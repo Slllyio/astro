@@ -48,6 +48,7 @@ def _seed_natal(user_id: int) -> NatalChart:
     return NatalChart(
         user_id=user_id,
         birth_jd=2451545.0, birth_moon_longitude=180.0,
+        ascendant_lon=0.0, ascendant_sign=1,  # synthetic; daemon doesn't read these
         sun_lon=2.0,        sun_sign=1,
         moon_lon=180.0,     moon_sign=7,
         mars_lon=60.0,      mars_sign=3,

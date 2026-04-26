@@ -52,6 +52,11 @@ class NatalChart(Base):
     birth_jd: Mapped[float] = mapped_column(Float)
     birth_moon_longitude: Mapped[float] = mapped_column(Float)
 
+    # Sidereal Lahiri ascendant (Lagna). Required - lat/lon are required on
+    # BirthDataInput, so every persisted natal chart has an ascendant.
+    ascendant_lon: Mapped[float] = mapped_column(Float)
+    ascendant_sign: Mapped[int] = mapped_column(Integer)
+
     # Sidereal D1 longitudes (0..360) and whole-sign indices (1..12) for each graha.
     # Sign columns are denormalized so the daemon can do whole-sign aspect checks
     # without recomputing int(lon // 30) every tick.

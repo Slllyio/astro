@@ -32,6 +32,17 @@ async def test_post_profile_creates_user_and_chart(
     assert isinstance(body["chart"]["d1"], dict)
     assert "Saturn" in body["chart"]["d1"]
 
+    # Lagna integration: response carries an ascendant and d1 entries are
+    # annotated with whole-sign house numbers. Bangalore 1990-07-15 12:00 IST
+    # has Virgo Lagna (sign 6) per the engine-layer test pin.
+    assert body["chart"]["ascendant"] is not None
+    assert body["chart"]["ascendant"]["sign_name"] == "Virgo"
+    assert body["chart"]["ascendant"]["sign"] == 6
+    for planet in ("Sun", "Moon", "Saturn", "Jupiter", "Mars",
+                   "Mercury", "Venus", "Rahu", "Ketu"):
+        h = body["chart"]["d1"][planet]["house"]
+        assert isinstance(h, int) and 1 <= h <= 12, f"{planet} house out of range: {h}"
+
     # Verify persistence: fetch the chart row directly via the test session.
     chart = (await db_session.execute(
         # noqa: E501 - readability beats line length here
@@ -41,6 +52,8 @@ async def test_post_profile_creates_user_and_chart(
     row = chart._mapping
     assert row["birth_jd"] is not None and row["birth_jd"] > 0
     assert 1 <= row["saturn_sign"] <= 12
+    assert row["ascendant_sign"] == 6, "Bangalore 1990 Lagna should persist as Virgo"
+    assert 150.0 <= row["ascendant_lon"] < 180.0
     # All 9 graha longitudes should be valid sidereal degrees.
     for col in ("sun_lon", "moon_lon", "mars_lon", "mercury_lon", "jupiter_lon",
                 "venus_lon", "saturn_lon", "rahu_lon", "ketu_lon"):
@@ -123,6 +136,7 @@ async def test_natal_chart_one_per_user(client: AsyncClient, db_session: AsyncSe
     db_session.add(NatalChart(
         user_id=user_id,
         birth_jd=0.0, birth_moon_longitude=0.0,
+        ascendant_lon=0.0, ascendant_sign=1,
         sun_lon=0, sun_sign=1, moon_lon=0, moon_sign=1,
         mars_lon=0, mars_sign=1, mercury_lon=0, mercury_sign=1,
         jupiter_lon=0, jupiter_sign=1, venus_lon=0, venus_sign=1,

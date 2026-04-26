@@ -29,7 +29,7 @@ profile_router = APIRouter()
 
 @chart_router.post("/calculate", response_model=ChartResponse)
 async def calculate_chart(birth_data: BirthDataInput) -> dict:
-    """Calculate D1, D9, D10 charts and current Mahadasha. Stateless; does not persist."""
+    """Calculate D1, D9, D10 charts, ascendant, and current Mahadasha. Stateless."""
     # calculate_all_charts is sync CPU-bound (Swiss Ephemeris C calls). Running
     # it in the request task would block the event loop and starve other
     # requests + the daemon. asyncio.to_thread offloads to the default executor.
@@ -41,6 +41,8 @@ async def calculate_chart(birth_data: BirthDataInput) -> dict:
         hour=birth_data.hour,
         minute=birth_data.minute,
         tz_offset=birth_data.tz_offset,
+        latitude=birth_data.latitude,
+        longitude=birth_data.longitude,
     )
 
 
@@ -51,10 +53,13 @@ def _build_natal_chart(user_id: int, chart: dict) -> NatalChart:
     do whole-sign aspect lookups without recomputing int(lon // 30) per tick.
     """
     d1 = chart["d1"]
+    asc = chart["ascendant"]
     return NatalChart(
         user_id=user_id,
         birth_jd=chart["birth_jd"],
         birth_moon_longitude=d1["Moon"]["longitude"],
+        ascendant_lon=asc["longitude"],
+        ascendant_sign=asc["sign"],
         sun_lon=d1["Sun"]["longitude"],         sun_sign=d1["Sun"]["sign"],
         moon_lon=d1["Moon"]["longitude"],       moon_sign=d1["Moon"]["sign"],
         mars_lon=d1["Mars"]["longitude"],       mars_sign=d1["Mars"]["sign"],
@@ -83,6 +88,7 @@ async def create_profile(
         calculate_all_charts,
         year=bd.year, month=bd.month, day=bd.day,
         hour=bd.hour, minute=bd.minute, tz_offset=bd.tz_offset,
+        latitude=bd.latitude, longitude=bd.longitude,
     )
 
     user = UserProfile(

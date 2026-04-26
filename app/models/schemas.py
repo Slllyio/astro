@@ -29,6 +29,17 @@ class PlanetaryPosition(BaseModel):
     sign_name: str
     degree_in_sign: float
     is_retrograde: bool
+    # House (1..12) under whole-sign Vedic counting, computed only when a
+    # geographic anchor (lat/lon) is supplied. Divisional charts (D9, D10)
+    # leave this as None - the ascendant is a D1-frame concept.
+    house: int | None = None
+
+
+class Ascendant(BaseModel):
+    longitude: float
+    sign: int
+    sign_name: str
+    degree_in_sign: float
 
 
 class DashaPeriod(BaseModel):
@@ -42,6 +53,10 @@ class DashaPeriod(BaseModel):
 class ChartResponse(BaseModel):
     jd: float
     ayanamsa: float
+    # Ascendant is None for transit-style charts where lat/lon weren't provided
+    # (the daemon's "where are the planets right now" call). It's always set
+    # for /chart/calculate and /profiles which require BirthDataInput.
+    ascendant: Ascendant | None = None
     d1: dict[str, PlanetaryPosition]
     d9: dict[str, PlanetaryPosition]
     d10: dict[str, PlanetaryPosition]

@@ -137,6 +137,44 @@ def calculate_divisional_longitude(longitude: float, divisor: int) -> float:
         
     return longitude
 
+def calculate_ascendant(jd: float, latitude: float, longitude: float) -> dict[str, Any]:
+    """Sidereal Lahiri ascendant (Lagna) for a moment + location.
+
+    Uses Swiss Ephemeris's whole-sign houses ('W'). The ascendant value itself
+    is independent of house system; we pick whole-sign because it's the Vedic
+    convention and lets the same call return whole-sign house cusps if needed
+    later.
+
+    The latitude/longitude inputs follow the WGS-84 convention: latitude in
+    [-90, +90], longitude in [-180, +180] with east positive.
+    """
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    flags = swe.FLG_SIDEREAL
+    _cusps, ascmc = swe.houses_ex(jd, latitude, longitude, b"W", flags)
+    asc_lon = ascmc[0]
+    sign_index = int(asc_lon // 30)
+    return {
+        "longitude": asc_lon,
+        "sign": sign_index + 1,
+        "sign_name": ZODIAC_SIGNS[sign_index],
+        "degree_in_sign": asc_lon % 30,
+    }
+
+
+def whole_sign_house(ascendant_sign: int, planet_sign: int) -> int:
+    """House number (1..12) for a planet under whole-sign Vedic counting.
+
+    The 1st house IS the ascendant's sign. Houses count forward from there:
+    asc=Virgo (6), planet in Libra (7) -> 2nd house. asc=Pisces (12), planet
+    in Aries (1) -> 2nd house (wrap).
+    """
+    if not (1 <= ascendant_sign <= 12 and 1 <= planet_sign <= 12):
+        raise ValueError(
+            f"signs must be 1..12, got asc={ascendant_sign} planet={planet_sign}"
+        )
+    return ((planet_sign - ascendant_sign) % 12) + 1
+
+
 def position_from_longitude(longitude: float, is_retrograde: bool) -> dict[str, Any]:
     sign_index = int(longitude // 30)
     degree_in_sign = longitude % 30
@@ -189,7 +227,19 @@ def calculate_vimshottari_mahadasha(moon_longitude: float, birth_jd: float) -> d
         "years_remaining": years_remaining,
     }
 
-def calculate_all_charts(year: int, month: int, day: int, hour: int, minute: int, tz_offset: float) -> dict[str, Any]:
+def calculate_all_charts(
+    year: int, month: int, day: int, hour: int, minute: int, tz_offset: float,
+    latitude: float | None = None, longitude: float | None = None,
+) -> dict[str, Any]:
+    """Compute D1/D9/D10 + Mahadasha (always) and ascendant + per-planet houses
+    (only when both `latitude` and `longitude` are provided).
+
+    Lat/lon are optional so the transit daemon can call this for "where are
+    the planets right now" without supplying meaningless geographic anchors —
+    the ascendant of a transit chart isn't astrologically interesting. When
+    omitted, the response's `ascendant` field is `None` and d1 entries do
+    NOT carry a `house` key.
+    """
     utc_hour_decimal = to_decimal_hours(hour, minute)
     jd = calculate_jd(year, month, day, utc_hour_decimal, tz_offset)
     ayanamsa = get_ayanamsa(jd)
@@ -232,10 +282,18 @@ def calculate_all_charts(year: int, month: int, day: int, hour: int, minute: int
     
     mahadasha = calculate_vimshottari_mahadasha(d1_chart["Moon"]["longitude"], jd)
 
+    # Ascendant + per-planet whole-sign houses (only when geographic anchor given).
+    ascendant: dict[str, Any] | None = None
+    if latitude is not None and longitude is not None:
+        ascendant = calculate_ascendant(jd, latitude, longitude)
+        for name, pos in d1_chart.items():
+            pos["house"] = whole_sign_house(ascendant["sign"], pos["sign"])
+
     return {
         "jd": jd,
         "birth_jd": jd,
         "ayanamsa": ayanamsa,
+        "ascendant": ascendant,
         "d1": d1_chart,
         "d9": d9_chart,
         "d10": d10_chart,

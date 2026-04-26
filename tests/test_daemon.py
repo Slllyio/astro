@@ -3,14 +3,11 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.daemon.transit_worker import NadiTransitDaemon
-from app.models.domain import NatalChart, TransitAlert, UserProfile
-
-pytestmark = pytest.mark.asyncio
+from app.models.domain import Account, NatalChart, TransitAlert, UserProfile
 
 
 # Build a synthetic transit chart that ONLY Saturn-sign-1 makes aspects.
@@ -63,7 +60,21 @@ def _seed_natal(user_id: int) -> NatalChart:
 
 
 async def _seed_user_with_natal(db: AsyncSession) -> int:
+    """Seed an Account + UserProfile + NatalChart and return the user id.
+
+    Account is required because UserProfile.account_id is a FK; we use a
+    deterministic google_sub per test via the session's identity map so
+    repeated calls in the same test don't collide.
+    """
+    account = Account(
+        google_sub="daemon-test-sub",
+        email="daemon-test@example.com",
+        name="Daemon Test",
+    )
+    db.add(account)
+    await db.flush()
     user = UserProfile(
+        account_id=account.id,
         name="DaemonTest",
         birth_year=2000, birth_month=1, birth_day=1,
         birth_hour=0, birth_minute=0,

@@ -14,15 +14,12 @@ from app.models.domain import NatalChart, UserProfile
 from _helpers import sample_profile_payload  # tests/ is on sys.path via pytest rootdir
 
 
-pytestmark = pytest.mark.asyncio
-
-
 # ---------- /profiles round-trip ----------
 
 async def test_post_profile_creates_user_and_chart(
-    client: AsyncClient, db_session: AsyncSession
+    authed_client: AsyncClient, db_session: AsyncSession
 ) -> None:
-    response = await client.post("/profiles", json=sample_profile_payload())
+    response = await authed_client.post("/profiles", json=sample_profile_payload())
 
     assert response.status_code == 201, response.text
     body = response.json()
@@ -60,24 +57,24 @@ async def test_post_profile_creates_user_and_chart(
         assert 0.0 <= row[col] < 360.0, f"{col} out of range: {row[col]}"
 
 
-async def test_get_transits_empty_initially(client: AsyncClient) -> None:
+async def test_get_transits_empty_initially(authed_client: AsyncClient) -> None:
     """A user with no transit alerts gets an empty list, not 404."""
-    create_resp = await client.post("/profiles", json=sample_profile_payload())
+    create_resp = await authed_client.post("/profiles", json=sample_profile_payload())
     user_id = create_resp.json()["id"]
 
-    transits_resp = await client.get(f"/profiles/{user_id}/transits")
+    transits_resp = await authed_client.get(f"/profiles/{user_id}/transits")
     assert transits_resp.status_code == 200
     assert transits_resp.json() == []
 
 
-async def test_get_transits_404_for_unknown_user(client: AsyncClient) -> None:
-    response = await client.get("/profiles/99999/transits")
+async def test_get_transits_404_for_unknown_user(authed_client: AsyncClient) -> None:
+    response = await authed_client.get("/profiles/99999/transits")
     assert response.status_code == 404
 
 
-async def test_post_profile_validates_birth_data(client: AsyncClient) -> None:
+async def test_post_profile_validates_birth_data(authed_client: AsyncClient) -> None:
     bad_payload = sample_profile_payload(month=13)  # invalid
-    response = await client.post("/profiles", json=bad_payload)
+    response = await authed_client.post("/profiles", json=bad_payload)
     assert response.status_code == 422
 
 
@@ -125,9 +122,11 @@ async def test_sqlite_wal_pragma_active(file_backed_engine) -> None:
 
 # ---------- ORM constraints ----------
 
-async def test_natal_chart_one_per_user(client: AsyncClient, db_session: AsyncSession) -> None:
+async def test_natal_chart_one_per_user(
+    authed_client: AsyncClient, db_session: AsyncSession
+) -> None:
     """The unique constraint on NatalChart.user_id (1:1) must hold."""
-    create_resp = await client.post("/profiles", json=sample_profile_payload())
+    create_resp = await authed_client.post("/profiles", json=sample_profile_payload())
     user_id = create_resp.json()["id"]
 
     user = await db_session.get(UserProfile, user_id)

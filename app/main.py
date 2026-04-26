@@ -1,4 +1,4 @@
-"""FastAPI app entrypoint with daemon lifespan."""
+"""FastAPI app entrypoint with daemon lifespan, auth, and rate limiting."""
 from __future__ import annotations
 
 import asyncio
@@ -7,8 +7,13 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from starlette.middleware.sessions import SessionMiddleware
 
+from app.api.auth_routes import auth_router
 from app.api.routes import chart_router, profile_router
+from app.core.auth import limiter
 from app.core.config import settings
 from app.core.database import init_db
 from app.daemon.transit_worker import NadiTransitDaemon
@@ -46,10 +51,21 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="High-fidelity Vedic and Nadi astrology application API",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
+# Authlib's OAuth client stores the CSRF state and PKCE verifier in a signed
+# session cookie across the redirect to Google. SessionMiddleware is the
+# Starlette primitive that backs that cookie. Reuses SECRET_KEY for signing.
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+
+# Rate-limit plumbing: register the limiter on app.state so @limiter.limit
+# decorators on routes can find it, and install slowapi's 429 error handler.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+app.include_router(auth_router)
 app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
 

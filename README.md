@@ -52,11 +52,26 @@ pytest --cov=app --cov-report=term-missing
 
 ## Endpoints
 
-- `POST /chart/calculate` — stateless: compute D1/D9/D10 + current Mahadasha for given birth data.
-- `POST /profiles` — persist a user + natal chart in one transaction.
-- `GET /profiles/{user_id}/transits` — list active transit alerts for a user.
+### Public
+- `POST /chart/calculate` — stateless: compute D1/D9/D10 + Lagna + current Mahadasha for given birth data.
+
+### Auth flow (Google OAuth)
+- `GET /auth/google/login` → 302 to Google's consent screen.
+- `GET /auth/google/callback` → exchanges code for token, upserts an `Account`, returns `{ access_token, token_type, account }` as JSON.
+- `GET /auth/me` → returns the authenticated `Account` (Bearer token required).
+
+### Auth-gated (require `Authorization: Bearer <jwt>`)
+- `POST /profiles` — persist a `UserProfile` + natal chart owned by the current account. Rate-limited per account (default 30/min).
+- `GET /profiles/{user_id}/transits` — list active transit alerts for a profile. Returns 404 (not 403) if the profile belongs to another account, to avoid leaking existence.
+
+## Auth setup
+
+1. Create OAuth credentials at <https://console.cloud.google.com/apis/credentials>. Choose **Web application** as the type.
+2. Add `http://localhost:8000/auth/google/callback` (or your deployment URL) to the client's Authorized redirect URIs.
+3. `cp .env.example .env` and fill in `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and a fresh `SECRET_KEY`.
+4. `uvicorn app.main:app --reload`, visit `http://localhost:8000/auth/google/login` in a browser, sign in, copy the JWT from the callback response, and use it for subsequent `/profiles` calls.
 
 ## Status
 
-Phase 2 complete (persistence + transit daemon). Phase 3 (auth, ascendant /
-houses, Antardasha sub-periods) is the next milestone.
+Phase 3 in progress (auth shipped; ascendant/houses shipped). Antardasha
+sub-periods, rate-limit refinements, and a frontend are the next milestones.

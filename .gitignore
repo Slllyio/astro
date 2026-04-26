@@ -28,6 +28,7 @@ env/
 # Environment / secrets
 .env
 .env.*
+!.env.example
 
 # Per-user Claude Code settings (machine-specific permissions)
 .claude/

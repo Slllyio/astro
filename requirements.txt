@@ -6,6 +6,10 @@ pydantic-settings
 sqlalchemy>=2.0
 asyncpg
 aiosqlite
+pyjwt
+authlib
+slowapi
+itsdangerous
 pytest
 pytest-asyncio
 pytest-cov

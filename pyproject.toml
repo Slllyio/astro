@@ -6,4 +6,8 @@
 # (whereas `python -m pytest` does).
 pythonpath = ["."]
 testpaths = ["tests"]
-asyncio_mode = "strict"
+# auto-mode: async functions are picked up without explicit @pytest.mark.asyncio.
+# Sync tests stay sync without triggering strict-mode warnings (which fire when
+# a module-level pytestmark applies the asyncio marker to a sync function).
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

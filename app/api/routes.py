@@ -1,14 +1,16 @@
 """HTTP endpoints. The chart engine is exposed at /chart/calculate; the profile and
-transit-alert endpoints live at /profiles."""
+transit-alert endpoints live at /profiles and require Bearer auth (see auth_routes)."""
 from __future__ import annotations
 
 import asyncio
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.auth import CurrentAccount, limiter
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.ephemeris_engine import calculate_all_charts
 from app.models.domain import NatalChart, TransitAlert, UserProfile
@@ -78,11 +80,17 @@ def _build_natal_chart(user_id: int, chart: dict) -> NatalChart:
     response_model=UserProfileResponse,
     status_code=status.HTTP_201_CREATED,
 )
+@limiter.limit(f"{settings.RATE_LIMIT_PROFILES_PER_MINUTE}/minute")
 async def create_profile(
+    request: Request,  # required by slowapi to introspect the request for keying
     payload: UserProfileCreate,
+    account: CurrentAccount,
     db: AsyncSession = Depends(get_db),
 ) -> UserProfileResponse:
-    """Persist a user, calculate their natal chart once, and store both atomically."""
+    """Persist a user, calculate their natal chart once, and store both atomically.
+
+    Auth-gated: the new UserProfile is owned by the authenticated account.
+    """
     bd = payload.birth_data
     chart = await asyncio.to_thread(
         calculate_all_charts,
@@ -92,6 +100,7 @@ async def create_profile(
     )
 
     user = UserProfile(
+        account_id=account.id,
         name=payload.name,
         birth_year=bd.year, birth_month=bd.month, birth_day=bd.day,
         birth_hour=bd.hour, birth_minute=bd.minute,
@@ -118,11 +127,17 @@ async def create_profile(
 )
 async def list_transits(
     user_id: int,
+    account: CurrentAccount,
     db: AsyncSession = Depends(get_db),
 ) -> list[TransitAlert]:
-    """Return active transit alerts for a user, newest first."""
+    """Return active transit alerts for a user, newest first.
+
+    IDOR fix: cross-account access returns 404 (not 403) so we don't leak
+    the existence of other accounts' profiles. Same response whether the
+    user_id doesn't exist OR exists but belongs to a different account.
+    """
     user = await db.get(UserProfile, user_id)
-    if user is None:
+    if user is None or user.account_id != account.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
 
     stmt = (

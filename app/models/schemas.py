@@ -77,6 +77,24 @@ class UserProfileResponse(BaseModel):
     chart: ChartResponse | None = None
 
 
+class AccountResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    name: str | None = None
+    picture: str | None = None
+    created_at: dt.datetime
+    last_login_at: dt.datetime
+
+
+class TokenResponse(BaseModel):
+    """Returned by /auth/google/callback after successful login."""
+    access_token: str
+    token_type: str = "bearer"
+    account: AccountResponse
+
+
 class TransitAlertResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

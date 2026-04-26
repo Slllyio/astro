@@ -16,10 +16,36 @@ class Base(DeclarativeBase):
     pass
 
 
+class Account(Base):
+    """Authenticated identity. One account, many UserProfiles (astrologer pattern)."""
+
+    __tablename__ = "accounts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    # Google's stable user ID (the `sub` claim). Preferred for identity over
+    # email because users can change emails on their Google account; the sub
+    # is permanent. Unique-indexed.
+    google_sub: Mapped[str] = mapped_column(String, unique=True, index=True)
+    email: Mapped[str] = mapped_column(String, index=True)
+    name: Mapped[str | None] = mapped_column(String, nullable=True)
+    picture: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    last_login_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    profiles: Mapped[list["UserProfile"]] = relationship(
+        back_populates="account", cascade="all, delete-orphan"
+    )
+
+
 class UserProfile(Base):
     __tablename__ = "user_profiles"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    # Multi-profile per account: astrologers commonly compute charts for
+    # spouse, kids, clients, etc. Required (no orphan profiles); the route
+    # populates account_id from CurrentAccount.
+    account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"), index=True)
     name: Mapped[str] = mapped_column(String, index=True)
 
     birth_year: Mapped[int] = mapped_column(Integer)
@@ -33,6 +59,7 @@ class UserProfile(Base):
 
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
+    account: Mapped["Account"] = relationship(back_populates="profiles")
     natal_chart: Mapped["NatalChart | None"] = relationship(
         back_populates="user", uselist=False, cascade="all, delete-orphan"
     )

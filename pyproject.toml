@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+# Add the project root to sys.path so `from app.X import Y` resolves
+# whether pytest is invoked as `pytest`, `python -m pytest`, or via CI.
+# Without this, Linux CI hits ModuleNotFoundError: No module named 'app'
+# because the `pytest` console script does not implicitly add cwd to sys.path
+# (whereas `python -m pytest` does).
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "strict"

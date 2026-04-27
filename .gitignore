@@ -31,6 +31,13 @@ portal/_skyfield_cache/
 portal-tmp/
 de421.bsp
 
+# Phase 5 ML pipeline artifacts. Top-level data/ holds raw scraped HTML,
+# intermediate CSVs, training run outputs (models, SHAP plots, reports).
+# All generated, all large, none of it belongs in source control.
+data/
+app/medini/data/*.parquet
+app/medini/data/ml_runs/
+
 # Environment / secrets
 .env
 .env.*

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Blueprint | Origin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="landing-page">
+    <div class="hero-container">
+        <!-- Background Yantra Geometry -->
+        <div class="yantra-container">
+            <div class="yantra-circle outer"></div>
+            <div class="yantra-circle middle"></div>
+            <div class="yantra-square"></div>
+            <div class="yantra-triangle"></div>
+        </div>
+
+        <main class="hero-content">
+            <div class="om-symbol fade-in">🕉</div>
+            <h1 class="fade-in">The Vedic Blueprint</h1>
+            <p class="subtitle fade-in-delay-1">Janma Kundali & Cosmic Algorhithms</p>
+
+            <form id="reportForm" action="/generate" method="POST" class="minimal-form fade-in-delay-2">
+                <div class="input-group">
+                    <input type="date" id="dob" name="dob" required max="2025-12-31" value="1989-10-12">
+                    <span class="focus-border"></span>
+                </div>
+
+                <div class="action-wrapper">
+                    <button type="submit" id="generateBtn" class="btn-clean">
+                        <span id="btnText">Reveal Signature</span>
+                        <div id="spinner" class="spinner hidden"></div>
+                    </button>
+                    <div id="btn-blur"></div>
+                </div>
+            </form>
+        </main>
+
+        <footer class="minimal-footer fade-in-delay-3">
+            <p>Astrological Probability Engine v2.0</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

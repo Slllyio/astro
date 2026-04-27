@@ -25,6 +25,12 @@ env/
 *.db-shm
 *.db-wal
 
+# Vendored portal: skyfield's ephemeris cache (downloaded de421.bsp ~16MB)
+# and any leftover `portal-tmp/` clone artefact from initial vendoring.
+portal/_skyfield_cache/
+portal-tmp/
+de421.bsp
+
 # Environment / secrets
 .env
 .env.*

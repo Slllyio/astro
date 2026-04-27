@@ -70,6 +70,18 @@ app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
 
 
+# Vendored Flask portal at /portal/. Lazy-imported so tests/CI (with
+# PORTAL_ENABLED=false) don't pay the skyfield ephemeris-load cost.
+# The portal is the original astro-web-portal "probability engine" — a
+# DOB-only matrix-based reader complementing this app's precise natal-chart
+# engine. See `portal/app.py` for its routes.
+if settings.PORTAL_ENABLED:
+    from starlette.middleware.wsgi import WSGIMiddleware
+    from portal.app import app as _portal_flask_app  # heavy import: ephemeris
+    app.mount("/portal", WSGIMiddleware(_portal_flask_app))
+    logger.info("Vendored Flask portal mounted at /portal/")
+
+
 @app.get("/")
 def root() -> dict[str, str]:
     return {"message": "Welcome to the Vedic & Nadi Astrology Engine"}

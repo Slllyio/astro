@@ -12,6 +12,9 @@ import os
 # Must run before any `from app...` import in this package.
 os.environ.setdefault("DAEMON_ENABLED", "false")
 os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+# Don't load the vendored Flask portal during tests — its skyfield ephemeris
+# would trigger a 16MB JPL download on first run and slow CI substantially.
+os.environ.setdefault("PORTAL_ENABLED", "false")
 # Force-blank OAuth credentials in tests so `.env` (if present locally) doesn't
 # leak real Google credentials into the test session. setdefault is wrong here
 # because we WANT to override anything sourced from .env; use direct assignment.

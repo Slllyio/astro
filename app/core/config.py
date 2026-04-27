@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     DAEMON_CHECK_INTERVAL_SECONDS: int = 3600
     TRANSIT_ORB_DEGREES: float = 3.0
 
+    # Vendored Flask portal mounted at /portal/. Disabled in tests/CI so the
+    # skyfield ephemeris (~16MB download) doesn't fire on every test session.
+    PORTAL_ENABLED: bool = True
+
     # Auth & sessions. SECRET_KEY signs JWTs AND encrypts the OAuth state
     # cookie used by authlib during the Google redirect dance. Using one
     # secret for both is acceptable for a prototype; in production these

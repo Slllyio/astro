@@ -1,0 +1,587 @@
+:root {
+    /* Brahma Muhurta Palette */
+    --bg-void: #1a0505;
+    /* Deep Maroon/Void */
+    --bg-deep: #2d0a0a;
+    --gold: #FFB300;
+    /* Turmeric Gold */
+    --gold-dim: #D97706;
+    /* Saffron */
+    --saffron-light: #FFCC80;
+    --text-primary: #f5e6d3;
+    /* Parchment white */
+    --text-muted: #d4a373;
+    --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-void);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-y: auto;
+    /* Default: allow scrolling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-void) 100%);
+}
+
+body.landing-page {
+    overflow: hidden;
+    /* Landing page specific */
+}
+
+/* Yantra Geometry Background */
+.yantra-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.15;
+    /* Subtle */
+}
+
+.yantra-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+}
+
+.yantra-circle.outer {
+    width: 600px;
+    height: 600px;
+    animation: rotateRight 120s linear infinite;
+    border-style: dashed;
+}
+
+.yantra-circle.middle {
+    width: 400px;
+    height: 400px;
+    animation: rotateLeft 90s linear infinite;
+    border: 2px solid var(--gold-dim);
+}
+
+.yantra-square {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    border: 1px solid var(--gold);
+    transform: translate(-50%, -50%) rotate(45deg);
+    animation: pulseYantra 8s ease-in-out infinite;
+}
+
+.yantra-triangle {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    border-top: 170px solid var(--gold-dim);
+    transform: translate(-50%, -50%);
+    opacity: 0.2;
+}
+
+@keyframes rotateRight {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes rotateLeft {
+    from {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+}
+
+@keyframes pulseYantra {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1.05);
+    }
+}
+
+
+.hero-container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.om-symbol {
+    font-size: 3rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(255, 179, 0, 0.4);
+    animation: floatOm 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatOm {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-10px);
+    }
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: 4rem;
+    letter-spacing: -1px;
+    color: var(--gold);
+    background: linear-gradient(to bottom, var(--gold) 0%, var(--saffron-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 30px rgba(255, 179, 0, 0.1);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+    font-family: 'Inter', sans-serif;
+    border-top: 1px solid var(--gold-dim);
+    border-bottom: 1px solid var(--gold-dim);
+    display: inline-block;
+    padding: 10px 20px;
+}
+
+/* Minimal Form */
+.minimal-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+
+.input-group {
+    position: relative;
+    width: 250px;
+}
+
+input[type="date"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--text-muted);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    /* Elegant date font */
+    font-size: 1.4rem;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    outline: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+/* Custom Calendar Icon Color hack */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8) sepia(100%) hue-rotate(0deg) saturate(1000%) brightness(1.1);
+    /* Gold-ish */
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    opacity: 1;
+}
+
+input[type="date"]:focus {
+    border-bottom-color: var(--gold);
+}
+
+.focus-border {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: var(--gold);
+    transition: var(--transition);
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--gold);
+}
+
+input[type="date"]:focus~.focus-border {
+    width: 100%;
+}
+
+/* Clean Button */
+.action-wrapper {
+    position: relative;
+}
+
+.btn-clean {
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 15px 45px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.btn-clean::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    transition: var(--transition);
+    z-index: -1;
+}
+
+.btn-clean:hover {
+    color: #1a0505;
+    border-color: var(--gold);
+    letter-spacing: 5px;
+    box-shadow: 0 0 20px rgba(255, 179, 0, 0.3);
+}
+
+.btn-clean:hover::before {
+    width: 100%;
+}
+
+/* Spinner inside button */
+.spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Minimal Footer */
+.minimal-footer {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in-delay-1 {
+    opacity: 0;
+    animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.fade-in-delay-2 {
+    opacity: 0;
+    animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+.fade-in-delay-3 {
+    opacity: 0;
+    animation: fadeIn 1.2s ease 1s forwards;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 3rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 3rem;
+    }
+
+    .input-group {
+        width: 220px;
+    }
+
+    .yantra-container {
+        width: 350px;
+        height: 350px;
+        opacity: 0.1;
+    }
+
+    .yantra-circle.outer {
+        width: 300px;
+        height: 300px;
+    }
+
+    .yantra-circle.middle {
+        width: 200px;
+        height: 200px;
+    }
+
+    .yantra-square {
+        width: 150px;
+        height: 150px;
+    }
+
+    .yantra-triangle {
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+}
+
+/* --- Report Page Specifics (Keeping simpler versions or overrides if needed) --- */
+/* Note: Report page logic might need the old classes. 
+   Ideally, we should split CSS or namespace the landing page. 
+   However, for 'minimal', I will assume 'style.css' handles both, but I've just replaced EVERYTHING.
+   User asked for "Landing page redesign". 
+   CRITICAL: If I replace everything, the REPORT page will break because it relies on .card-glass, .grid-2, etc.
+   I MUST RESTORE THE REPORT STYLES below the landing page styles, or merge them.
+   I will append the previous report-specific styles below the landing styles.
+*/
+
+/* --- SHARED / LEGACY STYLES FOR REPORT PAGE --- */
+/* Re-introducing report styles with the new variable palette */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 25px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Re-style Headers for Report Context */
+.container h1 {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--gold) 0%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.container .subtitle {
+    margin-bottom: 4rem;
+}
+
+/* Glass Card for Reports */
+.card-glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    /* More minimal */
+    padding: 40px;
+    margin-bottom: 60px;
+    transition: var(--transition);
+}
+
+.card-glass h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    /* Subtle underline */
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Grids */
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+/* Pillars */
+.pillar-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    text-align: center;
+}
+
+.pillar-number {
+    font-size: 3.5rem;
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    margin: 15px 0;
+}
+
+.pillar-title {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* Timeline */
+.timeline {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 30px;
+    margin-left: 10px;
+}
+
+.timeline-item {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 5px;
+    width: 9px;
+    height: 9px;
+    background: var(--gold);
+    border-radius: 50%;
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.timeline-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+}
+
+td {
+    color: var(--text-primary);
+}
+
+/* Print */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+
+    .card-glass {
+        border: 1px solid #ccc;
+        backdrop-filter: none;
+        background: transparent;
+    }
+
+    body::before,
+    body::after {
+        display: none;
+    }
+}

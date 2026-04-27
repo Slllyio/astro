@@ -1,0 +1,430 @@
+:root {
+    --bg-dark: #0a0e17;
+    --bg-panel: rgba(16, 24, 45, 0.8);
+    --text-gold: #cfaa6d;
+    --text-gold-bright: #f0d58a;
+    --text-white: #e0e6ed;
+    --text-muted: #8b9bb4;
+    --accent: #d4af37;
+    --border-gold: rgba(212, 175, 55, 0.3);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    overflow-x: hidden;
+}
+
+.starry-bg {
+    background-image: url('../images/background.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    font-family: 'Cinzel', serif;
+    color: var(--text-gold);
+    margin-top: 0;
+}
+
+h1.main-title {
+    font-size: 4rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: -webkit-linear-gradient(#fbf5b7, #bf9b30);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: var(--text-white);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Slides */
+.slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 2rem;
+    box-sizing: border-box;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.content {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.centered {
+    text-align: center;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide .content > * {
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+/* Section Specifics */
+/* Title Slide */
+.title-slide {
+    text-align: center;
+}
+
+.intro-text {
+    max-width: 600px;
+    margin: 3rem auto;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.meta {
+    font-size: 0.9rem;
+    color: var(--text-gold);
+    opacity: 0.7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* DOB Slide */
+.dob-slide h2 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-gold-bright);
+}
+
+.date-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: var(--text-white);
+    margin: 2rem 0;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+.date-part {
+    display: inline-block;
+}
+
+.separator {
+    color: var(--accent);
+    margin: 0 1rem;
+    opacity: 0.5;
+}
+
+.date-desc {
+    max-width: 700px;
+    margin: 0 auto 3rem auto;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.date-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: var(--text-gold);
+    align-items: center;
+}
+
+/* Synthesis Slide */
+.synthesis-slide h2 {
+    border-bottom: 1px solid var(--border-gold);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.identity-block {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.identity-item {
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.power-rank-block {
+    background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0));
+    padding: 2rem;
+    border: 1px solid var(--border-gold);
+    border-radius: 10px;
+}
+
+/* Elements Slide */
+.elements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.element-card {
+    background: var(--bg-panel);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.element-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-gold);
+}
+
+.element-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.highlight {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-gold-bright);
+    margin: 0.5rem 0;
+}
+
+.karma-list {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+}
+
+.karma-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Architecture / Attributes */
+.attributes-list {
+    max-width: 800px;
+    margin: 4rem auto;
+}
+
+.attr-item {
+    margin-bottom: 1.5rem;
+}
+
+.attr-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-white);
+}
+
+.attr-bar-bg {
+    background: rgba(255,255,255,0.1);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.attr-bar-fill {
+    background: linear-gradient(90deg, var(--accent), #fef6d2);
+    height: 100%;
+}
+
+/* Numerology Slide */
+.numerology-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+}
+
+.num-card {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border-gold);
+    padding: 2rem;
+    width: 250px;
+    text-align: center;
+    border-radius: 50%; /* Circle? Or rounded rect */
+    border-radius: 20px;
+    position: relative;
+}
+
+.num-card.featured {
+    transform: scale(1.1);
+    background: rgba(212,175,55,0.1);
+    border-width: 2px;
+    box-shadow: 0 0 30px rgba(212,175,55,0.2);
+}
+
+.num-value {
+    font-size: 4rem;
+    font-family: 'Playfair Display', serif;
+    color: var(--text-white);
+    margin: 1rem 0;
+}
+
+.num-theme {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Forecast Slide */
+.timeline {
+    border-left: 2px solid var(--border-gold);
+    margin-left: 2rem;
+    padding: 2rem 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 3rem;
+}
+
+.tl-dot {
+    position: absolute;
+    left: -9px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background: var(--bg-dark);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.tl-trend {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg-dark);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+/* Solar System Animation (Pure CSS) */
+.solar-system {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 4rem auto;
+}
+
+.sun {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #ffd700, #ff8c00);
+    border-radius: 50%;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+    z-index: 10;
+}
+
+.orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+
+.orbit-1 { width: 100px; height: 100px; animation: spin 4s linear infinite; }
+.orbit-2 { width: 160px; height: 160px; animation: spin 7s linear infinite; }
+.orbit-3 { width: 220px; height: 220px; animation: spin 10s linear infinite; }
+.orbit-4 { width: 300px; height: 300px; animation: spin 18s linear infinite; }
+.orbit-5 { width: 380px; height: 380px; animation: spin 29s linear infinite; }
+
+.planet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+.planet-1 { width: 8px; height: 8px; background: #aaa; }
+.planet-2 { width: 12px; height: 12px; background: #e6c288; }
+.planet-3 { width: 10px; height: 10px; background: #ff6b6b; }
+.planet-4 { width: 20px; height: 20px; background: #d4a373; }
+.planet-5 { width: 18px; height: 18px; background: #fefae0; box-shadow: 0 0 0 4px rgba(254, 250, 224, 0.2); }
+
+@keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.solar-legend {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Print Button */
+.print-actions {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+}
+
+.print-actions button {
+    background: var(--accent);
+    color: var(--bg-dark);
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    transition: all 0.3s;
+}
+
+.print-actions button:hover {
+    transform: scale(1.05);
+    background: var(--text-gold-bright);
+}
+
+@media print {
+    body { background: white; color: black; }
+    .starry-bg { background: none; }
+    .print-actions { display: none; }
+    .slide { min-height: auto; page-break-after: always; border: none; }
+    h1, h2, h3, h4 { color: #000; }
+    .timeline { border-left-color: #ccc; }
+    .tl-dot { background: #000; border-color: #000; }
+    .num-value { color: #000; }
+}
+
+@media (max-width: 768px) {
+    h1.main-title { font-size: 2.5rem; }
+    .date-display { font-size: 3rem; }
+    .date-breakdown { font-size: 1rem; flex-direction: column; gap: 0.5rem; }
+}

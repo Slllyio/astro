@@ -81,6 +81,56 @@ async def test_kurma_widget_returns_html(client: AsyncClient) -> None:
     assert "leaflet" in body.lower()
 
 
+async def test_cartography_post_returns_lines_and_regions(client: AsyncClient) -> None:
+    """POST /medini/cartography on the Bangalore baseline returns 36 planetary
+    lines + the Kurma GeoJSON layer + the natal ascendant (Virgo for this birth)."""
+    response = await client.post("/medini/cartography", json={
+        "year": 1990, "month": 7, "day": 15,
+        "hour": 12, "minute": 0,
+        "latitude": 12.97, "longitude": 77.59, "tz_offset": 5.5,
+    })
+    assert response.status_code == 200
+    body = response.json()
+
+    # 36 lines = 4 angles × 9 planets.
+    assert body["summary"]["line_count"] == 36
+    assert body["summary"]["planet_count"] == 9
+    assert len(body["planetary_lines"]) == 36
+
+    # Kurma layer is the same source-of-truth as /medini/regions.
+    assert body["kurma_geojson"]["type"] == "FeatureCollection"
+    assert len(body["kurma_geojson"]["features"]) == 9
+
+    # Natal ascendant comes through (the Phase-3 Lagna feature).
+    assert body["ascendant"]["sign_name"] == "Virgo"
+
+    # Each line has the expected shape.
+    line = body["planetary_lines"][0]
+    assert "planet" in line
+    assert line["angle"] in {"MC", "IC", "Asc", "Desc"}
+    assert isinstance(line["coords"], list) and len(line["coords"]) >= 2
+
+
+async def test_cartography_post_validates_birth_data(client: AsyncClient) -> None:
+    """Invalid birth data (month=13) returns 422 from Pydantic validation."""
+    response = await client.post("/medini/cartography", json={
+        "year": 1990, "month": 13, "day": 1,  # invalid month
+        "hour": 0, "minute": 0,
+        "latitude": 0.0, "longitude": 0.0, "tz_offset": 0.0,
+    })
+    assert response.status_code == 422
+
+
+async def test_cartography_page_returns_html(client: AsyncClient) -> None:
+    response = await client.get("/medini/cartography/page")
+    assert response.status_code == 200
+    assert "text/html" in response.headers.get("content-type", "")
+    body = response.text
+    assert "<title>Astrocartography" in body
+    # The page must POST to the cartography endpoint (single source of truth).
+    assert "/medini/cartography" in body
+
+
 async def test_kurma_widget_uses_safe_dom_construction(client: AsyncClient) -> None:
     """Defensive: the widget should build dynamic content via DOM helpers
     (createElement + textContent), not raw HTML strings. This is enforced

@@ -7,11 +7,14 @@ personalized endpoints; the /regions and /kurma-widget endpoints stay open.
 """
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import HTMLResponse
 
+from app.core.ephemeris_engine import calculate_all_charts
+from app.medini.astrocartography import compute_planetary_lines
 from app.medini.kurma_chakra import (
     ALL_REGIONS,
     all_nakshatra_regions,
@@ -19,6 +22,7 @@ from app.medini.kurma_chakra import (
     info_for_region,
     region_for_coordinates,
 )
+from app.models.schemas import BirthDataInput
 
 medini_router = APIRouter(prefix="/medini", tags=["Geo-Astrological Engine"])
 
@@ -94,5 +98,53 @@ async def kurma_widget() -> HTMLResponse:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Widget template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+
+@medini_router.post("/cartography")
+async def cartography(birth_data: BirthDataInput) -> dict:
+    """Compute personalized astrocartography lines for a birth chart.
+
+    Returns the 4 angular lines (MC/IC/Asc/Desc) for each of the 9 grahas =
+    36 lines total, plus the Kurma Chakra GeoJSON layer so the frontend
+    renders both overlays from a single response.
+
+    No auth in v1 — the calculation is stateless and doesn't expose any
+    persisted user data. Could be rate-limited or auth-gated later.
+    """
+    # calculate_all_charts is sync CPU-bound; offload so we don't block
+    # the event loop. Same pattern as POST /chart/calculate.
+    chart = await asyncio.to_thread(
+        calculate_all_charts,
+        year=birth_data.year, month=birth_data.month, day=birth_data.day,
+        hour=birth_data.hour, minute=birth_data.minute,
+        tz_offset=birth_data.tz_offset,
+        latitude=birth_data.latitude, longitude=birth_data.longitude,
+    )
+    lines = await asyncio.to_thread(compute_planetary_lines, chart["birth_jd"])
+
+    return {
+        "birth_jd": chart["birth_jd"],
+        "ascendant": chart["ascendant"],
+        "planetary_lines": lines,
+        "kurma_geojson": all_regions_geojson(),
+        "summary": {
+            "line_count": len(lines),
+            "planet_count": len({line["planet"] for line in lines}),
+        },
+    }
+
+
+@medini_router.get("/cartography/page", response_class=HTMLResponse)
+async def cartography_page() -> HTMLResponse:
+    """Personalized astrocartography map. Frontend submits birth data via a
+    form, fetches POST /medini/cartography, and overlays the planetary lines
+    on top of the same Kurma Chakra layer used by the educational widget."""
+    html_path = _TEMPLATES_DIR / "cartography.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Cartography template missing at {html_path}",
         )
     return HTMLResponse(content=html_path.read_text(encoding="utf-8"))

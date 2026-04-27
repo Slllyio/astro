@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astrocartography - Geo-Astrological Engine</title>
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f7f7f7; }
+    .container { display: grid; grid-template-columns: 1fr 380px; height: 100vh; }
+    #map { height: 100vh; }
+    .sidebar { background: #fafafa; border-left: 1px solid #ddd; padding: 24px; overflow-y: auto; }
+    h1 { font-size: 20px; margin-bottom: 4px; font-weight: 600; }
+    .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+    form { display: grid; gap: 10px; }
+    label { font-size: 12px; text-transform: uppercase; color: #666; letter-spacing: 0.5px; font-weight: 600; }
+    input { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    button { padding: 10px; background: #2a4a8e; color: white; border: 0; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    button:hover:not(:disabled) { background: #1a3a7e; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    .status { margin-top: 14px; padding: 8px 10px; border-radius: 4px; font-size: 13px; }
+    .status.error { background: #fde6e6; color: #8a1a1a; }
+    .status.ok { background: #e6f5ea; color: #1a5a2a; }
+    .summary { margin-top: 16px; padding: 12px; background: #eef4ff; border-radius: 6px; font-size: 13px; line-height: 1.5; }
+    .legend { background: white; padding: 12px 14px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-size: 12px; line-height: 1.6; max-height: 60vh; overflow-y: auto; }
+    .legend-title { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
+    .legend-row { display: flex; align-items: center; }
+    .legend-swatch { display: inline-block; width: 14px; height: 14px; margin-right: 8px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="map"></div>
+    <div class="sidebar">
+      <h1>Astrocartography</h1>
+      <p class="subtitle">Your planetary lines projected over the world</p>
+
+      <form id="birth-form">
+        <div>
+          <label>Date of birth</label>
+          <input type="date" id="dob" required value="1990-07-15" />
+        </div>
+        <div class="row">
+          <div>
+            <label>Hour (24h)</label>
+            <input type="number" id="hour" min="0" max="23" required value="12" />
+          </div>
+          <div>
+            <label>Minute</label>
+            <input type="number" id="minute" min="0" max="59" required value="0" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Latitude</label>
+            <input type="number" id="lat" step="0.01" min="-90" max="90" required value="12.97" />
+          </div>
+          <div>
+            <label>Longitude</label>
+            <input type="number" id="lon" step="0.01" min="-180" max="180" required value="77.59" />
+          </div>
+        </div>
+        <div>
+          <label>Timezone offset from UTC (hours)</label>
+          <input type="number" id="tz" step="0.25" min="-12" max="14" required value="5.5" />
+        </div>
+        <button type="submit" id="submit-btn">Compute lines</button>
+      </form>
+
+      <div id="status"></div>
+      <div id="summary" class="summary" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script>
+    // Per-planet line color. Mars red / Saturn dark / Jupiter gold / Venus rose
+    // / Mercury teal etc. — astrological tradition lightly informs choice but
+    // the strongest constraint is contrast on a green-blue OSM basemap.
+    const PLANET_COLORS = {
+      "Sun":     "#f57c00",
+      "Moon":    "#9e9e9e",
+      "Mercury": "#26a69a",
+      "Venus":   "#ec407a",
+      "Mars":    "#d32f2f",
+      "Jupiter": "#fdd835",
+      "Saturn":  "#5d4037",
+      "Rahu":    "#7b1fa2",
+      "Ketu":    "#455a64",
+    };
+
+    // Per-angle line style. MC/IC = solid; Asc/Desc = dashed for visual
+    // distinction. Width slight increase for MC/IC since they are
+    // conceptually "stronger" in classical ACG.
+    const ANGLE_STYLE = {
+      "MC":   { dashArray: null,        weight: 2.5, opacity: 0.9 },
+      "IC":   { dashArray: "6 4",       weight: 2.0, opacity: 0.7 },
+      "Asc":  { dashArray: "2 4",       weight: 2.0, opacity: 0.85 },
+      "Desc": { dashArray: "8 4 2 4",   weight: 1.8, opacity: 0.7 },
+    };
+
+    const KURMA_REGION_COLORS = {
+      "Central":    "#6b8e23", "East":       "#4682b4", "South-East": "#cd5c5c",
+      "South":      "#daa520", "South-West": "#9370db", "West":       "#48d1cc",
+      "North-West": "#dc143c", "North":      "#4169e1", "North-East": "#8b4513",
+    };
+
+    const map = L.map('map', { minZoom: 2, maxZoom: 8, worldCopyJump: true })
+      .setView([20, 30], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    const linesLayer = L.layerGroup().addTo(map);
+    const regionsLayer = L.layerGroup().addTo(map);
+
+    function el(tag, className, textValue) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (textValue !== undefined) e.textContent = textValue;
+      return e;
+    }
+    function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function renderRegions(geojson) {
+      regionsLayer.clearLayers();
+      L.geoJSON(geojson, {
+        style: feature => ({
+          color: '#222',
+          weight: 1,
+          fillColor: KURMA_REGION_COLORS[feature.properties.region] || '#999',
+          fillOpacity: 0.18,
+        }),
+      }).addTo(regionsLayer);
+    }
+
+    function renderLines(lines) {
+      linesLayer.clearLayers();
+      lines.forEach(line => {
+        const color = PLANET_COLORS[line.planet] || '#444';
+        const style = ANGLE_STYLE[line.angle] || ANGLE_STYLE['Asc'];
+        if (line.coords.length < 2) return;
+        // Coords from the API are [lat, lon]; Leaflet's L.polyline takes
+        // exactly that order. (Note GeoJSON elsewhere uses [lon, lat].)
+        const polyline = L.polyline(line.coords, {
+          color, ...style,
+        });
+        const tip = el('div');
+        tip.appendChild(el('strong', null, line.planet + ' ' + line.angle));
+        polyline.bindTooltip(tip, { sticky: true });
+        polyline.addTo(linesLayer);
+      });
+    }
+
+    function buildLegend() {
+      const div = L.DomUtil.create('div', 'legend');
+      div.appendChild(el('span', 'legend-title', 'Planets'));
+      Object.keys(PLANET_COLORS).forEach(name => {
+        const row = el('div', 'legend-row');
+        const swatch = el('span', 'legend-swatch');
+        swatch.style.background = PLANET_COLORS[name];
+        row.appendChild(swatch);
+        row.appendChild(document.createTextNode(name));
+        div.appendChild(row);
+      });
+      return div;
+    }
+    L.control({ position: 'bottomleft' }).onAdd = buildLegend;
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = buildLegend;
+    legend.addTo(map);
+
+    const form = document.getElementById('birth-form');
+    const statusEl = document.getElementById('status');
+    const summaryEl = document.getElementById('summary');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function setStatus(text, kind) {
+      statusEl.textContent = text;
+      statusEl.className = 'status ' + (kind || '');
+    }
+
+    function showSummary(payload) {
+      clearChildren(summaryEl);
+      summaryEl.style.display = 'block';
+      if (payload.ascendant) {
+        const ascRow = el('div');
+        ascRow.appendChild(el('strong', null, 'Lagna: '));
+        ascRow.appendChild(document.createTextNode(payload.ascendant.sign_name + ' (' + payload.ascendant.longitude.toFixed(2) + '°)'));
+        summaryEl.appendChild(ascRow);
+      }
+      const linesRow = el('div');
+      linesRow.appendChild(el('strong', null, 'Lines drawn: '));
+      linesRow.appendChild(document.createTextNode(payload.summary.line_count + ' (4 × ' + payload.summary.planet_count + ' planets)'));
+      summaryEl.appendChild(linesRow);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      submitBtn.disabled = true;
+      setStatus('Computing lines...', '');
+      summaryEl.style.display = 'none';
+
+      const dob = document.getElementById('dob').value;
+      const [year, month, day] = dob.split('-').map(Number);
+      const payload = {
+        year, month, day,
+        hour: parseInt(document.getElementById('hour').value, 10),
+        minute: parseInt(document.getElementById('minute').value, 10),
+        latitude: parseFloat(document.getElementById('lat').value),
+        longitude: parseFloat(document.getElementById('lon').value),
+        tz_offset: parseFloat(document.getElementById('tz').value),
+      };
+
+      try {
+        const resp = await fetch('/medini/cartography', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        renderRegions(data.kurma_geojson);
+        renderLines(data.planetary_lines);
+        showSummary(data);
+        setStatus('Done.', 'ok');
+      } catch (err) {
+        setStatus('Failed: ' + err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Auto-run with the default form values so the page renders something
+    // immediately rather than asking the user to submit before seeing anything.
+    window.addEventListener('load', () => form.requestSubmit());
+  </script>
+</body>
+</html>

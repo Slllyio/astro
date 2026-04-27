@@ -12,6 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
+from app.api.medini_routes import medini_router
 from app.api.routes import chart_router, profile_router
 from app.core.auth import limiter
 from app.core.config import settings
@@ -68,6 +69,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(auth_router)
 app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
+app.include_router(medini_router)  # Tab 3: Geo-Astrological Engine (/medini/*)
 
 
 # Vendored Flask portal at /portal/. Lazy-imported so tests/CI (with

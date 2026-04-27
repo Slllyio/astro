@@ -22,6 +22,7 @@ python-dateutil>=2.8
 # scikit-learn for stratified split + cross-validation.
 # xgboost + shap for the rule discovery model and interpretability.
 # matplotlib for SHAP plot rendering (must use Agg backend on headless CI).
+requests>=2.31
 beautifulsoup4>=4.12
 pandas>=2.0
 pyarrow>=14.0

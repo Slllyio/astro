@@ -27,6 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.core.ephemeris_engine import calculate_all_charts
+from app.core.sade_sati import is_in_sade_sati
 from app.daemon.nadi_rules import (
     AspectResult,
     NATAL_PLANETS,
@@ -105,6 +106,28 @@ class NadiTransitDaemon:
                 )
                 if aspect is not None:
                     results.append(aspect)
+
+        # Sade Sati: transit Saturn vs natal Moon, whole-sign-positional.
+        # This is a SEPARATE alert from the regular Saturn-Moon drishti
+        # aspects above. At house_distance=1 (PEAK), both will fire (one
+        # CONJUNCTION + one SADE_SATI_PEAK) because they convey different
+        # information: drishti is a moment-of-conjunction signal, Sade Sati
+        # is the named 7.5-yr life-phase. Reconcile dedupes by alert_type.
+        saturn_pos = transit_d1["Saturn"]
+        sade_sati = is_in_sade_sati(
+            transit_saturn_sign=saturn_pos["sign"],
+            natal_moon_sign=chart.moon_sign,
+        )
+        if sade_sati is not None:
+            results.append(AspectResult(
+                transit_planet="Saturn",
+                natal_planet="Moon",
+                alert_type=f"SADE_SATI_{sade_sati['phase'].value}",
+                house_distance=sade_sati["house_distance"],
+                is_exact=False,  # Sade Sati is whole-sign; no degree-orb concept.
+                transit_lon=saturn_pos["longitude"],
+                natal_lon=chart.moon_lon,
+            ))
         return results
 
     async def _reconcile_alerts(

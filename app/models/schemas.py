@@ -22,6 +22,14 @@ class BirthDataInput(BaseModel):
     tz_offset: float = Field(..., ge=-12.0, le=14.0, description="Timezone offset from UTC (e.g. 5.5 for IST)")
 
 
+class NakshatraInfo(BaseModel):
+    index: int                       # 0..26
+    name: str
+    pada: int                        # 1..4
+    lord: str                        # Vimshottari nakshatra lord
+    longitude_in_nakshatra: float    # 0..13.333
+
+
 class PlanetaryPosition(BaseModel):
     name: str
     longitude: float
@@ -33,6 +41,9 @@ class PlanetaryPosition(BaseModel):
     # geographic anchor (lat/lon) is supplied. Divisional charts (D9, D10)
     # leave this as None - the ascendant is a D1-frame concept.
     house: int | None = None
+    # Nakshatra annotation, populated for D1 entries only (divisional charts
+    # don't carry it). Optional so existing pre-Phase-3 callers don't break.
+    nakshatra: NakshatraInfo | None = None
 
 
 class Ascendant(BaseModel):
@@ -40,6 +51,55 @@ class Ascendant(BaseModel):
     sign: int
     sign_name: str
     degree_in_sign: float
+
+
+class AntardashaPeriod(BaseModel):
+    maha_lord: str
+    antar_lord: str
+    start_date: str       # ISO YYYY-MM-DD
+    end_date: str
+    start_jd: float
+    end_jd: float
+    duration_years: float
+
+
+class Yoga(BaseModel):
+    """Chart-based yoga (Pancha Mahapurusha / Gajakesari / Budha-Aditya).
+    Distinct from the panchanga yoga (Sun+Moon harmonic) below."""
+    name: str
+    type: str
+    planets_involved: list[str]
+    description: str
+
+
+class TithiInfo(BaseModel):
+    index: int            # 0..29
+    name: str
+    paksha: str           # "Shukla" | "Krishna"
+
+
+class KaranaInfo(BaseModel):
+    index: int            # 0..59
+    name: str
+
+
+class PanchangaYogaInfo(BaseModel):
+    """Panchanga's yoga (Sun+Moon harmonic). NOT the chart yoga schema above."""
+    index: int            # 0..26
+    name: str
+
+
+class VaraInfo(BaseModel):
+    index: int            # 0..6
+    name: str
+
+
+class Panchanga(BaseModel):
+    tithi: TithiInfo
+    karana: KaranaInfo
+    yoga: PanchangaYogaInfo
+    vara: VaraInfo
+    nakshatra: NakshatraInfo
 
 
 class DashaPeriod(BaseModel):
@@ -61,6 +121,13 @@ class ChartResponse(BaseModel):
     d9: dict[str, PlanetaryPosition]
     d10: dict[str, PlanetaryPosition]
     current_mahadasha: DashaPeriod
+    # Phase 3 feature payloads. All defaulted so older callers and the
+    # daemon's transit-only call (which still produces a chart-shaped dict
+    # with these populated) don't break.
+    antardashas: list[AntardashaPeriod] = Field(default_factory=list)
+    divisional_charts: dict[str, dict[str, PlanetaryPosition]] = Field(default_factory=dict)
+    panchanga: Panchanga | None = None
+    yogas: list[Yoga] = Field(default_factory=list)
 
 
 class UserProfileCreate(BaseModel):

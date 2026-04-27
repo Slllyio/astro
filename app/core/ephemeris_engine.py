@@ -289,6 +289,27 @@ def calculate_all_charts(
         for name, pos in d1_chart.items():
             pos["house"] = whole_sign_house(ascendant["sign"], pos["sign"])
 
+    # Phase 3 feature integration: each module computed in parallel by a
+    # specialized agent; we just thread the right inputs through here.
+    # These imports live inside the function so they don't load at module
+    # import time (and so the daemon's transit-only path can avoid them
+    # if needed in future profiling).
+    from app.core.antardasha import compute_antardashas
+    from app.core.nakshatra import nakshatra_for_longitude
+    from app.core.panchanga import compute_panchanga
+    from app.core.shodashavarga import compute_divisional_charts
+    from app.core.yogas import detect_yogas
+
+    # Per-planet nakshatra annotation merged inline into the existing d1
+    # entries so consumers see chart["d1"]["Saturn"]["nakshatra"] cleanly.
+    for pos in d1_chart.values():
+        pos["nakshatra"] = nakshatra_for_longitude(pos["longitude"])
+
+    antardashas = compute_antardashas(d1_chart["Moon"]["longitude"], jd)
+    divisional_charts = compute_divisional_charts(d1_chart)
+    panchanga = compute_panchanga(jd)
+    yogas = detect_yogas(d1_chart, ascendant) if ascendant is not None else []
+
     return {
         "jd": jd,
         "birth_jd": jd,
@@ -298,4 +319,8 @@ def calculate_all_charts(
         "d9": d9_chart,
         "d10": d10_chart,
         "current_mahadasha": mahadasha,
+        "antardashas": antardashas,
+        "divisional_charts": divisional_charts,
+        "panchanga": panchanga,
+        "yogas": yogas,
     }

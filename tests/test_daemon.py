@@ -261,3 +261,87 @@ async def test_run_once_uses_async_session_local(monkeypatch, db_engine) -> None
             select(TransitAlert).where(TransitAlert.is_active.is_(True))
         )).scalars().all()
         assert len(rows) == 3
+
+
+# ---------- Sade Sati integration ----------
+
+async def test_sade_sati_rising_alert_fires(db_session: AsyncSession) -> None:
+    """Move transit Saturn into the 12th sign from natal Moon and assert the
+    daemon writes a SADE_SATI_RISING alert. Natal Moon in our seed is sign=7
+    (Libra); 12th from Libra is sign=6 (Virgo). Putting Saturn at sign=6
+    triggers the Rising phase."""
+    user_id = await _seed_user_with_natal(db_session)
+    daemon = NadiTransitDaemon()
+
+    chart = _synthetic_transit_chart()
+    # Saturn at sign=6 (Virgo) -> Sade Sati Rising for natal Moon at sign=7.
+    # Saturn at sign=6 vs natal Mars (sign=3) -> hd=10 -> SATURN_10TH (still
+    # fires from regular drishti); we account for it in the assertions.
+    chart["d1"]["Saturn"] = {
+        "name": "Saturn", "longitude": 155.0, "sign": 6,
+        "sign_name": "Virgo", "degree_in_sign": 5.0, "is_retrograde": False,
+    }
+    daemon._last_transits = chart
+    await daemon.process_natal_charts(db_session)
+
+    alerts = (await db_session.execute(
+        select(TransitAlert).where(
+            TransitAlert.user_id == user_id,
+            TransitAlert.is_active.is_(True),
+        )
+    )).scalars().all()
+
+    sade = [a for a in alerts if a.alert_type.startswith("SADE_SATI")]
+    assert len(sade) == 1, f"expected exactly one SADE_SATI alert, got {[a.alert_type for a in alerts]}"
+    assert sade[0].alert_type == "SADE_SATI_RISING"
+    assert sade[0].transit_planet == "Saturn"
+    assert sade[0].natal_planet == "Moon"
+
+
+async def test_sade_sati_peak_coexists_with_conjunction(db_session: AsyncSession) -> None:
+    """When Saturn is in the same sign as natal Moon, BOTH the regular
+    CONJUNCTION drishti alert AND the SADE_SATI_PEAK alert fire. They
+    coexist as separate rows because alert_type is part of the dedupe key."""
+    user_id = await _seed_user_with_natal(db_session)
+    daemon = NadiTransitDaemon()
+
+    chart = _synthetic_transit_chart()
+    # Saturn at sign=7 (Libra), same as natal Moon -> PEAK + CONJUNCTION.
+    chart["d1"]["Saturn"] = {
+        "name": "Saturn", "longitude": 185.0, "sign": 7,
+        "sign_name": "Libra", "degree_in_sign": 5.0, "is_retrograde": False,
+    }
+    daemon._last_transits = chart
+    await daemon.process_natal_charts(db_session)
+
+    alerts = (await db_session.execute(
+        select(TransitAlert).where(
+            TransitAlert.user_id == user_id,
+            TransitAlert.transit_planet == "Saturn",
+            TransitAlert.natal_planet == "Moon",
+            TransitAlert.is_active.is_(True),
+        )
+    )).scalars().all()
+
+    types = sorted(a.alert_type for a in alerts)
+    assert types == ["CONJUNCTION", "SADE_SATI_PEAK"], (
+        f"expected both alerts to coexist, got {types}"
+    )
+
+
+async def test_sade_sati_does_not_fire_in_neutral_position(db_session: AsyncSession) -> None:
+    """The default synthetic chart has Saturn at sign=1, natal Moon at sign=7.
+    house_distance = 7, NOT in {12, 1, 2}, so no Sade Sati. This guards
+    against accidental over-triggering of the Sade Sati path."""
+    user_id = await _seed_user_with_natal(db_session)
+    daemon = NadiTransitDaemon()
+    daemon._last_transits = _synthetic_transit_chart()  # Saturn at sign=1
+    await daemon.process_natal_charts(db_session)
+
+    sade = (await db_session.execute(
+        select(TransitAlert).where(
+            TransitAlert.user_id == user_id,
+            TransitAlert.alert_type.like("SADE_SATI_%"),
+        )
+    )).scalars().all()
+    assert sade == [], "expected no Sade Sati alerts when Saturn is not in 12/1/2 from Moon"

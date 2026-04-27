@@ -295,8 +295,11 @@ def calculate_all_charts(
     # import time (and so the daemon's transit-only path can avoid them
     # if needed in future profiling).
     from app.core.antardasha import compute_antardashas
+    from app.core.ashtakavarga import compute_ashtakavarga
+    from app.core.avastha import compute_avasthas
     from app.core.nakshatra import nakshatra_for_longitude
     from app.core.panchanga import compute_panchanga
+    from app.core.pratyantar import compute_all_pratyantars
     from app.core.shodashavarga import compute_divisional_charts
     from app.core.yogas import detect_yogas
 
@@ -306,9 +309,17 @@ def calculate_all_charts(
         pos["nakshatra"] = nakshatra_for_longitude(pos["longitude"])
 
     antardashas = compute_antardashas(d1_chart["Moon"]["longitude"], jd)
+    pratyantars = compute_all_pratyantars(antardashas)
     divisional_charts = compute_divisional_charts(d1_chart)
     panchanga = compute_panchanga(jd)
     yogas = detect_yogas(d1_chart, ascendant) if ascendant is not None else []
+    # Ashtakavarga (BAV/SAV) requires the Lagna sign as the 8th contributor;
+    # only compute when an ascendant was supplied.
+    ashtakavarga = (
+        compute_ashtakavarga(d1_chart, ascendant) if ascendant is not None else None
+    )
+    # Avastha is per-planet and pure (no lat/lon dependency); always compute.
+    avasthas = compute_avasthas(d1_chart)
 
     return {
         "jd": jd,
@@ -320,7 +331,10 @@ def calculate_all_charts(
         "d10": d10_chart,
         "current_mahadasha": mahadasha,
         "antardashas": antardashas,
+        "pratyantars": pratyantars,
         "divisional_charts": divisional_charts,
         "panchanga": panchanga,
         "yogas": yogas,
+        "ashtakavarga": ashtakavarga,
+        "avasthas": avasthas,
     }

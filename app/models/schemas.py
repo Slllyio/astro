@@ -63,6 +63,40 @@ class AntardashaPeriod(BaseModel):
     duration_years: float
 
 
+class PratyantarPeriod(BaseModel):
+    """Third-level Vimshottari nesting (sub-period within Antardasha).
+    Durations are typically 5-14 days, hence days not years."""
+    maha_lord: str
+    antar_lord: str
+    pratyantar_lord: str
+    start_date: str
+    end_date: str
+    start_jd: float
+    end_jd: float
+    duration_days: float
+
+
+class AvasthaInfo(BaseModel):
+    """Per-planet state. Baladi (5 states by degree-in-sign) + Jagradadi
+    (3 states by drishti aspects from benefics/malefics)."""
+    baladi: str           # "Bala" | "Kumara" | "Yuva" | "Vriddha" | "Mrita"
+    jagradadi: str        # "Jagrad" | "Swapna" | "Sushupti"
+    benefic_aspects: int
+    malefic_aspects: int
+
+
+class BavMatrix(BaseModel):
+    """Bhinnashtakavarga + Sarvashtakavarga matrix.
+
+    bav_per_planet: 7 BAV planets (Sun..Saturn) -> list of 12 bindus per sign.
+    sav: column-wise sum across all 7 planets, 12-element list.
+    bav_totals: per-planet bindu total (chart-invariant of the rule table).
+    """
+    bav_per_planet: dict[str, list[int]]
+    sav: list[int]
+    bav_totals: dict[str, int]
+
+
 class Yoga(BaseModel):
     """Chart-based yoga (Pancha Mahapurusha / Gajakesari / Budha-Aditya).
     Distinct from the panchanga yoga (Sun+Moon harmonic) below."""
@@ -125,9 +159,15 @@ class ChartResponse(BaseModel):
     # daemon's transit-only call (which still produces a chart-shaped dict
     # with these populated) don't break.
     antardashas: list[AntardashaPeriod] = Field(default_factory=list)
+    # Pratyantar map keyed by f"{maha_lord}-{antar_lord}".
+    pratyantars: dict[str, list[PratyantarPeriod]] = Field(default_factory=dict)
     divisional_charts: dict[str, dict[str, PlanetaryPosition]] = Field(default_factory=dict)
     panchanga: Panchanga | None = None
     yogas: list[Yoga] = Field(default_factory=list)
+    # Ashtakavarga is None for transit-only calls (daemon supplies no lat/lon).
+    ashtakavarga: BavMatrix | None = None
+    # Avastha map keyed by graha name (always populated when D1 is present).
+    avasthas: dict[str, AvasthaInfo] = Field(default_factory=dict)
 
 
 class UserProfileCreate(BaseModel):

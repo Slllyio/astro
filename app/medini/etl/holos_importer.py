@@ -1,24 +1,32 @@
-"""Convert ASTROCRM's holos_clean.csv (lat/lon) joined with its raw
-astro_people.csv (categories) into the raw.csv schema our Stage 2 ETL
-expects.
+"""Convert ASTROCRM's holos_clean.csv (lat/lon) joined with one of two
+category sources (astro_people.csv OR astro_analytics_quality.csv) into
+the raw.csv schema our Stage 2 ETL expects.
 
-ASTROCRM ships two CSVs derived from Astro-Databank:
+ASTROCRM ships three relevant CSVs derived from Astro-Databank:
 
-  holos_clean.csv     - 61,583 AA+A records.
-                        Has: name, birth_year/month/day/hour/min/sec,
-                        utc_offset, latitude, longitude, rodden_rating
-                        Missing: categories (occupation field is empty)
+  holos_clean.csv                61,583 AA+A records with full birth data
+                                 (lat/lon, dates, utc_offset). No categories.
 
-  astro_people.csv    - 6,488 raw records (AA + A + B + C + X + DD).
-                        Has: name, date_of_birth, time_of_birth,
-                        place_of_birth, rodden_rating, **categories**
-                        Missing: latitude, longitude (only place_of_birth text)
+  astro_people.csv               6,488 raw records with vocational
+                                 categories. No lat/lon (place text only).
 
-Inner-joining the two on `name` yields 4,929 fully-equipped records:
-the geographic precision of holos_clean + the vocational labels of
-astro_people. That's ~5x our current Wayback corpus (1k records) and
-brings the same Wayback-style category vocabulary so existing model
-targets (politics, entertainment, etc.) extend transparently.
+  astro_analytics_quality.csv    65,041 records with categories at 99.9%
+                                 fill rate — but no lat/lon, only normalized
+                                 place names.
+
+Inner-joining `holos_clean` + `astro_analytics_quality` on `name` yields
+~61,540 fully-equipped records (12.5x what astro_people gave us). We
+default to the analytics CSV for that reason; pass `--astro-people`
+to fall back to the smaller source for testing or if the analytics
+CSV isn't available locally.
+
+Sample target distribution after full-pipeline merge with VedAstro +
+Wayback:
+  politics       6,342  (10.5% — was 432 with the smaller source)
+  entertainment  8,550  (14.1%)
+  writers       10,079  (16.6%)
+  sports         7,617  (12.6%)
+  business       7,848  (12.9%)
 
 Source: https://github.com/jfsagro-glitch/ASTROCRM (no LICENSE; public
 GitHub repo). The underlying birth data is Astro-Databank's, with the
@@ -26,9 +34,9 @@ usual research-use posture as our other Astrodienst-derived sources.
 
 CLI:
     python -m app.medini.etl.holos_importer \\
-        --holos-clean   data/holos/holos_clean.csv \\
-        --astro-people  data/holos/astro_people.csv \\
-        --output        data/astro_databank/raw_holos.csv \\
+        --holos-clean    data/holos/holos_clean.csv \\
+        --categories-csv data/holos/astro_analytics_quality.csv \\
+        --output         data/astro_databank/raw_holos.csv \\
         [--rodden-min A]
 """
 from __future__ import annotations
@@ -96,24 +104,34 @@ def _format_time(hour, minute, second) -> str:
 
 def import_holos(
     holos_clean_path: Path,
-    astro_people_path: Path,
+    categories_csv_path: Path,
     output_path: Path,
     *,
     min_rodden: str = "A",
+    include_unlabeled: bool = True,
 ) -> dict[str, int]:
-    """Read both ASTROCRM CSVs, inner-join on name, write a raw.csv.
+    """Read both ASTROCRM CSVs, left-join on name, write a raw.csv.
 
-    Returns stats dict: holos_rows, ap_rows, joined_rows, written.
+    `categories_csv_path` should point to either astro_people.csv (small,
+    6.5k rows) or astro_analytics_quality.csv (large, 65k rows). Both have
+    the same `name`/`categories` columns; the latter has 12.5x coverage.
+
+    With `include_unlabeled=True` (default), records present in
+    holos_clean but missing from the categories CSV still ship with
+    categories="". This maximises the corpus size; trainers that need
+    labels filter by substring match anyway.
+
+    Returns stats dict: holos_rows, ap_rows, matched, written.
     """
     if not holos_clean_path.exists():
         raise FileNotFoundError(f"holos_clean missing: {holos_clean_path}")
-    if not astro_people_path.exists():
-        raise FileNotFoundError(f"astro_people missing: {astro_people_path}")
+    if not categories_csv_path.exists():
+        raise FileNotFoundError(f"categories CSV missing: {categories_csv_path}")
 
     logger.info("loading %s", holos_clean_path)
     hc = pd.read_csv(holos_clean_path, low_memory=False)
-    logger.info("loading %s", astro_people_path)
-    ap = pd.read_csv(astro_people_path, low_memory=False)
+    logger.info("loading %s", categories_csv_path)
+    ap = pd.read_csv(categories_csv_path, low_memory=False)
 
     stats = {
         "holos_rows": len(hc),
@@ -125,15 +143,17 @@ def import_holos(
         "skipped_below_rodden_min": 0,
     }
 
-    # Inner-join: name from holos_clean must appear in astro_people.
-    # We take lat/lon/utc_offset/rodden from holos_clean, categories from
-    # astro_people (since holos_clean's gender/occupation are blank).
+    # Take lat/lon/utc_offset/rodden from holos_clean, categories from
+    # the join partner (since holos_clean's gender/occupation are blank).
+    # Inner-join when include_unlabeled=False, left-join when True.
     hc_named = hc.dropna(subset=["name"]).copy()
     ap_named = ap.dropna(subset=["name", "categories"])[["name", "categories"]].copy()
     ap_named = ap_named.drop_duplicates(subset="name", keep="first")
 
-    merged = hc_named.merge(ap_named, on="name", how="inner")
-    stats["joined_rows"] = len(merged)
+    join_how = "left" if include_unlabeled else "inner"
+    merged = hc_named.merge(ap_named, on="name", how=join_how)
+    # Count how many got categories (the rest will write categories="").
+    stats["joined_rows"] = int(merged["categories"].notna().sum())
 
     merged = _filter_by_rodden(merged, min_rodden)
 
@@ -154,10 +174,13 @@ def import_holos(
             )
             if pd.isna(row["latitude"]) or pd.isna(row["longitude"]):
                 continue
-            categories = (row.get("categories") or "").strip()
+            raw_cats = row.get("categories")
+            categories = "" if pd.isna(raw_cats) else str(raw_cats).strip()
             if not categories:
                 stats["skipped_no_categories"] += 1
-                continue
+                if not include_unlabeled:
+                    continue
+                # Otherwise: empty categories OK, write the row anyway.
 
             # Categories in astro_people use ' ; ' or '; ' or sometimes
             # '\n' separators. Normalise to the semicolon convention our
@@ -200,8 +223,9 @@ def main(argv: list[str] | None = None) -> int:
         help="Path to holos_clean.csv (provides lat/lon + clean dates).",
     )
     parser.add_argument(
-        "--astro-people", type=Path, required=True,
-        help="Path to astro_people.csv (provides vocational categories).",
+        "--categories-csv", type=Path, required=True,
+        help="Path to astro_analytics_quality.csv (preferred, ~65k rows) "
+             "or astro_people.csv (~6.5k rows). Provides vocational categories.",
     )
     parser.add_argument(
         "--output", type=Path, required=True,
@@ -210,6 +234,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--rodden-min", type=str, default="A",
         help="Lowest acceptable Rodden rating (AA/A/B/C/DD/X/XX). Default A.",
+    )
+    parser.add_argument(
+        "--require-categories", action="store_true",
+        help="Skip rows lacking categories. Default keeps them with "
+             "categories='' so the corpus stays maximal.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
@@ -221,9 +250,10 @@ def main(argv: list[str] | None = None) -> int:
 
     stats = import_holos(
         holos_clean_path=args.holos_clean,
-        astro_people_path=args.astro_people,
+        categories_csv_path=args.categories_csv,
         output_path=args.output,
         min_rodden=args.rodden_min,
+        include_unlabeled=not args.require_categories,
     )
     logger.info(
         "import complete: holos=%d ap=%d joined=%d written=%d "

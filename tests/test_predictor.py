@@ -213,6 +213,29 @@ def test_predict_for_chart_returns_probability_and_contributors(trained_run) -> 
     assert result["input_jd"] > 2447000  # ballpark for 1990
 
 
+def test_predict_for_chart_surfaces_base_rate_and_delta(trained_run) -> None:
+    """The response must include the training-set base_rate AND the
+    delta_pp (probability minus base_rate, in percentage points) so a
+    caller can immediately tell whether the prediction is meaningfully
+    above average without hitting /medini/runs separately."""
+    output_root, _ = trained_run
+    result = predict_for_chart(
+        "politician",
+        output_root=output_root,
+        **BANGALORE,
+    )
+    assert "base_rate" in result
+    assert result["base_rate"] is not None
+    assert 0.0 <= result["base_rate"] <= 1.0
+    assert "delta_pp" in result
+    # Sanity: delta_pp must equal (probability - base_rate) * 100.
+    expected_delta = round((result["probability"] - result["base_rate"]) * 100.0, 2)
+    assert result["delta_pp"] == expected_delta
+    # The model section must also surface AUC so consumers can judge
+    # whether the prediction is reliable enough to act on.
+    assert "cv_roc_auc" in result["model"]
+
+
 def test_predict_for_chart_top_contributors_have_feature_value(trained_run) -> None:
     """Each top-contributor entry must surface (feature, value, shap_value)
     — the value field is what makes the response readable as a sentence."""

@@ -348,18 +348,64 @@ def predict_for_chart(
     parsed = _parse_run_dir(run_dir)
     run_target, run_ts = (parsed[0], parsed[1]) if parsed else ("?", "?")
 
+    # Pull base rate + AUC from report.md so the response is self-contained.
+    # Without these, a caller has to hit /medini/runs separately to know
+    # whether 0.41 is a meaningful prediction or just slightly above the
+    # data's natural positive rate.
+    report_metrics = _scrape_report_metrics(run_dir)
+    base_rate = report_metrics.get("base_rate")
+    delta_pp = (
+        round((proba - base_rate) * 100.0, 2)
+        if base_rate is not None else None
+    )
+
     return {
         "target": target,
         "probability": proba,
+        "base_rate": base_rate,
+        "delta_pp": delta_pp,    # probability - base_rate, in percentage points
         "top_contributors": contributors,
         "model": {
             "run_dir": run_dir.name,
             "run_target": run_target,
             "trained_at_utc": _format_run_timestamp(run_ts),
             "feature_count": len(feature_columns),
+            "cv_roc_auc": report_metrics.get("cv_roc_auc_mean"),
+            "test_roc_auc": report_metrics.get("test_roc_auc"),
         },
         "input_jd": jd,
     }
+
+
+def _scrape_report_metrics(run_dir: Path) -> dict[str, float]:
+    """Pull base_rate, cv_roc_auc_mean, test_roc_auc from the run's report.md.
+
+    Returns whatever fields are present; missing keys are absent rather
+    than None so callers can use `dict.get(..., default)` cleanly.
+    Mirrors run_summary's regexes — kept separate so predict_for_chart
+    doesn't pull in the full summary apparatus on every call.
+    """
+    report_path = run_dir / "report.md"
+    if not report_path.exists():
+        return {}
+    text = report_path.read_text(encoding="utf-8")
+    out: dict[str, float] = {}
+    cv_match = re.search(
+        r"Cross-validation\s+ROC-AUC[^:]*:\s*([\d.]+)", text,
+    )
+    if cv_match:
+        out["cv_roc_auc_mean"] = float(cv_match.group(1))
+    test_match = re.search(
+        r"Holdout\s+test\s+ROC-AUC[^:]*:\s*([\d.]+)", text,
+    )
+    if test_match:
+        out["test_roc_auc"] = float(test_match.group(1))
+    base_match = re.search(
+        r"Base\s+positive\s+rate[^:]*:\s*([\d.]+)\s*%", text,
+    )
+    if base_match:
+        out["base_rate"] = float(base_match.group(1)) / 100.0
+    return out
 
 
 def _format_run_timestamp(ts: str) -> str:

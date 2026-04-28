@@ -28,6 +28,7 @@ from app.medini.ml.predictor import (  # noqa: E402
     find_run_for_target,
     list_available_targets,
     predict_for_chart,
+    run_summary,
 )
 from app.medini.ml.train_classifier import run_training  # noqa: E402
 
@@ -254,6 +255,64 @@ def test_predict_for_chart_legacy_run_without_schema_raises(tmp_path: Path) -> N
 
 
 # ---------- /medini/predict route ----------
+
+# ---------- run_summary ----------
+
+def test_run_summary_extracts_metrics_and_top_features(trained_run) -> None:
+    """The summary should parse feature_importance.csv + report.md to surface
+    metrics + the top-N feature names without loading the model itself."""
+    _, run_dir = trained_run
+    summary = run_summary(run_dir, top_n_features=3)
+
+    assert summary["target"] == "politician"
+    assert summary["run"] == run_dir.name
+    # The trainer always writes feature_columns.json now; older runs that
+    # lack it should report has_inference_schema=False.
+    assert summary["has_inference_schema"] is True
+    assert summary["feature_count"] is not None
+    assert summary["feature_count"] > 0
+
+    # Top features come from feature_importance.csv (rank 1..3 here).
+    assert len(summary["top_features"]) <= 3
+    for f in summary["top_features"]:
+        assert "feature" in f
+        assert "mean_abs_shap" in f
+        assert isinstance(f["mean_abs_shap"], float)
+
+    # Report-scraped metrics. CV ROC-AUC + base_rate + test ROC-AUC should
+    # all be present in the synthetic-trained run's report.md.
+    metrics = summary["metrics"]
+    assert "cv_roc_auc_mean" in metrics
+    assert 0.0 <= metrics["cv_roc_auc_mean"] <= 1.0
+    assert "base_rate" in metrics
+    assert 0.0 <= metrics["base_rate"] <= 1.0
+
+
+def test_run_summary_handles_missing_artifacts(tmp_path) -> None:
+    """A directory matching the run-dir naming convention but lacking
+    artifacts should return a summary with sensible defaults rather than
+    crashing — the /medini/runs endpoint must never 500 on a partial run."""
+    incomplete = tmp_path / "incomplete_20260101T120000Z"
+    incomplete.mkdir()
+    summary = run_summary(incomplete)
+    assert summary["target"] == "incomplete"
+    assert summary["feature_count"] is None
+    assert summary["has_inference_schema"] is False
+    assert summary["top_features"] == []
+    assert summary["metrics"] == {}
+
+
+@pytest.mark.asyncio
+async def test_runs_endpoint_returns_empty_list_in_test_env(client) -> None:
+    """In the CI environment data/ml_runs/ doesn't exist (gitignored), so
+    /medini/runs should return an empty list rather than 500."""
+    response = await client.get("/medini/runs")
+    assert response.status_code == 200
+    body = response.json()
+    assert "runs" in body
+    assert "count" in body
+    assert isinstance(body["runs"], list)
+
 
 @pytest.mark.asyncio
 async def test_predict_endpoint_lists_available_targets_when_empty(client) -> None:

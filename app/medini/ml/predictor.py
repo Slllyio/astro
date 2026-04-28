@@ -98,6 +98,86 @@ def list_available_targets(
     return runs
 
 
+def run_summary(run_dir: Path, top_n_features: int = 5) -> dict[str, Any]:
+    """Build a JSON-friendly summary of a single trained run.
+
+    Reads alongside model.json:
+      - feature_columns.json: training-time column count
+      - feature_importance.csv: top-N features by mean |SHAP|
+      - report.md (optional): scrape ROC-AUC + base rate from the headers
+
+    Designed to be cheap (no model load) — used by /medini/runs to render
+    a comparison table without paying XGBoost startup cost per run.
+    """
+    parsed = _parse_run_dir(run_dir)
+    target, ts = (parsed[0], parsed[1]) if parsed else ("?", "?")
+
+    summary: dict[str, Any] = {
+        "run": run_dir.name,
+        "target": target,
+        "trained_at_utc": _format_run_timestamp(ts),
+        "feature_count": None,
+        "top_features": [],
+        "metrics": {},
+        "has_inference_schema": False,
+    }
+
+    columns_path = run_dir / "feature_columns.json"
+    if columns_path.exists():
+        try:
+            cols = json.loads(columns_path.read_text(encoding="utf-8"))
+            summary["feature_count"] = len(cols)
+            summary["has_inference_schema"] = True
+        except (ValueError, json.JSONDecodeError):
+            pass
+
+    fi_path = run_dir / "feature_importance.csv"
+    if fi_path.exists():
+        rows: list[dict[str, str]] = []
+        with fi_path.open("r", encoding="utf-8", newline="") as f:
+            import csv as _csv
+            for row in _csv.DictReader(f):
+                rows.append(row)
+                if len(rows) >= top_n_features:
+                    break
+        summary["top_features"] = [
+            {
+                "rank": int(r["rank"]) if r.get("rank") else None,
+                "feature": r.get("feature", ""),
+                "mean_abs_shap": float(r["mean_abs_shap"])
+                if r.get("mean_abs_shap") else None,
+            }
+            for r in rows
+        ]
+
+    # Best-effort scrape of the auto-generated report.md for AUC + base rate.
+    # The trainer writes lines like "Cross-validation ROC-AUC ...: 0.5829 ± 0.0195"
+    # and "Base positive rate: 23.946%".
+    report_path = run_dir / "report.md"
+    if report_path.exists():
+        text = report_path.read_text(encoding="utf-8")
+        cv_match = re.search(
+            r"Cross-validation\s+ROC-AUC[^:]*:\s*([\d.]+)\s*[±+]?\s*([\d.]+)?",
+            text,
+        )
+        if cv_match:
+            summary["metrics"]["cv_roc_auc_mean"] = float(cv_match.group(1))
+            if cv_match.group(2):
+                summary["metrics"]["cv_roc_auc_std"] = float(cv_match.group(2))
+        test_match = re.search(
+            r"Holdout\s+test\s+ROC-AUC[^:]*:\s*([\d.]+)", text,
+        )
+        if test_match:
+            summary["metrics"]["test_roc_auc"] = float(test_match.group(1))
+        base_match = re.search(
+            r"Base\s+positive\s+rate[^:]*:\s*([\d.]+)\s*%", text,
+        )
+        if base_match:
+            summary["metrics"]["base_rate"] = float(base_match.group(1)) / 100.0
+
+    return summary
+
+
 def find_run_for_target(
     target: str,
     output_root: Path | None = None,

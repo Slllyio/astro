@@ -27,6 +27,7 @@ from app.medini.ml.predictor import (
     NoModelForTarget,
     list_available_targets,
     predict_for_chart,
+    run_summary,
 )
 from app.medini.mundane import daily_mundane_forecast
 from app.models.schemas import BirthDataInput
@@ -229,6 +230,22 @@ async def list_predict_targets() -> dict:
             }
             for r in runs
         ],
+        "count": len(runs),
+    }
+
+
+@medini_router.get("/runs")
+async def list_runs(top_n_features: int = 5) -> dict:
+    """Detailed comparison view of every trained run.
+
+    Unlike `/medini/predict` (which only lists target names), this returns
+    the metrics + top features per run so a frontend can render a side-by-
+    side comparison table. Cheap: reads CSV/JSON artifacts, doesn't load
+    any model. `top_n_features` caps the per-run feature list (default 5).
+    """
+    runs = list_available_targets()
+    return {
+        "runs": [run_summary(r.run_dir, top_n_features=top_n_features) for r in runs],
         "count": len(runs),
     }
 

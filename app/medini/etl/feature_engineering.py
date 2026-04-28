@@ -1,0 +1,426 @@
+"""The Vedic Tensor: ~150 ML features per natal chart.
+
+Three vectors:
+  - Base    : longitudes, pairwise angular distances, nakshatras,
+              houses-from-Lagna, Kurma tattvas (~70 cols)
+  - Kinematic: velocity, retrograde, stationary, combustion intensity,
+              ecliptic latitude, declination, out-of-bounds (~36 cols)
+  - Vedic   : Ashtakavarga (SAV per house, BAV in current sign),
+              D9/D10 placements, dispositor chain, final dispositor (~50 cols)
+
+Pure functions; no IO; no DB; no global state. Composes existing project
+primitives (ephemeris_engine, nakshatra, kurma_chakra, ashtakavarga,
+shodashavarga) — does NOT re-implement astronomy.
+
+Usage:
+    from app.medini.etl.feature_engineering import compute_chart_features
+    features = compute_chart_features(jd=2448087.77, latitude=12.97, longitude=77.59)
+    # features is a dict[str, float|int|str] with ~150 entries
+"""
+from __future__ import annotations
+
+import itertools
+import math
+from typing import Any
+
+import swisseph as swe
+
+from app.core.ashtakavarga import compute_ashtakavarga
+from app.core.ephemeris_engine import (
+    PLANETS,
+    ZODIAC_SIGNS,
+    calculate_ascendant,
+    calculate_d1_position,
+    calculate_ketu_d1,
+    whole_sign_house,
+)
+from app.core.nakshatra import nakshatra_for_longitude
+from app.core.shodashavarga import compute_divisional_charts
+from app.medini.kurma_chakra import region_for_nakshatra, tattva_for_region
+
+
+# ---------- Constants ----------
+
+# Ordered planet list. Order matters for column naming consistency:
+# `dist_sun_moon` always means Sun-Moon, never Moon-Sun. Pairs derived from
+# itertools.combinations preserve this order.
+GRAHAS: tuple[str, ...] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu",
+)
+
+# Per-planet combustion orbs (degrees). Classical Vedic: Mercury 12°, Venus 10°
+# Mars 17°, Jupiter 11°, Saturn 15°, Moon 12°. Sun is always its own combustion
+# axis (intensity = 1 by definition); nodes don't combust in classical thought.
+COMBUSTION_ORB: dict[str, float] = {
+    "Sun": 0.0,        # unused — Sun's intensity is always 1.0 by convention
+    "Moon": 12.0,
+    "Mars": 17.0,
+    "Mercury": 12.0,
+    "Jupiter": 11.0,
+    "Venus": 10.0,
+    "Saturn": 15.0,
+    "Rahu": 0.0,       # nodes don't combust; intensity stays 0.0
+    "Ketu": 0.0,
+}
+
+# Sign rulerships for the dispositor chain. Indexed by sign 1..12.
+# Classical Vedic (no Uranus/Neptune/Pluto rulerships, no nodal rulerships).
+SIGN_RULERS: dict[int, str] = {
+    1: "Mars",      # Aries
+    2: "Venus",     # Taurus
+    3: "Mercury",   # Gemini
+    4: "Moon",      # Cancer
+    5: "Sun",       # Leo
+    6: "Mercury",   # Virgo
+    7: "Venus",     # Libra
+    8: "Mars",      # Scorpio
+    9: "Jupiter",   # Sagittarius
+    10: "Saturn",   # Capricorn
+    11: "Saturn",   # Aquarius
+    12: "Jupiter",  # Pisces
+}
+
+# Earth's axial tilt: Out-of-Bounds threshold for declination.
+OUT_OF_BOUNDS_DECLINATION = 23.4367
+STATIONARY_VEL_THRESHOLD = 0.05  # degrees/day; below = effectively stationary
+
+
+# ---------- Low-level swisseph wrappers ----------
+
+def _planet_full_state(jd: float, planet_id: int) -> dict[str, float]:
+    """Compute lon, lat, vel for a planet under sidereal Lahiri.
+
+    `swe.calc_ut` returns 6 values when FLG_SPEED is set: [lon, lat, dist,
+    lon_speed, lat_speed, dist_speed]. We surface lon, ecliptic latitude,
+    and lon_speed (the daily motion in degrees).
+    """
+    flags = swe.FLG_SIDEREAL | swe.FLG_SPEED
+    result, _ = swe.calc_ut(jd, planet_id, flags)
+    return {
+        "lon": float(result[0]),
+        "lat": float(result[1]),
+        "vel": float(result[3]),
+    }
+
+
+def _planet_declination(jd: float, planet_id: int) -> float:
+    """Equatorial declination (degrees from celestial equator).
+
+    `FLG_EQUATORIAL` returns [RA, dec, dist, RA_speed, dec_speed, dist_speed].
+    Independent of sidereal/tropical mode (declination is an equatorial
+    coordinate, not ecliptic).
+    """
+    result, _ = swe.calc_ut(jd, planet_id, swe.FLG_EQUATORIAL)
+    return float(result[1])
+
+
+def circular_distance_180(lon_a: float, lon_b: float) -> float:
+    """Shortest angular distance on the 0..180° interval.
+
+    Pisces/Aries cusp safe: dist(359°, 2°) = 3°, not 357°. Bounded to
+    [0, 180] so the model doesn't have to learn that 270° and 90° are
+    "the same distance from a square." Also: ML models like compact ranges.
+    """
+    diff = abs(lon_a - lon_b) % 360.0
+    return min(diff, 360.0 - diff)
+
+
+def combustion_intensity(sun_lon: float, planet_lon: float, planet: str) -> float:
+    """0.0–1.0 continuous combustion score.
+
+    1.0 = exact Cazimi (planet conjunct Sun within ~17' of arc).
+    Linear decay to 0.0 at the edge of the per-planet combustion orb.
+    Outside the orb: 0.0.
+
+    Sun's own column is always 1.0 by convention. Nodes never combust
+    (their COMBUSTION_ORB entry is 0.0, which yields max(0, 1 - inf) = 0).
+    """
+    if planet == "Sun":
+        return 1.0
+    orb_max = COMBUSTION_ORB.get(planet, 0.0)
+    if orb_max <= 0.0:
+        return 0.0
+    orb = circular_distance_180(sun_lon, planet_lon)
+    if orb > orb_max:
+        return 0.0
+    return max(0.0, 1.0 - (orb / orb_max))
+
+
+# ---------- d1_chart construction (for Phase A modules to consume) ----------
+
+def _build_d1_chart(
+    states: dict[str, dict[str, float]],
+    ascendant_sign: int,
+) -> dict[str, dict[str, Any]]:
+    """Build the d1_chart shape that ashtakavarga / shodashavarga / yogas
+    expect: {planet: {longitude, sign, sign_name, degree_in_sign,
+    is_retrograde, name, house}}."""
+    chart: dict[str, dict[str, Any]] = {}
+    for planet, state in states.items():
+        lon = state["lon"]
+        sign_idx = int(lon // 30)
+        sign = sign_idx + 1
+        chart[planet] = {
+            "name": planet,
+            "longitude": lon,
+            "sign": sign,
+            "sign_name": ZODIAC_SIGNS[sign_idx],
+            "degree_in_sign": lon % 30.0,
+            "is_retrograde": state["vel"] < 0,
+            "house": whole_sign_house(ascendant_sign, sign),
+        }
+    return chart
+
+
+# ---------- Dispositor chain ----------
+
+def compute_dispositor(planet: str, planet_sign: int) -> str:
+    """Immediate dispositor: the planet ruling the sign this planet sits in.
+
+    Nodes (Rahu/Ketu) DO have dispositors per classical Parashara: the
+    lord of their occupied sign. So Rahu in Cancer is disposited by Moon.
+    """
+    return SIGN_RULERS.get(planet_sign, "none")
+
+
+def compute_dispositor_chain_depth(
+    planet: str,
+    chart_signs: dict[str, int],
+    max_hops: int = 12,
+) -> int:
+    """How many dispositor hops until the chain terminates (a planet in
+    its own sign disposits itself = chain ends).
+
+    Returns 0 if `planet` is already in its own sign (self-disposited).
+    Returns max_hops if the chain never terminates within max_hops
+    (indicates a non-terminating cycle).
+    """
+    visited: set[str] = set()
+    current = planet
+    for hop in range(max_hops):
+        sign = chart_signs.get(current)
+        if sign is None:
+            return hop
+        ruler = SIGN_RULERS.get(sign, "none")
+        if ruler == current:
+            return hop  # self-disposited; chain terminates here
+        if ruler in visited or ruler == "none":
+            return hop
+        visited.add(current)
+        current = ruler
+    return max_hops
+
+
+def compute_final_dispositor(chart_signs: dict[str, int]) -> str:
+    """Identify the "CEO of the chart" — the planet that all chains
+    eventually flow into.
+
+    Algorithm:
+      1. Find self-disposited planets (in their own sign). These are
+         chain terminators.
+      2. For each other planet, walk its chain to a self-disposited
+         endpoint and accumulate vote counts.
+      3. The self-disposited planet with the highest vote count wins.
+         Tie-break alphabetically (deterministic).
+      4. If no planet is self-disposited (extremely rare in real charts),
+         return "none".
+
+    Excludes nodes from being final dispositors (classical convention).
+    """
+    self_disposited = {
+        p for p in chart_signs
+        if p not in ("Rahu", "Ketu") and SIGN_RULERS.get(chart_signs[p]) == p
+    }
+    if not self_disposited:
+        return "none"
+
+    votes: dict[str, int] = {p: 0 for p in self_disposited}
+    for planet in chart_signs:
+        if planet in ("Rahu", "Ketu"):
+            continue  # nodes don't vote in classical chain analysis
+        # Walk the chain
+        current = planet
+        seen: set[str] = set()
+        while current not in self_disposited and current not in seen and current != "none":
+            seen.add(current)
+            sign = chart_signs.get(current)
+            if sign is None:
+                break
+            current = SIGN_RULERS.get(sign, "none")
+        if current in self_disposited:
+            votes[current] += 1
+
+    # Highest votes wins; alphabetical tie-break
+    return max(sorted(self_disposited), key=lambda p: votes[p])
+
+
+# ---------- The big composition ----------
+
+def compute_chart_features(
+    jd: float,
+    latitude: float,
+    longitude: float,
+) -> dict[str, Any]:
+    """Compute the full Vedic Tensor for one birth chart.
+
+    Returns a flat dict with ~150 keys (column names follow the
+    `<group>_<planet>` convention so a SHAP report stays readable).
+
+    Args:
+        jd:        Julian Day in UT for the birth moment.
+        latitude:  Birth lat in WGS-84 (-90..90).
+        longitude: Birth lon in WGS-84 (-180..180).
+
+    Raises:
+        ValueError: if pyswisseph rejects the inputs (e.g. extreme
+        historical date outside ephemeris range).
+    """
+    # ── Step 1: positions for the 8 chara grahas (Sun..Saturn + Rahu) ──
+    states: dict[str, dict[str, float]] = {}
+    for planet, planet_id in PLANETS.items():
+        states[planet] = _planet_full_state(jd, planet_id)
+
+    # ── Step 2: Ketu = Rahu reflected through the celestial origin ──
+    rahu = states["Rahu"]
+    states["Ketu"] = {
+        "lon": (rahu["lon"] + 180.0) % 360.0,
+        "lat": -rahu["lat"],
+        # Ketu inherits Rahu's velocity sign convention (mean nodes are
+        # always "retrograde"; true nodes oscillate). We mirror Rahu's vel.
+        "vel": rahu["vel"],
+    }
+
+    # ── Step 3: declinations (FLG_EQUATORIAL) ──
+    declinations: dict[str, float] = {}
+    for planet, planet_id in PLANETS.items():
+        declinations[planet] = _planet_declination(jd, planet_id)
+    declinations["Ketu"] = -declinations["Rahu"]
+
+    # ── Step 4: ascendant + d1_chart ──
+    ascendant = calculate_ascendant(jd, latitude, longitude)
+    d1_chart = _build_d1_chart(states, ascendant["sign"])
+
+    # ── Step 5: Phase-A heavy lifting (BAV/SAV + Vargas) — single source of truth ──
+    bav_matrix = compute_ashtakavarga(d1_chart, ascendant)
+    vargas = compute_divisional_charts(d1_chart)
+
+    # ── Step 6: dispositor chain ──
+    chart_signs = {p: d1_chart[p]["sign"] for p in GRAHAS}
+    dispositors = {p: compute_dispositor(p, chart_signs[p]) for p in GRAHAS}
+    final_disp = compute_final_dispositor(chart_signs)
+    chain_depths = {p: compute_dispositor_chain_depth(p, chart_signs) for p in GRAHAS}
+
+    # ── Step 7: assemble the flat feature dict ──
+    features: dict[str, Any] = {}
+
+    # Vector 1: Base
+    sun_lon = states["Sun"]["lon"]
+    for planet in GRAHAS:
+        s = states[planet]
+        p_lower = planet.lower()
+        features[f"lon_{p_lower}"] = s["lon"]
+        nak = nakshatra_for_longitude(s["lon"])
+        features[f"nak_{p_lower}"] = nak["index"]
+        features[f"house_{p_lower}"] = d1_chart[planet]["house"]
+        # Tattva: lookup region from nakshatra → tattva. Coerce categorical.
+        region = region_for_nakshatra(nak["index"])
+        features[f"tattva_{p_lower}"] = tattva_for_region(region)
+
+    for p1, p2 in itertools.combinations(GRAHAS, 2):
+        features[f"dist_{p1.lower()}_{p2.lower()}"] = circular_distance_180(
+            states[p1]["lon"], states[p2]["lon"]
+        )
+
+    # Vector 2: Kinematic
+    for planet in GRAHAS:
+        s = states[planet]
+        p_lower = planet.lower()
+        features[f"vel_{p_lower}"] = s["vel"]
+        features[f"rx_{p_lower}"] = 1 if s["vel"] < 0 else 0
+        features[f"stationary_{p_lower}"] = (
+            1 if abs(s["vel"]) < STATIONARY_VEL_THRESHOLD else 0
+        )
+        features[f"combust_{p_lower}"] = combustion_intensity(sun_lon, s["lon"], planet)
+        features[f"lat_{p_lower}"] = s["lat"]
+        features[f"dec_{p_lower}"] = declinations[planet]
+        features[f"oob_{p_lower}"] = (
+            1 if abs(declinations[planet]) > OUT_OF_BOUNDS_DECLINATION else 0
+        )
+
+    # Vector 3: Vedic — Ashtakavarga
+    for i, score in enumerate(bav_matrix["sav"], start=1):
+        features[f"sav_house_{i}"] = score
+    for planet, bindu_per_sign in bav_matrix["bav_per_planet"].items():
+        # planet's own sign-bindu count (the actually-varying piece)
+        sign_idx_zero = states[planet]["lon"] // 30  # 0..11
+        features[f"bav_in_sign_{planet.lower()}"] = bindu_per_sign[int(sign_idx_zero)]
+
+    # Vector 3: Vedic — D9 / D10 placements
+    d9 = vargas.get("D9_Navamsa", {})
+    d10 = vargas.get("D10_Dasamsa", {})
+    for planet in GRAHAS:
+        features[f"d9_{planet.lower()}_sign"] = d9.get(planet, {}).get("sign", 0)
+        features[f"d10_{planet.lower()}_sign"] = d10.get(planet, {}).get("sign", 0)
+
+    # Vector 3: Vedic — dispositor graph
+    for planet in GRAHAS:
+        features[f"dispositor_{planet.lower()}"] = dispositors[planet]
+        features[f"disp_depth_{planet.lower()}"] = chain_depths[planet]
+    features["final_dispositor"] = final_disp
+
+    # Lagna metadata
+    features["lagna_lon"] = ascendant["longitude"]
+    features["lagna_sign"] = ascendant["sign"]
+
+    return features
+
+
+# ---------- Schema introspection (for tests + Stage 3 validation) ----------
+
+def expected_feature_columns() -> list[str]:
+    """Return the canonical list of feature column names produced by
+    `compute_chart_features`. Used by the schema regression test to
+    catch silent column-name drift.
+    """
+    cols: list[str] = []
+
+    # Base
+    for p in GRAHAS:
+        p = p.lower()
+        cols.extend([f"lon_{p}", f"nak_{p}", f"house_{p}", f"tattva_{p}"])
+    for p1, p2 in itertools.combinations(GRAHAS, 2):
+        cols.append(f"dist_{p1.lower()}_{p2.lower()}")
+
+    # Kinematic
+    for p in GRAHAS:
+        p = p.lower()
+        cols.extend([
+            f"vel_{p}", f"rx_{p}", f"stationary_{p}", f"combust_{p}",
+            f"lat_{p}", f"dec_{p}", f"oob_{p}",
+        ])
+
+    # Vedic — Ashtakavarga
+    cols.extend([f"sav_house_{i}" for i in range(1, 13)])
+    for p in GRAHAS:
+        # bav_in_sign only emitted for the 7 chara grahas (BAV table)
+        if p in ("Rahu", "Ketu"):
+            continue
+        cols.append(f"bav_in_sign_{p.lower()}")
+
+    # Vedic — Vargas
+    for p in GRAHAS:
+        cols.append(f"d9_{p.lower()}_sign")
+    for p in GRAHAS:
+        cols.append(f"d10_{p.lower()}_sign")
+
+    # Vedic — Dispositors
+    for p in GRAHAS:
+        cols.append(f"dispositor_{p.lower()}")
+    for p in GRAHAS:
+        cols.append(f"disp_depth_{p.lower()}")
+    cols.append("final_dispositor")
+
+    # Lagna
+    cols.extend(["lagna_lon", "lagna_sign"])
+
+    return cols

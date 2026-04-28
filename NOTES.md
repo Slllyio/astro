@@ -18,7 +18,30 @@ Snapshot of the project state as of **2026-04-28** (Tasks 1–7 of the queued ex
 | 8. LLM Narrative | `POST /interpret/chart`, `POST /interpret/chart/{section}`, `/interpret/page` | Ollama-backed natural-language readings — summary mode (whole chart) + drill-down mode (ascendant / mahadasha / yogas / panchanga / planetary / ashtakavarga). Defaults to deterministic templates when `OLLAMA_ENABLED=false`. |
 | 9. Unified shell | `/` | Tab navigator over Nadi calculator (`/chart/page`), NumeroAstro, Kurma grid, Astrocartography, Cosmic Weather, Eclipses, Interpret, API Docs. URL-hash driven, single-iframe content area. |
 
-**Test suite**: 746 passing (+80 across the new tasks), ~84% coverage, GitHub Actions CI green.
+**Test suite**: 803 passing (+57 across the new tasks), ~84% coverage, GitHub Actions CI green.
+
+## Trained models (post-2026-04-28 batch)
+
+| Run dir                              | Target          | Source             | Rows  | Base rate | CV AUC | Test AUC |
+|---|---|---|---|---|---|---|
+| `dissolution_20260428T064109Z`       | dissolution     | VedAstro alone     | 14,278| 0.2395    | 0.583  | 0.590    |
+| `dissolution_20260428T090150Z`       | dissolution     | VedAstro + Wayback | 14,684| 0.2328    | 0.564  | 0.577    |
+| `politics_20260428T090354Z`          | politics        | Wayback only       | 422   | 0.1351    | 0.529  | 0.417    |
+| `entertainment_20260428T090406Z`     | entertainment   | Wayback only       | 422   | 0.3199    | 0.539  | 0.672    |
+
+**Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
+
+## Data pipeline (post-batch)
+
+```
+Stage 1a: VedAstro importer  (instant, MIT license — already in repo)
+Stage 1b: Wayback scraper    (overnight, CDX-driven, archive.org-friendly)
+Stage 1c: Corpus merger      (instant, dedup by name+DOB, union categories)
+Stage 2:  Vedic Tensor ETL   (~2 sec for 15k rows, 28 workers)
+Stage 3:  XGBoost+SHAP train (~2 sec per target on 15k rows)
+```
+
+Each stage is a CLI module under `app/medini/etl/` or `app/medini/ml/`.
 
 ## Run locally
 

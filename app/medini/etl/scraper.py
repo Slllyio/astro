@@ -268,6 +268,16 @@ def parse_tz_offset(text: str) -> float | None:
             offset = -offset
         return offset
 
+    # Astro-Databank's compact form: "h4w" / "h5.5e" / "EDT h4w (is dst)".
+    # The leading 'h' marks "hours-from-UTC", the trailing letter the
+    # hemisphere. Tolerant of an arbitrary tz-code prefix ("EDT ", "IST ")
+    # and trailing parenthetical commentary.
+    m = re.search(r"\bh(\d+(?:\.\d+)?)\s*([ew])\b", s)
+    if m:
+        magnitude = float(m.group(1))
+        direction = m.group(2).lower()
+        return -magnitude if direction == "w" else magnitude
+
     return None
 
 

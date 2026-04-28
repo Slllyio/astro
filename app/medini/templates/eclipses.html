@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eclipse Impact Mapper - Geo-Astrological Engine</title>
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f7f7f7; }
+    .container { display: grid; grid-template-columns: 1fr 420px; height: 100vh; }
+    #map { height: 100vh; }
+    .sidebar { background: #fafafa; border-left: 1px solid #ddd; padding: 22px; overflow-y: auto; }
+    h1 { font-size: 22px; margin-bottom: 4px; font-weight: 600; }
+    .subtitle { color: #666; font-size: 13px; margin-bottom: 22px; }
+    .summary-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 22px; }
+    .summary-cell { background: white; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #e2e2e2; }
+    .summary-num { font-size: 22px; font-weight: 600; color: #6a3a8e; }
+    .summary-label { font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+    h2 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 0.6px; margin: 18px 0 8px; font-weight: 700; }
+    .eclipse { background: white; border: 1px solid #e2e2e2; border-radius: 6px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: background 0.12s; }
+    .eclipse:hover { background: #f0f0fa; }
+    .eclipse-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .eclipse-date { font-weight: 600; font-size: 14px; }
+    .eclipse-family { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; letter-spacing: 0.4px; }
+    .eclipse-family-SOLAR { background: #f8d870; color: #5a3a0a; }
+    .eclipse-family-LUNAR { background: #a8b8d8; color: #1a2a4a; }
+    .eclipse-subtype { font-size: 11px; color: #888; }
+    .eclipse-astro { font-size: 13px; margin-top: 6px; line-height: 1.4; }
+    .nakshatra-name { font-weight: 500; }
+    .region-name { color: #6a3a8e; }
+    .empty-state { color: #888; font-style: italic; padding: 12px; }
+    .legend { background: white; padding: 12px 14px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-size: 12px; line-height: 1.5; }
+    .legend-title { display: block; margin-bottom: 6px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="map"></div>
+    <div class="sidebar">
+      <h1>Eclipse Impact</h1>
+      <p class="subtitle">Upcoming solar &amp; lunar eclipses, each tagged with the Kurma region it activates via the luminary's nakshatra.</p>
+
+      <div class="summary-row">
+        <div class="summary-cell"><div class="summary-num" id="num-total">-</div><div class="summary-label">Upcoming</div></div>
+        <div class="summary-cell"><div class="summary-num" id="num-solar">-</div><div class="summary-label">Solar</div></div>
+        <div class="summary-cell"><div class="summary-num" id="num-lunar">-</div><div class="summary-label">Lunar</div></div>
+      </div>
+
+      <h2>Upcoming Eclipses</h2>
+      <div id="eclipse-list" class="empty-state">Fetching forecast...</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script>
+    const REGION_BASE_COLORS = {
+      "Central":    "#6b8e23", "East":       "#4682b4", "South-East": "#cd5c5c",
+      "South":      "#daa520", "South-West": "#9370db", "West":       "#48d1cc",
+      "North-West": "#dc143c", "North":      "#4169e1", "North-East": "#8b4513",
+    };
+
+    const map = L.map('map', { minZoom: 2, maxZoom: 8, worldCopyJump: true })
+      .setView([20, 30], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    function el(tag, className, textValue) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (textValue !== undefined) e.textContent = textValue;
+      return e;
+    }
+    function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function regionStyle(activatedSet) {
+      return feature => {
+        const region = feature.properties.region;
+        const activated = activatedSet.has(region);
+        return {
+          color: '#222', weight: 1.0,
+          fillColor: REGION_BASE_COLORS[region] || '#999',
+          fillOpacity: activated ? 0.55 : 0.10,
+        };
+      };
+    }
+
+    function renderRegions(geojson, activatedSet) {
+      L.geoJSON(geojson, {
+        style: regionStyle(activatedSet),
+        onEachFeature: (feature, layer) => {
+          const region = feature.properties.region;
+          const tip = el('div');
+          tip.appendChild(el('strong', null, region));
+          tip.appendChild(document.createElement('br'));
+          tip.appendChild(document.createTextNode(
+            activatedSet.has(region)
+              ? feature.properties.tattva + ' (eclipse-activated)'
+              : feature.properties.tattva
+          ));
+          layer.bindTooltip(tip, { sticky: true });
+        },
+      }).addTo(map);
+    }
+
+    function placeEclipseMarkers(eclipses) {
+      const markers = [];
+      eclipses.forEach(e => {
+        if (e.greatest_lat == null || e.greatest_lon == null) return;
+        const color = e.family === 'SOLAR' ? '#f8d870' : '#a8b8d8';
+        const marker = L.circleMarker([e.greatest_lat, e.greatest_lon], {
+          radius: 9,
+          color: '#222',
+          weight: 1.5,
+          fillColor: color,
+          fillOpacity: 0.85,
+        });
+        const tip = el('div');
+        tip.appendChild(el('strong', null, e.date + ' ' + e.subtype + ' ' + e.family));
+        tip.appendChild(document.createElement('br'));
+        tip.appendChild(document.createTextNode(
+          e.astrology.nakshatra_name + ' (' + e.astrology.kurma_region + ')'
+        ));
+        marker.bindTooltip(tip, { sticky: true });
+        marker.addTo(map);
+        markers.push(marker);
+      });
+      return markers;
+    }
+
+    function renderEclipseList(eclipses) {
+      const container = document.getElementById('eclipse-list');
+      container.className = '';
+      clearChildren(container);
+
+      if (!eclipses || eclipses.length === 0) {
+        container.className = 'empty-state';
+        container.textContent = 'No upcoming eclipses found.';
+        return;
+      }
+
+      eclipses.forEach(e => {
+        const card = el('div', 'eclipse');
+        const header = el('div', 'eclipse-header');
+        header.appendChild(el('span', 'eclipse-date', e.date));
+        header.appendChild(el('span', 'eclipse-family eclipse-family-' + e.family, e.family));
+        header.appendChild(el('span', 'eclipse-subtype', e.subtype));
+        card.appendChild(header);
+
+        const astro = el('div', 'eclipse-astro');
+        astro.appendChild(document.createTextNode('Luminary: ' + e.astrology.luminary + ' in '));
+        astro.appendChild(el('span', 'nakshatra-name', e.astrology.nakshatra_name));
+        astro.appendChild(document.createTextNode(' → '));
+        astro.appendChild(el('span', 'region-name', e.astrology.kurma_region));
+        astro.appendChild(document.createTextNode(' (' + e.astrology.kurma_tattva + ')'));
+        card.appendChild(astro);
+
+        if (e.greatest_lat != null) {
+          const geo = el('div', 'eclipse-astro');
+          geo.style.color = '#666';
+          geo.style.fontSize = '12px';
+          geo.textContent = 'Greatest eclipse @ (' + e.greatest_lat.toFixed(1) + ', ' + e.greatest_lon.toFixed(1) + ')';
+          card.appendChild(geo);
+
+          // Click-to-zoom on map
+          card.addEventListener('click', () => {
+            map.setView([e.greatest_lat, e.greatest_lon], 4);
+          });
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function buildLegend() {
+      const div = L.DomUtil.create('div', 'legend');
+      div.appendChild(el('span', 'legend-title', 'Eclipse markers'));
+      const solRow = el('div');
+      solRow.appendChild(Object.assign(document.createElement('span'), {
+        style: 'display:inline-block;width:14px;height:14px;background:#f8d870;border-radius:50%;margin-right:8px;border:1px solid #222;'
+      }));
+      solRow.appendChild(document.createTextNode('Solar (greatest-eclipse point)'));
+      div.appendChild(solRow);
+      const lunRow = el('div');
+      lunRow.appendChild(Object.assign(document.createElement('span'), {
+        style: 'display:inline-block;width:14px;height:14px;background:#a8b8d8;border-radius:50%;margin-right:8px;border:1px solid #222;'
+      }));
+      lunRow.appendChild(document.createTextNode('Lunar (visible globally)'));
+      div.appendChild(lunRow);
+      return div;
+    }
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = buildLegend;
+    legend.addTo(map);
+
+    Promise.all([
+      fetch('/medini/regions').then(r => r.json()),
+      fetch('/medini/eclipses?count=5').then(r => r.json()),
+    ])
+      .then(([regions, payload]) => {
+        const activated = new Set(payload.eclipses.map(e => e.astrology.kurma_region));
+        renderRegions(regions.geojson, activated);
+        placeEclipseMarkers(payload.eclipses);
+        renderEclipseList(payload.eclipses);
+        document.getElementById('num-total').textContent = payload.summary.total_count;
+        document.getElementById('num-solar').textContent = payload.summary.solar_count;
+        document.getElementById('num-lunar').textContent = payload.summary.lunar_count;
+      })
+      .catch(err => {
+        document.getElementById('eclipse-list').textContent = 'Failed to load: ' + err;
+      });
+  </script>
+</body>
+</html>

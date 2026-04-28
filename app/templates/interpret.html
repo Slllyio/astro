@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chart Interpretation - LLM Narrative</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f4f1ec; padding: 24px; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    h1 { font-size: 22px; color: #2a1a4e; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #6a5a4a; margin-bottom: 18px; }
+    form, .results { background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e0d8c8; }
+    .results { min-height: 240px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: #5a4a3a; margin-bottom: 4px; letter-spacing: 0.3px; text-transform: uppercase; }
+    .field input, .field select { width: 100%; padding: 8px 10px; border: 1px solid #d4cab8; border-radius: 4px; font-size: 14px; font-family: inherit; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    button {
+      width: 100%; padding: 11px; font-size: 14px; font-weight: 600;
+      background: linear-gradient(135deg, #2a1a4e 0%, #5a2a7e 100%);
+      color: #f4e8c8; border: 0; border-radius: 4px; cursor: pointer;
+      letter-spacing: 0.5px; margin-top: 6px;
+    }
+    button:hover { background: linear-gradient(135deg, #3a2a5e 0%, #6a3a8e 100%); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .narrative { font-size: 15px; line-height: 1.6; color: #2a1a2e; padding: 8px 0; }
+    .source-badge {
+      display: inline-block; font-size: 10px; padding: 2px 8px;
+      border-radius: 10px; font-weight: 600; letter-spacing: 0.4px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .source-llm      { background: #c8f8d8; color: #1a4a2a; }
+    .source-fallback { background: #f8e8b8; color: #6a4a1a; }
+    .empty { color: #888; font-style: italic; padding: 40px 0; text-align: center; }
+    .err { color: #b22; padding: 12px; background: #fee; border: 1px solid #fbb; border-radius: 4px; font-size: 13px; }
+    .meta { font-size: 11px; color: #888; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0ebe2; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div>
+      <h1>Chart Interpretation</h1>
+      <p class="subtitle">LLM-narrated chart reading · falls back to deterministic templates when Ollama is offline</p>
+      <form id="interpret-form">
+        <div class="row3">
+          <div class="field">
+            <label for="year">Year</label>
+            <input type="number" id="year" min="1800" max="2100" value="1990" required />
+          </div>
+          <div class="field">
+            <label for="month">Month</label>
+            <input type="number" id="month" min="1" max="12" value="7" required />
+          </div>
+          <div class="field">
+            <label for="day">Day</label>
+            <input type="number" id="day" min="1" max="31" value="15" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="hour">Hour (0-23)</label>
+            <input type="number" id="hour" min="0" max="23" value="12" required />
+          </div>
+          <div class="field">
+            <label for="minute">Minute</label>
+            <input type="number" id="minute" min="0" max="59" value="0" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <input type="number" id="latitude" step="0.0001" min="-90" max="90" value="12.9716" required />
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <input type="number" id="longitude" step="0.0001" min="-180" max="180" value="77.5946" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="tz_offset">Timezone offset (hours)</label>
+          <input type="number" id="tz_offset" step="0.25" min="-12" max="14" value="5.5" required />
+        </div>
+        <div class="field">
+          <label for="section">Mode</label>
+          <select id="section">
+            <option value="">Summary (whole chart)</option>
+            <option value="ascendant">Drill-down: Ascendant</option>
+            <option value="mahadasha">Drill-down: Mahadasha</option>
+            <option value="yogas">Drill-down: Yogas</option>
+            <option value="panchanga">Drill-down: Panchanga</option>
+            <option value="planetary">Drill-down: Planetary</option>
+            <option value="ashtakavarga">Drill-down: Ashtakavarga</option>
+          </select>
+        </div>
+        <button type="submit" id="submit-btn">Interpret Chart</button>
+      </form>
+    </div>
+
+    <div class="results" id="results">
+      <div class="empty">Enter birth data and pick summary or drill-down.</div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('interpret-form');
+    const results = document.getElementById('results');
+    const btn = document.getElementById('submit-btn');
+
+    function el(tag, className, text) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function render(data) {
+      clear(results);
+      const badgeClass = data.source === 'llm' ? 'source-llm' : 'source-fallback';
+      const badgeText = data.source === 'llm' ? ('LLM · ' + (data.model || 'unknown')) : 'Fallback (no LLM)';
+      results.appendChild(el('span', 'source-badge ' + badgeClass, badgeText));
+      results.appendChild(el('div', 'narrative', data.text));
+      const meta = el('div', 'meta');
+      meta.textContent = 'Mode: ' + data.mode + (data.section ? '  ·  Section: ' + data.section : '');
+      results.appendChild(meta);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true; btn.textContent = 'Interpreting...';
+      clear(results);
+      results.appendChild(el('div', 'empty', 'Computing chart and asking the narrator...'));
+
+      const payload = {
+        year:      parseInt(document.getElementById('year').value, 10),
+        month:     parseInt(document.getElementById('month').value, 10),
+        day:       parseInt(document.getElementById('day').value, 10),
+        hour:      parseInt(document.getElementById('hour').value, 10),
+        minute:    parseInt(document.getElementById('minute').value, 10),
+        latitude:  parseFloat(document.getElementById('latitude').value),
+        longitude: parseFloat(document.getElementById('longitude').value),
+        tz_offset: parseFloat(document.getElementById('tz_offset').value),
+      };
+      const section = document.getElementById('section').value;
+      const url = section ? '/interpret/chart/' + encodeURIComponent(section) : '/interpret/chart';
+
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!resp.ok) {
+          const text = await resp.text();
+          clear(results);
+          const err = el('div', 'err', 'HTTP ' + resp.status + ': ' + text);
+          results.appendChild(err);
+          return;
+        }
+        render(await resp.json());
+      } catch (err) {
+        clear(results);
+        results.appendChild(el('div', 'err', 'Request failed: ' + err));
+      } finally {
+        btn.disabled = false; btn.textContent = 'Interpret Chart';
+      }
+    });
+  </script>
+</body>
+</html>

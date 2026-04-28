@@ -22,6 +22,13 @@ from app.medini.kurma_chakra import (
     info_for_region,
     region_for_coordinates,
 )
+from app.medini.eclipses import upcoming_eclipses_payload
+from app.medini.ml.predictor import (
+    NoModelForTarget,
+    list_available_targets,
+    predict_for_chart,
+)
+from app.medini.mundane import daily_mundane_forecast
 from app.models.schemas import BirthDataInput
 
 medini_router = APIRouter(prefix="/medini", tags=["Geo-Astrological Engine"])
@@ -148,3 +155,124 @@ async def cartography_page() -> HTMLResponse:
             detail=f"Cartography template missing at {html_path}",
         )
     return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+
+@medini_router.get("/today")
+async def today(jd: float | None = None) -> dict:
+    """Daily mundane forecast: ingresses, stations, conjunctions, and
+    Kurma regions activated by the current planetary positions.
+
+    Optional `jd` query param lets a caller pin the forecast to a specific
+    Julian Day (useful for historical analysis or deterministic testing).
+    Default is "now in UT".
+    """
+    return daily_mundane_forecast(jd_now=jd)
+
+
+@medini_router.get("/today/page", response_class=HTMLResponse)
+async def today_page() -> HTMLResponse:
+    """The cosmic-weather feed. Renders today's events list + a Kurma map
+    where regions are color-graded by how many planets currently sit in
+    nakshatras assigned to them."""
+    html_path = _TEMPLATES_DIR / "today.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Today template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+
+@medini_router.get("/eclipses")
+async def eclipses(jd: float | None = None, count: int = 5) -> dict:
+    """Upcoming solar + lunar eclipses, each tagged with the Kurma region
+    it activates via the luminary's nakshatra. Solar eclipses also include
+    the geographic point of greatest eclipse (lat/lon).
+
+    `count` is per-family; the response merges them and sorts by date.
+    Default `jd=None` means "starting from now in UT".
+    """
+    return upcoming_eclipses_payload(jd_now=jd, count=count)
+
+
+@medini_router.get("/eclipses/page", response_class=HTMLResponse)
+async def eclipses_page() -> HTMLResponse:
+    """Eclipse Impact Mapper. Map shows the next 5 solar + 5 lunar
+    eclipses; solar ones get pin markers at their greatest-eclipse
+    coordinates. Sidebar feed lists upcoming eclipses with their nakshatra
+    + Kurma region tag."""
+    html_path = _TEMPLATES_DIR / "eclipses.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Eclipses template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+
+@medini_router.get("/predict")
+async def list_predict_targets() -> dict:
+    """List every trained model available for prediction.
+
+    The predict endpoint at POST /medini/predict/{target} requires a model
+    trained for that target. This GET surface answers "which targets can I
+    actually call?" without requiring filesystem access — useful for
+    frontends that want to populate a dropdown of available targets.
+    """
+    runs = list_available_targets()
+    return {
+        "available_targets": [
+            {
+                "target": r.target,
+                "trained_at": r.timestamp,
+                "run": r.run_dir.name,
+            }
+            for r in runs
+        ],
+        "count": len(runs),
+    }
+
+
+@medini_router.post("/predict/{target}")
+async def predict_target(target: str, birth_data: BirthDataInput) -> dict:
+    """Predict the probability of `target` for a birth chart.
+
+    Loads the most recent trained model whose run-directory prefix matches
+    `target` (case-insensitive, sanitized — "Politician" matches "politician_*").
+    Computes the same Vedic Tensor features the trainer saw, aligns dtypes
+    via the persisted feature_columns.json + category_levels.json, and
+    returns:
+
+      - probability: 0.0–1.0
+      - top_contributors: top-N features by |SHAP value| with the chart's
+        actual feature value alongside, so the response reads like a story
+      - model: which run was used + its training timestamp
+
+    Graceful no-model fallback: if no run matches the target, returns 404
+    with `available_targets` in the body so the caller can pick a real one.
+    Uses asyncio.to_thread because XGBoost predict + SHAP TreeExplainer
+    are sync CPU-bound and would otherwise block the event loop.
+    """
+    try:
+        result = await asyncio.to_thread(
+            predict_for_chart,
+            target,
+            year=birth_data.year, month=birth_data.month, day=birth_data.day,
+            hour=birth_data.hour, minute=birth_data.minute,
+            tz_offset=birth_data.tz_offset,
+            latitude=birth_data.latitude, longitude=birth_data.longitude,
+        )
+    except NoModelForTarget as exc:
+        # 404 with the list of targets that DO have models, so the caller
+        # can correct their request without round-tripping through GET /predict.
+        runs = list_available_targets()
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail={
+                "error": str(exc),
+                "available_targets": [r.target for r in runs],
+                "hint": "GET /medini/predict to see all targets currently trained.",
+            },
+        ) from exc
+
+    return result

@@ -38,6 +38,10 @@ data/
 app/medini/data/*.parquet
 app/medini/data/ml_runs/
 
+# PDFs: planning documents, exported reports, etc. Should live alongside
+# the project in the user's filesystem but not in version control.
+*.pdf
+
 # Environment / secrets
 .env
 .env.*

@@ -4,20 +4,27 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import HTMLResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
+from app.api.interpret_routes import interpret_router
 from app.api.medini_routes import medini_router
 from app.api.routes import chart_router, profile_router
 from app.core.auth import limiter
 from app.core.config import settings
 from app.core.database import init_db
 from app.daemon.transit_worker import NadiTransitDaemon
+
+# App-level templates (the unified shell). Module-level Path resolution so the
+# location is stable regardless of where uvicorn is launched.
+_APP_TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -70,6 +77,7 @@ app.include_router(auth_router)
 app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
 app.include_router(medini_router)  # Tab 3: Geo-Astrological Engine (/medini/*)
+app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 
 
 # Vendored Flask portal at /portal/. Lazy-imported so tests/CI (with
@@ -84,6 +92,16 @@ if settings.PORTAL_ENABLED:
     logger.info("Vendored Flask portal mounted at /portal/")
 
 
-@app.get("/")
-def root() -> dict[str, str]:
-    return {"message": "Welcome to the Vedic & Nadi Astrology Engine"}
+@app.get("/", response_class=HTMLResponse)
+async def root() -> HTMLResponse:
+    """Unified-tabs shell. Single-page wrapper around the three tabs (Nadi /
+    NumeroAstro / Medini) — uses an iframe content area driven by URL hash
+    so each existing surface (Medini map pages, Flask portal) keeps its own
+    state without rewiring."""
+    html_path = _APP_TEMPLATES_DIR / "index.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Shell template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))

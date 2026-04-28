@@ -1,6 +1,6 @@
 # Resume Notes
 
-Snapshot of the project state as of **2026-04-28**, at commit `6e5f1c3` (Phase 5 Stage 3 ML trainer + dtype fix).
+Snapshot of the project state as of **2026-04-28** (Tasks 1–7 of the queued execution: PDF housekeeping, NumeroAstro rebrand, Daily Mundane Forecast, Eclipse Impact Mapper, Unified-tabs shell, Phase 5C `/medini/predict/{target}`, LLM Ollama narrative layer).
 
 ## What's shipped
 
@@ -12,8 +12,13 @@ Snapshot of the project state as of **2026-04-28**, at commit `6e5f1c3` (Phase 5
 | 2. NumeroAstro | `/portal/*` | Vendored Flask app from [Slllyio/astro-web-portal](https://github.com/Slllyio/astro-web-portal). DOB-only "probability engine" + numerology + BAV-driven karma classification. |
 | 3. Medini Phase 0+1 (Geo) | `/medini/*` | Kurma Chakra widget (`/medini/kurma-widget`) — 9 regions × 27 nakshatras × 5 tattvas. Personalized Astrocartography (`/medini/cartography/page`) — 36 planetary lines per chart over the Kurma layer. Both Leaflet + OSM, no API keys. |
 | 4. Medini Phase 5 (ML) | `python -m app.medini.etl.scraper / databank_etl / ml.train_classifier` | Three-stage offline pipeline: scrape Astro-Databank → compute the **Vedic Tensor** (~150 features per chart) → XGBoost+SHAP rule discovery with magnitude-filtered output. CLI tools, not a web surface. Outputs to `data/ml_runs/{target}_{timestamp}/`. |
+| 5. Medini Phase 2 (Daily Mundane) | `/medini/today`, `/medini/today/page` | Cosmic-weather feed: ingresses, stations, conjunctions over a ±3-day window, with Kurma regions intensity-graded by today's planetary load. |
+| 6. Medini Phase 3 (Eclipses) | `/medini/eclipses`, `/medini/eclipses/page` | Eclipse Impact Mapper — next 5 solar + 5 lunar eclipses tagged with the Kurma region they activate via the luminary's nakshatra. Solar markers placed at the geographic point of greatest eclipse. |
+| 7. Phase 5C predict | `POST /medini/predict/{target}`, `GET /medini/predict` | Loads the most recent trained run for a target, computes the Vedic Tensor for a new birth chart, returns probability + top-N SHAP contributors. Graceful 404 with `available_targets` when no model exists. |
+| 8. LLM Narrative | `POST /interpret/chart`, `POST /interpret/chart/{section}`, `/interpret/page` | Ollama-backed natural-language readings — summary mode (whole chart) + drill-down mode (ascendant / mahadasha / yogas / panchanga / planetary / ashtakavarga). Defaults to deterministic templates when `OLLAMA_ENABLED=false`. |
+| 9. Unified shell | `/` | Tab navigator over Nadi calculator (`/chart/page`), NumeroAstro, Kurma grid, Astrocartography, Cosmic Weather, Eclipses, Interpret, API Docs. URL-hash driven, single-iframe content area. |
 
-**Test suite**: 666 passing, ~84% coverage, GitHub Actions CI green.
+**Test suite**: 746 passing (+80 across the new tasks), ~84% coverage, GitHub Actions CI green.
 
 ## Run locally
 
@@ -38,15 +43,11 @@ python -m pytest --cov=app --cov-report=term-missing -q
 
 ## Pending work (priority order)
 
-1. **Phase 5 live run** — overnight scrape against real Astro-Databank, then ETL, then train one demo target (start with `--target politician` or similar broad token). Pipeline is fully tested on synthetic data; real data is the next gate. The scraper has a `--max-entries 100` flag for an initial validation pass before the full crawl.
-2. **LLM Ollama narrative layer**. An agent's plan has already been written to `C:\Users\S.C.C\.claude\plans\phase-2-database-hashed-ritchie-agent-ac1cfc52ab1b0c960.md`. Decisions locked: Ollama backend, hybrid summary+drill-down endpoints, no auth on `/interpret/*`.
-3. **Phase 5C — FastAPI prediction endpoint**. `POST /medini/predict/{target}` that loads a saved `model.json` from a `data/ml_runs/...` directory and returns probability + top-5 SHAP features. Trivial wiring once a real model exists.
-4. **Phase 5D — SHAP rule explorer widget**. Interactive Leaflet/D3 page that visualizes a SHAP dependence plot with a slider — see plan file for spec.
-5. **Tab 3 Phase 2 — Daily Mundane Forecast**. `/medini/today` page surfacing today's significant ingresses, retrogrades, eclipses, with activated Kurma regions highlighted. Reuses the existing transit daemon.
-6. **Tab 3 Phase 3 — Eclipse Impact Mapper**. `swe.sol_eclipse_when_glob` + Kurma layer + natal chart impact.
-7. **Unified-tabs frontend shell**. Currently each tab is reachable directly via URL but there's no nav between them.
-8. **NumeroAstro re-branding**. The vendored portal still says "Stellar Blueprint" in templates — needs surface-level rename.
-9. **PDF housekeeping**. `Geo-Astrological Planetary Intelligence Engine.pdf` was accidentally committed via `git add -A`. Repo is private so low-stakes, but cleaner to remove + add `*.pdf` to `.gitignore`.
+1. **Phase 5 live run** — overnight scrape against real Astro-Databank, then ETL, then train one demo target (start with `--target politician` or similar broad token). Pipeline is fully tested on synthetic data; real data is the next gate. The scraper has a `--max-entries 100` flag for an initial validation pass before the full crawl. Once a model exists, `POST /medini/predict/politician` will surface real probabilities + SHAP contributors.
+2. **Wire Ollama for live LLM narratives**. The `/interpret/*` endpoints work in fallback mode out of the box; setting `OLLAMA_ENABLED=true` plus `ollama serve` running locally with `llama3.1` (or override `OLLAMA_MODEL`) flips them to LLM mode. The fallback responses tag `source: "fallback"` so the UI can prompt the user.
+3. **Phase 5D — SHAP rule explorer widget**. Interactive Leaflet/D3 page that visualizes a SHAP dependence plot with a slider — see plan file for spec.
+4. **Optional: persist + cache model artifacts in S3/object storage** so the predict endpoint can serve from a fleet without each pod needing `data/ml_runs/` on local disk.
+5. **Optional: streaming SSE for /interpret/*** so the LLM tokens arrive incrementally instead of waiting on the full response.
 
 ## Phase 5 ML pipeline cheatsheet
 
@@ -115,6 +116,21 @@ All values cross-checked against external Vedic-astrology sources (Wikipedia, Pr
 ## Where to find more context
 
 - **Repo**: https://github.com/Slllyio/astro
-- **Architectural blueprint** (mundane-astrology vision): `Geo-Astrological Planetary Intelligence Engine.pdf` (still in repo at the time of writing; flagged for removal).
+- **Architectural blueprint** (mundane-astrology vision): `Geo-Astrological Planetary Intelligence Engine.pdf` (gitignored after Task 1; still on disk locally for reference).
 - **Most recent execution plan**: `C:\Users\S.C.C\.claude\plans\phase-2-database-hashed-ritchie.md` (the Tab 3 Medini plan).
 - **Scheduled remote agent**: `trig_01Ngco8W19HrbVgbQ3RGFDrH`, fires 2026-05-14 to revisit Phase-2 Tier-3 deferred items.
+
+## New endpoints from this execution batch
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET  | `/` | Unified-tabs HTML shell (replaces JSON welcome) |
+| GET  | `/chart/page` | Nadi chart calculator UI |
+| GET  | `/medini/today` / `/medini/today/page` | Daily mundane forecast JSON + map page |
+| GET  | `/medini/eclipses` / `/medini/eclipses/page` | Eclipse Impact Mapper JSON + map page |
+| GET  | `/medini/predict` | List trained-model targets |
+| POST | `/medini/predict/{target}` | Predict probability + top SHAP contributors |
+| GET  | `/interpret/sections` | List allowed drill-down sections |
+| POST | `/interpret/chart` | LLM summary of the whole chart |
+| POST | `/interpret/chart/{section}` | LLM drill-down for one section |
+| GET  | `/interpret/page` | Interpret UI (form + LLM/Fallback badge) |

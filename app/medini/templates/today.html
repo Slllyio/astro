@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmic Weather - Geo-Astrological Engine</title>
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f7f7f7; }
+    .container { display: grid; grid-template-columns: 1fr 420px; height: 100vh; }
+    #map { height: 100vh; }
+    .sidebar { background: #fafafa; border-left: 1px solid #ddd; padding: 22px; overflow-y: auto; }
+    h1 { font-size: 22px; margin-bottom: 4px; font-weight: 600; }
+    .timestamp { color: #666; font-size: 13px; margin-bottom: 18px; }
+    .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 22px; }
+    .summary-cell { background: white; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #e2e2e2; }
+    .summary-num { font-size: 22px; font-weight: 600; color: #2a4a8e; }
+    .summary-label { font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+    h2 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 0.6px; margin: 18px 0 8px; font-weight: 700; }
+    .event { background: white; border: 1px solid #e2e2e2; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+    .event-type { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+    .event-type-INGRESS { background: #c4d4e8; color: #1a3a6a; }
+    .event-type-STATION { background: #d8c4e8; color: #4a1a6a; }
+    .event-type-CONJUNCTION { background: #e8d4a4; color: #5a3a10; }
+    .event-direction { font-size: 11px; color: #888; margin-left: 6px; }
+    .event-description { font-size: 14px; margin-top: 6px; line-height: 1.4; }
+    .event-kurma { font-size: 12px; color: #666; margin-top: 4px; }
+    .empty-state { color: #888; font-style: italic; padding: 12px; }
+    .legend { background: white; padding: 12px 14px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-size: 12px; line-height: 1.5; }
+    .legend-title { display: block; margin-bottom: 6px; font-weight: 600; }
+    .legend-row { display: flex; align-items: center; }
+    .legend-swatch { display: inline-block; width: 14px; height: 14px; margin-right: 8px; border: 1px solid rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="map"></div>
+    <div class="sidebar">
+      <h1>Cosmic Weather</h1>
+      <p class="timestamp" id="timestamp">Loading...</p>
+
+      <div class="summary-row">
+        <div class="summary-cell"><div class="summary-num" id="num-events">-</div><div class="summary-label">Events</div></div>
+        <div class="summary-cell"><div class="summary-num" id="num-ingress">-</div><div class="summary-label">Ingress</div></div>
+        <div class="summary-cell"><div class="summary-num" id="num-station">-</div><div class="summary-label">Station</div></div>
+        <div class="summary-cell"><div class="summary-num" id="num-conj">-</div><div class="summary-label">Conjunct</div></div>
+      </div>
+
+      <h2>Today's Events</h2>
+      <div id="event-list" class="empty-state">Fetching feed...</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script>
+    // Color the 9 Kurma regions by activation INTENSITY (planet count). The
+    // most-activated region gets the deepest fill; empty regions stay light.
+    const REGION_BASE_COLORS = {
+      "Central":    "#6b8e23", "East":       "#4682b4", "South-East": "#cd5c5c",
+      "South":      "#daa520", "South-West": "#9370db", "West":       "#48d1cc",
+      "North-West": "#dc143c", "North":      "#4169e1", "North-East": "#8b4513",
+    };
+
+    const map = L.map('map', { minZoom: 2, maxZoom: 8, worldCopyJump: true })
+      .setView([20, 30], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    function el(tag, className, textValue) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (textValue !== undefined) e.textContent = textValue;
+      return e;
+    }
+    function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function renderRegions(geojson, intensityByRegion) {
+      L.geoJSON(geojson, {
+        style: feature => {
+          const region = feature.properties.region;
+          const intensity = intensityByRegion.get(region) || 0;
+          // Map planet-count (0..9) to fill opacity (0.10..0.7).
+          const opacity = 0.10 + Math.min(intensity, 9) * 0.07;
+          return {
+            color: '#222', weight: 1.0,
+            fillColor: REGION_BASE_COLORS[region] || '#999',
+            fillOpacity: opacity,
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          const region = feature.properties.region;
+          const intensity = intensityByRegion.get(region) || 0;
+          const tip = el('div');
+          tip.appendChild(el('strong', null, region));
+          tip.appendChild(document.createElement('br'));
+          tip.appendChild(document.createTextNode(
+            `${feature.properties.tattva} · ${intensity} planet${intensity === 1 ? '' : 's'}`
+          ));
+          layer.bindTooltip(tip, { sticky: true });
+        },
+      }).addTo(map);
+    }
+
+    function renderEvents(events) {
+      const container = document.getElementById('event-list');
+      container.className = '';  // drop empty-state styling
+      clearChildren(container);
+
+      if (!events || events.length === 0) {
+        container.className = 'empty-state';
+        container.textContent = 'No significant astrological events in the current window. Sky is calm.';
+        return;
+      }
+
+      events.forEach(ev => {
+        const card = el('div', 'event');
+        const header = el('div');
+        const typeBadge = el('span', `event-type event-type-${ev.type}`, ev.type);
+        header.appendChild(typeBadge);
+        if (ev.direction) {
+          const dir = el('span', 'event-direction', ev.direction === 'PAST' ? 'recent' : 'upcoming');
+          header.appendChild(dir);
+        }
+        card.appendChild(header);
+
+        const desc = el('div', 'event-description', ev.description || '');
+        card.appendChild(desc);
+
+        if (ev.kurma) {
+          const kurma = el('div', 'event-kurma');
+          kurma.textContent = `${ev.kurma.region} region · ${ev.kurma.tattva} · ${ev.kurma.nakshatra}`;
+          card.appendChild(kurma);
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function setSummary(s, ts) {
+      document.getElementById('timestamp').textContent = ts.replace('T', ' ').replace(/\+00:00$/, ' UTC');
+      document.getElementById('num-events').textContent = s.event_count;
+      document.getElementById('num-ingress').textContent = s.ingress_count;
+      document.getElementById('num-station').textContent = s.station_count;
+      document.getElementById('num-conj').textContent = s.conjunction_count;
+    }
+
+    function buildLegend() {
+      const div = L.DomUtil.create('div', 'legend');
+      div.appendChild(el('span', 'legend-title', 'Region intensity'));
+      [{ label: 'Empty', op: 0.10 }, { label: 'Active', op: 0.45 }, { label: 'Hot', op: 0.7 }].forEach(({ label, op }) => {
+        const row = el('div', 'legend-row');
+        const sw = el('span', 'legend-swatch');
+        sw.style.background = `rgba(70, 130, 180, ${op})`;  // example shade
+        row.appendChild(sw);
+        row.appendChild(document.createTextNode(label));
+        div.appendChild(row);
+      });
+      return div;
+    }
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = buildLegend;
+    legend.addTo(map);
+
+    // Fetch both the Kurma layer (regions) and the daily forecast in parallel.
+    Promise.all([
+      fetch('/medini/regions').then(r => r.json()),
+      fetch('/medini/today').then(r => r.json()),
+    ])
+      .then(([regions, forecast]) => {
+        const intensityByRegion = new Map(
+          forecast.activated_regions.map(r => [r.region, r.intensity])
+        );
+        renderRegions(regions.geojson, intensityByRegion);
+        renderEvents(forecast.events);
+        setSummary(forecast.summary, forecast.timestamp_utc);
+      })
+      .catch(err => {
+        document.getElementById('event-list').textContent = 'Failed to load forecast: ' + err;
+      });
+  </script>
+</body>
+</html>

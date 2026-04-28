@@ -32,6 +32,7 @@ import argparse
 import csv
 import dataclasses
 import datetime as dt
+import json
 import logging
 import sys
 from pathlib import Path
@@ -228,6 +229,39 @@ def _write_rules_csv(rules: list[Rule], output_path: Path) -> None:
             writer.writerow(dataclasses.asdict(rule))
 
 
+def _write_inference_schema(X: pd.DataFrame, output_dir: Path) -> None:
+    """Persist the column order + per-categorical level lists alongside model.json.
+
+    XGBoost with enable_categorical=True treats the *training-time* category
+    levels as the ground truth — at inference, a row with `tattva_sun="Fire"`
+    only aligns correctly if `"Fire"` is among the same levels in the same
+    order the model trained on. Saving these explicitly avoids the predictor
+    needing to re-derive them via expected_feature_columns(), and bullet-proofs
+    inference against schema drift between trainer and predictor.
+
+    Two files written:
+      - feature_columns.json: ordered list of column names
+      - category_levels.json: {col_name: [level1, level2, ...]} for each categorical
+    """
+    columns_path = output_dir / "feature_columns.json"
+    columns_path.write_text(
+        json.dumps(list(X.columns), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    cat_levels: dict[str, list[str]] = {}
+    for col in X.columns:
+        s = X[col]
+        if isinstance(s.dtype, pd.CategoricalDtype):
+            # Cast levels to str so JSON is uniform (XGB normalizes internally).
+            cat_levels[col] = [str(level) for level in s.cat.categories]
+    levels_path = output_dir / "category_levels.json"
+    levels_path.write_text(
+        json.dumps(cat_levels, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
 def run_training(
     *,
     features_parquet: Path,
@@ -282,8 +316,12 @@ def run_training(
     run_dir = output_root / f"{safe_target}_{timestamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    # Persist model
+    # Persist model + the schema artifacts the predictor needs for inference.
+    # X (the full-fit feature frame) is the source of truth for column order
+    # and categorical levels — using X_train would drop levels that only
+    # appear in the holdout test, breaking inference for those values.
     model.save_model(str(run_dir / "model.json"))
+    _write_inference_schema(X, run_dir)
 
     # Feature importance ranking
     ranked = rank_features_by_importance(shap_values, feature_names)

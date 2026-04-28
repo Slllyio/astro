@@ -3,8 +3,10 @@ transit-alert endpoints live at /profiles and require Bearer auth (see auth_rout
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -21,6 +23,9 @@ from app.models.schemas import (
     UserProfileCreate,
     UserProfileResponse,
 )
+
+# App-level templates dir — same convention as main.py and medini_routes.
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 # Mounted at /chart in main.py (preserves Phase 1 contract).
 chart_router = APIRouter()
@@ -46,6 +51,20 @@ async def calculate_chart(birth_data: BirthDataInput) -> dict:
         latitude=birth_data.latitude,
         longitude=birth_data.longitude,
     )
+
+
+@chart_router.get("/page", response_class=HTMLResponse)
+async def chart_page() -> HTMLResponse:
+    """Nadi chart calculator UI. Form posts birth data via fetch() to
+    /chart/calculate (which is JSON-only) and renders the result client-side.
+    Standalone page — also surfaced inside the unified shell at #nadi."""
+    html_path = _TEMPLATES_DIR / "nadi_chart.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Nadi chart template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
 
 
 def _build_natal_chart(user_id: int, chart: dict) -> NatalChart:

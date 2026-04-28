@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nadi Chart Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f4f1ec; padding: 24px; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    h1 { font-size: 22px; color: #2a1a4e; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #6a5a4a; margin-bottom: 18px; }
+    form { background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e0d8c8; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: #5a4a3a; margin-bottom: 4px; letter-spacing: 0.3px; text-transform: uppercase; }
+    .field input { width: 100%; padding: 8px 10px; border: 1px solid #d4cab8; border-radius: 4px; font-size: 14px; font-family: inherit; }
+    .field input:focus { outline: none; border-color: #6a3a8e; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    button {
+      width: 100%; padding: 11px; font-size: 14px; font-weight: 600;
+      background: linear-gradient(135deg, #2a1a4e 0%, #5a2a7e 100%);
+      color: #f4e8c8; border: 0; border-radius: 4px; cursor: pointer;
+      letter-spacing: 0.5px; margin-top: 6px;
+    }
+    button:hover { background: linear-gradient(135deg, #3a2a5e 0%, #6a3a8e 100%); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .results { background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e0d8c8; min-height: 200px; }
+    .empty { color: #888; font-style: italic; padding: 40px 0; text-align: center; }
+    .err { color: #b22; padding: 12px; background: #fee; border: 1px solid #fbb; border-radius: 4px; font-size: 13px; }
+    h2 { font-size: 16px; color: #2a1a4e; margin: 14px 0 8px; font-weight: 600; }
+    h2:first-child { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table th { text-align: left; padding: 6px 8px; background: #f4f1ec; color: #5a4a3a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+    table td { padding: 6px 8px; border-top: 1px solid #f0ebe2; }
+    .chip {
+      display: inline-block; font-size: 11px; padding: 2px 8px;
+      background: #d8b8f8; color: #3a1a5a; border-radius: 10px;
+      font-weight: 600; letter-spacing: 0.3px;
+    }
+    pre.raw { font-size: 11px; background: #f8f5ee; padding: 10px; border-radius: 4px; max-height: 260px; overflow: auto; color: #5a4a3a; }
+    details { margin-top: 12px; }
+    summary { cursor: pointer; font-size: 12px; color: #6a3a8e; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div>
+      <h1>Nadi Chart Calculator</h1>
+      <p class="subtitle">Sidereal Lahiri · Vedic D1/D9/D10 · Mahadasha · Panchanga · Yogas</p>
+      <form id="chart-form">
+        <div class="row3">
+          <div class="field">
+            <label for="year">Year</label>
+            <input type="number" id="year" min="1800" max="2100" value="1990" required />
+          </div>
+          <div class="field">
+            <label for="month">Month</label>
+            <input type="number" id="month" min="1" max="12" value="7" required />
+          </div>
+          <div class="field">
+            <label for="day">Day</label>
+            <input type="number" id="day" min="1" max="31" value="15" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="hour">Hour (0-23)</label>
+            <input type="number" id="hour" min="0" max="23" value="12" required />
+          </div>
+          <div class="field">
+            <label for="minute">Minute</label>
+            <input type="number" id="minute" min="0" max="59" value="0" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <input type="number" id="latitude" step="0.0001" min="-90" max="90" value="12.9716" required />
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <input type="number" id="longitude" step="0.0001" min="-180" max="180" value="77.5946" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="tz_offset">Timezone offset (hours)</label>
+          <input type="number" id="tz_offset" step="0.25" min="-12" max="14" value="5.5" required />
+        </div>
+        <button type="submit" id="submit-btn">Calculate Chart</button>
+      </form>
+    </div>
+
+    <div class="results" id="results">
+      <div class="empty">Enter birth data to calculate the chart.</div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('chart-form');
+    const results = document.getElementById('results');
+    const btn = document.getElementById('submit-btn');
+
+    function el(tag, className, text) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+    function renderError(msg) {
+      clear(results);
+      const div = el('div', 'err', msg);
+      results.appendChild(div);
+    }
+
+    function renderChart(data) {
+      clear(results);
+
+      // Ascendant
+      if (data.ascendant) {
+        const a = data.ascendant;
+        results.appendChild(el('h2', null, 'Ascendant (Lagna)'));
+        results.appendChild(el('div', null,
+          a.sign_name + '  ·  ' + a.degree_in_sign.toFixed(2) + '°  (longitude ' + a.longitude.toFixed(2) + '°)'));
+      }
+
+      // Mahadasha
+      if (data.current_mahadasha) {
+        const m = data.current_mahadasha;
+        results.appendChild(el('h2', null, 'Current Mahadasha'));
+        const md = el('div');
+        md.appendChild(el('span', 'chip', m.mahadasha_lord));
+        md.appendChild(document.createTextNode(
+          '  ' + m.start_date + ' → ' + m.end_date +
+          '  (' + m.time_elapsed_years.toFixed(2) + ' / ' + m.total_duration_years + ' yrs)'));
+        results.appendChild(md);
+      }
+
+      // D1 planets
+      if (data.d1) {
+        results.appendChild(el('h2', null, 'D1 (Rashi) Placements'));
+        const tbl = el('table');
+        const thead = el('thead');
+        const trh = el('tr');
+        ['Planet', 'Sign', 'Degree', 'House', 'Nakshatra', 'R'].forEach(h => trh.appendChild(el('th', null, h)));
+        thead.appendChild(trh);
+        tbl.appendChild(thead);
+        const tbody = el('tbody');
+        Object.keys(data.d1).forEach(name => {
+          const p = data.d1[name];
+          const tr = el('tr');
+          tr.appendChild(el('td', null, name));
+          tr.appendChild(el('td', null, p.sign_name));
+          tr.appendChild(el('td', null, p.degree_in_sign.toFixed(2) + '°'));
+          tr.appendChild(el('td', null, p.house != null ? String(p.house) : '-'));
+          tr.appendChild(el('td', null, p.nakshatra ? p.nakshatra.name + ' (pada ' + p.nakshatra.pada + ')' : '-'));
+          tr.appendChild(el('td', null, p.is_retrograde ? 'R' : ''));
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        results.appendChild(tbl);
+      }
+
+      // Yogas
+      if (data.yogas && data.yogas.length) {
+        results.appendChild(el('h2', null, 'Yogas (' + data.yogas.length + ')'));
+        const ul = el('div');
+        data.yogas.forEach(y => {
+          const row = el('div');
+          row.style.padding = '4px 0';
+          row.appendChild(el('span', 'chip', y.name));
+          row.appendChild(document.createTextNode(' — ' + y.description));
+          ul.appendChild(row);
+        });
+        results.appendChild(ul);
+      }
+
+      // Panchanga summary
+      if (data.panchanga) {
+        const p = data.panchanga;
+        results.appendChild(el('h2', null, 'Panchanga'));
+        const div = el('div');
+        div.textContent =
+          'Tithi: ' + p.tithi.name + ' (' + p.tithi.paksha + ')  ·  ' +
+          'Vara: ' + p.vara.name + '  ·  ' +
+          'Yoga: ' + p.yoga.name + '  ·  ' +
+          'Karana: ' + p.karana.name + '  ·  ' +
+          'Nakshatra: ' + p.nakshatra.name;
+        results.appendChild(div);
+      }
+
+      // Raw JSON for power users
+      const det = el('details');
+      det.appendChild(el('summary', null, 'Raw JSON'));
+      const pre = el('pre', 'raw', JSON.stringify(data, null, 2));
+      det.appendChild(pre);
+      results.appendChild(det);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Calculating...';
+      clear(results);
+      results.appendChild(el('div', 'empty', 'Computing chart...'));
+
+      const payload = {
+        year:      parseInt(document.getElementById('year').value, 10),
+        month:     parseInt(document.getElementById('month').value, 10),
+        day:       parseInt(document.getElementById('day').value, 10),
+        hour:      parseInt(document.getElementById('hour').value, 10),
+        minute:    parseInt(document.getElementById('minute').value, 10),
+        latitude:  parseFloat(document.getElementById('latitude').value),
+        longitude: parseFloat(document.getElementById('longitude').value),
+        tz_offset: parseFloat(document.getElementById('tz_offset').value),
+      };
+
+      try {
+        const resp = await fetch('/chart/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!resp.ok) {
+          const text = await resp.text();
+          renderError('HTTP ' + resp.status + ': ' + text);
+          return;
+        }
+        const data = await resp.json();
+        renderChart(data);
+      } catch (err) {
+        renderError('Request failed: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Calculate Chart';
+      }
+    });
+  </script>
+</body>
+</html>

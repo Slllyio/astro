@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vedic & Nadi Astrology Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f4f1ec; }
+    .app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+    header {
+      background: linear-gradient(135deg, #2a1a4e 0%, #5a2a7e 100%);
+      color: #f4e8c8; padding: 18px 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    }
+    header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.4px; }
+    header .tagline { font-size: 12px; opacity: 0.78; margin-top: 2px; letter-spacing: 0.6px; }
+    nav.tabs {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      background: #1a0e2e; padding: 0 28px; border-bottom: 1px solid #3a2a5a;
+    }
+    nav.tabs a {
+      padding: 12px 18px; color: #c8b8e8; text-decoration: none;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
+      border-bottom: 3px solid transparent; transition: all 0.15s;
+    }
+    nav.tabs a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    nav.tabs a.active { color: #f8d870; border-bottom-color: #f8d870; }
+    .frame-wrap { position: relative; background: #fff; }
+    iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .welcome {
+      max-width: 880px; margin: 0 auto; padding: 60px 32px;
+      color: #1a1a1a;
+    }
+    .welcome h2 { font-size: 32px; margin-bottom: 14px; color: #2a1a4e; }
+    .welcome p.lede { font-size: 17px; color: #5a4a3a; line-height: 1.55; margin-bottom: 36px; }
+    .surfaces { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .surface {
+      background: #fff; border: 1px solid #e0d8c8; border-radius: 8px; padding: 18px;
+      text-decoration: none; color: inherit; transition: all 0.18s;
+      display: block;
+    }
+    .surface:hover { border-color: #6a3a8e; box-shadow: 0 4px 16px rgba(106,58,142,0.12); transform: translateY(-2px); }
+    .surface h3 { font-size: 16px; color: #2a1a4e; margin-bottom: 6px; font-weight: 600; }
+    .surface p { font-size: 13px; color: #6a5a4a; line-height: 1.45; }
+    .surface .badge {
+      display: inline-block; font-size: 10px; padding: 2px 8px;
+      background: #f8d870; color: #5a3a0a; border-radius: 10px;
+      font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .surface[data-tab="nadi"]    .badge { background: #d8b8f8; color: #3a1a5a; }
+    .surface[data-tab="numero"]  .badge { background: #b8d8f8; color: #1a2a5a; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Vedic &amp; Nadi Astrology Engine</h1>
+      <div class="tagline">Sidereal Lahiri · Three-tab portal · Geo-Astrological intelligence</div>
+    </header>
+    <nav class="tabs" id="tab-nav">
+      <a href="#welcome"  data-tab="welcome">Home</a>
+      <a href="#nadi"     data-tab="nadi">Nadi Chart</a>
+      <a href="#numero"   data-tab="numero">NumeroAstro</a>
+      <a href="#kurma"    data-tab="kurma">Kurma Grid</a>
+      <a href="#carto"    data-tab="carto">Astrocartography</a>
+      <a href="#today"    data-tab="today">Cosmic Weather</a>
+      <a href="#eclipses" data-tab="eclipses">Eclipses</a>
+      <a href="#interpret" data-tab="interpret">Interpret</a>
+      <a href="#docs"     data-tab="docs">API Docs</a>
+    </nav>
+    <div class="frame-wrap">
+      <div id="welcome-pane" class="welcome">
+        <h2>The three-tab portal</h2>
+        <p class="lede">A sidereal Vedic engine grounded in Brihat Samhita and BPHS, paired with a numerology-driven probability reader and a Kurma-Chakra geo-astrology layer. Pick a surface below or use the tabs above.</p>
+        <div class="surfaces">
+          <a class="surface" href="#nadi" data-tab="nadi">
+            <span class="badge">Tab 1</span>
+            <h3>Nadi Chart Calculator</h3>
+            <p>Enter birth data to compute D1/D9/D10, ascendant, Mahadasha &amp; Antardasha, panchanga, yogas, ashtakavarga, and avasthas.</p>
+          </a>
+          <a class="surface" href="#numero" data-tab="numero">
+            <span class="badge">Tab 2</span>
+            <h3>NumeroAstro</h3>
+            <p>Date-of-Birth probability engine — numerology, karma classification, vedic-numerology hybrid reads.</p>
+          </a>
+          <a class="surface" href="#kurma" data-tab="kurma">
+            <span class="badge">Tab 3</span>
+            <h3>Kurma Chakra Grid</h3>
+            <p>Brihat Samhita's 9-region geo-astrology layer. Educational, no birth chart required.</p>
+          </a>
+          <a class="surface" href="#carto" data-tab="carto">
+            <span class="badge">Tab 3</span>
+            <h3>Astrocartography</h3>
+            <p>Personalized planetary lines (MC/IC/Asc/Desc for each graha) overlaid on the Kurma grid.</p>
+          </a>
+          <a class="surface" href="#today" data-tab="today">
+            <span class="badge">Tab 3</span>
+            <h3>Cosmic Weather</h3>
+            <p>Daily mundane forecast — ingresses, stations, conjunctions, and Kurma regions activated by today's sky.</p>
+          </a>
+          <a class="surface" href="#eclipses" data-tab="eclipses">
+            <span class="badge">Tab 3</span>
+            <h3>Eclipse Impact Mapper</h3>
+            <p>Upcoming solar &amp; lunar eclipses tagged with the Kurma region they activate via the luminary's nakshatra.</p>
+          </a>
+        </div>
+      </div>
+      <iframe id="content-frame" title="Tab content" style="display:none"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Hash-driven tab routing. Each tab maps to a URL the iframe loads,
+    // except 'welcome' which shows the static landing pane (iframe hidden).
+    const TAB_URLS = {
+      welcome:  null,
+      nadi:     '/chart/page',
+      numero:   '/portal/',
+      kurma:    '/medini/kurma-widget',
+      carto:    '/medini/cartography/page',
+      today:    '/medini/today/page',
+      eclipses: '/medini/eclipses/page',
+      interpret: '/interpret/page',
+      docs:     '/docs',
+    };
+
+    const frame = document.getElementById('content-frame');
+    const welcomePane = document.getElementById('welcome-pane');
+    const tabLinks = document.querySelectorAll('#tab-nav a, .surface');
+
+    function activateTab(name) {
+      const url = TAB_URLS[name];
+      if (!url) {
+        frame.style.display = 'none';
+        welcomePane.style.display = 'block';
+      } else {
+        welcomePane.style.display = 'none';
+        frame.style.display = 'block';
+        if (frame.src !== window.location.origin + url) {
+          frame.src = url;
+        }
+      }
+      document.querySelectorAll('#tab-nav a').forEach(a => {
+        a.classList.toggle('active', a.dataset.tab === name);
+      });
+    }
+
+    function tabFromHash() {
+      const h = window.location.hash.replace(/^#/, '') || 'welcome';
+      return TAB_URLS.hasOwnProperty(h) ? h : 'welcome';
+    }
+
+    window.addEventListener('hashchange', () => activateTab(tabFromHash()));
+    activateTab(tabFromHash());
+  </script>
+</body>
+</html>

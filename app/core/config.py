@@ -38,6 +38,16 @@ class Settings(BaseSettings):
     RATE_LIMIT_AUTH_LOGIN_PER_MINUTE: int = 60
     RATE_LIMIT_AUTH_CALLBACK_PER_MINUTE: int = 10
 
+    # Ollama LLM narrative layer. Disabled by default so CI / fresh checkouts
+    # serve deterministic-template fallbacks without needing a local Ollama
+    # daemon. Set OLLAMA_ENABLED=true and run `ollama serve` to switch to LLM
+    # narratives. The default model is llama3.1; users can swap to qwen2.5,
+    # phi3, etc. via the env var.
+    OLLAMA_ENABLED: bool = False
+    OLLAMA_HOST: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3.1"
+    OLLAMA_TIMEOUT_SECONDS: float = 30.0
+
     # extra="forbid" makes Settings(...) instantiation reject unknown kwargs.
     # It does NOT scan os.environ for unknown keys — pydantic-settings only
     # reads vars matching declared fields — so unrelated env vars (PATH etc.)

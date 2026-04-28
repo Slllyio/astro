@@ -35,7 +35,6 @@ import datetime as dt
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,14 +73,22 @@ def derive_binary_target(df: pd.DataFrame, target_substring: str) -> pd.Series:
 def select_features(df: pd.DataFrame) -> pd.DataFrame:
     """Drop label/metadata columns and prep dtypes for XGBoost.
 
-    String-categorical columns (`tattva_*`, `dispositor_*`, `final_dispositor`)
-    become pandas Categorical so XGBoost's `enable_categorical=True` can
-    consume them directly.
+    Any non-numeric, non-categorical column gets converted to
+    `pd.Categorical` so XGBoost's `enable_categorical=True` can consume
+    it directly. This catches both numpy `object` dtype (Windows) and
+    pandas `string` dtype (newer pandas/pyarrow on Linux), which would
+    otherwise break XGBoost's DMatrix construction.
     """
     feature_df = df.drop(columns=list(NON_FEATURE_COLUMNS), errors="ignore").copy()
     for col in feature_df.columns:
-        if feature_df[col].dtype == object:
-            feature_df[col] = feature_df[col].astype("category")
+        s = feature_df[col]
+        # Skip already-numeric and already-categorical columns.
+        if pd.api.types.is_numeric_dtype(s) or pd.api.types.is_bool_dtype(s):
+            continue
+        if isinstance(s.dtype, pd.CategoricalDtype):
+            continue
+        # Anything else (object, string, etc.) → Categorical.
+        feature_df[col] = s.astype("category")
     return feature_df
 
 

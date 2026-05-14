@@ -9,7 +9,7 @@ from httpx import AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from app.models.domain import NatalChart, UserProfile
+from app.models.domain import NatalChart, TransitAlert, UserProfile
 
 from _helpers import sample_profile_payload  # tests/ is on sys.path via pytest rootdir
 
@@ -145,3 +145,50 @@ async def test_natal_chart_one_per_user(
     ))
     with pytest.raises(Exception):  # IntegrityError or InvalidRequestError; both correct
         await db_session.commit()
+
+
+async def test_duplicate_active_transit_alert_raises_integrity_error(
+    authed_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Partial unique index (ix_transit_alerts_active_unique) must block duplicate
+    active alerts for the same (user_id, transit_planet, natal_planet, alert_type).
+    Deactivated rows are exempt from the constraint.
+    """
+    from sqlalchemy.exc import IntegrityError
+
+    create_resp = await authed_client.post("/profiles", json=sample_profile_payload())
+    assert create_resp.status_code == 201
+    user_id = create_resp.json()["id"]
+
+    def _alert() -> TransitAlert:
+        return TransitAlert(
+            user_id=user_id,
+            alert_type="CONJUNCTION",
+            description="regression test",
+            transit_planet="Saturn",
+            natal_planet="Moon",
+            is_exact=False,
+            is_active=True,
+        )
+
+    db_session.add(_alert())
+    await db_session.commit()
+
+    # Second active row with identical idempotency tuple — must be rejected.
+    db_session.add(_alert())
+    with pytest.raises((IntegrityError, Exception)):
+        await db_session.commit()
+    await db_session.rollback()
+
+    # A deactivated row with the same tuple is allowed — the partial index only
+    # covers is_active=True rows.
+    db_session.add(TransitAlert(
+        user_id=user_id,
+        alert_type="CONJUNCTION",
+        description="deactivated copy",
+        transit_planet="Saturn",
+        natal_planet="Moon",
+        is_exact=False,
+        is_active=False,
+    ))
+    await db_session.commit()  # must not raise

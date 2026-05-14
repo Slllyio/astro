@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import datetime as dt
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, JSON, String, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, JSON, String, UniqueConstraint, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -115,6 +115,17 @@ class TransitAlert(Base):
     __tablename__ = "transit_alerts"
     __table_args__ = (
         Index("ix_transit_alerts_user_active_date", "user_id", "is_active", "exact_date"),
+        # Partial unique index: prevents duplicate active alerts for the same
+        # (user, transit_planet, natal_planet, alert_type) tuple.
+        # Scoped to is_active=True so deactivated history rows are not constrained
+        # (AlertHistory, when it ships, will own the append-only audit trail).
+        Index(
+            "ix_transit_alerts_active_unique",
+            "user_id", "transit_planet", "natal_planet", "alert_type",
+            unique=True,
+            sqlite_where=text("is_active = 1"),
+            postgresql_where=text("is_active = true"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

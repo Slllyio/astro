@@ -274,13 +274,25 @@ def _write_report(
 def run_training(
     *,
     features_parquet: Path,
-    targets_csv: Path,
+    targets_csv: Path | None,
     target_column: str,
     output_root: Path,
     seed: int = 42,
     drop_other: bool = False,
+    in_parquet_label: bool = False,
+    min_class_count: int = 50,
 ) -> Path:
-    """End-to-end multi-class softmax classifier."""
+    """End-to-end multi-class softmax classifier.
+
+    Two label-source modes:
+
+    - ``in_parquet_label=False`` (legacy): ``targets_csv`` is joined on
+      ``name`` to populate the label column.
+    - ``in_parquet_label=True`` (per-event corpus): ``target_column``
+      already exists in the parquet (e.g. ``event_root`` for the per-event
+      corpus). Rare classes with fewer than ``min_class_count`` samples
+      are collapsed into "other".
+    """
     if not features_parquet.exists():
         raise FileNotFoundError(f"features parquet missing: {features_parquet}")
 
@@ -288,15 +300,35 @@ def run_training(
     df = pd.read_parquet(features_parquet)
     logger.info("loaded %d rows × %d columns", len(df), len(df.columns))
 
-    label_map = load_label_map(targets_csv, target_column)
-    # Match the regressor's case-insensitive join — derived CSVs use
-    # original names but the multiclass derivation kept original case;
-    # do the lowercase join defensively in case derivation conventions
-    # diverge between scripts.
-    df["_label"] = (
-        df["name"].astype(str).str.strip().str.lower()
-        .map({k.strip().lower(): v for k, v in label_map.items()})
-    )
+    if in_parquet_label:
+        if target_column not in df.columns:
+            raise ValueError(
+                f"target_column={target_column!r} not in parquet; "
+                f"available: {sorted(df.columns)[:20]}..."
+            )
+        # Normalise the label and collapse rare classes
+        df["_label"] = df[target_column].astype(str).str.strip().str.lower()
+        counts = df["_label"].value_counts()
+        rare = set(counts[counts < min_class_count].index)
+        if rare:
+            logger.info(
+                "collapsing %d rare classes (<%d samples) into 'other'",
+                len(rare), min_class_count,
+            )
+            df.loc[df["_label"].isin(rare), "_label"] = "other"
+    else:
+        if targets_csv is None:
+            raise ValueError("targets_csv required when in_parquet_label=False")
+        label_map = load_label_map(targets_csv, target_column)
+        # Match the regressor's case-insensitive join — derived CSVs use
+        # original names but the multiclass derivation kept original case;
+        # do the lowercase join defensively in case derivation conventions
+        # diverge between scripts.
+        df["_label"] = (
+            df["name"].astype(str).str.strip().str.lower()
+            .map({k.strip().lower(): v for k, v in label_map.items()})
+        )
+
     before_drop = len(df)
     df = df.dropna(subset=["_label"]).copy()
     if drop_other:
@@ -403,14 +435,29 @@ def main(argv: list[str] | None = None) -> int:
         description="Train an XGBoost softmax classifier on a Vedic Tensor parquet.",
     )
     parser.add_argument("--features", type=Path, required=True)
-    parser.add_argument("--targets-csv", type=Path, required=True)
+    parser.add_argument(
+        "--targets-csv", type=Path, default=None,
+        help="External labels CSV joined by name. Omit when "
+             "--in-parquet-label is set.",
+    )
     parser.add_argument("--target-column", type=str, default="vocation_root")
+    parser.add_argument(
+        "--in-parquet-label", action="store_true",
+        help="Read target-column directly from the parquet (e.g. "
+             "event_root for the per-event corpus). When set, --targets-csv "
+             "must be omitted.",
+    )
+    parser.add_argument(
+        "--min-class-count", type=int, default=50,
+        help="When --in-parquet-label is set, collapse classes with fewer "
+             "than this many samples into 'other'.",
+    )
     parser.add_argument("--output", type=Path, default=Path("data/ml_runs"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--drop-other", action="store_true",
         help="Exclude the 'other' catch-all class so the model only sees "
-             "rows with a real vocation label.",
+             "rows with a real label.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
@@ -420,6 +467,11 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
+    if args.in_parquet_label and args.targets_csv is not None:
+        parser.error("--in-parquet-label is incompatible with --targets-csv")
+    if not args.in_parquet_label and args.targets_csv is None:
+        parser.error("--targets-csv is required unless --in-parquet-label is set")
+
     try:
         run_dir = run_training(
             features_parquet=args.features,
@@ -428,6 +480,8 @@ def main(argv: list[str] | None = None) -> int:
             output_root=args.output,
             seed=args.seed,
             drop_other=args.drop_other,
+            in_parquet_label=args.in_parquet_label,
+            min_class_count=args.min_class_count,
         )
     except Exception as exc:
         logger.error("training failed: %s", exc)

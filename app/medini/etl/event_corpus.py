@@ -327,12 +327,31 @@ def build_event_corpus(
     features_parquet: Path,
     events_csv: Path,
     raw_csv: Path,
-    event_root_filter: str,
+    event_root_filter: str | None,
     output_parquet: Path,
     seed: int = 42,
     limit: int | None = None,
+    include_negatives: bool = True,
 ) -> dict[str, int]:
-    """Build a per-event corpus parquet. Returns stats dict."""
+    """Build a per-event corpus parquet. Returns stats dict.
+
+    Two modes — driven by what comes next:
+
+    1. **Binary-target mode** (``event_root_filter`` set, ``include_negatives=True``).
+       Filters events to one ``event_root`` and draws strict month-anchored
+       negatives. Pair with ``train_classifier.py --target-column is_event``
+       for "did this person experience event-X at this date".
+
+    2. **Multi-class mode** (``event_root_filter=None``, ``include_negatives=False``).
+       Keeps every real event of every type. No negatives. Pair with
+       ``train_multiclass.py --target-column event_root`` for "given
+       (natal + transit + dasha), which kind of event is this".
+
+    The user's original framing — "for each event for a person we take
+    the dob planet positions + date of event planet positions + time of
+    dasha" — is mode 2: one row per real (person, event), event type as
+    label, no artificial negatives.
+    """
     if not features_parquet.exists():
         raise FileNotFoundError(f"features parquet missing: {features_parquet}")
     if not events_csv.exists():
@@ -360,13 +379,12 @@ def build_event_corpus(
 
     logger.info("loading events from %s", events_csv)
     events_df = pd.read_csv(events_csv)
-    # Keep only events of the requested root, with a full ISO date, and
-    # a person we have a natal chart for.
     events_df["_name_lower"] = events_df["name"].astype(str).str.strip().str.lower()
-    events_df = events_df[
-        events_df["event_root"].astype(str).str.lower()
-        == event_root_filter.lower()
-    ]
+    if event_root_filter is not None:
+        events_df = events_df[
+            events_df["event_root"].astype(str).str.lower()
+            == event_root_filter.lower()
+        ]
     # Keep events with EITHER a full date OR a year — the JD parser
     # falls back to July 1 of the event_year when the date is missing.
     has_date = events_df["event_date"].notna()
@@ -375,8 +393,8 @@ def build_event_corpus(
     events_df = events_df[events_df["_name_lower"].isin(features_df.index)]
     events_df = events_df[events_df["_name_lower"].isin(raw_df.index)]
     logger.info(
-        "%d %r events joinable (date or year + natal chart + raw birth data)",
-        len(events_df), event_root_filter,
+        "%d events joinable (filter=%r, date-or-year + natal + raw)",
+        len(events_df), event_root_filter or "ALL",
     )
 
     if limit is not None:
@@ -446,39 +464,40 @@ def build_event_corpus(
         n_positives, failed_positives, len(positive_jds_per_person),
     )
 
-    # ── Pass 2: negatives ─────────────────────────────────────────────
+    # ── Pass 2: negatives (only in binary-target mode) ────────────────
     failed_negatives = 0
-    n_negatives_drawn = 0
-    for name_lower, positive_jds in positive_jds_per_person.items():
-        meta = person_meta[name_lower]
-        natal_row = features_df.loc[name_lower]
-        negative_jds = _draw_negative_jds(
-            rng, meta["birth_jd"], positive_jds, len(positive_jds),
-        )
-        for neg_jd in negative_jds:
-            row = _build_event_row(
-                natal_row,
-                event_jd=neg_jd,
-                birth_jd=meta["birth_jd"],
-                latitude=meta["latitude"],
-                longitude=meta["longitude"],
-                moon_longitude=meta["moon_lon"],
-                is_event=0,
-                event_date=str(dt.date(*swe.revjul(neg_jd, swe.GREG_CAL)[:3])),
-                event_root="",
-                event_subtype="",
+    if include_negatives:
+        for name_lower, positive_jds in positive_jds_per_person.items():
+            meta = person_meta[name_lower]
+            natal_row = features_df.loc[name_lower]
+            negative_jds = _draw_negative_jds(
+                rng, meta["birth_jd"], positive_jds, len(positive_jds),
             )
-            if row is None:
-                failed_negatives += 1
-                continue
-            rows.append(row)
-            n_negatives_drawn += 1
+            for neg_jd in negative_jds:
+                row = _build_event_row(
+                    natal_row,
+                    event_jd=neg_jd,
+                    birth_jd=meta["birth_jd"],
+                    latitude=meta["latitude"],
+                    longitude=meta["longitude"],
+                    moon_longitude=meta["moon_lon"],
+                    is_event=0,
+                    event_date=str(dt.date(*swe.revjul(neg_jd, swe.GREG_CAL)[:3])),
+                    event_root="",
+                    event_subtype="",
+                )
+                if row is None:
+                    failed_negatives += 1
+                    continue
+                rows.append(row)
 
     n_negatives = sum(1 for r in rows if r["is_event"] == 0)
-    logger.info(
-        "negatives: succeeded=%d failed=%d",
-        n_negatives, failed_negatives,
-    )
+    if include_negatives:
+        logger.info(
+            "negatives: succeeded=%d failed=%d", n_negatives, failed_negatives,
+        )
+    else:
+        logger.info("multi-class mode: no negatives drawn")
 
     if not rows:
         raise RuntimeError(
@@ -527,9 +546,14 @@ def main(argv: list[str] | None = None) -> int:
              "+ latitude + longitude + tz_offset.",
     )
     parser.add_argument(
-        "--event-root", type=str, required=True,
-        help="event_root substring to keep as positives "
-             "(e.g. 'Marriage', 'Death by Disease').",
+        "--event-root", type=str, default=None,
+        help="event_root to keep (e.g. 'Marriage', 'Death by Disease'). "
+             "Omit to keep ALL event types — required for multi-class mode.",
+    )
+    parser.add_argument(
+        "--no-negatives", action="store_true",
+        help="Skip negative-sample synthesis. Required for multi-class "
+             "training (one row per real event; label = event_root).",
     )
     parser.add_argument(
         "--output", type=Path, required=True,
@@ -546,6 +570,15 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
+    # Validation: --event-root is required when negatives are enabled
+    # (the binary mode needs to know which event type is the positive class)
+    if args.event_root is None and not args.no_negatives:
+        parser.error(
+            "binary-mode (negatives enabled) requires --event-root; "
+            "omit --event-root only when paired with --no-negatives "
+            "for multi-class corpus."
+        )
+
     stats = build_event_corpus(
         features_parquet=args.features,
         events_csv=args.events,
@@ -554,6 +587,7 @@ def main(argv: list[str] | None = None) -> int:
         output_parquet=args.output,
         seed=args.seed,
         limit=args.limit,
+        include_negatives=not args.no_negatives,
     )
     print(
         f"Event corpus built: positives={stats['n_positives']} "

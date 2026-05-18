@@ -56,6 +56,12 @@ logger = logging.getLogger(__name__)
 NON_FEATURE_COLUMNS: tuple[str, ...] = (
     "name", "rodden_rating", "categories_raw", "categories_lower",
     "categories_tokens", "source_url",
+    # Per-event corpus metadata (Round 4). `event_root` is the textual
+    # label that drives ``is_event`` — including it as a feature would
+    # leak the label. `birth_jd` and `event_jd` are absolute Julian Days
+    # that encode era position and would induce era confounding.
+    "is_event", "event_root", "event_subtype", "event_date",
+    "event_jd", "birth_jd",
 )
 
 
@@ -302,8 +308,15 @@ def run_training(
     seed: int = 42,
     top_n_features: int = 10,
     min_rule_impact: float = 0.05,
+    target_column: str | None = None,
 ) -> Path:
-    """Execute the Stage 3 pipeline end-to-end. Returns the per-run output dir."""
+    """Execute the Stage 3 pipeline end-to-end. Returns the per-run output dir.
+
+    Either ``target_substring`` (matched against ``categories_lower``) or
+    ``target_column`` (read as a pre-built 0/1 column) must drive the label.
+    When ``target_column`` is given it wins — used for per-event corpora
+    where positives/negatives are pre-resolved.
+    """
     if not features_parquet.exists():
         raise FileNotFoundError(f"features parquet not found: {features_parquet}")
 
@@ -311,11 +324,21 @@ def run_training(
     df = pd.read_parquet(features_parquet)
     logger.info("loaded %d rows × %d columns", len(df), len(df.columns))
 
-    y = derive_binary_target(df, target_substring)
+    if target_column:
+        if target_column not in df.columns:
+            raise ValueError(
+                f"target_column={target_column!r} not present in parquet; "
+                f"available: {sorted(df.columns)[:20]}..."
+            )
+        y = df[target_column].astype(int)
+        label_name = target_column
+    else:
+        y = derive_binary_target(df, target_substring)
+        label_name = target_substring
     n_pos = int(y.sum())
     base_rate = float(y.mean())
     logger.info(
-        "target=%r  positives=%d  base_rate=%.4f", target_substring, n_pos, base_rate,
+        "target=%r  positives=%d  base_rate=%.4f", label_name, n_pos, base_rate,
     )
     if n_pos < 5:
         raise ValueError(
@@ -351,7 +374,7 @@ def run_training(
 
     # Output directory: data/ml_runs/{target}_{timestamp}/
     timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    safe_target = "".join(c if c.isalnum() else "_" for c in target_substring)
+    safe_target = "".join(c if c.isalnum() else "_" for c in label_name)
     run_dir = output_root / f"{safe_target}_{timestamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -388,7 +411,7 @@ def run_training(
     # Markdown report
     write_report(
         run_dir / "report.md",
-        target_name=target_substring,
+        target_name=label_name,
         n_train=len(X_train),
         n_test=len(X_test),
         base_rate=base_rate,
@@ -426,9 +449,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--features", type=Path,
                         default=Path("app/medini/data/ml_astro_features.parquet"),
                         help="Stage 2 ETL output parquet.")
-    parser.add_argument("--target", type=str, required=True,
+    parser.add_argument("--target", type=str, default=None,
                         help="Lowercase substring matched against categories_lower "
-                             "(e.g. 'politician', 'athlete', 'astronaut').")
+                             "(e.g. 'politician', 'athlete', 'astronaut'). "
+                             "Mutually exclusive with --target-column.")
+    parser.add_argument("--target-column", type=str, default=None,
+                        help="Name of a pre-built 0/1 column in the parquet "
+                             "to use as the label directly (e.g. 'is_event' "
+                             "for the per-event corpora). Mutually exclusive "
+                             "with --target.")
     parser.add_argument("--output", type=Path, default=Path("data/ml_runs"),
                         help="Root directory for per-run output folders.")
     parser.add_argument("--seed", type=int, default=42,
@@ -445,14 +474,18 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
+    if bool(args.target) == bool(args.target_column):
+        parser.error("exactly one of --target / --target-column must be given")
+
     try:
         run_dir = run_training(
             features_parquet=args.features,
-            target_substring=args.target,
+            target_substring=args.target or "",
             output_root=args.output,
             seed=args.seed,
             top_n_features=args.top_n_features,
             min_rule_impact=args.min_rule_impact,
+            target_column=args.target_column,
         )
     except Exception as exc:
         logger.error("training failed: %s", exc)

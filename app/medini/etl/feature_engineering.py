@@ -365,6 +365,110 @@ def _compute_dasha_timeline_features(
     return features
 
 
+def compute_full_mahadasha_cycle(
+    jd_birth: float, moon_longitude: float,
+) -> list[tuple[str, float, float]]:
+    """Return the 9 Mahadashas spanning a full 120-year Vimshottari cycle
+    anchored to ``jd_birth`` as (lord, start_jd, end_jd) tuples in cycle
+    order, starting with the natal lord.
+
+    The natal MD started ``years_elapsed`` years before ``jd_birth``
+    (because birth occurred mid-MD). Each subsequent MD starts where the
+    previous one ends, with duration = lord's Vimshottari weight in years.
+
+    The whole cycle ends at ``jd_birth + (120 - years_elapsed) * DAYS_PER_VEDIC_YEAR``.
+    """
+    md = calculate_vimshottari_mahadasha(moon_longitude, jd_birth)
+    natal_lord: str = md["mahadasha_lord"]
+    natal_total: float = md["total_duration_years"]
+    natal_elapsed: float = md["time_elapsed_years"]
+
+    lord_years: dict[str, int] = {name: yrs for name, yrs in DASHA_LORDS}
+    lord_names: list[str] = [name for name, _ in DASHA_LORDS]
+    start_idx = lord_names.index(natal_lord)
+
+    cursor_jd = jd_birth - natal_elapsed * DAYS_PER_VEDIC_YEAR
+    cycle: list[tuple[str, float, float]] = []
+    for offset in range(len(lord_names)):
+        lord = lord_names[(start_idx + offset) % len(lord_names)]
+        if offset == 0:
+            years = natal_total
+        else:
+            years = float(lord_years[lord])
+        start = cursor_jd
+        end = start + years * DAYS_PER_VEDIC_YEAR
+        cycle.append((lord, start, end))
+        cursor_jd = end
+    return cycle
+
+
+def active_dasha_at(
+    event_jd: float, jd_birth: float, moon_longitude: float,
+) -> dict[str, Any]:
+    """Active Mahadasha + Antardasha at an arbitrary ``event_jd``.
+
+    Returns a dict with:
+      - ``active_md_lord``: str
+      - ``active_ad_lord``: str
+      - ``md_elapsed_years``: float (years from MD start to event)
+      - ``ad_elapsed_years``: float (years from AD start to event)
+
+    Outside the natal 120-year window the function returns sentinel
+    "none" lords and NaN elapsed values — XGBoost treats those as
+    missing.
+    """
+    cycle = compute_full_mahadasha_cycle(jd_birth, moon_longitude)
+    cycle_start = cycle[0][1]
+    cycle_end = cycle[-1][2]
+    if event_jd < cycle_start or event_jd > cycle_end:
+        return {
+            "active_md_lord": "none",
+            "active_ad_lord": "none",
+            "md_elapsed_years": float("nan"),
+            "ad_elapsed_years": float("nan"),
+        }
+
+    # Find which MD covers event_jd
+    md_lord: str = cycle[0][0]
+    md_start: float = cycle[0][1]
+    md_end: float = cycle[0][2]
+    for lord, start, end in cycle:
+        if start <= event_jd <= end:
+            md_lord, md_start, md_end = lord, start, end
+            break
+
+    md_elapsed_years = (event_jd - md_start) / DAYS_PER_VEDIC_YEAR
+    md_total_years = (md_end - md_start) / DAYS_PER_VEDIC_YEAR
+
+    # Divide MD into 9 ADs starting with MD lord (same rotation as
+    # compute_antardashas). Find which AD covers event_jd.
+    lord_years: dict[str, int] = {name: yrs for name, yrs in DASHA_LORDS}
+    lord_names: list[str] = [name for name, _ in DASHA_LORDS]
+    md_lord_idx = lord_names.index(md_lord)
+
+    ad_cursor = md_start
+    ad_lord = md_lord
+    ad_start = md_start
+    for offset in range(len(lord_names)):
+        candidate_lord = lord_names[(md_lord_idx + offset) % len(lord_names)]
+        ad_duration_years = md_total_years * lord_years[candidate_lord] / 120.0
+        ad_end = ad_cursor + ad_duration_years * DAYS_PER_VEDIC_YEAR
+        if ad_cursor <= event_jd <= ad_end:
+            ad_lord = candidate_lord
+            ad_start = ad_cursor
+            break
+        ad_cursor = ad_end
+
+    ad_elapsed_years = (event_jd - ad_start) / DAYS_PER_VEDIC_YEAR
+
+    return {
+        "active_md_lord": md_lord,
+        "active_ad_lord": ad_lord,
+        "md_elapsed_years": md_elapsed_years,
+        "ad_elapsed_years": ad_elapsed_years,
+    }
+
+
 def _compute_kinematic_derivatives(jd: float) -> dict[str, float]:
     """Higher-order time derivatives of planetary longitudes — 13 floats.
 

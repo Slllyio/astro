@@ -110,7 +110,6 @@ def test_extract_rules_finds_known_threshold_rule() -> None:
         base_rate=0.5,           # 50% so probability deltas are large
         top_n_features=3,
         min_rule_impact=0.05,
-        n_bins=10,
     )
 
     feature_a_rules = [r for r in rules if r.feature == "feature_a"]

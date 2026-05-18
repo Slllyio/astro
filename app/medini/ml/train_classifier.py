@@ -42,6 +42,7 @@ import numpy as np
 import pandas as pd
 import shap
 import xgboost as xgb
+from sklearn.isotonic import IsotonicRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
@@ -125,6 +126,7 @@ def cross_validate_roc_auc(
             tree_method="hist",
             random_state=seed,
             eval_metric="logloss",
+            n_jobs=-1,
         )
         clf.fit(X_tr, y_tr)
         proba = clf.predict_proba(X_val)[:, 1]
@@ -150,9 +152,39 @@ def fit_final_model(
         tree_method="hist",
         random_state=seed,
         eval_metric="logloss",
+        n_jobs=-1,
     )
     clf.fit(X_train, y_train)
     return clf
+
+
+def fit_probability_calibrator(
+    model: xgb.XGBClassifier,
+    X_holdout: pd.DataFrame,
+    y_holdout: pd.Series,
+) -> IsotonicRegression:
+    """Fit an Isotonic calibration on holdout predictions.
+
+    `scale_pos_weight` (used in fit_final_model for AUC on imbalanced
+    targets) systematically inflates the minority-class output probability:
+    XGBoost's internal calibration is to a 50/50 reference, not the
+    actual population base rate. A raw `predict_proba()` output of 0.6
+    for a 5%-base-rate target represents a much smaller probability shift
+    than +55 percentage points.
+
+    Isotonic regression on the holdout corrects this without retraining.
+    The fitted calibrator is downstream-fed to `extract_rules` so the
+    rule narrative reflects real population probability shifts, not the
+    weighted-model artifact.
+
+    `out_of_bounds="clip"` ensures input probabilities slightly outside
+    [0, 1] (which can happen with sigmoid-mapped extreme SHAP values)
+    don't raise.
+    """
+    raw_probs = model.predict_proba(X_holdout)[:, 1]
+    calibrator = IsotonicRegression(out_of_bounds="clip")
+    calibrator.fit(raw_probs, y_holdout)
+    return calibrator
 
 
 def shap_values_for_test(
@@ -306,6 +338,13 @@ def run_training(
     test_auc = float(roc_auc_score(y_test, test_proba))
     logger.info("holdout test ROC-AUC: %.4f", test_auc)
 
+    # Isotonic calibration on the holdout — converts XGBoost's scale_pos_weight
+    # -inflated probabilities back to the true population scale. Downstream
+    # rule extraction multiplies SHAP-shifted probabilities through this map,
+    # so rule narratives reflect real-world percentage shifts rather than the
+    # weighted-model artifact.
+    calibrator = fit_probability_calibrator(model, X_test, y_test)
+
     # SHAP on the holdout test set
     shap_values = shap_values_for_test(model, X_test)
     feature_names = list(X.columns)
@@ -342,6 +381,7 @@ def run_training(
         base_rate=base_rate,
         top_n_features=top_n_features,
         min_rule_impact=min_rule_impact,
+        calibrator=calibrator,
     )
     _write_rules_csv(rules, run_dir / "rules.csv")
 

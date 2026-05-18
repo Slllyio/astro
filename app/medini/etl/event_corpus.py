@@ -54,8 +54,10 @@ import numpy as np
 import pandas as pd
 import swisseph as swe
 
+from app.core.sade_sati import is_in_sade_sati
 from app.medini.etl.feature_engineering import (
     active_dasha_at,
+    compute_active_pratyantar,
     compute_chart_features,
 )
 from app.medini.etl.lahiri_worker import init_worker
@@ -192,6 +194,78 @@ def _cross_features(
     return out
 
 
+# Round 5 cross-feature helpers — depend on BOTH natal and transit and
+# can't be computed inside compute_chart_features (which sees only one
+# chart at a time).
+
+# Mapping from natal planet name (lowercase) to the natal-chart BAV table
+# column produced by `bav_in_sign_<planet>`. Nodes don't carry their own
+# BAV table in classical Vedic — only the 7 chara grahas.
+_BAV_GRAHAS: tuple[str, ...] = (
+    "sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn",
+)
+
+
+def _transit_bav_features(
+    natal_row: pd.Series, transit: dict[str, Any],
+) -> dict[str, float]:
+    """7 cols: where each transit planet is, look up the bindu count
+    that planet has in the NATAL Ashtakavarga table for its current
+    transit sign.
+
+    THE textbook classical-Vedic transit predictor. A planet transiting
+    a sign that holds high bindus in its natal BAV table delivers strong
+    results; low bindus = struggle. Currently we only have natal
+    `bav_in_sign_<planet>` (BAV at the planet's NATAL sign) — this adds
+    the time-varying gochara dimension.
+
+    Stored in natal parquet as `bav_in_sign_<planet>` is a scalar for
+    the planet's natal sign. We approximate the full natal BAV table
+    by inferring from the `sav_house_<n>` cols. SAV is the sum over the
+    7 charas, so we can't perfectly reconstruct per-planet bindus from
+    SAV alone. Pragmatic fallback: use SAV at the transit planet's
+    current sign as a strength proxy. Accurate full-BAV-table is a
+    Round 6 follow-up that requires re-emitting the BAV matrix from
+    the natal ETL.
+    """
+    out: dict[str, float] = {}
+    for planet in _BAV_GRAHAS:
+        # Transit planet's current sign (1..12)
+        t_lon = transit.get(f"t_lon_{planet}")
+        if t_lon is None:
+            out[f"transit_bav_{planet}"] = float("nan")
+            continue
+        transit_sign = int(float(t_lon) // 30) + 1  # 1..12
+        # Look up SAV at that sign (proxy for full BAV until table is exposed)
+        sav_value = natal_row.get(f"sav_house_{transit_sign}", float("nan"))
+        try:
+            out[f"transit_bav_{planet}"] = float(sav_value)
+        except (ValueError, TypeError):
+            out[f"transit_bav_{planet}"] = float("nan")
+    return out
+
+
+def _sade_sati_features(
+    natal_moon_sign: int, transit_saturn_sign: int,
+) -> dict[str, int]:
+    """3 cols: classical Saturn-from-Moon transit phase flags.
+
+    - ``sade_sati_active``: 1 if transit Saturn is in 12th/1st/2nd from
+      natal Moon (the canonical 7.5-year hard period)
+    - ``kantaka_shani``: 1 if transit Saturn in 4th from natal Moon
+      (obstacles to home / domestic life)
+    - ``ashtama_shani``: 1 if transit Saturn in 8th from natal Moon
+      (longevity stress / sudden upheaval)
+    """
+    info = is_in_sade_sati(transit_saturn_sign, natal_moon_sign)
+    house_distance = ((transit_saturn_sign - natal_moon_sign) % 12) + 1
+    return {
+        "sade_sati_active": 1 if info is not None else 0,
+        "kantaka_shani": 1 if house_distance == 4 else 0,
+        "ashtama_shani": 1 if house_distance == 8 else 0,
+    }
+
+
 def _build_event_row(
     natal_row: pd.Series,
     *,
@@ -226,12 +300,29 @@ def _build_event_row(
     }
     cross = _cross_features(natal, transit)
     dasha = active_dasha_at(event_jd, birth_jd, moon_longitude)
+    pratyantar = compute_active_pratyantar(event_jd, birth_jd, moon_longitude)
+    transit_bav = _transit_bav_features(natal_row, transit)
+    # Sade Sati / Kantaka / Ashtama require transit Saturn's sign + natal
+    # Moon sign. Both are derivable from the chart dicts.
+    natal_moon_sign = int(natal_row.get("lon_moon", 0)) // 30 + 1
+    transit_saturn_lon = transit.get("t_lon_saturn")
+    if transit_saturn_lon is None:
+        sade_sati = {"sade_sati_active": 0, "kantaka_shani": 0, "ashtama_shani": 0}
+    else:
+        transit_saturn_sign = int(float(transit_saturn_lon)) // 30 + 1
+        # Clamp to 1..12 (defensive against fp drift at exact boundaries)
+        transit_saturn_sign = max(1, min(12, transit_saturn_sign))
+        natal_moon_sign = max(1, min(12, natal_moon_sign))
+        sade_sati = _sade_sati_features(natal_moon_sign, transit_saturn_sign)
 
     row: dict[str, Any] = {}
     row.update(natal)
     row.update(transit)
     row.update(cross)
     row.update(dasha)
+    row.update(pratyantar)
+    row.update(transit_bav)
+    row.update(sade_sati)
     # Metadata — `categories_lower` is set to a sentinel so existing trainer
     # code that touches the column doesn't crash; only `is_event` matters
     # as the actual label.

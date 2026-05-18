@@ -353,17 +353,29 @@ def test_compute_chart_features_sav_house_total_invariant() -> None:
 
 
 def test_expected_feature_columns_count() -> None:
-    """The schema regression test: column count is locked at 225.
+    """The schema regression test: column count is locked at 529.
 
-    Layout (Phase 5 round-3 final):
+    Layout (Phase 5 round-5 final):
       - 193 base columns (Vectors 1+2+3: Base, Kinematic, Vedic)
       - +19 dasha timeline columns (1 natal_dasha_remaining_years +
         9 dasha_start_age_<planet> + 9 first_<planet>_antardasha_after_16)
       - +13 higher-order kinematics (9 acc_<planet> + 4 jerk for
         Jupiter/Saturn/Rahu/Ketu only)
+      - +174 Round-5a classical Vedic stack (whole-sign):
+        - 81 drishti matrix (9x9, including self-diagonal zeros)
+        - 63 extra divisional charts (7 vargas × 9 planets)
+        - 18 house frames (9 from-Moon + 9 from-Sun)
+        - 5 panchanga elements
+        - 7 named yogas
+      - +130 Round-5b continuous-precision layer (exact degrees):
+        - 81 aspect-orb matrix (continuous companion to drishti)
+        - 9 house_pos_<planet>: house from Lagna in [0, 12) float
+        - 9 nak_pos_<planet>: position within nakshatra in [0, 1)
+        - 4 (lagna_degree_in_sign + tithi_angle + yoga_angle + moon_phase)
+        - 27 divisional longitudes (D9/D10/D12 × 9 planets)
     """
     cols = expected_feature_columns()
-    assert len(cols) == 225, f"feature column count drifted: {len(cols)} != 225"
+    assert len(cols) == 529, f"feature column count drifted: {len(cols)} != 529"
     # No duplicate column names (ordering quirks could create these)
     assert len(cols) == len(set(cols)), "duplicate column names"
 

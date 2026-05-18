@@ -164,3 +164,96 @@ def test_negative_sampling_with_no_positives_returns_empty():
     rng = np.random.default_rng(3)
     birth_jd = swe.julday(1970, 1, 1, 12.0, swe.GREG_CAL)
     assert _draw_negative_jds(rng, birth_jd, [], n_to_draw=10) == []
+
+
+# ---------- Round 5 helpers ----------
+
+from app.medini.etl.feature_engineering import (  # noqa: E402
+    compute_active_pratyantar,
+    compute_chart_features,
+    expected_feature_columns,
+)
+
+
+def test_round5_natal_feature_count_is_529():
+    """Sanity check: full natal compute on Bangalore baseline returns 529
+    feature dict keys matching expected_feature_columns()."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    assert len(features) == 529
+    expected = set(expected_feature_columns())
+    actual = set(features.keys())
+    assert actual == expected, f"missing={expected - actual} extra={actual - expected}"
+
+
+def test_round5_drishti_diagonal_is_zero():
+    """Drishti matrix self-aspects are 0 by convention (a planet doesn't
+    aspect itself; conjunction is co-residency, not drishti)."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for planet in ("sun", "moon", "mars", "mercury", "jupiter",
+                   "venus", "saturn", "rahu", "ketu"):
+        assert features[f"drishti_{planet}_{planet}"] == 0
+
+
+def test_round5_aspect_orb_self_is_zero():
+    """Aspect orb to self is 0 — a planet is at zero distance from itself."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for planet in ("sun", "moon", "saturn"):
+        assert features[f"aspect_orb_{planet}_{planet}"] == 0.0
+
+
+def test_round5_aspect_orb_is_nonnegative():
+    """Orb is always a positive degree distance."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for k, v in features.items():
+        if k.startswith("aspect_orb_"):
+            assert v >= 0.0, f"{k}={v}"
+
+
+def test_round5_gajakesari_yoga_detected_for_bangalore_baseline():
+    """The Bangalore baseline is known to have Gajakesari yoga
+    (Jupiter in kendra — 1/4/7/10 — from Moon). Pinning so subsequent
+    refactors of detect_yogas don't silently drop it."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    assert features["yoga_gajakesari"] == 1
+
+
+def test_round5_house_pos_is_in_zero_to_twelve():
+    """Continuous house position is a float in [0, 12) — companion to
+    the discrete house_<planet> (1..12 integer)."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for planet in ("sun", "moon", "mars", "mercury", "jupiter",
+                   "venus", "saturn", "rahu", "ketu"):
+        pos = features[f"house_pos_{planet}"]
+        assert 0.0 <= pos < 12.0, f"house_pos_{planet}={pos}"
+
+
+def test_round5_tithi_angle_matches_panchanga_index():
+    """Continuous tithi_angle and discrete panchanga_tithi must agree:
+    discrete index = floor(angle / 12). This is the model's check that
+    the two representations of moon phase aren't drifting."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    angle = features["tithi_angle"]
+    discrete = features["panchanga_tithi"]
+    assert int(angle / 12.0) == discrete or int(angle / 12.0) == discrete + 1
+    # the +1 handles the fp boundary case at the cusp
+
+
+def test_round5_active_pratyantar_at_birth_returns_valid_lord():
+    """At birth_jd, pratyantar must be a known planet name from DASHA_LORDS."""
+    moon_lon = swe.calc_ut(BANGALORE_JD, swe.MOON, swe.FLG_SIDEREAL)[0][0]
+    result = compute_active_pratyantar(BANGALORE_JD, BANGALORE_JD, moon_lon)
+    assert result["active_pd_lord"] in {
+        "Sun", "Moon", "Mars", "Mercury", "Jupiter",
+        "Venus", "Saturn", "Rahu", "Ketu",
+    }
+    assert result["pd_elapsed_years"] >= 0
+
+
+def test_round5_active_pratyantar_outside_window_returns_sentinel():
+    """Beyond the 120-year natal cycle, pratyantar is 'none' / NaN."""
+    moon_lon = swe.calc_ut(BANGALORE_JD, swe.MOON, swe.FLG_SIDEREAL)[0][0]
+    result = compute_active_pratyantar(
+        BANGALORE_JD + 130 * 365.2425, BANGALORE_JD, moon_lon,
+    )
+    assert result["active_pd_lord"] == "none"
+    assert np.isnan(result["pd_elapsed_years"])

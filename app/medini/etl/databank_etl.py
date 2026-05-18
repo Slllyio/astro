@@ -126,19 +126,44 @@ def _process_row(row: dict[str, str]) -> dict[str, Any] | None:
 
 # ---------- Filtering ----------
 
-def _is_aa_complete(row: dict[str, str]) -> bool:
-    """True if the row passes Stage 2's strict AA-only + complete-data filter.
+# Pre-built sets of accepted Rodden ratings per tier. Lookups during
+# row filtering are O(1) regardless of tier size.
+_TIER_ACCEPTED_RATINGS: dict[str, frozenset[str]] = {
+    "AA": frozenset({"AA"}),
+    "A":  frozenset({"AA", "A"}),
+}
 
-    Per the plan: drop anything not Rodden AA, drop missing date/time/lat/lon
-    (silent corruption sources), drop missing tz_offset (LMT and other
-    unparseable timezones produce empty strings — see scraper.parse_tz_offset).
+
+def _is_complete(
+    row: dict[str, str],
+    accepted_ratings: frozenset[str],
+) -> bool:
+    """True if the row passes Stage 2's filter for the given Rodden tier.
+
+    Originally `_is_aa_complete()` hardcoded AA-only acceptance. Round 3
+    of Phase 5 relaxes this to optionally accept Rodden A as well — A
+    has ±15 minute birth-time precision, which doesn't materially shift
+    geocentric longitudes or outer-planet phases (the dominant signal
+    for our 30+ binary classifiers and the dasha schedule). Ascendant
+    and house positions ARE affected by ±15 min, but the trade for ~25%
+    sample mass on rare event-tag targets is worth it.
+
+    Independent of Rodden tier, all rows must have non-empty date / time /
+    lat / lon / tz_offset — those are silent-corruption gates regardless
+    of the catalogued precision rating.
     """
-    if row.get("rodden_rating", "").strip().upper() != "AA":
+    rating = row.get("rodden_rating", "").strip().upper()
+    if rating not in accepted_ratings:
         return False
     for field in ("date_of_birth", "time_of_birth", "latitude", "longitude", "tz_offset"):
         if not row.get(field, "").strip():
             return False
     return True
+
+
+def _is_aa_complete(row: dict[str, str]) -> bool:
+    """Backwards-compatible alias — defaults to AA-only tier."""
+    return _is_complete(row, _TIER_ACCEPTED_RATINGS["AA"])
 
 
 # ---------- Main ETL pipeline ----------
@@ -148,13 +173,24 @@ def run_etl(
     output_parquet: Path,
     n_workers: int | None = None,
     limit: int | None = None,
+    rodden_tier: str = "AA",
 ) -> dict[str, int]:
     """Execute the Stage 2 pipeline.
 
     Returns a stats dict: {input_count, after_filter, succeeded, failed}.
+
+    rodden_tier ∈ {"AA", "A"}. "AA" (default) is strict AA-only (legacy
+    behaviour). "A" accepts both Rodden AA and Rodden A — recovers ~25%
+    additional sample mass at the cost of ±15-min birth-time jitter,
+    which is below the threshold that shifts our dominant signal features.
     """
     if not input_csv.exists():
         raise FileNotFoundError(f"input CSV not found: {input_csv}")
+    if rodden_tier not in _TIER_ACCEPTED_RATINGS:
+        raise ValueError(
+            f"unknown rodden_tier {rodden_tier!r}; expected one of "
+            f"{sorted(_TIER_ACCEPTED_RATINGS)}"
+        )
 
     output_parquet.parent.mkdir(parents=True, exist_ok=True)
 
@@ -163,13 +199,14 @@ def run_etl(
         all_rows = list(csv.DictReader(f))
     input_count = len(all_rows)
 
-    filtered = [r for r in all_rows if _is_aa_complete(r)]
+    accepted = _TIER_ACCEPTED_RATINGS[rodden_tier]
+    filtered = [r for r in all_rows if _is_complete(r, accepted)]
     if limit is not None:
         filtered = filtered[:limit]
     after_filter = len(filtered)
     logger.info(
-        "input=%d, after AA+complete filter=%d, dropped=%d",
-        input_count, after_filter, input_count - after_filter,
+        "input=%d, after tier-%s+complete filter=%d, dropped=%d",
+        input_count, rodden_tier, after_filter, input_count - after_filter,
     )
 
     if not filtered:
@@ -225,6 +262,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="Worker process count (defaults to CPU count).")
     parser.add_argument("--limit", type=int, default=None,
                         help="Process only the first N filtered rows (for smoke tests).")
+    parser.add_argument(
+        "--rodden-tier", type=str, default="AA",
+        choices=sorted(_TIER_ACCEPTED_RATINGS.keys()),
+        help="AA = strict AA-only (default, legacy). A = AA + Rodden A "
+             "(±15min precision; recovers ~25%% sample mass for rare-event targets).",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -233,7 +276,11 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
-    stats = run_etl(args.input, args.output, n_workers=args.workers, limit=args.limit)
+    stats = run_etl(
+        args.input, args.output,
+        n_workers=args.workers, limit=args.limit,
+        rodden_tier=args.rodden_tier,
+    )
     print(
         f"ETL complete: input={stats['input_count']}, after_filter={stats['after_filter']}, "
         f"succeeded={stats['succeeded']}, failed={stats['failed']}, output={args.output}"

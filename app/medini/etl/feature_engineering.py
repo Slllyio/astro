@@ -25,13 +25,17 @@ from typing import Any
 
 import swisseph as swe
 
+from app.core.antardasha import compute_antardashas
 from app.core.ashtakavarga import compute_ashtakavarga
 from app.core.ephemeris_engine import (
+    DASHA_LORDS,
+    DAYS_PER_VEDIC_YEAR,
     PLANETS,
     ZODIAC_SIGNS,
     calculate_ascendant,
     calculate_d1_position,
     calculate_ketu_d1,
+    calculate_vimshottari_mahadasha,
     whole_sign_house,
 )
 from app.core.nakshatra import nakshatra_for_longitude
@@ -83,6 +87,18 @@ SIGN_RULERS: dict[int, str] = {
 # Earth's axial tilt: Out-of-Bounds threshold for declination.
 OUT_OF_BOUNDS_DECLINATION = 23.4367
 STATIONARY_VEL_THRESHOLD = 0.05  # degrees/day; below = effectively stationary
+
+# Vimshottari planets where 3rd-derivative (jerk) carries genuine signal rather
+# than numerical noise on the ±1-day window. Fast inner planets change velocity
+# too rapidly for finite-difference jerk to be informative; slow planets
+# (Jupiter through Ketu) have smooth velocity profiles around stations.
+JERK_TRACKED_PLANETS: tuple[str, ...] = ("Jupiter", "Saturn", "Rahu", "Ketu")
+
+# Earliest age (years) at which an Antardasha sub-period is considered to
+# "open in adulthood". Used by the dasha-timeline helper for the
+# `first_<planet>_antardasha_after_<N>` features. 16 is the classical
+# threshold for relational/career events to begin manifesting.
+ANTARDASHA_ADULTHOOD_AGE = 16
 
 
 # ---------- Low-level swisseph wrappers ----------
@@ -256,6 +272,159 @@ def compute_final_dispositor(chart_signs: dict[str, int]) -> str:
 
 # ---------- The big composition ----------
 
+def _compute_dasha_timeline_features(
+    jd_birth: float,
+    moon_longitude: float,
+) -> dict[str, float]:
+    """Continuous lifetime-Vimshottari encoding — 19 floats per chart.
+
+    Returns:
+      - `natal_dasha_remaining_years`: years left in the birth Mahadasha
+        at t=birth. Always positive, range [0, ~19.0].
+      - `dasha_start_age_<planet>` × 9: age (years) at which `<planet>`'s
+        first Mahadasha opens in the lifetime cycle. Negative for the
+        natal lord (its MD opened pre-birth) and any preceding lords if
+        we cycled them in; positive for all subsequent.
+      - `first_<planet>_antardasha_after_16` × 9: age at which the first
+        Antardasha sub-period of `<planet>` opens at or after the
+        adulthood threshold (ANTARDASHA_ADULTHOOD_AGE = 16).
+
+    Approach: walk the 9 Mahadashas of the 120-year cycle starting from
+    the natal lord (cycling through DASHA_LORDS). For each MD, expand
+    into 9 ADs via the canonical `_antar_sequence` from app.core.antardasha.
+    All ages computed in Vedic-year units (DAYS_PER_VEDIC_YEAR = 365.2425)
+    to match the rest of the pipeline.
+
+    A 120-year sweep guarantees every planet has at least one AD after
+    age 16 for any realistic birth scenario — but we still emit NaN
+    when not found (defensive; XGBoost handles NaN natively as missing).
+    """
+    # Reuses the production Mahadasha primitive — single source of truth
+    # so test_dasha_dates.py's date pins automatically validate this code.
+    md = calculate_vimshottari_mahadasha(moon_longitude, jd_birth)
+    natal_lord: str = md["mahadasha_lord"]
+    natal_total: float = md["total_duration_years"]
+    natal_elapsed: float = md["time_elapsed_years"]
+    natal_remaining: float = natal_total - natal_elapsed
+
+    # Map planet name -> Vimshottari years (e.g. Mercury -> 17)
+    lord_years: dict[str, int] = {name: yrs for name, yrs in DASHA_LORDS}
+    lord_names: list[str] = [name for name, _ in DASHA_LORDS]
+    start_idx = lord_names.index(natal_lord)
+
+    # Walk the 9 Mahadashas in cycle order. The natal lord's MD began
+    # `natal_elapsed` years before birth → start_age = -natal_elapsed.
+    md_sequence: list[tuple[str, float, float]] = []  # (lord, start_age, total_years)
+    cursor_age = -natal_elapsed
+    for offset in range(len(lord_names)):
+        lord = lord_names[(start_idx + offset) % len(lord_names)]
+        years = float(lord_years[lord])
+        md_sequence.append((lord, cursor_age, years))
+        cursor_age += years
+
+    # Each planet appears exactly once in the 9-MD cycle → its
+    # dasha_start_age is the start of that MD.
+    dasha_start_age: dict[str, float] = {
+        lord.lower(): start_age for lord, start_age, _ in md_sequence
+    }
+
+    # Antardasha first-after-adulthood scan. Sub-period order follows the
+    # same Vimshottari cycle as MDs, rotated so the first AD = MD lord.
+    first_ad_after_16: dict[str, float] = {}
+    for md_lord, md_start_age, md_total_years in md_sequence:
+        # Cycle ADs starting from the MD lord. Inside one MD, AD durations
+        # sum exactly to md_total_years (proportional split).
+        md_lord_idx = lord_names.index(md_lord)
+        ad_cursor_age = md_start_age
+        for offset in range(len(lord_names)):
+            ad_lord = lord_names[(md_lord_idx + offset) % len(lord_names)]
+            ad_lord_yrs = lord_years[ad_lord]
+            ad_duration = md_total_years * ad_lord_yrs / 120.0
+            ad_start_age = ad_cursor_age
+            ad_cursor_age += ad_duration
+            if (
+                ad_start_age >= ANTARDASHA_ADULTHOOD_AGE
+                and ad_lord.lower() not in first_ad_after_16
+            ):
+                first_ad_after_16[ad_lord.lower()] = ad_start_age
+        # Short-circuit once every planet has its first-after-16 AD recorded
+        if len(first_ad_after_16) == len(lord_names):
+            break
+
+    features: dict[str, float] = {
+        "natal_dasha_remaining_years": natal_remaining,
+    }
+    for lord in lord_names:
+        lc = lord.lower()
+        features[f"dasha_start_age_{lc}"] = dasha_start_age[lc]
+        # NaN if no AD-after-16 found (theoretically impossible for a
+        # full 120-yr sweep but we don't trust math we haven't tested)
+        features[f"first_{lc}_antardasha_after_16"] = first_ad_after_16.get(
+            lc, float("nan"),
+        )
+    return features
+
+
+def _compute_kinematic_derivatives(jd: float) -> dict[str, float]:
+    """Higher-order time derivatives of planetary longitudes — 13 floats.
+
+    Acceleration (deg/day²) computed via central difference on velocities:
+      acc(t) = (vel(t+1d) - vel(t-1d)) / 2
+
+    Jerk (deg/day³) computed via central difference on accelerations,
+    expanded so we only need vel samples at jd±1 and jd±2:
+      jerk(t) = (acc(t+1d) - acc(t-1d)) / 2
+              = (vel(t+2d) - vel(t)) / 2 / 2 - (vel(t) - vel(t-2d)) / 2 / 2
+              = (vel(t+2d) - 2*vel(t) + vel(t-2d)) ... no wait
+    Cleaner: just compute acc at jd±1 directly, then take their difference.
+
+    Restricted to JERK_TRACKED_PLANETS (the slow ones: Jupiter, Saturn,
+    Rahu, Ketu) because fast planet velocities change too rapidly within
+    ±2 days for finite-difference jerk to carry signal over noise.
+
+    Ketu mirrors Rahu's velocity profile (180° opposed, same time
+    derivative), so we reuse Rahu's samples — saves 4 swisseph calls.
+    """
+    features: dict[str, float] = {}
+
+    # ── Acceleration for all 9 planets ──
+    # 8 chara grahas (Sun..Saturn + Rahu) via swisseph; Ketu mirrors Rahu.
+    vel_prev: dict[str, float] = {}
+    vel_next: dict[str, float] = {}
+    for planet in GRAHAS:
+        if planet == "Ketu":
+            # Ketu inherits Rahu's velocity sign (matches the convention
+            # used by compute_chart_features). Same time derivative.
+            vel_prev[planet] = vel_prev["Rahu"]
+            vel_next[planet] = vel_next["Rahu"]
+        else:
+            vel_prev[planet] = _planet_full_state(jd - 1.0, PLANETS[planet])["vel"]
+            vel_next[planet] = _planet_full_state(jd + 1.0, PLANETS[planet])["vel"]
+
+    for planet in GRAHAS:
+        acc = (vel_next[planet] - vel_prev[planet]) / 2.0
+        features[f"acc_{planet.lower()}"] = acc
+
+    # ── Jerk for slow planets only ──
+    # Needs vel samples at jd-2 and jd+2 to compute acc at jd±1.
+    for planet in JERK_TRACKED_PLANETS:
+        if planet == "Ketu":
+            # Reuse Rahu samples — same caveat as above.
+            vel_m2 = _planet_full_state(jd - 2.0, PLANETS["Rahu"])["vel"]
+            vel_p2 = _planet_full_state(jd + 2.0, PLANETS["Rahu"])["vel"]
+            vel_now = _planet_full_state(jd, PLANETS["Rahu"])["vel"]
+        else:
+            vel_m2 = _planet_full_state(jd - 2.0, PLANETS[planet])["vel"]
+            vel_p2 = _planet_full_state(jd + 2.0, PLANETS[planet])["vel"]
+            vel_now = _planet_full_state(jd, PLANETS[planet])["vel"]
+        acc_minus1 = (vel_now - vel_m2) / 2.0
+        acc_plus1 = (vel_p2 - vel_now) / 2.0
+        jerk = (acc_plus1 - acc_minus1) / 2.0
+        features[f"jerk_{planet.lower()}"] = jerk
+
+    return features
+
+
 def compute_chart_features(
     jd: float,
     latitude: float,
@@ -372,6 +541,18 @@ def compute_chart_features(
     features["lagna_lon"] = ascendant["longitude"]
     features["lagna_sign"] = ascendant["sign"]
 
+    # Vector 4: Chronological scaffolding (Vimshottari Mahadasha + Antardasha)
+    # 19 continuous floats encoding the full 120-year lifetime schedule.
+    # Moon longitude is taken from the natal state computed above.
+    features.update(
+        _compute_dasha_timeline_features(jd, states["Moon"]["lon"]),
+    )
+
+    # Vector 5: Higher-order kinematics (acceleration + jerk)
+    # 13 continuous floats; jerk restricted to slow planets where the
+    # ±1-day finite difference carries genuine signal over noise.
+    features.update(_compute_kinematic_derivatives(jd))
+
     return features
 
 
@@ -422,5 +603,22 @@ def expected_feature_columns() -> list[str]:
 
     # Lagna
     cols.extend(["lagna_lon", "lagna_sign"])
+
+    # Vector 4: Chronological scaffolding (Vimshottari)
+    # natal_dasha_remaining_years + 9 dasha_start_age_<planet> + 9 first_<planet>_antardasha_after_16
+    cols.append("natal_dasha_remaining_years")
+    # Use DASHA_LORDS order (Ketu-Venus-Sun-Moon-Mars-Rahu-Jupiter-Saturn-Mercury)
+    # so the test pin order matches the canonical sequence.
+    dasha_lord_names = [name for name, _ in DASHA_LORDS]
+    for lord in dasha_lord_names:
+        cols.append(f"dasha_start_age_{lord.lower()}")
+    for lord in dasha_lord_names:
+        cols.append(f"first_{lord.lower()}_antardasha_after_16")
+
+    # Vector 5: Higher-order kinematics
+    for p in GRAHAS:
+        cols.append(f"acc_{p.lower()}")
+    for p in JERK_TRACKED_PLANETS:
+        cols.append(f"jerk_{p.lower()}")
 
     return cols

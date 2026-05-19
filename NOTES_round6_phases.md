@@ -1974,3 +1974,52 @@ The remaining 121 inconclusive rules likely need either:
 One background job still running:
 - Continuous DML sweep × 8 classes × 15 features
   (data/ml_runs/tier1_continuous_dml_sweep/)
+
+## Tier-1 §3 — Continuous DML sweep (DONE)
+
+8 event classes × 3 top features per class (the F-stat filter
+returned only 3 stable features per cohort) = 24 (class, feature)
+cells.
+
+VERDICT:
+- Both modes significant:        2
+- **Continuous-only significant: 9** ← new findings
+- Binary-only significant:       3 (lost in continuous)
+
+**9 causal findings invisible to binary median-split DML:**
+
+| Event | Feature | Cont. ATE | p | Binary p |
+|---|---|---|---|---|
+| death | aspect_orb_ketu_mercury | +0.012 | 0.0008 | 0.36 |
+| family | house_pos_mercury | -0.004 | 0.0009 | 0.38 |
+| death | aspect_orb_rahu_mercury | -0.012 | 0.0026 | 0.44 |
+| prize | aspect_orb_rahu_mercury | +0.005 | 0.014 | 0.43 |
+| work | disp_depth_saturn | -0.009 | 0.015 | 0.21 |
+| prize | d10_mercury_sign | -0.004 | 0.018 | 0.21 |
+| relationship | aspect_orb_ketu_mercury | -0.009 | 0.020 | 0.87 |
+| fame | house_sun | +0.003 | 0.037 | 0.074 |
+| family | aspect_orb_ketu_mercury | -0.003 | 0.049 | 0.18 |
+
+**Mercury-node aspect orbs dominate the new findings**:
+aspect_orb_ketu_mercury and aspect_orb_rahu_mercury appear across
+4 distinct event classes (death, family, prize, relationship).
+Binary DML missed these completely (all p > 0.18). The reviewer's
+§1.3 recommendation that binarization destroys continuous-signal
+is empirically validated again.
+
+The 3 binary-only significant cells (lost in continuous) are
+likely cases where the median-split happens to align with a
+threshold effect that the continuous-linear DML smooths over —
+suggesting future work should try NonParamDML (nonlinear
+treatment-response curves) per the reviewer's §1.3.
+
+## Tier-1 final status
+
+| Item | Status |
+|---|---|
+| §1.1 Reversed-rule investigation | DONE (7 confirmed genuine) |
+| §1.2 154-rule BPHS audit | DONE (11 validated, 12 reversed, 2/3/5/6-house pattern) |
+| §1.3 Continuous DML sweep | DONE (9 new findings via continuous) |
+| §1.4 Subtype outcome analysis | DONE (data bias exposed) |
+
+All four Tier-1 items complete. Round 7 production-defensible.

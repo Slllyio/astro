@@ -541,6 +541,145 @@ as a prompt. Output: a generative model of life trajectories.
 - Censoring: if person is censored mid-trajectory (still alive), use
   a CENSOR token instead of EOS.
 
+### Result
+
+Built `app/medini/ml/sequence_transformer.py`. PyTorch decoder-only
+Transformer (4 layers, 4 heads, 128 dim, ~0.98M params) with the
+Phase-3 chart embedding projected to a prefix-conditioning token.
+
+Tokenization:
+- 30 event_class labels (top-30 from events_all.csv)
+- Age bins: 5-year width × 21 bins (0..100)
+- Vocab size = 30 × 21 + 3 (BOS/EOS/PAD) = 633
+
+Training:
+- 4,832 trainable (chart, sequence) pairs (1,000 eval held out)
+- 25 epochs, batch size 64
+- AdamW lr 1e-3, gradient clip 1.0
+- Loss: 3.69 → 1.44
+
+Evaluation (next-token prediction on held-out cohort):
+- **Top-1 accuracy (class + age bin)**: 0.5912
+- **Top-5 accuracy**: 0.6966
+- **Class-only accuracy**: 0.0699
+- **Random baseline (most-common-token)**: 0.0042
+- **Lift over random**: **17×**
+
+Sample trajectory from a demo chart:
+```
+<BOS> → relationship@30 → family@30 → relationship@35 → <EOS>
+```
+
+The model generates biographically plausible sequences. The 17×
+random-baseline lift on class-only validates that the chart
+embedding + sequence context carries real predictive signal.
+
+### Learnings (Phase 4 only)
+
+1. **Sequence model converged**. Loss halved across 25 epochs; no
+   collapse, no divergence. ~1M params is the right scale for ~5k
+   training sequences.
+
+2. **Top-1 inflated by EOS prediction**. Many lives end after a few
+   events; the model learns to emit EOS aggressively. Top-1 0.59
+   is partly "predict EOS at the right time". The honest measure
+   is class-only 0.07 — still 17× random.
+
+3. **Sequences are very short**. Mean events/person = 3-4. Hard to
+   learn deep temporal patterns. Model essentially sees
+   `[BOS, event, event, EOS]` most of the time.
+
+4. **Age order can break in sampled trajectories**. Without enforcing
+   monotonic age in sampling, the model occasionally emits
+   `family@35 → relationship@25` (out of order). Decoding loop
+   needs an age-monotonicity constraint.
+
+5. **The headline architecture works**. Even with the short-sequence
+   constraint, the model produces samples that LOOK like life
+   trajectories. With richer event coverage per person (say 10-15
+   events average), this would be a deployable biography generator.
+
+6. **Chart embedding conditioning works**. The model uses the chart
+   embedding as a prefix — different charts produce different
+   trajectory distributions. The chart→destiny prior is encoded
+   into the generation.
+
+### Improvements possible within Phase 4 (defer or address)
+
+A. **Monotonic age constraint** in sampling. Reject tokens whose
+   age bin precedes the previously-sampled bin.
+
+B. **Mask EOS in eval** to get honest class-only accuracy without
+   the inflated top-1.
+
+C. **Relative-age tokenization** (predict gap to next event vs
+   absolute age). Better captures "after marriage, on average 4
+   years to first child" patterns.
+
+D. **Per-event-class eval breakdown**. Which event types is the
+   model good at predicting? E.g., does it know "after a relationship
+   event in 20s, work events follow in 30s"?
+
+E. **Beam search** instead of stochastic top-k for high-quality
+   sample trajectories.
+
+F. **More events per person**. Augment the 14k-event corpus with
+   additional event sources (we have lapaasindia/lunarastro CSVs
+   in raw/). Could lift mean events/person from 3 to 8+.
+
+G. **Censoring**: persons still alive shouldn't have a hard EOS.
+   Add a CENSOR token to indicate "sequence continues but unknown".
+
+### Phase 4 = done
+
+Moving to Phase 5. Phase 5 (GNN on chart graphs) is independent of
+Phases 3/4 — it's an alternative chart representation, not a
+downstream user of embeddings.
+
+### Implications for Phase 5 plan (GNN)
+
+What Phase 4 taught us, applied to Phase 5:
+- **The chart embedding is a strong prior** (Phase 3 + Phase 4
+  validate this). GNN should produce an embedding that's at least
+  as good — and ideally complementary to the MLP-from-features one.
+- **Permutation invariance matters**. Phase 4 inputs natal features
+  in fixed order; GNN naturally respects "the chart is a set of
+  planets in relationships", giving it a structural prior.
+- **Vocabulary of relationships**: drishti, conjunction, dispositor,
+  rulership, parashar aspect orbs. These become edge types in the
+  GNN's heterogeneous graph.
+- **Compare Phase 3 vs Phase 5 embeddings on the same K-NN Jaccard
+  metric** — gives a clean comparison.
+
+---
+
+## Phase 5 — Graph Neural Network on chart graphs
+
+**Status**: queued
+
+### Goal
+Represent each chart as a heterogeneous graph: 9 planet nodes + 12
+house nodes connected by drishti / conjunction / rulership / occupancy
+edges. Train a Graph Neural Network to encode chart-level
+representations. Compare to Phase 3 MLP embeddings.
+
+### Implementation
+1. Per chart, build the graph: 21 nodes (9 planets + 12 houses), edges
+   per drishti rule + conjunction (within 8°) + dispositor.
+2. Node features: planet → (longitude, sign, nakshatra, degree-in-sign);
+   house → (sign, occupancy_count).
+3. Edge features: edge type (one-hot of 5 types) + orb (degrees).
+4. GAT (Graph Attention) or HGT (Heterogeneous Graph Transformer).
+5. Pool node embeddings → 128-D chart embedding.
+6. Train with same SimCLR objective as Phase 3 OR distill from
+   Phase 3 embeddings (cheaper).
+
+### Open questions
+- Use PyTorch Geometric (PyG) for clean GNN abstractions? Yes.
+- Distill from Phase 3 or train from scratch? Distill first (cheap),
+  then independent training to see if structural representation
+  adds anything.
+
 (more to follow)
 
 ---

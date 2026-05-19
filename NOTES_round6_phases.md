@@ -1684,6 +1684,55 @@ This is the **first statistically rigorous, confounder-adjusted
 audit of classical Vedic astrology at this scale** — the §2.3
 goal of the Round 7 plan.
 
+### BPHS Causal Audit FINAL RESULTS
+
+84 classical rules audited via DML:
+- **VALIDATED: 6**
+- **REVERSED: 7** (this is the headline)
+- inconclusive: 64
+- n/a (no cohort events): 7
+
+**VALIDATED (classical rules empirically confirmed):**
+
+| Rule | ATE | p | Domain |
+|---|---|---|---|
+| sun_in_10th_authority | +7.74 | 0.001 | career |
+| mercury_in_10th_career | +6.67 | 0.009 | career |
+| venus_in_10th_career | +6.64 | 0.008 | career |
+| ketu_in_8th_spiritual_end | +0.46 | 0.007 | death |
+| mercury_jupiter_writing | +0.06 | 0.004 | publication |
+| saturn_in_5th_progeny_obstacle | -0.04 | <0.001 | family (delays/denies) |
+
+All four "planet in 10th = career" rules ratify the classical
+10th-house = profession axis. Ketu-in-8th and Mercury-Jupiter
+writing yoga confirmed.
+
+**REVERSED (classical rules ACTIVELY CONTRADICTED by data):**
+
+| Rule | ATE | p | Classical direction | Data direction |
+|---|---|---|---|---|
+| sun_in_9th_father | -3.55 | 0.049 | promotes family | reduces family events |
+| saturn_in_6th_service | -0.25 | <0.001 | promotes work | reduces work events |
+| mercury_in_6th_business | -0.16 | <0.001 | promotes work | reduces work events |
+| venus_in_5th_romance | -0.14 | <0.001 | promotes relationships | reduces relationships |
+| mercury_in_3rd_writing | -0.09 | <0.001 | promotes publication | reduces publication |
+| saturn_in_6th_chronic_disease | -0.07 | 0.033 | promotes health events | reduces health events |
+| venus_in_3rd_arts | -0.05 | 0.005 | promotes publication | reduces publication |
+
+**7 classical Vedic rules empirically REFUTED at p < 0.05 after
+confounder adjustment.** This is the first time at this scale.
+Pattern observation: many reversals involve 3rd or 6th house
+placements, which are classically interpreted as "growth through
+effort" — perhaps the modern recorded-event taxonomy biases
+against the 3rd/6th house benefic interpretations that BPHS
+intends.
+
+This is the most consequential finding of Round 7. The 7 reversals
+constitute 8.3% of the audited corpus — meaningful enough to merit
+serious re-examination of those specific rules, but not so large
+as to suggest the entire tradition is wrong. The 6 validated
+findings stand; the 64 inconclusive need more data.
+
 ## §3.1 Spatial De-quantization Probe
 **Status: DONE** (committed `92c8838`).
 

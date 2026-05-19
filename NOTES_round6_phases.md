@@ -1115,6 +1115,151 @@ etc.) is reproduced empirically by the gating weights.
   karaka mapping during pre-training, then fine-tune with soft gating,
   do we get better generalization?
 
+### Result
+
+Built `app/medini/ml/karaka_moe.py`. 9-expert MoE with feature
+partitioning by graha keyword (Venus expert sees lon_venus,
+house_venus, dist_*_venus, drishti_*_venus, cross_lon_venus, etc.;
+63 shared cols like sav_house_4 go to ALL experts).
+
+Per-karaka feature counts:
+- sun/mars: 203 cols each
+- venus/mercury/rahu/ketu: 195-196 cols each
+- jupiter: 205, saturn: 203, moon: 197
+- shared: 63 cols
+
+Model: 9 small MLPs (input → 64 → 64 → n_classes), ~175k params
+total. Gating: 8-D summary stats per karaka → softmax over 9 experts.
+
+Trained 12 epochs on 11,333 events × 27 classes.
+
+Result:
+- Loss: 2.72 → 1.38 (overfitting — training loss decreases but val
+  plateaus around epoch 4)
+- **Val accuracy: 0.263** vs Round-5 multi-class baseline 0.363
+- Underperforms baseline by -0.10
+
+**Critical failure mode: gating collapsed.** Across all 27 event
+classes, gating weights cluster around the same 3 experts:
+Sun (~0.38), Mars (~0.34), Venus (~0.28), with the other 6
+karakas at < 0.001 each. Differences across classes are tiny
+(±0.02). The karaka-aware architecture DID NOT reproduce
+classical karaka theory.
+
+### Learnings (Phase 8 only)
+
+1. **Vanilla MoE without gating regularization collapses to a few
+   experts**. The gating network learned to ignore 6 of 9 karakas
+   entirely. The 3 surviving karakas (Sun/Mars/Venus) happen to
+   have features with the highest variance, so their summary stats
+   dominate the gating input.
+
+2. **Classical karaka theory NOT reproduced from soft gating**.
+   Marriage's top karaka in our model is Sun (not Venus), career's
+   is Sun (not Saturn), death's is Mars (not Saturn). The data does
+   not naturally route to the classical karakas without architectural
+   constraints (top-K gating, classical-prior initialization, etc.)
+
+3. **Karaka-aware architecture didn't beat the unstructured MLP**.
+   Val accuracy 0.263 vs 0.363 baseline. The structural prior
+   over-constrained the model — by partitioning features by
+   karaka, we lost cross-karaka feature interactions that the
+   unstructured model captures.
+
+4. **Training-validation gap shows overfitting**. Train loss kept
+   dropping (2.72 → 1.38) but val accuracy plateaued around 0.27
+   after epoch 4. Standard regularization (dropout, weight decay)
+   would help.
+
+5. **Per-karaka feature variance is uneven**. Sun-related features
+   (lots of seasonality / day-of-year columns) have higher variance
+   than Saturn-related (slow-changing). Need to normalize per-
+   karaka summary stats or use richer gating input.
+
+6. **MoE-specific architectural details matter a lot**. Vanilla
+   soft-gating MoE rarely works without sparsity, load-balancing
+   loss, expert-utilization auxiliary losses, etc. We shipped a
+   first attempt; production-quality MoE would need much more
+   engineering.
+
+### Improvements possible within Phase 8
+
+A. **Top-K (e.g. K=2) sparse gating** instead of soft — forces
+   the model to pick a couple experts per input, preventing
+   collapse.
+
+B. **Load-balancing auxiliary loss** — penalize gating distribution
+   skew across the batch (Switch Transformer / Shazeer 2017 style).
+
+C. **Initialize gating with classical karaka priors** (one-hot per
+   event class to its theoretical karaka) and fine-tune with
+   gradient. Hot-start might unlock learning the right routing.
+
+D. **Class-conditional gating** — use class label as additional
+   gating input. Cleaner but only available at training (not at
+   inference where we'd need to softmax over class candidates first).
+
+E. **Per-karaka feature normalization** — standardize WITHIN each
+   karaka's slice so high-variance Sun features don't dominate
+   gating.
+
+F. **Richer gating signal** — replace 8-stat summary with a
+   learned projection (e.g. mean-pooled embedding of the karaka's
+   feature slice via a small MLP).
+
+G. **Add dropout to experts** — currently no dropout; train-val
+   gap suggests we need it.
+
+### Phase 8 = done (negative result; classical karaka theory
+NOT reproduced by vanilla soft-gating MoE)
+
+Moving to Phase 9 (Chart-as-language LLM).
+
+### Implications for Phase 9 plan (Chart-as-language LLM)
+
+What Phase 8 taught us, applied to Phase 9:
+- **Architectural priors don't always help**. Phase 8's karaka
+  partitioning hurt accuracy. Phase 9 should NOT force-encode
+  classical structure into the LLM — let it learn from text.
+- **Verbalising charts as text** sidesteps the feature-partition
+  problem entirely. The LLM tokenizes "Sun@Cancer@2°20'..." as a
+  natural-language sequence and learns through attention which
+  parts matter for which questions.
+- **Use existing pretrained small LM** (Phi-3 / Qwen2 / TinyLlama)
+  + LoRA fine-tuning. Avoid the training-stability issues of
+  Phase 8.
+
+---
+
+## Phase 9 — Chart-as-language LLM
+
+**Status**: queued
+
+### Goal
+Verbalize each natal chart as a structured text string ("Sun at
+Cancer 2°20', Moon at Pisces 27°14', ...") and fine-tune a small
+language model (Phi-3, Qwen2-1.5B, or TinyLlama) on (chart_text,
+outcome_question, answer) triples. Output: an astrologer-grade
+chatbot that reads charts and outputs predictions in natural
+language.
+
+### Implementation
+1. Chart serialiser: natal Round-5 features → markdown-formatted
+   chart description.
+2. Generate training prompts:
+   - "Given this chart, what is the most likely event in their 30s?"
+   - "What career path does this chart suggest?"
+   - "What is this person's marriage timing likely to be?"
+3. Build dataset: (chart_text, prompt, gold_answer) where gold_answer
+   = actual event sequence from their events_all.csv timeline.
+4. LoRA fine-tune Phi-3-mini-128k or Qwen2-1.5B.
+5. Eval: rate predictions vs ground truth on held-out cohort.
+
+### Open questions
+- Hardware: need a GPU for even LoRA fine-tuning at reasonable
+  speeds. CPU-only training is feasible but slow.
+- Use base or instruct variant? Instruct is closer to chatbot UX.
+
 (more to follow)
 
 ---

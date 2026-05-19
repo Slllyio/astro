@@ -413,6 +413,133 @@ CLASSICAL_RULES: list[VedicRule] = [
 
 # ---------- Empirical evaluation ----------
 
+def evaluate_rule_causal(
+    rule: VedicRule, natal_df: pd.DataFrame, events_df: pd.DataFrame,
+) -> dict:
+    """CRITICAL FIX (per Round-6 review): evaluate each classical rule
+    using **Double ML (Phase 6 methodology)** rather than raw rates.
+
+    Phase 6 showed marginal rates are confounded — Venus-Saturn drishti
+    raw rate is 7.3% (above the 6.5% marriage base rate) yet its CAUSAL
+    effect is -5.6pp (it DELAYS marriage as the classical rule predicts).
+    Raw-rate Phase 7 marked it INCONCLUSIVE. The causal-DML rerun fixes
+    this category-confusion.
+
+    Method:
+    1. Treatment T = rule antecedent active (binary).
+    2. Outcome Y = consequent event occurred (binary).
+    3. Covariates W = the rest of the natal numeric features.
+    4. LinearDML estimates the ATE = E[Y | T=1, W] - E[Y | T=0, W].
+
+    Verdict (purely on ATE):
+    - VALIDATED: ATE sign matches rule direction and p < 0.05 with
+      |ATE| > 0.005 (half a percentage point — practical threshold)
+    - REVERSED: ATE sign OPPOSITE to rule direction and p < 0.05
+    - inconclusive: otherwise
+
+    The Bayesian Beta posterior is still computed for transparency
+    (raw rate + prior) but is decorative — the verdict is now causal.
+    """
+    from econml.dml import LinearDML
+    from sklearn.ensemble import GradientBoostingClassifier
+
+    consequent_target = rule.consequent_event.lower().strip()
+    positive_names = set(
+        events_df.loc[events_df["root_lower"] == consequent_target, "_n"]
+    )
+    if not positive_names:
+        positive_names = set(
+            events_df.loc[events_df["root_lower"].str.contains(
+                consequent_target, na=False), "_n"]
+        )
+
+    cohort_names = set(events_df["_n"]) & set(natal_df["_n"])
+    natal_cohort = natal_df[natal_df["_n"].isin(cohort_names)].copy()
+    natal_cohort["y"] = natal_cohort["_n"].isin(positive_names).astype(int)
+    if natal_cohort["y"].sum() == 0:
+        return {
+            "rule": rule.name, "n_antecedent": 0,
+            "verdict": "n/a (no events of this type in cohort)",
+        }
+
+    try:
+        ante = natal_cohort.apply(rule.antecedent_fn, axis=1).astype(int).to_numpy()
+    except Exception as exc:
+        return {"rule": rule.name, "error": str(exc)}
+
+    n_ante = int(ante.sum())
+    n_both = int((ante & natal_cohort["y"].to_numpy()).sum())
+    if n_ante < 30 or (len(ante) - n_ante) < 30:
+        return {
+            "rule": rule.name, "n_antecedent": n_ante,
+            "verdict": "n/a (antecedent too imbalanced for DML)",
+        }
+
+    # Covariates: rest of natal numerics (exclude the rule's own
+    # feature columns to avoid trivial self-confounding)
+    natal_numerics = [
+        c for c in natal_cohort.columns
+        if c not in ("name", "_n", "y", "rodden_rating", "categories_raw",
+                     "categories_lower", "categories_tokens", "source_url")
+        and pd.api.types.is_numeric_dtype(natal_cohort[c])
+        and not pd.api.types.is_bool_dtype(natal_cohort[c])
+        and natal_cohort[c].nunique() > 1
+    ]
+    W = natal_cohort[natal_numerics].fillna(0.0).to_numpy()
+    Y = natal_cohort["y"].to_numpy()
+
+    try:
+        est = LinearDML(
+            model_y=GradientBoostingClassifier(
+                n_estimators=50, max_depth=3, random_state=42,
+            ),
+            model_t=GradientBoostingClassifier(
+                n_estimators=50, max_depth=3, random_state=42,
+            ),
+            discrete_treatment=True, discrete_outcome=True, random_state=42,
+        )
+        est.fit(Y=Y, T=ante, W=W)
+        ate = float(np.atleast_1d(est.ate()).flatten()[0])
+        try:
+            inf = est.ate_inference()
+            p_value = float(np.atleast_1d(inf.pvalue()).flatten()[0])
+            ate_lo = float(np.atleast_1d(inf.conf_int_mean()[0]).flatten()[0])
+            ate_hi = float(np.atleast_1d(inf.conf_int_mean()[1]).flatten()[0])
+        except Exception:
+            p_value = float("nan")
+            ate_lo = ate_hi = float("nan")
+    except Exception as exc:
+        return {"rule": rule.name, "error": f"DML fit: {exc}"}
+
+    if rule.consequent_direction == "promotes":
+        expected_sign = 1
+    else:  # delays/denies
+        expected_sign = -1
+
+    if abs(ate) > 0.005 and p_value < 0.05:
+        if (ate > 0) == (expected_sign > 0):
+            verdict = "VALIDATED"
+        else:
+            verdict = "REVERSED"
+    else:
+        verdict = "inconclusive"
+
+    return {
+        "rule": rule.name,
+        "description": rule.description,
+        "consequent_event": rule.consequent_event,
+        "consequent_direction": rule.consequent_direction,
+        "source": rule.source,
+        "n_antecedent": n_ante,
+        "n_antecedent_and_consequent": n_both,
+        "empirical_rate": n_both / n_ante,
+        "population_base_rate": float(Y.mean()),
+        "ate": ate, "ate_ci_low": ate_lo, "ate_ci_high": ate_hi,
+        "p_value": p_value,
+        "verdict": verdict,
+    }
+
+
 def evaluate_rule(
     rule: VedicRule, natal_df: pd.DataFrame, events_df: pd.DataFrame,
 ) -> dict:
@@ -544,6 +671,7 @@ def run_phase7(
     natal_parquet: Path,
     events_csv: Path,
     output_dir: Path,
+    use_causal: bool = True,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -558,30 +686,49 @@ def run_phase7(
     events["_n"] = events["name"].astype(str).str.strip().str.lower()
     events["root_lower"] = events["event_root"].astype(str).str.lower().str.strip()
 
+    evaluator = evaluate_rule_causal if use_causal else evaluate_rule
+    method_name = "causal-DML" if use_causal else "raw-rate Wilson"
+    logger.info("using verdict method: %s", method_name)
+
     results = []
     for rule in CLASSICAL_RULES:
         logger.info("evaluating: %s", rule.name)
-        r = evaluate_rule(rule, natal, events)
+        r = evaluator(rule, natal, events)
         results.append(r)
 
-    # Sort by lift over base rate
-    results_sorted = sorted(
-        results,
-        key=lambda r: r.get("lift_over_base_rate") or 0.0,
-        reverse=True,
-    )
+    # Sort by causal effect magnitude (or raw-rate lift in legacy mode)
+    def _sort_key(r: dict) -> float:
+        if "ate" in r:
+            try:
+                return abs(float(r.get("ate") or 0.0))
+            except (ValueError, TypeError):
+                return 0.0
+        try:
+            return float(r.get("lift_over_base_rate") or 0.0)
+        except (ValueError, TypeError):
+            return 0.0
+    results_sorted = sorted(results, key=_sort_key, reverse=True)
 
-    # Write CSV
+    # Write CSV — schema differs by method
     csv_path = output_dir / "rule_survival.csv"
-    fieldnames = [
-        "rule", "consequent_event", "consequent_direction",
-        "n_antecedent", "n_antecedent_and_consequent",
-        "empirical_rate", "population_base_rate",
-        "lift_over_base_rate",
-        "prior_mean", "posterior_mean",
-        "posterior_ci_low", "posterior_ci_high",
-        "verdict", "source", "description",
-    ]
+    if use_causal:
+        fieldnames = [
+            "rule", "consequent_event", "consequent_direction",
+            "n_antecedent", "n_antecedent_and_consequent",
+            "empirical_rate", "population_base_rate",
+            "ate", "ate_ci_low", "ate_ci_high", "p_value",
+            "verdict", "source", "description",
+        ]
+    else:
+        fieldnames = [
+            "rule", "consequent_event", "consequent_direction",
+            "n_antecedent", "n_antecedent_and_consequent",
+            "empirical_rate", "population_base_rate",
+            "lift_over_base_rate",
+            "prior_mean", "posterior_mean",
+            "posterior_ci_low", "posterior_ci_high",
+            "verdict", "source", "description",
+        ]
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
@@ -679,6 +826,12 @@ def main(argv: list[str] | None = None) -> int:
         "--output", type=Path,
         default=Path("data/ml_runs/bayesian_round6_phase7/"),
     )
+    parser.add_argument(
+        "--method", choices=("causal", "raw_rate"), default="causal",
+        help="Verdict method. `causal` = DML ATE (recommended; merges "
+             "Phase 6 + 7 per review). `raw_rate` = Wilson empirical CI "
+             "(legacy; vulnerable to confounding).",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -691,6 +844,7 @@ def main(argv: list[str] | None = None) -> int:
         natal_parquet=args.natal,
         events_csv=args.events,
         output_dir=args.output,
+        use_causal=(args.method == "causal"),
     )
     print(f"Phase 7 artifacts in: {args.output}")
     return 0

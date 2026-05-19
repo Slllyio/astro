@@ -317,6 +317,34 @@ def random_baseline_jaccard(
 
 # ---------- Main ----------
 
+def _split_fingerprint_cohort(
+    fingerprints: dict[str, frozenset[str]],
+    test_frac: float = 0.2,
+    seed: int = 42,
+) -> tuple[set[str], set[str]]:
+    """Split the event-fingerprinted cohort into train / held-out.
+
+    Critical methodological fix: previously Phase 3 evaluated K=5 NN
+    Jaccard on the same fingerprints used to build positive pairs,
+    which inflates the metric (the encoder has effectively memorised
+    the manifold). Held-out evaluation tests genuine generalisation:
+    can the embedding manifold place TEST people near TRAIN people
+    with similar fingerprints, when the encoder never saw the test
+    people's pair labels during training?
+    """
+    rng = random.Random(seed)
+    names = sorted(fingerprints.keys())
+    rng.shuffle(names)
+    n_test = max(int(len(names) * test_frac), 100)
+    test = set(names[:n_test])
+    train = set(names[n_test:])
+    logger.info(
+        "fingerprint cohort split: train=%d  held-out test=%d",
+        len(train), len(test),
+    )
+    return train, test
+
+
 def run_phase3(
     *,
     natal_parquet: Path,
@@ -327,6 +355,7 @@ def run_phase3(
     embed_dim: int = 128,
     threshold: float = 0.5,
     seed: int = 42,
+    test_frac: float = 0.2,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(seed)
@@ -350,8 +379,24 @@ def run_phase3(
     logger.info("building outcome fingerprints from events ...")
     fingerprints = build_outcome_fingerprints(events_csv, set(names))
 
-    logger.info("building positive pairs (Jaccard >= %g) ...", threshold)
-    pairs = build_positive_pairs(fingerprints, threshold=threshold, seed=seed)
+    # CRITICAL FIX (per Round-6 review): hold out a fraction of the
+    # fingerprinted cohort BEFORE building positive pairs. Train encoder
+    # only on train-set fingerprints; evaluate K-NN Jaccard on held-out
+    # fingerprints. Previously the encoder was effectively memorising
+    # the manifold defined by the same fingerprints we then evaluated on.
+    train_names, test_names = _split_fingerprint_cohort(
+        fingerprints, test_frac=test_frac, seed=seed,
+    )
+    train_fingerprints = {n: fingerprints[n] for n in train_names}
+    test_fingerprints = {n: fingerprints[n] for n in test_names}
+
+    logger.info(
+        "building positive pairs FROM TRAIN COHORT ONLY (Jaccard >= %g) ...",
+        threshold,
+    )
+    pairs = build_positive_pairs(
+        train_fingerprints, threshold=threshold, seed=seed,
+    )
     if len(pairs) < 1000:
         logger.warning("only %d positive pairs — try lower threshold", len(pairs))
 
@@ -365,14 +410,29 @@ def run_phase3(
     logger.info("encoding all %d charts ...", len(feature_matrix))
     embeddings = encode_all(encoder, feature_matrix)
 
-    # Evaluate: does the embedding manifold preserve outcome similarity?
-    knn_jaccard = nearest_neighbor_event_jaccard(
+    # IN-SAMPLE (legacy, inflated) eval — kept for transparency only
+    knn_jaccard_insample = nearest_neighbor_event_jaccard(
         embeddings, names, fingerprints, k=5,
     )
     baseline_jaccard = random_baseline_jaccard(fingerprints)
+
+    # HELD-OUT eval (the honest metric): K-NN search includes ALL 90k charts,
+    # but the "anchors" whose neighbours we evaluate are ONLY test-set
+    # people. Their fingerprints were NOT in training pair construction.
+    knn_jaccard_heldout = nearest_neighbor_event_jaccard(
+        embeddings, names, test_fingerprints, k=5,
+    )
+    # Random baseline restricted to the same test cohort for fair comparison
+    test_baseline = random_baseline_jaccard(test_fingerprints)
+
     logger.info(
-        "k=5 NN Jaccard: %.4f  |  random baseline: %.4f  |  lift: %+.4f",
-        knn_jaccard, baseline_jaccard, knn_jaccard - baseline_jaccard,
+        "K=5 NN Jaccard (IN-SAMPLE, inflated):    %.4f  | baseline %.4f",
+        knn_jaccard_insample, baseline_jaccard,
+    )
+    logger.info(
+        "K=5 NN Jaccard (HELD-OUT, honest):       %.4f  | baseline %.4f  | lift %+.4f",
+        knn_jaccard_heldout, test_baseline,
+        knn_jaccard_heldout - test_baseline,
     )
 
     # Persist artifacts
@@ -416,12 +476,22 @@ def run_phase3(
         "neighbours in embedding space; compute mean Jaccard similarity of",
         "their fingerprints. Higher = embedding preserves destiny structure.",
         "",
-        f"- **K=5 NN Jaccard**: {knn_jaccard:.4f}",
-        f"- **Random pair baseline**: {baseline_jaccard:.4f}",
-        f"- **Lift over random**: {knn_jaccard - baseline_jaccard:+.4f}",
+        "### IN-SAMPLE (inflated — encoder trained on these fingerprints)",
         "",
-        "Lift > +0.05 indicates the embedding manifold meaningfully captures",
-        "outcome-similarity structure beyond random nearest-neighbour chance.",
+        f"- K=5 NN Jaccard (in-sample):  {knn_jaccard_insample:.4f}",
+        f"- Random pair baseline (all):  {baseline_jaccard:.4f}",
+        f"- Inflated lift over random:   {knn_jaccard_insample - baseline_jaccard:+.4f}",
+        "",
+        "### HELD-OUT (honest — encoder never saw these test fingerprints)",
+        "",
+        f"- **K=5 NN Jaccard (held-out)**: **{knn_jaccard_heldout:.4f}**",
+        f"- Random pair baseline (test):   {test_baseline:.4f}",
+        f"- **Honest lift over random**:   **{knn_jaccard_heldout - test_baseline:+.4f}**",
+        "",
+        "**The held-out lift is the metric to trust.** The in-sample lift",
+        "is reported only for transparency about how much overfitting",
+        "occurred during contrastive training (gap between the two = the",
+        "memorisation component).",
     ])
     report.write_text("\n".join(lines) + "\n", encoding="utf-8")
     logger.info("wrote report to %s", report)
@@ -449,6 +519,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--embed-dim", type=int, default=128)
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--test-frac", type=float, default=0.2,
+        help="Fraction of the fingerprinted cohort held out from contrastive "
+             "training and used for honest K-NN Jaccard evaluation.",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -466,6 +541,7 @@ def main(argv: list[str] | None = None) -> int:
         embed_dim=args.embed_dim,
         threshold=args.threshold,
         seed=args.seed,
+        test_frac=args.test_frac,
     )
     print(f"Phase 3 artifacts in: {args.output}")
     return 0

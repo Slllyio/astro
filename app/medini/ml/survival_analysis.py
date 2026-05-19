@@ -79,6 +79,74 @@ EVENT_KARAKAS: dict[str, tuple[str, ...]] = {
 }
 
 
+# CRITICAL FIX (per Round-6 review): natural karakas are a "strawman"
+# baseline. Real Vedic timing analysis uses FUNCTIONAL LORDSHIPS — the
+# planet that rules the relevant house in this specific chart.
+# Marriage timing = 7th-lord dasha; career = 10th-lord; longevity =
+# 8th-lord etc. We map each event class to the house(s) whose lord(s)
+# should be active in its dasha.
+EVENT_FUNCTIONAL_HOUSES: dict[str, tuple[int, ...]] = {
+    "marriage":                    (7,),       # 7th house = spouse
+    "relationship":                (5, 7),     # 5th = romance, 7th = partner
+    "work":                        (6, 10),    # 6th = service, 10th = career
+    "career":                      (10,),      # 10th = profession
+    "new career":                  (10,),
+    "new job":                     (10, 6),
+    "death, cause unspecified":    (8,),       # 8th = longevity / death
+    "death by disease":            (6, 8),     # 6th = disease, 8th = death
+    "prize":                       (2, 11),    # 2nd = gain, 11th = honours
+    "fame":                        (10, 11),
+    "crime":                       (8, 12),    # 8th = sudden, 12th = loss/jail
+    "health":                      (1, 6),     # 1st = body, 6th = disease
+    "education":                   (5, 9),     # 5th = learning, 9th = higher ed
+    "family":                      (4,),       # 4th = home/mother
+    "published/ exhibited/ released": (3, 5),  # 3rd = writing, 5th = creativity
+}
+
+
+# Sign rulerships (1..12 → ruler graha name; matches feature_engineering.SIGN_RULERS)
+SIGN_RULER: dict[int, str] = {
+    1: "Mars", 2: "Venus", 3: "Mercury", 4: "Moon",
+    5: "Sun", 6: "Mercury", 7: "Venus", 8: "Mars",
+    9: "Jupiter", 10: "Saturn", 11: "Saturn", 12: "Jupiter",
+}
+
+
+def _functional_lords_for_event(
+    natal_row: pd.Series, event_class: str,
+) -> tuple[str, ...]:
+    """Return the planet names that rule the event's functional houses
+    in THIS chart (Ascendant-specific).
+
+    Example: for `marriage` (7th house), if Ascendant is Aries (sign=1),
+    7th sign from Aries is Libra (sign=7), ruled by Venus → returns
+    ("Venus",). For Cancer Ascendant, 7th is Capricorn, ruled by
+    Saturn → returns ("Saturn",).
+
+    This is the CHART-SPECIFIC functional baseline that the reviewer
+    correctly identified as the right Vedic comparator (vs the
+    universal natural karaka).
+    """
+    houses = EVENT_FUNCTIONAL_HOUSES.get(event_class.lower(), ())
+    if not houses:
+        return ()
+    try:
+        asc_sign = int(natal_row.get("lagna_sign", 1))
+    except (ValueError, TypeError):
+        return ()
+    lords: list[str] = []
+    seen: set[str] = set()
+    for h in houses:
+        # The Nth house's sign = ((asc_sign + h - 1) - 1) % 12 + 1
+        # (h=1 → asc_sign; h=7 → asc_sign + 6 mod 12)
+        sign_of_house = ((asc_sign + h - 2) % 12) + 1
+        lord = SIGN_RULER.get(sign_of_house)
+        if lord and lord not in seen:
+            lords.append(lord)
+            seen.add(lord)
+    return tuple(lords)
+
+
 # ---------- Survival dataset construction ----------
 
 def build_survival_dataset(
@@ -244,15 +312,16 @@ def vimshottari_baseline_age(
     surv: pd.DataFrame, karakas: tuple[str, ...],
 ) -> pd.Series:
     """For each row, predict event age as the earliest MD start age
-    (post-birth, post-16) of any karaka planet.
+    (post-birth, post-16) of any **natural karaka** planet.
 
     Uses Round 5's natal `dasha_start_age_<planet>` and
     `first_<planet>_antardasha_after_16` columns. Returns NaN if no
     karaka MD/AD opens in the recorded lifespan.
 
-    This is the classical-Vedic baseline. If our learned Cox model
-    can't beat it, the sages' karaka theory already captured what
-    the data shows.
+    NOTE: This is the "strawman" baseline (per Round-6 review) — it uses
+    universal natural karakas, not chart-specific functional lords.
+    See ``vimshottari_baseline_age_functional_lords`` for the stronger
+    classical comparator.
     """
     candidates = []
     for k in karakas:
@@ -269,6 +338,50 @@ def vimshottari_baseline_age(
     # Mask negative ages (pre-birth) and < 16 (pre-adulthood)
     candidates_df = candidates_df.where(candidates_df >= 16.0)
     return candidates_df.min(axis=1)
+
+
+def vimshottari_baseline_age_functional_lords(
+    surv: pd.DataFrame, event_class: str,
+) -> pd.Series:
+    """The PROPER classical-Vedic baseline: chart-specific functional
+    lord dasha.
+
+    For each chart, look up which planet rules the relevant house
+    (e.g., 7th-lord for marriage). Predict event age = earliest MD/AD
+    start age of that planet (post-16).
+
+    This is what a real Vedic astrologer uses for timing. If the
+    learned Cox model still beats this, the model has discovered
+    structure beyond classical functional-lord theory.
+    """
+    if surv.empty:
+        return pd.Series([np.nan] * len(surv), index=surv.index)
+    ages = []
+    for idx, row in surv.iterrows():
+        lords = _functional_lords_for_event(row, event_class)
+        if not lords:
+            ages.append(np.nan)
+            continue
+        candidate_ages: list[float] = []
+        for lord in lords:
+            lc = lord.lower()
+            for col in (f"dasha_start_age_{lc}",
+                        f"first_{lc}_antardasha_after_16"):
+                if col in surv.columns:
+                    v = row.get(col)
+                    if v is None or (isinstance(v, float) and np.isnan(v)):
+                        continue
+                    try:
+                        v = float(v)
+                    except (ValueError, TypeError):
+                        continue
+                    if v >= 16.0:
+                        candidate_ages.append(v)
+        if candidate_ages:
+            ages.append(min(candidate_ages))
+        else:
+            ages.append(np.nan)
+    return pd.Series(ages, index=surv.index)
 
 
 def evaluate_baseline(
@@ -462,10 +575,23 @@ def run_phase2(
             logger.warning("AFT fit failed: %s", exc)
             aft_c = float("nan")
 
-        # Vimshottari baseline
+        # Vimshottari baselines: BOTH the natural-karaka strawman AND the
+        # proper chart-specific functional-lord baseline.
         karakas = EVENT_KARAKAS.get(event_class.lower(), ("Saturn",))
-        baseline = vimshottari_baseline_age(surv, karakas)
-        baseline_c = evaluate_baseline(surv, baseline)
+        baseline_natural = vimshottari_baseline_age(surv, karakas)
+        baseline_natural_c = evaluate_baseline(surv, baseline_natural)
+
+        baseline_functional = vimshottari_baseline_age_functional_lords(
+            surv, event_class,
+        )
+        baseline_functional_c = evaluate_baseline(surv, baseline_functional)
+        # Keep variable name baseline_c for downstream report code:
+        # use the BETTER of the two as the "classical" baseline.
+        baseline_c = max(baseline_natural_c, baseline_functional_c)
+        logger.info(
+            "  Vimshottari natural-karaka C: %.4f  | functional-lord C: %.4f",
+            baseline_natural_c, baseline_functional_c,
+        )
 
         # Top hazard rows
         summary_df = cox.summary
@@ -504,8 +630,12 @@ def run_phase2(
             "n_censored": len(surv) - n_observed,
             "cox_c_index": cox_c,
             "aft_c_index": aft_c,
-            "vimshottari_c_index": baseline_c,
-            "delta_vs_baseline": cox_c - baseline_c,
+            "natural_karaka_c": baseline_natural_c,
+            "functional_lord_c": baseline_functional_c,
+            "best_classical_c": baseline_c,
+            "delta_vs_natural": cox_c - baseline_natural_c,
+            "delta_vs_functional": cox_c - baseline_functional_c,
+            "delta_vs_best_classical": cox_c - baseline_c,
         })
 
     # Index summary

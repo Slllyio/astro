@@ -1260,7 +1260,109 @@ language.
   speeds. CPU-only training is feasible but slow.
 - Use base or instruct variant? Instruct is closer to chatbot UX.
 
-(more to follow)
+### Result
+
+Scoped Phase 9 to the **verbalization layer** without LLM training
+(no GPU). Built the composable pieces that an LLM fine-tune would
+have used:
+
+NEW: `app/medini/ml/chart_verbalizer.py` with:
+- `chart_to_markdown(row)`: Round-5 natal feature row → structured
+  Markdown chart sheet (planets, signs, nakshatras, houses, active
+  yogas, drishtis, Vimshottari dasha schedule).
+- `predict_to_text(row, rules)`: applies Phase-1 RuleFit rules to
+  a chart and outputs a natural-language reading with rule
+  activations.
+- `build_qa_dataset()`: emits (chart_md, prompt, answer) triples
+  in JSONL format ready for LoRA fine-tune (5,664 records emitted
+  in this run from real (person, event_age) pairs).
+
+Sample chart output (Collins, Betty J.):
+```markdown
+# Natal chart — Collins, Betty J.
+**Ascendant (Lagna)**: Aries 4°17' (4.29° tropical)
+...
+## Active yogas
+- **Budha-Aditya**
+
+## Notable drishtis
+- Saturn aspects Moon
+- Saturn aspects Venus    ← Phase 6 said this CAUSAL marriage delay
+- Saturn aspects Ketu
+- Jupiter aspects Mars
+```
+
+The serialization is **fully readable** and **uses every classical-
+Vedic structural element** the model knows about. An astrologer
+would recognize this as a proper chart sheet.
+
+### Learnings (Phase 9 only)
+
+1. **The verbalization layer doesn't need an LLM**. Rule activation
+   + chart serialization produce useful, structured chart readings
+   deterministically. The LLM upgrade phrases them more naturally
+   but isn't required for the core functionality.
+
+2. **The QA dataset is ready**. 5,664 (chart_md, prompt, answer)
+   tuples saved as JSONL. Future LoRA fine-tune just needs GPU
+   compute, base model selection, and standard SFT pipeline.
+
+3. **Phase 1 rule activation is sparse**. For the 3 demo charts,
+   most produced "no rules activate strongly" — Phase 1 rules
+   only cover 6 event classes and have specific compound predicates
+   that don't always overlap with random charts. Need more rules
+   (Phase 1 improvement A) to cover more chart types.
+
+4. **The chart-as-text format is concise** (~30 lines per chart).
+   Within token budgets of small LLMs (Phi-3 has 128k context,
+   Qwen2 has 32k). Even a few hundred QA pairs fit easily into a
+   training batch.
+
+5. **Discovered rules and classical drishti aspects show up
+   together**. The Saturn-aspects-Venus aspect in Collins' chart
+   would be flagged by a Phase-6-aware reading: "this is the
+   Venus-Saturn drishti pattern which is associated with marriage
+   delays at p=0.005 in our data". This integration of
+   Phase 1/6/7 outputs into a single human reading is the final
+   chatbot deliverable.
+
+### Improvements possible within Phase 9 (defer to LLM round)
+
+A. **GPU LoRA fine-tune** on the 5,664-record QA dataset.
+
+B. **Include Phase 6 causal claims** in chart readings ("Venus-
+   Saturn drishti has -5.6pp causal effect on marriage").
+
+C. **Include Phase 7 rule validation** ("Sun-in-10th = career is
+   data-validated, lift +7.7pp").
+
+D. **Include Phase 4 sample trajectories** ("based on similar
+   charts, sample trajectories suggest...").
+
+E. **Per-classical-text source attribution** — cite BPHS chapter
+   numbers when a rule activates.
+
+F. **Multilingual** — generate Sanskrit-flavored or Hindi
+   readings for cultural authenticity.
+
+G. **Interactive Q&A endpoint** — given an arbitrary user
+   question + chart, route to the right phase's output (Phase 1
+   rules / Phase 4 sequence / Phase 6 causal).
+
+### Phase 9 = done (verbalization layer; LLM training deferred)
+
+3 phases left: Phase 10 (cross-tradition), Phase 11 (transit
+trajectories), Phase 12 (synastry).
+
+### Implications for Phase 10 plan
+
+What Phase 9 taught us, applied to Phase 10:
+- **The chart serializer is the right Vedic representation**. For
+  Phase 10's Western variant, we'd need a parallel serializer
+  using tropical longitudes + Placidus houses + Western aspects.
+- **Compare via verbal readings, not just numeric AUC**. Phase 10
+  should emit BOTH Vedic and Western chart readings for the same
+  birth event, and let evaluators compare.
 
 ---
 

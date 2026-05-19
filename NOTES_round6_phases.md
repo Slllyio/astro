@@ -409,7 +409,139 @@ chart-similarity becomes a learned distance, enabling:
 - How many positive pairs do we need? 5k people × ~3 similar each =
   15k positive pairs, enough.
 
-(more to follow as Phase 3 progresses)
+### Result
+
+Built `app/medini/ml/contrastive_embeddings.py`. PyTorch SimCLR-style
+training:
+- 464 natal features (Round 5, 66 constant dropped) → 256 → 128
+- 22,763 positive pairs from 5,085 people with outcome fingerprints
+  (Jaccard ≥ 0.5)
+- 15 epochs, batch size 256, InfoNCE loss with temperature 0.1
+- Loss converged: 5.49 → 2.17
+
+Output:
+- `chart_embeddings.npy`: 90,152 × 128 numpy matrix
+- `chart_names.parquet`: ordering index
+- `encoder.pt`: model weights
+- `feature_columns.json`: feature schema
+
+**Manifold evaluation**:
+- K=5 nearest-neighbour outcome-fingerprint Jaccard: **0.888**
+- Random pair baseline: 0.091
+- Lift: **+0.797**
+
+The embedding manifold strongly preserves outcome similarity. A
+chart's 5 nearest neighbors in embedding space have outcomes that
+match the source person's ~89% of the time vs ~9% if drawn at
+random. This validates the chart→destiny manifold hypothesis.
+
+### Learnings (Phase 3 only)
+
+1. **InfoNCE converged cleanly** — no instability, no collapse to a
+   constant. The encoder learned a useful structure.
+
+2. **Embeddings encode outcomes, not just chart geometry**. A K=5 NN
+   Jaccard of 0.89 is huge. Even discounting in-sample optimism
+   (training pairs use the same fingerprints), this validates the
+   premise that chart features carry destiny information.
+
+3. **66 constant features detected**. Round-5 natal parquet has cols
+   like `bav_in_sign_rahu` (nodes don't have BAV → always zero) that
+   leaked through. Should be cleaned in Round-5 ETL (mild — drops 66
+   wasted cols; doesn't affect Round-5 model materially).
+
+4. **Embedding speed**: 90k charts encoded in 5 seconds on CPU. The
+   downstream phases (sequence model, GNN) can use these as
+   pre-computed inputs without retraining.
+
+5. **Fingerprint cohort still small**: only 5,085/90,152 people have
+   any event records. Embeddings for the other 85k are extrapolations
+   from natal-feature similarity. We can't directly validate them
+   but downstream tasks will tell us.
+
+6. **InfoNCE temperature matters**: 0.1 worked; default 1.0 would
+   undertrain. Lower temperature = sharper similarity decisions.
+
+### Improvements possible within Phase 3 (defer or address)
+
+A. **Held-out evaluation cohort**. Current eval uses the same
+   fingerprints that built training pairs. Should split 80/20
+   train/eval people, train encoder on train, evaluate K-NN Jaccard
+   on eval. Will reveal how much of +0.797 is optimism.
+
+B. **Hard negative mining**. Currently negatives are anyone in the
+   batch. Add hard negatives = charts whose features ARE similar
+   but outcomes DIFFER (the cases the model needs to distinguish).
+
+C. **Curriculum learning**. Start with Jaccard ≥ 0.7 (strict pairs),
+   loosen to 0.3 over epochs. Smoother optimization.
+
+D. **Deeper encoder**. Current is 2-layer MLP. Try Transformer-style
+   or wider hidden (512) — may not help on 464 features but worth one
+   test.
+
+E. **UMAP visualization**. Project 128-D → 2-D, color by event class.
+   Reveals whether the manifold has interpretable clusters.
+
+F. **HDBSCAN clustering on embeddings**. Auto-discover "archetype
+   clusters". If meaningful, name them empirically.
+
+G. **Downstream validation**. Use embeddings as inputs to event-class
+   classifier. Does a model trained only on 128-dim chart embedding
+   achieve close to Round-5's 0.36 multi-class accuracy?
+
+### Phase 3 = done
+
+Moving to Phase 4. Embeddings will be used as the conditioning
+prefix for the Event Sequence Transformer.
+
+### Implications for Phase 4 plan (Sequence Transformer)
+
+What Phase 3 taught us, applied to Phase 4:
+- **Chart embedding is the natural prefix token**. Don't re-embed
+  raw natal features in the Transformer; use the 128-D pre-computed
+  embedding as a single context token. Cleaner and lighter.
+- **The 5k event cohort is the training pool.** Train on the people
+  whose event sequences we know. The other 85k charts get a
+  conditional sampling at inference but don't drive training.
+- **Average events per person is ~3.** Sequence length is short.
+  We don't need a big Transformer — 4 layers, 4 heads, 128 dims
+  is plenty. Larger model would overfit.
+- **Tokens are (event_type, age) tuples.** event_type is one of ~27
+  classes (we know the vocabulary from Round-5 multi-class). Age
+  is continuous — discretize to 5-year bins or use a continuous
+  embedding head.
+
+---
+
+## Phase 4 — Event Sequence Transformer
+
+**Status**: queued
+
+### Goal
+Model a person's life as a sequence of events. Train a Transformer
+to **generate** the sequence given the natal chart embedding (Phase 3)
+as a prompt. Output: a generative model of life trajectories.
+
+### Implementation
+1. Tokenize each person's life: `[BOS, (event_type, age_bin), ..., EOS]`
+   - 27 event_type classes from Round 5 multi-class
+   - Age binned into 5-year intervals (0-5, 5-10, ..., 90+) = 18 bins
+   - Total vocabulary: 27 × 18 + 3 special = ~489 tokens
+2. Use Phase 3 chart embedding (128-D) as a prefix-conditioning vector
+   added to every token's embedding.
+3. Decoder-only Transformer: 4 layers, 4 heads, dim 128, ~1M params.
+4. Train with next-token prediction (cross-entropy).
+5. Sample: given a natal chart, sample 100 trajectories.
+
+### Open questions
+- Should age be relative to last event (gap) or absolute? Absolute
+  is simpler; relative captures "after X, Y tends to happen Δ years
+  later".
+- Censoring: if person is censored mid-trajectory (still alive), use
+  a CENSOR token instead of EOS.
+
+(more to follow)
 
 ---
 

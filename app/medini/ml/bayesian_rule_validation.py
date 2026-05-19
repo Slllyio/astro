@@ -871,8 +871,611 @@ EXPANDED_RULES: list[VedicRule] = [
 ]
 
 
-# Combine the original and expanded rule sets
-ALL_RULES: list[VedicRule] = CLASSICAL_RULES + EXPANDED_RULES
+# Tier-1 §2 rule expansion — 70+ more rules across major BPHS axes
+# not yet covered: named Vedic yogas, lord placements, exaltation /
+# debilitation rules, mutual reception, additional ascendant rules.
+
+TIER1_RULES: list[VedicRule] = [
+    # --- Named yogas: Dhana (wealth) ---
+    VedicRule(
+        name="dhana_yoga_2nd_11th",
+        description="2nd lord (Mercury for Gemini-rising, Venus for "
+                    "Taurus-rising etc.) combining with 11th lord = Dhana yoga "
+                    "(wealth combination).",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 36",
+        # Approximated: any conjunction or aspect between Mercury and Jupiter,
+        # Venus and Jupiter, which carry wealth significations
+        antecedent_fn=lambda r: (
+            _conjunction("mercury", "jupiter", 10.0)(r)
+            or _conjunction("venus", "jupiter", 10.0)(r)
+            or _has_flag(r, "drishti_jupiter_venus")
+        ),
+    ),
+    # --- Adhi yoga (benefics in 6/7/8 from Moon) ---
+    VedicRule(
+        name="adhi_yoga_benefics_from_moon",
+        description="Benefics (Jupiter/Venus/Mercury) in 6/7/8 from natal "
+                    "Moon = Adhi yoga: comfort, leadership, abundance.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: any(
+            r.get(f"house_from_moon_{p}") in (6, 7, 8)
+            for p in ("jupiter", "venus", "mercury")
+        ),
+    ),
+    # --- Kemadruma yoga (Moon isolated) ---
+    VedicRule(
+        name="kemadruma_yoga_moon_isolated",
+        description="Moon alone (no planets in 2nd/12th from Moon, and not "
+                    "in kendra from lagna) = Kemadruma yoga: poverty, "
+                    "psychological isolation.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: (
+            not any(int(r.get(f"house_from_moon_{p}", 0)) in (2, 12)
+                    for p in ("sun", "mars", "mercury", "jupiter",
+                              "venus", "saturn"))
+        ),
+    ),
+    # --- Chandra-Mangala yoga ---
+    VedicRule(
+        name="chandra_mangala_yoga",
+        description="Moon-Mars conjunction = wealth through ventures, "
+                    "but emotional turbulence.",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 36",
+        antecedent_fn=_conjunction("moon", "mars", 8.0),
+    ),
+    # --- Lakshmi yoga (9th lord exalted in kendra) ---
+    VedicRule(
+        name="lakshmi_yoga_9th_lord_exalted",
+        description="9th lord (varies; often Jupiter for Pisces/Sag) "
+                    "exalted in a kendra = Lakshmi yoga (wealth + fortune).",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 36",
+        # Approximated: Jupiter in kendra in Cancer (its exaltation sign)
+        antecedent_fn=lambda r: (
+            int(r.get("lon_jupiter", 0) // 30) + 1 == 4  # Cancer
+            and r.get("house_jupiter") in (1, 4, 7, 10)
+        ),
+    ),
+    # --- Saraswati yoga (Mercury/Venus/Jupiter in kendra) ---
+    VedicRule(
+        name="saraswati_yoga",
+        description="Mercury, Venus, and Jupiter all in kendra (1/4/7/10) "
+                    "or trine (5/9) = Saraswati yoga: scholarship, art.",
+        consequent_event="education", consequent_direction="promotes",
+        prior_alpha=8, prior_beta=2, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: all(
+            r.get(f"house_{p}") in (1, 4, 5, 7, 9, 10)
+            for p in ("mercury", "venus", "jupiter")
+        ),
+    ),
+    # --- Parijata yoga (mutual exchange / dignity chain) ---
+    VedicRule(
+        name="parijata_lagna_lord_dignity",
+        description="Lagna lord in its own/exaltation/friend's sign with "
+                    "good dispositor chain = Parijata yoga.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: (
+            r.get("disp_depth_sun", 99) <= 1
+            and r.get("house_sun") in (1, 4, 5, 7, 9, 10)
+        ),
+    ),
+    # --- Vipreet Raja yogas (6/8/12 lords in 6/8/12) ---
+    VedicRule(
+        name="vipreet_raja_yoga",
+        description="6/8/12 lords (dusthana lords) in 6/8/12 = Vipreet "
+                    "Raja yoga: unexpected rise through misfortune.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 36",
+        # Approximated: Saturn (often 6/8/12 lord) in 6/8/12 from lagna
+        antecedent_fn=lambda r: r.get("house_saturn") in (6, 8, 12),
+    ),
+    # --- Neecha Bhanga Raja yoga ---
+    VedicRule(
+        name="neecha_bhanga_saturn",
+        description="Saturn debilitated in Aries (sign 1) but dispositor "
+                    "Mars in kendra = Neecha Bhanga: cancellation of "
+                    "debilitation → unexpected rise.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: (
+            int(r.get("lon_saturn", 0) // 30) + 1 == 1  # Saturn in Aries
+            and r.get("house_mars") in (1, 4, 7, 10)
+        ),
+    ),
+    VedicRule(
+        name="neecha_bhanga_sun",
+        description="Sun debilitated in Libra (sign 7) but dispositor "
+                    "Venus in kendra = Neecha Bhanga Sun.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 36",
+        antecedent_fn=lambda r: (
+            int(r.get("lon_sun", 0) // 30) + 1 == 7  # Sun in Libra
+            and r.get("house_venus") in (1, 4, 7, 10)
+        ),
+    ),
+    # --- Exaltation rules ---
+    VedicRule(
+        name="sun_exalted_aries",
+        description="Sun exalted in Aries = strong authority, leadership.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_sun", 0) // 30) + 1 == 1,
+    ),
+    VedicRule(
+        name="jupiter_exalted_cancer",
+        description="Jupiter exalted in Cancer = wisdom, fortune, "
+                    "spirituality.",
+        consequent_event="education", consequent_direction="promotes",
+        prior_alpha=8, prior_beta=2, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_jupiter", 0) // 30) + 1 == 4,
+    ),
+    VedicRule(
+        name="venus_exalted_pisces",
+        description="Venus exalted in Pisces = luxury, refined arts.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_venus", 0) // 30) + 1 == 12,
+    ),
+    VedicRule(
+        name="moon_exalted_taurus",
+        description="Moon exalted in Taurus = emotional stability, popularity.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_moon", 0) // 30) + 1 == 2,
+    ),
+    VedicRule(
+        name="mars_exalted_capricorn",
+        description="Mars exalted in Capricorn = disciplined action, "
+                    "executive power.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_mars", 0) // 30) + 1 == 10,
+    ),
+    VedicRule(
+        name="mercury_exalted_virgo",
+        description="Mercury exalted in Virgo = analytical genius.",
+        consequent_event="education", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_mercury", 0) // 30) + 1 == 6,
+    ),
+    VedicRule(
+        name="saturn_exalted_libra",
+        description="Saturn exalted in Libra = enduring success.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_saturn", 0) // 30) + 1 == 7,
+    ),
+    # --- Debilitation rules ---
+    VedicRule(
+        name="moon_debilitated_scorpio",
+        description="Moon debilitated in Scorpio = emotional instability.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_moon", 0) // 30) + 1 == 8,
+    ),
+    VedicRule(
+        name="saturn_debilitated_aries",
+        description="Saturn debilitated in Aries = impulsivity, hardship.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_saturn", 0) // 30) + 1 == 1,
+    ),
+    VedicRule(
+        name="venus_debilitated_virgo",
+        description="Venus debilitated in Virgo = relationship struggles.",
+        consequent_event="relationship", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_venus", 0) // 30) + 1 == 6,
+    ),
+    VedicRule(
+        name="mars_debilitated_cancer",
+        description="Mars debilitated in Cancer = courage diluted, "
+                    "emotional reactivity.",
+        consequent_event="crime", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 27",
+        antecedent_fn=lambda r: int(r.get("lon_mars", 0) // 30) + 1 == 4,
+    ),
+    # --- Own-sign placements ---
+    VedicRule(
+        name="moon_in_own_cancer",
+        description="Moon in Cancer (own sign) = peace, public popularity.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 25",
+        antecedent_fn=lambda r: int(r.get("lon_moon", 0) // 30) + 1 == 4,
+    ),
+    VedicRule(
+        name="sun_in_own_leo",
+        description="Sun in Leo (own sign) = leadership, authority.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 25",
+        antecedent_fn=lambda r: int(r.get("lon_sun", 0) // 30) + 1 == 5,
+    ),
+    VedicRule(
+        name="jupiter_in_own_sagittarius",
+        description="Jupiter in Sagittarius (own sign) = wisdom, dharma.",
+        consequent_event="religion", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 25",
+        antecedent_fn=lambda r: int(r.get("lon_jupiter", 0) // 30) + 1 == 9,
+    ),
+    # --- Specific house placements not yet covered ---
+    VedicRule(
+        name="jupiter_in_1st_wisdom",
+        description="Jupiter in 1st house = wisdom, dharmic identity.",
+        consequent_event="education", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 18",
+        antecedent_fn=_planet_in_house("jupiter", 1),
+    ),
+    VedicRule(
+        name="venus_in_1st_charm",
+        description="Venus in 1st = beauty, magnetism.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 18",
+        antecedent_fn=_planet_in_house("venus", 1),
+    ),
+    VedicRule(
+        name="moon_in_2nd_wealth",
+        description="Moon in 2nd = family wealth, gentle speech.",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("moon", 2),
+    ),
+    VedicRule(
+        name="saturn_in_2nd_speech_obstruction",
+        description="Saturn in 2nd = restricted speech, financial caution.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=4, prior_beta=6, source="BPHS Adhyaya 25",
+        antecedent_fn=_planet_in_house("saturn", 2),
+    ),
+    VedicRule(
+        name="mars_in_4th_domestic_friction",
+        description="Mars in 4th = domestic conflicts, real estate disputes.",
+        consequent_event="family", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("mars", 4),
+    ),
+    VedicRule(
+        name="saturn_in_4th_loneliness",
+        description="Saturn in 4th = emotional isolation, late home stability.",
+        consequent_event="family", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("saturn", 4),
+    ),
+    VedicRule(
+        name="ketu_in_5th_progeny_alienation",
+        description="Ketu in 5th = spiritual children, sometimes "
+                    "progeny obstacles.",
+        consequent_event="family", consequent_direction="delays/denies",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("ketu", 5),
+    ),
+    VedicRule(
+        name="rahu_in_5th_unconventional_progeny",
+        description="Rahu in 5th = unusual romantic/progeny patterns.",
+        consequent_event="relationship", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("rahu", 5),
+    ),
+    VedicRule(
+        name="venus_in_6th_relationship_issues",
+        description="Venus in 6th = relationships through work/service, "
+                    "sometimes marital obstacles.",
+        consequent_event="marriage", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("venus", 6),
+    ),
+    VedicRule(
+        name="jupiter_in_6th_self_undoing",
+        description="Jupiter in 6th = work-related challenges (Jupiter is "
+                    "uncomfortable in 6th).",
+        consequent_event="work", consequent_direction="delays/denies",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 25",
+        antecedent_fn=_planet_in_house("jupiter", 6),
+    ),
+    VedicRule(
+        name="jupiter_in_7th_wealthy_spouse",
+        description="Jupiter in 7th = noble/wealthy/dharmic spouse.",
+        consequent_event="marriage", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("jupiter", 7),
+    ),
+    VedicRule(
+        name="jupiter_in_11th_gains_career",
+        description="Jupiter in 11th = career gains, social network success.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("jupiter", 11),
+    ),
+    VedicRule(
+        name="saturn_in_11th_late_gains",
+        description="Saturn in 11th = slow but enduring gains.",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("saturn", 11),
+    ),
+    VedicRule(
+        name="rahu_in_11th_unconventional_gains",
+        description="Rahu in 11th = sudden/unconventional gains.",
+        consequent_event="prize", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("rahu", 11),
+    ),
+    VedicRule(
+        name="ketu_in_3rd_self_doubt",
+        description="Ketu in 3rd = withdrawal from communications.",
+        consequent_event="published/ exhibited/ released",
+        consequent_direction="delays/denies",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("ketu", 3),
+    ),
+    VedicRule(
+        name="rahu_in_3rd_courage_initiative",
+        description="Rahu in 3rd = bold ventures, often unconventional.",
+        consequent_event="crime", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("rahu", 3),
+    ),
+    # --- Drishti combinations ---
+    VedicRule(
+        name="saturn_jupiter_mutual_drishti",
+        description="Saturn-Jupiter mutual aspect = balance between "
+                    "discipline and wisdom.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: (
+            _has_flag(r, "drishti_saturn_jupiter")
+            and _has_flag(r, "drishti_jupiter_saturn")
+        ),
+    ),
+    VedicRule(
+        name="jupiter_aspects_venus_grace",
+        description="Jupiter aspecting Venus = dharmic relationships.",
+        consequent_event="marriage", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: _has_flag(r, "drishti_jupiter_venus"),
+    ),
+    VedicRule(
+        name="mars_aspects_jupiter_aggressive_dharma",
+        description="Mars aspecting Jupiter = competitive righteousness, "
+                    "warrior-scholar.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: _has_flag(r, "drishti_mars_jupiter"),
+    ),
+    VedicRule(
+        name="saturn_aspects_moon_emotional_weight",
+        description="Saturn aspecting Moon = emotional heaviness, depression.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 25",
+        antecedent_fn=lambda r: _has_flag(r, "drishti_saturn_moon"),
+    ),
+    # --- Specific yoga combos ---
+    VedicRule(
+        name="surya_chandra_yoga_kendra",
+        description="Sun and Moon in kendra (1/4/7/10 from each other) = "
+                    "balanced soul and mind, often fame.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="Saravali",
+        antecedent_fn=lambda r: (
+            int(r.get("house_from_sun_moon", 0)) in (1, 4, 7, 10)
+        ),
+    ),
+    VedicRule(
+        name="atmakaraka_jupiter_dharma_path",
+        description="Jupiter at highest degree among non-nodes = dharmic "
+                    "atmakaraka, religious path.",
+        consequent_event="religion", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="Jaimini Sutras",
+        antecedent_fn=lambda r: (
+            float(r.get("lon_jupiter", 0)) % 30
+            > max(float(r.get(f"lon_{p}", 0)) % 30 for p in
+                  ("sun", "moon", "mars", "mercury", "venus", "saturn"))
+        ),
+    ),
+    # --- Sade Sati lookup (sade_sati_active is event-time only; here we
+    # use natal Moon sign x Saturn currently transiting from Moon — proxy
+    # via the discrete house_from_moon_saturn column)
+    VedicRule(
+        name="natal_saturn_in_1st_from_moon",
+        description="Natal Saturn in 1st from natal Moon = born under "
+                    "Sade-Sati peak phase.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="Phaladeepika 9",
+        antecedent_fn=lambda r: int(r.get("house_from_moon_saturn", 0)) == 1,
+    ),
+    VedicRule(
+        name="natal_saturn_in_12th_from_moon",
+        description="Natal Saturn in 12th from Moon = rising Sade Sati at birth.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="Phaladeepika 9",
+        antecedent_fn=lambda r: int(r.get("house_from_moon_saturn", 0)) == 12,
+    ),
+    # --- Speed / retrograde rules ---
+    VedicRule(
+        name="retrograde_jupiter_inner_quest",
+        description="Retrograde Jupiter at birth = deep inner wisdom.",
+        consequent_event="religion", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: _has_flag(r, "rx_jupiter"),
+    ),
+    VedicRule(
+        name="retrograde_saturn_karmic_burden",
+        description="Retrograde Saturn = karmic burden from past life.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: _has_flag(r, "rx_saturn"),
+    ),
+    VedicRule(
+        name="retrograde_mercury_misunderstandings",
+        description="Retrograde Mercury = communication challenges.",
+        consequent_event="published/ exhibited/ released",
+        consequent_direction="delays/denies",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: _has_flag(r, "rx_mercury"),
+    ),
+    # --- Nakshatra rules (using nak_<planet> index 0..26) ---
+    VedicRule(
+        name="moon_in_rohini_beauty",
+        description="Moon in Rohini (nakshatra 3) = creativity, sensuality, fame.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 14",
+        antecedent_fn=lambda r: int(r.get("nak_moon", -1)) == 3,
+    ),
+    VedicRule(
+        name="moon_in_pushya_nourishment",
+        description="Moon in Pushya (nakshatra 7) = nurturing, leadership.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 14",
+        antecedent_fn=lambda r: int(r.get("nak_moon", -1)) == 7,
+    ),
+    VedicRule(
+        name="moon_in_mula_uprooting",
+        description="Moon in Mula (nakshatra 18) = uprooting experiences, "
+                    "spiritual journey.",
+        consequent_event="travel", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 14",
+        antecedent_fn=lambda r: int(r.get("nak_moon", -1)) == 18,
+    ),
+    # --- Combust planets ---
+    VedicRule(
+        name="mercury_combust_speech_dimmed",
+        description="Mercury combust by Sun (within 12°) = intelligence "
+                    "obscured by ego.",
+        consequent_event="education", consequent_direction="delays/denies",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 9",
+        antecedent_fn=_conjunction("sun", "mercury", 12.0),
+    ),
+    VedicRule(
+        name="jupiter_combust_wisdom_dimmed",
+        description="Jupiter combust by Sun (within 11°) = teacher's "
+                    "authority diminished.",
+        consequent_event="education", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 9",
+        antecedent_fn=_conjunction("sun", "jupiter", 11.0),
+    ),
+    VedicRule(
+        name="venus_combust_marriage_friction",
+        description="Venus combust by Sun (within 10°) = relationship "
+                    "friction from ego.",
+        consequent_event="marriage", consequent_direction="delays/denies",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 9",
+        antecedent_fn=_conjunction("sun", "venus", 10.0),
+    ),
+    # --- Pancha Mahapurusha overall outcome ---
+    VedicRule(
+        name="any_pmp_creates_general_success",
+        description="Any Pancha Mahapurusha yoga = general life elevation.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=8, prior_beta=2, source="BPHS PMP",
+        antecedent_fn=lambda r: any(
+            _has_flag(r, f"yoga_{name}")
+            for name in ("ruchaka", "bhadra", "hamsa", "malavya", "sasa")
+        ),
+    ),
+    # --- 8th-house death-by-cause-of-planet rules ---
+    VedicRule(
+        name="venus_in_8th_indulgence_death",
+        description="Venus in 8th = death through indulgence/luxury-related causes.",
+        consequent_event="death by disease", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 38",
+        antecedent_fn=_planet_in_house("venus", 8),
+    ),
+    VedicRule(
+        name="mercury_in_8th_nervous_death",
+        description="Mercury in 8th = death from nervous/skin disorders.",
+        consequent_event="death by disease", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 38",
+        antecedent_fn=_planet_in_house("mercury", 8),
+    ),
+    # --- Career sub-classes ---
+    VedicRule(
+        name="sun_in_5th_creative_authority",
+        description="Sun in 5th = creative authority, performance arts.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("sun", 5),
+    ),
+    VedicRule(
+        name="mars_in_3rd_courageous_writer",
+        description="Mars in 3rd = courageous, sometimes martial writer.",
+        consequent_event="published/ exhibited/ released",
+        consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("mars", 3),
+    ),
+    # --- Lagna lord rules ---
+    VedicRule(
+        name="lagna_lord_in_kendra",
+        description="Lagna lord in kendra (approx via Sun, often a lagna "
+                    "karaka) = vitality, leadership.",
+        consequent_event="career", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 18",
+        antecedent_fn=lambda r: r.get("house_sun") in (1, 4, 7, 10),
+    ),
+    VedicRule(
+        name="lagna_lord_in_dusthana",
+        description="Lagna lord (Sun proxy) in 6/8/12 = struggles with vitality.",
+        consequent_event="health", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 25",
+        antecedent_fn=lambda r: r.get("house_sun") in (6, 8, 12),
+    ),
+    # --- Relationships ---
+    VedicRule(
+        name="venus_jupiter_drishti_dharmic_love",
+        description="Venus-Jupiter mutual aspect = dharmic, deep love.",
+        consequent_event="marriage", consequent_direction="promotes",
+        prior_alpha=7, prior_beta=3, source="BPHS Adhyaya 9",
+        antecedent_fn=lambda r: (
+            _has_flag(r, "drishti_venus_jupiter")
+            or _has_flag(r, "drishti_jupiter_venus")
+        ),
+    ),
+    VedicRule(
+        name="moon_venus_conjunction_aesthetic",
+        description="Moon-Venus conjunction = aesthetic, emotional richness.",
+        consequent_event="fame", consequent_direction="promotes",
+        prior_alpha=6, prior_beta=4, source="BPHS Adhyaya 9",
+        antecedent_fn=_conjunction("moon", "venus", 8.0),
+    ),
+    # --- Death-of-relatives indicators (these had 0.50 baseline AUC) ---
+    VedicRule(
+        name="sun_in_8th_father_death",
+        description="Sun in 8th = father's longevity issues.",
+        consequent_event="death of father", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("sun", 8),
+    ),
+    VedicRule(
+        name="moon_in_8th_mother_death",
+        description="Moon in 8th = mother's longevity issues.",
+        consequent_event="death of mother", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("moon", 8),
+    ),
+    # --- Foreign / travel ---
+    VedicRule(
+        name="moon_in_9th_pilgrimage",
+        description="Moon in 9th = devotional pilgrimage.",
+        consequent_event="travel", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("moon", 9),
+    ),
+    VedicRule(
+        name="mars_in_12th_foreign_battles",
+        description="Mars in 12th = foreign struggles, expatriation.",
+        consequent_event="travel", consequent_direction="promotes",
+        prior_alpha=5, prior_beta=5, source="BPHS Adhyaya 19",
+        antecedent_fn=_planet_in_house("mars", 12),
+    ),
+]
+
+
+# Combine all rule sets
+ALL_RULES: list[VedicRule] = CLASSICAL_RULES + EXPANDED_RULES + TIER1_RULES
 
 
 # ---------- Empirical evaluation ----------

@@ -44,7 +44,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from econml.dml import LinearDML, NonParamDML
-from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, RandomForestRegressor
 
 warnings.filterwarnings("ignore")
 
@@ -275,6 +275,67 @@ def estimate_ate_for_feature(
         return {"ate": float("nan"), "p_value": float("nan"), "error": str(exc)}
 
 
+def plot_continuous_drishti(
+    df: pd.DataFrame, feature: str, y_col: str = "y",
+    output_dir: Path = Path("."), seed: int = 42
+) -> None:
+    """Generates a Continuous Causal Dose-Response curve for a feature.
+    Uses NonParamDML to capture non-linear treatment effects (like aspects).
+    """
+    import matplotlib.pyplot as plt
+    logger.info("Generating Continuous Dose-Response plot for %s...", feature)
+    
+    if feature not in df.columns or not _is_natal_numeric(feature, df):
+        logger.warning("Feature %s is not valid for plotting.", feature)
+        return
+
+    natal_numerics = [c for c in df.columns if c != feature and _is_natal_numeric(c, df)]
+    T = pd.to_numeric(df[feature], errors="coerce").fillna(df[feature].median()).to_numpy().astype(float)
+    Y = df[y_col].astype(int).to_numpy()
+    W = df[natal_numerics].fillna(0.0).to_numpy()
+
+    # Use PolynomialFeatures on T with LinearDML to capture non-linear dose-response
+    from sklearn.preprocessing import PolynomialFeatures
+    try:
+        T_poly = PolynomialFeatures(degree=3, include_bias=False).fit_transform(T.reshape(-1, 1))
+        
+        # LinearDML with continuous T allows multiple T columns for polynomial effects
+        # model_t needs to handle multi-output (3 polynomial features), so we use RandomForestRegressor
+        est = LinearDML(
+            model_y=GradientBoostingRegressor(n_estimators=50, max_depth=3, random_state=seed),
+            model_t=RandomForestRegressor(n_estimators=50, max_depth=5, random_state=seed),
+            discrete_treatment=False,
+            random_state=seed,
+        )
+        est.fit(Y=Y, T=T_poly, W=W)
+        
+        # Test treatments across the range
+        T_test = np.linspace(np.percentile(T, 1), np.percentile(T, 99), 100)
+        T_test_poly = PolynomialFeatures(degree=3, include_bias=False).fit_transform(T_test.reshape(-1, 1))
+        
+        # Calculate dose-response effect E[Y(T)] - E[Y(0)]
+        # We can use est.effect which computes the effect of T1 vs T0
+        T0 = np.zeros_like(T_test_poly)
+        te_pred = est.effect(X=None, T0=T0, T1=T_test_poly)
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(T_test, te_pred, color='blue', linewidth=2, label='Causal Effect vs T=0')
+        plt.title(f"Continuous Causal Dose-Response: {feature} on {y_col}")
+        plt.xlabel(f"{feature} (Degrees)")
+        plt.ylabel(f"Effect on P({y_col})")
+        plt.axhline(0, color='red', linestyle='--', alpha=0.5)
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        
+        out_path = output_dir / f"causal_dose_response_{feature}.png"
+        plt.savefig(out_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        logger.info("Saved dose-response plot to %s", out_path)
+    except Exception as exc:
+        logger.error("Failed to generate plot: %s", exc)
+
+
+
 # ---------- Main ----------
 
 def run_phase6(
@@ -336,11 +397,18 @@ def run_phase6(
         shap_lookup = {}
 
     estimator = (
-        estimate_ate_continuous if treatment_kind == "continuous"
+        estimate_ate_continuous if treatment_kind in ("continuous", "continuous_plot")
         else estimate_ate_for_feature
     )
     logger.info("treatment_kind=%s (estimator=%s)",
                 treatment_kind, estimator.__name__)
+    
+    # If continuous_plot is requested, plot the top feature or specific feature
+    if treatment_kind == "continuous_plot":
+        # Check if dist_venus_saturn is present and plot it
+        plot_feat = "dist_venus_saturn" if "dist_venus_saturn" in df.columns else top_features[0]
+        plot_continuous_drishti(df, plot_feat, "y", output_dir, seed)
+
     for feat in top_features:
         if feat not in df.columns:
             logger.warning("feature %s not in df — skip", feat)
@@ -462,10 +530,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--top-k", type=int, default=15)
     parser.add_argument(
-        "--treatment-kind", choices=("binary", "continuous"), default="binary",
-        help="binary = legacy median-split (faster); continuous = "
-             "Round-7 upgrade per review §1.3 (preserves variance and "
-             "non-linear orb effects).",
+        "--treatment-kind", choices=("binary", "continuous", "continuous_plot"), default="binary",
+        help="binary = legacy median-split; continuous = LinearDML; continuous_plot = NonParamDML plotting.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)

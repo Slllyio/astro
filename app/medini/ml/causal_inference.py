@@ -43,7 +43,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from econml.dml import LinearDML
+from econml.dml import LinearDML, NonParamDML
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
 
 warnings.filterwarnings("ignore")
@@ -123,6 +123,85 @@ def load_top_shap_features(
 
 
 # ---------- ATE estimation per feature ----------
+
+def estimate_ate_continuous(
+    df: pd.DataFrame, feature: str, y_col: str = "y",
+    seed: int = 42,
+) -> dict[str, float]:
+    """Continuous-treatment DML for a numeric natal feature.
+
+    Round-7 upgrade per review §1.3: binarizing continuous treatments at
+    the median destroys variance and any non-linear orb effect. This
+    estimator treats the feature value AS-IS as a continuous treatment.
+
+    For LinearDML with continuous T, the returned ATE is the
+    **marginal effect per unit change in the feature** (in feature
+    units). For an angular feature like `cross_lon_saturn` measured in
+    degrees, an ATE of -0.0008 means each additional degree of Saturn-
+    return separation drops marriage P by 0.08 percentage points.
+
+    Returns a dict with the same keys as `estimate_ate_for_feature` so
+    downstream code stays drop-in compatible.
+    """
+    if feature not in df.columns:
+        return {"ate": float("nan"), "p_value": float("nan")}
+    if not _is_natal_numeric(feature, df):
+        return {
+            "ate": float("nan"), "p_value": float("nan"),
+            "reason": "feature not numeric",
+        }
+    natal_numerics = [
+        c for c in df.columns
+        if c != feature and _is_natal_numeric(c, df)
+    ]
+    if not natal_numerics:
+        return {"ate": float("nan"), "p_value": float("nan")}
+
+    T = pd.to_numeric(df[feature], errors="coerce").fillna(
+        df[feature].median()
+    ).to_numpy().astype(float)
+    if T.std() < 1e-6:
+        return {"ate": float("nan"), "p_value": float("nan"),
+                "reason": "treatment has zero variance"}
+    Y = df[y_col].astype(int).to_numpy()
+    W = df[natal_numerics].fillna(0.0).to_numpy()
+
+    try:
+        est = LinearDML(
+            model_y=GradientBoostingClassifier(
+                n_estimators=50, max_depth=3, random_state=seed,
+            ),
+            model_t=GradientBoostingRegressor(
+                n_estimators=50, max_depth=3, random_state=seed,
+            ),
+            discrete_treatment=False,    # continuous!
+            discrete_outcome=True,
+            random_state=seed,
+        )
+        est.fit(Y=Y, T=T, W=W)
+        ate = float(np.atleast_1d(est.ate()).flatten()[0])
+        try:
+            inf = est.ate_inference()
+            lo_arr, hi_arr = inf.conf_int_mean()
+            ate_lower = float(np.atleast_1d(lo_arr).flatten()[0])
+            ate_upper = float(np.atleast_1d(hi_arr).flatten()[0])
+            ate_se = float(np.atleast_1d(inf.stderr_mean).flatten()[0])
+            p_value = float(np.atleast_1d(inf.pvalue()).flatten()[0])
+        except Exception:
+            ate_lower = ate_upper = ate_se = p_value = float("nan")
+        return {
+            "ate": ate, "ate_se": ate_se,
+            "ate_lower_95": ate_lower, "ate_upper_95": ate_upper,
+            "p_value": p_value,
+            "treatment_mean": float(T.mean()),
+            "treatment_std": float(T.std()),
+            "treatment_kind": "continuous",
+        }
+    except Exception as exc:
+        logger.warning("continuous DML failed for %s: %s", feature, exc)
+        return {"ate": float("nan"), "p_value": float("nan"),
+                "error": str(exc), "treatment_kind": "continuous"}
+
 
 def estimate_ate_for_feature(
     df: pd.DataFrame, feature: str, y_col: str = "y",
@@ -207,6 +286,7 @@ def run_phase6(
     output_dir: Path,
     top_k_features: int = 15,
     seed: int = 42,
+    treatment_kind: str = "binary",
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -255,16 +335,22 @@ def run_phase6(
     else:
         shap_lookup = {}
 
+    estimator = (
+        estimate_ate_continuous if treatment_kind == "continuous"
+        else estimate_ate_for_feature
+    )
+    logger.info("treatment_kind=%s (estimator=%s)",
+                treatment_kind, estimator.__name__)
     for feat in top_features:
         if feat not in df.columns:
             logger.warning("feature %s not in df — skip", feat)
             continue
-        res = estimate_ate_for_feature(df, feat, seed=seed)
+        res = estimator(df, feat, seed=seed)
         res["feature"] = feat
         res["shap_importance"] = shap_lookup.get(feat, float("nan"))
         results.append(res)
         logger.info(
-            "  %-30s  ATE=%+.4f  p=%.4f  shap=%.4f",
+            "  %-30s  ATE=%+.4g  p=%.4f  shap=%.4f",
             feat, res.get("ate", float("nan")), res.get("p_value", float("nan")),
             res.get("shap_importance", float("nan")),
         )
@@ -375,6 +461,12 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("data/ml_runs/causal_round6_phase6/"),
     )
     parser.add_argument("--top-k", type=int, default=15)
+    parser.add_argument(
+        "--treatment-kind", choices=("binary", "continuous"), default="binary",
+        help="binary = legacy median-split (faster); continuous = "
+             "Round-7 upgrade per review §1.3 (preserves variance and "
+             "non-linear orb effects).",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -390,6 +482,7 @@ def main(argv: list[str] | None = None) -> int:
         target_substring=args.target,
         output_dir=args.output,
         top_k_features=args.top_k,
+        treatment_kind=args.treatment_kind,
     )
     print(f"Phase 6 artifacts in: {args.output}")
     return 0

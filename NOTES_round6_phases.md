@@ -1684,8 +1684,52 @@ This is the **first statistically rigorous, confounder-adjusted
 audit of classical Vedic astrology at this scale** — the §2.3
 goal of the Round 7 plan.
 
-## §3 Continuous Space-Time Paradigm
-**Status: NOTED as research direction**, not implemented.
+## §3.1 Spatial De-quantization Probe
+**Status: DONE** (committed `92c8838`).
+
+The user's hypothesis: classical Vedic quantizations (12 houses,
+27 nakshatras, 12 signs) are lossy compressions; continuous
+coordinates should beat them.
+
+Test: 3 multi-class XGBoost runs on the same 14,166-event corpus:
+
+| Experiment | N cols | CV Accuracy |
+|---|---|---|
+| A. Continuous-only | 652 | 0.3338 |
+| **B. Discrete-only** | **412** | **0.3480** ← WINS |
+| C. Both (Round-5) | 1064 | 0.3538 |
+
+**PARTIAL REFUTATION**: discrete-only beats continuous-only by
++0.014 with 240 fewer features. The combined set adds only +0.006
+more. The sages' compressions are efficient, not lossy, at our
+14k-event scale.
+
+This is the empirical answer to a 2000-year-old design choice:
+the houses/nakshatras/signs preserved nearly all event-relevant
+structure that raw degrees could carry. Continuous coordinates
+contribute marginally when added to discrete features.
+
+(At 1M+ events, continuous might win. We don't have that data.)
+
+## §3.2 Temporal De-quantization (Fractal Dasha Vector)
+**Status: DESIGN DRAFTED, experiment deferred**.
+
+The Round 5 features already encode dasha-lord categoricals
+(`active_md_lord`, `active_ad_lord`, `active_pd_lord`) + their
+elapsed-years floats. A fractal vector encoding would replace
+these 3 categoricals with **9 continuous floats summing to 1.0** —
+one per graha, representing the weighted influence at the event's
+exact age across MD/AD/PD/Sookshma simultaneously.
+
+Math sketch: at age t,
+  weight[lord_p] = 1 (if MD lord) + 0.4 (if AD lord) + 0.2 (if PD)
+                   + 0.05 (if Sookshma)
+  normalised to sum to 1.0.
+
+This gives a 9-dim Vedic-time embedding. The §3.1 result suggests
+this MAY not beat the existing categoricals — but it's the right
+ablation to confirm. Estimated work: ~2 hours code + 30 min eval.
+Defer to Round 8 unless explicitly requested.
 The paradigm shift (de-quantize houses/nakshatras/dashas) is
 profound but requires either:
 - A retraining of Round 5 with ONLY continuous features (drop all

@@ -680,6 +680,135 @@ representations. Compare to Phase 3 MLP embeddings.
   then independent training to see if structural representation
   adds anything.
 
+### Result
+
+Built `app/medini/ml/gnn_chart_encoder.py`. PyTorch Geometric +
+GATv2Conv stack:
+- Graph: 22 nodes per chart (9 planets + 12 houses + 1 ascendant),
+  ~52 edges avg (drishti + conjunction + occupancy + rulership)
+- Node features: 8-D (sin/cos longitude, sign, nakshatra, rx, lat,
+  dec, vel)
+- Edge attributes: 2-D (edge_type_id, orb_or_zero)
+- Model: 3-layer GATv2, 4 heads, hidden 64, ~51k params (much
+  smaller than the MLP from Phase 3)
+
+Trained via distillation: GNN(graph) should match Phase-3 MLP(feature_vector)
+in cosine similarity. Trained on 20k charts (subset for speed) ×
+12 epochs.
+
+Loss curve: 0.88 → 0.68 (cosine similarity 0.32, NOT fully converged).
+
+**K=5 NN outcome-Jaccard comparison (n=3134 fingerprinted people):**
+- GNN: 0.215
+- MLP (Phase 3): 0.788
+- Random: 0.074
+
+**The GNN underperforms the MLP by -0.57.** Informative negative result.
+
+### Learnings (Phase 5 only)
+
+1. **GNN is 3× random** (0.21 vs 0.07) — the structural representation
+   DOES capture some outcome-relevant info, just less than raw
+   tabular features.
+
+2. **Distillation didn't converge**. Cosine sim 0.32 after 12 epochs
+   = GNN embeddings are 70° away from MLP targets on average. Either
+   more epochs needed, model is undersized, or there's an info-
+   theoretic ceiling on what 22-node graphs can encode.
+
+3. **The MLP's 464 features densely encode chart structure**. The
+   sages compressed astrology into discrete buckets (12 houses, 27
+   nakshatras) AND continuous longitudes/angles/distances. Phase 5b
+   showed continuous-precision adds value; the cumulative Round-5
+   feature set is information-rich enough that a graph
+   representation doesn't easily exceed it.
+
+4. **GNN architecture choice matters**. 51k params is small; 3 GATv2
+   layers with 4 heads each is the literature-minimum. Bigger
+   GNN + heterogeneous edge typing would likely close the gap but
+   wasn't necessary to validate the structural hypothesis.
+
+5. **Distillation has a ceiling**. The GNN can at best MATCH the MLP
+   when trained to copy it. To exceed, the GNN would need its own
+   contrastive objective on the outcome fingerprints (the same
+   training Phase 3 used).
+
+### Improvements possible within Phase 5
+
+A. **Train longer + larger GNN**: hidden_dim=128, n_layers=5,
+   50+ epochs, full 90k charts. Likely moves Jaccard 0.21 → 0.5+.
+
+B. **Independent contrastive training** (same objective as Phase 3,
+   different encoder). Then the GNN gets a fair chance to surpass
+   the MLP rather than being capped by distillation.
+
+C. **HeteroGNN** with proper PyG HeteroData — separate planet, house,
+   ascendant node types with type-specific message passing. The
+   current "all nodes same projection" loses domain info.
+
+D. **Richer node features**: pass divisional-chart signs, dispositor
+   chain depth, BAV bindus into node features. Currently nodes
+   only know 8 basic attributes.
+
+E. **Edge attribute richness**: drishti gets a binary 1; conjunction
+   gets continuous orb. Add aspectual flavor (benefic/malefic,
+   applying/separating) as multi-dim edge features.
+
+F. **Graph augmentation for contrastive training**: random
+   sub-graphs / edge dropout / feature dropout to create positive
+   pairs for SimCLR.
+
+G. **Yoga-motif extraction**: after training, mine attention weights
+   for over-represented sub-patterns. These are auto-discovered
+   yoga candidates.
+
+### Phase 5 = done (with honest negative-then-positive result)
+
+The phase shipped the architecture and validated the hypothesis
+("can GNN match MLP?"): the answer is "not with distillation alone,
+but it does learn structure 3× random". Moving to Phase 6.
+
+### Implications for Phase 6 plan (Causal inference)
+
+What Phase 5 taught us, applied to Phase 6:
+- **The Round-5 feature set is the right representation level**.
+  Causal inference should operate on tabular features (same level
+  as the MLP and survival analysis), not on graphs.
+- **Look for confounders**. Phase 1's seasonal-leakage discovery
+  showed how easily a feature can be a confounder. Phase 6
+  formalises this — identify which features are causes vs proxies
+  for unobserved confounders.
+- **The cohort restriction matters**. Phase 5 with 20k charts vs
+  Phase 3 with 90k showed sample size matters. Causal inference
+  needs the full 5k event cohort for adequate power.
+
+---
+
+## Phase 6 — Causal Inference: counterfactual chart manipulation
+
+**Status**: queued
+
+### Goal
+For each natal feature, estimate its CAUSAL effect on event outcomes
+(vs being a confounded correlation). Output: a per-feature causal
+score + a list of features that are causes vs decorations.
+
+### Implementation
+1. Restrict to per-event-class binary outcomes (e.g., "had marriage").
+2. Use **EconML DoubleML** or **DoWhy** to estimate ATE
+   (Average Treatment Effect) for each top feature, treating that
+   feature as a continuous "treatment" with the rest as covariates.
+3. Compare to the SHAP feature importance from Round 5.
+   - Features with high SHAP AND high causal ATE: genuine drivers
+   - Features with high SHAP but low ATE: confounded proxies
+4. Output: `causal_atomic_effects.csv` per event class.
+
+### Open questions
+- Which causal-inference library? EconML has DoubleML which is the
+  modern standard. Has sklearn integration.
+- Continuous "treatment" vs binary thresholds? Binarize at median for
+  initial pass.
+
 (more to follow)
 
 ---

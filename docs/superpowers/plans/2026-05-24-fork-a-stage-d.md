@@ -6,7 +6,7 @@
 
 **Architecture:** Shared MLP encoder (~200k params) feeds 30 cause-specific per-class hazard heads (each outputting a discrete-time PMF over 50 log-spaced bins). Matched-features `lifelines.CoxPHFitter` cause-specific baseline (30 models per seed, ProcessPool-parallelized). Sample-variability noise floor (20 independent seeds), frozen pre-run, SHA-256-logged. Conditional held-back-fold replication only fires if main run passes G1∧G2∧G3.
 
-**Tech Stack:** Python 3.12, PyTorch ≥2.0, [pycox](https://github.com/havakv/pycox) ≥0.2.3 (DeepHit), [lifelines](https://lifelines.readthedocs.io/) ≥0.27 (Cox PH + concordance), pandas + pyarrow (parquet), `concurrent.futures.ProcessPoolExecutor` (Cox parallelism), pytest with `asyncio_mode = "auto"` (project default).
+**Tech Stack:** Python 3.12, PyTorch ≥2.0 (hand-rolled DeepHit — see Spec deviations), [lifelines](https://lifelines.readthedocs.io/) ≥0.27 (Cox PH + concordance), [scikit-survival](https://scikit-survival.readthedocs.io/) ≥0.22 (concordance cross-check), pandas + pyarrow (parquet), `concurrent.futures.ProcessPoolExecutor` (Cox parallelism), pytest with `asyncio_mode = "auto"` (project default).
 
 **Source spec:** [docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md](../specs/2026-05-24-fork-a-stage-d-design.md). When in doubt, the spec wins — this plan is the concrete decomposition of the spec, not a re-derivation of it.
 
@@ -67,7 +67,7 @@ Expected: three version numbers, no ImportError. **If torch.cuda.is_available() 
 
 ```bash
 git add requirements.txt
-git commit -m "deps: add pycox + lifelines + torch for Fork-A Stage D"
+git commit -m "deps: add lifelines + torch + scikit-survival for Fork-A Stage D"
 ```
 
 ---
@@ -1298,18 +1298,33 @@ _CLASS_TO_IDX: dict[str, int] = {
 
 
 def _resolve_event_label(row: pd.Series) -> int:
-    """Returns 0 (censored) or class index 1..K. Earliest-JD wins on ties."""
+    """Returns 0 (censored) or class index 1..K.
+
+    When event_jd_<class> columns exist, earliest-JD wins.
+    When they don't, the first qualifying class in QUALIFYING_EVENT_CLASSES
+    enumeration order wins (deterministic; documented as spec-deviation #2).
+    """
     earliest_jd = float("inf")
     chosen_cls = 0
     for cls in QUALIFYING_EVENT_CLASSES:
         if row.get(f"event_{cls}", 0) != 1:
             continue
-        jd = row.get(f"event_jd_{cls}", earliest_jd)
-        if pd.isna(jd):
-            jd = float("inf")
-        if jd < earliest_jd:
-            earliest_jd = jd
-            chosen_cls = _CLASS_TO_IDX[cls]
+        jd_col = f"event_jd_{cls}"
+        if jd_col in row.index:
+            jd = row[jd_col]
+            if pd.isna(jd):
+                jd = float("inf")
+            if jd < earliest_jd:
+                earliest_jd = jd
+                chosen_cls = _CLASS_TO_IDX[cls]
+        else:
+            # No JD column → fall back to first-qualifying-class-wins.
+            # We hit this branch only when the corpus doesn't carry
+            # event_jd_* columns. _CLASS_TO_IDX iteration order matches
+            # QUALIFYING_EVENT_CLASSES, so the first iteration that hits
+            # an event_<cls>==1 wins and later iterations are skipped.
+            if chosen_cls == 0:
+                chosen_cls = _CLASS_TO_IDX[cls]
     return chosen_cls
 
 
@@ -1457,26 +1472,32 @@ from __future__ import annotations
 import torch
 from torch import nn
 
-from app.medini.ml.stage_d_dataset import K_BINS
+from app.medini.ml.stage_d_dataset import K_BINS as _DEFAULT_K_BINS
 from app.medini.ml.stage_d_features import QUALIFYING_EVENT_CLASSES
 
 N_CLASSES = len(QUALIFYING_EVENT_CLASSES)  # 30
 
 
 class _PerClassHead(nn.Module):
-    def __init__(self, hidden: int = 256) -> None:
+    def __init__(self, hidden: int = 256, k_bins: int = _DEFAULT_K_BINS) -> None:
         super().__init__()
         self.fc1 = nn.Linear(hidden, 128)
         self.act = nn.ReLU(inplace=True)
-        self.fc2 = nn.Linear(128, K_BINS)
+        self.fc2 = nn.Linear(128, k_bins)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.fc2(self.act(self.fc1(x)))
 
 
 class StageDModel(nn.Module):
-    def __init__(self, n_features: int, hidden: int = 256, dropout: float = 0.3) -> None:
+    def __init__(self, n_features: int, hidden: int = 256, dropout: float = 0.3,
+                 k_bins: int = _DEFAULT_K_BINS) -> None:
         super().__init__()
+        # k_bins captured at __init__ so a Task 19.5 sensitivity run that
+        # constructs the model with a non-default value actually changes
+        # the head output dimensions. Don't fall back to the imported
+        # K_BINS constant inside heads — pass the value through.
+        self.k_bins = k_bins
         layers = []
         in_dim = n_features
         for _ in range(3):
@@ -1488,15 +1509,17 @@ class StageDModel(nn.Module):
             ]
             in_dim = hidden
         self.encoder = nn.Sequential(*layers)
-        self.heads = nn.ModuleList([_PerClassHead(hidden) for _ in range(N_CLASSES)])
+        self.heads = nn.ModuleList(
+            [_PerClassHead(hidden, k_bins=k_bins) for _ in range(N_CLASSES)]
+        )
         self.censored_logit = nn.Linear(hidden, 1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Returns PMF of shape (batch, N_CLASSES * K_BINS + 1)."""
+        """Returns PMF of shape (batch, N_CLASSES * k_bins + 1)."""
         h = self.encoder(x)
-        per_class = torch.cat([head(h) for head in self.heads], dim=1)  # (b, 30*50)
+        per_class = torch.cat([head(h) for head in self.heads], dim=1)  # (b, 30*k_bins)
         cens = self.censored_logit(h)  # (b, 1)
-        logits = torch.cat([per_class, cens], dim=1)  # (b, 30*50 + 1)
+        logits = torch.cat([per_class, cens], dim=1)  # (b, 30*k_bins + 1)
         return torch.softmax(logits, dim=1)
 
 
@@ -1504,6 +1527,8 @@ def deephit_loss(
     pmf: torch.Tensor,
     time_bins: torch.Tensor,
     event_classes: torch.Tensor,
+    *,
+    k_bins: int = _DEFAULT_K_BINS,
     alpha: float = 0.5,
 ) -> torch.Tensor:
     """DeepHit-style: α · NLL + (1−α) · ranking loss.
@@ -1511,6 +1536,9 @@ def deephit_loss(
     NLL = -log(prob of correct (class, bin) cell).
     Ranking = pairwise margin loss encouraging earlier-event subjects to
     have higher cumulative hazard than later-event subjects of the same class.
+
+    `k_bins` MUST match the model's k_bins (the pmf layout depends on it).
+    Callers should pass `model.k_bins`.
     """
     batch_size = pmf.size(0)
     censored_mask = event_classes == 0
@@ -1519,8 +1547,8 @@ def deephit_loss(
     # event_classes is 0 (censored) or 1..N_CLASSES.
     cell_idx = torch.where(
         censored_mask,
-        torch.full_like(event_classes, N_CLASSES * K_BINS),  # censored bucket
-        (event_classes - 1) * K_BINS + time_bins,
+        torch.full_like(event_classes, N_CLASSES * k_bins),  # censored bucket
+        (event_classes - 1) * k_bins + time_bins,
     )
     cell_prob = pmf.gather(1, cell_idx.unsqueeze(1)).squeeze(1).clamp(min=1e-10)
     nll = -torch.log(cell_prob).mean()
@@ -1534,8 +1562,8 @@ def deephit_loss(
             continue
         idx = cls_mask.nonzero(as_tuple=True)[0]
         # Cumulative hazard for class `cls` at each subject's event bin.
-        start = (cls - 1) * K_BINS
-        cls_pmf = pmf[:, start:start + K_BINS]
+        start = (cls - 1) * k_bins
+        cls_pmf = pmf[:, start:start + k_bins]
         cum = torch.cumsum(cls_pmf, dim=1)
         bins_i = time_bins[idx]
         cum_at_event = cum[idx, bins_i]
@@ -1794,8 +1822,9 @@ def check_shuffled_times_collapse(df: pd.DataFrame, seed: int = 999) -> CheckRes
     shuffled = df.copy()
     for cls in ("career", "fame"):  # 2 sentinel classes, not all 30 for speed
         shuffled[f"event_{cls}"] = rng.permutation(shuffled[f"event_{cls}"].values)
-    from app.medini.ml.stage_d_baseline import fit_cause_specific_cox
-    r = fit_cause_specific_cox(shuffled, event_class="career", seed=seed)
+    from app.medini.ml.stage_d_baseline import fit_cause_specific_cox, split_train_test
+    train_sh, test_sh = split_train_test(shuffled, seed=seed)
+    r = fit_cause_specific_cox(train_sh, test_sh, event_class="career", seed=seed)
     if not r.converged:
         return CheckResult("shuffled_times_collapse", True,
                            "Cox didn't converge on shuffled labels; acceptable")
@@ -2006,7 +2035,10 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     test_ds = build_dataset(test_df, name_norms=test_persons)
 
     n_features = train_ds.features.shape[1]
-    model = StageDModel(n_features=n_features)
+    # k_bins normally inherits from stage_d_dataset.K_BINS (=50). For the
+    # F5 sensitivity check (Task 19.5), the caller overrides it.
+    k_bins = getattr(_train_one_seed, "_k_bins_override", None) or K_BINS
+    model = StageDModel(n_features=n_features, k_bins=k_bins)
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10)
 
@@ -2021,7 +2053,7 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
         for feats, time_bins, event_classes in train_loader:
             optimizer.zero_grad()
             pmf = model(feats)
-            loss = deephit_loss(pmf, time_bins, event_classes)
+            loss = deephit_loss(pmf, time_bins, event_classes, k_bins=model.k_bins)
             assert torch.isfinite(loss).all(), f"non-finite loss epoch {epoch}"
             loss.backward()
             optimizer.step()
@@ -2031,7 +2063,9 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
             val_losses = []
             for feats, time_bins, event_classes in val_loader:
                 pmf = model(feats)
-                val_losses.append(float(deephit_loss(pmf, time_bins, event_classes)))
+                val_losses.append(float(
+                    deephit_loss(pmf, time_bins, event_classes, k_bins=model.k_bins)
+                ))
             val_loss = float(np.mean(val_losses))
         scheduler.step(val_loss)
 
@@ -2059,10 +2093,11 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
         test_pmf = model(test_ds.features)
     # cumulative incidence at right edge per class = sum over bins.
     # Use test_ds.durations (same row order as test_pmf) — NOT test_df.
+    # Use model.k_bins so the F5 sensitivity check works correctly.
     durations = test_ds.durations
     for i, cls in enumerate(QUALIFYING_EVENT_CLASSES):
-        start = i * K_BINS
-        cum = test_pmf[:, start:start + K_BINS].sum(dim=1).numpy()
+        start = i * model.k_bins
+        cum = test_pmf[:, start:start + model.k_bins].sum(dim=1).numpy()
         events = (test_ds.event_classes == (i + 1)).int().numpy()
         if events.sum() < 2:
             deephit_c[cls] = float("nan")
@@ -2084,7 +2119,7 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
         "noise_floor_sha256": noise_floor_sha,
         "torch_version": torch.__version__,
         "lifelines_version": lifelines.__version__,
-        "pycox_version": pycox.__version__,
+        "deephit_implementation": "hand-rolled (see spec-deviation note in plan)",
         "per_class": {
             cls: {
                 "n_train_positives": int((train_df[f"event_{cls}"] == 1).sum()),
@@ -2304,7 +2339,19 @@ Spec §6 F5 requires verifying that the K_BINS=50 choice isn't artifact-driving.
 
 - [ ] **Step 19.5.1: Add a `--k-bins` CLI arg to `stage_d_train.py`**
 
-Modify [stage_d_train.py](../../../app/medini/ml/stage_d_train.py) to accept `--k-bins`, default 50, that is passed through to a `K_BINS_OVERRIDE` module global in `stage_d_dataset.py`. Alternatively, monkey-patch `stage_d_dataset.K_BINS` from the train script when the flag is set.
+`StageDModel` already takes `k_bins` as a constructor argument (Task 12 rev 3). Plumb it through:
+
+1. Add `--k-bins` to the argparse in `stage_d_train.main()`, default 50.
+2. Before calling `_train_one_seed`, set `_train_one_seed._k_bins_override = args.k_bins` (or refactor `_train_one_seed` to take `k_bins` as an explicit kwarg — cleaner).
+3. The dataset's time-bin assignment is INDEPENDENT of the model's k_bins and stays at K_BINS=50 (the bin edges don't shift). What changes is the model's output dimension: with k_bins=30 each per-class head emits 30 logits, with k_bins=80 it emits 80.
+4. **Important:** the dataset's `assign_time_bin()` uses module-level `K_BINS=50`. For the sensitivity test we want the dataset to also use the new k_bins so bin assignments are consistent with the model. The cleanest fix is to make `assign_time_bin` parameterized:
+   ```python
+   def assign_time_bin(duration_days: float, k_bins: int = K_BINS) -> int:
+       edges = np.logspace(np.log10(1.0), np.log10(100 * 365.25), k_bins + 1)
+       idx = int(np.searchsorted(edges, duration_days, side="right") - 1)
+       return max(0, min(k_bins - 1, idx))
+   ```
+   And update `build_dataset` to accept an optional `k_bins` arg that flows into `assign_time_bin`. The training script then passes the same `k_bins` to BOTH `build_dataset` and `StageDModel`.
 
 - [ ] **Step 19.5.2: Run two sensitivity seeds**
 

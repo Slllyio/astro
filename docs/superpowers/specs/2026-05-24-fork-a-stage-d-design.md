@@ -607,5 +607,5 @@ Excluded classes (below the n=50 floor): `death`, `death_by_execution`, `death_b
 
 **Notes on the list**:
 - `relationship` (n=635) and `relationships` (n=770) are both present — they're separate columns in the corpus, likely from differing label-source conventions. The pre-flight will flag the redundancy; merging them is out of scope for Stage D (would require re-ETL).
-- The `death_*` family is heavily fragmented; many subtypes fall below the floor. The 6 qualifying death classes (`death_cause_unspecified`, `death_by_disease`, `death_by_heart_attack`, `death_of_mate`, `death_by_accident`, `death_of_father`, `other_death`) give meaningful coverage of the death event space.
+- The `death_*` family is heavily fragmented; many subtypes fall below the floor. The 7 qualifying death classes (`death_cause_unspecified`, `death_by_disease`, `death_by_heart_attack`, `death_of_mate`, `death_by_accident`, `death_of_father`, `other_death`) give meaningful coverage of the death event space.
 - Highest-n classes (career, fame, death_cause_unspecified) will dominate the aggregate G1 lift; G2's per-class breadth requirement (≥ 11 of 30) ensures the verdict isn't a 2-3-class story.

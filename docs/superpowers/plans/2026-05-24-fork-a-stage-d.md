@@ -23,7 +23,7 @@
 | Data artifacts (generated) | `app/medini/data/dasha_stage_d_features.parquet` + `_smoke` variant |
 | Tests | `tests/test_stage_d_features.py`, `test_stage_d_dataset.py`, `test_stage_d_model.py`, `test_stage_d_baseline.py`, `test_stage_d_preflight.py`, `test_stage_d_evaluate.py` |
 | Run outputs (generated) | `data/ml_runs/fork_a_stage_d/{preflight.md, noise_floor.json, main_run.json, main_summary.md, replication_run.json, replication_summary.md, DECISION.md, models/}` |
-| Deps | `requirements.txt` (add `pycox`, `lifelines`, `torch`) |
+| Deps | `requirements.txt` (add `lifelines`, `torch`, `scikit-survival`; pycox dropped per spec-deviation note) |
 
 Each source file maps to one task group below. Tests are interleaved per task (TDD).
 
@@ -1277,18 +1277,23 @@ from app.medini.ml.stage_d_features import QUALIFYING_EVENT_CLASSES
 
 logger = logging.getLogger(__name__)
 
-K_BINS: int = 50
-
-# Log-spaced bin edges from 1 day to 100 years.
-_BIN_EDGES: np.ndarray = np.logspace(
-    np.log10(1.0), np.log10(100 * 365.25), K_BINS + 1
-)
+K_BINS: int = 50  # default; overrideable via the k_bins arg below
 
 
-def assign_time_bin(duration_days: float) -> int:
-    """Return the bin index (0..K_BINS-1) for a window duration."""
-    idx = int(np.searchsorted(_BIN_EDGES, duration_days, side="right") - 1)
-    return max(0, min(K_BINS - 1, idx))
+def _bin_edges(k_bins: int) -> np.ndarray:
+    """Log-spaced bin edges from 1 day to 100 years for the requested k."""
+    return np.logspace(np.log10(1.0), np.log10(100 * 365.25), k_bins + 1)
+
+
+def assign_time_bin(duration_days: float, k_bins: int = K_BINS) -> int:
+    """Return the bin index (0..k_bins-1) for a window duration.
+
+    `k_bins` defaults to the module-level K_BINS=50; F5 sensitivity
+    callers (Task 19.5) override it.
+    """
+    edges = _bin_edges(k_bins)
+    idx = int(np.searchsorted(edges, duration_days, side="right") - 1)
+    return max(0, min(k_bins - 1, idx))
 
 
 _CLASS_TO_IDX: dict[str, int] = {
@@ -1360,11 +1365,15 @@ class StageDDataset(Dataset):
         return self.features[idx], self.time_bins[idx], self.event_classes[idx]
 
 
-def build_dataset(df: pd.DataFrame, *, name_norms) -> StageDDataset:
+def build_dataset(df: pd.DataFrame, *, name_norms,
+                  k_bins: int = K_BINS) -> StageDDataset:
     """Build a Dataset restricted to the given `name_norms` (train OR test side).
 
     Caller MUST pass the name_norm list for ONE side of the split; this
     function asserts the dataframe rows match (F1 in spec §6).
+
+    `k_bins` MUST match the StageDModel's k_bins (defaults align at 50;
+    F5 sensitivity callers override both consistently).
     """
     name_norms = set(name_norms)
     sub = df[df["name_norm"].isin(name_norms)].reset_index(drop=True)
@@ -1376,7 +1385,7 @@ def build_dataset(df: pd.DataFrame, *, name_norms) -> StageDDataset:
     features = torch.tensor(sub[feat_cols].fillna(0.0).to_numpy(np.float32))
     durations = sub["window_duration_days"].to_numpy()
     time_bins = torch.tensor(
-        [assign_time_bin(d) for d in durations],
+        [assign_time_bin(d, k_bins=k_bins) for d in durations],
         dtype=torch.long,
     )
     event_classes = torch.tensor(
@@ -2015,7 +2024,15 @@ def _seed_everything(seed: int) -> None:
 
 
 def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
-                    out_dir: Path, noise_floor_sha: str) -> dict:
+                    out_dir: Path, noise_floor_sha: str,
+                    k_bins: int | None = None) -> dict:
+    # Resolve k_bins FIRST so the dataset and model agree.
+    # Default is the imported K_BINS=50; F5 sensitivity overrides via the
+    # explicit kwarg (preferred) or via _train_one_seed._k_bins_override
+    # (legacy attribute hook). Either path resolves before any build_dataset call.
+    if k_bins is None:
+        k_bins = getattr(_train_one_seed, "_k_bins_override", None) or K_BINS
+
     # Single source of truth for the split — DeepHit and Cox both use this.
     train_df, test_df = split_train_test(df, seed=seed, test_size=test_size)
     train_persons = train_df["name_norm"].unique()
@@ -2030,14 +2047,15 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     sub_train_persons = sub_train_df["name_norm"].unique()
     val_persons = val_df["name_norm"].unique()
 
-    train_ds = build_dataset(sub_train_df, name_norms=sub_train_persons)
-    val_ds = build_dataset(val_df, name_norms=val_persons)
-    test_ds = build_dataset(test_df, name_norms=test_persons)
+    # Pass k_bins to build_dataset so the dataset's time_bin assignments
+    # use the same bin grid as the model. Without this, --k-bins 30 would
+    # crash with an OOB index in deephit_loss because the dataset would
+    # still emit time_bins in [0, 49] while the PMF has only 30 cells/class.
+    train_ds = build_dataset(sub_train_df, name_norms=sub_train_persons, k_bins=k_bins)
+    val_ds = build_dataset(val_df, name_norms=val_persons, k_bins=k_bins)
+    test_ds = build_dataset(test_df, name_norms=test_persons, k_bins=k_bins)
 
     n_features = train_ds.features.shape[1]
-    # k_bins normally inherits from stage_d_dataset.K_BINS (=50). For the
-    # F5 sensitivity check (Task 19.5), the caller overrides it.
-    k_bins = getattr(_train_one_seed, "_k_bins_override", None) or K_BINS
     model = StageDModel(n_features=n_features, k_bins=k_bins)
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10)

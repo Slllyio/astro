@@ -487,8 +487,16 @@ def _shrink_memory_footprint(df: pd.DataFrame) -> pd.DataFrame:
     """
     cols_before = len(df.columns)
     mem_before_gb = df.memory_usage(deep=True).sum() / 1e9
+    # Keep object cols that downstream code REQUIRES even though they're
+    # not features: name/name_norm (join keys + leak-detection asserts),
+    # and md/ad/pd_lord (consumed by stage_d_baseline._ordinal_encode_lords
+    # to produce *_lord_ord int8 cols at Cox-fit time — the raw strings are
+    # the only way the encoder knows which lord is which).
+    _DROP_OBJECT_EXCLUDE = frozenset({
+        "name", "name_norm", "md_lord", "ad_lord", "pd_lord",
+    })
     object_cols = [c for c in df.columns if df[c].dtype == "object"
-                   and c not in ("name", "name_norm")]
+                   and c not in _DROP_OBJECT_EXCLUDE]
     if object_cols:
         df = df.drop(columns=object_cols)
         logger.info("Dropped %d object-dtype feature cols (string categoricals + "

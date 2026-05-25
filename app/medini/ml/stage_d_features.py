@@ -175,3 +175,82 @@ def add_active_dasha_encoding(df: pd.DataFrame) -> pd.DataFrame:
             df[chain_cols].isin(relevant).sum(axis=1).astype("int8")
         )
     return df
+
+
+# The 16 yogas present in screening_career_yogas.parquet (verified by
+# controller against the actual parquet on 2026-05-24). The order here
+# is hardcoded so a parquet column-set drift doesn't silently shift
+# downstream column positions.
+YOGA_NAMES: tuple[str, ...] = (
+    "vipareeta_harsha", "vipareeta_sarala", "vipareeta_vimala",
+    "sunapha", "anapha", "durudhura", "kemadruma",
+    "ruchaka", "bhadra", "hamsa", "malavya", "sasa",
+    "gajakesari", "budha_aditya", "raja_yoga", "dhana_yoga",
+)
+assert len(YOGA_NAMES) == 16
+
+# Map each yoga to the planet set whose membership in the active dasha
+# chain (MD/AD/PD lord) flips dasha_active=1. Sourced from
+# app/core/yogas.py docstrings (e.g., detect_sunapha line 576+).
+#
+# Configurational yogas (Sunapha/Anapha/Durudhura/Kemadruma) are defined
+# by what's in 2nd/12th from Moon — there is no single-planet activation.
+# Their planet set is intentionally empty; dasha_active is always 0.
+# The natal_strength column still carries useful signal for these yogas.
+_YOGA_PLANETS: dict[str, frozenset[str]] = {
+    "vipareeta_harsha": frozenset({"Saturn", "Mars", "Jupiter"}),
+    "vipareeta_sarala": frozenset({"Saturn", "Mars"}),
+    "vipareeta_vimala": frozenset({"Saturn"}),
+    "sunapha":     frozenset(),  # Moon-configurational
+    "anapha":      frozenset(),  # Moon-configurational
+    "durudhura":   frozenset(),  # Moon-configurational
+    "kemadruma":   frozenset(),  # Moon-configurational (anti-yoga)
+    "ruchaka":     frozenset({"Mars"}),
+    "bhadra":      frozenset({"Mercury"}),
+    "hamsa":       frozenset({"Jupiter"}),
+    "malavya":     frozenset({"Venus"}),
+    "sasa":        frozenset({"Saturn"}),
+    "gajakesari":  frozenset({"Moon", "Jupiter"}),
+    "budha_aditya": frozenset({"Sun", "Mercury"}),
+    "raja_yoga":   frozenset({"Sun", "Jupiter", "Saturn"}),  # kendra/trikona lord proxy
+    "dhana_yoga":  frozenset({"Jupiter", "Venus"}),           # wealth significators
+}
+assert set(_YOGA_PLANETS.keys()) == set(YOGA_NAMES)
+
+
+def add_yoga_features_with_dasha_gating(df: pd.DataFrame) -> pd.DataFrame:
+    """Join Phase-3B yoga natal strengths + add per-yoga dasha_active flags.
+
+    Adds 32 columns: 16 `<yoga>_natal_strength` (from
+    screening_career_yogas.parquet) + 16 `<yoga>_dasha_active` (computed
+    here from _YOGA_PLANETS). Vectorized for full-corpus scale.
+    """
+    natal_path = _DATA_DIR / "screening_career_yogas.parquet"
+    if not natal_path.exists():
+        raise FileNotFoundError(
+            f"Yoga-augmented parquet not found at {natal_path}. "
+            "Run `py -3.12 -m app.medini.etl.add_yoga_features` first."
+        )
+    yoga_df = pd.read_parquet(natal_path)
+    natal_strength_cols = [c for c in yoga_df.columns if c.endswith("_natal_strength")]
+    yoga_subset = (
+        yoga_df[["name_norm", *natal_strength_cols]]
+        .drop_duplicates("name_norm")
+    )
+    df = df.merge(yoga_subset, on="name_norm", how="left", validate="many_to_one")
+    # Fill NaN natal-strength values with 0.0 (person had no yoga score row).
+    for col in natal_strength_cols:
+        if df[col].isna().any():
+            df[col] = df[col].fillna(0.0)
+
+    # Dasha-active flags — VECTORIZED (~200× faster than .apply on full corpus).
+    chain_cols = ["md_lord", "ad_lord", "pd_lord"]
+    for yoga in YOGA_NAMES:
+        planets = _YOGA_PLANETS[yoga]
+        if not planets:
+            df[f"{yoga}_dasha_active"] = 0
+            continue
+        df[f"{yoga}_dasha_active"] = (
+            df[chain_cols].isin(planets).any(axis=1).astype("int8")
+        )
+    return df

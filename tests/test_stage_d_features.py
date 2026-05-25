@@ -111,3 +111,42 @@ class TestActiveDashaEncoding:
         with_dasha = add_active_dasha_encoding(corpus)
         assert (with_dasha["n_relevant_lords_personal"] == 0).all()
         assert (with_dasha["n_relevant_lords_general"] == 0).all()
+
+
+class TestActiveYogas:
+    def test_natal_strength_cols_present(self) -> None:
+        """Each of 16 yogas contributes a `<yoga>_natal_strength` col."""
+        from app.medini.ml.stage_d_features import (
+            add_yoga_features_with_dasha_gating,
+            YOGA_NAMES,
+        )
+
+        assert len(YOGA_NAMES) == 16
+        corpus = load_corpus(smoke=True)
+        with_yogas = add_yoga_features_with_dasha_gating(corpus)
+        for yoga in YOGA_NAMES:
+            assert f"{yoga}_natal_strength" in with_yogas.columns
+
+    def test_dasha_active_is_binary(self) -> None:
+        """`<yoga>_dasha_active` is 0/1 per window."""
+        from app.medini.ml.stage_d_features import (
+            add_yoga_features_with_dasha_gating,
+            YOGA_NAMES,
+        )
+
+        corpus = load_corpus(smoke=True)
+        with_yogas = add_yoga_features_with_dasha_gating(corpus)
+        for yoga in YOGA_NAMES:
+            col = f"{yoga}_dasha_active"
+            assert set(with_yogas[col].unique()).issubset({0, 1})
+
+    def test_moon_configurational_yogas_have_zero_dasha_active(self) -> None:
+        """Sunapha/Anapha/Durudhura/Kemadruma are Moon-configurational
+        (not lord-gated); their dasha_active column is intentionally all 0
+        (see docstring on _YOGA_PLANETS)."""
+        from app.medini.ml.stage_d_features import add_yoga_features_with_dasha_gating
+
+        corpus = load_corpus(smoke=True)
+        with_yogas = add_yoga_features_with_dasha_gating(corpus)
+        for yoga in ("sunapha", "anapha", "durudhura", "kemadruma"):
+            assert (with_yogas[f"{yoga}_dasha_active"] == 0).all()

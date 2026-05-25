@@ -72,8 +72,17 @@ def join_natal_vedic_tensor(corpus: pd.DataFrame) -> pd.DataFrame:
     # Drop the raw `name` column to avoid a column collision with the corpus.
     tensor = tensor.drop(columns=["name"])
     # The tensor may carry duplicates by name (e.g., Einstein × 2 from
-    # different rodden ratings). De-dupe by name_norm, keep first.
+    # different rodden ratings). De-dupe by name_norm, keep first; log
+    # the count so silent data-quality issues surface.
+    n_before = len(tensor)
     tensor = tensor.drop_duplicates(subset=["name_norm"], keep="first")
+    n_dropped = n_before - len(tensor)
+    if n_dropped:
+        logger.warning(
+            "Dropped %d duplicate-name_norm rows from Vedic Tensor "
+            "(kept first). %d → %d unique persons.",
+            n_dropped, n_before, len(tensor),
+        )
     logger.info(
         "Joining Vedic Tensor (%d persons × %d cols) onto %d windows",
         len(tensor), len(tensor.columns), len(corpus),

@@ -322,6 +322,20 @@ def add_stage_e_features(df: pd.DataFrame) -> pd.DataFrame:
             "Unmatched windows get NaN in Stage-E feature columns.",
             int(n_matched), len(joined), 100.0 * n_matched / max(1, len(joined)),
         )
+
+    # TODO(stage_d_dataset.py / Task 11): The Stage-E parquet contains
+    # list-typed columns — `rules_<planet>` is a list[int] of house numbers
+    # the planet rules for that asc_sign, `occ_<planet>` is the single
+    # occupied house, `aspects_<planet>` is a list[int] of aspected houses.
+    # `occ_*` is scalar (safe to cast directly), but `rules_*` and
+    # `aspects_*` need an encoding step before they can flow into
+    # StageDDataset.features as float32. Options:
+    #   (a) Convert each list[int] into a 12-dim binary indicator vector
+    #       per planet (rules_sun_h1, rules_sun_h2, ... rules_sun_h12).
+    #   (b) Reduce to scalars: count, presence-of-a-specific-house, etc.
+    # Decide in Task 11 with the dataset-building code in front of you.
+    # For Task 5's scope (parquet join), keeping the raw list columns is
+    # correct — encoding is StageDDataset's responsibility.
     return joined
 
 

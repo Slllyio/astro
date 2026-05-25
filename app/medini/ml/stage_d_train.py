@@ -195,7 +195,16 @@ def main(argv=None) -> int:
                    help="Output JSONL bucket name (noise_floor/main/replication/sensitivity_kbins30/...)")
     p.add_argument("--test-size", type=float, default=0.20)
     p.add_argument("--out-dir", type=Path, default=Path("data/ml_runs/fork_a_stage_d"))
-    p.add_argument("--smoke", action="store_true")
+    # --smoke / --subsample / (default = full corpus) are mutually exclusive.
+    # Subsample = 2000 randomly-sampled persons (~1.2M rows). Same shape as
+    # full but fits Cox in ~2 GB; verdict carries an "n=2000 subsample" footnote.
+    corpus = p.add_mutually_exclusive_group()
+    corpus.add_argument("--smoke", action="store_true",
+                        help="Use 100-person smoke parquet (~60K rows).")
+    corpus.add_argument("--subsample", action="store_true",
+                        help="Use 2000-person subsample parquet (~1.2M rows). "
+                             "Built by scratch_materialize_subsample.py; the "
+                             "person list lives in dasha_subsample_2000_persons.parquet.")
     p.add_argument("--k-bins", type=int, default=None,
                    help="Override the model's k_bins (default: stage_d_dataset.K_BINS=50). "
                         "Used by Task 19.5 sensitivity sweep (F5 defense). "
@@ -207,10 +216,13 @@ def main(argv=None) -> int:
                         format="%(asctime)s %(levelname)s :: %(message)s")
     _seed_everything(args.seed)
 
-    df_path = Path("app/medini/data") / (
-        "dasha_stage_d_features_smoke.parquet" if args.smoke
-        else "dasha_stage_d_features.parquet"
-    )
+    if args.smoke:
+        df_name = "dasha_stage_d_features_smoke.parquet"
+    elif args.subsample:
+        df_name = "dasha_stage_d_features_subsample.parquet"
+    else:
+        df_name = "dasha_stage_d_features.parquet"
+    df_path = Path("app/medini/data") / df_name
     df = pd.read_parquet(df_path)
 
     # Read noise floor SHA if it exists; empty string otherwise.
@@ -226,6 +238,13 @@ def main(argv=None) -> int:
                              k_bins=args.k_bins)
     record["split"] = args.split
     record["k_bins"] = args.k_bins or K_BINS
+    # Tag corpus so DECISION.md can footnote "n=2000 subsample" verdicts.
+    if args.smoke:
+        record["corpus"] = "smoke_100p"
+    elif args.subsample:
+        record["corpus"] = "subsample_2000p"
+    else:
+        record["corpus"] = "full_10239p"
     record["duration_seconds"] = round(time.time() - start, 1)
 
     # Append to the appropriate JSONL.

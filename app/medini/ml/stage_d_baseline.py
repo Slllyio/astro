@@ -10,6 +10,8 @@ See docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md §4.
 from __future__ import annotations
 
 import logging
+import os
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -144,7 +146,22 @@ def fit_cause_specific_cox(
     # Risk score = predicted partial hazard. Pass `-risk` so high risk =>
     # earlier event (lifelines concordance_index convention).
     risk = cph.predict_partial_hazard(test[features])
-    c = concordance_index(test["window_duration_days"], -risk, test[event_col])
+    try:
+        c = concordance_index(test["window_duration_days"], -risk, test[event_col])
+    except ZeroDivisionError:
+        # No admissible pairs: zero positives in test split for this class.
+        logger.warning(
+            "Cox concordance undefined for class=%s seed=%d (no test positives)",
+            event_class, seed,
+        )
+        return CoxFitResult(
+            event_class=event_class, seed=seed,
+            c_index=float("nan"),
+            n_train=len(train), n_test=len(test),
+            n_train_positives=int(train[event_col].sum()),
+            n_test_positives=int(test[event_col].sum()),
+            converged=True, convergence_msg="no_test_positives",
+        )
 
     return CoxFitResult(
         event_class=event_class, seed=seed,
@@ -154,3 +171,53 @@ def fit_cause_specific_cox(
         n_test_positives=int(test[event_col].sum()),
         converged=True,
     )
+
+
+def fit_all_classes(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    *,
+    seed: int,
+    parallel: bool = True,
+) -> list[CoxFitResult]:
+    """Fit 30 cause-specific Cox PH models, one per qualifying class.
+
+    Train/test split MUST be the same one passed to the DeepHit model
+    in stage_d_train._train_one_seed for the gate's Δ to be valid.
+
+    `parallel=True` uses ProcessPoolExecutor (default; ~Nx faster on
+    multi-core). `parallel=False` runs the 30 fits sequentially — useful
+    for debugging when a single class fails and you need a clean stack
+    trace.
+    """
+    if parallel:
+        return _fit_all_classes_parallel(train, test, seed=seed)
+    return [
+        fit_cause_specific_cox(train, test, event_class=cls, seed=seed)
+        for cls in QUALIFYING_EVENT_CLASSES
+    ]
+
+
+def _fit_one(args: tuple[pd.DataFrame, pd.DataFrame, str, int]) -> CoxFitResult:
+    """ProcessPoolExecutor entry point — must be top-level for pickling."""
+    train, test, cls, seed = args
+    return fit_cause_specific_cox(train, test, event_class=cls, seed=seed)
+
+
+def _fit_all_classes_parallel(
+    train: pd.DataFrame, test: pd.DataFrame, *, seed: int,
+) -> list[CoxFitResult]:
+    """ProcessPool fan-out across the 30 cause-specific Cox fits.
+
+    NOTE: pickling the (train, test) DataFrames per task is wasteful on
+    Windows (no fork). Expected wall-clock: ~8-15 min per seed at smoke
+    size (60K × ~250 cols) on 8 cores. For seed-level runs at scale, an
+    initializer-based pattern (`ProcessPoolExecutor(initializer=...)`)
+    would ship the data once per worker — defer that optimization until
+    Task 18's noise-floor measurement times out.
+    """
+    n_workers = max(1, (os.cpu_count() or 2) - 1)
+    args_list = [(train, test, cls, seed) for cls in QUALIFYING_EVENT_CLASSES]
+    with ProcessPoolExecutor(max_workers=n_workers) as ex:
+        results = list(ex.map(_fit_one, args_list))
+    return results

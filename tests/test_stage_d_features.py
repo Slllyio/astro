@@ -59,3 +59,26 @@ class TestJoinNatalTensor:
         new_cols = set(joined.columns) - set(corpus.columns)
         # Allow ±20% tolerance — the Vedic Tensor schema may have evolved.
         assert 150 <= len(new_cols) <= 230, f"got {len(new_cols)} new cols"
+
+
+class TestActiveDashaEncoding:
+    def test_md_lord_one_hot_sums_to_one(self) -> None:
+        """Each row has exactly one MD lord one-hot active."""
+        from app.medini.ml.stage_d_features import add_active_dasha_encoding
+
+        corpus = load_corpus(smoke=True)
+        with_dasha = add_active_dasha_encoding(corpus)
+        md_one_hots = [c for c in with_dasha.columns if c.startswith("md_lord_is_")]
+        assert len(md_one_hots) == 9, "Vimshottari has 9 lords"
+        # Each row sums to exactly 1 across the MD one-hots.
+        assert (with_dasha[md_one_hots].sum(axis=1) == 1).all()
+
+    def test_n_relevant_lords_is_0_to_3(self) -> None:
+        """The 'n_relevant_lords_career' rate-ladder column is in {0,1,2,3}."""
+        from app.medini.ml.stage_d_features import add_active_dasha_encoding
+
+        corpus = load_corpus(smoke=True)
+        with_dasha = add_active_dasha_encoding(corpus)
+        col = "n_relevant_lords_career"
+        assert col in with_dasha.columns
+        assert with_dasha[col].between(0, 3).all()

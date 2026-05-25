@@ -458,6 +458,63 @@ def _ensure_event_label_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _shrink_memory_footprint(df: pd.DataFrame) -> pd.DataFrame:
+    """Downcast dtypes + drop object cols to make the materialized parquet
+    fit in memory for full-corpus runs.
+
+    Profile on the un-shrunk full materialized parquet (6.17M rows × 726 cols)
+    showed 52.91 GB in-memory: object cols 22 GB (string categoricals + list
+    columns that _feature_columns drops at Cox-time anyway), int64 17 GB
+    (mostly one-hots and small counts), float64 13 GB (Vedic continuous
+    features). After this shrink we expect ~10-13 GB in-memory, which
+    fits comfortably for the train/test copies the gate evaluation needs.
+
+    Strategy:
+      - Object cols: DROP entirely. They're dead weight in the feature
+        matrix (Cox's numeric-only filter discards them; the Stage D
+        dataset's _select_feature_columns delegates to the same filter).
+        The narrative loss is small: the only object cols are tattva_*,
+        dispositor_*, panchanga_paksha, final_dispositor (string
+        categoricals — could one-hot in a future revision) and rules_*/
+        aspects_* (list-typed Stage-E cols — pending encoding strategy
+        in the Task 5 TODO).
+      - int64 → int8 if values fit in [-128, 127], else int32. Most
+        int64 cols here are 0/1 one-hots or small house-numbers in
+        [0, 12]; int8 covers them.
+      - float64 → float32. ~7 significant digits is plenty for the
+        Cox PH + DeepHit pipeline (lifelines internally normalizes
+        anyway, killing the last few digits of precision regardless).
+    """
+    cols_before = len(df.columns)
+    mem_before_gb = df.memory_usage(deep=True).sum() / 1e9
+    object_cols = [c for c in df.columns if df[c].dtype == "object"
+                   and c not in ("name", "name_norm")]
+    if object_cols:
+        df = df.drop(columns=object_cols)
+        logger.info("Dropped %d object-dtype feature cols (string categoricals + "
+                    "list-typed Stage-E cols); they're discarded at Cox-time anyway.",
+                    len(object_cols))
+
+    for col in df.columns:
+        dt = df[col].dtype
+        if dt == "int64":
+            vmax = df[col].abs().max() if len(df) else 0
+            if pd.isna(vmax):
+                continue
+            if vmax < 128:
+                df[col] = df[col].astype("int8")
+            elif vmax < 2_147_483_648:
+                df[col] = df[col].astype("int32")
+        elif dt == "float64":
+            df[col] = df[col].astype("float32")
+
+    mem_after_gb = df.memory_usage(deep=True).sum() / 1e9
+    logger.info("Memory shrink: %d → %d cols, %.2f GB → %.2f GB (%.0f%% reduction).",
+                cols_before, len(df.columns), mem_before_gb, mem_after_gb,
+                100 * (1 - mem_after_gb / mem_before_gb))
+    return df
+
+
 def materialize(*, smoke: bool, write: bool = True) -> pd.DataFrame:
     """Compose all feature blocks and (optionally) write the output parquet."""
     df = load_corpus(smoke=smoke)
@@ -467,6 +524,7 @@ def materialize(*, smoke: bool, write: bool = True) -> pd.DataFrame:
     df = add_stage_e_features(df)
     df = add_doctrine_scores(df)
     df = _ensure_event_label_columns(df)
+    df = _shrink_memory_footprint(df)
 
     if write:
         out = _DATA_DIR / ("dasha_stage_d_features_smoke.parquet" if smoke

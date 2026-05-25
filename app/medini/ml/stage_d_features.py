@@ -233,11 +233,26 @@ def add_yoga_features_with_dasha_gating(df: pd.DataFrame) -> pd.DataFrame:
         )
     yoga_df = pd.read_parquet(natal_path)
     natal_strength_cols = [c for c in yoga_df.columns if c.endswith("_natal_strength")]
-    yoga_subset = (
-        yoga_df[["name_norm", *natal_strength_cols]]
-        .drop_duplicates("name_norm")
-    )
+    yoga_subset_raw = yoga_df[["name_norm", *natal_strength_cols]]
+    yoga_subset = yoga_subset_raw.drop_duplicates("name_norm")
+    n_dropped = len(yoga_subset_raw) - len(yoga_subset)
+    if n_dropped:
+        logger.warning(
+            "Dropped %d duplicate-name_norm rows from yoga parquet "
+            "(kept first). %d → %d unique persons.",
+            n_dropped, len(yoga_subset_raw), len(yoga_subset),
+        )
+
     df = df.merge(yoga_subset, on="name_norm", how="left", validate="many_to_one")
+    # Report join hit rate so a substrate-mismatch (e.g., smoke corpus
+    # vs full-cohort yoga parquet) surfaces in logs instead of being
+    # silently masked by the fillna(0.0) below.
+    n_matched = df[natal_strength_cols[0]].notna().sum() if natal_strength_cols else 0
+    logger.info(
+        "Yoga join: %d / %d windows matched a yoga row (%.1f%%). "
+        "Unmatched windows get natal_strength=0.0.",
+        int(n_matched), len(df), 100.0 * n_matched / max(1, len(df)),
+    )
     # Fill NaN natal-strength values with 0.0 (person had no yoga score row).
     for col in natal_strength_cols:
         if df[col].isna().any():

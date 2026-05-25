@@ -150,3 +150,49 @@ class TestActiveYogas:
         with_yogas = add_yoga_features_with_dasha_gating(corpus)
         for yoga in ("sunapha", "anapha", "durudhura", "kemadruma"):
             assert (with_yogas[f"{yoga}_dasha_active"] == 0).all()
+
+
+class TestStageEFeatures:
+    def test_lord_house_columns_present(self) -> None:
+        """Stage-E adds 'rules_<planet>', 'occ_<planet>', 'aspects_<planet>' cols."""
+        from app.medini.ml.stage_d_features import add_stage_e_features
+
+        corpus = load_corpus(smoke=True)
+        with_e = add_stage_e_features(corpus)
+        for planet in ("sun", "moon", "saturn", "jupiter"):
+            assert f"rules_{planet}" in with_e.columns
+            assert f"occ_{planet}" in with_e.columns
+            assert f"aspects_{planet}" in with_e.columns
+
+    def test_doctrine_score_per_class_or_skipped(self) -> None:
+        """Doctrine parquet is OPTIONAL (spec §2). When present, adds 30 cols.
+        When absent, add_doctrine_scores is a no-op and the test is skipped."""
+        from pathlib import Path
+        import pytest
+        from app.medini.ml.stage_d_features import (
+            add_doctrine_scores, _DOCTRINE_PARQUET, QUALIFYING_EVENT_CLASSES,
+        )
+
+        if not _DOCTRINE_PARQUET.exists():
+            pytest.skip(
+                f"Optional doctrine parquet missing at {_DOCTRINE_PARQUET}; "
+                "add_doctrine_scores is a documented no-op (returns df unchanged)."
+            )
+        corpus = load_corpus(smoke=True)
+        with_doc = add_doctrine_scores(corpus)
+        for cls in QUALIFYING_EVENT_CLASSES:
+            assert f"doctrine_score_{cls}" in with_doc.columns
+
+    def test_doctrine_no_op_returns_unchanged(self) -> None:
+        """When doctrine parquet is absent, add_doctrine_scores returns df unchanged."""
+        from app.medini.ml.stage_d_features import add_doctrine_scores, _DOCTRINE_PARQUET
+
+        if _DOCTRINE_PARQUET.exists():
+            # Doctrine parquet exists; this test would not apply. Skip cleanly.
+            import pytest
+            pytest.skip("doctrine parquet present; no-op behavior only relevant when absent")
+        corpus = load_corpus(smoke=True)
+        out = add_doctrine_scores(corpus)
+        # Same shape, same columns.
+        assert out.shape == corpus.shape
+        assert list(out.columns) == list(corpus.columns)

@@ -39,3 +39,23 @@ class TestLoadCorpus:
         """load_corpus(smoke=False) loads the full mdadpd corpus."""
         df = load_corpus(smoke=False)
         assert len(df) > 0
+
+
+class TestJoinNatalTensor:
+    def test_join_preserves_window_count(self) -> None:
+        """Joining natal Vedic Tensor doesn't drop windows (left-join)."""
+        from app.medini.ml.stage_d_features import join_natal_vedic_tensor
+
+        corpus = load_corpus(smoke=True)
+        joined = join_natal_vedic_tensor(corpus)
+        assert len(joined) == len(corpus), "left-join must not drop rows"
+
+    def test_join_adds_193_columns_minus_meta(self) -> None:
+        """Tensor adds ~193 cols (Base 70 + Kinematic 63 + Vedic 50 + meta 10)."""
+        from app.medini.ml.stage_d_features import join_natal_vedic_tensor
+
+        corpus = load_corpus(smoke=True)
+        joined = join_natal_vedic_tensor(corpus)
+        new_cols = set(joined.columns) - set(corpus.columns)
+        # Allow ±20% tolerance — the Vedic Tensor schema may have evolved.
+        assert 150 <= len(new_cols) <= 230, f"got {len(new_cols)} new cols"

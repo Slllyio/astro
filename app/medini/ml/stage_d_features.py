@@ -18,7 +18,9 @@ See docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md §2.
 """
 from __future__ import annotations
 
+import argparse
 import logging
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -93,12 +95,46 @@ def join_natal_vedic_tensor(corpus: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_corpus(*, smoke: bool = False) -> pd.DataFrame:
-    """Load the (person × MD × AD × PD) leaf-window corpus."""
-    path = _CORPUS_SMOKE if smoke else _CORPUS_FULL
-    logger.info("Loading corpus: %s", path)
-    df = pd.read_parquet(path)
-    logger.info("Loaded %d windows × %d cols", len(df), len(df.columns))
-    return df
+    """Load the (person × MD × AD × PD) leaf-window corpus.
+
+    Smoke mode: if the smoke parquet is schema-stale (missing event label
+    columns that exist in the full corpus), rebuild it on the fly by
+    filtering the full corpus to the smoke persons and overwrite the stale
+    file. This handles the case where the full corpus ETL added new event
+    columns after the smoke parquet was last built.
+    """
+    if not smoke:
+        path = _CORPUS_FULL
+        logger.info("Loading corpus: %s", path)
+        df = pd.read_parquet(path)
+        logger.info("Loaded %d windows × %d cols", len(df), len(df.columns))
+        return df
+
+    # --- smoke path ---
+    if not _CORPUS_SMOKE.exists():
+        raise FileNotFoundError(
+            f"Smoke corpus not found at {_CORPUS_SMOKE}."
+        )
+    smoke_df = pd.read_parquet(_CORPUS_SMOKE)
+    full_df = pd.read_parquet(_CORPUS_FULL)
+
+    missing_cols = [c for c in full_df.columns if c not in smoke_df.columns]
+    if missing_cols:
+        logger.warning(
+            "Smoke corpus is schema-stale: missing %d cols present in full corpus "
+            "(%s …). Rebuilding smoke by filtering full corpus to smoke persons.",
+            len(missing_cols), missing_cols[:5],
+        )
+        smoke_names = set(smoke_df["name_norm"].unique())
+        smoke_df = full_df[full_df["name_norm"].isin(smoke_names)].reset_index(drop=True)
+        smoke_df.to_parquet(_CORPUS_SMOKE, index=False)
+        logger.info(
+            "Rebuilt smoke corpus: %d rows × %d cols — saved to %s",
+            len(smoke_df), len(smoke_df.columns), _CORPUS_SMOKE,
+        )
+
+    logger.info("Loaded smoke corpus: %d windows × %d cols", len(smoke_df), len(smoke_df.columns))
+    return smoke_df
 
 
 # Vimshottari 9 lords in canonical project order.
@@ -364,3 +400,70 @@ def add_doctrine_scores(df: pd.DataFrame) -> pd.DataFrame:
         if f"doctrine_score_{c}" in doc.columns
     ]
     return df.merge(doc[keep], on="name_norm", how="left", validate="many_to_one")
+
+
+def _ensure_event_label_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Guarantee all 30 qualifying-class event label columns exist.
+
+    The full corpus carries all 30 `event_<class>` columns; the smoke corpus
+    (a stratified 10% sample) may be missing rare classes that had 0 events
+    in the sampled windows. Fill with 0 so the downstream schema is always
+    complete and consistent regardless of split.
+    """
+    df = df.copy()
+    missing = [
+        cls for cls in QUALIFYING_EVENT_CLASSES
+        if f"event_{cls}" not in df.columns
+    ]
+    if missing:
+        logger.info(
+            "Adding %d missing event label columns (all-zero) for rare classes "
+            "absent from this corpus split: %s",
+            len(missing), missing,
+        )
+        for cls in missing:
+            df[f"event_{cls}"] = 0
+    return df
+
+
+def materialize(*, smoke: bool, write: bool = True) -> pd.DataFrame:
+    """Compose all feature blocks and (optionally) write the output parquet."""
+    df = load_corpus(smoke=smoke)
+    df = join_natal_vedic_tensor(df)
+    df = add_active_dasha_encoding(df)
+    df = add_yoga_features_with_dasha_gating(df)
+    df = add_stage_e_features(df)
+    df = add_doctrine_scores(df)
+    df = _ensure_event_label_columns(df)
+
+    if write:
+        out = _DATA_DIR / ("dasha_stage_d_features_smoke.parquet" if smoke
+                           else "dasha_stage_d_features.parquet")
+        df.to_parquet(out, index=False)
+        logger.info("Wrote %s (%d rows × %d cols)", out, len(df), len(df.columns))
+    return df
+
+
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(prog="python -m app.medini.ml.stage_d_features")
+    p.add_argument("--smoke", action="store_true",
+                   help="Use the smoke variant of the corpus.")
+    return p.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s :: %(message)s",
+    )
+    args = _parse_args(argv)
+    try:
+        materialize(smoke=args.smoke, write=True)
+    except Exception:
+        logger.exception("Feature materialization failed.")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

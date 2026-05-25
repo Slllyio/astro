@@ -196,3 +196,70 @@ class TestStageEFeatures:
         # Same shape, same columns.
         assert out.shape == corpus.shape
         assert list(out.columns) == list(corpus.columns)
+
+
+class TestMaterialize:
+    # Corpus-level metadata that's expected to be in the materialized parquet.
+    # These are NOT feature-leak — they're consumed by stage_d_dataset.py
+    # for label construction and censoring time, not selected as features.
+    _CORPUS_METADATA_JD_COLS: tuple[str, ...] = (
+        "birth_jd", "window_start_jd", "window_end_jd",
+    )
+
+    def test_no_unexpected_jd_columns_in_materialized_parquet(self) -> None:
+        """F3 in spec §6 — no `*_jd` columns beyond the known corpus metadata
+        should appear in the materialized parquet (would signal feature leak)."""
+        from app.medini.ml.stage_d_features import materialize
+
+        out = materialize(smoke=True, write=False)
+        unexpected_jd = [
+            c for c in out.columns
+            if c.endswith("_jd") and c not in self._CORPUS_METADATA_JD_COLS
+        ]
+        assert not unexpected_jd, f"unexpected JD cols (potential leak): {unexpected_jd}"
+
+    def test_no_death_feature_columns(self) -> None:
+        """F3 in spec §6 — no `death*` columns may be features, EXCEPT the
+        `event_death_*` label columns which are legitimate (they're per-class
+        labels, used by stage_d_dataset.py to build the survival event vector)."""
+        from app.medini.ml.stage_d_features import materialize
+
+        out = materialize(smoke=True, write=False)
+        forbidden = [
+            c for c in out.columns
+            if c.startswith("death") and not c.startswith("event_")
+        ]
+        assert not forbidden, f"forbidden death-feature cols: {forbidden}"
+
+    def test_smoke_has_positive_class_coverage(self) -> None:
+        """Sub-gate D.0 (smoke approximation) — at least 60% of qualifying
+        classes have ≥1 positive in the 100-person smoke corpus.
+
+        Why 60% (not 80% or 100%): the smoke corpus samples just 100 persons,
+        so rare classes (e.g., death_of_father n=69 in full → expected <1 in
+        smoke) legitimately land at 0. The 60% threshold catches catastrophic
+        failures (smoke parquet truncated or corrupted) without flagging the
+        ~11 naturally-zero classes. Full sub-gate D.0 — requiring all 30
+        classes present — is checked separately on the FULL materialized
+        parquet (run `py -3.12 -m app.medini.ml.stage_d_features` without
+        --smoke to verify)."""
+        from app.medini.ml.stage_d_features import (
+            materialize, QUALIFYING_EVENT_CLASSES,
+        )
+
+        out = materialize(smoke=True, write=False)
+        for cls in QUALIFYING_EVENT_CLASSES:
+            assert f"event_{cls}" in out.columns, f"missing label column: event_{cls}"
+
+        coverage = [
+            (cls, int(out[f"event_{cls}"].sum())) for cls in QUALIFYING_EVENT_CLASSES
+        ]
+        nonzero = sum(1 for _, n in coverage if n >= 1)
+        total = len(QUALIFYING_EVENT_CLASSES)
+        zero_classes = [cls for cls, n in coverage if n == 0]
+        # 60% floor: catches gross failures while tolerating the 11 known
+        # zero-classes in the 100-person smoke cohort.
+        assert nonzero / total >= 0.60, (
+            f"only {nonzero}/{total} ({100*nonzero/total:.0f}%) classes "
+            f"have ≥1 positive in smoke; zero-classes: {zero_classes}"
+        )

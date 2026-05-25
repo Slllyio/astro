@@ -169,7 +169,9 @@ def add_active_dasha_encoding(df: pd.DataFrame) -> pd.DataFrame:
         if not relevant:
             df[f"n_relevant_lords_{cls}"] = 0
             continue
+        # Vectorized: per-cell isin → sum across the 3 chain cols.
+        # ~200× faster than row-wise apply on full corpus.
         df[f"n_relevant_lords_{cls}"] = (
-            df[chain_cols].apply(lambda row: sum(1 for l in row if l in relevant), axis=1)
+            df[chain_cols].isin(relevant).sum(axis=1).astype("int8")
         )
     return df

@@ -82,3 +82,32 @@ class TestActiveDashaEncoding:
         col = "n_relevant_lords_career"
         assert col in with_dasha.columns
         assert with_dasha[col].between(0, 3).all()
+
+    def test_ad_lord_one_hot_sums_to_one(self) -> None:
+        """Each row has exactly one AD lord one-hot active (parity with MD test)."""
+        from app.medini.ml.stage_d_features import add_active_dasha_encoding
+
+        corpus = load_corpus(smoke=True)
+        with_dasha = add_active_dasha_encoding(corpus)
+        ad_one_hots = [c for c in with_dasha.columns if c.startswith("ad_lord_is_")]
+        assert len(ad_one_hots) == 9
+        assert (with_dasha[ad_one_hots].sum(axis=1) == 1).all()
+
+    def test_pd_lord_one_hot_sums_to_one(self) -> None:
+        """Each row has exactly one PD lord one-hot active (parity with MD test)."""
+        from app.medini.ml.stage_d_features import add_active_dasha_encoding
+
+        corpus = load_corpus(smoke=True)
+        with_dasha = add_active_dasha_encoding(corpus)
+        pd_one_hots = [c for c in with_dasha.columns if c.startswith("pd_lord_is_")]
+        assert len(pd_one_hots) == 9
+        assert (with_dasha[pd_one_hots].sum(axis=1) == 1).all()
+
+    def test_empty_attribution_emits_all_zeros(self) -> None:
+        """Classes with no classical attribution ('personal', 'general') emit 0."""
+        from app.medini.ml.stage_d_features import add_active_dasha_encoding
+
+        corpus = load_corpus(smoke=True)
+        with_dasha = add_active_dasha_encoding(corpus)
+        assert (with_dasha["n_relevant_lords_personal"] == 0).all()
+        assert (with_dasha["n_relevant_lords_general"] == 0).all()

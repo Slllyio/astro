@@ -47,32 +47,54 @@ _CORPUS_SMOKE = _DATA_DIR / "dasha_mdadpd_smoke.parquet"
 
 # Path to the canonical natal Vedic Tensor parquet. If the ETL writes
 # elsewhere, update this constant — do NOT silently fail.
-_VEDIC_TENSOR_PARQUET = _DATA_DIR / "ml_astro_features.parquet"
+#
+# IMPORTANT — points to the FULL-COVERAGE rebuild (10,239 dasha-corpus
+# persons; built 2026-05-25 by the regeneration handoff procedure at
+# docs/superpowers/specs/2026-05-25-stage-d-data-regeneration-plan.md).
+# The original ml_astro_features.parquet (14,070 persons) did not overlap
+# with the dasha corpus and caused 100% NaN on Vedic Tensor cols at
+# sub-gate D.0 (commit f1d95ec). Do not revert this path without
+# verifying the corpus-overlap rate first.
+_VEDIC_TENSOR_PARQUET = _DATA_DIR / "ml_astro_features_full.parquet"
 
 
 def join_natal_vedic_tensor(corpus: pd.DataFrame) -> pd.DataFrame:
     """Left-join the per-person Vedic Tensor onto each (person × window) row.
 
-    The Tensor has ~193 columns produced by app.medini.etl.feature_engineering.
-    The parquet ships with `name` (raw) but not `name_norm`, so we derive
-    `name_norm` here using the project-wide convention from
-    app.medini.etl.build_screening_cohort._norm_name (just str.strip()).
+    The Tensor has ~530 columns produced by app.medini.etl.feature_engineering.
+    Two parquet schemas are supported:
+      * Legacy `ml_astro_features.parquet` (14,070 persons, no overlap with
+        the dasha corpus) — ships with raw `name` only; name_norm derived
+        here via str.strip().lower().
+      * Full-coverage `ml_astro_features_full.parquet` (10,239 persons,
+        100% dasha-corpus overlap; built 2026-05-25 per the regeneration
+        handoff at docs/superpowers/specs/2026-05-25-stage-d-data-regeneration-plan.md)
+        — already carries name_norm; no derivation needed.
 
+    Either parquet works; the function detects which schema is present.
     Same value across all windows for a given person.
     """
     if not _VEDIC_TENSOR_PARQUET.exists():
         raise FileNotFoundError(
             f"Vedic Tensor parquet not found at {_VEDIC_TENSOR_PARQUET}. "
-            "Rebuild via `py -3.12 -m app.medini.etl.databank_etl`."
+            "Rebuild via `py -3.12 -m app.medini.etl.databank_etl` OR "
+            "the regen procedure in docs/superpowers/specs/"
+            "2026-05-25-stage-d-data-regeneration-plan.md."
         )
-    tensor = pd.read_parquet(_VEDIC_TENSOR_PARQUET)
-    if "name" not in tensor.columns:
-        raise ValueError("Vedic Tensor parquet missing `name` column.")
-    # Derive name_norm from name (project convention: just strip whitespace).
-    tensor = tensor.copy()
-    tensor["name_norm"] = tensor["name"].astype(str).str.strip()
-    # Drop the raw `name` column to avoid a column collision with the corpus.
-    tensor = tensor.drop(columns=["name"])
+    tensor = pd.read_parquet(_VEDIC_TENSOR_PARQUET).copy()
+    if "name_norm" in tensor.columns:
+        # Full-coverage schema — name_norm already present.
+        if "name" in tensor.columns:
+            tensor = tensor.drop(columns=["name"])
+    elif "name" in tensor.columns:
+        # Legacy schema — derive name_norm from raw name.
+        tensor["name_norm"] = tensor["name"].astype(str).str.lower().str.strip()
+        tensor = tensor.drop(columns=["name"])
+    else:
+        raise ValueError(
+            "Vedic Tensor parquet missing both `name` and `name_norm`; "
+            "cannot derive a join key."
+        )
     # The tensor may carry duplicates by name (e.g., Einstein × 2 from
     # different rodden ratings). De-dupe by name_norm, keep first; log
     # the count so silent data-quality issues surface.
@@ -261,11 +283,21 @@ def add_yoga_features_with_dasha_gating(df: pd.DataFrame) -> pd.DataFrame:
     screening_career_yogas.parquet) + 16 `<yoga>_dasha_active` (computed
     here from _YOGA_PLANETS). Vectorized for full-corpus scale.
     """
-    natal_path = _DATA_DIR / "screening_career_yogas.parquet"
+    # Use the full-coverage yoga parquet built 2026-05-25 by the regen
+    # procedure (covers all 10,239 dasha-corpus persons). The legacy
+    # screening_career_yogas.parquet only covered 951 career-screening
+    # cohort persons (0% dasha-corpus overlap) and was kept as a fallback
+    # for backwards compatibility.
+    natal_path = _DATA_DIR / "dasha_corpus_yogas.parquet"
+    if not natal_path.exists():
+        # Fallback to the legacy parquet (will likely show 0% join hit rate
+        # on the dasha corpus; the hit-rate log below makes this visible).
+        natal_path = _DATA_DIR / "screening_career_yogas.parquet"
     if not natal_path.exists():
         raise FileNotFoundError(
-            f"Yoga-augmented parquet not found at {natal_path}. "
-            "Run `py -3.12 -m app.medini.etl.add_yoga_features` first."
+            f"Yoga-augmented parquet not found at {natal_path} nor the "
+            "fallback dasha_corpus_yogas.parquet. Run the regen procedure "
+            "at docs/superpowers/specs/2026-05-25-stage-d-data-regeneration-plan.md."
         )
     yoga_df = pd.read_parquet(natal_path)
     natal_strength_cols = [c for c in yoga_df.columns if c.endswith("_natal_strength")]

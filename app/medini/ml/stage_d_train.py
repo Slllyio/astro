@@ -189,10 +189,18 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="python -m app.medini.ml.stage_d_train")
     p.add_argument("--seed", type=int, required=True)
-    p.add_argument("--split", choices=["noise_floor", "main", "replication"], required=True)
+    # Loose --split accept: noise_floor/main/replication are the spec set;
+    # `sensitivity_kbins{30,80}` etc. are used by Task 19.5 F5 defense.
+    p.add_argument("--split", type=str, required=True,
+                   help="Output JSONL bucket name (noise_floor/main/replication/sensitivity_kbins30/...)")
     p.add_argument("--test-size", type=float, default=0.20)
     p.add_argument("--out-dir", type=Path, default=Path("data/ml_runs/fork_a_stage_d"))
     p.add_argument("--smoke", action="store_true")
+    p.add_argument("--k-bins", type=int, default=None,
+                   help="Override the model's k_bins (default: stage_d_dataset.K_BINS=50). "
+                        "Used by Task 19.5 sensitivity sweep (F5 defense). "
+                        "Must match between the dataset's bin assignments and the model's heads — "
+                        "_train_one_seed threads this through to both build_dataset and StageDModel.")
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO,
@@ -214,8 +222,10 @@ def main(argv=None) -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     start = time.time()
     record = _train_one_seed(df, seed=args.seed, test_size=args.test_size,
-                             out_dir=args.out_dir, noise_floor_sha=sha)
+                             out_dir=args.out_dir, noise_floor_sha=sha,
+                             k_bins=args.k_bins)
     record["split"] = args.split
+    record["k_bins"] = args.k_bins or K_BINS
     record["duration_seconds"] = round(time.time() - start, 1)
 
     # Append to the appropriate JSONL.

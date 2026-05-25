@@ -198,8 +198,46 @@ def fit_all_classes(
     ]
 
 
+# Module-level globals populated per-worker by `_init_worker_data` (via
+# ProcessPoolExecutor's `initializer` argument). Keeping them at module
+# scope means each worker only deserializes the (train, test) DataFrames
+# ONCE rather than 30 times (was ~30s × 30 wasted on Windows pickling).
+_WORKER_TRAIN: pd.DataFrame | None = None
+_WORKER_TEST: pd.DataFrame | None = None
+
+
+def _init_worker_data(train_pickle: bytes, test_pickle: bytes) -> None:
+    """ProcessPool initializer — ships (train, test) to each worker ONCE.
+
+    Both args are pre-pickled bytes (not DataFrames) so the initializer
+    payload is the wire-format we want, not a deepcopied object that
+    multiprocessing would re-pickle anyway.
+    """
+    import pickle
+    global _WORKER_TRAIN, _WORKER_TEST
+    _WORKER_TRAIN = pickle.loads(train_pickle)
+    _WORKER_TEST = pickle.loads(test_pickle)
+
+
+def _fit_one_shared(args: tuple[str, int]) -> CoxFitResult:
+    """ProcessPool entry point — reads (train, test) from worker globals."""
+    cls, seed = args
+    if _WORKER_TRAIN is None or _WORKER_TEST is None:
+        raise RuntimeError(
+            "_fit_one_shared called without _init_worker_data; "
+            "ProcessPoolExecutor must be constructed with the initializer."
+        )
+    return fit_cause_specific_cox(
+        _WORKER_TRAIN, _WORKER_TEST, event_class=cls, seed=seed,
+    )
+
+
 def _fit_one(args: tuple[pd.DataFrame, pd.DataFrame, str, int]) -> CoxFitResult:
-    """ProcessPoolExecutor entry point — must be top-level for pickling."""
+    """Legacy entry point — kept for the sequential parity test only.
+
+    Pickles (train, test) per call; do NOT use in the production parallel
+    path (use `_fit_one_shared` via `_init_worker_data` instead).
+    """
     train, test, cls, seed = args
     return fit_cause_specific_cox(train, test, event_class=cls, seed=seed)
 
@@ -209,15 +247,22 @@ def _fit_all_classes_parallel(
 ) -> list[CoxFitResult]:
     """ProcessPool fan-out across the 30 cause-specific Cox fits.
 
-    NOTE: pickling the (train, test) DataFrames per task is wasteful on
-    Windows (no fork). Expected wall-clock: ~8-15 min per seed at smoke
-    size (60K × ~250 cols) on 8 cores. For seed-level runs at scale, an
-    initializer-based pattern (`ProcessPoolExecutor(initializer=...)`)
-    would ship the data once per worker — defer that optimization until
-    Task 18's noise-floor measurement times out.
+    Uses ProcessPoolExecutor(initializer=...) to ship (train, test) to
+    each worker ONCE per pool, not 30 times. Expected wall-clock on
+    smoke (60K × ~250 cols): ~10-20 min on 8 cores. At full scale (6.17M
+    rows), each Cox fit may take 30-90 min, so per-seed cost is 1-3 hours
+    on 8 cores. See docs/superpowers/specs/2026-05-25-stage-d-tasks-18-22-handoff.md.
     """
+    import pickle
     n_workers = max(1, (os.cpu_count() or 2) - 1)
-    args_list = [(train, test, cls, seed) for cls in QUALIFYING_EVENT_CLASSES]
-    with ProcessPoolExecutor(max_workers=n_workers) as ex:
-        results = list(ex.map(_fit_one, args_list))
+    # Pre-pickle once in the main process so the initializer just deserializes.
+    train_p = pickle.dumps(train)
+    test_p = pickle.dumps(test)
+    args_list = [(cls, seed) for cls in QUALIFYING_EVENT_CLASSES]
+    with ProcessPoolExecutor(
+        max_workers=n_workers,
+        initializer=_init_worker_data,
+        initargs=(train_p, test_p),
+    ) as ex:
+        results = list(ex.map(_fit_one_shared, args_list))
     return results

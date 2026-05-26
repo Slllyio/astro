@@ -34,6 +34,7 @@ import lifelines
 
 from app.medini.ml.stage_d_baseline import fit_all_classes, split_train_test
 from app.medini.ml.stage_d_dataset import K_BINS, build_dataset
+from app.medini.ml.stage_d_device import device_label, resolve_device
 from app.medini.ml.stage_d_features import QUALIFYING_EVENT_CLASSES
 from app.medini.ml.stage_d_model import (N_CLASSES, StageDModel, deephit_loss)
 
@@ -51,12 +52,24 @@ def _seed_everything(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    # DirectML has its own RNG state. Seed it too when available — otherwise
+    # the same code path produces different DML weight init across seeds.
+    try:
+        import torch_directml
+        torch_directml.manual_seed_all(seed)
+    except (ImportError, AttributeError):
+        pass
     torch.use_deterministic_algorithms(True, warn_only=True)
 
 
 def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
                     out_dir: Path, noise_floor_sha: str,
-                    k_bins: int | None = None) -> dict:
+                    k_bins: int | None = None,
+                    device: torch.device | None = None) -> dict:
+    # `device` lets the trainer push DeepHit to DirectML/CUDA while Cox
+    # stays on CPU (lifelines is CPU-only). Default None → CPU.
+    if device is None:
+        device = torch.device("cpu")
     # Resolve k_bins FIRST so the dataset and model agree.
     # Default is the imported K_BINS=50; F5 sensitivity overrides via the
     # explicit kwarg (preferred) or via _train_one_seed._k_bins_override
@@ -87,7 +100,7 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     test_ds = build_dataset(test_df, name_norms=test_persons, k_bins=k_bins)
 
     n_features = train_ds.features.shape[1]
-    model = StageDModel(n_features=n_features, k_bins=k_bins)
+    model = StageDModel(n_features=n_features, k_bins=k_bins).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10)
 
@@ -95,11 +108,14 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE)
 
     best_val = float("inf")
-    best_state = None
+    best_state = None  # always lives on CPU for save() portability
     patience_left = PATIENCE
     for epoch in range(EPOCHS):
         model.train()
         for feats, time_bins, event_classes in train_loader:
+            feats = feats.to(device, non_blocking=True)
+            time_bins = time_bins.to(device, non_blocking=True)
+            event_classes = event_classes.to(device, non_blocking=True)
             optimizer.zero_grad()
             pmf = model(feats)
             loss = deephit_loss(pmf, time_bins, event_classes, k_bins=model.k_bins)
@@ -111,6 +127,9 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
         with torch.no_grad():
             val_losses = []
             for feats, time_bins, event_classes in val_loader:
+                feats = feats.to(device, non_blocking=True)
+                time_bins = time_bins.to(device, non_blocking=True)
+                event_classes = event_classes.to(device, non_blocking=True)
                 pmf = model(feats)
                 val_losses.append(float(
                     deephit_loss(pmf, time_bins, event_classes, k_bins=model.k_bins)
@@ -120,7 +139,9 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
 
         if val_loss < best_val - 1e-4:
             best_val = val_loss
-            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+            # Snapshot to CPU so save() works without device-specific tensors
+            # in the checkpoint (and so load() with map_location='cpu' works).
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
             patience_left = PATIENCE
         else:
             patience_left -= 1
@@ -129,7 +150,7 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
                 break
 
     if best_state is not None:
-        model.load_state_dict(best_state)
+        model.load_state_dict(best_state)  # back onto the GPU
     model_path = out_dir / "models" / f"seed_{seed}_deephit.pt"
     model_path.parent.mkdir(parents=True, exist_ok=True)
     model.save(model_path)
@@ -139,10 +160,9 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     deephit_c: dict[str, float] = {}
     model.eval()
     with torch.no_grad():
-        test_pmf = model(test_ds.features)
-    # cumulative incidence at right edge per class = sum over bins.
-    # Use test_ds.durations (same row order as test_pmf) — NOT test_df.
-    # Use model.k_bins so the F5 sensitivity check works correctly.
+        # Move test features to device; the resulting pmf comes back to CPU
+        # because concordance_index runs on numpy arrays.
+        test_pmf = model(test_ds.features.to(device)).detach().cpu()
     durations = test_ds.durations
     for i, cls in enumerate(QUALIFYING_EVENT_CLASSES):
         start = i * model.k_bins
@@ -169,6 +189,7 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
         "torch_version": torch.__version__,
         "lifelines_version": lifelines.__version__,
         "deephit_implementation": "hand-rolled (see spec-deviation note in plan)",
+        "device": device_label(device),
         "per_class": {
             cls: {
                 "n_train_positives": int((train_df[f"event_{cls}"] == 1).sum()),
@@ -210,6 +231,12 @@ def main(argv=None) -> int:
                         "Used by Task 19.5 sensitivity sweep (F5 defense). "
                         "Must match between the dataset's bin assignments and the model's heads — "
                         "_train_one_seed threads this through to both build_dataset and StageDModel.")
+    p.add_argument("--device", type=str, default="auto",
+                   choices=("auto", "dml", "cuda", "cpu"),
+                   help="DeepHit training device. 'auto' prefers DirectML, "
+                        "then CUDA, then CPU. F14 spec deviation: original "
+                        "design was CPU-only; GPU choice is recorded in each "
+                        "run record's `device` field for honest replication.")
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO,
@@ -232,10 +259,12 @@ def main(argv=None) -> int:
         sha = hashlib.sha256(nf_path.read_bytes()).hexdigest()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    device = resolve_device(args.device)
+    logger.info("Using device: %s", device_label(device))
     start = time.time()
     record = _train_one_seed(df, seed=args.seed, test_size=args.test_size,
                              out_dir=args.out_dir, noise_floor_sha=sha,
-                             k_bins=args.k_bins)
+                             k_bins=args.k_bins, device=device)
     record["split"] = args.split
     record["k_bins"] = args.k_bins or K_BINS
     # Tag corpus so DECISION.md can footnote "n=2000 subsample" verdicts.

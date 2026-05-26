@@ -173,6 +173,25 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
             continue
         deephit_c[cls] = float(concordance_index(durations, -cum, events))
 
+    # Free DeepHit memory before launching Cox workers — the DML model +
+    # train/val/test datasets + best_state hold ~10 GB of GPU/host RAM, and
+    # each Cox worker malloc's ~1 GB for pyarrow's parquet read at subsample
+    # scale. Without this cleanup, ~7 concurrent worker initializers OOM
+    # with ArrowMemoryError. Order matters: clear references, then gc, then
+    # try to drop the DML allocator's cached blocks.
+    import gc
+    del model, optimizer, scheduler, train_loader, val_loader
+    del train_ds, val_ds, test_ds, best_state, test_pmf
+    gc.collect()
+    if device.type == "privateuseone":  # DirectML
+        try:
+            import torch_directml
+            torch_directml.empty_cache()
+        except (ImportError, AttributeError):
+            pass
+    elif device.type == "cuda":
+        torch.cuda.empty_cache()
+
     # Cox baseline (30 fits, parallel). MUST use the same train/test split
     # as Stage D for the Δ comparison to be valid (spec §5).
     cox_results = fit_all_classes(train_df, test_df, seed=seed, parallel=True)

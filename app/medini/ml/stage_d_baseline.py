@@ -309,10 +309,18 @@ def _fit_all_classes_parallel(
     # Large payload: spill to temp parquet, pass paths through the pipe.
     # NamedTemporaryFile auto-cleans on context exit; workers MUST finish
     # before we leave the `with tempfile.TemporaryDirectory` block.
+    #
+    # Cap workers at 4 when spilling because each worker's pyarrow read
+    # malloc's ~2-3x the final DataFrame size transiently. Pre-cap with
+    # 7 workers OOMed (ArrowMemoryError: malloc of size 1024358592 failed).
+    # 4 workers gives ~5-7 GB peak Cox-side; combined with the
+    # post-DeepHit orchestrator (~3 GB after gc) this fits comfortably.
+    spill_workers = min(4, n_workers)
     logger.info(
         "Cox parallel: payload ~%.2f GB exceeds pipe limit; "
-        "spilling to temp parquet",
+        "spilling to temp parquet (workers=%d)",
         payload_estimate / 1e9,
+        spill_workers,
     )
     with tempfile.TemporaryDirectory(prefix="stage_d_cox_") as td:
         train_path = os.path.join(td, "train.parquet")
@@ -320,7 +328,7 @@ def _fit_all_classes_parallel(
         train.to_parquet(train_path, index=False)
         test.to_parquet(test_path, index=False)
         with ProcessPoolExecutor(
-            max_workers=n_workers,
+            max_workers=spill_workers,
             initializer=_init_worker_data_from_paths,
             initargs=(train_path, test_path),
         ) as ex:

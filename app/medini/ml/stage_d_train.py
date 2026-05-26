@@ -44,7 +44,14 @@ EPOCHS = 200
 PATIENCE = 20
 LR = 1e-3
 WEIGHT_DECAY = 1e-4
-BATCH_SIZE = 256
+# BATCH_SIZE bumped 256 -> 1024 to exploit DML throughput. At 2000p
+# (1.2M rows), 256 made DeepHit ~3.3h/seed. The bigger batch reduces
+# fwd/bwd calls per epoch ~4x. AMD 9060 XT (16 GB VRAM) easily holds
+# the activations (~12 MB / batch at K_BINS=50, n_classes=30, hidden=256).
+# Note: gradient noise scales ~1/sqrt(batch), so val_loss convergence
+# behaviour may shift slightly; spec's hand-rolled DeepHit doesn't have
+# a published hyperparam scan, so this is a defensible tuning choice.
+BATCH_SIZE = 1024
 VAL_FRAC = 0.20
 
 

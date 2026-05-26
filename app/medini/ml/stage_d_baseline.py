@@ -212,11 +212,29 @@ def _init_worker_data(train_pickle: bytes, test_pickle: bytes) -> None:
     Both args are pre-pickled bytes (not DataFrames) so the initializer
     payload is the wire-format we want, not a deepcopied object that
     multiprocessing would re-pickle anyway.
+
+    Used by the small-payload path (<~1.5 GB pickle total). Larger payloads
+    use `_init_worker_data_from_paths` because Windows pipes can't carry
+    pickled data >2^31 bytes through a single WriteFile.
     """
     import pickle
     global _WORKER_TRAIN, _WORKER_TEST
     _WORKER_TRAIN = pickle.loads(train_pickle)
     _WORKER_TEST = pickle.loads(test_pickle)
+
+
+def _init_worker_data_from_paths(train_path: str, test_path: str) -> None:
+    """ProcessPool initializer — workers read (train, test) from parquet.
+
+    Used when the in-memory pickle path would exceed the Windows 2 GB
+    pipe write limit (OSError errno 22). The orchestrator writes the
+    split to a temp parquet ONCE per seed; each worker reads it lazily.
+    Pyarrow parquet read is ~3-5x slower than pickle.loads but bypasses
+    the pipe entirely.
+    """
+    global _WORKER_TRAIN, _WORKER_TEST
+    _WORKER_TRAIN = pd.read_parquet(train_path)
+    _WORKER_TEST = pd.read_parquet(test_path)
 
 
 def _fit_one_shared(args: tuple[str, int]) -> CoxFitResult:
@@ -242,27 +260,68 @@ def _fit_one(args: tuple[pd.DataFrame, pd.DataFrame, str, int]) -> CoxFitResult:
     return fit_cause_specific_cox(train, test, event_class=cls, seed=seed)
 
 
+# Windows multiprocessing pipe uses WriteFile with a 32-bit count argument,
+# so initargs containing pickled bytes >= 2 GiB raise OSError(22). Trigger
+# the disk-spill path well below the hard limit to leave headroom for
+# overhead and tooling reads.
+_PIPE_PICKLE_LIMIT_BYTES: int = 1_500_000_000
+
+
 def _fit_all_classes_parallel(
     train: pd.DataFrame, test: pd.DataFrame, *, seed: int,
 ) -> list[CoxFitResult]:
     """ProcessPool fan-out across the 30 cause-specific Cox fits.
 
-    Uses ProcessPoolExecutor(initializer=...) to ship (train, test) to
-    each worker ONCE per pool, not 30 times. Expected wall-clock on
-    smoke (60K × ~250 cols): ~10-20 min on 8 cores. At full scale (6.17M
-    rows), each Cox fit may take 30-90 min, so per-seed cost is 1-3 hours
-    on 8 cores. See docs/superpowers/specs/2026-05-25-stage-d-tasks-18-22-handoff.md.
+    Two transport modes for shipping (train, test) to workers:
+    1. Pickle-in-pipe (default, small data): pre-pickle each DataFrame in
+       the orchestrator and pass the bytes through initargs.
+    2. Parquet-on-disk (large data): write the split to temp parquet files
+       and pass the paths. Used when the combined pickle exceeds the
+       Windows pipe limit (~2 GB).
+
+    Triggered automatically by inspecting `train.memory_usage(deep=True).sum()`
+    (cheap; doesn't actually pickle). At subsample scale (1.2M rows) the
+    in-memory footprint is ~2.5 GB so we always take path 2.
     """
     import pickle
+    import tempfile
+
     n_workers = max(1, (os.cpu_count() or 2) - 1)
-    # Pre-pickle once in the main process so the initializer just deserializes.
-    train_p = pickle.dumps(train)
-    test_p = pickle.dumps(test)
     args_list = [(cls, seed) for cls in QUALIFYING_EVENT_CLASSES]
-    with ProcessPoolExecutor(
-        max_workers=n_workers,
-        initializer=_init_worker_data,
-        initargs=(train_p, test_p),
-    ) as ex:
-        results = list(ex.map(_fit_one_shared, args_list))
-    return results
+
+    # Cheap proxy for the eventual pickle size: deep memory usage is an
+    # upper bound on pickle output for primitive-dtype DataFrames. Using
+    # this avoids pickling twice (once to measure, once to send).
+    payload_estimate = int(
+        train.memory_usage(deep=True).sum() + test.memory_usage(deep=True).sum()
+    )
+
+    if payload_estimate < _PIPE_PICKLE_LIMIT_BYTES:
+        train_p = pickle.dumps(train)
+        test_p = pickle.dumps(test)
+        with ProcessPoolExecutor(
+            max_workers=n_workers,
+            initializer=_init_worker_data,
+            initargs=(train_p, test_p),
+        ) as ex:
+            return list(ex.map(_fit_one_shared, args_list))
+
+    # Large payload: spill to temp parquet, pass paths through the pipe.
+    # NamedTemporaryFile auto-cleans on context exit; workers MUST finish
+    # before we leave the `with tempfile.TemporaryDirectory` block.
+    logger.info(
+        "Cox parallel: payload ~%.2f GB exceeds pipe limit; "
+        "spilling to temp parquet",
+        payload_estimate / 1e9,
+    )
+    with tempfile.TemporaryDirectory(prefix="stage_d_cox_") as td:
+        train_path = os.path.join(td, "train.parquet")
+        test_path = os.path.join(td, "test.parquet")
+        train.to_parquet(train_path, index=False)
+        test.to_parquet(test_path, index=False)
+        with ProcessPoolExecutor(
+            max_workers=n_workers,
+            initializer=_init_worker_data_from_paths,
+            initargs=(train_path, test_path),
+        ) as ex:
+            return list(ex.map(_fit_one_shared, args_list))

@@ -30,19 +30,28 @@ Sub-gates D.0, D.1 (smoke), D.2, D.3 (smoke) all PASS. The pipeline runs end-to-
 
 ### 1. Decide on compute scale
 
-**At full corpus (6.17M rows)**, one seed takes an unknown amount of time. Smoke (60K rows) took 26 min. Naive linear scaling = 43 hours per seed (infeasible). Cox PH's complexity is closer to O(n × log n × iterations); realistic estimate is 1-3 hours per seed at full corpus.
+**At full corpus (6.17M rows)**, one Cox fit takes ~44 min on 8 cores even
+after the ProcessPoolExecutor(initializer=...) refactor. 30 fits × 30 seeds
+(noise floor + main + replication) ≈ 660 CPU-hours — infeasible single-machine.
 
 Three execution strategies:
 
 **A. Full corpus, status quo** (~25-100 hours for 20 seeds, single machine)
-- Risk: Cox baseline pickling 30 copies of (train, test) per seed kills wall-clock
-- **Strongly recommended**: refactor `_fit_all_classes_parallel` first (see step 2 below)
+- Cox baseline now uses ProcessPoolExecutor(initializer=...) so pickling is
+  ~8× per seed (one per worker), not 30×. See commit 4772033.
+- Still slow at full scale; realistic estimate 1-3 h per seed.
 
-**B. Person-subsample, status quo** (~5-10 hours)
-- Subsample dasha_corpus_birth_data.parquet to ~1000 persons
-- Re-materialize features at subsample scale (Step 5 of `2026-05-25-stage-d-data-regeneration-plan.md` but with `--limit 1000`)
-- Run all 20+10+10 seeds on the smaller substrate
-- Caveat: gate verdict carries an "n=1000-subsample" footnote
+**B. Person-subsample (CHOSEN PATH)** — 2000 persons / ~1.2M rows / ~20% of corpus
+- Person list: `app/medini/data/dasha_subsample_2000_persons.parquet`
+  (seed=42 random sample; 20/30 classes have ≥50 positives, all 30 ≥10)
+- Features parquet: `app/medini/data/dasha_stage_d_features_subsample.parquet`
+  (built by `scratch_materialize_subsample.py`, ~20 MB on disk)
+- Run via `--subsample` flag on stage_d_train.py (commit 61b3b33).
+- Each seed record carries `corpus: "subsample_2000p"` so DECISION.md can
+  footnote the substrate.
+- Per-seed expected: 10-20 min (timing probe in progress at seed=999).
+- Full 40-seed gate (20 noise + 10 main + 10 replication) ≈ 7-14 h.
+- Verdict carries "n=2000 subsample" footnote.
 
 **C. Cloud / batch** (out of scope of this handoff)
 
@@ -84,17 +93,16 @@ Expected speedup: 3-5× at smoke scale, much more at full scale.
 
 After applying, verify the existing `TestFitAllClasses` parity test still passes.
 
-## Task 18 — Noise floor (20 seeds)
+## Task 18 — Noise floor (20 seeds, subsample)
 
 ```powershell
-# PowerShell loop. Each seed writes one record to noise_floor_run.jsonl.
-for ($s = 101; $s -le 120; $s++) {
-    py -3.12 -m app.medini.ml.stage_d_train --seed $s --split noise_floor
-    if (-not $?) { Write-Error "seed $s FAILED"; break }
-}
+# Use the prepared launcher (seeds 101-120, --subsample, out-dir
+# data/ml_runs/fork_a_stage_d_subsample). Failures are collected into
+# noise_floor_FAILED.txt without aborting the loop. Source: scratch_run_task18.ps1.
+powershell -File scratch_run_task18.ps1
 ```
 
-Then compute and freeze `noise_floor.json`:
+Then compute and freeze `noise_floor.json` (note the `_subsample` out-dir):
 
 ```bash
 py -3.12 -c "
@@ -102,8 +110,9 @@ import json, statistics, math
 from pathlib import Path
 from app.medini.ml.stage_d_features import QUALIFYING_EVENT_CLASSES
 
+OUT = Path('data/ml_runs/fork_a_stage_d_subsample')
 records = [json.loads(l) for l in
-           Path('data/ml_runs/fork_a_stage_d/noise_floor_run.jsonl').read_text().splitlines()
+           (OUT / 'noise_floor_run.jsonl').read_text().splitlines()
            if l.strip()]
 assert len(records) == 20, f'expected 20 seeds, got {len(records)}'
 
@@ -117,6 +126,7 @@ for cls in QUALIFYING_EVENT_CLASSES:
 K_qual = sum(1 for v in sigma.values() if v is not None)
 threshold = max(1, math.ceil(K_qual * 5 / 14))
 out = {
+    'corpus': 'subsample_2000p',
     'K_qualifying': K_qual,
     'g2_threshold': threshold,
     'g2_threshold_formula': 'ceil(K * 5/14)',
@@ -125,49 +135,42 @@ out = {
     'n_seeds': 20,
     'computed_at': __import__('datetime').date.today().isoformat(),
 }
-Path('data/ml_runs/fork_a_stage_d/noise_floor.json').write_text(json.dumps(out, indent=2))
+(OUT / 'noise_floor.json').write_text(json.dumps(out, indent=2))
 print('K_qualifying:', K_qual, 'g2_threshold:', threshold)
 for cls, s in sorted(sigma.items()):
     print(f'  {cls:35s} sigma={s if s is None else round(s, 4)}')
 "
 
-git add data/ml_runs/fork_a_stage_d/noise_floor.json data/ml_runs/fork_a_stage_d/noise_floor_run.jsonl
-git commit -m "data(medini): Stage D noise floor — 20-seed sigma frozen"
+git add data/ml_runs/fork_a_stage_d_subsample/noise_floor.json data/ml_runs/fork_a_stage_d_subsample/noise_floor_run.jsonl
+git commit -m "data(medini): Stage D noise floor — 20-seed sigma frozen (subsample_2000p)"
 ```
 
-Sub-gate D.4 PASS criterion: most σ_noise in [0.015, 0.04]. Any class with σ > 0.06 should be flagged.
+Sub-gate D.4 PASS criterion: most σ_noise in [0.015, 0.04]. Any class with σ > 0.06 should be flagged. Subsample may push σ slightly higher than full-corpus expectation.
 
-## Task 19 — Main 10-seed run
+## Task 19 — Main 10-seed run (subsample)
 
 ```powershell
-for ($s = 1; $s -le 10; $s++) {
-    py -3.12 -m app.medini.ml.stage_d_train --seed $s --split main
-}
+powershell -File scratch_run_task19.ps1
 ```
 
 ## Task 19.5 — K_BINS sensitivity (F5 defense)
 
 ```bash
-# Re-run seed=42 at K_BINS=30 and K_BINS=80
-py -3.12 -m app.medini.ml.stage_d_train --seed 42 --split sensitivity_kbins30 --k-bins 30 \
-    --out-dir data/ml_runs/fork_a_stage_d/sensitivity_kbins
-py -3.12 -m app.medini.ml.stage_d_train --seed 42 --split sensitivity_kbins80 --k-bins 80 \
-    --out-dir data/ml_runs/fork_a_stage_d/sensitivity_kbins
+# Re-run seed=42 at K_BINS=30 and K_BINS=80 on the SAME subsample.
+py -3.12 -m app.medini.ml.stage_d_train --seed 42 --split sensitivity_kbins30 --k-bins 30 --subsample \
+    --out-dir data/ml_runs/fork_a_stage_d_subsample/sensitivity_kbins
+py -3.12 -m app.medini.ml.stage_d_train --seed 42 --split sensitivity_kbins80 --k-bins 80 --subsample \
+    --out-dir data/ml_runs/fork_a_stage_d_subsample/sensitivity_kbins
 ```
 
-⚠️ **CLI gap**: `stage_d_train.py` doesn't currently accept `--k-bins`. Add to the argparse in `main()`:
-```python
-p.add_argument("--k-bins", type=int, default=50)
-```
-And pass through to `_train_one_seed(..., k_bins=args.k_bins)`.
-
-Compare per-class Δ at K_BINS=30, 50, 80. If |Δ(50) − Δ(30)| > σ_noise on > 1/3 of classes, write a prominent warning into DECISION.md.
+`--k-bins` was added in commit 4772033. Compare per-class Δ at K_BINS=30, 50, 80. If |Δ(50) − Δ(30)| > σ_noise on > 1/3 of classes, write a prominent warning into DECISION.md.
 
 ## Task 20 — Conditional replication (only if main passed G1∧G2∧G3)
 
 ```powershell
 for ($s = 201; $s -le 210; $s++) {
-    py -3.12 -m app.medini.ml.stage_d_train --seed $s --split replication --test-size 0.25
+    py -3.12 -m app.medini.ml.stage_d_train --seed $s --split replication --test-size 0.25 --subsample \
+        --out-dir data/ml_runs/fork_a_stage_d_subsample
 }
 ```
 
@@ -218,10 +221,10 @@ print('PASS' if max_diff < 0.005 else 'FAIL')
 ## Task 22 — Generate DECISION.md
 
 ```bash
-py -3.12 -m app.medini.ml.stage_d_evaluate --out-dir data/ml_runs/fork_a_stage_d
+py -3.12 -m app.medini.ml.stage_d_evaluate --out-dir data/ml_runs/fork_a_stage_d_subsample
 ```
 
-Reads `noise_floor.json`, `main_run.jsonl`, optionally `replication_run.jsonl`, evaluates the 4-criterion gate, and writes `DECISION.md`. The verdict generator is committed at `30494e2`.
+Reads `noise_floor.json`, `main_run.jsonl`, optionally `replication_run.jsonl`, evaluates the 4-criterion gate, and writes `DECISION.md`. The verdict generator is committed at `30494e2`. DECISION.md should footnote `corpus: subsample_2000p` near the verdict header.
 
 ## Final commit + Stage D done
 

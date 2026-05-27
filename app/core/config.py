@@ -1,9 +1,24 @@
+from typing import Literal
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# Placeholder SECRET_KEY shipped in .env.example. Production must override
+# this — the post-init validator below refuses to start if ENVIRONMENT is
+# not "dev" and this string is still in use.
+_DEV_PLACEHOLDER_SECRET = "dev-only-not-secret-replace-in-production"
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Vedic & Nadi Astrology API"
     API_V1_STR: str = "/api/v1"
+
+    # Deployment marker. Used by the SECRET_KEY validator + any future
+    # environment-conditional logic (e.g., debug toolbar, verbose tracebacks).
+    # Local dev defaults to "dev"; staging/prod manifests MUST set this
+    # explicitly so misconfiguration fails loudly, not silently.
+    ENVIRONMENT: Literal["dev", "staging", "prod"] = "dev"
 
     # Defaulting to SQLite for prototype.
     # Swap to postgresql://user:password@localhost/astro_db (engine adapts the prefix to asyncpg).
@@ -22,7 +37,9 @@ class Settings(BaseSettings):
     # secret for both is acceptable for a prototype; in production these
     # should be separate so a compromise of one doesn't grant the other.
     # Override with `SECRET_KEY=...` in .env or the deployment manifest.
-    SECRET_KEY: str = "dev-only-not-secret-replace-in-production"
+    # The post-init validator REFUSES TO START in staging/prod if the
+    # placeholder is still present.
+    SECRET_KEY: str = _DEV_PLACEHOLDER_SECRET
     JWT_ALGORITHM: str = "HS256"
     JWT_TTL_SECONDS: int = 86400 * 7  # 7 days
 
@@ -48,12 +65,48 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "llama3.1"
     OLLAMA_TIMEOUT_SECONDS: float = 30.0
 
+    # Optional "deep" model override for layers that benefit from a more
+    # capable (slower) model — currently only forecast event_text uses it.
+    # Daily summaries stay on OLLAMA_MODEL (fast) because they're called
+    # many times per request; per-event synthesis is called fewer times
+    # AND benefits from better reasoning across multi-source citations.
+    # Empty string = fall through to OLLAMA_MODEL (no split).
+    # Timeout doubled because deep models take longer.
+    OLLAMA_MODEL_DEEP: str = ""
+    OLLAMA_DEEP_TIMEOUT_SECONDS: float = 120.0
+
+    # Knowledge-library RAG citations attached to /interpret responses.
+    # Disabled by default so tests/CI don't pay the embeddings load cost
+    # (~2-3s + ~150MB of RAM) on every interpret call. Set true when the
+    # RAG index has been built locally and you want chart narratives to
+    # ship with grounding citations. Failures are always swallowed —
+    # citations being broken never breaks chart interpretation.
+    INTERPRET_CITATIONS_ENABLED: bool = False
+    INTERPRET_CITATIONS_TOP_N: int = 3
+
     # extra="forbid" makes Settings(...) instantiation reject unknown kwargs.
     # It does NOT scan os.environ for unknown keys — pydantic-settings only
     # reads vars matching declared fields — so unrelated env vars (PATH etc.)
     # are unaffected. This is a hygiene knob that catches typos in tests and
     # explicit instantiation.
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env", extra="forbid")
+
+    @model_validator(mode="after")
+    def _enforce_production_secret(self) -> "Settings":
+        """Fail fast in staging/prod if SECRET_KEY is still the dev placeholder.
+
+        This catches the most common deploy mistake: shipping an .env that
+        was copied from .env.example without rotating the secret. JWT and
+        the OAuth session cookie both depend on this; in production a
+        leaked placeholder forges arbitrary identities and session state.
+        """
+        if self.ENVIRONMENT != "dev" and self.SECRET_KEY == _DEV_PLACEHOLDER_SECRET:
+            raise ValueError(
+                f"SECRET_KEY is the dev placeholder but ENVIRONMENT={self.ENVIRONMENT}. "
+                "Generate a strong secret (e.g. `python -c \"import secrets; print(secrets.token_urlsafe(64))\"`) "
+                "and set SECRET_KEY in the deployment env."
+            )
+        return self
 
 
 settings = Settings()

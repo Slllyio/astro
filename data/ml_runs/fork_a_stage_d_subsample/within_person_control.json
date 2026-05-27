@@ -1,0 +1,758 @@
+{
+  "age": [
+    {
+      "event_class": "fame",
+      "seed": 1,
+      "risk_source": "age",
+      "n_test_positives": 88,
+      "n_pairs": 52899,
+      "n_persons_with_pairs": 79,
+      "concordance": 0.3423127091249362,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "career",
+      "seed": 1,
+      "risk_source": "age",
+      "n_test_positives": 83,
+      "n_pairs": 49517,
+      "n_persons_with_pairs": 70,
+      "concordance": 0.40517398065310906,
+      "p_value_perm": 0.997002997002997
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 1,
+      "risk_source": "age",
+      "n_test_positives": 55,
+      "n_pairs": 33190,
+      "n_persons_with_pairs": 55,
+      "concordance": 0.7175956613437783,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 1,
+      "risk_source": "age",
+      "n_test_positives": 39,
+      "n_pairs": 23864,
+      "n_persons_with_pairs": 37,
+      "concordance": 0.5032266174991619,
+      "p_value_perm": 0.4645354645354645
+    },
+    {
+      "event_class": "personal",
+      "seed": 1,
+      "risk_source": "age",
+      "n_test_positives": 38,
+      "n_pairs": 22618,
+      "n_persons_with_pairs": 17,
+      "concordance": 0.304580422672208,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "fame",
+      "seed": 2,
+      "risk_source": "age",
+      "n_test_positives": 67,
+      "n_pairs": 40568,
+      "n_persons_with_pairs": 63,
+      "concordance": 0.34246203904555317,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "career",
+      "seed": 2,
+      "risk_source": "age",
+      "n_test_positives": 79,
+      "n_pairs": 47504,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.4017977433479286,
+      "p_value_perm": 0.998001998001998
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 2,
+      "risk_source": "age",
+      "n_test_positives": 58,
+      "n_pairs": 35064,
+      "n_persons_with_pairs": 58,
+      "concordance": 0.7424994296144194,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 2,
+      "risk_source": "age",
+      "n_test_positives": 32,
+      "n_pairs": 19390,
+      "n_persons_with_pairs": 31,
+      "concordance": 0.4661165549252192,
+      "p_value_perm": 0.7312687312687313
+    },
+    {
+      "event_class": "personal",
+      "seed": 2,
+      "risk_source": "age",
+      "n_test_positives": 45,
+      "n_pairs": 27505,
+      "n_persons_with_pairs": 22,
+      "concordance": 0.285184511906926,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "fame",
+      "seed": 3,
+      "risk_source": "age",
+      "n_test_positives": 80,
+      "n_pairs": 47963,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.34580822717511417,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "career",
+      "seed": 3,
+      "risk_source": "age",
+      "n_test_positives": 108,
+      "n_pairs": 64784,
+      "n_persons_with_pairs": 92,
+      "concordance": 0.3952827858730551,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 3,
+      "risk_source": "age",
+      "n_test_positives": 56,
+      "n_pairs": 33862,
+      "n_persons_with_pairs": 56,
+      "concordance": 0.7690331344870356,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 3,
+      "risk_source": "age",
+      "n_test_positives": 33,
+      "n_pairs": 19797,
+      "n_persons_with_pairs": 32,
+      "concordance": 0.49810577360206093,
+      "p_value_perm": 0.5064935064935064
+    },
+    {
+      "event_class": "personal",
+      "seed": 3,
+      "risk_source": "age",
+      "n_test_positives": 27,
+      "n_pairs": 16016,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.283528971028971,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "fame",
+      "seed": 4,
+      "risk_source": "age",
+      "n_test_positives": 99,
+      "n_pairs": 59569,
+      "n_persons_with_pairs": 84,
+      "concordance": 0.3274689855461733,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "career",
+      "seed": 4,
+      "risk_source": "age",
+      "n_test_positives": 77,
+      "n_pairs": 46170,
+      "n_persons_with_pairs": 67,
+      "concordance": 0.4014728178470868,
+      "p_value_perm": 0.998001998001998
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 4,
+      "risk_source": "age",
+      "n_test_positives": 62,
+      "n_pairs": 37230,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.7713134568896052,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 4,
+      "risk_source": "age",
+      "n_test_positives": 25,
+      "n_pairs": 15192,
+      "n_persons_with_pairs": 25,
+      "concordance": 0.4815692469720906,
+      "p_value_perm": 0.6183816183816184
+    },
+    {
+      "event_class": "personal",
+      "seed": 4,
+      "risk_source": "age",
+      "n_test_positives": 32,
+      "n_pairs": 19349,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.2741226936792599,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "fame",
+      "seed": 5,
+      "risk_source": "age",
+      "n_test_positives": 72,
+      "n_pairs": 43448,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.35106334008469897,
+      "p_value_perm": 1.0
+    },
+    {
+      "event_class": "career",
+      "seed": 5,
+      "risk_source": "age",
+      "n_test_positives": 86,
+      "n_pairs": 51416,
+      "n_persons_with_pairs": 73,
+      "concordance": 0.412925937451377,
+      "p_value_perm": 0.996003996003996
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 5,
+      "risk_source": "age",
+      "n_test_positives": 59,
+      "n_pairs": 35357,
+      "n_persons_with_pairs": 59,
+      "concordance": 0.7451706875583336,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 5,
+      "risk_source": "age",
+      "n_test_positives": 34,
+      "n_pairs": 20602,
+      "n_persons_with_pairs": 33,
+      "concordance": 0.44621881370740707,
+      "p_value_perm": 0.8621378621378621
+    },
+    {
+      "event_class": "personal",
+      "seed": 5,
+      "risk_source": "age",
+      "n_test_positives": 21,
+      "n_pairs": 12428,
+      "n_persons_with_pairs": 13,
+      "concordance": 0.3179916317991632,
+      "p_value_perm": 0.998001998001998
+    }
+  ],
+  "duration": [
+    {
+      "event_class": "fame",
+      "seed": 1,
+      "risk_source": "duration",
+      "n_test_positives": 88,
+      "n_pairs": 52899,
+      "n_persons_with_pairs": 79,
+      "concordance": 0.7428495812775289,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "career",
+      "seed": 1,
+      "risk_source": "duration",
+      "n_test_positives": 83,
+      "n_pairs": 49517,
+      "n_persons_with_pairs": 70,
+      "concordance": 0.6885009188763455,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 1,
+      "risk_source": "duration",
+      "n_test_positives": 55,
+      "n_pairs": 33190,
+      "n_persons_with_pairs": 55,
+      "concordance": 0.7325700512202471,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 1,
+      "risk_source": "duration",
+      "n_test_positives": 39,
+      "n_pairs": 23864,
+      "n_persons_with_pairs": 37,
+      "concordance": 0.6503729466979551,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "personal",
+      "seed": 1,
+      "risk_source": "duration",
+      "n_test_positives": 38,
+      "n_pairs": 22618,
+      "n_persons_with_pairs": 17,
+      "concordance": 0.7300822353877443,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "fame",
+      "seed": 2,
+      "risk_source": "duration",
+      "n_test_positives": 67,
+      "n_pairs": 40568,
+      "n_persons_with_pairs": 63,
+      "concordance": 0.7390184381778742,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "career",
+      "seed": 2,
+      "risk_source": "duration",
+      "n_test_positives": 79,
+      "n_pairs": 47504,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.7086350623105423,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 2,
+      "risk_source": "duration",
+      "n_test_positives": 58,
+      "n_pairs": 35064,
+      "n_persons_with_pairs": 58,
+      "concordance": 0.7508270590919461,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 2,
+      "risk_source": "duration",
+      "n_test_positives": 32,
+      "n_pairs": 19390,
+      "n_persons_with_pairs": 31,
+      "concordance": 0.6393243940175348,
+      "p_value_perm": 0.003996003996003996
+    },
+    {
+      "event_class": "personal",
+      "seed": 2,
+      "risk_source": "duration",
+      "n_test_positives": 45,
+      "n_pairs": 27505,
+      "n_persons_with_pairs": 22,
+      "concordance": 0.7004726413379385,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "fame",
+      "seed": 3,
+      "risk_source": "duration",
+      "n_test_positives": 80,
+      "n_pairs": 47963,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.7395388111669412,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "career",
+      "seed": 3,
+      "risk_source": "duration",
+      "n_test_positives": 108,
+      "n_pairs": 64784,
+      "n_persons_with_pairs": 92,
+      "concordance": 0.6939985181526303,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 3,
+      "risk_source": "duration",
+      "n_test_positives": 56,
+      "n_pairs": 33862,
+      "n_persons_with_pairs": 56,
+      "concordance": 0.7220778453723938,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 3,
+      "risk_source": "duration",
+      "n_test_positives": 33,
+      "n_pairs": 19797,
+      "n_persons_with_pairs": 32,
+      "concordance": 0.6689902510481386,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "personal",
+      "seed": 3,
+      "risk_source": "duration",
+      "n_test_positives": 27,
+      "n_pairs": 16016,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.7161276223776224,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "fame",
+      "seed": 4,
+      "risk_source": "duration",
+      "n_test_positives": 99,
+      "n_pairs": 59569,
+      "n_persons_with_pairs": 84,
+      "concordance": 0.7343165069079555,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "career",
+      "seed": 4,
+      "risk_source": "duration",
+      "n_test_positives": 77,
+      "n_pairs": 46170,
+      "n_persons_with_pairs": 67,
+      "concordance": 0.6550140784058913,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 4,
+      "risk_source": "duration",
+      "n_test_positives": 62,
+      "n_pairs": 37230,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.7338436744560838,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 4,
+      "risk_source": "duration",
+      "n_test_positives": 25,
+      "n_pairs": 15192,
+      "n_persons_with_pairs": 25,
+      "concordance": 0.7414099526066351,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "personal",
+      "seed": 4,
+      "risk_source": "duration",
+      "n_test_positives": 32,
+      "n_pairs": 19349,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.7271952038865057,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "fame",
+      "seed": 5,
+      "risk_source": "duration",
+      "n_test_positives": 72,
+      "n_pairs": 43448,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.7304363837230713,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "career",
+      "seed": 5,
+      "risk_source": "duration",
+      "n_test_positives": 86,
+      "n_pairs": 51416,
+      "n_persons_with_pairs": 73,
+      "concordance": 0.7302882371246304,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 5,
+      "risk_source": "duration",
+      "n_test_positives": 59,
+      "n_pairs": 35357,
+      "n_persons_with_pairs": 59,
+      "concordance": 0.710722063523489,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 5,
+      "risk_source": "duration",
+      "n_test_positives": 34,
+      "n_pairs": 20602,
+      "n_persons_with_pairs": 33,
+      "concordance": 0.700029123386079,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "personal",
+      "seed": 5,
+      "risk_source": "duration",
+      "n_test_positives": 21,
+      "n_pairs": 12428,
+      "n_persons_with_pairs": 13,
+      "concordance": 0.7209929192146766,
+      "p_value_perm": 0.000999000999000999
+    }
+  ],
+  "combined": [
+    {
+      "event_class": "fame",
+      "seed": 1,
+      "risk_source": "age+dur",
+      "n_test_positives": 88,
+      "n_pairs": 52899,
+      "n_persons_with_pairs": 79,
+      "concordance": 0.5664946407304486,
+      "p_value_perm": 0.01998001998001998
+    },
+    {
+      "event_class": "career",
+      "seed": 1,
+      "risk_source": "age+dur",
+      "n_test_positives": 83,
+      "n_pairs": 49517,
+      "n_persons_with_pairs": 70,
+      "concordance": 0.5766605408243634,
+      "p_value_perm": 0.006993006993006993
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 1,
+      "risk_source": "age+dur",
+      "n_test_positives": 55,
+      "n_pairs": 33190,
+      "n_persons_with_pairs": 55,
+      "concordance": 0.7961283519132268,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 1,
+      "risk_source": "age+dur",
+      "n_test_positives": 39,
+      "n_pairs": 23864,
+      "n_persons_with_pairs": 37,
+      "concordance": 0.6070650351994636,
+      "p_value_perm": 0.007992007992007992
+    },
+    {
+      "event_class": "personal",
+      "seed": 1,
+      "risk_source": "age+dur",
+      "n_test_positives": 38,
+      "n_pairs": 22618,
+      "n_persons_with_pairs": 17,
+      "concordance": 0.5309488018392431,
+      "p_value_perm": 0.27172827172827174
+    },
+    {
+      "event_class": "fame",
+      "seed": 2,
+      "risk_source": "age+dur",
+      "n_test_positives": 67,
+      "n_pairs": 40568,
+      "n_persons_with_pairs": 63,
+      "concordance": 0.5560910076907908,
+      "p_value_perm": 0.053946053946053944
+    },
+    {
+      "event_class": "career",
+      "seed": 2,
+      "risk_source": "age+dur",
+      "n_test_positives": 79,
+      "n_pairs": 47504,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.58627694509936,
+      "p_value_perm": 0.007992007992007992
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 2,
+      "risk_source": "age+dur",
+      "n_test_positives": 58,
+      "n_pairs": 35064,
+      "n_persons_with_pairs": 58,
+      "concordance": 0.8239219712525667,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 2,
+      "risk_source": "age+dur",
+      "n_test_positives": 32,
+      "n_pairs": 19390,
+      "n_persons_with_pairs": 31,
+      "concordance": 0.5815110881897886,
+      "p_value_perm": 0.06293706293706294
+    },
+    {
+      "event_class": "personal",
+      "seed": 2,
+      "risk_source": "age+dur",
+      "n_test_positives": 45,
+      "n_pairs": 27505,
+      "n_persons_with_pairs": 22,
+      "concordance": 0.5014906380658062,
+      "p_value_perm": 0.46653346653346656
+    },
+    {
+      "event_class": "fame",
+      "seed": 3,
+      "risk_source": "age+dur",
+      "n_test_positives": 80,
+      "n_pairs": 47963,
+      "n_persons_with_pairs": 69,
+      "concordance": 0.567009986864875,
+      "p_value_perm": 0.023976023976023976
+    },
+    {
+      "event_class": "career",
+      "seed": 3,
+      "risk_source": "age+dur",
+      "n_test_positives": 108,
+      "n_pairs": 64784,
+      "n_persons_with_pairs": 92,
+      "concordance": 0.5697471597925413,
+      "p_value_perm": 0.004995004995004995
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 3,
+      "risk_source": "age+dur",
+      "n_test_positives": 56,
+      "n_pairs": 33862,
+      "n_persons_with_pairs": 56,
+      "concordance": 0.8190597129525722,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 3,
+      "risk_source": "age+dur",
+      "n_test_positives": 33,
+      "n_pairs": 19797,
+      "n_persons_with_pairs": 32,
+      "concordance": 0.6227963832903975,
+      "p_value_perm": 0.006993006993006993
+    },
+    {
+      "event_class": "personal",
+      "seed": 3,
+      "risk_source": "age+dur",
+      "n_test_positives": 27,
+      "n_pairs": 16016,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.5043081918081919,
+      "p_value_perm": 0.45454545454545453
+    },
+    {
+      "event_class": "fame",
+      "seed": 4,
+      "risk_source": "age+dur",
+      "n_test_positives": 99,
+      "n_pairs": 59569,
+      "n_persons_with_pairs": 84,
+      "concordance": 0.553165236952106,
+      "p_value_perm": 0.03596403596403597
+    },
+    {
+      "event_class": "career",
+      "seed": 4,
+      "risk_source": "age+dur",
+      "n_test_positives": 77,
+      "n_pairs": 46170,
+      "n_persons_with_pairs": 67,
+      "concordance": 0.5435780810049816,
+      "p_value_perm": 0.10589410589410589
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 4,
+      "risk_source": "age+dur",
+      "n_test_positives": 62,
+      "n_pairs": 37230,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.8293714746172441,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 4,
+      "risk_source": "age+dur",
+      "n_test_positives": 25,
+      "n_pairs": 15192,
+      "n_persons_with_pairs": 25,
+      "concordance": 0.6710110584518167,
+      "p_value_perm": 0.001998001998001998
+    },
+    {
+      "event_class": "personal",
+      "seed": 4,
+      "risk_source": "age+dur",
+      "n_test_positives": 32,
+      "n_pairs": 19349,
+      "n_persons_with_pairs": 20,
+      "concordance": 0.5027133185177528,
+      "p_value_perm": 0.4515484515484515
+    },
+    {
+      "event_class": "fame",
+      "seed": 5,
+      "risk_source": "age+dur",
+      "n_test_positives": 72,
+      "n_pairs": 43448,
+      "n_persons_with_pairs": 62,
+      "concordance": 0.5615448352053029,
+      "p_value_perm": 0.03496503496503497
+    },
+    {
+      "event_class": "career",
+      "seed": 5,
+      "risk_source": "age+dur",
+      "n_test_positives": 86,
+      "n_pairs": 51416,
+      "n_persons_with_pairs": 73,
+      "concordance": 0.6126108604325502,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "death_cause_unspecified",
+      "seed": 5,
+      "risk_source": "age+dur",
+      "n_test_positives": 59,
+      "n_pairs": 35357,
+      "n_persons_with_pairs": 59,
+      "concordance": 0.8135305597194332,
+      "p_value_perm": 0.000999000999000999
+    },
+    {
+      "event_class": "health",
+      "seed": 5,
+      "risk_source": "age+dur",
+      "n_test_positives": 34,
+      "n_pairs": 20602,
+      "n_persons_with_pairs": 33,
+      "concordance": 0.6254004465585865,
+      "p_value_perm": 0.004995004995004995
+    },
+    {
+      "event_class": "personal",
+      "seed": 5,
+      "risk_source": "age+dur",
+      "n_test_positives": 21,
+      "n_pairs": 12428,
+      "n_persons_with_pairs": 13,
+      "concordance": 0.5269150305761184,
+      "p_value_perm": 0.34765234765234765
+    }
+  ]
+}

@@ -178,3 +178,218 @@ class Finding(BaseModel):
     dispute: Dispute | None = None
     robustness: RobustnessScore | None = None
     contradicts_finding_ids: list[str] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Named-dict sequence check enums (spec Section 6 — verbatim)
+# ---------------------------------------------------------------------------
+
+# Source: notebook NotebookLM proforma — "How to Judge a Mahadasha" by Anil
+# Kumar Jain. Schema validation refuses any judgment dict missing one of
+# these keys. Order is fixed for stable iteration; output dicts preserve
+# insertion order. Adding a key requires a spec amendment AND a schema
+# minor-version bump per Section 15.
+MD_CHECK_KEYS: Final[tuple[str, ...]] = (
+    "bhaav_from_lagna",                    # 1.  Bhava the MD lord occupies from Lagna
+    "commonality_significations",          # 2.  Overlap between planet karakas and bhava themes
+    "residential_strength",                # 3.  Degree-distance from Bhaav Madhya
+    "bhaavs_aspected_fully",               # 4.  Bhavas the MD lord fully aspects
+    "rashi_depositor",                     # 5.  Placement of rashi depositor of MD lord
+    "balaadi_avastha",                     # 6.  Baladi state of MD lord (Bala/Kumara/Yuva/Vriddha/Mrita)
+    "conjunctions_within_15deg",           # 7.  Planets within 15° of MD lord (functionally activated)
+    "full_aspects_on_md_lord",             # 8.  Planets giving full aspect to MD lord
+    "trinal_planets",                      # 9.  Planets trinal to MD lord within 15°
+    "proximity_to_exact_trine",            # 10. Closeness of trinal planets to exact 120°
+    "md_lord_as_lagna_yogas",              # 11. Treat MD lord point as Lagna; overlay yogas
+    "nakshatra_tara_from_moon",            # 12. Tara (2nd/9th best, 7th worst) of MD lord's nakshatra from natal Moon
+    "nakshatra_depositor_dignity",         # 13. Functional nature + dignity of MD lord's nakshatra-depositor
+    "navamsa_depositor",                   # 14. Navamsa depositor of MD lord; generic + functional
+    "kartari_yoga",                        # 15. Shubha/Pap Kartari on MD lord (planets flanking)
+    "planet_in_2nd_from_md_lord",          # 16. What "comes out" of the MD; dignity of 2nd-from-MD-lord planet
+    "ishta_phal",                          # 17. Ishta Phal scores of rashi/nakshatra/navamsa depositors
+    "repeat_from_arudha_lagna",            # 18. Repeat checks 1-17 treating Arudha Lagna as reference
+    "repeat_from_karakamsha_lagna",        # 19. Repeat checks 1-17 treating Karakamsha Lagna as reference
+)
+
+# Source: notebook NotebookLM proforma — "How To Read Antardasha In Vedic Astrology"
+AD_CHECK_KEYS: Final[tuple[str, ...]] = (
+    "rulership_of_ad_lord",                # 1.  Houses owned by AD lord (what it activates)
+    "house_placement_of_ad_lord",          # 2.  Bhava occupied by AD lord (where results play out)
+    "strength_dignity_influence",          # 3.  Combust/exalted/debilitated/dignified state
+    "rajyoga_formed",                      # 4.  Latent Rajyogas activated by AD lord
+    "afflictions",                         # 5.  Pap Kartari, malefic aspects, suppression
+    "divisional_chart_assessment",         # 6.  D3/D7/D9/D10 confirmation for AD lord
+    "mutual_position_md_ad",               # 7.  6/8/12 friction vs trinal support between MD and AD lords
+)
+
+# Source: notebook NotebookLM proforma — "The Architecture of Fate: Shodasha Varga System"
+AMSHA_BALA_KRAMA_KEYS: Final[tuple[str, ...]] = (
+    "analyze_d1",                          # 1.  Primary promise and physical manifestation
+    "consult_d9",                          # 2.  Inner strength, dharma, ultimate "fruit"
+    "specific_varga_refinement",           # 3.  Domain-specific Varga (D10 career, D7 children, etc.)
+    "dasha_transit_activation",            # 4.  When the conditionally active Varga potential fires
+)
+
+# Source: notebook NotebookLM proforma — "The Varga System Handbook: Blueprint for Professional Destiny"
+CAREER_EXECUTIVE_KEYS: Final[tuple[str, ...]] = (
+    "vargottama_amatya_karaka",            # 1.  Vargottama check + Amatya Karaka identification
+    "gandanta_knots",                      # 2.  Scan dasha sequence for water-to-fire nakshatra junctions
+    "vimsopaka_strength",                  # 3.  Verify dasha lord has Vimsopaka >10 (Shodashavarga scheme)
+    "gulika_saturn_bottlenecks",           # 4.  Debilitated Saturn in D10-6H or Gulika in D10-10H
+)
+
+
+def _require_exact_keys(
+    checks: dict[str, Finding], expected: tuple[str, ...], model_name: str
+) -> dict[str, Finding]:
+    """Validator helper: assert the dict's keys exactly match `expected`.
+
+    The error is raised as ValueError so Pydantic re-wraps it into a
+    ValidationError. We sort the diffs deterministically so the error
+    message is stable across runs (per ID-stability discipline).
+    """
+    expected_set = set(expected)
+    got_set = set(checks.keys())
+    missing = sorted(expected_set - got_set)
+    extra = sorted(got_set - expected_set)
+    if missing or extra:
+        raise ValueError(
+            f"{model_name}.checks must contain exactly the keys in spec Section 6. "
+            f"missing={missing!r} extra={extra!r}"
+        )
+    return checks
+
+
+# ---------------------------------------------------------------------------
+# Sequence-result models (one per named sequence)
+# ---------------------------------------------------------------------------
+
+
+class MDJudgment(BaseModel):
+    """Sequence 5 — Vimshottari Mahadasha 19-check judgment.
+
+    `start_date` / `end_date` are ISO-8601 strings; `start_jd` / `end_jd`
+    retain Julian-Day precision (spec Section 15 — dual representation).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    md_lord: str
+    start_jd: float
+    end_jd: float
+    start_date: str
+    end_date: str
+    age_at_start: float
+    age_at_end: float
+    is_current: bool
+    is_past: bool
+    is_future: bool
+    checks: dict[str, Finding]
+    overall_verdict: Finding
+
+    @model_validator(mode="after")
+    def _validate_check_keys(self):
+        _require_exact_keys(self.checks, MD_CHECK_KEYS, "MDJudgment")
+        return self
+
+
+class ADJudgment(BaseModel):
+    """Sequence 6 — Vimshottari Antardasha 7-check judgment."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    ad_lord: str
+    md_lord: str
+    start_jd: float
+    end_jd: float
+    start_date: str
+    end_date: str
+    age_at_start: float
+    age_at_end: float
+    is_current: bool
+    is_past: bool
+    is_future: bool
+    checks: dict[str, Finding]
+    overall_verdict: Finding
+
+    @model_validator(mode="after")
+    def _validate_check_keys(self):
+        _require_exact_keys(self.checks, AD_CHECK_KEYS, "ADJudgment")
+        return self
+
+
+class AmshaBalaKramaResult(BaseModel):
+    """Sequence 1 — BPHS layered Varga judgment (4 steps)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    steps: dict[str, Finding]
+    overall_verdict: Finding
+
+    @model_validator(mode="after")
+    def _validate_step_keys(self):
+        _require_exact_keys(self.steps, AMSHA_BALA_KRAMA_KEYS, "AmshaBalaKramaResult")
+        return self
+
+
+class CareerExecutiveResult(BaseModel):
+    """Sequence 2 — Career Executive Consulting (4 steps)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    steps: dict[str, Finding]
+    overall_verdict: Finding
+
+    @model_validator(mode="after")
+    def _validate_step_keys(self):
+        _require_exact_keys(self.steps, CAREER_EXECUTIVE_KEYS, "CareerExecutiveResult")
+        return self
+
+
+# ---------------------------------------------------------------------------
+# Cross-cutting models
+# ---------------------------------------------------------------------------
+
+
+class Contradiction(BaseModel):
+    """Cross-finding disagreement detected by `contradiction_detector.py`.
+
+    `severity` `"soft"` means the directions disagree but both findings stand;
+    `"hard"` means at least one finding must yield. `suggested_arbitration`
+    is descriptive only (spec Section 14: never picks a winner).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    finding_ids: list[str] = Field(min_length=2)
+    domain: str
+    description: str
+    severity: Literal["soft", "hard"]
+    suggested_arbitration: str | None = None
+
+
+class TimingWindow(BaseModel):
+    """A dated event-window in a `DomainReading`.
+
+    Dates are ISO-8601. `event_type` classifies the window for downstream
+    UI grouping; `triggering_finding_ids` cross-references the Findings whose
+    activation drove the window.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    start_date: str
+    end_date: str
+    driving_period: str
+    event_type: Literal[
+        "marriage",
+        "career_shift",
+        "child_birth",
+        "education_milestone",
+        "health_event",
+        "wealth_event",
+        "spiritual_event",
+        "general",
+    ]
+    confidence_band: Literal["indicative_only", "low", "medium", "high", "very_strong"]
+    triggering_finding_ids: list[str] = Field(default_factory=list)

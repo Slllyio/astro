@@ -437,3 +437,288 @@ class TestPropertyInvariants:
                     band="indicative_only",
                 ),
             )
+
+
+# ---------------------------------------------------------------------------
+# Enum tuples
+# ---------------------------------------------------------------------------
+
+
+class TestEnumTuples:
+    """Verbatim check-key tuples from spec Section 6."""
+
+    def test_md_check_keys_count_and_order(self):
+        from app.reading.schema import MD_CHECK_KEYS
+
+        assert isinstance(MD_CHECK_KEYS, tuple)
+        assert len(MD_CHECK_KEYS) == 19
+        # First and last entries are stable per spec
+        assert MD_CHECK_KEYS[0] == "bhaav_from_lagna"
+        assert MD_CHECK_KEYS[-1] == "repeat_from_karakamsha_lagna"
+
+    def test_md_check_keys_unique(self):
+        from app.reading.schema import MD_CHECK_KEYS
+
+        assert len(MD_CHECK_KEYS) == len(set(MD_CHECK_KEYS))
+
+    def test_ad_check_keys_count_and_order(self):
+        from app.reading.schema import AD_CHECK_KEYS
+
+        assert isinstance(AD_CHECK_KEYS, tuple)
+        assert len(AD_CHECK_KEYS) == 7
+        assert AD_CHECK_KEYS[0] == "rulership_of_ad_lord"
+        assert AD_CHECK_KEYS[-1] == "mutual_position_md_ad"
+
+    def test_amsha_bala_krama_keys_count_and_order(self):
+        from app.reading.schema import AMSHA_BALA_KRAMA_KEYS
+
+        assert isinstance(AMSHA_BALA_KRAMA_KEYS, tuple)
+        assert len(AMSHA_BALA_KRAMA_KEYS) == 4
+        assert AMSHA_BALA_KRAMA_KEYS == (
+            "analyze_d1",
+            "consult_d9",
+            "specific_varga_refinement",
+            "dasha_transit_activation",
+        )
+
+    def test_career_executive_keys_count_and_order(self):
+        from app.reading.schema import CAREER_EXECUTIVE_KEYS
+
+        assert isinstance(CAREER_EXECUTIVE_KEYS, tuple)
+        assert len(CAREER_EXECUTIVE_KEYS) == 4
+        assert CAREER_EXECUTIVE_KEYS == (
+            "vargottama_amatya_karaka",
+            "gandanta_knots",
+            "vimsopaka_strength",
+            "gulika_saturn_bottlenecks",
+        )
+
+
+# ---------------------------------------------------------------------------
+# MDJudgment
+# ---------------------------------------------------------------------------
+
+
+class TestMDJudgment:
+    """Mahadasha judgment dict must carry all 19 named keys."""
+
+    def _make_full_checks(self):
+        from app.reading.schema import MD_CHECK_KEYS
+
+        return {k: _make_dummy_finding(k) for k in MD_CHECK_KEYS}
+
+    def test_md_judgment_constructs_with_all_19_keys(self):
+        from app.reading.schema import MDJudgment
+
+        checks = self._make_full_checks()
+        j = MDJudgment(
+            md_lord="Saturn",
+            start_jd=2447909.5,
+            end_jd=2454850.0,
+            start_date="1989-12-01",
+            end_date="2009-01-15",
+            age_at_start=0.0,
+            age_at_end=19.1,
+            is_current=False,
+            is_past=True,
+            is_future=False,
+            checks=checks,
+            overall_verdict=_make_dummy_finding("summary"),
+        )
+        assert set(j.checks.keys()) == set(self._make_full_checks().keys())
+
+    def test_md_judgment_missing_key_rejected(self):
+        from app.reading.schema import MDJudgment, MD_CHECK_KEYS
+
+        partial = {k: _make_dummy_finding(k) for k in MD_CHECK_KEYS[:18]}
+        with pytest.raises(ValidationError):
+            MDJudgment(
+                md_lord="Saturn",
+                start_jd=2447909.5,
+                end_jd=2454850.0,
+                start_date="1989-12-01",
+                end_date="2009-01-15",
+                age_at_start=0.0,
+                age_at_end=19.1,
+                is_current=False,
+                is_past=True,
+                is_future=False,
+                checks=partial,
+                overall_verdict=_make_dummy_finding("summary"),
+            )
+
+    def test_md_judgment_extra_key_rejected(self):
+        from app.reading.schema import MDJudgment
+
+        bogus = self._make_full_checks()
+        bogus["bonus_check_not_in_spec"] = _make_dummy_finding("bonus")
+        with pytest.raises(ValidationError):
+            MDJudgment(
+                md_lord="Saturn",
+                start_jd=2447909.5,
+                end_jd=2454850.0,
+                start_date="1989-12-01",
+                end_date="2009-01-15",
+                age_at_start=0.0,
+                age_at_end=19.1,
+                is_current=False,
+                is_past=True,
+                is_future=False,
+                checks=bogus,
+                overall_verdict=_make_dummy_finding("summary"),
+            )
+
+
+# ---------------------------------------------------------------------------
+# ADJudgment
+# ---------------------------------------------------------------------------
+
+
+class TestADJudgment:
+    """Antardasha judgment dict must carry all 7 named keys."""
+
+    def _make_full_checks(self):
+        from app.reading.schema import AD_CHECK_KEYS
+
+        return {k: _make_dummy_finding(k) for k in AD_CHECK_KEYS}
+
+    def test_ad_judgment_constructs_with_all_7_keys(self):
+        from app.reading.schema import ADJudgment
+
+        j = ADJudgment(
+            ad_lord="Mercury",
+            md_lord="Saturn",
+            start_jd=2450000.0,
+            end_jd=2450500.0,
+            start_date="1995-10-01",
+            end_date="1997-02-15",
+            age_at_start=5.2,
+            age_at_end=6.6,
+            is_current=False,
+            is_past=True,
+            is_future=False,
+            checks=self._make_full_checks(),
+            overall_verdict=_make_dummy_finding("summary"),
+        )
+        assert len(j.checks) == 7
+
+    def test_ad_judgment_missing_key_rejected(self):
+        from app.reading.schema import ADJudgment, AD_CHECK_KEYS
+
+        partial = {k: _make_dummy_finding(k) for k in AD_CHECK_KEYS[:6]}
+        with pytest.raises(ValidationError):
+            ADJudgment(
+                ad_lord="Mercury",
+                md_lord="Saturn",
+                start_jd=2450000.0,
+                end_jd=2450500.0,
+                start_date="1995-10-01",
+                end_date="1997-02-15",
+                age_at_start=5.2,
+                age_at_end=6.6,
+                is_current=False,
+                is_past=True,
+                is_future=False,
+                checks=partial,
+                overall_verdict=_make_dummy_finding("summary"),
+            )
+
+
+# ---------------------------------------------------------------------------
+# AmshaBalaKramaResult
+# ---------------------------------------------------------------------------
+
+
+class TestAmshaBalaKramaResult:
+    def test_constructs_with_all_4_steps(self):
+        from app.reading.schema import AMSHA_BALA_KRAMA_KEYS, AmshaBalaKramaResult
+
+        steps = {k: _make_dummy_finding(k) for k in AMSHA_BALA_KRAMA_KEYS}
+        r = AmshaBalaKramaResult(
+            steps=steps, overall_verdict=_make_dummy_finding("summary")
+        )
+        assert len(r.steps) == 4
+
+    def test_missing_step_rejected(self):
+        from app.reading.schema import AMSHA_BALA_KRAMA_KEYS, AmshaBalaKramaResult
+
+        partial = {k: _make_dummy_finding(k) for k in AMSHA_BALA_KRAMA_KEYS[:3]}
+        with pytest.raises(ValidationError):
+            AmshaBalaKramaResult(
+                steps=partial, overall_verdict=_make_dummy_finding("summary")
+            )
+
+
+# ---------------------------------------------------------------------------
+# CareerExecutiveResult
+# ---------------------------------------------------------------------------
+
+
+class TestCareerExecutiveResult:
+    def test_constructs_with_all_4_steps(self):
+        from app.reading.schema import CAREER_EXECUTIVE_KEYS, CareerExecutiveResult
+
+        steps = {k: _make_dummy_finding(k) for k in CAREER_EXECUTIVE_KEYS}
+        r = CareerExecutiveResult(
+            steps=steps, overall_verdict=_make_dummy_finding("summary")
+        )
+        assert len(r.steps) == 4
+
+    def test_missing_step_rejected(self):
+        from app.reading.schema import CAREER_EXECUTIVE_KEYS, CareerExecutiveResult
+
+        partial = {k: _make_dummy_finding(k) for k in CAREER_EXECUTIVE_KEYS[:3]}
+        with pytest.raises(ValidationError):
+            CareerExecutiveResult(
+                steps=partial, overall_verdict=_make_dummy_finding("summary")
+            )
+
+
+# ---------------------------------------------------------------------------
+# Contradiction
+# ---------------------------------------------------------------------------
+
+
+class TestContradiction:
+    def test_constructs(self):
+        from app.reading.schema import Contradiction
+
+        c = Contradiction(
+            finding_ids=["seq_5.md_3.step_5", "seq_6.ad_1.step_2"],
+            domain="marriage",
+            description="MD says trinal support; AD says 6/8 friction.",
+            severity="soft",
+            suggested_arbitration=None,
+        )
+        assert c.severity == "soft"
+
+    def test_invalid_severity_rejected(self):
+        from app.reading.schema import Contradiction
+
+        with pytest.raises(ValidationError):
+            Contradiction(
+                finding_ids=["a", "b"],
+                domain="marriage",
+                description="x",
+                severity="catastrophic",  # type: ignore[arg-type]
+            )
+
+
+# ---------------------------------------------------------------------------
+# TimingWindow
+# ---------------------------------------------------------------------------
+
+
+class TestTimingWindow:
+    def test_constructs(self):
+        from app.reading.schema import TimingWindow
+
+        w = TimingWindow(
+            start_date="2027-03-15",
+            end_date="2028-09-20",
+            driving_period="MD Saturn / AD Jupiter",
+            event_type="marriage",
+            confidence_band="medium",
+            triggering_finding_ids=["domain.marriage.7l_dasha_window"],
+        )
+        assert w.event_type == "marriage"

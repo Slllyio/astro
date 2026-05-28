@@ -393,3 +393,242 @@ class TimingWindow(BaseModel):
     ]
     confidence_band: Literal["indicative_only", "low", "medium", "high", "very_strong"]
     triggering_finding_ids: list[str] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Remedies + DomainReading
+# ---------------------------------------------------------------------------
+
+
+class RemedyRecommendation(BaseModel):
+    """A doctrine-cited remedy attached to a DomainReading.
+
+    `kind` enumerates the broad remedy category; the precise prescription
+    lives in `description`. `source` carries the classical citation per
+    Tier-3 citation discipline.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    kind: Literal["mantra", "gemstone", "yantra", "donation", "ritual", "behavioural", "other"]
+    description: str
+    source: str | None = None
+
+
+class DomainReading(BaseModel):
+    """One of the 6 named domain syntheses (career, marriage, ...).
+
+    Aggregates the promise (natal potential), triggers (firing conditions),
+    timing_windows (dated activations), afflictions (limiters), cross_checks
+    (sequence-corroboration findings), remedies, and an overall verdict +
+    confidence score for the domain.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    domain: str
+    promise: Finding
+    triggers: list[Finding] = Field(default_factory=list)
+    timing_windows: list[TimingWindow] = Field(default_factory=list)
+    afflictions: list[Finding] = Field(default_factory=list)
+    cross_checks: list[Finding] = Field(default_factory=list)
+    remedies: list[RemedyRecommendation] = Field(default_factory=list)
+    overall_verdict: Finding
+    confidence: ConfidenceScore
+
+
+# ---------------------------------------------------------------------------
+# DoctrineConfig — echoes the 16 lockfile decisions (D-1..D-16)
+# ---------------------------------------------------------------------------
+
+
+class DoctrineConfig(BaseModel):
+    """Records the doctrine variant chosen for THIS reading.
+
+    Every default value mirrors the locked decision in
+    `docs/doctrine-decisions.md` (D-1 through D-16). When a reading is
+    emitted, this block lets downstream consumers verify exactly which
+    doctrine variants produced it. Configurable per-chart but with these
+    documented defaults.
+
+    Defaults track lockfile revision 1 (2026-05-27).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    # D-1 — 8-karaka (PVR Narasimha Rao) matches jagannathahora.io pinning
+    karaka_mode: Literal[7, 8] = 8
+
+    # D-2 — 1/7 → 10 shift applied uniformly to A1..A12, UL, UL₂
+    arudha_exception: Literal["1_7_to_10", "none"] = "1_7_to_10"
+
+    # D-3 — Shodashavarga 16-varga (BPHS Ch.7 vv.21–25, sum = 20.0)
+    vimsopaka_scheme: Literal["shodashavarga", "saptavarga", "dashavarga"] = "shodashavarga"
+
+    # D-4 — BPHS Ch.47 v.3 formula
+    ishta_formula: Literal["bphs_47_3", "phaladeepika_6"] = "bphs_47_3"
+
+    # D-8 — Sripati cusps (BPHS Vol.II Ch.51); KP/Placidus excluded by scope
+    bhava_chalit_system: Literal["sripati", "porphyry"] = "sripati"
+
+    # D-10 — Sanjay-Rath triple-AND formulation
+    karaka_triangulation_reading: Literal["sanjay_rath", "bphs_classical"] = "sanjay_rath"
+
+    # D-11 — BPHS Vol.I Ch.39 v.10 primary rule
+    neech_bhanga_rule: Literal["bphs_39_10", "alt_1", "alt_2", "alt_3"] = "bphs_39_10"
+
+    # D-12 — Strict 180° Rahu-leading
+    kala_sarpa_definition: Literal["strict_180_rahu_leading", "loose", "partial"] = "strict_180_rahu_leading"
+
+    # D-13 — Northern-latitude winner (BPHS Ch.27 v.13)
+    graha_yuddha_winner: Literal["northern_latitude", "size", "brightness"] = "northern_latitude"
+
+    # Section 12 open-Q #5 resolution — locked defaults
+    consensus_min_sources: int = Field(default=3, ge=0)
+    consensus_agreement_threshold: float = Field(default=0.66, ge=0.0, le=1.0)
+
+
+# ---------------------------------------------------------------------------
+# Pipeline-stage block models (placeholders — populated by downstream tasks)
+# ---------------------------------------------------------------------------
+#
+# Each block carries the outputs of one pipeline stage. The internal field
+# set will fill in as Phase 1 -> Phase 5 modules ship. For now we provide
+# minimum structural envelopes that satisfy ReadingOutput composition and
+# enforce the frozen + extra="forbid" lock so future field additions are
+# explicit (and gated by a schema version bump).
+
+
+class ChartBlock(BaseModel):
+    """Stage 1 — natal chart raw outputs (lagna, planets, cusps, ayanamsa)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    lagna_longitude: float | None = None
+    ayanamsa: float | None = None
+    planets: dict[str, Any] = Field(default_factory=dict)
+    cusps: dict[str, Any] = Field(default_factory=dict)
+    extras: dict[str, Any] = Field(default_factory=dict)
+
+
+class PrimitivesBlock(BaseModel):
+    """Stage 2 — Tier-0 outputs (karakas, arudha, dignities, ...)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    findings: list[Finding] = Field(default_factory=list)
+    by_module: dict[str, list[Finding]] = Field(default_factory=dict)
+
+
+class FoundationsBlock(BaseModel):
+    """Stage 3 — Tier-1 outputs (functional nature, bhava chalit, ...)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    findings: list[Finding] = Field(default_factory=list)
+    by_module: dict[str, list[Finding]] = Field(default_factory=dict)
+
+
+class PractitionerBlock(BaseModel):
+    """Stage 4 — Tier-2 doctrine layer (MKS, Kala Sarpa, Neech Bhanga, ...)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    findings: list[Finding] = Field(default_factory=list)
+    by_module: dict[str, list[Finding]] = Field(default_factory=dict)
+
+
+class SequencesBlock(BaseModel):
+    """Stage 5 — the 4 named sequence-result models.
+
+    Each sequence result is optional: not every reading exercises every
+    sequence (e.g. a chart with no career judgment skips Sequence 2).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    amsha_bala_krama: AmshaBalaKramaResult | None = None
+    career_executive: CareerExecutiveResult | None = None
+    md_judgments: list[MDJudgment] = Field(default_factory=list)
+    ad_judgments: list[ADJudgment] = Field(default_factory=list)
+
+
+class DomainsBlock(BaseModel):
+    """Stage 6 — the 6 named domain syntheses."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    career: DomainReading | None = None
+    marriage: DomainReading | None = None
+    children: DomainReading | None = None
+    wealth: DomainReading | None = None
+    health: DomainReading | None = None
+    education: DomainReading | None = None
+
+
+# ---------------------------------------------------------------------------
+# Meta — schema/version/doctrine echo
+# ---------------------------------------------------------------------------
+
+
+class Meta(BaseModel):
+    """Engine + chart-input metadata accompanying every reading.
+
+    `schema_version` is the public stable lock; bump to 1.1.0 for additive
+    fields, 2.0.0 for breaking changes. `stability` is `"experimental"`
+    until the first non-engine downstream consumer ships, then `"beta"`,
+    then `"stable"`.
+
+    `doctrine_config` echoes the 16 lockfile decisions so every emitted
+    reading is self-describing (per spec Section 6, design choices).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Literal["1.0.0"] = "1.0.0"
+    stability: Literal["experimental", "beta", "stable"] = "experimental"
+    engine_version: str
+    swiss_ephemeris_version: str
+    python_version: str
+    generated_at: str  # ISO-8601 UTC
+    chart_input: ChartInput
+    doctrines_used: list[str] = Field(default_factory=list)
+    doctrine_config: DoctrineConfig
+    enrichment_enabled: bool
+    robustness_enabled: bool
+    stage_timings_ms: dict[str, int] = Field(default_factory=dict)
+    schema_changelog_url: str = "docs/reading/CHANGELOG.md"
+
+
+# ---------------------------------------------------------------------------
+# ReadingOutput — root
+# ---------------------------------------------------------------------------
+
+
+class ReadingOutput(BaseModel):
+    """Top-level JSON contract.
+
+    The 9-key shape mirrors the pipeline stages 1–8 (spec Section 6):
+
+    - `meta`           — engine + chart envelope, doctrine echo
+    - `chart`          — Stage 1 natal raw
+    - `primitives`     — Stage 2 Tier-0 outputs
+    - `foundations`    — Stage 3 Tier-1 outputs
+    - `practitioner`   — Stage 4 Tier-2 outputs
+    - `sequences`      — Stage 5 4 named sequence results
+    - `domains`        — Stage 6 6 named domain readings
+    - `contradictions` — Stage 8.3 cross-finding disagreements
+    - `warnings`       — engine-level diagnostics (non-fatal)
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    meta: Meta
+    chart: ChartBlock
+    primitives: PrimitivesBlock
+    foundations: FoundationsBlock
+    practitioner: PractitionerBlock
+    sequences: SequencesBlock
+    domains: DomainsBlock
+    contradictions: list[Contradiction] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)

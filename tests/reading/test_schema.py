@@ -418,6 +418,43 @@ class TestPropertyInvariants:
         )
         assert len(f.verdict) <= 140
 
+    @given(
+        st.lists(
+            st.text(
+                alphabet="abcdefghijklmnopqrstuvwxyz_.",
+                min_size=3,
+                max_size=40,
+            ),
+            min_size=1,
+            max_size=30,
+            unique=True,
+        )
+    )
+    def test_finding_ids_can_be_collected_uniquely(self, ids):
+        """When findings carry distinct IDs the collection round-trips
+        without conflict (spec Section 17 invariant)."""
+        from app.reading.schema import ConfidenceScore, Finding
+
+        findings = [
+            Finding(
+                id=fid,
+                rule="r",
+                source_sequence=None,
+                classification="primitive",
+                direction="neutral",
+                verdict="v",
+                evidence=[],
+                confidence=ConfidenceScore(
+                    score=0.5,
+                    votes={"house": False, "lord": False, "karaka": False},
+                    band="indicative_only",
+                ),
+            )
+            for fid in ids
+        ]
+        collected = {f.id for f in findings}
+        assert collected == set(ids)
+
     @given(length=st.integers(min_value=141, max_value=2000))
     def test_finding_verdict_above_max_length_rejected(self, length):
         from app.reading.schema import ConfidenceScore, Finding
@@ -722,3 +759,307 @@ class TestTimingWindow:
             triggering_finding_ids=["domain.marriage.7l_dasha_window"],
         )
         assert w.event_type == "marriage"
+
+
+# ---------------------------------------------------------------------------
+# DoctrineConfig — echoes the 16 lockfile decisions
+# ---------------------------------------------------------------------------
+
+
+class TestDoctrineConfig:
+    """DoctrineConfig defaults match docs/doctrine-decisions.md D-1..D-16."""
+
+    def test_default_values_match_lockfile(self):
+        """Every default matches the locked decision (D-1..D-13 + consensus)."""
+        from app.reading.schema import DoctrineConfig
+
+        dc = DoctrineConfig()
+        # D-1 Karaka mode = 8 (PVR Narasimha Rao)
+        assert dc.karaka_mode == 8
+        # D-2 Arudha exception
+        assert dc.arudha_exception == "1_7_to_10"
+        # D-3 Vimsopaka scheme
+        assert dc.vimsopaka_scheme == "shodashavarga"
+        # D-4 Ishta formula
+        assert dc.ishta_formula == "bphs_47_3"
+        # D-8 Bhava Chalit
+        assert dc.bhava_chalit_system == "sripati"
+        # D-10 Karaka triangulation
+        assert dc.karaka_triangulation_reading == "sanjay_rath"
+        # D-11 Neech Bhanga primary rule
+        assert dc.neech_bhanga_rule == "bphs_39_10"
+        # D-12 Kala Sarpa definition
+        assert dc.kala_sarpa_definition == "strict_180_rahu_leading"
+        # D-13 Graha Yuddha winner
+        assert dc.graha_yuddha_winner == "northern_latitude"
+        # Consensus defaults (Section 12, open Q #5)
+        assert dc.consensus_min_sources == 3
+        assert dc.consensus_agreement_threshold == 0.66
+
+    def test_invalid_karaka_mode_rejected(self):
+        """Karaka mode is constrained to Literal[7, 8]."""
+        from app.reading.schema import DoctrineConfig
+
+        with pytest.raises(ValidationError):
+            DoctrineConfig(karaka_mode=9)  # type: ignore[arg-type]
+
+    def test_consensus_agreement_threshold_clamped(self):
+        from app.reading.schema import DoctrineConfig
+
+        with pytest.raises(ValidationError):
+            DoctrineConfig(consensus_agreement_threshold=1.5)
+
+    def test_consensus_min_sources_non_negative(self):
+        from app.reading.schema import DoctrineConfig
+
+        with pytest.raises(ValidationError):
+            DoctrineConfig(consensus_min_sources=-1)
+
+    def test_alternative_karaka_mode_accepted(self):
+        from app.reading.schema import DoctrineConfig
+
+        dc = DoctrineConfig(karaka_mode=7)
+        assert dc.karaka_mode == 7
+
+
+# ---------------------------------------------------------------------------
+# Meta
+# ---------------------------------------------------------------------------
+
+
+class TestMeta:
+    """Meta block: version locks + doctrine echo."""
+
+    def _make_meta(self, **overrides):
+        from app.reading.schema import ChartInput, DoctrineConfig, Meta
+
+        defaults = dict(
+            engine_version="abc1234",
+            swiss_ephemeris_version="2.10.03",
+            python_version="3.12.10",
+            generated_at="2026-05-28T12:00:00+00:00",
+            chart_input=ChartInput(
+                dob="1990-07-15", time="12:00", tz="+05:30", lat=12.97, lon=77.59
+            ),
+            doctrines_used=["D-1", "D-2"],
+            doctrine_config=DoctrineConfig(),
+            enrichment_enabled=False,
+            robustness_enabled=False,
+            stage_timings_ms={"stage_1": 12, "stage_2": 240},
+        )
+        defaults.update(overrides)
+        return Meta(**defaults)
+
+    def test_schema_version_locked_at_1_0_0(self):
+        """schema_version defaults to the locked value."""
+        m = self._make_meta()
+        assert m.schema_version == "1.0.0"
+
+    def test_stability_default_experimental(self):
+        m = self._make_meta()
+        assert m.stability == "experimental"
+
+    def test_schema_changelog_url_default(self):
+        m = self._make_meta()
+        assert m.schema_changelog_url == "docs/reading/CHANGELOG.md"
+
+    def test_invalid_stability_rejected(self):
+        with pytest.raises(ValidationError):
+            self._make_meta(stability="grandfather")
+
+    def test_doctrine_config_required(self):
+        """doctrine_config must be explicitly supplied -- it's the reproducibility lock."""
+        from app.reading.schema import ChartInput, Meta
+
+        with pytest.raises(ValidationError):
+            Meta(  # type: ignore[call-arg]
+                engine_version="x",
+                swiss_ephemeris_version="x",
+                python_version="x",
+                generated_at="x",
+                chart_input=ChartInput(
+                    dob="1990-07-15", time="12:00", tz="+05:30", lat=12.97, lon=77.59
+                ),
+                doctrines_used=[],
+                # doctrine_config omitted
+                enrichment_enabled=False,
+                robustness_enabled=False,
+                stage_timings_ms={},
+            )
+
+
+# ---------------------------------------------------------------------------
+# DomainReading
+# ---------------------------------------------------------------------------
+
+
+class TestDomainReading:
+    def test_constructs(self):
+        from app.reading.schema import (
+            ConfidenceScore,
+            DomainReading,
+            RemedyRecommendation,
+        )
+
+        promise = _make_dummy_finding("promise")
+        cs = ConfidenceScore(
+            score=0.7,
+            votes={"house": True, "lord": True, "karaka": False},
+            band="medium",
+        )
+        remedy = RemedyRecommendation(
+            kind="mantra",
+            description="Recite the Mahamrityunjaya mantra 108x weekly.",
+            source="Phaladeepika Ch.27",
+        )
+        dr = DomainReading(
+            domain="marriage",
+            promise=promise,
+            triggers=[],
+            timing_windows=[],
+            afflictions=[],
+            cross_checks=[],
+            remedies=[remedy],
+            overall_verdict=_make_dummy_finding("overall"),
+            confidence=cs,
+        )
+        assert dr.domain == "marriage"
+        assert len(dr.remedies) == 1
+
+
+# ---------------------------------------------------------------------------
+# Block models (ChartBlock, PrimitivesBlock, etc.)
+# ---------------------------------------------------------------------------
+
+
+class TestBlockModels:
+    """Each pipeline-stage block model exists, is frozen, forbids extra fields."""
+
+    def test_chart_block_constructs_empty(self):
+        from app.reading.schema import ChartBlock
+
+        c = ChartBlock()
+        assert isinstance(c, ChartBlock)
+
+    def test_primitives_block_constructs_empty(self):
+        from app.reading.schema import PrimitivesBlock
+
+        c = PrimitivesBlock()
+        assert isinstance(c, PrimitivesBlock)
+
+    def test_foundations_block_constructs_empty(self):
+        from app.reading.schema import FoundationsBlock
+
+        c = FoundationsBlock()
+        assert isinstance(c, FoundationsBlock)
+
+    def test_practitioner_block_constructs_empty(self):
+        from app.reading.schema import PractitionerBlock
+
+        c = PractitionerBlock()
+        assert isinstance(c, PractitionerBlock)
+
+    def test_sequences_block_constructs_empty(self):
+        from app.reading.schema import SequencesBlock
+
+        c = SequencesBlock()
+        assert isinstance(c, SequencesBlock)
+
+    def test_domains_block_constructs_empty(self):
+        from app.reading.schema import DomainsBlock
+
+        c = DomainsBlock()
+        assert isinstance(c, DomainsBlock)
+
+    def test_chart_block_rejects_extra_field(self):
+        from app.reading.schema import ChartBlock
+
+        with pytest.raises(ValidationError):
+            ChartBlock(bogus="x")  # type: ignore[call-arg]
+
+
+# ---------------------------------------------------------------------------
+# ReadingOutput — root
+# ---------------------------------------------------------------------------
+
+
+class TestReadingOutput:
+    """The root model holding all 9 top-level keys from spec Section 6."""
+
+    def _make_output(self, **overrides):
+        from app.reading.schema import (
+            ChartBlock,
+            ChartInput,
+            DoctrineConfig,
+            DomainsBlock,
+            FoundationsBlock,
+            Meta,
+            PractitionerBlock,
+            PrimitivesBlock,
+            ReadingOutput,
+            SequencesBlock,
+        )
+
+        meta = Meta(
+            engine_version="abc1234",
+            swiss_ephemeris_version="2.10.03",
+            python_version="3.12.10",
+            generated_at="2026-05-28T12:00:00+00:00",
+            chart_input=ChartInput(
+                dob="1990-07-15", time="12:00", tz="+05:30", lat=12.97, lon=77.59
+            ),
+            doctrines_used=[],
+            doctrine_config=DoctrineConfig(),
+            enrichment_enabled=False,
+            robustness_enabled=False,
+            stage_timings_ms={},
+        )
+        defaults = dict(
+            meta=meta,
+            chart=ChartBlock(),
+            primitives=PrimitivesBlock(),
+            foundations=FoundationsBlock(),
+            practitioner=PractitionerBlock(),
+            sequences=SequencesBlock(),
+            domains=DomainsBlock(),
+            contradictions=[],
+            warnings=[],
+        )
+        defaults.update(overrides)
+        return ReadingOutput(**defaults)
+
+    def test_constructs_with_all_top_level_keys(self):
+        o = self._make_output()
+        # All 9 top-level keys must be present and accessible.
+        assert o.meta is not None
+        assert o.chart is not None
+        assert o.primitives is not None
+        assert o.foundations is not None
+        assert o.practitioner is not None
+        assert o.sequences is not None
+        assert o.domains is not None
+        assert o.contradictions == []
+        assert o.warnings == []
+
+    def test_extra_field_rejected(self):
+        with pytest.raises(ValidationError):
+            self._make_output(extra_unspecified_block={"x": 1})
+
+    def test_schema_version_round_trip_via_dump(self):
+        """Round-tripping via model_dump preserves the schema_version lock."""
+        o = self._make_output()
+        d = o.model_dump()
+        assert d["meta"]["schema_version"] == "1.0.0"
+
+    def test_contradictions_carries_contradiction_objects(self):
+        from app.reading.schema import Contradiction
+
+        c = Contradiction(
+            finding_ids=["a.b.c", "x.y.z"],
+            domain="marriage",
+            description="conflict",
+            severity="soft",
+        )
+        o = self._make_output(contradictions=[c])
+        assert len(o.contradictions) == 1
+        assert o.contradictions[0].severity == "soft"

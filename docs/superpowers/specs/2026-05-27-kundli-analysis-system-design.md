@@ -136,14 +136,14 @@ app/reading/
 └─ cli.py                                   # python -m app.reading.cli --dob ... --time ... --lat ... --lon ... --tz ...
 ```
 
-**Module count:** 58 files. Each ≤400 LOC except `yogas_extended.py` (~600), `remedies.py` (~500), `sequence_5_vimshottari_md.py` (~600).
+**Module count:** 59 files (including `d24_chaturvimsamsa.py`). Each ≤400 LOC except `yogas_extended.py` (~600), `remedies.py` (~500), `sequences/vimshottari_md.py` (~600).
 
 ### Key boundary disciplines
 
 1. **Domains are pure synthesizers** — they consume upstream Finding objects by id; they NEVER do D-chart math themselves.
-2. **No cross-sequence imports** — `sequence_5_*` cannot import `sequence_6_*`. They only share via `computations/*`.
+2. **No cross-sequence imports** — `sequences/vimshottari_md.py` cannot import `sequences/vimshottari_ad.py`. They only share via `computations/*`.
 3. **`_run_core_pipeline` is private** — Birth-time robustness imports the private function directly, bypassing the Tier-3 wrapper. Eliminates recursion risk.
-4. **Sequence file naming reserves the namespace** — `sequence_5_vimshottari_md.py` admits this is the Vimshottari-specific orchestrator, so `sequence_7_chara_dasha.py` is a natural future extension.
+4. **Sequences directory reserves the namespace** — `sequences/vimshottari_md.py` admits this is the Vimshottari-specific orchestrator, so `sequences/chara_dasha.py` would slot in cleanly as a future Jaimini-timing extension (out of v1 scope).
 
 ## 5. Data flow (pipeline)
 
@@ -247,11 +247,77 @@ class Finding(BaseModel):
 
 Birth-time robustness relies on these IDs being identical across `T`, `T-5min`, `T+5min` runs. Enumeration-based IDs (`finding_1`, `finding_2`) are forbidden.
 
-### Named-dict sequence checks
+### Named-dict sequence checks — full enumerations
 
-`MD_CHECK_KEYS: Final[tuple[str, ...]]` enumerates the 19 named checks of Sequence 5 (`bhaav_from_lagna`, `commonality_significations`, …, `repeat_from_arudha_lagna`, `repeat_from_karakamsha_lagna`). Schema validation refuses any `MDJudgment` missing one of these.
+Schema validation refuses any judgment dict missing one of these keys. Order is fixed for stable iteration; output dicts preserve insertion order.
 
-Same pattern for Sequence 6 (7 names), Sequence 1 (4 names), Sequence 2 (4 names).
+**`MD_CHECK_KEYS` — 19 checks for Sequence 5 (Vimshottari Mahadasha)**
+*(Source: notebook NotebookLM proforma — "How to Judge a Mahadasha" by Anil Kumar Jain)*
+
+```python
+MD_CHECK_KEYS: Final[tuple[str, ...]] = (
+    "bhaav_from_lagna",                    # 1.  Bhava the MD lord occupies from Lagna
+    "commonality_significations",          # 2.  Overlap between planet karakas and bhava themes
+    "residential_strength",                # 3.  Degree-distance from Bhaav Madhya
+    "bhaavs_aspected_fully",               # 4.  Bhavas the MD lord fully aspects
+    "rashi_depositor",                     # 5.  Placement of rashi depositor of MD lord
+    "balaadi_avastha",                     # 6.  Baladi state of MD lord (Bala/Kumara/Yuva/Vriddha/Mrita)
+    "conjunctions_within_15deg",           # 7.  Planets within 15° of MD lord (functionally activated)
+    "full_aspects_on_md_lord",             # 8.  Planets giving full aspect to MD lord
+    "trinal_planets",                      # 9.  Planets trinal to MD lord within 15°
+    "proximity_to_exact_trine",            # 10. Closeness of trinal planets to exact 120°
+    "md_lord_as_lagna_yogas",              # 11. Treat MD lord point as Lagna; overlay yogas
+    "nakshatra_tara_from_moon",            # 12. Tara (2nd/9th best, 7th worst) of MD lord's nakshatra from natal Moon
+    "nakshatra_depositor_dignity",         # 13. Functional nature + dignity of MD lord's nakshatra-depositor
+    "navamsa_depositor",                   # 14. Navamsa depositor of MD lord; generic + functional
+    "kartari_yoga",                        # 15. Shubha/Pap Kartari on MD lord (planets flanking)
+    "planet_in_2nd_from_md_lord",          # 16. What "comes out" of the MD; dignity of 2nd-from-MD-lord planet
+    "ishta_phal",                          # 17. Ishta Phal scores of rashi/nakshatra/navamsa depositors
+    "repeat_from_arudha_lagna",            # 18. Repeat checks 1-17 treating Arudha Lagna as reference
+    "repeat_from_karakamsha_lagna",        # 19. Repeat checks 1-17 treating Karakamsha Lagna as reference
+)
+```
+
+**`AD_CHECK_KEYS` — 7 checks for Sequence 6 (Vimshottari Antardasha)**
+*(Source: notebook NotebookLM proforma — "How To Read Antardasha In Vedic Astrology")*
+
+```python
+AD_CHECK_KEYS: Final[tuple[str, ...]] = (
+    "rulership_of_ad_lord",                # 1.  Houses owned by AD lord (what it activates)
+    "house_placement_of_ad_lord",          # 2.  Bhava occupied by AD lord (where results play out)
+    "strength_dignity_influence",          # 3.  Combust/exalted/debilitated/dignified state
+    "rajyoga_formed",                      # 4.  Latent Rajyogas activated by AD lord
+    "afflictions",                         # 5.  Pap Kartari, malefic aspects, suppression
+    "divisional_chart_assessment",         # 6.  D3/D7/D9/D10 confirmation for AD lord
+    "mutual_position_md_ad",               # 7.  6/8/12 friction vs trinal support between MD and AD lords
+)
+```
+
+**`AMSHA_BALA_KRAMA_KEYS` — 4 steps for Sequence 1 (BPHS layered Varga judgment)**
+*(Source: notebook NotebookLM proforma — "The Architecture of Fate: Shodasha Varga System")*
+
+```python
+AMSHA_BALA_KRAMA_KEYS: Final[tuple[str, ...]] = (
+    "analyze_d1",                          # 1.  Primary promise and physical manifestation
+    "consult_d9",                          # 2.  Inner strength, dharma, ultimate "fruit"
+    "specific_varga_refinement",           # 3.  Domain-specific Varga (D10 career, D7 children, etc.)
+    "dasha_transit_activation",            # 4.  When the conditionally active Varga potential fires
+)
+```
+
+**`CAREER_EXECUTIVE_KEYS` — 4 steps for Sequence 2 (Career Executive Consulting)**
+*(Source: notebook NotebookLM proforma — "The Varga System Handbook: Blueprint for Professional Destiny")*
+
+```python
+CAREER_EXECUTIVE_KEYS: Final[tuple[str, ...]] = (
+    "vargottama_amatya_karaka",            # 1.  Vargottama check + Amatya Karaka identification
+    "gandanta_knots",                      # 2.  Scan dasha sequence for water-to-fire nakshatra junctions
+    "vimsopaka_strength",                  # 3.  Verify dasha lord has Vimsopaka >10 (Shodashavarga scheme)
+    "gulika_saturn_bottlenecks",           # 4.  Debilitated Saturn in D10-6H or Gulika in D10-10H
+)
+```
+
+The four tuples above are the ONLY keys schema validation accepts for their respective `*Judgment` dicts. Adding a key requires a spec amendment (minor schema version bump per Section 15).
 
 ### Sub-models (summary)
 
@@ -296,8 +362,10 @@ class DomainReading:
             E2E + sliced snapshots (Bangalore baseline)
         Famous-chart structure (10 charts, structure only)
     Integration tests (stage→stage, sequence→domain)
-Unit tests + external-pinned correctness (~200 tests total)
+Unit tests + external-pinned correctness (see Section 17 — target raised to 350+ post-review)
 ```
+
+> **Section 17 supersedes this section's quantitative targets** (test count, hypothesis property-tests, CLI subprocess test, prediction-trap regression, Swiss Ephemeris fixture). Pinning matrix + snapshot strategy below remain authoritative.
 
 ### External pinning matrix (CLAUDE.md doctrine)
 
@@ -335,7 +403,11 @@ Einstein, Gandhi, Steve Jobs, Ramana Maharshi, Tagore, Vivekananda, Ramanujan, A
 
 **ASSERT structure-validity, exit-code-zero, schema-conformance.** **NEVER assert life-event outcomes.** (See Section 11 / falsified-prediction trap.)
 
-### Performance budget
+### Performance budget — **SUPERSEDED, see Section 16**
+
+> The original budget below was found unachievable by the perf-engineer review. Section 16 contains the revised budget with mandatory wins (batch encode, lazy import, citation cap). Use Section 16 as the canonical reference. The table below is retained for traceability of the review delta.
+
+<details><summary>Original (superseded) budget</summary>
 
 | Stage | Cold cache | Warm cache |
 |---|---|---|
@@ -347,6 +419,8 @@ Einstein, Gandhi, Steve Jobs, Ramana Maharshi, Tagore, Vivekananda, Ramanujan, A
 | Stage 8.1–8.5 | < 5s | < 1s |
 | Stage 8.6 (robustness) | < 4s | < 200ms |
 | **Total** | **< 12s** | **< 3s** |
+
+</details>
 
 ### Doctrine audit cadence
 
@@ -360,7 +434,7 @@ Einstein, Gandhi, Steve Jobs, Ramana Maharshi, Tagore, Vivekananda, Ramanujan, A
 
 | Phase | Scope | Duration | Doctrine checkpoint |
 |---|---|---|---|
-| **1: Foundation** | schema + CLI + 11 Tier-0 + `functional_nature` + `bhava_chalit` | 1.5 weeks | ✅ Post-phase |
+| **1: Foundation** | doctrine lockfile + perf spikes + schema + CLI + 11 Tier-0 + `functional_nature` + `bhava_chalit` | **2 weeks** (see Section 18 for sub-task breakdown) | ✅ Post-phase |
 | **2: Tier 1 completion** | Remaining 7 Tier-1 modules | 1 week | — |
 | **3: Tier 2 doctrine layer** | All 17 Tier-2 modules (yogas_extended, remedies are biggest) | 2 weeks | ✅ Post-phase |
 | **4: Sequences** | 4 sequence orchestrators (Seq 5 with 19 checks is biggest) | 1 week | — |

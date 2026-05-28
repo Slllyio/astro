@@ -48,10 +48,13 @@ ALLOWED_VIEWS: Final[frozenset[str]] = frozenset({
     # Silver
     "persons", "events", "charts", "dasha_windows",
     "resolved_persons", "events_with_dasha",
-    "chart_edges", "static_graph_edges", "dasha_tree",
+    "chart_edges", "static_graph_edges", "dasha_tree", "dasha_pd_windows",
+    "person_id_map", "event_class_taxonomy", "event_transits",
+    "divisional_charts", "jaimini_karakas",
     # Gold
     "v_persons_canonical", "v_chart_with_person", "v_event_survival",
     "v_chart_edge_summary", "v_natal_md_ads", "v_event_with_tree",
+    "v_bridged_persons", "v_event_transits_powerful",
 })
 
 # Cohort filter must look like SQL boolean expression over column names,

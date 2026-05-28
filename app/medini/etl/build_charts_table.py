@@ -116,6 +116,7 @@ def _compute_chart(
         "time_precision": time_precision,
         "asc_lon": asc["longitude"],
         "asc_sign": asc_sign,
+        "asc_nakshatra": nakshatra_for_longitude(asc["longitude"])["index"],
     }
     for graha in GRAHAS:
         # Title-case for dict lookup ("Sun"); lowercase for column name ("sun_lon").

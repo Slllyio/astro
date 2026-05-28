@@ -53,6 +53,53 @@
    tests should strip the chart-independent karaka contribution from
    the score, OR stratify the RR by active dasha lord.
 
+8. **Triple-test follow-up (2026-05-28)** — three independent controls
+   triangulated the residual signal:
+   - **(a) Karaka-stripped scorer + K=20 permutation**: real pooled
+     RR=1.443, null mean=1.469, z=-0.18, empirical p=0.57.
+     KR isn't the only chart-independent leak; HR + func_mod also
+     encode lord-identity-correlated patterns that survive shuffling.
+   - **(b) Within-lord stratification (original scorer)**: ADB-only
+     pooled RR=1.577 across 7 lord-strata, Cochran Q_p=0.90
+     (homogeneous), p=0.005. Wikidata has ZERO `personal` events;
+     cross-corpus replication framing was always ADB+sparse-LA.
+   - **(c) Combined karaka-stripped + within-lord stratified + K=20
+     permutation**: real pooled RR=1.721, null mean=1.485, **z=1.07,
+     empirical p=0.19**. The cleanest control still shows real-vs-null
+     gap but not at conventional p<0.05.
+
+   See `data/ml_runs/round11_triple_test_synthesis/SYNTHESIS.md` for
+   the full triple-test verdict. The "robust cross-corpus RR=2.31,
+   p=7.4e-9" is fully retracted; the honest residual is a hint of
+   within-ADB chart-attributable signal at z=1.07 that would need
+   K≥100 to confirm.
+
+9. **K=100 high-resolution falsifier (2026-05-28, this session)** — the
+   z=1.07 hint at K=20 was a sampling artifact. Re-running test (c) at
+   K=100 produced:
+   - Real combined RR: 1.721 (unchanged)
+   - Shuffled null mean: 1.576 (UP from 1.485 at K=20)
+   - Shuffled null max: 2.343 (UP from 2.011)
+   - **z-score: 0.55** (down from 1.07)
+   - **Empirical p: 0.307** (31 of 100 shuffles ≥ real)
+
+   See `data/ml_runs/round11_combined_k100/K100_VERDICT.md`.
+
+   **The chart contributes nothing to the `personal`-event RR at
+   population scale.** The previously-ambiguous z=1.07 at K=20 was
+   sampling optimism on the upper tail of a true exceedance rate of
+   ~31%. The K=100 verdict closes the Round-11 ML chapter on chart-
+   structural population-scale doctrine RR testing. **This framework
+   has been exhausted.**
+
+10. **Unexplored frontiers** (not tested by Round-11):
+    - AD-level timing using `dasha_tree.parquet` mutual-relation features
+      (built but never modeled)
+    - Per-person sequence prediction (different statistical machinery
+      than population RR)
+    - Transit point process (Phase 6 deferred during architecture build)
+    - Deterministic doctrine reading (the sibling `astro-reading` project)
+
 ## What changed
 
 ### Phases delivered

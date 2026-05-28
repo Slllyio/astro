@@ -54,6 +54,18 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     ("static_graph_edges", "static_graph_edges.parquet"),
     # Phase 5 — dasha tree (BPHS Ch.46-47 MD↔AD mutual relations).
     ("dasha_tree", "dasha_tree.parquet"),
+    # Pratyantar-level (PD) windows — completes the MD/AD/PD hierarchy.
+    ("dasha_pd_windows", "dasha_pd_windows.parquet"),
+    # Event transits — planet transit state + natal house lordship per event.
+    ("event_transits", "event_transits.parquet"),
+    # Canonical name_norm ↔ person_id bridge across Round-9 and Silver eras.
+    ("person_id_map", "person_id_map.parquet"),
+    # Canonical event-class taxonomy: 56 granular ADB → 6 harmonized + category.
+    ("event_class_taxonomy", "event_class_taxonomy.parquet"),
+    # Divisional charts (Shodashavarga: D1 + 14 sub-vargas) per person.
+    ("divisional_charts", "divisional_charts.parquet"),
+    # Jaimini 8-karaka assignments (AK, AmK, ..., DK, PK2) per person.
+    ("jaimini_karakas", "jaimini_karakas.parquet"),
 )
 
 
@@ -61,6 +73,8 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
 # catalog initialise on a partially-built corpus (e.g. before Phase 2 runs).
 _OPTIONAL_SILVER: Final[set[str]] = {
     "events_with_dasha", "chart_edges", "static_graph_edges", "dasha_tree",
+    "person_id_map", "event_class_taxonomy", "dasha_pd_windows",
+    "event_transits", "divisional_charts", "jaimini_karakas",
 }
 
 
@@ -118,6 +132,22 @@ def _create_gold_views(con: duckdb.DuckDBPyConnection) -> None:
         JOIN persons p USING (person_id)
     """)
 
+    # ---------------- Bridge view (name_norm ↔ person_id) ----------------
+    has_id_map = con.execute(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'person_id_map'"
+    ).fetchone()[0]
+    bridge_views: tuple[str, ...] = ()
+    if has_id_map:
+        # Helper view: ADB+WD persons that are joined to the Silver layer,
+        # restricted to the bridged subset (excludes the LA gap).
+        con.execute("""
+            CREATE OR REPLACE VIEW v_bridged_persons AS
+            SELECT corpus_tag, name_norm, birth_jd, person_id
+            FROM person_id_map
+            WHERE is_silver_resident
+        """)
+        bridge_views = ("v_bridged_persons",)
+
     # ---------------- Gold views over Phase 4/5 tables ----------------
     # Whether the Phase 4/5 tables are registered (built).
     has_chart_edges = con.execute(
@@ -152,6 +182,49 @@ def _create_gold_views(con: duckdb.DuckDBPyConnection) -> None:
             WHERE md_seq = 0
         """)
         dasha_tree_views += ("v_natal_md_ads",)
+
+    # ---------------- Event-transit views ----------------
+    has_transits = con.execute(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'event_transits'"
+    ).fetchone()[0]
+    transit_views: tuple[str, ...] = ()
+    if has_transits:
+        # The classical "powerful trigger" view: slow-mover transit
+        # landing in a house this planet is natal lord of, joined with
+        # event class and dasha context for one-query analysis.
+        con.execute("""
+            CREATE OR REPLACE VIEW v_event_transits_powerful AS
+            SELECT
+                t.event_id,
+                t.person_id,
+                t.transit_planet,
+                t.transit_sign,
+                t.transit_natal_house,
+                t.natal_houses_ruled,
+                t.is_retrograde,
+                e.event_class,
+                e.event_date,
+                e.md_lord_at_event,
+                e.ad_lord_at_event,
+                e.age_at_event_years,
+                e.source AS corpus,
+                -- Is the transit planet currently transiting one of its OWN
+                -- natal-lord houses? This is the classical "self-trigger" pattern.
+                CASE
+                    WHEN t.has_natal_house_lordship
+                     AND list_contains(
+                            string_split(t.natal_houses_ruled, ','),
+                            CAST(t.transit_natal_house AS TEXT))
+                    THEN TRUE ELSE FALSE END AS in_own_lord_house,
+                -- Is the transit landing in a trikona (1, 5, 9) or 10th?
+                t.transit_natal_house IN (1, 5, 9, 10) AS in_auspicious_house,
+                -- Is the transit landing in a dusthana (6, 8, 12)?
+                t.transit_natal_house IN (6, 8, 12) AS in_difficult_house
+            FROM event_transits t
+            JOIN events_with_dasha e USING (event_id)
+            WHERE t.is_slow_mover
+        """)
+        transit_views = ("v_event_transits_powerful",)
 
     # Mutual-relation enriched survival view — joins events_with_dasha to
     # dasha_tree to add MD↔AD mutual relations alongside each event. This
@@ -218,6 +291,7 @@ def _create_gold_views(con: duckdb.DuckDBPyConnection) -> None:
     for v in (
         ("v_persons_canonical", "v_chart_with_person")
         + heterograph_views + dasha_tree_views + survival_views
+        + bridge_views + transit_views
     ):
         n = con.execute(f"SELECT COUNT(*) FROM {v}").fetchone()[0]
         logger.info("Created Gold view    %-20s (%d rows)", v, n)

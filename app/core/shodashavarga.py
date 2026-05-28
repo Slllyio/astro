@@ -25,13 +25,14 @@ from app.core.ephemeris_engine import (
 )
 
 SHODASHAVARGA_DIVISORS: tuple[int, ...] = (
-    2, 3, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60,
+    2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60,
 )
 
 SHODASHAVARGA_NAMES: dict[int, str] = {
     1: "D1_Rashi",
     2: "D2_Hora",
     3: "D3_Drekkana",
+    4: "D4_Chaturthamsa",
     7: "D7_Saptamsa",
     9: "D9_Navamsa",
     10: "D10_Dasamsa",
@@ -90,6 +91,29 @@ def _hora_d2(sign_index: int, degree_in_sign: float) -> float:
         target = 3 if in_first_half else 4
     # Scale 0..15 -> 0..30 so the Hora "degree" varies smoothly.
     intra = (degree_in_sign % 15.0) * 2.0
+    return _pack(target, intra)
+
+
+def _chaturthamsa_d4(sign_index: int, degree_in_sign: float) -> float:
+    """D4 Chaturthamsa: 4 parts of 7.5 degrees each, mapping to the four
+    kendras (1st, 4th, 7th, 10th) from the natal D1 sign.
+
+    1st part (0-7.5):     same sign (offset +0).
+    2nd part (7.5-15):    4th sign from D1 (offset +3).
+    3rd part (15-22.5):   7th sign from D1 (offset +6).
+    4th part (22.5-30):  10th sign from D1 (offset +9).
+
+    This pattern is identical for all 12 D1 signs (no parity / sign-type
+    branching, distinct from D7/D9 etc.). Per BPHS Vol.I Ch.6 — D4 governs
+    fixed assets / property / domestic stability.
+    """
+    span = 7.5
+    part = int(degree_in_sign // span)
+    if part > 3:
+        part = 3  # clamp for fp boundary at exactly 30deg
+    offset = part * 3  # part 0->0, 1->3, 2->6, 3->9 (the four kendras)
+    target = (sign_index + offset) % 12
+    intra = (degree_in_sign - part * span) * 4.0  # scale 0..7.5 -> 0..30
     return _pack(target, intra)
 
 
@@ -271,6 +295,7 @@ def _shastiamsa_d60(sign_index: int, degree_in_sign: float) -> float:
 _DISPATCH = {
     2: _hora_d2,
     3: _drekkana_d3,
+    4: _chaturthamsa_d4,
     7: _saptamsa_d7,
     12: _dwadasamsa_d12,
     16: _shodasamsa_d16,

@@ -155,6 +155,77 @@ def test_d12_dwadasamsa_taurus_first_part():
     assert sign == 2  # Taurus
 
 
+# ----------------------------- D4 Chaturthamsa ------------------------------
+# Per BPHS, D4 divides each 30deg sign into 4 portions of 7.5deg each, mapping
+# to the four kendras from the natal sign:
+#   1st portion (0-7.5):    same sign as D1
+#   2nd portion (7.5-15):   4th from D1 sign (Aries -> Cancer)
+#   3rd portion (15-22.5):  7th from D1 sign (Aries -> Libra)
+#   4th portion (22.5-30): 10th from D1 sign (Aries -> Capricorn)
+
+
+def test_d4_chaturthamsa_first_quarter_same_sign():
+    """3deg Aries -> 1st chaturthamsa -> Aries."""
+    lon = compute_divisional_longitude(3.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 1  # Aries
+
+
+def test_d4_chaturthamsa_second_quarter_fourth_sign():
+    """10deg Aries -> 2nd chaturthamsa -> Cancer (4th from Aries)."""
+    lon = compute_divisional_longitude(10.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 4  # Cancer
+
+
+def test_d4_chaturthamsa_third_quarter_seventh_sign():
+    """18deg Aries -> 3rd chaturthamsa -> Libra (7th from Aries)."""
+    lon = compute_divisional_longitude(18.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 7  # Libra
+
+
+def test_d4_chaturthamsa_fourth_quarter_tenth_sign():
+    """25deg Aries -> 4th chaturthamsa -> Capricorn (10th from Aries)."""
+    lon = compute_divisional_longitude(25.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 10  # Capricorn
+
+
+def test_d4_chaturthamsa_taurus_first_quarter():
+    """0deg Taurus -> 1st chaturthamsa -> Taurus."""
+    lon = compute_divisional_longitude(30.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 2  # Taurus
+
+
+def test_d4_chaturthamsa_pisces_third_quarter_wraps():
+    """345 + 18 = late Pisces (11), 3rd quarter -> 7th from Pisces = Virgo (6)."""
+    # Pisces is sign-index 11, so 7th from Pisces (= 11 + 6 mod 12 = 5 -> Virgo).
+    lon = compute_divisional_longitude(330.0 + 18.0, 4)
+    sign, _ = _split(lon)
+    assert sign == 6  # Virgo
+
+
+def test_d4_chaturthamsa_kendra_invariant_property():
+    """For every degree across the zodiac, the D4 sign must be one of the four
+    kendras (1st, 4th, 7th, 10th) from the input D1 sign."""
+    for d1_sign_index in range(12):
+        kendra_signs = {
+            (d1_sign_index + 0) % 12 + 1,
+            (d1_sign_index + 3) % 12 + 1,
+            (d1_sign_index + 6) % 12 + 1,
+            (d1_sign_index + 9) % 12 + 1,
+        }
+        for deg in (0.5, 7.0, 10.0, 14.9, 15.5, 22.4, 25.0, 29.5):
+            lon = compute_divisional_longitude(d1_sign_index * 30.0 + deg, 4)
+            sign, _ = _split(lon)
+            assert sign in kendra_signs, (
+                f"D4 sign {sign} not in kendras {kendra_signs} for D1 "
+                f"sign={d1_sign_index + 1}, deg={deg}"
+            )
+
+
 # ----------------------------- D16 Shodasamsa -------------------------------
 
 
@@ -390,15 +461,19 @@ def _make_d1(longitude: float) -> dict[str, dict]:
     }
 
 
-def test_compute_divisional_charts_returns_all_14_vargas():
-    """Top-level integration: the result has 14 vargas and each contains
-    a position dict for the input planet with a valid 1..12 sign."""
+def test_compute_divisional_charts_returns_all_15_vargas():
+    """Top-level integration: the result has 15 vargas and each contains
+    a position dict for the input planet with a valid 1..12 sign.
+
+    The 15 vargas covered: D2, D3, D4, D7, D9, D10, D12, D16, D20, D24,
+    D27, D30, D40, D45, D60. (D1 is the natal D1 itself; not in this set.)
+    """
     d1 = _make_d1(173.99)  # late Virgo
 
     charts = compute_divisional_charts(d1)
 
     # Every divisor in the spec is represented.
-    assert len(charts) == 14
+    assert len(charts) == 15
     for divisor in SHODASHAVARGA_DIVISORS:
         chart_name = SHODASHAVARGA_NAMES[divisor]
         assert chart_name in charts, f"missing varga {chart_name}"

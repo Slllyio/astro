@@ -3,157 +3,526 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vedic & Nadi Astrology Engine</title>
+  <title>ज्योतिषम् — Jyotisha Doctrine Library</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/manuscript.css">
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f4f1ec; }
-    .app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
-    header {
-      background: linear-gradient(135deg, #2a1a4e 0%, #5a2a7e 100%);
-      color: #f4e8c8; padding: 18px 28px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-    }
-    header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.4px; }
-    header .tagline { font-size: 12px; opacity: 0.78; margin-top: 2px; letter-spacing: 0.6px; }
-    nav.tabs {
-      display: flex; flex-wrap: wrap; gap: 4px;
-      background: #1a0e2e; padding: 0 28px; border-bottom: 1px solid #3a2a5a;
-    }
-    nav.tabs a {
-      padding: 12px 18px; color: #c8b8e8; text-decoration: none;
-      font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
-      border-bottom: 3px solid transparent; transition: all 0.15s;
-    }
-    nav.tabs a:hover { color: #fff; background: rgba(255,255,255,0.05); }
-    nav.tabs a.active { color: #f8d870; border-bottom-color: #f8d870; }
-    .frame-wrap { position: relative; background: #fff; }
-    iframe { width: 100%; height: 100%; border: 0; display: block; }
-    .welcome {
-      max-width: 880px; margin: 0 auto; padding: 60px 32px;
-      color: #1a1a1a;
-    }
-    .welcome h2 { font-size: 32px; margin-bottom: 14px; color: #2a1a4e; }
-    .welcome p.lede { font-size: 17px; color: #5a4a3a; line-height: 1.55; margin-bottom: 36px; }
-    .surfaces { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .surface {
-      background: #fff; border: 1px solid #e0d8c8; border-radius: 8px; padding: 18px;
-      text-decoration: none; color: inherit; transition: all 0.18s;
+    /* ---- Section cards ---- */
+    .section-card {
+      padding: 0.7rem 0.8rem;
+      background: rgba(245, 227, 184, 0.5);
+      border: 1px solid var(--ink-faded);
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
       display: block;
     }
-    .surface:hover { border-color: #6a3a8e; box-shadow: 0 4px 16px rgba(106,58,142,0.12); transform: translateY(-2px); }
-    .surface h3 { font-size: 16px; color: #2a1a4e; margin-bottom: 6px; font-weight: 600; }
-    .surface p { font-size: 13px; color: #6a5a4a; line-height: 1.45; }
-    .surface .badge {
-      display: inline-block; font-size: 10px; padding: 2px 8px;
-      background: #f8d870; color: #5a3a0a; border-radius: 10px;
-      font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
-      margin-bottom: 8px;
+    .section-card:hover {
+      background: rgba(232, 213, 168, 0.85);
+      border-color: var(--madder);
+      box-shadow: 0 2px 8px rgba(160, 40, 40, 0.15);
+      transform: translateX(2px);
     }
-    .surface[data-tab="nadi"]    .badge { background: #d8b8f8; color: #3a1a5a; }
-    .surface[data-tab="numero"]  .badge { background: #b8d8f8; color: #1a2a5a; }
+    .section-card .icon-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.4rem;
+      color: var(--madder);
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    .section-card .title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      color: var(--ink-primary);
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .section-card .desc {
+      font-size: 0.72rem;
+      color: var(--ink-secondary);
+      line-height: 1.4;
+      margin-top: 0.3rem;
+      padding-left: 1.9rem;
+    }
+    .section-card .badge-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--ink-faded);
+      font-variant: small-caps;
+      padding-left: 1.9rem;
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    /* ---- Featured quote folio ---- */
+    .featured-quote {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(184, 137, 90, 0.08);
+      border-top: 1px solid var(--ink-faded);
+      border-bottom: 1px solid var(--ink-faded);
+    }
+    .featured-quote .verse {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--ink-primary);
+      margin-bottom: 0.4rem;
+    }
+    .featured-quote .translation {
+      font-style: italic;
+      font-size: 0.78rem;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+    }
+    .featured-quote .source {
+      font-variant: small-caps;
+      letter-spacing: 0.12em;
+      font-size: 0.65rem;
+      color: var(--ink-faded);
+      margin-top: 0.4rem;
+    }
+
+    /* ---- Colophon panel ---- */
+    .colophon {
+      text-align: center;
+      font-style: italic;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+      font-size: 0.85rem;
+    }
+
+    /* ---- Deity / Om glyph ---- */
+    .deity-glyph {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 3.5rem;
+      color: var(--gold-deep);
+      text-shadow: 0 0 12px rgba(201, 160, 74, 0.3);
+      text-align: center;
+      line-height: 1;
+    }
+
+    /* ---- Recent-activity placeholder cards ---- */
+    .activity-card {
+      padding: 0.55rem 0.7rem;
+      background: rgba(245, 227, 184, 0.35);
+      border: 1px dashed var(--ink-faded);
+      margin-bottom: 0.45rem;
+      font-size: 0.72rem;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+    }
+    .activity-card .ac-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: var(--madder);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+    .activity-card .ac-meta {
+      font-size: 0.62rem;
+      color: var(--ink-faded);
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>Vedic &amp; Nadi Astrology Engine</h1>
-      <div class="tagline">Sidereal Lahiri · Three-tab portal · Geo-Astrological intelligence</div>
-    </header>
-    <nav class="tabs" id="tab-nav">
-      <a href="#welcome"  data-tab="welcome">Home</a>
-      <a href="#nadi"     data-tab="nadi">Nadi Chart</a>
-      <a href="#numero"   data-tab="numero">NumeroAstro</a>
-      <a href="#kurma"    data-tab="kurma">Kurma Grid</a>
-      <a href="#carto"    data-tab="carto">Astrocartography</a>
-      <a href="#today"    data-tab="today">Cosmic Weather</a>
-      <a href="#eclipses" data-tab="eclipses">Eclipses</a>
-      <a href="#interpret" data-tab="interpret">Interpret</a>
-      <a href="#docs"     data-tab="docs">API Docs</a>
-    </nav>
-    <div class="frame-wrap">
-      <div id="welcome-pane" class="welcome">
-        <h2>The three-tab portal</h2>
-        <p class="lede">A sidereal Vedic engine grounded in Brihat Samhita and BPHS, paired with a numerology-driven probability reader and a Kurma-Chakra geo-astrology layer. Pick a surface below or use the tabs above.</p>
-        <div class="surfaces">
-          <a class="surface" href="#nadi" data-tab="nadi">
-            <span class="badge">Tab 1</span>
-            <h3>Nadi Chart Calculator</h3>
-            <p>Enter birth data to compute D1/D9/D10, ascendant, Mahadasha &amp; Antardasha, panchanga, yogas, ashtakavarga, and avasthas.</p>
-          </a>
-          <a class="surface" href="#numero" data-tab="numero">
-            <span class="badge">Tab 2</span>
-            <h3>NumeroAstro</h3>
-            <p>Date-of-Birth probability engine — numerology, karma classification, vedic-numerology hybrid reads.</p>
-          </a>
-          <a class="surface" href="#kurma" data-tab="kurma">
-            <span class="badge">Tab 3</span>
-            <h3>Kurma Chakra Grid</h3>
-            <p>Brihat Samhita's 9-region geo-astrology layer. Educational, no birth chart required.</p>
-          </a>
-          <a class="surface" href="#carto" data-tab="carto">
-            <span class="badge">Tab 3</span>
-            <h3>Astrocartography</h3>
-            <p>Personalized planetary lines (MC/IC/Asc/Desc for each graha) overlaid on the Kurma grid.</p>
-          </a>
-          <a class="surface" href="#today" data-tab="today">
-            <span class="badge">Tab 3</span>
-            <h3>Cosmic Weather</h3>
-            <p>Daily mundane forecast — ingresses, stations, conjunctions, and Kurma regions activated by today's sky.</p>
-          </a>
-          <a class="surface" href="#eclipses" data-tab="eclipses">
-            <span class="badge">Tab 3</span>
-            <h3>Eclipse Impact Mapper</h3>
-            <p>Upcoming solar &amp; lunar eclipses tagged with the Kurma region they activate via the luminary's nakshatra.</p>
-          </a>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Front cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">ज्योतिषम्</div>
+            <div class="cover-english-title">JYOTISHA · THE DOCTRINE LIBRARY</div>
+          </div>
+          <!-- binding holes punched through at 1/3 and 2/3 -->
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to enter</div>
         </div>
       </div>
-      <iframe id="content-frame" title="Tab content" style="display:none"></iframe>
+
+      <!-- ========== Leaf 1 — Mangalacharana + welcome ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center;">
+            <div class="deity-glyph deva"
+                 style="opacity: 0; animation: fade-in 1.5s ease-out 0.3s forwards;">
+              श्री
+            </div>
+            <div style="text-align: center; font-style: italic; color: var(--ink-secondary);
+                        font-size: 0.75rem; margin-top: 0.5rem;
+                        opacity: 0; animation: fade-in 1.5s ease-out 0.8s forwards;">
+              Auspicious beginning
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center;">
+            <div class="mangalacharana deva">श्रीगणेशाय नमः</div>
+            <div class="leaf-title-deva deva" style="margin-top: 0.3rem;">ज्योतिषम्</div>
+            <div class="leaf-title-eng">A LIBRARY OF JYOTISHA</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center;">
+            <div class="colophon"
+                 style="opacity: 0; animation: fade-in 1.5s ease-out 1.1s forwards;">
+              918 doctrine artefacts<br>
+              6.28 M words indexed across<br>
+              75+ classical Sanskrit and<br>
+              English source texts<br>
+              <span style="display: inline-block; margin-top: 0.5rem;
+                           font-variant: small-caps; font-size: 0.65rem;
+                           letter-spacing: 0.15em; color: var(--ink-faded);">
+                — Lahiri sidereal · Whole-sign Vedic —
+              </span>
+            </div>
+          </div>
+          <div class="folio-mark">folio I · welcome</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Main navigation ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page">
+
+          <!-- LEFT column: CONSULT -->
+          <div class="panel left">
+            <div class="panel-heading">CONSULT</div>
+            <div class="panel-heading-deva deva">परामर्शः</div>
+
+            <a class="section-card" href="/medini/reading/page">
+              <span class="icon-deva deva">पठ्</span>
+              <span class="title">READING</span>
+              <div class="desc">Cast a chart and receive a doctrine-grounded interpretation with full source citations.</div>
+              <span class="badge-tag">live · Pothi-styled</span>
+            </a>
+
+            <a class="section-card" href="/chart/page">
+              <span class="icon-deva deva">गण्</span>
+              <span class="title">CHART CALCULATOR</span>
+              <div class="desc">Compute D1, D9, D10, dasha sequence, yogas, ashtakavarga for any birth data.</div>
+              <span class="badge-tag">Nadi engine</span>
+            </a>
+
+            <a class="section-card" href="/portal/">
+              <span class="icon-deva deva">अङ्</span>
+              <span class="title">NUMEROASTRO</span>
+              <div class="desc">Date-of-birth probability engine — numerology, karma classification, vedic-hybrid reads.</div>
+              <span class="badge-tag">NumeroAstro portal</span>
+            </a>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <!-- MIDDLE column: STUDY -->
+          <div class="panel middle">
+            <div class="panel-heading">STUDY</div>
+            <div class="panel-heading-deva deva">अध्ययनम्</div>
+
+            <a class="section-card" href="/medini/knowledge/page">
+              <span class="icon-deva deva">अन्</span>
+              <span class="title">DOCTRINE SEARCH</span>
+              <div class="desc">Query 6.28 M words across BPHS, Phaladeepika, Saravali, Hora Sara, and 71 more texts.</div>
+              <span class="badge-tag">RAG · semantic + lexical</span>
+            </a>
+
+            <a class="section-card" href="/medini/forecast/page">
+              <span class="icon-deva deva">कालः</span>
+              <span class="title">MUNDANE FORECAST</span>
+              <div class="desc">Next 30 days — ingresses, stations, lunations, eclipses, severity scoring + citations.</div>
+              <span class="badge-tag">Phase 2 · live</span>
+            </a>
+
+            <a class="section-card" href="/medini/almanac/page">
+              <span class="icon-deva deva">पञ्</span>
+              <span class="title">MUNDANE ALMANAC</span>
+              <div class="desc">Past 30 days through the same severity / domain / citation lens, newest-first.</div>
+              <span class="badge-tag">Phase 2 · live</span>
+            </a>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <!-- RIGHT column: OBSERVE -->
+          <div class="panel right">
+            <div class="panel-heading">OBSERVE</div>
+            <div class="panel-heading-deva deva">दर्शनम्</div>
+
+            <a class="section-card" href="/medini/eclipses/page">
+              <span class="icon-deva deva">ग्रहणम्</span>
+              <span class="title">ECLIPSE MAP</span>
+              <div class="desc">Upcoming solar and lunar eclipses tagged with the Kurma region they activate via the luminary's nakshatra.</div>
+              <span class="badge-tag">Tab 3 · Medini</span>
+            </a>
+
+            <a class="section-card" href="/medini/cartography/page">
+              <span class="icon-deva deva">भू</span>
+              <span class="title">ASTROCARTOGRAPHY</span>
+              <div class="desc">Personalized planetary lines (MC/IC/Asc/Desc) overlaid on the Kurma geo-astrology grid.</div>
+              <span class="badge-tag">equatorial · Leaflet + OSM</span>
+            </a>
+
+            <a class="section-card" href="/medini/kurma-widget">
+              <span class="icon-deva deva">कूर्म</span>
+              <span class="title">KURMA CHAKRA</span>
+              <div class="desc">Brihat Samhita's 9-region vulnerability map by nakshatra. Educational — no birth chart required.</div>
+              <span class="badge-tag">Tab 3 · Medini</span>
+            </a>
+          </div>
+
+          <div class="folio-mark">folio II · index of the library</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Featured verse (decorative) ========== -->
+      <div class="leaf" data-page="3">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center; text-align: right;">
+            <div class="leaf-label">VERSE OF THE DAY</div>
+            <div class="panel-heading-deva deva" style="text-align: right; margin: 0.4rem 0;">
+              अद्य श्लोकः
+            </div>
+            <div style="font-size: 0.7rem; color: var(--ink-faded); font-style: italic; line-height: 1.5;">
+              From the indexed corpus<br>of classical texts
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="featured-quote">
+              <div class="verse deva">
+                यो जानाति सूर्य-सिद्धान्तं<br>
+                स ज्योतिषीयाणां वरः ॥
+              </div>
+              <div class="translation">
+                He who knows the Surya Siddhanta<br>
+                is foremost among astrologers.
+              </div>
+              <div class="source">— BPHS Ch. I · 22</div>
+            </div>
+            <div style="margin-top: 1.2rem;">
+              <div class="featured-quote">
+                <div class="verse deva" style="font-size: 0.92rem;">
+                  ग्रहाणां स्थितिमाश्रित्य<br>
+                  फलं वक्ष्यामि सत्त्वतः ॥
+                </div>
+                <div class="translation" style="font-size: 0.72rem;">
+                  Based on the position of the planets<br>
+                  I shall speak the results truly.
+                </div>
+                <div class="source">— Phaladeepika Ch. I · 3</div>
+              </div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center;">
+            <div style="text-align: center;">
+              <a class="leaf-button" href="/medini/knowledge/page"
+                 style="text-decoration: none; display: inline-block;">
+                Read in Context
+              </a>
+              <div style="margin-top: 0.6rem; font-size: 0.68rem; font-style: italic;
+                          color: var(--ink-faded); line-height: 1.5;">
+                Search the doctrine<br>library to explore<br>these verses in full.
+              </div>
+            </div>
+          </div>
+          <div class="folio-mark">folio III · verse of the day</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 4 — Recent activity (placeholder) ========== -->
+      <div class="leaf" data-page="4">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">RECENT READING</div>
+            <a class="section-card" href="/medini/reading/page">
+              <div style="font-family: 'Cinzel', serif; font-size: 0.7rem;
+                          letter-spacing: 0.15em; color: var(--madder);">
+                BANGALORE BASELINE
+              </div>
+              <div style="font-size: 0.7rem; color: var(--ink-secondary); margin-top: 0.2rem;">
+                15 Jul 1990 · 12:00 IST
+              </div>
+              <div style="font-size: 0.65rem; color: var(--ink-faded);
+                          font-variant: small-caps; letter-spacing: 0.1em; margin-top: 0.3rem;">
+                test anchor chart
+              </div>
+            </a>
+            <div class="activity-card">
+              <span class="ac-label">RECENT ACTIVITY</span>
+              Activity history will be stored here once persistence is wired.
+              <span class="ac-meta">placeholder · no backend yet</span>
+            </div>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <div class="panel middle">
+            <div class="panel-heading">RECENT SEARCHES</div>
+            <a class="section-card" href="/medini/knowledge/page">
+              <div style="font-size: 0.78rem; color: var(--ink-primary); font-style: italic;">
+                "Mercury in 11th house"
+              </div>
+              <div style="font-size: 0.65rem; color: var(--ink-faded); margin-top: 0.2rem;">
+                doctrine search · BPHS
+              </div>
+            </a>
+            <div class="activity-card">
+              <span class="ac-label">SEARCH HISTORY</span>
+              Recent queries will appear here once session storage is connected.
+              <span class="ac-meta">placeholder · no backend yet</span>
+            </div>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <div class="panel right">
+            <div class="panel-heading">UPCOMING</div>
+            <a class="section-card" href="/medini/eclipses/page">
+              <div style="font-family: 'Tiro Devanagari Sanskrit', serif;
+                          font-size: 0.9rem; color: var(--madder);">
+                सूर्य-ग्रहणम्
+              </div>
+              <div style="font-family: 'Cinzel', serif; font-size: 0.7rem;
+                          letter-spacing: 0.15em; color: var(--ink-primary); margin-top: 0.2rem;">
+                SOLAR ECLIPSE
+              </div>
+              <div style="font-size: 0.7rem; color: var(--ink-secondary); margin-top: 0.2rem;">
+                See Eclipse Map for<br>current predictions
+              </div>
+            </a>
+            <a class="section-card" href="/medini/forecast/page">
+              <div style="font-family: 'Cinzel', serif; font-size: 0.7rem;
+                          letter-spacing: 0.15em; color: var(--ink-primary);">
+                MUNDANE FORECAST
+              </div>
+              <div style="font-size: 0.7rem; color: var(--ink-secondary); margin-top: 0.2rem;">
+                30-day classical calendar<br>with severity scoring
+              </div>
+            </a>
+          </div>
+
+          <div class="folio-mark">folio IV · continuity</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 5 — Closing colophon ========== -->
+      <div class="leaf" data-page="5">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center; text-align: right;">
+            <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.2rem;
+                        color: var(--madder);
+                        opacity: 0; animation: fade-in 1.0s ease-out 0.5s forwards;">
+              शुभमस्तु
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center; text-align: center;">
+            <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 3.5rem;
+                        color: var(--gold-deep);
+                        text-shadow: 0 0 12px rgba(201, 160, 74, 0.3);
+                        opacity: 0; animation: fade-in-up 1.2s ease-out 0.6s forwards;">
+              ॐ
+            </div>
+            <div style="margin-top: 1.2rem; font-size: 0.7rem; font-style: italic;
+                        color: var(--ink-faded); line-height: 1.6;
+                        opacity: 0; animation: fade-in 1.0s ease-out 1.0s forwards;">
+              Sidereal Lahiri ayanamsa<br>
+              Whole-sign Vedic drishti<br>
+              Vimshottari 365.2425 d/yr<br>
+              Kurma Chakra · Brihat Samhita
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: left;">
+            <div style="font-family: 'EB Garamond', serif; font-style: italic; font-size: 0.85rem;
+                        color: var(--ink-secondary); line-height: 1.7;
+                        opacity: 0; animation: fade-in 1.0s ease-out 0.7s forwards;">
+              May the study<br>be auspicious.<br>
+              <span style="font-variant: small-caps; font-size: 0.65rem;
+                           letter-spacing: 0.15em; color: var(--ink-faded);">
+                — śubhamastu —
+              </span>
+            </div>
+            <div style="margin-top: 1.5rem;
+                        opacity: 0; animation: fade-in 1.0s ease-out 1.2s forwards;">
+              <a href="/docs" style="font-family: 'Cinzel', serif; font-size: 0.65rem;
+                                     letter-spacing: 0.12em; color: var(--ink-faded);
+                                     text-decoration: none; font-variant: small-caps;">
+                API Documentation →
+              </a>
+            </div>
+          </div>
+          <div class="folio-mark">folio V · colophon</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 6 — Back cover ========== -->
+      <div class="leaf" data-page="6">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text">END OF INDEX</div>
+            <button class="reopen-btn" onclick="reopenManuscript()">RETURN TO COVER</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
     </div>
   </div>
 
+  <!-- Fixed nav bar (shared chrome — same pattern as reading.html) -->
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">sound</button>
+    <a class="nav-page-link" href="/medini/reading/page">reading</a>
+    <a class="nav-page-link" href="/medini/knowledge/page">search</a>
+    <a class="nav-page-link" href="/medini/forecast/page">forecast</a>
+  </div>
+
   <script>
-    // Hash-driven tab routing. Each tab maps to a URL the iframe loads,
-    // except 'welcome' which shows the static landing pane (iframe hidden).
-    const TAB_URLS = {
-      welcome:  null,
-      nadi:     '/chart/page',
-      numero:   '/portal/',
-      kurma:    '/medini/kurma-widget',
-      carto:    '/medini/cartography/page',
-      today:    '/medini/today/page',
-      eclipses: '/medini/eclipses/page',
-      interpret: '/interpret/page',
-      docs:     '/docs',
-    };
-
-    const frame = document.getElementById('content-frame');
-    const welcomePane = document.getElementById('welcome-pane');
-    const tabLinks = document.querySelectorAll('#tab-nav a, .surface');
-
-    function activateTab(name) {
-      const url = TAB_URLS[name];
-      if (!url) {
-        frame.style.display = 'none';
-        welcomePane.style.display = 'block';
-      } else {
-        welcomePane.style.display = 'none';
-        frame.style.display = 'block';
-        if (frame.src !== window.location.origin + url) {
-          frame.src = url;
-        }
-      }
-      document.querySelectorAll('#tab-nav a').forEach(a => {
-        a.classList.toggle('active', a.dataset.tab === name);
-      });
-    }
-
-    function tabFromHash() {
-      const h = window.location.hash.replace(/^#/, '') || 'welcome';
-      return TAB_URLS.hasOwnProperty(h) ? h : 'welcome';
-    }
-
-    window.addEventListener('hashchange', () => activateTab(tabFromHash()));
-    activateTab(tabFromHash());
+    window.MANUSCRIPT_LABELS = [
+      'COVER',
+      'WELCOME',
+      'INDEX',
+      'VERSE OF THE DAY',
+      'RECENT',
+      'COLOPHON',
+      'END',
+    ];
   </script>
+  <script src="/static/js/manuscript.js"></script>
 </body>
 </html>

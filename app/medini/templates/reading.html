@@ -83,6 +83,38 @@
       font-style: italic;
       margin-top: 0.2rem;
     }
+
+    /* Preset chart cards — click to auto-fill the form. */
+    .preset-card {
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 0.4rem;
+      background: rgba(232, 213, 168, 0.55);
+      border: 1px solid var(--ink-faded);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .preset-card:hover {
+      background: rgba(217, 155, 92, 0.4);
+      border-color: var(--madder);
+      transform: translateX(2px);
+    }
+    .preset-card.selected {
+      background: rgba(160, 40, 40, 0.12);
+      border-color: var(--madder);
+      border-left-width: 3px;
+    }
+    .preset-card .name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.13em;
+      color: var(--ink-primary);
+    }
+    .preset-card .meta {
+      font-size: 0.72rem;
+      color: var(--ink-secondary);
+      font-style: italic;
+      margin-top: 0.15rem;
+    }
   </style>
 </head>
 <body>
@@ -170,18 +202,41 @@
             </div>
           </div>
           <div class="binding-zone"><div class="binding-hole"></div></div>
-          <div class="panel right" style="justify-content: center;">
-            <div class="panel-heading">CROSS-LINKS</div>
-            <div style="text-align: center; line-height: 1.9; font-size: 0.9rem;">
-              <a href="/interpret/page" style="color: var(--saffron-deep); text-decoration: none; font-variant: small-caps; letter-spacing: 0.1em;">
-                /interpret &mdash; narrator
-              </a><br>
-              <a href="/medini/knowledge/page" style="color: var(--saffron-deep); text-decoration: none; font-variant: small-caps; letter-spacing: 0.1em;">
-                /knowledge &mdash; corpus search
-              </a><br>
-              <a href="/medini/forecast/page" style="color: var(--saffron-deep); text-decoration: none; font-variant: small-caps; letter-spacing: 0.1em;">
-                /forecast &mdash; mundane calendar
-              </a>
+          <div class="panel right">
+            <div class="panel-heading">PRESETS</div>
+            <div class="panel-heading-deva deva">पूर्व-नियताः</div>
+            <div style="margin-top: 0.4rem;">
+              <!-- Click to auto-fill form. data-attrs encode the birth data. -->
+              <div class="preset-card"
+                   data-y="1990" data-m="7" data-d="15" data-h="12" data-mn="0"
+                   data-lat="12.9716" data-lon="77.5946" data-tz="5.5">
+                <div class="name">BANGALORE BASELINE</div>
+                <div class="meta">15 Jul 1990 · noon · canonical test</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1944" data-m="8" data-d="20" data-h="7" data-mn="11"
+                   data-lat="18.97" data-lon="72.83" data-tz="5.5">
+                <div class="name">RAJIV GANDHI</div>
+                <div class="meta">20 Aug 1944 · 7:11 IST · Bombay</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1869" data-m="10" data-d="2" data-h="7" data-mn="12"
+                   data-lat="21.64" data-lon="69.61" data-tz="4.81">
+                <div class="name">M. K. GANDHI</div>
+                <div class="meta">2 Oct 1869 · 7:12 LMT · Porbandar</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1931" data-m="10" data-d="15" data-h="1" data-mn="0"
+                   data-lat="9.28" data-lon="79.31" data-tz="5.5">
+                <div class="name">A. P. J. ABDUL KALAM</div>
+                <div class="meta">15 Oct 1931 · 1:00 IST · Rameswaram</div>
+              </div>
+            </div>
+            <div style="margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--ink-faded); text-align: center; font-size: 0.78rem; font-variant: small-caps; letter-spacing: 0.12em; color: var(--ink-faded);">
+              also see&nbsp;
+              <a href="/medini/knowledge/page" style="color: var(--saffron-deep); text-decoration: none;">/knowledge</a>
+              &nbsp;&middot;&nbsp;
+              <a href="/medini/forecast/page" style="color: var(--saffron-deep); text-decoration: none;">/forecast</a>
             </div>
           </div>
           <div class="folio-mark">folio I · birth details</div>
@@ -416,6 +471,31 @@
       }
     }
     window.onSubmit = onSubmit;
+
+    // ============================================================
+    // Preset chart cards (right panel of form folio): click to
+    // auto-populate the date / place / time fields. The values are
+    // stored as data-attrs on each .preset-card element so the JS
+    // wiring stays declarative.
+    // ============================================================
+    const presetFieldMap = {
+      y: 'year', m: 'month', d: 'day',
+      h: 'hour', mn: 'minute',
+      lat: 'latitude', lon: 'longitude', tz: 'tz_offset',
+    };
+    document.querySelectorAll('.preset-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        for (const [dataKey, inputId] of Object.entries(presetFieldMap)) {
+          const val = card.dataset[dataKey];
+          if (val == null) continue;
+          const input = document.getElementById(inputId);
+          if (input) input.value = val;
+        }
+        // Visual confirmation: highlight selected, clear others
+        document.querySelectorAll('.preset-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
   </script>
 </body>
 </html>

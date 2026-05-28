@@ -34,6 +34,11 @@ import lifelines
 
 from app.medini.ml.stage_d_baseline import fit_all_classes, split_train_test
 from app.medini.ml.stage_d_dataset import K_BINS, build_dataset
+from app.medini.ml.stage_d_dataset_v2 import (
+    build_dataset_v2,
+    build_v2_parquet,
+    _V2_PARQUET,
+)
 from app.medini.ml.stage_d_device import device_label, resolve_device
 from app.medini.ml.stage_d_features import QUALIFYING_EVENT_CLASSES
 from app.medini.ml.stage_d_model import (N_CLASSES, StageDModel, deephit_loss)
@@ -72,7 +77,8 @@ def _seed_everything(seed: int) -> None:
 def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
                     out_dir: Path, noise_floor_sha: str,
                     k_bins: int | None = None,
-                    device: torch.device | None = None) -> dict:
+                    device: torch.device | None = None,
+                    dataset_v2: bool = False) -> dict:
     # `device` lets the trainer push DeepHit to DirectML/CUDA while Cox
     # stays on CPU (lifelines is CPU-only). Default None → CPU.
     if device is None:
@@ -102,9 +108,10 @@ def _train_one_seed(df: pd.DataFrame, *, seed: int, test_size: float,
     # use the same bin grid as the model. Without this, --k-bins 30 would
     # crash with an OOB index in deephit_loss because the dataset would
     # still emit time_bins in [0, 49] while the PMF has only 30 cells/class.
-    train_ds = build_dataset(sub_train_df, name_norms=sub_train_persons, k_bins=k_bins)
-    val_ds = build_dataset(val_df, name_norms=val_persons, k_bins=k_bins)
-    test_ds = build_dataset(test_df, name_norms=test_persons, k_bins=k_bins)
+    _ds_builder = build_dataset_v2 if dataset_v2 else build_dataset
+    train_ds = _ds_builder(sub_train_df, name_norms=sub_train_persons, k_bins=k_bins)
+    val_ds = _ds_builder(val_df, name_norms=val_persons, k_bins=k_bins)
+    test_ds = _ds_builder(test_df, name_norms=test_persons, k_bins=k_bins)
 
     n_features = train_ds.features.shape[1]
     model = StageDModel(n_features=n_features, k_bins=k_bins).to(device)
@@ -252,6 +259,13 @@ def main(argv=None) -> int:
                         help="Use 2000-person subsample parquet (~1.2M rows). "
                              "Built by scratch_materialize_subsample.py; the "
                              "person list lives in dasha_subsample_2000_persons.parquet.")
+    p.add_argument("--dataset-v2", action="store_true",
+                   help="Use the corrected v2 dataset (event_jd - birth_jd target). "
+                        "Loads stage_d_v2_person_level.parquet (built by "
+                        "stage_d_dataset_v2.py) and routes to build_dataset_v2(). "
+                        "Mutually exclusive with --smoke and --subsample for v2 runs; "
+                        "always uses a 2000-person subsample from the WD event corpus. "
+                        "Output to --out-dir (recommend a v2-specific directory).")
     p.add_argument("--k-bins", type=int, default=None,
                    help="Override the model's k_bins (default: stage_d_dataset.K_BINS=50). "
                         "Used by Task 19.5 sensitivity sweep (F5 defense). "
@@ -269,14 +283,39 @@ def main(argv=None) -> int:
                         format="%(asctime)s %(levelname)s :: %(message)s")
     _seed_everything(args.seed)
 
-    if args.smoke:
+    dataset_v2 = getattr(args, "dataset_v2", False)
+    if dataset_v2:
+        # Build or reuse the v2 person-level parquet
+        v2_path = _V2_PARQUET
+        if not v2_path.exists():
+            logger.info("Building v2 parquet (first run)...")
+            build_v2_parquet()
+        df_full = pd.read_parquet(v2_path)
+
+        # Subsample to 2000 persons for direct comparability with v1.
+        # Use args.seed as RNG to ensure reproducibility per seed.
+        rng = np.random.default_rng(args.seed)
+        all_persons = df_full["name_norm"].unique()
+        n_sample = min(2000, len(all_persons))
+        sampled = rng.choice(all_persons, size=n_sample, replace=False)
+        df = df_full[df_full["name_norm"].isin(sampled)].reset_index(drop=True)
+        logger.info(
+            "v2 dataset: %d persons → subsampled to %d persons (%d rows)",
+            len(all_persons), n_sample, len(df),
+        )
+        corpus_tag = f"v2_wikidata_{n_sample}p_corrected_target"
+    elif args.smoke:
         df_name = "dasha_stage_d_features_smoke.parquet"
+        df = pd.read_parquet(Path("app/medini/data") / df_name)
+        corpus_tag = "smoke_100p"
     elif args.subsample:
         df_name = "dasha_stage_d_features_subsample.parquet"
+        df = pd.read_parquet(Path("app/medini/data") / df_name)
+        corpus_tag = "subsample_2000p"
     else:
         df_name = "dasha_stage_d_features.parquet"
-    df_path = Path("app/medini/data") / df_name
-    df = pd.read_parquet(df_path)
+        df = pd.read_parquet(Path("app/medini/data") / df_name)
+        corpus_tag = "full_10239p"
 
     # Read noise floor SHA if it exists; empty string otherwise.
     nf_path = args.out_dir / "noise_floor.json"
@@ -290,16 +329,11 @@ def main(argv=None) -> int:
     start = time.time()
     record = _train_one_seed(df, seed=args.seed, test_size=args.test_size,
                              out_dir=args.out_dir, noise_floor_sha=sha,
-                             k_bins=args.k_bins, device=device)
+                             k_bins=args.k_bins, device=device,
+                             dataset_v2=dataset_v2)
     record["split"] = args.split
     record["k_bins"] = args.k_bins or K_BINS
-    # Tag corpus so DECISION.md can footnote "n=2000 subsample" verdicts.
-    if args.smoke:
-        record["corpus"] = "smoke_100p"
-    elif args.subsample:
-        record["corpus"] = "subsample_2000p"
-    else:
-        record["corpus"] = "full_10239p"
+    record["corpus"] = corpus_tag
     record["duration_seconds"] = round(time.time() - start, 1)
 
     # Append to the appropriate JSONL.

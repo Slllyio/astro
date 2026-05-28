@@ -37,7 +37,10 @@ _NON_FEATURE_EXACT: frozenset[str] = frozenset({
     "window_start_jd", "window_end_jd",
     "window_duration_days", "window_duration_years",  # `T` is fed separately
     "n_events_in_window",
-    "md_lord", "ad_lord", "pd_lord",  # replaced by ordinal versions
+    "md_lord", "ad_lord", "pd_lord",          # v1: replaced by ordinal versions
+    "md_lord_at_event", "ad_lord_at_event",   # v2: replaced by one-hot columns
+    "event_class",                             # v2: label, not feature
+    "person_id",                               # v2: identity column
 })
 
 
@@ -75,11 +78,18 @@ def _feature_columns(df: pd.DataFrame) -> list[str]:
 
 
 def _ordinal_encode_lords(df: pd.DataFrame) -> pd.DataFrame:
-    """Replace md/ad/pd_lord with ordinal-encoded versions for lifelines."""
+    """Replace md/ad/pd_lord with ordinal-encoded versions for lifelines.
+
+    Silently skips any column in _CATEGORICAL_COLS that is absent from
+    ``df`` (e.g., the v2 dataset uses ``md_lord_at_event`` / ``ad_lord_at_event``
+    which are already one-hot encoded; the original string columns are absent).
+    """
     from app.medini.ml.stage_d_features import _DASHA_LORDS
     lord_to_int = {l: i for i, l in enumerate(_DASHA_LORDS)}
     out = df.copy()
     for col in _CATEGORICAL_COLS:
+        if col not in out.columns:
+            continue
         out[f"{col}_ord"] = out[col].map(lord_to_int).astype("int8")
     return out
 
@@ -125,6 +135,9 @@ def fit_cause_specific_cox(
     logger.debug("Cox features after var-filter: %d", len(features))
 
     cph_input_train = train[features + ["window_duration_days", event_col]].copy()
+    # fillna(0.0) handles censored persons whose dasha timing features are NaN
+    # (v2 dataset: censored persons have no active dasha at event time).
+    cph_input_train[features] = cph_input_train[features].fillna(0.0)
     cph_input_train.rename(
         columns={"window_duration_days": "T", event_col: "E"}, inplace=True,
     )
@@ -145,7 +158,9 @@ def fit_cause_specific_cox(
 
     # Risk score = predicted partial hazard. Pass `-risk` so high risk =>
     # earlier event (lifelines concordance_index convention).
-    risk = cph.predict_partial_hazard(test[features])
+    # fillna(0.0) mirrors the training-set treatment for censored persons
+    # whose dasha timing features are NaN (v2 dataset).
+    risk = cph.predict_partial_hazard(test[features].fillna(0.0))
     try:
         c = concordance_index(test["window_duration_days"], -risk, test[event_col])
     except ZeroDivisionError:

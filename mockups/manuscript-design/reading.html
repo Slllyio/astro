@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जातक — Reading of the Birth Chart</title>
+
+  <!--
+    DESIGN MOCKUP — Sanskrit Manuscript (Pothi) aesthetic.
+    Standalone HTML for design review. Not yet wired into Jinja.
+    Renders correctly with internet access (Google Fonts).
+
+    Font choices, justified:
+    - Tiro Devanagari Sanskrit: Murty foundry-designed for traditional
+      Sanskrit text setting. Looks like a manuscript scribe's hand,
+      not a screen font. The ONLY web font designed specifically for
+      classical Sanskrit (not generic Hindi UI).
+    - EB Garamond: Renaissance-era serif. Pairs naturally with Devanagari
+      because both descend from manuscript traditions.
+    - The italic of EB Garamond (with its long descenders) carries IAST
+      transliteration the way a scholar would print it in a critical edition.
+
+    Color palette derived from actual aged palm-leaf samples (NOT generic
+    "warm beige"). Pure #000 is forbidden — it breaks the parchment illusion.
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- Design tokens ---------- */
+    :root {
+      /* Parchment palette — measured from aged palm-leaf scans */
+      --bg-parchment: #f3e4bd;
+      --bg-card: #ecd8a3;
+      --bg-card-deep: #e0c789;
+
+      /* Ink — never pure #000, breaks the parchment illusion */
+      --ink-primary: #2b1810;
+      --ink-secondary: #5c4a37;
+      --ink-faded: #8b6f47;
+
+      /* Saffron family — temple offerings, Kashayam-dyed cloth */
+      --saffron: #c77a2e;
+      --saffron-light: #d99b5c;
+      --saffron-deep: #9d5c1a;
+
+      /* Madder red — verse highlights, manuscript chapter markers */
+      --madder: #a0291e;
+      --madder-deep: #7a1f18;
+
+      /* Gold leaf — ornament accents only, never for body text */
+      --gold: #b8860b;
+      --gold-light: #d4a83a;
+
+      /* Borders — aged-ink brown */
+      --border-thin: #8b6f47;
+      --border-thick: #5c4a37;
+
+      /* Spacing — generous, manuscript proportions */
+      --margin-folio: 4.5rem;     /* left/right page margins, manuscript-wide */
+      --leading-prose: 1.75;       /* line-height for body */
+      --leading-verse: 2.1;        /* line-height for Sanskrit verse */
+    }
+
+    /* ---------- Reset + base ---------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      background:
+        /* Subtle parchment grain — radial noise pattern */
+        radial-gradient(circle at 20% 30%, rgba(139,111,71,0.04) 1px, transparent 2px),
+        radial-gradient(circle at 70% 80%, rgba(139,111,71,0.03) 1px, transparent 2px),
+        radial-gradient(circle at 40% 60%, rgba(139,111,71,0.05) 1px, transparent 2px),
+        var(--bg-parchment);
+      background-size: 80px 80px, 120px 120px, 200px 200px, auto;
+      color: var(--ink-primary);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: var(--leading-prose);
+    }
+
+    body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem var(--margin-folio) 5rem;
+      position: relative;
+    }
+
+    /* ---------- Devanagari ---------- */
+    .deva, [lang="sa"] {
+      font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    /* ---------- IAST transliteration ---------- */
+    .iast {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      color: var(--ink-secondary);
+      font-size: 0.95em;
+    }
+
+    /* ---------- Mangalacharana (auspicious opening) ---------- */
+    .mangalacharana {
+      text-align: center;
+      padding: 1.5rem 0 0.5rem;
+      color: var(--madder);
+      font-size: 1.4rem;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+    }
+    .mangalacharana::before, .mangalacharana::after {
+      content: "॥";
+      color: var(--gold);
+      margin: 0 0.4em;
+    }
+
+    /* ---------- Decorative dividers ---------- */
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2.5rem 0;
+      color: var(--saffron);
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right,
+        transparent, var(--border-thin) 20%, var(--border-thin) 80%, transparent);
+    }
+    .divider .ornament {
+      font-size: 1.3rem;
+      color: var(--saffron);
+    }
+
+    /* ---------- Title block ---------- */
+    .title-block {
+      text-align: center;
+      margin: 1.5rem 0 1rem;
+    }
+    .title-block .deva-title {
+      font-size: 2.4rem;
+      color: var(--ink-primary);
+      letter-spacing: 0.01em;
+      line-height: 1.3;
+    }
+    .title-block .english-title {
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--ink-secondary);
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+      margin-top: 0.3rem;
+    }
+
+    /* ---------- Birth-data card (ornate parchment) ---------- */
+    .native-card {
+      margin: 2rem auto;
+      max-width: 580px;
+      padding: 1.5rem 2.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-thin);
+      position: relative;
+      text-align: center;
+    }
+    /* Corner ornaments — pseudo-elements for manuscript-style fleurons */
+    .native-card::before, .native-card::after {
+      content: "❦";
+      position: absolute;
+      top: -0.65rem;
+      color: var(--saffron);
+      background: var(--bg-parchment);
+      padding: 0 0.4rem;
+      font-size: 1.1rem;
+    }
+    .native-card::before { left: 1.5rem; }
+    .native-card::after { right: 1.5rem; }
+    .native-card .label {
+      font-size: 0.85rem;
+      font-variant: small-caps;
+      letter-spacing: 0.15em;
+      color: var(--ink-faded);
+    }
+    .native-card .native-name {
+      font-size: 1.5rem;
+      margin: 0.4rem 0 0.6rem;
+      color: var(--ink-primary);
+    }
+    .native-card .birth-line {
+      font-size: 1rem;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+    .native-card .birth-line .deva {
+      color: var(--ink-primary);
+    }
+
+    /* ---------- Section heading ---------- */
+    .section {
+      margin: 2.5rem 0 2rem;
+    }
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px dashed var(--border-thin);
+    }
+    .section-heading .ordinal {
+      color: var(--madder);
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: 0.12em;
+      flex-shrink: 0;
+    }
+    .section-heading .ordinal-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      color: var(--madder);
+      font-size: 1.1rem;
+    }
+    .section-heading h2 {
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--ink-primary);
+      flex: 1;
+    }
+
+    /* ---------- Body prose with drop cap ---------- */
+    .prose {
+      font-size: 1.05rem;
+      line-height: var(--leading-prose);
+      color: var(--ink-primary);
+      text-align: justify;
+      hyphens: auto;
+    }
+    .prose p {
+      margin-bottom: 1.2rem;
+    }
+    .prose .dropcap {
+      float: left;
+      font-family: 'EB Garamond', serif;
+      font-size: 3.6rem;
+      line-height: 0.85;
+      padding: 0.4rem 0.5rem 0 0;
+      color: var(--madder);
+      font-weight: 600;
+    }
+    .prose .footnote-ref {
+      vertical-align: super;
+      font-size: 0.7em;
+      color: var(--madder);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 0 0.15em;
+    }
+    .prose .footnote-ref:hover {
+      background: var(--saffron-light);
+      border-radius: 2px;
+    }
+
+    /* ---------- Sloka card (verse quotation) ---------- */
+    .sloka {
+      margin: 1.8rem auto;
+      max-width: 580px;
+      padding: 1.5rem 2rem;
+      background: var(--bg-card-deep);
+      border-left: 4px solid var(--madder);
+      border-right: 1px solid var(--border-thin);
+      position: relative;
+    }
+    .sloka .verse-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.4rem;
+      line-height: var(--leading-verse);
+      color: var(--ink-primary);
+      text-align: center;
+      margin-bottom: 0.8rem;
+    }
+    .sloka .verse-iast {
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-secondary);
+      text-align: center;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.02em;
+    }
+    .sloka .verse-translation {
+      font-size: 1.02rem;
+      color: var(--ink-primary);
+      text-align: center;
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+    }
+    .sloka .verse-citation {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px dotted var(--border-thin);
+      font-size: 0.85rem;
+      color: var(--ink-faded);
+      text-align: right;
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+    }
+
+    /* ---------- Dasha tree (Mahadasha → Antardasha) ---------- */
+    .dasha-tree {
+      margin: 1.5rem auto;
+      max-width: 520px;
+      padding: 1.2rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-thin);
+      font-family: 'EB Garamond', serif;
+    }
+    .dasha-node {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      align-items: baseline;
+    }
+    .dasha-node.ad {
+      padding-left: 2.2rem;
+      border-left: 1px solid var(--border-thin);
+      margin-left: 1rem;
+      position: relative;
+    }
+    .dasha-node.ad::before {
+      content: "└";
+      position: absolute;
+      left: -0.4rem;
+      top: 0.5rem;
+      color: var(--ink-faded);
+    }
+    .dasha-node .lord {
+      font-weight: 600;
+      color: var(--madder);
+    }
+    .dasha-node .lord-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      color: var(--ink-secondary);
+      font-weight: normal;
+    }
+    .dasha-node .label {
+      color: var(--ink-secondary);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+    .dasha-node .remaining {
+      color: var(--ink-faded);
+      font-variant: small-caps;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---------- Footnotes block ---------- */
+    .footnotes {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-thin);
+      font-size: 0.92rem;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+    .footnotes h3 {
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+      color: var(--saffron-deep);
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+    .footnotes ol {
+      padding-left: 1.5rem;
+    }
+    .footnotes li {
+      margin-bottom: 0.6rem;
+    }
+    .footnotes li::marker {
+      color: var(--madder);
+      font-weight: 600;
+    }
+    .footnotes .source {
+      font-style: italic;
+      color: var(--ink-primary);
+    }
+    .footnotes .ref {
+      color: var(--saffron-deep);
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---------- Folio number ---------- */
+    .folio {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      font-variant: small-caps;
+      letter-spacing: 0.3em;
+      color: var(--ink-faded);
+    }
+    .folio::before { content: "— "; }
+    .folio::after { content: " —"; }
+
+    /* ---------- Margin annotation (manuscript-style side note) ---------- */
+    .marginalia {
+      position: absolute;
+      right: -2.5rem;
+      width: 4rem;
+      padding: 0.4rem 0.6rem;
+      background: var(--bg-card-deep);
+      border-left: 2px solid var(--saffron);
+      font-size: 0.75rem;
+      line-height: 1.3;
+      color: var(--ink-secondary);
+      font-style: italic;
+    }
+    @media (max-width: 900px) {
+      .marginalia { position: static; width: auto; margin: 0.5rem 0; }
+    }
+
+    /* ---------- Action row at bottom ---------- */
+    .actions {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .action {
+      background: transparent;
+      border: 1px solid var(--saffron-deep);
+      color: var(--saffron-deep);
+      padding: 0.7rem 1.5rem;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .action:hover {
+      background: var(--saffron);
+      color: var(--bg-parchment);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mangalacharana (auspicious opening invocation) -->
+  <div class="mangalacharana deva" lang="sa">
+    श्रीगणेशाय नमः
+  </div>
+
+  <!-- Title block — Devanagari first, then English -->
+  <div class="title-block">
+    <div class="deva-title deva" lang="sa">जातक — कुण्डली विवेचना</div>
+    <div class="english-title">A Reading of the Birth Chart</div>
+  </div>
+
+  <div class="divider">
+    <span class="ornament">☉</span>
+    <span class="ornament">✦</span>
+    <span class="ornament">☽</span>
+  </div>
+
+  <!-- Native (birth-data) card -->
+  <div class="native-card">
+    <div class="label">native — जातकः</div>
+    <div class="native-name">Bangalore Baseline</div>
+    <div class="birth-line">
+      Born on the <em>15th of July, 1990</em><br>
+      at the <em>noontide hour</em> (12:00 IST) in the city of
+      <span class="deva" lang="sa">बंगलूरु</span> (Bangalore)<br>
+      <span style="color: var(--ink-faded); font-size: 0.9rem;">
+        Lat 12.97°N · Lon 77.59°E
+      </span>
+    </div>
+  </div>
+
+  <!-- Section 1 — Lagna and Lagnesha -->
+  <section class="section">
+    <div class="section-heading">
+      <span class="ordinal-deva deva" lang="sa">प्रथमः</span>
+      <span class="ordinal">Sec. I</span>
+      <h2>Of the Ascendant and its Lord</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        <span class="dropcap">V</span>irgo rises at the eastern horizon, its tenant
+        the cool-rayed Moon-house occupying the longitude of 173.99 degrees of
+        ecliptic. The lord of the lagna is <strong>Budha</strong> &mdash; Mercury,
+        the swift-footed messenger and natural significator of intellect,
+        commerce, and the spoken word.<a class="footnote-ref" href="#fn-1">1</a>
+      </p>
+
+      <p>
+        Mercury hath placed himself in the <em>eleventh</em> bhava, the sthana of
+        gains and aspirations, in the watery sign of <strong>Karka</strong>
+        (Cancer). The Crab is the natural seat of the Moon &mdash; a cardinal
+        kendra of the zodiac and the abode of nourishment. For the lord of the
+        lagna to dwell in the eleventh from his own house is a most fortunate
+        disposition, conferring upon the native gain through intellectual labour,
+        the written word, and trade in matters of communication.<a class="footnote-ref" href="#fn-2">2</a>
+      </p>
+    </div>
+
+    <!-- Sloka card — Devanagari + IAST + English + citation -->
+    <div class="sloka">
+      <div class="verse-deva deva" lang="sa">
+        लग्नेशो लाभ-स्थाने यदि<br>
+        वित्त-वाक्-लाभं ददाति सः ॥
+      </div>
+      <div class="verse-iast">
+        lagneśo lābha-sthāne yadi<br>
+        vitta-vāk-lābhaṁ dadāti saḥ
+      </div>
+      <div class="verse-translation">
+        When the Lord of the Ascendant occupies the Eleventh,<br>
+        He confers gain through wealth and through speech.
+      </div>
+      <div class="verse-citation">
+        Phaladeepika, Chapter XI, Verse 18
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">
+    <span class="ornament">✦</span>
+  </div>
+
+  <!-- Section 2 — Active period -->
+  <section class="section">
+    <div class="section-heading">
+      <span class="ordinal-deva deva" lang="sa">द्वितीयः</span>
+      <span class="ordinal">Sec. II</span>
+      <h2>Of the Currently Active Period</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        The native presently dwelleth in the <strong>Mahadasha of Budha</strong>
+        — the great period of Mercury — which extends to the full measure of
+        seventeen years according to the Vimshottari reckoning. Of this, some
+        fifteen years and seven months yet remain.<a class="footnote-ref" href="#fn-3">3</a>
+      </p>
+    </div>
+
+    <!-- Dasha tree -->
+    <div class="dasha-tree">
+      <div class="dasha-node md">
+        <span class="lord">Budha</span>
+        <span class="label">Mahadasha &middot; <span class="lord-deva deva" lang="sa">महादशा</span></span>
+        <span class="remaining">15 yr 7 mo remain</span>
+      </div>
+      <div class="dasha-node ad">
+        <span class="lord">Shani</span>
+        <span class="label">Antardasha &middot; <span class="lord-deva deva" lang="sa">अन्तर्दशा</span></span>
+        <span class="remaining">2 yr 1 mo remain</span>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>
+        Within this period unfoldeth the <em>antardasha of Shani</em> — Saturn,
+        the slow-moving lord of discipline and karmic recompense. Saturn, posited
+        in his own sign of Makara (Capricorn) in the chart, bringeth to bear his
+        full strength upon the matters of the eleventh house through the
+        operative period.<a class="footnote-ref" href="#fn-4">4</a>
+      </p>
+    </div>
+  </section>
+
+  <div class="divider">
+    <span class="ornament">☉</span>
+    <span class="ornament">✦</span>
+    <span class="ornament">☽</span>
+  </div>
+
+  <!-- Footnotes / sources -->
+  <div class="footnotes">
+    <h3>Sources &amp; Verses</h3>
+    <ol>
+      <li id="fn-1">
+        <span class="source">Brihat Parashara Hora Shastra,</span>
+        <span class="ref">Ch. LVII, Verses 4–9</span>
+        — On the disposition of the lagnesha across the twelve houses.
+        (R. Santhanam ed., Vol. II, p. 421.)
+      </li>
+      <li id="fn-2">
+        <span class="source">Phaladeepika,</span>
+        <span class="ref">Ch. XI, Verse 18</span>
+        — On the lord of the ascendant in the eleventh bhava.
+        (V. S. Sastri trans., wisdomlib edition.)
+      </li>
+      <li id="fn-3">
+        <span class="source">Brihat Parashara Hora Shastra,</span>
+        <span class="ref">Ch. XLVI, Verses 1–18</span>
+        — On the calculation of Vimshottari Mahadasha and the
+        proportional sub-periods.
+      </li>
+      <li id="fn-4">
+        <span class="source">Saravali,</span>
+        <span class="ref">Ch. XXIX, Verses 21–24</span>
+        — On the effects of Saturn in his own sign during the
+        operative antardasha.
+        (Kalyana Varma; R. Santhanam ed.)
+      </li>
+    </ol>
+  </div>
+
+  <!-- Actions at bottom -->
+  <div class="actions">
+    <button class="action">Open Full Chart Wheel</button>
+    <button class="action">Search the Library</button>
+    <button class="action">Cast Another Chart</button>
+  </div>
+
+  <!-- Folio number — classical manuscript convention -->
+  <div class="folio">folio I</div>
+
+</body>
+</html>

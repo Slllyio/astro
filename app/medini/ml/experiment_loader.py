@@ -51,6 +51,7 @@ ALLOWED_VIEWS: Final[frozenset[str]] = frozenset({
     "chart_edges", "static_graph_edges", "dasha_tree", "dasha_pd_windows",
     "person_id_map", "event_class_taxonomy", "event_transits",
     "divisional_charts", "jaimini_karakas",
+    "person_dossier", "event_dossier",
     # Gold
     "v_persons_canonical", "v_chart_with_person", "v_event_survival",
     "v_chart_edge_summary", "v_natal_md_ads", "v_event_with_tree",

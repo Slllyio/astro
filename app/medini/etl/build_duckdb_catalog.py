@@ -66,6 +66,10 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     ("divisional_charts", "divisional_charts.parquet"),
     # Jaimini 8-karaka assignments (AK, AmK, ..., DK, PK2) per person.
     ("jaimini_karakas", "jaimini_karakas.parquet"),
+    # Wide-format per-person dossier — identity + natal + karaka in one row.
+    ("person_dossier", "person_dossier.parquet"),
+    # Wide-format per-event dossier — event + dasha + 9 transits in one row.
+    ("event_dossier", "event_dossier.parquet"),
 )
 
 
@@ -75,6 +79,7 @@ _OPTIONAL_SILVER: Final[set[str]] = {
     "events_with_dasha", "chart_edges", "static_graph_edges", "dasha_tree",
     "person_id_map", "event_class_taxonomy", "dasha_pd_windows",
     "event_transits", "divisional_charts", "jaimini_karakas",
+    "person_dossier", "event_dossier",
 }
 
 

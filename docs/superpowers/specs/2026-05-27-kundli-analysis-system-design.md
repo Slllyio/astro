@@ -526,7 +526,7 @@ The lockfile is a markdown document with one section per decision, structured as
 |---|---|---|
 | D-1 | Karaka mode | **8-karaka (PVR Narasimha Rao)** — matches jagannathahora.io pinning source |
 | D-2 | Arudha exception rule | **1/7 → 10 shift** applied to all A1–A12, UL, UL₂ |
-| D-3 | Vimsopaka scheme | **Shodashavarga 16-varga**, BPHS Ch.9 vv.7-10 weights: `{D1:3.5, D2:1, D3:1, D7:0.5, D9:3, D10:0.5, D12:0.5, D16:2, D20:0.5, D24:0.5, D27:0.5, D30:1, D40:0.5, D45:0.5, D60:5}` |
+| D-3 | Vimsopaka scheme | **Shodashavarga 16-varga**, **BPHS Ch.7 vv.21–25** (Santhanam + Sharma editions agree). Verified across 4+ external sources (jyotishvidya, vedicmystics, astroradiance). Weights: `{D1:3.5, D2:1.0, D3:1.0, D4:0.5, D7:0.5, D9:3.0, D10:0.5, D12:0.5, D16:2.0, D20:0.5, D24:0.5, D27:0.5, D30:1.0, D40:0.5, D45:0.5, D60:4.0}` — sum = 20.0 exactly. Note: prior spec draft incorrectly cited Ch.9 vv.7-10 and omitted D4; corrected by deep-research subagent 2026-05-27. |
 | D-4 | Ishta Phal formula | **BPHS Ch.47 v.3**: `Ishta = sqrt(Cheshta_bala × Uchcha_bala)`; `Kashta = 60 - Ishta`. Phaladeepika variant surfaced via `dispute_surfacing.py`. |
 | D-5 | Residential strength falloff | **Linear, zero at sandhi**. `strength = 60 × (1 - distance_from_madhya / 30)`. The 8°-strong / 3°-very-strong is a classification band on top, not the formula. |
 | D-6 | Gulika vs Mandi | **Two distinct upagrahas**. Gulika = portion of Saturn's day-segment; Mandi = midpoint of that segment. BPHS Vol.I Ch.5 + Phaladeepika Ch.25. |

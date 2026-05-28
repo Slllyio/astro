@@ -7,25 +7,40 @@ A planet's residential strength within a bhava follows a **linear falloff
 from Bhaav-Madhya (cusp midpoint) to the bhava sandhi (junction)**, zero
 at sandhi:
 
-    strength = 60 × (1 − distance_from_madhya / 30)
+    strength = 60 × (1 − distance_from_madhya / 15)
+
+The divisor is **15°**, not 30°. Under whole-sign Vedic doctrine the
+half-bhava distance from Bhaav-Madhya to sandhi is 15° (the sign spans
+30°; the madhya sits midway; sandhi is at the 0°/30° sign boundary, i.e.
+15° away). The circular distance ``min(diff, 30 - diff)`` naturally maxes
+at 15°, so the formula reaches **exactly zero at sandhi** as the lockfile
+requires.
+
+.. note::
+
+   Pre-checkpoint-#1 the divisor was 30 (BUG: strength never reached zero
+   because the maximum natural distance is 15, so strength bottomed at
+   30, never 0). The D-5 lockfile was amended 2026-05-27 to correct this
+   to honour the "zero at sandhi" invariant under BPHS whole-sign
+   half-bhava semantics. See ``docs/doctrine-decisions.md`` D-5 entry.
 
 For this Tier-0 primitive the comparison is the planet's
 *degree-within-sign* vs. the **Lagna's degree-within-its-sign**: a
 planet at the same degree as the Lagna sits at the Bhaav-Madhya of its
-own bhava and scores 60; a planet on the opposite side of its sign sits
-at sandhi and the strength falls off linearly.
+own bhava and scores 60; a planet 15° away (the sandhi) scores 0.
 
-The 8°-strong / 3°-very-strong **classification bands** are a
-*post-processing overlay* applied on top of the continuous formula, not
-the formula itself. The continuous score lives in ``evidence`` as
-``strength=`` and the categorical band lives as ``band=``.
+The classification bands are **degree-distance based** (more classical
+than strength-value cutoffs, which were a derived quantity):
 
-| band         | range (strength) |
-|--------------|------------------|
-| very_strong  | ≥ 51             |
-| strong       | ≥ 40             |
-| moderate     | ≥ 20             |
-| weak         | < 20             |
+| band         | degree-distance from madhya | rationale                       |
+|--------------|-----------------------------|---------------------------------|
+| very_strong  | ≤ 3°                        | Phaladeepika 3° intense band    |
+| strong       | ≤ 8°                        | BPHS 8° effective zone          |
+| moderate     | ≤ 12°                       | remainder until sandhi          |
+| weak         | > 12°                       | approaching / at sandhi         |
+
+The continuous strength score lives in ``evidence`` as ``strength=`` and
+the categorical degree-based band lives as ``band=``.
 
 Public API
 ==========
@@ -61,18 +76,24 @@ from app.reading.schema import ConfidenceScore, Finding
 logger = logging.getLogger(__name__)
 
 
-# Half-sign span — the maximum circular distance between two
-# degrees-within-sign. The formula clips ``distance`` to ``30.0`` so
-# pathological inputs never produce a negative strength.
-_MAX_DISTANCE: Final[float] = 30.0
+# Sign span — the circular-distance modulus. Two degrees-within-sign
+# differ by at most 30° on the cycle; the circular minimum yields the
+# half-sign max of 15°.
+_SIGN_SPAN: Final[float] = 30.0
+
+# Sandhi distance — the distance from Bhaav-Madhya to bhava sandhi under
+# whole-sign Vedic doctrine. The half-bhava span is 15° each direction
+# from madhya. Strength reaches zero at this distance.
+_SANDHI_DISTANCE: Final[float] = 15.0
 
 # Strength scale — BPHS / Phaladeepika 60-Rupa convention.
 _MAX_STRENGTH: Final[float] = 60.0
 
-# Band thresholds (see module docstring).
-_VERY_STRONG_MIN: Final[float] = 51.0
-_STRONG_MIN: Final[float] = 40.0
-_MODERATE_MIN: Final[float] = 20.0
+# Band thresholds — degree-distance based (see module docstring).
+_VERY_STRONG_MAX_DIST: Final[float] = 3.0   # Phaladeepika 3° intense
+_STRONG_MAX_DIST: Final[float] = 8.0        # BPHS 8° effective zone
+_MODERATE_MAX_DIST: Final[float] = 12.0     # remainder until sandhi
+# > 12° -> "weak"
 
 
 # 3-vote envelope — residential strength is a single deterministic
@@ -93,18 +114,30 @@ def _circular_distance(planet_deg: float, lagna_deg: float) -> float:
     Returns ``min(|p - l|, 30 - |p - l|)`` so that the 359°/2° style
     cusp wraparound (here 29.5° -> 0.5° within-sign) doesn't fall over.
     Matches the project-wide circular-orb convention from CLAUDE.md.
+
+    The natural maximum of this function is 15° (the half-sign span),
+    which is exactly the sandhi distance under whole-sign doctrine.
     """
-    diff = abs(planet_deg - lagna_deg) % _MAX_DISTANCE
-    return min(diff, _MAX_DISTANCE - diff)
+    diff = abs(planet_deg - lagna_deg) % _SIGN_SPAN
+    return min(diff, _SIGN_SPAN - diff)
 
 
-def _band_for(strength: float) -> ResidentialBand:
-    """Bucket a continuous strength into the four classical bands."""
-    if strength >= _VERY_STRONG_MIN:
+def _band_for(distance: float) -> ResidentialBand:
+    """Bucket a degree-distance (from madhya) into the four classical bands.
+
+    The cutoffs are degree-based per D-5 (more classical than the
+    earlier strength-value cutoffs, which were a derived quantity):
+
+    - ≤ 3°  -> very_strong (Phaladeepika intense zone)
+    - ≤ 8°  -> strong (BPHS effective zone)
+    - ≤ 12° -> moderate (remainder until sandhi)
+    - > 12° -> weak (approaching / at sandhi)
+    """
+    if distance <= _VERY_STRONG_MAX_DIST:
         return "very_strong"
-    if strength >= _STRONG_MIN:
+    if distance <= _STRONG_MAX_DIST:
         return "strong"
-    if strength >= _MODERATE_MIN:
+    if distance <= _MODERATE_MAX_DIST:
         return "moderate"
     return "weak"
 
@@ -180,11 +213,12 @@ def compute_residential_strength(
         deg = float(deg)
 
         distance = _circular_distance(deg, lagna_degree)
-        # Linear falloff: 1 - distance/30, clamped at 0 (defensive — natural
-        # max for the circular distance is 15).
-        ratio = max(0.0, 1.0 - distance / _MAX_DISTANCE)
+        # Linear falloff: 1 - distance/15, clamped at 0. The circular
+        # distance naturally maxes at 15° (the sandhi distance under
+        # whole-sign doctrine), so strength = 0 at sandhi exactly.
+        ratio = max(0.0, 1.0 - distance / _SANDHI_DISTANCE)
         strength = _MAX_STRENGTH * ratio
-        band = _band_for(strength)
+        band = _band_for(distance)
         findings[planet] = _strength_finding(
             planet, deg, lagna_degree, distance, strength, band
         )

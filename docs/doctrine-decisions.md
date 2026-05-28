@@ -127,20 +127,35 @@ Both Cheshta_bala and Uchcha_bala are taken in their Shadbala "Rupa" form (i.e. 
 ## D-5: Residential strength falloff
 
 **Status:** Locked 2026-05-27
+**Amended 2026-05-27 post-checkpoint-#1:** divisor corrected from 30 to 15 to honour "zero at sandhi" invariant per BPHS whole-sign half-bhava semantics. Classification bands switched from strength-value cutoffs to degree-distance cutoffs (more classical).
 **Used by:** `computations/residential_strength.py`, `sequences/vimshottari_md.py` (Step 3 — residential strength of MD lord), all `domains/*.py` modules that consult bhava-madhya degree-distance.
 **Source citation:** BPHS Vol.II Ch.51 (Sripati Bhava Chalit), Phaladeepika Ch.7 (degree-classification bands).
 **Decision:** Residential strength of a planet within a bhava follows a **linear falloff from Bhaav-Madhya (cusp midpoint) to the bhava sandhi (junction)**, zero at sandhi:
 
 ```
-strength = 60 × (1 − distance_from_madhya / 30)
+strength = 60 × (1 − distance_from_madhya / 15)
 ```
 
-where `distance_from_madhya` is the absolute degree-distance from the bhava's madhya, capped at 30° (the half-bhava span). The classical **8° = strong / 3° = very strong** classification bands are a categorical overlay applied on top of this continuous formula, not the formula itself. A planet at exactly Bhaav-Madhya scores 60; at sandhi scores 0; at 8° from madhya scores ~44.
+where `distance_from_madhya` is the absolute degree-distance from the bhava's madhya, capped at 15° (the half-bhava distance from madhya to sandhi in whole-sign doctrine). The circular distance `min(diff, 30 − diff)` naturally maxes at 15°, so strength reaches **exactly zero at sandhi** as the lockfile requires. The classical **8° = strong / 3° = very strong** classification bands are a **categorical degree-based overlay** applied alongside the continuous formula, not the formula itself.
+
+| band         | dist from madhya | rationale                       |
+|--------------|------------------|---------------------------------|
+| very_strong  | ≤ 3°             | Phaladeepika 3° intense band    |
+| strong       | ≤ 8°             | BPHS 8° effective zone          |
+| moderate     | ≤ 12°            | remainder until sandhi          |
+| weak         | > 12°            | approaching / at sandhi         |
+
+A planet at exactly Bhaav-Madhya scores 60; at sandhi (15° from madhya) scores exactly 0; at 8° from madhya scores 28.0 — and that 8° boundary now marks the "strong" band threshold (not a specific strength value).
+
+**Structural error in pre-checkpoint-#1 implementation (corrected here):**
+- The original D-5 code used divisor **30** in the formula `60 × (1 − dist / 30)`, but the circular-distance function maxes at 15°. So strength bottomed out at 30, never reaching 0 — violating the "zero at sandhi" invariant the lockfile committed to. The doctrine-reviewer Phase-1 audit (#1) caught this; the divisor above is the corrected form. Under whole-sign Vedic doctrine the sandhi sits 15° from madhya (the half-bhava distance), not 30°. The pre-checkpoint test file even contained a confused comment acknowledging that the formula couldn't reach zero in practice — that was a clue we should have caught earlier.
+
 **Alternatives considered:**
 - **Step function on the 8° / 3° bands only** — discards continuous information.
 - **Cosine falloff** (some modern Western Vedic implementations) — gives smoother but non-canonical results.
 - **Quadratic falloff** — overweights centre placement.
-**Rationale:** The linear-to-zero-at-sandhi formula is the most faithful read of BPHS's degree-distance instructions and produces interpretable, monotonic scores. The 8°/3° bands are preserved as a categorical `band` field in the Finding for human-readable output, so we lose nothing classical while gaining numerical comparability.
+- **Divisor 30 (pre-checkpoint form)** — described above; rejected because it cannot reach zero at sandhi.
+**Rationale:** The linear-to-zero-at-sandhi formula is the most faithful read of BPHS's degree-distance instructions and produces interpretable, monotonic scores. With the corrected divisor 15° the formula honours the explicit "zero at sandhi" invariant. Switching the bands from strength-cutoffs to degree-cutoffs makes the classification cite directly the classical Phaladeepika 3° / BPHS 8° degree-distance citations rather than a derived strength-value, which is more faithful to the source.
 
 ---
 

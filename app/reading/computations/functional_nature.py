@@ -29,6 +29,41 @@ The matrix is hardcoded as ``FUNCTIONAL_NATURE_TABLE`` (a
 ``compute_functional_nature(asc_sign)`` function wraps each lookup in a
 ``Finding`` envelope.
 
+Known interpretive deviations from K.N. Rao school
+---------------------------------------------------
+
+D-7 commits to the PVR / Sanjay Rath synthesis. Four cells admit
+legitimate alternative readings in K.N. Rao's school. We name them
+explicitly so downstream consumers (e.g. ``dispute_surfacing.py``,
+Tier-3) can surface the alternative without secretly mutating the
+deterministic D-7 lookup:
+
++--------------+---------+----------------------+--------------------+--------------------------------------------------------------+
+| Lagna        | Planet  | This impl (PVR/Rath) | Rao school         | Rationale                                                    |
++==============+=========+======================+====================+==============================================================+
+| Cancer (4)   | Jupiter | functional_malefic   | functional_benefic | 6L+9L; 6th dusthana dominates for natural benefic per PVR.   |
+|              |         |                      |                    | Rao reads 9L Trikona as dominant for a natural benefic and   |
+|              |         |                      |                    | calls Jupiter functionally benefic for Cancer lagna.         |
++--------------+---------+----------------------+--------------------+--------------------------------------------------------------+
+| Sagittarius  | Saturn  | functional_malefic   | functional_neutral | 2L Maraka + 3L upachaya = combined malefic per PVR. Rao      |
+| (9)          |         |                      |                    | treats the 2L+3L mix as neutral because neither pure         |
+|              |         |                      |                    | Trikona nor pure dusthana dominates.                         |
++--------------+---------+----------------------+--------------------+--------------------------------------------------------------+
+| Capricorn    | Mars    | functional_malefic   | functional_neutral | 4L kendra + 11L upachaya; debilitation + 11L upachaya        |
+| (10)         |         |                      |                    | dominate per PVR. Rao treats 4L kendra (Mars debilitated     |
+|              |         |                      |                    | in Cancer notwithstanding) as compensating the 11L           |
+|              |         |                      |                    | upachaya, yielding neutral.                                  |
++--------------+---------+----------------------+--------------------+--------------------------------------------------------------+
+| Aquarius     | Mars    | functional_malefic   | functional_neutral | 3L upachaya + 10L kendradhipati dosha per PVR. Rao treats    |
+| (11)         |         |                      |                    | the 3L+10L mix as neutral on the grounds that kendradhipati  |
+|              |         |                      |                    | dosha applies primarily to natural benefics, not Mars.       |
++--------------+---------+----------------------+--------------------+--------------------------------------------------------------+
+
+These four cells can be exposed via ``dispute_surfacing.py`` (Tier-3) for
+downstream consumers who prefer the Rao reading. The D-7 lookup itself
+always returns the PVR/Rath value; the Rao alternative is metadata, not
+a mode switch.
+
 The shadow-planet invariant
 ---------------------------
 Rahu and Ketu have **no lordship** in classical Parashari doctrine, so

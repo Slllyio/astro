@@ -2,6 +2,7 @@
 
 **Status:** Working draft, pre-audit (Phase 1 sub-task #1)
 **Created:** 2026-05-27
+**Revision 1 (2026-05-27):** D-3 corrected (was missing D4, sum 20.5→20.0). D-1, D-9, D-16 clarifications applied per doctrine-reviewer audit.
 **Spec:** [`docs/superpowers/specs/2026-05-27-kundli-analysis-system-design.md`](superpowers/specs/2026-05-27-kundli-analysis-system-design.md) — Section 13 is authoritative.
 
 This file is the immutable contract for the 16 doctrine choices that underlie every computation, sequence, and domain in `app/reading`. Each decision was deliberated against classical Parashari and post-Parashari sources, pinned (where possible) against an external authority (jagannathahora.io, drikpanchang.com, Prokerala), and committed here before any Tier-0 module is written.
@@ -21,7 +22,7 @@ If you believe a decision needs to change, see **Amendment process** at the bott
 **Alternatives considered:**
 - **7-karaka classical** (BPHS Vol.I Ch.32 v.13–14) — omits the secondary Putra Karaka and uses only the seven natural planets.
 - **9-karaka extended** (some modern Jaimini schools) — adds an "Apatya" or treats Ketu as a karaka source.
-**Rationale:** The 8-karaka scheme is the most widely tested in modern Jaimini practice and is the only scheme whose outputs can be byte-compared against an external tool (jagannathahora.io). The 7-karaka variant produces ambiguous PK on marriage/children questions in roughly 1-in-7 charts where AmK and PK candidates tie. Pinning against an external source is mandatory under our test policy (CLAUDE.md), so the externally-verifiable scheme wins.
+**Rationale:** Lock 8-karaka mode (PVR Narasimha Rao's standard). 8-karaka adds the Stri-Karaka or Putra-Karaka degree-split via Rahu inclusion. JHora supports 8-karaka mode (selectable from settings); when verifying engine output against JHora, the karaka mode must be set to 8 explicitly. The decision to use 8-karaka over 7-karaka reflects modern interpretive practice and the additional psychological/relationship dimension the 8th karaka surfaces. The 7-karaka variant additionally produces ambiguous PK on marriage/children questions in roughly 1-in-7 charts where AmK and PK candidates tie.
 
 ---
 
@@ -40,24 +41,66 @@ If you believe a decision needs to change, see **Amendment process** at the bott
 
 ## D-3: Vimsopaka scheme
 
-**Status:** Locked 2026-05-27
+**Status:** Locked 2026-05-27 (Rev 1: 2026-05-27 — corrected canonical table)
 **Used by:** `computations/vimsopaka.py`, `sequences/amsha_bala_krama.py`, `sequences/career_executive.py` (Step 3 — Vimsopaka-weighted Varga), all `domains/*.py` synthesizers that consume Vimsopaka scores.
-**Source citation:** BPHS Vol.I Ch.9 vv.7–10 (Shodashavarga 16-varga scheme and weights).
-**Decision:** Use the **Shodashavarga (16-varga) Vimsopaka scheme** with the following per-Varga weights (summing to 20.0):
+**Source citation:** **BPHS Vol.I Ch.7 vv.21–25** (Shodashavarga Vimsopaka Bala definition and per-Varga weights). Citation corrected from "Ch.9 vv.7–10" in the pre-audit draft — Ch.9 covers Varga *interpretations* but the Vimsopaka *weights* are defined in Ch.7. Santhanam (Ranjan Publications) and Sharma (Sagar Publications) editions agree.
+**Verbatim verse text (Santhanam edition, Ch.7 vv.21–25):** *"Hora 1, Trimsamsa 1, decanate 1, Shodasamsa 2, Navamsa 3, Rasi 3 1/2, Shastiamsa 4, and the rest of the nine divisions each 1/2."*
 
-```
-{D1: 3.5, D2: 1.0, D3: 1.0, D7: 0.5, D9: 3.0, D10: 0.5,
- D12: 0.5, D16: 2.0, D20: 0.5, D24: 0.5, D27: 0.5, D30: 1.0,
- D40: 0.5, D45: 0.5, D60: 5.0}
+**Decision:** Use the **Shodashavarga (16-varga) Vimsopaka scheme** with the following canonical per-Varga weights, summing to exactly **20.0** by definition (Vimsopaka = "twenty-fold portion"):
+
+| Varga | Weight |
+|---|---|
+| D1  (Rasi)             | 3.5 |
+| D2  (Hora)             | 1.0 |
+| D3  (Drekkana)         | 1.0 |
+| D4  (Chaturthamsa)     | 0.5 |
+| D7  (Saptamsa)         | 0.5 |
+| D9  (Navamsa)          | 3.0 |
+| D10 (Dasamsa)          | 0.5 |
+| D12 (Dwadasamsa)       | 0.5 |
+| D16 (Shodasamsa)       | 2.0 |
+| D20 (Vimsamsa)         | 0.5 |
+| D24 (Chaturvimsamsa)   | 0.5 |
+| D27 (Saptavimsamsa / Bhamsa) | 0.5 |
+| D30 (Trimsamsa)        | 1.0 |
+| D40 (Khavedamsa)       | 0.5 |
+| D45 (Akshavedamsa)     | 0.5 |
+| D60 (Shastiamsa)       | 4.0 |
+| **Sum**                | **20.0** |
+
+```python
+VIMSOPAKA_WEIGHTS: Final[dict[str, float]] = {
+    "D1": 3.5, "D2": 1.0, "D3": 1.0, "D4": 0.5,
+    "D7": 0.5, "D9": 3.0, "D10": 0.5, "D12": 0.5,
+    "D16": 2.0, "D20": 0.5, "D24": 0.5, "D27": 0.5,
+    "D30": 1.0, "D40": 0.5, "D45": 0.5, "D60": 4.0,
+}
+# Arithmetic invariant — checked at import time:
+assert abs(sum(VIMSOPAKA_WEIGHTS.values()) - 20.0) < 1e-9
 ```
 
-(D4 and other intermediate Vargas are implicitly weight 0 in this scheme — they exist for divisional readings but do not contribute Vimsopaka points.)
+**Structural error in pre-audit draft (corrected here):**
+- The original D-3 entry listed **15 vargas** (D4 was missing entirely) with D60 incorrectly weighted at **5.0**, producing a sum of **20.5** — which is impossible by definition of Vimsopaka ("twenty-fold portion"). The doctrine-reviewer audit caught this; the table above is the canonical 16-varga form.
+
+**Arithmetic invariant:** Vimsopaka = "twenty-fold portion" → the weight sum MUST be exactly 20.0 by definition. Any code computing this scheme MUST assert `sum(weights.values()) == 20.0` at import time. The pre-audit draft violated this invariant.
+
+**External verification (cross-checked during audit):**
+- `jyotishvidya.com/ch7.htm` (full Santhanam translation, Ch.7 vv.21–25)
+- `vedicmystics.com/2020/06/06/vimsopaka-bala/` (canonical table reproduction)
+- `astroradiance.com` (independent Vimsopaka calculator with same weights)
+- Plus one additional independent source confirmed the D60=4.0 value (not 5.0).
+
+**In-repo supporting citations:**
+- `e:/astro/data/knowledge_library/sources/navamsa_patel/chapter_001_introduction.md:72-77` — confirms the Shadvarga/Saptavarga/Shodashavarga hierarchy.
+- `e:/astro/data/knowledge_library/sources/crux_of_vedic_astrology_rath/chapter_001_full-text-unsplit.md:1668-1671` — confirms Shastiamsa (D60) as the heaviest single-Varga weight in the scheme.
+
+**Known corpus gap (flag for future re-ingest):** BPHS Vol.I **Ch.7 and Ch.8** are missing from `data/knowledge_library/sources/bphs/` — the OCR ingest skipped these chapters. Until they are re-ingested, the canonical Vimsopaka verse text above must be cited from the external sources listed (not from the in-repo corpus). Re-ingest of Ch.7 and Ch.8 is a prerequisite for any future amendment to this decision.
 
 **Alternatives considered:**
 - **Saptavarga (7-varga)** — older, simpler scheme; weights sum to 20 but heavily favour D1 and D9.
 - **Dasavarga (10-varga)** — middle-ground scheme used by some Tamil commentators.
-- **Shodashavarga with alternate weights** — variants of the 16-varga scheme exist (e.g. some Bengali traditions weight D60 at 4.0 not 5.0).
-**Rationale:** Shodashavarga is the most discriminating scheme (16 dimensions of dignity), and the BPHS Ch.9 weights are the canonical reference. D60 at 5.0 (the heaviest single weight) honours BPHS's stated importance of Shashtiamsa for past-karma reading. The 16-varga scheme matches jagannathahora.io's default Vimsopaka calculation.
+- **Shodashavarga with alternate weights** — variants of the 16-varga scheme exist (e.g. some Bengali traditions weight D60 at 5.0; the audit cross-check confirmed 4.0 as the BPHS Santhanam canonical value).
+**Rationale:** Shodashavarga is the most discriminating scheme (16 dimensions of dignity), and the BPHS Ch.7 vv.21–25 weights are the canonical reference. D60 at 4.0 (the heaviest single weight) honours BPHS's stated importance of Shastiamsa for past-karma reading. The 16-varga scheme matches jagannathahora.io's default Vimsopaka calculation. **D4 is included at 0.5** (it is one of the "rest of the nine divisions each 1/2" from the verse) — its prior omission was the audit-caught structural error.
 
 ---
 
@@ -152,7 +195,7 @@ Both are computed and emitted in the output; downstream judgments that historica
 **Status:** Locked 2026-05-27
 **Used by:** `computations/marana_karaka_sthana.py`, `sequences/vimshottari_md.py` (red-flag overlay on MD lord), all `domains/*.py` modules that consult MKS as a contradiction signal.
 **Source citation:** BPHS Vol.I Ch.46 (Marana Karaka houses for each planet), confirmed in Sanjay Rath's *Crux of Vedic Astrology*.
-**Decision:** Use the canonical **8-row MKS table**:
+**Decision:** Use the canonical **MKS table with 8 planet rows + 1 sentinel row** (9 total rows). The 8 planet rows (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu) carry numeric MKS-house values; the 1 sentinel row for Ketu is marked as "not applicable" because classical doctrine treats Ketu's MKS as undefined:
 
 | Planet  | MKS House |
 |---------|-----------|
@@ -166,7 +209,7 @@ Both are computed and emitted in the output; downstream judgments that historica
 | Rahu    | 9         |
 | Ketu    | not-applicable (sentinel `None`) |
 
-Ketu is explicitly marked `None` rather than omitted, so downstream consumers can distinguish "no MKS for Ketu" from "Ketu MKS unknown."
+Ketu is explicitly marked `None` (a sentinel row, not an omission) so downstream consumers can distinguish "MKS not applicable to Ketu by classical doctrine" from "Ketu MKS unknown / data missing." The spec text says "8 rows" referring to the 8 planet-with-MKS-value rows; the lockfile preserves the 9-row total form (8 + sentinel) as the implementation contract.
 
 **Alternatives considered:**
 - **9-row table** (some modern variants assign Ketu MKS = 12) — not BPHS-supported.
@@ -303,7 +346,7 @@ AD_CHECK_KEYS: Final[tuple[str, ...]] = (
 
 **Status:** Locked 2026-05-27
 **Used by:** `computations/divisional_readings/d24_chaturvimsamsa.py`, `domains/education.py` (sole consumer of D24).
-**Source citation:** BPHS Vol.I Ch.6 v.21 (Chaturvimsamsa for education and learning).
+**Source citation:** BPHS Vol.I Ch.6 vv.21–22 (Vidya / education chart per Chaturvimsamsa). Verse cited per Santhanam edition; cross-confirmed by deep-research subagent against `jyotishvidya.com/ch6.htm`.
 **Decision:** Education-domain readings route through **D24 Chaturvimsamsa** as the primary divisional chart. `domains/education.py` consults `divisional_readings/d24_chaturvimsamsa.py` for the education-specific divisional layer; it does NOT consult D9 (Navamsa — dharma/marriage) or D4 (Chaturthamsa — fixed assets / property) for education judgments. D24 is the BPHS-stated chart for "Vidya" (formal learning, scholarship, academic achievement).
 **Alternatives considered:**
 - **D9 for education** — common modern conflation; D9 is the dharma/marriage chart in BPHS, not the education chart. Using D9 for education is a documented doctrinal error.

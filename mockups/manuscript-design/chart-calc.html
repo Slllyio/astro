@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>कुण्डली गणकः — Chart Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="manuscript-system.css">
+
+  <style>
+    .form-row {
+      margin-bottom: 0.7rem;
+    }
+    .form-row-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .form-row-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.3rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .chart-wheel-placeholder {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 220px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          rgba(184, 137, 90, 0.15) 0 30deg,
+          rgba(184, 137, 90, 0.25) 30deg 60deg
+        ),
+        radial-gradient(circle, var(--leaf-cream) 0%, var(--leaf-cream-deep) 100%);
+      border: 2px solid var(--ink-faded);
+      box-shadow: inset 0 0 30px rgba(139, 111, 71, 0.3);
+      position: relative;
+    }
+    .chart-wheel-placeholder::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%; height: 50%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, var(--leaf-cream-light) 0%, var(--leaf-cream) 100%);
+      border: 1px solid var(--ink-faded);
+    }
+    .chart-wheel-placeholder::before {
+      content: 'D₁';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.4rem;
+      color: var(--madder);
+      z-index: 5;
+    }
+
+    .planet-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.4rem;
+      padding: 0.25rem 0;
+      font-size: 0.78rem;
+      border-bottom: 1px dotted var(--ink-faded);
+    }
+    .planet-row:last-child { border-bottom: none; }
+    .planet-row .glyph {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      color: var(--madder);
+      font-size: 0.95rem;
+      width: 1.5rem;
+    }
+    .planet-row .name {
+      color: var(--ink-primary);
+      font-family: 'EB Garamond', serif;
+    }
+    .planet-row .pos {
+      color: var(--ink-secondary);
+      font-style: italic;
+      font-size: 0.7rem;
+    }
+
+    .preset-card {
+      padding: 0.5rem 0.6rem;
+      background: rgba(232, 213, 168, 0.6);
+      border: 1px solid var(--ink-faded);
+      margin-bottom: 0.3rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-card:hover {
+      background: rgba(217, 155, 92, 0.4);
+      border-color: var(--madder);
+    }
+    .preset-card .name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--ink-primary);
+    }
+    .preset-card .meta {
+      font-size: 0.68rem;
+      color: var(--ink-secondary);
+      margin-top: 0.15rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">कुण्डली गणकः</div>
+            <div class="cover-english-title">THE CHART CALCULATOR</div>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to begin</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Form input (triptych: date / location / time) ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">DATE</div>
+            <div class="panel-heading-deva deva">तिथिः</div>
+            <div class="form-row">
+              <label class="leaf-label">DAY · MONTH · YEAR</label>
+              <div class="form-row-grid-3">
+                <input class="leaf-input" type="text" value="15" placeholder="DD">
+                <input class="leaf-input" type="text" value="07" placeholder="MM">
+                <input class="leaf-input" type="text" value="1990" placeholder="YYYY">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="leaf-label">
+                <span class="leaf-label-deva deva">कलः</span> TIME (24h)
+              </label>
+              <div class="form-row-grid">
+                <input class="leaf-input" type="text" value="12" placeholder="HH">
+                <input class="leaf-input" type="text" value="00" placeholder="MM">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="leaf-label">TZ OFFSET</label>
+              <input class="leaf-input" type="text" value="+5.5" placeholder="±H.H">
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="panel-heading">PLACE</div>
+            <div class="panel-heading-deva deva">स्थानम्</div>
+            <div class="form-row">
+              <label class="leaf-label">CITY OR SEARCH</label>
+              <input class="leaf-input" type="text" value="Bangalore" placeholder="search place...">
+            </div>
+            <div class="form-row">
+              <label class="leaf-label">LATITUDE · LONGITUDE</label>
+              <div class="form-row-grid">
+                <input class="leaf-input" type="text" value="12.97" placeholder="lat">
+                <input class="leaf-input" type="text" value="77.59" placeholder="lon">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="leaf-label">NAME (OPTIONAL)</label>
+              <input class="leaf-input" type="text" placeholder="for your records">
+            </div>
+            <div style="margin-top: 0.8rem; text-align: center;">
+              <button class="leaf-button">
+                Cast Chart · गणनम्
+              </button>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="panel-heading">PRESETS</div>
+            <div class="panel-heading-deva deva">पूर्व-नियताः</div>
+            <div class="preset-card">
+              <div class="name">BANGALORE BASELINE</div>
+              <div class="meta">15 Jul 1990 · canonical test chart</div>
+            </div>
+            <div class="preset-card">
+              <div class="name">RAJIV GANDHI</div>
+              <div class="meta">20 Aug 1944 · Bombay</div>
+            </div>
+            <div class="preset-card">
+              <div class="name">M. K. GANDHI</div>
+              <div class="meta">2 Oct 1869 · Porbandar</div>
+            </div>
+            <div class="preset-card">
+              <div class="name">A. P. J. ABDUL KALAM</div>
+              <div class="meta">15 Oct 1931 · Rameswaram</div>
+            </div>
+          </div>
+          <div class="folio-mark">folio I · cast</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Computed chart (D1 wheel + planet table + summary) ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center;">
+            <div class="panel-heading">RASHI CHART</div>
+            <div class="panel-heading-deva deva">राशि-चक्रम्</div>
+            <div class="chart-wheel-placeholder"></div>
+            <div style="text-align: center; margin-top: 0.4rem; font-size: 0.7rem; color: var(--ink-faded); font-style: italic;">
+              Lahiri sidereal · interactive
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="panel-heading">PLANETARY POSITIONS</div>
+            <div class="planet-row">
+              <span class="glyph deva">सू</span>
+              <span class="name">Sun · Surya</span>
+              <span class="pos">Cancer 22°47'</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">चं</span>
+              <span class="name">Moon · Chandra</span>
+              <span class="pos">Pisces 13°11' · Revatī ³</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">मं</span>
+              <span class="name">Mars · Mangala</span>
+              <span class="pos">Aries 07°51'</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">बु</span>
+              <span class="name">Mercury · Budha</span>
+              <span class="pos">Cancer 12°27' · 11H lord</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">गु</span>
+              <span class="name">Jupiter · Guru</span>
+              <span class="pos">Cancer 05°13' · EXALTED</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">शु</span>
+              <span class="name">Venus · Shukra</span>
+              <span class="pos">Gemini 17°56'</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">श</span>
+              <span class="name">Saturn · Shani</span>
+              <span class="pos">Capricorn 23°36' · own</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">रा</span>
+              <span class="name">Rahu</span>
+              <span class="pos">Aquarius 15°24'</span>
+            </div>
+            <div class="planet-row">
+              <span class="glyph deva">के</span>
+              <span class="name">Ketu</span>
+              <span class="pos">Leo 15°24'</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="panel-heading">SUMMARY</div>
+            <div class="cream-card">
+              <div style="font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--saffron-deep);">
+                LAGNA
+              </div>
+              <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.1rem; color: var(--madder); margin: 0.2rem 0;">
+                कन्या
+              </div>
+              <div style="font-size: 0.78rem; color: var(--ink-primary); font-style: italic;">
+                Virgo · 173.99°
+              </div>
+            </div>
+            <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(232, 213, 168, 0.5); border: 1px solid var(--ink-faded);">
+              <div style="font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--saffron-deep);">
+                CURRENT DASHA
+              </div>
+              <div style="font-size: 0.78rem; color: var(--ink-primary); margin-top: 0.2rem;">
+                <strong style="color: var(--madder);">Mercury</strong> / <strong style="color: var(--madder);">Saturn</strong>
+              </div>
+              <div style="font-size: 0.68rem; color: var(--ink-faded); font-variant: small-caps; letter-spacing: 0.1em; margin-top: 0.15rem;">
+                15y 7m remain · 2y 1m antardasha
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem;">
+              <button class="leaf-button" style="font-size: 0.7rem; padding: 0.4rem 0.9rem;">
+                Open Reading
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio II · computed chart</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Divisional charts (D9, D10) ========== -->
+      <div class="leaf" data-page="3">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center; text-align: center;">
+            <div class="panel-heading">NAVAMSA</div>
+            <div class="panel-heading-deva deva">नवांशः · D₉</div>
+            <div class="chart-wheel-placeholder" style="max-width: 160px;"></div>
+            <div style="margin-top: 0.3rem; font-size: 0.7rem; color: var(--ink-faded); font-style: italic;">
+              Marital + dharmic indications
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center; text-align: center;">
+            <div class="panel-heading">DASHAMSA</div>
+            <div class="panel-heading-deva deva">दशांशः · D₁₀</div>
+            <div class="chart-wheel-placeholder" style="max-width: 160px;"></div>
+            <div style="margin-top: 0.3rem; font-size: 0.7rem; color: var(--ink-faded); font-style: italic;">
+              Career + public role
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: center;">
+            <div class="panel-heading">CHATURVIMSAMSA</div>
+            <div class="panel-heading-deva deva">चतुर्विंशांशः · D₂₄</div>
+            <div class="chart-wheel-placeholder" style="max-width: 160px;"></div>
+            <div style="margin-top: 0.3rem; font-size: 0.7rem; color: var(--ink-faded); font-style: italic;">
+              Learning + wisdom (vidyā)
+            </div>
+          </div>
+          <div class="folio-mark">folio III · divisional charts</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 4 — Closing cover ========== -->
+      <div class="leaf" data-page="4">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text">CHART CAST</div>
+            <button class="reopen-btn" onclick="reopenManuscript()">CAST ANOTHER</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">🔊 sound</button>
+    <a class="nav-page-link" href="landing.html">🏠 home</a>
+    <a class="nav-page-link" href="reading-v4.html">📖 reading</a>
+  </div>
+
+  <script>
+    window.MANUSCRIPT_LABELS = [
+      'COVER', 'INPUT', 'CHART', 'DIVISIONALS', 'END',
+    ];
+  </script>
+  <script src="manuscript-system.js"></script>
+</body>
+</html>

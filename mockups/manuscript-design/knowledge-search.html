@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ज्ञानकोश — Doctrine Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="manuscript-system.css">
+
+  <style>
+    /* Page-specific overrides for the Search experience */
+
+    /* Highlighted result panel — slight tint to draw attention */
+    .panel.result-card {
+      background: rgba(245, 227, 184, 0.4);
+    }
+    .result-meta {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--saffron-deep);
+      margin-bottom: 0.3rem;
+    }
+    .result-source-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.1rem;
+      color: var(--ink-primary);
+      margin-bottom: 0.2rem;
+    }
+    .result-source-eng {
+      font-style: italic;
+      color: var(--ink-secondary);
+      font-size: 0.78rem;
+    }
+    .result-chapter {
+      font-variant: small-caps;
+      letter-spacing: 0.15em;
+      color: var(--madder);
+      font-size: 0.7rem;
+      margin-top: 0.2rem;
+    }
+    .result-excerpt {
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: var(--ink-primary);
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      background: rgba(184, 137, 90, 0.08);
+      border-left: 2px solid var(--saffron);
+    }
+    .result-score {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      background: var(--madder);
+      color: var(--leaf-cream-light);
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      border-radius: 8px;
+    }
+    .search-box-large {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(245, 227, 184, 0.4);
+      border: none;
+      border-bottom: 2px solid var(--madder);
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.2rem;
+      color: var(--ink-primary);
+      outline: none;
+      text-align: center;
+    }
+    .search-box-large::placeholder {
+      color: var(--ink-faded);
+      font-style: italic;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+    }
+    .topic-chip {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      margin: 0.15rem;
+      background: rgba(232, 213, 168, 0.7);
+      border: 1px solid var(--ink-faded);
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-secondary);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .topic-chip:hover {
+      background: var(--saffron-light);
+      color: var(--ink-primary);
+    }
+    .topic-chip.deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0;
+    }
+    .corpus-stat {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--saffron-deep);
+    }
+    .corpus-stat .number {
+      display: block;
+      font-family: 'EB Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--madder);
+      margin-bottom: 0.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Wooden cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">ज्ञानकोशः</div>
+            <div class="cover-english-title">DOCTRINE LIBRARY · SEARCH</div>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to enter the library</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Search input + corpus stats + topic chips ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center;">
+            <div class="corpus-stat">
+              <span class="number">918</span>
+              ARTEFACTS
+            </div>
+            <div class="corpus-stat" style="margin-top: 0.6rem;">
+              <span class="number">75+</span>
+              CLASSICAL TEXTS
+            </div>
+            <div class="corpus-stat" style="margin-top: 0.6rem;">
+              <span class="number">6.28M</span>
+              WORDS INDEXED
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center; padding: 0.8rem;">
+            <div class="panel-heading-deva deva" style="margin-bottom: 0.6rem;">अन्वेषणम्</div>
+            <input
+              class="search-box-large"
+              type="text"
+              placeholder="search the doctrine · विचारयतु"
+              value="Mercury in 11th house"
+              autofocus
+            >
+            <div class="leaf-button" style="margin-top: 0.8rem; align-self: center;">
+              Search · विचारः
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center;">
+            <div class="leaf-label">FILTER BY TOPIC</div>
+            <div style="margin-top: 0.3rem; text-align: center;">
+              <span class="topic-chip">Planets</span>
+              <span class="topic-chip">Houses</span>
+              <span class="topic-chip">Dashas</span>
+              <span class="topic-chip">Yogas</span>
+              <span class="topic-chip">Remedies</span>
+              <span class="topic-chip deva">नक्षत्र</span>
+              <span class="topic-chip deva">योग</span>
+            </div>
+            <div class="leaf-label" style="margin-top: 0.7rem;">SOURCE</div>
+            <div style="margin-top: 0.3rem; text-align: center;">
+              <span class="topic-chip">BPHS</span>
+              <span class="topic-chip">Phaladeepika</span>
+              <span class="topic-chip">Saravali</span>
+              <span class="topic-chip">+ 72 more</span>
+            </div>
+          </div>
+          <div class="folio-mark">folio I · SEARCH</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Result 1 (top hit) ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page">
+          <div class="panel left result-card">
+            <div class="result-meta">RESULT 1 OF 47</div>
+            <div class="result-source-deva deva">बृहत्पाराशर होरा शास्त्र</div>
+            <div class="result-source-eng">Brihat Parashara Hora Shastra</div>
+            <div class="result-chapter">Ch. LVII · Vv. 4–9</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="result-score">0.94 match</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                बुधे लाभ-स्थाने स्थिते<br>
+                वाणिज्य-लाभं ददाति ॥
+              </div>
+              <div class="verse-iast">
+                budhe lābha-sthāne sthite<br>
+                vāṇijya-lābhaṁ dadāti
+              </div>
+              <div class="verse-translation">
+                When Mercury is placed in the eleventh,<br>
+                gain through commerce is given.
+              </div>
+              <div class="verse-citation">BPHS LVII · 6</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="result-meta">CONTEXT</div>
+            <div class="result-excerpt">
+              The passage forms part of the systematic exposition of planetary
+              placement effects across the twelve bhavas. Mercury in the 11th
+              (lābha-sthāna) is uniformly auspicious, with intensity modulated
+              by the sign tenanted and the lagnesha's strength.
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button class="leaf-button secondary" style="font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                Open in Reading
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio II · RESULT 1</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Result 2 ========== -->
+      <div class="leaf" data-page="3">
+        <div class="leaf-page">
+          <div class="panel left result-card">
+            <div class="result-meta">RESULT 2 OF 47</div>
+            <div class="result-source-deva deva">फलदीपिका</div>
+            <div class="result-source-eng">Phaladeepika</div>
+            <div class="result-chapter">Ch. XI · V. 18</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="result-score">0.89 match</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                लग्नेशो लाभ-स्थाने यदि<br>
+                वित्त-वाक्-लाभं ददाति सः ॥
+              </div>
+              <div class="verse-iast">
+                lagneśo lābha-sthāne yadi<br>
+                vitta-vāk-lābhaṁ dadāti saḥ
+              </div>
+              <div class="verse-translation">
+                When the Lord of Ascendant occupies the Eleventh,<br>
+                he confers gain through wealth and through speech.
+              </div>
+              <div class="verse-citation">Phaladeepika XI · 18</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="result-meta">CONTEXT</div>
+            <div class="result-excerpt">
+              Particularly relevant when Mercury, as a benefic and natural
+              significator of speech and commerce, is also the lagnesha — as in
+              Virgo or Gemini ascendants. The conjunction of bhāvesha-strength
+              and 11th-house placement intensifies gain.
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button class="leaf-button secondary" style="font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                Open in Reading
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio III · RESULT 2</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 4 — Result 3 ========== -->
+      <div class="leaf" data-page="4">
+        <div class="leaf-page">
+          <div class="panel left result-card">
+            <div class="result-meta">RESULT 3 OF 47</div>
+            <div class="result-source-deva deva">सारावली</div>
+            <div class="result-source-eng">Saravali (Kalyana Varma)</div>
+            <div class="result-chapter">Ch. XXIX · Vv. 21–24</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="result-score">0.82 match</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                कर्के स्थिते बुधे चन्द्र-<br>
+                स्वामिनि लाभ-स्थाने ॥
+              </div>
+              <div class="verse-iast">
+                karke sthite budhe candra-<br>
+                svāmini lābha-sthāne
+              </div>
+              <div class="verse-translation">
+                Mercury in Cancer (lord: Moon)<br>
+                placed in the gains-house...
+              </div>
+              <div class="verse-citation">Saravali XXIX · 21</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="result-meta">CONTEXT</div>
+            <div class="result-excerpt">
+              Specific to Mercury in Cancer in the 11th. Cancer modulates the
+              normally cold-rational Mercury with emotional intelligence; the
+              11th-house position aligns this with social-network-mediated gain.
+              Saravali pairs this with a remedial recommendation for Moon-Mercury
+              periods.
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button class="leaf-button secondary" style="font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                Open in Reading
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio IV · RESULT 3</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 5 — Result 4 ========== -->
+      <div class="leaf" data-page="5">
+        <div class="leaf-page">
+          <div class="panel left result-card">
+            <div class="result-meta">RESULT 4 OF 47</div>
+            <div class="result-source-deva deva">होरासार</div>
+            <div class="result-source-eng">Hora Sara (V. S. Sastri ed.)</div>
+            <div class="result-chapter">Ch. XII · V. 7</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="result-score">0.78 match</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                ज्ञो लाभे शुभ-दृष्ट<br>
+                समृद्धिं ददाति ॥
+              </div>
+              <div class="verse-iast">
+                jño lābhe śubha-dṛṣṭa<br>
+                samṛddhiṁ dadāti
+              </div>
+              <div class="verse-translation">
+                Mercury in 11th, aspected by benefics,<br>
+                gives prosperity.
+              </div>
+              <div class="verse-citation">Hora Sara XII · 7</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="result-meta">CONTEXT</div>
+            <div class="result-excerpt">
+              The benefic-aspect requirement (śubha-dṛṣṭa) is critical here:
+              without Jupiter or Venus drishti on Mercury in the 11th, the
+              promised prosperity remains potential. The drishti requirement
+              is uniquely emphasised by Hora Sara compared to BPHS.
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button class="leaf-button secondary" style="font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                Open in Reading
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio V · RESULT 4</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 6 — Result 5 + see more ========== -->
+      <div class="leaf" data-page="6">
+        <div class="leaf-page">
+          <div class="panel left result-card">
+            <div class="result-meta">RESULT 5 OF 47</div>
+            <div class="result-source-deva deva">जातक पारिजात</div>
+            <div class="result-source-eng">Jataka Parijata</div>
+            <div class="result-chapter">Ch. XIV · V. 30</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="result-score">0.74 match</span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                बुधादित्य-योगे लाभे<br>
+                विद्या-वाक्-धन-समृद्धिः ॥
+              </div>
+              <div class="verse-iast">
+                budhāditya-yoge lābhe<br>
+                vidyā-vāk-dhana-samṛddhiḥ
+              </div>
+              <div class="verse-translation">
+                In Budha-Aditya yoga at the eleventh,<br>
+                wealth in learning, speech, and money.
+              </div>
+              <div class="verse-citation">Jataka Parijata XIV · 30</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: center;">
+            <div class="result-meta" style="margin-bottom: 1rem;">42 MORE RESULTS</div>
+            <button class="leaf-button" style="margin: 0 auto;">View All 47</button>
+            <div style="margin-top: 1rem;">
+              <button class="leaf-button secondary" style="font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                Refine Search
+              </button>
+            </div>
+          </div>
+          <div class="folio-mark">folio VI · RESULT 5</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 7 — Wooden back cover ========== -->
+      <div class="leaf" data-page="7">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text">END OF RESULTS</div>
+            <button class="reopen-btn" onclick="reopenManuscript()">NEW SEARCH</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">🔊 sound</button>
+    <a class="nav-page-link" href="reading-v4.html">📖 reading</a>
+    <a class="nav-page-link" href="landing.html">🏠 home</a>
+  </div>
+
+  <script>
+    window.MANUSCRIPT_LABELS = [
+      'COVER', 'SEARCH', 'RESULT 1', 'RESULT 2', 'RESULT 3',
+      'RESULT 4', 'RESULT 5', 'END',
+    ];
+  </script>
+  <script src="manuscript-system.js"></script>
+</body>
+</html>

@@ -80,14 +80,30 @@ class GocharaVerdict:
 
 
 def _transit_sign_to_natal_house(transit_sign: int, asc_sign: int) -> int:
-    """Whole-sign natal house for a transiting planet."""
+    """Whole-sign natal house for a transiting planet.
+
+    Validates inputs are 1..12 — silently accepting 0 or 13 would yield
+    a phantom house number (the audit caught this exact fragility).
+    """
+    if not (1 <= transit_sign <= 12 and 1 <= asc_sign <= 12):
+        raise ValueError(
+            f"transit_sign and asc_sign must both be 1..12; "
+            f"got transit_sign={transit_sign}, asc_sign={asc_sign}"
+        )
     return ((transit_sign - asc_sign) % 12) + 1
 
 
 def _planet_touches_house(
-    planet: str, planet_transit_house: int, target_house: int,
+    planet: str, planet_transit_house: int | None, target_house: int,
 ) -> bool:
-    """A planet 'touches' a house if it sits IN it OR aspects it."""
+    """A planet 'touches' a house if it sits IN it OR aspects it.
+
+    Returns False when ``planet_transit_house`` is None (planet missing
+    from the transit dict). Prior to the audit fix this silently fell
+    back to house 0, generating phantom aspects via ``_step(0, …)``.
+    """
+    if planet_transit_house is None:
+        return False
     if planet_transit_house == target_house:
         return True
     aspects = aspects_from_planet(planet, planet_transit_house)
@@ -182,22 +198,26 @@ def compute_gochara(
         # For "bhava sign": did Saturn AND Jupiter both touch this bhava?
         dt_bhava = saturn_present and jupiter_present
 
-        # Lord
+        # Lord — use ``is not None`` (not truthy) because house 0 would
+        # be falsy, and silent fallback to .get(planet, 0) used to inject
+        # phantom positions for missing transit planets. The audit fix is
+        # to pass None and short-circuit inside _planet_touches_house.
         lord = next(
             (p for p, r in roles.items() if b in r.houses_ruled), None,
         )
         lord_natal_sign = chart.sign_of(lord) if lord else None
-        lord_natal_house = (
-            _transit_sign_to_natal_house(lord_natal_sign, asc_sign)
-            if lord_natal_sign else None
-        )
+        lord_natal_house: int | None = None
+        if lord_natal_sign is not None:
+            lord_natal_house = _transit_sign_to_natal_house(
+                lord_natal_sign, asc_sign,
+            )
         dt_lord = False
-        if lord_natal_house:
+        if lord_natal_house is not None:
             sat_touches_lord = _planet_touches_house(
-                "Saturn", transit_houses.get("Saturn", 0), lord_natal_house,
+                "Saturn", transit_houses.get("Saturn"), lord_natal_house,
             )
             jup_touches_lord = _planet_touches_house(
-                "Jupiter", transit_houses.get("Jupiter", 0), lord_natal_house,
+                "Jupiter", transit_houses.get("Jupiter"), lord_natal_house,
             )
             dt_lord = sat_touches_lord and jup_touches_lord
 
@@ -208,12 +228,14 @@ def compute_gochara(
             k_natal_sign = chart.sign_of(k)
             if k_natal_sign is None:
                 continue
-            k_natal_house = _transit_sign_to_natal_house(k_natal_sign, asc_sign)
+            k_natal_house = _transit_sign_to_natal_house(
+                k_natal_sign, asc_sign,
+            )
             sat_touches_k = _planet_touches_house(
-                "Saturn", transit_houses.get("Saturn", 0), k_natal_house,
+                "Saturn", transit_houses.get("Saturn"), k_natal_house,
             )
             jup_touches_k = _planet_touches_house(
-                "Jupiter", transit_houses.get("Jupiter", 0), k_natal_house,
+                "Jupiter", transit_houses.get("Jupiter"), k_natal_house,
             )
             if sat_touches_k and jup_touches_k:
                 dt_karaka = True

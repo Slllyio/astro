@@ -92,9 +92,18 @@ def aspects_from_planet(planet: str, planet_house: int) -> tuple[int, ...]:
         planet_house: The natal house (1..12) the planet sits in.
     Returns:
         Sorted ascending tuple of bhava numbers the planet aspects.
+
+    Audit fix (edge-case agent): out-of-range ``planet_house`` (0 or 13)
+    used to silently produce phantom aspect targets via modular
+    arithmetic. Now raises ValueError. Internal callers always pass
+    bounded values; this hardens the public API against future misuse.
     """
     if planet not in _PLANET_EXTRA_ASPECTS:
         return ()
+    if not (1 <= planet_house <= 12):
+        raise ValueError(
+            f"planet_house must be 1..12, got {planet_house}"
+        )
     distances = _BASE_ASPECTS + _PLANET_EXTRA_ASPECTS[planet]
     return tuple(sorted({_step(planet_house, d) for d in distances}))
 

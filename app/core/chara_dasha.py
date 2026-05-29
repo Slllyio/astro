@@ -152,16 +152,22 @@ def chara_windows_jd(
 def chara_active_at(
     lagna_sign: int, birth_jd: float, target_jd: float,
 ) -> int | None:
-    """Active Chara MD sign at ``target_jd`` — None if outside the cycle.
+    """Active Chara MD sign at ``target_jd`` — None only before birth.
 
-    Returns:
-        The sign number (1..12) whose MD window covers target_jd, or
-        None if target_jd is before birth_jd or past the end of the
-        natal Chara cycle.
+    Audit-fixed: the cycle was previously returning None past its end
+    (~120 years), which is wrong for very-old natives. Classical doctrine
+    repeats the 12-sign cycle. We wrap ``target_jd`` into the first cycle
+    using elapsed-days modulo cycle-length.
     """
     if target_jd < birth_jd:
         return None
-    for sign, start, end in chara_windows_jd(lagna_sign, birth_jd):
-        if start <= target_jd < end:
+    windows = chara_windows_jd(lagna_sign, birth_jd)
+    cycle_end_jd = windows[-1][2]
+    cycle_length_days = cycle_end_jd - birth_jd
+    if cycle_length_days <= 0:
+        return None
+    effective_jd = birth_jd + ((target_jd - birth_jd) % cycle_length_days)
+    for sign, start, end in windows:
+        if start <= effective_jd < end:
             return sign
     return None

@@ -204,6 +204,16 @@ class TestInvalidInputs:
         with pytest.raises(ValueError):
             planets_aspecting_bhava(13, {})
 
+    def test_aspects_from_planet_rejects_invalid_house(self):
+        """Audit fix: aspects_from_planet validates house range (was
+        silently producing phantom aspects via modular arithmetic)."""
+        with pytest.raises(ValueError):
+            aspects_from_planet("Saturn", 0)
+        with pytest.raises(ValueError):
+            aspects_from_planet("Saturn", 13)
+        with pytest.raises(ValueError):
+            aspects_from_planet("Mars", -1)
+
     def test_argala_rejects_invalid_focal(self):
         """argala_for_bhava validates focal range."""
         with pytest.raises(ValueError):

@@ -119,12 +119,22 @@ class TestWindowsAndActiveLookup:
         birth = 2447988.0
         assert chara_active_at(1, birth, birth - 100) is None
 
-    def test_active_at_returns_none_past_cycle_end(self):
-        """Target JD past the natal cycle's end — None."""
+    def test_active_at_wraps_past_cycle_end(self):
+        """Audit-fix: past first cycle, doctrine says wrap to second cycle.
+
+        For a native past ~120 years, the cycle repeats — Chara MD reads
+        ``(elapsed % cycle_length)`` rather than returning None.
+        """
         birth = 2447988.0
         windows = chara_windows_jd(1, birth)
-        past_end = windows[-1][2] + 1.0
-        assert chara_active_at(1, birth, past_end) is None
+        cycle_length = windows[-1][2] - birth
+        # Sample inside first cycle
+        target_first = birth + 5.0 * 365.2425  # 5 years in
+        sign_first = chara_active_at(1, birth, target_first)
+        # Same offset in second cycle
+        target_second = birth + cycle_length + 5.0 * 365.2425
+        sign_second = chara_active_at(1, birth, target_second)
+        assert sign_first == sign_second  # cycle repeats
 
 
 class TestInvalidInputs:

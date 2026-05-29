@@ -26,13 +26,33 @@ _GRAHAS: Final[tuple[str, ...]] = (
 class Chart:
     """Immutable natal-chart snapshot used by all lens-framework engines.
 
+    ## Required planets
+
+    A full reading requires all 9 grahas (Sun, Moon, Mars, Mercury,
+    Jupiter, Venus, Saturn, Rahu, Ketu) to have entries in
+    ``planet_signs``, ``planet_houses`` and ``planet_lons``. Engines
+    that depend on luminaries (Shadbala, Kemadruma, Sunapha/Anapha,
+    Sade Sati, Gajakesari) will either crash or silently degrade
+    if Sun/Moon are missing. Use ``Chart.validate_complete()`` to
+    fail-fast on partial input.
+
+    ## Retrograde contract (audit-fix flag)
+
+    ``planet_retrograde`` defaults to empty when not provided. Per
+    Vedic convention, Rahu/Ketu are ALWAYS retrograde; visible planets
+    are typically direct. ``from_dossier_row`` applies these defaults
+    because ``person_dossier.parquet`` does not currently persist a
+    per-planet retrograde column. Engines that need true retrograde
+    state should explicitly query this field; do not assume.
+
     Attributes:
         asc_sign: Lagna sign (1..12).
         asc_lon: Lagna sidereal longitude (0..360 degrees).
         planet_signs: planet → sign (1..12).
         planet_houses: planet → natal house from Lagna (1..12).
         planet_lons: planet → sidereal longitude (0..360 degrees).
-        planet_retrograde: planet → True/False (Rahu/Ketu always True).
+        planet_retrograde: planet → True/False (see Retrograde contract
+            above; Rahu/Ketu defaulted to True, visible to False).
         person_id: optional chart identifier for cross-engine logging.
     """
     asc_sign: int
@@ -42,6 +62,34 @@ class Chart:
     planet_lons: Mapping[str, float]
     planet_retrograde: Mapping[str, bool] = field(default_factory=dict)
     person_id: str | None = None
+
+    def validate_complete(self) -> None:
+        """Fail-fast check that all 9 grahas have full position data.
+
+        Use this at the entry point of a full-reading pipeline to surface
+        partial-input bugs early. Engines that selectively skip planets
+        (yoga detectors) tolerate partials; full Shadbala / bhava judge
+        does not.
+
+        Raises:
+            ValueError: with a specific message naming the missing grahas
+                AND the missing field (sign / house / lon).
+        """
+        missing: list[str] = []
+        for g in _GRAHAS:
+            for field_name, mapping in (
+                ("sign", self.planet_signs),
+                ("house", self.planet_houses),
+                ("lon", self.planet_lons),
+            ):
+                if g not in mapping or mapping[g] is None:
+                    missing.append(f"{g}.{field_name}")
+        if missing:
+            raise ValueError(
+                f"Chart incomplete — missing position data: "
+                f"{', '.join(missing[:10])}"
+                + (f" (+{len(missing) - 10} more)" if len(missing) > 10 else "")
+            )
 
     @classmethod
     def from_dossier_row(cls, row: Mapping) -> "Chart":

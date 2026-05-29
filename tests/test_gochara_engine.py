@@ -139,6 +139,44 @@ class TestTrigger:
             assert is_triggered(v, b)
 
 
+class TestMissingTransitPlanetFallback:
+    """Audit fix: missing transit planet must yield False, not phantom aspects.
+
+    The previous bug used ``transit_houses.get("Saturn", 0)`` which fell
+    back to house 0, then ``_step(0, 7)`` produced house 6 — a phantom
+    Saturn aspect that could falsely trigger double-transit verdicts.
+    """
+
+    def test_missing_saturn_does_not_trigger_lord_double_transit(self, bangalore_chart):
+        """Without Saturn in the transit dict, no DT_lord can fire."""
+        # Only Jupiter provided — Saturn intentionally missing.
+        transits = {"Jupiter": 4}
+        v = compute_gochara(bangalore_chart, transits)
+        for ts in v.per_bhava.values():
+            assert ts.is_double_transit_lord is False
+
+    def test_missing_jupiter_does_not_trigger_karaka_double_transit(self, bangalore_chart):
+        """Without Jupiter, no DT_karaka can fire."""
+        transits = {"Saturn": 9}
+        v = compute_gochara(bangalore_chart, transits)
+        for ts in v.per_bhava.values():
+            assert ts.is_double_transit_karaka is False
+
+
+class TestTransitSignValidation:
+    """Audit fix: out-of-range sign raises ValueError."""
+
+    def test_zero_transit_sign_raises(self, bangalore_chart):
+        """transit_sign=0 must raise, not silently produce a phantom house."""
+        with pytest.raises(ValueError):
+            compute_gochara(bangalore_chart, {"Sun": 0, "Moon": 5})
+
+    def test_thirteen_transit_sign_raises(self, bangalore_chart):
+        """transit_sign=13 must raise too."""
+        with pytest.raises(ValueError):
+            compute_gochara(bangalore_chart, {"Sun": 13, "Moon": 5})
+
+
 class TestStructure:
     """Verdict-object integrity."""
 

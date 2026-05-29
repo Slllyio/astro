@@ -379,14 +379,23 @@ def detect_vipareeta_raja(chart: Chart) -> Yoga:
             variant_name = {6: "Harsha", 8: "Sarala", 12: "Vimala"}[dh]
             variants.append((variant_name, lord, dh, lord_house))
     active = bool(variants)
+    if variants:
+        description = (
+            "Dusthana lord in a dusthana — Harsha/Sarala/Vimala — "
+            "reversed affliction yielding gain. Variants found: "
+            + ", ".join(v[0] for v in variants)
+        )
+    else:
+        description = (
+            "Vipareeta Raja Yoga — reversed-affliction yoga (BPHS Ch.39). "
+            "Inactive: no dusthana lord currently sits in a dusthana."
+        )
     return Yoga(
         name="Vipareeta Raja", sanskrit="विपरीत-राज", active=active,
         intensity=min(1.0, 0.5 * len(variants)),
         participants=tuple(sorted({v[1] for v in variants})),
         reference="BPHS Ch.39",
-        description=("Dusthana lord in a dusthana — Harsha/Sarala/Vimala — "
-                     "reversed affliction yielding gain. Variants found: "
-                     + ", ".join(v[0] for v in variants) if variants else ""),
+        description=description,
     )
 
 
@@ -436,6 +445,13 @@ def detect_kala_sarpa(chart: Chart) -> Yoga:
     Reference: modern synthesis (Nadi/Sanjay Rath schools). When all
     planets fall on one side of the Rahu-Ketu axis, the chart carries
     a "serpent of time" — heavy karmic load.
+
+    Audit fix (edge-case agent): the previous version misfired when
+    rahu_lon == ketu_lon (malformed input). Now we require the nodes
+    to be ~180° apart (within 5° tolerance for ephemeris drift); a
+    degenerate axis returns inactive. We also exclude planets sitting
+    exactly on the axis from the arc test rather than letting strict
+    `<` push them into the wrong half silently.
     """
     rahu_lon = chart.planet_lons.get("Rahu")
     ketu_lon = chart.planet_lons.get("Ketu")
@@ -446,22 +462,36 @@ def detect_kala_sarpa(chart: Chart) -> Yoga:
             reference="Nadi tradition (modern synthesis)",
             description="(skipped — node positions not available)",
         )
-    # Walk forward from Rahu to Ketu; check if all 7 visible planets
-    # are inside that arc.
-    def arc_contains(lon: float) -> bool:
-        # Normalise angles relative to Rahu (start of arc).
+    # Nodes must be a real axis: Ketu must be ~180° from Rahu.
+    axis_sep = (ketu_lon - rahu_lon) % 360
+    if not (175.0 <= axis_sep <= 185.0):
+        return Yoga(
+            name="Kala Sarpa", sanskrit="काल-सर्प", active=False,
+            intensity=0.0, participants=("Rahu", "Ketu"),
+            reference="Nadi tradition (modern synthesis)",
+            description=(
+                "(skipped — Rahu/Ketu not approximately 180° apart; "
+                f"axis_sep={axis_sep:.2f}°)"
+            ),
+        )
+    # Planet is in the "Rahu→Ketu" half when its angle relative to Rahu
+    # is strictly between 0 and 180; treat the axis itself as boundary
+    # (boundary planets disqualify the yoga since they straddle).
+    def arc_status(lon: float) -> str:
         diff = (lon - rahu_lon) % 360
-        end_diff = (ketu_lon - rahu_lon) % 360
-        return diff < end_diff
+        if diff <= 0.01 or diff >= 359.99 or abs(diff - axis_sep) <= 0.01:
+            return "on_axis"
+        return "first_half" if diff < axis_sep else "second_half"
+
     visible = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
-    arc1 = all(arc_contains(chart.planet_lons[p])
-               for p in visible if p in chart.planet_lons)
-    # Try the OTHER arc too.
-    def other_arc(lon: float) -> bool:
-        return not arc_contains(lon)
-    arc2 = all(other_arc(chart.planet_lons[p])
-               for p in visible if p in chart.planet_lons)
-    active = arc1 or arc2
+    statuses = [
+        arc_status(chart.planet_lons[p])
+        for p in visible if p in chart.planet_lons
+    ]
+    if any(s == "on_axis" for s in statuses):
+        active = False  # axis-sitter straddles; doctrine treats as not-pure
+    else:
+        active = len(set(statuses)) == 1  # all in same half
     return Yoga(
         name="Kala Sarpa", sanskrit="काल-सर्प", active=active,
         intensity=0.8 if active else 0.0,

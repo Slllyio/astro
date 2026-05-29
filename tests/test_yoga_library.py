@@ -226,6 +226,44 @@ class TestAfflictionYogas:
         # Mars in 3H from Lagna AND in 11th from Moon (5→3 = -2 = 11) → safe
         assert not y.active
 
+    def test_kala_sarpa_inactive_when_nodes_degenerate(self):
+        """Audit fix: Rahu/Ketu at same longitude → axis_sep == 0 → inactive."""
+        ch = Chart(
+            asc_sign=1, asc_lon=0.0,
+            planet_signs={p: 1 for p in ["Sun", "Moon", "Mars", "Mercury",
+                                          "Jupiter", "Venus", "Saturn",
+                                          "Rahu", "Ketu"]},
+            planet_houses={p: 1 for p in ["Sun", "Moon", "Mars", "Mercury",
+                                           "Jupiter", "Venus", "Saturn",
+                                           "Rahu", "Ketu"]},
+            planet_lons={p: 0.0 for p in ["Sun", "Moon", "Mars", "Mercury",
+                                           "Jupiter", "Venus", "Saturn",
+                                           "Rahu", "Ketu"]},
+        )
+        y = detect_kala_sarpa(ch)
+        assert not y.active
+        assert "axis_sep" in y.description
+
+    def test_kala_sarpa_inactive_when_planet_on_axis(self):
+        """Audit fix: planet exactly at Rahu's longitude disqualifies."""
+        ch = Chart(
+            asc_sign=1, asc_lon=0.0,
+            planet_signs={"Sun": 3, "Moon": 5, "Mars": 6, "Mercury": 4,
+                          "Jupiter": 5, "Venus": 6, "Saturn": 5,
+                          "Rahu": 3, "Ketu": 9},
+            planet_houses={"Sun": 3, "Moon": 5, "Mars": 6, "Mercury": 4,
+                           "Jupiter": 5, "Venus": 6, "Saturn": 5,
+                           "Rahu": 3, "Ketu": 9},
+            planet_lons={
+                "Sun": 60.0,   # Exactly at Rahu's lon — on axis
+                "Moon": 130.0, "Mars": 160.0, "Mercury": 110.0,
+                "Jupiter": 140.0, "Venus": 155.0, "Saturn": 135.0,
+                "Rahu": 60.0, "Ketu": 240.0,
+            },
+        )
+        y = detect_kala_sarpa(ch)
+        assert not y.active  # Sun straddles the axis
+
     def test_kala_sarpa_fires_when_all_planets_one_side_of_axis(self):
         """All 7 visible planets between Rahu and Ketu arc → Kala Sarpa."""
         ch = Chart(

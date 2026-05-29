@@ -238,8 +238,11 @@ def _score_pillar_lord(bhava: int, chart: Chart) -> PillarScore:
 
     lord_sign = chart.sign_of(lord)
     lord_house = chart.house_of(lord)
+    lord_lon = chart.planet_lons.get(lord)
 
-    # Dignity
+    # Dignity — note: is_moolatrikona(planet, longitude) takes longitude,
+    # NOT sign integer (per app/core/dignity.py). Passing sign would
+    # silently return True for any sign 0-12° matching Mars's range etc.
     if lord_sign is not None:
         if is_exalted(lord, lord_sign):
             score += 0.4
@@ -247,10 +250,14 @@ def _score_pillar_lord(bhava: int, chart: Chart) -> PillarScore:
                 finding=f"{lord} (bhava {bhava} lord) exalted",
                 weight=0.4, reference="BPHS Ch.6",
             ))
-        elif is_own_sign(lord, lord_sign) or is_moolatrikona(lord, lord_sign):
+        elif is_own_sign(lord, lord_sign) or (
+            lord_lon is not None and is_moolatrikona(lord, lord_lon)
+        ):
+            in_mt = lord_lon is not None and is_moolatrikona(lord, lord_lon)
+            label = "Mooltrikona" if in_mt else "own sign"
             score += 0.25
             reasonings.append(Reasoning(
-                finding=f"{lord} (bhava {bhava} lord) in own/mooltrikona sign",
+                finding=f"{lord} (bhava {bhava} lord) in {label}",
                 weight=0.25, reference="BPHS Ch.6",
             ))
         elif is_debilitated(lord, lord_sign):
@@ -338,9 +345,10 @@ def _score_pillar_karaka(bhava: int, chart: Chart) -> PillarScore:
     for k in karakas:
         k_sign = chart.sign_of(k)
         k_house = chart.house_of(k)
+        k_lon = chart.planet_lons.get(k)
         if k_sign is None:
             continue
-        # Dignity
+        # Dignity — same is_moolatrikona-takes-longitude fix as the lord pillar.
         if is_exalted(k, k_sign):
             per_karaka_score += 0.3
             reasonings.append(Reasoning(
@@ -353,10 +361,12 @@ def _score_pillar_karaka(bhava: int, chart: Chart) -> PillarScore:
                 finding=f"Karaka {k} for bhava {bhava} debilitated",
                 weight=-0.3, reference="BPHS Ch.6",
             ))
-        elif is_own_sign(k, k_sign) or is_moolatrikona(k, k_sign):
+        elif is_own_sign(k, k_sign) or (
+            k_lon is not None and is_moolatrikona(k, k_lon)
+        ):
             per_karaka_score += 0.2
             reasonings.append(Reasoning(
-                finding=f"Karaka {k} for bhava {bhava} in own sign",
+                finding=f"Karaka {k} for bhava {bhava} in own/Mooltrikona",
                 weight=0.2, reference="BPHS Ch.6",
             ))
         # Placement — afflicted dusthana for non-mortality-bhava karaka

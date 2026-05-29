@@ -371,6 +371,33 @@ AD_CHECK_KEYS: Final[tuple[str, ...]] = (
 
 ---
 
+## D-17: Chara Dasha calculation variant
+
+**Status:** Locked 2026-05-29 (V1.5 addition; recovered from lost parallel-write 2026-05-29)
+**Used by:** `sequences/chara_dasha.py`
+**Source citation:** Jaimini Sutras Adhyaya 2, sutras 1–22; Sanjay Rath "Crux of Vedic Astrology" Ch.16.
+**Decision:** Use **Sanjay-Rath / Raghavendra variant** of Chara Dasha as implemented in `sequences/chara_dasha.py`:
+
+- **Starting sign**: depends on the trinal-character of the lagna's sign:
+  - **Movable lagna** (Aries, Cancer, Libra, Capricorn): MD cycle starts with the sign of the lagna itself.
+  - **Fixed lagna** (Taurus, Leo, Scorpio, Aquarius): MD cycle starts at the **5th** from lagna.
+  - **Dual lagna** (Gemini, Virgo, Sagittarius, Pisces): MD cycle starts at the **9th** from lagna.
+
+- **Years per sign** (literal-formula simplification adopted for V1.5): movable signs = **3 years**, fixed signs = **7 years**, dual signs = **11 years**. Total cycle = 4×3 + 4×7 + 4×11 = **84 years** (not 144). The literal formula is the V1.5 commitment; chart-dependent variants in classical sources are surfaced via `dispute_surfacing.py`.
+
+- **Cycle direction**: forward (signs cycle Aries → Pisces order from the starting sign), per Sanjay-Rath standard.
+
+- **Antardashas**: each MD divides into 12 antardasha sub-periods proportional to MD length, in the same forward sign order.
+
+**Alternatives considered:**
+- **PVR Narasimha Rao variant** (the most-common software default): differs in BOTH the starting-sign rule (movable=8H from sign, fixed=12H, dual=10H) AND the years-per-sign rule (chart-dependent: `12 - signs_to_colord`). Surface via `dispute_surfacing.py` if downstream consumers need the PVR view.
+- **Raghavendra-Sharma commentary variant** (same start rule but different exception handling for own-sign placements): considered, but Sanjay-Rath is the more widely cited modern English reference and is present in the project's knowledge_library.
+- **Chart-dependent years-per-sign** (the doctrinally richer variant where each sign's MD length = signs-from-sign-to-its-lord): rejected for V1.5 because it requires per-chart computation that the literal formula sidesteps. Pinned as a V2.0 candidate.
+
+**Rationale:** Sanjay Rath is the most-cited modern English-language source for Chara Dasha and is present in the project's knowledge_library (`crux_of_vedic_astrology_rath/chapter_016*.md`). The literal years-per-sign formula (3/7/11) is the V1.5 commitment; the chart-dependent richer variant is documented as a V2.0 candidate. Software-school disagreement (PVR vs Sanjay-Rath) is real and is the canonical use-case for `dispute_surfacing.py`. The lockfile note "D-17 was inadvertently lost during parallel-write of V1.5 wave 1" is preserved as a postmortem footnote: the V1.5 wave dispatched 6 parallel implementers, two of which both modified this file; the chara_dasha implementer's commit `5fdecf6` was supposed to add D-17 but the diff contained the D-18 (Yogini) prose instead — symptom of an unresolved race condition between the two parallel writes. The decision content here is recovered verbatim from the chara_dasha implementer's brief.
+
+---
+
 ## D-18: Yogini Dasha — start yogini calculation
 
 **Status:** Locked 2026-05-29

@@ -1,0 +1,11 @@
+{
+  "name": "Gandanta Moon — synthetic",
+  "source": "Synthetic edge case for the Pisces-Aries gandanta zone. Located via daily/hour sweep of January 1990 at Bangalore noon-window.",
+  "dob": "1990-01-05",
+  "time": "04:00",
+  "tz": "+05:30",
+  "lat": 12.97,
+  "lon": 77.59,
+  "edge_case": "gandanta_moon",
+  "structural_notes": "Bangalore baseline location. At this birth-moment the sidereal Moon falls at ~357.05 deg (Pisces 27.05 deg, Revati nakshatra pada 4) — inside the Pisces-Aries gandanta zone (Pisces 26 deg 40 min - 30 deg 00 min). Exercises gandanta handling. Per Section 11 prediction-trap ban, no outcome assertions about real life events."
+}

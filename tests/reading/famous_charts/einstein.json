@@ -1,0 +1,11 @@
+{
+  "name": "Albert Einstein",
+  "source": "Astro-Databank / wikipedia.org/wiki/Albert_Einstein",
+  "dob": "1879-03-14",
+  "time": "11:30",
+  "tz": "+00:00",
+  "lat": 48.4011,
+  "lon": 9.9876,
+  "edge_case": null,
+  "structural_notes": "Reference chart. Ulm, Germany. Original LMT offset was +00:53; rounded to +00:00 (UTC) for simplicity per Task 5.7 spec. Per Section 11 prediction-trap ban, the corpus does not assert outcome accuracy (e.g. 'predicted the Nobel timing')."
+}

@@ -49,11 +49,14 @@ from app.core.shadbala_report import compute_planet_shadbala
 from app.core.yoga_library import active_yogas
 
 # Natural karakas per bhava (BPHS Ch.6). 10H has the 4-karaka rule.
+# Doctrine review correction (2026-05-29): Mercury removed from 4H — BPHS
+# Ch.6.6 assigns Moon alone as 4H matr-karaka; Mercury is the 10H buddhi-
+# karaka per Ch.6.32 "four-karaka rule", not a 4H signifier.
 _BHAVA_KARAKAS: Final[Mapping[int, tuple[str, ...]]] = {
     1:  ("Sun",),
     2:  ("Jupiter",),
     3:  ("Mars",),
-    4:  ("Moon", "Mercury"),
+    4:  ("Moon",),                       # Mercury removed per doctrine review
     5:  ("Jupiter",),
     6:  ("Mars", "Saturn"),
     7:  ("Venus",),
@@ -75,21 +78,24 @@ _NATURAL_MALEFICS: Final[frozenset[str]] = frozenset({
 # Which yogas, when active, *strengthen* specific bhava themes.
 # Conservative: only the most direct mappings.
 _YOGA_TO_BHAVA: Final[Mapping[str, tuple[int, ...]]] = {
-    "Gajakesari":      (2, 5, 9, 10, 11),
-    "Budha-Aditya":    (3, 5, 10),
-    "Saraswati":       (2, 4, 5),
-    "Amala":           (10,),
-    "Adhi":            (1,),
-    "Sunapha":         (2, 11),
-    "Anapha":          (12,),
-    "Raja Yoga":       (1, 5, 9, 10),
-    "Vipareeta Raja":  (1, 6, 8, 11, 12),
-    "Ruchaka":         (1, 3, 6, 10),
-    "Bhadra":          (1, 4, 7, 10),
-    "Hamsa":           (1, 2, 5, 9, 10),
-    "Malavya":         (1, 7),
-    "Sasa":            (1, 6, 10, 11),
-    "Chandra-Mangal":  (2, 11),
+    "Gajakesari":             (2, 5, 9, 10, 11),
+    "Budha-Aditya":           (3, 5, 10),
+    "Saraswati":              (2, 4, 5),
+    "Amala":                  (10,),
+    "Adhi":                   (1,),
+    "Sunapha":                (2, 11),
+    "Anapha":                 (12,),
+    "Raja Yoga":              (1, 5, 9, 10),
+    "Vipareeta Raja":         (1, 6, 8, 11, 12),
+    "Ruchaka":                (1, 3, 6, 10),
+    "Bhadra":                 (1, 4, 7, 10),
+    "Hamsa":                  (1, 2, 5, 9, 10),
+    "Malavya":                (1, 7),
+    "Sasa":                   (1, 6, 10, 11),
+    "Chandra-Mangal":         (2, 11),
+    "Lakshmi":                (2, 9, 10, 11),
+    "Neecha Bhanga Raja":     (1, 5, 9, 10),
+    "Dharma-Karma Adhipati":  (9, 10),
 }
 
 # Yogas that signal AFFLICTION (lower score, not raise).

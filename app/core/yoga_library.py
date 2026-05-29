@@ -32,16 +32,17 @@ from app.core.chart_model import Chart
 from app.core.dignity import (
     is_debilitated, is_exalted, is_moolatrikona, is_own_sign,
 )
+from app.core.drishti_argala import aspects_from_planet
 from app.core.functional_roles import functional_roles
 
 
 def _is_well_placed(planet: str, sign: int) -> bool:
-    """Convenience: exalted, own, or Mooltrikona."""
-    return (
-        is_exalted(planet, sign)
-        or is_own_sign(planet, sign)
-        or is_moolatrikona(planet, sign)
-    )
+    """Convenience: exalted or own (Mooltrikona check needs longitude — skip here).
+
+    Note: is_moolatrikona requires longitude per app/core/dignity.py and
+    Saraswati detection uses this as a coarse strong-Jupiter check.
+    """
+    return is_exalted(planet, sign) or is_own_sign(planet, sign)
 
 
 _KENDRAS: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
@@ -69,23 +70,41 @@ class Yoga:
 def _pmp_template(
     planet: str, name: str, sanskrit: str, ref: str,
 ) -> Callable[[Chart], Yoga]:
-    """One factory for all 5 PMP yogas — planet must be own/exalt in Kendra."""
+    """One factory for all 5 PMP yogas — planet must be own/exalt/Mooltrikona in Kendra.
+
+    Per the doctrine review (BPHS Ch.36): Mooltrikona qualifies for PMP,
+    not only own/exalt. Specifically catches Hamsa (Jupiter in early
+    Sagittarius Mooltrikona portion) and Sasa (Saturn in Aquarius
+    Mooltrikona portion 0-20°).
+    """
     def detector(chart: Chart) -> Yoga:
         house = chart.house_of(planet)
         sign = chart.sign_of(planet)
+        lon = chart.planet_lons.get(planet)
         active = False
         intensity = 0.0
         if house is not None and sign is not None:
             in_kendra = house in _KENDRAS
-            in_dignity = is_exalted(planet, sign) or is_own_sign(planet, sign)
+            # is_moolatrikona takes longitude per existing app/core/dignity.py
+            in_moolatrikona = (
+                lon is not None and is_moolatrikona(planet, lon)
+            )
+            in_dignity = (
+                is_exalted(planet, sign) or is_own_sign(planet, sign) or in_moolatrikona
+            )
             if in_kendra and in_dignity:
                 active = True
-                intensity = 1.0 if is_exalted(planet, sign) else 0.75
+                if is_exalted(planet, sign):
+                    intensity = 1.0
+                elif is_own_sign(planet, sign):
+                    intensity = 0.85
+                else:
+                    intensity = 0.75
         return Yoga(
             name=name, sanskrit=sanskrit, active=active,
             intensity=intensity, participants=(planet,),
             reference=ref,
-            description=f"{planet} in own/exalt sign occupying a Kendra (1/4/7/10).",
+            description=f"{planet} in own/exalt/Mooltrikona sign occupying a Kendra (1/4/7/10).",
         )
     return detector
 
@@ -234,15 +253,20 @@ def detect_chandra_mangal(chart: Chart) -> Yoga:
 
 def detect_kemadruma(chart: Chart) -> Yoga:
     """Moon ALONE — no planet in 2nd or 12th from Moon, and no
-    planet in Moon's sign (besides Moon itself).
+    planet in Moon's sign — with the 4 BPHS Ch.40 cancellation rules
+    applied INLINE.
 
-    BPHS Ch.40 — significant affliction yoga; cancels if Moon receives
-    a benefic Kendra aspect or sits in own/exalt. The cancellation
-    rules are summarised in the description; the boolean here flags
-    the *raw* Kemadruma. Phase 6 applies cancellations.
+    Raw Kemadruma fires when Moon has no planet (excluding nodes) in
+    its sign, 2nd, or 12th. Per BPHS Ch.40 / Phaladeepika Ch.6, the
+    yoga is CANCELLED when any of:
+      (1) Moon sits in a Kendra (1/4/7/10) from Lagna
+      (2) Moon is in own (Cancer) or exalted (Taurus) sign
+      (3) All planets are in Kendras from Lagna
+      (4) Moon receives a Jupiter aspect from a Kendra
     """
     moon_sign = chart.sign_of("Moon")
-    if moon_sign is None:
+    moon_house = chart.house_of("Moon")
+    if moon_sign is None or moon_house is None:
         return Yoga(
             name="Kemadruma", sanskrit="केमद्रुम", active=False,
             intensity=0.0, participants=(),
@@ -258,13 +282,40 @@ def detect_kemadruma(chart: Chart) -> Yoga:
                    for p, s in chart.planet_signs.items())
     has_companion = any(p not in {"Moon"} and s == moon_sign
                         for p, s in chart.planet_signs.items())
-    active = not (has_2nd or has_12th or has_companion)
+    raw_active = not (has_2nd or has_12th or has_companion)
+
+    # Cancellation conditions per BPHS Ch.40.
+    cancellation_reasons: list[str] = []
+    if moon_house in _KENDRAS:
+        cancellation_reasons.append("Moon is in a Kendra (1/4/7/10) from Lagna")
+    if is_own_sign("Moon", moon_sign) or is_exalted("Moon", moon_sign):
+        cancellation_reasons.append("Moon is in own/exalted sign")
+    # All planets in Kendras from Lagna
+    visible = {"Sun", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
+    visible_houses = [chart.house_of(p) for p in visible if chart.house_of(p) is not None]
+    if visible_houses and all(h in _KENDRAS for h in visible_houses):
+        cancellation_reasons.append("All visible planets are in Kendras from Lagna")
+    # Jupiter Kendra-aspect on Moon
+    jupiter_house = chart.house_of("Jupiter")
+    if jupiter_house in _KENDRAS:
+        jup_aspects = aspects_from_planet("Jupiter", jupiter_house)
+        if moon_house in jup_aspects:
+            cancellation_reasons.append("Moon receives Jupiter aspect from a Kendra")
+
+    active = raw_active and not cancellation_reasons
+    intensity = 0.8 if active else 0.0
+    desc = (
+        "Moon with no planet in 2nd/12th/own sign — isolation yoga."
+        if active
+        else ("Raw Kemadruma cancelled: " + "; ".join(cancellation_reasons)
+              if raw_active else
+              "Moon has planetary support — no Kemadruma.")
+    )
     return Yoga(
         name="Kemadruma", sanskrit="केमद्रुम", active=active,
-        intensity=0.8 if active else 0.0, participants=("Moon",),
+        intensity=intensity, participants=("Moon",),
         reference="BPHS Ch.40",
-        description="Moon with no planet in 2nd/12th/own sign — isolation yoga "
-                    "(cancellable by Moon's dignity or benefic Kendra aspect).",
+        description=desc,
     )
 
 
@@ -498,6 +549,157 @@ def detect_saraswati(chart: Chart) -> Yoga:
     )
 
 
+def detect_lakshmi(chart: Chart) -> Yoga:
+    """Lakshmi Yoga — 9L in own/exalted/Mooltrikona AND in Kendra/Trikona,
+    while Venus or Jupiter sits in Kendra/Trikona too.
+
+    Reference: Phaladeepika Ch.6 — wealth and dignity yoga, named after
+    the goddess of fortune.
+    """
+    asc = chart.asc_sign
+    roles = functional_roles(asc)
+    # Find 9L
+    ninth_lord = next(
+        (p for p, r in roles.items() if 9 in r.houses_ruled), None,
+    )
+    if ninth_lord is None:
+        return Yoga(
+            name="Lakshmi", sanskrit="लक्ष्मी", active=False,
+            intensity=0.0, participants=(),
+            reference="Phaladeepika Ch.6",
+            description="(skipped — 9L not resolvable)",
+        )
+    ninth_lord_sign = chart.sign_of(ninth_lord)
+    ninth_lord_house = chart.house_of(ninth_lord)
+    ninth_lord_lon = chart.planet_lons.get(ninth_lord)
+    cond_lord_dignified = (
+        ninth_lord_sign is not None and (
+            is_exalted(ninth_lord, ninth_lord_sign)
+            or is_own_sign(ninth_lord, ninth_lord_sign)
+            or (ninth_lord_lon is not None and is_moolatrikona(ninth_lord, ninth_lord_lon))
+        )
+    )
+    cond_lord_well_placed = ninth_lord_house in (_KENDRAS | _TRIKONAS)
+    # Venus or Jupiter in Kendra/Trikona
+    benefic_kendra_trikona = []
+    for p in ("Venus", "Jupiter"):
+        h = chart.house_of(p)
+        if h in (_KENDRAS | _TRIKONAS):
+            benefic_kendra_trikona.append(p)
+    active = bool(cond_lord_dignified and cond_lord_well_placed and benefic_kendra_trikona)
+    return Yoga(
+        name="Lakshmi", sanskrit="लक्ष्मी", active=active,
+        intensity=0.9 if active else 0.0,
+        participants=(ninth_lord,) + tuple(benefic_kendra_trikona),
+        reference="Phaladeepika Ch.6",
+        description=("9L in own/exalt/Mooltrikona + Kendra/Trikona, with "
+                     "Venus or Jupiter in Kendra/Trikona — wealth + dignity."),
+    )
+
+
+def detect_neecha_bhanga_raja(chart: Chart) -> Yoga:
+    """Neecha Bhanga Raja Yoga — debilitation cancellation by classical rules.
+
+    BPHS Ch.32 — a debilitated planet's affliction is CANCELLED (and
+    becomes a Raja Yoga) when any of these conditions hold:
+      (1) Lord of the sign in which the planet is debilitated is in a
+          Kendra from Lagna or Moon.
+      (2) Lord of the planet's exaltation sign is in a Kendra from
+          Lagna or Moon.
+      (3) The debilitated planet is aspected by its own dispositor.
+      (4) The debilitated planet is in a Kendra from Lagna or Moon.
+
+    We detect (1) and (4) — the most-cited variants.
+    """
+    moon_sign = chart.sign_of("Moon")
+    asc = chart.asc_sign
+    # Sign rulership map
+    sign_lords = {
+        1: "Mars", 2: "Venus", 3: "Mercury", 4: "Moon", 5: "Sun", 6: "Mercury",
+        7: "Venus", 8: "Mars", 9: "Jupiter", 10: "Saturn", 11: "Saturn", 12: "Jupiter",
+    }
+    visible = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+    participants: list[str] = []
+    for p in visible:
+        p_sign = chart.sign_of(p)
+        p_house = chart.house_of(p)
+        if p_sign is None or p_house is None:
+            continue
+        if not is_debilitated(p, p_sign):
+            continue
+        # Rule (4): planet itself in Kendra from Lagna
+        if p_house in _KENDRAS:
+            participants.append(p)
+            continue
+        # Rule (1): dispositor (lord of debilitation sign) in Kendra from Lagna or Moon
+        dispositor = sign_lords[p_sign]
+        d_house = chart.house_of(dispositor)
+        d_sign = chart.sign_of(dispositor)
+        from_lagna_kendra = d_house in _KENDRAS
+        from_moon_kendra = False
+        if moon_sign is not None and d_sign is not None:
+            distance = ((d_sign - moon_sign) % 12) + 1
+            from_moon_kendra = distance in _KENDRAS
+        if from_lagna_kendra or from_moon_kendra:
+            participants.append(p)
+    active = bool(participants)
+    return Yoga(
+        name="Neecha Bhanga Raja", sanskrit="नीचभङ्ग-राज", active=active,
+        intensity=min(1.0, 0.5 + 0.2 * len(participants)) if active else 0.0,
+        participants=tuple(sorted(set(participants))),
+        reference="BPHS Ch.32",
+        description=("Debilitated planet's affliction cancelled — debility "
+                     "transmutes to Raja Yoga via dispositor in Kendra or "
+                     "planet itself in Kendra."),
+    )
+
+
+def detect_dharma_karma_adhipati(chart: Chart) -> Yoga:
+    """Dharma-Karma Adhipati Yoga — 9L + 10L conjunction/exchange.
+
+    BPHS Ch.39 — the most concentrated career-with-dharma yoga. We
+    detect direct conjunction (same sign) AND parivartana (mutual
+    sign exchange).
+    """
+    roles = functional_roles(chart.asc_sign)
+    ninth_lord = next(
+        (p for p, r in roles.items() if 9 in r.houses_ruled), None,
+    )
+    tenth_lord = next(
+        (p for p, r in roles.items() if 10 in r.houses_ruled), None,
+    )
+    if not ninth_lord or not tenth_lord or ninth_lord == tenth_lord:
+        return Yoga(
+            name="Dharma-Karma Adhipati", sanskrit="धर्म-कर्म-अधिपति",
+            active=False, intensity=0.0, participants=(),
+            reference="BPHS Ch.39",
+            description="(skipped — distinct 9L and 10L not resolvable)",
+        )
+    n_sign = chart.sign_of(ninth_lord)
+    t_sign = chart.sign_of(tenth_lord)
+    # Conjunction (same sign)
+    is_conjunct = n_sign is not None and n_sign == t_sign
+    # Parivartana (mutual sign exchange)
+    own_signs_9th = {
+        "Sun": {5}, "Moon": {4}, "Mars": {1, 8}, "Mercury": {3, 6},
+        "Jupiter": {9, 12}, "Venus": {2, 7}, "Saturn": {10, 11},
+    }
+    is_parivartana = (
+        n_sign in own_signs_9th.get(tenth_lord, set())
+        and t_sign in own_signs_9th.get(ninth_lord, set())
+    )
+    active = is_conjunct or is_parivartana
+    return Yoga(
+        name="Dharma-Karma Adhipati", sanskrit="धर्म-कर्म-अधिपति",
+        active=active,
+        intensity=1.0 if is_parivartana else (0.8 if is_conjunct else 0.0),
+        participants=(ninth_lord, tenth_lord),
+        reference="BPHS Ch.39",
+        description=("9L + 10L conjoined or in parivartana — dharmic action "
+                     "powerfully linked to career outcome."),
+    )
+
+
 def detect_adhi(chart: Chart) -> Yoga:
     """Benefics in 6/7/8 from Moon — protection yoga.
 
@@ -538,10 +740,11 @@ YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
     # Foundation
     detect_gajakesari, detect_chandra_mangal, detect_kemadruma,
     detect_raja_yoga, detect_vipareeta_raja,
+    detect_neecha_bhanga_raja, detect_dharma_karma_adhipati,
     # Affliction
     detect_mangal_dosha, detect_kala_sarpa, detect_daridra,
     # Auspicious specials
-    detect_amala, detect_saraswati, detect_adhi,
+    detect_amala, detect_saraswati, detect_adhi, detect_lakshmi,
 )
 
 

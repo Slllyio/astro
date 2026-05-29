@@ -16,6 +16,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.api.auth_routes import auth_router
 from app.api.interpret_routes import interpret_router
 from app.api.medini_routes import medini_router
+from app.api.reading_v15_routes import router as reading_v15_router
 from app.api.routes import chart_router, profile_router
 from app.core.auth import limiter
 from app.core.config import settings
@@ -78,6 +79,7 @@ app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
 app.include_router(medini_router)  # Tab 3: Geo-Astrological Engine (/medini/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
+app.include_router(reading_v15_router)  # V1.5 web UI for app/reading engine (/reading/v15/*)
 
 
 # Vendored Flask portal at /portal/. Lazy-imported so tests/CI (with

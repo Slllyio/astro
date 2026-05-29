@@ -36,6 +36,9 @@ from app.core.chart_model import Chart
 from app.core.dkp_modulation import (
     DKPContext, ModulatedVerdict, apply_dkp_modulation, context_completeness,
 )
+from app.core.dkp_translation import (
+    TranslationRecord, all_translations, translations_for_reading,
+)
 from app.core.functional_roles import (
     badhakesh_planet, functional_roles, yogakaraka_planets,
 )
@@ -77,6 +80,9 @@ class Reading:
     open_questions: tuple[str, ...]
     dkp_completeness: int
     chart_strength_summary: str
+    # Doctrine Translation Engine output (Phase 8.5 — classical
+    # shloka → modern manifestation translations).
+    translations: tuple[TranslationRecord, ...] = ()
 
 
 def _key_findings_for(verdict: BhavaVerdict, max_n: int = 4) -> tuple[str, ...]:
@@ -215,6 +221,13 @@ def compose_reading(
         shadbala, n_yogas=len(all_active_yogas), n_active=len(all_active_yogas),
     )
 
+    # Doctrine translations — find all classical→modern translation records
+    # that apply to the active yogas + the chart's bhava-placement patterns
+    # the translation engine knows about.
+    yoga_names = [y.name for y in all_active_yogas]
+    placement_pairs = _placement_pairs_present_in_chart(chart)
+    translations = translations_for_reading(yoga_names, placement_pairs)
+
     return Reading(
         person_id=chart.person_id,
         asc_sign=chart.asc_sign,
@@ -230,7 +243,37 @@ def compose_reading(
         open_questions=tuple(open_qs[:6]),
         dkp_completeness=context_completeness(context),
         chart_strength_summary=summary,
+        translations=translations,
     )
+
+
+def _placement_pairs_present_in_chart(
+    chart: Chart,
+) -> tuple[tuple[int, str], ...]:
+    """Enumerate (bhava, planet) pairs present in the chart for which the
+    translation engine has a record.
+
+    Iterates the registry's bhava-placement records and checks whether the
+    chart actually has the named planet in the named bhava. Deterministic
+    and forward-compatible: adding a new placement record to the engine
+    automatically picks it up here.
+    """
+    out: list[tuple[int, str]] = []
+    for record in all_translations():
+        if record.classification != "bhava_placement":
+            continue
+        # Key format: "bhava_<N>_planet_<P>" — parse defensively.
+        parts = record.key.split("_")
+        if len(parts) != 4 or parts[0] != "bhava" or parts[2] != "planet":
+            continue
+        try:
+            bhava = int(parts[1])
+        except ValueError:
+            continue
+        planet = parts[3]
+        if chart.house_of(planet) == bhava:
+            out.append((bhava, planet))
+    return tuple(out)
 
 
 def format_reading_text(reading: Reading) -> str:
@@ -287,4 +330,21 @@ def format_reading_text(reading: Reading) -> str:
         lines.append("Open clarifying questions:")
         for q in reading.open_questions:
             lines.append(f"  ? {q}")
+    if reading.translations:
+        lines.append("")
+        lines.append("=" * 70)
+        lines.append("DOCTRINE TRANSLATIONS (classical -> modern manifestation)")
+        lines.append("=" * 70)
+        lines.append(
+            "The shloka encodes the karmic signature; desh-kaal-paristhiti "
+            "provides the substrate. The translations below preserve the "
+            "doctrine while re-locating its expression in 2026 context."
+        )
+        lines.append("")
+        for t in reading.translations:
+            lines.append(f"- [{t.domain}] {t.key}")
+            lines.append(f"    Shloka: {t.shloka}")
+            lines.append(f"    Modern: {t.modern_manifestation[:300]}")
+            lines.append(f"    Invariant: {t.invariant_mechanism[:240]}")
+            lines.append("")
     return "\n".join(lines)

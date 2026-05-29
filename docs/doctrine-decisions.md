@@ -371,6 +371,55 @@ AD_CHECK_KEYS: Final[tuple[str, ...]] = (
 
 ---
 
+## D-18: Yogini Dasha — start yogini calculation
+
+**Status:** Locked 2026-05-29
+**Used by:** `sequences/yogini_dasha.py`
+**Source citation:** Maha Tantra commentary; Sanjay Rath "Crux of Vedic
+Astrology" Ch.17 (Yogini Dasha — 36-year specialty cycle).
+**Decision:** Start yogini is determined by Moon nakshatra at birth, per the
+**cyclic 8-fold mapping** keyed off the 1-indexed nakshatra position:
+``start_yogini_index = (nakshatra_index_1based - 1) % 8``, where the 8
+Yoginis cycle as **Mangala (0) → Pingala (1) → Dhanya (2) → Bhramari (3)
+→ Bhadrika (4) → Ulka (5) → Siddha (6) → Sankata (7)** in fixed order
+across the 27 nakshatras (three full 8-cycles plus three over). The
+full reference table (1-indexed nakshatra → starting yogini):
+
+| Nakshatra (1-indexed)                                            | Starting Yogini |
+|------------------------------------------------------------------|-----------------|
+| 1 Ashwini, 9 Ashlesha, 17 Anuradha, 25 Purva Bhadrapada          | Mangala         |
+| 2 Bharani, 10 Magha, 18 Jyeshtha, 26 Uttara Bhadrapada           | Pingala         |
+| 3 Krittika, 11 Purva Phalguni, 19 Mula, 27 Revati                | Dhanya          |
+| 4 Rohini, 12 Uttara Phalguni, 20 Purva Ashadha                   | Bhramari        |
+| 5 Mrigashira, 13 Hasta, 21 Uttara Ashadha                        | Bhadrika        |
+| 6 Ardra, 14 Chitra, 22 Shravana                                  | Ulka            |
+| 7 Punarvasu, 15 Swati, 23 Dhanishta                              | Siddha          |
+| 8 Pushya, 16 Vishakha, 24 Shatabhisha                            | Sankata         |
+
+The 8 Yoginis carry canonical period lengths summing to 36 years per
+cycle: Mangala 1, Pingala 2, Dhanya 3, Bhramari 4, Bhadrika 5, Ulka 6,
+Siddha 7, Sankata 8. Ruling planets are Sun, Moon, Jupiter, Mars,
+Mercury, Saturn, Venus, Rahu respectively.
+
+**Alternatives considered:**
+- **Nakshatra-based vs. count-from-Moon-sign variant** (rejected — Sanjay
+  Rath, Maha Tantra, and PVR Narasimha Rao all agree the canonical
+  reference is the Janma Nakshatra, not the Moon sign).
+- **8-padas-per-yogini equal split** (rejected — non-canonical; the
+  doctrine assigns whole nakshatras, not padas, to a yogini).
+- **Mangala = Sankata (8-year) at start variant** (rejected — some
+  southern editions invert the count direction; the locked direction
+  follows Sanjay Rath / Maha Tantra forward count).
+
+**Rationale:** Maha Tantra is the canonical source; the cyclic
+nakshatra-to-yogini mapping is standardized across practitioner editions
+of Sanjay Rath, PVR Narasimha Rao, and the Sukra Nadi tradition. The
+36-year cycle is designed to cross-validate Vimshottari predictions for
+shorter-cycle (yearly) events that Vimshottari's 120-year sweep tends to
+under-resolve.
+
+---
+
 ## Amendment process
 
 Amendments to this lockfile require **(a)** an amendment to `docs/superpowers/specs/2026-05-27-kundli-analysis-system-design.md` Section 13 first, and **(b)** a doctrine-reviewer audit (subagent `bphs-doctrine-reviewer`) confirming the new value against classical sources. Never silently change a locked decision — every value here is referenced by `Meta.doctrine_config` in production output JSON, so a silent change would invalidate every previously emitted reading without flagging the diff.

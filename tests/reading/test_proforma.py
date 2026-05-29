@@ -107,41 +107,52 @@ class TestCompute:
     """`compute` is the public orchestrator with optional Tier-3 wrapping."""
 
     def test_compute_with_enrich_false_skips_tier3(self):
-        """enrich=False MUST return the core pipeline output unmodified.
+        """enrich=False MUST take the bare deterministic path (no Tier-3).
 
-        This is the discipline-lock: birth-time-robustness and any other
-        recursion-prone caller must be able to bypass Tier-3 cleanly.
+        Asserts that Tier-3 enrichment never fires when ``enrich=False``:
+        ``Meta.enrichment_enabled`` and ``Meta.robustness_enabled`` both
+        stay False, no contradictions are computed top-level. (Direct
+        dict-equality with a second `_run_core_pipeline` call would
+        compare two independent timestamps and become flaky once Phase 7
+        wiring causes the pipeline to take real wall-clock time.)
         """
-        bare = _run_core_pipeline(CANONICAL_INPUT)
         result = compute(CANONICAL_INPUT, enrich=False)
-        assert result == bare
+        assert result["meta"]["enrichment_enabled"] is False
+        assert result["meta"]["robustness_enabled"] is False
+        # The contradictions list is only populated by the Tier-3
+        # afterpass; with enrich=False it MUST stay empty.
+        assert result["contradictions"] == []
 
     def test_compute_default_enrich_true_is_reachable(self):
-        """Default enrich=True path is reachable.
+        """Default enrich=True path is reachable and round-trips schema.
 
-        Phase 1 stub: _apply_tier3_enrichments returns base unchanged, so the
-        result still validates and equals the core output structurally. The
-        purpose of this test is to lock the call-graph (compute -> core ->
-        tier3 stub) before Tier-3 modules land.
+        Phase 7: with the real Tier-3 chain wired, the result still
+        validates against the schema and reports ``enrichment_enabled=True``
+        on its Meta envelope.
         """
         result = compute(CANONICAL_INPUT)
         # Round-trip validation proves the enriched payload still conforms.
         validated = ReadingOutput.model_validate(result)
         assert validated.meta.schema_version == "1.0.0"
+        assert validated.meta.enrichment_enabled is True
 
-    def test_compute_explicit_enrich_true_matches_default(self):
-        """Passing enrich=True explicitly is identical to the default."""
-        default_result = compute(CANONICAL_INPUT)
+    def test_compute_explicit_enrich_true_validates(self):
+        """Passing enrich=True explicitly produces a schema-valid result."""
         explicit_result = compute(CANONICAL_INPUT, enrich=True)
-        assert default_result == explicit_result
+        validated = ReadingOutput.model_validate(explicit_result)
+        assert validated.meta.schema_version == "1.0.0"
+        assert validated.meta.enrichment_enabled is True
 
-    def test_apply_tier3_enrichments_stub_is_identity(self):
-        """Phase 1 stub for Tier-3 returns base unchanged.
+    def test_apply_tier3_enrichments_flips_enrichment_flag(self):
+        """Phase 7: Tier-3 afterpass flips ``Meta.enrichment_enabled``.
 
-        When Task 6.x lands the real Tier-3 modules, this test is expected
-        to be replaced with content-level assertions about citations,
-        consensus, dispute, robustness, and contradiction enrichments.
+        Pre-Phase-7 this test asserted identity (the stub returned `base`
+        unchanged). Post-Phase-7 the real Tier-3 chain runs and the only
+        invariant we can lock structurally (without coupling to specific
+        finding contents) is that ``enrichment_enabled`` transitions
+        False -> True.
         """
         bare = _run_core_pipeline(CANONICAL_INPUT)
+        assert bare["meta"]["enrichment_enabled"] is False
         enriched = _apply_tier3_enrichments(bare, CANONICAL_INPUT)
-        assert enriched == bare
+        assert enriched["meta"]["enrichment_enabled"] is True

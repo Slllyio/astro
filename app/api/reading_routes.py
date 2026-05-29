@@ -86,6 +86,68 @@ async def post_reading(birth_data: BirthDataInput) -> dict:
     return _reading_to_dict(reading)
 
 
+@reading_router.post("/prashna")
+async def post_prashna_reading(payload: dict) -> dict:
+    """Prashna route — answer a natural-language question via the framework.
+
+    Body: ``{"question": "...", "birth_data": {...BirthDataInput}}``.
+
+    Returns the routed bhava + structured framework verdict for that bhava
+    + matched keywords + confidence. The full framework Reading is also
+    included so the UI can show context.
+    """
+    from app.core.prashna import route_question
+
+    question = (payload.get("question") or "").strip()
+    birth_payload = payload.get("birth_data") or {}
+    if not question:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail="question field required",
+        )
+    try:
+        birth_data = BirthDataInput(**birth_payload)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail=f"birth_data validation failed: {exc}",
+        ) from exc
+
+    def _compute_sync() -> dict:
+        chart = calculate_all_charts(
+            year=birth_data.year, month=birth_data.month, day=birth_data.day,
+            hour=birth_data.hour, minute=birth_data.minute,
+            tz_offset=birth_data.tz_offset,
+            latitude=birth_data.latitude, longitude=birth_data.longitude,
+        )
+        reading = read_chart_via_framework(chart)
+        match = route_question(question)
+        bhava_claim = reading.bhava_claims.get(match.bhava)
+        framework_dict = framework_reading_to_dict(reading)
+        return {
+            "question": question,
+            "routed_bhava": match.bhava,
+            "routing_confidence": match.confidence,
+            "matched_keywords": list(match.matched_keywords),
+            "candidates_considered": [
+                {"bhava": b, "score": s} for b, s in match.candidates_considered
+            ],
+            "primary_claim": framework_dict["bhava_claims"][str(match.bhava)] if bhava_claim else None,
+            "reading": framework_dict,
+        }
+
+    try:
+        return await asyncio.to_thread(_compute_sync)
+    except HTTPException:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("prashna reading failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"prashna reading failed: {exc}",
+        ) from exc
+
+
 @reading_router.post("/framework")
 async def post_framework_reading(birth_data: BirthDataInput) -> dict:
     """Astrologer's-lens framework reading (Phases 1-9, doctrine-faithful).

@@ -33,7 +33,7 @@ from app.core.dignity import (
     is_debilitated, is_exalted, is_moolatrikona, is_own_sign,
 )
 from app.core.drishti_argala import aspects_from_planet
-from app.core.functional_roles import functional_roles
+from app.core.functional_roles import functional_roles, houses_ruled_by
 
 
 def _is_well_placed(planet: str, sign: int) -> bool:
@@ -730,6 +730,189 @@ def detect_dharma_karma_adhipati(chart: Chart) -> Yoga:
     )
 
 
+def detect_akhanda_samrajya(chart: Chart) -> Yoga:
+    """Akhanda Samrajya Yoga — uninterrupted sovereignty.
+
+    BPHS Ch.39 — Jupiter is the lord of either 2H, 5H, 9H, or 11H AND
+    Jupiter aspects/joins 2L/11L while these are in Kendra/Trikona.
+
+    Simplified detection: Jupiter rules ≥1 of {2,5,9,11} for this Lagna
+    AND Jupiter is itself in a Kendra (1/4/7/10). The classical Akhanda
+    Samrajya is a very strong "great kingship" yoga.
+    """
+    asc = chart.asc_sign
+    jupiter_houses_ruled = set(houses_ruled_by("Jupiter", asc))
+    jupiter_house = chart.house_of("Jupiter")
+    cond_jupiter_rules_wealth_lord = bool(
+        jupiter_houses_ruled & {2, 5, 9, 11}
+    )
+    cond_jupiter_in_kendra = jupiter_house in _KENDRAS
+    active = cond_jupiter_rules_wealth_lord and cond_jupiter_in_kendra
+    return Yoga(
+        name="Akhanda Samrajya", sanskrit="अखण्ड-साम्राज्य",
+        active=active,
+        intensity=0.85 if active else 0.0,
+        participants=("Jupiter",),
+        reference="BPHS Ch.39",
+        description=("Jupiter rules wealth/fortune house (2/5/9/11) AND "
+                     "sits in a Kendra — uninterrupted prosperity."),
+    )
+
+
+def detect_sarpa_dosha(chart: Chart) -> Yoga:
+    """Sarpa Dosha — Rahu or Ketu in 1H, 5H, or 9H with malefic affliction.
+
+    Reference: Nadi tradition / modern synthesis. Indicates inherited
+    karmic burden along the Lagna-Trikona axis (self, intellect, dharma).
+    """
+    afflicted_houses = []
+    for node in ("Rahu", "Ketu"):
+        node_house = chart.house_of(node)
+        if node_house in (1, 5, 9):
+            afflicted_houses.append((node, node_house))
+    active = bool(afflicted_houses)
+    return Yoga(
+        name="Sarpa Dosha", sanskrit="सर्प-दोष",
+        active=active,
+        intensity=min(1.0, 0.5 * len(afflicted_houses)) if active else 0.0,
+        participants=tuple(sorted({n for n, _ in afflicted_houses})),
+        reference="Nadi tradition (modern synthesis)",
+        description=("Rahu/Ketu in 1H/5H/9H — Lagna-Trikona karmic burden "
+                     "affecting self, intellect, or dharma."),
+    )
+
+
+def detect_pitra_dosha(chart: Chart) -> Yoga:
+    """Pitra Dosha — Sun afflicted by Rahu/Saturn in 9H, OR Sun-Rahu conjunct.
+
+    Reference: classical commentary (Phaladeepika), modern Sanjay Rath
+    expansion. Karmic debt to paternal ancestors.
+    """
+    sun_sign = chart.sign_of("Sun")
+    sun_house = chart.house_of("Sun")
+    rahu_sign = chart.sign_of("Rahu")
+    rahu_house = chart.house_of("Rahu")
+    saturn_sign = chart.sign_of("Saturn")
+    triggers: list[str] = []
+    # Sun-Rahu conjunction (same sign)
+    if sun_sign is not None and sun_sign == rahu_sign:
+        triggers.append("Sun-Rahu conjunction (Grahana dosha)")
+    # Sun in 9H with Rahu/Saturn afflicting (same sign or aspecting)
+    if sun_house == 9:
+        if rahu_house == 9:
+            triggers.append("Rahu in 9H with Sun")
+        if saturn_sign == sun_sign:
+            triggers.append("Saturn with Sun in 9H")
+    active = bool(triggers)
+    return Yoga(
+        name="Pitra Dosha", sanskrit="पितृ-दोष",
+        active=active,
+        intensity=min(1.0, 0.4 * len(triggers)) if active else 0.0,
+        participants=("Sun", "Rahu") if "Rahu" in " ".join(triggers) else ("Sun",),
+        reference="Phaladeepika commentary; modern synthesis",
+        description=("Sun (pitr-karaka) afflicted by Rahu/Saturn — "
+                     "ancestral karmic burden. Triggers: "
+                     + "; ".join(triggers) if triggers else
+                     "Pitra Dosha not active for this chart"),
+    )
+
+
+def detect_matr_dosha(chart: Chart) -> Yoga:
+    """Matr Dosha — Moon afflicted by Rahu/Saturn in 4H, OR Moon-Rahu conjunct.
+
+    Reference: classical commentary; symmetric counterpart to Pitra Dosha
+    on the maternal axis.
+    """
+    moon_sign = chart.sign_of("Moon")
+    moon_house = chart.house_of("Moon")
+    rahu_sign = chart.sign_of("Rahu")
+    rahu_house = chart.house_of("Rahu")
+    saturn_sign = chart.sign_of("Saturn")
+    triggers: list[str] = []
+    if moon_sign is not None and moon_sign == rahu_sign:
+        triggers.append("Moon-Rahu conjunction (Grahana dosha on Moon)")
+    if moon_house == 4:
+        if rahu_house == 4:
+            triggers.append("Rahu in 4H with Moon")
+        if saturn_sign == moon_sign:
+            triggers.append("Saturn with Moon in 4H")
+    active = bool(triggers)
+    return Yoga(
+        name="Matr Dosha", sanskrit="मातृ-दोष",
+        active=active,
+        intensity=min(1.0, 0.4 * len(triggers)) if active else 0.0,
+        participants=("Moon",),
+        reference="Phaladeepika commentary; modern synthesis",
+        description=("Moon (matr-karaka) afflicted — maternal/emotional "
+                     "karmic burden. Triggers: "
+                     + "; ".join(triggers) if triggers else
+                     "Matr Dosha not active for this chart"),
+    )
+
+
+def detect_parijata(chart: Chart) -> Yoga:
+    """Parijata Yoga — Lagna lord's dispositor in own/exalt and well-placed.
+
+    BPHS Ch.39 — wealth-and-honour yoga. Trace: Lagna lord sits in sign X
+    ruled by planet P; if P is well-placed (own/exalt/Mooltrikona) AND in
+    Kendra/Trikona, the yoga fires. Compound trace through 2 rulership
+    levels — distinguished from simpler Lagna-strength signals.
+    """
+    asc = chart.asc_sign
+    roles = functional_roles(asc)
+    asc_lord = next(
+        (p for p, r in roles.items() if 1 in r.houses_ruled), None,
+    )
+    if asc_lord is None:
+        return Yoga(
+            name="Parijata", sanskrit="पारिजात", active=False,
+            intensity=0.0, participants=(),
+            reference="BPHS Ch.39",
+            description="(skipped — Lagna lord not resolvable)",
+        )
+    asc_lord_sign = chart.sign_of(asc_lord)
+    if asc_lord_sign is None:
+        return Yoga(
+            name="Parijata", sanskrit="पारिजात", active=False,
+            intensity=0.0, participants=(asc_lord,),
+            reference="BPHS Ch.39", description="(asc lord sign missing)",
+        )
+    # Sign rulership map
+    sign_lords = {
+        1: "Mars", 2: "Venus", 3: "Mercury", 4: "Moon", 5: "Sun",
+        6: "Mercury", 7: "Venus", 8: "Mars", 9: "Jupiter",
+        10: "Saturn", 11: "Saturn", 12: "Jupiter",
+    }
+    dispositor = sign_lords[asc_lord_sign]
+    disp_sign = chart.sign_of(dispositor)
+    disp_house = chart.house_of(dispositor)
+    disp_lon = chart.planet_lons.get(dispositor)
+    if disp_sign is None:
+        return Yoga(
+            name="Parijata", sanskrit="पारिजात", active=False,
+            intensity=0.0, participants=(asc_lord, dispositor),
+            reference="BPHS Ch.39", description="(dispositor sign missing)",
+        )
+    cond_disp_dignified = (
+        is_exalted(dispositor, disp_sign)
+        or is_own_sign(dispositor, disp_sign)
+        or (disp_lon is not None and is_moolatrikona(dispositor, disp_lon))
+    )
+    cond_disp_well_placed = disp_house in (_KENDRAS | _TRIKONAS)
+    active = bool(cond_disp_dignified and cond_disp_well_placed)
+    return Yoga(
+        name="Parijata", sanskrit="पारिजात",
+        active=active,
+        intensity=0.85 if active else 0.0,
+        participants=(asc_lord, dispositor),
+        reference="BPHS Ch.39",
+        description=(
+            f"Lagna lord {asc_lord} disposited by {dispositor}, which is "
+            "dignified AND well-placed — wealth and honour."
+        ),
+    )
+
+
 def detect_adhi(chart: Chart) -> Yoga:
     """Benefics in 6/7/8 from Moon — protection yoga.
 
@@ -761,20 +944,23 @@ def detect_adhi(chart: Chart) -> Yoga:
 
 
 YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
-    # PMP
+    # PMP (5)
     detect_ruchaka, detect_bhadra, detect_hamsa,
     detect_malavya, detect_sasa,
-    # Solar/Lunar
+    # Solar/Lunar (5)
     detect_budha_aditya, detect_veshi, detect_vosi,
     detect_sunapha, detect_anapha,
-    # Foundation
+    # Foundation (7)
     detect_gajakesari, detect_chandra_mangal, detect_kemadruma,
     detect_raja_yoga, detect_vipareeta_raja,
     detect_neecha_bhanga_raja, detect_dharma_karma_adhipati,
-    # Affliction
+    # Affliction (3)
     detect_mangal_dosha, detect_kala_sarpa, detect_daridra,
-    # Auspicious specials
+    # Auspicious specials (4)
     detect_amala, detect_saraswati, detect_adhi, detect_lakshmi,
+    # Phase B additions (5)
+    detect_akhanda_samrajya, detect_sarpa_dosha,
+    detect_pitra_dosha, detect_matr_dosha, detect_parijata,
 )
 
 

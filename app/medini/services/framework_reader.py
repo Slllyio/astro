@@ -20,6 +20,7 @@ from typing import Any
 
 from app.core.chart_model import Chart
 from app.core.dkp_modulation import DKPContext
+from app.core.dkp_translation import TranslationRecord
 from app.core.reading_composer import (
     Reading,
     compose_reading,
@@ -103,6 +104,27 @@ def read_chart_via_framework(
     )
 
 
+def _translation_to_dict(t: "TranslationRecord") -> dict[str, Any]:
+    """Serialise a TranslationRecord for JSON response."""
+    return {
+        "key": t.key,
+        "classification": t.classification,
+        "domain": t.domain,
+        "shloka": t.shloka,
+        "classical_references": list(t.classical_references),
+        "ancient_manifestation": t.ancient_manifestation,
+        "desh_shift": t.desh_shift,
+        "kaal_shift": t.kaal_shift,
+        "paristhiti_shift": t.paristhiti_shift,
+        "modern_manifestation": t.modern_manifestation,
+        "invariant_mechanism": t.invariant_mechanism,
+        "modern_references": list(t.modern_references),
+        "lagna_specific_notes": {
+            int(k): v for k, v in t.lagna_specific_notes.items()
+        },
+    }
+
+
 def reading_to_dict(reading: Reading) -> dict[str, Any]:
     """Serialise a framework Reading for JSON response.
 
@@ -122,6 +144,9 @@ def reading_to_dict(reading: Reading) -> dict[str, Any]:
             "afflicting_yogas": list(claim.afflicting_yogas),
             "gochara_triggered": bool(claim.gochara_triggered),
             "modulation_notes": list(claim.modulation_notes),
+            "relevant_translations": [
+                _translation_to_dict(t) for t in claim.relevant_translations
+            ],
         }
     return {
         "person_id": reading.person_id,
@@ -148,5 +173,6 @@ def reading_to_dict(reading: Reading) -> dict[str, Any]:
         "bhava_claims": bhava_claims_json,
         "open_questions": list(reading.open_questions),
         "dkp_completeness": int(reading.dkp_completeness),
+        "translations": [_translation_to_dict(t) for t in reading.translations],
         "rendered_text": format_reading_text(reading),
     }

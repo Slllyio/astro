@@ -45,8 +45,8 @@ that map the equivalent manifestation today.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Final, Iterable
+from dataclasses import dataclass, field
+from typing import Final, Iterable, Mapping
 
 
 # ─── Domain tags ──────────────────────────────────────────────────────
@@ -80,6 +80,11 @@ class TranslationRecord:
     modern_manifestation: str         # how it expresses today
     invariant_mechanism: str          # underlying karmic structure
     modern_references: tuple[str, ...]  # books/concepts mapping equivalence
+    lagna_specific_notes: Mapping[int, str] = field(default_factory=dict)
+    # Optional per-Lagna nuance — sparse coverage. The same yoga reads
+    # differently when the Lagna confers Yogakaraka status on a planet
+    # involved in the yoga (Cancer Mars, Taurus Saturn, etc.). Keys are
+    # asc_sign 1..12; values are short modifier notes.
 
 
 # ─── Meta-principles per domain ───────────────────────────────────────
@@ -132,6 +137,23 @@ _TRANSLATIONS: Final[tuple[TranslationRecord, ...]] = (
 
     TranslationRecord(
         key="Mangal Dosha",
+        lagna_specific_notes={
+            4: ("Cancer Lagna: Mars is YOGAKARAKA here (rules 5H+10H), "
+                "so Mangal Dosha softens into career-relationship-tension "
+                "rather than dissolution. Native often marries someone "
+                "from professional context."),
+            5: ("Leo Lagna: Mars rules 4H+9H — both Kendra+Trikona — "
+                "Yogakaraka softens Dosha; modern manifestation is "
+                "career-driven late marriage rather than divorce risk."),
+            1: ("Aries Lagna: Mars rules 1H+8H (Lagna lord and 8L). "
+                "Mars-7H here is reading 7H from Lagna-lord's own house — "
+                "intensifies the energy. Modern: dominant-partner attraction, "
+                "high-conflict-but-passionate relationship patterns."),
+            8: ("Scorpio Lagna: Mars is Lagna lord. Mars-7H is from one of "
+                "its own signs into the partnership axis — magnifies the "
+                "intensity. Modern: relationship as identity-battleground, "
+                "frequent intense-then-broken cycles."),
+        },
         classification="yoga",
         domain=Domain.KINSHIP,
         shloka="Mars in 1/2/4/7/8/12 from Lagna or Moon causes kalatra-pida "
@@ -333,6 +355,17 @@ _TRANSLATIONS: Final[tuple[TranslationRecord, ...]] = (
 
     TranslationRecord(
         key="bhava_10_planet_Saturn",
+        lagna_specific_notes={
+            2: ("Taurus Lagna: Saturn is YOGAKARAKA (rules 9H+10H). "
+                "Saturn-10H here is the karaka-in-its-own-bhava — "
+                "exceptionally favorable. Modern: long-arc institutional "
+                "leadership, central bank governor / chief justice / "
+                "Tata-Sons-chairman type trajectories."),
+            7: ("Libra Lagna: Saturn is YOGAKARAKA (rules 4H+5H — Kendra+"
+                "Trikona). Saturn-10H here gains immense karmic weight. "
+                "Modern: high-stakes professional roles requiring quiet "
+                "competence — surgeon, judge, infrastructure architect."),
+        },
         classification="bhava_placement",
         domain=Domain.CAREER_WEALTH,
         shloka="Saturn in 10H in own/exaltation produces leader of men "
@@ -921,6 +954,615 @@ _TRANSLATIONS: Final[tuple[TranslationRecord, ...]] = (
         modern_references=("Bowen family systems",
                            "Mark Wolynn It Didn't Start With You",
                            "Hellinger Familienstellen"),
+    ),
+
+    # ─── Phase 8.6 additions (post-v1 expansion) ──────────────────────
+
+    TranslationRecord(
+        key="Venus_afflicted_combust_or_dusthana",
+        classification="bhava_placement",
+        domain=Domain.KINSHIP,
+        shloka=("Venus combust by Sun, in debilitation (Virgo), or in "
+                "6/8/12 from Lagna damages bhogya (enjoyment) and "
+                "dampatya-sukha (marital happiness)."),
+        classical_references=("BPHS Ch.32 Karakadhyaya",
+                              "Phaladeepika Ch.15.16"),
+        ancient_manifestation=(
+            "Venus signified the wife as bhoga-patni — sensual-domestic "
+            "partner whose role was procreation, ritual partnership "
+            "(saha-dharmini), household management. Afflicted Venus "
+            "manifested as: barren wife (religious crisis under Putra-"
+            "dharma), wife of low kula-shila, repeated wife-deaths "
+            "(serial remarriage for Brahmin men), sensory deprivation "
+            "(Venus = arts, perfume, beauty — denied through poverty)."
+        ),
+        desh_shift=(
+            "Wife no longer principally bhoga-patni; she is co-earner, "
+            "co-decision-maker, often primary breadwinner in urban India "
+            "(Census 2011 trend continuing)."
+        ),
+        kaal_shift=(
+            "Beauty/sensuality (Venus) has industrialized — cosmetics, "
+            "fashion, OTT entertainment, pornography make bhoga "
+            "abundantly accessible OUTSIDE marriage, decoupling Venus "
+            "from spouse-karaka in lived experience."
+        ),
+        paristhiti_shift=(
+            "Sensuality without marriage (cohabitation, hookup culture), "
+            "marriage without sensuality (~15% urban Indian marriages "
+            "sexless by 5th year per ICMR), IVF/surrogacy decouple "
+            "procreation from sexuality."
+        ),
+        modern_manifestation=(
+            "Native may have abundant romantic/aesthetic life but no "
+            "stable partnership (bhoga without kalatra). Marriage that "
+            "lacks sensual-aesthetic life — companionate cohabitation, "
+            "sexless after children. Affairs (Venus seeks expression "
+            "elsewhere when starved at home). Aesthetic-career profile "
+            "(designer, artist, hospitality) conflicting with marital "
+            "stability. Modern vandhyatva manifests as voluntary "
+            "childlessness (DINK), IVF struggles, postponed fertility."
+        ),
+        invariant_mechanism=(
+            "Venus is the capacity for harmonious union and sensual "
+            "exchange. Affliction degrades that capacity. Whether the "
+            "manifestation is Vedic barren-wife or modern sexless-DINK-"
+            "marriage is contextual envelope; the inner deficit — "
+            "rasa-bhanga, a break in the flow of harmonious exchange — "
+            "is invariant."
+        ),
+        modern_references=("ICMR sexless-marriage studies",
+                           "Census 2011 female workforce participation",
+                           "Esther Perel Mating in Captivity"),
+    ),
+
+    TranslationRecord(
+        key="Mars-Venus association",
+        classification="yoga",
+        domain=Domain.KINSHIP,
+        shloka=("Mars-Venus association produces paradara-rati (attraction "
+                "to others' spouses), gupta-kama (clandestine desire), "
+                "skill in kama-shastra. Malefic-aspected escalates to "
+                "vyabhichara (adultery)."),
+        classical_references=("Saravali Ch.34", "Phaladeepika Ch.13.6",
+                              "Jataka Parijata Ch.7"),
+        ancient_manifestation=(
+            "Patrilineal kinship (Trautmann 1981) made female chastity "
+            "lineage-purity. Mars-Venus male natives could engage "
+            "courtesans (ganika) without dharmic transgression; female "
+            "natives were severely controlled — Mars-Venus typically "
+            "expressed as kulata (woman of 'loose conduct') and rapid "
+            "social ruin. Doctrine was framed asymmetrically because the "
+            "paristhiti was asymmetric."
+        ),
+        desh_shift=(
+            "Female sexuality no longer monopolized by lineage-honor in "
+            "urban contexts. Sex-work decriminalization debates ongoing."
+        ),
+        kaal_shift=(
+            "Public discourse of consent, choice, agency. Dating apps "
+            "(Tinder/Bumble/Hinge India 50M+ users 2024) institutionalize "
+            "Mars-Venus pattern — sexual selection at scale, "
+            "low-commitment encounters norm for ages 22-30."
+        ),
+        paristhiti_shift=(
+            "Serial monogamy as norm. Polyamory in urban-progressive "
+            "circles. Sexual confidence as cultural ideal."
+        ),
+        modern_manifestation=(
+            "Serial monogamy, overlapping relationships, situationships. "
+            "Sexual openness, polyamory in progressive circles. Career "
+            "in fashion, film, hospitality, OTT — Mars-Venus aesthetic-"
+            "passion fusion. Affairs within marriage (Indian extramarital-"
+            "dating apps like Gleeden report rapid growth). For women: "
+            "Mars-Venus now expresses as AGENCY (chosen partners, sexual "
+            "confidence) rather than ruination — paristhiti changed "
+            "faster than doctrine. Risk: drama-addiction in relationships, "
+            "attraction to unavailable partners, intensity-mistaken-for-love."
+        ),
+        invariant_mechanism=(
+            "Mars (desire-pursuit) + Venus (object-of-desire) on the same "
+            "axis intensifies kama and reduces patience for slow-cultivated "
+            "prema. The INTENSITY and SHORT-FUSE are invariant; whether "
+            "they ruin a Vedic woman's reputation or fuel a Bumble account "
+            "is contextual."
+        ),
+        modern_references=("Trautmann 1981 Dravidian kinship",
+                           "Tinder/Bumble India 2024 user data",
+                           "Esther Perel State of Affairs"),
+    ),
+
+    TranslationRecord(
+        key="strong_10L",
+        classification="bhava_placement",
+        domain=Domain.CAREER_WEALTH,
+        shloka=("Lord of 10H in dignity in Kendra/Trikona, aspected by "
+                "benefics, gives rajya — sovereignty, fame, command over "
+                "others, conduct of great works (maha-karma)."),
+        classical_references=("BPHS Ch.26 Bhava-phala",
+                              "Phaladeepika Ch.13"),
+        ancient_manifestation=(
+            "Rajya literally meant kingship or feudatory rank — samanta, "
+            "mahamatya, senapati, royal treasurer, chief temple "
+            "administrator (sthanika). For Brahmanas it meant kulapati "
+            "of a major gurukula. For Vaishyas it meant sreshthin (head "
+            "of merchant guild — the srenis system documented in "
+            "Arthasastra). Status was monotonic, lifelong, hereditary-"
+            "leaning, visible (palanquin, retinue, royal seal)."
+        ),
+        desh_shift=(
+            "Indian economy moved agrarian → colonial-extractive → "
+            "Nehruvian-industrial → 1991 liberalization → IT services → "
+            "platform/creator. Status unbundled from birth across "
+            "1850-2000 (Tirthankar Roy)."
+        ),
+        kaal_shift=(
+            "Authority is now plural and contestable. No single throne; "
+            "many thrones (CEO, MP, viral creator, top surgeon, fund "
+            "manager). Holland's RIASEC career typology and Schein's "
+            "career anchors show modern careers as SELF-CONSTRUCTED "
+            "portfolios."
+        ),
+        paristhiti_shift=(
+            "Strong 10L now expresses through whichever modality the "
+            "native's other karakas indicate."
+        ),
+        modern_manifestation=(
+            "Sun-flavored 10L → C-suite, founder-CEO, elected office, "
+            "military rank. Moon-flavored → hospitality, FMCG, public-"
+            "facing healthcare leadership. Mars → surgery, defense "
+            "contracting, real-estate development, sports. Mercury → "
+            "consulting partner, tech executive, top journalist, trader. "
+            "Jupiter → judge, professor-emeritus, central-bank governor, "
+            "religious head. Venus → fashion/luxury/film executive, "
+            "diplomatic post. Saturn → infrastructure czar, bureaucracy "
+            "chief, operations head of Fortune 500."
+        ),
+        invariant_mechanism=(
+            "Strong 10L produces RECOGNIZED COMMAND OVER A DOMAIN OF "
+            "ACTION. The substrate determines what counts as a domain "
+            "(province vs P&L vs subreddit) but the karmic signature — "
+            "the world routes its respect and resources to this native's "
+            "decisions — is constant."
+        ),
+        modern_references=("Tirthankar Roy India economic history",
+                           "Holland RIASEC career typology",
+                           "Schein career anchors"),
+    ),
+
+    TranslationRecord(
+        key="strong_11L",
+        classification="bhava_placement",
+        domain=Domain.CAREER_WEALTH,
+        shloka=("Lord of 11H exalted or in own sign in Kendra/Trikona = "
+                "gains from many sources (nana-desa-labha), many friends, "
+                "fulfillment of all desires (sarva-kama-purti), "
+                "flourishing elder siblings."),
+        classical_references=("BPHS Ch.26",),
+        ancient_manifestation=(
+            "Labha in agrarian society = harvest yields, tribute from "
+            "sub-feudatories, gifts from kin-network, marriage alliances "
+            "bringing dowry + political coalition. 11H literally tracked "
+            "the guild network (sreni) — merchant's reach across trading "
+            "cities, Brahmana's network of patron-families, Kshatriya's "
+            "web of allied clans. In low-trust pre-institutional society, "
+            "who you knew determined what flowed to you."
+        ),
+        desh_shift=(
+            "Networks have become measurable, portable, asymmetric — "
+            "LinkedIn (1B+ users), alumni networks, customer bases, "
+            "audience email lists, GitHub stars, Substack subscribers."
+        ),
+        kaal_shift=(
+            "Reid Hoffman's network=net-worth thesis; Metcalfe's Law "
+            "applies to careers — value scales with the square of "
+            "connections."
+        ),
+        paristhiti_shift=(
+            "Multiple-income-stream culture (rental + salary + side-"
+            "business + investments + creator-revenue) is the literal "
+            "modern reading of nana-desa-labha — gains from many places."
+        ),
+        modern_manifestation=(
+            "LinkedIn-influencer / B2B sales executive whose deal-flow "
+            "comes from network. Angel investor / scout whose returns "
+            "track network quality. VC partner whose career is literally "
+            "network-monetization. Recruiter, headhunter, executive coach "
+            "— pure 11H professions. Community-builder / membership-"
+            "business founder. Salesperson-as-rainmaker. Politician whose "
+            "constituency = labha-base. Diaspora-network entrepreneur "
+            "(Patel motel network, Marwari trade network — invariant "
+            "ancient-to-modern)."
+        ),
+        invariant_mechanism=(
+            "Strong 11L produces gains compounded through HUMAN-NETWORK "
+            "DENSITY. Native is a hub through which mutual benefit flows, "
+            "and the network itself becomes the asset. Whether the "
+            "network is a sreni of cloth merchants across the Deccan or "
+            "a Slack community of 50,000 SaaS founders, the karmic "
+            "signature — desire fulfilled through coalition — is unchanged."
+        ),
+        modern_references=("Reid Hoffman network=net-worth",
+                           "Kevin Kelly 1000 True Fans",
+                           "Metcalfe's Law applied to careers"),
+    ),
+
+    TranslationRecord(
+        key="Saraswati",
+        classification="yoga",
+        domain=Domain.CAREER_WEALTH,
+        shloka=("Mercury + Jupiter + Venus in Kendra/Trikona/2H with "
+                "Jupiter in own/exalted = Saraswati Yoga. Native becomes "
+                "learned in all sastras, a poet, scholar, wealthy, "
+                "famous, dear to kings — his words become artha "
+                "(wealth-bearing)."),
+        classical_references=("Mantreshvara via Phaladeepika 6.13",),
+        ancient_manifestation=(
+            "Kavi-pandita who recited at court receiving gold coins per "
+            "verse (Kalidasa archetype). The jyotisi / vaidya whose "
+            "knowledge was directly monetizable. Royal advisor whose "
+            "vak (speech) decided policy. Temple acharya whose pravachanas "
+            "drew patrons. Knowledge was scarce, oral, lineage-transmitted, "
+            "economically privileged."
+        ),
+        desh_shift=(
+            "Information has gone from scarce to over-abundant. Saraswati "
+            "now favors those who SYNTHESIZE and DISTRIBUTE rather than "
+            "merely POSSESS."
+        ),
+        kaal_shift=(
+            "Kali Mercury-amplification means written/digital word "
+            "travels infinitely. Single book or course earns for decades "
+            "(Tim Ferriss, James Clear)."
+        ),
+        paristhiti_shift=(
+            "Creator economy (Kevin Kelly's 1000 True Fans) is the "
+            "modern Saraswati substrate — direct-to-audience monetization "
+            "of expertise."
+        ),
+        modern_manifestation=(
+            "Author whose books generate royalties for life + speaking "
+            "fees + course revenue. Solo consultant / fractional executive "
+            "who charges premium for synthesized expertise. YouTube "
+            "educator / Substack writer with paid tier (Lex Fridman / "
+            "Tim Ferriss / Andrew Huberman). Investment-research analyst "
+            "whose newsletters are subscribed by funds. Lawyer / doctor "
+            "whose treatise becomes canonical reference. Academic-turned-"
+            "public-intellectual (Pinker, Haidt). AI-era twist: operator "
+            "who wields LLMs as force multipliers on own expertise."
+        ),
+        invariant_mechanism=(
+            "Saraswati produces SPEECH/WRITING THAT CONVERTS DIRECTLY TO "
+            "WEALTH WITHOUT INTERMEDIARY LABOR. Native's words ARE the "
+            "goods. Whether medium is palm-leaf manuscript copied by "
+            "scribes or Substack hitting 100k subscribers, the karmic "
+            "signature — vak becomes artha — is identical."
+        ),
+        modern_references=("Kevin Kelly 1000 True Fans",
+                           "Tim Ferriss / James Clear royalty patterns",
+                           "Naval Ravikant on specific knowledge"),
+    ),
+
+    TranslationRecord(
+        key="Saraswati",
+        classification="yoga",
+        domain=Domain.DHARMA,
+        shloka=("Saraswati Yoga viewed through dharma lens: native becomes "
+                "kavi, vagmi, shastrajna, prasiddha-vidvan — poet, "
+                "eloquent, scripture-knower, famous learned-one. Master "
+                "of kavya, natya, alankara."),
+        classical_references=("Saravali 38.1-3", "Phaladeepika 6.21"),
+        ancient_manifestation=(
+            "Kavi in original sense — composer of Sanskrit kavya, court-"
+            "poet to a king (rajakavi), composer of devotional stotras, "
+            "shastra-commentator. M+J+V triumvirate maps to classical "
+            "fusion of shastra (system) + kavya (art) + bhakti (devotional "
+            "sweetness). Kalidasa, Bhartrhari, Alvar poet-saints occupy "
+            "this slot."
+        ),
+        desh_shift=(
+            "Sanskrit court-poet has no modern analog as a profession; "
+            "structural slot fragmented into novelist, essayist, "
+            "screenwriter, intellectual-podcast-host, public-academic, "
+            "'thought-leader'."
+        ),
+        kaal_shift=(
+            "Geertz (Interpretation of Cultures 1973) — culture is a "
+            "'web of significance' people spin themselves into. "
+            "Saraswati-yoga native in 2026 spins this web through "
+            "Twitter threads, longform Substacks, viral op-eds, "
+            "bestselling nonfiction."
+        ),
+        paristhiti_shift=(
+            "Audience is global and digital-native. Patronage by a king "
+            "(Vikramaditya) is replaced by patronage by an algorithm "
+            "(recommendation engines) and an audience (paid subscribers, "
+            "Patreon)."
+        ),
+        modern_manifestation=(
+            "Public intellectual with media reach (Malcolm Gladwell, "
+            "Tyler Cowen, Maria Popova of Marginalian). Polymathic "
+            "creative (Brian Eno, Rick Rubin). Academic-with-audience "
+            "(Mary Beard, Cornel West). Indian diaspora Saraswati-yoga "
+            "native often shows up as elite-university humanities "
+            "professor who also writes for The New Yorker."
+        ),
+        invariant_mechanism=(
+            "M+J+V fuses analytic precision (Mercury), wisdom-frame "
+            "(Jupiter), aesthetic-affective resonance (Venus). The yoga "
+            "always produces a native whose function is TO RENDER HIGH-"
+            "COMPLEXITY MEANING INTO TRANSMISSIBLE-BEAUTIFUL FORM FOR A "
+            "PUBLIC AUDIENCE. The audience changes; the function is "
+            "invariant."
+        ),
+        modern_references=("Geertz Interpretation of Cultures",
+                           "Maria Popova Marginalian model"),
+    ),
+
+    TranslationRecord(
+        key="9L_in_12H",
+        classification="bhava_placement",
+        domain=Domain.DHARMA,
+        shloka=("9L in 12H produces videsha-dharma (foreign dharma), "
+                "sannyasa-bhagya (ascetic-fortune), pitr-viyoga "
+                "(separation from father)."),
+        classical_references=("BPHS Bhava-pati-phala adhyaya",
+                              "Phaladeepika 15.9"),
+        ancient_manifestation=(
+            "Native's fortune was located OUTSIDE the social grid — "
+            "typically through sannyasa (the 12H reading) or teerthayatra "
+            "to distant teerthas. Loss of paternal religion was karmically "
+            "grave; native reconstructed dharma as renunciate or hermit. "
+            "The split between fortune (9H) and loss (12H) was a karmic "
+            "forcing-function toward liberation."
+        ),
+        desh_shift=(
+            "'Foreign' is the modal middle-class Indian aspiration; the "
+            "12H foreign-residence is now the H-1B/OPT/PR pathway."
+        ),
+        kaal_shift=(
+            "Globalization has inverted the valence of videsha — diaspora-"
+            "dharma (Indian gurus teaching in California, yoga-teachers "
+            "in Berlin) is the dominant mode of dharma transmission."
+        ),
+        paristhiti_shift=(
+            "Many natives experience loss of inherited religion in "
+            "young-adulthood followed by reconstruction of personal "
+            "sadhana in a foreign context — the literal Hindu-American "
+            "second-generation pattern, or American who finds Buddhism "
+            "in Thailand."
+        ),
+        modern_manifestation=(
+            "NRI dharma-teacher, foreign-based yoga-instructor, immigrant "
+            "intellectual whose meaning-frame is built abroad, second-"
+            "generation diaspora native who reconstructs Hindu practice "
+            "on different terms than parents, expat who finds spiritual "
+            "home in adopted country. The 'loss of family religion' is "
+            "real but no longer catastrophic — it's now the precondition "
+            "for SELF-AUTHORED dharma."
+        ),
+        invariant_mechanism=(
+            "9L in 12H always relocates the fortune-of-meaning OUTSIDE "
+            "THE INHERITED SOCIAL CONTAINER. Whether the container exited "
+            "is a Vedic gotra in 500 CE or a Hindu-American suburban "
+            "household in 2010 is desh-kaal cosmetic. The karmic work is: "
+            "build dharma from outside the inheritance, not inside it."
+        ),
+        modern_references=("Indian diaspora religion studies (Vasudha "
+                           "Narayanan, Diana Eck)",
+                           "Wuthnow seeker spirituality"),
+    ),
+
+    TranslationRecord(
+        key="Ketu_6H_or_8H",
+        classification="bhava_placement",
+        domain=Domain.HEALTH,
+        shloka=("Ketu in 6H destroys enemies/disease (Vipareeta-flavor); "
+                "Ketu in 8H brings avyakta-rogah (inexplicable illness). "
+                "Ketu is moksha-karaka, dissolving bodily attachment."),
+        classical_references=("BPHS Ch.40",
+                              "Jaimini Sutras on Ketu moksha-karaka"),
+        ancient_manifestation=(
+            "Ketu's 'headless' signature mapped to decapitation in war, "
+            "wounds of forgotten cause, fevers of mysterious origin that "
+            "broke suddenly, possession-states, sudden falling-away of a "
+            "limb (leprosy was canonical 'Ketu' disease — body parts "
+            "dissociating from the whole). Acute, inexplicable, often "
+            "spiritually-framed."
+        ),
+        desh_shift=(
+            "Battlefield mortality rare for civilians."
+        ),
+        kaal_shift=(
+            "PSYCHOLOGICAL and IMMUNOLOGICAL equivalents emerged as "
+            "recognized categories: PTSD (named 1980 DSM-III), "
+            "dissociative disorders, autoimmune disease (immune system "
+            "'forgetting' self/non-self), psychosomatic medicine. The "
+            "body-disowning-itself signature found new substrates."
+        ),
+        paristhiti_shift=(
+            "Mental-health literacy normalizes the category of "
+            "psychosomatic illness."
+        ),
+        modern_manifestation=(
+            "Ketu-6 → autoimmune disease (immune burning away own tissue "
+            "— Ketu's signature of self-immolation turned inward), "
+            "psoriasis, eczema as somatic expression of unprocessed "
+            "emotion. Sudden inexplicable recoveries (Vipareeta flavor — "
+            "'spontaneous remission'). Patient who finds healing through "
+            "RENUNCIATION (going vegan, leaving career, monastic retreat "
+            "resolves the illness). Ketu-8 → dissociative states, sleep "
+            "paralysis, near-death experiences, psychedelic-occasioned "
+            "ego-dissolution, sudden cardiac events without warning, "
+            "'silent' pathology found incidentally on imaging."
+        ),
+        invariant_mechanism=(
+            "Ketu governs THE BODY EXPERIENCED AS NOT-SELF — whether "
+            "through dismemberment (ancient), autoimmune attack (modern), "
+            "or dissociative depersonalization (modern). The karmic theme "
+            "is the dissolution of body-identification."
+        ),
+        modern_references=("van der Kolk Body Keeps the Score",
+                           "Kleinman Rethinking Psychiatry",
+                           "Bach NEJM 2002 autoimmune epidemiology"),
+    ),
+
+    TranslationRecord(
+        key="Vipareeta Raja",
+        classification="yoga",
+        domain=Domain.HEALTH,
+        shloka=("VRY in 6/8/12 viewed through health lens: native gains "
+                "Raja-status through illness/adversity-navigation. The "
+                "wound becomes the medicine offered to others."),
+        classical_references=("Phaladeepika 6.34", "BPHS Ch.36"),
+        ancient_manifestation=(
+            "Native afflicted by chronic illness or 'enemy'-bhava "
+            "activation, but with VRY operative, became a sannyasi, "
+            "vaidya (healer who has personally suffered), tantric, or "
+            "warrior who channeled adversity into renunciation and "
+            "spiritual authority. Illness was the gateway to vairagya. "
+            "Documented in hagiographies of physicians-who-were-patients."
+        ),
+        desh_shift=(
+            "The illness-narrative economy (Kleinman, Frank's Wounded "
+            "Storyteller 1995) and social-media platform economy have "
+            "created the chronic-illness-as-public-identity pattern."
+        ),
+        kaal_shift=(
+            "Cancer-survivor advocacy, mental-health awareness leadership, "
+            "addiction-recovery testimony, chronic-illness influencer "
+            "accounts have monetary, social, identity returns that "
+            "classical India did not provide."
+        ),
+        paristhiti_shift=(
+            "Memoir + Instagram is the modern equivalent of the "
+            "spiritual-authority-after-illness arc."
+        ),
+        modern_manifestation=(
+            "Develops cancer at 35, writes a bestselling memoir, becomes "
+            "patient-advocacy figure. Becomes addicted, recovers, founds "
+            "rehab/sober-coaching practice. Diagnosed bipolar, becomes "
+            "mental-health-awareness influencer. Chronic illness drives "
+            "into integrative medicine, becomes practitioner. The "
+            "dushtana-bhava activation generates the crisis that produces "
+            "the public platform. Ancient template (illness → renunciation "
+            "→ spiritual authority) and modern template (illness → "
+            "narrative → social/economic authority) are structurally "
+            "isomorphic."
+        ),
+        invariant_mechanism=(
+            "Dushtana houses are crisis-as-catalyst engines. Whether the "
+            "platform is monastic-renunciation (ancient) or memoir-and-"
+            "Instagram (modern), the yoga produces the same karmic move: "
+            "THE WOUND BECOMES THE MEDICINE OFFERED TO OTHERS."
+        ),
+        modern_references=("Arthur Frank Wounded Storyteller",
+                           "Kleinman Illness Narratives",
+                           "Atul Gawande writer-physician archetype"),
+    ),
+
+    TranslationRecord(
+        key="Sunapha_or_Anapha_or_Durudhura",
+        classification="yoga",
+        domain=Domain.KINSHIP,
+        shloka=("Planets (not Sun) in 2nd from Moon = Sunapha (wealth-"
+                "acquisition through own effort); in 12th = Anapha "
+                "(refined character, expenses, charity); both = "
+                "Durudhura (servants, vehicles, comforts)."),
+        classical_references=("BPHS Ch.36.10-13", "Saravali Ch.13"),
+        ancient_manifestation=(
+            "2H from Moon = family/voice/resources flowing TO Moon-mind; "
+            "12H = expenditure/withdrawal from Moon-mind. These were "
+            "lineage-property yogas — Sunapha natives accumulated through "
+            "paternal/maternal lineage networks; Anapha gave dharmic "
+            "disposition and vairagya (renunciation); Durudhura gave the "
+            "rich householder (servants, conveyances)."
+        ),
+        desh_shift=(
+            "Lineage wealth less determining; self-made wealth dominant "
+            "in urban professional class."
+        ),
+        kaal_shift=(
+            "Renunciation (Anapha) culturally devalued; 'balanced "
+            "lifestyle' / minimalism is the secular substitute."
+        ),
+        paristhiti_shift=(
+            "Servants → cleaning services, dishwashers, Uber, food-"
+            "delivery — the Durudhura bhoga package is now SaaS-mediated "
+            "convenience."
+        ),
+        modern_manifestation=(
+            "Sunapha: self-earned income; brand/family reputation as "
+            "launchpad; 2nd-bhava-from-Moon planets indicate channel "
+            "(Sun = authority/government, Mercury = communication/IT, "
+            "Mars = engineering/military, Venus = creative/hospitality). "
+            "Anapha: refined-character professional, philanthropy, "
+            "charitable giving, sometimes lifestyle-spending without "
+            "accumulation. Durudhura: high-consumption urban professional "
+            "life — multiple homes, frequent travel, services-mediated "
+            "convenience, staff."
+        ),
+        invariant_mechanism=(
+            "Moon-as-fulcrum + flanking-planet structure governs the "
+            "texture of livelihood-flow around the emotional center. "
+            "Whether flow is grain-and-cattle or salary-and-equity is "
+            "contextual; the temperamental signature (acquisitive Sunapha "
+            "vs refined Anapha vs luxuriating Durudhura) is invariant."
+        ),
+        modern_references=("Indian urban consumer-class spending patterns",
+                           "Joan Williams class-as-culture framework"),
+    ),
+
+    TranslationRecord(
+        key="Matr Dosha",
+        classification="yoga",
+        domain=Domain.HEALTH,
+        shloka=("Moon afflicted by Rahu/Saturn in 4H, or Moon-Rahu "
+                "conjunction = Matr Dosha. Symmetric counterpart to "
+                "Pitra Dosha on maternal/emotional axis."),
+        classical_references=("Phaladeepika commentary",
+                              "modern synthesis Sanjay Rath"),
+        ancient_manifestation=(
+            "Native suffered mother's early death, distance through "
+            "father's co-wives, or maternal-line karma manifesting as "
+            "emotional disturbance. In joint-family context, manifested "
+            "as fractured matr-sambandha (mother-relationship) and the "
+            "downstream consequences for women's standing."
+        ),
+        desh_shift=(
+            "Maternal mortality dropped dramatically. Mother-child dyad "
+            "isolated in nuclear family; the relationship has more "
+            "psychological intensity (less social diffusion)."
+        ),
+        kaal_shift=(
+            "Attachment theory (Bowlby, Ainsworth), maternal-attunement "
+            "research (Tronick still-face paradigm), and intergenerational-"
+            "trauma psychology have given vocabulary to what doctrine "
+            "called Matr Dosha."
+        ),
+        paristhiti_shift=(
+            "Therapy modalities specifically target maternal attachment "
+            "wounds; women's-circles, somatic therapy, parts-work all "
+            "address the matr-sambandha layer."
+        ),
+        modern_manifestation=(
+            "Postpartum mood disorders. Eating disorders (Moon = "
+            "nourishment, Rahu/Saturn = distortion). Anxious or avoidant "
+            "attachment style. Conflict with mother surfacing in "
+            "adulthood as therapy-content. Difficulty receiving care. "
+            "For women: difficulty inhabiting the maternal role (PND, "
+            "ambivalence about motherhood). For men: choosing partners "
+            "who replicate mother's wounded pattern."
+        ),
+        invariant_mechanism=(
+            "Rahu/Saturn afflicting Moon turbulates the emotional-"
+            "nourishment substrate. The injury to the FEELING-OF-BEING-"
+            "HELD is invariant whether mother died of childbirth fever "
+            "(ancient) or was depressed and emotionally absent (modern)."
+        ),
+        modern_references=("Bowlby attachment theory",
+                           "Ainsworth Strange Situation paradigm",
+                           "Tronick still-face research"),
     ),
 
     TranslationRecord(

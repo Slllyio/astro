@@ -28,7 +28,7 @@ synthesis* layer over Phases 1-8 + caller-provided ephemeris facts.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Mapping
+from typing import Iterable, Mapping
 
 from app.core.bhava_judge import BhavaVerdict, judge_all_bhavas
 from app.core.chara_dasha import chara_active_at
@@ -61,6 +61,12 @@ class ReadingClaim:
     afflicting_yogas: tuple[str, ...]
     gochara_triggered: bool      # is the bhava currently activated by transit?
     modulation_notes: tuple[str, ...]
+    # Doctrine translations RELEVANT TO THIS SPECIFIC BHAVA — chosen by
+    # matching the bhava's lord/karaka/occupants against the translation
+    # registry, and by including yoga-translations from the confirming/
+    # afflicting yoga lists. UI can render these next to the verdict
+    # instead of only at the top level.
+    relevant_translations: tuple[TranslationRecord, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -110,8 +116,14 @@ def _unique_citations_for(verdict: BhavaVerdict) -> tuple[str, ...]:
 def _build_bhava_claim(
     verdict: BhavaVerdict, modulated: ModulatedVerdict,
     gochara: GocharaVerdict | None,
+    chart: Chart | None = None,
 ) -> ReadingClaim:
-    """Compose one per-bhava ReadingClaim from underlying parts."""
+    """Compose one per-bhava ReadingClaim from underlying parts.
+
+    Per-bhava translation lookup: when a chart is provided, find all
+    translation records whose key matches this bhava's occupants AND
+    the yoga-keyed translations from confirming/afflicting yoga lists.
+    """
     gochara_trig = False
     if gochara is not None:
         ts = gochara.per_bhava.get(verdict.bhava)
@@ -121,6 +133,10 @@ def _build_bhava_claim(
                 or ts.is_double_transit_lord
                 or ts.is_double_transit_karaka
             )
+    relevant_translations = _per_bhava_translations(
+        verdict.bhava, verdict.confirming_yogas, verdict.afflicting_yogas,
+        chart,
+    )
     return ReadingClaim(
         bhava=verdict.bhava,
         verdict_label=verdict.label,
@@ -133,7 +149,50 @@ def _build_bhava_claim(
         afflicting_yogas=verdict.afflicting_yogas,
         gochara_triggered=gochara_trig,
         modulation_notes=modulated.modulation_notes,
+        relevant_translations=relevant_translations,
     )
+
+
+def _per_bhava_translations(
+    bhava: int,
+    confirming_yogas: tuple[str, ...],
+    afflicting_yogas: tuple[str, ...],
+    chart: Chart | None,
+) -> tuple[TranslationRecord, ...]:
+    """Find translation records relevant to a specific bhava.
+
+    Three sources:
+      1. Yoga translations from confirming + afflicting yoga lists.
+      2. Bhava-placement records where a planet sits IN this specific
+         bhava (matches keys like ``bhava_{bhava}_planet_{planet}``).
+      3. Bhava-placement records where this bhava's lord or karaka has
+         a known placement record — surfaced only when the planet IS at
+         the relevant configured house.
+    """
+    from app.core.dkp_translation import (
+        translate_bhava_planet, translate_yoga,
+    )
+    seen: set[tuple[str, str]] = set()
+    out: list[TranslationRecord] = []
+
+    def _add(records: Iterable[TranslationRecord]) -> None:
+        for r in records:
+            sig = (r.key, r.domain)
+            if sig not in seen:
+                seen.add(sig)
+                out.append(r)
+
+    # Source 1 — yoga-keyed translations.
+    for y in confirming_yogas + afflicting_yogas:
+        _add(translate_yoga(y))
+
+    # Source 2 — planets sitting in THIS bhava.
+    if chart is not None:
+        for planet, house in chart.planet_houses.items():
+            if house == bhava:
+                _add(translate_bhava_planet(bhava, planet))
+
+    return tuple(out)
 
 
 def _chart_strength_summary(
@@ -200,12 +259,14 @@ def compose_reading(
     if transit_signs is not None:
         gochara_verdict = compute_gochara(chart, transit_signs)
 
-    # Phase 8 — per-bhava DKP modulation
+    # Phase 8 — per-bhava DKP modulation + per-bhava translation lookup
     bhava_claims: dict[int, ReadingClaim] = {}
     all_questions: list[str] = []
     for b, v in bhava_verdicts.items():
         modulated = apply_dkp_modulation(v, context)
-        bhava_claims[b] = _build_bhava_claim(v, modulated, gochara_verdict)
+        bhava_claims[b] = _build_bhava_claim(
+            v, modulated, gochara_verdict, chart=chart,
+        )
         all_questions.extend(modulated.clarifying_questions)
 
     # De-dup open questions

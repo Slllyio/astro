@@ -22,6 +22,10 @@ from fastapi.responses import HTMLResponse
 
 from app.core.ephemeris_engine import calculate_all_charts
 from app.medini.services.chart_reader import Reading, read_chart
+from app.medini.services.framework_reader import (
+    read_chart_via_framework,
+    reading_to_dict as framework_reading_to_dict,
+)
 from app.models.schemas import BirthDataInput
 
 logger = logging.getLogger(__name__)
@@ -80,6 +84,34 @@ async def post_reading(birth_data: BirthDataInput) -> dict:
             detail=f"chart reading failed: {exc}",
         ) from exc
     return _reading_to_dict(reading)
+
+
+@reading_router.post("/framework")
+async def post_framework_reading(birth_data: BirthDataInput) -> dict:
+    """Astrologer's-lens framework reading (Phases 1-9, doctrine-faithful).
+
+    Distinct from POST /medini/reading (RAG + LLM narrative) — this
+    endpoint returns the STRUCTURED framework verdict per bhava with
+    classical citations, no LLM call required. Fast (~50ms per chart).
+    """
+    def _compute_sync() -> dict:
+        chart = calculate_all_charts(
+            year=birth_data.year, month=birth_data.month, day=birth_data.day,
+            hour=birth_data.hour, minute=birth_data.minute,
+            tz_offset=birth_data.tz_offset,
+            latitude=birth_data.latitude, longitude=birth_data.longitude,
+        )
+        reading = read_chart_via_framework(chart)
+        return framework_reading_to_dict(reading)
+
+    try:
+        return await asyncio.to_thread(_compute_sync)
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("framework reading failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"framework reading failed: {exc}",
+        ) from exc
 
 
 @reading_router.get("/page", response_class=HTMLResponse)

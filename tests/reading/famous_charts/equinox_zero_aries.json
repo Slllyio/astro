@@ -1,0 +1,11 @@
+{
+  "name": "Equinox at equator — synthetic",
+  "source": "Synthetic edge case: vernal equinox 2026 at the equator + prime meridian",
+  "dob": "2026-03-20",
+  "time": "06:00",
+  "tz": "+00:00",
+  "lat": 0.0,
+  "lon": 0.0,
+  "edge_case": "equinox_zero_aries",
+  "structural_notes": "Birth at the vernal equinox moment near the equator + prime meridian. Tests the engine at the conceptual 'origin' point of the zodiac (Sun near tropical 0 Aries; sidereal differs by ayanamsa). Exercises ayanamsa handling and equatorial-latitude house computation. Per Section 11 prediction-trap ban, no outcome assertions."
+}

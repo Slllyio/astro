@@ -1,0 +1,20 @@
+Spike A: Import-chain cold-start measurements
+======================================================================
+       40ms  OK  import json
+       56ms  OK  import argparse
+       34ms  OK  import datetime
+       41ms  OK  import logging
+      105ms  OK  import pydantic
+       42ms  OK  import swisseph
+      102ms  OK  import numpy
+      613ms  OK  import pandas
+       88ms  OK  from app.core import ephemeris_engine
+       44ms  OK  from app.core import shodashavarga
+       38ms  FAIL  from app.core import dignity
+    stderr: Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'dignity' from 'app.core' (unknown location)
+       50ms  FAIL  from app.medini.services.knowledge_search import get_default_service
+    stderr: Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'app.medini.services'

@@ -75,3 +75,33 @@ pytest --cov=app --cov-report=term-missing
 
 Phase 3 in progress (auth shipped; ascendant/houses shipped). Antardasha
 sub-periods, rate-limit refinements, and a frontend are the next milestones.
+
+## App Reading — Kundli Analysis System
+
+A deterministic Vedic-astrology engine that produces a complete kundli
+analysis as structured JSON given DOB + time + place.
+
+### Quick start
+
+```
+py -3.12 -m app.reading.cli --dob=1990-07-15 --time=12:00 --tz=+05:30 \
+    --lat=12.97 --lon=77.59 --out=reading.json
+```
+
+### Documentation
+
+- [CLI reference](docs/reading/cli-reference.md) — synopsis, flags, exit codes, worked examples.
+- [JSON output schema](docs/reading/json-schema.md) — human-readable contract for downstream consumers.
+- [JSON Schema (machine)](docs/reading/json-schema.json) — auto-generated from Pydantic; regenerate with `py -3.12 scripts/generate_schema_json.py`.
+- [Doctrine decisions lockfile](docs/doctrine-decisions.md) — the 16 D-N locked choices.
+- [Architecture spec](docs/superpowers/specs/2026-05-27-kundli-analysis-system-design.md).
+
+### Doctrine compliance
+
+- 16 doctrine decisions locked (D-1 through D-16) in the lockfile.
+- Quarterly doctrine audit via the `bphs-doctrine-reviewer` agent — staged
+  by `.github/workflows/doctrine-audit.yml` (cron only, not a blocking CI
+  gate per spec Section 7); verdicts filed under `docs/audits/`.
+- Anti-prediction-trap discipline: Tier-3 modules carry mandatory
+  Methodology declarations and never auto-pick winners between disputed
+  doctrines.

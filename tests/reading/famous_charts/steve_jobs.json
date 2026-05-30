@@ -1,0 +1,11 @@
+{
+  "name": "Steve Jobs",
+  "source": "Astro-Databank / wikipedia.org/wiki/Steve_Jobs",
+  "dob": "1955-02-24",
+  "time": "19:15",
+  "tz": "-08:00",
+  "lat": 37.7749,
+  "lon": -122.4194,
+  "edge_case": null,
+  "structural_notes": "Reference chart. San Francisco, USA (PST). Evening birth at mid-latitude US. Per Section 11 prediction-trap ban, the corpus does not assert outcome accuracy."
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Barack Obama",
+  "source": "Astro-Databank / wikipedia.org/wiki/Barack_Obama",
+  "dob": "1961-08-04",
+  "time": "19:24",
+  "tz": "-10:00",
+  "lat": 21.3069,
+  "lon": -157.8583,
+  "edge_case": null,
+  "structural_notes": "Reference chart. Honolulu, Hawaii (HST). Evening birth at tropical-latitude US. Per Section 11 prediction-trap ban, the corpus does not assert outcome accuracy."
+}

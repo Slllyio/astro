@@ -940,6 +940,283 @@ def detect_adhi(chart: Chart) -> Yoga:
     )
 
 
+# ═══════════════════════════════════════════════════════════════════
+# Gap I — 10 additional canonical yogas (from agent research output)
+# ═══════════════════════════════════════════════════════════════════
+
+
+def detect_papa_kartari(chart: Chart) -> Yoga:
+    """Lagna or Moon hemmed by malefics in 2nd and 12th — BPHS Ch.78.9.
+
+    "Kartari" = scissors; the hemmed significator is cut off from its
+    natural promise. Most-cited classical affliction beyond Mangal Dosha.
+    """
+    def hemmed(house: int) -> bool:
+        prev_h = ((house - 2) % 12) + 1
+        next_h = (house % 12) + 1
+        prev_mal = any(p in _MALEFICS_NATURAL for p in chart.planets_in_house(prev_h))
+        next_mal = any(p in _MALEFICS_NATURAL for p in chart.planets_in_house(next_h))
+        return prev_mal and next_mal
+
+    moon_h = chart.house_of("Moon") or 0
+    lagna_hemmed = hemmed(1)
+    moon_hemmed = moon_h > 0 and hemmed(moon_h)
+    active = lagna_hemmed or moon_hemmed
+    participants: list[str] = []
+    if lagna_hemmed: participants.append("Lagna")
+    if moon_hemmed: participants.append("Moon")
+    return Yoga(
+        name="Papa Kartari", sanskrit="पाप-कर्तरि", active=active,
+        intensity=0.8 if (lagna_hemmed and moon_hemmed) else (0.6 if active else 0.0),
+        participants=tuple(participants),
+        reference="BPHS Ch.78.9",
+        description="Significator hemmed (kartari = scissors) by malefics in 2nd/12th; promise cut off.",
+    )
+
+
+def detect_shubha_kartari(chart: Chart) -> Yoga:
+    """Lagna or Moon hemmed by benefics in 2nd and 12th — BPHS Ch.78.10.
+
+    Auspicious counterpart of Papa Kartari. Benefic-hemmed significator
+    is protected and supported by helpful circumstance.
+    """
+    def shubha_hemmed(house: int) -> bool:
+        prev_h = ((house - 2) % 12) + 1
+        next_h = (house % 12) + 1
+        prev_b = any(p in _BENEFICS_NATURAL for p in chart.planets_in_house(prev_h))
+        next_b = any(p in _BENEFICS_NATURAL for p in chart.planets_in_house(next_h))
+        return prev_b and next_b
+
+    moon_h = chart.house_of("Moon") or 0
+    lagna_h = shubha_hemmed(1)
+    moon_h_hemmed = moon_h > 0 and shubha_hemmed(moon_h)
+    active = lagna_h or moon_h_hemmed
+    parts: list[str] = []
+    if lagna_h: parts.append("Lagna")
+    if moon_h_hemmed: parts.append("Moon")
+    return Yoga(
+        name="Shubha Kartari", sanskrit="शुभ-कर्तरि", active=active,
+        intensity=0.8 if (lagna_h and moon_h_hemmed) else (0.6 if active else 0.0),
+        participants=tuple(parts),
+        reference="BPHS Ch.78.10",
+        description="Significator hemmed by benefics in 2nd/12th; protected from obstacles.",
+    )
+
+
+def detect_kahala(chart: Chart) -> Yoga:
+    """4L and 9L in mutual Kendras + Lagna lord strong — Phaladeepika Ch.6.34.
+
+    Confers managerial command and landed prosperity ("commander of armies").
+    """
+    roles = functional_roles(chart.asc_sign)
+    l4 = next((p for p, r in roles.items() if 4 in r.houses_ruled), None)
+    l9 = next((p for p, r in roles.items() if 9 in r.houses_ruled), None)
+    ll = next((p for p, r in roles.items() if 1 in r.houses_ruled), None)
+    if not (l4 and l9 and ll):
+        return Yoga(name="Kahala", sanskrit="कहल", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.34",
+                    description="(skipped — lordship not resolvable)")
+    h4, h9 = chart.house_of(l4), chart.house_of(l9)
+    if not (h4 and h9):
+        return Yoga(name="Kahala", sanskrit="कहल", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.34",
+                    description="(skipped — placements missing)")
+    mutual_kendra = ((h4 - h9) % 12) in (0, 3, 6, 9)
+    ll_sign = chart.sign_of(ll)
+    ll_strong = (
+        ll_sign is not None and (
+            is_exalted(ll, ll_sign) or is_own_sign(ll, ll_sign)
+            or chart.house_of(ll) in (_KENDRAS | _TRIKONAS)
+        )
+    )
+    active = bool(mutual_kendra and ll_strong)
+    return Yoga(
+        name="Kahala", sanskrit="कहल", active=active,
+        intensity=0.85 if active else 0.0,
+        participants=(l4, l9, ll),
+        reference="Phaladeepika Ch.6.34",
+        description="4L + 9L in mutual Kendras with strong Lagna lord — commander of armies / landed authority.",
+    )
+
+
+def detect_vasumati(chart: Chart) -> Yoga:
+    """Natural benefics in Upachaya houses (3/6/10/11) — BPHS Ch.78.18.
+
+    Self-earned wealth that compounds; never inherited.
+    """
+    upachayas = {3, 6, 10, 11}
+    benefic_houses_lagna = [chart.house_of(p) for p in ("Jupiter", "Venus", "Mercury", "Moon")]
+    in_upa_lagna = sum(1 for h in benefic_houses_lagna if h in upachayas)
+    moon_h = chart.house_of("Moon")
+    in_upa_moon = 0
+    if moon_h is not None:
+        for h in benefic_houses_lagna:
+            if h is None: continue
+            from_moon = ((h - moon_h) % 12) + 1
+            if from_moon in upachayas:
+                in_upa_moon += 1
+    best = max(in_upa_lagna, in_upa_moon)
+    active = best >= 3
+    return Yoga(
+        name="Vasumati", sanskrit="वसुमती", active=active,
+        intensity=1.0 if best == 4 else (0.6 if best == 3 else 0.0),
+        participants=tuple(b for b in ("Jupiter", "Venus", "Mercury", "Moon")
+                           if chart.house_of(b) in upachayas),
+        reference="BPHS Ch.78.18",
+        description="All natural benefics in Upachaya (3/6/10/11) from Lagna or Moon — self-made wealth.",
+    )
+
+
+def detect_shakat(chart: Chart) -> Yoga:
+    """Moon in 6/8/12 from Jupiter, NOT in Kendra from Lagna — BPHS Ch.78.31.
+
+    Cart-wheel pattern — fortune rises and falls cyclically.
+    """
+    moon_h = chart.house_of("Moon")
+    jup_h = chart.house_of("Jupiter")
+    if not (moon_h and jup_h):
+        return Yoga(name="Shakat", sanskrit="शकट", active=False, intensity=0.0,
+                    participants=(), reference="BPHS Ch.78.31",
+                    description="(skipped — Moon or Jupiter missing)")
+    rel = ((moon_h - jup_h) % 12) + 1
+    cond1 = rel in {6, 8, 12}
+    cond2 = moon_h not in _KENDRAS
+    active = cond1 and cond2
+    return Yoga(
+        name="Shakat", sanskrit="शकट", active=active,
+        intensity=0.7 if active else 0.0,
+        participants=("Moon", "Jupiter"),
+        reference="BPHS Ch.78.31",
+        description="Moon 6/8/12 from Jupiter and not in Kendra — cyclic fortune-reversal pattern (cartwheel).",
+    )
+
+
+def detect_guru_chandala(chart: Chart) -> Yoga:
+    """Jupiter conjoined with Rahu or Ketu — Jataka Tattva.
+
+    Distorted dharma; teacher who misleads, philosophical confusion.
+    """
+    jh = chart.house_of("Jupiter")
+    rh = chart.house_of("Rahu")
+    kh = chart.house_of("Ketu")
+    if jh is None:
+        return Yoga(name="Guru Chandala", sanskrit="गुरु-चाण्डाल", active=False,
+                    intensity=0.0, participants=(),
+                    reference="Jataka Tattva",
+                    description="(skipped — Jupiter missing)")
+    active = jh in {rh, kh}
+    jup_sign = chart.sign_of("Jupiter")
+    intensity = 0.0
+    if active:
+        # Stronger if Jupiter exalted (Cancer) — paradoxical inversion
+        if jup_sign is not None and is_exalted("Jupiter", jup_sign):
+            intensity = 0.6  # transmuted to iconoclastic reform
+        else:
+            intensity = 0.9
+    return Yoga(
+        name="Guru Chandala", sanskrit="गुरु-चाण्डाल", active=active,
+        intensity=intensity,
+        participants=("Jupiter", "Rahu" if jh == rh else "Ketu"),
+        reference="Jataka Tattva",
+        description="Jupiter conjoined Rahu/Ketu — guru-corruption pattern; modern: cult / fallen-guru / conspiracy spirituality.",
+    )
+
+
+def detect_harsha(chart: Chart) -> Yoga:
+    """6L in 6/8/12 — Vipareeta Raja subtype: Harsha (joy/health).
+
+    Per Phaladeepika Ch.6.28. Freedom from disease, victory over enemies.
+    """
+    roles = functional_roles(chart.asc_sign)
+    l6 = next((p for p, r in roles.items() if 6 in r.houses_ruled), None)
+    if not l6:
+        return Yoga(name="Harsha", sanskrit="हर्ष", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.28",
+                    description="(skipped)")
+    h = chart.house_of(l6)
+    active = h in _DUSTHANAS
+    return Yoga(
+        name="Harsha", sanskrit="हर्ष", active=active,
+        intensity=1.0 if h == 6 else (0.7 if active else 0.0),
+        participants=(l6,),
+        reference="Phaladeepika Ch.6.28",
+        description="6L in 6/8/12 — Vipareeta Raja subtype: freedom from disease, victory over enemies.",
+    )
+
+
+def detect_sarala(chart: Chart) -> Yoga:
+    """8L in 6/8/12 — Vipareeta Raja subtype: Sarala (longevity/occult).
+
+    Per Phaladeepika Ch.6.28. Long life, escape from death-blows.
+    """
+    roles = functional_roles(chart.asc_sign)
+    l8 = next((p for p, r in roles.items() if 8 in r.houses_ruled), None)
+    if not l8:
+        return Yoga(name="Sarala", sanskrit="सरल", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.28",
+                    description="(skipped)")
+    h = chart.house_of(l8)
+    active = h in _DUSTHANAS
+    return Yoga(
+        name="Sarala", sanskrit="सरल", active=active,
+        intensity=1.0 if h == 8 else (0.7 if active else 0.0),
+        participants=(l8,),
+        reference="Phaladeepika Ch.6.28",
+        description="8L in 6/8/12 — Vipareeta Raja subtype: long life, occult mastery, trauma-into-mastery.",
+    )
+
+
+def detect_vimala(chart: Chart) -> Yoga:
+    """12L in 6/8/12 — Vipareeta Raja subtype: Vimala (moksha/freedom).
+
+    Per Phaladeepika Ch.6.29. Frugal habits, debt-freedom, moksha orientation.
+    """
+    roles = functional_roles(chart.asc_sign)
+    l12 = next((p for p, r in roles.items() if 12 in r.houses_ruled), None)
+    if not l12:
+        return Yoga(name="Vimala", sanskrit="विमल", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.29",
+                    description="(skipped)")
+    h = chart.house_of(l12)
+    active = h in _DUSTHANAS
+    return Yoga(
+        name="Vimala", sanskrit="विमल", active=active,
+        intensity=1.0 if h == 12 else (0.7 if active else 0.0),
+        participants=(l12,),
+        reference="Phaladeepika Ch.6.29",
+        description="12L in 6/8/12 — Vipareeta Raja subtype: minimalist + debt-free + moksha-oriented life.",
+    )
+
+
+def detect_kalanidhi(chart: Chart) -> Yoga:
+    """Jupiter in 2H or 5H, in Mercury/Venus sign, with Mer/Ven conjunction or aspect.
+
+    Per Phaladeepika Ch.6.41 — "treasure-house of arts" — scholar-aesthete.
+    """
+    jh = chart.house_of("Jupiter")
+    js = chart.sign_of("Jupiter")
+    if not (jh and js):
+        return Yoga(name="Kalanidhi", sanskrit="कलानिधि", active=False, intensity=0.0,
+                    participants=(), reference="Phaladeepika Ch.6.41",
+                    description="(skipped)")
+    in_right_house = jh in {2, 5}
+    in_right_sign = js in {3, 6, 2, 7}  # Mercury (Ge/Vi) + Venus (Ta/Li)
+    mer_h = chart.house_of("Mercury")
+    ven_h = chart.house_of("Venus")
+    conjunct = mer_h == jh or ven_h == jh
+    mer_aspect = mer_h is not None and jh in aspects_from_planet("Mercury", mer_h)
+    ven_aspect = ven_h is not None and jh in aspects_from_planet("Venus", ven_h)
+    aspect_or_conj = conjunct or mer_aspect or ven_aspect
+    active = in_right_house and in_right_sign and aspect_or_conj
+    return Yoga(
+        name="Kalanidhi", sanskrit="कलानिधि", active=active,
+        intensity=0.85 if active else 0.0,
+        participants=("Jupiter", "Mercury", "Venus"),
+        reference="Phaladeepika Ch.6.41",
+        description="Jupiter in 2H/5H in Mer/Ven sign + Mer/Ven aspect — treasure-house of arts; polymath-aesthete.",
+    )
+
+
 # ─── Registry ────────────────────────────────────────────────────────
 
 
@@ -961,6 +1238,11 @@ YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
     # Phase B additions (5)
     detect_akhanda_samrajya, detect_sarpa_dosha,
     detect_pitra_dosha, detect_matr_dosha, detect_parijata,
+    # Gap I additions (10)
+    detect_papa_kartari, detect_shubha_kartari,
+    detect_kahala, detect_vasumati, detect_shakat,
+    detect_guru_chandala, detect_harsha, detect_sarala,
+    detect_vimala, detect_kalanidhi,
 )
 
 

@@ -630,6 +630,8 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
         "career_executive": None,
         "md_judgments": [],
         "ad_judgments": [],
+        "chara_dasha": None,   # V1.5 D-17 — populated below if d1 present
+        "yogini_dasha": None,  # V1.5 D-18 — populated below if d1 present
     }
 
     current_md = chart.get("current_mahadasha") or {}
@@ -706,6 +708,44 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
         )
         if career_result is not None:
             seq_block_payload["career_executive"] = career_result
+
+    # V1.5 — Chara Dasha (D-17 Jaimini sign-frame).
+    # Wired into the deterministic pipeline (runs in --no-enrich too).
+    # Pass-through model_dump so SequencesBlock can carry it as dict[str, Any]
+    # (importing CharaDashaResult into schema.py would create a circular import).
+    if d1_chart:
+        try:
+            from app.reading.sequences import chara_dasha
+            chara_result = _safe_call(
+                warnings, "sequences.chara_dasha",
+                chara_dasha.run_sequence, chart, asc_sign, moon_sign,
+            )
+            if chara_result is not None:
+                seq_block_payload["chara_dasha"] = chara_result.model_dump(mode="json")
+        except Exception as exc:  # noqa: BLE001
+            warnings.append(
+                f"sequences.chara_dasha.import failed: {type(exc).__name__}: {exc}"
+            )
+
+    # V1.5 — Yogini Dasha (D-18 36-year specialty dasha).
+    # Yogini takes moon_nakshatra (1..27), not moon_sign — derive from moon_lon.
+    if d1_chart and moon_lon:
+        try:
+            from app.core.nakshatra import nakshatra_for_longitude
+            from app.reading.sequences import yogini_dasha
+            moon_nak_info = nakshatra_for_longitude(moon_lon)
+            moon_nakshatra_1based = int(moon_nak_info["index"]) + 1
+            yogini_result = _safe_call(
+                warnings, "sequences.yogini_dasha",
+                yogini_dasha.run_sequence,
+                chart, asc_sign, moon_nakshatra_1based,
+            )
+            if yogini_result is not None:
+                seq_block_payload["yogini_dasha"] = yogini_result.model_dump(mode="json")
+        except Exception as exc:  # noqa: BLE001
+            warnings.append(
+                f"sequences.yogini_dasha.import failed: {type(exc).__name__}: {exc}"
+            )
 
     # marriage_trigger — Tier-2, but needs current_ad_lord which we just got.
     if d1_chart and current_md_lord and arudha_padas:
@@ -855,6 +895,28 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             contradictions=[],
             warnings=warnings,
         )
+
+    # -----------------------------------------------------------------------
+    # V1.5 — modern-life enrichment.
+    # Appends classification="primitive" Findings to each domain's
+    # cross_checks list. Runs in --no-enrich path (deterministic, no LLM/RAG).
+    # We pass the assembled ReadingOutput in object mode; the synthesizer
+    # rebuilds the frozen DomainReading instances with augmented cross_checks
+    # and returns a new ReadingOutput.
+    # -----------------------------------------------------------------------
+    if d1_chart:
+        try:
+            from app.reading.modern_life.synthesizer import enrich_with_modern_signals
+            output = enrich_with_modern_signals(output, chart, asc_sign)
+        except Exception as exc:  # noqa: BLE001
+            msg = f"stage6.modern_life_enrichment failed: {type(exc).__name__}: {exc}"
+            logger.warning(msg)
+            # output.warnings is frozen — propagate by re-assembling Pydantic-ly
+            warnings.append(msg)
+            try:
+                output = output.model_copy(update={"warnings": list(warnings)})
+            except Exception:  # noqa: BLE001
+                pass
 
     return output.model_dump(mode="json")
 

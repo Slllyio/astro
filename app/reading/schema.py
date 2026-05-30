@@ -539,10 +539,18 @@ class PractitionerBlock(BaseModel):
 
 
 class SequencesBlock(BaseModel):
-    """Stage 5 — the 4 named sequence-result models.
+    """Stage 5 — the named sequence-result models.
 
     Each sequence result is optional: not every reading exercises every
     sequence (e.g. a chart with no career judgment skips Sequence 2).
+
+    V1.5 additions (``chara_dasha`` D-17 and ``yogini_dasha`` D-18) carry
+    ``dict[str, Any] | None`` types rather than their concrete Pydantic
+    models. The concrete models live inside
+    ``app.reading.sequences.chara_dasha`` and
+    ``app.reading.sequences.yogini_dasha`` — importing them into schema.py
+    would create a circular import. The sequence modules emit
+    ``.model_dump(mode="json")`` dicts that pass through unchanged.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -551,6 +559,8 @@ class SequencesBlock(BaseModel):
     career_executive: CareerExecutiveResult | None = None
     md_judgments: list[MDJudgment] = Field(default_factory=list)
     ad_judgments: list[ADJudgment] = Field(default_factory=list)
+    chara_dasha: dict[str, Any] | None = None    # V1.5 — D-17 Jaimini sign-frame
+    yogini_dasha: dict[str, Any] | None = None   # V1.5 — D-18 36-year cycle
 
 
 class DomainsBlock(BaseModel):
@@ -585,7 +595,7 @@ class Meta(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    schema_version: Literal["1.0.0"] = "1.0.0"
+    schema_version: Literal["1.0.0", "1.1.0"] = "1.1.0"
     stability: Literal["experimental", "beta", "stable"] = "experimental"
     engine_version: str
     swiss_ephemeris_version: str

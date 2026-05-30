@@ -95,7 +95,7 @@ class TestCliPerformance:
         assert elapsed < 12.0, (
             f"Cold enriched took {elapsed:.2f}s (budget <12s, spec Section 16)"
         )
-        assert output["meta"]["schema_version"] == "1.0.0"
+        assert output["meta"]["schema_version"] == "1.1.0"
         assert output["domains"], "Domains block must be populated"
 
 

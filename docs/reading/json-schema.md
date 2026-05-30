@@ -8,8 +8,10 @@ It is the contract every downstream consumer (CLI, future LLM narrators,
 frontend, RAG layers) builds against. The schema is versioned via
 `Meta.schema_version`; breaking changes require a major version bump.
 
-**Current schema version:** `1.0.0`
+**Current schema version:** `1.1.0` (`1.0.0` still accepted for backward compat)
 **Stability:** `experimental` (until the first non-engine downstream consumer ships)
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the version history.
 
 ---
 
@@ -41,7 +43,7 @@ produced it.
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `schema_version` | `Literal["1.0.0"]` | Bumps with schema changes. |
+| `schema_version` | `Literal["1.0.0", "1.1.0"]` | Bumps with schema changes; default emit = `"1.1.0"`. |
 | `stability` | `"experimental" \| "beta" \| "stable"` | Stability tier of the contract. |
 | `engine_version` | `str` | App version emitting the output. |
 | `swiss_ephemeris_version` | `str` | Pinned for reproducibility. |

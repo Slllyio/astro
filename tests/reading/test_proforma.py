@@ -41,7 +41,7 @@ class TestRunCorePipeline:
         output = _run_core_pipeline(CANONICAL_INPUT)
         # Round-trip through Pydantic asserts the full structural contract.
         validated = ReadingOutput.model_validate(output)
-        assert validated.meta.schema_version == "1.0.0"
+        assert validated.meta.schema_version == "1.1.0"
         assert validated.meta.stability == "experimental"
 
     def test_meta_chart_input_echoes_user_envelope(self):
@@ -133,14 +133,14 @@ class TestCompute:
         result = compute(CANONICAL_INPUT)
         # Round-trip validation proves the enriched payload still conforms.
         validated = ReadingOutput.model_validate(result)
-        assert validated.meta.schema_version == "1.0.0"
+        assert validated.meta.schema_version == "1.1.0"
         assert validated.meta.enrichment_enabled is True
 
     def test_compute_explicit_enrich_true_validates(self):
         """Passing enrich=True explicitly produces a schema-valid result."""
         explicit_result = compute(CANONICAL_INPUT, enrich=True)
         validated = ReadingOutput.model_validate(explicit_result)
-        assert validated.meta.schema_version == "1.0.0"
+        assert validated.meta.schema_version == "1.1.0"
         assert validated.meta.enrichment_enabled is True
 
     def test_apply_tier3_enrichments_flips_enrichment_flag(self):

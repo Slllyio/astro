@@ -101,7 +101,7 @@ jobs:
 
           ## Sanity checks the reviewer should confirm
 
-          - `meta.schema_version == "1.0.0"`
+          - `meta.schema_version == "1.1.0"` (V1.5 wiring; `"1.0.0"` accepted on read)
           - `meta.doctrine_config` echoes the locked D-1..D-16 defaults
           - `chart.lagna_longitude` ≈ 173.99° (Virgo lagna)
           - Mercury MD is current at the reading-generation date

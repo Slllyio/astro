@@ -892,8 +892,11 @@
       "description": "Engine + chart-input metadata accompanying every reading.\n\n`schema_version` is the public stable lock; bump to 1.1.0 for additive\nfields, 2.0.0 for breaking changes. `stability` is `\"experimental\"`\nuntil the first non-engine downstream consumer ships, then `\"beta\"`,\nthen `\"stable\"`.\n\n`doctrine_config` echoes the 16 lockfile decisions so every emitted\nreading is self-describing (per spec Section 6, design choices).",
       "properties": {
         "schema_version": {
-          "const": "1.0.0",
-          "default": "1.0.0",
+          "default": "1.1.0",
+          "enum": [
+            "1.0.0",
+            "1.1.0"
+          ],
           "title": "Schema Version",
           "type": "string"
         },
@@ -1099,7 +1102,7 @@
     },
     "SequencesBlock": {
       "additionalProperties": false,
-      "description": "Stage 5 \u2014 the 4 named sequence-result models.\n\nEach sequence result is optional: not every reading exercises every\nsequence (e.g. a chart with no career judgment skips Sequence 2).",
+      "description": "Stage 5 \u2014 the named sequence-result models.\n\nEach sequence result is optional: not every reading exercises every\nsequence (e.g. a chart with no career judgment skips Sequence 2).\n\nV1.5 additions (``chara_dasha`` D-17 and ``yogini_dasha`` D-18) carry\n``dict[str, Any] | None`` types rather than their concrete Pydantic\nmodels. The concrete models live inside\n``app.reading.sequences.chara_dasha`` and\n``app.reading.sequences.yogini_dasha`` \u2014 importing them into schema.py\nwould create a circular import. The sequence modules emit\n``.model_dump(mode=\"json\")`` dicts that pass through unchanged.",
       "properties": {
         "amsha_bala_krama": {
           "anyOf": [
@@ -1136,6 +1139,32 @@
           },
           "title": "Ad Judgments",
           "type": "array"
+        },
+        "chara_dasha": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chara Dasha"
+        },
+        "yogini_dasha": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yogini Dasha"
         }
       },
       "title": "SequencesBlock",

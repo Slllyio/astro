@@ -172,6 +172,41 @@ class TestPrescribedRemedies:
             assert rx.rationale
             assert rx.gemstone_caveat in ("PROCEED", "TRIAL_REQUIRED", "AVOID")
 
+    def test_prescriptions_capped_at_three(self):
+        """Doctrinal rule: a real astrologer prescribes at most 3 remedies.
+
+        Even when every visible graha would individually qualify (e.g. when
+        running with D1-only Vimsopaka where all 7 grahas land in WEAK),
+        the rank-and-cap step in _build_prescriptions must keep total at ≤3.
+        """
+        from app.core.master_reading import MAX_PRESCRIPTIONS
+        mr = compose_master_reading(_baseline_chart())
+        assert len(mr.prescribed_remedies) <= MAX_PRESCRIPTIONS
+
+    def test_unique_planets_no_duplicates(self):
+        """Same planet should never appear twice in the prescription list."""
+        mr = compose_master_reading(_baseline_chart())
+        planets = [rx.planet for rx in mr.prescribed_remedies]
+        assert len(planets) == len(set(planets))
+
+    def test_prescriptions_ordered_by_severity(self):
+        """Top-of-list prescription should be for the worst-afflicted graha.
+
+        Verifies the rank step actually sorts — not just truncates.
+        """
+        from app.core.master_reading import _planet_weakness_score
+        mr = compose_master_reading(_baseline_chart())
+        if len(mr.prescribed_remedies) < 2:
+            return  # nothing to compare
+        scores = []
+        for rx in mr.prescribed_remedies:
+            vlabel = mr.vimsopaka[rx.planet].strength_label
+            amult = mr.avastha_multipliers[rx.planet]
+            in_dushtana = (_baseline_chart().house_of(rx.planet) in {6, 8, 12})
+            scores.append(_planet_weakness_score(vlabel, amult, in_dushtana))
+        for a, b in zip(scores, scores[1:]):
+            assert a >= b, "prescriptions not sorted by weakness desc"
+
 
 class TestFormatMasterReading:
     def test_format_returns_string(self):

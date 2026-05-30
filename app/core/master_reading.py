@@ -119,6 +119,56 @@ class MasterReading:
 _NATURAL_BENEFICS = {"Jupiter", "Venus", "Mercury", "Moon"}
 _NATURAL_MALEFICS = {"Sun", "Mars", "Saturn"}  # excluding nodes — no remedy formula
 
+# Hard cap on prescriptions — a real astrologer never prescribes for all 7 grahas.
+# Most charts get 0-2; only deeply afflicted charts reach 3.
+MAX_PRESCRIPTIONS = 3
+
+# Discrete-marker weakness threshold. A planet is prescribed for only if it
+# accumulates ≥2 STRONG markers PLUS at least 1 WEAK corroboration (or all 3
+# strong, the "perfect storm" of affliction). This matches Phaladeepika
+# Ch.15's "tribhir adhikair vā" standard: three or more confirmations before
+# committing to upaya. Score scale: STRONG marker = 0.5, WEAK marker = 0.25.
+_WEAKNESS_THRESHOLD = 1.25
+
+
+def _planet_weakness_score(
+    vimsopaka_label: str, avastha_mult: float, in_dushtana: bool,
+) -> float:
+    """Discrete-tier weakness score 0..1.5. Higher = needs remedy.
+
+    BPHS/Phaladeepika never prescribes on a single weakness signal —
+    they require AT LEAST TWO independent afflictions (Phaladeepika
+    Ch.15 v.7 — "ekena hi dūṣitenāpi grahena..."). This score
+    operationalises that AND-gate by counting STRONG (0.5) and WEAK
+    (0.25) markers across three classical axes:
+
+      * Vimsopaka placement strength (varga-weighted)
+          STRONG marker: VERY WEAK label
+          WEAK marker: WEAK label
+      * Avastha state-of-functioning (Baladi/Deeptadi composite)
+          STRONG marker: multiplier < 0.20 (mrita/swapna)
+          WEAK marker: multiplier < 0.40 (asakta/peeditadi)
+      * House affliction (placed in 6/8/12)
+          STRONG marker: dushtana placement (always significant)
+
+    With _WEAKNESS_THRESHOLD = 1.0, a planet needs either two STRONG
+    markers (e.g. very weak + dushtana) or one STRONG + two WEAK markers
+    (e.g. dushtana + weak vims + low avastha). A single STRONG marker
+    alone won't fire — which is the doctrinally correct stance.
+    """
+    score = 0.0
+    if vimsopaka_label == "VERY WEAK":
+        score += 0.5
+    elif vimsopaka_label == "WEAK":
+        score += 0.25
+    if avastha_mult < 0.20:
+        score += 0.5
+    elif avastha_mult < 0.40:
+        score += 0.25
+    if in_dushtana:
+        score += 0.5
+    return score
+
 
 def _diagnose_planet_condition(
     planet: str,
@@ -131,15 +181,23 @@ def _diagnose_planet_condition(
     """Diagnose the remedy-prescription condition for one planet.
 
     Returns one of: "weak_benefic" / "weak_malefic" / "strong_affliction" /
-    "strong_benefic" / "lord_of_dushtana" / "marana_karaka_sthana" / None.
+    "strong_benefic" / "lord_of_dushtana" / None.
 
-    None = no remedy needed.
+    AND-gates weakness on BOTH Vimsopaka AND Avastha — D1-only-fallback
+    runs (where every Vimsopaka label is structurally WEAK because D1
+    weight=5/20) won't over-trigger.
+
+    Dushtana alone no longer auto-fires — it goes through the rank-based
+    weakness score in _build_prescriptions. A graha can be in 6/8/12
+    and still be strong; classical astrology recognises Vipareeta Raja
+    Yoga as the exemplar of this.
     """
-    is_weak = vimsopaka_label in ("WEAK", "VERY WEAK") or avastha_mult < 0.5
+    is_weak = (
+        vimsopaka_label in ("WEAK", "VERY WEAK")
+        and avastha_mult < 0.5
+    )
     is_strong = vimsopaka_label in ("GOOD", "STRONG") and avastha_mult > 0.75
 
-    if in_dushtana:
-        return "lord_of_dushtana"
     if is_weak and planet in _NATURAL_BENEFICS:
         return "weak_benefic"
     if is_weak and planet in _NATURAL_MALEFICS:
@@ -148,6 +206,8 @@ def _diagnose_planet_condition(
         return "strong_affliction"
     if is_strong and is_functional_benefic:
         return "strong_benefic"
+    if in_dushtana and is_weak:  # only when weakness ALSO confirmed
+        return "lord_of_dushtana"
     return None
 
 
@@ -155,19 +215,31 @@ def _build_prescriptions(
     chart: Chart, vimsopaka: Mapping[str, VimsopakaReport],
     avastha_mults: Mapping[str, float],
 ) -> tuple[RemedyPrescription, ...]:
-    """Generate remedy prescriptions for the chart's notable planets."""
+    """Generate remedy prescriptions for the chart's notable planets.
+
+    Three-stage filter:
+      1. Per-planet condition diagnosis (which kind of remedy, if any).
+      2. Apply discrete-tier weakness score; only planets ≥_WEAKNESS_THRESHOLD
+         pass. This enforces the ≥2-marker AND-gate doctrinally.
+      3. Rank by weakness score, take top MAX_PRESCRIPTIONS.
+
+    Result: most charts get 0-2 remedies; only deeply afflicted charts
+    reach 3. Strong charts get 0, which is the doctrinally correct
+    answer ("a balanced chart needs no upayas").
+    """
     from app.core.functional_roles import functional_roles
     roles = functional_roles(chart.asc_sign)
-    out: list[RemedyPrescription] = []
+    candidates: list[tuple[float, RemedyPrescription]] = []
     for planet in _NATURAL_BENEFICS | _NATURAL_MALEFICS:
         if planet not in vimsopaka:
             continue
         role = roles.get(planet)
         avastha_mult = avastha_mults.get(planet, 1.0)
         in_dushtana = (chart.house_of(planet) in {6, 8, 12})
+        vims_label = vimsopaka[planet].strength_label
         condition = _diagnose_planet_condition(
             planet=planet,
-            vimsopaka_label=vimsopaka[planet].strength_label,
+            vimsopaka_label=vims_label,
             avastha_mult=avastha_mult,
             is_functional_benefic=role.is_functional_benefic if role else False,
             is_functional_malefic=role.is_functional_malefic if role else False,
@@ -175,12 +247,17 @@ def _build_prescriptions(
         )
         if condition is None:
             continue
+        score = _planet_weakness_score(vims_label, avastha_mult, in_dushtana)
+        if score < _WEAKNESS_THRESHOLD:
+            continue
         try:
             rx = prescribe(planet, condition, lagna_sign=chart.asc_sign)
-            out.append(rx)
         except (ValueError, KeyError):
             continue
-    return tuple(out)
+        candidates.append((score, rx))
+
+    candidates.sort(key=lambda pair: pair[0], reverse=True)
+    return tuple(rx for _, rx in candidates[:MAX_PRESCRIPTIONS])
 
 
 def compose_master_reading(

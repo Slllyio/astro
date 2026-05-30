@@ -7,6 +7,8 @@ from app.core.chart_model import Chart
 from app.core.reading_composer import Reading
 from app.medini.services.framework_reader import (
     _to_framework_chart,
+    master_reading_to_dict,
+    read_chart_master,
     read_chart_via_framework,
     reading_to_dict,
 )
@@ -127,3 +129,76 @@ class TestReadingToDict:
         d = reading_to_dict(r)
         for y in d["active_yogas"]:
             assert "Ch" in y["reference"] or y["reference"]
+
+
+class TestReadChartMaster:
+    """Bridge from ephemeris chart dict → MasterReading (13-layer toolkit)."""
+
+    def test_returns_master_reading(self, chart_dict):
+        """Output is a MasterReading wrapping the base 9-phase Reading."""
+        from app.core.master_reading import MasterReading
+        mr = read_chart_master(chart_dict)
+        assert isinstance(mr, MasterReading)
+        assert mr.base_reading is not None
+
+    def test_threads_md_lord(self, chart_dict):
+        """current_mahadasha.lord feeds the composer (visible in base reading)."""
+        mr = read_chart_master(chart_dict)
+        assert mr.base_reading.vimshottari_md_at_target == "Mercury"
+
+    def test_optional_inputs_degrade_cleanly(self, chart_dict):
+        """No AK, no nakshatra, no transits → layers are None, no crash."""
+        mr = read_chart_master(chart_dict)
+        assert mr.karakamsa is None
+        assert mr.yogini_active is None
+        assert mr.tara_at_target is None
+
+    def test_optional_inputs_populate_when_provided(self, chart_dict):
+        """Passing AK + d9 sign activates Karakamsa layer."""
+        mr = read_chart_master(
+            chart_dict, atmakaraka="Mercury", atmakaraka_d9_sign=4,
+        )
+        assert mr.karakamsa is not None
+        assert mr.karakamsa.atmakaraka == "Mercury"
+
+
+class TestMasterReadingToDict:
+    """Serialisation for HTTP response on POST /medini/reading/master."""
+
+    def test_returns_dict_with_master_layers_envelope(self, chart_dict):
+        """JSON-safe dict carries the base + a master_layers sub-object."""
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        assert isinstance(d, dict)
+        assert "master_layers" in d
+        assert "bhava_claims" in d  # base reading fields are at top level
+
+    def test_master_layers_includes_all_13_gap_keys(self, chart_dict):
+        """All 13 master-toolkit layers surface under master_layers."""
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        ml = d["master_layers"]
+        for key in (
+            "ashtakavarga", "varga_confirmations", "arudha_lagna",
+            "upapada_lagna", "dara_pada", "all_arudhas", "karakamsa",
+            "sensitive_points", "avastha", "vimsopaka", "bhavat_chains",
+            "triple_lagna_per_bhava", "prescribed_remedies",
+        ):
+            assert key in ml, f"missing master_layers.{key}"
+
+    def test_sensitive_points_serialised_as_dict(self, chart_dict):
+        """SensitivePointsReport flattens to dict with bhrigu/pranapada/upagrahas."""
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        sp = d["master_layers"]["sensitive_points"]
+        assert "bhrigu_bindu" in sp
+        assert "pranapada" in sp
+        assert "upagrahas" in sp
+        assert len(sp["upagrahas"]) == 5
+
+    def test_arudhas_keyed_by_bhava_string(self, chart_dict):
+        """all_arudhas dict uses str keys for JSON compatibility."""
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        all_a = d["master_layers"]["all_arudhas"]
+        assert set(all_a.keys()) == {str(b) for b in range(1, 13)}

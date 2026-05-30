@@ -23,6 +23,8 @@ from fastapi.responses import HTMLResponse
 from app.core.ephemeris_engine import calculate_all_charts
 from app.medini.services.chart_reader import Reading, read_chart
 from app.medini.services.framework_reader import (
+    master_reading_to_dict,
+    read_chart_master,
     read_chart_via_framework,
     reading_to_dict as framework_reading_to_dict,
 )
@@ -145,6 +147,69 @@ async def post_prashna_reading(payload: dict) -> dict:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"prashna reading failed: {exc}",
+        ) from exc
+
+
+@reading_router.post("/master")
+async def post_master_reading(payload: dict) -> dict:
+    """Master 13-layer reading endpoint — full classical toolkit.
+
+    Body shape:
+      {
+        "birth_data": { ...BirthDataInput },
+        "atmakaraka": "Mercury" | null,             # optional
+        "atmakaraka_d9_sign": 1..12 | null,           # optional
+        "moon_nakshatra_index": 0..26 | null,         # optional
+        "target_nakshatra_index": 0..26 | null,       # optional for Tara
+        "day_of_week": 0..6 | null,                   # optional for Maandi
+        "is_day_birth": bool | null,                  # optional for Maandi
+        "varga_pillar_scores": {bhava: float} | null  # optional for Gap B
+      }
+
+    Returns the base framework reading PLUS a "master_layers" object
+    containing Ashtakavarga / varga confirmations / Arudhas / Karakamsa /
+    sensitive points / Avastha / Vimsopaka / Bhāvāt Bhāvam / Yogini /
+    Ashtottari / Tara / prescribed remedies.
+
+    All optional inputs degrade gracefully; missing → layer field is null.
+    """
+    birth_payload = payload.get("birth_data") or {}
+    try:
+        birth_data = BirthDataInput(**birth_payload)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail=f"birth_data validation failed: {exc}",
+        ) from exc
+
+    def _compute_sync() -> dict:
+        chart_dict = calculate_all_charts(
+            year=birth_data.year, month=birth_data.month, day=birth_data.day,
+            hour=birth_data.hour, minute=birth_data.minute,
+            tz_offset=birth_data.tz_offset,
+            latitude=birth_data.latitude, longitude=birth_data.longitude,
+        )
+        master = read_chart_master(
+            chart_dict,
+            atmakaraka=payload.get("atmakaraka"),
+            atmakaraka_d9_sign=payload.get("atmakaraka_d9_sign"),
+            moon_nakshatra_index=payload.get("moon_nakshatra_index"),
+            target_nakshatra_index=payload.get("target_nakshatra_index"),
+            day_of_week=payload.get("day_of_week"),
+            is_day_birth=payload.get("is_day_birth"),
+            varga_pillar_scores=payload.get("varga_pillar_scores"),
+        )
+        return master_reading_to_dict(master)
+
+    try:
+        return await asyncio.to_thread(_compute_sync)
+    except HTTPException:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("master reading failed")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"master reading failed: {exc}",
         ) from exc
 
 

@@ -82,4 +82,4 @@ class TestV15PipelineWiring:
     def test_schema_version_bumped(self, tmp_path: Path) -> None:
         """meta.schema_version is bumped to 1.1.0 per V1.5 MINOR bump."""
         output = _run_cli(tmp_path)
-        assert output["meta"]["schema_version"] == "1.1.0"
+        assert output["meta"]["schema_version"] == "1.2.0"

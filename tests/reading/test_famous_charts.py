@@ -127,7 +127,7 @@ def test_famous_chart_output_validates(chart_file: Path, tmp_path: Path):
     ReadingOutput.model_validate(payload)
 
     # Schema version + stability locks.
-    assert payload["meta"]["schema_version"] == "1.1.0", (
+    assert payload["meta"]["schema_version"] == "1.2.0", (
         f"{chart_file.stem}: schema_version drift "
         f"{payload['meta']['schema_version']!r}"
     )

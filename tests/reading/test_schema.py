@@ -853,7 +853,7 @@ class TestMeta:
     def test_schema_version_locked_at_1_1_0(self):
         """schema_version defaults to the V1.5 emitted value (1.1.0)."""
         m = self._make_meta()
-        assert m.schema_version == "1.1.0"
+        assert m.schema_version == "1.2.0"
 
     def test_schema_version_1_0_0_still_accepted(self):
         """Backward-compat: 1.0.0 remains a valid Literal value."""
@@ -1054,7 +1054,7 @@ class TestReadingOutput:
         """Round-tripping via model_dump preserves the schema_version lock."""
         o = self._make_output()
         d = o.model_dump()
-        assert d["meta"]["schema_version"] == "1.1.0"
+        assert d["meta"]["schema_version"] == "1.2.0"
 
     def test_contradictions_carries_contradiction_objects(self):
         from app.reading.schema import Contradiction

@@ -52,7 +52,7 @@ class TestCliHappyPath:
         )
         assert result.returncode == 0, f"stderr: {result.stderr}"
         output = json.loads(result.stdout)
-        assert output["meta"]["schema_version"] == "1.1.0"
+        assert output["meta"]["schema_version"] == "1.2.0"
         assert output["meta"]["stability"] == "experimental"
         assert output["meta"]["chart_input"]["dob"] == "1990-07-15"
 
@@ -68,7 +68,7 @@ class TestCliHappyPath:
         )
         assert result.returncode == 0, f"stderr: {result.stderr}"
         output = json.loads(result.stdout)
-        assert output["meta"]["schema_version"] == "1.1.0"
+        assert output["meta"]["schema_version"] == "1.2.0"
 
     def test_cli_writes_to_out_file_when_specified(self, tmp_path: Path):
         """`--out reading.json` writes the payload to disk rather than stdout."""
@@ -84,7 +84,7 @@ class TestCliHappyPath:
         assert result.returncode == 0, f"stderr: {result.stderr}"
         assert out_file.exists()
         payload = json.loads(out_file.read_text(encoding="utf-8"))
-        assert payload["meta"]["schema_version"] == "1.1.0"
+        assert payload["meta"]["schema_version"] == "1.2.0"
 
 
 class TestCliBadInput:

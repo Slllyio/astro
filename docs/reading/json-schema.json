@@ -892,10 +892,11 @@
       "description": "Engine + chart-input metadata accompanying every reading.\n\n`schema_version` is the public stable lock; bump to 1.1.0 for additive\nfields, 2.0.0 for breaking changes. `stability` is `\"experimental\"`\nuntil the first non-engine downstream consumer ships, then `\"beta\"`,\nthen `\"stable\"`.\n\n`doctrine_config` echoes the 16 lockfile decisions so every emitted\nreading is self-describing (per spec Section 6, design choices).",
       "properties": {
         "schema_version": {
-          "default": "1.1.0",
+          "default": "1.2.0",
           "enum": [
             "1.0.0",
-            "1.1.0"
+            "1.1.0",
+            "1.2.0"
           ],
           "title": "Schema Version",
           "type": "string"

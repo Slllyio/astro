@@ -18,6 +18,40 @@ extends the Literal without removing the older value.
 
 ---
 
+## 1.2.0 — Chara Dasha timing-field parity (2026-05-30)
+
+**Additive (MINOR).** Old `1.0.0` and `1.1.0` payloads remain valid and are
+still accepted on read. New default emitted value is `"1.2.0"`.
+
+### `sequences.chara_dasha.current_md_judgment` — 11 new fields
+
+The internal `CharaDashaJudgment` model (dumped inside the `chara_dasha`
+dict in `SequencesBlock`) gains timing-parity fields matching
+`YoginiMDJudgment`, so consumers can find date/age/is_current inline on
+`current_md_judgment` without having to walk `timeline` looking for the
+period flagged `is_current=True`.
+
+New fields on `current_md_judgment`:
+- `sign_category: str` — `"movable"` / `"fixed"` / `"dual"`
+- `total_years: float`
+- `start_jd: float`, `end_jd: float`
+- `start_date: str`, `end_date: str` — ISO-8601
+- `age_at_start: float`, `age_at_end: float`
+- `is_current: bool`, `is_past: bool`, `is_future: bool`
+
+Resolves a discovered asymmetry: `YoginiMDJudgment` already carried these
+inline (consumers could ask `current_md_judgment.start_date` directly);
+`CharaDashaJudgment` previously only carried them on `timeline` entries,
+forcing consumers to do `next(p for p in timeline if p["is_current"])`.
+
+### Schema version Literal extended
+
+```python
+schema_version: Literal["1.0.0", "1.1.0", "1.2.0"] = "1.2.0"
+```
+
+---
+
 ## 1.1.0 — V1.5 wiring (2026-05-30)
 
 **Additive (MINOR).** Old `1.0.0` payloads remain valid and are still

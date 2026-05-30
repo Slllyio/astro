@@ -202,12 +202,30 @@ class CharaDashaADPeriod(BaseModel):
 
 
 class CharaDashaJudgment(BaseModel):
-    """Per-MD judgment from the 7 named checks."""
+    """Per-MD judgment from the 7 named checks.
+
+    V1.5.2 adds timing fields for parity with ``YoginiMDJudgment`` so a
+    consumer reading ``current_md_judgment`` can find date/age/is_current
+    inline without having to walk ``timeline`` looking for the period
+    flagged ``is_current=True``.
+    """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     md_sign: int = Field(ge=1, le=12)
     md_sign_name: str
+    # Timing parity fields (V1.5.2 — match CharaDashaMDPeriod / YoginiMDJudgment).
+    sign_category: str  # "movable" / "fixed" / "dual"
+    total_years: float
+    start_jd: float
+    end_jd: float
+    start_date: str
+    end_date: str
+    age_at_start: float
+    age_at_end: float
+    is_current: bool
+    is_past: bool
+    is_future: bool
     checks: dict[str, Finding]
     overall_verdict: Finding
 
@@ -881,9 +899,15 @@ def _synthesize_overall(
 def _judge_md(
     d1_chart: Mapping[str, Mapping[str, object]],
     asc_sign: int,
-    md_sign: int,
+    period: CharaDashaMDPeriod,
 ) -> CharaDashaJudgment:
-    """Build a :class:`CharaDashaJudgment` by running all 7 named checks."""
+    """Build a :class:`CharaDashaJudgment` by running all 7 named checks.
+
+    V1.5.2: takes the full :class:`CharaDashaMDPeriod` (not just ``md_sign``)
+    so timing fields can be carried through to the judgment for parity with
+    ``YoginiMDJudgment``.
+    """
+    md_sign = period.md_sign
     checks: dict[str, Finding] = {
         "sign_character": _check_sign_character(md_sign),
         "sign_lord_placement": _check_sign_lord_placement(
@@ -912,7 +936,18 @@ def _judge_md(
     overall = _synthesize_overall(checks, md_sign)
     return CharaDashaJudgment(
         md_sign=md_sign,
-        md_sign_name=_SIGN_NAMES[md_sign],
+        md_sign_name=period.md_sign_name,
+        sign_category=period.sign_category,
+        total_years=period.total_years,
+        start_jd=period.start_jd,
+        end_jd=period.end_jd,
+        start_date=period.start_date,
+        end_date=period.end_date,
+        age_at_start=period.age_at_start,
+        age_at_end=period.age_at_end,
+        is_current=period.is_current,
+        is_past=period.is_past,
+        is_future=period.is_future,
         checks=checks,
         overall_verdict=overall,
     )
@@ -1024,7 +1059,7 @@ def run_sequence(
         )
 
     current_period = timeline[current_idx]
-    current_md_judgment = _judge_md(d1, asc_sign, current_period.md_sign)
+    current_md_judgment = _judge_md(d1, asc_sign, current_period)
 
     # Compute the 12 ADs for the current MD; flag the one containing
     # birth_jd as is_current.

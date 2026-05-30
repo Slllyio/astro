@@ -595,7 +595,7 @@ class Meta(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    schema_version: Literal["1.0.0", "1.1.0"] = "1.1.0"
+    schema_version: Literal["1.0.0", "1.1.0", "1.2.0"] = "1.2.0"
     stability: Literal["experimental", "beta", "stable"] = "experimental"
     engine_version: str
     swiss_ephemeris_version: str

@@ -122,6 +122,12 @@ def _translation_to_dict(t: "TranslationRecord") -> dict[str, Any]:
         "lagna_specific_notes": {
             int(k): v for k, v in t.lagna_specific_notes.items()
         },
+        # Phase C: direct Sanskrit quotation
+        "sanskrit_shloka": t.sanskrit_shloka,
+        "transliteration": t.transliteration,
+        "word_gloss": t.word_gloss,
+        # Phase E: knowledge-library passage IDs
+        "corpus_passage_ids": list(t.corpus_passage_ids),
     }
 
 

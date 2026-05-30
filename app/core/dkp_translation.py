@@ -45,7 +45,10 @@ that map the equivalent manifestation today.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import json
+from dataclasses import dataclass, field, replace
+from functools import lru_cache
+from pathlib import Path
 from typing import Final, Iterable, Mapping
 
 
@@ -71,7 +74,7 @@ class TranslationRecord:
     key: str                          # yoga name or "bhava_X_planet_Y" key
     classification: str               # "yoga" | "bhava_placement"
     domain: str                       # Domain.KINSHIP, etc.
-    shloka: str                       # one-line classical claim
+    shloka: str                       # one-line classical claim (English paraphrase)
     classical_references: tuple[str, ...]
     ancient_manifestation: str        # what the sage observed
     desh_shift: str                   # geographic/cultural changes
@@ -85,6 +88,16 @@ class TranslationRecord:
     # differently when the Lagna confers Yogakaraka status on a planet
     # involved in the yoga (Cancer Mars, Taurus Saturn, etc.). Keys are
     # asc_sign 1..12; values are short modifier notes.
+
+    # ─── Phase C: Direct doctrine quotation (added 2026-05-30) ───
+    sanskrit_shloka: str = ""         # Devanagari text of the source verse
+    transliteration: str = ""         # IAST or Roman transliteration
+    word_gloss: str = ""              # word-by-word translation
+    # ─── Phase E: Knowledge-library corpus linkage ───
+    corpus_passage_ids: tuple[str, ...] = ()
+    # IDs from data/knowledge_library/manifest.parquet — auto-matched
+    # by classical_references + topic tags. UI can fetch the actual
+    # text snippets via the knowledge-library service.
 
 
 # ─── Meta-principles per domain ───────────────────────────────────────
@@ -1663,9 +1676,91 @@ def translations_by_domain(
     return tuple(r for r in _TRANSLATIONS if r.domain == domain)
 
 
+# ─── Sidecar enrichment (loaded at module init) ─────────────────────
+
+
+_SIDECAR_DIR: Final[Path] = Path(__file__).resolve().parent
+_SANSKRIT_SIDECAR: Final[Path] = _SIDECAR_DIR / "dkp_translation_sanskrit.json"
+_LAGNA_NOTES_SIDECAR: Final[Path] = _SIDECAR_DIR / "dkp_translation_lagna_notes.json"
+_CORPUS_LINKS_SIDECAR: Final[Path] = _SIDECAR_DIR / "dkp_translation_corpus_links.json"
+
+
+def _composite_key(record: TranslationRecord) -> str:
+    """Same composite key the ETL sidecars use — key + '::' + domain."""
+    return f"{record.key}::{record.domain}"
+
+
+def _load_sidecar(path: Path) -> dict:
+    """Load a JSON sidecar; return empty dict if absent (forward-compat)."""
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        # Drop _meta key — it's documentation, not data
+        return {k: v for k, v in data.items() if not k.startswith("_")}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _merge_lagna_notes(
+    existing: Mapping[int, str], sidecar_entry: dict,
+) -> Mapping[int, str]:
+    """Merge sidecar Lagna notes into the existing dict.
+
+    Sidecar keys are strings (JSON), so we coerce to int. Sidecar wins
+    over inline-baked-in notes — the sidecar is the curated source.
+    """
+    merged = dict(existing)
+    for k_str, v in sidecar_entry.items():
+        try:
+            merged[int(k_str)] = str(v)
+        except (TypeError, ValueError):
+            continue
+    return merged
+
+
+@lru_cache(maxsize=1)
+def _enriched_translations() -> tuple[TranslationRecord, ...]:
+    """Apply Sanskrit shlokas + per-Lagna matrix + corpus links sidecars.
+
+    Pure function memoised once per process. The base ``_TRANSLATIONS``
+    tuple remains the schema-of-record; this function returns its
+    enriched form for all public APIs.
+    """
+    sanskrit = _load_sidecar(_SANSKRIT_SIDECAR)
+    lagna = _load_sidecar(_LAGNA_NOTES_SIDECAR)
+    links = _load_sidecar(_CORPUS_LINKS_SIDECAR)
+    out: list[TranslationRecord] = []
+    for record in _TRANSLATIONS:
+        ck = _composite_key(record)
+        updates: dict = {}
+        if ck in sanskrit:
+            entry = sanskrit[ck]
+            updates["sanskrit_shloka"] = entry.get("sanskrit_shloka", "")
+            updates["transliteration"] = entry.get("transliteration", "")
+            updates["word_gloss"] = entry.get("word_gloss", "")
+        if ck in lagna:
+            updates["lagna_specific_notes"] = _merge_lagna_notes(
+                record.lagna_specific_notes, lagna[ck],
+            )
+        if ck in links:
+            updates["corpus_passage_ids"] = tuple(links[ck])
+        if updates:
+            out.append(replace(record, **updates))
+        else:
+            out.append(record)
+    return tuple(out)
+
+
 def all_translations() -> tuple[TranslationRecord, ...]:
-    """The full registry — for diagnostic / completeness checks."""
-    return _TRANSLATIONS
+    """The full registry — for diagnostic / completeness checks.
+
+    Returns ENRICHED records (Sanskrit shlokas + per-Lagna matrix +
+    corpus_passage_ids applied from the three JSON sidecars at module-
+    init time). The unenriched ``_TRANSLATIONS`` tuple remains
+    available via ``_TRANSLATIONS`` for tests that need the raw schema.
+    """
+    return _enriched_translations()
 
 
 def format_translation(record: TranslationRecord) -> str:

@@ -151,6 +151,12 @@ from app.integration.dasha_triple import (
     DashaTriple,
     build_dasha_triple,
 )
+# v1.1.0 M8 — Master compose (depth output entry point)
+from app.integration.master_compose import (
+    DomainParagraph,
+    MasterReading,
+    compose_master_reading,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -271,6 +277,10 @@ __all__ = [
     # v1.1.0 M7 - Dasha triple
     "DashaTriple",
     "build_dasha_triple",
+    # v1.1.0 M8 - Master compose (depth output entry)
+    "DomainParagraph",
+    "MasterReading",
+    "compose_master_reading",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

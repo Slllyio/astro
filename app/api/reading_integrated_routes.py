@@ -25,7 +25,11 @@ import asyncio
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Body, HTTPException, Query, status
+from pathlib import Path
+
+from fastapi import APIRouter, Body, Form, HTTPException, Query, Request, status
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
 from app.core.dkp_modulation import DKPContext
@@ -46,6 +50,10 @@ from app.reading.sequences.chara_dasha import CharaDashaResult, run_sequence
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/reading/integrated", tags=["reading-integrated"])
+
+# Jinja2 templates dir (shared with reading_v15_routes).
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
+_templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
 
 # ---------------------------------------------------------------------------
@@ -141,6 +149,221 @@ class GenerateAndEnhanceRequest(BaseModel):
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
+
+_SIGN_NAMES = [
+    "", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+]
+
+_STATUS_TO_COLOR = {"shipped": "positive", "flagged": "neutral", "rejected": "negative"}
+
+
+@router.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
+async def integrated_form_route(request: Request) -> HTMLResponse:
+    """GET /reading/integrated/ — chart-input form."""
+    return _templates.TemplateResponse(
+        "reading_integrated_form.html",
+        {"request": request},
+    )
+
+
+def _build_view_context(
+    request: Request,
+    *,
+    reading: dict[str, Any],
+    integrated: dict[str, Any] | None,
+    modulated: dict[str, Any] | None,
+    gap_annotated: dict[str, Any] | None,
+    comparator_results: list[dict[str, Any]],
+    narrative_result: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Project the integrated payload into Jinja-friendly context."""
+    import json as _json
+
+    chart_block = reading.get("chart", {})
+    cusps = chart_block.get("cusps", {})
+    asc_sign = int(cusps.get("sign", 0) or 0)
+    asc_sign_name = _SIGN_NAMES[asc_sign] if 1 <= asc_sign <= 12 else "?"
+    extras = chart_block.get("extras") or {}
+    current_md = (extras.get("current_mahadasha") or {}).get("mahadasha_lord", "?")
+
+    # Domains
+    domains_block = reading.get("domains") or {}
+    DOMAIN_BHAVA = {"career": 10, "marriage": 7, "children": 5, "wealth": 2, "health": 6, "education": 4}
+    domains_view: list[dict[str, Any]] = []
+    for name, bhava in DOMAIN_BHAVA.items():
+        d = domains_block.get(name)
+        if not isinstance(d, dict):
+            continue
+        overall = d.get("overall_verdict") or {}
+        domains_view.append({
+            "name": name,
+            "bhava": bhava,
+            "direction": overall.get("direction", "neutral"),
+        })
+
+    # DKP translations summary
+    dkp_summary = None
+    if integrated:
+        summary = (integrated.get("dkp_translations_summary") or {})
+        records = summary.get("records") or {}
+        if records:
+            dkp_summary = {
+                "total_attached": summary.get("total_records_attached", 0),
+                "unique_count": len(records),
+                "record_keys": list(records.keys())[:10],
+                "shlokas": {
+                    k: (v.get("shloka") or "")[:200]
+                    for k, v in list(records.items())[:10]
+                    if isinstance(v, dict)
+                },
+            }
+
+    # Gap modules summary
+    gap_summary = None
+    if gap_annotated:
+        gap_summary = {
+            "available_count": gap_annotated.get("available_count", 0),
+            "modules": gap_annotated.get("gap_modules", {}),
+        }
+
+    # Narrative
+    narrative_view = None
+    if narrative_result:
+        narrative_view = {
+            "overall_summary": narrative_result.get("overall_summary", ""),
+            "survival_threshold": narrative_result.get("survival_threshold", 3),
+            "shipped_count": len(narrative_result.get("domains_shipped", []) or []),
+            "flagged_count": len(narrative_result.get("domains_flagged", []) or []),
+            "rejected_count": len(narrative_result.get("domains_rejected", []) or []),
+            "per_domain": [
+                {
+                    "domain": pd.get("domain"),
+                    "paragraph": (pd.get("narrative") or {}).get("paragraph", ""),
+                    "confirm_count": pd.get("confirm_count", 0),
+                    "status": pd.get("status", "flagged"),
+                    "status_color": _STATUS_TO_COLOR.get(pd.get("status", "flagged"), "neutral"),
+                }
+                for pd in narrative_result.get("per_domain", []) or []
+            ],
+        }
+
+    raw = {
+        "core": reading,
+        "integrated": integrated,
+        "modulated": modulated,
+        "gap_annotated": gap_annotated,
+        "comparators": comparator_results,
+        "narrative": narrative_result,
+    }
+    raw_json = _json.dumps(raw, indent=2, default=str)[:50000]  # cap for browser
+
+    return {
+        "request": request,
+        "chart_summary": f"Lagna {asc_sign_name}",
+        "asc_sign": asc_sign,
+        "asc_sign_name": asc_sign_name,
+        "schema_version": (reading.get("meta") or {}).get("schema_version", "?"),
+        "integration_version": (integrated or {}).get("integration_version", "0.7.0"),
+        "current_md_lord": current_md,
+        "domains": domains_view,
+        "dkp_summary": dkp_summary,
+        "gap_summary": gap_summary,
+        "comparators": comparator_results,
+        "narrative": narrative_view,
+        "raw_json": raw_json,
+    }
+
+
+@router.post("/generate", response_class=HTMLResponse)
+async def integrated_generate_route(
+    request: Request,
+    dob: str = Form(...),
+    time: str = Form(...),
+    tz: str = Form(...),
+    lat: float = Form(...),
+    lon: float = Form(...),
+    layer_dkp: str | None = Form(default=None),
+    layer_gap: str | None = Form(default=None),
+    layer_comparators: str | None = Form(default=None),
+    layer_narrative: str | None = Form(default=None),
+    layer_corpus: str | None = Form(default=None),
+) -> HTMLResponse:
+    """POST /reading/integrated/generate — form submission renders the
+    integrated view template."""
+
+    def _do_work():
+        from app.reading.proforma import compute as track_a_compute
+        from app.reading.schema import ChartInput
+        ci = ChartInput(dob=dob, time=time, tz=tz, lat=lat, lon=lon)
+        reading = track_a_compute(ci, enrich=False)
+
+        integrated_payload = None
+        if layer_dkp:
+            from app.integration import enhance
+            integrated_payload = enhance(reading).model_dump(mode="json")
+            reading = integrated_payload["reading"]
+
+        modulated_payload = None
+        if layer_dkp:
+            from app.integration import build_dkp_context_from_reading, modulate_all_domains
+            ctx = build_dkp_context_from_reading(reading)
+            modulated_payload = modulate_all_domains(reading, dkp_context=ctx).model_dump(mode="json")
+
+        gap_payload = None
+        if layer_gap:
+            from app.integration import annotate_with_gap_modules
+            gap_payload = annotate_with_gap_modules(reading).model_dump(mode="json")
+
+        comp_results: list[dict[str, Any]] = []
+        if layer_comparators:
+            try:
+                from app.integration import compare_functional_roles
+                fr = compare_functional_roles(int((reading.get("chart") or {}).get("cusps", {}).get("sign", 1)))
+                comp_results.append({"name": "functional_roles", "verdict": fr.verdict_summary})
+            except Exception:
+                pass
+            try:
+                from app.integration import compare_yoga_detection
+                yc = compare_yoga_detection(reading)
+                comp_results.append({"name": "yoga_detection", "verdict": yc.verdict_summary})
+            except Exception:
+                pass
+
+        narrative_payload = None
+        if layer_narrative:
+            from app.integration import narrate_and_verify
+            narrative_payload = narrate_and_verify(
+                reading, integrated=integrated_payload,
+            ).model_dump(mode="json")
+
+        return reading, integrated_payload, modulated_payload, gap_payload, comp_results, narrative_payload
+
+    try:
+        reading, integrated, modulated, gap_annotated, comp_results, narrative_result = (
+            await asyncio.to_thread(_do_work)
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("integrated generate route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Pipeline failed: {exc}",
+        ) from exc
+
+    context = _build_view_context(
+        request,
+        reading=reading,
+        integrated=integrated,
+        modulated=modulated,
+        gap_annotated=gap_annotated,
+        comparator_results=comp_results,
+        narrative_result=narrative_result,
+    )
+    return _templates.TemplateResponse("reading_integrated_view.html", context)
+
 
 @router.get("/info", response_model=InfoResponse)
 async def info_route() -> InfoResponse:

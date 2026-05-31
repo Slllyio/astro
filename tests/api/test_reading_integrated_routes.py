@@ -286,6 +286,66 @@ class TestCompareFunctionalRoute:
 # POST /generate-and-enhance (smoke only — heavier route)
 # ---------------------------------------------------------------------------
 
+class TestWebUIRoutes:
+    """v0.8.0 — GET / and POST /generate render Jinja2 templates."""
+
+    def test_form_get_returns_html(self):
+        resp = client.get("/reading/integrated/")
+        assert resp.status_code == 200
+        assert "text/html" in resp.headers["content-type"]
+        # Form template includes a known string
+        assert "Integrated Kundli Reading" in resp.text
+
+    def test_form_get_includes_default_field_values(self):
+        """Form should pre-fill with the Bangalore baseline."""
+        resp = client.get("/reading/integrated/")
+        assert "1990-07-15" in resp.text  # default DOB
+        assert "12.97" in resp.text or "12.97" in resp.text  # default lat
+        assert "+05:30" in resp.text  # default tz
+
+    def test_form_lists_seven_layer_options(self):
+        resp = client.get("/reading/integrated/")
+        # Each layer's name should appear as a checkbox label
+        for layer in ("DKP", "Gap modules", "Comparators",
+                      "Narrative", "Corpus RAG"):
+            assert layer in resp.text
+
+    def test_generate_post_with_minimal_layers_returns_view(self):
+        """POST with only the core reading (no extra layers) renders successfully."""
+        resp = client.post(
+            "/reading/integrated/generate",
+            data={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": "12.97", "lon": "77.59",
+            },
+        )
+        assert resp.status_code == 200, resp.text[:500]
+        assert "Domain verdicts" in resp.text
+
+    def test_generate_post_with_dkp_layer_shows_translations(self):
+        resp = client.post(
+            "/reading/integrated/generate",
+            data={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": "12.97", "lon": "77.59",
+                "layer_dkp": "1",
+            },
+        )
+        assert resp.status_code == 200
+        # DKP enhancer should attach translations; section heading should appear
+        assert "Doctrine translations attached" in resp.text or "Domain verdicts" in resp.text
+
+    def test_generate_post_invalid_lat_returns_422(self):
+        resp = client.post(
+            "/reading/integrated/generate",
+            data={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": "not_a_number", "lon": "77.59",
+            },
+        )
+        assert resp.status_code == 422
+
+
 class TestGenerateAndEnhanceRoute:
     """POST /reading/integrated/generate-and-enhance is a wrapper around
     Track A's compute() + enhance(). We smoke-test with --no-enrich for speed."""

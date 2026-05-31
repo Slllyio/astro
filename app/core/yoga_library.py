@@ -1217,6 +1217,570 @@ def detect_kalanidhi(chart: Chart) -> Yoga:
     )
 
 
+# ─── L-1: Nabhasa yoga family (BPHS Ch.36 + BV Raman's THIC) ─────────
+
+
+# Sign types for Nabhasa Asraya yogas
+_CHARA_SIGNS: Final[frozenset[int]] = frozenset({1, 4, 7, 10})    # movable
+_STHIRA_SIGNS: Final[frozenset[int]] = frozenset({2, 5, 8, 11})   # fixed
+_DWISWABHAVA_SIGNS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})  # dual
+
+_VISIBLE_SEVEN: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
+)
+
+
+def _visible_planet_signs(chart: Chart) -> dict[str, int]:
+    """{planet: sign} for the 7 visible grahas (Nabhasa excludes nodes)."""
+    out: dict[str, int] = {}
+    for p in _VISIBLE_SEVEN:
+        s = chart.sign_of(p)
+        if s is not None:
+            out[p] = s
+    return out
+
+
+def _count_distinct_signs(chart: Chart) -> int:
+    """How many DISTINCT signs the 7 visible grahas occupy."""
+    return len({s for s in _visible_planet_signs(chart).values()})
+
+
+# Nabhasa Sankhya yogas (BPHS 36.6-13) — named by sign-count.
+_SANKHYA_NAMES: Final[dict[int, tuple[str, str, str]]] = {
+    1: ("Gola", "गोल", "all 7 visible grahas in one sign — extreme concentration"),
+    2: ("Yuga", "युग", "7 visible grahas in 2 signs — duality / polarity"),
+    3: ("Shoola", "शूल", "7 visible grahas in 3 signs — concentrated thrust"),
+    4: ("Kedara", "केदार", "7 visible grahas in 4 signs — agrarian fields pattern"),
+    5: ("Pasha", "पाश", "7 visible grahas in 5 signs — bondage / collected karma"),
+    6: ("Damini", "दामिनी", "7 visible grahas in 6 signs — generous distribution"),
+    7: ("Veena", "वीणा", "7 visible grahas in 7 distinct signs — Vipanchi pattern, harmonious"),
+}
+
+
+def _sankhya_template(target_count: int) -> Callable[[Chart], Yoga]:
+    name, sanskrit, desc = _SANKHYA_NAMES[target_count]
+
+    def detector(chart: Chart) -> Yoga:
+        n = _count_distinct_signs(chart)
+        active = (n == target_count)
+        return Yoga(
+            name=name, sanskrit=sanskrit, active=active,
+            intensity=0.7 if active else 0.0,
+            participants=_VISIBLE_SEVEN,
+            reference=f"BPHS Ch.36.{6 + target_count - 1}",
+            description=desc,
+        )
+    return detector
+
+
+detect_gola    = _sankhya_template(1)
+detect_yuga    = _sankhya_template(2)
+detect_shoola  = _sankhya_template(3)
+detect_kedara  = _sankhya_template(4)
+detect_pasha   = _sankhya_template(5)
+detect_damini  = _sankhya_template(6)
+detect_veena   = _sankhya_template(7)
+
+
+# Nabhasa Asraya yogas (BPHS 36.3-5) — all 7 grahas in one sign-type
+def detect_rajju(chart: Chart) -> Yoga:
+    """All 7 visible grahas in chara (movable) signs — Rajju yoga (BPHS 36.3).
+
+    Doctrine: itinerant nature, frequent travel, restless personality.
+    """
+    signs = _visible_planet_signs(chart).values()
+    active = bool(signs) and all(s in _CHARA_SIGNS for s in signs)
+    return Yoga(
+        name="Rajju", sanskrit="रज्जु", active=active,
+        intensity=0.8 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.36.3",
+        description="All 7 visible grahas in chara (movable) signs — itinerant nature, travel-driven life.",
+    )
+
+
+def detect_musala(chart: Chart) -> Yoga:
+    """All 7 visible grahas in sthira (fixed) signs — Musala yoga (BPHS 36.4)."""
+    signs = _visible_planet_signs(chart).values()
+    active = bool(signs) and all(s in _STHIRA_SIGNS for s in signs)
+    return Yoga(
+        name="Musala", sanskrit="मुसल", active=active,
+        intensity=0.8 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.36.4",
+        description="All 7 visible grahas in sthira (fixed) signs — stable, accumulating, hierarchically rising.",
+    )
+
+
+def detect_nala(chart: Chart) -> Yoga:
+    """All 7 visible grahas in dwiswabhava (dual) signs — Nala yoga (BPHS 36.5)."""
+    signs = _visible_planet_signs(chart).values()
+    active = bool(signs) and all(s in _DWISWABHAVA_SIGNS for s in signs)
+    return Yoga(
+        name="Nala", sanskrit="नल", active=active,
+        intensity=0.8 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.36.5",
+        description="All 7 visible grahas in dwiswabhava (dual) signs — adaptable, dual-natured, often double-careered.",
+    )
+
+
+# Nabhasa Dala yogas (BPHS 36.14-15) — distribution by Kendra/Panapara/Apoklima
+
+
+def _planets_in_houses_set(chart: Chart, houses: set[int]) -> int:
+    """Count visible grahas in the given set of houses."""
+    return sum(
+        1 for p in _VISIBLE_SEVEN
+        if chart.house_of(p) in houses
+    )
+
+
+_PANAPARAS: Final[frozenset[int]] = frozenset({2, 5, 8, 11})
+_APOKLIMAS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})
+
+
+def detect_mala(chart: Chart) -> Yoga:
+    """All 7 visible grahas in PANAPARA houses (2/5/8/11) — Mala yoga."""
+    n_in_panapara = _planets_in_houses_set(chart, set(_PANAPARAS))
+    active = n_in_panapara == 7
+    return Yoga(
+        name="Mala", sanskrit="माल", active=active,
+        intensity=0.75 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.36.14",
+        description="All 7 visible grahas in panapara (2/5/8/11) houses — wealth-accumulating, garland-like distribution.",
+    )
+
+
+def detect_sarpa(chart: Chart) -> Yoga:
+    """All 7 visible grahas in APOKLIMA houses (3/6/9/12) — Sarpa yoga (Nabhasa variant)."""
+    n_in_apoklima = _planets_in_houses_set(chart, set(_APOKLIMAS))
+    active = n_in_apoklima == 7
+    return Yoga(
+        name="Sarpa (Nabhasa)", sanskrit="सर्प", active=active,
+        intensity=0.75 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.36.15",
+        description="All 7 visible grahas in apoklima (3/6/9/12) houses — strained, sinuous, snake-path life.",
+    )
+
+
+# ─── L-1: Pravrajya yogas (renunciation) (BPHS Ch.78) ────────────────
+
+
+def detect_pravrajya_4plus_in_one_sign(chart: Chart) -> Yoga:
+    """4+ grahas in ONE sign → renunciation tendency (BPHS Ch.78.1).
+
+    Per BV Raman: the lord of that sign determines the order/path.
+    """
+    sign_counts: dict[int, int] = {}
+    for p in _VISIBLE_SEVEN:
+        s = chart.sign_of(p)
+        if s is not None:
+            sign_counts[s] = sign_counts.get(s, 0) + 1
+    max_in_one = max(sign_counts.values()) if sign_counts else 0
+    active = max_in_one >= 4
+    return Yoga(
+        name="Pravrajya (4+ together)", sanskrit="प्रव्रज्या",
+        active=active, intensity=0.6 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.78.1",
+        description="4+ visible grahas conjunct in one sign — renunciation impulse, monastic tendency.",
+    )
+
+
+def detect_pravrajya_saturn_aspect(chart: Chart) -> Yoga:
+    """Saturn aspecting the Moon (or Moon in 9H aspected by Saturn) → ascetic.
+
+    Per BPHS Ch.78.2 + Phaladeepika Ch.27.
+    """
+    moon_h = chart.house_of("Moon")
+    sat_h = chart.house_of("Saturn")
+    if moon_h is None or sat_h is None:
+        return Yoga(name="Pravrajya (Saturn-Moon)", sanskrit="प्रव्रज्या",
+                    active=False, intensity=0.0, participants=(),
+                    reference="BPHS Ch.78.2", description="(skipped — missing positions)")
+    sat_aspects = aspects_from_planet("Saturn", sat_h)
+    active = moon_h in sat_aspects
+    return Yoga(
+        name="Pravrajya (Saturn-Moon)", sanskrit="प्रव्रज्या",
+        active=active, intensity=0.55 if active else 0.0,
+        participants=("Saturn", "Moon"),
+        reference="BPHS Ch.78.2 + Phaladeepika Ch.27",
+        description="Saturn aspecting Moon — detachment, contemplative ascetic tendency.",
+    )
+
+
+def detect_sanyasa(chart: Chart) -> Yoga:
+    """Strong Saturn + 9H/10H lord + Moon connection → formal renunciation.
+
+    Per BV Raman's THIC ch.119 — Sanyasa yoga proper requires the
+    chart's "spiritual triad" planets in mutual connection.
+    """
+    moon_h = chart.house_of("Moon")
+    sat_h = chart.house_of("Saturn")
+    if moon_h is None or sat_h is None:
+        return Yoga(name="Sanyasa", sanskrit="संन्यास", active=False,
+                    intensity=0.0, participants=(), reference="BV Raman THIC 119",
+                    description="(skipped)")
+    # Simplified: Saturn in 4 from Moon (the classic 'detachment' angle)
+    # OR Moon and Saturn in mutual kendras
+    sat_in_4_from_moon = ((sat_h - moon_h) % 12) + 1 == 4
+    moon_in_kendra = moon_h in _KENDRAS
+    sat_in_kendra = sat_h in _KENDRAS
+    mutual_kendra = moon_in_kendra and sat_in_kendra
+    active = sat_in_4_from_moon or mutual_kendra
+    return Yoga(
+        name="Sanyasa", sanskrit="संन्यास", active=active,
+        intensity=0.65 if active else 0.0,
+        participants=("Saturn", "Moon"), reference="BV Raman THIC 119",
+        description="Saturn-Moon detachment angle — formal renunciation potential, monastic vows.",
+    )
+
+
+# ─── L-1: Daridra-family expansion (poverty / wealth-loss variants) ─
+
+
+def detect_kuhu(chart: Chart) -> Yoga:
+    """Moon void in Capricorn or Aquarius with malefic aspect — Kuhu yoga.
+
+    Per Phaladeepika Ch.6.36 — financial vacuum, undeserved poverty.
+    """
+    moon_sign = chart.sign_of("Moon")
+    if moon_sign is None:
+        return Yoga(name="Kuhu", sanskrit="कुहू", active=False,
+                    intensity=0.0, participants=(), reference="Phaladeepika Ch.6.36",
+                    description="(skipped)")
+    in_saturn_sign = moon_sign in {10, 11}
+    moon_h = chart.house_of("Moon")
+    mal_aspect = False
+    if moon_h is not None:
+        for m in ("Sun", "Mars", "Saturn"):
+            mh = chart.house_of(m)
+            if mh is not None and moon_h in aspects_from_planet(m, mh):
+                mal_aspect = True
+                break
+    active = in_saturn_sign and mal_aspect
+    return Yoga(
+        name="Kuhu", sanskrit="कुहू", active=active,
+        intensity=0.55 if active else 0.0,
+        participants=("Moon",), reference="Phaladeepika Ch.6.36",
+        description="Moon in Capricorn/Aquarius with malefic aspect — financial vacuum, recurring poverty.",
+    )
+
+
+def detect_dhana_yoga_simple(chart: Chart) -> Yoga:
+    """Generic Dhana yoga: 2H lord + 11H lord in mutual kendra/trikona.
+
+    Per BPHS Ch.40.4 — the most common wealth combination beyond
+    Lakshmi/Vasumati/Parijata.
+    """
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lord_2 = None
+    lord_11 = None
+    for p, r in roles.items():
+        if 2 in r.houses_ruled:
+            lord_2 = p
+        if 11 in r.houses_ruled:
+            lord_11 = p
+    if lord_2 is None or lord_11 is None:
+        return Yoga(name="Dhana (2L-11L)", sanskrit="धन", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.4",
+                    description="(skipped)")
+    h2 = chart.house_of(lord_2)
+    h11 = chart.house_of(lord_11)
+    if h2 is None or h11 is None:
+        return Yoga(name="Dhana (2L-11L)", sanskrit="धन", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.4",
+                    description="(skipped)")
+    distance = ((h11 - h2) % 12) + 1
+    active = distance in (1, 4, 5, 7, 9, 10)
+    return Yoga(
+        name="Dhana (2L-11L)", sanskrit="धन", active=active,
+        intensity=0.7 if active else 0.0,
+        participants=(lord_2, lord_11), reference="BPHS Ch.40.4",
+        description="2H-lord and 11H-lord in mutual kendra/trikona — sustained wealth accumulation.",
+    )
+
+
+def detect_putra_dosha(chart: Chart) -> Yoga:
+    """Malefics in 5H + 5H lord debilitated/combust = Putra Dosha (child-difficulty).
+
+    Per Phaladeepika Ch.18.
+    """
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lord_5 = None
+    for p, r in roles.items():
+        if 5 in r.houses_ruled:
+            lord_5 = p
+            break
+    if lord_5 is None:
+        return Yoga(name="Putra Dosha", sanskrit="पुत्र दोष", active=False,
+                    intensity=0.0, participants=(), reference="Phaladeepika Ch.18",
+                    description="(skipped)")
+    malefics_in_5 = sum(
+        1 for m in _MALEFICS_NATURAL if chart.house_of(m) == 5
+    )
+    lord_5_sign = chart.sign_of(lord_5)
+    lord_5_debil = lord_5_sign is not None and is_debilitated(lord_5, lord_5_sign)
+    active = malefics_in_5 >= 2 or (malefics_in_5 >= 1 and lord_5_debil)
+    return Yoga(
+        name="Putra Dosha", sanskrit="पुत्र दोष", active=active,
+        intensity=0.6 if active else 0.0,
+        participants=(lord_5,), reference="Phaladeepika Ch.18",
+        description=f"5H afflicted ({malefics_in_5} malefics) — children-related obstacles or delay.",
+    )
+
+
+def detect_balarishta(chart: Chart) -> Yoga:
+    """Moon in dushtana + malefic aspect — Balarishta (childhood-risk yoga).
+
+    Per BPHS Ch.42 — classical early-mortality flag.
+    """
+    moon_h = chart.house_of("Moon")
+    if moon_h is None:
+        return Yoga(name="Balarishta", sanskrit="बालारिष्ट", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.42",
+                    description="(skipped)")
+    in_dushtana = moon_h in _DUSTHANAS
+    mal_aspect = False
+    for m in ("Sun", "Mars", "Saturn"):
+        mh = chart.house_of(m)
+        if mh is not None and moon_h in aspects_from_planet(m, mh):
+            mal_aspect = True
+            break
+    active = in_dushtana and mal_aspect
+    return Yoga(
+        name="Balarishta", sanskrit="बालारिष्ट", active=active,
+        intensity=0.55 if active else 0.0,
+        participants=("Moon",), reference="BPHS Ch.42",
+        description="Moon in dushtana with malefic aspect — childhood-mortality flag (cancellable).",
+    )
+
+
+# ─── L-1: More chart-architecture yogas ─────────────────────────────
+
+
+def detect_chamara(chart: Chart) -> Yoga:
+    """Lagna lord exalted + in kendra + Jupiter aspect — Chamara yoga (BPHS 40.10)."""
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lord_1 = None
+    for p, r in roles.items():
+        if 1 in r.houses_ruled:
+            lord_1 = p
+            break
+    if lord_1 is None:
+        return Yoga(name="Chamara", sanskrit="चामर", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.10",
+                    description="(skipped)")
+    sign = chart.sign_of(lord_1)
+    house = chart.house_of(lord_1)
+    if sign is None or house is None:
+        return Yoga(name="Chamara", sanskrit="चामर", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.10",
+                    description="(skipped)")
+    exalted = is_exalted(lord_1, sign)
+    in_kendra = house in _KENDRAS
+    jup_h = chart.house_of("Jupiter")
+    jup_aspect = jup_h is not None and house in aspects_from_planet("Jupiter", jup_h)
+    active = exalted and in_kendra and jup_aspect
+    return Yoga(
+        name="Chamara", sanskrit="चामर", active=active,
+        intensity=0.85 if active else 0.0,
+        participants=(lord_1, "Jupiter"), reference="BPHS Ch.40.10",
+        description="1H-lord exalted in kendra + Jupiter aspect — royal-grade authority and longevity.",
+    )
+
+
+def detect_simhasana(chart: Chart) -> Yoga:
+    """1H lord + 9H lord + 10H lord all in kendras — Simhasana yoga (BPHS 40.11)."""
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lords = {}
+    for p, r in roles.items():
+        for h in (1, 9, 10):
+            if h in r.houses_ruled:
+                lords[h] = p
+    if not all(h in lords for h in (1, 9, 10)):
+        return Yoga(name="Simhasana", sanskrit="सिंहासन", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.11",
+                    description="(skipped)")
+    all_in_kendra = all(
+        chart.house_of(lords[h]) in _KENDRAS for h in (1, 9, 10)
+        if chart.house_of(lords[h]) is not None
+    )
+    active = all_in_kendra and all(chart.house_of(lords[h]) is not None for h in (1, 9, 10))
+    return Yoga(
+        name="Simhasana", sanskrit="सिंहासन", active=active,
+        intensity=0.85 if active else 0.0,
+        participants=tuple(lords[h] for h in (1, 9, 10) if h in lords),
+        reference="BPHS Ch.40.11",
+        description="1H + 9H + 10H lords all in kendras — Simhasana (throne) yoga, leadership grade.",
+    )
+
+
+def detect_bheri(chart: Chart) -> Yoga:
+    """Venus/Jupiter/Lagna-lord/Moon connected via kendra/trikona — Bheri yoga (BPHS 40.12).
+
+    Simplified: Venus + Jupiter both in kendra/trikona AND 9H lord in kendra.
+    """
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lord_9 = None
+    for p, r in roles.items():
+        if 9 in r.houses_ruled:
+            lord_9 = p
+            break
+    ven_h = chart.house_of("Venus")
+    jup_h = chart.house_of("Jupiter")
+    l9_h = chart.house_of(lord_9) if lord_9 else None
+    if not (ven_h and jup_h and l9_h):
+        return Yoga(name="Bheri", sanskrit="भेरी", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.12",
+                    description="(skipped)")
+    in_aus = lambda h: h in _KENDRAS or h in {5, 9}
+    active = in_aus(ven_h) and in_aus(jup_h) and in_aus(l9_h)
+    return Yoga(
+        name="Bheri", sanskrit="भेरी", active=active,
+        intensity=0.75 if active else 0.0,
+        participants=("Venus", "Jupiter", lord_9 or "?"),
+        reference="BPHS Ch.40.12",
+        description="Venus + Jupiter + 9H-lord all in kendra/trikona — Bheri (drum) yoga, fame + prosperity.",
+    )
+
+
+def detect_shanka(chart: Chart) -> Yoga:
+    """5H + 6H + Lagna-lord all in strong placements — Shanka yoga (BPHS 40.13)."""
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lords = {}
+    for p, r in roles.items():
+        for h in (1, 5, 6):
+            if h in r.houses_ruled:
+                lords[h] = p
+    if not all(h in lords for h in (1, 5, 6)):
+        return Yoga(name="Shanka", sanskrit="शङ्ख", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.40.13",
+                    description="(skipped)")
+    in_strong = lambda p: chart.house_of(p) in (_KENDRAS | {5, 9})
+    active = (
+        in_strong(lords[1]) and in_strong(lords[5]) and in_strong(lords[6])
+    )
+    return Yoga(
+        name="Shanka", sanskrit="शङ्ख", active=active,
+        intensity=0.7 if active else 0.0,
+        participants=tuple(lords[h] for h in (1, 5, 6) if h in lords),
+        reference="BPHS Ch.40.13",
+        description="1H + 5H + 6H lords all strong — Shanka (conch) yoga, long-life + righteousness.",
+    )
+
+
+def detect_chatussagara(chart: Chart) -> Yoga:
+    """All 4 kendras occupied by planets — Chatussagara yoga (BPHS 40.14).
+
+    Doctrine: 'four oceans' — wide-reaching influence, master of multiple domains.
+    """
+    occupied = set()
+    for p in _VISIBLE_SEVEN:
+        h = chart.house_of(p)
+        if h is not None and h in _KENDRAS:
+            occupied.add(h)
+    active = occupied == _KENDRAS
+    return Yoga(
+        name="Chatussagara", sanskrit="चतुस्सागर", active=active,
+        intensity=0.75 if active else 0.0,
+        participants=_VISIBLE_SEVEN, reference="BPHS Ch.40.14",
+        description="All 4 kendras occupied by visible grahas — 'four oceans', wide-reaching authority.",
+    )
+
+
+def detect_lagnadhi(chart: Chart) -> Yoga:
+    """Benefics in 7H + 8H from Lagna — Lagnadhi yoga (BV Raman THIC 87)."""
+    benefics_in_7_8 = 0
+    for b in _BENEFICS_NATURAL:
+        h = chart.house_of(b)
+        if h in (7, 8):
+            benefics_in_7_8 += 1
+    active = benefics_in_7_8 >= 2
+    return Yoga(
+        name="Lagnadhi", sanskrit="लग्नाधि", active=active,
+        intensity=0.6 if active else 0.0,
+        participants=tuple(_BENEFICS_NATURAL), reference="BV Raman THIC 87",
+        description=f"{benefics_in_7_8} benefics in 7H/8H — Lagnadhi, fortunate disposition.",
+    )
+
+
+def detect_chandradhi(chart: Chart) -> Yoga:
+    """Benefics in 6H/7H/8H from MOON — Chandradhi (Adhi-from-Moon) yoga (BPHS 36).
+
+    The classical Adhi yoga (already detected as detect_adhi) reads from Lagna.
+    This variant reads from Moon.
+    """
+    moon_h = chart.house_of("Moon")
+    if moon_h is None:
+        return Yoga(name="Chandradhi", sanskrit="चन्द्राधि", active=False,
+                    intensity=0.0, participants=(), reference="BPHS Ch.36",
+                    description="(skipped)")
+    benefics_count = 0
+    for b in _BENEFICS_NATURAL:
+        bh = chart.house_of(b)
+        if bh is None:
+            continue
+        # Distance from Moon: 1-based
+        dist = ((bh - moon_h) % 12) + 1
+        if dist in (6, 7, 8):
+            benefics_count += 1
+    active = benefics_count >= 2
+    return Yoga(
+        name="Chandradhi", sanskrit="चन्द्राधि", active=active,
+        intensity=0.65 if active else 0.0,
+        participants=("Moon",) + tuple(_BENEFICS_NATURAL),
+        reference="BPHS Ch.36 + Adhi variant",
+        description=f"{benefics_count} benefics in 6/7/8 from Moon — Chandradhi, emotional stability + support.",
+    )
+
+
+def detect_vargottama(chart: Chart) -> Yoga:
+    """1H lord in same sign in D1 as in D9 — Vargottama yoga.
+
+    Note: requires per_planet_varga_signs to detect properly. This is a
+    SIMPLIFIED detector that flags as 'partial' when the Lagna-lord
+    sign hint suggests vargottama (sign in 1/5/9 cyclic position — the
+    base case where Vargottama is more common).
+    """
+    from app.core.functional_roles import functional_roles
+    roles = functional_roles(chart.asc_sign)
+    lord_1 = None
+    for p, r in roles.items():
+        if 1 in r.houses_ruled:
+            lord_1 = p
+            break
+    if not lord_1:
+        return Yoga(name="Vargottama (partial)", sanskrit="वर्गोत्तम",
+                    active=False, intensity=0.0, participants=(),
+                    reference="BPHS Ch.7", description="(skipped)")
+    sign = chart.sign_of(lord_1)
+    # Without D9 sign, we can only flag "potential" if Lagna lord is in
+    # a sign that classically tends to vargottama (movable signs at 0-3.33,
+    # fixed at 13.33-16.66, dual at 26.66-30 — the "vargottama navamsha" pads)
+    lon = chart.planet_lons.get(lord_1) if lord_1 else None
+    if lon is None or sign is None:
+        return Yoga(name="Vargottama (partial)", sanskrit="वर्गोत्तम",
+                    active=False, intensity=0.0, participants=(lord_1,),
+                    reference="BPHS Ch.7", description="(skipped — missing lon)")
+    deg = lon % 30.0
+    if sign in _CHARA_SIGNS:
+        vargottama_pad = 0.0 <= deg < 3.333
+    elif sign in _STHIRA_SIGNS:
+        vargottama_pad = 13.333 <= deg < 16.667
+    else:  # dwiswabhava
+        vargottama_pad = 26.667 <= deg < 30.0
+    return Yoga(
+        name="Vargottama (partial)", sanskrit="वर्गोत्तम", active=vargottama_pad,
+        intensity=0.6 if vargottama_pad else 0.0,
+        participants=(lord_1,), reference="BPHS Ch.7",
+        description=f"Lagna-lord {lord_1} in vargottama navamsha pad — D1 = D9 sign, strong promise.",
+    )
+
+
 # ─── Registry ────────────────────────────────────────────────────────
 
 
@@ -1243,6 +1807,26 @@ YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
     detect_kahala, detect_vasumati, detect_shakat,
     detect_guru_chandala, detect_harsha, detect_sarala,
     detect_vimala, detect_kalanidhi,
+    # L-1 Nabhasa Sankhya (7)
+    detect_gola, detect_yuga, detect_shoola, detect_kedara,
+    detect_pasha, detect_damini, detect_veena,
+    # L-1 Nabhasa Asraya (3)
+    detect_rajju, detect_musala, detect_nala,
+    # L-1 Nabhasa Dala (2)
+    detect_mala, detect_sarpa,
+    # L-1 Pravrajya / Sanyasa (3)
+    detect_pravrajya_4plus_in_one_sign,
+    detect_pravrajya_saturn_aspect,
+    detect_sanyasa,
+    # L-1 Affliction expansion (3)
+    detect_kuhu, detect_putra_dosha, detect_balarishta,
+    # L-1 Wealth expansion (1)
+    detect_dhana_yoga_simple,
+    # L-1 Royal/Chart-architecture (7)
+    detect_chamara, detect_simhasana, detect_bheri, detect_shanka,
+    detect_chatussagara, detect_lagnadhi, detect_chandradhi,
+    # L-1 Vargottama (1)
+    detect_vargottama,
 )
 
 

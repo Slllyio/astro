@@ -347,3 +347,107 @@ class TestRegistryAndDetectAll:
         all_results = detect_all(ch)
         assert all(y.active for y in active)
         assert len(active) <= len(all_results)
+
+
+# ─── L-1 expansion tests ─────────────────────────────────────────────
+
+
+class TestNabhasaFamily:
+    """L-1: Nabhasa Sankhya/Asraya/Dala yogas (BPHS Ch.36)."""
+
+    def test_gola_when_all_planets_in_one_sign(self):
+        from app.core.yoga_library import detect_gola
+        chart = Chart(
+            asc_sign=1, asc_lon=10.0,
+            planet_signs={p: 1 for p in
+                          ("Sun", "Moon", "Mars", "Mercury",
+                           "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")},
+            planet_houses={p: 1 for p in
+                           ("Sun", "Moon", "Mars", "Mercury",
+                            "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")},
+            planet_lons={p: 10.0 for p in
+                         ("Sun", "Moon", "Mars", "Mercury",
+                          "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")},
+        )
+        y = detect_gola(chart)
+        assert y.active is True
+        assert y.name == "Gola"
+
+    def test_veena_when_all_in_distinct_signs(self):
+        from app.core.yoga_library import detect_veena
+        chart = Chart(
+            asc_sign=1, asc_lon=10.0,
+            planet_signs={"Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+                          "Jupiter": 5, "Venus": 6, "Saturn": 7},
+            planet_houses={"Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4,
+                           "Jupiter": 5, "Venus": 6, "Saturn": 7},
+            planet_lons={"Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                         "Mercury": 100.0, "Jupiter": 130.0,
+                         "Venus": 160.0, "Saturn": 190.0},
+        )
+        y = detect_veena(chart)
+        assert y.active is True
+        assert y.name == "Veena"
+
+    def test_rajju_when_all_in_chara(self):
+        from app.core.yoga_library import detect_rajju
+        chart = Chart(
+            asc_sign=1, asc_lon=10.0,
+            planet_signs={"Sun": 1, "Moon": 4, "Mars": 7, "Mercury": 10,
+                          "Jupiter": 1, "Venus": 4, "Saturn": 7},
+            planet_houses={"Sun": 1, "Moon": 4, "Mars": 7, "Mercury": 10,
+                           "Jupiter": 1, "Venus": 4, "Saturn": 7},
+            planet_lons={"Sun": 10.0, "Moon": 100.0, "Mars": 190.0,
+                         "Mercury": 280.0, "Jupiter": 20.0,
+                         "Venus": 110.0, "Saturn": 200.0},
+        )
+        y = detect_rajju(chart)
+        assert y.active is True
+
+
+class TestPravrajyaFamily:
+    """L-1: Renunciation yogas (BPHS Ch.78)."""
+
+    def test_pravrajya_when_4plus_grahas_one_sign(self):
+        from app.core.yoga_library import detect_pravrajya_4plus_in_one_sign
+        chart = Chart(
+            asc_sign=1, asc_lon=10.0,
+            planet_signs={"Sun": 5, "Mars": 5, "Mercury": 5, "Jupiter": 5,
+                          "Moon": 2, "Venus": 3, "Saturn": 11},
+            planet_houses={"Sun": 5, "Mars": 5, "Mercury": 5, "Jupiter": 5,
+                           "Moon": 2, "Venus": 3, "Saturn": 11},
+            planet_lons={"Sun": 130.0, "Mars": 132.0, "Mercury": 135.0,
+                         "Jupiter": 138.0, "Moon": 40.0, "Venus": 70.0,
+                         "Saturn": 310.0},
+        )
+        y = detect_pravrajya_4plus_in_one_sign(chart)
+        assert y.active is True
+
+
+class TestChartArchitectureExpansion:
+    """L-1: Royal-grade and architectural yogas."""
+
+    def test_chatussagara_when_all_4_kendras_occupied(self):
+        from app.core.yoga_library import detect_chatussagara
+        chart = Chart(
+            asc_sign=1, asc_lon=10.0,
+            planet_signs={"Sun": 1, "Moon": 4, "Mars": 7, "Mercury": 10,
+                          "Jupiter": 1, "Venus": 4, "Saturn": 7},
+            planet_houses={"Sun": 1, "Moon": 4, "Mars": 7, "Mercury": 10,
+                           "Jupiter": 1, "Venus": 4, "Saturn": 7},
+            planet_lons={"Sun": 10.0, "Moon": 100.0, "Mars": 190.0,
+                         "Mercury": 280.0, "Jupiter": 20.0,
+                         "Venus": 110.0, "Saturn": 200.0},
+        )
+        y = detect_chatussagara(chart)
+        assert y.active is True
+
+
+class TestRegistryCount:
+    """L-1: Verify registry expansion."""
+
+    def test_registry_count_is_66(self):
+        """L-1 expanded from 39 → 66 yogas (+27 across Nabhasa/Pravrajya/
+        affliction/wealth/architecture/vargottama)."""
+        from app.core.yoga_library import YOGA_DETECTORS
+        assert len(YOGA_DETECTORS) == 66

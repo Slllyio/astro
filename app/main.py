@@ -19,6 +19,7 @@ from app.api.forecast_routes import almanac_router, forecast_router
 from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
+from app.api.reading_integrated_routes import router as reading_integrated_router
 from app.api.reading_routes import reading_router
 from app.api.reading_v15_routes import router as reading_v15_router
 from app.api.routes import chart_router, profile_router
@@ -88,6 +89,7 @@ app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac
 app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (/medini/reading/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(reading_v15_router)  # V1.5 web UI for app/reading engine (/reading/v15/*)
+app.include_router(reading_integrated_router)  # Track A + Track B bridge (/reading/integrated/*)
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

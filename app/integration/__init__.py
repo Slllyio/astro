@@ -46,6 +46,12 @@ from app.integration.dkp_modulator_adapter import (
     modulate_all_domains,
     modulate_domain,
 )
+from app.integration.gap_annotator import (
+    GapAnnotatedReading,
+    GapModuleEntry,
+    annotate_with_gap_modules,
+    chart_from_reading,
+)
 
 __all__ = [
     # DKP enhancer (v0.1.0)
@@ -63,4 +69,9 @@ __all__ = [
     "build_dkp_context_from_reading",
     "modulate_all_domains",
     "modulate_domain",
+    # Gap-module annotator (v0.3.0)
+    "GapAnnotatedReading",
+    "GapModuleEntry",
+    "annotate_with_gap_modules",
+    "chart_from_reading",
 ]

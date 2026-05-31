@@ -312,6 +312,74 @@ def compute_sahams(
                     "Asc + 9H-cusp - Jupiter",
                     "foreign residence / long-journey")
 
+    # ─── L-2 expansion: 22 more from full Tajik Neelakanthi canon ────
+    # Domain: Marriage variants (gender-specific + child-bearing)
+    _add("VivahaM", "Venus", "Saturn",
+         "Asc + Venus - Saturn (male variant)", "marriage (male native)")
+    _add("VivahaF", "Mars", "Saturn",
+         "Asc + Mars - Saturn (female variant)", "marriage (female native)")
+    _add("Putra2", "Saturn", "Jupiter",
+         "Asc + Saturn - Jupiter (Putra secondary)", "children (secondary line)")
+    _add("Garbha", "Jupiter", "Moon",
+         "Asc + Jupiter - Moon", "conception / gestation")
+
+    # Domain: Education / arts depth
+    _add("Buddhi", "Mars", "Mercury",
+         "Asc + Mars - Mercury (intellect variant)", "intellect / quick mind")
+    _add("Manmatha", "Venus", "Mars",
+         "Asc + Venus - Mars", "passion / romantic-erotic charge")
+    _add("Saraswati", "Jupiter", "Venus",
+         "Asc + Jupiter - Venus (arts variant)", "speech / arts / scholarship")
+
+    # Domain: Wealth lifecycle
+    _add("Lakshmi", "Jupiter", "Sun",
+         "Asc + Jupiter - Sun (Lakshmi grace variant)", "Lakshmi grace / fortune-stream")
+    _add("Trikona", "Jupiter", "Moon",
+         "Asc + Jupiter - Moon (Trikona variant)", "trikona stability / lucky houses")
+    _add_cusp_based("Sampatti", 1, "Mars",
+                    "Asc + 2H-cusp - Mars", "accumulated assets / property")
+
+    # Domain: Career details
+    _add("Rajya", "Saturn", "Sun",
+         "Asc + Saturn - Sun (Rajya variant)", "kingship / public office authority")
+    _add("Yatra", "Saturn", "Jupiter",
+         "Asc + Saturn - Jupiter (travel variant)",
+         "long journeys / cross-region action")
+    _add("Vyavasaya", "Jupiter", "Mercury",
+         "Asc + Jupiter - Mercury", "trade / enterprise vs employment")
+    _add("Pitryam", "Sun", "Jupiter",
+         "Asc + Sun - Jupiter (Pitr-yajna variant)",
+         "ancestral karma / paternal-legacy work")
+
+    # Domain: Specialised sensitive points
+    _add("Brahma", "Jupiter", "Mercury",
+         "Asc + Jupiter - Mercury (Brahma variant)",
+         "spiritual learning / Veda-study")
+    _add("Tarakesha", "Saturn", "Mercury",
+         "Asc + Saturn - Mercury",
+         "Tarakesha (savior-deity) connection")
+    _add("Sastra2", "Venus", "Jupiter",
+         "Asc + Venus - Jupiter (Sastra secondary)",
+         "scripture composition / literary works")
+
+    # Domain: Risk / misfortune expansion
+    _add_cusp_based("Riksha", 5, "Saturn",
+                    "Asc + 6H-cusp - Saturn",
+                    "disease severity / hospitalisation risk")
+    _add_cusp_based("Videsha", 11, "Moon",
+                    "Asc + 12H-cusp - Moon",
+                    "long-foreign residence / migration permanence")
+    _add("Bhukti", "Mars", "Sun",
+         "Asc + Mars - Sun", "land / property struggle")
+
+    # Domain: Lifespan / longevity bands
+    _add_cusp_based("Ayur", 0, "Saturn",
+                    "Asc + 1H-cusp - Saturn",
+                    "longevity baseline (Ayur Saham)")
+    _add_cusp_based("Adhana", 6, "Moon",
+                    "Asc + 7H-cusp - Moon",
+                    "conception-moment marker (adhana Lagna)")
+
     return tuple(sahams)
 
 

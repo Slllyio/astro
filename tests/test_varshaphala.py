@@ -60,22 +60,27 @@ class TestMuntha:
 
 class TestSahams:
     def test_returns_expected_sahams_when_all_planets_present(self):
-        """D-2: expanded from 8 to 28 sahams via classical Tajik canon."""
+        """L-2: expanded from 28 to 50 sahams via full Tajik Neelakanthi canon."""
         sahams = compute_sahams(
             asc_sign=6, asc_lon=173.99,
             planet_lons=_BASELINE_LONS,
         )
-        # 28 named formulas; all fire when 7 visible grahas present
-        assert len(sahams) == 28
+        # 50 named formulas; all fire when 7 visible grahas present
+        assert len(sahams) == 50
         names = {s.name for s in sahams}
         # Original 8 still present
         for core in ("Punya", "Vidya", "Karma", "Yasas",
                      "Putra", "Vivaha", "Mrityu", "Bhratru"):
             assert core in names, f"core saham {core} missing"
-        # New ones from D-2
-        for new_saham in ("Pitru", "Matri", "Roga", "Apamrityu",
-                          "Karagriha", "Bhagya", "Paradesh", "Samartha"):
-            assert new_saham in names, f"D-2 saham {new_saham} missing"
+        # D-2 additions still present
+        for d2_saham in ("Pitru", "Matri", "Roga", "Apamrityu",
+                         "Karagriha", "Bhagya", "Paradesh", "Samartha"):
+            assert d2_saham in names, f"D-2 saham {d2_saham} missing"
+        # NEW L-2 expansion (22)
+        for l2_saham in ("VivahaM", "VivahaF", "Garbha", "Manmatha",
+                         "Trikona", "Sampatti", "Rajya", "Yatra",
+                         "Vyavasaya", "Brahma", "Tarakesha", "Adhana"):
+            assert l2_saham in names, f"L-2 saham {l2_saham} missing"
 
     def test_saham_sign_in_1_12(self):
         sahams = compute_sahams(6, 173.99, _BASELINE_LONS)
@@ -134,8 +139,8 @@ class TestAggregate:
         r = compute_varshaphala(6, 173.99, _BASELINE_LONS, age_years=35.0)
         assert isinstance(r, VarshaphalaReport)
         assert r.muntha.age_years == 35.0
-        # D-2: expanded saham count
-        assert len(r.sahams) == 28
+        # L-2: 50 sahams (was 28 in D-2 pass)
+        assert len(r.sahams) == 50
 
     def test_format_returns_string(self):
         r = compute_varshaphala(6, 173.99, _BASELINE_LONS, age_years=35.0)
@@ -224,7 +229,7 @@ class TestAnnualChart:
             birth_lat=50.46, birth_lon_deg=-3.53,
             age_years=40,
         )
-        assert len(ac.annual_sahams) == 28  # full D-2 saham canon
+        assert len(ac.annual_sahams) == 50  # L-2: full 50-saham canon
         # Smoke: at least the Punya saham was computed
         punya = next((s for s in ac.annual_sahams if s.name == "Punya"), None)
         assert punya is not None

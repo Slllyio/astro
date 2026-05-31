@@ -62,14 +62,24 @@ DEFAULT_DATA_DIR: Final = Path("app/medini/data")
 # Saham names lowercased — must match the names emitted by
 # app.core.varshaphala.compute_sahams() (D-2 expansion to 28 sahams).
 _ALL_SAHAM_NAMES: Final[tuple[str, ...]] = (
+    # Original 8 (S-4)
     "punya", "vidya", "karma", "yasas",
     "putra", "vivaha", "mrityu", "bhratru",
+    # D-2 expansion (20)
     "pitru", "matri", "mata", "bandhu",
     "roga", "apamrityu", "jadya", "mrityu2",
     "vyapara", "krishi", "artha", "samartha",
     "karagriha", "bandhana",
     "daya", "sastra", "ratri",
     "bhagya", "asha", "paradesh",
+    # L-2 expansion (22)
+    "vivaham", "vivahaf", "putra2", "garbha",
+    "buddhi", "manmatha", "saraswati",
+    "lakshmi", "trikona", "sampatti",
+    "rajya", "yatra", "vyavasaya", "pitryam",
+    "brahma", "tarakesha", "sastra2",
+    "riksha", "videsha", "bhukti",
+    "ayur", "adhana",
 )
 
 

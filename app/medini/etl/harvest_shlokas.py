@@ -172,6 +172,16 @@ SHLOKA_SOURCES: Final[tuple[str, ...]] = (
     "jataka_tatva_mahadeva_1941",             # NEW — Mahadeva's Jataka Tatva
     "phaladeepika_sastri_1950",               # NEW — Phaladeepika Sastri 1950 alt
     "vidyamadhaviyam_english",                # NEW — English-only filter of Vidyamadhaviyam
+    # ─── F-4: OCR-text-layer extraction via PyMuPDF (no OCR binary) ──
+    # archive.org's `*_text.pdf` variants embed a searchable OCR layer
+    # even when the `*_djvu.txt` is missing/garbage. PyMuPDF (fitz)
+    # extracts that layer directly — 1.28M chars from Hora Ratnam's
+    # `*_text.pdf` with zero OCR-engine setup. See:
+    #   e:/astro/data/knowledge_library/sources/hora_ratnam_santhanam/
+    # populated by:
+    #   py -3.12 -c "import fitz; ... pdf.get_text() per page → chapter md"
+    "hora_ratnam_santhanam",                  # NEW F-4 — Bala Bhadra Hora Ratnam
+                                              # (R. Santhanam Part 1, 945 pages)
 )
 
 
@@ -435,6 +445,8 @@ _SOURCE_AUTHORITY: Final[dict[str, int]] = {
     "jataka_tatva_mahadeva_1941":  41,  # near jataka_tattvam_sastri/natesa
     "phaladeepika_sastri_1950":     3,  # equal-authority alt of phaladeepika (Sastri)
     "vidyamadhaviyam_english":      8,  # near vidyamadhaviyam authority (English-only filter)
+    "hora_ratnam_santhanam":       43,  # Bala Bhadra Hora Ratnam (Santhanam Part 1)
+                                        # F-4: text-layer extraction via PyMuPDF
 }
 
 

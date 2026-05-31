@@ -64,21 +64,40 @@ class TestLoadedCorpusBehaviour:
     """Tests assuming the JSONL corpus is on disk (skip if absent)."""
 
     def test_corpus_has_15k_plus_rules(self):
-        """After F-2 expansion (16 new archive.org scrapes: Kalaprakashika +
-        Suryanarayana Row classical collection + Astro Sutras Bhasin + BV
-        Raman's Astrology for Beginners + Manual of Hindu Astrology +
-        Chandra Nadi + Saptarishi alts + AIA digest 2006 + Sripatipaddhati
-        KSU + alt 1947 THIC), expect 15000+ rules."""
+        """After F-2 + F-4 expansion (F-2: 16 new archive.org scrapes:
+        Kalaprakashika + Suryanarayana Row classical collection + Astro
+        Sutras Bhasin + BV Raman's Astrology for Beginners + Manual of
+        Hindu Astrology + Chandra Nadi + Saptarishi alts + AIA digest
+        2006 + Sripatipaddhati KSU + alt 1947 THIC; F-4: Hora Ratnam
+        Santhanam via PyMuPDF text-layer extraction), expect 18000+
+        unique rules after dedup."""
         if corpus_size() == 0:
             pytest.skip("Shloka corpus not loaded — run harvest_shlokas first")
-        assert corpus_size() >= 15000
+        assert corpus_size() >= 18000
 
     def test_multiple_sources_loaded(self):
         if corpus_size() == 0:
             pytest.skip("Corpus not loaded")
         sources = sources_present()
-        # F-2 expansion: 16 newly scraped, expect 40+ distinct sources
+        # F-2 + F-4 expansion: 17+ newly scraped, expect 40+ distinct sources
         assert len(sources) >= 40
+
+    def test_hora_ratnam_santhanam_present(self):
+        """F-4: Hora Ratnam (Bala Bhadra, R. Santhanam Part 1) added via
+        PyMuPDF text-layer extraction from archive.org `_text.pdf` variant.
+        Source labelled NoOCR but the embedded OCR layer extracts cleanly
+        (1,285,314 chars across 945 pages). Expected: 1000+ rules (some
+        collapse via cross-source dedup against BPHS / Phaladeepika)."""
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        sources = set(sources_present())
+        assert "hora_ratnam_santhanam" in sources, (
+            "F-4: hora_ratnam_santhanam should be in source registry"
+        )
+        rules = rules_for_source("hora_ratnam_santhanam", limit=2000)
+        assert len(rules) >= 1000, (
+            f"F-4: expected 1000+ Hora Ratnam rules, got {len(rules)}"
+        )
 
     def test_deva_keralam_sources_present(self):
         """C-1: Deva Keralam vols 1/2/3 added to SHLOKA_SOURCES."""

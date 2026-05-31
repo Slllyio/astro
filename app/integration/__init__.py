@@ -111,6 +111,22 @@ from app.integration.dasha_now import (
     md_at_jd,
     md_at_now,
 )
+# v1.0.2 — doctrine reconciliation + summary
+from app.integration.doctrine_reconciliation import (
+    DoctrineNote,
+    ReconciledFunctionalReport,
+    reconcile_functional_roles,
+)
+from app.integration.summary import (
+    ChartBasics,
+    ChartSummary,
+    DomainHighlight,
+    FunctionalRoleNote,
+    GapHeadlines,
+    MDSnapshot,
+    YogaSummary,
+    summarize_chart,
+)
 # v1.0.0 production hardening
 from app.integration.production import (
     CacheKey,
@@ -187,6 +203,19 @@ __all__ = [
     "md_at_birth",
     "md_at_jd",
     "md_at_now",
+    # v1.0.2 doctrine reconciliation
+    "DoctrineNote",
+    "ReconciledFunctionalReport",
+    "reconcile_functional_roles",
+    # v1.0.2 high-signal summary
+    "ChartBasics",
+    "ChartSummary",
+    "DomainHighlight",
+    "FunctionalRoleNote",
+    "GapHeadlines",
+    "MDSnapshot",
+    "YogaSummary",
+    "summarize_chart",
     # v1.0.0 production hardening
     "CacheKey",
     "CacheStats",

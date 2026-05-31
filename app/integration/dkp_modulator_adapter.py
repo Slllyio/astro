@@ -182,6 +182,8 @@ def build_dkp_context_from_reading(
     foundations = reading.get("foundations") or {}
     meta = reading.get("meta") or {}
     sequences = reading.get("sequences") or {}
+    # Track A nests the original chart inputs under meta.chart_input.
+    chart_input = meta.get("chart_input") or {}
 
     def _first_non_none(*candidates: Any) -> Any:
         for c in candidates:
@@ -193,16 +195,21 @@ def build_dkp_context_from_reading(
         chart_block.get("latitude"),
         foundations.get("latitude"),
         meta.get("latitude"),
+        chart_input.get("lat"),
+        chart_input.get("latitude"),
     )
     lon = _first_non_none(
         chart_block.get("longitude"),
         foundations.get("longitude"),
         meta.get("longitude"),
+        chart_input.get("lon"),
+        chart_input.get("longitude"),
     )
     birth_date_iso = _first_non_none(
         chart_block.get("dob"),
         chart_block.get("birth_date_iso"),
         meta.get("dob"),
+        chart_input.get("dob"),
     )
 
     # Current MD lord from Vimshottari, if present.
@@ -218,6 +225,18 @@ def build_dkp_context_from_reading(
         init_kwargs["birth_longitude"] = float(lon)
     if birth_date_iso:
         init_kwargs["birth_date_iso"] = str(birth_date_iso)
+        # Derive age_years from birth date + now. Without this the modulator
+        # never gets a Kaal-axis signal, capping context_completeness at 5
+        # and forcing confidence to LOW. Auto-derivable from data we have.
+        try:
+            from datetime import date, datetime, timezone
+            dob = date.fromisoformat(str(birth_date_iso))
+            today = datetime.now(timezone.utc).date()
+            age = (today - dob).days / 365.2425
+            if age >= 0:
+                init_kwargs["age_years"] = float(age)
+        except (ValueError, TypeError):
+            pass
     if current_md:
         init_kwargs["active_dasha_lord"] = str(current_md)
 

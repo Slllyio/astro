@@ -29,6 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.core.chart_model import Chart
 from app.core.yoga_library import active_yogas
 from app.integration.gap_annotator import chart_from_reading
+from app.integration.yoga_aliases import alias_canonical
 
 
 class YogaSetDiff(BaseModel):
@@ -68,11 +69,13 @@ class YogaComparisonReport(BaseModel):
 def _normalise(name: str) -> str:
     """Canonicalise a yoga name for cross-engine matching.
 
-    - lower-case
-    - strip module prefixes ("yogas_extended.", "foundation.", etc.)
-    - replace underscores with spaces
-    - strip trailing " yoga" / " dosha" (Track A keeps these, Track B
-      sometimes does, sometimes doesn't)
+    Pipeline:
+    1. lower-case
+    2. strip module prefixes ("yogas_extended.", "foundation.", etc.)
+    3. replace underscores with spaces
+    4. strip trailing " yoga" / " dosha" (Track A keeps these, Track B sometimes does)
+    5. apply alias map — yogas with known cross-engine variants
+       (e.g. "neech_bhanga" / "neecha bhanga raja") fold to one canonical name
     """
     n = name.lower()
     # Drop namespace prefix
@@ -84,7 +87,8 @@ def _normalise(name: str) -> str:
     for suffix in (" yoga", " dosha"):
         if n.endswith(suffix):
             n = n[: -len(suffix)].strip()
-    return n
+    # Apply alias map — known cross-engine equivalences
+    return alias_canonical(n)
 
 
 def _collect_track_a_yogas(reading: dict[str, Any]) -> dict[str, list[str]]:

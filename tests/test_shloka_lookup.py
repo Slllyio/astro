@@ -63,20 +63,22 @@ class TestLookups:
 class TestLoadedCorpusBehaviour:
     """Tests assuming the JSONL corpus is on disk (skip if absent)."""
 
-    def test_corpus_has_10k_plus_rules(self):
-        """After F-1 expansion (BPHS + Raman classics + Jataka Parijata +
-        Jataka Tattvam + Laghu Parashari + Prasna Marga vol2 + Sarvartha
-        Chintamani etc.), expect 10000+ rules."""
+    def test_corpus_has_15k_plus_rules(self):
+        """After F-2 expansion (16 new archive.org scrapes: Kalaprakashika +
+        Suryanarayana Row classical collection + Astro Sutras Bhasin + BV
+        Raman's Astrology for Beginners + Manual of Hindu Astrology +
+        Chandra Nadi + Saptarishi alts + AIA digest 2006 + Sripatipaddhati
+        KSU + alt 1947 THIC), expect 15000+ rules."""
         if corpus_size() == 0:
             pytest.skip("Shloka corpus not loaded — run harvest_shlokas first")
-        assert corpus_size() >= 10000
+        assert corpus_size() >= 15000
 
     def test_multiple_sources_loaded(self):
         if corpus_size() == 0:
             pytest.skip("Corpus not loaded")
         sources = sources_present()
-        # F-1 expansion: expect 30+ distinct sources
-        assert len(sources) >= 25
+        # F-2 expansion: 16 newly scraped, expect 40+ distinct sources
+        assert len(sources) >= 40
 
     def test_deva_keralam_sources_present(self):
         """C-1: Deva Keralam vols 1/2/3 added to SHLOKA_SOURCES."""
@@ -107,14 +109,40 @@ class TestLoadedCorpusBehaviour:
         )
 
     def test_raman_classics_present(self):
-        """F-1: BV Raman's foundational books finally harvested."""
+        """F-1: BV Raman's foundational books finally harvested.
+
+        Note: original three_hundred_combinations_raman is fully covered
+        by three_hundred_combinations_raman_1947 alt edition (same book,
+        cleaner OCR). Dedup collapsed all its rules into the 1947 edition.
+        """
         if corpus_size() == 0:
             pytest.skip("Corpus not loaded")
         sources = set(sources_present())
         for raman_book in ("how_to_judge_a_horoscope_raman",
                            "hindu_predictive_astrology_raman",
-                           "three_hundred_combinations_raman"):
+                           "three_hundred_combinations_raman_1947"):
             assert raman_book in sources, f"missing {raman_book}"
+
+    def test_f2_scraped_sources_present(self):
+        """F-2: newly scraped sources from archive.org all integrated.
+
+        Note: sources whose rules fully dedup-collapse into higher-authority
+        sources may not appear (e.g. brihat_jataka_row_1919 vs brihat_jataka,
+        sarvartha_chintamani_row_1899 vs sarvartha_chintamani — Suryanarayana
+        Row's editions are alternative translations of the same originals).
+        """
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        sources = set(sources_present())
+        # These F-2 additions are distinct enough to survive dedup
+        for new_src in ("kalaprakashika",
+                        "astrology_for_beginners_raman",
+                        "astro_sutras_bhasin",
+                        "chandra_nadi_tsgk",
+                        "jyotish_saptarishi_nadi",
+                        "astro_self_instructor_row_1893",
+                        "aia_yearly_digest_2006"):
+            assert new_src in sources, f"F-2 missing {new_src}"
 
     def test_brihat_jataka_present(self):
         if corpus_size() == 0:

@@ -145,6 +145,27 @@ SHLOKA_SOURCES: Final[tuple[str, ...]] = (
     "indian_horary_ayer",            # 1.5K lines
     # REMOVED: jyotish_classified_topics — that source is a PDF-filename
     # catalog, not actual rule content. Misclassified in F-1 first pass.
+    # ─── F-2: Newly-scraped from archive.org (2026-05-31 EOD) ────────
+    # All English OCR, verified extractable. See:
+    # - app/medini/etl/import_archive_text.py for scrape commands
+    # - data/knowledge_library/sources/<slug>/ for raw markdown
+    "jyotish_saptarishi_nadi",       # 5K lines (NEW — Saptarishi general)
+    "horoscope_saptarishi_nadi",     # small (NEW)
+    "kalaprakashika",                # 12K lines (NEW — Muhurta classical)
+    "sripatipaddhati_ksu",           # 6.8K lines (NEW — alt edition)
+    "chandra_nadi_tsgk",             # 8.2K lines (NEW — per-graha Nadi)
+    "meena_nadi",                    # small (NEW)
+    "decoding_nadiamsha",            # 1.5K lines (NEW)
+    "aia_yearly_digest_2006",        # NEW — AIA group case studies
+    "astrology_for_beginners_raman", # NEW — BV Raman intro (most-downloaded)
+    "manual_hindu_astrology_raman_1935", # NEW — BV Raman classic
+    "astro_sutras_bhasin",           # NEW — J.N. Bhasin Astro Sutras
+    "brihat_jataka_row_1919",        # NEW — alt translation by Suryanarain Row
+    "sarvartha_chintamani_row_1899", # NEW — alt translation
+    "chappanna_prasana_sastra_row_1946",  # NEW — Prashna classic
+    "intro_astrology_row_1900",      # NEW
+    "astro_self_instructor_row_1893", # NEW — old classic by Suryanarain Rao
+    "three_hundred_combinations_raman_1947",  # NEW — alt edition
 )
 
 
@@ -384,6 +405,24 @@ _SOURCE_AUTHORITY: Final[dict[str, int]] = {
     "astrology_manual_eapc":       71,
     "notable_horoscopes_raman":    72,
     "indian_horary_ayer":          73,
+    # F-2: newly-scraped (assign authority near their respective tiers)
+    "brihat_jataka_row_1919":      19,  # alt translation of Brihat Jataka — Tier 1
+    "sarvartha_chintamani_row_1899": 48,  # alt edition of Sarvartha Chintamani
+    "chappanna_prasana_sastra_row_1946": 51,  # Prashna classical
+    "intro_astrology_row_1900":    74,
+    "astro_self_instructor_row_1893": 75,
+    "manual_hindu_astrology_raman_1935": 23,  # near Raman tier
+    "astrology_for_beginners_raman": 25,
+    "astro_sutras_bhasin":         76,
+    "three_hundred_combinations_raman_1947": 22,  # alt edition of THIC — Raman tier
+    "kalaprakashika":              52,  # Muhurta classical
+    "sripatipaddhati_ksu":         53,  # alt Sripatipaddhati
+    "jyotish_saptarishi_nadi":     54,
+    "horoscope_saptarishi_nadi":   55,
+    "chandra_nadi_tsgk":           56,  # per-graha Nadi (high authority for Chandra-specific)
+    "meena_nadi":                  57,
+    "decoding_nadiamsha":          58,
+    "aia_yearly_digest_2006":      77,
 }
 
 

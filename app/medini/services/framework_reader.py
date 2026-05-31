@@ -345,6 +345,36 @@ def master_reading_to_dict(mr) -> dict[str, Any]:
             }
             for rx in mr.prescribed_remedies
         ],
+        # S-5 — cross-layer convergence verdicts per domain. Top-level
+        # synthesis view: every verdict carries weighted_score, label,
+        # confidence band, supporting + contradicting layer counts, and
+        # the full per-layer Evidence list with classical citations.
+        "convergence": {
+            domain: {
+                "primary_bhava": int(v.primary_bhava),
+                "label": v.convergence_label,
+                "confidence": v.confidence_band,
+                "weighted_score": round(float(v.weighted_score), 3),
+                "n_supporting": int(v.n_supporting),
+                "n_contradicting": int(v.n_contradicting),
+                "coverage_caveat": v.coverage_caveat,
+                "evidence": [
+                    {
+                        "layer": e.layer,
+                        "signal": int(e.signal),
+                        "weight": round(float(e.weight), 3),
+                        "says": e.what_it_says,
+                        "citation": e.citation,
+                    }
+                    for e in v.evidence
+                ],
+                "contradictions": [
+                    {"supports": s, "contradicts": c}
+                    for s, c in v.contradictions
+                ],
+            }
+            for domain, v in (mr.convergence_verdicts or {}).items()
+        },
     }
     # Replace the base text with the richer master-format text
     from app.core.master_reading import format_master_reading_text

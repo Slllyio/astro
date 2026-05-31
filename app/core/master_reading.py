@@ -115,6 +115,13 @@ class MasterReading:
     # Gap L — Prescribed remedies for weak planets
     prescribed_remedies: tuple[RemedyPrescription, ...] = ()
 
+    # S-1 + S-5 — Cross-layer convergence verdicts per prediction domain.
+    # When compose_master_reading is called with compute_convergence=True
+    # (default), the engine scans 11 doctrinal layers for each of the
+    # CORE_DOMAINS and attaches the ConvergenceVerdict here. UI / consumers
+    # read this for the "reasoning trace" view.
+    convergence_verdicts: Mapping[str, "ConvergenceVerdict"] = field(default_factory=dict)
+
 
 _NATURAL_BENEFICS = {"Jupiter", "Venus", "Mercury", "Moon"}
 _NATURAL_MALEFICS = {"Sun", "Mars", "Saturn"}  # excluding nodes — no remedy formula
@@ -276,6 +283,7 @@ def compose_master_reading(
     transit_signs: Mapping[str, int] | None = None,
     per_planet_varga_signs: Mapping[str, Mapping[str, int]] | None = None,
     varga_pillar_scores: Mapping[int, float] | None = None,
+    convergence_domains: tuple[str, ...] | None = None,
 ) -> MasterReading:
     """The framework's master entry point.
 
@@ -379,7 +387,7 @@ def compose_master_reading(
     # Gap L — Prescribed remedies (synthesized from Vimsopaka + Avastha)
     prescriptions = _build_prescriptions(chart, vims, av_mults)
 
-    return MasterReading(
+    mr = MasterReading(
         base_reading=base,
         ashtakavarga=ashtakavarga,
         varga_confirmations=varga_confs,
@@ -394,6 +402,30 @@ def compose_master_reading(
         tara_at_target=tara,
         prescribed_remedies=prescriptions,
     )
+
+    # S-1 + S-5: cross-layer convergence verdicts attached for the
+    # caller-specified domains (defaults to CORE_DOMAINS).
+    domains = convergence_domains if convergence_domains is not None else CORE_DOMAINS
+    if domains:
+        # Local import — convergence_engine reads from MasterReading, but
+        # we attach its output back ON the MasterReading. Use object.__
+        # setattr__ because MasterReading is frozen.
+        from app.core.convergence_engine import convergence_verdict
+        cv_map: dict[str, "ConvergenceVerdict"] = {}
+        for d in domains:
+            try:
+                cv_map[d] = convergence_verdict(mr, d)
+            except (ValueError, KeyError):
+                continue
+        object.__setattr__(mr, "convergence_verdicts", cv_map)
+    return mr
+
+
+# Default domain set for the bulk reading pipeline. Tuned to cover the
+# 6 most-asked life questions in classical jyotisha consultations.
+CORE_DOMAINS: tuple[str, ...] = (
+    "marriage", "career", "wealth", "health", "children", "dharma",
+)
 
 
 def format_master_reading_text(mr: MasterReading) -> str:

@@ -254,6 +254,44 @@ def _master_reading_to_row(
     out["remedy_planets"] = [rx.planet for rx in mr.prescribed_remedies]
     out["remedy_caveats"] = [rx.gemstone_caveat for rx in mr.prescribed_remedies]
 
+    # S-5: Convergence verdicts per domain — emitted as parallel scalar
+    # columns + a list-of-struct evidence column per domain. Schema:
+    #   conv_<domain>_label       (str)        e.g. "strongly_supportive"
+    #   conv_<domain>_confidence  (str)        e.g. "near-certain"
+    #   conv_<domain>_score       (float)      weighted signal sum
+    #   conv_<domain>_n_support   (int)
+    #   conv_<domain>_n_contra    (int)
+    #   conv_<domain>_evidence    (list<struct>)  top 5 weighted signals
+    # PyArrow infers LIST<STRUCT<...>> from the list-of-dict structure.
+    for domain in ("marriage", "career", "wealth", "health", "children", "dharma"):
+        v = mr.convergence_verdicts.get(domain) if mr.convergence_verdicts else None
+        if v is None:
+            out[f"conv_{domain}_label"] = None
+            out[f"conv_{domain}_confidence"] = None
+            out[f"conv_{domain}_score"] = pd.NA
+            out[f"conv_{domain}_n_support"] = 0
+            out[f"conv_{domain}_n_contra"] = 0
+            out[f"conv_{domain}_evidence"] = []
+            continue
+        out[f"conv_{domain}_label"] = v.convergence_label
+        out[f"conv_{domain}_confidence"] = v.confidence_band
+        out[f"conv_{domain}_score"] = round(v.weighted_score, 3)
+        out[f"conv_{domain}_n_support"] = v.n_supporting
+        out[f"conv_{domain}_n_contra"] = v.n_contradicting
+        # Top 5 evidence items by absolute weight × |signal|, with citation
+        ranked = sorted(
+            v.evidence,
+            key=lambda e: abs(e.signal * e.weight),
+            reverse=True,
+        )[:5]
+        out[f"conv_{domain}_evidence"] = [
+            {"layer": e.layer, "signal": int(e.signal),
+             "weight": round(e.weight, 3),
+             "says": e.what_it_says[:200],
+             "citation": e.citation[:200]}
+            for e in ranked
+        ]
+
     # Dense nested layers — emitted as native list-of-structs so PyArrow
     # infers a queryable LIST<STRUCT<...>> schema. DuckDB can push
     # predicates into these (`WHERE upagrahas[1].sign = 4`) where JSON
@@ -325,6 +363,12 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         "n_prescribed_remedies": 0,
         "remedy_planets": [],
         "remedy_caveats": [],
+        # S-5 convergence stubs
+        **{f"conv_{d}_{f}": v for d in
+           ("marriage", "career", "wealth", "health", "children", "dharma")
+           for f, v in (("label", None), ("confidence", None),
+                        ("score", pd.NA), ("n_support", 0),
+                        ("n_contra", 0), ("evidence", []))},
         # Empty list-of-struct stubs for the 5 nested layers (matches
         # the success-path schema so PyArrow infers a consistent type).
         "upagrahas": [],

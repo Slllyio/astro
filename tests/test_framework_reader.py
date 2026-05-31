@@ -202,3 +202,25 @@ class TestMasterReadingToDict:
         d = master_reading_to_dict(mr)
         all_a = d["master_layers"]["all_arudhas"]
         assert set(all_a.keys()) == {str(b) for b in range(1, 13)}
+
+    def test_convergence_attached_for_core_domains(self, chart_dict):
+        """S-5: convergence dict appears under master_layers for 6 core domains."""
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        assert "convergence" in d["master_layers"]
+        conv = d["master_layers"]["convergence"]
+        for domain in ("marriage", "career", "wealth", "health", "children", "dharma"):
+            assert domain in conv, f"missing convergence verdict for {domain}"
+            v = conv[domain]
+            assert "label" in v and "confidence" in v
+            assert "weighted_score" in v
+            assert "evidence" in v and isinstance(v["evidence"], list)
+            for e in v["evidence"]:
+                assert "layer" in e and "citation" in e
+
+    def test_convergence_is_json_serializable(self, chart_dict):
+        """The convergence sub-dict round-trips through json.dumps cleanly."""
+        import json
+        mr = read_chart_master(chart_dict)
+        d = master_reading_to_dict(mr)
+        json.dumps(d["master_layers"]["convergence"])  # raises if not JSON-clean

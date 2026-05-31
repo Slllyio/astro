@@ -176,3 +176,211 @@ def md_at_birth(reading: Mapping[str, Any]) -> MDLookup:
 def md_at_now(reading: Mapping[str, Any]) -> MDLookup:
     """Convenience: look up the MD active at the current UTC moment."""
     return md_at_jd(reading, target_jd=_jd_now_utc())
+
+
+# ---------------------------------------------------------------------------
+# M1: Antardasha + Pratyantar at any JD
+# ---------------------------------------------------------------------------
+#
+# Vimshottari sub-period math (BPHS Ch.46):
+#   AD_duration = MD_duration * AD_lord_years / 120
+#   PD_duration = AD_duration * PD_lord_years / 120
+# Sequence inside any period starts with the parent-period's lord and
+# continues through the canonical Vimshottari order.
+
+_DASHA_YEARS: dict[str, int] = {
+    "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7,
+    "Rahu": 18, "Jupiter": 16, "Saturn": 19, "Mercury": 17,
+}
+
+_DASHA_ORDER: tuple[str, ...] = (
+    "Ketu", "Venus", "Sun", "Moon", "Mars",
+    "Rahu", "Jupiter", "Saturn", "Mercury",
+)
+
+
+def _dasha_order_from(start_lord: str) -> tuple[str, ...]:
+    """The 9-lord Vimshottari sequence starting at start_lord, wrapping."""
+    if start_lord not in _DASHA_ORDER:
+        raise ValueError(f"unknown dasha lord: {start_lord}")
+    idx = _DASHA_ORDER.index(start_lord)
+    return _DASHA_ORDER[idx:] + _DASHA_ORDER[:idx]
+
+
+class ADLookup(BaseModel):
+    """Result of looking up the active Antardasha at one JD."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    target_jd: float
+    target_iso: str | None = None
+    md_lord: str
+    ad_lord: str
+    start_jd: float
+    end_jd: float
+    start_date: str
+    end_date: str
+    age_at_start_years: float
+    age_at_end_years: float
+    age_now_years: float
+    md_progress_fraction: float = Field(ge=0.0, le=1.0)
+
+
+class PDLookup(BaseModel):
+    """Result of looking up the active Pratyantar at one JD."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    target_jd: float
+    target_iso: str | None = None
+    md_lord: str
+    ad_lord: str
+    pd_lord: str
+    start_jd: float
+    end_jd: float
+    start_date: str
+    end_date: str
+    age_at_start_years: float
+    age_at_end_years: float
+    age_now_years: float
+    ad_progress_fraction: float = Field(ge=0.0, le=1.0)
+
+
+def _ad_windows_within_md(md: MDLookup) -> list[tuple[str, float, float]]:
+    """Return 9 (ad_lord, start_jd, end_jd) inside the given MD."""
+    md_duration_days = md.end_jd - md.start_jd
+    out: list[tuple[str, float, float]] = []
+    cursor = md.start_jd
+    for ad_lord in _dasha_order_from(md.md_lord):
+        ad_years_share = _DASHA_YEARS[ad_lord] / 120.0
+        ad_duration_days = md_duration_days * ad_years_share
+        end = cursor + ad_duration_days
+        out.append((ad_lord, cursor, end))
+        cursor = end
+    return out
+
+
+def _pd_windows_within_ad(
+    ad_start_jd: float, ad_end_jd: float, ad_lord: str,
+) -> list[tuple[str, float, float]]:
+    """Return 9 (pd_lord, start_jd, end_jd) inside the given AD."""
+    ad_duration_days = ad_end_jd - ad_start_jd
+    out: list[tuple[str, float, float]] = []
+    cursor = ad_start_jd
+    for pd_lord in _dasha_order_from(ad_lord):
+        pd_years_share = _DASHA_YEARS[pd_lord] / 120.0
+        pd_duration_days = ad_duration_days * pd_years_share
+        end = cursor + pd_duration_days
+        out.append((pd_lord, cursor, end))
+        cursor = end
+    return out
+
+
+def ad_at_jd(
+    reading: Mapping[str, Any],
+    target_jd: float | None = None,
+) -> ADLookup:
+    """Look up which Antardasha is active at ``target_jd``.
+
+    Works for any target_jd within the natal Vimshottari window. Computes
+    the 9 ADs within the MD covering target_jd via Vimshottari proportional
+    math (no Track A/B invocation needed)."""
+    if target_jd is None:
+        target_jd = _jd_now_utc()
+
+    md = md_at_jd(reading, target_jd=target_jd)
+    ad_windows = _ad_windows_within_md(md)
+
+    chosen: tuple[str, float, float] | None = None
+    for window in ad_windows:
+        ad_lord, start, end = window
+        if start <= target_jd < end:
+            chosen = window
+            break
+    if chosen is None:
+        raise ValueError(
+            f"target_jd {target_jd} not within any AD inside MD {md.md_lord}"
+        )
+
+    ad_lord, ad_start, ad_end = chosen
+    birth_jd = float(
+        (reading.get("chart") or {}).get("extras", {}).get("birth_jd")
+        or md.start_jd
+    )
+
+    md_progress = (target_jd - md.start_jd) / (md.end_jd - md.start_jd)
+    md_progress = max(0.0, min(1.0, md_progress))
+
+    return ADLookup(
+        target_jd=target_jd,
+        target_iso=_iso_from_jd(target_jd),
+        md_lord=md.md_lord,
+        ad_lord=ad_lord,
+        start_jd=ad_start,
+        end_jd=ad_end,
+        start_date=_iso_from_jd(ad_start) or "",
+        end_date=_iso_from_jd(ad_end) or "",
+        age_at_start_years=(ad_start - birth_jd) / 365.2425,
+        age_at_end_years=(ad_end - birth_jd) / 365.2425,
+        age_now_years=(target_jd - birth_jd) / 365.2425,
+        md_progress_fraction=md_progress,
+    )
+
+
+def pd_at_jd(
+    reading: Mapping[str, Any],
+    target_jd: float | None = None,
+) -> PDLookup:
+    """Look up which Pratyantar is active at ``target_jd``."""
+    if target_jd is None:
+        target_jd = _jd_now_utc()
+
+    ad = ad_at_jd(reading, target_jd=target_jd)
+    pd_windows = _pd_windows_within_ad(ad.start_jd, ad.end_jd, ad.ad_lord)
+
+    chosen: tuple[str, float, float] | None = None
+    for window in pd_windows:
+        pd_lord, start, end = window
+        if start <= target_jd < end:
+            chosen = window
+            break
+    if chosen is None:
+        raise ValueError(
+            f"target_jd {target_jd} not within any PD inside "
+            f"MD={ad.md_lord} AD={ad.ad_lord}"
+        )
+
+    pd_lord, pd_start, pd_end = chosen
+    birth_jd = float(
+        (reading.get("chart") or {}).get("extras", {}).get("birth_jd")
+        or ad.start_jd
+    )
+
+    ad_progress = (target_jd - ad.start_jd) / (ad.end_jd - ad.start_jd)
+    ad_progress = max(0.0, min(1.0, ad_progress))
+
+    return PDLookup(
+        target_jd=target_jd,
+        target_iso=_iso_from_jd(target_jd),
+        md_lord=ad.md_lord,
+        ad_lord=ad.ad_lord,
+        pd_lord=pd_lord,
+        start_jd=pd_start,
+        end_jd=pd_end,
+        start_date=_iso_from_jd(pd_start) or "",
+        end_date=_iso_from_jd(pd_end) or "",
+        age_at_start_years=(pd_start - birth_jd) / 365.2425,
+        age_at_end_years=(pd_end - birth_jd) / 365.2425,
+        age_now_years=(target_jd - birth_jd) / 365.2425,
+        ad_progress_fraction=ad_progress,
+    )
+
+
+def ad_at_now(reading: Mapping[str, Any]) -> ADLookup:
+    """Convenience: AD active at the current UTC moment."""
+    return ad_at_jd(reading, target_jd=_jd_now_utc())
+
+
+def pd_at_now(reading: Mapping[str, Any]) -> PDLookup:
+    """Convenience: PD active at the current UTC moment."""
+    return pd_at_jd(reading, target_jd=_jd_now_utc())

@@ -106,10 +106,16 @@ from app.integration.corpus_rag_enhancer import (
 # v1.0.1 — MD-at-now / MD-at-any-JD helper (Bangalore "current_mahadasha"
 # field is mislabeled; it returns MD at BIRTH, not NOW)
 from app.integration.dasha_now import (
+    ADLookup,
     MDLookup,
+    PDLookup,
+    ad_at_jd,
+    ad_at_now,
     md_at_birth,
     md_at_jd,
     md_at_now,
+    pd_at_jd,
+    pd_at_now,
 )
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
@@ -203,6 +209,12 @@ __all__ = [
     "md_at_birth",
     "md_at_jd",
     "md_at_now",
+    "ADLookup",
+    "PDLookup",
+    "ad_at_jd",
+    "ad_at_now",
+    "pd_at_jd",
+    "pd_at_now",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

@@ -63,19 +63,20 @@ class TestLookups:
 class TestLoadedCorpusBehaviour:
     """Tests assuming the JSONL corpus is on disk (skip if absent)."""
 
-    def test_corpus_has_5k_plus_rules(self):
-        """After C-1 + C-2 expansion (Deva Keralam + BS DLI/Sastri + Nadi
-        Jyothisha + OCR-tolerant splitter), expect 5000+ rules."""
+    def test_corpus_has_10k_plus_rules(self):
+        """After F-1 expansion (BPHS + Raman classics + Jataka Parijata +
+        Jataka Tattvam + Laghu Parashari + Prasna Marga vol2 + Sarvartha
+        Chintamani etc.), expect 10000+ rules."""
         if corpus_size() == 0:
             pytest.skip("Shloka corpus not loaded — run harvest_shlokas first")
-        assert corpus_size() >= 5000
+        assert corpus_size() >= 10000
 
     def test_multiple_sources_loaded(self):
         if corpus_size() == 0:
             pytest.skip("Corpus not loaded")
         sources = sources_present()
-        # C-1 expansion: expect 15+ distinct sources
-        assert len(sources) >= 10
+        # F-1 expansion: expect 30+ distinct sources
+        assert len(sources) >= 25
 
     def test_deva_keralam_sources_present(self):
         """C-1: Deva Keralam vols 1/2/3 added to SHLOKA_SOURCES."""
@@ -95,6 +96,25 @@ class TestLoadedCorpusBehaviour:
             f"C-2 OCR fix should yield 100+ rules from Brihat Samhita Iyer, "
             f"got {len(iyer)}"
         )
+
+    def test_bphs_root_text_present(self):
+        """F-1: BPHS itself (the root text!) was never harvested before."""
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        bphs = rules_for_source("bphs", limit=500)
+        assert len(bphs) >= 100, (
+            f"F-1: BPHS root text should yield 100+ rules, got {len(bphs)}"
+        )
+
+    def test_raman_classics_present(self):
+        """F-1: BV Raman's foundational books finally harvested."""
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        sources = set(sources_present())
+        for raman_book in ("how_to_judge_a_horoscope_raman",
+                           "hindu_predictive_astrology_raman",
+                           "three_hundred_combinations_raman"):
+            assert raman_book in sources, f"missing {raman_book}"
 
     def test_brihat_jataka_present(self):
         if corpus_size() == 0:

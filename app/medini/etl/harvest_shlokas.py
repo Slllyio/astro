@@ -71,33 +71,80 @@ DEFAULT_OUTPUT: Final = Path("data/knowledge_library/classical_shloka_rules.json
 
 # Sources with substantial scraped content for shloka harvesting.
 # Ranked roughly by classical authority (BPHS/Phaladeepika/Brihat Jataka first).
+#
+# Intentionally EXCLUDED:
+#   * KP texts (kp_readers_*, kp_reader2/3_*) — project locked-decision
+#     uses Lahiri sidereal, not KP. Including them would mix paradigms.
+#   * Astronomy-only sources (surya_siddhanta, indian_ephemeris_swamikannu,
+#     indian_calendar_sewell) — no chart-reading rules.
+#   * world_vedic_heritage_oak — historical/polemical, not predictive.
 SHLOKA_SOURCES: Final[tuple[str, ...]] = (
-    # Foundational classical (highest authority)
+    # ─── Tier 1: Foundational classical ──────────────────────────────
+    "bphs",                          # 13K lines — Brihat Parashara Hora Shastra (THE root text!) (NEW F-1)
     "brihat_jataka",                 # 19K lines — Varahamihira natal
     "phaladeepika",                  # 15K lines — Mantreshvara
+    "phaladeepika_dli",              # 13K lines — DLI edition of Phaladeepika (NEW F-1)
     "saravali",                      # 11K lines — Kalyana Varma
     "jaimini_sutras",                # Jaimini canonical
-    "brihat_samhita_iyer",           # 18K lines — Varahamihira mundane+omens
-    "brihat_samhita_dli",            # 30K lines — DLI edition (NEW C-1)
-    "brihat_samhita_sastri",         # 43K lines — Sastri edition (NEW C-1)
-    # Modern syntheses
-    "crux_of_vedic_astrology_rath",  # 24K lines
+    "jataka_parijata",               # 20K lines — Vaidyanatha Dikshita (NEW F-1, classical)
+    "vidyamadhaviyam",               # 16K lines — classical (NEW F-1)
+    "prasna_marga_vol1",             # 14K lines — Prashna Marga Kerala (NEW F-1)
+    # ─── Tier 2: Classical mundane / omens ───────────────────────────
+    "brihat_samhita_iyer",           # 18K lines — Varahamihira mundane
+    "brihat_samhita_dli",            # 30K lines — DLI edition (C-1)
+    "brihat_samhita_sastri",         # 43K lines — Sastri edition (C-1)
+    # ─── Tier 3: Nadi tradition (rule-style) ─────────────────────────
+    "deva_keralam_vol1",             # 25K lines (C-1, = Chandra Kala Nadi)
+    "deva_keralam_vol2",             # 29K lines (C-1)
+    "deva_keralam_vol3",             # 35K lines (C-1)
+    "nadi_jyothisha_v1",             # 3.8K lines (C-1)
+    "nadi_jyothisha_v2",             # 3.7K lines (C-1)
+    "nadi_jyotisha_vol1",            # 1.8K lines (C-1)
+    "nadi_astrological_researches",  # 3.4K lines (C-1)
+    # ─── Tier 4: 20th-century BV Raman classics ──────────────────────
+    "how_to_judge_a_horoscope_raman",   # 19K lines (NEW F-1)
+    "how_to_judge_horoscope_raman2",    # 18K lines (NEW F-1, vol 2)
+    "hindu_predictive_astrology_raman", # 15K lines (NEW F-1)
+    "astrological_magazine_v75_raman",  # 50K lines (NEW F-1, case studies)
+    # ─── Tier 5: Modern syntheses ────────────────────────────────────
+    "crux_of_vedic_astrology_rath",  # 24K lines — Sanjay Rath v1
+    "crux_vedic_rath_v2",            # 31K lines — Sanjay Rath v2 (NEW F-1)
     "advance_techniques_kn_rao",
     "studies_jaimini_raman",
     "fundamentals_vedic_astrology",
     "fundamentals_vedic_behari_v1",
     "astrology_seers_frawley",
-    # Specialty
+    "bharatiya_jyotish_sastra_vol1", # NEW F-1
+    "bharatiya_jyotish_sastra_vol2", # 28K lines (NEW F-1)
+    # ─── Tier 6: Specialty / classified ──────────────────────────────
     "ashtakavarga_patel",
     "art_practice_braha",
-    # Nadi tradition (rule-style — harvests differently from Bhrigu lookup)
-    "deva_keralam_vol1",             # 25K lines (NEW C-1)
-    "deva_keralam_vol2",             # 29K lines (NEW C-1)
-    "deva_keralam_vol3",             # 35K lines (NEW C-1)
-    "nadi_jyothisha_v1",             # 3.8K lines (NEW C-1)
-    "nadi_jyothisha_v2",             # 3.7K lines (NEW C-1)
-    "nadi_jyotisha_vol1",            # 1.8K lines (NEW C-1)
-    "nadi_astrological_researches",  # 3.4K lines (NEW C-1)
+    "navamsa_patel",                 # 7.7K lines (NEW F-1)
+    "graha_bhava_balas_raman",       # 5K lines (NEW F-1)
+    "stri_jataka",                   # 5K lines (NEW F-1, female-specific)
+    "varshaphal_raman",              # 6K lines (NEW F-1, Tajik tradition)
+    # ─── Tier 7: F-1 additions (deeper classical) ────────────────────
+    "jataka_tattvam_sastri",         # 13K lines (Vaidyanatha Dikshita)
+    "jataka_tattvam_natesa",         # 7.7K lines (alt edition)
+    "uttara_kalamrita",              # 10K lines (Kalidasa classical)
+    "three_hundred_combinations_raman", # 9K lines (Raman THIC — referenced often)
+    "laghu_parashari_verma_v1",      # 10K lines (Laghu Parashari)
+    "laghu_parashari_verma_v2",      # 9K lines (vol 2)
+    # SKIPPED: lal_kitab_vol1/2/3 — Urdu/Persian script, English OCR
+    # yields garbage. Re-scrape with Urdu OCR would unlock ~30K lines of
+    # the Lal Kitab tradition; deferred (genuinely external).
+    "prasna_marga_vol2",             # 7.5K lines (complement to vol1)
+    "prasna_tantra_raman",           # 11K lines
+    "ayurvedic_astrology_frawley",   # 11K lines
+    "sarvartha_chintamani",          # 5K lines
+    "jataka_chandrika",              # 3.6K lines
+    "hora_sara_santhanam",           # 4.6K lines
+    "vedic_occultism_behari",        # 13K lines
+    "astrology_manual_eapc",         # 10K lines
+    "notable_horoscopes_raman",      # 1.5K lines (case studies)
+    "indian_horary_ayer",            # 1.5K lines
+    # REMOVED: jyotish_classified_topics — that source is a PDF-filename
+    # catalog, not actual rule content. Misclassified in F-1 first pass.
 )
 
 
@@ -275,34 +322,68 @@ def extract_from_file(source_name: str, file_path: Path) -> list[ShlokaRule]:
     return rules
 
 
-# C-3: source-authority order for dedup tie-breaking (lower = preferred)
+# C-3 + F-1: source-authority order for dedup tie-breaking (lower = preferred)
 _SOURCE_AUTHORITY: Final[dict[str, int]] = {
     # Foundational classical — preferred when duplicates collapse
-    "brihat_jataka":               1,
-    "phaladeepika":                2,
-    "saravali":                    3,
-    "jaimini_sutras":              4,
-    "brihat_samhita_iyer":         5,
-    "brihat_samhita_sastri":       6,
-    "brihat_samhita_dli":          7,
+    "bphs":                         0,  # Brihat Parashara — root text
+    "brihat_jataka":                1,
+    "phaladeepika":                 2,
+    "phaladeepika_dli":             3,
+    "saravali":                     4,
+    "jaimini_sutras":               5,
+    "jataka_parijata":              6,
+    "vidyamadhaviyam":              7,
+    "prasna_marga_vol1":            8,
+    "brihat_samhita_iyer":          9,
+    "brihat_samhita_sastri":       10,
+    "brihat_samhita_dli":          11,
     # Nadi-tradition rule texts (still classical, but specialized)
-    "deva_keralam_vol1":           8,
-    "deva_keralam_vol2":           9,
-    "deva_keralam_vol3":          10,
-    "nadi_jyothisha_v1":          11,
-    "nadi_jyothisha_v2":          12,
-    "nadi_jyotisha_vol1":         13,
-    "nadi_astrological_researches": 14,
+    "deva_keralam_vol1":           12,
+    "deva_keralam_vol2":           13,
+    "deva_keralam_vol3":           14,
+    "nadi_jyothisha_v1":           15,
+    "nadi_jyothisha_v2":           16,
+    "nadi_jyotisha_vol1":          17,
+    "nadi_astrological_researches": 18,
+    # 20th-century BV Raman classics
+    "how_to_judge_a_horoscope_raman":    19,
+    "how_to_judge_horoscope_raman2":     20,
+    "hindu_predictive_astrology_raman":  21,
+    "astrological_magazine_v75_raman":   22,
     # Modern syntheses (lower priority for dedup; cite earlier sources)
-    "crux_of_vedic_astrology_rath": 20,
-    "advance_techniques_kn_rao":   21,
-    "studies_jaimini_raman":       22,
-    "fundamentals_vedic_astrology": 23,
-    "fundamentals_vedic_behari_v1": 24,
-    "astrology_seers_frawley":     25,
+    "crux_of_vedic_astrology_rath": 30,
+    "crux_vedic_rath_v2":           31,
+    "advance_techniques_kn_rao":    32,
+    "studies_jaimini_raman":        33,
+    "fundamentals_vedic_astrology": 34,
+    "fundamentals_vedic_behari_v1": 35,
+    "astrology_seers_frawley":      36,
+    "bharatiya_jyotish_sastra_vol1": 37,
+    "bharatiya_jyotish_sastra_vol2": 38,
+    # Classical second tier (added F-2)
+    "jataka_tattvam_sastri":       40,
+    "jataka_tattvam_natesa":       41,
+    "uttara_kalamrita":            42,
+    "three_hundred_combinations_raman": 43,
+    "laghu_parashari_verma_v1":    44,
+    "laghu_parashari_verma_v2":    45,
+    "prasna_marga_vol2":           46,
+    "prasna_tantra_raman":         47,
+    "sarvartha_chintamani":        48,
+    "jataka_chandrika":            49,
+    "hora_sara_santhanam":         50,
     # Specialty
-    "ashtakavarga_patel":          30,
-    "art_practice_braha":          31,
+    "ashtakavarga_patel":          60,
+    "art_practice_braha":          61,
+    "navamsa_patel":               62,
+    "graha_bhava_balas_raman":     63,
+    "stri_jataka":                 64,
+    "varshaphal_raman":            65,
+    "ayurvedic_astrology_frawley": 66,
+    "vedic_occultism_behari":      70,
+    "astrology_manual_eapc":       71,
+    "notable_horoscopes_raman":    72,
+    "indian_horary_ayer":          73,
 }
 
 

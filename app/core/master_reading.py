@@ -48,6 +48,7 @@ from app.core.panchanga import BirthPanchanga, compute_birth_panchanga
 from app.core.special_lagnas import (
     SpecialLagnasReport, compute_all_special_lagnas,
 )
+from app.core.varshaphala import VarshaphalaReport, compute_varshaphala
 from app.core.ashtakavarga_predictive import (
     AshtakavargaPredictive, compute_predictive as compute_ashtakavarga_predictive,
 )
@@ -137,6 +138,10 @@ class MasterReading:
     # S-3 — 5 special lagnas (Bhava/Hora/Ghati/Indu/Sree). IL + SL always
     # populate from chart-only; BL/HL/GL need birth_jd + birth_lon.
     special_lagnas: SpecialLagnasReport | None = None
+
+    # S-4 — Varshaphala/Tajik progression at the snapshot age.
+    # None if age_years can't be computed (need birth_jd + target_jd).
+    varshaphala: VarshaphalaReport | None = None
 
 
 _NATURAL_BENEFICS = {"Jupiter", "Venus", "Mercury", "Moon"}
@@ -443,6 +448,20 @@ def compose_master_reading(
     except Exception:  # noqa: BLE001 — graceful degradation
         bb = {}
     object.__setattr__(mr, "bhava_bala", bb)
+
+    # S-4: Varshaphala (Muntha + Sahams) at the target_jd snapshot age.
+    if birth_jd is not None and target_jd is not None:
+        age_years = max(0.0, (target_jd - birth_jd) / 365.2425)
+        try:
+            vp = compute_varshaphala(
+                asc_sign=int(chart.asc_sign),
+                asc_lon=float(chart.asc_lon),
+                planet_lons={k: float(v) for k, v in chart.planet_lons.items()},
+                age_years=age_years,
+            )
+            object.__setattr__(mr, "varshaphala", vp)
+        except (ValueError, TypeError):
+            pass
 
     # S-3: Special Lagnas (IL + SL always; BL/HL/GL need birth_jd + birth_lon).
     if moon_lon is not None and moon_nakshatra_index is not None:

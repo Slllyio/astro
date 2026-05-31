@@ -379,6 +379,28 @@ def master_reading_to_dict(mr) -> dict[str, Any]:
             }
             for b, r in (mr.bhava_bala or {}).items()
         },
+        # S-4: Varshaphala/Tajik progression (Muntha + 8 Sahams)
+        "varshaphala": None if mr.varshaphala is None else {
+            "muntha": {
+                "sign": int(mr.varshaphala.muntha.sign),
+                "house_from_lagna": int(mr.varshaphala.muntha.house_from_lagna),
+                "munthesha": mr.varshaphala.muntha.munthesha,
+                "age_years": round(float(mr.varshaphala.muntha.age_years), 2),
+                "domain_focus": mr.varshaphala.muntha.domain_focus,
+            },
+            "sahams": [
+                {
+                    "name": s.name,
+                    "formula": s.formula,
+                    "longitude": round(float(s.longitude), 3),
+                    "sign": int(s.sign),
+                    "house_from_lagna": int(s.house_from_lagna),
+                    "domain": s.domain,
+                    "is_well_placed": bool(s.is_well_placed),
+                }
+                for s in mr.varshaphala.sahams
+            ],
+        },
         # S-3: 5 Special Lagnas — each is None if uncomputable
         "special_lagnas": None if mr.special_lagnas is None else {
             name: (

@@ -300,6 +300,26 @@ def _master_reading_to_row(
             sl = getattr(sl_report, f"{name}_lagna", None)
         out[f"special_lagna_{name}_sign"] = sl.sign if sl else pd.NA
 
+    # S-4: Varshaphala (Muntha + 8 Sahams)
+    vp = mr.varshaphala
+    if vp is None:
+        out["muntha_sign"] = pd.NA
+        out["muntha_house"] = pd.NA
+        out["munthesha"] = None
+        out["muntha_age_years"] = pd.NA
+        for saham_name in ("punya", "vidya", "karma", "yasas",
+                           "putra", "vivaha", "mrityu", "bhratru"):
+            out[f"saham_{saham_name}_sign"] = pd.NA
+            out[f"saham_{saham_name}_well_placed"] = pd.NA
+    else:
+        out["muntha_sign"] = int(vp.muntha.sign)
+        out["muntha_house"] = int(vp.muntha.house_from_lagna)
+        out["munthesha"] = vp.muntha.munthesha
+        out["muntha_age_years"] = round(float(vp.muntha.age_years), 2)
+        for s in vp.sahams:
+            out[f"saham_{s.name.lower()}_sign"] = int(s.sign)
+            out[f"saham_{s.name.lower()}_well_placed"] = bool(s.is_well_placed)
+
     # S-5: Convergence verdicts per domain — emitted as parallel scalar
     # columns + a list-of-struct evidence column per domain. Schema:
     #   conv_<domain>_label       (str)        e.g. "strongly_supportive"
@@ -422,6 +442,15 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         # S-3 Special Lagnas stubs
         **{f"special_lagna_{n}_sign": pd.NA
            for n in ("indu", "sree", "bhava", "hora", "ghati")},
+        # S-4 Varshaphala stubs
+        "muntha_sign": pd.NA, "muntha_house": pd.NA,
+        "munthesha": None, "muntha_age_years": pd.NA,
+        **{f"saham_{n}_sign": pd.NA
+           for n in ("punya", "vidya", "karma", "yasas",
+                     "putra", "vivaha", "mrityu", "bhratru")},
+        **{f"saham_{n}_well_placed": pd.NA
+           for n in ("punya", "vidya", "karma", "yasas",
+                     "putra", "vivaha", "mrityu", "bhratru")},
         # S-5 convergence stubs
         **{f"conv_{d}_{f}": v for d in
            ("marriage", "career", "wealth", "health", "children", "dharma")

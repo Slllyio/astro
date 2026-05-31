@@ -136,6 +136,11 @@ from app.integration.three_pillar import (
     ThreePillarReading,
     build_three_pillar_reading,
 )
+# v1.1.0 M5 — yoga effect translator
+from app.integration.yoga_effects import (
+    YogaEffect,
+    translate_yoga_effects,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -247,6 +252,9 @@ __all__ = [
     "ThreePillarBhava",
     "ThreePillarReading",
     "build_three_pillar_reading",
+    # v1.1.0 M5 - yoga effects
+    "YogaEffect",
+    "translate_yoga_effects",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

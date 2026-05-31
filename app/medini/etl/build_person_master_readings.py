@@ -102,10 +102,11 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
         return _empty_master_row(row)
     try:
         ppvs = row.get("per_planet_varga_signs") or None
-        # pandas may serialize empty dicts as NaN or {} — coerce both to None
-        # so vimsopaka_for_chart cleanly falls back to D1-only.
         if isinstance(ppvs, dict) and not ppvs:
             ppvs = None
+        vps = row.get("varga_pillar_scores") or None
+        if isinstance(vps, dict) and not vps:
+            vps = None
         mr = compose_master_reading(
             chart, DKPContext(),
             birth_jd=row.get("birth_jd"),
@@ -116,6 +117,7 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
             day_of_week=_safe_int(row.get("day_of_week")),
             is_day_birth=_safe_bool(row.get("is_day_birth")),
             per_planet_varga_signs=ppvs,
+            varga_pillar_scores=vps,
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("Master compose failed for %s: %s", row.get("person_id"), exc)
@@ -322,6 +324,93 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+# Bhava -> assigned varga for pillar confirmation. Subset of
+# app.core.varga_confirmation.BHAVA_TO_VARGA — we omit D4 (not loaded)
+# and skip D1/D2/D3 here because the BASE reading already covers D1
+# pillars (Phase 6 bhava_judge), and D2/D3 add little discrimination
+# beyond D1 in practice. Future deepening: wire D4 + D2/D3 pillars too.
+_BHAVA_PILLAR_VARGA: Final[Mapping[int, str]] = {
+    5: "D9",   # children — Saptamsa (D7) ideal; D9 is acceptable proxy
+    6: "D30",  # disease/service — Trimsamsa
+    7: "D9",   # marriage — Navamsa
+    8: "D30",  # longevity — Trimsamsa
+    9: "D9",   # dharma — Navamsa
+    10: "D10", # career — Dasamsa
+    12: "D30", # loss/moksha — Trimsamsa
+}
+
+# Natural karakas per bhava — duplicated from bhavat_bhavam._NATURAL_KARAKAS
+# to avoid import cycle. Keep in lockstep.
+_BHAVA_NATURAL_KARAKAS: Final[Mapping[int, tuple[str, ...]]] = {
+    1:  ("Sun",),
+    2:  ("Jupiter",),
+    3:  ("Mars",),
+    4:  ("Moon", "Mercury"),
+    5:  ("Jupiter",),
+    6:  ("Mars", "Saturn"),
+    7:  ("Venus",),
+    8:  ("Saturn",),
+    9:  ("Jupiter", "Sun"),
+    10: ("Sun", "Mercury", "Jupiter", "Saturn"),
+    11: ("Jupiter",),
+    12: ("Saturn", "Ketu"),
+}
+
+_KENDRA_TRIKONA: Final[frozenset[int]] = frozenset({1, 4, 5, 7, 9, 10})
+_DUSHTANA: Final[frozenset[int]] = frozenset({6, 8, 12})
+
+
+def _compute_varga_pillar_scores(
+    per_planet_full: Mapping[str, Mapping[str, int]],
+    varga_lagnas: Mapping[str, int],
+) -> dict[int, float]:
+    """Per-bhava placement-based varga pillar score (-1..+1).
+
+    Simplified scoring — DOCTRINAL CAVEATS:
+
+    For each bhava B with assigned varga V (from _BHAVA_PILLAR_VARGA):
+      * Locate each of B's natural karakas in V.
+      * Compute the karaka's house from V's Lagna.
+      * +0.5 if karaka in kendra/trikona, -0.5 if in dushtana, 0 else.
+      * Average across karakas → score in [-0.5, +0.5].
+
+    Returns dict {bhava: score} keyed by 1..12; only bhavas with
+    sufficient data are present. Composer's varga_confirmation reads
+    this and produces CONFIRMED / PROMISE_NO_DELIVERY / HIDDEN_PROMISE
+    / CONSISTENT_AFFLICTION verdicts by combining with the D1 pillar.
+
+    Future deepening (not implemented here): add bhava-lord placement,
+    benefic/malefic aspects in the varga chart, dignity-weighting.
+    Current simplification scores ONLY the karaka placement; that's
+    enough to differentiate CONFIRMED vs CONSISTENT_AFFLICTION but
+    misses some PROMISE_NO_DELIVERY nuance.
+    """
+    from typing import Mapping  # noqa  # for type-narrowing in scopes
+    scores: dict[int, float] = {}
+    for bhava, varga_short in _BHAVA_PILLAR_VARGA.items():
+        if varga_short not in varga_lagnas:
+            continue
+        varga_lagna = varga_lagnas[varga_short]
+        karakas = _BHAVA_NATURAL_KARAKAS.get(bhava, ())
+        if not karakas:
+            continue
+        karaka_scores: list[float] = []
+        for k in karakas:
+            varga_sign = per_planet_full.get(k, {}).get(varga_short)
+            if varga_sign is None:
+                continue
+            house = ((varga_sign - varga_lagna) % 12) + 1
+            if house in _KENDRA_TRIKONA:
+                karaka_scores.append(0.5)
+            elif house in _DUSHTANA:
+                karaka_scores.append(-0.5)
+            else:
+                karaka_scores.append(0.0)
+        if karaka_scores:
+            scores[bhava] = sum(karaka_scores) / len(karaka_scores)
+    return scores
+
+
 def _enrich_dossier_with_master_inputs(
     dossier: pd.DataFrame, data_dir: Path, snapshot_jd: float,
 ) -> pd.DataFrame:
@@ -375,38 +464,55 @@ def _enrich_dossier_with_master_inputs(
         logger.warning("jaimini_karakas.parquet missing — Karakamsa layer stays null")
         out["atmakaraka"] = None
 
-    # Divisional chart lookups for both Karakamsa AND Vimsopaka.
-    # divisional_charts.parquet has 15 vargas; saptavargaja Vimsopaka
-    # needs 7 of them: D1, D2, D3, D7, D9, D12, D30. Load those once.
+    # Divisional chart lookups for Karakamsa + Vimsopaka + varga pillar scores.
+    # divisional_charts.parquet has 15 vargas; we use 8 of them:
+    #   D1, D2, D3, D7, D9, D12, D30  — saptavargaja for Vimsopaka
+    #   D10                             — added for bhava-10 (career) pillar
+    # Plus the varga Lagna per person (graha=='Lagna' row in each varga)
+    # for computing house-from-varga-Lagna in the pillar score.
     dc_path = data_dir / "divisional_charts.parquet"
     if dc_path.exists():
-        # Map full varga names to short keys vimsopaka_bala() expects.
         _SAPTA_VARGAS = {
             "D1_Rashi": "D1", "D2_Hora": "D2", "D3_Drekkana": "D3",
             "D7_Saptamsa": "D7", "D9_Navamsa": "D9",
             "D12_Dwadasamsa": "D12", "D30_Trimsamsa": "D30",
         }
+        # D10 is loaded for pillar scoring (bhava 10 career) but NOT
+        # injected into per_planet_varga_signs (that's saptavargaja only,
+        # to keep vimsopaka_for_chart on its 7-varga scheme).
+        _PILLAR_VARGAS = {**_SAPTA_VARGAS, "D10_Dasamsa": "D10"}
         _VISIBLE = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
 
         dc = pd.read_parquet(
             dc_path,
-            filters=[("varga", "in", list(_SAPTA_VARGAS.keys()))],
+            filters=[("varga", "in", list(_PILLAR_VARGAS.keys()))],
         )
 
-        # Build nested lookup: {(person_id, planet): {"D1": s, ..., "D30": s}}
-        # Then build the per-person {planet: {varga: sign}} structure.
-        per_planet_varga: dict[str, dict[str, dict[str, int]]] = {}
+        # Build nested lookup: {person_id: {planet: {"D1": s, ..., "D30": s}}}
+        per_planet_full: dict[str, dict[str, dict[str, int]]] = {}
+        # Varga Lagnas: {person_id: {"D9": sign, "D10": sign, ...}}
+        varga_lagnas: dict[str, dict[str, int]] = {}
         for r in dc[["person_id", "varga", "graha", "sign"]].itertuples(index=False):
+            short = _PILLAR_VARGAS[r.varga]
+            if r.graha == "Lagna":
+                varga_lagnas.setdefault(r.person_id, {})[short] = int(r.sign)
+                continue
             if r.graha not in _VISIBLE:
                 continue
-            short = _SAPTA_VARGAS[r.varga]
-            person_map = per_planet_varga.setdefault(r.person_id, {})
+            person_map = per_planet_full.setdefault(r.person_id, {})
             planet_map = person_map.setdefault(r.graha, {})
             planet_map[short] = int(r.sign)
 
-        # AK D9 sign (for Karakamsa) — pull from the same loaded data
+        # Saptavargaja-only view for Vimsopaka (strip D10).
+        per_planet_sapta: dict[str, dict[str, dict[str, int]]] = {
+            pid: {p: {v: s for v, s in vargas.items() if v != "D10"}
+                  for p, vargas in planets.items()}
+            for pid, planets in per_planet_full.items()
+        }
+
+        # AK D9 sign (for Karakamsa)
         d9_map: dict[tuple[str, str], int] = {}
-        for pid, planets in per_planet_varga.items():
+        for pid, planets in per_planet_full.items():
             for planet, vargas in planets.items():
                 if "D9" in vargas:
                     d9_map[(pid, planet)] = vargas["D9"]
@@ -416,14 +522,26 @@ def _enrich_dossier_with_master_inputs(
             for pid, ak in zip(out["person_id"], out["atmakaraka"])
         ]
         out["per_planet_varga_signs"] = [
-            per_planet_varga.get(pid, {}) for pid in out["person_id"]
+            per_planet_sapta.get(pid, {}) for pid in out["person_id"]
+        ]
+        out["varga_pillar_scores"] = [
+            _compute_varga_pillar_scores(
+                per_planet_full.get(pid, {}),
+                varga_lagnas.get(pid, {}),
+            )
+            for pid in out["person_id"]
         ]
         n_have_varga = sum(1 for v in out["per_planet_varga_signs"] if v)
-        logger.info("Loaded saptavargaja signs for %d/%d persons", n_have_varga, len(out))
+        n_have_pillar = sum(1 for s in out["varga_pillar_scores"] if s)
+        logger.info(
+            "Loaded saptavargaja for %d/%d persons; pillar scores for %d/%d",
+            n_have_varga, len(out), n_have_pillar, len(out),
+        )
     else:
-        logger.warning("divisional_charts.parquet missing — Karakamsa + Vimsopaka stay D1-only")
+        logger.warning("divisional_charts.parquet missing — Karakamsa + Vimsopaka + varga pillars stay null")
         out["atmakaraka_d9_sign"] = None
         out["per_planet_varga_signs"] = [{}] * len(out)
+        out["varga_pillar_scores"] = [{}] * len(out)
 
     # Constant target_jd snapshot — Yogini + Ashtottari are dasha-state-AT-this-date
     out["target_jd"] = snapshot_jd

@@ -230,6 +230,24 @@ class TestRowToMasterDict:
         for vc in result["varga_confirmations"]:
             assert vc["label"] == "UNKNOWN"
 
+    def test_varga_confirmations_populated_when_pillar_scores_provided(self):
+        """When varga_pillar_scores supplied (Tier C-3), confirmations get real verdicts.
+
+        Strong positive scores for bhava 7 and 10 should fire CONFIRMED
+        when the D1 base also promises positively.
+        """
+        row = _fake_dossier_row()
+        row["varga_pillar_scores"] = {7: 0.5, 10: 0.5}
+        result = _row_to_master_dict(row)
+        # At least the supplied bhavas should NOT be UNKNOWN
+        non_unknown = {vc["bhava"]: vc["label"]
+                       for vc in result["varga_confirmations"]
+                       if vc["label"] != "UNKNOWN"}
+        assert 7 in non_unknown or 10 in non_unknown, (
+            "Supplying pillar scores must produce at least one non-UNKNOWN "
+            f"verdict; got {non_unknown}"
+        )
+
 
 class TestEmptyMasterRow:
     """The empty-row stub preserves identity and uses safe sentinels."""

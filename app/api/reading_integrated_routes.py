@@ -55,13 +55,20 @@ router = APIRouter(prefix="/reading/integrated", tags=["reading-integrated"])
 class InfoResponse(BaseModel):
     """Metadata about the integration layer; exposed for clients to feature-detect."""
 
-    integration_version: str = "0.3.0"
+    integration_version: str = "0.5.0"
     adapters: list[str] = Field(
         default_factory=lambda: [
             "enhance",
             "modulate_all_domains",
+            "annotate_with_gap_modules",
             "compare_chara_dasha",
             "compare_functional_roles",
+            "compare_vimshottari_current_md",
+            "compare_yoga_detection",
+            "compare_shadbala",
+            "compare_d9_signs",
+            "compare_argala_drishti",
+            "narrate_and_verify",
         ]
     )
     dkp_translation_registry_size: int
@@ -241,6 +248,43 @@ async def compare_functional_route(
             detail=f"Functional comparator failed: {exc}",
         ) from exc
     return report.model_dump(mode="json")
+
+
+@router.post("/narrate")
+async def narrate_route(body: dict = Body(...)) -> dict[str, Any]:
+    """LLM narrative + 4-critic adversarial verification.
+
+    Body shape:
+      {
+        "reading": {...},  // Track-A ReadingOutput dict
+        "integrated": {...}  // optional IntegratedReadingOutput dict for DKP citations
+      }
+
+    Returns a VerifiedNarrative envelope: per-domain narrative paragraphs +
+    4 critic verdicts each + survival status (shipped/flagged/rejected).
+    Uses the StubClient fallback if no LLM is configured — replace with a
+    real client (OllamaClient / future OpenAIClient) by injecting via DI."""
+    reading = body.get("reading")
+    if not isinstance(reading, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="body.reading must be a Track-A ReadingOutput dict",
+        )
+    integrated = body.get("integrated") if isinstance(body.get("integrated"), dict) else None
+
+    def _do_work():
+        from app.integration.narrative import narrate_and_verify
+        return narrate_and_verify(reading, integrated=integrated)
+
+    try:
+        result = await asyncio.to_thread(_do_work)
+    except Exception as exc:
+        logger.exception("narrate route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"narrate failed: {exc}",
+        ) from exc
+    return result.model_dump(mode="json")
 
 
 @router.post("/generate-and-enhance")

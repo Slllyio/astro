@@ -73,6 +73,18 @@ from app.integration.argala_drishti_compare import (
     ArgalaDrishtiComparisonReport,
     compare_argala_drishti,
 )
+# v0.5.0 LLM narrative + adversarial verification
+from app.integration.narrative import (
+    DomainNarrative,
+    NarrativeOutput,
+    CriticReview,
+    CriticVerdict,
+    VerifiedClaim,
+    VerifiedNarrative,
+    compose_narrative,
+    run_critics,
+    narrate_and_verify,
+)
 
 __all__ = [
     # DKP enhancer (v0.1.0)
@@ -106,4 +118,14 @@ __all__ = [
     "compare_d9_signs",
     "ArgalaDrishtiComparisonReport",
     "compare_argala_drishti",
+    # v0.5.0 narrative + critics
+    "DomainNarrative",
+    "NarrativeOutput",
+    "CriticReview",
+    "CriticVerdict",
+    "VerifiedClaim",
+    "VerifiedNarrative",
+    "compose_narrative",
+    "run_critics",
+    "narrate_and_verify",
 ]

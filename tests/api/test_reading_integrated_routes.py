@@ -91,7 +91,7 @@ class TestInfoRoute:
     def test_info_returns_integration_version(self):
         data = client.get("/reading/integrated/info").json()
         assert "integration_version" in data
-        assert data["integration_version"] == "0.3.0"
+        assert data["integration_version"] == "0.5.0"
 
     def test_info_includes_adapter_names(self):
         data = client.get("/reading/integrated/info").json()

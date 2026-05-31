@@ -35,10 +35,32 @@ from app.integration.chara_compare import (
     CharaComparisonReport,
     compare_chara_dasha,
 )
+from app.integration.functional_compare import (
+    FunctionalComparisonReport,
+    compare_functional_roles,
+)
+from app.integration.dkp_modulator_adapter import (
+    DkpModulatedReading,
+    ModulatedDomainReading,
+    build_dkp_context_from_reading,
+    modulate_all_domains,
+    modulate_domain,
+)
 
 __all__ = [
+    # DKP enhancer (v0.1.0)
     "IntegratedReadingOutput",
     "enhance",
+    # Chara Dasha comparator (v0.1.0)
     "CharaComparisonReport",
     "compare_chara_dasha",
+    # Functional benefic/malefic comparator (v0.2.0)
+    "FunctionalComparisonReport",
+    "compare_functional_roles",
+    # DKP modulator adapter (v0.2.0)
+    "DkpModulatedReading",
+    "ModulatedDomainReading",
+    "build_dkp_context_from_reading",
+    "modulate_all_domains",
+    "modulate_domain",
 ]

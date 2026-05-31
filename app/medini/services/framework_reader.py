@@ -345,6 +345,40 @@ def master_reading_to_dict(mr) -> dict[str, Any]:
             }
             for rx in mr.prescribed_remedies
         ],
+        # S-2 part 1: Birth Panchanga
+        "birth_panchanga": None if mr.birth_panchanga is None else {
+            "vara": {"name": mr.birth_panchanga.vara.name,
+                     "lord": mr.birth_panchanga.vara.lord,
+                     "index": int(mr.birth_panchanga.vara.index)},
+            "tithi": {"name": mr.birth_panchanga.tithi.name,
+                      "paksha": mr.birth_panchanga.tithi.paksha,
+                      "group": mr.birth_panchanga.tithi.group,
+                      "lord": mr.birth_panchanga.tithi.lord,
+                      "number_in_paksha": int(mr.birth_panchanga.tithi.number_in_paksha),
+                      "is_auspicious_default": bool(
+                          mr.birth_panchanga.tithi.is_auspicious_default)},
+            "yoga": {"name": mr.birth_panchanga.yoga.name,
+                     "index": int(mr.birth_panchanga.yoga.index),
+                     "is_inauspicious": bool(mr.birth_panchanga.yoga.is_inauspicious)},
+            "karana": {"name": mr.birth_panchanga.karana.name,
+                       "index": int(mr.birth_panchanga.karana.index),
+                       "is_movable": bool(mr.birth_panchanga.karana.is_movable),
+                       "is_inauspicious": bool(mr.birth_panchanga.karana.is_inauspicious)},
+            "moon_nakshatra_index": int(mr.birth_panchanga.moon_nakshatra_index),
+            "has_caution_flag": bool(mr.birth_panchanga.has_caution_flag),
+        },
+        # S-2 part 2: Bhava Bala per bhava
+        "bhava_bala": {
+            str(b): {
+                "lord": r.lord,
+                "bhavadhipati_bala": round(float(r.bhavadhipati_bala), 3),
+                "drishti_bala": round(float(r.drishti_bala), 3),
+                "dig_bala": round(float(r.dig_bala), 3),
+                "composite": round(float(r.composite_bhava_bala), 3),
+                "strength_label": r.strength_label,
+            }
+            for b, r in (mr.bhava_bala or {}).items()
+        },
         # S-5 — cross-layer convergence verdicts per domain. Top-level
         # synthesis view: every verdict carries weighted_score, label,
         # confidence band, supporting + contradicting layer counts, and

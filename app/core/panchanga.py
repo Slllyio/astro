@@ -14,10 +14,17 @@ Computes the five anga of Vedic almanacs:
 All Sun and Moon longitudes are sidereal Lahiri, sourced from
 ``app.core.ephemeris_engine.calculate_d1_position`` so panchanga values
 stay consistent with the rest of the engine's outputs.
+
+S-2 ADDITION (bottom of file): ``compute_birth_panchanga()`` adds a
+doctrinally-richer reading layer on top of the existing helpers — tithi
+group/lord/auspiciousness, yoga + karana caution flags, and an aggregate
+``BirthPanchanga`` dataclass for downstream consumers (master_reading
+attaches this per chart).
 """
 from __future__ import annotations
 
-from typing import TypedDict
+from dataclasses import dataclass
+from typing import Final, TypedDict
 
 import swisseph as swe
 
@@ -266,3 +273,198 @@ def compute_panchanga(jd: float) -> PanchangaResult:
         vara=_vara_info(jd),
         nakshatra=dict(_nakshatra_lookup(moon_lon)),
     )
+
+
+# ---------------------------------------------------------------------------
+# S-2 — doctrinal richness layer on top of the basic Panchanga
+#
+# Phaladeepika Ch.3 + Muhurta Chintamani classify each Panchanga limb on
+# doctrinal axes (tithi group/lord/auspicious, yoga caution flags, karana
+# caution flags). The basic TithiInfo/YogaInfo/KaranaInfo TypedDicts above
+# omit these — by design, since downstream feature engineering doesn't
+# need them. The master reading composer DOES need them: it attaches a
+# BirthPanchanga to every chart for the synthesis tier.
+# ---------------------------------------------------------------------------
+
+
+# 5 tithi groups (Nanda/Bhadra/Jaya/Rikta/Purna). Modular over 5 each paksha.
+# Phaladeepika Ch.3.7: each group has a quality reading for the native.
+TITHI_GROUP: Final[tuple[str, ...]] = (
+    "Nanda",   # 1/6/11 — joyful
+    "Bhadra",  # 2/7/12 — auspicious
+    "Jaya",    # 3/8/13 — victorious
+    "Rikta",   # 4/9/14 — empty/inauspicious
+    "Purna",   # 5/10/15 — complete/auspicious
+)
+
+# Per-tithi lord planet (BPHS Ch.2.32). 7-planet cycle.
+_TITHI_LORD_CYCLE: Final[tuple[str, ...]] = (
+    "Sun", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu",
+)
+
+# Vara lords (Sunday=Sun, Monday=Moon, ...). Aligns with VARA_NAMES.
+VARA_LORDS: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
+)
+
+# Classical inauspicious nityayogas (Phaladeepika Ch.3.12 + Muhurta Chintamani).
+_INAUSPICIOUS_YOGAS: Final[frozenset[str]] = frozenset({
+    "Atiganda", "Shoola", "Ganda", "Vyaghata", "Vajra",
+    "Vyatipata", "Parigha", "Vaidhriti",
+})
+
+# Vishti (aka Bhadra) is the classical caution karana for new ventures.
+_INAUSPICIOUS_KARANAS: Final[frozenset[str]] = frozenset({"Vishti"})
+
+
+@dataclass(frozen=True)
+class TithiReading:
+    """Doctrinal interpretation of one tithi."""
+    index: int                   # 0..29
+    number_in_paksha: int        # 1..15
+    paksha: str                  # "Shukla" / "Krishna"
+    name: str
+    group: str                   # Nanda/Bhadra/Jaya/Rikta/Purna
+    lord: str                    # ruling planet
+    is_auspicious_default: bool  # False for Krishna 4/9/14, else True
+
+
+@dataclass(frozen=True)
+class NityaYogaReading:
+    """Doctrinal interpretation of one nityayoga."""
+    index: int                   # 0..26
+    name: str
+    is_inauspicious: bool
+
+
+@dataclass(frozen=True)
+class KaranaReading:
+    """Doctrinal interpretation of one karana."""
+    index: int                   # 0..59
+    name: str
+    is_movable: bool
+    is_inauspicious: bool
+
+
+@dataclass(frozen=True)
+class VaraReading:
+    """Vara (weekday) with ruling planet."""
+    index: int                   # 0..6 (Sunday=0)
+    name: str
+    lord: str
+
+
+@dataclass(frozen=True)
+class BirthPanchanga:
+    """Aggregate Panchanga reading at the birth moment."""
+    vara: VaraReading
+    tithi: TithiReading
+    yoga: NityaYogaReading
+    karana: KaranaReading
+    moon_nakshatra_index: int
+    has_caution_flag: bool
+
+
+def _tithi_reading(sun_lon: float, moon_lon: float) -> TithiReading:
+    info = _tithi_info(sun_lon, moon_lon)
+    idx = info["index"]
+    paksha = info["paksha"]
+    num_in_paksha = (idx % 15) + 1
+    group = TITHI_GROUP[(num_in_paksha - 1) % 5]
+    lord = _TITHI_LORD_CYCLE[idx % 7]
+    is_aus = not (num_in_paksha in (4, 9, 14) and paksha == PAKSHA_KRISHNA)
+    return TithiReading(
+        index=idx, number_in_paksha=num_in_paksha, paksha=paksha,
+        name=info["name"], group=group, lord=lord,
+        is_auspicious_default=is_aus,
+    )
+
+
+def _yoga_reading(sun_lon: float, moon_lon: float) -> NityaYogaReading:
+    info = _yoga_info(sun_lon, moon_lon)
+    return NityaYogaReading(
+        index=info["index"], name=info["name"],
+        is_inauspicious=info["name"] in _INAUSPICIOUS_YOGAS,
+    )
+
+
+def _karana_reading(sun_lon: float, moon_lon: float) -> KaranaReading:
+    info = _karana_info(sun_lon, moon_lon)
+    name = info["name"]
+    return KaranaReading(
+        index=info["index"], name=name,
+        is_movable=name in KARANA_MOVABLE,
+        is_inauspicious=name in _INAUSPICIOUS_KARANAS,
+    )
+
+
+def _vara_reading(jd: float) -> VaraReading:
+    info = _vara_info(jd)
+    return VaraReading(
+        index=info["index"], name=info["name"],
+        lord=VARA_LORDS[info["index"]],
+    )
+
+
+def compute_birth_panchanga(
+    sun_lon: float, moon_lon: float, birth_jd: float,
+    moon_nakshatra_index: int,
+) -> BirthPanchanga:
+    """Compute the full doctrinal Panchanga reading from precomputed longitudes.
+
+    Used by the master_reading composer to attach a BirthPanchanga to
+    every chart. Bypasses the ephemeris call that the basic
+    ``compute_panchanga(jd)`` makes — faster in bulk pipelines where Sun
+    and Moon longitudes are already available from the dossier.
+
+    Args:
+        sun_lon: Sun's sidereal longitude in degrees (0..360).
+        moon_lon: Moon's sidereal longitude in degrees.
+        birth_jd: Birth time as Julian Day (for Vara).
+        moon_nakshatra_index: 0..26 — caller pre-computes via
+                              int(moon_lon // (360/27)).
+
+    Returns:
+        BirthPanchanga aggregate with doctrinal classifications on each limb.
+    """
+    t = _tithi_reading(sun_lon, moon_lon)
+    y = _yoga_reading(sun_lon, moon_lon)
+    k = _karana_reading(sun_lon, moon_lon)
+    v = _vara_reading(birth_jd)
+    caution = (
+        (t.paksha == PAKSHA_KRISHNA and t.number_in_paksha in (4, 9, 14))
+        or y.is_inauspicious
+        or k.is_inauspicious
+    )
+    return BirthPanchanga(
+        vara=v, tithi=t, yoga=y, karana=k,
+        moon_nakshatra_index=moon_nakshatra_index,
+        has_caution_flag=caution,
+    )
+
+
+def format_birth_panchanga(p: BirthPanchanga) -> str:
+    """Render a BirthPanchanga as a human-readable summary."""
+    lines = ["=== BIRTH PANCHANGA ==="]
+    lines.append(f"  Vara         : {p.vara.name} (lord: {p.vara.lord})")
+    lines.append(
+        f"  Tithi        : {p.tithi.paksha} {p.tithi.name} "
+        f"(#{p.tithi.number_in_paksha}, {p.tithi.group} group, "
+        f"lord: {p.tithi.lord})"
+    )
+    lines.append(
+        f"  Nakshatra    : index {p.moon_nakshatra_index} (Moon's asterism)"
+    )
+    flag_y = " [CAUTION]" if p.yoga.is_inauspicious else ""
+    lines.append(f"  Nityayoga    : {p.yoga.name}{flag_y}")
+    flag_k = " [CAUTION]" if p.karana.is_inauspicious else ""
+    lines.append(
+        f"  Karana       : {p.karana.name}"
+        f"{' (movable)' if p.karana.is_movable else ' (fixed)'}{flag_k}"
+    )
+    if p.has_caution_flag:
+        lines.append(
+            "  [!] Caution flag - see Rikta-tithi / inauspicious-yoga / "
+            "Vishti rules in Muhurta Chintamani Ch.1-3."
+        )
+    return "\n".join(lines)

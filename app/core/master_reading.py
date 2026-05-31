@@ -43,6 +43,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Mapping
 
+from app.core.bhava_bala import BhavaStrengthReport, compute_bhava_bala
+from app.core.panchanga import BirthPanchanga, compute_birth_panchanga
 from app.core.ashtakavarga_predictive import (
     AshtakavargaPredictive, compute_predictive as compute_ashtakavarga_predictive,
 )
@@ -121,6 +123,13 @@ class MasterReading:
     # CORE_DOMAINS and attaches the ConvergenceVerdict here. UI / consumers
     # read this for the "reasoning trace" view.
     convergence_verdicts: Mapping[str, "ConvergenceVerdict"] = field(default_factory=dict)
+
+    # S-2 part 1 — Birth Panchanga (Tithi/Yoga/Karana/Vara).
+    # None if sun_lon, moon_lon, or birth_jd are absent.
+    birth_panchanga: BirthPanchanga | None = None
+
+    # S-2 part 2 — Intrinsic Bhava Bala per bhava. Always computable from chart.
+    bhava_bala: Mapping[int, BhavaStrengthReport] = field(default_factory=dict)
 
 
 _NATURAL_BENEFICS = {"Jupiter", "Venus", "Mercury", "Moon"}
@@ -402,6 +411,30 @@ def compose_master_reading(
         tara_at_target=tara,
         prescribed_remedies=prescriptions,
     )
+
+    # S-2 part 1: Birth Panchanga (needs Sun+Moon longitudes + birth_jd).
+    sun_lon = chart.planet_lons.get("Sun")
+    moon_lon = chart.planet_lons.get("Moon")
+    if (sun_lon is not None and moon_lon is not None
+            and birth_jd is not None and moon_nakshatra_index is not None):
+        try:
+            panchanga = compute_birth_panchanga(
+                sun_lon=float(sun_lon), moon_lon=float(moon_lon),
+                birth_jd=float(birth_jd),
+                moon_nakshatra_index=int(moon_nakshatra_index),
+            )
+        except (ValueError, TypeError):
+            panchanga = None
+    else:
+        panchanga = None
+    object.__setattr__(mr, "birth_panchanga", panchanga)
+
+    # S-2 part 2: Bhava Bala (always computable from chart).
+    try:
+        bb = compute_bhava_bala(chart)
+    except Exception:  # noqa: BLE001 — graceful degradation
+        bb = {}
+    object.__setattr__(mr, "bhava_bala", bb)
 
     # S-1 + S-5: cross-layer convergence verdicts attached for the
     # caller-specified domains (defaults to CORE_DOMAINS).

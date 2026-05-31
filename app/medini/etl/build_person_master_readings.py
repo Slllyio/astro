@@ -254,6 +254,43 @@ def _master_reading_to_row(
     out["remedy_planets"] = [rx.planet for rx in mr.prescribed_remedies]
     out["remedy_caveats"] = [rx.gemstone_caveat for rx in mr.prescribed_remedies]
 
+    # S-2 part 1: Birth Panchanga (None when sun/moon/jd missing)
+    p = mr.birth_panchanga
+    if p is None:
+        out["panchanga_tithi_name"] = None
+        out["panchanga_tithi_paksha"] = None
+        out["panchanga_tithi_group"] = None
+        out["panchanga_tithi_lord"] = None
+        out["panchanga_yoga_name"] = None
+        out["panchanga_yoga_inauspicious"] = pd.NA
+        out["panchanga_karana_name"] = None
+        out["panchanga_karana_inauspicious"] = pd.NA
+        out["panchanga_vara_name"] = None
+        out["panchanga_vara_lord"] = None
+        out["panchanga_caution_flag"] = pd.NA
+    else:
+        out["panchanga_tithi_name"] = p.tithi.name
+        out["panchanga_tithi_paksha"] = p.tithi.paksha
+        out["panchanga_tithi_group"] = p.tithi.group
+        out["panchanga_tithi_lord"] = p.tithi.lord
+        out["panchanga_yoga_name"] = p.yoga.name
+        out["panchanga_yoga_inauspicious"] = p.yoga.is_inauspicious
+        out["panchanga_karana_name"] = p.karana.name
+        out["panchanga_karana_inauspicious"] = p.karana.is_inauspicious
+        out["panchanga_vara_name"] = p.vara.name
+        out["panchanga_vara_lord"] = p.vara.lord
+        out["panchanga_caution_flag"] = p.has_caution_flag
+
+    # S-2 part 2: Bhava Bala — one composite per bhava (12 scalar cols)
+    for b in range(1, 13):
+        bb = mr.bhava_bala.get(b) if mr.bhava_bala else None
+        if bb is None:
+            out[f"bhava_bala_{b}"] = pd.NA
+            out[f"bhava_bala_{b}_label"] = None
+        else:
+            out[f"bhava_bala_{b}"] = bb.composite_bhava_bala
+            out[f"bhava_bala_{b}_label"] = bb.strength_label
+
     # S-5: Convergence verdicts per domain — emitted as parallel scalar
     # columns + a list-of-struct evidence column per domain. Schema:
     #   conv_<domain>_label       (str)        e.g. "strongly_supportive"
@@ -363,6 +400,16 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         "n_prescribed_remedies": 0,
         "remedy_planets": [],
         "remedy_caveats": [],
+        # S-2 Panchanga stubs (all None / NA — empty-row case)
+        "panchanga_tithi_name": None, "panchanga_tithi_paksha": None,
+        "panchanga_tithi_group": None, "panchanga_tithi_lord": None,
+        "panchanga_yoga_name": None, "panchanga_yoga_inauspicious": pd.NA,
+        "panchanga_karana_name": None, "panchanga_karana_inauspicious": pd.NA,
+        "panchanga_vara_name": None, "panchanga_vara_lord": None,
+        "panchanga_caution_flag": pd.NA,
+        # S-2 Bhava Bala stubs (12 bhavas × 2 fields)
+        **{f"bhava_bala_{b}": pd.NA for b in range(1, 13)},
+        **{f"bhava_bala_{b}_label": None for b in range(1, 13)},
         # S-5 convergence stubs
         **{f"conv_{d}_{f}": v for d in
            ("marriage", "career", "wealth", "health", "children", "dharma")

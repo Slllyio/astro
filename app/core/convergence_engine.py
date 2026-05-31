@@ -580,19 +580,26 @@ def convergence_verdict(
     else:
         confidence = "indeterminate"
 
-    # Convergence label
+    # Convergence label — order matters. "contradictory" should fire ONLY
+    # when the dominant direction is genuinely unclear (|score| < 1.5),
+    # otherwise a chart with score +3 and 5-supporting/3-contradicting is
+    # CLEARLY supportive-with-caveats, not "contradictory". Earlier
+    # versions placed the contradictory check first and labeled 97% of
+    # careers contradictory because ≥2/≥2 splits are common in any
+    # rich-evidence chart.
     if n_sig < 2:
         label = "indeterminate"
-    elif len(supporting) >= 2 and len(contradicting) >= 2:
-        label = "contradictory"
     elif weighted_score >= 3.0:
         label = "strongly_supportive"
-    elif weighted_score >= 1.0:
-        label = "supportive"
     elif weighted_score <= -3.0:
         label = "strongly_afflicted"
-    elif weighted_score <= -1.0:
+    elif weighted_score >= 1.5:
+        label = "supportive"
+    elif weighted_score <= -1.5:
         label = "afflicted"
+    elif (len(supporting) >= 2 and len(contradicting) >= 2
+          and abs(weighted_score) < 1.5):
+        label = "contradictory"
     else:
         label = "mixed"
 

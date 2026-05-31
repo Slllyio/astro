@@ -94,17 +94,30 @@ class TestBatchBuild:
         assert first_pd["pd_lord"] == "Jupiter"
 
     def test_required_columns_present(self, two_ad_windows: pd.DataFrame):
-        """Schema contract for downstream PD consumers."""
+        """Schema contract for downstream PD consumers.
+
+        ``pd_window_id`` was dropped in the 2026-05-31 storage refactor —
+        the composite (person_id, md_seq, ad_seq, pd_seq) is the natural
+        key and the string concatenation was 562 MB of dead weight in
+        the produced parquet.
+        """
         result = build_pd_windows(two_ad_windows, workers=1)
-        required = {"pd_window_id", "person_id", "md_lord", "ad_lord",
+        required = {"person_id", "md_lord", "ad_lord",
                     "pd_lord", "md_seq", "ad_seq", "pd_seq",
                     "start_jd", "end_jd", "duration_days"}
         assert required.issubset(set(result.columns))
+        assert "pd_window_id" not in result.columns, (
+            "pd_window_id is a dropped derivable column; "
+            "the natural key is (person_id, md_seq, ad_seq, pd_seq)"
+        )
 
-    def test_pd_window_id_is_unique(self, two_ad_windows: pd.DataFrame):
-        """The composite (md_seq, ad_seq, pd_seq, person_id) → unique window_id."""
+    def test_natural_key_is_unique(self, two_ad_windows: pd.DataFrame):
+        """The composite (person_id, md_seq, ad_seq, pd_seq) uniquely identifies a PD window."""
         result = build_pd_windows(two_ad_windows, workers=1)
-        assert result["pd_window_id"].nunique() == len(result)
+        natural_key = result[["person_id", "md_seq", "ad_seq", "pd_seq"]]
+        assert natural_key.drop_duplicates().shape[0] == len(result), (
+            "(person_id, md_seq, ad_seq, pd_seq) is not unique — schema invariant violated"
+        )
 
 
 class TestPDOfPD:

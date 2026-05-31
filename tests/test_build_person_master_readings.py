@@ -132,8 +132,11 @@ class TestRowToMasterDict:
         # Without day_of_week / is_day_birth, Maandi is None
         assert result["maandi_sign"] is None
 
-    def test_per_planet_vimsopaka_columns(self):
-        """Each of 7 visible grahas has a vimsopaka column (D1-only fallback ≤5).
+    def test_per_planet_vimsopaka_columns_d1_fallback(self):
+        """Each of 7 visible grahas has a vimsopaka column.
+
+        Without per_planet_varga_signs in the row (D1-only fallback),
+        composite caps at ~5 rupas (D1 weight = 5/20).
 
         Rahu/Ketu omitted: classical Vimsopaka Bala doesn't apply to
         shadow grahas — they have no physical occupation of a varga.
@@ -145,6 +148,25 @@ class TestRowToMasterDict:
             col = f"vimsopaka_{p}"
             assert col in result
             assert 0.0 <= result[col] <= 5.5  # D1-only cap
+
+    def test_vimsopaka_uses_real_scale_with_varga_signs(self):
+        """When per_planet_varga_signs is supplied, Vimsopaka uses real 20-rupa scale.
+
+        Regression for Tier C-2: bulk ETL now enriches dossier rows with
+        saptavargaja sign maps. Composite should reach into 8-18 rupa
+        range for typical charts, not be structurally clamped at 5.
+        """
+        row = _fake_dossier_row()
+        # Mercury exalted in Virgo across multiple vargas → composite > 5
+        row["per_planet_varga_signs"] = {
+            "Mercury": {"D1": 6, "D2": 6, "D3": 6, "D7": 6,
+                        "D9": 6, "D12": 6, "D30": 6},
+        }
+        result = _row_to_master_dict(row)
+        assert result["vimsopaka_mercury"] > 5.5, (
+            f"With saptavargaja signs supplied, Mercury Vimsopaka should "
+            f"exceed the D1-only cap of 5, got {result['vimsopaka_mercury']}"
+        )
 
     def test_per_planet_avastha_multiplier_columns(self):
         """Each visible graha has an avastha multiplier column (7 total).

@@ -101,6 +101,11 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
         logger.warning("Chart build failed for %s: %s", row.get("person_id"), exc)
         return _empty_master_row(row)
     try:
+        ppvs = row.get("per_planet_varga_signs") or None
+        # pandas may serialize empty dicts as NaN or {} — coerce both to None
+        # so vimsopaka_for_chart cleanly falls back to D1-only.
+        if isinstance(ppvs, dict) and not ppvs:
+            ppvs = None
         mr = compose_master_reading(
             chart, DKPContext(),
             birth_jd=row.get("birth_jd"),
@@ -110,6 +115,7 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
             moon_nakshatra_index=_safe_int(row.get("moon_nakshatra_index")),
             day_of_week=_safe_int(row.get("day_of_week")),
             is_day_birth=_safe_bool(row.get("is_day_birth")),
+            per_planet_varga_signs=ppvs,
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("Master compose failed for %s: %s", row.get("person_id"), exc)
@@ -369,21 +375,55 @@ def _enrich_dossier_with_master_inputs(
         logger.warning("jaimini_karakas.parquet missing — Karakamsa layer stays null")
         out["atmakaraka"] = None
 
-    # AK D9 sign lookup from divisional_charts.parquet
+    # Divisional chart lookups for both Karakamsa AND Vimsopaka.
+    # divisional_charts.parquet has 15 vargas; saptavargaja Vimsopaka
+    # needs 7 of them: D1, D2, D3, D7, D9, D12, D30. Load those once.
     dc_path = data_dir / "divisional_charts.parquet"
     if dc_path.exists():
-        d9 = pd.read_parquet(dc_path, filters=[("varga", "==", "D9_Navamsa")])
-        d9_map = {
-            (r.person_id, r.graha): int(r.sign)
-            for r in d9[["person_id", "graha", "sign"]].itertuples(index=False)
+        # Map full varga names to short keys vimsopaka_bala() expects.
+        _SAPTA_VARGAS = {
+            "D1_Rashi": "D1", "D2_Hora": "D2", "D3_Drekkana": "D3",
+            "D7_Saptamsa": "D7", "D9_Navamsa": "D9",
+            "D12_Dwadasamsa": "D12", "D30_Trimsamsa": "D30",
         }
+        _VISIBLE = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+
+        dc = pd.read_parquet(
+            dc_path,
+            filters=[("varga", "in", list(_SAPTA_VARGAS.keys()))],
+        )
+
+        # Build nested lookup: {(person_id, planet): {"D1": s, ..., "D30": s}}
+        # Then build the per-person {planet: {varga: sign}} structure.
+        per_planet_varga: dict[str, dict[str, dict[str, int]]] = {}
+        for r in dc[["person_id", "varga", "graha", "sign"]].itertuples(index=False):
+            if r.graha not in _VISIBLE:
+                continue
+            short = _SAPTA_VARGAS[r.varga]
+            person_map = per_planet_varga.setdefault(r.person_id, {})
+            planet_map = person_map.setdefault(r.graha, {})
+            planet_map[short] = int(r.sign)
+
+        # AK D9 sign (for Karakamsa) — pull from the same loaded data
+        d9_map: dict[tuple[str, str], int] = {}
+        for pid, planets in per_planet_varga.items():
+            for planet, vargas in planets.items():
+                if "D9" in vargas:
+                    d9_map[(pid, planet)] = vargas["D9"]
+
         out["atmakaraka_d9_sign"] = [
             d9_map.get((pid, ak)) if ak else None
             for pid, ak in zip(out["person_id"], out["atmakaraka"])
         ]
+        out["per_planet_varga_signs"] = [
+            per_planet_varga.get(pid, {}) for pid in out["person_id"]
+        ]
+        n_have_varga = sum(1 for v in out["per_planet_varga_signs"] if v)
+        logger.info("Loaded saptavargaja signs for %d/%d persons", n_have_varga, len(out))
     else:
-        logger.warning("divisional_charts.parquet missing — Karakamsa layer stays null")
+        logger.warning("divisional_charts.parquet missing — Karakamsa + Vimsopaka stay D1-only")
         out["atmakaraka_d9_sign"] = None
+        out["per_planet_varga_signs"] = [{}] * len(out)
 
     # Constant target_jd snapshot — Yogini + Ashtottari are dasha-state-AT-this-date
     out["target_jd"] = snapshot_jd

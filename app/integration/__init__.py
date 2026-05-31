@@ -146,6 +146,11 @@ from app.integration.arudha_synthesis import (
     ArudhaSynthesis,
     synthesise_arudha,
 )
+# v1.1.0 M7 — Dasha triple (KN Rao canonical synthesis)
+from app.integration.dasha_triple import (
+    DashaTriple,
+    build_dasha_triple,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -263,6 +268,9 @@ __all__ = [
     # v1.1.0 M6 - Arudha synthesis
     "ArudhaSynthesis",
     "synthesise_arudha",
+    # v1.1.0 M7 - Dasha triple
+    "DashaTriple",
+    "build_dasha_triple",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

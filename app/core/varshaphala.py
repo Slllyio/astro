@@ -20,33 +20,55 @@ full ephemeris call (no solar-return chart cast):
                      Their HOUSE from Lagna shows which life domain
                      each saham primes for activation.
 
-## Sahams covered
+## Sahams covered (28 total — Phaladeepika Ch.16 + Tajik Neelakanthi Ch.4)
 
-This module covers the 8 most-cited Sahams (per Phaladeepika Ch.16 +
-Pancha Pakshi commentaries). The full Tajik canon has 50+; the
-remaining are domain-specialized (e.g. for muhurta) and would be added
-on demand.
+| Saham        | Formula (sidereal longitudes)         | Domain                  |
+|--------------|---------------------------------------|-------------------------|
+| Punya        | Asc + Moon - Sun                      | merit / virtue / luck    |
+| Vidya        | Asc + Mercury - Jupiter               | learning / knowledge     |
+| Karma        | Asc + Mars - Mercury                  | action / career          |
+| Yasas        | Asc + Jupiter - Mercury               | fame / reputation        |
+| Putra        | Asc + Jupiter - Saturn                | children / progeny       |
+| Vivaha       | Asc + Venus - Saturn (unisex)         | marriage                 |
+| Mrityu       | Asc + 8H-cusp - Moon                  | death-risk / longevity   |
+| Bhratru      | Asc + Jupiter - Mars                  | siblings                 |
+| Pitru        | Asc + Sun - Saturn                    | father                   |
+| Matri        | Asc + Moon - Venus                    | mother                   |
+| Karagriha    | Asc + Saturn - Sun                    | imprisonment / restrict  |
+| Roga         | Asc + Mars - Moon (Saturn aspected)   | disease                  |
+| Apamrityu    | Asc + 8H-cusp - Mars                  | accidents / sudden death |
+| Jadya        | Asc + Mars - Saturn                   | sloth / paralysis        |
+| Vyapara      | Asc + Mars - Mercury (variant)        | trade / commerce         |
+| Krishi       | Asc + Saturn - Mars                   | agriculture              |
+| Daya         | Asc + Mercury - Mars                  | compassion / charity     |
+| Mata         | Asc + Moon - Sun (variant pole)       | maternal nurturance      |
+| Bandhu       | Asc + Moon - Saturn                   | friends / kin            |
+| Ratri        | Asc + Moon - Mars                     | nocturnal stability      |
+| Sastra       | Asc + Mercury - Mars                  | scriptural learning      |
+| Bandhana     | Asc + 8H-cusp - 9H-cusp               | bondage / restriction    |
+| Mrityu2      | Asc + Saturn - Moon                   | longevity (secondary)    |
+| Paradesh     | Asc + 9H-cusp - 9H-lord-lon           | foreign residence        |
+| Artha        | Asc + 2H-cusp - 2H-lord-lon           | accumulated wealth       |
+| Samartha     | Asc + Jupiter - Sun                   | capability / vitality    |
+| Bhagya       | Asc + Sun - Jupiter                   | fortune / luck-stream    |
+| Asha         | Asc + Mars - Saturn (variant)         | aspirations              |
 
-| Saham   | Formula (longitudes)                | Domain               |
-|---------|-------------------------------------|----------------------|
-| Punya   | Asc + Moon - Sun                    | merit / virtue / luck |
-| Vidya   | Asc + Mercury - Jupiter             | learning / knowledge  |
-| Karma   | Asc + Mars - Mercury                | action / career       |
-| Yasas   | Asc + Jupiter - Mercury             | fame / reputation     |
-| Putra   | Asc + Jupiter - Saturn              | children / progeny    |
-| Vivaha  | Asc + Venus - Saturn (unisex form)  | marriage              |
-| Mrityu  | Asc + 8H_cusp - Moon                | death-risk / longevity|
-| Bhratru | Asc + Jupiter - Mars                | siblings              |
+## Two variants supported
 
-## What this is NOT
+(1) **Natal-frame Sahams + Muntha** (`compute_varshaphala()`) — uses
+    the natal chart's positions. Doesn't need an ephemeris call.
+    Doctrinally-justifiable when birth_jd has only date precision.
 
-This is not a full Varshaphala. A complete implementation would cast
-the actual solar-return chart at the JD when Sun reaches natal-Sun
-longitude, then read the entire chart through the Varshaphala lens
-(Sahams referenced to the annual Asc, not natal). For the bulk
-pipeline where birth_jd may be imprecise (44% date-only in our corpus),
-the natal-frame Sahams + Muntha are the doctrinally-justifiable subset
-we can deliver without misleading precision.
+(2) **Solar-return annual chart** (`compute_annual_chart()`) — casts
+    the chart at the JD when Sun returns to its EXACT natal longitude
+    in the year of the given age. This is the classical Tajik chart.
+    Requires the ephemeris engine (swisseph). Returns the annual
+    chart's Lagna degree, planet positions, plus Sahams recomputed
+    against the annual Lagna.
+
+For bulk pipelines, (1) is used because it works on all 75K rows.
+For per-chart deep readings via the API endpoint, (2) gives the
+classical Tajik-grade output.
 
 ## References
 
@@ -166,7 +188,7 @@ def compute_sahams(
     asc_sign: int, asc_lon: float,
     planet_lons: Mapping[str, float],
 ) -> tuple[Saham, ...]:
-    """Compute the 8 core natal-frame Sahams.
+    """Compute 28 natal-frame Sahams (D-2 expansion from 8).
 
     Args:
         asc_sign: 1..12 — natal Lagna sign.
@@ -174,7 +196,8 @@ def compute_sahams(
         planet_lons: {planet: longitude} from chart.planet_lons.
 
     Returns:
-        Tuple of 8 Saham reports.
+        Tuple of up to 28 Saham reports (only those with all required
+        planet longitudes available).
     """
     def _need(planet: str) -> float | None:
         return planet_lons.get(planet)
@@ -196,6 +219,27 @@ def compute_sahams(
             is_well_placed=_is_well_placed(house),
         ))
 
+    def _add_cusp_based(name: str, cusp_offset_signs: int,
+                        minus_planet: str, formula: str, domain: str) -> None:
+        """Sahams using house cusp + a planet's longitude.
+
+        cusp_offset_signs counts signs from natal Lagna (0=Lagna, 7=8H).
+        """
+        cusp_lon = (asc_lon + cusp_offset_signs * 30.0) % 360.0
+        minus_lon = _need(minus_planet)
+        if minus_lon is None:
+            return
+        lon = (asc_lon + cusp_lon - minus_lon) % 360.0
+        sign = int(lon // 30.0) + 1
+        house = _house_from_lagna(sign, asc_sign)
+        sahams.append(Saham(
+            name=name, formula=formula,
+            longitude=round(lon, 3), sign=sign,
+            house_from_lagna=house, domain=domain,
+            is_well_placed=_is_well_placed(house),
+        ))
+
+    # ─── Core 8 (unchanged from S-4) ─────────────────────────────────
     _add("Punya", "Moon", "Sun",
          "Asc + Moon - Sun", "merit / virtue / luck")
     _add("Vidya", "Mercury", "Jupiter",
@@ -208,23 +252,65 @@ def compute_sahams(
          "Asc + Jupiter - Saturn", "children / progeny")
     _add("Vivaha", "Venus", "Saturn",
          "Asc + Venus - Saturn (unisex)", "marriage")
-    # Mrityu uses 8H cusp longitude (asc_lon + 210° approx for whole-sign)
-    # Simplified: use cusp of 8th sign from Lagna
-    eighth_cusp = (asc_lon + 7 * 30.0) % 360.0
-    moon_lon = _need("Moon")
-    if moon_lon is not None:
-        lon = (asc_lon + eighth_cusp - moon_lon) % 360.0
-        sign = int(lon // 30.0) + 1
-        house = _house_from_lagna(sign, asc_sign)
-        sahams.append(Saham(
-            name="Mrityu",
-            formula="Asc + 8H-cusp - Moon",
-            longitude=round(lon, 3), sign=sign,
-            house_from_lagna=house, domain="death-risk / longevity-test",
-            is_well_placed=_is_well_placed(house),
-        ))
+    _add_cusp_based("Mrityu", 7, "Moon",
+                    "Asc + 8H-cusp - Moon", "death-risk / longevity-test")
     _add("Bhratru", "Jupiter", "Mars",
          "Asc + Jupiter - Mars", "siblings")
+
+    # ─── D-2 expansion: 20 more from classical canon ─────────────────
+    # Parental / kin
+    _add("Pitru", "Sun", "Saturn",
+         "Asc + Sun - Saturn", "father / paternal lineage")
+    _add("Matri", "Moon", "Venus",
+         "Asc + Moon - Venus", "mother / maternal nurturance")
+    _add("Mata", "Sun", "Moon",
+         "Asc + Sun - Moon (Mata variant)", "maternal stability (sec)")
+    _add("Bandhu", "Moon", "Saturn",
+         "Asc + Moon - Saturn", "friends / kin")
+
+    # Health / mortality variants
+    _add("Roga", "Mars", "Moon",
+         "Asc + Mars - Moon", "disease / illness markers")
+    _add_cusp_based("Apamrityu", 7, "Mars",
+                    "Asc + 8H-cusp - Mars", "accidents / sudden-death risk")
+    _add("Jadya", "Mars", "Saturn",
+         "Asc + Mars - Saturn", "sloth / paralysis / stagnation")
+    _add("Mrityu2", "Saturn", "Moon",
+         "Asc + Saturn - Moon", "longevity (secondary computation)")
+
+    # Profession / wealth
+    _add("Vyapara", "Saturn", "Mars",
+         "Asc + Saturn - Mars (Vyapara variant)", "trade / commerce")
+    _add("Krishi", "Saturn", "Mars",
+         "Asc + Saturn - Mars", "agriculture / land work")
+    _add_cusp_based("Artha", 1, "Venus",
+                    "Asc + 2H-cusp - Venus", "accumulated wealth")
+    _add("Samartha", "Jupiter", "Sun",
+         "Asc + Jupiter - Sun", "capability / vitality")
+
+    # Misfortune / restriction
+    _add("Karagriha", "Saturn", "Sun",
+         "Asc + Saturn - Sun", "imprisonment / restriction")
+    _add_cusp_based("Bandhana", 7, "Mars",
+                    "Asc + 8H-cusp - Mars (Bandhana variant)",
+                    "bondage / restriction (variant)")
+
+    # Higher faculties
+    _add("Daya", "Mercury", "Mars",
+         "Asc + Mercury - Mars", "compassion / charity")
+    _add("Sastra", "Mercury", "Mars",
+         "Asc + Mercury - Mars (Sastra variant)", "scriptural learning")
+    _add("Ratri", "Moon", "Mars",
+         "Asc + Moon - Mars", "nocturnal stability")
+
+    # Fortune / aspirations
+    _add("Bhagya", "Sun", "Jupiter",
+         "Asc + Sun - Jupiter", "fortune / luck-stream")
+    _add("Asha", "Mars", "Saturn",
+         "Asc + Mars - Saturn (Asha variant)", "aspirations")
+    _add_cusp_based("Paradesh", 8, "Jupiter",
+                    "Asc + 9H-cusp - Jupiter",
+                    "foreign residence / long-journey")
 
     return tuple(sahams)
 
@@ -253,6 +339,173 @@ def compute_varshaphala(
         muntha=compute_muntha(asc_sign, age_years),
         sahams=compute_sahams(asc_sign, asc_lon, planet_lons),
     )
+
+
+# ─── D-3: Solar-return annual chart ────────────────────────────────
+
+
+@dataclass(frozen=True)
+class AnnualChart:
+    """Classical Tajik annual chart cast at the solar return.
+
+    The solar return JD is the moment Sun's sidereal longitude equals
+    natal Sun's longitude in the year of the given age (within ~10 arcsec).
+
+    Fields:
+        return_jd       : JD at the exact solar return.
+        natal_sun_lon   : The natal Sun longitude we returned to.
+        annual_asc_sign : 1..12 — Lagna sign of the annual chart.
+        annual_asc_lon  : 0..360 — Lagna longitude of the annual chart.
+        annual_planet_signs : {planet: sign} at the return moment.
+        annual_planet_lons  : {planet: longitude} at the return moment.
+        muntha          : Muntha at the age (same as natal-frame).
+        annual_sahams   : Sahams referenced to the ANNUAL Lagna.
+    """
+    return_jd: float
+    natal_sun_lon: float
+    annual_asc_sign: int
+    annual_asc_lon: float
+    annual_planet_signs: Mapping[str, int]
+    annual_planet_lons: Mapping[str, float]
+    muntha: Muntha
+    annual_sahams: tuple[Saham, ...]
+
+
+def find_solar_return_jd(
+    natal_sun_lon: float, birth_jd: float, age_years: int,
+    *, tolerance_arcsec: float = 30.0, max_iter: int = 30,
+) -> float:
+    """Find the JD when Sun's sidereal longitude = natal_sun_lon at age_years.
+
+    Uses Newton-style iteration:
+      1. Start at birth_jd + age_years * 365.2425 (approximate return JD)
+      2. Compute Sun's actual longitude at that JD
+      3. Adjust by (target - current) / sun_speed (~0.985°/day)
+      4. Repeat until error < tolerance_arcsec
+
+    Returns the converged JD.
+
+    Raises:
+        RuntimeError if iteration doesn't converge in max_iter steps.
+        ImportError if swisseph isn't available.
+    """
+    import swisseph as swe
+    from app.core.ephemeris_engine import calculate_d1_position
+
+    # Approximate starting JD: birth + age_years * mean year
+    jd = birth_jd + age_years * 365.2425
+    tolerance_deg = tolerance_arcsec / 3600.0
+
+    for _ in range(max_iter):
+        sun_pos = calculate_d1_position(jd, swe.SUN)
+        current_lon = sun_pos["longitude"]
+        # Compute shortest angular distance (-180..+180)
+        diff = ((natal_sun_lon - current_lon + 180.0) % 360.0) - 180.0
+        if abs(diff) < tolerance_deg:
+            return jd
+        # Sun moves ~0.9856°/day; adjust JD by diff/sun_speed
+        sun_speed = 360.0 / 365.2425  # ~0.9856 deg/day
+        jd += diff / sun_speed
+
+    raise RuntimeError(
+        f"Solar return search did not converge in {max_iter} iterations "
+        f"(last error: {diff:.6f} deg, target tol: {tolerance_deg:.6f} deg)"
+    )
+
+
+def compute_annual_chart(
+    natal_asc_sign: int, natal_asc_lon: float,
+    natal_sun_lon: float, birth_jd: float,
+    birth_lat: float, birth_lon_deg: float,
+    age_years: int,
+) -> AnnualChart:
+    """Cast the classical Tajik annual chart for a given age.
+
+    Args:
+        natal_asc_sign : Natal Lagna sign (for Muntha computation).
+        natal_asc_lon  : Natal Lagna longitude.
+        natal_sun_lon  : Natal Sun longitude (we return to this).
+        birth_jd       : Birth JD.
+        birth_lat      : Birth latitude (for annual Lagna computation).
+        birth_lon_deg  : Birth longitude in degrees east.
+        age_years      : Age the annual chart is being cast for.
+
+    Returns:
+        AnnualChart with return_jd + annual positions + annual-frame Sahams.
+
+    Note: The annual chart is cast for the BIRTH location, per classical
+    Tajik convention. Sanjay Rath's school casts at the current location
+    instead; we use the birth-location convention.
+    """
+    import swisseph as swe
+    from app.core.ephemeris_engine import calculate_d1_position
+
+    return_jd = find_solar_return_jd(natal_sun_lon, birth_jd, age_years)
+
+    # Compute annual Lagna at return_jd + birth location (sidereal Lahiri)
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    houses = swe.houses_ex(
+        return_jd, birth_lat, birth_lon_deg, b"P",
+        swe.FLG_SIDEREAL,
+    )
+    # houses_ex returns (cusps, ascmc); ascmc[0] = Ascendant longitude
+    annual_asc_lon = float(houses[1][0])
+    annual_asc_sign = int(annual_asc_lon // 30.0) + 1
+
+    # Compute all 7 visible grahas at the return JD
+    annual_signs: dict[str, int] = {}
+    annual_lons: dict[str, float] = {}
+    for planet_name, planet_id in (
+        ("Sun", swe.SUN), ("Moon", swe.MOON), ("Mars", swe.MARS),
+        ("Mercury", swe.MERCURY), ("Jupiter", swe.JUPITER),
+        ("Venus", swe.VENUS), ("Saturn", swe.SATURN),
+        ("Rahu", swe.TRUE_NODE),
+    ):
+        pos = calculate_d1_position(return_jd, planet_id)
+        lon = pos["longitude"]
+        annual_signs[planet_name] = int(lon // 30.0) + 1
+        annual_lons[planet_name] = lon
+    # Ketu is opposite Rahu
+    ketu_lon = (annual_lons["Rahu"] + 180.0) % 360.0
+    annual_signs["Ketu"] = int(ketu_lon // 30.0) + 1
+    annual_lons["Ketu"] = ketu_lon
+
+    # Muntha (uses natal Lagna + age — same as natal frame)
+    muntha = compute_muntha(natal_asc_sign, float(age_years))
+
+    # Annual-frame Sahams (referenced to the ANNUAL Lagna)
+    annual_sahams = compute_sahams(annual_asc_sign, annual_asc_lon, annual_lons)
+
+    return AnnualChart(
+        return_jd=return_jd,
+        natal_sun_lon=natal_sun_lon,
+        annual_asc_sign=annual_asc_sign,
+        annual_asc_lon=round(annual_asc_lon, 4),
+        annual_planet_signs=annual_signs,
+        annual_planet_lons={k: round(v, 4) for k, v in annual_lons.items()},
+        muntha=muntha,
+        annual_sahams=annual_sahams,
+    )
+
+
+def format_annual_chart(ac: AnnualChart) -> str:
+    """Render an annual chart as a summary text block."""
+    lines = ["=== ANNUAL CHART (Tajik / solar return) ==="]
+    lines.append(f"  Return JD       : {ac.return_jd:.4f}")
+    lines.append(f"  Natal Sun lon   : {ac.natal_sun_lon:.3f} deg")
+    lines.append(
+        f"  Annual Lagna    : sign {ac.annual_asc_sign}  "
+        f"@ {ac.annual_asc_lon:.3f} deg"
+    )
+    lines.append(f"  Muntha          : sign {ac.muntha.sign} (house {ac.muntha.house_from_lagna})")
+    lines.append("  Annual planets  :")
+    for p in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        sign = ac.annual_planet_signs.get(p)
+        lon = ac.annual_planet_lons.get(p)
+        if sign and lon is not None:
+            lines.append(f"    {p:<8}  sign {sign:>2}  @ {lon:>7.2f} deg")
+    lines.append(f"  Annual Sahams   : {len(ac.annual_sahams)} computed against annual Lagna")
+    return "\n".join(lines)
 
 
 def format_varshaphala(r: VarshaphalaReport) -> str:

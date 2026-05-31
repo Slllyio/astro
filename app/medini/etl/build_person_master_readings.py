@@ -59,6 +59,19 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_DIR: Final = Path("app/medini/data")
 
+# Saham names lowercased — must match the names emitted by
+# app.core.varshaphala.compute_sahams() (D-2 expansion to 28 sahams).
+_ALL_SAHAM_NAMES: Final[tuple[str, ...]] = (
+    "punya", "vidya", "karma", "yasas",
+    "putra", "vivaha", "mrityu", "bhratru",
+    "pitru", "matri", "mata", "bandhu",
+    "roga", "apamrityu", "jadya", "mrityu2",
+    "vyapara", "krishi", "artha", "samartha",
+    "karagriha", "bandhana",
+    "daya", "sastra", "ratri",
+    "bhagya", "asha", "paradesh",
+)
+
 
 # ─── Worker helpers (module-level — must be picklable) ──────────────
 
@@ -307,8 +320,7 @@ def _master_reading_to_row(
         out["muntha_house"] = pd.NA
         out["munthesha"] = None
         out["muntha_age_years"] = pd.NA
-        for saham_name in ("punya", "vidya", "karma", "yasas",
-                           "putra", "vivaha", "mrityu", "bhratru"):
+        for saham_name in _ALL_SAHAM_NAMES:
             out[f"saham_{saham_name}_sign"] = pd.NA
             out[f"saham_{saham_name}_well_placed"] = pd.NA
     else:
@@ -445,12 +457,8 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         # S-4 Varshaphala stubs
         "muntha_sign": pd.NA, "muntha_house": pd.NA,
         "munthesha": None, "muntha_age_years": pd.NA,
-        **{f"saham_{n}_sign": pd.NA
-           for n in ("punya", "vidya", "karma", "yasas",
-                     "putra", "vivaha", "mrityu", "bhratru")},
-        **{f"saham_{n}_well_placed": pd.NA
-           for n in ("punya", "vidya", "karma", "yasas",
-                     "putra", "vivaha", "mrityu", "bhratru")},
+        **{f"saham_{n}_sign": pd.NA for n in _ALL_SAHAM_NAMES},
+        **{f"saham_{n}_well_placed": pd.NA for n in _ALL_SAHAM_NAMES},
         # S-5 convergence stubs
         **{f"conv_{d}_{f}": v for d in
            ("marriage", "career", "wealth", "health", "children", "dharma")

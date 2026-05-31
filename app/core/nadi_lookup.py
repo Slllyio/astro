@@ -109,73 +109,195 @@ class NadiPatternMatch:
     corpus_status: str
 
 
-# ─── Registry — currently empty ─────────────────────────────────────
+# ─── Registry ───────────────────────────────────────────────────────
 
 
-# The registry maps NadiPatternKey → NadiPatternMatch. Empty for now;
-# populated when a digitised corpus arrives. Loaders would read from
-# data/nadi_corpora/*.jsonl files into this dict at module import.
-_NADI_REGISTRY: Final[Mapping[NadiPatternKey, NadiPatternMatch]] = {}
+# The registry is populated at module import from
+# ``data/knowledge_library/nadi_corpus.jsonl`` (produced by
+# ``app/medini/etl/extract_nadi_corpus.py``). Each row is one Nadi leaf
+# with: source, horoscope_id, asc_sign, planet_signs, events, dasa_at_birth,
+# raw_text. We INDEX leaves by (asc_sign, key-graha-signs) for fast lookup.
 
 
-# Status string returned for every query until a corpus is loaded.
+import json as _json
+import logging as _logging
+from pathlib import Path as _Path
+
+
+_logger = _logging.getLogger(__name__)
+
+
+# Loaded at import: list of all parsed Nadi leaves.
+_NADI_LEAVES: list[dict] = []
+_NADI_LEAVES_BY_ASC: dict[int, list[dict]] = {}
+
+
+def _load_corpus() -> None:
+    """Load Nadi corpus from JSONL on disk. Idempotent — clears + reloads."""
+    global _NADI_LEAVES, _NADI_LEAVES_BY_ASC
+    _NADI_LEAVES = []
+    _NADI_LEAVES_BY_ASC = {}
+    corpus_path = _Path("data/knowledge_library/nadi_corpus.jsonl")
+    if not corpus_path.exists():
+        return
+    try:
+        with corpus_path.open("r", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    leaf = _json.loads(line)
+                    _NADI_LEAVES.append(leaf)
+                    asc = leaf.get("asc_sign")
+                    if asc is not None:
+                        _NADI_LEAVES_BY_ASC.setdefault(asc, []).append(leaf)
+                except _json.JSONDecodeError:
+                    continue
+    except OSError as exc:
+        _logger.warning("Could not load Nadi corpus: %s", exc)
+
+
+_load_corpus()
+
+
+# Status string when no leaf matches the query
+_NO_MATCH_STATUS: Final[str] = (
+    "No matching Nadi leaf for this pattern. The corpus is OCR-extracted "
+    "from palm-leaf manuscripts (currently Saptarishi Nadi Aries Asc "
+    "collection); other lagnas and traditions are sparse. Consider this "
+    "absence as 'no specific Nadi rule applies to this exact pattern' "
+    "rather than 'doctrine is silent on this question'."
+)
+
+
 _EMPTY_CORPUS_STATUS: Final[str] = (
-    "No digitised Nadi corpus is loaded. This module is a scaffold for "
-    "when one exists. Public Nadi-corpus datasets are essentially "
-    "non-existent; the classical tradition keeps palm-leaf manuscripts "
-    "closely held. Use the framework's BPHS+Phaladeepika+Mansagari "
-    "yoga library + convergence engine for actionable predictions."
+    "Nadi corpus not loaded. Run "
+    "`python -m app.medini.etl.extract_nadi_corpus` to populate from "
+    "data/knowledge_library/sources/*."
 )
 
 
 # ─── Public API ─────────────────────────────────────────────────────
 
 
-def lookup_nadi_pattern(key: NadiPatternKey) -> NadiPatternMatch:
+def _planet_signs_match(leaf_signs: Mapping[str, int],
+                        query_signs: Mapping[str, int],
+                        min_planets: int = 4) -> int:
+    """Count grahas that are in the same sign in both leaf and query.
+
+    A "match" requires at least ``min_planets`` graha-sign agreements.
+    Returns the match count (or 0 if below threshold).
+    """
+    matches = sum(
+        1 for p, s in query_signs.items()
+        if leaf_signs.get(p) == s
+    )
+    return matches if matches >= min_planets else 0
+
+
+def lookup_nadi_pattern(
+    key: NadiPatternKey,
+    *,
+    chart_planet_signs: Mapping[str, int] | None = None,
+) -> NadiPatternMatch:
     """Look up a Nadi leaf matching the given pattern key.
 
-    Always returns a NadiPatternMatch — never raises. When no corpus is
-    loaded (current state), returns found=False with a helpful
-    corpus_status string.
+    Always returns a NadiPatternMatch — never raises.
+
+    Matching strategy (in order):
+      1. Asc-sign match required (Nadi books are indexed per-lagna).
+      2. If chart_planet_signs supplied, find the leaf with the highest
+         graha-sign agreement count (≥4 of 9 grahas).
+      3. Falls back to the first leaf with the matching asc_sign.
 
     Args:
         key: NadiPatternKey describing the chart pattern to match.
+        chart_planet_signs: Optional {planet: sign} for refined matching.
+                            When provided, the best-overlap leaf is returned.
 
     Returns:
         NadiPatternMatch with found=True only when a real leaf matched.
     """
-    # Try exact match first
-    if key in _NADI_REGISTRY:
-        return _NADI_REGISTRY[key]
-    # Try less-specific keys (drop optional refinements one by one)
-    fallback_key = NadiPatternKey(
-        asc_sign=key.asc_sign,
-        moon_sign=key.moon_sign,
-        moon_nakshatra=key.moon_nakshatra,
-        atmakaraka=key.atmakaraka,
-        md_lord=key.md_lord,
-        # All refinements dropped
-    )
-    if fallback_key in _NADI_REGISTRY:
-        match = _NADI_REGISTRY[fallback_key]
-        # Mark as lower-specificity match
+    if not _NADI_LEAVES:
         return NadiPatternMatch(
-            found=match.found, reading=match.reading,
-            tradition=match.tradition,
-            key_specificity=0,
-            corpus_status="matched at base specificity (no refinements)",
+            found=False, reading=None, tradition=None,
+            key_specificity=0, corpus_status=_EMPTY_CORPUS_STATUS,
         )
+
+    candidates = _NADI_LEAVES_BY_ASC.get(key.asc_sign, [])
+    if not candidates:
+        return NadiPatternMatch(
+            found=False, reading=None, tradition=None,
+            key_specificity=0,
+            corpus_status=(
+                f"No Nadi leaf for Lagna sign {key.asc_sign}. "
+                f"Corpus has {len(_NADI_LEAVES)} leaves across "
+                f"{len(_NADI_LEAVES_BY_ASC)} lagnas."
+            ),
+        )
+
+    # Refined match: pick the leaf with the highest graha-sign overlap
+    if chart_planet_signs:
+        best_leaf = None
+        best_score = 0
+        for leaf in candidates:
+            leaf_signs = leaf.get("planet_signs", {})
+            score = _planet_signs_match(leaf_signs, chart_planet_signs)
+            if score > best_score:
+                best_score = score
+                best_leaf = leaf
+        if best_leaf is not None and best_score >= 4:
+            return _leaf_to_match(best_leaf, best_score)
+
+    # Fall back: return the first asc-sign-matching leaf as a generic
+    # "this lagna has stored Nadi predictions" hit at low specificity.
+    first_leaf = candidates[0]
+    return _leaf_to_match(first_leaf, key_specificity=1)
+
+
+def _leaf_to_match(leaf: dict, key_specificity: int) -> NadiPatternMatch:
+    """Convert a JSONL leaf dict to a NadiPatternMatch."""
+    source = leaf.get("source", "unknown")
+    hid = leaf.get("horoscope_id", "?")
+    raw = leaf.get("raw_text", "")
+    events = leaf.get("events", {})
+    dasa = leaf.get("dasa_at_birth", "")
+
+    reading_parts = [f"Nadi leaf {source}:H{hid}"]
+    if dasa:
+        reading_parts.append(f"Dasa at birth: {dasa}")
+    if events:
+        reading_parts.append("Events at ages: " + ", ".join(
+            f"{k}={v}" for k, v in events.items()
+        ))
+    if raw:
+        reading_parts.append(f"Source-text excerpt: {raw[:300]}")
+
     return NadiPatternMatch(
-        found=False, reading=None, tradition=None,
-        key_specificity=0, corpus_status=_EMPTY_CORPUS_STATUS,
+        found=True,
+        reading=" | ".join(reading_parts),
+        tradition=source.replace("_", " ").title(),
+        key_specificity=key_specificity,
+        corpus_status=(
+            f"Matched at specificity={key_specificity} "
+            f"({len(_NADI_LEAVES)} leaves loaded across "
+            f"{len(_NADI_LEAVES_BY_ASC)} lagnas)"
+        ),
     )
 
 
 def registry_size() -> int:
-    """Number of Nadi leaves currently loaded. Useful for status display."""
-    return len(_NADI_REGISTRY)
+    """Number of Nadi leaves currently loaded."""
+    return len(_NADI_LEAVES)
 
 
 def is_corpus_loaded() -> bool:
     """True iff at least one Nadi leaf is in the registry."""
-    return len(_NADI_REGISTRY) > 0
+    return len(_NADI_LEAVES) > 0
+
+
+def reload_corpus() -> int:
+    """Reload the corpus from disk. Returns the new leaf count."""
+    _load_corpus()
+    return len(_NADI_LEAVES)

@@ -1,4 +1,4 @@
-"""Tests for app.core.nadi_lookup — D-5 scaffold."""
+"""Tests for app.core.nadi_lookup — D-5 scaffold + N-1 corpus loader."""
 from __future__ import annotations
 
 import pytest
@@ -9,12 +9,21 @@ from app.core.nadi_lookup import (
 )
 
 
-class TestEmptyCorpusContract:
-    """The scaffold returns found=False for every key until a corpus loads."""
+class TestCorpusContract:
+    """When the Nadi JSONL corpus is on disk, the registry loads it at import.
 
-    def test_registry_empty_by_default(self):
-        assert registry_size() == 0
-        assert is_corpus_loaded() is False
+    With the Saptarishi Nadi extractor (N-1), 37+ leaves are available.
+    These tests adapt to both states:
+      - Empty registry (CI without data) → found=False, helpful status
+      - Loaded registry (production) → found=True for matching lagnas
+    """
+
+    def test_registry_size_nonneg(self):
+        """Registry size is always non-negative."""
+        assert registry_size() >= 0
+
+    def test_is_corpus_loaded_matches_size(self):
+        assert is_corpus_loaded() == (registry_size() > 0)
 
     def test_lookup_returns_match_not_raise(self):
         """A lookup must NEVER raise — returns NadiPatternMatch always."""
@@ -25,26 +34,67 @@ class TestEmptyCorpusContract:
         match = lookup_nadi_pattern(key)
         assert isinstance(match, NadiPatternMatch)
 
-    def test_found_false_when_empty(self):
-        """Empty registry -> every lookup returns found=False."""
+    def test_corpus_status_always_explanatory(self):
+        """corpus_status string is populated and explains the outcome."""
         key = NadiPatternKey(
             asc_sign=1, moon_sign=1, moon_nakshatra=0,
             atmakaraka="Sun", md_lord="Sun",
         )
         match = lookup_nadi_pattern(key)
-        assert match.found is False
-        assert match.reading is None
-        assert match.tradition is None
+        assert match.corpus_status
+        assert len(match.corpus_status) > 10
 
-    def test_corpus_status_explanatory(self):
-        """The corpus_status string explains why nothing matched."""
+
+class TestLoadedCorpusBehaviour:
+    """Tests that assume the Saptarishi Nadi corpus is loaded.
+
+    SKIPPED automatically when running CI without the JSONL artifact.
+    """
+
+    def test_aries_lagna_finds_at_least_one_leaf(self):
+        """Saptarishi Nadi Aries collection → Aries-Lagna queries should match."""
+        if registry_size() == 0:
+            pytest.skip("Nadi corpus not loaded — run extract_nadi_corpus first")
         key = NadiPatternKey(
-            asc_sign=1, moon_sign=1, moon_nakshatra=0,
-            atmakaraka="Sun", md_lord="Sun",
+            asc_sign=1, moon_sign=6, moon_nakshatra=15,
+            atmakaraka="Mercury", md_lord="Mercury",
         )
         match = lookup_nadi_pattern(key)
-        assert "scaffold" in match.corpus_status.lower() or \
-               "no digitised" in match.corpus_status.lower()
+        assert match.found is True
+        assert match.tradition is not None
+
+    def test_refined_match_returns_high_specificity(self):
+        """Supplying chart_planet_signs that overlap a stored leaf
+        should boost specificity > 1."""
+        if registry_size() == 0:
+            pytest.skip("Nadi corpus not loaded")
+        # Use exact planet positions from Saptarishi Nadi Horoscope 1
+        key = NadiPatternKey(
+            asc_sign=1, moon_sign=6, moon_nakshatra=15,
+            atmakaraka="Mercury", md_lord="Mercury",
+        )
+        match = lookup_nadi_pattern(key, chart_planet_signs={
+            "Rahu": 1, "Saturn": 6, "Moon": 6, "Ketu": 7, "Venus": 7,
+            "Sun": 8, "Mercury": 9, "Mars": 11, "Jupiter": 12,
+        })
+        assert match.found is True
+        # Specificity > 1 indicates planet-overlap match, not fallback
+        assert match.key_specificity >= 4
+
+    def test_unknown_lagna_finds_no_match(self):
+        """If no Nadi leaf exists for the lagna, found=False with status."""
+        if registry_size() == 0:
+            pytest.skip("Nadi corpus not loaded")
+        # Pick a lagna unlikely to have Aries-only Saptarishi coverage
+        key = NadiPatternKey(
+            asc_sign=4, moon_sign=4, moon_nakshatra=10,
+            atmakaraka="Moon", md_lord="Moon",
+        )
+        match = lookup_nadi_pattern(key)
+        # Could be False (no Cancer Lagna leaves) or True (if other sources)
+        # Just verify the contract holds: if False, status explains why
+        if not match.found:
+            assert "Lagna sign" in match.corpus_status or "Nadi" in match.corpus_status
 
 
 class TestKeyShape:

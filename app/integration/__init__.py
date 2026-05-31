@@ -130,6 +130,12 @@ from app.integration.md_lord_dossier import (
     MDLordDossier,
     build_md_lord_dossier,
 )
+# v1.1.0 M4 — three-pillar bhava synthesis
+from app.integration.three_pillar import (
+    ThreePillarBhava,
+    ThreePillarReading,
+    build_three_pillar_reading,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -237,6 +243,10 @@ __all__ = [
     # v1.1.0 M3 - MD-lord dossier
     "MDLordDossier",
     "build_md_lord_dossier",
+    # v1.1.0 M4 - three-pillar
+    "ThreePillarBhava",
+    "ThreePillarReading",
+    "build_three_pillar_reading",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

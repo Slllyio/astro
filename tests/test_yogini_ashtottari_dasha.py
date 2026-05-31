@@ -12,6 +12,43 @@ from app.core.yogini_ashtottari_dasha import (
 )
 
 
+class TestCycleShiftCorrection:
+    """Regression: active-at returns periods with CURRENT-cycle JDs, not first-cycle."""
+
+    def test_yogini_end_jd_after_target_for_old_native(self):
+        """For a native born >36 years ago, the returned end_jd must be in the future."""
+        birth_jd = 2419465.0  # ~1912 birth
+        target_jd = 2461191.0  # ~2026 (114 years later, ~3.17 cycles)
+        active = yogini_active_at(11, birth_jd, target_jd)
+        assert active is not None
+        assert active.end_jd > target_jd, (
+            f"end_jd ({active.end_jd}) must be after target ({target_jd}) "
+            f"— cycle offset not applied to returned period"
+        )
+        assert active.start_jd <= target_jd, "start_jd must be at or before target"
+
+    def test_ashtottari_end_jd_after_target_for_old_native(self):
+        """Same cycle-shift contract for Ashtottari (108-year cycle)."""
+        birth_jd = 2380000.0  # ~1804 birth (> 108 years before 2026)
+        target_jd = 2461191.0
+        active = ashtottari_active_at(11, birth_jd, target_jd)
+        assert active is not None
+        assert active.end_jd > target_jd
+        assert active.start_jd <= target_jd
+
+    def test_yogini_period_lord_unchanged_by_shift(self):
+        """The cycle shift is a JD offset only — the active yogini name + lord must match
+        what the first-cycle lookup gave."""
+        birth_jd = 2419465.0
+        target_jd_within_first = birth_jd + 100  # 100 days post-birth, first cycle
+        target_jd_after_3_cycles = birth_jd + (3 * 36 * 365.2425) + 100
+        a = yogini_active_at(11, birth_jd, target_jd_within_first)
+        b = yogini_active_at(11, birth_jd, target_jd_after_3_cycles)
+        assert a is not None and b is not None
+        assert a.yogini_name == b.yogini_name
+        assert a.presiding_planet == b.presiding_planet
+
+
 class TestYoginiStartingIndex:
     def test_ashwini_starts_at_index_3(self):
         """Ashwini = nakshatra 0; starting = (0 + 3) % 8 = 3 = Bhramari."""

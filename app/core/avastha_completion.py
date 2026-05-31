@@ -48,7 +48,24 @@ from dataclasses import dataclass
 from typing import Final, Mapping
 
 from app.core.chart_model import Chart
-from app.core.dignity import is_debilitated, is_exalted, is_own_sign
+from app.core.dignity import (
+    is_debilitated, is_exalted, is_own_sign, naisargika_relation,
+)
+
+# Sign → sign-lord mapping (for dispositor classification).
+# Matches the table in app/core/sensitive_points.py — duplicated here to
+# avoid a cross-module import cycle (sensitive_points imports avastha).
+_SIGN_LORDS: Final[Mapping[int, str]] = {
+    1: "Mars", 2: "Venus", 3: "Mercury", 4: "Moon", 5: "Sun", 6: "Mercury",
+    7: "Venus", 8: "Mars", 9: "Jupiter", 10: "Saturn", 11: "Saturn", 12: "Jupiter",
+}
+
+_NATURAL_BENEFICS: Final[frozenset[str]] = frozenset(
+    {"Jupiter", "Venus", "Mercury", "Moon"}
+)
+_NATURAL_MALEFICS: Final[frozenset[str]] = frozenset(
+    {"Sun", "Mars", "Saturn", "Rahu", "Ketu"}
+)
 
 
 @dataclass(frozen=True)
@@ -156,21 +173,60 @@ def _planet_is_combust(
     return diff < effective_orb
 
 
+def _count_aspects_to_planet(
+    target_planet: str, target_sign: int,
+    chart: Chart, aspecting_set: frozenset[str],
+) -> int:
+    """Count how many planets from ``aspecting_set`` aspect the target sign.
+
+    Uses whole-sign drishti (the locked project convention) — opposite +
+    Jupiter's 5/9, Mars' 4/8, Saturn's 3/10, Rahu/Ketu Jupiter-style 5/9
+    (modern Sukra Nadi). Conjunction does NOT count as aspect here.
+    """
+    if target_planet not in chart.planet_signs:
+        return 0
+    count = 0
+    for aspecter in aspecting_set:
+        if aspecter == target_planet:
+            continue
+        a_sign = chart.planet_signs.get(aspecter)
+        if a_sign is None:
+            continue
+        # Opposite-sign aspect (every planet, BPHS Ch.26)
+        if (a_sign - 1 + 6) % 12 + 1 == target_sign:
+            count += 1
+            continue
+        # Special drishti per planet
+        distance = ((target_sign - a_sign) % 12) + 1  # 1..12
+        if aspecter == "Jupiter" and distance in (5, 9):
+            count += 1
+        elif aspecter == "Mars" and distance in (4, 8):
+            count += 1
+        elif aspecter == "Saturn" and distance in (3, 10):
+            count += 1
+        elif aspecter in ("Rahu", "Ketu") and distance in (5, 9):
+            count += 1
+    return count
+
+
 def deeptadi_avastha(
     planet: str, chart: Chart,
 ) -> DeeptadiAvastha:
     """Compute Deeptadi state for one planet.
 
-    Application priority (first match wins):
-      1. Vikala (combust) — overrides everything except own/exalt.
-      2. Bheeta (debilitated + malefic aspect).
-      3. Deepta (exalted).
-      4. Swastha (own sign).
-      5. Khala (enemy sign — simplified: malefic-dispositor sign).
-      6. Drishta (≥2 malefic aspects, not in own/exalt).
-      7. Mudita (friend's sign + benefic aspect).
-      8. Shanta (benefic dispositor, no malefic aspect).
-      9. Sakta (default — neutral).
+    Application priority (first match wins). Each tier returns the state
+    if its preconditions hold; otherwise falls through. All 9 classical
+    states (BPHS Ch.45 + Phaladeepika Ch.4) are reachable.
+
+      1. Deepta    — exalted (overrides combust per most schools).
+      2. Swastha   — own sign.
+      3. Vikala    — combust.
+      4. Bheeta    — debilitated.
+      5. Drishta   — neutral/enemy sign + ≥2 malefic aspects.
+      6. Khala     — in an enemy's (malefic-dispositor) sign.
+      7. Mudita    — in a friend's sign + at least one benefic aspect.
+      8. Shanta    — in a benefic-dispositor sign with no malefic aspects.
+      9. Sakta     — neutral default (no other classification applied).
     """
     sign = chart.planet_signs.get(planet)
     lon = chart.planet_lons.get(planet)
@@ -178,8 +234,7 @@ def deeptadi_avastha(
     if sign is None or lon is None:
         raise ValueError(f"chart missing position data for {planet}")
 
-    # Tier 1: Exalted → Deepta (highest priority — overrides combust per
-    # most schools because exaltation > combust dignity)
+    # Tier 1: Exalted → Deepta
     if is_exalted(planet, sign):
         return DeeptadiAvastha(
             planet=planet, state="Deepta",
@@ -203,7 +258,7 @@ def deeptadi_avastha(
             rationale="Combust by the Sun — disabled state.",
         )
 
-    # Tier 4: Debilitated → Bheeta (if also malefic-aspected) or fall-through
+    # Tier 4: Debilitated → Bheeta
     if is_debilitated(planet, sign):
         return DeeptadiAvastha(
             planet=planet, state="Bheeta",
@@ -211,11 +266,81 @@ def deeptadi_avastha(
             rationale="Debilitated — frightened state.",
         )
 
-    # Default: Sakta (capable but unremarkable)
+    # Dispositor-based states require knowing who rules the planet's sign
+    # and how the planet relates to that lord innately.
+    dispositor = _SIGN_LORDS.get(sign)
+    # Nodes (Rahu/Ketu) don't have naisargika relation entries — they
+    # default to Sakta for the dispositor-based logic.
+    has_dispositor_relation = (
+        dispositor is not None and planet not in ("Rahu", "Ketu")
+        and dispositor not in ("Rahu", "Ketu")
+    )
+
+    malefic_aspect_count = _count_aspects_to_planet(
+        planet, sign, chart, _NATURAL_MALEFICS,
+    )
+    benefic_aspect_count = _count_aspects_to_planet(
+        planet, sign, chart, _NATURAL_BENEFICS,
+    )
+
+    # Tier 5: Drishta — heavily afflicted by malefic aspects (≥2)
+    if malefic_aspect_count >= 2:
+        return DeeptadiAvastha(
+            planet=planet, state="Drishta",
+            strength_multiplier=_DEEPTADI_MULT["Drishta"],
+            rationale=(
+                f"Afflicted by {malefic_aspect_count} malefic aspects "
+                f"— drishta (visibly distressed) state."
+            ),
+        )
+
+    # Tier 6: Khala — in an enemy's sign (natural enemy of the dispositor)
+    if has_dispositor_relation:
+        rel = naisargika_relation(planet, dispositor)
+        if rel == "enemy":
+            return DeeptadiAvastha(
+                planet=planet, state="Khala",
+                strength_multiplier=_DEEPTADI_MULT["Khala"],
+                rationale=(
+                    f"In enemy's sign — {dispositor} is naisargika enemy "
+                    f"of {planet}; khala (wicked) state."
+                ),
+            )
+
+    # Tier 7: Mudita — friend's sign + at least one benefic aspect
+    if has_dispositor_relation:
+        rel = naisargika_relation(planet, dispositor)
+        if rel == "friend" and benefic_aspect_count >= 1:
+            return DeeptadiAvastha(
+                planet=planet, state="Mudita",
+                strength_multiplier=_DEEPTADI_MULT["Mudita"],
+                rationale=(
+                    f"In friend's sign ({dispositor} is friend) and "
+                    f"aspected by {benefic_aspect_count} benefic(s) "
+                    f"— mudita (delighted) state."
+                ),
+            )
+
+    # Tier 8: Shanta — benefic-ruled sign with NO malefic aspects
+    if has_dispositor_relation and dispositor in _NATURAL_BENEFICS and malefic_aspect_count == 0:
+        return DeeptadiAvastha(
+            planet=planet, state="Shanta",
+            strength_multiplier=_DEEPTADI_MULT["Shanta"],
+            rationale=(
+                f"In benefic-ruled sign ({dispositor}) with no malefic "
+                f"aspects — shanta (peaceful) state."
+            ),
+        )
+
+    # Tier 9: Default → Sakta (neutral, no special markers)
     return DeeptadiAvastha(
         planet=planet, state="Sakta",
         strength_multiplier=_DEEPTADI_MULT["Sakta"],
-        rationale="Neutral sign — capable but unremarkable state.",
+        rationale=(
+            f"Neutral placement (dispositor {dispositor}, "
+            f"{malefic_aspect_count} malefic / {benefic_aspect_count} benefic "
+            f"aspects) — sakta (capable) state."
+        ),
     )
 
 

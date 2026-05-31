@@ -81,6 +81,19 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
     """Convert one dossier row to one master_readings.parquet row.
 
     Worker function — must be picklable for multiprocessing.
+
+    Reads optional master-toolkit inputs from the row (added by
+    ``_enrich_dossier_with_master_inputs`` before workers dispatch):
+
+      * ``moon_nakshatra_index`` (0..26)  — activates Yogini, Ashtottari, Tara
+      * ``atmakaraka`` (planet name)      — activates Karakamsa
+      * ``atmakaraka_d9_sign`` (1..12)    — activates Karakamsa
+      * ``day_of_week`` (0..6)            — activates Maandi
+      * ``is_day_birth`` (bool)           — activates Maandi
+      * ``target_jd`` (snapshot day)      — activates dasha-snapshot layers
+
+    Any missing input causes the corresponding layer to gracefully
+    degrade to ``None`` per the composer's contract.
     """
     try:
         chart = Chart.from_dossier_row(row)
@@ -91,12 +104,45 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
         mr = compose_master_reading(
             chart, DKPContext(),
             birth_jd=row.get("birth_jd"),
+            target_jd=row.get("target_jd"),
+            atmakaraka=row.get("atmakaraka"),
+            atmakaraka_d9_sign=_safe_int(row.get("atmakaraka_d9_sign")),
+            moon_nakshatra_index=_safe_int(row.get("moon_nakshatra_index")),
+            day_of_week=_safe_int(row.get("day_of_week")),
+            is_day_birth=_safe_bool(row.get("is_day_birth")),
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("Master compose failed for %s: %s", row.get("person_id"), exc)
         return _empty_master_row(row)
 
     return _master_reading_to_row(chart, row, mr)
+
+
+def _safe_int(v: Any) -> int | None:
+    """Coerce pandas NA / NaN / None → None; valid scalar → int."""
+    if v is None:
+        return None
+    try:
+        if pd.isna(v):
+            return None
+    except (TypeError, ValueError):
+        pass
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _safe_bool(v: Any) -> bool | None:
+    """Coerce pandas NA / NaN / None → None; valid scalar → bool."""
+    if v is None:
+        return None
+    try:
+        if pd.isna(v):
+            return None
+    except (TypeError, ValueError):
+        pass
+    return bool(v)
 
 
 def _master_reading_to_row(
@@ -134,6 +180,16 @@ def _master_reading_to_row(
         "karakamsa_present": mr.karakamsa is not None,
         "karakamsa_sign": mr.karakamsa.karakamsa_sign if mr.karakamsa else None,
         "atmakaraka": mr.karakamsa.atmakaraka if mr.karakamsa else None,
+
+        # Dasha snapshots at target_jd (today by default for bulk ETL)
+        "yogini_active_name": mr.yogini_active.yogini_name if mr.yogini_active else None,
+        "yogini_active_lord": mr.yogini_active.presiding_planet if mr.yogini_active else None,
+        "yogini_active_years_left": (
+            round((mr.yogini_active.end_jd - row.get("target_jd", 0)) / 365.2425, 2)
+            if mr.yogini_active else None
+        ),
+        "ashtottari_active_lord": mr.ashtottari_active.lord if mr.ashtottari_active else None,
+        "ashtottari_applicable": bool(mr.ashtottari_applicable_flag),
 
         # Sensitive points
         "bhrigu_bindu_sign": mr.sensitive_points.bhrigu_bindu.sign,
@@ -228,6 +284,11 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         "karakamsa_present": False,
         "karakamsa_sign": None,
         "atmakaraka": None,
+        "yogini_active_name": None,
+        "yogini_active_lord": None,
+        "yogini_active_years_left": None,
+        "ashtottari_active_lord": None,
+        "ashtottari_applicable": False,
         "bhrigu_bindu_sign": pd.NA,
         "bhrigu_bindu_lon": pd.NA,
         "pranapada_sign": pd.NA,
@@ -252,6 +313,88 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
                    "venus", "saturn"):
         out[f"vimsopaka_{planet}"] = pd.NA
         out[f"avastha_mult_{planet}"] = pd.NA
+    return out
+
+
+def _enrich_dossier_with_master_inputs(
+    dossier: pd.DataFrame, data_dir: Path, snapshot_jd: float,
+) -> pd.DataFrame:
+    """Add the 5 optional master-toolkit input columns to the dossier.
+
+    These columns activate previously-null master_readings layers:
+
+      * ``moon_nakshatra_index``  — derived from ``moon_lon`` (always populates).
+      * ``atmakaraka``            — looked up from jaimini_karakas.parquet.
+      * ``atmakaraka_d9_sign``    — looked up from divisional_charts.parquet (D9 + AK).
+      * ``day_of_week``           — derived from ``birth_jd`` (always populates).
+      * ``is_day_birth``          — heuristic from local-solar-hour (always populates).
+      * ``target_jd``             — constant: snapshot_jd (for Yogini/Ashtottari).
+
+    Pre-computing into the DataFrame keeps the worker function pure
+    (no shared lookup tables across multiprocessing workers).
+    """
+    out = dossier.copy()
+
+    # Always-populated derivations — NaN-safe (some dossier rows have
+    # missing birth_jd / moon_lon for low-precision births).
+    moon_lon_f = pd.to_numeric(out["moon_lon"], errors="coerce")
+    out["moon_nakshatra_index"] = (
+        (moon_lon_f // (360.0 / 27.0)).astype("Int64")
+    )
+
+    # JD -> day-of-week: int(JD + 1.5) % 7 gives 0=Sunday..6=Saturday (Vedic convention)
+    birth_jd_f = pd.to_numeric(out["birth_jd"], errors="coerce")
+    dow_raw = (birth_jd_f + 1.5).floordiv(1).mod(7)  # NaN-safe via pandas ops
+    out["day_of_week"] = dow_raw.astype("Int64")
+
+    # is_day_birth heuristic: local solar hour 6..18 = day. Caveat: not
+    # equation-of-time corrected; near poles this gets wrong. Acceptable
+    # for the bulk corpus (mostly mid-latitude births).
+    birth_lon_f = pd.to_numeric(out["birth_lon"], errors="coerce").fillna(0.0)
+    jd_frac = birth_jd_f.mod(1.0)
+    hour_ut = ((jd_frac + 0.5) * 24.0).mod(24.0)
+    hour_local = (hour_ut + birth_lon_f / 15.0).mod(24.0)
+    is_day = (hour_local >= 6.0) & (hour_local <= 18.0)
+    # Preserve NaN for rows where birth_jd was missing
+    out["is_day_birth"] = is_day.where(~birth_jd_f.isna(), other=pd.NA).astype("boolean")
+
+    # Atmakaraka lookup from jaimini_karakas.parquet
+    jk_path = data_dir / "jaimini_karakas.parquet"
+    if jk_path.exists():
+        jk = pd.read_parquet(jk_path)
+        ak_rows = jk[jk["karaka"] == "AK_Atmakaraka"][["person_id", "planet"]]
+        ak_map = dict(zip(ak_rows["person_id"], ak_rows["planet"]))
+        out["atmakaraka"] = out["person_id"].map(ak_map)
+    else:
+        logger.warning("jaimini_karakas.parquet missing — Karakamsa layer stays null")
+        out["atmakaraka"] = None
+
+    # AK D9 sign lookup from divisional_charts.parquet
+    dc_path = data_dir / "divisional_charts.parquet"
+    if dc_path.exists():
+        d9 = pd.read_parquet(dc_path, filters=[("varga", "==", "D9_Navamsa")])
+        d9_map = {
+            (r.person_id, r.graha): int(r.sign)
+            for r in d9[["person_id", "graha", "sign"]].itertuples(index=False)
+        }
+        out["atmakaraka_d9_sign"] = [
+            d9_map.get((pid, ak)) if ak else None
+            for pid, ak in zip(out["person_id"], out["atmakaraka"])
+        ]
+    else:
+        logger.warning("divisional_charts.parquet missing — Karakamsa layer stays null")
+        out["atmakaraka_d9_sign"] = None
+
+    # Constant target_jd snapshot — Yogini + Ashtottari are dasha-state-AT-this-date
+    out["target_jd"] = snapshot_jd
+
+    n_ak = int(out["atmakaraka"].notna().sum())
+    n_d9 = int(out["atmakaraka_d9_sign"].notna().sum())
+    logger.info(
+        "Enriched %d rows: %d have AK, %d have AK D9 sign, "
+        "Moon nakshatra/DoW/is_day populated for all",
+        len(out), n_ak, n_d9,
+    )
     return out
 
 
@@ -289,6 +432,13 @@ def main() -> int:
     )
     parser.add_argument("--force", action="store_true",
                         help="Rebuild even if output is fresh vs inputs.")
+    parser.add_argument(
+        "--snapshot-jd", type=float, default=None,
+        help=(
+            "Julian Day to use as the target for dasha-snapshot layers "
+            "(Yogini, Ashtottari). Defaults to today's JD."
+        ),
+    )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s | %(message)s")
@@ -296,16 +446,33 @@ def main() -> int:
     from app.medini.etl._freshness import skip_if_fresh
 
     dossier_path = args.data_dir / "person_dossier.parquet"
+    jk_path = args.data_dir / "jaimini_karakas.parquet"
+    d9_path = args.data_dir / "divisional_charts.parquet"
     out_path = args.data_dir / args.output
-    if args.limit is None and skip_if_fresh(
-        out_path, [dossier_path], force=args.force,
-    ):
+    # Tier B inputs are now dependencies — rebuild if any have changed.
+    inputs = [dossier_path] + [p for p in (jk_path, d9_path) if p.exists()]
+    if args.limit is None and skip_if_fresh(out_path, inputs, force=args.force):
         return 0
 
     dossier = pd.read_parquet(dossier_path)
     logger.info("Loaded %d dossier rows from %s", len(dossier), dossier_path)
     if args.limit is not None:
         dossier = dossier.head(args.limit)
+
+    # Tier B enrichment: add the 5 optional master-toolkit inputs so the
+    # composer can activate Karakamsa, Yogini, Ashtottari, and Maandi.
+    # Default snapshot_jd = today (2026-05-31 = JD 2461191.5).
+    snapshot_jd = args.snapshot_jd
+    if snapshot_jd is None:
+        from datetime import datetime, timezone
+        # JD at 00:00 UT today
+        epoch = datetime(2000, 1, 1, 12, tzinfo=timezone.utc)
+        now = datetime.now(timezone.utc)
+        snapshot_jd = 2451545.0 + (now - epoch).total_seconds() / 86400.0
+    logger.info("Using snapshot_jd=%.4f for dasha-snapshot layers", snapshot_jd)
+    dossier = _enrich_dossier_with_master_inputs(
+        dossier, args.data_dir, snapshot_jd,
+    )
 
     start = time.time()
     result = build_master_readings(dossier, workers=args.workers)
@@ -316,9 +483,10 @@ def main() -> int:
         len(result), elapsed, rate,
     )
 
-    result.to_parquet(out_path, index=False)
+    from app.medini.etl._parquet_io import write_parquet_zstd
+    write_parquet_zstd(result, out_path)
     logger.info(
-        "Wrote %d rows x %d cols to %s",
+        "Wrote %d rows x %d cols to %s (ZSTD)",
         len(result), len(result.columns), out_path,
     )
     return 0

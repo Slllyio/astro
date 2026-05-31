@@ -112,6 +112,12 @@ def yogini_active_at(
     """Active Yogini MD at the given JD (with cycle wrap).
 
     Returns None if target_jd is before birth.
+
+    Shifts the returned period's start_jd / end_jd by the number of
+    completed 36-year cycles, so callers see the JDs of the CURRENTLY
+    active period — not the first-cycle period whose lord happens to
+    match. Without this shift, ``end_jd - target_jd`` is negative for
+    any native older than 36 years.
     """
     if target_jd < birth_jd:
         return None
@@ -119,10 +125,18 @@ def yogini_active_at(
     cycle_length_days = cycle[-1].end_jd - birth_jd  # 36 years
     if cycle_length_days <= 0:
         return None
+    n_completed_cycles = int((target_jd - birth_jd) // cycle_length_days)
+    cycle_offset_days = n_completed_cycles * cycle_length_days
     effective_jd = birth_jd + ((target_jd - birth_jd) % cycle_length_days)
     for period in cycle:
         if period.start_jd <= effective_jd < period.end_jd:
-            return period
+            return YoginiPeriod(
+                yogini_name=period.yogini_name,
+                presiding_planet=period.presiding_planet,
+                period_years=period.period_years,
+                start_jd=period.start_jd + cycle_offset_days,
+                end_jd=period.end_jd + cycle_offset_days,
+            )
     return None
 
 
@@ -208,15 +222,29 @@ def ashtottari_sequence(
 def ashtottari_active_at(
     moon_nakshatra_index: int, birth_jd: float, target_jd: float,
 ) -> AshtottariPeriod | None:
-    """Active Ashtottari MD at the given JD (with cycle wrap)."""
+    """Active Ashtottari MD at the given JD (with cycle wrap).
+
+    Shifts the returned period's start_jd / end_jd by completed-cycle
+    offset — same correction as ``yogini_active_at``. Without this,
+    ``end_jd - target_jd`` is negative for any native older than 108
+    years (rare for Ashtottari but the math still matters for
+    consistency with downstream years-left consumers).
+    """
     if target_jd < birth_jd:
         return None
     cycle = ashtottari_sequence(moon_nakshatra_index, birth_jd)
     cycle_length_days = cycle[-1].end_jd - birth_jd  # 108 years
     if cycle_length_days <= 0:
         return None
+    n_completed_cycles = int((target_jd - birth_jd) // cycle_length_days)
+    cycle_offset_days = n_completed_cycles * cycle_length_days
     effective_jd = birth_jd + ((target_jd - birth_jd) % cycle_length_days)
     for period in cycle:
         if period.start_jd <= effective_jd < period.end_jd:
-            return period
+            return AshtottariPeriod(
+                lord=period.lord,
+                period_years=period.period_years,
+                start_jd=period.start_jd + cycle_offset_days,
+                end_jd=period.end_jd + cycle_offset_days,
+            )
     return None

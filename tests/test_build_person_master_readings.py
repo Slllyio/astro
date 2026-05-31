@@ -81,6 +81,47 @@ class TestRowToMasterDict:
         assert result["karakamsa_sign"] is None
         assert result["atmakaraka"] is None
 
+    def test_karakamsa_present_when_ak_and_d9_provided(self):
+        """When the row carries atmakaraka + d9 sign, Karakamsa activates."""
+        row = _fake_dossier_row()
+        row["atmakaraka"] = "Mercury"
+        row["atmakaraka_d9_sign"] = 4
+        result = _row_to_master_dict(row)
+        assert result["karakamsa_present"] is True
+        assert result["karakamsa_sign"] == 4
+        assert result["atmakaraka"] == "Mercury"
+
+    def test_yogini_populated_when_moon_nakshatra_and_target_jd_provided(self):
+        """Yogini snapshot layer activates with moon_nakshatra + target_jd."""
+        row = _fake_dossier_row()
+        row["moon_nakshatra_index"] = 11
+        row["target_jd"] = 2461191.0  # ~2026
+        result = _row_to_master_dict(row)
+        assert result["yogini_active_name"] is not None
+        assert result["yogini_active_lord"] is not None
+        assert result["yogini_active_years_left"] >= 0, (
+            "years_left must be positive — regression on cycle-shift fix"
+        )
+
+    def test_ashtottari_populated_with_inputs(self):
+        """Ashtottari activates with the same inputs as Yogini."""
+        row = _fake_dossier_row()
+        row["moon_nakshatra_index"] = 11
+        row["target_jd"] = 2461191.0
+        result = _row_to_master_dict(row)
+        assert result["ashtottari_active_lord"] is not None
+        # ashtottari_applicable depends on Rahu's position in this fake chart
+        assert isinstance(result["ashtottari_applicable"], bool)
+
+    def test_maandi_populated_with_day_metadata(self):
+        """Maandi activates when day_of_week + is_day_birth provided."""
+        row = _fake_dossier_row()
+        row["day_of_week"] = 5  # Friday
+        row["is_day_birth"] = True
+        result = _row_to_master_dict(row)
+        assert result["maandi_sign"] is not None
+        assert 1 <= result["maandi_sign"] <= 12
+
     def test_sensitive_points_present(self):
         """Bhrigu Bindu + Pranapada always present (no caller input needed)."""
         row = _fake_dossier_row()

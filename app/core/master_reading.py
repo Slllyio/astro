@@ -45,6 +45,9 @@ from typing import Mapping
 
 from app.core.bhava_bala import BhavaStrengthReport, compute_bhava_bala
 from app.core.panchanga import BirthPanchanga, compute_birth_panchanga
+from app.core.special_lagnas import (
+    SpecialLagnasReport, compute_all_special_lagnas,
+)
 from app.core.ashtakavarga_predictive import (
     AshtakavargaPredictive, compute_predictive as compute_ashtakavarga_predictive,
 )
@@ -130,6 +133,10 @@ class MasterReading:
 
     # S-2 part 2 — Intrinsic Bhava Bala per bhava. Always computable from chart.
     bhava_bala: Mapping[int, BhavaStrengthReport] = field(default_factory=dict)
+
+    # S-3 — 5 special lagnas (Bhava/Hora/Ghati/Indu/Sree). IL + SL always
+    # populate from chart-only; BL/HL/GL need birth_jd + birth_lon.
+    special_lagnas: SpecialLagnasReport | None = None
 
 
 _NATURAL_BENEFICS = {"Jupiter", "Venus", "Mercury", "Moon"}
@@ -293,6 +300,7 @@ def compose_master_reading(
     per_planet_varga_signs: Mapping[str, Mapping[str, int]] | None = None,
     varga_pillar_scores: Mapping[int, float] | None = None,
     convergence_domains: tuple[str, ...] | None = None,
+    birth_lon: float | None = None,
 ) -> MasterReading:
     """The framework's master entry point.
 
@@ -435,6 +443,25 @@ def compose_master_reading(
     except Exception:  # noqa: BLE001 — graceful degradation
         bb = {}
     object.__setattr__(mr, "bhava_bala", bb)
+
+    # S-3: Special Lagnas (IL + SL always; BL/HL/GL need birth_jd + birth_lon).
+    if moon_lon is not None and moon_nakshatra_index is not None:
+        try:
+            moon_sign = chart.planet_signs.get("Moon")
+            if moon_sign is not None:
+                sl_report = compute_all_special_lagnas(
+                    asc_sign=int(chart.asc_sign),
+                    asc_lon=float(chart.asc_lon),
+                    sun_lon=float(sun_lon) if sun_lon is not None else 0.0,
+                    moon_sign=int(moon_sign),
+                    moon_lon=float(moon_lon),
+                    moon_nakshatra_index=int(moon_nakshatra_index),
+                    birth_jd=float(birth_jd) if birth_jd is not None else None,
+                    birth_lon=float(birth_lon) if birth_lon is not None else None,
+                )
+                object.__setattr__(mr, "special_lagnas", sl_report)
+        except (ValueError, TypeError):
+            pass
 
     # S-1 + S-5: cross-layer convergence verdicts attached for the
     # caller-specified domains (defaults to CORE_DOMAINS).

@@ -379,6 +379,25 @@ def master_reading_to_dict(mr) -> dict[str, Any]:
             }
             for b, r in (mr.bhava_bala or {}).items()
         },
+        # S-3: 5 Special Lagnas — each is None if uncomputable
+        "special_lagnas": None if mr.special_lagnas is None else {
+            name: (
+                None if sl is None else {
+                    "name": sl.name,
+                    "sign": int(sl.sign),
+                    "longitude": round(float(sl.longitude), 3),
+                    "domain_lens": sl.domain_lens,
+                    "precision": sl.precision,
+                }
+            )
+            for name, sl in (
+                ("bhava_lagna", mr.special_lagnas.bhava_lagna),
+                ("hora_lagna", mr.special_lagnas.hora_lagna),
+                ("ghati_lagna", mr.special_lagnas.ghati_lagna),
+                ("indu_lagna", mr.special_lagnas.indu_lagna),
+                ("sree_lagna", mr.special_lagnas.sree_lagna),
+            )
+        },
         # S-5 — cross-layer convergence verdicts per domain. Top-level
         # synthesis view: every verdict carries weighted_score, label,
         # confidence band, supporting + contradicting layer counts, and

@@ -124,6 +124,7 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
             is_day_birth=_safe_bool(row.get("is_day_birth")),
             per_planet_varga_signs=ppvs,
             varga_pillar_scores=vps,
+            birth_lon=_safe_float(row.get("birth_lon")),
         )
     except Exception as exc:  # noqa: BLE001
         logger.warning("Master compose failed for %s: %s", row.get("person_id"), exc)
@@ -291,6 +292,14 @@ def _master_reading_to_row(
             out[f"bhava_bala_{b}"] = bb.composite_bhava_bala
             out[f"bhava_bala_{b}_label"] = bb.strength_label
 
+    # S-3: 5 Special Lagnas (sign only — full longitude stored in API output)
+    sl_report = mr.special_lagnas
+    for name in ("indu", "sree", "bhava", "hora", "ghati"):
+        sl = None
+        if sl_report is not None:
+            sl = getattr(sl_report, f"{name}_lagna", None)
+        out[f"special_lagna_{name}_sign"] = sl.sign if sl else pd.NA
+
     # S-5: Convergence verdicts per domain — emitted as parallel scalar
     # columns + a list-of-struct evidence column per domain. Schema:
     #   conv_<domain>_label       (str)        e.g. "strongly_supportive"
@@ -410,6 +419,9 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         # S-2 Bhava Bala stubs (12 bhavas × 2 fields)
         **{f"bhava_bala_{b}": pd.NA for b in range(1, 13)},
         **{f"bhava_bala_{b}_label": None for b in range(1, 13)},
+        # S-3 Special Lagnas stubs
+        **{f"special_lagna_{n}_sign": pd.NA
+           for n in ("indu", "sree", "bhava", "hora", "ghati")},
         # S-5 convergence stubs
         **{f"conv_{d}_{f}": v for d in
            ("marriage", "career", "wealth", "health", "children", "dharma")

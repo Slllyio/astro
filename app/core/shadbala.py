@@ -477,6 +477,189 @@ def paksha_bala(
 
 
 # --------------------------------------------------------------------------- #
+# D-4: Kala-bala sub-components — Nathonata + Tribhaga + Vara + Hora          #
+# --------------------------------------------------------------------------- #
+#
+# BPHS 27.20-26 splits Kala-bala into 8 sub-components. We already have
+# paksha_bala. Adding 4 more here (the ones computable from birth time +
+# weekday without a sunrise ephemeris call). The remaining 3 (Abda-bala
+# tied to year-lord, Masa-bala to month-lord, Ayana-bala from declination)
+# are mechanical extensions; they need a date-of-year sense + ephemeris.
+
+# Diurnal planets (Sun-aligned): Sun, Jupiter, Venus → strong at noon
+# Nocturnal planets (Moon-aligned): Moon, Mars, Saturn → strong at midnight
+# Mercury is dual — always gets 60 virupa
+_DIURNAL_PLANETS: frozenset[str] = frozenset({"Sun", "Jupiter", "Venus"})
+_NOCTURNAL_PLANETS: frozenset[str] = frozenset({"Moon", "Mars", "Saturn"})
+
+# Tribhaga-bala: each third of day/night assigned to a planet (BPHS 27.21)
+# Day portions:    1st = Mercury, 2nd = Sun,    3rd = Saturn
+# Night portions:  1st = Moon,    2nd = Venus,  3rd = Mars
+# Jupiter: always +60 (rules Tribhaga of every portion)
+_TRIBHAGA_DAY_LORDS: tuple[str, str, str] = ("Mercury", "Sun", "Saturn")
+_TRIBHAGA_NIGHT_LORDS: tuple[str, str, str] = ("Moon", "Venus", "Mars")
+
+# Weekday lords (Sun=Sun, Moon=Moon, Mars=Tue, Mercury=Wed, Jupiter=Thu,
+# Venus=Fri, Saturn=Sat). Used by Vara-bala + Hora-bala.
+_WEEKDAY_LORD: tuple[str, ...] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
+)
+
+# Hora cycle: starting from the day's lord, the 24 horas cycle through
+# planets in the order Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon.
+# (BPHS 27.24). This is the Chaldean sequence.
+_HORA_SEQUENCE: tuple[str, ...] = (
+    "Saturn", "Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon",
+)
+
+
+def nathonata_bala(planet: str, hour_of_day: float, is_day_birth: bool) -> float:
+    """Day/night strength per BPHS 27.20. Range: 0..60 virupa.
+
+    Diurnal planets (Sun/Jupiter/Venus) peak at noon (hour 12) and fall
+    to 0 at midnight. Nocturnal (Moon/Mars/Saturn) peak at midnight,
+    fall to 0 at noon. Mercury always full 60 (dual).
+
+    Args:
+        planet: graha name.
+        hour_of_day: local solar hour 0..24 (12 = noon, 0/24 = midnight).
+        is_day_birth: True if Sun above horizon at birth. Used as tie-
+                      breaker only — the math is hour-based.
+    """
+    if planet not in _KNOWN_PLANETS:
+        raise ValueError(f"unknown planet: {planet!r}")
+    if planet == "Mercury":
+        return 60.0
+    if planet in {"Rahu", "Ketu"}:
+        return 0.0  # nodes get 0 in this component
+    # Compute "distance from noon" for diurnal, "distance from midnight" for nocturnal
+    # Linear fall-off across 12 hours
+    noon_distance = abs(hour_of_day - 12.0)
+    if noon_distance > 12.0:
+        noon_distance = 24.0 - noon_distance
+    # noon_distance in [0, 12]; diurnal strength = 60 * (12 - distance)/12
+    diurnal_strength = max(0.0, 60.0 * (12.0 - noon_distance) / 12.0)
+    nocturnal_strength = 60.0 - diurnal_strength
+    if planet in _DIURNAL_PLANETS:
+        return diurnal_strength
+    if planet in _NOCTURNAL_PLANETS:
+        return nocturnal_strength
+    return 0.0
+
+
+def tribhaga_bala(planet: str, hour_of_day: float, is_day_birth: bool) -> float:
+    """Tribhaga (3-portion) strength per BPHS 27.21. Range: 0 or 60 virupa.
+
+    Day is split into 3 equal parts (sunrise→sunset assumed 6→18 local):
+      Day 1/3   (6:00-10:00)   → Mercury
+      Day 2/3   (10:00-14:00)  → Sun
+      Day 3/3   (14:00-18:00)  → Saturn
+      Night 1/3 (18:00-22:00)  → Moon
+      Night 2/3 (22:00-02:00)  → Venus
+      Night 3/3 (02:00-06:00)  → Mars
+    Jupiter ALWAYS receives 60 (rules Tribhaga of all portions).
+
+    Simplified day = 12 hours (6:00-18:00); night = 12 hours (18:00-6:00).
+    """
+    if planet not in _KNOWN_PLANETS:
+        raise ValueError(f"unknown planet: {planet!r}")
+    if planet == "Jupiter":
+        return 60.0
+    if planet in {"Rahu", "Ketu"}:
+        return 0.0
+    if 6.0 <= hour_of_day < 18.0:
+        # Day: portion 0/1/2 for hours 6-10/10-14/14-18
+        portion = int((hour_of_day - 6.0) // 4.0)
+        portion = min(portion, 2)
+        ruler = _TRIBHAGA_DAY_LORDS[portion]
+    else:
+        # Night: 18-22 / 22-2 / 2-6
+        night_hour = (hour_of_day - 18.0) % 24.0
+        portion = int(night_hour // 4.0)
+        portion = min(portion, 2)
+        ruler = _TRIBHAGA_NIGHT_LORDS[portion]
+    return 60.0 if planet == ruler else 0.0
+
+
+def vara_bala(planet: str, day_of_week: int) -> float:
+    """Day-lord strength per BPHS 27.23. Range: 0 or 45 virupa.
+
+    The planet ruling the birth weekday gets +45 virupa; all others 0.
+    Vedic convention: 0=Sunday, 1=Monday, ..., 6=Saturday.
+    """
+    if planet not in _KNOWN_PLANETS:
+        raise ValueError(f"unknown planet: {planet!r}")
+    if not 0 <= day_of_week <= 6:
+        raise ValueError(f"day_of_week must be 0..6, got {day_of_week}")
+    return 45.0 if planet == _WEEKDAY_LORD[day_of_week] else 0.0
+
+
+def hora_bala(planet: str, hour_of_day: float, day_of_week: int) -> float:
+    """Hour-lord strength per BPHS 27.24. Range: 0 or 60 virupa.
+
+    Horas cycle from the day-lord at sunrise (assumed 6:00), advancing
+    through the Chaldean sequence (Saturn → Jupiter → Mars → Sun → Venus
+    → Mercury → Moon) every hour. The planet ruling the birth-hour's
+    hora gets +60 virupa; all others 0.
+
+    Args:
+        planet: graha name.
+        hour_of_day: local solar hour 0..24.
+        day_of_week: 0..6 (Sunday=0).
+    """
+    if planet not in _KNOWN_PLANETS:
+        raise ValueError(f"unknown planet: {planet!r}")
+    if not 0 <= day_of_week <= 6:
+        raise ValueError(f"day_of_week must be 0..6, got {day_of_week}")
+    # Compute hours since sunrise (6 AM)
+    hours_since_sunrise = (hour_of_day - 6.0) % 24.0
+    hour_index = int(hours_since_sunrise) % 7
+    # Start the cycle at the day-lord's position in the Chaldean sequence
+    day_lord = _WEEKDAY_LORD[day_of_week]
+    try:
+        start_pos = _HORA_SEQUENCE.index(day_lord)
+    except ValueError:
+        return 0.0
+    ruler = _HORA_SEQUENCE[(start_pos + hour_index) % 7]
+    return 60.0 if planet == ruler else 0.0
+
+
+def kala_bala(
+    planet: str, sun_lon: float, moon_lon: float,
+    *,
+    hour_of_day: float | None = None,
+    is_day_birth: bool | None = None,
+    day_of_week: int | None = None,
+) -> dict[str, float]:
+    """Full Kala-bala aggregate per BPHS 27.20-26.
+
+    Sums the 5 computable sub-components (Paksha + Nathonata + Tribhaga
+    + Vara + Hora). The remaining 3 classical sub-components (Abda,
+    Masa, Ayana) need a year-start / month-start / declination context
+    we don't carry here — they're future extensions.
+
+    Returns:
+        Dict with per-sub-component virupa values plus a 'total' field
+        summing them. Missing optional inputs cause those sub-components
+        to silently return 0 (graceful degradation).
+    """
+    out: dict[str, float] = {
+        "paksha": paksha_bala(planet, sun_lon, moon_lon),
+        "nathonata": 0.0, "tribhaga": 0.0,
+        "vara": 0.0, "hora": 0.0,
+    }
+    if hour_of_day is not None and is_day_birth is not None:
+        out["nathonata"] = nathonata_bala(planet, hour_of_day, is_day_birth)
+        out["tribhaga"] = tribhaga_bala(planet, hour_of_day, is_day_birth)
+    if day_of_week is not None:
+        out["vara"] = vara_bala(planet, day_of_week)
+        if hour_of_day is not None:
+            out["hora"] = hora_bala(planet, hour_of_day, day_of_week)
+    out["total"] = sum(v for k, v in out.items() if k != "total")
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Drik-bala (BPHS 27.38) — Phase 2 simplified                                 #
 # --------------------------------------------------------------------------- #
 #

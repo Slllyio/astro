@@ -131,31 +131,62 @@ _logger = _logging.getLogger(__name__)
 _NADI_LEAVES: list[dict] = []
 _NADI_LEAVES_BY_ASC: dict[int, list[dict]] = {}
 
+# Secondary corpus (N-3): Lagna-keyed Nadi contexts from Deva Keralam +
+# multi-Lagna Saptarishi texts. Lacks full graha positions per leaf so
+# can't refine by chart_planet_signs — but DOES provide per-Lagna Nadi
+# content for all 12 ascendants (closing the Aries-only gap).
+_LAGNA_CONTEXTS: list[dict] = []
+_LAGNA_CONTEXTS_BY_ASC: dict[int, list[dict]] = {}
+
 
 def _load_corpus() -> None:
     """Load Nadi corpus from JSONL on disk. Idempotent — clears + reloads."""
     global _NADI_LEAVES, _NADI_LEAVES_BY_ASC
+    global _LAGNA_CONTEXTS, _LAGNA_CONTEXTS_BY_ASC
     _NADI_LEAVES = []
     _NADI_LEAVES_BY_ASC = {}
+    _LAGNA_CONTEXTS = []
+    _LAGNA_CONTEXTS_BY_ASC = {}
+
+    # Primary corpus: full horoscope leaves
     corpus_path = _Path("data/knowledge_library/nadi_corpus.jsonl")
-    if not corpus_path.exists():
-        return
-    try:
-        with corpus_path.open("r", encoding="utf-8") as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    leaf = _json.loads(line)
-                    _NADI_LEAVES.append(leaf)
-                    asc = leaf.get("asc_sign")
-                    if asc is not None:
-                        _NADI_LEAVES_BY_ASC.setdefault(asc, []).append(leaf)
-                except _json.JSONDecodeError:
-                    continue
-    except OSError as exc:
-        _logger.warning("Could not load Nadi corpus: %s", exc)
+    if corpus_path.exists():
+        try:
+            with corpus_path.open("r", encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        leaf = _json.loads(line)
+                        _NADI_LEAVES.append(leaf)
+                        asc = leaf.get("asc_sign")
+                        if asc is not None:
+                            _NADI_LEAVES_BY_ASC.setdefault(asc, []).append(leaf)
+                    except _json.JSONDecodeError:
+                        continue
+        except OSError as exc:
+            _logger.warning("Could not load Nadi corpus: %s", exc)
+
+    # Secondary corpus (N-3): Lagna-keyed contexts (all 12 Lagnas)
+    ctx_path = _Path("data/knowledge_library/nadi_lagna_contexts.jsonl")
+    if ctx_path.exists():
+        try:
+            with ctx_path.open("r", encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        ctx = _json.loads(line)
+                        _LAGNA_CONTEXTS.append(ctx)
+                        asc = ctx.get("asc_sign")
+                        if asc is not None:
+                            _LAGNA_CONTEXTS_BY_ASC.setdefault(asc, []).append(ctx)
+                    except _json.JSONDecodeError:
+                        continue
+        except OSError as exc:
+            _logger.warning("Could not load Nadi-Lagna-contexts: %s", exc)
 
 
 _load_corpus()
@@ -219,21 +250,27 @@ def lookup_nadi_pattern(
     Returns:
         NadiPatternMatch with found=True only when a real leaf matched.
     """
-    if not _NADI_LEAVES:
+    if not _NADI_LEAVES and not _LAGNA_CONTEXTS:
         return NadiPatternMatch(
             found=False, reading=None, tradition=None,
             key_specificity=0, corpus_status=_EMPTY_CORPUS_STATUS,
         )
 
     candidates = _NADI_LEAVES_BY_ASC.get(key.asc_sign, [])
+    # Fallback to Lagna-keyed contexts when no full horoscope leaf exists
     if not candidates:
+        ctx_candidates = _LAGNA_CONTEXTS_BY_ASC.get(key.asc_sign, [])
+        if ctx_candidates:
+            return _context_to_match(ctx_candidates[0], specificity=1)
         return NadiPatternMatch(
             found=False, reading=None, tradition=None,
             key_specificity=0,
             corpus_status=(
                 f"No Nadi leaf for Lagna sign {key.asc_sign}. "
-                f"Corpus has {len(_NADI_LEAVES)} leaves across "
-                f"{len(_NADI_LEAVES_BY_ASC)} lagnas."
+                f"Primary corpus: {len(_NADI_LEAVES)} leaves across "
+                f"{len(_NADI_LEAVES_BY_ASC)} lagnas. "
+                f"Secondary corpus: {len(_LAGNA_CONTEXTS)} contexts across "
+                f"{len(_LAGNA_CONTEXTS_BY_ASC)} lagnas."
             ),
         )
 
@@ -287,14 +324,62 @@ def _leaf_to_match(leaf: dict, key_specificity: int) -> NadiPatternMatch:
     )
 
 
+def _context_to_match(ctx: dict, specificity: int) -> NadiPatternMatch:
+    """Convert a Lagna-context dict (N-3 corpus) → NadiPatternMatch."""
+    source = ctx.get("source", "unknown")
+    tradition = ctx.get("tradition", source.replace("_", " ").title())
+    nadiamsa = ctx.get("nadiamsa")
+    asc_name = ctx.get("asc_sign_name", "?")
+    text = ctx.get("context_text", "")[:600]
+
+    reading_parts = [f"{tradition} ({asc_name} Lagna)"]
+    if nadiamsa:
+        reading_parts.append(f"Nadiamsa: {nadiamsa}")
+    reading_parts.append(f"Context: {text}")
+
+    return NadiPatternMatch(
+        found=True,
+        reading=" | ".join(reading_parts),
+        tradition=tradition,
+        key_specificity=specificity,
+        corpus_status=(
+            f"Matched in Lagna-context corpus (N-3): "
+            f"{len(_LAGNA_CONTEXTS)} contexts across "
+            f"{len(_LAGNA_CONTEXTS_BY_ASC)} lagnas. "
+            f"Full graha-pattern matching unavailable for this Lagna; "
+            f"returning per-Lagna Nadi material."
+        ),
+    )
+
+
 def registry_size() -> int:
-    """Number of Nadi leaves currently loaded."""
+    """Number of Nadi records currently loaded (primary + Lagna-contexts)."""
+    return len(_NADI_LEAVES) + len(_LAGNA_CONTEXTS)
+
+
+def primary_corpus_size() -> int:
+    """Just the full-horoscope-leaf count (excludes Lagna contexts)."""
     return len(_NADI_LEAVES)
 
 
+def lagna_contexts_size() -> int:
+    """Just the Lagna-keyed-context count (excludes full horoscope leaves)."""
+    return len(_LAGNA_CONTEXTS)
+
+
+def lagnas_covered() -> tuple[int, ...]:
+    """All Lagna signs present in EITHER corpus (1..12)."""
+    return tuple(sorted(set(_NADI_LEAVES_BY_ASC) | set(_LAGNA_CONTEXTS_BY_ASC)))
+
+
+def contexts_for_lagna(asc_sign: int, limit: int = 10) -> tuple[dict, ...]:
+    """Return Lagna-keyed contexts for a given ascendant (N-3 corpus only)."""
+    return tuple(_LAGNA_CONTEXTS_BY_ASC.get(asc_sign, [])[:limit])
+
+
 def is_corpus_loaded() -> bool:
-    """True iff at least one Nadi leaf is in the registry."""
-    return len(_NADI_LEAVES) > 0
+    """True iff at least one Nadi record is in EITHER registry."""
+    return bool(_NADI_LEAVES) or bool(_LAGNA_CONTEXTS)
 
 
 def reload_corpus() -> int:

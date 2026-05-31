@@ -6,7 +6,90 @@ import pytest
 from app.core.nadi_lookup import (
     NadiPatternKey, NadiPatternMatch, is_corpus_loaded,
     lookup_nadi_pattern, registry_size,
+    primary_corpus_size, lagna_contexts_size, lagnas_covered,
+    contexts_for_lagna,
 )
+
+
+class TestN3LagnaContextsCorpus:
+    """N-3 extension: Lagna-keyed contexts from Deva Keralam + multi-Lagna texts.
+
+    Closes the 'only Aries Lagna' gap by harvesting Lagna-section context
+    around every Lagna-mention across:
+      * deva_keralam_vol1/2/3
+      * horoscope_saptarishi_nadi (Kanya/Virgo)
+      * jyotish_saptarishi_nadi
+      * nadi_jyothisha_v1/v2
+      * chandra_nadi_tsgk
+      * nadi_astrological_researches
+    Yields ~1,700 contexts across ALL 12 lagnas.
+    """
+
+    def test_total_records_increased(self):
+        """registry_size() should now include N-3 contexts."""
+        if registry_size() == 0:
+            pytest.skip("No corpus loaded")
+        # Primary + Lagna-contexts; expect 1000+ after N-3 wiring
+        assert registry_size() >= 1000
+
+    def test_primary_corpus_still_distinct_from_contexts(self):
+        """Primary leaves and Lagna-contexts are separate counts."""
+        if not is_corpus_loaded():
+            pytest.skip("No corpus loaded")
+        assert registry_size() == primary_corpus_size() + lagna_contexts_size()
+
+    def test_all_12_lagnas_covered(self):
+        """N-3 closes the gap — all 12 ascendants should now have records."""
+        if registry_size() == 0:
+            pytest.skip("No corpus loaded")
+        covered = set(lagnas_covered())
+        assert covered == set(range(1, 13)), (
+            f"Expected all 12 Lagnas covered after N-3 extraction; "
+            f"got {sorted(covered)}"
+        )
+
+    def test_scorpio_lagna_lookup_now_resolves(self):
+        """Before N-3, asc_sign=8 (Scorpio) returned found=False — broken
+        for the Mainpuri-style chart we centered the framework on."""
+        if lagna_contexts_size() == 0:
+            pytest.skip("Lagna-contexts corpus not loaded")
+        key = NadiPatternKey(
+            asc_sign=8, moon_sign=11, moon_nakshatra=23,
+            atmakaraka="Sun", md_lord="Saturn",
+        )
+        match = lookup_nadi_pattern(key)
+        assert match.found is True
+        assert match.tradition is not None
+        assert "Lagna" in (match.reading or "")
+
+    def test_libra_lagna_has_dense_coverage(self):
+        """Libra is the richest Lagna in Deva Keralam — 267+ contexts."""
+        if lagna_contexts_size() == 0:
+            pytest.skip("Lagna-contexts corpus not loaded")
+        libra_ctxs = contexts_for_lagna(7, limit=300)
+        # Even after dedup, expect 100+ Libra contexts
+        assert len(libra_ctxs) >= 100, (
+            f"Libra should have dense Nadi coverage; got {len(libra_ctxs)}"
+        )
+
+    def test_virgo_lagna_now_resolves_via_horoscope_saptarishi(self):
+        """Virgo (Kanya) is the lightest coverage but still present."""
+        if lagna_contexts_size() == 0:
+            pytest.skip("Lagna-contexts corpus not loaded")
+        virgo_ctxs = contexts_for_lagna(6, limit=30)
+        assert len(virgo_ctxs) >= 1, (
+            "Virgo should have at least horoscope_saptarishi_nadi coverage"
+        )
+
+    def test_contexts_carry_tradition_attribution(self):
+        """Each Lagna context records its source tradition."""
+        if lagna_contexts_size() == 0:
+            pytest.skip("Lagna-contexts corpus not loaded")
+        ctxs = contexts_for_lagna(8, limit=5)
+        for ctx in ctxs:
+            assert ctx.get("tradition"), f"Missing tradition: {ctx}"
+            assert ctx.get("source"), f"Missing source: {ctx}"
+            assert ctx.get("context_text"), f"Missing text: {ctx}"
 
 
 class TestCorpusContract:

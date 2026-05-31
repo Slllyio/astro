@@ -107,10 +107,16 @@ def _row_to_master_dict(row: dict[str, Any]) -> dict[str, Any]:
         vps = row.get("varga_pillar_scores") or None
         if isinstance(vps, dict) and not vps:
             vps = None
+        # birth_jd can be NaN for low-precision births (date-only, no time).
+        # When it is, the dasha-snapshot layers (Yogini, Ashtottari) cannot
+        # compute and must be skipped — pass target_jd=None so they bail
+        # cleanly instead of crashing on float NaN in cycle math.
+        birth_jd = _safe_float(row.get("birth_jd"))
+        target_jd = _safe_float(row.get("target_jd")) if birth_jd is not None else None
         mr = compose_master_reading(
             chart, DKPContext(),
-            birth_jd=row.get("birth_jd"),
-            target_jd=row.get("target_jd"),
+            birth_jd=birth_jd,
+            target_jd=target_jd,
             atmakaraka=row.get("atmakaraka"),
             atmakaraka_d9_sign=_safe_int(row.get("atmakaraka_d9_sign")),
             moon_nakshatra_index=_safe_int(row.get("moon_nakshatra_index")),
@@ -151,6 +157,21 @@ def _safe_bool(v: Any) -> bool | None:
     except (TypeError, ValueError):
         pass
     return bool(v)
+
+
+def _safe_float(v: Any) -> float | None:
+    """Coerce pandas NA / NaN / None → None; valid scalar → float."""
+    if v is None:
+        return None
+    try:
+        if pd.isna(v):
+            return None
+    except (TypeError, ValueError):
+        pass
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
 
 
 def _master_reading_to_row(

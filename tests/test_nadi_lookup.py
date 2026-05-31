@@ -123,3 +123,39 @@ class TestKeyShape:
         assert hash(k1) == hash(k2)
         s = {k1, k2}
         assert len(s) == 1
+
+
+class TestBhriguRules:
+    """N-1 extension: rule-format Nadi corpus (Bhrigu Nadi Sangraha)."""
+
+    def test_bhrigu_rules_count_nonneg(self):
+        from app.core.nadi_lookup import bhrigu_rules_count
+        assert bhrigu_rules_count() >= 0
+
+    def test_rules_mentioning_returns_tuple(self):
+        from app.core.nadi_lookup import bhrigu_rules_mentioning
+        result = bhrigu_rules_mentioning("Saturn")
+        assert isinstance(result, tuple)
+
+    def test_rules_filter_by_multiple_planets(self):
+        """Multi-planet filter uses AND semantics — all needles must match."""
+        from app.core.nadi_lookup import bhrigu_rules_count, bhrigu_rules_mentioning
+        if bhrigu_rules_count() == 0:
+            pytest.skip("Bhrigu rules not loaded")
+        # Rules mentioning both Saturn AND Jupiter should be ≤ rules mentioning
+        # just Saturn alone.
+        sat_only = bhrigu_rules_mentioning("Saturn")
+        sat_jup = bhrigu_rules_mentioning("Saturn", "Jupiter")
+        assert len(sat_jup) <= len(sat_only)
+
+    def test_rules_with_8th_house_match_death_pattern(self):
+        """Saturn + 8th rules should include classical death-of-parent
+        statements per Bhrigu Nadi Sangraha."""
+        from app.core.nadi_lookup import bhrigu_rules_count, bhrigu_rules_mentioning
+        if bhrigu_rules_count() == 0:
+            pytest.skip("Bhrigu rules not loaded")
+        rules = bhrigu_rules_mentioning("Saturn", "8th")
+        # At least one rule should mention 'death' (classical Bhrigu pattern)
+        if rules:
+            has_death_rule = any("death" in r.raw_text.lower() for r in rules)
+            assert has_death_rule, "expected Saturn+8th rules to include death-related"

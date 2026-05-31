@@ -187,6 +187,101 @@ def _extract_dasa_from_text(text: str) -> str:
     return ""
 
 
+# ─── Bhrigu rule-extractor (different format from horoscope-leaves) ──
+
+
+# Bhrigu Nadi Sangraha is structured as CONDITIONAL RULES not horoscope
+# examples. Each rule says "(planetary condition) -> (outcome)". The
+# rule format is more like classical-doctrine shloka than Nadi-leaf.
+# We extract these as a separate corpus: bhrigu_rules.jsonl.
+
+@dataclass
+class BhriguRule:
+    """One Bhrigu Nadi conditional rule."""
+    source: str
+    rule_id: int
+    condition: str               # "When Saturn touches 8th from Sun in 2nd transit"
+    outcome: str                 # "death of the father of the native is denoted"
+    raw_text: str                # the whole sentence for provenance
+
+
+# Sentences with this pattern are likely Bhrigu rules. We require:
+#   - mentions a planet name early
+#   - contains a "shows / denotes / will be / occurs / is denoted" verb
+_BHRIGU_RULE_VERBS = (
+    "shows", "denotes", "will be", "occurs", "is denoted",
+    "is signified", "will have", "indicates", "gives", "becomes",
+    "is going to", "you can be sure",
+)
+
+
+def _split_paragraphs(text: str) -> list[str]:
+    """Split text into paragraphs (multiple consecutive newlines)."""
+    return [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+
+
+def _is_bhrigu_rule_sentence(s: str) -> bool:
+    """Heuristic: sentence mentions a planet AND a rule-verb in ≤300 chars."""
+    if len(s) < 30 or len(s) > 400:
+        return False
+    s_lower = s.lower()
+    # Must mention at least one classical planet
+    planets_mentioned = sum(
+        1 for p in ("sun", "moon", "mars", "mercury", "jupiter",
+                    "venus", "saturn", "rahu", "ketu")
+        if p in s_lower
+    )
+    if planets_mentioned < 1:
+        return False
+    # Must contain a rule-verb
+    if not any(v in s_lower for v in _BHRIGU_RULE_VERBS):
+        return False
+    # Skip TOC / header noise
+    if any(noise in s_lower for noise in
+           ("contents", "table of", "chapter", "page no",
+            "copyright", "all rights", "publisher", "translated by")):
+        return False
+    return True
+
+
+def _split_into_sentences(text: str) -> list[str]:
+    """Split on . / ! / ? followed by whitespace + capital letter."""
+    # Simple heuristic — Bhrigu's sentences are short, period-delimited
+    sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z])", text)
+    return [s.strip() for s in sentences if s.strip()]
+
+
+def extract_bhrigu_rules(source_name: str, file_path: Path) -> list[BhriguRule]:
+    """Extract conditional-rule sentences from a Bhrigu-style Nadi text."""
+    text = file_path.read_text(encoding="utf-8", errors="ignore")
+    paragraphs = _split_paragraphs(text)
+    rules: list[BhriguRule] = []
+    rule_id = 0
+    for para in paragraphs:
+        for s in _split_into_sentences(para):
+            if not _is_bhrigu_rule_sentence(s):
+                continue
+            # Split rule into condition + outcome on common rule-conjunctions
+            # The simplest split: find a verb like "shows / denotes / is denoted"
+            # and split there
+            condition = s
+            outcome = ""
+            for verb in _BHRIGU_RULE_VERBS:
+                m = re.search(rf"\b{re.escape(verb)}\b", s, re.IGNORECASE)
+                if m:
+                    condition = s[: m.start()].strip(" ,;:-")
+                    outcome = s[m.start():].strip()
+                    break
+            rule_id += 1
+            rules.append(BhriguRule(
+                source=source_name, rule_id=rule_id,
+                condition=condition[:300],
+                outcome=outcome[:300] if outcome else s[:300],
+                raw_text=s[:500],
+            ))
+    return rules
+
+
 def _split_into_horoscope_sections(text: str) -> list[tuple[int, str]]:
     """Split a Nadi text into (horoscope_id, section_text) pairs.
 
@@ -297,12 +392,49 @@ def extract_all(
     return (len(all_leaves), n_sources_processed)
 
 
+def extract_bhrigu_all(
+    knowledge_dir: Path, output_path: Path,
+    *, dry_run: bool = False,
+) -> int:
+    """Extract Bhrigu-style rule corpus from rule-format Nadi texts."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    # Sources that use rule-format (not horoscope-format)
+    rule_sources = ("brighu_nadi_sangraha",)
+    all_rules: list[BhriguRule] = []
+    for source_name in rule_sources:
+        source_dir = knowledge_dir / source_name
+        if not source_dir.is_dir():
+            logger.info("Rule source missing on disk: %s", source_name)
+            continue
+        for md_file in sorted(source_dir.glob("*.md")):
+            try:
+                rules = extract_bhrigu_rules(source_name, md_file)
+                all_rules.extend(rules)
+                logger.info("%-30s  %d rules extracted", source_name, len(rules))
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("Failed to parse %s: %s", md_file, exc)
+
+    if not dry_run:
+        with output_path.open("w", encoding="utf-8") as fh:
+            for rule in all_rules:
+                fh.write(json.dumps(asdict(rule), ensure_ascii=False) + "\n")
+        logger.info("Wrote %d Bhrigu rules to %s", len(all_rules), output_path)
+    else:
+        logger.info("DRY RUN — would write %d Bhrigu rules", len(all_rules))
+    return len(all_rules)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--knowledge-dir", type=Path, default=KNOWLEDGE_LIBRARY_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--bhrigu-output", type=Path,
+                        default=Path("data/knowledge_library/bhrigu_rules.jsonl"),
+                        help="Output JSONL for Bhrigu rule-format extraction.")
     parser.add_argument("--source", type=str, default=None,
-                        help="Process only this one source (default: all known Nadi sources).")
+                        help="Process only this one source (horoscope-format only).")
+    parser.add_argument("--skip-bhrigu", action="store_true",
+                        help="Skip the Bhrigu rule extraction.")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
@@ -316,7 +448,15 @@ def main() -> int:
     n_leaves, n_sources = extract_all(
         args.knowledge_dir, args.output, sources, dry_run=args.dry_run,
     )
-    logger.info("DONE: %d Nadi leaves across %d sources", n_leaves, n_sources)
+    logger.info("Horoscope-format: %d leaves across %d sources",
+                n_leaves, n_sources)
+
+    if not args.skip_bhrigu:
+        n_rules = extract_bhrigu_all(
+            args.knowledge_dir, args.bhrigu_output, dry_run=args.dry_run,
+        )
+        logger.info("Rule-format (Bhrigu): %d rules", n_rules)
+
     return 0
 
 

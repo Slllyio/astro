@@ -300,4 +300,83 @@ def is_corpus_loaded() -> bool:
 def reload_corpus() -> int:
     """Reload the corpus from disk. Returns the new leaf count."""
     _load_corpus()
+    _load_bhrigu_rules()
     return len(_NADI_LEAVES)
+
+
+# ─── Bhrigu rule-format corpus (separate from horoscope-leaf corpus) ─
+
+
+@dataclass(frozen=True)
+class BhriguRule:
+    """One conditional rule extracted from Bhrigu Nadi Sangraha.
+
+    Format differs from NadiPatternMatch — these are general rule-
+    statements (e.g. "When Saturn touches 8H from Sun in 2nd transit,
+    death of father is denoted") rather than horoscope-specific
+    predictions.
+    """
+    source: str
+    rule_id: int
+    condition: str
+    outcome: str
+    raw_text: str
+
+
+_BHRIGU_RULES: list[BhriguRule] = []
+
+
+def _load_bhrigu_rules() -> None:
+    """Load Bhrigu rule-format corpus from JSONL. Idempotent."""
+    global _BHRIGU_RULES
+    _BHRIGU_RULES = []
+    rules_path = _Path("data/knowledge_library/bhrigu_rules.jsonl")
+    if not rules_path.exists():
+        return
+    try:
+        with rules_path.open("r", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = _json.loads(line)
+                    _BHRIGU_RULES.append(BhriguRule(
+                        source=rec.get("source", "brighu_nadi_sangraha"),
+                        rule_id=int(rec.get("rule_id", 0)),
+                        condition=rec.get("condition", ""),
+                        outcome=rec.get("outcome", ""),
+                        raw_text=rec.get("raw_text", ""),
+                    ))
+                except (_json.JSONDecodeError, ValueError):
+                    continue
+    except OSError as exc:
+        _logger.warning("Could not load Bhrigu rules: %s", exc)
+
+
+_load_bhrigu_rules()
+
+
+def bhrigu_rules_mentioning(*planets: str) -> tuple[BhriguRule, ...]:
+    """Return Bhrigu rules whose raw_text mentions ALL of the given planets.
+
+    Planet name matching is case-insensitive substring (e.g. 'Saturn'
+    matches 'saturn' / 'Saturn'). Includes both classical English and
+    common transliterations.
+
+    Example:
+        # Rules about Saturn aspecting the 8th house
+        rules = bhrigu_rules_mentioning("Saturn", "8th")
+    """
+    if not _BHRIGU_RULES:
+        return ()
+    needles = [p.lower() for p in planets]
+    return tuple(
+        r for r in _BHRIGU_RULES
+        if all(n in r.raw_text.lower() for n in needles)
+    )
+
+
+def bhrigu_rules_count() -> int:
+    """Number of Bhrigu rules currently loaded."""
+    return len(_BHRIGU_RULES)

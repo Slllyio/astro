@@ -28,7 +28,7 @@ from typing import Any
 from pathlib import Path
 
 from fastapi import APIRouter, Body, Form, HTTPException, Query, Request, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
@@ -577,6 +577,125 @@ async def narrate_route(body: dict = Body(...)) -> dict[str, Any]:
             detail=f"narrate failed: {exc}",
         ) from exc
     return result.model_dump(mode="json")
+
+
+@router.post("/stream-generate")
+async def stream_generate_route(body: GenerateAndEnhanceRequest = Body(...)):
+    """Streaming variant of generate-and-enhance.
+
+    Emits Server-Sent Events (SSE) so the client sees progressive output:
+
+        event: layer
+        data: {"layer": "core", "status": "running"}
+
+        event: layer
+        data: {"layer": "core", "status": "complete", "elapsed_ms": 612}
+
+        event: layer
+        data: {"layer": "dkp", "status": "running"}
+        ...
+        event: complete
+        data: {"layers_completed": [...], "total_elapsed_ms": 4321}
+
+    Each layer is a separate event; the response stays open until the
+    pipeline completes or errors.
+    """
+    import time
+
+    async def _event_generator():
+        from app.integration import (
+            annotate_with_gap_modules, enhance,
+            build_dkp_context_from_reading, modulate_all_domains,
+        )
+        from app.reading.proforma import compute as track_a_compute
+        from app.reading.schema import ChartInput
+
+        def _emit(event: str, payload: dict[str, Any]) -> str:
+            import json as _json
+            return f"event: {event}\ndata: {_json.dumps(payload)}\n\n"
+
+        layers_completed: list[str] = []
+        t0 = time.time()
+
+        # Layer 1: core reading
+        yield _emit("layer", {"layer": "core", "status": "running"})
+        t_layer = time.time()
+        try:
+            ci = ChartInput(
+                dob=body.dob, time=body.time, tz=body.tz,
+                lat=body.lat, lon=body.lon,
+            )
+            reading = await asyncio.to_thread(track_a_compute, ci, enrich=body.enrich)
+        except Exception as exc:
+            yield _emit("error", {"layer": "core", "detail": str(exc)})
+            return
+        layer_ms = int((time.time() - t_layer) * 1000)
+        layers_completed.append("core")
+        yield _emit("layer", {
+            "layer": "core", "status": "complete", "elapsed_ms": layer_ms,
+            "schema_version": (reading.get("meta") or {}).get("schema_version"),
+        })
+
+        # Layer 2: DKP enhance
+        yield _emit("layer", {"layer": "dkp_enhance", "status": "running"})
+        t_layer = time.time()
+        try:
+            integrated = enhance(reading)
+            reading = integrated.reading
+        except Exception as exc:
+            yield _emit("error", {"layer": "dkp_enhance", "detail": str(exc)})
+            return
+        layer_ms = int((time.time() - t_layer) * 1000)
+        layers_completed.append("dkp_enhance")
+        yield _emit("layer", {
+            "layer": "dkp_enhance", "status": "complete", "elapsed_ms": layer_ms,
+            "translations_attached": integrated.dkp_translations_summary.total_records_attached,
+        })
+
+        # Layer 3: DKP modulate
+        yield _emit("layer", {"layer": "dkp_modulate", "status": "running"})
+        t_layer = time.time()
+        try:
+            ctx = build_dkp_context_from_reading(reading)
+            modulated = modulate_all_domains(reading, dkp_context=ctx)
+        except Exception as exc:
+            yield _emit("error", {"layer": "dkp_modulate", "detail": str(exc)})
+            return
+        layer_ms = int((time.time() - t_layer) * 1000)
+        layers_completed.append("dkp_modulate")
+        yield _emit("layer", {
+            "layer": "dkp_modulate", "status": "complete", "elapsed_ms": layer_ms,
+            "domains_modulated": len(modulated.per_domain),
+            "context_completeness": modulated.context_completeness,
+        })
+
+        # Layer 4: Gap modules
+        yield _emit("layer", {"layer": "gap_modules", "status": "running"})
+        t_layer = time.time()
+        try:
+            gap = annotate_with_gap_modules(reading)
+        except Exception as exc:
+            yield _emit("error", {"layer": "gap_modules", "detail": str(exc)})
+            return
+        layer_ms = int((time.time() - t_layer) * 1000)
+        layers_completed.append("gap_modules")
+        yield _emit("layer", {
+            "layer": "gap_modules", "status": "complete", "elapsed_ms": layer_ms,
+            "available_count": gap.available_count,
+            "skipped_count": gap.skipped_count,
+        })
+
+        # Done
+        total_ms = int((time.time() - t0) * 1000)
+        yield _emit("complete", {
+            "layers_completed": layers_completed,
+            "total_elapsed_ms": total_ms,
+        })
+
+    return StreamingResponse(
+        _event_generator(),
+        media_type="text/event-stream",
+    )
 
 
 @router.post("/generate-and-enhance")

@@ -346,6 +346,61 @@ class TestWebUIRoutes:
         assert resp.status_code == 422
 
 
+class TestStreamingRoute:
+    """v0.9.0 streaming endpoint emits SSE events per layer."""
+
+    def test_stream_endpoint_returns_event_stream_content_type(self):
+        with client.stream(
+            "POST", "/reading/integrated/stream-generate",
+            json={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": 12.97, "lon": 77.59, "enrich": False,
+            },
+        ) as resp:
+            assert resp.status_code == 200
+            assert "text/event-stream" in resp.headers["content-type"]
+
+    def test_stream_emits_layer_and_complete_events(self):
+        """Stream should emit multiple 'layer' events and a final 'complete'."""
+        events: list[str] = []
+        with client.stream(
+            "POST", "/reading/integrated/stream-generate",
+            json={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": 12.97, "lon": 77.59, "enrich": False,
+            },
+        ) as resp:
+            for line in resp.iter_lines():
+                if line.startswith("event:"):
+                    events.append(line.split(":", 1)[1].strip())
+        # At least: 4 layer-running + 4 layer-complete + 1 final complete
+        assert events.count("layer") >= 8
+        assert "complete" in events
+
+    def test_stream_layer_payloads_have_elapsed_ms(self):
+        """Each layer's 'complete' event payload should include elapsed_ms."""
+        import json as _json
+        complete_payloads: list[dict] = []
+        with client.stream(
+            "POST", "/reading/integrated/stream-generate",
+            json={
+                "dob": "1990-07-15", "time": "12:00", "tz": "+05:30",
+                "lat": 12.97, "lon": 77.59, "enrich": False,
+            },
+        ) as resp:
+            for line in resp.iter_lines():
+                if line.startswith("data:"):
+                    try:
+                        p = _json.loads(line.split(":", 1)[1].strip())
+                        if p.get("status") == "complete":
+                            complete_payloads.append(p)
+                    except _json.JSONDecodeError:
+                        pass
+        assert len(complete_payloads) >= 4
+        for p in complete_payloads:
+            assert "elapsed_ms" in p
+
+
 class TestGenerateAndEnhanceRoute:
     """POST /reading/integrated/generate-and-enhance is a wrapper around
     Track A's compute() + enhance(). We smoke-test with --no-enrich for speed."""

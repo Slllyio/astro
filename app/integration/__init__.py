@@ -117,6 +117,14 @@ from app.integration.dasha_now import (
     pd_at_jd,
     pd_at_now,
 )
+# v1.1.0 M2 — transit engine
+from app.integration.transit_engine import (
+    TransitReport,
+    TransitStateView,
+    transit_at_now,
+    transit_signs_at,
+    transit_state_at,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -215,6 +223,12 @@ __all__ = [
     "ad_at_now",
     "pd_at_jd",
     "pd_at_now",
+    # v1.1.0 M2 - transit engine
+    "TransitReport",
+    "TransitStateView",
+    "transit_at_now",
+    "transit_signs_at",
+    "transit_state_at",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

@@ -1,34 +1,41 @@
-"""Build the Jaimini-karakas table (8-karaka scheme per Narasimha Rao).
+"""Build the Jaimini-karakas table (strict 7-karaka scheme — Jaimini Sutras).
 
-For each person, rank the 7 visible planets + Rahu (longitude inverted)
-by degree-within-sign to derive the 8 karaka assignments:
+For each person, rank ONLY the 7 visible planets by degree-within-sign to
+derive the 7 karaka assignments:
 
   AK   Atmakaraka       self / soul
   AmK  Amatyakaraka     mind / advisor
   BK   Bhratrukaraka    siblings
   MK   Matrukaraka      mother
-  PK   Putrakaraka      children (primary)
+  PK   Putrakaraka      children
   GK   Gnatikaraka      relatives
   DK   Darakaraka       spouse
-  PK2  PutraKaraka2     secondary / 8th karaka
 
-Ketu is excluded from karaka derivation per the locked 8-karaka scheme.
+**Rahu and Ketu are EXCLUDED** — they are chayagrahas (shadow grahas) and
+per strict Jaimini doctrine (BV Raman, Sanjay Rath, the dominant traditional
+pandit consensus, and the Jaimini Sutras strict reading) they cannot
+signify the soul or any karaka role. AK can NEVER be Rahu or Ketu.
+
+The earlier 8-karaka extension (adding Rahu with longitude-inverted as
+"PK2_PutraKaraka2") was a Narasimha-Rao-modern-minority interpretation
+and is doctrinally rejected by the project as of 2026-06-01 — see the
+`feedback_chara_karakas_7_not_8.md` memory note + CLAUDE.md doctrinal lock.
 
 ## Output schema (jaimini_karakas.parquet)
 
   person_id        TEXT (FK → persons)
-  karaka           TEXT one of the 8 labels above
-  planet           TEXT  Sun..Saturn or Rahu
+  karaka           TEXT one of the 7 labels above
+  planet           TEXT  Sun..Saturn (never Rahu/Ketu)
   sign             INT   1..12
   sign_name        TEXT  zodiac sign name
   degree_in_sign   FLOAT 0..30
   natal_house      INT   1..12 from person's natal Lagna
   natal_houses_ruled  TEXT  comma-separated houses this planet rules natally
-  ranking_score    FLOAT degree_in_sign (or 30-degree for Rahu); the value used to rank
+  ranking_score    FLOAT degree_in_sign; the value used to rank
 
 ## Scale
 
-75,149 persons × 8 karakas = 601,192 rows. Tiny parquet (~10-20 MB).
+75,149 persons × 7 karakas = 526,043 rows. Tiny parquet (~9-18 MB).
 
 Usage:
     python -m app.medini.etl.build_jaimini_karakas
@@ -51,23 +58,24 @@ from app.medini.ml.person_profile import (
 logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_DIR: Final = Path("app/medini/data")
+# Strict 7-karaka Jaimini scheme — 7 visible planets only.
+# Rahu/Ketu are excluded as chayagrahas (shadow grahas cannot signify soul).
+# See CLAUDE.md locked decision + feedback_chara_karakas_7_not_8.md memory.
 _KARAKA_PLANETS: Final[tuple[str, ...]] = (
-    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",  # 7 visible
-    "Rahu",  # 8th — degree inverted
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
 )
 
 
 def _karakas_for_chart_row(row: pd.Series) -> list[dict[str, Any]]:
-    """Compute the 8 karaka assignments for one charts.parquet row."""
+    """Compute the 7 karaka assignments for one charts.parquet row."""
     asc_sign = int(row["asc_sign"])
     candidates: list[tuple[str, float, int, float]] = []
     for graha in _KARAKA_PLANETS:
         lon = float(row[f"{graha.lower()}_lon"])
         sign = int(row[f"{graha.lower()}_sign"])
         deg = lon - (sign - 1) * 30.0
-        score = (30.0 - deg) if graha == "Rahu" else deg
-        candidates.append((graha, score, sign, deg))
-    # Descending by score.
+        candidates.append((graha, deg, sign, deg))
+    # Descending by degree-in-sign; highest gets AK.
     candidates.sort(key=lambda t: t[1], reverse=True)
     out: list[dict[str, Any]] = []
     for i, (planet, score, sign, deg) in enumerate(candidates):
@@ -94,7 +102,7 @@ def build_jaimini_karakas(charts: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for _, row in charts.iterrows():
         rows.extend(_karakas_for_chart_row(row))
-    logger.info("Built %d karaka rows for %d persons (8 per person)",
+    logger.info("Built %d karaka rows for %d persons (7 per person)",
                 len(rows), len(charts))
     return pd.DataFrame(rows)
 

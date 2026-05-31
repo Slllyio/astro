@@ -64,7 +64,9 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     ("event_class_taxonomy", "event_class_taxonomy.parquet"),
     # Divisional charts (Shodashavarga: D1 + 14 sub-vargas) per person.
     ("divisional_charts", "divisional_charts.parquet"),
-    # Jaimini 8-karaka assignments (AK, AmK, ..., DK, PK2) per person.
+    # Jaimini 7-karaka assignments (AK, AmK, BK, MK, PK, GK, DK) per person.
+    # Strict Jaimini scheme — Rahu/Ketu excluded as chayagrahas per
+    # CLAUDE.md doctrinal lock + feedback_chara_karakas_7_not_8.md.
     ("jaimini_karakas", "jaimini_karakas.parquet"),
     # Wide-format per-person dossier — identity + natal + karaka in one row.
     ("person_dossier", "person_dossier.parquet"),

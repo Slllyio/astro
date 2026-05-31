@@ -103,7 +103,8 @@ def karakamsa_lagna(
     """Compute the Karakamsa Lagna reading.
 
     Args:
-        atmakaraka: the AK planet (Sun..Saturn or Rahu).
+        atmakaraka: the AK planet (Sun..Saturn only — never Rahu/Ketu
+            per strict 7-karaka Jaimini, CLAUDE.md doctrinal lock).
         atmakaraka_d1_sign: AK's natal D1 sign.
         atmakaraka_d9_sign: AK's D9 (Navamsha) sign — this is the
             Karakamsa Lagna.

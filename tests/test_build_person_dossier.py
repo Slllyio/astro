@@ -93,17 +93,27 @@ def fake_chart() -> pd.DataFrame:
 
 @pytest.fixture
 def fake_karakas() -> pd.DataFrame:
-    """8 karaka rows for ADB:T1 covering all _JAIMINI_KARAKA_LABELS."""
+    """7 karaka rows for ADB:T1 covering all _JAIMINI_KARAKA_LABELS.
+
+    Strict 7-karaka Jaimini: Rahu/Ketu excluded. The chart fixture's
+    planet degrees sorted desc:
+      Mercury 22.96 → AK
+      Saturn  16.95 → AmK
+      Venus   16.58 → BK
+      Moon    14.59 → MK
+      Jupiter 10.27 → PK
+      Mars     2.62 → GK
+      Sun      0.33 → DK
+    """
     rows = []
     planets_per_label = {
-        "AK_Atmakaraka": ("Mercury", 6, "Virgo", 22.96, 1, "7,10"),
-        "AmK_Amatyakaraka": ("Saturn", 5, "Leo", 16.95, 12, "2,3"),
-        "BK_Bhratrukaraka": ("Venus", 7, "Libra", 16.58, 2, "6,11"),
-        "MK_Matrukaraka": ("Moon", 6, "Virgo", 14.59, 1, "8"),
-        "PK_Putrakaraka": ("Jupiter", 10, "Capricorn", 10.27, 5, "1,4"),
-        "GK_Gnatikaraka": ("Rahu", 2, "Taurus", 26.42, 9, ""),
-        "DK_Darakaraka": ("Mars", 9, "Sagittarius", 2.62, 4, "5,12"),
-        "PK2_PutraKaraka2": ("Sun", 6, "Virgo", 0.33, 1, "9"),
+        "AK_Atmakaraka":    ("Mercury", 6, "Virgo",       22.96, 1, "7,10"),
+        "AmK_Amatyakaraka": ("Saturn",  5, "Leo",         16.95, 12, "2,3"),
+        "BK_Bhratrukaraka": ("Venus",   7, "Libra",       16.58, 2, "6,11"),
+        "MK_Matrukaraka":   ("Moon",    6, "Virgo",       14.59, 1, "8"),
+        "PK_Putrakaraka":   ("Jupiter", 10, "Capricorn",  10.27, 5, "1,4"),
+        "GK_Gnatikaraka":   ("Mars",    9, "Sagittarius",  2.62, 4, "5,12"),
+        "DK_Darakaraka":    ("Sun",     6, "Virgo",        0.33, 1, "9"),
     }
     for label, (pl, sign, sname, deg, house, ruled) in planets_per_label.items():
         rows.append({
@@ -182,14 +192,27 @@ class TestNatalColumns:
 
 
 class TestKarakaColumns:
-    def test_all_8_karaka_prefixes_present(self, fake_karakas):
-        """All 8 karaka prefixes (ak, amk, bk, mk, pk, gk, dk, pk2) must
-        populate the 6 per-karaka attribute columns."""
+    def test_all_7_karaka_prefixes_present(self, fake_karakas):
+        """All 7 karaka prefixes (ak, amk, bk, mk, pk, gk, dk) must
+        populate the 6 per-karaka attribute columns.
+
+        Strict 7-karaka Jaimini (no Rahu/Ketu) per CLAUDE.md doctrinal lock.
+        """
         cols = _karaka_columns(fake_karakas)
-        for prefix in ["ak", "amk", "bk", "mk", "pk", "gk", "dk", "pk2"]:
+        for prefix in ["ak", "amk", "bk", "mk", "pk", "gk", "dk"]:
             for attr in ["_planet", "_sign", "_sign_name", "_degree_in_sign",
                          "_natal_house", "_houses_ruled"]:
                 assert f"{prefix}{attr}" in cols, f"missing {prefix}{attr}"
+
+    def test_no_pk2_in_strict_7_karaka_scheme(self, fake_karakas):
+        """PK2 was the 8th karaka in the rejected 8-karaka scheme — must
+        not appear in the strict 7-karaka output."""
+        cols = _karaka_columns(fake_karakas)
+        for attr in ["_planet", "_sign", "_sign_name", "_degree_in_sign",
+                     "_natal_house", "_houses_ruled"]:
+            assert f"pk2{attr}" not in cols, (
+                f"pk2{attr} should not exist in strict 7-karaka output"
+            )
 
     def test_ak_planet_is_mercury(self, fake_karakas):
         """For the Agatha-like fixture, AK = Mercury (highest deg_in_sign)."""
@@ -198,11 +221,21 @@ class TestKarakaColumns:
         assert cols["ak_sign_name"] == "Virgo"
         assert cols["ak_natal_house"] == 1
 
-    def test_dk_planet_is_mars(self, fake_karakas):
-        """DK = Darakaraka (spouse), 7th in the ranking → Mars in fixture."""
+    def test_dk_planet_is_sun(self, fake_karakas):
+        """DK = Darakaraka (spouse), 7th in the strict 7-karaka ranking.
+        With Rahu excluded, Sun (lowest deg 0.33°) takes DK slot, not Mars."""
         cols = _karaka_columns(fake_karakas)
-        assert cols["dk_planet"] == "Mars"
-        assert cols["dk_natal_house"] == 4
+        assert cols["dk_planet"] == "Sun"
+
+    def test_no_rahu_or_ketu_in_any_karaka(self, fake_karakas):
+        """Rahu/Ketu are chayagrahas — they CANNOT signify any karaka.
+        Lock per CLAUDE.md + feedback_chara_karakas_7_not_8.md memory."""
+        cols = _karaka_columns(fake_karakas)
+        for prefix in ["ak", "amk", "bk", "mk", "pk", "gk", "dk"]:
+            planet = cols.get(f"{prefix}_planet")
+            assert planet not in ("Rahu", "Ketu"), (
+                f"{prefix}_planet={planet!r} — nodes cannot be karakas"
+            )
 
     def test_missing_karakas_yield_nulls(self):
         """Dropping all karaka rows leaves the wide block with None values."""
@@ -248,8 +281,11 @@ class TestBuildPersonDossier:
         assert {"person_id", "name", "corpus", "birth_jd"} <= cols
         # Natal
         assert {"asc_sign_name", "sun_nakshatra", "moon_houses_ruled"} <= cols
-        # Karaka
-        assert {"ak_planet", "dk_planet", "pk2_sign_name"} <= cols
+        # Karaka (strict 7-karaka — no PK2; gk is the 7th karaka)
+        assert {"ak_planet", "dk_planet", "gk_sign_name"} <= cols
+        assert "pk2_sign_name" not in cols, (
+            "pk2 was the 8th karaka in the rejected 8-karaka scheme"
+        )
 
     def test_skips_persons_without_chart(
         self, fake_person, fake_karakas,

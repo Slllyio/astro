@@ -2,7 +2,7 @@
 
 Materialises the comprehensive Agatha-style profile into a flat queryable
 parquet — each person becomes a single ~140-column row that bundles
-identity, full natal D1 chart with nakshatras, and Jaimini 8-karaka
+identity, full natal D1 chart with nakshatras, and Jaimini 7-karaka
 assignments. The atomic Silver tables (persons, charts, jaimini_karakas,
 divisional_charts) remain the source of truth; this dossier is a denormalised
 Gold-equivalent for fast single-table reads.
@@ -32,10 +32,10 @@ Natal planet block (9 grahas × 9 attrs ≈ 81 cols):
   {graha}_natal_house, {graha}_nakshatra, {graha}_nakshatra_pada,
   {graha}_nakshatra_lord, {graha}_houses_ruled
 
-Jaimini karaka block (8 karakas × 6 attrs = 48 cols):
+Jaimini karaka block (7 karakas × 6 attrs = 42 cols):
   {prefix}_planet, {prefix}_sign, {prefix}_sign_name,
   {prefix}_degree_in_sign, {prefix}_natal_house, {prefix}_houses_ruled
-  where {prefix} ∈ {ak, amk, bk, mk, pk, gk, dk, pk2}
+  where {prefix} ∈ {ak, amk, bk, mk, pk, gk, dk}  (strict 7-karaka Jaimini)
 
 ## Scale
 
@@ -122,11 +122,11 @@ def _natal_columns(chart_row: pd.Series) -> dict[str, Any]:
 
 
 def _karaka_columns(karaka_rows: pd.DataFrame) -> dict[str, Any]:
-    """Pivot the 8 karaka rows for one person into a wide column block."""
+    """Pivot the 7 karaka rows for one person into a wide column block."""
     out: dict[str, Any] = {}
     by_label = {str(r["karaka"]): r for _, r in karaka_rows.iterrows()}
     for label in _JAIMINI_KARAKA_LABELS:
-        prefix = label.split("_", 1)[0].lower()  # "ak", "amk", ..., "pk2"
+        prefix = label.split("_", 1)[0].lower()  # "ak", "amk", ..., "dk"
         r = by_label.get(label)
         if r is None:
             out[f"{prefix}_planet"] = None

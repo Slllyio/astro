@@ -7,7 +7,7 @@ Pulls EVERYTHING the doctrine cares about for one person:
      nakshatra + pada + lord, house from Lagna, houses_ruled
   C. Divisional charts (14 vargas): per-varga per-planet sign + house +
      houses_ruled
-  D. Jaimini 8-karaka scheme: AK, AmK, BK, MK, PK, GK, DK, + 8th karaka
+  D. Jaimini 7-karaka scheme: AK, AmK, BK, MK, PK, GK, DK (strict; no Rahu/Ketu)
   E. Active dasha at any date
   F. Events list with active dasha + full transit context
 
@@ -58,18 +58,20 @@ _SIGN_RULERS: Final[dict[int, str]] = {
     9: "Jupiter", 10: "Saturn", 11: "Saturn", 12: "Jupiter",
 }
 
-# Jaimini 8-karaka labels in classical order (Putra Karaka in 8th slot is
-# the secondary Putra Karaka per Rao's 8-karaka scheme; primary PK is at
-# index 4).
+# Strict 7-karaka Jaimini scheme (BV Raman, Sanjay Rath, Jaimini Sutras).
+# Rahu/Ketu are chayagrahas (shadow grahas) — they cannot signify the soul
+# or any karaka role. AK can NEVER be Rahu or Ketu. The earlier 8-karaka
+# extension (Rahu degree-inverted as PK2_PutraKaraka2) is a Narasimha-Rao
+# modern-minority interpretation that the project doctrinally rejects.
+# See CLAUDE.md locked decision + feedback_chara_karakas_7_not_8.md.
 _JAIMINI_KARAKA_LABELS: Final[tuple[str, ...]] = (
     "AK_Atmakaraka",      # Self / soul
     "AmK_Amatyakaraka",   # Mind / advisor
     "BK_Bhratrukaraka",   # Siblings
     "MK_Matrukaraka",     # Mother
-    "PK_Putrakaraka",     # Children (primary)
+    "PK_Putrakaraka",     # Children
     "GK_Gnatikaraka",     # Relatives
     "DK_Darakaraka",      # Spouse
-    "PK2_PutraKaraka2",   # 8th karaka (8-karaka scheme)
 )
 
 
@@ -95,21 +97,18 @@ def _compute_full_natal_chart(jd: float, lat: float, lon: float) -> dict:
 
 
 def _compute_jaimini_karakas(planets: dict) -> list[dict]:
-    """Rank the 7 visible planets by degree-within-sign, with Rahu's
-    longitude inverted (30 - lon), to derive the 8-karaka scheme.
+    """Rank the 7 visible planets by degree-within-sign to derive the
+    strict 7-karaka Jaimini scheme.
 
-    Ketu is excluded from karaka derivation per the locked Jaimini scheme
-    (Narasimha Rao 8-karaka per project doctrine-decisions.md D-1).
+    Rahu and Ketu are EXCLUDED (chayagrahas cannot signify the soul).
+    AK can never be Rahu or Ketu. See CLAUDE.md doctrinal lock.
     """
     ranked: list[tuple[str, float]] = []
     for graha in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         d = planets[graha]["degree_in_sign"]
         ranked.append((graha, d))
-    # Rahu uses inverted longitude (30 - degree_in_sign).
-    rahu_d = planets["Rahu"]["degree_in_sign"]
-    ranked.append(("Rahu", 30.0 - rahu_d))
 
-    # Sort descending by ranking score; highest gets AK.
+    # Sort descending by degree-in-sign; highest gets AK.
     ranked.sort(key=lambda kv: kv[1], reverse=True)
 
     out: list[dict] = []
@@ -218,7 +217,7 @@ def person_profile(
     Returns a structured dict with keys:
       - identity:        name, DOB, time, place, source
       - natal_chart:     ascendant, 9 planets with all metadata
-      - jaimini_karakas: 8-karaka assignments
+      - jaimini_karakas: 7-karaka assignments (strict Jaimini)
       - divisional_charts: 15 vargas (D1..D60) with per-planet detail
     """
     persons = pd.read_parquet(data_dir / "persons.parquet")

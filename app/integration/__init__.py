@@ -141,6 +141,11 @@ from app.integration.yoga_effects import (
     YogaEffect,
     translate_yoga_effects,
 )
+# v1.1.0 M6 — Arudha image synthesis
+from app.integration.arudha_synthesis import (
+    ArudhaSynthesis,
+    synthesise_arudha,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -255,6 +260,9 @@ __all__ = [
     # v1.1.0 M5 - yoga effects
     "YogaEffect",
     "translate_yoga_effects",
+    # v1.1.0 M6 - Arudha synthesis
+    "ArudhaSynthesis",
+    "synthesise_arudha",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

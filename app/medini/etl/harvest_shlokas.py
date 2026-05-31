@@ -166,6 +166,12 @@ SHLOKA_SOURCES: Final[tuple[str, ...]] = (
     "intro_astrology_row_1900",      # NEW
     "astro_self_instructor_row_1893", # NEW — old classic by Suryanarain Rao
     "three_hundred_combinations_raman_1947",  # NEW — alt edition
+    # ─── F-3: Final-frontier scrapes (English-OCR alts + bilingual) ──
+    "dictionary_astrology_hindus",            # NEW — DLI dictionary
+    "brihat_samhita_sastri_1946",             # NEW — Sastri 1946 EN OCR (fixes DLI gap)
+    "jataka_tatva_mahadeva_1941",             # NEW — Mahadeva's Jataka Tatva
+    "phaladeepika_sastri_1950",               # NEW — Phaladeepika Sastri 1950 alt
+    "vidyamadhaviyam_english",                # NEW — English-only filter of Vidyamadhaviyam
 )
 
 
@@ -423,6 +429,12 @@ _SOURCE_AUTHORITY: Final[dict[str, int]] = {
     "meena_nadi":                  57,
     "decoding_nadiamsha":          58,
     "aia_yearly_digest_2006":      77,
+    # F-3: Final-frontier scrapes
+    "dictionary_astrology_hindus": 78,
+    "brihat_samhita_sastri_1946":  12,  # equal-authority alt of brihat_samhita_sastri
+    "jataka_tatva_mahadeva_1941":  41,  # near jataka_tattvam_sastri/natesa
+    "phaladeepika_sastri_1950":     3,  # equal-authority alt of phaladeepika (Sastri)
+    "vidyamadhaviyam_english":      8,  # near vidyamadhaviyam authority (English-only filter)
 }
 
 

@@ -72,19 +72,32 @@ DEFAULT_OUTPUT: Final = Path("data/knowledge_library/classical_shloka_rules.json
 # Sources with substantial scraped content for shloka harvesting.
 # Ranked roughly by classical authority (BPHS/Phaladeepika/Brihat Jataka first).
 SHLOKA_SOURCES: Final[tuple[str, ...]] = (
-    "brihat_jataka",                 # 19K lines
-    "phaladeepika",                  # 15K lines
-    "brihat_samhita_iyer",           # 18K lines
-    "saravali",                      # 11K lines
+    # Foundational classical (highest authority)
+    "brihat_jataka",                 # 19K lines — Varahamihira natal
+    "phaladeepika",                  # 15K lines — Mantreshvara
+    "saravali",                      # 11K lines — Kalyana Varma
+    "jaimini_sutras",                # Jaimini canonical
+    "brihat_samhita_iyer",           # 18K lines — Varahamihira mundane+omens
+    "brihat_samhita_dli",            # 30K lines — DLI edition (NEW C-1)
+    "brihat_samhita_sastri",         # 43K lines — Sastri edition (NEW C-1)
+    # Modern syntheses
     "crux_of_vedic_astrology_rath",  # 24K lines
     "advance_techniques_kn_rao",
     "studies_jaimini_raman",
-    "jaimini_sutras",
-    "ashtakavarga_patel",
-    "art_practice_braha",
     "fundamentals_vedic_astrology",
     "fundamentals_vedic_behari_v1",
     "astrology_seers_frawley",
+    # Specialty
+    "ashtakavarga_patel",
+    "art_practice_braha",
+    # Nadi tradition (rule-style — harvests differently from Bhrigu lookup)
+    "deva_keralam_vol1",             # 25K lines (NEW C-1)
+    "deva_keralam_vol2",             # 29K lines (NEW C-1)
+    "deva_keralam_vol3",             # 35K lines (NEW C-1)
+    "nadi_jyothisha_v1",             # 3.8K lines (NEW C-1)
+    "nadi_jyothisha_v2",             # 3.7K lines (NEW C-1)
+    "nadi_jyotisha_vol1",            # 1.8K lines (NEW C-1)
+    "nadi_astrological_researches",  # 3.4K lines (NEW C-1)
 )
 
 
@@ -207,9 +220,23 @@ def _is_shloka_rule_sentence(s: str) -> bool:
 
 
 def _split_into_sentences(text: str) -> list[str]:
-    """Split on sentence-end punctuation."""
-    # Collapse internal newlines within paragraphs first
-    text = re.sub(r"(?<=[a-z])\n(?=[a-z])", " ", text)
+    """Split on sentence-end punctuation, OCR-tolerant.
+
+    C-2 fix: heavily OCR'd texts (Brihat Samhita Iyer, DLI editions)
+    have double-spaces between words, broken line-wraps, and missing
+    spaces after periods. Normalize before splitting.
+    """
+    # Collapse double+ spaces (OCR artifact)
+    text = re.sub(r"  +", " ", text)
+    # Join hyphen-broken words across line breaks
+    text = re.sub(r"(\w)-\n(\w)", r"\1\2", text)
+    # Join paragraphs broken mid-sentence (lowercase to lowercase across \n)
+    text = re.sub(r"(?<=[a-z,])\n(?=[a-z])", " ", text)
+    # Insert space after period if missing (e.g. ".A " → ". A ")
+    text = re.sub(r"\.(?=[A-Z][a-z])", ". ", text)
+    # Standardise multi-newlines to paragraph break
+    text = re.sub(r"\n{2,}", "\n\n", text)
+    # Now split — both ". X" and ".\nX" patterns work
     sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z])", text)
     return [s.strip() for s in sentences if s.strip()]
 
@@ -248,12 +275,92 @@ def extract_from_file(source_name: str, file_path: Path) -> list[ShlokaRule]:
     return rules
 
 
+# C-3: source-authority order for dedup tie-breaking (lower = preferred)
+_SOURCE_AUTHORITY: Final[dict[str, int]] = {
+    # Foundational classical — preferred when duplicates collapse
+    "brihat_jataka":               1,
+    "phaladeepika":                2,
+    "saravali":                    3,
+    "jaimini_sutras":              4,
+    "brihat_samhita_iyer":         5,
+    "brihat_samhita_sastri":       6,
+    "brihat_samhita_dli":          7,
+    # Nadi-tradition rule texts (still classical, but specialized)
+    "deva_keralam_vol1":           8,
+    "deva_keralam_vol2":           9,
+    "deva_keralam_vol3":          10,
+    "nadi_jyothisha_v1":          11,
+    "nadi_jyothisha_v2":          12,
+    "nadi_jyotisha_vol1":         13,
+    "nadi_astrological_researches": 14,
+    # Modern syntheses (lower priority for dedup; cite earlier sources)
+    "crux_of_vedic_astrology_rath": 20,
+    "advance_techniques_kn_rao":   21,
+    "studies_jaimini_raman":       22,
+    "fundamentals_vedic_astrology": 23,
+    "fundamentals_vedic_behari_v1": 24,
+    "astrology_seers_frawley":     25,
+    # Specialty
+    "ashtakavarga_patel":          30,
+    "art_practice_braha":          31,
+}
+
+
+def _dedup_key(rule: ShlokaRule) -> str:
+    """C-3 dedup key: first 60 chars of normalized raw_text.
+
+    Lowercase, collapse all whitespace to single spaces, strip punctuation
+    edges. Two rules with the same key are considered duplicates.
+    """
+    text = rule.raw_text.lower()
+    text = re.sub(r"\s+", " ", text)
+    # Strip leading/trailing punctuation + quotes
+    text = re.sub(r"^[\W_]+|[\W_]+$", "", text)
+    return text[:60]
+
+
+def _dedup_rules(rules: list[ShlokaRule]) -> list[ShlokaRule]:
+    """Collapse duplicate rules across sources, keeping highest-authority.
+
+    Returns the deduped list. The kept rule's source = the source ranked
+    earliest in _SOURCE_AUTHORITY.
+    """
+    by_key: dict[str, ShlokaRule] = {}
+    n_collapsed = 0
+    for rule in rules:
+        key = _dedup_key(rule)
+        if not key or len(key) < 20:
+            # Too short to dedup reliably — keep as-is with a unique key
+            by_key[f"_unique_{rule.source}_{rule.rule_id}"] = rule
+            continue
+        existing = by_key.get(key)
+        if existing is None:
+            by_key[key] = rule
+            continue
+        # Duplicate: keep the higher-authority source
+        existing_rank = _SOURCE_AUTHORITY.get(existing.source, 99)
+        new_rank = _SOURCE_AUTHORITY.get(rule.source, 99)
+        if new_rank < existing_rank:
+            by_key[key] = rule
+        n_collapsed += 1
+    if n_collapsed:
+        logger.info(
+            "Dedup collapsed %d duplicate rules (kept %d unique)",
+            n_collapsed, len(by_key),
+        )
+    return list(by_key.values())
+
+
 def extract_all(
     knowledge_dir: Path, output_path: Path,
     sources: tuple[str, ...] = SHLOKA_SOURCES,
-    *, dry_run: bool = False,
+    *, dry_run: bool = False, dedup: bool = True,
 ) -> int:
-    """Harvest shlokas from all foundational sources to a single JSONL."""
+    """Harvest shlokas from all foundational sources to a single JSONL.
+
+    With dedup=True (default), rules whose first-60-char-normalized
+    text matches are collapsed to one (highest-authority source kept).
+    """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     all_rules: list[ShlokaRule] = []
     for source_name in sources:
@@ -278,6 +385,12 @@ def extract_all(
                 logger.warning("Failed to parse %s: %s", md_file, exc)
         logger.info("%-34s  %5d rules harvested", source_name, source_rules)
 
+    if dedup:
+        all_rules = _dedup_rules(all_rules)
+        # Re-number rule_ids contiguously
+        for i, r in enumerate(all_rules, start=1):
+            r.rule_id = i
+
     if not dry_run:
         with output_path.open("w", encoding="utf-8") as fh:
             for rule in all_rules:
@@ -295,6 +408,8 @@ def main() -> int:
     parser.add_argument("--source", type=str, default=None,
                         help="Process only this one source.")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--no-dedup", action="store_true",
+                        help="Skip cross-source deduplication.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s | %(message)s")
@@ -304,7 +419,10 @@ def main() -> int:
     else:
         sources = SHLOKA_SOURCES
 
-    n = extract_all(args.knowledge_dir, args.output, sources, dry_run=args.dry_run)
+    n = extract_all(
+        args.knowledge_dir, args.output, sources,
+        dry_run=args.dry_run, dedup=not args.no_dedup,
+    )
     logger.info("DONE: %d shloka rules harvested", n)
     return 0
 

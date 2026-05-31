@@ -63,18 +63,38 @@ class TestLookups:
 class TestLoadedCorpusBehaviour:
     """Tests assuming the JSONL corpus is on disk (skip if absent)."""
 
-    def test_corpus_has_2k_plus_rules(self):
-        """After running harvest_shlokas, expect 2000+ rules."""
+    def test_corpus_has_5k_plus_rules(self):
+        """After C-1 + C-2 expansion (Deva Keralam + BS DLI/Sastri + Nadi
+        Jyothisha + OCR-tolerant splitter), expect 5000+ rules."""
         if corpus_size() == 0:
             pytest.skip("Shloka corpus not loaded — run harvest_shlokas first")
-        assert corpus_size() >= 2000
+        assert corpus_size() >= 5000
 
     def test_multiple_sources_loaded(self):
         if corpus_size() == 0:
             pytest.skip("Corpus not loaded")
         sources = sources_present()
-        # We expect at least a few foundational sources
-        assert len(sources) >= 5
+        # C-1 expansion: expect 15+ distinct sources
+        assert len(sources) >= 10
+
+    def test_deva_keralam_sources_present(self):
+        """C-1: Deva Keralam vols 1/2/3 added to SHLOKA_SOURCES."""
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        sources = set(sources_present())
+        for vol in ("deva_keralam_vol1", "deva_keralam_vol2", "deva_keralam_vol3"):
+            assert vol in sources, f"expected {vol} after C-1 expansion"
+
+    def test_brihat_samhita_iyer_has_rules_after_ocr_fix(self):
+        """C-2: OCR-tolerant splitter unlocks Brihat Samhita Iyer content.
+        Previously 6 rules; after fix, expect 100+."""
+        if corpus_size() == 0:
+            pytest.skip("Corpus not loaded")
+        iyer = rules_for_source("brihat_samhita_iyer", limit=500)
+        assert len(iyer) >= 100, (
+            f"C-2 OCR fix should yield 100+ rules from Brihat Samhita Iyer, "
+            f"got {len(iyer)}"
+        )
 
     def test_brihat_jataka_present(self):
         if corpus_size() == 0:

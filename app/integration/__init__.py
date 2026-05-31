@@ -52,6 +52,27 @@ from app.integration.gap_annotator import (
     annotate_with_gap_modules,
     chart_from_reading,
 )
+# v0.4.0 comparator suite
+from app.integration.vimshottari_compare import (
+    VimshottariCurrentMDReport,
+    compare_vimshottari_current_md,
+)
+from app.integration.yoga_compare import (
+    YogaComparisonReport,
+    compare_yoga_detection,
+)
+from app.integration.shadbala_compare import (
+    ShadbalaComparisonReport,
+    compare_shadbala,
+)
+from app.integration.d9_compare import (
+    D9ComparisonReport,
+    compare_d9_signs,
+)
+from app.integration.argala_drishti_compare import (
+    ArgalaDrishtiComparisonReport,
+    compare_argala_drishti,
+)
 
 __all__ = [
     # DKP enhancer (v0.1.0)
@@ -74,4 +95,15 @@ __all__ = [
     "GapModuleEntry",
     "annotate_with_gap_modules",
     "chart_from_reading",
+    # v0.4.0 comparator suite
+    "VimshottariCurrentMDReport",
+    "compare_vimshottari_current_md",
+    "YogaComparisonReport",
+    "compare_yoga_detection",
+    "ShadbalaComparisonReport",
+    "compare_shadbala",
+    "D9ComparisonReport",
+    "compare_d9_signs",
+    "ArgalaDrishtiComparisonReport",
+    "compare_argala_drishti",
 ]

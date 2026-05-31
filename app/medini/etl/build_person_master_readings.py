@@ -278,11 +278,21 @@ def main() -> int:
         "--output", type=str, default="master_readings.parquet",
         help="Output parquet filename (under data-dir).",
     )
+    parser.add_argument("--force", action="store_true",
+                        help="Rebuild even if output is fresh vs inputs.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s | %(message)s")
 
+    from app.medini.etl._freshness import skip_if_fresh
+
     dossier_path = args.data_dir / "person_dossier.parquet"
+    out_path = args.data_dir / args.output
+    if args.limit is None and skip_if_fresh(
+        out_path, [dossier_path], force=args.force,
+    ):
+        return 0
+
     dossier = pd.read_parquet(dossier_path)
     logger.info("Loaded %d dossier rows from %s", len(dossier), dossier_path)
     if args.limit is not None:
@@ -297,7 +307,6 @@ def main() -> int:
         len(result), elapsed, rate,
     )
 
-    out_path = args.data_dir / args.output
     result.to_parquet(out_path, index=False)
     logger.info(
         "Wrote %d rows x %d cols to %s",

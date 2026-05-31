@@ -70,6 +70,10 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     ("person_dossier", "person_dossier.parquet"),
     # Wide-format per-event dossier — event + dasha + 9 transits in one row.
     ("event_dossier", "event_dossier.parquet"),
+    # Astrologer's-lens framework reading (9-phase, base) per person.
+    ("readings", "readings.parquet"),
+    # Master 13-layer reading per person (BV Raman / KN Rao / Sanjay Rath toolkit).
+    ("master_readings", "master_readings.parquet"),
 )
 
 
@@ -80,6 +84,7 @@ _OPTIONAL_SILVER: Final[set[str]] = {
     "person_id_map", "event_class_taxonomy", "dasha_pd_windows",
     "event_transits", "divisional_charts", "jaimini_karakas",
     "person_dossier", "event_dossier",
+    "readings", "master_readings",
 }
 
 
@@ -293,10 +298,34 @@ def _create_gold_views(con: duckdb.DuckDBPyConnection) -> None:
         """)
         survival_views = ("v_event_survival",)
 
+    # ---------------- Master reading + dossier join ----------------
+    has_master = con.execute(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'master_readings'"
+    ).fetchone()[0]
+    has_pdossier = con.execute(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'person_dossier'"
+    ).fetchone()[0]
+    master_views: tuple[str, ...] = ()
+    if has_master and has_pdossier:
+        # Single-query entry point for the bulk reading pipeline — pairs
+        # every person's 13-layer master reading with their wide dossier.
+        # Replaces the previous two-step pattern of calling
+        # `pd.read_parquet(master_readings)` then joining client-side.
+        con.execute("""
+            CREATE OR REPLACE VIEW v_person_master AS
+            SELECT
+                m.*,
+                p.birth_date, p.birth_time, p.birth_lat, p.birth_lon,
+                p.birth_jd, p.source AS person_corpus
+            FROM master_readings m
+            JOIN person_dossier p USING (person_id)
+        """)
+        master_views = ("v_person_master",)
+
     for v in (
         ("v_persons_canonical", "v_chart_with_person")
         + heterograph_views + dasha_tree_views + survival_views
-        + bridge_views + transit_views
+        + bridge_views + transit_views + master_views
     ):
         n = con.execute(f"SELECT COUNT(*) FROM {v}").fetchone()[0]
         logger.info("Created Gold view    %-20s (%d rows)", v, n)

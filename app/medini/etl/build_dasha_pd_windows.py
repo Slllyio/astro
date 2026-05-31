@@ -154,18 +154,26 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=None,
                         help="Process only the first N AD rows (smoke test).")
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--force", action="store_true",
+                        help="Rebuild even if output is fresh vs inputs.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s | %(message)s")
 
-    dw = pd.read_parquet(args.data_dir / INPUT_FILE)
+    from app.medini.etl._freshness import skip_if_fresh
+
+    in_path = args.data_dir / INPUT_FILE
+    out_path = args.data_dir / OUTPUT_FILE
+    if args.limit is None and skip_if_fresh(out_path, [in_path], force=args.force):
+        return 0
+
+    dw = pd.read_parquet(in_path)
     if args.limit is not None:
         dw = dw.head(args.limit)
     logger.info("Loaded %d AD windows", len(dw))
 
     pd_df = build_pd_windows(dw, workers=args.workers)
-    out_path = args.data_dir / OUTPUT_FILE
     pd_df.to_parquet(out_path, index=False)
     logger.info("Wrote %d rows to %s", len(pd_df), out_path)
     return 0

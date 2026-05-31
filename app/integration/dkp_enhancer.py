@@ -166,6 +166,12 @@ def _extract_bhava_planet_pairs(text: str) -> list[tuple[int, str]]:
 
     Returns deduplicated ``(bhava, planet)`` tuples. A planet only pairs with
     a bhava if both appear in the same string; we do NOT cross strings.
+
+    NOTE: this returns candidate pairs only. Callers must verify against
+    actual chart placement (``planet_houses[planet] == bhava``) before
+    treating the pair as a real "planet IN bhava" claim. Without that
+    verification, lordship references ("4H lord Saturn") get falsely
+    matched as placement records.
     """
     bhavas = {int(m.group(1)) for m in _BHAVA_PATTERN.finditer(text)}
     if not bhavas:
@@ -176,6 +182,51 @@ def _extract_bhava_planet_pairs(text: str) -> list[tuple[int, str]]:
             for bhava in bhavas:
                 pairs.add((bhava, planet))
     return sorted(pairs)
+
+
+# Phrases that mean LORDSHIP (the planet rules that bhava) rather than
+# PLACEMENT (the planet is in that bhava). When any of these appears
+# in the finding text near the planet, we MUST NOT treat the regex
+# match as a placement claim.
+_LORDSHIP_INDICATORS: tuple[str, ...] = (
+    "lord", "ruler", "ruled by", "ruled-by", "owns",
+    "rules", "rulership", "house_lord", "bhava_lord",
+)
+
+
+def _looks_like_lordship_reference(text: str, planet: str) -> bool:
+    """Return True if ``text`` mentions ``planet`` in a lordship context
+    rather than a placement context.
+
+    Heuristics:
+    - "4H lord Saturn" — lordship
+    - "5H lord Jupiter in Virgo" — lordship (planet is in Virgo, NOT in 5H)
+    - "house_lord=Saturn" — lordship (the structured evidence form)
+    - "Saturn in 4H" — placement
+    - "Saturn occupies 4H" — placement
+    """
+    lower = text.lower()
+    planet_lower = planet.lower()
+    # If "house_lord=<planet>" or "bhava_lord=<planet>" appears, it's lordship.
+    if (f"house_lord={planet_lower}" in lower
+            or f"bhava_lord={planet_lower}" in lower
+            or f"lord={planet_lower}" in lower):
+        return True
+    # If the word "lord" / "rules" / "owns" appears within 30 chars of the planet,
+    # treat as lordship reference.
+    idx = 0
+    while True:
+        p_idx = lower.find(planet_lower, idx)
+        if p_idx < 0:
+            break
+        window_start = max(0, p_idx - 40)
+        window_end = min(len(lower), p_idx + len(planet_lower) + 40)
+        window = lower[window_start:window_end]
+        for indicator in _LORDSHIP_INDICATORS:
+            if indicator in window:
+                return True
+        idx = p_idx + 1
+    return False
 
 
 def _name_variants(segment: str) -> list[str]:
@@ -210,7 +261,10 @@ def _name_variants(segment: str) -> list[str]:
     return out
 
 
-def _lookup_for_finding(finding: dict[str, Any]) -> list[TranslationRecord]:
+def _lookup_for_finding(
+    finding: dict[str, Any],
+    planet_houses: dict[str, int] | None = None,
+) -> list[TranslationRecord]:
     """Run all three lookup strategies for a single Finding dict.
 
     Returns deduplicated ``TranslationRecord`` instances, preserving first-seen
@@ -247,8 +301,24 @@ def _lookup_for_finding(finding: dict[str, Any]) -> list[TranslationRecord]:
                 _record(rec)
 
     # Strategy 3: bhava+planet pair extraction over rule + evidence text.
+    # Only attach a bhava_N_planet_P record when:
+    #   (a) the text co-mentions bhava N and planet P, AND
+    #   (b) the text does NOT use lordship language for that planet, AND
+    #   (c) the planet is ACTUALLY placed in bhava N in the chart (when
+    #       planet_houses is available — otherwise we have to trust the text).
     combined_text = f"{rule} {evidence_text}"
     for bhava, planet in _extract_bhava_planet_pairs(combined_text):
+        # (b) Skip if the text talks about the planet as a LORD, not as
+        #     a placement. This catches "4H lord Saturn", "house_lord=Saturn".
+        if _looks_like_lordship_reference(combined_text, planet):
+            continue
+        # (c) When chart placement is available, require the planet to
+        #     actually be in that bhava. Without this guard we attach
+        #     records describing placements that aren't in the chart.
+        if planet_houses is not None:
+            actual_house = planet_houses.get(planet)
+            if actual_house is None or int(actual_house) != bhava:
+                continue
         for rec in translate_bhava_planet(bhava, planet):
             _record(rec)
 
@@ -308,13 +378,26 @@ def enhance(reading: dict[str, Any] | BaseModel) -> IntegratedReadingOutput:
     else:
         reading_dict = reading
 
+    # Extract planet->house map from the reading so the bhava+planet
+    # lookup can verify that a "Saturn in 4H" claim corresponds to an
+    # actual placement (vs a lordship reference like "4H lord Saturn").
+    planet_houses: dict[str, int] = {}
+    chart_block = reading_dict.get("chart") or {}
+    planets_block = chart_block.get("planets") or {}
+    for planet_name, body in planets_block.items():
+        if isinstance(body, dict) and "house" in body:
+            try:
+                planet_houses[planet_name] = int(body["house"])
+            except (TypeError, ValueError):
+                pass
+
     # Per-finding sidecars + cross-reference accumulator.
     all_records: dict[str, TranslationRecord] = {}
     cross_refs: dict[str, list[str]] = {}
     total_attached = 0
 
     for finding in _walk_findings(reading_dict):
-        matches = _lookup_for_finding(finding)
+        matches = _lookup_for_finding(finding, planet_houses=planet_houses or None)
         finding["dkp_translations"] = [
             TranslationRecordView.from_record(r).model_dump(mode="json")
             for r in matches

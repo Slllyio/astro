@@ -246,6 +246,98 @@ class TestEnhance:
 # Pydantic input acceptance
 # ---------------------------------------------------------------------------
 
+class TestLordshipVsPlacement:
+    """The DKP enhancer must NOT attach bhava_N_planet_P records on
+    lordship references like 'NH lord P' — only on actual placements.
+
+    Surfaced 2026-05-31 by user review of Mainpuri chart: Saturn was the
+    4H lord but placed in 2H; the enhancer wrongly attached
+    bhava_4_planet_Saturn (which describes Saturn IN 4H, a totally
+    different astrological signature).
+    """
+
+    def test_lordship_phrase_does_not_attach_placement_record(self):
+        """Finding text 'D24 4H lord Saturn in Cancer' must NOT trigger
+        bhava_4_planet_Saturn attachment."""
+        reading = _minimal_reading([
+            _finding(
+                id="t.4h.lord",
+                rule="d24_chaturvimsamsa",
+                classification="primitive",
+                evidence=[
+                    "house=4",
+                    "house_sign=11",
+                    "house_lord=Saturn",
+                    "d24_sign=4",
+                    "d24_sign_name=Cancer",
+                ],
+            ),
+        ])
+        result = enhance(reading)
+        sidecar = result.reading["domains"]["career"]["findings"][0]["dkp_translations"]
+        keys = [t["key"] for t in sidecar]
+        assert "bhava_4_planet_Saturn" not in keys
+
+    def test_placement_phrase_still_attaches_when_chart_confirms(self):
+        """Finding 'Saturn in 4H' WITH planet_houses[Saturn]==4 should attach."""
+        reading = _minimal_reading([
+            _finding(
+                id="t.4h.place",
+                rule="karaka.health",
+                classification="affliction",
+                evidence=["Saturn occupies 4H bhava in this chart"],
+            ),
+        ])
+        # Inject a chart so the enhancer can verify placement.
+        reading["chart"] = {
+            "planets": {
+                "Saturn": {"house": 4, "sign": 4, "longitude": 100.0},
+            },
+        }
+        result = enhance(reading)
+        sidecar = result.reading["domains"]["career"]["findings"][0]["dkp_translations"]
+        keys = [t["key"] for t in sidecar]
+        assert "bhava_4_planet_Saturn" in keys
+
+    def test_placement_phrase_blocked_when_chart_disagrees(self):
+        """Even if text says 'Saturn in 4H', if the chart says Saturn is in
+        2H, we must NOT attach the bhava_4_planet_Saturn record."""
+        reading = _minimal_reading([
+            _finding(
+                id="t.4h.wrong",
+                rule="some.rule",
+                classification="affliction",
+                evidence=["Saturn in 4H or wherever"],
+            ),
+        ])
+        reading["chart"] = {
+            "planets": {
+                "Saturn": {"house": 2, "sign": 9, "longitude": 254.0},
+            },
+        }
+        result = enhance(reading)
+        sidecar = result.reading["domains"]["career"]["findings"][0]["dkp_translations"]
+        keys = [t["key"] for t in sidecar]
+        assert "bhava_4_planet_Saturn" not in keys
+
+    def test_house_lord_equals_pattern_recognised(self):
+        """Structured evidence form 'house_lord=Saturn' must be detected."""
+        from app.integration.dkp_enhancer import _looks_like_lordship_reference
+        assert _looks_like_lordship_reference("house_lord=Saturn", "Saturn") is True
+        assert _looks_like_lordship_reference("bhava_lord=Jupiter", "Jupiter") is True
+
+    def test_lord_word_near_planet_recognised(self):
+        from app.integration.dkp_enhancer import _looks_like_lordship_reference
+        assert _looks_like_lordship_reference("4H lord Saturn in Cancer", "Saturn") is True
+        assert _looks_like_lordship_reference("Saturn rules the 4H", "Saturn") is True
+        assert _looks_like_lordship_reference("Saturn owns 4H", "Saturn") is True
+
+    def test_placement_phrase_NOT_flagged_as_lordship(self):
+        from app.integration.dkp_enhancer import _looks_like_lordship_reference
+        assert _looks_like_lordship_reference("Saturn in 4H", "Saturn") is False
+        assert _looks_like_lordship_reference("Saturn occupies 4H bhava", "Saturn") is False
+
+
 class TestPydanticInput:
     """enhance() accepts both Pydantic models and dicts — important because
     Track-A's compute() returns a Pydantic model in the in-process path."""

@@ -103,6 +103,14 @@ from app.integration.corpus_rag_enhancer import (
     CorpusRAGEnhancedReading,
     enhance_with_corpus_rag,
 )
+# v1.0.1 — MD-at-now / MD-at-any-JD helper (Bangalore "current_mahadasha"
+# field is mislabeled; it returns MD at BIRTH, not NOW)
+from app.integration.dasha_now import (
+    MDLookup,
+    md_at_birth,
+    md_at_jd,
+    md_at_now,
+)
 # v1.0.0 production hardening
 from app.integration.production import (
     CacheKey,
@@ -174,6 +182,11 @@ __all__ = [
     "CorpusCitation",
     "CorpusRAGEnhancedReading",
     "enhance_with_corpus_rag",
+    # v1.0.1 — MD-at-any-JD
+    "MDLookup",
+    "md_at_birth",
+    "md_at_jd",
+    "md_at_now",
     # v1.0.0 production hardening
     "CacheKey",
     "CacheStats",

@@ -69,6 +69,8 @@ class InfoResponse(BaseModel):
             "compare_d9_signs",
             "compare_argala_drishti",
             "narrate_and_verify",
+            "enhance_with_corpus_rag",
+            "run_benchmark",
         ]
     )
     dkp_translation_registry_size: int
@@ -248,6 +250,73 @@ async def compare_functional_route(
             detail=f"Functional comparator failed: {exc}",
         ) from exc
     return report.model_dump(mode="json")
+
+
+@router.post("/corpus-rag")
+async def corpus_rag_route(body: dict = Body(...)) -> dict[str, Any]:
+    """Attach full 6.28M-word doctrine-corpus RAG citations to a reading.
+
+    Body: {"reading": {...}, "top_k"?: int, "max_findings"?: int}.
+    Returns CorpusRAGEnhancedReading. Falls back gracefully when the RAG
+    index isn't available on the host."""
+    reading = body.get("reading")
+    if not isinstance(reading, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="body.reading must be a Track-A ReadingOutput dict",
+        )
+    top_k = int(body.get("top_k", 3))
+    max_findings = body.get("max_findings")
+
+    def _do_work():
+        from app.integration.corpus_rag_enhancer import enhance_with_corpus_rag
+        return enhance_with_corpus_rag(
+            reading, top_k=top_k,
+            max_findings=int(max_findings) if max_findings is not None else None,
+        )
+
+    try:
+        result = await asyncio.to_thread(_do_work)
+    except Exception as exc:
+        logger.exception("corpus-rag route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"corpus-rag failed: {exc}",
+        ) from exc
+    return result.model_dump(mode="json")
+
+
+@router.get("/benchmark")
+async def benchmark_route(
+    chart_name: str | None = Query(default=None, description="Optional filter to one chart"),
+) -> dict[str, Any]:
+    """Run the famous-chart accuracy benchmark.
+
+    Without ``chart_name`` filter: 24 events across 6 charts, ~3-5s.
+    With filter: just that chart's events, ~0.6s for one chart.
+    """
+    def _do_work():
+        from app.integration.benchmark import FAMOUS_EVENTS, run_benchmark
+        events = FAMOUS_EVENTS
+        if chart_name:
+            events = [e for e in FAMOUS_EVENTS if e.chart_name == chart_name]
+            if not events:
+                raise ValueError(f"no events for chart {chart_name!r}")
+        return run_benchmark(events=events)
+
+    try:
+        result = await asyncio.to_thread(_do_work)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc),
+        ) from exc
+    except Exception as exc:
+        logger.exception("benchmark route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"benchmark failed: {exc}",
+        ) from exc
+    return result.model_dump(mode="json")
 
 
 @router.post("/narrate")

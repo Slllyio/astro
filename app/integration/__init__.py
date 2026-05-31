@@ -85,6 +85,24 @@ from app.integration.narrative import (
     run_critics,
     narrate_and_verify,
 )
+# v0.6.0 + v0.7.0 — benchmark + corpus RAG
+from app.integration.benchmark import (
+    BenchmarkReport,
+    CHART_REGISTRY,
+    EventOutcome,
+    FAMOUS_EVENTS,
+    FamousChart,
+    FamousEvent,
+    PerChartSummary,
+    PerDomainSummary,
+    run_benchmark,
+    score_event,
+)
+from app.integration.corpus_rag_enhancer import (
+    CorpusCitation,
+    CorpusRAGEnhancedReading,
+    enhance_with_corpus_rag,
+)
 
 __all__ = [
     # DKP enhancer (v0.1.0)
@@ -128,4 +146,19 @@ __all__ = [
     "compose_narrative",
     "run_critics",
     "narrate_and_verify",
+    # v0.6.0 benchmark
+    "BenchmarkReport",
+    "CHART_REGISTRY",
+    "EventOutcome",
+    "FAMOUS_EVENTS",
+    "FamousChart",
+    "FamousEvent",
+    "PerChartSummary",
+    "PerDomainSummary",
+    "run_benchmark",
+    "score_event",
+    # v0.7.0 corpus RAG
+    "CorpusCitation",
+    "CorpusRAGEnhancedReading",
+    "enhance_with_corpus_rag",
 ]

@@ -19,13 +19,16 @@ We do **not** pass dasha-dependent inputs (Yogini/Ashtottari/Tara) — the
 dossier row has no Moon nakshatra or transit JD. Those layers degrade to
 ``None`` cleanly per the composer's contract.
 
-## Why JSON-encode some columns
+## Nested-layer encoding
 
-`varga_confirmations` (12 × VargaConfirmation), `all_arudhas` (12 × ArudhaPada),
-`vimsopaka` per scheme (9 × 7), and `triple_lagna_per_bhava` (12 × 3) are
-dense nested mappings. Encoding them as JSON strings keeps the parquet
-schema flat while preserving full fidelity for downstream readers (any
-consumer can ``json.loads`` to get the original dict back).
+The 5 dense nested layers (`upagrahas`, `all_arudhas`, `varga_confirmations`,
+`bhavat_chains`, `triple_lagna`) are emitted as list-of-struct columns —
+PyArrow infers a `LIST<STRUCT<...>>` schema automatically. DuckDB can push
+predicates into struct fields natively (`WHERE varga_confirmations[2].label
+= 'CONFIRMED'`), so they remain queryable without deserialization. Earlier
+versions of this script emitted these as JSON-encoded strings; the
+2026-05-31 storage refactor unnested them per the database-optimizer
+agent's recommendation.
 
 ## Scale
 
@@ -39,7 +42,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import multiprocessing as mp
 import time
@@ -167,31 +169,36 @@ def _master_reading_to_row(
     out["remedy_planets"] = [rx.planet for rx in mr.prescribed_remedies]
     out["remedy_caveats"] = [rx.gemstone_caveat for rx in mr.prescribed_remedies]
 
-    # JSON blobs for dense nested layers — preserves full fidelity
-    out["upagrahas_json"] = json.dumps({
-        name: {"sign": pt.sign, "longitude": round(pt.longitude, 3)}
+    # Dense nested layers — emitted as native list-of-structs so PyArrow
+    # infers a queryable LIST<STRUCT<...>> schema. DuckDB can push
+    # predicates into these (`WHERE upagrahas[1].sign = 4`) where JSON
+    # strings would be opaque blobs requiring deserialization at scan time.
+    out["upagrahas"] = [
+        {"name": name, "sign": pt.sign, "longitude": round(pt.longitude, 3)}
         for name, pt in mr.sensitive_points.upagrahas.items()
-    })
-    out["all_arudhas_json"] = json.dumps({
-        str(bhava): arudha.bhava for bhava, arudha in mr.all_arudhas.items()
-    })
-    out["varga_confirmations_json"] = json.dumps({
-        str(bhava): vc.confirmation_label
+    ]
+    out["all_arudhas"] = [
+        {"bhava": int(bhava), "sign": int(arudha.bhava)}
+        for bhava, arudha in mr.all_arudhas.items()
+    ]
+    out["varga_confirmations"] = [
+        {"bhava": int(bhava), "label": vc.confirmation_label}
         for bhava, vc in mr.varga_confirmations.items()
-    })
-    out["bhavat_chains_json"] = json.dumps([
-        {"base": ch.base_bhava, "distance": ch.distance,
-         "derived": ch.derived_bhava,
+    ]
+    out["bhavat_chains"] = [
+        {"base": int(ch.base_bhava), "distance": int(ch.distance),
+         "derived": int(ch.derived_bhava),
          "karaka": ch.natural_karaka_of_derived,
          "hint": ch.interpretation_hint}
         for ch in mr.bhavat_chains
-    ])
-    out["triple_lagna_json"] = json.dumps({
-        str(b): {"from_lagna": m["from_lagna"],
-                 "from_moon": m["from_moon"],
-                 "from_sun": m["from_sun"]}
+    ]
+    out["triple_lagna"] = [
+        {"bhava": int(b),
+         "from_lagna": int(m["from_lagna"]),
+         "from_moon": int(m["from_moon"]),
+         "from_sun": int(m["from_sun"])}
         for b, m in mr.triple_lagna_per_bhava.items()
-    })
+    ]
     return out
 
 
@@ -228,11 +235,13 @@ def _empty_master_row(row: dict[str, Any]) -> dict[str, Any]:
         "n_prescribed_remedies": 0,
         "remedy_planets": [],
         "remedy_caveats": [],
-        "upagrahas_json": "{}",
-        "all_arudhas_json": "{}",
-        "varga_confirmations_json": "{}",
-        "bhavat_chains_json": "[]",
-        "triple_lagna_json": "{}",
+        # Empty list-of-struct stubs for the 5 nested layers (matches
+        # the success-path schema so PyArrow infers a consistent type).
+        "upagrahas": [],
+        "all_arudhas": [],
+        "varga_confirmations": [],
+        "bhavat_chains": [],
+        "triple_lagna": [],
     }
     for b in range(1, 13):
         out[f"b{b}_label"] = None

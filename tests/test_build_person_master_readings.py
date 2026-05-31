@@ -1,8 +1,6 @@
 """Tests for app.medini.etl.build_person_master_readings — master ETL."""
 from __future__ import annotations
 
-import json
-
 import pandas as pd
 import pytest
 
@@ -128,22 +126,46 @@ class TestRowToMasterDict:
         for caveat in result["remedy_caveats"]:
             assert caveat in {"PROCEED", "TRIAL_REQUIRED", "AVOID"}
 
-    def test_json_blobs_are_valid_json(self):
-        """All *_json columns parse back to dict/list cleanly."""
+    def test_nested_layers_are_list_of_struct(self):
+        """The 5 dense layers are list[dict] so PyArrow infers LIST<STRUCT>.
+
+        Earlier this script JSON-encoded these columns into strings; the
+        2026-05-31 storage refactor unnested them so DuckDB can push
+        predicates into the struct fields (e.g.
+        ``WHERE varga_confirmations[1].label = 'CONFIRMED'``).
+        """
         row = _fake_dossier_row()
         result = _row_to_master_dict(row)
-        for col in ("upagrahas_json", "all_arudhas_json",
-                    "varga_confirmations_json", "bhavat_chains_json",
-                    "triple_lagna_json"):
-            json.loads(result[col])  # raises if invalid
+        for col in ("upagrahas", "all_arudhas", "varga_confirmations",
+                    "bhavat_chains", "triple_lagna"):
+            assert col in result, f"missing {col}"
+            assert isinstance(result[col], list), f"{col} should be list"
+            for elem in result[col]:
+                assert isinstance(elem, dict), (
+                    f"{col} elements should be dict (PyArrow → STRUCT)"
+                )
+
+    def test_upagrahas_has_5_named_entries(self):
+        """All 5 classical upagrahas present with sign + longitude."""
+        result = _row_to_master_dict(_fake_dossier_row())
+        names = {u["name"] for u in result["upagrahas"]}
+        assert names == {"Dhuma", "Vyatipata", "Parivesha",
+                         "Indrachapa", "Upaketu"}
+        for u in result["upagrahas"]:
+            assert "sign" in u and "longitude" in u
+
+    def test_all_arudhas_has_12_bhavas(self):
+        """One arudha entry per bhava (1..12)."""
+        result = _row_to_master_dict(_fake_dossier_row())
+        bhavas = sorted(a["bhava"] for a in result["all_arudhas"])
+        assert bhavas == list(range(1, 13))
 
     def test_varga_confirmations_all_unknown_without_input(self):
         """Without varga_pillar_scores, all 12 confirmations land UNKNOWN."""
         row = _fake_dossier_row()
         result = _row_to_master_dict(row)
-        decoded = json.loads(result["varga_confirmations_json"])
-        for label in decoded.values():
-            assert label == "UNKNOWN"
+        for vc in result["varga_confirmations"]:
+            assert vc["label"] == "UNKNOWN"
 
 
 class TestEmptyMasterRow:
@@ -164,10 +186,12 @@ class TestEmptyMasterRow:
         assert empty["n_prescribed_remedies"] == 0
         assert empty["remedy_planets"] == []
 
-    def test_json_blobs_are_empty_but_valid(self):
+    def test_nested_layers_are_empty_lists(self):
+        """Empty stub uses [] for all 5 nested layers (matches success schema)."""
         empty = _empty_master_row(_fake_dossier_row())
-        assert json.loads(empty["upagrahas_json"]) == {}
-        assert json.loads(empty["bhavat_chains_json"]) == []
+        for col in ("upagrahas", "all_arudhas", "varga_confirmations",
+                    "bhavat_chains", "triple_lagna"):
+            assert empty[col] == [], f"{col} should be empty list in stub"
 
 
 class TestBuildMasterReadings:
@@ -199,6 +223,6 @@ class TestBuildMasterReadings:
             "person_id", "asc_sign", "bhrigu_bindu_sign",
             "arudha_lagna_sign", "sav_b1", "vimsopaka_sun",
             "avastha_mult_jupiter", "n_prescribed_remedies",
-            "upagrahas_json", "bhavat_chains_json",
+            "upagrahas", "bhavat_chains",  # renamed from *_json in storage refactor
         }
         assert expected_subset.issubset(set(result.columns))

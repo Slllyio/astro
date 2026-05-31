@@ -103,6 +103,19 @@ from app.integration.corpus_rag_enhancer import (
     CorpusRAGEnhancedReading,
     enhance_with_corpus_rag,
 )
+# v1.0.0 production hardening
+from app.integration.production import (
+    CacheKey,
+    CacheStats,
+    ReadingCache,
+    StructuredLogger,
+    TimingContext,
+    default_cache,
+    get_logger,
+    make_cache_key,
+    measure,
+    timed,
+)
 
 __all__ = [
     # DKP enhancer (v0.1.0)
@@ -161,4 +174,15 @@ __all__ = [
     "CorpusCitation",
     "CorpusRAGEnhancedReading",
     "enhance_with_corpus_rag",
+    # v1.0.0 production hardening
+    "CacheKey",
+    "CacheStats",
+    "ReadingCache",
+    "StructuredLogger",
+    "TimingContext",
+    "default_cache",
+    "get_logger",
+    "make_cache_key",
+    "measure",
+    "timed",
 ]

@@ -91,7 +91,7 @@ class TestInfoRoute:
     def test_info_returns_integration_version(self):
         data = client.get("/reading/integrated/info").json()
         assert "integration_version" in data
-        assert data["integration_version"] == "0.5.0"
+        assert data["integration_version"] == "1.0.0"
 
     def test_info_includes_adapter_names(self):
         data = client.get("/reading/integrated/info").json()
@@ -344,6 +344,26 @@ class TestWebUIRoutes:
             },
         )
         assert resp.status_code == 422
+
+
+class TestCacheRoutes:
+    """v1.0.0 cache stats + clear routes."""
+
+    def test_cache_stats_returns_baseline_fields(self):
+        resp = client.get("/reading/integrated/cache-stats")
+        assert resp.status_code == 200
+        data = resp.json()
+        for field in ("capacity", "size", "hits", "misses", "evictions", "hit_rate"):
+            assert field in data
+
+    def test_cache_clear_zeros_size(self):
+        # First call may have data; clearing must zero size + reset counters
+        resp = client.post("/reading/integrated/cache-clear")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["size"] == 0
+        assert data["hits"] == 0
+        assert data["misses"] == 0
 
 
 class TestStreamingRoute:

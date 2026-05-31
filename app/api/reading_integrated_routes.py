@@ -63,7 +63,7 @@ _templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 class InfoResponse(BaseModel):
     """Metadata about the integration layer; exposed for clients to feature-detect."""
 
-    integration_version: str = "0.5.0"
+    integration_version: str = "1.0.0"
     adapters: list[str] = Field(
         default_factory=lambda: [
             "enhance",
@@ -363,6 +363,25 @@ async def integrated_generate_route(
         narrative_result=narrative_result,
     )
     return _templates.TemplateResponse("reading_integrated_view.html", context)
+
+
+@router.get("/cache-stats")
+async def cache_stats_route() -> dict[str, Any]:
+    """Return the default ReadingCache statistics (size, hit rate, etc.).
+
+    Useful for production observability — surface cache effectiveness
+    over time."""
+    from app.integration.production import default_cache
+    return default_cache().stats().model_dump(mode="json")
+
+
+@router.post("/cache-clear")
+async def cache_clear_route() -> dict[str, Any]:
+    """Clear the default ReadingCache. Returns the post-clear stats."""
+    from app.integration.production import default_cache
+    cache = default_cache()
+    cache.clear()
+    return cache.stats().model_dump(mode="json")
 
 
 @router.get("/info", response_model=InfoResponse)

@@ -125,6 +125,11 @@ from app.integration.transit_engine import (
     transit_signs_at,
     transit_state_at,
 )
+# v1.1.0 M3 — MD-lord natal dossier
+from app.integration.md_lord_dossier import (
+    MDLordDossier,
+    build_md_lord_dossier,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -229,6 +234,9 @@ __all__ = [
     "transit_at_now",
     "transit_signs_at",
     "transit_state_at",
+    # v1.1.0 M3 - MD-lord dossier
+    "MDLordDossier",
+    "build_md_lord_dossier",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

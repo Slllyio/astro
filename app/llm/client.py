@@ -109,7 +109,8 @@ class AnthropicClient:
         model: str = "claude-sonnet-4-6",
         system: str | None = None,
         max_tokens: int = 8192,
-        timeout_seconds: float = 120.0,
+        timeout_seconds: float = 600.0,
+        stream: bool = True,
     ) -> None:
         try:
             import anthropic
@@ -122,6 +123,7 @@ class AnthropicClient:
         self.system = system
         self.max_tokens = max_tokens
         self.timeout_seconds = timeout_seconds
+        self.stream = stream
         # Lazy-init the client so __init__ doesn't fail when the env var
         # is unset (tests that never call complete() still construct).
         self._client: object | None = None
@@ -139,11 +141,16 @@ class AnthropicClient:
             ) from exc
 
     def complete(self, prompt: str) -> str:
-        """Send a single non-streaming Messages request and return the text.
+        """Send a Messages request and return the text.
 
-        The LLMClient Protocol is sync; the FastAPI route layer is expected
-        to wrap calls in ``asyncio.to_thread`` (the same pattern the project
-        already applies to ephemeris calls).
+        Streaming is enabled by default to avoid Anthropic's long-request
+        cutoff (non-streaming requests over ~10 min are killed by their
+        infrastructure). For pandit-grade synthesis with 8K-token outputs
+        on dense input contexts, streaming is the robust default.
+
+        The LLMClient Protocol is sync; the FastAPI route layer wraps
+        calls in ``asyncio.to_thread`` (same pattern the project applies
+        to ephemeris calls).
         """
         self._ensure_client()
         kwargs: dict[str, object] = {
@@ -153,23 +160,30 @@ class AnthropicClient:
         }
         if self.system:
             kwargs["system"] = self.system
+
         try:
-            response = self._client.messages.create(**kwargs)  # type: ignore[attr-defined]
+            if self.stream:
+                # Streaming path: accumulate text deltas. Survives long
+                # generations without hitting the long-request limit.
+                text_parts: list[str] = []
+                with self._client.messages.stream(**kwargs) as stream:  # type: ignore[attr-defined]
+                    for text in stream.text_stream:
+                        text_parts.append(text)
+                full = "".join(text_parts).strip()
+            else:
+                response = self._client.messages.create(**kwargs)  # type: ignore[attr-defined]
+                blocks = [
+                    b.text for b in response.content  # type: ignore[attr-defined]
+                    if getattr(b, "type", None) == "text"
+                ]
+                full = "".join(blocks).strip()
         except Exception as exc:
             logger.warning("Anthropic request failed: %s", exc)
             raise AnthropicUnavailable(str(exc)) from exc
 
-        # The Messages API returns a list of content blocks; concatenate
-        # all text blocks. Non-text blocks (tool_use, etc.) aren't expected
-        # for plain completion, so we ignore them defensively.
-        text_parts = [
-            block.text for block in response.content  # type: ignore[attr-defined]
-            if getattr(block, "type", None) == "text"
-        ]
-        text = "".join(text_parts).strip()
-        if not text:
+        if not full:
             raise AnthropicUnavailable("Anthropic returned empty text")
-        return text
+        return full
 
 
 class StubClient:

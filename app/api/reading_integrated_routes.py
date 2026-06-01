@@ -561,6 +561,93 @@ async def benchmark_route(
     return result.model_dump(mode="json")
 
 
+@router.post("/master-reading")
+async def master_reading_route(body: dict = Body(...)) -> dict[str, Any]:
+    """Generate the v1.1.0 master reading (deterministic, template-based).
+
+    Body: {"reading": {...}}  # Track-A ReadingOutput dict
+    Returns MasterReading with chart basics + dasha triple + Arudha +
+    6 domain paragraphs synthesised from M1-M7.
+    """
+    reading = body.get("reading")
+    if not isinstance(reading, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="body.reading must be a Track-A ReadingOutput dict",
+        )
+
+    def _do_work():
+        from app.integration import compose_master_reading
+        return compose_master_reading(reading)
+
+    try:
+        result = await asyncio.to_thread(_do_work)
+    except Exception as exc:
+        logger.exception("master_reading route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"master_reading failed: {exc}",
+        ) from exc
+    return result.model_dump(mode="json")
+
+
+@router.post("/master-polish")
+async def master_polish_route(body: dict = Body(...)) -> dict[str, Any]:
+    """v1.2.0 — LLM-polished master reading.
+
+    Body: {
+      "reading": {...},                  # Track-A ReadingOutput dict
+      "ollama_host"?: "http://localhost:11434",
+      "ollama_model"?: "llama3.1",
+      "polish_domains"?: true,
+      "polish_dasha_triple"?: true,
+      "polish_arudha"?: true,
+      "polish_upapada"?: true,
+      "include_overview"?: true
+    }
+
+    If ``ollama_host`` + ``ollama_model`` are supplied, uses OllamaClient.
+    Otherwise falls back to StubClient (offline) — polished_paragraph
+    will equal the stub canned response and the template_paragraph
+    preserves the M8 deterministic output."""
+    reading = body.get("reading")
+    if not isinstance(reading, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="body.reading must be a Track-A ReadingOutput dict",
+        )
+
+    ollama_host = body.get("ollama_host")
+    ollama_model = body.get("ollama_model")
+
+    def _do_work():
+        from app.integration import compose_master_reading, llm_polish_master_reading
+        from app.llm.client import OllamaClient
+
+        master = compose_master_reading(reading)
+        llm = None
+        if ollama_host and ollama_model:
+            llm = OllamaClient(host=str(ollama_host), model=str(ollama_model))
+        return llm_polish_master_reading(
+            master, llm=llm,
+            polish_domains=bool(body.get("polish_domains", True)),
+            polish_dasha_triple=bool(body.get("polish_dasha_triple", True)),
+            polish_arudha=bool(body.get("polish_arudha", True)),
+            polish_upapada=bool(body.get("polish_upapada", True)),
+            include_overview=bool(body.get("include_overview", True)),
+        )
+
+    try:
+        result = await asyncio.to_thread(_do_work)
+    except Exception as exc:
+        logger.exception("master_polish route failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"master_polish failed: {exc}",
+        ) from exc
+    return result.model_dump(mode="json")
+
+
 @router.post("/narrate")
 async def narrate_route(body: dict = Body(...)) -> dict[str, Any]:
     """LLM narrative + 4-critic adversarial verification.

@@ -90,20 +90,54 @@ class RamanChart:
     bhava_madhyas: tuple[float, ...]    # 12 Sripati cusps
     bhava_sandhis: tuple[float, ...]    # 12 junctions
     planets: Mapping[str, PlanetPos]    # Sun..Ketu
-    upagrahas: Mapping[str, float]      # Gulika, Mandi (lon) — H5/H6/H12 rules
-    arudha_lagna: int                   # H10/H12 rules
-    karakamsa: int                      # Atmakaraka's navamsa sign — H12 moksha (Ketu-from-karakamsa)
-    maraka_points: MarakaPoints         # 2nd/7th lords, 64th-navamsa lord, 22nd-drekkana lord
+    upagrahas: Mapping[str, SpecialPoint]   # Gulika, Mandi (FULL position) — H5/H6/H12 rules
+    arudha_lagna: SpecialPoint              # H10/H12 rules (full position, for conjunction tests)
+    karakamsa: SpecialPoint                 # Atmakaraka's navamsa as a position — H12 Ketu-from-karakamsa
+    maraka_points: MarakaPoints
     balarishta: BalarishtaState
     birth: BirthData
+
+# Supporting structures (review fix: were referenced but undefined)
+@dataclass(frozen=True)
+class SpecialPoint:                         # upagrahas, Arudha, Karakamsa — full positions
+    name: str; lon: float; sign: int; bhava: int; navamsa_sign: int
+
+@dataclass(frozen=True)
+class MarakaUnit:
+    graha: str; tier: Literal["primary","secondary","tertiary"]; strength_rank: int
+
+@dataclass(frozen=True)
+class MarakaPoints:
+    units: tuple[MarakaUnit, ...]           # 2nd/7th lords + occupants + associates, tiered
+    drekkana22_lord: str; navamsa64_lord: str
+
+@dataclass(frozen=True)
+class BalarishtaState:
+    applies: bool; cancelled: bool; reasons: tuple[str, ...]
+
+@dataclass(frozen=True)
+class SpanClass:
+    label: Literal["balarishta","alpayu","madhyayu","purnayu"]
+    method: Literal["pindayu","nisargayu","amsayu","combination"]
+    years: float | None
+    agreement: bool                         # do the combination & mathematical tracks agree?
+
+@dataclass(frozen=True)
+class ShadbalaBreakdown:                     # the six-fold strength, in Rupas (GBB Ch.3–8)
+    sthana: float; dig: float; kala: float   # position · direction · time
+    cheshta: float; naisargika: float; drik: float   # motion · natural · aspect
+    total: float                             # sum, vs the planet's min-required threshold
 ```
 
 **4.6 `app/core` reuse allowlist (self-review #7):** the adapter MAY import only —
 ephemeris position calls (with a *local* ayanamsa set, never the global), varga/Navamsa
 geometry, exalt/debil/own-sign longitude tables, and Vimshottari dasha-date math.
 **Shadbala is re-derived** in `primitives/shadbala.py` to Raman's *Graha & Bhava Balas*
-(Ch.3–10) — NOT imported from `app/core/shadbala.py`. A guard test asserts no import of
-`app/core/{bhava_judge,reading_composer,drishti_argala,dkp_*,yogas}`.
+(the on-disk `graha_bhava_balas_raman/` Ch.3–10 component definitions) — NOT imported from
+`app/core/shadbala.py` — validated by a fixture of 5 hand-verified charts at **±1 rupa per
+component**. A guard test (importlib-based, CI-enforced) asserts the package never imports
+`app/core/{bhava_judge,reading_composer,drishti_argala,dkp_*,yogas,shadbala}` and never
+mutates the global ayanamsa.
 
 ## 5. Doctrine-as-data (`doctrine/`)
 
@@ -126,7 +160,7 @@ class RuleRecord:
     condition: Condition | None   # predicate tree (evaluable); None for descriptive
     placement: Placement | None   # the placement a descriptive rule attaches to
     fortified: str; afflicted: str | None
-    frame: Frame                  # LAGNA | MOON | KARAKA
+    frame: Frame                  # LAGNA | MOON | KARAKA(p) | FROM(p) | STRONGEST_OF([...])
     varga: str                    # D1 | D9 | D7 ...
     navamsa_override: str | None
     timing: tuple[Trigger, ...]
@@ -146,12 +180,19 @@ tractable: only evaluable rules need precise condition encoding.
 Core:        InHouse(p,n) · LordOf(h).In(n) · Occupies(p,h) · Aspects(a,b) · Conjunct(a,b)
              HemmedBy(t,[malefics]) · Dignity(p)∈{…} · Combust(p) · Retrograde(p)
              Vargottama(p) · InNavamsaOf(p,sign) · DispositorOf(p) · And/Or/Not
-Added:       Strongest(in_house=h) / Weakest(...)             # superlatives
-             Count(navamsas_of=…) → int                       # sibling/child counts
+Added:       Strongest(among=[…]) / Weakest(among=[…])        # superlatives ("strongest in house h")
+             Count(navamsas_of=…) → int · CountInHouse(h)     # sibling/child/co-born counts
              Sphuta(beeja|kshetra|special_dhana|pranapada)    # computed points
              SignParity(p)∈{odd,even} · SignModality(p)∈{movable,fixed,common}
              InSign(p, sign) · InUpagraha(gulika|mandi, h)
+             DrekkanaLordOf(n, from=lagna|moon) · NavamsaLordOf(p) · DispositorChain(p)
+             Vargottama(p, in=d9|d3|d60)                       # vargottama variants
+Frames:      a rule's origin may be LAGNA, MOON, KARAKA(p), an arbitrary FROM(p)
+             (e.g. "from Venus"), or STRONGEST_OF([Lagna,Moon,Sun]) — the engine evaluates
+             from that origin and records which origin won (review fix: multi-frame rules).
 All predicates evaluate relative to a (frame, varga) pair.
+A **pre-Phase-1 predicate audit** (categorize all 700+ corpus rules → required predicates)
+finalizes this algebra before coding, so encoding never hits an inexpressible rule.
 ```
 *Ragged conditions* ("well disposed", "fortified", "any beneficial aspect") resolve to
 **canonical cited predicates** — `is_fortified()`, `is_afflicted()`, `well_disposed()` —
@@ -163,6 +204,15 @@ Parse each `house_NN_*.md` table → skeleton `RuleRecord`s (id, house, signific
 group, fortified/afflicted text, frame, varga, source) auto-populated; then hand/agent-fill
 `condition` for `kind="evaluable"` rows. Descriptive rows need no condition. A test asserts
 **every record's `source` cites a line that exists in the on-disk corpus.**
+
+### 5.5 Cancellations (bhangas) & orbs (review fix #10/#11)
+`doctrine/bhangas.py` holds the cancellation/inversion rules — **neecha-bhanga**,
+**kemadruma-bhanga**, **balarishta-bhanga**, **subha/papa-kartari** softening, **parivartana**
+(exchange), and the **Vipareeta** + **Bhavartha-Ratnakara** polarity inversions — each cited.
+They run as a **pre-scoring gate**: a rule's chosen branch is re-evaluated after bhangas
+(a debilitated lord with neecha-bhanga is not scored afflicted). Conjunction uses a circular
+orb `min(diff, 360−diff)` with per-planet defaults in `relationships.py` (the ~12–18° gates
+the corpus relies on for "free of conjunction", e.g. H1 Chart 14 Sun ~18° from Saturn).
 
 ## 6. The house judge (`judges/`)
 
@@ -193,11 +243,26 @@ fired_benefic[], fired_malefic[], karaka_intact, maraka_active`.
 - **Rule-vs-rule contradiction:** when benefic and malefic rules both fire, the verdict is
   `mixed` and *both* are surfaced with citations — contradiction is shown, never hidden.
 - **Verdict is an explicit ordinal**, not a score: `{favourable | mixed | afflicted |
-  insufficient-evidence}`, computed by a defined rule over the ledger. No false-precision number.
+  insufficient-evidence}`, computed by this **defined decision rule** per signification:
+  1. `karaka_intact == False` → **afflicted** (karaka veto, overrides all).
+  2. else, after the bhanga gate (§5.5): both fired_benefic and fired_malefic non-empty
+     → **mixed** (surface both, cited).
+  3. lord & karaka both ≥ their min-required Shadbala AND bhava_bala strong AND no malefic
+     fired → **favourable**.
+  4. lord or karaka below min-required AND (malefic fired OR bhava_bala weak) → **afflicted**.
+  5. no rule fired AND pillars neutral → **insufficient-evidence**.
+  Navamsa status shifts a *borderline* case one step (confirm / "starts well, fades") but
+  never overturns a decisive Shadbala. Thresholds (min-required Shadbala per planet; bhava_bala
+  strong/weak bands) are **GBB constants tuned only to satisfy the named-historical goldens** —
+  never hand-set to force a particular reading. No false-precision number is exposed.
 
-### 6.4 House-specific pre-passes
-H5 Beeja/Kshetra fertility · H2 Special Dhana Lagna · H6 dusthana-inversion/Vipareeta ·
-H8 → longevity sub-engine · H12 Bhavartha-Ratnakara polarity flip + Ketu-from-karakamsa.
+### 6.4 House-specific pre-passes & cross-cutting gates
+Per-house: H5 Beeja/Kshetra fertility · H2 Special Dhana Lagna · H6 dusthana-inversion /
+Vipareeta · **H7 Kuja-Dosha** (single-chart Mars-affliction scoring via the cited numeric
+grid; couple-matching synastry is a flagged optional extra) · H8 → longevity sub-engine ·
+H12 Bhavartha-Ratnakara polarity flip + Ketu-from-karakamsa + **Bandhana-yoga** (confinement).
+Cross-cutting: the **bhanga gate** (§5.5) runs before scoring every house; multi-frame rules
+(`STRONGEST_OF`/`FROM`) are evaluated from each candidate origin and the winning origin is recorded.
 
 ## 7. Longevity sub-engine (`judges/longevity.py` + `doctrine/ayus_tables.py` + `primitives/maraka.py`)
 Runs as a **pre-pass that gates the houses** (overview §8):
@@ -206,7 +271,10 @@ Runs as a **pre-pass that gates the houses** (overview §8):
    (b) mathematical — **select** method by strongest of Sun/Moon/Lagna (Pindayu/Nisargayu/Amsayu),
    compute terms, apply the 4 ordered haranas (each to the running remainder; Venus/Saturn &
    Mars/retro exemptions), → band (Balarishta<8 · Alpa 8–32 · Madhya 33–75 · Purna 75–120).
-   Reconcile; **flag disagreement**, never silently pick.
+   **Reconciliation rule:** the combination/maraka track is **primary** (Raman's stated
+   preference — maraka-on-Vimshottari "proved quite satisfactory"); Pindayu/Amsayu is
+   **corroborative**. On disagreement, lead with the combination/maraka span, attach the
+   mathematical span, set `SpanClass.agreement=False` — never average, never silently pick.
 3. **Maraka** (primary/secondary/tertiary + per-Lagna table).
 4. **Death timing** — maraka dasha/bhukti ∩ ayus-band, confirmed by transit over maraka points.
 
@@ -249,11 +317,22 @@ Raman Saab has its **own Raman-ayanamsa fixtures** (not the repo's Lahiri baseli
 0 skeleton+adapter → 1 primitives(+GBB Shadbala) → 2 doctrine data(+condition algebra,
 evaluable/descriptive) → 3 house judge+overview(per-signification, one house fully then
 replicate) → 4 longevity → 5 timing+divisional → 6 proforma+renderers+surfaces → 7
-golden-chart harness (~370 charts + named-historical). Phases 0–3 already give a usable
-house reading.
+golden-chart harness (~370 charts + named-historical).
+
+**Orchestration (resolves the gate-vs-usable tension):** the house judges emit facts +
+per-signification sub-verdicts **unconditionally**; `chart_overview` and `longevity` are
+pre-passes whose output is applied as a **gate at `proforma` assembly time**, not inside the
+judges. So Phases 0–3 give a usable **ungated** reading; Phase 4 longevity then overlays the
+gate (Balarishta suppression, span-class context for H8, maraka timing). No judge depends on
+a later phase.
 
 ## 13. Open questions / risks
+- **MANDATORY pre-Phase-1 predicate audit:** categorize all 700+ corpus rules → the exact
+  predicate set, finalizing `doctrine/conditions.py` (§5.3) before any coding. The single
+  highest-leverage de-risking step (per the architecture review): prevents encoding thrash.
 - **Encoding effort:** ~350 *evaluable* rules need precise conditions — the dominant labor item; mitigated by the evaluable/descriptive split and the skeleton-parse workflow.
+- **Kuja-Dosha scope:** v1 ships single-chart Mars-affliction detection; two-chart synastry
+  (couple matching) is a flagged, optional, post-v1 extra.
 - **Adapter fidelity at cusps:** SIDM_RAMAN t0 vs Raman's hand-computations (~1–3′) — handled by the judge/adapter golden split, but a few of Raman's oldest charts may need pinned positions.
 - **Verdict-synthesis tuning:** the ledger→ordinal rule is heuristic; it must stay an honest *qualified* assessment, validated against the named-historical goldens, not presented as precision.
 - **Upagraha/Arudha computation** (Gulika/Mandi, Arudha, Karakamsa) must be re-derived in-package (doctrine-neutral math) consistent with the chosen ayanamsa.

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>जातकम् — Chart Reader</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/manuscript.css">
+
+  <style>
+    /* Page-specific tweaks for the Reading page only. The shared system
+       handles all common chrome (leaves, covers, holes, strings, nav).
+       Here we add: source-pill, loading state, error state, dynamic
+       section-card variants that the JS populates on submit. */
+    .source-pill {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-left: 0.5rem;
+    }
+    .source-pill.llm {
+      background: rgba(160, 40, 40, 0.15);
+      color: var(--madder-deep);
+      border: 1px solid var(--madder);
+    }
+    .source-pill.deterministic {
+      background: rgba(199, 122, 46, 0.15);
+      color: var(--saffron-deep);
+      border: 1px solid var(--saffron);
+    }
+    .loading-state, .error-state {
+      text-align: center;
+      padding: 2rem;
+      font-style: italic;
+      color: var(--ink-secondary);
+    }
+    .error-state {
+      color: var(--madder-deep);
+      font-style: normal;
+    }
+    /* Reading-section card for the dynamically-populated results panel */
+    .reading-section {
+      margin-bottom: 0.8rem;
+      padding: 0.8rem 1rem;
+      background: rgba(245, 227, 184, 0.45);
+      border-left: 3px solid var(--saffron);
+    }
+    .reading-section h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      color: var(--madder);
+      margin-bottom: 0.4rem;
+    }
+    .reading-section .text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--ink-primary);
+      white-space: pre-wrap;
+    }
+    .citation-line {
+      font-size: 0.78rem;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+      padding: 0.3rem 0;
+      border-bottom: 1px dotted var(--ink-faded);
+    }
+    .citation-line:last-child { border-bottom: none; }
+    .citation-line .meta {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.08em;
+      color: var(--madder);
+      font-size: 0.72rem;
+    }
+    .citation-line .snippet {
+      font-style: italic;
+      margin-top: 0.2rem;
+    }
+
+    /* Preset chart cards — click to auto-fill the form. */
+    .preset-card {
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 0.4rem;
+      background: rgba(232, 213, 168, 0.55);
+      border: 1px solid var(--ink-faded);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .preset-card:hover {
+      background: rgba(217, 155, 92, 0.4);
+      border-color: var(--madder);
+      transform: translateX(2px);
+    }
+    .preset-card.selected {
+      background: rgba(160, 40, 40, 0.12);
+      border-color: var(--madder);
+      border-left-width: 3px;
+    }
+    .preset-card .name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.13em;
+      color: var(--ink-primary);
+    }
+    .preset-card .meta {
+      font-size: 0.72rem;
+      color: var(--ink-secondary);
+      font-style: italic;
+      margin-top: 0.15rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Front cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">जातकम्</div>
+            <div class="cover-english-title">A READING OF THE BIRTH CHART</div>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to enter birth details</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Birth-data form ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">DATE &amp; TIME</div>
+            <div class="panel-heading-deva deva">तिथिः</div>
+            <form id="form" autocomplete="off">
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; margin-bottom: 0.8rem;">
+                <div>
+                  <label class="leaf-label">DAY</label>
+                  <input class="leaf-input" id="day" type="number" value="15" min="1" max="31" required />
+                </div>
+                <div>
+                  <label class="leaf-label">MONTH</label>
+                  <input class="leaf-input" id="month" type="number" value="7" min="1" max="12" required />
+                </div>
+                <div>
+                  <label class="leaf-label">YEAR</label>
+                  <input class="leaf-input" id="year" type="number" value="1990" required />
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.8rem;">
+                <div>
+                  <label class="leaf-label">HOUR</label>
+                  <input class="leaf-input" id="hour" type="number" value="12" min="0" max="23" required />
+                </div>
+                <div>
+                  <label class="leaf-label">MINUTE</label>
+                  <input class="leaf-input" id="minute" type="number" value="0" min="0" max="59" required />
+                </div>
+              </div>
+              <div>
+                <label class="leaf-label">TIMEZONE (HRS FROM UTC)</label>
+                <input class="leaf-input" id="tz_offset" type="number" step="0.5" value="5.5" required />
+              </div>
+            </form>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center;">
+            <div class="panel-heading">PLACE</div>
+            <div class="panel-heading-deva deva">स्थानम्</div>
+            <div style="margin-bottom: 0.8rem;">
+              <label class="leaf-label">LATITUDE</label>
+              <input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.9716" required />
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+              <label class="leaf-label">LONGITUDE</label>
+              <input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.5946" required />
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+              <button class="leaf-button" id="submit-btn" type="button" onclick="onSubmit()">
+                Synthesize Reading
+              </button>
+            </div>
+            <div style="text-align: center; margin-top: 0.6rem; font-size: 0.78rem; color: var(--ink-faded); font-style: italic;">
+              First call: 30–60s (LLM + RAG warmup)
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="panel-heading">PRESETS</div>
+            <div class="panel-heading-deva deva">पूर्व-नियताः</div>
+            <div style="margin-top: 0.4rem;">
+              <!-- Click to auto-fill form. data-attrs encode the birth data. -->
+              <div class="preset-card"
+                   data-y="1990" data-m="7" data-d="15" data-h="12" data-mn="0"
+                   data-lat="12.9716" data-lon="77.5946" data-tz="5.5">
+                <div class="name">BANGALORE BASELINE</div>
+                <div class="meta">15 Jul 1990 · noon · canonical test</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1944" data-m="8" data-d="20" data-h="7" data-mn="11"
+                   data-lat="18.97" data-lon="72.83" data-tz="5.5">
+                <div class="name">RAJIV GANDHI</div>
+                <div class="meta">20 Aug 1944 · 7:11 IST · Bombay</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1869" data-m="10" data-d="2" data-h="7" data-mn="12"
+                   data-lat="21.64" data-lon="69.61" data-tz="4.81">
+                <div class="name">M. K. GANDHI</div>
+                <div class="meta">2 Oct 1869 · 7:12 LMT · Porbandar</div>
+              </div>
+              <div class="preset-card"
+                   data-y="1931" data-m="10" data-d="15" data-h="1" data-mn="0"
+                   data-lat="9.28" data-lon="79.31" data-tz="5.5">
+                <div class="name">A. P. J. ABDUL KALAM</div>
+                <div class="meta">15 Oct 1931 · 1:00 IST · Rameswaram</div>
+              </div>
+            </div>
+            <div style="margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--ink-faded); text-align: center; font-size: 0.78rem; font-variant: small-caps; letter-spacing: 0.12em; color: var(--ink-faded);">
+              also see&nbsp;
+              <a href="/medini/knowledge/page" style="color: var(--saffron-deep); text-decoration: none;">/knowledge</a>
+              &nbsp;&middot;&nbsp;
+              <a href="/medini/forecast/page" style="color: var(--saffron-deep); text-decoration: none;">/forecast</a>
+            </div>
+          </div>
+          <div class="folio-mark">folio I · birth details</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Placeholder for results (populated by JS) ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page" id="result-leaf">
+          <div class="panel left" id="result-summary" style="justify-content: center; text-align: center;">
+            <div class="panel-heading-deva deva">सारः</div>
+            <div class="panel-heading">CHART SUMMARY</div>
+            <div style="font-style: italic; color: var(--ink-faded); font-size: 0.9rem; margin-top: 1rem;">
+              Submit birth details on folio I<br>to see the reading here.
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-sections">
+            <div class="panel-heading-deva deva">पठनम्</div>
+            <div class="panel-heading">THE READING</div>
+            <div style="font-style: italic; color: var(--ink-faded); font-size: 0.9rem; text-align: center; margin-top: 1rem;">
+              Doctrine-grounded sections will appear here after synthesis.
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-citations">
+            <div class="panel-heading-deva deva">सन्दर्भाः</div>
+            <div class="panel-heading">SOURCES CITED</div>
+            <div style="font-style: italic; color: var(--ink-faded); font-size: 0.9rem; text-align: center; margin-top: 1rem;">
+              BPHS, Phaladeepika, Saravali, etc.<br>chapter:verse anchors with snippets.
+            </div>
+          </div>
+          <div class="folio-mark" id="result-folio-mark">folio II · awaiting input</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Closing cover ========== -->
+      <div class="leaf" data-page="3">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text">END OF READING</div>
+            <button class="reopen-btn" onclick="reopenManuscript()">CAST ANOTHER CHART</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous folio (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next folio (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">🔊 sound</button>
+    <a class="nav-page-link" href="/">🏠 home</a>
+  </div>
+
+  <script>
+    window.MANUSCRIPT_LABELS = ['COVER', 'BIRTH DETAILS', 'READING', 'END'];
+  </script>
+  <script src="/static/js/manuscript.js"></script>
+
+  <script>
+    // ============================================================
+    // Reading page: form submit + result rendering into the
+    // already-existing result leaf (folio II).
+    //
+    // Strategy: pre-defined leaf 2 ("result-leaf") has three panels —
+    // summary (left), sections (middle), citations (right) — populated
+    // dynamically when the user submits. Then we flip to folio II so
+    // the user sees the reading. No need to dynamically add leaves;
+    // all three result columns fit in the triptych.
+    // ============================================================
+    function el(tag, attrs, ...children) {
+      const n = document.createElement(tag);
+      if (attrs) for (const [k, v] of Object.entries(attrs)) {
+        if (k === 'class') n.className = v;
+        else if (k.startsWith('on')) n[k] = v;
+        else n.setAttribute(k, v);
+      }
+      for (const c of children) {
+        if (c == null) continue;
+        if (typeof c === 'string') n.appendChild(document.createTextNode(c));
+        else n.appendChild(c);
+      }
+      return n;
+    }
+
+    function renderSummary(cs) {
+      const summary = document.getElementById('result-summary');
+      summary.replaceChildren(
+        el('div', {class: 'panel-heading-deva deva'}, 'सारः'),
+        el('div', {class: 'panel-heading'}, 'CHART SUMMARY'),
+      );
+      const asc = cs.ascendant || {};
+      const sun = cs.sun || {};
+      const moon = cs.moon || {};
+      const md = cs.current_mahadasha || {};
+      const lines = [
+        ['LAGNA', `${asc.sign_name || '?'}  ${(asc.degree_in_sign || 0).toFixed(1)}°`],
+        ['SUN', `${sun.sign_name || '?'}  H${sun.house || '?'}`],
+        ['MOON', `${moon.sign_name || '?'}  H${moon.house || '?'}`],
+      ];
+      if (md.mahadasha_lord) {
+        lines.push(['MAHADASHA',
+          `${md.mahadasha_lord} (${(md.time_elapsed_years || 0).toFixed(1)} / ${md.total_duration_years} yrs)`]);
+      }
+      const yogas = (cs.yogas || []).map(y => y.name).join(', ');
+      if (yogas) lines.push(['YOGAS', yogas]);
+
+      for (const [label, value] of lines) {
+        summary.appendChild(el('div', {style: 'margin-top: 0.7rem; text-align: left;'},
+          el('div', {class: 'leaf-label', style: 'margin-bottom: 0.15rem;'}, label),
+          el('div', {style: 'font-size: 0.95rem; color: var(--madder); font-family: Cinzel, serif; letter-spacing: 0.05em;'}, value),
+        ));
+      }
+    }
+
+    function renderSections(payload) {
+      const middle = document.getElementById('result-sections');
+      middle.replaceChildren(
+        el('div', {class: 'panel-heading-deva deva'}, 'पठनम्'),
+        el('div', {class: 'panel-heading'},
+          'THE READING',
+          el('span', {class: `source-pill ${payload.source}`}, payload.source || 'unknown'),
+        ),
+      );
+      for (const s of payload.sections || []) {
+        middle.appendChild(el('div', {class: 'reading-section'},
+          el('h3', null, s.title),
+          el('div', {class: 'text'}, s.text),
+        ));
+      }
+    }
+
+    function renderCitations(payload) {
+      const right = document.getElementById('result-citations');
+      right.replaceChildren(
+        el('div', {class: 'panel-heading-deva deva'}, 'सन्दर्भाः'),
+        el('div', {class: 'panel-heading'}, `${payload.n_citations_total || 0} SOURCES`),
+      );
+      const allCits = [];
+      for (const s of payload.sections || []) {
+        for (const c of s.citations || []) allCits.push(c);
+      }
+      // Dedupe by source+title
+      const seen = new Set();
+      for (const c of allCits) {
+        const key = `${c.source}::${c.title}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        right.appendChild(el('div', {class: 'citation-line'},
+          el('div', {class: 'meta'}, `${c.source} — ${c.title || '(untitled)'}`),
+          el('div', {class: 'snippet'}, c.snippet || ''),
+        ));
+      }
+    }
+
+    function setResultFolio(text) {
+      document.getElementById('result-folio-mark').textContent = text;
+    }
+
+    async function onSubmit() {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'SYNTHESIZING…';
+      // Render loading state in the middle panel
+      const middle = document.getElementById('result-sections');
+      middle.replaceChildren(
+        el('div', {class: 'panel-heading-deva deva'}, 'पठनम्'),
+        el('div', {class: 'panel-heading'}, 'THE READING'),
+        el('div', {class: 'loading-state'}, 'Computing chart, retrieving doctrine, synthesizing reading…'),
+      );
+      setResultFolio('folio II · synthesizing');
+      // Flip to result folio so the user sees progress
+      if (typeof window.goToManuscriptPage === 'function') {
+        window.goToManuscriptPage(2);
+      }
+
+      const body = {
+        year: +document.getElementById('year').value,
+        month: +document.getElementById('month').value,
+        day: +document.getElementById('day').value,
+        hour: +document.getElementById('hour').value,
+        minute: +document.getElementById('minute').value,
+        latitude: +document.getElementById('latitude').value,
+        longitude: +document.getElementById('longitude').value,
+        tz_offset: +document.getElementById('tz_offset').value,
+      };
+
+      try {
+        const res = await fetch('/medini/reading', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({detail: res.statusText}));
+          middle.replaceChildren(
+            el('div', {class: 'panel-heading-deva deva'}, 'पठनम्'),
+            el('div', {class: 'panel-heading'}, 'THE READING'),
+            el('div', {class: 'error-state'},
+              `Error ${res.status}: ${errBody.detail || res.statusText}`),
+          );
+          setResultFolio('folio II · error');
+          return;
+        }
+        const data = await res.json();
+        renderSummary(data.chart_summary || {});
+        renderSections(data);
+        renderCitations(data);
+        setResultFolio(`folio II · ${(data.sections || []).length} sections`);
+      } catch (e) {
+        middle.replaceChildren(
+          el('div', {class: 'panel-heading-deva deva'}, 'पठनम्'),
+          el('div', {class: 'panel-heading'}, 'THE READING'),
+          el('div', {class: 'error-state'}, `Network error: ${e.message}`),
+        );
+        setResultFolio('folio II · error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Synthesize Reading';
+      }
+    }
+    window.onSubmit = onSubmit;
+
+    // ============================================================
+    // Preset chart cards (right panel of form folio): click to
+    // auto-populate the date / place / time fields. The values are
+    // stored as data-attrs on each .preset-card element so the JS
+    // wiring stays declarative.
+    // ============================================================
+    const presetFieldMap = {
+      y: 'year', m: 'month', d: 'day',
+      h: 'hour', mn: 'minute',
+      lat: 'latitude', lon: 'longitude', tz: 'tz_offset',
+    };
+    document.querySelectorAll('.preset-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        for (const [dataKey, inputId] of Object.entries(presetFieldMap)) {
+          const val = card.dataset[dataKey];
+          if (val == null) continue;
+          const input = document.getElementById(inputId);
+          if (input) input.value = val;
+        }
+        // Visual confirmation: highlight selected, clear others
+        document.querySelectorAll('.preset-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

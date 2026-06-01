@@ -1,0 +1,9 @@
+Spike C: Shodashavarga 16-varga marginal cost
+======================================================================
+SHODASHAVARGA_DIVISORS: (2, 3, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
+USED (per spec): (1, 2, 3, 4, 7, 9, 10, 12, 24, 60)
+
+USED  (10 divisors):    13.6ms per 1000 charts
+ALL16 (14 divisors):    16.5ms per 1000 charts
+Delta: 2.9ms (21% increase)
+Per-chart marginal: 0.003ms

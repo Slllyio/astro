@@ -1,0 +1,1284 @@
+{
+  "$defs": {
+    "ADJudgment": {
+      "additionalProperties": false,
+      "description": "Sequence 6 \u2014 Vimshottari Antardasha 7-check judgment.",
+      "properties": {
+        "ad_lord": {
+          "title": "Ad Lord",
+          "type": "string"
+        },
+        "md_lord": {
+          "title": "Md Lord",
+          "type": "string"
+        },
+        "start_jd": {
+          "title": "Start Jd",
+          "type": "number"
+        },
+        "end_jd": {
+          "title": "End Jd",
+          "type": "number"
+        },
+        "start_date": {
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "title": "End Date",
+          "type": "string"
+        },
+        "age_at_start": {
+          "title": "Age At Start",
+          "type": "number"
+        },
+        "age_at_end": {
+          "title": "Age At End",
+          "type": "number"
+        },
+        "is_current": {
+          "title": "Is Current",
+          "type": "boolean"
+        },
+        "is_past": {
+          "title": "Is Past",
+          "type": "boolean"
+        },
+        "is_future": {
+          "title": "Is Future",
+          "type": "boolean"
+        },
+        "checks": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Checks",
+          "type": "object"
+        },
+        "overall_verdict": {
+          "$ref": "#/$defs/Finding"
+        }
+      },
+      "required": [
+        "ad_lord",
+        "md_lord",
+        "start_jd",
+        "end_jd",
+        "start_date",
+        "end_date",
+        "age_at_start",
+        "age_at_end",
+        "is_current",
+        "is_past",
+        "is_future",
+        "checks",
+        "overall_verdict"
+      ],
+      "title": "ADJudgment",
+      "type": "object"
+    },
+    "AmshaBalaKramaResult": {
+      "additionalProperties": false,
+      "description": "Sequence 1 \u2014 BPHS layered Varga judgment (4 steps).",
+      "properties": {
+        "steps": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Steps",
+          "type": "object"
+        },
+        "overall_verdict": {
+          "$ref": "#/$defs/Finding"
+        }
+      },
+      "required": [
+        "steps",
+        "overall_verdict"
+      ],
+      "title": "AmshaBalaKramaResult",
+      "type": "object"
+    },
+    "CareerExecutiveResult": {
+      "additionalProperties": false,
+      "description": "Sequence 2 \u2014 Career Executive Consulting (4 steps).",
+      "properties": {
+        "steps": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Steps",
+          "type": "object"
+        },
+        "overall_verdict": {
+          "$ref": "#/$defs/Finding"
+        }
+      },
+      "required": [
+        "steps",
+        "overall_verdict"
+      ],
+      "title": "CareerExecutiveResult",
+      "type": "object"
+    },
+    "ChartBlock": {
+      "additionalProperties": false,
+      "description": "Stage 1 \u2014 natal chart raw outputs (lagna, planets, cusps, ayanamsa).",
+      "properties": {
+        "lagna_longitude": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lagna Longitude"
+        },
+        "ayanamsa": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ayanamsa"
+        },
+        "planets": {
+          "additionalProperties": true,
+          "title": "Planets",
+          "type": "object"
+        },
+        "cusps": {
+          "additionalProperties": true,
+          "title": "Cusps",
+          "type": "object"
+        },
+        "extras": {
+          "additionalProperties": true,
+          "title": "Extras",
+          "type": "object"
+        }
+      },
+      "title": "ChartBlock",
+      "type": "object"
+    },
+    "ChartInput": {
+      "additionalProperties": false,
+      "description": "User-supplied birth-data envelope.\n\nFormat conventions:\n    - `dob` is ISO date `YYYY-MM-DD`\n    - `time` is 24-hour `HH:MM`\n    - `tz` is signed offset `\u00b1HH:MM` (the project does NOT accept tz-database names)\n    - `lat`, `lon` in decimal degrees; negatives are South / West",
+      "properties": {
+        "dob": {
+          "title": "Dob",
+          "type": "string"
+        },
+        "time": {
+          "title": "Time",
+          "type": "string"
+        },
+        "tz": {
+          "title": "Tz",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "dob",
+        "time",
+        "tz",
+        "lat",
+        "lon"
+      ],
+      "title": "ChartInput",
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "description": "A single doctrine-source citation attached to a Finding by Tier-3 RAG.",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "passage": {
+          "title": "Passage",
+          "type": "string"
+        },
+        "relevance": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Relevance",
+          "type": "number"
+        },
+        "knowledge_doc_id": {
+          "title": "Knowledge Doc Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "passage",
+        "relevance",
+        "knowledge_doc_id"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "ConfidenceScore": {
+      "additionalProperties": false,
+      "description": "3-vote rule confidence envelope.\n\n`votes` is a fixed-key dict {house, lord, karaka} -> bool indicating which\nof the three classical evidence pillars agree with the finding. `score`\nis a [0,1] aggregation; `band` is the human-readable bucket.",
+      "properties": {
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "votes": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Votes",
+          "type": "object"
+        },
+        "band": {
+          "enum": [
+            "indicative_only",
+            "low",
+            "medium",
+            "high",
+            "very_strong"
+          ],
+          "title": "Band",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "votes",
+        "band"
+      ],
+      "title": "ConfidenceScore",
+      "type": "object"
+    },
+    "ConsensusScore": {
+      "additionalProperties": false,
+      "description": "Cross-source agreement scored by `consensus_scoring.py` (Tier-3).",
+      "properties": {
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        },
+        "sources_agreeing": {
+          "minimum": 0,
+          "title": "Sources Agreeing",
+          "type": "integer"
+        },
+        "sources_total": {
+          "minimum": 0,
+          "title": "Sources Total",
+          "type": "integer"
+        },
+        "low_consensus_flag": {
+          "title": "Low Consensus Flag",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "score",
+        "sources_agreeing",
+        "sources_total",
+        "low_consensus_flag"
+      ],
+      "title": "ConsensusScore",
+      "type": "object"
+    },
+    "Contradiction": {
+      "additionalProperties": false,
+      "description": "Cross-finding disagreement detected by `contradiction_detector.py`.\n\n`severity` `\"soft\"` means the directions disagree but both findings stand;\n`\"hard\"` means at least one finding must yield. `suggested_arbitration`\nis descriptive only (spec Section 14: never picks a winner).",
+      "properties": {
+        "finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Finding Ids",
+          "type": "array"
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "soft",
+            "hard"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "suggested_arbitration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggested Arbitration"
+        }
+      },
+      "required": [
+        "finding_ids",
+        "domain",
+        "description",
+        "severity"
+      ],
+      "title": "Contradiction",
+      "type": "object"
+    },
+    "Dispute": {
+      "additionalProperties": false,
+      "description": "Report-only doctrine variance surfaced by `dispute_surfacing.py`.\n\nBy design carries NO `is_correct` / `recommended_side` / `engine_preferred`\nfield (spec Section 14, Tier-3 methodology commitments).",
+      "properties": {
+        "rule": {
+          "title": "Rule",
+          "type": "string"
+        },
+        "sources_for": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources For",
+          "type": "array"
+        },
+        "sources_against": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sources Against",
+          "type": "array"
+        },
+        "canonical_example": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Example"
+        }
+      },
+      "required": [
+        "rule"
+      ],
+      "title": "Dispute",
+      "type": "object"
+    },
+    "DoctrineConfig": {
+      "additionalProperties": false,
+      "description": "Records the doctrine variant chosen for THIS reading.\n\nEvery default value mirrors the locked decision in\n`docs/doctrine-decisions.md` (D-1 through D-16). When a reading is\nemitted, this block lets downstream consumers verify exactly which\ndoctrine variants produced it. Configurable per-chart but with these\ndocumented defaults.\n\nDefaults track lockfile revision 1 (2026-05-27).",
+      "properties": {
+        "karaka_mode": {
+          "default": 8,
+          "enum": [
+            7,
+            8
+          ],
+          "title": "Karaka Mode",
+          "type": "integer"
+        },
+        "arudha_exception": {
+          "default": "1_7_to_10",
+          "enum": [
+            "1_7_to_10",
+            "none"
+          ],
+          "title": "Arudha Exception",
+          "type": "string"
+        },
+        "vimsopaka_scheme": {
+          "default": "shodashavarga",
+          "enum": [
+            "shodashavarga",
+            "saptavarga",
+            "dashavarga"
+          ],
+          "title": "Vimsopaka Scheme",
+          "type": "string"
+        },
+        "ishta_formula": {
+          "default": "bphs_47_3",
+          "enum": [
+            "bphs_47_3",
+            "phaladeepika_6"
+          ],
+          "title": "Ishta Formula",
+          "type": "string"
+        },
+        "bhava_chalit_system": {
+          "default": "sripati",
+          "enum": [
+            "sripati",
+            "porphyry"
+          ],
+          "title": "Bhava Chalit System",
+          "type": "string"
+        },
+        "karaka_triangulation_reading": {
+          "default": "sanjay_rath",
+          "enum": [
+            "sanjay_rath",
+            "bphs_classical"
+          ],
+          "title": "Karaka Triangulation Reading",
+          "type": "string"
+        },
+        "neech_bhanga_rule": {
+          "default": "bphs_39_10",
+          "enum": [
+            "bphs_39_10",
+            "alt_1",
+            "alt_2",
+            "alt_3"
+          ],
+          "title": "Neech Bhanga Rule",
+          "type": "string"
+        },
+        "kala_sarpa_definition": {
+          "default": "strict_180_rahu_leading",
+          "enum": [
+            "strict_180_rahu_leading",
+            "loose",
+            "partial"
+          ],
+          "title": "Kala Sarpa Definition",
+          "type": "string"
+        },
+        "graha_yuddha_winner": {
+          "default": "northern_latitude",
+          "enum": [
+            "northern_latitude",
+            "size",
+            "brightness"
+          ],
+          "title": "Graha Yuddha Winner",
+          "type": "string"
+        },
+        "consensus_min_sources": {
+          "default": 3,
+          "minimum": 0,
+          "title": "Consensus Min Sources",
+          "type": "integer"
+        },
+        "consensus_agreement_threshold": {
+          "default": 0.66,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Consensus Agreement Threshold",
+          "type": "number"
+        }
+      },
+      "title": "DoctrineConfig",
+      "type": "object"
+    },
+    "DomainReading": {
+      "additionalProperties": false,
+      "description": "One of the 6 named domain syntheses (career, marriage, ...).\n\nAggregates the promise (natal potential), triggers (firing conditions),\ntiming_windows (dated activations), afflictions (limiters), cross_checks\n(sequence-corroboration findings), remedies, and an overall verdict +\nconfidence score for the domain.",
+      "properties": {
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "promise": {
+          "$ref": "#/$defs/Finding"
+        },
+        "triggers": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Triggers",
+          "type": "array"
+        },
+        "timing_windows": {
+          "items": {
+            "$ref": "#/$defs/TimingWindow"
+          },
+          "title": "Timing Windows",
+          "type": "array"
+        },
+        "afflictions": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Afflictions",
+          "type": "array"
+        },
+        "cross_checks": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Cross Checks",
+          "type": "array"
+        },
+        "remedies": {
+          "items": {
+            "$ref": "#/$defs/RemedyRecommendation"
+          },
+          "title": "Remedies",
+          "type": "array"
+        },
+        "overall_verdict": {
+          "$ref": "#/$defs/Finding"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceScore"
+        }
+      },
+      "required": [
+        "domain",
+        "promise",
+        "overall_verdict",
+        "confidence"
+      ],
+      "title": "DomainReading",
+      "type": "object"
+    },
+    "DomainsBlock": {
+      "additionalProperties": false,
+      "description": "Stage 6 \u2014 the 6 named domain syntheses.",
+      "properties": {
+        "career": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "marriage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "children": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wealth": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "health": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "education": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DomainReading"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "DomainsBlock",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "The universal output unit emitted by every engine module.\n\nA Finding represents one judgment: a karaka identification, a yoga\ndetection, an MD check-step result, a domain promise/trigger/affliction.\nTier-3 enrichments (citations, consensus, dispute, robustness,\ncontradicts_finding_ids) are inline so consumers never need a JOIN to\ntop-level enrichment tables.\n\nID grammar (stable across runs; enumeration-based IDs are forbidden):\n    - `seq_<N>.<scope>.<rule_slug>`         e.g. `seq_5.md_3.step_05_rashi_depositor`\n    - `primitive.<module>.<rule_slug>`      e.g. `primitive.karakas.atmakaraka`\n    - `foundation.<module>.<rule_slug>`     e.g. `foundation.argala.7th_house_argala`\n    - `practitioner.<module>.<rule_slug>`   e.g. `practitioner.mks.saturn_in_1`\n    - `domain.<name>.<rule_slug>`           e.g. `domain.marriage.7l_dasha_window`",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "rule": {
+          "title": "Rule",
+          "type": "string"
+        },
+        "source_sequence": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Sequence"
+        },
+        "classification": {
+          "enum": [
+            "promise",
+            "trigger",
+            "affliction",
+            "yoga",
+            "primitive"
+          ],
+          "title": "Classification",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "positive",
+            "negative",
+            "neutral",
+            "mixed"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "verdict": {
+          "maxLength": 140,
+          "title": "Verdict",
+          "type": "string"
+        },
+        "verdict_language": {
+          "const": "en",
+          "default": "en",
+          "title": "Verdict Language",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceScore"
+        },
+        "enrichment_level": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "title": "Enrichment Level",
+          "type": "integer"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "consensus": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsensusScore"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consensus_status": {
+          "default": "not_computed",
+          "enum": [
+            "not_computed",
+            "no_agreement",
+            "computed"
+          ],
+          "title": "Consensus Status",
+          "type": "string"
+        },
+        "dispute": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Dispute"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "robustness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RobustnessScore"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "contradicts_finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradicts Finding Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "rule",
+        "source_sequence",
+        "classification",
+        "direction",
+        "verdict",
+        "confidence"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FoundationsBlock": {
+      "additionalProperties": false,
+      "description": "Stage 3 \u2014 Tier-1 outputs (functional nature, bhava chalit, ...).",
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "by_module": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/Finding"
+            },
+            "type": "array"
+          },
+          "title": "By Module",
+          "type": "object"
+        }
+      },
+      "title": "FoundationsBlock",
+      "type": "object"
+    },
+    "MDJudgment": {
+      "additionalProperties": false,
+      "description": "Sequence 5 \u2014 Vimshottari Mahadasha 19-check judgment.\n\n`start_date` / `end_date` are ISO-8601 strings; `start_jd` / `end_jd`\nretain Julian-Day precision (spec Section 15 \u2014 dual representation).",
+      "properties": {
+        "md_lord": {
+          "title": "Md Lord",
+          "type": "string"
+        },
+        "start_jd": {
+          "title": "Start Jd",
+          "type": "number"
+        },
+        "end_jd": {
+          "title": "End Jd",
+          "type": "number"
+        },
+        "start_date": {
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "title": "End Date",
+          "type": "string"
+        },
+        "age_at_start": {
+          "title": "Age At Start",
+          "type": "number"
+        },
+        "age_at_end": {
+          "title": "Age At End",
+          "type": "number"
+        },
+        "is_current": {
+          "title": "Is Current",
+          "type": "boolean"
+        },
+        "is_past": {
+          "title": "Is Past",
+          "type": "boolean"
+        },
+        "is_future": {
+          "title": "Is Future",
+          "type": "boolean"
+        },
+        "checks": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Checks",
+          "type": "object"
+        },
+        "overall_verdict": {
+          "$ref": "#/$defs/Finding"
+        }
+      },
+      "required": [
+        "md_lord",
+        "start_jd",
+        "end_jd",
+        "start_date",
+        "end_date",
+        "age_at_start",
+        "age_at_end",
+        "is_current",
+        "is_past",
+        "is_future",
+        "checks",
+        "overall_verdict"
+      ],
+      "title": "MDJudgment",
+      "type": "object"
+    },
+    "Meta": {
+      "additionalProperties": false,
+      "description": "Engine + chart-input metadata accompanying every reading.\n\n`schema_version` is the public stable lock; bump to 1.1.0 for additive\nfields, 2.0.0 for breaking changes. `stability` is `\"experimental\"`\nuntil the first non-engine downstream consumer ships, then `\"beta\"`,\nthen `\"stable\"`.\n\n`doctrine_config` echoes the 16 lockfile decisions so every emitted\nreading is self-describing (per spec Section 6, design choices).",
+      "properties": {
+        "schema_version": {
+          "default": "1.2.0",
+          "enum": [
+            "1.0.0",
+            "1.1.0",
+            "1.2.0"
+          ],
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stability": {
+          "default": "experimental",
+          "enum": [
+            "experimental",
+            "beta",
+            "stable"
+          ],
+          "title": "Stability",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "swiss_ephemeris_version": {
+          "title": "Swiss Ephemeris Version",
+          "type": "string"
+        },
+        "python_version": {
+          "title": "Python Version",
+          "type": "string"
+        },
+        "generated_at": {
+          "title": "Generated At",
+          "type": "string"
+        },
+        "chart_input": {
+          "$ref": "#/$defs/ChartInput"
+        },
+        "doctrines_used": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Doctrines Used",
+          "type": "array"
+        },
+        "doctrine_config": {
+          "$ref": "#/$defs/DoctrineConfig"
+        },
+        "enrichment_enabled": {
+          "title": "Enrichment Enabled",
+          "type": "boolean"
+        },
+        "robustness_enabled": {
+          "title": "Robustness Enabled",
+          "type": "boolean"
+        },
+        "stage_timings_ms": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Stage Timings Ms",
+          "type": "object"
+        },
+        "schema_changelog_url": {
+          "default": "docs/reading/CHANGELOG.md",
+          "title": "Schema Changelog Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine_version",
+        "swiss_ephemeris_version",
+        "python_version",
+        "generated_at",
+        "chart_input",
+        "doctrine_config",
+        "enrichment_enabled",
+        "robustness_enabled"
+      ],
+      "title": "Meta",
+      "type": "object"
+    },
+    "PractitionerBlock": {
+      "additionalProperties": false,
+      "description": "Stage 4 \u2014 Tier-2 doctrine layer (MKS, Kala Sarpa, Neech Bhanga, ...).",
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "by_module": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/Finding"
+            },
+            "type": "array"
+          },
+          "title": "By Module",
+          "type": "object"
+        }
+      },
+      "title": "PractitionerBlock",
+      "type": "object"
+    },
+    "PrimitivesBlock": {
+      "additionalProperties": false,
+      "description": "Stage 2 \u2014 Tier-0 outputs (karakas, arudha, dignities, ...).",
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "by_module": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/Finding"
+            },
+            "type": "array"
+          },
+          "title": "By Module",
+          "type": "object"
+        }
+      },
+      "title": "PrimitivesBlock",
+      "type": "object"
+    },
+    "RemedyRecommendation": {
+      "additionalProperties": false,
+      "description": "A doctrine-cited remedy attached to a DomainReading.\n\n`kind` enumerates the broad remedy category; the precise prescription\nlives in `description`. `source` carries the classical citation per\nTier-3 citation discipline.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "mantra",
+            "gemstone",
+            "yantra",
+            "donation",
+            "ritual",
+            "behavioural",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "kind",
+        "description"
+      ],
+      "title": "RemedyRecommendation",
+      "type": "object"
+    },
+    "RobustnessScore": {
+      "additionalProperties": false,
+      "description": "Output of `birth_time_robustness.py` (Tier-3).\n\n`sensitive_to_birth_time` is `EXPERIMENTAL` until the threshold\nmethodology is published (Section 14).",
+      "properties": {
+        "sensitive_to_birth_time": {
+          "title": "Sensitive To Birth Time",
+          "type": "boolean"
+        },
+        "flip_rate_at_5min": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Flip Rate At 5Min",
+          "type": "number"
+        },
+        "flip_rate_at_10min": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Flip Rate At 10Min",
+          "type": "number"
+        },
+        "inputs_used": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs Used",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sensitive_to_birth_time",
+        "flip_rate_at_5min",
+        "flip_rate_at_10min"
+      ],
+      "title": "RobustnessScore",
+      "type": "object"
+    },
+    "SequencesBlock": {
+      "additionalProperties": false,
+      "description": "Stage 5 \u2014 the named sequence-result models.\n\nEach sequence result is optional: not every reading exercises every\nsequence (e.g. a chart with no career judgment skips Sequence 2).\n\nV1.5 additions (``chara_dasha`` D-17 and ``yogini_dasha`` D-18) carry\n``dict[str, Any] | None`` types rather than their concrete Pydantic\nmodels. The concrete models live inside\n``app.reading.sequences.chara_dasha`` and\n``app.reading.sequences.yogini_dasha`` \u2014 importing them into schema.py\nwould create a circular import. The sequence modules emit\n``.model_dump(mode=\"json\")`` dicts that pass through unchanged.",
+      "properties": {
+        "amsha_bala_krama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AmshaBalaKramaResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "career_executive": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CareerExecutiveResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "md_judgments": {
+          "items": {
+            "$ref": "#/$defs/MDJudgment"
+          },
+          "title": "Md Judgments",
+          "type": "array"
+        },
+        "ad_judgments": {
+          "items": {
+            "$ref": "#/$defs/ADJudgment"
+          },
+          "title": "Ad Judgments",
+          "type": "array"
+        },
+        "chara_dasha": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chara Dasha"
+        },
+        "yogini_dasha": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yogini Dasha"
+        }
+      },
+      "title": "SequencesBlock",
+      "type": "object"
+    },
+    "TimingWindow": {
+      "additionalProperties": false,
+      "description": "A dated event-window in a `DomainReading`.\n\nDates are ISO-8601. `event_type` classifies the window for downstream\nUI grouping; `triggering_finding_ids` cross-references the Findings whose\nactivation drove the window.",
+      "properties": {
+        "start_date": {
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "title": "End Date",
+          "type": "string"
+        },
+        "driving_period": {
+          "title": "Driving Period",
+          "type": "string"
+        },
+        "event_type": {
+          "enum": [
+            "marriage",
+            "career_shift",
+            "child_birth",
+            "education_milestone",
+            "health_event",
+            "wealth_event",
+            "spiritual_event",
+            "general"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "confidence_band": {
+          "enum": [
+            "indicative_only",
+            "low",
+            "medium",
+            "high",
+            "very_strong"
+          ],
+          "title": "Confidence Band",
+          "type": "string"
+        },
+        "triggering_finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Triggering Finding Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date",
+        "driving_period",
+        "event_type",
+        "confidence_band"
+      ],
+      "title": "TimingWindow",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Top-level JSON contract.\n\nThe 9-key shape mirrors the pipeline stages 1\u20138 (spec Section 6):\n\n- `meta`           \u2014 engine + chart envelope, doctrine echo\n- `chart`          \u2014 Stage 1 natal raw\n- `primitives`     \u2014 Stage 2 Tier-0 outputs\n- `foundations`    \u2014 Stage 3 Tier-1 outputs\n- `practitioner`   \u2014 Stage 4 Tier-2 outputs\n- `sequences`      \u2014 Stage 5 4 named sequence results\n- `domains`        \u2014 Stage 6 6 named domain readings\n- `contradictions` \u2014 Stage 8.3 cross-finding disagreements\n- `warnings`       \u2014 engine-level diagnostics (non-fatal)",
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "chart": {
+      "$ref": "#/$defs/ChartBlock"
+    },
+    "primitives": {
+      "$ref": "#/$defs/PrimitivesBlock"
+    },
+    "foundations": {
+      "$ref": "#/$defs/FoundationsBlock"
+    },
+    "practitioner": {
+      "$ref": "#/$defs/PractitionerBlock"
+    },
+    "sequences": {
+      "$ref": "#/$defs/SequencesBlock"
+    },
+    "domains": {
+      "$ref": "#/$defs/DomainsBlock"
+    },
+    "contradictions": {
+      "items": {
+        "$ref": "#/$defs/Contradiction"
+      },
+      "title": "Contradictions",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "meta",
+    "chart",
+    "primitives",
+    "foundations",
+    "practitioner",
+    "sequences",
+    "domains"
+  ],
+  "title": "ReadingOutput",
+  "type": "object"
+}

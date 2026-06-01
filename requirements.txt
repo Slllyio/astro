@@ -34,3 +34,7 @@ pytest
 pytest-asyncio
 pytest-cov
 httpx
+# Stage D dynamic-deephit deps (see docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md)
+lifelines>=0.27,<0.30
+torch>=2.0,<3.0
+scikit-survival>=0.22,<0.25

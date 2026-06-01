@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ज्ञानकोशः — Doctrine Search</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/manuscript.css">
+
+  <style>
+    /* ---- Page-specific styles for the Knowledge Search experience ---- */
+
+    /* Corpus stat block in the left panel of the search folio */
+    .corpus-stat {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--saffron-deep);
+    }
+    .corpus-stat .number {
+      display: block;
+      font-family: 'EB Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--madder);
+      margin-bottom: 0.1rem;
+    }
+
+    /* Full-width search input styled as a palm-leaf inscription */
+    .search-box-large {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: rgba(245, 227, 184, 0.4);
+      border: none;
+      border-bottom: 2px solid var(--madder);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--ink-primary);
+      outline: none;
+      text-align: center;
+    }
+    .search-box-large::placeholder {
+      color: var(--ink-faded);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    /* Filter chips for topic/source quick-select */
+    .topic-chip {
+      display: inline-block;
+      padding: 0.18rem 0.55rem;
+      margin: 0.12rem;
+      background: rgba(232, 213, 168, 0.7);
+      border: 1px solid var(--ink-faded);
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-secondary);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .topic-chip:hover, .topic-chip.active {
+      background: var(--saffron-light);
+      color: var(--ink-primary);
+    }
+    .topic-chip.deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0;
+    }
+
+    /* Manuscript-style select and text input for filter controls */
+    .leaf-select, .leaf-input-sm {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      background: rgba(245, 227, 184, 0.5);
+      border: none;
+      border-bottom: 1px solid var(--ink-faded);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 0.85rem;
+      color: var(--ink-primary);
+      outline: none;
+      cursor: pointer;
+    }
+    .leaf-select:focus, .leaf-input-sm:focus {
+      border-bottom-color: var(--madder);
+    }
+
+    /* Result panels — slight parchment tint */
+    .panel.result-card {
+      background: rgba(245, 227, 184, 0.4);
+    }
+    .result-meta {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--saffron-deep);
+      margin-bottom: 0.3rem;
+    }
+    .result-source-eng {
+      font-style: italic;
+      color: var(--ink-secondary);
+      font-size: 0.78rem;
+    }
+    .result-score {
+      display: inline-block;
+      padding: 0.14rem 0.38rem;
+      background: var(--madder);
+      color: var(--leaf-cream-light);
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      border-radius: 8px;
+    }
+    .result-excerpt {
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: var(--ink-primary);
+      margin-top: 0.5rem;
+      padding: 0.35rem 0.55rem;
+      background: rgba(184, 137, 90, 0.08);
+      border-left: 2px solid var(--saffron);
+      white-space: pre-wrap;
+    }
+    .result-topics {
+      font-size: 0.65rem;
+      color: var(--ink-faded);
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    /* Loading / error states that still feel like manuscript text */
+    .ms-loading {
+      text-align: center;
+      padding: 1.2rem 0.5rem;
+      font-style: italic;
+      color: var(--ink-secondary);
+      font-size: 0.9rem;
+    }
+    .ms-error {
+      padding: 0.8rem;
+      color: var(--madder-deep);
+      font-size: 0.85rem;
+      border-left: 2px solid var(--madder);
+      background: rgba(160, 40, 40, 0.07);
+    }
+    .ms-error .error-hint {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      margin-top: 0.4rem;
+      color: var(--ink-faded);
+    }
+    .ms-empty {
+      text-align: center;
+      font-style: italic;
+      color: var(--ink-faded);
+      font-size: 0.9rem;
+      padding: 1rem 0.5rem;
+    }
+
+    /* Folio-mark dynamic update */
+    #folio-search { }
+  </style>
+</head>
+<body>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Wooden front cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">ज्ञानकोशः</div>
+            <div class="cover-english-title">DOCTRINE LIBRARY · SEARCH</div>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to enter the library</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Search input + corpus stats + filters ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <!-- Left panel: corpus stats (populated by loadStats()) -->
+          <div class="panel left" id="panel-stats" style="justify-content: center;">
+            <div class="panel-heading">CORPUS</div>
+            <div id="stat-artefacts" class="corpus-stat" style="margin-top: 0.5rem;">
+              <span class="number" id="stat-chunks">…</span>
+              CHUNKS INDEXED
+            </div>
+            <div id="stat-sources" class="corpus-stat" style="margin-top: 0.6rem;">
+              <span class="number" id="stat-sources-num">…</span>
+              SOURCES
+            </div>
+            <div class="corpus-stat" style="margin-top: 0.6rem;">
+              <span class="number">918</span>
+              ARTEFACTS
+            </div>
+            <div class="corpus-stat" style="margin-top: 0.6rem;">
+              <span class="number">6.28M</span>
+              WORDS
+            </div>
+            <div id="stat-status" style="
+              margin-top: 0.9rem;
+              text-align: center;
+              font-family: 'Cinzel', serif;
+              font-size: 0.6rem;
+              letter-spacing: 0.1em;
+              color: var(--ink-faded);
+              font-style: italic;
+            ">checking index…</div>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <!-- Middle panel: search query input + submit button -->
+          <div class="panel middle" style="justify-content: center; padding-left: 1.2rem; padding-right: 1.2rem;">
+            <div class="panel-heading-deva deva" style="margin-bottom: 0.5rem;">अन्वेषणम्</div>
+            <div class="panel-heading">SEARCH THE DOCTRINE</div>
+            <input
+              class="search-box-large"
+              type="text"
+              id="query"
+              placeholder="marriage timing · Saturn dasha · yogakaraka…"
+              maxlength="400"
+              autofocus
+            />
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.6rem;">
+              <div>
+                <label class="leaf-label">MODE</label>
+                <select class="leaf-select" id="mode">
+                  <option value="hybrid" selected>Hybrid</option>
+                  <option value="semantic">Semantic</option>
+                  <option value="lexical">Lexical</option>
+                </select>
+              </div>
+              <div>
+                <label class="leaf-label">TOP N</label>
+                <input class="leaf-input-sm" id="top" type="number" value="5" min="1" max="50" />
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 0.8rem;">
+              <button class="leaf-button" id="submit-btn" type="button" onclick="runSearch()">
+                Search · विचारः
+              </button>
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem; font-size: 0.72rem; color: var(--ink-faded); font-style: italic;">
+              First call warms the model (~2–3s)
+            </div>
+          </div>
+
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+
+          <!-- Right panel: filter controls -->
+          <div class="panel right" style="justify-content: center;">
+            <div class="panel-heading">FILTERS</div>
+            <div style="margin-bottom: 0.6rem;">
+              <label class="leaf-label">TOPIC</label>
+              <select class="leaf-select" id="topic"><option value="">(any)</option></select>
+            </div>
+            <div style="margin-bottom: 0.6rem;">
+              <label class="leaf-label">SOURCE SUBSTRING</label>
+              <input class="leaf-input-sm" id="source" type="text" placeholder="bphs · frawley · lunarastro" />
+            </div>
+            <div style="margin-top: 0.6rem;">
+              <div class="leaf-label">QUICK TOPICS</div>
+              <div style="margin-top: 0.3rem;">
+                <span class="topic-chip" onclick="setTopic('dasha')">Dashas</span>
+                <span class="topic-chip" onclick="setTopic('yoga')">Yogas</span>
+                <span class="topic-chip" onclick="setTopic('house')">Houses</span>
+                <span class="topic-chip" onclick="setTopic('planet')">Planets</span>
+                <span class="topic-chip deva" onclick="setTopic('nakshatra')">नक्षत्र</span>
+                <span class="topic-chip" onclick="setTopic('remedies')">Remedies</span>
+              </div>
+            </div>
+            <div style="margin-top: 0.6rem;">
+              <div class="leaf-label">QUICK SOURCES</div>
+              <div style="margin-top: 0.3rem;">
+                <span class="topic-chip" onclick="setSource('bphs')">BPHS</span>
+                <span class="topic-chip" onclick="setSource('phaladeepika')">Phaladeepika</span>
+                <span class="topic-chip" onclick="setSource('saravali')">Saravali</span>
+                <span class="topic-chip" onclick="setSource('lunarastro')">LunarAstro</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="folio-mark" id="folio-search">folio I · search</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaves 2-6 — Result folios (pre-defined, populated by JS) ========== -->
+
+      <div class="leaf" data-page="2">
+        <div class="leaf-page" id="result-leaf-1">
+          <div class="panel left result-card" id="result-left-1">
+            <div class="ms-empty">Submit a query to see results.</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-middle-1">
+            <div class="ms-empty" style="margin-top: 2rem;">Doctrine passages will appear here.</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-right-1">
+            <div class="ms-empty" style="margin-top: 2rem;">Context &amp; links will appear here.</div>
+          </div>
+          <div class="folio-mark" id="folio-mark-1">folio II · result 1</div>
+        </div>
+      </div>
+
+      <div class="leaf" data-page="3">
+        <div class="leaf-page" id="result-leaf-2">
+          <div class="panel left result-card" id="result-left-2">
+            <div class="ms-empty">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-middle-2">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-right-2">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="folio-mark" id="folio-mark-2">folio III · result 2</div>
+        </div>
+      </div>
+
+      <div class="leaf" data-page="4">
+        <div class="leaf-page" id="result-leaf-3">
+          <div class="panel left result-card" id="result-left-3">
+            <div class="ms-empty">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-middle-3">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-right-3">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="folio-mark" id="folio-mark-3">folio IV · result 3</div>
+        </div>
+      </div>
+
+      <div class="leaf" data-page="5">
+        <div class="leaf-page" id="result-leaf-4">
+          <div class="panel left result-card" id="result-left-4">
+            <div class="ms-empty">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-middle-4">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-right-4">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="folio-mark" id="folio-mark-4">folio V · result 4</div>
+        </div>
+      </div>
+
+      <div class="leaf" data-page="6">
+        <div class="leaf-page" id="result-leaf-5">
+          <div class="panel left result-card" id="result-left-5">
+            <div class="ms-empty">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" id="result-middle-5">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" id="result-right-5">
+            <div class="ms-empty" style="margin-top: 2rem;">—</div>
+          </div>
+          <div class="folio-mark" id="folio-mark-5">folio VI · result 5</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 7 — Wooden back cover ========== -->
+      <div class="leaf" data-page="7">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text" id="closing-text">END OF RESULTS</div>
+            <button class="reopen-btn" onclick="window.reopenManuscript()">NEW SEARCH</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous folio (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next folio (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">🔊 sound</button>
+    <a class="nav-page-link" href="/medini/reading/page">📖 reading</a>
+    <a class="nav-page-link" href="/">🏠 home</a>
+  </div>
+
+  <script>
+    window.MANUSCRIPT_LABELS = [
+      'COVER', 'SEARCH',
+      'RESULT 1', 'RESULT 2', 'RESULT 3', 'RESULT 4', 'RESULT 5',
+      'END',
+    ];
+  </script>
+  <script src="/static/js/manuscript.js"></script>
+
+  <script>
+    // ============================================================
+    // Safe-DOM helper — never use innerHTML for retrieved content.
+    // Prevents XSS even against OCR'd archive.org texts that may
+    // contain HTML-looking glyph sequences (CLAUDE.md convention).
+    // ============================================================
+    function el(tag, attrs, ...children) {
+      const node = document.createElement(tag);
+      if (attrs) {
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === 'class') node.className = v;
+          else if (k === 'href' || k === 'target' || k === 'rel') node.setAttribute(k, v);
+          else if (k.startsWith('on')) node[k] = v;
+          else node.setAttribute(k, v);
+        }
+      }
+      for (const c of children) {
+        if (c == null) continue;
+        if (typeof c === 'string') node.appendChild(document.createTextNode(c));
+        else node.appendChild(c);
+      }
+      return node;
+    }
+
+    // ---- Quick-filter helpers ----
+    function setTopic(val) {
+      const sel = document.getElementById('topic');
+      // Match any option that contains the val substring (case-insensitive)
+      const lower = val.toLowerCase();
+      let matched = false;
+      for (const opt of sel.options) {
+        if (opt.value.toLowerCase().includes(lower)) {
+          sel.value = opt.value;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        // Fallback: set the source input instead
+        document.getElementById('source').value = '';
+      }
+    }
+    function setSource(val) {
+      document.getElementById('source').value = val;
+    }
+
+    // ---- Corpus stats (cheap — never triggers model load) ----
+    async function loadStats() {
+      try {
+        const res = await fetch('/medini/knowledge/stats');
+        const data = await res.json();
+        const statusEl = document.getElementById('stat-status');
+        if (data.loaded) {
+          document.getElementById('stat-chunks').textContent =
+            (data.n_chunks || 0).toLocaleString();
+          document.getElementById('stat-sources-num').textContent =
+            data.n_sources || '?';
+          if (statusEl) statusEl.textContent = 'index · loaded';
+          if (data.model_name) {
+            statusEl.textContent = `model: ${data.model_name}`;
+          }
+        } else if (data.exists) {
+          document.getElementById('stat-chunks').textContent = '?';
+          document.getElementById('stat-sources-num').textContent = '?';
+          if (statusEl) statusEl.textContent = 'index available · warms on first search';
+        } else {
+          document.getElementById('stat-chunks').textContent = '—';
+          document.getElementById('stat-sources-num').textContent = '—';
+          if (statusEl) statusEl.textContent = 'index NOT BUILT · search returns 503';
+        }
+      } catch (e) {
+        const statusEl = document.getElementById('stat-status');
+        if (statusEl) statusEl.textContent = 'stats unavailable';
+      }
+    }
+
+    // ---- Topic taxonomy (for the dropdown) ----
+    async function loadTopics() {
+      try {
+        const res = await fetch('/medini/knowledge/topics');
+        const data = await res.json();
+        const sel = document.getElementById('topic');
+        sel.replaceChildren(el('option', {value: ''}, '(any)'));
+        const categories = Object.keys(data.taxonomy || {}).sort();
+        for (const cat of categories) {
+          const group = document.createElement('optgroup');
+          group.label = cat;
+          for (const leaf of data.taxonomy[cat]) {
+            const path = `${cat}.${leaf}`;
+            group.appendChild(el('option', {value: path}, path));
+          }
+          sel.appendChild(group);
+        }
+      } catch (_) {
+        // Non-fatal: dropdown stays empty but search still works without filter
+      }
+    }
+
+    // ---- Result rendering — populates pre-defined result leaves ----
+    const RESULT_SLOTS = 5;
+    const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+    const FOLIO_ROMAN = ['II', 'III', 'IV', 'V', 'VI'];
+
+    function clearResultLeaves() {
+      for (let i = 1; i <= RESULT_SLOTS; i++) {
+        const leftEl   = document.getElementById(`result-left-${i}`);
+        const middleEl = document.getElementById(`result-middle-${i}`);
+        const rightEl  = document.getElementById(`result-right-${i}`);
+        const markEl   = document.getElementById(`folio-mark-${i}`);
+        if (leftEl)   leftEl.replaceChildren(el('div', {class: 'ms-empty'}, '—'));
+        if (middleEl) middleEl.replaceChildren(el('div', {class: 'ms-empty'}, '—'));
+        if (rightEl)  rightEl.replaceChildren(el('div', {class: 'ms-empty'}, '—'));
+        if (markEl)   markEl.textContent = `folio ${FOLIO_ROMAN[i-1]} · result ${i}`;
+      }
+    }
+
+    function renderResultIntoLeaf(r, idx, total) {
+      const slotIdx = idx + 1;  // 1-based
+      if (slotIdx > RESULT_SLOTS) return;
+
+      const leftEl   = document.getElementById(`result-left-${slotIdx}`);
+      const middleEl = document.getElementById(`result-middle-${slotIdx}`);
+      const rightEl  = document.getElementById(`result-right-${slotIdx}`);
+      const markEl   = document.getElementById(`folio-mark-${slotIdx}`);
+
+      // ---- Left panel: identity card ----
+      leftEl.replaceChildren(
+        el('div', {class: 'result-meta'}, `RESULT ${idx + 1} OF ${total}`),
+        el('div', {
+          style: 'font-family:"EB Garamond",serif; font-size:1.05rem; color:var(--ink-primary); margin-bottom:0.2rem; font-weight:600;'
+        }, r.title || '(untitled)'),
+        el('div', {class: 'result-source-eng'}, r.source || ''),
+        el('div', {style: 'margin-top: 0.45rem;'},
+          el('span', {class: 'result-score'}, `${r.score.toFixed(3)} match`),
+        ),
+        el('div', {class: 'result-topics'}, (r.topics || []).slice(0, 3).join(' / ')),
+      );
+
+      // ---- Middle panel: excerpt / snippet ----
+      middleEl.replaceChildren(
+        el('div', {class: 'panel-heading'}, 'PASSAGE'),
+        el('div', {class: 'result-excerpt'}, r.snippet || '(no snippet)'),
+      );
+
+      // ---- Right panel: context links ----
+      const rightChildren = [
+        el('div', {class: 'result-meta'}, 'SOURCE LINKS'),
+      ];
+      if (r.source_url) {
+        rightChildren.push(
+          el('a', {
+            href: r.source_url,
+            target: '_blank',
+            rel: 'noopener',
+            style: 'display:block; margin-top:0.4rem; font-family:Cinzel,serif; font-size:0.65rem; letter-spacing:0.1em; color:var(--saffron-deep); text-decoration:none;',
+          }, 'Open source'),
+        );
+      }
+      if (r.local_path) {
+        rightChildren.push(
+          el('a', {
+            href: r.local_path,
+            target: '_blank',
+            rel: 'noopener',
+            style: 'display:block; margin-top:0.3rem; font-family:Cinzel,serif; font-size:0.65rem; letter-spacing:0.1em; color:var(--saffron-deep); text-decoration:none;',
+          }, 'Local mirror'),
+        );
+      }
+      if (!r.source_url && !r.local_path) {
+        rightChildren.push(el('div', {class: 'ms-empty'}, 'no links available'));
+      }
+      rightEl.replaceChildren(...rightChildren);
+
+      // ---- Folio mark ----
+      if (markEl) {
+        markEl.textContent = `folio ${FOLIO_ROMAN[idx]} · ${r.source || 'result ' + (idx + 1)}`;
+      }
+    }
+
+    function renderLoadingState() {
+      // Show spinner on folio 2 (first result leaf = page index 2)
+      const leftEl   = document.getElementById('result-left-1');
+      const middleEl = document.getElementById('result-middle-1');
+      const markEl   = document.getElementById('folio-mark-1');
+      if (leftEl)   leftEl.replaceChildren(el('div', {class: 'ms-loading'}, 'Searching…'));
+      if (middleEl) middleEl.replaceChildren(el('div', {class: 'ms-loading'}, 'Retrieving passages from doctrine corpus…'));
+      if (markEl)   markEl.textContent = 'folio II · searching';
+    }
+
+    function renderErrorInLeaf1(msg, hint) {
+      const middleEl = document.getElementById('result-middle-1');
+      const markEl   = document.getElementById('folio-mark-1');
+      const errDiv = el('div', {class: 'ms-error'}, msg);
+      if (hint) errDiv.appendChild(el('div', {class: 'error-hint'}, hint));
+      if (middleEl) middleEl.replaceChildren(errDiv);
+      if (markEl)   markEl.textContent = 'folio II · error';
+    }
+
+    // ---- Main search handler ----
+    async function runSearch() {
+      const q = document.getElementById('query').value.trim();
+      if (!q) return;
+
+      const mode   = document.getElementById('mode').value;
+      const topic  = document.getElementById('topic').value;
+      const source = document.getElementById('source').value.trim();
+      const top    = parseInt(document.getElementById('top').value, 10) || 5;
+      const btn    = document.getElementById('submit-btn');
+
+      btn.disabled = true;
+      clearResultLeaves();
+      renderLoadingState();
+
+      // Jump to result folio immediately so user sees progress
+      if (typeof window.goToManuscriptPage === 'function') {
+        window.goToManuscriptPage(2);
+      }
+
+      try {
+        const params = new URLSearchParams({q, mode, top: String(top)});
+        if (topic)  params.set('topic', topic);
+        if (source) params.set('source', source);
+
+        const res = await fetch(`/medini/knowledge/search?${params}`);
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          const errMsg = `HTTP ${res.status}: ${body.detail?.error || body.detail || res.statusText}`;
+          const hint   = body.detail?.hint || null;
+          renderErrorInLeaf1(errMsg, hint);
+          return;
+        }
+
+        const payload = await res.json();
+
+        if (!payload.results || payload.results.length === 0) {
+          const middleEl = document.getElementById('result-middle-1');
+          const markEl   = document.getElementById('folio-mark-1');
+          if (middleEl) middleEl.replaceChildren(
+            el('div', {class: 'ms-empty'},
+              `No matches for "${payload.query}" (mode=${payload.mode}). Try removing filters or switching mode.`),
+          );
+          if (markEl) markEl.textContent = 'folio II · no results';
+          // Update closing folio text
+          const closingEl = document.getElementById('closing-text');
+          if (closingEl) closingEl.textContent = 'NO RESULTS';
+          return;
+        }
+
+        // Render up to RESULT_SLOTS results into pre-defined leaves
+        const results = payload.results.slice(0, RESULT_SLOTS);
+        for (let i = 0; i < results.length; i++) {
+          renderResultIntoLeaf(results[i], i, payload.n_results);
+        }
+
+        // Update closing cover text
+        const closingEl = document.getElementById('closing-text');
+        if (closingEl) {
+          const shown  = results.length;
+          const hidden = payload.n_results - shown;
+          closingEl.textContent = hidden > 0
+            ? `${shown} RESULTS SHOWN · ${hidden} MORE`
+            : `${shown} RESULT${shown === 1 ? '' : 'S'} FOUND`;
+        }
+
+        // Refresh stats in case index just warmed
+        loadStats();
+
+      } catch (e) {
+        renderErrorInLeaf1(`Network error: ${e.message}`, null);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Allow Enter key in the query box to trigger search
+    document.getElementById('query').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); runSearch(); }
+    });
+
+    // ---- Init ----
+    loadStats();
+    loadTopics();
+  </script>
+</body>
+</html>

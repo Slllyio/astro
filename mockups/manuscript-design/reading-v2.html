@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जातक — Reading of the Birth Chart</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       POTHI MANUSCRIPT — v2 with page-flip mechanics
+       ============================================================
+       Real palm-leaf manuscripts (Pothi) are bound by string through
+       two holes punched in each leaf. Leaves are flipped horizontally
+       (~6:1 landscape proportion). We simulate this with CSS 3D
+       transforms hinged on the left binding edge.
+    */
+
+    /* ---------- Design tokens ---------- */
+    :root {
+      --bg-museum: #1a0e06;          /* deep dark surround, museum display */
+      --bg-museum-glow: #2a1810;
+      --bg-parchment: #f3e4bd;
+      --bg-card: #ecd8a3;
+      --bg-card-deep: #e0c789;
+      --bg-leaf: #efdcb0;            /* palm-leaf cream */
+      --bg-leaf-edge: #d4b97a;
+      --ink-primary: #2b1810;
+      --ink-secondary: #5c4a37;
+      --ink-faded: #8b6f47;
+      --saffron: #c77a2e;
+      --saffron-light: #d99b5c;
+      --saffron-deep: #9d5c1a;
+      --madder: #a0291e;
+      --madder-deep: #7a1f18;
+      --gold: #c9a04a;
+      --gold-bright: #e6c068;
+      --gold-deep: #8e6d28;
+      --wood-dark: #3d2817;
+      --wood-mid: #5c3d28;
+      --wood-light: #8b5e3c;
+      --wood-grain: #7a4f30;
+      --string: #4a2f1c;
+      --leaf-shadow: rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at center, var(--bg-museum-glow) 0%, var(--bg-museum) 60%, #0a0503 100%);
+      font-family: 'EB Garamond', Georgia, serif;
+      color: var(--ink-primary);
+      cursor: default;
+    }
+
+    /* Subtle vignette so leaf glows like it's under a candle */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, transparent 0%, rgba(0,0,0,0.65) 100%);
+      z-index: 1;
+    }
+
+    /* ---------- Floating dust motes / particles ---------- */
+    .dust-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .dust-mote {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: radial-gradient(circle, rgba(255, 220, 150, 0.6) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0%   { transform: translate(0, 100vh) scale(0.4); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.8; }
+      100% { transform: translate(40px, -10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* ---------- Devanagari ---------- */
+    .deva, [lang="sa"] {
+      font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    /* ---------- The manuscript stage ---------- */
+    .manuscript-stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 2800px;
+      perspective-origin: 50% 50%;
+      z-index: 10;
+    }
+
+    /* Stack of leaves — the actual book */
+    .manuscript {
+      position: relative;
+      width: min(92vw, 1100px);
+      height: min(78vh, 720px);
+      transform-style: preserve-3d;
+    }
+
+    /* Each leaf is absolutely positioned, hinged on the left edge */
+    .leaf {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0% 50%;
+      transform-style: preserve-3d;
+      transition:
+        transform 1.4s cubic-bezier(0.55, 0, 0.25, 1),
+        box-shadow 1.4s ease-out;
+      backface-visibility: hidden;
+      border-radius: 4px 14px 14px 4px;
+      overflow: hidden;
+      box-shadow:
+        0 4px 16px var(--leaf-shadow),
+        0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    .leaf.flipped {
+      transform: rotateY(-178deg);
+      box-shadow:
+        0 30px 50px rgba(0,0,0,0.5),
+        0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Z-stacking: later leaves underneath, current on top */
+    .leaf[data-page="0"] { z-index: 100; }
+    .leaf[data-page="1"] { z-index: 90; }
+    .leaf[data-page="2"] { z-index: 80; }
+    .leaf[data-page="3"] { z-index: 70; }
+    .leaf[data-page="4"] { z-index: 60; }
+    .leaf[data-page="5"] { z-index: 50; }
+
+    /* ---------- Wooden covers ---------- */
+    .cover {
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(110deg,
+          var(--wood-dark) 0%,
+          var(--wood-mid) 30%,
+          var(--wood-grain) 50%,
+          var(--wood-mid) 70%,
+          var(--wood-dark) 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    /* Wood-grain striations */
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg,
+          transparent 0 4px,
+          rgba(0,0,0,0.06) 4px 5px,
+          transparent 5px 14px,
+          rgba(255,255,255,0.03) 14px 15px),
+        repeating-linear-gradient(90deg,
+          transparent 0 60px,
+          rgba(0,0,0,0.08) 60px 62px);
+      pointer-events: none;
+    }
+    /* Brass corners */
+    .cover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18px 18px, var(--gold) 8px, var(--gold-deep) 11px, transparent 13px),
+        radial-gradient(circle at calc(100% - 18px) 18px, var(--gold) 8px, var(--gold-deep) 11px, transparent 13px),
+        radial-gradient(circle at 18px calc(100% - 18px), var(--gold) 8px, var(--gold-deep) 11px, transparent 13px),
+        radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), var(--gold) 8px, var(--gold-deep) 11px, transparent 13px);
+      pointer-events: none;
+    }
+    .cover-inner {
+      text-align: center;
+      color: var(--gold-bright);
+      padding: 3rem;
+      z-index: 5;
+      position: relative;
+    }
+    .cover-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 4rem;
+      color: var(--gold-bright);
+      text-shadow:
+        0 0 18px rgba(212, 175, 55, 0.4),
+        0 2px 0 rgba(0,0,0,0.5);
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+      animation: gold-shimmer 4s ease-in-out infinite;
+    }
+    @keyframes gold-shimmer {
+      0%, 100% { text-shadow: 0 0 18px rgba(212, 175, 55, 0.4), 0 2px 0 rgba(0,0,0,0.5); }
+      50% { text-shadow: 0 0 32px rgba(230, 192, 104, 0.7), 0 2px 0 rgba(0,0,0,0.5); }
+    }
+    .cover-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.25em;
+      color: var(--gold-bright);
+      margin-top: 1.5rem;
+    }
+    .cover-sub {
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-top: 0.8rem;
+      letter-spacing: 0.1em;
+    }
+    .cover-tap {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      opacity: 0.7;
+      font-variant: small-caps;
+      animation: tap-pulse 2s ease-in-out infinite;
+    }
+    @keyframes tap-pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.95; }
+    }
+
+    /* ---------- Palm-leaf page ---------- */
+    .leaf-page {
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(139,111,71,0.06) 1px, transparent 2px),
+        radial-gradient(circle at 70% 80%, rgba(139,111,71,0.04) 1px, transparent 2px),
+        radial-gradient(circle at 40% 60%, rgba(139,111,71,0.05) 1px, transparent 2px),
+        linear-gradient(135deg, var(--bg-leaf) 0%, var(--bg-leaf-edge) 100%);
+      background-size: 80px 80px, 120px 120px, 200px 200px, auto;
+      padding: 3.2rem 4.5rem 3.2rem 6rem;  /* extra left padding for binding margin */
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Aged-edge darkening on right (sun exposure on a stacked manuscript) */
+    .leaf-page::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 3rem;
+      background: linear-gradient(to left, rgba(139,111,71,0.18), transparent);
+      pointer-events: none;
+    }
+
+    /* String binding holes on the left margin */
+    .string-holes {
+      position: absolute;
+      left: 2.5rem;
+      top: 0;
+      bottom: 0;
+      width: 18px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .string-holes::before, .string-holes::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 35%, var(--wood-dark) 0%, #0d0703 60%, var(--wood-dark) 100%);
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(139,111,71,0.4);
+    }
+    .string-holes::before { top: 22%; }
+    .string-holes::after { top: 75%; }
+
+    /* Vertical decorative line — palm-leaf rib */
+    .leaf-rib {
+      position: absolute;
+      left: 4.5rem;
+      top: 1rem;
+      bottom: 1rem;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(139,111,71,0.3) 8%,
+        rgba(139,111,71,0.3) 92%,
+        transparent 100%);
+    }
+
+    /* Decorative corner ornaments */
+    .corner-ornament {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      opacity: 0.55;
+      color: var(--saffron-deep);
+    }
+    .corner-ornament.tl { top: 0.8rem; right: 1.2rem; }
+    .corner-ornament.bl { bottom: 0.8rem; right: 1.2rem; transform: rotate(180deg); }
+
+    /* Folio number — bottom center */
+    .folio-mark {
+      position: absolute;
+      bottom: 0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-variant: small-caps;
+      letter-spacing: 0.4em;
+      color: var(--ink-faded);
+      z-index: 5;
+    }
+    .folio-mark::before { content: '— '; }
+    .folio-mark::after { content: ' —'; }
+
+    /* ---------- Page content layouts ---------- */
+    .page-body {
+      flex: 1;
+      overflow: auto;
+      padding-right: 1rem;
+    }
+    .page-body::-webkit-scrollbar { width: 6px; }
+    .page-body::-webkit-scrollbar-track { background: transparent; }
+    .page-body::-webkit-scrollbar-thumb { background: var(--ink-faded); border-radius: 3px; opacity: 0.5; }
+
+    /* ---------- Mangalacharana ---------- */
+    .mangalacharana {
+      text-align: center;
+      padding: 0.5rem 0 1.5rem;
+      color: var(--madder);
+      font-size: 1.8rem;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fade-in-up 1.2s ease-out 0.4s forwards;
+    }
+    .mangalacharana::before, .mangalacharana::after {
+      content: "॥";
+      color: var(--gold);
+      margin: 0 0.4em;
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Title block ---------- */
+    .title-block {
+      text-align: center;
+      margin: 1rem 0 1.5rem;
+      opacity: 0;
+      animation: fade-in-up 1.2s ease-out 0.8s forwards;
+    }
+    .deva-title {
+      font-size: 3rem;
+      color: var(--ink-primary);
+      line-height: 1.2;
+    }
+    .english-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.25em;
+      color: var(--ink-secondary);
+      margin-top: 0.6rem;
+    }
+
+    /* ---------- Decorative divider ---------- */
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--saffron);
+      opacity: 0;
+      animation: fade-in 1.4s ease-out 1.2s forwards;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      max-width: 100px;
+      height: 1px;
+      background: linear-gradient(to right,
+        transparent, var(--border-thin, #8b6f47) 30%, var(--border-thin, #8b6f47) 70%, transparent);
+    }
+    .divider .ornament { font-size: 1.3rem; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ---------- Native card ---------- */
+    .native-card {
+      margin: 1.5rem auto;
+      max-width: 580px;
+      padding: 1.4rem 2.5rem;
+      background: rgba(232, 213, 168, 0.7);
+      border: 1px solid var(--ink-faded);
+      position: relative;
+      text-align: center;
+      opacity: 0;
+      animation: fade-in-up 1.2s ease-out 1.5s forwards;
+    }
+    .native-card::before, .native-card::after {
+      content: "❦";
+      position: absolute;
+      top: -0.55rem;
+      color: var(--saffron);
+      background: var(--bg-leaf);
+      padding: 0 0.4rem;
+      font-size: 1.1rem;
+    }
+    .native-card::before { left: 1.5rem; }
+    .native-card::after { right: 1.5rem; }
+    .native-card .label {
+      font-size: 0.85rem;
+      font-variant: small-caps;
+      letter-spacing: 0.15em;
+      color: var(--ink-faded);
+    }
+    .native-card .native-name {
+      font-size: 1.6rem;
+      margin: 0.4rem 0 0.6rem;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.1em;
+    }
+    .native-card .birth-line {
+      font-size: 1rem;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+    }
+
+    /* ---------- Section heading ---------- */
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px dashed var(--ink-faded);
+      opacity: 0;
+      animation: fade-in-up 1s ease-out 0.4s forwards;
+    }
+    .section-heading .ordinal-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      color: var(--madder);
+      font-size: 1.4rem;
+    }
+    .section-heading .ordinal {
+      color: var(--madder);
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      flex-shrink: 0;
+    }
+    .section-heading h2 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--ink-primary);
+      flex: 1;
+    }
+
+    /* ---------- Prose with animated drop-cap ---------- */
+    .prose {
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--ink-primary);
+      text-align: justify;
+      hyphens: auto;
+      opacity: 0;
+      animation: fade-in 1.4s ease-out 0.8s forwards;
+    }
+    .prose p { margin-bottom: 1rem; }
+    .prose .dropcap {
+      float: left;
+      font-family: 'EB Garamond', serif;
+      font-size: 4.2rem;
+      line-height: 0.85;
+      padding: 0.5rem 0.6rem 0 0;
+      color: var(--madder);
+      font-weight: 600;
+      opacity: 0;
+      transform: scale(0.6);
+      animation: ink-stroke 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s forwards;
+    }
+    @keyframes ink-stroke {
+      0% { opacity: 0; transform: scale(0.6) rotate(-5deg); filter: blur(3px); }
+      40% { opacity: 0.6; filter: blur(1px); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+    }
+    .prose .footnote-ref {
+      vertical-align: super;
+      font-size: 0.7em;
+      color: var(--madder);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 0 0.15em;
+      transition: background 0.2s, box-shadow 0.2s;
+      border-radius: 2px;
+    }
+    .prose .footnote-ref:hover {
+      background: var(--saffron-light);
+      box-shadow: 0 0 8px var(--saffron-light);
+    }
+
+    /* ---------- Sloka card with line-by-line entrance ---------- */
+    .sloka {
+      margin: 1.6rem auto;
+      max-width: 600px;
+      padding: 1.5rem 2rem;
+      background: rgba(224, 199, 137, 0.6);
+      border-left: 4px solid var(--madder);
+      border-right: 1px solid var(--ink-faded);
+      position: relative;
+    }
+    .sloka .verse-deva {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 1.5rem;
+      line-height: 2.1;
+      color: var(--ink-primary);
+      text-align: center;
+      margin-bottom: 0.8rem;
+      opacity: 0;
+      animation: sloka-line 1.4s ease-out 1.6s forwards;
+    }
+    .sloka .verse-iast {
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-secondary);
+      text-align: center;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: sloka-line 1.4s ease-out 2.0s forwards;
+    }
+    .sloka .verse-translation {
+      font-size: 1.02rem;
+      color: var(--ink-primary);
+      text-align: center;
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: sloka-line 1.4s ease-out 2.4s forwards;
+    }
+    .sloka .verse-citation {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px dotted var(--ink-faded);
+      font-size: 0.85rem;
+      color: var(--ink-faded);
+      text-align: right;
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: sloka-line 1.4s ease-out 2.8s forwards;
+    }
+    @keyframes sloka-line {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Dasha tree ---------- */
+    .dasha-tree {
+      margin: 1.4rem auto;
+      max-width: 540px;
+      padding: 1.2rem 1.5rem;
+      background: rgba(232, 213, 168, 0.7);
+      border: 1px solid var(--ink-faded);
+    }
+    .dasha-node {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      padding: 0.6rem 0;
+      align-items: baseline;
+    }
+    .dasha-node.ad {
+      padding-left: 2.2rem;
+      border-left: 1px solid var(--ink-faded);
+      margin-left: 1rem;
+      position: relative;
+    }
+    .dasha-node.ad::before {
+      content: "└";
+      position: absolute;
+      left: -0.4rem;
+      top: 0.6rem;
+      color: var(--ink-faded);
+    }
+    .dasha-node .lord {
+      font-weight: 600;
+      color: var(--madder);
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.08em;
+    }
+    .dasha-node .label {
+      color: var(--ink-secondary);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+    .dasha-node .remaining {
+      color: var(--ink-faded);
+      font-variant: small-caps;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---------- Footnotes block ---------- */
+    .footnotes {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      font-size: 0.92rem;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+    .footnotes h3 {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.15em;
+      color: var(--saffron-deep);
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .footnotes ol { padding-left: 1.5rem; }
+    .footnotes li { margin-bottom: 0.7rem; }
+    .footnotes li::marker { color: var(--madder); font-weight: 600; }
+    .footnotes .source { font-style: italic; color: var(--ink-primary); }
+    .footnotes .ref { color: var(--saffron-deep); font-variant: small-caps; letter-spacing: 0.08em; }
+
+    /* ---------- Closing cover content ---------- */
+    .closing {
+      text-align: center;
+      color: var(--gold-bright);
+    }
+    .closing .om {
+      font-family: 'Tiro Devanagari Sanskrit', serif;
+      font-size: 8rem;
+      color: var(--gold-bright);
+      text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+      animation: gold-shimmer 4s ease-in-out infinite;
+    }
+    .closing .complete {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.3em;
+      margin-top: 1.5rem;
+      font-size: 1rem;
+    }
+    .closing .reopen {
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-bright);
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .closing .reopen:hover {
+      background: var(--gold);
+      color: var(--wood-dark);
+    }
+
+    /* ---------- Navigation chrome ---------- */
+    .nav-bar {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      z-index: 100;
+      padding: 0.8rem 1.5rem;
+      background: rgba(26, 14, 6, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 30px;
+      backdrop-filter: blur(8px);
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold-bright);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--wood-dark);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.5);
+    }
+    .nav-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+    .nav-status {
+      color: var(--gold-bright);
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.2em;
+      font-size: 0.85rem;
+      min-width: 110px;
+      text-align: center;
+    }
+
+    /* ---------- Click zones on left + right edges of leaf ---------- */
+    .edge-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      cursor: pointer;
+      z-index: 50;
+      transition: background 0.3s;
+    }
+    .edge-zone.right {
+      right: 0;
+      background: linear-gradient(to right, transparent 0%, rgba(201, 160, 74, 0) 100%);
+    }
+    .edge-zone.right:hover {
+      background: linear-gradient(to right, transparent 0%, rgba(201, 160, 74, 0.18) 100%);
+    }
+    .edge-zone.left {
+      left: 0;
+      background: linear-gradient(to left, transparent 0%, rgba(201, 160, 74, 0) 100%);
+    }
+    .edge-zone.left:hover {
+      background: linear-gradient(to left, transparent 0%, rgba(201, 160, 74, 0.18) 100%);
+    }
+
+    /* Hint chevrons that appear on hover */
+    .edge-zone::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 24px;
+      height: 24px;
+      border-top: 2px solid var(--saffron);
+      border-right: 2px solid var(--saffron);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .edge-zone.right::after {
+      right: 1.5rem;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .edge-zone.left::after {
+      left: 1.5rem;
+      transform: translateY(-50%) rotate(-135deg);
+    }
+    .edge-zone:hover::after { opacity: 0.8; }
+
+    /* ---------- Hide certain elements on mobile ---------- */
+    @media (max-width: 700px) {
+      .manuscript { width: 96vw; height: 86vh; }
+      .leaf-page { padding: 2rem 1.5rem 2rem 3.5rem; }
+      .string-holes { left: 1rem; }
+      .leaf-rib { left: 2.2rem; }
+      .deva-title { font-size: 2rem; }
+      .nav-bar { bottom: 1rem; padding: 0.5rem 1rem; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating dust motes -->
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <!-- Manuscript stage -->
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+
+      <!-- ========== Leaf 0 — Wooden front cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inner">
+            <div class="cover-deva deva">जातकम्</div>
+            <div class="cover-title">A Reading of the Birth Chart</div>
+            <div class="cover-sub">cast for the native, Bangalore-1990</div>
+            <div class="cover-tap">tap or press → to open</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Title + Birth Data ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="string-holes"></div>
+          <div class="leaf-rib"></div>
+
+          <div class="page-body">
+            <div class="mangalacharana deva">श्रीगणेशाय नमः</div>
+
+            <div class="title-block">
+              <div class="deva-title deva">जातक — कुण्डली विवेचना</div>
+              <div class="english-title">A READING OF THE BIRTH CHART</div>
+            </div>
+
+            <div class="divider">
+              <span class="ornament">☉</span>
+              <span class="ornament">✦</span>
+              <span class="ornament">☽</span>
+            </div>
+
+            <div class="native-card">
+              <div class="label">the native · जातकः</div>
+              <div class="native-name">Bangalore Baseline</div>
+              <div class="birth-line">
+                Born on the <em>15<sup>th</sup> of July, 1990</em><br>
+                at the <em>noontide hour</em> (12:00 IST) in the city of
+                <span class="deva">बंगलूरु</span><br>
+                <span style="color: var(--ink-faded); font-size: 0.88rem;">
+                  Lat 12.97°N · Lon 77.59°E
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="folio-mark">folio I</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Section I: Lagna ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page">
+          <div class="string-holes"></div>
+          <div class="leaf-rib"></div>
+
+          <div class="page-body">
+            <div class="section-heading">
+              <span class="ordinal-deva deva">प्रथमः</span>
+              <span class="ordinal">SEC. I</span>
+              <h2>Of the Ascendant and its Lord</h2>
+            </div>
+
+            <div class="prose">
+              <p>
+                <span class="dropcap">V</span>irgo rises at the eastern horizon, its lord
+                <strong>Budha</strong> &mdash; Mercury, the swift-footed messenger and
+                significator of intellect, commerce, and the spoken word.<a class="footnote-ref">1</a>
+              </p>
+              <p>
+                Mercury hath placed himself in the <em>eleventh</em> bhava, the sthana of
+                gains, in <strong>Karka</strong> (Cancer). For the lord of the lagna to
+                dwell in the eleventh from his own house is a most fortunate
+                disposition.<a class="footnote-ref">2</a>
+              </p>
+            </div>
+
+            <div class="sloka">
+              <div class="verse-deva deva">
+                लग्नेशो लाभ-स्थाने यदि<br>
+                वित्त-वाक्-लाभं ददाति सः ॥
+              </div>
+              <div class="verse-iast">
+                lagneśo lābha-sthāne yadi<br>
+                vitta-vāk-lābhaṁ dadāti saḥ
+              </div>
+              <div class="verse-translation">
+                When the Lord of the Ascendant occupies the Eleventh,<br>
+                He confers gain through wealth and through speech.
+              </div>
+              <div class="verse-citation">
+                Phaladeepika XI · 18
+              </div>
+            </div>
+          </div>
+
+          <div class="folio-mark">folio II</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Section II: Active Period ========== -->
+      <div class="leaf" data-page="3">
+        <div class="leaf-page">
+          <div class="string-holes"></div>
+          <div class="leaf-rib"></div>
+
+          <div class="page-body">
+            <div class="section-heading">
+              <span class="ordinal-deva deva">द्वितीयः</span>
+              <span class="ordinal">SEC. II</span>
+              <h2>Of the Currently Active Period</h2>
+            </div>
+
+            <div class="prose">
+              <p>
+                <span class="dropcap">T</span>he native presently dwelleth in the
+                <strong>Mahadasha of Budha</strong> — Mercury's great period of
+                seventeen years, of which some fifteen years and seven months yet
+                remain.<a class="footnote-ref">3</a>
+              </p>
+            </div>
+
+            <div class="dasha-tree">
+              <div class="dasha-node md">
+                <span class="lord">Budha</span>
+                <span class="label">Mahadasha &middot; <span class="deva">महादशा</span></span>
+                <span class="remaining">15 yr 7 mo remain</span>
+              </div>
+              <div class="dasha-node ad">
+                <span class="lord">Shani</span>
+                <span class="label">Antardasha &middot; <span class="deva">अन्तर्दशा</span></span>
+                <span class="remaining">2 yr 1 mo remain</span>
+              </div>
+            </div>
+
+            <div class="prose">
+              <p>
+                Within this period unfoldeth the <em>antardasha of Shani</em> — Saturn,
+                posited in his own sign of Makara (Capricorn), bringing his full
+                strength upon the matters of the eleventh house.<a class="footnote-ref">4</a>
+              </p>
+            </div>
+          </div>
+
+          <div class="folio-mark">folio III</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 4 — Footnotes ========== -->
+      <div class="leaf" data-page="4">
+        <div class="leaf-page">
+          <div class="string-holes"></div>
+          <div class="leaf-rib"></div>
+
+          <div class="page-body">
+            <div class="footnotes">
+              <h3>SOURCES &amp; VERSES</h3>
+              <ol>
+                <li>
+                  <span class="source">Brihat Parashara Hora Shastra,</span>
+                  <span class="ref">Ch. LVII, Verses 4–9</span> — on the disposition of the
+                  lagnesha across the twelve houses (R. Santhanam ed., Vol. II, p. 421).
+                </li>
+                <li>
+                  <span class="source">Phaladeepika,</span>
+                  <span class="ref">Ch. XI, Verse 18</span> — on the lord of the ascendant
+                  in the eleventh bhava (V. S. Sastri trans., wisdomlib edition).
+                </li>
+                <li>
+                  <span class="source">Brihat Parashara Hora Shastra,</span>
+                  <span class="ref">Ch. XLVI, Verses 1–18</span> — on the calculation of
+                  Vimshottari Mahadasha and the proportional sub-periods.
+                </li>
+                <li>
+                  <span class="source">Saravali,</span>
+                  <span class="ref">Ch. XXIX, Verses 21–24</span> — on Saturn in his own
+                  sign during the operative antardasha (Kalyana Varma; R. Santhanam ed.).
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="folio-mark">folio IV</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 5 — Wooden back cover ========== -->
+      <div class="leaf" data-page="5">
+        <div class="cover">
+          <div class="cover-inner closing">
+            <div class="om deva">ॐ</div>
+            <div class="complete">END OF READING</div>
+            <button class="reopen" onclick="reopenManuscript()">REOPEN THE MANUSCRIPT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edge click zones, kept ABOVE leaves so click works -->
+      <div class="edge-zone left" id="zone-prev"></div>
+      <div class="edge-zone right" id="zone-next"></div>
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous folio (←)">‹</button>
+    <div class="nav-status" id="folio-status">FRONT COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next folio (→)">›</button>
+  </div>
+
+  <script>
+    // -----------------------------------------------------------
+    // Page-flip state machine
+    // -----------------------------------------------------------
+    const TOTAL_PAGES = 6;
+    let currentPage = 0;
+    const leaves = document.querySelectorAll('.leaf');
+    const status = document.getElementById('folio-status');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    let isFlipping = false;
+
+    const labels = [
+      'FRONT COVER',
+      'FOLIO I',
+      'FOLIO II',
+      'FOLIO III',
+      'FOLIO IV',
+      'END',
+    ];
+
+    function render() {
+      leaves.forEach((leaf, i) => {
+        if (i < currentPage) leaf.classList.add('flipped');
+        else leaf.classList.remove('flipped');
+      });
+      status.textContent = labels[currentPage];
+      btnPrev.disabled = currentPage === 0;
+      btnNext.disabled = currentPage === TOTAL_PAGES - 1;
+    }
+
+    function next() {
+      if (isFlipping || currentPage >= TOTAL_PAGES - 1) return;
+      isFlipping = true;
+      currentPage += 1;
+      render();
+      setTimeout(() => { isFlipping = false; }, 700);
+    }
+    function prev() {
+      if (isFlipping || currentPage <= 0) return;
+      isFlipping = true;
+      currentPage -= 1;
+      render();
+      setTimeout(() => { isFlipping = false; }, 700);
+    }
+    function reopenManuscript() {
+      // Flip all back to cover
+      currentPage = 0;
+      render();
+    }
+    window.reopenManuscript = reopenManuscript;
+
+    // -----------------------------------------------------------
+    // Wire navigation
+    // -----------------------------------------------------------
+    btnNext.addEventListener('click', next);
+    btnPrev.addEventListener('click', prev);
+    document.getElementById('zone-next').addEventListener('click', next);
+    document.getElementById('zone-prev').addEventListener('click', prev);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { currentPage = 0; render(); }
+      else if (e.key === 'End')  { currentPage = TOTAL_PAGES - 1; render(); }
+    });
+
+    render();
+
+    // -----------------------------------------------------------
+    // Dust mote particle generator — keep DOM count bounded
+    // -----------------------------------------------------------
+    const dustLayer = document.getElementById('dust-layer');
+    const MAX_MOTES = 35;
+    function spawnMote() {
+      const m = document.createElement('div');
+      m.className = 'dust-mote';
+      const dur = 14 + Math.random() * 22;
+      m.style.left = (Math.random() * 100) + 'vw';
+      m.style.animationDuration = dur + 's';
+      m.style.animationDelay = (Math.random() * 2) + 's';
+      m.style.opacity = 0.4 + Math.random() * 0.4;
+      m.style.width = m.style.height = (1.5 + Math.random() * 3) + 'px';
+      dustLayer.appendChild(m);
+      setTimeout(() => m.remove(), (dur + 3) * 1000);
+    }
+    for (let i = 0; i < MAX_MOTES; i++) {
+      setTimeout(spawnMote, Math.random() * 8000);
+    }
+    setInterval(() => {
+      if (dustLayer.children.length < MAX_MOTES) spawnMote();
+    }, 700);
+  </script>
+
+</body>
+</html>

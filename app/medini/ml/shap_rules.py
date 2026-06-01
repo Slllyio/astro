@@ -5,27 +5,42 @@ human-readable rules in the form:
 
     "WHEN <feature> IN [<low>, <high>] THEN probability shifts by <delta>"
 
-Method (per the locked plan):
+Method (revised after the Phase 5 round-2 review):
   1. Identify the top-N features by mean |SHAP| magnitude.
-  2. For each top feature, scan its (value, shap_value) pairs to find
-     contiguous ranges where the SHAP contribution is consistently
-     positive or consistently negative.
-  3. Compute the *mean SHAP shift* in each such range. Convert SHAP
-     log-odds to a probability delta via the sigmoid difference at
-     the base rate.
+  2. For each top feature, fit a shallow `DecisionTreeRegressor(max_depth=2)`
+     mapping feature value → SHAP value. The tree's leaf boundaries are
+     statistically-robust threshold candidates (vs the previous
+     histogram-bucket sign-flip walk, which got trapped in tree-split
+     micro-oscillations of the underlying XGBoost model).
+  3. For each leaf segment, compute mean SHAP. Convert log-odds to a
+     calibrated probability delta — either via the raw sigmoid(base_logit)
+     baseline or, when an Isotonic calibrator from the trainer is
+     supplied, through the calibrated probability scale (which corrects
+     for `scale_pos_weight`-induced output distortion).
   4. Filter: discard rules whose absolute probability delta is below
      the magnitude threshold (default 0.05 = 5%).
   5. Sort by absolute probability impact, descending.
 
-Pure functions; no IO; no model dependency. Tests feed synthetic SHAP
-arrays directly without needing a real XGBoost model.
+Pure functions except for the optional calibrator argument; no IO; no
+direct model dependency. Tests feed synthetic SHAP arrays + optional
+calibrators directly without needing a real XGBoost model.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Protocol, Sequence
 
 import numpy as np
+from sklearn.tree import DecisionTreeRegressor
+
+
+class ProbabilityCalibrator(Protocol):
+    """Duck-typed Isotonic / Platt scaler. Anything with a `.transform([p])
+    -> array-like-of-1` works. Matches `sklearn.isotonic.IsotonicRegression`
+    and `sklearn.calibration.CalibratedClassifierCV.calibrators_[i]`.
+    """
+
+    def transform(self, X) -> np.ndarray: ...
 
 
 @dataclass(frozen=True)
@@ -50,21 +65,47 @@ class Rule:
         )
 
 
-def _logit_to_probability_delta(shap_value: float, base_rate: float) -> float:
-    """Convert a SHAP log-odds value to a probability delta at a base rate.
+def _calibrated_probability_delta(
+    shap_value: float,
+    base_rate: float,
+    calibrator: ProbabilityCalibrator | None = None,
+) -> float:
+    """Convert a SHAP log-odds value to a probability delta.
 
-    SHAP values for binary classifiers are log-odds contributions. To turn
-    one into a "% change in predicted probability," apply the sigmoid
-    difference between (base_logit + shap_value) and base_logit.
+    Without calibrator: applies the sigmoid difference between
+    (base_logit + shap_value) and base_logit — the original behaviour.
 
-    base_rate is the marginal positive-class rate (a value in (0, 1));
-    base_logit = log(p / (1 - p)).
+    With calibrator: maps BOTH the raw baseline probability and the
+    raw shifted probability through the trainer-fit Isotonic calibrator,
+    then returns the delta on the calibrated scale. This corrects for
+    the `scale_pos_weight` distortion: XGBoost trained with
+    scale_pos_weight=n_neg/n_pos outputs probabilities calibrated to a
+    50/50 reference distribution, NOT the real population base rate.
+    The raw log-odds → sigmoid mapping therefore overstates probability
+    shifts for imbalanced targets (e.g. a SHAP value of +1.0 might
+    correspond to a 4% real-world shift even though raw sigmoid says 12%).
+
+    SHAP values for binary classifiers are log-odds contributions.
+    base_rate is the marginal positive-class rate (a value in (0, 1)).
     """
     base_rate = max(min(base_rate, 1 - 1e-9), 1e-9)  # clamp away from 0/1
     base_logit = np.log(base_rate / (1.0 - base_rate))
-    new_logit = base_logit + shap_value
-    new_prob = 1.0 / (1.0 + np.exp(-new_logit))
-    return float(new_prob - base_rate)
+    raw_base_prob = 1.0 / (1.0 + np.exp(-base_logit))
+    raw_shifted_prob = 1.0 / (1.0 + np.exp(-(base_logit + shap_value)))
+    if calibrator is None:
+        return float(raw_shifted_prob - raw_base_prob)
+    # calibrator.transform expects 1-D array; returns 1-D array.
+    calibrated_base = float(np.asarray(calibrator.transform([raw_base_prob]))[0])
+    calibrated_shifted = float(
+        np.asarray(calibrator.transform([raw_shifted_prob]))[0]
+    )
+    return calibrated_shifted - calibrated_base
+
+
+# Backwards-compatible alias — older callers and tests that don't yet
+# supply a calibrator keep working unchanged.
+def _logit_to_probability_delta(shap_value: float, base_rate: float) -> float:
+    return _calibrated_probability_delta(shap_value, base_rate, calibrator=None)
 
 
 def rank_features_by_importance(
@@ -87,88 +128,90 @@ def rank_features_by_importance(
 def _find_signed_ranges(
     feature_values: np.ndarray,
     shap_for_feature: np.ndarray,
-    n_bins: int = 10,
+    min_segment_samples: int = 20,
+    max_depth: int = 2,
+    min_samples_leaf_frac: float = 0.05,
+    random_state: int = 42,
 ) -> list[tuple[float, float, float, int]]:
-    """Bucket feature values, compute mean SHAP per bucket, and yield contiguous
-    same-sign ranges as (low, high, mean_shap, sample_count) tuples.
+    """Discover statistically robust rule boundaries via a meta-regression-tree.
 
-    Pre-bucketing prevents per-row noise from creating spurious tiny rules
-    while still revealing the threshold structure SHAP dependence plots show.
+    Fits a shallow `DecisionTreeRegressor(max_depth=max_depth)` mapping
+    feature_value → shap_value. The tree's split thresholds are the
+    macro-level boundaries where SHAP behaviour genuinely changes —
+    robust to the micro-oscillations XGBoost SHAP values exhibit at
+    individual tree-split boundaries.
+
+    Returns (low, high, mean_shap, sample_count) tuples for each leaf
+    segment that contains at least `min_segment_samples` rows.
+
+    With max_depth=2 (the default), this produces at most 3 split
+    thresholds → at most 4 segments per feature. min_samples_leaf_frac=0.05
+    means no segment captures fewer than 5% of the dataset — guards
+    against noise-fitting in sparse regions.
+
+    Returns empty list if input has < 100 non-NaN pairs (insufficient
+    data for a meaningful regression tree fit) or has zero feature
+    variance (e.g. a constant column slipped through).
     """
-    if len(feature_values) == 0:
+    # Drop NaNs in either feature or SHAP — paired masking.
+    feature_arr = np.asarray(feature_values, dtype=float)
+    shap_arr = np.asarray(shap_for_feature, dtype=float)
+    if feature_arr.shape != shap_arr.shape:
+        raise ValueError(
+            f"shape mismatch: feature {feature_arr.shape} vs shap {shap_arr.shape}"
+        )
+    mask = ~(np.isnan(feature_arr) | np.isnan(shap_arr))
+    X = feature_arr[mask]
+    y = shap_arr[mask]
+    if len(X) < 100:
+        return []
+    if float(np.std(X)) < 1e-9:
+        return []
+    if float(np.std(y)) < 1e-9:
+        # SHAP values are flat — the model isn't using this feature.
+        # Returning a zero-impact "rule" would be misleading; skip.
         return []
 
-    # Edges include both extremes; np.histogram_bin_edges returns n_bins+1 edges
-    bin_edges = np.histogram_bin_edges(feature_values, bins=n_bins)
-    bucket_indices = np.clip(
-        np.digitize(feature_values, bin_edges) - 1,
-        0,
-        n_bins - 1,
+    meta = DecisionTreeRegressor(
+        max_depth=max_depth,
+        min_samples_leaf=min_samples_leaf_frac,
+        random_state=random_state,
     )
+    meta.fit(X.reshape(-1, 1), y)
 
+    # The tree's `threshold` array has the split value at each internal
+    # node; leaf nodes use a sentinel value (-2.0). Collect the real
+    # thresholds, sort, and form contiguous segments using the data range.
+    raw_thresholds = meta.tree_.threshold
+    is_internal = meta.tree_.children_left != -1  # -1 = leaf sentinel
+    split_values = sorted(set(
+        float(raw_thresholds[i]) for i in range(len(raw_thresholds)) if is_internal[i]
+    ))
+
+    boundaries = [float(X.min()), *split_values, float(X.max())]
     ranges: list[tuple[float, float, float, int]] = []
-    current_sign: int = 0
-    current_lo_idx: int = 0
-    current_shap_sum = 0.0
-    current_count = 0
-
-    for i in range(n_bins):
-        mask = bucket_indices == i
-        n = int(mask.sum())
-        if n == 0:
-            # Empty bucket; close any open run and reset
-            if current_count > 0:
-                lo = float(bin_edges[current_lo_idx])
-                hi = float(bin_edges[i])
-                mean_shap = current_shap_sum / current_count
-                ranges.append((lo, hi, mean_shap, current_count))
-            current_sign = 0
-            current_count = 0
-            current_shap_sum = 0.0
-            continue
-
-        bucket_mean = float(shap_for_feature[mask].mean())
-        sign = 1 if bucket_mean > 0 else (-1 if bucket_mean < 0 else 0)
-
-        if sign == 0:
-            # Bucket has no signal (mean SHAP exactly 0). Close any open
-            # run and skip — emitting a zero-impact "rule" is meaningless.
-            if current_sign != 0 and current_count > 0:
-                lo = float(bin_edges[current_lo_idx])
-                hi = float(bin_edges[i])
-                mean_shap = current_shap_sum / current_count
-                ranges.append((lo, hi, mean_shap, current_count))
-            current_sign = 0
-            current_count = 0
-            current_shap_sum = 0.0
-            continue
-
-        if current_sign == 0:
-            current_sign = sign
-            current_lo_idx = i
-            current_shap_sum = bucket_mean * n
-            current_count = n
-        elif sign == current_sign:
-            current_shap_sum += bucket_mean * n
-            current_count += n
+    for i in range(len(boundaries) - 1):
+        lo, hi = boundaries[i], boundaries[i + 1]
+        # Right-inclusive on the final segment so values exactly at X.max()
+        # are captured; otherwise left-inclusive/right-exclusive to avoid
+        # double-counting at internal split boundaries.
+        if i == len(boundaries) - 2:
+            seg_mask = (feature_arr >= lo) & (feature_arr <= hi)
         else:
-            # Sign flip: emit current range, start new one
-            lo = float(bin_edges[current_lo_idx])
-            hi = float(bin_edges[i])
-            mean_shap = current_shap_sum / current_count
-            ranges.append((lo, hi, mean_shap, current_count))
-            current_sign = sign
-            current_lo_idx = i
-            current_shap_sum = bucket_mean * n
-            current_count = n
-
-    # Close final run
-    if current_count > 0:
-        lo = float(bin_edges[current_lo_idx])
-        hi = float(bin_edges[-1])
-        mean_shap = current_shap_sum / current_count
-        ranges.append((lo, hi, mean_shap, current_count))
-
+            seg_mask = (feature_arr >= lo) & (feature_arr < hi)
+        # NaN guard — the seg_mask via comparisons already excludes NaNs.
+        count = int(seg_mask.sum())
+        if count < min_segment_samples:
+            continue
+        seg_shap = shap_arr[seg_mask]
+        if seg_shap.size == 0:
+            continue
+        ranges.append((
+            float(lo),
+            float(hi),
+            float(np.nanmean(seg_shap)),
+            count,
+        ))
     return ranges
 
 
@@ -179,7 +222,7 @@ def extract_rules(
     base_rate: float,
     top_n_features: int = 10,
     min_rule_impact: float = 0.05,
-    n_bins: int = 10,
+    calibrator: ProbabilityCalibrator | None = None,
 ) -> list[Rule]:
     """Discover astrological rules from a trained model's SHAP outputs.
 
@@ -194,7 +237,12 @@ def extract_rules(
         top_n_features:  scan only the top-N features by |SHAP| importance.
         min_rule_impact: minimum |probability_delta| required to emit a rule.
                          Default 0.05 = 5% probability shift. Lower = noisier.
-        n_bins:          per-feature bucket count for range detection.
+        calibrator:      optional Isotonic / Platt calibrator fit on the
+                         trainer's holdout. When supplied, probability
+                         deltas are reported on the calibrated scale
+                         (corrects for scale_pos_weight distortion).
+                         When None, falls back to the original
+                         sigmoid-against-base-rate mapping.
 
     Returns:
         List of Rule objects, sorted by |probability_delta| descending. Empty
@@ -225,9 +273,11 @@ def extract_rules(
             continue
 
         for lo, hi, mean_shap, count in _find_signed_ranges(
-            feature_values, shap_for_feature, n_bins=n_bins,
+            feature_values, shap_for_feature,
         ):
-            prob_delta = _logit_to_probability_delta(mean_shap, base_rate)
+            prob_delta = _calibrated_probability_delta(
+                mean_shap, base_rate, calibrator=calibrator,
+            )
 
             if abs(prob_delta) < min_rule_impact:
                 continue

@@ -1,0 +1,308 @@
+"""Integration layer bridging the two parallel reading engines.
+
+This package adapts between two independently-developed reading engines that
+both live in this repo but were built in isolation:
+
+- **Track A** — ``app.reading.*`` — deterministic kundli engine with strict
+  schema discipline (1763 tests, 18 doctrine commitments, JSON envelope
+  versioned 1.2.0). Public entry: ``app.reading.proforma.compute(...)``.
+- **Track B** — ``app.core.reading_composer`` + ``app.core.dkp_*`` +
+  ``app.core.functional_roles`` + 8 Gap modules — the "astrologer's-lens"
+  framework with DKP modulation, Doctrine Translation Engine (27 records
+  spanning ancient shloka → modern manifestation), and three-pillar bhava
+  judgement. Public entry: ``app.core.reading_composer.compose_reading(...)``.
+
+Neither engine is modified by this package. Adapters here are READ-ONLY
+over both APIs and produce a NEW envelope (``IntegratedReadingOutput``)
+that wraps Track A's output and decorates it with Track B's doctrine
+translations and modulation context.
+
+Public surface:
+
+- ``enhance(reading_dict)`` — annotate a Track-A reading with DKP translations.
+- ``compare_chara_dasha(chart_input, target_iso=None)`` — diff both Chara
+  Dasha implementations for the same chart.
+- ``IntegratedReadingOutput`` — Pydantic envelope wrapping enhanced output.
+"""
+
+from __future__ import annotations
+
+from app.integration.dkp_enhancer import (
+    IntegratedReadingOutput,
+    enhance,
+)
+from app.integration.chara_compare import (
+    CharaComparisonReport,
+    compare_chara_dasha,
+)
+from app.integration.functional_compare import (
+    FunctionalComparisonReport,
+    compare_functional_roles,
+)
+from app.integration.dkp_modulator_adapter import (
+    DkpModulatedReading,
+    ModulatedDomainReading,
+    build_dkp_context_from_reading,
+    modulate_all_domains,
+    modulate_domain,
+)
+from app.integration.gap_annotator import (
+    GapAnnotatedReading,
+    GapModuleEntry,
+    annotate_with_gap_modules,
+    chart_from_reading,
+)
+# v0.4.0 comparator suite
+from app.integration.vimshottari_compare import (
+    VimshottariCurrentMDReport,
+    compare_vimshottari_current_md,
+)
+from app.integration.yoga_compare import (
+    YogaComparisonReport,
+    compare_yoga_detection,
+)
+from app.integration.shadbala_compare import (
+    ShadbalaComparisonReport,
+    compare_shadbala,
+)
+from app.integration.d9_compare import (
+    D9ComparisonReport,
+    compare_d9_signs,
+)
+from app.integration.argala_drishti_compare import (
+    ArgalaDrishtiComparisonReport,
+    compare_argala_drishti,
+)
+# v0.5.0 LLM narrative + adversarial verification
+from app.integration.narrative import (
+    DomainNarrative,
+    NarrativeOutput,
+    CriticReview,
+    CriticVerdict,
+    VerifiedClaim,
+    VerifiedNarrative,
+    compose_narrative,
+    run_critics,
+    narrate_and_verify,
+)
+# v0.6.0 + v0.7.0 — benchmark + corpus RAG
+from app.integration.benchmark import (
+    BenchmarkReport,
+    CHART_REGISTRY,
+    EventOutcome,
+    FAMOUS_EVENTS,
+    FamousChart,
+    FamousEvent,
+    PerChartSummary,
+    PerDomainSummary,
+    run_benchmark,
+    score_event,
+)
+from app.integration.corpus_rag_enhancer import (
+    CorpusCitation,
+    CorpusRAGEnhancedReading,
+    enhance_with_corpus_rag,
+)
+# v1.0.1 — MD-at-now / MD-at-any-JD helper (Bangalore "current_mahadasha"
+# field is mislabeled; it returns MD at BIRTH, not NOW)
+from app.integration.dasha_now import (
+    ADLookup,
+    MDLookup,
+    PDLookup,
+    ad_at_jd,
+    ad_at_now,
+    md_at_birth,
+    md_at_jd,
+    md_at_now,
+    pd_at_jd,
+    pd_at_now,
+)
+# v1.1.0 M2 — transit engine
+from app.integration.transit_engine import (
+    TransitReport,
+    TransitStateView,
+    transit_at_now,
+    transit_signs_at,
+    transit_state_at,
+)
+# v1.1.0 M3 — MD-lord natal dossier
+from app.integration.md_lord_dossier import (
+    MDLordDossier,
+    build_md_lord_dossier,
+)
+# v1.1.0 M4 — three-pillar bhava synthesis
+from app.integration.three_pillar import (
+    ThreePillarBhava,
+    ThreePillarReading,
+    build_three_pillar_reading,
+)
+# v1.1.0 M5 — yoga effect translator
+from app.integration.yoga_effects import (
+    YogaEffect,
+    translate_yoga_effects,
+)
+# v1.1.0 M6 — Arudha image synthesis
+from app.integration.arudha_synthesis import (
+    ArudhaSynthesis,
+    synthesise_arudha,
+)
+# v1.1.0 M7 — Dasha triple (KN Rao canonical synthesis)
+from app.integration.dasha_triple import (
+    DashaTriple,
+    build_dasha_triple,
+)
+# v1.1.0 M8 — Master compose (depth output entry point)
+from app.integration.master_compose import (
+    DomainParagraph,
+    MasterReading,
+    compose_master_reading,
+)
+# v1.0.2 — doctrine reconciliation + summary
+from app.integration.doctrine_reconciliation import (
+    DoctrineNote,
+    ReconciledFunctionalReport,
+    reconcile_functional_roles,
+)
+from app.integration.summary import (
+    ChartBasics,
+    ChartSummary,
+    DomainHighlight,
+    FunctionalRoleNote,
+    GapHeadlines,
+    MDSnapshot,
+    YogaSummary,
+    summarize_chart,
+)
+# v1.0.0 production hardening
+from app.integration.production import (
+    CacheKey,
+    CacheStats,
+    ReadingCache,
+    StructuredLogger,
+    TimingContext,
+    default_cache,
+    get_logger,
+    make_cache_key,
+    measure,
+    timed,
+)
+
+__all__ = [
+    # DKP enhancer (v0.1.0)
+    "IntegratedReadingOutput",
+    "enhance",
+    # Chara Dasha comparator (v0.1.0)
+    "CharaComparisonReport",
+    "compare_chara_dasha",
+    # Functional benefic/malefic comparator (v0.2.0)
+    "FunctionalComparisonReport",
+    "compare_functional_roles",
+    # DKP modulator adapter (v0.2.0)
+    "DkpModulatedReading",
+    "ModulatedDomainReading",
+    "build_dkp_context_from_reading",
+    "modulate_all_domains",
+    "modulate_domain",
+    # Gap-module annotator (v0.3.0)
+    "GapAnnotatedReading",
+    "GapModuleEntry",
+    "annotate_with_gap_modules",
+    "chart_from_reading",
+    # v0.4.0 comparator suite
+    "VimshottariCurrentMDReport",
+    "compare_vimshottari_current_md",
+    "YogaComparisonReport",
+    "compare_yoga_detection",
+    "ShadbalaComparisonReport",
+    "compare_shadbala",
+    "D9ComparisonReport",
+    "compare_d9_signs",
+    "ArgalaDrishtiComparisonReport",
+    "compare_argala_drishti",
+    # v0.5.0 narrative + critics
+    "DomainNarrative",
+    "NarrativeOutput",
+    "CriticReview",
+    "CriticVerdict",
+    "VerifiedClaim",
+    "VerifiedNarrative",
+    "compose_narrative",
+    "run_critics",
+    "narrate_and_verify",
+    # v0.6.0 benchmark
+    "BenchmarkReport",
+    "CHART_REGISTRY",
+    "EventOutcome",
+    "FAMOUS_EVENTS",
+    "FamousChart",
+    "FamousEvent",
+    "PerChartSummary",
+    "PerDomainSummary",
+    "run_benchmark",
+    "score_event",
+    # v0.7.0 corpus RAG
+    "CorpusCitation",
+    "CorpusRAGEnhancedReading",
+    "enhance_with_corpus_rag",
+    # v1.0.1 — MD-at-any-JD
+    "MDLookup",
+    "md_at_birth",
+    "md_at_jd",
+    "md_at_now",
+    "ADLookup",
+    "PDLookup",
+    "ad_at_jd",
+    "ad_at_now",
+    "pd_at_jd",
+    "pd_at_now",
+    # v1.1.0 M2 - transit engine
+    "TransitReport",
+    "TransitStateView",
+    "transit_at_now",
+    "transit_signs_at",
+    "transit_state_at",
+    # v1.1.0 M3 - MD-lord dossier
+    "MDLordDossier",
+    "build_md_lord_dossier",
+    # v1.1.0 M4 - three-pillar
+    "ThreePillarBhava",
+    "ThreePillarReading",
+    "build_three_pillar_reading",
+    # v1.1.0 M5 - yoga effects
+    "YogaEffect",
+    "translate_yoga_effects",
+    # v1.1.0 M6 - Arudha synthesis
+    "ArudhaSynthesis",
+    "synthesise_arudha",
+    # v1.1.0 M7 - Dasha triple
+    "DashaTriple",
+    "build_dasha_triple",
+    # v1.1.0 M8 - Master compose (depth output entry)
+    "DomainParagraph",
+    "MasterReading",
+    "compose_master_reading",
+    # v1.0.2 doctrine reconciliation
+    "DoctrineNote",
+    "ReconciledFunctionalReport",
+    "reconcile_functional_roles",
+    # v1.0.2 high-signal summary
+    "ChartBasics",
+    "ChartSummary",
+    "DomainHighlight",
+    "FunctionalRoleNote",
+    "GapHeadlines",
+    "MDSnapshot",
+    "YogaSummary",
+    "summarize_chart",
+    # v1.0.0 production hardening
+    "CacheKey",
+    "CacheStats",
+    "ReadingCache",
+    "StructuredLogger",
+    "TimingContext",
+    "default_cache",
+    "get_logger",
+    "make_cache_key",
+    "measure",
+    "timed",
+]

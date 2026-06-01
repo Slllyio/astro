@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जातकम् — A Reading of the Birth Chart</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- v5: refactored to use the shared design system. Previous v4 had ~720
+       lines of inline CSS that duplicated manuscript-system.css. Stripping
+       the duplication unifies the visual language with the 4 other mockups
+       (landing, knowledge-search, chart-calc, forecast) and means future
+       design tweaks happen in ONE place.
+
+       Content classes used here all exist in manuscript-system.css:
+       .leaf, .cover, .leaf-page, .panel, .binding-string/-zone/-hole,
+       .mangalacharana, .leaf-title-*, .panel-heading*, .prose, .dropcap,
+       .sloka-middle, .native-card, .dasha-tree-mini, .footnotes-mini,
+       .folio-mark, .nav-bar, .nav-btn, .nav-mute, .edge-zone. -->
+  <link rel="stylesheet" href="manuscript-system.css">
+</head>
+<body>
+
+  <div class="dust-layer" id="dust-layer"></div>
+
+  <div class="manuscript-stage">
+    <div class="manuscript" id="manuscript">
+
+      <!-- Two static vertical jute strings through the binding holes -->
+      <div class="binding-string left"></div>
+      <div class="binding-string right"></div>
+
+      <!-- ========== Leaf 0 — Wooden front cover ========== -->
+      <div class="leaf" data-page="0">
+        <div class="cover">
+          <div class="cover-inscription">
+            <div class="cover-deva-title deva">जातकम्</div>
+            <div class="cover-english-title">A READING OF THE BIRTH CHART</div>
+          </div>
+          <!-- Cover also has binding holes (same physical leaf format) -->
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div class="cover-tap-hint">tap or press ↓ to flip open</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 1 — Mangalacharana + Title ========== -->
+      <div class="leaf" data-page="1">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center;">
+            <div class="mangalacharana deva">श्रीगणेशाय नमः</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center;">
+            <div class="leaf-title-deva deva">जातक<br>कुण्डली विवेचना</div>
+            <div class="leaf-title-eng">A Reading of the Birth Chart</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: center;">
+            <div style="font-family: 'EB Garamond', serif; font-style: italic;
+                       font-size: 1.05rem; color: var(--ink-secondary); line-height: 1.75;
+                       opacity: 0; animation: fade-in 1.4s ease-out 1.2s forwards;">
+              Composed in accordance<br>with the canonical śāstras<br>—<br>
+              <span style="font-variant: small-caps; letter-spacing: 0.15em; font-size: 0.85rem;">
+                Bangalore, 1990
+              </span>
+            </div>
+          </div>
+          <div class="folio-mark">folio I</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 2 — Native birth data (across panels) ========== -->
+      <div class="leaf" data-page="2">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center; text-align: right;">
+            <div class="panel-heading-deva deva">जातकः</div>
+            <div style="font-size: 1rem; color: var(--ink-secondary); font-style: italic; opacity: 0;
+                       animation: fade-in 1.0s ease-out 0.7s forwards;">
+              The Native
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center;">
+            <div class="native-card">
+              <div class="label">name · नाम</div>
+              <div class="native-name">Bangalore Baseline</div>
+              <div class="birth-line">
+                15<sup>th</sup> July, 1990 · 12:00 IST<br>
+                <span class="deva">बंगलूरु</span> (12.97°N, 77.59°E)
+              </div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: left;">
+            <div style="font-size: 1rem; color: var(--ink-secondary); line-height: 1.85; opacity: 0;
+                       animation: fade-in-up 1.0s ease-out 0.9s forwards;">
+              Lagna: <strong style="color: var(--madder);">Virgo</strong><br>
+              Rāśi: <strong style="color: var(--madder);">Pisces</strong><br>
+              Nakṣatra: <strong style="color: var(--madder);">Revatī</strong><br>
+              <span style="font-size: 0.85rem; color: var(--ink-faded);">pada 3</span>
+            </div>
+          </div>
+          <div class="folio-mark">folio II</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 3 — Section I: Lagna (triptych content) ========== -->
+      <div class="leaf" data-page="3">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">SEC. I</div>
+            <div class="panel-heading-deva deva">प्रथमः</div>
+            <div class="prose">
+              <p>
+                <span class="dropcap">V</span>irgo rises at the eastern horizon, its lord
+                <strong>Budha</strong> — Mercury, the swift-footed messenger of the gods.<a class="footnote-ref">1</a>
+              </p>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="sloka-middle">
+              <div class="verse-deva deva">
+                लग्नेशो लाभ-स्थाने<br>
+                ददाति लाभं सः ॥
+              </div>
+              <div class="verse-iast">
+                lagneśo lābha-sthāne<br>
+                dadāti lābhaṁ saḥ
+              </div>
+              <div class="verse-translation">
+                The Lord of Ascendant in the Eleventh<br>
+                confers gain.
+              </div>
+              <div class="verse-citation">Phaladeepika XI · 18</div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="prose">
+              <p style="margin-top: 1rem;">
+                Mercury hath placed himself in the <em>eleventh</em> bhava, in
+                <strong>Karka</strong> (Cancer) — a most fortunate disposition for
+                the lord of the lagna.<a class="footnote-ref">2</a>
+              </p>
+            </div>
+          </div>
+          <div class="folio-mark">folio III</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 4 — Section II: Active period ========== -->
+      <div class="leaf" data-page="4">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">SEC. II</div>
+            <div class="panel-heading-deva deva">द्वितीयः</div>
+            <div class="prose">
+              <p>
+                <span class="dropcap">T</span>he native presently dwelleth in the
+                Mahādaśā of <strong>Budha</strong> — Mercury's great period of
+                seventeen years.<a class="footnote-ref">3</a>
+              </p>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center;">
+            <div class="panel-heading">CURRENT PERIOD</div>
+            <div class="dasha-tree-mini">
+              <div class="row md">
+                <span class="lord">Budha</span>
+                <span class="rem">15y 7m rem.</span>
+              </div>
+              <div class="row ad">
+                <span class="lord">Shani</span>
+                <span class="rem">2y 1m rem.</span>
+              </div>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="prose">
+              <p style="margin-top: 1rem;">
+                Within unfoldeth the <em>antardaśā of Shani</em> — Saturn,
+                posited in his own sign of Makara (Capricorn), bringing his
+                full strength upon the eleventh house.<a class="footnote-ref">4</a>
+              </p>
+            </div>
+          </div>
+          <div class="folio-mark">folio IV</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 5 — Yogas + key combinations ========== -->
+      <div class="leaf" data-page="5">
+        <div class="leaf-page">
+          <div class="panel left">
+            <div class="panel-heading">SEC. III</div>
+            <div class="panel-heading-deva deva">तृतीयः</div>
+            <div class="prose">
+              <p>
+                <span class="dropcap">B</span>ehold the auspicious yogas formed at
+                birth: Gajakesari arises by Moon in kendra from Jupiter; Budha-Aditya
+                yoga formed by Sun-Mercury in Cancer.<a class="footnote-ref">5</a>
+              </p>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center; text-align: center;">
+            <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 2.2rem; color: var(--madder);
+                       opacity: 0; animation: fade-in-up 1.0s ease-out 0.8s forwards;">
+              गजकेसरी
+            </div>
+            <div style="font-style: italic; font-size: 1rem; color: var(--ink-secondary); margin-top: 0.5rem;
+                       opacity: 0; animation: fade-in 1.0s ease-out 1.1s forwards;">
+              Gajakesarī Yoga<br>
+              <span style="font-variant: small-caps; font-size: 0.85rem; color: var(--ink-faded); letter-spacing: 0.12em;">
+                lion-elephant union
+              </span>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="prose">
+              <p style="margin-top: 1rem;">
+                These yogas confer fame, oratorical power, and authority. Their
+                fruits unfold most fully during Jupiter and Mercury sub-periods.<a class="footnote-ref">6</a>
+              </p>
+            </div>
+          </div>
+          <div class="folio-mark">folio V</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 6 — Sources ========== -->
+      <div class="leaf" data-page="6">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center;">
+            <div class="panel-heading-deva deva" style="text-align: center;">सन्दर्भाः</div>
+            <div class="panel-heading" style="text-align: center;">SOURCES</div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle">
+            <div class="footnotes-mini">
+              <ol>
+                <li><span class="source">BPHS</span> <span class="ref">LVII · 4–9</span></li>
+                <li><span class="source">Phaladeepika</span> <span class="ref">XI · 18</span></li>
+                <li><span class="source">BPHS</span> <span class="ref">XLVI · 1–18</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right">
+            <div class="footnotes-mini">
+              <ol start="4">
+                <li><span class="source">Saravali</span> <span class="ref">XXIX · 21–24</span></li>
+                <li><span class="source">BPHS</span> <span class="ref">LXXVI · 1–9</span> (yoga chapter)</li>
+                <li><span class="source">Jataka Parijata</span> <span class="ref">XIV · 30</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="folio-mark">folio VI</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 7 — Closing colophon ========== -->
+      <div class="leaf" data-page="7">
+        <div class="leaf-page">
+          <div class="panel left" style="justify-content: center; text-align: right;">
+            <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.7rem; color: var(--madder);
+                       opacity: 0; animation: fade-in 1.0s ease-out 0.5s forwards;">
+              इति समाप्तम्
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel middle" style="justify-content: center; text-align: center;">
+            <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 5rem; color: var(--gold-deep);
+                       text-shadow: 0 0 16px rgba(201, 160, 74, 0.35);
+                       opacity: 0; animation: fade-in-up 1.2s ease-out 0.6s forwards;">
+              ॐ
+            </div>
+          </div>
+          <div class="binding-zone"><div class="binding-hole"></div></div>
+          <div class="panel right" style="justify-content: center; text-align: left;">
+            <div style="font-family: 'EB Garamond', serif; font-style: italic; font-size: 1.05rem;
+                       color: var(--ink-secondary); line-height: 1.85;
+                       opacity: 0; animation: fade-in 1.0s ease-out 0.7s forwards;">
+              Here ends the<br>reading of the<br>birth chart.<br>
+              <span style="font-variant: small-caps; font-size: 0.85rem; letter-spacing: 0.12em;
+                          color: var(--ink-faded);">
+                — śubhamastu —
+              </span>
+            </div>
+          </div>
+          <div class="folio-mark">folio VII</div>
+        </div>
+      </div>
+
+      <!-- ========== Leaf 8 — Wooden back cover ========== -->
+      <div class="leaf" data-page="8">
+        <div class="cover closing">
+          <div class="cover-inscription">
+            <div class="om-mantra deva">ॐ</div>
+            <div class="closing-text">END OF READING</div>
+            <button class="reopen-btn" onclick="reopenManuscript()">REOPEN MANUSCRIPT</button>
+          </div>
+          <div style="position: absolute; left: 33.33%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+          <div style="position: absolute; left: 66.67%; top: 50%; transform: translate(-50%, -50%); z-index: 3;">
+            <div class="binding-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP + BOTTOM edge zones for upward flip -->
+      <div class="edge-zone top"    id="zone-prev"></div>
+      <div class="edge-zone bottom" id="zone-next"></div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" title="Previous folio (↑)">↑</button>
+    <div class="nav-status" id="folio-status">COVER</div>
+    <button class="nav-btn" id="btn-next" title="Next folio (↓)">↓</button>
+    <button class="nav-mute" id="btn-mute">🔊 sound</button>
+    <a class="nav-page-link" href="landing.html">🏠 home</a>
+    <a class="nav-page-link" href="knowledge-search.html">🔍 search</a>
+  </div>
+
+  <script>
+    window.MANUSCRIPT_LABELS = [
+      'COVER', 'FOLIO I', 'FOLIO II', 'FOLIO III', 'FOLIO IV',
+      'FOLIO V', 'FOLIO VI', 'FOLIO VII', 'END',
+    ];
+  </script>
+  <script src="manuscript-system.js"></script>
+</body>
+</html>

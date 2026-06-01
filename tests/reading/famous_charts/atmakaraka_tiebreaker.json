@@ -1,0 +1,11 @@
+{
+  "name": "Atmakaraka tiebreaker — synthetic",
+  "source": "Synthetic edge case for Phase 5 Task 5.7. Located via fine sweep of 1990 by minute over Bangalore noon-window: Moon and Saturn share degrees-in-sign within ~0.00106°.",
+  "dob": "1990-09-05",
+  "time": "18:55",
+  "tz": "+05:30",
+  "lat": 12.97,
+  "lon": 77.59,
+  "edge_case": "atmakaraka_tiebreaker",
+  "structural_notes": "Bangalore baseline location. At this birth-moment Moon's degree-in-sign (25.2280) and Saturn's degree-in-sign (25.2270) differ by only ~0.00106° — exercises the Atmakaraka tiebreaker logic when two karakas are essentially co-degree. Per Section 11 prediction-trap ban, no outcome assertions."
+}

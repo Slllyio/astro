@@ -1,0 +1,11 @@
+{
+  "name": "Polar latitude — Reykjavik summer solstice",
+  "source": "Synthetic edge case for high-latitude house cusp computation",
+  "dob": "1990-06-21",
+  "time": "12:00",
+  "tz": "+00:00",
+  "lat": 64.13,
+  "lon": -21.94,
+  "edge_case": "polar_latitude",
+  "structural_notes": "Tests house-cusp arithmetic at lat >63° where some house systems fail (Placidus undefined above polar circle ~66.5°). Whole-sign houses used here should still work cleanly. Per Section 11 prediction-trap ban, no outcome assertions."
+}

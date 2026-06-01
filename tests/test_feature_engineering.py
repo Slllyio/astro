@@ -6,6 +6,8 @@ JD; no network, no DB.
 """
 from __future__ import annotations
 
+import math
+
 import pytest
 import swisseph as swe
 
@@ -207,6 +209,124 @@ def test_compute_chart_features_oob_is_binary() -> None:
         assert flag in (0, 1), f"oob_{graha} should be 0 or 1, got {flag}"
 
 
+# ---------- Phase C: Vimshottari dasha timeline features ----------
+
+def test_dasha_timeline_bangalore_baseline() -> None:
+    """Bangalore baseline pin: Mercury Mahadasha 1978-03-26 → 1995-03-26.
+
+    Birth date 1990-07-15 falls 12.305 years into Mercury MD; 4.695 years
+    remain. The next MD (Ketu) opens at age 4.695. These match the existing
+    pins in `tests/test_dasha_dates.py`.
+    """
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+
+    # Mercury MD started ~12.3 years before birth (1978-03-26 → 1990-07-15)
+    assert features["dasha_start_age_mercury"] == pytest.approx(-12.305, abs=0.05)
+
+    # ~4.7 years left in Mercury MD at birth
+    assert features["natal_dasha_remaining_years"] == pytest.approx(4.695, abs=0.05)
+
+    # Ketu MD opens 1995-03-26 = age ~4.7
+    assert features["dasha_start_age_ketu"] == pytest.approx(4.695, abs=0.05)
+
+    # Subsequent Vimshottari sequence: Ketu(7) → Venus(20) → Sun(6) →
+    # Moon(10) → Mars(7) → Rahu(18) → Jupiter(16) → Saturn(19) → Mercury(17, wraps)
+    # Saturn opens at 4.695 + 7 + 20 + 6 + 10 + 7 + 18 + 16 = 88.695
+    assert features["dasha_start_age_saturn"] == pytest.approx(88.695, abs=0.05)
+
+
+def test_dasha_timeline_invariant_120_year_cycle() -> None:
+    """The 9 Mahadashas in the cycle starting from the natal lord
+    cumulatively span exactly 120 years. Verified by walking
+    dasha_start_age values in Vimshottari order from natal lord."""
+    from app.core.ephemeris_engine import DASHA_LORDS
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+
+    # Bangalore natal lord = Mercury (last in DASHA_LORDS sequence)
+    lord_names = [name for name, _ in DASHA_LORDS]
+    start_idx = lord_names.index("Mercury")
+    cycled = [
+        lord_names[(start_idx + i) % len(lord_names)]
+        for i in range(len(lord_names))
+    ]
+
+    # Walk consecutive deltas
+    ages = [features[f"dasha_start_age_{lord.lower()}"] for lord in cycled]
+    # Add the cycle's end (= start + 120 years). The natal lord's MD
+    # opened `natal_elapsed = 12.305` years before birth, so the cycle
+    # ends at age (natal_elapsed * -1 + 120) = 107.695.
+    cycle_end = ages[0] + 120.0
+    deltas = [
+        ages[i + 1] - ages[i] for i in range(len(ages) - 1)
+    ] + [cycle_end - ages[-1]]
+
+    # Each delta should match the lord's tenure
+    lord_years = dict(DASHA_LORDS)
+    for i, lord in enumerate(cycled):
+        expected_years = lord_years[lord]
+        assert deltas[i] == pytest.approx(expected_years, abs=0.01), (
+            f"{lord} MD duration mismatch: got {deltas[i]:.3f}, expected {expected_years}"
+        )
+
+
+def test_dasha_antardasha_after_16_finite_for_all_planets() -> None:
+    """Every planet must have a finite first-AD-after-16 age — the
+    120-year cycle guarantees this for any realistic birth."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for lord in ("sun", "moon", "mars", "mercury", "jupiter", "venus",
+                 "saturn", "rahu", "ketu"):
+        age = features[f"first_{lord}_antardasha_after_16"]
+        assert not math.isnan(age), f"first_{lord}_antardasha_after_16 should be finite"
+        assert 16.0 <= age < 120.0, f"first_{lord}_antardasha_after_16 out of plausible range: {age}"
+
+
+# ---------- Phase B: Higher-order kinematics (acceleration + jerk) ----------
+
+def test_kinematic_acceleration_all_finite() -> None:
+    """Every planet must have a finite acceleration value, no NaN/Inf."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for graha in GRAHAS:
+        acc = features[f"acc_{graha.lower()}"]
+        assert math.isfinite(acc), f"acc_{graha} not finite: {acc}"
+
+
+def test_kinematic_sun_acceleration_near_zero() -> None:
+    """Sun's velocity is near-constant at ~1°/day; its acceleration
+    should be very small. A large value would indicate the finite-diff
+    is broken or pointing at the wrong planet."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    # Sun's velocity varies slowly within a few thousandths of a deg/day
+    # over a ±1-day window. Anything above 0.01 would be a bug.
+    assert abs(features["acc_sun"]) < 0.01
+
+
+def test_kinematic_ketu_acceleration_mirrors_rahu() -> None:
+    """Ketu is 180° opposite Rahu and moves with the same mean velocity
+    profile, so their accelerations are identical (no sign flip — the
+    velocity convention in compute_chart_features already mirrors)."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    assert features["acc_ketu"] == pytest.approx(features["acc_rahu"], abs=1e-9)
+
+
+def test_kinematic_jerk_only_for_slow_planets() -> None:
+    """Jerk is intentionally restricted to Jupiter/Saturn/Rahu/Ketu —
+    inner planets have too-fast velocity changes for ±2-day finite
+    differences to carry signal over noise."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    for slow in ("jupiter", "saturn", "rahu", "ketu"):
+        assert f"jerk_{slow}" in features
+    for fast in ("sun", "moon", "mars", "mercury", "venus"):
+        assert f"jerk_{fast}" not in features, (
+            f"jerk_{fast} should NOT be in features — only slow planets are tracked"
+        )
+
+
+def test_kinematic_jerk_ketu_mirrors_rahu() -> None:
+    """Same as acceleration mirror — Ketu's velocity profile = Rahu's."""
+    features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
+    assert features["jerk_ketu"] == pytest.approx(features["jerk_rahu"], abs=1e-9)
+
+
 def test_compute_chart_features_dispositors_are_valid_planets() -> None:
     features = compute_chart_features(BANGALORE_JD, 12.97, 77.59)
     valid = set(SIGN_RULERS.values()) | {"none"}
@@ -233,9 +353,29 @@ def test_compute_chart_features_sav_house_total_invariant() -> None:
 
 
 def test_expected_feature_columns_count() -> None:
-    """The schema regression test: column count is locked at 193."""
+    """The schema regression test: column count is locked at 529.
+
+    Layout (Phase 5 round-5 final):
+      - 193 base columns (Vectors 1+2+3: Base, Kinematic, Vedic)
+      - +19 dasha timeline columns (1 natal_dasha_remaining_years +
+        9 dasha_start_age_<planet> + 9 first_<planet>_antardasha_after_16)
+      - +13 higher-order kinematics (9 acc_<planet> + 4 jerk for
+        Jupiter/Saturn/Rahu/Ketu only)
+      - +174 Round-5a classical Vedic stack (whole-sign):
+        - 81 drishti matrix (9x9, including self-diagonal zeros)
+        - 63 extra divisional charts (7 vargas × 9 planets)
+        - 18 house frames (9 from-Moon + 9 from-Sun)
+        - 5 panchanga elements
+        - 7 named yogas
+      - +130 Round-5b continuous-precision layer (exact degrees):
+        - 81 aspect-orb matrix (continuous companion to drishti)
+        - 9 house_pos_<planet>: house from Lagna in [0, 12) float
+        - 9 nak_pos_<planet>: position within nakshatra in [0, 1)
+        - 4 (lagna_degree_in_sign + tithi_angle + yoga_angle + moon_phase)
+        - 27 divisional longitudes (D9/D10/D12 × 9 planets)
+    """
     cols = expected_feature_columns()
-    assert len(cols) == 193, f"feature column count drifted: {len(cols)} != 193"
+    assert len(cols) == 529, f"feature column count drifted: {len(cols)} != 529"
     # No duplicate column names (ordering quirks could create these)
     assert len(cols) == len(set(cols)), "duplicate column names"
 

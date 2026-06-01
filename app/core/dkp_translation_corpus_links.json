@@ -1,0 +1,272 @@
+{
+  "9L_in_12H::dharma": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch002",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch004",
+    "bphs-vol1-ch006",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch014"
+  ],
+  "Chandra-Mangal::kinship": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch016",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch023",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch030",
+    "bphs-vol1-ch033"
+  ],
+  "Gajakesari::career_wealth": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch021",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch037",
+    "bphs-vol1-ch039",
+    "bphs-vol1-ch042",
+    "bphs-vol2-ch007",
+    "bphs-vol2-ch046"
+  ],
+  "Ketu_6H_or_8H::health": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019",
+    "bphs-vol1-ch020"
+  ],
+  "Lakshmi::career_wealth": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch021",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch037",
+    "bphs-vol1-ch039",
+    "bphs-vol1-ch042",
+    "bphs-vol2-ch007",
+    "bphs-vol2-ch046"
+  ],
+  "Mangal Dosha::kinship": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch016",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch023",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch030",
+    "bphs-vol1-ch033"
+  ],
+  "Mars-Venus association::kinship": [
+    "phaladeepika-ch04",
+    "phaladeepika-ch08",
+    "phaladeepika-ch10",
+    "phaladeepika-ch11",
+    "phaladeepika-ch12",
+    "phaladeepika-ch13",
+    "phaladeepika-ch14",
+    "phaladeepika-ch15"
+  ],
+  "Matr Dosha::health": [
+    "phaladeepika-ch04",
+    "phaladeepika-ch11",
+    "phaladeepika-ch15",
+    "phaladeepika-ch16",
+    "phaladeepika-ch18",
+    "phaladeepika-ch19",
+    "phaladeepika-ch22",
+    "phaladeepika-ch23"
+  ],
+  "Pitra Dosha::dharma": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch002",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch004",
+    "bphs-vol1-ch006",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch014"
+  ],
+  "Saraswati::career_wealth": [
+    "phaladeepika-ch04",
+    "phaladeepika-ch07",
+    "phaladeepika-ch08",
+    "phaladeepika-ch10",
+    "phaladeepika-ch11",
+    "phaladeepika-ch12",
+    "phaladeepika-ch13",
+    "phaladeepika-ch15"
+  ],
+  "Saraswati::dharma": [
+    "phaladeepika-ch02",
+    "phaladeepika-ch03",
+    "phaladeepika-ch04",
+    "phaladeepika-ch05",
+    "phaladeepika-ch06",
+    "phaladeepika-ch07",
+    "phaladeepika-ch08",
+    "phaladeepika-ch09"
+  ],
+  "Sarpa Dosha::health": [
+    "vedic_occultism_behari-ch005",
+    "vedic_occultism_behari-ch006",
+    "vedic_occultism_behari-ch007",
+    "vedic_occultism_behari-ch012",
+    "vedic_occultism_behari-ch001",
+    "vedic_occultism_behari-ch002",
+    "vedic_occultism_behari-ch003",
+    "vedic_occultism_behari-ch004"
+  ],
+  "Sunapha_or_Anapha_or_Durudhura::kinship": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch016",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch023",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch030",
+    "bphs-vol1-ch033"
+  ],
+  "Venus_afflicted_combust_or_dusthana::kinship": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch016",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch023",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch030",
+    "bphs-vol1-ch033"
+  ],
+  "Vipareeta Raja::career_wealth": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch021",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch037",
+    "bphs-vol1-ch039",
+    "bphs-vol1-ch042",
+    "bphs-vol2-ch007",
+    "bphs-vol2-ch046"
+  ],
+  "Vipareeta Raja::health": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019",
+    "bphs-vol1-ch020"
+  ],
+  "bhava_10_planet_Saturn::career_wealth": [
+    "saravali-ch029",
+    "phaladeepika-ch04",
+    "phaladeepika-ch07",
+    "phaladeepika-ch08",
+    "phaladeepika-ch10",
+    "phaladeepika-ch11",
+    "phaladeepika-ch12",
+    "phaladeepika-ch13"
+  ],
+  "bhava_12_planet_Ketu::dharma": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch002",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch004",
+    "bphs-vol1-ch006",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch014"
+  ],
+  "bhava_1_planet_Rahu::health": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019",
+    "bphs-vol1-ch020"
+  ],
+  "bhava_4_planet_Saturn::kinship": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch016",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch023",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch030",
+    "bphs-vol1-ch033"
+  ],
+  "bhava_5_planet_Jupiter::dharma": [
+    "phaladeepika_dli-ch012",
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch002",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch004",
+    "bphs-vol1-ch006",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch011"
+  ],
+  "bhava_8_planet_Mars::health": [
+    "saravali-ch025",
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019"
+  ],
+  "bhava_8_planet_Saturn::health": [
+    "phaladeepika_dli-ch017",
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019"
+  ],
+  "bhava_9_planet_Jupiter::dharma": [
+    "phaladeepika_dli-ch012",
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch002",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch004",
+    "bphs-vol1-ch006",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch011"
+  ],
+  "moon_afflicted_by_rahu_saturn::health": [
+    "bphs-vol1-ch001",
+    "bphs-vol1-ch003",
+    "bphs-vol1-ch005",
+    "bphs-vol1-ch009",
+    "bphs-vol1-ch017",
+    "bphs-vol1-ch018",
+    "bphs-vol1-ch019",
+    "bphs-vol1-ch020"
+  ],
+  "strong_10L::career_wealth": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch021",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch037",
+    "bphs-vol1-ch039",
+    "bphs-vol1-ch042",
+    "bphs-vol2-ch007",
+    "bphs-vol2-ch046"
+  ],
+  "strong_11L::career_wealth": [
+    "bphs-vol1-ch011",
+    "bphs-vol1-ch021",
+    "bphs-vol1-ch024",
+    "bphs-vol1-ch037",
+    "bphs-vol1-ch039",
+    "bphs-vol1-ch042",
+    "bphs-vol2-ch007",
+    "bphs-vol2-ch046"
+  ]
+}

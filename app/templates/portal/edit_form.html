@@ -1,0 +1,270 @@
+{% extends "portal/base.html" %}
+
+{% block title %}Edit {{ person.name }} — Family Chart Portal{% endblock %}
+{% block header_title %}Edit {{ person.name }}{% endblock %}
+{% block header_tagline %}Update saved birth record{% endblock %}
+
+{% block extra_css %}
+    .container-form { max-width: 720px; }
+    .breadcrumb-row {
+      font-size: 0.85rem;
+      color: var(--tc-ink-muted);
+      margin-bottom: 14px;
+    }
+    .breadcrumb-row a { color: var(--tc-primary-deep); }
+    .section-divider {
+      border-top: 1px solid var(--tc-border);
+      margin: 24px 0 18px;
+      padding-top: 16px;
+    }
+    .section-divider h3 {
+      font-size: 0.78rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--tc-ink-muted);
+      margin: 0 0 14px;
+    }
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 26px;
+    }
+    .action-row .btn-cancel {
+      color: var(--tc-ink-muted);
+      font-size: 0.9rem;
+    }
+    .form-help-note {
+      font-size: 0.78rem;
+      color: var(--tc-ink-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+    .danger-zone {
+      margin-top: 30px;
+      padding: 16px 20px;
+      background: #fbf0f0;
+      border: 1px solid #e8c8c8;
+      border-radius: 8px;
+      color: #6a1a1a;
+      font-size: 0.85rem;
+    }
+    .danger-zone h4 {
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--tc-danger);
+      margin: 0 0 8px;
+    }
+    .danger-zone form { margin: 0; display: inline; }
+    .danger-zone .btn-delete {
+      background: transparent;
+      border: 1px solid var(--tc-danger);
+      color: var(--tc-danger);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .danger-zone .btn-delete:hover {
+      background: var(--tc-danger);
+      color: #fff;
+    }
+{% endblock %}
+
+{% block content %}
+  <div class="container-form mx-auto">
+    <div class="breadcrumb-row">
+      <a href="/portal/">Family Charts</a> &rsaquo;
+      <a href="/portal/{{ person.id }}">{{ person.name }}</a> &rsaquo;
+      <span>Edit</span>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        <strong>Could not save changes.</strong><br>
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <div class="card-surface">
+      <h2>Edit birth record</h2>
+      <p class="subtitle">
+        Updates take effect immediately. The reading is regenerated on the next view.
+      </p>
+
+      {# Prefer in-flight form_data on validation re-render, else fall back to person row #}
+      {% set d = form_data if form_data else {
+          'name': person.name,
+          'relationship': person.relationship,
+          'dob': person.dob.isoformat() if person.dob else '',
+          'time': person.time_of_birth.strftime('%H:%M') if person.time_of_birth else '',
+          'time_unknown': (person.time_of_birth is none),
+          'tz': person.tz,
+          'lat': person.lat,
+          'lon': person.lon,
+          'place_name': person.place_name or '',
+          'notes': person.notes or '',
+        } %}
+
+      <form method="post" action="/portal/{{ person.id }}/edit" id="portal-edit-form">
+
+        <div class="section-divider" style="border-top: none; margin-top: 0; padding-top: 0;">
+          <h3>Identity</h3>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-7">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              value="{{ d.name }}"
+              maxlength="80"
+              required
+            />
+          </div>
+          <div class="col-md-5">
+            <label for="relationship" class="form-label">Relationship</label>
+            <select class="form-select" id="relationship" name="relationship" required>
+              {% for opt in ['self','spouse','mother','father','child','sibling','friend','other'] %}
+                <option value="{{ opt }}" {% if d.relationship == opt %}selected{% endif %}>
+                  {{ opt|capitalize }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <h3>Birth data</h3>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="dob" class="form-label">Date of birth</label>
+            <input
+              type="date"
+              class="form-control"
+              id="dob"
+              name="dob"
+              value="{{ d.dob }}"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="time" class="form-label">Time of birth</label>
+            <input
+              type="time"
+              class="form-control"
+              id="time"
+              name="time"
+              value="{{ d.time }}"
+              {% if d.time_unknown %}disabled{% endif %}
+            />
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="time_unknown"
+                name="time_unknown"
+                value="true"
+                {% if d.time_unknown %}checked{% endif %}
+                onchange="document.getElementById('time').disabled = this.checked;"
+              />
+              <label class="form-check-label form-help-note" for="time_unknown">
+                Time of birth unknown
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <div class="col-md-4">
+            <label for="tz" class="form-label">Timezone offset</label>
+            <input
+              type="text"
+              class="form-control"
+              id="tz"
+              name="tz"
+              value="{{ d.tz }}"
+              pattern="^[+-]\d{2}:?\d{2}$"
+              required
+            />
+            <div class="form-text">e.g. +05:30 or -0800</div>
+          </div>
+          <div class="col-md-4">
+            <label for="lat" class="form-label">Latitude</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="lat"
+              name="lat"
+              value="{{ d.lat }}"
+              min="-90"
+              max="90"
+              required
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="lon" class="form-label">Longitude</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="lon"
+              name="lon"
+              value="{{ d.lon }}"
+              min="-180"
+              max="180"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <h3>Place &amp; notes</h3>
+        </div>
+        <div class="mb-3">
+          <label for="place_name" class="form-label">Place name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="place_name"
+            name="place_name"
+            value="{{ d.place_name }}"
+            maxlength="120"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="notes" class="form-label">Notes</label>
+          <textarea
+            class="form-control"
+            id="notes"
+            name="notes"
+            rows="4"
+            maxlength="2000"
+          >{{ d.notes }}</textarea>
+        </div>
+
+        <div class="action-row">
+          <a href="/portal/{{ person.id }}" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn btn-tc-primary">Save Changes</button>
+        </div>
+      </form>
+
+      <div class="danger-zone">
+        <h4>Danger zone</h4>
+        <p style="margin-bottom: 10px;">
+          Soft-delete this record. The data is hidden from the portal but not destroyed.
+        </p>
+        <form method="post" action="/portal/{{ person.id }}/delete"
+              onsubmit="return confirm('Soft-delete {{ person.name }}? You can restore it later.');">
+          <button type="submit" class="btn-delete">Delete this record</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

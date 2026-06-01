@@ -1,0 +1,4 @@
+{# Dispatcher for portal/form — picks the right B3 template based on mode.
+   B2's routes call portal/form.html (single path); B3 wrote new_form.html +
+   edit_form.html as distinct templates. This dispatcher reconciles. #}
+{% if mode == "edit" %}{% include "portal/edit_form.html" %}{% else %}{% include "portal/new_form.html" %}{% endif %}

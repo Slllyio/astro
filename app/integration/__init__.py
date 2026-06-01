@@ -157,6 +157,12 @@ from app.integration.master_compose import (
     MasterReading,
     compose_master_reading,
 )
+# v1.2.0 — LLM polish for master reading
+from app.integration.llm_master import (
+    PolishedDomain,
+    PolishedMasterReading,
+    llm_polish_master_reading,
+)
 # v1.0.2 — doctrine reconciliation + summary
 from app.integration.doctrine_reconciliation import (
     DoctrineNote,
@@ -281,6 +287,10 @@ __all__ = [
     "DomainParagraph",
     "MasterReading",
     "compose_master_reading",
+    # v1.2.0 - LLM polish
+    "PolishedDomain",
+    "PolishedMasterReading",
+    "llm_polish_master_reading",
     # v1.0.2 doctrine reconciliation
     "DoctrineNote",
     "ReconciledFunctionalReport",

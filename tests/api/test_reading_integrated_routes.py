@@ -346,6 +346,72 @@ class TestWebUIRoutes:
         assert resp.status_code == 422
 
 
+class TestMasterReadingRoutes:
+    """v1.1.0 + v1.2.0 master-reading routes."""
+
+    def _track_a_reading(self):
+        from app.reading.proforma import compute
+        from app.reading.schema import ChartInput
+        return compute(
+            ChartInput(dob="1989-10-12", time="10:02", tz="+05:30",
+                       lat=27.23, lon=79.03),
+            enrich=False,
+        )
+
+    def test_master_reading_returns_six_domains(self):
+        reading = self._track_a_reading()
+        resp = client.post(
+            "/reading/integrated/master-reading",
+            json={"reading": reading},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "domain_paragraphs" in data
+        assert len(data["domain_paragraphs"]) == 6
+        assert data["integration_version"] == "1.1.0"
+
+    def test_master_reading_includes_dasha_triple_and_arudha(self):
+        reading = self._track_a_reading()
+        resp = client.post(
+            "/reading/integrated/master-reading",
+            json={"reading": reading},
+        )
+        data = resp.json()
+        assert "Saturn" in data["dasha_triple_paragraph"]
+        assert "Arudha" in data["arudha_image_summary"]
+
+    def test_master_reading_invalid_body_returns_400(self):
+        resp = client.post(
+            "/reading/integrated/master-reading",
+            json={"not_reading": "wrong"},
+        )
+        assert resp.status_code == 400
+
+    def test_master_polish_falls_back_to_stub_without_ollama(self):
+        reading = self._track_a_reading()
+        resp = client.post(
+            "/reading/integrated/master-polish",
+            json={"reading": reading},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["integration_version"] == "1.2.0"
+        assert data["llm_provider"] == "StubClient"
+        assert len(data["polished_domains"]) == 6
+
+    def test_master_polish_preserves_template_in_each_domain(self):
+        reading = self._track_a_reading()
+        resp = client.post(
+            "/reading/integrated/master-polish",
+            json={"reading": reading},
+        )
+        data = resp.json()
+        for pd in data["polished_domains"]:
+            # Template paragraph always populated (M8 output)
+            assert pd["template_paragraph"] != ""
+            assert pd["polished_paragraph"] != ""
+
+
 class TestCacheRoutes:
     """v1.0.0 cache stats + clear routes."""
 

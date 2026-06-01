@@ -361,6 +361,110 @@ def _fingerprint_from_chart_dict(chart_dict: dict, target_jd: float | None = Non
         if name and name not in yoga_names:
             yoga_names.append(name)
 
+    # --- Phase-2 doctrine enrichment ---------------------------------------
+    # Build a Chart object from the chart_dict and invoke Phase-2 doctrine
+    # modules (Upapada, Kalasarpa, extra yogas) to populate the new
+    # ChartFingerprint fields added in Round-10 retrieval.
+    upapada_sign: int | None = None
+    second_from_upl_sign: int | None = None
+    kalasarpa_variant: str | None = None
+    dignified_eighth_lord: bool = False
+    chandra_mangala_active: bool = False
+    adhi_yoga_active: bool = False
+    saraswati_active: bool = False
+    pushkara_planets: tuple[str, ...] = ()
+
+    try:
+        from app.core.chart_model import Chart
+
+        PLANETS = (
+            "Sun", "Moon", "Mars", "Mercury", "Jupiter",
+            "Venus", "Saturn", "Rahu", "Ketu",
+        )
+        planet_signs = {
+            p: int(d1[p]["sign"]) for p in PLANETS if p in d1
+        }
+        planet_houses = {
+            p: int(d1[p]["house"]) for p in planet_signs
+        }
+        planet_lons = {
+            p: float(d1[p]["longitude"]) for p in planet_signs
+        }
+        chart = Chart(
+            asc_sign=asc_sign,
+            asc_lon=float(asc["longitude"]),
+            planet_signs=planet_signs,
+            planet_houses=planet_houses,
+            planet_lons=planet_lons,
+        )
+
+        # Upapada Lagna (UPL) and 2nd-from-UPL — Jaimini marriage axis.
+        try:
+            from app.core.upapada_lagna import compute_upapada
+
+            upl = compute_upapada(chart)
+            upapada_sign = upl.upapada_sign
+            second_from_upl_sign = upl.second_from_upl_sign
+        except (ValueError, KeyError) as exc:
+            logger.debug("Upapada computation skipped: %s", exc)
+
+        # Kalasarpa Dosha — strict arc membership; surface variant name
+        # only when the dosha is actively present.
+        try:
+            from app.core.kalasarpa_detection import detect_kalasarpa
+
+            ks = detect_kalasarpa(chart)
+            if ks.active:
+                kalasarpa_variant = ks.kalasarpa_type
+        except (ValueError, KeyError) as exc:
+            logger.debug("Kalasarpa detection skipped: %s", exc)
+
+        # Extra Phase-2 yogas (each detector is independently wrapped so
+        # one missing planet cannot abort the entire fingerprint).
+        from app.core.yoga_detection_extra import (
+            detect_adhi_yoga_strict,
+            detect_chandra_mangala_extended,
+            detect_pushkara_navamsa,
+            detect_sarala_dignified,
+            detect_saraswati_yoga_extended,
+        )
+
+        try:
+            dignified_eighth_lord = detect_sarala_dignified(chart).active
+        except (ValueError, KeyError) as exc:
+            logger.debug("Sarala-dignified detection skipped: %s", exc)
+
+        try:
+            adhi_yoga_active = detect_adhi_yoga_strict(chart).active
+        except (ValueError, KeyError) as exc:
+            logger.debug("Adhi-yoga detection skipped: %s", exc)
+
+        try:
+            chandra_mangala_active = (
+                detect_chandra_mangala_extended(chart).active
+            )
+        except (ValueError, KeyError) as exc:
+            logger.debug("Chandra-Mangala detection skipped: %s", exc)
+
+        try:
+            saraswati_active = detect_saraswati_yoga_extended(chart).active
+        except (ValueError, KeyError) as exc:
+            logger.debug("Saraswati detection skipped: %s", exc)
+
+        try:
+            pushkara_planets = (
+                detect_pushkara_navamsa(chart).planets_in_pushkara
+            )
+        except (ValueError, KeyError) as exc:
+            logger.debug("Pushkara-navamsa detection skipped: %s", exc)
+    except (KeyError, ValueError, TypeError) as exc:
+        # Chart construction itself failed — log and fall through with
+        # all Phase-2 fields at their defensive defaults.
+        logger.warning(
+            "Phase-2 doctrine enrichment skipped (chart build failed): %s",
+            exc,
+        )
+
     return ChartFingerprint(
         asc_sign=asc_sign,
         asc_lord_house=lagna_lord_house,
@@ -372,6 +476,14 @@ def _fingerprint_from_chart_dict(chart_dict: dict, target_jd: float | None = Non
         md_lord=md_lord,
         ad_lord=ad_lord,
         active_yoga_names=tuple(yoga_names),
+        upapada_sign=upapada_sign,
+        second_from_upl_sign=second_from_upl_sign,
+        kalasarpa_variant=kalasarpa_variant,
+        dignified_eighth_lord=dignified_eighth_lord,
+        chandra_mangala_active=chandra_mangala_active,
+        adhi_yoga_active=adhi_yoga_active,
+        saraswati_active=saraswati_active,
+        pushkara_planets=pushkara_planets,
     )
 
 
@@ -463,6 +575,8 @@ async def post_pandit_reading(payload: dict) -> dict:
                 "md_lord": fingerprint.md_lord,
                 "ad_lord": fingerprint.ad_lord,
                 "active_yogas": list(fingerprint.active_yoga_names),
+                "upapada_sign": fingerprint.upapada_sign,
+                "kalasarpa_variant": fingerprint.kalasarpa_variant,
             },
         }
 

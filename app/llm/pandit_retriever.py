@@ -65,8 +65,10 @@ from app.core.dkp_translation import (
     translate_by_key,
 )
 from app.core.nadi_lookup import (
+    BhriguRule,
     NadiPatternKey,
     NadiPatternMatch,
+    bhrigu_rules_mentioning,
     contexts_for_lagna,
     lookup_nadi_pattern,
 )
@@ -144,6 +146,16 @@ class ChartFingerprint:
     active_yoga_names: tuple[str, ...] = ()
     queried_bhava: int | None = None
     domain: str | None = None
+    # Phase-2 doctrine extensions (all optional, defaulted so existing
+    # callers and tests don't break).
+    upapada_sign: int | None = None
+    second_from_upl_sign: int | None = None
+    kalasarpa_variant: str | None = None
+    dignified_eighth_lord: bool = False
+    chandra_mangala_active: bool = False
+    adhi_yoga_active: bool = False
+    saraswati_active: bool = False
+    pushkara_planets: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -154,6 +166,23 @@ class RetrievedPassage:
     source: str                # e.g. "bphs", "phaladeepika"
     chapter: str
     text: str                  # raw passage text (OCR-cleaned)
+
+
+@dataclass(frozen=True)
+class BhriguPassage:
+    """One Bhrigu Nadi rule with a stable [Ref N] anchor.
+
+    Bhrigu rules ride a separate field on ``RetrievedCorpus`` because
+    they are rule-format (condition -> outcome) rather than free
+    classical shloka prose; the synthesizer renders them in a distinct
+    section but the ``ref_id`` namespace is shared with shloka passages
+    so [Ref N] anchors remain globally unique.
+    """
+    ref_id: int
+    axis: str        # e.g. "bhrigu:md_lord", "bhrigu:atmakaraka"
+    source: str
+    rule_id: int
+    text: str        # rule.raw_text whitespace-collapsed
 
 
 @dataclass(frozen=True)
@@ -172,6 +201,7 @@ class RetrievedCorpus:
     nadi_match: NadiPatternMatch | None = None
     nadi_contexts: tuple[dict, ...] = ()
     axis_counts: dict[str, int] = field(default_factory=dict)
+    bhrigu_passages: tuple[BhriguPassage, ...] = ()
 
 
 # ─── Retrieval helpers ──────────────────────────────────────────────
@@ -271,6 +301,58 @@ def retrieve_for_chart(
         except Exception as exc:
             logger.warning("Bhava axis retrieval failed: %s", exc)
 
+    # ── Varga axis (D9/D10/D7/D60 sub-queries) ──────────────────────
+    varga_per_sub = 3
+    varga_total_cap = 9
+    varga_sub_queries: list[tuple[str, tuple[str, ...]]] = [
+        ("varga:navamsa", ("navamsa", fingerprint.atmakaraka)),
+    ]
+    if fingerprint.domain == "career" or fingerprint.queried_bhava == 10:
+        varga_sub_queries.append(("varga:dasamsa_career", ("dasamsa", "career")))
+    varga_sub_queries.append(
+        ("varga:dasamsa_mdlord", ("dasamsa", fingerprint.md_lord))
+    )
+    if fingerprint.queried_bhava == 5:
+        varga_sub_queries.append(("varga:saptamsa", ("saptamsa", "children")))
+    varga_sub_queries.append(
+        ("varga:shastiamsa", ("shastiamsa", fingerprint.md_lord))
+    )
+
+    varga_rules: list[tuple[str, ShlokaRule]] = []
+    for sub_axis, needles in varga_sub_queries:
+        if len(varga_rules) >= varga_total_cap:
+            break
+        try:
+            vrs = rules_mentioning(*needles, limit=varga_per_sub * 2)[:varga_per_sub]
+        except Exception as exc:
+            logger.warning("Varga sub-axis %s failed: %s", sub_axis, exc)
+            vrs = ()
+        for v in vrs:
+            if len(varga_rules) >= varga_total_cap:
+                break
+            varga_rules.append((sub_axis, v))
+
+    # ── Doctrine-flag yoga axes (only when the flag is True) ────────
+    flag_yoga_queries: list[tuple[str, str]] = []
+    if fingerprint.dignified_eighth_lord:
+        flag_yoga_queries.append(("yoga:Sarala-dignified", "Sarala"))
+    if fingerprint.chandra_mangala_active:
+        flag_yoga_queries.append(("yoga:Chandra-Mangala", "Chandra-Mangala"))
+    if fingerprint.adhi_yoga_active:
+        flag_yoga_queries.append(("yoga:Adhi", "Adhi"))
+    if fingerprint.saraswati_active:
+        flag_yoga_queries.append(("yoga:Saraswati", "Saraswati"))
+
+    flag_yoga_rules: list[tuple[str, ShlokaRule]] = []
+    for axis_label, needle in flag_yoga_queries:
+        try:
+            frs = rules_mentioning(needle, limit=6)[:3]
+        except Exception as exc:
+            logger.warning("Flag yoga %s retrieval failed: %s", axis_label, exc)
+            frs = ()
+        for fr in frs:
+            flag_yoga_rules.append((axis_label, fr))
+
     # ── Dedup + global numbering ────────────────────────────────────
     seen_keys: set[tuple[str, str, str]] = set()
     passages: list[RetrievedPassage] = []
@@ -297,17 +379,23 @@ def retrieve_for_chart(
     # they get the lowest reference numbers (humans read those most).
     axis_order = (
         "lagna_character", "lagna_lord", "moon_sign", "moon_nakshatra",
-        "atmakaraka", "karakamsa", "md_lord", "md_ad",
+        "atmakaraka", "karakamsa", "md_lord", "md_ad", "varga",
     )
     for axis in axis_order:
+        if axis == "varga":
+            continue  # varga sub-axes carry their own labels below
         for rule in raw_per_axis.get(axis, ()):
             _emit(axis, rule)
     for yoga, rule in yoga_rules:
         _emit(f"yoga:{yoga}", rule)
+    for axis_label, rule in flag_yoga_rules:
+        _emit(axis_label, rule)
     for rule in domain_rules:
         _emit(f"domain:{fingerprint.domain}", rule)
     for rule in bhava_rules:
         _emit(f"bhava:{fingerprint.queried_bhava}", rule)
+    for sub_axis, rule in varga_rules:
+        _emit(sub_axis, rule)
 
     # ── DKP TranslationRecord layer ─────────────────────────────────
     dkp_seen: set[tuple[str, str]] = set()
@@ -338,6 +426,67 @@ def retrieve_for_chart(
     nadi_match = lookup_nadi_pattern(nadi_key)
     nadi_ctxs = contexts_for_lagna(fingerprint.asc_sign, limit=3)
 
+    # ── Bhrigu rule-format axis ─────────────────────────────────────
+    # Bhrigu rules are CONDITION -> OUTCOME statements (different shape
+    # from shloka prose), so they live on a separate field with a
+    # shared global ref_id namespace continuing from len(passages) + 1.
+    bhrigu_per_sub_cap = 4
+    bhrigu_total_cap = 12
+    bhrigu_sub_queries: list[tuple[str, tuple[str, ...]]] = []
+    if fingerprint.md_lord:
+        bhrigu_sub_queries.append(
+            ("bhrigu:md_lord", (fingerprint.md_lord, "house"))
+        )
+    if fingerprint.atmakaraka:
+        bhrigu_sub_queries.append(
+            ("bhrigu:atmakaraka", (fingerprint.atmakaraka, "atmakaraka"))
+        )
+    if fingerprint.asc_lord_planet:
+        bhrigu_sub_queries.append(
+            ("bhrigu:lagna_lord", (fingerprint.asc_lord_planet, "lagna"))
+        )
+    if fingerprint.kalasarpa_variant:
+        bhrigu_sub_queries.append(
+            ("bhrigu:kalasarpa", ("saturn", "8th"))
+        )
+    for yoga in fingerprint.active_yoga_names[:3]:
+        bhrigu_sub_queries.append((f"bhrigu:yoga:{yoga}", (yoga,)))
+
+    bhrigu_seen_rule_ids: set[int] = set()
+    bhrigu_passages_list: list[BhriguPassage] = []
+    bhrigu_ref_id = len(passages) + 1
+    for sub_axis, needles in bhrigu_sub_queries:
+        if len(bhrigu_passages_list) >= bhrigu_total_cap:
+            break
+        try:
+            brs = bhrigu_rules_mentioning(*needles)
+        except Exception as exc:
+            logger.warning("Bhrigu sub-axis %s failed: %s", sub_axis, exc)
+            continue
+        sub_taken = 0
+        for r in brs:
+            if sub_taken >= bhrigu_per_sub_cap:
+                break
+            if len(bhrigu_passages_list) >= bhrigu_total_cap:
+                break
+            if r.rule_id in bhrigu_seen_rule_ids:
+                continue
+            bhrigu_seen_rule_ids.add(r.rule_id)
+            bhrigu_passages_list.append(BhriguPassage(
+                ref_id=bhrigu_ref_id,
+                axis=sub_axis,
+                source=r.source,
+                rule_id=r.rule_id,
+                text=" ".join(r.raw_text.split()),
+            ))
+            bhrigu_ref_id += 1
+            sub_taken += 1
+            # NOTE: Bhrigu axes are NOT added to axis_counts — that map
+            # tracks counts inside ``passages`` only, preserving the
+            # ``sum(axis_counts.values()) == len(passages)`` invariant
+            # that downstream tests and analytics rely on. Bhrigu axis
+            # provenance lives on each BhriguPassage.axis instead.
+
     return RetrievedCorpus(
         fingerprint=fingerprint,
         passages=tuple(passages),
@@ -345,6 +494,7 @@ def retrieve_for_chart(
         nadi_match=nadi_match,
         nadi_contexts=nadi_ctxs,
         axis_counts=axis_counts,
+        bhrigu_passages=tuple(bhrigu_passages_list),
     )
 
 
@@ -359,6 +509,7 @@ def _bhava_topic_name(bhava: int) -> str:
 
 
 __all__ = [
+    "BhriguPassage",
     "ChartFingerprint",
     "RetrievedCorpus",
     "RetrievedPassage",

@@ -1,0 +1,186 @@
+{% extends "portal/base.html" %}
+
+{% block title %}Family Chart Portal — Your relatives{% endblock %}
+
+{% block extra_css %}
+    .container-portal { max-width: 1100px; }
+    .empty-state {
+      background: var(--tc-card);
+      border: 2px dashed var(--tc-border-strong);
+      border-radius: 12px;
+      padding: 56px 32px;
+      text-align: center;
+      color: var(--tc-ink-mid);
+    }
+    .empty-state h3 {
+      color: var(--tc-primary-deep);
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+    .relative-card {
+      background: var(--tc-card);
+      border: 1px solid var(--tc-border);
+      border-radius: 10px;
+      padding: 22px;
+      box-shadow: 0 4px 18px rgba(122, 46, 26, 0.08);
+      transition: box-shadow 160ms ease, transform 160ms ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .relative-card:hover {
+      box-shadow: 0 6px 22px rgba(122, 46, 26, 0.14);
+      transform: translateY(-2px);
+    }
+    .relative-card .name {
+      color: var(--tc-primary-deep);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    .relative-card .meta {
+      font-size: 0.85rem;
+      color: var(--tc-ink-mid);
+      margin: 8px 0 0;
+    }
+    .relative-card .meta .label {
+      color: var(--tc-ink-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: block;
+    }
+    .relative-card .lagna-peek {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--tc-umber);
+      font-style: italic;
+    }
+    .relative-card .place {
+      font-size: 0.82rem;
+      color: var(--tc-ink-muted);
+      font-style: italic;
+      margin-top: 6px;
+    }
+    .relative-card .card-actions {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .relative-card .card-actions .btn-view {
+      flex: 1;
+      background: linear-gradient(135deg, var(--tc-primary-deep) 0%, var(--tc-primary-mid) 100%);
+      color: #fbe9c8;
+      font-weight: 600;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+    }
+    .relative-card .card-actions .btn-view:hover {
+      background: linear-gradient(135deg, #8a3a26 0%, #d65a3a 100%);
+      color: #fff;
+    }
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--tc-border-strong);
+      color: var(--tc-umber);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+    }
+    .icon-btn:hover {
+      background: var(--tc-card-alt);
+      color: var(--tc-primary-deep);
+    }
+    .icon-btn.danger:hover {
+      background: #fbeaea;
+      color: var(--tc-danger);
+      border-color: var(--tc-danger);
+    }
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .action-bar .search-input {
+      max-width: 320px;
+    }
+    .count-chip {
+      display: inline-block;
+      background: var(--tc-card-alt);
+      border: 1px solid var(--tc-border);
+      color: var(--tc-ink-mid);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: 0.78rem;
+      letter-spacing: 0.3px;
+    }
+{% endblock %}
+
+{% block content %}
+  <div class="container-portal mx-auto">
+    <div class="action-bar">
+      <div>
+        <span class="count-chip">
+          {{ relatives|length }} saved relative{{ '' if relatives|length == 1 else 's' }}
+        </span>
+      </div>
+      <a href="/portal/new" class="btn btn-tc-primary">+ Add Relative</a>
+    </div>
+
+    {% if not relatives %}
+      <div class="empty-state">
+        <h3>No relatives added yet</h3>
+        <p>Save birth data for family and friends, then click any name to read their full master chart.</p>
+        <a href="/portal/new" class="btn btn-tc-primary">+ Add your first relative</a>
+      </div>
+    {% else %}
+      <div class="row g-3">
+        {% for p in relatives %}
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="relative-card">
+              <h3 class="name">{{ p.name }}</h3>
+              <div>
+                <span class="relationship-pill">{{ p.relationship }}</span>
+                {% if p.age is not none %}
+                  <span class="text-muted" style="font-size: 0.82rem; margin-left: 8px;">
+                    age {{ p.age }}
+                  </span>
+                {% endif %}
+              </div>
+              <div class="meta">
+                <span class="label">Born</span>
+                {{ p.dob }}{% if p.time_of_birth %} · {{ p.time_of_birth }}{% else %} · time unknown{% endif %}
+              </div>
+              {% if p.lagna_sign %}
+                <div class="lagna-peek">
+                  Lagna: {{ p.lagna_sign }}
+                </div>
+              {% endif %}
+              {% if p.place_name %}
+                <div class="place">{{ p.place_name }}</div>
+              {% endif %}
+              <div class="card-actions">
+                <a href="/portal/{{ p.id }}" class="btn btn-view">View Reading</a>
+                <a href="/portal/{{ p.id }}/edit" class="icon-btn" title="Edit">Edit</a>
+                <form method="post" action="/portal/{{ p.id }}/delete"
+                      onsubmit="return confirm('Soft-delete {{ p.name }}? The record will be hidden but can be restored.');"
+                      style="margin: 0;">
+                  <button type="submit" class="icon-btn danger" title="Delete">Del</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

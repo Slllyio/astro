@@ -1,0 +1,383 @@
+{% extends "portal/base.html" %}
+
+{% block title %}{{ person.name }} — Family Chart Portal{% endblock %}
+{% block header_title %}{{ person.name }}{% endblock %}
+{% block header_tagline %}
+  {% if person.relationship %}{{ person.relationship|capitalize }} ·{% endif %}
+  Born {{ person.dob }}{% if person.time_of_birth %} at {{ person.time_of_birth }}{% else %} (time unknown){% endif %}
+  {% if person.place_name %}· {{ person.place_name }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+    .container-view { max-width: 960px; }
+
+    .breadcrumb-row {
+      font-size: 0.85rem;
+      color: var(--tc-ink-muted);
+      margin-bottom: 16px;
+    }
+    .breadcrumb-row a { color: var(--tc-primary-deep); }
+
+    .top-action-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .top-action-bar .spacer { flex: 1; }
+    .top-action-bar .reading-id-chip {
+      background: var(--tc-card-alt);
+      border: 1px solid var(--tc-border);
+      color: var(--tc-ink-muted);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      letter-spacing: 0.4px;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    }
+    .polish-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--tc-ink-mid);
+    }
+    .polish-toggle .form-check-input { margin-top: 0; }
+
+    .section {
+      background: var(--tc-card);
+      border: 1px solid var(--tc-border);
+      border-radius: 10px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(122, 46, 26, 0.06);
+    }
+    .section h2 {
+      color: var(--tc-primary-deep);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--tc-border);
+    }
+    .kv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px 24px;
+    }
+    .kv-grid .kv .k {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--tc-ink-muted);
+    }
+    .kv-grid .kv .v {
+      font-size: 0.95rem;
+      color: var(--tc-primary-deep);
+      font-weight: 500;
+    }
+
+    .prose-paragraph {
+      background: var(--tc-card-alt);
+      border-left: 4px solid var(--tc-primary-mid);
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      color: var(--tc-ink-dark);
+      border-radius: 4px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .domain-cards .accordion-item {
+      border: 1px solid var(--tc-border);
+      border-radius: 8px !important;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .domain-cards .accordion-button {
+      background: var(--tc-card);
+      color: var(--tc-primary-deep);
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+    .domain-cards .accordion-button:not(.collapsed) {
+      background: var(--tc-card-alt);
+      color: var(--tc-primary-deep);
+      box-shadow: none;
+    }
+    .domain-cards .accordion-button:focus {
+      box-shadow: 0 0 0 0.2rem rgba(184, 92, 56, 0.18);
+    }
+    .domain-cards .accordion-body {
+      background: #fffbf3;
+      font-size: 0.93rem;
+      color: var(--tc-ink-dark);
+      line-height: 1.55;
+    }
+    .domain-cards .badge-bhava {
+      background: var(--tc-card-alt);
+      color: var(--tc-umber);
+      border: 1px solid var(--tc-border-strong);
+      font-size: 0.72rem;
+      margin-left: 10px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .domain-cards .badge-pillar {
+      background: #fff0d8;
+      color: var(--tc-primary-deep);
+      border: 1px solid #e8c89a;
+      font-size: 0.72rem;
+      margin-left: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    .domain-cards .badge-md {
+      background: #e8e0d0;
+      color: var(--tc-umber);
+      border: 1px solid var(--tc-border-strong);
+      font-size: 0.72rem;
+      margin-left: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+    }
+    .domain-cards .badge-md.directly_rules { background: #d4e8d4; color: #1a5e2a; border-color: #b0d8b0; }
+    .domain-cards .badge-md.placed_in_domain { background: #d4e8d4; color: #1a5e2a; border-color: #b0d8b0; }
+    .domain-cards .badge-md.double_transit_active { background: #f4e0c0; color: #6a4a0a; border-color: #e8c890; }
+    .yoga-chip {
+      display: inline-block;
+      background: var(--tc-card-alt);
+      color: var(--tc-umber);
+      border: 1px solid var(--tc-border-strong);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.74rem;
+      margin: 4px 4px 0 0;
+      text-transform: capitalize;
+      cursor: help;
+    }
+
+    .notes-block {
+      background: #fffbf3;
+      border: 1px solid var(--tc-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      color: var(--tc-ink-mid);
+      white-space: pre-wrap;
+    }
+
+    .bottom-action-row {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin: 24px 0 8px;
+      flex-wrap: wrap;
+    }
+    .btn-edit {
+      background: var(--tc-saffron);
+      color: var(--tc-ink-dark);
+      font-weight: 600;
+      border: none;
+      padding: 8px 18px;
+    }
+    .btn-edit:hover {
+      background: var(--tc-saffron-hover);
+      color: #fff;
+    }
+    .btn-delete-outline {
+      background: transparent;
+      border: 1px solid var(--tc-danger);
+      color: var(--tc-danger);
+      font-weight: 600;
+      padding: 8px 18px;
+    }
+    .btn-delete-outline:hover {
+      background: var(--tc-danger);
+      color: #fff;
+    }
+    .row-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .row-split { grid-template-columns: 1fr; }
+    }
+    .meta-footer {
+      font-size: 0.78rem;
+      color: var(--tc-ink-muted);
+      text-align: center;
+      margin-top: 18px;
+    }
+{% endblock %}
+
+{% block content %}
+  <div class="container-view mx-auto">
+
+    <div class="breadcrumb-row">
+      <a href="/portal/">Family Charts</a> &rsaquo; <span>{{ person.name }}</span>
+    </div>
+
+    <div class="top-action-bar">
+      <a href="/portal/" class="btn btn-outline-secondary btn-sm">&larr; Back</a>
+      <form method="get" action="/portal/{{ person.id }}" class="polish-toggle" style="margin: 0;">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="polish-toggle"
+          name="polish"
+          value="on"
+          {% if polish_on %}checked{% endif %}
+          onchange="this.form.submit();"
+        />
+        <label for="polish-toggle">LLM polish</label>
+      </form>
+      <div class="spacer"></div>
+      {% if reading and reading.integration_version %}
+        <span class="reading-id-chip">v{{ reading.integration_version }}</span>
+      {% endif %}
+      <a href="/portal/{{ person.id }}/edit" class="btn btn-edit btn-sm">Edit</a>
+    </div>
+
+    {# ----- Reading sections (only when reading was generated) ----- #}
+    {% if not reading %}
+      <div class="alert alert-warning">
+        <strong>Reading not available.</strong>
+        {{ reading_error or "The master reading could not be generated for this record." }}
+      </div>
+    {% else %}
+
+    <div class="section">
+      <h2>Chart overview</h2>
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="k">Lagna</div>
+          <div class="v">{{ reading.chart_basics.lagna_sign_name }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Moon sign</div>
+          <div class="v">{{ reading.chart_basics.moon_sign_name }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Moon nakshatra</div>
+          <div class="v">{{ reading.chart_basics.moon_nakshatra }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Sun sign</div>
+          <div class="v">{{ reading.chart_basics.sun_sign_name }}</div>
+        </div>
+        {% if md_lord %}
+          <div class="kv">
+            <div class="k">Current MD lord</div>
+            <div class="v">
+              {{ md_lord }}{% if md_age is not none %} · age {{ md_age }}{% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Mahadasha / Antardasha / Pratyantar</h2>
+      <p class="prose-paragraph">{{ reading.dasha_triple_paragraph }}</p>
+    </div>
+
+    <div class="row-split">
+      <div class="section" style="margin-bottom: 0;">
+        <h2>Public image (Arudha)</h2>
+        <p class="prose-paragraph">{{ reading.arudha_image_summary }}</p>
+      </div>
+      <div class="section" style="margin-bottom: 0;">
+        <h2>Marriage signifier (Upapada)</h2>
+        <p class="prose-paragraph">{{ reading.upapada_marriage_summary }}</p>
+      </div>
+    </div>
+
+    <div class="section domain-cards" style="margin-top: 20px;">
+      <h2>Six life domains</h2>
+      <div class="accordion" id="domainAccordion">
+        {% for dp in reading.domain_paragraphs %}
+          {% set safe_domain = dp.domain|replace(' ', '_') %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-{{ safe_domain }}">
+              <button class="accordion-button {% if not loop.first %}collapsed{% endif %}"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapse-{{ safe_domain }}"
+                      aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                      aria-controls="collapse-{{ safe_domain }}">
+                <span style="text-transform: capitalize;">{{ dp.domain }}</span>
+                <span class="badge-bhava">H{{ dp.bhava }}</span>
+                <span class="badge-pillar">{{ dp.three_pillar_label|replace('_', ' ') }}</span>
+                <span class="badge-md {{ dp.md_relevance }}">
+                  MD: {{ dp.md_relevance|replace('_', ' ') }}
+                </span>
+              </button>
+            </h2>
+            <div id="collapse-{{ safe_domain }}"
+                 class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                 aria-labelledby="heading-{{ safe_domain }}"
+                 data-bs-parent="#domainAccordion">
+              <div class="accordion-body">
+                {% set polished = (polished_domain_paragraphs or {}).get(dp.domain) %}
+                <p style="margin: 0 0 10px;">
+                  {{ polished if polished else dp.paragraph }}
+                </p>
+                {% if dp.yogas_touching_domain %}
+                  <div style="margin-top: 8px;">
+                    <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--tc-ink-muted);">
+                      Yogas touching this domain
+                    </span><br>
+                    {% for yoga_name in dp.yogas_touching_domain %}
+                      {% set effect = (yoga_effects_lookup or {}).get(yoga_name) %}
+                      <span class="yoga-chip"
+                            title="{{ effect.classical_effect if effect else '' }}{% if effect and effect.classical_source %} · {{ effect.classical_source }}{% endif %}">
+                        {{ yoga_name }}
+                      </span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% endif %}
+
+    {% if person.notes %}
+      <div class="section">
+        <h2>Notes</h2>
+        <div class="notes-block">{{ person.notes }}</div>
+      </div>
+    {% endif %}
+
+    <div class="bottom-action-row">
+      <a href="/portal/" class="btn btn-outline-secondary">&larr; Back to list</a>
+      <div>
+        <a href="/portal/{{ person.id }}/edit" class="btn btn-edit">Edit record</a>
+        <form method="post" action="/portal/{{ person.id }}/delete"
+              onsubmit="return confirm('Soft-delete {{ person.name }}? You can restore the record later.');"
+              style="display: inline; margin-left: 8px;">
+          <button type="submit" class="btn btn-delete-outline">Delete</button>
+        </form>
+      </div>
+    </div>
+
+    {% if reading %}
+      <div class="meta-footer">
+        Reading composed on demand · master_compose v{{ reading.integration_version }}
+        {% if generated_at %}· generated {{ generated_at }}{% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends "portal/base.html" %}
+
+{% block title %}Add Relative — Family Chart Portal{% endblock %}
+{% block header_title %}Add Relative{% endblock %}
+{% block header_tagline %}New birth record · saved to your portal{% endblock %}
+
+{% block extra_css %}
+    .container-form { max-width: 720px; }
+    .breadcrumb-row {
+      font-size: 0.85rem;
+      color: var(--tc-ink-muted);
+      margin-bottom: 14px;
+    }
+    .breadcrumb-row a { color: var(--tc-primary-deep); }
+    .section-divider {
+      border-top: 1px solid var(--tc-border);
+      margin: 24px 0 18px;
+      padding-top: 16px;
+    }
+    .section-divider h3 {
+      font-size: 0.78rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--tc-ink-muted);
+      margin: 0 0 14px;
+    }
+    .baseline-hint {
+      background: var(--tc-card-alt);
+      border: 1px dashed var(--tc-border-strong);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--tc-ink-mid);
+      margin-top: 14px;
+    }
+    .baseline-hint code {
+      color: var(--tc-primary-deep);
+      font-size: 0.78rem;
+      background: transparent;
+    }
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 26px;
+    }
+    .action-row .btn-cancel {
+      color: var(--tc-ink-muted);
+      font-size: 0.9rem;
+    }
+    .form-help-note {
+      font-size: 0.78rem;
+      color: var(--tc-ink-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+{% endblock %}
+
+{% block content %}
+  <div class="container-form mx-auto">
+    <div class="breadcrumb-row">
+      <a href="/portal/">Family Charts</a> &rsaquo; <span>Add Relative</span>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        <strong>Could not save.</strong><br>
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <div class="card-surface">
+      <h2>New birth record</h2>
+      <p class="subtitle">
+        Required fields: name, relationship, date of birth, timezone, and
+        location. Time of birth is optional (toggle on if unknown — the
+        reading engine will degrade to a solar/sunrise chart).
+      </p>
+
+      <form method="post" action="/portal/new" id="portal-new-form">
+
+        <div class="section-divider" style="border-top: none; margin-top: 0; padding-top: 0;">
+          <h3>Identity</h3>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-7">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              value="{{ form_data.name if form_data else '' }}"
+              maxlength="80"
+              required
+            />
+            <div class="form-text">Display name. Need not be unique.</div>
+          </div>
+          <div class="col-md-5">
+            <label for="relationship" class="form-label">Relationship</label>
+            <select class="form-select" id="relationship" name="relationship" required>
+              {% set sel = (form_data.relationship if form_data else '') %}
+              {% for opt in ['self','spouse','mother','father','child','sibling','friend','other'] %}
+                <option value="{{ opt }}" {% if sel == opt %}selected{% endif %}>
+                  {{ opt|capitalize }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <h3>Birth data</h3>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="dob" class="form-label">Date of birth</label>
+            <input
+              type="date"
+              class="form-control"
+              id="dob"
+              name="dob"
+              value="{{ form_data.dob if form_data else '' }}"
+              required
+            />
+            <div class="form-text">ISO format YYYY-MM-DD</div>
+          </div>
+          <div class="col-md-6">
+            <label for="time" class="form-label">Time of birth</label>
+            <input
+              type="time"
+              class="form-control"
+              id="time"
+              name="time"
+              value="{{ form_data.time if form_data else '' }}"
+              {% if not (form_data and form_data.time_unknown) %}{% endif %}
+            />
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="time_unknown"
+                name="time_unknown"
+                value="true"
+                {% if form_data and form_data.time_unknown %}checked{% endif %}
+                onchange="document.getElementById('time').disabled = this.checked;"
+              />
+              <label class="form-check-label form-help-note" for="time_unknown">
+                Time of birth unknown
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+          <div class="col-md-4">
+            <label for="tz" class="form-label">Timezone offset</label>
+            <input
+              type="text"
+              class="form-control"
+              id="tz"
+              name="tz"
+              value="{{ form_data.tz if form_data else '+05:30' }}"
+              pattern="^[+-]\d{2}:?\d{2}$"
+              required
+            />
+            <div class="form-text">Signed offset, e.g. +05:30 or -0800</div>
+          </div>
+          <div class="col-md-4">
+            <label for="lat" class="form-label">Latitude</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="lat"
+              name="lat"
+              value="{{ form_data.lat if form_data else '' }}"
+              min="-90"
+              max="90"
+              required
+            />
+            <div class="form-text">Decimal degrees (negative = S)</div>
+          </div>
+          <div class="col-md-4">
+            <label for="lon" class="form-label">Longitude</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="lon"
+              name="lon"
+              value="{{ form_data.lon if form_data else '' }}"
+              min="-180"
+              max="180"
+              required
+            />
+            <div class="form-text">Decimal degrees (negative = W)</div>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <h3>Place &amp; notes</h3>
+        </div>
+        <div class="mb-3">
+          <label for="place_name" class="form-label">Place name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="place_name"
+            name="place_name"
+            value="{{ form_data.place_name if form_data else '' }}"
+            maxlength="120"
+            placeholder="e.g. Bangalore, Karnataka, India"
+          />
+          <div class="form-text">Display only — latitude/longitude above are the source of truth for chart math.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="notes" class="form-label">Notes</label>
+          <textarea
+            class="form-control"
+            id="notes"
+            name="notes"
+            rows="4"
+            maxlength="2000"
+            placeholder="Optional. Markdown supported."
+          >{{ form_data.notes if form_data else '' }}</textarea>
+        </div>
+
+        <div class="baseline-hint">
+          <strong>Tip:</strong> the canonical test baseline is Bangalore
+          <code>1990-07-15 12:00 IST · 12.97°N, 77.59°E</code>
+        </div>
+
+        <div class="action-row">
+          <a href="/portal/" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn btn-tc-primary">Save &amp; View Reading</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

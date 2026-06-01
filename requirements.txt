@@ -34,6 +34,10 @@ pytest
 pytest-asyncio
 pytest-cov
 httpx
+# Pandit-synthesis pipeline (app/llm/pandit_synthesizer.py) — frontier-model
+# Vedic chart reading with RAG-grounded corpus retrieval. Sonnet 4.6 is the
+# locked default per CLAUDE.md decision 2026-06-01.
+anthropic>=0.40
 # Stage D dynamic-deephit deps (see docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md)
 lifelines>=0.27,<0.30
 torch>=2.0,<3.0

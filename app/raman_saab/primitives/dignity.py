@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Final
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.primitives import relationships as r
@@ -37,7 +38,7 @@ def _temporal(of: str, towards: str, chart: RamanChart) -> str:
     return "friend" if dist in (2, 3, 4, 10, 11, 12) else "enemy"
 
 
-_COMPOUND: dict[tuple[str, str], str] = {
+_COMPOUND: Final[dict[tuple[str, str], str]] = {
     ("friend", "friend"): "friend", ("friend", "enemy"): "neutral",
     ("enemy", "friend"): "neutral", ("enemy", "enemy"): "enemy",
     ("friend", "neutral"): "friend", ("neutral", "friend"): "friend",
@@ -47,7 +48,7 @@ _COMPOUND: dict[tuple[str, str], str] = {
 
 
 def _compound_relation(of: str, lord: str, chart: RamanChart) -> str:
-    if lord in ("Rahu", "Ketu") or of == lord:
+    if lord in ("Rahu", "Ketu") or of == lord or lord not in chart.planets:
         return "neutral"
     nat = r.naisargika(of, lord)
     tmp = _temporal(of, lord, chart)

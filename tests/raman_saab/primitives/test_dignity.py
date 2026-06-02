@@ -20,3 +20,10 @@ def test_debilitated_sun():
 def test_own_sign():
     assert dignity("Mars", _chart({"Mars": 5.0})) == "moolatrikona"  # Aries 5 (MT 0-12)
     assert dignity("Mars", _chart({"Mars": 215.0})) == "own"         # Scorpio (own, not MT)
+
+
+def test_dignity_handles_sparse_chart_without_lord():
+    # Mars in Aquarius (lon 310°); sign lord Saturn is absent — must return "neutral", not KeyError.
+    from app.raman_saab.chart.model import RamanChart
+    chart = RamanChart.from_stated_positions({"Mars": {"lon": 310.0, "bhava": 1}}, asc_lon=0.0, ayanamsa="raman")
+    assert dignity("Mars", chart) == "neutral"   # Aquarius, lord Saturn absent -> neutral

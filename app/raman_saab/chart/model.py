@@ -72,10 +72,10 @@ class RamanChart:
         """Build a chart from a book's printed positions (Track-B / Tier-3 tests).
         `stated[planet] = {"lon": float, "bhava": int}`. Bhava is taken as given;
         rasi_house / navamsa / nakshatra / dispositor are derived from lon."""
-        asc_sign = int(asc_lon // 30) + 1
+        asc_sign = int((asc_lon % 360.0) // 30) + 1
         planets: dict[str, PlanetPos] = {}
         for name, d in stated.items():
-            lon = float(d["lon"]); sign = int(lon // 30) + 1
+            lon = float(d["lon"]) % 360.0; sign = int(lon // 30) + 1
             nak, pada = varga.nakshatra_pada(lon)
             nav = varga.navamsa_sign(lon)
             planets[name] = PlanetPos(

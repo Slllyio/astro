@@ -2,7 +2,7 @@ import ast, pathlib
 
 FORBIDDEN = {"app.core.bhava_judge","app.core.reading_composer","app.core.drishti_argala",
              "app.core.yogas","app.core.shadbala"}
-PKG = pathlib.Path("app/raman_saab")
+PKG = pathlib.Path(__file__).resolve().parents[2] / "app" / "raman_saab"
 
 def _imports(path: pathlib.Path) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"))
@@ -19,7 +19,8 @@ def _imports(path: pathlib.Path) -> set[str]:
 def test_no_forbidden_core_imports():
     offenders = {}
     for f in PKG.rglob("*.py"):
-        bad = _imports(f) & FORBIDDEN | {m for m in _imports(f) if m.startswith("app.core.dkp")}
+        mods = _imports(f)
+        bad = mods & FORBIDDEN | {m for m in mods if m.startswith("app.core.dkp")}
         if bad:
             offenders[str(f)] = bad
     assert not offenders, f"forbidden app/core imports: {offenders}"

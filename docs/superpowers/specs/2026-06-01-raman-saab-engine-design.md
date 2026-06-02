@@ -316,6 +316,28 @@ never swallowed.
 
 Raman Saab has its **own Raman-ayanamsa fixtures** (not the repo's Lahiri baseline). Target 80% coverage.
 
+### 11.1 Three-Tier Single-Ledger Harness (the golden-chart mechanism)
+The ~370 example charts are **not** scattered fixtures. One ledger + one parametrized test:
+
+- **Single source of truth:** `tests/fixtures/raman_goldens.jsonl` — one flat JSON record per
+  chart: `{id, book, case_type, name, birth{dt,tz,lat,lon}, stated_positions{planet:{lon,bhava}},
+  expected_verdicts{H10:{signification,verdict}}, expected_longevity?}`. Bulk-editable, searchable,
+  schema-checkable.
+- **Track A — Ephemeris sanity (astronomy):** read `birth`, run the adapter at the chart's
+  ayanamsa, compare to `stated_positions` within **±5 arc-min** (absorbs Raman's manual rounding).
+  An ephemeris/ayanamsa drift fails *this* track only — it never breaks doctrine tests.
+- **Track B — Pure doctrine (astrology):** inject `stated_positions` **directly** via
+  `RamanChart.from_stated_positions(...)` (bypasses the ephemeris entirely), run the judges,
+  assert the per-signification ordinal == `expected_verdicts`. Absolute determinism: refactor the
+  condition algebra / ledger with full confidence you're testing logic, not planetary math.
+- **Tier 3 — Evidence-ledger snapshots:** the proforma's fired-rule-IDs + citations are
+  snapshot-tested (`pytest-regressions`). When the algebra changes and N charts' *reasoning*
+  shifts, inspect diffs and `pytest --snapshot-update` — never hand-rewrite N tests.
+
+This requires `RamanChart.from_stated_positions(stated, *, ayanamsa)` — an alternate constructor
+that takes book-stated longitudes/bhavas and derives the rest, so Track B and Tier 3 are
+ephemeris-independent. Maintenance footprint: **one data file + one test script** for all ~370 charts.
+
 ## 12. Phasing
 0 skeleton+adapter → 1 primitives(+GBB Shadbala) → 2 doctrine data(+condition algebra,
 evaluable/descriptive) → 3 house judge+overview(per-signification, one house fully then

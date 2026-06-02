@@ -194,8 +194,26 @@ Frames:      a rule's origin may be LAGNA, MOON, KARAKA(p), an arbitrary FROM(p)
              (e.g. "from Venus"), or STRONGEST_OF([Lagna,Moon,Sun]) — the engine evaluates
              from that origin and records which origin won (review fix: multi-frame rules).
 All predicates evaluate relative to a (frame, varga) pair.
-A **pre-Phase-1 predicate audit** (categorize all 700+ corpus rules → required predicates)
-finalizes this algebra before coding, so encoding never hits an inexpressible rule.
+The **pre-Phase-1 predicate audit is DONE** — see
+[`docs/raman_saab/predicate_audit.md`](../../raman_saab/predicate_audit.md) (12 parallel
+per-house audits of ~1,648 rule-atoms; ~1,128 evaluable). It finalizes this algebra and adds
+the recurring gaps §5.3's first draft missed:
+- generalize the origin frame: `FROM(origin)` where origin ∈ {planet, house, special-point,
+  **karakamsa**, navamsa-lagna}, plus `HouseFrom(origin,n)` arithmetic and **`InVargaHouseFrom`**
+  (the "6/8/12-from-X-in-D9" overlay — the single most-recurrent gap);
+- the **nakshatra layer** (`NakshatraLordOf`, `TaraOf`/`TaraPosition`) and **functional nature**
+  (`FunctionalNature`, `IsYogaKaraka`, `KendradhipatiDosha`) — "evil/good planet" is chart-relative;
+- `NeechaBhanga`, `Parivartana`, `HemmedBy(klass=benefic)` (subhakartari), `SignElement`,
+  `Gender`, `MoonPhase`, `InHouseClass`, mutual-relation predicates.
+
+**A rule is not always a boolean predicate.** The audit splits rules into four layers; only the
+first is the condition algebra: (1) **condition predicates** → `doctrine/conditions.py`;
+(2) **lookup tables** (disease organ/tridosha/season, vocation, source-of-gains, decanate-cause,
+confinement-mode, drekkana-financial) → `doctrine/lookups/` data, returned as result metadata,
+never boolean-evaluated; (3) **numeric sub-engines** (ayus, beeja/kshetra, special-dhana,
+kuja-units, sahams, counts) → `primitives/`, their outputs feed predicates; (4) **timing**
+(two-level MD×AD, tara, gochara) → `judges/timing.py` (chart,date). Plus output **meta-modifiers**
+(Bhavartha-Ratnakara inversion, capacity-not-profession) applied in `proforma.py`.
 ```
 *Ragged conditions* ("well disposed", "fortified", "any beneficial aspect") resolve to
 **canonical cited predicates** — `is_fortified()`, `is_afflicted()`, `well_disposed()` —
@@ -352,9 +370,11 @@ gate (Balarishta suppression, span-class context for H8, maraka timing). No judg
 a later phase.
 
 ## 13. Open questions / risks
-- **MANDATORY pre-Phase-1 predicate audit:** categorize all 700+ corpus rules → the exact
-  predicate set, finalizing `doctrine/conditions.py` (§5.3) before any coding. The single
-  highest-leverage de-risking step (per the architecture review): prevents encoding thrash.
+- **Pre-Phase-1 predicate audit — DONE** (`docs/raman_saab/predicate_audit.md`): 12 parallel
+  per-house audits finalized the algebra (§5.3) and the four-layer rule split. Net: §5.3's first
+  draft covered ~80%; the audit added ~20 predicate families (6 critical, recurring in nearly
+  every house) and pinned the lookup/numeric/timing/meta-modifier layers that are NOT condition
+  predicates. Encoding can now proceed without hitting an inexpressible rule.
   The audit must also pin **edge-case semantics** for the aggregating predicates:
   `Strongest(among=…)` tie-breaking when two planets share Shadbala rupas (deterministic
   order: higher total → higher Cheshta → lower combustion → planet-index), and `Count()`/

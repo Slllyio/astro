@@ -31,3 +31,22 @@ def test_adapter_populates_combust_fraction():
     # Values must match what the combustion primitive would compute independently.
     for name, p in chart.planets.items():
         assert p.combust_fraction == combust_fraction(name, chart)
+
+
+def test_adapter_populates_pure_special_fields():
+    """Task 7: karakamsa, arudha_lagna, maraka_points, balarishta are filled by cast_chart."""
+    from app.raman_saab.primitives.special_points import atmakaraka
+    chart = cast_chart(BANGALORE, ayanamsa="raman")
+    assert chart.karakamsa is not None and chart.karakamsa.name == "Karakamsa"
+    assert chart.karakamsa.sign == chart.planets[atmakaraka(chart)].navamsa_sign
+    assert chart.arudha_lagna is not None and chart.arudha_lagna.name == "ArudhaLagna"
+    assert chart.maraka_points is not None and len(chart.maraka_points.units) >= 1
+    assert chart.balarishta is not None and isinstance(chart.balarishta.applies, bool)
+
+
+def test_adapter_populates_upagrahas():
+    """Task 8: upagrahas dict with Gulika and Mandi are filled by cast_chart."""
+    chart = cast_chart(BANGALORE, ayanamsa="raman")
+    assert chart.upagrahas is not None
+    assert set(chart.upagrahas) == {"Gulika", "Mandi"}
+    assert 1 <= chart.upagrahas["Gulika"].sign <= 12

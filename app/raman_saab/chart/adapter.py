@@ -7,6 +7,8 @@ from app.raman_saab.chart.ayanamsa import sidereal_mode
 from app.raman_saab.chart.constants import SWE_PLANETS, SIGN_LORDS
 from app.raman_saab.chart.model import BirthData, PlanetPos, RamanChart
 from app.raman_saab.primitives import combustion
+from app.raman_saab.primitives import special_points, maraka, balarishta as balarishta_mod
+from app.raman_saab.chart import upagrahas as upagrahas_mod
 
 logger = logging.getLogger(__name__)
 swe.set_ephe_path(None)  # built-in Moshier ephemeris (mirrors app/core)
@@ -52,4 +54,16 @@ def cast_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanChart:
                        bhava_madhyas=madhyas, bhava_sandhis=sandhis, planets=planets, birth=birth)
     planets = {n: dataclasses.replace(p, combust_fraction=combustion.combust_fraction(n, chart))
                for n, p in planets.items()}
-    return dataclasses.replace(chart, planets=planets)
+    chart = dataclasses.replace(chart, planets=planets)
+    ug = {
+        "Gulika": upagrahas_mod.gulika(birth, ayanamsa=ayanamsa),
+        "Mandi": upagrahas_mod.mandi(birth, ayanamsa=ayanamsa),
+    }
+    return dataclasses.replace(
+        chart,
+        upagrahas=ug,
+        karakamsa=special_points.karakamsa(chart),
+        arudha_lagna=special_points.arudha_lagna(chart),
+        maraka_points=maraka.maraka_points(chart),
+        balarishta=balarishta_mod.balarishta(chart),
+    )

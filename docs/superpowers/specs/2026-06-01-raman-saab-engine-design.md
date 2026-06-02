@@ -137,7 +137,10 @@ geometry, exalt/debil/own-sign longitude tables, and Vimshottari dasha-date math
 `app/core/shadbala.py` — validated by a fixture of 5 hand-verified charts at **±1 rupa per
 component**. A guard test (importlib-based, CI-enforced) asserts the package never imports
 `app/core/{bhava_judge,reading_composer,drishti_argala,dkp_*,yogas,shadbala}` and never
-mutates the global ayanamsa.
+mutates the global ayanamsa. **Fidelity note:** the re-derivation must follow Raman's *own*
+component definitions — notably his **Dig-bala boundaries** and **Kala-bala** (paksha/hora/
+ayana) defaults — which differ from modern blended Shadbala; forcing standard algorithms will
+silently shift rupas and flip strength rankings. The ±1-rupa fixture pins this.
 
 ## 5. Doctrine-as-data (`doctrine/`)
 
@@ -330,6 +333,10 @@ a later phase.
 - **MANDATORY pre-Phase-1 predicate audit:** categorize all 700+ corpus rules → the exact
   predicate set, finalizing `doctrine/conditions.py` (§5.3) before any coding. The single
   highest-leverage de-risking step (per the architecture review): prevents encoding thrash.
+  The audit must also pin **edge-case semantics** for the aggregating predicates:
+  `Strongest(among=…)` tie-breaking when two planets share Shadbala rupas (deterministic
+  order: higher total → higher Cheshta → lower combustion → planet-index), and `Count()`/
+  `CountInHouse()` behaviour on **empty houses / no qualifying planets** (returns 0, never errors).
 - **Encoding effort:** ~350 *evaluable* rules need precise conditions — the dominant labor item; mitigated by the evaluable/descriptive split and the skeleton-parse workflow.
 - **Kuja-Dosha scope:** v1 ships single-chart Mars-affliction detection; two-chart synastry
   (couple matching) is a flagged, optional, post-v1 extra.

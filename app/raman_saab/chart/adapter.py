@@ -1,10 +1,12 @@
 from __future__ import annotations
+import dataclasses
 import logging
 import swisseph as swe
 from app.raman_saab.chart import cusps, varga
 from app.raman_saab.chart.ayanamsa import sidereal_mode
 from app.raman_saab.chart.constants import SWE_PLANETS, SIGN_LORDS
 from app.raman_saab.chart.model import BirthData, PlanetPos, RamanChart
+from app.raman_saab.primitives import combustion
 
 logger = logging.getLogger(__name__)
 swe.set_ephe_path(None)  # built-in Moshier ephemeris (mirrors app/core)
@@ -46,5 +48,8 @@ def cast_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanChart:
             nakshatra=nak, pada=pada, retrograde=retro,
             navamsa_sign=nav, vargottama=(nav == sign),
             dispositor=SIGN_LORDS[sign])
-    return RamanChart(ayanamsa=ayanamsa, jd_ut=jd, asc_sign=asc_sign, asc_lon=asc_lon,
-                      bhava_madhyas=madhyas, bhava_sandhis=sandhis, planets=planets, birth=birth)
+    chart = RamanChart(ayanamsa=ayanamsa, jd_ut=jd, asc_sign=asc_sign, asc_lon=asc_lon,
+                       bhava_madhyas=madhyas, bhava_sandhis=sandhis, planets=planets, birth=birth)
+    planets = {n: dataclasses.replace(p, combust_fraction=combustion.combust_fraction(n, chart))
+               for n, p in planets.items()}
+    return dataclasses.replace(chart, planets=planets)

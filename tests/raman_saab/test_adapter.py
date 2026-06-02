@@ -19,3 +19,15 @@ def test_every_planet_has_a_bhava_in_range():
     chart = cast_chart(BANGALORE, ayanamsa="raman")
     for p in chart.planets.values():
         assert 1 <= p.bhava <= 12 and 1 <= p.rasi_house <= 12
+
+
+def test_adapter_populates_combust_fraction():
+    """Adapter must compute combust_fraction via the primitives module (not stub 0.0)."""
+    from app.raman_saab.primitives.combustion import combust_fraction
+    chart = cast_chart(BANGALORE, ayanamsa="raman")
+    # All planets must have a float in [0, 1].
+    for p in chart.planets.values():
+        assert 0.0 <= p.combust_fraction <= 1.0
+    # Values must match what the combustion primitive would compute independently.
+    for name, p in chart.planets.items():
+        assert p.combust_fraction == combust_fraction(name, chart)

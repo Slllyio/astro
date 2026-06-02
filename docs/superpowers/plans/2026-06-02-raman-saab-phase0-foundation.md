@@ -157,7 +157,7 @@ def test_from_stated_positions_builds_chart_without_ephemeris():
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `py -3.12 -m pytest tests/raman_saab/test_model.py -v`
-Expected: FAIL (module not found)
+Expected: FAIL. **Do Task 3 (`varga`) first** — `model` imports it at module top, so until Task 3 lands this fails on the `varga` import; after Task 3 it fails on `model` missing, then passes at Step 4.
 
 - [ ] **Step 3: Write minimal implementation**
 ```python
@@ -223,7 +223,7 @@ class RamanChart:
     bhava_sandhis: tuple[float, ...]
     planets: Mapping[str, PlanetPos]
     birth: Optional[BirthData] = None
-    upagrahas: Mapping[str, SpecialPoint] = None          # Phase 1
+    upagrahas: Optional[Mapping[str, SpecialPoint]] = None  # Phase 1
     arudha_lagna: Optional[SpecialPoint] = None           # Phase 1
     karakamsa: Optional[SpecialPoint] = None              # Phase 1
     maraka_points: Optional[MarakaPoints] = None          # Phase 1
@@ -368,19 +368,26 @@ AYANAMSA: Final[dict[str, int]] = {"raman": swe.SIDM_RAMAN, "lahiri": swe.SIDM_L
 @contextlib.contextmanager
 def sidereal_mode(name: str) -> Iterator[None]:
     """Set the swisseph sidereal mode for the duration, then restore the prior mode.
-    Keeps Raman Saab from corrupting the repo's global (Lahiri) ayanamsa."""
+    Keeps Raman Saab from corrupting the repo's global (Lahiri) ayanamsa.
+
+    NOTE: pyswisseph 2.10.x has NO ``get_sid_mode()``; when absent we restore the
+    repo default (Lahiri) — which is what ``app/core`` re-asserts on every call anyway.
+    Verified against the installed build: Raman vs Lahiri differ ~1.45° at J2000."""
     if name not in AYANAMSA:
         raise ValueError(f"unknown ayanamsa {name!r}; expected one of {sorted(AYANAMSA)}")
-    prior = swe.get_sid_mode()                        # (mode, t0, ayan_t0)
+    has_get = hasattr(swe, "get_sid_mode")
+    prior = swe.get_sid_mode() if has_get else None
     try:
         swe.set_sid_mode(AYANAMSA[name])
         yield
     finally:
-        # restore prior mode (set_sid_mode takes mode, optional t0, ayan_t0)
-        swe.set_sid_mode(prior[0], prior[1], prior[2]) if isinstance(prior, (tuple, list)) \
-            else swe.set_sid_mode(prior)
+        if prior is None:
+            swe.set_sid_mode(swe.SIDM_LAHIRI)            # repo global default
+        elif isinstance(prior, (tuple, list)):
+            swe.set_sid_mode(*prior)
+        else:
+            swe.set_sid_mode(prior)
 ```
-> If `swe.get_sid_mode` is unavailable in the installed pyswisseph build, fall back to restoring `swe.SIDM_LAHIRI` (the repo default) in `finally`; add a comment and keep the test asserting Lahiri is restored.
 
 - [ ] **Step 4: Run** → PASS.
 

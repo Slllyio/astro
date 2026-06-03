@@ -86,10 +86,23 @@ Mercury total). The strength engine reconciles to the GBB Standard-Horoscope tot
 under-counts ≤0.75R); navamsa64 +63/+64 external pin; the Mars/Venus-Ayana + Saptavargaja-cusp `xfail`s
 (engine follows Raman's stated rule; his book contradicts itself at those sub-degree cells).
 
-## ▶ RESUME: Phase 2 — doctrine/conditions + rule encoding
+## Phase 2 — doctrine/conditions + rule encoding (STARTED)
 
-`doctrine/conditions.py` = the predicate algebra (FINALIZED set in `predicate_audit.md` §7 — C1-C6
-critical + H1-H12 high families). Then encode the **evaluable/descriptive `RuleRecord`s** from the 12
+- **`doctrine/drishti.py` — DONE** (commit `a7a4430`; 5 tests). Whole-sign aspects: all 7th; Mars 4/8,
+  Jupiter 5/9, Saturn 3/10; **Rahu/Ketu 7th-ONLY** (the locked divergence vs `app/core` 5/9, guard-tested).
+  API: `aspects_planet(a,b,chart)`, `aspects_house(p,h,chart)`, `mutual_aspect`, `aspecting_planets`,
+  `aspecting_house`. This unblocks the deferred aspect-based conditions.
+
+**▶ RESUME next:**
+1. **Aspect backfills** (now drishti exists): refine the Phase-1 conjunction-only deferrals to use
+   `drishti.aspects_planet` — neecha-bhanga aspect-by-dispositor (`bhangas.py`), kemadruma
+   aspect-cancellation, maraka aspect-associates (`maraka.py`), balarishta aspected-by-malefic/benefic
+   yogas (`balarishta.py`). Re-run the fixtures (aspects are additive — confirm no fixture regression).
+2. **`doctrine/conditions.py`** = the predicate algebra (FINALIZED set in `predicate_audit.md` §7 —
+   C1-C6 critical + H1-H12 high families). A composable `Condition` (And/Or/Not/AtLeastN) evaluating
+   against a `(chart, frame, varga)` context; leaf predicates read the Phase-1 primitives + `drishti`.
+
+Then encode the **evaluable/descriptive `RuleRecord`s** from the 12
 `methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill
 id/house/signification/group/fortified-afflicted/frame/varga/source → hand/agent-fill `condition` for
 `kind="evaluable"` rows. A test asserts **every RuleRecord cites a real on-disk corpus line**. The Phase-1

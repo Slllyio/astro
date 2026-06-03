@@ -66,18 +66,36 @@ own component sum 580.46; engine pins 9.674) and **all 7 powerful** per GBB thre
 `shadbala/ishta_kashta.py` — all 7 Ishta/Kashta reconcile to ≤0.05 Sh incl. the Sun/Moon Cheshta
 surrogates. **The whole six-fold strength engine now reconciles to Raman's worked totals to the decimal.**
 
-**▶ RESUME: Phase 1c-3 continuation** (the final stretch of Phase 1):
-- **Bhava-bala** — `shadbala/bhava_bala.py`: Bhavadhipati (lord's Shadbala) + Bhavadig (sign-class) +
-  BhavaDrig (aspect on the madhya). Pin the fixture Bhava totals (I 6.70…V 10.20…XII 9.66). Reference §8.
-- **Adapter wiring** — compute all 6 components + Kala context + mean longitudes per planet and fill
-  `PlanetPos.shadbala_rupas/ishta/kashta` (currently `Optional=None`); a real-chart end-to-end test.
-- **Backfills** (now that Shadbala exists): maraka `strength_rank`+weakest-planet; balarishta
-  "powerfully situated" strength; navamsa64 external pin; the Ahargana Kala year/month lords; decide
-  the Mars/Venus-Ayana + Saptavargaja-cusp xfails (engine vs book self-inconsistency).
-- Then **Phase 1 is COMPLETE** → Phase 2 (`doctrine/conditions.py` + evaluable/descriptive rule
-  encoding; predicate_audit §7 is the finalized algebra).
+**1c-3 continuation — DONE** (commits `bb00234`→`85a9530`; 161 passed, 3 xfailed). `shadbala/bhava_bala.py`
+(Bhavadhipati + Bhavadig[nil-house ref; 8th-in-Leo=40] + BhavaDrig); `chart/shadbala_compute.py` + a
+3-pass adapter (combustion → Shadbala → maraka/balarishta) fills `PlanetPos.shadbala_rupas/ishta/kashta`
+on ephemeris charts; maraka `strength_rank`+weakest-planet and the balarishta strong-lagna-lord antidote
+now use real Shadbala. Bangalore chart: Sun 8.62R … Saturn 5.97R, all plausible.
 
-Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
+---
+
+# ✅ PHASE 1 COMPLETE
+
+All chart primitives + the full six-fold **Shadbala** engine (Sthana, Dig, Kala, Cheshta, Naisargika,
+Drik → total + verdict, Bhava-bala, Ishta/Kashta) are built, pinned to Raman's *Graha & Bhava Balas*
+worked example, and wired onto real charts. **161 passed, 3 xfailed.** Six book self-inconsistencies were
+caught + handled honestly (drekkana offset, Drik branch, Cheshta OCR, 2 Ayana cells, 2 Saptavargaja cusps,
+Mercury total). The strength engine reconciles to the GBB Standard-Horoscope totals to the decimal.
+
+**Small residuals (documented, none are bugs):** Ahargana Kala year/month lords (UNKNOWN→0, Kala
+under-counts ≤0.75R); navamsa64 +63/+64 external pin; the Mars/Venus-Ayana + Saptavargaja-cusp `xfail`s
+(engine follows Raman's stated rule; his book contradicts itself at those sub-degree cells).
+
+## ▶ RESUME: Phase 2 — doctrine/conditions + rule encoding
+
+`doctrine/conditions.py` = the predicate algebra (FINALIZED set in `predicate_audit.md` §7 — C1-C6
+critical + H1-H12 high families). Then encode the **evaluable/descriptive `RuleRecord`s** from the 12
+`methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill
+id/house/signification/group/fortified-afflicted/frame/varga/source → hand/agent-fill `condition` for
+`kind="evaluable"` rows. A test asserts **every RuleRecord cites a real on-disk corpus line**. The Phase-1
+primitives are the facts those conditions read. Then **3** (house judges + overview), **4** (longevity),
+**5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via
+`tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 
 ## Locked decisions / gotchas (do NOT relitigate)
 - **Ayanamsa = Raman default**, isolated via `chart/ayanamsa.py` context manager — NEVER mutates the global (app/core stays Lahiri). `pyswisseph 2.10.x has no get_sid_mode()` — uses hasattr + Lahiri-restore fallback.

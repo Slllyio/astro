@@ -114,13 +114,28 @@ cusps, the engine must accept stated bhava-madhyas; see §10.)
 > (Sun/Moon Cheshta surrogates are computed ONLY for Ishta/Kashta — §9.)
 
 ```
-ChestaKendra = Seegrochcha − (MeanLong − TrueLong)        # GBB-6:537-549
-if ChestaKendra > 180: ChestaKendra = 360 − ChestaKendra
-Chesta = ChestaKendra / 3                                 # Shashtiamsas (Sripathi continuous arc)
+ChestaKendra = Seegrochcha − (MeanLong + TrueLong) / 2    # Sripathi (CORRECTED, see note)
+if ChestaKendra < 0:   ChestaKendra += 360
+if ChestaKendra > 180: ChestaKendra = 360 − ChestaKendra  # reduced Chesta Kendra
+Chesta = ChestaKendra / 3                                 # Shashtiamsas (0 at 0°, 60 at 180°)
 ```
-Superior planets (Mars,Jup,Saturn): Seegrochcha = Mean Sun. Inferior (Mercury,Venus): Mean
-long = Mean Sun, Seegrochcha from own epoch tables. **No discrete 8-state award table** — pure arc.
-*(This needs MEAN longitudes → ephemeris/epoch machinery; deferred to Phase 1c-2.)*
+> **OCR CORRECTION (resolved + validated):** Raman's text prints the formula as `Seegrochcha −
+> (Mean Long − true long)` (GBB-6:547-551), but that does NOT reproduce his own worked Chesta
+> Kendras. The real Sripathi formula is `Seegrochcha − (Mean + True)/2` (the OCR mangled `+ … ÷2`
+> into `−`). Confirmed against an external Sripathi source and **validated to the decimal** against
+> all 5 of Raman's Ex.49-51 values: Kuja CK 293.15→22.28, Budha 353.60→2.13, Guru 105.99→35.33,
+> Sukra 342.70→5.76, Sani 63.19→21.06. Use the corrected form.
+
+**Inputs (GBB-6:88-104):** **5 planets only** (Mars,Mercury,Jupiter,Venus,Saturn — Sun/Moon get
+NO Cheshta in the Shadbala total). `Seegrochcha` = **Mean Sun** for superior planets (Mars,Jup,Sat);
+for Budha/Sukra it's their own apogee from epoch tables. `MeanLong` of superior planets + the Sun
+via Raman's **epoch method** (epoch 1 Jan 1900 Ujjain 76°E: mean-Sun const 257.4568; Mars 270.22;
+Jup 220.04 −(3.33+.0067·t); Sat 236.74 +(5+.001·t); t=birthyear−1900) — Mean Budha/Sukra = Mean Sun.
+For the **Track-B fixture**, inject Raman's stated Standard-Horoscope means (MeanSun/Budha/Sukra
+181.2275, Mars 266.34, Jup 66.91, Sat 111.23; Seeg Budha 174.49, Sukra 158.35) and pin the 5
+ChestaBala values. For **real charts**, compute mean longitudes via the epoch constants OR
+`swisseph` mean elements (`swe.get_orbital_elements` exists in 2.10.x). **No discrete 8-state
+table** — pure Sripathi arc. Sun/Moon Cheshta surrogates (Ishta/Kashta only) = §9.
 
 ## 5. Naisargika Bala (natural) — GBB-7 — fixed constants (the 60/7 ladder)
 

@@ -45,18 +45,19 @@ Saptavargaja 45-only-in-D1) and a **validated worked fixture** (GBB "Standard Ho
 - **Full Dig column** needs real Sripati cusps (only Saturn pinned via the one stated madhya).
 - **Drik Mercury benefic/malefic** ("well/badly associated") refinement — Mercury currently always benefic.
 
-**Resume ▶** Phase **1c-2**. Suggested split (each pinned to the §10 fixture):
-- **1c-2a — Cheshta** (NOW FULLY UNBLOCKED): the Chesta Kendra formula OCR blocker is **resolved +
-  validated** — `CK = Seegrochcha − (Mean + True)/2` (Raman's printed `−` was an OCR slip for
-  `+ … ÷2`; reproduces all 5 worked Chesta Kendras to the decimal, reference §4). Build:
-  `cheshta_bala(seegrochcha, mean_lon, true_lon)` pure + the mean-longitude machinery (Raman's
-  epoch constants OR `swe.get_orbital_elements`); Sun/Moon get NO Cheshta in the total. Pin the
-  5-planet column via the stated means.
-- **1c-2b — Kala** (9 sub-components, ephemeris-heavy): Nathonnatha (time/3), Paksha (Moon-doubled),
-  Tribhaga + Hora (need sunrise), Abda/Masa/Vara (Ahargana date-math), Ayana (24°/48°, Sun-doubled,
-  planet-group sign table — declination from Sayana lon), Yuddha. Reference §3.
-Then **1c-3** — total assembly + min-required verdict + Bhava-bala + Ishta/Kashta + `PlanetPos`
-wiring + the 1c-1 carry-overs.
+**Phase 1c-2 split:**
+- **1c-2a — Cheshta — DONE** (commits `be49da0`,`00f1089`; 95 passed, 2 xfailed). `shadbala/cheshta.py`
+  (Sripathi `CK = Seegrochcha − (Mean+True)/2`, OCR-corrected + validated to the decimal vs all 5
+  worked values) + `chart/mean_longitudes.py` (Raman's epoch method, reproduces his means to ≤0.12°).
+  Sun/Moon get NO Cheshta in the total. End-to-end test passes on a real ephemeris chart.
+- **▶ RESUME: 1c-2b — Kala** (9 sub-components, ephemeris-heavy): Nathonnatha (time/3), Paksha
+  (Moon-doubled), Tribhaga + Hora (need sunrise — reuse `chart/upagrahas.py` `rise_trans` pattern),
+  Abda/Masa/Vara (Ahargana date-math), Ayana (24°/48°, Sun-doubled, planet-group sign table —
+  declination from Sayana lon), Yuddha. Reference §3; fixture Kala column (Sun 104.49, Moon 202.75,
+  Mars 28.39, Mercury 219.92, Jupiter 211.93, Venus 116.81, Saturn 115.69).
+
+Then **1c-3** — total assembly + min-required verdict + Bhava-bala + Ishta/Kashta (incl. the Sun/Moon
+Cheshta surrogates §9) + `PlanetPos` wiring + the 1c-1/1c-2a carry-overs.
 
 Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 

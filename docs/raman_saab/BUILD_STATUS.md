@@ -50,14 +50,23 @@ Saptavargaja 45-only-in-D1) and a **validated worked fixture** (GBB "Standard Ho
   (Sripathi `CK = Seegrochcha − (Mean+True)/2`, OCR-corrected + validated to the decimal vs all 5
   worked values) + `chart/mean_longitudes.py` (Raman's epoch method, reproduces his means to ≤0.12°).
   Sun/Moon get NO Cheshta in the total. End-to-end test passes on a real ephemeris chart.
-- **▶ RESUME: 1c-2b — Kala** (9 sub-components, ephemeris-heavy): Nathonnatha (time/3), Paksha
-  (Moon-doubled), Tribhaga + Hora (need sunrise — reuse `chart/upagrahas.py` `rise_trans` pattern),
-  Abda/Masa/Vara (Ahargana date-math), Ayana (24°/48°, Sun-doubled, planet-group sign table —
-  declination from Sayana lon), Yuddha. Reference §3; fixture Kala column (Sun 104.49, Moon 202.75,
-  Mars 28.39, Mercury 219.92, Jupiter 211.93, Venus 116.81, Saturn 115.69).
+- **1c-2b — Kala — DONE** (commits `805d54a`,`3c10a83`; 112 passed, 3 xfailed). `shadbala/kala.py`
+  (all 9 sub-components, `KalaContext`; 5-planet column pinned to ≤0.04 Sh) + `chart/kala_context.py`
+  (real-chart weekday/sunrise/is_day/day_third/hora/birth_degrees). Mars/Venus Ayana `xfail` (book
+  self-inconsistency: formula 1.90/24.30 vs Raman's printed 1.40/23.80). **Ahargana year_lord/month_lord
+  flagged "UNKNOWN" → award 0 (never a wrong planet); carried to 1c-3.**
 
-Then **1c-3** — total assembly + min-required verdict + Bhava-bala + Ishta/Kashta (incl. the Sun/Moon
-Cheshta surrogates §9) + `PlanetPos` wiring + the 1c-1/1c-2a carry-overs.
+**ALL SIX Graha-Bala components now built** (Sthana, Naisargika, Dig, Drik, Cheshta, Kala), each
+pinned to the GBB Standard-Horoscope fixture.
+
+**▶ RESUME: Phase 1c-3** — (a) **total Shadbala assembly** `ShadbalaBreakdown` =
+Sthana+Dik+Kala+Cheshta+Naisargika±Drik in Rupas + the **min-required verdict** (Sun5/Moon6/Mars5/
+Merc7/Jup6.5/Ven5.5/Sat5); pin the fixture **Total-Rupas** row (6.288/6.936/5.381/9.743/7.381/5.949/
+6.196) and the "all powerful" verdict. (b) **Bhava-bala** (Bhavadhipati+Bhavadig+BhavaDrig, reference §8).
+(c) **Ishta/Kashta** (√(Ochcha×Cheshta) / √((60−Ochcha)(60−Cheshta)), incl. the Sun/Moon Cheshta
+surrogates §9). (d) wire `PlanetPos.shadbala_rupas/ishta/kashta` via the adapter. (e) **backfills:**
+maraka `strength_rank`+weakest-planet, balarishta strength checks, navamsa64 external pin, the
+Ahargana Kala lords, and decide the Mars/Venus Ayana + Saptavargaja-cusp xfails.
 
 Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 

@@ -133,13 +133,19 @@ Aspect angle `K = (aspected_lon − aspecting_lon) mod 360`. Sripathi piecewise 
 
 | K range | value |
 |---|---|
-| 30–60 | K−30 |
+| 30–60 | **(K−30)/2** |
 | 60–90 | (K−60)+15 |
-| 90–120 | **45 − (K−90)/2**  ← OCR-reconstructed; anchors 45@90°, 30@120° (GBB-8 flag — external-pin) |
+| 90–120 | 45 − (K−90)/2 |
 | 120–150 | 150−K |
 | 150–180 | (K−150)×2 |
 | 180–300 | (300−K)/2 |
 | else | 0 |
+
+*(Branches verified live to hit Raman's stated anchors GBB-8:27-46 — 30°→0, 60°→**15**, 90°→45,
+150°→0, 180°→60, 300°→0 — and to be continuous at every join. The 30–60 branch is `(K−30)/2`
+NOT `K−30` (the latter gives 30 at 60° and breaks the 15-at-60° anchor); the 90–120 branch
+`45−(K−90)/2` is OCR-reconstructed but forced by the 45@90°/30@120° anchors. Pin the whole
+function against an external Sripathi Shadbala table before Phase-3 verdicts lock.)*
 
 **Visesha (special) Dristi** added for the aspecting planet when it truly casts it (GBB-8:172-191):
 Mars 4th(90-120)&8th(210-240)=+15 · Jupiter 5th(120-150)&9th(240-270)=+30 · Saturn 3rd(60-90)&10th(270-300)=+45.

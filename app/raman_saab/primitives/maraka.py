@@ -9,9 +9,12 @@ Usage:
 Doctrine: HTJAH-I:776-814 (overview §8.2) + HTJAH-II:3692-3695 (22nd drekkana)
           + HTJAH-II:4544 (64th navamsa from the Moon).
 
-Deferred to Phase 1c (needs Shadbala):
-  - MarakaUnit.strength_rank is stubbed as 0.
-  - The "weakest planet in the chart" tertiary maraka is omitted (see NOTE below).
+Phase 1c-3 backfill (now that Shadbala exists):
+  - MarakaUnit.strength_rank is the graha's rank among the 7 by total Shadbala
+    (1 = strongest), read from chart.planets[g].shadbala_rupas.total — guarded to 0
+    when Shadbala is absent (Track-B / stated-positions charts).
+  - The "weakest planet in the chart" (lowest total Shadbala) is added as a tertiary
+    maraka when Shadbala is filled (GBB-8 / overview §8.2).
 
 Deferred to Phase 2 (needs drishti engine):
   - "Associate" currently means conjunct (same rasi-house only).
@@ -21,6 +24,10 @@ from typing import Final
 from app.raman_saab.chart.model import RamanChart, MarakaUnit, MarakaPoints
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS, NATURAL_BENEFICS
+
+# The 7 visible grahas that can carry Shadbala (nodes never do).
+_SEVEN: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
 
 
 # ── house-arithmetic helpers ──────────────────────────────────────────────────
@@ -82,6 +89,34 @@ def _navamsa64_lord(chart: RamanChart) -> str:
     return SIGN_LORDS[(g % 12) + 1]        # sign lord of the navamsa's sign
 
 
+# ── Shadbala-driven strength helpers (Phase 1c-3) ─────────────────────────────
+
+def _shadbala_totals(chart: RamanChart) -> dict[str, float]:
+    """Total Shadbala (Shashtiamsas) for each of the 7 visible grahas that carry it.
+
+    Returns an empty dict when no planet has Shadbala filled (Track-B charts), so the
+    callers fall back to the stubbed strength_rank=0 / no-weakest-tertiary behaviour.
+    """
+    return {
+        g: chart.planets[g].shadbala_rupas.total
+        for g in _SEVEN
+        if g in chart.planets and chart.planets[g].shadbala_rupas is not None
+    }
+
+
+def _strength_ranks(totals: dict[str, float]) -> dict[str, int]:
+    """Rank the grahas by total Shadbala descending (1 = strongest). Empty -> empty."""
+    ordered = sorted(totals, key=lambda g: totals[g], reverse=True)
+    return {g: i + 1 for i, g in enumerate(ordered)}
+
+
+def _weakest_planet(totals: dict[str, float]) -> str | None:
+    """The graha with the lowest total Shadbala, or None when no Shadbala is present."""
+    if not totals:
+        return None
+    return min(totals, key=lambda g: totals[g])
+
+
 # ── main public function ──────────────────────────────────────────────────────
 
 def maraka_points(chart: RamanChart) -> MarakaPoints:
@@ -97,8 +132,10 @@ def maraka_points(chart: RamanChart) -> MarakaPoints:
                tier assignment is kept via seen.setdefault).
 
     Rahu/Ketu are excluded (no lordship; they act per dispositor/conjunction
-    in Phase 2).  strength_rank is stubbed 0 — Phase 1c fills it via Shadbala.
-    NOTE: 'weakest planet' tertiary maraka omitted — needs Shadbala (Phase 1c).
+    in Phase 2).  When the chart carries Shadbala (ephemeris charts), each unit's
+    strength_rank is its rank among the 7 by total Shadbala (1 = strongest) and the
+    weakest planet (lowest total Shadbala) is added as a tertiary maraka; on Track-B
+    charts (no Shadbala) strength_rank stays 0 and no weakest-planet tertiary is added.
     """
     asc = chart.asc_sign
     seen: dict[str, str] = {}   # graha -> first (strongest) tier assigned
@@ -147,10 +184,18 @@ def maraka_points(chart: RamanChart) -> MarakaPoints:
         add("Saturn", "tertiary")
     add(l6, "tertiary")
     add(l8, "tertiary")  # 8th lord gets secondary above; this is a no-op via setdefault
-    # NOTE: "weakest planet in the chart" tertiary maraka -> Phase 1c (needs Shadbala).
+
+    # Weakest planet in the chart (lowest total Shadbala) — only when Shadbala filled.
+    totals = _shadbala_totals(chart)
+    weakest = _weakest_planet(totals)
+    if weakest is not None:
+        add(weakest, "tertiary")
+
+    # Rank by total Shadbala (1 = strongest); 0 when the chart carries no Shadbala.
+    ranks = _strength_ranks(totals)
 
     units = tuple(
-        MarakaUnit(graha=g, tier=t, strength_rank=0)  # strength_rank -> Phase 1c
+        MarakaUnit(graha=g, tier=t, strength_rank=ranks.get(g, 0))
         for g, t in seen.items()
     )
     return MarakaPoints(

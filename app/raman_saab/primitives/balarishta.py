@@ -19,6 +19,7 @@ from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import BalarishtaState, RamanChart
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import NATURAL_BENEFICS, NATURAL_MALEFICS
+from app.raman_saab.primitives.shadbala import total as shadbala_total
 
 _KENDRA: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
 _TRIKONA: Final[frozenset[int]] = frozenset({1, 5, 9})
@@ -46,6 +47,24 @@ def _has_benefic_with_moon(chart: RamanChart) -> bool:
     )
 
 
+def _lagna_lord_powerful(lagna_lord: str, chart: RamanChart) -> bool:
+    """True if the lagna lord is 'powerfully situated' (HPA-14:235).
+
+    Prefers the real Shadbala test (total/60 >= MIN_REQUIRED[lagna_lord]) when the
+    chart carries Shadbala for the lagna lord; falls back to the Track-B dignity/kendra
+    proxy (lagna lord in a kendra/trikona, or dignity in {exalt, own, moolatrikona})
+    when Shadbala is absent.
+    """
+    ll = chart.planets[lagna_lord]
+    if ll.shadbala_rupas is not None:
+        req = shadbala_total.MIN_REQUIRED.get(lagna_lord)
+        return req is not None and (ll.shadbala_rupas.total / 60.0) >= req
+    # Track-B proxy.
+    in_good_house = ll.rasi_house in (_KENDRA | _TRIKONA)
+    strong_dignity = dignity(lagna_lord, chart) in ("exalt", "own", "moolatrikona")
+    return in_good_house or strong_dignity
+
+
 def balarishta(chart: RamanChart) -> BalarishtaState:
     """Infant-mortality gate.
 
@@ -61,8 +80,9 @@ def balarishta(chart: RamanChart) -> BalarishtaState:
     Antidotes implemented:
       (1) Jupiter powerfully posited in the ascendant.                HPA-14:232
       (2) Lord of the lagna powerfully situated.                      HPA-14:235
-          v1 proxy: lagna lord in a kendra/trikona OR in exalt/own/moolatrikona.
-          Full Shadbala refinement deferred to Phase 1c.
+          Real check (Phase 1c-3): total Shadbala/60 >= MIN_REQUIRED[lagna_lord]
+          when the chart carries Shadbala; otherwise the Track-B proxy (lagna lord
+          in a kendra/trikona OR in exalt/own/moolatrikona).
       (9) Full Moon aspects lagna with Jupiter in quadrants.          HPA-14:263
           v1 proxy: any natural benefic (excl. Moon) in a kendra.
           Aspect refinement deferred to Phase 2.
@@ -110,15 +130,10 @@ def balarishta(chart: RamanChart) -> BalarishtaState:
             cancel_reasons.append("jupiter_in_lagna")
 
         # (2) Lord of the lagna powerfully situated.                HPA-14:235
-        #     v1 proxy: lagna lord in kendra/trikona, or dignity in
-        #     {exalt, own, moolatrikona}.  Full Shadbala -> Phase 1c.
+        #     Real Shadbala when present; Track-B dignity/kendra proxy otherwise.
         lagna_lord = SIGN_LORDS[chart.asc_sign]
-        if lagna_lord in chart.planets:
-            ll = chart.planets[lagna_lord]
-            in_good_house = ll.rasi_house in (_KENDRA | _TRIKONA)
-            strong_dignity = dignity(lagna_lord, chart) in ("exalt", "own", "moolatrikona")
-            if in_good_house or strong_dignity:
-                cancel_reasons.append("strong_lagna_lord")
+        if lagna_lord in chart.planets and _lagna_lord_powerful(lagna_lord, chart):
+            cancel_reasons.append("strong_lagna_lord")
 
         # (9) Full Moon aspects lagna with Jupiter in quadrants.    HPA-14:263
         #     v1 proxy: any natural benefic (excl. Moon) in a kendra.

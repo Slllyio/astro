@@ -8,21 +8,17 @@ Usage:
 
 Citation note
 -------------
-The on-disk corpus files referenced in the plan
-(``data/knowledge_library/sources/hindu_predictive_astrology_raman/`` and
-``how_to_judge_a_horoscope_raman/``) are not present on disk.  The nearest
-available Raman on-disk reference is the methodology overview which cites the
-8 Considerations at HTJAH-I:474-493 (consideration 5: exaltation/debilitation
-of lords) and the longevity section HPA-14.  The neecha-bhanga 4-condition
-list (dispositor/planet-exalted-here in kendra from lagna/moon; conjunction
-with dispositor; navamsa exaltation/vargottama) is the **standard
-Parashari/Phaladeepika doctrine** that Raman's HPA accepts verbatim — it is
-not independently enumerated in the available on-disk Raman corpus.  Per the
-project citation-discipline policy, the comment below cites the nearest
-available Raman line (HTJAH-I:475 — consideration 5) and documents that the
-4-condition set is standard doctrine accepted by the project.  The same
-applies to kemadruma (Moon isolation), which Raman discusses in HPA but whose
-chapter file is absent from the corpus.
+Kemadruma is defined in Raman's *Hindu Predictive Astrology*, Special Yogas
+(HPA-20:208, ``hindu_predictive_astrology_raman/chapter_020_special-yogas.md``).
+Raman references neecha-bhanga at HPA-33:308
+(``hindu_predictive_astrology_raman/chapter_033_annual-horoscopes.md``) but does
+not enumerate the cancellation conditions there; the neecha-bhanga 4-condition
+list (dispositor/planet-exalted-here in kendra from lagna/moon; conjunction with
+dispositor; navamsa exaltation/vargottama) is the **standard
+Parashari/Phaladeepika doctrine** that Raman's method accepts. It is anchored to
+the 8-Considerations principle (HTJAH-I:474-493, consideration 5:
+exaltation/debilitation of the lords; consideration 4: whether a yoga alters the
+influence).
 
 Phase-2 deferral: conditions that classically use *aspect* (dispositor
 aspecting the debilitated planet; benefic aspecting the Moon for kemadruma
@@ -72,12 +68,11 @@ def parivartana(h1: int, h2: int, chart: RamanChart) -> bool:
 def neecha_bhanga(planet: str, chart: RamanChart) -> bool:
     """Cancellation of debilitation (neecha-bhanga raja yoga).
 
-    Nearest Raman on-disk citation: HTJAH-I:475 (consideration 5 —
-    exaltation/debilitation of the lords).  The 4-condition set below is the
-    standard Parashari/Phaladeepika cancellation-of-debilitation doctrine that
-    B.V. Raman's Hindu Predictive Astrology accepts; the HPA corpus file is
-    absent from disk so an exact HPA line cannot be supplied (see module
-    docstring).
+    Raman references neecha-bhanga at HPA-33:308 but does not enumerate the
+    conditions; the 4-condition set below is the standard
+    Parashari/Phaladeepika cancellation-of-debilitation doctrine Raman's method
+    accepts, anchored to the exaltation/debilitation principle at HTJAH-I:474-493
+    (consideration 5). See the module docstring.
 
     Computable conditions implemented here (Phase 1b):
       (1) dispositor of the debilitation sign is in a kendra from Lagna or Moon
@@ -126,12 +121,10 @@ def kemadruma(chart: RamanChart) -> bool:
     """Kemadruma yoga: the Moon has no planet (excluding Sun and nodes) in the
     2nd or 12th from it and none conjunct it.
 
-    Nearest Raman on-disk citation: HTJAH-I:475 (consideration 5 — yoga
-    alters the influence).  The kemadruma definition is from B.V. Raman's
-    Hindu Predictive Astrology; the HPA corpus file is absent from disk (see
-    module docstring).  This implements the standard doctrine: Moon isolated
-    from all planets except Sun/Rahu/Ketu in the adjacent houses and in
-    conjunction.
+    Raman's definition: HPA-20:208 ("Kemadruma yoga. —No planets in the..."),
+    Special Yogas chapter. This implements the standard doctrine: the Moon is
+    isolated from all planets except Sun/Rahu/Ketu in the adjacent houses (2nd,
+    12th) and in conjunction.
 
     NOTE: The aspect-based cancellation condition (benefic aspecting the Moon)
     is deferred to Phase 2 (drishti engine).
@@ -152,9 +145,8 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
     """Kemadruma cancellation (computable subset): a planet other than the Moon
     in a kendra from the Lagna, or the Moon itself in a kendra from the Lagna.
 
-    Nearest Raman on-disk citation: HTJAH-I:475 (yoga alters the influence).
-    Full cancellation list (including aspect-based) from HPA — deferred to
-    Phase 2 (drishti engine).
+    Kemadruma is defined at HPA-20:208 (Special Yogas). Full cancellation list
+    (including aspect-based) — deferred to Phase 2 (drishti engine).
     """
     if "Moon" not in chart.planets:
         return False

@@ -32,14 +32,23 @@ Saptavargaja 45-only-in-D1) and a **validated worked fixture** (GBB "Standard Ho
 
 | Sub-plan | Components | Status |
 |---|---|---|
-| **1c-1** | varga_lords + `shadbala/{naisargika,sthana,dig,drik}` (pure/cusp, Track-B) | **plan written + reviewed** (`docs/superpowers/plans/2026-06-03-raman-saab-phase1c1-shadbala-pure.md`) — **▶ RESUME: execute subagent-driven** |
-| **1c-2** | `shadbala/{cheshta,kala}` — mean longitudes, declination, sunrise/ghatis, Ahargana (ephemeris) | not started |
+| **1c-1** | varga_lords + `shadbala/{naisargika,sthana,dig,drik}` (pure/cusp, Track-B) | **DONE** — 89 passed, 2 xfailed; commits `27599d4…9a56d7c`. Naisargika (all 7), Sthana (5/7 Saptavargaja exact), Dig (Saturn 56.7), Drik (anchors) pinned to fixture. |
+| **1c-2** | `shadbala/{cheshta,kala}` — mean longitudes, declination, sunrise/ghatis, Ahargana (ephemeris) | **▶ RESUME: not started** |
 | **1c-3** | total Shadbala assembly + min-required verdict; `bhava_bala`; `ishta_kashta`; wire `PlanetPos.shadbala_rupas/ishta/kashta`; **backfill** maraka `strength_rank`+weakest-planet, balarishta strength, navamsa64 external pin | not started |
 
-**Resume ▶** Execute the **1c-1** plan (subagent-driven, same loop as 1b). Known carry-over inside
-1c-1: Mars/Venus/Saturn/Moon **Saptavargaja** cells don't yet reconcile (gap is in the per-varga
-compound-relation, NOT Kendra which is verified) — localize via the per-sub-component fixture in
-Task 6, `xfail` + carry any residual to 1c-3.
+**1c-1 carry-overs to resolve in 1c-3** (all diagnosed, none are engine bugs):
+- **Mars D30 / Saturn D7 Saptavargaja** — `xfail(strict)`. Engine follows Raman's degree-band rules
+  correctly; the book's worked example "bakes" own/neutral at those sub-degree cusps, inconsistent
+  with its own §126 bands. Decide whether to honor the book's printed cell or the rule.
+- **Moon/Venus Sthana total ±15** — the **Ch.8 Ex.56 vs Ch.3 Ex.13** OCR divergence in the
+  Ochcha/Drekkana columns (engine's Moon 126.639 matches Ch.3; §10 gold uses Ch.8 141.650). Pick the gold.
+- **Full Dig column** needs real Sripati cusps (only Saturn pinned via the one stated madhya).
+- **Drik Mercury benefic/malefic** ("well/badly associated") refinement — Mercury currently always benefic.
+
+**Resume ▶** Phase **1c-2** — Cheshta (Sripathi arc via mean longitudes — needs an epoch/mean-element
+machinery in the `chart/` layer) + Kala (Nathonnatha, Paksha[Moon-doubled], Tribhaga, Abda/Masa/Vara/Hora
+via Ahargana, Ayana[24°/48°, Sun-doubled, planet-group sign table], Yuddha). Both pinned to the §10
+fixture Cheshta/Kala columns. Reference: `gbb_shadbala_reference.md` §3-§4.
 
 Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 

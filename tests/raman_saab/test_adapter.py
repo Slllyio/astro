@@ -50,3 +50,30 @@ def test_adapter_populates_upagrahas():
     assert chart.upagrahas is not None
     assert set(chart.upagrahas) == {"Gulika", "Mandi"}
     assert 1 <= chart.upagrahas["Gulika"].sign <= 12
+
+
+def test_adapter_fills_shadbala_for_ephemeris_chart():
+    """Task 2: cast_chart attaches a ShadbalaBreakdown + ishta/kashta to all 7 grahas."""
+    from app.raman_saab.chart.model import ShadbalaBreakdown
+    chart = cast_chart(BANGALORE, ayanamsa="raman")
+    for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        p = chart.planets[name]
+        assert isinstance(p.shadbala_rupas, ShadbalaBreakdown)
+        rupas = p.shadbala_rupas.total / 60.0
+        assert 0.0 < rupas < 12.0, f"{name} total/60 = {rupas} out of band"
+        assert p.ishta is not None and 0.0 <= p.ishta <= 60.0
+        assert p.kashta is not None and 0.0 <= p.kashta <= 60.0
+    # Nodes carry no Shadbala (they are never in SWE_PLANETS).
+    assert chart.planets["Rahu"].shadbala_rupas is None
+    assert chart.planets["Ketu"].shadbala_rupas is None
+
+
+def test_from_stated_positions_leaves_shadbala_none():
+    """Track-B charts have no ephemeris context → shadbala_rupas stays None."""
+    from app.raman_saab.chart.model import RamanChart
+    chart = RamanChart.from_stated_positions(
+        {"Sun": {"lon": 100.0, "bhava": 1}, "Moon": {"lon": 200.0, "bhava": 7}},
+        asc_lon=0.0, ayanamsa="raman")
+    for p in chart.planets.values():
+        assert p.shadbala_rupas is None
+        assert p.ishta is None and p.kashta is None

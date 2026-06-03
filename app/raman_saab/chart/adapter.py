@@ -9,6 +9,7 @@ from app.raman_saab.chart.model import BirthData, PlanetPos, RamanChart
 from app.raman_saab.primitives import combustion
 from app.raman_saab.primitives import special_points, maraka, balarishta as balarishta_mod
 from app.raman_saab.chart import upagrahas as upagrahas_mod
+from app.raman_saab.chart import shadbala_compute
 
 logger = logging.getLogger(__name__)
 swe.set_ephe_path(None)  # built-in Moshier ephemeris (mirrors app/core)
@@ -22,6 +23,7 @@ def cast_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanChart:
     """Birth data -> RamanChart. ONLY place that touches swisseph; ayanamsa isolated."""
     jd = _jd_ut(birth)
     with sidereal_mode(ayanamsa):
+        ayan_deg = float(swe.get_ayanamsa_ut(jd))   # for Ayana / Ishta-Kashta sayana arcs
         # 1. Lagna + Porphyry cusps (reinterpreted as Vedic bhava-madhyas).
         cusp_arr, ascmc = swe.houses_ex(jd, birth.latitude, birth.longitude, b"O", swe.FLG_SIDEREAL)
         madhyas = tuple(float(x) for x in cusp_arr[:12])       # house 1..12 madhyas
@@ -52,9 +54,25 @@ def cast_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanChart:
             dispositor=SIGN_LORDS[sign])
     chart = RamanChart(ayanamsa=ayanamsa, jd_ut=jd, asc_sign=asc_sign, asc_lon=asc_lon,
                        bhava_madhyas=madhyas, bhava_sandhis=sandhis, planets=planets, birth=birth)
+    # ── Pass 1: combustion ─────────────────────────────────────────────────────
     planets = {n: dataclasses.replace(p, combust_fraction=combustion.combust_fraction(n, chart))
                for n, p in planets.items()}
     chart = dataclasses.replace(chart, planets=planets)
+
+    # ── Pass 2: Shadbala (must precede maraka/balarishta so the backfills can read
+    #            each PlanetPos.shadbala_rupas) ────────────────────────────────────
+    shadbala = shadbala_compute.compute_shadbala(chart, birth, ayan_deg)
+    planets = {
+        n: (dataclasses.replace(p, shadbala_rupas=shadbala[n][0],
+                                ishta=shadbala[n][1], kashta=shadbala[n][2])
+            if n in shadbala else p)
+        for n, p in planets.items()
+    }
+    chart = dataclasses.replace(chart, planets=planets)
+
+    # ── Pass 3: special points / upagrahas / maraka / balarishta ────────────────
+    #            (maraka.strength_rank + weakest-planet tertiary and the balarishta
+    #            strong-lagna-lord antidote now read the filled Shadbala.)
     ug = {
         "Gulika": upagrahas_mod.gulika(birth, ayanamsa=ayanamsa),
         "Mandi": upagrahas_mod.mandi(birth, ayanamsa=ayanamsa),

@@ -59,14 +59,23 @@ Saptavargaja 45-only-in-D1) and a **validated worked fixture** (GBB "Standard Ho
 **ALL SIX Graha-Bala components now built** (Sthana, Naisargika, Dig, Drik, Cheshta, Kala), each
 pinned to the GBB Standard-Horoscope fixture.
 
-**▶ RESUME: Phase 1c-3** — (a) **total Shadbala assembly** `ShadbalaBreakdown` =
-Sthana+Dik+Kala+Cheshta+Naisargika±Drik in Rupas + the **min-required verdict** (Sun5/Moon6/Mars5/
-Merc7/Jup6.5/Ven5.5/Sat5); pin the fixture **Total-Rupas** row (6.288/6.936/5.381/9.743/7.381/5.949/
-6.196) and the "all powerful" verdict. (b) **Bhava-bala** (Bhavadhipati+Bhavadig+BhavaDrig, reference §8).
-(c) **Ishta/Kashta** (√(Ochcha×Cheshta) / √((60−Ochcha)(60−Cheshta)), incl. the Sun/Moon Cheshta
-surrogates §9). (d) wire `PlanetPos.shadbala_rupas/ishta/kashta` via the adapter. (e) **backfills:**
-maraka `strength_rank`+weakest-planet, balarishta strength checks, navamsa64 external pin, the
-Ahargana Kala lords, and decide the Mars/Venus Ayana + Saptavargaja-cusp xfails.
+**1c-3 capstone — DONE** (commits `f5c0f4d`→`19905ff`; 117 passed, 3 xfailed). `shadbala/total.py`
+(`assemble_shadbala` + `is_powerful` + `MIN_REQUIRED`) — **all 7 fixture Total-Rupas reconcile**
+(6.288/6.936/5.381/**9.674**/7.381/5.949/6.196 — Mercury's printed 9.743 was a book OCR error vs its
+own component sum 580.46; engine pins 9.674) and **all 7 powerful** per GBB thresholds.
+`shadbala/ishta_kashta.py` — all 7 Ishta/Kashta reconcile to ≤0.05 Sh incl. the Sun/Moon Cheshta
+surrogates. **The whole six-fold strength engine now reconciles to Raman's worked totals to the decimal.**
+
+**▶ RESUME: Phase 1c-3 continuation** (the final stretch of Phase 1):
+- **Bhava-bala** — `shadbala/bhava_bala.py`: Bhavadhipati (lord's Shadbala) + Bhavadig (sign-class) +
+  BhavaDrig (aspect on the madhya). Pin the fixture Bhava totals (I 6.70…V 10.20…XII 9.66). Reference §8.
+- **Adapter wiring** — compute all 6 components + Kala context + mean longitudes per planet and fill
+  `PlanetPos.shadbala_rupas/ishta/kashta` (currently `Optional=None`); a real-chart end-to-end test.
+- **Backfills** (now that Shadbala exists): maraka `strength_rank`+weakest-planet; balarishta
+  "powerfully situated" strength; navamsa64 external pin; the Ahargana Kala year/month lords; decide
+  the Mars/Venus-Ayana + Saptavargaja-cusp xfails (engine vs book self-inconsistency).
+- Then **Phase 1 is COMPLETE** → Phase 2 (`doctrine/conditions.py` + evaluable/descriptive rule
+  encoding; predicate_audit §7 is the finalized algebra).
 
 Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 

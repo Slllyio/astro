@@ -19,14 +19,27 @@
 
 Every phase gated by independent review that **verified against reality** (ran pyswisseph; ran every formula). Phase 1b: plan-doc review (approved) + bphs-doctrine review caught 3 doctrine errors → fixed against Raman's printed text (64th-navamsa from the **Moon** HTJAH-II:4544; 22nd-drekkana offset **+22** pinned to 27°-Aquarius→Libra→Venus HTJAH-II:3692-3695; balarishta houses **7/8/12** + real HPA-14 antidotes); final code-quality + doctrine re-audit on the shipped source = sound.
 
-## Resume here ▶ — Phase 1c
+## Phase 1c — GBB Shadbala (in progress)
 
-GBB Shadbala — the last Phase-1 primitive. Write the plan from spec §4 (ShadbalaBreakdown) + §4.6 (re-derive to Raman's *Graha & Bhava Balas*, **NOT** `app/core/shadbala`). Modules:
-- `primitives/shadbala.py` — the **6 GBB components in Rupas** (Sthana, Dig, Kala, Cheshta, Naisargika, Drik) + total, **±1-rupa fixture** from 5 hand-verified charts (`graha_bhava_balas_raman/` Ch.3–10). **Fidelity trap (spec §4.6):** use Raman's *own* Dig-bala boundaries + Kala-bala (paksha/hora/ayana) defaults — modern blended Shadbala shifts rupas and flips rankings.
-- `primitives/bhava_bala.py` — house strength; `primitives/ishta_kashta.py` — ishta/kashta phala.
-- `primitives/sphutas.py` — beeja/kshetra (H5), special-dhana (H2), pranapada, sahams (H9).
-- **Backfill from 1b** (deferred there): `MarakaUnit.strength_rank` (rank marakas by Shadbala) and the **weakest-planet** tertiary maraka in `maraka.py`; the "powerfully situated" strength checks in `balarishta.py` antidotes; the +63/+64 **64th-navamsa external pin** (JH/drikpanchang) in `maraka.py`.
-- Wire `shadbala_rupas`/`ishta`/`kashta` into `PlanetPos` via the adapter (currently `Optional=None`).
+The last Phase-1 primitive: re-derive Raman's six-fold strength to his *Graha & Bhava Balas*
+(NOT `app/core/shadbala`). **Research done** — `docs/raman_saab/gbb_shadbala_reference.md` is the
+authoritative, line-cited formula spec (4-agent corpus extraction + my Ch.4 read), with the two
+key fidelity traps pinned (Sun/Moon get **no** Cheshta in the Shadbala total; Dig from the
+bhava-**madhya** cusp; Ayana 24°/48° Sun-doubled; Paksha Moon-doubled; Kendra by sign;
+Saptavargaja 45-only-in-D1) and a **validated worked fixture** (GBB "Standard Horoscope", 16 Oct
+1918, Libra Lagna — full 6-component table in Rupas). The Drik 30-60 branch bug (`(K−30)/2`, not
+`K−30`) was caught live. **Decomposed into 3 sub-plans, each pinned to the fixture:**
+
+| Sub-plan | Components | Status |
+|---|---|---|
+| **1c-1** | varga_lords + `shadbala/{naisargika,sthana,dig,drik}` (pure/cusp, Track-B) | **plan written + reviewed** (`docs/superpowers/plans/2026-06-03-raman-saab-phase1c1-shadbala-pure.md`) — **▶ RESUME: execute subagent-driven** |
+| **1c-2** | `shadbala/{cheshta,kala}` — mean longitudes, declination, sunrise/ghatis, Ahargana (ephemeris) | not started |
+| **1c-3** | total Shadbala assembly + min-required verdict; `bhava_bala`; `ishta_kashta`; wire `PlanetPos.shadbala_rupas/ishta/kashta`; **backfill** maraka `strength_rank`+weakest-planet, balarishta strength, navamsa64 external pin | not started |
+
+**Resume ▶** Execute the **1c-1** plan (subagent-driven, same loop as 1b). Known carry-over inside
+1c-1: Mars/Venus/Saturn/Moon **Saptavargaja** cells don't yet reconcile (gap is in the per-varga
+compound-relation, NOT Kendra which is verified) — localize via the per-sub-component fixture in
+Task 6, `xfail` + carry any residual to 1c-3.
 
 Then **Phase 2** (`doctrine/conditions.py` + evaluable/descriptive rule encoding — predicate_audit §7 is the finalized algebra), **3** (judges + overview), **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 

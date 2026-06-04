@@ -88,3 +88,11 @@ def test_functional_nature_star_moonphase_count():
     ctx2 = _ctx({"Sun": 5.0, "Saturn": 6.0, "Mars": 7.0})
     assert C.CountInHouse(1, 2, "malefic").evaluate(ctx2) is True
     assert C.CountInHouse(1, 4, "malefic").evaluate(ctx2) is False
+
+
+def test_class_in_house_from_origin():
+    # Aries lagna: Venus 1st (Aries), Saturn (malefic) in the 8th (Scorpio) = 8th from Venus.
+    ctx = _ctx({"Venus": 5.0, "Saturn": 220.0})
+    assert C.ClassInHouseFrom("malefic", "Venus", {4, 8, 12}).evaluate(ctx) is True
+    assert C.ClassInHouseFrom("malefic", "Venus", {7}).evaluate(ctx) is False
+    assert C.ClassInHouseFrom("benefic", "Venus", {4, 8, 12}).evaluate(ctx) is False

@@ -247,6 +247,21 @@ class InHouseClass(Condition):
         return p is not None and p.rasi_house in _HOUSE_CLASS[self.klass]
 
 
+class ClassInHouseFrom(Condition):
+    """Any planet of `klass` ∈ {"malefic","benefic"} sits in one of `houses` counted from
+    `origin` (e.g. a malefic in the 4/8/12 from Venus). C1 + class quantifier."""
+    def __init__(self, klass: str, origin: object, houses: set[int]) -> None:
+        self.klass, self.origin, self.houses = klass, origin, houses
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        oh = _origin_house(self.origin, ctx.chart)
+        if oh is None:
+            return False
+        group = NATURAL_MALEFICS if self.klass == "malefic" else NATURAL_BENEFICS
+        return any(name in group and _house_from(p.rasi_house, oh) in self.houses
+                   for name, p in ctx.chart.planets.items())
+
+
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────
 class MutualAspect(Condition):
     def __init__(self, a: str, b: str) -> None:

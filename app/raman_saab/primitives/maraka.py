@@ -23,6 +23,7 @@ Deferred to Phase 2 (needs drishti engine):
 from typing import Final
 from app.raman_saab.chart.model import RamanChart, MarakaUnit, MarakaPoints
 from app.raman_saab.chart.constants import SIGN_LORDS
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS, NATURAL_BENEFICS
 
 # The 7 visible grahas that can carry Shadbala (nodes never do).
@@ -166,9 +167,14 @@ def maraka_points(chart: RamanChart) -> MarakaPoints:
         for occ in _occupants(h, chart):
             if occ in NATURAL_MALEFICS:
                 add(occ, "primary")
-    # malefic associates (conjunct) of 2nd/7th lords
+    # malefic associates of the 2nd/7th lords — conjunct OR aspecting (drishti, Phase 2)
     for name, p in chart.planets.items():
-        if name in NATURAL_MALEFICS and p.rasi_house in death_lord_houses:
+        if name not in NATURAL_MALEFICS:
+            continue
+        conjunct = p.rasi_house in death_lord_houses
+        aspects = any(lord in chart.planets and drishti.aspects_planet(name, lord, chart)
+                      for lord in death_lords)
+        if conjunct or aspects:
             add(name, "primary")
 
     # ── secondary ────────────────────────────────────────────────────────────

@@ -3,10 +3,9 @@
 Implements a faithful cited subset of Raman's HPA Chapter 14 combinations
 (yogas at HPA-14:90-115; antidotes at HPA-14:232-266).
 
-Phase constraint: conjunction-based v1 only.  Aspect-based yogas/antidotes
-(e.g. yoga 3's "without being aspected by benefics", antidote 9's "Full Moon
-aspects lagna") are approximated by their conjunction proxy here and flagged
-with a # Phase 2 comment where the drishti engine will refine them.
+Phase 2: yoga 3's "without being aspected by benefics" now uses the drishti
+engine (benefic conjunct OR aspecting the Moon). Antidote 9's "Full Moon aspects
+lagna" remains a conjunction proxy (needs a Full-Moon test) — flagged below.
 
 Usage:
     python -m app.raman_saab.primitives.balarishta   # (no CLI; pure library)
@@ -17,6 +16,7 @@ from typing import Final
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import BalarishtaState, RamanChart
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import NATURAL_BENEFICS, NATURAL_MALEFICS
 from app.raman_saab.primitives.shadbala import total as shadbala_total
@@ -39,12 +39,16 @@ def _conjunct_malefic(house: int, chart: RamanChart) -> bool:
 
 
 def _has_benefic_with_moon(chart: RamanChart) -> bool:
-    """True if a natural benefic (other than Moon itself) shares the Moon's house."""
+    """True if a natural benefic (other than the Moon) is **with or aspecting** the
+    Moon — Raman's "without being aspected by benefics" protection (HPA-14:96).
+    Conjunction OR drishti aspect (Phase 2)."""
     mh = chart.planets["Moon"].rasi_house
-    return any(
-        n in NATURAL_BENEFICS and n != "Moon" and p.rasi_house == mh
-        for n, p in chart.planets.items()
-    )
+    for n, p in chart.planets.items():
+        if n not in NATURAL_BENEFICS or n == "Moon":
+            continue
+        if p.rasi_house == mh or drishti.aspects_planet(n, "Moon", chart):
+            return True
+    return False
 
 
 def _lagna_lord_powerful(lagna_lord: str, chart: RamanChart) -> bool:

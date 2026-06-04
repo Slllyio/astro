@@ -30,8 +30,10 @@ from typing import Final
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives.dignity import dignity
+from app.raman_saab.primitives.functional_nature import NATURAL_BENEFICS
 
 _KENDRA: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
 
@@ -99,8 +101,10 @@ def neecha_bhanga(planet: str, chart: RamanChart) -> bool:
     if exalted_here and (_in_kendra_from(exalted_here, lagna_h, chart)
                          or _in_kendra_from(exalted_here, moon_h, chart)):
         return True
-    # (3) conjunct its dispositor (same rasi-house)  [aspect variant -> Phase 2]
-    if dispositor in chart.planets and chart.planets[dispositor].rasi_house == p.rasi_house:
+    # (3) conjunct OR aspected by its dispositor (Phase 2: drishti now available)
+    if dispositor in chart.planets and (
+            chart.planets[dispositor].rasi_house == p.rasi_house
+            or drishti.aspects_planet(dispositor, planet, chart)):
         return True
     # (4) exalted in navamsa, or vargottama
     if p.vargottama or p.navamsa_sign == r.EXALTATION[planet][0]:
@@ -145,8 +149,9 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
     """Kemadruma cancellation (computable subset): a planet other than the Moon
     in a kendra from the Lagna, or the Moon itself in a kendra from the Lagna.
 
-    Kemadruma is defined at HPA-20:208 (Special Yogas). Full cancellation list
-    (including aspect-based) — deferred to Phase 2 (drishti engine).
+    Kemadruma is defined at HPA-20:208 (Special Yogas). Cancellations: a planet
+    (not the Moon) in a kendra from the Lagna, the Moon in a kendra, OR a benefic
+    aspecting the Moon (the aspect case now available via the Phase-2 drishti engine).
     """
     if "Moon" not in chart.planets:
         return False
@@ -156,5 +161,9 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
         if name in ("Moon", "Rahu", "Ketu"):
             continue
         if pl.rasi_house in _KENDRA:
+            return True
+    # a benefic aspecting the Moon also breaks kemadruma
+    for name in NATURAL_BENEFICS:
+        if name != "Moon" and drishti.aspects_planet(name, "Moon", chart):
             return True
     return False

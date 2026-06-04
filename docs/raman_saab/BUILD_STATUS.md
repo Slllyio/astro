@@ -114,11 +114,20 @@ under-counts ≤0.75R); navamsa64 +63/+64 external pin; the Mars/Venus-Ayana + S
 **PHASE-2 INFRASTRUCTURE COMPLETE.** drishti + condition algebra + RuleRecord + citation verifier all
 built. Now the bulk **rule ENCODING** can proceed.
 
-**▶ RESUME next — encode the rules (the large repetitive heart of Phase 2):**
-1. **Still-to-add predicates** (as rules need them): varga overlays `InVargaHouseFrom`/`VargaHouseDist`
-   (C2); KARAKA/STRONGEST_OF/KARAKAMSA origins; `Strongest`/`Weakest` (Shadbala aggregates); `TaraOf`;
-   sphuta/Saham. Add on demand during encoding.
-2. **Encode RuleRecords house-by-house** (likely subagent-driven, one house at a time) from the 12
+- **Rule-encoding TEMPLATE — DONE** (commit `8a02985`). `doctrine/rule_sets/house_07_kalatra.py` — 5
+  cited House-7 RuleRecords (from-Venus combinations + 7th-lord-in-house) proving the pattern;
+  `ClassInHouseFrom` predicate added. `tests/.../test_rule_sets.py` **auto-guards every encoded rule**
+  (parametrized: citation resolves on-disk + evaluable has a condition) — add new house modules to its
+  `ALL_RULE_SETS` list.
+
+**▶ RESUME next — scale the encoding (the large repetitive heart of Phase 2):**
+1. **Encode each house** into `doctrine/rule_sets/house_NN_*.py` following the House-7 template: read
+   `methodology/house_NN_*.md`, encode each evaluable combination as a `RuleRecord` (Condition tree +
+   real `Citation`), register the module in `test_rule_sets.ALL_RULE_SETS`. The lord-in-12-houses table
+   (`LordIn(h,n)`) is the cleanest bulk unit per house; then planets-in-house, combinations, Kuja-Dosha (H7).
+2. **Still-to-add predicates** (on demand): varga overlays `InVargaHouseFrom`/`VargaHouseDist` (C2);
+   KARAKA/STRONGEST_OF/KARAKAMSA origins; `Strongest`/`Weakest` (Shadbala); `TaraOf`; sphuta/Saham.
+3. (legacy note) Encode the **evaluable/descriptive `RuleRecord`s** from the 12
 `methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill
 id/house/signification/group/fortified-afflicted/frame/varga/source → hand/agent-fill `condition` for
 `kind="evaluable"` rows. A test asserts **every RuleRecord cites a real on-disk corpus line**. The Phase-1

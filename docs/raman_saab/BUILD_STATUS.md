@@ -93,14 +93,22 @@ under-counts ≤0.75R); navamsa64 +63/+64 external pin; the Mars/Venus-Ayana + S
   API: `aspects_planet(a,b,chart)`, `aspects_house(p,h,chart)`, `mutual_aspect`, `aspecting_planets`,
   `aspecting_house`. This unblocks the deferred aspect-based conditions.
 
+- **Aspect backfills — DONE** (commit `93b8fd3`). `drishti` wired into the Phase-1 conjunction-only
+  deferrals: neecha-bhanga aspect-by-dispositor + kemadruma benefic-aspect cancellation (`bhangas.py`),
+  maraka aspect-associates (`maraka.py`), balarishta benefic-aspect protection (`balarishta.py`).
+  3 aspect-path tests in `doctrine/test_aspect_backfills.py`; no fixture regression.
+- **`doctrine/conditions.py` foundation — DONE** (commit `e41e9e6`; 4 tests). Composable `Condition`
+  (`And`/`Or`/`Not`/`AtLeastN` + `& | ~`) over an `EvalContext(chart)`; **first batch** of leaf
+  predicates (absolute, Lagna-frame, D1): `InRashiHouse`, `InHouse`(Chalita), `InSign`, `LordIn`,
+  `Conjunct`, `Aspects`, `HasDignity`, `Retrograde`, `Combust`, `IsYogaKaraka`, `NeechaBhanga`.
+
 **▶ RESUME next:**
-1. **Aspect backfills** (now drishti exists): refine the Phase-1 conjunction-only deferrals to use
-   `drishti.aspects_planet` — neecha-bhanga aspect-by-dispositor (`bhangas.py`), kemadruma
-   aspect-cancellation, maraka aspect-associates (`maraka.py`), balarishta aspected-by-malefic/benefic
-   yogas (`balarishta.py`). Re-run the fixtures (aspects are additive — confirm no fixture regression).
-2. **`doctrine/conditions.py`** = the predicate algebra (FINALIZED set in `predicate_audit.md` §7 —
-   C1-C6 critical + H1-H12 high families). A composable `Condition` (And/Or/Not/AtLeastN) evaluating
-   against a `(chart, frame, varga)` context; leaf predicates read the Phase-1 primitives + `drishti`.
+1. **Expand `conditions.py`** with the remaining predicate families (roadmap in its docstring +
+   `predicate_audit.md` §7): frame-relative origins (`FROM(origin)`, MOON/KARAKA/STRONGEST_OF — C1),
+   varga overlays (`InVargaHouseFrom`/`VargaHouseDist` — C2), nakshatra (C3), aggregates
+   (`Strongest`/`CountInHouse` — H10), `Parivartana`/`Exchange` (C6), `HemmedBy` (H1), `InHouseClass`
+   (H6), `MoonPhase` (H4), sphutas. Add `EvalContext` frame/varga fields when C1/C2 land.
+2. Then the **`RuleRecord`** dataclass (spec §5.2) + the skeleton-parse encoder (spec §5.4).
 
 Then encode the **evaluable/descriptive `RuleRecord`s** from the 12
 `methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill

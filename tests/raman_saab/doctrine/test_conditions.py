@@ -44,3 +44,47 @@ def test_missing_planet_is_false_not_error():
     assert C.InRashiHouse("Mars", 1).evaluate(ctx) is False
     assert C.Aspects("Mars", "Sun").evaluate(ctx) is False
     assert C.Combust("Mars").evaluate(ctx) is False
+
+
+def test_in_house_from_origin():
+    # Moon in 1st (Aries), Mars in 7th (Libra) -> Mars is 7th from the Moon.
+    ctx = _ctx({"Moon": 5.0, "Mars": 185.0})
+    assert C.InHouseFrom("Mars", "MOON", 7).evaluate(ctx) is True
+    assert C.InHouseFrom("Mars", "LAGNA", 7).evaluate(ctx) is True
+    assert C.InHouseFrom("Mars", "MOON", 4).evaluate(ctx) is False
+
+
+def test_in_house_class_and_vargottama():
+    ctx = _ctx({"Sun": 5.0, "Saturn": 65.0})  # Sun 1st(kendra), Saturn 3rd(upachaya)
+    assert C.InHouseClass("Sun", "kendra").evaluate(ctx) is True
+    assert C.InHouseClass("Saturn", "upachaya").evaluate(ctx) is True
+    assert C.InHouseClass("Saturn", "kendra").evaluate(ctx) is False
+    assert C.Vargottama("Sun").evaluate(_ctx({"Sun": 0.0})) is True   # 0° Aries -> Aries navamsa
+
+
+def test_parivartana_exchange_mutual_aspect():
+    # Aries lagna: 1st lord Mars in 2nd (Taurus), 2nd lord Venus in 1st (Aries).
+    ctx = _ctx({"Mars": 35.0, "Venus": 5.0})
+    assert C.Parivartana(1, 2).evaluate(ctx) is True
+    assert C.Exchange("Mars", "Venus").evaluate(ctx) is True
+    # Saturn 1st & Mars 7th -> mutual 7th aspect.
+    assert C.MutualAspect("Saturn", "Mars").evaluate(_ctx({"Saturn": 5.0, "Mars": 185.0})) is True
+
+
+def test_hemmed_by_malefics():
+    # Aries lagna: Sun in 1st; Saturn in 2nd (Taurus), Mars in 12th (Pisces) -> papakartari.
+    ctx = _ctx({"Sun": 5.0, "Saturn": 35.0, "Mars": 340.0})
+    assert C.HemmedBy("Sun", "malefic").evaluate(ctx) is True
+    assert C.HemmedBy("Sun", "benefic").evaluate(ctx) is False
+
+
+def test_functional_nature_star_moonphase_count():
+    ctx = _ctx({"Jupiter": 5.0})  # Aries lagna -> Jupiter benefic
+    assert C.FunctionalNature("Jupiter", {"benefic"}).evaluate(ctx) is True
+    assert C.InStarOf("Moon", "Ketu").evaluate(_ctx({"Moon": 0.0})) is True   # Ashwini = Ketu
+    assert C.MoonPhase("waxing").evaluate(_ctx({"Moon": 100.0, "Sun": 10.0})) is True
+    assert C.MoonPhase("waning").evaluate(_ctx({"Moon": 200.0, "Sun": 10.0})) is True
+    # two malefics in the 1st
+    ctx2 = _ctx({"Sun": 5.0, "Saturn": 6.0, "Mars": 7.0})
+    assert C.CountInHouse(1, 2, "malefic").evaluate(ctx2) is True
+    assert C.CountInHouse(1, 4, "malefic").evaluate(ctx2) is False

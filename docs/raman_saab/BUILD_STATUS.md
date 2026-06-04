@@ -102,15 +102,23 @@ under-counts ≤0.75R); navamsa64 +63/+64 external pin; the Mars/Venus-Ayana + S
   predicates (absolute, Lagna-frame, D1): `InRashiHouse`, `InHouse`(Chalita), `InSign`, `LordIn`,
   `Conjunct`, `Aspects`, `HasDignity`, `Retrograde`, `Combust`, `IsYogaKaraka`, `NeechaBhanga`.
 
-**▶ RESUME next:**
-1. **Expand `conditions.py`** with the remaining predicate families (roadmap in its docstring +
-   `predicate_audit.md` §7): frame-relative origins (`FROM(origin)`, MOON/KARAKA/STRONGEST_OF — C1),
-   varga overlays (`InVargaHouseFrom`/`VargaHouseDist` — C2), nakshatra (C3), aggregates
-   (`Strongest`/`CountInHouse` — H10), `Parivartana`/`Exchange` (C6), `HemmedBy` (H1), `InHouseClass`
-   (H6), `MoonPhase` (H4), sphutas. Add `EvalContext` frame/varga fields when C1/C2 land.
-2. Then the **`RuleRecord`** dataclass (spec §5.2) + the skeleton-parse encoder (spec §5.4).
+- **`conditions.py` expanded — DONE** (commit `b708586`; 9 tests). Added C1 frame-relative
+  `InHouseFrom` (LAGNA/MOON/planet/house origins), `InHouseClass` (H6), `Parivartana`/`Exchange`
+  (C6), `HemmedBy` (H1), `MutualAspect`, `FunctionalNature` (C4), `InStarOf` (C3), `MoonPhase` (H4),
+  `CountInHouse` (H10), `Vargottama`. ~22 leaf predicates total + combinators.
+- **`RuleRecord` + Citation registry — DONE** (commit `7ab6c02`; 4 tests). `doctrine/rules.py`
+  (`RuleRecord` = condition tree + house/signification/group/fortified-afflicted/frame/varga/polarity/
+  source; `.fires(chart)`); `doctrine/sources.py` (`Citation(work,line)` + `verify()` resolving on-disk
+  corpus lines — HTJAH-I/II, HPA-NN, GBB-N — confirmed against real lines).
 
-Then encode the **evaluable/descriptive `RuleRecord`s** from the 12
+**PHASE-2 INFRASTRUCTURE COMPLETE.** drishti + condition algebra + RuleRecord + citation verifier all
+built. Now the bulk **rule ENCODING** can proceed.
+
+**▶ RESUME next — encode the rules (the large repetitive heart of Phase 2):**
+1. **Still-to-add predicates** (as rules need them): varga overlays `InVargaHouseFrom`/`VargaHouseDist`
+   (C2); KARAKA/STRONGEST_OF/KARAKAMSA origins; `Strongest`/`Weakest` (Shadbala aggregates); `TaraOf`;
+   sphuta/Saham. Add on demand during encoding.
+2. **Encode RuleRecords house-by-house** (likely subagent-driven, one house at a time) from the 12
 `methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill
 id/house/signification/group/fortified-afflicted/frame/varga/source → hand/agent-fill `condition` for
 `kind="evaluable"` rows. A test asserts **every RuleRecord cites a real on-disk corpus line**. The Phase-1

@@ -134,10 +134,22 @@ built. Now the bulk **rule ENCODING** can proceed.
   RuleRecords** (147 lord-in-12 + 108 planets-in-house), all guard-verified. Firing bug fixed
   (falls back to the available branch when a rule gives only one side, e.g. nodes). 698 tests green.
 
+- **Phase 3 house judge — DONE** (commit `f11e8ae`; 4 tests). `doctrine/karakas.py` (bhava karakas,
+  fixed naisargika) + `judges/house_judge.py`: `judge_house(chart, h)` / `judge_all_houses(chart)` →
+  **ordinal `HouseVerdict`** (favourable/mixed/afflicted/insufficient-evidence) from the fired rules
+  (split by polarity = cited evidence) + the Lord & Karaka Shadbala pillars (spec §6.3). Track-B charts
+  decide on polarity alone (no Shadbala). **The engine now emits a full 12-house cited judgment** from
+  birth data (demoed: Bangalore → H2/H9/H11 favourable, rest mixed).
+
 **▶ RESUME next:**
-1. **Remaining rule layers** (same parallel template): important **combinations** per house (the
-   `{condition, result, frame, citation}` yogas — heavy use of from-Moon / from-Karaka frames), and
-   the **special grids** (Kuja-Dosha H7, disease-organ H6, decanate-cause H8, source-of-gains H11).
+1. **Proforma + renderer + CLI surface** (spec §9): assemble the 12 `HouseVerdict`s into a
+   `RamanReading` and a markdown/text render; wire `read_chart(birth) -> RamanReading` behind the
+   existing `python -m app.raman_saab` CLI so a user gets a readable cited reading. (Longevity/timing
+   overlay later — Phases 4/5.)
+2. **Remaining rule layers** (same parallel template): important **combinations** per house (the
+   `{condition, result, frame, citation}` yogas — from-Moon / from-Karaka frames), and the **special
+   grids** (Kuja-Dosha H7, disease-organ H6, decanate-cause H8, source-of-gains H11).
+3. **Per-signification sub-verdicts** — refine the house-level verdict to per-signification routing (§6.1).
 2. **Phase 3 — the full house judge** (`judges/house_template.py`, spec §6): per-signification
    sub-verdicts via the karaka routing + the StrengthLedger → ordinal verdict
    (favourable/mixed/afflicted/insufficient-evidence). `rule_firing` is its substrate.

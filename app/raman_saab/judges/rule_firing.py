@@ -56,8 +56,15 @@ def fire_rules(chart: RamanChart, rules=ALL_RULES) -> list[FiredRule]:
         if rule.kind != "evaluable" or rule.condition is None:
             continue
         if rule.condition.evaluate(ctx):
-            branch = _branch(rule, chart)
-            text = rule.afflicted if (branch == "afflicted" and rule.afflicted) else rule.fortified
+            pref = _branch(rule, chart)
+            # Resolve to a branch that actually has text (some rules give only one side,
+            # e.g. nodes with fortified=None) so `text` is never None.
+            if pref == "afflicted" and rule.afflicted:
+                text, branch = rule.afflicted, "afflicted"
+            elif rule.fortified:
+                text, branch = rule.fortified, "fortified"
+            else:
+                text, branch = (rule.afflicted or ""), "afflicted"
             out.append(FiredRule(rule=rule, branch=branch, text=text))
     return out
 

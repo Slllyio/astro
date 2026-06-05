@@ -129,10 +129,15 @@ built. Now the bulk **rule ENCODING** can proceed.
   produces a cited, deterministic house reading from birth data** (demoed live on the Bangalore chart:
   per-house lord placement + branch + corpus citation).
 
+- **Planets-in-house layer COMPLETE for ALL 12 houses** (commits `e0b3938`,`036906c`,`e26cd35`).
+  108 occupant rules (`InRashiHouse(graha,N)`, 9 grahas × 12 houses). **Corpus now = 255 cited
+  RuleRecords** (147 lord-in-12 + 108 planets-in-house), all guard-verified. Firing bug fixed
+  (falls back to the available branch when a rule gives only one side, e.g. nodes). 698 tests green.
+
 **▶ RESUME next:**
-1. **More rule layers** (same parallel template, register in `test_rule_sets.ALL_RULE_SETS`):
-   planets-in-house (`InRashiHouse(graha,N)`, 9/house), important combinations, special grids
-   (Kuja-Dosha H7, disease H6, decanate-cause H8). 482 tests green.
+1. **Remaining rule layers** (same parallel template): important **combinations** per house (the
+   `{condition, result, frame, citation}` yogas — heavy use of from-Moon / from-Karaka frames), and
+   the **special grids** (Kuja-Dosha H7, disease-organ H6, decanate-cause H8, source-of-gains H11).
 2. **Phase 3 — the full house judge** (`judges/house_template.py`, spec §6): per-signification
    sub-verdicts via the karaka routing + the StrengthLedger → ordinal verdict
    (favourable/mixed/afflicted/insufficient-evidence). `rule_firing` is its substrate.

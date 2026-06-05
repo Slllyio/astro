@@ -141,15 +141,25 @@ built. Now the bulk **rule ENCODING** can proceed.
   decide on polarity alone (no Shadbala). **The engine now emits a full 12-house cited judgment** from
   birth data (demoed: Bangalore → H2/H9/H11 favourable, rest mixed).
 
-**▶ RESUME next:**
-1. **Proforma + renderer + CLI surface** (spec §9): assemble the 12 `HouseVerdict`s into a
-   `RamanReading` and a markdown/text render; wire `read_chart(birth) -> RamanReading` behind the
-   existing `python -m app.raman_saab` CLI so a user gets a readable cited reading. (Longevity/timing
-   overlay later — Phases 4/5.)
-2. **Remaining rule layers** (same parallel template): important **combinations** per house (the
+- **Proforma + renderer + CLI surface — DONE** (commit `7e3519e`; 4 tests). `proforma.read_chart(birth)
+  -> RamanReading` (12 HouseVerdicts); `render.to_text`/`to_markdown` (ASCII-safe book-style worksheet);
+  CLI `--format reading|markdown`. **The engine is now end-to-end usable:**
+  `py -3.12 -m app.raman_saab --name X --date 1990-07-15 --time 12:00 --tz 5.5 --lat 12.97 --lon 77.59
+  --format reading` prints a full cited house-by-house judgment. **706 tests green.**
+
+# ✅ FULL VERTICAL SLICE WORKING
+
+birth data → chart (Phase 0/1) → Shadbala (Phase 1c) → conditions + 255 cited rules (Phase 2) →
+fired-rule reading → ordinal house verdicts (Phase 3) → rendered cited worksheet (proforma/render/CLI).
+
+**▶ RESUME next (enrichment + remaining phases):**
+1. **More rule layers** (same parallel template): important **combinations** per house (the
    `{condition, result, frame, citation}` yogas — from-Moon / from-Karaka frames), and the **special
    grids** (Kuja-Dosha H7, disease-organ H6, decanate-cause H8, source-of-gains H11).
-3. **Per-signification sub-verdicts** — refine the house-level verdict to per-signification routing (§6.1).
+2. **Per-signification sub-verdicts** — refine the house-level verdict to per-signification routing (§6.1).
+3. **Phase 4 longevity** (`judges/longevity.py` — balarishta gate + span class + maraka timing, the
+   pre-pass that gates the houses), **Phase 5 timing** (Vimshottari MD/AD timeline), **API + portal**
+   surfaces (spec §9), **Phase 7 golden harness** (Raman's example charts → his verdicts, spec §11.1).
 2. **Phase 3 — the full house judge** (`judges/house_template.py`, spec §6): per-signification
    sub-verdicts via the karaka routing + the StrengthLedger → ordinal verdict
    (favourable/mixed/afflicted/insufficient-evidence). `rule_firing` is its substrate.

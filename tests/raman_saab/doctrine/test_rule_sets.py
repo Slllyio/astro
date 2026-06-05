@@ -7,11 +7,16 @@ import pytest
 
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.rule_sets import (
-    house_01_lagna, house_02_dhana, house_04_sukha, house_07_kalatra, house_10_karma)
+    house_01_lagna, house_02_dhana, house_03_sahaja, house_04_sukha, house_05_putra,
+    house_06_ari, house_07_kalatra, house_08_ayur, house_09_bhagya, house_10_karma,
+    house_11_labha, house_12_vyaya)
 from app.raman_saab.doctrine.sources import verify
 
 # Every encoded house module exposes a `RULES` tuple. Add new houses here as they land.
-ALL_RULE_SETS = [house_01_lagna, house_02_dhana, house_04_sukha, house_07_kalatra, house_10_karma]
+ALL_RULE_SETS = [
+    house_01_lagna, house_02_dhana, house_03_sahaja, house_04_sukha, house_05_putra,
+    house_06_ari, house_07_kalatra, house_08_ayur, house_09_bhagya, house_10_karma,
+    house_11_labha, house_12_vyaya]
 
 
 def _all_rules():

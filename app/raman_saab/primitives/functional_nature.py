@@ -3,7 +3,7 @@ from typing import Final, Literal
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart.constants import SIGN_LORDS
 
-Nature = Literal["benefic", "malefic", "neutral", "yogakaraka"]
+Nature = Literal["benefic", "malefic", "neutral", "yogakaraka", "maraka"]
 
 NATURAL_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
 NATURAL_MALEFICS: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Saturn", "Rahu", "Ketu"})
@@ -114,3 +114,18 @@ def functional_nature(planet: str, chart: RamanChart) -> Nature:
     if is_yogakaraka(planet, chart.asc_sign):
         return "yogakaraka"
     return _FUNCTIONAL_TABLE[chart.asc_sign][planet]  # type: ignore[return-value]
+
+
+def compute_functional_nature(lagna_sign: int, planet: str) -> Nature:
+    """Chart-free variant: per-Lagna functional nature given `lagna_sign` (1..12) and
+    `planet` name.  Yogakaraka overlay applied exactly as in ``functional_nature``.
+    Rahu/Ketu → 'neutral'.  Use this when only the ascendant sign is available
+    (e.g. inside EvalContext without a full RamanChart reference in the call site).
+
+    Source: HTJAH-I:523-604.
+    """
+    if planet in ("Rahu", "Ketu"):
+        return "neutral"
+    if is_yogakaraka(planet, lagna_sign):
+        return "yogakaraka"
+    return _FUNCTIONAL_TABLE[lagna_sign][planet]  # type: ignore[return-value]

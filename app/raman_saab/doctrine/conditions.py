@@ -21,8 +21,8 @@ Usage:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Sequence
+from dataclasses import dataclass, field
+from typing import Any, Callable, Sequence
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
@@ -30,7 +30,8 @@ from app.raman_saab.doctrine import drishti
 from app.raman_saab.primitives import bhangas, nakshatra
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
-    NATURAL_BENEFICS, NATURAL_MALEFICS, functional_nature, is_yogakaraka)
+    NATURAL_BENEFICS, NATURAL_MALEFICS, Nature,
+    compute_functional_nature, functional_nature, is_yogakaraka)
 from app.raman_saab.primitives.bhangas import neecha_bhanga
 
 # House classes (whole-sign, from the Lagna).
@@ -59,10 +60,43 @@ def _house_from(rasi_house: int, origin_house: int) -> int:
     return ((rasi_house - origin_house) % 12) + 1
 
 
-@dataclass(frozen=True)
+@dataclass
 class EvalContext:
-    """The chart a condition is evaluated against. (Frame/varga overlays land here next.)"""
+    """The chart a condition is evaluated against. (Frame/varga overlays land here next.)
+
+    ``chart`` is the only required constructor argument; it is read-only by convention.
+    ``_cache`` is an internal memo store populated lazily via :meth:`get_or_compute` —
+    do NOT access it directly.  Phase-added computed fields (functional nature,
+    parivartana pairs, varga charts, sahams, longevity) should always go through
+    ``get_or_compute`` so they are calculated at most once per context instance.
+    """
     chart: RamanChart
+    _cache: dict[str, Any] = field(default_factory=dict, compare=False, hash=False, repr=False)
+
+    # A3 — lazy memo ----------------------------------------------------------
+    def get_or_compute(self, key: str, compute_fn: Callable[[], Any]) -> Any:
+        """Return the cached value for `key`, or call `compute_fn()`, cache, and return it.
+
+        ``compute_fn`` must be a zero-argument callable.  Storing ``None`` is
+        supported — a sentinel distinct from 'not yet computed' is used internally.
+        """
+        _MISSING = object.__new__(object)  # local sentinel type unused for check
+        if key not in self._cache:
+            self._cache[key] = compute_fn()
+        return self._cache[key]
+
+    # A2 — per-Lagna functional nature ----------------------------------------
+    def functional_nature(self, planet: str) -> Nature:
+        """Per-Lagna functional nature of `planet` for this chart's ascendant.
+
+        Returns one of ``"benefic" | "malefic" | "neutral" | "yogakaraka" | "maraka"``.
+        Result is memoised via :meth:`get_or_compute`.
+        Source: HTJAH-I:523-604 + yogakaraka overlay.
+        """
+        return self.get_or_compute(
+            f"_fn_{planet}",
+            lambda: compute_functional_nature(self.chart.asc_sign, planet),
+        )
 
 
 class Condition(ABC):

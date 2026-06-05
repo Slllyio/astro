@@ -120,19 +120,26 @@ built. Now the bulk **rule ENCODING** can proceed.
   (parametrized: citation resolves on-disk + evaluable has a condition) — add new house modules to its
   `ALL_RULE_SETS` list.
 
-**▶ RESUME next — scale the encoding (the large repetitive heart of Phase 2):**
-1. **Encode each house** into `doctrine/rule_sets/house_NN_*.py` following the House-7 template: read
-   `methodology/house_NN_*.md`, encode each evaluable combination as a `RuleRecord` (Condition tree +
-   real `Citation`), register the module in `test_rule_sets.ALL_RULE_SETS`. The lord-in-12-houses table
-   (`LordIn(h,n)`) is the cleanest bulk unit per house; then planets-in-house, combinations, Kuja-Dosha (H7).
-2. **Still-to-add predicates** (on demand): varga overlays `InVargaHouseFrom`/`VargaHouseDist` (C2);
-   KARAKA/STRONGEST_OF/KARAKAMSA origins; `Strongest`/`Weakest` (Shadbala); `TaraOf`; sphuta/Saham.
-3. (legacy note) Encode the **evaluable/descriptive `RuleRecord`s** from the 12
-`methodology/house_NN_*.md` files (spec §5.2, §5.4): skeleton-parse each house table → auto-fill
-id/house/signification/group/fortified-afflicted/frame/varga/source → hand/agent-fill `condition` for
-`kind="evaluable"` rows. A test asserts **every RuleRecord cites a real on-disk corpus line**. The Phase-1
-primitives are the facts those conditions read. Then **3** (house judges + overview), **4** (longevity),
-**5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via
+- **Lord-in-12 layer COMPLETE for ALL 12 houses** (commits `6673978`,`6d622ee`). 147 cited RuleRecords
+  in `doctrine/rule_sets/house_NN_*.py` (12×12 `LordIn` + 3 House-7 from-Venus), parallel-encoded by
+  subagents, every citation guard-verified on-disk. `rule_sets/__init__.ALL_RULES` aggregates them.
+- **Rule-firing bridge — DONE** (commit `485cd6a`; 3 tests). `judges/rule_firing.py`:
+  `fire_rules(chart)` / `fire_house(chart, h)` fire every evaluable rule whose condition holds, choosing
+  the **fortified vs afflicted branch by the bhava-lord's Shadbala** (`is_powerful`). **The engine now
+  produces a cited, deterministic house reading from birth data** (demoed live on the Bangalore chart:
+  per-house lord placement + branch + corpus citation).
+
+**▶ RESUME next:**
+1. **More rule layers** (same parallel template, register in `test_rule_sets.ALL_RULE_SETS`):
+   planets-in-house (`InRashiHouse(graha,N)`, 9/house), important combinations, special grids
+   (Kuja-Dosha H7, disease H6, decanate-cause H8). 482 tests green.
+2. **Phase 3 — the full house judge** (`judges/house_template.py`, spec §6): per-signification
+   sub-verdicts via the karaka routing + the StrengthLedger → ordinal verdict
+   (favourable/mixed/afflicted/insufficient-evidence). `rule_firing` is its substrate.
+3. **Still-to-add predicates** (on demand): varga overlays C2; KARAKA/STRONGEST_OF/KARAKAMSA origins;
+   `Strongest`/`Weakest`; `TaraOf`; sphuta/Saham.
+
+Then **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via
 `tests/fixtures/raman_goldens.jsonl`, spec §11.1).
 
 ## Locked decisions / gotchas (do NOT relitigate)

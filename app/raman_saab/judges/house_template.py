@@ -1,0 +1,538 @@
+"""Per-signification house judge (NEW engine) — `judges/house_template.py`.
+
+This is the spec §6.1 refinement of the house-level judge (`house_judge.py`,
+left untouched): instead of one verdict per Bhava, each **signification**
+(sub-matter — e.g. H4 mother / education / property) is judged through its own
+karaka, in up to three frames (LAGNA / MOON / KARAKA), each producing a
+``FrameLedger`` of strength + evidence. ``_decide`` collapses a ledger to an
+ordinal ``Verdict``; ``judge_house`` aggregates the per-signification verdicts
+into a ``HouseProforma`` whose :meth:`HouseProforma.as_house_verdict` reproduces
+the legacy :class:`house_judge.HouseVerdict` so the two engines are swappable.
+
+Frame scoping
+-------------
+* LAGNA  — always built. Lord = sign-lord of the house counted from the Lagna.
+* MOON   — always built. Lord = sign-lord of the house counted from the Moon's
+           rasi-house (Chandra-Lagna). Karaka is the natural karaka (frame-free).
+* KARAKA — built ONLY when ``sig.alternate_frame_core`` is set (mother→Moon-as-Lagna,
+           spouse→Venus-as-Lagna, father→Sun-as-Lagna, …). Lord = sign-lord of the
+           house counted from the alternate-core planet's sign.
+
+Lead frame = the frame whose LORD has the larger total Shadbala (LAGNA vs MOON);
+on Track-B (no Shadbala) the lead defaults to LAGNA. The KARAKA frame, when
+present, rides as an alternate ledger (its longevity use lands in Phase E).
+
+Decision order in ``_decide`` is LOAD-BEARING — see the inline numbering.
+
+Usage:
+    from app.raman_saab.judges import house_template as ht
+    pf = ht.judge_house(chart, 4)          # HouseProforma for the 4th
+    for sv in pf.significations:
+        print(sv.signification, sv.verdict, sv.lead_frame)
+    legacy_shaped = pf.as_house_verdict()  # drop-in HouseVerdict
+"""
+from __future__ import annotations
+
+import dataclasses
+from dataclasses import dataclass, field
+from typing import Literal, Optional
+
+from app.raman_saab.chart.constants import SIGN_LORDS
+from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.chart import varga
+from app.raman_saab.doctrine.conditions import EvalContext
+from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
+from app.raman_saab.doctrine.significations import Signification, significations_of
+from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.judges import rule_firing as rf
+from app.raman_saab.judges.house_judge import HouseVerdict
+from app.raman_saab.primitives import relationships as r
+from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
+from app.raman_saab.primitives.dignity import dignity
+from app.raman_saab.primitives.shadbala import bhava_bala as bhava_bala_mod
+from app.raman_saab.primitives.shadbala import total as shadbala_total
+
+Verdict = Literal["favourable", "mixed", "afflicted", "insufficient-evidence"]
+Frame = Literal["lagna", "moon", "karaka"]
+NavStatus = Literal["confirms", "weakens", "neutral", "unknown"]
+
+# Combust thresholds for the karaka-intact "graded combustion" test. Saturn and Venus
+# use a HIGHER bar (a larger combust_fraction is required to count as a true affliction)
+# because they are easily eclipsed yet doctrinally resilient. NOVEL engine heuristic —
+# NOT cited to Raman; tune here.
+_COMBUST_HARD_FRACTION: float = 0.5            # default: half-combust counts
+_COMBUST_HARD_FRACTION_HIGH: float = 0.85      # Saturn / Venus: near-total combustion only
+_HIGH_COMBUST_PLANETS: frozenset[str] = frozenset({"Saturn", "Venus"})
+
+# Dusthana houses (6/8/12) counted from the navamsa lagna weaken the D9 verdict.
+_D9_WEAK_HOUSES: frozenset[int] = frozenset({6, 8, 12})
+
+
+# ---------------------------------------------------------------------------
+# Dataclasses
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class FrameLedger:
+    """One frame's strength + evidence record for a single signification."""
+    frame: Frame
+    lord: str
+    lord_strong: Optional[bool]           # None on Track-B (no Shadbala)
+    karaka: str
+    karaka_strong: Optional[bool]
+    bhava_bala: Optional[float]           # Shashtiamsas; None on Track-B
+    bhava_bala_strong: Optional[bool]
+    navamsa_status: NavStatus
+    karaka_intact: bool
+    maraka_active: bool
+    parivartana_resilient: bool
+    lord_karaka_identical: bool
+    fired_benefic: tuple[rf.FiredRule, ...]
+    fired_malefic: tuple[rf.FiredRule, ...]
+    fired_neutral: tuple[rf.FiredRule, ...]
+    flags: tuple[str, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True)
+class SignificationVerdict:
+    """A single sub-matter's verdict, its lead frame, and the alternate ledgers."""
+    house: int
+    signification: str
+    verdict: Verdict
+    karaka: str
+    lead_frame: Frame
+    ledger: FrameLedger
+    alt_ledgers: tuple[FrameLedger, ...]
+    borderline_shifted: bool
+
+
+@dataclass(frozen=True)
+class HouseProforma:
+    """Every signification of a house + the rolled-up house verdict."""
+    house: int
+    lord: str
+    significations: tuple[SignificationVerdict, ...]
+    rollup: Verdict
+
+    def as_house_verdict(self) -> HouseVerdict:
+        """Reproduce the legacy house-level :class:`HouseVerdict` (drop-in compatibility).
+
+        Lord/karaka are the lead signification's; the verdict is the house rollup;
+        the fired-rule evidence is the de-duplicated union across every signification.
+        """
+        karaka = BHAVA_KARAKA.get(self.house, "Sun")
+        benefic: list[rf.FiredRule] = []
+        malefic: list[rf.FiredRule] = []
+        neutral: list[rf.FiredRule] = []
+        seen_b: set[str] = set()
+        seen_m: set[str] = set()
+        seen_n: set[str] = set()
+        for sv in self.significations:
+            for fr in sv.ledger.fired_benefic:
+                if fr.rule.id not in seen_b:
+                    seen_b.add(fr.rule.id); benefic.append(fr)
+            for fr in sv.ledger.fired_malefic:
+                if fr.rule.id not in seen_m:
+                    seen_m.add(fr.rule.id); malefic.append(fr)
+            for fr in sv.ledger.fired_neutral:
+                if fr.rule.id not in seen_n:
+                    seen_n.add(fr.rule.id); neutral.append(fr)
+        # Lead lord/karaka strength: take the lead signification's lagna-frame ledger
+        lead = self.significations[0] if self.significations else None
+        lord_strong = lead.ledger.lord_strong if lead else None
+        karaka_strong = lead.ledger.karaka_strong if lead else None
+        return HouseVerdict(
+            house=self.house, verdict=self.rollup, lord=self.lord, karaka=karaka,
+            lord_strong=lord_strong, karaka_strong=karaka_strong,
+            benefic=tuple(benefic), malefic=tuple(malefic), neutral=tuple(neutral))
+
+
+# ---------------------------------------------------------------------------
+# Small helpers (reuse legacy semantics)
+# ---------------------------------------------------------------------------
+
+def _lord_of_sign(sign: int, house_offset: int) -> str:
+    """Sign-lord of the house `house_offset` (1..12) counted from rising `sign` (1..12)."""
+    return SIGN_LORDS[((sign - 1) + (house_offset - 1)) % 12 + 1]
+
+
+def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
+    """Legacy ``house_judge._strong`` semantics: None on Track-B, else is_powerful."""
+    p = chart.planets.get(planet)
+    if p is None or p.shadbala_rupas is None:
+        return None
+    return shadbala_total.is_powerful(planet, p.shadbala_rupas.total / 60.0)
+
+
+def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
+    p = chart.planets.get(planet)
+    if p is None or p.shadbala_rupas is None:
+        return None
+    return p.shadbala_rupas.total
+
+
+# ---------------------------------------------------------------------------
+# Decision rule — ORDER IS LOAD-BEARING.
+# ---------------------------------------------------------------------------
+
+def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
+    """D9 only nudges a BORDERLINE 'mixed'; decisive favourable/afflicted never shift."""
+    if base in ("favourable", "afflicted"):
+        return base, False
+    if L.navamsa_status == "confirms" and base == "mixed":
+        return "favourable", True
+    if L.navamsa_status == "weakens" and base == "mixed":
+        return "afflicted", True
+    return base, False
+
+
+def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
+    """Collapse a ledger to (verdict, borderline_shifted). The clause order matters."""
+    # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
+    if not L.karaka_intact:
+        return _navamsa_modulate("afflicted", L)
+    # 2. contradiction — show, never hide, when benefic and malefic both fire.
+    if L.fired_benefic and L.fired_malefic:
+        return _navamsa_modulate("mixed", L)
+    # 3. Track-B fallback — no Shadbala -> decide on rule polarity / maraka alone.
+    if L.lord_strong is None or L.karaka_strong is None:
+        if L.fired_malefic or L.maraka_active:
+            base: Verdict = "afflicted"
+        elif L.fired_benefic:
+            base = "favourable"
+        else:
+            base = "insufficient-evidence"
+        return _navamsa_modulate(base, L)
+    # 4. both pillars known.
+    both_strong = bool(L.lord_strong) and bool(L.karaka_strong)
+    bhava_ok = (L.bhava_bala_strong is True) or (L.bhava_bala_strong is None)
+    weak_pillar = (not L.lord_strong) or (not L.karaka_strong)
+    # 5. clean strength + supportive bhava + no malefic -> favourable.
+    if both_strong and bhava_ok and not L.fired_malefic:
+        base = "favourable"
+    # 6. a weak pillar with malefic / weak-bhava / maraka pressure -> afflicted...
+    elif weak_pillar and (L.fired_malefic or L.bhava_bala_strong is False or L.maraka_active):
+        base = "afflicted"
+        # KARAKA-SALVAGE: a decisively strong karaka rescues a weak-lord, lone-malefic
+        # afflicted to mixed (a powerful significator can still deliver the matter).
+        # HTJAH-I:503-505 (the karaka can carry the bhava when the lord is wanting).
+        if L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
+            base = "mixed"
+    # 7. nothing fired at all -> insufficient-evidence.
+    elif not (L.fired_benefic or L.fired_malefic or L.fired_neutral):
+        base = "insufficient-evidence"
+    # 8. everything else is a genuine borderline -> mixed.
+    else:
+        base = "mixed"
+    # 9. final D9 modulation of a borderline mixed.
+    return _navamsa_modulate(base, L)
+
+
+# ---------------------------------------------------------------------------
+# Ledger construction
+# ---------------------------------------------------------------------------
+
+def _frame_lord(chart: RamanChart, sig: Signification, frame: Frame) -> Optional[str]:
+    """The bhava-lord for `frame`. None when a frame cannot be built (missing planet)."""
+    if frame == "lagna":
+        return _lord_of_sign(chart.asc_sign, sig.house)
+    if frame == "moon":
+        moon = chart.planets.get("Moon")
+        if moon is None:
+            return None
+        return _lord_of_sign(moon.sign, sig.house)
+    # KARAKA frame: alternate-core planet's sign acts as the rising sign.
+    core = chart.planets.get(sig.alternate_frame_core) if sig.alternate_frame_core else None
+    if core is None:
+        return None
+    return _lord_of_sign(core.sign, sig.house)
+
+
+def _navamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
+    """Confirm/weaken from D9 — works on Track-B via PlanetPos.navamsa_sign.
+
+    confirms : either lord or karaka is vargottama or D9-exalted/own.
+    weakens  : either is D9-debilitated, or sits in a 6/8/12 from the navamsa lagna.
+    unknown  : navamsa data absent for both pillars.
+    """
+    nav_lagna_sign = varga.navamsa_sign(chart.asc_lon)
+    saw_any = False
+    confirms = False
+    weakens = False
+    for name in (lord, karaka):
+        p = chart.planets.get(name)
+        if p is None:
+            continue
+        nav = getattr(p, "navamsa_sign", None)
+        if nav is None:
+            continue
+        saw_any = True
+        # confirms: vargottama, or D9 sign is the planet's exaltation/own sign.
+        if p.vargottama:
+            confirms = True
+        elif name in r.EXALTATION and nav == r.EXALTATION[name][0]:
+            confirms = True
+        elif SIGN_LORDS.get(nav) == name:
+            confirms = True
+        # weakens: D9 debilitation, or 6/8/12 from the navamsa lagna.
+        if name in r.DEBILITATION and nav == r.DEBILITATION[name][0]:
+            weakens = True
+        d9_house = ((nav - nav_lagna_sign) % 12) + 1
+        if d9_house in _D9_WEAK_HOUSES:
+            weakens = True
+    if not saw_any:
+        return "unknown"
+    if confirms and not weakens:
+        return "confirms"
+    if weakens and not confirms:
+        return "weakens"
+    return "neutral"
+
+
+def _combust_graded(planet: str, chart: RamanChart) -> bool:
+    """Is `planet` combust beyond its graded threshold? Saturn/Venus need near-total
+    combustion (NOVEL engine heuristic, NOT Raman-stated)."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return False
+    thresh = _COMBUST_HARD_FRACTION_HIGH if planet in _HIGH_COMBUST_PLANETS else _COMBUST_HARD_FRACTION
+    return p.combust_fraction >= thresh
+
+
+def _debilitated_uncancelled(planet: str, chart: RamanChart) -> bool:
+    p = chart.planets.get(planet)
+    if p is None:
+        return False
+    return dignity(planet, chart) == "debil" and not neecha_bhanga(planet, chart)
+
+
+def _maraka_grahas(chart: RamanChart) -> frozenset[str]:
+    """The maraka graha set from chart.maraka_points (empty when absent / Track-B)."""
+    mp = chart.maraka_points
+    if mp is None:
+        return frozenset()
+    return frozenset(u.graha for u in mp.units)
+
+
+def _karaka_intact(karaka: str, chart: RamanChart, marakas: frozenset[str]) -> bool:
+    """A karaka is NOT intact only when triply afflicted: combust (graded) AND
+    debilitated-uncancelled AND a maraka hit. Any single affliction is survivable."""
+    maraka_hit = karaka in marakas
+    return not (_combust_graded(karaka, chart)
+                and _debilitated_uncancelled(karaka, chart)
+                and maraka_hit)
+
+
+def _parivartana_pairs(chart: RamanChart, ctx: EvalContext) -> frozenset[frozenset[str]]:
+    """All bhava-lord exchange pairs, cached on the EvalContext. Returns a set of
+    2-element frozensets of planet names."""
+    def _compute() -> frozenset[frozenset[str]]:
+        pairs: set[frozenset[str]] = set()
+        for h1 in range(1, 13):
+            for h2 in range(h1 + 1, 13):
+                if parivartana(h1, h2, chart):
+                    l1 = _lord_of_sign(chart.asc_sign, h1)
+                    l2 = _lord_of_sign(chart.asc_sign, h2)
+                    if l1 != l2:
+                        pairs.add(frozenset({l1, l2}))
+        return frozenset(pairs)
+
+    return ctx.get_or_compute("parivartana_pairs", _compute)
+
+
+def _in_parivartana(planet: str, pairs: frozenset[frozenset[str]]) -> bool:
+    return any(planet in pair for pair in pairs)
+
+
+def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
+    """Total Bhava Bala (Shashtiamsas) for `house`, or None on Track-B (no madhyas)."""
+    if not chart.bhava_madhyas or len(chart.bhava_madhyas) < house:
+        return None
+    lord = _lord_of_sign(chart.asc_sign, house)
+    lord_sb = _total_shadbala(lord, chart)
+    if lord_sb is None:
+        return None
+    madhya = chart.bhava_madhyas[house - 1]
+    bhava_sign = int(madhya // 30) + 1
+    bhava_sign_deg = madhya % 30.0
+    return bhava_bala_mod.bhava_bala(
+        house, chart, lord_shadbala=lord_sb, bhava_madhya=madhya,
+        bhava_sign=bhava_sign, bhava_sign_deg=bhava_sign_deg)
+
+
+def _bucket_fired(
+    chart: RamanChart, sig: Signification, ctx: EvalContext,
+) -> tuple[tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...], tuple[rf.FiredRule, ...]]:
+    """Fired rules for this house filtered to the signification's rule_tags, bucketed by
+    polarity. Functional-nature overlay: a fired rule whose subject planet is a functional
+    MALEFIC for this Lagna counts toward malefic even if its static polarity is neutral."""
+    tags = set(sig.rule_tags)
+    benefic: list[rf.FiredRule] = []
+    malefic: list[rf.FiredRule] = []
+    neutral: list[rf.FiredRule] = []
+    for fr in rf.fire_house(chart, sig.house):
+        if tags and fr.rule.signification not in tags:
+            continue
+        pol = fr.rule.polarity
+        if pol in ("malefic", "maraka"):
+            malefic.append(fr)
+        elif pol == "benefic":
+            benefic.append(fr)
+        else:
+            # neutral by static polarity; promote to malefic if its subject planet is a
+            # functional malefic for this Lagna (HTJAH-I:523-604 functional-nature overlay).
+            subj = _rule_subject(fr.rule)
+            if subj is not None and subj in chart.planets and \
+                    ctx.functional_nature(subj) == "malefic":
+                malefic.append(fr)
+            else:
+                neutral.append(fr)
+    return tuple(benefic), tuple(malefic), tuple(neutral)
+
+
+def _rule_subject(rule) -> Optional[str]:
+    """Best-effort subject planet of a rule, parsed from its id (e.g. 'H8.P.Saturn').
+
+    Rule ids encode the planet in the trailing component for planet-in-house rules
+    (``H<h>.P.<Planet>``). Returns None when no planet token is present (lord/combination
+    rules), in which case the functional-nature overlay simply does not apply."""
+    parts = rule.id.split(".")
+    if len(parts) >= 3 and parts[1] == "P":
+        cand = parts[2]
+        # strip any trailing sub-id letters (e.g. 'Saturn1' is not expected, but be safe)
+        for planet in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus",
+                       "Saturn", "Rahu", "Ketu"):
+            if cand.startswith(planet):
+                return planet
+    return None
+
+
+def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame) -> FrameLedger:
+    """Assemble the FrameLedger for one signification in one frame."""
+    ctx = EvalContext(chart)
+    lord = _frame_lord(chart, sig, frame) or _lord_of_sign(chart.asc_sign, sig.house)
+    karaka = sig.primary_karaka
+
+    flags: list[str] = []
+    lord_karaka_identical = (lord == karaka)
+    if lord_karaka_identical:
+        flags.append("LORD_KARAKA_IDENTITY")
+
+    # Strength pillars. When lord==karaka the two pillars are collapsed to a single value
+    # so one affliction is not double-counted.
+    lord_strong = _strong(lord, chart)
+    karaka_strong = lord_strong if lord_karaka_identical else _strong(karaka, chart)
+
+    marakas = _maraka_grahas(chart)
+    pairs = _parivartana_pairs(chart, ctx)
+    parivartana_resilient = _in_parivartana(lord, pairs) or _in_parivartana(karaka, pairs)
+
+    # parivartana leniency: a lord/karaka in an exchange bypasses an inimical/debilitation
+    # penalty — treat a debil-but-exchanged pillar as not-weak.
+    if parivartana_resilient:
+        if lord_strong is False and _in_parivartana(lord, pairs) \
+                and _debilitated_uncancelled(lord, chart):
+            lord_strong = True
+        if karaka_strong is False and _in_parivartana(karaka, pairs) \
+                and _debilitated_uncancelled(karaka, chart):
+            karaka_strong = True
+        if lord_karaka_identical:
+            karaka_strong = lord_strong
+
+    bb = _bhava_bala_for(chart, sig.house)
+    bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)
+
+    navamsa_status = _navamsa_status(lord, karaka, chart)
+    karaka_intact = _karaka_intact(karaka, chart, marakas)
+    maraka_active = bool(marakas) and (lord in marakas or karaka in marakas)
+
+    benefic, malefic, neutral = _bucket_fired(chart, sig, ctx)
+
+    # Longevity guard: do not let death/maraka drive a verdict while longevity is unknown
+    # (Phase E). maraka_active still informs strength; we only flag the gap here.
+    if "longevity" in sig.rule_tags or "death" == sig.key:
+        flags.append("LONGEVITY_UNKNOWN")
+    if maraka_active:
+        flags.append("LONGEVITY_UNKNOWN")
+
+    return FrameLedger(
+        frame=frame, lord=lord, lord_strong=lord_strong, karaka=karaka,
+        karaka_strong=karaka_strong, bhava_bala=bb, bhava_bala_strong=bb_strong,
+        navamsa_status=navamsa_status, karaka_intact=karaka_intact,
+        maraka_active=maraka_active, parivartana_resilient=parivartana_resilient,
+        lord_karaka_identical=lord_karaka_identical,
+        fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
+        flags=tuple(dict.fromkeys(flags)))
+
+
+# ---------------------------------------------------------------------------
+# Per-signification + per-house judging
+# ---------------------------------------------------------------------------
+
+def judge_signification(chart: RamanChart, house: int, sig: Signification) -> SignificationVerdict:
+    """Judge one sub-matter across its frames; lead = stronger of LAGNA/MOON by lord Shadbala."""
+    lagna = _build_frame_ledger(chart, sig, "lagna")
+    moon = _build_frame_ledger(chart, sig, "moon")
+    others: list[FrameLedger] = []
+
+    # Lead selection by lord total Shadbala; Track-B -> LAGNA.
+    lagna_sb = _total_shadbala(lagna.lord, chart)
+    moon_sb = _total_shadbala(moon.lord, chart)
+    if lagna_sb is None or moon_sb is None:
+        lead = lagna
+        others.append(moon)
+    elif moon_sb > lagna_sb:
+        lead = moon
+        others.append(lagna)
+    else:
+        lead = lagna
+        others.append(moon)
+
+    if sig.alternate_frame_core and sig.alternate_frame_core in chart.planets:
+        others.append(_build_frame_ledger(chart, sig, "karaka"))
+
+    verdict, shifted = _decide(lead)
+    return SignificationVerdict(
+        house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
+        lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
+        borderline_shifted=shifted)
+
+
+def _default_sig(house: int) -> Signification:
+    """Fallback signification for a house with no encoded sub-matters: the BHAVA_KARAKA."""
+    return Signification(
+        key="general", house=house, primary_karaka=BHAVA_KARAKA.get(house, "Sun"),
+        rule_tags=(), source=Citation("HTJAH-I", 983))
+
+
+_ROLLUP_ORDER: dict[Verdict, int] = {
+    "afflicted": 0, "mixed": 1, "insufficient-evidence": 2, "favourable": 3,
+}
+
+
+def _rollup(verdicts: tuple[Verdict, ...]) -> Verdict:
+    """Deterministic house rollup precedence:
+
+    * if BOTH a 'mixed' and a 'favourable' are present -> 'mixed' (a contradicted house
+      cannot read as cleanly favourable);
+    * otherwise the worst present, ordered afflicted > mixed > insufficient-evidence > favourable.
+    """
+    if not verdicts:
+        return "insufficient-evidence"
+    present = set(verdicts)
+    if "mixed" in present and "favourable" in present:
+        return "mixed"
+    return min(verdicts, key=lambda v: _ROLLUP_ORDER[v])
+
+
+def judge_house(chart: RamanChart, house: int) -> HouseProforma:
+    """All significations of `house` judged, plus the rolled-up house verdict."""
+    sigs = significations_of(house) or (_default_sig(house),)
+    svs = tuple(judge_signification(chart, house, s) for s in sigs)
+    rollup = _rollup(tuple(sv.verdict for sv in svs))
+    lord = _lord_of_sign(chart.asc_sign, house)
+    return HouseProforma(house=house, lord=lord, significations=svs, rollup=rollup)
+
+
+def judge_all_houses(chart: RamanChart) -> list[HouseProforma]:
+    return [judge_house(chart, h) for h in range(1, 13)]

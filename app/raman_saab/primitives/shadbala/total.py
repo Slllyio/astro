@@ -13,6 +13,14 @@ from typing import Final
 
 from app.raman_saab.chart.model import ShadbalaBreakdown
 
+# Minimum-required total Bhava Bala in Shashtiamsas for a house to count as "strong".
+# GOLDEN-TUNED (not a Raman-stated threshold): Raman gives no numeric Bhava-Bala cut-off,
+# so this is an engine band chosen to separate well-supported bhavas from weak ones on the
+# canonical charts. Bhava Bala = Bhavadhipati (lord total Shadbala) + Bhavadig (0..60) +
+# Bhava Drig (signed). A lord meeting ~5-6 Rupas (300-360 Shashtiamsas) plus a middling
+# Bhavadig already clears this; document any retune here.
+BHAVA_BALA_MIN_SH: Final[float] = 300.0
+
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
 MIN_REQUIRED: Final[dict[str, float]] = {
     "Sun": 5.0,

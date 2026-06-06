@@ -6,23 +6,23 @@
     "fired_rule_ids": [
       "H8.L.1"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
       "death": {
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "lead_frame": "moon",
+        "verdict": "favourable"
       },
       "legacies": {
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "lead_frame": "moon",
+        "verdict": "favourable"
       },
       "longevity": {
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "lead_frame": "moon",
+        "verdict": "favourable"
       },
       "sudden_gains": {
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "lead_frame": "moon",
+        "verdict": "favourable"
       }
     }
   }

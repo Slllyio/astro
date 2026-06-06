@@ -35,6 +35,7 @@ example beside its machine record without breaking the parser.
 | `track_eligibility` | array of `"A"`\|`"B"`\|`"3"` | yes | Which tiers may run this record. `"A"`=astronomy (needs full birth), `"B"`=doctrine, `"3"`=evidence snapshot. |
 | `confidence` | float 0..1 | yes | Curator's confidence the record faithfully captures Raman's verdict. Informational; the tuner may weight by it. |
 | `citations` | array of string | yes | Source pointers, `"<work>:<line>"` form, e.g. `["HTJAH-I:1068"]`. At least one for non-`self_test` records. |
+| `_note` | string | no | Optional provenance/curation note (e.g. an OCR-correction explanation: dropped `W` hemisphere, a degrees-as-hours longitude, a corrected ayanamsa-cusp Lagna). Ignored by the harness; kept for human traceability. |
 
 ### `case_type`
 
@@ -153,6 +154,11 @@ full `birth`; Track B also needs ≥1 `CONFIRMED` verdict). Typical values:
    `{death_date}` ISO date.
 10. A `self_test` record must have `verdict_review == "CONFIRMED"` on every verdict
     (it is a regression anchor and must always assert).
+11. **Case-type structural invariants (schema guard #5).** A `doctrine_statement`
+    record carries no chart to judge, so it must have **empty** `stated_positions`
+    **and** empty `expected_verdicts` (it pins a prose claim only). A `rule_level`
+    record synthesises a minimal chart for a single combination, so it may pin **at
+    most one** `expected_verdicts` house (`len(expected_verdicts) <= 1`).
 
 ---
 

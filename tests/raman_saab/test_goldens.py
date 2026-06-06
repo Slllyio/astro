@@ -233,6 +233,21 @@ def test_golden_line_conforms_to_schema(rec: dict[str, Any]) -> None:
         for entry in rec["expected_verdicts"].values():
             assert _is_confirmed(entry), f"{_id(rec)}: self_test verdicts must be CONFIRMED"
 
+    # SCHEMA GUARD #5 (validation rule #11): case_type structural invariants.
+    # A doctrine_statement is a prose claim with NO chart to judge -> it must carry
+    # empty stated_positions AND empty expected_verdicts (nothing is asserted).
+    if rec["case_type"] == "doctrine_statement":
+        assert rec["expected_verdicts"] == {}, \
+            f"{_id(rec)}: doctrine_statement must have empty expected_verdicts"
+        assert rec["stated_positions"] == {}, \
+            f"{_id(rec)}: doctrine_statement must have empty stated_positions"
+    # A rule_level golden pins ONE combination on a minimal synthesised chart, so it
+    # may assert at most its single rule house (one expected_verdicts key).
+    if rec["case_type"] == "rule_level":
+        assert len(rec["expected_verdicts"]) <= 1, \
+            f"{_id(rec)}: rule_level pins at most its single rule house, got " \
+            f"{sorted(rec['expected_verdicts'])}"
+
 
 def test_at_least_one_golden_loaded() -> None:
     """The fixture is non-empty (the loader saw at least the self-test anchor)."""
@@ -245,6 +260,45 @@ def test_at_least_one_golden_loaded() -> None:
 
 # Module-level audit log of cusp-proximate placements (logged, never hard-failed).
 TRACK_A_AUDIT: list[dict[str, Any]] = []
+
+
+@pytest.mark.skipif(not _TRACK_A_RECORDS, reason="no Track-A goldens (need full birth)")
+@pytest.mark.parametrize("rec", _TRACK_A_RECORDS,
+                         ids=[_id(r) for r in _TRACK_A_RECORDS] or ["<none>"])
+def test_track_a_lagna_sign_matches_printed(rec: dict[str, Any]) -> None:
+    """The FRESH-CAST Lagna (Ascendant) sign equals Raman's printed ``lagna_sign``.
+
+    This operationalises the locked rule "computed degrees must match Raman printed
+    positions" without transcribing full planet tables — it leans only on the
+    already-populated ``lagna_sign``. A record whose ``lagna_sign`` is ``null`` (the
+    book gave no Lagna) is skipped. An Ascendant within +-2 deg of a sign boundary
+    (bhava sandhi) is AUDIT-LOGGED rather than hard-failed (a one-sign cusp drift from
+    Raman's printed label is doctrinally acceptable); a >1-sign mismatch, or a
+    one-sign mismatch away from a cusp, IS a hard failure."""
+    printed_lagna = rec.get("lagna_sign")
+    if printed_lagna is None:
+        pytest.skip(f"{_id(rec)}: no printed lagna_sign to check")
+    chart = build_chart(rec)
+    computed = int(chart.asc_sign)
+    printed = int(printed_lagna)
+    if computed == printed:
+        return
+    # One-sign-off near a cusp -> audit, never hard-fail. Distance of the Ascendant
+    # to the nearest sign boundary (cusp at every 30 deg).
+    deg_in_sign = chart.asc_lon % 30.0
+    dist_to_cusp = min(deg_in_sign, 30.0 - deg_in_sign)
+    sign_gap = min((computed - printed) % 12, (printed - computed) % 12)
+    if sign_gap == 1 and dist_to_cusp <= _SANDHI_ORB_DEG:
+        TRACK_A_AUDIT.append({
+            "id": _id(rec), "planet": "Lagna", "lon": round(chart.asc_lon, 4),
+            "computed_sign": computed, "printed_sign": printed,
+            "dist_to_cusp": round(dist_to_cusp, 4),
+        })
+        return
+    raise AssertionError(
+        f"{_id(rec)}: fresh-cast Lagna sign {computed} != printed {printed} "
+        f"(asc_lon={chart.asc_lon:.4f}, dist_to_cusp={dist_to_cusp:.4f}, "
+        f"sign_gap={sign_gap}) -- not a within-sandhi one-sign drift")
 
 
 @pytest.mark.skipif(not _TRACK_A_RECORDS, reason="no Track-A goldens (need full birth)")

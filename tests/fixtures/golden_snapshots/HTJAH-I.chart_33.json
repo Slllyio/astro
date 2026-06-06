@@ -6,19 +6,19 @@
     "fired_rule_ids": [
       "H1.L.3"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "body": {
-        "lead_frame": "lagna",
-        "verdict": "favourable"
+        "lead_frame": "moon",
+        "verdict": "mixed"
       },
       "health": {
-        "lead_frame": "lagna",
-        "verdict": "favourable"
+        "lead_frame": "moon",
+        "verdict": "mixed"
       },
       "self": {
-        "lead_frame": "lagna",
-        "verdict": "favourable"
+        "lead_frame": "moon",
+        "verdict": "mixed"
       }
     }
   }

@@ -110,12 +110,14 @@ class _ApplyThresholds:
         self._saved_bb = shadbala_total.BHAVA_BALA_MIN_SH
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self.th.min_required)
-        shadbala_total.BHAVA_BALA_MIN_SH = self.th.bhava_bala_min  # type: ignore[misc]
+        # BHAVA_BALA_MIN_SH is a documented golden-tuned knob (NOT typing.Final), so
+        # the tuner may rebind it directly without a type:ignore.
+        shadbala_total.BHAVA_BALA_MIN_SH = self.th.bhava_bala_min
 
     def __exit__(self, *exc: Any) -> None:
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self._saved_min or {})
-        shadbala_total.BHAVA_BALA_MIN_SH = self._saved_bb  # type: ignore[misc]
+        shadbala_total.BHAVA_BALA_MIN_SH = self._saved_bb
 
 
 # ---------------------------------------------------------------------------

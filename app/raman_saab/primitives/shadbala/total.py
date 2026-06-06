@@ -9,8 +9,6 @@ Usage:
 """
 from __future__ import annotations
 
-from typing import Final
-
 from app.raman_saab.chart.model import ShadbalaBreakdown
 
 # Minimum-required total Bhava Bala in Shashtiamsas for a house to count as "strong".
@@ -19,10 +17,15 @@ from app.raman_saab.chart.model import ShadbalaBreakdown
 # canonical charts. Bhava Bala = Bhavadhipati (lord total Shadbala) + Bhavadig (0..60) +
 # Bhava Drig (signed). A lord meeting ~5-6 Rupas (300-360 Shashtiamsas) plus a middling
 # Bhavadig already clears this; document any retune here.
-BHAVA_BALA_MIN_SH: Final[float] = 300.0
+#
+# NOTE: deliberately NOT typed ``Final`` — this is a documented golden-tuned knob.
+# ``tools/raman_saab/tune_thresholds.py`` rebinds it (under a save/restore context
+# manager) while scoring candidate thresholds against the golden corpus.
+BHAVA_BALA_MIN_SH: float = 300.0
 
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
-MIN_REQUIRED: Final[dict[str, float]] = {
+# Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.
+MIN_REQUIRED: dict[str, float] = {
     "Sun": 5.0,
     "Moon": 6.0,
     "Mars": 5.0,

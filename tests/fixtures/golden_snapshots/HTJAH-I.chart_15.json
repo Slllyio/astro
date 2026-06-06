@@ -1,0 +1,27 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1015",
+      "HTJAH-I:1532"
+    ],
+    "fired_rule_ids": [
+      "H1.L.3",
+      "H1.P.Venus"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "body": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "health": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "self": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

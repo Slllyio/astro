@@ -1,0 +1,33 @@
+{
+  "H8": {
+    "citations": [
+      "HTJAH-II:3001",
+      "HTJAH-II:3498",
+      "HTJAH-II:3531"
+    ],
+    "fired_rule_ids": [
+      "H8.L.8",
+      "H8.P.Jupiter",
+      "H8.P.Moon"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "death": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "legacies": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "longevity": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "sudden_gains": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      }
+    }
+  }
+}

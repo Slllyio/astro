@@ -1,0 +1,29 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1499",
+      "HTJAH-I:1519",
+      "HTJAH-I:997"
+    ],
+    "fired_rule_ids": [
+      "H1.L.1",
+      "H1.P.Mercury",
+      "H1.P.Sun"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "body": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "health": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "self": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

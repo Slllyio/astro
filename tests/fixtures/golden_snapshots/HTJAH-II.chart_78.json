@@ -1,0 +1,29 @@
+{
+  "H8": {
+    "citations": [
+      "HTJAH-II:2993"
+    ],
+    "fired_rule_ids": [
+      "H8.L.7"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "death": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "legacies": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "longevity": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "sudden_gains": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

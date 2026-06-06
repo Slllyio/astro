@@ -1,0 +1,27 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1078",
+      "HTJAH-I:1559"
+    ],
+    "fired_rule_ids": [
+      "H1.L.12",
+      "H1.P.Ketu"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "body": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "health": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "self": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

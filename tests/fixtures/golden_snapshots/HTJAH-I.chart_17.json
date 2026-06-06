@@ -1,0 +1,27 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1062",
+      "HTJAH-I:1559"
+    ],
+    "fired_rule_ids": [
+      "H1.L.9",
+      "H1.P.Ketu"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "body": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "health": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "self": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      }
+    }
+  }
+}

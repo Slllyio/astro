@@ -137,10 +137,22 @@ class HouseProforma:
             for fr in sv.ledger.fired_neutral:
                 if fr.rule.id not in seen_n:
                     seen_n.add(fr.rule.id); neutral.append(fr)
-        # Lead lord/karaka strength: take the lead signification's lagna-frame ledger
+        # Lord/karaka strength MUST describe the SAME planets reported in lord/karaka.
+        # `self.lord` is the LAGNA-frame bhava-lord; the lead signification's `ledger`
+        # may be the MOON-frame ledger (when the Moon-frame lord has the larger Shadbala),
+        # whose lord is frequently a DIFFERENT planet. Reading lord_strong off the lead
+        # ledger would pair the lagna lord's NAME with the moon lord's STRENGTH. So we
+        # locate the lagna-frame ledger explicitly for the strength readout.
         lead = self.significations[0] if self.significations else None
-        lord_strong = lead.ledger.lord_strong if lead else None
-        karaka_strong = lead.ledger.karaka_strong if lead else None
+        lord_strong: Optional[bool] = None
+        karaka_strong: Optional[bool] = None
+        if lead is not None:
+            lagna_ledger = next(
+                (L for L in (lead.ledger,) + lead.alt_ledgers if L.frame == "lagna"),
+                lead.ledger,
+            )
+            lord_strong = lagna_ledger.lord_strong
+            karaka_strong = lagna_ledger.karaka_strong
         return HouseVerdict(
             house=self.house, verdict=self.rollup, lord=self.lord, karaka=karaka,
             lord_strong=lord_strong, karaka_strong=karaka_strong,
@@ -188,35 +200,56 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
 
 def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     """Collapse a ledger to (verdict, borderline_shifted). The clause order matters."""
+    # Longevity guard (methodology §1 lines 39-42, §8): for a longevity/death matter the
+    # span class and maraka are owned by the Phase-E longevity sub-engine, which runs as a
+    # pre-pass and "gates and modulates all house judgment". This judge must NOT emit a
+    # death/afflicted verdict for such a matter — it defers to insufficient-evidence. The
+    # guard therefore (a) neutralises maraka_active's verdict-driving effect, (b) replaces
+    # the karaka VETO's afflicted with insufficient-evidence, and (c) clamps any afflicted
+    # the remaining clauses would produce to insufficient-evidence.
+    guarded = "LONGEVITY_GUARD" in L.flags
+    maraka_drives = L.maraka_active and not guarded
     # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
     if not L.karaka_intact:
+        if guarded:
+            return _navamsa_modulate("insufficient-evidence", L)
         return _navamsa_modulate("afflicted", L)
     # 2. contradiction — show, never hide, when benefic and malefic both fire.
     if L.fired_benefic and L.fired_malefic:
         return _navamsa_modulate("mixed", L)
     # 3. Track-B fallback — no Shadbala -> decide on rule polarity / maraka alone.
     if L.lord_strong is None or L.karaka_strong is None:
-        if L.fired_malefic or L.maraka_active:
+        if L.fired_malefic or maraka_drives:
             base: Verdict = "afflicted"
         elif L.fired_benefic:
             base = "favourable"
         else:
             base = "insufficient-evidence"
-        return _navamsa_modulate(base, L)
+        v, shifted = _navamsa_modulate(_clamp_longevity(base, guarded), L)
+        return _clamp_longevity(v, guarded), shifted
     # 4. both pillars known.
     both_strong = bool(L.lord_strong) and bool(L.karaka_strong)
     bhava_ok = (L.bhava_bala_strong is True) or (L.bhava_bala_strong is None)
+    bhava_strong = L.bhava_bala_strong is True
     weak_pillar = (not L.lord_strong) or (not L.karaka_strong)
     # 5. clean strength + supportive bhava + no malefic -> favourable.
     if both_strong and bhava_ok and not L.fired_malefic:
         base = "favourable"
     # 6. a weak pillar with malefic / weak-bhava / maraka pressure -> afflicted...
-    elif weak_pillar and (L.fired_malefic or L.bhava_bala_strong is False or L.maraka_active):
+    elif weak_pillar and (L.fired_malefic or L.bhava_bala_strong is False or maraka_drives):
         base = "afflicted"
-        # KARAKA-SALVAGE: a decisively strong karaka rescues a weak-lord, lone-malefic
-        # afflicted to mixed (a powerful significator can still deliver the matter).
-        # HTJAH-I:503-505 (the karaka can carry the bhava when the lord is wanting).
-        if L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
+        # BHAVA-RESCUE (HTJAH-I:503-505): "if the lord is badly placed, and the house
+        # itself has good conjunctions and aspects then evil results should not be
+        # predicted." The rescue agent is the BHAVA — benefic rules firing ON the house
+        # (fired_benefic) backed by a strong Bhava Bala — NOT the karaka. When the bhava
+        # carries good aspects and there is no benefic-vs-malefic contradiction (that
+        # contradiction was already routed to 'mixed' at clause 2), demote afflicted.
+        if (not L.lord_strong) and L.fired_benefic and bhava_strong:
+            base = "mixed"
+        # KARAKA-SALVAGE (three-pillar doctrine — methodology §2 / HTJAH-II:221;
+        # the lord's dual ownership+karaka role HTJAH-I:985): a decisively strong karaka
+        # can still deliver a weak-lord, lone-malefic matter -> demote afflicted to mixed.
+        elif L.karaka_strong and not L.lord_strong and L.fired_malefic and not L.fired_benefic:
             base = "mixed"
     # 7. nothing fired at all -> insufficient-evidence.
     elif not (L.fired_benefic or L.fired_malefic or L.fired_neutral):
@@ -224,8 +257,17 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # 8. everything else is a genuine borderline -> mixed.
     else:
         base = "mixed"
-    # 9. final D9 modulation of a borderline mixed.
-    return _navamsa_modulate(base, L)
+    # 9. final D9 modulation of a borderline mixed (after the longevity clamp).
+    v, shifted = _navamsa_modulate(_clamp_longevity(base, guarded), L)
+    return _clamp_longevity(v, guarded), shifted
+
+
+def _clamp_longevity(base: Verdict, guarded: bool) -> Verdict:
+    """Under the longevity guard, an 'afflicted' (death) verdict is deferred to the
+    Phase-E longevity sub-engine -> reported as insufficient-evidence here."""
+    if guarded and base == "afflicted":
+        return "insufficient-evidence"
+    return base
 
 
 # ---------------------------------------------------------------------------
@@ -448,11 +490,18 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame) -> 
 
     benefic, malefic, neutral = _bucket_fired(chart, sig, ctx)
 
-    # Longevity guard: do not let death/maraka drive a verdict while longevity is unknown
-    # (Phase E). maraka_active still informs strength; we only flag the gap here.
+    # Longevity guard (methodology §1, lines 39-42; §8): longevity is a pre-pass that
+    # OWNS death/span-class judgment and "gates and modulates all house judgment". A
+    # longevity/death signification therefore must NOT emit a death verdict here — the
+    # Phase-E longevity sub-engine fixes the span class first. LONGEVITY_GUARD is the
+    # load-bearing flag _decide reads to suppress maraka_active and karaka-veto afflicted
+    # paths for these matters, deferring the call to Phase E.
     if "longevity" in sig.rule_tags or "death" == sig.key:
-        flags.append("LONGEVITY_UNKNOWN")
-    if maraka_active:
+        flags.append("LONGEVITY_GUARD")
+    # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
+    # (possibly non-longevity) matter, so its maraka pressure is provisional until the
+    # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.
+    if "longevity" in sig.rule_tags or "death" == sig.key or maraka_active:
         flags.append("LONGEVITY_UNKNOWN")
 
     return FrameLedger(

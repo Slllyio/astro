@@ -280,3 +280,118 @@ def test_track_b_lead_frame_is_lagna():
     proforma = ht.judge_house(chart, 8)
     for sv in proforma.significations:
         assert sv.lead_frame == "lagna"
+
+
+# ---------------------------------------------------------------------------
+# 6. Longevity guard — death/longevity verdicts deferred to the Phase-E engine.
+#    methodology §1 (lines 39-42): longevity is a pre-pass that gates all house
+#    judgment, so this judge must NOT emit a death/afflicted verdict for a
+#    longevity/death matter while the span class is unfixed.
+# ---------------------------------------------------------------------------
+
+class TestLongevityGuard:
+    """LONGEVITY_GUARD makes the guard load-bearing in `_decide` (was cosmetic)."""
+
+    def test_guarded_maraka_track_b_yields_insufficient_not_afflicted(self):
+        """A guarded death matter on Track-B with an active maraka must NOT read
+        'afflicted' — the death call belongs to the Phase-E longevity engine."""
+        v, _ = ht._decide(_ledger(lord_strong=None, karaka_strong=None,
+                                  maraka_active=True, flags=("LONGEVITY_GUARD",)))
+        assert v == "insufficient-evidence"
+
+    def test_unguarded_maraka_track_b_still_afflicted(self):
+        """Without the guard (a non-longevity matter) an active maraka still drives
+        afflicted on Track-B — the suppression is scoped to longevity/death only."""
+        v, _ = ht._decide(_ledger(lord_strong=None, karaka_strong=None,
+                                  maraka_active=True))
+        assert v == "afflicted"
+
+    def test_guarded_maraka_both_pillars_yields_insufficient(self):
+        """Both pillars known: a weak-lord guarded matter with maraka pressure is
+        clamped to insufficient-evidence instead of afflicted."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=True,
+                                  maraka_active=True, flags=("LONGEVITY_GUARD",)))
+        assert v == "insufficient-evidence"
+
+    def test_guarded_broken_karaka_veto_clamped(self):
+        """The karaka VETO (non-intact karaka) is clamped to insufficient-evidence
+        under the guard rather than hard-driving the death verdict to afflicted."""
+        v, _ = ht._decide(_ledger(karaka_intact=False, flags=("LONGEVITY_GUARD",)))
+        assert v == "insufficient-evidence"
+
+    def test_guarded_weak_pillar_malefic_clamped(self):
+        """A weak-pillar lone-malefic guarded matter is clamped to insufficient-evidence
+        (the afflicted clause-6 verdict is deferred to the longevity engine)."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=False,
+                                  fired_malefic=(_fired("malefic"),),
+                                  flags=("LONGEVITY_GUARD",)))
+        assert v == "insufficient-evidence"
+
+    def test_guarded_navamsa_weakens_does_not_resurrect_afflicted(self):
+        """Even a D9-weakening of a guarded borderline must not surface afflicted."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=True,
+                                  fired_neutral=(_fired("neutral"),),
+                                  navamsa_status="weakens",
+                                  flags=("LONGEVITY_GUARD",)))
+        assert v != "afflicted"
+
+    def test_h8_longevity_significations_are_guarded_on_real_chart(self):
+        """H8 longevity/death significations set LONGEVITY_GUARD and never read afflicted
+        on the canonical chart (the longevity engine owns that call)."""
+        chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59), ayanamsa="raman")
+        proforma = ht.judge_house(chart, 8)
+        guarded = [sv for sv in proforma.significations
+                   if "LONGEVITY_GUARD" in sv.ledger.flags]
+        assert guarded, "H8 longevity/death significations should carry LONGEVITY_GUARD"
+        for sv in guarded:
+            assert sv.verdict != "afflicted"
+
+
+# ---------------------------------------------------------------------------
+# 7. HTJAH-I:503-505 bhava-rescue vs three-pillar karaka-salvage (distinct clauses).
+# ---------------------------------------------------------------------------
+
+class TestBhavaAndKarakaRescue:
+    """The two demotion clauses cite DIFFERENT Raman doctrine and fire on DIFFERENT
+    evidence — the bhava itself (good aspects) vs the karaka's strength."""
+
+    def test_bhava_rescue_strong_bhava_benefic_demotes_afflicted(self):
+        """HTJAH-I:503-505 — a weak lord but a strong bhava with good benefic aspects
+        ('the house itself has good conjunctions and aspects') -> do not predict evil:
+        afflicted demoted to mixed by the BHAVA, not the karaka."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=False,
+                                  bhava_bala_strong=True,
+                                  fired_benefic=(_fired("benefic"),)))
+        assert v == "mixed"
+
+    def test_bhava_rescue_requires_strong_bhava(self):
+        """Without a strong Bhava Bala the :503 rescue does not apply: a weak-bhava
+        weak-pillar matter stays afflicted."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=False,
+                                  bhava_bala_strong=False,
+                                  fired_benefic=(_fired("benefic"),)))
+        assert v == "afflicted"
+
+    def test_karaka_salvage_still_demotes_lone_malefic(self):
+        """The three-pillar karaka-salvage (HTJAH-II:221 / HTJAH-I:985) still demotes a
+        weak-lord strong-karaka lone-malefic matter -> mixed (no benefic present)."""
+        v, _ = ht._decide(_ledger(lord_strong=False, karaka_strong=True,
+                                  fired_malefic=(_fired("malefic"),)))
+        assert v == "mixed"
+
+
+# ---------------------------------------------------------------------------
+# 8. as_house_verdict lord/lord_strong consistency (lagna-frame, not lead-frame).
+# ---------------------------------------------------------------------------
+
+def test_as_house_verdict_lord_strong_matches_lagna_lord():
+    """`lord` (the LAGNA bhava-lord) and `lord_strong` must describe the SAME planet.
+    When the lead signification's lead ledger is the MOON frame (different lord), the
+    strength readout must still be taken from the LAGNA-frame ledger."""
+    chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59), ayanamsa="raman")
+    from app.raman_saab.judges.house_judge import _strong as legacy_strong
+    for h in range(1, 13):
+        pf = ht.judge_house(chart, h)
+        hv = pf.as_house_verdict()
+        # the reported lord_strength is exactly the lagna lord's own strength
+        assert hv.lord_strong == legacy_strong(hv.lord, chart)

@@ -1,0 +1,16 @@
+# Raman Saab golden corpus (JSON Lines). Schema: docs/raman_saab/golden_schema.md
+# Lines starting with '#' and blank lines are ignored by the loader. Keep tiny —
+# the bulk extraction (Phase B) appends CONFIRMED rows via tools/raman_saab/extract_goldens.py.
+#
+# --- SELF-TEST ANCHOR (regression guard, NOT a doctrine claim) -------------------
+# Synthetic Aries Lagna with Jupiter (benefic) in the 1st: judge_house(chart, 1)
+# deterministically returns 'favourable' for self/body/health on Track B (no Shadbala).
+# This row proves the harness asserting-path and Track-B plumbing catch regressions.
+# It is the ONE record allowed to be CONFIRMED without a book citation — its citation
+# points at a real corpus line only to satisfy the shape, not to claim Raman judged it.
+{"id":"self_test.aries_jupiter_h1","book":"HTJAH-I","name":"self-test: Aries Lagna, Jupiter benefic in 1st (synthetic regression anchor, NOT a doctrine claim)","case_type":"self_test","birth":null,"lagna_sign":1,"stated_positions":{"Sun":{"lon":130.0,"bhava":5,"position_source":"synthetic_minimal"},"Moon":{"lon":40.0,"bhava":2,"position_source":"synthetic_minimal"},"Mars":{"lon":280.0,"bhava":10,"position_source":"synthetic_minimal"},"Mercury":{"lon":160.0,"bhava":6,"position_source":"synthetic_minimal"},"Jupiter":{"lon":5.0,"bhava":1,"position_source":"synthetic_minimal"},"Venus":{"lon":340.0,"bhava":12,"position_source":"synthetic_minimal"},"Saturn":{"lon":200.0,"bhava":7,"position_source":"synthetic_minimal"},"Rahu":{"lon":70.0,"bhava":3,"position_source":"synthetic_minimal"},"Ketu":{"lon":250.0,"bhava":9,"position_source":"synthetic_minimal"}},"expected_verdicts":{"H1":{"signification":"self","verdict":"favourable","verdict_prose":"synthetic: benefic Jupiter occupying the 1st with no malefic firing yields a favourable Lagna on Track B","verdict_review":"CONFIRMED"}},"expected_longevity":null,"track_eligibility":["B","3"],"confidence":1.0,"citations":["HTJAH-I:1068"]}
+#
+# --- COMMENTED WORKED-EXAMPLE TEMPLATE (DRAFT; skipped by Track B until reviewed) ---
+# This is the shape a real book chart takes once positions are filled. It is DRAFT,
+# so the harness COUNTS it but does NOT assert it. Uncomment + confirm in Phase B.
+# {"id":"HTJAH-I.chart_08","book":"HTJAH-I","name":"Chart 8 (greatness via strong Navamsa Lagna)","case_type":"worked_example","birth":null,"lagna_sign":7,"stated_positions":{"Venus":{"sign":2,"bhava":8,"position_source":"sign_midpoint"}},"expected_verdicts":{"H1":{"signification":"self","verdict":"favourable","verdict_prose":"born to greatness; Lagna lord in 8th redeemed by strong Navamsa Lagna","verdict_review":"DRAFT"}},"expected_longevity":null,"track_eligibility":["B","3"],"confidence":0.55,"citations":["HTJAH-I:1068"]}

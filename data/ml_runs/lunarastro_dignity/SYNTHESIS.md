@@ -152,20 +152,55 @@ matters, but modestly and chiefly for the benefic lords; it is not a
 uniform "good planet strong → good life" dial, and for the Sun it points
 the other way.*
 
+### Finding 5 — robustness battery & split-half replication
+
+Two threats to Finding 3 remained: confounds/label-noise, and the fact
+that 17912 events cluster into only 3779 people (non-independence).
+`dasha_dignity_robustness.py` re-runs the full chart-shuffle permutation
+under each stress (`robustness.md`):
+
+- **Label noise** — restrict to events whose class polarity agrees with the
+  Beneficial/Adverse label: z **3.91** (vs 4.09 baseline). Not a coding
+  artifact.
+- **Soft classes** — drop personal/family/relationship/other: z **4.00**.
+- **Independence** — one *random* event per native (¼ the sample): real
+  gradient holds at ~+0.2, **median z = 2.41, significant in 5/6 random
+  draws**. The full-sample significance is *not* inflated by repeated events
+  per person. (An earlier "earliest-event" version of this filter gave a
+  false collapse — it cherry-picked late-bloomers; the random pick is the
+  correct test.)
+- **Split-half replication** — disjoint 50/50 person halves, each with its
+  own events and donor chart pool: **all 6 halves positive, z 2.6–3.9, every
+  p ≤ 0.01**. The effect reproduces, not a one-partition fluke.
+
+**Remaining caveat (the headline one)**: this is *internal* replication on a
+single corpus. A truly independent second dataset is the gold standard and
+is **not yet available in this repo** — confirmed by surveying the data
+dirs. That, not a statistical gap, is the next real step.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
 the classics and this project's own prior conclusion: **strong, sensible
 associations between which lord runs and which event occurs** (Finding 1),
 a **large age/recording effect on outcome valence** (Finding 2), and a
-**small, directionally-correct dignity×life-stage interaction that is
-sharpest for the MD+AD pair in the prime years** (Finding 3). The next
-step to know whether Finding 3 is real is the permutation control
-(shuffle natal charts, recompute the pair gradient, K≥100).
+**small, directionally-correct dignity×life-stage interaction, sharpest for
+the MD+AD pair in the prime years** (Finding 3) that **survives a
+chart-shuffle permutation** (z≈2.9–4.1, p≈0.003), is **carried chiefly by
+Jupiter/Mercury and reverses for the Sun** (Finding 4), and is **robust to
+label noise, event clustering, and disjoint-subsample replication**
+(Finding 5). Net: a genuine but modest (~+0.2) chart→event signal on this
+corpus. The one honest gap left is **external replication** — a second,
+independent dataset — which the repo does not currently contain.
 
 ## Files
 - `lifestage_dignity.md` — full MD / AD / pair tables + MD×AD grid
 - `dasha_event_associations.md` — per-class MD/AD/pair lift tables
 - Pipeline: `app/medini/etl/lunarastro_kundli_pipeline.py`
+- `dignity_anatomy.md` — dignity ladder + within-lord contrast (Finding 4)
+- `robustness.md` — robustness battery + split-half replication (Finding 5)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
-  `app/medini/ml/dasha_event_associations.py`
+  `app/medini/ml/dasha_event_associations.py`,
+  `app/medini/ml/dasha_dignity_permutation.py`,
+  `app/medini/ml/dasha_dignity_characterize.py`,
+  `app/medini/ml/dasha_dignity_robustness.py`

@@ -178,6 +178,35 @@ single corpus. A truly independent second dataset is the gold standard and
 is **not yet available in this repo** — confirmed by surveying the data
 dirs. That, not a statistical gap, is the next real step.
 
+### Finding 6 — native-kundli deep dive: benefic/malefic is flat, dignity is the only signal
+
+We widened the per-event feature set from one dignity axis to 45 native-kundli
+features of the running MD & AD lords — natural nature (benefic/malefic),
+functional nature (yogakaraka / dusthana-lord off the lagna), bhava placement
+(kendra/trikona/dusthana/lagna), pair relations, and chart-level auspiciousness
+counts — and tabled the benefit rate by each (`event_features_deepdive.md`,
+module `dasha_event_features.py`). Across **57 feature-levels** (Bonferroni
+bar p < 0.0009):
+
+- **Natural benefic/malefic is FLAT** — a running natural benefic and a running
+  natural malefic carry the *same* benefit rate (75% vs 75%). `pair_both_benefic`
+  is null too. The textbook "benefic dasha = good period" does **not** hold at
+  the single-feature level on this corpus.
+- **Functional nature** is weak: functional-neutral MD lords underperform
+  (72%, raw p=0.01) but don't survive correction.
+- **Bhava placement** mostly flat; the two largest raw cells — AD lord in the
+  1st house (81%, raw p=0.003) and `chart_kendra_net=2` (81%, p=0.0035) —
+  are **suggestive but do NOT survive** the family-wise bar. Honest status:
+  candidate hypotheses, not findings.
+- **Dignity remains the one validated axis** — not because it's individually
+  huge, but because it was a *single pre-registered hypothesis* that passed a
+  chart-shuffle permutation (Findings 3–5), whereas everything here is
+  multiple-comparison-exposed.
+
+Net: enriching events with the full chart does **not** surface a stronger or
+simpler predictor than the dignity gradient already found; if anything it
+shows how little the coarse benefic/malefic dichotomy buys you.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -199,8 +228,11 @@ independent dataset — which the repo does not currently contain.
 - Pipeline: `app/medini/etl/lunarastro_kundli_pipeline.py`
 - `dignity_anatomy.md` — dignity ladder + within-lord contrast (Finding 4)
 - `robustness.md` — robustness battery + split-half replication (Finding 5)
+- `event_features_deepdive.md` — 45 native-kundli features per event (Finding 6)
+- `events_enriched.parquet` — events + all native-kundli features (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
   `app/medini/ml/dasha_dignity_permutation.py`,
   `app/medini/ml/dasha_dignity_characterize.py`,
-  `app/medini/ml/dasha_dignity_robustness.py`
+  `app/medini/ml/dasha_dignity_robustness.py`,
+  `app/medini/ml/dasha_event_features.py`

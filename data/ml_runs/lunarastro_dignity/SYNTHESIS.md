@@ -283,6 +283,34 @@ carries genuine, mutually-corroborating chart signal — modest in size but real
 and non-circular, unlike the valence findings. Longevity, the other classical
 flagship, is a clean null with this index.
 
+### Finding 9 — drilling the marriage signal, and the multiclass ceiling
+
+**Marriage deep dive** (`marriage_deepdive.md`, `dasha_marriage_deepdive.py`)
+sharpens Finding 8A into a precise rule:
+- It is specifically the **7th-lord in the Mahadasha** that times marriage
+  (lift 1.15, z=2.18, p=0.018). The **antardasha is null** (0.99), and the
+  **2nd and 11th lords do not time marriage** (lift 0.87, 0.89) — the textbook
+  "2/7/11 signify marriage" does *not* hold; pooling them only dilutes the 7th.
+- **Double activation sharpens it**: MD∩AD both = 7th-lord lifts to 1.25
+  (highest), directionally consistent with doctrine though underpowered (~2% of
+  marriages).
+- **Replication**: the 7th-lord MD lift is positive in **all 6 disjoint person
+  halves** (mean lift 1.15, mean z 1.60). Per-half significance is weak only
+  because a ~1.15 lift needs the full sample to resolve — direction and
+  magnitude reproduce everywhere (the Finding-5 discipline).
+
+**Multiclass ceiling** (`houselord_class.md`, `dasha_houselord_class.py`) — the
+formal "does the running lord's house-lordship predict which CLASS of event the
+period brings", as a 12×N lift matrix with a chart-shuffle null. The three major
+life domains all lean the classically-correct way — marriage/7th lift 1.09
+(z=1.53), career/10th 1.05 (z=1.38), death/8th 1.06 (z=1.30) — but **none clears
+p<0.05 in the class-prediction direction and the aggregate diagonal is null**
+(lift 1.03, z=0.78, p=0.21); health/education are flat. So house-lordship →
+event-class is **directionally classical but too weak to confirm** on this
+corpus. Marriage remains the single domain with a real, replicated, non-circular
+signal — and it lives in the *timing* direction (which dasha), strongest for the
+7th-lord Mahadasha.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -310,6 +338,8 @@ independent dataset — which the repo does not currently contain.
 - `events_promise.parquet` — events + domain promise score + timing-activation flag
 - `significator_timing.md` — chart-specific house-lord vs universal karaka timing (Finding 8A)
 - `event_age.md` — chart strength → longevity / marriage age (Finding 8B)
+- `marriage_deepdive.md` — 7th-lord MD/AD/MD∩AD + secondary significators + split-half (Finding 9)
+- `houselord_class.md` — house-lordship → event-class lift matrix, chart-shuffle (Finding 9)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
   `app/medini/ml/dasha_dignity_permutation.py`,
@@ -318,4 +348,6 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_event_features.py`,
   `app/medini/ml/dasha_event_promise.py`,
   `app/medini/ml/dasha_significator_timing.py`,
-  `app/medini/ml/dasha_event_age.py`
+  `app/medini/ml/dasha_event_age.py`,
+  `app/medini/ml/dasha_marriage_deepdive.py`,
+  `app/medini/ml/dasha_houselord_class.py`

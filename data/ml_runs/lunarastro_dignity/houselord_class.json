@@ -1,0 +1,55 @@
+{
+  "canonical_cells": [
+    {
+      "house": 7,
+      "class": "marriage",
+      "obs": 0.1015,
+      "null": 0.0927,
+      "lift": 1.095,
+      "z": 1.53,
+      "p": 0.0632
+    },
+    {
+      "house": 10,
+      "class": "career",
+      "obs": 0.3915,
+      "null": 0.374,
+      "lift": 1.047,
+      "z": 1.38,
+      "p": 0.0882
+    },
+    {
+      "house": 8,
+      "class": "death",
+      "obs": 0.164,
+      "null": 0.1543,
+      "lift": 1.063,
+      "z": 1.3,
+      "p": 0.0965
+    },
+    {
+      "house": 6,
+      "class": "health",
+      "obs": 0.0427,
+      "null": 0.0427,
+      "lift": 0.998,
+      "z": -0.01,
+      "p": 0.5025
+    },
+    {
+      "house": 4,
+      "class": "education",
+      "obs": 0.0209,
+      "null": 0.0217,
+      "lift": 0.964,
+      "z": -0.22,
+      "p": 0.5973
+    }
+  ],
+  "diagonal_lift": 1.0333,
+  "null_mean": 1.0,
+  "null_std": 0.0426,
+  "z": 0.78,
+  "p": 0.213,
+  "k_effective": 600
+}

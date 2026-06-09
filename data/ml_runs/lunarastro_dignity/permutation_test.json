@@ -1,0 +1,13 @@
+{
+  "n_events": 12832,
+  "n_prime_events": 5053,
+  "real_gradient": 0.2149,
+  "null_mean": 0.0041,
+  "null_std": 0.047,
+  "null_min": -0.1927,
+  "null_max": 0.1199,
+  "k_effective": 500,
+  "z_score": 4.489,
+  "empirical_p": 0.002,
+  "exceed_real": 0
+}

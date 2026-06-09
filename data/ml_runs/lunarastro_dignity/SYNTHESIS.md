@@ -94,12 +94,34 @@ strong lords + productive years = beneficial manifestation, and the pair
 is a sharper filter than either lord alone (MD +0.06, AD +0.05 → pair
 +0.21).
 
-**But**: it is modest (n=235 strong-pair events in prime), it does not
-hold in maturity/elder (mildly reverses), and it has **not** been
-permutation-tested. On the evidence of `round11_triple_test_synthesis`,
-an effect this size is exactly the kind that can shrink toward the null
-under chart-shuffle. Treat Finding 3 as a **directionally-correct hint at
-modest effect size**, not a confirmed law.
+### Finding 3 — RESOLVED by the permutation control ✅
+
+Unlike Round-11's RR=2.31 (which collapsed to z=1.07 under chart-shuffle),
+this gradient **survives**. Holding every event's (md_lord, ad_lord,
+age, valence) fixed and re-scoring the running lords' dignity from a
+*random other person's chart*, K=500 times:
+
+| quantity | value |
+|---|---|
+| real prime pair gradient | **+0.215** |
+| chart-shuffle null mean / max | +0.004 / +0.120 |
+| shuffled ≥ real | **0 / 500** |
+| z-score | **4.49** |
+| empirical p | **0.002** |
+
+Stable across seeds (z≈4.7–4.9). **Decomposition** shows the signal is
+anchored in **dignity-by-sign** (exaltation/own/debilitation — z=2.16
+alone), the *place-independent* feature robust to this source's noisy
+birth coordinates, while the place-dependent **functional** component is a
+pure null (z=0.40). A bad-birth-data artifact would show the opposite, so
+the decomposition argues *for* a genuine chart-structural effect.
+
+See `permutation_test.md`. **Caveats that remain**: one corpus (~3.8k
+people), event valence comes from a label→polarity map, and famous-person
+recording bias is not controlled by the chart shuffle (it controls only
+the person↔chart link). This is the strongest positive result in the
+project's history of this question — worth replication on an independent
+corpus before it is called a law.
 
 ---
 

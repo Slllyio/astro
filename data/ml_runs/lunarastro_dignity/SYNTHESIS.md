@@ -125,6 +125,33 @@ corpus before it is called a law.
 
 ---
 
+### Finding 4 — anatomy of the gradient: small, planet-specific, Sun reverses
+
+Dissecting *how* the effect is produced (`dignity_anatomy.md`) tempers the
+headline:
+
+- **Single-MD dignity ladder is monotonic but tiny**: exalted 1.05 → own
+  1.02 → … → debilitated 0.94. The direction is right (better dignity →
+  more beneficial) but no single rung is significant; well-vs-ill contrast
+  is only **+0.024**.
+- **Within-lord (lord-identity controlled) is heterogeneous, not a law**.
+  For a *fixed* planet, benefit share when well- vs ill-dignified:
+  - **Jupiter +0.08 (p=3e-5)** and **Mercury +0.10 (p=0.002)** — the
+    predicted positive dignity→benefit, well powered.
+  - Rahu/Venus/Moon/Ketu/Saturn/Mars ≈ 0.
+  - **Sun −0.10 (p=0.0009) — REVERSED**: a well-dignified Sun runs with
+    *fewer* events coded beneficial (Sun = authority/separation/ego; may
+    also be a valence-coding boundary case).
+
+**Reconciliation**: the large +0.21 composite *pair* gradient is mostly
+**natural-benefic selection** — "strong pair" overwhelmingly means two
+natural-benefic, well-placed lords (Jupiter/Venus/Mercury) running
+together — riding on a **small but permutation-real by-sign core** that is
+concentrated in Jupiter and Mercury. The honest one-line version: *dignity
+matters, but modestly and chiefly for the benefic lords; it is not a
+uniform "good planet strong → good life" dial, and for the Sun it points
+the other way.*
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both

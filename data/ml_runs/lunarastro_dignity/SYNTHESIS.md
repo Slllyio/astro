@@ -207,6 +207,42 @@ Net: enriching events with the full chart does **not** surface a stronger or
 simpler predictor than the dignity gradient already found; if anything it
 shows how little the coarse benefic/malefic dichotomy buys you.
 
+### Finding 7 — promise vs timing, and what the dignity signal really is
+
+Testing the doctrine *"the dasha only times a result the natal chart already
+promises"* (`dasha_event_promise.py`, `promise_analysis.md`). For each event we
+scored the native chart's **domain-matched promise** — the strength of the bhava
+the event belongs to (marriage→7, career→10, death→8, …): house-lord dignity +
+placement, karaka dignity, benefic/malefic occupancy and aspect — and flagged
+whether the running dasha **activates** that domain (MD/AD = house-lord or
+karaka).
+
+- **Promise → valence: NULL.** Strong / medium / weak promise all ~74–75%
+  beneficial; the chart-shuffle permutation on the promise gradient gives
+  z=0.59, p=0.28. The chart's domain promise does not predict outcome here.
+- **Marginal timing effect looks huge** — activated 82% vs non-activated 63% —
+  **but it is Simpson's paradox.** Within every event class the timing gap is
+  ≈0 (career 0.97 vs 0.98, marriage 1.00 vs 1.00, death 0.00 vs 0.00). Beneficial
+  classes (career, marriage) just get activated more often than adverse ones.
+
+**The deep reason — and a reinterpretation of Findings 3–6.** In this corpus
+**event valence is essentially a relabeling of `event_class`** (career 97%
+beneficial, marriage 100%, education 100%; death/health/divorce 0%). So
+"predicting benefit" ≈ "predicting which *class* of event occurs", and almost no
+within-class outcome variation exists for any natal feature to move. Re-examining
+the validated dignity gradient under this lens: strong-dignity MD+AD buckets
+contain **more career (59% vs 43%) and marriage (19% vs 13%)** and **fewer death
+(10% vs 18%), health and divorce** than weak buckets, while *within* a class
+dignity barely moves valence (career 0.986 vs 0.955). 
+
+So the real, permutation-validated, replicated signal is best stated as:
+**well-disposed MD+AD dasha periods coincide with beneficial-*class* life events
+(career, marriage); ill-disposed periods coincide with adverse-*class* events
+(death, disease, divorce)** — a classical idea (benefic periods bring auspicious
+matters) — *not* "a given event resolves better when the lords are dignified."
+The promise layer adds no predictive lift on top of that, and the coarse
+benefic/malefic dichotomy adds none at all (Finding 6).
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -230,9 +266,12 @@ independent dataset — which the repo does not currently contain.
 - `robustness.md` — robustness battery + split-half replication (Finding 5)
 - `event_features_deepdive.md` — 45 native-kundli features per event (Finding 6)
 - `events_enriched.parquet` — events + all native-kundli features (reusable)
+- `promise_analysis.md` — domain promise vs dasha timing + within-class control (Finding 7)
+- `events_promise.parquet` — events + domain promise score + timing-activation flag
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
   `app/medini/ml/dasha_dignity_permutation.py`,
   `app/medini/ml/dasha_dignity_characterize.py`,
   `app/medini/ml/dasha_dignity_robustness.py`,
-  `app/medini/ml/dasha_event_features.py`
+  `app/medini/ml/dasha_event_features.py`,
+  `app/medini/ml/dasha_event_promise.py`

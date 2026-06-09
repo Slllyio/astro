@@ -1,0 +1,7 @@
+timing_activates,promise,n,benefit_share
+True,strong,916,0.825
+True,medium,1208,0.825
+True,weak,957,0.82
+False,strong,582,0.619
+False,medium,750,0.628
+False,weak,640,0.641

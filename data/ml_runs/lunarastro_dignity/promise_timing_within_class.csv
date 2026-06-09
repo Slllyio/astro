@@ -1,0 +1,8 @@
+event_class,n_timed,n_not,benefit_timed,benefit_not,gap
+career,2098,593,0.968,0.98,-0.012
+marriage,381,469,1.0,1.0,0.0
+death,292,385,0.0,0.0,0.0
+relationship,116,163,0.716,0.73,-0.015
+divorce,86,120,0.0,0.0,0.0
+health,64,170,0.0,0.0,0.0
+education,43,72,1.0,1.0,0.0

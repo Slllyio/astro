@@ -1,0 +1,9 @@
+{
+  "n_prime": 5053,
+  "real_gradient": -0.0033,
+  "null_mean": -0.0135,
+  "null_std": 0.0175,
+  "z_score": 0.585,
+  "empirical_p": 0.2843,
+  "k_effective": 400
+}

@@ -311,6 +311,37 @@ corpus. Marriage remains the single domain with a real, replicated, non-circular
 signal — and it lives in the *timing* direction (which dasha), strongest for the
 7th-lord Mahadasha.
 
+### Finding 10 — the Navamsa (D9) does not sharpen marriage *timing*
+
+D9 is the classical marriage varga, so we tested whether D9-derived significators
+time marriage better than the D1 7th-lord. `charts.parquet` stored only D1 signs,
+but `birth_jd_used` lets us recompute each graha's longitude from the ephemeris
+and fold it to Navamsa (`build_d9_charts.py` → `charts_d9.parquet`; recomputed D1
+signs reproduce the stored parquet exactly; Venus vargottama rate 0.109 ≈ 1/9).
+The D9 *ascendant* is unrecoverable (birth lat/long were not persisted), so we
+test the strongest **planet-based** D9 significators (`dasha_marriage_d9.py`,
+K=5000):
+
+| significator | lift | z | p |
+|---|---:|---:|---:|
+| **d1_7th_lord** (baseline) | **1.15** | 2.24 | 0.016 |
+| venus_d9_disp (Venus's navamsa dispositor) | 1.03 | 0.45 | 0.34 (null) |
+| d1_7L_d9_disp (7th-lord's navamsa dispositor) | 1.13 | 1.84 | 0.037 |
+| d1_7L or venus_d9 (union) | 1.09 | 1.96 | 0.029 |
+
+- **D9 does not beat D1.** The plain D1 7th-lord (lift 1.15) stays the strongest
+  single marriage-timing significator. The 7th-lord's navamsa dispositor is also
+  significant (1.13) but is a *correlated* refinement, not an improvement; Venus's
+  navamsa dispositor is null; the union dilutes.
+- **Caveat:** the most classical D9 marriage significator — the Navamsa 7th-lord
+  reckoned from the D9 *lagna* — could not be tested (no birth lat/long → no D9
+  ascendant). So this rules out the D9 *dispositors* sharpening timing, not the
+  full Navamsa. D9 may still matter for marriage *quality/promise*, which this
+  corpus (valence ≈ class) can't probe.
+
+Net: across D1 and the testable parts of D9, **marriage timing lives in one place
+— the D1 7th-lord Mahadasha.** Adding vargas does not help on this data.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -340,6 +371,8 @@ independent dataset — which the repo does not currently contain.
 - `event_age.md` — chart strength → longevity / marriage age (Finding 8B)
 - `marriage_deepdive.md` — 7th-lord MD/AD/MD∩AD + secondary significators + split-half (Finding 9)
 - `houselord_class.md` — house-lordship → event-class lift matrix, chart-shuffle (Finding 9)
+- `marriage_d9.md` — D9 Navamsa marriage significators vs D1 7th-lord (Finding 10)
+- `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
   `app/medini/ml/dasha_dignity_permutation.py`,
@@ -350,4 +383,6 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_significator_timing.py`,
   `app/medini/ml/dasha_event_age.py`,
   `app/medini/ml/dasha_marriage_deepdive.py`,
-  `app/medini/ml/dasha_houselord_class.py`
+  `app/medini/ml/dasha_houselord_class.py`,
+  `app/medini/etl/build_d9_charts.py`,
+  `app/medini/ml/dasha_marriage_d9.py`

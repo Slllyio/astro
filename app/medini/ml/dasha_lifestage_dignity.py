@@ -109,6 +109,11 @@ _POLARITY_SUBTYPE: Final[dict[str, int]] = {
 }
 
 
+def _bucket(score: float) -> str:
+    """Composite-score → strong / mixed / weak (±0.33 thresholds)."""
+    return "strong" if score >= 0.33 else "weak" if score <= -0.33 else "mixed"
+
+
 def md_lord_quality(
     planet: str,
     sign: int | None,
@@ -156,10 +161,10 @@ def md_lord_quality(
 
     score = w_dignity * dig_s + w_functional * func_s + w_natural * nat_s
     score = max(-1.0, min(1.0, score))
-    bucket = "strong" if score >= 0.33 else "weak" if score <= -0.33 else "mixed"
     return {
         "planet": planet, "dignity": dig, "functional": func_label,
-        "yogakaraka": yk, "quality_score": round(score, 3), "quality": bucket,
+        "yogakaraka": yk, "quality_score": round(score, 3),
+        "quality": _bucket(score),
     }
 
 
@@ -194,29 +199,52 @@ def annotate(events: pd.DataFrame, charts: pd.DataFrame) -> pd.DataFrame:
     """
     df = events.copy()
     chart_idx = charts.set_index("person_id")
+    has_ad = "ad_lord_at_event" in df.columns
 
-    qualities: list[str] = []
-    funcs: list[str] = []
-    for person_id, lord in zip(df["person_id"], df["md_lord_at_event"]):
-        if lord is None or pd.isna(lord) or person_id not in chart_idx.index:
-            qualities.append("unknown")
-            funcs.append("unknown")
-            continue
-        crow = chart_idx.loc[person_id]
-        if isinstance(crow, pd.DataFrame):  # duplicate person_id — take first
-            crow = crow.iloc[0]
+    def _q(crow: pd.Series, lord: object) -> dict[str, object]:
         sign = crow.get(f"{str(lord).lower()}_sign")
         asc = crow.get("asc_sign")
-        q = md_lord_quality(
+        return md_lord_quality(
             str(lord),
             int(sign) if pd.notna(sign) else None,
             int(asc) if pd.notna(asc) else None,
         )
-        qualities.append(q["quality"])
-        funcs.append(q["functional"])
 
-    df["md_quality"] = qualities
-    df["md_functional"] = funcs
+    md_q, md_f, md_s = [], [], []
+    ad_q, ad_f, ad_s = [], [], []
+    pair_q, pair_lbl = [], []
+    ad_lords = df["ad_lord_at_event"] if has_ad else [None] * len(df)
+    for person_id, md_lord, ad_lord in zip(
+            df["person_id"], df["md_lord_at_event"], ad_lords):
+        if md_lord is None or pd.isna(md_lord) or person_id not in chart_idx.index:
+            for lst in (md_q, md_f, ad_q, ad_f, pair_q, pair_lbl):
+                lst.append("unknown")
+            md_s.append(float("nan"))
+            ad_s.append(float("nan"))
+            continue
+        crow = chart_idx.loc[person_id]
+        if isinstance(crow, pd.DataFrame):  # duplicate person_id — take first
+            crow = crow.iloc[0]
+        qm = _q(crow, md_lord)
+        md_q.append(qm["quality"]); md_f.append(qm["functional"])
+        md_s.append(float(qm["quality_score"]))
+        if has_ad and ad_lord is not None and not pd.isna(ad_lord):
+            qa = _q(crow, ad_lord)
+            ad_q.append(qa["quality"]); ad_f.append(qa["functional"])
+            ad_s.append(float(qa["quality_score"]))
+            # Pair quality = mean of the two lords' composite scores. The AD
+            # modulates the MD: a strong MD soured by a weak AD lands mixed.
+            mean_s = (float(qm["quality_score"]) + float(qa["quality_score"])) / 2
+            pair_q.append(_bucket(mean_s))
+            pair_lbl.append(f"{qm['quality']}/{qa['quality']}")
+        else:
+            ad_q.append("unknown"); ad_f.append("unknown")
+            ad_s.append(float("nan"))
+            pair_q.append("unknown"); pair_lbl.append("unknown")
+
+    df["md_quality"], df["md_functional"], df["md_quality_score"] = md_q, md_f, md_s
+    df["ad_quality"], df["ad_functional"], df["ad_quality_score"] = ad_q, ad_f, ad_s
+    df["pair_quality"], df["pair_label"] = pair_q, pair_lbl
     df["life_stage"] = df["age_at_event_years"].map(life_stage)
     subtype = (df["event_subtype"] if "event_subtype" in df.columns
                else pd.Series([None] * len(df), index=df.index))
@@ -226,18 +254,22 @@ def annotate(events: pd.DataFrame, charts: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def stage_quality_table(annotated: pd.DataFrame, *, min_support: int = 8) -> pd.DataFrame:
-    """Benefit rate per (life_stage × md_quality), as a lift over the life
-    stage's own base benefit rate.
+def stage_quality_table(
+    annotated: pd.DataFrame, *, quality_col: str = "md_quality", min_support: int = 8,
+) -> pd.DataFrame:
+    """Benefit rate per (life_stage × ``quality_col``), as a lift over the
+    life stage's own base benefit rate.
 
-    Only valence≠0 events count. ``benefit_lift`` > 1 means a chart-strong
-    (or -weak) MD over-delivers beneficial events *relative to others at
-    the same age*. Cells below ``min_support`` non-neutral events drop.
+    ``quality_col`` selects the lord whose dignity drives the split —
+    ``md_quality``, ``ad_quality`` or the combined ``pair_quality``. Only
+    valence≠0 events count. ``benefit_lift`` > 1 means that quality
+    over-delivers beneficial events *relative to others at the same age*.
+    Cells below ``min_support`` non-neutral events drop.
     """
     a = annotated[
         (annotated["valence"] != 0)
         & annotated["life_stage"].notna()
-        & annotated["md_quality"].isin(_QUALITY_ORDER)
+        & annotated[quality_col].isin(_QUALITY_ORDER)
     ].copy()
     if a.empty:
         return pd.DataFrame()
@@ -245,7 +277,7 @@ def stage_quality_table(annotated: pd.DataFrame, *, min_support: int = 8) -> pd.
     stage_base = a.groupby("life_stage")["benefit"].mean()
 
     rows: list[dict[str, object]] = []
-    for (stage, quality), grp in a.groupby(["life_stage", "md_quality"]):
+    for (stage, quality), grp in a.groupby(["life_stage", quality_col]):
         n = len(grp)
         if n < min_support:
             continue
@@ -293,6 +325,43 @@ def dignity_gradient(table: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def pair_cross_table(annotated: pd.DataFrame, *, min_support: int = 8) -> pd.DataFrame:
+    """Benefit share for every (MD quality × AD quality) cell, pooled over
+    life stages, as a lift over the global base benefit rate.
+
+    This is the MD/AD interaction in one grid: does a strong MD survive a
+    weak AD, and does a weak AD drag a strong MD down? Cells below
+    ``min_support`` non-neutral events drop.
+    """
+    a = annotated[
+        (annotated["valence"] != 0)
+        & annotated["md_quality"].isin(_QUALITY_ORDER)
+        & annotated["ad_quality"].isin(_QUALITY_ORDER)
+    ].copy()
+    if a.empty:
+        return pd.DataFrame()
+    a["benefit"] = (a["valence"] > 0).astype(int)
+    base = a["benefit"].mean()
+
+    rows: list[dict[str, object]] = []
+    for (mq, aq), grp in a.groupby(["md_quality", "ad_quality"]):
+        n = len(grp)
+        if n < min_support:
+            continue
+        share = grp["benefit"].mean()
+        rows.append({
+            "md_quality": mq, "ad_quality": aq, "n": int(n),
+            "benefit_share": round(share, 3), "base_share": round(base, 3),
+            "benefit_lift": round(share / base, 3) if base > 0 else float("nan"),
+        })
+    out = pd.DataFrame(rows)
+    if out.empty:
+        return out
+    out["_m"] = out["md_quality"].map(_QUALITY_ORDER.index)
+    out["_a"] = out["ad_quality"].map(_QUALITY_ORDER.index)
+    return out.sort_values(["_m", "_a"]).drop(columns=["_m", "_a"]).reset_index(drop=True)
+
+
 def lord_by_stage(annotated: pd.DataFrame) -> pd.DataFrame:
     """Count of events by (life_stage × MD lord) — the literal 'which md
     runs at which life stage'. A sanity/exposure cross-check."""
@@ -307,43 +376,71 @@ def lord_by_stage(annotated: pd.DataFrame) -> pd.DataFrame:
         columns="_s").reset_index(drop=True)
 
 
-def build_report(
-    table: pd.DataFrame, gradient: pd.DataFrame, lords: pd.DataFrame,
-) -> str:
-    lines: list[str] = [
-        "# Life-stage × MD-lord dignity (descriptive)",
-        "",
-        "`md_quality` = composite of natal dignity + functional nature "
-        "(yogakaraka/FB/FM) + natural nature. `benefit_lift` = cell "
-        "benefit share ÷ that life stage's base benefit share, so the "
-        "dignity effect is read net of the age shift in base rates.",
-        "",
-        "> Descriptive interaction, not a deconfounded causal effect.",
-        "",
-        "## Dignity gradient by life stage (strong − weak benefit share)",
-        "",
-    ]
+def _scope_section(
+    title: str, table: pd.DataFrame, gradient: pd.DataFrame, quality_label: str,
+) -> list[str]:
+    lines = [f"## {title}", "",
+             "### Dignity gradient by life stage (strong − weak benefit share)", ""]
     if gradient.empty:
         lines.append("_insufficient support._\n")
     else:
-        lines += ["| life stage | strong | weak | gradient |",
-                  "|---|---:|---:|---:|"]
+        lines += ["| life stage | strong | weak | gradient |", "|---|---:|---:|---:|"]
         for _, r in gradient.iterrows():
             lines.append(
                 f"| {r['life_stage']} | {r['strong_benefit_share']:.2f} | "
                 f"{r['weak_benefit_share']:.2f} | **{r['gradient']:+.2f}** |")
         lines.append("")
-
-    lines += ["## Benefit lift per (life stage × MD quality)", ""]
+    lines += [f"### Benefit lift per (life stage × {quality_label})", ""]
     if table.empty:
         lines.append("_insufficient support._\n")
     else:
-        lines += ["| life stage | MD quality | n | benefit % | stage base % | lift |",
+        lines += [f"| life stage | {quality_label} | n | benefit % | stage base % | lift |",
                   "|---|---|---:|---:|---:|---:|"]
         for _, r in table.iterrows():
             lines.append(
                 f"| {r['life_stage']} | {r['md_quality']} | {r['n']} | "
                 f"{r['benefit_share']*100:.0f} | {r['stage_base_share']*100:.0f} | "
+                f"**{r['benefit_lift']:.2f}** |")
+        lines.append("")
+    return lines
+
+
+def build_report(
+    scopes: dict[str, tuple[pd.DataFrame, pd.DataFrame]],
+    cross: pd.DataFrame,
+    lords: pd.DataFrame,
+) -> str:
+    """Render the multi-scope report. ``scopes`` maps a section title to
+    its (stage_quality_table, dignity_gradient) pair; ``cross`` is the
+    pooled MD×AD grid."""
+    lines: list[str] = [
+        "# Life-stage × dasha-lord dignity (descriptive)",
+        "",
+        "`*_quality` = composite of natal dignity + functional nature "
+        "(yogakaraka/FB/FM) + natural nature, for the Mahadasha lord (MD), "
+        "Antardasha lord (AD), or both (pair = mean of the two scores). "
+        "`benefit_lift` = cell benefit share ÷ that life stage's base "
+        "benefit share, so the dignity effect is read net of the age shift "
+        "in base rates.",
+        "",
+        "> Descriptive interaction, not a deconfounded causal effect.",
+        "",
+    ]
+    labels = {"MD lord": "MD quality", "AD lord": "AD quality",
+              "MD+AD pair": "pair quality"}
+    for title, (table, gradient) in scopes.items():
+        lines += _scope_section(title, table, gradient, labels.get(title, "quality"))
+
+    lines += ["## MD × AD interaction grid (pooled, lift over global base)", ""]
+    if cross.empty:
+        lines.append("_insufficient support._\n")
+    else:
+        lines += ["| MD quality | AD quality | n | benefit % | base % | lift |",
+                  "|---|---|---:|---:|---:|---:|"]
+        for _, r in cross.iterrows():
+            lines.append(
+                f"| {r['md_quality']} | {r['ad_quality']} | {r['n']} | "
+                f"{r['benefit_share']*100:.0f} | {r['base_share']*100:.0f} | "
                 f"**{r['benefit_lift']:.2f}** |")
         lines.append("")
 
@@ -376,22 +473,34 @@ def run(data_dir: Path, out_dir: Path, *, min_support: int = 8) -> dict[str, int
     logger.info("events=%d charts=%d", len(events), len(charts))
 
     annotated = annotate(events, charts)
-    table = stage_quality_table(annotated, min_support=min_support)
-    gradient = dignity_gradient(table)
+
+    scopes: dict[str, tuple[pd.DataFrame, pd.DataFrame]] = {}
+    for title, col in (("MD lord", "md_quality"), ("AD lord", "ad_quality"),
+                       ("MD+AD pair", "pair_quality")):
+        tbl = stage_quality_table(annotated, quality_col=col, min_support=min_support)
+        scopes[title] = (tbl, dignity_gradient(tbl))
+
+    cross = pair_cross_table(annotated, min_support=min_support)
     lords = lord_by_stage(annotated)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    table.to_csv(out_dir / "stage_quality.csv", index=False)
-    gradient.to_csv(out_dir / "dignity_gradient.csv", index=False)
+    for title, (tbl, grad) in scopes.items():
+        tag = title.split()[0].lower().replace("+", "_")
+        tbl.to_csv(out_dir / f"stage_quality_{tag}.csv", index=False)
+        grad.to_csv(out_dir / f"dignity_gradient_{tag}.csv", index=False)
+    cross.to_csv(out_dir / "md_ad_cross.csv", index=False)
     lords.to_csv(out_dir / "lord_by_stage.csv", index=False)
     (out_dir / "lifestage_dignity.md").write_text(
-        build_report(table, gradient, lords), encoding="utf-8")
+        build_report(scopes, cross, lords), encoding="utf-8")
 
-    logger.info("wrote report + 3 CSVs to %s", out_dir)
+    logger.info("wrote report + CSVs to %s", out_dir)
     return {
         "events_annotated": len(annotated),
         "with_chart": int((annotated["md_quality"] != "unknown").sum()),
-        "cells": len(table),
+        "md_cells": len(scopes["MD lord"][0]),
+        "ad_cells": len(scopes["AD lord"][0]),
+        "pair_cells": len(scopes["MD+AD pair"][0]),
+        "cross_cells": len(cross),
     }
 
 

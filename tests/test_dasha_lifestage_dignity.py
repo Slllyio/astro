@@ -15,6 +15,7 @@ from app.medini.ml.dasha_lifestage_dignity import (
     event_valence,
     life_stage,
     md_lord_quality,
+    pair_cross_table,
     stage_quality_table,
 )
 
@@ -148,3 +149,56 @@ def test_stage_quality_min_support_drops_sparse() -> None:
         "md_lord_at_event": ["Venus"] * 3,
     })
     assert stage_quality_table(ann, min_support=5).empty
+
+
+# ---------- AD lord + MD/AD pair ----------
+
+def _charts_ad() -> pd.DataFrame:
+    # Saturn strong (Libra/Taurus-lagna), Mars weak as AD (debilitated Cancer).
+    return pd.DataFrame([
+        {"person_id": "p1", "asc_sign": TAURUS, "saturn_sign": LIBRA, "mars_sign": CANCER},
+    ])
+
+
+def test_annotate_scores_ad_and_pair() -> None:
+    events = pd.DataFrame({
+        "person_id": ["p1"],
+        "event_class": ["marriage"],
+        "md_lord_at_event": ["Saturn"],
+        "ad_lord_at_event": ["Mars"],
+        "age_at_event_years": [33.0],
+    })
+    out = annotate(events, _charts_ad())
+    assert out["md_quality"].iloc[0] == "strong"      # exalted+YK Saturn
+    assert out["ad_quality"].iloc[0] == "weak"        # debilitated Mars
+    # pair = mean of a strong (>0) and weak (<0) score → mixed/weak, not strong.
+    assert out["pair_quality"].iloc[0] in {"mixed", "weak"}
+    assert out["pair_label"].iloc[0] == "strong/weak"
+
+
+def test_stage_quality_table_accepts_ad_column() -> None:
+    ann = pd.DataFrame({
+        "md_quality": ["strong"] * 10,
+        "ad_quality": ["weak"] * 6 + ["strong"] * 4,
+        "valence": [-1] * 6 + [1] * 4,
+        "life_stage": ["prime"] * 10,
+        "md_lord_at_event": ["Saturn"] * 10,
+    })
+    tbl = stage_quality_table(ann, quality_col="ad_quality", min_support=3)
+    weak = tbl[tbl.md_quality == "weak"].iloc[0]   # generic 'md_quality' = the split col
+    strong = tbl[tbl.md_quality == "strong"].iloc[0]
+    assert weak["benefit_share"] == 0.0
+    assert strong["benefit_share"] == 1.0
+
+
+def test_pair_cross_table_grid() -> None:
+    ann = pd.DataFrame({
+        "md_quality": ["strong"] * 10 + ["weak"] * 10,
+        "ad_quality": ["strong"] * 10 + ["weak"] * 10,
+        "valence": [1] * 10 + [-1] * 10,
+    })
+    cross = pair_cross_table(ann, min_support=5)
+    ss = cross[(cross.md_quality == "strong") & (cross.ad_quality == "strong")].iloc[0]
+    ww = cross[(cross.md_quality == "weak") & (cross.ad_quality == "weak")].iloc[0]
+    assert ss["benefit_share"] == 1.0 and ss["benefit_lift"] > 1.0
+    assert ww["benefit_share"] == 0.0

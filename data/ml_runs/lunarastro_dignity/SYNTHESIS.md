@@ -466,6 +466,46 @@ This is the decisive verdict the whole arc was building toward: tested as
 practised — graded weight-of-evidence, read within one chart, predicting at the
 peak — Vedic dasha timing **does not concentrate real life events beyond chance.**
 
+### Finding 14 — the verses tested as written, with the two schools separated
+
+Finding 13's six "families" blended two *different* classical doctrines and never
+tested Parashara's own mechanism. A verse-level research pass (four reports →
+`dictum_catalog_v2.md`, 70 sourced dictums) let us encode specific rules and test
+each within-life, exposure-controlled (Poisson–binomial: a native's *expected*
+hit-rate = the duration-weighted share of their in-band life the rule covers;
+*lift* = observed/expected). `dasha_verse_timing.py`.
+
+**T1 — Parashara's "AD counted from the MD lord" frame (PD 20.29; BPHS 52–60).**
+The core BPHS timing rule — bhukti lord in 6/8/12 *from the dasha lord* → sorrow,
+in kendra/trikona/11 → the auspicious result — had never been tested. It is
+**null**: pooled across the three auspicious domains, benefic-from-MD lift =
+**1.008** (n=3530, p=0.54); death's malefic-from-MD lift = 1.03 (p=0.60). The
+faint right-direction wobble per domain washes out under power.
+
+**T2 — the 7th-lord school adjudication (the headline finding, now decided).**
+Phaladeepika 10.13/JP 14.29 make the 7L's dasha a *marriage*-giver; BPHS 48.5–8/
+44.2–5 make the 7L a *maraka* (death). Empirically **both fail**: the 7L period's
+lift is **0.95 for marriage** (p=0.35) and **0.98 for death** (p=0.60) — slightly
+*below* chance for each. The single most-cited timing rule in jyotiṣa is
+empirically inert here, and Parashara's reclassification of it as a killer gets no
+support either. The data picks *neither* school.
+
+**T3 — the two marriage streams, separated (Finding 13's dilution lesson applied).**
+Phaladeepika-stream (7L ∪ Venus ∪ occ/asp of 7H ∪ rāśi/navāṁśa-dispositor of 7L)
+lift = **1.007** (p=0.61) — flat. The lone glimmer is the **BPHS well-dignified
+benefic-AD stream** (a natural benefic, in good dignity, benefic from both Lagna
+and the MD lord): lift ≈ **1.09** in both marriage and career, pooled **1.088**
+(n=3254, **p=0.14**) — consistent in sign with the one real effect we ever found
+(the 7th-lord MD, lift 1.15, Finding 8), and pointing the same way: what little
+signal exists tracks the *dignity/strength* of the timing planet, not *which*
+significator it is. But it does not reach significance.
+
+**Verdict.** Encoded verbatim from the verses, with the schools disentangled and
+each native its own control, classical dasha timing is **null** — now confirmed at
+the level of Parashara's actual positional mechanism, not just abstracted families.
+The only non-null whisper (benefic-AD *strength*, lift ~1.09, p≈0.14) is the same
+dignity signal Findings 8–10 isolated, still too weak to clear the bar.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -500,6 +540,8 @@ independent dataset — which the repo does not currently contain.
 - `dictum_catalog.md` — sourced classical dictums (BPHS/Phaladeepika/…) by domain
 - `classical_dictum_test.md` — dictums tested the astrologer's way: hit-rate vs chance (Finding 12)
 - `confluence_timing.md` — convergence/weight-of-evidence model, dose-response + within-person peak (Finding 13)
+- `dictum_catalog_v2.md` + `dictum_catalog_v2.json` + `dictum_research/*.md` — 70 verse-level sourced dictums (Finding 14 inputs)
+- `verse_timing.md` — verses tested as written, within-person exposure-controlled; PD 20.29 frame, 7L adjudication, two streams (Finding 14)
 - `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
@@ -518,4 +560,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_hypothesis_battery.py`,
   `app/medini/ml/dasha_classical_dictums.py`,
   `app/medini/etl/build_longitudes.py`,
-  `app/medini/ml/dasha_confluence_timing.py`
+  `app/medini/ml/dasha_confluence_timing.py`,
+  `app/medini/ml/dasha_verse_timing.py`

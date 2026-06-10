@@ -1,0 +1,158 @@
+{
+  "per_domain": [
+    {
+      "domain": "marriage",
+      "auspicious": true,
+      "n_persons": 1147,
+      "n_dropped_out_of_band": 53,
+      "conditions": {
+        "AD_benefic_from_MD": {
+          "n": 1147,
+          "hit_rate": 0.6364,
+          "expected": 0.6282,
+          "lift": 1.013,
+          "z": 0.59,
+          "p": 0.5543
+        },
+        "AD_malefic_from_MD": {
+          "n": 1147,
+          "hit_rate": 0.204,
+          "expected": 0.2086,
+          "lift": 0.978,
+          "z": -0.4,
+          "p": 0.6923
+        },
+        "7L_period": {
+          "n": 1147,
+          "hit_rate": 0.2267,
+          "expected": 0.2376,
+          "lift": 0.954,
+          "z": -0.93,
+          "p": 0.3546
+        },
+        "Phaladeepika_stream": {
+          "n": 1147,
+          "hit_rate": 0.7873,
+          "expected": 0.7815,
+          "lift": 1.007,
+          "z": 0.51,
+          "p": 0.6066
+        },
+        "BPHS_benefic_AD_stream": {
+          "n": 1147,
+          "hit_rate": 0.0767,
+          "expected": 0.0704,
+          "lift": 1.09,
+          "z": 0.88,
+          "p": 0.3781
+        }
+      }
+    },
+    {
+      "domain": "career",
+      "auspicious": true,
+      "n_persons": 2107,
+      "n_dropped_out_of_band": 233,
+      "conditions": {
+        "AD_benefic_from_MD": {
+          "n": 2107,
+          "hit_rate": 0.6236,
+          "expected": 0.6256,
+          "lift": 0.997,
+          "z": -0.19,
+          "p": 0.8497
+        },
+        "AD_malefic_from_MD": {
+          "n": 2107,
+          "hit_rate": 0.2126,
+          "expected": 0.2117,
+          "lift": 1.004,
+          "z": 0.11,
+          "p": 0.9149
+        },
+        "BPHS_benefic_AD_stream": {
+          "n": 2107,
+          "hit_rate": 0.0793,
+          "expected": 0.0729,
+          "lift": 1.087,
+          "z": 1.18,
+          "p": 0.2388
+        }
+      }
+    },
+    {
+      "domain": "education",
+      "auspicious": true,
+      "n_persons": 276,
+      "n_dropped_out_of_band": 16,
+      "conditions": {
+        "AD_benefic_from_MD": {
+          "n": 276,
+          "hit_rate": 0.663,
+          "expected": 0.6208,
+          "lift": 1.068,
+          "z": 1.49,
+          "p": 0.1349
+        },
+        "AD_malefic_from_MD": {
+          "n": 276,
+          "hit_rate": 0.1739,
+          "expected": 0.2037,
+          "lift": 0.854,
+          "z": -1.27,
+          "p": 0.2043
+        }
+      }
+    },
+    {
+      "domain": "death",
+      "auspicious": false,
+      "n_persons": 1435,
+      "n_dropped_out_of_band": 595,
+      "conditions": {
+        "AD_benefic_from_MD": {
+          "n": 1435,
+          "hit_rate": 0.623,
+          "expected": 0.6266,
+          "lift": 0.994,
+          "z": -0.29,
+          "p": 0.7723
+        },
+        "AD_malefic_from_MD": {
+          "n": 1435,
+          "hit_rate": 0.2125,
+          "expected": 0.2071,
+          "lift": 1.026,
+          "z": 0.52,
+          "p": 0.6033
+        },
+        "7L_period": {
+          "n": 1435,
+          "hit_rate": 0.2286,
+          "expected": 0.2342,
+          "lift": 0.976,
+          "z": -0.52,
+          "p": 0.6042
+        }
+      }
+    }
+  ],
+  "pooled": {
+    "AD_benefic_from_MD \u2223 auspicious (marriage+career+education)": {
+      "n": 3530,
+      "hit_rate": 0.6309,
+      "expected": 0.6261,
+      "lift": 1.008,
+      "z": 0.61,
+      "p": 0.5449
+    },
+    "BPHS_benefic_AD_stream \u2223 marriage+career": {
+      "n": 3254,
+      "hit_rate": 0.0784,
+      "expected": 0.072,
+      "lift": 1.088,
+      "z": 1.47,
+      "p": 0.1413
+    }
+  }
+}

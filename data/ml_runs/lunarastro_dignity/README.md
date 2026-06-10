@@ -44,6 +44,19 @@ is either a **null** or an **artifact of how the data is labelled**.
    method carries no timing signal here, because the one real factor is too weak
    and the rest are noise that dilute it.
 
+5. **The verses, verbatim, still fail — and they settle an old dispute
+   (Finding 14).** A verse-level sourcing pass (70 dictums with chapter/verse;
+   `dictum_catalog_v2.md`) let us test Parashara's *actual* mechanism — the bhukti
+   lord's position **counted from the dasha lord** (PD 20.29) — for the first
+   time: null (lift 1.01, p=0.54). And it adjudicates a real schism: Phaladeepika
+   says the 7th-lord's period *gives marriage*; BPHS says the 7th-lord is a
+   *maraka* (killer). On 1,750 marriages and 2,695 deaths, the 7th-lord period
+   lifts **neither** (0.95 and 0.98) — both classical schools are wrong here. The
+   only surviving whisper is that a *well-dignified* benefic sub-period lifts
+   events ~1.09× (p=0.14): faint, not significant, but the same *strength* signal
+   Findings 8–10 found — suggesting whatever little is real is about planetary
+   **dignity**, not which significator is named.
+
 ## Corpus & method
 
 | | |
@@ -74,6 +87,7 @@ are FDR-controlled.
 | 11 | 103-claim battery, FDR-corrected | 4 survive, all karaka-exposure → the benefic-period→class coincidence; marriage←7th-lord leads the age-robust family |
 | 12 | Classical dictums tested the astrologer's way | Hit 76–90% — but **= chance** (lift ≈1.00); near-unfalsifiable by construction. Mangal Dosha → no divorce link |
 | 13 | Convergence model (count agreeing dictums, predict at peak) | **Flat** — event rate independent of confluence; within-person peak percentile = 0.50. Even the steelman is null |
+| 14 | Verses encoded verbatim, 2 schools separated, exposure-controlled | **Null** — PD 20.29 from-MD-lord frame lift 1.01 (p=0.54); "7L→marriage" lift **0.95**, "7L=maraka→death" lift 0.98 (both fail); only whisper = benefic-AD *strength* lift ~1.09 (p=0.14) |
 
 ## Three caveats that shape every claim
 

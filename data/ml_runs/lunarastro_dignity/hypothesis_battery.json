@@ -1,0 +1,11 @@
+{
+  "n_hypotheses": 103,
+  "n_raw_sig": 11,
+  "n_fdr_pass": 4,
+  "survivors": [
+    "relationship \u2190 karaka Jupiter of 5th [exposure]",
+    "death \u2190 karaka Saturn of 8th [exposure]",
+    "family \u2190 karaka Jupiter of 2th [exposure]",
+    "career \u2190 karaka Sun/Mercury/Jupiter/Saturn of 10th [exposure]"
+  ]
+}

@@ -342,6 +342,45 @@ K=5000):
 Net: across D1 and the testable parts of D9, **marriage timing lives in one place
 — the D1 7th-lord Mahadasha.** Adding vargas does not help on this data.
 
+### Finding 11 — the 103-hypothesis battery: what survives, and what it really is
+
+A pre-registered battery (`dasha_hypothesis_battery.py`, `hypothesis_battery.md`)
+runs **103 classical claims** through one non-circular engine — chart-shuffle for
+house-lord significators (age-robust), exposure-null for universal karakas, and
+permutation for event-age — with Benjamini-Hochberg FDR at 0.05 over all 103.
+Result: **11 raw p<0.05, 4 survive FDR**, and all four are *karaka-exposure*
+claims:
+
+| claim | lift | z | FDR p |
+|---|---:|---:|---:|
+| relationship ← Jupiter (5th karaka) | 1.53 | 4.83 | 7e-7 |
+| death ← Saturn (8th karaka) | 1.18 | 4.03 | 3e-5 |
+| family ← Jupiter (2nd karaka) | 1.28 | 3.38 | 4e-4 |
+| career ← Sun/Mer/Jup/Sat (10th karakas) | 1.04 | 3.00 | 1e-3 |
+
+**But these are not clean significator-timing wins.** Two checks deflate them:
+- *Age stratification* — the karaka exposure null controls dasha *length* but not
+  *when in life* it falls. Jupiter exposure is flat (~0.13) across life stages, yet
+  the Jupiter effects concentrate in **prime** (relationship 2.02, career 1.52,
+  family 1.37 in prime vs ≈1.0 in youth) and Saturn→death in **elder** (1.16). So
+  not a pure age artifact, but strongly life-stage-bound.
+- *Specificity* — Jupiter (a benefic) lifts relationship **and** family **and**
+  career, while Venus (also benefic, the marriage karaka) **fails** to lift
+  marriage (0.86). That pattern is the **benefic-period → beneficial-class
+  coincidence** of Findings 7–8 (Jupiter→auspicious classes, Saturn→death), not
+  precise karaka-to-domain timing — and the exposure null cannot remove it.
+
+The **age-robust** family (chart-shuffle house-lord tests) is led, as all session,
+by **marriage ← 7th-lord** (lift 1.15, p=0.02) — real and chart-specific, but it
+does not clear FDR over 103 claims. The vast remainder sit at p≈0.5, lift≈1: most
+classical significator rules leave **no detectable footprint**.
+
+**Battery verdict**: a wide, honest sweep confirms the whole arc — broad Vedic
+significator-timing doctrine is mostly null on this corpus; the robust signals
+reduce to (a) a benefic/malefic-period → event-class-nature coincidence and (b)
+one modest, chart-specific, age-robust effect: the 7th-lord Mahadasha times
+marriage.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -372,6 +411,7 @@ independent dataset — which the repo does not currently contain.
 - `marriage_deepdive.md` — 7th-lord MD/AD/MD∩AD + secondary significators + split-half (Finding 9)
 - `houselord_class.md` — house-lordship → event-class lift matrix, chart-shuffle (Finding 9)
 - `marriage_d9.md` — D9 Navamsa marriage significators vs D1 7th-lord (Finding 10)
+- `hypothesis_battery.md` — 103 pre-registered claims, FDR-corrected (Finding 11)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
@@ -385,4 +425,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_marriage_deepdive.py`,
   `app/medini/ml/dasha_houselord_class.py`,
   `app/medini/etl/build_d9_charts.py`,
-  `app/medini/ml/dasha_marriage_d9.py`
+  `app/medini/ml/dasha_marriage_d9.py`,
+  `app/medini/ml/dasha_hypothesis_battery.py`

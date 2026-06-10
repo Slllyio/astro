@@ -1,0 +1,203 @@
+{
+  "marriage": {
+    "dose": {
+      "curve": [
+        {
+          "conf": 0,
+          "n_windows": 15821,
+          "person_years": 20467.7,
+          "events": 228,
+          "rate_per_1k_yr": 11.14
+        },
+        {
+          "conf": 1,
+          "n_windows": 14470,
+          "person_years": 19669.0,
+          "events": 213,
+          "rate_per_1k_yr": 10.83
+        },
+        {
+          "conf": 2,
+          "n_windows": 21317,
+          "person_years": 30769.7,
+          "events": 318,
+          "rate_per_1k_yr": 10.33
+        },
+        {
+          "conf": 3,
+          "n_windows": 23804,
+          "person_years": 35892.9,
+          "events": 401,
+          "rate_per_1k_yr": 11.17
+        },
+        {
+          "conf": 4,
+          "n_windows": 15345,
+          "person_years": 25825.4,
+          "events": 278,
+          "rate_per_1k_yr": 10.76
+        },
+        {
+          "conf": 5,
+          "n_windows": 5789,
+          "person_years": 11772.2,
+          "events": 118,
+          "rate_per_1k_yr": 10.02
+        },
+        {
+          "conf": 6,
+          "n_windows": 1062,
+          "person_years": 2948.1,
+          "events": 30,
+          "rate_per_1k_yr": 10.18
+        }
+      ],
+      "chi2": 2.05,
+      "chi2_p": 0.9148529680899109,
+      "trend_rho": -0.679,
+      "overall_rate": 10.76
+    },
+    "peak": {
+      "n_persons": 1147,
+      "mean_percentile": 0.5009,
+      "null_mean": 0.5002,
+      "null_std": 0.0078,
+      "z": 0.11,
+      "p": 0.4663
+    }
+  },
+  "career": {
+    "dose": {
+      "curve": [
+        {
+          "conf": 0,
+          "n_windows": 13394,
+          "person_years": 18075.6,
+          "events": 559,
+          "rate_per_1k_yr": 30.93
+        },
+        {
+          "conf": 1,
+          "n_windows": 9119,
+          "person_years": 12186.6,
+          "events": 401,
+          "rate_per_1k_yr": 32.91
+        },
+        {
+          "conf": 2,
+          "n_windows": 16595,
+          "person_years": 23796.0,
+          "events": 710,
+          "rate_per_1k_yr": 29.84
+        },
+        {
+          "conf": 3,
+          "n_windows": 31738,
+          "person_years": 50129.5,
+          "events": 1453,
+          "rate_per_1k_yr": 28.98
+        },
+        {
+          "conf": 4,
+          "n_windows": 35125,
+          "person_years": 56884.2,
+          "events": 1755,
+          "rate_per_1k_yr": 30.85
+        },
+        {
+          "conf": 5,
+          "n_windows": 21503,
+          "person_years": 33976.3,
+          "events": 1045,
+          "rate_per_1k_yr": 30.76
+        },
+        {
+          "conf": 6,
+          "n_windows": 5893,
+          "person_years": 9030.5,
+          "events": 285,
+          "rate_per_1k_yr": 31.56
+        }
+      ],
+      "chi2": 7.15,
+      "chi2_p": 0.3074678227116886,
+      "trend_rho": -0.107,
+      "overall_rate": 30.42
+    },
+    "peak": {
+      "n_persons": 2107,
+      "mean_percentile": 0.4852,
+      "null_mean": 0.5001,
+      "null_std": 0.0061,
+      "z": -2.43,
+      "p": 0.991
+    }
+  },
+  "death": {
+    "dose": {
+      "curve": [
+        {
+          "conf": 0,
+          "n_windows": 31832,
+          "person_years": 39996.7,
+          "events": 283,
+          "rate_per_1k_yr": 7.08
+        },
+        {
+          "conf": 1,
+          "n_windows": 27752,
+          "person_years": 38105.3,
+          "events": 295,
+          "rate_per_1k_yr": 7.74
+        },
+        {
+          "conf": 2,
+          "n_windows": 39843,
+          "person_years": 57310.9,
+          "events": 396,
+          "rate_per_1k_yr": 6.91
+        },
+        {
+          "conf": 3,
+          "n_windows": 44164,
+          "person_years": 67647.6,
+          "events": 500,
+          "rate_per_1k_yr": 7.39
+        },
+        {
+          "conf": 4,
+          "n_windows": 29581,
+          "person_years": 50135.2,
+          "events": 315,
+          "rate_per_1k_yr": 6.28
+        },
+        {
+          "conf": 5,
+          "n_windows": 11866,
+          "person_years": 23840.2,
+          "events": 184,
+          "rate_per_1k_yr": 7.72
+        },
+        {
+          "conf": 6,
+          "n_windows": 2274,
+          "person_years": 5984.2,
+          "events": 56,
+          "rate_per_1k_yr": 9.36
+        }
+      ],
+      "chi2": 13.29,
+      "chi2_p": 0.038694629683571714,
+      "trend_rho": 0.321,
+      "overall_rate": 7.17
+    },
+    "peak": {
+      "n_persons": 1435,
+      "mean_percentile": 0.4996,
+      "null_mean": 0.5,
+      "null_std": 0.0075,
+      "z": -0.05,
+      "p": 0.5147
+    }
+  }
+}

@@ -423,6 +423,49 @@ carry chart-specific skill — the single **7th-lord Mahadasha** (lift 1.15) —
 **diluted back to lift 1.00** the moment it is buried in the full disjunctive set.
 The classical method's breadth is exactly what hides its one real signal.
 
+### Finding 13 — the steelman: convergence of dictums, the astrologer's actual method
+
+Findings 11–12 were rightly criticised: testing single factors is too strict, and
+testing "ANY of a disjunctive set fires" is too permissive — *neither is how a
+jyotishi predicts*. Real practice is **convergence / cross-inference**: the event
+is predicted in the period where **many independent significators agree**, graded
+by **how many** converge. So we built that (`dasha_confluence_timing.py`): every
+Mahadasha–Antardasha period scored **0–6** by independent classical families —
+MD significator, AD significator, D9 navamsa corroboration, universal karaka,
+dignity-of-activator (with combustion/moolatrikona from recomputed longitudes,
+`build_longitudes.py`), and MD↔AD sambandha — and tested **within each life**:
+does the event rate rise with confluence, and does the event fall in the native's
+**peak-confluence** period?
+
+**It is a clean null across marriage, career, and death.**
+
+| domain | rate at conf 0 → 6 | trend ρ | within-person peak percentile | z |
+|---|---|---:|---:|---:|
+| marriage | 11.1 → 10.2 (flat) | −0.68 | 0.501 | 0.11 |
+| career | 30.9 → 31.6 (flat) | −0.11 | 0.485 | −2.43 |
+| death | 7.1 → 9.4 (slight) | +0.32 | 0.500 | −0.05 |
+
+- **Marriage & career dose-response is flat** — periods where **six** dictums
+  converge have the *same* event rate as periods where **none** do.
+- **The within-person peak test — the astrologer's literal move (predict at the
+  period of maximum convergence) — sits exactly at chance** (percentile ≈0.50)
+  for all three domains. Career is even slightly *below* 0.50.
+- Death shows a faint dose-response (ρ=0.32, χ²p=0.04) driven by the small
+  conf=6 cell, but its person-controlled peak test is dead null (z=−0.05) — i.e.
+  an age residual, not a confluence effect.
+- The planted-signal unit test confirms the peak test *does* fire when
+  concentration exists, so this is a true null, not a dead instrument.
+
+**Why even the steelman is null:** the one genuinely real factor (the 7th-lord
+Mahadasha, lift 1.15, Finding 8) is weak, and the other five families are
+essentially noise; **averaging a weak signal with five noisy indicators dilutes
+it to invisibility.** Convergence helps only if the converging indicators each
+carry signal — here they do not, so "more dictums agreeing" tracks nothing.
+
+This is the decisive verdict the whole arc was building toward: tested as
+practised — graded weight-of-evidence, read within one chart, predicting at the
+peak — Vedic dasha timing **does not concentrate real life events beyond chance.**
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -456,6 +499,8 @@ independent dataset — which the repo does not currently contain.
 - `hypothesis_battery.md` — 103 pre-registered claims, FDR-corrected (Finding 11)
 - `dictum_catalog.md` — sourced classical dictums (BPHS/Phaladeepika/…) by domain
 - `classical_dictum_test.md` — dictums tested the astrologer's way: hit-rate vs chance (Finding 12)
+- `confluence_timing.md` — convergence/weight-of-evidence model, dose-response + within-person peak (Finding 13)
+- `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
@@ -471,4 +516,6 @@ independent dataset — which the repo does not currently contain.
   `app/medini/etl/build_d9_charts.py`,
   `app/medini/ml/dasha_marriage_d9.py`,
   `app/medini/ml/dasha_hypothesis_battery.py`,
-  `app/medini/ml/dasha_classical_dictums.py`
+  `app/medini/ml/dasha_classical_dictums.py`,
+  `app/medini/etl/build_longitudes.py`,
+  `app/medini/ml/dasha_confluence_timing.py`

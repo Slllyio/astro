@@ -35,6 +35,15 @@ is either a **null** or an **artifact of how the data is labelled**.
    which is precisely how the system can feel reliable for millennia while
    adding no skill over naming the same number of planets at random.
 
+4. **The steelman also fails (Finding 13).** Tested as *convergence* — scoring
+   each life-period by how many independent dictums agree (0–6) and predicting at
+   the **peak**, the way an astrologer cross-infers — events do **not** cluster
+   in high-confluence periods. Dose-response is flat (marriage: rate 11.1 at
+   0 dictums vs 10.2 at 6), and the within-person peak percentile sits at **0.50
+   = chance** for marriage, career, and death. Even astrology's best-practice
+   method carries no timing signal here, because the one real factor is too weak
+   and the rest are noise that dilute it.
+
 ## Corpus & method
 
 | | |
@@ -64,6 +73,7 @@ are FDR-controlled.
 | 10 | Does the Navamsa (D9) sharpen marriage timing? | **No** — D1 7th-lord stays strongest |
 | 11 | 103-claim battery, FDR-corrected | 4 survive, all karaka-exposure → the benefic-period→class coincidence; marriage←7th-lord leads the age-robust family |
 | 12 | Classical dictums tested the astrologer's way | Hit 76–90% — but **= chance** (lift ≈1.00); near-unfalsifiable by construction. Mangal Dosha → no divorce link |
+| 13 | Convergence model (count agreeing dictums, predict at peak) | **Flat** — event rate independent of confluence; within-person peak percentile = 0.50. Even the steelman is null |
 
 ## Three caveats that shape every claim
 

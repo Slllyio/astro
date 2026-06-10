@@ -1,0 +1,93 @@
+{
+  "_meta": {
+    "version": 2,
+    "date": "2026-06-10",
+    "description": "Machine-readable classical timing dictums by event, verse-level. Status: verse=located in primary text; commentary=late-classic/commentarial; popular=no classical verse found (do NOT test as scripture). testable: yes/partial/no against our corpus (D1 signs+houses, D9, recomputed longitudes, MD+AD windows, dated events).",
+    "sources_read": ["BPHS (Santhanam/Sharma 97-ch., Sanskrit mula cross-checked)", "Phaladeepika (Kapoor)", "Jataka Parijata (Sastri + Sanskrit mula)", "Brihat Jataka", "Saravali (Santhanam)", "Uttara Kalamrita (P.S. Sastri)", "Jaimini Sutras (Sanskrit + tika)", "Jataka Tattva (Kadalangudi)", "Jataka Chandrika / Laghu Parashari", "Sarvartha Chintamani (Bhasin)", "Prasna Marga (Raman, partial)"],
+    "research_reports": "dictum_research/{marriage,career_wealth,death_longevity,children_education_travel_meta}.md"
+  },
+  "meta_rules": [
+    {"id": "M1", "rule": "Dasha results from lord's nature, placement+state, strength; then lordship; then association", "citation": "BPHS 47.2-3, 48.1, 47.9-10", "status": "verse", "testable": "yes"},
+    {"id": "M2", "rule": "Dasha tone graded by dignity: exalt full, trine 3/4, own 1/2, friend 1/4, enemy little, debilitated zero; combust = debilitated; lord in 6/8/12 adverse", "citation": "BPHS 47.5-6; PD 20.30", "status": "verse", "testable": "yes"},
+    {"id": "M3", "rule": "12-lord dasha table: L1 wellbeing, L2 death-risk, L4 home/land, L5 learning+children, L6 disease, L7 spouse-trouble+death-risk, L8 death+money-loss, L9 gains/fame, L10 government honours, L11 obstructed gains, L12 suffering", "citation": "BPHS 48.2-8", "status": "verse", "testable": "yes"},
+    {"id": "M4", "rule": "AD lord counted FROM the MD lord: kendra/trikona/11 good, 6/8/12 sorrow; AD lord gives the bhava-results of its house from the MD lord", "citation": "BPHS 52-60 passim; PD 20.29; UK 5.23.5-24.5", "status": "verse", "testable": "yes", "note": "untested frame in our runs so far"},
+    {"id": "M5", "rule": "AD of the MD lord's enemy = death-like time", "citation": "JP 18.56; PD 20.28", "status": "verse", "testable": "yes"},
+    {"id": "M6", "rule": "Benefic AD lord unconnected with malefic MD lord gives evil anyway; connected gives mixed; planets associated with MD lord reproduce its results in their ADs", "citation": "Jataka Chandrika 29, 36-37; UK 5.24.5", "status": "commentary", "testable": "yes"},
+    {"id": "M7", "rule": "Phase rule: 1st/2nd/3rd drekkana of sign -> results at start/middle/end of dasha; retrograde reversed. Variants JP 18.82 (house/sign/aspect thirds), PD 20.33 (udaya)", "citation": "BPHS 47.3-4", "status": "verse", "testable": "partial", "needs": ["degrees (have)", "retrograde flag"]},
+    {"id": "M8", "rule": "Dasha-transit samanvaya: dasha lord's transit nourishes the transited house if natal-strong; trigger when transit Sun/Jupiter enter dasha lord's exalt/own sign; Moon-from-dasha-lord gates", "citation": "PD 20.34-38, 20.60-62", "status": "verse", "testable": "partial", "needs": ["transit ephemeris"]},
+    {"id": "M9", "rule": "Two lordships: contradictory results cancel, different both obtain; strength full/half/quarter; moolatrikona sign dominates; first sign fruits in first half of dasha", "citation": "BPHS 24.145-148; PD 15.11", "status": "verse", "testable": "yes"},
+    {"id": "M10", "rule": "Rahu/Ketu give results of the planet they conjoin; trouble especially at dasha-end", "citation": "PD 20.39", "status": "verse", "testable": "yes"},
+    {"id": "M11", "rule": "Planet at sign-junction: its dasha gives grief/disease; at bhava-sandhi gives nothing", "citation": "JP 18.27; PD 15.13-14", "status": "verse", "testable": "partial"},
+    {"id": "M12", "rule": "Graha maturity ages 16/22/24/25/28/32/36/42/48", "citation": "none", "status": "popular", "testable": "no"},
+    {"id": "M13", "rule": "MD-to-MD junction (dasha-chhidra) inherently dangerous", "citation": "no verse; seeds PD 20.39, 19.16", "status": "popular", "testable": "no"}
+  ],
+  "marriage": [
+    {"id": "Mar1", "rule": "Marriage in dasha of occupant/aspector/lord of 7H", "citation": "PD 10.13", "status": "verse", "testable": "yes"},
+    {"id": "Mar2", "rule": "Strong 7H -> marriage in 7L dasha; WEAK 7L dasha -> separation from wife (divorce timing)", "citation": "PD 20.8, 20.18", "status": "verse", "testable": "yes"},
+    {"id": "Mar3", "rule": "Marriage in dasha of strongest of {rasi-dispositor(7L), navamsa-dispositor(7L), Venus, Moon}, with Jupiter transit trine to 7L sign/navamsa", "citation": "JP 14.28 = PD 10.14", "status": "verse", "testable": "partial", "note": "UK attribution not located"},
+    {"id": "Mar4", "rule": "Also dashas of: dispositor of Venus-joined 7th sign; dispositor of 2L's sign; 10L; 8L; planet CONJUNCT 7L; occupant of 7H", "citation": "JP 14.29", "status": "verse", "testable": "yes"},
+    {"id": "Mar5", "rule": "Venus MD -> acquisition of wife (kalatra-karaka)", "citation": "PD 19.26, 2.6", "status": "verse", "testable": "yes"},
+    {"id": "Mar6", "rule": "BPHS-stream: marriage in specific benefic MD/AD pairs gated by dignity/position conditions (18 pairs; self-marriage: Sun-Jup 52.32, Sun-Ven 52.65, Sat-Ven 57.24, Merc-Moon 58.26, Rahu-Ven PD 21.35)", "citation": "BPHS 52-60", "status": "verse", "testable": "yes"},
+    {"id": "Mar7", "rule": "In BPHS the 7L dasha is a MARAKA (distress to wife, death-risk) - 7L-marriage rule is Phaladeepika/JP stream; test streams separately", "citation": "BPHS 48.5-8, 44.2-5", "status": "verse", "testable": "yes"},
+    {"id": "Mar8", "rule": "13 fixed-age yogas -> marriage at specific ages 5-33 (e.g. Venus 7th-from-Moon + Saturn 7th-from-Venus -> 18)", "citation": "BPHS 18.22-34", "status": "verse", "testable": "yes"},
+    {"id": "Mar9", "rule": "Transit triggers: Venus/7L trine to 1L sign-navamsa; 1L over 7H sign; Jupiter over 7L/Venus house", "citation": "PD 10.12-13; JP 14.31", "status": "verse", "testable": "partial", "needs": ["transit ephemeris"]},
+    {"id": "Mar10", "rule": "Early marriage: 1L near 7L; benefic near 1L/7L; strong 7L in 2H", "citation": "Jataka Tattva 125-127", "status": "commentary", "testable": "yes"},
+    {"id": "Mar11", "rule": "Within-dasha tempo: benefic in benefic sign -> start; benefic in malefic sign -> middle; malefic in malefic sign -> end", "citation": "JP 14.30", "status": "verse", "testable": "yes"},
+    {"id": "Mar12", "rule": "Jaimini: DK = spouse karaka; UL afflicted -> denial unless benefic relief; 2nd-from-UL = spouse-loss point; Sat+Rahu there -> loss/divorce; chara-dasha of UL/A7/DK signs", "citation": "BPHS 30, 32; JS 1.4; Rangacharya (chara-dasha part)", "status": "verse+commentary", "testable": "partial", "needs": ["arudhas (computable)"]},
+    {"id": "Mar13", "rule": "Delay/denial: 7H/7L hemmed/debilitated/COMBUST -> deprived of wife; Saturn in female 7H -> old without marriage; Mars+Saturn in 7th-from-Venus AND 7th-from-Moon -> wifeless", "citation": "PD 10.2-10.5; BJ 24.8", "status": "verse", "testable": "yes"},
+    {"id": "Mar14", "rule": "Plurality/remarriage: dual-sign 7L+Venus -> two wives; benefics+malefics in female 7H -> remarriage; exalted A7 lord -> second marriage", "citation": "BPHS 18.19-21; PD 10.5, 11.3; BJ 24.9; UK comm.", "status": "verse+commentary", "testable": "partial"},
+    {"id": "Mar15", "rule": "Widowhood in the dasha of the navamsa-dispositor of the 8L (malefic in 8H); Mars in female 7H -> early widowhood; spouse-death age table; Mars-6/Rahu-7/Saturn-8 chain", "citation": "Saravali 46.27; BJ 24.14, 24.8; BPHS 18.35-42", "status": "verse", "testable": "partial", "note": "female-chart rules"},
+    {"id": "Mar16", "rule": "Mangal dosha verse NOT in any primary classic (Agastya Samhita / Manasagari / Deva Keralam attributions); classical core = Mars in female 7H harms spouse", "citation": "none (primary)", "status": "popular", "testable": "yes", "note": "tested: no divorce link (Finding 12)"}
+  ],
+  "career_wealth": [
+    {"id": "Car1", "rule": "10L dasha -> recognition/awards from government, per 10L dignity & house", "citation": "BPHS 48.6, 48.1; PD 20.11", "status": "verse", "testable": "yes"},
+    {"id": "Car2", "rule": "Karmajiva: profession from 10th from Lagna/Moon/Sun; livelihood = lord of navamsa occupied by 10L (strongest reference)", "citation": "BJ X.1-3; PD 5.1-9; JP 15.43", "status": "verse", "testable": "partial"},
+    {"id": "Car3", "rule": "Raja-yoga formation: kendra x trikona sambandha; yogakaraka; 9L+10L Dharma-Karmadhipati", "citation": "BPHS 34.11-15, 39.33-37; JC 14-15, 20-21", "status": "verse", "testable": "yes"},
+    {"id": "Car4", "rule": "Raja-yoga TIMING: fruits in dashas of yoga-participants; begins in yogakaraka MD, continues in 3/6/11-lord ADs; planets conjunct yogakaraka give it in their ADs; kendra-lord MD x trikona-lord AD; often BEGINS in maraka bhuktis", "citation": "JC 17-18, 31-33; BPHS 48.9-13; PD 20.54", "status": "verse+commentary", "testable": "yes"},
+    {"id": "Car5", "rule": "'Fructifies in dasha of the stronger' - not BPHS; actual: UK 5.28.5-29.5 + BPHS 39.5 strength-proportionality", "citation": "UK; BPHS 39.5", "status": "commentary", "testable": "yes"},
+    {"id": "Car6", "rule": "1-10 exchange -> rajya-labha in the dashas of L1 and L10 (explicit dasha verse); likewise 1-9", "citation": "BPHS 48.16-17.5", "status": "verse", "testable": "yes"},
+    {"id": "Car7", "rule": "25 MD/AD pairs with rajya-labha/position/wealth + exact gating conditions (table in research file)", "citation": "BPHS 52-60", "status": "verse", "testable": "yes"},
+    {"id": "Car8", "rule": "Position loss: AD 6/8/12 from MD lord; weak-L10 dasha -> failure/exile/loss of honour; afflicted Sun dasha -> punishment/exile", "citation": "BPHS 52.60-73, 53.25-28.5, 47.12-15; PD 20.19", "status": "verse", "testable": "yes"},
+    {"id": "Car9", "rule": "Wealth: L5/L9 + planets conjunct them give wealth in their dashas; wealth-LOSS in dashas of planets joined to L6/L8/L12 without trine-lord aspect; L8 dasha -> financial loss", "citation": "BPHS 41.16, 42.13, 48.5, 13.1-4, 22.2", "status": "verse", "testable": "yes"},
+    {"id": "Car10", "rule": "Dashas of 3/6/11 lords & maraka-connected planets unfavourable; dusthana-lord dashas redeemed by trikona-lord association; viparita exception", "citation": "BPHS 48.14-20; PD 6.63-66", "status": "verse", "testable": "yes"},
+    {"id": "Car11", "rule": "Dasha of planet IN the 10th -> ruling powers/fame; malefic 10th/12th from MD lord in its AD -> defame/loss", "citation": "Sarvartha Chintamani dasha-phala 19-24, 33", "status": "commentary", "testable": "yes", "note": "not verse-verified"},
+    {"id": "Car12", "rule": "Raja-yoga bhanga gates (fallen planets, weak Moon, Sun at Libra 10deg)", "citation": "Saravali 39", "status": "verse", "testable": "partial"},
+    {"id": "Car13", "rule": "Marana-karaka-sthana", "citation": "none", "status": "popular", "testable": "no"}
+  ],
+  "death_longevity": [
+    {"id": "D1", "rule": "Maraka houses 2 & 7 (2nd stronger); killer set = lords + malefic occupants + malefics joined to lords; death in their MD/AD gated by ayus band", "citation": "BPHS 44.1-5", "status": "verse", "testable": "yes"},
+    {"id": "D2", "rule": "Fallback ladder: 12L -> benefic related to 12L -> 8L -> pure malefic", "citation": "BPHS 44.6-7; LP 25-26", "status": "verse", "testable": "yes"},
+    {"id": "D3", "rule": "Maraka does not kill in benefic bhuktis even if related; kills in malefic bhuktis even if unrelated", "citation": "BPHS 44.8", "status": "verse", "testable": "yes"},
+    {"id": "D4", "rule": "Saturn ill-disposed + related to maraka kills first of all", "citation": "BPHS 44.9", "status": "verse", "testable": "yes"},
+    {"id": "D5", "rule": "Jupiter/Venus as kendra-lords = powerful marakas (LAGHU PARASHARI not BPHS); Venus-Saturn AD exchange-of-results", "citation": "LP ~13/23, 33-34", "status": "commentary", "testable": "yes"},
+    {"id": "D6", "rule": "Rahu/Ketu in 1/7/8/12 or related to maraka lords acquire killing power", "citation": "BPHS 44.16-17", "status": "verse", "testable": "yes"},
+    {"id": "D7", "rule": "6L dasha can kill; ADs of 6/8/12 lords; AD lord owning 2&7 -> apamrityu (severity per planet: Merc/Sat worst, Moon mildest)", "citation": "BPHS 44.19; 52-60 refrains", "status": "verse", "testable": "yes"},
+    {"id": "D8", "rule": "Seven chhidra grahas (8L, occupant/aspector of 8H, 22nd-drekkana lord, planet w/ 8L, 64th-navamsa-from-Moon lord, atisatru of 8L): death in dasha of the strongest", "citation": "JP ~5.52-53; BJ 25 (22nd drekkana)", "status": "verse", "testable": "partial", "needs": ["lagna drekkana (birth-time quality)", "64th navamsa (have Moon longitude)"]},
+    {"id": "D9", "rule": "Ayurdaya three-pairs (1L/8L, Sat/Moon, Lagna/Hora-Lagna) x sign-quality -> alpa/madhya/purna bands; year caps; Saturn declension", "citation": "BPHS 43", "status": "verse", "testable": "no", "needs": ["Hora Lagna = exact birth time"]},
+    {"id": "D10", "rule": "Marakas OF a bhava (its 2nd & 7th) time death of that relative (father 9th, mother 4th, spouse 7th)", "citation": "UK kanda IV-V; PD bhava rule", "status": "commentary", "testable": "partial"},
+    {"id": "D11", "rule": "Illness: weak-8L dasha -> sickness/death; malefics in 6/8/12 from any bhava destroy it; 6H/8H occupant disease signatures", "citation": "PD 19, 14, 15-16", "status": "verse", "testable": "yes"},
+    {"id": "D12", "rule": "Sade-sati as death timer", "citation": "no jataka verse (gochara core only)", "status": "popular", "testable": "no"}
+  ],
+  "children": [
+    {"id": "Ch1", "rule": "Childbirth in dashas/ADs of occupants of 5H, aspectors of 5H, 5L (+ L1, L7, Jupiter)", "citation": "PD 12.25-27", "status": "verse", "testable": "partial", "note": "no clean childbirth event class in corpus"},
+    {"id": "Ch2", "rule": "Child in dasha/AD of strong 5L or Jupiter OR of the lords of the signs/navamsas they occupy", "citation": "PD 12.28", "status": "verse", "testable": "partial"},
+    {"id": "Ch3", "rule": "5th from Jupiter/Moon/Lagna; son in dasha-bhukti of its lord; nakshatra-dasha of 5L+7L summed longitudes", "citation": "JP 13.49, 13.14", "status": "verse", "testable": "partial"},
+    {"id": "Ch4", "rule": "BPHS: 5L dasha -> child-happiness; Venus AD in Sun MD -> birth of son; AD kendra/kona from MD lord in Jup MD -> putra-labha", "citation": "BPHS 48.4, 52.52, 56.15", "status": "verse", "testable": "partial"},
+    {"id": "Ch5", "rule": "Jupiter transit over trines of 5L sign/navamsa -> birth of son", "citation": "PD 12.29, 12.26, 12.30", "status": "verse", "testable": "partial", "needs": ["transit ephemeris"]},
+    {"id": "Ch6", "rule": "Promise/denial: 5L in 6/8/12 -> childless; triple-frame affliction -> no children; adoption yogas; curse apparatus; Beeja/Kshetra-sphuta parity", "citation": "BPHS 16.1-11, ch.83; PD 12.1-24", "status": "verse", "testable": "partial"},
+    {"id": "Ch7", "rule": "Fixed-age verses: son at 30/32-33/36/40; child-death at 32; grief at 56", "citation": "BPHS 16.18-23", "status": "verse", "testable": "partial"},
+    {"id": "Ch8", "rule": "D7 governs children (BPHS 7.2); 'D7-lord dasha' timing = derived tradition, no verse", "citation": "BPHS 7.2", "status": "verse+popular", "testable": "partial"}
+  ],
+  "education": [
+    {"id": "E1", "rule": "5L dasha -> vidyaptih (attainment of learning)", "citation": "BPHS 48.4", "status": "verse", "testable": "yes"},
+    {"id": "E2", "rule": "Mercury AD in Saturn MD (kendra/trikona) -> vidya-labha; Mercury MD -> education success; Jup/Jup -> learning; afflicted Mercury sub-periods -> vidya-hani", "citation": "BPHS 57.8, 47.62-69, 55.73; JP 18.110", "status": "verse", "testable": "yes"},
+    {"id": "E3", "rule": "4L = learning; Mercury=vidya, Jupiter=jnana karakas; 12L in 5th -> bereft of learning", "citation": "BPHS 24.37/43/137; PD 2.4, 15.15-16", "status": "verse", "testable": "yes"}
+  ],
+  "travel_foreign": [
+    {"id": "T1", "rule": "House anchors: 7th = road travel, 9th = pilgrimage, 10th = pravasa (residence away). 12th = foreign settlement NOT in BPHS ch.11", "citation": "BPHS 11.8/10/11", "status": "verse", "testable": "yes"},
+    {"id": "T2", "rule": "Rahu dasha -> honor from foreign (Yavana) lord; Saturn in 6/8/12 -> wandering abroad; Ketu -> journeys/banishment", "citation": "BPHS 47.40/57/73-76; PD 19.13/17", "status": "verse", "testable": "yes"},
+    {"id": "T3", "rule": "AD kendra/kona/3/11 from MD lord -> pilgrimage/honor abroad; 6/8/12 -> displacement; Saturn AD in Rahu MD -> residence in distant land", "citation": "BPHS 52-60 (~30 verses); JP 18.96-152", "status": "verse", "testable": "yes"},
+    {"id": "T4", "rule": "All planets in movable signs (Rajju) -> dwelling in foreign lands", "citation": "BJ 12.11; BPHS 35.7/18", "status": "verse", "testable": "yes"},
+    {"id": "T5", "rule": "Modern package '12L+9L+7L+Rahu = foreign settlement' - components classical, package modern", "citation": "none as package", "status": "popular", "testable": "no"}
+  ]
+}

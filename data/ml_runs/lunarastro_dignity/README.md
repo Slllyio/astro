@@ -26,6 +26,15 @@ Everything else — the dignity→benefit gradient, natural benefic/malefic natu
 domain "promise", D9 navamsa refinements, and the broad house-lord→class rules —
 is either a **null** or an **artifact of how the data is labelled**.
 
+3. **Why astrology *feels* accurate (Finding 12).** Tested the way a jyotishi
+   actually reads a chart — the disjunctive union of significators (7th-lord
+   *or* Venus *or* 2nd/11th-lord *or* aspecting planet…) across MD *and* AD —
+   the classical dictums "hit" **76–90%** of real events. But that equals
+   **chance** (lift ≈ 1.00): a ~5-of-9-planet set read over two dasha levels is
+   running ~83% of the time by construction. The rules are near-unfalsifiable,
+   which is precisely how the system can feel reliable for millennia while
+   adding no skill over naming the same number of planets at random.
+
 ## Corpus & method
 
 | | |
@@ -54,6 +63,7 @@ are FDR-controlled.
 | 9 | Marriage deep-dive + multiclass ceiling | It's the 7th-lord **MD** (not AD, not 2/11); house-lord→class directionally right but aggregate null |
 | 10 | Does the Navamsa (D9) sharpen marriage timing? | **No** — D1 7th-lord stays strongest |
 | 11 | 103-claim battery, FDR-corrected | 4 survive, all karaka-exposure → the benefic-period→class coincidence; marriage←7th-lord leads the age-robust family |
+| 12 | Classical dictums tested the astrologer's way | Hit 76–90% — but **= chance** (lift ≈1.00); near-unfalsifiable by construction. Mangal Dosha → no divorce link |
 
 ## Three caveats that shape every claim
 

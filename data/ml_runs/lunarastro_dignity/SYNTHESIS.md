@@ -381,6 +381,48 @@ reduce to (a) a benefic/malefic-period → event-class-nature coincidence and (b
 one modest, chart-specific, age-robust effect: the 7th-lord Mahadasha times
 marriage.
 
+### Finding 12 — the dictums tested on their own terms: why astrology *feels* accurate
+
+The permutation battery tested isolated single factors — fair science, but *not*
+how a jyotishi reads a chart. Classical practice is **disjunctive and
+multi-significator**: the event is predicted in the dasha of *any* of the 7th-lord
+**or** Venus **or** the 2nd/11th-lord **or** a planet in/aspecting the 7th **or**
+the navamsa dispositor — read across **MD and AD together**. So we encoded the
+sourced dictums (`dictum_catalog.md`) exactly that way and measured the
+practitioner's hit-rate (`dasha_classical_dictums.py`, `classical_dictum_test.md`).
+
+**The dictums "work" 76–90% of the time** — marriage 83%, relationship 90%,
+career 89%, death 82%. On its face, vindication. **But the hit-rate equals
+chance** — i.e. the share of each native's *own* timeline that the significator
+set occupies (lift ≈ **1.00** for every class; education and divorce even dip
+below 1):
+
+| event | hit-rate | chance | lift |
+|---|---:|---:|---:|
+| marriage | 83% | 83% | 1.00 |
+| relationship | 90% | 87% | 1.04 |
+| career | 89% | 88% | 1.01 |
+| death | 82% | 82% | 1.01 |
+| education | 76% | 80% | 0.95 |
+| divorce | 86% | 88% | 0.98 |
+
+The mechanism is structural: a ~5-of-9-planet disjunctive set, read across **both**
+MD and AD, is running **~83% of the time by construction** — the rule is almost
+always "satisfied". The high apparent accuracy is the *permissiveness* of the
+prescription, not predictive skill; the specific prescribed planets add **nothing**
+over naming the same *number* of planets at random. This quantifies, on 17,912
+real events, **how a near-unfalsifiable system can feel reliable for millennia**:
+not fraud, not nonsense — a rule that is nearly always confirmable.
+
+Two named dictums fared the same: **Mangal/Kuja Dosha** (in 50% of charts) shows
+**no** link to divorce (ratio 1.01) or relationship trouble (1.07); **7th-lord in
+dusthana** delays marriage by a non-result **+0.23 years**.
+
+The contrast with Finding 8 is the whole point: the *one* isolated rule that *did*
+carry chart-specific skill — the single **7th-lord Mahadasha** (lift 1.15) — gets
+**diluted back to lift 1.00** the moment it is buried in the full disjunctive set.
+The classical method's breadth is exactly what hides its one real signal.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -412,6 +454,8 @@ independent dataset — which the repo does not currently contain.
 - `houselord_class.md` — house-lordship → event-class lift matrix, chart-shuffle (Finding 9)
 - `marriage_d9.md` — D9 Navamsa marriage significators vs D1 7th-lord (Finding 10)
 - `hypothesis_battery.md` — 103 pre-registered claims, FDR-corrected (Finding 11)
+- `dictum_catalog.md` — sourced classical dictums (BPHS/Phaladeepika/…) by domain
+- `classical_dictum_test.md` — dictums tested the astrologer's way: hit-rate vs chance (Finding 12)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
   `app/medini/ml/dasha_event_associations.py`,
@@ -426,4 +470,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_houselord_class.py`,
   `app/medini/etl/build_d9_charts.py`,
   `app/medini/ml/dasha_marriage_d9.py`,
-  `app/medini/ml/dasha_hypothesis_battery.py`
+  `app/medini/ml/dasha_hypothesis_battery.py`,
+  `app/medini/ml/dasha_classical_dictums.py`

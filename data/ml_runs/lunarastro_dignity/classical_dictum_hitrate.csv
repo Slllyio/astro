@@ -1,0 +1,9 @@
+event_class,src,n,set_size,hit_rate,chance,lift
+marriage,M1–M5,1750,5.1,0.829,0.83,0.999
+relationship,M1–M4 / P1,551,5.6,0.902,0.868,1.039
+career,C1–C3,6702,5.9,0.889,0.882,1.007
+death,D1–D3,2695,5.0,0.821,0.816,1.006
+education,E1,422,4.9,0.758,0.802,0.946
+family,W1 / family,956,4.5,0.757,0.745,1.017
+divorce,M1 / D1,422,5.6,0.86,0.875,0.984
+health,D2 / 6th,763,5.5,0.83,0.833,0.996

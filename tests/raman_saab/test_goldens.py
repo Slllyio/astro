@@ -158,6 +158,14 @@ def _signification_verdict(chart: RamanChart, house: int, sig_key: str) -> Optio
 # Records that may run Track B at all: those with >=1 CONFIRMED verdict.
 _TRACK_B_RECORDS = [r for r in _GOLDENS
                     if "B" in r.get("track_eligibility", []) and confirmed_verdicts(r)]
+# Anchors (synthetic self_test records) hard-assert per record — they are regression
+# canaries with deterministic verdicts. Worked examples instead feed the accuracy RATCHET:
+# the engine is measured against Raman's confirmed verdicts and must never regress below
+# the committed baseline (plan: "golden accuracy up or flat"), but is not required to be
+# 100% before the combinations/tuning phases land.
+_TRACK_B_ANCHORS = [r for r in _TRACK_B_RECORDS if r["case_type"] == "self_test"]
+_TRACK_B_RATCHET = [r for r in _TRACK_B_RECORDS if r["case_type"] != "self_test"]
+_BASELINE_PATH = _FIXTURES / "golden_accuracy_baseline.json"
 # Records eligible for Track A.
 _TRACK_A_RECORDS = [r for r in _GOLDENS
                     if "A" in r.get("track_eligibility", []) and _birth_from(r) is not None]
@@ -342,15 +350,11 @@ def _near_sandhi(lon: float, chart: RamanChart) -> bool:
 # TRACK B — doctrine (the north star). Only CONFIRMED verdicts assert.
 # ===========================================================================
 
-@pytest.mark.skipif(not _TRACK_B_RECORDS, reason="no Track-B records with CONFIRMED verdicts")
-@pytest.mark.parametrize("rec", _TRACK_B_RECORDS,
-                         ids=[_id(r) for r in _TRACK_B_RECORDS] or ["<none>"])
-def test_track_b_confirmed_verdicts(rec: dict[str, Any]) -> None:
-    """Each CONFIRMED per-signification verdict equals the engine's judge_house output.
-
-    DRAFT verdicts are filtered out by confirmed_verdicts() (the DRAFT-gate), so a
-    worked_example/rule_level row whose verdicts are all DRAFT never reaches here.
-    """
+@pytest.mark.skipif(not _TRACK_B_ANCHORS, reason="no self_test anchor records")
+@pytest.mark.parametrize("rec", _TRACK_B_ANCHORS,
+                         ids=[_id(r) for r in _TRACK_B_ANCHORS] or ["<none>"])
+def test_track_b_anchor_verdicts(rec: dict[str, Any]) -> None:
+    """self_test anchors hard-assert per record (deterministic regression canaries)."""
     chart = build_chart(rec)
     for house, entry in confirmed_verdicts(rec):
         sig_key = entry["signification"]
@@ -359,6 +363,50 @@ def test_track_b_confirmed_verdicts(rec: dict[str, Any]) -> None:
         assert got == entry["verdict"], (
             f"{_id(rec)}: H{house}/{sig_key} engine={got!r} != golden={entry['verdict']!r}\n"
             f"  prose: {entry.get('verdict_prose', '')}")
+
+
+def track_b_scoreboard() -> tuple[int, int, list[str]]:
+    """(correct, total, mismatch_lines) across every CONFIRMED worked-example verdict.
+
+    Deterministic: records in ledger order, houses in confirmed_verdicts() order.
+    Shared by the ratchet test and tools/raman_saab/tune_thresholds.py.
+    """
+    correct, total, mismatches = 0, 0, []
+    for rec in _TRACK_B_RATCHET:
+        chart = build_chart(rec)
+        for house, entry in confirmed_verdicts(rec):
+            sig_key = entry["signification"]
+            got = _signification_verdict(chart, house, sig_key)
+            total += 1
+            if got == entry["verdict"]:
+                correct += 1
+            else:
+                mismatches.append(
+                    f"  {_id(rec)} H{house}/{sig_key}: engine={got!r} golden={entry['verdict']!r}")
+    return correct, total, mismatches
+
+
+@pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
+def test_track_b_accuracy_ratchet() -> None:
+    """Engine accuracy vs Raman's confirmed verdicts must never drop below the
+    committed baseline (tests/fixtures/golden_accuracy_baseline.json).
+
+    The baseline is bumped by a HUMAN, in the same commit as the change that earned
+    the improvement (or that legitimately re-bases it, e.g. newly confirmed goldens).
+    A failure means either (a) an engine change regressed doctrine accuracy — fix the
+    change, or (b) new goldens were confirmed and the measured floor moved — re-base
+    the baseline file deliberately in this commit.
+    """
+    correct, total, mismatches = track_b_scoreboard()
+    accuracy = correct / total if total else 1.0
+    baseline = json.loads(_BASELINE_PATH.read_text(encoding="utf-8"))["track_b"]
+    base_acc = baseline["correct"] / baseline["total"]
+    report = (f"Track-B accuracy: {correct}/{total} = {accuracy:.3f} "
+              f"(baseline {baseline['correct']}/{baseline['total']} = {base_acc:.3f})")
+    if mismatches:
+        report += "\nmismatches:\n" + "\n".join(mismatches)
+    assert accuracy >= base_acc - 1e-9, report
+    # Improvement is reported (visible with -s / on failure elsewhere) but never auto-saved.
 
 
 # ===========================================================================

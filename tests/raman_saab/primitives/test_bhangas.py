@@ -35,3 +35,28 @@ def test_kemadruma_moon_isolated():
     # Moon alone, nothing in 2nd/12th from Moon, nothing with it (Sun excluded) -> kemadruma.
     c = _c({"Moon": 100.0})
     assert b.kemadruma(c) is True
+
+
+def test_kemadruma_bhanga_planet_in_kendra_from_moon():
+    # 3HC:2182-2185 kendra-from-Moon branch: Moon h2 isolated; Saturn h5 is the
+    # 4th from the Moon (a kendra from the Moon) but NOT a kendra from the Lagna.
+    c = _c({"Moon": 35.0, "Saturn": 125.0})
+    assert b.kemadruma(c) is True
+    assert b.kemadruma_bhanga(c) is True
+
+
+def test_kemadruma_bhanga_sun_conjunct_moon():
+    # 3HC:2182-2185 conjunction branch (Sun policy): the Sun conjunct the Moon
+    # does not stop formation (Sun is excluded there) but DOES cancel — the
+    # cited line says "a planet" with no Sun exception.
+    c = _c({"Moon": 35.0, "Sun": 40.0})
+    assert b.kemadruma(c) is True
+    assert b.kemadruma_bhanga(c) is True
+
+
+def test_kemadruma_bhanga_absent_when_moon_truly_isolated():
+    # Moon alone in h6: no kendra from the Lagna, nothing in a kendra from the
+    # Moon (the Moon itself never counts), no conjunction, no benefic drishti.
+    c = _c({"Moon": 160.0})
+    assert b.kemadruma(c) is True
+    assert b.kemadruma_bhanga(c) is False

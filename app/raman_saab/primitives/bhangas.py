@@ -9,7 +9,8 @@ Usage:
 Citation note
 -------------
 Kemadruma is defined in Raman's *Hindu Predictive Astrology*, Special Yogas
-(HPA-20:208, ``hindu_predictive_astrology_raman/chapter_020_special-yogas.md``).
+(HPA-20:208, ``hindu_predictive_astrology_raman/chapter_020_special-yogas.md``);
+its cancellation is printed at 3HC:2182-2185 (see :func:`kemadruma_bhanga`).
 Raman references neecha-bhanga at HPA-33:308
 (``hindu_predictive_astrology_raman/chapter_033_annual-horoscopes.md``) but does
 not enumerate the cancellation conditions there; the neecha-bhanga 4-condition
@@ -146,23 +147,54 @@ def kemadruma(chart: RamanChart) -> bool:
 
 
 def kemadruma_bhanga(chart: RamanChart) -> bool:
-    """Kemadruma cancellation (computable subset): a planet other than the Moon
-    in a kendra from the Lagna, or the Moon itself in a kendra from the Lagna.
+    """Kemadruma cancellation per 3HC:2182-2185, plus one EXTENDED branch.
 
-    Kemadruma is defined at HPA-20:208 (Special Yogas). Cancellations: a planet
-    (not the Moon) in a kendra from the Lagna, the Moon in a kendra, OR a benefic
-    aspecting the Moon (the aspect case now available via the Phase-2 drishti engine).
+    3HC:2182-2185 (Remarks, verbatim — "m" is the corpus OCR for "in"):
+    "Some authors say that if planets are m a kendra from birth or from the
+    Moon or if the Moon is in conjunction with a planet there is no
+    Kemadruma." Branches encoded from that line:
+
+      (a) any planet (the Moon included) in a kendra (1/4/7/10) from birth
+          (the Lagna);
+      (b) any planet other than the Moon in a kendra counted from the Moon's
+          rasi-house (the Moon itself is trivially its own 1st and is excluded);
+      (c) the Moon in conjunction with a planet (same rasi, whole-sign — the
+          convention of :mod:`app.raman_saab.primitives.relationships`).
+          Subsumed by (b) since the 1st-from-Moon is a kendra, but kept as an
+          explicit branch for textual fidelity.
+
+    Sun policy: the cited line says "planets" / "a planet" with NO exception,
+    so the Sun counts in every branch. This is also the only reading that
+    gives branch (c) independent effect: :func:`kemadruma` already excludes
+    every non-Sun planet conjunct the Moon at formation time, so the Sun is
+    the one planet whose conjunction can still cancel an otherwise-formed
+    Kemadruma. Nodes are excluded per the project chaya-graha convention
+    (3HC names no nodes here).
+
+    EXTENDED bhanga — NOT attributable to 3HC:2182-2185: a natural benefic
+    casting drishti on the Moon also cancels. This branch comes from the
+    Phase-2 aspect backfill (standard doctrine) and is kept distinct so the
+    corpus citation is not over-claimed.
     """
     if "Moon" not in chart.planets:
         return False
-    if chart.planets["Moon"].rasi_house in _KENDRA:
+    moon_h = chart.planets["Moon"].rasi_house
+    # (a) the Moon itself in a kendra from the Lagna
+    if moon_h in _KENDRA:
         return True
     for name, pl in chart.planets.items():
         if name in ("Moon", "Rahu", "Ketu"):
             continue
+        # (a) planet in a kendra from birth (Lagna)
         if pl.rasi_house in _KENDRA:
             return True
-    # a benefic aspecting the Moon also breaks kemadruma
+        # (b) planet in a kendra from the Moon
+        if _in_kendra_from(name, moon_h, chart):
+            return True
+        # (c) the Moon in conjunction with a planet (same rasi)
+        if pl.rasi_house == moon_h:
+            return True
+    # EXTENDED (not 3HC:2182-2185): a benefic aspecting the Moon breaks kemadruma
     for name in NATURAL_BENEFICS:
         if name != "Moon" and drishti.aspects_planet(name, "Moon", chart):
             return True

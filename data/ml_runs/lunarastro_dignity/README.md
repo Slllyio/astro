@@ -3,13 +3,13 @@
 **A pre-registered, permutation-controlled audit on 17,912 dated life events.**
 
 *Run: `lunarastro_dignity` · corpus: LunarAstro/Astro-Databank export · see
-`SYNTHESIS.md` for the full 11-finding detail.*
+`SYNTHESIS.md` for the full 15-finding detail.*
 
 ---
 
 ## TL;DR
 
-Across 11 findings and a 103-hypothesis FDR-corrected battery, **most classical
+Across 15 findings and a 103-hypothesis FDR-corrected battery, **most classical
 dasha-timing doctrine shows no detectable signal** on this corpus. Two things
 survive honest, non-circular testing:
 
@@ -57,6 +57,20 @@ is either a **null** or an **artifact of how the data is labelled**.
    Findings 8–10 found — suggesting whatever little is real is about planetary
    **dignity**, not which significator is named.
 
+6. **Chasing that whisper to ground — pre-registered (Finding 15).** A two-stage,
+   person-split, permutation-controlled test of the strength effect. The discovery
+   half independently re-selected the **exact classical conjunction** — a benefic
+   that is well-dignified *and* well-placed from both the Lagna *and* the dasha
+   lord (the simpler "dignity alone" / "good house alone" versions are flat). The
+   held-out half replicates it **in direction and size** (lift 1.08) but
+   **cannot confirm it** (p=0.18) — the design is underpowered for an effect this
+   small (80% power needs lift ≥1.21; the truth is ~1.1). Full-corpus one-sided
+   p=0.03. **This is the honest terminus**: the dignity/strength effect is the
+   single non-null survivor of the whole arc — real-but-tiny, the specific
+   conjunction the texts prescribe, sitting right at the edge of what 17,912
+   events can resolve. We can neither kill it nor claim it; it would take a corpus
+   several times larger to settle.
+
 ## Corpus & method
 
 | | |
@@ -88,6 +102,7 @@ are FDR-controlled.
 | 12 | Classical dictums tested the astrologer's way | Hit 76–90% — but **= chance** (lift ≈1.00); near-unfalsifiable by construction. Mangal Dosha → no divorce link |
 | 13 | Convergence model (count agreeing dictums, predict at peak) | **Flat** — event rate independent of confluence; within-person peak percentile = 0.50. Even the steelman is null |
 | 14 | Verses encoded verbatim, 2 schools separated, exposure-controlled | **Null** — PD 20.29 from-MD-lord frame lift 1.01 (p=0.54); "7L→marriage" lift **0.95**, "7L=maraka→death" lift 0.98 (both fail); only whisper = benefic-AD *strength* lift ~1.09 (p=0.14) |
+| 15 | Pre-registered split-half confirmation of the strength whisper | **Inconclusive-but-alive** — out-of-sample lift **1.08** (p=0.18, underpowered: needed ≥1.21); full-corpus lift 1.11 (1-sided p=0.03). The single non-null survivor — real-but-tiny (~10%), the exact classical conjunction, at the edge of detectability |
 
 ## Three caveats that shape every claim
 

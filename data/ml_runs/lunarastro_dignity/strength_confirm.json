@@ -1,0 +1,95 @@
+{
+  "frozen_spec": "S4_full_strength_benefic_AD",
+  "discovery_half_A": {
+    "S1_dignified_benefic_AD": {
+      "n": 1766,
+      "hit_rate": 0.239,
+      "expected": 0.246,
+      "lift": 0.971,
+      "z": -0.73,
+      "p_onesided": 0.7659
+    },
+    "S2_benefic_AD_kendra_trikona_Lagna": {
+      "n": 1766,
+      "hit_rate": 0.2718,
+      "expected": 0.2639,
+      "lift": 1.03,
+      "z": 0.79,
+      "p_onesided": 0.2145
+    },
+    "S3_benefic_AD_benefic_from_MD": {
+      "n": 1766,
+      "hit_rate": 0.2978,
+      "expected": 0.3202,
+      "lift": 0.93,
+      "z": -2.04,
+      "p_onesided": 0.9793
+    },
+    "S4_full_strength_benefic_AD": {
+      "n": 1766,
+      "hit_rate": 0.0855,
+      "expected": 0.0752,
+      "lift": 1.137,
+      "z": 1.72,
+      "p_onesided": 0.0425
+    },
+    "S5_dignified_any_AD": {
+      "n": 1766,
+      "hit_rate": 0.483,
+      "expected": 0.4753,
+      "lift": 1.016,
+      "z": 0.69,
+      "p_onesided": 0.2452
+    },
+    "S6_dignified_benefic_MD": {
+      "n": 1766,
+      "hit_rate": 0.2333,
+      "expected": 0.2335,
+      "lift": 0.999,
+      "z": -0.02,
+      "p_onesided": 0.5089
+    },
+    "S7_dignified_significator_AD": {
+      "n": 1766,
+      "hit_rate": 0.308,
+      "expected": 0.3068,
+      "lift": 1.004,
+      "z": 0.12,
+      "p_onesided": 0.454
+    },
+    "S8_dignified_benefic_MD_or_AD": {
+      "n": 1766,
+      "hit_rate": 0.4105,
+      "expected": 0.4075,
+      "lift": 1.007,
+      "z": 0.29,
+      "p_onesided": 0.3878
+    }
+  },
+  "confirmation_half_B": {
+    "n": 1764,
+    "hit_rate": 0.0754,
+    "expected": 0.0697,
+    "lift": 1.082,
+    "z": 0.99,
+    "p_onesided": 0.161,
+    "p_perm_onesided": 0.1752
+  },
+  "full_corpus": {
+    "n": 3530,
+    "hit_rate": 0.0805,
+    "expected": 0.0724,
+    "lift": 1.111,
+    "z": 1.93,
+    "p_onesided": 0.0269,
+    "p_perm_onesided": 0.033
+  },
+  "power": {
+    "confirm_n": 1764,
+    "base_exposure": 0.0724,
+    "lift_needed_80pct_confirm": 1.212,
+    "lift_needed_80pct_full": 1.15,
+    "observed_full_lift": 1.111
+  },
+  "k_perm": 10000
+}

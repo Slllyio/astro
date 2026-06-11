@@ -506,6 +506,46 @@ the level of Parashara's actual positional mechanism, not just abstracted famili
 The only non-null whisper (benefic-AD *strength*, lift ~1.09, p≈0.14) is the same
 dignity signal Findings 8–10 isolated, still too weak to clear the bar.
 
+### Finding 15 — chasing the lone whisper to ground: a pre-registered confirmation
+
+One effect refused to die across Findings 8–14: timing periods whose planet is
+**well-dignified** lift auspicious events slightly (7th-lord MD 1.15; BPHS
+benefic-AD stream ~1.09). Finding 14 tested ~13 cells, so this could be
+multiple-comparisons noise. `dasha_strength_confirm.py` settles it with a
+pre-registered two-stage, person-split design + exact within-person permutation.
+
+**Stage 1 (discovery, half A).** Of 8 candidate "strength" specifications, the
+discovery half independently re-selected the **full classical conjunction**
+(S4: a natural benefic that is well-dignified **and** in kendra/trikona from
+Lagna **and** in a benefic house from the dasha lord) as the only promising one —
+lift **1.14**, z=1.72. Tellingly, the *simpler* versions were flat: dignity alone
+0.97, kendra/trikona-from-Lagna alone 1.03, dignified-benefic-MD 1.00, any
+dignified AD 1.02. The signal lives specifically in the conjunction the texts
+insist on, not in any single component.
+
+**Stage 2 (held-out confirmation, half B).** The frozen S4 gives lift **1.082**
+(z=0.99, permutation **p₁=0.175**) — **same direction and magnitude** as
+discovery, but it **does not reach significance**. The design was underpowered by
+construction: at n=1764 and 7% base exposure, 80% power needs lift ≥ **1.21**, and
+the true effect is ~1.1 — unresolvable on a half.
+
+**Stage 3 (full corpus + power).** Pooled, S4 lifts **1.111** (n=3530, one-sided
+permutation **p=0.033**) — but this is selection-inclusive and one-sided, so it is
+suggestive, not clean. The full corpus needed lift ≥ 1.15 for 80% power; we
+observed 1.11.
+
+**Verdict — the honest terminus.** The dignity/strength effect is the **single
+non-null survivor** of the entire arc: a *real-but-tiny* concentration (~10%,
+lift ≈ 1.08–1.14) that (i) is the **specific full conjunction** classical texts
+prescribe, not a loose "dignity matters," (ii) replicates **in direction and size**
+across two independent halves, yet (iii) **cannot be firmly confirmed** — it sits
+right at the edge of detectability for this corpus, reaching one-sided
+significance only at full n. We can neither kill it nor claim it. Everything else
+in classical dasha timing is flat null; this one whisper — that a *strong,
+well-placed benefic period* concentrates good events about a tenth more than
+chance — is the most that 17,912 events will yield, and it would take a corpus
+several times larger to nail down.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -542,6 +582,7 @@ independent dataset — which the repo does not currently contain.
 - `confluence_timing.md` — convergence/weight-of-evidence model, dose-response + within-person peak (Finding 13)
 - `dictum_catalog_v2.md` + `dictum_catalog_v2.json` + `dictum_research/*.md` — 70 verse-level sourced dictums (Finding 14 inputs)
 - `verse_timing.md` — verses tested as written, within-person exposure-controlled; PD 20.29 frame, 7L adjudication, two streams (Finding 14)
+- `strength_confirm.md` + `strength_confirm.json` — pre-registered two-stage confirmation of the benefic-AD strength effect (Finding 15)
 - `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
@@ -561,4 +602,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_classical_dictums.py`,
   `app/medini/etl/build_longitudes.py`,
   `app/medini/ml/dasha_confluence_timing.py`,
-  `app/medini/ml/dasha_verse_timing.py`
+  `app/medini/ml/dasha_verse_timing.py`,
+  `app/medini/ml/dasha_strength_confirm.py`

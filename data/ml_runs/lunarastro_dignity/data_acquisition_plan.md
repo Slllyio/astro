@@ -1,11 +1,35 @@
 # Data acquisition plan — feeding the pre-registered replication
 
-> Drafted 2026-06-11. **Live web verification was blocked by an account session
-> limit (resets 06:50 UTC); figures drawn from this repo's existing importers are
-> firm, figures for external sources are from prior knowledge and marked ⚠ for
-> re-confirmation once search is available.** Goal set by
+> Drafted 2026-06-11, **verification pass added same day** (WebSearch restored;
+> HuggingFace/datasets-server WebFetch still 403, so a few schema details are
+> confirmed via search snippets rather than direct schema reads). Goal set by
 > `replication_preregistration.md`: **≥ ~9,000 auspicious first events** (marriage/
 > career/education) with birth-time-quality charts to resolve IRR 1.10 at 80% power.
+
+## ✅ Verified findings (2026-06-11)
+
+- **VedAstro `15000-Famous-People-Marriage-Divorce-Info` carries real DATES**, not
+  just outcomes: fields = Person Identifier (name+birth year), Marriage Type, Spouse,
+  **Marriage/Divorce dates (years)**, Outcome, Data Credibility — **MIT**, joins on
+  Person Identifier to `15000-Famous-People-Birth-Date-Location` (AA-rated births).
+  → This is a **drop-in licensed marriage-event source for ~up to 15k people**; our
+  `vedastro_importer` just needs extending to read the date fields.
+  [HF: vedastro-org](https://huggingface.co/vedastro-org)
+- **Astro-Databank firm composition**: AA **28,702** · A **12,982** · B 2,301 ·
+  C 3,668 · DD 499 · X 6,186 — ~129,000 individuals+events total, **~41,684 AA+A**,
+  and entries carry **birth + death + event** data. A documented **XML export
+  format** exists (`Help:XML_export_format`) with an `rrc` Rodden-code attribute.
+  [Wikipedia: Astrodatabank](https://en.wikipedia.org/wiki/Astrodatabank) ·
+  [Help:RR](https://www.astro.com/astro-databank/Help:RR)
+- **Bulk-ADB lead — TkAstroDb** ([github.com/dildeolupbiten/TkAstroDb](https://github.com/dildeolupbiten/TkAstroDb)):
+  an open Python tool that runs **statistical studies on Astro-Databank** — i.e. it
+  already ingests the ADB XML (with events). Inspect it for a redistributable XML
+  dump or a parser we can reuse; this is the most promising single route to ADB
+  *with events* in bulk.
+- **Wikidata events** (CC0): ~**61,300** spouse (P26) statements (dated subset via
+  the P580 start-time qualifier), plus millions of death dates (P570) and dated
+  positions (P39). Events are abundant; the only scarce field is birth *time*, so
+  use Wikidata for **events** and the astro DBs for **time**, matched by name+date.
 
 ## 1. The real bottleneck is EVENTS, not charts
 
@@ -53,9 +77,12 @@ dated life-event narrative we have not parsed) and a **Wikidata join** (below).
    *events* and the astro DBs for the *time*. **Est. yield: thousands of marriage/
    death/career dates for already-charted public figures.** *Build: a Wikidata
    Query Service / dump puller + name-birthdate matcher with `resolve_persons_dedup`.*
-3. **VedAstro MarriageInfoDataset (MIT).** Confirm whether it carries marriage
-   **dates** or only outcomes (⚠ the importer notes "outcome"); if dated, it's a
-   clean, licensed marriage-event drop joined on RowKey to the 15.8k charts.
+3. **VedAstro Marriage-Divorce dataset (MIT) — CONFIRMED dated.** Carries
+   marriage/divorce **years** + spouse + outcome, joined by Person Identifier to the
+   ~15.8k AA-rated birth-time charts. The single **cleanest, lowest-effort** new
+   event source: extend `vedastro_importer` to emit marriage events from the date
+   fields. **Est. ~5,000–10,000 datable marriages** (most of 15k people have ≥1).
+   *This source alone may clear a large fraction of the marriage-event target.*
 
 ### Tier 2 — accessible, moderate yield
 4. **More LunarAstro endpoints.** We scraped `/kundli-all` + `/kundli-details`;
@@ -113,19 +140,26 @@ and both reach data we can legally use (archived facts; CC0 Wikidata).
   **charts** overlap, but ideally draw the confirmation sample from persons not in
   the current LunarAstro set. NCDS/BCS70 is the only fully-independent option.
 
-## 6. Immediate next steps (no new scraping infra needed for the first two)
+## 6. Immediate next steps (revised after verification)
 
-1. **Build an ADB-Wayback event extractor** over the snapshots `wayback_scraper`
-   already retrieves: parse biography sections → (person, event_class, year) →
-   feed the existing `events` schema. *Biggest bang, uses data we can already fetch.*
-2. **Build a Wikidata event puller + name/birthdate matcher** to attach P26/P570/
-   P39 dated events to our charted persons. CC0, scalable.
-3. **Verify (after session reset):** VedAstro marriage-date granularity; current
-   LunarAstro export size; Wikidata birth-time precision counts; NCDS birth-time
-   variable availability and application route. These four ⚠ items need live
-   confirmation but do not block steps 1–2.
+1. **Extend `vedastro_importer` to emit dated marriage events** from the confirmed
+   Marriage-Divorce dataset (MIT, dates present). Lowest effort, licensed, ~5–10k
+   marriages joined to AA charts. **Do this first.**
+2. **Inspect TkAstroDb** for a redistributable ADB XML dump / parser; if present,
+   it gives ADB *with events* (28.7k AA births + death/event data) in one shot.
+3. **Build a Wikidata event puller + name/birthdate matcher** (P26+P580 marriages,
+   P570 deaths, P39 positions) → attach to charted persons. CC0, scalable; the
+   network-allowlist means run via the app's fetch path or an added host allowance.
+4. **ADB-Wayback biography extractor** over snapshots `wayback_scraper` retrieves —
+   parse biography sections → (person, event_class, year). Higher effort; pursue if
+   1–3 fall short of 9k.
 
-*Re-run the blocked deep-research pass after 06:50 UTC to firm up the ⚠ figures and
-surface any named Kaggle/HuggingFace ADB-with-biographies dumps; this plan's
-structure (events-bottleneck → Wayback + Wikidata → optional cohort gold standard)
-will not change.*
+Still to verify when HF/registry fetches are unblocked: exact VedAstro marriage-row
+count; NCDS/BCS70 birth-time variable + UK Data Service application route (the
+gold-standard independent track). These do not block steps 1–4.
+
+**Bottom line:** the verification *strengthened* the plan — VedAstro gives a
+clean, licensed, dated marriage-event drop that, combined with the Wikidata join,
+plausibly reaches the ~9,000-event target without any new scraping or institutional
+access. Sequence: VedAstro dates → TkAstroDb/ADB → Wikidata → (Wayback biographies
+/ NCDS only if needed).

@@ -609,6 +609,37 @@ precise: a marginal *rate* whisper (IRR 1.13, CI grazing 1), **no** ability to
 prior (0 bits) despite clean calibration. Better metrics did not change the
 conclusion — they made it exact.
 
+### Finding 16 — the transit trigger: the untested half of the method is also null
+
+Findings 8–15c only ever tested the dasha **promise**; the practitioner's actual
+method is promise + transit **trigger** (PD 10.12–14/JP 14.28: Jupiter transiting
+trine to the 7L's sign/navamsa; K.N. Rao's Jupiter+Saturn "double transit").
+`dasha_transit_trigger.py` tests the trigger — alone and **jointly with the
+dasha** — within-person and exposure-controlled, using a 15-day sidereal
+Jupiter/Saturn grid from recomputed ephemerides.
+
+**Everything is exposure-level chance.** Marriage: Jupiter-trine-7L-rasi lift
+1.04 (p=0.42), trine-navamsa 1.01, trine-7H 0.91, double-transit-7H 0.97;
+**the verse-faithful joint rule (dasha AND Jupiter-trine-7L) lift = 1.002
+(p=0.97)**; Rao's joint rule 0.91. Career: all 0.99–1.01. Death: double transit
+0.98; the Sade-sati gochara core (Saturn in 12/1/2 from Moon at death) 1.05
+(p=0.25). The two-stage "double confirmation" that practitioners call the heart
+of timing adds nothing over the exposure its windows already cover. With this,
+**every pillar of the classical timing method has now been tested on its own
+terms** — promise, convergence, verses, strength, and trigger.
+
+### Finding 17 — BPHS's fixed-age marriage tables encode social custom, not law
+
+BPHS 18.22–34 maps configurations to specific marriage ages. 11 of 13 are
+encodable on our data (`bphs_fixed_age.py`); 8 had n≥8 matches among 2,233
+married natives. **All null** (p = 0.08–0.50 vs ages drawn from the corpus
+distribution). The decisive detail: natives matching the "marry at **5 or 9**"
+yoga (n=205) marry at mean age **29.1**; the "marry at **11**" yoga (n=82) at
+**29.6** — indistinguishable from the corpus mean (~29) regardless of
+configuration. The tables' predicted ages cluster at 5–19 because they reflect
+the **child-marriage norms of the text's era**: direct evidence the age tables
+are period social documents, not celestial constants.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -649,6 +680,9 @@ independent dataset — which the repo does not currently contain.
 - `evaluation_methodology.md` — deep-research synthesis: better metrics than lift/z (SCCS rate ratio, C-index, proper scoring rules, calibration)
 - `timing_metrics.md` + `timing_metrics.json` — Finding 15 effect as a self-controlled incidence-rate ratio (Layer A) + within-person C-index/top-k (Layer B)
 - `forecast_skill.md` + `forecast_skill.json` — astrology scored as a forecaster (Layer C): proper-scoring skill over age base-rate + reliability diagram (Finding 15c)
+- `transit_trigger.md` + `transit_trigger.json` — Jupiter-trine & double-transit triggers, alone and jointly with dasha (Finding 16)
+- `bphs_fixed_age.md` + `bphs_fixed_age.json` — BPHS 18.22–34 fixed-age marriage tables tested directly (Finding 17)
+- `replication_preregistration.md` — frozen confirmatory protocol + power table for settling the IRR-1.13 whisper on an external corpus
 - `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
@@ -671,4 +705,6 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_verse_timing.py`,
   `app/medini/ml/dasha_strength_confirm.py`,
   `app/medini/ml/dasha_timing_metrics.py`,
-  `app/medini/ml/dasha_forecast_skill.py`
+  `app/medini/ml/dasha_forecast_skill.py`,
+  `app/medini/ml/dasha_transit_trigger.py`,
+  `app/medini/ml/bphs_fixed_age.py`

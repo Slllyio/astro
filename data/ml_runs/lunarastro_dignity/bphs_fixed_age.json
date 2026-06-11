@@ -1,0 +1,114 @@
+{
+  "n_married_with_charts": 1200,
+  "k": 2000,
+  "yogas": [
+    {
+      "yoga": "18.22 7L in benefic sign/9H + Venus exalt-own \u2192 5,9",
+      "n": 205,
+      "mean_abs_err_yrs": 20.14,
+      "null_mean_err_yrs": 20.75,
+      "p_better_than_chance": 0.2039,
+      "mean_obs_age": 29.1,
+      "predicted_ages": [
+        5,
+        9
+      ]
+    },
+    {
+      "yoga": "18.23 Sun in 7H + dispositor yuti Venus \u2192 7,11",
+      "n": 7,
+      "note": "too few matches"
+    },
+    {
+      "yoga": "18.24 Venus in 2H + 7L in 11H \u2192 10,16",
+      "n": 4,
+      "note": "too few matches"
+    },
+    {
+      "yoga": "18.25 Venus kendra + 1L in Cap/Aqu \u2192 11",
+      "n": 82,
+      "mean_abs_err_yrs": 18.57,
+      "null_mean_err_yrs": 18.78,
+      "p_better_than_chance": 0.4463,
+      "mean_obs_age": 29.6,
+      "predicted_ages": [
+        11
+      ]
+    },
+    {
+      "yoga": "18.26 Venus kendra + Saturn 7th-from-Venus \u2192 12,19",
+      "n": 42,
+      "mean_abs_err_yrs": 10.57,
+      "null_mean_err_yrs": 10.89,
+      "p_better_than_chance": 0.4338,
+      "mean_obs_age": 29.4,
+      "predicted_ages": [
+        12,
+        19
+      ]
+    },
+    {
+      "yoga": "18.27 Venus 7th-from-Moon + Saturn 7th-from-Venus \u2192 18",
+      "n": 9,
+      "mean_abs_err_yrs": 10.51,
+      "null_mean_err_yrs": 12.08,
+      "p_better_than_chance": 0.3433,
+      "mean_obs_age": 28.5,
+      "predicted_ages": [
+        18
+      ]
+    },
+    {
+      "yoga": "18.28 2L in 11H + 1L in 10H \u2192 15",
+      "n": 10,
+      "mean_abs_err_yrs": 10.53,
+      "null_mean_err_yrs": 14.93,
+      "p_better_than_chance": 0.0765,
+      "mean_obs_age": 25.5,
+      "predicted_ages": [
+        15
+      ]
+    },
+    {
+      "yoga": "18.29 2L\u201311L exchange \u2192 13",
+      "n": 10,
+      "mean_abs_err_yrs": 14.92,
+      "null_mean_err_yrs": 16.93,
+      "p_better_than_chance": 0.2919,
+      "mean_obs_age": 27.9,
+      "predicted_ages": [
+        13
+      ]
+    },
+    {
+      "yoga": "18.30 Venus in 2H + dispositor yuti Mars \u2192 22,27",
+      "n": 16,
+      "mean_abs_err_yrs": 5.55,
+      "null_mean_err_yrs": 5.82,
+      "p_better_than_chance": 0.5047,
+      "mean_obs_age": 30.6,
+      "predicted_ages": [
+        22,
+        27
+      ]
+    },
+    {
+      "yoga": "18.33 Venus in 5H + Rahu in 5H/9H \u2192 31,33",
+      "n": 19,
+      "mean_abs_err_yrs": 5.68,
+      "null_mean_err_yrs": 7.48,
+      "p_better_than_chance": 0.1164,
+      "mean_obs_age": 27.2,
+      "predicted_ages": [
+        31,
+        33
+      ]
+    },
+    {
+      "yoga": "18.34 Venus in 1H + 7L in 7H \u2192 27,30",
+      "n": 4,
+      "note": "too few matches"
+    }
+  ],
+  "corpus_mean_marriage_age": 29.7
+}

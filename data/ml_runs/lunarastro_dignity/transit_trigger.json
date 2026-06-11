@@ -1,0 +1,113 @@
+[
+  {
+    "domain": "marriage",
+    "conditions": {
+      "jup_trine_7L_rasi (PD 10.14)": {
+        "n": 1145,
+        "hit_rate": 0.2594,
+        "expected": 0.2491,
+        "lift": 1.041,
+        "z": 0.81,
+        "p": 0.4199
+      },
+      "jup_trine_7L_navamsa (PD 10.14)": {
+        "n": 1145,
+        "hit_rate": 0.2533,
+        "expected": 0.2499,
+        "lift": 1.013,
+        "z": 0.26,
+        "p": 0.7937
+      },
+      "jup_trine_7H (popular)": {
+        "n": 1145,
+        "hit_rate": 0.2288,
+        "expected": 0.2502,
+        "lift": 0.914,
+        "z": -1.67,
+        "p": 0.0941
+      },
+      "double_transit_7H (Rao)": {
+        "n": 1145,
+        "hit_rate": 0.1092,
+        "expected": 0.1121,
+        "lift": 0.973,
+        "z": -0.32,
+        "p": 0.7493
+      },
+      "dasha_stream_alone": {
+        "n": 1026,
+        "hit_rate": 0.8031,
+        "expected": 0.8029,
+        "lift": 1.0,
+        "z": 0.02,
+        "p": 0.9827
+      },
+      "dasha AND jup_trine_7L (verse-faithful joint)": {
+        "n": 1145,
+        "hit_rate": 0.3415,
+        "expected": 0.3409,
+        "lift": 1.002,
+        "z": 0.04,
+        "p": 0.9659
+      },
+      "dasha AND double_transit_7H (Rao joint)": {
+        "n": 1145,
+        "hit_rate": 0.0847,
+        "expected": 0.0927,
+        "lift": 0.913,
+        "z": -0.94,
+        "p": 0.347
+      }
+    }
+  },
+  {
+    "domain": "career",
+    "conditions": {
+      "jup_trine_10H": {
+        "n": 2115,
+        "hit_rate": 0.2482,
+        "expected": 0.2501,
+        "lift": 0.993,
+        "z": -0.2,
+        "p": 0.843
+      },
+      "double_transit_10H (Rao)": {
+        "n": 2115,
+        "hit_rate": 0.1139,
+        "expected": 0.1134,
+        "lift": 1.005,
+        "z": 0.08,
+        "p": 0.9362
+      },
+      "dasha AND double_transit_10H (Rao joint)": {
+        "n": 2115,
+        "hit_rate": 0.0993,
+        "expected": 0.1008,
+        "lift": 0.985,
+        "z": -0.23,
+        "p": 0.8187
+      }
+    }
+  },
+  {
+    "domain": "death",
+    "conditions": {
+      "double_transit_8H (Rao)": {
+        "n": 1435,
+        "hit_rate": 0.1094,
+        "expected": 0.1117,
+        "lift": 0.979,
+        "z": -0.28,
+        "p": 0.7808
+      },
+      "saturn_12_1_2_from_Moon (gochara core)": {
+        "n": 1435,
+        "hit_rate": 0.2634,
+        "expected": 0.2503,
+        "lift": 1.052,
+        "z": 1.15,
+        "p": 0.2489
+      }
+    }
+  }
+]

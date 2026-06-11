@@ -3,13 +3,13 @@
 **A pre-registered, permutation-controlled audit on 17,912 dated life events.**
 
 *Run: `lunarastro_dignity` · corpus: LunarAstro/Astro-Databank export · see
-`SYNTHESIS.md` for the full 15-finding detail.*
+`SYNTHESIS.md` for the full 17-finding detail.*
 
 ---
 
 ## TL;DR
 
-Across 15 findings and a 103-hypothesis FDR-corrected battery, **most classical
+Across 17 findings and a 103-hypothesis FDR-corrected battery, **most classical
 dasha-timing doctrine shows no detectable signal** on this corpus. Two things
 survive honest, non-circular testing:
 
@@ -103,6 +103,10 @@ are FDR-controlled.
 | 13 | Convergence model (count agreeing dictums, predict at peak) | **Flat** — event rate independent of confluence; within-person peak percentile = 0.50. Even the steelman is null |
 | 14 | Verses encoded verbatim, 2 schools separated, exposure-controlled | **Null** — PD 20.29 from-MD-lord frame lift 1.01 (p=0.54); "7L→marriage" lift **0.95**, "7L=maraka→death" lift 0.98 (both fail); only whisper = benefic-AD *strength* lift ~1.09 (p=0.14) |
 | 15 | Pre-registered split-half confirmation of the strength whisper | **Inconclusive-but-alive** — out-of-sample lift **1.08** (p=0.18, underpowered: needed ≥1.21); full-corpus lift 1.11 (1-sided p=0.03). The single non-null survivor — real-but-tiny (~10%), the exact classical conjunction, at the edge of detectability |
+| 15b | The whisper in practitioner metrics (SCCS rate ratio; C-index) | **Dissociates** — IRR 1.13 (CI 0.998–1.29) but C-index **0.503**: a faint rate shift with zero ability to *point at* the period. Death also lifts 1.11 (not auspicious-specific) |
+| 15c | Astrology scored as a forecaster (proper scores vs age base-rate) | **Calibrated but empty** — log-skill −0.0005, ≈0 bits gained, ECE 0.0014: calibrated only because the forecast reduces to the actuarial age table |
+| 16 | The transit trigger (Jupiter-trine, Rao double transit), alone & joint with dasha | **Null** — verse-faithful joint rule lift **1.002** (p=0.97); every trigger 0.91–1.05. The two-stage "double confirmation" adds nothing |
+| 17 | BPHS 18.22–34 fixed-age marriage tables | **Null** — natives matching "marry at 5/9" yogas marry at mean age **29**, same as everyone; the tables encode the child-marriage customs of their era |
 
 ## Three caveats that shape every claim
 
@@ -111,7 +115,9 @@ are FDR-controlled.
    "predict class". This is why the dignity findings, though real, mean *"good
    periods bring good-class events"* — not *"a given event turns out better"*.
 2. **Single corpus.** Replication here is internal (split-half); a truly
-   independent dataset is the outstanding gold-standard step.
+   independent dataset is the outstanding gold-standard step — the confirmatory
+   protocol is frozen in `replication_preregistration.md` (needs ≥ ~9,000
+   auspicious first events to resolve IRR 1.10 at 80% power).
 3. **The karaka survivors are not age-deconfounded** and are non-specific
    (Jupiter lifts several good classes; Venus fails to lift marriage), so they
    read as a benefic-period effect, not karaka-to-domain timing.
@@ -128,9 +134,24 @@ python -m app.medini.ml.dasha_hypothesis_battery --data-dir <run> --out <here> -
 
 ## Bottom line
 
-A genuine, modest, **chart-specific** signal exists — the 7th-lord Mahadasha
-times marriage — and it survives every control we threw at it. The grander
-edifice of dasha significator timing, dignity-determined fortune, and varga
-refinement does **not** leave a footprint distinguishable from chance and data
-labelling on this corpus. That is a useful, falsifiable map of where the
-signal is.
+Every pillar of the classical timing method has now been tested **on its own
+terms**: single significators (null), the disjunctive dictums as astrologers
+state them (hit 76–90% = exactly chance), convergence/weight-of-evidence
+(flat), the verses verbatim including Parashara's from-the-dasha-lord mechanism
+(null), the fixed-age tables (era custom, not law), and the dasha+transit
+"double confirmation" — the heart of practice — at exposure-level chance
+(joint-rule lift 1.002). Scored as a forecaster with proper scoring rules,
+astrological timing is **calibrated but empty**: it reduces to the actuarial
+age table, adding ≈0 bits.
+
+Two residues survive. The **7th-lord Mahadasha → marriage** association
+(lift ≈1.15) is real, modest, chart-specific, and age-robust — the one clean
+positive. And a **strong-benefic sub-period rate whisper** (IRR 1.13, CI
+grazing 1) persists at the edge of detectability, but confers **no ranking or
+forecasting skill** (C-index 0.50, 0 bits) and is not auspicious-specific —
+its confirmation or burial awaits the pre-registered external replication.
+
+The map is now complete and falsifiable: on 17,912 dated events, Vedic dasha
+timing does not predict *when* life events happen beyond a person's age —
+and we know precisely where the two faint exceptions sit and what it would
+take to settle them.

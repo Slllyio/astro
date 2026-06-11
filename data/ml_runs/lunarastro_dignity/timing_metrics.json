@@ -1,0 +1,126 @@
+{
+  "frozen_rule": "benefic-AD strength (graded 0\u20134; binary = all four)",
+  "pooled_auspicious": {
+    "irr": {
+      "n_informative": 2217,
+      "n_exposed_events": 284,
+      "irr": 1.134,
+      "ci_lo": 0.998,
+      "ci_hi": 1.288,
+      "z": 1.93,
+      "p": 0.054,
+      "lift": 1.111
+    },
+    "discrimination": {
+      "n": 3530,
+      "c_index": 0.503,
+      "c_index_null": 0.5004,
+      "c_index_p": 0.5387,
+      "hit_at_1": 0.1884,
+      "hit_at_1_expected": 0.1808,
+      "hit_at_1_p": 0.109,
+      "hit_at_3": 0.2827,
+      "hit_at_3_expected": 0.2764,
+      "hit_at_3_p": 0.1942
+    }
+  },
+  "per_domain": {
+    "marriage": {
+      "irr": {
+        "n_informative": 702,
+        "n_exposed_events": 88,
+        "irr": 1.109,
+        "ci_lo": 0.881,
+        "ci_hi": 1.395,
+        "z": 0.88,
+        "p": 0.3783,
+        "lift": 1.09
+      },
+      "discrimination": {
+        "n": 1147,
+        "c_index": 0.5095,
+        "c_index_null": 0.5004,
+        "c_index_p": 0.2591,
+        "hit_at_1": 0.1892,
+        "hit_at_1_expected": 0.1854,
+        "hit_at_1_p": 0.3739,
+        "hit_at_3": 0.3165,
+        "hit_at_3_expected": 0.3054,
+        "hit_at_3_p": 0.2024
+      }
+    },
+    "career": {
+      "irr": {
+        "n_informative": 1344,
+        "n_exposed_events": 167,
+        "irr": 1.105,
+        "ci_lo": 0.936,
+        "ci_hi": 1.304,
+        "z": 1.18,
+        "p": 0.239,
+        "lift": 1.087
+      },
+      "discrimination": {
+        "n": 2107,
+        "c_index": 0.4971,
+        "c_index_null": 0.5005,
+        "c_index_p": 0.6281,
+        "hit_at_1": 0.1875,
+        "hit_at_1_expected": 0.1779,
+        "hit_at_1_p": 0.1194,
+        "hit_at_3": 0.2572,
+        "hit_at_3_expected": 0.2541,
+        "hit_at_3_p": 0.3711
+      }
+    },
+    "education": {
+      "irr": {
+        "n_informative": 171,
+        "n_exposed_events": 29,
+        "irr": 1.461,
+        "ci_lo": 0.967,
+        "ci_hi": 2.209,
+        "z": 1.8,
+        "p": 0.0721,
+        "lift": 1.356
+      },
+      "discrimination": {
+        "n": 276,
+        "c_index": 0.5212,
+        "c_index_null": 0.5009,
+        "c_index_p": 0.2288,
+        "hit_at_1": 0.192,
+        "hit_at_1_expected": 0.1846,
+        "hit_at_1_p": 0.3851,
+        "hit_at_3": 0.337,
+        "hit_at_3_expected": 0.328,
+        "hit_at_3_p": 0.3881
+      }
+    },
+    "death": {
+      "irr": {
+        "n_informative": 948,
+        "n_exposed_events": 115,
+        "irr": 1.105,
+        "ci_lo": 0.905,
+        "ci_hi": 1.349,
+        "z": 0.98,
+        "p": 0.3269,
+        "lift": 1.088
+      },
+      "discrimination": {
+        "n": 1435,
+        "c_index": 0.4929,
+        "c_index_null": 0.5004,
+        "c_index_p": 0.3409,
+        "hit_at_1": 0.1756,
+        "hit_at_1_expected": 0.1704,
+        "hit_at_1_p": 0.3085,
+        "hit_at_3": 0.2181,
+        "hit_at_3_expected": 0.2098,
+        "hit_at_3_p": 0.2206
+      }
+    }
+  },
+  "k_perm": 5000
+}

@@ -546,6 +546,32 @@ well-placed benefic period* concentrates good events about a tenth more than
 chance — is the most that 17,912 events will yield, and it would take a corpus
 several times larger to nail down.
 
+### Finding 15b — the surviving effect in practitioner metrics (rate ratio vs ranking)
+
+Acting on the deep-research review of evaluation methods (`evaluation_methodology.md`),
+the Finding-15 effect was re-expressed in the two frameworks that match how
+astrologers actually predict (`dasha_timing_metrics.py`), keeping the
+self-controlled design:
+
+- **Layer A — self-controlled incidence-rate ratio (SCCS / conditional Poisson).**
+  Pooled auspicious **IRR = 1.13 (95% CI 0.998–1.29, p=0.054)** — the
+  practitioner-legible "events ~13% more frequent during strong benefic-AD
+  periods," with the CI's lower bound just grazing 1.0. Per domain: education 1.46
+  (0.97–2.21), marriage 1.11, career 1.11. Notably **death also 1.11** — the rule
+  is not even auspicious-specific.
+- **Layer B — discrimination (does the rule *rank* the true period high?).** On a
+  graded 0–4 weight-of-evidence: **C-index = 0.503** (null 0.50, p=0.54);
+  hit@1 0.188 vs 0.181 expected; hit@3 0.283 vs 0.276. **No discriminative power.**
+
+**The decisive new insight: the two metrics dissociate.** There is a whisper of a
+*rate* elevation (IRR 1.13) but **zero ability to rank or point at the true period**
+(C-index 0.50). An astrologer's actual act is discrimination — naming the most
+likely period — and on that, the only surviving rule is flat. So the generous
+framing (aggregate rate ratio) keeps a faint signal alive at the edge of
+significance, while the framing that matches *how prediction is practised*
+(ranking a native's periods) shows nothing. Better metrics did not rescue the
+effect; they located it precisely — a marginal rate shift with no forecasting skill.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -583,6 +609,8 @@ independent dataset — which the repo does not currently contain.
 - `dictum_catalog_v2.md` + `dictum_catalog_v2.json` + `dictum_research/*.md` — 70 verse-level sourced dictums (Finding 14 inputs)
 - `verse_timing.md` — verses tested as written, within-person exposure-controlled; PD 20.29 frame, 7L adjudication, two streams (Finding 14)
 - `strength_confirm.md` + `strength_confirm.json` — pre-registered two-stage confirmation of the benefic-AD strength effect (Finding 15)
+- `evaluation_methodology.md` — deep-research synthesis: better metrics than lift/z (SCCS rate ratio, C-index, proper scoring rules, calibration)
+- `timing_metrics.md` + `timing_metrics.json` — Finding 15 effect as a self-controlled incidence-rate ratio (Layer A) + within-person C-index/top-k (Layer B)
 - `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
@@ -603,4 +631,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/etl/build_longitudes.py`,
   `app/medini/ml/dasha_confluence_timing.py`,
   `app/medini/ml/dasha_verse_timing.py`,
-  `app/medini/ml/dasha_strength_confirm.py`
+  `app/medini/ml/dasha_strength_confirm.py`,
+  `app/medini/ml/dasha_timing_metrics.py`

@@ -1,0 +1,433 @@
+{
+  "pooled_auspicious": {
+    "n": 1764,
+    "ignorance_astro_bits": 4.1198,
+    "ignorance_base_bits": 4.1179,
+    "bits_gained": -0.0019,
+    "log_skill": -0.0005,
+    "rpss": -0.0007,
+    "reliability": {
+      "ece": 0.0014,
+      "curve": [
+        {
+          "bin": "0.000-0.039",
+          "n": 41101,
+          "mean_forecast": 0.0134,
+          "observed": 0.0133
+        },
+        {
+          "bin": "0.039-0.078",
+          "n": 7748,
+          "mean_forecast": 0.0555,
+          "observed": 0.0585
+        },
+        {
+          "bin": "0.078-0.118",
+          "n": 2900,
+          "mean_forecast": 0.0952,
+          "observed": 0.0921
+        },
+        {
+          "bin": "0.118-0.157",
+          "n": 1688,
+          "mean_forecast": 0.1372,
+          "observed": 0.1268
+        },
+        {
+          "bin": "0.157-0.196",
+          "n": 1127,
+          "mean_forecast": 0.1728,
+          "observed": 0.1863
+        },
+        {
+          "bin": "0.196-0.235",
+          "n": 255,
+          "mean_forecast": 0.2109,
+          "observed": 0.2039
+        },
+        {
+          "bin": "0.235-0.274",
+          "n": 67,
+          "mean_forecast": 0.253,
+          "observed": 0.2537
+        },
+        {
+          "bin": "0.274-0.314",
+          "n": 28,
+          "mean_forecast": 0.2936,
+          "observed": 0.1071
+        },
+        {
+          "bin": "0.314-0.353",
+          "n": 5,
+          "mean_forecast": 0.3273,
+          "observed": 0.2
+        },
+        {
+          "bin": "0.353-0.392",
+          "n": 3,
+          "mean_forecast": 0.3763,
+          "observed": 0.0
+        }
+      ]
+    }
+  },
+  "per_domain": {
+    "marriage": {
+      "multiplier": {
+        "0": 1.235,
+        "1": 1.017,
+        "2": 0.96,
+        "3": 0.976,
+        "4": 1.152
+      },
+      "skill": {
+        "n": 565,
+        "ignorance_astro_bits": 3.9174,
+        "ignorance_base_bits": 3.9113,
+        "bits_gained": -0.0061,
+        "log_skill": -0.0016,
+        "log_skill_ci": [
+          -0.0032,
+          0.0002
+        ],
+        "rps_astro": 0.11277,
+        "rps_base": 0.11276,
+        "rpss": -0.0
+      },
+      "reliability": {
+        "ece": 0.0029,
+        "curve": [
+          {
+            "bin": "0.000-0.027",
+            "n": 8434,
+            "mean_forecast": 0.0109,
+            "observed": 0.0103
+          },
+          {
+            "bin": "0.027-0.054",
+            "n": 2671,
+            "mean_forecast": 0.0388,
+            "observed": 0.0434
+          },
+          {
+            "bin": "0.054-0.082",
+            "n": 1358,
+            "mean_forecast": 0.0664,
+            "observed": 0.0663
+          },
+          {
+            "bin": "0.082-0.109",
+            "n": 824,
+            "mean_forecast": 0.0944,
+            "observed": 0.1019
+          },
+          {
+            "bin": "0.109-0.136",
+            "n": 382,
+            "mean_forecast": 0.1206,
+            "observed": 0.1073
+          },
+          {
+            "bin": "0.136-0.163",
+            "n": 340,
+            "mean_forecast": 0.1505,
+            "observed": 0.1441
+          },
+          {
+            "bin": "0.163-0.190",
+            "n": 319,
+            "mean_forecast": 0.1759,
+            "observed": 0.1693
+          },
+          {
+            "bin": "0.190-0.218",
+            "n": 183,
+            "mean_forecast": 0.2007,
+            "observed": 0.1749
+          },
+          {
+            "bin": "0.218-0.245",
+            "n": 38,
+            "mean_forecast": 0.2266,
+            "observed": 0.2895
+          },
+          {
+            "bin": "0.245-0.272",
+            "n": 10,
+            "mean_forecast": 0.2535,
+            "observed": 0.1
+          }
+        ]
+      },
+      "auspicious": true
+    },
+    "career": {
+      "multiplier": {
+        "0": 1.114,
+        "1": 1.022,
+        "2": 0.969,
+        "3": 0.985,
+        "4": 1.11
+      },
+      "skill": {
+        "n": 1062,
+        "ignorance_astro_bits": 4.3037,
+        "ignorance_base_bits": 4.3047,
+        "bits_gained": 0.001,
+        "log_skill": 0.0002,
+        "log_skill_ci": [
+          -0.0006,
+          0.0011
+        ],
+        "rps_astro": 0.1214,
+        "rps_base": 0.12138,
+        "rpss": -0.0001
+      },
+      "reliability": {
+        "ece": 0.0015,
+        "curve": [
+          {
+            "bin": "0.000-0.022",
+            "n": 23333,
+            "mean_forecast": 0.0089,
+            "observed": 0.0091
+          },
+          {
+            "bin": "0.022-0.045",
+            "n": 6799,
+            "mean_forecast": 0.0315,
+            "observed": 0.0325
+          },
+          {
+            "bin": "0.045-0.067",
+            "n": 3101,
+            "mean_forecast": 0.055,
+            "observed": 0.05
+          },
+          {
+            "bin": "0.067-0.089",
+            "n": 1453,
+            "mean_forecast": 0.0769,
+            "observed": 0.0826
+          },
+          {
+            "bin": "0.089-0.112",
+            "n": 821,
+            "mean_forecast": 0.0995,
+            "observed": 0.0938
+          },
+          {
+            "bin": "0.112-0.134",
+            "n": 620,
+            "mean_forecast": 0.123,
+            "observed": 0.1226
+          },
+          {
+            "bin": "0.134-0.156",
+            "n": 620,
+            "mean_forecast": 0.1449,
+            "observed": 0.1323
+          },
+          {
+            "bin": "0.156-0.179",
+            "n": 471,
+            "mean_forecast": 0.1659,
+            "observed": 0.1741
+          },
+          {
+            "bin": "0.179-0.201",
+            "n": 147,
+            "mean_forecast": 0.1867,
+            "observed": 0.2177
+          },
+          {
+            "bin": "0.201-0.223",
+            "n": 16,
+            "mean_forecast": 0.2107,
+            "observed": 0.25
+          }
+        ]
+      },
+      "auspicious": true
+    },
+    "education": {
+      "multiplier": {
+        "0": 1.139,
+        "1": 0.802,
+        "2": 1.096,
+        "3": 0.966,
+        "4": 1.413
+      },
+      "skill": {
+        "n": 137,
+        "ignorance_astro_bits": 3.5287,
+        "ignorance_base_bits": 3.5221,
+        "bits_gained": -0.0065,
+        "log_skill": -0.0019,
+        "log_skill_ci": [
+          -0.0119,
+          0.0083
+        ],
+        "rps_astro": 0.10431,
+        "rps_base": 0.10346,
+        "rpss": -0.0083
+      },
+      "reliability": {
+        "ece": 0.011,
+        "curve": [
+          {
+            "bin": "0.000-0.039",
+            "n": 2026,
+            "mean_forecast": 0.0134,
+            "observed": 0.0173
+          },
+          {
+            "bin": "0.039-0.078",
+            "n": 415,
+            "mean_forecast": 0.0553,
+            "observed": 0.041
+          },
+          {
+            "bin": "0.078-0.118",
+            "n": 185,
+            "mean_forecast": 0.0964,
+            "observed": 0.0811
+          },
+          {
+            "bin": "0.118-0.157",
+            "n": 124,
+            "mean_forecast": 0.1347,
+            "observed": 0.129
+          },
+          {
+            "bin": "0.157-0.196",
+            "n": 72,
+            "mean_forecast": 0.1752,
+            "observed": 0.2778
+          },
+          {
+            "bin": "0.196-0.235",
+            "n": 73,
+            "mean_forecast": 0.2171,
+            "observed": 0.2329
+          },
+          {
+            "bin": "0.235-0.274",
+            "n": 51,
+            "mean_forecast": 0.2548,
+            "observed": 0.2549
+          },
+          {
+            "bin": "0.274-0.314",
+            "n": 28,
+            "mean_forecast": 0.2936,
+            "observed": 0.1071
+          },
+          {
+            "bin": "0.314-0.353",
+            "n": 5,
+            "mean_forecast": 0.3273,
+            "observed": 0.2
+          },
+          {
+            "bin": "0.353-0.392",
+            "n": 3,
+            "mean_forecast": 0.3763,
+            "observed": 0.0
+          }
+        ]
+      },
+      "auspicious": true
+    },
+    "death": {
+      "multiplier": {
+        "0": 1.441,
+        "1": 1.026,
+        "2": 0.964,
+        "3": 0.953,
+        "4": 1.051
+      },
+      "skill": {
+        "n": 710,
+        "ignorance_astro_bits": 5.0892,
+        "ignorance_base_bits": 5.0859,
+        "bits_gained": -0.0033,
+        "log_skill": -0.0007,
+        "log_skill_ci": [
+          -0.0023,
+          0.001
+        ],
+        "rps_astro": 0.12982,
+        "rps_base": 0.12989,
+        "rpss": 0.0005
+      },
+      "reliability": {
+        "ece": 0.0016,
+        "curve": [
+          {
+            "bin": "0.000-0.011",
+            "n": 14097,
+            "mean_forecast": 0.0041,
+            "observed": 0.005
+          },
+          {
+            "bin": "0.011-0.022",
+            "n": 8419,
+            "mean_forecast": 0.0163,
+            "observed": 0.0163
+          },
+          {
+            "bin": "0.022-0.033",
+            "n": 5300,
+            "mean_forecast": 0.027,
+            "observed": 0.0277
+          },
+          {
+            "bin": "0.033-0.044",
+            "n": 2688,
+            "mean_forecast": 0.0382,
+            "observed": 0.0372
+          },
+          {
+            "bin": "0.044-0.055",
+            "n": 2422,
+            "mean_forecast": 0.0496,
+            "observed": 0.0533
+          },
+          {
+            "bin": "0.055-0.066",
+            "n": 1608,
+            "mean_forecast": 0.0601,
+            "observed": 0.0479
+          },
+          {
+            "bin": "0.066-0.077",
+            "n": 575,
+            "mean_forecast": 0.0705,
+            "observed": 0.0626
+          },
+          {
+            "bin": "0.077-0.088",
+            "n": 108,
+            "mean_forecast": 0.0815,
+            "observed": 0.1019
+          },
+          {
+            "bin": "0.088-0.099",
+            "n": 24,
+            "mean_forecast": 0.094,
+            "observed": 0.0417
+          },
+          {
+            "bin": "0.099-0.110",
+            "n": 8,
+            "mean_forecast": 0.1043,
+            "observed": 0.125
+          }
+        ]
+      },
+      "auspicious": false
+    }
+  }
+}

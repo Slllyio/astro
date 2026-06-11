@@ -572,6 +572,43 @@ significance, while the framing that matches *how prediction is practised*
 (ranking a native's periods) shows nothing. Better metrics did not rescue the
 effect; they located it precisely — a marginal rate shift with no forecasting skill.
 
+### Finding 15c — astrology scored as a forecaster: calibrated but empty
+
+The final layer scores timing the way forecast verification scores a weather
+forecaster (`dasha_forecast_skill.py`) — the first calibration test of
+astrological *timing* on real dated events. Each native gets a forward probability
+over their candidate periods: the **population age-prior tilted by weight-of-
+evidence**, the tilt fit on the discovery half and scored on the held-out half
+with strictly proper rules (logarithmic/ignorance + RPS), as skill over the age
+base-rate.
+
+- **Skill ≈ 0.** Pooled auspicious **log-skill −0.0005, RPSS −0.0007, bits gained
+  −0.002** (per domain all |skill| < 0.002). Tilting the actuarial age table by
+  the astrological weight-of-evidence adds **essentially zero bits** of timing
+  information over simply predicting by population age.
+- **Yet near-perfectly calibrated.** **ECE = 0.0014**; the reliability curve sits
+  on the diagonal through the populated range (forecast 0.013→obs 0.013, 0.056→
+  0.059, 0.095→0.092, 0.137→0.127, 0.173→0.186, 0.211→0.204, 0.253→0.254; only the
+  tiny n=3–28 high-confidence bins wobble, as noise).
+
+**The resolution of the apparent paradox is the whole point.** A forecast can be
+perfectly calibrated and still carry no skill (Murphy: reliability ≠ resolution).
+The astrological forecast is calibrated *because it is almost entirely the
+actuarial age table* — the weight-of-evidence multipliers (0.95–1.44) are too weak
+to break calibration or to add information. This both **nuances and explains**
+McGrew & McFall 1990: their astrologers were *un*calibrated because they inflated
+subjective confidence; map the same convergence signal to probabilities via its
+*actual empirical rate* and the forecast becomes calibrated — and empty. On this
+corpus, astrological timing, scored honestly as a forecaster, **reduces to the
+age base-rate**: calibrated only because it borrows the actuary's table, adding
+≈0 bits of its own.
+
+Across the three practitioner-aligned framings the verdict is unanimous and
+precise: a marginal *rate* whisper (IRR 1.13, CI grazing 1), **no** ability to
+*rank* the period (C-index 0.50), and **no** forecast *skill* over the actuarial
+prior (0 bits) despite clean calibration. Better metrics did not change the
+conclusion — they made it exact.
+
 ## Honest verdict
 
 Real data, real charts, real dasha math — and the results rhyme with both
@@ -611,6 +648,7 @@ independent dataset — which the repo does not currently contain.
 - `strength_confirm.md` + `strength_confirm.json` — pre-registered two-stage confirmation of the benefic-AD strength effect (Finding 15)
 - `evaluation_methodology.md` — deep-research synthesis: better metrics than lift/z (SCCS rate ratio, C-index, proper scoring rules, calibration)
 - `timing_metrics.md` + `timing_metrics.json` — Finding 15 effect as a self-controlled incidence-rate ratio (Layer A) + within-person C-index/top-k (Layer B)
+- `forecast_skill.md` + `forecast_skill.json` — astrology scored as a forecaster (Layer C): proper-scoring skill over age base-rate + reliability diagram (Finding 15c)
 - `charts_lon.parquet` (run dir) — recomputed D1 longitudes per graha (combustion/conjunction/moolatrikona)
 - `charts_d9.parquet` (run dir) — recomputed Navamsa signs per graha (reusable)
 - Analyzers: `app/medini/ml/dasha_lifestage_dignity.py`,
@@ -632,4 +670,5 @@ independent dataset — which the repo does not currently contain.
   `app/medini/ml/dasha_confluence_timing.py`,
   `app/medini/ml/dasha_verse_timing.py`,
   `app/medini/ml/dasha_strength_confirm.py`,
-  `app/medini/ml/dasha_timing_metrics.py`
+  `app/medini/ml/dasha_timing_metrics.py`,
+  `app/medini/ml/dasha_forecast_skill.py`

@@ -152,22 +152,62 @@ built. Now the bulk **rule ENCODING** can proceed.
 birth data → chart (Phase 0/1) → Shadbala (Phase 1c) → conditions + 255 cited rules (Phase 2) →
 fired-rule reading → ordinal house verdicts (Phase 3) → rendered cited worksheet (proforma/render/CLI).
 
-**▶ RESUME next (enrichment + remaining phases):**
-1. **More rule layers** (same parallel template): important **combinations** per house (the
-   `{condition, result, frame, citation}` yogas — from-Moon / from-Karaka frames), and the **special
-   grids** (Kuja-Dosha H7, disease-organ H6, decanate-cause H8, source-of-gains H11).
-2. **Per-signification sub-verdicts** — refine the house-level verdict to per-signification routing (§6.1).
-3. **Phase 4 longevity** (`judges/longevity.py` — balarishta gate + span class + maraka timing, the
-   pre-pass that gates the houses), **Phase 5 timing** (Vimshottari MD/AD timeline), **API + portal**
-   surfaces (spec §9), **Phase 7 golden harness** (Raman's example charts → his verdicts, spec §11.1).
-2. **Phase 3 — the full house judge** (`judges/house_template.py`, spec §6): per-signification
-   sub-verdicts via the karaka routing + the StrengthLedger → ordinal verdict
-   (favourable/mixed/afflicted/insufficient-evidence). `rule_firing` is its substrate.
-3. **Still-to-add predicates** (on demand): varga overlays C2; KARAKA/STRONGEST_OF/KARAKAMSA origins;
-   `Strongest`/`Weakest`; `TaraOf`; sphuta/Saham.
+# Accuracy-first rebuild (plan: C:\Users\S.C.C\.claude\plans\compressed-mixing-trinket.md)
 
-Then **4** (longevity), **5** (timing+divisional), **6** (proforma+surfaces), **7** (golden harness via
-`tests/fixtures/raman_goldens.jsonl`, spec §11.1).
+The roadmap was re-planned **accuracy-first** (per-signification judge + golden harness BEFORE mass
+rule encoding) and stress-tested by 3 independent reviews (doctrine/architecture/completeness) + 5
+rounds of user doctrinal review. Key locked corrections live in the plan file: **harana order =
+Chakrapatha → Satrukshetra (Mars+retro exempt) → Astangata (Venus/Saturn FULLY exempt) → Krurodaya
+(absolute, Pindayu-only)**; Vipareeta = Raman's narrow form only; §6.3 thresholds are golden-tuned
+heuristics (never cited to Raman); maraka tie-break = Chart-35 unit-counting; span bands 8-32/33-75/75-120.
+
+## Phase A — per-signification judge (DONE)
+- **A1 `doctrine/significations.py`** (commit `924d7b6`; 8 tests): 42 Signification records, all 12
+  houses — fine matters → karaka(s) + mandatory frames (H4 mother→Moon, H7 spouse→Venus, H9
+  father→Sun, H10 quad-karaka weights) + `rule_tags` bridge to the coarse rule buckets. Doctrinal
+  spot-check: PASS (all karakas correct, zero node-karakas, citations on-topic).
+- **A2/A3** (commit `60c7664`; 17 tests): `EvalContext` lazy `_cache` + `get_or_compute` +
+  `functional_nature(planet)` accessor (per-Lagna table already existed in `primitives/functional_nature.py`).
+- **A4-A6 `judges/house_template.py`** (commits `f81d051` + fixes `ff96590`; 33 tests): 3-frame
+  immutable `FrameLedger` (Lagna/Moon/Karaka-as-Lagna), `_decide` 5-step ordinal rule (karaka-veto →
+  contradiction-mixed → Track-B polarity fallback → favourable → afflicted with **bhava-rescue
+  (HTJAH-I:503-505)** + **karaka-salvage (three-pillar, HTJAH-II:221)** → insufficient), navamsa
+  modulation (borderline-only), lord==karaka pillar-collapse, parivartana resilience, **load-bearing
+  longevity guard** (LONGEVITY_GUARD clamps death/longevity matters to insufficient-evidence until
+  Phase E). Adversarial 3-lens review caught + fixed: citation misattribution (503-505 was the
+  HOUSE-rescue, not karaka), inert longevity guard, as_house_verdict lord/strength frame mismatch.
+  Legacy `house_judge.py` untouched (shim compat; Phase-G cutover).
+
+## Phase B — golden harness (FOUNDATION DONE; user validation pending)
+- **Framework** (commit `780ac15`): `docs/raman_saab/golden_schema.md`; `tools/raman_saab/
+  extract_goldens.py` (prose→ordinal lexicon + condition-solver that escalates on Not()/unknown);
+  `tests/raman_saab/test_goldens.py` (Track A astronomy sign-level + sandhi audit-log; Track B
+  doctrine CONFIRMED-only; Tier-3 evidence snapshots with explicit UPDATE_RAMAN_SNAPSHOTS=1 switch;
+  schema guard + DRAFT-gate); `tools/raman_saab/tune_thresholds.py` (bounded discrete tuner,
+  0.5R/1.0R steps, --max-iterations --holdout-lock, emits diff never writes total.py).
+- **First DRAFT batch** (commit `2506ad2`): 19 worked-example goldens — H1 charts 9,10,12,15,17,18,
+  20,24,29,31,33,35 (HTJAH-I) + H8 longevity 33/34/35 (86y2m20d Pindayu / 68y10m5d Amsayu / death
+  1966-02-07) + Gandhi/Lincoln/JFK/Hitler death charts. ALL verdict_review=DRAFT (non-asserting).
+- **Objective review fixes** (commit `0eb5af8`): chart_33 tz→5.5 IST; chart_10+33 lagna→Aquarius
+  (HTJAH-II:4253 prints "Aquarius 9°42'" — the methodology "Capricorn" label was wrong, fresh-cast
+  agreed); Lincoln lon/tz→Western (book OCR dropped the W); Track A now ASSERTS fresh-cast Lagna vs
+  printed lagna_sign (sandhi-tolerant); schema guard #11 (rule_level/doctrine_statement can't smuggle
+  verdicts); tuner Final removed; extractor self-test in CI. **855 passed, 5 skipped, 3 xfailed.**
+
+**▶ RESUME next:**
+1. **USER VALIDATION (blocking the ratchet, not the build):** review the 19 DRAFT prose→ordinal
+   mappings in `tests/fixtures/raman_goldens.jsonl` → flip to CONFIRMED (or correct). The doctrine
+   reviewer's suggested corrections (charts 33/20→afflicted, 29→favourable, 10→mixed, 31→mixed,
+   35→favourable, 24→favourable-or-mixed) are in the session log; "insufficient-evidence" is reserved
+   for ABSENT testimony, not negative testimony.
+2. **Phase-A deps in flight** (workflow `wf_ed2702cc-bdc`): `doctrine/yogas.py` (Raman-cited yoga
+   catalogue + detect_yogas), `primitives/sphutas.py` (Beeja/Kshetra gate, Special-Dhana-Lagna,
+   Sahams), `doctrine/lookups/` (decanate-cause, source-of-gains, Bhavartha-Ratnakara, confinement
+   modes, disease map) — parallel-built, then doctrine+code review, orchestrator commits.
+3. Then: wire yogas/sphutas/lookups into the judge + proforma metadata; **Phase C** combinations
+   encoding (harness-gated); **Phase D** predicates (C2 varga-overlay `InVargaHouseFrom`, TaraOf,
+   KARAKAMSA origins); **Phase E** longevity (corrected harana matrix, 3 to-the-day goldens);
+   **Phase F** timing (+ `stated_dasha_balance` drift guard); **Phase G** surfaces + shim cutover.
 
 ## Locked decisions / gotchas (do NOT relitigate)
 - **Ayanamsa = Raman default**, isolated via `chart/ayanamsa.py` context manager — NEVER mutates the global (app/core stays Lahiri). `pyswisseph 2.10.x has no get_sid_mode()` — uses hasattr + Lahiri-restore fallback.

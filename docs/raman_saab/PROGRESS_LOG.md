@@ -15,14 +15,55 @@ surgical staging, no Co-Authored-By.
 
 ---
 
-## Where we are (top — keep current)
+## ▶▶ RESUME HERE (2026-06-13, switching to Claude Code terminal) ◀◀
 
-- **HEAD `7d6d1af`** · suite **1732 passed, 9 skipped, 3 xfailed** · **ratchet floor 7/12** ·
-  pushed to GitHub (origin/round8-unification in sync).
-- Phases A+B+deps+wiring + **Stage 1 (H1) + preponderance mechanism + tuner-fix + House 3
-  COMMITTED**. **AWAITING USER:** H3 golden validation worksheet
-  (`docs/raman_saab/golden_validation_worksheet_h3.md`, charts 52-63) → confirming unlocks the
-  2-house tuner application (F11). H1 worksheet decisions already applied (12 CONFIRMED).
+**HEAD `d46f4e7`** · suite **1734 passed, 8 skipped, 3 xfailed** · **ratchet 9/24** (H1 7/12 +
+H3 2/12) · pushed to GitHub `origin/round8-unification`. Working tree CLEAN for raman_saab (a
+few pre-existing untracked files under docs/ + tools/ are NOT ours — leave them).
+
+**The execution plan is now IN the repo:** `docs/raman_saab/EXECUTION_PLAN.md` (v3, all stages +
+per-possibility contingencies G1-G16). The validation worksheets:
+`docs/raman_saab/golden_validation_worksheet.md` (H1, done) +
+`..._worksheet_h3.md` (H3, done). Goldens: `tests/fixtures/raman_goldens.jsonl` (24 CONFIRMED:
+H1 charts 9-35, H3 charts 52-63). Ratchet test + scoreboard: `tests/raman_saab/test_goldens.py`
+(`track_b_scoreboard()`). Tuner: `tools/raman_saab/tune_thresholds.py`.
+
+**EXACT next steps, in order:**
+1. **REVIEW + TUNE the pillar-preponderance mechanism** (commit `d46f4e7`, currently no-op,
+   review+tune were cut off by a session limit). It replaced the count-based contradiction-weigh
+   in `house_template._decide` clause-2 with a PILLAR weigh (Raman three-factors: count weak/strong
+   of lord/karaka/bhava_bala; knobs `CONTRA_PILLAR_AFFLICT`/`CONTRA_PILLAR_FAVOUR` in
+   `shadbala/total.py`, default 99 = no-op). (a) Adversarial-review it (no-op default proof +
+   doctrine fidelity: weak>=2 → afflicted must match Raman, and the count-version's over-favour
+   artifact must be GONE). (b) Run `py -3.12 -m tools.raman_saab.tune_thresholds
+   --max-iterations=50 --holdout-lock`; inspect the candidate's TUNED confusion matrix — apply
+   `CONTRA_PILLAR_*` to `total.py` ONLY if it gains fit AND holdout WITHOUT a class-swap artifact
+   (an afflicted-golden flipping to favourable = overfit, reject). On apply: re-measure, regen
+   Tier-3 snapshots under review, BUMP baseline in the earning commit, push.
+2. **Complete H3 affliction rules** (Stage-4 H3) for the ~6 missing-rule misses: deafness
+   Papakartari pattern (charts 55/56 — current #28/#29 only cover Mercury-with-3rd-lord +
+   malefic-IN-3rd), the specific "no brothers" denial combinations (58/60/62), and the
+   cordial-relations rule that fits chart_63's actual config (Mars-in-Lagna + exalted 3rd-lord;
+   the encoded H3.C.30 mis-fires because 2nd=3rd lord identity → False). Each rule cited;
+   re-measure; bump baseline on gain.
+3. **Continue breadth** house-by-house per EXECUTION_PLAN Stage 4 (richest next: H7 marriage or
+   H10 career → best tuner signal) + Stage-6 longevity interleave after H8/H2.
+4. Cleanup later: Stage 1c (fine re-tag, aggregate bridge — doesn't move ratchet), Stage 1d
+   (chart_17 bhava-frame), chart_33 Capricorn-vs-Aquarius lagna re-validation.
+
+**Standing protocol (terminal):** TDD; per batch: implement → adversarial review (doctrine
+content-audits ≥10% of new citations) → fix CRITICAL/HIGH → full suite green → reviewed Tier-3
+snapshot regen → ratchet measured (G5/G6/G16) → surgical commit on `round8-unification` (simple
+`-m`, no `git add -A`, no Co-Authored-By) → **`git push origin round8-unification`** (user wants
+continuous GitHub backup) → update this log + BUILD_STATUS. Run `py -3.12 -m pytest
+tests/raman_saab/ -q` (currently 1734 passed). Locked decisions: see EXECUTION_PLAN.md + below.
+
+---
+
+## Where we are (history — superseded by RESUME HERE above)
+
+- Phases A+B+deps+wiring + Stage 1 (H1) + preponderance mechanism + tuner-fix + House 3 +
+  pillar-preponderance refinement — all COMMITTED + pushed.
 - **AT THE PLATEAU CHECKPOINT (plan F13).** Stage 1 added 106 H1 rules + 6 predicates; the rules
   WORK (chart_10 now correctly `afflicted` on real malefic evidence) but the **§6.3 judge
   synthesis caps accuracy** — diagnosed as a systematic **mixed-bias** (clause-2 contradiction →
@@ -123,6 +164,22 @@ surgical staging, no Co-Authored-By.
 ---
 
 ## Append new entries below this line
+
+### 2026-06-13 — pillar-preponderance refinement (committed `d46f4e7`, review+tune PENDING)
+- House 3 goldens user-CONFIRMED (all 12 drafts kept; chart_58 time→5:30pm/Aquarius per user's
+  structural-reality call). Baseline re-based 7/12 → **9/24** (`727d0d2`).
+- Tuner run #1 (count-based, 2 houses): suggested `CONTRA_FAVOUR_MARGIN 99→1`, +0.158 fit but the
+  confusion matrix showed it over-favours (6 afflicted→favourable) = **overfit artifact REJECTED**.
+- Diagnosis: count-based net is the wrong signal; Raman weighs the **three pillars** (chart_20
+  "all three factors afflicted → afflicted" is literal). Pillar-aware weigh would fix 6 of 7
+  contradiction misses (20/31/59/61 weak-pillars→afflicted; 53/54 strong-pillars→favourable).
+- **Mechanism refined to PILLAR-based** (`d46f4e7`): `_decide` clause-2 counts weak/strong of
+  {lord, karaka, bhava_bala}; knobs `CONTRA_PILLAR_AFFLICT/FAVOUR` (default 99 no-op); tuner sweep
+  {2,3,99}; tests rewritten. Suite 1734 passed, ratchet 9/24 unchanged (no-op verified). **The
+  adversarial review + the real tuner run were CUT OFF by a session limit** — they are step 1 of
+  RESUME HERE. (Committed no-op because it's verdict-unchanged + green + leaves a clean tree for
+  the terminal switch; the tune APPLICATION is the gated next step, not done.)
+- Plan copied into repo: `docs/raman_saab/EXECUTION_PLAN.md`.
 
 ### 2026-06-12 — Plateau resolution path + House 3 developed
 - **User decision (plateau):** TUNER-DRIVEN cutoffs (data-calibrated preponderance, not hand-set).

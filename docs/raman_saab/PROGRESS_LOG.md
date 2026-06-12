@@ -17,11 +17,17 @@ surgical staging, no Co-Authored-By.
 
 ## Where we are (top — keep current)
 
-- **HEAD `a90414d`** · suite **1212 passed, 5 skipped, 3 xfailed** · **ratchet floor 7/12**.
-- Phases **A + B + A-deps + wiring COMPLETE**. Next: **Stage 1** (H1 deep combination encoding,
-  mismatch-targeted) — workflow `wf_4cbd3be9-afb` in flight (predicates + house split + 6 group
-  encoders + adversarial verify).
-- Open H1 mismatches to flip: charts 09, 10, 17, 20, 31 (each diagnosed in the plan, Stage 1e).
+- **HEAD `e59fc2e`** · suite **1623 passed, 5 skipped, 3 xfailed** · **ratchet floor 7/12** ·
+  pushed to GitHub (origin/round8-unification in sync).
+- Phases A + B + A-deps + wiring + **Stage 1 (H1 combination layer) COMMITTED**.
+- **AT THE PLATEAU CHECKPOINT (plan F13).** Stage 1 added 106 H1 rules + 6 predicates; the rules
+  WORK (chart_10 now correctly `afflicted` on real malefic evidence) but the **§6.3 judge
+  synthesis caps accuracy** — diagnosed as a systematic **mixed-bias** (clause-2 contradiction →
+  mixed without weighing preponderance) + **navamsa/lead-frame over-aggression**. Next decision:
+  refine the judge policy (WITH the user) vs continue breadth. NOT a rule-coverage problem.
+- Open H1 mismatches (5): 09(mixed/insuff), 15(mixed/fav — regressed by mind-rule pollution),
+  17(afflicted/fav — needs Stage-1d bhava-frame + lead-frame), 20+31(mixed/afflicted — the
+  preponderance cap).
 
 ---
 
@@ -152,3 +158,26 @@ ship until fixed.
 - **Lesson for Stage 4+:** parallel encoders must get DISJOINT corpus line-ranges (not just
   disjoint files) + a unique-id guard test must exist BEFORE encoding (now being added). The
   overlapping-span instruction was an orchestrator error.
+
+### 2026-06-12 — Stage 1 COMMITTED (`e59fc2e`) + PLATEAU CHECKPOINT reached
+Fix workflow `wf_034b34b3-2c5` applied all 7 review fixes (dedup + unique-id guard, inverted-text
+→ fortified=None, rule-#15 tautology, true-drishti in H1.M.G2, Dwirdwadasha "almost-all"
+threshold, constitution physique → neutral, W33 → descriptive). Ratchet recovered 5/12 → 7/12.
+Committed: conditions.py (6 predicates + LORD_OF origin), the `house_01_lagna/` subpackage (10
+modules, 106 rules), 14 reviewed Tier-3 snapshot regenerations, 4 new test files. Suite 1623
+passed. Baseline stays 7/12 (count flat — composition +chart_10 / −chart_15).
+- **Verdict audit of the snapshot regen (all changes intended):** chart_10 fav→**afflicted**
+  (WIN, grounded); 09/20/31 fav→mixed (closer, capped); chart_15 fav→mixed (regression from
+  mind-rule pollution); 12/17/18/24/29/33/35 verdict-stable.
+- **THE PLATEAU DIAGNOSIS (measure agent, cross-referenced to memory obs 1611/1657):** remaining
+  misses are JUDGE-POLICY, not rules:
+  1. **Clause-2 mixed-bias** — "any benefic + any malefic → mixed" ignores preponderance; chart_09
+     (4 malefic vs 1 benefic) and chart_20/31 ("all three factors afflicted" per Raman) read mixed
+     where Raman reads afflicted. Caps 09/20/31.
+  2. **Navamsa-weakens + lone-malefic over-aggression + Moon-lead-frame** — chart_17 reads
+     afflicted (opposite of golden favourable) despite 5 benefic rules; also needs Stage-1d
+     bhava-frame (Ketu → 12th bhava, not afflicting H1).
+  3. **chart_33** afflicted RIGHT-FOR-THIN-REASONS (zero malefic house rules; rides on Y.SAKATA
+     overlay — the known crutch).
+- Aligns with the USER's own calls (chart_10/31 "afflicted not mixed; career is H10"). The §6.3
+  numbers are golden-tuned heuristics → the refinement is a doctrine-shaping decision for the user.

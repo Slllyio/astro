@@ -44,12 +44,18 @@ _RULE_SETS_DIR: Path = (
 
 
 def _all_rule_set_significations() -> frozenset[str]:
-    """Collect every signification= string value in rule_sets/*.py."""
+    """Collect every signification= string value in rule_sets/house_* modules.
+
+    A house rule-set may be a flat module (house_02_dhana.py) or a subpackage of
+    group modules (house_01_lagna/ since the Stage-1 split) — recurse into both.
+    """
     pattern = re.compile(r'signification\s*=\s*["\']([^"\']+)["\']')
     found: set[str] = set()
-    for py_file in _RULE_SETS_DIR.glob("house_*.py"):
-        for match in pattern.finditer(py_file.read_text(encoding="utf-8")):
-            found.add(match.group(1))
+    for entry in _RULE_SETS_DIR.glob("house_*"):
+        py_files = sorted(entry.rglob("*.py")) if entry.is_dir() else [entry]
+        for py_file in py_files:
+            for match in pattern.finditer(py_file.read_text(encoding="utf-8")):
+                found.add(match.group(1))
     return frozenset(found)
 
 

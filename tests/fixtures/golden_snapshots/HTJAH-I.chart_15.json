@@ -2,25 +2,35 @@
   "H1": {
     "citations": [
       "HTJAH-I:1015",
+      "HTJAH-I:1106",
+      "HTJAH-I:1131",
+      "HTJAH-I:1139",
+      "HTJAH-I:1238",
+      "HTJAH-I:1278",
       "HTJAH-I:1532"
     ],
     "fired_rule_ids": [
+      "H1.B.14",
+      "H1.C.28b",
+      "H1.C.34",
       "H1.L.3",
+      "H1.M.G3",
+      "H1.M.S03",
       "H1.P.Venus"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "body": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "health": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "self": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

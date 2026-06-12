@@ -1,24 +1,33 @@
 {
   "H1": {
     "citations": [
-      "HTJAH-I:1015"
+      "HTJAH-I:1015",
+      "HTJAH-I:1110",
+      "HTJAH-I:1127",
+      "HTJAH-I:1138",
+      "HTJAH-I:1347"
     ],
     "fired_rule_ids": [
-      "H1.L.3"
+      "H1.B.18",
+      "H1.C.26a",
+      "H1.C.26b",
+      "H1.C.33",
+      "H1.L.3",
+      "H1.M.S07"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "body": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "health": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "self": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

@@ -15,11 +15,10 @@ surgical staging, no Co-Authored-By.
 
 ---
 
-## ▶▶ RESUME HERE (2026-06-13, switching to Claude Code terminal) ◀◀
+## ▶▶ RESUME HERE (2026-06-13, post H3 affliction rules) ◀◀
 
-**HEAD `d46f4e7`** · suite **1734 passed, 8 skipped, 3 xfailed** · **ratchet 9/24** (H1 7/12 +
-H3 2/12) · pushed to GitHub `origin/round8-unification`. Working tree CLEAN for raman_saab (a
-few pre-existing untracked files under docs/ + tools/ are NOT ours — leave them).
+**HEAD `3a12ea1`** · suite **1744 passed, 8 skipped, 3 xfailed** · **ratchet 11/24** (H1 7/12 +
+H3 4/12) · pushed to GitHub `origin/round8-unification`.
 
 **The execution plan is now IN the repo:** `docs/raman_saab/EXECUTION_PLAN.md` (v3, all stages +
 per-possibility contingencies G1-G16). The validation worksheets:
@@ -40,12 +39,10 @@ H1 charts 9-35, H3 charts 52-63). Ratchet test + scoreboard: `tests/raman_saab/t
    `CONTRA_PILLAR_*` to `total.py` ONLY if it gains fit AND holdout WITHOUT a class-swap artifact
    (an afflicted-golden flipping to favourable = overfit, reject). On apply: re-measure, regen
    Tier-3 snapshots under review, BUMP baseline in the earning commit, push.
-2. **Complete H3 affliction rules** (Stage-4 H3) for the ~6 missing-rule misses: deafness
-   Papakartari pattern (charts 55/56 — current #28/#29 only cover Mercury-with-3rd-lord +
-   malefic-IN-3rd), the specific "no brothers" denial combinations (58/60/62), and the
-   cordial-relations rule that fits chart_63's actual config (Mars-in-Lagna + exalted 3rd-lord;
-   the encoded H3.C.30 mis-fires because 2nd=3rd lord identity → False). Each rule cited;
-   re-measure; bump baseline on gain.
+2. **Judge clause-8 policy refinement** — chart_56 fires 3 malefic ear_throat rules correctly but
+   `_decide` clause-8 (strong pillars + only-malefic, no benefic contradiction → mixed) blocks the
+   afflicted verdict. When ONLY malefic fires and no benefic contradicts, the engine should still
+   read afflicted. Affects chart_56 directly; may unblock other "strong but afflicted" patterns.
 3. **Continue breadth** house-by-house per EXECUTION_PLAN Stage 4 (richest next: H7 marriage or
    H10 career → best tuner signal) + Stage-6 longevity interleave after H8/H2.
 4. Cleanup later: Stage 1c (fine re-tag, aggregate bridge — doesn't move ratchet), Stage 1d
@@ -259,3 +256,31 @@ passed. Baseline stays 7/12 (count flat — composition +chart_10 / −chart_15)
      overlay — the known crutch).
 - Aligns with the USER's own calls (chart_10/31 "afflicted not mixed; career is H10"). The §6.3
   numbers are golden-tuned heuristics → the refinement is a doctrine-shaping decision for the user.
+
+### 2026-06-13 — H3 affliction rules completed (`3a12ea1`), ratchet 9/24 → 11/24
+- **Step 2 of RESUME-HERE executed (plan step 2).** 5 new rules + 2 condition fixes + 1 golden fix:
+  - **C.31** (ear_throat malefic): 3rd lord in dusthana (6/8/12) → fires on charts 55 (Venus h12),
+    56 (Mars h6). Citation HTJAH-I:3465.
+  - **C.32** (ear_throat malefic): Saturn aspects 3rd house → fires on charts 55, 56. New local leaf
+    `_SaturnAspects3rd`. Citation HTJAH-I:3467.
+  - **C.33** (ear_throat malefic): 3rd lord debilitated → fires on chart 56 (Mars debil in Cancer).
+    Citation HTJAH-I:3467.
+  - **C.34** (siblings malefic): 3rd lord in dusthana → fires on charts 56, 62. Citation HTJAH-I:3436.
+  - **C.35** (siblings malefic): natural malefic aspects 3rd → new leaf `_MaleficAspects3rd` (inverse
+    of C.7). Fires on charts 58, 60. Citation HTJAH-I:3430.
+  - **C.9 fix**: exempt exalted/own malefic 3rd lord via `Not(_ThirdLordHasDignity({"exalt","own"}))`.
+    Chart 63's Saturn (malefic, exalted in Libra) no longer triggers C.9. Citation HTJAH-I:4087.
+  - **C.30 fix**: new leaf `_LordsIdentical(h1, h2)` recognises same-planet lordship as "connection"
+    (LordsConjunct returns False for identity by design). Chart 63 Sagittarius: Saturn lords both
+    h2 (Capricorn) and h3 (Aquarius) → identity fires as benefic.
+  - **chart_63**: added stated_positions `Mars sign:9 bhava:1`, `Saturn sign:7 bhava:11`.
+- **Gains:** chart_55 favourable→**afflicted** (C.31 fires, no benefic ear_throat contradicts →
+  clause-3 Track-B fallback → afflicted). chart_63 afflicted→**favourable** (C.9 exempted + C.30
+  identity + C.1 lord-in-11th + C.8 exalted → only benefic fires → clause-3 → favourable).
+- **NOT gained (expected):** chart_56 favourable→mixed (closer, 3 malefic rules fire correctly but
+  judge clause-8 — strong pillars + only-malefic, no benefic contradiction — falls through to
+  "mixed" instead of "afflicted"). This is a judge-policy gap, not a rule-coverage gap. Charts
+  53/54/58-62 deferred per plan (pillar tuning, navamsa-override, papakartari).
+- **H1 7/12 unchanged** (no regression). **H3 2/12 → 4/12.** Baseline bumped 9→11/24.
+- `Not` condition already existed in `conditions.py` (line 188) — no addition needed.
+- All 12 H3 Tier-3 snapshots regenerated. Suite 1744 passed.

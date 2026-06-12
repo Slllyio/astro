@@ -3,12 +3,20 @@
     "citations": [
       "HTJAH-I:3351",
       "HTJAH-I:3371",
+      "HTJAH-I:3430",
       "HTJAH-I:3435",
-      "HTJAH-I:3436"
+      "HTJAH-I:3436",
+      "HTJAH-I:3465",
+      "HTJAH-I:3467"
     ],
     "fired_rule_ids": [
       "H3.C.1",
       "H3.C.10",
+      "H3.C.31",
+      "H3.C.32",
+      "H3.C.33",
+      "H3.C.34",
+      "H3.C.35",
       "H3.C.9",
       "H3.L.6"
     ],
@@ -20,7 +28,7 @@
       },
       "ear_throat": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "short_journeys": {
         "lead_frame": "lagna",

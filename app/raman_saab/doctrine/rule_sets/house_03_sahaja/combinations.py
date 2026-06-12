@@ -232,6 +232,46 @@ class _ThirdLordWithInimical(C.Condition):
         return _BodyWithInimical(_third_lord(ctx.chart)).evaluate(ctx)
 
 
+class _SaturnAspects3rd(C.Condition):
+    """Saturn casts a whole-sign aspect on house 3 (HTJAH-I:3467). Saturn's
+    aspects hit houses at distances 3, 7, 10 from its position; the classic
+    deafness graha."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return drishti.aspects_house("Saturn", 3, ctx.chart)
+
+
+class _MaleficAspects3rd(C.Condition):
+    """Any natural malefic casts a whole-sign aspect on house 3
+    (HTJAH-I:3430-3431, inverse of C.7's benefic-occupies/aspects rule).
+    Malefics occupying the 3rd are caught by CountInHouse; this leaf covers
+    the ASPECT arm only (distance > 0)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        for name in NATURAL_MALEFICS:
+            if ctx.chart.planets.get(name) is None:
+                continue
+            if drishti.aspects_house(name, 3, ctx.chart):
+                return True
+        return False
+
+
+class _LordsIdentical(C.Condition):
+    """The D1 lords of houses `h1` and `h2` are the SAME planet (identity).
+    Backs "connected" when conjunction is impossible because one planet lords
+    both houses (e.g. Saturn lords Capricorn 2nd and Aquarius 3rd for a
+    Sagittarius Lagna). ``LordsConjunct`` returns False for identity by
+    design; this predicate fills that gap."""
+
+    def __init__(self, h1: int, h2: int) -> None:
+        self.h1, self.h2 = h1, h2
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        l1 = SIGN_LORDS[((ctx.chart.asc_sign - 1) + (self.h1 - 1)) % 12 + 1]
+        l2 = SIGN_LORDS[((ctx.chart.asc_sign - 1) + (self.h2 - 1)) % 12 + 1]
+        return l1 == l2
+
+
 def _lord_with(rule_id: str, planet: str, result: str, line: int,
                polarity: str) -> RuleRecord:
     """One "3rd lord with <planet>" courage atom (#19-#26 family)."""
@@ -342,10 +382,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H3.C.9", house=3, signification="siblings", group="combination",
         kind="evaluable",
-        condition=C.Or(_ThirdLordIsMalefic(), C.CountInHouse(3, 1, "malefic")),
+        condition=C.Or(
+            C.And(_ThirdLordIsMalefic(),
+                  C.Not(_ThirdLordHasDignity({"exalt", "own"}))),
+            C.CountInHouse(3, 1, "malefic")),
         fortified=None,
         afflicted="the 3rd lord an evil (malefic) planet, or evil planets occupying "
-                  "the 3rd -> very few brothers",
+                  "the 3rd -> very few brothers (exempted when the malefic lord is "
+                  "exalted or in own sign — a well-dignified malefic delivers its "
+                  "house significations, per Chart 63 HTJAH-I:4087)",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3435)),
     # #10 — Mars or 3rd lord debilitated, combust, or with inimical planets ->
@@ -517,12 +562,73 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     RuleRecord(
         id="H3.C.30", house=3, signification="siblings", group="combination",
         kind="evaluable",
-        condition=C.Or(C.LordsConjunct(1, 3), C.LordsConjunct(2, 3)),
+        condition=C.Or(C.LordsConjunct(1, 3), C.LordsConjunct(2, 3),
+                       _LordsIdentical(1, 3), _LordsIdentical(2, 3)),
         fortified="the Lagna lord and the lord of wealth (2nd) connected with the lord "
                   "of the house of brothers (3rd) -> cordial relations between brothers "
                   "and mutual financial benefit; the native's finances improve through "
-                  "the brothers",
+                  "the brothers (identity of lordship counts as connection)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 4087)),
+
+    # — D. additional ear/throat affliction atoms (HTJAH-I:3465-3468 inferred) —
+    # #31 — 3rd lord in a dusthana (6/8/12) -> ear/throat affliction. Inferred from
+    #       Charts 55 (Venus in 12th) and 56 (Mars in 6th): Raman reads deafness when
+    #       the lord of the 3rd is placed in a house of loss/affliction.
+    RuleRecord(
+        id="H3.C.31", house=3, signification="ear_throat", group="combination",
+        kind="evaluable",
+        condition=C.Or(C.LordIn(3, 6), C.LordIn(3, 8), C.LordIn(3, 12)),
+        fortified=None,
+        afflicted="the 3rd lord placed in a dusthana (6th, 8th, or 12th) -> ear/throat "
+                  "affliction; the house of hearing suffers when its lord occupies a "
+                  "house of disease (6th), obstruction (8th), or loss (12th)",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3465)),
+    # #32 — Saturn aspects the 3rd house -> ear defects (Saturn = classic deafness graha).
+    RuleRecord(
+        id="H3.C.32", house=3, signification="ear_throat", group="combination",
+        kind="evaluable",
+        condition=_SaturnAspects3rd(),
+        fortified=None,
+        afflicted="Saturn aspecting the 3rd house -> ear defects and deafness should be "
+                  "predicted; Saturn is the classic graha of deafness (Chart 56: Saturn "
+                  "from the 9th aspects the 3rd)",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3467)),
+    # #33 — 3rd lord debilitated -> ear/throat affliction.
+    RuleRecord(
+        id="H3.C.33", house=3, signification="ear_throat", group="combination",
+        kind="evaluable",
+        condition=_ThirdLordHasDignity({"debil"}),
+        fortified=None,
+        afflicted="the 3rd lord debilitated -> ear/throat affliction; Chart 56: '3rd "
+                  "lord debilitated in 6th -> partially deaf'",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3467)),
+
+    # — E. additional sibling-denial atoms (HTJAH-I:3430-3436 inverse) —
+    # #34 — 3rd lord in a dusthana (6/8/12) -> sibling affliction.
+    RuleRecord(
+        id="H3.C.34", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=C.Or(C.LordIn(3, 6), C.LordIn(3, 8), C.LordIn(3, 12)),
+        fortified=None,
+        afflicted="the 3rd lord in the 6th, 8th, or 12th -> destruction of the "
+                  "indications of the 3rd house; the siblings suffer when their lord "
+                  "occupies a dusthana",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3436)),
+    # #35 — natural malefic aspects the 3rd house -> few brothers (inverse of #7).
+    RuleRecord(
+        id="H3.C.35", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=_MaleficAspects3rd(),
+        fortified=None,
+        afflicted="natural malefic planets aspecting the 3rd -> few brothers (inverse "
+                  "of #7: benefic aspect/occupation strengthens the 3rd; malefic aspect "
+                  "weakens it)",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3430)),
 )

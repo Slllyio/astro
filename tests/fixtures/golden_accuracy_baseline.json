@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor (correct/total over CONFIRMED worked-example verdicts). Bumped by a HUMAN in the earning commit; never lowered to make a regression pass; DELIBERATELY re-based when new goldens are CONFIRMED (new measurement territory). 2026-06-13 re-base: 12 House-3 goldens (charts 52-63) user-CONFIRMED, expanding from 12 (H1) to 24 (H1+H3). Per-house: H1 7/12 (unchanged), H3 2/12 (incomplete rule coverage — the deafness Papakartari pattern + specific 'no brothers' denial combinations are unencoded Stage-4 targets; the contradiction-mixed cases await the tuner setting the new pillar knobs). 2026-06-13: clause-2 preponderance MECHANISM refined from count-based net to PILLAR-based (Raman three-factors: lord/karaka/Bhava-Bala). New knobs CONTRA_PILLAR_AFFLICT/CONTRA_PILLAR_FAVOUR replace CONTRA_AFFLICT_MARGIN/CONTRA_FAVOUR_MARGIN; default 99 is a NO-OP (weak/strong of 3 pillars never reaches it) so this re-base is UNCHANGED at 9/24 — no verdict moves until the tuner lowers the knobs (sweep {2,3,99}). Next levers: complete H3 affliction rules + run the tuner over the pillar sweep.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: bumped 9/24 -> 11/24. +2 gains: chart_55 (ear_throat: new C.31 lord-in-dusthana fires, no benefic ear_throat -> afflicted), chart_63 (siblings: C.9 exempts exalted Saturn, C.30 identity-aware -> favourable). H1 7/12 unchanged. H3 4/12 (from 2/12). chart_56 ear_throat fires 3 malefic rules correctly but judge clause-8 (strong pillars + only malefic -> mixed) blocks afflicted verdict — deferred to judge-policy refinement. New rules: C.31-C.35 (ear_throat dusthana/Saturn-aspect/debil + siblings dusthana/malefic-aspect). C.9 now exempts exalted/own malefic lord. C.30 now recognises lord identity as connection.",
   "track_b": {
-    "correct": 9,
+    "correct": 11,
     "total": 24
   }
 }

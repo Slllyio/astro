@@ -1,16 +1,21 @@
 {
   "H3": {
     "citations": [
-      "HTJAH-I:3435"
+      "HTJAH-I:3351",
+      "HTJAH-I:3432",
+      "HTJAH-I:4087"
     ],
     "fired_rule_ids": [
-      "H3.C.9"
+      "H3.C.1",
+      "H3.C.30",
+      "H3.C.8",
+      "H3.L.11"
     ],
-    "rollup": "afflicted",
+    "rollup": "insufficient-evidence",
     "significations": {
       "courage": {
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "ear_throat": {
         "lead_frame": "lagna",
@@ -18,11 +23,11 @@
       },
       "short_journeys": {
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "siblings": {
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       }
     }
   }

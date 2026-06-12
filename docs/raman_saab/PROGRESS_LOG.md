@@ -17,9 +17,12 @@ surgical staging, no Co-Authored-By.
 
 ## Where we are (top — keep current)
 
-- **HEAD `e59fc2e`** · suite **1623 passed, 5 skipped, 3 xfailed** · **ratchet floor 7/12** ·
+- **HEAD `7d6d1af`** · suite **1732 passed, 9 skipped, 3 xfailed** · **ratchet floor 7/12** ·
   pushed to GitHub (origin/round8-unification in sync).
-- Phases A + B + A-deps + wiring + **Stage 1 (H1 combination layer) COMMITTED**.
+- Phases A+B+deps+wiring + **Stage 1 (H1) + preponderance mechanism + tuner-fix + House 3
+  COMMITTED**. **AWAITING USER:** H3 golden validation worksheet
+  (`docs/raman_saab/golden_validation_worksheet_h3.md`, charts 52-63) → confirming unlocks the
+  2-house tuner application (F11). H1 worksheet decisions already applied (12 CONFIRMED).
 - **AT THE PLATEAU CHECKPOINT (plan F13).** Stage 1 added 106 H1 rules + 6 predicates; the rules
   WORK (chart_10 now correctly `afflicted` on real malefic evidence) but the **§6.3 judge
   synthesis caps accuracy** — diagnosed as a systematic **mixed-bias** (clause-2 contradiction →
@@ -120,6 +123,24 @@ surgical staging, no Co-Authored-By.
 ---
 
 ## Append new entries below this line
+
+### 2026-06-12 — Plateau resolution path + House 3 developed
+- **User decision (plateau):** TUNER-DRIVEN cutoffs (data-calibrated preponderance, not hand-set).
+- **Preponderance mechanism + tuner-fix COMMITTED (`e07418b`):** `_decide` clause-2 gains a
+  tunable net malefic-benefic margin (`CONTRA_AFFLICT_MARGIN`/`CONTRA_FAVOUR_MARGIN` in total.py,
+  default 99 = no-op, verified byte-identical at e59fc2e). Tuner holdout fixed (F1: id-list
+  {chart_73/74/75/78} + crc32%5 slice + separate fit/holdout scoring + cast cache); CONTRA knobs
+  in the sweep. Advisory run (single-house, NOT applied per F11): the H1 margins trade off
+  (lowering AFFLICT fixes 09 but breaks 35) — confirms multi-house goldens are needed.
+- **House 3 COMMITTED (`7d6d1af`):** 30 cited combinations (26 evaluable + 4 descriptive-deferred
+  for unbuilt D9-count machinery), house_03_sahaja subpackage split, **new `ear_throat`
+  signification** (HTJAH-I:3325 — deafness charts 55/56/57 were mis-bucketed; #28/#29 re-tagged,
+  goldens re-keyed), 12 DRAFT goldens (charts 52-63, 11 fresh-cast). Reviews: only MEDIUM/LOW
+  (ear_throat gap — FIXED; contestable 52/53/54 sibling-loss ordinals → user worksheet). H1
+  ratchet 7/12 unchanged (H3 isolated). Suite 1732 passed.
+- **Repeating loop established:** develop house (combinations+goldens) → USER validates goldens →
+  re-run tuner as combination-rich houses accumulate → apply CONTRA when >=2 houses give clean
+  fit+holdout → repeat. Longevity (Stage 6) interleaves after H8/H2.
 
 ### 2026-06-12 — GitHub backup enabled
 - User reversed the earlier "local only": pushed `round8-unification` to `origin`

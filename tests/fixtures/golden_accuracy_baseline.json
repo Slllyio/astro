@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. Bumped by a HUMAN in the same commit that earns the improvement (or deliberately re-bases after new goldens are CONFIRMED). Never lowered to make a regression pass. 6/12 measured 2026-06-11 (12 user-CONFIRMED H1 worked examples, pre-Phase-C). Bumped to 7/12 2026-06-12: the yoga-modulation wiring's Sakata drop corrected HTJAH-I.chart_33 H1 to Raman's confirmed 'afflicted' (mechanism pinned by test_chart33_h1_drop_is_sakata_not_kemadruma).",
+  "_comment": "Track-B accuracy ratchet floor (correct/total over CONFIRMED worked-example verdicts). Bumped by a HUMAN in the earning commit; never lowered to make a regression pass; DELIBERATELY re-based when new goldens are CONFIRMED (new measurement territory). 2026-06-13 re-base: 12 House-3 goldens (charts 52-63) user-CONFIRMED, expanding from 12 (H1) to 24 (H1+H3). Per-house: H1 7/12 (unchanged), H3 2/12 (incomplete rule coverage — the deafness Papakartari pattern + specific 'no brothers' denial combinations are unencoded Stage-4 targets; the contradiction-mixed cases await a pillar-based preponderance refinement). Tuner run across both houses (advisory): CONTRA_FAVOUR_MARGIN 99->1 gained +0.158 fit but the confusion matrix showed it over-favours (pushes 6 afflicted charts to favourable) = overfit artifact of the count-based net -> NOT applied; margins stay at the 99 no-op. Next levers: complete H3 affliction rules + a pillar-based (three-factors) preponderance mechanism.",
   "track_b": {
-    "correct": 7,
-    "total": 12
+    "correct": 9,
+    "total": 24
   }
 }

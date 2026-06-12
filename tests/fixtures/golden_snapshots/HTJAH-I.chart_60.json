@@ -1,0 +1,36 @@
+{
+  "H3": {
+    "citations": [
+      "HTJAH-I:3351",
+      "HTJAH-I:3430",
+      "HTJAH-I:3432",
+      "HTJAH-I:3444"
+    ],
+    "fired_rule_ids": [
+      "H3.C.1",
+      "H3.C.14",
+      "H3.C.7",
+      "H3.C.8",
+      "H3.L.11"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "courage": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "ear_throat": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "short_journeys": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "siblings": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

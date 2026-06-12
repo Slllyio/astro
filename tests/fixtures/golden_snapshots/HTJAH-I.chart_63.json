@@ -1,0 +1,29 @@
+{
+  "H3": {
+    "citations": [
+      "HTJAH-I:3435"
+    ],
+    "fired_rule_ids": [
+      "H3.C.9"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "courage": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "ear_throat": {
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "short_journeys": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "siblings": {
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      }
+    }
+  }
+}

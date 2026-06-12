@@ -183,6 +183,16 @@ _H3: tuple[Signification, ...] = (
         rule_tags=("siblings",),
         source=_c1(3324),
     ),
+    # Throat / ears / deafness — a real 3rd-house karya (HTJAH-I:3325 "throat, ears
+    # and father's death"); Mercury is the throat/speech significator (HTJAH-I:3466).
+    # Routes the deafness combinations (#28/#29) and worked-charts 55/56/57.
+    Signification(
+        key="ear_throat",
+        house=3,
+        primary_karaka="Mercury",
+        rule_tags=("ear_throat",),
+        source=_c1(3325),
+    ),
 )
 
 # ---------------------------------------------------------------------------

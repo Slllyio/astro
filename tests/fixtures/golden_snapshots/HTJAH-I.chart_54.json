@@ -1,0 +1,45 @@
+{
+  "H3": {
+    "citations": [
+      "HTJAH-I:3394",
+      "HTJAH-I:3423",
+      "HTJAH-I:3430",
+      "HTJAH-I:3432",
+      "HTJAH-I:3435",
+      "HTJAH-I:3436",
+      "HTJAH-I:3466",
+      "HTJAH-I:3467",
+      "HTJAH-I:3517"
+    ],
+    "fired_rule_ids": [
+      "H3.C.10",
+      "H3.C.28",
+      "H3.C.29",
+      "H3.C.5",
+      "H3.C.7",
+      "H3.C.8",
+      "H3.C.9",
+      "H3.L.9",
+      "H3.P.Ketu"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "courage": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      },
+      "ear_throat": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "short_journeys": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      },
+      "siblings": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "H3": {
+    "citations": [
+      "HTJAH-I:3351",
+      "HTJAH-I:3371",
+      "HTJAH-I:3435",
+      "HTJAH-I:3436"
+    ],
+    "fired_rule_ids": [
+      "H3.C.1",
+      "H3.C.10",
+      "H3.C.9",
+      "H3.L.6"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "courage": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "ear_throat": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "short_journeys": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "siblings": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

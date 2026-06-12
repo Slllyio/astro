@@ -259,20 +259,26 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         if guarded:
             return _navamsa_modulate("insufficient-evidence", L)
         return _navamsa_modulate("afflicted", L)
-    # 2. contradiction — weigh the preponderance when benefic AND malefic both fire.
-    # ``net`` is the malefic-vs-benefic surplus (positive = more malefics fired).
-    # The two margins are read LIVE off the module (NOT import-time-bound) so the
-    # threshold tuner's monkeypatch of shadbala_total.CONTRA_* takes effect during a
-    # sweep. With the default 99 margins, a small fired-rule net never reaches the
-    # cut-off, so ``base`` stays "mixed" — the current always-mixed behavior (no-op).
-    # ``fired_malefic`` already folds in maraka-polarity rules; neutral does not count.
-    # The preponderance verdict is DECISIVE: _navamsa_modulate only nudges a borderline
-    # "mixed", so an afflicted/favourable from preponderance is never shifted by D9.
+    # 2. contradiction — weigh the PREPONDERANCE when benefic AND malefic both fire.
+    # Faithful to Raman's THREE-FACTORS doctrine: instead of counting fired-rule surplus,
+    # weigh the three strength PILLARS — lord, karaka, Bhava-Bala. Count only the KNOWN
+    # pillars (Shadbala present -> not None; fresh-cast goldens HAVE Shadbala, so theirs
+    # ARE populated). If enough pillars are weak the "factors" are afflicted; if enough
+    # are strong they are favourable; otherwise the matter is genuinely 'mixed'.
+    # The two knobs are read LIVE off the module (NOT import-time-bound) so the threshold
+    # tuner's monkeypatch of shadbala_total.CONTRA_PILLAR_* takes effect during a sweep.
+    # With the default 99 knobs, weak/strong (max 3) never reaches the cut-off, so ``base``
+    # stays "mixed" — the no-op default. On Track-B (all pillars None) the known set is
+    # empty -> "mixed" (safe). The preponderance verdict is DECISIVE: _navamsa_modulate
+    # only nudges a borderline "mixed", so an afflicted/favourable here is never shifted.
     if L.fired_benefic and L.fired_malefic:
-        net = len(L.fired_malefic) - len(L.fired_benefic)
-        if net >= shadbala_total.CONTRA_AFFLICT_MARGIN:
+        pillars = [L.lord_strong, L.karaka_strong, L.bhava_bala_strong]
+        known = [p for p in pillars if p is not None]
+        weak = sum(1 for p in known if p is False)
+        strong = sum(1 for p in known if p is True)
+        if known and weak >= shadbala_total.CONTRA_PILLAR_AFFLICT:
             base = "afflicted"
-        elif (-net) >= shadbala_total.CONTRA_FAVOUR_MARGIN:
+        elif known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR:
             base = "favourable"
         else:
             base = "mixed"

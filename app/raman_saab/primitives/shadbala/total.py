@@ -23,20 +23,27 @@ from app.raman_saab.chart.model import ShadbalaBreakdown
 # manager) while scoring candidate thresholds against the golden corpus.
 BHAVA_BALA_MIN_SH: float = 300.0
 
-# Preponderance margins for the per-signification contradiction weigh (clause-2 of
+# Pillar-preponderance knobs for the per-signification contradiction weigh (clause-2 of
 # ``judges/house_template._decide``). When BOTH a benefic and a malefic rule fire on a
-# matter, the judge counts ``net = len(fired_malefic) - len(fired_benefic)`` (positive =
-# malefic preponderance). If ``net >= CONTRA_AFFLICT_MARGIN`` the matter reads 'afflicted';
-# if ``-net >= CONTRA_FAVOUR_MARGIN`` it reads 'favourable'; otherwise it stays 'mixed'.
+# matter, the judge no longer counts fired-rule surplus; instead — faithful to Raman's
+# THREE-FACTORS doctrine (lord strength, karaka strength, Bhava-Bala strength) — it counts
+# how many of the three KNOWN pillars (``lord_strong`` / ``karaka_strong`` /
+# ``bhava_bala_strong``, ignoring None) are weak vs strong:
+#   * ``weak  >= CONTRA_PILLAR_AFFLICT`` -> 'afflicted' (Raman "factors afflicted");
+#   * ``strong >= CONTRA_PILLAR_FAVOUR`` -> 'favourable';
+#   * otherwise                          -> 'mixed'.
 #
 # GOLDEN-TUNED knobs (NOT ``typing.Final``): ``tools/raman_saab/tune_thresholds.py``
-# rebinds them (under a save/restore context manager) while scoring candidate margins
-# against the golden corpus. The DEFAULT 99 is effectively infinite — no small fired-rule
-# net ever reaches it — so clause-2 ALWAYS stays 'mixed' (the current always-mixed
-# behavior). The tuner will lower these once multi-house goldens exist; do NOT hand-set
-# them below 99 without a golden that earns the change.
-CONTRA_AFFLICT_MARGIN: int = 99
-CONTRA_FAVOUR_MARGIN: int = 99
+# rebinds them (under a save/restore context manager) while scoring candidate pillar counts
+# against the golden corpus. The DEFAULT 99 is effectively infinite — at most 3 pillars
+# exist, so weak/strong never reaches it — so clause-2 ALWAYS stays 'mixed' (the current
+# always-mixed behavior). On Track-B sparse charts all pillars are None -> the known set is
+# empty -> 'mixed' regardless of the knob. The tuner will lower these (discrete pillar
+# counts {2, 3, 99}) once multi-house goldens exist; a pillar count of 1 is too aggressive
+# (a single weak factor amid contradicting evidence should not condemn a matter), so do NOT
+# hand-set below 2 without a golden that earns the change.
+CONTRA_PILLAR_AFFLICT: int = 99
+CONTRA_PILLAR_FAVOUR: int = 99
 
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.

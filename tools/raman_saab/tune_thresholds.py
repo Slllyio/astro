@@ -8,10 +8,11 @@ over the engine thresholds:
     (``app/raman_saab/primitives/shadbala/total.py``). Step = 0.5 Rupa.
   * ``BHAVA_BALA_MIN_SH`` — minimum Bhava Bala in Shashtiamsas. Step = 1.0 Rupa
     (== 60 Shashtiamsas).
-  * ``CONTRA_AFFLICT_MARGIN`` / ``CONTRA_FAVOUR_MARGIN`` — the per-signification
-    preponderance margins (clause-2 of ``judges/house_template._decide``). Swept over
-    the discrete set {1,2,3,4,5} plus the no-op 99. Default 99 is effectively infinite
-    (always 'mixed'); lower values let a malefic/benefic fired-rule surplus decide.
+  * ``CONTRA_PILLAR_AFFLICT`` / ``CONTRA_PILLAR_FAVOUR`` — the per-signification
+    pillar-preponderance counts (clause-2 of ``judges/house_template._decide``). Swept
+    over the discrete set {2, 3} plus the no-op 99. Default 99 is effectively infinite
+    (always 'mixed'); a lower count lets weak/strong of the three Raman pillars (lord,
+    karaka, Bhava-Bala) decide. A count of 1 is too aggressive and is NOT in the sweep.
 
 It NEVER writes ``total.py``. It prints a report (with SEPARATE fit-set and holdout-set
 accuracies, so an "improves fit / drops holdout" comparison is computable) and emits a
@@ -69,9 +70,11 @@ _MIN_REQUIRED_BOUNDS: tuple[float, float] = (4.0, 8.0)   # per-planet Rupa floor
 _BHAVA_BALA_STEP: float = 60.0           # 1.0 Rupa == 60 Shashtiamsas
 _BHAVA_BALA_BOUNDS: tuple[float, float] = (180.0, 420.0)  # Shashtiamsas
 
-# Preponderance-margin discrete sweep set: the active band {1..5} plus the no-op 99.
-# (clause-2 of house_template._decide; default 99 == always 'mixed'.)
-_CONTRA_MARGIN_STEPS: tuple[int, ...] = (1, 2, 3, 4, 5, 99)
+# Pillar-preponderance discrete sweep set: the active band {2, 3} plus the no-op 99.
+# (clause-2 of house_template._decide; default 99 == always 'mixed'.) A pillar count of 1
+# is too aggressive — a single weak factor amid contradicting evidence should not condemn
+# a matter — so the sweep starts at 2 (only 3 pillars exist, so 3 is the strict ceiling).
+_CONTRA_PILLAR_STEPS: tuple[int, ...] = (2, 3, 99)
 
 # ---------------------------------------------------------------------------
 # Holdout membership (STABLE — must NOT churn as records are added).
@@ -104,24 +107,25 @@ def is_holdout(record_id: str) -> bool:
 class Thresholds:
     """A candidate threshold setting. ``min_required`` mirrors
     ``shadbala_total.MIN_REQUIRED``; ``bhava_bala_min`` mirrors ``BHAVA_BALA_MIN_SH``;
-    ``contra_afflict``/``contra_favour`` mirror the preponderance margins."""
+    ``contra_pillar_afflict``/``contra_pillar_favour`` mirror the pillar-preponderance
+    counts (clause-2 of ``judges/house_template._decide``)."""
     min_required: dict[str, float]
     bhava_bala_min: float
-    contra_afflict: int
-    contra_favour: int
+    contra_pillar_afflict: int
+    contra_pillar_favour: int
 
     @classmethod
     def current(cls) -> "Thresholds":
         return cls(min_required=dict(shadbala_total.MIN_REQUIRED),
                    bhava_bala_min=float(shadbala_total.BHAVA_BALA_MIN_SH),
-                   contra_afflict=int(shadbala_total.CONTRA_AFFLICT_MARGIN),
-                   contra_favour=int(shadbala_total.CONTRA_FAVOUR_MARGIN))
+                   contra_pillar_afflict=int(shadbala_total.CONTRA_PILLAR_AFFLICT),
+                   contra_pillar_favour=int(shadbala_total.CONTRA_PILLAR_FAVOUR))
 
     def clone(self) -> "Thresholds":
         return Thresholds(min_required=dict(self.min_required),
                           bhava_bala_min=self.bhava_bala_min,
-                          contra_afflict=self.contra_afflict,
-                          contra_favour=self.contra_favour)
+                          contra_pillar_afflict=self.contra_pillar_afflict,
+                          contra_pillar_favour=self.contra_pillar_favour)
 
 
 # ---------------------------------------------------------------------------
@@ -134,8 +138,8 @@ class _ApplyThresholds:
 
     All four knobs live on ``shadbala_total`` and are documented golden-tuned (NOT
     ``typing.Final``), so they may be rebound directly. ``house_template._decide`` reads
-    ``shadbala_total.CONTRA_*`` LIVE (module-attribute access, not an import-time bind),
-    so patching here takes effect for the in-flight scoring pass."""
+    ``shadbala_total.CONTRA_PILLAR_*`` LIVE (module-attribute access, not an import-time
+    bind), so patching here takes effect for the in-flight scoring pass."""
     def __init__(self, th: Thresholds) -> None:
         self.th = th
         self._saved_min: Optional[dict[str, float]] = None
@@ -146,20 +150,20 @@ class _ApplyThresholds:
     def __enter__(self) -> None:
         self._saved_min = dict(shadbala_total.MIN_REQUIRED)
         self._saved_bb = shadbala_total.BHAVA_BALA_MIN_SH
-        self._saved_afflict = shadbala_total.CONTRA_AFFLICT_MARGIN
-        self._saved_favour = shadbala_total.CONTRA_FAVOUR_MARGIN
+        self._saved_afflict = shadbala_total.CONTRA_PILLAR_AFFLICT
+        self._saved_favour = shadbala_total.CONTRA_PILLAR_FAVOUR
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self.th.min_required)
         shadbala_total.BHAVA_BALA_MIN_SH = self.th.bhava_bala_min
-        shadbala_total.CONTRA_AFFLICT_MARGIN = self.th.contra_afflict
-        shadbala_total.CONTRA_FAVOUR_MARGIN = self.th.contra_favour
+        shadbala_total.CONTRA_PILLAR_AFFLICT = self.th.contra_pillar_afflict
+        shadbala_total.CONTRA_PILLAR_FAVOUR = self.th.contra_pillar_favour
 
     def __exit__(self, *exc: Any) -> None:
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self._saved_min or {})
         shadbala_total.BHAVA_BALA_MIN_SH = self._saved_bb
-        shadbala_total.CONTRA_AFFLICT_MARGIN = self._saved_afflict
-        shadbala_total.CONTRA_FAVOUR_MARGIN = self._saved_favour
+        shadbala_total.CONTRA_PILLAR_AFFLICT = self._saved_afflict
+        shadbala_total.CONTRA_PILLAR_FAVOUR = self._saved_favour
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +242,8 @@ def score(records: list[dict[str, Any]], th: Thresholds,
 
 def _neighbours(th: Thresholds) -> list[tuple[str, Thresholds]]:
     """All one-step discrete moves from ``th`` within bounds: +-step on each planet's
-    MIN_REQUIRED and on BHAVA_BALA_MIN_SH, plus each discrete preponderance-margin
-    value (CONTRA_AFFLICT_MARGIN / CONTRA_FAVOUR_MARGIN) other than the current one.
+    MIN_REQUIRED and on BHAVA_BALA_MIN_SH, plus each discrete pillar-preponderance
+    count (CONTRA_PILLAR_AFFLICT / CONTRA_PILLAR_FAVOUR) other than the current one.
     Returns (label, candidate)."""
     out: list[tuple[str, Thresholds]] = []
     for planet, val in th.min_required.items():
@@ -255,18 +259,18 @@ def _neighbours(th: Thresholds) -> list[tuple[str, Thresholds]]:
             cand = th.clone()
             cand.bhava_bala_min = nv
             out.append((f"BHAVA_BALA_MIN_SH {th.bhava_bala_min}->{nv}", cand))
-    # Preponderance margins: every discrete step value is a candidate (the search space
-    # is small and not naturally ordered for +-1 descent, so we expose the full set).
-    for step in _CONTRA_MARGIN_STEPS:
-        if step != th.contra_afflict:
+    # Pillar-preponderance counts: every discrete step value is a candidate (the search
+    # space is small and not naturally ordered for +-1 descent, so we expose the full set).
+    for step in _CONTRA_PILLAR_STEPS:
+        if step != th.contra_pillar_afflict:
             cand = th.clone()
-            cand.contra_afflict = step
-            out.append((f"CONTRA_AFFLICT_MARGIN {th.contra_afflict}->{step}", cand))
-    for step in _CONTRA_MARGIN_STEPS:
-        if step != th.contra_favour:
+            cand.contra_pillar_afflict = step
+            out.append((f"CONTRA_PILLAR_AFFLICT {th.contra_pillar_afflict}->{step}", cand))
+    for step in _CONTRA_PILLAR_STEPS:
+        if step != th.contra_pillar_favour:
             cand = th.clone()
-            cand.contra_favour = step
-            out.append((f"CONTRA_FAVOUR_MARGIN {th.contra_favour}->{step}", cand))
+            cand.contra_pillar_favour = step
+            out.append((f"CONTRA_PILLAR_FAVOUR {th.contra_pillar_favour}->{step}", cand))
     return out
 
 
@@ -324,11 +328,13 @@ def _candidate_diff(base: Thresholds, tuned: Thresholds) -> str:
     if tuned.bhava_bala_min != base.bhava_bala_min:
         lines.append(f"#   BHAVA_BALA_MIN_SH: {base.bhava_bala_min} -> {tuned.bhava_bala_min}")
         changed = True
-    if tuned.contra_afflict != base.contra_afflict:
-        lines.append(f"#   CONTRA_AFFLICT_MARGIN: {base.contra_afflict} -> {tuned.contra_afflict}")
+    if tuned.contra_pillar_afflict != base.contra_pillar_afflict:
+        lines.append(f"#   CONTRA_PILLAR_AFFLICT: "
+                     f"{base.contra_pillar_afflict} -> {tuned.contra_pillar_afflict}")
         changed = True
-    if tuned.contra_favour != base.contra_favour:
-        lines.append(f"#   CONTRA_FAVOUR_MARGIN: {base.contra_favour} -> {tuned.contra_favour}")
+    if tuned.contra_pillar_favour != base.contra_pillar_favour:
+        lines.append(f"#   CONTRA_PILLAR_FAVOUR: "
+                     f"{base.contra_pillar_favour} -> {tuned.contra_pillar_favour}")
         changed = True
     if not changed:
         lines.append("#   (no change -- current thresholds already optimal on this corpus)")

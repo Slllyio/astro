@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. Bumped by a HUMAN in the same commit that earns the improvement (or deliberately re-bases after new goldens are CONFIRMED). Never lowered to make a regression pass. Measured 2026-06-11 on the 12 user-CONFIRMED H1 worked examples, pre-Phase-C (combinations unencoded, thresholds untuned).",
+  "_comment": "Track-B accuracy ratchet floor. Bumped by a HUMAN in the same commit that earns the improvement (or deliberately re-bases after new goldens are CONFIRMED). Never lowered to make a regression pass. 6/12 measured 2026-06-11 (12 user-CONFIRMED H1 worked examples, pre-Phase-C). Bumped to 7/12 2026-06-12: the yoga-modulation wiring's Sakata drop corrected HTJAH-I.chart_33 H1 to Raman's confirmed 'afflicted' (mechanism pinned by test_chart33_h1_drop_is_sakata_not_kemadruma).",
   "track_b": {
-    "correct": 6,
+    "correct": 7,
     "total": 12
   }
 }

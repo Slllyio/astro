@@ -1,24 +1,28 @@
-"""Threshold tuner SKELETON for the Raman Saab engine (build-time tool, OUTSIDE app/).
+"""Threshold tuner for the Raman Saab engine (build-time tool, OUTSIDE app/).
 
 Loads the CONFIRMED goldens, runs Track B, scores accuracy + a 3x3 confusion matrix
 (favourable / mixed / afflicted), and performs a BOUNDED, DISCRETE coordinate-descent
-over the two engine thresholds:
+over the engine thresholds:
 
   * ``MIN_REQUIRED[planet]`` — per-planet minimum total Shadbala in Rupas
     (``app/raman_saab/primitives/shadbala/total.py``). Step = 0.5 Rupa.
   * ``BHAVA_BALA_MIN_SH`` — minimum Bhava Bala in Shashtiamsas. Step = 1.0 Rupa
     (== 60 Shashtiamsas).
+  * ``CONTRA_AFFLICT_MARGIN`` / ``CONTRA_FAVOUR_MARGIN`` — the per-signification
+    preponderance margins (clause-2 of ``judges/house_template._decide``). Swept over
+    the discrete set {1,2,3,4,5} plus the no-op 99. Default 99 is effectively infinite
+    (always 'mixed'); lower values let a malefic/benefic fired-rule surplus decide.
 
-It NEVER writes ``total.py``. It prints a report and emits a *candidate diff* (the
-proposed constant changes) for a human to apply. ``--holdout-lock`` excludes named
-historical charts from the fit so the famous charts cannot be over-fit; ``--max-iterations``
-bounds the descent.
+It NEVER writes ``total.py``. It prints a report (with SEPARATE fit-set and holdout-set
+accuracies, so an "improves fit / drops holdout" comparison is computable) and emits a
+*candidate diff* (the proposed constant changes) for a human to apply. ``--holdout-lock``
+excludes the held-out charts from the fit so the famous charts cannot be over-fit;
+``--max-iterations`` bounds the descent.
 
-This is a SKELETON: it runs end-to-end on the seed corpus today (even with a single
-CONFIRMED record), exercising the scorer, the confusion matrix, and the descent loop.
-The Shadbala-perturbation hook is wired but only Track-B-relevant thresholds move the
-needle once the corpus carries fresh-cast (Shadbala-bearing) goldens — on a pure
-from_stated_positions seed the verdict is threshold-independent, which the report states.
+Holdout membership is STABLE (does not churn as records are added): a record is held out
+iff its id is in ``HOLDOUT_IDS`` (the 4 death charts, always held out) OR
+``zlib.crc32(id) % 5 == 0`` (a deterministic ~20% slice of the worked examples). Index-
+based selection is deliberately NOT used — adding a record must not reshuffle the split.
 
 Usage:
     py -3.12 -m tools.raman_saab.tune_thresholds
@@ -27,11 +31,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import copy
-import sys
+import zlib
 from dataclasses import dataclass, field
 from typing import Any, Callable, Optional
 
+from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.primitives.shadbala import total as shadbala_total
 
 # Import the harness loader/scorer so the tuner and the tests judge identically.
@@ -65,11 +69,31 @@ _MIN_REQUIRED_BOUNDS: tuple[float, float] = (4.0, 8.0)   # per-planet Rupa floor
 _BHAVA_BALA_STEP: float = 60.0           # 1.0 Rupa == 60 Shashtiamsas
 _BHAVA_BALA_BOUNDS: tuple[float, float] = (180.0, 420.0)  # Shashtiamsas
 
-# Charts excluded from the fit under --holdout-lock (named-historical anti-overfit set).
-# Match on the record id prefix. Extend as famous charts are added to the corpus.
-_HOLDOUT_PREFIXES: tuple[str, ...] = (
-    "HTJAH-I.chart_", "HTJAH-II.chart_",  # the book's numbered worked examples
-)
+# Preponderance-margin discrete sweep set: the active band {1..5} plus the no-op 99.
+# (clause-2 of house_template._decide; default 99 == always 'mixed'.)
+_CONTRA_MARGIN_STEPS: tuple[int, ...] = (1, 2, 3, 4, 5, 99)
+
+# ---------------------------------------------------------------------------
+# Holdout membership (STABLE — must NOT churn as records are added).
+# ---------------------------------------------------------------------------
+# The 4 death charts are ALWAYS held out (longevity worked examples — their span class
+# is owned by the Phase-E engine, not the house judge, so they must never enter the fit).
+HOLDOUT_IDS: frozenset[str] = frozenset({
+    "HTJAH-II.chart_73", "HTJAH-II.chart_74",
+    "HTJAH-II.chart_75", "HTJAH-II.chart_78",
+})
+# Plus a deterministic ~20% slice of the *other* worked examples, selected by a stable
+# hash of the record id (NOT a list index, so adding a record never reshuffles the split).
+_HOLDOUT_HASH_MODULUS: int = 5
+
+
+def is_holdout(record_id: str) -> bool:
+    """True iff `record_id` is held out of the fit: a named death chart, or a member
+    of the stable crc32-hash slice. Pure function of the id — stable across runs and
+    across corpus growth."""
+    if record_id in HOLDOUT_IDS:
+        return True
+    return zlib.crc32(record_id.encode()) % _HOLDOUT_HASH_MODULUS == 0
 
 
 # ---------------------------------------------------------------------------
@@ -79,18 +103,25 @@ _HOLDOUT_PREFIXES: tuple[str, ...] = (
 @dataclass
 class Thresholds:
     """A candidate threshold setting. ``min_required`` mirrors
-    ``shadbala_total.MIN_REQUIRED``; ``bhava_bala_min`` mirrors ``BHAVA_BALA_MIN_SH``."""
+    ``shadbala_total.MIN_REQUIRED``; ``bhava_bala_min`` mirrors ``BHAVA_BALA_MIN_SH``;
+    ``contra_afflict``/``contra_favour`` mirror the preponderance margins."""
     min_required: dict[str, float]
     bhava_bala_min: float
+    contra_afflict: int
+    contra_favour: int
 
     @classmethod
     def current(cls) -> "Thresholds":
         return cls(min_required=dict(shadbala_total.MIN_REQUIRED),
-                   bhava_bala_min=float(shadbala_total.BHAVA_BALA_MIN_SH))
+                   bhava_bala_min=float(shadbala_total.BHAVA_BALA_MIN_SH),
+                   contra_afflict=int(shadbala_total.CONTRA_AFFLICT_MARGIN),
+                   contra_favour=int(shadbala_total.CONTRA_FAVOUR_MARGIN))
 
     def clone(self) -> "Thresholds":
         return Thresholds(min_required=dict(self.min_required),
-                          bhava_bala_min=self.bhava_bala_min)
+                          bhava_bala_min=self.bhava_bala_min,
+                          contra_afflict=self.contra_afflict,
+                          contra_favour=self.contra_favour)
 
 
 # ---------------------------------------------------------------------------
@@ -99,25 +130,57 @@ class Thresholds:
 
 class _ApplyThresholds:
     """Context manager that swaps the engine's module-level thresholds for the duration
-    of a scoring pass, then restores them. Keeps the tuner side-effect-free."""
+    of a scoring pass, then restores them. Keeps the tuner side-effect-free.
+
+    All four knobs live on ``shadbala_total`` and are documented golden-tuned (NOT
+    ``typing.Final``), so they may be rebound directly. ``house_template._decide`` reads
+    ``shadbala_total.CONTRA_*`` LIVE (module-attribute access, not an import-time bind),
+    so patching here takes effect for the in-flight scoring pass."""
     def __init__(self, th: Thresholds) -> None:
         self.th = th
         self._saved_min: Optional[dict[str, float]] = None
         self._saved_bb: Optional[float] = None
+        self._saved_afflict: Optional[int] = None
+        self._saved_favour: Optional[int] = None
 
     def __enter__(self) -> None:
         self._saved_min = dict(shadbala_total.MIN_REQUIRED)
         self._saved_bb = shadbala_total.BHAVA_BALA_MIN_SH
+        self._saved_afflict = shadbala_total.CONTRA_AFFLICT_MARGIN
+        self._saved_favour = shadbala_total.CONTRA_FAVOUR_MARGIN
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self.th.min_required)
-        # BHAVA_BALA_MIN_SH is a documented golden-tuned knob (NOT typing.Final), so
-        # the tuner may rebind it directly without a type:ignore.
         shadbala_total.BHAVA_BALA_MIN_SH = self.th.bhava_bala_min
+        shadbala_total.CONTRA_AFFLICT_MARGIN = self.th.contra_afflict
+        shadbala_total.CONTRA_FAVOUR_MARGIN = self.th.contra_favour
 
     def __exit__(self, *exc: Any) -> None:
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self._saved_min or {})
         shadbala_total.BHAVA_BALA_MIN_SH = self._saved_bb
+        shadbala_total.CONTRA_AFFLICT_MARGIN = self._saved_afflict
+        shadbala_total.CONTRA_FAVOUR_MARGIN = self._saved_favour
+
+
+# ---------------------------------------------------------------------------
+# Chart-cast cache — keyed by golden id (the cast is a pure function of the record's
+# birth/stated positions and is threshold-independent, so it is computed at most once).
+# ---------------------------------------------------------------------------
+
+class _ChartCache:
+    """Memoises ``build_chart`` per golden id so the sweep does not re-cast a chart on
+    every coordinate-descent iteration. Charts are threshold-independent (thresholds only
+    affect the VERDICT, never the cast), so this is safe to share across scoring passes."""
+    def __init__(self) -> None:
+        self._cache: dict[str, RamanChart] = {}
+
+    def get(self, rec: dict[str, Any]) -> RamanChart:
+        key = str(rec.get("id", id(rec)))
+        chart = self._cache.get(key)
+        if chart is None:
+            chart = build_chart(rec)
+            self._cache[key] = chart
+        return chart
 
 
 # ---------------------------------------------------------------------------
@@ -142,12 +205,17 @@ def _blank_confusion() -> dict[str, dict[str, int]]:
     return {e: {p: 0 for p in _MATRIX_CLASSES} for e in _MATRIX_CLASSES}
 
 
-def score(records: list[dict[str, Any]], th: Thresholds) -> Score:
-    """Run Track B under ``th`` and tally accuracy + the 3x3 confusion matrix."""
+def score(records: list[dict[str, Any]], th: Thresholds,
+          cache: Optional[_ChartCache] = None) -> Score:
+    """Run Track B under ``th`` and tally accuracy + the 3x3 confusion matrix.
+
+    ``cache`` (when supplied) reuses casts across iterations; the cast is threshold-
+    independent so this never changes a verdict, only avoids redundant ephemeris work."""
+    cache = cache if cache is not None else _ChartCache()
     sc = Score(confusion=_blank_confusion())
     with _ApplyThresholds(th):
         for rec in records:
-            chart = build_chart(rec)
+            chart = cache.get(rec)
             for house, entry in confirmed_verdicts(rec):
                 expected = entry["verdict"]
                 got = _signification_verdict(chart, house, entry["signification"])
@@ -170,7 +238,9 @@ def score(records: list[dict[str, Any]], th: Thresholds) -> Score:
 
 def _neighbours(th: Thresholds) -> list[tuple[str, Thresholds]]:
     """All one-step discrete moves from ``th`` within bounds: +-step on each planet's
-    MIN_REQUIRED and on BHAVA_BALA_MIN_SH. Returns (label, candidate)."""
+    MIN_REQUIRED and on BHAVA_BALA_MIN_SH, plus each discrete preponderance-margin
+    value (CONTRA_AFFLICT_MARGIN / CONTRA_FAVOUR_MARGIN) other than the current one.
+    Returns (label, candidate)."""
     out: list[tuple[str, Thresholds]] = []
     for planet, val in th.min_required.items():
         for delta in (-_MIN_REQUIRED_STEP, _MIN_REQUIRED_STEP):
@@ -185,21 +255,36 @@ def _neighbours(th: Thresholds) -> list[tuple[str, Thresholds]]:
             cand = th.clone()
             cand.bhava_bala_min = nv
             out.append((f"BHAVA_BALA_MIN_SH {th.bhava_bala_min}->{nv}", cand))
+    # Preponderance margins: every discrete step value is a candidate (the search space
+    # is small and not naturally ordered for +-1 descent, so we expose the full set).
+    for step in _CONTRA_MARGIN_STEPS:
+        if step != th.contra_afflict:
+            cand = th.clone()
+            cand.contra_afflict = step
+            out.append((f"CONTRA_AFFLICT_MARGIN {th.contra_afflict}->{step}", cand))
+    for step in _CONTRA_MARGIN_STEPS:
+        if step != th.contra_favour:
+            cand = th.clone()
+            cand.contra_favour = step
+            out.append((f"CONTRA_FAVOUR_MARGIN {th.contra_favour}->{step}", cand))
     return out
 
 
 def coordinate_descent(records: list[dict[str, Any]], start: Thresholds,
-                       max_iterations: int) -> tuple[Thresholds, Score, list[str]]:
+                       max_iterations: int,
+                       cache: Optional[_ChartCache] = None,
+                       ) -> tuple[Thresholds, Score, list[str]]:
     """Greedy bounded descent: at each step take the neighbour with the highest
     accuracy (ties broken by fewer abstains), stop when no neighbour improves or the
     iteration budget runs out. Returns (best_thresholds, best_score, move_log)."""
+    cache = cache if cache is not None else _ChartCache()
     best = start.clone()
-    best_score = score(records, best)
+    best_score = score(records, best, cache)
     log: list[str] = []
     for it in range(max_iterations):
         improved = False
         for label, cand in _neighbours(best):
-            cand_score = score(records, cand)
+            cand_score = score(records, cand, cache)
             better = (cand_score.accuracy > best_score.accuracy
                       or (cand_score.accuracy == best_score.accuracy
                           and cand_score.abstain < best_score.abstain))
@@ -239,17 +324,31 @@ def _candidate_diff(base: Thresholds, tuned: Thresholds) -> str:
     if tuned.bhava_bala_min != base.bhava_bala_min:
         lines.append(f"#   BHAVA_BALA_MIN_SH: {base.bhava_bala_min} -> {tuned.bhava_bala_min}")
         changed = True
+    if tuned.contra_afflict != base.contra_afflict:
+        lines.append(f"#   CONTRA_AFFLICT_MARGIN: {base.contra_afflict} -> {tuned.contra_afflict}")
+        changed = True
+    if tuned.contra_favour != base.contra_favour:
+        lines.append(f"#   CONTRA_FAVOUR_MARGIN: {base.contra_favour} -> {tuned.contra_favour}")
+        changed = True
     if not changed:
         lines.append("#   (no change -- current thresholds already optimal on this corpus)")
     return "\n".join(lines)
 
 
-def _filter_holdout(records: list[dict[str, Any]], lock: bool) -> list[dict[str, Any]]:
+def _split_fit_holdout(
+    records: list[dict[str, Any]], lock: bool,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Partition CONFIRMED records into (fit_set, holdout_set).
+
+    Under ``--holdout-lock`` the held-out records (per :func:`is_holdout`) are removed
+    from the fit AND returned as a separate scoreable set, so the report can compare
+    "improves fit / drops holdout". Without the lock every record is fittable and the
+    holdout set is empty."""
     if not lock:
-        return records
-    kept = [r for r in records
-            if not any(str(r.get("id", "")).startswith(p) for p in _HOLDOUT_PREFIXES)]
-    return kept
+        return records, []
+    fit = [r for r in records if not is_holdout(str(r.get("id", "")))]
+    holdout = [r for r in records if is_holdout(str(r.get("id", "")))]
+    return fit, holdout
 
 
 def run(max_iterations: int, holdout_lock: bool,
@@ -258,12 +357,13 @@ def run(max_iterations: int, holdout_lock: bool,
     all_records = load_goldens()
     confirmed = [r for r in all_records
                  if "B" in r.get("track_eligibility", []) and confirmed_verdicts(r)]
-    fit_set = _filter_holdout(confirmed, holdout_lock)
+    fit_set, holdout_set = _split_fit_holdout(confirmed, holdout_lock)
+    cache = _ChartCache()
 
     out("=" * 70)
-    out("Raman Saab threshold tuner (SKELETON)")
+    out("Raman Saab threshold tuner")
     out(f"  CONFIRMED Track-B records: {len(confirmed)}"
-        + (f"  (holdout-lock excludes {len(confirmed) - len(fit_set)})" if holdout_lock else ""))
+        + (f"  (holdout-lock excludes {len(holdout_set)})" if holdout_lock else ""))
     out("=" * 70)
 
     if not fit_set:
@@ -271,21 +371,43 @@ def run(max_iterations: int, holdout_lock: bool,
         return 0
 
     base = Thresholds.current()
-    base_score = score(fit_set, base)
-    out(f"\nBaseline accuracy: {base_score.accuracy:.3f} "
+    base_score = score(fit_set, base, cache)
+    out(f"\nBaseline fit accuracy: {base_score.accuracy:.3f} "
         f"({base_score.correct}/{base_score.total})  "
         f"abstain={base_score.abstain} missing={base_score.missing}")
-    out("\nBaseline confusion matrix:")
+    out("\nBaseline fit confusion matrix:")
     out(_format_confusion(base_score))
 
-    tuned, tuned_score, log = coordinate_descent(fit_set, base, max_iterations)
-    out(f"\nTuned accuracy: {tuned_score.accuracy:.3f} "
+    tuned, tuned_score, log = coordinate_descent(fit_set, base, max_iterations, cache)
+    out(f"\nTuned fit accuracy: {tuned_score.accuracy:.3f} "
         f"({tuned_score.correct}/{tuned_score.total})  abstain={tuned_score.abstain}")
     out("\nDescent log:")
     for line in log:
         out(f"  {line}")
-    out("\nTuned confusion matrix:")
+    out("\nTuned fit confusion matrix:")
     out(_format_confusion(tuned_score))
+
+    # Holdout scoring — the anti-overfit comparison. The 4 death charts (and any other
+    # held-out records) currently carry NO confirmed Track-B verdicts, so the holdout
+    # score is often over 0 records; report that gracefully.
+    out("")
+    if holdout_set:
+        base_hold = score(holdout_set, base, cache)
+        tuned_hold = score(holdout_set, tuned, cache)
+        if base_hold.total == 0:
+            out("Holdout accuracy: n=0 (no confirmed verdicts yet)")
+        else:
+            out(f"Holdout accuracy (baseline): {base_hold.accuracy:.3f} "
+                f"({base_hold.correct}/{base_hold.total})")
+            out(f"Holdout accuracy (tuned):    {tuned_hold.accuracy:.3f} "
+                f"({tuned_hold.correct}/{tuned_hold.total})")
+            delta_fit = tuned_score.accuracy - base_score.accuracy
+            delta_hold = tuned_hold.accuracy - base_hold.accuracy
+            out(f"  delta fit={delta_fit:+.3f}  delta holdout={delta_hold:+.3f}  "
+                + ("(improves fit, drops holdout -> likely OVERFIT)"
+                   if delta_fit > 0 and delta_hold < 0 else "(no overfit signal)"))
+    else:
+        out("Holdout accuracy: n=0 (no records held out -- run with --holdout-lock)")
 
     out("")
     out(_candidate_diff(base, tuned))
@@ -294,11 +416,12 @@ def run(max_iterations: int, holdout_lock: bool,
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    ap = argparse.ArgumentParser(description="Raman Saab threshold tuner (skeleton).")
+    ap = argparse.ArgumentParser(description="Raman Saab threshold tuner.")
     ap.add_argument("--max-iterations", type=int, default=10,
                     help="bound on coordinate-descent iterations (default 10)")
     ap.add_argument("--holdout-lock", action="store_true",
-                    help="exclude named-historical charts from the fit (anti-overfit)")
+                    help="exclude held-out charts from the fit and score them separately "
+                         "(anti-overfit)")
     args = ap.parse_args(argv)
     return run(max_iterations=args.max_iterations, holdout_lock=args.holdout_lock)
 

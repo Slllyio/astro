@@ -259,9 +259,24 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         if guarded:
             return _navamsa_modulate("insufficient-evidence", L)
         return _navamsa_modulate("afflicted", L)
-    # 2. contradiction — show, never hide, when benefic and malefic both fire.
+    # 2. contradiction — weigh the preponderance when benefic AND malefic both fire.
+    # ``net`` is the malefic-vs-benefic surplus (positive = more malefics fired).
+    # The two margins are read LIVE off the module (NOT import-time-bound) so the
+    # threshold tuner's monkeypatch of shadbala_total.CONTRA_* takes effect during a
+    # sweep. With the default 99 margins, a small fired-rule net never reaches the
+    # cut-off, so ``base`` stays "mixed" — the current always-mixed behavior (no-op).
+    # ``fired_malefic`` already folds in maraka-polarity rules; neutral does not count.
+    # The preponderance verdict is DECISIVE: _navamsa_modulate only nudges a borderline
+    # "mixed", so an afflicted/favourable from preponderance is never shifted by D9.
     if L.fired_benefic and L.fired_malefic:
-        return _navamsa_modulate("mixed", L)
+        net = len(L.fired_malefic) - len(L.fired_benefic)
+        if net >= shadbala_total.CONTRA_AFFLICT_MARGIN:
+            base = "afflicted"
+        elif (-net) >= shadbala_total.CONTRA_FAVOUR_MARGIN:
+            base = "favourable"
+        else:
+            base = "mixed"
+        return _navamsa_modulate(base, L)
     # 3. Track-B fallback — no Shadbala -> decide on rule polarity / maraka alone.
     if L.lord_strong is None or L.karaka_strong is None:
         if L.fired_malefic or maraka_drives:

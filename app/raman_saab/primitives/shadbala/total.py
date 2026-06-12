@@ -23,6 +23,21 @@ from app.raman_saab.chart.model import ShadbalaBreakdown
 # manager) while scoring candidate thresholds against the golden corpus.
 BHAVA_BALA_MIN_SH: float = 300.0
 
+# Preponderance margins for the per-signification contradiction weigh (clause-2 of
+# ``judges/house_template._decide``). When BOTH a benefic and a malefic rule fire on a
+# matter, the judge counts ``net = len(fired_malefic) - len(fired_benefic)`` (positive =
+# malefic preponderance). If ``net >= CONTRA_AFFLICT_MARGIN`` the matter reads 'afflicted';
+# if ``-net >= CONTRA_FAVOUR_MARGIN`` it reads 'favourable'; otherwise it stays 'mixed'.
+#
+# GOLDEN-TUNED knobs (NOT ``typing.Final``): ``tools/raman_saab/tune_thresholds.py``
+# rebinds them (under a save/restore context manager) while scoring candidate margins
+# against the golden corpus. The DEFAULT 99 is effectively infinite — no small fired-rule
+# net ever reaches it — so clause-2 ALWAYS stays 'mixed' (the current always-mixed
+# behavior). The tuner will lower these once multi-house goldens exist; do NOT hand-set
+# them below 99 without a golden that earns the change.
+CONTRA_AFFLICT_MARGIN: int = 99
+CONTRA_FAVOUR_MARGIN: int = 99
+
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.
 MIN_REQUIRED: dict[str, float] = {

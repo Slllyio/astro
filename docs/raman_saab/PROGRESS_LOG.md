@@ -114,3 +114,41 @@ surgical staging, no Co-Authored-By.
 ---
 
 ## Append new entries below this line
+
+### 2026-06-12 — GitHub backup enabled
+- User reversed the earlier "local only": pushed `round8-unification` to `origin`
+  (`github.com/Slllyio/astro`), upstream set. **Standing: push after every commit** for
+  continuous off-machine backup. No secrets pushed (`.env` gitignored; only `.env.example`).
+
+### 2026-06-12 — Stage 1 (H1 deep encoding) — ENCODE DONE, DEFECTS FOUND, FIX IN FLIGHT
+Workflow `wf_4cbd3be9-afb` (foundations + 6 group encoders + adversarial verify; fix stage died
+on session limit). **NOT YET COMMITTED** — the batch regressed the ratchet, so per G5 it cannot
+ship until fixed.
+- **Foundations (clean, in working tree):** 6 new predicates in `conditions.py` —
+  `InVargaHouseFrom` (D9, both endpoints in varga), `VargaDignity`, `PlanetPairIn2_12` +
+  `AllPlanetsInDwirdwadasha`, `SignIsSushka`/`SignIsWatery`, `LordsConjunct`, and the
+  **`LORD_OF:n` origin** in shared `_origin_house`. `house_01_lagna.py` split into the
+  `house_01_lagna/` subpackage (21 original rules moved verbatim, verified field-by-field). 36
+  new predicate tests. (A 3rd registration point surfaced: `test_significations.py` globs flat
+  `house_*.py` — fixed to recurse into subpackages.)
+- **Encode:** ~97 new H1 rules across 6 group modules (combinations_core 14, combinations_misc
+  22, navamsa_qualifiers 30, constitution 7, moon_mind 15, sign_afflictions 9). Many
+  descriptive-deferred for absent predicates (Tara #35/36, Shadbala aggregates).
+- **Reviews (both ISSUES_FOUND) — the batch REGRESSED ratchet 7/12 → 5/12 (charts 20/31/33
+  flipped afflicted→mixed).** Root causes: (CRITICAL) duplicate ids H1.C.32/33/34 in core AND
+  misc (fire twice → benefic flood — the G12 overlapping-span hazard); (HIGH) #13-19 / #38-39 /
+  #67 double-encoded across modules; rule #15 self-conjunction tautology; wrong whole-sign
+  drishti proxy in H1.M.G2; **inverted fortified-text** on affliction-condition rules (positive
+  text surfaced as benefic); (verdict-MED) `~AllPlanetsInDwirdwadasha` fires on ~every chart;
+  constitution physique polarity (stout=benefic). Fix workflow `wf_034b34b3-2c5` in flight.
+- **OPEN QUESTION (user/golden territory — DEFERRED):** doctrine review flags **HTJAH-I.chart_33
+  may be CAPRICORN, not Aquarius** — the book files it under "Makara/Capricorn" and Raman's
+  stated grounds (6-planet stellium "in the 10th") only reproduce from Capricorn (Libra = 10th
+  from Capricorn). The earlier `0eb5af8` "Aquarius 9°42' per HTJAH-II:4253" fix was for the
+  **HTJAH-II chart_33** (a DIFFERENT chart — the longevity one); the two were conflated. The H1
+  personality chart_33's lagna needs re-validation against the printed diagram. The verdict
+  (afflicted) is likely correct either way; only WHICH rules fire depends on it. NOT changed
+  pending user/Phase-B re-check.
+- **Lesson for Stage 4+:** parallel encoders must get DISJOINT corpus line-ranges (not just
+  disjoint files) + a unique-id guard test must exist BEFORE encoding (now being added). The
+  overlapping-span instruction was an orchestrator error.

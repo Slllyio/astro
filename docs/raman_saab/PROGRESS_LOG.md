@@ -414,3 +414,31 @@ death combos now bucketed; rollup/verdicts unchanged, guard holds). Suite 2156 p
 - **Honest deferral (G13):** Navamsa/Drekkana overlays, Beeja/Kshetra sphuta, strength gates,
   native-sex, Mandi — descriptive.
 - **Ratchet 18/37 UNCHANGED** (no H5 goldens; no snapshot drift). **Full suite 2268 passed.**
+
+### 2026-06-14 — Stage-4 H6/H9/H11/H12 combination layers (parallel workflow + doctrine-verify)
+**COMPLETES all 12 houses' combination layers.** Ultracode multi-agent orchestration:
+- **Encode workflow** (wf_d225b8b0): 4 builder agents drafted combinations.py per house from the
+  methodology + corpus. Hit a session limit before returning structured output, but had already
+  WRITTEN the draft files to disk (511/747/643/955 lines). Harvested the on-disk drafts.
+- **Integration (orchestrator, serial):** fixed H11 invalid sig `acquisitions`→`gains`; split all
+  4 placement layers verbatim (12 lord + 9 planet each); wrote __init__; deleted flats; fine-tagged
+  14 significations to ("<fine>","<aggregate>") (H6 accidents/debts/disease_chronic/enemies;
+  H9 father/dharma/higher_learning/long_journeys; H11 elder_siblings; H12 expenditure/
+  foreign_residence/moksha/incarceration/left_eye). Structural gate (full suite) green.
+- **Doctrine-verify workflow** (wf_b62ac90f): 4 bphs-doctrine-reviewer agents, EXHAUSTIVE
+  (213/214 citations opened+read against corpus; 3 wrong-but-in-range caught & fixed). Verdicts all
+  FIX-FIRST; corrected files applied:
+  - **H6 (50 rules):** CRITICAL — H6.C.1 bare Or(LordIn(6,1/8/10)) double-counted L.1/L.8/L.10 in
+    enemies_disease AND faked the "evil lord" gate → demoted to descriptive. Citations 6092→6093
+    (Mandi heart/lung), 6126→6127 (Mars-afflicted accidents). C.13 over-fire flagged.
+  - **H9 (72 rules):** 3 HIGH — A.13 faked an available predicate; B.23 & D.43 had leftover
+    `if False` dead-code ternaries + wrong aspect direction → rewritten; B.31 misroute, D.37
+    double-count fixed.
+  - **H11 (75 rules):** C.15 routing; F-block (C.41/44/46–52/54) + C.53 double-count vs placements;
+    dusthana-polarity verified.
+  - **H12 (104 rules):** citation drift A.10 (16313→tail); A.2/C6/J9 under-encoding fixed; Mandi
+    rules confirmed descriptive.
+- Orchestrator post-check: re-fixed H11 `acquisitions` (reviewer re-introduced it as "more
+  specific" — not a real H11 sig key → would orphan); full orphan-scan across all 4 houses = clean.
+- **Ratchet 18/37 UNCHANGED** (no confirmed goldens for these houses; no snapshot drift).
+  **Full suite 2702 passed, 21 skipped, 3 xfailed.** All 12 houses now carry combination layers.

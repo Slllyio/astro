@@ -217,14 +217,15 @@ _H4: tuple[Signification, ...] = (
         primary_karaka="Moon",
         alternate_frame_core="Moon",
         derived_lagna="karaka",
-        rule_tags=("mother_home",),
+        # Aggregate bridge (Stage-4 fine-tag): shared placements (mother_home) + own combos.
+        rule_tags=("mother", "mother_home"),
         source=_c1(4387),
     ),
     Signification(
         key="happiness",
         house=4,
         primary_karaka="Jupiter",
-        rule_tags=("mother_home",),
+        rule_tags=("happiness", "mother_home"),
         source=_c1(4386),
     ),
     Signification(
@@ -233,27 +234,29 @@ _H4: tuple[Signification, ...] = (
         primary_karaka="Jupiter",
         secondary_karakas=("Mercury",),
         karaka_weights=(0.65, 0.35),
-        rule_tags=("mother_home",),
+        rule_tags=("education", "mother_home"),
         source=_c1(4701),
     ),
     Signification(
         key="vehicles",
         house=4,
         primary_karaka="Venus",
-        rule_tags=("mother_home",),
+        rule_tags=("vehicles", "mother_home"),
         source=_c1(4934),
     ),
     Signification(
         key="property",
         house=4,
         primary_karaka="Mars",
-        rule_tags=("mother_home",),
+        rule_tags=("property", "mother_home"),
         source=_c1(4969),
     ),
     Signification(
         key="home_comforts",
         house=4,
         primary_karaka="Moon",
+        # No dedicated combos route to home_comforts; it aggregates the shared
+        # placements only (keep the bare bridge — see test_rule_tags_match_existing_buckets).
         rule_tags=("mother_home",),
         source=_c1(4125),
     ),

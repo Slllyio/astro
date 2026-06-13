@@ -376,3 +376,24 @@ combos:
 Ratchet 18/37 unchanged. 7 H8 death-chart Tier-3 snapshots regenerated (pure evidence-additions —
 death combos now bucketed; rollup/verdicts unchanged, guard holds). Suite 2156 passed.
 (H7 unaffected — its fine sigs already had matching rule_tags.)
+
+### 2026-06-13 — Stage-4 H4 (Sukha) combination layer encoded + fine-tagging
+- **Subpackage split:** flat `house_04_sukha.py` (21 rules) → `house_04_sukha/` (lord_in_12 [12] +
+  planets_in_4th [9] + new `combinations.py` [28]). 49 rules total. Placements split verbatim.
+- **28 combination rules** across sections A (general/property/happiness), B (mother death-timing),
+  C (education), D (vehicles), E (houses). New leaves `_AspectedByClass`, `_ConjunctAnyMalefic`,
+  `_HouseHemmedBy`, `_PlanetInOrAspectsHouse` (uses drishti.aspects_house).
+- **Fine-tagging (Stage-4 step-3):** extended each H4 sig's rule_tags to ("<key>","mother_home")
+  for mother/happiness/education/vehicles/property so each matter aggregates the shared placements
+  + its own combos (home_comforts left bare — no combos route there, per
+  test_rule_tags_match_existing_buckets). Mother-death rules NOT longevity-guarded → measurable.
+- **Honest deferral (G13):** 4 grouped descriptive `TODO(predicate)` — strength/weak/lord-friendship
+  gates, Gopuramsa/shashtiamsa/thrimsamsa varga ranks, derived-Lagna (4th-as-mother's-Lagna),
+  lords-associated-in-house.
+- **Adversarial doctrine review: SHIP** (24/24 citations content-verified clean, 0 polarity
+  reversals, routing sound). Fixed 1 MEDIUM: H4.C.18 (mother-death) was aspect-only → broadened to
+  "joined OR aspected" (both arms of HTJAH-I:4224), closing the non-Saturn-malefic coverage hole;
+  H4.C.30 (Saturn+Moon-in-4) demoted to descriptive (now owned by C.18's joined arm, avoids
+  double-count); H4.C.21 (Rahu) likewise broadened. Code lens self-reviewed.
+- **Ratchet 18/37 UNCHANGED** (no confirmed H4 goldens; no snapshot drift). **Full suite 2212
+  passed, 21 skipped, 3 xfailed.**

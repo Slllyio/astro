@@ -1,0 +1,33 @@
+{
+  "H2": {
+    "citations": [
+      "HTJAH-I:2347",
+      "HTJAH-I:2540",
+      "HTJAH-I:2642"
+    ],
+    "fired_rule_ids": [
+      "H2.C.48",
+      "H2.L.3",
+      "H2.P.Sun"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "family": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "speech": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "vision": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "wealth": {
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

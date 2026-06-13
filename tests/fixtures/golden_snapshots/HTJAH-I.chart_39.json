@@ -1,0 +1,33 @@
+{
+  "H2": {
+    "citations": [
+      "HTJAH-I:2417",
+      "HTJAH-I:2472",
+      "HTJAH-I:2577"
+    ],
+    "fired_rule_ids": [
+      "H2.C.26",
+      "H2.L.12",
+      "H2.P.Ketu"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "family": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "speech": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "vision": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      },
+      "wealth": {
+        "lead_frame": "moon",
+        "verdict": "afflicted"
+      }
+    }
+  }
+}

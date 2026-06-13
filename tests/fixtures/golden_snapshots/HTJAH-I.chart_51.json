@@ -1,0 +1,33 @@
+{
+  "H2": {
+    "citations": [
+      "HTJAH-I:2417",
+      "HTJAH-I:2444",
+      "HTJAH-I:2472"
+    ],
+    "fired_rule_ids": [
+      "H2.C.26",
+      "H2.C.6",
+      "H2.L.12"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "family": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "speech": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "vision": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "wealth": {
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

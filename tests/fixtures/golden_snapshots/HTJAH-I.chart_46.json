@@ -1,0 +1,33 @@
+{
+  "H2": {
+    "citations": [
+      "HTJAH-I:2362",
+      "HTJAH-I:2472",
+      "HTJAH-I:2544"
+    ],
+    "fired_rule_ids": [
+      "H2.C.26",
+      "H2.L.5",
+      "H2.P.Moon"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "family": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      },
+      "speech": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      },
+      "vision": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      },
+      "wealth": {
+        "lead_frame": "moon",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

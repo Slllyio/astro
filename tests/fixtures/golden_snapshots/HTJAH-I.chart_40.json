@@ -1,0 +1,45 @@
+{
+  "H2": {
+    "citations": [
+      "HTJAH-I:2332",
+      "HTJAH-I:2436",
+      "HTJAH-I:2472",
+      "HTJAH-I:2474",
+      "HTJAH-I:2544",
+      "HTJAH-I:2549",
+      "HTJAH-I:2553",
+      "HTJAH-I:2637",
+      "HTJAH-I:2710"
+    ],
+    "fired_rule_ids": [
+      "H2.C.1",
+      "H2.C.26",
+      "H2.C.28",
+      "H2.C.47",
+      "H2.C.62",
+      "H2.L.2",
+      "H2.P.Mars",
+      "H2.P.Mercury",
+      "H2.P.Moon"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "family": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "speech": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "vision": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      },
+      "wealth": {
+        "lead_frame": "moon",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

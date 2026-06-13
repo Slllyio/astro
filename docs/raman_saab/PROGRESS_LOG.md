@@ -315,3 +315,28 @@ H8 → H7 → H10 → H4 → H5 → H6 → H9 → H11 → H12 (H1/H2/H3 done). H
   death/longevity verdicts unchanged (guard holds), legacies/sudden_gains mixed/afflicted→favourable
   (intended re-tag effect), +2 grounded evidence-additions (chart_35 C.28, chart_75 C.30).
   **Full suite 2025 passed, 21 skipped, 3 xfailed.**
+
+### 2026-06-13 — Stage-4 H7 (Kalatra/Yuvati) combination layer encoded
+- **Subpackage split:** flat `house_07_kalatra.py` (24 rules) → `house_07_kalatra/` (from_karaka [3] +
+  lord_in_12 [12] + planets_in_7th [9] + new `combinations.py` [43]). 67 rules total.
+- **43 combination rules** across sections A-F: marriage-happiness (→marital_happiness),
+  character/chastity + marriage-count (→spouse), impotency (→virility), loss/death/widowhood
+  (→coverture), wealth-loss-via-women (→wealth_through_marriage). New local leaves: parity
+  (odd/even sign + Lagna), `_SeventhSignIn`, `_LordIsPlanet`, `_HouseHemmedBy` (papakartari on a
+  HOUSE), `_KujaDosha`, `_AspectedByClass`, `_ConjunctAnyMalefic`, `_PlanetInSigns`, `_LagnaInSigns`.
+- **Single-chart Kuja-Dosha (H7.KD.1)** encoded WITH the corpus per-sign exemptions
+  (HTJAH-II:2593-2601: 7th exempt in Cn/Cp, 2nd in Ge/Vi, 4th in Ar/Sc, 8th in Sg/Pi, 12th in
+  Ta/Li; Leo/Aquarius wholly exempt; neutralised by Mars+Jupiter/Mars+Moon). Pinned by
+  `tests/raman_saab/doctrine/test_house07_kuja_dosha.py` (5 tests). **Two-chart synastry (S1-S7)
+  + dosha-units matching grid are LOCKED OUT-OF-SCOPE v1.**
+- **Honest deferral (G13):** 6 descriptive `TODO(predicate)` — Navamsa-parity (rec.31/33/35),
+  D60, Gulika/upagraha, planet strength/weak gates, sex-dependent splits, Dasa-timing (Phase-F).
+- **Adversarial review:** doctrine reviewer FIX-FIRST → 5 doctrinal MEDIUMs fixed: (1) KD.1
+  per-sign exemptions added (was over-firing on exempt placements); (2) H7.C.67 7th-leg excluded
+  ({2,4,8,12}) — Mars-in-7th owned by C.60 (de-dup in coverture); (3) H7.C.41 polarity malefic→neutral
+  (count-rule convention); (4) H7.C.52 coverture→spouse (remarriage is count, not partner-death);
+  (5) rec.45 folded into H7.K.2 as two-branch rule, deleting H7.C.45 + correcting K.2 citation
+  368→374 (368 was the Venus-exaltation line). Code reviewer SHIP (frozenset nit fixed). Citations:
+  19/19 content-verified clean.
+- **Ratchet 18/37 UNCHANGED** (no confirmed H7 Track-B goldens; no snapshot drift — existing
+  goldens scope H1/H2/H3/H8). **Full suite 2111 passed, 21 skipped, 3 xfailed.**

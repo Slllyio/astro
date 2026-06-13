@@ -1,9 +1,11 @@
 {
   "H8": {
     "citations": [
-      "HTJAH-II:2902"
+      "HTJAH-II:2902",
+      "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
+      "H8.C.26",
       "H8.L.1"
     ],
     "rollup": "favourable",

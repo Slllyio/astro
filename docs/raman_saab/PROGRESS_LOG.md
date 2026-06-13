@@ -361,3 +361,18 @@ H8 → H7 → H10 → H4 → H5 → H6 → H9 → H11 → H12 (H1/H2/H3 done). H
   leaves, None-safe).
 - **Ratchet 18/37 UNCHANGED** (no confirmed H10 Track-B goldens; no snapshot drift). **Full suite
   2156 passed, 21 skipped, 3 xfailed.**
+
+### 2026-06-13 — FIX: orphaned combination significations (H8 death, H10 status/profession)
+Self-caught during H4 prep (verified via `_bucket_fired`, house_template.py:482): a signification
+only aggregates fired rules whose `rule.signification` ∈ its `rule_tags`. H8's `death` combos
+(signification="death") and H10's `status_honour`/`profession_learned`/`profession_trade` combos
+were ORPHANED — they fired but fed no verdict, because those sigs' rule_tags pointed only at the
+aggregate bridge (`longevity`/`career`). Fix: added the fine key to each sig's rule_tags
+(H1/H7 aggregate-bridge pattern) so each matter aggregates the shared placements AND its own
+combos:
+- H8 `death`: ("longevity",) → ("longevity","death") [still guard-clamped]
+- H10 `status_honour`: ("career",) → ("career","status_honour")
+- H10 `profession_trade`/`profession_learned`: ("career",) → ("career", "<key>")
+Ratchet 18/37 unchanged. 7 H8 death-chart Tier-3 snapshots regenerated (pure evidence-additions —
+death combos now bucketed; rollup/verdicts unchanged, guard holds). Suite 2156 passed.
+(H7 unaffected — its fine sigs already had matching rule_tags.)

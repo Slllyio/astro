@@ -2,12 +2,22 @@
   "H8": {
     "citations": [
       "HTJAH-II:3001",
+      "HTJAH-II:3085",
       "HTJAH-II:3498",
       "HTJAH-II:3502",
-      "HTJAH-II:3531"
+      "HTJAH-II:3531",
+      "HTJAH-II:3616",
+      "HTJAH-II:3712",
+      "HTJAH-II:3719",
+      "HTJAH-II:3900"
     ],
     "fired_rule_ids": [
+      "H8.C.13",
+      "H8.C.2",
+      "H8.C.24",
       "H8.C.28",
+      "H8.K.22",
+      "H8.K.25",
       "H8.L.8",
       "H8.P.Jupiter",
       "H8.P.Moon"

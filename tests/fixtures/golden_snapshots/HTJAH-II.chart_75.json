@@ -2,11 +2,19 @@
   "H8": {
     "citations": [
       "HTJAH-II:3001",
+      "HTJAH-II:3084",
+      "HTJAH-II:3085",
+      "HTJAH-II:3087",
       "HTJAH-II:3510",
       "HTJAH-II:3523",
-      "HTJAH-II:3525"
+      "HTJAH-II:3525",
+      "HTJAH-II:3900"
     ],
     "fired_rule_ids": [
+      "H8.C.1",
+      "H8.C.2",
+      "H8.C.24",
+      "H8.C.3",
       "H8.C.30",
       "H8.L.8",
       "H8.P.Mars",

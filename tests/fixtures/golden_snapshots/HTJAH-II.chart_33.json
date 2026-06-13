@@ -2,9 +2,13 @@
   "H8": {
     "citations": [
       "HTJAH-II:2993",
-      "HTJAH-II:3574"
+      "HTJAH-II:3084",
+      "HTJAH-II:3574",
+      "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
+      "H8.C.1",
+      "H8.C.26",
       "H8.L.7",
       "H8.P.Ketu"
     ],

@@ -407,7 +407,10 @@ _H8: tuple[Signification, ...] = (
         key="death",
         house=8,
         primary_karaka="Saturn",
-        rule_tags=("longevity",),
+        # Aggregate bridge: the death matter pulls the shared longevity placements
+        # AND its own manner/cause/place-of-death combinations (signification="death").
+        # Both still LONGEVITY_GUARD-clamped (key=="death" and "longevity" in tags).
+        rule_tags=("longevity", "death"),
         source=_c2(2886),
     ),
     Signification(
@@ -522,14 +525,15 @@ _H10: tuple[Signification, ...] = (
         key="profession_trade",
         house=10,
         primary_karaka="Mercury",
-        rule_tags=("career",),
+        # Aggregate bridge: career placements + own nature-of-profession combos.
+        rule_tags=("career", "profession_trade"),
         source=_c2(9689),
     ),
     Signification(
         key="profession_learned",
         house=10,
         primary_karaka="Jupiter",
-        rule_tags=("career",),
+        rule_tags=("career", "profession_learned"),
         source=_c2(9860),
     ),
     Signification(
@@ -543,7 +547,8 @@ _H10: tuple[Signification, ...] = (
         key="status_honour",
         house=10,
         primary_karaka="Sun",
-        rule_tags=("career",),
+        # Aggregate bridge: career placements + own Rajayoga/dishonour/vice combos.
+        rule_tags=("career", "status_honour"),
         source=_c2(9442),
     ),
 )

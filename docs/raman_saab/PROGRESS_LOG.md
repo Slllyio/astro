@@ -452,3 +452,19 @@ mismatches, Track A green); chart 8 corrected to 7:35 PM (was AM → wrong Lagna
 DRAFT reading on 6/12; the other 6 (charts 03/04/05/06/08/09) are the H7 mismatch-target list once
 confirmed. Worksheet: `docs/raman_saab/worksheets/H7_marriage_batch.md` for user validation
 (confirm/correct sig + ordinal → flip to CONFIRMED → Track-B denominator 37→49). Suite 2738 passed.
+
+### 2026-06-14 — Stage-2 batch 2: worked-chart extraction H4/H5/H7+/H9/H10/H11/H12 (80 DRAFT)
+Parallel extraction workflow (wf_3d2ef71e, 8 agents) read each house's Example-Chart Insights and
+drafted worked-chart verdicts + birth data. Orchestrator cast-verified EVERY chart (cast Lagna vs
+stated Lagna/7th-sign) before appending:
+- **80 DRAFT goldens appended** (ids `<vol>.h<N>_NN`). Verified-decode (cast Lagna == stated):
+  H4 5, H5 12, H7 18, H10 6, H11 17 → track_eligibility ["A","B"]. Unverified (agent gave no stated
+  Lagna): H9 29, H12 18(−1), H5 4 → ["B"] only, flagged in worksheet.
+- **5 DECODE-MISMATCH charts EXCLUDED** (h5_03, h5_17, h7_08, h11_11, +1) — cast Lagna ≠ stated by a
+  full sign → wrong birth-decode → invalid fresh-cast; flagged in worksheet for user to supply
+  correct birth data. (Track-A hard-fails these, correctly — a wrong Lagna means wrong positions.)
+- **H6: 0 extractable** — the methodology prints dates + derivable Lagnas but NO places/times for its
+  worked charts; agent declined to invent coords (correct). Needs stated-positions or external coords.
+- All DRAFT → inert: CONFIRMED stays 38, **ratchet 18/37 untouched**. records 57→137, TrackA→114.
+  Suite 2936 passed. 8 validation worksheets in `docs/raman_saab/worksheets/`.
+Awaiting user validation (confirm sig+ordinal per row → flip DRAFT→CONFIRMED → grows Track-B).

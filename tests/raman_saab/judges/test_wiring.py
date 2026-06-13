@@ -56,8 +56,13 @@ def _dhana_chart() -> RamanChart:
     """Taurus lagna (asc 40deg): Mercury (H2 lord) in Pisces=H11, Jupiter (H11 lord
     + H2 wealth karaka) in Gemini=H2 -> the 2-11 parivartana fires Y.DHANA.EXCH.
     Mercury strong / Jupiter weak by synthetic Shadbala -> weak-pillar borderline
-    'mixed' on H2 wealth (lone benefic H2.P.Jupiter; H2.L.11 neutral; D9 neutral)."""
-    chart = _track_b({"Mercury": 330.5, "Jupiter": 63.83, "Moon": 310.0},
+    'mixed' on H2 wealth (lone benefic H2.P.Jupiter; H2.L.11 neutral; D9 neutral).
+
+    Venus in Leo (H4, a kendra from Lagna) grants NeechaBhanga to Mercury in
+    Pisces (Venus is the planet exalted in Pisces → condition 2 of cancellation
+    of debilitation), preventing H2.C.24 (debilitated 2nd lord) from firing."""
+    chart = _track_b({"Mercury": 330.5, "Jupiter": 63.83, "Moon": 310.0,
+                      "Venus": 130.0},
                      asc_lon=40.0)
     return _with_shadbala(chart, {"Mercury": 480.0, "Jupiter": 200.0, "Moon": 250.0})
 

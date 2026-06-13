@@ -340,3 +340,24 @@ H8 → H7 → H10 → H4 → H5 → H6 → H9 → H11 → H12 (H1/H2/H3 done). H
   19/19 content-verified clean.
 - **Ratchet 18/37 UNCHANGED** (no confirmed H7 Track-B goldens; no snapshot drift — existing
   goldens scope H1/H2/H3/H8). **Full suite 2111 passed, 21 skipped, 3 xfailed.**
+
+### 2026-06-13 — Stage-4 H10 (Karma/Rajya) combination layer encoded
+- **Subpackage split:** flat `house_10_karma.py` (21 rules) → `house_10_karma/` (lord_in_12 [12] +
+  planets_in_10th [9] + new `combinations.py` [20]). 41 rules total. Placement rules split verbatim.
+- **20 combination rules:** nature-of-profession anchors (Mercury/Sun-Rahu/Mars-Venus → fine
+  `profession_learned`/`profession_trade` sigs to avoid double-counting `career` placements),
+  structural Rajayogas (3+ exalted/own in kendras, benefics/malefics in all quadrants, benefics
+  in 10/11/3), Rajabhanga (Mars+Saturn in 1/7/8/10, Saturn-in-10), vice (afflicted Moon, 2/7
+  lords in 10), 4-planets-in-10 sanyasa. New leaves `_DignityInKendrasAtLeast`,
+  `_AllKendrasHaveClass`, `_AspectedByClass`.
+- **Honest deferral (G13):** 6 descriptive `TODO(predicate)` — Navamsa-dispositor-of-10th-lord
+  routing + trade/sign lookups, Karakamsa/AK overlay (Stage-5), Varahamihira-32/vargottama
+  Rajayogas, Neechabhanga variants, strength-gated sanyasa, dasa-phala rise/fall (Phase-F).
+- **Adversarial doctrine review: FIX-FIRST → 2 HIGH fixed:** (1) H10.C.15 wrong citation 9969→10969
+  (the Karakamsa statesman text is at corpus 10969, NOT 9969 — the methodology doc shared the same
+  ~1000-line-off error; corrected doc section-B rows 15-25/42 + AK note to 10965-10992); (2) H10.C.54a
+  double-counted H10.L.7 (`LordIn(10,7)` in `career`) → re-routed to `status_honour` (it's a
+  conduct/vice verdict). 19/20 citations content-verified clean. Code lens self-reviewed (3 simple
+  leaves, None-safe).
+- **Ratchet 18/37 UNCHANGED** (no confirmed H10 Track-B goldens; no snapshot drift). **Full suite
+  2156 passed, 21 skipped, 3 xfailed.**

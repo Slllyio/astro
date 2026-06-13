@@ -171,20 +171,20 @@ lord, and **(iii)** the sign on the 10th, then maps to a trade list.
 
 | # | Condition | Result | Frame | Cite |
 |---|---|---|---|---|
-| 15 | Sun with Atmakaraka (Rasi or Navamsa) | Statesman / diplomat | Karakamsa | HTJAH-II:9969-9971 |
-| 16 | Sun-AK aspected by Jupiter | Temple employment | Karakamsa | HTJAH-II:9973-9974 |
-| 17 | Sun-AK aspected by Saturn | Vile occupation | Karakamsa | HTJAH-II:9974-9975 |
-| 18 | Sun-AK aspected by Rahu | Works for foreign concerns/rulers | Karakamsa | HTJAH-II:9975-9976 |
-| 19 | Sun-AK with Venus | Attendant/secretary to outstanding women | Karakamsa | HTJAH-II:9976-9978 |
-| 20 | Sun-AK with Mars | Heads local/district body | Karakamsa | HTJAH-II:9978-9982 |
-| 21 | Sun-AK with Mercury | Judiciary employment | Karakamsa | HTJAH-II:9982-9983 |
-| 22 | Full Moon or Venus with AK | Journalist, writer, poet, dramatist | Karakamsa | HTJAH-II:9985-9986 |
-| 23 | Sun+Rahu in Karakamsa (benefic aspect) | "Poisonous medicines" — chemist, druggist, anaesthetist | Karakamsa | HTJAH-II:9987-9989 |
-| 24 | Mars in Karakamsa | Electric/mechanical/allied jobs | Karakamsa | HTJAH-II:9989-9990 |
-| 25 | Jupiter in Karakamsa | Religious learning, priesthood, spirituality | Karakamsa | HTJAH-II:9990-9992 |
+| 15 | Sun with Atmakaraka (Rasi or Navamsa) | Statesman / diplomat | Karakamsa | HTJAH-II:10969-10971 |
+| 16 | Sun-AK aspected by Jupiter | Temple employment | Karakamsa | HTJAH-II:10973-10974 |
+| 17 | Sun-AK aspected by Saturn | Vile occupation | Karakamsa | HTJAH-II:10974-10975 |
+| 18 | Sun-AK aspected by Rahu | Works for foreign concerns/rulers | Karakamsa | HTJAH-II:10975-10976 |
+| 19 | Sun-AK with Venus | Attendant/secretary to outstanding women | Karakamsa | HTJAH-II:10976-10978 |
+| 20 | Sun-AK with Mars | Heads local/district body | Karakamsa | HTJAH-II:10978-10982 |
+| 21 | Sun-AK with Mercury | Judiciary employment | Karakamsa | HTJAH-II:10982-10983 |
+| 22 | Full Moon or Venus with AK | Journalist, writer, poet, dramatist | Karakamsa | HTJAH-II:10985-10986 |
+| 23 | Sun+Rahu in Karakamsa (benefic aspect) | "Poisonous medicines" — chemist, druggist, anaesthetist | Karakamsa | HTJAH-II:10987-10989 |
+| 24 | Mars in Karakamsa | Electric/mechanical/allied jobs | Karakamsa | HTJAH-II:10989-10990 |
+| 25 | Jupiter in Karakamsa | Religious learning, priesthood, spirituality | Karakamsa | HTJAH-II:10990-10992 |
 
 > **DOCTRINE NOTE for engine:** Raman *here* defines Atmakaraka as "the planet
-> that gets the largest number of degrees in a sign" (`HTJAH-II:9965-9967`).
+> that gets the largest number of degrees in a sign" (`HTJAH-II:10965-10967`).
 > Project CLAUDE.md locks the **strict 7-karaka Jaimini doctrine (no Rahu/Ketu)**;
 > these Karakamsa rules use **Sun-as-AK / Moon / Venus** which is consistent. Do
 > NOT let a Rahu/Ketu degree win AK in `house_10.py`.
@@ -230,7 +230,7 @@ See the **Nature of Results** section: the 10th-lord-in-house rise/fall verdicts
 |---|---|---|---|---|
 | 40 | 10th lord in 7th (with 7th lord) | Works abroad, foreign distinction; diplomatic missions | Lagna | HTJAH-II:9517-9519, 10131-10135 |
 | 41 | 10th lord in 12th | Works in a far-off place | Lagna | HTJAH-II:9564-9565 |
-| 42 | Sun-AK aspected by Rahu | Foreign concerns / foreign rulers | Karakamsa | HTJAH-II:9975-9976 |
+| 42 | Sun-AK aspected by Rahu | Foreign concerns / foreign rulers | Karakamsa | HTJAH-II:10975-10976 |
 | 43 | Mars+Venus in 10th | Trader in foreign lands | Lagna | HTJAH-II:9847-9847 |
 
 ### G. Sanyasa / asceticism (10th as spiritual karma)

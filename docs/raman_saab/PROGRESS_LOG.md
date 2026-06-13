@@ -397,3 +397,20 @@ death combos now bucketed; rollup/verdicts unchanged, guard holds). Suite 2156 p
   double-count); H4.C.21 (Rahu) likewise broadened. Code lens self-reviewed.
 - **Ratchet 18/37 UNCHANGED** (no confirmed H4 goldens; no snapshot drift). **Full suite 2212
   passed, 21 skipped, 3 xfailed.**
+
+### 2026-06-13 — Stage-4 H5 (Putra) combination layer encoded
+- **Subpackage split:** flat `house_05_putra.py` (21) → `house_05_putra/` (lord_in_12 [12] +
+  planets_in_5th [9] + combinations [28]). 49 rules total. Placements split verbatim.
+- **28 combination rules** across A (birth), B (death/loss), C (extinction), D (sex of first
+  child), E (count/timing), F (adoption), G (obedience), H (brain/intellect). Children/sex/count/
+  adoption/obedience → `children` (passes the Beeja/Kshetra fertility gate); brain → `intellect`.
+- **Adversarial doctrine review: FIX-FIRST → fixed:** (1) HIGH — `intellect` bridged to the live
+  `children` bucket and double-counted Jupiter-in-5 (H5.P.Jupiter placement + H5.C.35 combo) →
+  changed `intellect` rule_tags to ("intellect",) so it aggregates only its own combos (KEY LESSON:
+  the aggregate-bridge only works against a DEDICATED placement tag like mother_home/longevity, not
+  a live matter); (2) MEDIUM — H5.C.4 "aspected by Jupiter" was a conjunction → new `_PlanetAspectsLord`
+  leaf; (3) MEDIUM — H5.C.8 (5th-lord-in-3/6/12) overlapped lord_in_12 placements under `children`
+  → demoted to descriptive. Citations 26/26 content-verified clean. Routing + polarity PASS.
+- **Honest deferral (G13):** Navamsa/Drekkana overlays, Beeja/Kshetra sphuta, strength gates,
+  native-sex, Mandi — descriptive.
+- **Ratchet 18/37 UNCHANGED** (no H5 goldens; no snapshot drift). **Full suite 2268 passed.**

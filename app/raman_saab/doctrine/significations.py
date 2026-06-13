@@ -279,7 +279,11 @@ _H5: tuple[Signification, ...] = (
         key="intellect",
         house=5,
         primary_karaka="Jupiter",
-        rule_tags=("children",),
+        # Intellect aggregates only its OWN brain/intellect combos — NOT the shared
+        # children placements. (Bridging to "children" would double-count Jupiter-in-5,
+        # which is both H5.P.Jupiter [children placement] and H5.C.35 [intellect combo];
+        # unlike H4/H8, "children" is a live matter, not a dedicated placement tag.)
+        rule_tags=("intellect",),
         source=_c1(5012),
     ),
     Signification(

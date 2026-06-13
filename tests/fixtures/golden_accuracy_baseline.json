@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: bumped 9/24 -> 11/24. +2 gains: chart_55 (ear_throat: new C.31 lord-in-dusthana fires, no benefic ear_throat -> afflicted), chart_63 (siblings: C.9 exempts exalted Saturn, C.30 identity-aware -> favourable). H1 7/12 unchanged. H3 4/12 (from 2/12). chart_56 ear_throat fires 3 malefic rules correctly but judge clause-8 (strong pillars + only malefic -> mixed) blocks afflicted verdict — deferred to judge-policy refinement. New rules: C.31-C.35 (ear_throat dusthana/Saturn-aspect/debil + siblings dusthana/malefic-aspect). C.9 now exempts exalted/own malefic lord. C.30 now recognises lord identity as connection.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: re-based 11/24 -> 16/37. +13 H2 (Dhana) goldens confirmed (charts 38-51). H1 7/12 unchanged. H3 4/12 unchanged. H2 5/13 (charts 38-41,51 correct; 42,48,50 reversed polarity; 43-46,49 systematic mixed bias). Accuracy dips 45.8% -> 43.2% — legitimate re-base per EXECUTION_PLAN: new house coverage expands denominator before rule refinement closes mismatches.",
   "track_b": {
-    "correct": 11,
-    "total": 24
+    "correct": 16,
+    "total": 37
   }
 }

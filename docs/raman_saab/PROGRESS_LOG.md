@@ -442,3 +442,13 @@ death combos now bucketed; rollup/verdicts unchanged, guard holds). Suite 2156 p
   specific" — not a real H11 sig key → would orphan); full orphan-scan across all 4 houses = clean.
 - **Ratchet 18/37 UNCHANGED** (no confirmed goldens for these houses; no snapshot drift).
   **Full suite 2702 passed, 21 skipped, 3 xfailed.** All 12 houses now carry combination layers.
+
+### 2026-06-14 — Stage-2 pilot: H7 marriage goldens (12 DRAFT) + validation worksheet
+First Stage-2 golden-extraction batch (makes the new combination layers measurable). 12 H7
+worked charts from HTJAH-II Ch.XI drafted as `HTJAH-II.chart_01..12` (fresh-cast, full birth
+data). **Birth-decode validated**: all 12 cast Lagnas match Raman's stated Lagna/7th-sign (0
+mismatches, Track A green); chart 8 corrected to 7:35 PM (was AM → wrong Lagna). All
+`verdict_review=DRAFT` → inert (CONFIRMED stays 38, ratchet 18/37 untouched). Engine matches the
+DRAFT reading on 6/12; the other 6 (charts 03/04/05/06/08/09) are the H7 mismatch-target list once
+confirmed. Worksheet: `docs/raman_saab/worksheets/H7_marriage_batch.md` for user validation
+(confirm/correct sig + ordinal → flip to CONFIRMED → Track-B denominator 37→49). Suite 2738 passed.

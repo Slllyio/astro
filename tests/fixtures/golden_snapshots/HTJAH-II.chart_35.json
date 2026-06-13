@@ -3,9 +3,11 @@
     "citations": [
       "HTJAH-II:3001",
       "HTJAH-II:3498",
+      "HTJAH-II:3502",
       "HTJAH-II:3531"
     ],
     "fired_rule_ids": [
+      "H8.C.28",
       "H8.L.8",
       "H8.P.Jupiter",
       "H8.P.Moon"
@@ -18,7 +20,7 @@
       },
       "legacies": {
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       },
       "longevity": {
         "lead_frame": "lagna",
@@ -26,7 +28,7 @@
       },
       "sudden_gains": {
         "lead_frame": "lagna",
-        "verdict": "afflicted"
+        "verdict": "favourable"
       }
     }
   }

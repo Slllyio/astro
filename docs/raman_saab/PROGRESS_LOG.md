@@ -284,3 +284,34 @@ passed. Baseline stays 7/12 (count flat — composition +chart_10 / −chart_15)
 - **H1 7/12 unchanged** (no regression). **H3 2/12 → 4/12.** Baseline bumped 9→11/24.
 - `Not` condition already existed in `conditions.py` (line 188) — no addition needed.
 - All 12 H3 Tier-3 snapshots regenerated. Suite 1744 passed.
+
+### 2026-06-13 — Stage-4 H8 (Ayur/Randhra) combination layer encoded (breadth start)
+**Directive:** complete ALL houses' combination layers first, then polish. Stage-4 order
+H8 → H7 → H10 → H4 → H5 → H6 → H9 → H11 → H12 (H1/H2/H3 done). H8 first per plan
+(longevity-adjacent, feeds Phase E).
+- **Subpackage split:** flat `house_08_ayur.py` → `house_08_ayur/` (lord_in_12 [12] +
+  planets_in_8th [9], moved verbatim, + new `combinations.py` [50]). Aggregator __init__
+  mirrors H2/H3 (relative import). Registration unchanged (explicit import resolves to pkg).
+- **50 combination rules** (60 evaluable / 11 descriptive across the subpackage):
+  nature-of-death (C.1-3), specific killers (C.12,13,15-18), 23 killer-yogas (K.1-30 subset),
+  place-of-death by 8th-sign modality (C.24-26), chronic disease (D.1). New local leaves:
+  `_LagnaInSign`, `_EighthSignModality`, `_PlanetInWaterySign`, `_ConjunctAnyMalefic`,
+  `_AspectedByClass`, `_PlanetWithHouseLord`, `_LordsRelated`, `_all_in_house`
+  (conditions.py untouched — local-leaf convention).
+- **LONGEVITY_GUARD handling:** death/manner/cause/place/disease → `signification="death"`
+  (guarded, deferred to Phase-E). **Re-tagged `legacies`/`sudden_gains` significations off the
+  "longevity" bridge** (`("longevity",)` → `("legacies",)`/`("sudden_gains",)`) so the
+  NON-death, measurable matters are no longer guard-clamped — H8.C.28/30/31 (legacies) +
+  C.29/32 (sudden_gains) can move them. HTJAH-II:2886 / 3068 cite these as distinct matters.
+- **Honest deferral (G13):** 11 descriptive `TODO(predicate)` for 22nd-drekkana/D3, 64th-navamsa,
+  Mandi-in-navamsa, planet-strength gates, affliction-grade — Stage-5 picks them up.
+- **Adversarial review (both lenses): SHIP.** Doctrine reviewer content-verified 24/50 citations
+  (48%, > 30% floor) — no wrong-but-in-range found after 3 pre-fixes (C.29 3490→3491, C.30
+  3524→3525, C.25 3901→3902). Fixed K.20 (documented the deliberate de-dup of its Moon+Mercury-6th
+  branch vs C.17, same `death` sig) and C.31 (noted Ketu branch sourced 3574). Code reviewer:
+  SHIP (1 style nit fixed — relative import).
+- **Ratchet 18/37 UNCHANGED** (H8 has no confirmed Track-B goldens — DRAFT longevity charts only;
+  baseline untouched per single-writer rule). 5 H8 Tier-3 snapshots regenerated (reviewed):
+  death/longevity verdicts unchanged (guard holds), legacies/sudden_gains mixed/afflicted→favourable
+  (intended re-tag effect), +2 grounded evidence-additions (chart_35 C.28, chart_75 C.30).
+  **Full suite 2025 passed, 21 skipped, 3 xfailed.**

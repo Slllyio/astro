@@ -414,14 +414,21 @@ _H8: tuple[Signification, ...] = (
         key="legacies",
         house=8,
         primary_karaka="Saturn",
-        rule_tags=("longevity",),
+        # Re-tagged off the "longevity" bridge (Stage-4 H8): legacies/inheritance is
+        # a NON-death matter, so it must NOT trip LONGEVITY_GUARD — the combination
+        # layer (H8.C.28/30/31) needs to move its verdict. HTJAH-II:2886 ("legacies,
+        # gifts and unearned wealth").
+        rule_tags=("legacies",),
         source=_c2(2886),
     ),
     Signification(
         key="sudden_gains",
         house=8,
         primary_karaka="Saturn",
-        rule_tags=("longevity",),
+        # Re-tagged off "longevity" (Stage-4 H8): sudden gains is a non-death matter
+        # (H8.C.29/32 speculation + 8th-lord-in-10th). HTJAH-II:3068 ("the 8th
+        # signifies sudden gains of money").
+        rule_tags=("sudden_gains",),
         source=_c2(3068),
     ),
 )

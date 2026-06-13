@@ -3,11 +3,15 @@
     "citations": [
       "HTJAH-I:2417",
       "HTJAH-I:2444",
-      "HTJAH-I:2472"
+      "HTJAH-I:2472",
+      "HTJAH-I:2937",
+      "HTJAH-I:2945"
     ],
     "fired_rule_ids": [
       "H2.C.26",
       "H2.C.6",
+      "H2.C.65a",
+      "H2.C.70",
       "H2.L.12"
     ],
     "rollup": "favourable",

@@ -8,13 +8,15 @@
       "HTJAH-I:2532",
       "HTJAH-I:2540",
       "HTJAH-I:2549",
-      "HTJAH-I:2553"
+      "HTJAH-I:2553",
+      "HTJAH-I:2800"
     ],
     "fired_rule_ids": [
       "H2.C.26",
       "H2.C.29",
       "H2.C.44",
       "H2.C.5",
+      "H2.C.69",
       "H2.L.1",
       "H2.P.Mars",
       "H2.P.Mercury",

@@ -3,10 +3,12 @@
     "citations": [
       "HTJAH-I:2347",
       "HTJAH-I:2540",
-      "HTJAH-I:2642"
+      "HTJAH-I:2642",
+      "HTJAH-I:2937"
     ],
     "fired_rule_ids": [
       "H2.C.48",
+      "H2.C.70",
       "H2.L.3",
       "H2.P.Sun"
     ],

@@ -3,30 +3,34 @@
     "citations": [
       "HTJAH-I:2380",
       "HTJAH-I:2444",
-      "HTJAH-I:2549"
+      "HTJAH-I:2549",
+      "HTJAH-I:2800",
+      "HTJAH-I:2945"
     ],
     "fired_rule_ids": [
       "H2.C.6",
+      "H2.C.65a",
+      "H2.C.69",
       "H2.L.7",
       "H2.P.Mars"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "family": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "speech": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "vision": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "wealth": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       }
     }
   }

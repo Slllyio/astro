@@ -1,28 +1,30 @@
 {
   "H2": {
     "citations": [
-      "HTJAH-I:2395"
+      "HTJAH-I:2395",
+      "HTJAH-I:2800"
     ],
     "fired_rule_ids": [
+      "H2.C.69",
       "H2.L.9"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "family": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "speech": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "vision": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "wealth": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       }
     }
   }

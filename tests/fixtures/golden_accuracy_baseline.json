@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: re-based 11/24 -> 16/37. +13 H2 (Dhana) goldens confirmed (charts 38-51). H1 7/12 unchanged. H3 4/12 unchanged. H2 5/13 (charts 38-41,51 correct; 42,48,50 reversed polarity; 43-46,49 systematic mixed bias). Accuracy dips 45.8% -> 43.2% — legitimate re-base per EXECUTION_PLAN: new house coverage expands denominator before rule refinement closes mismatches.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: re-based 16/37 -> 18/37. H2 rule refinement: +FunctionalNature guard on H2.C.6, Chandramangala/Gajakesari yoga evaluable, +Dwirdwadasha malefic (H2.C.69), +6th-lord-aspects-2nd (H2.C.70). H1 7/12 unchanged. H3 4/12 unchanged. H2 5/13 -> 7/13. CONTRA_PILLAR stays 99 (pillar=2 caused H1 regression).",
   "track_b": {
-    "correct": 16,
+    "correct": 18,
     "total": 37
   }
 }

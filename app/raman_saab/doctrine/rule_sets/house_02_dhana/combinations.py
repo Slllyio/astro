@@ -107,6 +107,15 @@ class _PlanetAspectsHouse(C.Condition):
         return drishti.aspects_house(self.planet, self.house, ctx.chart)
 
 
+class _LordAspectsHouse(C.Condition):
+    """The lord of whole-sign house `lord_house` aspects house `target_house`."""
+    def __init__(self, lord_house: int, target_house: int) -> None:
+        self.lord_house, self.target_house = lord_house, target_house
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(self.lord_house, ctx.chart)
+        return drishti.aspects_house(lord, self.target_house, ctx.chart)
+
+
 # ── dasha-result factory ─────────────────────────────────────────────────────
 
 def _lord_with_lord_in(rule_id: str, other_h: int, fortified: str | None,
@@ -189,7 +198,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="evaluable",
         condition=C.Or(_SecondLordIs("Jupiter"),
                        C.And(C.InRashiHouse("Jupiter", 2),
-                             _NotAspectedByMalefic("Jupiter"))),
+                             _NotAspectedByMalefic("Jupiter"),
+                             C.Not(C.FunctionalNature("Jupiter", {"malefic"})))),
         fortified="2nd lord is Jupiter, or Jupiter in 2nd un-aspected by malefic → "
                   "much wealth",
         afflicted=None,
@@ -820,11 +830,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # ── E. YOGA BLOCK (HTJAH-I:2879–2956) ────────────────────────────────────
 
-    # #65 — DESCRIPTIVE: Chandramangala Yoga (Moon+Mars conjunct/mutual aspect).
-    #       TODO(predicate): YogaDetection(Chandramangala).
+    # #65 — Chandramangala Yoga (Moon+Mars conjunct/mutual aspect).
+    #       Core condition evaluable; sign-dignity refinement in result text.
     RuleRecord(
         id="H2.C.65", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(C.Conjunct("Moon", "Mars"), C.MutualAspect("Moon", "Mars")),
         fortified="Chandramangala Yoga (Moon+Mars conjunct/mutual aspect), dignified "
                   "in Taurus/Scorpio or Cancer/Capricorn, esp. in 2/9/10/11 → wealth "
                   "by above-board means (else Varahamihira's 'unscrupulous')",
@@ -832,10 +843,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2879)),
 
-    # #65a — DESCRIPTIVE: Mars and Moon in mutual Kendra.
+    # #65a — Mars and Moon in mutual Kendra (not already Chandramangala).
+    #       InHouseFrom with kendra offsets {1,4,7,10} encodes "in kendra from".
     RuleRecord(
         id="H2.C.65a", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(
+            C.Not(C.Conjunct("Moon", "Mars")),        # not already Chandramangala
+            C.Not(C.MutualAspect("Moon", "Mars")),    # not already Chandramangala
+            C.Or(C.InHouseFrom("Mars", "Moon", 1),    # Mars in kendra from Moon
+                 C.InHouseFrom("Mars", "Moon", 4),
+                 C.InHouseFrom("Mars", "Moon", 7),
+                 C.InHouseFrom("Mars", "Moon", 10))),
         fortified="Mars and Moon in mutual Kendra → gives rise to something like "
                   "Chandramangala Yoga (a Chandramangala-grade wealth yoga from "
                   "angular disposition)",
@@ -843,11 +862,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2945)),
 
-    # #66 — DESCRIPTIVE: Gajakesari Yoga (Moon-Jupiter mutual kendra).
-    #       TODO(predicate): YogaDetection(Gajakesari).
+    # #66 — Gajakesari Yoga (Jupiter in kendra from Moon).
+    #       Core kendra-from-Moon condition evaluable; 6/8/12 refinement in text.
     RuleRecord(
         id="H2.C.66", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(C.InHouseFrom("Jupiter", "Moon", 1),
+                       C.InHouseFrom("Jupiter", "Moon", 4),
+                       C.InHouseFrom("Jupiter", "Moon", 7),
+                       C.InHouseFrom("Jupiter", "Moon", 10)),
         fortified="Gajakesari Yoga (Moon-Jupiter mutual kendra), with Jupiter "
                   "connected to 2nd → makes one earn well (but not if in 12/6/8 "
                   "from Lagna)",
@@ -878,4 +901,31 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="ARUDHA/AK", varga="D1", polarity="neutral",
         source=Citation("HTJAH-I", 2514)),
+
+    # ── F. ACCURACY-FIX RULES (added for H2 golden accuracy) ───────────────
+
+    # #69 — Chart-wide Dwirdwadasha web → wealth severely curtailed.
+    #       Charts 42 & 44 cite Dwirdwadasha positions as key affliction.
+    RuleRecord(
+        id="H2.C.69", house=2, signification="wealth", group="combination",
+        kind="evaluable",
+        condition=C.AllPlanetsInDwirdwadasha(),
+        fortified=None,
+        afflicted="Planets bound in Dwirdwadasha (2nd/12th) web throughout → wealth "
+                  "severely curtailed (chart 42: 'ordinary man drawing Rs. 50-60/month'; "
+                  "chart 44: 'lost all fortune, Rs. 50000 debt')",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 2800)),
+
+    # #70 — 6th lord aspects the 2nd house → wealth curtailed.
+    #       Chart 48: "6th lord aspects house of finance."
+    RuleRecord(
+        id="H2.C.70", house=2, signification="wealth", group="combination",
+        kind="evaluable",
+        condition=_LordAspectsHouse(6, 2),
+        fortified=None,
+        afflicted="6th lord (debt/enemy) aspects the 2nd house → wealth curtailed, "
+                  "acquired by hard labour",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 2937)),
 )

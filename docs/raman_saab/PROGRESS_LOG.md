@@ -468,3 +468,17 @@ stated Lagna/7th-sign) before appending:
 - All DRAFT → inert: CONFIRMED stays 38, **ratchet 18/37 untouched**. records 57→137, TrackA→114.
   Suite 2936 passed. 8 validation worksheets in `docs/raman_saab/worksheets/`.
 Awaiting user validation (confirm sig+ordinal per row → flip DRAFT→CONFIRMED → grows Track-B).
+
+### 2026-06-14 — Stage-2 batch 2 verified + worksheets reconciled
+Cast-verified the batch-2 decodes and regenerated accurate worksheets from the fixture:
+- **H12**: re-derived each chart's Lagna (lordship/exaltation reasoning, workflow wf_5bbcc7d5) →
+  cast-checked → **14 promoted** (decode sound, track ["A","B"]), **2 excluded** (cast Lagna ≠ stated
+  → wrong birth data, dropped), **2 left unverified** (Lagna indeterminable from doc).
+- **H9**: 0 goldens — its Example-Chart Insights print dates + lordship reasoning but NO birth
+  times/places, so no chart is fresh-castable (same as H6). Candidates kept in the reference
+  worksheet for when externally-verified coords can be supplied.
+- Final Stage-2 golden inventory (all DRAFT, inert): H7 30 (12 pilot + 18), H5 16, H11 17, H12 16,
+  H10 6, H4 5 = **90 worked-chart DRAFT goldens** across 6 houses; H6/H9 pending coords.
+- records 135, CONFIRMED 38 (**ratchet 18/37 untouched**), TrackA 127 (decode-validated fresh-casts).
+  Suite 2960 passed. Worksheets in docs/raman_saab/worksheets/ regenerated to match the fixture.
+Awaiting user validation (confirm sig+ordinal → DRAFT→CONFIRMED → Track-B grows).

@@ -494,3 +494,19 @@ Baseline re-based 18/37 -> **24/49** (G5-c: confirmations grow the corpus). CONF
 H7 combination layer is now MEASURABLE; the 6 mismatches are the targeted Stage-3/4 refinement list.
 Suite 2960 passed. (H9/H12 decode-verify done earlier: H12 14 verified/2 excluded/2 indeterminable;
 H9 has no birth times/places in the doc -> not fresh-castable, needs corpus stated-positions/coords.)
+
+### 2026-06-14 — Stage-2 completion: H6/H9 extracted from corpus + 4 held charts recovered
+Per the approved plan (complete every house before calibration). Root cause of the earlier H6/H9
+zero-yield: extractors read the abbreviated methodology docs; the raw CORPUS prints full
+"Born on DD-MM-YYYY at H-MM a.m./p.m. (tz) (Lat/Long)" lines with explicit a.m./p.m. Re-extracted
+from the corpus (workflow wyb1a1dsv stalled at 1/3 agents -> harvested H9 from transcript + ran H6
+and held via direct file-writing agents — robust against the structured-output-return stall).
+- **+29 DRAFT goldens**: H9 17 (h9_01..), H6 12 (h6_01..); decode cast-verified (cast Lagna ==
+  text-derived Lagna); 2 full-sign mismatches excluded; H6 110/113 + H9 one indeterminable -> ["B"].
+- **4 of 6 held charts RECOVERED** (decode now verified, still DRAFT pending verdict validation):
+  h5_13 (Chart 103, Virgo), h5_15 (105, Gemini), h5_18 (108, Sagittarius), h12_14 (Chart 252 =
+  Milton, Julian-date, Scorpio). Still held: h12_13 (251, prose Pisces vs computed Virgo) and
+  h5_14 (104, computed-only Lagna, no text cross-check).
+- All new/recovered records DRAFT/inert -> **ratchet 44/104 untouched**. records 135->165,
+  CONFIRMED 105 unchanged, TrackA 127->158. Suite 3052 passed. Worksheets H6_ari_batch.md,
+  H9_bhagya_batch.md written. Awaiting user validation to complete the 12-house array.

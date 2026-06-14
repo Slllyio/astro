@@ -173,6 +173,41 @@ class _HouseHemmedBy(C.Condition):
         return all(have.values())
 
 
+class _SeventhBesiegedBySaturnAndMars(C.Condition):
+    """Both Saturn AND Mars afflict the 7th house (each either occupies it or casts a
+    whole-sign drishti on it) AND no natural benefic occupies or aspects the 7th.
+
+    Raman's separation/discord signature for marital happiness — Saturn and Mars together
+    on the 7th, unrelieved by a benefic, give estrangement and loss of marital happiness
+    (HTJAH-II:996 "misery, death or separation in marriage; the 7th house or Venus
+    [afflicted]"). The no-benefic guard is Raman's standard mitigation: a FULL benefic on
+    the 7th rescues the marriage, which is what spares the favourable Chart 02 (both
+    malefics aspect its 7th, but Jupiter also aspects it).
+
+    The relieving set is the three FULL benefics (Jupiter, Venus, Mercury) — NOT the Moon,
+    whose beneficence is conditional (paksha-/association-dependent). Chart 04 has the Moon
+    with Rahu in the 7th, which gave no relief ('complete deprivation ... separated'), so a
+    Moon-inclusive guard would wrongly spare it."""
+
+    _RELIEVERS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury"})
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+
+        def afflicts(name: str) -> bool:
+            p = chart.planets.get(name)
+            return p is not None and (p.rasi_house == 7
+                                      or drishti.aspects_house(name, 7, chart))
+
+        if not (afflicts("Saturn") and afflicts("Mars")):
+            return False
+        for b in self._RELIEVERS:
+            p = chart.planets.get(b)
+            if p is not None and (p.rasi_house == 7 or drishti.aspects_house(b, 7, chart)):
+                return False
+        return True
+
+
 class _KujaDosha(C.Condition):
     """Single-chart Kuja-Dosha (Mangal-Dosha): Mars in the 2/4/7/8/12 from the
     Lagna, the Moon, OR Venus (rashi-frame), with the corpus exemptions applied
@@ -524,4 +559,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="Saturn aspecting the 7th, 7th lord and Venus, or a 6/8/12 lord touching them → "
                   "delays/denies early marriage",
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 852)),
+
+    # ===== G. Separation / deprivation of marital happiness — sig marital_happiness =====
+    # DECISIVE: Saturn AND Mars both afflict the 7th (occupy or aspect) with NO benefic on
+    # the 7th -> estrangement / loss of marital happiness. Flagged in the judge's
+    # _DECISIVE_AFFLICTION_RULE_IDS so it carries the marital_happiness verdict past the
+    # benefic-starved bucket's strong-pillar preponderance (the bucket otherwise holds 6
+    # benefics vs only Kuja-Dosha + a from-Venus malefic). Fires on chart_04 ("complete
+    # deprivation of marital happiness; separated 1974"); the no-benefic guard spares the
+    # favourable chart_02 (both malefics aspect its 7th but Jupiter does too).
+    RuleRecord(
+        id="H7.C.82", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable", condition=_SeventhBesiegedBySaturnAndMars(),
+        fortified=None,
+        afflicted="Saturn and Mars both afflicting the 7th (occupation or aspect) with no "
+                  "benefic relieving it -> estrangement and loss of marital happiness; "
+                  "separation should be predicted",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 996)),
 )

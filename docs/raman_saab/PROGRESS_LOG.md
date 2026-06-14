@@ -655,3 +655,21 @@ conclusion HTJAH-I:3765. +1 (chart_58 -> afflicted), ZERO regressions; chart_58 
 - **Remaining H3**: chart_59/60 (a separate/well-disposed lord but karaka Mars + house afflicted — directly
   contradicts chart_54's "good lord rescues", the hardest discrimination, deferred) + chart_52 (mixed, V2
   over-commit) + chart_56 (ear_throat). Then H7.
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 4, FIRST H7 rule): H7.C.82 separation — ratchet 83/130 -> 84/130
+First H7 rule. New H7.C.82 + `_SeventhBesiegedBySaturnAndMars` predicate, flagged decisive: Saturn AND Mars both
+afflict the 7th (occupy or aspect) with NO FULL-benefic (Jupiter/Venus/Mercury) relief -> marital separation. The
+marital_happiness bucket is benefic-starved (6 benefics vs 2 malefics), so the rule must be decisive to carry the
+verdict. Key calibration: the relieving set EXCLUDES the Moon (conditional beneficence) — chart_04 has Moon+Rahu
+in the 7th which gave no relief; a Moon-inclusive guard wrongly spared it. Fires on chart_04 ("complete
+deprivation; separated 1974"); the no-benefic guard spares favourable chart_02 (both malefics aspect its 7th but
+Jupiter does too). cite HTJAH-II:996. +1 (chart_04 -> afflicted), ZERO regressions; H7 marital_happiness 6/12 ->
+7/12. chart_04 is not Tier-3 (no snapshot).
+- **PROCESS FIXES this commit**: (1) repaired a malformed-JSON bug in golden_accuracy_baseline.json's _comment
+  shipped in increment 3 (a literal double-quote in the chart-58 quotation broke json.load in the ratchet test;
+  the increment-3 full-suite run predated the baseline edit so it escaped). (2) committed a DANGLING regenerated
+  snapshot HTJAH-I.chart_56.json (H3.C.38 fires on it -> its non-golden siblings verdict flipped; the UPDATE runs
+  had regenerated it but only the per-increment target snapshot was staged). Going forward: stage the whole
+  golden_snapshots/ dir after an UPDATE, and re-run the FULL suite AFTER editing the baseline.
+- **Remaining H7**: chart_05/06/09 (separation via 7th-lord-in-12 / dual-sign multiplicity) + chart_03/08
+  (maraka-leak over-harsh — needs the non-death-marital maraka guard + Kuja-Dosha cancellation).

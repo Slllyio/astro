@@ -626,3 +626,19 @@ out-votes. Fix = author those as DECISIVE rules + a clause that makes a flagged 
 - **Next increments**: H3.C.37 D9-papakartari (new HouseHemmedByInVarga predicate -> chart_61); H3 aspect-based
   decisive affliction (chart_58/60); H7 separation rule + maraka-leak guard (chart_03/04/08/09); H7 dual-sign /
   in-bucket malefic (chart_05/06). Each is a measured, signed-off increment on the same decisive-rule mechanism.
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 2): H3.C.37 D9-papakartari — ratchet 81/130 -> 82/130
+New rule H3.C.37 + a `_ThirdHouseHemmedByMaleficsInNavamsa` predicate (the 2nd & 12th navamsa signs from the
+3rd's navamsa sign both hold a malefic, read by navamsa_sign), flagged decisive. Validated by the
+**bphs-doctrine-reviewer** (SOUND-WITH-CAVEAT): navamsa papakartari is well-attested (HTJAH-I:1823, 4531), but
+Chart 61 denies brothers on "Papa-karthari Yoga in Amsa IN ADDITION TO other afflictions" — never on amsa-
+papakartari alone. So per the reviewer the rule is CUMULATIVE: it ANDs (a rasi malefic occupies or aspects the
+3rd) and re-cites the chart conclusion HTJAH-I:3836 (2006 kept as the general-doctrine backref in the comment).
+chart_61 has Saturn in the 3rd -> the guard fires; the favourable twins (53/54/63) have no D9 hemming at all.
+The reviewer also confirmed H3.C.36's >=2 threshold KEEP (attributed the threshold + dusthana arm to Charts
+58/62 in the comment, not to bare 3436). +1 (chart_61 -> afflicted), ZERO regressions. chart_61 Tier-3 snapshot
+regenerated (citation 3836 + H3.C.37 + siblings afflicted). Suite 3071 passed.
+- **Next**: H3 chart_58/60 (aspect-based affliction — Mars Ketu-aspected / Saturn+Mars both aspect the 3rd —
+  needs a decisive "house+karaka heavily malefic-aspected" rule, carefully guarded vs chart_54 which is also
+  malefic-aspected yet favourable on lord strength); then H7 (separation rule, maraka-leak guard, dual-sign) —
+  H7 is messier (bidirectional, partial effects) and will go increment-by-increment with doctrine review.

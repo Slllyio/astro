@@ -122,6 +122,7 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
 # papakartari / separation-yoga gates keep them off the favourable twin charts).
 _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H3.C.36",  # Karaka Mars multiply afflicted (>=2 of dusthana/debil/combust/papakartari)
+    "H3.C.37",  # 3rd house hemmed between malefics in the Navamsha (papakartari in amsa)
 })
 
 

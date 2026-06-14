@@ -32,6 +32,7 @@ from typing import Final
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.chart import varga
 from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
@@ -283,6 +284,32 @@ class _KarakaMultiplyAfflicted(C.Condition):
             C.HemmedBy(_KARAKA, "malefic").evaluate(ctx),
         )
         return sum(afflictions) >= 2
+
+
+class _ThirdHouseHemmedByMaleficsInNavamsa(C.Condition):
+    """Papakartari on the 3rd house IN THE NAVAMSHA (D9): both the 2nd and 12th navamsa
+    signs counted from the 3rd house's navamsa sign are occupied (by navamsa_sign) by a
+    natural malefic.
+
+    Raman applies Papakartari Yoga 'in Amsa' as a decisive sibling-denial in Chart 61
+    ('the third house is subject to Papakarthari Yoga in Amsa'). The general doctrine —
+    a house/factor hemmed between two malefics is afflicted (Papakartariyoga over the
+    three factors, HTJAH-I:2006) — is encoded for the D1 frame by the shared ``HemmedBy``
+    leaf; this predicate carries the SAME doctrine into the navamsha, which Raman judges
+    by the same rules. The 3rd nav-house sign = navamsa lagna sign + 2 (whole-sign)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        nav_lagna = varga.navamsa_sign(chart.asc_lon)
+        third_nav = ((nav_lagna - 1) + 2) % 12 + 1
+        flank = {(third_nav % 12) + 1: False, ((third_nav - 2) % 12) + 1: False}
+        for name in NATURAL_MALEFICS:
+            p = chart.planets.get(name)
+            if p is None:
+                continue
+            if p.navamsa_sign in flank:
+                flank[p.navamsa_sign] = True
+        return all(flank.values())
 
 
 class _LordsIdentical(C.Condition):
@@ -664,10 +691,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # — F. decisive karaka-affliction (Stage-3 rule-authoring; HTJAH-I:3436) —
     # #36 — DECISIVE: the Karaka Mars MULTIPLY afflicted (>=2 of dusthana / debilitation /
     #       combustion / papakartari) -> the indications of the 3rd are destroyed; no
-    #       brothers. Distinct from #10 (a SINGLE affliction, survivable). Flagged in the
-    #       judge (_DECISIVE_AFFLICTION_RULE_IDS) so it drives the verdict past a
-    #       strong-pillar preponderance, exactly as Raman reads Charts 58/62. The >=2 gate
-    #       is the explicit guard against regressing Chart 54 (Mars dusthana-only, count 1).
+    #       brothers. The core dictum is HTJAH-I:3436 ("the Karaka ... debilitated, in
+    #       combustion or with inimical planets -> destruction of the indications"); that
+    #       verse is a DISJUNCTION (any one), already encoded non-decisively at #10. This
+    #       rule's STRICTER >=2 threshold and its added 'dusthana' arm are an engineering
+    #       discriminator attributed to the worked charts, NOT to 3436's literal list:
+    #       Charts 58 (HTJAH-I:3765) and 62 (HTJAH-I:3844) deny brothers on a *multiply*
+    #       afflicted Mars and explicitly override a favourable Bhava ("Though the third
+    #       house is somewhat favourable ... the subject has no brothers"), while Chart 54
+    #       (Mars dusthana-only, count 1) keeps brothers on a strong 3rd lord. The >=2 gate
+    #       is the guard against regressing Chart 54; flagged decisive in the judge.
     RuleRecord(
         id="H3.C.36", house=3, signification="siblings", group="combination",
         kind="evaluable",
@@ -679,4 +712,26 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "brothers",
         frame="KARAKA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3436)),
+    # #37 — DECISIVE: the 3rd house hemmed between malefics IN THE NAVAMSHA (Papakartari in
+    #       Amsa) AND otherwise afflicted (a rasi-malefic occupying or aspecting the 3rd) ->
+    #       denial of brothers. CUMULATIVE by design: Raman's Chart-61 conclusion denies
+    #       brothers on "Papa-karthari Yoga in Amsa IN ADDITION TO other afflictions"
+    #       (HTJAH-I:3836) — never on amsa-papakartari alone — so the rule requires the
+    #       co-affliction, which is the doctrine-reviewer's caveat made load-bearing (it
+    #       blocks a false denial on a chart whose 3rd is hemmed in D9 but otherwise robust,
+    #       a config Raman never tested). Navamsa papakartari itself is well-attested
+    #       (HTJAH-I:1823, 4531; general doctrine 2006). Flagged decisive; fires on chart_61
+    #       (Saturn in the 3rd + D9 hemming), NOT chart_54 (no D9 hemming).
+    RuleRecord(
+        id="H3.C.37", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=C.And(
+            _ThirdHouseHemmedByMaleficsInNavamsa(),
+            C.Or(C.CountInHouse(3, 1, "malefic"), _MaleficAspects3rd())),
+        fortified=None,
+        afflicted="the 3rd house hemmed between malefics in the Navamsha (Papakartari in "
+                  "Amsa) and otherwise afflicted (a malefic occupying or aspecting the 3rd) "
+                  "-> denial of brothers should be predicted",
+        frame="LAGNA/D9", varga="D9", polarity="malefic",
+        source=Citation("HTJAH-I", 3836)),
 )

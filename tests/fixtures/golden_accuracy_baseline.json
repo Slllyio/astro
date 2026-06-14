@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 43/92 -> 44/104 on Stage-2 H5 confirmation (user-validated 12 verified children goldens 91-102 afflicted, 106 favourable; 103/104/105/108 HELD as DRAFT - unverified Lagna). +1 correct (96), +11 targets = the 'Triple-Veto blindspot' (engine reads catastrophic 5th-house+lord+Karaka affliction as mixed/favourable; needs a non-linear veto rule + D7 child-count, Stage-3/4). Lineage: 18/37(H2)->24/49(H7)->27/55(H4)->32/61(H10)->39/78(H11)->43/92(H12)->44/104(H5). Validation pass COMPLETE for H1/H2/H3/H4/H5/H7/H10/H11/H12; H6/H9 blocked on coords; H8=Phase-E; 6 charts held unverified. CONTRA_PILLAR stays 99.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 44/104 -> 46/114 on Stage-2 H6 confirmation (user-validated 10 corpus-extracted disease/enemies/debts goldens, all afflicted; 110/113 held unverified, 119 excluded decode-mismatch). +2 correct (109/114), +8 targets = the '6th-house dusthana blindspot' (engine treats malefic/strong 6th as positive/neutral instead of triggering chronic-illness/imprisonment/debt breakdown). Lineage: 18/37(H2)->24/49(H7)->27/55(H4)->32/61(H10)->39/78(H11)->43/92(H12)->44/104(H5)->46/114(H6). H9 DRAFT pending validation; 2 held (h5_14/h12_13). CONTRA_PILLAR stays 99.",
   "track_b": {
-    "correct": 44,
-    "total": 104
+    "correct": 46,
+    "total": 114
   }
 }

@@ -99,6 +99,21 @@ _H8_DEATH_KEYS: Final[frozenset[str]] = frozenset({"longevity", "death"})
 _H11_GAINS_KEYS: Final[frozenset[str]] = frozenset({"gains", "acquisitions"})
 _H6_DISEASE_KEYS: Final[frozenset[str]] = frozenset({"enemies_disease", "disease_chronic"})
 
+# Dusthana-affliction matters (Stage-3 calibration, user-signed-off). INHERENTLY-malefic
+# significations where a fired malefic with NO benefic contradiction CONFIRMS the affliction:
+# a strong dusthana lord STRENGTHENS the evil (a powerful 6th lord gives serious disease), so
+# pillar strength must not rescue the matter and a confirming navamsa must not lift it. Scope:
+# the 6th's five afflictions + the 12th's incarceration / left_eye. H8 is DELIBERATELY EXCLUDED
+# (legacies / sudden_gains are GAINS; death / longevity are owned by the Phase-E longevity
+# pre-pass). H12 expenditure / moksha / foreign_residence are excluded (not pure afflictions —
+# the wealthy spend lavishly, moksha is liberation). Every key is unique to its dusthana, so
+# scoping by key alone carries no cross-house leakage. Read in _build_frame_ledger to set the
+# AFFLICTION_MATTER flag that _decide clause-1.5 consumes.
+_DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
+    "enemies_disease", "accidents", "debts", "enemies", "disease_chronic",  # H6
+    "incarceration", "left_eye",                                            # H12
+})
+
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -258,6 +273,19 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     if not L.karaka_intact:
         if guarded:
             return _navamsa_modulate("insufficient-evidence", L)
+        return _navamsa_modulate("afflicted", L)
+    # 1.5 DUSTHANA-AFFLICTION CONFIRMATION (Stage-3, user-signed-off "B"). For an inherently
+    # malefic signification (6th disease/enemies/debts/accidents; 12th incarceration/left_eye —
+    # flagged AFFLICTION_MATTER in _build_frame_ledger) a fired malefic with NO benefic
+    # contradiction CONFIRMS the affliction. This is the directional mirror of the clause-2
+    # navamsa guard: pillar strength does NOT rescue a dusthana evil (a strong 6th lord
+    # strengthens disease), so the matter must not fall through to clause 6/8 and read as
+    # 'mixed', nor be lifted by a confirming navamsa. A BENEFIC contradiction (a Vipareeta /
+    # Harsha yoga or a benefic aspect) routes the matter back to the normal preponderance
+    # weigh at clause 2. Deferred under the longevity guard (Phase E owns death/span). The
+    # verdict is decisive — _navamsa_modulate never shifts an 'afflicted'.
+    if ("AFFLICTION_MATTER" in L.flags and not guarded
+            and L.fired_malefic and not L.fired_benefic):
         return _navamsa_modulate("afflicted", L)
     # 2. contradiction — weigh the PREPONDERANCE when benefic AND malefic both fire.
     # Faithful to Raman's THREE-FACTORS doctrine: instead of counting fired-rule surplus,
@@ -582,6 +610,11 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # paths for these matters, deferring the call to Phase E.
     if "longevity" in sig.rule_tags or "death" == sig.key:
         flags.append("LONGEVITY_GUARD")
+    # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
+    # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the
+    # affliction on lone-malefic evidence (a strong dusthana lord strengthens, never rescues).
+    if sig.key in _DUSTHANA_AFFLICTION_KEYS:
+        flags.append("AFFLICTION_MATTER")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the
     # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.

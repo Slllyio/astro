@@ -116,6 +116,44 @@ class TestDecide:
                                   navamsa_status="weakens"))
         assert v == "afflicted"
 
+    def test_affliction_matter_lone_malefic_afflicted(self):
+        """Stage-3 'B' dusthana-affliction (clause 1.5): an AFFLICTION_MATTER ledger
+        (6th/12th malefic signification) with a lone malefic and NO benefic reads
+        'afflicted' even when ALL pillars are strong — a strong dusthana lord strengthens
+        the evil, never rescues it."""
+        v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
+                                        bhava_bala_strong=True,
+                                        fired_malefic=(_fired("malefic"),),
+                                        flags=("AFFLICTION_MATTER",)))
+        assert v == "afflicted" and shifted is False
+
+    def test_affliction_matter_not_lifted_by_navamsa_confirms(self):
+        """The dusthana-affliction verdict is decisive: a confirming navamsa (which would
+        lift a borderline mixed to favourable) does NOT touch it."""
+        v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
+                                        bhava_bala_strong=True, navamsa_status="confirms",
+                                        fired_malefic=(_fired("malefic"),),
+                                        flags=("AFFLICTION_MATTER",)))
+        assert v == "afflicted" and shifted is False
+
+    def test_affliction_matter_with_benefic_routes_to_preponderance(self):
+        """A BENEFIC contradiction (e.g. a Vipareeta/Harsha yoga or benefic aspect) takes a
+        dusthana matter OUT of clause-1.5 and back to the clause-2 preponderance weigh: two
+        strong pillars + a non-weakening navamsa -> favourable, not auto-afflicted."""
+        v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=False,
+                                  fired_benefic=(_fired("benefic"),),
+                                  fired_malefic=(_fired("malefic"),),
+                                  flags=("AFFLICTION_MATTER",)))
+        assert v == "favourable"
+
+    def test_affliction_matter_deferred_under_longevity_guard(self):
+        """The Phase-E longevity guard wins: an AFFLICTION_MATTER that is ALSO longevity-
+        guarded does not fire clause-1.5 (death/span is owned by the longevity pre-pass)."""
+        v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+                                  fired_malefic=(_fired("malefic"),),
+                                  flags=("AFFLICTION_MATTER", "LONGEVITY_GUARD")))
+        assert v != "afflicted"
+
     def test_track_b_fallback_malefic_afflicted(self):
         """No Shadbala (lord_strong None) + a malefic rule -> afflicted by polarity alone."""
         v, _ = ht._decide(_ledger(lord_strong=None, karaka_strong=None, fired_malefic=(_fired("malefic"),)))

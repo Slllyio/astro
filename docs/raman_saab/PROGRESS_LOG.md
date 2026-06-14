@@ -536,3 +536,25 @@ contradiction (CONTRA_PILLAR knobs at the no-op 99/99).
 - **Next**: the AFFLICTION side (H5 1/12, H6 2/10) — those goldens mostly do NOT reach clause-2
   (single-polarity / dusthana-overweight), needing the separate conditional-override / affliction-veto
   cluster (a distinct user sign-off).
+
+### 2026-06-14 — Stage-3 DECISION 2: dusthana-affliction rule "B" — ratchet 62/130 -> 73/130
+Affliction-side cluster (user-chosen). Diagnostic (`scratch_afflict_diag.py`) showed the H6/H12
+misses split into two root causes: (1) DUSTHANA INVERSION — for the 6th/12th's malefic
+significations a STRONG lord/karaka by Shadbala *strengthens* the evil, but clause-6 needs a WEAK
+pillar to call afflicted, so all-strong + lone-malefic fell to clause-8 'mixed' (then navamsa
+'confirms' could even lift to 'favourable'); (2) the H5 children problem (strong-pillar favourable
++ fertility gate only softening to mixed) — a DIFFERENT, harder design, deferred.
+- **Fix (clause-1.5, after the karaka veto)**: an `AFFLICTION_MATTER` flag (set in
+  `_build_frame_ledger` for the scoped keys) makes a fired malefic with NO benefic contradiction
+  CONFIRM the affliction — decisive, pillar-strength-proof, not navamsa-liftable. A benefic
+  contradiction (Vipareeta/Harsha/benefic aspect) routes back to clause-2. Deferred under the
+  longevity guard. Scope: H6 {enemies_disease, accidents, debts, enemies, disease_chronic} + H12
+  {incarceration, left_eye}; H8 EXCLUDED (legacies/sudden_gains are gains, death/longevity Phase-E).
+- **Result**: 62/130 -> **73/130** (+11, 47.7%->56.2%), **ZERO regressions** (gains are pure):
+  H6 2/10 -> 9/10, H12 incarceration/left_eye +4. The directional MIRROR of V2's navamsa guard —
+  together they make Shadbala strength directional (helps a benefic significator, harms via a
+  dusthana one). No Tier-3 snapshot drift (the H6/H12 affliction goldens are track ["A","B"] only).
+- Tests: 4 new clause-1.5 unit tests in `test_house_template.py` (lone-malefic->afflicted;
+  navamsa-confirms can't lift; benefic routes to preponderance; longevity guard defers). Suite green.
+- **Next**: H5 children (1/12) — strong-pillar favourable not an inherent-affliction key; needs a
+  children-specific beeja/kshetra design (its own sign-off). Held: h5_14, h12_13.

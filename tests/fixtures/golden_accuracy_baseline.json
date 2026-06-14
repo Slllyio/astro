@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 44/104 -> 46/114 on Stage-2 H6 confirmation (user-validated 10 corpus-extracted disease/enemies/debts goldens, all afflicted; 110/113 held unverified, 119 excluded decode-mismatch). +2 correct (109/114), +8 targets = the '6th-house dusthana blindspot' (engine treats malefic/strong 6th as positive/neutral instead of triggering chronic-illness/imprisonment/debt breakdown). Lineage: 18/37(H2)->24/49(H7)->27/55(H4)->32/61(H10)->39/78(H11)->43/92(H12)->44/104(H5)->46/114(H6). H9 DRAFT pending validation; 2 held (h5_14/h12_13). CONTRA_PILLAR stays 99.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 46/114 -> 53/130 on Stage-2 H9 confirmation (user-validated 16 corpus-extracted father/fortune/dharma/travel goldens; 85 held, 102 excluded). +7 correct, +9 targets (Neechabhanga/Papakartari conditional-override failures + Karaka-vs-Bhava weight). VALIDATION PASS COMPLETE: 130 confirmed verdicts across 11 houses (H1:12 H2:13 H3:12 H4:6 H5:12 H6:10 H7:12 H9:16 H10:6 H11:17 H12:14; H8=Phase-E longevity). Lineage: 18/37->24/49->27/55->32/61->39/78->43/92->44/104->46/114->53/130. ~77 refinement targets for Stage-3/4 (dusthana over-weighting H6/H12; conditional-override H9; Karaka-isolation H5/H7; Dhana-Yoga H11). Held: h5_14, h12_13. CONTRA_PILLAR stays 99.",
   "track_b": {
-    "correct": 46,
-    "total": 114
+    "correct": 53,
+    "total": 130
   }
 }

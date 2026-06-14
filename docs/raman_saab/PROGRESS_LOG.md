@@ -482,3 +482,15 @@ Cast-verified the batch-2 decodes and regenerated accurate worksheets from the f
 - records 135, CONFIRMED 38 (**ratchet 18/37 untouched**), TrackA 127 (decode-validated fresh-casts).
   Suite 2960 passed. Worksheets in docs/raman_saab/worksheets/ regenerated to match the fixture.
 Awaiting user validation (confirm sig+ordinal → DRAFT→CONFIRMED → Track-B grows).
+
+### 2026-06-14 — H7 marriage goldens CONFIRMED (user-validated) — ratchet 18/37 -> 24/49
+User locked the H7 pilot (12 charts, marital_happiness). Flipped chart_01..12 to CONFIRMED:
+- chart_05 override mixed->afflicted (isolated marital_happiness: "miserable" dominates "not broken").
+- chart_06 kept marital_happiness/afflicted (NOT diluted to spouse/mixed — both-marriages-unhappy is a
+  systemic happiness failure; left as a refinement target).
+- chart_07 kept mixed; partner-loss logged as a Phase-E/Dasha event via _note (core valence unsplit).
+- **+6 correct** (01/02/07/10/11/12 match engine) **+6 refinement targets** (03/04/05/06/08/09 mismatch).
+Baseline re-based 18/37 -> **24/49** (G5-c: confirmations grow the corpus). CONFIRMED 38->50, TrackB 50.
+H7 combination layer is now MEASURABLE; the 6 mismatches are the targeted Stage-3/4 refinement list.
+Suite 2960 passed. (H9/H12 decode-verify done earlier: H12 14 verified/2 excluded/2 indeterminable;
+H9 has no birth times/places in the doc -> not fresh-castable, needs corpus stated-positions/coords.)

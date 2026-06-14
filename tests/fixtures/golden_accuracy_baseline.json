@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-13: re-based 16/37 -> 18/37. H2 rule refinement: +FunctionalNature guard on H2.C.6, Chandramangala/Gajakesari yoga evaluable, +Dwirdwadasha malefic (H2.C.69), +6th-lord-aspects-2nd (H2.C.70). H1 7/12 unchanged. H3 4/12 unchanged. H2 5/13 -> 7/13. CONTRA_PILLAR stays 99 (pillar=2 caused H1 regression).",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: re-based 18/37 -> 24/49 on the Stage-2 H7 confirmation (user-validated 12 marriage goldens HTJAH-II.chart_01..12, marital_happiness; chart_05 mixed->afflicted override, chart_07 coverture event-noted). +6 correct (01/02/07/10/11/12 match engine), +6 confirmed mismatches that are the H7 refinement targets (03 fav vs afflicted; 04 afflicted vs mixed; 05 afflicted vs favourable; 06 afflicted vs favourable [severe]; 08 favourable vs afflicted; 09 afflicted vs mixed). Prior floor 18/37 from H2 refinement. All H4/H5/H10/H11/H12 Stage-2 goldens remain DRAFT (inert) pending validation. CONTRA_PILLAR stays 99.",
   "track_b": {
-    "correct": 18,
-    "total": 37
+    "correct": 24,
+    "total": 49
   }
 }

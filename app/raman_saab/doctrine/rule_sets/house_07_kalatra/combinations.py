@@ -208,6 +208,17 @@ class _SeventhBesiegedBySaturnAndMars(C.Condition):
         return True
 
 
+class _MaleficOccupiesOrAspects7th(C.Condition):
+    """A natural malefic occupies OR casts a whole-sign drishti on the 7th house."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        for m in NATURAL_MALEFICS:
+            p = ctx.chart.planets.get(m)
+            if p is not None and (p.rasi_house == 7 or drishti.aspects_house(m, 7, ctx.chart)):
+                return True
+        return False
+
+
 class _KujaDosha(C.Condition):
     """Single-chart Kuja-Dosha (Mangal-Dosha): Mars in the 2/4/7/8/12 from the
     Lagna, the Moon, OR Venus (rashi-frame), with the corpus exemptions applied
@@ -576,4 +587,22 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "benefic relieving it -> estrangement and loss of marital happiness; "
                   "separation should be predicted",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 996)),
+    # DECISIVE: the 7th LORD in the 12th (the house of loss) AND a malefic afflicting the 7th
+    # -> loss / separation in marriage. The lord of marriage cast into the 12th is the
+    # classic loss signature; the cumulative malefic-on-7th conjunct keeps it from firing on
+    # a 7th-lord-in-12 chart whose 7th is otherwise clean (per the C.37 reviewer pattern, and
+    # matching HTJAH-II:834 "[7th lord] is in the 12th house and the karaka is also very weak,
+    # marital [happiness suffers]"). Flagged decisive (the marital_happiness bucket is
+    # benefic-starved). Fires on chart_06 (Mercury=7th-lord in 12th, Mars aspects the 7th —
+    # "two marriages, both unhappy") and chart_09 (Mars=7th-lord in 12th, Saturn in the 7th —
+    # "separated 1964"); no favourable H7 golden has the 7th lord in the 12th.
+    RuleRecord(
+        id="H7.C.83", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable",
+        condition=C.And(C.LordIn(7, 12), _MaleficOccupiesOrAspects7th()),
+        fortified=None,
+        afflicted="the 7th lord cast into the 12th (house of loss) with a malefic also "
+                  "afflicting the 7th -> loss and separation in marriage; marital happiness "
+                  "is denied",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 834)),
 )

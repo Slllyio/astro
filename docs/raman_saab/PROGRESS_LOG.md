@@ -673,3 +673,16 @@ Jupiter does too). cite HTJAH-II:996. +1 (chart_04 -> afflicted), ZERO regressio
   golden_snapshots/ dir after an UPDATE, and re-run the FULL suite AFTER editing the baseline.
 - **Remaining H7**: chart_05/06/09 (separation via 7th-lord-in-12 / dual-sign multiplicity) + chart_03/08
   (maraka-leak over-harsh — needs the non-death-marital maraka guard + Kuja-Dosha cancellation).
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 5): H7.C.83 7th-lord-in-12 separation — ratchet 84/130 -> 86/130
+New H7.C.83 + `_MaleficOccupiesOrAspects7th` predicate, flagged decisive: the 7th LORD cast into the 12th (house
+of loss) AND a malefic afflicting the 7th -> marital loss/separation. Cumulative malefic-on-7th conjunct per the
+C.37 reviewer pattern (matching HTJAH-II:834 "[7th lord] is in the 12th house and the karaka is also very weak,
+marital ..."). Fires on chart_06 (Mercury=7th-lord in 12th + Mars aspects the 7th — on the raman-cast the prose's
+dual-sign cause does NOT hold, but 7th-lord-in-12 does and reaches the same afflicted verdict) and chart_09
+(Mars=7th-lord in 12th + Saturn in the 7th — "separated 1964"). No favourable H7 golden has the 7th lord in the
+12th. +2, ZERO regressions; H7 marital_happiness 7/12 -> 9/12. No Tier-3 drift (chart_06/09 are track ["A","B"]).
+- **Remaining H7 (3)**: chart_05 (over-lenient — Mars on the 7th "violent clashes, miserable", needs an in-bucket
+  Mars/Saturn-on-7th malefic) + chart_03/08 (over-harsh — the maraka-leak: H7 is a maraka house so Venus-the-karaka
+  lands in the maraka set and drives clause-6 afflicted on a barely-weak Venus even when the only fired rule is a
+  benefic; needs a non-death-marital maraka guard, and chart_03 also needs Kuja-Dosha cancellation).

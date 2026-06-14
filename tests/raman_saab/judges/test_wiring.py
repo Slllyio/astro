@@ -380,6 +380,68 @@ class TestYogaModulation:
 
 
 # ---------------------------------------------------------------------------
+# 3b. H11 Dhana-yoga FLOOR (Stage-3 — the salvaged architecture-proposal kernel).
+# ---------------------------------------------------------------------------
+
+class TestDhanaFloor:
+    """H11 Dhana-yoga floor: a verified Dhana yoga is a wealth floor — the ONE layer
+    permitted to override a decisive afflicted, graded by pillar strength."""
+
+    _DHANA = (_fired_yoga("Y.DHANA.EXCH", "dhana"),)
+
+    def test_all_strong_dhana_overrides_afflicted_to_favourable(self):
+        """All three pillars strong + a fired Dhana yoga -> favourable, overriding an
+        afflicted (golden h11_12: strong wealth structure, weakening D9)."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=True,
+                                   bhava_bala_strong=True)
+        v, shifted, md = ht._dhana_floor("afflicted", lead, _sig(11, "gains"), self._DHANA)
+        assert v == "favourable" and shifted is True
+        assert ("dhana_floor", "Y.DHANA.EXCH:favourable") in md
+
+    def test_weak_pillar_dhana_lifts_afflicted_to_mixed(self):
+        """A weak pillar + a fired Dhana yoga lifts an afflicted only to mixed (golden
+        h11_18: the Dhana yoga tempered by a weak karaka)."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=False,
+                                   bhava_bala_strong=True)
+        v, shifted, md = ht._dhana_floor("afflicted", lead, _sig(11, "gains"), self._DHANA)
+        assert v == "mixed" and shifted is True
+        assert ("dhana_floor", "Y.DHANA.EXCH:mixed") in md
+
+    def test_floor_never_demotes_favourable(self):
+        """The floor never demotes: a weak-pillar favourable gains matter stays favourable
+        (':noted')."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=False,
+                                   bhava_bala_strong=True)
+        v, shifted, md = ht._dhana_floor("favourable", lead, _sig(11, "gains"), self._DHANA)
+        assert v == "favourable" and shifted is False
+        assert ("dhana_floor", "Y.DHANA.EXCH:noted") in md
+
+    def test_no_dhana_yoga_no_effect(self):
+        """No Dhana yoga firing -> verdict and metadata untouched."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=True,
+                                   bhava_bala_strong=True)
+        v, shifted, md = ht._dhana_floor(
+            "afflicted", lead, _sig(11, "gains"), (_fired_yoga("Y.RAJA.KT", "raja"),))
+        assert v == "afflicted" and shifted is False and md == ()
+
+    def test_scoped_to_gains_not_elder_siblings(self):
+        """The floor touches gains/acquisitions only: an H11 elder_siblings afflicted
+        with a fired Dhana yoga is untouched (co-borns are not a wealth matter)."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=True,
+                                   bhava_bala_strong=True)
+        v, shifted, md = ht._dhana_floor(
+            "afflicted", lead, _sig(11, "elder_siblings"), self._DHANA)
+        assert v == "afflicted" and shifted is False and md == ()
+
+    def test_longevity_guard_defers(self):
+        """Defensive: a longevity-guarded ledger is never floored (Phase E owns it)."""
+        lead = _clean_mixed_ledger(lord_strong=True, karaka_strong=True,
+                                   bhava_bala_strong=True, flags=("LONGEVITY_GUARD",))
+        v, shifted, md = ht._dhana_floor("afflicted", lead, _sig(11, "gains"), self._DHANA)
+        assert v == "afflicted" and shifted is False and md == ()
+
+
+# ---------------------------------------------------------------------------
 # 4. Lookup-grid metadata surfacing (None-safe, metadata-only).
 # ---------------------------------------------------------------------------
 

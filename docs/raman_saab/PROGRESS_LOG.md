@@ -578,9 +578,29 @@ purely on barren sphutas — proving "both barren = denial" even with no other a
 - **Remaining H5**: h5_01/05/07/10/12 (one-or-zero weak sphutas — malefics-on-5th mechanism) and
   h5_16 (reverse-miss) — a separate cluster. Held: h5_14, h12_13.
 
-### Stage-3 calibration summary (3 user-signed-off decisions, one session): ratchet 53/130 -> 78/130
-40.8% -> 60.0% (+25 verdicts), ZERO doctrinal inversions across all three. The unifying theme:
+### 2026-06-14 — Stage-3 DECISION 4: H11 Dhana-yoga floor — ratchet 78/130 -> 80/130
+The salvaged kernel of an architecture-proposal review (a doc proposing a linear-scoring rewrite —
+refuted: the engine is already a 13-mechanism non-linear clause tree; its triple-veto was refuted on
+the H5 charts it targeted; its masking/signification ideas were already implemented; only the
+Dhana-yoga floor survived). Diagnostic (`scratch_h11_diag.py`/`scratch_h11_proto.py`) refuted the
+doc's specific claims (chart 218 has NO encoded Dhana yoga; 223 already correct; 232 wants mixed not
+favourable) but found a clean +2 via a two-tier rule matching Raman's gradation.
+- **Fix (`_dhana_floor`, new step after _yoga_modulate)**: scoped to H11 gains/acquisitions with a
+  fired Dhana yoga — all three pillars strong -> favourable (an unshakeable wealth floor that
+  OVERRIDES even a decisive afflicted, e.g. h11_12: Dhana exchange + weakening D9); else lift only
+  afflicted -> mixed (a weak pillar tempers the yoga, e.g. h11_18). Never demotes favourable/mixed;
+  deferred under the longevity guard. The ONE layer allowed to override a decisive afflicted (every
+  other modulator only nudges a borderline 'mixed') — the doctrinal expansion signed off on.
+- **Result**: 78/130 -> **80/130** (+2, 60.0%->61.5%), ZERO regressions: H11 10/17 -> 12/17. No
+  Tier-3 snapshot drift. 6 new TestDhanaFloor unit tests. Suite green.
+- **Remaining H11**: h11_09/h11_17 (gains, no Dhana yoga — navamsa-guard over-reach) + 3
+  elder_siblings (co-born logic, not wealth). Held: h5_14, h12_13.
+
+### Stage-3 calibration summary (4 user-signed-off decisions, one session): ratchet 53/130 -> 80/130
+40.8% -> 61.5% (+27 verdicts), ZERO doctrinal inversions across all four. The unifying theme:
 Shadbala strength is now DIRECTIONAL — V2's navamsa guard stopped strong pillars over-claiming
 favourable on benefic houses; the dusthana rule stopped them under-claiming affliction on malefic
-houses; the fertility gate stopped a strong 5th lord begetting a child when both seeds are barren.
-Strength helps a benefic significator and harms via a malefic/barren one.
+houses; the fertility gate stopped a strong 5th lord begetting a child when both seeds are barren;
+the Dhana-yoga floor lets a verified wealth combination override an over-harsh afflicted on gains.
+Strength helps a benefic significator and harms via a malefic/barren one — and a named yoga is a
+structural floor a stray malefic cannot strip.

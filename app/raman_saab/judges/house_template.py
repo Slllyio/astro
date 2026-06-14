@@ -725,6 +725,49 @@ def _yoga_modulate(
     return new, shifted_kind is not None, metadata
 
 
+#: H11 gains matters eligible for the Dhana-yoga floor (wealth-accumulation only).
+_DHANA_FLOOR_KEYS: Final[frozenset[str]] = frozenset({"gains", "acquisitions"})
+
+
+def _dhana_floor(
+    verdict: Verdict, lead: FrameLedger, sig: Signification,
+    fired: tuple[FiredYoga, ...],
+) -> tuple[Verdict, bool, Metadata]:
+    """H11 Dhana-yoga FLOOR (Stage-3, user-signed-off; the salvaged kernel of the
+    architecture-proposal review). A verified Dhana yoga is a STRUCTURAL FLOOR for a
+    gains/acquisitions matter that a single malefic or a weakening navamsa cannot strip
+    (the document's correct instinct, in the engine's clause idiom). Faithful to Raman's
+    own gradation:
+
+    * all three pillars strong -> 'favourable' — an unshakeable wealth floor that
+      OVERRIDES even the 'afflicted' that clause-2's navamsa guard produced from a lone
+      malefic + weakening D9 (e.g. golden h11_12: Dhana exchange, all pillars strong,
+      D9 weakens -> Raman favourable);
+    * otherwise (a weak pillar) -> lift only an 'afflicted' up to 'mixed' — the weak
+      pillar tempers the yoga to 'wealth, but...' (e.g. golden h11_18: Dhana-59, weak
+      karaka -> Raman mixed). A favourable/mixed verdict is NEVER demoted.
+
+    Scoped to H11 gains/acquisitions; deferred under the longevity guard. This is the ONE
+    layer permitted to override a DECISIVE 'afflicted' (the doctrinal expansion signed off
+    on) — every other modulator only nudges a borderline 'mixed'. Metadata records the
+    driving Dhana yoga + the action ('favourable' / 'mixed' / 'noted')."""
+    if sig.house != 11 or sig.key not in _DHANA_FLOOR_KEYS \
+            or "LONGEVITY_GUARD" in lead.flags:
+        return verdict, False, ()
+    dhana_ids = tuple(y.id for y in fired if y.kind == "dhana")
+    if not dhana_ids:
+        return verdict, False, ()
+    all_strong = (lead.lord_strong is True and lead.karaka_strong is True
+                  and lead.bhava_bala_strong is True)
+    new: Verdict = verdict
+    if all_strong:
+        new = "favourable"
+    elif verdict == "afflicted":
+        new = "mixed"
+    action = new if new != verdict else "noted"
+    return new, new != verdict, (("dhana_floor", f"{dhana_ids[0]}:{action}"),)
+
+
 def _fertility_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict,
     lead: FrameLedger, ctx: EvalContext,
@@ -851,8 +894,8 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
 
     After ``_decide`` collapses the lead ledger (navamsa modulation included), the
     chart-level layers run in the documented order: yoga modifier (consideration
-    #4) -> H5 fertility gate -> lookup-grid metadata. `ctx` shares the per-chart
-    memo store (fired yogas are detected ONCE per chart).
+    #4) -> H11 Dhana-yoga floor -> H5 fertility gate -> lookup-grid metadata. `ctx`
+    shares the per-chart memo store (fired yogas are detected ONCE per chart).
     """
     ctx = ctx if ctx is not None else EvalContext(chart)
     lagna = _build_frame_ledger(chart, sig, "lagna", ctx)
@@ -879,13 +922,14 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     fired_yogas: tuple[FiredYoga, ...] = ctx.get_or_compute(
         "fired_yogas", lambda: detect_yogas(chart))
     verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
+    verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
-    metadata: Metadata = tuple(dict.fromkeys(yoga_md + gate_md + lookup_md))
+    metadata: Metadata = tuple(dict.fromkeys(yoga_md + dhana_md + gate_md + lookup_md))
     return SignificationVerdict(
         house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
         lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
-        borderline_shifted=shifted or yoga_shifted, metadata=metadata)
+        borderline_shifted=shifted or yoga_shifted or dhana_shifted, metadata=metadata)
 
 
 def _default_sig(house: int) -> Signification:

@@ -642,3 +642,16 @@ regenerated (citation 3836 + H3.C.37 + siblings afflicted). Suite 3071 passed.
   needs a decisive "house+karaka heavily malefic-aspected" rule, carefully guarded vs chart_54 which is also
   malefic-aspected yet favourable on lord strength); then H7 (separation rule, maraka-leak guard, dual-sign) —
   H7 is messier (bidirectional, partial effects) and will go increment-by-increment with doctrine review.
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 3): H3.C.38 lord==Karaka-Mars afflicted — ratchet 82/130 -> 83/130
+New rule H3.C.38 + `_LordKarakaMarsAfflicted` predicate, flagged decisive. The clean discriminator from Raman's
+chart_58 prose: the 3rd LORD is itself Mars ("Mars, who is himself the Karaka"), so lord and Karaka collapse into
+one planet and a single affliction (here Ketu aspecting Mars) strikes two of the three factors -> decisive. The
+lord==Karaka gate keeps chart_54 (lord Saturn, a separate strong rescuer) untouched — that is the discriminator
+the earlier global-knob probe lacked. Made CUMULATIVE (ANDs "a malefic occupies/aspects the 3rd") per the C.37
+reviewer pattern, faithful to "the house AS WELL AS the lord/Karaka come under affliction"; cites the chart-58
+conclusion HTJAH-I:3765. +1 (chart_58 -> afflicted), ZERO regressions; chart_58 Tier-3 snapshot regenerated
+(siblings + rollup -> afflicted only, no leak). Suite 3073 passed. H3 siblings now 8/12 (chart_58/61/62 added).
+- **Remaining H3**: chart_59/60 (a separate/well-disposed lord but karaka Mars + house afflicted — directly
+  contradicts chart_54's "good lord rescues", the hardest discrimination, deferred) + chart_52 (mixed, V2
+  over-commit) + chart_56 (ear_throat). Then H7.

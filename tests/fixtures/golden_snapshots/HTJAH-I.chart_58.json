@@ -9,12 +9,14 @@
       "HTJAH-I:3435",
       "HTJAH-I:3444",
       "HTJAH-I:3467",
-      "HTJAH-I:3517"
+      "HTJAH-I:3517",
+      "HTJAH-I:3765"
     ],
     "fired_rule_ids": [
       "H3.C.14",
       "H3.C.29",
       "H3.C.35",
+      "H3.C.38",
       "H3.C.5",
       "H3.C.6",
       "H3.C.7",
@@ -23,7 +25,7 @@
       "H3.L.9",
       "H3.P.Ketu"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "courage": {
         "lead_frame": "moon",
@@ -39,7 +41,7 @@
       },
       "siblings": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       }
     }
   }

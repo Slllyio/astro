@@ -286,6 +286,36 @@ class _KarakaMultiplyAfflicted(C.Condition):
         return sum(afflictions) >= 2
 
 
+class _LordKarakaMarsAfflicted(C.Condition):
+    """The 3rd LORD is itself Mars (Aquarius/Virgo Lagna -> lord and Karaka collapse into ONE
+    planet) AND that Mars is afflicted (in a dusthana 6/8/12, debilitated-without-cancellation,
+    combust, hemmed between malefics, or aspected by a natural malefic).
+
+    When lord==karaka, a SINGLE affliction strikes TWO of Raman's three factors at once, so it
+    is decisive even on a lone affliction (Chart 58: "the house as well as the lord of brothers
+    (Mars, who is himself the Karaka) come under affliction ... the subject has no brothers",
+    HTJAH-I:3765). Discriminates Chart 58 (lord==karaka==Mars, Mars aspected by Ketu) from
+    Chart 54 (lord==Saturn != karaka, brothers survive on the strong lord) — the lord==karaka
+    gate is what keeps Chart 54 untouched."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if _third_lord(chart) != _KARAKA:
+            return False
+        p = chart.planets.get(_KARAKA)
+        if p is None:
+            return False
+        if p.rasi_house in (6, 8, 12):
+            return True
+        if dignity(_KARAKA, chart) == "debil" and not neecha_bhanga(_KARAKA, chart):
+            return True
+        if C.Combust(_KARAKA).evaluate(ctx) or C.HemmedBy(_KARAKA, "malefic").evaluate(ctx):
+            return True
+        return any(name in NATURAL_MALEFICS and name != _KARAKA
+                   and drishti.aspects_planet(name, _KARAKA, chart)
+                   for name in chart.planets)
+
+
 class _ThirdHouseHemmedByMaleficsInNavamsa(C.Condition):
     """Papakartari on the 3rd house IN THE NAVAMSHA (D9): both the 2nd and 12th navamsa
     signs counted from the 3rd house's navamsa sign are occupied (by navamsa_sign) by a
@@ -734,4 +764,24 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "-> denial of brothers should be predicted",
         frame="LAGNA/D9", varga="D9", polarity="malefic",
         source=Citation("HTJAH-I", 3836)),
+    # #38 — DECISIVE: the 3rd LORD is itself Mars (lord==Karaka collapse) AND that Mars is
+    #       afflicted (dusthana / debil / combust / papakartari / malefic-aspected) -> no
+    #       brothers. When the lord and Karaka are the SAME planet, one affliction hits two
+    #       of the three factors, so even a lone affliction is decisive (Chart 58: "the house
+    #       as well as the lord of brothers (Mars, who is himself the Karaka) come under
+    #       affliction", HTJAH-I:3765). The lord==Karaka gate keeps Chart 54 (lord Saturn,
+    #       a separate strong rescuer) untouched.
+    RuleRecord(
+        id="H3.C.38", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=C.And(
+            _LordKarakaMarsAfflicted(),
+            C.Or(C.CountInHouse(3, 1, "malefic"), _MaleficAspects3rd())),
+        fortified=None,
+        afflicted="the 3rd lord being Mars himself (lord and Karaka collapsed into one) and "
+                  "afflicted, with the 3rd house ALSO afflicted (a malefic occupying or "
+                  "aspecting it) -> the house as well as the lord/Karaka of brothers are "
+                  "struck together; the native has no brothers",
+        frame="LAGNA/KARAKA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3765)),
 )

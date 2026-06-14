@@ -730,12 +730,24 @@ def _fertility_gate(
     lead: FrameLedger, ctx: EvalContext,
 ) -> tuple[Verdict, Metadata, FrameLedger]:
     """H5 Beeja/Kshetra GATE (HTJAH-I:5517-5527) — the mandatory fertility pre-pass
-    for children/progeny matters, encoded CONSERVATIVELY: Raman weighs the sphutas,
-    he never auto-denies, so when BOTH sphutas are weak a 'favourable' children
-    verdict is clamped ONE step to 'mixed' (never hard-denied to afflicted) and the
-    lead ledger gains the FERTILITY_GATE flag. Strong sphutas (and the unprinted
-    one-weak partial case) ride along as metadata only. None-safe on sparse charts
-    (a missing sphuta planet skips the gate entirely).
+    for children/progeny matters.
+
+    DOCTRINE (Stage-3 calibration, user-signed-off "O1"): Raman weighs a SINGLE weak
+    sphuta (one parent's contribution barren -> reduced but possible), but BOTH sphutas
+    weak is the strongest classical denial signal — both the male seed (Beeja) AND the
+    female field (Kshetra) are barren, which Raman reads as genuine progeny DENIAL. So:
+
+    * BOTH sphutas weak -> ``afflicted`` (decisive denial), FERTILITY_GATE flag set. This
+      is NOT an "auto-deny from nothing": it fires only when the two fertility sphutas
+      BOTH fail their odd/even-sign test. The goldens prove it — h5_08 (no malefic, no
+      benefic, neutral navamsa) and h5_11 (3 benefics, 0 malefics) are both read
+      ``afflicted`` by Raman purely on barren sphutas. The gate runs AFTER _decide /
+      yoga, so it OVERRIDES a favourable/mixed children verdict the placement evidence
+      produced — barren sphutas trump a strong 5th lord (the children-matter mirror of
+      the dusthana rule: significator strength does not beget a child when both seeds
+      are barren).
+    * Strong sphutas (and the unprinted one-weak partial case) ride along as metadata
+      only. None-safe on sparse charts (a missing sphuta planet skips the gate entirely).
 
     Metadata values are prefixed ``numeric_`` ('numeric_strong' / 'numeric_partial')
     because only the NUMERIC odd/even sphuta test is evaluated here; the
@@ -752,8 +764,10 @@ def _fertility_gate(
     if not bk.beeja_strong and not bk.kshetra_strong:
         lead = dataclasses.replace(
             lead, flags=tuple(dict.fromkeys(lead.flags + ("FERTILITY_GATE",))))
-        if verdict == "favourable":
-            verdict = "mixed"
+        # Both seed and field barren -> denial (decisive; overrides any favourable/mixed
+        # the placement evidence produced). A single weak sphuta is handled by the
+        # one-weak 'numeric_partial' branch below (weighed, not denied).
+        verdict = "afflicted"
         return verdict, (("beeja_kshetra", "weak"),), lead
     if bk.beeja_strong and bk.kshetra_strong:
         return verdict, (("beeja_kshetra", "numeric_strong"),), lead

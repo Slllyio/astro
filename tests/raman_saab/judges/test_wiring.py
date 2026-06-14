@@ -3,7 +3,7 @@
 TDD spec for:
   * ``SignificationVerdict.metadata`` / ``HouseProforma.metadata`` (frozen-safe
     key-value pairs, deterministic order);
-  * the H5 Beeja/Kshetra fertility GATE (HTJAH-I:5517-5527) — clamp, never deny;
+  * the H5 Beeja/Kshetra fertility GATE (HTJAH-I:5517-5527) — both barren sphutas deny;
   * the yoga modifier (HTJAH-I consideration #4, :480-482) — dhana/arishta/raja
     kind-scoped modulation of a borderline 'mixed' only;
   * lookup-grid metadata surfacing (H8 decanate cause, H11 source of gains,
@@ -176,7 +176,8 @@ class TestMetadata:
 # ---------------------------------------------------------------------------
 
 class TestFertilityGate:
-    """Mandatory H5 fertility pre-pass: weighs (clamps), never auto-denies."""
+    """Mandatory H5 fertility pre-pass: a single weak sphuta is weighed, but BOTH
+    barren (Stage-3 'O1') is decisive progeny DENIAL -> afflicted."""
 
     def test_sphuta_pins_hold(self):
         """The two _h5_chart longitude sets really produce both-weak / both-strong
@@ -187,12 +188,13 @@ class TestFertilityGate:
         assert (weak.beeja_strong, weak.kshetra_strong) == (False, False)
         assert (strong.beeja_strong, strong.kshetra_strong) == (True, True)
 
-    def test_weak_sphutas_clamp_favourable_children_to_mixed(self):
-        """Both sphutas weak (beeja even-sign, kshetra odd-sign) clamp a favourable
-        children verdict one step to mixed with ('beeja_kshetra','weak') recorded."""
+    def test_weak_sphutas_deny_children_afflicted(self):
+        """Both sphutas weak (beeja even-sign, kshetra odd-sign) DENY a favourable
+        children verdict to afflicted (Stage-3 'O1': both seed and field barren),
+        with ('beeja_kshetra','weak') recorded."""
         chart = _h5_chart(weak=True)
         sv = ht.judge_signification(chart, 5, _sig(5, "children"))
-        assert sv.verdict == "mixed"
+        assert sv.verdict == "afflicted"
         assert ("beeja_kshetra", "weak") in sv.metadata
 
     def test_weak_sphutas_set_fertility_gate_flag(self):
@@ -201,11 +203,13 @@ class TestFertilityGate:
         sv = ht.judge_signification(chart, 5, _sig(5, "children"))
         assert "FERTILITY_GATE" in sv.ledger.flags
 
-    def test_gate_never_hard_denies(self):
-        """Raman weighs, never auto-denies: the clamp lands on mixed, NOT afflicted."""
+    def test_gate_denies_on_both_barren_sphutas(self):
+        """Stage-3 'O1' doctrinal shift: when BOTH sphutas are barren the gate DOES
+        deny (afflicted) — the strongest classical progeny signal. (A single weak
+        sphuta is still only weighed, via the 'numeric_partial' branch.)"""
         chart = _h5_chart(weak=True)
         sv = ht.judge_signification(chart, 5, _sig(5, "children"))
-        assert sv.verdict != "afflicted"
+        assert sv.verdict == "afflicted"
 
     def test_strong_sphutas_metadata_only(self):
         """Beeja odd/odd + kshetra even/even -> 'numeric_strong' metadata (the

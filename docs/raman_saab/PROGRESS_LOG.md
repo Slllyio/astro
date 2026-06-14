@@ -558,3 +558,29 @@ pillar to call afflicted, so all-strong + lone-malefic fell to clause-8 'mixed' 
   navamsa-confirms can't lift; benefic routes to preponderance; longevity guard defers). Suite green.
 - **Next**: H5 children (1/12) — strong-pillar favourable not an inherent-affliction key; needs a
   children-specific beeja/kshetra design (its own sign-off). Held: h5_14, h12_13.
+
+### 2026-06-14 — Stage-3 DECISION 3: H5 fertility-gate extension "O1" — ratchet 73/130 -> 78/130
+Final affliction-side piece. Diagnostic (`scratch_h5_diag.py` + `scratch_h5_proto.py`) split the 11
+H5 children afflicted-misses by sphuta state: 5 "both sphutas weak" (the gate already detects, but
+only softened favourable->mixed) + 5 "one-weak/both-strong" (fertility not the cause — malefics ON
+the 5th, harder) + 1 reverse (h5_16, Raman favourable). The decisive evidence: h5_08 (no malefic,
+no benefic, neutral navamsa) and h5_11 (3 benefics, 0 malefics) are read **afflicted** by Raman
+purely on barren sphutas — proving "both barren = denial" even with no other affliction.
+- **Fix (`_fertility_gate`)**: a doctrinal REVERSAL of the gate's prior soften-only design — when
+  BOTH beeja+kshetra sphutas are weak the children verdict is now DENIED to `afflicted` (decisive,
+  overrides the placement-evidence favourable/mixed). A SINGLE weak sphuta is still only weighed
+  (the 'numeric_partial' branch). The children-matter mirror of the dusthana rule: significator
+  strength does not beget a child when both seeds are barren.
+- **Result**: 73/130 -> **78/130** (+5, 56.2%->60.0%), **ZERO regressions**: H5 children 1/12 ->
+  6/12. No Tier-3 snapshot drift (H5 children goldens are track ["A","B"]).
+- Tests: `test_wiring.py` TestFertilityGate updated (clamp->deny: `test_weak_sphutas_deny_children_afflicted`,
+  `test_gate_denies_on_both_barren_sphutas`) + class/module docstrings. Suite green.
+- **Remaining H5**: h5_01/05/07/10/12 (one-or-zero weak sphutas — malefics-on-5th mechanism) and
+  h5_16 (reverse-miss) — a separate cluster. Held: h5_14, h12_13.
+
+### Stage-3 calibration summary (3 user-signed-off decisions, one session): ratchet 53/130 -> 78/130
+40.8% -> 60.0% (+25 verdicts), ZERO doctrinal inversions across all three. The unifying theme:
+Shadbala strength is now DIRECTIONAL — V2's navamsa guard stopped strong pillars over-claiming
+favourable on benefic houses; the dusthana rule stopped them under-claiming affliction on malefic
+houses; the fertility gate stopped a strong 5th lord begetting a child when both seeds are barren.
+Strength helps a benefic significator and harms via a malefic/barren one.

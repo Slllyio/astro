@@ -686,3 +686,18 @@ dual-sign cause does NOT hold, but 7th-lord-in-12 does and reaches the same affl
   Mars/Saturn-on-7th malefic) + chart_03/08 (over-harsh — the maraka-leak: H7 is a maraka house so Venus-the-karaka
   lands in the maraka set and drives clause-6 afflicted on a barely-weak Venus even when the only fired rule is a
   benefic; needs a non-death-marital maraka guard, and chart_03 also needs Kuja-Dosha cancellation).
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 6): generalize H7.C.82 to ≥2-malefic besiege — ratchet 86/130 -> 87/130
+Generalised the committed H7.C.82 from the specific "Saturn AND Mars besiege the 7th" to "TWO OR MORE malefics
+besiege the 7th (occupy/aspect), no full-benefic relief" (leaf renamed _SeventhBesiegedBySaturnAndMars ->
+_SeventhBesiegedByMalefics). The ≥2-malefic form subsumes the Saturn+Mars case and now also catches chart_05
+(Mars-aspect + Ketu-occupy = 2 malefics, "violent clashes, miserable but not broken"). Verified across all H7:
+fires on chart_04/05/06 (all afflicted); the full-benefic guard spares favourable chart_02 (4 malefics but
+Jupiter aspects) and chart_09's Jupiter-in-7th (handled by C.83); leaves chart_03/08 (1 malefic each) untouched
+so the pending maraka-leak fix can still rescue them. +1, ZERO regressions; H7 marital_happiness 9/12 -> 10/12.
+Suite 3077 passed.
+- **Remaining H7 (2)**: chart_03/08 — over-harsh maraka-leak (death-house maraka logic afflicting "happiness" on
+  a barely-weak Venus). The maraka guard alone only gets chart_08 to mixed and leaves chart_03 afflicted
+  (Kuja-Dosha); a true fix also needs the marginal-Venus handling. These are the messiest H7 cases.
+
+### H3/H7 rule-authoring running total (6 increments): ratchet 80/130 -> 87/130; H3 siblings 5/12->8/12, H7 marital_happiness 6/12->10/12

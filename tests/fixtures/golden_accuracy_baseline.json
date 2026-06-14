@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 32/61 -> 39/78 on Stage-2 H11 confirmation (user-validated 17 gains/elder-sibling goldens h11_01..17). +7 correct, +10 targets (Dhana-Yoga undervaluation: 218/223/225/227/230/232; D9 co-born-count gap: 210/211/214/215). Lineage: 18/37(H2) -> 24/49(H7) -> 27/55(H4) -> 32/61(H10) -> 39/78(H11). H5/H12 Stage-2 goldens remain DRAFT pending validation. CONTRA_PILLAR stays 99.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 39/78 -> 43/92 on Stage-2 H12 confirmation (user-validated 14 verified-decode goldens; charts 251/252 HELD as DRAFT — unverified Lagna). +4 correct, +10 targets (12th-house dual-nature: incarceration under-penalised 244/247/248; moksha-liberation under-rewarded 257/258; expenditure/eye nuances 234/242/243/246/254). Lineage: 18/37(H2)->24/49(H7)->27/55(H4)->32/61(H10)->39/78(H11)->43/92(H12). H5 (16) still DRAFT pending validation; H6/H9 blocked on coords; H12 251/252 held. CONTRA_PILLAR stays 99.",
   "track_b": {
-    "correct": 39,
-    "total": 78
+    "correct": 43,
+    "total": 92
   }
 }

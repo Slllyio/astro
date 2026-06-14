@@ -14,19 +14,19 @@
       "H1.L.3",
       "H1.M.S06"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
       "body": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "health": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "self": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

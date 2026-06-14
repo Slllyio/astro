@@ -91,9 +91,30 @@ class TestDecide:
         assert v == "afflicted" and shifted is False
 
     def test_contradiction_yields_mixed(self):
-        """Benefic AND malefic rules both firing show contradiction -> mixed (never hidden)."""
-        v, _ = ht._decide(_ledger(fired_benefic=(_fired("benefic"),), fired_malefic=(_fired("malefic"),)))
+        """Benefic AND malefic both firing on a BALANCED ledger (1 strong pillar, 1
+        weak — no pillar preponderance) shows contradiction -> mixed (never hidden)."""
+        v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=False,
+                                  fired_benefic=(_fired("benefic"),),
+                                  fired_malefic=(_fired("malefic"),)))
         assert v == "mixed"
+
+    def test_contradiction_two_strong_pillars_favourable(self):
+        """Stage-3 'V2' preponderance: a contradiction with 2 strong pillars and a
+        non-weakening navamsa lifts to favourable (CONTRA_PILLAR_FAVOUR=2)."""
+        v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
+                                  fired_benefic=(_fired("benefic"),),
+                                  fired_malefic=(_fired("malefic"),)))
+        assert v == "favourable"
+
+    def test_contradiction_navamsa_weakens_afflicted(self):
+        """Stage-3 'V2' navamsa guard: the same 2-strong-pillar contradiction with a
+        WEAKENING navamsa is held back from favourable, falls to mixed, and is then
+        dropped to afflicted by the navamsa modulation."""
+        v, _ = ht._decide(_ledger(lord_strong=True, karaka_strong=True,
+                                  fired_benefic=(_fired("benefic"),),
+                                  fired_malefic=(_fired("malefic"),),
+                                  navamsa_status="weakens"))
+        assert v == "afflicted"
 
     def test_track_b_fallback_malefic_afflicted(self):
         """No Shadbala (lord_strong None) + a malefic rule -> afflicted by polarity alone."""

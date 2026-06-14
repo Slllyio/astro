@@ -22,19 +22,19 @@
       "H1.M.S01",
       "H1.P.Jupiter"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
       "body": {
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "health": {
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "self": {
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

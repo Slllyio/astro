@@ -30,20 +30,28 @@ BHAVA_BALA_MIN_SH: float = 300.0
 # how many of the three KNOWN pillars (``lord_strong`` / ``karaka_strong`` /
 # ``bhava_bala_strong``, ignoring None) are weak vs strong:
 #   * ``weak  >= CONTRA_PILLAR_AFFLICT`` -> 'afflicted' (Raman "factors afflicted");
-#   * ``strong >= CONTRA_PILLAR_FAVOUR`` -> 'favourable';
+#   * ``strong >= CONTRA_PILLAR_FAVOUR`` AND D9 does not weaken -> 'favourable';
 #   * otherwise                          -> 'mixed'.
 #
 # GOLDEN-TUNED knobs (NOT ``typing.Final``): ``tools/raman_saab/tune_thresholds.py``
 # rebinds them (under a save/restore context manager) while scoring candidate pillar counts
-# against the golden corpus. The DEFAULT 99 is effectively infinite — at most 3 pillars
-# exist, so weak/strong never reaches it — so clause-2 ALWAYS stays 'mixed' (the current
-# always-mixed behavior). On Track-B sparse charts all pillars are None -> the known set is
-# empty -> 'mixed' regardless of the knob. The tuner will lower these (discrete pillar
-# counts {2, 3, 99}) once multi-house goldens exist; a pillar count of 1 is too aggressive
-# (a single weak factor amid contradicting evidence should not condemn a matter), so do NOT
-# hand-set below 2 without a golden that earns the change.
-CONTRA_PILLAR_AFFLICT: int = 99
-CONTRA_PILLAR_FAVOUR: int = 99
+# against the golden corpus. On Track-B sparse charts all pillars are None -> the known set
+# is empty -> 'mixed' regardless of the knob.
+#
+# CALIBRATION 2026-06-14 (Stage-3, user-signed-off "V2"): activated from the no-op 99/99 to
+# 3/2 after an isolated CONTRA_PILLAR sweep over the 131-verdict golden corpus. AFFLICT=3
+# (all three pillars must be weak to condemn a contradicted matter — strict, because the D9
+# down-modulation already catches most afflictions); FAVOUR=2 (a two-pillar strong majority
+# lifts a contradicted matter to favourable). The FAVOUR lift is GUARDED in clause-2 by the
+# navamsa: it does NOT fire when ``L.navamsa_status == "weakens"`` — a strong-pillar majority
+# must not paint over a weakening confirmation-varga (that guard alone protected the H9
+# father-death charts + the H2 afflictions from inversion). Net: 54/131 -> 63/131 (+9), zero
+# afflicted->favourable inversions; the 7 residual misses are mild mixed->favourable
+# over-commitments on borderline charts. A pillar count of 1 is too aggressive (a single
+# weak factor amid contradicting evidence should not condemn a matter), so do NOT hand-set
+# AFFLICT below 2 without a golden that earns the change.
+CONTRA_PILLAR_AFFLICT: int = 3
+CONTRA_PILLAR_FAVOUR: int = 2
 
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.

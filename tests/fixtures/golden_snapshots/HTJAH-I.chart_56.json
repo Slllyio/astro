@@ -24,7 +24,7 @@
     "significations": {
       "courage": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "ear_throat": {
         "lead_frame": "lagna",
@@ -32,11 +32,11 @@
       },
       "short_journeys": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "siblings": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

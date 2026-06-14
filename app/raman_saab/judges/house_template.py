@@ -264,13 +264,24 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # weigh the three strength PILLARS — lord, karaka, Bhava-Bala. Count only the KNOWN
     # pillars (Shadbala present -> not None; fresh-cast goldens HAVE Shadbala, so theirs
     # ARE populated). If enough pillars are weak the "factors" are afflicted; if enough
-    # are strong they are favourable; otherwise the matter is genuinely 'mixed'.
+    # are strong AND the navamsa does not weaken they are favourable; otherwise the matter
+    # is genuinely 'mixed'.
     # The two knobs are read LIVE off the module (NOT import-time-bound) so the threshold
     # tuner's monkeypatch of shadbala_total.CONTRA_PILLAR_* takes effect during a sweep.
-    # With the default 99 knobs, weak/strong (max 3) never reaches the cut-off, so ``base``
-    # stays "mixed" — the no-op default. On Track-B (all pillars None) the known set is
-    # empty -> "mixed" (safe). The preponderance verdict is DECISIVE: _navamsa_modulate
-    # only nudges a borderline "mixed", so an afflicted/favourable here is never shifted.
+    # Defaults are 3/2 (Stage-3 calibration, user-signed-off "V2"). On Track-B (all pillars
+    # None) the known set is empty -> "mixed" (safe).
+    #
+    # NAVAMSA GUARD (Stage-3, the load-bearing half of "V2"): the FAVOUR lift additionally
+    # requires ``L.navamsa_status != "weakens"``. The navamsa (D9) is Raman's confirmation
+    # varga — a contradicted matter the Rasi pillars read as strong but the D9 weakens (lord
+    # or karaka D9-debilitated or in a 6/8/12 from the navamsa lagna) is genuinely afflicted,
+    # not favourable. Without this guard the strong-pillar 'favourable' is DECISIVE and
+    # preempts the navamsa down-modulation below — inverting the H9 father-death charts and
+    # the H2 afflictions to 'favourable'. With the guard, a weakening-D9 strong-pillar matter
+    # falls through to 'mixed', where _navamsa_modulate then drops it to 'afflicted'. This is
+    # the same discipline the navamsa/yoga modulators already obey: a contradiction is never
+    # painted over. The AFFLICTED preponderance stays unguarded and DECISIVE (navamsa
+    # 'confirms' never lifts an afflicted; only a borderline 'mixed' is nudged).
     if L.fired_benefic and L.fired_malefic:
         pillars = [L.lord_strong, L.karaka_strong, L.bhava_bala_strong]
         known = [p for p in pillars if p is not None]
@@ -278,7 +289,8 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         strong = sum(1 for p in known if p is True)
         if known and weak >= shadbala_total.CONTRA_PILLAR_AFFLICT:
             base = "afflicted"
-        elif known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR:
+        elif (known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR
+                and L.navamsa_status != "weakens"):
             base = "favourable"
         else:
             base = "mixed"

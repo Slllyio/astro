@@ -510,3 +510,29 @@ and held via direct file-writing agents — robust against the structured-output
 - All new/recovered records DRAFT/inert -> **ratchet 44/104 untouched**. records 135->165,
   CONFIRMED 105 unchanged, TrackA 127->158. Suite 3052 passed. Worksheets H6_ari_batch.md,
   H9_bhagya_batch.md written. Awaiting user validation to complete the 12-house array.
+
+### 2026-06-14 — Stage-3 calibration: clause-2 favour-preponderance "V2" — ratchet 53/130 -> 62/130
+First ENGINE calibration (all prior re-bases were golden-confirmations). Target: the dominant
+mixed-bias failure — clause-2 of `house_template._decide` returned 'mixed' on EVERY benefic+malefic
+contradiction (CONTRA_PILLAR knobs at the no-op 99/99).
+- **Method**: isolated CONTRA_PILLAR sweep over the 130-verdict corpus (`scratch_contra_sweep.py`,
+  `scratch_contra_guarded.py`), per-house before/after + explicit gain/regression list. Found the
+  bare knob-flip (3/2) nets only +5 and INVERTS genuine afflictions to favourable — the decisive
+  favour-vote preempts the navamsa down-modulation (mixed+weakens->afflicted) that was correctly
+  reading the H9 father-death charts + H2 afflictions as afflicted.
+- **Fix (user-signed-off "V2")**: `CONTRA_PILLAR_AFFLICT 99->3`, `CONTRA_PILLAR_FAVOUR 99->2`
+  (total.py) + a NAVAMSA GUARD in clause-2 — the favour lift is skipped when
+  `L.navamsa_status=='weakens'` (a weakening confirmation-varga is never painted over by Rasi
+  pillar strength; same discipline the navamsa/yoga modulators already obey). The afflicted
+  preponderance stays unguarded/decisive.
+- **Result**: 53/130 -> **62/130** (+9, 40.8%->47.7%), ZERO afflicted->favourable inversions (all
+  58 snapshot drifts are mixed->favourable). Per-house base->V2: H1 8->7, H2 7->9, H3 4->5,
+  H4 3->5, H9 7->9, H10 5->3, H11 7->10, H12 4->6. The 7 residual misses are mild mixed->favourable
+  over-commitments (notably H10 status_honour 5->3).
+- Tests: rewrote `test_preponderance.py` (3 tests: the no-op `==99` pins -> `3`/`2`; the "favourable
+  is decisive vs navamsa-weakens" rule INVERTED to the guard) + `test_house_template.py` clause-2
+  contradiction trio (balanced->mixed, 2-strong->favourable, weakens->afflicted). Regenerated 15
+  Tier-3 snapshots. Suite 3054 passed, 21 skipped, 3 xfailed.
+- **Next**: the AFFLICTION side (H5 1/12, H6 2/10) — those goldens mostly do NOT reach clause-2
+  (single-polarity / dusthana-overweight), needing the separate conditional-override / affliction-veto
+  cluster (a distinct user sign-off).

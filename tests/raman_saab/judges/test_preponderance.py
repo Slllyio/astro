@@ -9,13 +9,14 @@ karaka strength, Bhava-Bala strength (``L.lord_strong`` / ``L.karaka_strong`` /
 * count the KNOWN pillars (Shadbala present -> not None);
 * ``weak`` = how many known pillars are False, ``strong`` = how many are True;
 * ``weak  >= CONTRA_PILLAR_AFFLICT`` -> 'afflicted' (Raman "factors afflicted");
-* ``strong >= CONTRA_PILLAR_FAVOUR`` -> 'favourable';
+* ``strong >= CONTRA_PILLAR_FAVOUR`` AND D9 does not weaken -> 'favourable';
 * otherwise                          -> 'mixed'.
 
-The DEFAULT knob is 99 (effectively infinite): at most 3 pillars exist, so the
-weak/strong count never reaches it and clause-2 ALWAYS stays 'mixed' — the no-op
-the round-8 batch requires (Track-B ratchet must remain 9/24). The tuner lowers
-the knobs to a discrete pillar count later.
+The DEFAULTS are 3/2 (Stage-3 calibration, user-signed-off "V2"): AFFLICT=3 (all three
+pillars must be weak to condemn a contradicted matter) and FAVOUR=2 (a two-pillar strong
+majority lifts to favourable) — but the FAVOUR lift is GUARDED by the navamsa: it does NOT
+fire when ``L.navamsa_status == "weakens"`` (a weakening confirmation-varga is never painted
+over). See ``app/raman_saab/primitives/shadbala/total.py`` for the calibration note.
 
 On Track-B sparse charts all three pillars are None -> the known set is empty ->
 clause-2 is 'mixed' regardless of the knob (safe). Our fresh-cast goldens HAVE
@@ -88,15 +89,16 @@ def _ledger(
 
 
 # ---------------------------------------------------------------------------
-# (a) DEFAULT knob 99 -> the no-op proof (always 'mixed').
+# (a) DEFAULT knobs 3/2 (Stage-3 'V2') -> calibrated preponderance behaviour.
 # ---------------------------------------------------------------------------
 
 def test_default_knob_two_weak_pillars_still_mixed():
-    """With the default 99 knobs, a ledger with 2 weak pillars and BOTH polarities
-    fired still reads 'mixed' — weak (max 3) never reaches 99, the no-op the
-    round-8 batch requires."""
-    assert shadbala_total.CONTRA_PILLAR_AFFLICT == 99
-    assert shadbala_total.CONTRA_PILLAR_FAVOUR == 99
+    """With the calibrated default AFFLICT=3, a ledger with only 2 weak pillars
+    (weak=2 < 3) and BOTH polarities fired stays 'mixed' — the afflicted
+    preponderance needs ALL three pillars weak. (Stage-3 'V2' default: AFFLICT=3,
+    FAVOUR=2.)"""
+    assert shadbala_total.CONTRA_PILLAR_AFFLICT == 3
+    assert shadbala_total.CONTRA_PILLAR_FAVOUR == 2
     b, m = _both_fired()
     L = _ledger(lord_strong=False, karaka_strong=False, bhava_bala_strong=True,
                 fired_benefic=b, fired_malefic=m)
@@ -104,14 +106,16 @@ def test_default_knob_two_weak_pillars_still_mixed():
     assert v == "mixed" and shifted is False
 
 
-def test_default_knob_two_strong_pillars_still_mixed():
-    """The strong-pillar mirror is also clamped to 'mixed' under the default
-    infinite knobs (strong never reaches 99)."""
+def test_default_two_strong_pillars_favourable():
+    """Under the calibrated default FAVOUR=2, a both-fired ledger with 2 strong
+    pillars (strong=2 >= 2) and a NON-weakening navamsa lifts to 'favourable'
+    (Stage-3 'V2'). This is the favour-preponderance the old no-op 99 default
+    suppressed."""
     b, m = _both_fired()
     L = _ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=False,
-                fired_benefic=b, fired_malefic=m)
+                navamsa_status="neutral", fired_benefic=b, fired_malefic=m)
     v, shifted = ht._decide(L)
-    assert v == "mixed" and shifted is False
+    assert v == "favourable" and shifted is False
 
 
 # ---------------------------------------------------------------------------
@@ -193,12 +197,16 @@ def test_pillar_afflicted_not_shifted_by_navamsa_confirms(monkeypatch):
     assert v == "afflicted" and shifted is False
 
 
-def test_pillar_favourable_not_shifted_by_navamsa_weakens(monkeypatch):
-    """A strong-pillar 'favourable' is decisive: a D9 'weakens' (which would drop a
-    borderline 'mixed' to 'afflicted') must NOT touch it."""
+def test_pillar_favourable_guarded_by_navamsa_weakens(monkeypatch):
+    """NAVAMSA GUARD (Stage-3 'V2' — a doctrinal reversal of the round-8 "favourable
+    is decisive" rule): a strong-pillar majority does NOT lift to 'favourable' when
+    the D9 weakens. The favour branch is skipped, the matter falls to 'mixed', and
+    _navamsa_modulate then drops that borderline to 'afflicted' — a weakening
+    confirmation-varga is never painted over by Rasi pillar strength. This guard is
+    what protected the H9 father-death charts + the H2 afflictions from inversion."""
     monkeypatch.setattr(shadbala_total, "CONTRA_PILLAR_FAVOUR", 2)
     b, m = _both_fired()
     L = _ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=False,
                 navamsa_status="weakens", fired_benefic=b, fired_malefic=m)
     v, shifted = ht._decide(L)
-    assert v == "favourable" and shifted is False
+    assert v == "afflicted" and shifted is True

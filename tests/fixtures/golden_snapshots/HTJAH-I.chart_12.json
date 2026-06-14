@@ -12,19 +12,19 @@
       "H1.L.8",
       "H1.M.S11"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
       "body": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "health": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "self": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

@@ -36,6 +36,8 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.bhangas import neecha_bhanga
+from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 from app.raman_saab.primitives.relationships import naisargika
@@ -254,6 +256,33 @@ class _MaleficAspects3rd(C.Condition):
             if drishti.aspects_house(name, 3, ctx.chart):
                 return True
         return False
+
+
+class _KarakaMultiplyAfflicted(C.Condition):
+    """Mars (3rd Karaka) afflicted in AT LEAST TWO distinct ways among: in a dusthana
+    (6/8/12), debilitated-without-cancellation, combust, or hemmed between malefics
+    (papakartari). Raman's DECISIVE sibling-denial (HTJAH-I:3436 "If the Karaka for
+    brothers (Mars) ... is debilitated, is in combustion or [otherwise afflicted] ...
+    destruction of the indications of the 3rd house should be predicted").
+
+    Distinct from #10 (``H3.C.10``), which fires on a SINGLE affliction and is therefore
+    survivable: the >=2 threshold is the discriminator that separates a multiply-afflicted
+    Mars (no brothers — Chart 62, "Mars debilitated in the 6th, severely afflicted") from a
+    Mars merely placed in a dusthana whose brothers survive on a strong 3rd lord (Chart 54,
+    affliction-count 1). Flagged in the judge's ``_DECISIVE_AFFLICTION_RULE_IDS`` so it
+    drives the verdict past a strong-pillar preponderance."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_KARAKA)
+        if p is None:
+            return False
+        afflictions = (
+            p.rasi_house in (6, 8, 12),
+            dignity(_KARAKA, ctx.chart) == "debil" and not neecha_bhanga(_KARAKA, ctx.chart),
+            C.Combust(_KARAKA).evaluate(ctx),
+            C.HemmedBy(_KARAKA, "malefic").evaluate(ctx),
+        )
+        return sum(afflictions) >= 2
 
 
 class _LordsIdentical(C.Condition):
@@ -631,4 +660,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "weakens it)",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3430)),
+
+    # — F. decisive karaka-affliction (Stage-3 rule-authoring; HTJAH-I:3436) —
+    # #36 — DECISIVE: the Karaka Mars MULTIPLY afflicted (>=2 of dusthana / debilitation /
+    #       combustion / papakartari) -> the indications of the 3rd are destroyed; no
+    #       brothers. Distinct from #10 (a SINGLE affliction, survivable). Flagged in the
+    #       judge (_DECISIVE_AFFLICTION_RULE_IDS) so it drives the verdict past a
+    #       strong-pillar preponderance, exactly as Raman reads Charts 58/62. The >=2 gate
+    #       is the explicit guard against regressing Chart 54 (Mars dusthana-only, count 1).
+    RuleRecord(
+        id="H3.C.36", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=_KarakaMultiplyAfflicted(),
+        fortified=None,
+        afflicted="the Karaka Mars multiply afflicted (two or more of: in a dusthana, "
+                  "debilitated without cancellation, combust, hemmed between malefics) -> "
+                  "the indications of the 3rd house are destroyed; the native has no "
+                  "brothers",
+        frame="KARAKA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3436)),
 )

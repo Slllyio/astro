@@ -604,3 +604,25 @@ houses; the fertility gate stopped a strong 5th lord begetting a child when both
 the Dhana-yoga floor lets a verified wealth combination override an over-harsh afflicted on gains.
 Strength helps a benefic significator and harms via a malefic/barren one — and a named yoga is a
 structural floor a stray malefic cannot strip.
+
+### 2026-06-14 — Stage-3 H3/H7 RULE-AUTHORING (increment 1): decisive-affliction mechanism + H3.C.36 — ratchet 80/130 -> 81/130
+H3/H7 are NOT calibration-fixable (proven earlier: a global karaka placement-affliction knob is net-negative;
+their fav/afflicted goldens collide in the current evidence space). A 3-agent research workflow mapped the
+exact gap + found real corpus citations: the afflictions Raman names (D9 papakartari, multiply-afflicted karaka,
+separation yoga) either aren't encoded or fire as ONE ordinary malefic that the strong-pillar preponderance
+out-votes. Fix = author those as DECISIVE rules + a clause that makes a flagged fired rule drive the verdict.
+- **New mechanism**: `_decisive_affliction` (house_template.py, runs after _decide) — a fired malefic rule whose
+  id is in `_DECISIVE_AFFLICTION_RULE_IDS` AND whose `signification == sig.key` confirms 'afflicted' even against
+  strong pillars + a benefic aspect (chart_58 "except for the single benefic aspect ... the house and karaka come
+  under affliction"). SIGNIFICATION-PRECISE: the sig.key gate prevents the empty-rule_tags bucket leak (a siblings
+  decisive rule must not afflict 'courage'/'short_journeys'). Deferred under the longevity guard.
+- **New rule H3.C.36** (house_03_sahaja/combinations.py, cite HTJAH-I:3436): Karaka Mars afflicted in >=2 of
+  {dusthana, debil-uncancelled, combust, papakartari}. The >=2 gate is the discriminator vs the survivable
+  single-affliction H3.C.10. Fires on chart_62 (count 3), NOT chart_54 (count 1).
+- **Result**: 80/130 -> **81/130** (+1, chart_62 siblings favourable->afflicted), ZERO regressions; chart_62
+  Tier-3 snapshot regenerated (only siblings flips + H3.C.36 fired-id; courage/short_journeys correctly unchanged
+  after the leak fix). 4 new unit tests (decisive drives afflicted / signification-scoped / longevity-deferred).
+  Suite 3069 passed.
+- **Next increments**: H3.C.37 D9-papakartari (new HouseHemmedByInVarga predicate -> chart_61); H3 aspect-based
+  decisive affliction (chart_58/60); H7 separation rule + maraka-leak guard (chart_03/04/08/09); H7 dual-sign /
+  in-bucket malefic (chart_05/06). Each is a measured, signed-off increment on the same decisive-rule mechanism.

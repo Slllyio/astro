@@ -114,6 +114,16 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "incarceration", "left_eye",                                            # H12
 })
 
+# Rule ids the judge treats as DECISIVE afflictions (Stage-3 H3/H7 rule-authoring). A fired
+# MALEFIC rule whose id is listed here confirms 'afflicted' in _decide clause-1.6, even
+# against a strong-pillar preponderance and a benefic aspect — the rule-level analogue of
+# the dusthana clause-1.5. Each is a combination Raman reads as verdict-driving and is
+# specific enough to fire only on genuine severe affliction (the >=2-affliction / D9-
+# papakartari / separation-yoga gates keep them off the favourable twin charts).
+_DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
+    "H3.C.36",  # Karaka Mars multiply afflicted (>=2 of dusthana/debil/combust/papakartari)
+})
+
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -725,6 +735,29 @@ def _yoga_modulate(
     return new, shifted_kind is not None, metadata
 
 
+def _decisive_affliction(
+    verdict: Verdict, lead: FrameLedger, sig: Signification,
+) -> tuple[Verdict, bool]:
+    """DECISIVE-AFFLICTION RULE (Stage-3 H3/H7 rule-authoring) — the rule-level analogue of
+    the dusthana clause-1.5. Certain combinations Raman treats as VERDICT-DRIVING (a
+    multiply-afflicted karaka, papakartari on the house in the navamsa, a marriage-
+    separation yoga) confirm 'afflicted' even against a strong-pillar preponderance and a
+    benefic aspect (chart_58: "Except for the single benefic aspect of Jupiter ... the house
+    and the karaka come under affliction" -> afflicted).
+
+    SIGNIFICATION-PRECISE: a decisive rule drives ONLY its own matter — the gate
+    ``fr.rule.signification == sig.key`` prevents the leak that ``_bucket_fired`` would
+    otherwise allow (a signification with empty ``rule_tags`` buckets every fired house rule,
+    so a siblings decisive rule must not be allowed to afflict 'courage'/'short_journeys').
+    Deferred under the longevity guard (Phase E owns death/span). 'afflicted' is decisive."""
+    if "LONGEVITY_GUARD" in lead.flags or verdict == "afflicted":
+        return verdict, False
+    fired_decisive = any(
+        fr.rule.id in _DECISIVE_AFFLICTION_RULE_IDS and fr.rule.signification == sig.key
+        for fr in lead.fired_malefic)
+    return ("afflicted", True) if fired_decisive else (verdict, False)
+
+
 #: H11 gains matters eligible for the Dhana-yoga floor (wealth-accumulation only).
 _DHANA_FLOOR_KEYS: Final[frozenset[str]] = frozenset({"gains", "acquisitions"})
 
@@ -919,6 +952,7 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
         others.append(_build_frame_ledger(chart, sig, "karaka", ctx))
 
     verdict, shifted = _decide(lead)
+    verdict, dec_shifted = _decisive_affliction(verdict, lead, sig)
     fired_yogas: tuple[FiredYoga, ...] = ctx.get_or_compute(
         "fired_yogas", lambda: detect_yogas(chart))
     verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
@@ -929,7 +963,8 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     return SignificationVerdict(
         house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
         lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
-        borderline_shifted=shifted or yoga_shifted or dhana_shifted, metadata=metadata)
+        borderline_shifted=shifted or dec_shifted or yoga_shifted or dhana_shifted,
+        metadata=metadata)
 
 
 def _default_sig(house: int) -> Signification:

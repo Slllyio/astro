@@ -16,19 +16,28 @@ from app.raman_saab.judges import house_judge as legacy
 from app.raman_saab.judges import house_template as ht
 from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.doctrine.rules import RuleRecord
+from app.raman_saab.doctrine.significations import Signification
 from app.raman_saab.doctrine.sources import Citation
+
+#: Minimal significations for the _decisive_affliction signification-scoping tests.
+_SIBLINGS_SIG = Signification(key="siblings", house=3, primary_karaka="Mars",
+                              rule_tags=("siblings",), source=Citation("HTJAH-I", 3351))
+_SELF_SIG = Signification(key="self", house=1, primary_karaka="Sun",
+                          rule_tags=("self",), source=Citation("HTJAH-I", 1))
 
 
 # ---------------------------------------------------------------------------
 # Helpers: build FiredRule / FrameLedger instances directly for _decide units.
 # ---------------------------------------------------------------------------
 
-def _fired(polarity: str) -> rf.FiredRule:
-    """A synthetic FiredRule carrying only the polarity `_decide` reads."""
+def _fired(polarity: str, rule_id: str | None = None,
+           signification: str = "self") -> rf.FiredRule:
+    """A synthetic FiredRule carrying the polarity `_decide` reads, with an optional
+    explicit rule id + signification (for the decisive-affliction-rule tests)."""
     rule = RuleRecord(
-        id=f"TEST.{polarity}",
+        id=rule_id or f"TEST.{polarity}",
         house=1,
-        signification="self",
+        signification=signification,
         group="combination",
         kind="evaluable",
         condition=None,
@@ -153,6 +162,34 @@ class TestDecide:
                                   fired_malefic=(_fired("malefic"),),
                                   flags=("AFFLICTION_MATTER", "LONGEVITY_GUARD")))
         assert v != "afflicted"
+
+    def test_decisive_affliction_rule_drives_afflicted(self):
+        """Stage-3 _decisive_affliction: a fired MALEFIC rule whose id is in
+        _DECISIVE_AFFLICTION_RULE_IDS and whose signification matches the matter confirms
+        afflicted even from a decisive favourable (chart_58/62: multiply-afflicted karaka)."""
+        decisive_id = next(iter(ht._DECISIVE_AFFLICTION_RULE_IDS))
+        dec = _fired("malefic", decisive_id, signification="siblings")
+        L = _ledger(lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+                    fired_malefic=(dec,))
+        v, shifted = ht._decisive_affliction("favourable", L, _SIBLINGS_SIG)
+        assert v == "afflicted" and shifted is True
+
+    def test_decisive_affliction_signification_scoped(self):
+        """No cross-signification leak: a siblings-decisive rule does NOT afflict a 'self'
+        matter even when it sits in the (empty-rule_tags) ledger's malefic bucket."""
+        decisive_id = next(iter(ht._DECISIVE_AFFLICTION_RULE_IDS))
+        dec = _fired("malefic", decisive_id, signification="siblings")
+        v, shifted = ht._decisive_affliction("favourable", _ledger(fired_malefic=(dec,)),
+                                             _SELF_SIG)
+        assert v == "favourable" and shifted is False
+
+    def test_decisive_affliction_deferred_under_longevity_guard(self):
+        """The longevity guard defers a decisive-affliction rule too (Phase E owns death)."""
+        decisive_id = next(iter(ht._DECISIVE_AFFLICTION_RULE_IDS))
+        dec = _fired("malefic", decisive_id, signification="siblings")
+        L = _ledger(fired_malefic=(dec,), flags=("LONGEVITY_GUARD",))
+        v, shifted = ht._decisive_affliction("favourable", L, _SIBLINGS_SIG)
+        assert v == "favourable" and shifted is False
 
     def test_track_b_fallback_malefic_afflicted(self):
         """No Shadbala (lord_strong None) + a malefic rule -> afflicted by polarity alone."""

@@ -1,7 +1,7 @@
 {
-  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 24/49 -> 27/55 on the Stage-2 H4 confirmation (user-validated: Chart 64 mother/afflicted, 76/77/81 education/favourable, Chart 85 SPLIT into 85-A vehicles/favourable [h4_05] + 85-B property/favourable [h4_06]). +3 correct (76/77/81 match engine) +3 refinement targets (64 afflicted vs mixed; 85-A vehicles fav vs mixed; 85-B property fav vs mixed). Prior 24/49 from H7 marriage confirmation; 18/37 from H2. H5/H10/H11/H12 Stage-2 goldens remain DRAFT pending validation. CONTRA_PILLAR stays 99.",
+  "_comment": "Track-B accuracy ratchet floor. 2026-06-14: 27/55 -> 32/61 on Stage-2 H10 confirmation (user-validated 6 career goldens h10_01..06: 114/126 profession_learned-fav, 195 profession_authority-fav, 198 profession_authority-mixed, 203/204 status_honour-mixed). +5 correct, +1 target (198 mixed vs engine afflicted). Lineage: 18/37 (H2) -> 24/49 (H7) -> 27/55 (H4) -> 32/61 (H10). H5/H11/H12 Stage-2 goldens remain DRAFT pending validation. CONTRA_PILLAR stays 99.",
   "track_b": {
-    "correct": 27,
-    "total": 55
+    "correct": 32,
+    "total": 61
   }
 }

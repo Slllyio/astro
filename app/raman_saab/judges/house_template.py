@@ -124,6 +124,7 @@ _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H3.C.36",  # Karaka Mars multiply afflicted (>=2 of dusthana/debil/combust/papakartari)
     "H3.C.37",  # 3rd house hemmed between malefics in the Navamsha (papakartari in amsa)
     "H3.C.38",  # 3rd lord==Karaka Mars, afflicted (lord+karaka struck together)
+    "H3.C.39",  # 3rd lord substantially combust (powerless lord -> bhava weak)
     "H7.C.82",  # Saturn+Mars besiege the 7th, no benefic relief (marital separation)
     "H7.C.83",  # 7th lord in the 12th + malefic on the 7th (marital loss/separation)
 })

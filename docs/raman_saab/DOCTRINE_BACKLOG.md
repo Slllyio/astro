@@ -94,6 +94,18 @@ Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):
 - Planet results vary by avastha/disposition, not mere occupancy (HPA-19:47; HPA-7 the 10
   avasthas) — a longer-horizon `shadbala`/metadata item, deferred.
 
+## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  (reviewer-flagged)
+**Origin.** bphs-doctrine-reviewer flag on H3.C.39 (Phase-2a). The engine carries TWO
+Venus-combustion thresholds: `_combust_graded` uses 0.85 for Venus/Saturn (a NOVEL heuristic
+explicitly "NOT cited to Raman", wired only into the `_karaka_intact` triple-veto), while
+H3.C.39's `_ThirdLordSubstantiallyCombust` uses a flat 0.5. Chart_59's Venus is 0.79 — Raman
+calls it "powerless" (HTJAH-I:3788), so the 0.5 bar is the more faithful one.
+**Status.** No runtime collision (separate paths). But the project should pick ONE
+Venus-combustion doctrine. Decision is the user's (it touches the karaka-intact veto, which
+has its own blast radius): keep both (documented), lower the `_combust_graded` Venus/Saturn
+exemption toward Raman's reading, or unify on a single combustion model. Deferred pending
+user sign-off; H3.C.39 ships as-is (faithful, zero-regression).
+
 ## Golden expansion  `golden`  (Phase 3)
 - Mine more worked charts from HTJAH-I/II early chapters (full birth lines) via the existing
   DRAFT→worksheet→CONFIRMED pipeline.

@@ -701,3 +701,28 @@ Suite 3077 passed.
   (Kuja-Dosha); a true fix also needs the marginal-Venus handling. These are the messiest H7 cases.
 
 ### H3/H7 rule-authoring running total (6 increments): ratchet 80/130 -> 87/130; H3 siblings 5/12->8/12, H7 marital_happiness 6/12->10/12
+
+### 2026-06-15 — DOCTRINE-FOUNDATION PROGRAM (user pivot: "read all the books")
+The user redirected from chart-by-chart grinding to a systematic read of Raman's full corpus to build
+the doctrine foundation the hard tail needs. Approved plan: prioritized gap-driven read -> compendium +
+backlog -> implement the foundational mechanisms it surfaces (signed-off increments).
+- **Phase 0** (citations): verified HPA-NN / GBB-N / 3HC resolvers already work (sources.py) — no change.
+- **Phase 1** (the read): 5-agent extraction sweep over GBB/HTJAH-I/HTJAH-II/HPA/3HC -> committed
+  `doctrine_compendium.md` + `DOCTRINE_BACKLOG.md` (commit 0d3c932). Key: chart_59/60 have VERBATIM
+  doctrine (HTJAH-I:3788 combust-lord, HTJAH-I:3815 house+karaka afflicted); paksha-bala already in the
+  stack and Kuja-Dosha sign-exemption cancellation already encoded (gap narrows to marginal-Venus +
+  maraka-leak); HPA/3HC are large un-mined rule sources.
+
+### 2026-06-15 — Phase-2a: H3.C.39 combust-lord decisive rule — ratchet 87/130 -> 88/130
+Diagnosis refined B1 ("grand comparative-weighing rework") into a specific, low-risk rule: chart_59's 3rd
+lord Venus is combust 0.79 ("powerless", HTJAH-I:3788) while its Shadbala pillar reads strong; chart_60 is a
+genuine holistic relative-strength LIMIT (lord good, karaka+house Shadbala-strong but Raman reads them
+afflicted — not cleanly capturable without regressing chart_54, which also has a heavily malefic-aspected
+3rd). New H3.C.39 + `_ThirdLordSubstantiallyCombust` (>=0.5), flagged decisive. bphs-doctrine-reviewer:
+SOUND-WITH-CAVEAT/KEEP — validated the lord-decisive vs karaka->=2 asymmetry against the Chart-54 contrast.
++1 (chart_59 -> afflicted), ZERO regressions; H3 siblings 9/12; suite 3079 passed; chart_59 snapshot regenerated.
+- **Reviewer FLAG (B7, deferred to user)**: two Venus-combustion thresholds coexist — H3.C.39's 0.5 vs
+  `_combust_graded`'s 0.85 Venus/Saturn exemption (non-Raman heuristic, karaka-veto path only). chart_59 (0.79)
+  proves 0.5 is the more faithful; the project should pick one Venus-combustion doctrine (user's call).
+- **chart_60 documented as a genuine limit** (Raman's holistic relative-strength judgment of a Shadbala-weak
+  lord he calls "more powerful" — the engine cannot reproduce it without regressing chart_54).

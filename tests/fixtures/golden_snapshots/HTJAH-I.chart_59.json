@@ -7,6 +7,7 @@
       "HTJAH-I:3432",
       "HTJAH-I:3436",
       "HTJAH-I:3466",
+      "HTJAH-I:3788",
       "HTJAH-I:4087"
     ],
     "fired_rule_ids": [
@@ -15,12 +16,13 @@
       "H3.C.28",
       "H3.C.30",
       "H3.C.35",
+      "H3.C.39",
       "H3.C.5",
       "H3.C.7",
       "H3.C.8",
       "H3.L.11"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "courage": {
         "lead_frame": "lagna",
@@ -36,7 +38,7 @@
       },
       "siblings": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       }
     }
   }

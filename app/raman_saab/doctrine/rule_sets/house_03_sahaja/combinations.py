@@ -316,6 +316,21 @@ class _LordKarakaMarsAfflicted(C.Condition):
                    for name in chart.planets)
 
 
+class _ThirdLordSubstantiallyCombust(C.Condition):
+    """The 3rd lord is substantially combust (combust_fraction >= 0.5 — at least half-eclipsed
+    by the Sun). Raman reads a combust 3rd lord as 'powerless', which renders the whole bhava
+    weak and denies brothers even when the Karaka is well disposed (Chart 59 conclusion
+    HTJAH-I:3788; combustion is among the 'destruction of the indications' causes listed at
+    HTJAH-I:3436). Decisive on its own because the lord is a primary factor and combustion
+    strips its power; the >=0.5 bar keeps a barely-combust lord from condemning the matter
+    (and is below the Venus high-combust exemption used elsewhere, matching Raman's reading of
+    Chart 59 where Venus at ~0.79 combustion is treated as powerless)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_third_lord(ctx.chart))
+        return p is not None and p.combust_fraction >= 0.5
+
+
 class _ThirdHouseHemmedByMaleficsInNavamsa(C.Condition):
     """Papakartari on the 3rd house IN THE NAVAMSHA (D9): both the 2nd and 12th navamsa
     signs counted from the 3rd house's navamsa sign are occupied (by navamsa_sign) by a
@@ -784,4 +799,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "struck together; the native has no brothers",
         frame="LAGNA/KARAKA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3765)),
+    # #39 — DECISIVE: the 3rd LORD substantially combust (>=0.5) -> a 'powerless' lord renders
+    #       the bhava weak; brothers denied even with a well-disposed Karaka. Chart 59
+    #       conclusion: "the ruler of the third becoming combust and hence powerless renders
+    #       the third house weak. This stands against his having any brothers." (HTJAH-I:3788;
+    #       combustion is a 'destruction of the indications' cause at HTJAH-I:3436.) The lord
+    #       is a PRIMARY factor, so unlike the survivable single karaka-affliction (the >=2
+    #       gate of #36) a combust LORD is decisive on its own. Fires on chart_59 (Venus
+    #       combust 0.79); no favourable/mixed sibling golden has a combust 3rd lord.
+    RuleRecord(
+        id="H3.C.39", house=3, signification="siblings", group="combination",
+        kind="evaluable",
+        condition=_ThirdLordSubstantiallyCombust(),
+        fortified=None,
+        afflicted="the 3rd lord substantially combust (powerless) -> the bhava is rendered "
+                  "weak and brothers are denied, even when the Karaka is well disposed",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3788)),
 )

@@ -64,13 +64,17 @@ NavStatus = Literal["confirms", "weakens", "neutral", "unknown"]
 #: Frozen-safe judge metadata: deterministic (key, value) string pairs.
 Metadata = tuple[tuple[str, str], ...]
 
-# Combust thresholds for the karaka-intact "graded combustion" test. Saturn and Venus
-# use a HIGHER bar (a larger combust_fraction is required to count as a true affliction)
-# because they are easily eclipsed yet doctrinally resilient. NOVEL engine heuristic —
-# NOT cited to Raman; tune here.
-_COMBUST_HARD_FRACTION: float = 0.5            # default: half-combust counts
-_COMBUST_HARD_FRACTION_HIGH: float = 0.85      # Saturn / Venus: near-total combustion only
-_HIGH_COMBUST_PLANETS: frozenset[str] = frozenset({"Saturn", "Venus"})
+# Combust threshold for the karaka-intact "graded combustion" test: a half-combust planet
+# (combust_fraction >= 0.5) counts as a true affliction.
+#
+# B7 (2026-06-15, doctrine-foundation): the former Saturn/Venus 0.85 "resilience" exemption
+# (a NOVEL heuristic, explicitly NOT cited to Raman) was REMOVED — unified to a single 0.5 bar
+# for all planets. Chart 59 contradicts the exemption: Raman calls a 0.79-combust Venus
+# "powerless" (HTJAH-I:3788, the very chart H3.C.39 is built on), so a higher Venus/Saturn bar
+# is doctrinally wrong. Unifying is zero-regression on the golden corpus and removes the
+# inconsistency the bphs-doctrine-reviewer flagged (this 0.5 now matches H3.C.39's lord-combust
+# bar — one combustion doctrine).
+_COMBUST_HARD_FRACTION: float = 0.5            # half-combust counts (all planets)
 
 # Dusthana houses (6/8/12) counted from the navamsa lagna weaken the D9 verdict.
 _D9_WEAK_HOUSES: frozenset[int] = frozenset({6, 8, 12})
@@ -454,13 +458,13 @@ def _navamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
 
 
 def _combust_graded(planet: str, chart: RamanChart) -> bool:
-    """Is `planet` combust beyond its graded threshold? Saturn/Venus need near-total
-    combustion (NOVEL engine heuristic, NOT Raman-stated)."""
+    """Is `planet` at least half-combust (combust_fraction >= 0.5)? One threshold for all
+    planets (B7 unification — the former Saturn/Venus 0.85 exemption was removed; see the
+    _COMBUST_HARD_FRACTION note)."""
     p = chart.planets.get(planet)
     if p is None:
         return False
-    thresh = _COMBUST_HARD_FRACTION_HIGH if planet in _HIGH_COMBUST_PLANETS else _COMBUST_HARD_FRACTION
-    return p.combust_fraction >= thresh
+    return p.combust_fraction >= _COMBUST_HARD_FRACTION
 
 
 def _debilitated_uncancelled(planet: str, chart: RamanChart) -> bool:

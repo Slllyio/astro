@@ -322,9 +322,9 @@ class _ThirdLordSubstantiallyCombust(C.Condition):
     weak and denies brothers even when the Karaka is well disposed (Chart 59 conclusion
     HTJAH-I:3788; combustion is among the 'destruction of the indications' causes listed at
     HTJAH-I:3436). Decisive on its own because the lord is a primary factor and combustion
-    strips its power; the >=0.5 bar keeps a barely-combust lord from condemning the matter
-    (and is below the Venus high-combust exemption used elsewhere, matching Raman's reading of
-    Chart 59 where Venus at ~0.79 combustion is treated as powerless)."""
+    strips its power; the >=0.5 bar keeps a barely-combust lord from condemning the matter and
+    matches the engine's unified half-combust threshold (B7: the former Venus/Saturn 0.85
+    exemption was removed, since Raman treats Chart 59's ~0.79-combust Venus as powerless)."""
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
         p = ctx.chart.planets.get(_third_lord(ctx.chart))

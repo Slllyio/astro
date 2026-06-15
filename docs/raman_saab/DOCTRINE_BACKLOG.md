@@ -94,7 +94,14 @@ Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):
 - Planet results vary by avastha/disposition, not mere occupancy (HPA-19:47; HPA-7 the 10
   avasthas) — a longer-horizon `shadbala`/metadata item, deferred.
 
-## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  (reviewer-flagged)
+## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  ✅ RESOLVED 2026-06-15
+**Settled:** removed the non-Raman 0.85 Venus/Saturn exemption; `_combust_graded` now uses one
+0.5 half-combust bar for all planets, matching H3.C.39. Zero golden regression (the exemption
+only affected the karaka-intact triple-veto, and no golden sits in the 0.5–0.85 band with the
+combined debil+maraka condition). Chart 59's powerless 0.79 Venus (HTJAH-I:3788) is the warrant.
+Below is the original analysis, kept for provenance.
+
+### (original)
 **Origin.** bphs-doctrine-reviewer flag on H3.C.39 (Phase-2a). The engine carries TWO
 Venus-combustion thresholds: `_combust_graded` uses 0.85 for Venus/Saturn (a NOVEL heuristic
 explicitly "NOT cited to Raman", wired only into the `_karaka_intact` triple-veto), while

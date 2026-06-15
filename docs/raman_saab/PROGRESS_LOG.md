@@ -726,3 +726,21 @@ SOUND-WITH-CAVEAT/KEEP — validated the lord-decisive vs karaka->=2 asymmetry a
   proves 0.5 is the more faithful; the project should pick one Venus-combustion doctrine (user's call).
 - **chart_60 documented as a genuine limit** (Raman's holistic relative-strength judgment of a Shadbala-weak
   lord he calls "more powerful" — the engine cannot reproduce it without regressing chart_54).
+
+### 2026-06-15 — Phase-2b: H7 blemishless-Venus floor — ratchet 88/130 -> 89/130
+The H7 over-harsh charts (chart_03/08: Raman favourable, engine afflicted) have Venus marginally under the
+canonical 5.5 Shadbala bar (5.32/5.37). A Venus-bar sweep showed lowering it to 5.3 gives +2 zero-regression
+BUT deviates from the canonical minimum and is zero-regression only by corpus luck (overfit) — so the USER chose
+the faithful marriage-scoped alternative. New `_blemishless_venus_floor` (HTJAH-II:1207 "blemishless Venus as
+karaka and 7th lord aspecting the 7th"; HTJAH-II:368): a blemishless Venus (dignity not debil/enemy, combust
+<0.5, no Saturn/Mars/Rahu/Ketu conjunct or aspecting it — the SUN excluded since its mode is combustion, gated
+separately) as karaka + 7th-lord/in-7th/aspecting-7th lifts marital_happiness to favourable. Decisive-favourable
+that NEVER overrides a fired separation/besiege (decisive-affliction guard spares chart_06) and never demotes;
+canonical Venus bar untouched. +1 (chart_03 -> favourable). chart_08 correctly NOT fixed (its Venus has Mars on
+it -> not blemishless; forcing it would be unfaithful overfit). H7 marital_happiness 10/12 -> 11/12. 4 new
+TestBlemishlessVenusFloor unit tests; suite 3083 passed; no Tier-3 drift.
+- **Session ratchet milestone: 53/130 -> 89/130 (40.8% -> 68.5%)** across calibration (V2/dusthana/fertility/
+  dhana) + 7 rule-authoring increments + the doctrine-foundation program (Phases 0/1/2a/2b).
+- **Remaining hard cases**: chart_08 (Venus not blemishless), chart_60 (holistic relative-strength limit),
+  chart_52 (mixed V2 over-commit), chart_56 (H3 ear_throat). Deferred backlog: B5/B6 (HPA/3HC yoga mining),
+  B7 (reconcile the two Venus-combustion thresholds), Phase 3 (golden expansion).

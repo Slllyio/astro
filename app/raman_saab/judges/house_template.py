@@ -40,6 +40,7 @@ from typing import Final, Literal, Optional
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart import varga
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
 from app.raman_saab.doctrine.conditions import EvalContext
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
@@ -766,6 +767,50 @@ def _decisive_affliction(
 #: H11 gains matters eligible for the Dhana-yoga floor (wealth-accumulation only).
 _DHANA_FLOOR_KEYS: Final[frozenset[str]] = frozenset({"gains", "acquisitions"})
 
+#: Malefics whose association "blemishes" Venus for the marital-happiness floor. The Sun is
+#: EXCLUDED: the Sun's affliction of a graha is COMBUSTION (checked separately via
+#: combust_fraction), not a mere conjunction/aspect, so a non-combusting Sun on Venus does not
+#: disqualify "blemishless" (HTJAH-II:1207, chart_03: Sun on Venus, combust 0 -> still blemishless).
+_BLEMISH_MALEFICS: Final[frozenset[str]] = frozenset({"Saturn", "Mars", "Rahu", "Ketu"})
+
+
+def _blemishless_venus_floor(
+    chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+) -> tuple[Verdict, bool, Metadata]:
+    """H7 BLEMISHLESS-VENUS floor (Stage-3 doctrine-foundation, user-signed-off). Raman: a
+    *blemishless* Venus (good dignity, not combust, unafflicted by the malefic grahas) as
+    karaka — and as 7th lord / aspecting the 7th — assures a chaste, devoted wife and marital
+    happiness, regardless of a marginal Shadbala (HTJAH-II:1207 "the aspect of a blemishless
+    Venus as karaka and 7th lord aspecting the 7th house"; HTJAH-II:368 "Venus in exaltation
+    or own vargas -> the wife will be good and beautiful"). This is the faithful, marriage-
+    SCOPED fix for the over-harsh chart_03 (Venus 5.32, just under the canonical 5.5 bar, but
+    blemishless) — it leaves the canonical Venus Shadbala minimum untouched.
+
+    A decisive-favourable for marital_happiness only: it lifts an afflicted/mixed verdict to
+    favourable, but NEVER overrides a genuine decisive affliction (a fired separation/besiege
+    rule in _DECISIVE_AFFLICTION_RULE_IDS — that is what spares chart_06: blemishless Venus but
+    the 7th is besieged) and never demotes. 'Blemish' = the malefic grahas Saturn/Mars/Rahu/
+    Ketu (NOT the Sun — combustion is the Sun's mode, gated separately)."""
+    if sig.key != "marital_happiness" or verdict == "favourable" \
+            or "LONGEVITY_GUARD" in lead.flags:
+        return verdict, False, ()
+    if any(fr.rule.id in _DECISIVE_AFFLICTION_RULE_IDS for fr in lead.fired_malefic):
+        return verdict, False, ()
+    v = chart.planets.get("Venus")
+    if v is None or dignity("Venus", chart) in ("debil", "enemy") \
+            or v.combust_fraction >= 0.5:
+        return verdict, False, ()
+    for m in _BLEMISH_MALEFICS:
+        p = chart.planets.get(m)
+        if p is not None and (p.rasi_house == v.rasi_house
+                              or drishti.aspects_planet(m, "Venus", chart)):
+            return verdict, False, ()
+    venus_7th = (_lord_of_sign(chart.asc_sign, 7) == "Venus" or v.rasi_house == 7
+                 or drishti.aspects_house("Venus", 7, chart))
+    if not venus_7th:
+        return verdict, False, ()
+    return "favourable", True, (("blemishless_venus", "favourable"),)
+
 
 def _dhana_floor(
     verdict: Verdict, lead: FrameLedger, sig: Signification,
@@ -962,14 +1007,16 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
         "fired_yogas", lambda: detect_yogas(chart))
     verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
     verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
+    verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
-    metadata: Metadata = tuple(dict.fromkeys(yoga_md + dhana_md + gate_md + lookup_md))
+    metadata: Metadata = tuple(dict.fromkeys(
+        yoga_md + dhana_md + blem_md + gate_md + lookup_md))
     return SignificationVerdict(
         house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
         lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
-        borderline_shifted=shifted or dec_shifted or yoga_shifted or dhana_shifted,
-        metadata=metadata)
+        borderline_shifted=shifted or dec_shifted or yoga_shifted or dhana_shifted
+        or blem_shifted, metadata=metadata)
 
 
 def _default_sig(house: int) -> Signification:

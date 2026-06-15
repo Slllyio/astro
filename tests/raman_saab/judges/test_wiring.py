@@ -115,6 +115,17 @@ def _fired_rule(polarity: str):
     return rf.FiredRule(rule=rule, branch="fortified", text="ok")
 
 
+def _fired_rule_id(polarity: str, rule_id: str):
+    """A synthetic FiredRule with an explicit rule id (for decisive-rule-guard tests)."""
+    from app.raman_saab.doctrine.rules import RuleRecord
+    from app.raman_saab.judges import rule_firing as rf
+    rule = RuleRecord(
+        id=rule_id, house=7, signification="marital_happiness", group="combination",
+        kind="evaluable", condition=None, fortified="ok", afflicted="bad",
+        frame="LAGNA", varga="D1", polarity=polarity, source=Citation("HTJAH-II", 1))
+    return rf.FiredRule(rule=rule, branch="afflicted", text="bad")
+
+
 def _clean_mixed_ledger(**over) -> ht.FrameLedger:
     """A borderline-mixed ledger: weak lord, strong karaka, neutral-only evidence."""
     base = dict(
@@ -439,6 +450,57 @@ class TestDhanaFloor:
                                    bhava_bala_strong=True, flags=("LONGEVITY_GUARD",))
         v, shifted, md = ht._dhana_floor("afflicted", lead, _sig(11, "gains"), self._DHANA)
         assert v == "afflicted" and shifted is False and md == ()
+
+
+# ---------------------------------------------------------------------------
+# 3c. H7 Blemishless-Venus floor (Stage-3 doctrine-foundation, HTJAH-II:1207/368).
+# ---------------------------------------------------------------------------
+
+class TestBlemishlessVenusFloor:
+    """A blemishless Venus (good dignity, not combust, no malefic graha on it) as karaka +
+    7th-lord / aspecting the 7th lifts a marital_happiness verdict to favourable — the faithful,
+    marriage-scoped fix that leaves the canonical Venus Shadbala bar untouched."""
+
+    @staticmethod
+    def _chart(malefic_on_venus=False):
+        # Aries Lagna (asc 10deg) -> 7th = Libra; Venus in Libra (own sign) is the 7th lord IN
+        # the 7th -> blemishless + 7th-related. Optionally drop Saturn on Venus to blemish it.
+        lons = {"Venus": 190.0}
+        if malefic_on_venus:
+            lons["Saturn"] = 192.0
+        return _track_b(lons, asc_lon=10.0)
+
+    def test_blemishless_venus_lifts_to_favourable(self):
+        v, shifted, md = ht._blemishless_venus_floor(
+            self._chart(), _sig(7, "marital_happiness"), "afflicted", _clean_mixed_ledger())
+        assert v == "favourable" and shifted is True
+        assert ("blemishless_venus", "favourable") in md
+
+    def test_malefic_graha_on_venus_blocks_floor(self):
+        """Saturn on Venus is a blemish -> the floor does not fire (verdict unchanged)."""
+        v, shifted, md = ht._blemishless_venus_floor(
+            self._chart(malefic_on_venus=True), _sig(7, "marital_happiness"),
+            "afflicted", _clean_mixed_ledger())
+        assert v == "afflicted" and shifted is False and md == ()
+
+    def test_decisive_affliction_blocks_floor(self):
+        """A fired decisive-affliction rule (genuine separation/besiege) is never painted over
+        by a blemishless Venus (the chart_06 case: blemishless Venus but the 7th besieged)."""
+        decisive_id = next(iter(ht._DECISIVE_AFFLICTION_RULE_IDS))
+        lead = _clean_mixed_ledger(fired_malefic=(_fired_rule_id("malefic", decisive_id),))
+        v, shifted, _ = ht._blemishless_venus_floor(
+            self._chart(), _sig(7, "marital_happiness"), "afflicted", lead)
+        assert v == "afflicted" and shifted is False
+
+    def test_floor_never_demotes_and_scoped_to_marital_happiness(self):
+        # never demotes a favourable
+        v, shifted, _ = ht._blemishless_venus_floor(
+            self._chart(), _sig(7, "marital_happiness"), "favourable", _clean_mixed_ledger())
+        assert v == "favourable" and shifted is False
+        # scoped: a non-marital H7 signification is untouched
+        v2, sh2, md2 = ht._blemishless_venus_floor(
+            self._chart(), _sig(7, "spouse"), "afflicted", _clean_mixed_ledger())
+        assert v2 == "afflicted" and sh2 is False and md2 == ()
 
 
 # ---------------------------------------------------------------------------

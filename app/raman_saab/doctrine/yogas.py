@@ -139,6 +139,18 @@ class _KemadrumaBhanga(C.Condition):
         return bhangas.kemadruma_bhanga(ctx.chart)
 
 
+class _NthHouseSignOwnedBy(C.Condition):
+    """The whole-sign `house` (1..12 from the Lagna) is a sign owned by `planet`. Backs the
+    Dhana-Yoga clause '5th from the Ascendant happens to be a sign of Venus' (3HC:7632)."""
+
+    def __init__(self, house: int, planet: str) -> None:
+        self.house, self.planet = house, planet
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        sign = ((ctx.chart.asc_sign - 1) + (self.house - 1)) % 12 + 1
+        return SIGN_LORDS[sign] == self.planet
+
+
 # ── record forms ─────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class YogaRecord:
@@ -317,6 +329,35 @@ YOGAS: tuple[YogaRecord, ...] = (
         effect=("Acquires great wealth: lord of Lagna in the 2nd, the 2nd lord "
                 "in the 11th, or the 11th lord in Lagna."),
         source=Citation("HTJAH-I", 2480)),
+
+    # — dhana (3HC mining, B5 — additive coverage; the 1-2-11 cyclic chain and two
+    #   specific 5th/11th-axis combinations Raman names; each feeds the H2/H11 dhana
+    #   modulation + dhana-floor for real charts) —
+    YogaRecord(
+        id="Y.DHANA.BAHU", name="Bahudravyarjana Yoga (1-2-11 lord cyclic chain)",
+        kind="dhana",
+        # The CONJUNCTIVE chain (distinct from the disjunct Y.DHANA.CHAIN above): lagna lord
+        # in the 2nd AND 2nd lord in the 11th AND 11th lord in the lagna -> earns much money.
+        condition=C.And(C.LordIn(1, 2), C.LordIn(2, 11), C.LordIn(11, 1)),
+        effect=("Earns much money and amasses good fortune (the lagna lord in the 2nd, "
+                "the 2nd lord in the 11th, and the 11th lord in the lagna)."),
+        source=Citation("3HC", 8184)),
+    YogaRecord(
+        id="Y.DHANA.122", name="Dhana Yoga (Venus-5th + Saturn-11th, a Venus 5th-sign)",
+        kind="dhana",
+        condition=C.And(_NthHouseSignOwnedBy(5, "Venus"),
+                        C.InRashiHouse("Venus", 5), C.InRashiHouse("Saturn", 11)),
+        effect=("Immense wealth: the 5th is a sign of Venus with Venus in the 5th and "
+                "Saturn in the 11th."),
+        source=Citation("3HC", 7632)),
+    YogaRecord(
+        id="Y.DHANA.125", name="Dhana Yoga (Sun own-5th + Moon & Jupiter 11th)",
+        kind="dhana",
+        condition=C.And(C.InRashiHouse("Sun", 5), C.HasDignity("Sun", {"own"}),
+                        C.InRashiHouse("Moon", 11), C.InRashiHouse("Jupiter", 11)),
+        effect=("Immense wealth: the Sun in the 5th identical with his own sign (Leo) "
+                "and Jupiter and the Moon in the 11th (a Moon-Jupiter Gajakesari in gains)."),
+        source=Citation("3HC", 7645)),
 )
 
 

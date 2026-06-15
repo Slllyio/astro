@@ -75,7 +75,19 @@ stigma ("fixity of affections"). A positive karaka-quality gate the engine lacks
 **Plan.** A `marital_happiness` benefic rule: blemishless/Yogakaraka Venus → favourable
 (complements B2/B3 for the chart_03/08 over-harsh).
 
-## B5 — Yoga additions  `new-rule`
+## B5 — Yoga additions  `new-rule`  (partly done 2026-06-15)
+**Done (coverage):** added 3 cited 3HC Dhana yogas to the detector — Y.DHANA.BAHU (Bahudravyarjana
+1-2-11 cyclic chain, 3HC:8184), Y.DHANA.122 (Venus-5th + Saturn-11th in a Venus 5th-sign,
+3HC:7632), Y.DHANA.125 (Sun own-5th + Moon&Jupiter-11th, 3HC:7645). They fire on **0 of the 130
+goldens** (ratchet unchanged at 89) — pure additive fidelity for real charts via the H2/H11 dhana
+modulation + dhana-floor. **Deliberately NOT added** (un-faithful or noisy): Lakshmi (#72) — its
+faithful form needs "lagna-lord powerful" (Shadbala), and the geometry-only form over-fires (17/130);
+the Sun-based Vesi/Vasi/Ubhayachari — near-universal (~85/130), inert (kind=other), snapshot noise.
+**Remaining (defer to after Phase-3 goldens):** the HPA named raja/virtue yogas (Chamara, Shankha,
+Sreenatha, Bheri, Sarada, Kesari, Kahala, …) — add only once goldens exercise them, so each is
+golden-validated. Original list below.
+
+### (original)
 Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):
 - **3HC Dhana yogas** (H2/H11 wealth): #122 Venus-5th+Saturn-11th (3HC:7632); #125 Sun-5th-own
   + Moon/Jupiter-11th (3HC:7645); Bahudravyarjana #133 lagna→2nd→11th→lagna lord chain

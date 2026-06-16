@@ -150,9 +150,14 @@ and both reach data we can legally use (archived facts; CC0 Wikidata).
    events and `vedastro_importer` for charts, then `build_event_dasha_join`.
 2. **Inspect TkAstroDb** for a redistributable ADB XML dump / parser; if present,
    it gives ADB *with events* (28.7k AA births + death/event data) in one shot.
-3. **Build a Wikidata event puller + name/birthdate matcher** (P26+P580 marriages,
-   P570 deaths, P39 positions) → attach to charted persons. CC0, scalable; the
-   network-allowlist means run via the app's fetch path or an added host allowance.
+3. ✅ **DONE (puller) — `wikidata_events_importer.py`** pulls dated marriages
+   (P26+P580), deaths (P570) and career positions (P39+P580) from WDQS, requiring a
+   birth date (P569) so each row is matchable, emitting `(name, name_norm,
+   birth_date, event_class, year)`. Network isolated + mocked (6 tests). It also
+   *fills a real gap*: the pipeline already consumed `wikidata_dated_events.parquet`
+   but nothing produced it. **Remaining:** (a) run it where WDQS is reachable
+   (sandbox allowlist blocks it here); (b) a small join matching WD events to
+   birth-*time* charts by `name_norm` + birth year — the actual event multiplier.
 4. **ADB-Wayback biography extractor** over snapshots `wayback_scraper` retrieves —
    parse biography sections → (person, event_class, year). Higher effort; pursue if
    1–3 fall short of 9k.

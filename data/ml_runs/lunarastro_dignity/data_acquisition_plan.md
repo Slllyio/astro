@@ -142,9 +142,12 @@ and both reach data we can legally use (archived facts; CC0 Wikidata).
 
 ## 6. Immediate next steps (revised after verification)
 
-1. **Extend `vedastro_importer` to emit dated marriage events** from the confirmed
-   Marriage-Divorce dataset (MIT, dates present). Lowest effort, licensed, ~5–10k
-   marriages joined to AA charts. **Do this first.**
+1. ✅ **DONE — `vedastro_events_importer.py`** extracts dated marriage/divorce
+   events from the Marriage-Divorce dataset into the standard `events.csv` schema
+   (schema-tolerant: flat-column or JSON `Info`; strips birth-year name suffixes;
+   year-precision). Tested (11 tests) + CLI verified. **Next physical step:**
+   download the dataset CSV + the companion birth dataset, run this importer for
+   events and `vedastro_importer` for charts, then `build_event_dasha_join`.
 2. **Inspect TkAstroDb** for a redistributable ADB XML dump / parser; if present,
    it gives ADB *with events* (28.7k AA births + death/event data) in one shot.
 3. **Build a Wikidata event puller + name/birthdate matcher** (P26+P580 marriages,

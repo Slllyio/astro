@@ -155,9 +155,14 @@ and both reach data we can legally use (archived facts; CC0 Wikidata).
    birth date (P569) so each row is matchable, emitting `(name, name_norm,
    birth_date, event_class, year)`. Network isolated + mocked (6 tests). It also
    *fills a real gap*: the pipeline already consumed `wikidata_dated_events.parquet`
-   but nothing produced it. **Remaining:** (a) run it where WDQS is reachable
-   (sandbox allowlist blocks it here); (b) a small join matching WD events to
-   birth-*time* charts by `name_norm` + birth year — the actual event multiplier.
+   but nothing produced it. **Remaining:** run it where WDQS is reachable
+   (sandbox allowlist blocks it here).
+   ✅ **DONE (matcher) — `match_events_to_charts.py`** attaches `person_id` to any
+   name+birth-year event source (Wikidata, biographies) by joining birth-time
+   charts on normalized name + birth year (±1 yr; ambiguous homonyms dropped, never
+   guessed). Includes an exact `jd_to_year`. 8 tests. This is the event multiplier:
+   every WD event whose person is already charted becomes a usable dated event,
+   ready for `build_event_dasha_join`.
 4. **ADB-Wayback biography extractor** over snapshots `wayback_scraper` retrieves —
    parse biography sections → (person, event_class, year). Higher effort; pursue if
    1–3 fall short of 9k.

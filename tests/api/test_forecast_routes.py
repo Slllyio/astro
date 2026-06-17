@@ -139,3 +139,22 @@ async def test_forecast_conjunction_orb_bounds(client: AsyncClient) -> None:
     assert (await client.get("/medini/forecast", params={"conjunction_orb": 99})).status_code == 422
     ok = await client.get("/medini/forecast", params={"conjunction_orb": 5, "days": 5})
     assert ok.status_code == 200
+
+
+# ------------------------------- page routes ------------------------------- #
+
+@pytest.mark.asyncio
+async def test_forecast_page_returns_html(client: AsyncClient) -> None:
+    resp = await client.get("/medini/forecast/page")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers.get("content-type", "")
+    assert "/medini/forecast" in resp.text  # the page fetches its own endpoint
+
+
+@pytest.mark.asyncio
+async def test_almanac_page_returns_html_and_targets_almanac(client: AsyncClient) -> None:
+    resp = await client.get("/medini/almanac/page")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers.get("content-type", "")
+    # The almanac page must point its client-side fetch at the almanac endpoint.
+    assert 'data-endpoint="/medini/almanac"' in resp.text

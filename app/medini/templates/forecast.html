@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mundane Forecast — Geo-Astrological Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f7f7f7; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 28px 22px 60px; }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 2px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 18px; }
+    .window { color: #555; font-size: 13px; margin-bottom: 18px; }
+    .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+    .controls label { font-size: 13px; color: #555; }
+    .controls input { width: 80px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+    .controls button { padding: 7px 16px; border: 0; border-radius: 6px; background: #2a4a8e; color: #fff; font-size: 14px; cursor: pointer; }
+    .controls button:hover { background: #1f3a72; }
+    .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 22px; }
+    .summary-cell { background: #fff; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid #e2e2e2; }
+    .summary-num { font-size: 24px; font-weight: 600; color: #2a4a8e; }
+    .summary-label { font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+    h2 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 0.6px; margin: 18px 0 10px; font-weight: 700; }
+    .event { background: #fff; border: 1px solid #e2e2e2; border-radius: 6px; padding: 11px 13px; margin-bottom: 9px; }
+    .event-head { display: flex; align-items: center; gap: 8px; }
+    .event-type { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+    .event-type-INGRESS { background: #c4d4e8; color: #1a3a6a; }
+    .event-type-STATION { background: #d8c4e8; color: #4a1a6a; }
+    .event-type-CONJUNCTION { background: #e8d4a4; color: #5a3a10; }
+    .event-when { font-size: 12px; color: #888; }
+    .event-description { font-size: 14px; margin-top: 6px; line-height: 1.4; }
+    .event-kurma { font-size: 12px; color: #666; margin-top: 4px; }
+    .empty-state { color: #888; font-style: italic; padding: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 id="title">Mundane Forecast</h1>
+    <p class="subtitle" id="subtitle">Upcoming ingresses, stations, and conjunctions over the coming days.</p>
+
+    <div class="controls">
+      <label for="days" id="days-label">Days ahead</label>
+      <input type="number" id="days" min="1" max="90" value="14" />
+      <button id="refresh">Refresh</button>
+    </div>
+
+    <p class="window" id="window"></p>
+
+    <div class="summary-row">
+      <div class="summary-cell"><div class="summary-num" id="num-events">-</div><div class="summary-label">Events</div></div>
+      <div class="summary-cell"><div class="summary-num" id="num-ingress">-</div><div class="summary-label">Ingress</div></div>
+      <div class="summary-cell"><div class="summary-num" id="num-station">-</div><div class="summary-label">Station</div></div>
+      <div class="summary-cell"><div class="summary-num" id="num-conj">-</div><div class="summary-label">Conjunct</div></div>
+    </div>
+
+    <h2>Events</h2>
+    <div id="event-list" class="empty-state">Fetching feed...</div>
+  </div>
+
+  <script>
+    // The almanac page reuses this template with data-endpoint="/medini/almanac".
+    const ENDPOINT = document.body.dataset.endpoint || '/medini/forecast';
+
+    function el(tag, className, textValue) {
+      const e = document.createElement(tag);
+      if (className) e.className = className;
+      if (textValue !== undefined) e.textContent = textValue;
+      return e;
+    }
+    function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+    function fmtWhen(iso) { return (iso || '').replace('T', ' ').replace(/\+00:00$/, ' UTC'); }
+
+    function renderEvents(events) {
+      const container = document.getElementById('event-list');
+      container.className = '';
+      clearChildren(container);
+      if (!events || events.length === 0) {
+        container.className = 'empty-state';
+        container.textContent = 'No significant astrological events in this window. Sky is calm.';
+        return;
+      }
+      events.forEach(ev => {
+        const card = el('div', 'event');
+        const head = el('div', 'event-head');
+        head.appendChild(el('span', `event-type event-type-${ev.type}`, ev.type));
+        if (ev.timestamp_utc) head.appendChild(el('span', 'event-when', fmtWhen(ev.timestamp_utc)));
+        card.appendChild(head);
+        card.appendChild(el('div', 'event-description', ev.description || ''));
+        if (ev.kurma) {
+          card.appendChild(el('div', 'event-kurma',
+            `${ev.kurma.region} region · ${ev.kurma.tattva} · ${ev.kurma.nakshatra}`));
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function setSummary(data) {
+      const s = data.summary || {};
+      document.getElementById('num-events').textContent = s.event_count ?? '-';
+      document.getElementById('num-ingress').textContent = s.ingress_count ?? '-';
+      document.getElementById('num-station').textContent = s.station_count ?? '-';
+      document.getElementById('num-conj').textContent = s.conjunction_count ?? '-';
+      document.getElementById('window').textContent =
+        `${fmtWhen(data.start_utc)} → ${fmtWhen(data.end_utc)} · ${data.direction || ''}`;
+    }
+
+    function load() {
+      const days = Math.max(1, Math.min(90, parseInt(document.getElementById('days').value, 10) || 14));
+      document.getElementById('event-list').textContent = 'Fetching feed...';
+      document.getElementById('event-list').className = 'empty-state';
+      fetch(`${ENDPOINT}?days=${days}`)
+        .then(r => r.json())
+        .then(data => { setSummary(data); renderEvents(data.events); })
+        .catch(err => {
+          document.getElementById('event-list').textContent = 'Failed to load: ' + err;
+        });
+    }
+
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('days').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+    load();
+  </script>
+</body>
+</html>

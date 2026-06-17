@@ -15,8 +15,10 @@ Public — no auth, consistent with the rest of the Medini surface.
 from __future__ import annotations
 
 from dataclasses import asdict
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, status
+from fastapi.responses import HTMLResponse
 
 from app.medini.services.knowledge_search import (
     IndexUnavailable,
@@ -27,12 +29,53 @@ knowledge_router = APIRouter(
     prefix="/medini/knowledge", tags=["Knowledge Library (RAG)"],
 )
 
+# Templates live alongside the medini module (same convention as medini_routes).
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "medini" / "templates"
+
 
 @knowledge_router.get("/stats")
 async def knowledge_stats() -> dict:
     """Index metadata. Safe before load — reports ``loaded``/``exists`` without
     paying the model-load cost."""
     return get_default_service().stats()
+
+
+@knowledge_router.get("/topics")
+async def knowledge_topics() -> dict:
+    """Topic taxonomy for the search-filter dropdown.
+
+    Topic tags are dotted paths (``category.leaf``); this groups them into a
+    ``{category: [leaf, ...]}`` taxonomy. Degrades to an empty taxonomy (not an
+    error) when the index is absent, so the page's dropdown just shows "(any)".
+    """
+    try:
+        topics = get_default_service().topics()
+    except IndexUnavailable:
+        return {"taxonomy": {}, "topics": []}
+
+    taxonomy: dict[str, list[str]] = {}
+    for tag in topics:
+        category, _, leaf = tag.partition(".")
+        if not leaf:
+            category, leaf = "general", tag
+        bucket = taxonomy.setdefault(category, [])
+        if leaf not in bucket:
+            bucket.append(leaf)
+    for leaves in taxonomy.values():
+        leaves.sort()
+    return {"taxonomy": taxonomy, "topics": list(topics)}
+
+
+@knowledge_router.get("/page", response_class=HTMLResponse)
+async def knowledge_page() -> HTMLResponse:
+    """The doctrine-search UI. Fetches /stats, /topics, and /search client-side."""
+    html_path = _TEMPLATES_DIR / "knowledge_search.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Knowledge search template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
 
 
 @knowledge_router.get("/search")

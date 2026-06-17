@@ -204,6 +204,34 @@ class KnowledgeSearchService:
             "n_sources": int(self._chunks_df["source"].nunique()),
         }
 
+    def topics(self) -> tuple[str, ...]:
+        """Sorted, de-duplicated topic tags present in the index.
+
+        Lightweight: reads only the chunks parquet (the ``topics`` column) and
+        never loads the sentence-transformer model, so a topic dropdown can be
+        populated cheaply. Raises ``IndexUnavailable`` if the index is missing.
+        """
+        if not self.index_exists():
+            raise IndexUnavailable(
+                f"RAG index missing in {self._embeddings_dir}. "
+                f"Rebuild via: python -m app.medini.ml.build_rag_index"
+            )
+        if self._chunks_df is not None:
+            df = self._chunks_df
+        else:
+            df = pd.read_parquet(
+                self._embeddings_dir / "chunks.parquet", columns=["topics"],
+            )
+        seen: set[str] = set()
+        for cell in df["topics"]:
+            if cell is None:
+                continue
+            for tag in cell:  # numpy array or list per row
+                text = str(tag).strip()
+                if text:
+                    seen.add(text)
+        return tuple(sorted(seen))
+
     def search(
         self,
         query: str,

@@ -89,6 +89,42 @@ def _build_synthetic_index(tmp_path) -> "object":
 
 
 @pytest.mark.asyncio
+async def test_knowledge_page_returns_html(client: AsyncClient) -> None:
+    resp = await client.get("/medini/knowledge/page")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers.get("content-type", "")
+
+
+@pytest.mark.asyncio
+async def test_knowledge_topics_empty_when_no_index(client: AsyncClient) -> None:
+    """Topics degrade to an empty taxonomy (not an error) without an index."""
+    resp = await client.get("/medini/knowledge/topics")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body == {"taxonomy": {}, "topics": []}
+
+
+@pytest.mark.asyncio
+async def test_knowledge_topics_builds_taxonomy_from_index(client: AsyncClient, tmp_path, monkeypatch) -> None:
+    """With an index, dotted topic tags group into a {category: [leaf]} taxonomy."""
+    svc = _build_synthetic_index(tmp_path)
+    # Override the parquet's topics with dotted tags to exercise grouping.
+    import pandas as pd
+    df = pd.read_parquet(tmp_path / "embeddings" / "chunks.parquet")
+    df["topics"] = [["timing.marriage"], ["graha.saturn"], ["timing.career"]]
+    df.to_parquet(tmp_path / "embeddings" / "chunks.parquet")
+
+    from app.api import knowledge_routes
+    monkeypatch.setattr(knowledge_routes, "get_default_service", lambda: svc)
+
+    resp = await client.get("/medini/knowledge/topics")
+    assert resp.status_code == 200
+    tax = resp.json()["taxonomy"]
+    assert tax["timing"] == ["career", "marriage"]
+    assert tax["graha"] == ["saturn"]
+
+
+@pytest.mark.asyncio
 async def test_knowledge_search_lexical_happy_path(client: AsyncClient, tmp_path, monkeypatch) -> None:
     """With a synthetic index and lexical mode (no model needed), search returns
     ranked results serialized to JSON."""

@@ -28,6 +28,19 @@ Snapshot of the project state as of **2026-04-28** (Tasks 1–7 of the queued ex
 | `dissolution_20260428T090150Z`       | dissolution     | VedAstro + Wayback | 14,684| 0.2328    | 0.564  | 0.577    |
 | `politics_20260428T090354Z`          | politics        | Wayback only       | 422   | 0.1351    | 0.529  | 0.417    |
 | `entertainment_20260428T090406Z`     | entertainment   | Wayback only       | 422   | 0.3199    | 0.539  | 0.672    |
+| `dissolution_20260617T161022Z`       | dissolution     | VedAstro (HF)      | 14,278| 0.2395    | 0.568  | 0.578    |
+
+**2026-06-17 resume run**: re-ran the Phase-5 pipeline end-to-end on real data
+pulled fresh from HuggingFace (`vedastro-org/15000-Famous-People-*`), since the
+ephemeral container ships with no data on disk. VedAstro import → Vedic-Tensor ETL
+(14,278 rows × 535 features) → `dissolution` model reproduced the historical
+result (CV 0.568 ± 0.008, holdout 0.578). Top SHAP features: `aspect_orb_rahu_mercury`,
+`aspect_orb_ketu_mercury`, `dist_moon_saturn`. Artifacts committed to branch
+`data/vedastro-corpus` (raw.csv, features parquet, run dir) — gitignored elsewhere,
+so the branch is the durable copy. Next scaling step (Wayback/lapaas) still pending:
+archive.org's CDX API returns 403 from the sandbox, so the full crawl needs a
+reachable CDX path or a user-provided CDX cache.
+
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
 

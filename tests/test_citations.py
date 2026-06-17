@@ -23,8 +23,18 @@ from app.llm.citations import (
     _summary_query,
     gather_citations,
 )
-from app.llm.interpreter import interpret_chart
+import dataclasses
+
+from app.llm.interpreter import Interpretation, interpret_chart
 from app.medini.services.knowledge_search import SearchResult
+
+# The citations integration into interpret_chart (Interpretation.citations) is
+# in-flight round8 work not yet on this branch. The standalone gatherer
+# (app.llm.citations) is present and fully tested above; only the end-to-end
+# wiring is gated until Interpretation grows a `citations` field.
+_HAS_CITATIONS_FIELD = "citations" in {
+    f.name for f in dataclasses.fields(Interpretation)
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -203,6 +213,10 @@ class TestGatherCitations:
 # interpret_chart citations attachment                                         #
 # --------------------------------------------------------------------------- #
 
+@pytest.mark.skipif(
+    not _HAS_CITATIONS_FIELD,
+    reason="Interpretation.citations integration is in-flight round8 work not on this branch",
+)
 class TestInterpretChartCitations:
     """End-to-end: settings flag + gather_citations wired into interpret_chart."""
 

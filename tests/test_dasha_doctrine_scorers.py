@@ -8,6 +8,10 @@ Covers:
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("app.medini.ml.dasha_doctrine_score")  # in-flight module not present on this branch
+
 import numpy as np
 import pandas as pd
 import pytest

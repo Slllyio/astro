@@ -6,8 +6,19 @@ import pytest
 
 from app.medini.ml.stage_d_features import (
     QUALIFYING_EVENT_CLASSES,
+    _CORPUS_SMOKE,
     load_corpus,
 )
+
+# The Stage-D smoke corpus is a generated (gitignored) ETL artifact, not
+# committed. When it's absent (e.g. CI) the data-driven tests can't run, so
+# skip the module cleanly rather than failing with FileNotFoundError.
+if not _CORPUS_SMOKE.exists():
+    pytest.skip(
+        "Stage-D smoke corpus not generated "
+        "(run `python -m app.medini.ml.stage_d_features --smoke`)",
+        allow_module_level=True,
+    )
 
 
 class TestQualifyingClasses:

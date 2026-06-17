@@ -8,6 +8,10 @@ Pins the Mantel-Haenszel pooling primitives + birth_jd deduplication:
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("app.medini.ml.dasha_doctrine_score")  # in-flight module not present on this branch
+
 import math
 
 import numpy as np

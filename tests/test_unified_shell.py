@@ -32,26 +32,28 @@ async def test_root_shell_references_all_surface_urls(client) -> None:
     If a new tab is added without updating the shell, this test catches it."""
     response = await client.get("/")
     body = response.text
-    # All tab targets the shell promises:
+    # Section-card targets the manuscript shell promises (real routes only):
     for url in (
-        "/chart/page",            # Nadi calculator
-        "/portal/",               # NumeroAstro
-        "/medini/kurma-widget",   # Kurma grid
+        "/chart/page",               # Nadi calculator
+        "/portal/",                  # NumeroAstro portal
+        "/medini/kurma-widget",      # Kurma grid
         "/medini/cartography/page",  # Astrocartography
-        "/medini/today/page",     # Cosmic Weather
-        "/medini/eclipses/page",  # Eclipses
-        "/docs",                  # FastAPI swagger
+        "/medini/eclipses/page",     # Eclipses
+        "/docs",                     # FastAPI swagger
     ):
         assert url in body, f"Shell missing surface URL: {url}"
 
 
 @pytest.mark.asyncio
 async def test_root_shell_has_tab_navigation(client) -> None:
-    """Sanity: the shell must have a recognisable nav element."""
+    """Sanity: the manuscript shell must carry its nav chrome + identity.
+
+    The root was redesigned from the old `<nav class="tabs">` shell into the
+    Pothi manuscript ("Jyotisha Doctrine Library") with a fixed `nav-bar`."""
     response = await client.get("/")
     body = response.text
-    assert '<nav class="tabs"' in body
-    assert "Vedic &amp; Nadi Astrology Engine" in body or "Vedic & Nadi Astrology Engine" in body
+    assert '<div class="nav-bar">' in body
+    assert "Jyotisha Doctrine Library" in body
 
 
 # ---------- /chart/page (Nadi calculator) ----------

@@ -8,6 +8,10 @@ Pins the PyG HeteroData factory contract:
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")  # Stage-D / PyG heavy dep — see requirements-stage-d.txt
+
 from pathlib import Path
 
 import pandas as pd

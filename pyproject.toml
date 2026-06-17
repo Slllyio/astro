@@ -11,3 +11,19 @@ testpaths = ["tests"]
 # a module-level pytestmark applies the asyncio marker to a sync function).
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.run]
+# The offline research layer — ML training/rule-discovery and ETL/importers
+# under app/medini/ml/ and app/medini/etl/ — is excluded from coverage
+# *measurement*. These are manually-run CLI scripts, not part of the served
+# FastAPI surface, and their tests require the heavy Stage-D deps
+# (torch/lifelines/duckdb in requirements-stage-d.txt) that don't install on
+# CI, so they skip there. Their tests still run and guard against regressions
+# wherever the deps are present — this only keeps the --cov-fail-under gate
+# enforcing 80% against the code CI can actually exercise (the served app +
+# core engine). Served medini modules (mundane, eclipses, kurma_chakra,
+# astrocartography, services/) live directly under app/medini/ and stay measured.
+omit = [
+    "app/medini/ml/*",
+    "app/medini/etl/*",
+]

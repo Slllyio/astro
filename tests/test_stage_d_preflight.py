@@ -1,6 +1,10 @@
 """Tests for Fork-A Stage D pre-flight diagnostics."""
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")  # Stage-D heavy dep — see requirements-stage-d.txt
+
 import pandas as pd
 import pytest
 

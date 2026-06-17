@@ -163,8 +163,9 @@ _STATUS_TO_COLOR = {"shipped": "positive", "flagged": "neutral", "rejected": "ne
 async def integrated_form_route(request: Request) -> HTMLResponse:
     """GET /reading/integrated/ — chart-input form."""
     return _templates.TemplateResponse(
+        request,
         "reading_integrated_form.html",
-        {"request": request},
+        {},
     )
 
 
@@ -362,7 +363,7 @@ async def integrated_generate_route(
         comparator_results=comp_results,
         narrative_result=narrative_result,
     )
-    return _templates.TemplateResponse("reading_integrated_view.html", context)
+    return _templates.TemplateResponse(request, "reading_integrated_view.html", context)
 
 
 @router.get("/cache-stats")

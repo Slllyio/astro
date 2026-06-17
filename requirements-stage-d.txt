@@ -1,0 +1,15 @@
+# Heavy research deps for the Stage-D dynamic-deephit / survival-analysis /
+# DuckDB-catalog work. Split out of requirements.txt because they fail to
+# build wheels on the GitHub-hosted CI runner (autograd-gamma) and dominate
+# install time. Install locally on top of the core requirements:
+#
+#   pip install -r requirements.txt -r requirements-stage-d.txt
+#
+# The test modules that exercise these (tests/test_stage_d_*.py,
+# tests/test_duckdb_catalog.py, tests/test_experiment_loader.py,
+# tests/test_heterograph_dataset.py, tests/test_build_event_dasha_join.py)
+# guard their imports with pytest.importorskip and skip when the dep is absent.
+lifelines>=0.27,<0.30
+torch>=2.0,<3.0
+scikit-survival>=0.22,<0.25
+duckdb>=0.10

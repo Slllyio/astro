@@ -1,6 +1,10 @@
 """Tests for Fork-A Stage D PyTorch Dataset + time-bin assignment."""
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")  # Stage-D heavy dep — see requirements-stage-d.txt
+
 import numpy as np
 import pandas as pd
 import pytest

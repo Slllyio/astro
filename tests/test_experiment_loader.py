@@ -9,6 +9,10 @@ Pins the loader contract:
 """
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("duckdb")  # DuckDB catalog dep — see requirements-stage-d.txt
+
 from pathlib import Path
 
 import duckdb

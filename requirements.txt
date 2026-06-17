@@ -34,8 +34,12 @@ matplotlib>=3.8
 pytest
 pytest-asyncio
 pytest-cov
+hypothesis
 httpx
-# Stage D dynamic-deephit deps (see docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md)
-lifelines>=0.27,<0.30
-torch>=2.0,<3.0
-scikit-survival>=0.22,<0.25
+# NOTE: the heavy Stage-D research deps (torch, lifelines, scikit-survival,
+# duckdb) are intentionally NOT here — they fail to build wheels on the CI
+# runner (autograd-gamma) and balloon install time. They live in
+# requirements-stage-d.txt and are installed only when running the Stage-D /
+# survival-analysis / DuckDB-catalog suites locally. The tests that need them
+# skip cleanly (pytest.importorskip) when the deps are absent, so the core CI
+# suite stays installable and green.

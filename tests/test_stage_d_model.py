@@ -1,6 +1,10 @@
 """Tests for Fork-A Stage D Dynamic-DeepHit model."""
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("torch")  # Stage-D heavy dep — see requirements-stage-d.txt
+
 import torch
 import pytest
 

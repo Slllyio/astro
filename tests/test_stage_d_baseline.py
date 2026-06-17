@@ -1,6 +1,10 @@
 """Tests for Fork-A Stage D Cox PH baseline."""
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("lifelines")  # Survival-analysis dep — see requirements-stage-d.txt
+
 import pandas as pd
 import pytest
 

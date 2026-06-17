@@ -10,6 +10,7 @@ pyjwt
 authlib
 slowapi
 itsdangerous
+python-multipart
 # Vendored portal (Flask app under /portal/) — astro-web-portal probability engine
 flask>=3.0
 skyfield>=1.46

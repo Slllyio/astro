@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import datetime as dt
 import itertools
+import math
 from typing import Any, Literal
 
 import swisseph as swe
@@ -83,6 +84,20 @@ def planet_at_jd(jd: float, planet_name: str) -> dict[str, Any]:
 def _circular_distance_180(lon_a: float, lon_b: float) -> float:
     diff = abs(lon_a - lon_b) % 360.0
     return min(diff, 360.0 - diff)
+
+
+def _jd_to_iso(jd: float) -> str:
+    """Convert a UT Julian Day back to an ISO-8601 UTC timestamp string.
+
+    Mirrors the inline conversion in ``daily_mundane_forecast`` so the
+    multi-day scanners below can stamp each event with a wall-clock time.
+    """
+    y, m, d, h_decimal = swe.revjul(jd, swe.GREG_CAL)
+    h = int(h_decimal)
+    mi = int((h_decimal - h) * 60)
+    s = int(round((((h_decimal - h) * 60) - mi) * 60))
+    s = max(0, min(59, s))
+    return dt.datetime(int(y), int(m), int(d), h, mi, s, tzinfo=dt.timezone.utc).isoformat()
 
 
 def _kurma_for_planet(planet_data: dict[str, Any]) -> dict[str, Any]:
@@ -305,6 +320,190 @@ def daily_mundane_forecast(
         "timestamp_utc": timestamp_utc.isoformat(),
         "events": events,
         "planet_positions": planet_positions,
+        "activated_regions": activated_regions,
+        "summary": {
+            "event_count": len(events),
+            "ingress_count": sum(1 for e in events if e["type"] == "INGRESS"),
+            "station_count": sum(1 for e in events if e["type"] == "STATION"),
+            "conjunction_count": sum(1 for e in events if e["type"] == "CONJUNCTION"),
+        },
+    }
+
+
+# ---------- Multi-day range scanners (forecast / almanac) ----------
+
+DEFAULT_RANGE_STEP_DAYS = 1.0
+
+
+def _refine_attr_crossing(
+    planet_name: str,
+    jd_lo: float,
+    jd_hi: float,
+    key: str,
+    lo_value: Any,
+    *,
+    iters: int = 30,
+) -> float:
+    """Binary-search the JD in ``(jd_lo, jd_hi)`` where ``planet_name``'s
+    ``key`` attribute first stops equalling ``lo_value``.
+
+    Used to pin an ingress (key=``sign``) or a station (key=``is_retrograde``)
+    to a precise moment once a daily-grid scan has bracketed it. Assumes a
+    single crossing inside the bracket — true for a one-day step since no
+    graha changes sign or stations twice within a day. 30 bisections on a
+    one-day bracket converge to ~sub-second precision.
+    """
+    for _ in range(iters):
+        mid = 0.5 * (jd_lo + jd_hi)
+        if planet_at_jd(mid, planet_name)[key] == lo_value:
+            jd_lo = mid
+        else:
+            jd_hi = mid
+    return jd_hi
+
+
+def range_forecast(
+    jd_start: float,
+    jd_end: float,
+    *,
+    direction: EventDirection,
+    step_days: float = DEFAULT_RANGE_STEP_DAYS,
+    conjunction_orb: float = DEFAULT_CONJUNCTION_ORB,
+) -> dict[str, Any]:
+    """Scan a JD interval for mundane events and aggregate them.
+
+    Walks a daily grid from ``jd_start`` to ``jd_end`` and, between each pair
+    of consecutive samples, detects:
+
+      - INGRESS:     a sign change (refined to the crossing moment).
+      - STATION:     a direct↔retrograde flip (refined; Sun/Moon excluded).
+      - CONJUNCTION: a pair entering ``conjunction_orb`` (onset reported at the
+                     sample where the pair first falls within orb; Sun-Moon
+                     excluded as in ``detect_close_conjunctions``).
+
+    ``direction`` is stamped on every event so the forward forecast tags its
+    events ``UPCOMING`` and the backward almanac tags them ``PAST``. Events are
+    returned sorted by JD; ``activated_regions`` aggregates the Kurma regions
+    the events touch (by event count, hottest first).
+
+    Pure compute — no IO. Cost scales with ``(span / step_days) * 9`` planet
+    evaluations plus refinement bisections; a 14-day window is ~150 ephemeris
+    calls, well under a second.
+    """
+    if jd_end <= jd_start:
+        raise ValueError("jd_end must be strictly greater than jd_start")
+    if step_days <= 0:
+        raise ValueError("step_days must be positive")
+
+    span = jd_end - jd_start
+    n_steps = max(1, int(math.ceil(span / step_days)))
+    grid = [jd_start + i * (span / n_steps) for i in range(n_steps + 1)]
+
+    # Position snapshot for every planet at every grid point (computed once).
+    positions: list[dict[str, dict[str, Any]]] = [
+        {name: planet_at_jd(jd, name) for name in PLANETS.keys()} for jd in grid
+    ]
+
+    events: list[dict[str, Any]] = []
+
+    # Ingress + station: compare each planet across consecutive samples.
+    for name in PLANETS.keys():
+        for i in range(len(grid) - 1):
+            a = positions[i][name]
+            b = positions[i + 1][name]
+
+            if a["sign"] != b["sign"]:
+                jd_cross = _refine_attr_crossing(name, grid[i], grid[i + 1], "sign", a["sign"])
+                cur = planet_at_jd(jd_cross, name)
+                events.append({
+                    "type": "INGRESS",
+                    "planet": name,
+                    "from_sign": a["sign_name"],
+                    "to_sign": b["sign_name"],
+                    "jd": jd_cross,
+                    "timestamp_utc": _jd_to_iso(jd_cross),
+                    "direction": direction,
+                    "kurma": _kurma_for_planet(cur),
+                    "description": (
+                        f"{name} ingresses from {a['sign_name']} into {b['sign_name']}"
+                    ),
+                })
+
+            if name not in ("Sun", "Moon") and a["is_retrograde"] != b["is_retrograde"]:
+                jd_cross = _refine_attr_crossing(
+                    name, grid[i], grid[i + 1], "is_retrograde", a["is_retrograde"],
+                )
+                cur = planet_at_jd(jd_cross, name)
+                from_state = "retrograde" if a["is_retrograde"] else "direct"
+                to_state = "retrograde" if b["is_retrograde"] else "direct"
+                events.append({
+                    "type": "STATION",
+                    "planet": name,
+                    "from_state": from_state,
+                    "to_state": to_state,
+                    "jd": jd_cross,
+                    "timestamp_utc": _jd_to_iso(jd_cross),
+                    "direction": direction,
+                    "kurma": _kurma_for_planet(cur),
+                    "description": (
+                        f"{name} stations: turning {to_state} (was {from_state})"
+                    ),
+                })
+
+    # Conjunction onsets: a pair that was outside orb at sample i and inside
+    # orb at sample i+1. Reported once, at the onset sample.
+    for i in range(len(grid) - 1):
+        for name_a, name_b in itertools.combinations(positions[i].keys(), 2):
+            if frozenset({name_a, name_b}) == _SUN_MOON_PAIR:
+                continue
+            orb_prev = _circular_distance_180(
+                positions[i][name_a]["longitude"], positions[i][name_b]["longitude"],
+            )
+            orb_cur = _circular_distance_180(
+                positions[i + 1][name_a]["longitude"], positions[i + 1][name_b]["longitude"],
+            )
+            if orb_cur <= conjunction_orb and orb_prev > conjunction_orb:
+                pa = positions[i + 1][name_a]
+                events.append({
+                    "type": "CONJUNCTION",
+                    "planet_a": name_a,
+                    "planet_b": name_b,
+                    "orb_degrees": orb_cur,
+                    "sign": pa["sign_name"],
+                    "jd": grid[i + 1],
+                    "timestamp_utc": _jd_to_iso(grid[i + 1]),
+                    "direction": direction,
+                    "kurma": _kurma_for_planet(pa),
+                    "description": (
+                        f"{name_a} conjunct {name_b} within {orb_cur:.2f}° in {pa['sign_name']}"
+                    ),
+                })
+
+    events.sort(key=lambda e: e["jd"])
+
+    # Aggregate Kurma-region activation across all events in the window.
+    region_counts: dict[KurmaRegion, int] = {}
+    for e in events:
+        region = e["kurma"]["region"]
+        region_counts[region] = region_counts.get(region, 0) + 1
+    activated_regions = [
+        {
+            "region": region,
+            "tattva": info_for_region(region).tattva,
+            "event_count": count,
+        }
+        for region, count in region_counts.items()
+    ]
+    activated_regions.sort(key=lambda r: r["event_count"], reverse=True)
+
+    return {
+        "jd_start": jd_start,
+        "jd_end": jd_end,
+        "start_utc": _jd_to_iso(jd_start),
+        "end_utc": _jd_to_iso(jd_end),
+        "span_days": span,
+        "direction": direction,
+        "events": events,
         "activated_regions": activated_regions,
         "summary": {
             "event_count": len(events),

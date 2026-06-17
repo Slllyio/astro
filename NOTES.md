@@ -56,6 +56,23 @@ then `python -m app.medini.etl.events_extractor --input data/holos/astro_people.
 event-timing model still needs natal coordinates — ASTROCRM ships `place_of_birth`
 as free text, so it requires a geocoding step before `event_corpus` → training.
 
+**2026-06-17 event-timing model (geocoder + end-to-end)**: closed the geocoding
+gap with a new offline importer `app/medini/etl/astrocrm_geocode_importer.py`
+(city name → lat/lon via `geonamescache`, disambiguated by population; tz_offset
+via `timezonefinder` + `zoneinfo`). Full chain on real data:
+`astrocrm_geocode_importer` (4,692 geocoded / 6,488) → `databank_etl`
+(3,964 AA+A natal charts) → `event_corpus --event-root Relationship`
+(1,081 events + 1,081 month-anchored negatives, 1,072 natal+transit+dasha cols) →
+`train_classifier --target-column is_event` → `data/ml_runs/is_event_20260617T184650Z/`.
+Result: balanced base rate 0.50, CV ROC-AUC **0.542 ± 0.031**, holdout 0.542 —
+weak but the **feature story is doctrinally coherent**: top SHAP features are
+`cross_lon_saturn` (Saturn transit vs natal, dominant), then `active_md_lord` /
+`active_ad_lord` / `active_pd_lord` (Vimshottari dasha lords) and Rahu/Jupiter
+transits — exactly the classical relationship-timing drivers. Known limitation:
+bare-city geocoding (population prior) misplaces ambiguous small-town names,
+dampening house accuracy; region/country disambiguation is the next quality lever.
+Geocoder deps: `pip install geonamescache timezonefinder`.
+
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
 

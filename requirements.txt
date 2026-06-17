@@ -24,6 +24,10 @@ python-dateutil>=2.8
 # matplotlib for SHAP plot rendering (must use Agg backend on headless CI).
 requests>=2.31
 beautifulsoup4>=4.12
+# Offline geocoding for astrocrm_geocode_importer (place name -> lat/lon -> tz).
+# Lazily imported, so the app/tests run without them; needed only to run that importer.
+geonamescache>=2.0
+timezonefinder>=6.0
 pandas>=2.0
 pyarrow>=14.0
 scikit-learn>=1.3

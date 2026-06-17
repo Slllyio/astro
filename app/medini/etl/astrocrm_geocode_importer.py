@@ -9,9 +9,11 @@ offline (no API keys, consistent with the project's Leaflet+OSM stance):
      cities dataset. With only a city name to go on, we disambiguate by
      **population** (the most-populous match — a sound prior for "famous person
      born in <city>"). City names + their alternate names are indexed.
-  2. **Timezone** → numeric UTC offset at the *birth instant* via
-     ``timezonefinder`` (lat/lon → IANA zone) + ``zoneinfo`` (historical
-     DST/tz-history rules), mirroring ``lunarastro_importer``.
+  2. **Timezone** → numeric UTC offset at the *birth instant* from the city's
+     bundled IANA zone (geonamescache ships it) + ``zoneinfo`` (historical
+     DST/tz-history rules), so pre-1970 births get the right offset.
+     Region/country hints (parentheticals, comma-tails) disambiguate same-name
+     cities before the population fallback.
   3. **Emit** a ``raw.csv`` row (name, date_of_birth, time_of_birth, latitude,
      longitude, tz_offset, rodden_rating, categories, source_url) that
      ``databank_etl`` consumes verbatim.
@@ -66,32 +68,56 @@ def _normalize_city(place: str) -> str:
     return s.strip().lower()
 
 
+def _extract_hints(place: str) -> list[str]:
+    """Lowercased region/country hint tokens from a place string.
+
+    "Aba (Sichuan)"      -> ["sichuan"]
+    "New York, NY, USA"  -> ["ny", "usa"]
+    "Poitiers, France"   -> ["france"]
+    Bare "Strasbourg"    -> []
+    """
+    hints: list[str] = []
+    for m in _PAREN.findall(place):
+        tok = m.strip("() ").strip()
+        if tok:
+            hints.append(tok.lower())
+    parts = [p.strip() for p in place.split(",")]
+    for tok in parts[1:]:  # everything after the city
+        if tok:
+            hints.append(tok.lower())
+    return hints
+
+
 @dataclass(frozen=True)
 class _City:
     lat: float
     lon: float
     population: int
+    countrycode: str
+    admin1: str
+    tz_name: str
 
 
-def _build_city_index() -> dict[str, _City]:
-    """Map normalized city name → most-populous (lat, lon).
+def _build_city_index(min_population: int = 500) -> dict[str, list[_City]]:
+    """Map normalized city name → ALL candidate cities of that name.
 
-    Indexes both the canonical name and any alternate names geonamescache
-    ships, so "Munich"/"München" both resolve. Higher population wins on
-    collision — the right prior when all we have is a bare city string.
+    Keeping every candidate (not just the most-populous) lets the resolver use
+    region/country hints to disambiguate; bare names fall back to max
+    population. Indexes canonical + alternate names. A lower
+    ``min_population`` captures more small birthplaces (fewer geocode misses)
+    at the cost of more same-name candidates — which the population fallback
+    and hint filtering handle.
     """
     import geonamescache
 
-    gc = geonamescache.GeonamesCache()
-    index: dict[str, _City] = {}
+    gc = geonamescache.GeonamesCache(min_city_population=min_population)
+    index: dict[str, list[_City]] = {}
 
     def _consider(name: str, city: _City) -> None:
         key = _normalize_city(name)
         if not key:
             return
-        prev = index.get(key)
-        if prev is None or city.population > prev.population:
-            index[key] = city
+        index.setdefault(key, []).append(city)
 
     for rec in gc.get_cities().values():
         try:
@@ -99,6 +125,9 @@ def _build_city_index() -> dict[str, _City]:
                 lat=float(rec["latitude"]),
                 lon=float(rec["longitude"]),
                 population=int(rec.get("population") or 0),
+                countrycode=str(rec.get("countrycode") or "").upper(),
+                admin1=str(rec.get("admin1code") or "").upper(),
+                tz_name=str(rec.get("timezone") or ""),
             )
         except (KeyError, TypeError, ValueError):
             continue
@@ -108,6 +137,65 @@ def _build_city_index() -> dict[str, _City]:
 
     logger.info("built city index: %d distinct names", len(index))
     return index
+
+
+def _build_country_index() -> dict[str, str]:
+    """Map lowercased country name / ISO2 / ISO3 → ISO2 country code."""
+    import geonamescache
+
+    gc = geonamescache.GeonamesCache()
+    out: dict[str, str] = {}
+    for rec in gc.get_countries().values():
+        cc = str(rec.get("iso") or "").upper()
+        if not cc:
+            continue
+        out[cc.lower()] = cc
+        if rec.get("iso3"):
+            out[str(rec["iso3"]).lower()] = cc
+        if rec.get("name"):
+            out[str(rec["name"]).lower()] = cc
+    return out
+
+
+def _resolve_city(
+    city_key: str,
+    hints: list[str],
+    city_index: dict[str, list[_City]],
+    country_index: dict[str, str],
+) -> _City | None:
+    """Pick the best candidate for a city name using region/country hints.
+
+    Order: (1) a hint naming a country → keep candidates in that country;
+    (2) a hint matching a US state code (e.g. 'NY') → keep US candidates in
+    that admin1; (3) otherwise, or if a filter empties the set, fall back to
+    the most-populous candidate.
+    """
+    candidates = city_index.get(city_key)
+    if not candidates:
+        return None
+
+    # (1) country hint
+    for h in hints:
+        cc = country_index.get(h)
+        if cc:
+            in_country = [c for c in candidates if c.countrycode == cc]
+            if in_country:
+                candidates = in_country
+                break
+
+    # (2) US state hint (2-letter, matches admin1 of US cities)
+    for h in hints:
+        hu = h.upper()
+        if len(hu) == 2:
+            in_state = [
+                c for c in candidates
+                if c.countrycode == "US" and c.admin1 == hu
+            ]
+            if in_state:
+                candidates = in_state
+                break
+
+    return max(candidates, key=lambda c: c.population)
 
 
 def _parse_date(text: str) -> str | None:
@@ -140,14 +228,14 @@ def _parse_time(text: str) -> str | None:
     return f"{h:02d}:{mi:02d}:{s:02d}"
 
 
-def _tz_offset(lat: float, lon: float, iso_date: str, tf) -> float | None:
-    """Numeric UTC offset (decimal hours) at the birth date for (lat, lon).
+def _tz_offset(zone_name: str, iso_date: str) -> float | None:
+    """Numeric UTC offset (decimal hours) at the birth date for an IANA zone.
 
-    Uses timezonefinder for the IANA zone and zoneinfo for the historical
-    offset on the birth date (so pre-1970 / DST-era births get the right
-    offset). Returns None if the zone can't be resolved.
+    geonamescache ships each city's IANA timezone, so we resolve the offset
+    directly via zoneinfo on the birth date (historical DST/tz-history rules,
+    so pre-1970 births get the right offset). Returns None if the zone is
+    missing or unknown.
     """
-    zone_name = tf.timezone_at(lat=lat, lng=lon)
     if not zone_name:
         return None
     try:
@@ -170,10 +258,8 @@ def import_astrocrm(
     require_time: bool = True,
 ) -> dict[str, int]:
     """Geocode astro_people.csv → raw.csv. Returns a stats dict."""
-    from timezonefinder import TimezoneFinder
-
     city_index = _build_city_index()
-    tf = TimezoneFinder()
+    country_index = _build_country_index()
 
     stats = {
         "input_rows": 0, "written": 0,
@@ -207,12 +293,15 @@ def import_astrocrm(
                     continue
                 iso_time = "12:00:00"
 
-            city = city_index.get(_normalize_city(place))
+            city = _resolve_city(
+                _normalize_city(place), _extract_hints(place),
+                city_index, country_index,
+            )
             if city is None:
                 stats["skipped_geocode_miss"] += 1
                 continue
 
-            tz = _tz_offset(city.lat, city.lon, iso_date, tf)
+            tz = _tz_offset(city.tz_name, iso_date)
             if tz is None:
                 stats["skipped_tz_miss"] += 1
                 continue

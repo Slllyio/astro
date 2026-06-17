@@ -71,7 +71,28 @@ weak but the **feature story is doctrinally coherent**: top SHAP features are
 transits — exactly the classical relationship-timing drivers. Known limitation:
 bare-city geocoding (population prior) misplaces ambiguous small-town names,
 dampening house accuracy; region/country disambiguation is the next quality lever.
-Geocoder deps: `pip install geonamescache timezonefinder`.
+
+**2026-06-17 geocoder v2 + 3 event-root models**: improved the geocoder —
+region/country hints from parentheticals + comma-tails (US-state and country
+disambiguation before the population fallback), lowered the city-population
+threshold for broader coverage, and switched tz resolution to each city's
+bundled IANA zone (dropping the `timezonefinder` dep; geonamescache alone now).
+Coverage rose 72%→82% (5,301/6,488 geocoded; misses 1,096→487) → 4,504 AA+A
+natal charts. Trained event-timing models for three roots (balanced 0.50 base
+rate, `is_event` target, runs under `data/ml_runs/{relationship,work,death}/`):
+
+| Event root            | Events | CV ROC-AUC      | Holdout |
+|---|---|---|---|
+| Relationship          | 1,179  | 0.542 ± 0.015   | 0.551   |
+| Work                  | 2,039  | 0.512 ± 0.039   | 0.542   |
+| Death (cause unspec.) | 1,341  | 0.439 ± 0.021   | 0.454   |
+
+Relationship is the clearest (and CV variance tightened vs the v1 geocoder run,
+0.015 vs 0.031). Work is near-random; Death is *below* 0.5 — death timing isn't
+captured by this transit/dasha feature set + month-anchored sampling (honest
+negative result). Across all three, `cross_lon_saturn` (Saturn transit vs natal)
+is the #1 SHAP feature — Saturn as the classical timer — with Jupiter/Rahu
+transits and dasha lords following. Geocoder dep: `pip install geonamescache`.
 
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.

@@ -92,6 +92,19 @@ dated life-event narrative we have not parsed) and a **Wikidata join** (below).
    bundles of notable-chart files; ⚠ find named repos. Birth data mostly; events
    only where filenames/notes carry them — low event yield, high dedup overlap.
 
+### ✅ Astro-Databank XML — built (charts), but events are licence-gated
+**`astrodatabank_xml_importer.py`** (5 tests) streams the ADB XML export →
+`raw.csv` charts from the **public-domain `public_data`** section (name, Rodden
+rating, date/time, `48n24`-style coords reusing the scraper's parser), plus
+`events.csv` from `<event>` tags **only when present**. Verification finding that
+*reshapes ADB's role*: Astrodienst declares **only `public_data` public domain**;
+the biographies (`text_data`) and life-event categories (`research_data`) are not,
+and the full dated-events dump is **behind a signed research licence**. So ADB is a
+large **chart** source for us (28.7k AA births, public-domain), **not** an easy
+event source — which is why VedAstro (MIT, dated) + Wikidata (CC0) lead for events.
+The importer is ready either way: charts now, events automatically if you obtain a
+licensed dump with event tags.
+
 ### Tier 3 — gold standard, but institutional/slow
 6. **1958 NCDS & 1970 BCS70 British birth cohorts (UK Data Service).** These
    famously record **time of birth** (the basis of Dean's "time twins" work) AND,

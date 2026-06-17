@@ -41,6 +41,21 @@ so the branch is the durable copy. Next scaling step (Wayback/lapaas) still pend
 archive.org's CDX API returns 403 from the sandbox, so the full crawl needs a
 reachable CDX path or a user-provided CDX cache.
 
+**2026-06-17 event-data ingest**: added the dated life-event corpus on the same
+branch. `lapaasindia/good-time-finder` is gone (404), so the reachable source was
+ASTROCRM's `astro_people.csv` (`jfsagro-glitch/ASTROCRM`, ~32 MB, fetched from the
+repo root on `main`). `events_extractor` parsed its `raw_wikitext`
+`{{ASTRODATABANK_evn}}` templates into `data/astro_databank/events.csv`:
+**9,070 dated events** from 3,741 people (59% with full ISO dates; year range
+202–2026). Top roots: Work (2,551), Death-cause-unspecified (1,743), Relationship
+(1,569), Family (553), Death-by-Disease (507). Reproduce with:
+`curl -sL https://raw.githubusercontent.com/jfsagro-glitch/ASTROCRM/main/astro_people.csv -o data/holos/astro_people.csv`
+then `python -m app.medini.etl.events_extractor --input data/holos/astro_people.csv
+--output data/astro_databank/events.csv`. Only the derived `events.csv` is committed
+(the 32 MB source stays reproducible via the URL). Wiring these events into a trained
+event-timing model still needs natal coordinates — ASTROCRM ships `place_of_birth`
+as free text, so it requires a geocoding step before `event_corpus` → training.
+
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
 

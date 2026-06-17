@@ -228,7 +228,13 @@ def check_event_class_taxonomy(
 def check_person_id_map_residents(
     data_dir: Path, report: ValidationReport,
 ) -> None:
-    """Where is_silver_resident, the person_id must exist in persons."""
+    """Where is_silver_resident, the person_id must exist in persons.
+
+    Skipped if person_id_map hasn't been built — it's the optional Round-9
+    name↔id bridge, absent for stores built directly from canonical corpora.
+    """
+    if not (data_dir / "person_id_map.parquet").exists():
+        return
     persons = _load(data_dir, "persons.parquet", columns=["person_id"])
     pim = _load(data_dir, "person_id_map.parquet",
                 columns=["person_id", "is_silver_resident"])

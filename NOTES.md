@@ -94,6 +94,33 @@ negative result). Across all three, `cross_lon_saturn` (Saturn transit vs natal)
 is the #1 SHAP feature — Saturn as the classical timer — with Jupiter/Rahu
 transits and dasha lords following. Geocoder dep: `pip install geonamescache`.
 
+**2026-06-17 canonical Silver layer (data structuring)**: folded all collected
+data into the documented Silver/Gold + DuckDB architecture instead of leaving it
+as scattered CSVs. New adapter `app/medini/etl/build_silver_from_corpora.py` emits
+canonical `persons.parquet` + `events.parquet` from `raw.csv` (VedAstro) +
+`raw_astrocrm.csv` (ASTROCRM) + `events.csv`, reusing the schema + event-class
+harmonization from `build_person_event_tables`. Then the existing pipeline ran
+unchanged: `build_charts_table` → `build_dasha_windows` → `build_dasha_tree` →
+`build_event_dasha_join` → `resolve_persons_dedup` → `build_duckdb_catalog` →
+`materialize_gold_views`. Result (all committed):
+
+| Table | Rows |
+|---|---|
+| persons (VedAstro 14,205 + ASTROCRM 5,301) | 19,506 |
+| charts (1 per person) | 19,506 |
+| dasha_windows (81 per person) | 1,579,986 |
+| dasha_tree | 1,579,986 |
+| events (linked, dated; 527 orphans + year-only dropped) | 4,833 |
+| events_with_dasha (4,823 matched to a window) | 4,833 |
+| resolved_persons (20 cross-corpus matches) | 19,486 |
+
+`validate_silver_layer` → **9 PASS, 0 FAIL** (made the optional Round-9
+`person_id_map` check skip-if-absent, matching the transit checks). DuckDB catalog
+`app/medini/data/catalog.duckdb` exposes 8 Silver tables + 5 Gold views; verified a
+persons⋈charts⋈events_with_dasha join resolves. `source` values: `vedastro` /
+`astrocrm`; person_id tags `VA:` / `AC:` (= `{prefix}:{birth_jd:.4f}`).
+Query it: `duckdb.connect("app/medini/data/catalog.duckdb", read_only=True)`.
+
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
 

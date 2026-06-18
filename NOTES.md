@@ -189,6 +189,12 @@ exactly what the small population lifts (~1.03–1.19) predict. 3 tests.
 timing. Matched our charted, death-less persons to Wikidata P570 by exact English
 label + birth-year (±1), multi-token names only → **+5,448 fresh day-precision
 deaths** (events 33,548 → 38,996; death events with MD known 30,910 → **36,355**).
+A second **recover-dropped pass** (`--recover-dropped`) caught the names the first
+pass missed — mononyms (gated by exact-label + birth-year) and accented names (queried
+with their original accent-preserving spelling, since Wikidata's exact-label join is
+accent-sensitive): **+604 more day-precision deaths** (events 38,996 → 39,600; deaths
+with MD known → **36,959**). All findings held steady (composite 1.025/1.093/1.187;
+bracket madhya 1.09; backtest top-decile capture 19.3%→21.9%, M1→M2 z=2.72 p=0.0065).
 Re-validating on the richer corpus **confirmed and sharpened every finding**:
 significators third_lord/navāṁśa_64 lift 1.044, maraka_full 1.036 (p≈0); composite
 dose-response now **1.026 / 1.096 / 1.189** at ≥1/2/3 roles (was 1.022/1.086/1.151);

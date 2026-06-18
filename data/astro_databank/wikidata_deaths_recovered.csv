@@ -1,0 +1,1031 @@
+norm_name,birth_year,death_date
+alice,1617.0,1692-01-01
+alice,1555.0,1616-05-11
+alice,1608.0,1675-08-26
+alice,1575.0,1627-04-27
+alexander,1462.0,1514-10-31
+alexander,872.0,0913-06-06
+alexander,-35.0,-0313-01-0
+alexander,-30.0,-0300-01-0
+alexander,-25.0,-0219-01-0
+alexander,-3.0,-0006-01-0
+alexander,200.0,0172-01-01
+alexander,1853.0,1928-01-02
+alexander,1882.0,1951-11-19
+alexander,1891.0,1973-09-11
+alexander,1876.0,1960-04-11
+alexander,1941.0,2003-01-07
+alexander,1891.0,1937-10-30
+alexander,1880.0,1954-08-05
+alexander,501.0,0602-01-01
+alexander,1400.0,1418-01-01
+alexander,-24.0,-0220-01-0
+alexander,1880.0,1929-02-01
+alexander,1964.0,2024-02-14
+albert feraud,1921.0,2008-01-11
+alexander,1250.0,1300-01-01
+alexander,1927.0,2023-01-01
+alexander,0.0,-0325-01-0
+alice,1581.0,1648-04-02
+alice,1554.0,1620-03-02
+alice,1620.0,1667-01-01
+alice,1632.0,1699-03-11
+alice,1310.0,1347-01-01
+alice,1480.0,1514-01-01
+alice,1284.0,1349-01-01
+alice,1504.0,1530-01-01
+alfred lande,1888.0,1976-10-30
+aime cesaire,1913.0,2008-04-17
+aime maillart,1817.0,1871-05-26
+aja,1963.0,2006-09-18
+alain poire,1917.0,2000-01-14
+alexandre falguiere,1831.0,1900-04-19
+alfons hockmann,1923.0,2014-03-04
+agnes capri,1907.0,1976-11-15
+aime clariond,1894.0,1959-12-31
+albert remy,1911.0,1967-01-26
+albert remy,1915.0,1967-01-26
+alex metayer,1930.0,2004-02-21
+ailton,1956.0,2021-06-01
+agnes varda,1928.0,2019-03-29
+alain,1868.0,1951-06-02
+albert coppe,1911.0,1999-03-30
+aimable,1922.0,1997-10-31
+amalia rodrigues,1920.0,1999-10-06
+andre courreges,1923.0,2016-01-07
+andre bord,1922.0,2013-05-13
+andre gill,1840.0,1885-05-01
+andre fougeron,1913.0,1998-09-10
+andre jacquemin,1902.0,1994-03-02
+andre jacquemin,1904.0,1992-01-16
+andre jacquemin,1902.0,1975-12-20
+andre bord,1922.0,2018-12-02
+andre falcon,1924.0,2009-07-22
+andre obrecht,1899.0,1985-07-30
+andre glucksmann,1937.0,2015-11-10
+alphonse de chateaubriant,1877.0,1951-05-02
+andre cheuva,1908.0,1989-02-05
+andre leducq,1904.0,1980-06-18
+andre bettencourt,1919.0,2007-11-19
+andre castelot,1911.0,2004-07-18
+andre cayatte,1909.0,1989-02-06
+andre chamson,1900.0,1983-11-09
+andre cluytens,1905.0,1967-06-03
+andre hunebelle,1896.0,1985-11-27
+andre dequae,1915.0,2006-08-17
+andre delvaux,1926.0,2002-10-04
+andre frenaud,1907.0,1993-06-21
+andre petitfils,1920.0,2001-10-03
+andre reybaz,1922.0,1989-04-07
+andre gill,1941.0,2014-12-02
+andre malraux,1901.0,1976-11-23
+andre breton,1896.0,1966-09-28
+andre citroen,1878.0,1935-07-03
+anais nin,1903.0,1977-01-14
+andre maurois,1885.0,1967-10-09
+andre claveau,1911.0,2003-07-04
+andre pousse,1919.0,2005-09-09
+andre marie,1897.0,1974-06-12
+andre blondel,1863.0,1938-11-15
+andre beaudin,1895.0,1979-06-06
+andre antoine,1858.0,1943-10-19
+andre gardere,1913.0,1977-02-16
+andre even,1926.0,2009-10-10
+andre calmettes,1861.0,1942-03-14
+alphonse guepin,1808.0,1878-12-08
+andre bellec,1914.0,2008-10-03
+andre berthomieu,1903.0,1960-04-10
+andre brahic,1942.0,2016-05-15
+andre breton,1897.0,1954-11-01
+andre brunot,1879.0,1973-08-04
+andre cauvin,1907.0,2004-04-02
+andre colin,1910.0,1978-08-29
+andre diligent,1919.0,2002-02-03
+andre gabriello,1896.0,1975-03-19
+andre gaillard,1927.0,2019-09-30
+andre gaillard,1921.0,2010-11-13
+andre gaillard,1898.0,1929-12-16
+andre gaillard,1898.0,1929-12-17
+andre legrand,1939.0,2024-07-01
+andre obey,1892.0,1975-04-11
+andre allemand,1927.0,2018-08-08
+alphonse guepin,1836.0,1917-04-30
+andre even,1918.0,1997-03-14
+andre breton,1934.0,1992-09-18
+andre gaillard,1890.0,1950-01-01
+andre breton,1903.0,1962-07-08
+andre gaillard,1909.0,1983-03-11
+andre allemand,1916.0,1983-11-10
+andre calmettes,1902.0,1991-06-22
+anna,1932.0,1941-01-01
+anna,1932.0,1942-08-05
+anna,1932.0,1942-08-06
+arthur,1939.0,2010-07-17
+arthur,1747.0,1768-10-20
+anna,1074.0,1104-01-01
+anna,1500.0,1600-01-01
+anne,1605.0,1688-06-01
+anne,1602.0,1680-05-01
+anne,1600.0,1670-01-01
+anne,1394.0,1459-11-30
+antoine,1680.0,1703-01-01
+anne,1659.0,1726-01-01
+anna,1880.0,1956-01-01
+anna,1411.0,1443-01-01
+anna,1896.0,1968-10-01
+anna,1101.0,1221-01-01
+anna,1350.0,1429-01-01
+anouk aimee,1932.0,2024-06-18
+arletty,1898.0,1992-07-23
+andre siegfried,1875.0,1959-03-28
+arnoldo foa,1916.0,2014-01-11
+andree putman,1925.0,2013-01-19
+anemone,1950.0,2019-04-30
+andre roussin,1911.0,1987-11-03
+andre stil,1921.0,2004-09-03
+andre strappe,1928.0,2006-02-10
+andre theuriet,1833.0,1907-04-23
+andre verchuren,1920.0,2013-07-10
+andre zeller,1898.0,1979-09-18
+anicee alvina,1953.0,2006-11-11
+aud schnemann,1922.0,2006-10-30
+andrex,1907.0,1989-07-09
+andrex,1907.0,1989-07-10
+andre theuriet,1887.0,1965-03-21
+andre turcat,1921.0,2016-01-04
+andre versini,1923.0,1966-12-08
+andre weber,1928.0,1996-06-28
+andre wogenscky,1916.0,2004-08-05
+andree clement,1918.0,1954-05-31
+andree debar,1920.0,1999-01-24
+andree tainsy,1911.0,2004-12-19
+arrelia,1905.0,2005-05-23
+arrelia,1906.0,2005-05-23
+arthur seres,1913.0,1998-12-25
+anitta,-180.0,-1739-01-0
+arne nss,1912.0,2009-01-12
+annabella,1907.0,1996-09-18
+arno muller,1897.0,1983-11-20
+antoine lumiere,1840.0,1911-04-15
+arne nss,1925.0,2009-12-13
+anselme,1820.0,1858-07-18
+arno muller,1899.0,1984-06-12
+anselme,1710.0,1783-01-01
+arno muller,1930.0,2005-01-01
+arne nss,1916.0,1996-04-05
+anne,1599.0,1630-01-01
+avoine,1939.0,2017-12-29
+beatrix dussane,1888.0,1969-03-03
+auguste lumiere,1862.0,1954-04-10
+barbara,1930.0,1997-11-24
+barbara,1880.0,1918-07-18
+barbara,1930.0,2011-02-08
+barbara,1843.0,1915-12-23
+barbara,1908.0,1986-02-02
+barbara,1551.0,1576-01-01
+bach,1882.0,1953-11-19
+auguste,1800.0,1900-01-01
+benoite groult,1920.0,2016-06-20
+benjamin peret,1899.0,1959-09-18
+bernard dheran,1926.0,2013-01-27
+bernard mazieres,1950.0,2010-12-24
+berthe de courriere,1852.0,1916-06-14
+bernard,1100.0,1148-10-01
+belchior,1946.0,2017-04-30
+bernard,1150.0,1214-07-08
+bernard,1150.0,1164-01-01
+bernard,1301.0,1301-01-01
+betinho,1918.0,2000-03-30
+bernard,776.0,http://www
+bolinha,1940.0,1999-05-23
+bolinha,1936.0,1998-07-01
+bourvil,1917.0,1970-09-23
+c. jerome,1946.0,2000-03-14
+cachimbal,1924.0,2011-04-17
+bruno dreler,1879.0,1952-08-07
+carl friedrich von weizsacker,1912.0,2007-04-28
+camilo jose cela,1916.0,2002-01-17
+capucine,1928.0,1990-03-17
+carlos,1943.0,2008-01-17
+carlos,1550.0,1567-01-01
+charles,1459.0,1496-01-10
+charles,1675.0,1733-03-26
+charles,1897.0,1991-01-01
+charles,876.0,0877-01-01
+charles halle,1819.0,1895-10-25
+cecile aubry,1928.0,2010-07-19
+celestin freinet,1896.0,1966-10-08
+charles peguy,1873.0,1914-09-05
+claire bretecher,1940.0,2020-02-11
+charles pathe,1863.0,1957-12-25
+charles pacome,1902.0,1978-10-01
+christophe,1945.0,2020-04-16
+celestin oliver,1930.0,2011-06-05
+christine carere,1930.0,2008-12-13
+charles heger,1902.0,1984-03-16
+celeste albaret,1891.0,1984-04-25
+charlo,1830.0,1910-01-10
+charlo,1906.0,1990-10-30
+christophe,1956.0,1978-01-01
+colette dereal,1927.0,1988-04-12
+claude labbe,1920.0,1993-11-29
+claude schurr,1921.0,2014-11-28
+claude vega,1930.0,2022-04-11
+colette,1873.0,1954-08-03
+claude,1966.0,1996-09-22
+clarke,1875.0,2000-01-01
+claude francois,1939.0,1978-03-11
+claude allegre,1937.0,2025-01-04
+corrado,1924.0,1999-06-08
+claude farrere,1876.0,1957-06-21
+coccinelle,1931.0,2006-10-09
+claude brule,1925.0,2012-09-30
+claude francois,1614.0,1685-05-17
+corrado,1050.0,1106-10-29
+claude francois,1615.0,1685-05-17
+claude francois,1559.0,1632-01-01
+daniele delorme,1926.0,2015-10-18
+danilo kis,1935.0,1989-10-15
+daniel gelin,1921.0,2002-11-29
+daniela dessi,1957.0,2016-08-20
+dario,1944.0,2021-10-09
+damiron,1908.0,1992-04-03
+daniele huillet,1936.0,2006-10-09
+daniel,1880.0,1965-08-27
+daniel,1958.0,2005-12-10
+daniel,1200.0,1194-01-01
+daniel,1150.0,1192-08-14
+daniel,1200.0,1300-01-01
+daniel,1677.0,1766-01-27
+donatello,1386.0,1466-12-13
+denys de la patelliere,1921.0,2013-07-21
+denis d'ines,1885.0,1968-10-25
+edouard manet,1832.0,1883-04-30
+dorothee gunther,1896.0,1975-09-18
+edge,1870.0,2000-01-01
+edith piaf,1915.0,1963-10-10
+emile durkheim,1858.0,1917-11-15
+eduard morike,1804.0,1875-06-04
+elisabeth langgasser,1899.0,1950-07-25
+elisabeth hongen,1906.0,1997-08-07
+edgar dacque,1878.0,1945-09-14
+edouard daladier,1884.0,1970-10-10
+duchess anna amalia of brunswick-wolfenbuttel,1739.0,1807-04-10
+edouard herriot,1872.0,1957-03-26
+emile littre,1801.0,1881-06-02
+eduard kunneke,1885.0,1953-10-27
+edwige feuillere,1907.0,1998-11-13
+edouard caillau,1924.0,1990-03-15
+eduard morike,1877.0,1929-03-15
+emil durr,1883.0,1934-02-12
+emile pladner,1906.0,1980-03-15
+edward gardere,1909.0,1997-07-24
+douchka,1943.0,1997-05-29
+emil durr,1920.0,1944-06-27
+emile fourquet,1862.0,1936-03-21
+eduardo,1953.0,2026-02-13
+eugene fromentin,1820.0,1876-08-27
+eugene baboulene,1905.0,1994-07-15
+eugene constant,1850.0,1860-01-01
+eugene constant,1901.0,1970-10-22
+etienne,1952.0,2025-01-17
+eugene,1877.0,1937-09-20
+etienne,1350.0,1368-09-10
+eugene constant,1936.0,2020-09-20
+emile zola,1840.0,1902-09-29
+erich huckel,1896.0,1980-02-16
+erich muhsam,1878.0,1934-07-10
+erich barenfanger,1915.0,1945-05-02
+ernst schroder,1915.0,1994-07-26
+ernst schroder,1915.0,1994-07-27
+ernst junger,1895.0,1998-02-17
+ernst schroder,1841.0,1902-06-16
+ernst fritz furbringer,1900.0,1988-10-30
+eve curie,1904.0,2007-10-22
+emilie dequenne,1981.0,2025-03-16
+eugene sue,1804.0,1857-08-03
+everaldo,1944.0,1974-10-27
+everaldo,1944.0,1974-10-28
+ernest perochon,1885.0,1942-02-10
+ernest legouve,1807.0,1903-03-14
+emmanuel robles,1914.0,1995-02-22
+ernst junger,1868.0,1943-01-09
+ernst schroder,1893.0,1976-02-20
+eugene leroy,1910.0,2000-05-10
+eugene saccomano,1936.0,2019-10-07
+eugenie dauzat,1900.0,2013-01-12
+eugenio,830.0,0898-01-01
+ernst staudle,1913.0,1946-07-11
+esteban de sanlucar,1910.0,1989-01-01
+emile prud'homme,1913.0,1974-07-17
+eugene huat,1907.0,1980-12-15
+ernst schroder,1907.0,1999-11-17
+eugene leroy,1771.0,1816-01-01
+esme gordon,1910.0,1993-01-01
+ernst schroder,1906.0,1988-12-31
+everaldo,1949.0,2001-01-20
+ernst schroder,1889.0,1951-04-04
+fernand leger,1881.0,1955-08-17
+felix faure,1841.0,1899-02-16
+fernando fernan gomez,1921.0,2007-11-21
+felix gouin,1884.0,1977-10-25
+felicien marceau,1913.0,2012-03-07
+ferdinand brunetiere,1849.0,1906-12-09
+firmin gemier,1869.0,1933-11-26
+florelle,1898.0,1974-09-28
+felix brunet,1913.0,1959-12-05
+felix grimonprez,1910.0,1940-05-26
+felix marten,1919.0,1992-11-20
+felix pironti,1921.0,1999-01-12
+fernandel,1903.0,1971-02-26
+felicien rops,1833.0,1898-08-22
+felicien rops,1833.0,1898-08-23
+fidus,1868.0,1948-02-23
+fidus,1850.0,1950-01-01
+fish,-350.0,http://www
+francois mitterrand,1916.0,1996-01-08
+frederic mistral,1830.0,1914-03-25
+francois truffaut,1932.0,1984-10-21
+francois jacob,1920.0,2013-04-20
+francois boyer,1920.0,2003-05-24
+frederic mistral,1893.0,1968-10-23
+franz muller,1850.0,2000-01-01
+franz muller,1836.0,1915-01-13
+franz muller,1843.0,1929-09-01
+franz muller,1844.0,1929-09-01
+francois boyer,1736.0,1809-02-28
+franz muller,1817.0,1905-10-16
+franz muller,1695.0,1753-03-29
+franz muller,1810.0,1887-07-24
+franz muller,1801.0,1884-01-01
+franz muller,1840.0,1935-01-01
+franz muller,1876.0,1929-01-01
+franz muller,1886.0,1915-07-30
+franz muller,1931.0,2015-01-01
+franz muller,1790.0,1852-02-14
+franz muller,1730.0,1799-01-01
+franz muller,1757.0,1823-10-19
+franz muller,1855.0,1924-06-28
+franz muller,1845.0,1934-04-10
+franz muller,1805.0,1883-12-26
+franz muller,1885.0,1968-04-13
+francois boyer,1847.0,1903-09-06
+francois boyer,1677.0,1755-01-01
+franz muller,1803.0,1873-05-07
+franz muller,1616.0,1681-01-01
+franz muller,1745.0,1816-01-01
+franz muller,1886.0,1945-05-20
+franz muller,1905.0,1942-09-21
+franz muller,1951.0,2012-02-09
+franz muller,1918.0,2011-10-09
+franz muller,1896.0,1968-08-25
+franz muller,1841.0,1903-11-29
+franz muller,1871.0,1945-10-01
+franz muller,1840.0,1864-11-14
+frederic mitterrand,1947.0,2024-03-21
+francois morel,1926.0,2018-01-14
+francoise gilot,1921.0,2023-06-06
+fred,1931.0,2013-04-02
+franz muller,1886.0,1963-12-17
+franz muller,1915.0,1999-09-22
+francois lesage,1929.0,2011-12-01
+francois morel,1914.0,1940-05-18
+franz muller,1855.0,1920-01-01
+franz muller,1900.0,1989-08-14
+francois morel,1871.0,1938-01-17
+francois morel,1923.0,2007-05-09
+francois morel,1768.0,1830-01-01
+francoise sagan,1935.0,2004-09-24
+francoise hardy,1944.0,2024-06-11
+francoise dolto,1908.0,1988-08-25
+francois mauriac,1885.0,1970-09-01
+francois d'astier de la vigerie,1886.0,1956-10-09
+francis ambriere,1907.0,1998-07-02
+francois darlan,1881.0,1942-12-24
+francoise dorleac,1942.0,1967-06-26
+francoise prevost,1929.0,1997-11-30
+francoise d'eaubonne,1920.0,2005-08-03
+francois de menthon,1900.0,1984-06-02
+francois cavanna,1923.0,2014-01-29
+francisco de sa carneiro,1934.0,1980-12-04
+francois coppee,1842.0,1908-05-23
+francoise prevost,1680.0,1741-01-01
+francoise rosay,1891.0,1974-03-28
+francoise arnoul,1931.0,2021-07-20
+frederic dard,1921.0,2000-06-06
+francoise seigner,1928.0,2008-10-13
+francois weyergans,1941.0,2019-05-27
+francois missoffe,1919.0,2003-08-28
+francois coty,1874.0,1934-07-25
+francois deguelt,1932.0,2014-01-22
+francois leotard,1942.0,2023-04-25
+francois chaumette,1923.0,1996-02-27
+francois perier,1919.0,2002-06-28
+francoise heritier,1933.0,2017-11-15
+francis halle,1938.0,2025-12-31
+frank pe,1956.0,2025-11-29
+francois brigneau,1919.0,2012-04-09
+francois campaux,1906.0,1983-08-08
+francois chalais,1919.0,1996-05-01
+francois fabie,1846.0,1928-07-18
+francois joseph liger,1819.0,1907-01-01
+francois reichenbach,1921.0,1993-02-02
+francoise claustre,1937.0,2006-09-03
+francoise dorin,1928.0,2018-01-12
+francoise oriane,1940.0,2021-11-14
+francoise verny,1928.0,2004-12-13
+francoise vatel,1937.0,2005-10-24
+francois baboulet,1914.0,2010-12-17
+francois vincent,1824.0,1893-05-02
+friedrich durrenmatt,1921.0,1990-12-14
+friedrich ruckert,1788.0,1866-01-31
+friedrich georg junger,1898.0,1977-07-20
+fritz schaffer,1888.0,1967-03-29
+friedrich schutter,1921.0,1995-09-17
+gaston rebuffat,1921.0,1985-05-31
+fromental halevy,1799.0,1862-03-17
+frederick lemaitre,1800.0,1876-01-26
+frederick tristan,1931.0,2022-03-02
+frederic soulie,1800.0,1847-09-23
+gaetan picon,1809.0,1882-01-01
+friedrich ruckert,1920.0,2011-05-05
+friedrich ruckert,1832.0,1893-11-01
+garcia junior,1861.0,1945-01-01
+gerhard schroder,1910.0,1989-12-31
+gerhard schroder,1921.0,2012-01-23
+gerard philipe,1922.0,1959-11-25
+gerhard schroder,1914.0,2010-03-09
+georges,1050.0,1070-01-01
+giovanna,1934.0,2024-02-20
+gerhard schroder,1530.0,1601-11-16
+gerhard schroder,1659.0,1723-01-28
+gerhard schroder,1908.0,1944-07-12
+gerhard schroder,1929.0,2015-12-18
+giacomo,1913.0,1989-01-01
+gerhard schroder,1896.0,1945-01-01
+gerhard schroder,1708.0,1762-12-16
+gert frobe,1913.0,1988-09-05
+gerard barray,1931.0,2024-02-15
+gerard blain,1930.0,2000-12-17
+gerard brach,1927.0,2006-09-09
+glenmor,1931.0,1996-06-18
+georges melies,1861.0,1938-01-21
+gilbert becaud,1927.0,2001-12-18
+gerard debreu,1921.0,2004-12-31
+gilmar,1930.0,2013-08-25
+georges dumezil,1898.0,1986-10-11
+georges descrieres,1930.0,2013-10-19
+georges pretre,1924.0,2017-01-04
+gerard blitz,1912.0,1990-03-03
+genevieve page,1927.0,2025-02-14
+gerard calvi,1922.0,2015-02-20
+gerard rinaldi,1943.0,2012-03-02
+gerard de villiers,1929.0,2013-10-31
+gina manes,1893.0,1989-09-06
+gerard blitz,1901.0,1979-03-08
+georg schonberger,1596.0,1645-08-01
+georges geret,1924.0,1996-04-07
+genevieve asse,1923.0,2021-08-11
+gerard blanc,1947.0,2009-01-25
+gerard darrieu,1925.0,2004-01-22
+genevieve fontanel,1936.0,2018-03-17
+genevieve morel,1916.0,1989-08-30
+gilbert dupe,1900.0,1986-07-19
+gerard lanvin,1923.0,2018-06-29
+gerard pilet,1933.0,2011-05-08
+gerard sety,1922.0,1998-02-01
+georg schonberger,1911.0,1943-11-20
+gian,1936.0,2010-02-14
+gisele vallerey,1930.0,2010-09-28
+gisele vallerey,1889.0,1940-02-18
+georg schonberger,1838.0,1923-08-25
+georg schonberger,1936.0,2017-02-18
+gilbert becaud,1953.0,2022-09-26
+gottfried august burger,1747.0,1794-06-08
+goran kropp,1966.0,2002-09-30
+guy,1225.0,1305-03-15
+heinrich lubke,1894.0,1972-04-06
+heinrich boll,1917.0,1985-07-16
+gunter eich,1907.0,1972-12-20
+gustaf grundgens,1899.0,1963-10-07
+hans gunter winkler,1926.0,2018-07-09
+helene stocker,1869.0,1943-02-24
+helmut dorner,1909.0,1945-02-11
+hans sohnker,1903.0,1981-04-20
+gunther weisenborn,1902.0,1969-03-26
+heinrich gruber,1891.0,1975-11-29
+gunther fielmann,1939.0,2024-01-03
+heinrich bruning,1885.0,1970-03-30
+helene dutrieu,1877.0,1961-06-26
+helene carrere d'encausse,1929.0,2023-08-05
+gunther ramin,1898.0,1956-02-27
+henri almeras,1892.0,1965-01-01
+heinrich bruning,1836.0,1920-09-10
+henfil,1944.0,1988-01-04
+guillaume landre,1905.0,1968-11-06
+helno,1963.0,1993-01-22
+helene van zuylen,1863.0,1947-10-17
+helena bossis,1919.0,2008-08-15
+hertha topper,1924.0,2020-03-28
+henri charriere,1906.0,1973-07-29
+herve bazin,1911.0,1996-02-17
+henri christine,1867.0,1941-11-25
+henri queffelec,1910.0,1992-01-13
+henri perignon,1879.0,1990-06-18
+herve bourges,1933.0,2020-02-23
+herve bromberger,1918.0,1993-11-25
+honore de balzac,1799.0,1850-08-18
+herge,1907.0,1983-03-03
+ilse kunkele,1925.0,1992-04-24
+imhotep,-280.0,-2700-01-0
+honore daumier,1808.0,1879-02-10
+imhotep,-230.0,http://www
+imhotep,-160.0,-1500-01-0
+henri decae,1915.0,1987-03-07
+ignacio sanchez mejias,1891.0,1934-08-13
+imhotep,-200.0,-1960-01-0
+henry's,1931.0,2013-12-27
+ignacio sanchez mejias,1887.0,1934-01-01
+jan,1000.0,1001-01-01
+jije,1914.0,1980-06-19
+jan,1300.0,1353-01-01
+jan,1882.0,1968-02-27
+jan,1883.0,1933-01-17
+jan,1898.0,1990-01-13
+jan,1250.0,1296-09-02
+jan,1500.0,1518-01-01
+jan,1314.0,1356-01-01
+jeanne,1198.0,1255-05-28
+jean,1070.0,1146-03-28
+jacques prevert,1900.0,1977-04-11
+jean prouve,1901.0,1984-03-23
+jean rene bazaine,1904.0,2001-03-04
+jean,1200.0,1192-01-01
+jean,1200.0,1193-01-01
+jean,850.0,0900-01-01
+jean,1703.0,1796-01-01
+jean jaures,1859.0,1914-07-31
+jacques francois,1920.0,2003-11-25
+jean carriere,1928.0,2005-05-08
+jerome savary,1942.0,2013-03-04
+jean-charles,1922.0,2003-06-21
+jean gregoire,1922.0,2013-09-14
+jean carriere,1925.0,1989-05-07
+jacques prevost,1505.0,1580-01-01
+jean carriere,1904.0,1986-05-16
+jean carriere,1939.0,2002-01-01
+jean gregoire,1810.0,1874-02-25
+jacques francois,1910.0,1972-02-02
+jacques prevost,1918.0,2007-09-14
+jacques francois,1822.0,1903-01-01
+jean danielou,1905.0,1974-05-20
+jean daste,1904.0,1994-10-15
+jerome lejeune,1926.0,1994-04-03
+jean dreville,1906.0,1997-03-05
+irene aitoff,1904.0,2006-06-05
+jacques verges,1925.0,2013-08-15
+jean vallee,1941.0,2014-03-12
+jean gremillon,1901.0,1959-11-25
+jean gremillon,1902.0,1959-11-25
+jens jrgen thorsen,1932.0,2000-11-15
+jean vallee,1899.0,1979-07-19
+jacques correze,1912.0,1991-06-26
+jean babilee,1923.0,2014-01-30
+jean crepin,1908.0,1996-05-04
+jean hebey,1916.0,1992-10-31
+jean larteguy,1920.0,2011-02-23
+jo gerard,1919.0,2006-01-15
+jerome tharaud,1874.0,1953-01-28
+jeanne-claude,1935.0,2009-11-18
+jacques prevost,1725.0,1776-01-01
+jean lenegre,1904.0,1972-02-09
+jerome delaage,1930.0,2018-08-21
+jean carriere,1729.0,1784-01-01
+jorg immendorff,1945.0,2007-05-28
+joseph,1150.0,1240-01-01
+joseph,1150.0,http://www
+joseph,1854.0,1927-01-14
+joseph,1872.0,1937-11-20
+joseph,-5.0,-0037-01-0
+joseph,1793.0,1865-01-01
+joseph,1793.0,1870-01-01
+joyce,1608.0,1687-10-20
+joseph,1652.0,1722-01-01
+jurgen wagner,1901.0,1947-06-27
+jose gomes ferreira,1900.0,1985-02-08
+jurgen wagner,1934.0,2023-12-22
+jose giovanni,1923.0,2004-04-24
+jose ferrer,1912.0,1992-01-26
+josep lluis sert,1902.0,1983-03-15
+jose cabanis,1922.0,2000-10-06
+juliette,1926.0,2017-10-26
+juliette,1926.0,2017-10-27
+juliette,1927.0,2017-10-26
+juliette,1927.0,2017-10-27
+joelle de gravelaine,1929.0,1997-07-26
+johannes peter muller,1801.0,1858-04-28
+jurgen bartsch,1946.0,1976-04-27
+jurgen bartsch,1946.0,1976-04-28
+jurgen habermas,1929.0,2026-03-14
+juan peron,1895.0,1974-07-01
+juliette greco,1927.0,2020-09-23
+julio cortazar,1914.0,1984-02-12
+jules grevy,1807.0,1891-09-09
+jules amedee barbey d'aurevilly,1808.0,1889-04-23
+joelle aubron,1959.0,2006-03-01
+jose hermano saraiva,1919.0,2012-07-20
+jose afonso,1929.0,1987-02-23
+jorg demus,1928.0,2019-04-16
+jose ferrer,1835.0,1916-03-07
+jose alfredo jimenez,1926.0,1973-11-23
+joel robuchon,1945.0,2018-08-06
+joao villaret,1913.0,1961-01-21
+jose charlet,1916.0,1993-03-19
+joseph peyre,1892.0,1968-12-26
+jose luccioni,1949.0,2022-06-02
+jose luccioni,1903.0,1978-10-05
+jose carreras,1820.0,1902-01-01
+jose ferrer,1746.0,1815-01-01
+jose ferrer,1728.0,1782-01-01
+jose ferrer,1763.0,1794-01-01
+karl munchinger,1915.0,1990-03-13
+karl donitz,1891.0,1980-12-24
+karl christian muller,1900.0,1975-01-10
+karl klusner,1905.0,1960-07-25
+karl muhleck,1920.0,1944-12-26
+laetitia perrais,1992.0,2011-01-19
+karl christian muller,1773.0,1849-02-20
+kathe dorsch,1890.0,1957-12-25
+karl,1948.0,1985-12-01
+karl,1050.0,1072-01-02
+karima,1934.0,2005-11-10
+karima,1973.0,2019-04-09
+lazarus,350.0,0449-03-15
+lima,1942.0,2025-02-03
+leon gischia,1903.0,1991-05-29
+lima,1650.0,1702-01-01
+leon gischia,1858.0,1936-11-01
+leon blum,1872.0,1950-03-30
+leon daudet,1867.0,1942-06-30
+leon jouhaux,1879.0,1954-04-28
+leon bourgeois,1851.0,1925-09-29
+leon gambetta,1838.0,1882-12-31
+leo ferre,1916.0,1993-07-14
+liberace,1919.0,1987-02-04
+leonce perret,1880.0,1935-08-12
+leon frapie,1863.0,1949-09-29
+leon roches,1809.0,1900-06-23
+leo marjane,1912.0,2016-12-18
+loic caradec,1948.0,1986-11-14
+leo campion,1905.0,1992-03-06
+leon azema,1888.0,1978-03-01
+leon poirier,1884.0,1968-06-27
+leonce corne,1894.0,1977-12-31
+liminha,1930.0,1985-07-22
+leon dony,1929.0,2007-05-08
+liminha,1951.0,2000-08-14
+leon smet,1908.0,1989-11-08
+leon bourgeois,1856.0,1938-01-01
+leon blum,1868.0,1950-01-01
+leon blum,1878.0,1930-03-06
+leon blum,1837.0,1906-01-01
+leon bourgeois,1902.0,1925-01-01
+leon blum,1876.0,1944-04-05
+leon blum,1879.0,1941-09-16
+lulu,1879.0,1961-09-03
+louis de funes,1914.0,1983-01-27
+luis bunuel,1900.0,1983-07-29
+louis,900.0,0867-01-09
+louis,877.0,0879-11-01
+luise buchner,1821.0,1877-11-28
+magali noel,1931.0,2015-06-23
+manolete,1917.0,1947-08-29
+luis cesar amadori,1902.0,1977-06-05
+loulou gaste,1908.0,1995-01-08
+louis feraud,1920.0,1999-12-28
+louis feraud,1921.0,1999-12-28
+manfred kohnlechner,1925.0,2002-04-10
+louis lumiere,1864.0,1948-06-06
+ludmilla tcherina,1924.0,2004-03-21
+lucien barriere,1923.0,1990-09-17
+madeleine barbulee,1910.0,2001-01-01
+maite,1938.0,2024-12-21
+manolete,1945.0,2022-09-12
+mary,1636.0,1708-02-04
+marion,1883.0,1958-12-13
+maurice,539.0,0602-11-30
+maurice,1100.0,1107-10-03
+mary,1260.0,http://www
+mary,1605.0,1639-01-01
+mary,1733.0,1798-03-03
+mary,1767.0,1845-04-30
+mary,1706.0,1783-03-14
+mary,1540.0,1616-08-27
+mary,1610.0,1687-01-01
+mary,1705.0,1781-01-01
+mary,1610.0,1696-01-01
+mary,1850.0,1903-01-01
+mary,1583.0,1613-05-09
+mary,1609.0,1674-06-16
+mary,1695.0,1716-09-11
+mary,1621.0,1676-07-13
+mary,1654.0,1719-12-22
+mary,1591.0,1628-10-27
+mary,1596.0,1661-01-01
+mary,1819.0,1869-11-30
+mary,1641.0,1712-11-22
+mary,1644.0,1712-11-22
+mary,1569.0,1613-01-01
+mary,1661.0,1744-06-15
+mary,1607.0,1630-01-01
+mary,1535.0,1586-01-01
+mary,1607.0,1647-08-08
+mary,1619.0,1700-01-01
+mary,1628.0,1707-01-01
+mary,1763.0,1831-02-22
+mary,1643.0,1685-07-27
+mary,1614.0,1640-09-02
+mary,1648.0,1719-11-12
+mary,1619.0,1702-01-01
+mary,1725.0,1804-12-01
+mary,1604.0,1680-01-01
+mary,1662.0,1742-11-12
+mary,1622.0,1678-01-01
+mary,1795.0,1876-03-01
+mary,1235.0,1313-01-01
+mary,1808.0,1887-01-21
+marcel carne,1906.0,1996-10-31
+maurice bejart,1927.0,2007-11-22
+marc allegret,1900.0,1973-11-03
+marion hansel,1949.0,2020-06-08
+mantovani,1905.0,1980-03-29
+mantovani,1905.0,1980-03-30
+maurice de guerin,1810.0,1839-07-19
+maurice garcon,1889.0,1967-12-28
+maurice garcon,1889.0,1967-12-29
+maria pacome,1923.0,2018-12-01
+maurice barthelemy,1871.0,1922-03-31
+marcel levesque,1877.0,1962-02-16
+marie dea,1912.0,1992-03-01
+maurice barthelemy,1925.0,2004-01-01
+mario lopez,1918.0,2003-04-01
+marcel thevenet,1915.0,1990-02-03
+maurice bourges,1812.0,1881-03-15
+marcel levesque,1919.0,2012-02-14
+maurice andre,1914.0,1985-01-01
+maurice bourges,1858.0,1918-08-19
+maurice andre,1921.0,2016-08-03
+maurice esteve,1904.0,2001-06-29
+marlene,1922.0,2014-06-13
+marlene,1955.0,2023-01-31
+marie,1957.0,1973-06-09
+max ophuls,1902.0,1957-03-26
+miguel angel asturias,1899.0,1974-06-09
+michel tourliere,1925.0,2004-08-22
+michel deon,1919.0,2016-12-28
+michele morgan,1920.0,2016-12-20
+milva,1939.0,2021-04-23
+michel debre,1912.0,1996-08-02
+michel guerard,1933.0,2024-08-19
+maurice lemaitre,1926.0,2018-07-02
+max flechet,1901.0,1983-10-11
+max pecas,1925.0,2003-02-10
+michou,1931.0,2020-01-26
+michele alfa,1911.0,1987-08-24
+mecislas golberg,1869.0,1907-12-28
+maurice lemaitre,1898.0,1974-12-25
+michele,1436.0,1485-01-01
+michel guerard,1808.0,1888-11-09
+morris,1923.0,2001-07-16
+narcisse berchere,1819.0,1891-09-20
+morgan,1150.0,1217-01-01
+morris,1876.0,2000-01-01
+nadar,1820.0,1910-03-20
+musidora,1889.0,1957-12-07
+moustache,1929.0,1987-03-25
+natalia,1925.0,2006-07-29
+natalia correia,1923.0,1993-03-16
+mose,1917.0,2003-01-21
+olivier debre,1920.0,1999-06-01
+oliver,1945.0,2000-02-12
+nusch eluard,1906.0,1946-11-28
+nicolas guillen,1902.0,1989-07-16
+nina companeez,1937.0,2015-04-09
+noel fore,1932.0,1994-02-16
+noel roquevert,1892.0,1973-11-06
+nityananda,1473.0,1540-01-01
+norbert segard,1922.0,1981-02-01
+odetta,1930.0,2008-12-02
+odilon,800.0,0900-01-01
+norge,1898.0,1990-10-25
+octave greard,1828.0,1904-04-25
+norbert blum,1938.0,2009-10-09
+oliver,1300.0,1400-01-01
+pele,1940.0,2022-12-29
+paul cezanne,1839.0,1906-10-22
+paul,700.0,0727-01-01
+paul,1798.0,1871-01-01
+paul,1872.0,1946-02-02
+paul,1914.0,1979-01-21
+paul,1871.0,1932-01-05
+paul,1855.0,1927-03-30
+paul cezanne,1872.0,1947-01-01
+paul valery,1871.0,1945-07-20
+patachou,1918.0,2015-04-30
+paul painleve,1863.0,1933-10-29
+paul serusier,1864.0,1927-10-07
+paul feval,1816.0,1887-03-07
+paul preboist,1927.0,1997-03-04
+pascal laine,1942.0,2024-12-30
+paquirri,1948.0,1984-09-26
+paul feval,1860.0,1933-03-17
+paule noelle,1942.0,2022-03-28
+pal lkkeberg,1934.0,1998-01-29
+philippe petain,1856.0,1951-07-23
+peter hartling,1933.0,2017-07-10
+pierre beregovoy,1925.0,1993-05-01
+pierre louys,1870.0,1925-06-04
+pierre jonqueres d'oriola,1920.0,2011-07-19
+pierre clementi,1942.0,1999-12-27
+pierre beghin,1951.0,1992-10-11
+pierre clementi,1910.0,1982-04-16
+pierre montane,1919.0,1991-01-15
+pierre palue,1920.0,2005-03-29
+pieral,1923.0,2003-08-22
+pierre benoit,1794.0,1852-08-22
+pierre jerome,1905.0,1982-03-11
+pierre soulie,1903.0,1970-07-09
+peter kurten,1883.0,1931-07-02
+philippe leotard,1940.0,2001-08-25
+peyo,1928.0,1992-12-24
+pierre mendes france,1907.0,1982-10-18
+peter kostler,1805.0,1870-10-11
+pierre etaix,1928.0,2016-10-14
+pierre,1150.0,1203-11-08
+pierre benoit,1906.0,1987-04-23
+pierre benoit,1920.0,1995-01-01
+pierre benoit,1824.0,1870-08-26
+piem,1923.0,2020-11-12
+pierre benoit,1925.0,1943-02-08
+prince,1958.0,2016-04-21
+prosper merimee,1803.0,1870-09-23
+raffaella carra,1943.0,2021-07-05
+ramon menendez pidal,1869.0,1968-11-14
+raf,1928.0,1997-10-13
+prosper montagne,1865.0,1948-04-22
+raymond poincare,1860.0,1934-10-15
+raimu,1883.0,1946-09-20
+raymond bussieres,1907.0,1982-04-29
+rachilde,1860.0,1953-04-04
+regine deforges,1935.0,2014-04-03
+regis charlet,1920.0,1998-10-31
+praxille gyde,1908.0,1946-04-10
+rene goscinny,1926.0,1977-11-05
+rene char,1907.0,1988-02-19
+rene lalique,1860.0,1945-05-01
+rene duhamel,1935.0,2007-03-12
+rene duhamel,1919.0,1996-04-23
+rene duvillier,1919.0,2002-09-05
+rene magritte,1898.0,1967-08-15
+rene clair,1898.0,1981-03-15
+rene lacoste,1904.0,1996-10-12
+renee faure,1918.0,2005-05-02
+rene clement,1913.0,1996-03-17
+rene pleven,1901.0,1993-01-13
+rene feret,1945.0,2015-04-28
+rene mayer,1895.0,1972-12-13
+rene bihel,1916.0,1997-09-08
+rene etiemble,1909.0,2002-01-07
+rene barjavel,1911.0,1985-11-24
+rene bousquet,1909.0,1993-06-08
+rene bousquet,1909.0,1993-06-09
+rene monory,1923.0,2009-04-11
+rene huyghe,1906.0,1997-02-05
+rene vautier,1928.0,2015-01-04
+rene dary,1905.0,1974-10-07
+rene allio,1924.0,1995-03-27
+rene trintzius,1898.0,1953-01-24
+rene alpsteg,1920.0,2001-12-24
+rene allendy,1889.0,1942-07-12
+rene dereuddre,1930.0,2008-04-16
+rene gardien,1928.0,2006-02-01
+rene bougnol,1911.0,1956-06-20
+rene wheeler,1912.0,2000-12-11
+rene fallet,1927.0,1983-07-25
+rene benjamin,1885.0,1948-10-04
+rellys,1905.0,1991-07-20
+rene bonino,1930.0,2016-08-17
+rene bousquet,1903.0,1964-05-19
+rene domingo,1928.0,2013-06-13
+rene genin,1900.0,1941-06-17
+rene genin,1890.0,1967-10-24
+rene hell,1891.0,1965-10-11
+rene kenner,1906.0,1970-01-04
+rene margotton,1915.0,2009-12-22
+renee simonot,1911.0,2021-07-11
+renee fox,1928.0,2020-09-23
+richard sporle,1915.0,1945-04-17
+rene mayer,1925.0,2015-10-20
+rene bigand,1923.0,1967-05-18
+rene arnoux,1858.0,1928-03-15
+rene weissmann,1930.0,1986-10-28
+rene clement,1913.0,1953-01-01
+rene feret,1860.0,1947-09-20
+rudolf hoss,1900.0,1947-04-16
+rudolf hoss,1901.0,1947-04-16
+robert hubner,1948.0,2025-01-05
+robert dhery,1921.0,2004-12-03
+robert hebras,1925.0,2023-02-11
+roger carre,1921.0,1996-11-02
+roger muhl,1929.0,2008-04-04
+rudolf saumenicht,1916.0,1944-08-26
+roger francois,1928.0,2013-01-01
+roger montane,1916.0,2002-07-14
+robert hubner,1860.0,1892-08-30
+roger francois,1897.0,1941-10-28
+ruben dario,1867.0,1916-02-06
+roger francois,1900.0,1949-02-15
+ronaldinho,1971.0,2013-04-12
+roger guerin,1926.0,2010-02-06
+roger bissiere,1886.0,1964-12-02
+roger,900.0,0900-11-05
+rudolf schroder,1926.0,2016-11-22
+rudolf schroder,1876.0,2000-01-01
+roger,1200.0,1213-01-01
+roger,1201.0,1301-01-01
+roger,1050.0,1101-01-01
+roger,1150.0,1221-12-01
+rudolf schroder,1874.0,1929-12-09
+rudolf schroder,1903.0,1981-12-17
+rudolf schroder,1884.0,1960-01-01
+roger guerin,1896.0,1954-12-10
+savannah,1970.0,1994-07-11
+rufus,400.0,http://www
+sapphire,1934.0,1996-09-10
+sapphire,1935.0,1996-09-10
+rufus,450.0,http://www
+sabicas,1912.0,1990-04-14
+saro urzi,1913.0,1979-11-01
+sandro,1945.0,2010-01-04
+sasha,1892.0,1953-01-01
+salvador dali,1904.0,1989-01-23
+santiago ramon y cajal,1852.0,1934-10-17
+sebastian,1870.0,1929-12-08
+sebastian,1914.0,1992-02-03
+sebastian,1869.0,1905-01-23
+simone valere,1921.0,2010-11-11
+sine,1928.0,2016-05-05
+serge lariviere,1957.0,2018-09-22
+tamara,1876.0,1942-05-01
+tamara,1869.0,1936-06-23
+sylvester,1947.0,1988-12-16
+stephane mallarme,1842.0,1898-09-09
+stephane audran,1932.0,2018-03-27
+steno,1917.0,1988-03-13
+stephane grappelli,1908.0,1997-12-01
+stephane steeman,1933.0,2015-01-23
+theodore rousseau,1812.0,1867-12-22
+tcheky karyo,1953.0,2025-10-31
+thorbjrn egner,1912.0,1990-12-24
+trilussa,1871.0,1950-12-21
+theodore rousseau,1880.0,1953-03-30
+theodore monod,1902.0,2000-11-22
+theodore,1050.0,1163-01-01
+theodore,1895.0,1955-05-05
+theodore,1286.0,1287-01-01
+tuca,1944.0,1978-05-08
+theodore monod,1836.0,1921-02-26
+therese michielsen,1926.0,2020-03-31
+valery giscard d'estaing,1926.0,2020-12-02
+vaclav havel,1936.0,2011-12-18
+udo jurgens,1934.0,2014-12-21
+valentino,1932.0,2026-01-19
+varlin,1900.0,1977-10-30
+ulysses guimaraes,1916.0,1992-10-12
+vaclav havel,1920.0,1979-12-14
+vaclav havel,1788.0,1832-01-01
+vaclav havel,1895.0,1972-05-08
+vaclav havel,1886.0,1965-01-04
+vaclav havel,1778.0,1826-01-01
+wolfgang schauble,1942.0,2023-12-26
+wilhelm dorpfeld,1853.0,1940-04-25
+viktor von weizsacker,1886.0,1957-01-09
+willi munzenberg,1889.0,1940-06-22
+willi munzenberg,1889.0,1940-10-21
+xavier gelin,1946.0,1999-07-02
+wolfgang rohder,1911.0,1945-05-16
+wilhelm schluter,1871.0,1930-01-08
+wilhelm schluter,1844.0,1930-03-27
+wilhelm schluter,1900.0,1976-01-26
+wilhelm schluter,1912.0,1993-09-24
+wilhelm schluter,1828.0,1919-04-25
+wilhelm schluter,1759.0,1809-01-01
+wilhelm schluter,1874.0,1944-01-01
+yves guena,1922.0,2016-03-03
+yves allegret,1905.0,1987-01-31
+zoe lund,1962.0,1999-04-16
+yves renier,1942.0,2021-04-24
+yram,1884.0,1927-10-01
+ze roberto,1945.0,2016-05-07
+yuri,-3.0,0018-01-01
+yuri,1694.0,1764-01-01

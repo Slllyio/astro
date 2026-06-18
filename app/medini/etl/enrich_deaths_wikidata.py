@@ -70,22 +70,45 @@ def _birth_year(jd: float) -> int:
 
 def _candidate_index(
     persons: pd.DataFrame, charts: pd.DataFrame, max_birth_year: int,
+    min_tokens: int = 2,
 ) -> dict[str, list[int]]:
     """norm_name → sorted unique birth years, for charted persons with no death
-    event and a multi-token name born on/before ``max_birth_year``."""
+    event born on/before ``max_birth_year`` and a name of ≥ ``min_tokens`` tokens
+    (min_tokens=1 includes mononyms)."""
     charted = set(charts["person_id"])
     idx: dict[str, set[int]] = {}
     for name, pid, jd in zip(persons["name"], persons["person_id"], persons["birth_jd"]):
         if pid not in charted or name is None or pd.isna(name) or pd.isna(jd):
             continue
         key = _norm(name)
-        if len(key.split()) < 2:        # drop mononyms (entity collisions)
+        if len(key.split()) < min_tokens:   # drop mononyms unless min_tokens=1
             continue
         by = _birth_year(jd)
         if by > max_birth_year:
             continue
         idx.setdefault(key, set()).add(by)
     return {k: sorted(v) for k, v in idx.items()}
+
+
+def _is_ascii(s: str) -> bool:
+    return all(ord(c) < 128 for c in s)
+
+
+def _original_label_map(corpus_dir: Path) -> dict[str, set[str]]:
+    """norm_name → set of ORIGINAL (accent-preserving) spellings from the raw corpora.
+
+    Wikidata's rdfs:label carries accents ('Gérard Depardieu'), so the deaccented
+    Title-cased form never matches it via the exact-label VALUES join. Sending the
+    original spelling recovers those people."""
+    out: dict[str, set[str]] = {}
+    for fname in ("raw.csv", "raw_astrocrm.csv", "raw_holos.csv"):
+        path = corpus_dir / fname
+        if not path.exists():
+            continue
+        col = pd.read_csv(path, usecols=["name"], low_memory=False)["name"].dropna()
+        for original in col:
+            out.setdefault(_norm(original), set()).add(str(original).strip())
+    return out
 
 
 def _sparql(query: str, timeout: int = 60, retries: int = 4) -> list[dict[str, Any]]:
@@ -123,13 +146,26 @@ def _batch_query(titles: list[str]) -> list[dict[str, Any]]:
 
 def fetch_wikidata_deaths(
     names: list[str], batch: int = 200, sleep: float = 0.4,
+    label_variants: dict[str, set[str]] | None = None,
 ) -> pd.DataFrame:
     """Resolve a list of normalized names to Wikidata death records.
 
-    Returns a DataFrame [norm_name, birth_year, death_date] (one row per raw
-    binding; matching/dedup happens downstream)."""
+    For each name we send the Title-cased deaccented form plus every original
+    (accent-preserving) spelling in ``label_variants`` — Wikidata's exact-label join
+    is accent-sensitive, so the originals recover accented people. The returned label
+    is normalized for matching downstream, so accents cancel on the result side.
+
+    Returns a DataFrame [norm_name, birth_year, death_date] (one row per raw binding;
+    matching/dedup happens downstream)."""
     out: list[dict[str, Any]] = []
-    titles = [_title(n) for n in names]
+    label_variants = label_variants or {}
+    titles: list[str] = []
+    seen: set[str] = set()
+    for n in names:
+        for label in {_title(n), *label_variants.get(n, set())}:
+            if label and label not in seen:
+                seen.add(label)
+                titles.append(label)
     n_batches = (len(titles) + batch - 1) // batch
     for bi in range(0, len(titles), batch):
         chunk = titles[bi:bi + batch]
@@ -156,11 +192,11 @@ def fetch_wikidata_deaths(
 
 def match_deaths(
     persons: pd.DataFrame, charts: pd.DataFrame, wd: pd.DataFrame,
-    max_birth_year: int,
+    max_birth_year: int, min_tokens: int = 2,
 ) -> pd.DataFrame:
     """Join Wikidata death records to our charted, death-less persons on
     (norm_name, birth_year ±1). Returns one death per person_id."""
-    idx = _candidate_index(persons, charts, max_birth_year)
+    idx = _candidate_index(persons, charts, max_birth_year, min_tokens=min_tokens)
     # person_id lookup by (norm_name, birth_year)
     charted = set(charts["person_id"])
     by_key: dict[tuple[str, int], str] = {}
@@ -209,9 +245,15 @@ def enrich(
     limit_names: int | None = None,
     use_cache: bool = True,
     dry_run: bool = False,
+    recover_dropped: bool = False,
 ) -> dict[str, Any]:
     """End-to-end: pick death-less charted persons, resolve via Wikidata, append
-    fresh day-precision death events to events.parquet. Returns run stats."""
+    fresh day-precision death events to events.parquet. Returns run stats.
+
+    ``recover_dropped`` targets the names the first pass couldn't catch: mononyms
+    (now gated by exact-label + birth-year) and accented names (queried with their
+    original accent-preserving spelling). Use a distinct cache file so it doesn't
+    clobber the first pass's records."""
     persons = pd.read_parquet(data_dir / "persons.parquet")
     charts = pd.read_parquet(data_dir / "charts.parquet")
     events = pd.read_parquet(data_dir / "events.parquet")
@@ -220,25 +262,37 @@ def enrich(
                                 "person_id"])
     persons_nd = persons[~persons["person_id"].isin(have_death)].copy()
 
-    idx = _candidate_index(persons_nd, charts, max_birth_year)
-    names = sorted(idx)
+    min_tokens = 1 if recover_dropped else 2
+    idx = _candidate_index(persons_nd, charts, max_birth_year, min_tokens=min_tokens)
+
+    originals: dict[str, set[str]] = {}
+    if recover_dropped:
+        originals = _original_label_map(corpus_dir)
+        # restrict to the genuinely-recoverable: mononyms ∪ names with an accented original
+        names = [n for n in idx
+                 if len(n.split()) < 2
+                 or any(not _is_ascii(o) for o in originals.get(n, set()))]
+        cache_path = corpus_dir / "wikidata_deaths_recovered.csv"
+    else:
+        names = sorted(idx)
+        cache_path = corpus_dir / CACHE_FILE
+    names = sorted(names)
     if limit_names is not None:
         names = names[:limit_names]
-    logger.info("Candidate death-less charted names (≤%d, multi-token): %d",
-                max_birth_year, len(names))
+    logger.info("Candidate death-less names (≤%d, recover=%s): %d",
+                max_birth_year, recover_dropped, len(names))
 
-    cache_path = corpus_dir / CACHE_FILE
     if use_cache and cache_path.exists():
         wd = pd.read_csv(cache_path)
         logger.info("Loaded %d cached Wikidata death records from %s", len(wd), cache_path)
     else:
         logger.info("Querying Wikidata for %d names…", len(names))
-        wd = fetch_wikidata_deaths(names)
+        wd = fetch_wikidata_deaths(names, label_variants=originals or None)
         corpus_dir.mkdir(parents=True, exist_ok=True)
         wd.to_csv(cache_path, index=False)
         logger.info("Cached %d Wikidata death records → %s", len(wd), cache_path)
 
-    matched = match_deaths(persons_nd, charts, wd, max_birth_year)
+    matched = match_deaths(persons_nd, charts, wd, max_birth_year, min_tokens=min_tokens)
     logger.info("Matched %d fresh day-precision deaths (name + birth-year ±1)", len(matched))
 
     stats = {
@@ -273,6 +327,8 @@ def main() -> int:
                         help="ignore any cached wikidata_deaths.csv and re-query")
     parser.add_argument("--dry-run", action="store_true",
                         help="report match counts without writing events.parquet")
+    parser.add_argument("--recover-dropped", action="store_true",
+                        help="target mononyms + accented names the first pass missed")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s | %(message)s")
@@ -280,6 +336,7 @@ def main() -> int:
         data_dir=args.data_dir, corpus_dir=args.corpus_dir,
         max_birth_year=args.max_birth_year, limit_names=args.limit_names,
         use_cache=not args.no_cache, dry_run=args.dry_run,
+        recover_dropped=args.recover_dropped,
     )
     logger.info("Done: %s", stats)
     return 0

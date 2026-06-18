@@ -115,13 +115,15 @@ def _maraka_con() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect(":memory:")
     con.execute("""CREATE TABLE events_with_dasha
         (event_id INT, person_id TEXT, event_class TEXT, md_lord_at_event TEXT, ad_lord_at_event TEXT)""")
-    con.execute("CREATE TABLE charts (person_id TEXT, asc_sign INT)")
+    house_cols = ", ".join(f"{g}_house INT" for g in
+                           ("sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn", "rahu", "ketu"))
+    con.execute(f"CREATE TABLE charts (person_id TEXT, asc_sign INT, {house_cols})")
     ew, ch = [], []
     for i in range(200):
         ew.append((i, f"p{i}", "death_cause_unspecified", "Saturn", "Mercury"))
-        ch.append((f"p{i}", 5))  # Leo ascendant (sign 5)
+        ch.append((f"p{i}", 5, *([1] * 9)))  # Leo ascendant; all grahas in house 1 (no 2/7 occupants)
     con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?)", ew)
-    con.executemany("INSERT INTO charts VALUES (?,?)", ch)
+    con.executemany("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?,?)", ch)
     return con
 
 

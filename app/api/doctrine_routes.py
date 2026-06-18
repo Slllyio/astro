@@ -135,13 +135,14 @@ async def age_shift(
 async def maraka(
     event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
     level: str = Query("md", description="'md' or 'ad'"),
+    definition: str = Query("full", description="'lords' | 'lords_occupants' | 'full' (lords+occupants+Saturn)"),
     con: duckdb.DuckDBPyConnection = Depends(get_con),
 ) -> dict:
-    """Maraka doctrine: do events run under the 2nd/7th-lord dasha more than the
-    dasha-length-weighted, per-ascendant baseline? Includes a per-ascendant
-    breakdown (the marakas differ by Lagna)."""
+    """Maraka doctrine: do events run under a maraka-planet dasha more than the
+    dasha-length-weighted, per-ascendant baseline? Includes MD&AD confluence and a
+    per-ascendant breakdown (the marakas differ by Lagna)."""
     try:
-        res = dv.validate_maraka(con, event_class, level)
+        res = dv.validate_maraka(con, event_class, level, definition)
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     return res.__dict__

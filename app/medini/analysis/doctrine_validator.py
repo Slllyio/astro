@@ -288,15 +288,30 @@ def _house_lord(asc_sign: int, house: int) -> str:
     return SIGN_RULERS[((asc_sign - 1 + house - 1) % 12) + 1]
 
 
-def _marakas(asc_sign: int) -> set[str]:
-    """Primary marakas for an ascendant: the 2nd and 7th house lords."""
-    return {_house_lord(asc_sign, 2), _house_lord(asc_sign, 7)}
+_MARAKA_GRAHAS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+_MARAKA_DEFS = ("lords", "lords_occupants", "full")
+
+
+def _maraka_set(asc_sign: int, graha_houses: dict[str, int], definition: str) -> set[str]:
+    """Maraka planets for a chart under a given doctrine definition.
+
+    - "lords": the 2nd and 7th house lords (primary marakas).
+    - "lords_occupants": + planets posited in the 2nd or 7th house.
+    - "full": + Saturn (the natural maraka). Empirically the strongest.
+    """
+    m = {_house_lord(asc_sign, 2), _house_lord(asc_sign, 7)}
+    if definition in ("lords_occupants", "full"):
+        m |= {g for g, h in graha_houses.items() if h in (2, 7)}
+    if definition == "full":
+        m.add("Saturn")
+    return m
 
 
 @dataclass(frozen=True)
 class MarakaResult:
     event_class: str
     level: str
+    definition: str
     n_events: int
     n_maraka: int
     observed_rate: float
@@ -305,39 +320,55 @@ class MarakaResult:
     z: float
     p_value: float
     verdict: str
+    # MD-and-AD both-maraka confluence (vs an independence baseline)
+    confluence_rate: float
+    confluence_expected: float
+    confluence_lift: float
+    confluence_p: float
     by_ascendant: list[dict]
 
 
 def validate_maraka(con: duckdb.DuckDBPyConnection, event_class: str = "death_cause_unspecified",
-                    level: str = "md") -> MarakaResult:
-    """Test the maraka doctrine: do deaths run under the 2nd/7th-lord dasha more
+                    level: str = "md", definition: str = "full") -> MarakaResult:
+    """Test the maraka doctrine: do deaths run under a maraka-planet dasha more
     than chance, accounting for each ascendant's marakas AND their dasha lengths?
 
-    The baseline is the per-person dasha-length share of that person's own
-    marakas (so a Libra native whose maraka is short-dasha Mars has a low
-    expected rate, a Leo native whose maraka is long-dasha Saturn a high one).
+    The baseline is the per-person dasha-length share of that person's own maraka
+    set (so a Libra native whose maraka is short-dasha Mars has a low expected
+    rate, a Leo native whose maraka is long-dasha Saturn a high one). ``definition``
+    selects how broadly marakas are defined; ``full`` (lords + 2/7 occupants +
+    Saturn) is empirically the most predictive. Also reports MD&AD confluence.
     """
     col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
     if col is None:
         raise ValueError("level must be 'md' or 'ad'")
+    if definition not in _MARAKA_DEFS:
+        raise ValueError(f"definition must be one of {_MARAKA_DEFS}")
+
+    house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
     rows = con.execute(
-        f"""SELECT e.{col} AS lord, c.asc_sign
+        f"""SELECT e.{col} AS lord, e.md_lord_at_event AS md, e.ad_lord_at_event AS ad,
+                   c.asc_sign, {house_cols}
             FROM events_with_dasha e JOIN charts c USING(person_id)
             WHERE e.event_class = '{_q(event_class)}'
               AND e.{col} IS NOT NULL AND c.asc_sign IS NOT NULL"""
     ).fetchall()
 
-    n = len(rows)
-    k = 0
-    exp_sum = 0.0
-    # per-ascendant tallies
+    n = k = k_conf = 0
+    exp_sum = exp_conf = 0.0
     per: dict[int, dict] = {}
-    for lord, asc in rows:
+    for lord, md, ad, asc, *houses in rows:
         asc = int(asc)
-        mar = _marakas(asc)
-        is_mar = lord in mar
+        gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
+        mset = _maraka_set(asc, gh, definition)
+        share = sum(LORD_SHARE[m] for m in mset)
+        n += 1
+        is_mar = lord in mset
         k += is_mar
-        exp_sum += sum(LORD_SHARE[m] for m in mar)
+        exp_sum += share
+        if md in mset and ad in mset:
+            k_conf += 1
+        exp_conf += share * share  # independence baseline for both-maraka
         b = per.setdefault(asc, {"asc_sign": asc, "second_lord": _house_lord(asc, 2),
                                  "seventh_lord": _house_lord(asc, 7), "n": 0, "n_maraka": 0})
         b["n"] += 1
@@ -350,16 +381,24 @@ def validate_maraka(con: duckdb.DuckDBPyConnection, event_class: str = "death_ca
     z = (k - n * exp_rate) / se if se else 0.0
     p = 2.0 * _norm_sf(abs(z))
 
-    by_asc = []
-    for asc in sorted(per):
-        b = per[asc]
-        by_asc.append({**b, "maraka_rate": round(b["n_maraka"] / b["n"], 4) if b["n"] else 0.0})
+    conf_obs = (k_conf / n) if n else 0.0
+    conf_exp = (exp_conf / n) if n else 0.0
+    conf_lift = (conf_obs / conf_exp) if conf_exp else 0.0
+    conf_se = math.sqrt(n * conf_exp * (1 - conf_exp)) if n else 0.0
+    conf_p = 2.0 * _norm_sf(abs((k_conf - n * conf_exp) / conf_se)) if conf_se else 1.0
 
+    by_asc = [
+        {**per[a], "maraka_rate": round(per[a]["n_maraka"] / per[a]["n"], 4)}
+        for a in sorted(per)
+    ]
     return MarakaResult(
-        event_class=event_class, level=level, n_events=n, n_maraka=k,
-        observed_rate=round(obs_rate, 4), expected_rate=round(exp_rate, 4),
-        lift=round(lift, 3), z=round(z, 3), p_value=round(p, 6),
-        verdict=_verdict(lift, p, k), by_ascendant=by_asc,
+        event_class=event_class, level=level, definition=definition,
+        n_events=n, n_maraka=k, observed_rate=round(obs_rate, 4),
+        expected_rate=round(exp_rate, 4), lift=round(lift, 3), z=round(z, 3),
+        p_value=round(p, 6), verdict=_verdict(lift, p, k),
+        confluence_rate=round(conf_obs, 4), confluence_expected=round(conf_exp, 4),
+        confluence_lift=round(conf_lift, 3), confluence_p=round(conf_p, 6),
+        by_ascendant=by_asc,
     )
 
 

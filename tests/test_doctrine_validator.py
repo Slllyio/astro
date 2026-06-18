@@ -171,6 +171,57 @@ def test_death_significators_report() -> None:
         dv.death_significators_report(con, "death_cause_unspecified", "bogus")
 
 
+def _event_sig_con() -> duckdb.DuckDBPyConnection:
+    """Aries natives whose 'relationships' events all run under Jupiter MD, so the
+    jupiter_karaka significator must hit ~100%."""
+    con = duckdb.connect(":memory:")
+    con.execute("""CREATE TABLE events_with_dasha
+        (event_id INT, person_id TEXT, event_class TEXT, md_lord_at_event TEXT,
+         ad_lord_at_event TEXT, age_at_event_years DOUBLE)""")
+    house_cols = ", ".join(f"{g}_house INT" for g in
+                           ("sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn", "rahu", "ketu"))
+    con.execute(f"CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, {house_cols})")
+    ew, ch = [], []
+    for i in range(200):
+        ew.append((i, f"p{i}", "relationships", "Jupiter", "Sun", 30.0))
+        ch.append((f"p{i}", 1, 5.0, *([1] * 9)))
+    con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?,?)", ew)
+    con.executemany("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", ch)
+    return con
+
+
+def test_event_significators_registry_and_report() -> None:
+    assert set(dv.EVENT_SIGNIFICATORS) >= {"relationships", "career", "death_cause_unspecified"}
+    con = _event_sig_con()
+    res = dv.death_significators_report(
+        con, "relationships", "md", significators=dv.EVENT_SIGNIFICATORS["relationships"])
+    by = {r.significator: r for r in res}
+    assert by["jupiter_karaka"].observed_rate == pytest.approx(1.0)
+    assert by["jupiter_karaka"].verdict == "supports"
+
+
+@pytest.mark.asyncio
+async def test_event_significators_endpoint() -> None:
+    app = FastAPI()
+    app.include_router(doctrine_router)
+    con = _event_sig_con()
+    app.dependency_overrides[get_con] = lambda: con
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://t") as ac:
+        r = await ac.get("/medini/doctrine/event-significators",
+                         params={"event_class": "relationships"})
+        assert r.status_code == 200
+        body = r.json()
+        assert body["significators"] == list(dv.EVENT_SIGNIFICATORS["relationships"])
+        jk = next(x for x in body["significators_report"] if x["significator"] == "jupiter_karaka")
+        assert jk["observed_rate"] == pytest.approx(1.0)
+        # unknown event class -> 422
+        r2 = await ac.get("/medini/doctrine/event-significators",
+                          params={"event_class": "bogus_class"})
+        assert r2.status_code == 422
+    app.dependency_overrides.clear()
+
+
 def _composite_con() -> duckdb.DuckDBPyConnection:
     """Aries natives. For Aries the 8th lord (Scorpio) AND 3rd lord (Gemini->
     Mercury) differ, but Mars is the 8th lord and (with asc_lon 5°) also the

@@ -162,6 +162,17 @@ async def test_death_window_endpoint() -> None:
 
 
 @pytest.mark.asyncio
+async def test_death_window_page_served() -> None:
+    app = FastAPI()
+    app.include_router(doctrine_router)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://t") as ac:
+        r = await ac.get("/medini/doctrine/death-window/page")
+        assert r.status_code == 200
+        assert "dw-form" in r.text and "Death-Window Predictor" in r.text
+
+
+@pytest.mark.asyncio
 async def test_calibrate_without_catalog_returns_503(monkeypatch) -> None:
     # Force the catalog to look absent so calibration is unavailable.
     from pathlib import Path

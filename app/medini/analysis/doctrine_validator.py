@@ -433,6 +433,25 @@ _SIGNIFICATORS: dict[str, "Callable"] = {
     "badhakesa": lambda asc, lon, gh: {_house_lord(asc, _badhaka_house(asc))},
     "drekkana_22": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 3)},
     "navamsa_64": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 9)},
+    # Marriage / relationship significators
+    "seventh_lord": lambda asc, lon, gh: {_house_lord(asc, 7)},
+    "second_lord": lambda asc, lon, gh: {_house_lord(asc, 2)},
+    "venus_karaka": lambda asc, lon, gh: {"Venus"},      # kalatra (spouse) karaka
+    "jupiter_karaka": lambda asc, lon, gh: {"Jupiter"},  # saubhagya / husband karaka
+    # Career significators
+    "tenth_lord": lambda asc, lon, gh: {_house_lord(asc, 10)},
+    "saturn_karaka": lambda asc, lon, gh: {"Saturn"},    # karma karaka
+    "sun_karaka": lambda asc, lon, gh: {"Sun"},          # authority / status
+    "mercury_karaka": lambda asc, lon, gh: {"Mercury"},  # commerce / skill
+}
+
+# Per-event-class composite significator panels — the classical "who times this
+# event" sets, tested head-to-head and as a confluence. Death is the validated
+# flagship; marriage & career are the karaka-driven analogues.
+EVENT_SIGNIFICATORS: dict[str, tuple[str, ...]] = {
+    "death_cause_unspecified": ("maraka_full", "third_lord", "navamsa_64"),
+    "relationships": ("seventh_lord", "venus_karaka", "jupiter_karaka"),
+    "career": ("tenth_lord", "saturn_karaka", "jupiter_karaka"),
 }
 
 

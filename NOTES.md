@@ -158,6 +158,23 @@ cardinality checks activated). Every event now carries active MD/AD dāśā + 9-
 gochara — enabling population-scale dāśā+transit timing analysis (e.g. MD-lord-at-
 death distribution over 30k deaths).
 
+**Death-window predictor UI** (`templates/death_window.html`,
+`GET /medini/doctrine/death-window/page`): birth-data form → ranked future windows
+with calibrated probabilities, a risk bar, MD death-roles, and the
+median-remaining / P(die≤5y,≤10y) summary. Static page calling the JSON endpoint
+(matches the existing `/interpret/page` pattern); honest caveat rendered inline.
+
+**Pivot to non-death events — marriage & career** (`EVENT_SIGNIFICATORS` +
+`GET /medini/doctrine/event-significators`): ran the same machinery on the
+relationships (1,385) and career (743) event classes. Finding: unlike death's
+multi-significator *confluence*, both reduce to a **single kāraka — Jupiter MD**
+(relationships lift **1.343 p=1e-6**; career **1.363 p=1e-4**), while the classical
+7th-lord / Venus / 10th-lord / Saturn significators are weak or null in this corpus.
+So the composite adds little beyond Jupiter (relationships confluence no-effect;
+career ≥1 lift 1.178). Deliberately did NOT ship a marriage "confluence predictor"
+(it would be noise beyond Jupiter) — exposed the validated analysis generically
+instead. n is small + events skew to early adulthood (caveat noted).
+
 **Transit (gochara) lever — validated NULL for death** (after rebuilding
 `event_transits` over all 38,995 events): slow planets transiting natal dusthānas
 at death show no signal — Saturn/Rahu/Ketu/Jupiter/Mars over 6/8/12 all lift ≈ 1.00,
@@ -345,6 +362,8 @@ All values cross-checked against external Vedic-astrology sources (Wikipedia, Pr
 | GET  | `/medini/doctrine/death-composite` | Composite confluence dose-response (maraka+3rd+64th-navāṁśa) |
 | GET  | `/medini/doctrine/longevity-bracket` | Significator lift by āyurdāya bracket (alpa/madhya/pūrṇa) |
 | GET  | `/medini/doctrine/death-window` | **Per-chart death-window predictor** — rank a living person's future dāśā periods |
+| GET  | `/medini/doctrine/death-window/page` | Interactive UI for the predictor (form → ranked windows + probabilities) |
+| GET  | `/medini/doctrine/event-significators` | Generic per-event-class significator panel (death / marriage / career) |
 
 ### Per-chart death-window predictor (`death_window_predictor.py`)
 

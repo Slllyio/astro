@@ -19,11 +19,15 @@ from typing import Iterator
 
 import duckdb
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import HTMLResponse
 
 import datetime as _dt
+from pathlib import Path as _Path
 
 from app.medini.analysis import death_window_predictor as dwp
 from app.medini.analysis import doctrine_validator as dv
+
+_TEMPLATES_DIR = _Path(__file__).resolve().parent.parent / "templates"
 
 doctrine_router = APIRouter(prefix="/medini/doctrine", tags=["Doctrine Validator"])
 
@@ -167,6 +171,35 @@ async def death_significators(
             "results": [r.__dict__ for r in results]}
 
 
+@doctrine_router.get("/event-significators")
+async def event_significators(
+    event_class: str = Query(..., description="e.g. relationships, career, death_cause_unspecified"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Generic per-event-class significator panel: tests that event class's classical
+    timing significators (from EVENT_SIGNIFICATORS) head-to-head AND as a confluence.
+
+    Finding: death is a multi-significator *confluence* (maraka+3rd+64th-navāṁśa);
+    marriage & career instead reduce to a single kāraka — Jupiter MD (lift ≈1.35) —
+    so their confluence adds little beyond Jupiter alone."""
+    sigs = dv.EVENT_SIGNIFICATORS.get(event_class)
+    if sigs is None:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"no significator panel for {event_class!r}; "
+                   f"known: {list(dv.EVENT_SIGNIFICATORS)}",
+        )
+    try:
+        report = dv.death_significators_report(con, event_class, level, significators=sigs)
+        composite = dv.validate_composite_death_score(con, event_class, level, significators=sigs)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return {"event_class": event_class, "level": level, "significators": list(sigs),
+            "significators_report": [r.__dict__ for r in report],
+            "composite": composite.__dict__}
+
+
 @doctrine_router.get("/death-composite")
 async def death_composite(
     event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
@@ -265,3 +298,12 @@ async def death_window(
         )
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+
+
+@doctrine_router.get("/death-window/page", response_class=HTMLResponse)
+async def death_window_page() -> HTMLResponse:
+    """Interactive UI for the death-window predictor (form → ranked windows)."""
+    html_path = _TEMPLATES_DIR / "death_window.html"
+    if not html_path.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="death_window.html missing")
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))

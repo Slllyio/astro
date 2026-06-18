@@ -87,6 +87,37 @@ def test_unknown_significator_raises() -> None:
         dwp.predict_death_windows(as_of=_AS_OF, significators=("bogus",), **_CHART)
 
 
+def test_mortality_model_conditional_reads() -> None:
+    # Deaths uniformly at ages 0,1,...,99 → clean closed-form checks.
+    m = dwp.MortalityModel(ages=tuple(float(a) for a in range(100)))
+    assert m.survival(0.0) == pytest.approx(1.0)
+    assert m.survival(50.0) == pytest.approx(0.5, abs=0.02)
+    assert m.mass(0.0, 50.0) == pytest.approx(0.5, abs=0.02)
+    # P(die within 10y | alive at 50) = mass(50,60)/survival(50) = 10/50 = 0.2
+    assert m.prob_within(50.0, 10.0) == pytest.approx(0.2, abs=0.02)
+    # median remaining at 50 ≈ 25 (half of the 50 remaining years)
+    assert m.median_remaining(50.0) == pytest.approx(25.0, abs=2.0)
+
+
+def test_calibrated_probabilities_sum_and_rank() -> None:
+    # Skew deaths toward 70-90 so the calibrated ranking favours that age band.
+    ages = tuple(float(a) for a in (list(range(60, 95)) * 10))
+    m = dwp.MortalityModel(ages=ages)
+    out = dwp.predict_death_windows(as_of=_AS_OF, mortality=m, **_CHART)
+    assert out["calibrated"] is True
+    assert "median_remaining_years" in out and "prob_within_10y" in out
+    wins = out["windows"]
+    # every future window carries a probability; they sum to ~1 over the full set
+    assert all(w["probability"] is not None for w in wins)
+    assert sum(w["probability"] for w in wins) == pytest.approx(1.0, abs=1e-3)
+    # ranked by probability descending now (not risk_score)
+    probs = [w["probability"] for w in wins]
+    assert probs == sorted(probs, reverse=True)
+    # the #1 window should overlap the corpus's high-mortality band (60-95)
+    top = wins[0]
+    assert top["end_age"] >= 60 and top["start_age"] <= 95
+
+
 @pytest.mark.asyncio
 async def test_death_window_endpoint() -> None:
     app = FastAPI()

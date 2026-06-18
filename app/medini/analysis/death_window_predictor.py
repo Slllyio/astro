@@ -83,9 +83,62 @@ class DeathWindow:
     bracket_factor: float
     ad_factor: float
     risk_score: float      # composite × bracket × AD reinforcement
+    probability: float | None = None   # calibrated P(death in this window | alive now)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+@dataclass(frozen=True)
+class MortalityModel:
+    """Empirical age-at-death distribution from the corpus, as a conditional
+    survival model. Holds the sorted death ages so window masses and remaining-life
+    quantiles are exact ECDF reads (no parametric assumption)."""
+    ages: tuple[float, ...]   # sorted ascending
+
+    @classmethod
+    def from_catalog(cls, con: Any, event_class: str = "death_cause_unspecified") -> "MortalityModel":
+        rows = con.execute(
+            "SELECT age_at_event_years FROM events_with_dasha "
+            "WHERE event_class = ? AND age_at_event_years IS NOT NULL "
+            "AND age_at_event_years >= 0 AND age_at_event_years <= 120",
+            [event_class],
+        ).fetchall()
+        return cls(ages=tuple(sorted(float(r[0]) for r in rows)))
+
+    def _below(self, a: float) -> int:
+        import bisect
+        return bisect.bisect_left(self.ages, a)
+
+    def mass(self, a0: float, a1: float) -> float:
+        """Fraction of deaths with age in [a0, a1)."""
+        n = len(self.ages)
+        if n == 0 or a1 <= a0:
+            return 0.0
+        return (self._below(a1) - self._below(a0)) / n
+
+    def survival(self, c: float) -> float:
+        """Fraction of deaths occurring at age >= c (≈ P(still to die | this cohort))."""
+        n = len(self.ages)
+        return (n - self._below(c)) / n if n else 0.0
+
+    def prob_within(self, c: float, years: float) -> float:
+        """P(death in (c, c+years] | alive at c)."""
+        s = self.survival(c)
+        return self.mass(c, c + years) / s if s > 0 else 0.0
+
+    def median_remaining(self, c: float) -> float | None:
+        """Conditional median remaining years given alive at age c."""
+        s = self.survival(c)
+        if s <= 0:
+            return None
+        target = 0.5 * s            # half the surviving mass
+        n = len(self.ages)
+        base = self._below(c)
+        idx = base + int(round(target * n))
+        if idx >= n:
+            return None
+        return round(self.ages[min(idx, n - 1)] - c, 1)
 
 
 def _jd_to_iso(jd: float) -> str:
@@ -145,11 +198,21 @@ def predict_death_windows(
     brackets: tuple[tuple[str, float, float], ...] = DEFAULT_BRACKETS,
     composite_factor: dict[int, float] | None = None,
     bracket_factor: dict[str, float] | None = None,
+    mortality: "MortalityModel | None" = None,
 ) -> dict[str, Any]:
     """Rank a living person's future Vimśottarī windows by composite × bracket risk.
 
     Casts the natal chart, enumerates the MD×AD windows, keeps those ending after
     `as_of` (default = today, UTC), scores each, and returns them ranked.
+
+    If a `mortality` model is supplied, each window also gets a *calibrated*
+    ``probability`` — P(death falls in this window | alive now) — and the windows are
+    ranked by it. The probability is the empirical age-at-death mass over the window's
+    age span (which already encodes duration + age-of-death shape) tilted by the
+    composite confluence factor, renormalized over the person's future windows. The
+    bracket factor is deliberately NOT re-applied here: the empirical age density
+    already carries the longevity-bracket effect, so applying it again would
+    double-count age.
     """
     if latitude is None or longitude is None:
         raise ValueError("latitude and longitude are required to cast the chart")
@@ -213,7 +276,29 @@ def predict_death_windows(
             ad_factor=round(ad_factor, 4), risk_score=round(risk, 4),
         ))
 
-    scored.sort(key=lambda d: d.risk_score, reverse=True)
+    # Calibrated probabilities from the empirical age-at-death model.
+    summary: dict[str, Any] = {}
+    if mortality is not None and scored:
+        bases = []
+        for d in scored:
+            lo = max(d.start_age, current_age)   # condition on survival to now
+            base = mortality.mass(lo, d.end_age) * d.composite_factor
+            bases.append(max(base, 0.0))
+        total = sum(bases)
+        scored = [
+            DeathWindow(**{**asdict(d),
+                           "probability": round(b / total, 4) if total > 0 else 0.0})
+            for d, b in zip(scored, bases)
+        ]
+        summary = {
+            "median_remaining_years": mortality.median_remaining(current_age),
+            "prob_within_5y": round(mortality.prob_within(current_age, 5.0), 4),
+            "prob_within_10y": round(mortality.prob_within(current_age, 10.0), 4),
+        }
+
+    sort_key = ((lambda d: (d.probability or 0.0)) if mortality is not None
+                else (lambda d: d.risk_score))
+    scored.sort(key=sort_key, reverse=True)
     ranked = [DeathWindow(**{**asdict(d), "rank": i + 1}) for i, d in enumerate(scored)]
     if top_n is not None:
         ranked = ranked[:top_n]
@@ -224,6 +309,8 @@ def predict_death_windows(
         "current_age": current_age,
         "asc_sign": asc_sign,
         "significators": list(significators),
+        "calibrated": mortality is not None,
+        **summary,
         "n_future_windows": len(scored),
         "windows": [d.to_dict() for d in ranked],
     }

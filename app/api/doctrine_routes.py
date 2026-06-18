@@ -240,7 +240,7 @@ async def death_window(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="as_of must be an ISO date (YYYY-MM-DD)") from exc
 
-    composite_factor = bracket_factor = None
+    composite_factor = bracket_factor = mortality = None
     if calibrate:
         if not dv.DEFAULT_CATALOG.exists():
             raise HTTPException(
@@ -250,6 +250,7 @@ async def death_window(
         con = dv.open_catalog()
         try:
             composite_factor, bracket_factor = dwp.calibrate_factors(con)
+            mortality = dwp.MortalityModel.from_catalog(con)
         finally:
             con.close()
 
@@ -259,6 +260,7 @@ async def death_window(
             latitude=latitude, longitude=longitude, tz_offset=tz_offset,
             as_of=as_of_date, top_n=top_n,
             composite_factor=composite_factor, bracket_factor=bracket_factor,
+            mortality=mortality,
         )
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc

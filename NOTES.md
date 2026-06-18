@@ -158,6 +158,19 @@ cardinality checks activated). Every event now carries active MD/AD dāśā + 9-
 gochara — enabling population-scale dāśā+transit timing analysis (e.g. MD-lord-at-
 death distribution over 30k deaths).
 
+**Backtest of the assembled ranker** (`death_backtest.py`): validating the levers
+individually isn't the same as validating the *predictor*. Held-out test (25% of
+persons; factors calibrated only on the disjoint 75%), scoring three nested models of
+P(death lands in window w): **M0** ∝ duration (time-at-risk), **M1** ∝ duration·bracket,
+**M2** ∝ duration·bracket·composite. Results (9,157 test deaths): top-decile capture
+**19.4% → 21.9%** vs 10% null (the predictor lands the real death window in its
+riskiest 10% about **2× chance**); M0→M1 Δ logLik +0.021 (bracket = mostly the
+actuarial age-of-death shape); **M1→M2 Δ +0.0008, z=2.85, p=0.0044** — the
+lord-specific confluence is real and significant on held-out data but **tiny**
+(realized lift 1.0013). Honest verdict: the ranker beats chance, but its power is
+mostly time-at-risk + age; the astrology-specific signal is genuine yet marginal —
+exactly what the small population lifts (~1.03–1.19) predict. 3 tests.
+
 **Wikidata day-precision death enrichment** (`enrich_deaths_wikidata.py`): the holos
 "NNNN deaths" mine gave year-precision (mid-year-anchored) deaths, which blur dāśā
 timing. Matched our charted, death-less persons to Wikidata P570 by exact English

@@ -116,7 +116,9 @@ unchanged: `build_charts_table` → `build_dasha_windows` → `build_dasha_tree`
 
 `validate_silver_layer` → **9 PASS, 0 FAIL** (made the optional Round-9
 `person_id_map` check skip-if-absent, matching the transit checks). DuckDB catalog
-`app/medini/data/catalog.duckdb` exposes 8 Silver tables + 5 Gold views; verified a
+`app/medini/data/catalog.duckdb` exposes 10 Silver tables + 6 Gold views (incl. the
+chart heterograph: `chart_edges` 897,276 + `static_graph_edges` 25 →
+`v_chart_edge_summary` 78,024); verified a
 persons⋈charts⋈events_with_dasha join resolves. `source` values: `vedastro` /
 `astrocrm`; person_id tags `VA:` / `AC:` (= `{prefix}:{birth_jd:.4f}`).
 Query it: `duckdb.connect("app/medini/data/catalog.duckdb", read_only=True)`.

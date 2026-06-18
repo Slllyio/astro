@@ -23,6 +23,7 @@ from typing import Any
 import duckdb
 
 from app.core.ephemeris_engine import DASHA_LORDS
+from app.core.yogas import SIGN_RULERS
 
 DEFAULT_CATALOG = Path("app/medini/data/catalog.duckdb")
 
@@ -276,6 +277,90 @@ def scan_yogas(con: duckdb.DuckDBPyConnection, outcome: str) -> list[DoctrineRes
     out = [validate_yoga(con, y, outcome) for y in yogas]
     out.sort(key=lambda r: r.lift, reverse=True)
     return out
+
+
+# --------------------------------------------------------------------------- #
+# Maraka — ascendant-specific death-timing doctrine                           #
+# --------------------------------------------------------------------------- #
+
+def _house_lord(asc_sign: int, house: int) -> str:
+    """Ruler of the sign occupying `house` counted from `asc_sign` (whole-sign)."""
+    return SIGN_RULERS[((asc_sign - 1 + house - 1) % 12) + 1]
+
+
+def _marakas(asc_sign: int) -> set[str]:
+    """Primary marakas for an ascendant: the 2nd and 7th house lords."""
+    return {_house_lord(asc_sign, 2), _house_lord(asc_sign, 7)}
+
+
+@dataclass(frozen=True)
+class MarakaResult:
+    event_class: str
+    level: str
+    n_events: int
+    n_maraka: int
+    observed_rate: float
+    expected_rate: float   # dasha-length-weighted, per-ascendant baseline
+    lift: float
+    z: float
+    p_value: float
+    verdict: str
+    by_ascendant: list[dict]
+
+
+def validate_maraka(con: duckdb.DuckDBPyConnection, event_class: str = "death_cause_unspecified",
+                    level: str = "md") -> MarakaResult:
+    """Test the maraka doctrine: do deaths run under the 2nd/7th-lord dasha more
+    than chance, accounting for each ascendant's marakas AND their dasha lengths?
+
+    The baseline is the per-person dasha-length share of that person's own
+    marakas (so a Libra native whose maraka is short-dasha Mars has a low
+    expected rate, a Leo native whose maraka is long-dasha Saturn a high one).
+    """
+    col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
+    if col is None:
+        raise ValueError("level must be 'md' or 'ad'")
+    rows = con.execute(
+        f"""SELECT e.{col} AS lord, c.asc_sign
+            FROM events_with_dasha e JOIN charts c USING(person_id)
+            WHERE e.event_class = '{_q(event_class)}'
+              AND e.{col} IS NOT NULL AND c.asc_sign IS NOT NULL"""
+    ).fetchall()
+
+    n = len(rows)
+    k = 0
+    exp_sum = 0.0
+    # per-ascendant tallies
+    per: dict[int, dict] = {}
+    for lord, asc in rows:
+        asc = int(asc)
+        mar = _marakas(asc)
+        is_mar = lord in mar
+        k += is_mar
+        exp_sum += sum(LORD_SHARE[m] for m in mar)
+        b = per.setdefault(asc, {"asc_sign": asc, "second_lord": _house_lord(asc, 2),
+                                 "seventh_lord": _house_lord(asc, 7), "n": 0, "n_maraka": 0})
+        b["n"] += 1
+        b["n_maraka"] += is_mar
+
+    exp_rate = (exp_sum / n) if n else 0.0
+    obs_rate = (k / n) if n else 0.0
+    lift = (obs_rate / exp_rate) if exp_rate else 0.0
+    se = math.sqrt(n * exp_rate * (1 - exp_rate)) if n else 0.0
+    z = (k - n * exp_rate) / se if se else 0.0
+    p = 2.0 * _norm_sf(abs(z))
+
+    by_asc = []
+    for asc in sorted(per):
+        b = per[asc]
+        by_asc.append({**b, "maraka_rate": round(b["n_maraka"] / b["n"], 4) if b["n"] else 0.0})
+
+    return MarakaResult(
+        event_class=event_class, level=level, n_events=n, n_maraka=k,
+        observed_rate=round(obs_rate, 4), expected_rate=round(exp_rate, 4),
+        lift=round(lift, 3), z=round(z, 3), p_value=round(p, 6),
+        verdict=_verdict(lift, p, k), by_ascendant=by_asc,
+    )
 
 
 def open_catalog(catalog: Path = DEFAULT_CATALOG) -> duckdb.DuckDBPyConnection:

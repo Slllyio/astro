@@ -129,3 +129,19 @@ async def age_shift(
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     return res.__dict__
+
+
+@doctrine_router.get("/maraka")
+async def maraka(
+    event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Maraka doctrine: do events run under the 2nd/7th-lord dasha more than the
+    dasha-length-weighted, per-ascendant baseline? Includes a per-ascendant
+    breakdown (the marakas differ by Lagna)."""
+    try:
+        res = dv.validate_maraka(con, event_class, level)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return res.__dict__

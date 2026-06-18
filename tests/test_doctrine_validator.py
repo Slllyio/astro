@@ -109,6 +109,51 @@ def test_age_shift_detects_later_deaths() -> None:
     assert res.verdict == "later"
 
 
+def _maraka_con() -> duckdb.DuckDBPyConnection:
+    """Leo-Lagna natives whose deaths all run under Saturn MD. For Leo, the 7th
+    lord is Saturn (a maraka) -> the maraka-MD rate should be ~100%."""
+    con = duckdb.connect(":memory:")
+    con.execute("""CREATE TABLE events_with_dasha
+        (event_id INT, person_id TEXT, event_class TEXT, md_lord_at_event TEXT, ad_lord_at_event TEXT)""")
+    con.execute("CREATE TABLE charts (person_id TEXT, asc_sign INT)")
+    ew, ch = [], []
+    for i in range(200):
+        ew.append((i, f"p{i}", "death_cause_unspecified", "Saturn", "Mercury"))
+        ch.append((f"p{i}", 5))  # Leo ascendant (sign 5)
+    con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?)", ew)
+    con.executemany("INSERT INTO charts VALUES (?,?)", ch)
+    return con
+
+
+def test_maraka_detects_seventh_lord_dasha() -> None:
+    con = _maraka_con()
+    res = dv.validate_maraka(con, "death_cause_unspecified", "md")
+    # Leo: 2nd lord Mercury, 7th lord Saturn -> all-Saturn deaths => 100% maraka
+    assert res.observed_rate == pytest.approx(1.0)
+    assert res.lift > 1.5
+    assert res.verdict == "supports"
+    # per-ascendant breakdown present for Leo (sign 5)
+    leo = next(b for b in res.by_ascendant if b["asc_sign"] == 5)
+    assert leo["seventh_lord"] == "Saturn"
+    assert leo["maraka_rate"] == pytest.approx(1.0)
+
+
+@pytest.mark.asyncio
+async def test_maraka_endpoint() -> None:
+    app = FastAPI()
+    app.include_router(doctrine_router)
+    con = _maraka_con()
+    app.dependency_overrides[get_con] = lambda: con
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://t") as ac:
+        r = await ac.get("/medini/doctrine/maraka",
+                         params={"event_class": "death_cause_unspecified", "level": "md"})
+        assert r.status_code == 200
+        assert r.json()["verdict"] == "supports"
+        assert any(b["asc_sign"] == 5 for b in r.json()["by_ascendant"])
+    app.dependency_overrides.clear()
+
+
 @pytest.mark.asyncio
 async def test_validate_endpoint() -> None:
     app = FastAPI()

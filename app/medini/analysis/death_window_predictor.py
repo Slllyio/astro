@@ -42,7 +42,8 @@ from app.medini.analysis.doctrine_validator import (
     validate_significator_by_bracket,
 )
 from app.medini.etl.build_charts_table import _compute_chart
-from app.medini.etl.build_dasha_windows import _windows_for_person
+from app.medini.etl.build_dasha_windows import _antardashas_in_md, _windows_for_person
+from app.medini.etl.feature_engineering import compute_full_mahadasha_cycle
 
 # Empirically measured over ~36.4k dated deaths (death_cause_unspecified, MD level)
 # after the Wikidata day-precision enrichment. Composite = P(MD lord plays >= k of
@@ -56,10 +57,12 @@ DEFAULT_COMPOSITE_FACTOR: dict[int, float] = {0: 1.0, 1: 1.026, 2: 1.096, 3: 1.1
 # in pūrṇa (>70).
 DEFAULT_BRACKET_FACTOR: dict[str, float] = {"alpa": 0.895, "madhya": 1.092, "purna": 1.016}
 
-# How much an antardaśā lord's own confluence reinforces the mahādaśā's risk. The
-# AD modulates but does not dominate the MD, so its excess-over-1 is down-weighted.
-# (A blend heuristic, not a measured lift — kept explicit and tunable.)
+# How much an antardaśā (AD) / pratyantardaśā (PD) lord's own confluence reinforces
+# the mahādaśā's risk. Sub-periods modulate but do not dominate the MD, so each
+# successively finer level's excess-over-1 is down-weighted further. (Blend
+# heuristics, not measured lifts — kept explicit and tunable.)
 AD_WEIGHT: float = 0.5
+PD_WEIGHT: float = 0.25
 
 
 @dataclass(frozen=True)
@@ -82,8 +85,12 @@ class DeathWindow:
     composite_factor: float
     bracket_factor: float
     ad_factor: float
-    risk_score: float      # composite × bracket × AD reinforcement
+    risk_score: float      # composite × bracket × AD (× PD) reinforcement
     probability: float | None = None   # calibrated P(death in this window | alive now)
+    pd_lord: str | None = None          # pratyantardaśā lord (depth="pd" only)
+    pd_seq: int | None = None
+    pd_score: int | None = None
+    pd_factor: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -155,6 +162,40 @@ def _bracket_for_age(age: float,
     return brackets[-1][0]  # ages past the last bound fall in the final bracket
 
 
+def _future_windows(birth_jd: float, moon_lon: float, depth: str) -> list[dict[str, Any]]:
+    """Enumerate the natal Vimśottarī windows at the requested resolution.
+
+    depth="ad": the 81 MD×AD windows (reuses the Silver builder).
+    depth="pd": the 729 MD×AD×PD (pratyantardaśā) windows — month-resolution — by
+    expanding each AD into 9 PDs with the same proportional rule (PD starts with the
+    AD lord, then the canonical order; PD_years = AD_years · lord_years / 120)."""
+    if depth == "ad":
+        out = _windows_for_person("live", birth_jd, moon_lon)
+        for w in out:
+            w["pd_lord"], w["pd_seq"] = None, None
+        return out
+    if depth != "pd":
+        raise ValueError("depth must be 'ad' or 'pd'")
+    cycle = compute_full_mahadasha_cycle(birth_jd, moon_lon)
+    out: list[dict[str, Any]] = []
+    for md_seq, (md_lord, md_start, md_end) in enumerate(cycle):
+        md_years = (md_end - md_start) / DAYS_PER_VEDIC_YEAR
+        for ad_seq, (ad_lord, ad_start, ad_end) in enumerate(
+            _antardashas_in_md(md_lord, md_start, md_years)
+        ):
+            ad_years = (ad_end - ad_start) / DAYS_PER_VEDIC_YEAR
+            for pd_seq, (pd_lord, pd_start, pd_end) in enumerate(
+                _antardashas_in_md(ad_lord, ad_start, ad_years)
+            ):
+                out.append({
+                    "window_id": f"live::MD::{md_lord}::AD::{ad_lord}::PD::{pd_lord}::{md_seq}.{ad_seq}",
+                    "md_lord": md_lord, "ad_lord": ad_lord, "pd_lord": pd_lord,
+                    "md_seq": md_seq, "ad_seq": ad_seq, "pd_seq": pd_seq,
+                    "start_jd": pd_start, "end_jd": pd_end,
+                })
+    return out
+
+
 def _role_count(lord: str, asc_sign: int, asc_lon: float,
                 graha_houses: dict[str, int],
                 significators: tuple[str, ...]) -> tuple[int, list[str]]:
@@ -199,6 +240,7 @@ def predict_death_windows(
     composite_factor: dict[int, float] | None = None,
     bracket_factor: dict[str, float] | None = None,
     mortality: "MortalityModel | None" = None,
+    depth: str = "ad",
 ) -> dict[str, Any]:
     """Rank a living person's future Vimśottarī windows by composite × bracket risk.
 
@@ -237,7 +279,7 @@ def predict_death_windows(
     as_of_jd = calculate_jd(as_of.year, as_of.month, as_of.day, 12.0, 0.0)
     current_age = round((as_of_jd - birth_jd) / DAYS_PER_VEDIC_YEAR, 2)
 
-    raw = _windows_for_person("live", birth_jd, moon_lon)
+    raw = _future_windows(birth_jd, moon_lon, depth)
 
     # Cache each lord's composite role-count — only 9 distinct lords.
     role_cache: dict[str, tuple[int, list[str]]] = {}
@@ -265,6 +307,14 @@ def predict_death_windows(
         ad_factor = 1.0 + AD_WEIGHT * (ad_c - 1.0)
         risk = c_factor * b_factor * ad_factor
 
+        pd_lord = w.get("pd_lord")
+        pd_score = pd_factor = None
+        if pd_lord is not None:
+            pd_score, _ = roles(pd_lord)
+            pd_c = composite_factor.get(pd_score, 1.0)
+            pd_factor = 1.0 + PD_WEIGHT * (pd_c - 1.0)
+            risk *= pd_factor
+
         scored.append(DeathWindow(
             rank=0,  # filled after sort
             window_id=w["window_id"], md_lord=w["md_lord"], ad_lord=w["ad_lord"],
@@ -274,6 +324,8 @@ def predict_death_windows(
             bracket=bracket, md_score=md_score, md_roles=md_roles, ad_score=ad_score,
             composite_factor=round(c_factor, 4), bracket_factor=round(b_factor, 4),
             ad_factor=round(ad_factor, 4), risk_score=round(risk, 4),
+            pd_lord=pd_lord, pd_seq=w.get("pd_seq"), pd_score=pd_score,
+            pd_factor=round(pd_factor, 4) if pd_factor is not None else None,
         ))
 
     # Calibrated probabilities from the empirical age-at-death model.
@@ -309,6 +361,7 @@ def predict_death_windows(
         "current_age": current_age,
         "asc_sign": asc_sign,
         "significators": list(significators),
+        "depth": depth,
         "calibrated": mortality is not None,
         **summary,
         "n_future_windows": len(scored),

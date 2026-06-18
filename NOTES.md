@@ -158,6 +158,19 @@ cardinality checks activated). Every event now carries active MD/AD dāśā + 9-
 gochara — enabling population-scale dāśā+transit timing analysis (e.g. MD-lord-at-
 death distribution over 30k deaths).
 
+**Transit (gochara) lever — validated NULL for death** (after rebuilding
+`event_transits` over all 38,995 events): slow planets transiting natal dusthānas
+at death show no signal — Saturn/Rahu/Ketu/Jupiter/Mars over 6/8/12 all lift ≈ 1.00,
+p > 0.35; Saturn over {8}, {1,8}, {1} likewise null. Likely because natal house cusps
+need exact birth time, which much of the corpus lacks. Deliberately **not** added to
+the predictor (would inject noise) — an honest negative result.
+
+**Pratyantardaśā (month-resolution) windows**: the predictor gained `depth="pd"` —
+expands each AD into its 9 PDs (729 windows/chart) with the same proportional rule,
+so predictions resolve to ~weeks–months instead of multi-year ADs. The PD lord's
+confluence reinforces the MD risk at a down-weighted `PD_WEIGHT=0.25`. Calibration +
+ranking are resolution-agnostic.
+
 **Backtest of the assembled ranker** (`death_backtest.py`): validating the levers
 individually isn't the same as validating the *predictor*. Held-out test (25% of
 persons; factors calibrated only on the disjoint 75%), scoring three nested models of

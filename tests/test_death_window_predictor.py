@@ -87,6 +87,25 @@ def test_unknown_significator_raises() -> None:
         dwp.predict_death_windows(as_of=_AS_OF, significators=("bogus",), **_CHART)
 
 
+def test_pd_depth_gives_finer_windows() -> None:
+    ad = dwp.predict_death_windows(as_of=_AS_OF, top_n=None, **_CHART)
+    pd_ = dwp.predict_death_windows(as_of=_AS_OF, top_n=None, depth="pd", **_CHART)
+    assert pd_["depth"] == "pd"
+    # PD partitions each AD into 9 → strictly more (and finer) future windows
+    assert pd_["n_future_windows"] > ad["n_future_windows"]
+    w = pd_["windows"][0]
+    assert w["pd_lord"] is not None and w["pd_seq"] is not None
+    assert w["pd_score"] is not None and w["pd_factor"] is not None
+    # PD resolves to sub-year windows (vs multi-year ADs)
+    spans = [x["end_age"] - x["start_age"] for x in pd_["windows"]]
+    assert min(spans) < 1.0
+
+
+def test_invalid_depth_raises() -> None:
+    with pytest.raises(ValueError):
+        dwp.predict_death_windows(as_of=_AS_OF, depth="bogus", **_CHART)
+
+
 def test_mortality_model_conditional_reads() -> None:
     # Deaths uniformly at ages 0,1,...,99 → clean closed-form checks.
     m = dwp.MortalityModel(ages=tuple(float(a) for a in range(100)))

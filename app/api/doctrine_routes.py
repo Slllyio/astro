@@ -164,6 +164,37 @@ async def death_significators(
             "results": [r.__dict__ for r in results]}
 
 
+@doctrine_router.get("/death-composite")
+async def death_composite(
+    event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Composite death-risk: does the dasha lord playing more death-significator
+    roles (maraka + 3rd lord + 64th navamsa) raise risk (dose-response)?"""
+    try:
+        res = dv.validate_composite_death_score(con, event_class, level)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return res.__dict__
+
+
+@doctrine_router.get("/longevity-bracket")
+async def longevity_bracket(
+    significator: str = Query("maraka_full", description="a death significator"),
+    event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Does a significator's timing power concentrate in a longevity bracket
+    (alpa / madhya / purna by age-at-event)?"""
+    try:
+        res = dv.validate_significator_by_bracket(con, significator, event_class, level)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return res.__dict__
+
+
 @doctrine_router.get("/transit")
 async def transit(
     planet: str = Query("Saturn", description="transiting graha"),

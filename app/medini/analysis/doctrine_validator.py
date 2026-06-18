@@ -513,6 +513,158 @@ def death_significators_report(
 
 
 # --------------------------------------------------------------------------- #
+# Composite death-risk score (confluence / dose-response)                     #
+# --------------------------------------------------------------------------- #
+
+_DEATH_COMPOSITE = ("maraka_full", "third_lord", "navamsa_64")
+
+
+@dataclass(frozen=True)
+class CompositeResult:
+    event_class: str
+    level: str
+    significators: list[str]
+    n_events: int
+    thresholds: list[dict]   # one per k: {k, observed, expected, lift, z, p_value, verdict}
+
+
+def validate_composite_death_score(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    significators: tuple[str, ...] = _DEATH_COMPOSITE,
+) -> CompositeResult:
+    """Confluence test: does the dasha lord playing MORE death-significator roles
+    raise the risk (a dose-response)? For each event the active lord's score is the
+    number of `significators` whose set it belongs to; we test P(score>=k) at the
+    event vs the dasha-length-weighted baseline P(a random lord has score>=k)."""
+    col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
+    if col is None:
+        raise ValueError("level must be 'md' or 'ad'")
+    bad = [s for s in significators if s not in _SIGNIFICATORS]
+    if bad:
+        raise ValueError(f"unknown significator(s): {bad}")
+
+    house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
+    rows = con.execute(
+        f"""SELECT e.{col} AS lord, c.asc_sign, c.asc_lon, {house_cols}
+            FROM events_with_dasha e JOIN charts c USING(person_id)
+            WHERE e.event_class = '{_q(event_class)}'
+              AND e.{col} IS NOT NULL AND c.asc_sign IS NOT NULL AND c.asc_lon IS NOT NULL"""
+    ).fetchall()
+
+    nsig = len(significators)
+    obs = [0] * (nsig + 1)
+    exp = [0.0] * (nsig + 1)
+    all_lords = [lord for lord, _ in DASHA_LORDS]
+    for lord, asc, lon, *houses in rows:
+        asc, lon = int(asc), float(lon)
+        gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
+        sets = [_SIGNIFICATORS[s](asc, lon, gh) for s in significators]
+        obs[sum(lord in S for S in sets)] += 1
+        for L in all_lords:
+            exp[sum(L in S for S in sets)] += LORD_SHARE[L]
+
+    n = len(rows)
+    thresholds = []
+    for k in range(1, nsig + 1):
+        ok = sum(obs[k:])
+        ek = sum(exp[k:]) / n if n else 0.0
+        obs_p = ok / n if n else 0.0
+        lift = obs_p / ek if ek else 0.0
+        se = math.sqrt(n * ek * (1 - ek)) if (n and 0 < ek < 1) else 0.0
+        z = (ok - n * ek) / se if se else 0.0
+        p = 2.0 * _norm_sf(abs(z))
+        thresholds.append({
+            "k": k, "observed": round(obs_p, 4), "expected": round(ek, 4),
+            "lift": round(lift, 3), "z": round(z, 3), "p_value": round(p, 6),
+            "verdict": _verdict(lift, p, ok),
+        })
+    return CompositeResult(event_class=event_class, level=level,
+                           significators=list(significators), n_events=n,
+                           thresholds=thresholds)
+
+
+# --------------------------------------------------------------------------- #
+# Longevity bracket (ayurdaya) — do significators fire in a specific window?   #
+# --------------------------------------------------------------------------- #
+
+DEFAULT_BRACKETS: tuple[tuple[str, float, float], ...] = (
+    ("alpa", 0.0, 32.0), ("madhya", 32.0, 70.0), ("purna", 70.0, 200.0),
+)
+
+
+@dataclass(frozen=True)
+class BracketResult:
+    significator: str
+    event_class: str
+    level: str
+    brackets: list[dict]   # {name, lo, hi, n, observed, expected, lift, z, p_value, verdict}
+
+
+def validate_significator_by_bracket(
+    con: duckdb.DuckDBPyConnection,
+    significator: str = "maraka_full",
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    brackets: tuple[tuple[str, float, float], ...] = DEFAULT_BRACKETS,
+) -> BracketResult:
+    """Does a significator's timing power concentrate in a longevity bracket?
+
+    Splits events by age-at-event (alpa/madhya/purna by default) and computes the
+    significator's lift within each, against the same dasha-weighted baseline.
+    """
+    col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
+    if col is None:
+        raise ValueError("level must be 'md' or 'ad'")
+    if significator not in _SIGNIFICATORS:
+        raise ValueError(f"unknown significator {significator!r}")
+
+    house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
+    rows = con.execute(
+        f"""SELECT e.{col} AS lord, c.asc_sign, c.asc_lon, e.age_at_event_years AS age, {house_cols}
+            FROM events_with_dasha e JOIN charts c USING(person_id)
+            WHERE e.event_class = '{_q(event_class)}'
+              AND e.{col} IS NOT NULL AND c.asc_sign IS NOT NULL AND c.asc_lon IS NOT NULL
+              AND e.age_at_event_years IS NOT NULL"""
+    ).fetchall()
+
+    fn = _SIGNIFICATORS[significator]
+    acc = {name: {"n": 0, "k": 0, "exp": 0.0} for name, _, _ in brackets}
+    for lord, asc, lon, age, *houses in rows:
+        age = float(age)
+        bracket = next((name for name, lo, hi in brackets if lo <= age < hi), None)
+        if bracket is None:
+            continue
+        asc, lon = int(asc), float(lon)
+        gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
+        s = fn(asc, lon, gh)
+        a = acc[bracket]
+        a["n"] += 1
+        a["k"] += lord in s
+        a["exp"] += sum(LORD_SHARE[p] for p in s)
+
+    out = []
+    for name, lo, hi in brackets:
+        a = acc[name]
+        n, k = a["n"], a["k"]
+        ek = a["exp"] / n if n else 0.0
+        obs = k / n if n else 0.0
+        lift = obs / ek if ek else 0.0
+        se = math.sqrt(n * ek * (1 - ek)) if (n and 0 < ek < 1) else 0.0
+        z = (k - n * ek) / se if se else 0.0
+        p = 2.0 * _norm_sf(abs(z))
+        out.append({
+            "name": name, "lo": lo, "hi": hi, "n": n,
+            "observed": round(obs, 4), "expected": round(ek, 4),
+            "lift": round(lift, 3), "z": round(z, 3), "p_value": round(p, 6),
+            "verdict": _verdict(lift, p, k),
+        })
+    return BracketResult(significator=significator, event_class=event_class,
+                         level=level, brackets=out)
+
+
+# --------------------------------------------------------------------------- #
 # Transit (gochara) at the event                                              #
 # --------------------------------------------------------------------------- #
 

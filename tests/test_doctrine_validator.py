@@ -171,6 +171,53 @@ def test_death_significators_report() -> None:
         dv.death_significators_report(con, "death_cause_unspecified", "bogus")
 
 
+def _composite_con() -> duckdb.DuckDBPyConnection:
+    """Aries natives. For Aries the 8th lord (Scorpio) AND 3rd lord (Gemini->
+    Mercury) differ, but Mars is the 8th lord and (with asc_lon 5°) also the
+    64th-navamsa lord region — we just need Mars to be a maraka/role-player.
+    Half die under Mars MD (multi-role), half under Moon MD (no role)."""
+    con = duckdb.connect(":memory:")
+    con.execute("""CREATE TABLE events_with_dasha
+        (event_id INT, person_id TEXT, event_class TEXT, md_lord_at_event TEXT,
+         ad_lord_at_event TEXT, age_at_event_years DOUBLE)""")
+    hc = ", ".join(f"{g}_house INT" for g in
+                   ("sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn", "rahu", "ketu"))
+    con.execute(f"CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, {hc})")
+    ew, ch = [], []
+    for i in range(400):
+        # All deaths under Saturn MD (always in maraka_full -> a role-player), so
+        # the observed role-player rate (1.0) exceeds the dasha-weighted baseline.
+        md = "Saturn"
+        age = 50.0 if i % 2 == 0 else 20.0  # split alpa/madhya for the bracket test
+        ew.append((i, f"p{i}", "death_cause_unspecified", md, "Sun", age))
+        ch.append((f"p{i}", 1, 5.0, *([1] * 9)))
+    con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?,?)", ew)
+    con.executemany("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", ch)
+    return con
+
+
+def test_composite_thresholds_monotone_and_present() -> None:
+    con = _composite_con()
+    res = dv.validate_composite_death_score(con, "death_cause_unspecified", "md")
+    assert [t["k"] for t in res.thresholds] == [1, 2, 3]
+    # Mars (Aries 8th lord) is a death role-player; 200/400 deaths under Mars MD
+    # -> observed P(>=1 role) clearly exceeds the dasha-weighted baseline.
+    assert res.thresholds[0]["observed"] > res.thresholds[0]["expected"]
+    assert res.n_events == 400
+
+
+def test_bracket_splits_by_age() -> None:
+    con = _composite_con()
+    res = dv.validate_significator_by_bracket(con, "maraka_full", level="md")
+    by = {b["name"]: b for b in res.brackets}
+    # ages are 20 (alpa) and 50 (madhya); purna empty
+    assert by["alpa"]["n"] == 200
+    assert by["madhya"]["n"] == 200
+    assert by["purna"]["n"] == 0
+    with pytest.raises(ValueError):
+        dv.validate_significator_by_bracket(con, "nope")
+
+
 def _transit_con() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect(":memory:")
     con.execute("CREATE TABLE events_with_dasha (event_id INT, event_class TEXT)")

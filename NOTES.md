@@ -151,7 +151,8 @@ GitHub's hard 100 MB file limit, so it (and the sibling `dasha_tree.parquet`,
 68 MB) are **NOT committed** — both are untracked/gitignored and regenerated
 deterministically. After a fresh checkout, rebuild them (and refresh the catalog
 views over them) in ~30s:
-`python -m app.medini.etl.build_dasha_windows --workers 4 && python -m app.medini.etl.build_dasha_tree && python -m app.medini.etl.build_duckdb_catalog`.
+`python -m app.medini.etl.build_dasha_windows --workers 4 && python -m app.medini.etl.build_dasha_tree && python -m app.medini.etl.build_divisional_charts --workers 4 && python -m app.medini.etl.build_duckdb_catalog`.
+(`divisional_charts.parquet` is 219 MB — also untracked/regenerable for the same reason.)
 The committed compact Gold views (`v_natal_md_ads`, `v_event_with_tree`,
 `v_event_survival`) already carry the query-ready answers derived from them.
 

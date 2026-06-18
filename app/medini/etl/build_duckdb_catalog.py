@@ -70,6 +70,9 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     ("person_dossier", "person_dossier.parquet"),
     # Wide-format per-event dossier — event + dasha + 9 transits in one row.
     ("event_dossier", "event_dossier.parquet"),
+    # Structured attributes + derived labels mined from the categories field.
+    ("person_attributes", "person_attributes.parquet"),
+    ("person_labels", "person_labels.parquet"),
 )
 
 
@@ -79,7 +82,7 @@ _OPTIONAL_SILVER: Final[set[str]] = {
     "events_with_dasha", "chart_edges", "static_graph_edges", "dasha_tree",
     "person_id_map", "event_class_taxonomy", "dasha_pd_windows",
     "event_transits", "divisional_charts", "jaimini_karakas",
-    "person_dossier", "event_dossier",
+    "person_dossier", "event_dossier", "person_attributes", "person_labels",
 }
 
 

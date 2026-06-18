@@ -158,6 +158,18 @@ cardinality checks activated). Every event now carries active MD/AD dāśā + 9-
 gochara — enabling population-scale dāśā+transit timing analysis (e.g. MD-lord-at-
 death distribution over 30k deaths).
 
+**Wikidata day-precision death enrichment** (`enrich_deaths_wikidata.py`): the holos
+"NNNN deaths" mine gave year-precision (mid-year-anchored) deaths, which blur dāśā
+timing. Matched our charted, death-less persons to Wikidata P570 by exact English
+label + birth-year (±1), multi-token names only → **+5,448 fresh day-precision
+deaths** (events 33,548 → 38,996; death events with MD known 30,910 → **36,355**).
+Re-validating on the richer corpus **confirmed and sharpened every finding**:
+significators third_lord/navāṁśa_64 lift 1.044, maraka_full 1.036 (p≈0); composite
+dose-response now **1.026 / 1.096 / 1.189** at ≥1/2/3 roles (was 1.022/1.086/1.151);
+longevity bracket madhya 1.092 (p≈0), alpa 0.895 (under-represented), pūrṇa 1.016.
+The predictor's baked-in default factors were updated to these refreshed lifts. Raw
+matches cached/auditable in `data/astro_databank/wikidata_deaths.csv`.
+
 **Persistence note**: at this scale `dasha_windows.parquet` is **154 MB**, over
 GitHub's hard 100 MB file limit, so it (and the sibling `dasha_tree.parquet`,
 68 MB) are **NOT committed** — both are untracked/gitignored and regenerated

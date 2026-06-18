@@ -44,15 +44,17 @@ from app.medini.analysis.doctrine_validator import (
 from app.medini.etl.build_charts_table import _compute_chart
 from app.medini.etl.build_dasha_windows import _windows_for_person
 
-# Empirically measured this session over ~30.9k dated deaths (death_cause_unspecified,
-# MD level). Composite = P(MD lord plays >= k of {maraka_full, 3rd-lord, 64th-navāṁśa})
-# lifts at each threshold; mapped here to a per-window factor by the lord's exact role
-# count (0 roles = neutral, the dose-response climbs from there).
-DEFAULT_COMPOSITE_FACTOR: dict[int, float] = {0: 1.0, 1: 1.022, 2: 1.086, 3: 1.151}
+# Empirically measured over ~36.4k dated deaths (death_cause_unspecified, MD level)
+# after the Wikidata day-precision enrichment. Composite = P(MD lord plays >= k of
+# {maraka_full, 3rd-lord, 64th-navāṁśa}) lifts at each threshold; mapped here to a
+# per-window factor by the lord's exact role count (0 roles = neutral, the
+# dose-response climbs from there).
+DEFAULT_COMPOSITE_FACTOR: dict[int, float] = {0: 1.0, 1: 1.026, 2: 1.096, 3: 1.189}
 
 # Longevity bracket (āyurdāya) lift for the maraka_full significator: the confluence
-# fires in madhya (32–70), is under-represented in alpa (<32), and is null in pūrṇa.
-DEFAULT_BRACKET_FACTOR: dict[str, float] = {"alpa": 0.89, "madhya": 1.085, "purna": 1.01}
+# fires in madhya (32–70), is under-represented in alpa (<32), and is only marginal
+# in pūrṇa (>70).
+DEFAULT_BRACKET_FACTOR: dict[str, float] = {"alpa": 0.895, "madhya": 1.092, "purna": 1.016}
 
 # How much an antardaśā lord's own confluence reinforces the mahādaśā's risk. The
 # AD modulates but does not dominate the MD, so its excess-over-1 is down-weighted.

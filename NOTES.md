@@ -123,6 +123,34 @@ persons⋈charts⋈events_with_dasha join resolves. `source` values: `vedastro` 
 `astrocrm`; person_id tags `VA:` / `AC:` (= `{prefix}:{birth_jd:.4f}`).
 Query it: `duckdb.connect("app/medini/data/catalog.duckdb", read_only=True)`.
 
+**2026-06-18 scaled corpus 4× → 80,890 persons**. Added the holos corpus
+(`jfsagro-glitch/ASTROCRM/holos_clean.csv`, 61,583 chart-grade records with
+full date+time+coords+tz+vocation; fetched + run through the existing
+`holos_importer` → `raw_holos.csv`), wired as a third corpus in
+`build_silver_from_corpora` (`source=holos`, person_id `HO:`). Rebuilt the whole
+Silver/Gold store unchanged:
+
+| Table | Rows |
+|---|---|
+| persons (holos 61,384 + vedastro 14,205 + astrocrm 5,301) | 80,890 |
+| charts | 80,890 |
+| dasha_windows / dasha_tree | 6,552,090 |
+| chart_edges | 3,720,940 |
+| events / events_with_dasha (5,129 matched) | 5,139 |
+| resolved_persons (4,592 cross-corpus matches) | 76,279 |
+
+`validate_silver_layer` → **9 PASS, 0 FAIL** (added a birth-year sanity gate
+`1 ≤ year ≤ 2100` in the adapter — holos ships a mythological "Thema Mundi" at
+year 6050 that has no computable chart). Why Wikidata wasn't used: its WDQS
+endpoint is reachable but **times out (60s)** on any bucket large enough to be
+worth it (even one birth-year), and the bulk-downloadable people datasets
+(Laouenan 2.2M, Yale 250k) are year-only / NLP-formatted — not chart-grade.
+
+**Persistence note**: the two bulky *deterministic* tables `dasha_windows.parquet`
+(155 MB) + `dasha_tree.parquet` (68 MB) are NOT committed (gitignored, regenerable
+in ~30s). Restore after checkout with:
+`python -m app.medini.etl.build_dasha_windows --workers 4 && python -m app.medini.etl.build_dasha_tree && python -m app.medini.etl.build_duckdb_catalog`.
+
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.
 

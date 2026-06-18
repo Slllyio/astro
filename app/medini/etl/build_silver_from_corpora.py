@@ -54,6 +54,7 @@ EVENT_TAXONOMY_FILE: Final = "event_class_taxonomy.parquet"
 _CORPORA: Final = (
     ("raw.csv", "vedastro", "VA"),
     ("raw_astrocrm.csv", "astrocrm", "AC"),
+    ("raw_holos.csv", "holos", "HO"),
 )
 
 # Rodden rating → birth_time_confidence (mirrors the ADB convention: AA/A are
@@ -105,6 +106,12 @@ def build_persons(raw_dir: Path) -> pd.DataFrame:
                 continue
             try:
                 y, m, day = (int(x) for x in date.split("-"))
+                # Sanity gate: reject implausible years (e.g. holos ships the
+                # mythological "Thema Mundi" at year 6050) so every person yields
+                # a computable chart and the charts 1:1 contract holds.
+                if not (1 <= y <= 2100):
+                    skipped += 1
+                    continue
                 jd = calculate_jd(y, m, day, _decimal_hour(d.get("time_of_birth")), float(tz))
             except (ValueError, TypeError):
                 skipped += 1
@@ -146,9 +153,10 @@ def build_events(
     df = pd.read_csv(path, dtype=str).fillna("")
     df = df[df["event_date"].str.match(r"^\d{4}-\d{2}-\d{2}$", na=False)].copy()
 
-    # name → person_id (ASTROCRM persons take precedence; see build_persons sort).
+    # name → person_id. ASTROCRM (the corpus the events were extracted from)
+    # takes precedence, then holos, then vedastro.
     name_to_id: dict[str, str] = {}
-    for src_pref in ("astrocrm", "vedastro"):
+    for src_pref in ("astrocrm", "holos", "vedastro"):
         sub = persons[persons["source"] == src_pref]
         for name, pid in zip(sub["name"], sub["person_id"]):
             name_to_id.setdefault(name, pid)

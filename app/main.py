@@ -16,6 +16,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
 from app.api.forecast_routes import almanac_router, forecast_router
+from app.api.doctrine_routes import doctrine_router
 from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
@@ -92,6 +93,7 @@ app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(reading_v15_router)  # V1.5 web UI for app/reading engine (/reading/v15/*)
 app.include_router(reading_integrated_router)  # Track A + Track B bridge (/reading/integrated/*)
 app.include_router(portal_router)  # v1.3.0 Family Charts portal (/portal/*) — saved relatives + master reading
+app.include_router(doctrine_router)  # Doctrine Validator — empirical rule testing (/medini/doctrine/*)
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

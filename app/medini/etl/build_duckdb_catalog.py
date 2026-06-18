@@ -73,6 +73,8 @@ _SILVER_TABLES: Final[tuple[tuple[str, str], ...]] = (
     # Structured attributes + derived labels mined from the categories field.
     ("person_attributes", "person_attributes.parquet"),
     ("person_labels", "person_labels.parquet"),
+    # Classical yogas detected per chart (truth-layer).
+    ("chart_yogas", "chart_yogas.parquet"),
 )
 
 
@@ -83,6 +85,7 @@ _OPTIONAL_SILVER: Final[set[str]] = {
     "person_id_map", "event_class_taxonomy", "dasha_pd_windows",
     "event_transits", "divisional_charts", "jaimini_karakas",
     "person_dossier", "event_dossier", "person_attributes", "person_labels",
+    "chart_yogas",
 }
 
 

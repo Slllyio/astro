@@ -65,6 +65,50 @@ def test_scan_sorts_by_lift() -> None:
 
 # ------------------------------- API ------------------------------- #
 
+def _timing_con() -> duckdb.DuckDBPyConnection:
+    """events_with_dasha where deaths over-cluster under Saturn MD and the
+    'StrongYoga' cohort dies ~10y later."""
+    con = duckdb.connect(":memory:")
+    con.execute("""CREATE TABLE events_with_dasha
+        (event_id INT, person_id TEXT, event_class TEXT,
+         md_lord_at_event TEXT, ad_lord_at_event TEXT, age_at_event_years DOUBLE)""")
+    con.execute("CREATE TABLE chart_yogas (person_id TEXT, yoga TEXT)")
+    rows, eid = [], 0
+    # 300 Saturn-MD deaths (age ~80), 100 Venus-MD deaths (age ~70); jittered so
+    # the within-cohort variance is non-zero (the t-test needs spread).
+    for i in range(300):
+        rows.append((eid := eid + 1, f"s{eid}", "death_cause_unspecified", "Saturn", "Sun", 80.0 + (i % 7) - 3))
+    for i in range(100):
+        rows.append((eid := eid + 1, f"v{eid}", "death_cause_unspecified", "Venus", "Sun", 70.0 + (i % 7) - 3))
+    con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?,?)", rows)
+    # tag the Saturn cohort with a yoga (so age-shift sees later deaths)
+    con.executemany("INSERT INTO chart_yogas VALUES (?, ?)",
+                    [(r[1], "StrongYoga") for r in rows if r[3] == "Saturn"])
+    return con
+
+
+def test_dasha_timing_flags_overclustered_lord() -> None:
+    con = _timing_con()
+    res = dv.validate_dasha_timing(con, "death_cause_unspecified", "md")
+    by_lord = {r.lord: r for r in res}
+    # Saturn: observed 300/400 = 0.75 vs natural share 19/120 ~ 0.158 -> big lift, significant
+    assert by_lord["Saturn"].lift > 3
+    assert by_lord["Saturn"].p_value < 0.001
+    assert by_lord["Saturn"].verdict == "supports"
+    # results sorted by lift descending
+    assert res == sorted(res, key=lambda r: r.lift, reverse=True)
+
+
+def test_age_shift_detects_later_deaths() -> None:
+    con = _timing_con()
+    res = dv.validate_age_shift(con, "death_cause_unspecified", yoga="StrongYoga")
+    assert res.mean_age_cohort == pytest.approx(80.0, abs=0.6)
+    assert res.mean_age_rest == pytest.approx(70.0, abs=0.6)
+    assert res.diff_years == pytest.approx(10.0, abs=0.6)
+    assert res.p_value < 0.001
+    assert res.verdict == "later"
+
+
 @pytest.mark.asyncio
 async def test_validate_endpoint() -> None:
     app = FastAPI()
@@ -88,4 +132,30 @@ async def test_validate_endpoint() -> None:
         # outcomes list
         r3 = await ac.get("/medini/doctrine/outcomes")
         assert "is_famous" in r3.json()["outcomes"]
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_timing_endpoints() -> None:
+    app = FastAPI()
+    app.include_router(doctrine_router)
+    con = _timing_con()
+    app.dependency_overrides[get_con] = lambda: con
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://t") as ac:
+        r = await ac.get("/medini/doctrine/dasha-timing",
+                         params={"event_class": "death_cause_unspecified", "level": "md"})
+        assert r.status_code == 200
+        saturn = next(x for x in r.json()["results"] if x["lord"] == "Saturn")
+        assert saturn["lift"] > 3 and saturn["verdict"] == "supports"
+
+        r2 = await ac.get("/medini/doctrine/age-shift",
+                          params={"event_class": "death_cause_unspecified", "yoga": "StrongYoga"})
+        assert r2.status_code == 200
+        assert r2.json()["verdict"] == "later"
+
+        r3 = await ac.get("/medini/doctrine/dasha-timing",
+                          params={"event_class": "death_cause_unspecified", "level": "bogus"})
+        assert r3.status_code == 422
     app.dependency_overrides.clear()

@@ -84,3 +84,48 @@ async def scan(
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     return {"outcome": outcome, "results": [r.to_dict() for r in results]}
+
+
+@doctrine_router.get("/event-classes")
+async def event_classes(con: duckdb.DuckDBPyConnection = Depends(get_con)) -> dict:
+    """Event classes available for timing analysis (with counts)."""
+    rows = con.execute(
+        "SELECT event_class, COUNT(*) n FROM events_with_dasha "
+        "WHERE md_lord_at_event IS NOT NULL GROUP BY 1 ORDER BY 2 DESC"
+    ).fetchall()
+    return {"event_classes": [{"event_class": c, "n": int(n)} for c, n in rows]}
+
+
+@doctrine_router.get("/dasha-timing")
+async def dasha_timing(
+    event_class: str = Query(..., description="see /event-classes"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Does an event class cluster under particular dasha lords (vs each lord's
+    natural Vimshottari share of life)?"""
+    try:
+        results = dv.validate_dasha_timing(con, event_class, level)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return {"event_class": event_class, "level": level,
+            "results": [r.__dict__ for r in results]}
+
+
+@doctrine_router.get("/age-shift")
+async def age_shift(
+    event_class: str = Query(..., description="see /event-classes"),
+    yoga: str | None = Query(None),
+    attr_root: str | None = Query(None),
+    attr_field: str | None = Query(None),
+    strong_graha: str | None = Query(None),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Does a chart condition shift the age at which an event class strikes?"""
+    try:
+        attr = (attr_root, attr_field) if attr_root and attr_field else None
+        res = dv.validate_age_shift(con, event_class, yoga=yoga, attr=attr,
+                                    strong_graha=strong_graha)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return res.__dict__

@@ -22,7 +22,15 @@ from typing import Any
 
 import duckdb
 
+from app.core.ephemeris_engine import DASHA_LORDS
+
 DEFAULT_CATALOG = Path("app/medini/data/catalog.duckdb")
+
+# Natural Vimshottari share of an ideal 120-year life per lord — the baseline a
+# dasha-timing test compares against ("does death cluster under a lord *more*
+# than that lord simply owns of life?").
+_TOTAL_DASHA_YEARS = sum(yrs for _, yrs in DASHA_LORDS)
+LORD_SHARE: dict[str, float] = {lord: yrs / _TOTAL_DASHA_YEARS for lord, yrs in DASHA_LORDS}
 
 # Outcome flags available in person_labels (boolean columns).
 OUTCOMES: tuple[str, ...] = (
@@ -106,25 +114,159 @@ def _evaluate(con: duckdb.DuckDBPyConnection, condition_label: str,
     )
 
 
+def _q(s: str) -> str:
+    """Strip single quotes — tiny inline sanitizer for interpolated literals."""
+    return s.replace("'", "")
+
+
+def _yoga_member(yoga: str) -> str:
+    return f"SELECT person_id FROM chart_yogas WHERE yoga = '{_q(yoga)}'"
+
+
+def _attr_member(root: str, field: str) -> str:
+    return (f"SELECT person_id FROM person_attributes "
+            f"WHERE root = '{_q(root)}' AND field = '{_q(field)}'")
+
+
+def _strong_member(graha: str) -> str:
+    return (f"SELECT person_id FROM graha_strength "
+            f"WHERE graha = '{_q(graha)}' AND rank = 1")
+
+
 def validate_yoga(con: duckdb.DuckDBPyConnection, yoga: str, outcome: str) -> DoctrineResult:
-    member = f"SELECT person_id FROM chart_yogas WHERE yoga = '{yoga.replace(chr(39), '')}'"
-    return _evaluate(con, f"yoga:{yoga}", member, outcome)
+    return _evaluate(con, f"yoga:{yoga}", _yoga_member(yoga), outcome)
 
 
 def validate_attribute(con: duckdb.DuckDBPyConnection, root: str, field: str,
                        outcome: str) -> DoctrineResult:
-    safe = lambda s: s.replace("'", "")  # noqa: E731 — tiny inline sanitizer
-    member = (f"SELECT person_id FROM person_attributes "
-              f"WHERE root = '{safe(root)}' AND field = '{safe(field)}'")
-    return _evaluate(con, f"attr:{root}:{field}", member, outcome)
+    return _evaluate(con, f"attr:{root}:{field}", _attr_member(root, field), outcome)
 
 
 def validate_strong_graha(con: duckdb.DuckDBPyConnection, graha: str,
                           outcome: str) -> DoctrineResult:
     """Condition = this graha is the strongest (Shadbala rank 1) in the chart."""
-    member = (f"SELECT person_id FROM graha_strength "
-              f"WHERE graha = '{graha.replace(chr(39), '')}' AND rank = 1")
-    return _evaluate(con, f"strongest:{graha}", member, outcome)
+    return _evaluate(con, f"strongest:{graha}", _strong_member(graha), outcome)
+
+
+# --------------------------------------------------------------------------- #
+# Event / timing outcomes (over events_with_dasha)                            #
+# --------------------------------------------------------------------------- #
+
+@dataclass(frozen=True)
+class DashaTimingResult:
+    event_class: str
+    level: str            # "md" or "ad"
+    lord: str
+    n_events: int
+    n_lord: int
+    observed_share: float
+    expected_share: float   # natural Vimshottari share of life
+    lift: float
+    z: float
+    p_value: float
+    verdict: str
+
+
+def validate_dasha_timing(con: duckdb.DuckDBPyConnection, event_class: str,
+                          level: str = "md") -> list[DashaTimingResult]:
+    """Does an event class cluster under particular dasha lords?
+
+    Compares the observed lord-at-event distribution to each lord's natural
+    Vimshottari share of life (a lord that owns 1/6 of life should, by chance,
+    be running at ~1/6 of events). A binomial z-test flags real deviations.
+    """
+    col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
+    if col is None:
+        raise ValueError("level must be 'md' or 'ad'")
+    rows = con.execute(
+        f"""SELECT {col} AS lord, COUNT(*) n
+            FROM events_with_dasha
+            WHERE event_class = '{_q(event_class)}' AND {col} IS NOT NULL
+            GROUP BY 1"""
+    ).fetchall()
+    counts = {lord: int(n) for lord, n in rows}
+    n_total = sum(counts.values())
+    out: list[DashaTimingResult] = []
+    for lord, exp_share in LORD_SHARE.items():
+        k = counts.get(lord, 0)
+        obs = k / n_total if n_total else 0.0
+        lift = obs / exp_share if exp_share else 0.0
+        # Binomial z-test: observed k vs expected n*p.
+        if n_total:
+            se = math.sqrt(n_total * exp_share * (1 - exp_share))
+            z = (k - n_total * exp_share) / se if se else 0.0
+        else:
+            z = 0.0
+        p = 2.0 * _norm_sf(abs(z))
+        out.append(DashaTimingResult(
+            event_class=event_class, level=level, lord=lord,
+            n_events=n_total, n_lord=k,
+            observed_share=round(obs, 4), expected_share=round(exp_share, 4),
+            lift=round(lift, 3), z=round(z, 3), p_value=round(p, 5),
+            verdict=_verdict(lift, p, k),
+        ))
+    out.sort(key=lambda r: r.lift, reverse=True)
+    return out
+
+
+@dataclass(frozen=True)
+class AgeShiftResult:
+    condition: str
+    event_class: str
+    n_cohort: int
+    n_rest: int
+    mean_age_cohort: float
+    mean_age_rest: float
+    diff_years: float
+    z: float
+    p_value: float
+    verdict: str
+
+
+def _age_shift(con: duckdb.DuckDBPyConnection, condition_label: str,
+               member_sql: str, event_class: str) -> AgeShiftResult:
+    """Welch two-sample test (normal approx; large-n) on age-at-event for the
+    condition cohort vs the rest, within one event class."""
+    def stats(in_cohort: bool) -> tuple[int, float, float]:
+        op = "IN" if in_cohort else "NOT IN"
+        r = con.execute(
+            f"""SELECT COUNT(*), AVG(age_at_event_years), VAR_SAMP(age_at_event_years)
+                FROM events_with_dasha
+                WHERE event_class = '{_q(event_class)}'
+                  AND age_at_event_years IS NOT NULL
+                  AND person_id {op} ({member_sql})"""
+        ).fetchone()
+        return int(r[0]), float(r[1] or 0.0), float(r[2] or 0.0)
+
+    n1, m1, v1 = stats(True)
+    n0, m0, v0 = stats(False)
+    diff = m1 - m0
+    se = math.sqrt((v1 / n1 if n1 else 0) + (v0 / n0 if n0 else 0))
+    z = diff / se if se else 0.0
+    p = 2.0 * _norm_sf(abs(z))
+    verdict = ("insufficient-n" if min(n1, n0) < 30
+               else "no-effect" if p >= 0.05
+               else "later" if diff > 0 else "earlier")
+    return AgeShiftResult(
+        condition=condition_label, event_class=event_class,
+        n_cohort=n1, n_rest=n0,
+        mean_age_cohort=round(m1, 2), mean_age_rest=round(m0, 2),
+        diff_years=round(diff, 2), z=round(z, 3), p_value=round(p, 5),
+        verdict=verdict,
+    )
+
+
+def validate_age_shift(con: duckdb.DuckDBPyConnection, event_class: str, *,
+                       yoga: str | None = None, attr: tuple[str, str] | None = None,
+                       strong_graha: str | None = None) -> AgeShiftResult:
+    """Does a chart condition shift the age at which an event class strikes?"""
+    if yoga:
+        return _age_shift(con, f"yoga:{yoga}", _yoga_member(yoga), event_class)
+    if attr:
+        return _age_shift(con, f"attr:{attr[0]}:{attr[1]}", _attr_member(*attr), event_class)
+    if strong_graha:
+        return _age_shift(con, f"strongest:{strong_graha}", _strong_member(strong_graha), event_class)
+    raise ValueError("provide one condition: yoga, attr=(root,field), or strong_graha")
 
 
 def scan_yogas(con: duckdb.DuckDBPyConnection, outcome: str) -> list[DoctrineResult]:

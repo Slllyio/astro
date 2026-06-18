@@ -146,10 +146,14 @@ endpoint is reachable but **times out (60s)** on any bucket large enough to be
 worth it (even one birth-year), and the bulk-downloadable people datasets
 (Laouenan 2.2M, Yale 250k) are year-only / NLP-formatted — not chart-grade.
 
-**Persistence note**: the two bulky *deterministic* tables `dasha_windows.parquet`
-(155 MB) + `dasha_tree.parquet` (68 MB) are NOT committed (gitignored, regenerable
-in ~30s). Restore after checkout with:
+**Persistence note**: at this scale `dasha_windows.parquet` is **154 MB**, over
+GitHub's hard 100 MB file limit, so it (and the sibling `dasha_tree.parquet`,
+68 MB) are **NOT committed** — both are untracked/gitignored and regenerated
+deterministically. After a fresh checkout, rebuild them (and refresh the catalog
+views over them) in ~30s:
 `python -m app.medini.etl.build_dasha_windows --workers 4 && python -m app.medini.etl.build_dasha_tree && python -m app.medini.etl.build_duckdb_catalog`.
+The committed compact Gold views (`v_natal_md_ads`, `v_event_with_tree`,
+`v_event_survival`) already carry the query-ready answers derived from them.
 
 
 **Reading the AUCs**: 0.5 = random, 0.6 = small but real, 0.7+ = strong. The dissolution-on-VedAstro number (0.59) is the most credible — large sample, good label discipline. Politics on a 422-row corpus (only 57 positives) is dominated by overfitting noise; entertainment's 0.67 holdout is encouraging but the high CV variance (±0.05) suggests it's not yet stable. Scaling the Wayback crawl to ~5,000 AA-complete rows (~12k fetches, ~13hr) would tighten these.

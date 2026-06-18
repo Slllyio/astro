@@ -18,11 +18,12 @@ from __future__ import annotations
 import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import duckdb
 
 from app.core.ephemeris_engine import DASHA_LORDS
+from app.core.shodashavarga import compute_divisional_longitude
 from app.core.yogas import SIGN_RULERS
 
 DEFAULT_CATALOG = Path("app/medini/data/catalog.duckdb")
@@ -399,6 +400,160 @@ def validate_maraka(con: duckdb.DuckDBPyConnection, event_class: str = "death_ca
         confluence_rate=round(conf_obs, 4), confluence_expected=round(conf_exp, 4),
         confluence_lift=round(conf_lift, 3), confluence_p=round(conf_p, 6),
         by_ascendant=by_asc,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Death significators — classical death-timing lords, tested head-to-head      #
+# --------------------------------------------------------------------------- #
+
+_MOVABLE = {1, 4, 7, 10}
+_FIXED = {2, 5, 8, 11}
+
+
+def _badhaka_house(asc_sign: int) -> int:
+    """Badhaka house: 11th for movable, 9th for fixed, 7th for dual signs."""
+    return 11 if asc_sign in _MOVABLE else (9 if asc_sign in _FIXED else 7)
+
+
+def _div_sign_lord(longitude: float, divisor: int) -> str:
+    """Ruler of the divisional (D-`divisor`) sign at a longitude."""
+    dl = compute_divisional_longitude(longitude % 360.0, divisor)
+    return SIGN_RULERS[int(dl // 30) + 1]
+
+
+# Each significator maps a chart -> the set of planets that "time" the event by
+# classical doctrine. asc_lon drives the 210°-from-Lagna points (22nd drekkana,
+# 64th navamsa); graha_houses feeds maraka occupants.
+_SIGNIFICATORS: dict[str, "Callable"] = {
+    "maraka_full": lambda asc, lon, gh: _maraka_set(asc, gh, "full"),
+    "maraka_lords": lambda asc, lon, gh: _maraka_set(asc, gh, "lords"),
+    "eighth_lord": lambda asc, lon, gh: {_house_lord(asc, 8)},
+    "third_lord": lambda asc, lon, gh: {_house_lord(asc, 3)},
+    "badhakesa": lambda asc, lon, gh: {_house_lord(asc, _badhaka_house(asc))},
+    "drekkana_22": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 3)},
+    "navamsa_64": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 9)},
+}
+
+
+@dataclass(frozen=True)
+class SignificatorResult:
+    significator: str
+    event_class: str
+    level: str
+    n_events: int
+    n_hit: int
+    observed_rate: float
+    expected_rate: float
+    lift: float
+    z: float
+    p_value: float
+    verdict: str
+
+
+def death_significators_report(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    significators: tuple[str, ...] | None = None,
+) -> list[SignificatorResult]:
+    """Test every classical death-timing significator head-to-head.
+
+    For each, computes how often the active dasha lord is that significator vs a
+    per-person dasha-length-weighted baseline (so longer-dasha significators are
+    not unfairly credited). Returns results sorted by lift descending.
+    """
+    col = {"md": "md_lord_at_event", "ad": "ad_lord_at_event"}.get(level)
+    if col is None:
+        raise ValueError("level must be 'md' or 'ad'")
+    names = significators or tuple(_SIGNIFICATORS)
+    bad = [s for s in names if s not in _SIGNIFICATORS]
+    if bad:
+        raise ValueError(f"unknown significator(s): {bad}; choose from {tuple(_SIGNIFICATORS)}")
+
+    house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
+    rows = con.execute(
+        f"""SELECT e.{col} AS lord, c.asc_sign, c.asc_lon, {house_cols}
+            FROM events_with_dasha e JOIN charts c USING(person_id)
+            WHERE e.event_class = '{_q(event_class)}'
+              AND e.{col} IS NOT NULL AND c.asc_sign IS NOT NULL AND c.asc_lon IS NOT NULL"""
+    ).fetchall()
+
+    acc = {s: {"n": 0, "k": 0, "exp": 0.0} for s in names}
+    for lord, asc, lon, *houses in rows:
+        asc, lon = int(asc), float(lon)
+        gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
+        for s in names:
+            sset = _SIGNIFICATORS[s](asc, lon, gh)
+            if not sset:
+                continue
+            a = acc[s]
+            a["n"] += 1
+            a["k"] += lord in sset
+            a["exp"] += sum(LORD_SHARE[p] for p in sset)
+
+    out: list[SignificatorResult] = []
+    for s in names:
+        a = acc[s]
+        n, k = a["n"], a["k"]
+        exp_rate = (a["exp"] / n) if n else 0.0
+        obs = (k / n) if n else 0.0
+        lift = (obs / exp_rate) if exp_rate else 0.0
+        se = math.sqrt(n * exp_rate * (1 - exp_rate)) if n else 0.0
+        z = (k - n * exp_rate) / se if se else 0.0
+        p = 2.0 * _norm_sf(abs(z))
+        out.append(SignificatorResult(
+            significator=s, event_class=event_class, level=level,
+            n_events=n, n_hit=k, observed_rate=round(obs, 4),
+            expected_rate=round(exp_rate, 4), lift=round(lift, 3),
+            z=round(z, 3), p_value=round(p, 6), verdict=_verdict(lift, p, k),
+        ))
+    out.sort(key=lambda r: r.lift, reverse=True)
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# Transit (gochara) at the event                                              #
+# --------------------------------------------------------------------------- #
+
+@dataclass(frozen=True)
+class TransitResult:
+    event_class: str
+    planet: str
+    houses: list[int]
+    n_events: int
+    n_hit: int
+    observed_rate: float
+    expected_rate: float
+    lift: float
+    z: float
+    p_value: float
+    verdict: str
+
+
+def validate_transit_house(con: duckdb.DuckDBPyConnection, planet: str = "Saturn",
+                           houses: tuple[int, ...] = (6, 8, 12),
+                           event_class: str = "death_cause_unspecified") -> TransitResult:
+    """Is a planet transiting one of `houses` (from natal Lagna) at the event more
+    than chance? Baseline = len(houses)/12 (uniform-house null)."""
+    in_list = ",".join(str(int(h)) for h in houses)
+    n, k = con.execute(
+        f"""SELECT COUNT(*), COALESCE(SUM(CASE WHEN t.transit_natal_house IN ({in_list}) THEN 1 ELSE 0 END),0)
+            FROM event_transits t JOIN events_with_dasha e USING(event_id)
+            WHERE e.event_class = '{_q(event_class)}' AND t.transit_planet = '{_q(planet)}'"""
+    ).fetchone()
+    n, k = int(n), int(k)
+    exp = len(houses) / 12.0
+    obs = (k / n) if n else 0.0
+    lift = obs / exp if exp else 0.0
+    se = math.sqrt(n * exp * (1 - exp)) if n else 0.0
+    z = (k - n * exp) / se if se else 0.0
+    p = 2.0 * _norm_sf(abs(z))
+    return TransitResult(
+        event_class=event_class, planet=planet, houses=list(houses),
+        n_events=n, n_hit=k, observed_rate=round(obs, 4), expected_rate=round(exp, 4),
+        lift=round(lift, 3), z=round(z, 3), p_value=round(p, 6),
+        verdict=_verdict(lift, p, k),
     )
 
 

@@ -146,3 +146,36 @@ async def maraka(
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     return res.__dict__
+
+
+@doctrine_router.get("/death-significators")
+async def death_significators(
+    event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
+    level: str = Query("md", description="'md' or 'ad'"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Test all classical death-timing significators head-to-head (maraka, 8th/3rd
+    lord, badhakesa, 22nd drekkana lord, 64th navamsa lord), ranked by lift."""
+    try:
+        results = dv.death_significators_report(con, event_class, level)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+    return {"event_class": event_class, "level": level,
+            "results": [r.__dict__ for r in results]}
+
+
+@doctrine_router.get("/transit")
+async def transit(
+    planet: str = Query("Saturn", description="transiting graha"),
+    houses: str = Query("6,8,12", description="comma-separated natal houses"),
+    event_class: str = Query("death_cause_unspecified", description="see /event-classes"),
+    con: duckdb.DuckDBPyConnection = Depends(get_con),
+) -> dict:
+    """Is a planet transiting one of `houses` (from natal Lagna) at the event more
+    than the uniform-house baseline?"""
+    try:
+        hs = tuple(int(h) for h in houses.split(",") if h.strip())
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="houses must be comma-separated integers") from exc
+    return dv.validate_transit_house(con, planet, hs, event_class).__dict__

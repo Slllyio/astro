@@ -140,6 +140,57 @@ def test_maraka_detects_seventh_lord_dasha() -> None:
     assert leo["maraka_rate"] == pytest.approx(1.0)
 
 
+def _sig_con() -> duckdb.DuckDBPyConnection:
+    """Aries-Lagna natives all dying under Mars MD. For Aries the 8th house is
+    Scorpio -> 8th lord Mars, so the eighth_lord significator should hit ~100%."""
+    con = duckdb.connect(":memory:")
+    con.execute("""CREATE TABLE events_with_dasha
+        (event_id INT, person_id TEXT, event_class TEXT, md_lord_at_event TEXT, ad_lord_at_event TEXT)""")
+    house_cols = ", ".join(f"{g}_house INT" for g in
+                           ("sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn", "rahu", "ketu"))
+    con.execute(f"CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, {house_cols})")
+    ew, ch = [], []
+    for i in range(200):
+        ew.append((i, f"p{i}", "death_cause_unspecified", "Mars", "Sun"))
+        ch.append((f"p{i}", 1, 5.0, *([1] * 9)))  # Aries asc
+    con.executemany("INSERT INTO events_with_dasha VALUES (?,?,?,?,?)", ew)
+    con.executemany("INSERT INTO charts VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", ch)
+    return con
+
+
+def test_death_significators_report() -> None:
+    con = _sig_con()
+    res = dv.death_significators_report(con, "death_cause_unspecified", "md")
+    by = {r.significator: r for r in res}
+    # Aries 8th lord = Mars; all deaths under Mars MD => ~100% hit, strong support
+    assert by["eighth_lord"].observed_rate == pytest.approx(1.0)
+    assert by["eighth_lord"].verdict == "supports"
+    # results sorted by lift desc
+    assert res == sorted(res, key=lambda r: r.lift, reverse=True)
+    with pytest.raises(ValueError):
+        dv.death_significators_report(con, "death_cause_unspecified", "bogus")
+
+
+def _transit_con() -> duckdb.DuckDBPyConnection:
+    con = duckdb.connect(":memory:")
+    con.execute("CREATE TABLE events_with_dasha (event_id INT, event_class TEXT)")
+    con.execute("CREATE TABLE event_transits (event_id INT, transit_planet TEXT, transit_natal_house INT)")
+    con.executemany("INSERT INTO events_with_dasha VALUES (?, ?)",
+                    [(i, "death_cause_unspecified") for i in range(120)])
+    # Saturn always transits the 8th at death -> huge lift over the 1/12 baseline.
+    con.executemany("INSERT INTO event_transits VALUES (?, 'Saturn', 8)",
+                    [(i,) for i in range(120)])
+    return con
+
+
+def test_transit_house() -> None:
+    con = _transit_con()
+    r = dv.validate_transit_house(con, "Saturn", (8,), "death_cause_unspecified")
+    assert r.observed_rate == pytest.approx(1.0)
+    assert r.expected_rate == pytest.approx(1 / 12, abs=1e-3)
+    assert r.lift > 5 and r.verdict == "supports"
+
+
 @pytest.mark.asyncio
 async def test_maraka_endpoint() -> None:
     app = FastAPI()

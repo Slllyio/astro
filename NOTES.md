@@ -297,3 +297,24 @@ All values cross-checked against external Vedic-astrology sources (Wikipedia, Pr
 | POST | `/interpret/chart` | LLM summary of the whole chart |
 | POST | `/interpret/chart/{section}` | LLM drill-down for one section |
 | GET  | `/interpret/page` | Interpret UI (form + LLM/Fallback badge) |
+| GET  | `/medini/doctrine/death-significators` | Classical death-timing significators, head-to-head by lift |
+| GET  | `/medini/doctrine/death-composite` | Composite confluence dose-response (maraka+3rd+64th-navāṁśa) |
+| GET  | `/medini/doctrine/longevity-bracket` | Significator lift by āyurdāya bracket (alpa/madhya/pūrṇa) |
+| GET  | `/medini/doctrine/death-window` | **Per-chart death-window predictor** — rank a living person's future dāśā periods |
+
+### Per-chart death-window predictor (`death_window_predictor.py`)
+
+Turns the population findings into a forward, per-chart tool. Given birth data it
+casts the natal chart (reusing the Silver `_compute_chart`), enumerates the 81
+Vimśottarī MD×AD windows (reusing `build_dasha_windows`), keeps the future ones
+(end after an as-of date), and ranks them by **composite × bracket** risk:
+- **composite** — how many of {maraka_full, 3rd-lord, 64th-navāṁśa} the running MD
+  lord plays (measured dose-response, lift 1.022/1.086/1.151 at score ≥1/2/3);
+- **bracket** — the āyurdāya window the period lands in (alpa 0.89 / madhya 1.085 /
+  pūrṇa 1.01, from the maraka_full bracket test);
+- a down-weighted AD reinforcement (AD lord's own confluence).
+
+Risk factors default to this session's measured lifts but can be re-derived live
+from the catalog (`?calibrate=true` → `calibrate_factors`; verified to reproduce the
+baked-in values). Core path needs only swisseph — no catalog — so it stays
+serveable + CI-testable. 8 tests in `tests/test_death_window_predictor.py`.

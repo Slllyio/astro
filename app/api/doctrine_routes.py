@@ -20,6 +20,9 @@ from typing import Iterator
 import duckdb
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
+import datetime as _dt
+
+from app.medini.analysis import death_window_predictor as dwp
 from app.medini.analysis import doctrine_validator as dv
 
 doctrine_router = APIRouter(prefix="/medini/doctrine", tags=["Doctrine Validator"])
@@ -210,3 +213,52 @@ async def transit(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="houses must be comma-separated integers") from exc
     return dv.validate_transit_house(con, planet, hs, event_class).__dict__
+
+
+@doctrine_router.get("/death-window")
+async def death_window(
+    year: int = Query(..., description="birth year"),
+    month: int = Query(..., ge=1, le=12),
+    day: int = Query(..., ge=1, le=31),
+    hour: int = Query(12, ge=0, le=23),
+    minute: int = Query(0, ge=0, le=59),
+    latitude: float = Query(..., ge=-90.0, le=90.0),
+    longitude: float = Query(..., ge=-180.0, le=180.0),
+    tz_offset: float = Query(0.0, description="hours east of UTC"),
+    as_of: str | None = Query(None, description="ISO date; default today (UTC)"),
+    top_n: int | None = Query(10, description="return the N riskiest windows; null = all"),
+    calibrate: bool = Query(False, description="re-derive risk factors live from the catalog"),
+) -> dict:
+    """Per-chart death-window predictor: rank a living person's future Vimśottarī
+    MD×AD periods by composite death-significator confluence × longevity bracket.
+
+    The risk factors default to this session's measured lifts; pass ``calibrate=true``
+    to re-derive them live from the catalog (requires the DuckDB catalog to be built)."""
+    try:
+        as_of_date = _dt.date.fromisoformat(as_of) if as_of else None
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="as_of must be an ISO date (YYYY-MM-DD)") from exc
+
+    composite_factor = bracket_factor = None
+    if calibrate:
+        if not dv.DEFAULT_CATALOG.exists():
+            raise HTTPException(
+                status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="calibration requested but DuckDB catalog is not built",
+            )
+        con = dv.open_catalog()
+        try:
+            composite_factor, bracket_factor = dwp.calibrate_factors(con)
+        finally:
+            con.close()
+
+    try:
+        return dwp.predict_death_windows(
+            year=year, month=month, day=day, hour=hour, minute=minute,
+            latitude=latitude, longitude=longitude, tz_offset=tz_offset,
+            as_of=as_of_date, top_n=top_n,
+            composite_factor=composite_factor, bracket_factor=bracket_factor,
+        )
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc

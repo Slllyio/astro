@@ -27,6 +27,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import csv
 import logging
 import re
 import unicodedata
@@ -84,6 +85,60 @@ def _decimal_hour(time_str: str) -> float:
 
 def _confidence(rodden: str) -> float:
     return _RODDEN_CONFIDENCE.get(str(rodden or "").strip().upper(), 0.0)
+
+
+# Wikipedia-category death-year tag, e.g. "1971 deaths", carried in the holos
+# `categories` field — a high-coverage (47%) dated-event source.
+_DEATH_TAG: Final = re.compile(r"^(\d{3,4}) deaths$")
+
+
+def _corpus_person_id(prefix: str, row: dict) -> str | None:
+    """Recompute a row's canonical person_id (matches build_persons)."""
+    date = (row.get("date_of_birth") or "").strip()
+    lat, lon, tz = row.get("latitude"), row.get("longitude"), row.get("tz_offset")
+    if not date or not lat or not lon or tz in (None, ""):
+        return None
+    try:
+        y, m, d = (int(x) for x in date.split("-"))
+        if not (1 <= y <= 2100):
+            return None
+        jd = calculate_jd(y, m, d, _decimal_hour(row.get("time_of_birth")), float(tz))
+    except (ValueError, TypeError):
+        return None
+    return f"{prefix}:{jd:.4f}"
+
+
+def _death_year_events(raw_dir: Path, persons: pd.DataFrame) -> pd.DataFrame:
+    """Year-precision death events mined from holos `categories` ("NNNN deaths").
+
+    Each holos row IS its own person, so person_id is recomputed directly (no
+    name join). The death year must be after the birth year. Dates anchor to
+    mid-year (07-01); precision is flagged "year" so downstream can filter.
+    """
+    path = raw_dir / "raw_holos.csv"
+    if not path.exists():
+        return pd.DataFrame()
+    valid = set(persons["person_id"])
+    rows: list[dict] = []
+    for r in csv.DictReader(path.open(encoding="utf-8")):
+        pid = _corpus_person_id("HO", r)
+        if pid is None or pid not in valid:
+            continue
+        m = next((_DEATH_TAG.match(t.strip()) for t in (r.get("categories") or "").split(";")
+                  if _DEATH_TAG.match(t.strip())), None)
+        if not m:
+            continue
+        dyear = int(m.group(1))
+        byear = int(r["date_of_birth"][:4])
+        if not (byear < dyear <= 2100):
+            continue
+        rows.append({
+            "person_id": pid, "event_class": "death_cause_unspecified",
+            "event_root": "Death", "event_subtype": pd.NA,
+            "event_date": f"{dyear:04d}-07-01", "event_date_precision": "year",
+            "event_label": pd.NA, "source": "astro_databank",
+        })
+    return pd.DataFrame(rows)
 
 
 def build_persons(raw_dir: Path) -> pd.DataFrame:
@@ -173,8 +228,7 @@ def build_events(
     orphans = int(df["person_id"].isna().sum())
     df = df[df["person_id"].notna()].copy()
 
-    events = pd.DataFrame({
-        "event_id": range(len(df)),
+    dated = pd.DataFrame({
         "person_id": df["person_id"].to_numpy(),
         "event_class": df["event_root"].map(_class).to_numpy(),
         "event_root": df["event_root"].to_numpy(),
@@ -184,11 +238,23 @@ def build_events(
         "event_label": pd.NA,
         "source": "astro_databank",
     })
+
+    # Year-precision death events mined from holos categories (big event boost).
+    deaths = _death_year_events(raw_dir, persons)
+    # A holos person already covered by a day-precision ADB death stays day-only.
+    if len(deaths):
+        day_death_ids = set(dated.loc[dated["event_class"] == "death_cause_unspecified", "person_id"])
+        deaths = deaths[~deaths["person_id"].isin(day_death_ids)]
+
+    combined = pd.concat([dated, deaths], ignore_index=True)
+    combined.insert(0, "event_id", range(len(combined)))
     logger.info(
-        "events: %d linked, %d orphans dropped, %d classes",
-        len(events), orphans, events["event_class"].nunique(),
+        "events: %d total (%d day-precision linked, %d year-precision deaths, "
+        "%d orphans dropped), %d classes",
+        len(combined), len(dated), len(deaths), orphans,
+        combined["event_class"].nunique(),
     )
-    return events[list(EVENT_COLS)]
+    return combined[list(EVENT_COLS)]
 
 
 def build(data_dir: Path = DEFAULT_DATA_DIR, raw_dir: Path = DEFAULT_RAW_DIR) -> dict:

@@ -146,6 +146,18 @@ endpoint is reachable but **times out (60s)** on any bucket large enough to be
 worth it (even one birth-year), and the bulk-downloadable people datasets
 (Laouenan 2.2M, Yale 250k) are year-only / NLP-formatted — not chart-grade.
 
+**2026-06-18 event layer 6.5× → 33,548 events + transits**. The event layer was
+the weak point (5,139 dated, death-heavy). Mined **year-precision death events**
+from the holos `categories` ("NNNN deaths" tags — 47% coverage) in
+`build_silver_from_corpora`: +28,409 deaths (mid-year anchor, `event_date_precision="year"`),
+for people we already have charts for. events 5,139 → **33,548** (30,943 death).
+Then ran `build_event_transits` → `event_transits.parquet` (301,932 rows = 9 grahas
+× 33,548 events) + Gold `v_event_transits_powerful` (167,740). `events_with_dasha`
+now 33,510 matched; `validate_silver_layer` **11 PASS / 0 FAIL** (the transit
+cardinality checks activated). Every event now carries active MD/AD dāśā + 9-graha
+gochara — enabling population-scale dāśā+transit timing analysis (e.g. MD-lord-at-
+death distribution over 30k deaths).
+
 **Persistence note**: at this scale `dasha_windows.parquet` is **154 MB**, over
 GitHub's hard 100 MB file limit, so it (and the sibling `dasha_tree.parquet`,
 68 MB) are **NOT committed** — both are untracked/gitignored and regenerated

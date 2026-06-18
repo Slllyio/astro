@@ -56,6 +56,13 @@ def _write_corpora(raw_dir: Path) -> None:
         + "Bob Sample,1980-06-15,09:30:00,48.85,2.35,1.0,A,,u2\n",
         encoding="utf-8",
     )
+    # holos corpus carries year-precision death tags in its categories.
+    (raw_dir / "raw_holos.csv").write_text(
+        _RAW_HEADER
+        + "Carol Holos,1900-05-05,06:00:00,40.71,-74.01,-5.0,A,1900 births;1975 deaths;Vocation : Art : Painter,u3\n"
+        + "Dave NoDeath,1950-01-01,12:00:00,51.5,-0.12,0.0,A,Vocation : Sports : Boxer,u4\n",
+        encoding="utf-8",
+    )
     (raw_dir / "events.csv").write_text(
         "name,event_code,event_root,event_subtype,event_date,event_year,source_url\n"
         "Bob Sample,Death,Death by Disease,,2020-03-01,2020,u2\n"   # links to Bob
@@ -70,13 +77,12 @@ def test_build_persons_unions_and_namespaces(tmp_path: Path) -> None:
     _write_corpora(tmp_path)
     persons = build_persons(tmp_path)
     assert list(persons.columns) == list(PERSON_COLS)
-    assert len(persons) == 2
-    assert set(persons["source"]) == {"vedastro", "astrocrm"}
-    # person_id namespacing by corpus
+    # alice (VA) + bob (AC) + carol & dave (HO)
+    assert len(persons) == 4
+    assert set(persons["source"]) == {"vedastro", "astrocrm", "holos"}
     prefixes = {pid.split(":")[0] for pid in persons["person_id"]}
-    assert prefixes == {"VA", "AC"}
-    # names normalized; confidence from rodden
-    assert set(persons["name"]) == {"alice example", "bob sample"}
+    assert prefixes == {"VA", "AC", "HO"}
+    assert "carol holos" in set(persons["name"])
     assert set(persons["birth_time_confidence"].astype(float)) == {1.0}
 
 
@@ -90,12 +96,14 @@ def test_build_events_links_and_drops(tmp_path: Path) -> None:
     persons = build_persons(tmp_path)
     events = build_events(tmp_path, persons, taxonomy_path=tax_path)
     assert list(events.columns) == list(EVENT_COLS)
-    # year-only ("1999") and the orphan ("Ghost Person") are dropped; 2 remain
-    assert len(events) == 2
-    assert set(events["event_date"]) == {"2020-03-01", "2001-02-02"}
+    # 2 day-precision (Bob marriage + death) + 1 year-precision (Carol's 1975 death).
+    # year-only ADB row ("1999") and the orphan ("Ghost Person") are dropped.
+    assert len(events) == 3
     # every event FK resolves into persons
     assert set(events["person_id"]).issubset(set(persons["person_id"]))
-    # Death by Disease harmonizes to the death class via the taxonomy
-    classes = set(events["event_class"])
-    assert "death_cause_unspecified" in classes
-    assert events["event_date_precision"].eq("day").all()
+    assert "death_cause_unspecified" in set(events["event_class"])
+    # the mined death-year event carries year precision + mid-year anchor
+    year_rows = events[events["event_date_precision"] == "year"]
+    assert len(year_rows) == 1
+    assert year_rows.iloc[0]["event_date"] == "1975-07-01"
+    assert set(events["event_date_precision"]) == {"day", "year"}

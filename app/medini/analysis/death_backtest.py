@@ -40,6 +40,7 @@ import duckdb
 
 from app.medini.analysis import doctrine_validator as dv
 from app.medini.analysis import death_window_predictor as dwp
+from app.medini.analysis import transit_triggers as tt
 from app.medini.analysis.death_window_predictor import _bracket_for_age, _role_count
 
 logger = logging.getLogger(__name__)
@@ -86,13 +87,18 @@ class BacktestResult:
     loglik_m0: float
     loglik_m1: float
     loglik_m2: float
+    loglik_m3: float          # M2 × transit factor (Saturn-trigger window fraction)
     delta_m1_m0: float        # bracket's added predictive value
-    delta_m2_m1: float        # composite (lord-specific) added value — the headline
+    delta_m2_m1: float        # composite (lord-specific) added value
+    delta_m3_m2: float        # transit-factor added value — the new headline
     z_m2_m1: float            # paired z on per-death (M2-M1)
     p_m2_m1: float
+    z_m3_m2: float            # paired z on per-death (M3-M2)
+    p_m3_m2: float
     # interpretable capture metrics (true window in model's top-decile of risk)
     top_decile_capture_m0: float
     top_decile_capture_m2: float
+    top_decile_capture_m3: float
     # realized-risk lift: composite factor of the true window vs the person's
     # duration-weighted average composite factor (isolates the lord signal)
     composite_realized_lift: float
@@ -125,11 +131,12 @@ def backtest(
 
     # ---- pull every window + chart for the test persons -------------------------
     house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in dv._MARAKA_GRAHAS)
+    lon_cols = ", ".join(f"c.{g.lower()}_lon AS {g.lower()}_lon" for g in dv._MARAKA_GRAHAS)
     lord_col = "w.md_lord" if level == "md" else "w.ad_lord"
     rows = con.execute(
         f"""SELECT w.person_id, w.md_seq, w.ad_seq, {lord_col} AS lord,
                    w.duration_days, w.start_jd, w.end_jd,
-                   c.asc_sign, c.asc_lon, c.birth_jd_used AS birth_jd, {house_cols}
+                   c.asc_sign, c.asc_lon, c.birth_jd_used AS birth_jd, {house_cols}, {lon_cols}
             FROM dasha_windows w JOIN charts c USING(person_id)
             WHERE w.person_id IN (SELECT UNNEST(?))
               AND c.asc_sign IS NOT NULL AND c.asc_lon IS NOT NULL""",
@@ -137,18 +144,26 @@ def backtest(
     ).fetchall()
 
     # group windows by person
+    nm = len(dv._MARAKA_GRAHAS)
     per: dict[str, list[dict]] = {}
     chart_of: dict[str, tuple[int, float, dict[str, int]]] = {}
+    trigger_pts: dict[str, list[float]] = {}
     for r in rows:
-        pid, ms, as_, lord, dur, sjd, ejd, asc, alon, bjd, *houses = r
+        pid, ms, as_, lord, dur, sjd, ejd, asc, alon, bjd = r[:10]
+        houses = r[10:10 + nm]
+        lons = r[10 + nm:10 + 2 * nm]
         if pid not in chart_of:
             gh = {g: (int(h) if h is not None else 0)
                   for g, h in zip(dv._MARAKA_GRAHAS, houses)}
             chart_of[pid] = (int(asc), float(alon), gh)
+            natal_lons = {g: (float(l) if l is not None else None)
+                          for g, l in zip(dv._MARAKA_GRAHAS, lons)}
+            trigger_pts[pid] = tt.death_trigger_points(int(asc), gh, natal_lons)
         mid_age = (((float(sjd) + float(ejd)) / 2.0) - float(bjd)) / _DAYS_PER_YEAR
         per.setdefault(pid, []).append({
             "md_seq": int(ms), "ad_seq": int(as_), "lord": lord,
             "dur": float(dur), "mid_age": mid_age,
+            "start_jd": float(sjd), "end_jd": float(ejd),
         })
 
     sig = dwp._DEATH_COMPOSITE
@@ -162,9 +177,10 @@ def backtest(
         return score_cache[key]
 
     # ---- evaluate each test death ----------------------------------------------
-    ll0 = ll1 = ll2 = 0.0
+    ll0 = ll1 = ll2 = ll3 = 0.0
     deltas21: list[float] = []
-    cap0 = cap2 = 0
+    deltas32: list[float] = []
+    cap0 = cap2 = cap3 = 0
     real_lift_num = real_lift_den = 0
     n = 0
 
@@ -172,8 +188,9 @@ def backtest(
         if pid not in true_win:
             continue
         tms, tas = true_win[pid]
+        pts = trigger_pts.get(pid, [])
         # weights under each model
-        w0, w1, w2 = [], [], []
+        w0, w1, w2, w3 = [], [], [], []
         comp_facs = []
         true_i = None
         for i, w in enumerate(wins):
@@ -181,19 +198,24 @@ def backtest(
             bf = bracket_factor.get(br, 1.0)
             cf = composite_factor.get(md_score(pid, w["lord"]), 1.0)
             comp_facs.append(cf)
+            # M3 transit factor: window's trigger-active fraction × validated lift.
+            tf = (tt.transit_factor(w["start_jd"], w["end_jd"], pts, n_samples=12)
+                  if pts else 1.0)
             w0.append(w["dur"])
             w1.append(w["dur"] * bf)
             w2.append(w["dur"] * bf * cf)
+            w3.append(w["dur"] * bf * cf * tf)
             if w["md_seq"] == tms and w["ad_seq"] == tas:
                 true_i = i
         if true_i is None:
             continue
-        s0, s1, s2 = sum(w0), sum(w1), sum(w2)
-        if s0 <= 0 or s1 <= 0 or s2 <= 0:
+        s0, s1, s2, s3 = sum(w0), sum(w1), sum(w2), sum(w3)
+        if min(s0, s1, s2, s3) <= 0:
             continue
-        p0, p1, p2 = w0[true_i] / s0, w1[true_i] / s1, w2[true_i] / s2
-        ll0 += math.log(p0); ll1 += math.log(p1); ll2 += math.log(p2)
+        p0, p1, p2, p3 = w0[true_i] / s0, w1[true_i] / s1, w2[true_i] / s2, w3[true_i] / s3
+        ll0 += math.log(p0); ll1 += math.log(p1); ll2 += math.log(p2); ll3 += math.log(p3)
         deltas21.append(math.log(p2) - math.log(p1))
+        deltas32.append(math.log(p3) - math.log(p2))
 
         # top-decile capture: true window among the model's riskiest 10% by weight
         k = max(1, int(round(0.10 * len(wins))))
@@ -201,6 +223,8 @@ def backtest(
             cap0 += 1
         if true_i in sorted(range(len(wins)), key=lambda j: w2[j], reverse=True)[:k]:
             cap2 += 1
+        if true_i in sorted(range(len(wins)), key=lambda j: w3[j], reverse=True)[:k]:
+            cap3 += 1
 
         # composite realized lift: true window's composite factor vs the person's
         # duration-weighted average composite factor (age/duration cancel out)
@@ -210,11 +234,15 @@ def backtest(
             real_lift_den += 1
         n += 1
 
-    mu = sum(deltas21) / len(deltas21) if deltas21 else 0.0
-    var = (sum((d - mu) ** 2 for d in deltas21) / len(deltas21)) if deltas21 else 0.0
-    se = math.sqrt(var / len(deltas21)) if deltas21 and var > 0 else 0.0
-    z = mu / se if se else 0.0
-    p = 2.0 * dv._norm_sf(abs(z))
+    def _paired(deltas: list[float]) -> tuple[float, float]:
+        mu = sum(deltas) / len(deltas) if deltas else 0.0
+        var = (sum((d - mu) ** 2 for d in deltas) / len(deltas)) if deltas else 0.0
+        se = math.sqrt(var / len(deltas)) if deltas and var > 0 else 0.0
+        zz = mu / se if se else 0.0
+        return zz, 2.0 * dv._norm_sf(abs(zz))
+
+    z, p = _paired(deltas21)
+    z32, p32 = _paired(deltas32)
 
     return BacktestResult(
         event_class=event_class, level=level,
@@ -224,11 +252,15 @@ def backtest(
         loglik_m0=round(ll0 / n, 4) if n else 0.0,
         loglik_m1=round(ll1 / n, 4) if n else 0.0,
         loglik_m2=round(ll2 / n, 4) if n else 0.0,
+        loglik_m3=round(ll3 / n, 4) if n else 0.0,
         delta_m1_m0=round((ll1 - ll0) / n, 5) if n else 0.0,
         delta_m2_m1=round((ll2 - ll1) / n, 5) if n else 0.0,
+        delta_m3_m2=round((ll3 - ll2) / n, 5) if n else 0.0,
         z_m2_m1=round(z, 3), p_m2_m1=round(p, 6),
+        z_m3_m2=round(z32, 3), p_m3_m2=round(p32, 6),
         top_decile_capture_m0=round(cap0 / n, 4) if n else 0.0,
         top_decile_capture_m2=round(cap2 / n, 4) if n else 0.0,
+        top_decile_capture_m3=round(cap3 / n, 4) if n else 0.0,
         composite_realized_lift=round(real_lift_num / real_lift_den, 4) if real_lift_den else 0.0,
     )
 
@@ -256,13 +288,14 @@ def main() -> int:
     print(f"  M0 duration-only          : {d['loglik_m0']}")
     print(f"  M1 + longevity bracket     : {d['loglik_m1']}   (Δ {d['delta_m1_m0']:+})")
     print(f"  M2 + composite confluence  : {d['loglik_m2']}   (Δ {d['delta_m2_m1']:+})")
-    print(f"\nHEADLINE M1→M2 (does the running lord add signal beyond age+duration?):")
-    print(f"  per-death Δ logLik = {d['delta_m2_m1']:+}  z={d['z_m2_m1']}  p={d['p_m2_m1']}")
-    print(f"  composite realized lift = {d['composite_realized_lift']} "
-          f"(true death window's confluence vs duration-weighted average)")
+    print(f"  M3 + transit factor        : {d['loglik_m3']}   (Δ {d['delta_m3_m2']:+})")
+    print(f"\nHEADLINE M1→M2 (running lord beyond age+duration):")
+    print(f"  Δ logLik = {d['delta_m2_m1']:+}  z={d['z_m2_m1']}  p={d['p_m2_m1']}")
+    print(f"NEW M2→M3 (transit trigger beyond composite):")
+    print(f"  Δ logLik = {d['delta_m3_m2']:+}  z={d['z_m3_m2']}  p={d['p_m3_m2']}")
     print(f"\ntop-decile capture (true window in model's riskiest 10%):")
     print(f"  M0 duration-only: {d['top_decile_capture_m0']}   "
-          f"M2 full: {d['top_decile_capture_m2']}   (null ≈ 0.10)")
+          f"M2: {d['top_decile_capture_m2']}   M3: {d['top_decile_capture_m3']}   (null ≈ 0.10)")
     return 0
 
 

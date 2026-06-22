@@ -30,6 +30,10 @@ from app.medini.analysis.doctrine_validator import _MARAKA_GRAHAS, _maraka_set
 # Validated default: transit Saturn within ±3° of a natal maraka or the natal Sun.
 DEFAULT_ORB_DEG: float = 3.0
 TRIGGER_PLANET: str = "Saturn"
+# On a trigger-active day the death rate is ~1.13× baseline (validated lift).
+TRANSIT_LIFT: float = 1.13
+
+_PLANET_ID = {"Saturn": swe.SATURN, "Jupiter": swe.JUPITER, "Mars": swe.MARS}
 
 
 def _ang_sep(a: float, b: float) -> float:
@@ -38,9 +42,14 @@ def _ang_sep(a: float, b: float) -> float:
     return min(d, 360.0 - d)
 
 
+def transit_lon(jd: float, planet: str = TRIGGER_PLANET) -> float:
+    """Sidereal (Lahiri) longitude of a transiting planet at a Julian Day."""
+    return float(calculate_d1_position(jd, _PLANET_ID[planet])["longitude"]) % 360.0
+
+
 def saturn_transit_lon(jd: float) -> float:
-    """Sidereal (Lahiri) longitude of Saturn at a Julian Day."""
-    return float(calculate_d1_position(jd, swe.SATURN)["longitude"]) % 360.0
+    """Sidereal (Lahiri) longitude of Saturn at a Julian Day (back-compat)."""
+    return transit_lon(jd, "Saturn")
 
 
 def death_trigger_points(
@@ -55,12 +64,43 @@ def death_trigger_points(
 
 
 def is_triggered(jd: float, trigger_points: list[float],
-                 orb: float = DEFAULT_ORB_DEG) -> bool:
-    """Is transit Saturn within `orb` of any trigger point at this JD?"""
+                 orb: float = DEFAULT_ORB_DEG, planet: str = TRIGGER_PLANET) -> bool:
+    """Is the transiting `planet` within `orb` of any trigger point at this JD?"""
     if not trigger_points:
         return False
-    sat = saturn_transit_lon(jd)
-    return any(_ang_sep(sat, p) < orb for p in trigger_points)
+    lon = transit_lon(jd, planet)
+    return any(_ang_sep(lon, p) < orb for p in trigger_points)
+
+
+def trigger_active_fraction(
+    start_jd: float, end_jd: float, trigger_points: list[float],
+    planet: str = TRIGGER_PLANET, orb: float = DEFAULT_ORB_DEG,
+    n_samples: int = 24,
+) -> float:
+    """Fraction of a window when `planet` is within `orb` of a trigger point.
+
+    Estimated by evenly sampling `n_samples` epochs across [start_jd, end_jd] — cheap
+    enough to call for every window in the backtest (vs the day-by-day
+    `active_trigger_intervals` used for the human-facing bands)."""
+    if not trigger_points or end_jd <= start_jd:
+        return 0.0
+    hits = sum(
+        1 for i in range(n_samples)
+        if is_triggered(start_jd + (i + 0.5) * (end_jd - start_jd) / n_samples,
+                        trigger_points, orb, planet)
+    )
+    return hits / n_samples
+
+
+def transit_factor(
+    start_jd: float, end_jd: float, trigger_points: list[float],
+    planet: str = TRIGGER_PLANET, orb: float = DEFAULT_ORB_DEG,
+    lift: float = TRANSIT_LIFT, n_samples: int = 24,
+) -> float:
+    """Between-window death-risk multiplier from the transit trigger: a window that is
+    trigger-active for fraction f carries propensity (1-f)·1 + f·lift = 1 + (lift-1)·f."""
+    f = trigger_active_fraction(start_jd, end_jd, trigger_points, planet, orb, n_samples)
+    return 1.0 + (lift - 1.0) * f
 
 
 @dataclass(frozen=True)

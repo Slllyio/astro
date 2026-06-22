@@ -81,6 +81,18 @@ scoring nested models of `P(death in window w)`:
 **Bottom line:** this ranks life-stage mortality *exposure* — a genuine ~2× edge over
 chance — not an individual death date. It is a risk-tendency ranker, not a prophecy.
 
+## Strength-gating: tested, does not help (negative result)
+
+The classical idea that "a maraka only delivers if strong/awake" was tested against
+the corpus and is **not supported**:
+- **Shadbala**: the MD-lord's shadbala rank at death equals the dāśā-weighted baseline
+  (diff −0.005, p=0.69).
+- **Baladi avastha**: death-MD-lords do not avoid the *Mrita* (24–30°, "dead") state —
+  0.210 vs a 0.20 uniform (z=+4.92), i.e. very slightly the opposite of the doctrine.
+
+So the death-timing signal is in *which lord* runs (maraka identity / composite role),
+**not** in the lord's strength or avasthā. Strength-gating was therefore not added.
+
 ## Other event classes
 
 The same machinery (`GET /medini/doctrine/event-significators?event_class=`) was run on

@@ -175,6 +175,17 @@ career ≥1 lift 1.178). Deliberately did NOT ship a marriage "confluence predic
 (it would be noise beyond Jupiter) — exposed the validated analysis generically
 instead. n is small + events skew to early adulthood (caveat noted).
 
+**Doctrine-mining the untested classical apparatus** (`alt_dasha_death.py`): tested the
+death-specific tools never validated before, on 37k deaths. **New finding:** the maraka
+counted from the **Karakāṁśa** (Jaimini, lift 1.067, p≈0) and from the **Sun** (1.058,
+p≈0) are individually STRONGER death significators than the textbook **Lagna maraka**
+(1.035); 2nd-from-Karakāṁśa is strongest (1.082). `maraka_from_sun` added to the
+significator panel. **But the ceiling holds:** folding them into the composite does NOT
+raise held-out capture@10% past ~0.22 (current 0.220 → 5-way 0.222, within ±0.004 noise)
+— the signals are correlated. Negatives: Ashtottari maraka anti-correlated (0.97,
+p=1e-6), Yogini weak (1.02), Moon-maraka & 8th-from-Karakāṁśa anti-correlated. Net: the
+death-timing signal has a hard ceiling ≈2.2× chance that no classical lever breaks.
+
 **Transit-Saturn conjunction trigger — validated, narrows windows** (`transit_triggers.py`,
 `predict_death_windows(transit_refine=True)` / `/death-window?transit_refine=true`):
 on 8,578 exact-date deaths vs a per-person uniform baseline, **transit Saturn within

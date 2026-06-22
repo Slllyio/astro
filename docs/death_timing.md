@@ -104,6 +104,42 @@ the corpus and is **not supported**:
 So the death-timing signal is in *which lord* runs (maraka identity / composite role),
 **not** in the lord's strength or avasthā. Strength-gating was therefore not added.
 
+## Doctrine-mining the untested classical apparatus (`alt_dasha_death.py`)
+
+We systematically tested the death-specific tools the tradition built but we'd never
+validated — alternate dashas and Jaimini/Moon/Sun marakas — against the 37k deaths
+(`python -m app.medini.analysis.alt_dasha_death`).
+
+**A genuine new finding — better significators than the textbook maraka.** Tested as
+"is the Vimśottarī MD-at-death this significator, vs its dāśā-length share?":
+
+| Significator | lift | p |
+|---|---|---|
+| **2nd-from-Karakāṁśa lord** | **1.082** | 1e-8 |
+| **maraka from Karakāṁśa** (Jaimini, 2&7+Saturn) | **1.067** | ~0 |
+| **maraka from the Sun** (2&7-from-Sun+Saturn) | **1.058** | ~0 |
+| maraka from Lagna (the textbook baseline) | 1.035 | ~0 |
+| 8th lord / Atmakaraka | 1.02 / 1.00 | ns |
+| maraka from Moon / 8th-from-Karakāṁśa | 0.96 / 0.93 | *anti* (p<1e-5) |
+
+So the **Jaimini (Karakāṁśa) and Sūrya marakas are individually stronger** death
+significators than the standard Lagna maraka — a real refinement of doctrine.
+(`maraka_from_sun` is now in the significator panel; the Karakāṁśa variants need the
+Atmakaraka and live in the battery module.)
+
+**But the ranking ceiling holds (the honest other half).** Folding these stronger
+significators into the composite does **not** raise held-out capture@10% past ~0.22
+(current 0.2200; +Karakāṁśa+Sun 0.2208; 5-way 0.2217 — all within the ±0.004 noise on
+9,313 deaths). The signals are correlated (all share Saturn + overlapping maraka sets),
+so combining them adds little. The death-timing signal has a **ceiling around 2.2×
+chance** that no classical lever we've tried — composite, transit, strength, alt-dasha,
+Jaimini — breaks meaningfully.
+
+**Alternate dashas — negative for maraka timing.** Ashtottari (classically a *death*
+dasha) is *anti*-correlated (lift 0.97, p=1e-6, even in its applicable charts); Yogini
+is barely positive (1.02) and weaker than Vimśottarī. Chara/Kālachakra and
+Rudra/Maheshwara remain unbuilt (deferred — the ceiling makes further mining low-yield).
+
 ## Other event classes
 
 The same machinery (`GET /medini/doctrine/event-significators?event_class=`) was run on

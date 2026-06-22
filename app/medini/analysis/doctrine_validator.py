@@ -433,6 +433,13 @@ _SIGNIFICATORS: dict[str, "Callable"] = {
     "badhakesa": lambda asc, lon, gh: {_house_lord(asc, _badhaka_house(asc))},
     "drekkana_22": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 3)},
     "navamsa_64": lambda asc, lon, gh: {_div_sign_lord(lon + 210.0, 9)},
+    # maraka counted from the Sun sign (2nd/7th-from-Sun lords + Saturn). Doctrine-
+    # mined: individually a STRONGER death significator than the Lagna maraka
+    # (lift 1.058 vs 1.035, p≈0 on 37k deaths), though correlated so it doesn't lift
+    # the composite ceiling. sun_sign = whole-sign from Lagna + Sun's house.
+    "maraka_from_sun": lambda asc, lon, gh: {
+        _house_lord(((asc - 1) + (gh.get("Sun", 1) - 1)) % 12 + 1, 2),
+        _house_lord(((asc - 1) + (gh.get("Sun", 1) - 1)) % 12 + 1, 7), "Saturn"},
     # Marriage / relationship significators
     "seventh_lord": lambda asc, lon, gh: {_house_lord(asc, 7)},
     "second_lord": lambda asc, lon, gh: {_house_lord(asc, 2)},

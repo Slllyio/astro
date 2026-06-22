@@ -99,6 +99,9 @@ class BacktestResult:
     top_decile_capture_m0: float
     top_decile_capture_m2: float
     top_decile_capture_m3: float
+    # fine empirical age-at-death model (MortalityModel) × composite — the calibrated
+    # predictor's true ranking; the coarse-bracket M2 badly under-reports capture.
+    top_decile_capture_mortality: float
     # realized-risk lift: composite factor of the true window vs the person's
     # duration-weighted average composite factor (isolates the lord signal)
     composite_realized_lift: float
@@ -124,6 +127,17 @@ def backtest(
     true_win = {pid: (int(ms), int(as_)) for pid, ms, as_ in deaths}
     test_ids = {pid for pid in true_win if _in_test(pid, test_frac)}
     train_ids = {pid for pid in true_win if pid not in test_ids}
+
+    # Train-only fine age-at-death model (the calibrated predictor's MortalityModel) —
+    # the proper alternative to the coarse 3-bucket age factor. Leak-free: TRAIN ages.
+    train_ages = con.execute(
+        f"""SELECT age_at_event_years FROM events_with_dasha
+            WHERE event_class = '{dv._q(event_class)}'
+              AND age_at_event_years IS NOT NULL AND age_at_event_years BETWEEN 0 AND 120
+              AND person_id IN (SELECT UNNEST(?))""",
+        [list(train_ids)],
+    ).fetchall()
+    mort = dwp.MortalityModel(ages=tuple(sorted(float(a[0]) for a in train_ages)))
 
     composite_factor, bracket_factor = _calibrate_on_train(con, train_ids, event_class, level)
     logger.info("Calibrated on %d train deaths: composite=%s bracket=%s",
@@ -164,6 +178,8 @@ def backtest(
             "md_seq": int(ms), "ad_seq": int(as_), "lord": lord,
             "dur": float(dur), "mid_age": mid_age,
             "start_jd": float(sjd), "end_jd": float(ejd),
+            "start_age": (float(sjd) - float(bjd)) / _DAYS_PER_YEAR,
+            "end_age": (float(ejd) - float(bjd)) / _DAYS_PER_YEAR,
         })
 
     sig = dwp._DEATH_COMPOSITE
@@ -180,7 +196,7 @@ def backtest(
     ll0 = ll1 = ll2 = ll3 = 0.0
     deltas21: list[float] = []
     deltas32: list[float] = []
-    cap0 = cap2 = cap3 = 0
+    cap0 = cap2 = cap3 = cap_mort = 0
     real_lift_num = real_lift_den = 0
     n = 0
 
@@ -190,7 +206,7 @@ def backtest(
         tms, tas = true_win[pid]
         pts = trigger_pts.get(pid, [])
         # weights under each model
-        w0, w1, w2, w3 = [], [], [], []
+        w0, w1, w2, w3, wm = [], [], [], [], []
         comp_facs = []
         true_i = None
         for i, w in enumerate(wins):
@@ -205,6 +221,9 @@ def backtest(
             w1.append(w["dur"] * bf)
             w2.append(w["dur"] * bf * cf)
             w3.append(w["dur"] * bf * cf * tf)
+            # Mfine: fine empirical age-at-death mass × composite (the calibrated
+            # predictor's ranking) — replaces the coarse bracket with the MortalityModel.
+            wm.append(mort.mass(w["start_age"], w["end_age"]) * cf)
             if w["md_seq"] == tms and w["ad_seq"] == tas:
                 true_i = i
         if true_i is None:
@@ -225,6 +244,8 @@ def backtest(
             cap2 += 1
         if true_i in sorted(range(len(wins)), key=lambda j: w3[j], reverse=True)[:k]:
             cap3 += 1
+        if true_i in sorted(range(len(wins)), key=lambda j: wm[j], reverse=True)[:k]:
+            cap_mort += 1
 
         # composite realized lift: true window's composite factor vs the person's
         # duration-weighted average composite factor (age/duration cancel out)
@@ -261,6 +282,7 @@ def backtest(
         top_decile_capture_m0=round(cap0 / n, 4) if n else 0.0,
         top_decile_capture_m2=round(cap2 / n, 4) if n else 0.0,
         top_decile_capture_m3=round(cap3 / n, 4) if n else 0.0,
+        top_decile_capture_mortality=round(cap_mort / n, 4) if n else 0.0,
         composite_realized_lift=round(real_lift_num / real_lift_den, 4) if real_lift_den else 0.0,
     )
 
@@ -295,7 +317,9 @@ def main() -> int:
     print(f"  Δ logLik = {d['delta_m3_m2']:+}  z={d['z_m3_m2']}  p={d['p_m3_m2']}")
     print(f"\ntop-decile capture (true window in model's riskiest 10%):")
     print(f"  M0 duration-only: {d['top_decile_capture_m0']}   "
-          f"M2: {d['top_decile_capture_m2']}   M3: {d['top_decile_capture_m3']}   (null ≈ 0.10)")
+          f"M2 (coarse bracket): {d['top_decile_capture_m2']}   M3: {d['top_decile_capture_m3']}")
+    print(f"  Mfine (MortalityModel age × composite): {d['top_decile_capture_mortality']}  "
+          f"<= the calibrated predictor's real capture (null ≈ 0.10)")
     return 0
 
 

@@ -84,10 +84,14 @@ scoring nested models of `P(death in window w)`:
 | M1 — + longevity bracket | −4.201 |
 | M2 — + composite confluence | −4.200 |
 
-- **Top-decile capture: 19.3% → 21.9%** vs a 10% null — the predictor lands the real
-  death window in its riskiest 10% about **2× chance**.
-- The bulk of that is time-at-risk + age (M0→M1). The **lord-specific signal (M1→M2)
-  is real and significant (z≈2.7, p≈0.006) but small** (realized lift ≈1.001).
+- **Top-decile capture with the FINE age model (MortalityModel × composite): ≈0.435**
+  vs a 10% null — the calibrated predictor lands the real death window in its riskiest
+  10% about **4.3× chance**. (The coarse 3-bucket bracket "M2" reports only 0.219 — it
+  throws away most of the age signal; see `death_timing_findings.md`.)
+- That power is **overwhelmingly the age-at-death distribution**; an XGBoost
+  learning-to-rank confirms it (0.436, ≈ the fine age model — no astrological gain).
+  The **lord-specific signal (M1→M2) is real and significant (z≈2.7, p≈0.006) but
+  tiny** (realized lift ≈1.001).
 
 **Bottom line:** this ranks life-stage mortality *exposure* — a genuine ~2× edge over
 chance — not an individual death date. It is a risk-tendency ranker, not a prophecy.

@@ -43,8 +43,24 @@ def _ang_sep(a: float, b: float) -> float:
 
 
 def transit_lon(jd: float, planet: str = TRIGGER_PLANET) -> float:
-    """Sidereal (Lahiri) longitude of a transiting planet at a Julian Day."""
+    """Sidereal (Lahiri) longitude of a transiting planet at a Julian Day (exact)."""
     return float(calculate_d1_position(jd, _PLANET_ID[planet])["longitude"]) % 360.0
+
+
+# Bucketed cache for the bulk fraction estimate (backtest scores ~9M epochs). The
+# slow movers shift <0.2°/5d, far inside a multi-degree orb, so 5-day buckets are
+# exact enough here. NOT used by the day-resolution bands (those call transit_lon).
+_LON_BUCKET_DAYS: float = 5.0
+_lon_cache: dict[tuple[int, str], float] = {}
+
+
+def _transit_lon_cached(jd: float, planet: str) -> float:
+    key = (int(jd / _LON_BUCKET_DAYS), planet)
+    v = _lon_cache.get(key)
+    if v is None:
+        v = transit_lon(key[0] * _LON_BUCKET_DAYS, planet)
+        _lon_cache[key] = v
+    return v
 
 
 def saturn_transit_lon(jd: float) -> float:
@@ -84,11 +100,12 @@ def trigger_active_fraction(
     `active_trigger_intervals` used for the human-facing bands)."""
     if not trigger_points or end_jd <= start_jd:
         return 0.0
-    hits = sum(
-        1 for i in range(n_samples)
-        if is_triggered(start_jd + (i + 0.5) * (end_jd - start_jd) / n_samples,
-                        trigger_points, orb, planet)
-    )
+    hits = 0
+    for i in range(n_samples):
+        jd = start_jd + (i + 0.5) * (end_jd - start_jd) / n_samples
+        lon = _transit_lon_cached(jd, planet)
+        if any(_ang_sep(lon, p) < orb for p in trigger_points):
+            hits += 1
     return hits / n_samples
 
 

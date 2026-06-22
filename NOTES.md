@@ -175,7 +175,18 @@ career ≥1 lift 1.178). Deliberately did NOT ship a marriage "confluence predic
 (it would be noise beyond Jupiter) — exposed the validated analysis generically
 instead. n is small + events skew to early adulthood (caveat noted).
 
-**Transit (gochara) lever — validated NULL for death** (after rebuilding
+**Transit-Saturn conjunction trigger — validated, narrows windows** (`transit_triggers.py`,
+`predict_death_windows(transit_refine=True)` / `/death-window?transit_refine=true`):
+on 8,578 exact-date deaths vs a per-person uniform baseline, **transit Saturn within
+±3° of (natal maraka ∪ Sun)** is over-represented on death days — **lift 1.131, p=0.001**
+(lift rises as orb tightens: ±8°→1.09, ±5°→1.10, ±3°→1.13 — a real conjunction, not an
+artifact). Only Saturn carries it (Jupiter/Mars/Rāhu/Ketu null; transit Saturn over
+8th-lord/Moon/2nd-7th-lords-alone null — driven by natal Saturn-return + Sun). Used to
+NARROW a flagged multi-year dāśā window to the ~weeks-scale bands when Saturn is within
+orb (a 3.3y window → three ~45–171-day bands, split by Saturn's retrograde loops). This
+is the degree-orb conjunction the earlier house-based gochara test missed.
+
+**Transit (gochara) HOUSE lever — validated NULL for death** (after rebuilding
 `event_transits` over all 38,995 events): slow planets transiting natal dusthānas
 at death show no signal — Saturn/Rahu/Ketu/Jupiter/Mars over 6/8/12 all lift ≈ 1.00,
 p > 0.35; Saturn over {8}, {1,8}, {1} likewise null. Likely because natal house cusps

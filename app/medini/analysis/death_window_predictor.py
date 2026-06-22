@@ -91,6 +91,7 @@ class DeathWindow:
     pd_seq: int | None = None
     pd_score: int | None = None
     pd_factor: float | None = None
+    trigger_bands: list[dict] | None = None  # transit-Saturn danger bands (transit_refine)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -152,6 +153,12 @@ def _jd_to_iso(jd: float) -> str:
     """Julian Day → ISO date string (UTC, day precision)."""
     y, m, d, _ = swe.revjul(jd, swe.GREG_CAL)
     return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
+
+
+def _iso_to_ymd(iso: str) -> tuple[int, int, int]:
+    """'YYYY-MM-DD' → (year, month, day)."""
+    y, m, d = iso.split("-")
+    return int(y), int(m), int(d)
 
 
 def _bracket_for_age(age: float,
@@ -241,6 +248,7 @@ def predict_death_windows(
     bracket_factor: dict[str, float] | None = None,
     mortality: "MortalityModel | None" = None,
     depth: str = "ad",
+    transit_refine: bool = False,
 ) -> dict[str, Any]:
     """Rank a living person's future Vimśottarī windows by composite × bracket risk.
 
@@ -354,6 +362,23 @@ def predict_death_windows(
     ranked = [DeathWindow(**{**asdict(d), "rank": i + 1}) for i, d in enumerate(scored)]
     if top_n is not None:
         ranked = ranked[:top_n]
+
+    # Transit-trigger refinement: narrow each returned window to the weeks when
+    # transit Saturn is within orb of a natal maraka/Sun point (validated lift 1.13).
+    if transit_refine and ranked:
+        from app.medini.analysis import transit_triggers as tt
+        natal_lons = {g: float(chart[f"{g.lower()}_lon"]) for g in _MARAKA_GRAHAS}
+        natal_lons["Sun"] = float(chart["sun_lon"])
+        pts = tt.death_trigger_points(asc_sign, graha_houses, natal_lons)
+        ranked = [
+            DeathWindow(**{**asdict(d), "trigger_bands": [
+                {"start_date": iv.start_date, "end_date": iv.end_date, "days": iv.days}
+                for iv in tt.active_trigger_intervals(
+                    calculate_jd(*_iso_to_ymd(d.start_date), 12.0, 0.0),
+                    calculate_jd(*_iso_to_ymd(d.end_date), 12.0, 0.0), pts)
+            ]})
+            for d in ranked
+        ]
 
     return {
         "birth_jd": birth_jd,

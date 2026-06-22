@@ -261,6 +261,7 @@ async def death_window(
     as_of: str | None = Query(None, description="ISO date; default today (UTC)"),
     top_n: int | None = Query(10, description="return the N riskiest windows; null = all"),
     depth: str = Query("ad", description="'ad' (MD×AD) or 'pd' (MD×AD×PD, month-resolution)"),
+    transit_refine: bool = Query(False, description="narrow each window to transit-Saturn danger bands (validated lift 1.13)"),
     calibrate: bool = Query(False, description="re-derive risk factors live from the catalog"),
 ) -> dict:
     """Per-chart death-window predictor: rank a living person's future Vimśottarī
@@ -292,7 +293,7 @@ async def death_window(
         return dwp.predict_death_windows(
             year=year, month=month, day=day, hour=hour, minute=minute,
             latitude=latitude, longitude=longitude, tz_offset=tz_offset,
-            as_of=as_of_date, top_n=top_n, depth=depth,
+            as_of=as_of_date, top_n=top_n, depth=depth, transit_refine=transit_refine,
             composite_factor=composite_factor, bracket_factor=bracket_factor,
             mortality=mortality,
         )

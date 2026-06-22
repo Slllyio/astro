@@ -25,8 +25,34 @@ Two empirically-significant levers, each tested vs a dāśā-length-weighted bas
 2. **Longevity bracket (āyurdāya)** — the marakas fire in *madhya* (age 32–70, lift
    **1.09**, p≈0), are under-represented in *alpa* (<32, 0.89), marginal in *pūrṇa* (>70).
 
-The transit (gochara) lever was tested and is **null** (slow planets over natal
-6/8/12 at death all lift ≈ 1.00) — deliberately excluded.
+The transit (gochara) **house** lever is **null** (slow planets over natal 6/8/12 at
+death all lift ≈ 1.00). But the **degree-orb transit-conjunction** lever is real
+(see "Narrowing" below).
+
+## Narrowing: transit-Saturn conjunction trigger
+
+Validated on the 8,578 exact-date deaths against a per-person uniform baseline (a
+transiting planet's longitude on a random day is ~uniform over 360°, so each person's
+expected hit-rate is the fraction of the circle within orb of their natal trigger
+points). Only **transit Saturn** carries signal (Jupiter/Mars/Rāhu/Ketu null):
+
+| Trigger (orb ±3°) | lift | p |
+|---|---|---|
+| transit Saturn → natal Sun | 1.20 | 0.019 |
+| transit Saturn → natal Saturn (Saturn return) | 1.18 | 0.029 |
+| transit Saturn → maraka set | 1.13 | 0.017 |
+| **combined: transit Saturn → (maraka ∪ Sun)** | **1.131** | **0.001** |
+
+Lift rises as the orb tightens (±8°→1.09, ±5°→1.10, ±3°→1.13) — the signature of a
+genuine conjunction, not an artifact. Transit Saturn over the 2nd/7th lords *alone*
+is null; the effect concentrates on natal Saturn and Sun.
+
+`death_window_predictor.predict_death_windows(..., transit_refine=True)` (or
+`/death-window?transit_refine=true`) uses this to **narrow** each flagged multi-year
+dāśā window to the multi-week bands when transit Saturn is within ±3° of a natal
+maraka/Sun point — e.g. a 3.3-year window collapses to three ~45–171-day bands (the
+splits are Saturn's retrograde loops over the point). Module:
+`app/medini/analysis/transit_triggers.py` (validate with `python -m app.medini.analysis.transit_triggers`).
 
 ## Calibration (real probability)
 

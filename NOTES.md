@@ -179,12 +179,20 @@ instead. n is small + events skew to early adulthood (caveat noted).
 `predict_death_windows(transit_refine=True)` / `/death-window?transit_refine=true`):
 on 8,578 exact-date deaths vs a per-person uniform baseline, **transit Saturn within
 ±3° of (natal maraka ∪ Sun)** is over-represented on death days — **lift 1.131, p=0.001**
-(lift rises as orb tightens: ±8°→1.09, ±5°→1.10, ±3°→1.13 — a real conjunction, not an
-artifact). Only Saturn carries it (Jupiter/Mars/Rāhu/Ketu null; transit Saturn over
-8th-lord/Moon/2nd-7th-lords-alone null — driven by natal Saturn-return + Sun). Used to
-NARROW a flagged multi-year dāśā window to the ~weeks-scale bands when Saturn is within
-orb (a 3.3y window → three ~45–171-day bands, split by Saturn's retrograde loops). This
-is the degree-orb conjunction the earlier house-based gochara test missed.
+(lift rises monotonically as orb tightens: ±4°→1.10, ±3°→1.13, ±2°→1.167 p=0.0007 — a
+real conjunction, not an artifact; orb is tunable). Only Saturn carries it
+(Jupiter/Mars/Rāhu/Ketu null; transit Saturn over 8th-lord/Moon/2nd-7th-lords-alone
+null — driven by natal Saturn-return + Sun). Used to NARROW a flagged multi-year dāśā
+window to the ~weeks-scale bands when Saturn is within orb (a 3.3y window → three
+~45–171-day bands, split by Saturn's retrograde loops).
+
+*"More" round — two validated negatives, kept honest:* (1) **double transit**
+(Saturn AND Jupiter both within orb of a death point) is null (lift 1.06, p=0.52) —
+the classical double-transit doctrine doesn't help. (2) **transit factor for window
+RANKING** (backtest model M3 = M2 × per-window trigger-active fraction) gives no
+accuracy gain (M2→M3 Δ logLik −1e-5, p=0.97) — the trigger is within-window (which
+weeks), not between-window (which period), so it sharpens bands but not ranking;
+deliberately NOT in risk_score. (Earlier strength-gating — shadbala/avastha — also null.)
 
 **Transit (gochara) HOUSE lever — validated NULL for death** (after rebuilding
 `event_transits` over all 38,995 events): slow planets transiting natal dusthānas

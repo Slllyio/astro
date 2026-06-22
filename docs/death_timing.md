@@ -43,9 +43,20 @@ points). Only **transit Saturn** carries signal (Jupiter/Mars/Rāhu/Ketu null):
 | transit Saturn → maraka set | 1.13 | 0.017 |
 | **combined: transit Saturn → (maraka ∪ Sun)** | **1.131** | **0.001** |
 
-Lift rises as the orb tightens (±8°→1.09, ±5°→1.10, ±3°→1.13) — the signature of a
-genuine conjunction, not an artifact. Transit Saturn over the 2nd/7th lords *alone*
-is null; the effect concentrates on natal Saturn and Sun.
+Lift rises monotonically as the orb tightens (±4°→1.10, ±3°→1.13, **±2°→1.167**,
+p=0.0007) — the signature of a genuine conjunction, not an artifact. Transit Saturn
+over the 2nd/7th lords *alone* is null; the effect concentrates on natal Saturn and Sun.
+`orb` is tunable: ±3° (default) balances lift vs coverage (fires ~7.7% of death days);
+±2° gives sharper, higher-confidence but rarer bands (5.3%).
+
+**Tested and rejected (negatives, kept honest):**
+- *Double transit* (Saturn AND Jupiter both within orb of a death point): null
+  (lift 1.06, p=0.52) — the classical double-transit doctrine does not help here.
+- *Transit factor for window RANKING* (backtest model M3 = M2 × per-window
+  trigger-active fraction): no accuracy gain (M2→M3 Δ logLik = −1e-5, p=0.97). The
+  trigger is a *within-window* timing signal (which weeks), not a *between-window*
+  one (which period), so it sharpens the bands but not the window ranking — it is
+  deliberately **not** in `risk_score`.
 
 `death_window_predictor.predict_death_windows(..., transit_refine=True)` (or
 `/death-window?transit_refine=true`) uses this to **narrow** each flagged multi-year

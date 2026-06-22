@@ -42,23 +42,25 @@ def _bt_con(n_persons: int = 120) -> duckdb.DuckDBPyConnection:
     assert len(controls) >= 4
 
     con = duckdb.connect()
+    chart_cols = (", ".join(f"{g.lower()}_house INT" for g in dwp._MARAKA_GRAHAS) + ", "
+                  + ", ".join(f"{g.lower()}_lon DOUBLE" for g in dwp._MARAKA_GRAHAS))
     con.execute("CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, "
-                "birth_jd_used DOUBLE, " +
-                ", ".join(f"{g.lower()}_house INT" for g in dwp._MARAKA_GRAHAS) + ")")
+                "birth_jd_used DOUBLE, " + chart_cols + ")")
     con.execute("CREATE TABLE dasha_windows (person_id TEXT, md_lord TEXT, ad_lord TEXT, "
                 "md_seq INT, ad_seq INT, start_jd DOUBLE, end_jd DOUBLE, duration_days DOUBLE)")
     con.execute("CREATE TABLE events_with_dasha (person_id TEXT, event_class TEXT, "
                 "md_lord_at_event TEXT, ad_lord_at_event TEXT, age_at_event_years DOUBLE, "
                 "md_seq INT, ad_seq INT, event_jd DOUBLE)")
 
-    hvals = [0] * len(dwp._MARAKA_GRAHAS)
+    ng = len(dwp._MARAKA_GRAHAS)
+    cvals = [0] * ng + [0.0] * ng     # 9 house ints + 9 natal-lon doubles
     win_years = 10.0
     death_seq = 4                                    # mid-age 45 → madhya bracket
     for i in range(n_persons):
         bjd = 2_440_000.0 + i
         con.execute("INSERT INTO charts VALUES (?,?,?,?," +
-                    ",".join("?" * len(hvals)) + ")",
-                    [f"P:{i}", asc, lon, bjd, *hvals])
+                    ",".join("?" * len(cvals)) + ")",
+                    [f"P:{i}", asc, lon, bjd, *cvals])
         for seq in range(6):
             lord = death_lord if seq == death_seq else controls[seq % len(controls)]
             sjd = bjd + seq * win_years * _DPY
@@ -93,19 +95,21 @@ def test_backtest_runs_and_detects_planted_signal() -> None:
 def test_backtest_no_planted_signal_is_neutral() -> None:
     # If every window shares one control lord, composite is constant → no lift.
     con = duckdb.connect()
+    chart_cols = (", ".join(f"{g.lower()}_house INT" for g in dwp._MARAKA_GRAHAS) + ", "
+                  + ", ".join(f"{g.lower()}_lon DOUBLE" for g in dwp._MARAKA_GRAHAS))
     con.execute("CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, "
-                "birth_jd_used DOUBLE, " +
-                ", ".join(f"{g.lower()}_house INT" for g in dwp._MARAKA_GRAHAS) + ")")
+                "birth_jd_used DOUBLE, " + chart_cols + ")")
     con.execute("CREATE TABLE dasha_windows (person_id TEXT, md_lord TEXT, ad_lord TEXT, "
                 "md_seq INT, ad_seq INT, start_jd DOUBLE, end_jd DOUBLE, duration_days DOUBLE)")
     con.execute("CREATE TABLE events_with_dasha (person_id TEXT, event_class TEXT, "
                 "md_lord_at_event TEXT, ad_lord_at_event TEXT, age_at_event_years DOUBLE, "
                 "md_seq INT, ad_seq INT, event_jd DOUBLE)")
-    hvals = [0] * len(dwp._MARAKA_GRAHAS)
+    ng = len(dwp._MARAKA_GRAHAS)
+    cvals = [0] * ng + [0.0] * ng
     for i in range(80):
         bjd = 2_440_000.0 + i
-        con.execute("INSERT INTO charts VALUES (?,?,?,?," + ",".join("?" * len(hvals)) + ")",
-                    [f"P:{i}", 1, 5.0, bjd, *hvals])
+        con.execute("INSERT INTO charts VALUES (?,?,?,?," + ",".join("?" * len(cvals)) + ")",
+                    [f"P:{i}", 1, 5.0, bjd, *cvals])
         for seq in range(5):
             sjd = bjd + seq * 10 * _DPY
             con.execute("INSERT INTO dasha_windows VALUES (?,?,?,?,?,?,?,?)",

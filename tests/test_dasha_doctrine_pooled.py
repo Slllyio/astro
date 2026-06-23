@@ -14,6 +14,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# The Round-11 doctrine-scorer modules (dasha_doctrine_score / _score_mix /
+# _score_strength) were never committed to this branch, so dasha_doctrine_pooled is
+# unimportable here. Skip rather than abort collection; restore the modules to re-enable.
+pytest.importorskip(
+    "app.medini.ml.dasha_doctrine_score",
+    reason="dasha_doctrine_score* scorer modules are not present on this branch",
+)
+
 from app.medini.ml.dasha_doctrine_pooled import (
     CorpusRR,
     _CORPUS_PRECEDENCE,

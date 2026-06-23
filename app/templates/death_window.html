@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Death-Window Predictor · Vimśottarī risk ranking</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f4f1ec; padding: 24px; }
+    .layout { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 360px 1fr; gap: 24px; }
+    @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+    h1 { font-size: 22px; color: #2a1a4e; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #6a5a4a; margin-bottom: 18px; }
+    form, .results { background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e0d8c8; }
+    .results { min-height: 280px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: #5a4a3a; margin-bottom: 4px; letter-spacing: 0.3px; text-transform: uppercase; }
+    .field input, .field select { width: 100%; padding: 8px 10px; border: 1px solid #d4cab8; border-radius: 4px; font-size: 14px; font-family: inherit; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    button {
+      width: 100%; padding: 11px; font-size: 14px; font-weight: 600;
+      background: linear-gradient(135deg, #2a1a4e 0%, #5a2a7e 100%);
+      color: #f4e8c8; border: 0; border-radius: 4px; cursor: pointer;
+      letter-spacing: 0.5px; margin-top: 6px;
+    }
+    button:hover { background: linear-gradient(135deg, #3a2a5e 0%, #6a3a8e 100%); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .summary { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; }
+    .stat { background: #faf7f0; border: 1px solid #ece3d2; border-radius: 6px; padding: 10px 14px; min-width: 120px; }
+    .stat .v { font-size: 20px; font-weight: 700; color: #2a1a4e; }
+    .stat .k { font-size: 11px; color: #8a7a6a; text-transform: uppercase; letter-spacing: 0.4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #f0ebe2; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #8a7a6a; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .bar { height: 8px; background: #ece3d2; border-radius: 4px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: linear-gradient(90deg, #c98a2a, #b2402a); }
+    .roles { font-size: 11px; color: #6a5a4a; }
+    .tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 9px; background: #efe6d4; color: #6a4a1a; margin-right: 3px; }
+    .empty { color: #888; font-style: italic; padding: 40px 0; text-align: center; }
+    .err { color: #b22; padding: 12px; background: #fee; border: 1px solid #fbb; border-radius: 4px; font-size: 13px; }
+    .meta { font-size: 11px; color: #888; margin-top: 14px; padding-top: 12px; border-top: 1px solid #f0ebe2; line-height: 1.5; }
+    .note { font-size: 11px; color: #a08a6a; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div>
+      <h1>Death-Window Predictor</h1>
+      <p class="subtitle">Ranks a living person's future Vimśottarī periods by empirically-validated death risk (composite confluence × longevity bracket), calibrated to the corpus age-at-death distribution.</p>
+      <form id="dw-form">
+        <div class="row3">
+          <div class="field"><label for="year">Year</label><input id="year" type="number" value="1960" required /></div>
+          <div class="field"><label for="month">Month</label><input id="month" type="number" min="1" max="12" value="7" required /></div>
+          <div class="field"><label for="day">Day</label><input id="day" type="number" min="1" max="31" value="15" required /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="hour">Hour (0–23)</label><input id="hour" type="number" min="0" max="23" value="12" /></div>
+          <div class="field"><label for="minute">Minute</label><input id="minute" type="number" min="0" max="59" value="0" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="latitude">Latitude</label><input id="latitude" type="number" step="any" value="12.97" required /></div>
+          <div class="field"><label for="longitude">Longitude</label><input id="longitude" type="number" step="any" value="77.59" required /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="tz_offset">TZ offset (h)</label><input id="tz_offset" type="number" step="any" value="5.5" /></div>
+          <div class="field"><label for="as_of">As of (date)</label><input id="as_of" type="date" /></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label for="depth">Resolution</label>
+            <select id="depth"><option value="ad">MD×AD</option><option value="pd">MD×AD×PD</option></select></div>
+          <div class="field"><label for="top_n">Top N</label><input id="top_n" type="number" min="1" value="12" /></div>
+          <div class="field"><label for="calibrate">Probability</label>
+            <select id="calibrate"><option value="true">Calibrated</option><option value="false">Relative only</option></select></div>
+        </div>
+        <button type="submit" id="go">Rank future windows</button>
+        <p class="note">Calibration reads the live death corpus; if the catalog isn't built, switch Probability to "Relative only".</p>
+      </form>
+    </div>
+    <div class="results" id="results">
+      <div class="empty">Enter birth data and rank the windows.</div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("dw-form");
+    const results = document.getElementById("results");
+    const go = document.getElementById("go");
+
+    function pct(x) { return (x == null) ? "—" : (x * 100).toFixed(1) + "%"; }
+
+    function renderRoles(roles) {
+      if (!roles || !roles.length) return '<span class="roles">—</span>';
+      const nice = { maraka_full: "maraka", third_lord: "3rd-lord", navamsa_64: "64th-nav" };
+      return roles.map(r => `<span class="tag">${nice[r] || r}</span>`).join("");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      go.disabled = true; results.innerHTML = '<div class="empty">Casting chart and ranking…</div>';
+      const q = new URLSearchParams();
+      ["year","month","day","hour","minute","latitude","longitude","tz_offset","depth","top_n","calibrate"]
+        .forEach(id => q.set(id, document.getElementById(id).value));
+      const asof = document.getElementById("as_of").value;
+      if (asof) q.set("as_of", asof);
+      try {
+        const r = await fetch("/medini/doctrine/death-window?" + q.toString());
+        const body = await r.json();
+        if (!r.ok) { results.innerHTML = `<div class="err">${body.detail || "request failed"}</div>`; go.disabled = false; return; }
+        renderResult(body);
+      } catch (err) {
+        results.innerHTML = `<div class="err">${err}</div>`;
+      }
+      go.disabled = false;
+    });
+
+    function renderResult(b) {
+      const calibrated = b.calibrated;
+      let summary = `<div class="summary">
+        <div class="stat"><div class="v">${b.current_age}</div><div class="k">current age</div></div>
+        <div class="stat"><div class="v">${b.n_future_windows}</div><div class="k">future windows</div></div>`;
+      if (calibrated) {
+        summary += `
+        <div class="stat"><div class="v">${b.median_remaining_years ?? "—"}</div><div class="k">median yrs left</div></div>
+        <div class="stat"><div class="v">${pct(b.prob_within_5y)}</div><div class="k">die ≤ 5y</div></div>
+        <div class="stat"><div class="v">${pct(b.prob_within_10y)}</div><div class="k">die ≤ 10y</div></div>`;
+      }
+      summary += `</div>`;
+
+      const probHeader = calibrated ? "<th>P(window)</th><th></th>" : "<th>risk</th>";
+      const maxMetric = Math.max(...b.windows.map(w => calibrated ? (w.probability || 0) : w.risk_score), 0.0001);
+      let rows = b.windows.map(w => {
+        const lords = w.pd_lord ? `${w.md_lord}/${w.ad_lord}/${w.pd_lord}` : `${w.md_lord}/${w.ad_lord}`;
+        const metric = calibrated ? (w.probability || 0) : w.risk_score;
+        const barCell = calibrated
+          ? `<td class="num">${pct(w.probability)}</td><td style="width:90px"><div class="bar"><span style="width:${(metric/maxMetric*100).toFixed(0)}%"></span></div></td>`
+          : `<td class="num">${w.risk_score}</td>`;
+        return `<tr>
+          <td class="num">${w.rank}</td>
+          <td>${lords}</td>
+          <td>${w.start_date} → ${w.end_date}</td>
+          <td class="num">${Math.round(w.start_age)}–${Math.round(w.end_age)}</td>
+          <td>${w.bracket}</td>
+          <td>${renderRoles(w.md_roles)}</td>
+          ${barCell}
+        </tr>`;
+      }).join("");
+
+      results.innerHTML = summary + `<table>
+        <thead><tr><th>#</th><th>Period (MD/AD${b.depth==='pd'?'/PD':''})</th><th>Dates</th><th>Age</th><th>Bracket</th><th>MD death-roles</th>${probHeader}</tr></thead>
+        <tbody>${rows}</tbody></table>
+        <div class="meta">
+          ${calibrated
+            ? "Probabilities are P(death falls in this window | alive now), from the empirical age-at-death distribution tilted by the composite confluence — they sum to ~1 over all future windows."
+            : "Relative risk = composite × longevity-bracket × sub-period reinforcement (a multiplier, not a probability)."}
+          <br/>Lagna sign #${b.asc_sign} · as of ${b.as_of}.
+          <br/><b>Honest caveat:</b> the lord-specific signal is real but small (validated lift ≈1.03–1.19); this ranks life-stage exposure, it is not a prophecy.
+        </div>`;
+    }
+
+    // default as-of = today
+    document.getElementById("as_of").value = new Date().toISOString().slice(0,10);
+  </script>
+</body>
+</html>

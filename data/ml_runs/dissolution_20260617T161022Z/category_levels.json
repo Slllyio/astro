@@ -1,0 +1,169 @@
+{
+  "tattva_sun": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_moon": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_mars": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_mercury": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_jupiter": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_venus": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_saturn": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_rahu": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "tattva_ketu": [
+    "Air/Water",
+    "Earth/Air",
+    "Earth/Fire",
+    "Fire/Water",
+    "Water/Air",
+    "Water/Fire"
+  ],
+  "dispositor_sun": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_moon": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_mars": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_mercury": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_jupiter": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_venus": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_saturn": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_rahu": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "dispositor_ketu": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus"
+  ],
+  "final_dispositor": [
+    "Jupiter",
+    "Mars",
+    "Mercury",
+    "Moon",
+    "Saturn",
+    "Sun",
+    "Venus",
+    "none"
+  ],
+  "panchanga_paksha": [
+    "Krishna",
+    "Shukla"
+  ]
+}

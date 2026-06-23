@@ -60,6 +60,20 @@ def test_empty_points_gives_no_bands() -> None:
     assert tt.is_triggered(start, [], orb=3.0) is False
 
 
+def test_date_sharpening_runs_and_is_finite() -> None:
+    from app.medini.analysis import doctrine_validator as dv
+    if not dv.DEFAULT_CATALOG.exists():
+        pytest.skip("catalog not built")
+    res = tt.evaluate_date_sharpening(test_only=False, limit=120)
+    assert res["n"] > 0
+    # both estimators produce finite non-negative median errors
+    assert res["median_err_days_window_midpoint"] >= 0
+    assert res["median_err_days_trigger_band"] >= 0
+    # 0 ≤ coverage ≤ 1, and the metric exposes the conditional days-saved
+    assert 0.0 <= res["coverage_actual_in_band"] <= 1.0
+    assert "median_days_saved_when_inside" in res
+
+
 def test_predictor_transit_refine_attaches_bands() -> None:
     from app.medini.analysis import death_window_predictor as dwp
     out = dwp.predict_death_windows(

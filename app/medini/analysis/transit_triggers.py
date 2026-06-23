@@ -223,6 +223,88 @@ def _validate(orb: float = DEFAULT_ORB_DEG) -> dict[str, Any]:
             "lift": round(orr / er, 3), "z": round(z, 2), "p_value": round(p, 5)}
 
 
+def evaluate_date_sharpening(orb: float = DEFAULT_ORB_DEG, test_only: bool = True,
+                             limit: int | None = None) -> dict:
+    """Given the CORRECT dāśā window, does the Saturn-trigger narrow the death-DATE?
+
+    For each day-precise death we compare two point estimates of the death date:
+      A. the window midpoint (no transit info), and
+      B. the midpoint of the window's nearest Saturn-trigger band
+         (`active_trigger_intervals`), falling back to A when no band exists.
+    Reports median |error| in days for each, the median days saved, and coverage (the
+    fraction of deaths whose actual date lands inside a trigger band). Held-out by
+    default (the same 25% person split as the backtest) so it can't be over-fit."""
+    import statistics
+
+    from app.medini.analysis.death_backtest import _in_test
+    from app.medini.analysis.doctrine_validator import open_catalog
+
+    con = open_catalog()
+    hc = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
+    lc = ", ".join(f"c.{g.lower()}_lon AS {g.lower()}_lon" for g in _MARAKA_GRAHAS)
+    rows = con.execute(
+        f"""SELECT e.person_id, e.event_jd, w.start_jd, w.end_jd, c.asc_sign, {hc}, {lc}
+            FROM events_with_dasha e
+            JOIN events ev ON ev.event_id = e.event_id
+            JOIN dasha_windows w ON w.person_id = e.person_id
+                                AND w.md_seq = e.md_seq AND w.ad_seq = e.ad_seq
+            JOIN charts c ON c.person_id = e.person_id
+            WHERE e.event_class = 'death_cause_unspecified'
+              AND ev.event_date_precision = 'day' AND c.asc_sign IS NOT NULL
+              AND e.event_jd IS NOT NULL
+            {f'LIMIT {int(limit)}' if limit else ''}"""
+    ).fetchall()
+    con.close()
+
+    nc = len(_MARAKA_GRAHAS)
+    err_window: list[float] = []
+    err_trigger: list[float] = []
+    err_w_inside: list[float] = []        # window-midpoint error, deaths inside a band
+    err_t_inside: list[float] = []        # nearest-band-midpoint error, same deaths
+    inside = n = 0
+    for r in rows:
+        pid, ejd, sjd, ejd_w, asc = r[0], float(r[1]), float(r[2]), float(r[3]), int(r[4])
+        if test_only and not _in_test(pid, 0.25):
+            continue
+        houses = r[5:5 + nc]; lons = r[5 + nc:5 + 2 * nc]
+        gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
+        natal = {g: l for g, l in zip(_MARAKA_GRAHAS, lons)}
+        pts = death_trigger_points(asc, gh, natal)
+        bands = active_trigger_intervals(sjd, ejd_w, pts, orb) if pts else []
+        n += 1
+        e_w = abs(ejd - (sjd + ejd_w) / 2.0)
+        err_window.append(e_w)
+        if bands:
+            mids = [(b.start_jd + b.end_jd) / 2.0 for b in bands]
+            e_t = min(abs(ejd - m) for m in mids)
+            err_trigger.append(e_t)
+            if any(b.start_jd <= ejd <= b.end_jd for b in bands):
+                inside += 1
+                err_w_inside.append(e_w)
+                err_t_inside.append(e_t)
+        else:
+            err_trigger.append(e_w)                              # no band → fall back to A
+
+    def _med(x):
+        return round(statistics.median(x), 1) if x else 0.0
+    med_w, med_t = _med(err_window), _med(err_trigger)
+    return {
+        "n": n, "orb": orb, "test_only": test_only,
+        "median_err_days_window_midpoint": med_w,
+        "median_err_days_trigger_band": med_t,
+        "median_days_saved": round(med_w - med_t, 1),
+        "coverage_actual_in_band": round(inside / n, 4) if n else 0.0,
+        # conditional on the trigger actually firing on the death (the ~7% it covers):
+        "n_inside_band": inside,
+        "median_err_inside_window_midpoint": _med(err_w_inside),
+        "median_err_inside_trigger_band": _med(err_t_inside),
+        "median_days_saved_when_inside": round(_med(err_w_inside) - _med(err_t_inside), 1),
+    }
+
+
 if __name__ == "__main__":
+    print("=== transit-trigger corpus validation (lift on death days) ===")
     for o in (3.0, 5.0):
         print(_validate(o))
+    print("\n=== sub-window date sharpening (held-out; correct window given) ===")
+    print(evaluate_date_sharpening())

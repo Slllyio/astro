@@ -33,8 +33,34 @@ duration, mid_age); the astrology features barely register. The earlier "≈2× 
 figure was an artifact of the *coarse* 3-bucket age factor; the fine `MortalityModel`
 (already shipped for calibrated probabilities) roughly doubles it.
 
+**Robustness (8-split cross-validation, mean ± 95% CI):** Mfine capture
+**0.4367 ± 0.0037**, M0 (duration) 0.1997 ± 0.0017, the lord tilt
+Δ(M2−M1) 0.0008 ± 0.0001 — the headline is not a single-split fluke.
+
+**Age-bias caveat (honest):** the capture is concentrated in the typical death-age band.
+Splitting Mfine capture by true death age: **≈0.57 for deaths after 70**, 0.27 for 40–70,
+and **≈0.00 for deaths before 40**. The fine age model is near-useless for atypical
+(young) deaths and the ~4.3× headline is carried by the elderly majority of the corpus.
+
 **So: the useful prediction is largely actuarial — "you'll most likely die in the
 windows covering your high-mortality years."** Astrology adds a small, real tilt on top.
+
+## Cause-specific signal — pooling hid it (new finding)
+Every test above pooled ~37k mixed deaths. Classical doctrine assigns *different* killers
+to *different* deaths (Mars/8th/nodes to violent ends, Saturn to chronic disease), which
+pooling averages toward zero. Stratifying by the catalog's manner-of-death tags
+(`manner_of_death.py`; holos: suicide ≈563, accidental ≈518, illness ≈1,959, unusual ≈182)
+and contrasting **unnatural (suicide∪accidental∪unusual) vs natural (illness)**:
+
+- Each violent-death karaka individually points the right way but is underpowered
+  (dusthāna z=1.6, nodes z=1.3, Mars z=1.3 — all *unnatural > natural*).
+- The **pooled violent signature** (MD-lord ∈ Mars ∪ Rahu/Ketu ∪ 8th-lord ∪ dusthāna ∪
+  8th-occupants) clusters significantly more at unnatural deaths: **excess +0.048,
+  z=2.82, p=0.005**, confirmed by a 5,000-shuffle permutation test (**p=0.0048**).
+
+So the small pooled tilt is partly a **cancellation artifact**: the violent-death karakas
+are real for violent deaths and washed out by natural deaths. A genuinely new, validated
+result — though subgroups are modest, so it's a directional confirmation, not a large effect.
 
 ## What's astrologically real (the tilt, beyond age)
 - **Composite confluence** — MD lord playing more of {maraka, 3rd-lord, 64th-navāṁśa}:
@@ -48,6 +74,11 @@ windows covering your high-mortality years."** Astrology adds a small, real tilt
   a natal maraka/Sun is over-represented on death days (lift 1.131, p=0.001; ±2°→1.167).
   It pinpoints *weeks within* a flagged window — but adds nothing to *which* window
   (M2→M3 p=0.97), because it's a within-window timing signal.
+  **Quantified date-sharpening** (`evaluate_date_sharpening`, held-out, correct window
+  given): high-precision / low-recall. Pooled it only shaves a ~145→133-day median error
+  (~12 days), because just **~7% of deaths fall inside a Saturn band**. But *when a death
+  does fall in a band* (n=153), the band midpoint pins the date to **~19 days vs ~162 — a
+  ~9× sharpening (~144 days saved)**. Useful precisely on the minority it covers.
 
 ## What's null (tested and rejected — kept honest)
 | Hypothesis | Result |
@@ -65,20 +96,23 @@ windows covering your high-mortality years."** Astrology adds a small, real tilt
 
 ## Verdict
 Classical Vedic death-timing **is not noise** — multiple effects survive held-out
-validation, and doctrine-mining even surfaced significators (Jaimini Karakāṁśa, Sūrya
-maraka) *stronger* than the standard textbook one. But the **astrology-specific signal
-is small and has a hard ceiling**: once the (actuarial) age-at-death distribution is
-modeled finely, no classical lever — composite, transit, strength, alt-dasha, Jaimini —
-nor a learned ML model adds materially to *which* window. The product is an honest,
-calibrated **risk-tendency ranker** (≈4.3× chance, age-driven, with a small real
-astrological tilt and a validated Saturn-transit trigger that narrows to weeks) — not a
-death-date oracle.
+validation; doctrine-mining surfaced significators (Jaimini Karakāṁśa, Sūrya maraka)
+*stronger* than the textbook one, and **manner-of-death stratification recovered a real
+violent-death signature (z=2.82, p=0.005) that pooling had cancelled out**. But the
+astrology-specific signal remains **small with a hard ceiling**: once the (actuarial)
+age-at-death distribution is modeled finely, no classical lever nor a learned ML model
+adds materially to *which* window. The product is an honest, calibrated **risk-tendency
+ranker** (≈4.3× chance, age-driven — and weak for atypical ages — with a small real
+astrological tilt and a high-precision Saturn-transit trigger that pins ~7% of deaths to
+~3 weeks) — not a death-date oracle. The predictor is served by `/doctrine/death-window`
+(`calibrate=auto` uses the fine model; response carries a `model_card` + provenance).
 
 ## Reproduce
 ```
-python -m app.medini.analysis.death_backtest        # nested models + Mfine capture
-python -m app.medini.analysis.alt_dasha_death        # significator + alt-dasha battery
-python -m app.medini.analysis.transit_triggers       # transit-conjunction lift
-python -m app.medini.ml.train_death_ranker           # learned ranker vs the ceiling
+python -m app.medini.analysis.death_backtest --cross-val 8   # nested models, Mfine, CIs, age-strata
+python -m app.medini.analysis.manner_of_death               # cause-specific (manner) signal hunt
+python -m app.medini.analysis.alt_dasha_death               # significator + alt-dasha battery
+python -m app.medini.analysis.transit_triggers              # transit lift + date-sharpening
+python -m app.medini.ml.train_death_ranker                  # learned ranker vs the ceiling
 ```
 See also `docs/death_timing.md` (method + API/UI).

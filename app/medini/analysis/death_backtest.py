@@ -102,6 +102,8 @@ class BacktestResult:
     # fine empirical age-at-death model (MortalityModel) × composite — the calibrated
     # predictor's true ranking; the coarse-bracket M2 badly under-reports capture.
     top_decile_capture_mortality: float
+    # Mfine capture split by true death age — the age-bias control
+    capture_mortality_by_age: dict
     # realized-risk lift: composite factor of the true window vs the person's
     # duration-weighted average composite factor (isolates the lord signal)
     composite_realized_lift: float
@@ -116,6 +118,7 @@ def backtest(
     level: str = "md",
     test_frac: float = 0.25,
     brackets=dwp.DEFAULT_BRACKETS,
+    salt: str = "bt1",
 ) -> BacktestResult:
     # ---- split deaths by person -------------------------------------------------
     deaths = con.execute(
@@ -125,7 +128,7 @@ def backtest(
               AND md_seq IS NOT NULL AND ad_seq IS NOT NULL"""
     ).fetchall()
     true_win = {pid: (int(ms), int(as_)) for pid, ms, as_ in deaths}
-    test_ids = {pid for pid in true_win if _in_test(pid, test_frac)}
+    test_ids = {pid for pid in true_win if _in_test(pid, test_frac, salt)}
     train_ids = {pid for pid in true_win if pid not in test_ids}
 
     # Train-only fine age-at-death model (the calibrated predictor's MortalityModel) —
@@ -197,6 +200,7 @@ def backtest(
     deltas21: list[float] = []
     deltas32: list[float] = []
     cap0 = cap2 = cap3 = cap_mort = 0
+    cap_by_age = {"<40": [0, 0], "40-70": [0, 0], ">70": [0, 0]}
     real_lift_num = real_lift_den = 0
     n = 0
 
@@ -244,8 +248,14 @@ def backtest(
             cap2 += 1
         if true_i in sorted(range(len(wins)), key=lambda j: w3[j], reverse=True)[:k]:
             cap3 += 1
-        if true_i in sorted(range(len(wins)), key=lambda j: wm[j], reverse=True)[:k]:
-            cap_mort += 1
+        mort_hit = true_i in sorted(range(len(wins)), key=lambda j: wm[j], reverse=True)[:k]
+        cap_mort += int(mort_hit)
+        # age-bias control: bucket Mfine capture by the true death age, to show it isn't
+        # carried solely by the corpus's narrow celebrity death-age band.
+        true_age = wins[true_i]["mid_age"]
+        stratum = "<40" if true_age < 40 else ("40-70" if true_age < 70 else ">70")
+        cap_by_age[stratum][0] += int(mort_hit)
+        cap_by_age[stratum][1] += 1
 
         # composite realized lift: true window's composite factor vs the person's
         # duration-weighted average composite factor (age/duration cancel out)
@@ -283,8 +293,38 @@ def backtest(
         top_decile_capture_m2=round(cap2 / n, 4) if n else 0.0,
         top_decile_capture_m3=round(cap3 / n, 4) if n else 0.0,
         top_decile_capture_mortality=round(cap_mort / n, 4) if n else 0.0,
+        capture_mortality_by_age={
+            s: {"capture": round(h / d, 4) if d else 0.0, "n": d}
+            for s, (h, d) in cap_by_age.items()},
         composite_realized_lift=round(real_lift_num / real_lift_den, 4) if real_lift_den else 0.0,
     )
+
+
+def cross_validate(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    test_frac: float = 0.25,
+    n_splits: int = 8,
+) -> dict[str, dict[str, float]]:
+    """Repeat the backtest over `n_splits` independent person splits (varying the hash
+    salt) and report mean ± 95% CI for the headline metrics — so the capture numbers and
+    the M1→M2 effect aren't single-split flukes."""
+    metrics = ("top_decile_capture_mortality", "top_decile_capture_m0",
+               "top_decile_capture_m2", "delta_m2_m1", "composite_realized_lift")
+    samples: dict[str, list[float]] = {m: [] for m in metrics}
+    for s in range(n_splits):
+        res = backtest(con, event_class, level, test_frac, salt=f"cv{s}").to_dict()
+        for m in metrics:
+            samples[m].append(res[m])
+    out = {}
+    for m, xs in samples.items():
+        mu = sum(xs) / len(xs)
+        sd = math.sqrt(sum((x - mu) ** 2 for x in xs) / (len(xs) - 1)) if len(xs) > 1 else 0.0
+        ci = 1.96 * sd / math.sqrt(len(xs))
+        out[m] = {"mean": round(mu, 4), "ci95": round(ci, 4),
+                  "min": round(min(xs), 4), "max": round(max(xs), 4), "n_splits": len(xs)}
+    return out
 
 
 def main() -> int:
@@ -292,12 +332,18 @@ def main() -> int:
     parser.add_argument("--event-class", default="death_cause_unspecified")
     parser.add_argument("--level", default="md", choices=["md", "ad"])
     parser.add_argument("--test-frac", type=float, default=0.25)
+    parser.add_argument("--cross-val", type=int, default=0, metavar="N",
+                        help="also run N-split cross-validation with 95%% CIs")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s | %(message)s")
 
     con = dv.open_catalog()
+    cv = None
     try:
         res = backtest(con, args.event_class, args.level, args.test_frac)
+        if args.cross_val:
+            cv = cross_validate(con, args.event_class, args.level, args.test_frac,
+                                args.cross_val)
     finally:
         con.close()
 
@@ -320,6 +366,16 @@ def main() -> int:
           f"M2 (coarse bracket): {d['top_decile_capture_m2']}   M3: {d['top_decile_capture_m3']}")
     print(f"  Mfine (MortalityModel age × composite): {d['top_decile_capture_mortality']}  "
           f"<= the calibrated predictor's real capture (null ≈ 0.10)")
+    print(f"\nMfine capture by true death age (age-bias control):")
+    for s in ("<40", "40-70", ">70"):
+        b = d["capture_mortality_by_age"][s]
+        print(f"  age {s:<6}: {b['capture']:.4f}  (n={b['n']})")
+
+    if cv:
+        print(f"\n=== {args.cross_val}-split cross-validation (mean ± 95% CI) ===")
+        for m, st in cv.items():
+            print(f"  {m:<32} {st['mean']:.4f} ± {st['ci95']:.4f}  "
+                  f"[{st['min']:.4f}, {st['max']:.4f}]")
     return 0
 
 

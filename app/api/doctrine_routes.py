@@ -262,26 +262,39 @@ async def death_window(
     top_n: int | None = Query(10, description="return the N riskiest windows; null = all"),
     depth: str = Query("ad", description="'ad' (MD×AD) or 'pd' (MD×AD×PD, month-resolution)"),
     transit_refine: bool = Query(False, description="narrow each window to transit-Saturn danger bands (validated lift 1.13)"),
-    calibrate: bool = Query(False, description="re-derive risk factors live from the catalog"),
+    calibrate: str = Query("auto", description="'auto' (calibrate live if the catalog is built — the fine MortalityModel that captures ~43% in the riskiest 10%), 'true' (require it), or 'false' (baked factors)"),
 ) -> dict:
     """Per-chart death-window predictor: rank a living person's future Vimśottarī
-    MD×AD periods by composite death-significator confluence × longevity bracket.
+    MD×AD periods by an empirical age-at-death model × composite death-significator
+    confluence, optionally narrowed to transit-Saturn danger bands.
 
-    The risk factors default to this session's measured lifts; pass ``calibrate=true``
-    to re-derive them live from the catalog (requires the DuckDB catalog to be built)."""
+    By default (``calibrate=auto``) it serves the **fine** model when the DuckDB catalog
+    is present — the calibrated `MortalityModel` × composite that lands the true death
+    window in its riskiest 10% ≈43% of the time (≈4.3× chance) on held-out people. Without
+    a catalog it falls back to baked session factors (the coarse age bracket); the
+    ``calibration`` block in the response says which was used. This is a risk-tendency
+    ranker, not a death-date oracle — see ``docs/death_timing_findings.md``."""
     try:
         as_of_date = _dt.date.fromisoformat(as_of) if as_of else None
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="as_of must be an ISO date (YYYY-MM-DD)") from exc
 
+    mode = calibrate.strip().lower()
+    if mode not in {"auto", "true", "false", "1", "0", "yes", "no"}:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="calibrate must be 'auto', 'true', or 'false'")
+    want = mode in {"true", "1", "yes"}
+    has_catalog = dv.DEFAULT_CATALOG.exists()
+    if want and not has_catalog:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="calibrate=true but the DuckDB catalog is not built",
+        )
+
     composite_factor = bracket_factor = mortality = None
-    if calibrate:
-        if not dv.DEFAULT_CATALOG.exists():
-            raise HTTPException(
-                status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="calibration requested but DuckDB catalog is not built",
-            )
+    calibrated = (want or mode == "auto") and has_catalog
+    if calibrated:
         con = dv.open_catalog()
         try:
             composite_factor, bracket_factor = dwp.calibrate_factors(con)
@@ -290,7 +303,7 @@ async def death_window(
             con.close()
 
     try:
-        return dwp.predict_death_windows(
+        result = dwp.predict_death_windows(
             year=year, month=month, day=day, hour=hour, minute=minute,
             latitude=latitude, longitude=longitude, tz_offset=tz_offset,
             as_of=as_of_date, top_n=top_n, depth=depth, transit_refine=transit_refine,
@@ -299,6 +312,28 @@ async def death_window(
         )
     except ValueError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+
+    result["calibration"] = {
+        "mode": mode,
+        "calibrated": calibrated,
+        "source": "live MortalityModel × composite (fine age model)" if calibrated
+        else "baked session factors (coarse age bracket — build the catalog for the fine model)",
+    }
+    result["model_card"] = {
+        "what": "ranks future Vimśottarī MD×AD periods by death risk; a risk-tendency "
+                "ranker, not a death-date oracle",
+        "capture_at_10pct": "≈0.43 held-out (true window in the riskiest 10%; ≈4.3× chance) "
+                            "when calibrated; mostly the empirical age-at-death distribution",
+        "astrology_tilt": "small but real — the running lord adds ~0.001 realized lift over "
+                          "age (held-out z≈2.7)",
+        "age_caveat": "capture ≈0.57 for deaths after 70 but ≈0 for deaths before 40 — weak "
+                      "for atypical ages",
+        "saturn_transit": "transit_refine=true narrows a flagged window to multi-week Saturn "
+                          "danger bands; when a death falls in a band (~7%) it pins the date "
+                          "to ~19 days vs ~160",
+        "docs": "docs/death_timing_findings.md",
+    }
+    return result
 
 
 @doctrine_router.get("/death-window/page", response_class=HTMLResponse)

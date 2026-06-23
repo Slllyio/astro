@@ -157,7 +157,8 @@ def _sig_rows(con) -> list[dict]:
     hc = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in _MARAKA_GRAHAS)
     lc = ", ".join(f"c.{g.lower()}_lon AS {g.lower()}_lon" for g in _MARAKA_GRAHAS)
     rows = con.execute(
-        f"""SELECT e.md_lord_at_event AS md, c.asc_sign, c.asc_lon, {hc}, {lc}, k.planet AS ak
+        f"""SELECT e.person_id, e.md_lord_at_event AS md, c.asc_sign, c.asc_lon, {hc}, {lc},
+                   k.planet AS ak
             FROM events_with_dasha e JOIN charts c USING(person_id)
             LEFT JOIN jaimini_karakas k ON k.person_id=e.person_id
                                        AND k.karaka='AK_Atmakaraka'
@@ -167,11 +168,12 @@ def _sig_rows(con) -> list[dict]:
     nc = len(_MARAKA_GRAHAS)
     out = []
     for r in rows:
-        md, asc, asclon = r[0], int(r[1]), float(r[2])
-        houses = r[3:3 + nc]; lons = r[3 + nc:3 + 2 * nc]; ak = r[-1]
+        pid, md, asc, asclon = r[0], r[1], int(r[2]), float(r[3])
+        houses = r[4:4 + nc]; lons = r[4 + nc:4 + 2 * nc]; ak = r[-1]
         gh = {g: (int(h) if h is not None else 0) for g, h in zip(_MARAKA_GRAHAS, houses)}
         lo = {g: l for g, l in zip(_MARAKA_GRAHAS, lons)}
-        out.append({"md": md, "asc": asc, "asclon": asclon, "gh": gh, "lo": lo, "ak": ak})
+        out.append({"pid": pid, "md": md, "asc": asc, "asclon": asclon,
+                    "gh": gh, "lo": lo, "ak": ak})
     return out
 
 

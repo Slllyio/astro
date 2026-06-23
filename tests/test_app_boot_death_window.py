@@ -48,3 +48,26 @@ def test_calibrated_prediction_through_app(client: TestClient) -> None:
         assert body["calibrated"] is True
         assert body["windows"] and body["windows"][0]["probability"] is not None
         assert body["prob_within_10y"] is not None
+
+
+def test_auto_mode_always_200_with_model_card(client: TestClient) -> None:
+    # 'auto' (the new default) never 503s: it serves the fine model if the catalog is
+    # built, else baked factors — and always reports provenance + an honest model card.
+    r = client.get("/medini/doctrine/death-window", params={
+        "year": 1955, "month": 3, "day": 20,
+        "latitude": 19.07, "longitude": 72.88, "tz_offset": 5.5, "top_n": 5,
+    })
+    assert r.status_code == 200
+    body = r.json()
+    assert body["calibration"]["mode"] == "auto"
+    assert isinstance(body["calibration"]["calibrated"], bool)
+    assert body["model_card"]["docs"] == "docs/death_timing_findings.md"
+    assert "capture_at_10pct" in body["model_card"]
+
+
+def test_invalid_calibrate_value_is_422(client: TestClient) -> None:
+    r = client.get("/medini/doctrine/death-window", params={
+        "year": 1955, "month": 3, "day": 20,
+        "latitude": 19.07, "longitude": 72.88, "tz_offset": 5.5, "calibrate": "maybe",
+    })
+    assert r.status_code == 422

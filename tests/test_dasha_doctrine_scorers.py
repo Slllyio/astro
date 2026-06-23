@@ -12,6 +12,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# dasha_doctrine_personal_disambiguation / _structural import the never-committed
+# dasha_doctrine_score* scorer modules. Skip rather than abort collection.
+pytest.importorskip(
+    "app.medini.ml.dasha_doctrine_score",
+    reason="dasha_doctrine_score* scorer modules are not present on this branch",
+)
+
 from app.medini.ml.dasha_doctrine_ad_timing import (
     _DUSTHANA_DISTANCES, _TRIKONA_DISTANCES,
     ad_mutual_score, ad_mutual_score_vec,

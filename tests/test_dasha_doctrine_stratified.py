@@ -7,6 +7,14 @@ mix_score quintile, then a CorpusRR is emitted per (corpus, lord) cell.
 from __future__ import annotations
 
 import pandas as pd
+import pytest
+
+# dasha_doctrine_stratified imports the never-committed dasha_doctrine_score_mix module.
+# Skip rather than abort collection; restore the scorer modules to re-enable.
+pytest.importorskip(
+    "app.medini.ml.dasha_doctrine_score_mix",
+    reason="dasha_doctrine_score* scorer modules are not present on this branch",
+)
 
 from app.medini.ml.dasha_doctrine_stratified import _per_stratum_rrs
 

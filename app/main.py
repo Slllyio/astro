@@ -15,9 +15,18 @@ from slowapi.errors import RateLimitExceeded
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
-from app.api.forecast_routes import almanac_router, forecast_router
+try:
+    from app.api.forecast_routes import almanac_router, forecast_router
+except ImportError:
+    # forecast_routes is not present on every branch (e.g. the data branch).
+    # Degrade gracefully so the rest of the app still boots.
+    almanac_router = forecast_router = None
+from app.api.doctrine_routes import doctrine_router
 from app.api.interpret_routes import interpret_router
-from app.api.knowledge_routes import knowledge_router
+try:
+    from app.api.knowledge_routes import knowledge_router
+except ImportError:
+    knowledge_router = None  # not present on every branch (e.g. the data branch)
 from app.api.medini_routes import medini_router
 from app.api.portal_routes import router as portal_router
 from app.api.reading_integrated_routes import router as reading_integrated_router
@@ -84,14 +93,18 @@ app.include_router(auth_router)
 app.include_router(chart_router, prefix="/chart", tags=["Astrology Engine"])
 app.include_router(profile_router, tags=["Profiles & Transits"])
 app.include_router(medini_router)  # Tab 3: Geo-Astrological Engine (/medini/*)
-app.include_router(knowledge_router)  # RAG search over doctrine corpus (/medini/knowledge/*)
-app.include_router(forecast_router)  # Phase 2: multi-day Mundane Forecast (/medini/forecast/*)
-app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac (/medini/almanac/*)
+if knowledge_router is not None:
+    app.include_router(knowledge_router)  # RAG search over doctrine corpus (/medini/knowledge/*)
+if forecast_router is not None:
+    app.include_router(forecast_router)  # Phase 2: multi-day Mundane Forecast (/medini/forecast/*)
+if almanac_router is not None:
+    app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac (/medini/almanac/*)
 app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (/medini/reading/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(reading_v15_router)  # V1.5 web UI for app/reading engine (/reading/v15/*)
 app.include_router(reading_integrated_router)  # Track A + Track B bridge (/reading/integrated/*)
 app.include_router(portal_router)  # v1.3.0 Family Charts portal (/portal/*) — saved relatives + master reading
+app.include_router(doctrine_router)  # Doctrine Validator — empirical rule testing (/medini/doctrine/*)
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

@@ -1,0 +1,445 @@
+"""Backtest the assembled death-window predictor against real deaths.
+
+The doctrine validators proved each *ingredient* (maraka, composite confluence,
+longevity bracket) at population scale. This module tests the *assembled ranker*:
+given a decedent's chart, does the predictor concentrate their actual death in the
+windows it calls high-risk — and does it beat the obvious confound?
+
+The confound: a death is more likely in a *long* window simply because it spans more
+time-at-risk. So we score three NESTED models of P(death lands in window w), and ask
+what each successive lever adds:
+
+    M0:  P(w) ∝ duration_w                                   (pure time-at-risk)
+    M1:  P(w) ∝ duration_w · bracket_factor(age_w)           (+ age-of-death shape)
+    M2:  P(w) ∝ duration_w · bracket_factor · composite(md)  (+ lord-specific signal)
+
+For every test death we read off the probability each model assigned to the window
+that *actually* occurred, and compare mean per-death log-likelihood. M0→M1 measures
+how much the āyurdāya bracket helps (largely the empirical age-at-death shape); the
+**headline is M1→M2** — does *which lord runs* add predictive power once age and
+duration are already accounted for?
+
+Leakage control: the bracket + composite factors are calibrated on a TRAIN split of
+persons and the likelihoods are evaluated on a disjoint TEST split, so no test death
+informs its own risk factors.
+
+Usage:
+    python -m app.medini.analysis.death_backtest
+    python -m app.medini.analysis.death_backtest --test-frac 0.25 --event-class death_cause_unspecified
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import logging
+import math
+from dataclasses import asdict, dataclass
+from typing import Any, Final
+
+import duckdb
+
+from app.medini.analysis import doctrine_validator as dv
+from app.medini.analysis import death_window_predictor as dwp
+from app.medini.analysis import transit_triggers as tt
+from app.medini.analysis.death_window_predictor import _bracket_for_age, _role_count
+
+logger = logging.getLogger(__name__)
+
+_DAYS_PER_YEAR: Final = 365.2425
+
+
+def _in_test(person_id: str, test_frac: float, salt: str = "bt1") -> bool:
+    """Deterministic person-level split via a stable hash (no global RNG state)."""
+    h = hashlib.md5(f"{salt}:{person_id}".encode()).hexdigest()
+    return (int(h[:8], 16) / 0xFFFFFFFF) < test_frac
+
+
+def _calibrate_on_train(
+    con: duckdb.DuckDBPyConnection, train_ids: set[str],
+    event_class: str, level: str,
+) -> tuple[dict[int, float], dict[str, float]]:
+    """Run the real validators on a TRAIN-only in-memory catalog so the risk
+    factors never see a test death."""
+    charts_df = con.execute("SELECT * FROM charts").df()
+    ev_df = con.execute(
+        f"SELECT * FROM events_with_dasha WHERE event_class = '{dv._q(event_class)}'"
+    ).df()
+    ev_df = ev_df[ev_df["person_id"].isin(train_ids)].copy()
+
+    tmp = duckdb.connect()
+    try:
+        tmp.register("charts", charts_df)
+        tmp.register("events_with_dasha", ev_df)
+        return dwp.calibrate_factors(tmp, event_class, level)
+    finally:
+        tmp.close()
+
+
+@dataclass(frozen=True)
+class BacktestResult:
+    event_class: str
+    level: str
+    n_test_deaths: int
+    n_train_deaths: int
+    composite_factor: dict
+    bracket_factor: dict
+    # mean per-death log-likelihood under each nested model (higher = better)
+    loglik_m0: float
+    loglik_m1: float
+    loglik_m2: float
+    loglik_m3: float          # M2 × transit factor (Saturn-trigger window fraction)
+    delta_m1_m0: float        # bracket's added predictive value
+    delta_m2_m1: float        # composite (lord-specific) added value
+    delta_m3_m2: float        # transit-factor added value — the new headline
+    z_m2_m1: float            # paired z on per-death (M2-M1)
+    p_m2_m1: float
+    z_m3_m2: float            # paired z on per-death (M3-M2)
+    p_m3_m2: float
+    # interpretable capture metrics (true window in model's top-decile of risk)
+    top_decile_capture_m0: float
+    top_decile_capture_m2: float
+    top_decile_capture_m3: float
+    # fine empirical age-at-death model (MortalityModel) × composite — the calibrated
+    # predictor's true ranking; the coarse-bracket M2 badly under-reports capture.
+    top_decile_capture_mortality: float
+    # Mfine capture split by true death age — the age-bias control
+    capture_mortality_by_age: dict
+    # realized-risk lift: composite factor of the true window vs the person's
+    # duration-weighted average composite factor (isolates the lord signal)
+    composite_realized_lift: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+def backtest(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    test_frac: float = 0.25,
+    brackets=dwp.DEFAULT_BRACKETS,
+    salt: str = "bt1",
+    train_ids: set[str] | None = None,
+    test_ids: set[str] | None = None,
+) -> BacktestResult:
+    # ---- split deaths by person -------------------------------------------------
+    deaths = con.execute(
+        f"""SELECT person_id, md_seq, ad_seq
+            FROM events_with_dasha
+            WHERE event_class = '{dv._q(event_class)}'
+              AND md_seq IS NOT NULL AND ad_seq IS NOT NULL"""
+    ).fetchall()
+    true_win = {pid: (int(ms), int(as_)) for pid, ms, as_ in deaths}
+    # Default: deterministic hash split. Callers (e.g. cross_source_validate) may pass
+    # explicit disjoint train/test person sets to validate across data sources.
+    if test_ids is None:
+        test_ids = {pid for pid in true_win if _in_test(pid, test_frac, salt)}
+    else:
+        test_ids = {pid for pid in test_ids if pid in true_win}
+    if train_ids is None:
+        train_ids = {pid for pid in true_win if pid not in test_ids}
+    else:
+        train_ids = {pid for pid in train_ids if pid in true_win}
+
+    # Train-only fine age-at-death model (the calibrated predictor's MortalityModel) —
+    # the proper alternative to the coarse 3-bucket age factor. Leak-free: TRAIN ages.
+    train_ages = con.execute(
+        f"""SELECT age_at_event_years FROM events_with_dasha
+            WHERE event_class = '{dv._q(event_class)}'
+              AND age_at_event_years IS NOT NULL AND age_at_event_years BETWEEN 0 AND 120
+              AND person_id IN (SELECT UNNEST(?))""",
+        [list(train_ids)],
+    ).fetchall()
+    mort = dwp.MortalityModel(ages=tuple(sorted(float(a[0]) for a in train_ages)))
+
+    composite_factor, bracket_factor = _calibrate_on_train(con, train_ids, event_class, level)
+    logger.info("Calibrated on %d train deaths: composite=%s bracket=%s",
+                len(train_ids), composite_factor, bracket_factor)
+
+    # ---- pull every window + chart for the test persons -------------------------
+    house_cols = ", ".join(f"c.{g.lower()}_house AS {g.lower()}_h" for g in dv._MARAKA_GRAHAS)
+    lon_cols = ", ".join(f"c.{g.lower()}_lon AS {g.lower()}_lon" for g in dv._MARAKA_GRAHAS)
+    lord_col = "w.md_lord" if level == "md" else "w.ad_lord"
+    rows = con.execute(
+        f"""SELECT w.person_id, w.md_seq, w.ad_seq, {lord_col} AS lord,
+                   w.duration_days, w.start_jd, w.end_jd,
+                   c.asc_sign, c.asc_lon, c.birth_jd_used AS birth_jd, {house_cols}, {lon_cols}
+            FROM dasha_windows w JOIN charts c USING(person_id)
+            WHERE w.person_id IN (SELECT UNNEST(?))
+              AND c.asc_sign IS NOT NULL AND c.asc_lon IS NOT NULL""",
+        [list(test_ids)],
+    ).fetchall()
+
+    # group windows by person
+    nm = len(dv._MARAKA_GRAHAS)
+    per: dict[str, list[dict]] = {}
+    chart_of: dict[str, tuple[int, float, dict[str, int]]] = {}
+    trigger_pts: dict[str, list[float]] = {}
+    for r in rows:
+        pid, ms, as_, lord, dur, sjd, ejd, asc, alon, bjd = r[:10]
+        houses = r[10:10 + nm]
+        lons = r[10 + nm:10 + 2 * nm]
+        if pid not in chart_of:
+            gh = {g: (int(h) if h is not None else 0)
+                  for g, h in zip(dv._MARAKA_GRAHAS, houses)}
+            chart_of[pid] = (int(asc), float(alon), gh)
+            natal_lons = {g: (float(l) if l is not None else None)
+                          for g, l in zip(dv._MARAKA_GRAHAS, lons)}
+            trigger_pts[pid] = tt.death_trigger_points(int(asc), gh, natal_lons)
+        mid_age = (((float(sjd) + float(ejd)) / 2.0) - float(bjd)) / _DAYS_PER_YEAR
+        per.setdefault(pid, []).append({
+            "md_seq": int(ms), "ad_seq": int(as_), "lord": lord,
+            "dur": float(dur), "mid_age": mid_age,
+            "start_jd": float(sjd), "end_jd": float(ejd),
+            "start_age": (float(sjd) - float(bjd)) / _DAYS_PER_YEAR,
+            "end_age": (float(ejd) - float(bjd)) / _DAYS_PER_YEAR,
+        })
+
+    sig = dwp._DEATH_COMPOSITE
+    score_cache: dict[tuple[str, str], int] = {}
+
+    def md_score(pid: str, lord: str) -> int:
+        key = (pid, lord)
+        if key not in score_cache:
+            asc, alon, gh = chart_of[pid]
+            score_cache[key] = _role_count(lord, asc, alon, gh, sig)[0]
+        return score_cache[key]
+
+    # ---- evaluate each test death ----------------------------------------------
+    ll0 = ll1 = ll2 = ll3 = 0.0
+    deltas21: list[float] = []
+    deltas32: list[float] = []
+    cap0 = cap2 = cap3 = cap_mort = 0
+    cap_by_age = {"<40": [0, 0], "40-70": [0, 0], ">70": [0, 0]}
+    real_lift_num = real_lift_den = 0
+    n = 0
+
+    for pid, wins in per.items():
+        if pid not in true_win:
+            continue
+        tms, tas = true_win[pid]
+        pts = trigger_pts.get(pid, [])
+        # weights under each model
+        w0, w1, w2, w3, wm = [], [], [], [], []
+        comp_facs = []
+        true_i = None
+        for i, w in enumerate(wins):
+            br = _bracket_for_age(w["mid_age"], brackets)
+            bf = bracket_factor.get(br, 1.0)
+            cf = composite_factor.get(md_score(pid, w["lord"]), 1.0)
+            comp_facs.append(cf)
+            # M3 transit factor: window's trigger-active fraction × validated lift.
+            tf = (tt.transit_factor(w["start_jd"], w["end_jd"], pts, n_samples=12)
+                  if pts else 1.0)
+            w0.append(w["dur"])
+            w1.append(w["dur"] * bf)
+            w2.append(w["dur"] * bf * cf)
+            w3.append(w["dur"] * bf * cf * tf)
+            # Mfine: fine empirical age-at-death mass × composite (the calibrated
+            # predictor's ranking) — replaces the coarse bracket with the MortalityModel.
+            wm.append(mort.mass(w["start_age"], w["end_age"]) * cf)
+            if w["md_seq"] == tms and w["ad_seq"] == tas:
+                true_i = i
+        if true_i is None:
+            continue
+        s0, s1, s2, s3 = sum(w0), sum(w1), sum(w2), sum(w3)
+        if min(s0, s1, s2, s3) <= 0:
+            continue
+        p0, p1, p2, p3 = w0[true_i] / s0, w1[true_i] / s1, w2[true_i] / s2, w3[true_i] / s3
+        ll0 += math.log(p0); ll1 += math.log(p1); ll2 += math.log(p2); ll3 += math.log(p3)
+        deltas21.append(math.log(p2) - math.log(p1))
+        deltas32.append(math.log(p3) - math.log(p2))
+
+        # top-decile capture: true window among the model's riskiest 10% by weight
+        k = max(1, int(round(0.10 * len(wins))))
+        if true_i in sorted(range(len(wins)), key=lambda j: w0[j], reverse=True)[:k]:
+            cap0 += 1
+        if true_i in sorted(range(len(wins)), key=lambda j: w2[j], reverse=True)[:k]:
+            cap2 += 1
+        if true_i in sorted(range(len(wins)), key=lambda j: w3[j], reverse=True)[:k]:
+            cap3 += 1
+        mort_hit = true_i in sorted(range(len(wins)), key=lambda j: wm[j], reverse=True)[:k]
+        cap_mort += int(mort_hit)
+        # age-bias control: bucket Mfine capture by the true death age, to show it isn't
+        # carried solely by the corpus's narrow celebrity death-age band.
+        true_age = wins[true_i]["mid_age"]
+        stratum = "<40" if true_age < 40 else ("40-70" if true_age < 70 else ">70")
+        cap_by_age[stratum][0] += int(mort_hit)
+        cap_by_age[stratum][1] += 1
+
+        # composite realized lift: true window's composite factor vs the person's
+        # duration-weighted average composite factor (age/duration cancel out)
+        dw_mean_cf = sum(comp_facs[j] * w0[j] for j in range(len(wins))) / s0
+        if dw_mean_cf > 0:
+            real_lift_num += comp_facs[true_i] / dw_mean_cf
+            real_lift_den += 1
+        n += 1
+
+    def _paired(deltas: list[float]) -> tuple[float, float]:
+        mu = sum(deltas) / len(deltas) if deltas else 0.0
+        var = (sum((d - mu) ** 2 for d in deltas) / len(deltas)) if deltas else 0.0
+        se = math.sqrt(var / len(deltas)) if deltas and var > 0 else 0.0
+        zz = mu / se if se else 0.0
+        return zz, 2.0 * dv._norm_sf(abs(zz))
+
+    z, p = _paired(deltas21)
+    z32, p32 = _paired(deltas32)
+
+    return BacktestResult(
+        event_class=event_class, level=level,
+        n_test_deaths=n, n_train_deaths=len(train_ids),
+        composite_factor={int(k): round(v, 4) for k, v in composite_factor.items()},
+        bracket_factor={k: round(v, 4) for k, v in bracket_factor.items()},
+        loglik_m0=round(ll0 / n, 4) if n else 0.0,
+        loglik_m1=round(ll1 / n, 4) if n else 0.0,
+        loglik_m2=round(ll2 / n, 4) if n else 0.0,
+        loglik_m3=round(ll3 / n, 4) if n else 0.0,
+        delta_m1_m0=round((ll1 - ll0) / n, 5) if n else 0.0,
+        delta_m2_m1=round((ll2 - ll1) / n, 5) if n else 0.0,
+        delta_m3_m2=round((ll3 - ll2) / n, 5) if n else 0.0,
+        z_m2_m1=round(z, 3), p_m2_m1=round(p, 6),
+        z_m3_m2=round(z32, 3), p_m3_m2=round(p32, 6),
+        top_decile_capture_m0=round(cap0 / n, 4) if n else 0.0,
+        top_decile_capture_m2=round(cap2 / n, 4) if n else 0.0,
+        top_decile_capture_m3=round(cap3 / n, 4) if n else 0.0,
+        top_decile_capture_mortality=round(cap_mort / n, 4) if n else 0.0,
+        capture_mortality_by_age={
+            s: {"capture": round(h / d, 4) if d else 0.0, "n": d}
+            for s, (h, d) in cap_by_age.items()},
+        composite_realized_lift=round(real_lift_num / real_lift_den, 4) if real_lift_den else 0.0,
+    )
+
+
+def cross_validate(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+    test_frac: float = 0.25,
+    n_splits: int = 8,
+) -> dict[str, dict[str, float]]:
+    """Repeat the backtest over `n_splits` independent person splits (varying the hash
+    salt) and report mean ± 95% CI for the headline metrics — so the capture numbers and
+    the M1→M2 effect aren't single-split flukes."""
+    metrics = ("top_decile_capture_mortality", "top_decile_capture_m0",
+               "top_decile_capture_m2", "delta_m2_m1", "composite_realized_lift")
+    samples: dict[str, list[float]] = {m: [] for m in metrics}
+    for s in range(n_splits):
+        res = backtest(con, event_class, level, test_frac, salt=f"cv{s}").to_dict()
+        for m in metrics:
+            samples[m].append(res[m])
+    out = {}
+    for m, xs in samples.items():
+        mu = sum(xs) / len(xs)
+        sd = math.sqrt(sum((x - mu) ** 2 for x in xs) / (len(xs) - 1)) if len(xs) > 1 else 0.0
+        ci = 1.96 * sd / math.sqrt(len(xs))
+        out[m] = {"mean": round(mu, 4), "ci95": round(ci, 4),
+                  "min": round(min(xs), 4), "max": round(max(xs), 4), "n_splits": len(xs)}
+    return out
+
+
+def _source_persons(con, event_class: str) -> dict[str, set[str]]:
+    rows = con.execute(
+        f"""SELECT source, person_id FROM events_with_dasha
+            WHERE event_class = '{dv._q(event_class)}' AND md_seq IS NOT NULL"""
+    ).fetchall()
+    out: dict[str, set[str]] = {}
+    for src, pid in rows:
+        out.setdefault(src, set()).add(pid)
+    return out
+
+
+def cross_source_validate(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+) -> dict:
+    """Train on one data SOURCE, test on a disjoint other source — the strongest
+    generalization test (the corpus blends astro_databank + wikidata, person-disjoint).
+
+    If the fine age model and the lord tilt calibrated on source A still hold on source
+    B's people, the result isn't a holos/source-specific selection artifact."""
+    persons = _source_persons(con, event_class)
+    # keep the two large disjoint sources; drop tiny/overlapping ones defensively.
+    srcs = sorted(persons, key=lambda s: -len(persons[s]))[:2]
+    a, b = srcs[0], srcs[1]
+    pa, pb = persons[a] - persons[b], persons[b] - persons[a]   # enforce disjoint
+    out = {}
+    for train_src, test_src, tr, te in ((a, b, pa, pb), (b, a, pb, pa)):
+        res = backtest(con, event_class, level,
+                       train_ids=tr, test_ids=te).to_dict()
+        out[f"train_{train_src}__test_{test_src}"] = {
+            "n_train": res["n_train_deaths"], "n_test": res["n_test_deaths"],
+            "capture_mortality": res["top_decile_capture_mortality"],
+            "capture_m0": res["top_decile_capture_m0"],
+            "capture_m2": res["top_decile_capture_m2"],
+            "delta_m2_m1": res["delta_m2_m1"], "p_m2_m1": res["p_m2_m1"],
+            "composite_realized_lift": res["composite_realized_lift"],
+        }
+    return out
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--event-class", default="death_cause_unspecified")
+    parser.add_argument("--level", default="md", choices=["md", "ad"])
+    parser.add_argument("--test-frac", type=float, default=0.25)
+    parser.add_argument("--cross-val", type=int, default=0, metavar="N",
+                        help="also run N-split cross-validation with 95%% CIs")
+    parser.add_argument("--cross-source", action="store_true",
+                        help="also train-on-one-source / test-on-the-other (generalization)")
+    args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s | %(message)s")
+
+    con = dv.open_catalog()
+    cv = xsrc = None
+    try:
+        res = backtest(con, args.event_class, args.level, args.test_frac)
+        if args.cross_val:
+            cv = cross_validate(con, args.event_class, args.level, args.test_frac,
+                                args.cross_val)
+        if args.cross_source:
+            xsrc = cross_source_validate(con, args.event_class, args.level)
+    finally:
+        con.close()
+
+    d = res.to_dict()
+    print("\n=== Death-window predictor backtest ===")
+    print(f"test deaths: {d['n_test_deaths']}  |  train deaths: {d['n_train_deaths']}")
+    print(f"composite factor: {d['composite_factor']}")
+    print(f"bracket factor:   {d['bracket_factor']}")
+    print(f"\nmean per-death log-likelihood (higher = better):")
+    print(f"  M0 duration-only          : {d['loglik_m0']}")
+    print(f"  M1 + longevity bracket     : {d['loglik_m1']}   (Δ {d['delta_m1_m0']:+})")
+    print(f"  M2 + composite confluence  : {d['loglik_m2']}   (Δ {d['delta_m2_m1']:+})")
+    print(f"  M3 + transit factor        : {d['loglik_m3']}   (Δ {d['delta_m3_m2']:+})")
+    print(f"\nHEADLINE M1→M2 (running lord beyond age+duration):")
+    print(f"  Δ logLik = {d['delta_m2_m1']:+}  z={d['z_m2_m1']}  p={d['p_m2_m1']}")
+    print(f"NEW M2→M3 (transit trigger beyond composite):")
+    print(f"  Δ logLik = {d['delta_m3_m2']:+}  z={d['z_m3_m2']}  p={d['p_m3_m2']}")
+    print(f"\ntop-decile capture (true window in model's riskiest 10%):")
+    print(f"  M0 duration-only: {d['top_decile_capture_m0']}   "
+          f"M2 (coarse bracket): {d['top_decile_capture_m2']}   M3: {d['top_decile_capture_m3']}")
+    print(f"  Mfine (MortalityModel age × composite): {d['top_decile_capture_mortality']}  "
+          f"<= the calibrated predictor's real capture (null ≈ 0.10)")
+    print(f"\nMfine capture by true death age (age-bias control):")
+    for s in ("<40", "40-70", ">70"):
+        b = d["capture_mortality_by_age"][s]
+        print(f"  age {s:<6}: {b['capture']:.4f}  (n={b['n']})")
+
+    if cv:
+        print(f"\n=== {args.cross_val}-split cross-validation (mean ± 95% CI) ===")
+        for m, st in cv.items():
+            print(f"  {m:<32} {st['mean']:.4f} ± {st['ci95']:.4f}  "
+                  f"[{st['min']:.4f}, {st['max']:.4f}]")
+
+    if xsrc:
+        print(f"\n=== cross-SOURCE validation (train on one source, test on the other) ===")
+        for k, st in xsrc.items():
+            print(f"  {k}  (train n={st['n_train']}, test n={st['n_test']})")
+            print(f"      Mfine capture={st['capture_mortality']}  M0={st['capture_m0']}  "
+                  f"M2={st['capture_m2']}  | M1→M2 Δ={st['delta_m2_m1']:+} p={st['p_m2_m1']}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

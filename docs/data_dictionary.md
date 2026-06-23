@@ -383,3 +383,27 @@ py -m app.medini.etl.resolve_persons_dedup
 py -m app.medini.etl.build_duckdb_catalog
 py -m app.medini.etl.materialize_gold_views
 ```
+
+## Building from the VedAstro + ASTROCRM corpora (no Round-9 sources)
+
+`build_person_event_tables` needs the Round-9 source parquets. When those are
+absent, build the Tier-0 `persons` + `events` directly from the session corpora
+with **`build_silver_from_corpora`**, then run the rest of the sequence unchanged:
+
+```bash
+py -m app.medini.etl.build_event_class_taxonomy
+py -m app.medini.etl.build_silver_from_corpora     # raw.csv + raw_astrocrm.csv + events.csv → persons/events
+py -m app.medini.etl.build_charts_table --workers 4
+py -m app.medini.etl.build_dasha_windows --workers 4
+py -m app.medini.etl.build_dasha_tree
+py -m app.medini.etl.resolve_persons_dedup         # before event_dasha_join (catalog needs it)
+py -m app.medini.etl.build_event_dasha_join
+py -m app.medini.etl.build_duckdb_catalog
+py -m app.medini.etl.materialize_gold_views
+py -m app.medini.etl.validate_silver_layer         # gate
+```
+
+Provenance for this variant: `persons.source ∈ {vedastro, astrocrm}` and
+`person_id = {VA|AC}:{birth_jd:.4f}` (vs. the Round-9 `ADB:`/`WD:`/`LA:` tags).
+`v_chart_edge_summary` Gold view is skipped unless `build_chart_heterograph` is
+also run.

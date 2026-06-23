@@ -92,6 +92,53 @@ def test_backtest_runs_and_detects_planted_signal() -> None:
     con.close()
 
 
+def _two_source_con(n_each: int = 80) -> duckdb.DuckDBPyConnection:
+    """Two disjoint sources ('srcA'/'srcB'), same planted maraka signal — so
+    cross-source validation must transfer (capture computed both directions)."""
+    asc, lon = 1, 5.0
+    con = duckdb.connect()
+    chart_cols = (", ".join(f"{g.lower()}_house INT" for g in dwp._MARAKA_GRAHAS) + ", "
+                  + ", ".join(f"{g.lower()}_lon DOUBLE" for g in dwp._MARAKA_GRAHAS))
+    con.execute("CREATE TABLE charts (person_id TEXT, asc_sign INT, asc_lon DOUBLE, "
+                "birth_jd_used DOUBLE, " + chart_cols + ")")
+    con.execute("CREATE TABLE dasha_windows (person_id TEXT, md_lord TEXT, ad_lord TEXT, "
+                "md_seq INT, ad_seq INT, start_jd DOUBLE, end_jd DOUBLE, duration_days DOUBLE)")
+    con.execute("CREATE TABLE events_with_dasha (person_id TEXT, event_class TEXT, source TEXT, "
+                "md_lord_at_event TEXT, ad_lord_at_event TEXT, age_at_event_years DOUBLE, "
+                "md_seq INT, ad_seq INT, event_jd DOUBLE)")
+    ng = len(dwp._MARAKA_GRAHAS)
+    cvals = [0] * ng + [0.0] * ng
+    controls = [g for g in ("Sun", "Moon", "Mars", "Jupiter", "Rahu", "Ketu")
+                if _role_count(g, asc, lon, {g2: 0 for g2 in dwp._MARAKA_GRAHAS}, dwp._DEATH_COMPOSITE)[0] == 0]
+    for src, base in (("srcA", 0), ("srcB", 100_000)):
+        for i in range(n_each):
+            pid = f"P:{src}:{i}"
+            bjd = 2_440_000.0 + base + i
+            con.execute("INSERT INTO charts VALUES (?,?,?,?," + ",".join("?" * len(cvals)) + ")",
+                        [pid, asc, lon, bjd, *cvals])
+            for seq in range(6):
+                lord = "Saturn" if seq == 4 else controls[seq % len(controls)]
+                sjd = bjd + seq * 10 * _DPY
+                con.execute("INSERT INTO dasha_windows VALUES (?,?,?,?,?,?,?,?)",
+                            [pid, lord, lord, seq, 0, sjd, sjd + 10 * _DPY, 10 * _DPY])
+            con.execute("INSERT INTO events_with_dasha VALUES (?,?,?,?,?,?,?,?,?)",
+                        [pid, "death_cause_unspecified", src, "Saturn", "Saturn", 45.0,
+                         4, 0, bjd + 45 * _DPY])
+    return con
+
+
+def test_cross_source_validate_transfers() -> None:
+    con = _two_source_con()
+    out = bt.cross_source_validate(con)
+    assert len(out) == 2                              # both train/test directions
+    for k, st in out.items():
+        assert st["n_train"] > 0 and st["n_test"] > 0
+        assert 0.0 <= st["capture_mortality"] <= 1.0
+        # planted maraka signal → composite at least ties duration-only capture
+        assert st["composite_realized_lift"] >= 1.0 - 1e-6
+    con.close()
+
+
 def test_backtest_no_planted_signal_is_neutral() -> None:
     # If every window shares one control lord, composite is constant → no lift.
     con = duckdb.connect()

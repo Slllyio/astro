@@ -119,6 +119,8 @@ def backtest(
     test_frac: float = 0.25,
     brackets=dwp.DEFAULT_BRACKETS,
     salt: str = "bt1",
+    train_ids: set[str] | None = None,
+    test_ids: set[str] | None = None,
 ) -> BacktestResult:
     # ---- split deaths by person -------------------------------------------------
     deaths = con.execute(
@@ -128,8 +130,16 @@ def backtest(
               AND md_seq IS NOT NULL AND ad_seq IS NOT NULL"""
     ).fetchall()
     true_win = {pid: (int(ms), int(as_)) for pid, ms, as_ in deaths}
-    test_ids = {pid for pid in true_win if _in_test(pid, test_frac, salt)}
-    train_ids = {pid for pid in true_win if pid not in test_ids}
+    # Default: deterministic hash split. Callers (e.g. cross_source_validate) may pass
+    # explicit disjoint train/test person sets to validate across data sources.
+    if test_ids is None:
+        test_ids = {pid for pid in true_win if _in_test(pid, test_frac, salt)}
+    else:
+        test_ids = {pid for pid in test_ids if pid in true_win}
+    if train_ids is None:
+        train_ids = {pid for pid in true_win if pid not in test_ids}
+    else:
+        train_ids = {pid for pid in train_ids if pid in true_win}
 
     # Train-only fine age-at-death model (the calibrated predictor's MortalityModel) —
     # the proper alternative to the coarse 3-bucket age factor. Leak-free: TRAIN ages.
@@ -327,6 +337,47 @@ def cross_validate(
     return out
 
 
+def _source_persons(con, event_class: str) -> dict[str, set[str]]:
+    rows = con.execute(
+        f"""SELECT source, person_id FROM events_with_dasha
+            WHERE event_class = '{dv._q(event_class)}' AND md_seq IS NOT NULL"""
+    ).fetchall()
+    out: dict[str, set[str]] = {}
+    for src, pid in rows:
+        out.setdefault(src, set()).add(pid)
+    return out
+
+
+def cross_source_validate(
+    con: duckdb.DuckDBPyConnection,
+    event_class: str = "death_cause_unspecified",
+    level: str = "md",
+) -> dict:
+    """Train on one data SOURCE, test on a disjoint other source — the strongest
+    generalization test (the corpus blends astro_databank + wikidata, person-disjoint).
+
+    If the fine age model and the lord tilt calibrated on source A still hold on source
+    B's people, the result isn't a holos/source-specific selection artifact."""
+    persons = _source_persons(con, event_class)
+    # keep the two large disjoint sources; drop tiny/overlapping ones defensively.
+    srcs = sorted(persons, key=lambda s: -len(persons[s]))[:2]
+    a, b = srcs[0], srcs[1]
+    pa, pb = persons[a] - persons[b], persons[b] - persons[a]   # enforce disjoint
+    out = {}
+    for train_src, test_src, tr, te in ((a, b, pa, pb), (b, a, pb, pa)):
+        res = backtest(con, event_class, level,
+                       train_ids=tr, test_ids=te).to_dict()
+        out[f"train_{train_src}__test_{test_src}"] = {
+            "n_train": res["n_train_deaths"], "n_test": res["n_test_deaths"],
+            "capture_mortality": res["top_decile_capture_mortality"],
+            "capture_m0": res["top_decile_capture_m0"],
+            "capture_m2": res["top_decile_capture_m2"],
+            "delta_m2_m1": res["delta_m2_m1"], "p_m2_m1": res["p_m2_m1"],
+            "composite_realized_lift": res["composite_realized_lift"],
+        }
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--event-class", default="death_cause_unspecified")
@@ -334,16 +385,20 @@ def main() -> int:
     parser.add_argument("--test-frac", type=float, default=0.25)
     parser.add_argument("--cross-val", type=int, default=0, metavar="N",
                         help="also run N-split cross-validation with 95%% CIs")
+    parser.add_argument("--cross-source", action="store_true",
+                        help="also train-on-one-source / test-on-the-other (generalization)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s | %(message)s")
 
     con = dv.open_catalog()
-    cv = None
+    cv = xsrc = None
     try:
         res = backtest(con, args.event_class, args.level, args.test_frac)
         if args.cross_val:
             cv = cross_validate(con, args.event_class, args.level, args.test_frac,
                                 args.cross_val)
+        if args.cross_source:
+            xsrc = cross_source_validate(con, args.event_class, args.level)
     finally:
         con.close()
 
@@ -376,6 +431,13 @@ def main() -> int:
         for m, st in cv.items():
             print(f"  {m:<32} {st['mean']:.4f} ± {st['ci95']:.4f}  "
                   f"[{st['min']:.4f}, {st['max']:.4f}]")
+
+    if xsrc:
+        print(f"\n=== cross-SOURCE validation (train on one source, test on the other) ===")
+        for k, st in xsrc.items():
+            print(f"  {k}  (train n={st['n_train']}, test n={st['n_test']})")
+            print(f"      Mfine capture={st['capture_mortality']}  M0={st['capture_m0']}  "
+                  f"M2={st['capture_m2']}  | M1→M2 Δ={st['delta_m2_m1']:+} p={st['p_m2_m1']}")
     return 0
 
 

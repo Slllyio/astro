@@ -50,6 +50,34 @@ app/medini/data/ml_runs/
 # Per-user Claude Code settings (machine-specific permissions)
 .claude/
 
+# IDE + MCP tooling caches (machine-specific)
+/.idea/
+/.serena/
+/.playwright-mcp/
+
+# Standalone Claude Agent SDK demo (separate throwaway project)
+/claude-agent-demo/
+
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Scratch / throwaway exploration (CLAUDE.md: promote or delete before merge)
+/scratch_*
+/test_h5_analysis.py
+
+# Local UI walkthrough screenshots (binaries; kept on disk, not in source control)
+/*.png
+
+# Machine-local MCP server config (per-machine, like .claude/)
+/.mcp.json
+
+# Stale git worktrees of feat/integration & feat/app-reading (already on remote)
+/astro-integration/
+/astro-reading/
+
+# Separate market-prediction experiment (own project: PyTorch weights + market CSVs)
+/astrov2/
+
+# Extracted archive
+/Astro_Data/

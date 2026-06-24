@@ -1,30 +1,24 @@
 # Phase-3 — DRAFT golden validation worksheet
 
-Generated 2026-06-25 (Item 3). The fixture carries **34 DRAFT verdicts** awaiting
-user validation. Confirming a DRAFT = set `verdict_review: "CONFIRMED"` in
+Generated 2026-06-25 (Item 3), regenerated after the Section-A validation pass.
+Confirming a DRAFT = set `verdict_review: "CONFIRMED"` in
 `tests/fixtures/raman_goldens.jsonl`; it then enters the Track-B ratchet. A DRAFT
 the engine already matches becomes a CORRECT verdict (ratchet numerator + denominator
 both +1); a DRAFT the engine misses adds to the denominator only.
 
-**Your task per row:** read the cited Raman passage, confirm the recorded verdict is
-Raman's actual reading (or correct it), then I flip `verdict_review` for the ones you OK.
+> **Update 2026-06-25:** the original 10-row Section A was validated against Raman's
+> text and **9 confirmed** (h7_01/06/12/13/14, h9_01, h12_14, h6_02/05) — ratchet
+> 90/130 → **99/139**. `h12_13` left HELD (below). **25 DRAFTs remain** (1 held +
+> 7 H8 placeholders + 17 engine-mismatch).
 
-## A. Ready to confirm — engine already matches (10 DRAFTs)
+## A. Ready to confirm — engine already matches (1 DRAFT: the held one)
 
-Confirming the verdicts you validate here moves the ratchet 90/130 → up to 100/140.
+The 9 validated rows are now CONFIRMED. Only `h12_13` remains — previously HELD,
+left as-is pending a fresh decision.
 
 | # | id | house/sig | recorded verdict | engine | held? | Raman's reasoning (verdict_prose) | citations |
 |---|----|-----------|------------------|--------|-------|-----------------------------------|-----------|
-| 1 | h7_01 | H7/marital_happiness | **favourable** | favourable |  | Happy married life; a reverenced, learned, well-placed husband. | HTJAH-II:1687 |
-| 2 | h7_06 | H7/spouse | **mixed** | mixed |  | Two wives, both alive (dwikalatra yoga) via the 7th-11th relationship from Lagna and Moon. | HTJAH-II:1918 |
-| 3 | h7_12 | H7/coverture | **afflicted** | afflicted |  | A disgusting, stupid, stubborn husband; widowhood in Saturn Dasa, Saturn Bhukti. | HTJAH-II:2233 |
-| 4 | h7_13 | H7/coverture | **afflicted** | afflicted |  | Husband died in Venus Bhukti, Mars Dasa — both period lords in the 12th-from-7th. | HTJAH-II:2280 |
-| 5 | h7_14 | H7/spouse | **afflicted** | afflicted |  | Jara Yoga — extra-marital relations with many women, a glutton for sexual experience; the wife too carried on affairs. | HTJAH-II:2446 |
-| 6 | h12_13 | H12/left_eye | **afflicted** | afflicted | ⚠️ HELD | First suffered night-blindness, then lost vision completely. | HTJAH-II:17420 |
-| 7 | h12_14 | H12/left_eye | **afflicted** | afflicted |  | Totally blind — heavy affliction to Venus in both Rasi and Navamsa. | HTJAH-II:17447 |
-| 8 | h9_01 | H9/father | **afflicted** | afflicted |  | Native lost his father, his guardian angel, in the Ketu Bhukti of Saturn Dasa; Kujavad-Ketu in a martian sign was the operative 9th-house period. | HTJAH-II:7638 |
-| 9 | h6_02 | H6/disease_chronic | **afflicted** | afflicted |  | Unmarried lady, T.B. suspected 1947 in Rahu MD/Jupiter AD/Sun antara; died in 27th year the moment Saturn (AyushKaraka, 7th from Moon) sub-period began. Rahu with Jupiter (6th lord from Lagna) and Saturn (6th lord from Moon). | HTJAH-I:6634 |
-| 10 | h6_05 | H6/enemies_disease | **afflicted** | afflicted |  | Serious smallpox in Sun MD/Moon AD. 6th lord Mars (RogaKaraka) in the 11th with malefics Saturn, Ketu and Sun; only slight relief from Jupiter's aspect. | HTJAH-I:6667 |
+| 1 | h12_13 | H12/left_eye | **afflicted** | afflicted | ⚠️ HELD | First suffered night-blindness, then lost vision completely. | HTJAH-II:17420 |
 
 ## B. H8 death/longevity — no verdict assigned yet (7 placeholders)
 

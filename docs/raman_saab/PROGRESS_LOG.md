@@ -786,3 +786,24 @@ conjunction transcribing Chart 56 verbatim (HTJAH-I:3722). Added to `_DECISIVE_A
   CONTESTABLE golden (the record itself notes "favourable/mixed contestable... pending user worksheet",
   confidence 0.45). Forcing `mixed` risks overfit/regression of solidly-favourable charts — deferred to B1 +
   a user worksheet, like chart_60.
+
+### 2026-06-25 — Item-3 Section A: confirm 9 validated DRAFTs — ratchet 90/130 -> 99/139
+Validated the 9 "ready" DRAFTs (engine-matching) against Raman's TEXT read from the corpus (NOT engine
+self-output, per the test-pinning policy), then flipped verdict_review DRAFT->CONFIRMED:
+- h7_01 (Chart 13) marital_happiness **favourable** — "the 7th house both from Lagna and the Moon being
+  free of malefic influences gives a happy married life" (HTJAH-II:1687+).
+- h7_06 (Chart 18) spouse **mixed** — "dwikalatra yoga ... two wives, both alive" (HTJAH-II:1918+).
+- h7_12 (Chart 24) coverture **afflicted** — "widowhood in Saturn Dasa, Saturn Bhukti" (HTJAH-II:2233+).
+- h7_13 (Chart 25) coverture **afflicted** — "the native's husband died in Venus Bhukti of Mars Dasa"
+  (HTJAH-II:2280+).
+- h7_14 (Chart 26) spouse **afflicted** — "leads to Jara Yoga" (adultery) (HTJAH-II:2446+).
+- h9_01 (Chart 85) father **afflicted** — "He lost his father, his guardian angel" (HTJAH-II:7675).
+- h12_14 (Chart 252) left_eye **afflicted** — "totally blind; 12th lord Venus afflicted by the nodes
+  in Rasi and Navamsa" (HTJAH-II:17447+).
+- h6_02 (Chart 110) disease_chronic **afflicted** — "died in her 27th year; T.B." (HTJAH-I:6634+).
+- h6_05 (Chart 113) enemies_disease **afflicted** — "6th lord Mars RogaKaraka in the 11th with
+  Saturn/Ketu/Sun; smallpox" (HTJAH-I:6667+).
+All 9 were already engine-matches, so correct +9 / total +9 (the engine was faithful; confirmation just
+admits them to the asserting set). Baseline re-based 90/130 -> 99/139 (accuracy 0.692 -> 0.712); zero
+regressions, no snapshot drift. h12_13 left HELD. Worksheet PHASE3_draft_validation.md regenerated:
+25 DRAFTs remain (1 held + 7 H8 placeholders + 17 engine-mismatch). Suite 3101 passed, CONFIRMED 131->140.

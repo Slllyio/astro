@@ -708,6 +708,32 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "lord debilitated in 6th -> partially deaf'",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3467)),
+    # #40 — DECISIVE (ear): the 3rd house aspected by Saturn AND the 3rd lord BOTH
+    #       debilitated AND in a dusthana (6/8/12) -> the house of hearing is struck on two
+    #       primary factors at once; partial deafness. Chart 56 verbatim ("the third house is
+    #       aspected by Saturn and the third lord is debilitated in the 6th; the native is
+    #       partially deaf", HTJAH-I:3722). The three legs transcribe Raman's one sentence.
+    #       The debilitation leg is intentionally NOT neecha-bhanga-gated: the ear-affliction
+    #       rules (H3.C.33) read a debilitated lord as harming the hearing ORGAN even when
+    #       bhanga restores its prosperity/status (chart_56's Mars IS bhanga-cancelled, yet
+    #       Raman still reads deafness) -- the prosperity-vs-organ split is the live convention
+    #       (H3.C.36/38 DO bhanga-gate their prosperity/siblings legs). bphs-doctrine-reviewer:
+    #       SOUND-WITH-CAVEAT/KEEP. Narrow + cumulative: the Saturn-aspect+debil pair co-fires
+    #       on chart_56 ALONE across the H3 goldens and the dusthana leg narrows it further, so
+    #       favourable ear charts 54/60 (Saturn-aspect, no debil lord) are untouched. Flagged
+    #       decisive; rests on the single worked chart_56 -- revisit if a contrary (bhanga-
+    #       spared) golden ever appears.
+    RuleRecord(
+        id="H3.C.40", house=3, signification="ear_throat", group="combination",
+        kind="evaluable",
+        condition=C.And(_SaturnAspects3rd(), _ThirdLordHasDignity({"debil"}),
+                        C.Or(C.LordIn(3, 6), C.LordIn(3, 8), C.LordIn(3, 12))),
+        fortified=None,
+        afflicted="the 3rd house aspected by Saturn AND the 3rd lord debilitated in a "
+                  "dusthana (6/8/12) -> the house of hearing struck on two primary factors "
+                  "at once; partial deafness should be predicted",
+        frame="LAGNA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-I", 3722)),
 
     # — E. additional sibling-denial atoms (HTJAH-I:3430-3436 inverse) —
     # #34 — 3rd lord in a dusthana (6/8/12) -> sibling affliction.

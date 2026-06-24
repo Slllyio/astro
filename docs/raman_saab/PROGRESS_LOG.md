@@ -763,3 +763,26 @@ the 7th-LORD; a dedup guard asserts exactly one spouse-evaluable rule fires on b
 - **Reviewer bonus flag (NOT a B6 action, logged in the backlog)**: the H4 `property` verdict double-fires on
   the single `LordIn(4,12)` placement via H4.C.3 + H4.L.12 (the property sig aggregates property+mother_home).
   Verdict-affecting; deferred for user sign-off (it can move H4 property goldens).
+
+### 2026-06-25 — Item-2 hard-tail: chart_56 deafness — ratchet 89/130 -> 90/130
+Diagnosed the two remaining H3 hard cases (chart_52, chart_56). chart_56 (Aquarius Lagna, ear_throat
+expected afflicted, engine said mixed): the doctrine's exact conditions both hold — 3rd lord Mars
+debilitated in the 6th + Saturn aspecting the 3rd — and all three non-decisive ear rules (H3.C.31/32/33)
+fired, but the frame-ledger pillars held it at mixed. Authored **H3.C.40** (DECISIVE ear-affliction):
+Saturn-aspects-3rd AND 3rd-lord-debilitated AND 3rd-lord-in-dusthana → partial deafness, a 3-leg
+conjunction transcribing Chart 56 verbatim (HTJAH-I:3722). Added to `_DECISIVE_AFFLICTION_RULE_IDS`.
+- **neecha-bhanga subtlety**: the engine computes `neecha_bhanga(Mars)=True` (debility cancelled), yet
+  Raman reads deafness. bphs-doctrine-reviewer (SOUND-WITH-CAVEAT/KEEP, HIGH confidence): bhanga restores
+  prosperity/status, NOT the physical organ — so the debilitation leg is intentionally NOT bhanga-gated,
+  mirroring the ungated ear rule H3.C.33 (vs the bhanga-gated prosperity/siblings rules H3.C.36/38). The
+  split is the live codebase convention. Caveat: decisive status rests on the single worked chart_56 —
+  revisit if a contrary (bhanga-spared) golden appears.
+- **Narrowness verified**: the Saturn-aspect+debil pair co-fires on chart_56 ALONE across the H3 goldens;
+  the dusthana leg narrows it further. Favourable ear charts 54/60 (Saturn-aspect, no debil lord) untouched.
+- +1 (chart_56 ear_throat mixed → afflicted), ZERO regressions; only chart_56's Tier-3 snapshot drifted
+  (regenerated). 4 new TestH3C40 unit tests (fires + 3 boundary negatives). Suite 3101 passed.
+- **chart_52 DEFERRED (documented limit)**: siblings expected `mixed` (6 born, 3 died — house good but lord
+  Moon weak), engine reads `favourable` (siblings granted). This is the B1 comparative-weighing case on a
+  CONTESTABLE golden (the record itself notes "favourable/mixed contestable... pending user worksheet",
+  confidence 0.45). Forcing `mixed` risks overfit/regression of solidly-favourable charts — deferred to B1 +
+  a user worksheet, like chart_60.

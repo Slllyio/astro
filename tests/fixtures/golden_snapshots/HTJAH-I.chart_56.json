@@ -8,6 +8,7 @@
       "HTJAH-I:3436",
       "HTJAH-I:3465",
       "HTJAH-I:3467",
+      "HTJAH-I:3722",
       "HTJAH-I:3765"
     ],
     "fired_rule_ids": [
@@ -19,10 +20,11 @@
       "H3.C.34",
       "H3.C.35",
       "H3.C.38",
+      "H3.C.40",
       "H3.C.9",
       "H3.L.6"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "courage": {
         "lead_frame": "lagna",
@@ -30,7 +32,7 @@
       },
       "ear_throat": {
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       },
       "short_journeys": {
         "lead_frame": "lagna",

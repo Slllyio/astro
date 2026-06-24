@@ -159,7 +159,19 @@ exemption toward Raman's reading, or unify on a single combustion model. Deferre
 user sign-off; H3.C.39 ships as-is (faithful, zero-regression).
 
 ## Golden expansion  `golden`  (Phase 3)
-- Mine more worked charts from HTJAH-I/II early chapters (full birth lines) via the existing
-  DRAFT→worksheet→CONFIRMED pipeline.
+**Assessed 2026-06-25 (Item 3).** The fixture already holds **131 CONFIRMED** verdicts (the
+ratchet) **+ 34 DRAFT verdicts awaiting user validation** — so the nearest Phase-3 lever is
+VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
+`docs/raman_saab/worksheets/PHASE3_draft_validation.md`. Breakdown:
+- **Ready to confirm (10)** — the engine already matches the recorded DRAFT verdict, so
+  confirming the ones the user validates moves the ratchet 90/130 → up to 100/140:
+  h7_01, h7_06, h7_12, h7_13, h7_14, h9_01, h12_14, h6_02, h6_05 (+ h12_13, currently HELD).
+- **H8 death/longevity (7)** — `chart_33/34/35/73/74/75/78` carry a bare `verdict="DRAFT"`
+  literal (no ground-truth verdict assigned); the death house has **0 CONFIRMED goldens**. The
+  user must assign each verdict from Raman's text (engine output shown as a starting hypothesis).
+- **Engine mismatch (17)** — recorded DRAFT ≠ engine; mostly the over-harsh H7 marriage tail
+  (B2/B3/B4) + H5. Not ready to confirm — these need engine work or a verdict correction.
+- New-chart mining (HTJAH-I/II early chapters, full birth lines) via the existing
+  DRAFT→worksheet→CONFIRMED pipeline remains available once the DRAFT backlog is cleared.
 - **Notable Horoscopes** is only 2 of ~50 chapters present — an *acquisition* gap; the full
   edition would add ~48 fully-worked goldens. Flag for the user to source.

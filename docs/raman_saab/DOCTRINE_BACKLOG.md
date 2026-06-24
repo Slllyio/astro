@@ -131,6 +131,13 @@ placement; the codebase elsewhere prevents this by making the overlapping rule `
 (cf. H4.C.30, H7.C.67's note). Whether this is a true double-count to collapse, or an acceptable
 two-testimony overlap, is a verdict-affecting judgment for the user — deferred (it can move H4
 `property` goldens; needs its own regression analysis + sign-off).
+**Measured 2026-06-25:** making `H4.C.3` descriptive is **zero golden regression** — the
+double-count is currently *inert* (no golden verdict depends on it), confirmed by running the
+full harness with H4.C.3 disabled (only the B6.2 coverage assertion changed; all goldens held,
+TrackB=131). So there is no ratchet cost or benefit today; the decision is purely the design call
+above (combos-stack-on-bridge vs the H7 "no re-score" policy). Recommendation: align with the H7
+policy (make `H4.C.3` descriptive, citation preserved) *before* Phase-3 adds H4-property goldens,
+so the inflation can't bake a wrong verdict into a new golden. Engine left unchanged pending sign-off.
 
 ## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  ✅ RESOLVED 2026-06-15
 **Settled:** removed the non-Raman 0.85 Venus/Saturn exemption; `_combust_graded` now uses one

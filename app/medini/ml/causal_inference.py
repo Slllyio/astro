@@ -58,18 +58,27 @@ def build_target_outcome(
     target_event_substring: str,
 ) -> pd.DataFrame:
     """Build (natal_features, y) frame where y = 1 if person ever had
-    an event whose event_root contains target_event_substring."""
+    an event whose event_root, event_subtype, or event_code contains target_event_substring."""
     natal = pd.read_parquet(natal_parquet)
     natal["_n"] = natal["name"].astype(str).str.strip().str.lower()
     natal = natal.drop_duplicates(subset="_n")
 
     events = pd.read_csv(events_csv)
     events["_n"] = events["name"].astype(str).str.strip().str.lower()
+    
+    # Check all possible columns for a match
     events["root_lower"] = events["event_root"].astype(str).str.lower().str.strip()
+    events["subtype_lower"] = events["event_subtype"].astype(str).str.lower().str.strip()
+    events["code_lower"] = events["event_code"].astype(str).str.lower().str.strip()
+    
     target_lc = target_event_substring.strip().lower()
-    positives = set(
-        events.loc[events["root_lower"].str.contains(target_lc, na=False), "_n"]
+    mask = (
+        events["root_lower"].str.contains(target_lc, na=False) |
+        events["subtype_lower"].str.contains(target_lc, na=False) |
+        events["code_lower"].str.contains(target_lc, na=False)
     )
+    positives = set(events.loc[mask, "_n"])
+    
     cohort = set(events["_n"]) & set(natal["_n"])
     natal = natal[natal["_n"].isin(cohort)].copy()
     natal["y"] = natal["_n"].isin(positives).astype(int)

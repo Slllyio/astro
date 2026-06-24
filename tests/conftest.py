@@ -28,6 +28,15 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
+
+def pytest_configure(config):
+    """Register custom markers so pytest doesn't warn on them."""
+    config.addinivalue_line(
+        "markers",
+        "bphs(citation): pin a test to a BPHS sloka citation "
+        "(see tests/bphs_compliance.py for the BPHSCitation dataclass)",
+    )
+
 # Imported lazily inside fixtures so app modules see the env-overridden settings.
 
 

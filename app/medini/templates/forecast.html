@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mundane Forecast - Geo-Astrological Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; background: #f7f7f7; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+    h1 { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 18px; }
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: white; padding: 14px 16px; border: 1px solid #e2e2e2; border-radius: 8px; margin-bottom: 22px; }
+    .controls label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #444; }
+    .controls input[type=number], .controls input[type=text] { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 13px; width: 80px; }
+    .controls input[type=checkbox] { margin: 0; }
+    .controls button { padding: 6px 16px; background: #2a4a8e; color: white; border: 0; border-radius: 5px; font-size: 13px; cursor: pointer; font-weight: 600; }
+    .controls button:hover { background: #1a3a7a; }
+    .controls button.secondary { background: #888; }
+    .controls button.secondary:hover { background: #666; }
+
+    /* Mobile: stack controls, shrink summary strip to 4 cols then 2. */
+    @media (max-width: 700px) {
+      .container { padding: 16px 12px 40px; }
+      h1 { font-size: 22px; }
+      .controls { padding: 10px 12px; gap: 8px; }
+      .controls label { font-size: 12px; }
+      .summary-strip { grid-template-columns: repeat(4, 1fr); }
+      .day-row { padding: 8px 10px; }
+      .event-desc { font-size: 12px; }
+      .crosslink { font-size: 11px; }
+    }
+    @media (max-width: 480px) {
+      .summary-strip { grid-template-columns: repeat(2, 1fr); }
+      .controls { flex-direction: column; align-items: stretch; }
+      .controls label { justify-content: space-between; }
+      .controls button { width: 100%; }
+    }
+
+    .summary-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 22px; }
+    .summary-cell { background: white; padding: 10px 6px; border-radius: 6px; text-align: center; border: 1px solid #e2e2e2; }
+    .summary-num { font-size: 20px; font-weight: 600; color: #2a4a8e; }
+    .summary-label { font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+
+    .section-h2 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 0.6px; margin: 18px 0 8px; font-weight: 700; }
+
+    .headlines { display: grid; gap: 8px; margin-bottom: 24px; }
+    .headline { background: white; border: 1px solid #e2e2e2; border-left: 6px solid #ccc; border-radius: 6px; padding: 10px 14px; }
+    .headline.red { border-left-color: #c54040; }
+    .headline.orange { border-left-color: #e08030; }
+    .headline.yellow { border-left-color: #d9b020; }
+    .headline.green { border-left-color: #6a9050; }
+    .headline-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .headline-title { font-size: 14px; font-weight: 600; }
+    .headline-meta { font-size: 11px; color: #888; }
+    .severity-pill { display: inline-block; min-width: 22px; text-align: center; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 700; color: white; }
+    .severity-pill.red { background: #c54040; }
+    .severity-pill.orange { background: #e08030; }
+    .severity-pill.yellow { background: #d9b020; color: #444; }
+    .severity-pill.green { background: #6a9050; }
+
+    .calendar { display: flex; flex-direction: column; gap: 8px; }
+    .day-row { background: white; border: 1px solid #e2e2e2; border-radius: 6px; padding: 10px 14px; }
+    .day-row-head { font-size: 13px; font-weight: 600; color: #444; margin-bottom: 6px; }
+    .event { padding: 8px 0; border-top: 1px solid #f0f0f0; }
+    .event:first-child { border-top: 0; }
+    .event-row { display: flex; gap: 10px; align-items: baseline; }
+    .event-type { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; }
+    .event-type-INGRESS { background: #c4d4e8; color: #1a3a6a; }
+    .event-type-STATION { background: #d8c4e8; color: #4a1a6a; }
+    .event-type-CONJUNCTION { background: #e8d4a4; color: #5a3a10; }
+    .event-type-NEW_MOON { background: #2a2a4a; color: white; }
+    .event-type-FULL_MOON { background: #f4ecc8; color: #5a4a1a; }
+    .event-type-ECLIPSE { background: #1a1a1a; color: #ff8000; }
+    .event-desc { font-size: 13px; color: #222; flex: 1; }
+    .event-domains { font-size: 11px; color: #666; margin-top: 2px; }
+    .domain-chip { display: inline-block; padding: 1px 6px; margin-right: 4px; background: #f0f0f0; border-radius: 8px; font-size: 10px; color: #555; }
+    .event-kurma { font-size: 11px; color: #888; margin-top: 2px; }
+    .daily-summary { font-size: 12px; color: #444; background: #f3f7fc; padding: 6px 10px; border-left: 3px solid #c4d4e8; border-radius: 3px; margin-bottom: 8px; }
+    .daily-summary-source { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 6px; }
+    .event-text { margin-top: 6px; padding: 8px 10px; background: #fafbfa; border-left: 3px solid #6a9050; font-size: 12px; line-height: 1.5; }
+    .event-text.general { background: #fdfaf3; border-left-color: #d9b020; }
+    .event-text-badge { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; margin-right: 6px; text-transform: uppercase; vertical-align: middle; }
+    .event-text-badge.grounded { background: #6a9050; color: white; }
+    .event-text-badge.general { background: #d9b020; color: #5a4a1a; }
+    .event-text-badge.unmarked { background: #999; color: white; }
+    .citations { margin-top: 6px; padding: 8px 10px; background: #fafbfd; border-left: 3px solid #c4d4e8; font-size: 12px; }
+    .citation { margin-bottom: 4px; }
+    .citation-source { font-weight: 600; color: #2a4a8e; font-size: 11px; }
+    .citation-snippet { font-size: 11px; color: #444; line-height: 1.4; margin-top: 2px; }
+    .citation-link a { color: #2a4a8e; text-decoration: none; font-size: 11px; }
+    .citation-link a:hover { text-decoration: underline; }
+
+    .empty-state, .loading, .error { padding: 30px; text-align: center; color: #888; font-style: italic; background: white; border: 1px dashed #ccc; border-radius: 6px; margin-top: 12px; }
+    .error { color: #b03030; border-color: #e0a0a0; background: #fff5f5; font-style: normal; }
+
+    .crosslink { font-size: 12px; color: #888; margin-bottom: 18px; }
+    .crosslink a { color: #2a4a8e; text-decoration: none; }
+    .crosslink a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mundane Forecast</h1>
+    <p class="subtitle">Multi-day cosmic weather - ingresses, stations, conjunctions, lunations, and eclipses scored by classical mundane significance.</p>
+    <p class="crosslink">See also: <a href="/medini/today/page">/today</a> (right-now snapshot) | <a href="/medini/eclipses/page">/eclipses</a> (eclipse impact map) | <a href="/medini/knowledge/page">/knowledge</a> (corpus search)</p>
+
+    <div class="controls">
+      <label>Horizon (days):
+        <input type="number" id="horizon" value="30" min="1" max="90" />
+      </label>
+      <label>Conjunction orb (deg):
+        <input type="number" id="orb" value="2.0" step="0.1" min="0.1" max="10" />
+      </label>
+      <label><input type="checkbox" id="severity" checked /> Severity</label>
+      <label><input type="checkbox" id="domains" checked /> Domains</label>
+      <label><input type="checkbox" id="daily_summary" /> Daily summary</label>
+      <label><input type="checkbox" id="citations" /> Citations (slow first call)</label>
+      <label><input type="checkbox" id="event_text" /> Per-event synthesis (needs citations + Ollama)</label>
+      <button id="refresh-btn">Refresh</button>
+      <button id="force-refresh-btn" class="secondary" title="Drop the daily-summary and event-text caches before refreshing.">Force refresh (clear cache)</button>
+    </div>
+
+    <div class="summary-strip" id="summary-strip"></div>
+
+    <div id="headlines-section" style="display:none">
+      <h2 class="section-h2">Top headlines (by severity)</h2>
+      <div class="headlines" id="headlines"></div>
+    </div>
+
+    <h2 class="section-h2">Day-by-day calendar</h2>
+    <div id="calendar-area">
+      <div class="empty-state">Loading forecast...</div>
+    </div>
+  </div>
+
+  <script>
+    // Safe-DOM helper - never use innerHTML for retrieved content.
+    function el(tag, attrs, ...children) {
+      const node = document.createElement(tag);
+      if (attrs) {
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === 'class') node.className = v;
+          else if (k === 'href' || k === 'target' || k === 'rel' || k === 'title') node.setAttribute(k, v);
+          else if (k.startsWith('on')) node[k] = v;
+          else if (k === 'style') node.setAttribute('style', v);
+          else node.setAttribute(k, v);
+        }
+      }
+      for (const c of children) {
+        if (c == null) continue;
+        if (typeof c === 'string') node.appendChild(document.createTextNode(c));
+        else node.appendChild(c);
+      }
+      return node;
+    }
+
+    let DOMAIN_DICT = {};
+    async function loadDomainDict() {
+      try {
+        const res = await fetch('/medini/forecast/domains');
+        const data = await res.json();
+        for (const d of data.domains) DOMAIN_DICT[d.key] = d;
+      } catch (e) { /* tooltip-only, swallow */ }
+    }
+
+    function renderSummary(payload) {
+      const strip = document.getElementById('summary-strip');
+      strip.replaceChildren();
+      const t = payload.summary.by_type;
+      const cells = [
+        ['Total', payload.summary.total],
+        ['Ingress', t.INGRESS],
+        ['Station', t.STATION],
+        ['Conjunct', t.CONJUNCTION],
+        ['New Moon', t.NEW_MOON],
+        ['Full Moon', t.FULL_MOON],
+        ['Eclipse', t.ECLIPSE],
+      ];
+      for (const [label, n] of cells) {
+        strip.appendChild(el('div', {class:'summary-cell'},
+          el('div', {class:'summary-num'}, String(n)),
+          el('div', {class:'summary-label'}, label),
+        ));
+      }
+    }
+
+    function renderHeadlines(payload) {
+      const sec = document.getElementById('headlines-section');
+      const list = document.getElementById('headlines');
+      list.replaceChildren();
+      if (!payload.top_events || payload.top_events.length === 0) {
+        sec.style.display = 'none';
+        return;
+      }
+      sec.style.display = '';
+      for (const e of payload.top_events) {
+        const band = e.severity_band || 'green';
+        const row = el('div', {class:`headline ${band}`},
+          el('div', {class:'headline-row'},
+            el('div', {class:'headline-title'},
+              el('span', {class:`severity-pill ${band}`}, String(e.severity || '?')),
+              ' ',
+              e.description || '(event)',
+            ),
+            el('div', {class:'headline-meta'}, e.date_utc),
+          ),
+        );
+        list.appendChild(row);
+      }
+    }
+
+    function renderDomains(domains) {
+      if (!domains || domains.length === 0) return null;
+      const node = el('div', {class:'event-domains'});
+      for (const key of domains) {
+        const meta = DOMAIN_DICT[key];
+        const chip = el('span', {class:'domain-chip', title: meta ? meta.description : key},
+          meta ? meta.label : key,
+        );
+        node.appendChild(chip);
+      }
+      return node;
+    }
+
+    function renderEventText(text, grounded) {
+      if (!text) return null;
+      const mode = grounded === true ? 'grounded'
+        : grounded === false ? 'general'
+        : 'unmarked';
+      const label = mode === 'grounded' ? 'Cited'
+        : mode === 'general' ? 'General principles'
+        : 'Synthesis';
+      return el('div', {class: `event-text ${mode}`},
+        el('span', {class: `event-text-badge ${mode}`}, label),
+        text,
+      );
+    }
+
+    function renderCitations(cits) {
+      if (!cits || cits.length === 0) return null;
+      const node = el('div', {class:'citations'});
+      for (const c of cits) {
+        const cit = el('div', {class:'citation'},
+          el('div', {class:'citation-source'}, `${c.source} - ${c.title || ''}`),
+          el('div', {class:'citation-snippet'}, c.snippet),
+        );
+        if (c.source_url || c.local_path) {
+          const linkRow = el('div', {class:'citation-link'});
+          if (c.source_url) linkRow.appendChild(el('a', {href: c.source_url, target:'_blank', rel:'noopener'}, 'source'));
+          if (c.local_path) {
+            if (c.source_url) linkRow.appendChild(document.createTextNode('  ·  '));
+            linkRow.appendChild(el('a', {href: c.local_path, target:'_blank', rel:'noopener'}, 'local mirror'));
+          }
+          cit.appendChild(linkRow);
+        }
+        node.appendChild(cit);
+      }
+      return node;
+    }
+
+    function renderCalendar(payload) {
+      const area = document.getElementById('calendar-area');
+      area.replaceChildren();
+      const dates = Object.keys(payload.by_day).sort();
+      if (dates.length === 0) {
+        area.appendChild(el('div', {class:'empty-state'},
+          'No events detected in this horizon. Increase the horizon or reduce filters.',
+        ));
+        return;
+      }
+      const cal = el('div', {class:'calendar'});
+      const daily = payload.daily_summaries || {};
+      for (const d of dates) {
+        const row = el('div', {class:'day-row'});
+        row.appendChild(el('div', {class:'day-row-head'}, d));
+        const summary = daily[d];
+        if (summary && summary.summary) {
+          row.appendChild(el('div', {class:'daily-summary'},
+            summary.summary,
+            el('span', {class:'daily-summary-source'}, `[${summary.source}]`),
+          ));
+        }
+        for (const e of payload.by_day[d]) {
+          const evt = el('div', {class:'event'});
+          const band = e.severity_band || 'green';
+          const sevPill = e.severity != null
+            ? el('span', {class:`severity-pill ${band}`}, String(e.severity)) : null;
+          const typeChip = el('span', {class:`event-type event-type-${e.type}`}, e.type);
+          const desc = el('div', {class:'event-desc'}, e.description || '(event)');
+          const rowEl = el('div', {class:'event-row'}, sevPill, typeChip, desc);
+          evt.appendChild(rowEl);
+          if (e.kurma && e.kurma.region) {
+            evt.appendChild(el('div', {class:'event-kurma'},
+              `Kurma: ${e.kurma.region} (${e.kurma.tattva || '?'})${e.kurma.nakshatra ? ' / ' + e.kurma.nakshatra : ''}`,
+            ));
+          }
+          const domNode = renderDomains(e.domains);
+          if (domNode) evt.appendChild(domNode);
+          const textNode = renderEventText(e.event_text, e.event_text_grounded);
+          if (textNode) evt.appendChild(textNode);
+          const citNode = renderCitations(e.citations);
+          if (citNode) evt.appendChild(citNode);
+          row.appendChild(evt);
+        }
+        cal.appendChild(row);
+      }
+      area.appendChild(cal);
+    }
+
+    async function loadForecast() {
+      const area = document.getElementById('calendar-area');
+      area.replaceChildren(el('div', {class:'loading'},
+        document.getElementById('citations').checked
+          ? 'Loading - first citations call warms the RAG model (~3s)...'
+          : 'Loading...',
+      ));
+      const params = new URLSearchParams({
+        horizon_days: document.getElementById('horizon').value,
+        conjunction_orb: document.getElementById('orb').value,
+        include_severity: document.getElementById('severity').checked,
+        include_domains: document.getElementById('domains').checked,
+        include_daily_summary: document.getElementById('daily_summary').checked,
+        include_citations: document.getElementById('citations').checked,
+        include_event_text: document.getElementById('event_text').checked,
+      });
+      try {
+        const res = await fetch(`/medini/forecast?${params}`);
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          area.replaceChildren(el('div', {class:'error'},
+            `HTTP ${res.status}: ${body.detail || res.statusText}`,
+          ));
+          return;
+        }
+        const payload = await res.json();
+        renderSummary(payload);
+        renderHeadlines(payload);
+        renderCalendar(payload);
+      } catch (e) {
+        area.replaceChildren(el('div', {class:'error'}, `Network error: ${e.message}`));
+      }
+    }
+
+    async function forceRefresh() {
+      const btn = document.getElementById('force-refresh-btn');
+      btn.disabled = true;
+      try {
+        await fetch('/medini/forecast/cache-clear', {method: 'POST'});
+      } finally {
+        btn.disabled = false;
+      }
+      await loadForecast();
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', loadForecast);
+    document.getElementById('force-refresh-btn').addEventListener('click', forceRefresh);
+    loadDomainDict().then(loadForecast);
+  </script>
+</body>
+</html>

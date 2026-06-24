@@ -78,7 +78,7 @@ def derive_binary_target(df: pd.DataFrame, target_substring: str) -> pd.Series:
     return df["categories_lower"].fillna("").str.contains(target, regex=False).astype(int)
 
 
-def select_features(df: pd.DataFrame) -> pd.DataFrame:
+def select_features(df: pd.DataFrame, *, lean: bool = False) -> pd.DataFrame:
     """Drop label/metadata columns and prep dtypes for XGBoost.
 
     Any non-numeric, non-categorical column gets converted to
@@ -86,7 +86,19 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
     it directly. This catches both numpy `object` dtype (Windows) and
     pandas `string` dtype (newer pandas/pyarrow on Linux), which would
     otherwise break XGBoost's DMatrix construction.
+
+    Round 8 (2026-05-20): when `lean=True`, the 15-group aggressive
+    Tier-2 §2 drop list is applied AFTER the categorical coercion.
+    DEFAULT IS FALSE — Phase 1.3 falsification: on locked group-split
+    holdout, lean WINS ONLY 4/10 classes, mean Δ AUC -0.0137. The
+    Tier-2 §2 lift was an artifact of row-level random splitting (same
+    person in train+test). Pass --lean to opt in for experiments; the
+    safe default is the FULL Round-5 tensor pending Phase 2's per-class
+    ablation matrix.
     """
+    # Late import — avoid circular dep if feature_groups grows imports.
+    from app.medini.ml.feature_groups import resolve_drop_columns
+
     feature_df = df.drop(columns=list(NON_FEATURE_COLUMNS), errors="ignore").copy()
     for col in feature_df.columns:
         s = feature_df[col]
@@ -97,6 +109,17 @@ def select_features(df: pd.DataFrame) -> pd.DataFrame:
             continue
         # Anything else (object, string, etc.) → Categorical.
         feature_df[col] = s.astype("category")
+
+    if lean:
+        drop_cols = resolve_drop_columns(feature_df.columns.tolist())
+        if drop_cols:
+            feature_df = feature_df.drop(columns=list(drop_cols))
+            logger.info(
+                "select_features lean=True: dropped %d cols across the "
+                "DROP_BY_DEFAULT groups; kept %d",
+                len(drop_cols), len(feature_df.columns),
+            )
+
     return feature_df
 
 
@@ -309,6 +332,7 @@ def run_training(
     top_n_features: int = 10,
     min_rule_impact: float = 0.05,
     target_column: str | None = None,
+    lean: bool = False,
 ) -> Path:
     """Execute the Stage 3 pipeline end-to-end. Returns the per-run output dir.
 
@@ -346,7 +370,11 @@ def run_training(
             f"Try a broader target substring."
         )
 
-    X = select_features(df)
+    X = select_features(df, lean=lean)
+    logger.info(
+        "feature mode: %s  →  %d feature cols",
+        "LEAN (Round 8 drop list)" if lean else "FULL (legacy)", len(X.columns),
+    )
 
     # Stratified 80/20 split; CV happens inside the 80% train half.
     X_train, X_test, y_train, y_test = train_test_split(
@@ -466,6 +494,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="How many top features (by |SHAP|) to scan for rules.")
     parser.add_argument("--min-rule-impact", type=float, default=0.05,
                         help="Minimum |probability shift| to emit a rule (default 0.05 = 5%%).")
+    parser.add_argument("--lean", dest="lean", action="store_true",
+                        help="Apply the Round 8 lean-feature drop (313 cols across "
+                             "15 groups). Default OFF — Phase 1.3 falsification: "
+                             "lean does NOT generalize at locked-holdout binary scale.")
+    parser.set_defaults(lean=False)
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -486,6 +519,7 @@ def main(argv: list[str] | None = None) -> int:
             top_n_features=args.top_n_features,
             min_rule_impact=args.min_rule_impact,
             target_column=args.target_column,
+            lean=args.lean,
         )
     except Exception as exc:
         logger.error("training failed: %s", exc)

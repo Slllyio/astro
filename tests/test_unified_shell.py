@@ -39,10 +39,31 @@ async def test_root_shell_references_all_surface_urls(client) -> None:
         "/medini/kurma-widget",   # Kurma grid
         "/medini/cartography/page",  # Astrocartography
         "/medini/today/page",     # Cosmic Weather
+        "/medini/forecast/page",  # Phase 2: Mundane Forecast
+        "/medini/almanac/page",   # Phase 2: Mundane Almanac
         "/medini/eclipses/page",  # Eclipses
+        "/medini/knowledge/page", # RAG search
+        "/medini/reading/page",   # Round 10: per-chart RAG reading
+        "/interpret/page",        # LLM narrative
         "/docs",                  # FastAPI swagger
     ):
         assert url in body, f"Shell missing surface URL: {url}"
+
+
+@pytest.mark.asyncio
+async def test_shell_tabs_for_new_phase2_surfaces(client) -> None:
+    """Forecast + Almanac + Knowledge each get their own clickable tab in
+    the nav AND their own surface card on the welcome screen. The data-tab
+    attribute is what the JS dispatcher dispatches on; pin both spellings."""
+    response = await client.get("/")
+    body = response.text
+    for tab in ("forecast", "almanac", "knowledge", "reading"):
+        assert f'data-tab="{tab}"' in body, (
+            f"Shell missing data-tab={tab} (tab nav or welcome card)"
+        )
+        assert f'#{tab}' in body, (
+            f"Shell missing hash route for #{tab}"
+        )
 
 
 @pytest.mark.asyncio

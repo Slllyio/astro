@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from app.core.config import settings
+from app.llm.citations import Citation, gather_citations
 from app.llm.client import LLMClient, OllamaClient, OllamaUnavailable
 from app.llm.templates import (
     ALLOWED_SECTIONS,
@@ -33,15 +34,18 @@ InterpretMode = Literal["summary", "section"]
 class Interpretation:
     """Result of a narration call.
 
-    `source` lets the caller (and the response payload) tell whether the
-    text came from the LLM or the fallback template — useful for users
-    deciding whether to enable Ollama.
+    `source` tells the caller whether the text came from the LLM or the
+    fallback template. `citations` is the (possibly empty) tuple of
+    grounding passages pulled from the doctrine RAG index — useful for a
+    UI to show "where does this come from?" without coupling the
+    interpreter to any specific LLM evidence-injection flow.
     """
     text: str
     mode: InterpretMode
     section: str | None
     source: Literal["llm", "fallback"]
     model: str | None  # populated only when source == "llm"
+    citations: tuple[Citation, ...] = ()
 
 
 def _default_client() -> LLMClient | None:
@@ -56,6 +60,23 @@ def _default_client() -> LLMClient | None:
         host=settings.OLLAMA_HOST,
         model=settings.OLLAMA_MODEL,
         timeout_seconds=settings.OLLAMA_TIMEOUT_SECONDS,
+    )
+
+
+def _maybe_gather_citations(
+    chart: dict[str, Any], mode: InterpretMode, section: str | None,
+) -> tuple[Citation, ...]:
+    """Pull doctrine citations when enabled; never raise.
+
+    Reads ``settings.INTERPRET_CITATIONS_ENABLED`` at call time (not import
+    time) so tests can flip the flag via monkeypatch without re-importing.
+    The flag exists so CI / fresh checkouts don't pay the RAG load cost.
+    """
+    if not settings.INTERPRET_CITATIONS_ENABLED:
+        return ()
+    return gather_citations(
+        chart, mode=mode, section=section,
+        top=settings.INTERPRET_CITATIONS_TOP_N,
     )
 
 
@@ -74,6 +95,12 @@ def interpret_chart(
 
     If `client` is None, falls back to settings (Ollama if enabled, else
     template). If the LLM call raises OllamaUnavailable, also falls back.
+
+    When ``settings.INTERPRET_CITATIONS_ENABLED`` is True, attaches the
+    top-N doctrine passages relevant to this chart+section as
+    ``Interpretation.citations``. Citation lookup never raises — a missing
+    or broken RAG index just gives an empty tuple, leaving the narrative
+    untouched.
     """
     if mode == "section":
         if section is None:
@@ -94,6 +121,8 @@ def interpret_chart(
     else:
         prompt = build_section_prompt(chart, section)  # type: ignore[arg-type]
 
+    citations = _maybe_gather_citations(chart, mode, section)
+
     # No LLM available → render the deterministic template directly.
     if effective_client is None:
         text = (
@@ -103,7 +132,7 @@ def interpret_chart(
         )
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="fallback", model=None,
+            source="fallback", model=None, citations=citations,
         )
 
     # LLM available — try, fall back on transport failure.
@@ -112,7 +141,7 @@ def interpret_chart(
         model_name = getattr(effective_client, "model", "unknown")
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="llm", model=str(model_name),
+            source="llm", model=str(model_name), citations=citations,
         )
     except OllamaUnavailable:
         logger.warning("LLM unavailable; serving deterministic fallback")
@@ -123,5 +152,5 @@ def interpret_chart(
         )
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="fallback", model=None,
+            source="fallback", model=None, citations=citations,
         )

@@ -99,12 +99,38 @@ Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):
   Vasi/Vesi/Obhayachari (mirror of lunar Sunapha/Anapha/Durudhura); Daridra (poverty),
   Rajju (foreign). Wire kind-scoped like the existing dhana/raja/arishta modulation.
 
-## B6 — HPA/HTJAH house rules  `new-rule`
-- Mars in the 7th → clashes/tensions, possibly two wives (HTJAH-I:8170) — feeds H7.
-- 4th lord in the 12th → loss of ancestral property (HPA-19:247) — feeds H4 property.
-- 7th-lord & Venus in common/dual signs → ≥2 marriages (HTJAH-II:484; HTJAH-I:8138) — H7.
+## B6 — HPA/HTJAH house rules  `new-rule`  ✅ RESOLVED-BY-AUDIT 2026-06-25
+**Settled:** all three proposed rules are ALREADY encoded; adding them would double-count
+(the judge dedups by `rule.id`, not by placement). bphs-doctrine-reviewer pass confirmed,
+HIGH confidence on B6.1/B6.2, MEDIUM on B6.3. Coverage pinned by
+`tests/raman_saab/doctrine/test_b6_house_rules_coverage.py` so the rules can't silently
+regress nor be re-added as duplicates. ZERO engine change → ratchet unchanged (89/130).
+- **B6.1** Mars-in-7th → clashes/tensions/two wives (HTJAH-I:8170) — **COVERED** by
+  `H7.P.Mars` (planets_in_7th.py:35, HTJAH-II:532 — the SAME dictum, near-verbatim), with the
+  placement partitioned into `coverture` (`H7.C.60`) and `marital_happiness` (`H7.KD.1`).
+- **B6.2** 4th-lord-in-12 → loss of ancestral property (HPA-19:247) — **COVERED** by
+  `H4.C.3` (combinations.py:116, HTJAH-I:4208, sig `property`) + `H4.L.12` (lord_in_12.py:84,
+  HTJAH-I:4187). HPA is Raman's own condensation of the same HTJAH-I lines.
+- **B6.3** dual-sign 7th & Venus → ≥2 marriages (HTJAH-II:484; HTJAH-I:8138) — **PARTIALLY
+  COVERED**: `H7.C.38` (combinations.py:392) already scores the **7th-SIGN**-dual + Venus-dual
+  signature from the SAME source (HTJAH-II:484). The reviewer FLAGGED the **7th-LORD**-in-dual-
+  sign as a *genuinely distinct* but deliberately deferred refinement — encoding it now would
+  inflate the over-harsh H7 marriage tail (the very thing B2/B3/B4 relieve) and needs the
+  unencoded Jupiter↔Venus holding-factor exception first. Kept text-only, as the code already
+  does. (HTJAH-I:8138 could not be verified on disk — confirm against a primary source before
+  treating it as an independent testimony.)
 - Planet results vary by avastha/disposition, not mere occupancy (HPA-19:47; HPA-7 the 10
-  avasthas) — a longer-horizon `shadbala`/metadata item, deferred.
+  avasthas) — a longer-horizon `shadbala`/metadata item, **still deferred**.
+
+### B6-adjacent observation (NOT a B6 action) — `H4.C.3` / `H4.L.12` same-placement double-fire
+Surfaced during the B6.2 audit: the H4 `property` verdict (which aggregates the `property` and
+`mother_home` rule_tags, significations.py:251) has TWO evaluable rules firing on the single
+`LordIn(4,12)` placement — `H4.C.3` (sig `property`, HTJAH-I:4208) and `H4.L.12` (sig
+`mother_home`, HTJAH-I:4187). They are two distinct corpus lines that happen to overlap on one
+placement; the codebase elsewhere prevents this by making the overlapping rule `descriptive`
+(cf. H4.C.30, H7.C.67's note). Whether this is a true double-count to collapse, or an acceptable
+two-testimony overlap, is a verdict-affecting judgment for the user — deferred (it can move H4
+`property` goldens; needs its own regression analysis + sign-off).
 
 ## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  ✅ RESOLVED 2026-06-15
 **Settled:** removed the non-Raman 0.85 Venus/Saturn exemption; `_combust_graded` now uses one

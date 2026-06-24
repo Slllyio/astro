@@ -744,3 +744,22 @@ TestBlemishlessVenusFloor unit tests; suite 3083 passed; no Tier-3 drift.
 - **Remaining hard cases**: chart_08 (Venus not blemishless), chart_60 (holistic relative-strength limit),
   chart_52 (mixed V2 over-commit), chart_56 (H3 ear_throat). Deferred backlog: B5/B6 (HPA/3HC yoga mining),
   B7 (reconcile the two Venus-combustion thresholds), Phase 3 (golden expansion).
+
+### 2026-06-25 — B6 closed RESOLVED-BY-AUDIT — ratchet 89/130 unchanged
+Picked up B6 ("HPA/HTJAH house rules") expecting to author 3 rules; the gap-check found all three
+ALREADY encoded by the Stage-4 combination layers (which mined the primary HTJAH tables before the
+backlog was written). bphs-doctrine-reviewer confirmed (HIGH on B6.1/B6.2, MEDIUM on B6.3):
+- B6.1 Mars-in-7th = `H7.P.Mars` (HTJAH-II:532 ≡ the backlog's HTJAH-I:8170, same dictum), partitioned
+  into `coverture` (H7.C.60) + `marital_happiness` (Kuja-Dosha H7.KD.1).
+- B6.2 4th-lord-in-12 = `H4.C.3` (HTJAH-I:4208, sig property) + `H4.L.12` (HTJAH-I:4187); HPA-19:247 is
+  Raman's condensation of the same lines.
+- B6.3 dual-sign = `H7.C.38` (HTJAH-II:484, the SAME source). The 7th-LORD-in-dual-sign refinement is a
+  genuinely distinct testimony but deliberately kept text-only (encoding it would inflate the over-harsh
+  H7 marriage tail B2/B3/B4 are relieving; needs the Jupiter↔Venus holding-factor exception first).
+Adding any of them would DOUBLE-COUNT — the judge dedups by rule.id, not by placement. So: NO engine
+change. Instead pinned the coverage with 6 tests in `tests/raman_saab/doctrine/test_b6_house_rules_coverage.py`
+(each B6 doctrine fires through its shipped rule; a boundary test asserts H7.C.38 keys on the 7th-SIGN not
+the 7th-LORD; a dedup guard asserts exactly one spouse-evaluable rule fires on bare Mars-in-7th). Suite green.
+- **Reviewer bonus flag (NOT a B6 action, logged in the backlog)**: the H4 `property` verdict double-fires on
+  the single `LordIn(4,12)` placement via H4.C.3 + H4.L.12 (the property sig aggregates property+mother_home).
+  Verdict-affecting; deferred for user sign-off (it can move H4 property goldens).

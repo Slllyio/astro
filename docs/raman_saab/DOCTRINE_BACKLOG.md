@@ -294,3 +294,51 @@ fairer headline and is at the projected ordinal ceiling.** The 20 distance-1 bou
 subjective favourable-vs-mixed calls (handled by the graded `degree`), not errors. The two most-promising
 remaining over-lenient cases (h9_02, chart_44) were empirically re-tested and both confirm as limits —
 every faithful general-dictum / 2+-chart mechanism has been mined. Further rule-grinding overfits.
+
+---
+
+## H7-marriage (+H5) DRAFT backlog — validated 2026-06-26, awaiting engine work
+
+bphs-doctrine-reviewer adjudicated all 16 remaining non-empty DRAFT goldens against Raman's
+TEXT. **All 16 DRAFT labels are correct per Raman.** One (h12_13) was an engine-match and is now
+CONFIRMED (115/149). The other **15 are validated-but-the-engine-mismatches** — kept DRAFT per the
+project pattern (confirm engine-matches; DRAFT-until-fixed for mismatches) and recorded here as the
+next coherent improvement target. Confirming them now would re-base the ratchet DOWN to ~115/164 =
+0.701 for zero engine benefit; the right move is to BUILD the H7-marriage mechanisms, then confirm.
+
+**Two engine failure modes (the agent's diagnosis):**
+
+**(A) Over-weights affliction, ignores Raman's stated benefic RELIEF -> engine wrongly `afflicted`
+(correct = `mixed`):**
+| golden | sig | Raman (correct) | engine | the relief the engine drops | conf |
+|---|---|---|---|---|---|
+| h5_13 | children | mixed | afflicted | "birth of children is not denied" (Jupiter unafflicted) HTJAH-I:5876 | HIGH |
+| h5_14 | children | mixed | afflicted | "5th house is fairly well disposed" HTJAH-I:5889 | HIGH |
+| h7_03 | marital_happiness | mixed | afflicted | "rule out... separation or divorce" (Venus+Jupiter) HTJAH-II:1818 | HIGH |
+| h7_07 | coverture | mixed | afflicted | remarriage after the first husband's death HTJAH-II:1996 | MED |
+| h7_17 | spouse | mixed | afflicted | realized (inter-faith) marriage, not destroyed HTJAH-II:2726 | MED |
+| h7_18 | spouse | mixed | afflicted | "Jupiter... on karaka and 7th lord Venus" HTJAH-II:2768 | MED |
+
+**(B) Over-weights a clean 7th-lord, misses the heavily-afflicted 8th / marital-bond / Navamsa ->
+engine wrongly `favourable` (correct = `mixed`/`afflicted`):**
+| golden | sig | Raman (correct) | engine | what the engine misses | conf |
+|---|---|---|---|---|---|
+| h7_02 | spouse | afflicted | favourable | both 7th-lords afflicted by Rahu; immoral spouse HTJAH-II:1773 | HIGH |
+| h7_05 | spouse | afflicted | favourable | two wives; clandestine marriage; wife left HTJAH-II:1906 | HIGH |
+| h7_15 | spouse | afflicted | favourable | 7th-lord+Venus much afflicted; profligate, VD HTJAH-II:2528 | HIGH |
+| h7_04 | marital_happiness | mixed | favourable | "domestic bickerings" (Rahu-7th, Mars-Venus) HTJAH-II:1864 | MED |
+| h7_16 | spouse | mixed | favourable | 8th (marital bond) heavily afflicted, Rasi+Navamsa HTJAH-II:2664 | MED |
+| h7_19 | spouse | mixed | favourable | all malefics in 8th, 8th-lord combust in Navamsa HTJAH-II:2877 | MED |
+
+**Also:** h5_15 (children, favourable — engine `mixed`, the single child-death over-weighted) and
+h5_18 (children, mixed — engine `favourable`, "spoiling of the 5th house" missed).
+
+**Engine work implied (future):** (1) a marital benefic-RELIEF mechanism that lifts an afflicted
+spouse/marital verdict to `mixed` when Raman's named reliefs are present (no separation/divorce,
+remarriage, benefic on the karaka) — complements the existing blemishless-Venus floor; (2) an
+8th-house / Navamsa MARITAL-BOND affliction rule so a clean 7th-lord with a heavily-afflicted 8th
+reads `mixed`/`afflicted`, not `favourable` (the h7_02/05/15 hard reversals are the priority — a
+profligate-with-VD spouse must not read favourable). The three HIGH-confidence reversals
+(h7_02/05/15) are the cleanest fix targets. The four "Unconventional Marriages" charts
+(h7_16/17/18/19) are MEDIUM (afflicted-but-realized marriage = mixed) — tighten the spouse rubric
+first.

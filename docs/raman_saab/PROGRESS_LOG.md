@@ -982,3 +982,20 @@ a fresh classical-math subsystem.
 - Confirmed the 2 DRAFT span goldens chart_33 + chart_34 = favourable longevity (both lived full lives).
 **Ratchet: 112/146 -> 114/148 exact (0.770); 132/146 -> 134/148 within-1 (0.905).** Denominator +2; ZERO
 regressions (only the 5 H8 Tier-3 longevity snapshots drifted). The longevity-span backlog item is RESOLVED.
+
+### 2026-06-26 (ultracode) — "the remains": DRAFT validation + degree tweaks + sanity
+Completed the residual backlog the user asked for after the ayurdaya engine:
+- **Degree tweaks (commit 2f71ba3, verdict-invariant):** Bala avastha 0->-1 (the more faithful
+  "progressing" reading, Phaladeepika Sl.10); support-PROMOTION enabled (both deliverers
+  yuva/jagrad -> a moderate lifts to strong, Sl.20 "full effect"). `_avastha_demotes` (bool) ->
+  `_avastha_combined` (signed). The invariance pin now forces BOTH directions.
+- **Premature-death sanity test:** the alloted ayurdaya span >= actual age-at-death for every
+  death-dated golden (a maraka cuts the span short, never exceeds it).
+- **DRAFT-validation sweep:** bphs-doctrine-reviewer adjudicated all 16 remaining non-empty DRAFTs
+  against Raman's TEXT. ALL 16 DRAFT labels are correct per Raman; the engine matches only 1
+  (h12_13 left_eye, now CONFIRMED -> 115/149). The other 15 are validated engine-MISMATCHES (mostly
+  H7 marriage) -- kept DRAFT per the project pattern and recorded as the H7-MARRIAGE BACKLOG
+  (DOCTRINE_BACKLOG) with the two failure modes + the cleanest fix targets (h7_02/05/15 reversals).
+  Confirming them would re-base DOWN to ~0.701 for zero engine benefit; deferred until the
+  marital benefic-relief + 8th-marital-bond mechanisms are built.
+**Ratchet: 114/148 -> 115/149 exact (0.772); 134/148 -> 135/149 within-1 (0.906).**

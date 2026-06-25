@@ -277,9 +277,20 @@ MORE surface affliction. Forcing them violates the main goal (faithful, not gold
   needs the forbidden navamsa/CONTRA_PILLAR retune. Documented limits. (The Phase-2 gate explicitly SPARES
   h5_16 — does not make it worse.)
 - **chart_09/17/20/31 (H1 self)** — holistic whole-chart prose with no single cited combination.
-- **h9_02 (H9 father)** — distinct mechanism (EXALTED Sun IN the 9th + papakartari-on-bhava), not the
-  H9.A.20a dusthana signature; would need a separate papakartari-on-bhava rule.
+- **h9_02 (H9 father)** — INVESTIGATED + confirmed limit 2026-06-26. The clean candidate "Sun-in-9th +
+  9th-house papakartari (malefics in 8th & 10th)" does NOT fire (9th-house is not hemmed that way); the
+  affliction is Raman's COMPOUND "papakartari to 9th house/lord/karaka PLUS karaka-in-house" reading
+  (HTJAH-II:7929) that no single predicate reproduces. 3 malefic father-rules already fire but strong
+  pillars (exalted Sun, vargottama Jupiter, Mars in own kendra) override — a confluence case, not a
+  missed cited rule.
+- **chart_44 (H2 wealth)** — INVESTIGATED + confirmed limit 2026-06-26. The 2nd lord IS papakartari'd,
+  but the over-fire scan shows "2nd-lord-papakartari" fires on chart_40/41/46 — all FAVOURABLE wealth
+  twins. chart_44's poverty is the compound confluence (Dwirdwadasa from the Moon + Sun aspected by
+  Saturn + 2nd-lord-with-malefic-turned-Venus + papakartari TOGETHER, HTJAH-I:2827-2848); the single
+  papakartari signature over-fires on 3 favourable charts.
 
-**Honest ceiling: ~75% exact / ~89% within-1 today; the within-1 figure is the fairer headline and is at
-the projected ordinal ceiling.** The 20 distance-1 boundary near-hits are subjective favourable-vs-mixed
-calls (handled by the graded `degree`), not errors.
+**Honest ceiling: ~77% exact / ~90% within-1 (112/146, 132/146 at 2026-06-26); the within-1 figure is the
+fairer headline and is at the projected ordinal ceiling.** The 20 distance-1 boundary near-hits are
+subjective favourable-vs-mixed calls (handled by the graded `degree`), not errors. The two most-promising
+remaining over-lenient cases (h9_02, chart_44) were empirically re-tested and both confirm as limits —
+every faithful general-dictum / 2+-chart mechanism has been mined. Further rule-grinding overfits.

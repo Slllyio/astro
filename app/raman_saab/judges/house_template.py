@@ -143,6 +143,7 @@ _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H7.C.85",  # Mars-in-8th + debilitated 7th lord (coverture: vaidhavya/spouse death)
     "H9.A.20a", # Sun-Pitrukaraka in a dusthana + papakartari (father: early death)
     "H5.C.38",  # PutraKaraka Jupiter papakartari + malefic rashi (children: progeny denied)
+    "H4.C.18a", # Moon (Matru-karaka) in 4th conjoined by a malefic (mother: early death)
 })
 
 

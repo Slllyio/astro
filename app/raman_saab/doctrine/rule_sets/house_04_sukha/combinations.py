@@ -162,12 +162,29 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4223)),
     RuleRecord(
         id="H4.C.18", house=4, signification="mother", group="combination", kind="evaluable",
-        condition=C.And(C.InRashiHouse("Moon", 4),
-                        C.Or(_AspectedByClass("Moon", "malefic"), _ConjunctAnyMalefic("Moon"))),
+        condition=C.And(C.InRashiHouse("Moon", 4), _AspectedByClass("Moon", "malefic")),
         fortified=None,
-        afflicted="Moon in the 4th joined OR aspected by evil planets → kills the mother early "
-                  "(both arms of HTJAH-I:4224; the Saturn-joined instance HTJAH-I:4401 is owned "
-                  "here, so H4.C.30 is descriptive to avoid double-counting)",
+        afflicted="Moon in the 4th ASPECTED by an evil planet → injurious to the mother (the "
+                  "aspect arm of HTJAH-I:4224; the stronger JOINED/conjunct arm is the decisive "
+                  "H4.C.18a, so this arm stays non-decisive to avoid double-counting)",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4224)),
+    # DECISIVE (mother): the Moon (Matru-Karaka) in the 4th CONJOINED by a natural malefic ->
+    # kills the mother early. The conjunct (JOINED) arm of HTJAH-I:4224 ("Moon in the 4th joined
+    # ... by evil planets -> kills the mother early"), corroborated by Chart 64/h4_01 (Saturn
+    # conjunct an EXALTED Moon -> "the Matru-Karaka is definitely afflicted; early death of the
+    # mother", HTJAH-I:4404) and Chart 66 (Saturn+Moon-in-4 -> mother death, HTJAH-I:4488). The
+    # H4 twin of the decisive karaka-affliction rules H9.A.20a / H5.C.38; `mother` is bidirectional
+    # (not AFFLICTION_MATTER), so the decisive flag is the lever past the (exalted-Moon) strong-
+    # pillar favourable preponderance -- EXALTATION is not a relief. Only the CONJUNCT arm is
+    # decisive; a lone distant aspect (the C.18 arm) stays non-decisive (no worked chart supports
+    # a decisive mother-death on aspect alone). Fires on h4_01 across the H4/mother goldens.
+    # bphs-doctrine-reviewer SOUND-WITH-CAVEAT (doctrine HIGH; n=2 worked charts 64/66).
+    RuleRecord(
+        id="H4.C.18a", house=4, signification="mother", group="combination", kind="evaluable",
+        condition=C.And(C.InRashiHouse("Moon", 4), _ConjunctAnyMalefic("Moon")),
+        fortified=None,
+        afflicted="the Moon (Matru-Karaka) in the 4th conjoined by an evil planet → the mother's "
+                  "longevity is killed; early death of the mother",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4224)),
     RuleRecord(
         id="H4.C.19", house=4, signification="happiness", group="combination", kind="evaluable",
@@ -216,8 +233,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=None,
         fortified=None,
         afflicted="Saturn in the 4th with the Moon → early loss of the mother (the Saturn-joined "
-                  "instance of HTJAH-I:4224; scored by H4.C.18's joined arm, so kept descriptive "
-                  "here to avoid double-counting Saturn+Moon-in-4 in the `mother` verdict)",
+                  "instance of HTJAH-I:4224; scored by the decisive H4.C.18a conjunct arm, so kept "
+                  "descriptive here to avoid double-counting Saturn+Moon-in-4 in the `mother` verdict)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4401)),
     RuleRecord(
         id="H4.C.26", house=4, signification="mother", group="combination", kind="descriptive",

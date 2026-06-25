@@ -20,11 +20,24 @@ left as-is pending a fresh decision.
 |---|----|-----------|------------------|--------|-------|-----------------------------------|-----------|
 | 1 | h12_13 | H12/left_eye | **afflicted** | afflicted | ⚠️ HELD | First suffered night-blindness, then lost vision completely. | HTJAH-II:17420 |
 
-## B. H8 death/longevity — no verdict assigned yet (7 placeholders)
+## B. H8 death/longevity — BLOCKED on the Phase-E longevity engine (7 placeholders)
 
-These are `verdict="DRAFT"` literals — the death-house has **0 confirmed goldens**.
-You need to assign the verdict from Raman's text; the engine's current output is shown
-as a starting hypothesis.
+The death-house has **0 confirmed goldens**, and these **cannot be confirmed by text
+validation** — they are deliberately Phase-E-gated:
+- Each record's prose ends *"Asserts only after Phase E longevity engine."*
+- The judge sets `LONGEVITY_GUARD` for every `longevity`/`death` signification and
+  `_clamp_longevity` (house_template.py:392) **defers an afflicted/death verdict to the
+  Phase-E sub-engine → `insufficient-evidence`**. The engine intentionally does NOT emit a
+  real death/longevity verdict, so there is nothing faithful to confirm against.
+- chart_33/34 assert specific ayurdaya year-counts (Pindayu 86y, Amsayu 68y) that need the
+  alpa/madhya/purna span computation; chart_35/73/74/75/78 (Lincoln/Gandhi/JFK/Hitler) need
+  death-dasha + maraka timing.
+
+**To open the death house, raman_saab needs a Phase-E longevity engine** (ayurdaya span +
+maraka-dasha timing). NB: the death-timing/longevity work on the sibling branches
+(`feat/death-timing-predictor`, `data/vedastro-corpus`) is the empirical analogue of exactly
+this missing machinery — a candidate to port/adapt. The `engine says` column below is the
+clamped fallback, **not** a real longevity reading.
 
 | id | name | sig | engine says | citations |
 |----|------|-----|-------------|-----------|

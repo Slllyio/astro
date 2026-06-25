@@ -172,9 +172,15 @@ VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
 - **Ready to confirm (10)** — the engine already matches the recorded DRAFT verdict, so
   confirming the ones the user validates moves the ratchet 90/130 → up to 100/140:
   h7_01, h7_06, h7_12, h7_13, h7_14, h9_01, h12_14, h6_02, h6_05 (+ h12_13, currently HELD).
-- **H8 death/longevity (7)** — `chart_33/34/35/73/74/75/78` carry a bare `verdict="DRAFT"`
-  literal (no ground-truth verdict assigned); the death house has **0 CONFIRMED goldens**. The
-  user must assign each verdict from Raman's text (engine output shown as a starting hypothesis).
+- **H8 death/longevity (7)** — `chart_33/34/35/73/74/75/78`. **BLOCKED on Phase E (2026-06-25):**
+  these are NOT confirmable by text validation. Each record's prose ends "Asserts only after Phase E
+  longevity engine", and the judge's `LONGEVITY_GUARD` + `_clamp_longevity` (house_template.py:392)
+  deliberately DEFER every death/longevity verdict to the unbuilt Phase-E sub-engine
+  (afflicted → insufficient-evidence). chart_33/34 assert ayurdaya year-counts (Pindayu/Amsayu);
+  chart_35/73/74/75/78 (Lincoln/Gandhi/JFK/Hitler) need death-dasha + maraka timing. Opening the
+  death house requires building a **Phase-E longevity engine** (ayurdaya span class + maraka-dasha
+  timing). The death-timing work on the sibling branches (`feat/death-timing-predictor`,
+  `data/vedastro-corpus`) is the empirical analogue of this missing machinery — a port/adapt candidate.
 - **Engine mismatch (17)** — recorded DRAFT ≠ engine; mostly the over-harsh H7 marriage tail
   (B2/B3/B4) + H5. Not ready to confirm — these need engine work or a verdict correction.
 - New-chart mining (HTJAH-I/II early chapters, full birth lines) via the existing

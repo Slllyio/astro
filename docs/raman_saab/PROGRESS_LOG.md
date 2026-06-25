@@ -817,3 +817,16 @@ same signification" policy. Now descriptive (citation preserved, ownership note)
 H4.C.30 precedent; the property-loss testimony survives via the bridge. ZERO regression (ratchet held
 99/139, no snapshot drift — the double-count was inert at the evidence level too). B6.2 coverage test
 updated to assert property loss flows through H4.L.12 and that H4.C.3 no longer fires. Suite 3101 passed.
+
+### 2026-06-25 — Item-3 Section B (H8 death/longevity): BLOCKED on Phase E — no confirmations
+Investigated the 7 H8 DRAFTs (chart_33/34/35/73/74/75/78) for confirmation. Finding: they are NOT
+confirmable by text validation — they are deliberately Phase-E-gated. (1) Every record's prose ends
+"Asserts only after Phase E longevity engine." (2) The judge sets `LONGEVITY_GUARD` for every
+longevity/death signification and `_clamp_longevity` (house_template.py:392) DEFERS an afflicted/death
+verdict to the unbuilt Phase-E sub-engine (→ insufficient-evidence) — so the engine intentionally emits
+no real death/longevity verdict to assert against. chart_33/34 need ayurdaya year-counts (Pindayu 86y /
+Amsayu 68y); chart_35/73/74/75/78 (Lincoln/Gandhi/JFK/Hitler) need death-dasha + maraka timing. Left all
+7 as DRAFT (correct). Opening the death house requires building the Phase-E longevity engine (ayurdaya
+span + maraka-dasha timing). NB the death-timing/longevity work on the sibling branches
+(feat/death-timing-predictor, data/vedastro-corpus) is the empirical analogue of that missing machinery —
+a port/adapt candidate. Backlog + worksheet updated; no fixture/engine change.

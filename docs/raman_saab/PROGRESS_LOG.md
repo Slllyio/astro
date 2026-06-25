@@ -830,3 +830,21 @@ Amsayu 68y); chart_35/73/74/75/78 (Lincoln/Gandhi/JFK/Hitler) need death-dasha +
 span + maraka-dasha timing). NB the death-timing/longevity work on the sibling branches
 (feat/death-timing-predictor, data/vedastro-corpus) is the empirical analogue of that missing machinery —
 a port/adapt candidate. Backlog + worksheet updated; no fixture/engine change.
+
+### 2026-06-25 — Item-3 Section C engine work increment 1: H7.C.84 vaidhavya — ratchet 99/139 -> 100/140
+Validated all 17 Section-C mismatches against Raman's text (all DRAFTs correct; engine misses them — 10
+over-lenient + 7 over-harsh). FIRST engine-driven fix: the over-lenient coverture case h7_09 (Chart 21):
+Raman reads vaidhavya ("the 7th lord Mars in the 8th, Saturn's aspect + Rahu's association -> loss of
+husband; her husband drowned 10 months after marriage") but the engine read coverture=favourable — the
+9th-house sowbhagya rescue (H7.C.77) + V2 favour-preponderance over-lifted a genuine spouse-death.
+New H7.C.84 (DECISIVE coverture): the 7th LORD in the 8th (the spouse's maraka/death house) aggravated by
+a node conjoining it OR Saturn's aspect, with NO full-benefic relief on the 8th -> vaidhavya. The 8th-house
+twin of the decisive H7.C.83 (7th-lord-in-12th); GENERALISES the non-decisive H7.C.78 (Rahu+Saturn+Mars all
+in the 8th) to the lord-centric form. cite HTJAH-II:298-305 ("In the Eighth House ... Affliction causes the
+early death of partner"). bphs-doctrine-reviewer SOUND-WITH-CAVEAT/FLAG (HIGH), cross-cited Phaladeepika
+10.2 ("loss of wife certain if 5th/8th lord in 7th") + 10.8; amendments applied (OR not AND; full-benefic-
+on-8th relief guard; verified citation). Only h7_09 has the 7th lord in the 8th across the coverture goldens
+-> +1 (coverture favourable->afflicted), ZERO regressions (chart_09 also fires it but pins no coverture
+verdict; h7_09 is A/B not Tier-3 so no snapshot). h7_09 CONFIRMED, baseline 99/139 -> 100/140. 4 new
+TestH7C84 unit tests. Suite 3107 passed. Remaining Section-C: 16 (9 over-lenient -1 + 7 over-harsh), each
+its own faithful increment.

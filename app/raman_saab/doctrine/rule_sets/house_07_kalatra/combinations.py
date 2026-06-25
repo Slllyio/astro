@@ -242,6 +242,44 @@ class _KujaDosha(C.Condition):
             for origin in ("LAGNA", "MOON", "Venus") for h in _KUJA_HOUSES)
 
 
+class _SeventhLordInEighthVaidhavya(C.Condition):
+    """The 7th LORD cast into the 8th (the spouse's maraka / house of death) AND aggravated
+    by a node conjoining it OR Saturn's aspect, with NO full-benefic relief on the 8th ->
+    death of the married partner (vaidhavya).
+
+    The 7th-lord-in-8th is Raman's 'early death of partner' placement (HTJAH-II:298-305:
+    "In the Eighth House ... Affliction causes the early death of partner"); the node/Saturn
+    aggravator makes it DECISIVE. Chart 21 (h7_09): Mars=7th-lord in the 8th with Rahu,
+    aspected by exalted Saturn -> the husband drowned 10 months after marriage. Cross-cited
+    Phaladeepika 10.2 ("loss of the wife is certain if the 5th/8th lord be in the 7th") and
+    10.8 (malefics in the 7th/8th/2nd -> demise of the partner). The 8th-house twin of the
+    decisive H7.C.83 (7th-lord-in-12th); GENERALISES the non-decisive H7.C.78 (Rahu+Saturn+
+    Mars ALL in the 8th) to the lord-centric form, so it is additive, not a duplicate. The
+    full-benefic-on-8th guard is the genuine sowbhagya cancellation (HTJAH-II:961, the same
+    relieving set as _SeventhBesiegedByMalefics). bphs-doctrine-reviewer SOUND-WITH-CAVEAT."""
+
+    _RELIEVERS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury"})
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        lord = _lord_of(7, chart)
+        p = chart.planets.get(lord)
+        if p is None or p.rasi_house != 8:
+            return False
+        node_conj = any(chart.planets.get(n) is not None and chart.planets[n].rasi_house == 8
+                        for n in ("Rahu", "Ketu"))
+        sat = chart.planets.get("Saturn")
+        sat_afflict = sat is not None and (drishti.aspects_house("Saturn", 8, chart)
+                                           or drishti.aspects_planet("Saturn", lord, chart))
+        if not (node_conj or sat_afflict):
+            return False
+        for b in self._RELIEVERS:
+            bp = chart.planets.get(b)
+            if bp is not None and (bp.rasi_house == 8 or drishti.aspects_house(b, 8, chart)):
+                return False
+        return True
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -606,4 +644,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "afflicting the 7th -> loss and separation in marriage; marital happiness "
                   "is denied",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 834)),
+    # DECISIVE (coverture): the 7th LORD cast into the 8th (the spouse's maraka / house of
+    # death) aggravated by a node conjoining it OR Saturn's aspect, no full-benefic relief on
+    # the 8th -> death of the married partner (vaidhavya). The 8th-house twin of H7.C.83;
+    # generalises the non-decisive H7.C.78 (Rahu+Saturn+Mars all in the 8th) to the lord-
+    # centric form. Fires on chart_21/h7_09 (Mars=7th-lord in 8th with Rahu, Saturn aspect ->
+    # husband drowned); only h7_09 has the 7th lord in the 8th across the coverture goldens.
+    # bphs-doctrine-reviewer SOUND-WITH-CAVEAT/FLAG (HIGH); cross-cited Phaladeepika 10.2/10.8.
+    RuleRecord(
+        id="H7.C.84", house=7, signification="coverture", group="combination",
+        kind="evaluable", condition=_SeventhLordInEighthVaidhavya(),
+        fortified=None,
+        afflicted="the 7th lord cast into the 8th (the spouse's maraka / house of death) and "
+                  "further afflicted by a node conjoining it or Saturn's aspect, with no full-"
+                  "benefic relief on the 8th -> death of the married partner; vaidhavya should "
+                  "be predicted",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 300)),
 )

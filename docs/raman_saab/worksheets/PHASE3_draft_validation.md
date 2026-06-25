@@ -49,7 +49,11 @@ clamped fallback, **not** a real longevity reading.
 | chart_75 | Chart 75 (Kennedy/JFK - US President shot dead) | H8/death | afflicted | HTJAH-II:6821-6869 |
 | chart_78 | Chart 78 (Hitler - believed suicide) | H8/death | favourable | HTJAH-II:6959-6993 |
 
-## C. Engine mismatch — VALIDATED as genuine engine misses (17 DRAFTs)
+## C. Engine mismatch — VALIDATED as genuine engine misses (16 remaining; h7_09 FIXED)
+
+> **Increment 1 (2026-06-25):** `h7_09` (over-lenient coverture/vaidhavya) **fixed + confirmed**
+> via the decisive rule `H7.C.84` (7th-lord-in-8th + node/Saturn aggravator → spouse death).
+> Ratchet 99/139 → **100/140**. 16 mismatches remain (8 over-lenient + 7 over-harsh + h5_14 held).
 
 **Validated 2026-06-25 against Raman's text (corpus reads).** Every recorded DRAFT
 verdict is CORRECT per Raman — the engine misses each one, so NONE is confirmable now

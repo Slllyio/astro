@@ -133,6 +133,7 @@ _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H3.C.40",  # Saturn-aspects-3rd + debilitated-3rd-lord-in-dusthana (ear: partial deafness)
     "H7.C.82",  # Saturn+Mars besiege the 7th, no benefic relief (marital separation)
     "H7.C.83",  # 7th lord in the 12th + malefic on the 7th (marital loss/separation)
+    "H7.C.84",  # 7th lord in the 8th + node/Saturn aggravator (coverture: vaidhavya/spouse death)
 })
 
 

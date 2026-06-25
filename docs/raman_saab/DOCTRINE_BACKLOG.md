@@ -231,3 +231,49 @@ These are CONFIRMED goldens the engine misses; each is a deliberate limit, not a
 The B1 comparative-weighing mechanism (backlog B1) is the single lever that would address chart_52 +
 chart_60; it is high-risk (med) and was deliberately narrowed into the H3.C.39 combust-lord rule rather
 than attempted wholesale. Deferred pending a careful, chart_54-guarded design.
+
+---
+
+## Layer-C cited-fix sweep (2026-06-25) — shipped + documented limits
+
+The faithfulness program (graded `degree` + within-1 ordinal metric + cited fixes) reached its clean
+ceiling. **Shipped (+4, all on GENERAL dicta, user-validated, doctrine-reviewed, over-fire-scanned):**
+
+| Rule | Fixes | Cited dictum | Pattern |
+|---|---|---|---|
+| H9.A.20a | h9_13 | HTJAH-II:7916 "afflictions to the Sun → early death of father" | Sun-Pitrukaraka dusthana + papakartari (decisive) |
+| H5.C.38 | h5_01, h5_07 | HTJAH-I:5619 "Jupiter… Papakarthari + malefic Rashi → blemished" | PutraKaraka papakartari + malefic-rashi (decisive) |
+| H4.C.18a | h4_01 | HTJAH-I:4224 "Moon in 4th joined by evil planets → kills mother early" | Moon-Matrukaraka in 4th conjunct-malefic (decisive) |
+
+Ratchet: **106/146 → 110/146 exact (0.753); 126/146 → 130/146 within-1 ordinal (0.890).**
+
+**Documented limits — the irreducible real-error tail (do NOT force; each would overfit).**
+The shipped fixes all rested on a GENERAL Raman dictum. The remainder do not — they are n=1
+chart-conclusion-only readings or comparative-weighing/over-harsh cases where the favourable twin carries
+MORE surface affliction. Forcing them violates the main goal (faithful, not golden-tuned):
+
+- **chart_60 (H3 siblings), chart_52** — comparative-weighing limit. The favourable twin `chart_54` has 5
+  malefics on/aspecting the 3rd (vs chart_60's 2); any "3rd/karaka afflicted" signature over-fires on
+  chart_54. Only a chart_54-guarded narrow aspect-rule could help; deferred (backlog B1).
+- **h12_05 (H12 expenditure)** — n=1, cite HTJAH-II:17170 is Chart-243's HEADER (no general dictum). The
+  only discriminator vs the favourable twin `h12_03` (also 12th-lord-conjunct-node, Venus+Ketu) is the
+  lord's nature (malefic Saturn vs benefic Venus) — an empirically-found twin-sparing gate = overfit risk.
+- **h6_04 (H6 disease_chronic / eye)** — n=1, cite HTJAH-I:6664 is Chart-130's myopia CONCLUSION (6th lord
+  in 2nd + 2nd-lord Moon in 12th with Saturn). Encoding this multi-factor configuration memorises one chart.
+- **h11_01 (H11 elder_siblings)** — n=1, cite HTJAH-II:14804 is the Chart-210 CONCLUSION; a debilitated
+  11th lord + aspect-affliction with no general dictum.
+- **h11_09 (H11 gains, over-harsh fav→afflicted)** — the engine over-weights an afflicted karaka (Jupiter in
+  dusthana + conj Ketu) and under-weights a strong 2nd/7th/9th/11th-lords-in-kendra dhana-yoga. Fixing needs
+  a yoga-relief that risks regressing genuinely-afflicted gains; deferred.
+- **h5_05 / h5_10 / h5_12 (H5 children)** — single-weak-sphuta mechanism (no Jupiter papakartari, so not
+  caught by H5.C.38). The fertility-gate refinement (one-weak-sphuta + corroborating affliction) is the
+  "delicate" engine-logic change flagged in the plan; deferred pending a chart-by-chart over-fire design.
+- **h5_16 / chart_08 (over-harsh fav→engine-afflicted)** — softening these un-afflicts genuine cases or
+  needs the forbidden navamsa/CONTRA_PILLAR retune. Documented limits.
+- **chart_09/17/20/31 (H1 self)** — holistic whole-chart prose with no single cited combination.
+- **h9_02 (H9 father)** — distinct mechanism (EXALTED Sun IN the 9th + papakartari-on-bhava), not the
+  H9.A.20a dusthana signature; would need a separate papakartari-on-bhava rule.
+
+**Honest ceiling: ~75% exact / ~89% within-1 today; the within-1 figure is the fairer headline and is at
+the projected ordinal ceiling.** The 20 distance-1 boundary near-hits are subjective favourable-vs-mixed
+calls (handled by the graded `degree`), not errors.

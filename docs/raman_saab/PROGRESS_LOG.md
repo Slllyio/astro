@@ -923,3 +923,23 @@ User-directed reframe ("7 categories, world-best logic, don't overfit"). Three f
 **Ratchet: 106/146 -> 107/146 strict (0.733); 126/146 -> 127/146 within-1 (0.870); 19 real errors remain.**
 Remaining cited-fix targets (dist>=2): H5 progeny x6, H1 self x4 (mostly limits), H11 x2, h9_02, chart_44,
 chart_60, h4_01, h6_04, chart_08, h12_05.
+
+### 2026-06-25 (cont.) — Layer-C cited-fix sweep: +4 shipped, tail documented
+Continued the faithfulness program through the real-error list (real-errors-first). Three more cited
+decisive rules shipped, each on a GENERAL Raman dictum, doctrine-reviewed (each review CAUGHT a doctrinal
+error in the first draft), over-fire-scanned, user-validated:
+- **H5.C.38** (children): PutraKaraka Jupiter papakartari + malefic-rashi -> blemished karaka (HTJAH-I:5619).
+  +2 (h5_01, h5_07). Reviewer: malefic-rashi conjunct is load-bearing; NO bhanga guard (H3.C.40 precedent).
+- **H4.C.18a** (mother): Moon-Matrukaraka in 4th conjunct-malefic -> kills mother early (HTJAH-I:4224).
+  +1 (h4_01). Reviewer: narrowed from the broad C.18 "joined OR aspected" to conjunct-only (aspect arm has
+  no worked-chart support for a decisive death); split C.18 + reconciled C.30.
+**Ratchet: 106/146 -> 110/146 exact (0.753); 126/146 -> 130/146 within-1 ordinal (0.890).** Net session:
+foundation (degree + ordinal metric) + 4 cited fixes (h9_13, h5_01, h5_07, h4_01).
+
+**Clean tail exhausted.** The remaining 16 real-errors are documented limits (DOCTRINE_BACKLOG 2026-06-25
+section): all are n=1 chart-conclusion-only (no general dictum -> encoding memorises one chart: h12_05,
+h6_04, h11_01, h9_02) or comparative-weighing/over-harsh cases where the favourable twin carries MORE
+surface affliction (chart_60-vs-chart_54, h11_09 dhana-yoga, h5_16, chart_08, h1x4). The line between the
+4 shipped and the 16 deferred is exactly GENERAL-dictum vs chart-conclusion-only — i.e. faithful vs
+golden-tuned. within-1 (0.890) is at the projected ordinal ceiling; the 20 distance-1 misses are
+subjective favourable-vs-mixed boundary calls surfaced by the graded `degree`, not errors.

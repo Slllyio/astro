@@ -32,6 +32,8 @@ from app.raman_saab.primitives.functional_nature import (
 
 
 _COMMON_EX_SAG: Final[frozenset[int]] = frozenset({3, 6, 12})  # dual signs minus Sagittarius
+# Signs owned by a natural malefic (Sun, Mars, Saturn): Ar Le Sc Cp Aq (Raman's "malefic Rashi").
+_MALEFIC_SIGNS: Final[frozenset[int]] = frozenset({1, 5, 8, 10, 11})
 
 
 def _lord_of(house: int, chart: RamanChart) -> str:
@@ -364,4 +366,27 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="Saturn as the afflicting planet on the 5th → fear of brain derangement "
                   "(an affliction-grade modifier). TODO(predicate: affliction-grade gate)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5271)),
+    # DECISIVE (children): the PutraKaraka Jupiter hemmed by papakartari (a malefic in BOTH the
+    # 2nd- and 12th-from-Jupiter) AND occupying a malefic rashi (Sun/Mars/Saturn-owned) -> the
+    # karaka of children is BLEMISHED -> progeny denied. HTJAH-I:5619-5620 verbatim
+    # "Jupiter, the Karaka for children ... is subject to Papakarthari Yoga and occupies
+    # a malefic Rashi, he is also blemished" (Chart 91/h5_01); the h5_07/Chart-97 leg at
+    # HTJAH-I:5733/5746 "all three factors considerably afflicted, 5th house spoilt; no issue".
+    # The H5 twin of the decisive karaka-papakartari rules H9.A.20a (Sun) / H7.C.84-85. The
+    # malefic-rashi conjunct is LOAD-BEARING (Charts 93/95 have a papakartari'd Jupiter Raman does
+    # NOT let drive the denial). NO neecha-bhanga guard: per the H3.C.40 organ-affliction split,
+    # bhanga restores prosperity/status but NOT the papakartari blemish (h5_16's Jupiter has
+    # neecha-bhanga yet Raman still reads child-loss). `children` is bidirectional (not
+    # AFFLICTION_MATTER), so the decisive flag carries it past the favourable preponderance.
+    # Fires on h5_01 + h5_07 across the H5/children goldens; spares the favourable twin h5_16.
+    # bphs-doctrine-reviewer SOUND-WITH-CAVEAT (HIGH). h5_05/10/12 (no Jupiter papakartari) are a
+    # distinct single-weak-sphuta mechanism, deferred.
+    RuleRecord(
+        id="H5.C.38", house=5, signification="children", group="combination", kind="evaluable",
+        condition=C.And(C.HemmedBy("Jupiter", "malefic"),
+                        _PlanetInSigns("Jupiter", _MALEFIC_SIGNS)),
+        fortified=None,
+        afflicted="the PutraKaraka Jupiter hemmed by papakartari and occupying a malefic rashi "
+                  "→ the karaka of children is blemished; progeny is denied",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 5619)),
 )

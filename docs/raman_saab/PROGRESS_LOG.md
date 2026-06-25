@@ -865,4 +865,18 @@ Closed the loop on every remaining item so nothing is left un-triaged:
   needing its own faithful increment (h7_10 Mars-maraka-in-8th, h7_11 8th-from-Moon, h7_05 papakartari-on-
   7th-lord, the "married-outside-caste"=mixed over-harsh trio h7_17/18/19, …). Precise per-chart spec in
   worksheets/PHASE3_draft_validation.md §C. Not bulk-rushable (overfit risk).
-**Session net**: ratchet 89/130 → 100/140 (68.5% → 71.4%); validation array 130 → 140 confirmed verdicts.
+**Session net** (so far): ratchet 89/130 → 100/140; validation array 130 → 140 confirmed verdicts.
+
+### 2026-06-25 — Item-3 Section C engine work increment 2: H7.C.85 vaidhavya (Mars-in-8th) — 100/140 -> 101/141
+Second engine-driven Section-C fix: h7_10 (Chart 22), over-lenient coverture. Raman: "death of the wife --
+debilitated 7th lord with Mars in the 8th"; engine read favourable. New H7.C.85 (DECISIVE coverture): Mars
+(the natural maraka) in the 8th (the spouse's death house) AND the 7th lord debilitated-without-cancellation
+(mangalya powerless), no full-benefic relief on the 8th -> vaidhavya. The Mars-in-8th SIBLING of H7.C.84;
+PROMOTES the Mars-in-8th sub-case of the non-decisive H7.C.67 (HTJAH-II:929) to decisive, gated on the
+debilitated lord (bare Mars-in-8th must NOT be decisive). LAGNA-framed + bhanga-gated (Chart 22 notes "no
+neechabhanga"; the gate also protects the parivartana-rescued neighbour Chart 25 from a from-Moon false
+fire). bphs-doctrine-reviewer SOUND-WITH-CAVEAT/FLAG (HIGH), cross-cited Phaladeepika 10.8/10.15; amendments
+applied (citation 300->929 = the Mars-in-8th rule, not the 7th-lord-in-8th line; documented the H7.C.67
+promotion). Only h7_10 has the signature across the H7 goldens -> +1 (favourable->afflicted, CONFIRMED),
+ZERO regressions. 4 new TestH7C85 unit tests. Suite 3113 passed. Remaining Section-C: 14 (7 over-lenient +
+7 over-harsh). **Session net: ratchet 89/130 -> 101/141 (68.5% -> 71.6%); validation array 130 -> 141.**

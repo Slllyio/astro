@@ -31,6 +31,8 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.bhangas import neecha_bhanga
+from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 
@@ -272,6 +274,41 @@ class _SeventhLordInEighthVaidhavya(C.Condition):
         sat_afflict = sat is not None and (drishti.aspects_house("Saturn", 8, chart)
                                            or drishti.aspects_planet("Saturn", lord, chart))
         if not (node_conj or sat_afflict):
+            return False
+        for b in self._RELIEVERS:
+            bp = chart.planets.get(b)
+            if bp is not None and (bp.rasi_house == 8 or drishti.aspects_house(b, 8, chart)):
+                return False
+        return True
+
+
+class _MarsInEighthLordDebilVaidhavya(C.Condition):
+    """Mars (the natural maraka / death-aggressor) in the 8th (the spouse's death house) AND
+    the 7th lord debilitated-without-cancellation (the mangalya rendered powerless), with no
+    full-benefic relief on the 8th -> death of the married partner.
+
+    Chart 22 (h7_10) verbatim: "death of the wife -- debilitated 7th lord with Mars in the
+    8th." The Mars-in-8th SIBLING of H7.C.84 (7th-lord-in-8th): here the two factors are the
+    maraka Mars occupying the death-house and the debilitated 7th lord, rather than the lord
+    itself cast into the 8th. This PROMOTES the Mars-in-8th sub-case of the existing non-
+    decisive H7.C.67 (Mars in 2/4/8/12 -> partner death, HTJAH-II:929-931) to DECISIVE, gated
+    on the powerless mangalya (debilitated 7th lord) -- bare Mars-in-8th alone is one testimony
+    among the pillars and must NOT be decisive (it would over-fire). The debilitation is
+    bhanga-gated (a cancelled debility / parivartana = the lord is not truly powerless, so no
+    decisive vaidhavya -- Chart 22's narrative explicitly notes "no neechabhanga"). cite
+    HTJAH-II:929-931 (rule 67) + 955-960 (rule 75, malefic-in-8th); Phaladeepika 10.8/10.15.
+    bphs-doctrine-reviewer SOUND-WITH-CAVEAT (HIGH); LAGNA-framed so it cannot fire on the
+    neighbouring Chart 25's from-Moon Mars-in-8th."""
+
+    _RELIEVERS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury"})
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        mars = chart.planets.get("Mars")
+        if mars is None or mars.rasi_house != 8:
+            return False
+        lord = _lord_of(7, chart)
+        if dignity(lord, chart) != "debil" or neecha_bhanga(lord, chart):
             return False
         for b in self._RELIEVERS:
             bp = chart.planets.get(b)
@@ -660,4 +697,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "benefic relief on the 8th -> death of the married partner; vaidhavya should "
                   "be predicted",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 300)),
+    # DECISIVE (coverture): Mars (the natural maraka) in the 8th (the spouse's death house)
+    # AND the 7th lord debilitated-without-cancellation (mangalya powerless), no full-benefic
+    # relief on the 8th -> death of the married partner. The Mars-in-8th SIBLING of H7.C.84;
+    # PROMOTES the Mars-in-8th sub-case of the non-decisive H7.C.67 (HTJAH-II:929) to decisive,
+    # gated on the debilitated lord (bare Mars-in-8th must NOT be decisive -> over-fires).
+    # Chart_22/h7_10 verbatim: "death of the wife -- debilitated 7th lord with Mars in the 8th."
+    # Only h7_10 has Mars-in-8th + debilitated-7th-lord across the H7 goldens; LAGNA-framed +
+    # bhanga-gated. bphs-doctrine-reviewer SOUND-WITH-CAVEAT (HIGH); cross-cited Phaladeepika 10.8/10.15.
+    RuleRecord(
+        id="H7.C.85", house=7, signification="coverture", group="combination",
+        kind="evaluable", condition=_MarsInEighthLordDebilVaidhavya(),
+        fortified=None,
+        afflicted="Mars (the maraka) in the 8th (the spouse's death house) with the 7th lord "
+                  "debilitated (mangalya powerless) and no full-benefic relief on the 8th -> "
+                  "death of the married partner; vaidhavya should be predicted",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 929)),
 )

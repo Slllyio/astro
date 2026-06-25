@@ -53,7 +53,10 @@ clamped fallback, **not** a real longevity reading.
 
 > **Increment 1 (2026-06-25):** `h7_09` (over-lenient coverture/vaidhavya) **fixed + confirmed**
 > via the decisive rule `H7.C.84` (7th-lord-in-8th + node/Saturn aggravator → spouse death).
-> Ratchet 99/139 → **100/140**. 16 mismatches remain (8 over-lenient + 7 over-harsh + h5_14 held).
+> **Increment 2:** `h7_10` fixed + confirmed via `H7.C.85` (Mars-in-8th + debilitated 7th lord →
+> spouse death). Ratchet 99/139 → **101/141**. **14 mismatches remain** (7 over-lenient + 7
+> over-harsh; h5_14 held). The remaining coverture/vaidhavya miss `h7_11` is engine=mixed (8th-
+> from-Moon affliction — a Chandra-frame signature, its own increment).
 
 **Validated 2026-06-25 against Raman's text (corpus reads).** Every recorded DRAFT
 verdict is CORRECT per Raman — the engine misses each one, so NONE is confirmable now

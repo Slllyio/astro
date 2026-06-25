@@ -317,6 +317,71 @@ class _MarsInEighthLordDebilVaidhavya(C.Condition):
         return True
 
 
+class _SeventhLordAfflictedVitiatesSpouse(C.Condition):
+    """The 7th LORD heavily afflicted -> the spouse/marriage CHARACTER is vitiated (an immoral,
+    unfaithful or dissolute partner / disharmony). Two affliction modes:
+      (a) the 7th lord CONJOINS a node (Rahu/Ketu) AND is aspected by >= 1 natural malefic, OR
+      (b) the 7th lord is hemmed by PAPAKARTARI (a natural malefic flanking it on both sides).
+
+    Raman reads a heavily-afflicted 7th lord as a vitiated spouse: Chart 14/h7_02 "the 7th lords
+    are afflicted by Rahu ... makes him immoral" (HTJAH-II:1773); Chart 17/h7_05 "the papakartari
+    yoga of the 7th lord Mars resulted in disharmony ... the wife left the husband" (HTJAH-II:1906);
+    Chart 27/h7_15 "both the lord of the 7th and Venus have been much afflicted ... a profligate"
+    (HTJAH-II:2528). Branch (a) promotes the existing descriptive H7.C.14 (7th-lord/Venus +
+    node + malefic aspect -> adultery, HTJAH-II:447-449) to evaluable; branch (b) mirrors H7.C.80
+    (papakartari on the 7th lord -> loss of spouse, HTJAH-II:974). `spouse` is bidirectional, so
+    this is flagged decisive to carry the verdict past the engine's favourable preponderance (the
+    7th-lord Shadbala pillar reads strong despite the nodal/papakartari taint).
+
+    GUARDS (bphs-doctrine-reviewer SOUND-WITH-CAVEAT): (i) the 7th lord must NOT be DEBILITATED --
+    a debilitated lord routes to the milder unconventional-marriage reading (mixed), NOT
+    character-vitiation; this excludes the over-harsh inter-faith trio, esp. h7_19 (debil Mars,
+    "married outside caste" = mixed). (ii) NO BLEMISHLESS full benefic (Jupiter/Venus/Mercury;
+    good dignity, not combust/papakartari/node-touched) conjoins or aspects the 7th lord -- a
+    genuine reliever cancels the vitiation (mirrors the H7.C.84/85 relief guard). The confirmed
+    mixed twin h7_06 (clean 7th lord) and the aspect-only h7_14 are spared by the affliction gate;
+    h7_15's Venus touches the lord but is node-conjunct (not blemishless), so guard (ii) is safe."""
+
+    _FULL_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury"})
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        lord = _lord_of(7, chart)
+        p = chart.planets.get(lord)
+        if p is None or dignity(lord, chart) == "debil":            # guard (i): not debilitated
+            return False
+        if not self._afflicted(ctx, chart, lord, p):
+            return False
+        return not self._blemishless_benefic_on_lord(ctx, chart, lord, p)   # guard (ii)
+
+    def _afflicted(self, ctx: C.EvalContext, chart: RamanChart, lord: str, p) -> bool:
+        if C.HemmedBy(lord, "malefic").evaluate(ctx):                # (b) papakartari
+            return True
+        node_conj = any(chart.planets.get(n) is not None            # (a) node-conjunction ...
+                        and chart.planets[n].rasi_house == p.rasi_house
+                        for n in ("Rahu", "Ketu"))
+        return node_conj and any(                                   # ... + a malefic aspect
+            m in chart.planets and drishti.aspects_planet(m, lord, chart)
+            for m in NATURAL_MALEFICS if m != lord)
+
+    def _blemishless_benefic_on_lord(self, ctx: C.EvalContext, chart: RamanChart, lord: str, p) -> bool:
+        for b in self._FULL_BENEFICS:
+            if b == lord or b not in chart.planets:
+                continue
+            bp = chart.planets[b]
+            if not (bp.rasi_house == p.rasi_house or drishti.aspects_planet(b, lord, chart)):
+                continue
+            if dignity(b, chart) in ("debil", "enemy") or getattr(bp, "combust_fraction", 0) > 0:
+                continue
+            if C.HemmedBy(b, "malefic").evaluate(ctx):
+                continue
+            if any(chart.planets.get(n) is not None and chart.planets[n].rasi_house == bp.rasi_house
+                   for n in ("Rahu", "Ketu")):
+                continue
+            return True   # a blemishless full benefic relieves the lord
+        return False
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -713,4 +778,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "debilitated (mangalya powerless) and no full-benefic relief on the 8th -> "
                   "death of the married partner; vaidhavya should be predicted",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 929)),
+    # DECISIVE (spouse): a heavily-afflicted 7th lord (conjunct a node AND malefic-aspected, OR
+    # hemmed by papakartari) -> a vitiated spouse / disharmonious marriage. The engine read these
+    # FAVOURABLE because the 7th-lord Shadbala pillar reads strong despite the nodal/papakartari
+    # taint; the decisive flag carries the verdict past that preponderance. Fixes the three
+    # HIGH-confidence reversals h7_02 (lord+Rahu, immoral), h7_05 (lord papakartari, wife left),
+    # h7_15 (lord+Venus much afflicted, profligate). cite HTJAH-II:1773 (+ h7_05 leg :1906, h7_15
+    # leg :2528). The node-AND-aspect / papakartari gate spares the clean-lord twins (h7_06, h7_14).
+    RuleRecord(
+        id="H7.C.86", house=7, signification="spouse", group="combination", kind="evaluable",
+        condition=_SeventhLordAfflictedVitiatesSpouse(),
+        fortified=None,
+        afflicted="the 7th lord heavily afflicted (conjunct a node and malefic-aspected, or "
+                  "hemmed by papakartari) → a vitiated spouse / disharmonious marriage",
+        frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 1773)),
 )

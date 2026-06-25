@@ -999,3 +999,18 @@ Completed the residual backlog the user asked for after the ayurdaya engine:
   Confirming them would re-base DOWN to ~0.701 for zero engine benefit; deferred until the
   marital benefic-relief + 8th-marital-bond mechanisms are built.
 **Ratchet: 114/148 -> 115/149 exact (0.772); 134/148 -> 135/149 within-1 (0.906).**
+
+### 2026-06-26 (ultracode) — H7-marriage fix #1: the 3 HIGH-confidence spouse reversals
+Began clearing the H7-marriage backlog the DRAFT sweep surfaced. New decisive **H7.C.86** (spouse):
+a heavily-afflicted 7th LORD -- conjunct a node AND malefic-aspected, OR hemmed by papakartari ->
+a vitiated spouse/marriage character. Fixes the 3 HIGH-confidence reversals the engine read
+FAVOURABLE (the 7th-lord Shadbala pillar reads strong despite the nodal/papakartari taint):
+h7_02 (lord+Rahu -> immoral husband), h7_05 (lord papakartari -> wife left), h7_15 (lord+Venus
+much afflicted -> profligate/VD). bphs-doctrine-reviewer SOUND-WITH-CAVEAT (HIGH): branch (a)
+promotes the descriptive H7.C.14 (HTJAH-II:447), branch (b) mirrors H7.C.80; two reviewer-required
+guards -- (i) NOT debilitated (a debil lord -> the milder unconventional-marriage=mixed reading,
+excludes h7_19), (ii) NO blemishless full benefic on the lord (relief cancels vitiation). Over-fire
+scan: fires on h7_02/05/15 only; spares h7_06 (clean lord), h7_14 (aspect-only), h7_19 (debil).
++3 CONFIRMED, ZERO regressions, all A/B (no snapshot). 5 unit tests.
+**Ratchet: 115/149 -> 118/152 exact (0.776); 135/149 -> 138/152 within-1 (0.908).** 12 H7/H5-marriage
+DRAFTs remain (mode-A benefic-relief lift + the 8th-marital-bond mode-B rule).

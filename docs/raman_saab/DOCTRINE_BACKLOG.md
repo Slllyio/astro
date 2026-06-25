@@ -300,11 +300,13 @@ every faithful general-dictum / 2+-chart mechanism has been mined. Further rule-
 ## H7-marriage (+H5) DRAFT backlog — validated 2026-06-26, awaiting engine work
 
 bphs-doctrine-reviewer adjudicated all 16 remaining non-empty DRAFT goldens against Raman's
-TEXT. **All 16 DRAFT labels are correct per Raman.** One (h12_13) was an engine-match and is now
-CONFIRMED (115/149). The other **15 are validated-but-the-engine-mismatches** — kept DRAFT per the
-project pattern (confirm engine-matches; DRAFT-until-fixed for mismatches) and recorded here as the
-next coherent improvement target. Confirming them now would re-base the ratchet DOWN to ~115/164 =
-0.701 for zero engine benefit; the right move is to BUILD the H7-marriage mechanisms, then confirm.
+TEXT. **All 16 DRAFT labels are correct per Raman.** Progress: h12_13 (engine-match) CONFIRMED;
+**h7_02 / h7_05 / h7_15 FIXED + CONFIRMED 2026-06-26** via the decisive **H7.C.86** (afflicted
+7th lord -> vitiated spouse) — the 3 HIGH-confidence mode-B reversals. **12 validated DRAFTs
+remain** (the mode-A benefic-relief lift + the residual mode-B 8th-marital-bond rule), kept DRAFT
+per the project pattern (confirm engine-matches; DRAFT-until-fixed for mismatches). Confirming the
+remaining 12 now would re-base the ratchet DOWN for zero engine benefit; BUILD the mechanisms,
+then confirm.
 
 **Two engine failure modes (the agent's diagnosis):**
 

@@ -21,14 +21,17 @@
     "rollup": "afflicted",
     "significations": {
       "body": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "health": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "self": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       }

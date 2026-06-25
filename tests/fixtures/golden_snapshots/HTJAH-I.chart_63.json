@@ -14,18 +14,22 @@
     "rollup": "insufficient-evidence",
     "significations": {
       "courage": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "ear_throat": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "insufficient-evidence"
       },
       "short_journeys": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "siblings": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

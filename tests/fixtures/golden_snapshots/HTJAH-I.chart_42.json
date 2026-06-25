@@ -17,18 +17,22 @@
     "rollup": "afflicted",
     "significations": {
       "family": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "speech": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "vision": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "wealth": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       }

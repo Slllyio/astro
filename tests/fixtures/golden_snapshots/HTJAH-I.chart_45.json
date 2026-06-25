@@ -11,18 +11,22 @@
     "rollup": "mixed",
     "significations": {
       "family": {
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "mixed"
       },
       "speech": {
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "mixed"
       },
       "vision": {
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "mixed"
       },
       "wealth": {
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "mixed"
       }

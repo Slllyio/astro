@@ -23,14 +23,17 @@
     "rollup": "favourable",
     "significations": {
       "body": {
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "health": {
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "self": {
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

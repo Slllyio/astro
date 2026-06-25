@@ -486,7 +486,8 @@ def evidence_snapshot(chart: RamanChart, houses: tuple[int, ...] = tuple(range(1
         fired_ids = sorted({fr.rule.id for fr in (hv.benefic + hv.malefic + hv.neutral)})
         citations = sorted({f"{fr.rule.source.work}:{fr.rule.source.line}"
                             for fr in (hv.benefic + hv.malefic + hv.neutral)})
-        sigs = {sv.signification: {"verdict": sv.verdict, "lead_frame": sv.lead_frame}
+        sigs = {sv.signification: {"verdict": sv.verdict, "degree": sv.degree,
+                                    "lead_frame": sv.lead_frame}
                 for sv in pf.significations}
         snap[f"H{h}"] = {
             "rollup": pf.rollup,

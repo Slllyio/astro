@@ -58,6 +58,11 @@ from app.raman_saab.primitives.shadbala import total as shadbala_total
 from app.raman_saab.primitives.sphutas import beeja_kshetra
 
 Verdict = Literal["favourable", "mixed", "afflicted", "insufficient-evidence"]
+# The graded INTENSITY of a verdict (Layer A): surfaces the gradation the engine already
+# computes (pillar count, decisive/veto flags, marginal-shift) WITHOUT inventing a doctrinal
+# verdict level. verdict x degree gives 7 graded output states (fav/mixed/afflicted x
+# strong/moderate/mild) — never a literal 7-level ordinal (that would be false precision).
+Degree = Literal["strong", "moderate", "mild"]
 Frame = Literal["lagna", "moon", "karaka"]
 NavStatus = Literal["confirms", "weakens", "neutral", "unknown"]
 
@@ -182,6 +187,7 @@ class SignificationVerdict:
     ledger: FrameLedger
     alt_ledgers: tuple[FrameLedger, ...]
     borderline_shifted: bool
+    degree: Degree = "moderate"
     metadata: Metadata = ()
 
 
@@ -400,6 +406,40 @@ def _clamp_longevity(base: Verdict, guarded: bool) -> Verdict:
     if guarded and base == "afflicted":
         return "insufficient-evidence"
     return base
+
+
+def _compute_degree(verdict: Verdict, lead: FrameLedger, shifted: bool) -> Degree:
+    """The deterministic INTENSITY of a verdict (Layer A), from the gradation the engine
+    already computes — pillar-strength count, the decisive/karaka-veto flags, and whether the
+    verdict was nudged at the margin. Surfaces existing strength as strong/moderate/mild; it
+    does NOT change the verdict bucket and needs no golden re-grading.
+
+    - mild   : the verdict was shifted at the margin (navamsa modulation / a relief floor) —
+               the weakest commitment; or insufficient-evidence (no evidence to grade).
+    - strong : the verdict rests on the engine's maximal evidence — for favourable, all known
+               pillars strong (navamsa-confirmed) or a 2+ strong majority; for afflicted, a
+               decisive-affliction rule / broken karaka, or all known pillars weak.
+    - moderate: everything in between (a clear but not maximal majority).
+    """
+    if verdict == "insufficient-evidence":
+        return "mild"
+    if shifted:
+        return "mild"
+    pillars = (lead.lord_strong, lead.karaka_strong, lead.bhava_bala_strong)
+    known = [p for p in pillars if p is not None]
+    n_strong = sum(1 for p in known if p is True)
+    n_weak = sum(1 for p in known if p is False)
+    if verdict == "afflicted":
+        decisive = (not lead.karaka_intact) or any(
+            fr.rule.id in _DECISIVE_AFFLICTION_RULE_IDS for fr in lead.fired_malefic)
+        if decisive or (known and n_weak == len(known)) or n_weak >= 2:
+            return "strong"
+        return "moderate"
+    if verdict == "favourable":
+        if (known and n_strong == len(known) and lead.navamsa_status == "confirms") or n_strong >= 2:
+            return "strong"
+        return "moderate"
+    return "moderate"  # mixed: the genuine middle (mild already handled by the shift flag)
 
 
 # ---------------------------------------------------------------------------
@@ -1026,11 +1066,12 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
         yoga_md + dhana_md + blem_md + gate_md + lookup_md))
+    shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     return SignificationVerdict(
         house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
         lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
-        borderline_shifted=shifted or dec_shifted or yoga_shifted or dhana_shifted
-        or blem_shifted, metadata=metadata)
+        borderline_shifted=shifted_any,
+        degree=_compute_degree(verdict, lead, shifted_any), metadata=metadata)
 
 
 def _default_sig(house: int) -> Signification:

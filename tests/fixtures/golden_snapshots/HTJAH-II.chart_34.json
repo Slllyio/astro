@@ -11,18 +11,22 @@
     "rollup": "mixed",
     "significations": {
       "death": {
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "legacies": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "longevity": {
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
       "sudden_gains": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

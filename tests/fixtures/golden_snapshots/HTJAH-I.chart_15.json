@@ -21,14 +21,17 @@
     "rollup": "favourable",
     "significations": {
       "body": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "health": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "self": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "favourable"
       }

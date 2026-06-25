@@ -21,18 +21,22 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "ear_throat": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "short_journeys": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "siblings": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

@@ -23,18 +23,22 @@
     "rollup": "afflicted",
     "significations": {
       "death": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "legacies": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "longevity": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
       "sudden_gains": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

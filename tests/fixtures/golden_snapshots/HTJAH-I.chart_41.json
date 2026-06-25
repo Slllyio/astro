@@ -25,18 +25,22 @@
     "rollup": "favourable",
     "significations": {
       "family": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "speech": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "vision": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
       "wealth": {
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

@@ -15,14 +15,17 @@
     "rollup": "afflicted",
     "significations": {
       "body": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "health": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "self": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       }

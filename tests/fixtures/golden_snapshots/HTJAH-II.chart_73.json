@@ -11,18 +11,22 @@
     "rollup": "afflicted",
     "significations": {
       "death": {
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "legacies": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "longevity": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "sudden_gains": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "favourable"
       }

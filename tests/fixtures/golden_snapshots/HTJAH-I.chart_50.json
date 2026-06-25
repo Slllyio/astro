@@ -11,18 +11,22 @@
     "rollup": "afflicted",
     "significations": {
       "family": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "speech": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "vision": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "wealth": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       }

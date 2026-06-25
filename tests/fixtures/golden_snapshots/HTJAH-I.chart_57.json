@@ -15,18 +15,22 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "ear_throat": {
+        "degree": "strong",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "short_journeys": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "siblings": {
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       }

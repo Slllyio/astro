@@ -848,3 +848,21 @@ on-8th relief guard; verified citation). Only h7_09 has the 7th lord in the 8th 
 verdict; h7_09 is A/B not Tier-3 so no snapshot). h7_09 CONFIRMED, baseline 99/139 -> 100/140. 4 new
 TestH7C84 unit tests. Suite 3107 passed. Remaining Section-C: 16 (9 over-lenient -1 + 7 over-harsh), each
 its own faithful increment.
+
+### 2026-06-25 — Phase-E scope + documented-limits register (triage sweep)
+Closed the loop on every remaining item so nothing is left un-triaged:
+- **Phase-E longevity engine scoped** (backlog): raman_saab already has partial infra (balarishta.py,
+  the house_08_ayur rule sets, the maraka/LONGEVITY_GUARD flags) but lacks the classical ayurdaya span
+  computation (Pindayu/Amsayu + haranas → alpa/madhya/purna) and maraka-dasha death-timing. The
+  death-timing sibling branches are EMPIRICAL (MortalityModel ECDF + age brackets), a reference for the
+  bracket taxonomy/maraka results but NOT a direct port of classical ayurdaya. Major effort, its own phase.
+- **Documented-limits register** (backlog): chart_60 (siblings afflicted, engine favourable — B1
+  lord-good/house+karaka-afflicted), chart_52 (siblings mixed, engine favourable — B1, contestable
+  golden), chart_08 (marital favourable, engine afflicted — Venus not blemishless, over-harsh), h12_13/
+  h5_14 (held). All are deliberate limits; the only lever for chart_52+60 is the high-risk B1 mechanism
+  (chart_54-guarded), deferred.
+- **Section-C engine grind**: 15 misses remain (8 over-lenient + 7 over-harsh), each a distinct signature
+  needing its own faithful increment (h7_10 Mars-maraka-in-8th, h7_11 8th-from-Moon, h7_05 papakartari-on-
+  7th-lord, the "married-outside-caste"=mixed over-harsh trio h7_17/18/19, …). Precise per-chart spec in
+  worksheets/PHASE3_draft_validation.md §C. Not bulk-rushable (overfit risk).
+**Session net**: ratchet 89/130 → 100/140 (68.5% → 71.4%); validation array 130 → 140 confirmed verdicts.

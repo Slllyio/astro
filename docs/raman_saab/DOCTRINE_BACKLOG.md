@@ -193,3 +193,38 @@ VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
   DRAFT→worksheet→CONFIRMED pipeline remains available once the DRAFT backlog is cleared.
 - **Notable Horoscopes** is only 2 of ~50 chapters present — an *acquisition* gap; the full
   edition would add ~48 fully-worked goldens. Flag for the user to source.
+
+## Phase E — longevity / death-timing engine  `shadbala`/`new-mechanism`  (scoped 2026-06-25)
+The H8 death house has **0 confirmed goldens**; the engine deliberately defers all death/longevity
+verdicts (`LONGEVITY_GUARD` + `_clamp_longevity`). Opening it needs a Phase-E sub-engine. Scope:
+- **Already present** (partial infra to build on): `app/raman_saab/primitives/balarishta.py`
+  (infant-mortality / early-death yogas), the `house_08_ayur/` rule sets (combinations, lord_in_12,
+  planets_in_8th), and the maraka flags in the judge (`maraka_active`, `LONGEVITY_GUARD`).
+- **Missing** (the build): (1) the classical **ayurdaya span computation** — Pindayu / Amsayu /
+  Nisargayu year-counts with the haranas (Chakrapatha, Krurodaya, etc.) → the alpa/madhya/purna
+  span class; (2) **maraka-dasha death-timing** — selecting the killing Dasa/Bhukti from the 2nd/7th
+  lords + Saturn + the assembled marakas; (3) a verdict path that, once the span class is fixed,
+  releases the `LONGEVITY_GUARD` to emit a real death/longevity verdict.
+- **Death-timing branch relationship:** `feat/death-timing-predictor` / `data/vedastro-corpus` built
+  an **empirical** longevity model (MortalityModel ECDF, alpa/madhya/purna *brackets* by age,
+  composite×bracket risk) — it shares the bracket taxonomy and the maraka/significator concepts but
+  is **statistical, not classical ayurdaya**. So it is a strong *reference* (bracket boundaries, the
+  maraka head-to-head results, the Saturn-transit trigger) and a candidate to wrap as a secondary
+  empirical lever, but the classical span computation must be built natively. **Major effort** — its
+  own phase, not a single increment.
+
+## Documented limits register  (confirmed misses the engine cannot faithfully reach today)
+These are CONFIRMED goldens the engine misses; each is a deliberate limit, not a bug to hack:
+- **chart_60** — H3 siblings *afflicted*, engine *favourable*. The lord (Jupiter) is well-disposed but
+  the house + karaka are afflicted (HTJAH-I:3815, "no brothers"); the preponderance favours the good
+  lord. The B1 three-factor comparative-weighing case — a faithful fix needs the general B1 mechanism
+  and risks regressing chart_54 (also malefic-aspected 3rd that KEEPS brothers on a strong lord).
+- **chart_52** — H3 siblings *mixed*, engine *favourable*. House good but lord Moon weak (6 born, 3
+  died); contestable "favourable/mixed" golden (confidence 0.45). Same B1 comparative-weighing family.
+- **chart_08** — H7 marital_happiness *favourable*, engine *afflicted*. Over-harsh: a separation/besiege
+  rule fires, but Raman reads it favourable; the blemishless-Venus floor correctly does NOT rescue it
+  (its Venus has Mars on it → not blemishless). Softening the decisive rule risks regression.
+- **h12_13 / h5_14** — HELD DRAFTs (engine matches but deliberately not confirmed pending a fresh call).
+The B1 comparative-weighing mechanism (backlog B1) is the single lever that would address chart_52 +
+chart_60; it is high-risk (med) and was deliberately narrowed into the H3.C.39 combust-lord rule rather
+than attempted wholesale. Deferred pending a careful, chart_54-guarded design.

@@ -17,7 +17,7 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
@@ -27,12 +27,12 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "siblings": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       }

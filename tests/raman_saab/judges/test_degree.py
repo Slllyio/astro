@@ -103,26 +103,35 @@ def test_avastha_score_absent_is_zero():
     assert ht._planet_avastha_score({}, "Sun") == 0
 
 
-def test_avastha_demotes_min_weakest_deliverer():
+def test_avastha_combined_min_weakest_deliverer():
     """combined = min(lord, karaka): a strong karaka cannot rescue a Mrita+Sushupti lord."""
     av = {"Sun": {"baladi": "Mrita", "jagradadi": "Sushupti"},
           "Jupiter": {"baladi": "Yuva", "jagradadi": "Jagrad"}}
-    assert ht._avastha_demotes(av, "Sun", "Jupiter") is True       # min(-1, +1) = -1 -> demote
-    assert ht._avastha_demotes(av, "Jupiter", "Jupiter") is False  # min(+1, +1) = +1 -> no
+    assert ht._avastha_combined(av, "Sun", "Jupiter") == -1   # min(-1, +1) -> demote
+    assert ht._avastha_combined(av, "Jupiter", "Jupiter") == 1  # min(+1, +1) -> promote
 
 
 def test_compute_degree_avastha_demotes_one_step():
-    """A net-weak deliverer avastha drops the degree exactly one step (strong->moderate)."""
+    """A net-weak deliverer avastha (av_adjust=-1) drops the degree one step (strong->moderate)."""
     led = _ledger(lord_strong=True, karaka_strong=True, navamsa="confirms")  # base strong
-    assert ht._compute_degree("favourable", led, False, demote_avastha=False) == "strong"
-    assert ht._compute_degree("favourable", led, False, demote_avastha=True) == "moderate"
+    assert ht._compute_degree("favourable", led, False, av_adjust=0) == "strong"
+    assert ht._compute_degree("favourable", led, False, av_adjust=-1) == "moderate"
+
+
+def test_compute_degree_avastha_promotes_moderate_to_strong():
+    """Both deliverers strong (av_adjust=+1) lift a moderate to strong; a mild/shifted verdict
+    is NOT promoted (its margin dominates)."""
+    led = _ledger(lord_strong=True)  # one strong pillar -> base moderate
+    assert ht._compute_degree("favourable", led, False, av_adjust=0) == "moderate"
+    assert ht._compute_degree("favourable", led, False, av_adjust=1) == "strong"
+    assert ht._compute_degree("favourable", led, True, av_adjust=1) == "mild"  # shifted stays mild
 
 
 def test_compute_degree_avastha_floors_at_mild():
     """Demotion never goes below mild; mild/insufficient-evidence stay mild."""
     led = _ledger(lord_strong=True, karaka_strong=False)  # mixed base -> moderate
-    assert ht._compute_degree("mixed", led, False, demote_avastha=True) == "mild"
-    assert ht._compute_degree("insufficient-evidence", led, False, demote_avastha=True) == "mild"
+    assert ht._compute_degree("mixed", led, False, av_adjust=-1) == "mild"
+    assert ht._compute_degree("insufficient-evidence", led, False, av_adjust=-1) == "mild"
 
 
 def test_safe_avasthas_missing_graha_returns_none():

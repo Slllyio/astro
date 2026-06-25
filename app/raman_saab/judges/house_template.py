@@ -416,13 +416,18 @@ def _clamp_longevity(base: Verdict, guarded: bool) -> Verdict:
 
 # Avastha result-strength scores (Layer-A doctrinal deepening). Phaladeepika Ch.3 Sl.3/Sl.10/
 # Sl.20 + BPHS Ch.1 Sl.14-16: a graha's avastha scales the INTENSITY of its result (both the
-# auspicious AND the inauspicious effect — "decreasing proportionately", Sl.20), NEVER the
-# polarity. Baladi (ageing 5-state) + Jagradadi (consciousness 3-state), each -> {+1,0,-1}. Bala
-# is scored 0 (conservative, demotion-only) per the doctrine-review. ALLOW_SUPPORT_PROMOTION is
-# OFF: avastha can only DEMOTE the degree (Sl.20 proportional decrease), never promote it.
-_BALADI_SCORE: dict[str, int] = {"Yuva": 1, "Kumara": 0, "Bala": 0, "Vriddha": -1, "Mrita": -1}
+# auspicious AND the inauspicious effect — "decreasing proportionately", Sl.20; "full" at
+# praditavastha), NEVER the polarity. Baladi (ageing 5-state) + Jagradadi (consciousness
+# 3-state), each -> {+1,0,-1}. Bala (infancy) is scored -1 — "progressing", the least of the
+# developing states (Phaladeepika Sl.10), so it weakens delivery.
+_BALADI_SCORE: dict[str, int] = {"Yuva": 1, "Kumara": 0, "Bala": -1, "Vriddha": -1, "Mrita": -1}
 _JAGRADADI_SCORE: dict[str, int] = {"Jagrad": 1, "Swapna": 0, "Sushupti": -1}
+# Avastha degree adjustment: combined deliverer score -1 DEMOTES one step (a Mrita/Sushupti
+# deliverer enfeebles), +1 PROMOTES a moderate to strong (Sl.20 "full effect" when both
+# deliverers are yuva/jagrad). Promotion lifts only moderate->strong — a marginal/mild verdict
+# is not promoted (its margin dominates the avastha).
 _DEGREE_DEMOTE: dict[Degree, Degree] = {"strong": "moderate", "moderate": "mild", "mild": "mild"}
+_DEGREE_PROMOTE: dict[Degree, Degree] = {"moderate": "strong"}
 
 
 def _safe_avasthas(chart: RamanChart) -> Optional[dict[str, object]]:
@@ -448,16 +453,17 @@ def _planet_avastha_score(avasthas: Optional[dict[str, object]], planet: str) ->
     return max(-1, min(1, score))
 
 
-def _avastha_demotes(avasthas: Optional[dict[str, object]], lord: str, karaka: str) -> bool:
-    """True when the verdict's delivering grahas are net-weak (min avastha score == -1) so the
-    intensity drops one step. MIN = 'the weakest deliverer caps the intensity' (mirrors the
-    karaka-veto philosophy; a strong karaka cannot rescue a Mrita lord, per Phaladeepika Sl.20)."""
+def _avastha_combined(avasthas: Optional[dict[str, object]], lord: str, karaka: str) -> int:
+    """The verdict's combined deliverer avastha in {-1, 0, +1}: MIN of the lord's and karaka's
+    scores. MIN = 'the weakest deliverer caps the intensity' (mirrors the karaka-veto
+    philosophy; a strong karaka cannot rescue a Mrita lord, per Phaladeepika Sl.20) — and,
+    symmetrically, +1 requires BOTH deliverers in a strong (yuva/jagrad) avastha."""
     return min(_planet_avastha_score(avasthas, lord),
-               _planet_avastha_score(avasthas, karaka)) <= -1
+               _planet_avastha_score(avasthas, karaka))
 
 
 def _compute_degree(verdict: Verdict, lead: FrameLedger, shifted: bool,
-                    demote_avastha: bool = False) -> Degree:
+                    av_adjust: int = 0) -> Degree:
     """The deterministic INTENSITY of a verdict (Layer A), from the gradation the engine
     already computes — pillar-strength count, the decisive/karaka-veto flags, and whether the
     verdict was nudged at the margin. Surfaces existing strength as strong/moderate/mild; it
@@ -470,13 +476,18 @@ def _compute_degree(verdict: Verdict, lead: FrameLedger, shifted: bool,
                decisive-affliction rule / broken karaka, or all known pillars weak.
     - moderate: everything in between (a clear but not maximal majority).
 
-    ``demote_avastha`` (Layer-A deepening): when the verdict's delivering grahas (lead lord +
-    karaka) are in a net-weak avastha, the intensity drops ONE step (strong->moderate,
-    moderate->mild). Demotion-only; the verdict BUCKET is untouched (a Mrita malefic on an
-    afflicted verdict -> afflicted/mild, a weaker-but-real affliction, per Phaladeepika Sl.20).
+    ``av_adjust`` (Layer-A deepening, in {-1,0,+1}): when the verdict's delivering grahas (lead
+    lord + karaka) are net-weak (-1) the intensity drops ONE step (strong->moderate,
+    moderate->mild); when both are strong (+1) a moderate is lifted to strong. The verdict
+    BUCKET is untouched (a Mrita malefic on an afflicted verdict -> afflicted/mild, a
+    weaker-but-real affliction, per Phaladeepika Sl.20).
     """
     base = _base_degree(verdict, lead, shifted)
-    return _DEGREE_DEMOTE[base] if demote_avastha else base
+    if av_adjust <= -1:
+        return _DEGREE_DEMOTE[base]
+    if av_adjust >= 1:
+        return _DEGREE_PROMOTE.get(base, base)
+    return base
 
 
 def _base_degree(verdict: Verdict, lead: FrameLedger, shifted: bool) -> Degree:
@@ -1199,12 +1210,12 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas
     # are computed once per chart and cached on ctx.
     avasthas = ctx.get_or_compute("avasthas", lambda: _safe_avasthas(chart))
-    demote = _avastha_demotes(avasthas, lead.lord, lead.karaka)
+    av_adjust = _avastha_combined(avasthas, lead.lord, lead.karaka)
     return SignificationVerdict(
         house=house, signification=sig.key, verdict=verdict, karaka=sig.primary_karaka,
         lead_frame=lead.frame, ledger=lead, alt_ledgers=tuple(others),
         borderline_shifted=shifted_any,
-        degree=_compute_degree(verdict, lead, shifted_any, demote), metadata=metadata)
+        degree=_compute_degree(verdict, lead, shifted_any, av_adjust), metadata=metadata)
 
 
 def _default_sig(house: int) -> Signification:

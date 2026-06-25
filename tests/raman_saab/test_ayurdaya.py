@@ -135,6 +135,38 @@ def test_expected_longevity_goldens_within_tolerance():
     assert checked == 2, f"expected 2 expected_longevity goldens, found {checked}"
 
 
+def test_ayurdaya_span_brackets_actual_age_at_death():
+    """Sanity: the alloted ayurdaya span (best of the two methods) is >= the actual
+    age-at-death for every death-dated golden. The span is the POTENTIAL lifespan; a maraka
+    can cut it short (Lincoln 56, JFK 46 << their ~73y spans), but cannot exceed it. For
+    natural/old deaths (Gandhi 78, chart_35 70) the span sits close to the actual age."""
+    import json
+    from datetime import date
+    from pathlib import Path
+    goldens = Path(__file__).resolve().parents[1] / "fixtures" / "raman_goldens.jsonl"
+    checked = 0
+    for ln in goldens.read_text(encoding="utf-8").splitlines():
+        s = ln.strip()
+        if not s or s.startswith("#"):
+            continue
+        rec = json.loads(s)
+        exp, b = rec.get("expected_longevity"), rec.get("birth")
+        if not exp or "death_date" not in exp or not b:
+            continue
+        by, bm, bd = (int(x) for x in str(b["dt"]).split("T")[0].split("-"))
+        dy, dmo, dd = (int(x) for x in exp["death_date"].split("-"))
+        age = (date(dy, dmo, dd) - date(by, bm, bd)).days / 365.25
+        dp, _, tp = str(b["dt"]).partition("T")
+        hh, mm = int(tp.split(":")[0]), int(tp.split(":")[1])
+        ch = cast_chart(BirthData(name="g", year=by, month=bm, day=bd, hour=hh, minute=mm,
+                                  tz_offset=float(b["tz"]), latitude=float(b["lat"]),
+                                  longitude=float(b["lon"])), ayanamsa="raman")
+        span = max(ay.pindayu(ch).total_years, ay.amsayu(ch).total_years)
+        assert span >= age - 2.0, f"{rec['id']}: span {span:.1f}y < age-at-death {age:.1f}y"
+        checked += 1
+    assert checked >= 5, f"expected >=5 death-dated goldens, found {checked}"
+
+
 def test_longevity_selects_a_method_and_returns_result():
     ch = cast_chart(BirthData(name="c", year=1990, month=7, day=15, hour=12, minute=0,
                               tz_offset=5.5, latitude=12.97, longitude=77.59), ayanamsa="raman")

@@ -486,15 +486,16 @@ def test_avastha_modulates_degree_only(monkeypatch: pytest.MonkeyPatch) -> None:
             key = (_id(rec), house, entry["signification"])
             baseline[key] = _signification_verdict(chart, house, entry["signification"])
 
-    monkeypatch.setattr(ht, "_avastha_demotes", lambda *a, **k: True)  # force demotion everywhere
     changed = []
-    for rec in _TRACK_B_RATCHET:
-        chart = build_chart(rec)
-        for house, entry in confirmed_verdicts(rec):
-            key = (_id(rec), house, entry["signification"])
-            got = _signification_verdict(chart, house, entry["signification"])
-            if got != baseline[key]:
-                changed.append(f"  {key}: {baseline[key]!r} -> {got!r}")
+    for forced in (-1, 1):  # force demotion AND promotion everywhere
+        monkeypatch.setattr(ht, "_avastha_combined", lambda *a, **k: forced)
+        for rec in _TRACK_B_RATCHET:
+            chart = build_chart(rec)
+            for house, entry in confirmed_verdicts(rec):
+                key = (_id(rec), house, entry["signification"])
+                got = _signification_verdict(chart, house, entry["signification"])
+                if got != baseline[key]:
+                    changed.append(f"  av={forced} {key}: {baseline[key]!r} -> {got!r}")
     assert not changed, "avastha changed verdict buckets (must be degree-only):\n" + "\n".join(changed)
 
 

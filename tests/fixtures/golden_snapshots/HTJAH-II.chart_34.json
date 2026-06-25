@@ -8,7 +8,7 @@
       "H8.C.25",
       "H8.L.2"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
@@ -21,9 +21,9 @@
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "sudden_gains": {
         "degree": "moderate",

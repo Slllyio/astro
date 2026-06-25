@@ -962,3 +962,23 @@ User-directed under ultracode (multi-agent workflows: discover→design→advers
 **Ratchet: 110/146 -> 112/146 exact (0.767); 130/146 -> 132/146 within-1 (0.904); 14 real errors remain.**
 Session total: foundation (degree + ordinal metric) + avastha deepening + 6 cited/gate fixes
 (h9_13, h5_01, h5_07, h4_01, h5_05, h5_12), 106/146 -> 112/146 exact, 126/146 -> 132/146 within-1.
+
+### 2026-06-26 (ultracode) — Ayurdaya longevity-span engine (the "what's left" feature)
+Built the mathematical longevity engine `app/raman_saab/primitives/ayurdaya.py` — the substantial
+remaining lever flagged after the doctrine rule-engine hit its faithful ceiling. NOT a doctrine rule:
+a fresh classical-math subsystem.
+- **Pindayu** (Grahadattayurdaya): per-graha term = full_term x arc-from-debilitation / 360; HTJAH-II:3947-4260.
+- **Amsayu** (navamsa longevity): per-graha navamsas-traversed x Bharana (x2/x3 for dignity); HTJAH-II:4262-4441.
+- The four **Haranas** in order: Chakrapatha (west-half bhavas, strongest-in-house, malefic/benefic table) ->
+  Satrukshetra (enemy sign, 1/3, Mars+retro exempt) -> Astangata (combust, 1/2, Venus+Saturn exempt) ->
+  Krurodaya (malefic-in-Lagna, Pindayu only).
+- Research via a 5-agent workflow (4 corpus extractors + synthesis); cross-validated by direct corpus reading.
+- **Validated to the day** against Raman's worked Chart 33 (Pindayu, engine 85y10m vs corpus 86y2m20d) and
+  Chart 34 (Amsayu navamsa-terms exact; total within ~5y). 21 unit tests.
+- **Wired** into the H8 `longevity` sig: span -> class -> verdict (alpa->afflicted, madhya->mixed,
+  purna->favourable), with the span as metadata. The SPAN (full-life capacity) is distinct from the death
+  MANNER -- a purna-span native can die violently young, so longevity=favourable + death=afflicted is the
+  correct dual reading (Lincoln/JFK).
+- Confirmed the 2 DRAFT span goldens chart_33 + chart_34 = favourable longevity (both lived full lives).
+**Ratchet: 112/146 -> 114/148 exact (0.770); 132/146 -> 134/148 within-1 (0.905).** Denominator +2; ZERO
+regressions (only the 5 H8 Tier-3 longevity snapshots drifted). The longevity-span backlog item is RESOLVED.

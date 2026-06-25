@@ -289,7 +289,7 @@ MORE surface affliction. Forcing them violates the main goal (faithful, not gold
   Saturn + 2nd-lord-with-malefic-turned-Venus + papakartari TOGETHER, HTJAH-I:2827-2848); the single
   papakartari signature over-fires on 3 favourable charts.
 
-**Honest ceiling: ~77% exact / ~90% within-1 (112/146, 132/146 at 2026-06-26); the within-1 figure is the
+**Honest ceiling: ~77% exact / ~90% within-1 (114/148, 134/148 at 2026-06-26; the AYURDAYA longevity engine resolved the chart_33/34 span goldens); the within-1 figure is the
 fairer headline and is at the projected ordinal ceiling.** The 20 distance-1 boundary near-hits are
 subjective favourable-vs-mixed calls (handled by the graded `degree`), not errors. The two most-promising
 remaining over-lenient cases (h9_02, chart_44) were empirically re-tested and both confirm as limits —

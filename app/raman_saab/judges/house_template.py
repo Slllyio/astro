@@ -51,6 +51,7 @@ from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.judges.house_judge import HouseVerdict
+from app.raman_saab.primitives import ayurdaya
 from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
 from app.raman_saab.primitives.dignity import dignity
@@ -964,6 +965,35 @@ def _dhana_floor(
     return new, new != verdict, (("dhana_floor", f"{dhana_ids[0]}:{action}"),)
 
 
+_AYURDAYA_VERDICT: dict[str, Verdict] = {
+    "alpa": "afflicted", "madhya": "mixed", "purna": "favourable"}
+
+
+def _longevity_span(
+    chart: RamanChart, sig: Signification, verdict: Verdict, ctx: EvalContext,
+) -> tuple[Verdict, Metadata]:
+    """H8 longevity SPAN — the mathematical ayurdaya (Pindayu/Amsayu, HTJAH-II:3947-4441).
+
+    Replaces the placement-evidence longevity guess with Raman's lifespan computation:
+    the span maps to a class -> verdict (alpa/short -> afflicted; madhya/medium -> mixed;
+    purna/full -> favourable), and the computed span is surfaced as metadata. The longevity
+    SPAN (capacity for a full life) is distinct from the death MANNER (the `death` sig) -- a
+    purna-span native can still die violently young (Lincoln), so longevity=favourable +
+    death=afflicted is the correct dual reading.
+
+    Falls back to the incoming verdict when the chart lacks a graha (Track-B book charts),
+    since the ayurdaya needs all seven.
+    """
+    if sig.key != "longevity":
+        return verdict, ()
+    if any(p not in chart.planets for p in ayurdaya.SEVEN):
+        return verdict, ()
+    res = ctx.get_or_compute("ayurdaya", lambda: ayurdaya.longevity(chart))
+    y, m, d = res.ymd()
+    md: Metadata = (("ayurdaya", f"{res.method}:{res.longevity_class}:{y}y{m}m{d}d"),)
+    return _AYURDAYA_VERDICT[res.longevity_class], md
+
+
 def _putrakaraka_malefic_afflicted(chart: RamanChart) -> bool:
     """The PutraKaraka Jupiter conjoined or aspected (whole-sign drishti) by >= 1 natural
     malefic — Raman's 'baneful PutraKaraka' (HTJAH-I:5701-5709: 'Jupiter ... his association
@@ -1160,9 +1190,10 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
     verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
+    verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + lookup_md))
+        yoga_md + dhana_md + blem_md + gate_md + longev_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

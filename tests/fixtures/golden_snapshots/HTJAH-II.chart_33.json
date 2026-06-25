@@ -12,7 +12,7 @@
       "H8.L.7",
       "H8.P.Ketu"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
@@ -25,9 +25,9 @@
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "sudden_gains": {
         "degree": "moderate",

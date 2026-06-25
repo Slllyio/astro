@@ -10,7 +10,7 @@
       "H8.C.3",
       "H8.L.1"
     ],
-    "rollup": "mixed",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
@@ -23,9 +23,9 @@
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "sudden_gains": {
         "degree": "moderate",

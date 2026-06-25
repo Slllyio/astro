@@ -386,6 +386,47 @@ def track_b_scoreboard() -> tuple[int, int, list[str]]:
     return correct, total, mismatches
 
 
+# ---------------------------------------------------------------------------
+# Ordinal-tolerance metric (Layer B) — the fairer second headline.
+# The verdict is an ordinal afflicted < mixed < favourable. A within-1 "near-hit"
+# recognises that the favourable-vs-mixed / mixed-vs-afflicted boundary is genuinely
+# contestable (Raman's readings are graded), separating SUBJECTIVE boundary calls
+# (distance 1) from REAL doctrinal errors (distance >=2 — the cited-fix targets).
+# insufficient-evidence is OFF the graded axis, so any mismatch with it is a real miss.
+# The strict exact-match ratchet above is unchanged; this is purely additive.
+# ---------------------------------------------------------------------------
+_ORD_POS: dict[str, int] = {"afflicted": 0, "mixed": 1, "favourable": 2}
+
+
+def _ordinal_distance(got: Optional[str], expected: str) -> int:
+    if got == expected:
+        return 0
+    if got in _ORD_POS and expected in _ORD_POS:
+        return abs(_ORD_POS[got] - _ORD_POS[expected])
+    return 2  # insufficient-evidence vs a graded verdict -> a real miss, not a near-hit
+
+
+def track_b_ordinal_scoreboard() -> tuple[int, int, list[str]]:
+    """(within1, total, real_error_lines) across every CONFIRMED worked-example verdict.
+    within1 counts ordinal distance <= 1; real_error_lines are the distance >= 2 genuine
+    doctrinal errors (the Layer-C cited-fix targets). Deterministic; same record order as
+    track_b_scoreboard()."""
+    within1, total, real = 0, 0, []
+    for rec in _TRACK_B_RATCHET:
+        chart = build_chart(rec)
+        for house, entry in confirmed_verdicts(rec):
+            sig_key = entry["signification"]
+            got = _signification_verdict(chart, house, sig_key)
+            total += 1
+            d = _ordinal_distance(got, entry["verdict"])
+            if d <= 1:
+                within1 += 1
+            if d >= 2:
+                real.append(f"  {_id(rec)} H{house}/{sig_key}: engine={got!r} "
+                            f"golden={entry['verdict']!r} (dist {d})")
+    return within1, total, real
+
+
 @pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
 def test_track_b_accuracy_ratchet() -> None:
     """Engine accuracy vs Raman's confirmed verdicts must never drop below the
@@ -407,6 +448,27 @@ def test_track_b_accuracy_ratchet() -> None:
         report += "\nmismatches:\n" + "\n".join(mismatches)
     assert accuracy >= base_acc - 1e-9, report
     # Improvement is reported (visible with -s / on failure elsewhere) but never auto-saved.
+
+
+@pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
+def test_track_b_ordinal_ratchet() -> None:
+    """Within-1 ordinal accuracy must never drop below the committed ordinal baseline
+    (golden_accuracy_baseline.json track_b_ordinal). The fairer headline: a verdict within one
+    ordinal step of Raman's counts as a near-hit (the favourable-vs-mixed boundary is graded and
+    contestable). The distance>=2 cases printed on failure are the REAL doctrinal errors — the
+    cited-fix targets. Like the strict ratchet, the baseline is bumped by a HUMAN in the same
+    commit as the change that earns it."""
+    within1, total, real = track_b_ordinal_scoreboard()
+    accuracy = within1 / total if total else 1.0
+    baseline = json.loads(_BASELINE_PATH.read_text(encoding="utf-8")).get("track_b_ordinal")
+    if baseline is None:
+        pytest.skip("no track_b_ordinal baseline yet")
+    base_acc = baseline["correct"] / baseline["total"]
+    report = (f"Track-B ordinal (within-1): {within1}/{total} = {accuracy:.3f} "
+              f"(baseline {baseline['correct']}/{baseline['total']} = {base_acc:.3f})")
+    if real:
+        report += "\nREAL doctrinal errors (distance>=2):\n" + "\n".join(real)
+    assert accuracy >= base_acc - 1e-9, report
 
 
 # ===========================================================================
@@ -506,8 +568,14 @@ def test_report_draft_vs_confirmed(capsys: pytest.CaptureFixture[str]) -> None:
     (a large DRAFT backlog is expected mid-extraction)."""
     draft, confirmed = _count_reviews()
     total = len(_GOLDENS)
+    exact, etot, _ = track_b_scoreboard() if _TRACK_B_RATCHET else (0, 0, [])
+    w1, wtot, _real = track_b_ordinal_scoreboard() if _TRACK_B_RATCHET else (0, 0, [])
     with capsys.disabled():
         print(f"\n[goldens] records={total}  verdicts: CONFIRMED={confirmed} DRAFT={draft}"
               f"  TrackA={len(_TRACK_A_RECORDS)} TrackB={len(_TRACK_B_RECORDS)} "
               f"Tier3={len(_TIER3_RECORDS)}")
+        if etot:
+            print(f"[ratchet] exact={exact}/{etot}={exact/etot:.3f}  "
+                  f"within-1(ordinal)={w1}/{wtot}={w1/wtot:.3f}  "
+                  f"real-errors(dist>=2)={wtot - w1}")
     assert confirmed >= 0  # tautology — this test reports, it does not gate on DRAFT

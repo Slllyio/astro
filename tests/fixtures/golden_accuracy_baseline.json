@@ -3,5 +3,10 @@
   "track_b": {
     "correct": 106,
     "total": 146
+  },
+  "_comment_ordinal": "Within-1 ordinal accuracy floor (Layer B, 2026-06-25). The verdict is an ordinal afflicted<mixed<favourable; a verdict within ONE step of Raman's is a near-hit (the favourable-vs-mixed / mixed-vs-afflicted boundary is genuinely contestable, since Raman's readings are graded). This is the fairer headline alongside the strict exact-match track_b. At introduction: 126/146 = 0.863 (vs strict 106/146 = 0.726) -- the 40 strict misses split into 20 SUBJECTIVE boundary near-hits (distance 1) and 20 REAL doctrinal errors (distance >=2: H5 progeny x6, H1 self x4, H9 father x2, H11 x2, + chart_44/chart_60/h4_01/h6_04/chart_08/h12_05). The distance>=2 set is the Layer-C cited-fix target list. Bumped by a HUMAN like track_b.",
+  "track_b_ordinal": {
+    "correct": 126,
+    "total": 146
   }
 }

@@ -358,10 +358,22 @@ dedicated work (NOT a tail-of-session rush). Per-target why-afflicted:
   configuration but a realized marriage; the inverse of the marital-bond demote (lift afflicted->mixed
   when the 7th LORD is clean and the marriage is realized). h7_18 reads afflicted with nmal=0/nben=0
   (investigate the source -- navamsa/maraka).
-All are dist-1 near-hits (already within-1), so this lifts the EXACT metric only. Build a single
-"marital/progeny benefic-relief" lift (unafflicted karaka/benefic-on-house -> afflicted->mixed),
-over-fire-scanned against EVERY afflicted golden (incl. the just-shipped H5/H7 afflicted fixes), then
-confirm. Estimated +4-6 exact with careful guards.
+All are dist-1 near-hits (already within-1).
+
+### Mode-A is a DOCUMENTED LIMIT — empirically proven not mechanically separable (2026-06-26)
+A benefic-relief lift was BUILT AND TESTED (a blemishless Jupiter/Venus on the 5th/7th house, lord, or
+karaka -> lift afflicted->mixed). It does NOT discriminate, in BOTH families:
+- **Children:** h5_13 (mixed) has NO detectable benefic-on-5th relief, while h5_04/h5_08/h5_09 (all
+  AFFLICTED) DO. The real mixed-vs-afflicted axis is child SURVIVAL ("born and lived" h5_13 vs "born and
+  died" h5_04/08/09) -- an outcome the natal config cannot express.
+- **Marriage:** h7_17/h7_18 (mixed) have a Jupiter relief, but so do chart_09, h7_02, h7_05 (all
+  AFFLICTED -- and h7_02/h7_05 were JUST confirmed afflicted via H7.C.86). A relief lift would REGRESS
+  those shipped fixes. h7_03 (mixed) has no detectable relief at all. The axis is marriage REALIZED-but-
+  flawed (mixed) vs DESTROYED/immoral (afflicted) -- again an outcome, not a separable natal predicate.
+CONCLUSION: the 10 mode-A items are the subjective afflicted-vs-mixed boundary the within-1 ordinal
+metric was built to honor (all dist-1 near-hits). Forcing a relief mechanism over-fires on genuinely-
+afflicted charts and regresses the H5/H7 afflicted fixes. LEFT as within-1 limits; do NOT pursue a
+relief lift. (If ever fixed, it would need a Dasa/outcome layer the rule-engine deliberately excludes.)
 
 **Engine work implied (future):** (1) a marital benefic-RELIEF mechanism that lifts an afflicted
 spouse/marital verdict to `mixed` when Raman's named reliefs are present (no separation/divorce,

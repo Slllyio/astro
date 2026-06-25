@@ -72,3 +72,67 @@ def test_mixed_is_moderate():
     """Mixed is the genuine middle -> moderate (mild only when shifted)."""
     led = _ledger(lord_strong=True, karaka_strong=False)
     assert ht._compute_degree("mixed", led, False) == "moderate"
+
+
+# --- Avastha deepening (Layer A) -------------------------------------------------
+
+class _StubPos:
+    def __init__(self, sign: int, lon: float) -> None:
+        self.sign, self.lon = sign, lon
+
+
+class _StubChart:
+    def __init__(self, planets: dict) -> None:
+        self.planets = planets
+
+
+_ALL_GRAHAS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+
+
+def test_avastha_score_clamped_sum():
+    """A planet's avastha score is the baladi+jagradadi sum clamped to {-1,0,+1}."""
+    assert ht._planet_avastha_score({"Saturn": {"baladi": "Mrita", "jagradadi": "Sushupti"}}, "Saturn") == -1  # -2 -> -1
+    assert ht._planet_avastha_score({"Saturn": {"baladi": "Mrita", "jagradadi": "Jagrad"}}, "Saturn") == 0     # -1+1
+    assert ht._planet_avastha_score({"Jupiter": {"baladi": "Yuva", "jagradadi": "Jagrad"}}, "Jupiter") == 1    # +2 -> +1
+    assert ht._planet_avastha_score({"Sun": {"baladi": "Kumara", "jagradadi": "Swapna"}}, "Sun") == 0          # 0+0
+
+
+def test_avastha_score_absent_is_zero():
+    """Absent planet or unavailable avasthas -> 0 (graceful, no pull)."""
+    assert ht._planet_avastha_score(None, "Sun") == 0
+    assert ht._planet_avastha_score({}, "Sun") == 0
+
+
+def test_avastha_demotes_min_weakest_deliverer():
+    """combined = min(lord, karaka): a strong karaka cannot rescue a Mrita+Sushupti lord."""
+    av = {"Sun": {"baladi": "Mrita", "jagradadi": "Sushupti"},
+          "Jupiter": {"baladi": "Yuva", "jagradadi": "Jagrad"}}
+    assert ht._avastha_demotes(av, "Sun", "Jupiter") is True       # min(-1, +1) = -1 -> demote
+    assert ht._avastha_demotes(av, "Jupiter", "Jupiter") is False  # min(+1, +1) = +1 -> no
+
+
+def test_compute_degree_avastha_demotes_one_step():
+    """A net-weak deliverer avastha drops the degree exactly one step (strong->moderate)."""
+    led = _ledger(lord_strong=True, karaka_strong=True, navamsa="confirms")  # base strong
+    assert ht._compute_degree("favourable", led, False, demote_avastha=False) == "strong"
+    assert ht._compute_degree("favourable", led, False, demote_avastha=True) == "moderate"
+
+
+def test_compute_degree_avastha_floors_at_mild():
+    """Demotion never goes below mild; mild/insufficient-evidence stay mild."""
+    led = _ledger(lord_strong=True, karaka_strong=False)  # mixed base -> moderate
+    assert ht._compute_degree("mixed", led, False, demote_avastha=True) == "mild"
+    assert ht._compute_degree("insufficient-evidence", led, False, demote_avastha=True) == "mild"
+
+
+def test_safe_avasthas_missing_graha_returns_none():
+    """A chart missing grahas (Track-B book chart) -> None, never a crash (mandatory guard)."""
+    ch = _StubChart({"Sun": _StubPos(1, 10.0), "Moon": _StubPos(2, 20.0)})  # only 2 of 9
+    assert ht._safe_avasthas(ch) is None
+
+
+def test_safe_avasthas_full_chart_ok():
+    """A chart with all 9 grahas yields per-planet avastha dicts."""
+    ch = _StubChart({g: _StubPos(1, 10.0) for g in _ALL_GRAHAS})
+    av = ht._safe_avasthas(ch)
+    assert av is not None and "Sun" in av and "baladi" in av["Sun"]

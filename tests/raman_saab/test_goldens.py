@@ -471,6 +471,33 @@ def test_track_b_ordinal_ratchet() -> None:
     assert accuracy >= base_acc - 1e-9, report
 
 
+@pytest.mark.skipif(not _TRACK_B_RATCHET, reason="no CONFIRMED worked-example records")
+def test_avastha_modulates_degree_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Layer-A avastha pin: the avastha deepening modulates DEGREE only. Forcing the avastha
+    demotion ON for EVERY signification must not change a single verdict bucket (Phaladeepika
+    Sl.20 — avastha scales intensity, never polarity). This guards the degree-only invariant:
+    if a future change let avastha touch the verdict, this fails loudly."""
+    import app.raman_saab.judges.house_template as ht
+
+    baseline: dict[tuple, Optional[str]] = {}
+    for rec in _TRACK_B_RATCHET:
+        chart = build_chart(rec)
+        for house, entry in confirmed_verdicts(rec):
+            key = (_id(rec), house, entry["signification"])
+            baseline[key] = _signification_verdict(chart, house, entry["signification"])
+
+    monkeypatch.setattr(ht, "_avastha_demotes", lambda *a, **k: True)  # force demotion everywhere
+    changed = []
+    for rec in _TRACK_B_RATCHET:
+        chart = build_chart(rec)
+        for house, entry in confirmed_verdicts(rec):
+            key = (_id(rec), house, entry["signification"])
+            got = _signification_verdict(chart, house, entry["signification"])
+            if got != baseline[key]:
+                changed.append(f"  {key}: {baseline[key]!r} -> {got!r}")
+    assert not changed, "avastha changed verdict buckets (must be degree-only):\n" + "\n".join(changed)
+
+
 # ===========================================================================
 # TIER 3 — evidence snapshot (stable fired-rule ids + citations + ledger summary).
 # ===========================================================================

@@ -13,22 +13,22 @@
     "rollup": "mixed",
     "significations": {
       "death": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "afflicted"
       },
       "legacies": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "longevity": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
         "verdict": "mixed"
       },
       "sudden_gains": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       }

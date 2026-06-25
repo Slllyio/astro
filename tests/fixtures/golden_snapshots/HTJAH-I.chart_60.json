@@ -19,7 +19,7 @@
     "rollup": "favourable",
     "significations": {
       "courage": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
@@ -29,12 +29,12 @@
         "verdict": "favourable"
       },
       "short_journeys": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       },
       "siblings": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "moon",
         "verdict": "favourable"
       }

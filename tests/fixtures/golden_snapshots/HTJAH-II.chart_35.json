@@ -30,7 +30,7 @@
         "verdict": "afflicted"
       },
       "legacies": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -40,7 +40,7 @@
         "verdict": "afflicted"
       },
       "sudden_gains": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

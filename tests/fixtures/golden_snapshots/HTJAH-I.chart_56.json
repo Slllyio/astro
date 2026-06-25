@@ -27,7 +27,7 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -37,7 +37,7 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },

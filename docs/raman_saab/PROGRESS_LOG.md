@@ -1014,3 +1014,17 @@ scan: fires on h7_02/05/15 only; spares h7_06 (clean lord), h7_14 (aspect-only),
 +3 CONFIRMED, ZERO regressions, all A/B (no snapshot). 5 unit tests.
 **Ratchet: 115/149 -> 118/152 exact (0.776); 135/149 -> 138/152 within-1 (0.908).** 12 H7/H5-marriage
 DRAFTs remain (mode-A benefic-relief lift + the 8th-marital-bond mode-B rule).
+
+### 2026-06-26 (ultracode) — H7-marriage fix #2: the 8th-from-Moon marital-bond demote
+New `_marital_bond_gate` (spouse/marital_happiness): when the 8th house FROM THE MOON (Chandra-Lagna
+8th = the marital bond/mangalya) holds >= 2 CRUEL malefics (Mars/Saturn/Rahu/Ketu), an otherwise-
+FAVOURABLE marriage is demoted to MIXED (a troubled/unconventional but realized marriage). Demote-only.
+Fixes the mode-B favourable->mixed misses h7_16 (clean 7th lord but 8th-from-Moon afflicted -> divorcee)
+and h7_19 (8th-from-Moon afflicted -> inter-faith; its debil 7th lord routes away from H7.C.86 to this
+milder mixed). bphs-doctrine-reviewer SOUND-WITH-CAVEAT (HIGH): the Sun was dropped from the count (cruel
+four only) -- never the load-bearing 8th-from-Moon affliction in Raman, the likeliest false-demote.
+Over-fire scan: demotes ZERO favourable goldens (all have <= 1 cruel malefic there); no-op on h7_06.
+Key-based scope excludes coverture (death) + partnership (business). +2 CONFIRMED, ZERO regressions,
+both A/B. 4 unit tests.
+**Ratchet: 118/152 -> 120/154 exact (0.779); 138/152 -> 140/154 within-1 (0.909).** H7-marriage backlog:
+5 of 15 fixed (3 via H7.C.86, 2 via the marital-bond gate); 10 remain (the mode-A benefic-relief lift).

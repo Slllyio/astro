@@ -329,11 +329,17 @@ engine wrongly `favourable` (correct = `mixed`/`afflicted`):**
 | h7_05 | spouse | afflicted | favourable | two wives; clandestine marriage; wife left HTJAH-II:1906 | HIGH |
 | h7_15 | spouse | afflicted | favourable | 7th-lord+Venus much afflicted; profligate, VD HTJAH-II:2528 | HIGH |
 | h7_04 | marital_happiness | mixed | favourable | "domestic bickerings" (Rahu-7th, Mars-Venus) HTJAH-II:1864 | MED |
-| h7_16 | spouse | mixed | favourable | 8th (marital bond) heavily afflicted, Rasi+Navamsa HTJAH-II:2664 | MED |
-| h7_19 | spouse | mixed | favourable | all malefics in 8th, 8th-lord combust in Navamsa HTJAH-II:2877 | MED |
+| ~~h7_16~~ | spouse | mixed | ~~favourable~~ **FIXED** | 8th-from-Moon afflicted -- _marital_bond_gate 2026-06-26 | MED |
+| ~~h7_19~~ | spouse | mixed | ~~favourable~~ **FIXED** | 8th-from-Moon afflicted -- _marital_bond_gate | MED |
 
 **Also:** h5_15 (children, favourable — engine `mixed`, the single child-death over-weighted) and
 h5_18 (children, mixed — engine `favourable`, "spoiling of the 5th house" missed).
+
+**Status (2026-06-26): 5 of 15 fixed** (h7_02/05/15 via H7.C.86; h7_16/19 via the marital-bond gate).
+**10 remain** — all MODE-A `afflicted`-should-be-`mixed` benefic-relief misses (h5_13/14, h7_03/07/17/18),
+plus h7_04 (the lone weak mode-B, 1 malefic in 8th-from-Moon), h5_15/h5_18, and h7_11 (coverture). The
+mode-A family needs a marital benefic-RELIEF lift (afflicted->mixed when Raman's named relief is present:
+"no separation/divorce", remarriage, benefic on the karaka) — the inverse of this gate.
 
 **Engine work implied (future):** (1) a marital benefic-RELIEF mechanism that lifts an afflicted
 spouse/marital verdict to `mixed` when Raman's named reliefs are present (no separation/divorce,

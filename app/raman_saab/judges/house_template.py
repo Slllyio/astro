@@ -980,6 +980,43 @@ def _dhana_floor(
 _AYURDAYA_VERDICT: dict[str, Verdict] = {
     "alpa": "afflicted", "madhya": "mixed", "purna": "favourable"}
 
+_MARITAL_BOND_KEYS: frozenset[str] = frozenset({"spouse", "marital_happiness"})
+# The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
+# Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in
+# Raman's worked charts, and including it is the likeliest out-of-sample false-demote
+# (bphs-doctrine-reviewer). All four occupants of the 8th-from-Moon in both targets are cruel.
+_CRUEL_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
+
+
+def _marital_bond_gate(
+    chart: RamanChart, sig: Signification, verdict: Verdict,
+) -> tuple[Verdict, Metadata]:
+    """H7 marital-bond demote: a heavily-afflicted 8th house FROM THE MOON (the Chandra-Lagna
+    8th — the marital bond / mangalya from the emotional self) with >= 2 CRUEL malefics
+    (Mars/Saturn/Rahu/Ketu) softens an otherwise-FAVOURABLE marriage to MIXED (a troubled /
+    unconventional but realized marriage). Demote-only: it never touches a mixed/afflicted
+    verdict, and never reaches afflicted.
+
+    Raman reads the 8th-from-Moon affliction as the marriage's flaw even when the 7th lord is clean:
+    Chart 28/h7_16 'the 8th house from Chandra Lagna is heavily afflicted by Mars, Rahu, Ketu and
+    Saturn ... married a divorcee' (HTJAH-II:2664); Chart 32/h7_19 'all malefics in the 8th [from
+    the Moon] ... married a Christian' (HTJAH-II:2877). The >= 2 cruel-malefic gate spares every
+    favourable H7 golden (each has <= 1) and is a no-op on the already-mixed twins. Scope is
+    key-based (spouse/marital_happiness) so it correctly excludes coverture (the widowhood/death
+    matter) and partnership (business, which only carries the 'spouse' rule_tag).
+    bphs-doctrine-reviewer SOUND-WITH-CAVEAT (the >= 2 vs Raman's 'heavily' = 3-4 is a logged
+    calibration margin)."""
+    if sig.key not in _MARITAL_BOND_KEYS or verdict != "favourable":
+        return verdict, ()
+    moon = chart.planets.get("Moon")
+    if moon is None:
+        return verdict, ()
+    n = sum(1 for nm, p in chart.planets.items()
+            if nm in _CRUEL_MALEFICS and ((p.rasi_house - moon.rasi_house) % 12) + 1 == 8)
+    if n >= 2:
+        return "mixed", (("marital_bond", "8th_from_moon_afflicted"),)
+    return verdict, ()
+
 
 def _longevity_span(
     chart: RamanChart, sig: Signification, verdict: Verdict, ctx: EvalContext,
@@ -1203,9 +1240,10 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
+    verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + longev_md + lookup_md))
+        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

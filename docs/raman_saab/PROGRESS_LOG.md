@@ -1028,3 +1028,21 @@ Key-based scope excludes coverture (death) + partnership (business). +2 CONFIRME
 both A/B. 4 unit tests.
 **Ratchet: 118/152 -> 120/154 exact (0.779); 138/152 -> 140/154 within-1 (0.909).** H7-marriage backlog:
 5 of 15 fixed (3 via H7.C.86, 2 via the marital-bond gate); 10 remain (the mode-A benefic-relief lift).
+
+### 2026-06-26 (ultracode) — Vimshottari Dasha: the event-timing layer
+Added `app/raman_saab/primitives/vimshottari.py` — the 120-year Vimshottari Mahadasha + Bhukti timeline,
+the foundation the placement-only judges deliberately lacked (it lets a NATAL verdict be projected onto
+TIME -- *when* a significator's results mature). Reuses the main engine's birth-MD computation
+(`calculate_vimshottari_mahadasha` from the Moon's nakshatra), unrolls the full multi-decade sequence in
+JD space (birth_jd +/- years*365.2425), and subdivides each MD into 9 proportional Bhuktis. API:
+`dasha_on(chart, jd) -> DashaPeriod(maha, antar)`, `date_to_jd`, plus a `maraka_lords`/`is_maraka_period`
+approximation (2nd/7th lords + Saturn).
+
+VALIDATED (8 unit tests): the canonical chart's birth MD is Mercury (CLAUDE.md pin); the Mahadasha
+running at the death date reproduces Raman's stated MD for ALL FOUR dated death goldens (Lincoln
+Saturn/Mercury and Hitler Rahu/Moon match to the BHUKTI exactly; chart_35/74 match the MD with the Bhukti
+off by 1-2 positions -- the expected birth-time/ephemeris sensitivity of a sub-period boundary). Additive
+(not wired into any verdict; ratchet unchanged at 120/154). NEXT for full OUTCOME timing: (a) functional-
+maraka identification (Rahu/Jupiter became chart-specific marakas in 3 of the death charts -- the simple
+2L/7L/Saturn set misses them); (b) per-signification period projection (which Dasha activates a matter's
+significators) to time events and tighten the death/longevity reading.

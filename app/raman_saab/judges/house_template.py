@@ -141,6 +141,7 @@ _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H7.C.83",  # 7th lord in the 12th + malefic on the 7th (marital loss/separation)
     "H7.C.84",  # 7th lord in the 8th + node/Saturn aggravator (coverture: vaidhavya/spouse death)
     "H7.C.85",  # Mars-in-8th + debilitated 7th lord (coverture: vaidhavya/spouse death)
+    "H9.A.20a", # Sun-Pitrukaraka in a dusthana + papakartari (father: early death)
 })
 
 

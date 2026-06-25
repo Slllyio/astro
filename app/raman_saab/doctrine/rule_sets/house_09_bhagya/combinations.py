@@ -38,6 +38,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
@@ -385,6 +386,34 @@ class _LordInHouseClassFromMoon(C.Condition):
         return (((p.rasi_house - moon.rasi_house) % 12) + 1) in self.from_houses
 
 
+class _SunPitrukarakaAfflicted(C.Condition):
+    """The Sun (Pitru-karaka) cast into a dusthana {6,8,12} AND hemmed by papakartari (a
+    natural malefic in BOTH the 2nd- and 12th-from-Sun), UNCANCELLED by neecha-bhanga ->
+    early death of the father.
+
+    Raman (HTJAH-II:7916): "Afflictions to the Sun or his occupation of malefic houses results
+    in early death of father. If the 9th lord is in a kendra or the 11th... or fortified, the
+    father lives long." Chart 97 (h9_13) conclusion HTJAH-II:8580: "the karaka and 9th lord Sun
+    are in a dusthana ... afflicted by the papakartari yoga caused by Rahu and Saturn ... the
+    father of the native died." The H9-father twin of the decisive vaidhavya rules H7.C.84/85
+    (karaka cast into an evil house + a malefic aggravator). EXALTATION is NOT a relief -- Raman
+    curtails an exalted-Sun-under-papakartari father too (h9_02/h9_05), so the only relief kept
+    is neecha-bhanga (HTJAH-II:8157, which flips a deprivation to protection). bphs-doctrine-
+    reviewer SOUND-WITH-CAVEAT (the backwards exalted-Sun guard was dropped)."""
+
+    _DUS: Final[frozenset[int]] = frozenset({6, 8, 12})
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        sun = ctx.chart.planets.get("Sun")
+        if sun is None or sun.rasi_house not in self._DUS:
+            return False
+        if not C.HemmedBy("Sun", "malefic").evaluate(ctx):
+            return False
+        if dignity("Sun", ctx.chart) == "debil" and neecha_bhanga("Sun", ctx.chart):
+            return False
+        return True
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -541,6 +570,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the Sun or the Moon in a kendra in a movable sign → native will not perform "
                   "the father's last rites",
         frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7455)),
+    # DECISIVE (father): the Sun (Pitru-karaka) cast into a dusthana {6,8,12} AND hemmed by
+    # papakartari (malefics flanking it), uncancelled by neecha-bhanga -> early death of the
+    # father. HTJAH-II:7916; Chart-97/h9_13 conclusion HTJAH-II:8580. The H9-father twin of the
+    # decisive vaidhavya rules H7.C.84/85; `father` is BIDIRECTIONAL (not an AFFLICTION_MATTER),
+    # so the decisive flag is the only lever that carries the verdict past _decide's strong-
+    # pillar favourable preponderance. Fires on h9_13 (target) + h9_05 (already afflicted) across
+    # the H9 goldens; spares every favourable/mixed twin (zero over-fire). EXALTATION is NOT a
+    # relief (h9_02/h9_05 are exalted-Sun fathers Raman still curtails). h9_02 (exalted Sun in
+    # the 9th, papakartari-on-bhava + karaka-in-9th) is a distinct mechanism, deferred.
+    RuleRecord(
+        id="H9.A.20a", house=9, signification="father", group="combination", kind="evaluable",
+        condition=_SunPitrukarakaAfflicted(),
+        fortified=None,
+        afflicted="the Sun (Pitru-karaka) cast into a dusthana (6th/8th/12th) and hemmed by "
+                  "papakartari (malefics flanking it), uncancelled by neecha-bhanga -> the "
+                  "father's longevity is curtailed; early death of the father",
+        frame="KARAKA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7916)),
 
     # ===== B. Fortune / raja-yoga-ish (HTJAH-II:7460-7484) — sig fortune =====
     RuleRecord(

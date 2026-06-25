@@ -902,3 +902,24 @@ span class). +5, ZERO regressions (only the 5 H8 Tier-3 snapshots drifted, regen
 on its confirmed death goldens -- the death house is open.** Phase E narrowed to just the numeric SPAN.
 **Session net: ratchet 89/130 -> 106/146 (68.5% -> 72.6%); validation array 130 -> 146; ALL 12 houses now
 have confirmed goldens (H8 was the last empty one).**
+
+### 2026-06-25 — Faithfulness program: graded degree + ordinal metric + first cited fix
+User-directed reframe ("7 categories, world-best logic, don't overfit"). Three faithful layers (plan
+`synchronous-crafting-wreath.md`), each user-validated:
+- **Layer A — graded `degree`** (strong/moderate/mild) on every SignificationVerdict, deterministic from
+  the pillar count + decisive/veto flags + marginal-shift. verdict x degree = 7 graded output states (the
+  user's "7 categories" done faithfully -- surfaces real internal strength, invents no doctrinal level).
+  Pinned in all 45 Tier-3 snapshots; 9 unit tests. Strict ratchet unchanged. (commit 6208f9b)
+- **Layer B — ordinal-tolerance metric** (within-1) alongside the strict exact-match ratchet. At intro:
+  exact 106/146=0.726, within-1 126/146=0.863. The 40 strict misses split EXACTLY in half: 20 subjective
+  boundary near-hits (dist 1) + 20 REAL doctrinal errors (dist>=2). The dist>=2 set is the cited-fix target
+  list. New track_b_ordinal baseline; the [ratchet] report shows both. (commit ce86fad)
+- **Layer C — cited fixes, real-errors-first.** #1 H9 father: **H9.A.20a** (DECISIVE; Sun-Pitrukaraka in a
+  dusthana + papakartari, bhanga-guarded; cite HTJAH-II:7916/8580). The drafting agent's first cut had a
+  backwards exalted-Sun guard; bphs-doctrine-reviewer CAUGHT it (Raman curtails an exalted-Sun-under-
+  papakartari father too) -> guard dropped. Over-fire scan: fires on h9_13 (target) + h9_05 (already
+  afflicted); spares every favourable/mixed twin. +1 (h9_13 favourable->afflicted), user-validated against
+  Raman's text ("the father of the native died"). h9_02 deferred (distinct mechanism).
+**Ratchet: 106/146 -> 107/146 strict (0.733); 126/146 -> 127/146 within-1 (0.870); 19 real errors remain.**
+Remaining cited-fix targets (dist>=2): H5 progeny x6, H1 self x4 (mostly limits), H11 x2, h9_02, chart_44,
+chart_60, h4_01, h6_04, chart_08, h12_05.

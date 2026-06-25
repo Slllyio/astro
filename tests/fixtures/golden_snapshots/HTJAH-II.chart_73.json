@@ -8,11 +8,11 @@
       "H8.C.26",
       "H8.L.1"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "legacies": {
         "lead_frame": "moon",

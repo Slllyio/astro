@@ -880,3 +880,25 @@ applied (citation 300->929 = the Mars-in-8th rule, not the 7th-lord-in-8th line;
 promotion). Only h7_10 has the signature across the H7 goldens -> +1 (favourable->afflicted, CONFIRMED),
 ZERO regressions. 4 new TestH7C85 unit tests. Suite 3113 passed. Remaining Section-C: 14 (7 over-lenient +
 7 over-harsh). **Session net: ratchet 89/130 -> 101/141 (68.5% -> 71.6%); validation array 130 -> 141.**
+
+### 2026-06-25 — H8 DEATH HOUSE OPENED (user-directed: "do H8 like the other houses") — 101/141 -> 106/146
+The user rejected the "Phase-E subsystem" framing: H8 has the same house_08_ayur rule structure as every
+house, so the death MANNER should be judged from the 8th-house affliction like any dusthana house, not
+deferred wholesale. Two-part judge change:
+1. **Narrowed LONGEVITY_GUARD** to the `longevity` SPAN sig only (`sig.key=="longevity"`). The `death`
+   MANNER sig now judges normally.
+2. **Added `death` to _DUSTHANA_AFFLICTION_KEYS** (AFFLICTION_MATTER): a fired malefic on the 8th CONFIRMS
+   the affliction; pillar strength cannot rescue death (a strong chart can't make a violent death
+   un-afflicted) — the exact mechanism already used for H6 (disease/enemies) + H12 (incarceration/left_eye).
+bphs-doctrine-reviewer VALIDATED (HIGH): the manner is read from the 8th apparatus independent of the span
+(HTJAH-II 8th-house combos #1-2: malefics-in-8th -> unnatural death; Phaladeepika Ch.14 Sl.12-13/20: cause
+read from 8th occupants/aspectors). Confirmed 5 death goldens = afflicted: chart_73 (Lincoln, assassinated
+-> Mrityu Yoga), chart_74 (Gandhi, weapon-yoga), chart_75 (JFK, shot), chart_78 (Hitler, suicide, "8th
+heavily afflicted"), chart_35 (Poornayu natural death -- afflicted because the maraka apparatus FIRED; the
+"good longevity" reading lives in the separate deferred `longevity` sig; reviewer VALIDATED/MEDIUM). The 2
+LONGEVITY-SPAN charts (chart_33 86y, chart_34 70y) LEFT DRAFT -- the numeric ayurdaya span genuinely needs
+the span engine (reviewer INSUFFICIENT-EVIDENCE; in-corpus counter-examples 59/61 prove 8th-strength !=
+span class). +5, ZERO regressions (only the 5 H8 Tier-3 snapshots drifted, regenerated). **H8 now 5/5 = 100%
+on its confirmed death goldens -- the death house is open.** Phase E narrowed to just the numeric SPAN.
+**Session net: ratchet 89/130 -> 106/146 (68.5% -> 72.6%); validation array 130 -> 146; ALL 12 houses now
+have confirmed goldens (H8 was the last empty one).**

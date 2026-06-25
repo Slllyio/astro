@@ -8,11 +8,11 @@
       "H8.C.25",
       "H8.L.7"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "legacies": {
         "lead_frame": "lagna",

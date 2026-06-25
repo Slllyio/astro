@@ -117,6 +117,7 @@ _H6_DISEASE_KEYS: Final[frozenset[str]] = frozenset({"enemies_disease", "disease
 _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "enemies_disease", "accidents", "debts", "enemies", "disease_chronic",  # H6
     "incarceration", "left_eye",                                            # H12
+    "death",                                                                # H8 (manner/cause)
 })
 
 # Rule ids the judge treats as DECISIVE afflictions (Stage-3 H3/H7 rule-authoring). A fired
@@ -283,13 +284,13 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
 
 def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     """Collapse a ledger to (verdict, borderline_shifted). The clause order matters."""
-    # Longevity guard (methodology §1 lines 39-42, §8): for a longevity/death matter the
-    # span class and maraka are owned by the Phase-E longevity sub-engine, which runs as a
-    # pre-pass and "gates and modulates all house judgment". This judge must NOT emit a
-    # death/afflicted verdict for such a matter — it defers to insufficient-evidence. The
-    # guard therefore (a) neutralises maraka_active's verdict-driving effect, (b) replaces
-    # the karaka VETO's afflicted with insufficient-evidence, and (c) clamps any afflicted
-    # the remaining clauses would produce to insufficient-evidence.
+    # Longevity guard — SPAN only. For the numeric life-SPAN (`longevity` sig) the span class
+    # and maraka are owned by the unbuilt ayurdaya pre-pass, so this judge must NOT emit a
+    # span verdict from raw positions (HTJAH-II:3477-3479) — it defers to insufficient-
+    # evidence. The guard therefore (a) neutralises maraka_active's verdict-driving effect,
+    # (b) replaces the karaka VETO's afflicted with insufficient-evidence, and (c) clamps any
+    # afflicted the remaining clauses would produce. The `death` MANNER sig is NOT guarded —
+    # it judges the 8th-house affliction directly (see clause 1.5 AFFLICTION_MATTER).
     guarded = "LONGEVITY_GUARD" in L.flags
     maraka_drives = L.maraka_active and not guarded
     # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
@@ -298,15 +299,17 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
             return _navamsa_modulate("insufficient-evidence", L)
         return _navamsa_modulate("afflicted", L)
     # 1.5 DUSTHANA-AFFLICTION CONFIRMATION (Stage-3, user-signed-off "B"). For an inherently
-    # malefic signification (6th disease/enemies/debts/accidents; 12th incarceration/left_eye —
-    # flagged AFFLICTION_MATTER in _build_frame_ledger) a fired malefic with NO benefic
-    # contradiction CONFIRMS the affliction. This is the directional mirror of the clause-2
-    # navamsa guard: pillar strength does NOT rescue a dusthana evil (a strong 6th lord
-    # strengthens disease), so the matter must not fall through to clause 6/8 and read as
-    # 'mixed', nor be lifted by a confirming navamsa. A BENEFIC contradiction (a Vipareeta /
-    # Harsha yoga or a benefic aspect) routes the matter back to the normal preponderance
-    # weigh at clause 2. Deferred under the longevity guard (Phase E owns death/span). The
-    # verdict is decisive — _navamsa_modulate never shifts an 'afflicted'.
+    # malefic signification (6th disease/enemies/debts/accidents; 12th incarceration/left_eye;
+    # 8th death/manner — flagged AFFLICTION_MATTER in _build_frame_ledger) a fired malefic with
+    # NO benefic contradiction CONFIRMS the affliction. This is the directional mirror of the
+    # clause-2 navamsa guard: pillar strength does NOT rescue a dusthana evil (a strong 6th lord
+    # strengthens disease; a strong chart cannot make a violent death un-afflicted), so the
+    # matter must not fall through to clause 6/8 and read as 'mixed', nor be lifted by a
+    # confirming navamsa. A BENEFIC contradiction (a Vipareeta / Harsha yoga, a benefic in/on
+    # the 8th, or a benefic aspect) routes the matter back to the normal preponderance weigh at
+    # clause 2 (preserving the 'natural death' reading on a beneficially-disposed 8th). Applies
+    # to `death` (manner) but NOT to the `longevity` SPAN, which is still guarded. The verdict
+    # is decisive — _navamsa_modulate never shifts an 'afflicted'.
     if ("AFFLICTION_MATTER" in L.flags and not guarded
             and L.fired_malefic and not L.fired_benefic):
         return _navamsa_modulate("afflicted", L)
@@ -625,13 +628,17 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
 
     benefic, malefic, neutral = _bucket_fired(chart, sig, ctx)
 
-    # Longevity guard (methodology §1, lines 39-42; §8): longevity is a pre-pass that
-    # OWNS death/span-class judgment and "gates and modulates all house judgment". A
-    # longevity/death signification therefore must NOT emit a death verdict here — the
-    # Phase-E longevity sub-engine fixes the span class first. LONGEVITY_GUARD is the
-    # load-bearing flag _decide reads to suppress maraka_active and karaka-veto afflicted
-    # paths for these matters, deferring the call to Phase E.
-    if "longevity" in sig.rule_tags or "death" == sig.key:
+    # Longevity guard — SPAN only (2026-06-25, "do H8 like the other houses"). The numeric
+    # life-SPAN (Pindayu/Amsayu ayurdaya year-count → alpa/madhya/purna class) is a pre-pass
+    # the classics insist be computed before pronouncing the span (HTJAH-II:3477-3479,
+    # 4465-4472); the engine can't yet do it, so the `longevity` signification still defers
+    # (LONGEVITY_GUARD suppresses maraka_active + karaka-veto → insufficient-evidence). The
+    # `death` MANNER signification is NOT guarded: Raman reads the manner/cause directly off
+    # the 8th-house affliction apparatus, independent of the span (HTJAH-II combos #1-2
+    # malefics-in-8th → unnatural death; Phaladeepika Ch.14 Sl.12-13/20). `death` is instead
+    # an AFFLICTION_MATTER (below) so a fired malefic confirms it. bphs-doctrine-reviewer
+    # VALIDATED (HIGH).
+    if sig.key == "longevity":
         flags.append("LONGEVITY_GUARD")
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the

@@ -172,15 +172,17 @@ VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
 - **Ready to confirm (10)** — the engine already matches the recorded DRAFT verdict, so
   confirming the ones the user validates moves the ratchet 90/130 → up to 100/140:
   h7_01, h7_06, h7_12, h7_13, h7_14, h9_01, h12_14, h6_02, h6_05 (+ h12_13, currently HELD).
-- **H8 death/longevity (7)** — `chart_33/34/35/73/74/75/78`. **BLOCKED on Phase E (2026-06-25):**
-  these are NOT confirmable by text validation. Each record's prose ends "Asserts only after Phase E
-  longevity engine", and the judge's `LONGEVITY_GUARD` + `_clamp_longevity` (house_template.py:392)
-  deliberately DEFER every death/longevity verdict to the unbuilt Phase-E sub-engine
-  (afflicted → insufficient-evidence). chart_33/34 assert ayurdaya year-counts (Pindayu/Amsayu);
-  chart_35/73/74/75/78 (Lincoln/Gandhi/JFK/Hitler) need death-dasha + maraka timing. Opening the
-  death house requires building a **Phase-E longevity engine** (ayurdaya span class + maraka-dasha
-  timing). The death-timing work on the sibling branches (`feat/death-timing-predictor`,
-  `data/vedastro-corpus`) is the empirical analogue of this missing machinery — a port/adapt candidate.
+- **H8 death/longevity** — **DEATH MANNER OPENED 2026-06-25** (user-directed "do H8 like the other
+  houses"). The death *manner* is read directly from the 8th-house affliction apparatus, like any
+  dusthana house — NOT a Phase-E subsystem. Two-part judge change: narrowed `LONGEVITY_GUARD` to the
+  `longevity` SPAN sig only; flagged `death` as an `AFFLICTION_MATTER` (a fired malefic on the 8th
+  confirms the affliction; pillar strength can't rescue death — mirrors H6/H12). bphs-doctrine-reviewer
+  VALIDATED (HIGH; HTJAH-II combos #1-2, Phaladeepika Ch.14). **5 death goldens confirmed = afflicted**
+  (chart_73 Lincoln, chart_74 Gandhi, chart_75 JFK, chart_78 Hitler, chart_35 Poornayu-natural-via-maraka)
+  → ratchet +5, H8 now 5/5. **Only the 2 LONGEVITY-SPAN charts remain** (`chart_33` Pindayu 86y,
+  `chart_34` Amsayu 70y) — left DRAFT: the numeric span genuinely needs the ayurdaya engine (reviewer
+  INSUFFICIENT-EVIDENCE; 8th-strength ≠ span class, proven by in-corpus charts 59/61). That span build
+  is the one true Phase-E remnant below.
 - **Engine mismatch (17)** — **VALIDATED 2026-06-25** against Raman's text: every recorded DRAFT
   verdict is CORRECT, the engine misses each, so NONE is confirmable (no wrong-DRAFT quick wins).
   Split: **10 over-lenient** (engine favourable/mixed where Raman afflicted/mixed — esp. the
@@ -194,9 +196,10 @@ VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
 - **Notable Horoscopes** is only 2 of ~50 chapters present — an *acquisition* gap; the full
   edition would add ~48 fully-worked goldens. Flag for the user to source.
 
-## Phase E — longevity / death-timing engine  `shadbala`/`new-mechanism`  (scoped 2026-06-25)
-The H8 death house has **0 confirmed goldens**; the engine deliberately defers all death/longevity
-verdicts (`LONGEVITY_GUARD` + `_clamp_longevity`). Opening it needs a Phase-E sub-engine. Scope:
+## Phase E — longevity SPAN engine  `shadbala`/`new-mechanism`  (narrowed 2026-06-25)
+**Update:** the H8 death *manner* is now judged like any house (5/5 confirmed) — Phase E is no longer
+needed for the death house in general, **only for the numeric life-SPAN** (`chart_33` Pindayu 86y,
+`chart_34` Amsayu 70y, still DRAFT). The `longevity` sig keeps deferring. Remaining scope for the span: 
 - **Already present** (partial infra to build on): `app/raman_saab/primitives/balarishta.py`
   (infant-mortality / early-death yogas), the `house_08_ayur/` rule sets (combinations, lord_in_12,
   planets_in_8th), and the maraka flags in the judge (`maraka_active`, `LONGEVITY_GUARD`).

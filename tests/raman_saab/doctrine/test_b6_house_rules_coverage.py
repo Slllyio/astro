@@ -50,13 +50,16 @@ class TestB6HouseRuleCoverage:
         assert _RULES["H7.KD.1"].fires(chart) is True
         assert _RULES["H7.C.60"].fires(chart) is True
 
-    def test_b6_2_fourth_lord_in_12_fires_property_loss(self):
-        """B6.2: Aries Lagna, 4th lord (Moon) in the 12th (Pisces) → both H4.C.3
-        (HTJAH-I:4208, sig property) and H4.L.12 (HTJAH-I:4187) fire — the loss-of-
-        property doctrine HPA-19:247 restates."""
+    def test_b6_2_fourth_lord_in_12_property_loss_via_bridge(self):
+        """B6.2: Aries Lagna, 4th lord (Moon) in the 12th (Pisces) → the property-loss
+        doctrine (HPA-19:247 / HTJAH-I:4187) is carried into the `property` verdict by
+        the mother_home BRIDGE rule H4.L.12. H4.C.3 (HTJAH-I:4208) is DESCRIPTIVE since
+        the 2026-06-25 de-dup — it documents the same dusthana-lord property loss but does
+        NOT fire, so the placement is not double-counted in the property preponderance."""
         chart = _chart({"Moon": 340.0}, 5.0)
-        assert _RULES["H4.C.3"].fires(chart) is True
         assert _RULES["H4.L.12"].fires(chart) is True
+        assert _RULES["H4.C.3"].kind == "descriptive"
+        assert _RULES["H4.C.3"].fires(chart) is False
 
     def test_b6_3_dual_sign_seventh_and_venus_fires_multiplicity(self):
         """B6.3: Sagittarius Lagna (7th sign = Gemini, a common/dual sign) with

@@ -112,13 +112,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified="4th lord in the Lagna with Venus strongly in the 4th → vehicles, jewels, wealth",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4207)),
+    # H4.C.3 is DESCRIPTIVE (de-dup, 2026-06-25): EVERY arm of its Or — LordIn(4,6/8/12)
+    # and Mars/Saturn-in-4 — is a placement already scored into the `property` verdict by the
+    # mother_home BRIDGE rules (H4.L.6/8/12 in lord_in_12.py, H4.P.Mars/H4.P.Saturn in
+    # planets_in_4th.py; the `property` sig aggregates property+mother_home, significations.py).
+    # Keeping it evaluable double-counted one placement in the property preponderance, violating
+    # the H7 policy "no rule re-scores a placement already fired within the SAME signification".
+    # Made descriptive (citation preserved) per that policy and the H4.C.30 precedent; the
+    # property-loss testimony survives via the bridge. Zero golden regression — the double-count
+    # was inert (DOCTRINE_BACKLOG B6-adjacent, measured 2026-06-25).
     RuleRecord(
-        id="H4.C.3", house=4, signification="property", group="combination", kind="evaluable",
+        id="H4.C.3", house=4, signification="property", group="combination", kind="descriptive",
         condition=C.Or(C.LordIn(4, 6), C.LordIn(4, 8), C.LordIn(4, 12),
                        C.InRashiHouse("Mars", 4), C.InRashiHouse("Saturn", 4)),
         fortified=None,
         afflicted="4th lord in a dusthana, or Mars/Saturn occupying the 4th → loses property "
-                  "and wealth",
+                  "and wealth (scored via the mother_home bridge placements H4.L.6/8/12 + "
+                  "H4.P.Mars/Saturn; kept descriptive to avoid double-counting in `property`)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4208)),
     RuleRecord(
         id="H4.C.5", house=4, signification="happiness", group="combination", kind="evaluable",

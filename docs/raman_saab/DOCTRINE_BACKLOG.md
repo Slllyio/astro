@@ -122,7 +122,7 @@ regress nor be re-added as duplicates. ZERO engine change → ratchet unchanged 
 - Planet results vary by avastha/disposition, not mere occupancy (HPA-19:47; HPA-7 the 10
   avasthas) — a longer-horizon `shadbala`/metadata item, **still deferred**.
 
-### B6-adjacent observation (NOT a B6 action) — `H4.C.3` / `H4.L.12` same-placement double-fire
+### B6-adjacent observation — `H4.C.3` / `H4.L.12` same-placement double-fire  ✅ RESOLVED 2026-06-25
 Surfaced during the B6.2 audit: the H4 `property` verdict (which aggregates the `property` and
 `mother_home` rule_tags, significations.py:251) has TWO evaluable rules firing on the single
 `LordIn(4,12)` placement — `H4.C.3` (sig `property`, HTJAH-I:4208) and `H4.L.12` (sig
@@ -137,7 +137,13 @@ full harness with H4.C.3 disabled (only the B6.2 coverage assertion changed; all
 TrackB=131). So there is no ratchet cost or benefit today; the decision is purely the design call
 above (combos-stack-on-bridge vs the H7 "no re-score" policy). Recommendation: align with the H7
 policy (make `H4.C.3` descriptive, citation preserved) *before* Phase-3 adds H4-property goldens,
-so the inflation can't bake a wrong verdict into a new golden. Engine left unchanged pending sign-off.
+so the inflation can't bake a wrong verdict into a new golden.
+**Applied 2026-06-25 (user-delegated):** `H4.C.3` is now `kind="descriptive"` (citation preserved,
+ownership note added) — EVERY arm of its Or is already scored into `property` by the mother_home
+bridge (H4.L.6/8/12, H4.P.Mars/Saturn), so the property-loss testimony survives via the bridge while
+the double-count is removed. Zero golden regression (ratchet held 99/139, no snapshot drift — the
+double-count was inert at the evidence level too). The B6.2 coverage test was updated to assert the
+property loss flows through H4.L.12 and that H4.C.3 no longer fires.
 
 ## B7 — Reconcile the Venus/Saturn combustion doctrine  `threshold`  ✅ RESOLVED 2026-06-15
 **Settled:** removed the non-Raman 0.85 Venus/Saturn exemption; `_combust_graded` now uses one

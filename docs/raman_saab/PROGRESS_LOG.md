@@ -807,3 +807,13 @@ All 9 were already engine-matches, so correct +9 / total +9 (the engine was fait
 admits them to the asserting set). Baseline re-based 90/130 -> 99/139 (accuracy 0.692 -> 0.712); zero
 regressions, no snapshot drift. h12_13 left HELD. Worksheet PHASE3_draft_validation.md regenerated:
 25 DRAFTs remain (1 held + 7 H8 placeholders + 17 engine-mismatch). Suite 3101 passed, CONFIRMED 131->140.
+
+### 2026-06-25 — Item-1 applied: H4.C.3 property double-fire removed — ratchet 99/139 unchanged
+Applied the deferred B6-adjacent fix (user-delegated): `H4.C.3` made `kind="descriptive"`. Every arm of
+its Or (LordIn(4,6/8/12), Mars/Saturn-in-4) is already scored into the `property` verdict by the
+mother_home BRIDGE rules (H4.L.6/8/12, H4.P.Mars/Saturn), so keeping it evaluable double-counted one
+placement in the property preponderance — a violation of the H7 "no rule re-scores a placement within the
+same signification" policy. Now descriptive (citation preserved, ownership note) per that policy + the
+H4.C.30 precedent; the property-loss testimony survives via the bridge. ZERO regression (ratchet held
+99/139, no snapshot drift — the double-count was inert at the evidence level too). B6.2 coverage test
+updated to assert property loss flows through H4.L.12 and that H4.C.3 no longer fires. Suite 3101 passed.

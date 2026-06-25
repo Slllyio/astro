@@ -49,10 +49,24 @@ clamped fallback, **not** a real longevity reading.
 | chart_75 | Chart 75 (Kennedy/JFK - US President shot dead) | H8/death | afflicted | HTJAH-II:6821-6869 |
 | chart_78 | Chart 78 (Hitler - believed suicide) | H8/death | favourable | HTJAH-II:6959-6993 |
 
-## C. Engine mismatch — needs engine work or verdict correction (17 DRAFTs)
+## C. Engine mismatch — VALIDATED as genuine engine misses (17 DRAFTs)
 
-The recorded DRAFT verdict differs from the engine. Mostly the over-harsh H7
-marriage tail (B2/B3/B4) + H5. Listed for awareness; not ready to confirm.
+**Validated 2026-06-25 against Raman's text (corpus reads).** Every recorded DRAFT
+verdict is CORRECT per Raman — the engine misses each one, so NONE is confirmable now
+(confirming would lower accuracy). No "wrong-DRAFT" quick wins exist here. The split:
+- **Over-LENIENT (10)** — engine reads favourable/mixed where Raman is afflicted/mixed:
+  h7_02, h7_04, h7_05, h7_09, h7_10, h7_11, h7_15, h7_16, h7_19, h5_18. The dominant
+  failure: the engine **under-reads marriage afflictions** — esp. coverture/vaidhavya
+  (spouse-death) charts h7_09/10/11 read favourable/mixed though Raman reads the spouse
+  dead. The V2 favour-preponderance is over-lifting afflicted marriage verdicts.
+- **Over-HARSH (7)** — engine reads afflicted where Raman is mixed/favourable:
+  h7_03, h7_07, h7_17, h7_18, h5_13, h5_14, h5_15. Mostly "unconventional but not ruined"
+  marriages (married outside caste/religion, remarried after widowhood = mixed) that the
+  engine's decisive/nodal affliction over-reads as full afflicted.
+
+These are the precise B2/B3/B4 + H5 engine-calibration spec. They are NOT bulk-fixable —
+each needs a faithful, cited, doctrine-reviewed, zero-regression increment (the project's
+demonstrated discipline). Raman's exact reasoning per chart:
 
 | id | house/sig | recorded | engine | Raman's reasoning |
 |----|-----------|----------|--------|-------------------|

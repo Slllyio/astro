@@ -181,8 +181,14 @@ VALIDATING the existing DRAFTs, not mining new charts. Worksheet:
   death house requires building a **Phase-E longevity engine** (ayurdaya span class + maraka-dasha
   timing). The death-timing work on the sibling branches (`feat/death-timing-predictor`,
   `data/vedastro-corpus`) is the empirical analogue of this missing machinery — a port/adapt candidate.
-- **Engine mismatch (17)** — recorded DRAFT ≠ engine; mostly the over-harsh H7 marriage tail
-  (B2/B3/B4) + H5. Not ready to confirm — these need engine work or a verdict correction.
+- **Engine mismatch (17)** — **VALIDATED 2026-06-25** against Raman's text: every recorded DRAFT
+  verdict is CORRECT, the engine misses each, so NONE is confirmable (no wrong-DRAFT quick wins).
+  Split: **10 over-lenient** (engine favourable/mixed where Raman afflicted/mixed — esp. the
+  coverture/vaidhavya spouse-death charts h7_09/10/11 the V2 favour-preponderance over-lifts) +
+  **7 over-harsh** (engine afflicted where Raman mixed — "unconventional but not ruined" marriages
+  h7_17/18/19 the nodal/decisive affliction over-reads). This is the precise B2/B3/B4 + H5
+  calibration spec (per-chart reasoning in `worksheets/PHASE3_draft_validation.md` §C). Each needs
+  a faithful, cited, doctrine-reviewed, zero-regression increment — not a bulk pass.
 - New-chart mining (HTJAH-I/II early chapters, full birth lines) via the existing
   DRAFT→worksheet→CONFIRMED pipeline remains available once the DRAFT backlog is cleared.
 - **Notable Horoscopes** is only 2 of ~50 chapters present — an *acquisition* gap; the full

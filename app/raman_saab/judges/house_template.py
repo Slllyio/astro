@@ -964,6 +964,24 @@ def _dhana_floor(
     return new, new != verdict, (("dhana_floor", f"{dhana_ids[0]}:{action}"),)
 
 
+def _putrakaraka_malefic_afflicted(chart: RamanChart) -> bool:
+    """The PutraKaraka Jupiter conjoined or aspected (whole-sign drishti) by >= 1 natural
+    malefic — Raman's 'baneful PutraKaraka' (HTJAH-I:5701-5709: 'Jupiter ... his association
+    with Rahu and the combined aspects of Mars and Saturn ... rendered him highly malefic ...
+    capable of producing the most baneful effects')."""
+    jup = chart.planets.get("Jupiter")
+    if jup is None:
+        return False
+    for m in NATURAL_MALEFICS:
+        if m == "Jupiter" or m not in chart.planets:
+            continue
+        if chart.planets[m].rasi_house == jup.rasi_house:   # conjunction
+            return True
+        if drishti.aspects_planet(m, "Jupiter", chart):     # whole-sign drishti
+            return True
+    return False
+
+
 def _fertility_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict,
     lead: FrameLedger, ctx: EvalContext,
@@ -1010,6 +1028,26 @@ def _fertility_gate(
         return verdict, (("beeja_kshetra", "weak"),), lead
     if bk.beeja_strong and bk.kshetra_strong:
         return verdict, (("beeja_kshetra", "numeric_strong"),), lead
+    # Exactly one sphuta weak: a single barren seed/field. Raman never denies on a lone weak
+    # sphuta (HTJAH-I:5507 "children may be born late"), but DENIES it when an independent
+    # house/karaka affliction corroborates — his own h5_05 / h5_12 reasoning:
+    #   Arm A (h5_12 "5th house spoilt"):    >= 2 fired malefic child-rules.
+    #   Arm B (h5_05 "PutraKaraka baneful"): the lead karaka pillar is weak AND the PutraKaraka
+    #     Jupiter is itself afflicted by >= 1 natural malefic (conjunction / whole-sign drishti).
+    # The AND in Arm B is the faithful discriminator vs the FAVOURABLE twin h5_16, whose Jupiter
+    # is ALSO malefic-afflicted but has neecha-bhanga (so karaka_strong is True) and is read as
+    # fertile (Raman's count method -> 13 children). h5_10 (engine reads all pillars strong, 0
+    # malefic rules) stays a documented limit — a Shadbala-vs-Raman strength disagreement, not a
+    # gate gap. bphs-doctrine-reviewer SOUND. The gate is decisive (overrides the placement
+    # verdict), like the both-weak arm.
+    n_malefic = sum(1 for fr in lead.fired_malefic if fr.rule.signification == sig.key)
+    arm_a = n_malefic >= 2
+    arm_b = (lead.karaka_strong is False) and _putrakaraka_malefic_afflicted(chart)
+    if arm_a or arm_b:
+        lead = dataclasses.replace(
+            lead, flags=tuple(dict.fromkeys(lead.flags + ("FERTILITY_GATE",))))
+        verdict = "afflicted"
+        return verdict, (("beeja_kshetra", "one_weak_denied"),), lead
     return verdict, (("beeja_kshetra", "numeric_partial"),), lead
 
 

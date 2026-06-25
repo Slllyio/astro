@@ -265,11 +265,17 @@ MORE surface affliction. Forcing them violates the main goal (faithful, not gold
 - **h11_09 (H11 gains, over-harsh fav→afflicted)** — the engine over-weights an afflicted karaka (Jupiter in
   dusthana + conj Ketu) and under-weights a strong 2nd/7th/9th/11th-lords-in-kendra dhana-yoga. Fixing needs
   a yoga-relief that risks regressing genuinely-afflicted gains; deferred.
-- **h5_05 / h5_10 / h5_12 (H5 children)** — single-weak-sphuta mechanism (no Jupiter papakartari, so not
-  caught by H5.C.38). The fertility-gate refinement (one-weak-sphuta + corroborating affliction) is the
-  "delicate" engine-logic change flagged in the plan; deferred pending a chart-by-chart over-fire design.
+- **h5_05 / h5_12 (H5 children)** — FIXED 2026-06-25 (Phase-2). The `_fertility_gate` one-weak-sphuta
+  refinement denies on a corroborating affliction: Arm A (>=2 malefic 5th-rules = "5th house spoilt",
+  h5_12) or Arm B (weak karaka pillar + Jupiter malefic-afflicted = "baneful PutraKaraka", h5_05). +2,
+  zero over-fire; spares h5_16 via the `karaka_strong is False` AND. bphs-doctrine-reviewer SOUND.
+- **h5_10 (H5 children)** — STILL a limit. Raman: "the lord is weak and the Karaka powerless"
+  (HTJAH-I:5804), but the engine reads ALL pillars strong + 0 malefic rules — a pillar-layer strength
+  DISAGREEMENT, not a gate gap. The gate must not invent an affliction the engine cannot see. Revisit only
+  if the Shadbala/dignity strength reads are reconciled.
 - **h5_16 / chart_08 (over-harsh fav→engine-afflicted)** — softening these un-afflicts genuine cases or
-  needs the forbidden navamsa/CONTRA_PILLAR retune. Documented limits.
+  needs the forbidden navamsa/CONTRA_PILLAR retune. Documented limits. (The Phase-2 gate explicitly SPARES
+  h5_16 — does not make it worse.)
 - **chart_09/17/20/31 (H1 self)** — holistic whole-chart prose with no single cited combination.
 - **h9_02 (H9 father)** — distinct mechanism (EXALTED Sun IN the 9th + papakartari-on-bhava), not the
   H9.A.20a dusthana signature; would need a separate papakartari-on-bhava rule.

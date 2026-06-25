@@ -943,3 +943,22 @@ surface affliction (chart_60-vs-chart_54, h11_09 dhana-yoga, h5_16, chart_08, h1
 4 shipped and the 16 deferred is exactly GENERAL-dictum vs chart-conclusion-only — i.e. faithful vs
 golden-tuned. within-1 (0.890) is at the projected ordinal ceiling; the 20 distance-1 misses are
 subjective favourable-vs-mixed boundary calls surfaced by the graded `degree`, not errors.
+
+### 2026-06-25 (ultracode) — Phase 1 avastha→degree + Phase 2 H5 single-weak-sphuta gate
+User-directed under ultracode (multi-agent workflows: discover→design→adversarial doctrine-review).
+- **Phase 1 (avastha→degree, commit 3694e26):** the classical avastha (baladi + jagradadi, app.core.avastha)
+  now modulates the graded `degree` — the verdict's deliverers (lead lord + karaka) in a net-weak avastha
+  demote the intensity one step. DEGREE-ONLY, verdict-invariant (ratchet unchanged); a monkeypatch pin
+  asserts forcing the demotion ON changes no verdict. Phaladeepika Sl.20 basis; demotion-only, min-combine,
+  Bala=0, mandatory ValueError crash-guard for Track-B charts. bphs-doctrine-reviewer SOUND-WITH-CAVEAT.
+  10 tests; 45 snapshots refreshed degree-only.
+- **Phase 2 (H5 single-weak-sphuta fertility-gate, +2):** when exactly one Beeja/Kshetra sphuta is weak,
+  the gate now denies on a corroborating affliction — Arm A (>=2 malefic 5th-rules, h5_12 "5th house
+  spoilt") or Arm B (weak karaka pillar + Jupiter malefic-afflicted, h5_05 "baneful PutraKaraka"). The
+  reviewer's first bhava-fortification guard FAILED empirically (lost h5_05); the reformulated Arm B
+  (actual Jupiter malefic-affliction) is more faithful AND safer, and the reviewer re-confirmed SOUND on
+  follow-up. Spares the favourable twin h5_16 via the karaka_strong-is-False AND; h5_10 stays a documented
+  limit (pillar-layer strength disagreement). 4 tests.
+**Ratchet: 110/146 -> 112/146 exact (0.767); 130/146 -> 132/146 within-1 (0.904); 14 real errors remain.**
+Session total: foundation (degree + ordinal metric) + avastha deepening + 6 cited/gate fixes
+(h9_13, h5_01, h5_07, h4_01, h5_05, h5_12), 106/146 -> 112/146 exact, 126/146 -> 132/146 within-1.

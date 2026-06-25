@@ -337,9 +337,31 @@ h5_18 (children, mixed — engine `favourable`, "spoiling of the 5th house" miss
 
 **Status (2026-06-26): 5 of 15 fixed** (h7_02/05/15 via H7.C.86; h7_16/19 via the marital-bond gate).
 **10 remain** — all MODE-A `afflicted`-should-be-`mixed` benefic-relief misses (h5_13/14, h7_03/07/17/18),
-plus h7_04 (the lone weak mode-B, 1 malefic in 8th-from-Moon), h5_15/h5_18, and h7_11 (coverture). The
-mode-A family needs a marital benefic-RELIEF lift (afflicted->mixed when Raman's named relief is present:
-"no separation/divorce", remarriage, benefic on the karaka) — the inverse of this gate.
+plus h7_04 (the lone weak mode-B, 1 malefic in 8th-from-Moon), h5_15/h5_18, and h7_11 (coverture).
+
+### Mode-A path (diagnosed 2026-06-26) — a benefic-RELIEF LIFT (afflicted -> mixed), regression-aware
+The mode-A reliefs are heterogeneous and the fix touches rules already shipped, so it needs careful,
+dedicated work (NOT a tail-of-session rush). Per-target why-afflicted:
+- **h5_13** (children): reads afflicted via the **fertility-gate Arm A (>=2 malefics)** I shipped — but
+  Raman = mixed ("birth not denied", Jupiter unafflicted). **Arm A over-fires here** (the H5 over-fire
+  scan only checked CONFIRMED goldens; h5_13 was DRAFT). FIX: gate Arm A with "karaka Jupiter NOT clean"
+  (a clean/unafflicted karaka -> the affliction is tempered to mixed, not denied). Must NOT regress h5_12
+  (Jupiter afflicted there -> stays afflicted). Verify h5_12/06/07 unchanged.
+- **h5_14** (children): fertility-gate (nben=3, nmal=1) -> afflicted; Raman mixed ("5th house fairly well
+  disposed"). Same karaka/bhava-relief family as h5_13.
+- **h7_03** (marital_happiness): 1 malefic, 0 benefic-RULE -> afflicted; Raman = mixed ("Venus+Jupiter
+  rule out separation"). The relief is a benefic INFLUENCE not captured as a rule -> needs a marital
+  benefic-relief detector (unafflicted Jupiter/Venus on the 7th house/lord/karaka -> lift afflicted->mixed).
+- **h7_07** (coverture): 4 malefics -> afflicted; Raman mixed (remarriage after the spouse's death) -- a
+  recovery signature, harder; possibly leave as a documented near-hit.
+- **h7_17 / h7_18** (spouse): the "unconventional-but-realized inter-faith marriage" pair -- afflicted
+  configuration but a realized marriage; the inverse of the marital-bond demote (lift afflicted->mixed
+  when the 7th LORD is clean and the marriage is realized). h7_18 reads afflicted with nmal=0/nben=0
+  (investigate the source -- navamsa/maraka).
+All are dist-1 near-hits (already within-1), so this lifts the EXACT metric only. Build a single
+"marital/progeny benefic-relief" lift (unafflicted karaka/benefic-on-house -> afflicted->mixed),
+over-fire-scanned against EVERY afflicted golden (incl. the just-shipped H5/H7 afflicted fixes), then
+confirm. Estimated +4-6 exact with careful guards.
 
 **Engine work implied (future):** (1) a marital benefic-RELIEF mechanism that lifts an afflicted
 spouse/marital verdict to `mixed` when Raman's named reliefs are present (no separation/divorce,

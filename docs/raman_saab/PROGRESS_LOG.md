@@ -1103,3 +1103,17 @@ Validated: on a stated period the event house is ACTIVE >=80% (7/8), par_excelle
 empire chart (Ketu/Mercury -> H2+H11) and the clean-birth deaths (H8). Lincoln snapshot on 1865-04-14 ->
 H8 Longevity/Death AFFLICTED par_excellence, activated by Saturn(well)/Mercury(well). Ratchet unchanged
 (120/154); 10 new tests; raman harness 3213 green.
+
+### 2026-06-27 (ultracode) — Phase 1A: HPA named yogas (first assimilated book)
+First book through the per-book SOP on the hardened base (Phase 0). Added 3 HPA Ch.20 named raja
+yogas to yogas.py, each cited HPA-20, reviewer-KEEP, additive (zero-regression; ratchet unchanged
+120/154, 140/154):
+- Y.CHAMARA (HPA-20:65) — lagna-lord exalted in kendra + Jupiter aspect (strict arm; benefic arm
+  omitted, over-fired 35/164). Fires 0/164 goldens (pure-additive fidelity, the Y.DHANA.* pattern).
+- Y.SREENATHA (HPA-20:90) — exalted 7th-lord in 10th + 9th/10th lords conjoined. Fires 2/164.
+- Y.KHADGA (HPA-20:184) — 2<->9 lord parivartana + lagna-lord in kendra/trikona. Fires 0/164.
+DEFERRED (over-fire under the is_powerful proxy — need B1 effective-strength): Shankha (102/164),
+Kahala (48/164), Lakshmi (strict dignity arm still 16/164). REJECTED as noise: Sun-based Vasi/Vesi/
+Obhayachari. SOURCE_LOCK re-generated to cover the newly-cited HPA-20 chapter. bphs-doctrine-reviewer:
+3/3 KEEP (Khadga SOUND; Chamara/Sreenatha SOUND-WITH-CAVEAT — faithful strict-subsets). 22 yogas
+total; raman harness 3226 green.

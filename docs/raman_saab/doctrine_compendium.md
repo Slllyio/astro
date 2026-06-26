@@ -6,7 +6,7 @@ produced by the Phase-1 extraction sweep (2026-06-14/15). Each entry: the doctri
 `DOCTRINE_BACKLOG.md`; this file is the reference. (Consolidated into one file per-book
 section rather than separate files, for scannability.)
 
-Corpus reach: the engine cites 3 of 13 Raman books today (HTJAH-I/II, 3HC). HPA-NN and GBB-N
+Corpus reach: the engine cites 4 of 13 Raman books today (HTJAH-I/II, 3HC, HPA-20). GBB-N
 citation resolvers exist and pass `verify()` — these books are citable, just un-mined.
 
 ---
@@ -69,13 +69,19 @@ in the engine — the marginal gap is threshold handling.*
   kashta phala (√(ochcha×cheshta)) is a unified good/bad scalar useful for dasa-lord eval
   (`judge-mechanism`, longer-horizon).
 
-## Hindu Predictive Astrology (HPA) — 0 rules used today
+## Hindu Predictive Astrology (HPA) — 3 yogas live (2026-06-27)
 *Headline: ~16 named yogas + avastha doctrine + house rules the HTJAH-only engine lacks.*
 
-- **HPA-20:65-229** — named yogas: Chamara, Shankha, Sreenatha, Bheri, Sarada, Kesari,
-  Kahala, Mridanga, Khadga, Lakshmi, Kusimia, Konrma (raja/wealth/virtue); Sun-based
-  Vasi/Vesi/Obhayachari (mirror of lunar Sunapha/Anapha/Durudhura); Daridra (poverty),
-  Rajju (foreign). `new-rule` (B5)
+- **HPA-20 named yogas** `new-rule` (B5): **ENCODED (additive, zero-regression, reviewer KEEP):**
+  - **Y.CHAMARA** (HPA-20:65) — lagna-lord exalted in a kendra + Jupiter's aspect (strict first
+    arm only; the "two benefics in 1/7/10" arm OMITTED — over-fired 35/164).
+  - **Y.SREENATHA** (HPA-20:90) — exalted 7th-lord in the 10th + 9th/10th lords conjoined.
+  - **Y.KHADGA** (HPA-20:184) — 2↔9 lord exchange (parivartana) + lagna-lord in kendra/trikona.
+  **DEFERRED (over-fire under current primitives — need B1 effective-strength):** Shankha
+  (HPA-20:77, hinges on "powerful lord", fired 102/164), Kahala (HPA-20:151, 48/164), Lakshmi
+  (HPA-20:190, strict dignity arm still 16/164). **REJECTED (noise):** Sun-based Vasi/Vesi/
+  Obhayachari (near-universal). Remaining un-mined: Bheri, Sarada, Matsya, Mridanga, Konrma,
+  Kusimia, Daridra, Rajju — revisit with goldens that exercise them.
 - **HPA-19:47** — a planet's results vary by its **avastha/disposition**, not mere occupancy
   (exalted Jupiter in 4th = religious learning; debilitated differs). `judge-mechanism`
 - **HPA-7:39-83** — the 10 avasthas (Deeptha…Bhita). `shadbala` (longer-horizon)

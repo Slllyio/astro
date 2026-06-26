@@ -151,6 +151,47 @@ class _NthHouseSignOwnedBy(C.Condition):
         return SIGN_LORDS[sign] == self.planet
 
 
+# ── HPA-20 named-yoga leaf predicates (lords resolved at evaluate time) ───────
+class _LordDignityInHouses(C.Condition):
+    """The lord of `house` has a dignity in `states` AND (if `in_houses` given) occupies one."""
+
+    def __init__(self, house: int, states: frozenset[str],
+                 in_houses: frozenset[int] = frozenset()) -> None:
+        self.house, self.states, self.in_houses = house, states, in_houses
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dignity import dignity
+        lord = _house_lord(self.house, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or dignity(lord, ctx.chart) not in self.states:
+            return False
+        return (not self.in_houses) or p.rasi_house in self.in_houses
+
+
+class _LordInHouses(C.Condition):
+    """The lord of `house` occupies one of `in_houses` (whole-sign, from the Lagna)."""
+
+    def __init__(self, house: int, in_houses: frozenset[int]) -> None:
+        self.house, self.in_houses = house, in_houses
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _house_lord(self.house, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        return p is not None and p.rasi_house in self.in_houses
+
+
+class _LordAspectedBy(C.Condition):
+    """`aspector` casts a graha-aspect on the lord of `house`."""
+
+    def __init__(self, house: int, aspector: str) -> None:
+        self.house, self.aspector = house, aspector
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _house_lord(self.house, ctx.chart)
+        return (lord in ctx.chart.planets
+                and drishti.aspects_planet(self.aspector, lord, ctx.chart))
+
+
 # ── record forms ─────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class YogaRecord:
@@ -358,7 +399,41 @@ YOGAS: tuple[YogaRecord, ...] = (
         effect=("Immense wealth: the Sun in the 5th identical with his own sign (Leo) "
                 "and Jupiter and the Moon in the 11th (a Moon-Jupiter Gajakesari in gains)."),
         source=Citation("3HC", 7645)),
+    # — HPA Ch.20 named raja/virtue yogas (additive fidelity; cited verbatim) —
+    YogaRecord(
+        id="Y.CHAMARA", name="Chamara Yoga", kind="raja",
+        # Raman: "lord of the ascendant exalted in a quadrant with the aspect of Jupiter;
+        # OR two benefics in the ascendant/7th/10th." Only the STRICT first arm is encoded
+        # (exalted-lagna-lord + Jupiter aspect). The "two benefics in 1/7/10" arm is OMITTED
+        # — it over-fires (35/164); a documented limit.
+        condition=C.And(_LordDignityInHouses(1, frozenset({"exalt"}), _KENDRAS),
+                        _LordAspectedBy(1, "Jupiter")),
+        effect=("Greatly respected by kings and the aristocracy; good conversationalist, "
+                "profound scholar; long-lived (over 70 years)."),
+        source=Citation("HPA-20", 65)),
+    YogaRecord(
+        id="Y.SREENATHA", name="Sreenatha Yoga", kind="raja",
+        # "the exalted lord of the 7th occupies the 10th AND the lord of the 10th combines
+        # with the lord of the 9th."
+        condition=C.And(_LordDignityInHouses(7, frozenset({"exalt"}), frozenset({10})),
+                        C.LordsConjunct(9, 10)),
+        effect="Great respect and reputation, honourable living, much wealth, fine surroundings.",
+        source=Citation("HPA-20", 90)),
+    YogaRecord(
+        id="Y.KHADGA", name="Khadga Yoga", kind="raja",
+        # "Lord of the 2nd in the 9th, and the lord of the 9th in the 2nd [a 2-9 exchange],
+        # and the lord of ascendant in a quadrant or a trine."
+        condition=C.And(C.Parivartana(2, 9), _LordInHouses(1, _KENDRAS | _TRIKONAS)),
+        effect="Religiously inclined; courageous, strong, of penetrating intelligence.",
+        source=Citation("HPA-20", 184)),
 )
+# DEFERRED HPA-20 yogas (over-fire under the current primitives; documented limits):
+#   Y.SHANKHA (HPA-20:77), Y.KAHALA (HPA-20:151) — hinge on a holistic "powerful lord" the
+#     Shadbala is_powerful proxy reads too liberally (Shankha 102/164, Kahala 48/164). Re-attempt
+#     once an effective-strength (combust/dignity-adjusted) measure exists (DOCTRINE_BACKLOG B1).
+#   Y.LAKSHMI (HPA-20:190) — even the strict dignity arm (9th-lord exalt/moolatrikona) fires
+#     16/164; its discriminating form needs lagna-lord involvement the geometry can't isolate
+#     (matches the prior B5 finding). Re-attempt with B1.
 
 
 # ── detection API ────────────────────────────────────────────────────────────

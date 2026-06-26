@@ -83,9 +83,11 @@ goldens** (ratchet unchanged at 89) — pure additive fidelity for real charts v
 modulation + dhana-floor. **Deliberately NOT added** (un-faithful or noisy): Lakshmi (#72) — its
 faithful form needs "lagna-lord powerful" (Shadbala), and the geometry-only form over-fires (17/130);
 the Sun-based Vesi/Vasi/Ubhayachari — near-universal (~85/130), inert (kind=other), snapshot noise.
-**Remaining (defer to after Phase-3 goldens):** the HPA named raja/virtue yogas (Chamara, Shankha,
-Sreenatha, Bheri, Sarada, Kesari, Kahala, …) — add only once goldens exercise them, so each is
-golden-validated. Original list below.
+**HPA named yogas — partly done 2026-06-27 (Phase 1A):** added 3 as additive fidelity (cited HPA-20,
+reviewer-KEEP, zero-regression) — **Y.CHAMARA** (HPA-20:65, strict arm), **Y.SREENATHA** (HPA-20:90),
+**Y.KHADGA** (HPA-20:184). Deferred (over-fire under the is_powerful proxy → need B1 effective-strength):
+Shankha (102/164), Kahala (48/164), Lakshmi (strict dignity arm 16/164). Rejected as noise: Sun-based
+Vasi/Vesi/Obhayachari. Un-mined: Bheri, Sarada, Matsya, Mridanga, Konrma, Kusimia, Daridra, Rajju.
 
 ### (original)
 Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):

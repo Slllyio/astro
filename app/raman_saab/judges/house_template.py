@@ -53,6 +53,7 @@ from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.judges.house_judge import HouseVerdict
 from app.raman_saab.primitives import ayurdaya
 from app.raman_saab.primitives import relationships as r
+from app.raman_saab.primitives import vimshottari
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS
@@ -981,6 +982,50 @@ _AYURDAYA_VERDICT: dict[str, Verdict] = {
     "alpa": "afflicted", "madhya": "mixed", "purna": "favourable"}
 
 _MARITAL_BOND_KEYS: frozenset[str] = frozenset({"spouse", "marital_happiness"})
+
+# Significations whose Dasha timing pivots on the maraka set (death of the native or a relative).
+_TIMING_MARAKA_KEYS: frozenset[str] = frozenset(
+    {"longevity", "death", "coverture", "father", "mother", "spouse"})
+
+
+def _event_timing(
+    chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger, ctx: EvalContext,
+) -> tuple[Verdict, Metadata]:
+    """Outcome-timing overlay (Layer): annotate WHEN a matter's results are active, from the
+    Vimshottari Dasha. METADATA-ONLY — the verdict is returned byte-for-byte unchanged (timing
+    annotates, it never resolves the natal verdict). Two data:
+
+    * ``death_window`` (H8 longevity/death): the maraka Bhukti periods in the alloted-span region
+      (when the lifespan expires under a maraka). Premature/violent deaths strike a strong EARLIER
+      maraka the engine does not isolate (documented limit).
+    * ``active_periods`` (every matter): the Mahadasha windows of the matter's significators
+      (lord, karaka, fired afflictors/relievers, and — for death/relative-death matters — the
+      maraka set), most-salient roles first, bounded.
+
+    No-ops on a Track-B chart (no birth_jd)."""
+    if getattr(chart, "jd_ut", None) is None:
+        return verdict, ()
+    md: list[tuple[str, str]] = []
+    if sig.house == 8 and sig.key in ("longevity", "death"):
+        windows = ctx.get_or_compute("death_window", lambda: vimshottari.death_window(chart))
+        if windows:
+            md.append(("death_window", "; ".join(w.label() for w in windows[:3])))
+    grahas: dict[str, frozenset[str]] = {
+        "lord": frozenset({lead.lord}),
+        "karaka": frozenset({sig.primary_karaka}),
+        "afflictor": frozenset(
+            s for fr in lead.fired_malefic if (s := _rule_subject(fr.rule)) is not None),
+        "reliever": frozenset(
+            s for fr in lead.fired_benefic if (s := _rule_subject(fr.rule)) is not None),
+    }
+    if sig.key in _TIMING_MARAKA_KEYS:
+        grahas["maraka"] = ctx.get_or_compute(
+            "maraka_lords", lambda: vimshottari.maraka_set(chart).all())
+    windows = vimshottari.significator_dasha_windows(chart, grahas)
+    if windows:
+        salient = [w for w in windows if w.role in ("afflictor", "maraka")] or list(windows)
+        md.append(("active_periods", "; ".join(w.label() for w in salient[:4])))
+    return verdict, tuple(md)
 # The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
 # Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in
 # Raman's worked charts, and including it is the likeliest out-of-sample false-demote
@@ -1241,9 +1286,10 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
+    verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + lookup_md))
+        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

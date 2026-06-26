@@ -3,7 +3,7 @@ markdown). ASCII-safe (no characters outside CP1252) so it prints on any console
 """
 from __future__ import annotations
 
-from app.raman_saab.judges.house_judge import HouseVerdict
+from app.raman_saab.judges.house_template import HouseProforma
 from app.raman_saab.proforma import RamanReading
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra",
@@ -30,7 +30,17 @@ def _ascii(s: str) -> str:
     return s.encode("ascii", "replace").decode("ascii")
 
 
-def _house_block(hv: HouseVerdict) -> list[str]:
+# Metadata keys surfaced in the per-house "notes" block (un-stranded from the modern judge:
+# graded degree, yoga modulations, ayurdaya span, beeja/kshetra fertility, drekkana cause,
+# and the Dasha event-timing — death_window / active_periods).
+_NOTE_LABELS = {
+    "ayurdaya": "longevity span", "death_window": "death-prone Dasha", "active_periods": "active Dasha",
+    "beeja_kshetra": "fertility sphutas", "drekkana22_lord": "22nd-drekkana lord",
+    "decanate_cause": "cause-of-end decanate", "marital_bond": "marital bond"}
+
+
+def _house_block(p: HouseProforma) -> list[str]:
+    hv = p.as_house_verdict()
     lines = [f"House {hv.house} - {_HOUSE_NAMES[hv.house]}: {hv.verdict.upper()}",
              f"  pillars: lord {hv.lord} ({_FLAG[hv.lord_strong]}), "
              f"karaka {hv.karaka} ({_FLAG[hv.karaka_strong]})"]
@@ -39,6 +49,8 @@ def _house_block(hv: HouseVerdict) -> list[str]:
         lines.append("  (no rule fired - insufficient evidence)")
     for fr in evidence:
         lines.append(f"  - [{fr.branch}] {fr.text}  ({fr.rule.source.work}:{fr.rule.source.line})")
+    for key, val in p.metadata:
+        lines.append(f"  * {_NOTE_LABELS.get(key, key)}: {val}")
     return lines
 
 
@@ -54,8 +66,8 @@ def to_text(reading: RamanReading) -> str:
         "=" * 72,
         "",
     ]
-    for hv in reading.houses:
-        out += _house_block(hv)
+    for p in reading.proformas:
+        out += _house_block(p)
         out.append("")
     out.append("Every line cites a verse of B.V. Raman's *How to Judge a Horoscope*.")
     return _ascii("\n".join(out))
@@ -66,12 +78,15 @@ def to_markdown(reading: RamanReading) -> str:
     out = [f"# Raman Saab reading - {b.name}",
            f"**Lagna:** {_SIGNS[reading.asc_sign - 1]} ({reading.asc_lon:.2f} deg) - "
            f"ayanamsa {reading.ayanamsa}", ""]
-    for hv in reading.houses:
+    for p in reading.proformas:
+        hv = p.as_house_verdict()
         out.append(f"## House {hv.house} - {_HOUSE_NAMES[hv.house]}: {hv.verdict}")
         out.append(f"*Lord {hv.lord} ({_FLAG[hv.lord_strong]}), "
                    f"Karaka {hv.karaka} ({_FLAG[hv.karaka_strong]})*")
         for fr in list(hv.benefic) + list(hv.malefic) + list(hv.neutral):
             out.append(f"- **[{fr.branch}]** {fr.text} "
                        f"(`{fr.rule.source.work}:{fr.rule.source.line}`)")
+        for key, val in p.metadata:
+            out.append(f"- _{_NOTE_LABELS.get(key, key)}:_ {val}")
         out.append("")
     return _ascii("\n".join(out))

@@ -384,3 +384,29 @@ profligate-with-VD spouse must not read favourable). The three HIGH-confidence r
 (h7_02/05/15) are the cleanest fix targets. The four "Unconventional Marriages" charts
 (h7_16/17/18/19) are MEDIUM (afflicted-but-realized marriage = mixed) — tighten the spouse rubric
 first.
+
+---
+
+## Dasha / outcome-timing layer (2026-06-26) — built + documented limits
+
+The Vimshottari timing layer (vimshottari.py: maraka_set, death_window, significator_dasha_windows;
+wired metadata-only via house_template._event_timing; rendered via the re-routed proforma) is ADDITIVE
+and validated (death-Mahadasha matches Raman on all 5 dated deaths; the death falls in a maraka period
+all 5). Honest limits, NOT to be force-fixed:
+
+- **Strongest-maraka / single-date prediction** — the death's Mahadasha is reliably a maraka, but WHICH
+  of the (broad) maraka set actually strikes — and the to-the-day date — is the chart-specific
+  "strongest-maraka + Saturn-transit final-signal" judgement Raman makes by hand (chart_35 invokes a
+  Saturn transit). The engine returns a RANKED WINDOW SET, never a date. `death_window` predicts the
+  natural-death (alloted-span) region; premature/violent deaths (Lincoln 56, JFK 46) strike a strong
+  EARLIER maraka well below the ayurdaya span and are not isolated.
+- **General event-timing is partial** — the soft claim (the event-MD is a matter significator) holds for
+  relative-death + property goldens (6/6) but FAILS for gains/career (chart_40/44 wealth in Ketu Dasa,
+  h11_14/17 gains in Venus/Saturn Dasa): those events fall in a YOGA-specific Dasha (a dhana-yoga planet,
+  or a from-11th significator) not captured by the basic lord/karaka/afflictor set. Adding yoga-planet
+  significators is the future lift (uncertain; needs over-fire care).
+- **Birth-time sensitivity** — a Bhukti boundary shifts months per few minutes of birth error: the
+  Mahadasha claim is robust (all 5 deaths), the Bhukti only for precisely-timed births (Lincoln/Hitler
+  exact). Hence the layer reports a window, not a date.
+- **Timing ANNOTATES, never resolves** the mode-A outcome ambiguity (born-and-lived vs born-and-died):
+  the natal verdict is unchanged; timing only adds "when the significators/marakas are active".

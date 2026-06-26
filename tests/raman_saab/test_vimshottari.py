@@ -45,7 +45,8 @@ def _golden_chart(cid: str):
         chart = cast_chart(BirthData(name="g", year=y, month=mo, day=d, hour=hh, minute=mm,
                                      tz_offset=float(b["tz"]), latitude=float(b["lat"]),
                                      longitude=float(b["lon"])), ayanamsa="raman")
-        return chart, r["expected_longevity"]["death_date"]
+        el = r.get("expected_longevity") or {}
+        return chart, el.get("death_date")
     raise KeyError(cid)
 
 
@@ -87,6 +88,55 @@ def test_death_bhukti_matches_raman_for_clean_births():
         dy, dmo, dd = (int(x) for x in death_date.split("-"))
         period = vd.dasha_on(chart, vd.date_to_jd(dy, dmo, dd))
         assert (period.maha, period.antar) == _STATED_DEATH_DASHA[cid]
+
+
+@pytest.mark.parametrize("cid", list(_STATED_DEATH_DASHA))
+def test_death_falls_in_a_maraka_period(cid: str):
+    """The strong, robust death-timing claim: the death's Mahadasha lord is a maraka, and the
+    death falls in a maraka period, for every dated death golden (the engine recognises the
+    death period as death-dealing — incl. the functional Rahu/Jupiter marakas)."""
+    chart, death_date = _golden_chart(cid)
+    dy, dmo, dd = (int(x) for x in death_date.split("-"))
+    jd = vd.date_to_jd(dy, dmo, dd)
+    ms = vd.maraka_set(chart)
+    assert vd.dasha_on(chart, jd).maha in ms.all()        # death-MD lord is a maraka
+    assert vd.is_maraka_period(chart, jd)                 # death falls in a maraka period
+
+
+def test_death_window_returns_maraka_periods_near_span():
+    """death_window yields maraka periods in the alloted-span region; for a near-span death
+    (Gandhi, died ~78 ≈ ayurdaya span) the death falls inside one. (Premature/violent deaths
+    strike a strong EARLIER maraka the engine does not isolate — a documented limit.)"""
+    chart, death_date = _golden_chart("HTJAH-II.chart_74")
+    dy, dmo, dd = (int(x) for x in death_date.split("-"))
+    jd = vd.date_to_jd(dy, dmo, dd)
+    windows = vd.death_window(chart)
+    assert windows and all(w.score > 0 for w in windows)
+    assert any(w.start_jd <= jd < w.end_jd for w in windows)
+
+
+def test_significator_windows_catch_relative_death_mds():
+    """General event-timing soft claim (death-class): the stated relative-death Mahadasha lord
+    is among the matter's significators (here the maraka set), so it appears as an active window.
+    Validated for the relative-death goldens; gains/career events that fall in a yoga-specific
+    Dasha are a documented partial (see DOCTRINE_BACKLOG)."""
+    for cid, sig_key, event_md in (("HTJAH-I.h4_01", "mother", "Mars"),
+                                   ("HTJAH-II.h7_13", "coverture", "Mars"),
+                                   ("HTJAH-II.h7_12", "coverture", "Saturn")):
+        chart, _ = _golden_chart(cid)
+        grahas = {"maraka": vd.maraka_set(chart).all()}
+        windows = vd.significator_dasha_windows(chart, grahas)
+        assert event_md in {w.graha for w in windows}, f"{cid}: {event_md} not an active window"
+
+
+def test_timing_primitives_noop_on_track_b():
+    """Track-B (stated-position) charts have no birth_jd -> timing primitives degrade cleanly."""
+    from app.raman_saab.chart.model import RamanChart
+    tb = RamanChart.from_stated_positions(
+        {"Sun": {"lon": 10.0, "bhava": 1}, "Moon": {"lon": 40.0, "bhava": 2}},
+        asc_lon=5.0, ayanamsa="raman")
+    assert vd.death_window(tb) == ()
+    assert vd.significator_dasha_windows(tb, {"maraka": frozenset({"Saturn"})}) == ()
 
 
 def test_date_to_jd_and_dasha_on_outside_timeline():

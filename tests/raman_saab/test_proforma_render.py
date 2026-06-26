@@ -31,6 +31,27 @@ def test_render_markdown():
     assert md.count("## House") == 12
 
 
+def test_render_surfaces_dasha_timing_and_metadata():
+    """The render-gap fix: the reading now flows through the MODERN judge, so the Dasha
+    event-timing and the formerly-stranded metadata reach the worksheet."""
+    txt = render.to_text(read_chart(_BLR, ayanamsa="raman"))
+    assert "active Dasha" in txt          # significator event-timing windows
+    assert "death-prone Dasha" in txt     # H8 death_window
+    assert "longevity span" in txt        # ayurdaya span (was stranded before)
+
+
+def test_read_chart_carries_proformas_with_metadata():
+    """`proformas` carries the modern per-house result incl. metadata; verdicts stay valid
+    (the timing layer is metadata-only — the strict ratchet, tested elsewhere, is unchanged)."""
+    reading = read_chart(_BLR, ayanamsa="raman")
+    assert len(reading.proformas) == 12
+    h8 = next(p for p in reading.proformas if p.house == 8)
+    keys = {k for k, _ in h8.metadata}
+    assert {"ayurdaya", "death_window", "active_periods"} <= keys
+    for p in reading.proformas:
+        assert p.rollup in ("favourable", "mixed", "afflicted", "insufficient-evidence")
+
+
 def test_cli_reading_format(capsys):
     rc = main(["--name", "T", "--date", "1990-07-15", "--time", "12:00",
                "--tz", "5.5", "--lat", "12.97", "--lon", "77.59", "--format", "reading"])

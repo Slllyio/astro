@@ -33,7 +33,9 @@ import swisseph as swe
 
 from app.core.ephemeris_engine import (
     DASHA_LORDS, DAYS_PER_VEDIC_YEAR, calculate_vimshottari_mahadasha)
+from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.doctrine import drishti
 
 _LORD_YEARS: Final[dict[str, int]] = dict(DASHA_LORDS)
 _SEQUENCE: Final[tuple[str, ...]] = tuple(name for name, _ in DASHA_LORDS)
@@ -109,21 +111,210 @@ def dasha_on(chart: RamanChart, jd: float) -> Optional[DashaPeriod]:
     return None
 
 
+@dataclass(frozen=True)
+class MarakaSet:
+    """The death-inflicting grahas, tiered by Raman's doctrine (HTJAH-I:770-795). A maraka's
+    Dasha is when a fatal 8th/longevity affliction is most apt to mature; the tier weights how
+    strong a death-signal the period carries (it does NOT narrow the set — the doctrine is
+    deliberately broad, so the death-WINDOW ranking, not set membership, discriminates)."""
+    primary: frozenset[str]
+    secondary: frozenset[str]
+    tertiary: frozenset[str]
+
+    def all(self) -> frozenset[str]:
+        return self.primary | self.secondary | self.tertiary
+
+    def weight(self, graha: str) -> int:
+        """Death-signal weight: primary 3, secondary 2, tertiary 1, non-maraka 0."""
+        if graha in self.primary:
+            return 3
+        if graha in self.secondary:
+            return 2
+        if graha in self.tertiary:
+            return 1
+        return 0
+
+
+def _node_is_maraka(chart: RamanChart, node: str) -> bool:
+    """A node (Rahu/Ketu) becomes a maraka by OCCUPYING the 2nd/7th/8th from the Moon, OR by
+    conjoining/aspecting a 2nd/7th lord (HTJAH-II:4806-4814, Chart 35: Rahu in the 8th-from-Moon
+    AND associated with the 7th lord). Nodes carry no lordship, so only occupation/association."""
+    p = chart.planets.get(node)
+    moon = chart.planets.get("Moon")
+    if p is None or moon is None:
+        return False
+    if ((p.rasi_house - moon.rasi_house) % 12) + 1 in (2, 7, 8):
+        return True
+    l2 = SIGN_LORDS[((chart.asc_sign - 1) + 1) % 12 + 1]
+    l7 = SIGN_LORDS[((chart.asc_sign - 1) + 6) % 12 + 1]
+    for lord in (l2, l7):
+        lp = chart.planets.get(lord)
+        if lp is not None and (lp.rasi_house == p.rasi_house
+                               or drishti.aspects_planet(node, lord, chart)):
+            return True
+    return False
+
+
+def maraka_set(chart: RamanChart) -> MarakaSet:
+    """Raman's full tiered maraka set. REUSES the existing `chart.maraka_points` doctrine
+    (primitives/maraka.py: 2nd/7th lords + occupants/associates, 3rd/8th lords, Saturn/weakest)
+    for the LAGNA tiers, and adds the FROM-MOON marakas (2nd/7th-from-Moon -> secondary,
+    8th-from-Moon -> tertiary), node marakas, and the Saturn-in-10th Mrityu Yoga (-> tertiary).
+    Validated: every dated death golden's Mahadasha lord lands in the set (incl. the functional
+    Rahu/Jupiter marakas)."""
+    primary: set[str] = set()
+    secondary: set[str] = set()
+    tertiary: set[str] = set()
+    # 1. Lagna tiers — reuse the existing maraka_points doctrine.
+    mp = getattr(chart, "maraka_points", None)
+    if mp is not None:
+        bucket = {"primary": primary, "secondary": secondary, "tertiary": tertiary}
+        for u in mp.units:
+            bucket[u.tier].add(u.graha)
+    else:  # Track-B fallback: the two maraka-house lords only
+        primary.add(SIGN_LORDS[((chart.asc_sign - 1) + 1) % 12 + 1])
+        primary.add(SIGN_LORDS[((chart.asc_sign - 1) + 6) % 12 + 1])
+    moon = chart.planets.get("Moon")
+    if moon is not None:
+        # 2. From-Moon house lords (Raman reads the 2nd/7th/8th from the Moon as well as Lagna).
+        secondary.add(SIGN_LORDS[(moon.sign - 1 + 1) % 12 + 1])   # 2nd from Moon
+        secondary.add(SIGN_LORDS[(moon.sign - 1 + 6) % 12 + 1])   # 7th from Moon
+        tertiary.add(SIGN_LORDS[(moon.sign - 1 + 7) % 12 + 1])    # 8th from Moon
+        # 3. Node marakas.
+        for node in ("Rahu", "Ketu"):
+            if _node_is_maraka(chart, node):
+                secondary.add(node)
+    # 4. Saturn-in-10th Mrityu Yoga.
+    sat = chart.planets.get("Saturn")
+    if sat is not None and sat.rasi_house == 10:
+        tertiary.add("Saturn")
+    # Keep each graha in its strongest tier only.
+    secondary -= primary
+    tertiary -= primary | secondary
+    return MarakaSet(frozenset(primary), frozenset(secondary), frozenset(tertiary))
+
+
 def maraka_lords(chart: RamanChart) -> frozenset[str]:
-    """The maraka (death-inflicting) graha set: the lords of the 2nd and 7th houses
-    (the maraka bhavas) plus Saturn (Ayushkaraka / the natural killer). The Dasha of a
-    maraka is when a fatal 8th/longevity affliction is most apt to mature."""
-    from app.raman_saab.chart.constants import SIGN_LORDS
-    second = SIGN_LORDS[((chart.asc_sign - 1) + 1) % 12 + 1]
-    seventh = SIGN_LORDS[((chart.asc_sign - 1) + 6) % 12 + 1]
-    return frozenset({second, seventh, "Saturn"})
+    """The full maraka graha set (all tiers). Back-compat shim over `maraka_set`."""
+    return maraka_set(chart).all()
 
 
-def is_maraka_period(chart: RamanChart, jd: float) -> bool:
-    """True when the Mahadasha OR Bhukti lord running on `jd` is a maraka — the timing
-    signature for a death/longevity-affliction maturing."""
+def is_maraka_period(chart: RamanChart, jd: float, *, strength: str = "any") -> bool:
+    """True when the period running on `jd` carries a maraka. ``strength="any"`` (default): the
+    Mahadasha OR Bhukti lord is a maraka. ``strength="strong"``: BOTH are marakas (the sharper
+    death-timing signature)."""
     period = dasha_on(chart, jd)
     if period is None:
         return False
-    marakas = maraka_lords(chart)
-    return period.maha in marakas or (period.antar is not None and period.antar in marakas)
+    marakas = maraka_set(chart).all()
+    md_maraka = period.maha in marakas
+    antar_maraka = period.antar is not None and period.antar in marakas
+    if strength == "strong":
+        return md_maraka and antar_maraka
+    return md_maraka or antar_maraka
+
+
+# ---------------------------------------------------------------------------
+# Death window (Phase 2) — maraka Dasha periods x the ayurdaya span
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class DeathWindow:
+    """A death-prone period: a maraka Bhukti overlapping the alloted-span region, with its
+    maraka tier-score (MD-weight + Bhukti-weight)."""
+    maha: str
+    antar: str
+    start_jd: float
+    end_jd: float
+    score: int
+
+    def label(self) -> str:
+        y0, m0, _d0, _ = swe.revjul(self.start_jd, swe.GREG_CAL)
+        y1, m1, _d1, _ = swe.revjul(self.end_jd, swe.GREG_CAL)
+        return f"{self.maha}/{self.antar} {int(y0)}-{int(m0):02d}..{int(y1)}-{int(m1):02d}"
+
+
+_SPAN_BAND_YEARS: Final[dict[str, float]] = {"alpa": 5.0, "madhya": 8.0, "purna": 10.0}
+
+
+def death_window(chart: RamanChart) -> tuple[DeathWindow, ...]:
+    """The alloted-span death window: the maraka Bhukti periods overlapping the ayurdaya span
+    ± its class band, in chronological order. This is when the alloted lifespan expires UNDER a
+    maraka — the natural-death region.
+
+    HONEST LIMIT: a strong EARLIER maraka can cut life short well before the span (premature /
+    violent death — Lincoln 56, JFK 46), and isolating WHICH maraka strikes then is the
+    chart-specific 'strongest-maraka + transit' judgement the engine deliberately does NOT make.
+    So this predicts the natural-death region, not a premature death; the validated, robust claim
+    is the weaker `is_maraka_period(death_date)` (the death always falls in *some* maraka period)
+    plus the Mahadasha match. None on a Track-B chart (no birth_jd)."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    from app.raman_saab.primitives import ayurdaya
+    ms = maraka_set(chart)
+    span = ayurdaya.longevity(chart)
+    death_jd = chart.jd_ut + span.total_years * DAYS_PER_VEDIC_YEAR
+    band = _SPAN_BAND_YEARS.get(span.longevity_class, 8.0) * DAYS_PER_VEDIC_YEAR
+    lo, hi = death_jd - band, death_jd + band
+    out: list[DeathWindow] = []
+    for md in mahadasha_timeline(chart):
+        if md.start_jd > hi:
+            break
+        for bh in bhuktis(md):
+            if bh.end_jd < lo or bh.start_jd > hi:
+                continue
+            score = ms.weight(bh.maha) + ms.weight(bh.antar)
+            if score > 0:
+                out.append(DeathWindow(bh.maha, bh.antar, bh.start_jd, bh.end_jd, score))
+    return tuple(out)
+
+
+# ---------------------------------------------------------------------------
+# General event-timing (Phase 3) — a matter's significators x their Dasha
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class EventWindow:
+    """A Mahadasha window of one of a matter's significators, tagged with the role by which it
+    signifies (lord / karaka / afflictor / reliever / maraka). These are the periods when the
+    matter's results are 'active' — the soft, validatable claim ("the event fell in a
+    significator's Dasha"), not a single-date prediction."""
+    graha: str
+    role: str
+    start_jd: float
+    end_jd: float
+
+    def label(self) -> str:
+        y0, m0, _d, _ = swe.revjul(self.start_jd, swe.GREG_CAL)
+        y1, m1, _e, _ = swe.revjul(self.end_jd, swe.GREG_CAL)
+        return f"{self.graha}({self.role}) {int(y0)}-{int(y1)}"
+
+
+# Role priority when one graha signifies a matter several ways: iterated in order, the LAST
+# match wins, so the more event-salient roles (maraka/afflictor) override lord/karaka.
+_ROLE_ORDER: Final[tuple[str, ...]] = ("lord", "karaka", "reliever", "maraka", "afflictor")
+
+
+def significator_dasha_windows(
+    chart: RamanChart, grahas_by_role: dict[str, frozenset[str]], *, span_years: float = 120.0,
+) -> tuple[EventWindow, ...]:
+    """The Mahadasha windows of a matter's significators, given a {role: {graha,...}} map (the
+    caller assembles it from lead.lord, sig.primary_karaka, the fired-rule subjects, and — for
+    death/relative-death matters — `maraka_set`; kept decoupled from the judge to avoid an import
+    cycle). One window per (graha, strongest-role) within `span_years` from birth, chronological.
+    Empty on a Track-B chart (no birth_jd)."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    role_of: dict[str, str] = {}
+    for role in _ROLE_ORDER:                       # weakest first so stronger roles overwrite
+        for g in grahas_by_role.get(role, ()):  # type: ignore[arg-type]
+            role_of[g] = role
+    horizon = chart.jd_ut + span_years * DAYS_PER_VEDIC_YEAR
+    out: list[EventWindow] = []
+    for md in mahadasha_timeline(chart, span_years):
+        if md.start_jd >= horizon:
+            break
+        if md.maha in role_of:
+            out.append(EventWindow(md.maha, role_of[md.maha], md.start_jd, md.end_jd))
+    out.sort(key=lambda w: w.start_jd)
+    return tuple(out)

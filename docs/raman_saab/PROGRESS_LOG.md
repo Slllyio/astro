@@ -1046,3 +1046,26 @@ off by 1-2 positions -- the expected birth-time/ephemeris sensitivity of a sub-p
 maraka identification (Rahu/Jupiter became chart-specific marakas in 3 of the death charts -- the simple
 2L/7L/Saturn set misses them); (b) per-signification period projection (which Dasha activates a matter's
 significators) to time events and tighten the death/longevity reading.
+
+### 2026-06-26 (ultracode) — Dasha / outcome-timing layer (P1-P4)
+Built the event-timing layer on the Vimshottari spine (plan: synchronous-crafting-wreath). ADDITIVE —
+the natal verdicts and the strict ratchet are untouched (120/154 exact, 140/154 within-1).
+- **P1 maraka set** (`vimshottari.maraka_set`/`maraka_lords` rewrite): consumes the existing tiered
+  `chart.maraka_points` doctrine (HTJAH-I:770-795) + from-Moon marakas (2/7/8-from-Moon lords; nodes in
+  2/7/8-from-Moon or conjoining/aspecting a 2/7 lord) + Saturn-in-10th Mrityu-Yoga. Validated: every dated
+  death golden's Mahadasha lord is in the set, incl. the functional Rahu (chart_35/78) and Jupiter (74/75).
+- **P2 `death_window`**: the maraka Bhukti periods in the alloted-span region. HONEST LIMIT documented:
+  isolating WHICH maraka strikes (premature/violent death below the span) is the strongest-maraka+transit
+  judgement the engine won't make; the robust validated claim is `is_maraka_period(death)` = True for all 5.
+- **P3 `significator_dasha_windows`**: the Dasha windows of a matter's lord/karaka/afflictors/relievers
+  (+maraka for death-class). Soft claim validated: the stated event-MD is a significator for the
+  relative-death + property goldens (6/6); gains/career events fall in a yoga-specific Dasha not captured
+  by the basic significators (documented partial).
+- **P4 wiring + render-gap fix**: a metadata-only `_event_timing` gate (verdict byte-for-byte unchanged;
+  snapshot-safe since metadata isn't snapshotted) surfaces `death_window` + `active_periods`. The render
+  path was re-routed `proforma.read_chart` -> the MODERN judge (house_template), which was a stale parallel
+  engine (house_judge) before -- this both upgrades the rendered verdicts to the validated engine AND
+  un-strands the formerly-invisible metadata (yoga/ayurdaya/beeja/drekkana + the new Dasha timing).
+**Validated vs Raman's dated deaths: the death-Mahadasha matches all 5; the death falls in a maraka period
+all 5.** 15 vimshottari tests + 2 render tests. Ratchet unchanged. The engine can now say not just "the 8th
+is afflicted" but "the maraka Dasha runs <window>" -- the timing foundation.

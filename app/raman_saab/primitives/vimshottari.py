@@ -37,6 +37,8 @@ from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
+from app.raman_saab.primitives import dignity as _dignity
+from app.raman_saab.primitives.shadbala import total as _shadbala_total
 
 _LORD_YEARS: Final[dict[str, int]] = dict(DASHA_LORDS)
 _SEQUENCE: Final[tuple[str, ...]] = tuple(name for name, _ in DASHA_LORDS)
@@ -366,3 +368,93 @@ def significator_dasha_windows(
             out.append(EventWindow(md.maha, role_of[md.maha], md.start_jd, md.end_jd))
     out.sort(key=lambda w: w.start_jd)
     return tuple(out)
+
+
+# ---------------------------------------------------------------------------
+# Dasha-driven house activation (inverse timer-set) — which houses a running
+# period lights up, the basis of Raman's temporally-prioritized reading.
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class ActiveHouse:
+    """A house lit up by the running Dasha. Raman reads the chart through the period: the running
+    Mahadasha/Bhukti lord ACTIVATES the houses it signifies (the inverse of `timer_set`), and the
+    matter fructifies there. ``grade`` follows HTJAH-II:680-694 — both period-lords time the house
+    -> ``par_excellence`` (the focus); exactly one -> ``limited``; neither -> dormant (omitted)."""
+    house: int
+    grade: str                      # "par_excellence" | "limited"
+    md_activates: bool
+    antar_activates: bool
+    md_lord: str
+    antar_lord: Optional[str]
+
+
+def active_houses(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
+    """The houses the running period lights up on ``jd`` (HTJAH-I:1586-1596: a Dasha lord gives the
+    results of the houses it owns/occupies/aspects/associates-with — exactly `timer_set` membership,
+    read in reverse). Graded by whether BOTH period-lords converge on the house. ``par_excellence``
+    first. Empty on a Track-B chart (no birth_jd). The `limited` set is broad by design (a Dasha
+    touches many matters); the `par_excellence` set is the narrow FOCUS."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    period = dasha_on(chart, jd)
+    if period is None:
+        return ()
+    md, antar = period.maha, period.antar
+    out: list[ActiveHouse] = []
+    for house in range(1, 13):
+        timers: set[str] = set(timer_set(chart, house))
+        for aux in _EVENT_AUX_HOUSES.get(house, ()):
+            timers |= timer_set(chart, aux)
+        md_hit = md in timers
+        antar_hit = antar is not None and antar in timers
+        if md_hit and antar_hit:
+            grade = "par_excellence"
+        elif md_hit or antar_hit:
+            grade = "limited"
+        else:
+            continue
+        out.append(ActiveHouse(house, grade, md_hit, antar_hit, md, antar))
+    out.sort(key=lambda a: (0 if a.grade == "par_excellence" else 1, a.house))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
+class LordQuality:
+    """How WELL a Dasha lord delivers the houses it activates — a strength/dignity DESCRIPTOR, not
+    a verdict (HTJAH-II:10004-10008: the activated house's result is good/bad per the lord's
+    strength). ``tag`` summarises: well / poorly / mixed / unknown."""
+    lord: str
+    strong: Optional[bool]          # is_powerful; None on Track-B / node (no Shadbala)
+    dignity: str
+    combust: bool
+    vargottama: bool
+    tag: str
+
+
+_GOOD_DIGNITIES: Final[frozenset[str]] = frozenset({"exalt", "moolatrikona", "own"})
+
+
+def _delivery_tag(strong: Optional[bool], dignity: str, combust: bool, vargottama: bool) -> str:
+    if combust or dignity == "debil" or (strong is False and dignity == "enemy"):
+        return "poorly"
+    if (strong is True or dignity in _GOOD_DIGNITIES or vargottama) and not combust:
+        return "well"
+    if strong is None and dignity == "neutral":
+        return "unknown"
+    return "mixed"
+
+
+def lord_quality(chart: RamanChart, lord: str) -> LordQuality:
+    """The activating lord's delivery quality (reuses `is_powerful`, `dignity`, combustion). Nodes
+    have no Shadbala/lordship -> strong None, dignity 'neutral'."""
+    p = chart.planets.get(lord)
+    if p is None:
+        return LordQuality(lord, None, "neutral", False, False, "unknown")
+    strong: Optional[bool] = None
+    if p.shadbala_rupas is not None:
+        strong = _shadbala_total.is_powerful(lord, p.shadbala_rupas.total / 60.0)
+    dig = _dignity.dignity(lord, chart)
+    combust = p.combust_fraction >= 0.5
+    return LordQuality(lord, strong, dig, combust, p.vargottama,
+                       _delivery_tag(strong, dig, combust, p.vargottama))

@@ -13,12 +13,27 @@ def _parse(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--lat", type=float, required=True); ap.add_argument("--lon", type=float, required=True)
     ap.add_argument("--ayanamsa", default="raman", choices=["raman", "lahiri"])
     ap.add_argument("--format", default="json", choices=["json", "text", "reading", "markdown"])
+    ap.add_argument("--at")                # YYYY-MM-DD: Dasha snapshot (what is active on this date)
+    ap.add_argument("--timeline", action="store_true")   # Dasha-by-Dasha life-narrative
+    ap.add_argument("--bhuktis", action="store_true")    # expand the timeline to MD->Bhukti
     return ap.parse_args(argv)
 
 def main(argv: list[str] | None = None) -> int:
     a = _parse(argv)
     y, mo, d = (int(x) for x in a.date.split("-")); hh, mm = (int(x) for x in a.time.split(":"))
     birth = BirthData(a.name, y, mo, d, hh, mm, a.tz, a.lat, a.lon)
+    if a.at or a.timeline:                                  # Dasha-driven prioritized reading
+        from app.raman_saab import reading_timeline as rt
+        md = a.format == "markdown"
+        if a.timeline:
+            tl = rt.reading_timeline(birth, ayanamsa=a.ayanamsa, expand_bhuktis=a.bhuktis)
+            print(render.timeline_to_markdown(tl) if md else render.timeline_to_text(tl))
+        else:
+            ay, am, ad = (int(x) for x in a.at.split("-"))
+            from app.raman_saab.primitives.vimshottari import date_to_jd
+            snap = rt.read_chart_on_date(birth, date_to_jd(ay, am, ad), ayanamsa=a.ayanamsa)
+            print(render.snapshot_to_markdown(snap) if md else render.snapshot_to_text(snap))
+        return 0
     if a.format in ("reading", "markdown"):                 # full house-by-house judgment
         reading = read_chart(birth, ayanamsa=a.ayanamsa)
         print(render.to_markdown(reading) if a.format == "markdown" else render.to_text(reading))

@@ -90,3 +90,108 @@ def to_markdown(reading: RamanReading) -> str:
             out.append(f"- _{_NOTE_LABELS.get(key, key)}:_ {val}")
         out.append("")
     return _ascii("\n".join(out))
+
+
+# ---------------------------------------------------------------------------
+# Dasha-driven (temporally-prioritized) reading — the snapshot + life-narrative.
+# These build their OWN blocks (never _house_block) and surface no per-matter
+# `active_periods` note, so they don't double up with the static all-house reading.
+# ---------------------------------------------------------------------------
+
+def _jd_to_date(jd: float) -> str:
+    import swisseph as swe
+    y, m, d, _h = swe.revjul(jd, swe.GREG_CAL)
+    return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
+
+
+def _activates_clause(a) -> str:
+    """'activated by MD Saturn (well) AND Bhukti Mercury (well)' — only the lord(s) that fire."""
+    parts: list[str] = []
+    if a.md_activates:
+        parts.append(f"MD {a.md_lord} ({a.md_quality.tag})")
+    if a.antar_activates and a.antar_lord is not None and a.antar_quality is not None:
+        parts.append(f"Bhukti {a.antar_lord} ({a.antar_quality.tag})")
+    return "activated by " + " AND ".join(parts)
+
+
+def _activated_lines(rows: tuple) -> list[str]:
+    lines: list[str] = []
+    active_houses = {a.house for a in rows}
+    for a in rows:
+        lines.append(f"[{a.grade.replace('_', '-')}] House {a.house} - {_HOUSE_NAMES[a.house]}: "
+                     f"{a.natal_verdict.upper()} ({a.natal_degree})")
+        lines.append(f"    {_activates_clause(a)}")
+    dormant = [h for h in range(1, 13) if h not in active_houses]
+    if dormant:
+        lines.append(f"Dormant this period: {', '.join(map(str, dormant))}  "
+                     f"({len(dormant)} not lit)")
+    return lines
+
+
+def snapshot_to_text(snap) -> str:
+    """Render a `DashaSnapshot`: the houses the running period lights up, par-excellence first."""
+    b = snap.birth
+    period = (f"{snap.period.maha} / {snap.period.antar}" if snap.period and snap.period.antar
+              else (snap.period.maha if snap.period else "n/a"))
+    out = ["=" * 72,
+           f"RAMAN SAAB - Dasha Snapshot for {b.name} on {_jd_to_date(snap.jd)}",
+           f"Running period: {period}    [ayanamsa = {snap.promise.ayanamsa}]",
+           "=" * 72, "",
+           "ACTIVE HOUSES (par-excellence first; natal promise + activating lord)"]
+    out += _activated_lines(snap.activated) if snap.activated else ["(no house lit - check date)"]
+    out += ["", "The natal verdict is the standing promise; the Dasha selects what is active now."]
+    return _ascii("\n".join(out))
+
+
+def snapshot_to_markdown(snap) -> str:
+    b = snap.birth
+    period = (f"{snap.period.maha}/{snap.period.antar}" if snap.period and snap.period.antar
+              else (snap.period.maha if snap.period else "n/a"))
+    out = [f"# Dasha Snapshot - {b.name} ({_jd_to_date(snap.jd)})",
+           f"**Running period:** {period}", "", "## Active houses (par-excellence first)"]
+    for a in snap.activated:
+        out.append(f"- **[{a.grade.replace('_', '-')}] House {a.house} - {_HOUSE_NAMES[a.house]}:** "
+                   f"{a.natal_verdict} ({a.natal_degree}) - _{_activates_clause(a)}_")
+    if not snap.activated:
+        out.append("- (no house lit)")
+    return _ascii("\n".join(out))
+
+
+def timeline_to_text(tl) -> str:
+    """Render a `DashaTimeline`: Raman's Dasha-by-Dasha narrative — each period's active houses."""
+    b = tl.birth
+    out = ["=" * 72, f"RAMAN SAAB - Dasha Life-Narrative for {b.name}",
+           f"[ayanamsa = {tl.promise.ayanamsa}]  (natal promise x running-period activation)",
+           "=" * 72]
+    for tp in tl.periods:
+        label = f"{tp.period.maha}/{tp.period.antar}" if tp.period.antar else f"{tp.period.maha} Dasha"
+        out.append("")
+        out.append(f"=== {label}  ({_jd_to_date(tp.period.start_jd)} .. "
+                   f"{_jd_to_date(tp.period.end_jd)}) ===")
+        pe = [a for a in tp.activated if a.grade == "par_excellence"]
+        lim = [a for a in tp.activated if a.grade == "limited"]
+        if pe:
+            for a in pe:
+                out.append(f"  [par-excellence] House {a.house} ({_HOUSE_NAMES[a.house]}): "
+                           f"{a.natal_verdict} ({a.natal_degree})")
+        else:
+            out.append("  (no par-excellence house this period)")
+        if lim:
+            out.append(f"  limited: {', '.join(str(a.house) for a in lim)}")
+    return _ascii("\n".join(out))
+
+
+def timeline_to_markdown(tl) -> str:
+    out = [f"# Dasha Life-Narrative - {tl.birth.name}", ""]
+    for tp in tl.periods:
+        label = f"{tp.period.maha}/{tp.period.antar}" if tp.period.antar else f"{tp.period.maha} Dasha"
+        out.append(f"## {label} ({_jd_to_date(tp.period.start_jd)} .. {_jd_to_date(tp.period.end_jd)})")
+        pe = [a for a in tp.activated if a.grade == "par_excellence"]
+        for a in pe:
+            out.append(f"- **House {a.house} ({_HOUSE_NAMES[a.house]}):** "
+                       f"{a.natal_verdict} ({a.natal_degree})")
+        lim = [a.house for a in tp.activated if a.grade == "limited"]
+        if lim:
+            out.append(f"- _limited:_ {', '.join(map(str, lim))}")
+        out.append("")
+    return _ascii("\n".join(out))

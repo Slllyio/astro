@@ -1085,3 +1085,21 @@ SAME "Time of Fructification" rule for every house (HTJAH-I:4303-4322 [4th]/5315
 - **Result**: non-death event-MD recognition jumps from ~10% to **12/13 (92%)** on the dated goldens
   (gains/career/acquisition/travel). Lone miss: h10_05 Napoleon (Rahu via the deeper Kujavad-Ketu
   constellation-chaining — documented edge). Ratchet unchanged (additive). 10 new parametrised tests.
+
+### 2026-06-26 (ultracode) — Dasha-driven, temporally-prioritized reading (Raman's two-layer method)
+Answered the methodology question (deep corpus research, 2 agents): per Raman, read the NATAL PROMISE
+(static all-house) AND prioritize TEMPORALLY by the running Dasha — his worked readings are Dasha-by-Dasha
+("let us take Mars and see what effects he will produce in his Dasha"). Built the activation layer:
+- **`vimshottari.active_houses(chart, jd)`** — the INVERSE of timer_set: the running MD/Bhukti lord lights
+  up the houses it signifies (HTJAH-I:1586-1596). Graded par_excellence (both period-lords converge) /
+  limited (one) / dormant (HTJAH-II:680-694). par_excellence is the narrow FOCUS.
+- **`vimshottari.lord_quality(chart, lord)`** — good/bad delivery descriptor (strength + dignity +
+  combust; HTJAH-II:10004), NOT a verdict.
+- **`reading_timeline.py`** — `read_chart_on_date` (SNAPSHOT: what's active on a date) + `reading_timeline`
+  (LIFE-NARRATIVE: Dasha-by-Dasha). ADDITIVE — carries the unchanged RamanReading as `promise` (tested).
+- **render + CLI** — `--at YYYY-MM-DD` (snapshot, par_excellence-first, dormant collapsed) and `--timeline`
+  (+`--bhuktis`); reuses _ascii/_HOUSE_NAMES; no double-render with the static reading.
+Validated: on a stated period the event house is ACTIVE >=80% (7/8), par_excellence on the worked-example
+empire chart (Ketu/Mercury -> H2+H11) and the clean-birth deaths (H8). Lincoln snapshot on 1865-04-14 ->
+H8 Longevity/Death AFFLICTED par_excellence, activated by Saturn(well)/Mercury(well). Ratchet unchanged
+(120/154); 10 new tests; raman harness 3213 green.

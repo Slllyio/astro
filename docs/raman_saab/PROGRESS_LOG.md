@@ -1069,3 +1069,19 @@ the natal verdicts and the strict ratchet are untouched (120/154 exact, 140/154 
 **Validated vs Raman's dated deaths: the death-Mahadasha matches all 5; the death falls in a maraka period
 all 5.** 15 vimshottari tests + 2 render tests. Ratchet unchanged. The engine can now say not just "the 8th
 is afflicted" but "the maraka Dasha runs <window>" -- the timing foundation.
+
+### 2026-06-26 (ultracode) — Fix the death-bias: general "Time of Fructification" timer-set
+A critical audit (2 agents) found the timing layer was DEATH-BIASED: death/relative-death 12/12 (100%)
+but non-death events ~10-29% genuine (gains 0/9, career 0/2, acquisition 0/2) — because the broad
+significator pool (maraka_set) was gated to 6 death keys, significator_dasha_windows was Mahadasha-only,
+and _rule_subject dropped 85% of fired rules. The doctrine researcher found the fix: Raman gives the
+SAME "Time of Fructification" rule for every house (HTJAH-I:4303-4322 [4th]/5315-5333 [5th]; HTJAH-II:
+9910-9934 [10th]/14496-14537 [11th]).
+- **New `vimshottari.timer_set(chart, house)`**: the H-lord, H-karaka, the house's occupants + aspecters,
+  the planets conjoining/aspecting the H-lord, the H-lord-from-Moon, and a node whose dispositor is itself
+  a timer (HTJAH-I:2764/8566 node-via-dispositor). `_EVENT_AUX_HOUSES` unions 2+11 (gains) and 9+12 (travel).
+- **`_event_timing` generalized**: every matter now draws its significators from `timer_set(sig.house)`
+  (+aux), not the death-gated maraka set (which stays for death matters). Metadata-only, verdict-invariant.
+- **Result**: non-death event-MD recognition jumps from ~10% to **12/13 (92%)** on the dated goldens
+  (gains/career/acquisition/travel). Lone miss: h10_05 Napoleon (Rahu via the deeper Kujavad-Ketu
+  constellation-chaining — documented edge). Ratchet unchanged (additive). 10 new parametrised tests.

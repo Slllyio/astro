@@ -400,11 +400,14 @@ all 5). Honest limits, NOT to be force-fixed:
   Saturn transit). The engine returns a RANKED WINDOW SET, never a date. `death_window` predicts the
   natural-death (alloted-span) region; premature/violent deaths (Lincoln 56, JFK 46) strike a strong
   EARLIER maraka well below the ayurdaya span and are not isolated.
-- **General event-timing is partial** — the soft claim (the event-MD is a matter significator) holds for
-  relative-death + property goldens (6/6) but FAILS for gains/career (chart_40/44 wealth in Ketu Dasa,
-  h11_14/17 gains in Venus/Saturn Dasa): those events fall in a YOGA-specific Dasha (a dhana-yoga planet,
-  or a from-11th significator) not captured by the basic lord/karaka/afflictor set. Adding yoga-planet
-  significators is the future lift (uncertain; needs over-fire care).
+- **General event-timing — RESOLVED 2026-06-26** (was: partial). A critical audit found the layer was
+  death-biased (death 12/12; non-death ~10-29%). FIXED by `vimshottari.timer_set(chart, house)` — Raman's
+  universal "Time of Fructification" significator set (H-lord + H-karaka + occupants + aspecters +
+  H-lord-aspecters/conjuncts + H-lord-from-Moon + node-via-dispositor), wired into `_event_timing` for
+  EVERY matter. Non-death event-MD recognition: **12/13 (92%)** across gains/career/acquisition/travel.
+  Remaining edge: **h10_05 Napoleon (Rahu)** — needs the deeper Kujavad-Ketu *constellation-chaining*
+  (Rahu in Ketu's star -> Ketu gives Mars' results -> Mars+Sun = empire); the engine adds a node by its
+  sign-DISPOSITOR but not yet by its CONSTELLATION-lord chain. Future lift, low priority.
 - **Birth-time sensitivity** — a Bhukti boundary shifts months per few minutes of birth error: the
   Mahadasha claim is robust (all 5 deaths), the Bhukti only for precisely-timed births (Lincoln/Hitler
   exact). Hence the layer reports a window, not a date.

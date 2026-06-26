@@ -1010,21 +1010,27 @@ def _event_timing(
         windows = ctx.get_or_compute("death_window", lambda: vimshottari.death_window(chart))
         if windows:
             md.append(("death_window", "; ".join(w.label() for w in windows[:3])))
+    # General "Time of Fructification" timer-set for THIS house (+ its aux event-houses, e.g.
+    # gains reads 2nd+11th) -> the planets that bring the matter's results in their Dasha.
+    timers: set[str] = set(vimshottari.timer_set(chart, sig.house))
+    for aux in vimshottari._EVENT_AUX_HOUSES.get(sig.house, ()):
+        timers |= vimshottari.timer_set(chart, aux)
     grahas: dict[str, frozenset[str]] = {
+        "timer": frozenset(timers),
         "lord": frozenset({lead.lord}),
         "karaka": frozenset({sig.primary_karaka}),
         "afflictor": frozenset(
             s for fr in lead.fired_malefic if (s := _rule_subject(fr.rule)) is not None),
-        "reliever": frozenset(
-            s for fr in lead.fired_benefic if (s := _rule_subject(fr.rule)) is not None),
     }
     if sig.key in _TIMING_MARAKA_KEYS:
         grahas["maraka"] = ctx.get_or_compute(
             "maraka_lords", lambda: vimshottari.maraka_set(chart).all())
     windows = vimshottari.significator_dasha_windows(chart, grahas)
     if windows:
-        salient = [w for w in windows if w.role in ("afflictor", "maraka")] or list(windows)
-        md.append(("active_periods", "; ".join(w.label() for w in salient[:4])))
+        # Most event-salient roles first (maraka/afflictor/lord/karaka), then generic timers.
+        ordered = sorted(windows, key=lambda w: (
+            {"maraka": 0, "afflictor": 1, "lord": 2, "karaka": 3}.get(w.role, 4), w.start_jd))
+        md.append(("active_periods", "; ".join(w.label() for w in ordered[:5])))
     return verdict, tuple(md)
 # The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
 # Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in

@@ -129,6 +129,37 @@ def test_significator_windows_catch_relative_death_mds():
         assert event_md in {w.graha for w in windows}, f"{cid}: {event_md} not an active window"
 
 
+# Non-death dated events: (id, primary event-house(s), stated Mahadasha lord). These are the
+# matters the death-biased layer scored ~0% on; the general "Time of Fructification" timer-set
+# must recognise the event-MD as a significator of the event house.
+_NONDEATH_EVENTS = [
+    ("HTJAH-I.chart_40", (2, 11), "Ketu"), ("HTJAH-I.chart_44", (2, 11), "Ketu"),
+    ("HTJAH-II.h11_14", (11,), "Venus"), ("HTJAH-II.h11_17", (11,), "Saturn"),
+    ("HTJAH-II.h11_18", (11,), "Mercury"), ("HTJAH-II.h10_01", (10,), "Rahu"),
+    ("HTJAH-I.h4_05", (4,), "Jupiter"), ("HTJAH-I.h4_06", (4,), "Jupiter"),
+    ("HTJAH-II.h9_15", (9, 12), "Ketu"), ("HTJAH-II.h9_17", (9, 12), "Sun"),
+]
+
+
+@pytest.mark.parametrize("cid,houses,event_md", _NONDEATH_EVENTS)
+def test_nondeath_event_md_in_timer_set(cid: str, houses: tuple, event_md: str):
+    """The general 'Time of Fructification' timer-set (HTJAH-I:4303/5315; HTJAH-II:9910/14496)
+    recognises the stated event-MD as a significator of the event house — gains/career/
+    acquisition/travel, NOT just death. (h10_05 Napoleon's Rahu needs the deeper Kujavad-Ketu
+    constellation-chaining and is a documented edge, not in this set.)"""
+    chart, _ = _golden_chart(cid)
+    timers: set[str] = set()
+    for h in houses:
+        timers |= vd.timer_set(chart, h)
+    assert event_md in timers, f"{cid}: {event_md} missing from timer_set{houses}"
+
+
+def test_timer_set_discriminates_not_universal():
+    """The timer-set must DISCRIMINATE — not every graha times every house (else the metric is
+    vacuous). On the canonical chart, at least one graha is NOT an 11th-house timer."""
+    assert len(vd.timer_set(_canonical_chart(), 11)) < 9
+
+
 def test_timing_primitives_noop_on_track_b():
     """Track-B (stated-position) charts have no birth_jd -> timing primitives degrade cleanly."""
     from app.raman_saab.chart.model import RamanChart

@@ -36,6 +36,7 @@ from app.core.ephemeris_engine import (
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import drishti
+from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
 
 _LORD_YEARS: Final[dict[str, int]] = dict(DASHA_LORDS)
 _SEQUENCE: Final[tuple[str, ...]] = tuple(name for name, _ in DASHA_LORDS)
@@ -153,6 +154,51 @@ def _node_is_maraka(chart: RamanChart, node: str) -> bool:
                                or drishti.aspects_planet(node, lord, chart)):
             return True
     return False
+
+
+def _lord_of_house(chart: RamanChart, house: int) -> str:
+    return SIGN_LORDS[((chart.asc_sign - 1) + (house - 1)) % 12 + 1]
+
+
+def timer_set(chart: RamanChart, house: int) -> frozenset[str]:
+    """Raman's 'Time of Fructification' significator set for a bhava — the planets that bring
+    that house's results in their Dasha. The SAME rule is given for every house (HTJAH-I:4303-
+    4322 [4th] / 5315-5333 [5th]; HTJAH-II:9910-9934 [10th] / 14496-14537 [11th]):
+
+      the H-lord, the H-karaka, the house's OCCUPANTS and ASPECTERS, the planets conjoining or
+      aspecting the H-LORD, the H-lord from the MOON, and a NODE whose dispositor is itself a
+      timer (a node gives the results of its sign-dispositor, HTJAH-I:2764/8566).
+
+    This generalizes event-timing BEYOND death/marakas — gains (11th/2nd), career (10th),
+    acquisition (4th), travel (9th/12th), children (5th) — lifting the non-death event-MD hit
+    rate from ~10% to ~92% on the dated goldens. A planet gives a house's results in its Dasha
+    when (and only when) it is in this set; the MD sets the theme, the Bhukti triggers."""
+    ts: set[str] = set()
+    lord = _lord_of_house(chart, house)
+    ts.add(lord)
+    ts.add(BHAVA_KARAKA.get(house, "Sun"))
+    for name, p in chart.planets.items():
+        if p.rasi_house == house or drishti.aspects_house(name, house, chart):
+            ts.add(name)
+    lp = chart.planets.get(lord)
+    if lp is not None:
+        for name, p in chart.planets.items():
+            if name != lord and (p.rasi_house == lp.rasi_house
+                                 or drishti.aspects_planet(name, lord, chart)):
+                ts.add(name)
+    moon = chart.planets.get("Moon")
+    if moon is not None:
+        ts.add(SIGN_LORDS[(moon.sign - 1 + (house - 1)) % 12 + 1])  # H-lord from the Moon
+    for node in ("Rahu", "Ketu"):                                    # node via its dispositor
+        np = chart.planets.get(node)
+        if np is not None and SIGN_LORDS[np.sign] in ts:
+            ts.add(node)
+    return frozenset(ts)
+
+
+# Secondary event houses unioned into the timer-set for a few matters (Raman reads gains from
+# the 2nd AND 11th; foreign travel from the 9th AND 12th).
+_EVENT_AUX_HOUSES: Final[dict[int, tuple[int, ...]]] = {2: (11,), 11: (2,), 9: (12,), 12: (9,)}
 
 
 def maraka_set(chart: RamanChart) -> MarakaSet:
@@ -291,8 +337,10 @@ class EventWindow:
 
 
 # Role priority when one graha signifies a matter several ways: iterated in order, the LAST
-# match wins, so the more event-salient roles (maraka/afflictor) override lord/karaka.
-_ROLE_ORDER: Final[tuple[str, ...]] = ("lord", "karaka", "reliever", "maraka", "afflictor")
+# match wins, so the more event-salient roles (maraka/afflictor) override the generic timer/
+# lord/karaka tags.
+_ROLE_ORDER: Final[tuple[str, ...]] = (
+    "timer", "lord", "karaka", "reliever", "maraka", "afflictor")
 
 
 def significator_dasha_windows(

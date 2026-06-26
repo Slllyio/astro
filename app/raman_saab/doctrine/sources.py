@@ -14,6 +14,8 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from app.raman_saab.doctrine import book_registry
+
 _CORPUS: Path = (Path(__file__).resolve().parents[3]
                  / "data" / "knowledge_library" / "sources")
 
@@ -25,18 +27,16 @@ class Citation:
 
 
 def _resolve_file(work: str) -> Path | None:
-    """The on-disk file backing a source tag (None if the tag is unknown)."""
-    if work == "HTJAH-I":
-        return _CORPUS / "how_to_judge_a_horoscope_raman" / "chapter_001_full-text-unsplit.md"
-    if work == "HTJAH-II":
-        return _CORPUS / "how_to_judge_horoscope_raman2" / "chapter_001_full-text-unsplit.md"
-    if work.startswith("HPA-"):
-        return _glob_chapter("hindu_predictive_astrology_raman", work.split("-", 1)[1])
-    if work.startswith("GBB-"):
-        return _glob_chapter("graha_bhava_balas_raman", work.split("-", 1)[1])
-    if work == "3HC":
-        return _first(_CORPUS / "three_hundred_combinations_raman")
-    return None
+    """The on-disk file backing a source tag, via the unified `book_registry`. None if the tag
+    is unknown OR points at an out-of-scope (non-citable) book — the divergence firewall."""
+    entry = book_registry.entry_for(work)
+    if entry is None:
+        return None
+    if entry.multi_chapter:
+        return _glob_chapter(entry.slug, work.split("-", 1)[1])
+    if entry.fixed_file is not None:
+        return _CORPUS / entry.slug / entry.fixed_file
+    return _first(_CORPUS / entry.slug)
 
 
 def _glob_chapter(folder: str, num: str) -> Path | None:

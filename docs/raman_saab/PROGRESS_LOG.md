@@ -1128,3 +1128,21 @@ corpus file is git-ignored (out-of-band, like every Raman source); only the regi
 Not yet cited -> not in the source-lock (locks on first citation). Ratchet unchanged (120/154); raman
 harness 3226 green. NEXT: Phase 3 — extract each worked chart + Raman's verdict as verdict_review=DRAFT
 goldens (denominator honesty: confirm engine-matches, keep mismatches DRAFT).
+
+### 2026-06-27 (ultracode) — Phase 3: Notable Horoscopes -> 45 DRAFT goldens + out-of-sample validation
+Extracted NH's worked charts via a fan-out Workflow (15 extractor agents over 71 chart line-ranges ->
+72 charts; the ~6 legendary/BC ones (Buddha/Alexander/Jesus...) are disputed and excluded). Recovered
+lat/long by regex for the 35 clear charts the agents left null (all printed coords in NH); cast 45 charts
+(LMT tz where unstated) and ran judge_house.
+
+OUT-OF-SAMPLE VALIDATION (the key result): on 45 UNSEEN NH charts / 218 house-verdicts the engine matches
+Raman **146/218 = 66% exact, 181/218 = 83% within-1** -- tracking its own ratchet (78%/91%) with the
+expected drop from out-of-sample + extraction noise. A memorised engine would collapse on unseen charts;
+this generalises -> direct evidence of FAITHFULNESS, not overfit. The 72 mismatches are a cited backlog of
+real gaps (or extraction errors) to investigate.
+
+Wrote the 45 charts to raman_goldens.jsonl as book="NH", verdict_review="DRAFT", track_eligibility=["B"],
+confidence=0.3 (215 verdict rows). Widened the schema book enum to allow NH. DRAFT => NOT asserted, so the
+ratchet is UNCHANGED (120/154, 140/154); they await human confirmation against the text (denominator
+honesty: confirm engine-matches, keep mismatches DRAFT until a mechanism exists). raman harness 3271 green.
+Review manifest: scratchpad/nh_draft_manifest.json. Birth coords/tz are auto-recovered -> verify on confirm.

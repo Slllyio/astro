@@ -186,7 +186,7 @@ def test_golden_line_conforms_to_schema(rec: dict[str, Any]) -> None:
         assert fld in rec, f"{_id(rec)}: missing required field {fld!r}"
 
     assert rec["case_type"] in _CASE_TYPES, f"{_id(rec)}: bad case_type {rec['case_type']!r}"
-    assert rec["book"] in {"HTJAH-I", "HTJAH-II"}, f"{_id(rec)}: bad book"
+    assert rec["book"] in {"HTJAH-I", "HTJAH-II", "NH"}, f"{_id(rec)}: bad book"
 
     lagna = rec["lagna_sign"]
     assert lagna is None or (isinstance(lagna, int) and 1 <= lagna <= 12), \

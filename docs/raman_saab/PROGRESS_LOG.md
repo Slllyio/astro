@@ -1117,3 +1117,14 @@ Kahala (48/164), Lakshmi (strict dignity arm still 16/164). REJECTED as noise: S
 Obhayachari. SOURCE_LOCK re-generated to cover the newly-cited HPA-20 chapter. bphs-doctrine-reviewer:
 3/3 KEEP (Khadga SOUND; Chamara/Sreenatha SOUND-WITH-CAVEAT — faithful strict-subsets). 22 yogas
 total; raman harness 3226 green.
+
+### 2026-06-27 (ultracode) — Notable Horoscopes ingested (Phase 3 groundwork)
+archive.org is network-blocked from this machine, so the full Notable Horoscopes was ingested from a
+locally-supplied PDF (452 pages, full text layer, ~707K chars, ~72 worked-chart markers) into
+data/knowledge_library/sources/notable_horoscopes_raman/chapter_001_full-text-unsplit.md (single
+unsplit file, like HTJAH; the 2 prior mis-split chapters were replaced). Registered in book_registry
+as a LIVE single-file book, tag "NH" (resolves + verifies; entry coupled to the ETL bundle slug). The
+corpus file is git-ignored (out-of-band, like every Raman source); only the registry entry is tracked.
+Not yet cited -> not in the source-lock (locks on first citation). Ratchet unchanged (120/154); raman
+harness 3226 green. NEXT: Phase 3 — extract each worked chart + Raman's verdict as verdict_review=DRAFT
+goldens (denominator honesty: confirm engine-matches, keep mismatches DRAFT).

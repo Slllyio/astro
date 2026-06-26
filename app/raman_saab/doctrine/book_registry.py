@@ -45,6 +45,8 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Hindu Predictive Astrology"),
     BookEntry("GBB", "graha_bhava_balas_raman", True, "live",
               None, "Graha and Bhava Balas"),
+    BookEntry("NH", "notable_horoscopes_raman", False, "live",
+              "chapter_001_full-text-unsplit.md", "Notable Horoscopes", "NotableHoroscopesBVR"),
     # --- CATALOG-ONLY, OUT OF SCOPE (different systems): present, NON-citable (divergence firewall) ---
     BookEntry("JAIMINI", "studies_jaimini_raman", True, "catalog-only-out-of-scope",
               None, "Studies in Jaimini Astrology (Jaimini system)"),

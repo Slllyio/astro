@@ -91,3 +91,13 @@ with holdout-lock) calibrating effective-strength weighting across the WHOLE set
 **Decision: do NOT ship.** The ~17 B1 NH-miss rows stay DRAFT (documented engine limits, honestly recorded);
 the NH charts become the test set for a future dedicated B1 redesign. The discipline (no regression, no
 overfit) held — the gates refused both a regressing and an overfit B1.
+
+## SHIPPED 2026-06-27: two-malefic-occupancy demote gate (Theme 2, partial)
+`_malefic_occupancy_gate` (house_template.py): >=2 cruel malefics {Mars,Saturn,Rahu,Ketu} tenant a bhava
+AND the lead lord is not Shadbala-strong -> favourable demoted to MIXED. DEMOTE-ONLY. Cite NH:5890 (Tagore
+4th by Mars+Ketu -> desultory/unconventional education). Reviewer SOUND-WITH-CAVEAT (KEEP). Validated:
+with/without-gate diff changes 0 confirmed verdicts; closed NH chart_35 H4 -> CONFIRMED. Ratchet 205/239 ->
+206/240. The strong-lord twin (chart_42 H2) is spared by the compensation clause. The other user-flagged
+cases stay DRAFT/limits: chart_45 H2 (neecha-lord, identical-signature counterexample chart_57 H4) and
+chart_67 H5 (Mars-on-progeny, strong lord present -> can't gate without over-firing). Bose H1/H2 confirmed
+B1-class (benefic-occupant floor over-fires 17/100), not isolated bugs -> need the deferred B1 recalibration.

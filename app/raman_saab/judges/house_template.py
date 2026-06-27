@@ -1069,6 +1069,32 @@ def _marital_bond_gate(
     return verdict, ()
 
 
+def _malefic_occupancy_gate(
+    chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+) -> tuple[Verdict, Metadata]:
+    """Two-malefic-occupancy demote: a bhava TENANTED by >= 2 cruel malefics (Mars/Saturn/Rahu/
+    Ketu) whose LORD does not compensate (the lead lord is not Shadbala-strong) is afflicted enough
+    to qualify an otherwise-FAVOURABLE verdict down to MIXED. Demote-only: it never touches a
+    mixed/afflicted/insufficient verdict and never reaches afflicted.
+
+    Raman's comparative weighing — multiple malefics tenanting a bhava afflict it UNLESS a strong
+    lord carries the house: Notable Horoscopes Chart 100 (Tagore) 'the affliction of the 4th house
+    by the presence of Mars and Ketu denotes that his education was of a desultory character'
+    (NH:5890) -> mixed (the unconventional schooling). The lord-not-strong clause is the
+    compensation exemption: it spares the favourable twin (NH chart_42 H2 — two malefics but a
+    STRONG lord) and over-fires 0/109 confirmed-favourable verdicts (with-gate vs without-gate diff
+    changes 0 confirmed verdicts). The Sun is deliberately EXCLUDED from `_CRUEL_MALEFICS` (a
+    calibration choice mirroring `_marital_bond_gate`, not a claim the Sun never afflicts by
+    occupancy). bphs-doctrine-reviewer: SOUND-WITH-CAVEAT (KEEP)."""
+    if verdict != "favourable" or lead.lord_strong is True:
+        return verdict, ()
+    occ = sorted(nm for nm, p in chart.planets.items()
+                 if nm in _CRUEL_MALEFICS and p.rasi_house == sig.house)
+    if len(occ) >= 2:
+        return "mixed", (("malefic_occupancy", f"{'+'.join(occ)}@H{sig.house}:weak_lord"),)
+    return verdict, ()
+
+
 def _longevity_span(
     chart: RamanChart, sig: Signification, verdict: Verdict, ctx: EvalContext,
 ) -> tuple[Verdict, Metadata]:
@@ -1292,10 +1318,12 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
+    verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + timing_md + lookup_md))
+        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + timing_md
+        + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

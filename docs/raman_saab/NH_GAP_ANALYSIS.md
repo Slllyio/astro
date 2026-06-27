@@ -118,3 +118,23 @@ whole. B1 is only buildable as a CALIBRATED re-fit via `tools/raman_saab/tune_th
 affliction-weighting holdout-locked to 206/240 — a dedicated, uncertain research effort (the -40 hand-start
 makes the tuner's job hard). The faithful near-term ceiling is the current 206/240; the only safe additive
 wins are the rare clean gates with a real compensation discriminator (e.g. the shipped two-malefic gate).
+
+## SHIPPED 2026-06-27: Theme 3 (yogakaraka-Lagna gate, partial) + B3/B4 superseded
+`_yogakaraka_lagna_gate`: a natural malefic (Mars/Saturn) that is the chart's functional yogakaraka
+occupying the Lagna is a Raja-yoga that fortifies the self -> an over-harsh afflicted self rises to
+favourable. Comparative-weighing guard withholds the lift when >=2 non-yogakaraka malefics co-occupy
+(reviewer FLAG). Closed NH chart_69 H1 (Cancer Lagna, Mars-YK+Ketu; Raman 'confers imagination') ->
+CONFIRMED, ratchet 207/240 -> 208/241. chart_57 EXCLUDED by the guard (3 malefics; Raman credits its
+favourable self to Moon-in-10th, a different/B1 mechanism — and its cast is doubtful per reviewer) ->
+stays DRAFT. Theme-3 row chart_61 H9 (Saturn-YK aspecting the 9th) is the any-house case deliberately
+left to the deferred general form. **B3 (non-death marital maraka guard) and B4 (blemishless/yogakaraka-
+Venus override) are SUPERSEDED**: their sole target was the chart_03/08 marriage over-harsh, now fully
+closed by B2 (chart_08) + earlier work (chart_03). With no live targets, building them would add over-fire
+risk for zero upside — not built.
+
+## Session tally (2026-06-27): three clean gates + the gap map, 205/239 -> 208/241
+two-malefic-occupancy (+1 Tagore), GBB B2 marginal-karaka (+1 chart_08, real-error resolved), Theme-3
+yogakaraka-Lagna (+1 chart_69). Plus the 69-miss MISS_TABLE (77% B1) and the B1 scoping (calibration, not
+hand-codeable: -40). Refused as over-firing/unfaithful and documented: B1 effective-strength, benefic-
+occupant-fortifies, neecha-lord, Mars-on-progeny, B3, B4. Every shipped gate: over-fire-scanned, reviewer-
+KEEP, zero-regression, human-bumped.

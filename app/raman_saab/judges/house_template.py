@@ -56,7 +56,7 @@ from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives import vimshottari
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
 from app.raman_saab.primitives.dignity import dignity
-from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS
+from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS, is_yogakaraka
 from app.raman_saab.primitives.shadbala import bhava_bala as bhava_bala_mod
 from app.raman_saab.primitives.shadbala import total as shadbala_total
 from app.raman_saab.primitives.sphutas import beeja_kshetra
@@ -1136,6 +1136,44 @@ def _marginal_karaka_gate(
     return verdict, ()
 
 
+_NATURAL_MALEFIC_YK: frozenset[str] = frozenset({"Mars", "Saturn"})
+
+
+def _yogakaraka_lagna_gate(
+    chart: RamanChart, sig: Signification, verdict: Verdict,
+) -> tuple[Verdict, Metadata]:
+    """Theme 3 — functional-yogakaraka non-affliction. A natural malefic (Mars/Saturn) that is the
+    chart's FUNCTIONAL YOGAKARAKA occupying the LAGNA is a Raja-yoga that FORTIFIES the self (the
+    'man of action' / dynamic personality), not an affliction. The engine fires the yogakaraka's
+    planet-in-Lagna as a malefic (H1.P.Mars + H1.C.28 functional-malefic-in-Lagna), over-afflicting
+    a Lagna Raman reads favourable (NH chart_57, chart_69 — both Cancer Lagna, where Mars rules the
+    5th [trikona] and 10th [kendra] and so is the yogakaraka, posited in the Lagna). When an
+    AFFLICTED self-verdict has a natural-malefic yogakaraka in the Lagna, lift it to favourable.
+    Scoped to the LAGNA self-matter (the general any-house form clips 2 correct confirmed-afflicted
+    verdicts); 0 over-fire on the confirmed set.
+
+    COMPARATIVE-WEIGHING GUARD (bphs-doctrine-reviewer FLAG): the yogakaraka's Raja-yoga
+    fortification does NOT erase the affliction of OTHER malefics tenanting the Lagna — if >= 2
+    NON-yogakaraka natural malefics also occupy the Lagna, the self is not cleanly favourable
+    (mirrors `_malefic_occupancy_gate` / NH:5890 'two malefics occupying -> at least mixed'). This
+    guard holds the gate to the clean anchor NH chart_69 (Mars-YK + Ketu — Raman: 'Cancer Lagna
+    occupied by Mars and Ketu confers imagination', favourable) and excludes NH chart_57 (Mars-YK +
+    Saturn + Rahu — three malefics, and Raman credits its favourable self to the Moon-in-10th, a
+    different mechanism), which stays DRAFT. bphs-doctrine-reviewer: SOUND-WITH-CAVEAT (KEEP/FLAG)."""
+    if verdict != "afflicted" or sig.house != 1:
+        return verdict, ()
+    yk = sorted(n for n in _NATURAL_MALEFIC_YK
+                if (p := chart.planets.get(n)) is not None and p.rasi_house == 1
+                and is_yogakaraka(n, chart.asc_sign))
+    if not yk:
+        return verdict, ()
+    other_malefics = sum(1 for n in NATURAL_MALEFICS if n not in yk
+                         and (p := chart.planets.get(n)) is not None and p.rasi_house == 1)
+    if other_malefics >= 2:
+        return verdict, ()
+    return "favourable", (("yogakaraka_lagna", f"{'+'.join(yk)}@Lagna:raja-yoga"),)
+
+
 def _longevity_span(
     chart: RamanChart, sig: Signification, verdict: Verdict, ctx: EvalContext,
 ) -> tuple[Verdict, Metadata]:
@@ -1361,11 +1399,12 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
     verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
+    verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
         yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
-        + timing_md + lookup_md))
+        + yk_md + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

@@ -68,3 +68,26 @@ Kahala/Lakshmi yogas that also need effective-strength. Then **Theme 2** (thresh
 **Themes 3–4** (additive rules). Treat **Theme 5** cautiously (D9 over-fire). The ~17 B1 + ~5 threshold +
 ~6 Themes 3-4 rows are the real, faithful accuracy lever — not 34 ad-hoc fixes. The rejected Sripathi row
 and the verify-first rows are the guardrails that keep this from diverging.
+
+## B1 implementation attempt — EMPIRICAL RESULT (2026-06-27): deep redesign, not a safe increment
+Built `_effective_strength` (the doctrine-faithful B1 core: Raman's "strong" = Shadbala folded with
+dignity + combustion + neecha-bhanga — exalt/own/MT -> strong; combust>=0.5 or debil-uncancelled -> weak)
+and ran it through the anti-overfit gates:
+- **Naive "weak lord -> demote favourable":** over-fires 14/109 confirmed-favourable (lord weak but
+  COMPENSATED by karaka/bhava -> rightly favourable). Unsafe.
+- **Compensation-gated demote:** 0/109 over-fire but catches 0 targets (Raman weighs the debil lord more
+  than the engine's compensation -> the safe form is inert).
+- **Positive-leg promote (exalted benefic lord/occupant lifts an afflicted house):** catches 3/8, over-fires
+  8/100 confirmed-afflicted INCLUDING chart_35/74 H8 death charts (an exalted benefic in the 8th would
+  wrongly lift a real death-affliction). Unsafe.
+- **Effective-strength swapped globally into `_strong`:** baseline 204 -> 200 on 238 fresh-cast confirmed
+  verdicts. **IMPROVED 0, REGRESSED 4** (chart_54 H3 [the documented canary], h7_12 H7, NH.chart_26 H10,
+  NH.chart_65 H5). NET -4.
+**Root cause:** the B1-miss verdicts are produced by `_decide`'s OTHER clauses (dusthana-affliction,
+preponderance weigh, navamsa guard), which are inter-tuned against RAW Shadbala. Changing the strength
+reading regresses tuned cases without reaching the targets. **B1 is a holistic `_decide` re-derivation that
+risks all 239 confirmed verdicts** — it requires the threshold-tuner (`tools/raman_saab/tune_thresholds.py`
+with holdout-lock) calibrating effective-strength weighting across the WHOLE set, not a hand-written clause.
+**Decision: do NOT ship.** The ~17 B1 NH-miss rows stay DRAFT (documented engine limits, honestly recorded);
+the NH charts become the test set for a future dedicated B1 redesign. The discipline (no regression, no
+overfit) held — the gates refused both a regressing and an overfit B1.

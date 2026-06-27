@@ -46,7 +46,14 @@ each factor (Shadbala adjusted for combustion / debilitation-uncancelled / dusth
 compared; a decisively-weak dominant factor denies, a decisively-strong one carries. Guard
 hard against regressing chart_54 and the broad ratchet. Shared judge → user sign-off.
 
-## B2 — Marginal-strength band  `threshold`  (Phase 2b)
+## B2 — Marginal-strength band  `threshold`  (Phase 2b) — ✅ SHIPPED 2026-06-27
+**Status.** `_marginal_karaka_gate` (house_template.py): a MARRIAGE verdict afflicted PURELY by a
+marginally-weak Venus karaka (within 0.2 rupa of MIN_REQUIRED) + a STRONG lord + NO real malefic
+re-decides treating the karaka as not-decisively-weak (GBB-8:303-312 bars are reference values,
+GBB-1:38-60 continuity). Scoped to marriage (general form clips chart_54 H10); with/without-gate
+diff changes exactly 1 confirmed verdict (chart_08 H7 afflicted→favourable, a dist-2 real-error
+resolved); 0 regressions; reviewer SOUND-WITH-CAVEAT (KEEP/FLAG: n=1 + 0.2 band + 2-level lift,
+re-examine if a 2nd marriage golden enters the band). Ratchet 206/240 → 207/240, real-errors 14→13.
 **Doctrine.** GBB-1:38-60 — strength scales continuously (0 at bhava-sandhi → full at
 madhya); there is no hard cliff. The engine's `MIN_REQUIRED` is a hard cutoff, so Venus at
 5.37 vs the 5.5 bar reads "decisively weak" and trips clause-6/maraka on chart_03/08.

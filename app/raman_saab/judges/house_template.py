@@ -1095,6 +1095,47 @@ def _malefic_occupancy_gate(
     return verdict, ()
 
 
+_MARGINAL_BAND: Final[float] = 0.2  # GBB-1:38-60 borderline band (rupas) below MIN_REQUIRED
+
+
+def _marginal_karaka_gate(
+    chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+) -> tuple[Verdict, Metadata]:
+    """GBB B2 marginal-strength band. The MIN_REQUIRED Rupa bars (GBB-8:303-312) are Raman's
+    full-strength REFERENCE values, not pass/fail gates — strength is a continuum (GBB-1:38-60,
+    'no effect at the sandhi ... full effect at the Bhavamadhya', the rule-of-three principle).
+    The engine's `is_powerful` is a hard `>=` cutoff, so a karaka just under its bar (Venus 5.37
+    vs 5.5) reads 'decisively weak' and, with maraka pressure, forces an AFFLICTED marriage that
+    Raman reads favourable (chart_03/08). When a MARRIAGE verdict is afflicted PURELY because the
+    karaka is MARGINALLY weak (within ~0.2 rupa of its bar) AND a STRONG lord carries the house AND
+    NO real malefic fired (the affliction is the maraka/cliff artefact, not a genuine evil), this
+    RE-DECIDES treating the marginal karaka as not-decisively-weak — it does not force a verdict;
+    it adopts whatever `_decide` yields (for chart_08 that is favourable via the both-pillars-strong
+    clause, matching Raman's confirmed reading). This is the transpose of the already-approved
+    KARAKA-SALVAGE (a strong karaka carries a weak-lord matter, HTJAH-II:221); here a strong lord
+    carries a marginal-karaka marriage. Scoped to the marriage significations (Venus karaka) where
+    the cliff was identified; 0 over-fire on the confirmed set (the general all-house form clips a
+    correct chart_54 H10 afflicted, so it is held to marriage). bphs-doctrine-reviewer:
+    SOUND-WITH-CAVEAT (KEEP/FLAG) — calibration rests on n=1 confirmed golden + a hand-tuned 0.2
+    band + a 2-level lift (vs KARAKA-SALVAGE's conservative 1-level); re-examine if a second
+    marriage golden ever enters the band."""
+    if verdict != "afflicted" or sig.key not in _MARITAL_BOND_KEYS:
+        return verdict, ()
+    if lead.lord_strong is not True or lead.fired_malefic or lead.karaka_strong is not False:
+        return verdict, ()
+    p = chart.planets.get(lead.karaka)
+    req = shadbala_total.MIN_REQUIRED.get(lead.karaka)
+    if p is None or p.shadbala_rupas is None or req is None:
+        return verdict, ()
+    rupas = p.shadbala_rupas.total / 60.0
+    if not (req - _MARGINAL_BAND <= rupas < req):
+        return verdict, ()
+    softened, _ = _decide(dataclasses.replace(lead, karaka_strong=True))
+    if softened != verdict:
+        return softened, (("marginal_karaka", f"{lead.karaka} {rupas:.2f}<{req}: not decisively weak"),)
+    return verdict, ()
+
+
 def _longevity_span(
     chart: RamanChart, sig: Signification, verdict: Verdict, ctx: EvalContext,
 ) -> tuple[Verdict, Metadata]:
@@ -1319,11 +1360,12 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
+    verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + timing_md
-        + lookup_md))
+        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
+        + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

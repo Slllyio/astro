@@ -6,5 +6,5 @@ def test_cli_prints_json_chart():
          "--time", "12:00", "--tz", "5.5", "--lat", "12.97", "--lon", "77.59", "--format", "json"],
         capture_output=True, text=True, check=True)
     data = json.loads(out.stdout)
-    assert data["ayanamsa"] == "raman"
+    assert data["ayanamsa"] == "lahiri"  # user-facing default is Lahiri (project-locked standard)
     assert len(data["planets"]) == 9

@@ -100,8 +100,8 @@ def test_event_house_par_excellence_on_clean_charts(cid, houses, md, antar):
 def test_snapshot_is_additive_promise_unchanged():
     """The Dasha snapshot CARRIES the natal reading unchanged — activation never edits a verdict."""
     birth = _birth("HTJAH-II.chart_73")
-    snap = rt.read_chart_on_date(birth, vd.date_to_jd(1865, 4, 14))
-    assert snap.promise == read_chart(birth)
+    snap = rt.read_chart_on_date(birth, vd.date_to_jd(1865, 4, 14), ayanamsa="raman")
+    assert snap.promise == read_chart(birth, ayanamsa="raman")
 
 
 def test_active_houses_par_excellence_first():
@@ -139,6 +139,6 @@ def test_cli_snapshot_and_timeline_smoke():
 def test_render_snapshot_shows_active_houses_and_period():
     """The rendered snapshot names the running period and the active houses with their promise."""
     birth = _birth("HTJAH-II.chart_73")
-    txt = render.snapshot_to_text(rt.read_chart_on_date(birth, vd.date_to_jd(1865, 4, 14)))
+    txt = render.snapshot_to_text(rt.read_chart_on_date(birth, vd.date_to_jd(1865, 4, 14), ayanamsa="raman"))
     assert "Dasha Snapshot" in txt and "Running period: Saturn / Mercury" in txt
     assert "House 8 - Longevity / Death" in txt

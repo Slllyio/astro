@@ -86,7 +86,7 @@ def _activated_row(chart, promise: RamanReading, a: ActiveHouse) -> ActivatedHou
 
 
 def read_chart_on_date(birth: BirthData, jd: Optional[float] = None, *,
-                       ayanamsa: str = "raman") -> DashaSnapshot:
+                       ayanamsa: str = "lahiri") -> DashaSnapshot:
     """Snapshot: the houses the running period lights up on `jd` (default today), each with its
     unchanged natal promise and the activating lord's delivery quality."""
     chart = cast_chart(birth, ayanamsa=ayanamsa)
@@ -98,7 +98,7 @@ def read_chart_on_date(birth: BirthData, jd: Optional[float] = None, *,
     return DashaSnapshot(birth=birth, jd=jd, period=period, activated=rows, promise=promise)
 
 
-def reading_timeline(birth: BirthData, *, ayanamsa: str = "raman",
+def reading_timeline(birth: BirthData, *, ayanamsa: str = "lahiri",
                      expand_bhuktis: bool = False) -> DashaTimeline:
     """Life-narrative: walk the Vimshottari timeline (Mahadasha, or Mahadasha->Bhukti when
     `expand_bhuktis`), listing each period's active houses — Raman's Dasha-by-Dasha structure."""

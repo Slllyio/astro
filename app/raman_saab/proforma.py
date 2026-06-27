@@ -25,8 +25,13 @@ class RamanReading:
     proformas: tuple[HouseProforma, ...] = ()
 
 
-def read_chart(birth: BirthData, *, ayanamsa: str = "raman") -> RamanReading:
-    """Birth data -> a deterministic, cited, house-by-house Raman reading (modern judge)."""
+def read_chart(birth: BirthData, *, ayanamsa: str = "lahiri") -> RamanReading:
+    """Birth data -> a deterministic, cited, house-by-house Raman reading (modern judge).
+
+    Defaults to **Lahiri** sidereal ayanamsa — the project-locked standard for all live/user
+    charts (CLAUDE.md), matching every common tool (Prokerala, Jagannatha Hora, drikpanchang).
+    Pass ``ayanamsa="raman"`` ONLY to reproduce B.V. Raman's own book charts (the golden-test
+    harness pins ``"raman"`` explicitly, so it is unaffected by this default)."""
     chart = cast_chart(birth, ayanamsa=ayanamsa)
     proformas = tuple(judge_house(chart, h) for h in range(1, 13))
     houses = tuple(p.as_house_verdict() for p in proformas)

@@ -11,7 +11,7 @@ def _parse(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--time", required=True)                                              # HH:MM
     ap.add_argument("--tz", type=float, required=True)
     ap.add_argument("--lat", type=float, required=True); ap.add_argument("--lon", type=float, required=True)
-    ap.add_argument("--ayanamsa", default="raman", choices=["raman", "lahiri"])
+    ap.add_argument("--ayanamsa", default="lahiri", choices=["raman", "lahiri"])
     ap.add_argument("--format", default="json", choices=["json", "text", "reading", "markdown"])
     ap.add_argument("--at")                # YYYY-MM-DD: Dasha snapshot (what is active on this date)
     ap.add_argument("--timeline", action="store_true")   # Dasha-by-Dasha life-narrative

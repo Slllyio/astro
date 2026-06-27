@@ -101,3 +101,20 @@ with/without-gate diff changes 0 confirmed verdicts; closed NH chart_35 H4 -> CO
 cases stay DRAFT/limits: chart_45 H2 (neecha-lord, identical-signature counterexample chart_57 H4) and
 chart_67 H5 (Mars-on-progeny, strong lord present -> can't gate without over-firing). Bose H1/H2 confirmed
 B1-class (benefic-occupant floor over-fires 17/100), not isolated bugs -> need the deferred B1 recalibration.
+
+## B1 SCOPING via the miss table (2026-06-27): confirmed a calibration problem, not a rule problem
+The 69-miss table classified 53/69 (77%) as B1 comparative-weighing and named the EXACT afflictions Raman
+uses that the engine's `lord_strong` (raw Shadbala) ignores: Papakartari on the lord, a node-conjunct lord,
+a dusthana-placed (6/8/12) lord, a 1st-6th lord contact, combustion. Tested the refined hypothesis — fold
+ALL of these into an effective `lord_strong`/`karaka_strong`:
+- **Refined effective-strength (papakartari+dusthana+node+combust+dignity):** CONFIRMED 205 -> 165,
+  IMPROVED 1, REGRESSED 41, **NET -40** (worse than the earlier dignity+combustion-only attempt's -4).
+- **Benefic-occupant-fortifies (the top doctrine_gap, drives Bose H1/H2):** over-fires 21/129 confirmed
+  afflicted/mixed even gated to non-dusthana + <2 malefic occupants; catches only 5/35. Collapses into B1.
+**Conclusion (final):** every hand-coded B1 form regresses the confirmed set because Raman applies these
+afflictions CONTEXTUALLY (a dusthana/papakartari lord dooms the house only when uncompensated — the
+comparative weighing). The current `lord_strong` is crude but CALIBRATED; editing one factor breaks the
+whole. B1 is only buildable as a CALIBRATED re-fit via `tools/raman_saab/tune_thresholds.py` searching the
+affliction-weighting holdout-locked to 206/240 — a dedicated, uncertain research effort (the -40 hand-start
+makes the tuner's job hard). The faithful near-term ceiling is the current 206/240; the only safe additive
+wins are the rare clean gates with a real compensation discriminator (e.g. the shipped two-malefic gate).

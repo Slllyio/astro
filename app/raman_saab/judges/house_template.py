@@ -548,8 +548,9 @@ def _navamsa_status(lord: str, karaka: str, chart: RamanChart,
     occupants in the navamsa, and a planet 'though exalted [in rashi] ... debilitated in the
     Navamsha' has its promised good withheld [Grahanam Amsakam Balam]; such an occupant
     contributes a weakens, hollowing the bhava's promise just as a weak lord does. The symmetric
-    uplift direction — a vargottama / D9-strong occupant contributing a confirms — is deferred to
-    the D9-6 netting, per bphs-doctrine-reviewer.)"""
+    uplift direction (D9-6/B1) — an occupant DEBILITATED in the rashi but EXALTED in the navamsa
+    ("debilitated in Rasi but exalted in Navamsa makes the native happy") — is also passed in
+    `extra` and routes through the confirms branch, redeeming the bhava's promise.)"""
     nav_lagna_sign = varga.navamsa_sign(chart.asc_lon)
     saw_any = False
     confirms = False
@@ -752,7 +753,17 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         if p.rasi_house == sig.house and nm not in (lord, karaka)
         and nm in r.EXALTATION and p.sign == r.EXALTATION[nm][0]
         and nm in r.DEBILITATION and p.navamsa_sign == r.DEBILITATION[nm][0])
-    navamsa_status = _navamsa_status(lord, karaka, chart, hollow_occupants)
+    # D9-6/B1 (symmetric uplift): the mirror — a bhava occupant DEBILITATED in the rashi but
+    # EXALTED in the navamsa REDEEMS the promise ("a planet debilitated in Rasi but exalted in
+    # Navamsa makes the native happy" — Grahanam Amsakam Balam). The navamsa-exalt routes through
+    # the existing confirms branch. Surgical mirror of the hollow case (deferred symmetric direction
+    # the D9-4 reviewer flagged).
+    redeemed_occupants = tuple(
+        nm for nm, p in chart.planets.items()
+        if p.rasi_house == sig.house and nm not in (lord, karaka)
+        and nm in r.DEBILITATION and p.sign == r.DEBILITATION[nm][0]
+        and nm in r.EXALTATION and p.navamsa_sign == r.EXALTATION[nm][0])
+    navamsa_status = _navamsa_status(lord, karaka, chart, hollow_occupants + redeemed_occupants)
     karaka_intact = _karaka_intact(karaka, chart, marakas)
     maraka_active = bool(marakas) and (lord in marakas or karaka in marakas)
 

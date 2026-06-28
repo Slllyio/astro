@@ -65,7 +65,7 @@ def _birth_jd(b: BirthData) -> float:
 
 
 def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
-             transit_note: Optional[str]) -> str:
+             transit_note: Optional[str], activation: tuple[str, ...] = ()) -> str:
     parts = [f"the rashi reads **{verdict}**"]
     parts.append({"confirms": "and the navamsa confirms it (delivered)",
                   "weakens": "but the navamsa qualifies/withholds it (delivery in doubt)",
@@ -77,6 +77,8 @@ def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str
     if sav:
         n, band = sav.split(":")
         parts.append(f"Ashtakavarga {band} ({n} bindus)")
+    if activation:
+        parts.append("activated in " + " / ".join(activation))
     if transit_note:
         parts.append(transit_note)
     return "; ".join(p for p in parts if p)
@@ -87,7 +89,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
     chart: RamanChart = cast_chart(birth, ayanamsa=ayanamsa)
     reading = read_chart(birth, ayanamsa=ayanamsa)
     y, m, d = on if on is not None else _today()
-    jd = swe.julday(y, m, d, 6.5)
+    jd = swe.julday(y, m, d, 12.0)              # noon UT, consistent with transits + reading_timeline
     age = (jd - _birth_jd(birth)) / 365.2425
 
     period = vim.dasha_on(chart, jd)
@@ -108,20 +110,23 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         here = by_house.get(h, [])
         tnote = None
         if here:
+            # show BOTH the classical Gochara (from the Moon) AND the Ashtakavarga support
             tnote = "current transit: " + ", ".join(
-                f"{t.planet}{' (supported)' if t.supported else ''}" for t in here)
+                f"{t.planet} ({'favourable' if t.gochara_good else 'adverse'} from Moon"
+                f"{', AV-supported' if t.supported else ''})" for t in here)
         active_now = " — ACTIVE in the running period" if h in active else ""
         matters.append(MatterReading(
             house=h, name=_HOUSE[h], verdict=pf.rollup, navamsa=led.navamsa_status,
             matter_varga=varga, ashtakavarga=sav, activation=activ, transit_note=tnote,
-            reading=_compose(pf.rollup, led.navamsa_status, varga, sav, tnote) + active_now))
+            reading=_compose(pf.rollup, led.navamsa_status, varga, sav, tnote, activ) + active_now))
 
     al = sp.arudha_lagna(chart).sign
     return Synthesis(
         lagna=_SIGNS[chart.asc_sign - 1], atmakaraka=sp.atmakaraka(chart),
         arudha_lagna=_SIGNS[al - 1], navamsa_lagna=_SIGNS[sp.navamsa_lagna(chart).sign - 1],
         running_md=period.maha, running_ad=period.antar,
-        chara=_SIGNS[(cd.chara_dasha_on(chart, age) or (chart.asc_sign, 0))[0] - 1],
+        chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
+            cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
         sade_sati=tr.sade_sati(chart, y, m, d, ayanamsa=ayanamsa), matters=tuple(matters))
 
 
@@ -134,10 +139,11 @@ def to_text(s: Synthesis) -> str:
            "=" * 76]
     for mr in s.matters:
         out.append(f"H{mr.house:2} {mr.name}: {mr.reading}")
-    return "\n".join(out)
+    from app.raman_saab.render import _ascii    # ASCII-safe like the other renderers (CP1252 consoles)
+    return _ascii("\n".join(out))
 
 
 def _today() -> tuple[int, int, int]:
     import datetime
-    t = datetime.date.today()
+    t = datetime.datetime.now(datetime.timezone.utc)    # UTC, consistent with reading_timeline
     return (t.year, t.month, t.day)

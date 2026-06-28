@@ -48,8 +48,8 @@ def main(argv: list[str] | None = None) -> int:
     if a.format == "json":
         print(json.dumps(payload, indent=2))
     else:
-        print(f"Lagna: sign {chart.asc_sign} ({chart.asc_lon:.2f}°)  [ayanamsa={chart.ayanamsa}]")
+        print(f"Lagna: sign {chart.asc_sign} ({chart.asc_lon:.2f} deg)  [ayanamsa={chart.ayanamsa}]")
         for n, p in chart.planets.items():
-            print(f"  {n:8} {p.lon:7.2f}°  sign {p.sign:2}  bhava {p.bhava:2}  "
+            print(f"  {n:8} {p.lon:7.2f} deg  sign {p.sign:2}  bhava {p.bhava:2}  "
                   f"{'(R)' if p.retrograde else '   '}")
     return 0

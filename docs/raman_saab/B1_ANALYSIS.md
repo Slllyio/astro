@@ -74,3 +74,37 @@ one). Reaching net-positive requires the threshold-tuner with a holdout-lock (pl
 + yoga-overcomes — a real grind with overfit risk, and B1 must NOT move decisive verdicts while it can
 still invert a widowhood to favourable. The cancellation LOGIC itself is sound doctrine independent of
 B1 and could enrich the engine's strength assessment without verdict-moving.
+
+## Tuner grind with holdout-lock — the definitive result (2026-06-28)
+
+Decision was: push for net-positive via the threshold-tuner + holdout-lock. Built it (charts split
+70/30 train/holdout by id-hash; a cancellation rule is kept only if it improves TRAIN without
+degrading HOLDOUT). Measured B1's effect on ALL graded verdicts (not just confirmed) to capture any
+UPSIDE on the engine's existing misses.
+
+| config (cancellation +) | TRAIN fix/break | HOLDOUT fix/break |
+|---|---|---|
+| base cancellation | +1/-6 | +1/-3 |
+| + lord_dominates | +1/-5 | +1/-2 |
+| + severe_combust (BEST) | +1/-4 | +1/-2 |
+| + multi_block | +1/-7 (worse) | +1/-3 (worse) |
+
+`lord_dominates` and `severe_combust` both generalised (helped train, held holdout); `multi_block`
+was correctly REJECTED by the holdout (overfit). But the decisive fact is the **+1 upside is constant
+across every config**. Best config, reviewed verdicts only: **2 fixes (1 CONFIRMED: chart_45 Einstein
+Papakartari-9th; 1 DRAFT), 6 breaks (all CONFIRMED) → net −5 on reliable verdicts.**
+
+### Conclusion: net-positive is UNREACHABLE for the effective-strength B1 — proven, not asserted
+B1 has almost no upside because the engine's confirmed verdicts are ALREADY correct (that is what
+"confirmed" means); B1's affliction-folding can only CHANGE them, which is neutral-or-worse. Its one
+reliable fix (chart_45) is a genuine Papakartari case — proving the mechanism CAN help in the right
+spot — but there is no POOL of strength-fixable misses to capture, because the real misses are
+COMPARATIVE-WEIGHING problems (which of bhava/lord/karaka dominates), not single-planet strength.
+Effective-strength recalibration is the wrong mechanism for them.
+
+### Constructive salvage (the proven safe pattern)
+- The ONE reliable win (chart_45, Papakartari on the 9th lord) can be captured as a NARROW
+  demote-only gate — the project's zero-regression pattern — instead of the broad B1 that breaks 6.
+- The cancellation doctrine (lord-dominates, severe-combustion-not-rescued, benefic-neutralises-
+  hemming) is validated against the holdout and is sound Raman doctrine that could refine the engine's
+  strength signals safely (non-verdict-moving), independent of B1.

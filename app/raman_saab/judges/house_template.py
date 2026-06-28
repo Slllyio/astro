@@ -1382,6 +1382,51 @@ def _lookup_metadata(chart: RamanChart, sig: Signification,
 
 
 # ---------------------------------------------------------------------------
+# Matter-specific divisional charts (Shodashavarga) — Raman cross-checks each
+# matter in its OWN varga: children -> D7, career -> D10, parents -> D12, siblings -> D3.
+# ---------------------------------------------------------------------------
+
+_MATTER_VARGA: Final[dict[int, tuple[int, str]]] = {
+    3: (3, "D3"),     # siblings / courage  — drekkana
+    5: (7, "D7"),     # children            — saptamsa
+    4: (12, "D12"),   # mother / home       — dwadasamsa
+    9: (12, "D12"),   # father / fortune    — dwadasamsa
+    10: (10, "D10"),  # career              — dasamsa
+}
+
+
+def _varga_dignity_at(planet: str, chart: RamanChart, n: int) -> str:
+    """Sign-only dignity (exalt/debil/own/neutral) of `planet` in the D-`n` divisional chart."""
+    p = chart.planets.get(planet)
+    if p is None or planet in ("Rahu", "Ketu"):
+        return "neutral"
+    vs = varga.varga_sign(p.lon, n)
+    if planet in r.EXALTATION and vs == r.EXALTATION[planet][0]:
+        return "exalt"
+    if planet in r.DEBILITATION and vs == r.DEBILITATION[planet][0]:
+        return "debil"
+    if SIGN_LORDS.get(vs) == planet:
+        return "own"
+    return "neutral"
+
+
+def _matter_varga_overlay(chart: RamanChart, sig: Signification, lord: str, karaka: str) -> Metadata:
+    """ADDITIVE metadata: report the bhava lord + karaka dignity in the MATTER-specific divisional
+    chart (the rasi declares the promise; the matter-varga shows the matter-specific fruit, e.g. D7
+    for progeny, D10 for profession). Verdict-INVARIANT — feeding the varga into the decisive verdict
+    carries the same distortion risk as the D9 netting (B2), so this only surfaces the testimony."""
+    mv = _MATTER_VARGA.get(sig.house)
+    if mv is None:
+        return ()
+    n, name = mv
+    ld = _varga_dignity_at(lord, chart, n)
+    kd = _varga_dignity_at(karaka, chart, n)
+    if ld == "neutral" and kd == "neutral":
+        return ()                                   # no varga testimony -> stay silent (not noise)
+    return ((f"varga_{name}", f"{lord}:{ld}|{karaka}:{kd}"),)
+
+
+# ---------------------------------------------------------------------------
 # Per-signification + per-house judging
 # ---------------------------------------------------------------------------
 
@@ -1429,10 +1474,11 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
+    varga_md = _matter_varga_overlay(chart, sig, lead.lord, lead.karaka)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
         yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
-        + yk_md + timing_md + lookup_md))
+        + yk_md + varga_md + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

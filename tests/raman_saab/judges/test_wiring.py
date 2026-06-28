@@ -172,14 +172,17 @@ class TestMetadata:
             assert [sv.verdict for sv in a.significations] == \
                    [sv.verdict for sv in b.significations]
 
-    def test_house_proforma_metadata_unions_significations(self):
-        """HouseProforma.metadata is the deduplicated union of its significations'."""
+    def test_house_proforma_metadata_dedups_by_key(self):
+        """HouseProforma.metadata is the house-level union de-duplicated BY KEY (one entry per
+        key, lead signification's value wins; per-sig detail stays on each sv.metadata)."""
         chart = cast_chart(_BANGALORE, ayanamsa="raman")
         for h in (8, 11):
             pf = ht.judge_house(chart, h)
+            pf_keys = [k for k, _ in pf.metadata]
+            assert len(pf_keys) == len(set(pf_keys))            # exactly one entry per key
             for sv in pf.significations:
-                for pair in sv.metadata:
-                    assert pair in pf.metadata
+                for k, _ in sv.metadata:
+                    assert k in pf_keys                          # every sig key surfaces at house level
 
 
 # ---------------------------------------------------------------------------

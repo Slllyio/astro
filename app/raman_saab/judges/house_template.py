@@ -204,8 +204,9 @@ class SignificationVerdict:
 class HouseProforma:
     """Every signification of a house + the rolled-up house verdict.
 
-    ``metadata`` is the de-duplicated, order-preserving union of every
-    signification's metadata pairs (deterministic across runs).
+    ``metadata`` is the house-level, order-preserving union of the significations'
+    metadata, de-duplicated BY KEY (the lead signification's value wins; per-signification
+    detail remains on each ``significations[i].metadata``). Deterministic across runs.
     """
     house: int
     lord: str
@@ -1544,8 +1545,11 @@ def judge_house(chart: RamanChart, house: int) -> HouseProforma:
     svs = tuple(judge_signification(chart, house, s, ctx) for s in sigs)
     rollup = _rollup(tuple(sv.verdict for sv in svs))
     lord = _lord_of_sign(chart.asc_sign, house)
-    metadata: Metadata = tuple(dict.fromkeys(
-        pair for sv in svs for pair in sv.metadata))
+    by_key: dict[str, tuple[str, str]] = {}         # house-level: de-dup BY KEY, lead sig's value wins
+    for sv in svs:
+        for k, v in sv.metadata:
+            by_key.setdefault(k, (k, v))
+    metadata: Metadata = tuple(by_key.values())
     return HouseProforma(house=house, lord=lord, significations=svs,
                          rollup=rollup, metadata=metadata)
 

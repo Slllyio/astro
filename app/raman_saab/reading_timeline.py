@@ -76,7 +76,11 @@ def _today_jd() -> float:
 
 def _activated_row(chart, promise: RamanReading, a: ActiveHouse) -> ActivatedHouseReading:
     pf = promise.proformas[a.house - 1]                 # proformas are ordered house 1..12
-    degree = pf.significations[0].degree if pf.significations else "moderate"
+    # degree of the signification that DROVE the rollup (verdict == rollup), so the degree word
+    # agrees with the verdict word (was significations[0], a frequently-different sub-matter).
+    driver = next((sv for sv in pf.significations if sv.verdict == pf.rollup), None)
+    degree = driver.degree if driver else (
+        pf.significations[0].degree if pf.significations else "moderate")
     antar_q = vd.lord_quality(chart, a.antar_lord) if a.antar_lord is not None else None
     return ActivatedHouseReading(
         house=a.house, grade=a.grade, natal_verdict=pf.rollup, natal_degree=degree,

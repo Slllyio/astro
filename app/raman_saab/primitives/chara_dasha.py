@@ -51,11 +51,17 @@ def chara_dasha(chart: RamanChart) -> list[tuple[int, int]]:
 
 
 def chara_dasha_on(chart: RamanChart, age_years: float) -> Optional[tuple[int, int]]:
-    """The (sign, years) Chara Dasha running at `age_years` after birth, or None if past the
-    sequence (the 12 periods do not sum to a fixed total in Chara Dasha)."""
+    """The (sign, years) Chara Dasha running at `age_years` after birth. The 12-sign sequence
+    REPEATS for subsequent cycles (KN Rao) to fill a whole life; None only for a negative age or an
+    empty/degenerate sequence."""
+    seq = chara_dasha(chart)
+    cycle = sum(y for _, y in seq)
+    if age_years < 0 or cycle <= 0:
+        return None
+    t = age_years % cycle                       # which sign within the (repeating) cycle
     elapsed = 0.0
-    for sign, years in chara_dasha(chart):
-        if elapsed <= age_years < elapsed + years:
+    for sign, years in seq:
+        if elapsed <= t < elapsed + years:
             return (sign, years)
         elapsed += years
-    return None
+    return seq[-1]                              # numerical edge (t == cycle); last period

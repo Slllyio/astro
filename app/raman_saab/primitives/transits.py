@@ -56,10 +56,11 @@ def transit_chart(year: int, month: int, day: int, *, ayanamsa: str = "lahiri") 
 
 
 def gochara(natal: RamanChart, year: int, month: int, day: int, *,
-            ayanamsa: str = "lahiri", planets: tuple[str, ...] = SIGNIFICANT) -> tuple[TransitRow, ...]:
+            ayanamsa: str | None = None, planets: tuple[str, ...] = SIGNIFICANT) -> tuple[TransitRow, ...]:
     """Transit rows for `planets` on the date, judged from the natal Moon + natal Lagna + each
-    planet's own Ashtakavarga support."""
-    tc = transit_chart(year, month, day, ayanamsa=ayanamsa)
+    planet's own Ashtakavarga support. Default ayanamsa = the natal chart's (so a Raman-cast natal is
+    not mixed with a Lahiri-cast transit)."""
+    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "lahiri"))
     moon = natal.planets.get("Moon")
     moon_sign = moon.sign if moon else natal.asc_sign
     rows: list[TransitRow] = []
@@ -79,9 +80,10 @@ def gochara(natal: RamanChart, year: int, month: int, day: int, *,
 
 
 def sade_sati(natal: RamanChart, year: int, month: int, day: int, *,
-              ayanamsa: str = "lahiri") -> str | None:
-    """Saturn's Sade-Sati phase if active (transit of the 12th/1st/2nd from the natal Moon)."""
-    tc = transit_chart(year, month, day, ayanamsa=ayanamsa)
+              ayanamsa: str | None = None) -> str | None:
+    """Saturn's Sade-Sati phase if active (transit of the 12th/1st/2nd from the natal Moon). Default
+    ayanamsa = the natal chart's."""
+    tc = transit_chart(year, month, day, ayanamsa=ayanamsa or getattr(natal, "ayanamsa", "lahiri"))
     moon = natal.planets.get("Moon")
     sat = tc.planets.get("Saturn")
     if moon is None or sat is None:

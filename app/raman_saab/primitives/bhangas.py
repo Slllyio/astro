@@ -107,8 +107,9 @@ def neecha_bhanga(planet: str, chart: RamanChart) -> bool:
             chart.planets[dispositor].rasi_house == p.rasi_house
             or drishti.aspects_planet(dispositor, planet, chart)):
         return True
-    # (4) exalted in navamsa, or vargottama
-    if p.vargottama or p.navamsa_sign == r.EXALTATION[planet][0]:
+    # (4) exalted in navamsa. (A vargottama-but-debilitated planet is debilitated in D9 TOO -> doubly
+    # afflicted, NOT cancelled; the classical clause is specifically navamsa-exaltation.)
+    if p.navamsa_sign == r.EXALTATION[planet][0]:
         return True
     return False
 

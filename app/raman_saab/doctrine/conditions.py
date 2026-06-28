@@ -295,8 +295,11 @@ class Combust(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
+        # Substantially combust: combust_fraction >= 0.5 (within half the orb). One threshold for the
+        # whole engine, matching the judge's affliction bar (_COMBUST_HARD_FRACTION / B7 doctrine) --
+        # a planet barely inside its orb (e.g. ~13 deg from the Sun) is not treated as afflicted.
         p = ctx.chart.planets.get(self.planet)
-        return p is not None and p.combust_fraction > 0.0
+        return p is not None and p.combust_fraction >= 0.5
 
 
 class IsYogaKaraka(Condition):

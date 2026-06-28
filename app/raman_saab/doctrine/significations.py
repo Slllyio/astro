@@ -136,7 +136,7 @@ _H2: tuple[Signification, ...] = (
         key="family",
         house=2,
         primary_karaka="Jupiter",
-        rule_tags=("wealth",),
+        rule_tags=("wealth", "family"),     # own rules + the general 2nd-house testimony
         source=_c1(2316),
     ),
     Signification(
@@ -144,14 +144,14 @@ _H2: tuple[Signification, ...] = (
         house=2,
         primary_karaka="Jupiter",
         secondary_karakas=("Mercury",),
-        rule_tags=("wealth",),
+        rule_tags=("wealth", "speech"),
         source=_c1(2316),
     ),
     Signification(
         key="vision",
         house=2,
         primary_karaka="Jupiter",  # Netra-Karaka per HTJAH-I:2734
-        rule_tags=("wealth",),
+        rule_tags=("wealth", "vision"),
         source=_c1(2734),
     ),
 )
@@ -173,7 +173,7 @@ _H3: tuple[Signification, ...] = (
         key="courage",
         house=3,
         primary_karaka="Mars",
-        rule_tags=("siblings",),
+        rule_tags=("siblings", "courage"),
         source=_c1(3324),
     ),
     Signification(

@@ -2,9 +2,13 @@
   "H2": {
     "citations": [
       "HTJAH-I:2362",
+      "HTJAH-I:2458",
+      "HTJAH-I:2652",
       "HTJAH-I:2710"
     ],
     "fired_rule_ids": [
+      "H2.C.16",
+      "H2.C.50",
       "H2.C.62",
       "H2.L.5"
     ],
@@ -16,9 +20,9 @@
         "verdict": "mixed"
       },
       "speech": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "moon",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "vision": {
         "degree": "mild",

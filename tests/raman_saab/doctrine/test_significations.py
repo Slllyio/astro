@@ -187,3 +187,17 @@ class TestRuleTagsMatchExistingBuckets:
                 f"{len(bad)} rule_tag(s) not in rule_sets:\n  {lines}\n"
                 f"Known tags: {sorted(known)}"
             )
+
+    def test_every_authored_signification_is_reachable(self) -> None:
+        """REVERSE direction: every signification= a rule is authored under must appear in SOME
+        Signification's rule_tags, else those rules fire and are silently discarded by _bucket_fired
+        (the dead-rule class the audit found: H2 speech/vision/family + H3 courage)."""
+        authored = _all_rule_set_significations()
+        reachable: set[str] = set()
+        for sigs in SIGNIFICATIONS.values():
+            for sig in sigs:
+                reachable.update(sig.rule_tags)
+        unreachable = sorted(authored - reachable)
+        assert not unreachable, (
+            f"{len(unreachable)} rule signification(s) are in NO Signification.rule_tags -> their "
+            f"rules fire but are discarded: {unreachable}")

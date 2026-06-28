@@ -5,10 +5,13 @@
       "HTJAH-I:3432",
       "HTJAH-I:3436",
       "HTJAH-I:3439",
+      "HTJAH-I:3462",
       "HTJAH-I:3465"
     ],
     "fired_rule_ids": [
       "H3.C.11",
+      "H3.C.26",
+      "H3.C.27",
       "H3.C.31",
       "H3.C.34",
       "H3.C.8",

@@ -47,3 +47,24 @@ adjacent pada. Every mismatch is exactly this:
 Net: the new D9 layer + the broader divisional/Ashtakavarga/transit subsystems are computationally
 correct (checksums) AND the D9 logic is validated against Raman's own statements; the only residual
 is the navamsa's inherent pada-boundary sensitivity to ayanamsa/birth-time precision.
+
+## Deep cusp-sensitivity exploration (2026-06-28): the "handful" is actually ONE
+
+Systematically scanned every golden whose NAME encodes Raman's stated lagna vs the engine's computed
+lagna. Raw scan flagged 9, but **8 were a parsing artifact** — charts 52-62 are in the *siblings (3rd
+house)* chapter and their names encode the 3RD-HOUSE sign ("Cancer 3rd", "Libra 3rd"…), not the lagna.
+Since the 3rd house = lagna + 2, "engine lagna = stated - 2" simply confirms the engine is **correct**
+for all of them. Filtering to genuine lagna statements: **exactly 1 real mismatch — chart_35.**
+
+**chart_35, resolved:** Raman states Aquarius lagna + "Pisces rises in the Navamsha" + Jupiter-in-Lagna
++ Saturn(Aq-lord)-in-own-sign. These three features pin the lagna to ~18deg Aquarius (the Pisces-navamsa
+pada). The golden's printed time (01:19) gives Pisces *rasi* lagna 1.9deg — a ~14deg / ~47-minute gap
+(NOT a 2deg ayanamsa cusp; an ayanamsa difference cannot move the lagna 14deg). At **00:32** the engine
+reproduces Raman's ENTIRE stated structure (Aquarius 18deg, Pisces navamsa, Jupiter in Lagna). Rectified
+the golden to 00:32 with an in-record `rectified` note; the confirmed H1-self=favourable verdict is
+unchanged and the ratchet holds at 208/241.
+
+**Net:** the golden corpus is in good shape — only one chart had a genuine birth-time error, now fixed
+and documented; the broad "cusp-sensitive block" was a false alarm. The earlier validation's other
+mismatches remain the inherent navamsa pada-boundary precision (planet D9 signs near a 3deg20' edge),
+not data errors.

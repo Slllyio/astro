@@ -16,9 +16,8 @@ Phase 1c-3 backfill (now that Shadbala exists):
   - The "weakest planet in the chart" (lowest total Shadbala) is added as a tertiary
     maraka when Shadbala is filled (GBB-8 / overview §8.2).
 
-Deferred to Phase 2 (needs drishti engine):
-  - "Associate" currently means conjunct (same rasi-house only).
-  - Aspect-based association will be added when doctrine/drishti.py is available.
+"Associate" = conjunct (same rasi-house) OR by whole-sign aspect (the drishti engine is now wired;
+the aspect-based association is implemented below).
 """
 from typing import Final
 from app.raman_saab.chart.model import RamanChart, MarakaUnit, MarakaPoints

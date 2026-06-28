@@ -250,7 +250,9 @@ def maraka_lords(chart: RamanChart) -> frozenset[str]:
 def is_maraka_period(chart: RamanChart, jd: float, *, strength: str = "any") -> bool:
     """True when the period running on `jd` carries a maraka. ``strength="any"`` (default): the
     Mahadasha OR Bhukti lord is a maraka. ``strength="strong"``: BOTH are marakas (the sharper
-    death-timing signature)."""
+    death-timing signature). NOTE: ``any`` is broad/low-discrimination -- the maraka set spans most
+    grahas, so the majority of periods qualify; use ``strong`` (or death_window ranking) for a
+    discriminating death-timing claim, not ``any``."""
     period = dasha_on(chart, jd)
     if period is None:
         return False
@@ -393,8 +395,9 @@ def active_houses(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
     """The houses the running period lights up on ``jd`` (HTJAH-I:1586-1596: a Dasha lord gives the
     results of the houses it owns/occupies/aspects/associates-with — exactly `timer_set` membership,
     read in reverse). Graded by whether BOTH period-lords converge on the house. ``par_excellence``
-    first. Empty on a Track-B chart (no birth_jd). The `limited` set is broad by design (a Dasha
-    touches many matters); the `par_excellence` set is the narrow FOCUS."""
+    first. Empty on a Track-B chart (no jd_ut). NOTE: broad-recall / low-precision by design -- a slow
+    lord (Saturn/Rahu) times most houses, so during its Mahadasha many houses still grade
+    ``par_excellence``; the grade only narrows the field when the two period-lords disagree."""
     if getattr(chart, "jd_ut", None) is None:
         return ()
     period = dasha_on(chart, jd)

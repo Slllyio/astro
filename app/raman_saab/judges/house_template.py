@@ -1032,7 +1032,7 @@ def _event_timing(
       (lord, karaka, fired afflictors/relievers, and — for death/relative-death matters — the
       maraka set), most-salient roles first, bounded.
 
-    No-ops on a Track-B chart (no birth_jd)."""
+    No-ops on a Track-B chart (no jd_ut)."""
     if getattr(chart, "jd_ut", None) is None:
         return verdict, ()
     md: list[tuple[str, str]] = []

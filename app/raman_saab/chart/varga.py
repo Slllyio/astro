@@ -150,7 +150,8 @@ SUPPORTED_VARGAS: frozenset[int] = frozenset(_VARGA_FN)
 
 def varga_sign(lon: float, n: int) -> int:
     """Sign (1..12) a longitude occupies in the D-`n` divisional chart.
-    Supported n: 1 (rasi), 3 (drekkana), 7 (saptamsa), 9 (navamsa), 10 (dasamsa), 12 (dwadasamsa)."""
+    Supported n: the 16 Shodashavarga (see ``SUPPORTED_VARGAS``):
+    1,2,3,4,7,9,10,12,16,20,24,27,30,40,45,60. Raises ValueError for any other n."""
     try:
         return _VARGA_FN[n](lon)
     except KeyError:

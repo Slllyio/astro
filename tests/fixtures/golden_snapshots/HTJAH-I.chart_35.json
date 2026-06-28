@@ -5,13 +5,15 @@
       "HTJAH-I:1127",
       "HTJAH-I:1139",
       "HTJAH-I:1260",
-      "HTJAH-I:1559"
+      "HTJAH-I:1559",
+      "HTJAH-I:1711"
     ],
     "fired_rule_ids": [
       "H1.C.26b",
       "H1.C.34",
       "H1.L.12",
       "H1.M.S02",
+      "H1.N.39",
       "H1.P.Ketu"
     ],
     "rollup": "favourable",

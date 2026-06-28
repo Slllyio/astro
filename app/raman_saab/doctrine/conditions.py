@@ -66,6 +66,18 @@ def _parse_lord_of(origin: str) -> int:
     return ((n - 1) % 12) + 1
 
 
+def _resolve_planet(name: str, chart: RamanChart) -> str:
+    """Resolve a SUBJECT-planet reference to an actual planet name. A static name passes
+    through unchanged; a "LORD_OF:n" reference resolves to the D1 lord of house n (chart-
+    dependent). This closes the G13 gap: varga predicates (InVargaHouseFrom / VargaDignity /
+    Vargottama) can now take a dynamically-resolved house lord as their subject planet, not only
+    as their origin — activating Raman's cited "Lagnadhipati in the 6/8/12 in the Navamsha"
+    qualifier rules (HTJAH-I:1709-1789)."""
+    if isinstance(name, str) and name.startswith(_LORD_OF_PREFIX):
+        return _lord_of(_parse_lord_of(name), chart)
+    return name
+
+
 def _origin_house(origin: object, chart: RamanChart) -> int | None:
     """Resolve a frame origin to a whole-sign house (1..12). origin ∈ {"LAGNA","MOON",
     "LORD_OF:n", planet name, int house}. Returns None if a referenced planet is absent.
@@ -308,7 +320,7 @@ class Vargottama(Condition):
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         return p is not None and p.vargottama
 
 
@@ -383,7 +395,7 @@ class InVargaHouseFrom(Condition):
             frozenset({houses}) if isinstance(houses, int) else frozenset(houses))
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
+        p = ctx.chart.planets.get(_resolve_planet(self.planet, ctx.chart))
         ov = _origin_varga_sign(self.origin, ctx.chart)
         return (p is not None and ov is not None
                 and _house_from(p.navamsa_sign, ov) in self.houses)
@@ -420,8 +432,9 @@ class VargaDignity(Condition):
         self.planet, self.varga, self.states = planet, varga, frozenset(states)
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        p = ctx.chart.planets.get(self.planet)
-        return p is not None and _varga_dignity(self.planet, p.navamsa_sign) in self.states
+        subj = _resolve_planet(self.planet, ctx.chart)
+        p = ctx.chart.planets.get(subj)
+        return p is not None and _varga_dignity(subj, p.navamsa_sign) in self.states
 
 
 # ── relations (C6, H1, mutual) ───────────────────────────────────────────────

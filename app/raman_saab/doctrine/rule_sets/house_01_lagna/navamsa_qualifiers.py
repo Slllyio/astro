@@ -9,12 +9,17 @@ Predicate notes
 * LordsConjunct(1, N) — same-rasi conjunction of the D1 lords of houses 1 & N.
 * LordIn(1, N)        — lord of house 1 sits in whole-sign house N (D1).
   Together these faithfully encode "Lagnadhipati in the Nth with the Nth lord".
-* InVargaHouseFrom / VargaDignity accept a *planet name* as their first
-  argument; "LORD_OF:n" is valid only as the *origin* parameter.  Because the
-  lord of house 1 is chart-dependent, all conditions that would need
-  `InVargaHouseFrom("LORD_OF:1", ...)` or `VargaDignity("LORD_OF:1", ...)`
-  as the *subject planet* cannot be expressed with the current predicate
-  algebra → kind="descriptive" + TODO comment (G13).
+* G13 CLOSED (D9-1, 2026-06-28): `conditions._resolve_planet` now resolves a
+  "LORD_OF:n" SUBJECT planet (mirroring the long-standing LORD_OF origin support),
+  so `InVargaHouseFrom("LORD_OF:1", ...)` / `VargaDignity("LORD_OF:1", ...)` /
+  `Vargottama("LORD_OF:1")` are now expressible. Nine rules are therefore now
+  **evaluable**: H1.N.39 + H1.N.64 fire standalone; H1.N.41/43/45/47/49/50/53 are
+  gated to their BASE configuration (the LordIn+LordsConjunct of the rule they
+  qualify) because Raman's text makes them "lessen the #N effects" — they have no
+  referent unless the base obtains, and firing them standalone over-fires. The
+  per-rule "# G13 ... → descriptive / TODO(G13)" comments below those nine are
+  HISTORICAL (now superseded by the live `kind="evaluable"` conditions); only
+  H1.N.38/52/55/57/58/60/62/65/66/67 remain genuinely descriptive (other gaps).
 
 Rule-id scheme: H1.N.<seq>  (N = navamsa_qualifier group, seq is sequential).
 """
@@ -50,8 +55,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # once the predicate accepts LORD_OF origins as the subject.
     RuleRecord(
         id="H1.N.39", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.InVargaHouseFrom("LORD_OF:1", "LAGNA", {12}, "D9"),
         fortified="",
         afflicted="lord of Lagna in 12th in Navamsha → always roaming, suffers in "
                   "mind and body",
@@ -76,8 +81,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # once the predicate algebra supports LORD_OF origins as the subject.
     RuleRecord(
         id="H1.N.41", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 2), C.LordsConjunct(1, 2),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:2", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagnadhipati in 6th/8th/12th in Navamsha from sign held by 2nd "
                   "lord → lessening of the #40 effects",
@@ -100,8 +106,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): InVargaHouseFrom("LORD_OF:1", "LORD_OF:3", {6,8,12}, "D9")
     RuleRecord(
         id="H1.N.43", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 3), C.LordsConjunct(1, 3),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:3", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagnadhipati in 6th/8th/12th from 3rd lord in Navamsha → "
                   "enmity with brothers or sorrow to them",
@@ -125,8 +132,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): InVargaHouseFrom("LORD_OF:1", "LORD_OF:4", {6,8,12}, "D9")
     RuleRecord(
         id="H1.N.45", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 4), C.LordsConjunct(1, 4),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:4", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagnadhipati in 6th/8th/12th in Navamsha from 4th lord → "
                   "enmity with mother/relatives, accident, legal troubles",
@@ -149,8 +157,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): InVargaHouseFrom("LORD_OF:1", "LORD_OF:5", {6,8,12}, "D9")
     RuleRecord(
         id="H1.N.47", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 5), C.LordsConjunct(1, 5),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:5", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagna-lord in 6th/8th/12th from 5th lord in Navamsha → "
                   "reverses in political or official career",
@@ -175,8 +184,10 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     #                VargaDignity("LORD_OF:1","D9",{"exalt"}))
     RuleRecord(
         id="H1.N.49", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 6), C.LordsConjunct(1, 6),
+                        C.VargaDignity("LORD_OF:6", "D9", {"debil"}),
+                        C.VargaDignity("LORD_OF:1", "D9", {"exalt"})),
         fortified="in Navamsha 6th lord debilitated AND Lagna-lord exalted → "
                   "enters Army, vanquishes enemies, succeeds in litigation",
         afflicted=None,
@@ -188,8 +199,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): InVargaHouseFrom("LORD_OF:1", "LORD_OF:6", {6,8,12}, "D9")
     RuleRecord(
         id="H1.N.50", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 6), C.LordsConjunct(1, 6),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:6", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagna-lord in 6th/8th/12th in Navamsha from 6th lord → "
                   "favourable results minimised, unfavourable will not predominate",
@@ -225,8 +237,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): InVargaHouseFrom("LORD_OF:1", "LORD_OF:7", {6,8,12}, "D9")
     RuleRecord(
         id="H1.N.53", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 7), C.LordsConjunct(1, 7),
+                        C.InVargaHouseFrom("LORD_OF:1", "LORD_OF:7", {6, 8, 12}, "D9")),
         fortified="",
         afflicted="Lagna-lord in 6th/8th/12th from 7th lord in Navamsha → "
                   "deprived of livelihood, defamed, misunderstandings with wife, "
@@ -361,8 +374,8 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # TODO(G13): Vargottama("LORD_OF:1") once the predicate accepts LORD_OF origins.
     RuleRecord(
         id="H1.N.64", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=C.Vargottama("LORD_OF:1"),
         fortified="Lagnadhipati in own Navamsha → slight benefit / earns money "
                   "in foreign countries",
         afflicted=None,

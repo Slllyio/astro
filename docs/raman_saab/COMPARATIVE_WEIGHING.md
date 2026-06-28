@@ -85,3 +85,33 @@ calibration wall B1/B2/preponderance all hit).
 
 Each gate: cite Raman -> bphs-doctrine-reviewer -> over-fire scan -> zero-regression ratchet ->
 human baseline bump. Start with #1 (clearest, highest coverage, already validated by the B1 probe).
+
+## Phase 3 — the effort converges: there is no separate weighing mechanism (2026-06-28)
+
+Gate-by-gate, every fix for the 13 entangles with Raman's holistic judgment, and the over-fire scan
+killed each:
+- **Gate #1 (Papakartari-on-leg):** over-fire scan = 6 confirmed-favourable regressions, 0 reliable
+  fixes, and it misses the 3 targets (their hemming is on the house/lagna, not the planet). The 6
+  over-fires are the same cancellation cases B1 hit.
+- **Gate #3 (navamsa weakens):** not a bug — the engine's `weakens` is correct for the weak leg
+  (h5_16 karaka Jupiter is debil); Raman's HOLISTIC navamsa (a different planet's Vargottama,
+  neechabhanga, the navamsa lagna) is positive. Entangles with weighing.
+- **Type-B coverage (h5_10, Chart 100):** the supposedly-safe avenue is the SAME wall — the engine
+  reads the 5th lord/karaka STRONG (Shadbala), Raman reads them "afflicted… weak… powerless" by
+  malefic CONJUNCTION + ASPECT. Detecting that = effective strength = B1 = net-negative.
+
+### Unification (the real deliverable)
+All five independent directions — B1 effective-strength, preponderance aggregation, Papakartari gate,
+navamsa gate, Type-B coverage — reduce to ONE root cause: **the engine's per-leg strength is raw
+Shadbala; Raman's is Shadbala NET of affliction-by-association and NET of cancellation.** Folding that
+in is precisely what the holdout-locked B1 tuner proved net-negative, because the affliction detection
+that fixes the misses fires on the confirmed-favourable charts Raman rescues by holistic judgment.
+
+### Conclusion
+**208/241 is the faithful ceiling of the rule-based engine.** The 13 residual errors are not bugs and
+not a missing mechanism — they are the irreducible gap between a rulebook and a holistic reader, now
+evidenced from five directions. Further accuracy would require a different architecture (e.g. a
+learned holistic scorer trained on Raman's verdicts), not another rule — a deliberate, separate
+decision, not a continuation of this effort. The cancellation doctrine (lord-dominates,
+severe-combustion, benefic-neutralises), holdout-validated, remains available as a SAFE
+non-verdict-moving strength refinement if that value is wanted later.

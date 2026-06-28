@@ -1070,7 +1070,7 @@ _CRUEL_MALEFICS: frozenset[str] = frozenset({"Mars", "Saturn", "Rahu", "Ketu"})
 
 
 def _marital_bond_gate(
-    chart: RamanChart, sig: Signification, verdict: Verdict,
+    chart: RamanChart, sig: Signification, verdict: Verdict, blem_lifted: bool = False,
 ) -> tuple[Verdict, Metadata]:
     """H7 marital-bond demote: a heavily-afflicted 8th house FROM THE MOON (the Chandra-Lagna
     8th — the marital bond / mangalya from the emotional self) with >= 2 CRUEL malefics
@@ -1088,6 +1088,8 @@ def _marital_bond_gate(
     bphs-doctrine-reviewer SOUND-WITH-CAVEAT (the >= 2 vs Raman's 'heavily' = 3-4 is a logged
     calibration margin)."""
     if sig.key not in _MARITAL_BOND_KEYS or verdict != "favourable":
+        return verdict, ()
+    if blem_lifted:         # anti-double-move: don't re-demote a verdict the blemishless-Venus floor just lifted
         return verdict, ()
     moon = chart.planets.get("Moon")
     if moon is None:
@@ -1484,7 +1486,7 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     _v_before_gates = verdict                       # capture for the late-shift (gates/longevity/timing) flag
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
-    verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
+    verdict, bond_md = _marital_bond_gate(chart, sig, verdict, blem_lifted=blem_shifted)
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
     verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)

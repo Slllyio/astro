@@ -1481,6 +1481,7 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
     verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
     verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
+    _v_before_gates = verdict                       # capture for the late-shift (gates/longevity/timing) flag
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict)
@@ -1488,13 +1489,15 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
+    late_shifted = verdict != _v_before_gates       # a gate/longevity/timing moved the verdict
     varga_md = _matter_varga_overlay(chart, sig, lead.lord, lead.karaka)
     av_md = _ashtakavarga_overlay(chart, sig)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
         yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
         + yk_md + varga_md + av_md + timing_md + lookup_md))
-    shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
+    shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted
+                   or late_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas
     # are computed once per chart and cached on ctx.

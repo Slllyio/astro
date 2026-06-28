@@ -535,18 +535,26 @@ def _frame_lord(chart: RamanChart, sig: Signification, frame: Frame) -> Optional
     return _lord_of_sign(core.sign, sig.house)
 
 
-def _navamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
+def _navamsa_status(lord: str, karaka: str, chart: RamanChart,
+                    extra: tuple[str, ...] = ()) -> NavStatus:
     """Confirm/weaken from D9 — works on Track-B via PlanetPos.navamsa_sign.
 
-    confirms : either lord or karaka is vargottama or D9-exalted/own.
-    weakens  : either is D9-debilitated, or sits in a 6/8/12 from the navamsa lagna.
-    unknown  : navamsa data absent for both pillars.
-    """
+    confirms : any pillar is vargottama or D9-exalted/own.
+    weakens  : any pillar is D9-debilitated, or sits in a 6/8/12 from the navamsa lagna.
+    unknown  : navamsa data absent for all pillars.
+
+    Pillars = the bhava LORD and natural KARAKA, PLUS `extra` (D9-4: the house's HOLLOW
+    occupants — exalted in the rashi but debilitated in the navamsa. Raman re-judges a bhava's
+    occupants in the navamsa, and a planet 'though exalted [in rashi] ... debilitated in the
+    Navamsha' has its promised good withheld [Grahanam Amsakam Balam]; such an occupant
+    contributes a weakens, hollowing the bhava's promise just as a weak lord does. The symmetric
+    uplift direction — a vargottama / D9-strong occupant contributing a confirms — is deferred to
+    the D9-6 netting, per bphs-doctrine-reviewer.)"""
     nav_lagna_sign = varga.navamsa_sign(chart.asc_lon)
     saw_any = False
     confirms = False
     weakens = False
-    for name in (lord, karaka):
+    for name in (lord, karaka, *extra):
         p = chart.planets.get(name)
         if p is None:
             continue
@@ -735,7 +743,16 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     bb = _bhava_bala_for(chart, sig.house)
     bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)
 
-    navamsa_status = _navamsa_status(lord, karaka, chart)
+    # D9-4: a bhava occupant EXALTED in the rashi but DEBILITATED in the navamsa hollows the
+    # promise (Raman's explicit "though exalted ... debilitated in Navamsha" — the rasi sets up
+    # the promise, the navamsa withholds the fruit). Scoped to exactly this case (rare, surgical):
+    # the broad "all strong occupants" form regressed borderline verdicts.
+    hollow_occupants = tuple(
+        nm for nm, p in chart.planets.items()
+        if p.rasi_house == sig.house and nm not in (lord, karaka)
+        and nm in r.EXALTATION and p.sign == r.EXALTATION[nm][0]
+        and nm in r.DEBILITATION and p.navamsa_sign == r.DEBILITATION[nm][0])
+    navamsa_status = _navamsa_status(lord, karaka, chart, hollow_occupants)
     karaka_intact = _karaka_intact(karaka, chart, marakas)
     maraka_active = bool(marakas) and (lord in marakas or karaka in marakas)
 

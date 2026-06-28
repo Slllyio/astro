@@ -22,9 +22,30 @@ def karakamsa(chart: RamanChart) -> SpecialPoint:
                         navamsa_sign=sign)
 
 
+def navamsa_lagna(chart: RamanChart) -> SpecialPoint:
+    """The Navamsa (D9) ascendant — the navamsa of the rasi-lagna degree. Raman reads the body and
+    temperament from the navamsa-lagna and its lord alongside the rasi-lagna."""
+    sign = varga.navamsa_sign(chart.asc_lon)
+    return SpecialPoint(name="NavamsaLagna", lon=chart.asc_lon, sign=sign,
+                        bhava=((sign - chart.asc_sign) % 12) + 1, navamsa_sign=sign)
+
+
+def navamsa_lagna_lord(chart: RamanChart) -> str:
+    """Lord of the navamsa Lagna sign."""
+    return SIGN_LORDS[varga.navamsa_sign(chart.asc_lon)]
+
+
+def navamsa_seventh_lord(chart: RamanChart) -> str:
+    """Lord of the 7th from the navamsa Lagna — Raman's spouse significator in the D9
+    ('the 7th from Navamsha Lagna judges the spouse', HtJaH)."""
+    nl = varga.navamsa_sign(chart.asc_lon)
+    return SIGN_LORDS[((nl - 1 + 6) % 12) + 1]
+
+
 def arudha_lagna(chart: RamanChart) -> SpecialPoint:
     """Jaimini Arudha (Pada) Lagna: count from the lagna-lord as many signs as it is
-    from the Lagna; if the result falls in the 1st or 7th, take the 10th from there."""
+    from the Lagna; if the result falls in the 1st or 7th, take the 10th from there.
+    (For the generalised per-house arudha padas + Upapada, see primitives/arudha.py.)"""
     asc = chart.asc_sign
     lord = SIGN_LORDS[asc]
     lord_house = chart.planets[lord].rasi_house if lord in chart.planets else 1

@@ -1515,7 +1515,9 @@ def _default_sig(house: int) -> Signification:
 
 
 _ROLLUP_ORDER: dict[Verdict, int] = {
-    "afflicted": 0, "mixed": 1, "insufficient-evidence": 2, "favourable": 3,
+    # insufficient-evidence is ABSENCE of evidence, not a worse outcome than favourable: it is the
+    # MOST ignorable, so a decided sub-matter always outranks an un-ruled one.
+    "afflicted": 0, "mixed": 1, "favourable": 2, "insufficient-evidence": 3,
 }
 
 
@@ -1524,7 +1526,8 @@ def _rollup(verdicts: tuple[Verdict, ...]) -> Verdict:
 
     * if BOTH a 'mixed' and a 'favourable' are present -> 'mixed' (a contradicted house
       cannot read as cleanly favourable);
-    * otherwise the worst present, ordered afflicted > mixed > insufficient-evidence > favourable.
+    * otherwise the worst DECIDED verdict present, ordered afflicted > mixed > favourable;
+      'insufficient-evidence' only wins when no sub-matter was decided (it never masks a real verdict).
     """
     if not verdicts:
         return "insufficient-evidence"

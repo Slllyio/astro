@@ -50,3 +50,38 @@ rules (Papakartari-on-lord; the specific afflictions of h5_10/h11_01), a separat
   regression on the 208 confirmed.
 
 Type B (coverage) is tracked separately and not part of the weighing mechanism.
+
+## Phase 2 — validation REFUTED the preponderance hypothesis (2026-06-28)
+
+Two agents read Raman's reasoning for all 7 Type-A cases. The benefic/malefic-preponderance
+hypothesis held **0 of 7**. Raman does NOT head-count influences. The real mechanism:
+
+- **Under-reads:** the engine's "lord/karaka strong" premise is WRONG in Raman's reading — the
+  lord/karaka are afflicted by **Papakartari hemming** (h9_02: house+lord+karaka each hemmed; this is
+  also chart_20/chart_31), by rasi affliction (h12_05: Saturn afflicted by Rahu), or the affliction
+  is a Chandra-lagna + dasha matter the natal house doesn't carry (chart_44, read "ordinarily
+  disposed"). The engine's per-leg affliction DETECTION is incomplete.
+- **Over-reads:** Raman reads favourable via (1) **functional reclassification** — a malefic that is
+  the lagna-lord / yogakaraka is GOOD, not afflicting (chart_17 Ketu disqualified as 12th-bhava;
+  h5_16 Mars good as lagna-lord); (2) **named yogas** (h11_09 four-lord kendra dhana + Vipareeta Raja
+  Yoga); (3) the navamsa is actually **corroborating/Vargottama**, so the engine's `navamsa=weakens`
+  flag is simply WRONG in all 3 over-reads.
+
+### Reframe: it's DETECTION, not aggregation
+Raman's three-factor triangulation (bhava+lord+karaka, each checked, negative if ANY leg afflicted)
+is the model the engine ALREADY has. The misses are per-leg DETECTION errors, not a missing weighing
+scale. This is good news: the fix is the project's PROVEN safe pattern — specific cited gates that
+fire only on the named structure, zero regression — NOT a risky aggregation change (which is the
+calibration wall B1/B2/preponderance all hit).
+
+### Revised plan — cited detection gates (safe pattern)
+1. **Papakartari-on-lord/karaka demote gate** (covers chart_20, chart_31, h9_02; also B1's one real
+   win chart_45) — when a leg is hemmed between two malefics and uncancelled, that leg is afflicted.
+2. **Functional reclassification** — a natural malefic that is the bhava's functional benefic
+   (lagna-lord / yogakaraka) must not count as a malefic affliction on it (chart_17, h5_16).
+3. **Navamsa `weakens` false-positive fixes** — investigate the navamsa_status mis-reads in the 3
+   over-reads (Vargottama/benefic-aspected navamsa wrongly flagged weakens).
+4. (separate) yoga detection (Vipareeta/dhana) for h11_09; dasha/Chandra-lagna for chart_44.
+
+Each gate: cite Raman -> bphs-doctrine-reviewer -> over-fire scan -> zero-regression ratchet ->
+human baseline bump. Start with #1 (clearest, highest coverage, already validated by the B1 probe).

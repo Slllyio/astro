@@ -42,6 +42,7 @@ from typing import Final, Literal, Optional
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart import varga
+from app.raman_saab.primitives import ashtakavarga
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
 from app.raman_saab.doctrine.conditions import EvalContext
@@ -1427,6 +1428,17 @@ def _matter_varga_overlay(chart: RamanChart, sig: Signification, lord: str, kara
     return ((f"varga_{name}", f"{lord}:{ld}|{karaka}:{kd}"),)
 
 
+def _ashtakavarga_overlay(chart: RamanChart, sig: Signification) -> Metadata:
+    """ADDITIVE: the Sarvashtakavarga bindus in the bhava — Raman's house-strength backbone (the
+    12-sign total is always 337, average ~28; a bhava with more bindus is better supported, fewer
+    is weaker). Verdict-invariant; only emits on a full chart (all seven planets present)."""
+    if not all(p in chart.planets for p in ashtakavarga.PLANETS):
+        return ()
+    n = ashtakavarga.bindus_in_house(chart, sig.house)
+    band = "strong" if n >= 30 else "weak" if n <= 25 else "average"
+    return (("sav_bindus", f"{n}:{band}"),)
+
+
 # ---------------------------------------------------------------------------
 # Per-signification + per-house judging
 # ---------------------------------------------------------------------------
@@ -1476,10 +1488,11 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     varga_md = _matter_varga_overlay(chart, sig, lead.lord, lead.karaka)
+    av_md = _ashtakavarga_overlay(chart, sig)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
         yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
-        + yk_md + varga_md + timing_md + lookup_md))
+        + yk_md + varga_md + av_md + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas

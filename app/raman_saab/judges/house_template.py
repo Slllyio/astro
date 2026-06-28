@@ -1390,6 +1390,7 @@ _MATTER_VARGA: Final[dict[int, tuple[int, str]]] = {
     3: (3, "D3"),     # siblings / courage  — drekkana
     5: (7, "D7"),     # children            — saptamsa
     4: (12, "D12"),   # mother / home       — dwadasamsa
+    6: (30, "D30"),   # disease / evils     — trimsamsa
     9: (12, "D12"),   # father / fortune    — dwadasamsa
     10: (10, "D10"),  # career              — dasamsa
 }

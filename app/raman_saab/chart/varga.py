@@ -50,13 +50,98 @@ def dwadasamsa_sign(lon: float) -> int:
     return ((sign - 1 + part) % 12) + 1
 
 
+def hora_sign(lon: float) -> int:
+    """D2 — odd sign: 0-15 deg -> Leo(Sun), 15-30 -> Cancer(Moon); even sign reversed."""
+    sign, deg = _sign_deg(lon)
+    first = deg < 15.0
+    if sign % 2 == 1:
+        return 5 if first else 4
+    return 4 if first else 5
+
+
+def chaturthamsa_sign(lon: float) -> int:
+    """D4 — 4 parts of 7.5 deg; part 0 -> same, 1 -> 4th, 2 -> 7th, 3 -> 10th (kendras)."""
+    sign, deg = _sign_deg(lon)
+    part = int(deg / 7.5)                             # 0..3
+    return ((sign - 1 + part * 3) % 12) + 1
+
+
+def shodasamsa_sign(lon: float) -> int:
+    """D16 — 16 parts; start movable->Aries, fixed->Leo, dual->Sagittarius."""
+    sign, deg = _sign_deg(lon)
+    start = (1, 5, 9)[(sign - 1) % 3]
+    return ((start - 1 + int(deg * 16 / 30)) % 12) + 1
+
+
+def vimsamsa_sign(lon: float) -> int:
+    """D20 — 20 parts; start movable->Aries, fixed->Sagittarius, dual->Leo."""
+    sign, deg = _sign_deg(lon)
+    start = (1, 9, 5)[(sign - 1) % 3]
+    return ((start - 1 + int(deg * 20 / 30)) % 12) + 1
+
+
+def siddhamsa_sign(lon: float) -> int:
+    """D24 — 24 parts; odd sign starts Leo, even sign starts Cancer."""
+    sign, deg = _sign_deg(lon)
+    start = 5 if sign % 2 == 1 else 4
+    return ((start - 1 + int(deg * 24 / 30)) % 12) + 1
+
+
+def bhamsa_sign(lon: float) -> int:
+    """D27 — 27 parts; start by element Fire->Aries, Earth->Cancer, Air->Libra, Water->Capricorn."""
+    sign, deg = _sign_deg(lon)
+    start = (1, 4, 7, 10)[(sign - 1) % 4]
+    return ((start - 1 + int(deg * 27 / 30)) % 12) + 1
+
+
+def trimsamsa_sign(lon: float) -> int:
+    """D30 — unequal 5-fold; planet-sign mapping (odd vs even sign)."""
+    sign, deg = _sign_deg(lon)
+    bounds = ([(5, 1), (10, 11), (18, 9), (25, 3), (30, 7)] if sign % 2 == 1
+              else [(5, 2), (12, 6), (20, 12), (25, 10), (30, 8)])
+    for hi, s in bounds:
+        if deg < hi:
+            return s
+    return bounds[-1][1]
+
+
+def khavedamsa_sign(lon: float) -> int:
+    """D40 — 40 parts; odd sign starts Aries, even sign starts Libra."""
+    sign, deg = _sign_deg(lon)
+    start = 1 if sign % 2 == 1 else 7
+    return ((start - 1 + int(deg * 40 / 30)) % 12) + 1
+
+
+def akshavedamsa_sign(lon: float) -> int:
+    """D45 — 45 parts; start movable->Aries, fixed->Leo, dual->Sagittarius."""
+    sign, deg = _sign_deg(lon)
+    start = (1, 5, 9)[(sign - 1) % 3]
+    return ((start - 1 + int(deg * 45 / 30)) % 12) + 1
+
+
+def shashtiamsa_sign(lon: float) -> int:
+    """D60 — 60 parts of 0.5 deg, counted from the sign itself."""
+    sign, deg = _sign_deg(lon)
+    return ((sign - 1 + int(deg * 60 / 30)) % 12) + 1
+
+
 _VARGA_FN = {
     1: lambda lon: _sign_deg(lon)[0],
+    2: hora_sign,
     3: drekkana_sign,
+    4: chaturthamsa_sign,
     7: saptamsa_sign,
     9: navamsa_sign,
     10: dasamsa_sign,
     12: dwadasamsa_sign,
+    16: shodasamsa_sign,
+    20: vimsamsa_sign,
+    24: siddhamsa_sign,
+    27: bhamsa_sign,
+    30: trimsamsa_sign,
+    40: khavedamsa_sign,
+    45: akshavedamsa_sign,
+    60: shashtiamsa_sign,
 }
 
 #: Divisional charts BV Raman judges for matter-specific significations.

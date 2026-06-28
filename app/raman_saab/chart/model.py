@@ -10,6 +10,18 @@ class BirthData:
     hour: int; minute: int; tz_offset: float
     latitude: float; longitude: float
 
+    def __post_init__(self) -> None:
+        """Validate at the boundary so a typo (lat 200, month 13) fails loudly with a clear message
+        instead of producing a wrong chart or a raw swisseph error downstream."""
+        checks = (("month", self.month, 1, 12), ("day", self.day, 1, 31),
+                  ("hour", self.hour, 0, 23), ("minute", self.minute, 0, 59),
+                  ("latitude", self.latitude, -90.0, 90.0),
+                  ("longitude", self.longitude, -180.0, 180.0),
+                  ("tz_offset", self.tz_offset, -12.0, 14.0))
+        for field, value, lo, hi in checks:
+            if not (lo <= value <= hi):
+                raise ValueError(f"BirthData.{field} must be in [{lo}, {hi}], got {value!r}")
+
 @dataclass(frozen=True)
 class ShadbalaBreakdown:
     sthana: float; dig: float; kala: float

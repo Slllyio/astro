@@ -28,6 +28,7 @@ from app.raman_saab.primitives import chara_dasha as cd
 from app.raman_saab.primitives import special_points as sp
 from app.raman_saab.primitives import arudha
 from app.raman_saab.primitives import jaimini_reading as jr
+from app.raman_saab.primitives import deeptadi
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -59,6 +60,7 @@ class Synthesis:
     karakamsa_reading: tuple[str, ...]   # Jaimini Karakamsa profession/inclination (JS 1.2 Su.14-22)
     upapada: str                 # Upapada Lagna (12th arudha) — the marriage/spouse image
     spouse_significator: str     # lord of the 7th-from-navamsa-lagna (Raman's D9 spouse lord)
+    deeptadi: tuple[str, ...]    # each graha's Deeptadi result-state (HPA Ch.7)
     running_md: str
     running_ad: str
     chara: str
@@ -135,6 +137,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         karakamsa_reading=tuple(f"{p}: {ind}" for p, ind in jr.karakamsa_indications(chart)),
         upapada=_SIGNS[ul - 1] if ul else "(unknown)",
         spouse_significator=sp.navamsa_seventh_lord(chart),
+        deeptadi=tuple(f"{p} {s}" for p, (s, _r) in deeptadi.chart_states(chart).items()),
         running_md=period.maha, running_ad=period.antar,
         chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
@@ -152,6 +155,9 @@ def to_text(s: Synthesis) -> str:
            "=" * 76]
     for mr in s.matters:
         out.append(f"H{mr.house:2} {mr.name}: {mr.reading}")
+    if s.deeptadi:
+        out.append("-" * 76)
+        out.append("Deeptadi avasthas (each graha's result-state, HPA Ch.7): " + ", ".join(s.deeptadi))
     if s.karakamsa_reading:
         out.append("-" * 76)
         out.append(f"Jaimini Karakamsa reading (soul's inclination, parallel to the above):")

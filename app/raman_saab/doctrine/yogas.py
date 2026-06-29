@@ -242,6 +242,84 @@ class _Panchamahapurusha(C.Condition):
         return dignity(self.planet, ctx.chart) in ("own", "moolatrikona", "exalt")
 
 
+_SEVEN_VISIBLE: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+_NABHASA_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
+_NABHASA_MALEFICS: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Saturn"})
+
+
+def _seven_present(chart: RamanChart) -> list[str]:
+    return [p for p in _SEVEN_VISIBLE if p in chart.planets]
+
+
+class _SunFlank(C.Condition):
+    """A planet OTHER than the Moon occupies the `n`-th house from the Sun (Sun-flank yogas: Vesi
+    2nd, Vasi 12th) — the solar analogue of Sunapha/Anapha (3HC:3252-3388)."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        sun = ctx.chart.planets.get("Sun")
+        if sun is None:
+            return False
+        target = ((sun.rasi_house - 1 + self.n - 1) % 12) + 1
+        return any(nm not in ("Sun", "Moon", "Rahu", "Ketu") and p.rasi_house == target
+                   for nm, p in ctx.chart.planets.items())
+
+
+class _AsrayaModality(C.Condition):
+    """All seven visible planets occupy signs of a SINGLE modality — movable (Rajju) / fixed (Musala)
+    / common (Nala) (3HC:7088 'all the planets exclusively occupy movable, fixed or common signs')."""
+
+    def __init__(self, modality: str) -> None:
+        self.modality = modality
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ps = _seven_present(ctx.chart)
+        return len(ps) == 7 and all(
+            ("movable", "fixed", "common")[(ctx.chart.planets[p].sign - 1) % 3] == self.modality
+            for p in ps)
+
+
+class _SankhyaSignCount(C.Condition):
+    """The seven visible planets (nodes excepted) occupy exactly `n` distinct signs (the Sankhya
+    count yogas: 7=Veena, 6=Damini, 5=Pasa, 4=Kedara, 3=Sula, 2=Yuga, 1=Gola; 3HC:6498-6868)."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ps = _seven_present(ctx.chart)
+        return len(ps) == 7 and len({ctx.chart.planets[p].sign for p in ps}) == self.n
+
+
+class _DalaKendra(C.Condition):
+    """The kendra-occupants are exclusively benefic (Mala) or exclusively malefic (Sarpa), with at
+    least two of them there (3HC:3194 Mala 'benefics in kendras'; 3HC:7177 Sarpa 'malefics in
+    kendras')."""
+
+    def __init__(self, group: str) -> None:
+        self.group = group
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        occ = [p for p in _seven_present(ctx.chart) if ctx.chart.planets[p].rasi_house in _KENDRAS]
+        grp = _NABHASA_BENEFICS if self.group == "benefic" else _NABHASA_MALEFICS
+        return len(occ) >= 2 and all(p in grp for p in occ)
+
+
+class _AllSevenInHouses(C.Condition):
+    """All seven visible planets fall within a contiguous four-house block (the Akriti contiguous
+    yogas: 1-4 Yupa, 4-7 Ishu, 7-10 Sakti, 10-1 Danda; 3HC:5761-5785)."""
+
+    def __init__(self, houses: tuple[int, ...]) -> None:
+        self.houses = frozenset(houses)
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ps = _seven_present(ctx.chart)
+        return len(ps) == 7 and all(ctx.chart.planets[p].rasi_house in self.houses for p in ps)
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
     # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
@@ -275,6 +353,80 @@ YOGAS: tuple[YogaRecord, ...] = (
         effect=("Commands good servants; head of a town or a king; powerful, covetous of others' "
                 "wealth, strong constitution."),
         source=Citation("3HC", 3737)),
+    # — solar (Sun-flank) yogas: the analogue of Sunapha/Anapha/Durudhara from the Sun —
+    YogaRecord(
+        id="Y.VESI", name="Vesi Yoga", kind="other", condition=_SunFlank(2),
+        effect=("Truthful, happy, balanced; (benefic Vesi) eloquent and well-known."),
+        source=Citation("3HC", 3268)),
+    YogaRecord(
+        id="Y.VASI", name="Vasi Yoga", kind="other", condition=_SunFlank(12),
+        effect=("Skilful, liberal, eloquent; favoured by the ruler."),
+        source=Citation("3HC", 3388)),
+    YogaRecord(
+        id="Y.UBHAYACHARI", name="Ubhayachari Yoga", kind="other",
+        condition=C.And(_SunFlank(2), _SunFlank(12)),
+        effect=("A king or his equal; eloquent, strong-bodied, virtuous, enjoys comforts."),
+        source=Citation("3HC", 3373)),
+    # — Nabhasa: Asraya (3) — all seven planets in one modality —
+    YogaRecord(
+        id="Y.RAJJU", name="Rajju Yoga", kind="other", condition=_AsrayaModality("movable"),
+        effect=("Fond of travel and wandering, charming, attached to worldly objects."),
+        source=Citation("3HC", 7088)),
+    YogaRecord(
+        id="Y.MUSALA", name="Musala Yoga", kind="other", condition=_AsrayaModality("fixed"),
+        effect=("Endowed with self-respect, wealth, wisdom; firm of determination, honoured."),
+        source=Citation("3HC", 7088)),
+    YogaRecord(
+        id="Y.NALA", name="Nala Yoga", kind="other", condition=_AsrayaModality("common"),
+        effect=("Resourceful and clever, but defective of limb; engaged in many works."),
+        source=Citation("3HC", 7113)),
+    # — Nabhasa: Dala (2) — kendras held purely by benefics / malefics —
+    YogaRecord(
+        id="Y.MALA", name="Mala (Srik) Yoga", kind="other", condition=_DalaKendra("benefic"),
+        effect=("Ever happy, blessed with conveyances, comforts and the company of agreeable people."),
+        source=Citation("3HC", 3194)),
+    YogaRecord(
+        id="Y.SARPA", name="Sarpa Yoga", kind="other", condition=_DalaKendra("malefic"),
+        effect=("Crooked and miserable; lives in distress, dependent and poor."),
+        source=Citation("3HC", 7177)),
+    # — Nabhasa: Sankhya (7) — by the count of distinct signs the seven planets occupy —
+    YogaRecord(id="Y.VEENA", name="Veena (Vallaki) Yoga", kind="other", condition=_SankhyaSignCount(7),
+               effect="Fond of music, dance and the arts; wealthy, happy, a leader.",
+               source=Citation("3HC", 6498)),
+    YogaRecord(id="Y.DAMINI", name="Damini Yoga", kind="other", condition=_SankhyaSignCount(6),
+               effect="Charitable, wealthy, famous; helps others and is renowned.",
+               source=Citation("3HC", 6593)),
+    YogaRecord(id="Y.PASA", name="Pasa Yoga", kind="other", condition=_SankhyaSignCount(5),
+               effect="Skilful, talkative, with many dependents; liable to bondage/confinement.",
+               source=Citation("3HC", 6732)),
+    YogaRecord(id="Y.KEDARA", name="Kedara Yoga", kind="other", condition=_SankhyaSignCount(4),
+               effect="An agriculturist, useful to many, truthful and happy.",
+               source=Citation("3HC", 6868)),
+    YogaRecord(id="Y.SULA", name="Sula Yoga", kind="other", condition=_SankhyaSignCount(3),
+               effect="Sharp/aggressive, valorous but indigent; cruel-natured.",
+               source=Citation("3HC", 6868)),
+    YogaRecord(id="Y.YUGA", name="Yuga Yoga", kind="other", condition=_SankhyaSignCount(2),
+               effect="A heretic or outcaste; poor and devoid of wealth.",
+               source=Citation("3HC", 6868)),
+    YogaRecord(id="Y.GOLA", name="Gola Yoga", kind="other", condition=_SankhyaSignCount(1),
+               effect="Poor, dirty, devoid of learning, strength and comfort.",
+               source=Citation("3HC", 6868)),
+    # — Nabhasa: Akriti (the 4 contiguous-house forms; the 16 other Akriti shapes are a backlog) —
+    YogaRecord(id="Y.YUPA", name="Yupa Yoga", kind="other", condition=_AllSevenInHouses((1, 2, 3, 4)),
+               effect="Liberal, self-possessed, noted for charitable and sacrificial deeds.",
+               source=Citation("3HC", 5761)),
+    YogaRecord(id="Y.ISHU", name="Ishu (Sara) Yoga", kind="other",
+               condition=_AllSevenInHouses((4, 5, 6, 7)),
+               effect="A maker or seller of arrows; superintendent of a jail/camp.",
+               source=Citation("3HC", 5761)),
+    YogaRecord(id="Y.SAKTI", name="Sakti Yoga", kind="other",
+               condition=_AllSevenInHouses((7, 8, 9, 10)),
+               effect="Lazy and slothful, devoid of riches, generally disliked.",
+               source=Citation("3HC", 5761)),
+    YogaRecord(id="Y.DANDA", name="Danda Yoga", kind="other",
+               condition=_AllSevenInHouses((10, 11, 12, 1)),
+               effect="Lacks the happiness of wife and children; lonely, servile.",
+               source=Citation("3HC", 5761)),
     # — lunar (Moon-centred) —
     YogaRecord(
         id="Y.GAJAKESARI", name="Gajakesari Yoga", kind="lunar",

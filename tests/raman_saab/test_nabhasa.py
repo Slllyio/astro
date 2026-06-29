@@ -43,3 +43,25 @@ def test_yupa_when_all_seven_in_houses_1_to_4():
                "Jupiter": 8.0, "Venus": 38.0, "Saturn": 68.0}.items()}   # all in signs 1-4
     ch = RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman")
     assert "Y.YUPA" in _ids(ch)
+
+
+def test_kamala_when_all_seven_in_kendras():
+    stated = {"Sun": {"lon": 5.0, "bhava": 1}, "Moon": {"lon": 95.0, "bhava": 4},
+              "Mars": {"lon": 185.0, "bhava": 7}, "Mercury": {"lon": 275.0, "bhava": 10},
+              "Jupiter": {"lon": 8.0, "bhava": 1}, "Venus": {"lon": 98.0, "bhava": 4},
+              "Saturn": {"lon": 188.0, "bhava": 7}}        # all in signs 1/4/7/10 = the kendras
+    assert "Y.KAMALA" in _ids(RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman"))
+
+
+def test_nava_anchored_arc_spans_1_to_7():
+    """All seven in houses 1..7 with a planet in the 1st AND the 7th -> Nava (anchored)."""
+    stated = {p: {"lon": 5.0 + 30 * i, "bhava": i + 1} for i, p in enumerate(
+        ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"))}  # signs 1..7 = houses 1..7
+    assert "Y.NAVA" in _ids(RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman"))
+
+
+def test_anchored_arc_not_fired_when_confined_tighter():
+    """All seven confined to houses 1..5 (none in the 7th) does NOT form Nava."""
+    stated = {p: {"lon": 5.0 + 30 * (i % 5), "bhava": (i % 5) + 1} for i, p in enumerate(
+        ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"))}  # signs 1..5 only
+    assert "Y.NAVA" not in _ids(RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman"))

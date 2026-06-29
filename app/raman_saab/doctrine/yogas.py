@@ -309,8 +309,9 @@ class _DalaKendra(C.Condition):
 
 
 class _AllSevenInHouses(C.Condition):
-    """All seven visible planets fall within a contiguous four-house block (the Akriti contiguous
-    yogas: 1-4 Yupa, 4-7 Ishu, 7-10 Sakti, 10-1 Danda; 3HC:5761-5785)."""
+    """All seven visible planets are confined to the given set of houses (the Akriti shape yogas:
+    contiguous blocks Yupa/Ishu/Sakti/Danda; odd-house Chakra; even-house Samudra; kendra Kamala;
+    trine Sringhataka; etc.; 3HC:5761-6450)."""
 
     def __init__(self, houses: tuple[int, ...]) -> None:
         self.houses = frozenset(houses)
@@ -318,6 +319,48 @@ class _AllSevenInHouses(C.Condition):
     def evaluate(self, ctx: C.EvalContext) -> bool:
         ps = _seven_present(ctx.chart)
         return len(ps) == 7 and all(ctx.chart.planets[p].rasi_house in self.houses for p in ps)
+
+
+class _ShapeByClass(C.Condition):
+    """Benefics confined to `benefic_houses` AND malefics to `malefic_houses` (Akriti Vajra: benefics
+    in 1+7, malefics in 4+10; Yava: the reverse; 3HC:6172-6174). All seven planets must be present."""
+
+    def __init__(self, benefic_houses: tuple[int, ...], malefic_houses: tuple[int, ...]) -> None:
+        self.bh, self.mh = frozenset(benefic_houses), frozenset(malefic_houses)
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ps = _seven_present(ctx.chart)
+        if len(ps) != 7:
+            return False
+        for p in ps:
+            allowed = self.bh if p in _NABHASA_BENEFICS else self.mh
+            if ctx.chart.planets[p].rasi_house not in allowed:
+                return False
+        return True
+
+
+def _contig(start: int, n: int = 7) -> tuple[int, ...]:
+    """`n` contiguous houses starting at `start` (1-based, wrapping)."""
+    return tuple(((start - 1 + i) % 12) + 1 for i in range(n))
+
+
+class _AnchoredArc(C.Condition):
+    """All seven planets confined to the n-contiguous-house arc from `start`, AND the arc is FULLY
+    SPANNED (a planet in `start` and a planet in the last house) so it is EXACTLY n houses long and
+    anchored — the precise Akriti contiguous form (Nava/Kuta/Chatra/Chapa, Ardha-Chandra). Without
+    the anchor a loose 'all in a 7-house window' over-fires on ~40% of charts."""
+
+    def __init__(self, start: int, n: int = 7) -> None:
+        self.start = start
+        self.houses = frozenset(_contig(start, n))
+        self.last = ((start - 1 + n - 1) % 12) + 1
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ps = _seven_present(ctx.chart)
+        if len(ps) != 7:
+            return False
+        rh = {ctx.chart.planets[p].rasi_house for p in ps}
+        return rh <= self.houses and self.start in rh and self.last in rh
 
 
 # ── the encoded yogas ────────────────────────────────────────────────────────
@@ -427,6 +470,72 @@ YOGAS: tuple[YogaRecord, ...] = (
                condition=_AllSevenInHouses((10, 11, 12, 1)),
                effect="Lacks the happiness of wife and children; lonely, servile.",
                source=Citation("3HC", 5761)),
+    # — Nabhasa: the 16 remaining Akriti shape-yogas (3HC:5955-6450) — all seven planets confined
+    #   to a named house-shape. Verdict-invariant (kind='other'). —
+    YogaRecord(id="Y.NAVA", name="Nava (Nauka) Yoga", kind="other",
+               condition=_AnchoredArc(1),
+               effect="Gathers wealth (often by water/voyages); greedy, miserly.",
+               source=Citation("3HC", 5955)),
+    YogaRecord(id="Y.KUTA", name="Kuta Yoga", kind="other",
+               condition=_AnchoredArc(4),
+               effect="Deceitful and poor; a jailer or keeper of forts.",
+               source=Citation("3HC", 5957)),
+    YogaRecord(id="Y.CHATRA", name="Chatra Yoga", kind="other",
+               condition=_AnchoredArc(7),
+               effect="Helpful and wise; happy at the beginning and end of life.",
+               source=Citation("3HC", 5959)),
+    YogaRecord(id="Y.CHAPA", name="Chapa Yoga", kind="other",
+               condition=_AnchoredArc(10),
+               effect="Leads a comfortable life delighting in good deeds.",
+               source=Citation("3HC", 5961)),
+    YogaRecord(id="Y.ARDHACHANDRA", name="Ardha-Chandra Yoga", kind="other",
+               condition=C.Or(*[_AnchoredArc(s) for s in (2, 3, 5, 6, 8, 9, 11, 12)]),
+               effect="Fair-featured and happy throughout life; a commander, favoured by the ruler.",
+               source=Citation("3HC", 6008)),
+    YogaRecord(id="Y.CHAKRA", name="Chakra Yoga", kind="other",
+               condition=_AllSevenInHouses((1, 3, 5, 7, 9, 11)),
+               effect="A king or his equal; commands respect, earns and spends well.",
+               source=Citation("3HC", 6025)),
+    YogaRecord(id="Y.SAMUDRA", name="Samudra Yoga", kind="other",
+               condition=_AllSevenInHouses((2, 4, 6, 8, 10, 12)),
+               effect="Wealthy and well-supplied; enjoys many pleasures.",
+               source=Citation("3HC", 6450)),
+    YogaRecord(id="Y.GADA", name="Gada Yoga", kind="other",
+               condition=C.Or(*[_AllSevenInHouses(p) for p in ((1, 4), (4, 7), (7, 10), (10, 1))]),
+               effect="Highly religious and wealthy; performs sacrifices.",
+               source=Citation("3HC", 6047)),
+    YogaRecord(id="Y.SAKATA_AKRITI", name="Sakata Yoga (Akriti)", kind="other",
+               condition=_AllSevenInHouses((1, 7)),
+               effect="Poor and unhappy in domestic life.",
+               source=Citation("3HC", 6049)),
+    YogaRecord(id="Y.VIHAGA", name="Vihaga Yoga", kind="other",
+               condition=_AllSevenInHouses((4, 10)),
+               effect="A vagrant; quarrelsome and mean.",
+               source=Citation("3HC", 6051)),
+    YogaRecord(id="Y.VAJRA", name="Vajra Yoga", kind="other",
+               condition=_ShapeByClass((1, 7), (4, 10)),
+               effect="Brave and valorous; happy at the beginning and end of life.",
+               source=Citation("3HC", 6172)),
+    YogaRecord(id="Y.YAVA", name="Yava Yoga", kind="other",
+               condition=_ShapeByClass((4, 10), (1, 7)),
+               effect="Charitable and observant of vows; happy in middle life.",
+               source=Citation("3HC", 6174)),
+    YogaRecord(id="Y.SRINGHATAKA", name="Sringhataka Yoga", kind="other",
+               condition=_AllSevenInHouses((1, 5, 9)),
+               effect="Happy and devoted to god; loving spouse, conquers enemies.",
+               source=Citation("3HC", 6260)),
+    YogaRecord(id="Y.HALA", name="Hala Yoga", kind="other",
+               condition=C.Or(*[_AllSevenInHouses(t) for t in ((2, 6, 10), (3, 7, 11), (4, 8, 12))]),
+               effect="An agriculturist; eats much, often poor or servile.",
+               source=Citation("3HC", 6262)),
+    YogaRecord(id="Y.KAMALA", name="Kamala Yoga", kind="other",
+               condition=_AllSevenInHouses((1, 4, 7, 10)),
+               effect="Wealthy, virtuous, famous and long-lived; of many good deeds.",
+               source=Citation("3HC", 6365)),
+    YogaRecord(id="Y.VAPEE", name="Vapee Yoga", kind="other",
+               condition=C.Or(_AllSevenInHouses((2, 5, 8, 11)), _AllSevenInHouses((3, 6, 9, 12))),
+               effect="Accumulates and conserves wealth; frugal, enjoys steady fortune.",
+               source=Citation("3HC", 6367)),
     # — lunar (Moon-centred) —
     YogaRecord(
         id="Y.GAJAKESARI", name="Gajakesari Yoga", kind="lunar",

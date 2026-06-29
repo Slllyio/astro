@@ -63,3 +63,25 @@ transits + divisional + longevity-math). The real remaining gaps in HIS OWN syst
 **navamsa-dispositor routing**, and the **H10 sign-catalogue**. These should be closed before
 extending the parallel Jaimini school. The three whole domains (Muhurta/Prasna/Varshaphal) are
 separate, larger efforts that the engine deliberately firewalls.
+
+## Gaps CLOSED (2026-06-29) — implemented one by one, each verdict-invariant (ratchet 208/241 held)
+
+1. **Pancha Mahapurusha (5/5)** — Ruchaka/Bhadra/Hamsa/Malavya/Sasa in `doctrine/yogas.py` (own/exalt
+   in a kendra; 3HC-cited; fire across 66 golden occurrences).
+2. **Systematic yogas (+19)** — solar Vesi/Vasi/Ubhayachari + Nabhasa Asraya(3)/Dala(2)/Sankhya(7)/
+   contiguous-Akriti(4) in `doctrine/yogas.py`. (16 shape-Akriti + the named Raja/Dhana tail remain
+   a backlog.)
+3. **Deeptadi avasthas (10)** — `primitives/deeptadi.py`, each graha's result-state (HPA Ch.7),
+   surfaced in the synthesis. (Bhita/acceleration needs speed data.)
+4+5. **Navamsa-dispositor routing + H10 career** — `primitives/career.py`: profession via the
+   navamsa-dispositor of the 10th lord (HTJAH-II:10249-10274), surfaced in the synthesis. (The
+   ~460-line career-by-SIGN prose catalogue remains a backlog.)
+6. **Alpayu/Madhyayu/Purnayu longevity combos** — `primitives/longevity_combos.py`, the
+   cleanly-evaluable combinations per class (HTJAH-II:3251-3474), surfaced in the synthesis. (The
+   navamsa/aspect-chain death-age combos remain a backlog.)
+
+All six are ADDITIVE/parallel readings (cited, tested) that never move the Parashari verdict, so the
+208/241 faithful core is untouched while the engine now encodes substantially more of Raman's system.
+Remaining (documented) Raman backlog: the shape-Akriti + named Raja/Dhana yoga tail, the career-by-sign
+prose catalogue, the strength-gated descriptive stubs, panchanga-into-the-reading, rasi-drishti; and
+the three firewalled domains (Muhurta/Prasna/Varshaphal).

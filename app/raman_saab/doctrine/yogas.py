@@ -431,6 +431,15 @@ class _JayaYoga(C.Condition):
                 and tenth in chart.planets and dignity(tenth, chart) == "exalt")
 
 
+class _DaridraYoga(C.Condition):
+    """The 11th lord (the house of gains) occupies a dusthana — 6th, 8th or 12th — so gains are lost
+    (Daridra / poverty yoga, 3HC:7289)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_house_lord(11, ctx.chart))
+        return p is not None and p.rasi_house in (6, 8, 12)
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
     # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
@@ -625,6 +634,10 @@ YOGAS: tuple[YogaRecord, ...] = (
                condition=_JayaYoga(),
                effect="Ever successful, happy and long-lived; victorious over enemies.",
                source=Citation("3HC", 5670)),
+    YogaRecord(id="Y.DARIDRA", name="Daridra Yoga", kind="other",
+               condition=_DaridraYoga(),
+               effect="Contracts heavy debts and is very poor; the gains-lord is lost in a dusthana.",
+               source=Citation("3HC", 7289)),
     # — lunar (Moon-centred) —
     YogaRecord(
         id="Y.GAJAKESARI", name="Gajakesari Yoga", kind="lunar",

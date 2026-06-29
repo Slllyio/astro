@@ -26,6 +26,7 @@ from app.raman_saab.primitives import vimshottari as vim
 from app.raman_saab.primitives import transits as tr
 from app.raman_saab.primitives import chara_dasha as cd
 from app.raman_saab.primitives import special_points as sp
+from app.raman_saab.primitives import arudha
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -53,6 +54,9 @@ class Synthesis:
     atmakaraka: str
     arudha_lagna: str
     navamsa_lagna: str
+    karakamsa: str               # AK's navamsa sign — the Jaimini soul axis
+    upapada: str                 # Upapada Lagna (12th arudha) — the marriage/spouse image
+    spouse_significator: str     # lord of the 7th-from-navamsa-lagna (Raman's D9 spouse lord)
     running_md: str
     running_ad: str
     chara: str
@@ -121,9 +125,13 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
             reading=_compose(pf.rollup, led.navamsa_status, varga, sav, tnote, activ) + active_now))
 
     al = sp.arudha_lagna(chart).sign
+    ul = arudha.upapada_lagna(chart)
     return Synthesis(
         lagna=_SIGNS[chart.asc_sign - 1], atmakaraka=sp.atmakaraka(chart),
         arudha_lagna=_SIGNS[al - 1], navamsa_lagna=_SIGNS[sp.navamsa_lagna(chart).sign - 1],
+        karakamsa=_SIGNS[sp.karakamsa(chart).sign - 1],
+        upapada=_SIGNS[ul - 1] if ul else "(unknown)",
+        spouse_significator=sp.navamsa_seventh_lord(chart),
         running_md=period.maha, running_ad=period.antar,
         chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
@@ -134,6 +142,8 @@ def to_text(s: Synthesis) -> str:
     out = ["=" * 76,
            f"SYNTHESIS — Lagna {s.lagna} | Atmakaraka {s.atmakaraka} | Arudha Lagna {s.arudha_lagna}"
            f" | Navamsa Lagna {s.navamsa_lagna}",
+           f"Jaimini: Karakamsa {s.karakamsa} | Upapada {s.upapada} | spouse-lord (7th-from-D9) "
+           f"{s.spouse_significator}",
            f"Running: Vimshottari {s.running_md} MD / {s.running_ad} AD | Chara dasha {s.chara}"
            + (f" | {s.sade_sati}" if s.sade_sati else ""),
            "=" * 76]

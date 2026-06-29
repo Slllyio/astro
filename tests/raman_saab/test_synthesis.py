@@ -15,6 +15,7 @@ def test_synthesize_has_twelve_matters_and_header():
     assert len(s.matters) == 12
     assert s.lagna == "Scorpio" and s.atmakaraka == "Sun" and s.arudha_lagna == "Cancer"
     assert s.navamsa_lagna == "Scorpio"            # vargottama
+    assert s.karakamsa == "Leo" and s.upapada == "Sagittarius" and s.spouse_significator == "Venus"
     assert s.running_md == "Saturn" and s.running_ad == "Jupiter"
     assert s.chara == "Pisces"
     assert s.sade_sati and "setting" in s.sade_sati

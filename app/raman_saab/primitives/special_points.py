@@ -18,7 +18,8 @@ def karakamsa(chart: RamanChart) -> SpecialPoint:
     ak = chart.planets[atmakaraka(chart)]
     sign = ak.navamsa_sign
     bhava = ((sign - chart.asc_sign) % 12) + 1     # rasi-house of the karakamsa sign
-    return SpecialPoint(name="Karakamsa", lon=ak.lon, sign=sign, bhava=bhava,
+    # lon represents the navamsa SIGN this point stands for (not the AK's rasi lon) -> consistent
+    return SpecialPoint(name="Karakamsa", lon=float((sign - 1) * 30), sign=sign, bhava=bhava,
                         navamsa_sign=sign)
 
 
@@ -43,17 +44,13 @@ def navamsa_seventh_lord(chart: RamanChart) -> str:
 
 
 def arudha_lagna(chart: RamanChart) -> SpecialPoint:
-    """Jaimini Arudha (Pada) Lagna: count from the lagna-lord as many signs as it is
-    from the Lagna; if the result falls in the 1st or 7th, take the 10th from there.
-    (For the generalised per-house arudha padas + Upapada, see primitives/arudha.py.)"""
-    asc = chart.asc_sign
-    lord = SIGN_LORDS[asc]
-    lord_house = chart.planets[lord].rasi_house if lord in chart.planets else 1
-    lord_sign = ((asc - 1) + (lord_house - 1)) % 12 + 1
-    a = ((lord_sign - 1) + (lord_house - 1)) % 12 + 1
-    rel = ((a - asc) % 12) + 1
-    if rel in (1, 7):                               # Jaimini exception
-        a = ((a - 1) + 9) % 12 + 1
-    bhava = ((a - asc) % 12) + 1
+    """Jaimini Arudha (Pada) Lagna as a point. Delegates the sign to the single-source-of-truth
+    formula in primitives/arudha.py (count from the lagna-lord; 1st/7th -> 10th); falls back to the
+    Lagna itself only when the lagna-lord is absent (sparse Track-B chart)."""
+    from app.raman_saab.primitives.arudha import arudha_pada
+    a = arudha_pada(chart, 1)
+    if a is None:                                   # lagna-lord absent (sparse chart)
+        a = chart.asc_sign
+    bhava = ((a - chart.asc_sign) % 12) + 1
     return SpecialPoint(name="ArudhaLagna", lon=float((a - 1) * 30), sign=a, bhava=bhava,
                         navamsa_sign=varga.navamsa_sign(float((a - 1) * 30)))

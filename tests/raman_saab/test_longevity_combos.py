@@ -24,6 +24,36 @@ def test_madhyayu_all_seven_in_5th():
     assert "Madhyayu" in fired
 
 
+def test_madhyayu_benefics_own_moon_exalt_lagna():
+    """HTJAH-II:3397 — benefics in own Rasis and the Moon exalted in Lagna (60y, Madhyayu)."""
+    stated = {"Moon": {"lon": 40.0, "bhava": 1},        # Taurus = Lagna, exalted
+              "Mercury": {"lon": 65.0, "bhava": 2},      # Gemini, own
+              "Venus": {"lon": 195.0, "bhava": 6},       # Libra, own
+              "Jupiter": {"lon": 245.0, "bhava": 8}}     # Sagittarius, own
+    ch = RamanChart.from_stated_positions(stated, asc_lon=35.0, ayanamsa="raman")  # Taurus Lagna
+    fired = {desc: cls for cls, _span, desc in lc.fired(ch)}
+    assert "benefics in their own signs and the Moon exalted in the Lagna" in fired
+    assert fired["benefics in their own signs and the Moon exalted in the Lagna"] == "Madhyayu"
+
+
+def test_purnayu_lagna_lord_joined_by_benefic():
+    """HTJAH-II:3404 — benefics in kendras + Lagna lord JOINED by a benefic (Purnayu)."""
+    stated = {"Mars": {"lon": 185.0, "bhava": 7},        # Aries-Lagna lord in Libra (7th, a kendra)
+              "Jupiter": {"lon": 190.0, "bhava": 7}}      # benefic conjoined the Lagna lord
+    ch = RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman")   # Aries Lagna
+    descs = {desc for _cls, _span, desc in lc.fired(ch)}
+    assert "benefics in kendras and the Lagna lord joined by, or aspected by, a benefic/Jupiter" in descs
+
+
+def test_purnayu_lagna_lord_aspected_by_jupiter():
+    """HTJAH-II:3404 — the disjunct: Lagna lord ASPECTED by Jupiter (not conjoined)."""
+    stated = {"Jupiter": {"lon": 10.0, "bhava": 1},      # Aries (1st, a kendra); 7th-aspects Libra
+              "Mars": {"lon": 185.0, "bhava": 7}}          # Aries-Lagna lord in Libra, alone, aspected
+    ch = RamanChart.from_stated_positions(stated, asc_lon=5.0, ayanamsa="raman")   # Aries Lagna
+    fired = {cls for cls, _span, _desc in lc.fired(ch)}
+    assert "Purnayu" in fired, "Jupiter's 7th aspect on the Lagna lord must satisfy the disjunct"
+
+
 def test_fired_shape_and_classes():
     out = lc.fired(cast_chart(_MAINPURI, ayanamsa="raman"))
     for cls, span, desc in out:

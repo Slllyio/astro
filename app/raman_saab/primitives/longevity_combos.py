@@ -3,8 +3,9 @@ HTJAH-II:3251-3474). Raman's COMBINATION-based longevity judgment, complementing
 ayurdaya span the engine already computes. Reports which cited combinations fire and the longevity
 class each indicates. ADDITIVE / reported — verdict-invariant.
 
-Only the cleanly-evaluable combinations (simple placements/dignities) are encoded; the navamsa- and
-aspect-chain death-age combos in the same lists remain a documented backlog.
+Only the cleanly-evaluable combinations (placements, dignities and whole-sign graha aspects) are
+encoded; the navamsa-based and strength-gated (weak/strong "in vargas") death-age combos in the same
+lists remain a documented backlog.
 
 Usage:
     from app.raman_saab.primitives import longevity_combos as lc
@@ -16,10 +17,12 @@ from typing import Callable, Final
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.doctrine.drishti import aspects_planet
 from app.raman_saab.primitives.dignity import dignity
 
 _MALEFICS: Final[tuple[str, ...]] = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
 _BENEFICS: Final[tuple[str, ...]] = ("Jupiter", "Venus", "Mercury", "Moon")
+_NAT_BENEFICS: Final[tuple[str, ...]] = ("Jupiter", "Venus", "Mercury")
 _SEVEN: Final[tuple[str, ...]] = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
 _KENDRAS: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
 
@@ -60,7 +63,26 @@ def _madhya_all_seven_in_5th(c: RamanChart) -> bool:
     return len(present) == 7 and all(_rh(c, p) == 5 for p in present)
 
 
+def _madhya_benefics_own_moon_exalt_lagna(c: RamanChart) -> bool:
+    if not all(b in c.planets for b in _NAT_BENEFICS):
+        return False
+    benefics_own = all(dignity(b, c) in ("own", "moolatrikona") for b in _NAT_BENEFICS)
+    moon = c.planets.get("Moon")
+    return benefics_own and moon is not None and moon.rasi_house == 1 and dignity("Moon", c) == "exalt"
+
+
 # Purnayu (75-120) ----------------------------------------------------------------------------------
+def _purna_benefics_kendra_lord_supported(c: RamanChart) -> bool:
+    ben_kendra = any(c.planets[b].rasi_house in _KENDRAS for b in _BENEFICS if b in c.planets)
+    lord = SIGN_LORDS[c.asc_sign]
+    lp = c.planets.get(lord)
+    if not (ben_kendra and lp is not None):
+        return False
+    lord_with_ben = any(n in _BENEFICS and n != lord and p.rasi_house == lp.rasi_house
+                        for n, p in c.planets.items())
+    return lord_with_ben or aspects_planet("Jupiter", lord, c)
+
+
 def _purna_three_in_8th_dignified(c: RamanChart) -> bool:
     digs = {dignity(p, c) for p in _occupants(c, 8) if p not in ("Rahu", "Ketu")}
     return len(_occupants(c, 8)) >= 3 and {"exalt", "own"} <= digs and (
@@ -89,6 +111,10 @@ _COMBOS: Final[tuple[tuple[str, str, int, Callable[[RamanChart], bool], str], ..
      "malefics occupy the 2nd, 3rd, 4th, 5th, 8th and 11th"),
     ("Madhyayu", "32-75y", 3394, _madhya_all_seven_in_5th,
      "all the planets in the 5th house"),
+    ("Madhyayu", "32-75y", 3397, _madhya_benefics_own_moon_exalt_lagna,
+     "benefics in their own signs and the Moon exalted in the Lagna"),
+    ("Purnayu", "75-120y", 3404, _purna_benefics_kendra_lord_supported,
+     "benefics in kendras and the Lagna lord joined by, or aspected by, a benefic/Jupiter"),
     ("Purnayu", "75-120y", 3406, _purna_three_in_8th_dignified,
      "three planets in the 8th in exaltation, own and friendly signs"),
     ("Purnayu", "75-120y", 3408, _purna_saturn_or_8thlord_with_exalt,

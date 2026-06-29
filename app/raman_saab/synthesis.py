@@ -27,6 +27,7 @@ from app.raman_saab.primitives import transits as tr
 from app.raman_saab.primitives import chara_dasha as cd
 from app.raman_saab.primitives import special_points as sp
 from app.raman_saab.primitives import arudha
+from app.raman_saab.primitives import jaimini_reading as jr
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -55,6 +56,7 @@ class Synthesis:
     arudha_lagna: str
     navamsa_lagna: str
     karakamsa: str               # AK's navamsa sign — the Jaimini soul axis
+    karakamsa_reading: tuple[str, ...]   # Jaimini Karakamsa profession/inclination (JS 1.2 Su.14-22)
     upapada: str                 # Upapada Lagna (12th arudha) — the marriage/spouse image
     spouse_significator: str     # lord of the 7th-from-navamsa-lagna (Raman's D9 spouse lord)
     running_md: str
@@ -130,6 +132,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         lagna=_SIGNS[chart.asc_sign - 1], atmakaraka=sp.atmakaraka(chart),
         arudha_lagna=_SIGNS[al - 1], navamsa_lagna=_SIGNS[sp.navamsa_lagna(chart).sign - 1],
         karakamsa=_SIGNS[sp.karakamsa(chart).sign - 1],
+        karakamsa_reading=tuple(f"{p}: {ind}" for p, ind in jr.karakamsa_indications(chart)),
         upapada=_SIGNS[ul - 1] if ul else "(unknown)",
         spouse_significator=sp.navamsa_seventh_lord(chart),
         running_md=period.maha, running_ad=period.antar,
@@ -149,6 +152,11 @@ def to_text(s: Synthesis) -> str:
            "=" * 76]
     for mr in s.matters:
         out.append(f"H{mr.house:2} {mr.name}: {mr.reading}")
+    if s.karakamsa_reading:
+        out.append("-" * 76)
+        out.append(f"Jaimini Karakamsa reading (soul's inclination, parallel to the above):")
+        for line in s.karakamsa_reading:
+            out.append(f"  {line}")
     from app.raman_saab.render import _ascii    # ASCII-safe like the other renderers (CP1252 consoles)
     return _ascii("\n".join(out))
 

@@ -363,6 +363,74 @@ class _AnchoredArc(C.Condition):
         return rh <= self.houses and self.start in rh and self.last in rh
 
 
+_NAT_BENEFICS: Final[tuple[str, ...]] = ("Jupiter", "Venus", "Mercury")
+
+
+class _Conjunct(C.Condition):
+    """Two planets share a rasi house (conjunction)."""
+
+    def __init__(self, a: str, b: str) -> None:
+        self.a, self.b = a, b
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        pa, pb = ctx.chart.planets.get(self.a), ctx.chart.planets.get(self.b)
+        return pa is not None and pb is not None and pa.rasi_house == pb.rasi_house
+
+
+class _AllKendrasOccupied(C.Condition):
+    """All four kendras (1/4/7/10) hold at least one planet (Chatussagara, 3HC:2613)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        occ = {p.rasi_house for p in ctx.chart.planets.values()}
+        return all(k in occ for k in (1, 4, 7, 10))
+
+
+class _BeneficsInUpachayas(C.Condition):
+    """The natural benefics (Jupiter/Venus/Mercury) all occupy upachayas (3/6/10/11) reckoned from
+    the Lagna OR all from the Moon (Vasumathi, 3HC:2708)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        if not all(b in chart.planets for b in _NAT_BENEFICS):
+            return False
+        moon = chart.planets.get("Moon")
+        for ref in (chart.asc_sign, moon.rasi_house + chart.asc_sign - 1 if moon else None):
+            if ref is None:
+                continue
+            base = ref if ref == chart.asc_sign else moon.rasi_house  # house-frame base
+            upa = {((base - 1 + (u - 1)) % 12) + 1 for u in (3, 6, 10, 11)}
+            if all(chart.planets[b].rasi_house in upa for b in _NAT_BENEFICS):
+                return True
+        return False
+
+
+class _ParvataYoga(C.Condition):
+    """Benefics disposed in the kendras (a benefic present and NO malefic in any kendra), and the 6th
+    & 8th houses free of malefics (Parvata, 3HC:3170: 'benefics in kendras; 6th and 8th must be
+    free')."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        malefics = ("Sun", "Mars", "Saturn", "Rahu", "Ketu")
+        ben_in_kendra = any(chart.planets[b].rasi_house in (1, 4, 7, 10)
+                            for b in _NABHASA_BENEFICS if b in chart.planets)
+        no_malefic_kendra = not any(p.rasi_house in (1, 4, 7, 10)
+                                    for n, p in chart.planets.items() if n in malefics)
+        no_malefic_6_8 = not any(p.rasi_house in (6, 8)
+                                 for n, p in chart.planets.items() if n in malefics)
+        return ben_in_kendra and no_malefic_kendra and no_malefic_6_8
+
+
+class _JayaYoga(C.Condition):
+    """6th lord debilitated AND 10th lord exalted (Jaya, 3HC:5670)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        sixth, tenth = _house_lord(6, chart), _house_lord(10, chart)
+        return (sixth in chart.planets and dignity(sixth, chart) == "debil"
+                and tenth in chart.planets and dignity(tenth, chart) == "exalt")
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
     # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
@@ -536,6 +604,27 @@ YOGAS: tuple[YogaRecord, ...] = (
                condition=C.Or(_AllSevenInHouses((2, 5, 8, 11)), _AllSevenInHouses((3, 6, 9, 12))),
                effect="Accumulates and conserves wealth; frugal, enjoys steady fortune.",
                source=Citation("3HC", 6367)),
+    # — named Raja / Dhana yogas (3HC; reported, kind='other') —
+    YogaRecord(id="Y.BUDHA_ADITYA", name="Budha-Aditya Yoga", kind="other",
+               condition=_Conjunct("Sun", "Mercury"),
+               effect="Highly intelligent and skilful in all undertakings; learned, of good repute.",
+               source=Citation("3HC", 4061)),
+    YogaRecord(id="Y.CHATUSSAGARA", name="Chatussagara Yoga", kind="other",
+               condition=_AllKendrasOccupied(),
+               effect="Good reputation, equal to a ruler, long-lived; fame to the four oceans.",
+               source=Citation("3HC", 2613)),
+    YogaRecord(id="Y.VASUMATHI", name="Vasumathi Yoga", kind="other",
+               condition=_BeneficsInUpachayas(),
+               effect="Never wanting; always commands plenty of wealth.",
+               source=Citation("3HC", 2708)),
+    YogaRecord(id="Y.PARVATA", name="Parvata Yoga", kind="other",
+               condition=_ParvataYoga(),
+               effect="Wealthy, prosperous, liberal, charitable, humorous; head of a town.",
+               source=Citation("3HC", 3170)),
+    YogaRecord(id="Y.JAYA", name="Jaya Yoga", kind="other",
+               condition=_JayaYoga(),
+               effect="Ever successful, happy and long-lived; victorious over enemies.",
+               source=Citation("3HC", 5670)),
     # — lunar (Moon-centred) —
     YogaRecord(
         id="Y.GAJAKESARI", name="Gajakesari Yoga", kind="lunar",

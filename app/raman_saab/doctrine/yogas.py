@@ -42,6 +42,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.primitives import bhangas
+from app.raman_saab.primitives.dignity import dignity
 
 logger = logging.getLogger(__name__)
 
@@ -225,8 +226,55 @@ def _any_flank_in_house_from_moon(n: int) -> C.Condition:
     return C.Or(*[C.InHouseFrom(p, "MOON", n) for p in _LUNAR_FLANK_PLANETS])
 
 
+class _Panchamahapurusha(C.Condition):
+    """One of the five Mahapurusha yogas: the planet occupies a KENDRA (1/4/7/10 from the Lagna)
+    that is identical with its OWN sign or EXALTATION sign (3HC:3434-3435, Hamsa: 'Jupiter should
+    occupy a Kendra which should be his own house or exaltation sign'; the same form for the other
+    four). Moolatrikona counts as own-sign occupancy."""
+
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(self.planet)
+        if p is None or p.rasi_house not in _KENDRAS:
+            return False
+        return dignity(self.planet, ctx.chart) in ("own", "moolatrikona", "exalt")
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
+    # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
+    YogaRecord(
+        id="Y.RUCHAKA", name="Ruchaka Yoga", kind="other",
+        condition=_Panchamahapurusha("Mars"),
+        effect=("Strong, valorous physique; a leader of men, a great commander, aggressive and "
+                "famous; observes ancestral custom."),
+        source=Citation("3HC", 3884)),
+    YogaRecord(
+        id="Y.BHADRA", name="Bhadra Yoga", kind="other",
+        condition=_Panchamahapurusha("Mercury"),
+        effect=("Highly intelligent and skilful in all undertakings; learned, eloquent, long-lived; "
+                "lion-like physique."),
+        source=Citation("3HC", 3973)),
+    YogaRecord(
+        id="Y.HAMSA", name="Hamsa Yoga", kind="other",
+        condition=_Panchamahapurusha("Jupiter"),
+        effect=("Handsome body, righteous disposition, pure mind; a man of sterling character and "
+                "moral fibre, respected."),
+        source=Citation("3HC", 3434)),
+    YogaRecord(
+        id="Y.MALAVYA", name="Malavya Yoga", kind="other",
+        condition=_Panchamahapurusha("Venus"),
+        effect=("Well-developed physique, strong-minded, wealthy; happy with children and wife; "
+                "commands renown, learned and refined."),
+        source=Citation("3HC", 3680)),
+    YogaRecord(
+        id="Y.SASA", name="Sasa Yoga", kind="other",
+        condition=_Panchamahapurusha("Saturn"),
+        effect=("Commands good servants; head of a town or a king; powerful, covetous of others' "
+                "wealth, strong constitution."),
+        source=Citation("3HC", 3737)),
     # — lunar (Moon-centred) —
     YogaRecord(
         id="Y.GAJAKESARI", name="Gajakesari Yoga", kind="lunar",

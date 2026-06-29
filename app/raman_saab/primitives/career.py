@@ -30,10 +30,36 @@ TRADE_BY_NAVAMSA_DISPOSITOR: Final[dict[str, str]] = {
 }
 
 
+#: HTJAH-II:10340-10800 — the profession profile of the 10th SIGN (when the 10th/sign is strong).
+CAREER_BY_SIGN: Final[dict[int, str]] = {
+    1:  "military, police, surgery (esp. brain), engineering, metals & fire-trades, sport, leadership",
+    2:  "banking & finance, jewellery & luxury goods, agriculture, music & voice, throat specialists",
+    3:  "writing, journalism, communications, accountancy, languages, trade, teaching",
+    4:  "nursing & caregiving, hospitality & food, shipping, real estate, public dealings, liquids",
+    5:  "government & administration, politics, authority, gold & jewels, the stage & entertainment",
+    6:  "accountancy & analysis, medicine, editing & language, research, service, statistics",
+    7:  "law, the fine arts, fashion & design, diplomacy, trade & partnerships, beauty",
+    8:  "surgery, investigation & research, military, chemicals, insurance, the occult",
+    9:  "law, teaching & religion, philosophy, banking & advisory, travel, horses",
+    10: "administration & government, mining, construction, labour & management, contracting",
+    11: "science & technology, research & invention, social work, astrology, electrical work",
+    12: "medicine & healing, charity, the arts, spirituality, shipping & liquids, imagination",
+}
+
+
+def tenth_sign(chart: RamanChart) -> int:
+    """The 10th sign (1..12) from the Lagna."""
+    return ((chart.asc_sign - 1) + 9) % 12 + 1
+
+
 def tenth_lord(chart: RamanChart) -> str:
     """Lord of the 10th sign from the Lagna."""
-    tenth_sign = ((chart.asc_sign - 1) + 9) % 12 + 1
-    return SIGN_LORDS[tenth_sign]
+    return SIGN_LORDS[tenth_sign(chart)]
+
+
+def tenth_sign_career(chart: RamanChart) -> str:
+    """The profession profile of the 10th sign (HTJAH-II career-by-sign catalogue)."""
+    return CAREER_BY_SIGN[tenth_sign(chart)]
 
 
 def career_indication(chart: RamanChart) -> Optional[tuple[str, str, str]]:

@@ -77,6 +77,16 @@ def _birth_jd(b: BirthData) -> float:
     return swe.julday(b.year, b.month, b.day, b.hour + b.minute / 60.0 - b.tz_offset)
 
 
+def _career_line(chart: RamanChart) -> str:
+    """The H10 career reading: the 10th-SIGN profession profile (HTJAH-II catalogue) + the trade via
+    the navamsa-dispositor of the 10th lord."""
+    parts = [f"10th-sign profile: {career_mod.tenth_sign_career(chart)}"]
+    c = career_mod.career_indication(chart)
+    if c:
+        parts.append(f"navamsa-dispositor of 10th-lord ({c[0]}) is {c[1]} -> {c[2]}")
+    return " | ".join(parts)
+
+
 def _panchanga_line(birth: BirthData, chart: RamanChart) -> Optional[str]:
     """The birth Panchanga (vara/tithi/nityayoga/karana) — wires the existing core/panchanga compute
     into the reading. None on a sparse chart (Sun/Moon absent)."""
@@ -156,8 +166,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         upapada=_SIGNS[ul - 1] if ul else "(unknown)",
         spouse_significator=sp.navamsa_seventh_lord(chart),
         deeptadi=tuple(f"{p} {s}" for p, (s, _r) in deeptadi.chart_states(chart).items()),
-        career=(lambda c: f"10th-lord {c[0]} -> navamsa-dispositor {c[1]} -> {c[2]}" if c else None)(
-            career_mod.career_indication(chart)),
+        career=_career_line(chart),
         longevity_combos=tuple(f"{cls} ({span}): {desc}" for cls, span, desc in lc.fired(chart)),
         panchanga=_panchanga_line(birth, chart),
         running_md=period.maha, running_ad=period.antar,

@@ -30,6 +30,7 @@ from app.raman_saab.primitives import arudha
 from app.raman_saab.primitives import jaimini_reading as jr
 from app.raman_saab.primitives import deeptadi
 from app.raman_saab.primitives import career as career_mod
+from app.raman_saab.primitives import longevity_combos as lc
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -63,6 +64,7 @@ class Synthesis:
     spouse_significator: str     # lord of the 7th-from-navamsa-lagna (Raman's D9 spouse lord)
     deeptadi: tuple[str, ...]    # each graha's Deeptadi result-state (HPA Ch.7)
     career: Optional[str]        # profession via the navamsa-dispositor of the 10th lord (HTJAH-II)
+    longevity_combos: tuple[str, ...]    # fired Alpayu/Madhyayu/Purnayu combinations (HTJAH-II)
     running_md: str
     running_ad: str
     chara: str
@@ -142,6 +144,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         deeptadi=tuple(f"{p} {s}" for p, (s, _r) in deeptadi.chart_states(chart).items()),
         career=(lambda c: f"10th-lord {c[0]} -> navamsa-dispositor {c[1]} -> {c[2]}" if c else None)(
             career_mod.career_indication(chart)),
+        longevity_combos=tuple(f"{cls} ({span}): {desc}" for cls, span, desc in lc.fired(chart)),
         running_md=period.maha, running_ad=period.antar,
         chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
@@ -162,6 +165,9 @@ def to_text(s: Synthesis) -> str:
     if s.career:
         out.append("-" * 76)
         out.append(f"Career (HTJAH-II navamsa-dispositor of 10th lord): {s.career}")
+    if s.longevity_combos:
+        out.append("-" * 76)
+        out.append("Longevity combinations (HTJAH-II): " + "; ".join(s.longevity_combos))
     if s.deeptadi:
         out.append("-" * 76)
         out.append("Deeptadi avasthas (each graha's result-state, HPA Ch.7): " + ", ".join(s.deeptadi))

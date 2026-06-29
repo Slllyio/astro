@@ -19,6 +19,7 @@ def test_synthesize_has_twelve_matters_and_header():
     assert s.karakamsa_reading and all("JS 1.2" in line for line in s.karakamsa_reading)
     assert len(s.deeptadi) >= 7 and any("Deeptha" in d or "Vikala" in d for d in s.deeptadi)
     assert s.career and "navamsa-dispositor" in s.career
+    assert s.panchanga and "Tithi" in s.panchanga and "Vara" in s.panchanga
     assert s.running_md == "Saturn" and s.running_ad == "Jupiter"
     assert s.chara == "Pisces"
     assert s.sade_sati and "setting" in s.sade_sati

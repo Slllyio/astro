@@ -65,6 +65,7 @@ class Synthesis:
     deeptadi: tuple[str, ...]    # each graha's Deeptadi result-state (HPA Ch.7)
     career: Optional[str]        # profession via the navamsa-dispositor of the 10th lord (HTJAH-II)
     longevity_combos: tuple[str, ...]    # fired Alpayu/Madhyayu/Purnayu combinations (HTJAH-II)
+    panchanga: Optional[str]     # birth panchanga (vara/tithi/nityayoga/karana) — core/panchanga
     running_md: str
     running_ad: str
     chara: str
@@ -74,6 +75,19 @@ class Synthesis:
 
 def _birth_jd(b: BirthData) -> float:
     return swe.julday(b.year, b.month, b.day, b.hour + b.minute / 60.0 - b.tz_offset)
+
+
+def _panchanga_line(birth: BirthData, chart: RamanChart) -> Optional[str]:
+    """The birth Panchanga (vara/tithi/nityayoga/karana) — wires the existing core/panchanga compute
+    into the reading. None on a sparse chart (Sun/Moon absent)."""
+    sun, moon = chart.planets.get("Sun"), chart.planets.get("Moon")
+    if sun is None or moon is None:
+        return None
+    from app.core.panchanga import compute_birth_panchanga
+    p = compute_birth_panchanga(sun.lon, moon.lon, _birth_jd(birth), moon.nakshatra - 1)
+    caution = " [caution]" if p.has_caution_flag else ""
+    return (f"Vara {p.vara.name} | Tithi {p.tithi.paksha} {p.tithi.name} | "
+            f"Nityayoga {p.yoga.name} | Karana {p.karana.name}{caution}")
 
 
 def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
@@ -145,6 +159,7 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         career=(lambda c: f"10th-lord {c[0]} -> navamsa-dispositor {c[1]} -> {c[2]}" if c else None)(
             career_mod.career_indication(chart)),
         longevity_combos=tuple(f"{cls} ({span}): {desc}" for cls, span, desc in lc.fired(chart)),
+        panchanga=_panchanga_line(birth, chart),
         running_md=period.maha, running_ad=period.antar,
         chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
@@ -160,6 +175,8 @@ def to_text(s: Synthesis) -> str:
            f"Running: Vimshottari {s.running_md} MD / {s.running_ad} AD | Chara dasha {s.chara}"
            + (f" | {s.sade_sati}" if s.sade_sati else ""),
            "=" * 76]
+    if s.panchanga:
+        out.insert(3, f"Panchanga: {s.panchanga}")
     for mr in s.matters:
         out.append(f"H{mr.house:2} {mr.name}: {mr.reading}")
     if s.career:

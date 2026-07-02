@@ -289,6 +289,36 @@ class TestDecide:
             dominant_factor="lord", dominant_severe=True, flags=("DUSTHANA_HOUSE",)))
         assert v == "favourable"
 
+    def test_career_maraka_guard_neutralises_maraka_drive(self):
+        """WP2: maraka pressure is a DEATH signal — under CAREER_MARAKA_GUARD it must
+        not afflict a profession/status matter (h10_04: maraka-lorded 10th -> mixed)."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=False, bhava_bala_strong=True,
+            maraka_active=True, fired_neutral=(_fired("neutral"),),
+            flags=("CAREER_MARAKA_GUARD",)))
+        assert v == "mixed"
+
+    def test_dusthana_ambivalent_matter_weakens_needs_margin(self):
+        """WP2: for a NON-affliction dusthana matter (12th expenditure/moksha), the D9
+        weakens-drop needs a decisive malefic preponderance — balanced testimony stays
+        a qualified mixed (h12_04/h12_08)."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=False, karaka_strong=True, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"), _fired("benefic")),
+            fired_malefic=(_fired("malefic"), _fired("malefic")),
+            navamsa_status="weakens", flags=("DUSTHANA_HOUSE",)))
+        assert v == "mixed"
+
+    def test_weak_lord_in_own_star_spares_the_drop(self):
+        """WP2 nakshatra-swakshetra (HTJAH-II:8196): a Shadbala-weak lord in its own
+        constellation is a compensating strength — the weakens-drop is spared."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=False, karaka_strong=True, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"),),
+            fired_malefic=(_fired("malefic"), _fired("malefic")),
+            navamsa_status="weakens", flags=("LORD_IN_OWN_STAR",)))
+        assert v == "mixed"
+
     def test_decisive_favourable_never_shifts(self):
         """A decisive favourable is never modulated by D9 (modulation only touches mixed)."""
         v, shifted = ht._decide(_ledger(lord_strong=True, karaka_strong=True,

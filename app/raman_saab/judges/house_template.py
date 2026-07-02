@@ -53,6 +53,7 @@ from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.judges import rule_firing as rf
 from app.raman_saab.judges.house_judge import HouseVerdict
 from app.raman_saab.primitives import ayurdaya
+from app.raman_saab.primitives import nakshatra as nakshatra_prims
 from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives import vimshottari
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
@@ -136,6 +137,18 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
 # the dusthana clause-1.5. Each is a combination Raman reads as verdict-driving and is
 # specific enough to fire only on genuine severe affliction (the >=2-affliction / D9-
 # papakartari / separation-yoga gates keep them off the favourable twin charts).
+# WP2 — career/status matters where maraka (death-dealer) pressure must NOT drive the
+# verdict: maraka-ship concerns the DEATH of the signified, not the quality of the
+# native's career (the same doctrine as the marital B3 guard — HTJAH-II:2579 reads
+# Kuja/maraka pressure as spouse-DEATH, distinct from happiness; h10_04: Raman judges a
+# maraka-lorded 10th 'Idol of India, Prime Minister ... weaker as administrator' ->
+# mixed, not afflicted). Scoped to the H10 profession/status keys; death/longevity
+# matters keep their maraka semantics via the Phase-E guard.
+_CAREER_MARAKA_GUARD_KEYS: Final[frozenset[str]] = frozenset({
+    "profession_authority", "profession_trade", "profession_learned",
+    "profession_labour", "status_honour",
+})
+
 _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H3.C.36",  # Karaka Mars multiply afflicted (>=2 of dusthana/debil/combust/papakartari)
     "H3.C.37",  # 3rd house hemmed between malefics in the Navamsha (papakartari in amsa)
@@ -148,6 +161,7 @@ _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
     "H7.C.85",  # Mars-in-8th + debilitated 7th lord (coverture: vaidhavya/spouse death)
     "H7.C.86",  # 7th lord node-conjunct+aspected / papakartari (spouse: vitiated marriage)
     "H9.A.20a", # Sun-Pitrukaraka in a dusthana + papakartari (father: early death)
+    "H9.C.36",  # Sun-Pitrukaraka IN the 9th + papakartari (karako bhava nashaya: father curtailed)
     "H5.C.38",  # PutraKaraka Jupiter papakartari + malefic rashi (children: progeny denied)
     "H4.C.18a", # Moon (Matru-karaka) in 4th conjoined by a malefic (mother: early death)
 })
@@ -310,6 +324,21 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
     # rasi testimony is purely benefic (h11-class: benefic-only rules + a weakening D9 is
     # a qualified promise, not a denial).
     if L.navamsa_status == "weakens" and base == "mixed" and L.fired_malefic:
+        # WP2 dusthana-ambivalence gate: for a NON-affliction matter of a dusthana house
+        # (12th expenditure/moksha — "the wealthy spend lavishly, moksha is liberation";
+        # the inherently-malefic keys are handled by AFFLICTION_MATTER instead), balanced
+        # testimony under a weakening D9 stays a QUALIFIED mixed; the drop needs a
+        # decisive malefic preponderance (h12_04: fabulous spending judged 'mixed';
+        # h12_08: racing losses but reputation untarnished -> 'mixed').
+        if ("DUSTHANA_HOUSE" in L.flags and "AFFLICTION_MATTER" not in L.flags
+                and len(L.fired_malefic) <= len(L.fired_benefic) + 1):
+            return base, False
+        # WP2 nakshatra-swakshetra rescue: the sig lord standing in its OWN constellation
+        # is a cited strengthening that keeps the matter a qualified mixed — Raman:
+        # the afflicted 9th lord "strengthened in his own constellation" meant the father
+        # "was not deprived early" (h9_07, HTJAH-II:8196).
+        if "LORD_IN_OWN_STAR" in L.flags:
+            return base, False
         return "afflicted", True
     return base, False
 
@@ -324,7 +353,11 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # afflicted the remaining clauses would produce. The `death` MANNER sig is NOT guarded —
     # it judges the 8th-house affliction directly (see clause 1.5 AFFLICTION_MATTER).
     guarded = "LONGEVITY_GUARD" in L.flags
-    maraka_drives = L.maraka_active and not guarded
+    # WP2 CAREER_MARAKA_GUARD: maraka pressure is a DEATH signal — it must not afflict a
+    # profession/status matter (mirrors the longevity guard's neutralisation (a) and the
+    # marital B3 doctrine, HTJAH-II:2579).
+    maraka_drives = (L.maraka_active and not guarded
+                     and "CAREER_MARAKA_GUARD" not in L.flags)
     # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
     if not L.karaka_intact:
         if guarded:
@@ -869,6 +902,20 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # (the dusthana-inversion direction), so the count weigh decides there instead.
     if sig.house in (6, 8, 12):
         flags.append("DUSTHANA_HOUSE")
+    # WP2 — maraka pressure must not drive a career/status verdict (death != career).
+    if sig.key in _CAREER_MARAKA_GUARD_KEYS:
+        flags.append("CAREER_MARAKA_GUARD")
+    # WP2 — a Shadbala-WEAK lord standing in its OWN constellation (nakshatra-
+    # swakshetra) is a cited COMPENSATING strengthening: Raman reads the (weak,
+    # papakartari-afflicted) 9th lord "strengthened in his own constellation" as the
+    # reason "the father was not deprived early" (h9_07, HTJAH-II:8196). The D9
+    # weakens-drop is spared under this flag. Scoped to a weak lord — an already-strong
+    # lord gains nothing decision-relevant from its star (chart_69's strong Sun/Saturn
+    # own-star placements must keep their normal drop semantics).
+    lord_pos = chart.planets.get(lord)
+    if (lord_strong is False and lord_pos is not None
+            and nakshatra_prims.nakshatra_lord(lord_pos.nakshatra) == lord):
+        flags.append("LORD_IN_OWN_STAR")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the
     # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.

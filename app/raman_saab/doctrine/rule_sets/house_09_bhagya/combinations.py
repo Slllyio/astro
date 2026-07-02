@@ -707,6 +707,30 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "captivity and misery",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 7507)),
 
+    # #36 — DECISIVE: Karako Bhava Nashaya for the father — the Sun (Pitru-karaka)
+    # OCCUPYING the 9th itself IN MALEFIC ASSOCIATION (a second natural malefic in the
+    # 9th with him). This is the "distinct mechanism" the H9.A.20a note explicitly
+    # deferred: Raman's worked chart (h9_02, HTJAH-II:7929) gives a ROYAL father from
+    # the exalted Sun yet reads the malefic pressure on the 9th "plus KARAKA-IN-HOUSE
+    # curtailed his longevity" — the karaka standing in its own bhava harms that
+    # bhava's signified person, and the malefic association seals the denial (h9_02:
+    # Mars with the Sun in the 9th, Rahu flanking from the 8th; h9_04: Saturn+Ketu
+    # with the Sun). EXALTATION is no relief (the worked chart is exalted; same
+    # doctrine as H9.A.20a). The malefic-association gate spares the favourable
+    # Sun-in-9th father with no malefic company (h9_10). CountInHouse(9,2,malefic)
+    # counts the Sun himself (a natural malefic) + at least one more. Flagged decisive
+    # in the judge (a strong-pillar preponderance must not rescue a curtailment Raman
+    # reads as decisive).
+    RuleRecord(
+        id="H9.C.36", house=9, signification="father", group="combination", kind="evaluable",
+        condition=C.And(C.InRashiHouse("Sun", 9), C.CountInHouse(9, 2, "malefic")),
+        fortified=None,
+        afflicted="the Sun (Pitru-karaka) in the 9th itself joined by another natural "
+                  "malefic -> karako bhava nashaya: the father's longevity is curtailed "
+                  "despite an otherwise dignified Sun",
+        frame="LAGNA/KARAKA", varga="D1", polarity="malefic",
+        source=Citation("HTJAH-II", 7929)),
+
     # ===== D. Travel / pilgrimage (HTJAH-II:7486-7507, 8648, 9388-9418) =====
     RuleRecord(
         id="H9.D.36", house=9, signification="long_journeys", group="combination", kind="evaluable",

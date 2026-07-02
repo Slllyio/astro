@@ -103,6 +103,69 @@ class TestValidation:
 # ratchet gate                                                                #
 # --------------------------------------------------------------------------- #
 
+class TestKundali:
+    def test_einstein_lagna_and_marakas(self):
+        # Einstein: 1879-03-14 11:30, Ulm (48.4N 10.0E), LMT +0.6989h.
+        # ADB/JHora give Gemini rising -> lagna sign 3; whole-sign marakas:
+        # 2H Cancer -> Moon, 7H Sagittarius -> Jupiter.
+        from app.medini.ml.raman_saab.kundali import cast_kundali
+        k = cast_kundali(1879, 3, 14, 11, 30, 0.6989, 48.4, 10.0)
+        assert k is not None
+        assert k.lagna_sign == 3
+        assert k.maraka_lords == frozenset({"Moon", "Jupiter"})
+        assert k.lord_8 == "Saturn"  # 8H Capricorn from Gemini
+
+    def test_nth_sign_wraps(self):
+        from app.medini.ml.raman_saab.kundali import _nth_sign
+        assert _nth_sign(12, 2) == 1   # Pisces lagna -> 2H Aries
+        assert _nth_sign(7, 7) == 1    # Libra lagna -> 7H Aries
+        assert _nth_sign(1, 1) == 1
+
+    def test_bad_input_returns_none(self):
+        from app.medini.ml.raman_saab.kundali import cast_kundali
+        assert cast_kundali(1879, 13, 45, 11, 30, 0.0, 91.0, 500.0) is None
+
+
+class TestAdbParsers:
+    def test_parse_adb_tz_notations(self):
+        from app.medini.etl.adb_wayback_death_corpus import parse_adb_tz
+        assert abs(parse_adb_tz("LMT m10e0 (is local mean time)") - 10 / 15) < 1e-9
+        assert parse_adb_tz("CET h1e (is standard time)") == 1.0
+        assert parse_adb_tz("EST h5w (is standard time)") == -5.0
+        assert parse_adb_tz("h5w30") == -5.5
+        assert abs(parse_adb_tz("LMT m77w35") - (-(77 + 35 / 60) / 15)) < 1e-9
+        assert parse_adb_tz("") is None
+
+    def test_death_line_matches_own_death_only(self):
+        from app.medini.etl.adb_wayback_death_corpus import parse_death_date
+        own = "<li>Death&#160;: Death  18 April 1955 at 01:15 AM (age 76)</li>"
+        family = "<li>Death of Mate  20 December 1936</li>"
+        cause = "<li>Death by Heart Attack  22 March 1994</li>"
+        assert parse_death_date(own) == "1955-04-18"
+        assert parse_death_date(family) is None
+        assert parse_death_date(cause) == "1994-03-22"
+
+    def test_name_from_entry_url(self):
+        from app.medini.etl.adb_wayback_death_corpus import name_from_entry_url
+        assert name_from_entry_url(
+            "https://www.astro.com/astro-databank/Kennedy,_John_F."
+        ) == "John F. Kennedy"
+        assert name_from_entry_url(
+            "https://www.astro.com/astro-databank/Einstein,_Albert"
+        ) == "Albert Einstein"
+
+
+class TestMarakaResolvers:
+    def test_saturn_if_maraka_empty_when_not_maraka(self):
+        from app.medini.ml.raman_saab.kundali import cast_kundali
+        from app.medini.ml.raman_saab.maraka_validate import _RESOLVERS
+        # Einstein (Gemini lagna): marakas Moon/Jupiter -> Saturn not maraka.
+        k = cast_kundali(1879, 3, 14, 11, 30, 0.6989, 48.4, 10.0)
+        assert _RESOLVERS["saturn_if_maraka"](k) == set()
+        assert _RESOLVERS["maraka_lords"](k) == {"Moon", "Jupiter"}
+        assert _RESOLVERS["maraka_and_8"](k) == {"Moon", "Jupiter", "Saturn"}
+
+
 class TestRatchet:
     def _fake_result(self, rr_saturn_md: float, n: int = 82000) -> dict:
         rows = []

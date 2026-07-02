@@ -84,3 +84,67 @@ CANDIDATE_RULES: tuple[Rule, ...] = (
 
 
 PER_LORD_LEVELS: tuple[str, ...] = ("md", "ad", "md_or_ad")
+
+
+# --------------------------------------------------------------------------- #
+# Chart-dependent (house-based) maraka rules — need a timed birth (lagna).     #
+# The lord set varies per person; `resolver` names a Kundali-based derivation  #
+# implemented in maraka_validate.py.                                           #
+# --------------------------------------------------------------------------- #
+
+@dataclass(frozen=True)
+class ChartRule:
+    rule_id: str
+    family: str
+    resolver: str      # key into maraka_validate._RESOLVERS
+    direction: str     # "enrich" | "deplete"
+    levels: tuple[str, ...]
+    citation: str      # ⚑ to be pinned
+    rationale: str = ""
+
+
+MARAKA_RULES: tuple[ChartRule, ...] = (
+    ChartRule(
+        rule_id="raman.maraka.lords_2_7",
+        family="longevity",
+        resolver="maraka_lords",
+        direction="enrich",
+        levels=("md", "ad", "md_or_ad"),
+        citation="Raman, How to Judge a Horoscope (maraka adhyaya); "
+                 "BPHS Ch.44 (2nd & 7th lords as marakas)",  # ⚑
+        rationale="THE core classical death-timing rule: dashas of the lords "
+                  "of the 2nd and 7th from lagna are the death-inflicting "
+                  "(maraka) periods.",
+    ),
+    ChartRule(
+        rule_id="raman.maraka.lord_8",
+        family="longevity",
+        resolver="lord_8",
+        direction="enrich",
+        levels=("md", "ad", "md_or_ad"),
+        citation="8th lord as ayus lord; its dasha as a mortality window",  # ⚑
+        rationale="The 8th (ayus) lord's periods as longevity-critical.",
+    ),
+    ChartRule(
+        rule_id="raman.maraka.lords_2_7_8",
+        family="longevity",
+        resolver="maraka_and_8",
+        direction="enrich",
+        levels=("md", "ad", "md_or_ad"),
+        citation="Union of maraka lords and 8th lord",  # ⚑
+        rationale="Broadest classical death-window set.",
+    ),
+    ChartRule(
+        rule_id="raman.maraka.saturn_as_maraka",
+        family="longevity",
+        resolver="saturn_if_maraka",
+        direction="enrich",
+        levels=("md", "ad", "md_or_ad"),
+        citation="Raman/classical: 'Saturn as a maraka lord kills without "
+                 "compunction' — Saturn's dasha in charts where Saturn rules "
+                 "2H or 7H",  # ⚑
+        rationale="Sharpest form: Saturn restricted to charts where it holds "
+                  "maraka lordship (Cancer/Leo/Gemini/Capricorn... lagnas "
+                  "where Saturn rules 2 or 7).",
+    ),
+)

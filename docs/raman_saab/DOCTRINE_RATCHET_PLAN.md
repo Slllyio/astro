@@ -1,8 +1,9 @@
 # Raman Saab — Doctrine Ratchet Plan (89/130 → higher)
 
-**Status:** proposed · **Branch:** `round8-unification` (PR #6) · **Current ratchet:** 89/130 (68.5%)
-CONFIRMED Track-B verdicts · **Governing rule:** every change is *doctrine-first, cited,
-zero-regression, and non-overfitting* — faithful to B.V. Raman's printed method, not curve-fit
+**Status:** proposed · **Branch:** `round8-unification` (PR #6) · **Current ratchet:** 208/241
+(86.3%) CONFIRMED Track-B verdicts (re-measured on HEAD; the golden set has grown from 130 → 241
+and prior H5/H3 clusters were largely closed) · **Governing rule:** every change is *doctrine-first,
+cited, zero-regression, and non-overfitting* — faithful to B.V. Raman's printed method, not curve-fit
 to the golden charts.
 
 ## Context & intent
@@ -35,13 +36,17 @@ These are Raman's principles as the engine encodes them; a proposed rule that br
    insufficient-evidence`; absent testimony = `insufficient-evidence`, explicit negative =
    `afflicted`, explicit positive = `favourable`.
 
-## Gap analysis — the 41 current misses
-Worst clusters (engine → Raman): **H9 father (7), H1 self (6), H5 children (6), H11 (5), H2 (4),
-H12 (4), H3 (3), H10 (3), H4/H6/H7 (1)**. The **dominant failure mode** (documented since the
-53/130 snapshot and still the majority pattern) is *engine = `mixed` where Raman committed to
-`afflicted`/`favourable`* — i.e. the judge counts the three pillars as independent booleans
-("any benefic + any malefic → mixed") instead of **weighing them comparatively**. Fixing that one
-mechanism is therefore both the most doctrinally central and the highest-leverage move.
+## Gap analysis — the 33 current misses (re-measured on HEAD, 208/241)
+Worst clusters (engine → Raman): **H1 self (6), H9 father (6), H11 (5), H2 wealth (4), H12 (4),
+H10 (3), H3 (2), H5 (2), H6 (1)**. The **dominant failure mode** is still *the engine disagreeing
+across the `mixed` boundary* — either over-generous (`favourable` where Raman said `mixed`/`afflicted`
+— H1 chart_12/18/20/31, H2 chart_44/48, H9 h9_02/12, H12 h12_05) or over-harsh (`afflicted`/`mixed`
+where Raman said `mixed`/`favourable` — H9 h9_07/09, H11 h11_02/09/17, H12 h12_01/04/08, H10 h10_04).
+Both directions are the same root cause: the judge counts the three factors as independent booleans
+instead of **weighing them comparatively**. Fixing that one mechanism (WP1) is therefore still the
+most doctrinally central and highest-leverage move. A handful of reverse-direction misses (h5_16,
+chart_17, h9_08, h11_09, h9_15) are candidate *deliberate non-fits* (class-swaps that would be
+overfit) — to be judged case by case against the chart_60/chart_08 precedent, not forced.
 
 ## Work plan (priority order)
 
@@ -62,17 +67,17 @@ mechanism is therefore both the most doctrinally central and the highest-leverag
   ordering, measure every house, accept only a **net rise with zero individual regression**; if any
   committed golden flips the wrong way, reject per **G5**.
 
-### WP2 — H5 children: putra-affliction, comparative not softened
-- **Principle:** 5th matter denied when the **5th, its lord, and Jupiter (putrakāraka)** are
-  afflicted, or the **Beeja/Kshetra sphuṭas both barren** (already a gate) — Raman calls these
-  `afflicted`, but the engine's strong lagna pillar out-votes to `favourable`.
-- **Gap:** 5 of 6 H5 misses are `favourable → afflicted` — the fertility gate only *softens to
-  mixed*; comparative weighing (WP1) plus one or two **cited putra-denial combinations** (5th-lord
-  in dusthāna with malefic on 5th; afflicted/combust Jupiter as dominant factor) are needed.
-- **Method:** read each h5 golden's Raman prose, encode the *specific testimony he cites* as an
-  `HN.C.*` clause, flag decisive only if lord==kāraka collapse or explicit denial. **h5_16
-  (afflicted→favourable) is the reverse** — do NOT force it if it would be an overfit class-swap
-  (per the chart_08 precedent).
+### WP2 — H9 father + H10 karma: `mixed`-boundary calibration (now a larger residual than H5)
+- **Principle:** the 9th (father, fortune) and 10th (karma, status) are judged by bhāva + lord +
+  kāraka (Sun/Jupiter for 9th; Sun/Mercury/Jupiter/Saturn karmakārakas for 10th); Raman frequently
+  lands a *qualified* `mixed` where mixed benefic+malefic testimony is present.
+- **Gap (post-WP1 residue):** H9 has 6 misses split both ways (h9_02/12 over-generous, h9_07/09
+  over-harsh, h9_08 the reverse); H10 has 3 (`favourable`/`afflicted` → `mixed`). These are exactly
+  the boundary cases WP1's comparative weighing should mostly resolve; anything left needs a **cited
+  9th/10th clause** read from each chart's Raman prose.
+- **Note on H5:** the earlier 6-miss H5 cluster is now down to 2 (h5_10 `favourable→afflicted`;
+  h5_16 a reverse class-swap) — the fertility-gate + intervening work largely closed it, so H5 is no
+  longer a priority. h5_16 is a candidate deliberate non-fit.
 
 ### WP3 — Dusthāna nuance: H12 (and H6) over-harshness
 - **Principle:** the 12th is a natural dusthāna, but Raman reads *expenditure/moksha* nuancedly —

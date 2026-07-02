@@ -417,6 +417,16 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         if (L.dominant_factor == "lord" and L.dominant_severe
                 and "DUSTHANA_HOUSE" not in L.flags and not guarded):
             return "afflicted", False
+        # 2a'. AFFLICTION_MATTER with BOTH factors EFFECTIVELY broken (WP2): for an
+        # inherently-malefic dusthana signification, a benefic contradiction only
+        # relieves while a factor still effectively stands — when lord AND karaka are
+        # both effectively broken (weak / combust / debilitated / dusthana-placed) the
+        # apparatus cannot deliver the relief and the evil is CONFIRMED (directional
+        # mirror of clause 1.5; h6_04: myopia read off a 12th-placed 6th lord with a
+        # weak Saturn karaka despite a benefic aspect).
+        if ("AFFLICTION_MATTER" in L.flags and not guarded
+                and L.lord_effective is False and L.karaka_effective is False):
+            return "afflicted", False
         pillars = [L.lord_strong, L.karaka_strong, L.bhava_bala_strong]
         known = [p for p in pillars if p is not None]
         weak = sum(1 for p in known if p is False)

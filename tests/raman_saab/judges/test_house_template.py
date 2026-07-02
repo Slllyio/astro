@@ -289,6 +289,17 @@ class TestDecide:
             dominant_factor="lord", dominant_severe=True, flags=("DUSTHANA_HOUSE",)))
         assert v == "favourable"
 
+    def test_affliction_matter_both_factors_broken_confirms(self):
+        """WP2: an inherently-malefic dusthana matter whose lord AND karaka are both
+        EFFECTIVELY broken is confirmed afflicted even against a benefic contradiction
+        (directional mirror of clause 1.5; h6_04 myopia)."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=False, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"),), fired_malefic=(_fired("malefic"),),
+            lord_effective=False, karaka_effective=False,
+            dominant_factor="lord", flags=("AFFLICTION_MATTER", "DUSTHANA_HOUSE")))
+        assert v == "afflicted"
+
     def test_career_maraka_guard_neutralises_maraka_drive(self):
         """WP2: maraka pressure is a DEATH signal — under CAREER_MARAKA_GUARD it must
         not afflict a profession/status matter (h10_04: maraka-lorded 10th -> mixed)."""

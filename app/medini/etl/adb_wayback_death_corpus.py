@@ -96,8 +96,16 @@ def parse_adb_tz(text: str) -> float | None:
     m = _TZ_NOTATION_RE.search(text)
     if not m:
         return None
-    kind, big, ew, small = (m.group(1).lower(), int(m.group(2)),
-                            m.group(3).lower(), int(m.group(4) or 0))
+    kind, big, ew = m.group(1).lower(), int(m.group(2)), m.group(3).lower()
+    small_str = m.group(4) or ""
+    # Same MMSS convention as coordinates: "PMT m2e2015" = meridian
+    # 2°20'15"E, not 2°2015'. More than 2 digits = minutes + seconds.
+    if len(small_str) > 2:
+        small = int(small_str[:2]) + int(small_str[2:]) / 60.0
+    else:
+        small = int(small_str) if small_str else 0
+    if small >= 60:
+        return None
     if kind == "h":
         val = big + small / 60.0
     else:  # meridian degrees -> hours
@@ -173,13 +181,35 @@ _CSV_COLS = ("name", "dob", "tob", "tz_offset", "lat", "lon", "rodden",
              "dod", "dod_source", "source_url")
 
 
+def _cache_path(cache_dir: Path, url: str) -> Path:
+    import hashlib
+    return cache_dir / (hashlib.sha1(url.encode()).hexdigest() + ".html.gz")
+
+
 def _fetch(url: str, timestamp: str, session: requests.Session,
-           retries: int = 3) -> str | None:
+           retries: int = 3, cache_dir: Path | None = None) -> str | None:
+    """Fetch archived HTML, with an on-disk gzip cache.
+
+    The cache means a parser fix re-parses locally instead of re-hitting
+    archive.org (the coordinate-MMSS bug cost one full re-crawl; never again).
+    """
+    import gzip
+    if cache_dir is not None:
+        cp = _cache_path(cache_dir, url)
+        if cp.exists():
+            try:
+                return gzip.decompress(cp.read_bytes()).decode("utf-8", "replace")
+            except OSError:
+                pass
     replay = WAYBACK_REPLAY_TEMPLATE.format(timestamp=timestamp, original=url)
     for attempt in range(retries):
         try:
             r = session.get(replay, timeout=60, allow_redirects=True)
             if r.status_code == 200:
+                if cache_dir is not None:
+                    cache_dir.mkdir(parents=True, exist_ok=True)
+                    _cache_path(cache_dir, url).write_bytes(
+                        gzip.compress(r.text.encode("utf-8")))
                 return r.text
             if r.status_code in (429, 503):
                 time.sleep(15 * (attempt + 1))
@@ -191,7 +221,8 @@ def _fetch(url: str, timestamp: str, session: requests.Session,
 
 
 def build(cdx_path: Path, out_path: Path, *, rate_limit: float = 4.0,
-          max_entries: int | None = None, skip_wikidata: bool = False) -> int:
+          max_entries: int | None = None, skip_wikidata: bool = False,
+          html_cache: Path | None = None) -> int:
     idx: dict[str, str] = json.loads(cdx_path.read_text())
     urls = sorted(idx)
     logger.info("CDX index: %d entries", len(urls))
@@ -226,8 +257,11 @@ def build(cdx_path: Path, out_path: Path, *, rate_limit: float = 4.0,
         for i, url in enumerate(queue):
             if url in done:
                 continue
-            html = _fetch(url, idx[url], session)
-            time.sleep(rate_limit)
+            cached = (html_cache is not None
+                      and _cache_path(html_cache, url).exists())
+            html = _fetch(url, idx[url], session, cache_dir=html_cache)
+            if not cached:  # only rate-limit real network hits
+                time.sleep(rate_limit)
             row = {c: "" for c in _CSV_COLS}
             row["source_url"] = url
             if html:
@@ -294,6 +328,8 @@ def main() -> int:
     p.add_argument("--rate-limit", type=float, default=4.0)
     p.add_argument("--max-entries", type=int, default=None)
     p.add_argument("--skip-wikidata", action="store_true")
+    p.add_argument("--html-cache", type=Path,
+                   default=Path("app/medini/data/raman_saab/wayback/html_cache"))
     p.add_argument("--finalize-only", action="store_true",
                    help="just rebuild the parquet from the checkpoint CSV")
     args = p.parse_args()
@@ -302,7 +338,8 @@ def main() -> int:
         finalize(args.out.with_suffix(".checkpoint.csv"), args.out)
         return 0
     build(args.cdx, args.out, rate_limit=args.rate_limit,
-          max_entries=args.max_entries, skip_wikidata=args.skip_wikidata)
+          max_entries=args.max_entries, skip_wikidata=args.skip_wikidata,
+          html_cache=args.html_cache)
     return 0
 
 

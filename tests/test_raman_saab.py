@@ -145,6 +145,26 @@ class TestAdbParsers:
         assert parse_death_date(family) is None
         assert parse_death_date(cause) == "1994-03-22"
 
+    def test_parse_coordinate_mmss_run_together(self):
+        # ADB seconds-precision format with no separator: "36n4619" is
+        # 36°46'19", NOT 36 + 4619 minutes (the bug that produced lat=112.98
+        # for Ferhat Abbas, born Taher, Algeria 36.77N).
+        from app.medini.etl.scraper import parse_coordinate
+        assert abs(parse_coordinate("36n4619") - (36 + 46 / 60 + 19 / 3600)) < 1e-9
+        assert abs(parse_coordinate("5e5354") - (5 + 53 / 60 + 54 / 3600)) < 1e-9
+        # 2-digit minutes unchanged; explicit-seconds form unchanged.
+        assert abs(parse_coordinate("48n24") - 48.4) < 1e-9
+        assert abs(parse_coordinate("48n24'15") - (48 + 24 / 60 + 15 / 3600)) < 1e-9
+        # Malformed DMS (minutes >= 60) rejected, not mis-read.
+        assert parse_coordinate("48n7205") is None
+
+    def test_parse_adb_tz_mmss_meridian(self):
+        # "PMT m2e2015" = Paris Mean Time, meridian 2°20'15"E -> +0.1556h,
+        # NOT (2 + 2015/60)/15 = +2.37h.
+        from app.medini.etl.adb_wayback_death_corpus import parse_adb_tz
+        want = (2 + 20 / 60 + 15 / 3600) / 15
+        assert abs(parse_adb_tz("PMT m2e2015 (is standard time)") - want) < 1e-9
+
     def test_name_from_entry_url(self):
         from app.medini.etl.adb_wayback_death_corpus import name_from_entry_url
         assert name_from_entry_url(

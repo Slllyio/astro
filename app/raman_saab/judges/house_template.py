@@ -147,6 +147,12 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
 _CAREER_MARAKA_GUARD_KEYS: Final[frozenset[str]] = frozenset({
     "profession_authority", "profession_trade", "profession_learned",
     "profession_labour", "status_honour",
+    # WP2c — wealth is likewise a non-PERSON matter: no one's death is signified, so
+    # maraka-ship of its lord/karaka has no bearing on the finances themselves
+    # (chart_45, HTJAH-I:2850-2873: Raman judges the maraka-lorded 2nd favourable).
+    # Person-signifying matters (spouse, father, siblings, children...) keep their
+    # maraka semantics — the death of the signified IS their affliction.
+    "wealth",
 })
 
 _DECISIVE_AFFLICTION_RULE_IDS: Final[frozenset[str]] = frozenset({
@@ -454,6 +460,15 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     bhava_ok = (L.bhava_bala_strong is True) or (L.bhava_bala_strong is None)
     bhava_strong = L.bhava_bala_strong is True
     weak_pillar = (not L.lord_strong) or (not L.karaka_strong)
+    # 5'. ALL THREE factors strong vs a LONE non-decisive malefic -> favourable (WP2c,
+    # chart_45 HTJAH-I:2850-2873: the un-afflicted 2nd, its strong lord and karaka out-
+    # weigh a lone malefic testimony — "two-of-three strong assures the matter", and here
+    # all three stand). Decisive rules were already honoured at clause 1.6; maraka
+    # pressure and the D9 keep their say (weakens falls through to the normal clauses).
+    if (both_strong and bhava_strong and len(L.fired_malefic) == 1
+            and not L.fired_benefic and not maraka_drives
+            and L.navamsa_status != "weakens" and not guarded):
+        return "favourable", False
     # 5. clean strength + supportive bhava + no malefic -> favourable.
     if both_strong and bhava_ok and not L.fired_malefic:
         base = "favourable"
@@ -816,6 +831,26 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
             karaka_strong = True
         if lord_karaka_identical:
             karaka_strong = lord_strong
+
+    # NEECHA-BHANGA leniency (WP2c, chart_43 HTJAH-I:2807-2823): a Shadbala-weak pillar
+    # whose planet is debilitated WITH the cancellation is restored — Raman reads the
+    # debilitated Dhana-Karaka "but neecha-bhanga (dispositor in quadrant from Moon)" as
+    # capable, and judges the finances sound. Mirrors the parivartana leniency above
+    # (cancellations never bypassed — charter #5).
+    # Scoped away from maraka grahas: the cancellation restores the planet's CAPABILITY,
+    # not immunity from maraka-ship — a maraka-touched pillar keeps its death-pressure on
+    # the signified person (h11_07: the bhanga'd Jupiter karaka is a maraka and the elder
+    # sibling is still lost).
+    def _bhanga_lift(planet: str, strong: Optional[bool]) -> Optional[bool]:
+        if strong is False and planet not in marakas \
+                and dignity(planet, chart) == "debil" \
+                and neecha_bhanga(planet, chart):
+            return True
+        return strong
+
+    lord_strong = _bhanga_lift(lord, lord_strong)
+    karaka_strong = lord_strong if lord_karaka_identical \
+        else _bhanga_lift(karaka, karaka_strong)
 
     bb = _bhava_bala_for(chart, sig.house)
     bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)

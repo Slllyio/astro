@@ -300,6 +300,21 @@ class TestDecide:
             dominant_factor="lord", flags=("AFFLICTION_MATTER", "DUSTHANA_HOUSE")))
         assert v == "afflicted"
 
+    def test_all_three_strong_outweigh_lone_malefic(self):
+        """WP2c (chart_45): lord+karaka+bhava ALL strong vs a single non-decisive
+        malefic testimony -> the matter is assured (two-of-three doctrine; here 3/3)."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_malefic=(_fired("malefic"),)))
+        assert v == "favourable"
+
+    def test_all_three_strong_blocked_by_weakening_navamsa(self):
+        """WP2c: the lone-malefic assurance still defers to a weakening D9."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_malefic=(_fired("malefic"),), navamsa_status="weakens"))
+        assert v != "favourable"
+
     def test_career_maraka_guard_neutralises_maraka_drive(self):
         """WP2: maraka pressure is a DEATH signal — under CAREER_MARAKA_GUARD it must
         not afflict a profession/status matter (h10_04: maraka-lorded 10th -> mixed)."""

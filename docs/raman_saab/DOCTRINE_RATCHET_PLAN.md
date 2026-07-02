@@ -1,8 +1,15 @@
 # Raman Saab — Doctrine Ratchet Plan (89/130 → higher)
 
-**Status:** proposed · **Branch:** `round8-unification` (PR #6) · **Current ratchet:** 208/241
-(86.3%) CONFIRMED Track-B verdicts (re-measured on HEAD; the golden set has grown from 130 → 241
-and prior H5/H3 clusters were largely closed) · **Governing rule:** every change is *doctrine-first,
+**Status:** WP1 + WP2/2b/2c EXECUTED (5 commits, 2026-07-02) · **Branch:** `round8-unification`
+(PR #6) · **Ratchet:** 208/241 → **219/241 (90.9%)** exact, 228 → **231 (95.9%)** within-1, zero
+regressions. Landed: severe dominant-lord denial + D9 testimony gate (WP1); career-maraka guard,
+dusthana-ambivalence gate, H9.C.36 karako-bhava-nashaya, nakshatra-swakshetra rescue (WP2);
+both-factors-broken confirmation (WP2b); neecha-bhanga pillar leniency + all-three-strong
+assurance + wealth-as-non-person-maraka (WP2c). Full mechanism log in
+`tests/fixtures/golden_accuracy_baseline.json` `_comment`. **Remaining 22 misses:** ~5 candidate
+deliberate non-fits (chart_17/60, h5_16, h9_08, h11_09), the H10 rise-then-fall pair, chart_44/48
+from-Moon afflictions, and the H1/H3/H11 residue — most need the doctrine corpus on disk
+(`data/knowledge_library/sources/`, absent in the dev container) for cited clause-mining, or WP4/WP5. · **Governing rule:** every change is *doctrine-first,
 cited, zero-regression, and non-overfitting* — faithful to B.V. Raman's printed method, not curve-fit
 to the golden charts.
 

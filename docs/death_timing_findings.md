@@ -1,19 +1,20 @@
 ---
 date: 2026-07-02
-type: methodology / findings (findings tables empty until first run)
-status: DRAFT — pre-review (awaiting sign-off before any code is written)
+type: methodology / findings
+status: IMPLEMENTED — first run complete (Wikidata N=82,589); dasha family refuted
 project: raman_saab population validation — longevity / maraka family
 companion_to: docs/raman_saab/DOCTRINE_RATCHET_PLAN.md
+verdict: docs/ml_runs/raman_saab_death_timing_VERDICT.md
 ---
 
 # Death-Timing Methodology & Findings
 
-> **DRAFT, reverse-inferred from the existing medini code to fit repo
-> conventions.** This is the *methodology* half of the `raman_saab` work; the
-> *governance* half is `docs/raman_saab/DOCTRINE_RATCHET_PLAN.md`. The
-> findings tables in §7 are **empty templates** — they get populated by the
-> first harness run, not by this draft. Classical specifics marked ⚑ need a
-> `bphs-doctrine-reviewer` audit before they are treated as authoritative.
+> **STATUS: implemented and run.** §7 below now holds real results from the
+> first run (Wikidata death corpus, N=82,589). The dasha-timing rule family is
+> **refuted** under the confound-controlled permutation null; full write-up in
+> `docs/ml_runs/raman_saab_death_timing_VERDICT.md`. House/lord maraka rules
+> remain untested (need birth times). Classical specifics marked ⚑ still need a
+> `bphs-doctrine-reviewer` audit before promotion.
 >
 > **Ethical guardrail (non-negotiable, from kundli spec §11 and the
 > `ramana_maharshi.json` "structural_notes"):** everything here measures
@@ -170,30 +171,57 @@ clear a higher bar than mere enrichment.
 
 ---
 
-## 7. Findings (EMPTY — populated by the first run)
+## 7. Findings (first run — Wikidata, N=82,589, 2026-07-02)
 
-> These tables are the render target of the first `raman_saab` longevity run.
-> Left empty deliberately; filling them from this draft would fabricate results.
+Full write-up: `docs/ml_runs/raman_saab_death_timing_VERDICT.md`. Result JSON:
+`data/ml_runs/raman_saab/population_validation.json`. Ledger:
+`docs/raman_saab/RATCHET_LEDGER.json`.
 
-### 7a. Enrichment (pooled MH RR)
-| rule_id | N deaths | RR ADB | RR WD | RR LA | RR pooled | p (Bonf.) | Cochran Q p | Gate G1/G2 | Status |
-|---|---|---|---|---|---|---|---|---|---|
-| _(pending first run)_ | | | | | | | | | |
+The corpus has no birth times, so the metric run was **enrichment of the
+dasha-lord-at-death** (not the survival C-index or ayurdaya bands, which need an
+ascendant). The primary null is the **permutation / shuffled-age null** (§5
+metric #1, adapted): it controls both the dasha-length endpoint-bias and the
+age-at-death confound simultaneously. RR = observed / expected; O is
+Poisson-binomial → exact z, one-sided p.
 
-### 7b. Timing concordance (survival)
-| rule_id | C-index rule | C age-alone | C duration-alone | Δ vs max(baseline) | 3σ noise floor | Gate G3 | Status |
-|---|---|---|---|---|---|---|---|
-| _(pending first run)_ | | | | | | | |
+### 7a. Enrichment — dasha-lord-at-death (permutation null, PRIMARY)
+| rule_id | best level | RR | z | p (1-sided) | Gate G1 | Status |
+|---|---|---:|---:|---:|---|---|
+| raman.karaka.saturn_dasha | AD | 1.007 | 0.90 | 0.18 | ✗ | refuted |
+| raman.karaka.mars_saturn_dasha | AD | 0.997 | −0.50 | 0.69 | ✗ | refuted |
+| raman.malefic_dasha | AD | 0.997 | −0.72 | 0.77 | ✗ | refuted |
+| raman.benefic_dasha_protective (deplete) | MD-or-AD | 1.002 | +1.16 | 0.88 | ✗ | refuted |
+| raman.karaka.rahu_ketu_dasha | MD | 1.004 | 0.57 | 0.28 | ✗ | refuted |
 
-### 7c. Ayurdaya-band accuracy
-| method | band accuracy | κ vs base-rate null | N | Status |
-|---|---|---|---|---|
-| _(pending first run)_ | | | | |
+All within RR ∈ [0.97, 1.01] = null. None clears G1 (RR ≥ 1.20 enrich / ≤ 0.83
+deplete). N=82,589 ≫ power threshold → **refuted**, not underpowered.
 
-### 7d. Shuffled-chart null (G4)
-| rule_id | real RR | null mean | null σ | z | empirical p | Gate G4 |
-|---|---|---|---|---|---|---|
-| _(pending first run)_ | | | | | | |
+### 7b. The length-bias confound (exposure null vs permutation null)
+| rule / lord | level | exposure-null RR | permutation-null RR |
+|---|---|---:|---:|
+| Saturn (19y MD) | MD | **1.090** (z 12.1, p 9e-34) | **0.973** (z −4.0) |
+| malefic group | MD | 0.923 | 0.989 |
+| benefic group | MD | 1.075 | 1.010 |
+
+The exposure null's apparent Saturn "signal" is entirely the endpoint
+length-bias (long dashas over-catch deaths); it collapses under the
+length-and-age-controlled permutation null. **Do not cite the exposure column.**
+
+### 7c. Robustness
+| check | Saturn MD RR | note |
+|---|---:|---|
+| birth-time sweep 00h | 0.977 | z −3.39 |
+| birth-time sweep 06h | 0.975 | z −3.64 |
+| birth-time sweep 12h (primary) | 0.973 | z −4.03 |
+| birth-time sweep 18h | 0.982 | z −2.70 |
+| age-stratified 55–85 (N=55,000) | 0.960 | z −4.88; not an age artifact |
+
+### 7d. Not run (need birth times / ascendant)
+- Survival C-index vs age/duration baselines (metric #2) — needs timed charts.
+- Ayurdaya-band accuracy (§4) — needs the ascendant-dependent longevity pairs.
+- House/lord maraka rules (§3b) — 2nd/7th lords, 8th occupancy, MKS overlay.
+
+These stay `candidate` (blocked on a birth-time-rated corpus), NOT refuted.
 
 ---
 

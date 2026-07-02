@@ -1,24 +1,29 @@
 ---
 date: 2026-07-02
 type: design / plan
-status: DRAFT — pre-review (awaiting sign-off before any code is written)
+status: IMPLEMENTED — longevity/dasha family built + run (Wikidata N=82,589); refuted
 project: raman_saab population validation
 author: drafted by agent from existing medini validation machinery
 companion_to: docs/death_timing_findings.md
+verdict: docs/ml_runs/raman_saab_death_timing_VERDICT.md
 supersedes: nothing (new subsystem)
 ---
 
 # raman_saab — Doctrine Ratchet Plan
 
-> **This is a DRAFT specification, reverse-inferred from the existing medini
-> validation code so that it fits the repo's conventions.** The task that
-> spawned it referenced this file and `docs/death_timing_findings.md` as if
-> they already existed; they did not. Nothing here has been implemented.
-> **Open questions for the requester are collected in §10 — please resolve
-> those before implementation begins.** Classical-doctrine specifics marked
-> ⚑ must be pinned by the `bphs-doctrine-reviewer` subagent (per the
-> `docs/doctrine-decisions.md` amendment process) before they can be treated
-> as authoritative.
+> **Status: the longevity/dasha family described here is now built and run.**
+> Code lives in `app/medini/ml/raman_saab/` (+ the corpus scraper
+> `app/medini/etl/wikidata_death_corpus.py`); the first run refuted all five
+> dasha-timing rules at N=82,589 (see the companion `death_timing_findings.md`
+> §7 and `docs/ml_runs/raman_saab_death_timing_VERDICT.md`). This document
+> remains the governing spec. What was actually built diverges from the
+> original draft in two ways forced by the data (§8): (1) validation runs on a
+> freshly-scraped Wikidata corpus, not the (absent) medini catalog; (2) the
+> Stack-B pooled-RR path was replaced by a self-contained permutation-null test
+> because it needs birth-time-rated charts the corpus lacks. Classical-doctrine
+> specifics marked ⚑ still need a `bphs-doctrine-reviewer` audit before any rule
+> is promoted past `refuted`/`candidate`. The open questions in §10 record how
+> each was resolved.
 
 ---
 

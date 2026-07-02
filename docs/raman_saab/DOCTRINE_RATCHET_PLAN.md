@@ -9,7 +9,12 @@ assurance + wealth-as-non-person-maraka (WP2c). Full mechanism log in
 `tests/fixtures/golden_accuracy_baseline.json` `_comment`. **Remaining 22 misses:** ~5 candidate
 deliberate non-fits (chart_17/60, h5_16, h9_08, h11_09), the H10 rise-then-fall pair, chart_44/48
 from-Moon afflictions, and the H1/H3/H11 residue — most need the doctrine corpus on disk
-(`data/knowledge_library/sources/`, absent in the dev container) for cited clause-mining, or WP4/WP5. · **Governing rule:** every change is *doctrine-first,
+(`data/knowledge_library/sources/`) for cited clause-mining, or WP4/WP5. **ACQUISITION GAP
+(verified 2026-07-02): the corpus was NEVER committed to git — no tracking, no history, not
+gitignored; it exists only on the original author's machine. Until it is pushed (or an
+environment ships it), WP4 clause-mining and citation verification are hard-blocked in every
+fresh clone and in CI. Action for the repo owner: commit `data/knowledge_library/` (or an
+LFS/artifact equivalent).** · **Governing rule:** every change is *doctrine-first,
 cited, zero-regression, and non-overfitting* — faithful to B.V. Raman's printed method, not curve-fit
 to the golden charts.
 

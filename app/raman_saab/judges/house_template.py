@@ -176,6 +176,18 @@ class FrameLedger:
     fired_malefic: tuple[rf.FiredRule, ...]
     fired_neutral: tuple[rf.FiredRule, ...]
     flags: tuple[str, ...] = field(default_factory=tuple)
+    # WP1 — comparative three-factor weighing (B1; HTJAH-I:3713/3788/3815). EFFECTIVE
+    # strength folds combustion / uncancelled debilitation / dusthana PLACEMENT into the
+    # pillar (a Shadbala-strong but combust lord is effectively powerless — Raman reads
+    # chart_59's combust 3rd lord as denying the matter despite a strong Karaka). The
+    # dominant factor is the larger-Shadbala one of {lord, karaka}: Raman's dictum is that
+    # the STRONGEST single factor dominates, and a weak/combust DOMINANT factor drags the
+    # matter down even when the other factor is strong. All default None/False so ledgers
+    # built without them (unit pins, legacy callers) fall through to the pre-WP1 clauses.
+    lord_effective: Optional[bool] = None
+    karaka_effective: Optional[bool] = None
+    dominant_factor: Optional[str] = None      # "lord" | "karaka"
+    dominant_severe: bool = False              # dominant combust or uncancelled-debilitated
 
 
 @dataclass(frozen=True)
@@ -293,7 +305,11 @@ def _navamsa_modulate(base: Verdict, L: FrameLedger) -> tuple[Verdict, bool]:
         return base, False
     if L.navamsa_status == "confirms" and base == "mixed":
         return "favourable", True
-    if L.navamsa_status == "weakens" and base == "mixed":
+    # WP1 testimony-gate: the D9 is Raman's CONFIRMATION varga — a 'weakens' can confirm
+    # malefic rasi testimony into an affliction, but it cannot MANUFACTURE one when the
+    # rasi testimony is purely benefic (h11-class: benefic-only rules + a weakening D9 is
+    # a qualified promise, not a denial).
+    if L.navamsa_status == "weakens" and base == "mixed" and L.fired_malefic:
         return "afflicted", True
     return base, False
 
@@ -353,6 +369,21 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # painted over. The AFFLICTED preponderance stays unguarded and DECISIVE (navamsa
     # 'confirms' never lifts an afflicted; only a borderline 'mixed' is nudged).
     if L.fired_benefic and L.fired_malefic:
+        # 2a. COMPARATIVE OVERRIDE — severe dominant-LORD denial (WP1 / backlog B1).
+        # Raman weighs the factors against each other: the strongest single factor
+        # dominates, and when the bhava's own LORD is that dominant factor yet is
+        # substantially combust or uncancelled-debilitated, the matter is denied even
+        # against a strong Karaka (chart_59, HTJAH-I:3788: the combust 3rd lord denies
+        # brothers; chart_20: the debilitated Lagna lord denies the self despite a
+        # strong Sun; HTJAH-I:3713/3815). Deliberately NOT fired when the severe
+        # dominant is the KARAKA and the lord stands — that is chart_54's "good lord
+        # rescues" (HTJAH-I:503-505), which must stay favourable. Scoped to NON-dusthana
+        # houses (a broken 6/8/12 lord can lighten the evil — inversion direction) and
+        # to ledgers carrying the comparative data (fresh-cast charts); Track-B /
+        # unit-pin ledgers fall through unchanged.
+        if (L.dominant_factor == "lord" and L.dominant_severe
+                and "DUSTHANA_HOUSE" not in L.flags and not guarded):
+            return "afflicted", False
         pillars = [L.lord_strong, L.karaka_strong, L.bhava_bala_strong]
         known = [p for p in pillars if p is not None]
         weak = sum(1 for p in known if p is False)
@@ -746,6 +777,51 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     bb = _bhava_bala_for(chart, sig.house)
     bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)
 
+    # WP1 — effective factor strength (comparative three-factor weighing, B1).
+    # Fold combustion / uncancelled debilitation / dusthana placement into the pillar:
+    # HTJAH-I:3788 — a substantially-combust lord is powerless and denies the matter even
+    # against a strong Karaka; a 6/8/12-placed factor cannot deliver its house. The
+    # parivartana exemption mirrors the pillar leniency above (an exchanged planet works
+    # through its exchange partner). lord==karaka identity collapses the two, as for the
+    # boolean pillars.
+    def _effective(planet: str, base: Optional[bool]) -> Optional[bool]:
+        if base is None:
+            return None
+        if not base:
+            return False
+        if _in_parivartana(planet, pairs):
+            return True
+        if _combust_graded(planet, chart):
+            return False
+        if _debilitated_uncancelled(planet, chart):
+            return False
+        p = chart.planets.get(planet)
+        if p is not None and p.rasi_house in (6, 8, 12):
+            return False
+        return True
+
+    lord_effective = _effective(lord, lord_strong)
+    karaka_effective = (lord_effective if lord_karaka_identical
+                        else _effective(karaka, karaka_strong))
+    lord_sh = _total_shadbala(lord, chart)
+    kar_sh = _total_shadbala(karaka, chart)
+    dominant_factor: Optional[str] = None
+    dominant_severe = False
+    if lord_sh is not None and kar_sh is not None:
+        # ties go to the lord — the bhava's own lord is the primary deliverer of its matter.
+        dominant_factor = "lord" if lord_sh >= kar_sh else "karaka"
+        dom_planet = lord if dominant_factor == "lord" else karaka
+        dp = chart.planets.get(dom_planet)
+        # UPACHAYA MEND: an afflicted planet in a growth house (3/6/10/11) improves with
+        # time, so its combustion/debility does not DENY the matter outright (chart_54's
+        # debilitated Venus in the 11th and h11_08's combust Jupiter in the 6th are both
+        # read favourably by Raman; chart_20's debilitated Moon in the 5th is not).
+        in_upachaya = dp is not None and dp.rasi_house in (3, 6, 10, 11)
+        dominant_severe = (not in_upachaya) and (
+            not _in_parivartana(dom_planet, pairs)) and (
+            _combust_graded(dom_planet, chart)
+            or _debilitated_uncancelled(dom_planet, chart))
+
     # D9-4: a bhava occupant EXALTED in the rashi but DEBILITATED in the navamsa hollows the
     # promise (Raman's explicit "though exalted ... debilitated in Navamsha" — the rasi sets up
     # the promise, the navamsa withholds the fruit). Scoped to exactly this case (rare, surgical):
@@ -788,6 +864,11 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # affliction on lone-malefic evidence (a strong dusthana lord strengthens, never rescues).
     if sig.key in _DUSTHANA_AFFLICTION_KEYS:
         flags.append("AFFLICTION_MATTER")
+    # WP1 — the comparative severe-denial (combust/debil dominant factor -> afflicted) is
+    # scoped to NON-dusthana houses: for a 6/8/12 matter a broken lord can lighten the evil
+    # (the dusthana-inversion direction), so the count weigh decides there instead.
+    if sig.house in (6, 8, 12):
+        flags.append("DUSTHANA_HOUSE")
     # LONGEVITY_UNKNOWN: informational marker that a maraka touches a pillar of THIS
     # (possibly non-longevity) matter, so its maraka pressure is provisional until the
     # longevity engine confirms it. Kept for downstream reporting; not verdict-driving.
@@ -801,7 +882,9 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         maraka_active=maraka_active, parivartana_resilient=parivartana_resilient,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
-        flags=tuple(dict.fromkeys(flags)))
+        flags=tuple(dict.fromkeys(flags)),
+        lord_effective=lord_effective, karaka_effective=karaka_effective,
+        dominant_factor=dominant_factor, dominant_severe=dominant_severe)
 
 
 # ---------------------------------------------------------------------------

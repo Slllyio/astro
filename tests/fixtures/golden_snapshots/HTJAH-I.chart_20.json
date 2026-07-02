@@ -29,22 +29,22 @@
       "H1.P.Mercury",
       "H1.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "body": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "health": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
       "self": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       }
     }
   }

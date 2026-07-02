@@ -69,6 +69,10 @@ def _ledger(
     fired_malefic=(),
     fired_neutral=(),
     flags=(),
+    lord_effective=None,
+    karaka_effective=None,
+    dominant_factor=None,
+    dominant_severe: bool = False,
 ) -> ht.FrameLedger:
     return ht.FrameLedger(
         frame=frame, lord=lord, lord_strong=lord_strong, karaka=karaka,
@@ -78,7 +82,9 @@ def _ledger(
         parivartana_resilient=parivartana_resilient,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=tuple(fired_benefic), fired_malefic=tuple(fired_malefic),
-        fired_neutral=tuple(fired_neutral), flags=tuple(flags))
+        fired_neutral=tuple(fired_neutral), flags=tuple(flags),
+        lord_effective=lord_effective, karaka_effective=karaka_effective,
+        dominant_factor=dominant_factor, dominant_severe=dominant_severe)
 
 
 def _track_b(lons: dict[str, float], asc_lon: float = 0.0) -> RamanChart:
@@ -238,10 +244,50 @@ class TestDecide:
         assert v == "favourable" and shifted is True
 
     def test_navamsa_weakens_demotes_mixed_to_afflicted(self):
-        """D9 weakening drops a borderline mixed to afflicted (navamsa modulation)."""
+        """D9 weakening drops a borderline mixed to afflicted — but only when MALEFIC
+        testimony exists to confirm (WP1 testimony gate): the D9 is a confirmation
+        varga, it cannot manufacture an affliction from non-malefic rasi testimony."""
         v, shifted = ht._decide(_ledger(lord_strong=False, karaka_strong=True,
-                                        fired_neutral=(_fired("neutral"),), navamsa_status="weakens"))
+                                        fired_neutral=(_fired("neutral"),),
+                                        fired_malefic=(_fired("malefic"),),
+                                        fired_benefic=(_fired("benefic"),),
+                                        navamsa_status="weakens"))
         assert v == "afflicted" and shifted is True
+
+    def test_navamsa_weakens_needs_malefic_testimony(self):
+        """WP1: nav 'weakens' + purely neutral/benefic rasi testimony -> the borderline
+        stays mixed (a qualified promise, not a denial)."""
+        v, shifted = ht._decide(_ledger(lord_strong=False, karaka_strong=True,
+                                        fired_neutral=(_fired("neutral"),),
+                                        navamsa_status="weakens"))
+        assert v == "mixed" and shifted is False
+
+    def test_severe_dominant_lord_denies_in_contradiction(self):
+        """WP1 comparative override (HTJAH-I:3788): a combust/uncancelled-debilitated
+        DOMINANT lord denies the matter in a contradiction, despite strong pillars."""
+        v, shifted = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"),), fired_malefic=(_fired("malefic"),),
+            dominant_factor="lord", dominant_severe=True))
+        assert v == "afflicted" and shifted is False
+
+    def test_severe_dominant_karaka_does_not_deny(self):
+        """WP1: the severe-denial is LORD-scoped — a severe dominant KARAKA with a
+        standing lord is chart_54's 'good lord rescues' (HTJAH-I:503-505)."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"),), fired_malefic=(_fired("malefic"),),
+            dominant_factor="karaka", dominant_severe=True))
+        assert v == "favourable"
+
+    def test_severe_dominant_lord_spared_in_dusthana_house(self):
+        """WP1: in a 6/8/12 house a broken lord can LIGHTEN the evil (inversion
+        direction) — the severe-denial must not fire there."""
+        v, _ = ht._decide(_ledger(
+            lord_strong=True, karaka_strong=True, bhava_bala_strong=True,
+            fired_benefic=(_fired("benefic"),), fired_malefic=(_fired("malefic"),),
+            dominant_factor="lord", dominant_severe=True, flags=("DUSTHANA_HOUSE",)))
+        assert v == "favourable"
 
     def test_decisive_favourable_never_shifts(self):
         """A decisive favourable is never modulated by D9 (modulation only touches mixed)."""

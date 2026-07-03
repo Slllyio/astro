@@ -1,0 +1,254 @@
+{
+ "n_cases": 24,
+ "n_timed": 24,
+ "median_pctile": 0.12263450834879405,
+ "mean_pctile": 0.38802837791144135,
+ "frac_below_50": 0.625,
+ "killer_hit_rate": 0.6190476190476191,
+ "band_hit_rate": 0.0,
+ "use_transits": false,
+ "cases": [
+  {
+   "key": "alexander",
+   "pctile": 0.05263157894736842,
+   "death_window": "Mercury/Moon@32",
+   "n_windows": 19,
+   "killers": "0/2",
+   "band": "PURNAYU vs ALPAYU",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "ashutosh",
+   "pctile": 0.044444444444444446,
+   "death_window": "Jupiter/Saturn@60",
+   "n_windows": 45,
+   "killers": "0/1",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "augustus",
+   "pctile": 0.41304347826086957,
+   "death_window": "Ketu/Jupiter@76",
+   "n_windows": 46,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "aurangzeb",
+   "pctile": 0.03508771929824561,
+   "death_window": "Mercury/Saturn@87",
+   "n_windows": 57,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "aurobindo",
+   "pctile": 0.9137931034482759,
+   "death_window": "Jupiter/Rahu@78",
+   "n_windows": 58,
+   "killers": "2/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "crdas",
+   "pctile": 0.4878048780487805,
+   "death_window": "Moon/Jupiter@54",
+   "n_windows": 41,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "einstein",
+   "pctile": 0.9322033898305084,
+   "death_window": "Jupiter/Jupiter@76",
+   "n_windows": 59,
+   "killers": "1/1",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "fdr",
+   "pctile": 0.6153846153846154,
+   "death_window": "Ketu/Jupiter@63",
+   "n_windows": 39,
+   "killers": "1/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "gandhi",
+   "pctile": 0.9491525423728814,
+   "death_window": "Jupiter/Venus@77",
+   "n_windows": 59,
+   "killers": "1/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "godse",
+   "pctile": 0.06666666666666667,
+   "death_window": "Jupiter/Mercury@39",
+   "n_windows": 30,
+   "killers": "2/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "goethe",
+   "pctile": 0.16363636363636364,
+   "death_window": "Moon/Mars@82",
+   "n_windows": 55,
+   "killers": "0/1",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "havelock_ellis",
+   "pctile": 0.98,
+   "death_window": "Mercury/Jupiter@79",
+   "n_windows": 50,
+   "killers": "2/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "jesus",
+   "pctile": 0.041666666666666664,
+   "death_window": "Ketu/Jupiter@35",
+   "n_windows": 24,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "marx",
+   "pctile": 0.08163265306122448,
+   "death_window": "Saturn/Mercury@64",
+   "n_windows": 49,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "mussolini",
+   "pctile": 0.075,
+   "death_window": "Saturn/Jupiter@61",
+   "n_windows": 40,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "narasimha_bharathi",
+   "pctile": 0.02702702702702703,
+   "death_window": "Saturn/Ketu@54",
+   "n_windows": 37,
+   "killers": "2/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "nehru",
+   "pctile": 0.07017543859649122,
+   "death_window": "Rahu/Ketu@74",
+   "n_windows": 57,
+   "killers": "0/0",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "rajendra_prasad",
+   "pctile": 0.9583333333333334,
+   "death_window": "Ketu/Moon@78",
+   "n_windows": 48,
+   "killers": "1/2",
+   "band": "ALPAYU vs PURNAYU",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "ramanuja",
+   "pctile": 0.7073170731707317,
+   "death_window": "Rahu/Mercury@119",
+   "n_windows": 82,
+   "killers": "1/2",
+   "band": "ALPAYU vs PURNAYU",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "sankara",
+   "pctile": 0.0,
+   "death_window": "Saturn/Saturn@31",
+   "n_windows": 18,
+   "killers": "1/1",
+   "band": "PURNAYU vs ALPAYU",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "sayaji_rao",
+   "pctile": 0.016666666666666666,
+   "death_window": "Rahu/Rahu@76",
+   "n_windows": 60,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "suryanarain_rao",
+   "pctile": 0.03571428571428571,
+   "death_window": "Saturn/Moon@81",
+   "n_windows": 56,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "tilak",
+   "pctile": 0.7222222222222222,
+   "death_window": "Rahu/Rahu@64",
+   "n_windows": 54,
+   "killers": "2/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "victoria",
+   "pctile": 0.9230769230769231,
+   "death_window": "Mercury/Saturn@82",
+   "n_windows": 52,
+   "killers": "2/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  }
+ ],
+ "half": "held_out",
+ "weights_file": "data/raman_saab/run5_weights.json"
+}

@@ -36,3 +36,28 @@ construction (it is the tuned quantity); the held-out number is the honest
 fidelity estimate. Band-statement hit-rate on the 2 calibration cases with
 explicit ayurdaya statements is 0/2 — the band classifier's population
 informativeness is P3's question, flagged, not hidden.
+
+---
+
+## Step F — held-out read-out (scored ONCE, post-freeze; sha check passed)
+
+| gate | value | threshold | outcome |
+|---|---|---|---|
+| HG1 median death-window percentile | **0.123** | ≤ 0.35 proceed / ≥ 0.45 abort | **PASS — proceed** |
+| HG2 fraction below 50th percentile | 0.625 (15/24) | ≥ 0.65 | miss (marginal) |
+| HG3 killer hit-rate (soft) | 0.62 | ≥ 0.70 | miss (reported) |
+
+Full per-case table: `data/ml_runs/raman_saab/run5/heldout_readout.json`.
+
+**Reading:** the tuned encoder generalizes within the book far better than
+run 4 (held-out median 0.123 vs run-4's calibrated-set 0.21): 16/24 unseen
+cases score below the 20th percentile, including sub-5% hits on Sankara,
+Sayaji Rao, Narasimha Bharathi, Ashutosh, Jesus, Aurangzeb. The failures are
+bimodal and BAND-DRIVEN: the placement-class classifier mis-assigns ALPAYU
+to several long-lived natives (Gandhi 78, Einstein 76, Victoria 82,
+Havelock Ellis 79, Rajendra Prasad 78 — the latter stated PURNAYU by Raman)
+and the band gate then crushes their true late windows (percentiles
+0.92–0.98). On the 5 held-out cases with explicit ayurdaya statements the
+classifier is wrong 5/5 — an anti-pattern, reported as the strongest
+interpretive caveat for P3. Weights are frozen; per the pre-registration the
+population run PROCEEDS on HG1, carrying HG2/HG3 misses as prior.

@@ -1,0 +1,386 @@
+{
+ "calibration_final": {
+  "n_cases": 24,
+  "n_timed": 24,
+  "median_pctile": 0.09041394335511982,
+  "mean_pctile": 0.23718800719515395,
+  "frac_below_50": 0.7916666666666666,
+  "killer_hit_rate": 0.5714285714285714,
+  "band_hit_rate": 0.0,
+  "use_transits": false
+ },
+ "calibration_cases": [
+  {
+   "key": "akbar",
+   "pctile": 0.5428571428571428,
+   "death_window": "Mercury/Saturn@63",
+   "n_windows": 35,
+   "killers": "2/2",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "buddha",
+   "pctile": 0.08163265306122448,
+   "death_window": "Sun/Rahu@80",
+   "n_windows": 49,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "chaitanya",
+   "pctile": 0.025,
+   "death_window": "Jupiter/Jupiter@47",
+   "n_windows": 40,
+   "killers": "0/1",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "george_vi",
+   "pctile": 0.08823529411764706,
+   "death_window": "Venus/Saturn@56",
+   "n_windows": 34,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "golwalkar",
+   "pctile": 0.16,
+   "death_window": "Jupiter/Venus@67",
+   "n_windows": 50,
+   "killers": "1/1",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "hyderali",
+   "pctile": 0.48936170212765956,
+   "death_window": "Mars/Rahu@60",
+   "n_windows": 47,
+   "killers": "0/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "kasturi",
+   "pctile": 0.5510204081632653,
+   "death_window": "Moon/Rahu@71",
+   "n_windows": 49,
+   "killers": "0/0",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "lincoln",
+   "pctile": 0.04878048780487805,
+   "death_window": "Saturn/Mercury@56",
+   "n_windows": 41,
+   "killers": "2/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "marie_antoinette",
+   "pctile": 0.0,
+   "death_window": "Saturn/Saturn@37",
+   "n_windows": 23,
+   "killers": "2/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "milton",
+   "pctile": 0.18604651162790697,
+   "death_window": "Saturn/Jupiter@66",
+   "n_windows": 43,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "nanak",
+   "pctile": 0.30434782608695654,
+   "death_window": "Saturn/Jupiter@69",
+   "n_windows": 46,
+   "killers": "0/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "nero",
+   "pctile": 0.07407407407407407,
+   "death_window": "Mars/Saturn@30",
+   "n_windows": 27,
+   "killers": "2/2",
+   "band": "MADHYAYU vs ALPAYU",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "nizam",
+   "pctile": 0.7368421052631579,
+   "death_window": "Saturn/Mars@81",
+   "n_windows": 57,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "omar",
+   "pctile": 0.0,
+   "death_window": "Venus/Saturn@74",
+   "n_windows": 44,
+   "killers": "2/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "ramana",
+   "pctile": 0.06666666666666667,
+   "death_window": "Sun/Saturn@70",
+   "n_windows": 45,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "sc_bose",
+   "pctile": 0.05555555555555555,
+   "death_window": "Jupiter/Mars@48",
+   "n_windows": 36,
+   "killers": "1/1",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "shivaji",
+   "pctile": 0.1,
+   "death_window": "Saturn/Moon@50",
+   "n_windows": 30,
+   "killers": "1/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": false,
+   "notes": []
+  },
+  {
+   "key": "sivananda",
+   "pctile": 0.8727272727272727,
+   "death_window": "Saturn/Rahu@75",
+   "n_windows": 55,
+   "killers": "1/1",
+   "band": "ALPAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "tagore",
+   "pctile": 0.9836065573770492,
+   "death_window": "Jupiter/Jupiter@79",
+   "n_windows": 61,
+   "killers": "0/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "tennyson",
+   "pctile": 0.09259259259259259,
+   "death_window": "Ketu/Mercury@83",
+   "n_windows": 54,
+   "killers": "0/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": null,
+   "notes": []
+  },
+  {
+   "key": "thyagaraja",
+   "pctile": 0.046875,
+   "death_window": "Rahu/Jupiter@84",
+   "n_windows": 64,
+   "killers": "0/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "tippu",
+   "pctile": 0.025,
+   "death_window": "Jupiter/Saturn@47",
+   "n_windows": 40,
+   "killers": "2/2",
+   "band": "PURNAYU vs MADHYAYU",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "vivekananda",
+   "pctile": 0.0,
+   "death_window": "Jupiter/Sun@39",
+   "n_windows": 28,
+   "killers": "1/2",
+   "band": "MADHYAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  },
+  {
+   "key": "wadiyar",
+   "pctile": 0.16129032258064516,
+   "death_window": "Mercury/Mercury@56",
+   "n_windows": 31,
+   "killers": "2/2",
+   "band": "PURNAYU vs \u2014",
+   "ad_anchor_ok": true,
+   "notes": []
+  }
+ ],
+ "transit_decision": {
+  "median_without": 0.09041394335511982,
+  "median_with": 0.096875,
+  "gain": -0.0065,
+  "killer_without": 0.5714285714285714,
+  "killer_with": 0.5714285714285714,
+  "included_in_primaries": false
+ },
+ "search_log": [
+  {
+   "step": "defaults",
+   "median": 0.1842741935483871,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass0:fp2.weakness=0.9",
+   "median": 0.17286585365853657,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass0:fp2.node_sign_dispositor=0.4",
+   "median": 0.17286585365853657,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass0:fp2.tara_death=0.2",
+   "median": 0.14074074074074072,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass0:fp2.gate_adjacent=0.4",
+   "median": 0.13951612903225807,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass0:fp2.gate_far=0.1",
+   "median": 0.12701612903225806,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass1:fp2.nakshatra_transfer=0.6",
+   "median": 0.10657596371882086,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass1:fp2.md_ad_shashtashtaka=0.1",
+   "median": 0.10657596371882086,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass1:mk2.saturn_ayushkaraka_base=0.6",
+   "median": 0.10102040816326531,
+   "killer_hit_rate": 0.6428571428571429
+  },
+  {
+   "step": "pass1:mk2.ref_moon=0.7",
+   "median": 0.0962962962962963,
+   "killer_hit_rate": 0.5952380952380952
+  },
+  {
+   "step": "pass1:mk2.ref_navamsa=0.7",
+   "median": 0.09041394335511982,
+   "killer_hit_rate": 0.5714285714285714
+  }
+ ],
+ "grid": {
+  "fp2.weakness": [
+   0.3,
+   0.6,
+   0.9
+  ],
+  "fp2.nakshatra_transfer": [
+   0.6,
+   0.8,
+   1.0
+  ],
+  "fp2.node_sign_dispositor": [
+   0.4,
+   0.6,
+   0.8
+  ],
+  "fp2.tara_death": [
+   0.2,
+   0.4,
+   0.6
+  ],
+  "fp2.dasha_sandhi": [
+   0.15,
+   0.3,
+   0.5
+  ],
+  "fp2.md_ad_shashtashtaka": [
+   0.1,
+   0.25,
+   0.4
+  ],
+  "fp2.gate_adjacent": [
+   0.4,
+   0.6,
+   0.8
+  ],
+  "fp2.gate_far": [
+   0.1,
+   0.25,
+   0.4
+  ],
+  "mk2.saturn_ayushkaraka_base": [
+   0.2,
+   0.4,
+   0.6
+  ],
+  "mk2.override_spare": [
+   0.1,
+   0.25,
+   0.4
+  ],
+  "mk2.ref_moon": [
+   0.3,
+   0.5,
+   0.7
+  ],
+  "mk2.ref_navamsa": [
+   0.3,
+   0.5,
+   0.7
+  ],
+  "lng2.promotion_margin": [
+   0.05,
+   0.15,
+   0.25
+  ]
+ }
+}

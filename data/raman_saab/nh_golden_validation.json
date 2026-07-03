@@ -1,0 +1,701 @@
+{
+ "n_total": 57,
+ "n_valid": 48,
+ "cases": [
+  {
+   "key": "krishna",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: mythological_reconstruction_partial_positions",
+   "suspect_planets": []
+  },
+  {
+   "key": "buddha",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    -622,
+    4,
+    14
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:2.2deg"
+   ]
+  },
+  {
+   "key": "alexander",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    -355,
+    7,
+    22
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:11.9deg"
+   ]
+  },
+  {
+   "key": "augustus",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    -62,
+    9,
+    23
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "sankara",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    -43,
+    3,
+    25
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mercury:4.2deg"
+   ]
+  },
+  {
+   "key": "jesus",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    -6,
+    12,
+    25
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Sun:30.0deg",
+    "Mercury:30.1deg",
+    "Rahu:179.8deg"
+   ]
+  },
+  {
+   "key": "nero",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    37,
+    12,
+    15
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "ramanuja",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1017,
+    4,
+    4
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mars:2.0deg",
+    "Venus:2.1deg"
+   ]
+  },
+  {
+   "key": "omar",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1048,
+    5,
+    18
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mars:4.1deg",
+    "Venus:10.4deg"
+   ]
+  },
+  {
+   "key": "chengiz",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "MD anchor mismatch (want Venus)",
+   "suspect_planets": []
+  },
+  {
+   "key": "vidyaranya",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: positions_incomplete_ocr",
+   "suspect_planets": []
+  },
+  {
+   "key": "nanak",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1470,
+    11,
+    8
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:12.9deg"
+   ]
+  },
+  {
+   "key": "chaitanya",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1486,
+    2,
+    18
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "akbar",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1542,
+    11,
+    24
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Venus:9.6deg"
+   ]
+  },
+  {
+   "key": "milton",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1608,
+    12,
+    9
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "aurangzeb",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1618,
+    11,
+    3
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mars:6.2deg",
+    "Mercury:7.6deg",
+    "Venus:11.8deg"
+   ]
+  },
+  {
+   "key": "shivaji",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1630,
+    2,
+    19
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "hyderali",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1722,
+    12,
+    8
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "goethe",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1749,
+    8,
+    29
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:15.4deg"
+   ]
+  },
+  {
+   "key": "tippu",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1751,
+    12,
+    1
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mars:21.8deg"
+   ]
+  },
+  {
+   "key": "marie_antoinette",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1755,
+    11,
+    2
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Rahu:7.6deg"
+   ]
+  },
+  {
+   "key": "thyagaraja",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1767,
+    5,
+    4
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Mercury:4.3deg"
+   ]
+  },
+  {
+   "key": "lincoln",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1809,
+    2,
+    12
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:2.4deg",
+    "Mercury:7.9deg"
+   ]
+  },
+  {
+   "key": "tennyson",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1809,
+    8,
+    6
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:11.6deg"
+   ]
+  },
+  {
+   "key": "marx",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:9.2deg",
+    "Mercury:4.1deg"
+   ]
+  },
+  {
+   "key": "victoria",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1819,
+    5,
+    24
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "suryanarain_rao",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1856,
+    2,
+    12
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:3.7deg",
+    "Mercury:4.4deg",
+    "Jupiter:2.0deg",
+    "Venus:2.6deg"
+   ]
+  },
+  {
+   "key": "tilak",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1856,
+    7,
+    23
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "shaw",
+   "valid": false,
+   "tier": "B",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: positions_lost_to_ocr",
+   "suspect_planets": []
+  },
+  {
+   "key": "narasimha_bharathi",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1858,
+    3,
+    11
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "jc_bose",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "MD anchor mismatch (want Ketu)",
+   "suspect_planets": []
+  },
+  {
+   "key": "havelock_ellis",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1859,
+    2,
+    2
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "tagore",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1861,
+    5,
+    7
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "vivekananda",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1863,
+    1,
+    12
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:6.6deg"
+   ]
+  },
+  {
+   "key": "sayaji_rao",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1863,
+    3,
+    12
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Moon:8.0deg"
+   ]
+  },
+  {
+   "key": "ashutosh",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1864,
+    6,
+    29
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "crdas",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1870,
+    11,
+    5
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "aurobindo",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1872,
+    8,
+    15
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "fdr",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1882,
+    1,
+    30
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "mussolini",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1883,
+    7,
+    29
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "wadiyar",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1884,
+    6,
+    4
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "rajendra_prasad",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1884,
+    12,
+    3
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "nizam",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1886,
+    4,
+    6
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "kasturi",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1887,
+    8,
+    7
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "sivananda",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1887,
+    9,
+    8
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "nehru",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1889,
+    11,
+    14
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "george_vi",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1895,
+    12,
+    14
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "sc_bose",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1897,
+    1,
+    23
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "golwalkar",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1906,
+    2,
+    19
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "godse",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1910,
+    5,
+    19
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "gandhi",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1869,
+    10,
+    2
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "ramana",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1879,
+    12,
+    30
+   ],
+   "fail_reason": null,
+   "suspect_planets": []
+  },
+  {
+   "key": "einstein",
+   "valid": true,
+   "tier": "A",
+   "birth_date_used": [
+    1879,
+    3,
+    14
+   ],
+   "fail_reason": null,
+   "suspect_planets": [
+    "Saturn:10.0deg"
+   ]
+  },
+  {
+   "key": "hitler",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: predictive_forecast_not_verdict",
+   "suspect_planets": []
+  },
+  {
+   "key": "franco",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: predictive_forecast_not_verdict",
+   "suspect_planets": []
+  },
+  {
+   "key": "dalmia",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: predictive_forecast_not_verdict",
+   "suspect_planets": []
+  },
+  {
+   "key": "farouk",
+   "valid": false,
+   "tier": "A",
+   "birth_date_used": null,
+   "fail_reason": "pre-excluded: predictive_no_mechanism",
+   "suspect_planets": []
+  }
+ ]
+}

@@ -95,6 +95,7 @@ def _varga_signs_for_vimsopaka(d1: dict, divisional: dict) -> dict[str, dict[str
 def bundle_from_positions(
     planet_lons: Mapping[str, float], lagna_lon: float, *,
     birth_jd: float, person_id: str = "",
+    retrograde: Mapping[str, bool] | None = None,
 ) -> ChartBundle:
     """Build a bundle directly from sidereal longitudes — no ephemeris.
 
@@ -125,8 +126,9 @@ def bundle_from_positions(
     chart = Chart(asc_sign=lagna_sign, asc_lon=lagna_lon,
                   planet_signs=planet_signs, planet_houses=planet_house,
                   planet_lons=planet_lons, person_id=person_id or None)
+    retrograde = retrograde or {}
     d1 = {g: {"longitude": planet_lons[g], "sign": planet_signs[g],
-              "is_retrograde": False} for g in GRAHAS}
+              "is_retrograde": bool(retrograde.get(g, False))} for g in GRAHAS}
     divisional = compute_divisional_charts(d1)
     varga_signs = _varga_signs_for_vimsopaka(d1, divisional)
     vim = vimsopaka_for_chart(chart, varga_signs, scheme="shodashavargaja")

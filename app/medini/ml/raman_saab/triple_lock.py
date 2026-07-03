@@ -277,9 +277,12 @@ def run(corpus: Path, out_dir: Path, *, robustness: bool = True,
     # collapse every RR to ~1.
     shuffled = rng.permutation(ages)
     pre = evaluate(people, sample_ages, death_ages_override=shuffled)
+    # Collapse criterion: under the shuffled pairing each primary count is a
+    # draw from its own Poisson-binomial null, so RR fluctuates with
+    # sd = sqrt(var)/E (~0.09 for the joint test at full N). A fixed RR band
+    # would false-alarm on correct nulls; the right check is |z| <= 3.
     pre_bad = [r for r in pre["rows"]
-               if r["tier"] == "primary" and r["rr"] is not None
-               and abs(r["rr"] - 1.0) > 0.08]
+               if r["tier"] == "primary" and abs(r["z"]) > 3.0]
     preflight = {"primary": _primary_summary(pre),
                  "pass": not pre_bad}
     if pre_bad:

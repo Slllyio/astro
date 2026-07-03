@@ -53,10 +53,23 @@ def _ensure_lahiri() -> None:
         _LAHIRI_SET = True
 
 
-def sidereal_lon(jd: float, planet_id: int) -> float:
-    _ensure_lahiri()
+def sidereal_lon(jd: float, planet_id: int,
+                 sid_mode: int | None = None) -> float:
+    """Sidereal longitude; default Lahiri (run-3 semantics preserved).
+
+    Run 5 passes ``sid_mode=swe.SIDM_RAMAN`` for Raman-frame tables. The
+    mode is set per call and restored to Lahiri afterwards so the run-3
+    one-shot global stays truthful for existing callers.
+    """
     flags = swe.FLG_MOSEPH | swe.FLG_SIDEREAL
-    return float(swe.calc_ut(jd, planet_id, flags)[0][0]) % 360.0
+    if sid_mode is None:
+        _ensure_lahiri()
+        return float(swe.calc_ut(jd, planet_id, flags)[0][0]) % 360.0
+    swe.set_sid_mode(sid_mode)
+    try:
+        return float(swe.calc_ut(jd, planet_id, flags)[0][0]) % 360.0
+    finally:
+        swe.set_sid_mode(swe.SIDM_LAHIRI)
 
 
 def _sign(lon: float) -> int:
@@ -64,11 +77,11 @@ def _sign(lon: float) -> int:
 
 
 def _bisect_ingress(planet_id: int, jd_lo: float, jd_hi: float,
-                    sign_lo: int) -> float:
+                    sign_lo: int, sid_mode: int | None = None) -> float:
     """JD where the sign changes away from sign_lo, to ±_BISECT_TOL_DAYS."""
     while jd_hi - jd_lo > _BISECT_TOL_DAYS:
         mid = (jd_lo + jd_hi) / 2.0
-        if _sign(sidereal_lon(mid, planet_id)) == sign_lo:
+        if _sign(sidereal_lon(mid, planet_id, sid_mode)) == sign_lo:
             jd_lo = mid
         else:
             jd_hi = mid
@@ -88,18 +101,19 @@ class IngressTable:
         return self.sign[idx]
 
 
-def build_table(planet: str) -> IngressTable:
+def build_table(planet: str, sid_mode: int | None = None) -> IngressTable:
     pid = _PLANET_IDS[planet]
     jd0 = swe.julday(*_START, 0.0, swe.GREG_CAL)
     jd1 = swe.julday(*_END, 0.0, swe.GREG_CAL)
     grid = np.arange(jd0, jd1 + _GRID_DAYS, _GRID_DAYS)
-    signs = np.array([_sign(sidereal_lon(j, pid)) for j in grid], dtype=np.int8)
+    signs = np.array([_sign(sidereal_lon(j, pid, sid_mode)) for j in grid],
+                     dtype=np.int8)
     ingress_jd = [float(grid[0])]
     ingress_sign = [int(signs[0])]
     for i in range(1, len(grid)):
         if signs[i] != signs[i - 1]:
             jd_cross = _bisect_ingress(pid, float(grid[i - 1]), float(grid[i]),
-                                       int(signs[i - 1]))
+                                       int(signs[i - 1]), sid_mode)
             ingress_jd.append(jd_cross)
             ingress_sign.append(int(signs[i]))
     return IngressTable(
@@ -109,11 +123,16 @@ def build_table(planet: str) -> IngressTable:
     )
 
 
-_CACHE: dict[str, IngressTable] = {}
+_CACHE: dict[tuple[str, int | None], IngressTable] = {}
 
 
-def get_table(planet: str) -> IngressTable:
-    """Process-cached ingress table (build cost ~0.5 s per planet)."""
-    if planet not in _CACHE:
-        _CACHE[planet] = build_table(planet)
-    return _CACHE[planet]
+def get_table(planet: str, sid_mode: int | None = None) -> IngressTable:
+    """Process-cached ingress table (build cost ~0.5 s per planet).
+
+    ``sid_mode=None`` keeps run-3 Lahiri semantics; pass ``swe.SIDM_RAMAN``
+    for Raman-frame tables (cache is keyed by (planet, mode)).
+    """
+    key = (planet, sid_mode)
+    if key not in _CACHE:
+        _CACHE[key] = build_table(planet, sid_mode)
+    return _CACHE[key]

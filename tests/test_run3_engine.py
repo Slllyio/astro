@@ -251,3 +251,33 @@ class TestAyurdayaGolden:
         assert res.tie_broken is True
         assert res.tie_rule == "lagna_horalagna_prevails"
         assert res.band == AyuBand.ALPAYU
+
+
+class TestRamanFrameTable:
+    def test_raman_mode_table_matches_direct_ephemeris(self):
+        """Run-5 addition: (planet, sid_mode)-keyed cache; Raman-frame table
+        must match direct SIDM_RAMAN ephemeris, and Lahiri default must be
+        unaffected by prior Raman-mode calls (mode restoration)."""
+        import swisseph as _swe
+        rng = np.random.default_rng(7)
+        jd0 = swe.julday(1851, 1, 1, 0.0, swe.GREG_CAL)
+        jd1 = swe.julday(2034, 1, 1, 0.0, swe.GREG_CAL)
+        jds = rng.uniform(jd0, jd1, size=100)
+        t_raman = get_table("Saturn", sid_mode=_swe.SIDM_RAMAN)
+        got = t_raman.sign_at(jds)
+        want = np.array([
+            int(sidereal_lon(j, _PLANET_IDS["Saturn"], _swe.SIDM_RAMAN) // 30) + 1
+            for j in jds])
+        mism = got != want
+        for j in jds[mism]:
+            dist = np.abs(t_raman.ingress_jd - j).min()
+            assert dist <= 0.5, f"Raman-frame mismatch {dist:.2f}d from ingress"
+        # Lahiri default unchanged after Raman-mode use
+        t_lahiri = get_table("Saturn")
+        got_l = t_lahiri.sign_at(jds[:20])
+        want_l = np.array([
+            int(sidereal_lon(j, _PLANET_IDS["Saturn"]) // 30) + 1
+            for j in jds[:20]])
+        mism_l = got_l != want_l
+        for j in jds[:20][mism_l]:
+            assert np.abs(t_lahiri.ingress_jd - j).min() <= 0.5

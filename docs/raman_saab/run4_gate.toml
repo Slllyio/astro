@@ -1,0 +1,37 @@
+# RUN-4 pre-registered gate — committed BEFORE the population evaluation.
+# Any change to raman_method.py after this commit voids the run.
+
+[freeze]
+raman_method_sha256 = "459ff1dfeba8a17bd2a94524657e276069fdfd234c99ff595931654b15a4fa41"
+corpus_sha256 = "45c7cd38fb7d6737b850c33e47d52372653869bba4b57c6949791a9242d943ef"
+corpus = "data/raman_saab/death_corpus_run3.parquet"   # N = 2,091 (run-3 corpus)
+seed = 20260703
+perm_samples = 1000
+ayanamsa = "RAMAN"   # justified divergence from repo Lahiri lock; see prereg §3
+transits_in_primaries = false
+
+[primaries]
+alpha = 0.0033333   # 0.01 / 3 Bonferroni
+
+[primaries.P1_top_decile]
+description = "death potency strictly above own 90th pct of shuffled-age potencies"
+rr_min = 1.25
+direction = "enrich"
+
+[primaries.P2_mean_percentile]
+description = "mean mid-rank percentile of death potency in own null distribution"
+mean_min = 0.53
+direction = "enrich"
+
+[primaries.P3_band_kappa]
+description = "Cohen kappa, encoder band vs observed band_of_age, empirical null"
+kappa_min = 0.05
+
+[preflight]
+shuffled_pairing_abs_z_max = 3.0
+
+[verdict]
+# provisional requires >=1 primary passing threshold AND p < alpha;
+# refuted requires all three failing at N >= 1500 (power: P2 se ~= 0.0063 at
+# N=2091 so the 0.53 threshold sits ~4.8 sigma from the null mean — refutable).
+min_n_for_refuted = 1500

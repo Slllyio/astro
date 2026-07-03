@@ -290,6 +290,42 @@ per the ratchet kill criterion absent a genuinely new mechanism; the
 remaining pinned variants (P5/P7 sensitivities, BPHS Ch.43 Pindayu family,
 survival C-index) are catalogued `candidate`, not scheduled.
 
+### 7f. Run 4 — "Raman as practiced" (fidelity-gated composite, 2026-07-03)
+
+The genuinely-new-mechanism run the §7e halt allowed for: encode Raman's
+**practiced** method (not textbook marginals) from his own worked cases in
+*Notable Horoscopes*, verify the encoder against his published verdicts
+BEFORE touching the population, freeze weights, run in **his ayanamsa**.
+Prereg: `docs/raman_saab/RUN4_PREREG.md`; full write-up:
+`docs/ml_runs/raman_saab_run4_VERDICT.md`.
+
+**Fidelity gate** (`docs/raman_saab/FIDELITY_REPORT.md`): his printed
+positions reproduce his stated death dashas 4/4 (Lahiri: 2/5 — the frame
+matters); named killers in encoder top-4 for 3/4 Tier-A charts; band correct
+where he states one (Shaw). But death-window potency concentrated only
+modestly even on his own showcase charts (median 21st pctile vs 50% chance).
+**FIDELITY: PARTIAL — calibration closed after four cited rounds.**
+
+| Primary (α = 0.01/3, N = 2,091) | result | threshold | verdict |
+|---|---|---|---|
+| P1 death potency > own 90th-pct null | RR **1.0045** (p 0.47) | ≥ 1.25 | null |
+| P2 mean percentile of death potency | **0.5062** (p 0.16) | ≥ 0.53 | null |
+| P3 longevity-band κ | **0.0145** (p 0.23) | ≥ 0.05 | null |
+
+Preflight shuffled-pairing collapsed cleanly (|z| ≤ 1.2). The golden-set
+concentration did NOT generalize (population deaths sit at the 50.6th
+percentile of each person's own potency distribution — chance). Ledger:
+`raman.composite.as_practiced_v1 → refuted`.
+
+**Family verdict after run 4: HALTED, hard.** Four escalating
+operationalizations — marginals, house lords, conjunction, and a
+fidelity-verified reconstruction of the practitioner's own composite in his
+own zodiac — are all null. No further death-timing runs without BOTH a
+qualitatively new hypothesis AND a new data modality (Wayback replication
+corpus for G2, or rectified birth times). The unfalsifiable residue
+("intuition beyond the encodable") is acknowledged in the prereg, not
+litigated.
+
 ---
 
 ## 8. Prior expectation (for calibration, NOT a result)

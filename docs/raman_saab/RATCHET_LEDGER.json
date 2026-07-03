@@ -384,5 +384,42 @@
         }
       ]
     }
+  ],
+  "run4": [
+    {
+      "rule_id": "raman.composite.as_practiced_v1",
+      "family": "longevity",
+      "run_id": "2026-07-03T-run4-raman-frame-n2091",
+      "from_status": "candidate",
+      "to_status": "refuted",
+      "gate": {
+        "preflight_shuffled_pairing": true,
+        "P1_top_decile": {
+          "rr": 1.0045,
+          "threshold": 1.25,
+          "pass": false,
+          "p": 0.47455105088383837
+        },
+        "P2_mean_percentile": {
+          "mean": 0.5062,
+          "threshold": 0.53,
+          "pass": false,
+          "p": 0.16267681400185863
+        },
+        "P3_band_kappa": {
+          "kappa": 0.0145,
+          "threshold": 0.05,
+          "pass": false,
+          "p": 0.22954091816367264
+        },
+        "G2_replication": false
+      },
+      "n": 2091,
+      "fidelity_prior": "PARTIAL (docs/raman_saab/FIDELITY_REPORT.md): golden-set median death-window percentile 21% vs 50% chance; did NOT generalize (population P2 = 0.5062).",
+      "weights_sha256": "459ff1dfeba8a17bd2a94524657e276069fdfd234c99ff595931654b15a4fa41",
+      "citation": "Raman, Notable Horoscopes (archive.org NotableHoroscopesBVR) \u2014 mechanisms cited per-weight in raman_method.RAMAN_WEIGHTS",
+      "reason": "All three pre-registered primaries null at N=2,091 (>= min 1,500): RR 1.0045 (need >=1.25), mean pct 0.5062 (need >=0.53), kappa 0.0145 (need >=0.05). Refutes the encoded composite at its demonstrated fidelity level; the un-encodable intuitive residue is unfalsifiable by construction (stated in prereg, not post-hoc).",
+      "prereg": "docs/raman_saab/RUN4_PREREG.md"
+    }
   ]
 }

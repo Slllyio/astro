@@ -1,5 +1,27 @@
 # raman_saab Death-Timing — VERDICT
 
+> **Run 2 addendum (2026-07-03, timed-birth corpus):** the house-based maraka
+> rules — the part of the doctrine run 1 could not test — were validated on
+> **N = 4,586 Rodden AA/A/B timed charts** scraped from Astro-Databank via the
+> Wayback Machine (real birth times, ADB timezone offsets, real lagnas).
+> **Every rule is null:** maraka-lords (2H/7H) dasha RR = 0.99 MD / 0.96 AD;
+> 8th-lord RR = 0.99/0.96; union RR = 0.99/0.97; Saturn-as-maraka (1,625
+> eligible charts) RR = 0.94/0.95 — all under the same permutation
+> (shuffled-age) null, all far from the G1 threshold of 1.20. Natal 8H
+> longevity tests (births ≤ 1900, right-truncation-guarded): all null; the
+> weak Rahu/Venus trends seen at the N≈2,100 checkpoint regressed to nothing
+> at full N, as multiple-comparison noise does. Run 1's fixed-lord rules
+> **replicate their null** on this independent corpus (RR 0.98–1.03) —
+> completing the cross-corpus (G2) axis for the dasha-karaka refutations.
+> Ratchet: the chart rules sit at `candidate (underpowered)` because
+> N = 4,586 is just under the pre-registered 5,000 power bar; the corpus
+> scrape's tail is still appending deceased entries and the statuses flip to
+> `refuted` when N crosses 5,000. Engine audit (2026-07-02): dasha timelines
+> match the production engine to 0.0 days on 500 random charts; null
+> calibration z ~ N(0,1); planted 5% effect recovered at true size
+> (RR 1.171, p=1.5e-4) at N=1,500 — the nulls are powered, not blind.
+> Full numbers: `data/ml_runs/raman_saab/maraka_validation.json`.
+
 **Date**: 2026-07-02
 **Module**: `app/medini/ml/raman_saab/` (population_validate + ratchet)
 **Corpus**: Wikidata death corpus, N = 82,589 persons (day-precision birth +

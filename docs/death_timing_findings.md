@@ -216,12 +216,41 @@ length-and-age-controlled permutation null. **Do not cite the exposure column.**
 | birth-time sweep 18h | 0.982 | z −2.70 |
 | age-stratified 55–85 (N=55,000) | 0.960 | z −4.88; not an age artifact |
 
-### 7d. Not run (need birth times / ascendant)
-- Survival C-index vs age/duration baselines (metric #2) — needs timed charts.
-- Ayurdaya-band accuracy (§4) — needs the ascendant-dependent longevity pairs.
-- House/lord maraka rules (§3b) — 2nd/7th lords, 8th occupancy, MKS overlay.
+### 7d. Run 2 — house-based maraka rules on TIMED births (2026-07-03)
 
-These stay `candidate` (blocked on a birth-time-rated corpus), NOT refuted.
+Corpus: **N = 4,586 Rodden AA/A/B timed charts** (Astro-Databank via Wayback;
+real birth times + ADB tz offsets incl. LMT; death dates from each page's own
+Events section). Built by `app/medini/etl/adb_wayback_death_corpus.py`;
+validated by `app/medini/ml/raman_saab/maraka_validate.py`. Permutation
+(shuffled-age) null throughout. Results:
+`data/ml_runs/raman_saab/maraka_validation.json`.
+
+| rule (chart-dependent lords) | RR MD | RR AD | RR MD-or-AD | Gate G1 | status |
+|---|---:|---:|---:|---|---|
+| raman.maraka.lords_2_7 (2H+7H lords) | 0.989 | 0.960 | 0.974 | ✗ | candidate¹ |
+| raman.maraka.lord_8 | 0.987 | 0.964 | 0.982 | ✗ | candidate¹ |
+| raman.maraka.lords_2_7_8 (union) | 0.992 | 0.968 | 0.980 | ✗ | candidate¹ |
+| raman.maraka.saturn_as_maraka (n=1,625) | 0.943 | 0.947 | 0.958 | ✗ | candidate¹ |
+
+¹ `candidate (underpowered)` by the letter of the pre-registered gate
+(N = 4,586 < 5,000 power bar); every point estimate is at-or-below 1.0 vs the
+G1 threshold of ≥ 1.20, and the corpus tail is still growing — statuses move
+to `refuted` when N ≥ 5,000.
+
+**Natal 8H longevity** (births ≤ 1900, two-sided, N≈115 per placement): all
+null — Saturn +2.4y (p=0.10), Mars +0.2y, Rahu +0.3y, Ketu −0.4y, Jupiter
+−1.2y, Venus +1.3y. The Rahu/Venus p≈0.06–0.08 trends at the N≈2,100
+checkpoint regressed to null at full N (multiple-comparison noise, as
+expected). Note the Saturn direction (longer life) matches classical BPHS
+"Saturn in ayus-sthana" rather than the repo library's "longevity issues"
+phrasing ⚑ — but it is not significant.
+
+**G2 replication completed:** run 1's fixed-lord rules re-run on this
+independent corpus land at RR 0.98–1.03 (all null) — the Wikidata null
+replicates on ADB. Two corpora, one conclusion.
+
+Still not run: survival C-index vs age/duration baselines; ayurdaya-band
+accuracy (§4). These stay `candidate` (unimplemented, not refuted).
 
 ---
 

@@ -32,17 +32,23 @@ _RR_DEPLETE = 0.83
 _MIN_POWER_N = 5000  # below this, a failure is "underpowered", not "refuted"
 
 
-def _rule_by_id() -> dict:
-    return {r.rule_id: r for r in CANDIDATE_RULES}
+def _rule_by_id(rule_set=CANDIDATE_RULES) -> dict:
+    return {r.rule_id: r for r in rule_set}
 
 
-def apply_gate(result: dict) -> list[dict]:
-    """Return one ledger row per rule with its post-gate status."""
-    rules = _rule_by_id()
+def apply_gate(result: dict, *, rule_set=CANDIDATE_RULES,
+               results_key: str = "rule_results") -> list[dict]:
+    """Return one ledger row per rule with its post-gate status.
+
+    Works for both the fixed-lord CANDIDATE_RULES (results_key
+    'rule_results') and the chart-dependent MARAKA_RULES (results_key
+    'chart_rule_results' from maraka_validate).
+    """
+    rules = _rule_by_id(rule_set)
     n = result["n_persons"]
     alpha = result["bonferroni_alpha"]
     # Best permutation-null result per rule (most extreme in predicted direction).
-    perm = [r for r in result["rule_results"] if r["null"] == "permutation"]
+    perm = [r for r in result[results_key] if r["null"] == "permutation"]
     by_rule: dict[str, list] = {}
     for r in perm:
         by_rule.setdefault(r["rule_id"], []).append(r)

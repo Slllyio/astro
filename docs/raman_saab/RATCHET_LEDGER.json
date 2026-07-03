@@ -1,156 +1,287 @@
 {
-  "run_id": "2026-07-02T-wikidata-n82589",
-  "corpus": "app/medini/data/raman_saab/death_corpus.parquet",
-  "entries": [
+  "runs": [
     {
-      "rule_id": "raman.karaka.saturn_dasha",
-      "family": "longevity",
-      "direction": "enrich",
-      "from_status": "candidate",
-      "to_status": "refuted",
-      "gate": {
-        "G1": false,
-        "G2_replication": false,
-        "G3": null,
-        "G4": null
-      },
-      "best_result": {
-        "rule_id": "raman.karaka.saturn_dasha",
-        "level": "ad",
-        "direction": "enrich",
-        "null": "permutation",
-        "n": 82589,
-        "observed": 12722,
-        "expected": 12629.37,
-        "rr": 1.0073,
-        "z": 0.899,
-        "p_one_sided": 0.18430569792211876
-      },
-      "n": 82589,
-      "bonferroni_alpha": 0.0006666666666666666,
-      "citation": "Raman, How to Judge a Horoscope; EVENT_KARAKAS['death']=(Saturn,)",
-      "reason": "failed G1 at high power (N=82589); best ad RR=1.0073 (need >=1.20)",
-      "run_id": "2026-07-02T-wikidata-n82589"
+      "run_id": "2026-07-02T-wikidata-n82589",
+      "corpus": "app/medini/data/raman_saab/death_corpus.parquet",
+      "entries": [
+        {
+          "rule_id": "raman.karaka.saturn_dasha",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.karaka.saturn_dasha",
+            "level": "ad",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 82589,
+            "observed": 12722,
+            "expected": 12629.37,
+            "rr": 1.0073,
+            "z": 0.899,
+            "p_one_sided": 0.18430569792211876
+          },
+          "n": 82589,
+          "bonferroni_alpha": 0.0006666666666666666,
+          "citation": "Raman, How to Judge a Horoscope; EVENT_KARAKAS['death']=(Saturn,)",
+          "reason": "failed G1 at high power (N=82589); best ad RR=1.0073 (need >=1.20)",
+          "run_id": "2026-07-02T-wikidata-n82589"
+        },
+        {
+          "rule_id": "raman.karaka.mars_saturn_dasha",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.karaka.mars_saturn_dasha",
+            "level": "ad",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 82589,
+            "observed": 17536,
+            "expected": 17594.96,
+            "rr": 0.9966,
+            "z": -0.502,
+            "p_one_sided": 0.6922179751529438
+          },
+          "n": 82589,
+          "bonferroni_alpha": 0.0006666666666666666,
+          "citation": "EVENT_KARAKAS['death by disease']=(Saturn, Mars)",
+          "reason": "failed G1 at high power (N=82589); best ad RR=0.9966 (need >=1.20)",
+          "run_id": "2026-07-02T-wikidata-n82589"
+        },
+        {
+          "rule_id": "raman.malefic_dasha",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.malefic_dasha",
+            "level": "ad",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 82589,
+            "observed": 38971,
+            "expected": 39074.45,
+            "rr": 0.9974,
+            "z": -0.722,
+            "p_one_sided": 0.7647733969565387
+          },
+          "n": 82589,
+          "bonferroni_alpha": 0.0006666666666666666,
+          "citation": "Classical natural-malefic set (BPHS)",
+          "reason": "failed G1 at high power (N=82589); best ad RR=0.9974 (need >=1.20)",
+          "run_id": "2026-07-02T-wikidata-n82589"
+        },
+        {
+          "rule_id": "raman.benefic_dasha_protective",
+          "family": "longevity",
+          "direction": "deplete",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.benefic_dasha_protective",
+            "level": "md_or_ad",
+            "direction": "deplete",
+            "null": "permutation",
+            "n": 82589,
+            "observed": 64674,
+            "expected": 64537.81,
+            "rr": 1.0021,
+            "z": 1.157,
+            "p_one_sided": 0.8764507528528227
+          },
+          "n": 82589,
+          "bonferroni_alpha": 0.0006666666666666666,
+          "citation": "Dual of the malefic rule (benefics as protective)",
+          "reason": "failed G1 at high power (N=82589); best md_or_ad RR=1.0021 (need <=0.83)",
+          "run_id": "2026-07-02T-wikidata-n82589"
+        },
+        {
+          "rule_id": "raman.karaka.rahu_ketu_dasha",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.karaka.rahu_ketu_dasha",
+            "level": "md",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 82589,
+            "observed": 16274,
+            "expected": 16211.6,
+            "rr": 1.0038,
+            "z": 0.57,
+            "p_one_sided": 0.2842565775800938
+          },
+          "n": 82589,
+          "bonferroni_alpha": 0.0006666666666666666,
+          "citation": "Nodal dashas as sudden/unusual death (bayesian_rule_validation rahu_in_8th_unusual_death, ketu_in_8th_spiritual_end)",
+          "reason": "failed G1 at high power (N=82589); best md RR=1.0038 (need >=1.20)",
+          "run_id": "2026-07-02T-wikidata-n82589"
+        }
+      ]
     },
     {
-      "rule_id": "raman.karaka.mars_saturn_dasha",
-      "family": "longevity",
-      "direction": "enrich",
-      "from_status": "candidate",
-      "to_status": "refuted",
-      "gate": {
-        "G1": false,
-        "G2_replication": false,
-        "G3": null,
-        "G4": null
-      },
-      "best_result": {
-        "rule_id": "raman.karaka.mars_saturn_dasha",
-        "level": "ad",
-        "direction": "enrich",
-        "null": "permutation",
-        "n": 82589,
-        "observed": 17536,
-        "expected": 17594.96,
-        "rr": 0.9966,
-        "z": -0.502,
-        "p_one_sided": 0.6922179751529438
-      },
-      "n": 82589,
-      "bonferroni_alpha": 0.0006666666666666666,
-      "citation": "EVENT_KARAKAS['death by disease']=(Saturn, Mars)",
-      "reason": "failed G1 at high power (N=82589); best ad RR=0.9966 (need >=1.20)",
-      "run_id": "2026-07-02T-wikidata-n82589"
-    },
-    {
-      "rule_id": "raman.malefic_dasha",
-      "family": "longevity",
-      "direction": "enrich",
-      "from_status": "candidate",
-      "to_status": "refuted",
-      "gate": {
-        "G1": false,
-        "G2_replication": false,
-        "G3": null,
-        "G4": null
-      },
-      "best_result": {
-        "rule_id": "raman.malefic_dasha",
-        "level": "ad",
-        "direction": "enrich",
-        "null": "permutation",
-        "n": 82589,
-        "observed": 38971,
-        "expected": 39074.45,
-        "rr": 0.9974,
-        "z": -0.722,
-        "p_one_sided": 0.7647733969565387
-      },
-      "n": 82589,
-      "bonferroni_alpha": 0.0006666666666666666,
-      "citation": "Classical natural-malefic set (BPHS)",
-      "reason": "failed G1 at high power (N=82589); best ad RR=0.9974 (need >=1.20)",
-      "run_id": "2026-07-02T-wikidata-n82589"
-    },
-    {
-      "rule_id": "raman.benefic_dasha_protective",
-      "family": "longevity",
-      "direction": "deplete",
-      "from_status": "candidate",
-      "to_status": "refuted",
-      "gate": {
-        "G1": false,
-        "G2_replication": false,
-        "G3": null,
-        "G4": null
-      },
-      "best_result": {
-        "rule_id": "raman.benefic_dasha_protective",
-        "level": "md_or_ad",
-        "direction": "deplete",
-        "null": "permutation",
-        "n": 82589,
-        "observed": 64674,
-        "expected": 64537.81,
-        "rr": 1.0021,
-        "z": 1.157,
-        "p_one_sided": 0.8764507528528227
-      },
-      "n": 82589,
-      "bonferroni_alpha": 0.0006666666666666666,
-      "citation": "Dual of the malefic rule (benefics as protective)",
-      "reason": "failed G1 at high power (N=82589); best md_or_ad RR=1.0021 (need <=0.83)",
-      "run_id": "2026-07-02T-wikidata-n82589"
-    },
-    {
-      "rule_id": "raman.karaka.rahu_ketu_dasha",
-      "family": "longevity",
-      "direction": "enrich",
-      "from_status": "candidate",
-      "to_status": "refuted",
-      "gate": {
-        "G1": false,
-        "G2_replication": false,
-        "G3": null,
-        "G4": null
-      },
-      "best_result": {
-        "rule_id": "raman.karaka.rahu_ketu_dasha",
-        "level": "md",
-        "direction": "enrich",
-        "null": "permutation",
-        "n": 82589,
-        "observed": 16274,
-        "expected": 16211.6,
-        "rr": 1.0038,
-        "z": 0.57,
-        "p_one_sided": 0.2842565775800938
-      },
-      "n": 82589,
-      "bonferroni_alpha": 0.0006666666666666666,
-      "citation": "Nodal dashas as sudden/unusual death (bayesian_rule_validation rahu_in_8th_unusual_death, ketu_in_8th_spiritual_end)",
-      "reason": "failed G1 at high power (N=82589); best md RR=1.0038 (need >=1.20)",
-      "run_id": "2026-07-02T-wikidata-n82589"
+      "run_id": "2026-07-03T-adb-timed-n4586",
+      "corpus": "app/medini/data/raman_saab/adb_timed_death_corpus.parquet",
+      "corpus_kind": "ADB timed births (Rodden AA/A/B) via Wayback",
+      "entries": [
+        {
+          "rule_id": "raman.maraka.lords_2_7",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "candidate",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.maraka.lords_2_7",
+            "level": "md",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 4586,
+            "observed": 1069,
+            "expected": 1080.62,
+            "rr": 0.9892,
+            "z": -0.443,
+            "p_one_sided": 0.6710680601870955
+          },
+          "n": 4586,
+          "bonferroni_alpha": 0.0008333333333333334,
+          "citation": "Raman, How to Judge a Horoscope (maraka adhyaya); BPHS Ch.44 (2nd & 7th lords as marakas)",
+          "reason": "underpowered; inconclusive",
+          "run_id": "2026-07-03T-adb-timed-n4586"
+        },
+        {
+          "rule_id": "raman.maraka.lord_8",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "candidate",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.maraka.lord_8",
+            "level": "md",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 4586,
+            "observed": 573,
+            "expected": 580.65,
+            "rr": 0.9868,
+            "z": -0.373,
+            "p_one_sided": 0.6455615450604358
+          },
+          "n": 4586,
+          "bonferroni_alpha": 0.0008333333333333334,
+          "citation": "8th lord as ayus lord; its dasha as a mortality window",
+          "reason": "underpowered; inconclusive",
+          "run_id": "2026-07-03T-adb-timed-n4586"
+        },
+        {
+          "rule_id": "raman.maraka.lords_2_7_8",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "candidate",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.maraka.lords_2_7_8",
+            "level": "md",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 4586,
+            "observed": 1561,
+            "expected": 1573.84,
+            "rr": 0.9918,
+            "z": -0.439,
+            "p_one_sided": 0.6695167905840002
+          },
+          "n": 4586,
+          "bonferroni_alpha": 0.0008333333333333334,
+          "citation": "Union of maraka lords and 8th lord",
+          "reason": "underpowered; inconclusive",
+          "run_id": "2026-07-03T-adb-timed-n4586"
+        },
+        {
+          "rule_id": "raman.maraka.saturn_as_maraka",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "candidate",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "G3": null,
+            "G4": null
+          },
+          "best_result": {
+            "rule_id": "raman.maraka.saturn_as_maraka",
+            "level": "md_or_ad",
+            "direction": "enrich",
+            "null": "permutation",
+            "n": 1625,
+            "observed": 477,
+            "expected": 498.06,
+            "rr": 0.9577,
+            "z": -1.164,
+            "p_one_sided": 0.8778092008262443
+          },
+          "n": 4586,
+          "bonferroni_alpha": 0.0008333333333333334,
+          "citation": "Raman/classical: 'Saturn as a maraka lord kills without compunction' \u2014 Saturn's dasha in charts where Saturn rules 2H or 7H",
+          "reason": "underpowered; inconclusive",
+          "run_id": "2026-07-03T-adb-timed-n4586"
+        }
+      ]
     }
   ]
 }

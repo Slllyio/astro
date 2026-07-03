@@ -282,6 +282,107 @@
           "run_id": "2026-07-03T-adb-timed-n4586"
         }
       ]
+    },
+    {
+      "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091",
+      "entries": [
+        {
+          "rule_id": "raman.triple_lock.leg1_maraka",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "power_at_threshold": 1.0
+          },
+          "best_result": {
+            "rr": 0.9779,
+            "z": -0.881,
+            "p_one_sided": 0.8107681571525058,
+            "observed": 826,
+            "expected": 844.71
+          },
+          "n": 2091,
+          "alpha": 0.0025,
+          "rr_threshold": 1.2,
+          "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=0.9779",
+          "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+        },
+        {
+          "rule_id": "raman.triple_lock.leg2_gochara",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "power_at_threshold": 1.0
+          },
+          "best_result": {
+            "rr": 1.0198,
+            "z": 0.717,
+            "p_one_sided": 0.2367495434005052,
+            "observed": 800,
+            "expected": 784.45
+          },
+          "n": 2091,
+          "alpha": 0.0025,
+          "rr_threshold": 1.2,
+          "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=1.0198",
+          "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+        },
+        {
+          "rule_id": "raman.triple_lock.leg3_ayurdaya",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "power_at_threshold": 1.0
+          },
+          "best_result": {
+            "rr": 1.0326,
+            "z": 1.201,
+            "p_one_sided": 0.11492471861891312,
+            "observed": 706,
+            "expected": 683.7
+          },
+          "n": 2091,
+          "alpha": 0.0025,
+          "rr_threshold": 1.2,
+          "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=1.0326",
+          "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+        },
+        {
+          "rule_id": "raman.triple_lock.triple_lock",
+          "family": "longevity",
+          "direction": "enrich",
+          "from_status": "candidate",
+          "to_status": "refuted",
+          "gate": {
+            "G1": false,
+            "G2_replication": false,
+            "power_at_threshold": 0.9951
+          },
+          "best_result": {
+            "rr": 0.9915,
+            "z": -0.091,
+            "p_one_sided": 0.5363424063079791,
+            "observed": 102,
+            "expected": 102.87
+          },
+          "n": 2091,
+          "alpha": 0.0025,
+          "rr_threshold": 1.5,
+          "reason": "failed G1 at adequate power (power=0.995 >= 0.9 for RR>=1.5); observed RR=0.9915",
+          "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+        }
+      ]
     }
   ]
 }

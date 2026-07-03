@@ -251,6 +251,44 @@ replicates on ADB. Two corpora, one conclusion.
 
 Still not run: survival C-index vs age/duration baselines; ayurdaya-band
 accuracy (§4). These stay `candidate` (unimplemented, not refuted).
+**Update (run 3):** ayurdaya-band accuracy is now tested — see §7e (null,
+κ = 0.016). The survival C-index remains untested.
+
+### 7e. Run 3 — the Triple Lock (conjunctional claim, 2026-07-03)
+
+**Pre-registered** (`docs/raman_saab/RUN3_PREREG.md`, committed before the
+evaluation; pins P1–P12, T1–T4, thresholds, seeds, hashes). Corpus:
+**N = 2,091** Rodden AA/A timed births with full-date own-deaths
+(ASTROCRM/ADB; `build_run3_corpus.py`). Full write-up:
+`docs/ml_runs/raman_saab_triple_lock_VERDICT.md`. Result JSON:
+`data/ml_runs/raman_saab/run3/triple_lock_validation.json`.
+
+This is the test of the doctrine's *conjunctional* form — the standing defense
+of the marginal nulls ("the factors must concur") — plus the two never-tested
+legs (gochara triggers; ayurdaya bands via the three-pairs method with true
+sunrise-anchored Hora Lagna).
+
+| test (permutation null) | RR | z | p | threshold | power | status |
+|---|---:|---:|---:|---|---:|---|
+| leg1 maraka dasha (md_or_ad) | 0.978 | −0.88 | 0.81 | ≥1.20 | 1.000 | **refuted** |
+| leg2 gochara (SadeSati\|Sat-8H\|DoubleTransit-8H) | 1.020 | +0.72 | 0.24 | ≥1.20 | 1.000 | **refuted** |
+| leg3 ayurdaya band match | 1.033 | +1.20 | 0.12 | ≥1.20 | 1.000 | **refuted** |
+| **Triple Lock (1∧2∧3)** | **0.992** | **−0.09** | **0.54** | ≥1.50 | 0.995 | **refuted** |
+
+Observed 442 joint-lock deaths vs 445.8 expected — chance to the third
+decimal. Ayurdaya confusion: accuracy 33.8% vs 33.3% chance, **Cohen's
+κ = 0.016** (the three-pairs method mis-bands its own author: it votes ALPAYU
+for B. V. Raman, who died at 86). Robustness: ±15-min birth-time jitter flips
+13–14% of ascendants/bands yet joint RR stays 0.95–0.96; fixed-hour sweep
+0.93–1.05; Rodden strata 0.96–1.00. Preflight shuffled-pairing collapse
+passed (all primary |z| ≤ 3).
+
+**Family verdict after runs 1–3:** house-independent marginals (N=82,589),
+house-based marginals (N=4,586), and the conjunction (N=2,091) are all null
+across three independently assembled corpora. The longevity family **halts**
+per the ratchet kill criterion absent a genuinely new mechanism; the
+remaining pinned variants (P5/P7 sensitivities, BPHS Ch.43 Pindayu family,
+survival C-index) are catalogued `candidate`, not scheduled.
 
 ---
 

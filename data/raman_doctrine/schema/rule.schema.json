@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raman_doctrine/rule.schema.json",
+  "title": "Raman Doctrine Compendium rule record",
+  "$comment": "One JSONL line per rule. Records are immutable; corrections mint a new id with an _rN suffix. The 18-value domain taxonomy aligns to the medini event taxonomy for future validation joins: death->longevity, marriage/relationship->marriage, work/career->career, fame/publish->fame, prize->gains, family->family.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "book", "archive_item", "page", "quote", "quote_sha256",
+    "quote_verified", "domain", "rule_type", "antecedent", "consequent",
+    "inputs_required", "computability", "provenance"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^raman\\.[a-z0-9_]+\\.[a-z0-9_]+\\.[a-z0-9_]+(_r[0-9]+)?$",
+      "$comment": "raman.<book>.<chapter>.<slug>[_rN]"
+    },
+    "book": {
+      "enum": [
+        "hpa", "htjah_vol1", "htjah_vol2", "three_hundred",
+        "notable_horoscopes", "jaimini_studies", "graha_bhava_balas",
+        "muhurtha", "prasna_marga_1", "prasna_marga_2",
+        "manual_hindu_astrology"
+      ]
+    },
+    "archive_item": { "type": "string", "minLength": 3 },
+    "page": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "$comment": "Printed page, assigned mechanically from the page map; null when the folio chain has no anchor before the quote."
+    },
+    "quote": {
+      "type": "string",
+      "minLength": 20,
+      "$comment": "Verbatim from the OCR dump (fair-use excerpt). Never paraphrased; OCR artifacts are preserved."
+    },
+    "quote_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "quote_verified": {
+      "type": "boolean",
+      "$comment": "True only when verify_quotes found the quote in the pinned source text. Records with false are quarantined, never evaluated."
+    },
+    "domain": { "$ref": "#/$defs/domain" },
+    "secondary_domains": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/domain" },
+      "uniqueItems": true
+    },
+    "rule_type": {
+      "enum": [
+        "yoga", "bhava_judgment", "graha_effect", "functional_role",
+        "dasha_timing", "transit", "strength", "cancellation",
+        "electional", "prasna", "definition", "method"
+      ]
+    },
+    "antecedent": {
+      "$comment": "DSL predicate tree (object), an escape-hatch reference (impl:python:<id>), or null for manual/unfalsifiable rules.",
+      "oneOf": [
+        { "type": "object" },
+        { "type": "string", "pattern": "^impl:python:[a-z0-9_.]+$" },
+        { "type": "null" }
+      ]
+    },
+    "consequent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["polarity", "text"],
+      "properties": {
+        "polarity": { "enum": ["favorable", "unfavorable", "mixed", "neutral"] },
+        "magnitude": { "enum": ["slight", "moderate", "strong", null] },
+        "timing": {
+          "$comment": "Structured activation spec, decoupled from the structural verdict. Static chart summaries ignore it; timeline traversals gate on it.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode"],
+              "properties": {
+                "mode": { "enum": ["dasha", "bhukti", "transit", "age_band", "election"] },
+                "of": { "type": "string" },
+                "detail": { "type": "string" }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "text": { "type": "string", "minLength": 3 },
+        "payload": {
+          "type": "object",
+          "$comment": "Machine-usable content for definition/functional_role rules (e.g. per-lagna benefic/malefic/yogakaraka sets)."
+        }
+      }
+    },
+    "inputs_required": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "computability": { "enum": ["full", "partial", "manual", "unfalsifiable"] },
+    "ambiguity_notes": { "type": ["string", "null"] },
+    "conflicts_with": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "$comment": "Provenance pointer only — never an execution mechanism."
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["sweep_id", "extractor"],
+      "properties": {
+        "sweep_id": { "type": "string" },
+        "extractor": { "type": "string" },
+        "chapter": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "domain": {
+      "enum": [
+        "general", "longevity", "health_body", "mind_character", "wealth",
+        "family", "siblings", "education", "property", "children",
+        "enemies_obstacles", "marriage", "inheritance_occult",
+        "fortune_father", "career", "fame", "gains", "losses_moksha"
+      ]
+    }
+  }
+}

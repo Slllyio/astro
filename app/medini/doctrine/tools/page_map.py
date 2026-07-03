@@ -57,9 +57,20 @@ class PageMap:
             return 0.0
         return len(self.anchors) / self.candidates_seen
 
-    def page_for_offset(self, offset: int) -> int | None:
-        """Printed page containing ``offset`` (None before the first anchor)."""
+    def page_for_offset(self, offset: int, *, folio_at: str = "top") -> int | None:
+        """Printed page containing ``offset``.
+
+        ``folio_at="top"``: a folio line opens its page (running heads),
+        so the page is the last anchor at or before the offset — None
+        before the first anchor. ``folio_at="bottom"``: a folio line
+        closes its page (standalone page numbers at the foot, the usual
+        style in these prints), so the page is the first anchor at or
+        after the offset — None after the last anchor.
+        """
         keys = [a.offset for a in self.anchors]
+        if folio_at == "bottom":
+            i = bisect.bisect_left(keys, offset)
+            return self.anchors[i].page if i < len(self.anchors) else None
         i = bisect.bisect_right(keys, offset) - 1
         return self.anchors[i].page if i >= 0 else None
 

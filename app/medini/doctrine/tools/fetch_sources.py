@@ -64,6 +64,10 @@ class SourceSpec:
     markers: tuple[str, ...]  # phrases a correct scan must contain (casefolded match)
     min_pages: int      # plausibility floor for the page map's max page
     folio_patterns: tuple[str, ...] = (STANDALONE_FOLIO,)
+    # Where the print carries its page number: standalone folios sit at the
+    # page FOOT ("bottom"), running heads at the page HEAD ("top"). Decides
+    # prev-vs-next anchor when resolving an offset to a page.
+    folio_at: str = "bottom"
 
 
 MANIFEST: tuple[SourceSpec, ...] = (
@@ -85,6 +89,7 @@ MANIFEST: tuple[SourceSpec, ...] = (
         markers=("how to judge a horoscope", "first house"),
         min_pages=150,
         folio_patterns=_HTJAH_FOLIOS,
+        folio_at="top",
     ),
     SourceSpec(
         key="htjah_vol2",
@@ -94,6 +99,7 @@ MANIFEST: tuple[SourceSpec, ...] = (
         markers=("how to judge a horoscope", "seventh house"),
         min_pages=150,
         folio_patterns=_HTJAH_FOLIOS,
+        folio_at="top",
     ),
     SourceSpec(
         key="three_hundred",
@@ -134,6 +140,7 @@ MANIFEST: tuple[SourceSpec, ...] = (
             r"^(\d{1,3})\s+GRAHA AND BHAVA",
             r"GRAHA AND BHAVA BALAS\s+(\d{1,3})\s*$",
         ),
+        folio_at="top",
     ),
     SourceSpec(
         key="muhurtha",
@@ -172,6 +179,7 @@ MANIFEST: tuple[SourceSpec, ...] = (
         markers=("hindu astrology", "bhava"),
         min_pages=80,
         folio_patterns=(STANDALONE_FOLIO, r"^(\d{1,3})\s+A MANUAL OF"),
+        folio_at="top",
     ),
 )
 

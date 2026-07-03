@@ -41,3 +41,5 @@ httpx
 lifelines>=0.27,<0.30
 torch>=2.0,<3.0
 scikit-survival>=0.22,<0.25
+# Raman doctrine compendium schema validation (app/medini/doctrine/compendium.py)
+jsonschema>=4.18,<5

@@ -35,6 +35,12 @@ _PLANET_IDS: Final[Mapping[str, int]] = {
     "Saturn": swe.SATURN,
     "Jupiter": swe.JUPITER,
     "Rahu": swe.TRUE_NODE,
+    # Run 4: Mars, for the Mars-Saturn hard-contact transit trigger. Mars is
+    # the fastest body here (~45 d/sign); the 10-day grid + bisection still
+    # brackets every ingress except a station exactly at a sign boundary
+    # (double-cross inside one grid cell) — rare enough for a confirmatory
+    # multiplier, and pinned by the property test against direct ephemeris.
+    "Mars": swe.MARS,
 }
 
 _LAHIRI_SET = False

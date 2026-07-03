@@ -35,7 +35,7 @@ class TestTransitTable:
         jd0 = swe.julday(1851, 1, 1, 0.0, swe.GREG_CAL)
         jd1 = swe.julday(2034, 1, 1, 0.0, swe.GREG_CAL)
         jds = rng.uniform(jd0, jd1, size=300)
-        for planet in ("Saturn", "Jupiter"):
+        for planet in ("Saturn", "Jupiter", "Mars"):
             table = get_table(planet)
             got = table.sign_at(jds)
             want = np.array([int(sidereal_lon(j, _PLANET_IDS[planet]) // 30) + 1
@@ -52,6 +52,8 @@ class TestTransitTable:
         # Jupiter ~11.9y/cycle -> >=185.
         assert len(get_table("Saturn").ingress_jd) >= 75
         assert len(get_table("Jupiter").ingress_jd) >= 185
+        # Mars ~1.88y/cycle -> >=1100 ingresses incl. retro re-entries.
+        assert len(get_table("Mars").ingress_jd) >= 1100
 
 
 # ── gochara_death ────────────────────────────────────────────────────────────

@@ -117,11 +117,14 @@ def build_corpus(
            + m["birth_sec"].fillna(0).astype(float) / 3600.0)
     tz = m["utc_dst_corrected"].where(m["utc_dst_corrected"].notna(),
                                       m["utc_offset"])
+    tob_str = (m["birth_hour"].astype(int).map("{:02d}".format) + ":"
+               + m["birth_min"].astype(int).map("{:02d}".format))
     out = pd.DataFrame({
         "person_id": "ADB:" + m["name_norm"].str.replace(r"[^a-z0-9]+", "_",
                                                          regex=True),
         "name": m["name"],
         "dob": dob.dt.strftime("%Y-%m-%d"),
+        "tob": tob_str,          # "HH:MM" — the schema maraka_validate expects
         "tob_hours": tob,
         "lat": m["latitude"].astype(float),
         "lon": m["longitude"].astype(float),

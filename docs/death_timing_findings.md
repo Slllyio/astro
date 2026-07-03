@@ -326,6 +326,49 @@ corpus for G2, or rectified birth times). The unfalsifiable residue
 ("intuition beyond the encodable") is acknowledged in the prereg, not
 litigated.
 
+### 7g. Run 5 — audit-corrected encoder, held-out fidelity design (2026-07-03)
+
+A three-agent audit of run 4's encoder found defects that made it an unfair
+test of its own hypothesis (degenerate band veto, navamsa conjunctions in
+radix houses, dead combustion/Shadbala wiring, band edges HPA explicitly
+rejects), and the full *Notable Horoscopes* sweep supplied a new data
+modality: 48 OCR-validated golden cases with Raman's printed positions
+(run 4 had 6). Both re-run conditions of the §7f halt met; owner-directed.
+Prereg: `docs/raman_saab/RUN5_PREREG.md`; full write-up:
+`docs/ml_runs/raman_saab_run5_VERDICT.md`.
+
+**Held-out fidelity gate** (the design element run 4 lacked): weights
+calibrated on a seeded half of the casebook only (median death-window
+percentile 0.184 → 0.090), sha-frozen, then the unseen half scored ONCE:
+**HG1 median 0.123 — PASS** (16/24 unseen charts below the 20th
+percentile). The encoder verifiably reproduces Raman out of book-sample.
+Transit terms excluded by the pre-registered calibration rule (−0.006 gain).
+
+| Primary (α = 0.01/3, N = 2,091) | result | threshold | verdict |
+|---|---|---|---|
+| P1 death potency > own 90th-pct null | RR **0.9675** (p 0.68) | ≥ 1.25 | null |
+| P2 mean percentile of death potency | **0.4950** (p 0.78) | ≥ 0.53 | null |
+| P3 longevity-band κ (v2 bands, non-degenerate) | **−0.0234** (p 0.96) | ≥ 0.05 | null |
+
+Preflight collapsed cleanly (|z| ≤ 1.1). Ledger:
+`raman.composite.as_practiced_v2 → refuted`.
+
+**The dissociation is the finding**: an encoder that passes an honest
+out-of-sample fidelity test on the practitioner's own casebook (12th
+percentile median on unseen charts) lands at exactly chance (49.5th
+percentile) on 2,091 independently-timed real deaths. The coherence is a
+property of the literature, not of the population. Run 4's most charitable
+escape hatch — "the fidelity signal was overfitting to six charts" — is
+closed; the signal survives a held-out half of the book and vanishes only
+when the charts stop coming from the book.
+
+**Family verdict after run 5: re-HALTED.** Five operationalizations, the
+last carrying an out-of-sample fidelity certificate — all null. Remaining
+outs: the Wayback/ADB replication corpus (one pre-declared read-out with
+the frozen pipeline if it yields ≥ 1,000 timed persons) and the
+unfalsifiable intuition residue, which shrinks with every mechanism
+encoded and is acknowledged, not litigated.
+
 ---
 
 ## 8. Prior expectation (for calibration, NOT a result)

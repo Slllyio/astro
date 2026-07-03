@@ -1,0 +1,89 @@
+{
+  "corpus": "data/raman_saab/death_corpus_run3.parquet",
+  "n_rows": 2091,
+  "n_persons": 2091,
+  "perm_samples": 1000,
+  "seed": 20260705,
+  "smoke": false,
+  "ayanamsa": "RAMAN (converted from Lahiri cast by exact per-JD delta)",
+  "transits_in_primaries": false,
+  "preflight_shuffled_pairing": {
+    "n": 2091,
+    "P1_top_decile": {
+      "observed": 168.0,
+      "expected": 181.92,
+      "rr": 0.9235,
+      "z": -1.081,
+      "p_one_sided": 0.8601953487303036
+    },
+    "P2_mean_percentile": {
+      "mean_percentile": 0.4988,
+      "se": 0.00631,
+      "z": -0.196,
+      "p_one_sided": 0.5776299390343621
+    },
+    "P3_band_kappa": {
+      "kappa": -0.0025,
+      "kappa_null_mean": -0.0005,
+      "kappa_null_sd": 0.01534,
+      "p_one_sided": 0.5588822355289421,
+      "band_confusion": {
+        "pred_ALPAYU": {
+          "obs_ALPAYU": 23,
+          "obs_MADHYAYU": 249,
+          "obs_PURNAYU": 301
+        },
+        "pred_MADHYAYU": {
+          "obs_ALPAYU": 39,
+          "obs_MADHYAYU": 326,
+          "obs_PURNAYU": 389
+        },
+        "pred_PURNAYU": {
+          "obs_ALPAYU": 29,
+          "obs_MADHYAYU": 336,
+          "obs_PURNAYU": 399
+        }
+      }
+    },
+    "pass": true
+  },
+  "primaries": {
+    "n": 2091,
+    "P1_top_decile": {
+      "observed": 176.0,
+      "expected": 181.92,
+      "rr": 0.9675,
+      "z": -0.46,
+      "p_one_sided": 0.6770969990820295
+    },
+    "P2_mean_percentile": {
+      "mean_percentile": 0.495,
+      "se": 0.00631,
+      "z": -0.787,
+      "p_one_sided": 0.7843071849472785
+    },
+    "P3_band_kappa": {
+      "kappa": -0.0234,
+      "kappa_null_mean": 0.001,
+      "kappa_null_sd": 0.01466,
+      "p_one_sided": 0.9560878243512974,
+      "band_confusion": {
+        "pred_ALPAYU": {
+          "obs_ALPAYU": 16,
+          "obs_MADHYAYU": 258,
+          "obs_PURNAYU": 299
+        },
+        "pred_MADHYAYU": {
+          "obs_ALPAYU": 32,
+          "obs_MADHYAYU": 318,
+          "obs_PURNAYU": 404
+        },
+        "pred_PURNAYU": {
+          "obs_ALPAYU": 43,
+          "obs_MADHYAYU": 335,
+          "obs_PURNAYU": 386
+        }
+      }
+    }
+  }
+}

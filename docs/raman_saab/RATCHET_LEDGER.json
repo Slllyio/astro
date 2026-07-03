@@ -421,5 +421,45 @@
       "reason": "All three pre-registered primaries null at N=2,091 (>= min 1,500): RR 1.0045 (need >=1.25), mean pct 0.5062 (need >=0.53), kappa 0.0145 (need >=0.05). Refutes the encoded composite at its demonstrated fidelity level; the un-encodable intuitive residue is unfalsifiable by construction (stated in prereg, not post-hoc).",
       "prereg": "docs/raman_saab/RUN4_PREREG.md"
     }
+  ],
+  "run5": [
+    {
+      "rule_id": "raman.composite.as_practiced_v2",
+      "family": "longevity",
+      "run_id": "2026-07-03T-run5-heldout-gated-n2091",
+      "from_status": "candidate",
+      "to_status": "refuted",
+      "gate": {
+        "heldout_HG1_median": 0.123,
+        "heldout_HG1_pass": true,
+        "heldout_HG2_frac_below_50": 0.625,
+        "heldout_HG2_pass": false,
+        "heldout_HG3_killer_rate": 0.62,
+        "preflight_shuffled_pairing": true,
+        "P1_top_decile": {
+          "rr": 0.9675,
+          "threshold": 1.25,
+          "pass": false,
+          "p": 0.6770969990820295
+        },
+        "P2_mean_percentile": {
+          "mean": 0.495,
+          "threshold": 0.53,
+          "pass": false,
+          "p": 0.7843071849472785
+        },
+        "P3_band_kappa": {
+          "kappa": -0.0234,
+          "threshold": 0.05,
+          "pass": false,
+          "p": 0.9560878243512974
+        },
+        "G2_replication": false
+      },
+      "n": 2091,
+      "prereg": "docs/raman_saab/RUN5_PREREG.md",
+      "weights_sha256": "c4faf677b193f70ddac57f22937b64337ed7434a9ba4a697689fe8088445616d",
+      "reason": "All three primaries null at N=2,091 despite the encoder PASSING the held-out fidelity gate on Raman's own unseen charts (median death-window percentile 0.123 in-book vs 0.495 = chance on real timed deaths). The audit-corrected, treatise-complete, held-out-validated composite does not transfer beyond the casebook: the coherence is a property of the literature, not of the population."
+    }
   ]
 }

@@ -92,6 +92,73 @@ def _varga_signs_for_vimsopaka(d1: dict, divisional: dict) -> dict[str, dict[str
     return per_planet
 
 
+def bundle_from_positions(
+    planet_lons: Mapping[str, float], lagna_lon: float, *,
+    birth_jd: float, person_id: str = "",
+) -> ChartBundle:
+    """Build a bundle directly from sidereal longitudes — no ephemeris.
+
+    Used by the fidelity gate: golden charts are constructed from B. V.
+    Raman's own PRINTED planetary positions (his ayanamsa, his data), so the
+    encoder is tested in exactly the frame he reasoned in, with zero
+    ephemeris/ayanamsa noise. All derived quantities (signs, whole-sign
+    houses, vargas, nakshatra dispositors, combustion, Vimsopaka strength)
+    are pure functions of the longitudes.
+    """
+    from app.core.nakshatra import nakshatra_for_longitude
+    from app.core.planet_state import is_combust
+
+    lagna_sign = int(lagna_lon % 360.0 // 30) + 1
+    planet_lons = {g: float(planet_lons[g]) % 360.0 for g in GRAHAS}
+    planet_signs = {g: int(v // 30) + 1 for g, v in planet_lons.items()}
+    planet_house = {g: ((planet_signs[g] - lagna_sign) % 12) + 1
+                    for g in GRAHAS}
+    kundali = Kundali(
+        lagna_sign=lagna_sign, moon_longitude=planet_lons["Moon"],
+        birth_jd=birth_jd, planet_house=planet_house,
+        maraka_lords=frozenset({SIGN_RULER[_nth_sign(lagna_sign, 2)],
+                                SIGN_RULER[_nth_sign(lagna_sign, 7)]}),
+        lord_8=SIGN_RULER[_nth_sign(lagna_sign, 8)],
+        lord_2=SIGN_RULER[_nth_sign(lagna_sign, 2)],
+        lord_7=SIGN_RULER[_nth_sign(lagna_sign, 7)],
+    )
+    chart = Chart(asc_sign=lagna_sign, asc_lon=lagna_lon,
+                  planet_signs=planet_signs, planet_houses=planet_house,
+                  planet_lons=planet_lons, person_id=person_id or None)
+    d1 = {g: {"longitude": planet_lons[g], "sign": planet_signs[g],
+              "is_retrograde": False} for g in GRAHAS}
+    divisional = compute_divisional_charts(d1)
+    varga_signs = _varga_signs_for_vimsopaka(d1, divisional)
+    vim = vimsopaka_for_chart(chart, varga_signs, scheme="shodashavargaja")
+    strength = {p: vim[p].composite_rupas / 20.0 for p in VISIBLE if p in vim}
+    for node in ("Rahu", "Ketu"):
+        strength[node] = strength.get(SIGN_RULER[planet_signs[node]], 0.5)
+    shad = compute_shadbala(chart)
+    shadbala_ratio = {
+        p: shad.per_planet[p].total_virupa / shad.per_planet[p].threshold_virupa
+        for p in VISIBLE if p in shad.per_planet
+    }
+    navamsa_sign = {
+        g: int(compute_divisional_longitude(planet_lons[g], 9) % 360.0 // 30) + 1
+        for g in GRAHAS
+    }
+    nav_lagna = int(compute_divisional_longitude(lagna_lon, 9) % 360.0 // 30) + 1
+    nakshatra_lord = {g: str(nakshatra_for_longitude(planet_lons[g])["lord"])
+                      for g in GRAHAS}
+    sun_lon = planet_lons["Sun"]
+    combust = {g: (is_combust(g, planet_lons[g], sun_lon)
+                   if g not in ("Sun", "Rahu", "Ketu") else False)
+               for g in GRAHAS}
+    return ChartBundle(
+        person_id=person_id, kundali=kundali, chart=chart,
+        strength=strength, shadbala_ratio=shadbala_ratio,
+        navamsa_sign=navamsa_sign, navamsa_lagna=nav_lagna,
+        nakshatra_lord=nakshatra_lord, combust=combust,
+        moon_waxing=((planet_lons["Moon"] - sun_lon) % 360.0) < 180.0,
+        lagna_lord=SIGN_RULER[lagna_sign],
+    )
+
+
 def build_bundle(
     year: int, month: int, day: int, hour: int, minute: int,
     tz_offset: float, lat: float, lon: float, *, person_id: str = "",

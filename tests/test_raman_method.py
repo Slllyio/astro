@@ -141,13 +141,21 @@ class TestLongevity:
         afflicted = mk_bundle({"Saturn": 8, "Mars": 8})
         assert longevity_score(afflicted).score < longevity_score(clean).score
 
-    def test_balarishta_forces_alpayu(self):
+    def test_balarishta_flags_but_does_not_set_band(self):
         # Moon in 8H conjunct Saturn, weak lagna lord, waning weak Moon,
-        # Jupiter not in kendra -> balarishta, no cancellation.
+        # Jupiter not in kendra -> balarishta flag, no cancellation. The flag
+        # is a CHILDHOOD-mortality indication; the band still comes from the
+        # score (round-2 fidelity: the old band override called Einstein,
+        # dead at 76, ALPAYU).
         b = mk_bundle({"Moon": 8, "Saturn": 8, "Jupiter": 3},
                       strength={"Mars": 0.2, "Moon": 0.2}, moon_waxing=False)
         lng = longevity_score(b)
-        assert lng.balarishta and lng.band == AyuBand.ALPAYU
+        assert lng.balarishta
+        # band derives from the score thresholds, not the flag
+        exp = (AyuBand.ALPAYU if lng.score < RAMAN_WEIGHTS["lng.madhyayu_min"]
+               else AyuBand.PURNAYU if lng.score >= RAMAN_WEIGHTS["lng.purnayu_min"]
+               else AyuBand.MADHYAYU)
+        assert lng.band == exp
 
     def test_balarishta_cancelled_by_kendra_jupiter(self):
         b = mk_bundle({"Moon": 8, "Saturn": 8, "Jupiter": 4},
@@ -180,15 +188,21 @@ class TestPotency:
         f_weak = PotencyModel.from_bundle(weak).lord_factor[LORD_IDX["Venus"]]
         assert f_weak > f_strong  # weak maraka kills more readily
 
-    def test_nakshatra_dispositor_multiplier(self):
-        # Venus is the radix maraka lord for Aries lagna; give Rahu a Venus
-        # nakshatra dispositor (the Tilak mechanism).
+    def test_nakshatra_dispositor_transfer(self):
+        # The Tilak mechanism: a dasha lord INHERITS its nakshatra
+        # dispositor's maraka power. Venus is the radix maraka lord for Aries
+        # lagna; Rahu in Venus's star must carry transfer × Venus's score.
+        from app.medini.ml.raman_saab.raman_method import maraka_scores
         with_nak = mk_bundle({}, nakshatra_lord={"Rahu": "Venus"})
         without = mk_bundle({})
-        f_with = PotencyModel.from_bundle(with_nak).lord_factor[LORD_IDX["Rahu"]]
-        f_without = PotencyModel.from_bundle(without).lord_factor[LORD_IDX["Rahu"]]
-        assert f_with / f_without == pytest.approx(
-            1.0 + RAMAN_WEIGHTS["fp.nakshatra_maraka"])
+        mk = maraka_scores(with_nak)
+        pm_with = PotencyModel.from_bundle(with_nak)
+        pm_without = PotencyModel.from_bundle(without)
+        got = pm_with.maraka[LORD_IDX["Rahu"]]
+        want = max(mk["Rahu"],
+                   RAMAN_WEIGHTS["fp.nakshatra_transfer"] * mk["Venus"])
+        assert got == pytest.approx(want)
+        assert got > pm_without.maraka[LORD_IDX["Rahu"]]
 
     def test_transit_multipliers(self):
         b = mk_bundle({})

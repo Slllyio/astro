@@ -40,6 +40,14 @@
    "rule_count": 12,
    "sweep_id": "p4_t1",
    "notes": "source scan missing printed pp.68-87 and 94-95: yogas 50-63 and 68 have no Definition text in any archive.org scan"
+  },
+  {
+   "label": "y133-y162",
+   "title": "Bahudravyarjana .. Jada (end of scan)",
+   "status": "swept",
+   "rule_count": 30,
+   "sweep_id": "p4_t1",
+   "notes": null
   }
  ]
 }

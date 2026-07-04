@@ -4,7 +4,7 @@ Per-chapter extraction status, written by the sweep tooling —
 never edited by hand. `pending` chapters are un-swept; a book is
 complete only when nothing is pending and every skip has a reason.
 
-## hpa — 0/35 chapters swept
+## hpa — 1/35 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -21,7 +21,7 @@ complete only when nothing is pending and every skip has a reason.
 | XII | On Birth Verification and Rectification | pending | 0 |  |  |
 | XIII | Dasas and Bhukthies | pending | 0 |  |  |
 | XIV | Ayurdaya or Longevity | pending | 0 |  |  |
-| XV | Marakas or Death-Inflicting Planets | pending | 0 |  |  |
+| XV | Marakas or Death-Inflicting Planets | swept | 17 | p4_t1 |  |
 | XVI | Judgment of a Horoscope | pending | 0 |  |  |
 | XVII | Key-Planets for Each Sign | partial | 12 | p1_seed | key-planet roles extracted; full sweep in P4 |
 | XVIII | Results of Ascending Signs | pending | 0 |  |  |

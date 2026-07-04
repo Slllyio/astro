@@ -188,9 +188,9 @@
   {
    "label": "XXV",
    "title": "Source and Nature of Death",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 71,
+   "sweep_id": "p4_t1",
    "notes": null
   },
   {

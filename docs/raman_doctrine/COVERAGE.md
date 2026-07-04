@@ -44,7 +44,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
 
-## three_hundred — 4/4 chapters swept
+## three_hundred — 4/5 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -52,4 +52,5 @@ complete only when nothing is pending and every skip has a reason.
 | y021-y044 | Sasa .. Malika family | swept | 24 | p4_t1 |  |
 | y001-y020 | Gajakesari .. Malavya | swept | 20 | p4_t1 |  |
 | y021-y044 | Sasa .. Malika family | swept | 24 | p4_t1 |  |
+| y045-y071 | Sankha .. Thrilochana | partial | 12 | p4_t1 | source scan missing printed pp.68-87 and 94-95: yogas 50-63 and 68 have no Definition text in any archive.org scan |
 

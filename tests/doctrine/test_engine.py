@@ -238,12 +238,21 @@ class TestEvaluateRule:
 
 
 class TestSeedEndToEnd:
-    def test_committed_seed_compiles_and_evaluates(self, ctx):
+    def test_committed_compendium_compiles_and_seed_evaluates(self, ctx):
         rules = load_book(Path("data/raman_doctrine/compendium/hpa.jsonl"))
+        # every committed hpa record must compile (unknown ops fail here)
         for rule in rules:
             compile_rule(rule)
-        outs = evaluate_rules(rules, ctx)
-        fired = [o.rule_id for o in outs if o.fired]
-        # Virgo lagna chart: exactly the virgo key-planet rule fires
-        assert fired == ["raman.hpa.xvii.virgo_key_planets"]
+        # the Ch. XVII key-planet seed: exactly the Virgo rule fires on a
+        # Virgo-lagna chart, and every seed rule is evaluable
+        seed = [r for r in rules if r["provenance"].get("chapter") == "XVII"]
+        assert len(seed) == 12
+        outs = evaluate_rules(seed, ctx)
+        assert [o.rule_id for o in outs if o.fired] == [
+            "raman.hpa.xvii.virgo_key_planets"]
         assert all(o.evaluable for o in outs)
+        # broader sanity across the whole book: evaluation completes and
+        # every non-evaluable record reports its missing input
+        all_outs = evaluate_rules(rules, ctx)
+        assert len(all_outs) == sum(1 for r in rules if r["antecedent"] is not None)
+        assert all(o.missing for o in all_outs if not o.evaluable)

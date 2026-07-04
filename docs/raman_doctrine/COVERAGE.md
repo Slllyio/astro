@@ -44,3 +44,12 @@ complete only when nothing is pending and every skip has a reason.
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
 
+## three_hundred — 4/4 chapters swept
+
+| chapter | title | status | rules | sweep | notes |
+|---|---|---|---:|---|---|
+| y001-y020 | Gajakesari .. Malavya | swept | 20 | p4_t1 |  |
+| y021-y044 | Sasa .. Malika family | swept | 24 | p4_t1 |  |
+| y001-y020 | Gajakesari .. Malavya | swept | 20 | p4_t1 |  |
+| y021-y044 | Sasa .. Malika family | swept | 24 | p4_t1 |  |
+

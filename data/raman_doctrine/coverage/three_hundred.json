@@ -1,0 +1,37 @@
+{
+ "book": "three_hundred",
+ "chapters": [
+  {
+   "label": "y001-y020",
+   "title": "Gajakesari .. Malavya",
+   "status": "swept",
+   "rule_count": 20,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y021-y044",
+   "title": "Sasa .. Malika family",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y001-y020",
+   "title": "Gajakesari .. Malavya",
+   "status": "swept",
+   "rule_count": 20,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y021-y044",
+   "title": "Sasa .. Malika family",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p4_t1",
+   "notes": null
+  }
+ ]
+}

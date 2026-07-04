@@ -56,10 +56,12 @@ Page maps (mechanical char-offset -> printed-page): `data/raman_doctrine/page_ma
 - **graha_bhava_balas**: contains a year-by-year ayanamsa table (1826-1860)
   that forms a fake monotonic "page" chain; the page-map ceiling
   (max_page=800) plus running-head patterns recover the real folios.
-- **three_hundred**: scan's folio chain reaches p.155 only; page citations
-  beyond that fall back to the last anchored page — extraction records
-  carry `quote_verified` regardless, so provenance never depends on the
-  folio chain alone.
+- **three_hundred**: ALL THREE archive.org scans of this title
+  (`ThreeHundredImportantCombinationsInVedicAstrology`,
+  `in.ernet.dli.2015.83552`, the 1947-ed item) are the same TRUNCATED
+  volume: the text ends at yoga 162 (~p.156). Yogas 163-300 have no
+  retrievable source and are recorded as unavailable in COVERAGE.md —
+  extraction covers 1-162 only.
 
 ## Raman titles with NO retrievable archive.org text
 

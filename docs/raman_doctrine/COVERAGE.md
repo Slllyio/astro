@@ -44,7 +44,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
 
-## three_hundred — 6/7 chapters swept
+## three_hundred — 7/8 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -55,4 +55,5 @@ complete only when nothing is pending and every skip has a reason.
 | y045-y071 | Sankha .. Thrilochana | partial | 12 | p4_t1 | source scan missing printed pp.68-87 and 94-95: yogas 50-63 and 68 have no Definition text in any archive.org scan |
 | y133-y162 | Bahudravyarjana .. Jada (end of scan) | swept | 30 | p4_t1 |  |
 | y072-y106 | Amsavatara .. Sarpa (Nabhasa families) | swept | 35 | p4_t1 |  |
+| y107-y132 | Duryoga .. Dhana family | swept | 26 | p4_t1 |  |
 

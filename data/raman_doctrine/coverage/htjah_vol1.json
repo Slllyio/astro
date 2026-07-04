@@ -1,0 +1,29 @@
+{
+ "book": "htjah_vol1",
+ "chapters": [
+  {
+   "label": "1",
+   "title": "General Introduction",
+   "status": "swept",
+   "rule_count": 16,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "2",
+   "title": "Considerations in Judging a House",
+   "status": "swept",
+   "rule_count": 51,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "3",
+   "title": "Determination of Longevity",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p4_t1",
+   "notes": null
+  }
+ ]
+}

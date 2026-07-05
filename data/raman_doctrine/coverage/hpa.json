@@ -156,9 +156,9 @@
   {
    "label": "XXI",
    "title": "Planets in Different Bhavas or Houses",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p7_deep",
    "notes": null
   },
   {

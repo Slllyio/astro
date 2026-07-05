@@ -10,7 +10,7 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
 
-## hpa — 7/36 chapters swept
+## hpa — 8/36 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -33,7 +33,7 @@ complete only when nothing is pending and every skip has a reason.
 | XVIII | Results of Ascending Signs | swept | 12 | p6_t2 |  |
 | XIX | • Judgment of Bhavas (Houses) | swept | 12 | p6_t2 |  |
 | XX | Special Yogas | pending | 0 |  |  |
-| XXI | Planets in Different Bhavas or Houses | pending | 0 |  |  |
+| XXI | Planets in Different Bhavas or Houses | swept | 24 | p7_deep | Sun & Moon in the 12 bhavas (planet_in_house, tagged by bhava domain) |
 | XXII | Planets in Different Rasis or Signs | pending | 0 |  |  |
 | XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |
 | XXIV | Results of Dasas and Bhukthies | pending | 0 |  |  |

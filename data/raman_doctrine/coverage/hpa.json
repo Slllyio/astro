@@ -140,9 +140,9 @@
   {
    "label": "XIX",
    "title": "• Judgment of Bhavas (Houses)",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p6_t2",
    "notes": null
   },
   {

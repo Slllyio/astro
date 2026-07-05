@@ -53,7 +53,47 @@
    "label": "ch11",
    "title": "",
    "status": "swept",
-   "rule_count": 26,
+   "rule_count": 35,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch12",
+   "title": "",
+   "status": "swept",
+   "rule_count": 21,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch13",
+   "title": "",
+   "status": "swept",
+   "rule_count": 22,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch14",
+   "title": "",
+   "status": "swept",
+   "rule_count": 22,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch15",
+   "title": "",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch16",
+   "title": "",
+   "status": "swept",
+   "rule_count": 22,
    "sweep_id": "htjah_deep",
    "notes": null
   }

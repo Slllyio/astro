@@ -16,6 +16,22 @@
    "rule_count": 6,
    "sweep_id": "p7_deep",
    "notes": null
+  },
+  {
+   "label": "education",
+   "title": "",
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "financial",
+   "title": "",
+   "status": "swept",
+   "rule_count": 2,
+   "sweep_id": "p7_deep",
+   "notes": null
   }
  ]
 }

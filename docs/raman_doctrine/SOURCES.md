@@ -61,6 +61,13 @@ Page maps (mechanical char-offset -> printed-page): `data/raman_doctrine/page_ma
 - **graha_bhava_balas**: contains a year-by-year ayanamsa table (1826-1860)
   that forms a fake monotonic "page" chain; the page-map ceiling
   (max_page=800) plus running-head patterns recover the real folios.
+- **jaimini_studies**: the page map was rebuilt over the body (past the
+  contents at ~offset 15k) using the two running-head folios
+  ("<section> Influences <page>" on right pages, "<page> Studies in Jaimini
+  Astrology" on left) — 27 monotonic anchors (p.38–138). Records swept under
+  the corrected map (sweep p7_deep, chapters `education`/`financial`) carry
+  accurate pages; the earlier p6_t2/ch127 records predate the fix and retain
+  their original stamps (records are immutable once written).
 - **three_hundred**: ALL THREE archive.org scans of this title
   (`ThreeHundredImportantCombinationsInVedicAstrology`,
   `in.ernet.dli.2015.83552`, the 1947-ed item) are the same TRUNCATED

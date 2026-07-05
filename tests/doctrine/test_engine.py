@@ -152,6 +152,21 @@ class TestLeaves:
         assert not evaluate_predicate(
             node, EvalContext(chart=ctx.chart, transit={"Saturn": third}))
 
+    def test_planet_influences_house(self, ctx):
+        # House 1 = Virgo, lord = Mercury (in Cancer/11th). Raman's 5-factor test.
+        inf = lambda p: ev({"op": "planet_influences_house",
+                            "planet": p, "house": 1}, ctx)
+        assert inf("Mercury")           # factor 1: owns the 1st
+        # Jupiter is in Cancer with Mercury but does NOT own/occupy/aspect the 1st
+        # nor aspect the lord — it influences ONLY by conjoining the lord (factor 5),
+        # the limb the DSL previously could not express.
+        assert inf("Jupiter")
+        # Saturn (5th) aspects the 11th where the lord Mercury sits -> factor 4.
+        assert inf("Saturn")
+        # Sun (10th): not lord, not in 1st, aspects only the 4th, not conjunct/
+        # aspecting Mercury -> influences the 1st by no factor.
+        assert not inf("Sun")
+
     def test_jaimini_and_points(self, ctx):
         assert ev({"op": "karaka_is", "planet": "Sun"}, ctx)  # Sun 29° in sign
         assert isinstance(ev({"op": "occupies_khara", "planet": "Mars"}, ctx), bool)

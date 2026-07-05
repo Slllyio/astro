@@ -168,6 +168,41 @@ def _op_planet_aspects_planet(ctx, node):
     )
 
 
+def _op_planet_influences_house(ctx, node):
+    """Raman's five-factor 'influence' test (HTJAH Vol 1, ch. IV): a planet
+    influences a house if it OWNS, OCCUPIES, or ASPECTS the house, or
+    ASPECTS/CONJOINS its lord. Factors are tested in order; factor 1 (owns)
+    short-circuits the P==L identity case, so the lord-relative factors 4/5 are
+    only reached when P != L (no spurious self-aspect/self-conjunction)."""
+    house = int(node["house"])
+    frame = _frame(node)
+    lord = _lord_of_house(ctx, house, frame)
+    if not lord:
+        return False
+    ph = ctx.chart.bundle.kundali.planet_house
+    lord_house = ph.get(lord)
+    for p in _planets(ctx, node["planet"]):
+        # 1. owns (handles the P == lord identity up front)
+        if p == lord:
+            return True
+        p_house = ph.get(p)
+        if p_house is None:
+            continue
+        # 2. occupies the house (respects the frame)
+        if ctx.chart.house_of(p, frame) == house:
+            return True
+        # 3. aspects the house
+        if house in aspects_from_planet(p, p_house):
+            return True
+        # 4. aspects the lord (P != lord guaranteed by factor 1)
+        if lord_house is not None and lord_house in aspects_from_planet(p, p_house):
+            return True
+        # 5. conjoins the lord (P != lord guaranteed by factor 1)
+        if lord_house is not None and p_house == lord_house:
+            return True
+    return False
+
+
 def _op_varga_sign_is(ctx, node):
     return (ctx.chart.varga_sign(node["planet"], int(node["divisor"]))
             == _sign(node["sign"]))
@@ -347,6 +382,7 @@ LEAF_OPS: dict[str, Callable[[EvalContext, Mapping], bool]] = {
     "planet_is_lord_of": _op_planet_is_lord_of,
     "planet_aspects_house": _op_planet_aspects_house,
     "planet_aspects_planet": _op_planet_aspects_planet,
+    "planet_influences_house": _op_planet_influences_house,
     "varga_sign_is": _op_varga_sign_is,
     "varga_lord_is": _op_varga_lord_is,
     "vargottama": _op_vargottama,

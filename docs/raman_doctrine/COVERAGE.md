@@ -36,7 +36,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXI | Planets in Different Bhavas or Houses | swept | 108 | p7_deep | all 9 grahas in the 12 bhavas (planet_in_house, tagged by bhava domain; polarity = tenor of Raman's result-list) |
 | XXII | Planets in Different Rasis or Signs | swept | 84 | p7_deep | 7 grahas in the 12 signs (planet_in_sign, domain mind_character) |
 | XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |
-| XXIV | Results of Dasas and Bhukthies | swept | 12 | p7_deep | Sun's Mahadasa by the Sun's natal sign (dasha_lord_is + planet_in_sign, executable under a dasha context) |
+| XXIV | Results of Dasas and Bhukthies | swept | 108 | p7_deep | every graha's Mahadasa by the lord's natal sign (dasha_lord_is + planet_in_sign, 9 grahas x 12 signs, executable under a dasha context) |
 | XXV | Source and Nature of Death | swept | 71 | p4_t1 |  |
 | XXVI | The Ashtakavarga System | swept | 16 | p4_t1 |  |
 | XXVII | Prasna Sastra or Horary Astrology | pending | 0 |  |  |

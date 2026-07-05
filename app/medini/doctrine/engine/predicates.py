@@ -57,6 +57,9 @@ class EvalContext:
     chart: RamanChart
     # timeline context; None in static mode (dasha leaves raise MissingInput)
     dasha: Mapping[str, str] | None = None       # e.g. {"md": "Saturn", "ad": "Venus"}
+    # gochara context; None in static mode (transit leaves raise MissingInput).
+    # Maps a graha to the sign (1..12) it is transiting at the moment judged.
+    transit: Mapping[str, int] | None = None
     strength_threshold: float = 0.5              # "if strong" compiles against this
 
 
@@ -295,6 +298,33 @@ def _op_karaka_is(ctx, node):
     return ctx.chart.atmakaraka in _planets(ctx, node["planet"])
 
 
+def _op_transit_in_house(ctx, node):
+    """Gochara: a transiting graha reckoned as a house from a natal reference.
+
+    ``from`` is ``moon`` (classical Gochara, default) or ``lagna``. Fires when
+    any named transiting graha stands in one of the target houses counted from
+    that reference sign. Raises MissingInput in static mode (no transit ctx),
+    so the rule is simply non-evaluable rather than an error."""
+    if ctx.transit is None:
+        raise MissingInput("transit context absent (static evaluation)")
+    frm = node.get("from", "moon")
+    if frm == "moon":
+        ref = ctx.chart.bundle.chart.planet_signs["Moon"]
+    elif frm == "lagna":
+        ref = ctx.chart.lagna_sign("lagna")
+    else:
+        raise UnknownOp(f"transit 'from' must be moon|lagna, got {frm!r}")
+    houses = _houses(node)
+    for p in _planets(ctx, node["planet"]):
+        sign = ctx.transit.get(p)
+        if sign is None:
+            continue
+        house = ((int(sign) - int(ref)) % 12) + 1
+        if house in houses:
+            return True
+    return False
+
+
 def _op_occupies_khara(ctx, node):
     lon = ctx.chart.bundle.chart.planet_lons[node["planet"]]
     return occupies_point(lon, ctx.chart.khara, float(node.get("orb", 5.0)))
@@ -333,6 +363,7 @@ LEAF_OPS: dict[str, Callable[[EvalContext, Mapping], bool]] = {
     "tara_class": _op_tara_class,
     "dasha_lord_is": _op_dasha_lord_is,
     "karaka_is": _op_karaka_is,
+    "transit_in_house": _op_transit_in_house,
     "occupies_khara": _op_occupies_khara,
     "occupies_chidra": _op_occupies_chidra,
 }

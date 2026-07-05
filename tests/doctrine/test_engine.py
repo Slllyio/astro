@@ -125,6 +125,20 @@ class TestLeaves:
         timed = EvalContext(chart=ctx.chart, dasha={"md": "Saturn"})
         assert evaluate_predicate(node, timed)
 
+    def test_transit_requires_context(self, ctx):
+        # Gochara: Saturn transiting the 8th from the natal Moon.
+        node = {"op": "transit_in_house", "planet": "Saturn", "house": 8,
+                "from": "moon"}
+        with pytest.raises(MissingInput):
+            ev(node, ctx)  # static mode -> non-evaluable, not False
+        moon_sign = ctx.chart.bundle.chart.planet_signs["Moon"]
+        eighth = ((moon_sign - 1 + 7) % 12) + 1
+        third = ((moon_sign - 1 + 2) % 12) + 1
+        assert evaluate_predicate(
+            node, EvalContext(chart=ctx.chart, transit={"Saturn": eighth}))
+        assert not evaluate_predicate(
+            node, EvalContext(chart=ctx.chart, transit={"Saturn": third}))
+
     def test_jaimini_and_points(self, ctx):
         assert ev({"op": "karaka_is", "planet": "Sun"}, ctx)  # Sun 29° in sign
         assert isinstance(ev({"op": "occupies_khara", "planet": "Mars"}, ctx), bool)

@@ -56,14 +56,14 @@ interpreter error, and at least one rule must fire.
 
 ## Full-system run (P7)
 
-The whole enlarged compendium — **1,085 records across 10 books, 855 with an
+The whole enlarged compendium — **1,106 records across 10 books, 865 with an
 executable antecedent** — was evaluated end to end on Raman's five printed
 horoscopes. Every rule — the HPA planets-in-bhavas/signs enumerations, the
 special/female yogas, the executable Gochara transits, the 108 dasa-by-sign
 rules, and the frame-heavy karakamsa/arudha/prasna rules — evaluates cleanly:
 
-- **0 interpreter errors** across 855 rules × 5 charts (4,275 evaluations).
-- computability mix: full 672 · partial 183 · manual 133 · unfalsifiable 97.
+- **0 interpreter errors** across 865 rules × 5 charts (4,325 evaluations).
+- computability mix: full 675 · partial 190 · manual 133 · unfalsifiable 108.
 - The two timeline dimensions are non-evaluable in the static pass and activate
   when context is supplied: transit rules on `EvalContext.transit`, dasa rules
   on `EvalContext.dasha`. Verified end to end — supplying the Sun's Mahadasa to

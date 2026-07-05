@@ -1,4 +1,4 @@
-# Raman Doctrine Compendium — Fidelity Report (Gate 1, tranche 1)
+# Raman Doctrine Compendium — Fidelity Report (Gate 1 + full-system P7)
 
 "Truest to Raman" is measured here, not asserted. The gate runs on every
 commit (`tests/doctrine/test_fidelity.py`).
@@ -39,11 +39,40 @@ interpreter error, and at least one rule must fire.
 
 | chart | compendium rules fired |
 |---|---|
-| Bala Gangadhara Tilak | 54 |
-| Mahatma Gandhi | 65 |
-| Sri Ramana Maharshi | 52 |
-| Albert Einstein | 54 |
-| Jawaharlal Nehru | 53 |
+| Bala Gangadhara Tilak | 65 |
+| Mahatma Gandhi | 75 |
+| Sri Ramana Maharshi | 63 |
+| Albert Einstein | 67 |
+| Jawaharlal Nehru | 65 |
+
+## Full-system run (P7)
+
+The whole enlarged compendium — **745 records across 10 books, 517 with an
+executable antecedent** — was evaluated end to end on Raman's five printed
+horoscopes. The new frame-heavy rules (karakamsa education/character, arudha
+wealth, prasna marriage/progeny) all evaluate cleanly:
+
+- **0 interpreter errors** across 517 rules × 5 charts (2,585 evaluations).
+- computability mix: full 341 · partial 176 · manual 131 · unfalsifiable 97.
+
+The P7 domain engine (`domains/houses.py`) was then run per chart — each of
+the 12 houses read both by the fired compendium rules and by the three-pillar
+`bhava_judge` verdict, reported side by side:
+
+| chart | domain rules fired | houses agreeing with framework |
+|---|---:|---:|
+| Bala Gangadhara Tilak | 45 | 12 / 12 |
+| Mahatma Gandhi | 52 | 6 / 12 |
+| Sri Ramana Maharshi | 43 | 8 / 12 |
+| Albert Einstein | 48 | 9 / 12 |
+| Jawaharlal Nehru | 39 | 10 / 12 |
+
+Agreement is *observed, not enforced*: the compendium reading and the framework
+scorer are independent by design ("activation, not mutation"), so divergences
+are signal — houses where Raman's book-level doctrine and the classical scorer
+point different ways — not failures. The zero-error and domain-engine passes
+are enforced on every commit by
+`tests/doctrine/test_fidelity.py::TestFullSystemP7`.
 
 ## Thresholds (gate)
 
@@ -51,8 +80,10 @@ interpreter error, and at least one rule must fire.
   diverge from its prose on the golden set).
 - Polarity agreement == 1.0.
 - Every printed chart evaluates without error and fires >= 1 rule.
+- Full-system: every executable rule evaluates without interpreter error on
+  every printed chart (0 errors over the 745-record compendium).
 
-All thresholds met at tranche 1. The golden set grows with each tranche;
+All thresholds met through P7. The golden set grows with each tranche;
 mechanism-overlap Jaccard against Raman's *named* mechanisms on the printed
-death charts is wired (`score.mechanism_jaccard`) and expands in P6 as the
+death charts is wired (`score.mechanism_jaccard`) and expands as the
 longevity-mechanism rules gain their fired-id tags.

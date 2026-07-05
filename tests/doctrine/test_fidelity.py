@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from app.medini.doctrine.compendium import load_compendium
+from app.medini.doctrine.domains.houses import read_all_domains
 from app.medini.doctrine.engine.evaluate import compile_rule, evaluate_rule
 from app.medini.doctrine.engine.predicates import EvalContext
 from app.medini.doctrine.fidelity import golden_registry as gr
@@ -102,3 +103,41 @@ class TestPrintedChartSmoke:
                 out = evaluate_rule(rule, ctx)  # must not raise
                 fired += bool(out.fired)
             assert fired > 0, f"{case.name}: no compendium rule fired"
+
+
+class TestFullSystemP7:
+    """Full-system gate: the entire executable compendium must evaluate
+    without interpreter error on every printed chart, and the P7 domain
+    engine must compose a reading for all 12 houses on each."""
+
+    def _printed_charts(self):
+        from app.medini.ml.raman_saab.fidelity import GOLDEN_CASES
+        cases = [c for c in GOLDEN_CASES if c.positions and c.lagna_lon]
+        assert cases, "expected at least one printed chart with positions"
+        for case in cases:
+            yield case, gr.from_positions(
+                dict(case.positions), case.lagna_lon,
+                birth_jd=2451545.0, ayanamsa="raman")
+
+    def test_whole_compendium_evaluates_without_error(self, rules_by_id):
+        exe = [r for r in rules_by_id.values() if r["antecedent"] is not None]
+        assert exe
+        errors = []
+        for case, chart in self._printed_charts():
+            ctx = EvalContext(chart=chart)
+            for rule in exe:
+                try:
+                    evaluate_rule(rule, ctx)
+                except Exception as e:  # noqa: BLE001
+                    errors.append(f"{case.name} / {rule['id']}: "
+                                  f"{type(e).__name__}: {e}")
+        assert not errors, "interpreter errors:\n" + "\n".join(errors)
+
+    def test_domain_engine_reads_all_houses(self):
+        for case, chart in self._printed_charts():
+            readings = read_all_domains(chart)
+            assert set(readings) == set(range(1, 13)), case.name
+            for h, r in readings.items():
+                assert -1.0 <= r.doctrine_score <= 1.0
+                assert r.bhava_verdict.bhava == h
+                assert isinstance(r.agrees_with_framework, bool)

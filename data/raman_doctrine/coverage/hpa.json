@@ -52,9 +52,9 @@
   {
    "label": "VIII",
    "title": "On Aspects",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 5,
+   "sweep_id": "p7_deep",
    "notes": null
   },
   {
@@ -76,9 +76,9 @@
   {
    "label": "XI",
    "title": "The Shadvargas",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 4,
+   "sweep_id": "p7_deep",
    "notes": null
   },
   {

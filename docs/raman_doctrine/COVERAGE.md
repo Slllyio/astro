@@ -10,7 +10,7 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
 
-## hpa — 14/36 chapters swept
+## hpa — 16/36 chapters swept chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -20,10 +20,10 @@ complete only when nothing is pending and every skip has a reason.
 | V | Peculiarities of the Zodiacal Signs | pending | 0 |  |  |
 | VI | Astrological Terminology | pending | 0 |  |  |
 | VII | Planetary Strengths and Avasthas | pending | 0 |  |  |
-| VIII | On Aspects | pending | 0 |  |  |
+| VIII | On Aspects | swept | 5 | p7_deep | aspect scheme grounding the DSL aspect ops (graded sights, special aspects) |
 | IX | Hindu Method of Casting the Horoscope | pending | 0 |  |  |
 | X | Western Method of Horoscope Casting | pending | 0 |  |  |
-| XI | The Shadvargas | pending | 0 |  |  |
+| XI | The Shadvargas | swept | 4 | p7_deep | varga definitions (Shadvargas, Hora, Drekkana, Navamsa) |
 | XII | On Birth Verification and Rectification | pending | 0 |  |  |
 | XIII | Dasas and Bhukthies | pending | 0 |  |  |
 | XIV | Ayurdaya or Longevity | swept | 86 | p4_t1 |  |

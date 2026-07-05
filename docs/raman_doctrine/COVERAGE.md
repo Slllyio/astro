@@ -33,7 +33,7 @@ complete only when nothing is pending and every skip has a reason.
 | XVIII | Results of Ascending Signs | swept | 12 | p6_t2 |  |
 | XIX | • Judgment of Bhavas (Houses) | swept | 12 | p6_t2 |  |
 | XX | Special Yogas | pending | 0 |  |  |
-| XXI | Planets in Different Bhavas or Houses | swept | 24 | p7_deep | Sun & Moon in the 12 bhavas (planet_in_house, tagged by bhava domain) |
+| XXI | Planets in Different Bhavas or Houses | swept | 108 | p7_deep | all 9 grahas in the 12 bhavas (planet_in_house, tagged by bhava domain; polarity = tenor of Raman's result-list) |
 | XXII | Planets in Different Rasis or Signs | pending | 0 |  |  |
 | XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |
 | XXIV | Results of Dasas and Bhukthies | pending | 0 |  |  |

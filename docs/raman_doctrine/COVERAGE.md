@@ -70,6 +70,12 @@ complete only when nothing is pending and every skip has a reason.
 | 15 | Concerning the Eleventh House | swept | 15 | p6_t2 |  |
 | 16 | Concerning the Twelfth House | swept | 13 | p6_t2 |  |
 
+## manual_hindu_astrology — 1/1 chapters swept
+
+| chapter | title | status | rules | sweep | notes |
+|---|---|---|---:|---|---|
+| 2 | Preliminaries Explained (Bhava significations) | swept | 12 | p6_t2 |  |
+
 ## three_hundred — 7/8 chapters swept
 
 | chapter | title | status | rules | sweep | notes |

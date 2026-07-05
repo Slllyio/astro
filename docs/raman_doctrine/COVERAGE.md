@@ -4,7 +4,7 @@ Per-chapter extraction status, written by the sweep tooling —
 never edited by hand. `pending` chapters are un-swept; a book is
 complete only when nothing is pending and every skip has a reason.
 
-## hpa — 6/35 chapters swept
+## hpa — 7/36 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -43,6 +43,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXXIV | Gocharaphala or Results of Transits | pending | 0 |  |  |
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
+| XXIII | Characteristics of the Signs and Planets | swept | 12 | p6_t2 |  |
 
 ## htjah_vol1 — 9/9 chapters swept
 

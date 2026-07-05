@@ -1,6 +1,6 @@
 # Raman Doctrine Compendium — Status
 
-**706 rule records across 9 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**722 rule records across 9 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
@@ -10,32 +10,32 @@
 | `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 198 |
 | `three_hundred` | Three Hundred Important Combinations | 147 |
 | `htjah_vol2` | How to Judge a Horoscope Vol. 2 | 85 |
+| `jaimini_studies` | Studies in Jaimini Astrology | 16 |
+| `graha_bhava_balas` | Graha and Bhava Balas | 12 |
 | `manual_hindu_astrology` | A Manual of Hindu Astrology | 12 |
-| `jaimini_studies` | Studies in Jaimini Astrology | 10 |
-| `muhurtha` | Muhurtha (Electional Astrology) | 6 |
-| `graha_bhava_balas` | Graha and Bhava Balas | 5 |
+| `muhurtha` | Muhurtha (Electional Astrology) | 9 |
 | `prasna_marga_1` | Prasna Marga, Part 1 | 5 |
-| | **total** | **706** |
+| | **total** | **722** |
 
 ## By computability
 
 | class | count | meaning |
 |---|---:|---|
-| full | 327 | antecedent fully expresses the condition in the DSL |
-| partial | 166 | DSL captures the core; a qualifier quoted in ambiguity_notes |
-| manual | 118 | arithmetic/mechanism lives in code (cited) — antecedent null |
+| full | 331 | antecedent fully expresses the condition in the DSL |
+| partial | 168 | DSL captures the core; a qualifier quoted in ambiguity_notes |
+| manual | 128 | arithmetic/mechanism lives in code (cited) — antecedent null |
 | unfalsifiable | 95 | a definition/signification with no testable condition |
 
 ## By rule type
 
-- graha_effect: 159
+- graha_effect: 165
 - yoga: 153
 - bhava_judgment: 150
-- definition: 132
+- definition: 138
 - functional_role: 43
-- method: 41
+- method: 44
 - cancellation: 15
-- dasha_timing: 7
+- dasha_timing: 8
 - strength: 3
 - transit: 2
 - electional: 1
@@ -49,5 +49,6 @@
 - **P4** tranche 1 extraction (Three Hundred, HPA longevity/AV, HTJAH Vol 1)
 - **P5** fidelity gate 1 — mechanism precision/recall 1.0 (`FIDELITY_REPORT.md`)
 - **P6** tranche 2 — HTJAH Vol 2 + Jaimini, Manual, Graha & Bhava Balas, Muhurtha, Prasna Marga
+- **P7** domain engine (`domains/houses.py`) composing compendium rules with `bhava_judge`; specialised-book deepening — Jaimini Karakamsa, Muhurtha Tarabala, Shadbala components
 
 Coverage per book/chapter is tracked in `COVERAGE.md`; sources and sha256 pins in `SOURCES.md`.

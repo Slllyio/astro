@@ -8,7 +8,7 @@ complete only when nothing is pending and every skip has a reason.
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
-| 1 | The Shadbalas | swept | 5 | p6_t2 |  |
+| 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
 
 ## hpa — 7/36 chapters swept
 

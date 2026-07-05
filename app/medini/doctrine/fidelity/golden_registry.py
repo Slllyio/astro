@@ -29,6 +29,16 @@ GRAHAS = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
 # the 11th-from-Aries house in a way the parking would complete).
 _PARK = 11
 
+# Base longitudes for karakamsa cases: distinct degrees so the Atmakaraka is
+# unambiguous (the Sun, highest deg-in-sign 29°) and the Karakamsa sign is
+# fixed. A target planet is then moved to 108.0 (navamsa Sagittarius = kk
+# house 1, "in Karakamsa") for a positive, or 6.0 (kk house 6) for a control.
+_KK_BASE = {"Sun": 29.0, "Moon": 40.0, "Mars": 70.0, "Mercury": 100.0,
+            "Jupiter": 130.0, "Venus": 160.0, "Saturn": 190.0, "Rahu": 5.0,
+            "Ketu": 220.0}
+_KK_IN = 108.0    # -> karakamsa house 1
+_KK_OUT = 6.0     # -> karakamsa house 6 (control)
+
 
 @dataclasses.dataclass(frozen=True)
 class ConstructedCase:
@@ -38,12 +48,16 @@ class ConstructedCase:
     placements: dict[str, int]      # graha -> sign 1..12
     expected_fire: bool
     verdict_polarity: str | None = None  # Raman's verdict for a firing chart
+    longitudes: dict[str, float] | None = None  # graha -> absolute lon; for
+    # frame rules (karakamsa/navamsa) that need real degrees, not sign midpoints
 
     def chart(self) -> RamanChart:
         lons = {}
         for g in GRAHAS:
             sign = self.placements.get(g, _PARK)
             lons[g] = (sign - 1) * 30 + 15.0
+        if self.longitudes:
+            lons.update(self.longitudes)
         lagna_lon = (self.lagna_sign - 1) * 30 + 5.0
         return from_positions(lons, lagna_lon, birth_jd=2451545.0)
 
@@ -137,4 +151,127 @@ CONSTRUCTED: tuple[ConstructedCase, ...] = (
                     "Cancer lagna: the Sun owns the 2nd (Leo) -> sure maraka",
                     lagna_sign=4, placements={}, expected_fire=True,
                     verdict_polarity="unfavorable"),
+
+    # ----- Prasna Marga Part 2: marriage & progeny (lagna frame) -----
+    # Benefics in the 7th (Aries lagna -> 7th = sign 7).
+    ConstructedCase("raman.prasna_marga_2.ch17.benefics_in_7th_good",
+                    "a benefic (Jupiter) in the 7th house",
+                    lagna_sign=1, placements={"Jupiter": 7},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.prasna_marga_2.ch17.benefics_in_7th_good",
+                    "control: no benefic in the 7th",
+                    lagna_sign=1,
+                    placements={"Jupiter": 11, "Venus": 11, "Mercury": 11},
+                    expected_fire=False),
+    # Venus and the 7th lord in Upachayas. Taurus lagna: 7th = Scorpio (lord
+    # Mars); Upachaya houses 3/6/10/11 = signs 4/7/11/12. Venus in the 3rd
+    # (sign 4), Mars (7th lord) in the 6th (sign 7).
+    ConstructedCase("raman.prasna_marga_2.ch17.venus_lord7_upachaya_happy",
+                    "Venus and the 7th lord (Mars) both in Upachayas",
+                    lagna_sign=2, placements={"Venus": 4, "Mars": 7},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.prasna_marga_2.ch17.venus_lord7_upachaya_happy",
+                    "control: the 7th lord (Mars) in the 4th (not an Upachaya)",
+                    lagna_sign=2, placements={"Venus": 4, "Mars": 5},
+                    expected_fire=False),
+    # Malefic in the 5th (Aries lagna -> 5th = sign 5).
+    ConstructedCase("raman.prasna_marga_2.ch18.malefics_afflict_5th_no_children",
+                    "a malefic (Saturn) in the 5th house",
+                    lagna_sign=1, placements={"Saturn": 5},
+                    expected_fire=True, verdict_polarity="unfavorable"),
+    ConstructedCase("raman.prasna_marga_2.ch18.malefics_afflict_5th_no_children",
+                    "control: Saturn in the 6th, not the 5th",
+                    lagna_sign=1, placements={"Saturn": 6}, expected_fire=False),
+    # Mars in a fiery 5th aspected by Jupiter. Aries lagna: 5th = Leo (fiery);
+    # Jupiter in the 1st aspects the 5th (its 5th aspect).
+    ConstructedCase("raman.prasna_marga_2.ch18.mars_5th_fiery_jupiter_aspect_children",
+                    "Mars in the 5th (Leo, fiery), Jupiter aspecting from the 1st",
+                    lagna_sign=1, placements={"Mars": 5, "Jupiter": 1},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.prasna_marga_2.ch18.mars_5th_fiery_jupiter_aspect_children",
+                    "control: Jupiter in the 2nd, not aspecting the 5th",
+                    lagna_sign=1, placements={"Mars": 5, "Jupiter": 2},
+                    expected_fire=False),
+
+    # ----- Studies in Jaimini: Arudha wealth (arudha frame) -----
+    # Aries lagna, lord Mars in the 1st -> Arudha Lagna = sign 10; a benefic
+    # (Jupiter) in sign 10 sits in the Arudha Lagna (arudha house 1).
+    ConstructedCase("raman.jaimini_studies.financial.arudha_benefics_wealthy",
+                    "benefic (Jupiter) in the Arudha Lagna",
+                    lagna_sign=1,
+                    placements={"Mars": 1, "Jupiter": 10, "Venus": 10, "Mercury": 10},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.jaimini_studies.financial.arudha_benefics_wealthy",
+                    "control: benefics in the 2nd from Arudha, not on it",
+                    lagna_sign=1,
+                    placements={"Mars": 1, "Jupiter": 11, "Venus": 11, "Mercury": 11},
+                    expected_fire=False),
+    # 2nd from the Arudha Lagna (sign 11) holds Venus, Moon and Jupiter.
+    ConstructedCase("raman.jaimini_studies.financial.venus_moon_jupiter_2nd_arudha_wealth",
+                    "Venus, Moon and Jupiter together in the 2nd from Arudha",
+                    lagna_sign=1,
+                    placements={"Mars": 1, "Venus": 11, "Moon": 11, "Jupiter": 11},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.jaimini_studies.financial.venus_moon_jupiter_2nd_arudha_wealth",
+                    "control: Jupiter not in the 2nd from Arudha",
+                    lagna_sign=1,
+                    placements={"Mars": 1, "Venus": 11, "Moon": 11, "Jupiter": 10},
+                    expected_fire=False),
+
+    # ----- Studies in Jaimini: Karakamsa education (karakamsa frame) -----
+    ConstructedCase("raman.jaimini_studies.education.jupiter_karakamsa_grammar_vedas",
+                    "Jupiter in the Karakamsa",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Jupiter": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.jupiter_karakamsa_grammar_vedas",
+                    "control: Jupiter not in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Jupiter": _KK_OUT}),
+    ConstructedCase("raman.jaimini_studies.education.mercury_karakamsa_meemamsa",
+                    "Mercury in the Karakamsa",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Mercury": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.mercury_karakamsa_meemamsa",
+                    "control: Mercury not in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Mercury": _KK_OUT}),
+    ConstructedCase("raman.jaimini_studies.education.mars_karakamsa_legal",
+                    "Mars in the Karakamsa",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Mars": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.mars_karakamsa_legal",
+                    "control: Mars not in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Mars": _KK_OUT}),
+    ConstructedCase("raman.jaimini_studies.education.moon_karakamsa_music_literature",
+                    "the Moon in the Karakamsa",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Moon": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.moon_karakamsa_music_literature",
+                    "control: the Moon not in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Moon": _KK_OUT}),
+    ConstructedCase("raman.jaimini_studies.education.ketu_karakamsa_mathematics",
+                    "Ketu in the Karakamsa",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Ketu": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.ketu_karakamsa_mathematics",
+                    "control: Ketu not in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Ketu": _KK_OUT}),
+    ConstructedCase("raman.jaimini_studies.education.karakamsa_edu_jupiter_aspect_genius",
+                    "an education combination present (Jupiter in the Karakamsa)",
+                    lagna_sign=1, placements={}, expected_fire=True,
+                    verdict_polarity="favorable",
+                    longitudes={**_KK_BASE, "Jupiter": _KK_IN}),
+    ConstructedCase("raman.jaimini_studies.education.karakamsa_edu_jupiter_aspect_genius",
+                    "control: none of the five in the Karakamsa or the 5th from it",
+                    lagna_sign=1, placements={}, expected_fire=False,
+                    longitudes={**_KK_BASE, "Jupiter": _KK_OUT, "Mercury": _KK_OUT,
+                                "Mars": _KK_OUT, "Moon": _KK_OUT, "Ketu": _KK_OUT}),
 )

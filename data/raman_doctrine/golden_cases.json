@@ -10,7 +10,8 @@
     "Jupiter": 4
    },
    "expected_fire": true,
-   "verdict_polarity": "favorable"
+   "verdict_polarity": "favorable",
+   "longitudes": null
   },
   {
    "rule_id": "raman.three_hundred.y001.gajakesari",
@@ -21,7 +22,8 @@
     "Jupiter": 2
    },
    "expected_fire": false,
-   "verdict_polarity": null
+   "verdict_polarity": null,
+   "longitudes": null
   },
   {
    "rule_id": "raman.three_hundred.y007.adhi",
@@ -34,7 +36,8 @@
     "Mercury": 8
    },
    "expected_fire": true,
-   "verdict_polarity": "favorable"
+   "verdict_polarity": "favorable",
+   "longitudes": null
   },
   {
    "rule_id": "raman.three_hundred.y007.adhi",
@@ -47,7 +50,8 @@
     "Mercury": 4
    },
    "expected_fire": false,
-   "verdict_polarity": null
+   "verdict_polarity": null,
+   "longitudes": null
   },
   {
    "rule_id": "raman.three_hundred.y002.sunapha",
@@ -58,7 +62,8 @@
     "Mars": 2
    },
    "expected_fire": true,
-   "verdict_polarity": "favorable"
+   "verdict_polarity": "favorable",
+   "longitudes": null
   },
   {
    "rule_id": "raman.three_hundred.y002.sunapha",
@@ -74,7 +79,8 @@
     "Sun": 8
    },
    "expected_fire": false,
-   "verdict_polarity": null
+   "verdict_polarity": null,
+   "longitudes": null
   },
   {
    "rule_id": "raman.hpa.xvii.aries_key_planets",
@@ -82,7 +88,8 @@
    "lagna_sign": 1,
    "placements": {},
    "expected_fire": true,
-   "verdict_polarity": "neutral"
+   "verdict_polarity": "neutral",
+   "longitudes": null
   },
   {
    "rule_id": "raman.hpa.xvii.aries_key_planets",
@@ -90,7 +97,8 @@
    "lagna_sign": 2,
    "placements": {},
    "expected_fire": false,
-   "verdict_polarity": null
+   "verdict_polarity": null,
+   "longitudes": null
   },
   {
    "rule_id": "raman.hpa.xvii.virgo_key_planets",
@@ -98,7 +106,8 @@
    "lagna_sign": 6,
    "placements": {},
    "expected_fire": true,
-   "verdict_polarity": "neutral"
+   "verdict_polarity": "neutral",
+   "longitudes": null
   },
   {
    "rule_id": "raman.htjah_vol1.ch4.lagna_lord_in_7",
@@ -108,7 +117,8 @@
     "Mars": 7
    },
    "expected_fire": true,
-   "verdict_polarity": "unfavorable"
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
   },
   {
    "rule_id": "raman.htjah_vol1.ch4.lagna_lord_in_7",
@@ -118,7 +128,8 @@
     "Mars": 1
    },
    "expected_fire": false,
-   "verdict_polarity": null
+   "verdict_polarity": null,
+   "longitudes": null
   },
   {
    "rule_id": "raman.htjah_vol1.ch5.lord2_in_11",
@@ -128,7 +139,8 @@
     "Venus": 11
    },
    "expected_fire": true,
-   "verdict_polarity": "favorable"
+   "verdict_polarity": "favorable",
+   "longitudes": null
   },
   {
    "rule_id": "raman.hpa.xv.sun_venus_kendradhipatya_maraka",
@@ -136,7 +148,386 @@
    "lagna_sign": 4,
    "placements": {},
    "expected_fire": true,
-   "verdict_polarity": "unfavorable"
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch17.benefics_in_7th_good",
+   "label": "a benefic (Jupiter) in the 7th house",
+   "lagna_sign": 1,
+   "placements": {
+    "Jupiter": 7
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch17.benefics_in_7th_good",
+   "label": "control: no benefic in the 7th",
+   "lagna_sign": 1,
+   "placements": {
+    "Jupiter": 11,
+    "Venus": 11,
+    "Mercury": 11
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch17.venus_lord7_upachaya_happy",
+   "label": "Venus and the 7th lord (Mars) both in Upachayas",
+   "lagna_sign": 2,
+   "placements": {
+    "Venus": 4,
+    "Mars": 7
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch17.venus_lord7_upachaya_happy",
+   "label": "control: the 7th lord (Mars) in the 4th (not an Upachaya)",
+   "lagna_sign": 2,
+   "placements": {
+    "Venus": 4,
+    "Mars": 5
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch18.malefics_afflict_5th_no_children",
+   "label": "a malefic (Saturn) in the 5th house",
+   "lagna_sign": 1,
+   "placements": {
+    "Saturn": 5
+   },
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch18.malefics_afflict_5th_no_children",
+   "label": "control: Saturn in the 6th, not the 5th",
+   "lagna_sign": 1,
+   "placements": {
+    "Saturn": 6
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch18.mars_5th_fiery_jupiter_aspect_children",
+   "label": "Mars in the 5th (Leo, fiery), Jupiter aspecting from the 1st",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 5,
+    "Jupiter": 1
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.prasna_marga_2.ch18.mars_5th_fiery_jupiter_aspect_children",
+   "label": "control: Jupiter in the 2nd, not aspecting the 5th",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 5,
+    "Jupiter": 2
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.jaimini_studies.financial.arudha_benefics_wealthy",
+   "label": "benefic (Jupiter) in the Arudha Lagna",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1,
+    "Jupiter": 10,
+    "Venus": 10,
+    "Mercury": 10
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.jaimini_studies.financial.arudha_benefics_wealthy",
+   "label": "control: benefics in the 2nd from Arudha, not on it",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1,
+    "Jupiter": 11,
+    "Venus": 11,
+    "Mercury": 11
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.jaimini_studies.financial.venus_moon_jupiter_2nd_arudha_wealth",
+   "label": "Venus, Moon and Jupiter together in the 2nd from Arudha",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1,
+    "Venus": 11,
+    "Moon": 11,
+    "Jupiter": 11
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.jaimini_studies.financial.venus_moon_jupiter_2nd_arudha_wealth",
+   "label": "control: Jupiter not in the 2nd from Arudha",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1,
+    "Venus": 11,
+    "Moon": 11,
+    "Jupiter": 10
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.jupiter_karakamsa_grammar_vedas",
+   "label": "Jupiter in the Karakamsa",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 108.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.jupiter_karakamsa_grammar_vedas",
+   "label": "control: Jupiter not in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 6.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.mercury_karakamsa_meemamsa",
+   "label": "Mercury in the Karakamsa",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 108.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.mercury_karakamsa_meemamsa",
+   "label": "control: Mercury not in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 6.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.mars_karakamsa_legal",
+   "label": "Mars in the Karakamsa",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 108.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.mars_karakamsa_legal",
+   "label": "control: Mars not in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 6.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.moon_karakamsa_music_literature",
+   "label": "the Moon in the Karakamsa",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 108.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.moon_karakamsa_music_literature",
+   "label": "control: the Moon not in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 6.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.ketu_karakamsa_mathematics",
+   "label": "Ketu in the Karakamsa",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 108.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.ketu_karakamsa_mathematics",
+   "label": "control: Ketu not in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 130.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 6.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.karakamsa_edu_jupiter_aspect_genius",
+   "label": "an education combination present (Jupiter in the Karakamsa)",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 40.0,
+    "Mars": 70.0,
+    "Mercury": 100.0,
+    "Jupiter": 108.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 220.0
+   }
+  },
+  {
+   "rule_id": "raman.jaimini_studies.education.karakamsa_edu_jupiter_aspect_genius",
+   "label": "control: none of the five in the Karakamsa or the 5th from it",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": {
+    "Sun": 29.0,
+    "Moon": 6.0,
+    "Mars": 6.0,
+    "Mercury": 6.0,
+    "Jupiter": 6.0,
+    "Venus": 160.0,
+    "Saturn": 190.0,
+    "Rahu": 5.0,
+    "Ketu": 6.0
+   }
   }
  ]
 }

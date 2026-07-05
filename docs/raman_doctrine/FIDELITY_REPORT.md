@@ -10,10 +10,19 @@ encoded antecedent — then the encoded antecedent is evaluated. A positive
 case must fire; a control (one clause deliberately broken) must stay quiet.
 A divergence is a real encoding bug. Cases: `data/raman_doctrine/golden_cases.json`.
 
-- Distinct rules covered: **8** (across HPA, HTJAH Vol 1, Three Hundred)
-- Cases: 13 (8 positive, 5 control)
+- Distinct rules covered: **20** (HPA, HTJAH Vol 1, Three Hundred, Prasna
+  Marga Part 2, Studies in Jaimini)
+- Cases: 37 (20 positive, 17 control)
 - **Precision: 1.000  Recall: 1.000  Accuracy: 1.000**
 - Polarity agreement (firing rule vs. Raman's verdict): **1.000**
+- Frames exercised: lagna, moon, **arudha** and **karakamsa** — the last two
+  built from explicit longitudes (a fixed Atmakaraka), so the frame-derived
+  antecedents (Jaimini karakamsa education, Arudha wealth) are gate-covered,
+  not just the sign-placement rules.
+
+The table below lists the tranche-1 rules; the P7 additions (12 rules from
+Prasna Part 2 marriage/progeny and Jaimini karakamsa/arudha) are exercised by
+the same gate and enumerated in `data/raman_doctrine/golden_cases.json`.
 
 | rule | golden chart | expected | fired | result |
 |---|---|---|---|---|

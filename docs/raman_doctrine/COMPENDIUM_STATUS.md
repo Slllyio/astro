@@ -1,6 +1,6 @@
 # Raman Doctrine Compendium — Status
 
-**727 rule records across 9 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**737 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
@@ -14,30 +14,31 @@
 | `graha_bhava_balas` | Graha and Bhava Balas | 12 |
 | `manual_hindu_astrology` | A Manual of Hindu Astrology | 12 |
 | `prasna_marga_1` | Prasna Marga, Part 1 | 10 |
+| `prasna_marga_2` | Prasna Marga, Part 2 | 10 |
 | `muhurtha` | Muhurtha (Electional Astrology) | 9 |
-| | **total** | **727** |
+| | **total** | **737** |
 
 ## By computability
 
 | class | count | meaning |
 |---|---:|---|
-| full | 331 | antecedent fully expresses the condition in the DSL |
-| partial | 168 | DSL captures the core; a qualifier quoted in ambiguity_notes |
+| full | 335 | antecedent fully expresses the condition in the DSL |
+| partial | 174 | DSL captures the core; a qualifier quoted in ambiguity_notes |
 | manual | 131 | arithmetic/mechanism lives in code (cited) — antecedent null |
 | unfalsifiable | 97 | a definition/signification with no testable condition |
 
 ## By rule type
 
-- graha_effect: 165
+- graha_effect: 173
 - yoga: 153
-- bhava_judgment: 150
+- bhava_judgment: 151
 - definition: 138
 - method: 46
 - functional_role: 43
 - cancellation: 15
 - dasha_timing: 8
+- prasna: 4
 - strength: 3
-- prasna: 3
 - transit: 2
 - electional: 1
 
@@ -50,6 +51,6 @@
 - **P4** tranche 1 extraction (Three Hundred, HPA longevity/AV, HTJAH Vol 1)
 - **P5** fidelity gate 1 — mechanism precision/recall 1.0 (`FIDELITY_REPORT.md`)
 - **P6** tranche 2 — HTJAH Vol 2 + Jaimini, Manual, Graha & Bhava Balas, Muhurtha, Prasna Marga
-- **P7** domain engine (`domains/houses.py`) composing compendium rules with `bhava_judge`; specialised-book deepening — Jaimini Karakamsa, Muhurtha Tarabala, Shadbala components
+- **P7** domain engine (`domains/houses.py`) composing compendium rules with `bhava_judge`; specialised-book deepening — Jaimini Karakamsa, Muhurtha Tarabala, Shadbala components, Prasna Marga Part 2 (marriage/progeny horary)
 
 Coverage per book/chapter is tracked in `COVERAGE.md`; sources and sha256 pins in `SOURCES.md`.

@@ -103,6 +103,17 @@ complete only when nothing is pending and every skip has a reason.
 | intro | Introduction (horary foundations) | swept | 5 | p6_t2 |  |
 | prognostics | Prasna=Jataka, svara, longevity sphutas | swept | 5 | p7_deep | breath nimitta, Prana/Deha/Mrityu sphutas, Gulika/recovery |
 
+## prasna_marga_2 — 2/17 chapters swept
+
+Part 2 covers Chapters XVII–XXXII. The body OCR of this scan carries no folio
+anchors (all page numbers survive only in the table of contents), so records
+are cited by verbatim quote + sha256 pin with `page: null` — see SOURCES.md.
+
+| chapter | title | status | rules | sweep | notes |
+|---|---|---|---:|---|---|
+| ch17 | Vivaha Prasna (marriage) | swept | 4 | p7_deep | benefics in 7th, Venus/7th-lord Upachaya, couple-death, bride's parents |
+| ch18 | Santana Prasna (children) | swept | 6 | p7_deep | 5th-house progeny combinations, Mars/Jupiter, Rahu child-death, pregnancy |
+
 ## three_hundred — 7/8 chapters swept
 
 | chapter | title | status | rules | sweep | notes |

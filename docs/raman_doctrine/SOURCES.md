@@ -37,7 +37,7 @@ Page maps (mechanical char-offset -> printed-page): `data/raman_doctrine/page_ma
 |  | sha256: `dfd15e4c22d5edb74797b6e8ed0d6378e26218530c1cf92622cb8f3bb8aa0b1c` | file: `2015.128092.Muhurtha-Or-Electional-Astrology_djvu.txt` | | | | | |
 | `prasna_marga_1` | Prasna Marga, Part 1 | `PrasnaMargaBVR` | 625,992 | 0.75 | 273 | 278 | PASS |
 |  | sha256: `136976037ac1b5ce1bd49556c81afd313f02d8f8a2e95da75e0834fc9e0c326a` | file: `Prasna Marga 1_djvu.txt` | | | | | |
-| `prasna_marga_2` | Prasna Marga, Part 2 | `prasna-marga-part-2-by-bv-raman` | 561,325 | 0.88 | 72 | 426 | PASS |
+| `prasna_marga_2` | Prasna Marga, Part 2 | `prasna-marga-part-2-by-bv-raman` | 561,325 | 0.88 | 0 | — | PASS (no folios) |
 |  | sha256: `aa74225e314994f9e39b669899a704132a9b29ddaeb7d287dea09f65afe29e47` | file: `Prasna Marga Part 2 by BV Raman_djvu.txt` | | | | | |
 | `manual_hindu_astrology` | A Manual of Hindu Astrology | `ISVP_a-manual-of-hindu-astrology-by-venkat-raman-english-raman-publications-banglore` | 225,878 | 0.69 | 34 | 88 | PASS |
 |  | sha256: `d5e4f7e8eab8b84ecf0bc6b141b607c6a95f6948c91750a518d7218e433f7204` | file: `A Manual Of Hindu Astrology By Venkat Raman English - Raman Publications, Banglore_djvu.txt` | | | | | |
@@ -50,9 +50,14 @@ Page maps (mechanical char-offset -> printed-page): `data/raman_doctrine/page_ma
   carries both volumes' OCR files. Folios are running heads
   ("50 How to Judge a Horoscope" / "Concerning the Seventh House 51"),
   handled by per-book folio patterns.
-- **prasna_marga_2**: `PrasnaMargaBVR`'s part-2 file keeps only 19 folio
-  anchors; `prasna-marga-part-2-by-bv-raman` keeps 72 and reads cleaner.
-  Part 2 continues Part 1's pagination (anchors start ~p.280).
+- **prasna_marga_2**: the body OCR of this scan carries no folio anchors —
+  the only bare page numbers are the table-of-contents dotted-leader columns,
+  which (if scanned) form a fake monotonic chain fixed in the TOC region. The
+  page map is therefore intentionally empty (built over the body slice,
+  constrained to the real folio range p.270–430, yields zero anchors), so
+  Part 2 records are cited by verbatim quote + sha256 pin with `page: null`.
+  The quote-verification honesty gate still holds; only the printed-page
+  number is unavailable for this scan.
 - **graha_bhava_balas**: contains a year-by-year ayanamsa table (1826-1860)
   that forms a fake monotonic "page" chain; the page-map ceiling
   (max_page=800) plus running-head patterns recover the real folios.

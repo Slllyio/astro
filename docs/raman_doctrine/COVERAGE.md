@@ -4,6 +4,12 @@ Per-chapter extraction status, written by the sweep tooling —
 never edited by hand. `pending` chapters are un-swept; a book is
 complete only when nothing is pending and every skip has a reason.
 
+## graha_bhava_balas — 1/1 chapters swept
+
+| chapter | title | status | rules | sweep | notes |
+|---|---|---|---:|---|---|
+| 1 | The Shadbalas | swept | 5 | p6_t2 |  |
+
 ## hpa — 7/36 chapters swept
 
 | chapter | title | status | rules | sweep | notes |

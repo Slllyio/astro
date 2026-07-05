@@ -180,9 +180,9 @@
   {
    "label": "XXIV",
    "title": "Results of Dasas and Bhukthies",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p7_deep",
    "notes": null
   },
   {

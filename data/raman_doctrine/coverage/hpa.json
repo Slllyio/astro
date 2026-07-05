@@ -196,9 +196,9 @@
   {
    "label": "XXVI",
    "title": "The Ashtakavarga System",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 16,
+   "sweep_id": "p4_t1",
    "notes": null
   },
   {

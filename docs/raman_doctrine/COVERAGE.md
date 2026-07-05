@@ -4,7 +4,7 @@ Per-chapter extraction status, written by the sweep tooling —
 never edited by hand. `pending` chapters are un-swept; a book is
 complete only when nothing is pending and every skip has a reason.
 
-## hpa — 3/35 chapters swept
+## hpa — 4/35 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -32,7 +32,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |
 | XXIV | Results of Dasas and Bhukthies | pending | 0 |  |  |
 | XXV | Source and Nature of Death | swept | 71 | p4_t1 |  |
-| XXVI | The Ashtakavarga System | pending | 0 |  |  |
+| XXVI | The Ashtakavarga System | swept | 16 | p4_t1 |  |
 | XXVII | Prasna Sastra or Horary Astrology | pending | 0 |  |  |
 | XXVIII | Unknown Birth Times | pending | 0 |  |  |
 | XXIX | Medical Astrology | pending | 0 |  |  |

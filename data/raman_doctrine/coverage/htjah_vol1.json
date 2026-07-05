@@ -101,7 +101,7 @@
    "label": "ch7",
    "title": "",
    "status": "swept",
-   "rule_count": 25,
+   "rule_count": 32,
    "sweep_id": "htjah_deep",
    "notes": null
   },
@@ -109,7 +109,7 @@
    "label": "ch8",
    "title": "",
    "status": "swept",
-   "rule_count": 36,
+   "rule_count": 39,
    "sweep_id": "htjah_deep",
    "notes": null
   },
@@ -117,7 +117,7 @@
    "label": "ch9",
    "title": "",
    "status": "swept",
-   "rule_count": 30,
+   "rule_count": 34,
    "sweep_id": "htjah_deep",
    "notes": null
   }

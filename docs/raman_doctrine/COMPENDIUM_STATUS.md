@@ -1,13 +1,13 @@
 # Raman Doctrine Compendium — Status
 
-**1,161 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**1,175 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
 | key | title | records |
 |---|---|---:|
 | `hpa` | Hindu Predictive Astrology | 599 |
-| `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 253 |
+| `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 267 |
 | `three_hundred` | Three Hundred Important Combinations | 147 |
 | `htjah_vol2` | How to Judge a Horoscope Vol. 2 | 85 |
 | `jaimini_studies` | Studies in Jaimini Astrology | 24 |
@@ -16,7 +16,7 @@
 | `prasna_marga_1` | Prasna Marga, Part 1 | 10 |
 | `prasna_marga_2` | Prasna Marga, Part 2 | 10 |
 | `muhurtha` | Muhurtha (Electional Astrology) | 9 |
-| | **total** | **1161** |
+| | **total** | **1175** |
 
 ## By computability
 

@@ -1,6 +1,6 @@
 # Raman Doctrine Compendium — Status
 
-**722 rule records across 9 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**727 rule records across 9 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
@@ -13,9 +13,9 @@
 | `jaimini_studies` | Studies in Jaimini Astrology | 16 |
 | `graha_bhava_balas` | Graha and Bhava Balas | 12 |
 | `manual_hindu_astrology` | A Manual of Hindu Astrology | 12 |
+| `prasna_marga_1` | Prasna Marga, Part 1 | 10 |
 | `muhurtha` | Muhurtha (Electional Astrology) | 9 |
-| `prasna_marga_1` | Prasna Marga, Part 1 | 5 |
-| | **total** | **722** |
+| | **total** | **727** |
 
 ## By computability
 
@@ -23,8 +23,8 @@
 |---|---:|---|
 | full | 331 | antecedent fully expresses the condition in the DSL |
 | partial | 168 | DSL captures the core; a qualifier quoted in ambiguity_notes |
-| manual | 128 | arithmetic/mechanism lives in code (cited) — antecedent null |
-| unfalsifiable | 95 | a definition/signification with no testable condition |
+| manual | 131 | arithmetic/mechanism lives in code (cited) — antecedent null |
+| unfalsifiable | 97 | a definition/signification with no testable condition |
 
 ## By rule type
 
@@ -32,11 +32,12 @@
 - yoga: 153
 - bhava_judgment: 150
 - definition: 138
+- method: 46
 - functional_role: 43
-- method: 44
 - cancellation: 15
 - dasha_timing: 8
 - strength: 3
+- prasna: 3
 - transit: 2
 - electional: 1
 

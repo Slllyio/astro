@@ -96,11 +96,12 @@ complete only when nothing is pending and every skip has a reason.
 | 1 | The Panchanga (five limbs) | swept | 6 | p6_t2 |  |
 | 2 | Tarabala, Chandrabala, Panchaka | swept | 3 | p7_deep |  |
 
-## prasna_marga_1 — 1/1 chapters swept
+## prasna_marga_1 — 2/2 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
 | intro | Introduction (horary foundations) | swept | 5 | p6_t2 |  |
+| prognostics | Prasna=Jataka, svara, longevity sphutas | swept | 5 | p7_deep | breath nimitta, Prana/Deha/Mrityu sphutas, Gulika/recovery |
 
 ## three_hundred — 7/8 chapters swept
 

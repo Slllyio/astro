@@ -56,14 +56,16 @@ interpreter error, and at least one rule must fire.
 
 ## Full-system run (P7)
 
-The whole enlarged compendium — **950 records across 10 books, 722 with an
+The whole enlarged compendium — **977 records across 10 books, 747 with an
 executable antecedent** — was evaluated end to end on Raman's five printed
 horoscopes. Every rule — the HPA planets-in-bhavas/signs enumerations, the
-special/female yogas, and the frame-heavy karakamsa/arudha/prasna rules —
-evaluates cleanly:
+special/female yogas, the executable Gochara transits, and the frame-heavy
+karakamsa/arudha/prasna rules — evaluates cleanly:
 
-- **0 interpreter errors** across 722 rules × 5 charts (3,610 evaluations).
-- computability mix: full 539 · partial 183 · manual 131 · unfalsifiable 97.
+- **0 interpreter errors** across 747 rules × 5 charts (3,735 evaluations).
+- computability mix: full 564 · partial 183 · manual 133 · unfalsifiable 97.
+- transit (Gochara) rules are non-evaluable in this static pass and become
+  evaluable when an `EvalContext.transit` map is supplied.
 
 The P7 domain engine (`domains/houses.py`) was then run per chart — each of
 the 12 houses read both by the fired compendium rules and by the three-pillar

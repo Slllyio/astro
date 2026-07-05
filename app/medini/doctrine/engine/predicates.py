@@ -289,6 +289,9 @@ def _op_dasha_lord_is(ctx, node):
     lord = ctx.dasha.get(level)
     if lord is None:
         raise MissingInput(f"dasha level {level!r} absent")
+    if "house" in node:
+        # "dasa of the lord of house N" — the running lord is that house's lord
+        return lord == _lord_of_house(ctx, int(node["house"]), _frame(node))
     return lord in _planets(ctx, node["planet"])
 
 

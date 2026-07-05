@@ -125,6 +125,19 @@ class TestLeaves:
         timed = EvalContext(chart=ctx.chart, dasha={"md": "Saturn"})
         assert evaluate_predicate(node, timed)
 
+    def test_dasha_lord_is_by_house(self, ctx):
+        # "dasa of the lord of house N": the running lord must be that house's lord.
+        from app.medini.doctrine.engine.predicates import _lord_of_house
+        node = {"op": "dasha_lord_is", "house": 2}
+        with pytest.raises(MissingInput):
+            ev(node, ctx)
+        lord2 = _lord_of_house(ctx, 2, "lagna")
+        assert evaluate_predicate(
+            node, EvalContext(chart=ctx.chart, dasha={"md": lord2}))
+        other = "Sun" if lord2 != "Sun" else "Moon"
+        assert not evaluate_predicate(
+            node, EvalContext(chart=ctx.chart, dasha={"md": other}))
+
     def test_transit_requires_context(self, ctx):
         # Gochara: Saturn transiting the 8th from the natal Moon.
         node = {"op": "transit_in_house", "planet": "Saturn", "house": 8,

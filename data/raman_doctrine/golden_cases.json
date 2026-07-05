@@ -1,0 +1,142 @@
+{
+ "note": "Charts hand-built from Raman's prose to test that the encoded antecedent reproduces the stated mechanism (fires when it should, stays quiet on controls).",
+ "cases": [
+  {
+   "rule_id": "raman.three_hundred.y001.gajakesari",
+   "label": "Jupiter in the 4th from the Moon (kendra)",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 4
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable"
+  },
+  {
+   "rule_id": "raman.three_hundred.y001.gajakesari",
+   "label": "control: Jupiter in the 2nd from the Moon (not a kendra)",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 2
+   },
+   "expected_fire": false,
+   "verdict_polarity": null
+  },
+  {
+   "rule_id": "raman.three_hundred.y007.adhi",
+   "label": "benefic in the 7th from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 7,
+    "Venus": 6,
+    "Mercury": 8
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable"
+  },
+  {
+   "rule_id": "raman.three_hundred.y007.adhi",
+   "label": "control: no benefic in the 6/7/8 from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 2,
+    "Venus": 3,
+    "Mercury": 4
+   },
+   "expected_fire": false,
+   "verdict_polarity": null
+  },
+  {
+   "rule_id": "raman.three_hundred.y002.sunapha",
+   "label": "Mars in the 2nd from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Mars": 2
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable"
+  },
+  {
+   "rule_id": "raman.three_hundred.y002.sunapha",
+   "label": "control: no planet in the 2nd from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Mars": 3,
+    "Mercury": 4,
+    "Jupiter": 5,
+    "Venus": 6,
+    "Saturn": 7,
+    "Sun": 8
+   },
+   "expected_fire": false,
+   "verdict_polarity": null
+  },
+  {
+   "rule_id": "raman.hpa.xvii.aries_key_planets",
+   "label": "Aries lagna",
+   "lagna_sign": 1,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "neutral"
+  },
+  {
+   "rule_id": "raman.hpa.xvii.aries_key_planets",
+   "label": "control: Taurus lagna",
+   "lagna_sign": 2,
+   "placements": {},
+   "expected_fire": false,
+   "verdict_polarity": null
+  },
+  {
+   "rule_id": "raman.hpa.xvii.virgo_key_planets",
+   "label": "Virgo lagna",
+   "lagna_sign": 6,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "neutral"
+  },
+  {
+   "rule_id": "raman.htjah_vol1.ch4.lagna_lord_in_7",
+   "label": "Aries lagna, its lord Mars in the 7th",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 7
+   },
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable"
+  },
+  {
+   "rule_id": "raman.htjah_vol1.ch4.lagna_lord_in_7",
+   "label": "control: Aries lagna, Mars in the 1st",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1
+   },
+   "expected_fire": false,
+   "verdict_polarity": null
+  },
+  {
+   "rule_id": "raman.htjah_vol1.ch5.lord2_in_11",
+   "label": "Aries lagna, 2nd lord Venus in the 11th",
+   "lagna_sign": 1,
+   "placements": {
+    "Venus": 11
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable"
+  },
+  {
+   "rule_id": "raman.hpa.xv.sun_venus_kendradhipatya_maraka",
+   "label": "Cancer lagna: the Sun owns the 2nd (Leo) -> sure maraka",
+   "lagna_sign": 4,
+   "placements": {},
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable"
+  }
+ ]
+}

@@ -94,6 +94,12 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 1 | The Panchanga (five limbs) | swept | 6 | p6_t2 |  |
 
+## prasna_marga_1 — 1/1 chapters swept
+
+| chapter | title | status | rules | sweep | notes |
+|---|---|---|---:|---|---|
+| intro | Introduction (horary foundations) | swept | 5 | p6_t2 |  |
+
 ## three_hundred — 7/8 chapters swept
 
 | chapter | title | status | rules | sweep | notes |

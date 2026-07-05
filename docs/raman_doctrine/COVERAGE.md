@@ -44,13 +44,14 @@ complete only when nothing is pending and every skip has a reason.
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
 
-## htjah_vol1 — 3/3 chapters swept
+## htjah_vol1 — 4/4 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
 | 1 | General Introduction | swept | 16 | p4_t1 |  |
 | 2 | Considerations in Judging a House | swept | 51 | p4_t1 |  |
 | 3 | Determination of Longevity | swept | 12 | p4_t1 |  |
+| 4 | Concerning the First House | swept | 21 | p4_t1 |  |
 
 ## three_hundred — 7/8 chapters swept
 

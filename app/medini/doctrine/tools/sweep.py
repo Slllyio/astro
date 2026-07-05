@@ -119,9 +119,18 @@ def run(book: str, draft_paths: list[Path], source_path: Path, sweep_id: str,
     total = merge(book, stamped)
     logger.info("%s: compendium now %d records", book, total)
     manifest = load_manifest(book)
+    known = {c["label"] for c in manifest["chapters"]}
     for spec in marks:
         label, rest = spec.split("=", 1)
         status, _, count = rest.partition(":")
+        if label not in known:
+            # a sweep may cover a chapter the manifest hasn't seen yet;
+            # append it rather than fail (title backfilled at render time).
+            manifest["chapters"].append({
+                "label": label, "title": "", "status": "pending",
+                "rule_count": 0, "sweep_id": None, "notes": None,
+            })
+            known.add(label)
         mark(manifest, label, status, rule_count=int(count or 0), sweep_id=sweep_id)
     if marks:
         save_manifest(manifest)

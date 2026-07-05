@@ -48,21 +48,22 @@ interpreter error, and at least one rule must fire.
 
 | chart | compendium rules fired |
 |---|---|
-| Bala Gangadhara Tilak | 81 |
-| Mahatma Gandhi | 91 |
-| Sri Ramana Maharshi | 79 |
-| Albert Einstein | 83 |
+| Bala Gangadhara Tilak | 83 |
+| Mahatma Gandhi | 94 |
+| Sri Ramana Maharshi | 81 |
+| Albert Einstein | 86 |
 | Jawaharlal Nehru | 81 |
 
 ## Full-system run (P7)
 
-The whole enlarged compendium — **937 records across 10 books, 709 with an
+The whole enlarged compendium — **950 records across 10 books, 722 with an
 executable antecedent** — was evaluated end to end on Raman's five printed
-horoscopes. Every rule — including the HPA planets-in-bhavas/signs enumerations
-and the frame-heavy karakamsa/arudha/prasna rules — evaluates cleanly:
+horoscopes. Every rule — the HPA planets-in-bhavas/signs enumerations, the
+special/female yogas, and the frame-heavy karakamsa/arudha/prasna rules —
+evaluates cleanly:
 
-- **0 interpreter errors** across 709 rules × 5 charts (3,545 evaluations).
-- computability mix: full 533 · partial 176 · manual 131 · unfalsifiable 97.
+- **0 interpreter errors** across 722 rules × 5 charts (3,610 evaluations).
+- computability mix: full 539 · partial 183 · manual 131 · unfalsifiable 97.
 
 The P7 domain engine (`domains/houses.py`) was then run per chart — each of
 the 12 houses read both by the fired compendium rules and by the three-pillar
@@ -70,10 +71,10 @@ the 12 houses read both by the fired compendium rules and by the three-pillar
 
 | chart | domain rules fired | houses agreeing with framework |
 |---|---:|---:|
-| Bala Gangadhara Tilak | 54 | 10 / 12 |
-| Mahatma Gandhi | 61 | 6 / 12 |
-| Sri Ramana Maharshi | 52 | 7 / 12 |
-| Albert Einstein | 57 | 9 / 12 |
+| Bala Gangadhara Tilak | 55 | 10 / 12 |
+| Mahatma Gandhi | 63 | 6 / 12 |
+| Sri Ramana Maharshi | 54 | 7 / 12 |
+| Albert Einstein | 59 | 9 / 12 |
 | Jawaharlal Nehru | 48 | 10 / 12 |
 
 Agreement is *observed, not enforced*: the compendium reading and the framework

@@ -22,8 +22,8 @@
 
 | class | count | meaning |
 |---|---:|---|
-| full | 537 | antecedent fully expresses the condition in the DSL |
-| partial | 179 | DSL captures the core; a qualifier quoted in ambiguity_notes |
+| full | 539 | antecedent fully expresses the condition in the DSL |
+| partial | 183 | DSL captures the core; a qualifier quoted in ambiguity_notes |
 | manual | 131 | arithmetic/mechanism lives in code (cited) — antecedent null |
 | unfalsifiable | 97 | a definition/signification with no testable condition |
 

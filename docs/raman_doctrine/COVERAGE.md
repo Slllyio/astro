@@ -10,7 +10,7 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
 
-## hpa — 13/36 chapters swept
+## hpa — 14/36 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -41,7 +41,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXVI | The Ashtakavarga System | swept | 16 | p4_t1 |  |
 | XXVII | Prasna Sastra or Horary Astrology | pending | 0 |  |  |
 | XXVIII | Unknown Birth Times | pending | 0 |  |  |
-| XXIX | Medical Astrology | pending | 0 |  |  |
+| XXIX | Medical Astrology | swept | 6 | p7_deep | 6th-house/organ definitions + disease combinations (Mars-Venus constipation, testicle inflammation, Moon-anus, white leprosy) |
 | XXX | Female Horoscopy* | swept | 6 | p7_deep | marriage/widowhood combinations (Mars-7th widow, rich-husband, Gemini Rajayoga, lords-7/8 widowhood) |
 | XXXI | Mundane Astrology | pending | 0 |  |  |
 | XXIX | Muhurtha or Election | pending | 0 |  |  |

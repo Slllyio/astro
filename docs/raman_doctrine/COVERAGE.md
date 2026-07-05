@@ -46,7 +46,7 @@ complete only when nothing is pending and every skip has a reason.
 | XXXI | Mundane Astrology | pending | 0 |  |  |
 | XXIX | Muhurtha or Election | pending | 0 |  |  |
 | XXXIII | Annual Horoscopes | pending | 0 |  |  |
-| XXXIV | Gocharaphala or Results of Transits | swept | 12 | p7_deep | Sun's transit through the 12 rasis from the Moon (transit_in_house, executable under a transit context) |
+| XXXIV | Gocharaphala or Results of Transits | swept | 24 | p7_deep | Sun and Moon transits through the 12 rasis from the Moon (transit_in_house, executable under a transit context) |
 | XXXV | Practical Horoscopes | pending | 0 |  |  |
 | XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
 | XXIII | Characteristics of the Signs and Planets | swept | 12 | p6_t2 |  |

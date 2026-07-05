@@ -10,7 +10,7 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
 
-## hpa — 9/36 chapters swept
+## hpa — 10/36 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -32,7 +32,7 @@ complete only when nothing is pending and every skip has a reason.
 | XVII | Key-Planets for Each Sign | partial | 12 | p1_seed | key-planet roles extracted; full sweep in P4 |
 | XVIII | Results of Ascending Signs | swept | 12 | p6_t2 |  |
 | XIX | • Judgment of Bhavas (Houses) | swept | 12 | p6_t2 |  |
-| XX | Special Yogas | pending | 0 |  |  |
+| XX | Special Yogas | swept | 7 | p7_deep | net-new DSL-encodable yogas: Chamara, Anapha, Durudhara, Lakshmi, Kemadruma, Brihadbija, Daridra |
 | XXI | Planets in Different Bhavas or Houses | swept | 108 | p7_deep | all 9 grahas in the 12 bhavas (planet_in_house, tagged by bhava domain; polarity = tenor of Raman's result-list) |
 | XXII | Planets in Different Rasis or Signs | swept | 84 | p7_deep | 7 grahas in the 12 signs (planet_in_sign, domain mind_character) |
 | XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |

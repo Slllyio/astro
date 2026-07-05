@@ -528,6 +528,102 @@
     "Rahu": 5.0,
     "Ketu": 6.0
    }
+  },
+  {
+   "rule_id": "raman.hpa.xx.anapha",
+   "label": "Jupiter in the 12th from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 12
+   },
+   "expected_fire": true,
+   "verdict_polarity": "favorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.anapha",
+   "label": "control: no non-luminary in the 12th from the Moon",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.kemadruma",
+   "label": "the 2nd and 12th from the Moon are empty of non-luminaries",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1
+   },
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.kemadruma",
+   "label": "control: Jupiter in the 2nd from the Moon breaks Kemadruma",
+   "lagna_sign": 1,
+   "placements": {
+    "Moon": 1,
+    "Jupiter": 2
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.daridra",
+   "label": "lagna lord (Mars) in the 12th, 12th lord (Jupiter) in the 1st",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 12,
+    "Jupiter": 1
+   },
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.daridra",
+   "label": "control: lagna lord Mars in the 1st, not the 12th",
+   "lagna_sign": 1,
+   "placements": {
+    "Mars": 1,
+    "Jupiter": 1
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.brihadbija",
+   "label": "Rahu, Mars and Saturn together in the ascendant",
+   "lagna_sign": 1,
+   "placements": {
+    "Rahu": 1,
+    "Mars": 1,
+    "Saturn": 1
+   },
+   "expected_fire": true,
+   "verdict_polarity": "unfavorable",
+   "longitudes": null
+  },
+  {
+   "rule_id": "raman.hpa.xx.brihadbija",
+   "label": "control: Saturn in the 2nd, not with Rahu and Mars in lagna",
+   "lagna_sign": 1,
+   "placements": {
+    "Rahu": 1,
+    "Mars": 1,
+    "Saturn": 2
+   },
+   "expected_fire": false,
+   "verdict_polarity": null,
+   "longitudes": null
   }
  ]
 }

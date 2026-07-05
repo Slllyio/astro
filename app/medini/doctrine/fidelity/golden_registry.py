@@ -274,4 +274,44 @@ CONSTRUCTED: tuple[ConstructedCase, ...] = (
                     lagna_sign=1, placements={}, expected_fire=False,
                     longitudes={**_KK_BASE, "Jupiter": _KK_OUT, "Mercury": _KK_OUT,
                                 "Mars": _KK_OUT, "Moon": _KK_OUT, "Ketu": _KK_OUT}),
+
+    # ----- HPA Ch. XX special yogas (Moon frame / house-lord frame) -----
+    # Anapha: a non-luminary in the 12th from the Moon (Moon in sign 1 -> 12th
+    # from Moon = sign 12).
+    ConstructedCase("raman.hpa.xx.anapha",
+                    "Jupiter in the 12th from the Moon",
+                    lagna_sign=1, placements={"Moon": 1, "Jupiter": 12},
+                    expected_fire=True, verdict_polarity="favorable"),
+    ConstructedCase("raman.hpa.xx.anapha",
+                    "control: no non-luminary in the 12th from the Moon",
+                    lagna_sign=1, placements={"Moon": 1}, expected_fire=False),
+    # Kemadruma: no non-luminary in the 2nd or 12th from the Moon.
+    ConstructedCase("raman.hpa.xx.kemadruma",
+                    "the 2nd and 12th from the Moon are empty of non-luminaries",
+                    lagna_sign=1, placements={"Moon": 1},
+                    expected_fire=True, verdict_polarity="unfavorable"),
+    ConstructedCase("raman.hpa.xx.kemadruma",
+                    "control: Jupiter in the 2nd from the Moon breaks Kemadruma",
+                    lagna_sign=1, placements={"Moon": 1, "Jupiter": 2},
+                    expected_fire=False),
+    # Daridra: lord of the ascendant in the 12th and lord of the 12th in the 1st.
+    # Aries lagna: lord Mars; 12th is Pisces (lord Jupiter). Mars in sign 12,
+    # Jupiter in sign 1.
+    ConstructedCase("raman.hpa.xx.daridra",
+                    "lagna lord (Mars) in the 12th, 12th lord (Jupiter) in the 1st",
+                    lagna_sign=1, placements={"Mars": 12, "Jupiter": 1},
+                    expected_fire=True, verdict_polarity="unfavorable"),
+    ConstructedCase("raman.hpa.xx.daridra",
+                    "control: lagna lord Mars in the 1st, not the 12th",
+                    lagna_sign=1, placements={"Mars": 1, "Jupiter": 1},
+                    expected_fire=False),
+    # Brihadbija: Rahu, Mars and Saturn together in the ascendant.
+    ConstructedCase("raman.hpa.xx.brihadbija",
+                    "Rahu, Mars and Saturn together in the ascendant",
+                    lagna_sign=1, placements={"Rahu": 1, "Mars": 1, "Saturn": 1},
+                    expected_fire=True, verdict_polarity="unfavorable"),
+    ConstructedCase("raman.hpa.xx.brihadbija",
+                    "control: Saturn in the 2nd, not with Rahu and Mars in lagna",
+                    lagna_sign=1, placements={"Rahu": 1, "Mars": 1, "Saturn": 2},
+                    expected_fire=False),
 )

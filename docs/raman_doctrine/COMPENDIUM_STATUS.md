@@ -1,12 +1,12 @@
 # Raman Doctrine Compendium — Status
 
-**937 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**944 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
 | key | title | records |
 |---|---|---:|
-| `hpa` | Hindu Predictive Astrology | 430 |
+| `hpa` | Hindu Predictive Astrology | 437 |
 | `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 198 |
 | `three_hundred` | Three Hundred Important Combinations | 147 |
 | `htjah_vol2` | How to Judge a Horoscope Vol. 2 | 85 |
@@ -16,21 +16,21 @@
 | `prasna_marga_1` | Prasna Marga, Part 1 | 10 |
 | `prasna_marga_2` | Prasna Marga, Part 2 | 10 |
 | `muhurtha` | Muhurtha (Electional Astrology) | 9 |
-| | **total** | **937** |
+| | **total** | **944** |
 
 ## By computability
 
 | class | count | meaning |
 |---|---:|---|
-| full | 533 | antecedent fully expresses the condition in the DSL |
-| partial | 176 | DSL captures the core; a qualifier quoted in ambiguity_notes |
+| full | 537 | antecedent fully expresses the condition in the DSL |
+| partial | 179 | DSL captures the core; a qualifier quoted in ambiguity_notes |
 | manual | 131 | arithmetic/mechanism lives in code (cited) — antecedent null |
 | unfalsifiable | 97 | a definition/signification with no testable condition |
 
 ## By rule type
 
 - graha_effect: 373
-- yoga: 153
+- yoga: 160
 - bhava_judgment: 151
 - definition: 138
 - method: 46

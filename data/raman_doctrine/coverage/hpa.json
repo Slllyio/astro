@@ -228,9 +228,9 @@
   {
    "label": "XXX",
    "title": "Female Horoscopy*",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p7_deep",
    "notes": null
   },
   {

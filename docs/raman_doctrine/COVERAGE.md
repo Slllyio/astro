@@ -58,7 +58,7 @@ complete only when nothing is pending and every skip has a reason.
 | 8 | The Fifth House | swept | 27 | p4_t1 |  |
 | 9 | Concerning the Sixth House | swept | 21 | p4_t1 |  |
 
-## htjah_vol2 — 5/5 chapters swept
+## htjah_vol2 — 6/6 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -67,6 +67,7 @@ complete only when nothing is pending and every skip has a reason.
 | 13 | Concerning the Ninth House | swept | 13 | p6_t2 |  |
 | 14 | Concerning the Tenth House | swept | 13 | p6_t2 |  |
 | 15 | Concerning the Eleventh House | swept | 15 | p6_t2 |  |
+| 16 | Concerning the Twelfth House | swept | 13 | p6_t2 |  |
 
 ## three_hundred — 7/8 chapters swept
 

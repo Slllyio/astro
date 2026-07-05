@@ -72,6 +72,22 @@
    "rule_count": 21,
    "sweep_id": "p4_t1",
    "notes": null
+  },
+  {
+   "label": "ch5",
+   "title": "",
+   "status": "swept",
+   "rule_count": 26,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch4",
+   "title": "",
+   "status": "swept",
+   "rule_count": 34,
+   "sweep_id": "htjah_deep",
+   "notes": null
   }
  ]
 }

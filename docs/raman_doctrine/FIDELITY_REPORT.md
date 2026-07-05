@@ -48,21 +48,21 @@ interpreter error, and at least one rule must fire.
 
 | chart | compendium rules fired |
 |---|---|
-| Bala Gangadhara Tilak | 65 |
-| Mahatma Gandhi | 75 |
-| Sri Ramana Maharshi | 63 |
-| Albert Einstein | 67 |
-| Jawaharlal Nehru | 65 |
+| Bala Gangadhara Tilak | 81 |
+| Mahatma Gandhi | 91 |
+| Sri Ramana Maharshi | 79 |
+| Albert Einstein | 83 |
+| Jawaharlal Nehru | 81 |
 
 ## Full-system run (P7)
 
-The whole enlarged compendium — **745 records across 10 books, 517 with an
+The whole enlarged compendium — **937 records across 10 books, 709 with an
 executable antecedent** — was evaluated end to end on Raman's five printed
-horoscopes. The new frame-heavy rules (karakamsa education/character, arudha
-wealth, prasna marriage/progeny) all evaluate cleanly:
+horoscopes. Every rule — including the HPA planets-in-bhavas/signs enumerations
+and the frame-heavy karakamsa/arudha/prasna rules — evaluates cleanly:
 
-- **0 interpreter errors** across 517 rules × 5 charts (2,585 evaluations).
-- computability mix: full 341 · partial 176 · manual 131 · unfalsifiable 97.
+- **0 interpreter errors** across 709 rules × 5 charts (3,545 evaluations).
+- computability mix: full 533 · partial 176 · manual 131 · unfalsifiable 97.
 
 The P7 domain engine (`domains/houses.py`) was then run per chart — each of
 the 12 houses read both by the fired compendium rules and by the three-pillar
@@ -70,11 +70,11 @@ the 12 houses read both by the fired compendium rules and by the three-pillar
 
 | chart | domain rules fired | houses agreeing with framework |
 |---|---:|---:|
-| Bala Gangadhara Tilak | 45 | 12 / 12 |
-| Mahatma Gandhi | 52 | 6 / 12 |
-| Sri Ramana Maharshi | 43 | 8 / 12 |
-| Albert Einstein | 48 | 9 / 12 |
-| Jawaharlal Nehru | 39 | 10 / 12 |
+| Bala Gangadhara Tilak | 54 | 10 / 12 |
+| Mahatma Gandhi | 61 | 6 / 12 |
+| Sri Ramana Maharshi | 52 | 7 / 12 |
+| Albert Einstein | 57 | 9 / 12 |
+| Jawaharlal Nehru | 48 | 10 / 12 |
 
 Agreement is *observed, not enforced*: the compendium reading and the framework
 scorer are independent by design ("activation, not mutation"), so divergences

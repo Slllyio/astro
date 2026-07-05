@@ -76,11 +76,12 @@ complete only when nothing is pending and every skip has a reason.
 | 15 | Concerning the Eleventh House | swept | 15 | p6_t2 |  |
 | 16 | Concerning the Twelfth House | swept | 13 | p6_t2 |  |
 
-## jaimini_studies — 1/1 chapters swept
+## jaimini_studies — 2/2 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
 | 2 | The Chara Karakas | swept | 10 | p6_t2 |  |
+| 127 | Karakamsa Influences (mind/character) | swept | 6 | p7_deep |  |
 
 ## manual_hindu_astrology — 1/1 chapters swept
 

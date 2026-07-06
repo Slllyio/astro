@@ -9,9 +9,10 @@ import pytest
 from app.medini.doctrine import raman_chart as rc
 from app.medini.doctrine.domains.house_judgment import (
     ACTIVATION_TIERS, VERDICT_SCALE, Finding, _antardasha_spans, _assess_bhava,
-    _assess_karaka, _assess_lord, _associated, _classify, _combine,
-    _influence_factors, _is_benefic, _kartari, _maha_sequence, _pair_tier,
-    _planet_nature, _verdict_label, judge_all_houses_doctrine, judge_house_doctrine,
+    _assess_from_moon, _assess_karaka, _assess_lord, _associated, _classify,
+    _combine, _influence_factors, _is_benefic, _kartari, _lord_from_moon,
+    _maha_sequence, _pair_tier, _planet_nature, _verdict_label,
+    judge_all_houses_doctrine, judge_house_doctrine,
 )
 
 _LABELS = set(VERDICT_SCALE)
@@ -321,3 +322,40 @@ class TestFirstHouseTestimony:
         # a raised flag must name more than one afflicting malefic
         if t.health_flag:
             assert len(t.afflicting_malefics) > 1
+
+
+class TestChandraLagna:
+    """The house judged from the Moon (Chandra Lagna) on the same lines as the
+    Lagna — Raman's method throughout HTJAH (82 'from the Moon' references)."""
+
+    def test_present_on_every_house(self, mainpuri):
+        judged = judge_all_houses_doctrine(mainpuri, dasha={"md": "Mercury", "ad": "Mercury"})
+        for h, j in judged.items():
+            assert j.chandra is not None
+            assert j.chandra.reference.startswith("Chandra Lagna")
+
+    def test_lord_from_moon_is_moon_sign_lord(self, mainpuri):
+        # Mainpuri Moon is in Aquarius (sign 11) -> lord Saturn.
+        assert _lord_from_moon(mainpuri, 1) == "Saturn"
+        cm = judge_house_doctrine(mainpuri, 1).chandra
+        assert cm.reference_sign == 11 and cm.lord_planet == "Saturn"
+
+    def test_bhava_and_lord_graded(self, mainpuri):
+        cm = _assess_from_moon(mainpuri, 1)
+        assert cm.bhava.label in VERDICT_SCALE
+        assert cm.lord.label in VERDICT_SCALE
+        # Chandra Lagna (Aquarius) is occupied by the Moon and Rahu -> afflicted.
+        assert any("Moon" in f.text for f in cm.bhava.findings)
+        assert any("Rahu" in f.text for f in cm.bhava.findings)
+
+    def test_functional_nature_read_from_chandra_lagna(self, mainpuri):
+        # From Aquarius, the Moon rules the 6th -> a functional malefic 'from the
+        # Moon', though a natural benefic. (Contrast: from the Lagna it may differ.)
+        ben_moon_ref, tag = _planet_nature(mainpuri, "Moon", ref_sign=11)
+        assert ben_moon_ref is False and tag == "functional malefic"
+
+    def test_factor_f_lord_from_moon_is_an_influencer(self, mainpuri):
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        assert "Saturn" in j.timing.influencers
+        assert "Saturn" in j.timing.influence_by_factor.get("lord from Moon", ())
+        assert "lord from Moon" in _influence_factors(mainpuri, 1, "Saturn")

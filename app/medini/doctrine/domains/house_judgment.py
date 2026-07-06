@@ -56,6 +56,29 @@ BHAVA_KARAKAS: Mapping[int, tuple[str, ...]] = {
     12: ("Saturn", "Ketu"),
 }
 
+# What each house signifies, from the opening line of its HTJAH chapter (ch. IV-XV).
+# A per-house descriptor + the traditional name of its karaka, for context.
+HOUSE_SIGNIFICATIONS: Mapping[int, str] = {
+    1: "body, appearance, health, temperament, longevity",
+    2: "family, speech, vision (eyes), food, wealth",
+    3: "brothers & sisters, courage, short journeys, communication",
+    4: "mother, happiness, home, lands & vehicles, education",
+    5: "children, intelligence, past merit (purva-punya), speculation",
+    6: "enemies, disease, debts, litigation",
+    7: "wife / spouse, marriage, partnerships, passion",
+    8: "longevity & death, obstacles, legacies, the occult",
+    9: "father, fortune, dharma, preceptor, long journeys",
+    10: "profession, status, karma, authority, honour",
+    11: "gains, elder siblings, fulfilment of desires",
+    12: "loss & expenditure, exile, moksha, bed-comforts",
+}
+KARAKA_NAMES: Mapping[int, str] = {
+    1: "Thanukaraka (body)", 2: "Dhanakaraka (wealth)", 3: "Bhratrukaraka (siblings)",
+    4: "Matrukaraka (mother)", 5: "Putrakaraka (children)", 6: "Satrukaraka (enemies)",
+    7: "Kalatrakaraka (spouse)", 8: "Ayushkaraka (longevity)", 9: "Pitrukaraka (father)",
+    10: "Karmakaraka (profession)", 11: "Labhakaraka (gains)", 12: "Vyayakaraka (loss)",
+}
+
 # Which method record prescribes which part of the procedure (cited, not dropped).
 METHOD_CITATIONS = {
     "frame": "raman.htjah_vol1.ch4.judgment_elements",
@@ -897,12 +920,19 @@ def _influence_factors(chart: RamanChart, house: int, planet: str) -> tuple[str,
     return tuple(facs)
 
 
-def _nature_of(books, planet: str, lagna_sign: int) -> str:
-    """The planet's own nature in the 1st, from the doctrine (planet-in-first)."""
-    want = f".ch4.{planet.lower()}_in_first"
+_HOUSE_WORDS = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
+                6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth",
+                11: "eleventh", 12: "twelfth"}
+
+
+def _nature_of(books, planet: str, house: int) -> str:
+    """The planet's effect in THIS house, from the doctrine (planet-in-Nth), if a
+    record exists. Falls back to the empty string when the compendium has none."""
+    word = _HOUSE_WORDS.get(house, "first")
+    wants = (f"_{planet.lower()}_in_{word}", f".{planet.lower()}_in_{word}")
     for rules in books.values():
         for r in rules:
-            if r["id"].endswith(want):
+            if r["id"].endswith(wants[0]) or r["id"].endswith(wants[1]):
                 txt = r["consequent"]["text"].split("—", 1)[-1]
                 return " ".join(txt.replace("¬", "").split())[:180]
     return ""
@@ -910,7 +940,6 @@ def _nature_of(books, planet: str, lagna_sign: int) -> str:
 
 def _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
                       influencers_tuple) -> Conclusion:
-    lagna_sign = chart.bundle.chart.asc_sign
     ranked: list[Influencer] = []
     for p in influencers_tuple:
         facs = _influence_factors(chart, house, p)
@@ -918,7 +947,7 @@ def _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
             planet=p, factors=facs,
             tier="mostly" if len(facs) >= 2 else "moderate",
             is_benefic=_is_benefic(chart, p),
-            nature=_nature_of(books, p, lagna_sign)))
+            nature=_nature_of(books, p, house)))
     ranked.sort(key=lambda i: (-len(i.factors), i.planet))
     # headline verdict: decoded from Raman's own priority — "if the strength of the
     # lord is full there will be a good influence on the house": the Lord dominates,

@@ -8,8 +8,12 @@ import pytest
 
 from app.medini.doctrine import raman_chart as rc
 from app.medini.doctrine.domains.house_judgment import (
-    _classify, _maha_sequence, judge_all_houses_doctrine, judge_house_doctrine,
+    _assess_bhava, _assess_karaka, _assess_lord, _classify, _influence_factors,
+    _is_benefic, _kartari, _maha_sequence, _verdict_label,
+    judge_all_houses_doctrine, judge_house_doctrine,
 )
+
+_LABELS = {"afflicted", "weak", "moderate", "fairly good", "good", "powerful"}
 
 # Mainpuri chart: Scorpio lagna, lord Mars in Virgo/11th, Mercury conjunct Mars.
 MAINPURI = dict(
@@ -115,3 +119,65 @@ class TestMethodSpine:
         assert keys == ["bhava", "lord", "occupants", "karaka", "combinations"]
         assert j.n_fired > 0
         assert j.blend_label in ("favourable", "afflicted", "mixed")
+
+
+class TestStrengthAssessor:
+    def test_verdict_labels(self, mainpuri):
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        for v in (j.lagna_verdict, j.lord_verdict, j.karaka_verdict):
+            assert v.label in _LABELS
+            assert v.findings  # every factor is judged from cited findings
+            assert all(f.frame in ("Rasi", "Navamsa", "both") for f in v.findings)
+
+    def test_rasi_and_navamsa_cross_check(self, mainpuri):
+        # Raman judges each factor in both charts — findings from both frames.
+        lord = _assess_lord(mainpuri, 1)
+        frames = {f.frame for f in lord.findings}
+        assert "Rasi" in frames and "Navamsa" in frames
+
+    def test_mercury_exalted_conjunction_on_lord(self, mainpuri):
+        # Lord Mars conjoins Mercury, exalted in Virgo — must be captured (+).
+        lord = _assess_lord(mainpuri, 1)
+        assert any("Mercury" in f.text and "exalted" in f.text and f.delta > 0
+                   for f in lord.findings)
+
+    def test_navamsa_neechabhanga_flip(self, mainpuri):
+        # Mars is debilitated in the Navamsa (Cancer) but neechabhanga cancels it.
+        lord = _assess_lord(mainpuri, 1)
+        assert any("neechabhanga" in f.text and f.delta > 0 for f in lord.findings)
+
+    def test_lagna_occupant_and_navamsa_aspect(self, mainpuri):
+        lagna = _assess_bhava(mainpuri, 1)
+        assert any("Venus" in f.text and f.frame == "Rasi" for f in lagna.findings)
+        assert any(f.frame == "Navamsa" for f in lagna.findings)
+
+    def test_is_benefic_waxing_moon(self, mainpuri):
+        # Mainpuri Moon (Aqu 19) vs Sun (Vir 26): elongation ~ 142 -> waxing -> benefic
+        assert _is_benefic(mainpuri, "Moon")
+        assert _is_benefic(mainpuri, "Jupiter")
+        assert not _is_benefic(mainpuri, "Saturn")
+
+    def test_influence_factors_specific(self, mainpuri):
+        # Mars owns the 1st; Mercury conjoins the lord; Venus occupies.
+        assert _influence_factors(mainpuri, 1, "Mars") == ("owns",)
+        assert "conjoins lord" in _influence_factors(mainpuri, 1, "Mercury")
+        assert "occupies" in _influence_factors(mainpuri, 1, "Venus")
+
+    def test_kartari_shapes(self, mainpuri):
+        kind, occ2, occ12 = _kartari(mainpuri, 1)
+        assert kind in (None, "papa", "subha")
+
+    def test_conclusion_ranks_and_synthesizes(self, mainpuri):
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        c = j.conclusion
+        assert c.label in _LABELS
+        assert c.influencers  # the five-factor influencers, ranked
+        assert "influencing the 1st house" in c.synthesis
+        assert "1th" not in c.synthesis  # ordinal bug guard
+        # afflicted (malefic) influencers surfaced for timed caution
+        assert set(c.afflicted_activators) <= {i.planet for i in c.influencers}
+
+    def test_verdict_label_thresholds(self):
+        assert _verdict_label(3.5) == "powerful"
+        assert _verdict_label(0.0) == "moderate"
+        assert _verdict_label(-2.0) == "afflicted"

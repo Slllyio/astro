@@ -77,6 +77,7 @@ HOUSE_SIGNIFICATIONS: Mapping[int, str] = {
 # is deliberately absent so its reviewed output stays byte-stable).
 HOUSE_CHAPTERS: Mapping[int, tuple[str, ...]] = {
     2: ("ch5", "5"),
+    3: ("ch6", "6"),
 }
 KARAKA_NAMES: Mapping[int, str] = {
     1: "Thanukaraka (body)", 2: "Dhanakaraka (wealth)", 3: "Bhratrukaraka (siblings)",

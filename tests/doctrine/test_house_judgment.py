@@ -443,3 +443,9 @@ class TestChapterRules:
         assert j.lagna_verdict.label == "very powerful"
         assert j.lord_verdict.label == "fairly good"
         assert j.conclusion.label == "fairly strong"
+
+    def test_house3_reads_ch6(self, mainpuri):
+        # HOUSE_CHAPTERS[3] -> the 3rd house reads its own ch. VI rules.
+        j = judge_house_doctrine(mainpuri, 3, dasha={"md": "Mercury", "ad": "Mercury"})
+        fired = {e.rule_id for s in j.steps for e in s.evidence}
+        assert any(".ch6." in i for i in fired)

@@ -101,7 +101,45 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 3–12 — pending
+## House 3 — ch. VI — HELD-OUT AUDIT
+
+- **Corpus:** Charts 52, 53, 61, 62 (8 factor-verdicts) + 2 rows set aside as
+  *un-modeled* (see below). Ch. VI's verdicts are coarser/comparative ("good",
+  "well disposed", "not sufficiently strong") than ch. V's graded scale.
+- **Result:** **5 / 8 within one grade** (2 exact). Per factor:
+  **Bhāva 3/4 · Lord 1/3 · Kāraka 1/1.**
+- Ch. VI's remaining combinations are mostly **backlog** (need lord-to-planet
+  binding, sign parity, or planet gender) — the 26 encoded ch6 rules already
+  cover the systematic lord-in-house + planets-in-3rd content; chapter-reading
+  wired (`HOUSE_CHAPTERS[3]`).
+
+### Divergence patterns — these REINFORCE the House-2 findings
+
+1. **Lord over-scores when placement + dignity + associations stack** (again, the
+   dominant pattern):
+   - *Chart 61:* Mars in a kendra (+1.2) **and** own sign (+1.2) → "very
+     powerful"; Raman **"not sufficiently strong"** (Δ **+6**, worst row so far).
+   - *Chart 53:* Venus in the 7th (+1.2) + neechabhaṅga (+0.2) + **exalted**
+     Mercury conjunct (+1.6) + Jupiter aspect (+0.7) → "very powerful"; Raman
+     **"well disposed"** (Δ +4).
+
+2. **Empty-house baseline** — *Chart 52:* empty, unaspected 3rd → scheme
+   "moderate"; Raman **"fairly strong"** (Δ −3). **Second data point** (with
+   Chart 43) for "empty + unaspected → fairly strong" — so this is now a
+   *pattern*, not noise, and it argues for a small positive baseline on a clean
+   house (still to be reconciled with Chart 12's "moderate").
+
+### NEW — factors the scheme cannot see (set aside, not counted)
+
+- **Combustion** (*Chart 59:* Venus own-sign-in-9th but **combust → "powerless"**;
+  *Chart 62* Mars). The scheme has no combustion penalty — a genuine missing
+  input, not a weight error.
+- **Mandi / upagraha** (*Chart 60:* the 3rd occupied by **Mandi**, outside the
+  nine grahas the scheme scores).
+
+---
+
+## Houses 4–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
 within-one rate, the per-factor split, and the divergence patterns here._
@@ -114,3 +152,15 @@ Tune the shared weights/thresholds/combine **once**, driven by the accumulated
 patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
+
+**Running tally of the dominant signals (houses 2–3):**
+- **Lord over-scoring by stacked positives** — confirmed 4× (Chart 43 +5, 61 +6,
+  53 +4, 40 +3). The single highest-value fix: a diminishing return / cap so
+  "good house + own sign (+ exalted conjunction)" ≈ one strong positive, not two
+  or three summed to the ceiling.
+- **Empty + unaspected house → "fairly strong"** — confirmed 2× (Charts 43, 52).
+  Argues for a small positive baseline on a clean house, reconciled with Chart 12
+  ("moderate") — the truth is likely "moderately good", splitting the two.
+- **Optimistic combine over-rescues a Rāśi-afflicted planet** — Charts 45, 62.
+- **Missing inputs (not weight bugs):** combustion penalty; upagrahas (Mandi/
+  Gulika). Candidates for new low-level factors before/alongside the tune.

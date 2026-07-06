@@ -286,6 +286,19 @@ class TestCalibration:
     12-14; scratchpad/htjah_h1_calibration.json) and must reproduce his stated
     per-factor verdicts within one grade."""
 
+    def test_unassessed_frame_does_not_rescue_affliction(self):
+        # Phase 2.2 -- an UN-assessed varga must not stand in as a phantom 0 that
+        # rescues an afflicted Rasi via the optimistic blend. A planet with only
+        # Rasi findings, net negative, keeps its Rasi score (not 0.3x it upward).
+        rasi_only = [Finding("dusthana", -1.0, "Rasi", "placement"),
+                     Finding("exalted", 1.6, "Rasi", "dignity"),
+                     Finding("papakartari", -1.0, "Rasi", "kartari"),
+                     Finding("malefic aspect", -0.7, "Rasi", "aspect")]
+        score, rasi, nav = _combine(rasi_only, additive=False)
+        assert nav == 0.0 and rasi < -1.0
+        assert score == rasi           # NOT rescued to 0.3 * rasi
+        assert _verdict_label(score) in ("afflicted", "weak")
+
     def test_navamsa_redeems_afflicted_lord(self):
         # Chart 12 (Capricorn): Saturn (lord) is bad on EVERY Rasi count — 8th
         # (dusthana), enemy sign, aspected by malefic Moon — yet Raman calls the

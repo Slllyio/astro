@@ -763,3 +763,33 @@ Remaining Phase-2 gaps (next increments, each its own audited commit): exaltatio
 the +1.6, e.g. exalted-but-papakartari); papakartari re-scoped per factor type;
 combustion penalty; upagraha (Mandi/Gulika) occupancy; parivartana / sign-exchange
 bonus; nodal / eclipse constellation affliction.
+
+### Increment 2 — exaltation over-credit, examined (DONE, as a blend fix)
+
+Reconstructed the audit corpora (ch. IV anchor + h2/h7/h9/h11, 104 rows) and
+committed them under `docs/raman_doctrine/audit/` so they survive resets. Baselined
+the post-2.1 scheme: anchor 8/8 within-one; corpus 79/104 within-one, over>1=12,
+under>1=13, mean +0.13.
+
+Inspecting the 12 over-predictions (`validate_house.py -v`) split the "exaltation
+over-credit" into two mechanisms:
+
+1. **Phantom-frame rescue (fixable, real bug).** Chart 9/89 — Sun *exalted* but
+   dusthana + papakartari + malefic conjunction/aspect — sums to −1.8 in the Rasi
+   (correctly afflicted), yet scored −0.54 ("moderate"). The optimistic PLANET blend
+   `max()+0.3·min()` took the EMPTY Navamsa frame as a 0 and let it rescue the
+   afflicted Rasi. Fix: blend only across frames that carry findings; an un-assessed
+   varga is "no testimony", not "neutral strength". **Result: within-one 79→81,
+   exact 44→52, over>1 12→10, under>1 flat at 13, mean +0.13→−0.02, anchor still
+   8/8.** Over dropped with under unchanged — a real fix, not the zero-sum frontier.
+   No Mainpuri rendered verdict changes (the live engine always assigns a Navamsa
+   D9-dignity finding, so the phantom-empty frame never arises there; the fix is
+   latent-correctness + corpus fit). Guarded by
+   `test_unassessed_frame_does_not_rescue_affliction` and the raised audit floor (81).
+
+2. **Stacked positives (the v2-exhausted frontier).** The remaining 10 over-rows
+   (e.g. 9/92, 9/94, 2/43, 11/211) are kendra + dignity + benefic conjunctions
+   saturating just under the ceiling. over>1=10 vs under>1=13 is near-symmetric —
+   damping the positive cap would only trade over for under (confirming the v2
+   negative result). Closing this needs new FEATURES (combustion, upagraha,
+   parivartana, nodal constellation), not a cap tweak — the next Phase-2 increments.

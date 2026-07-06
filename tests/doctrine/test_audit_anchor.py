@@ -56,6 +56,6 @@ def test_corpus_within_one_floor(harness):
         harness, "htjah_h2_calibration.json", "htjah_h7_calibration.json",
         "htjah_h9_calibration.json", "htjah_h11_calibration.json")
     assert total == 104
-    # Established floor (post Phase 2.1). Improvements should raise this; a drop
-    # below it is a calibration regression to investigate before committing.
-    assert ok >= 79, f"corpus within-one regressed to {ok}/104 (floor 79)"
+    # Floor raised to 81 by Phase 2.2 (no-phantom-frame blend). Improvements should
+    # raise it further; a drop below is a calibration regression to investigate.
+    assert ok >= 81, f"corpus within-one regressed to {ok}/104 (floor 81)"

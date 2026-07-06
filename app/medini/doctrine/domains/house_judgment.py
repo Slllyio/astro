@@ -653,8 +653,15 @@ def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, flo
                  + sum(d for d in rasi_ds if d < 0), 3)
     nav = round(_cap_positive(sum(d for d in nav_ds if d > 0))
                 + sum(d for d in nav_ds if d < 0), 3)
-    hi, lo = (rasi, nav) if rasi >= nav else (nav, rasi)
-    return round(hi + 0.3 * lo, 3), rasi, nav
+    # The optimistic blend rewards a planet strong in EITHER varga -- but only a
+    # varga that was actually assessed. An UN-assessed frame is "no testimony", not
+    # "neutral strength", so it must not stand in as a phantom 0 that rescues an
+    # afflicted Rasi (Raman grades exalted-but-dusthana/papakartari Sun "afflicted",
+    # not "moderate"). Blend only across frames that carry findings.
+    if rasi_ds and nav_ds:
+        hi, lo = (rasi, nav) if rasi >= nav else (nav, rasi)
+        return round(hi + 0.3 * lo, 3), rasi, nav
+    return (rasi if rasi_ds else nav), rasi, nav
 
 
 def _neechabhanga(chart: RamanChart, planet: str, sign: int) -> bool:

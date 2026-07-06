@@ -32,16 +32,22 @@ PYTHONPATH=. python3 docs/raman_doctrine/audit/validate_house.py \
 `-v` prints every row that misses by more than one grade (the tuning signal). Holdout
 rows are `chart_no % 3 == 0`; TRAIN/HOLDOUT/OVERALL are reported separately.
 
-## Current baseline (post Phase 2.1)
+## Current baseline (post Phase 2.2)
 
-| set | n | within-one | over>1 | under>1 |
-|-----|---|-----------|--------|---------|
-| anchor (ch. IV 12–14) | 8 | 8 (100%) | 0 | 0 |
-| full corpus (h2,7,9,11) | 104 | 79 (76%) | 12 | 13 |
+| set | n | within-one | exact | over>1 | under>1 | mean |
+|-----|---|-----------|-------|--------|---------|------|
+| anchor (ch. IV 12–14) | 8 | 8 (100%) | 3 | 0 | 0 | −0.38 |
+| full corpus (h2,7,9,11) | 104 | 81 (78%) | 52 (50%) | 10 | 13 | −0.02 |
 
-`over>1` (12) is the exaltation-over-credit signal Phase 2.2 targets:
-`+1.6` exaltation reaches the verdict ceiling on its own, so an exalted-but-afflicted
-factor reads high where Raman grades it low.
+Phase 2.2 (no-phantom-frame blend) raised within-one 79→81 and exact 44→52 while
+**leaving under>1 flat at 13** — an un-assessed varga no longer stands in as a
+phantom 0 that rescues an afflicted Rasi. This was a real logic fix, not the v2
+zero-sum weight-tuning frontier.
 
-`tests/doctrine/test_audit_anchor.py` gates the anchor (8/8) and a corpus within-one
-floor so a future scheme edit cannot silently regress the calibration.
+The remaining `over>1` (10) is stacked positives (kendra + dignity + benefic
+conjunctions saturating just under the ceiling) — the v2-exhausted tuning frontier;
+closing it needs new *features* (combustion, upagraha, parivartana, nodal), not a
+cap tweak.
+
+`tests/doctrine/test_audit_anchor.py` gates the anchor (8/8) and the corpus
+within-one floor (81) so a future scheme edit cannot silently regress the calibration.

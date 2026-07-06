@@ -8,10 +8,10 @@ import pytest
 
 from app.medini.doctrine import raman_chart as rc
 from app.medini.doctrine.domains.house_judgment import (
-    VERDICT_SCALE, Finding, _assess_bhava, _assess_karaka, _assess_lord,
-    _classify, _combine, _influence_factors, _is_benefic, _kartari,
-    _maha_sequence, _planet_nature, _verdict_label,
-    judge_all_houses_doctrine, judge_house_doctrine,
+    ACTIVATION_TIERS, VERDICT_SCALE, Finding, _antardasha_spans, _assess_bhava,
+    _assess_karaka, _assess_lord, _associated, _classify, _combine,
+    _influence_factors, _is_benefic, _kartari, _maha_sequence, _pair_tier,
+    _planet_nature, _verdict_label, judge_all_houses_doctrine, judge_house_doctrine,
 )
 
 _LABELS = set(VERDICT_SCALE)
@@ -102,6 +102,63 @@ class TestTiming:
         j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Moon", "ad": "Moon"})
         assert not j.timing.current_is_activator
         assert j.timing.active_outcomes == ()
+
+
+class TestAntardashaTiming:
+    """Vimshottari antardasha (bhukti) nesting + Raman's MD x AD fructification
+    tiers (HTJAH pp. 44-48)."""
+
+    def test_antardasha_partitions_each_mahadasha(self):
+        # Every mahadasha holds nine sub-periods summing to its own length.
+        spans = _antardasha_spans("Saturn", 10.0, 29.0)   # full 19-year Saturn MD
+        assert [l for l, _, _ in spans] == [
+            "Saturn", "Mercury", "Ketu", "Venus", "Sun", "Moon", "Mars",
+            "Rahu", "Jupiter"]                             # order begins with MD lord
+        total = sum(e - s for _, s, e in spans)
+        assert total == pytest.approx(19.0, abs=1e-2)
+        assert spans[0][1] == 10.0 and spans[-1][2] == pytest.approx(29.0, abs=1e-2)
+
+    def test_partial_birth_mahadasha_clipped_to_birth(self):
+        # A partial birth MD drops pre-birth sub-periods; the running one starts at 0.
+        spans = _antardasha_spans("Mars", 0.0, 6.11, elapsed_into_md=7 - 6.11)
+        assert spans[0][1] == 0.0
+        # Saturn sub-period in Mars MD ends ~2.6y (Raman's Chart 11: "about April 1915").
+        sat = next(e for l, s, e in spans if l == "Saturn")
+        assert 2.4 < sat < 2.8
+
+    def test_windows_carry_nested_antardashas(self, mainpuri):
+        nine = {"Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn",
+                "Rahu", "Ketu"}
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Venus"})
+        # full mahadashas hold all nine bhuktis; only the partial birth MD is short
+        for w in j.timing.windows[1:]:
+            assert {a.lord for a in w.antardashas} == nine
+        assert j.timing.windows[0].antardashas  # birth MD has its (clipped) bhuktis
+
+    def test_md_ad_fructification_tiers(self, mainpuri):
+        # both lords influence + associated -> par excellence; both -> predominant;
+        # one -> limited; neither -> dormant. (Scorpio: Mars owns, Saturn aspects
+        # the lord, so Saturn+Mars are associated influencers.)
+        assert _pair_tier(mainpuri, 1, "Saturn", "Mercury") == "par excellence"
+        assert _pair_tier(mainpuri, 1, "Saturn", "Saturn") == "predominant"
+        assert _pair_tier(mainpuri, 1, "Jupiter", "Saturn") == "limited"
+        assert _pair_tier(mainpuri, 1, "Rahu", "Moon") == "dormant"
+        assert set(ACTIVATION_TIERS) == {
+            "par excellence", "predominant", "limited", "dormant"}
+
+    def test_current_tier_and_factor_grouping(self, mainpuri):
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Venus"})
+        assert j.timing.current_tier in ACTIVATION_TIERS
+        # Raman's (a)-(e): Mars owns the 1st, Venus is posited there.
+        fbf = j.timing.influence_by_factor
+        assert "Mars" in fbf.get("owns", ())
+        assert "Venus" in fbf.get("occupies", ())
+
+    def test_associated_is_conjunction_or_mutual_aspect(self, mainpuri):
+        # Sun conjoins the lagna-lord Mars -> associated; a planet is not
+        # 'associated' with itself.
+        assert _associated(mainpuri, "Mars", "Sun")
+        assert not _associated(mainpuri, "Mars", "Mars")
 
 
 class TestMethodSpine:

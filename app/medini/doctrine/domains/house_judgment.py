@@ -96,6 +96,28 @@ class MethodStep:
     score: float                  # per-bucket polarity mean, [-1, +1]
 
 
+# Raman's MD x AD fructification tiers (HTJAH pp. 44-48, "Nature of the Results").
+# Ordered strongest -> weakest so a UI can sort/colour them.
+ACTIVATION_TIERS = ("par excellence", "predominant", "limited", "dormant")
+_TIER_GLOSS = {
+    "par excellence": "both lords influence the house AND are mutually associated",
+    "predominant": "both the major and sub lords influence the house",
+    "limited": "only one of the two lords influences the house",
+    "dormant": "neither lord influences the house — no results of this house",
+}
+
+
+@dataclasses.dataclass(frozen=True)
+class AntarWindow:
+    lord: str
+    start_age: float
+    end_age: float
+    influences: bool              # does the sub-lord influence the house (5 factors)?
+    is_current: bool              # is this the running antardasha (bhukti)?
+    associated_with_md: bool      # is the sub-lord associated with the major lord?
+    tier: str                     # ACTIVATION_TIERS: this MD x AD fructification
+
+
 @dataclasses.dataclass(frozen=True)
 class DasaWindow:
     lord: str
@@ -103,6 +125,7 @@ class DasaWindow:
     end_age: float
     influences: bool              # is this planet a house influencer (5 factors)?
     is_current: bool              # is this the running mahadasha?
+    antardashas: tuple[AntarWindow, ...] = ()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -112,6 +135,8 @@ class HouseTiming:
     current_md: str | None
     current_ad: str | None
     current_is_activator: bool
+    current_tier: str | None            # ACTIVATION_TIERS for the running MD x AD
+    influence_by_factor: Mapping[str, tuple[str, ...]]  # Raman's (a)-(e) grouping
     active_outcomes: tuple[FiredEvidence, ...]
     method_citation: tuple[str, ...]
 
@@ -229,6 +254,20 @@ def _label(score: float) -> str:
     return "mixed"
 
 
+_DASHA_YEARS = dict(DASHA_LORDS)
+
+# Raman's five influence factors (HTJAH p. 44), in his (a)-(e) order, mapped to
+# the tags _influence_factors emits.
+_FACTOR_LABELS = ("owns", "aspects house", "occupies", "aspects lord", "conjoins lord")
+FACTOR_DESCRIPTIONS = {
+    "owns": "(a) lord of the house",
+    "aspects house": "(b) aspects the house",
+    "occupies": "(c) posited in the house",
+    "aspects lord": "(d) aspects the lord of the house",
+    "conjoins lord": "(e) in association with the lord",
+}
+
+
 def _maha_sequence(moon_lon: float) -> list[tuple[str, float, float]]:
     """Full Vimshottari mahadasha windows as (lord, start_age, end_age) from
     birth, using the running-dasha balance + the DASHA_LORDS order."""
@@ -243,6 +282,58 @@ def _maha_sequence(moon_lon: float) -> list[tuple[str, float, float]]:
         seq.append((lord, cursor, cursor + years))
         cursor += years
     return seq
+
+
+def _birth_elapsed_into_md(moon_lon: float) -> float:
+    """Years already elapsed into the birth mahadasha (so its antardasha balance
+    can be trimmed to start at birth)."""
+    return calculate_vimshottari_mahadasha(moon_lon, birth_jd=0.0)["time_elapsed_years"]
+
+
+def _antardasha_spans(md_lord: str, md_start: float, md_end: float,
+                      elapsed_into_md: float = 0.0) -> list[tuple[str, float, float]]:
+    """Vimshottari antardasha (bhukti) windows inside one mahadasha, as
+    (lord, start_age, end_age). Each sub-lord Y's span within lord X's dasa is
+    ``total_X * total_Y / 120`` years, in the DASHA_LORDS order beginning with X.
+    For the partial birth mahadasha, the sub-periods elapsed before birth are
+    dropped and the running one is clipped to start at birth (Raman, Chart 11)."""
+    idx0 = next(i for i, (l, _) in enumerate(DASHA_LORDS) if l == md_lord)
+    total_md = _DASHA_YEARS[md_lord]
+    notional_start = md_start - elapsed_into_md   # where the MD would have begun
+    out: list[tuple[str, float, float]] = []
+    cursor = notional_start
+    for k in range(9):
+        lord, total_y = DASHA_LORDS[(idx0 + k) % 9]
+        length = total_md * total_y / 120.0
+        a_s, a_e = cursor, cursor + length
+        cursor = a_e
+        if a_e <= md_start + 1e-9:        # wholly elapsed before birth
+            continue
+        out.append((lord, round(max(a_s, md_start), 3), round(min(a_e, md_end), 3)))
+    return out
+
+
+def _associated(chart: RamanChart, p1: str, p2: str) -> bool:
+    """Two planets are 'associated' (Raman) when conjoined or in mutual aspect —
+    the relation that turns a doubly-influencing MD x AD into results par excellence."""
+    if p1 == p2:
+        return False
+    d1 = _d1_houses(chart)
+    if d1[p1] == d1[p2]:
+        return True
+    return (d1[p2] in aspects_from_planet(p1, d1[p1])
+            or d1[p1] in aspects_from_planet(p2, d1[p2]))
+
+
+def _pair_tier(chart: RamanChart, house: int, md_lord: str, ad_lord: str) -> str:
+    """Raman's fructification tier for a (major, sub) lord pair on a house."""
+    md_inf = bool(_influence_factors(chart, house, md_lord))
+    ad_inf = bool(_influence_factors(chart, house, ad_lord))
+    if md_inf and ad_inf:
+        return "par excellence" if _associated(chart, md_lord, ad_lord) else "predominant"
+    if md_inf or ad_inf:
+        return "limited"
+    return "dormant"
 
 
 # ============================================================ strength assessor
@@ -747,19 +838,41 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     md = dasha.get("md") if dasha else None
     ad = dasha.get("ad") if dasha else None
     moon_lon = chart.bundle.chart.planet_lons["Moon"]
-    windows = tuple(
-        DasaWindow(lord=l, start_age=round(s, 2), end_age=round(e, 2),
-                   influences=l in infl_set, is_current=(l == md))
-        for l, s, e in _maha_sequence(moon_lon)
-    )
+    # Raman's (a)-(e) grouping of the planets that influence this house.
+    factor_map: dict[str, list[str]] = {f: [] for f in _FACTOR_LABELS}
+    for p in GRAHAS:
+        for fac in _influence_factors(chart, house, p):
+            factor_map[fac].append(p)
+    influence_by_factor = {f: tuple(v) for f, v in factor_map.items() if v}
+    # mahadasha windows, each with its nested antardasha (bhukti) sub-periods and
+    # the MD x AD fructification tier Raman assigns to the pair.
+    seq = _maha_sequence(moon_lon)
+    elapsed0 = _birth_elapsed_into_md(moon_lon)
+    windows_l: list[DasaWindow] = []
+    for i, (l, s, e) in enumerate(seq):
+        elapsed = elapsed0 if i == 0 else 0.0
+        antars = tuple(
+            AntarWindow(
+                lord=al, start_age=as_, end_age=ae_,
+                influences=al in infl_set, is_current=(l == md and al == ad),
+                associated_with_md=_associated(chart, l, al),
+                tier=_pair_tier(chart, house, l, al))
+            for al, as_, ae_ in _antardasha_spans(l, s, e, elapsed)
+        )
+        windows_l.append(DasaWindow(
+            lord=l, start_age=round(s, 2), end_age=round(e, 2),
+            influences=l in infl_set, is_current=(l == md), antardashas=antars))
+    windows = tuple(windows_l)
     current_is_activator = md in infl_set if md else False
+    current_tier = _pair_tier(chart, house, md, ad) if md and ad else None
     active_outcomes = tuple(
         ev for ev, rule in timing_fired
         if (rule["consequent"].get("timing") or {}).get("of") == md
     )
     timing = HouseTiming(
         influencers=influencers, windows=windows, current_md=md, current_ad=ad,
-        current_is_activator=current_is_activator, active_outcomes=active_outcomes,
+        current_is_activator=current_is_activator, current_tier=current_tier,
+        influence_by_factor=influence_by_factor, active_outcomes=active_outcomes,
         method_citation=METHOD_CITATIONS["timing"],
     )
 

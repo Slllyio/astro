@@ -1,0 +1,541 @@
+{
+ "house": 2,
+ "chapter": "ch5 (Vol. I)",
+ "holdout_rule": "chart_no % 3 == 0",
+ "rows": [
+  {
+   "chart": 40,
+   "role": "Bhava",
+   "subject": "2nd (4 planets, cancellations)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "very strong",
+   "note": "own-sign Mars + neechabhanga Moon + exalted-Jupiter aspect = 'very strongly situated'; occupant cancellations unseen by scheme"
+  },
+  {
+   "chart": 40,
+   "role": "Lord",
+   "subject": "Mars (2L own, 2nd)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Rasi",
+     "why": "own (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "very strong",
+   "note": ""
+  },
+  {
+   "chart": 40,
+   "role": "Dhana",
+   "subject": "Jupiter (exalt, 10th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "very strong",
+   "note": ""
+  },
+  {
+   "chart": 41,
+   "role": "Bhava",
+   "subject": "2nd (Rajayoga, 3 planets)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": "Sun/Mercury/Mars Rajayoga -> 'strong'; Rajayoga occupancy unseen"
+  },
+  {
+   "chart": 41,
+   "role": "Lord",
+   "subject": "Saturn (2L, Lagna)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Navamsa",
+     "exalted": false,
+     "why": "conjunct (Navamsa)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": "Raman 'moderately powerful'; kendra placement over-scores"
+  },
+  {
+   "chart": 41,
+   "role": "Dhana",
+   "subject": "Jupiter (12th, vargottama)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "vargottama",
+     "frame": "both",
+     "why": "vargottama"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 42,
+   "role": "Bhava",
+   "subject": "2nd (Mars in, Jupiter asp)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 42,
+   "role": "Lord",
+   "subject": "Saturn (2L, 3rd)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "inimical",
+     "frame": "Navamsa",
+     "why": "inimical (Navamsa)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 42,
+   "role": "Dhana",
+   "subject": "Jupiter (8th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 43,
+   "role": "Bhava",
+   "subject": "2nd (Aries, clean)",
+   "additive": true,
+   "findings": [],
+   "expected": "fairly strong",
+   "note": "'not aspected by any planet, hence fairly strong' -- clean house UNDER-scored"
+  },
+  {
+   "chart": 43,
+   "role": "Lord",
+   "subject": "Mars (2L own, 9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Rasi",
+     "why": "own (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Navamsa",
+     "exalted": false,
+     "why": "conjunct (Navamsa)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Navamsa",
+     "exalted": false,
+     "why": "conjunct (Navamsa)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": "trikona+own -> very powerful; Raman 'moderately good'"
+  },
+  {
+   "chart": 43,
+   "role": "Dhana",
+   "subject": "Jupiter (11th debil, NB)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "neechabhanga",
+     "why": "neechabhanga"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 44,
+   "role": "Bhava",
+   "subject": "2nd (Virgo)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderate",
+   "note": "Sun occupant + Saturn aspect -> 'ordinarily disposed'"
+  },
+  {
+   "chart": 44,
+   "role": "Lord",
+   "subject": "Mercury (2L, 3rd)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 44,
+   "role": "Dhana",
+   "subject": "Jupiter (4th, w/ Mars YK)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 45,
+   "role": "Bhava",
+   "subject": "2nd (Libra, clean)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly good",
+   "note": "'free from affliction ... fairly well disposed' -- clean house"
+  },
+  {
+   "chart": 45,
+   "role": "Lord",
+   "subject": "Venus (2L, 5th, 3 malefics)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Navamsa",
+     "why": "friendly (Navamsa)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Navamsa",
+     "exalted": false,
+     "why": "conjunct (Navamsa)"
+    }
+   ],
+   "expected": "weak",
+   "note": "Venus joined by Sun+Moon+Rahu -> 'feebly strong'; optimistic combine over-rescues"
+  },
+  {
+   "chart": 46,
+   "role": "Bhava",
+   "subject": "2nd (Saturn in, Jupiter asp)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderate",
+   "note": "'ordinarily situated'"
+  },
+  {
+   "chart": 46,
+   "role": "Dhana",
+   "subject": "Jupiter (8th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 48,
+   "role": "Bhava",
+   "subject": "2nd (Virgo, Saturn asp)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderately good",
+   "note": "aspected by neutral Saturn -> 'moderately good'"
+  },
+  {
+   "chart": 48,
+   "role": "Lord",
+   "subject": "Mercury (2L, 3rd, friendly)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Navamsa",
+     "why": "own (Navamsa)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 48,
+   "role": "Dhana",
+   "subject": "Jupiter (inimical, Navamsa lord)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "inimical",
+     "frame": "Rasi",
+     "why": "inimical (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Navamsa",
+     "why": "friendly (Navamsa)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  }
+ ]
+}

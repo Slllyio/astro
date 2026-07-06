@@ -1,0 +1,455 @@
+{
+ "house": 11,
+ "chapter": "ch15 (Vol. II)",
+ "holdout_rule": "chart_no % 3 == 0",
+ "rows": [
+  {
+   "chart": 210,
+   "role": "Lord",
+   "subject": "Moon (11L debil, 3rd)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "debilitated",
+     "frame": "Rasi",
+     "why": "debilitated (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 211,
+   "role": "Bhava",
+   "subject": "11th (Aries)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 211,
+   "role": "Lord",
+   "subject": "Mars (11L, Lagna)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Navamsa",
+     "why": "exalted (Navamsa)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 212,
+   "role": "Bhava",
+   "subject": "11th (Libra)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 212,
+   "role": "Lord",
+   "subject": "Venus (11L own, 11th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Rasi",
+     "why": "own (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    }
+   ],
+   "expected": "very strong",
+   "note": ""
+  },
+  {
+   "chart": 213,
+   "role": "Bhava",
+   "subject": "11th",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 213,
+   "role": "Lord",
+   "subject": "Saturn (11L, 3rd)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 214,
+   "role": "Bhava",
+   "subject": "11th (Gemini)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 215,
+   "role": "Bhava",
+   "subject": "11th (Cancer)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 215,
+   "role": "Lord",
+   "subject": "Moon (11L own, 11th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Rasi",
+     "why": "own (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Navamsa",
+     "exalted": true,
+     "why": "conjunct (Navamsa)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 216,
+   "role": "Bhava",
+   "subject": "11th (Pisces)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 216,
+   "role": "Lord",
+   "subject": "Jupiter (11L debil, 9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "neechabhanga",
+     "why": "neechabhanga"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 217,
+   "role": "Bhava",
+   "subject": "11th (Pisces)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 217,
+   "role": "Lord",
+   "subject": "Jupiter (11L, 6th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "dignity",
+     "state": "inimical",
+     "frame": "Rasi",
+     "why": "inimical (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Navamsa",
+     "why": "own (Navamsa)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 218,
+   "role": "Bhava",
+   "subject": "11th (Leo)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 218,
+   "role": "Lord",
+   "subject": "Sun (11L exalt, kendra)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  }
+ ]
+}

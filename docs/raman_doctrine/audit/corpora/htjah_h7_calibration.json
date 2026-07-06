@@ -1,0 +1,1068 @@
+{
+ "house": 7,
+ "chapter": "ch11 (Vol. II)",
+ "holdout_rule": "chart_no % 3 == 0",
+ "rows": [
+  {
+   "chart": 1,
+   "role": "Bhava",
+   "subject": "7th (Pisces)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 1,
+   "role": "Lord",
+   "subject": "Jupiter (7L)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "vargottama",
+     "frame": "both",
+     "why": "vargottama"
+    },
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Rasi",
+     "why": "own (Rasi)"
+    },
+    {
+     "type": "dignity",
+     "state": "own",
+     "frame": "Navamsa",
+     "why": "own (Navamsa)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Navamsa",
+     "why": "aspect (Navamsa)"
+    }
+   ],
+   "expected": "very strong",
+   "note": ""
+  },
+  {
+   "chart": 1,
+   "role": "Karaka",
+   "subject": "Venus",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 2,
+   "role": "Bhava",
+   "subject": "7th (Aquarius)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly powerful",
+   "note": ""
+  },
+  {
+   "chart": 2,
+   "role": "Lord",
+   "subject": "Saturn (7L)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "subha",
+     "why": "subhakartari"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 2,
+   "role": "Karaka",
+   "subject": "Venus",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 3,
+   "role": "Bhava",
+   "subject": "7th",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 3,
+   "role": "Lord",
+   "subject": "Venus (7L, Lagna)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 4,
+   "role": "Bhava",
+   "subject": "7th (Pisces)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "afflicted",
+   "note": ""
+  },
+  {
+   "chart": 4,
+   "role": "Lord",
+   "subject": "Jupiter (7L)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 4,
+   "role": "Karaka",
+   "subject": "Venus",
+   "additive": false,
+   "findings": [
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "afflicted",
+   "note": ""
+  },
+  {
+   "chart": 5,
+   "role": "Bhava",
+   "subject": "7th",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 5,
+   "role": "Lord",
+   "subject": "Mercury (7L)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 5,
+   "role": "Karaka",
+   "subject": "Venus",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "inimical",
+     "frame": "Rasi",
+     "why": "inimical (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 6,
+   "role": "Bhava",
+   "subject": "7th (Virgo)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 7,
+   "role": "Bhava",
+   "subject": "7th (Scorpio)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 7,
+   "role": "Lord",
+   "subject": "Mars (7L)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 7,
+   "role": "Karaka",
+   "subject": "Venus (8th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 8,
+   "role": "Bhava",
+   "subject": "7th (Leo)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 8,
+   "role": "Lord",
+   "subject": "Sun (6th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 8,
+   "role": "Karaka",
+   "subject": "Venus (7th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 9,
+   "role": "Bhava",
+   "subject": "7th (Aries)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 9,
+   "role": "Lord",
+   "subject": "Mars (12th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 9,
+   "role": "Karaka",
+   "subject": "Venus (12th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "afflicted",
+   "note": ""
+  },
+  {
+   "chart": 10,
+   "role": "Bhava",
+   "subject": "7th (Scorpio)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 10,
+   "role": "Lord",
+   "subject": "Mars (3rd, debil)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "debilitated",
+     "frame": "Rasi",
+     "why": "debilitated (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 10,
+   "role": "Karaka",
+   "subject": "Venus (12th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "afflicted",
+   "note": ""
+  },
+  {
+   "chart": 11,
+   "role": "Bhava",
+   "subject": "7th (Pisces)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 11,
+   "role": "Lord",
+   "subject": "Jupiter (9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 11,
+   "role": "Karaka",
+   "subject": "Venus (4th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 12,
+   "role": "Bhava",
+   "subject": "7th (Sagittarius)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 12,
+   "role": "Karaka",
+   "subject": "Venus",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "friendly",
+     "frame": "Rasi",
+     "why": "friendly (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 13,
+   "role": "Bhava",
+   "subject": "7th (Cancer)",
+   "additive": true,
+   "findings": [],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 13,
+   "role": "Karaka",
+   "subject": "Venus (9th, debil)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "neechabhanga",
+     "why": "neechabhanga"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 14,
+   "role": "Bhava",
+   "subject": "7th (Gemini)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 14,
+   "role": "Lord",
+   "subject": "Mercury (11th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 14,
+   "role": "Karaka",
+   "subject": "Venus (Lagna)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 15,
+   "role": "Bhava",
+   "subject": "7th (Pisces)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 15,
+   "role": "Lord",
+   "subject": "Jupiter (9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 15,
+   "role": "Karaka",
+   "subject": "Venus (5th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 16,
+   "role": "Bhava",
+   "subject": "7th (Leo)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 16,
+   "role": "Lord",
+   "subject": "Sun (kendra, varg)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "vargottama",
+     "frame": "both",
+     "why": "vargottama"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 16,
+   "role": "Karaka",
+   "subject": "Venus (2nd, exalt+varg)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "vargottama",
+     "frame": "both",
+     "why": "vargottama"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Navamsa",
+     "why": "exalted (Navamsa)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "very strong",
+   "note": ""
+  }
+ ]
+}

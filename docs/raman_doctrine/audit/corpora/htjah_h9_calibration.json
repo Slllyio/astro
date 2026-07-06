@@ -1,0 +1,703 @@
+{
+ "house": 9,
+ "chapter": "ch13 (Vol. II)",
+ "holdout_rule": "chart_no % 3 == 0",
+ "rows": [
+  {
+   "chart": 86,
+   "role": "Karaka",
+   "subject": "Sun (exalt, 9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 87,
+   "role": "Lord",
+   "subject": "Moon (9L, 10th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 87,
+   "role": "Karaka",
+   "subject": "Sun (exalt, 6th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 88,
+   "role": "Lord",
+   "subject": "Mercury (9L exalt, 9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 88,
+   "role": "Karaka",
+   "subject": "Sun (9th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 89,
+   "role": "Bhava",
+   "subject": "9th (Cancer)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 89,
+   "role": "Karaka",
+   "subject": "Sun (exalt, 6th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "afflicted",
+   "note": ""
+  },
+  {
+   "chart": 90,
+   "role": "Lord",
+   "subject": "Mercury (9L, 10th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 90,
+   "role": "Karaka",
+   "subject": "Sun (debil, kendra)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "debilitated",
+     "frame": "Rasi",
+     "why": "debilitated (Rasi)"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 91,
+   "role": "Karaka",
+   "subject": "Sun (10th, papakartari)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 92,
+   "role": "Bhava",
+   "subject": "9th",
+   "additive": true,
+   "findings": [
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 92,
+   "role": "Karaka",
+   "subject": "Sun (4th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 93,
+   "role": "Bhava",
+   "subject": "9th",
+   "additive": true,
+   "findings": [],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 93,
+   "role": "Lord",
+   "subject": "Venus (9L inimical, 7th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "dignity",
+     "state": "inimical",
+     "frame": "Rasi",
+     "why": "inimical (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  },
+  {
+   "chart": 94,
+   "role": "Bhava",
+   "subject": "9th (Libra)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "kartari",
+     "kind": "subha",
+     "why": "subhakartari"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": true,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 94,
+   "role": "Lord",
+   "subject": "Venus (9L, 10th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly powerful",
+   "note": ""
+  },
+  {
+   "chart": 94,
+   "role": "Karaka",
+   "subject": "Sun (9th, neechabhanga)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "neechabhanga",
+     "why": "neechabhanga"
+    },
+    {
+     "type": "kartari",
+     "kind": "subha",
+     "why": "subhakartari"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderately good",
+   "note": ""
+  },
+  {
+   "chart": 95,
+   "role": "Bhava",
+   "subject": "9th (Capricorn)",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    },
+    {
+     "type": "occupant",
+     "benefic": false,
+     "why": "occupant"
+    },
+    {
+     "type": "bhava_aspect",
+     "benefic": false,
+     "why": "house aspect"
+    }
+   ],
+   "expected": "fairly strong",
+   "note": ""
+  },
+  {
+   "chart": 95,
+   "role": "Karaka",
+   "subject": "Sun (exalt, 12th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "dignity",
+     "state": "exalted",
+     "frame": "Rasi",
+     "why": "exalted (Rasi)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 96,
+   "role": "Bhava",
+   "subject": "9th",
+   "additive": true,
+   "findings": [
+    {
+     "type": "occupant",
+     "benefic": true,
+     "why": "occupant"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 96,
+   "role": "Lord",
+   "subject": "Jupiter (9L, 4th, varg)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "vargottama",
+     "frame": "both",
+     "why": "vargottama"
+    },
+    {
+     "type": "conjunct",
+     "benefic": false,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "moderate",
+   "note": ""
+  },
+  {
+   "chart": 96,
+   "role": "Karaka",
+   "subject": "Sun (Lagna)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "kendra_trikona",
+     "why": "placed (kendra_trikona)"
+    },
+    {
+     "type": "aspect",
+     "benefic": false,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    }
+   ],
+   "expected": "fairly good",
+   "note": ""
+  },
+  {
+   "chart": 97,
+   "role": "Lord",
+   "subject": "Sun (9L+karaka, 12th)",
+   "additive": false,
+   "findings": [
+    {
+     "type": "placement",
+     "where": "dusthana",
+     "why": "placed (dusthana)"
+    },
+    {
+     "type": "conjunct",
+     "benefic": true,
+     "frame": "Rasi",
+     "exalted": false,
+     "why": "conjunct (Rasi)"
+    },
+    {
+     "type": "aspect",
+     "benefic": true,
+     "frame": "Rasi",
+     "why": "aspect (Rasi)"
+    },
+    {
+     "type": "kartari",
+     "kind": "papa",
+     "why": "papakartari"
+    }
+   ],
+   "expected": "weak",
+   "note": ""
+  }
+ ]
+}

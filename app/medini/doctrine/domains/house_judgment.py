@@ -83,6 +83,7 @@ HOUSE_CHAPTERS: Mapping[int, tuple[str, ...]] = {
     6: ("ch9", "9"),
     7: ("ch11", "11"),
     8: ("ch12", "12"),
+    9: ("ch13", "13"),
 }
 KARAKA_NAMES: Mapping[int, str] = {
     1: "Thanukaraka (body)", 2: "Dhanakaraka (wealth)", 3: "Bhratrukaraka (siblings)",

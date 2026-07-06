@@ -142,6 +142,19 @@ class HouseTiming:
 
 
 @dataclasses.dataclass(frozen=True)
+class Combination:
+    """A named combination (yoga) Raman states for the house — a compound of two or
+    more placements. Some manifest in a specific lord's dasa (``dasha_lord``)."""
+    rule_id: str
+    text: str
+    polarity: str                # favorable | unfavorable | mixed
+    magnitude: str | None
+    book: str
+    dasha_lord: str | None       # the period in which it fructifies, if dasa-timed
+    active_now: bool             # is that period running?
+
+
+@dataclasses.dataclass(frozen=True)
 class HouseJudgment:
     house: int
     domain: str
@@ -159,6 +172,7 @@ class HouseJudgment:
     conclusion: "Conclusion"
     first_house: "FirstHouseTestimony | None" = None
     chandra: "ReferenceJudgment | None" = None
+    combinations: tuple["Combination", ...] = ()
 
     @property
     def method_records_cited(self) -> frozenset[str]:
@@ -207,12 +221,53 @@ def _is_timing(rule: dict, ops: set[str]) -> bool:
             or "dasha_lord_is" in ops or "planet_influences_house" in ops)
 
 
+def _planets_named(node) -> set[str]:
+    p = node.get("planet")
+    return set(p) if isinstance(p, (list, tuple)) else ({p} if isinstance(p, str) else set())
+
+
+# leaf ops that assert a placement / aspect / lordship — the building blocks of a yoga
+_COMBO_ATOM_OPS = frozenset({
+    "planet_in_house", "planet_aspects_house", "lord_of_house_in_house",
+    "planet_is_lord_of", "planet_aspects_planet", "planet_conjunct_planet",
+    "planet_in_sign", "planet_aspects_lord", "lagna_sign_is",
+})
+
+
+def _is_combination(rule: dict) -> bool:
+    """A named yoga: a COMPOUND antecedent (all / n-of / none) that conjoins two or
+    more placements on DIFFERENT houses, planets, or lordships — as opposed to a
+    single-factor testimony. These are Raman's stated combinations (e.g. 'benefics
+    in 1, 11, 12 with the lagna lord in a trikona', 'three malefics in the 1st')."""
+    node = rule["antecedent"]
+    if not isinstance(node, Mapping) or node.get("op") not in ("all", "n_of", "none"):
+        return False
+    atoms = [n for n in _walk(node)
+             if isinstance(n, Mapping) and n.get("op") in _COMBO_ATOM_OPS]
+    if len(atoms) < 2:
+        return False
+    houses: set[int] = set()
+    planets: set[str] = set()
+    lordships: set[int] = set()
+    for a in atoms:
+        houses |= _houses_of(a)
+        planets |= _planets_named(a)
+        if "of_house" in a:
+            lordships.add(int(a["of_house"]))
+    return len(houses) >= 2 or len(planets) >= 2 or len(lordships) >= 2
+
+
 def _classify(rule: dict, house: int) -> str:
     """Assign a fired rule to Raman's analytical bucket by its antecedent shape."""
     nodes = _walk(rule["antecedent"])
     ops = {n["op"] for n in nodes if isinstance(n, Mapping) and "op" in n}
     if _is_timing(rule, ops):
         return "timing"
+    # Combinations (yogas): a compound multi-placement antecedent is recognised as a
+    # named combination BEFORE the single-factor buckets, so a yoga that merely
+    # mentions a planet in the house is not mis-filed under Occupants.
+    if _is_combination(rule):
+        return "combinations"
     # Lord: a lordship leaf that concerns THIS house.
     for n in nodes:
         op = n.get("op")
@@ -488,6 +543,18 @@ def _d9_houses(chart: RamanChart) -> dict[str, int]:
 
 def _lord_of(chart: RamanChart, house: int) -> str:
     return chart.bundle.sign_lord_of_house(house, from_moon=False)
+
+
+def _resolve_period_lord(chart: RamanChart, of: str | None) -> str | None:
+    """Resolve a timing 'of' token ('lord_of_1', a planet name) to a planet."""
+    if not of:
+        return None
+    if of.startswith("lord_of_"):
+        try:
+            return _lord_of(chart, int(of.rsplit("_", 1)[1]))
+        except (ValueError, KeyError):
+            return None
+    return of if of in GRAHAS else None
 
 
 _ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th", 6: "6th",
@@ -896,6 +963,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     ctx = EvalContext(chart=chart, dasha=dasha)
     buckets: dict[str, list[FiredEvidence]] = {k: [] for k in STEP_ORDER}
     timing_fired: list[tuple[FiredEvidence, dict]] = []
+    combos_fired: list[tuple[FiredEvidence, dict]] = []
     n_fired = evaluable = 0
     seen: set[str] = set()
     for rule in by_domain.get(domain, ()):
@@ -913,6 +981,11 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
                            rule["consequent"]["text"], rule["book"],
                            rule["consequent"].get("magnitude"))
         bucket = _classify(rule, house)
+        # a named yoga is surfaced as a Combination even when it is dasa-timed
+        # (Raman's 'Lagna lord joins the Nth lord in the Nth' set) — collected here
+        # in addition to its bucket so both the step vote and the yoga list see it.
+        if _is_combination(rule):
+            combos_fired.append((ev, rule))
         if bucket == "timing":
             timing_fired.append((ev, rule))
         else:
@@ -990,6 +1063,19 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     first_house = _first_house_testimony(chart) if house == 1 else None
     chandra = _assess_from_moon(chart, house)
 
+    # ---- named combinations (yogas) that fired for this house ----
+    combos: list[Combination] = []
+    for ev, rule in combos_fired:
+        of = (rule["consequent"].get("timing") or {}).get("of")
+        dl = _resolve_period_lord(chart, of)
+        combos.append(Combination(
+            rule_id=ev.rule_id, text=ev.text, polarity=ev.polarity,
+            magnitude=ev.magnitude, book=ev.book, dasha_lord=dl,
+            active_now=(dl is not None and dl == md)))
+    # strongest / most specific first: favourable+unfavourable before mixed, then by text
+    _pol_rank = {"unfavorable": 0, "favorable": 0, "mixed": 1}
+    combos.sort(key=lambda c: (_pol_rank.get(c.polarity, 2), c.rule_id))
+
     return HouseJudgment(
         house=house, domain=domain,
         frame_citation=METHOD_CITATIONS["frame"], steps=steps,
@@ -998,6 +1084,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         n_fired=n_fired, n_evaluable=evaluable,
         lagna_verdict=lagna_v, lord_verdict=lord_v, karaka_verdict=karaka_v,
         conclusion=conclusion, first_house=first_house, chandra=chandra,
+        combinations=tuple(combos),
     )
 
 

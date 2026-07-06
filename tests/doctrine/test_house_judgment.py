@@ -10,8 +10,8 @@ from app.medini.doctrine import raman_chart as rc
 from app.medini.doctrine.domains.house_judgment import (
     ACTIVATION_TIERS, VERDICT_SCALE, Finding, _antardasha_spans, _assess_bhava,
     _assess_from_moon, _assess_karaka, _assess_lord, _associated, _classify,
-    _combine, _influence_factors, _is_benefic, _kartari, _lord_from_moon,
-    _maha_sequence, _pair_tier, _planet_nature, _verdict_label,
+    _combine, _influence_factors, _is_benefic, _is_combination, _kartari,
+    _lord_from_moon, _maha_sequence, _pair_tier, _planet_nature, _verdict_label,
     judge_all_houses_doctrine, judge_house_doctrine,
 )
 
@@ -360,3 +360,52 @@ class TestChandraLagna:
         assert "Saturn" in j.timing.influencers
         assert "Saturn" in j.timing.influence_by_factor.get("lord from Moon", ())
         assert "lord from Moon" in _influence_factors(mainpuri, 1, "Saturn")
+
+
+class TestCombinations:
+    """Raman's named combinations (yogas) for the house — compound antecedents are
+    recognised as combinations and surfaced with their result text (HTJAH ch. IV)."""
+
+    def _rule(self, ante, rt="graha_effect", timing=None):
+        return {"rule_type": rt, "antecedent": ante,
+                "consequent": {"timing": timing, "polarity": "favorable"}}
+
+    def test_compound_yoga_detected(self):
+        # 'benefics in 1, 11, 12 with the lagna lord in a trikona' -> a combination.
+        yoga = self._rule({"op": "all", "args": [
+            {"op": "planet_in_house", "planet": "benefic", "house": 1},
+            {"op": "planet_in_house", "planet": "benefic", "house": 11},
+            {"op": "lord_of_house_in_house", "of_house": 1, "in_house": [1, 5, 9]}]})
+        assert _is_combination(yoga)
+        assert _classify(yoga, 1) == "combinations"
+
+    def test_single_factor_is_not_a_combination(self):
+        # a lone planet-in-house is an Occupant, not a combination.
+        simple = self._rule({"op": "planet_in_house", "planet": "Sun", "house": 1})
+        assert not _is_combination(simple)
+        assert _classify(simple, 1) == "occupants"
+
+    def test_compound_yoga_not_stolen_by_occupants(self):
+        # a multi-placement yoga that MENTIONS a planet in house 1 must still be a
+        # combination, not mis-filed under Occupants.
+        yoga = self._rule({"op": "all", "args": [
+            {"op": "planet_in_house", "planet": "Mars", "house": 1},
+            {"op": "planet_in_house", "planet": "Saturn", "house": 7}]})
+        assert _classify(yoga, 1) == "combinations"
+
+    def test_mainpuri_surfaces_lagnalord_11_combination(self, mainpuri):
+        # Scorpio lagna: Mars (lagna lord) and Mercury (11th lord) both in the 11th
+        # -> Raman's 'lagna lord joins the 11th lord in the 11th', gain from trade,
+        # manifesting in the lagna-lord's (Mars) dasa.
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mars", "ad": "Mars"})
+        ids = [c.rule_id for c in j.combinations]
+        assert any("lagnalord_11_with_lord11" in i for i in ids)
+        c = next(c for c in j.combinations if "lagnalord_11_with_lord11" in c.rule_id)
+        assert c.dasha_lord == "Mars" and c.active_now is True
+        assert c.polarity == "favorable"
+
+    def test_combinations_have_text_and_polarity(self, mainpuri):
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        assert j.combinations
+        for c in j.combinations:
+            assert c.text and c.polarity in ("favorable", "unfavorable", "mixed")

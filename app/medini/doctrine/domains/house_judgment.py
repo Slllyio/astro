@@ -29,6 +29,7 @@ from collections.abc import Mapping, Sequence
 from app.core.bhava_judge import _NATURAL_BENEFICS, _NATURAL_MALEFICS
 from app.core.dignity import dignity_state
 from app.core.drishti_argala import aspects_from_planet, planets_aspecting_bhava
+from app.core.functional_roles import functional_roles
 from app.core.ephemeris_engine import DASHA_LORDS, calculate_vimshottari_mahadasha
 from app.medini.doctrine.compendium import load_compendium
 from app.medini.doctrine.domains.houses import HOUSE_DOMAIN, _POLARITY_SIGN
@@ -131,6 +132,7 @@ class HouseJudgment:
     lord_verdict: "FactorVerdict"
     karaka_verdict: "FactorVerdict"
     conclusion: "Conclusion"
+    first_house: "FirstHouseTestimony | None" = None
 
     @property
     def method_records_cited(self) -> frozenset[str]:
@@ -244,17 +246,34 @@ def _maha_sequence(moon_lon: float) -> list[tuple[str, float, float]]:
 
 
 # ============================================================ strength assessor
-# Raman's ch. IV method judges each of Lagna / Lord / Karaka to a graded
-# strength verdict from his own criteria — aspects (benefic/malefic), dignity
-# (friend/enemy sign, exaltation/debility, neechabhanga), vargottama, placement
-# and kartari yogas — CROSS-CHECKED in the Rasi and the Navamsa. Computed from
-# low-level chart primitives (dignity, drishti, D9 frame), NOT judge_bhava.
-# The weights below are a transparent modelling choice (Raman states qualitative
-# verdicts, not numbers); the FINDINGS are the faithful, cited part.
+# Raman's ch. IV method judges each of Lagna / Lord / Karaka to a graded strength
+# verdict from his own criteria — aspects, dignity (friend/enemy sign, exalt/debil,
+# neechabhanga), vargottama, placement, kartari — CROSS-CHECKED in Rasi and Navamsa.
+#
+# The weights + the combine rule are DECODED from Raman's worked horoscopes in ch. IV
+# (Charts 12-14; scratchpad/htjah_h1_calibration.json), tuned so the assessor
+# reproduces his stated per-factor verdicts within one grade (9/9). Decoded facts:
+#   * the Navamsa is CO-EQUAL with the Rasi (Chart 12: the lord Saturn is bad on every
+#     Rasi count yet "fairly good" because the Navamsa redeems it) — not a half-modifier;
+#   * a PLANET strong in EITHER varga is strong -> optimistic combine max()+0.3*min();
+#     the BHAVA is additive across vargas;
+#   * vargottama is top-tier (a vargottama Lagna is "very powerful");
+#   * neechabhanga cancels debility; exalted-conjunction and kartari are big.
+# Computed from low-level chart primitives (dignity, drishti, D9 frame), NOT judge_bhava.
 
 _CLASSICAL = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
-_DIGNITY_W = {"exalted": 2.0, "own": 1.5, "friendly": 1.0, "neutral": 0.0,
-              "inimical": -1.0, "debilitated": -2.0}
+# dignity weights (decoded): exalt/own strong, friend/enemy moderate, debil strong-neg
+_DIGNITY_W = {"exalted": 1.6, "own": 1.2, "friendly": 0.8, "neutral": 0.0,
+              "inimical": -0.8, "debilitated": -1.6}
+_W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
+          kartari_subha=1.0, kartari_papa=-1.0, aspect=0.7, conjunct=0.7,
+          conjunct_exalted=1.6, bhava_aspect_mul=0.5)
+
+VERDICT_SCALE = ("afflicted", "weak", "moderate", "moderately good", "fairly good",
+                 "fairly strong", "fairly powerful", "very strong", "very powerful")
+_THRESH = ((2.4, "very powerful"), (1.75, "very strong"), (1.25, "fairly powerful"),
+           (0.9, "fairly strong"), (0.55, "fairly good"), (0.25, "moderately good"),
+           (-0.6, "moderate"), (-1.6, "weak"))
 
 
 @dataclasses.dataclass(frozen=True)
@@ -269,9 +288,11 @@ class Finding:
 class FactorVerdict:
     role: str            # "Lagna" | "Lord" | "Karaka"
     subject: str         # the point judged (e.g. "house 1" or "Mars")
-    label: str           # afflicted..powerful
-    score: float
+    label: str           # VERDICT_SCALE
+    score: float         # combined (cross-varga) score
     findings: tuple[Finding, ...]
+    rasi_score: float = 0.0
+    navamsa_score: float = 0.0
 
 
 @dataclasses.dataclass(frozen=True)
@@ -292,14 +313,57 @@ class Conclusion:
     afflicted_activators: tuple[str, ...]
 
 
-def _is_benefic(chart: RamanChart, planet: str) -> bool:
-    """Natural benefic/malefic with the waxing-Moon refinement Raman uses
-    ('the Moon, a malefic in this case')."""
+# Raman on the first house (HTJAH ch. IV, "Results of Different Signs Ascending",
+# pp. 30-31): the rising SIGN's own nature is only a baseline "to be blended with
+# those of planets rising or aspecting" — so the assessor does NOT score it. But
+# two of the preamble's directions ARE weighed: mind by the Moon, health by Sun +
+# Moon + Lagna. These are prose directions, not DSL records, so they are cited to
+# the passage rather than to a method id.
+_SIGNS_ASCENDING_CITE = ("How to Judge a Horoscope, Vol. I, ch. IV — "
+                         "Results of Different Signs Ascending (pp. 30-31)")
+
+
+@dataclasses.dataclass(frozen=True)
+class FirstHouseTestimony:
+    """The two first-house directions of the Signs-Ascending preamble that turn
+    on luminaries rather than the rising sign's own nature."""
+    mind_verdict: str            # "The mental disposition should always be judged
+    mind_note: str               #  by reference to the Moon and his disposition."
+    health_flag: bool            # Sun + Moon + Lagna each afflicted, >1 malefic
+    health_note: str
+    afflicting_malefics: tuple[str, ...]
+    citation: str = _SIGNS_ASCENDING_CITE
+
+
+def _planet_nature(chart: RamanChart, planet: str) -> tuple[bool, str]:
+    """Raman's TWO malefic kinds: natural AND lagna-specific functional
+    ('for Aries the Sun is good'; 'the Moon, a malefic in this case'). Returns
+    (is_benefic, tag). Benefic if a natural benefic (Moon by waxing paksha) OR a
+    functional benefic / yogakaraka for this lagna."""
     if planet == "Moon":
         lons = chart.bundle.chart.planet_lons
-        elong = (lons["Moon"] - lons["Sun"]) % 360.0
-        return 0.0 <= elong < 180.0        # shukla paksha (waxing) -> benefic
-    return planet in _NATURAL_BENEFICS
+        nat_ben = 0.0 <= (lons["Moon"] - lons["Sun"]) % 360.0 < 180.0
+    else:
+        nat_ben = planet in _NATURAL_BENEFICS
+    fr = functional_roles(chart.bundle.chart.asc_sign).get(planet)
+    yk = bool(fr and fr.is_yogakaraka)
+    fb = bool(fr and fr.is_functional_benefic)
+    fm = bool(fr and fr.is_functional_malefic)
+    # Functional status is lagna-specific and takes precedence over the natural
+    # nature: a yogakaraka / functional benefic is good even if a natural malefic
+    # (Saturn for Libra); a functional malefic — a maraka/dusthana lord — is bad
+    # even if a natural benefic (Venus, lord of 7 & 12, for Scorpio).
+    if yk:
+        return True, "yogakaraka"
+    if fb:
+        return True, "functional benefic"
+    if fm:
+        return False, "functional malefic"
+    return nat_ben, ("benefic" if nat_ben else "malefic")
+
+
+def _is_benefic(chart: RamanChart, planet: str) -> bool:
+    return _planet_nature(chart, planet)[0]
 
 
 def _d1_houses(chart: RamanChart) -> dict[str, int]:
@@ -323,17 +387,25 @@ def _ordinal(n: int) -> str:
 
 
 def _verdict_label(score: float) -> str:
-    if score >= 3.0:
-        return "powerful"
-    if score >= 1.5:
-        return "good"
-    if score >= 0.5:
-        return "fairly good"
-    if score > -0.5:
-        return "moderate"
-    if score >= -1.5:
-        return "weak"
+    """Map a combined score to Raman's graded scale (decoded thresholds)."""
+    for lo, lab in _THRESH:
+        if score >= lo:
+            return lab
     return "afflicted"
+
+
+def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, float, float]:
+    """Blend a factor's Rasi and Navamsa findings into one score.
+
+    Decoded from Raman's worked charts: the BHAVA is additive across vargas,
+    but a PLANET strong in EITHER varga is strong -> optimistic max()+0.3*min().
+    Vargottama findings (frame 'both') count with the Rasi frame."""
+    rasi = round(sum(x.delta for x in findings if x.frame in ("Rasi", "both")), 3)
+    nav = round(sum(x.delta for x in findings if x.frame == "Navamsa"), 3)
+    if additive:
+        return round(rasi + nav, 3), rasi, nav
+    hi, lo = (rasi, nav) if rasi >= nav else (nav, rasi)
+    return round(hi + 0.3 * lo, 3), rasi, nav
 
 
 def _neechabhanga(chart: RamanChart, planet: str, sign: int) -> bool:
@@ -346,14 +418,17 @@ def _neechabhanga(chart: RamanChart, planet: str, sign: int) -> bool:
     return chart.house_of(dispositor, "lagna") in KENDRA
 
 
-def _kartari(chart: RamanChart, house: int) -> tuple[str | None, list[str], list[str]]:
+def _kartari(chart: RamanChart, house: int,
+             houses: Mapping[str, int] | None = None
+             ) -> tuple[str | None, list[str], list[str]]:
     """Papakartari / Subhakartari around a house: occupants of the 2nd AND the
-    12th from it all malefic (papa) or all benefic (subha)."""
-    d1 = _d1_houses(chart)
+    12th from it all malefic (papa) or all benefic (subha). ``houses`` defaults
+    to the Rasi placement map; pass the D9 map to test the Navamsa frame."""
+    hm = houses if houses is not None else _d1_houses(chart)
     second = house % 12 + 1
     twelfth = (house - 2) % 12 + 1
-    occ2 = [p for p in GRAHAS if d1[p] == second]
-    occ12 = [p for p in GRAHAS if d1[p] == twelfth]
+    occ2 = [p for p in GRAHAS if hm[p] == second]
+    occ12 = [p for p in GRAHAS if hm[p] == twelfth]
     if occ2 and occ12:
         if all(not _is_benefic(chart, p) for p in occ2 + occ12):
             return "papa", occ2, occ12
@@ -362,43 +437,47 @@ def _kartari(chart: RamanChart, house: int) -> tuple[str | None, list[str], list
     return None, occ2, occ12
 
 
-def _dignity_findings(chart, planet, sign, frame, scale) -> list[Finding]:
+def _dignity_findings(chart, planet, sign, frame, scale=1.0) -> list[Finding]:
     if planet not in _CLASSICAL:
         return []
     dg = dignity_state(planet, sign)
     if dg == "debilitated" and _neechabhanga(chart, planet, sign):
+        # cancellation lifts the debility to a mild positive (decoded 0.2), not -1.6.
         return [Finding(f"{planet} debilitated but neechabhanga (cancellation)",
-                        round(1.5 * scale, 2), frame, "dignity")]
+                        round(_W["neechabhanga"] * scale, 2), frame, "dignity")]
     w = _DIGNITY_W.get(dg, 0.0) * scale
     if w == 0.0:
         return []
     return [Finding(f"{planet} in a {dg} sign", round(w, 2), frame, "dignity")]
 
 
-def _aspect_findings(chart, houses, target_house, subject, frame, scale) -> list[Finding]:
+def _aspect_findings(chart, houses, target_house, subject, frame, scale=1.0) -> list[Finding]:
     out: list[Finding] = []
     for a in planets_aspecting_bhava(target_house, houses):
         if a == subject:
             continue
-        ben = _is_benefic(chart, a)
-        out.append(Finding(f"aspected by {a} ({'benefic' if ben else 'malefic'})",
-                           round((0.75 if ben else -0.75) * scale, 2), frame, "aspect"))
+        ben, tag = _planet_nature(chart, a)
+        w = (_W["aspect"] if ben else -_W["aspect"]) * scale
+        out.append(Finding(f"aspected by {a} ({tag})", round(w, 2), frame, "aspect"))
     return out
 
 
-def _conjunction_findings(chart, houses, planet, frame, scale) -> list[Finding]:
+def _conjunction_findings(chart, houses, planet, frame, scale=1.0) -> list[Finding]:
     out: list[Finding] = []
     signs = (chart.bundle.chart.planet_signs if frame == "Rasi"
              else {p: chart.varga_signs[p][9] for p in GRAHAS})
     for c in GRAHAS:
         if c == planet or houses.get(c) != houses.get(planet):
             continue
-        ben = _is_benefic(chart, c)
+        ben, tag = _planet_nature(chart, c)
         exalt = c in _CLASSICAL and dignity_state(c, signs[c]) == "exalted"
-        w = (0.75 if ben else -0.75) * scale + (0.5 * scale if exalt else 0.0)
-        tag = "benefic" if ben else "malefic"
-        out.append(Finding(f"conjunct {c} ({tag}{', exalted' if exalt else ''})",
-                           round(w, 2), frame, "conjunction"))
+        if exalt:                          # an exalted companion is strongly good
+            w = _W["conjunct_exalted"] * scale
+            label = f"conjunct {c} (exalted)"
+        else:
+            w = (_W["conjunct"] if ben else -_W["conjunct"]) * scale
+            label = f"conjunct {c} ({tag})"
+        out.append(Finding(label, round(w, 2), frame, "conjunction"))
     return out
 
 
@@ -409,44 +488,82 @@ def _assess_planet(chart: RamanChart, planet: str, role: str) -> FactorVerdict:
     f: list[Finding] = []
     h = d1[planet]
     if h in DUSTHANA:
-        f.append(Finding(f"placed in the {h}th (dusthana)", -1.5, "Rasi", "placement"))
+        f.append(Finding(f"placed in the {h}th (dusthana)", _W["dusthana"], "Rasi", "placement"))
     elif h in set(KENDRA) | set(TRIKONA):
-        f.append(Finding(f"placed in the {h}th (kendra/trikona)", 1.0, "Rasi", "placement"))
-    f += _dignity_findings(chart, planet, sign1, "Rasi", 1.0)
+        f.append(Finding(f"placed in the {h}th (kendra/trikona)",
+                         _W["kendra_trikona"], "Rasi", "placement"))
+    # vargottama (same sign in both vargas) — decoded top-tier; counts with Rasi.
     if sign1 == sign9:
-        f.append(Finding("vargottama (same sign in Rasi & Navamsa)", 1.0, "both", "vargottama"))
-    f += _aspect_findings(chart, d1, h, planet, "Rasi", 1.0)
-    f += _conjunction_findings(chart, d1, planet, "Rasi", 1.0)
-    f += _dignity_findings(chart, planet, sign9, "Navamsa", 0.5)
-    f += _aspect_findings(chart, d9, d9[planet], planet, "Navamsa", 0.5)
-    f += _conjunction_findings(chart, d9, planet, "Navamsa", 0.5)
-    score = round(sum(x.delta for x in f), 3)
-    return FactorVerdict(role, planet, _verdict_label(score), score, tuple(f))
+        f.append(Finding("vargottama (same sign in Rasi & Navamsa)",
+                         _W["vargottama"], "both", "vargottama"))
+    # Rasi frame — dignity, aspects, conjunctions, kartari (all co-equal weight).
+    f += _dignity_findings(chart, planet, sign1, "Rasi")
+    f += _aspect_findings(chart, d1, h, planet, "Rasi")
+    f += _conjunction_findings(chart, d1, planet, "Rasi")
+    kind, _o2, _o12 = _kartari(chart, h)
+    if kind == "subha":
+        f.append(Finding("hemmed between benefics (Subhakartari)",
+                         _W["kartari_subha"], "Rasi", "kartari"))
+    elif kind == "papa":
+        f.append(Finding("hemmed between malefics (Papakartari)",
+                         _W["kartari_papa"], "Rasi", "kartari"))
+    # Navamsa frame — CO-EQUAL (Chart 12: the Navamsa redeems a Rasi-afflicted lord).
+    f += _dignity_findings(chart, planet, sign9, "Navamsa")
+    f += _aspect_findings(chart, d9, d9[planet], planet, "Navamsa")
+    f += _conjunction_findings(chart, d9, planet, "Navamsa")
+    score, rasi, nav = _combine(f, additive=False)
+    return FactorVerdict(role, planet, _verdict_label(score), score, tuple(f),
+                         rasi_score=rasi, navamsa_score=nav)
 
 
 def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
+    """The Bhava — additive across vargas; aspects on the house weigh half a
+    planet's (decoded ``bhava_aspect_mul``). A vargottama Lagna is an override:
+    Raman calls it 'very powerful' outright (Chart 14)."""
     d1 = _d1_houses(chart)
+    amul = _W["bhava_aspect_mul"]
     f: list[Finding] = []
+    # vargottama Lagna override — Rasi ascendant sign == Navamsa ascendant sign.
+    lagna_vargottama = (house == 1
+                        and chart.lagna_sign("navamsa") == chart.lagna_sign("lagna"))
     occ = [p for p in GRAHAS if d1[p] == house]
     for p in occ:
-        ben = _is_benefic(chart, p)
-        f.append(Finding(f"occupied by {p} ({'benefic' if ben else 'malefic'})",
-                         0.75 if ben else -0.75, "Rasi", "conjunction"))
+        ben, tag = _planet_nature(chart, p)
+        f.append(Finding(f"occupied by {p} ({tag})",
+                         round((_W["conjunct"] if ben else -_W["conjunct"]), 2),
+                         "Rasi", "conjunction"))
     if not occ:
-        f.append(Finding("occupied by no planet", 0.25, "Rasi", "conjunction"))
-    f += _aspect_findings(chart, d1, house, None, "Rasi", 1.0)
-    if not any(x.criterion == "aspect" for x in f):
-        f.append(Finding("aspected by no planet", 0.25, "Rasi", "aspect"))
+        f.append(Finding("occupied by no planet", 0.0, "Rasi", "conjunction"))
+    ra = _aspect_findings(chart, d1, house, None, "Rasi", amul)
+    f += ra
+    if not ra:
+        f.append(Finding("aspected by no planet", 0.0, "Rasi", "aspect"))
     kind, occ2, occ12 = _kartari(chart, house)
     if kind == "subha":
-        f.append(Finding("hemmed between benefics (Subhakartari)", 1.0, "Rasi", "kartari"))
+        f.append(Finding("hemmed between benefics (Subhakartari)",
+                         _W["kartari_subha"], "Rasi", "kartari"))
     elif kind == "papa":
-        f.append(Finding("hemmed between malefics (Papakartari)", -1.0, "Rasi", "kartari"))
-    if house == 1:                        # the Navamsa lagna
+        f.append(Finding("hemmed between malefics (Papakartari)",
+                         _W["kartari_papa"], "Rasi", "kartari"))
+    if house == 1:                        # the Navamsa lagna: aspects on it (×0.5)
         d9 = _d9_houses(chart)
-        f += _aspect_findings(chart, d9, 1, None, "Navamsa", 0.5)
-    score = round(sum(x.delta for x in f), 3)
-    return FactorVerdict("Lagna", f"house {house}", _verdict_label(score), score, tuple(f))
+        na = _aspect_findings(chart, d9, 1, None, "Navamsa", amul)
+        f += na
+        nk, _n2, _n12 = _kartari(chart, 1, d9)
+        if nk == "subha":
+            f.append(Finding("Navamsa lagna hemmed between benefics (Subhakartari)",
+                             _W["kartari_subha"], "Navamsa", "kartari"))
+        elif nk == "papa":
+            f.append(Finding("Navamsa lagna hemmed between malefics (Papakartari)",
+                             _W["kartari_papa"], "Navamsa", "kartari"))
+    if lagna_vargottama:
+        f.insert(0, Finding("Lagna vargottama (same sign in Rasi & Navamsa)",
+                            _W["vargottama"], "both", "vargottama"))
+        return FactorVerdict("Lagna", f"house {house}", "very powerful",
+                             99.0, tuple(f), rasi_score=99.0, navamsa_score=0.0)
+    score, rasi, nav = _combine(f, additive=True)
+    return FactorVerdict("Lagna", f"house {house}", _verdict_label(score), score,
+                         tuple(f), rasi_score=rasi, navamsa_score=nav)
 
 
 def _assess_lagna(chart): return _assess_bhava(chart, 1)
@@ -458,6 +575,48 @@ def _assess_lord(chart, house):
 
 def _assess_karaka(chart, house):
     return _assess_planet(chart, BHAVA_KARAKAS[house][0], "Karaka")
+
+
+def _malefic_afflictions(chart: RamanChart, house: int) -> list[str]:
+    """Malefics (natural OR functional, per Raman's two-malefic rule) that afflict
+    a house — those aspecting it or occupying it. Returns their names."""
+    d1 = _d1_houses(chart)
+    out: list[str] = []
+    for p in planets_aspecting_bhava(house, d1):
+        if not _is_benefic(chart, p):
+            out.append(p)
+    for p in GRAHAS:
+        if d1[p] == house and not _is_benefic(chart, p) and p not in out:
+            out.append(p)
+    return out
+
+
+def _first_house_testimony(chart: RamanChart) -> FirstHouseTestimony:
+    """Mind by the Moon; health by Sun + Moon + Lagna (Signs-Ascending preamble)."""
+    moon_v = _assess_planet(chart, "Moon", "Karaka")
+    mind_note = (
+        "The mental disposition is judged by the Moon and his disposition: the "
+        f"Moon is {moon_v.label} here, colouring the native's mind accordingly.")
+    d1 = _d1_houses(chart)
+    lagna_af = _malefic_afflictions(chart, 1)
+    sun_af = _malefic_afflictions(chart, d1["Sun"])
+    moon_af = _malefic_afflictions(chart, d1["Moon"])
+    # "When the Sun, the Moon and the ascendant are afflicted by more than one of
+    # the malefics" — each of the three afflicted, and more than one malefic across.
+    union = sorted(set(lagna_af) | set(sun_af) | set(moon_af))
+    flag = bool(lagna_af and sun_af and moon_af and len(union) > 1)
+    if flag:
+        health_note = (
+            "The Sun, the Moon and the ascendant are each afflicted by malefics "
+            f"({', '.join(union)}) — Raman flags a liability to accidents or a "
+            "violent/sudden turn of health (confirm from the 6th & 8th).")
+    else:
+        health_note = ("The Sun, Moon and ascendant are not jointly afflicted by "
+                       "more than one malefic — no special accident liability flagged.")
+    return FirstHouseTestimony(
+        mind_verdict=moon_v.label, mind_note=mind_note,
+        health_flag=flag, health_note=health_note,
+        afflicting_malefics=tuple(union))
 
 
 def _influence_factors(chart: RamanChart, house: int, planet: str) -> tuple[str, ...]:
@@ -502,8 +661,12 @@ def _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
             is_benefic=_is_benefic(chart, p),
             nature=_nature_of(books, p, lagna_sign)))
     ranked.sort(key=lambda i: (-len(i.factors), i.planet))
-    # headline verdict: Raman bases it on the strength of Lagna + Lord + Karaka.
-    score = round((lagna_v.score + lord_v.score + karaka_v.score) / 3.0, 3)
+    # headline verdict: decoded from Raman's own priority — "if the strength of the
+    # lord is full there will be a good influence on the house": the Lord dominates,
+    # then the Bhava, then the Karaka. (Cap the vargottama sentinel to its grade.)
+    cap = _THRESH[0][0]                    # "very powerful" magnitude
+    lagna_s = min(lagna_v.score, cap)
+    score = round(0.5 * lord_v.score + 0.3 * lagna_s + 0.2 * karaka_v.score, 3)
     mostly = [i.planet for i in ranked if i.tier == "mostly"]
     moderate = [i.planet for i in ranked if i.tier == "moderate"]
     if mostly and moderate:
@@ -606,6 +769,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     karaka_v = _assess_karaka(chart, house)
     conclusion = _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
                                    influencers)
+    first_house = _first_house_testimony(chart) if house == 1 else None
 
     return HouseJudgment(
         house=house, domain=domain,
@@ -614,7 +778,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         blend_modifier_citation=METHOD_CITATIONS["blend"], timing=timing,
         n_fired=n_fired, n_evaluable=evaluable,
         lagna_verdict=lagna_v, lord_verdict=lord_v, karaka_verdict=karaka_v,
-        conclusion=conclusion,
+        conclusion=conclusion, first_house=first_house,
     )
 
 

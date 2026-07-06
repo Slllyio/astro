@@ -8,12 +8,13 @@ import pytest
 
 from app.medini.doctrine import raman_chart as rc
 from app.medini.doctrine.domains.house_judgment import (
-    _assess_bhava, _assess_karaka, _assess_lord, _classify, _influence_factors,
-    _is_benefic, _kartari, _maha_sequence, _verdict_label,
+    VERDICT_SCALE, Finding, _assess_bhava, _assess_karaka, _assess_lord,
+    _classify, _combine, _influence_factors, _is_benefic, _kartari,
+    _maha_sequence, _planet_nature, _verdict_label,
     judge_all_houses_doctrine, judge_house_doctrine,
 )
 
-_LABELS = {"afflicted", "weak", "moderate", "fairly good", "good", "powerful"}
+_LABELS = set(VERDICT_SCALE)
 
 # Mainpuri chart: Scorpio lagna, lord Mars in Virgo/11th, Mercury conjunct Mars.
 MAINPURI = dict(
@@ -178,6 +179,88 @@ class TestStrengthAssessor:
         assert set(c.afflicted_activators) <= {i.planet for i in c.influencers}
 
     def test_verdict_label_thresholds(self):
-        assert _verdict_label(3.5) == "powerful"
+        # 9-grade scale decoded from Raman's ch. IV worked charts.
+        assert _verdict_label(3.5) == "very powerful"
+        assert _verdict_label(1.3) == "fairly powerful"
+        assert _verdict_label(0.6) == "fairly good"
         assert _verdict_label(0.0) == "moderate"
         assert _verdict_label(-2.0) == "afflicted"
+
+
+class TestCalibration:
+    """The weighting is DECODED from Raman's worked charts (HTJAH ch. IV, Charts
+    12-14; scratchpad/htjah_h1_calibration.json) and must reproduce his stated
+    per-factor verdicts within one grade."""
+
+    def test_navamsa_redeems_afflicted_lord(self):
+        # Chart 12 (Capricorn): Saturn (lord) is bad on EVERY Rasi count — 8th
+        # (dusthana), enemy sign, aspected by malefic Moon — yet Raman calls the
+        # lord "fairly good" because in the Navamsa it is with Jupiter in a
+        # friend's sign. The optimistic cross-varga combine must reproduce that.
+        findings = (
+            Finding("placed in the 8th (dusthana)", -1.0, "Rasi", "placement"),
+            Finding("Saturn in a inimical sign", -0.8, "Rasi", "dignity"),
+            Finding("aspected by Moon (malefic)", -0.7, "Rasi", "aspect"),
+            Finding("Saturn in a friendly sign", 0.8, "Navamsa", "dignity"),
+            Finding("conjunct Jupiter (benefic)", 0.7, "Navamsa", "conjunction"),
+        )
+        score, rasi, nav = _combine(findings, additive=False)
+        assert rasi < -1.5 and nav > 0.5          # Rasi bad, Navamsa good
+        assert _verdict_label(score) == "fairly good"   # Raman's verdict
+
+    def test_bhava_is_additive_not_optimistic(self):
+        # The BHAVA blends its vargas additively (a mild Navamsa boon adds to,
+        # not replaces, the Rasi reading) — Chart 12 ascendant: nothing in Rasi,
+        # a Jupiter aspect in the Navamsa -> "moderate", not lifted to good.
+        findings = (
+            Finding("occupied by no planet", 0.0, "Rasi", "conjunction"),
+            Finding("aspected by no planet", 0.0, "Rasi", "aspect"),
+            Finding("aspected by Jupiter (benefic)", 0.35, "Navamsa", "aspect"),
+        )
+        score, rasi, nav = _combine(findings, additive=True)
+        assert score == pytest.approx(0.35)
+        assert _verdict_label(score) in ("moderate", "moderately good")
+
+    def test_functional_malefic_precedence(self, mainpuri):
+        # Scorpio lagna: Venus rules 7 & 12 -> a functional malefic though a
+        # NATURAL benefic; the classifier must call it malefic (two-malefic rule).
+        ben, tag = _planet_nature(mainpuri, "Venus")
+        assert ben is False and tag == "functional malefic"
+        # Jupiter rules 2 & 5 -> functional benefic for Scorpio.
+        jben, jtag = _planet_nature(mainpuri, "Jupiter")
+        assert jben is True and jtag == "functional benefic"
+
+    def test_functional_benefic_overrides_natural_malefic(self):
+        # Saturn is a NATURAL malefic but the yogakaraka for Libra lagna: benefic.
+        from app.medini.doctrine import raman_chart as rc
+        libra = rc.from_printed_positions(
+            {"Sun": 10.0, "Moon": 40.0, "Mars": 70.0, "Mercury": 15.0,
+             "Jupiter": 100.0, "Venus": 20.0, "Saturn": 130.0,
+             "Rahu": 200.0, "Ketu": 20.0},
+            185.0, birth_jd=MAINPURI["jd"])   # ~Libra ascendant
+        ben, tag = _planet_nature(libra, "Saturn")
+        assert ben is True and tag == "yogakaraka"
+
+
+class TestFirstHouseTestimony:
+    """Signs-Ascending preamble (HTJAH pp. 30-31): mind by the Moon, health by
+    Sun + Moon + Lagna. The rising sign's own nature is NOT scored."""
+
+    def test_present_only_for_house_one(self, mainpuri):
+        j1 = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        j2 = judge_house_doctrine(mainpuri, 2, dasha={"md": "Mercury", "ad": "Mercury"})
+        assert j1.first_house is not None
+        assert j2.first_house is None
+
+    def test_mind_judged_by_moon(self, mainpuri):
+        t = judge_house_doctrine(mainpuri, 1).first_house
+        assert t.mind_verdict in VERDICT_SCALE
+        assert "Moon" in t.mind_note
+        assert t.citation.startswith("How to Judge a Horoscope")
+
+    def test_health_flag_shape(self, mainpuri):
+        t = judge_house_doctrine(mainpuri, 1).first_house
+        assert isinstance(t.health_flag, bool)
+        # a raised flag must name more than one afflicting malefic
+        if t.health_flag:
+            assert len(t.afflicting_malefics) > 1

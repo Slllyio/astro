@@ -1,13 +1,13 @@
 # Raman Doctrine Compendium — Status
 
-**1,340 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
+**1,349 rule records across 10 of B. V. Raman's books**, every quote verbatim-verified against the pinned OCR (`quote_verified` = true for all), every executable antecedent compiling through the DSL engine.
 
 ## By book
 
 | key | title | records |
 |---|---|---:|
 | `hpa` | Hindu Predictive Astrology | 599 |
-| `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 332 |
+| `htjah_vol1` | How to Judge a Horoscope Vol. 1 | 341 |
 | `three_hundred` | Three Hundred Important Combinations | 147 |
 | `htjah_vol2` | How to Judge a Horoscope Vol. 2 | 185 |
 | `jaimini_studies` | Studies in Jaimini Astrology | 24 |
@@ -16,27 +16,27 @@
 | `prasna_marga_1` | Prasna Marga, Part 1 | 10 |
 | `prasna_marga_2` | Prasna Marga, Part 2 | 10 |
 | `muhurtha` | Muhurtha (Electional Astrology) | 9 |
-| | **total** | **1340** |
+| | **total** | **1349** |
 
 ## By computability
 
 | class | count | meaning |
 |---|---:|---|
-| full | 869 | antecedent fully expresses the condition in the DSL |
-| partial | 224 | DSL captures the core; a qualifier quoted in ambiguity_notes |
+| full | 872 | antecedent fully expresses the condition in the DSL |
+| partial | 230 | DSL captures the core; a qualifier quoted in ambiguity_notes |
 | manual | 139 | arithmetic/mechanism lives in code (cited) — antecedent null |
 | unfalsifiable | 108 | a definition/signification with no testable condition |
 
 ## By rule type
 
-- graha_effect: 538
+- graha_effect: 540
 - yoga: 177
-- bhava_judgment: 187
+- bhava_judgment: 192
 - definition: 149
 - method: 52
 - functional_role: 43
 - cancellation: 15
-- dasha_timing: 142
+- dasha_timing: 144
 - prasna: 4
 - strength: 3
 - transit: 29

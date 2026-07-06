@@ -210,6 +210,24 @@ class TestStrengthAssessor:
         assert any("Venus" in f.text and f.frame == "Rasi" for f in lagna.findings)
         assert any(f.frame == "Navamsa" for f in lagna.findings)
 
+    def test_exalted_occupant_credited_not_bare_malefic(self, mainpuri):
+        # Phase 2 / increment 1 -- occupant DIGNITY colours the bhava. Mainpuri's
+        # 11th holds exalted Mercury (in Virgo): it must be credited as exalted
+        # (like an exalted companion in _conjunction_findings), not scored -0.7 as a
+        # functional malefic, so the crowded 11th is no longer graded "afflicted".
+        b = _assess_bhava(mainpuri, 11)
+        exalt = [f for f in b.findings if "occupied by Mercury" in f.text]
+        assert exalt and "(exalted)" in exalt[0].text and exalt[0].delta > 1.0
+        assert b.label != "afflicted"
+
+    def test_friendly_or_neutral_occupant_stays_on_nature(self, mainpuri):
+        # Only high-signal dignities (exalted/own/debilitated) add an occupant
+        # dignity term; a plain malefic/benefic occupant keeps its single ±0.7
+        # nature finding and gains no extra dignity line.
+        b = _assess_bhava(mainpuri, 1)   # Venus in Scorpio: not exalted/own/debil
+        venus = [f for f in b.findings if "Venus" in f.text and f.frame == "Rasi"]
+        assert len(venus) == 1 and venus[0].criterion == "conjunction"
+
     def test_is_benefic_waxing_moon(self, mainpuri):
         # Mainpuri Moon (Aqu 19) vs Sun (Vir 26): elongation ~ 142 -> waxing -> benefic
         assert _is_benefic(mainpuri, "Moon")

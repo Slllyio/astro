@@ -788,11 +788,33 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
     lagna_vargottama = (house == 1
                         and chart.lagna_sign("navamsa") == chart.lagna_sign("lagna"))
     occ = [p for p in GRAHAS if d1[p] == house]
+    rasi_signs = chart.bundle.chart.planet_signs
     for p in occ:
         ben, tag = _planet_nature(chart, p)
+        # An occupant's DIGNITY colours the house, not just its benefic/malefic
+        # nature (Raman, e.g. the 11th's exalted Mercury is a rajayoga, not a bare
+        # malefic). Mirror the exalted-companion credit already in
+        # _conjunction_findings; add own-sign / (cancelled) debility for the same
+        # high-signal dignities. Friendly/neutral occupants stay on nature alone.
+        dg = dignity_state(p, rasi_signs[p]) if p in _CLASSICAL else None
+        if dg == "exalted":
+            f.append(Finding(f"occupied by {p} (exalted)",
+                             _W["conjunct_exalted"], "Rasi", "conjunction"))
+            continue
         f.append(Finding(f"occupied by {p} ({tag})",
                          round((_W["conjunct"] if ben else -_W["conjunct"]), 2),
                          "Rasi", "conjunction"))
+        if dg == "own":
+            f.append(Finding(f"occupant {p} in own sign",
+                             _DIGNITY_W["own"], "Rasi", "dignity"))
+        elif dg == "debilitated":
+            if _neechabhanga(chart, p, rasi_signs[p]):
+                f.append(Finding(
+                    f"occupant {p} debilitated but neechabhanga (cancellation)",
+                    _W["neechabhanga"], "Rasi", "dignity"))
+            else:
+                f.append(Finding(f"occupant {p} in debilitated sign",
+                                 _DIGNITY_W["debilitated"], "Rasi", "dignity"))
     if not occ:
         f.append(Finding("occupied by no planet", 0.0, "Rasi", "conjunction"))
     ra = _aspect_findings(chart, d1, house, None, "Rasi", amul)

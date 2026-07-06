@@ -728,3 +728,38 @@ the same wherever it rules.
 Follow-up (**v3, sequenced**): the engine's *verdicts* still carry the ledger's
 known gaps (11th-house afflicted-vs-Rajayoga, exaltation over-credit); those are the
 next phase — feature-modeled and re-audited — after this pipeline lands.
+
+---
+
+## Phase 2 — engine-verdict accuracy
+
+### Increment 1 — occupant dignity in the bhava (DONE)
+
+The bhava scored an occupant purely by its ±0.7 benefic/malefic nature, blind to its
+**dignity** — so Mainpuri's 11th (Sun + Mars + **exalted** Mercury) read three stacked
+malefics and graded **afflicted**, missing the rajayoga the exalted occupant makes.
+This is the ledger's own flagged gap ("let a bhava occupant's dignity count ... an
+exalted occupant, not just its ±0.7").
+
+`_assess_bhava` now mirrors the exalted-companion credit already in
+`_conjunction_findings`: an **exalted** occupant is credited `conjunct_exalted`
+(+1.6) in place of a bare −0.7; an **own-sign** occupant adds +1.2; a **debilitated**
+occupant adds −1.6 (or +0.2 if neechabhanga). Friendly/neutral occupants — too common,
+low signal — stay on nature alone, to keep the change narrow.
+
+- **Effect (Mainpuri):** exactly one house moves — the **11th bhava afflicted ->
+  moderate** (headline weak -> moderate), matching Raman's rajayoga reading. Lord and
+  karaka verdicts are untouched (only `_assess_bhava` changed); house-1 stays *very
+  powerful* (vargottama override); all other bhavas unchanged (no other house has an
+  exalted/own/debilitated occupant).
+- **Regression:** 220 doctrine tests pass, incl. house-1 byte-stability and the two
+  new guards (`test_exalted_occupant_credited_not_bare_malefic`,
+  `test_friendly_or_neutral_occupant_stays_on_nature`). The ch.IV anchor is
+  untouched — it calibrates house-1 (override) and lord/karaka charts, neither of
+  which this feature reaches.
+
+Remaining Phase-2 gaps (next increments, each its own audited commit): exaltation
+**over-credit** on an afflicted factor (the cap should let a strong affliction cancel
+the +1.6, e.g. exalted-but-papakartari); papakartari re-scoped per factor type;
+combustion penalty; upagraha (Mandi/Gulika) occupancy; parivartana / sign-exchange
+bonus; nodal / eclipse constellation affliction.

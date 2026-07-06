@@ -344,9 +344,10 @@ class TestChandraLagna:
         cm = _assess_from_moon(mainpuri, 1)
         assert cm.bhava.label in VERDICT_SCALE
         assert cm.lord.label in VERDICT_SCALE
-        # Chandra Lagna (Aquarius) is occupied by the Moon and Rahu -> afflicted.
-        assert any("Moon" in f.text for f in cm.bhava.findings)
+        # Chandra Lagna (Aquarius) carries Rahu with the Moon -> afflicted. The Moon
+        # itself defines the lagna and is not counted as its own occupant-affliction.
         assert any("Rahu" in f.text for f in cm.bhava.findings)
+        assert not any("occupied by Moon" in f.text for f in cm.bhava.findings)
 
     def test_functional_nature_read_from_chandra_lagna(self, mainpuri):
         # From Aquarius, the Moon rules the 6th -> a functional malefic 'from the

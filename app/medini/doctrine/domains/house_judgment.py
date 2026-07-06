@@ -714,13 +714,15 @@ def _lord_from_moon(chart: RamanChart, house: int) -> str:
 
 def _assess_bhava_reference(chart: RamanChart, house: int,
                             houses: Mapping[str, int], ref_sign: int,
-                            ref_name: str) -> FactorVerdict:
+                            ref_name: str, exclude: str | None = None) -> FactorVerdict:
     """The bhava reckoned from a second ascendant (the Moon). Additive, aspects on
     the house weigh half — same shape as the Lagna bhava, but no Lagna-only
-    vargottama/Navamsa-lagna specials (those belong to the birth ascendant)."""
+    vargottama/Navamsa-lagna specials (those belong to the birth ascendant).
+    ``exclude`` drops the reference luminary from its own occupant list (the Moon
+    defines the Chandra Lagna; it is not an affliction of it)."""
     amul = _W["bhava_aspect_mul"]
     f: list[Finding] = []
-    occ = [p for p in GRAHAS if houses[p] == house]
+    occ = [p for p in GRAHAS if houses[p] == house and p != exclude]
     for p in occ:
         ben, tag = _planet_nature(chart, p, ref_sign)
         f.append(Finding(f"occupied by {p} ({tag})",
@@ -751,7 +753,8 @@ def _assess_from_moon(chart: RamanChart, house: int) -> ReferenceJudgment:
     moon_sign = chart.bundle.chart.planet_signs["Moon"]
     mh = _moon_houses(chart)
     lord = _lord_from_moon(chart, house)
-    bhava_v = _assess_bhava_reference(chart, house, mh, moon_sign, "Chandra Lagna")
+    bhava_v = _assess_bhava_reference(chart, house, mh, moon_sign, "Chandra Lagna",
+                                      exclude="Moon")
     lord_v = _assess_planet(chart, lord, "Lord from Moon",
                             ref_sign=moon_sign, houses=mh)
     note = (

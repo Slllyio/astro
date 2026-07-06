@@ -392,12 +392,46 @@ over-score is amplified:
 
 ---
 
-## Houses 10–12 — pending
+## House 10 — ch. XIV (Vol. II) — NOT POINT-SCHEME-AUDITABLE (structural finding — a NEW kind)
+
+- Chapter-reading wired (`HOUSE_CHAPTERS[10]` = ch14; **30 rules already encoded**
+  in htjah_vol2). Guard: `test_house10_reads_ch14`. The Mainpuri house-10 reading
+  runs; 3 ch14 rules fire.
+- **But ch. XIV yields no held-out strength rows — and NOT for the dusthāna
+  reason.** The 10th is a **kendra**, so I expected it auditable. It is not,
+  because of *what Raman judges the 10th FOR*: **identifying the nature / type of
+  profession**, never grading the bhāva / lord / kāraka on the afflicted↔powerful
+  scale. A full scan of ch. XIV (charts 114–132) found:
+  - **0** "Karmakāraka" gradings and **0** "the 10th house/lord is strong / weak /
+    afflicted / fairly …" verdicts (vs one *per chart* in ch. XI & XIII);
+  - **105** profession-type phrases — the charts conclude on the *kind* of career:
+    "a military emperor" (115), "a teacher" (117), "an accounts officer" (119),
+    "a great educationist / mathematician / jurist" (120), "an income-tax
+    official" (123), "an actor" (131).
+  - The method is **determinant-selection**: pick the strongest of {10th lord,
+    its occupant, the Navāṁśa-lord of the 10th, reckoned from the strongest of
+    Lagna / Moon / Sun}, by **shaḍvarga** strength, then read *that planet's*
+    nature (Jupiter → intellectual, Venus → aesthetic, Mars → military, Mercury →
+    writing/trade, Saturn → labour). Strength is used **comparatively** (to pick
+    the determinant), never as a bhāva-quality verdict.
+- **The methodological lesson:** auditability is **not** predicted by dignity
+  class (kendra vs dusthāna) — it is predicted by *what Raman judges the house
+  FOR*. Three non-auditable houses, three different reasons: **6** disease-events,
+  **8** longevity/death-events, **10** profession-type identification. Only houses
+  whose chapter grades the bhāva/lord/kāraka on the strength scale (1–5, 7, 9)
+  feed the tuning corpus.
+- **Implication:** house 10 contributes **nothing** to the tuning corpus. Combined
+  tally stays at houses 2–5, 7, 9. House 11 (gains) remains to be checked; house
+  12 (dusthāna) is expected non-auditable.
+
+---
+
+## Houses 11–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
-within-one rate, the per-factor split, and the divergence patterns here. Houses 10
-(kendra) and 11 (upachaya) are auditable; house 12 (dusthāna) is expected
-non-auditable like houses 6 and 8._
+within-one rate, the per-factor split, and the divergence patterns here. House 11
+(gains) auditability depends on whether ch. XV grades bhāva strength or (like ch.
+XIV) reads gains-type; house 12 (dusthāna) is expected non-auditable._
 
 ---
 
@@ -420,9 +454,11 @@ held-out audit and record the before/after match rates here.
   corpus for the scheme — mostly exalted-but-afflicted father-charts, exactly the
   cases the #1 fix targets. It is the sharpest single-house confirmation, not an
   outlier.
-- Houses 6 **and 8** (dusthānas) contributed none — both confirmed non-auditable
-  (judged for disease / longevity-death, not bhāva strength); house 12 expected
-  likewise.
+- **Three houses now confirmed non-auditable, three different reasons:** 6
+  (disease-events), 8 (longevity/death-events), **10 (profession-type
+  identification — a kendra, yet still non-auditable)**. Auditability tracks *what
+  Raman judges the house for*, not its dignity class. House 12 (dusthāna) expected
+  likewise; house 11 to be checked.
 
 **Running tally of the dominant signals (houses 2–5, 7, 9):**
 - **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked

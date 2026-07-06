@@ -697,3 +697,34 @@ interprets the doctrine rather than casting its own.
   the packet carries the three testimonies + headline, findings/sūtras stay
   verbatim and traceable to fired rule ids, and the whole-chart compaction bounds
   each testimony to its strongest findings.
+
+### Cost architecture — accurate *and* cheap (no trade)
+
+Feeding the LLM every house's full packet is ~48K input tokens; the earlier
+whole-chart compaction dropped to ~4.6K but was *lossy* (top-3 findings, no
+sutras/timing). The waste was redundancy, not detail: the chart's ≤9 planets fill
+36 lord/karaka slots (Jupiter 6x, Mars/Saturn 4x each), and a planet's findings are
+the same wherever it rules.
+
+- `build_chart_grounding` emits each planet **once** into a `planets` dossier (all
+  findings kept) and has each house reference its lord/karaka by name. Result on
+  Mainpuri: **48K -> ~19K tokens, fully lossless** (verified: the dossier is a
+  superset of every per-house lord/karaka finding). The remaining bulk is genuine
+  per-house content (77 unique verbatim sutras, bhava findings), not repetition.
+- `interpret_chart` is **hybrid + cached + structured**: one `messages.parse` on the
+  cheap tier (`claude-haiku-4-5`) returns all twelve grounded readings as a
+  `ChartReadings` schema; one Opus (`claude-opus-4-8`) streamed call writes the
+  whole-chart synthesis. The static system prompt and the planet dossier carry
+  `cache_control:{"type":"ephemeral"}`, so re-runs read the shared prefix cheaply.
+  `count_tokens` reports the packet size before sending. Rough: ~$0.02 (Haiku
+  readings) + Opus synthesis per chart, less on cached re-runs.
+- `resolve_current_dasha(chart, birth_jd, target_jd)` walks the Vimshottari sequence
+  (reusing `calculate_vimshottari_mahadasha` + `_maha_sequence`/`_antardasha_spans`)
+  to the period running at a date, returning MD/AD + calendar windows. The engine
+  never infers this from a date — the resolved `{"md":..,"ad":..}` is fed into
+  `judge_all_houses_doctrine(dasha=...)` so every reading is time-anchored. Mainpuri
+  (born 1989-10-12) at 2026-07-06 -> **Mercury / Mercury** MD-AD.
+
+Follow-up (**v3, sequenced**): the engine's *verdicts* still carry the ledger's
+known gaps (11th-house afflicted-vs-Rajayoga, exaltation over-credit); those are the
+next phase — feature-modeled and re-audited — after this pipeline lands.

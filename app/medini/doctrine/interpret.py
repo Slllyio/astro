@@ -27,15 +27,22 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:  # avoid importing anthropic at module import time
     from anthropic import Anthropic
 
+from app.core.ephemeris_engine import DAYS_PER_VEDIC_YEAR
 from app.medini.doctrine.domains.house_judgment import (
     HouseJudgment,
+    _antardasha_spans,
+    _birth_elapsed_into_md,
+    _maha_sequence,
     judge_all_houses_doctrine,
     judge_house_doctrine,
 )
 
-# Per the claude-api guidance: default to Opus 4.8 with adaptive thinking, and
-# stream so a long grounded reading never trips a request timeout.
-DEFAULT_MODEL = "claude-opus-4-8"
+# Model split (the user's explicit choice): the engine has already done the
+# astrological reasoning, so a cheap tier renders the twelve grounded per-house
+# readings; the whole-chart synthesis — where prose quality matters most — uses Opus.
+READING_MODEL = "claude-haiku-4-5"
+SYNTHESIS_MODEL = "claude-opus-4-8"
+DEFAULT_MODEL = SYNTHESIS_MODEL  # back-compat for interpret_house
 
 _SYSTEM = """\
 You are an interpreter of an *already-computed* judgment from B. V. Raman's \
@@ -227,7 +234,8 @@ def _complete(client: "Anthropic", model: str, user_block: str,
         model=model,
         max_tokens=max_tokens,
         thinking={"type": "adaptive"},
-        system=_SYSTEM,
+        system=[{"type": "text", "text": _SYSTEM,
+                 "cache_control": {"type": "ephemeral"}}],
         messages=[{"role": "user", "content": user_block}],
     ) as stream:
         final = stream.get_final_message()
@@ -254,29 +262,236 @@ def interpret_house(
     return _complete(_client(client), model, user_block, max_tokens)
 
 
-def interpret_chart(
-    judgments: Sequence[HouseJudgment],
-    *,
-    client: "Anthropic | None" = None,
-    model: str = DEFAULT_MODEL,
-    max_tokens: int = 8192,
-) -> str:
-    """Produce a whole-chart synthesis across the twelve houses' judgments.
+# ------------------------------------------------- dasha timing resolution
 
-    The per-house packets are compacted (headline verdict, the three testimonies'
-    labels, the strongest findings, and the running dasa) so the synthesis stays
-    grounded without overflowing the prompt."""
-    houses = [_compact_grounding(build_grounding(hj)) for hj in judgments]
+def _jd_to_iso(jd: float) -> str:
+    """Julian Day -> 'YYYY-MM' (Fliegel/Van Flandern; pure, no swe dependency)."""
+    z = int(jd + 0.5)
+    a = z
+    if z >= 2299161:
+        alpha = int((z - 1867216.25) / 36524.25)
+        a = z + 1 + alpha - alpha // 4
+    b = a + 1524
+    c = int((b - 122.1) / 365.25)
+    d = int(365.25 * c)
+    e = int((b - d) / 30.6001)
+    month = e - 1 if e < 14 else e - 13
+    year = c - 4716 if month > 2 else c - 4715
+    return f"{year:04d}-{month:02d}"
+
+
+def resolve_current_dasha(chart, birth_jd: float, target_jd: float) -> dict[str, Any]:
+    """Resolve the Vimshottari period running at ``target_jd`` and the full window
+    geometry, so an interpretation can say *when* a house activates. The engine does
+    not infer this from a date — it must be handed a ``dasha={"md":..,"ad":..}`` dict.
+
+    Returns ``{"md","ad","age","windows":[{lord,age_span,start_date,end_date,
+    is_current,antardashas:[...]}]}``. Feed ``{"md":..,"ad":..}`` straight into
+    ``judge_all_houses_doctrine(chart, dasha=...)``."""
+    moon_lon = chart.bundle.chart.planet_lons["Moon"]
+    age = (target_jd - birth_jd) / DAYS_PER_VEDIC_YEAR
+    elapsed0 = _birth_elapsed_into_md(moon_lon)
+    md = ad = None
+    windows: list[dict[str, Any]] = []
+    for i, (lord, s, e) in enumerate(_maha_sequence(moon_lon)):
+        elapsed = elapsed0 if i == 0 else 0.0
+        md_current = s <= age < e
+        if md_current:
+            md = lord
+        antars: list[dict[str, Any]] = []
+        for al, as_, ae_ in _antardasha_spans(lord, s, e, elapsed):
+            ad_current = md_current and as_ <= age < ae_
+            if ad_current:
+                ad = al
+            antars.append({
+                "lord": al, "age_span": [round(as_, 2), round(ae_, 2)],
+                "start_date": _jd_to_iso(birth_jd + as_ * DAYS_PER_VEDIC_YEAR),
+                "end_date": _jd_to_iso(birth_jd + ae_ * DAYS_PER_VEDIC_YEAR),
+                "is_current": ad_current,
+            })
+        windows.append({
+            "lord": lord, "age_span": [round(s, 2), round(e, 2)],
+            "start_date": _jd_to_iso(birth_jd + s * DAYS_PER_VEDIC_YEAR),
+            "end_date": _jd_to_iso(birth_jd + e * DAYS_PER_VEDIC_YEAR),
+            "is_current": md_current, "antardashas": antars,
+        })
+    return {"md": md, "ad": ad, "age": round(age, 2), "windows": windows}
+
+
+# --------------------------------------- lossless de-duplicated chart grounding
+
+def _house_timing_summary(t: dict[str, Any]) -> dict[str, Any]:
+    """The per-house timing the interpreter actually needs — the running period,
+    its tier, and which dasa windows activate THIS house — not the full 81-window
+    geometry (that is deterministic and identical across houses)."""
+    return {
+        "current_maha_lord": t["current_maha_lord"],
+        "current_antar_lord": t["current_antar_lord"],
+        "current_activation_tier": t["current_activation_tier"],
+        "influencing_planets": t["influencing_planets"],
+        "activating_windows": [
+            {"maha_lord": w["maha_lord"], "age_span": w["age_span"],
+             "tiers": sorted({a["activation_tier"] for a in w["antardasas"]})}
+            for w in t["windows"] if w["lord_activates_house"]
+        ],
+    }
+
+
+def build_chart_grounding(
+    judgments: "Sequence[HouseJudgment] | dict[int, HouseJudgment]",
+    *,
+    dasha: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Whole-chart grounding, de-duplicated and lossless.
+
+    The chart's ≤9 planets fill 36 lord/karaka slots (e.g. Jupiter as lord/karaka of
+    houses 2, 5, 9, 11), and a planet's dignity/aspect/conjunction findings are the
+    same wherever it rules. So each planet is serialized **once** into a ``planets``
+    dossier (all findings retained), and each house references its lord/karaka by
+    name — no information lost, ~4x fewer tokens than repeating every packet."""
+    js = _as_judgment_list(judgments)
+    planets: dict[str, Any] = {}
+    houses: list[dict[str, Any]] = []
+    for hj in js:
+        p = build_grounding(hj)
+        for role in ("lord", "karaka"):
+            v = p[role]
+            planets.setdefault(v["subject"], {
+                "planet": v["subject"], "verdict": v["verdict"],
+                "rasi_score": v["rasi_score"], "navamsa_score": v["navamsa_score"],
+                "findings": v["findings"],
+            })
+        houses.append({
+            "house": p["house"], "domain": p["domain"],
+            "headline_verdict": p["headline_verdict"],
+            "sutra_polarity_blend": p["sutra_polarity_blend"],
+            "bhava": p["bhava"],                     # house-specific — inline
+            "lord": p["lord"]["subject"],            # reference into `planets`
+            "karaka": p["karaka"]["subject"],
+            "synthesis": p["synthesis"]["prose"],
+            "influencers": p["synthesis"]["influencers"],
+            "afflicted_activators": p["synthesis"]["afflicted_activators"],
+            "fired_sutras": p["fired_sutras"],       # verbatim, per house
+            "combinations": p["combinations"],
+            "from_moon": p.get("from_moon"),
+            "first_house_testimony": p.get("first_house_testimony"),
+            "timing": _house_timing_summary(p["timing"]),
+        })
+    out: dict[str, Any] = {"planets": planets, "houses": houses}
+    if dasha is not None:
+        out["dasha"] = dasha
+    return out
+
+
+def _as_judgment_list(judgments) -> list[HouseJudgment]:
+    if isinstance(judgments, dict):
+        return [judgments[h] for h in sorted(judgments)]
+    return list(judgments)
+
+
+# -------------------------------------------- structured reading output schema
+
+from pydantic import BaseModel, Field  # noqa: E402  (kept near its sole use)
+
+
+class _HouseReading(BaseModel):
+    house: int = Field(ge=1, le=12)
+    reading: str
+
+
+class ChartReadings(BaseModel):
+    """The twelve grounded per-house readings, one structured object."""
+    readings: list[_HouseReading]
+
+
+_READING_TASK = """\
+Below is the engine's executed judgment for one chart: a `planets` dossier (each \
+planet assessed once, with the signed findings behind its verdict) and twelve \
+`houses` that reference their lord/karaka by name into that dossier. For EACH of the \
+twelve houses, write one grounded paragraph: state the headline verdict and explain \
+it from the bhava's own findings and its lord's/karaka's dossier entry, weigh the \
+from-Moon testimony and any stated combination, and — if a running period is given \
+in `dasha` or the house's timing — name it. Interpret only what is encoded; trace \
+every claim to a verdict, a finding, a verbatim sutra, a combination, or a window."""
+
+_SYNTHESIS_TASK = """\
+You are given (1) a compact twelve-house summary the engine judged and (2) the twelve \
+grounded per-house readings already written. Synthesize a whole-life reading: weigh \
+the houses against each other, name the structures that recur across houses, identify \
+the strongest and weakest departments, note where the Chandra-Lagna re-weights a \
+house, and name the running dasa and what it activates. Keep every claim traceable to \
+the encoded evidence; introduce nothing new."""
+
+
+def interpret_chart(
+    judgments: "Sequence[HouseJudgment] | dict[int, HouseJudgment]",
+    *,
+    dasha: dict[str, Any] | None = None,
+    client: "Anthropic | None" = None,
+    reading_model: str = READING_MODEL,
+    synthesis_model: str = SYNTHESIS_MODEL,
+    max_tokens: int = 8192,
+) -> dict[str, Any]:
+    """Hybrid, cached, structured whole-chart interpretation.
+
+    Call 1 (cheap tier, structured): one request over the de-duplicated grounding
+    returns all twelve grounded per-house readings. Call 2 (Opus, streamed): the
+    whole-chart synthesis. The static system prompt and the planet dossier are marked
+    cacheable, so repeat runs read the shared prefix at a fraction of the cost.
+
+    Returns ``{"readings": {1..12: str}, "synthesis": str, "dasha": ...,
+    "input_tokens": int}``."""
     import json
-    user_block = (
-        "Synthesize a whole-life reading from the twelve houses the engine judged "
-        "below. Weigh the houses against each other, name the running dasa and what "
-        "it activates, and keep every claim traceable to a house's verdict, its "
-        "findings, or a dasa window. Do not introduce anything not encoded here.\n\n"
-        "=== TWELVE-HOUSE DOCTRINE SUMMARY ===\n"
-        f"{json.dumps(houses, indent=2, ensure_ascii=False)}"
+    cl = _client(client)
+    grounding = build_chart_grounding(judgments, dasha=dasha)
+
+    # Split the grounding so the (chart-stable) dossier is a cacheable prefix and the
+    # houses are the varying tail.
+    dossier_block = ("=== PLANET DOSSIER (each planet assessed once) ===\n"
+                     + json.dumps(grounding["planets"], ensure_ascii=False, indent=1))
+    houses_payload = {"houses": grounding["houses"]}
+    if "dasha" in grounding:
+        houses_payload["dasha"] = grounding["dasha"]
+    houses_block = ("=== TWELVE HOUSES (lord/karaka reference the dossier) ===\n"
+                    + json.dumps(houses_payload, ensure_ascii=False, indent=1))
+
+    system_blocks = [{"type": "text", "text": _SYSTEM + "\n\n" + _READING_TASK,
+                      "cache_control": {"type": "ephemeral"}}]
+    user_content = [
+        {"type": "text", "text": dossier_block,
+         "cache_control": {"type": "ephemeral"}},
+        {"type": "text", "text": houses_block},
+    ]
+
+    # Measure the packet before sending (cost visibility; no message created).
+    input_tokens = cl.messages.count_tokens(
+        model=reading_model, system=system_blocks,
+        messages=[{"role": "user", "content": user_content}],
+    ).input_tokens
+
+    # Call 1 — twelve readings, structured, cheap tier.
+    parsed = cl.messages.parse(
+        model=reading_model, max_tokens=max_tokens,
+        system=system_blocks,
+        messages=[{"role": "user", "content": user_content}],
+        output_format=ChartReadings,
+    ).parsed
+    readings = {r.house: r.reading for r in parsed.readings}
+
+    # Call 2 — whole-chart synthesis (Opus), grounded in the compact summary + the
+    # readings just produced.
+    compact = [_compact_grounding(build_grounding(hj))
+               for hj in _as_judgment_list(judgments)]
+    syn_block = (
+        _SYNTHESIS_TASK + "\n\n=== TWELVE-HOUSE SUMMARY ===\n"
+        + json.dumps(compact, ensure_ascii=False, indent=1)
+        + "\n\n=== THE TWELVE READINGS ===\n"
+        + json.dumps(readings, ensure_ascii=False, indent=1)
     )
-    return _complete(_client(client), model, user_block, max_tokens)
+    synthesis = _complete(cl, synthesis_model, syn_block, max_tokens)
+
+    return {"readings": readings, "synthesis": synthesis,
+            "dasha": dasha, "input_tokens": input_tokens}
 
 
 def _compact_grounding(packet: dict[str, Any]) -> dict[str, Any]:
@@ -325,9 +540,17 @@ def interpret_house_of_chart(chart, house: int, **kw) -> str:
     return interpret_house(judge_house_doctrine(chart, house), **kw)
 
 
-def interpret_whole_chart(chart, **kw) -> str:
-    """Convenience: judge all twelve houses of ``chart`` and synthesize a reading."""
-    judgments = judge_all_houses_doctrine(chart)
-    if isinstance(judgments, dict):
-        judgments = [judgments[h] for h in sorted(judgments)]
-    return interpret_chart(judgments, **kw)
+def interpret_whole_chart(chart, *, birth_jd: float, target_jd: float | None = None,
+                          **kw) -> dict[str, Any]:
+    """Convenience: resolve the running dasa, judge all twelve houses time-anchored,
+    and produce the twelve readings + synthesis in one call.
+
+    ``birth_jd`` is required (the chart does not retain it); ``target_jd`` defaults to
+    the caller-supplied 'now'. Pass ``target_jd`` explicitly for a deterministic run
+    (the module never reads the wall clock)."""
+    dasha = None
+    if target_jd is not None:
+        d = resolve_current_dasha(chart, birth_jd, target_jd)
+        dasha = {"md": d["md"], "ad": d["ad"]}
+    judgments = judge_all_houses_doctrine(chart, dasha=dasha)
+    return interpret_chart(judgments, dasha=dasha, **kw)

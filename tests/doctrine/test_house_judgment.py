@@ -579,3 +579,71 @@ class TestInterpretGrounding:
         for role in ("bhava", "lord", "karaka"):
             assert len(c["key_findings"][role]) <= 3
         assert c["headline_verdict"] in _LABELS
+
+
+class TestChartGroundingCostAndTiming:
+    """The de-duplicated whole-chart grounding (lossless + cheap) and the dasa
+    resolver that time-anchors it. Serialization/arithmetic only -- no API key."""
+
+    def test_planets_deduped_and_houses_reference_them(self, mainpuri):
+        from app.medini.doctrine.interpret import build_chart_grounding
+        J = judge_all_houses_doctrine(mainpuri)
+        g = build_chart_grounding(J)
+        # Each planet appears once in the dossier, keyed by its own name.
+        for name, dossier in g["planets"].items():
+            assert dossier["planet"] == name
+        # Every house's lord/karaka is a name resolvable in the dossier.
+        for h in g["houses"]:
+            assert h["lord"] in g["planets"]
+            assert h["karaka"] in g["planets"]
+        # Dedup is real: 12 houses x 2 role-slots collapse onto <=9 planets.
+        assert len(g["planets"]) <= 9
+
+    def test_grounding_is_lossless_for_lord_and_karaka_findings(self, mainpuri):
+        from app.medini.doctrine.interpret import (
+            build_chart_grounding, build_grounding)
+        J = judge_all_houses_doctrine(mainpuri)
+        g = build_chart_grounding(J)
+        dossier = {(f["observation"], f["contribution"])
+                   for p in g["planets"].values() for f in p["findings"]}
+        # No lord/karaka finding is dropped in the collapse -- the dossier is a
+        # superset of every per-house lord/karaka finding.
+        for h in range(1, 13):
+            p = build_grounding(J[h])
+            for role in ("lord", "karaka"):
+                for f in p[role]["findings"]:
+                    assert (f["observation"], f["contribution"]) in dossier
+
+    def test_resolver_picks_bracketing_period(self, mainpuri):
+        from app.medini.doctrine.interpret import resolve_current_dasha
+        birth_jd = MAINPURI["jd"]
+        target = birth_jd + 36.73 * 365.2425  # ~age 36.73
+        d = resolve_current_dasha(mainpuri, birth_jd, target)
+        assert d["md"] and d["ad"]
+        # The running MD's window brackets the target age.
+        cur = [w for w in d["windows"] if w["is_current"]]
+        assert len(cur) == 1
+        s, e = cur[0]["age_span"]
+        assert s <= d["age"] < e
+        # Exactly one antardasa is current, inside the current MD.
+        cad = [a for w in d["windows"] for a in w["antardashas"] if a["is_current"]]
+        assert len(cad) == 1 and cad[0]["lord"] == d["ad"]
+
+    def test_resolver_feeds_engine_current_period(self, mainpuri):
+        from app.medini.doctrine.interpret import resolve_current_dasha
+        birth_jd = MAINPURI["jd"]
+        d = resolve_current_dasha(mainpuri, birth_jd, birth_jd + 36.73 * 365.2425)
+        # Passing the resolved md/ad populates the engine's current-period fields.
+        J = judge_all_houses_doctrine(mainpuri, dasha={"md": d["md"], "ad": d["ad"]})
+        assert J[1].timing.current_md == d["md"]
+        assert J[1].timing.current_tier in ACTIVATION_TIERS
+
+    def test_chart_readings_schema_validates_and_rejects(self):
+        import pydantic
+        from app.medini.doctrine.interpret import ChartReadings
+        ok = ChartReadings(readings=[{"house": h, "reading": f"r{h}"}
+                                     for h in range(1, 13)])
+        assert len(ok.readings) == 12
+        # House number out of the 1..12 range is rejected by the schema.
+        with pytest.raises(pydantic.ValidationError):
+            ChartReadings(readings=[{"house": 13, "reading": "x"}])

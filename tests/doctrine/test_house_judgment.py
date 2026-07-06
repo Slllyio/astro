@@ -535,3 +535,47 @@ class TestChapterRules:
         j = judge_house_doctrine(mainpuri, 12, dasha={"md": "Mercury", "ad": "Mercury"})
         fired = {e.rule_id for s in j.steps for e in s.evidence}
         assert any(".ch16." in i for i in fired)
+
+
+class TestInterpretGrounding:
+    """The LLM interpretation layer's grounding packet — the anti-hallucination
+    contract. These exercise serialization only (no API key, no network): the
+    reading Claude produces must be traceable to exactly this evidence."""
+
+    def test_packet_carries_the_three_testimonies_and_headline(self, mainpuri):
+        from app.medini.doctrine.interpret import build_grounding
+        hj = judge_house_doctrine(mainpuri, 1)
+        p = build_grounding(hj)
+        # Raman's house verdict is the Lagna+lord+karaka synthesis, not the raw
+        # sutra-polarity blend -- the two must be reported as distinct fields.
+        assert p["headline_verdict"] == hj.conclusion.label
+        assert p["sutra_polarity_blend"]["label"] == hj.blend_label
+        for role in ("bhava", "lord", "karaka"):
+            assert p[role]["verdict"] in _LABELS
+            assert p[role]["findings"]  # every testimony shows its evidence
+
+    def test_findings_and_sutras_are_verbatim_and_traceable(self, mainpuri):
+        from app.medini.doctrine.interpret import build_grounding
+        hj = judge_house_doctrine(mainpuri, 1)
+        p = build_grounding(hj)
+        # Each fired sutra is the engine's verbatim text keyed by its rule id.
+        fired_ids = {e.rule_id for s in hj.steps for e in s.evidence}
+        assert {s["id"] for s in p["fired_sutras"]} <= fired_ids
+        assert all(s["text"] for s in p["fired_sutras"])
+        # Findings preserve the signed contribution the verdict was built from.
+        f0 = p["bhava"]["findings"][0]
+        assert set(f0) == {"observation", "contribution", "frame", "criterion"}
+
+    def test_first_house_and_from_moon_present_for_house1(self, mainpuri):
+        from app.medini.doctrine.interpret import build_grounding
+        p = build_grounding(judge_house_doctrine(mainpuri, 1))
+        assert "first_house_testimony" in p and "from_moon" in p
+        assert p["from_moon"]["reference"].startswith("Chandra")
+
+    def test_compact_grounding_bounds_findings_for_whole_chart(self, mainpuri):
+        from app.medini.doctrine.interpret import build_grounding, _compact_grounding
+        c = _compact_grounding(build_grounding(judge_house_doctrine(mainpuri, 1)))
+        # Whole-chart synthesis keeps only the strongest findings per testimony.
+        for role in ("bhava", "lord", "karaka"):
+            assert len(c["key_findings"][role]) <= 3
+        assert c["headline_verdict"] in _LABELS

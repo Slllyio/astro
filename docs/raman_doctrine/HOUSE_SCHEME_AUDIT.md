@@ -671,3 +671,29 @@ and record before/after above.
   Gulika); **parivartana / sign-exchange bonus** (house-7 Chart 11); **nodal /
   eclipse ("eclipsed") constellation affliction** (house-9 Charts 88, 94).
   Candidates for new low-level factors before/alongside the tune.
+
+---
+
+## Interpretation layer — `app/medini/doctrine/interpret.py`
+
+The point-scheme this ledger audits produces *structured* verdicts, not prose. A
+thin LLM layer now renders those verdicts as a reading — **grounded**, so it
+interprets the doctrine rather than casting its own.
+
+- `build_grounding(HouseJudgment)` — pure, key-free serialization of one house's
+  executed judgment into the only evidence the model is allowed to read: the
+  headline (Lagna+lord+kāraka **synthesis**, kept distinct from the raw
+  sutra-polarity blend), the three testimonies with their **signed findings**,
+  the **verbatim** fired sūtras (keyed by rule id), the named combinations and the
+  dasa they fructify in, the Chandra-Lagna (from-Moon) view, and the first-house
+  testimony.
+- `interpret_house` / `interpret_chart` (+ `interpret_*_of_chart` convenience) —
+  call Claude (`claude-opus-4-8`, adaptive thinking, streamed) under a system
+  prompt whose one rule is grounding: every claim must trace to a verdict label, a
+  listed finding, a quoted sūtra, a combination, or a dasa window; no placement,
+  aspect, or prediction the engine never derived. Standard SDK auth
+  (`ANTHROPIC_API_KEY`); no credential is sourced from anywhere else.
+- Tests (`TestInterpretGrounding`, key-free) pin the anti-hallucination contract:
+  the packet carries the three testimonies + headline, findings/sūtras stay
+  verbatim and traceable to fired rule ids, and the whole-chart compaction bounds
+  each testimony to its strongest findings.

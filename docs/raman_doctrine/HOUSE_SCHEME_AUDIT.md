@@ -426,12 +426,54 @@ over-score is amplified:
 
 ---
 
-## Houses 11–12 — pending
+## House 11 — ch. XV (Vol. II) — HELD-OUT AUDIT
 
-_One held-out audit per house as each is deepened; append the corpus size, the
-within-one rate, the per-factor split, and the divergence patterns here. House 11
-(gains) auditability depends on whether ch. XV grades bhāva strength or (like ch.
-XIV) reads gains-type; house 12 (dusthāna) is expected non-auditable._
+- Chapter-reading wired (`HOUSE_CHAPTERS[11]` = ch15; **29 rules already encoded**
+  in htjah_vol2). Guard: `test_house11_reads_ch15`.
+- **AUDITABLE — auditability was genuinely open and had to be checked** (house 10
+  taught that dignity class does not predict it). ch. XV is a **hybrid like ch.
+  XIII**: 23 per-chart "The Eleventh House:" + 23 "The Eleventh Lord:" strength
+  headings (vs 2 in the non-auditable ch. XIV), grading the 11th house and lord on
+  the strength scale — in service of **elder-sibling survival** and **Dhana
+  yogas**. (0 "Labhakāraka" gradings, so Bhāva + Lord only, no kāraka row. The
+  chapter's opening *gains-type* passage — "if Saturn → industries, if Venus →
+  films …" — mirrors ch. XIV, but the worked charts 210–232 do grade strength.)
+- **Corpus:** ch. XV worked Charts 210–218, **16 factor-verdicts** (Bhāva /
+  11th-lord), each cited verbatim; ÷3 holdout.
+- **Result:** **OVERALL 12/16 within one grade (10 EXACT, 75%)** · **TRAIN 7/11 ·
+  HOLDOUT 5/5 (100%).** Mean Δ **+0.50** — the familiar over-scoring bias; 3 of 4
+  misses are over-scores.
+
+### Divergence patterns — same signal, exaltation again to the fore
+
+1. **Positive-side stacking, most visibly on exaltation / Navāṁśa dignity** (all 3
+   over-misses — reinforcing the sharpened house-9 finding):
+   - *Chart 211-Lord:* Mars in the Lagna (kendra) + **Navāṁśa exaltation** →
+     "very powerful"; Raman grades it barely adequate, "allowing one elder co-born
+     to survive" (Δ **+4**).
+   - *Chart 218-Lord:* Sun **exalted** in a kendra → "very powerful"; Raman just
+     "well placed" (Δ +3).
+   - *Chart 215-Lord:* Moon own-sign, Saturn-afflicted, but a Navāṁśa
+     exalted-Mars conjunction (+1.6) → "fairly good"; Raman "moderate" (Δ +2).
+   - *Legit-strong control:* Chart 212-Lord Venus (own-sign moolatrikoṇa with
+     benefics) = "very strong" both ways (Δ 0) — the soft cap must spare it.
+2. **Fortified house dragged by one occupant + halved aspects** (the lone
+   under-miss): *Chart 217-Bhāva* — an 11th "**strongly disposed**" (aspected by
+   Saturn + exalted Mercury) reads "moderate" because a Ketu occupant is −0.7 and
+   the two benefic aspects are halved by `bhava_aspect_mul` (Δ −3). Same family as
+   the clean/fortified-house baseline.
+3. **Negative side exact, again** — every empty/afflicted/debilitated factor is
+   exact or within one (10 exact: 210, 211-Bhāva, 213, 214, 215-Bhāva, 216, 218-
+   Bhāva …). The holdout is a clean **5/5**.
+
+---
+
+## House 12 — pending
+
+_The last house. House 12 (dusthāna: loss, expenditure, mokṣa) is expected
+**non-auditable** like houses 6 and 8 — ch. XVI most likely judges loss/liberation
+events, not bhāva strength — but, per the house-10 lesson, this will be
+**determined from ch. XVI's worked charts**, not assumed._
 
 ---
 
@@ -442,30 +484,30 @@ patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
 
-**Combined held-out audit so far (houses 2–5 + 7 + 9, comprehensive corpora):**
-- **OVERALL 87/124 within one grade (~70%).**
-- **HOLDOUT 28/37 (~76%)** — reserved, never used to derive anything. Its failures
+**Combined held-out audit so far (houses 2–5 + 7 + 9 + 11, comprehensive corpora):**
+- **OVERALL 99/140 within one grade (~71%).**
+- **HOLDOUT 33/42 (~79%)** — reserved, never used to derive anything. Its failures
   are all named patterns: 45-Lord, 48-Lord, 96-Karaka, 15-Kāraka, 16-Lord,
   94(h9)-Kāraka (stacking), 66-Bhāva (papakartari), 69-Bhāva & 12-Bhāva & 95(h9)-
-  Bhāva (light/clean/neechabhaṅga-house). The reserved data independently points
-  at the same fixes, so the consolidation's before/after can be quoted on data it
-  never saw.
+  Bhāva & 217(h11)-Bhāva (light/clean/fortified-house). House 11's holdout is a
+  clean 5/5. The reserved data independently points at the same fixes.
 - **House 9 dropped the average** (52% within-one): ch. XIII is an adversarial
   corpus for the scheme — mostly exalted-but-afflicted father-charts, exactly the
   cases the #1 fix targets. It is the sharpest single-house confirmation, not an
-  outlier.
+  outlier. Houses 7 (77%) and 11 (75%) bracket the typical rate.
 - **Three houses now confirmed non-auditable, three different reasons:** 6
   (disease-events), 8 (longevity/death-events), **10 (profession-type
   identification — a kendra, yet still non-auditable)**. Auditability tracks *what
   Raman judges the house for*, not its dignity class. House 12 (dusthāna) expected
   likewise; house 11 to be checked.
 
-**Running tally of the dominant signals (houses 2–5, 7, 9):**
+**Running tally of the dominant signals (houses 2–5, 7, 9, 11):**
 - **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked
-  positives — OVERWHELMING: confirmed ~26×** (houses 2–5: Charts 43 +5, 61 +6,
+  positives — OVERWHELMING: confirmed ~29×** (houses 2–5: Charts 43 +5, 61 +6,
   53 +4, 40 +3, 65 +2, 91-Kāraka +4, 95 +5, 98 +7, 96-Kāraka +3; house 7: 15 +3,
   16-Lord +3, 2-Lord +3, 1-Kāraka +2, 3-Lord +2, 4-Kāraka +2, 7-Lord +2, 8-Kāraka
-  +2; **house 9: 94-Kāraka +5, 92-Kāraka +4, 86/88-Lord/88-Kāraka/91/96 +3**).
+  +2; house 9: 94-Kāraka +5, 92-Kāraka +4, 86/88-Lord/88-Kāraka/91/96 +3;
+  **house 11: 211-Lord +4, 218-Lord +3, 215-Lord +2**).
   The scheme lets a planet reach "very strong / very powerful" from placement +
   dignity + a benefic conjunction/vargottama **alone**; Raman reserves the top
   grades. **THE #1 fix**: a ceiling / diminishing return on stacked positives,
@@ -477,10 +519,11 @@ held-out audit and record the before/after match rates here.
   reaches the ceiling on its own, so an "exalted but papakartari / nodal /
   dusthāna" factor — which Raman grades LOW — reads high. The cap should let a
   strong affliction **cancel** the dignity bonus, not merely subtract from it.
-- **Clean / light / neechabhaṅga house UNDER-scored** — Raman rates empty,
-  lightly-aspected, or Rājayoga-occupied houses higher than the scheme's neutral
-  "moderate" — now **~13×** (houses 2–5: 43, 52, 65, 69, 70; house 7: 7, 10, 11,
-  13 + Chart 12; house 9: 92, 95). Fix: a small positive baseline on a clean
+- **Clean / light / neechabhaṅga / fortified-by-aspect house UNDER-scored** —
+  Raman rates empty, lightly-aspected, Rājayoga-occupied, or benefic-aspected
+  houses higher than the scheme's neutral "moderate" — now **~14×** (houses 2–5:
+  43, 52, 65, 69, 70; house 7: 7, 10, 11, 13 + Chart 12; house 9: 92, 95;
+  house 11: 217-Bhāva). Fix: a small positive baseline on a clean
   house; reconsider `bhava_aspect_mul = 0.5`; and let a bhāva **occupant's
   dignity** count (a debilitated-but-neechabhaṅga or exalted occupant, not just
   its ±0.7 benefic/malefic sign).

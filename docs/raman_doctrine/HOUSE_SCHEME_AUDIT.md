@@ -575,6 +575,43 @@ container reset; they are **not** re-measured here. But their documented diverge
 cap targets, so the fix applies to them by construction; the 93% holdout is the
 defensible generalisation number.
 
+### v2 exploration — the weight-tuning space is exhausted; further gains need FEATURES
+
+After v1 I reconstructed a fresh **house-2 corpus** (ch. V, Charts 40–48, 22 rows)
+— a house **not used to derive v1** — and tested the remaining candidate weight
+fixes on the pooled set (h2 + h7 + h9 + h11 = 104 rows). Findings:
+
+- **v1 generalises without bias to the unseen house.** House 2 under the live v1
+  engine: mean Δ **+0.00**, errors balanced (5 over / 4 under) — the systematic
+  over-scoring is gone here too, not just on the tuning corpora. Its lower absolute
+  within-one (59%) is **variance, not bias**.
+- **The clean-house baseline is NET-NEUTRAL and cannot be tuned.** Adding a positive
+  baseline to empty/lightly-aspected bhāvas moves the pooled within-one by **at most
+  +1 row** (76% → 77% at B≈0.3–0.5) and *regresses* past B≈0.5. Reason, now proven
+  on data: Raman's own clean-house verdicts are **contradictory across houses** —
+  "moderate" for the empty 7th/9th/11th (h7 Ch7/10/11/13, h11 Ch213/216/218) but
+  "fairly strong" for the empty 2nd/4th (h2 Ch43/45, h4 Ch65/69/70). No single
+  scalar satisfies both; the ledger's earlier "keep it small / direction robust,
+  magnitude mapping-sensitive" caveat is confirmed — the honest magnitude is ~zero.
+- **The residual misses are high-variance STRUCTURAL cases the weight vocabulary
+  cannot express**, not mis-calibrations: a bhāva with **dignified / Rajayoga
+  occupants** (h2 Ch40 own-Mars + neechabhaṅga-Moon + exalted-aspect → "very
+  strong", read weak, Δ −6; Ch41 three-planet Rajayoga, Δ −4) — the ±0.7
+  occupant scoring is blind to occupant dignity; plus **combustion**, **Mandi /
+  upagrahas** (ch. VI Charts 59/60/62), **parivartana**, and **nodal/eclipse
+  constellations**. Only ~2 corpus rows even cite occupant dignity, so no single
+  one is worth a bespoke weight.
+
+**Verdict: v1 (the positive soft-cap) is the correct stopping point for a
+weight-and-combine consolidation.** The point-scheme's tunable surface is now fit
+to Raman as well as it can be — mean Δ ≈ 0 everywhere, holdout 93%. Closing the
+remaining gap requires **new low-level inputs** (occupant-dignity in `_assess_bhava`,
+a combustion penalty, upagraha occupancy, a parivartana bonus, a nodal-constellation
+affliction) — a *feature-modelling* project (call it v3), distinct from tuning, and
+larger. It is scoped in the "missing inputs" bullet of the running tally below.
+*(No engine change in v2 — this is a validated negative result that fixes the
+stopping point.)*
+
 ---
 
 ### Pre-consolidation record (the "before")

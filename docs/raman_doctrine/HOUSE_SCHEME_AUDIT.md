@@ -468,23 +468,62 @@ over-score is amplified:
 
 ---
 
-## House 12 — pending
+## House 12 — ch. XVI (Vol. II) — NOT POINT-SCHEME-AUDITABLE (structural finding)
 
-_The last house. House 12 (dusthāna: loss, expenditure, mokṣa) is expected
-**non-auditable** like houses 6 and 8 — ch. XVI most likely judges loss/liberation
-events, not bhāva strength — but, per the house-10 lesson, this will be
-**determined from ch. XVI's worked charts**, not assumed._
+- Chapter-reading wired (`HOUSE_CHAPTERS[12]` = ch16; **28 rules already encoded**
+  in htjah_vol2). Guard: `test_house12_reads_ch16`. The Mainpuri house-12 reading
+  runs; a ch16 rule fires.
+- **Confirmed non-auditable — a dusthāna, judged for loss and mokṣa events, not
+  bhāva strength.** A full scan of ch. XVI (charts 233–258) found **2** "The
+  Twelfth House:" headings and **~4** strength-verdict phrases, versus **41**
+  loss/mokṣa-event phrases. The chapter judges:
+  - **Loss / expenditure / affliction** (planet-in-12th effects: "loss of some
+    limb", "weak eye-sight", "loses all his money", penury, disease);
+  - **Mokṣa / liberation** — combinations for Kaivalya and *jeevanmukta*, which
+    Raman himself flags as **unverifiable**: *"There is no way of verifying
+    predictions bearing on the state of the soul after it shakes off the physical
+    body."*
+  - The **Bhāvārtha-Ratnākara dictum** — a house is fortunate if *its* kāraka sits
+    in the 12th (Chart 233: Moon-in-12th → fortunate re: the mother).
+  - It carries the "(a)–(f) factors governing / Time of Fructification" timing
+    structure, but that times loss/mokṣa events; it never grades the 12th
+    bhāva/lord/kāraka on the afflicted↔powerful scale.
+- **Implication:** house 12 contributes **nothing** to the tuning corpus.
 
 ---
 
-## Consolidation — TODO (after House 12)
+## THE TWELVE-HOUSE WALK IS COMPLETE
 
+Every house now reads its own HTJAH chapter via `HOUSE_CHAPTERS` (house 1 stays
+absent so its reviewed output is byte-stable). The audit map:
+
+| Auditable (feeds the tuning corpus) | Non-auditable (structural finding) |
+|---|---|
+| 1 (ch. IV — calibration anchor) | **6** (ch. IX — disease events) |
+| 2 (ch. V), 3 (ch. VI), 4 (ch. VII), 5 (ch. VIII) | **8** (ch. XII — longevity/death) |
+| 7 (ch. XI), 9 (ch. XIII), 11 (ch. XV) | **10** (ch. XIV — profession-*type*) |
+| | **12** (ch. XVI — loss/mokṣa events) |
+
+**The load-bearing lesson (house 10):** auditability is predicted by *what Raman
+judges the house FOR*, not by dignity class. The 6th/8th/12th dusthānas judge
+disease/death/loss **events**; the 10th (a kendra!) reads career **type**; only the
+seven strength-graded houses feed the corpus. Guards
+`test_house{3..12}_reads_ch{6..16}` (+ the cross-volume lock) hold all twelve
+wirings; 208 doctrine tests pass; house-1 verdicts byte-stable throughout.
+
+**→ The deferred CONSOLIDATION is now the next step** (below).
+
+---
+
+## Consolidation — NEXT (the walk is complete)
+
+All twelve houses are wired and the seven strength-graded corpora are collected.
 Tune the shared weights/thresholds/combine **once**, driven by the accumulated
 patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
 
-**Combined held-out audit so far (houses 2–5 + 7 + 9 + 11, comprehensive corpora):**
+**Combined held-out audit — FINAL pre-consolidation (houses 2–5 + 7 + 9 + 11):**
 - **OVERALL 99/140 within one grade (~71%).**
 - **HOLDOUT 33/42 (~79%)** — reserved, never used to derive anything. Its failures
   are all named patterns: 45-Lord, 48-Lord, 96-Karaka, 15-Kāraka, 16-Lord,
@@ -495,11 +534,11 @@ held-out audit and record the before/after match rates here.
   corpus for the scheme — mostly exalted-but-afflicted father-charts, exactly the
   cases the #1 fix targets. It is the sharpest single-house confirmation, not an
   outlier. Houses 7 (77%) and 11 (75%) bracket the typical rate.
-- **Three houses now confirmed non-auditable, three different reasons:** 6
-  (disease-events), 8 (longevity/death-events), **10 (profession-type
-  identification — a kendra, yet still non-auditable)**. Auditability tracks *what
-  Raman judges the house for*, not its dignity class. House 12 (dusthāna) expected
-  likewise; house 11 to be checked.
+- **Four houses confirmed non-auditable:** 6 (disease-events), 8 (longevity/death),
+  10 (profession-*type* — a kendra, yet non-auditable), **12 (loss/mokṣa events)**.
+  Auditability tracks *what Raman judges the house for*, not its dignity class. The
+  seven strength-graded houses (2–5, 7, 9, 11) are the whole corpus; the walk is
+  **complete** and this combined number is **final** pre-consolidation.
 
 **Running tally of the dominant signals (houses 2–5, 7, 9, 11):**
 - **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked

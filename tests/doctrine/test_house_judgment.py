@@ -487,3 +487,9 @@ class TestChapterRules:
         j = judge_house_doctrine(chart, 7, dasha={"md": "Venus", "ad": "Venus"})
         fired = {e.rule_id for s in j.steps for e in s.evidence}
         assert any("ch11.lord7_in_10" in i for i in fired)
+
+    def test_house8_reads_ch12(self, mainpuri):
+        # HOUSE_CHAPTERS[8] -> the 8th house reads its own ch. XII rules (vol. II).
+        j = judge_house_doctrine(mainpuri, 8, dasha={"md": "Mercury", "ad": "Mercury"})
+        fired = {e.rule_id for s in j.steps for e in s.evidence}
+        assert any(".ch12." in i for i in fired)

@@ -309,11 +309,38 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 8–12 — pending
+## House 8 — ch. XII (Vol. II) — NOT POINT-SCHEME-AUDITABLE (structural finding)
+
+- Chapter-reading wired (`HOUSE_CHAPTERS[8]` = ch12; **34 rules already encoded**
+  in htjah_vol2 — lord8-in-house ×12, planets-in-8th ×9, longevity/nature-of-death
+  combinations). Guard: `test_house8_reads_ch12`. The Mainpuri house-8 reading
+  runs (Gemini on the 8th, Āyuṣkāraka Saturn); 3 ch12 rules fire.
+- **But ch. XII yields no held-out audit rows — the same shape as house 6.** The
+  8th is a **dusthāna**, and Raman judges it entirely for **longevity and the
+  timing / nature of death**, never grading the bhāva / lord / kāraka on the
+  strength scale. The chapter's machinery is lifespan arithmetic, not strength:
+  - **Length-of-life groups** — Bālāriṣṭa (<8y), Alpāyu (8–32), Madhyāyu (32–75),
+    Pūrṇāyu (75–120) — fixed by ~20 named Bālāriṣṭa combinations, then
+  - **Āyurdāya computation** — Piṇḍa / Aṁśa / Jaimini arcs of longevity (Chart 33:
+    "total longevity 86 years 2 months 20 days"), then
+  - **Māraka death-timing** — primary/secondary/tertiary death-dealers (2nd & 7th
+    lords foremost) fixing the year (Chart 34: "died 15-4-1950, per Aṁśāyurdāya").
+  - All 3 worked charts (33–35) are longevity/death cases; **zero** "the 8th house
+    is fairly-strong / weak" verdicts. ("If the 8th lord is strong, the Lagna lord
+    can kill in his period" is a *māraka* rule, not a bhāva-strength grade.)
+- **Implication:** as with house 6, the strength point-scheme has no ground truth
+  in ch. XII, so house 8 contributes **nothing** to the tuning corpus. Two of the
+  three dusthānas (6, 8) are now confirmed non-auditable; **house 12**
+  (loss/mokṣa) is the last expected one.
+
+---
+
+## Houses 9–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
-within-one rate, the per-factor split, and the divergence patterns here.
-Expect houses 8 & 12 (dusthānas) to be non-auditable like house 6._
+within-one rate, the per-factor split, and the divergence patterns here. Houses 9,
+10, 11 are kendras/trikoṇas/upachaya (auditable); house 12 (dusthāna) is expected
+non-auditable like houses 6 and 8._
 
 ---
 
@@ -331,7 +358,9 @@ held-out audit and record the before/after match rates here.
   (stacking), 66-Bhāva (papakartari), 69-Bhāva & 12-Bhāva (light/clean-house). The
   reserved data independently points at the same fixes, so the consolidation's
   before/after can be quoted on data it never saw.
-- House 6 (dusthāna) contributed none; houses 8 & 12 expected likewise.
+- Houses 6 **and 8** (dusthānas) contributed none — both confirmed non-auditable
+  (judged for disease / longevity-death, not bhāva strength); house 12 expected
+  likewise.
 
 **Running tally of the dominant signals (houses 2–5, 7):**
 - **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked

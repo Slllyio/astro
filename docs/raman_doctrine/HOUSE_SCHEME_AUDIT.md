@@ -166,7 +166,42 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 4–12 — pending
+## House 4 — ch. VII — HELD-OUT AUDIT
+
+- **Corpus (comprehensive):** Charts 65–71 (**12 factor-verdicts**). ch7 already
+  has 32 encoded rules (lord4-in-house ×12, planets-in-4th ×9, parivartana +
+  mother-death yogas). Chapter-reading wired (`HOUSE_CHAPTERS[4]`).
+- **Result:** **OVERALL 8/12 within one grade** (1 exact) · **TRAIN 5/7 ·
+  HOLDOUT 3/5** (holdout charts 66, 69).
+
+### Divergence patterns
+
+1. **Empty / light-house UNDER-score — now the biggest recurring signal.** Raman
+   repeatedly calls a clean or lightly-aspected 4th house **"moderately strong"**
+   (Charts 65, 69, 70), which the scheme centres a grade or two lower. With Charts
+   43 and 52 that is **five** instances of "clean house rated higher than the
+   scheme". **BUT** this is entangled with a **mapping choice**: I map Raman's
+   "moderately strong" → *fairly good*. Map it one notch lower (→ *moderately
+   good*) and ch7 rises **8/12 → 10/12** — most light-house rows come within one.
+   So the divergence is *real in direction* (clean houses read higher for Raman)
+   but its *magnitude is mapping-sensitive*; the robust fix is a small positive
+   baseline for a clean house, not a big one.
+
+2. **Placement over-score on an afflicted lord** (mapping-independent) — *Chart
+   65:* Moon in a kendra (+1.2) but conjunct a functional-malefic → scheme
+   "moderately good"; Raman **"considerably afflicted"** (Δ +2). Same family as
+   the Lord stacking pattern: good placement over-rewards a genuinely afflicted
+   planet.
+
+3. **NEW — Papakartari over-penalises the BHĀVA** (mapping-independent, holdout) —
+   *Chart 66:* the 4th is hemmed between malefics (papakartari) yet Raman rates it
+   **"moderately strong"**; the scheme's `kartari_papa = -1.0` alone sinks it to
+   "weak" (Δ −3). Suggests kartari should weigh **less on the bhāva** than on a
+   planet, or be softened when a benefic also occupies.
+
+---
+
+## Houses 5–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
 within-one rate, the per-factor split, and the divergence patterns here._
@@ -180,21 +215,26 @@ patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
 
-**Combined held-out audit so far (houses 2–3, comprehensive corpora):**
-- **OVERALL 21/29 within one grade (~72%).**
-- **HOLDOUT 6/8 (~75%)** — reserved, never used to derive anything. Its *only*
-  two failures are both the Lord stacking over-score (45-Lord, 48-Lord), so the
-  reserved data independently points at the same #1 fix. When the consolidation
-  caps the stacking, the holdout rate is the honest before/after number to quote.
+**Combined held-out audit so far (houses 2–4, comprehensive corpora):**
+- **OVERALL 29/41 within one grade (~71%).**
+- **HOLDOUT 9/13 (~69%)** — reserved, never used to derive anything. Its failures
+  are all named patterns: 45-Lord & 48-Lord (stacking), 66-Bhāva (papakartari),
+  69-Bhāva (light-house / mapping). The reserved data independently points at the
+  same fixes, so the consolidation's before/after can be quoted on data it never
+  saw.
 
-**Running tally of the dominant signals (houses 2–3):**
-- **Lord over-scoring by stacked positives** — confirmed 4× (Chart 43 +5, 61 +6,
-  53 +4, 40 +3). The single highest-value fix: a diminishing return / cap so
-  "good house + own sign (+ exalted conjunction)" ≈ one strong positive, not two
-  or three summed to the ceiling.
-- **Empty + unaspected house → "fairly strong"** — confirmed 2× (Charts 43, 52).
-  Argues for a small positive baseline on a clean house, reconciled with Chart 12
-  ("moderate") — the truth is likely "moderately good", splitting the two.
+**Running tally of the dominant signals (houses 2–4):**
+- **Lord over-scoring by good placement / stacked positives** — confirmed 5×
+  (Charts 43 +5, 61 +6, 53 +4, 40 +3, 65-Lord +2). #1 fix: a diminishing return /
+  cap so "good house + own sign (+ exalted conjunction)" ≈ one strong positive,
+  and so a good *house* alone can't lift a genuinely afflicted planet.
+- **Clean / light house UNDER-scored** — Raman rates empty-or-lightly-aspected
+  houses higher ("fairly strong" / "moderately strong") than the scheme ~5×
+  (Charts 43, 52, 65, 69, 70). Fix: a small positive baseline on a clean house.
+  *Caveat:* magnitude is mapping-sensitive ("moderately strong" → fairly good vs
+  moderately good); direction is robust, so keep the baseline small.
+- **Papakartari too harsh on the BHĀVA** — Chart 66: `kartari_papa = -1.0` sinks
+  a Raman-"moderately strong" house to "weak". Weigh kartari less on the bhāva.
 - **Optimistic combine over-rescues a Rāśi-afflicted planet** — Charts 45, 62.
 - **Missing inputs (not weight bugs):** combustion penalty; upagrahas (Mandi/
   Gulika). Candidates for new low-level factors before/alongside the tune.

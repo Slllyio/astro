@@ -78,12 +78,16 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ## House 2 — ch. V — HELD-OUT AUDIT
 
-- **Corpus:** Charts 40, 41, 43, 44, 45, 46 (14 factor-verdicts).
-- **Result:** **10–11 / 14 within one grade** (5 exact). Per factor:
-  **Kāraka 4/4 · Bhāva 4/5 · Lord 2/5.** ("strong" phrase mapped
-  conservatively → *fairly strong*; the looser reading → *very strong* lifts the
-  total to 11/14.)
-- **Report artifact:** ch5-scheme-audit (per-chart table + diagnosis).
+- **Corpus (comprehensive):** Charts 40, 41, 42, 43, 44, 45, 46, 48
+  (**19 factor-verdicts**).
+- **Result:** **OVERALL 14/19 within one grade** (5 exact) ·
+  **TRAIN 8/11 · HOLDOUT 6/8** (holdout charts 42, 45, 48).
+- **The held-out set independently reproduces the dominant pattern:** its only
+  two misses are **45-Lord (+3)** and **48-Lord (+4)** — both the
+  placement+dignity+conjunction **stacking over-score**. So the fix, when made,
+  is validatable on data it was not derived from.
+- **Report artifact:** ch5-scheme-audit (per-chart table + diagnosis; built on the
+  original 14-row cut).
 
 ### Divergence patterns (the signal for consolidation)
 
@@ -124,11 +128,13 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ## House 3 — ch. VI — HELD-OUT AUDIT
 
-- **Corpus:** Charts 52, 53, 61, 62 (8 factor-verdicts) + 2 rows set aside as
-  *un-modeled* (see below). Ch. VI's verdicts are coarser/comparative ("good",
-  "well disposed", "not sufficiently strong") than ch. V's graded scale.
-- **Result:** **5 / 8 within one grade** (2 exact). Per factor:
-  **Bhāva 3/4 · Lord 1/3 · Kāraka 1/1.**
+- **Corpus (comprehensive):** Charts 52, 53, 58, 61, 62 (**10 factor-verdicts**)
+  + 2 rows set aside as *un-modeled* (below). Ch. VI's verdicts are
+  coarser/comparative ("good", "well disposed", "not sufficiently strong").
+- **Result:** **OVERALL 7/10 within one grade** (2 exact). **HOLDOUT 0** — ch.
+  VI's ÷3 charts (54, 57, 60, 63) carry only coarse or un-modeled verdicts, so
+  they yielded no clean held-out rows; ch. VI contributes to TRAIN, and the
+  global holdout is fed by ch. V (and later houses).
 - Ch. VI's remaining combinations are mostly **backlog** (need lord-to-planet
   binding, sign parity, or planet gender) — the 26 encoded ch6 rules already
   cover the systematic lord-in-house + planets-in-3rd content; chapter-reading
@@ -173,6 +179,13 @@ Tune the shared weights/thresholds/combine **once**, driven by the accumulated
 patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
+
+**Combined held-out audit so far (houses 2–3, comprehensive corpora):**
+- **OVERALL 21/29 within one grade (~72%).**
+- **HOLDOUT 6/8 (~75%)** — reserved, never used to derive anything. Its *only*
+  two failures are both the Lord stacking over-score (45-Lord, 48-Lord), so the
+  reserved data independently points at the same #1 fix. When the consolidation
+  caps the stacking, the holdout rate is the honest before/after number to quote.
 
 **Running tally of the dominant signals (houses 2–3):**
 - **Lord over-scoring by stacked positives** — confirmed 4× (Chart 43 +5, 61 +6,

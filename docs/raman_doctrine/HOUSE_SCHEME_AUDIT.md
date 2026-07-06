@@ -248,7 +248,68 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 7, 9–12 — pending
+## House 7 — ch. XI (Vol. II) — HELD-OUT AUDIT
+
+- **Chapter is in Volume TWO** (houses 7–12 → ch. XI–XVI). Two structural facts
+  surfaced here:
+  1. The compendium already ships a comprehensive **`htjah_vol2.jsonl`** (185
+     rules, ch11–16); ch. XI alone has **34 marriage rules** (lord7-in-house ×12,
+     planets-in-7th ×9, plus the marriage/impotence/adultery combinations). No
+     new hand-encoding was needed — the earlier duplicates I drafted were dropped.
+  2. The engine's chapter-map scan was **hard-coded to `htjah_vol1`**, so for
+     houses 7–12 the map pulled nothing. **Fixed** (`HOUSE_CHAPTERS[7] =
+     ("ch11","11")` + the scan now spans both htjah volumes). The lock is
+     `test_house7_reads_cross_domain_ch11_from_vol2`: the career-tagged
+     `ch11.lord7_in_10` sutra reaches the 7th house *only* via the vol-two scan.
+- **Corpus (comprehensive):** ch. XI worked Charts 1–16, **43 factor-verdicts**
+  (Bhāva / Lord / Kāraka), each cited verbatim; ÷3 chart-number holdout.
+- **Result:** **OVERALL 33/43 within one grade (21 EXACT, 77%)** · **TRAIN 25/32
+  (56% exact) · HOLDOUT 8/11 (73%).** As a **kendra**, the 7th *is* fully
+  auditable (unlike dusthāna house 6). Mean Δ **+0.53** — a systematic
+  over-scoring bias, and every large miss is on the positive side.
+
+### Divergence patterns — a textbook REINFORCEMENT of the #1 fix
+
+1. **Positive-side stacking over-score — ALL 8 of the >1 misses.** A planet in a
+   kendra/trikoṇa **plus** dignity **plus** an aspect/conjunction/vargottama blows
+   past the 2.4 ceiling to "very strong / very powerful" where Raman grades it
+   mid-scale:
+   - *Chart 15-Kāraka:* Venus in the 5th (trikoṇa +1.2) + two benefic aspects
+     (Moon, Jupiter +1.4) → "very powerful"; Raman just places it (Δ **+3**).
+   - *Chart 16-Lord:* Sun in a quadrant (+1.2) + **vargottama** (+1.2) = exactly
+     the 2.4 ceiling → "very powerful"; Raman **"strongly placed"** (Δ +3).
+   - *Chart 2-Lord:* Saturn kendra (+1.2) + friendly (+0.8) + **subhakartari**
+     (+1.0) → "very powerful"; Raman **"well placed"** (Δ +3).
+   - Plus 1-Kāraka +2, 3-Lord +2, 4-Kāraka +2, 7-Lord +2, 8-Kāraka +2.
+   - *Legit counter-example (kept honest):* Chart 16-Kāraka Venus **exalted +
+     vargottama** genuinely earns "very strong" (Δ +1) — stacking is only wrong
+     when the parts are individually modest, exactly what a soft-cap preserves.
+
+2. **The negative side is right, again.** Every afflicted / dusthāna / debilitated
+   factor matched or came within one — 4-Bhāva "afflicted" exact, 9-Bhāva/Lord/
+   Kāraka all exact-or-1, 15-Bhāva "weak" exact, 10-Lord debilitated exact. The
+   two ceiling-fix families (positive stacking) never touch these.
+
+3. **Clean-house baseline — five more data points, consistent direction.** Charts
+   7, 10, 11, 13 have empty/unaspected 7ths that the scheme scores **0 →
+   "moderate"** while Raman calls them "free of affliction / blemish-free / happy"
+   — mildly positive. Small positive baseline, as before (not counted as misses
+   here; mapped conservatively to "moderate").
+
+### NEW signals
+
+- **Fortification-by-aspect UNDER-scored on the bhāva** (both >1 unders):
+  *Chart 12-Bhāva* — a clean 7th "**quite fortified**" by three benefic aspects
+  scores only "moderately good" because `bhava_aspect_mul = 0.5` halves each
+  (Δ −2). Argues the half-weight is too aggressive when several benefics pile onto
+  an empty house — same family as the clean-house baseline.
+- **Parivartana (sign exchange) is an unmodelled input** — *Chart 11-Lord*
+  Jupiter⇄Venus exchange makes Raman call the lord "strong" (Δ −2); the scheme has
+  no exchange bonus. A missing low-level factor, like combustion/upagraha.
+
+---
+
+## Houses 8–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
 within-one rate, the per-factor split, and the divergence patterns here.
@@ -263,29 +324,37 @@ patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
 
-**Combined held-out audit so far (houses 2–5, comprehensive corpora):**
-- **OVERALL 42/58 within one grade (~72%).**
-- **HOLDOUT 12/17 (~71%)** — reserved, never used to derive anything. Its failures
-  are all named patterns: 45-Lord, 48-Lord, 96-Karaka (stacking), 66-Bhāva
-  (papakartari), 69-Bhāva (light-house). The reserved data independently points at
-  the same fixes, so the consolidation's before/after can be quoted on data it
-  never saw.
+**Combined held-out audit so far (houses 2–5 + 7, comprehensive corpora):**
+- **OVERALL 75/101 within one grade (~74%).**
+- **HOLDOUT 20/28 (~71%)** — reserved, never used to derive anything. Its failures
+  are all named patterns: 45-Lord, 48-Lord, 96-Karaka, 15-Kāraka, 16-Lord
+  (stacking), 66-Bhāva (papakartari), 69-Bhāva & 12-Bhāva (light/clean-house). The
+  reserved data independently points at the same fixes, so the consolidation's
+  before/after can be quoted on data it never saw.
+- House 6 (dusthāna) contributed none; houses 8 & 12 expected likewise.
 
-**Running tally of the dominant signals (houses 2–5):**
+**Running tally of the dominant signals (houses 2–5, 7):**
 - **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked
-  positives — OVERWHELMING: confirmed ~9×** (Charts 43 +5, 61 +6, 53 +4, 40 +3,
-  65 +2, 91-Kāraka +4, 95 +5, 98 +7, 96-Kāraka +3). The scheme lets a planet reach
-  "very strong / very powerful" from placement + dignity + a benefic conjunction
-  **alone**; Raman reserves the top grades. **THE #1 fix**: a ceiling /
-  diminishing return on stacked positives, applied only to the positive side
-  (ch. VIII's 9 exact afflicted matches prove the negative side is already right).
+  positives — OVERWHELMING: confirmed ~17×** (houses 2–5: Charts 43 +5, 61 +6,
+  53 +4, 40 +3, 65 +2, 91-Kāraka +4, 95 +5, 98 +7, 96-Kāraka +3; **house 7: 15
+  +3, 16-Lord +3, 2-Lord +3, 1-Kāraka +2, 3-Lord +2, 4-Kāraka +2, 7-Lord +2,
+  8-Kāraka +2**). The scheme lets a planet reach "very strong / very powerful"
+  from placement + dignity + a benefic conjunction/vargottama **alone**; Raman
+  reserves the top grades. **THE #1 fix**: a ceiling / diminishing return on
+  stacked positives, applied only to the positive side (the negative side is
+  already right — ch. VIII's 9 exact afflicted matches and house 7's exact
+  afflicted/dusthāna rows both prove it). House-7 Chart-16-Kāraka (exalted +
+  vargottama = genuinely "very strong") shows the cap must spare *individually*
+  strong parts — a **soft** cap, not a hard clip.
 - **Clean / light house UNDER-scored** — Raman rates empty-or-lightly-aspected
-  houses higher ("fairly strong" / "moderately strong") than the scheme ~5×
-  (Charts 43, 52, 65, 69, 70). Fix: a small positive baseline on a clean house.
-  *Caveat:* magnitude is mapping-sensitive ("moderately strong" → fairly good vs
-  moderately good); direction is robust, so keep the baseline small.
+  houses higher than the scheme's neutral "moderate" — now **~10×** (houses 2–5:
+  43, 52, 65, 69, 70; house 7: 7, 10, 11, 13 clean 7ths + **Chart 12** fortified-
+  by-aspect). Fix: a small positive baseline on a clean house, and reconsider the
+  `bhava_aspect_mul = 0.5` halving that under-credits multi-benefic fortification.
+  *Caveat:* magnitude is mapping-sensitive; direction is robust, so keep it small.
 - **Papakartari too harsh on the BHĀVA** — Chart 66: `kartari_papa = -1.0` sinks
   a Raman-"moderately strong" house to "weak". Weigh kartari less on the bhāva.
 - **Optimistic combine over-rescues a Rāśi-afflicted planet** — Charts 45, 62.
 - **Missing inputs (not weight bugs):** combustion penalty; upagrahas (Mandi/
-  Gulika). Candidates for new low-level factors before/alongside the tune.
+  Gulika); **parivartana / sign-exchange bonus** (house-7 Chart 11). Candidates
+  for new low-level factors before/alongside the tune.

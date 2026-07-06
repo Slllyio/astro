@@ -467,3 +467,23 @@ class TestChapterRules:
         j = judge_house_doctrine(mainpuri, 6, dasha={"md": "Mercury", "ad": "Mercury"})
         fired = {e.rule_id for s in j.steps for e in s.evidence}
         assert any(".ch9." in i for i in fired)
+
+    def test_house7_reads_ch11(self, mainpuri):
+        # HOUSE_CHAPTERS[7] -> the 7th house reads its own ch. XI rules, which
+        # live in vol. TWO of the compendium (houses 7-12 -> ch. XI-XVI).
+        j = judge_house_doctrine(mainpuri, 7, dasha={"md": "Mercury", "ad": "Mercury"})
+        fired = {e.rule_id for s in j.steps for e in s.evidence}
+        assert any(".ch11." in i for i in fired)
+
+    def test_house7_reads_cross_domain_ch11_from_vol2(self):
+        # The chapter map must span BOTH htjah volumes: the ch. XI sutra
+        # "7th lord in the 10th" is tagged domain=career, so the marriage-only
+        # domain sweep would miss it -- it reaches the 7th house solely via the
+        # vol-two chapter scan. Lagna Aries -> 7th lord Venus, placed in the 10th.
+        pos = {"Sun": 20.0, "Moon": 50.0, "Mars": 100.0, "Mercury": 30.0,
+               "Jupiter": 130.0, "Venus": 280.0, "Saturn": 200.0,
+               "Rahu": 160.0, "Ketu": 340.0}
+        chart = rc.from_printed_positions(pos, 5.0, birth_jd=MAINPURI["jd"])
+        j = judge_house_doctrine(chart, 7, dasha={"md": "Venus", "ad": "Venus"})
+        fired = {e.rule_id for s in j.steps for e in s.evidence}
+        assert any("ch11.lord7_in_10" in i for i in fired)

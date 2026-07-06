@@ -81,6 +81,7 @@ HOUSE_CHAPTERS: Mapping[int, tuple[str, ...]] = {
     4: ("ch7", "7"),
     5: ("ch8", "8"),
     6: ("ch9", "9"),
+    7: ("ch11", "11"),
 }
 KARAKA_NAMES: Mapping[int, str] = {
     1: "Thanukaraka (body)", 2: "Dhanakaraka (wealth)", 3: "Bhratrukaraka (siblings)",
@@ -1000,18 +1001,22 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     domain = HOUSE_DOMAIN[house]
 
     # Candidate rules: the house's primary domain, PLUS every rule from that
-    # house's own HTJAH chapter (ch. IV = 1, ch. V = 2, ...). A chapter's rules
-    # ARE that house's doctrine irrespective of the coarse topic-domain tag, so
-    # e.g. the 2nd house reads its eye / speech / learning sutras (tagged
-    # health_body / education) that the wealth-only domain sweep would miss.
+    # house's own HTJAH chapter (ch. IV = 1, ch. V = 2, ...; houses 7-12 live in
+    # vol. two, ch. XI = 7, ..., ch. XVI = 12). A chapter's rules ARE that house's
+    # doctrine irrespective of the coarse topic-domain tag, so e.g. the 2nd house
+    # reads its eye / speech / learning sutras (tagged health_body / education),
+    # and the 7th reads its career-tagged 7th-lord-in-10th sutra, that the
+    # single-domain sweep would miss.
     candidates: list[dict] = list(by_domain.get(domain, ()))
     chapters = HOUSE_CHAPTERS.get(house, ())
     if chapters:
         cand_ids = {r["id"] for r in candidates}
-        for r in books.get("htjah_vol1", ()):
-            if (r.get("provenance", {}).get("chapter") in chapters
-                    and r["id"] not in cand_ids):
-                candidates.append(r)
+        for book_name in ("htjah_vol1", "htjah_vol2"):
+            for r in books.get(book_name, ()):
+                if (r.get("provenance", {}).get("chapter") in chapters
+                        and r["id"] not in cand_ids):
+                    candidates.append(r)
+                    cand_ids.add(r["id"])
 
     ctx = EvalContext(chart=chart, dasha=dasha)
     buckets: dict[str, list[FiredEvidence]] = {k: [] for k in STEP_ORDER}

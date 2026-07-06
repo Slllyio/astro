@@ -457,6 +457,26 @@ _W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
           kartari_subha=1.0, kartari_papa=-1.0, aspect=0.7, conjunct=0.7,
           conjunct_exalted=1.6, bhava_aspect_mul=0.5)
 
+# Consolidation (post-twelve-house-walk): diminishing returns on STACKED POSITIVES.
+# The held-out audit of every strength-graded house (2-5, 7, 9, 11) showed the same
+# dominant error -- a factor reaches "very strong / very powerful" from placement +
+# dignity + a benefic conjunction/vargottama stacked additively, where Raman reserves
+# the top grades (confirmed ~29x, sharpest on exaltation). So a factor's POSITIVE
+# contributions saturate: past one strong dignity's worth (the knee = the exaltation
+# weight, 1.6) extra positives compound only weakly. Applied to the positive side
+# ONLY -- the negative side is already correct (every afflicted/dusthana factor and
+# ch. VIII's childless charts matched), and the knee is set so no mid-range verdict
+# and no ch. IV calibration anchor (Charts 12-14) shifts out of within-one.
+_POS_KNEE = 1.6
+_POS_SLOPE = 0.1
+
+
+def _cap_positive(total_pos: float) -> float:
+    """Soft-cap the summed positive contributions of a frame (diminishing returns)."""
+    if total_pos <= _POS_KNEE:
+        return total_pos
+    return _POS_KNEE + (total_pos - _POS_KNEE) * _POS_SLOPE
+
 VERDICT_SCALE = ("afflicted", "weak", "moderate", "moderately good", "fairly good",
                  "fairly strong", "fairly powerful", "very strong", "very powerful")
 _THRESH = ((2.4, "very powerful"), (1.75, "very strong"), (1.25, "fairly powerful"),
@@ -618,10 +638,21 @@ def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, flo
     Decoded from Raman's worked charts: the BHAVA is additive across vargas,
     but a PLANET strong in EITHER varga is strong -> optimistic max()+0.3*min().
     Vargottama findings (frame 'both') count with the Rasi frame."""
-    rasi = round(sum(x.delta for x in findings if x.frame in ("Rasi", "both")), 3)
-    nav = round(sum(x.delta for x in findings if x.frame == "Navamsa"), 3)
+    rasi_ds = [x.delta for x in findings if x.frame in ("Rasi", "both")]
+    nav_ds = [x.delta for x in findings if x.frame == "Navamsa"]
     if additive:
-        return round(rasi + nav, 3), rasi, nav
+        # BHAVA: additive across vargas; the positive contributions saturate together.
+        allpos = _cap_positive(sum(d for d in rasi_ds + nav_ds if d > 0))
+        allneg = sum(d for d in rasi_ds + nav_ds if d < 0)
+        rasi = round(sum(rasi_ds), 3)
+        nav = round(sum(nav_ds), 3)
+        return round(allpos + allneg, 3), rasi, nav
+    # PLANET: each varga's positive contributions saturate on their own, then the
+    # optimistic max()+0.3*min() blend (a planet strong in EITHER varga is strong).
+    rasi = round(_cap_positive(sum(d for d in rasi_ds if d > 0))
+                 + sum(d for d in rasi_ds if d < 0), 3)
+    nav = round(_cap_positive(sum(d for d in nav_ds if d > 0))
+                + sum(d for d in nav_ds if d < 0), 3)
     hi, lo = (rasi, nav) if rasi >= nav else (nav, rasi)
     return round(hi + 0.3 * lo, 3), rasi, nav
 

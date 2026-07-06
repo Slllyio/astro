@@ -244,6 +244,24 @@ class TestStrengthAssessor:
         assert _verdict_label(0.0) == "moderate"
         assert _verdict_label(-2.0) == "afflicted"
 
+    def test_positive_soft_cap(self):
+        # Consolidation: stacked positives suffer diminishing returns past the
+        # knee (1.6), so a planet does not reach the top grade from placement +
+        # dignity + conjunction alone. A single strong positive is untouched;
+        # the negative side stays linear.
+        one = [Finding("own sign", 1.2, "Rasi", "dignity")]
+        assert _combine(one, additive=False)[0] == 1.2          # <= knee, unchanged
+        stacked = [Finding("kendra", 1.2, "Rasi", "placement"),
+                   Finding("exalted", 1.6, "Rasi", "dignity"),
+                   Finding("conjunct benefic", 0.7, "Rasi", "conjunction")]
+        raw = 1.2 + 1.6 + 0.7                                    # 3.5 additive-style
+        capped = _combine(stacked, additive=False)[0]
+        assert capped < raw and capped < 2.0                    # compressed toward the ceiling
+        # negatives are NOT capped — an afflicted bhava stays afflicted (additive).
+        afflicted = [Finding("debilitated", -1.6, "Rasi", "dignity"),
+                     Finding("dusthana", -1.0, "Rasi", "placement")]
+        assert _combine(afflicted, additive=True)[0] == -2.6
+
 
 class TestCalibration:
     """The weighting is DECODED from Raman's worked charts (HTJAH ch. IV, Charts

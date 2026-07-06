@@ -72,6 +72,12 @@ HOUSE_SIGNIFICATIONS: Mapping[int, str] = {
     11: "gains, elder siblings, fulfilment of desires",
     12: "loss & expenditure, exile, moksha, bed-comforts",
 }
+# A house's own HTJAH chapter — its rules are that house's doctrine regardless of
+# the coarse topic-domain tag. Populated per house as each is deepened (house 1
+# is deliberately absent so its reviewed output stays byte-stable).
+HOUSE_CHAPTERS: Mapping[int, tuple[str, ...]] = {
+    2: ("ch5", "5"),
+}
 KARAKA_NAMES: Mapping[int, str] = {
     1: "Thanukaraka (body)", 2: "Dhanakaraka (wealth)", 3: "Bhratrukaraka (siblings)",
     4: "Matrukaraka (mother)", 5: "Putrakaraka (children)", 6: "Satrukaraka (enemies)",
@@ -263,7 +269,7 @@ def _is_combination(rule: dict) -> bool:
     single-factor testimony. These are Raman's stated combinations (e.g. 'benefics
     in 1, 11, 12 with the lagna lord in a trikona', 'three malefics in the 1st')."""
     node = rule["antecedent"]
-    if not isinstance(node, Mapping) or node.get("op") not in ("all", "n_of", "none"):
+    if not isinstance(node, Mapping) or node.get("op") not in ("all", "n_of", "none", "any"):
         return False
     atoms = [n for n in _walk(node)
              if isinstance(n, Mapping) and n.get("op") in _COMBO_ATOM_OPS]
@@ -989,13 +995,27 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
             by_domain.setdefault(r["domain"], []).append(r)
     domain = HOUSE_DOMAIN[house]
 
+    # Candidate rules: the house's primary domain, PLUS every rule from that
+    # house's own HTJAH chapter (ch. IV = 1, ch. V = 2, ...). A chapter's rules
+    # ARE that house's doctrine irrespective of the coarse topic-domain tag, so
+    # e.g. the 2nd house reads its eye / speech / learning sutras (tagged
+    # health_body / education) that the wealth-only domain sweep would miss.
+    candidates: list[dict] = list(by_domain.get(domain, ()))
+    chapters = HOUSE_CHAPTERS.get(house, ())
+    if chapters:
+        cand_ids = {r["id"] for r in candidates}
+        for r in books.get("htjah_vol1", ()):
+            if (r.get("provenance", {}).get("chapter") in chapters
+                    and r["id"] not in cand_ids):
+                candidates.append(r)
+
     ctx = EvalContext(chart=chart, dasha=dasha)
     buckets: dict[str, list[FiredEvidence]] = {k: [] for k in STEP_ORDER}
     timing_fired: list[tuple[FiredEvidence, dict]] = []
     combos_fired: list[tuple[FiredEvidence, dict]] = []
     n_fired = evaluable = 0
     seen: set[str] = set()
-    for rule in by_domain.get(domain, ()):
+    for rule in candidates:
         if rule["antecedent"] is None or rule["id"] in seen:
             continue
         seen.add(rule["id"])

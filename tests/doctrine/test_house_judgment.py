@@ -409,3 +409,37 @@ class TestCombinations:
         assert j.combinations
         for c in j.combinations:
             assert c.text and c.polarity in ("favorable", "unfavorable", "mixed")
+
+
+class TestChapterRules:
+    """A house reads its own HTJAH chapter (ch. V = 2nd house) irrespective of the
+    coarse topic-domain tag, so its eye/speech/learning sutras fire (they would be
+    missed by the wealth-only domain sweep)."""
+
+    def test_new_ch5_sutras_are_encoded(self):
+        from app.medini.doctrine.compendium import load_compendium
+        ids = {r["id"] for r in load_compendium()["htjah_vol1"] if ".ch5." in r["id"]}
+        for slug in ("mars_moon_2_mathematician",
+                     "sun_moon_aspected_jupiter_venus_debator",
+                     "lord12_in_2_or_lord2_in_12_penalty",
+                     "jupiter_venus_mercury_exalted_2_supports_men"):
+            assert f"raman.htjah_vol1.ch5.{slug}" in ids
+
+    def test_house2_reads_ch5_health_body_rule(self, mainpuri):
+        # saturn_2_bad_eyesight is tagged health_body (house-1's domain) yet is a
+        # ch5 rule -> it must now fire in the 2nd-house judgment via the chapter map.
+        j = judge_house_doctrine(mainpuri, 2, dasha={"md": "Mercury", "ad": "Mercury"})
+        fired = {e.rule_id for s in j.steps for e in s.evidence}
+        assert any("saturn_2_bad_eyesight" in i for i in fired)
+
+    def test_house2_surfaces_new_debator_combination(self, mainpuri):
+        # Sun/Moon aspected by Jupiter or Venus is present on this chart.
+        j = judge_house_doctrine(mainpuri, 2, dasha={"md": "Mercury", "ad": "Mercury"})
+        assert any("debator" in c.rule_id for c in j.combinations)
+
+    def test_house1_unchanged_by_chapter_map(self, mainpuri):
+        # House 1 is deliberately absent from HOUSE_CHAPTERS -> its verdicts stand.
+        j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
+        assert j.lagna_verdict.label == "very powerful"
+        assert j.lord_verdict.label == "fairly good"
+        assert j.conclusion.label == "fairly strong"

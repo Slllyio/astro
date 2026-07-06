@@ -201,7 +201,34 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 5–12 — pending
+## House 5 — ch. VIII — HELD-OUT AUDIT
+
+- **Corpus (comprehensive):** Charts 91–98 (**17 factor-verdicts**). ch8 has 39
+  encoded rules (lord5-in-house ×12, planets-in-5th ×9, many progeny yogas).
+  Chapter-reading wired (`HOUSE_CHAPTERS[5]`).
+- **Result:** **OVERALL 13/17 within one grade — 9 EXACT** · **TRAIN 10/13 ·
+  HOLDOUT 3/4.** ch. VIII's charts are mostly childless (heavily afflicted)
+  natives, and the scheme grades **afflicted factors excellently** (9 exact).
+- **The decisive confirmation:** *every one of the 4 misses is the placement /
+  dignity over-score* —
+  - *Chart 98-Lord:* Saturn in trikoṇa **and** own sign → "very powerful"; Raman
+    **"weakened"** (Δ **+7**, worst in the whole audit).
+  - *Chart 95-Lord:* Venus in a kendra + benefic conjunction → "very strong";
+    Raman **"rendered neutral"** (Δ +5).
+  - *Chart 91-Karaka:* Jupiter in trikoṇa + benefic conjunction but papakartari →
+    "fairly strong"; Raman **"blemished"** (Δ +4).
+  - *Chart 96-Karaka (holdout):* Jupiter own + benefic conjunction → "very
+    strong"; Raman **"moderately benefic"** (Δ +3).
+- **Refined diagnosis:** the scheme lets a planet reach "very strong / very
+  powerful" from **placement + dignity + a benefic conjunction alone**. Raman
+  reserves the top grades; his "good" planets sit around *fairly good / fairly
+  strong*. The fix is a **ceiling / diminishing return on stacked positives**,
+  and it must NOT touch the negative side (the 9 exact afflicted-factor matches
+  show the scheme already reads affliction correctly).
+
+---
+
+## Houses 6–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
 within-one rate, the per-factor split, and the divergence patterns here._
@@ -215,19 +242,22 @@ patterns above, under the hard constraint that **no already-approved house
 regresses** (ch. IV 9/9; house-1 verdicts byte-stable). Re-run every house's
 held-out audit and record the before/after match rates here.
 
-**Combined held-out audit so far (houses 2–4, comprehensive corpora):**
-- **OVERALL 29/41 within one grade (~71%).**
-- **HOLDOUT 9/13 (~69%)** — reserved, never used to derive anything. Its failures
-  are all named patterns: 45-Lord & 48-Lord (stacking), 66-Bhāva (papakartari),
-  69-Bhāva (light-house / mapping). The reserved data independently points at the
-  same fixes, so the consolidation's before/after can be quoted on data it never
-  saw.
+**Combined held-out audit so far (houses 2–5, comprehensive corpora):**
+- **OVERALL 42/58 within one grade (~72%).**
+- **HOLDOUT 12/17 (~71%)** — reserved, never used to derive anything. Its failures
+  are all named patterns: 45-Lord, 48-Lord, 96-Karaka (stacking), 66-Bhāva
+  (papakartari), 69-Bhāva (light-house). The reserved data independently points at
+  the same fixes, so the consolidation's before/after can be quoted on data it
+  never saw.
 
-**Running tally of the dominant signals (houses 2–4):**
-- **Lord over-scoring by good placement / stacked positives** — confirmed 5×
-  (Charts 43 +5, 61 +6, 53 +4, 40 +3, 65-Lord +2). #1 fix: a diminishing return /
-  cap so "good house + own sign (+ exalted conjunction)" ≈ one strong positive,
-  and so a good *house* alone can't lift a genuinely afflicted planet.
+**Running tally of the dominant signals (houses 2–5):**
+- **Planet (Lord/Kāraka) over-scoring by good placement / dignity / stacked
+  positives — OVERWHELMING: confirmed ~9×** (Charts 43 +5, 61 +6, 53 +4, 40 +3,
+  65 +2, 91-Kāraka +4, 95 +5, 98 +7, 96-Kāraka +3). The scheme lets a planet reach
+  "very strong / very powerful" from placement + dignity + a benefic conjunction
+  **alone**; Raman reserves the top grades. **THE #1 fix**: a ceiling /
+  diminishing return on stacked positives, applied only to the positive side
+  (ch. VIII's 9 exact afflicted matches prove the negative side is already right).
 - **Clean / light house UNDER-scored** — Raman rates empty-or-lightly-aspected
   houses higher ("fairly strong" / "moderately strong") than the scheme ~5×
   (Charts 43, 52, 65, 69, 70). Fix: a small positive baseline on a clean house.

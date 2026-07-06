@@ -12,10 +12,31 @@ houses are done**, tuning the weights *jointly* so that no already-reviewed hous
 regresses (in particular ch. IV must stay 9/9 and the approved house-1 output must
 hold). Do not re-tune per house.
 
-Each house audit is a small, cited, feature-level corpus read from the prose
-(not the OCR grids), scored by the *live* scheme (constants imported, not copied).
+Each house audit is a **comprehensive**, cited, feature-level corpus read from the
+prose (not the OCR grids) — *every* factor-verdict a chapter states clearly, not
+just the tidiest — scored by the *live* scheme (constants imported, not copied).
 Corpora themselves are fair-use excerpts kept in the working scratchpad, not
-committed; only the distilled insights live here.
+committed; only the distilled insights and the split assignment live here.
+
+---
+
+## Held-out validation protocol (PRE-REGISTERED)
+
+To keep the final consolidation claim honest — *not* a circular in-sample fit —
+a fraction of the evidence is reserved and **never used to derive or tune**
+anything. Declared here **before** the consolidation, by a mechanical rule so it
+cannot be cherry-picked:
+
+- **Anchor (train, fixed):** ch. IV Charts 12–14 — the scheme was decoded to fit
+  these; they stay the 9/9 calibration anchor and are never held out.
+- **HOLDOUT (test, never tuned):** from ch. V onward, every worked chart whose
+  **number is divisible by 3** — Charts 42, 45, 48, 51, 54, 57, 60, 63, …
+- **TRAIN (tuning insights):** every other ch. V+ chart — 40, 41, 43, 44, 46,
+  47, 49, 50, 52, 53, 55, 56, 58, 59, 61, 62, …
+
+The consolidation may look at TRAIN rows only when choosing weights; the HOLDOUT
+match rate is computed **once**, at the end, as the real generalisation number.
+Each corpus row is tagged `split: train|holdout` accordingly.
 
 ---
 

@@ -228,10 +228,31 @@ _THRESH   = 2.4 very powerful | 1.75 very strong | 1.25 fairly powerful |
 
 ---
 
-## Houses 6–12 — pending
+## House 6 — ch. IX — NOT POINT-SCHEME-AUDITABLE (structural finding)
+
+- Chapter-reading wired (`HOUSE_CHAPTERS[6]` = ch9; 34 rules already encoded —
+  lord6-in-house ×12, planets-in-6th ×9, disease/enemy yogas). The Mainpuri
+  house-6 reading works (Aries on the 6th, Satrukāraka Mars & Saturn).
+- **But ch. IX yields no held-out audit rows.** The 6th is a **dusthāna**, and
+  Raman judges it entirely for **disease identification and timing** — *which*
+  ailment, via the 6th/8th lords, their conjunctions, combustion and transits —
+  **never grading the bhāva / lord / kāraka on the strength scale.** A scan of
+  all ~16 worked charts (109–124) found **zero** "the 6th house is
+  moderately-strong / weak" verdicts (e.g. Chart 113: "the 6th lord Mars, the
+  Rogakāraka, is in the 11th with malefics… the native is suffering from myopia").
+- **Implication:** the strength point-scheme has no ground truth to validate
+  against in ch. IX, so house 6 contributes **nothing** to the tuning corpus. The
+  same likely holds for the other dusthānas — **house 8** (longevity/death:
+  ayurdāya, mārakas) and **house 12** (loss/mokṣa) — which are judged for their
+  own events, not bhāva strength. Combined tally therefore stays at houses 2–5.
+
+---
+
+## Houses 7, 9–12 — pending
 
 _One held-out audit per house as each is deepened; append the corpus size, the
-within-one rate, the per-factor split, and the divergence patterns here._
+within-one rate, the per-factor split, and the divergence patterns here.
+Expect houses 8 & 12 (dusthānas) to be non-auditable like house 6._
 
 ---
 

@@ -1,0 +1,82 @@
+{
+ "source": "B. V. Raman, How to Judge a Horoscope (Vol I & II)",
+ "note": "timing: printed balance-of-dasa + stated event MD/AD",
+ "charts": [
+  {
+   "chart_no": 71,
+   "birth_line": "Born 5-7-1886 at 10-32 p.m. (L.M.T.)",
+   "house_judged": 4,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 17,
+    "months": 8,
+    "days": 3
+   },
+   "events": [
+    {
+     "desc": "mother died, native ~36th year",
+     "age_years": 36,
+     "md": "Mars",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": 72,
+   "birth_line": "Born 10-4-1910 at 8-38 p.m. (I.S.T.) Lat 16 20 N Long 80 15 E",
+   "house_judged": 4,
+   "balance_of_dasa": {
+    "lord": "Ketu",
+    "years": 2,
+    "months": 1,
+    "days": 25
+   },
+   "events": [
+    {
+     "desc": "mother died, native aged 3",
+     "age_years": 3,
+     "md": "Venus",
+     "ad": "Venus"
+    }
+   ]
+  },
+  {
+   "chart_no": 92,
+   "birth_line": "Born 31-1-1938 at 0-23 a.m. (I.S.T.) 8 N 77 E 44",
+   "house_judged": 9,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 0,
+    "months": 1,
+    "days": 4
+   },
+   "events": [
+    {
+     "desc": "father died, native 41st year",
+     "age_years": 41,
+     "md": "Jupiter",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": 93,
+   "birth_line": "Born 8-8-1912 at 7-35 p.m. (I.S.T.) 33 N 77 E 35",
+   "house_judged": 9,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 6,
+    "months": 1,
+    "days": 6
+   },
+   "events": [
+    {
+     "desc": "father died, native about 32",
+     "age_years": 32,
+     "md": "Jupiter",
+     "ad": "Ketu"
+    }
+   ]
+  }
+ ]
+}

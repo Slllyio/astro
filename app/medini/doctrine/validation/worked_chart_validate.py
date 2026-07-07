@@ -121,10 +121,15 @@ def validate_record(rec: dict, patterns: list[tuple[str, str]]) -> dict[str, Any
     return {"chart": rec.get("chart_no"), "house": house, "rows": rows}
 
 
-def run(corpus_path: str, map_path: Path = _MAP_PATH) -> dict[str, Any]:
+def run(corpus_path: str | list[str], map_path: Path = _MAP_PATH) -> dict[str, Any]:
+    """Validate one corpus, or POOL several (pass a list of paths) into one report --
+    used to aggregate held-out sets across chapters/volumes (e.g. Ch VII + Vol 2 9th)."""
     patterns = load_verdict_map(map_path)
-    corpus = json.loads(Path(corpus_path).read_text())
-    records = corpus["charts"] if isinstance(corpus, dict) else corpus
+    paths = [corpus_path] if isinstance(corpus_path, str) else list(corpus_path)
+    records: list[dict] = []
+    for p in paths:
+        corpus = json.loads(Path(p).read_text())
+        records += corpus["charts"] if isinstance(corpus, dict) else corpus
     scored, excluded, divergences = [], [], []
     for rec in records:
         res = validate_record(rec, patterns)
@@ -181,7 +186,7 @@ def main() -> None:
     if not paths:
         print(__doc__)
         raise SystemExit(2)
-    summary = run(paths[0])
+    summary = run(paths if len(paths) > 1 else paths[0])
     _print(summary)
     if "--json" in sys.argv:
         print(json.dumps(summary, indent=1))

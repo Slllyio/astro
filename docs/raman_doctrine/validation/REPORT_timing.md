@@ -44,6 +44,10 @@ within his age precision at the AD level. No arithmetic discrepancy was found.
 ## Caveats & next
 - N=4 events (charts with a clean balance line + a dated event + a stated MD/AD). More
   can be back-filled from the mother/father-death examples across Ch VII and Vol 2.
+- **Provenance:** ch71/ch72 are Ch VII (Vol I); ch92/ch93 are Vol 2 Ch XIII — the
+  strength-tuned `h9` chapter. That does **not** taint this test: the tuned corpus is
+  strength-only tokens with no daśā content, and the engine's Vimśottarī period arithmetic
+  was never fit to any chart. Timing here is untuned regardless of chart provenance.
 - **Not validated here:** the balance-of-daśā *itself* (i.e. the engine computing the
   balance from the Moon). That needs a birth-data recompute in the Raman ayanamsa
   (`raman_saab/dasha.py` is Lahiri + approximate tz; the precise path mirrors

@@ -5,10 +5,16 @@
 > for being a functional malefic. Fixes: ch72 bhāva −4 → −1, ch74 −2 → **0**; ch73 −4 → −3
 > (Mercury aspect credited); **ch70 −2 → 0** (a false papakartari — Mercury on one side is
 > a natural benefic — suppressed). **Ch VII within-one 39% → 56%**, bhāva mean Δ −0.43;
-> tuned audit unchanged (79%), anchor byte-stable, 241 tests pass. Remaining bhāva misses
-> (ch73 −3, ch94 −4) are Raman's generous grading of rescued/hemmed houses (ch94's
-> subhakartari is blocked by a node in the 8th). Target **B** (kāraka over-credit) open.
-> Body numbers are the pre-2.6 diagnosis that motivated the fixes.
+> tuned audit unchanged (79%), anchor byte-stable, 241 tests pass. The remaining held-out
+> bhāva miss is **ch73 −3** (Raman's generous grading of a twice-aspected empty house,
+> beyond the additive model's reach). Target **B** (kāraka over-credit) open. Body numbers
+> are the pre-2.6 diagnosis that motivated the fixes.
+>
+> **Data-integrity correction:** earlier drafts pooled this with a "Vol 2 9th-house
+> held-out" set (ch92/93/94) — those charts are the tuned `h9` chapter (`ch13 Vol II`),
+> NOT held-out, so they are excluded from every held-out figure here. The honest held-out
+> strength number is **Ch VII only: 18 rows / 7 charts, within-one 56%.** See
+> `REPORT_ch13_vol2_9th_rederivation.md`.
 
 **Full-verdict held-out within-one: 7/18 (39%) across 7 charts — vs ~78% on the tuned
 corpora.** Widening from 5→7 charts *sharpened* the diagnosis rather than just lowering

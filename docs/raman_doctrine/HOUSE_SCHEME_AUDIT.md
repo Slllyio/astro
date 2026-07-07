@@ -876,8 +876,15 @@ Mainpuri's house-1 Mars (lo −0.6) is untouched, keeping the anchor byte-stable
 
 ### Increment 6 — natural-benefic occupant is not blemished by functional-malefic status (held-out-driven, DONE)
 
-Phase A.1 of 2.6, the cleaner of the two cross-house-confirmed bhāva gaps. The widened
-held-out set (Ch VII → 7 charts + Vol 2 Ch XIII 9th house) showed `_assess_bhava`
+> **DATA-INTEGRITY CORRECTION (increments 6–8).** Earlier drafts of these increments
+> called Vol 2 Ch XIII (charts 92/93/94) a "held-out cross-house" set. It is NOT — Ch XIII
+> is the tuned `h9` calibration chapter, so those charts were in the training data. All
+> "cross-house-confirmed" / "pooled (4th+9th)" claims below are retracted; the honest
+> held-out set is **Ch VII 4th house only** (ch64/69/70/71/72/73/74). The fixes themselves
+> were driven and validated by Ch VII held-out charts, so A.1/A.2 stand; only the framing
+> was wrong. See `docs/raman_doctrine/validation/REPORT_ch13_vol2_9th_rederivation.md`.
+
+Phase A.1 of 2.6. The **held-out Ch VII** set (7 charts) showed `_assess_bhava`
 driving a **natural benefic** occupant to −0.70 whenever it happened to be a **functional
 malefic** (a dusthāna/maraka lord): ch72 Venus (7/12 lord for Scorpio) and ch74 Venus
 (3/8 lord for Pisces). Raman credits the natural benefic's presence outright — ch72 "the
@@ -889,18 +896,17 @@ governs the *results a planet gives as a lord*, not its blemishing weight as an 
 (`nat_ben`). Only a planet malefic by **both** measures blemishes as an occupant. Scoped
 to occupants (the evidenced site); aspects unchanged.
 
-- **Held-out effect:** ch72 bhāva **−4 → −1** (within-one) and ch74 bhāva **−2 → 0**
-  (exact). Pooled (4th + 9th) within-one **35% → 45%**; Ch VII within-one **39% → 50%**;
-  bhāva per-factor within-one 3/8 → 5/8.
+- **Held-out effect (Ch VII):** ch72 bhāva **−4 → −1** (within-one) and ch74 bhāva
+  **−2 → 0** (exact). Ch VII within-one **39% → 50%**; bhāva per-factor within-one 3/7 → 5/7.
 - **Zero tuned/anchor cost:** the token audit is blind to natural-vs-functional nature
   (corpus occupant tokens carry only a `benefic` flag), so tuned stays **79%** and the
   live-engine anchor is **byte-stable** — the tuned "weak" bhāvas are all blemished by
   *natural* malefics (`nat_ben` False), untouched. 237 doctrine tests pass; guarded by
   `TestNaturalBeneficBhavaOccupant` (credit for a natural-benefic functional malefic;
   penalty preserved for a natural malefic).
-- **Still open (A.2 / B):** ch73 & ch94 bhāva (−4) are the *neechabhanga-rescued aspect*
+- **Still open (A.2 / B):** ch73 bhāva (−4) is the *neechabhanga-rescued aspect*
   under-credit (a different mechanism); and the kendra-offsets-affliction lord/kāraka
-  over-credit (B) — cross-house-confirmed (ch64/70/71/72/73/93), the next candidate.
+  over-credit (B, held-out ch64/70/71/72/73), the next candidate.
 
 ### Increment 7 — natural-benefic influence on a bhava: aspect + kartari (held-out-driven, DONE)
 
@@ -921,28 +927,27 @@ and the reference/from-Moon bhava keep functional nature (unchanged).
     **false papakartari**: the 4th is hemmed by Mercury (natural benefic, 5th) on one side
     and Mars+Ketu on the other, so it is *not* papa (Raman: "moderately strong"). A.2
     suppresses the spurious −1.0.
-- **Ch VII within-one 50% → 56%; pooled (4th+9th) 45% → 50%; bhāva mean Δ −1.25 → −0.43.**
+- **Held-out Ch VII within-one 50% → 56%; bhāva mean Δ −1.25 → −0.43.**
 - **Zero tuned/anchor cost:** the token audit stays **79%** (blind to natural-vs-functional
   nature), the live anchor byte-stable; natural malefics and node hemmers are unaffected
   (`_bhava_benefic` False). 241 tests pass; guarded by `TestNaturalBeneficBhavaOccupant`
   (aspect credited; false papakartari suppressed vs. functional papa).
-- **Not closed:** ch94 (9th) stays −4 — its subhakartari is blocked by **Ketu in the 8th**
-  (Raman ignores the node; excluding nodes from kartari is a separate change, unmade). ch73
-  stays −3 (generous grading). Both are the residual "Raman rates a rescued/hemmed house
-  more generously than the additive model reaches" limit.
-- **Next: B** — the kendra-offsets-affliction lord/kāraka over-credit (ch64/70/71/72/73/93),
-  the positive-saturation frontier, still open.
+- **Not closed:** ch73 (held-out) stays −3 (generous grading — Raman's "fairly powerful"
+  for a twice-aspected empty house out-reaches the additive model). (The tuned ch94 also
+  stays −4, its subhakartari blocked by Ketu in the 8th, but that is not a held-out miss.)
+- **Next: B** — the kendra-offsets-affliction lord/kāraka over-credit (held-out
+  ch64/70/71/72/73), the positive-saturation frontier, still open.
 
 ### Increment 8 — the lord/kāraka over-credit (B): NOT closable on current features (documented negative result)
 
 B is the target Phase B's optimizer flagged (it lowered `pos_knee`/`kendra_trikona`) and the
 one the held-out set most consistently misses: a kendra/dignity placement offsets stacked
-malefic testimony where Raman grades the planet **afflicted** (ch64/70/71/72/73/93,
+malefic testimony where Raman grades the planet **afflicted** (held-out ch64/70/71/72/73,
 Δ +2/+3). Two routes were tested against the anchor-as-hard-constraint and **both fail**:
 
 1. **Blanket `pos_knee` / `kendra_trikona` reduction (the Phase-B direction, in isolation).**
-   A sweep of `pos_knee ∈ {1.6..1.2} × kendra_trikona ∈ {1.2..0.8}` lifts pooled held-out
-   50% → 60% but **drops the ch. IV anchor 8/8 → 5/8** the moment `pos_knee < 1.6`, and
+   A sweep of `pos_knee ∈ {1.6..1.2} × kendra_trikona ∈ {1.2..0.8}` raised the scored set
+   but **dropped the ch. IV anchor 8/8 → 5/8** the moment `pos_knee < 1.6`, and
    pulls the tuned audit to ≤77%. The anchor charts are legitimately strong *without* heavy
    malefic siege, so saturating their positives earlier mis-grades them. Phase B kept the
    anchor at 100% only by co-moving ~20 other params; the two knobs in isolation cannot.

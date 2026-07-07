@@ -1,6 +1,8 @@
 {
+ "_WARNING": "NOT HELD-OUT. Vol 2 Ch XIII (9th house) IS the tuned h9 calibration chapter (docs/raman_doctrine/audit/corpora/htjah_h9_calibration.json, \"ch13 (Vol. II)\"). The engine was hand-decoded AND Phase-B-fit on these charts. Retained only as a tuned-vs-live consistency check (does the live sign-reconstruction engine reproduce the tuned tokens?), NOT as validation. Genuine held-out strength = Ch VII 4th house only (heldout_ch07_4th.json).",
  "source": "B. V. Raman, How to Judge a Horoscope, Vol. II",
  "chapter": "Ch. XIII -- Ninth House (Pitrukaraka = Sun)",
+ "status": "tuned-chapter re-derivation (not held-out)",
  "charts": [
   {
    "chart_no": 92,

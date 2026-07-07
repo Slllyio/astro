@@ -1,12 +1,14 @@
 # Held-out validation report — Vol 1 Ch. VII (Fourth House)
 
-> **Update — Phase 2.6 / A.1 applied (natural-benefic bhāva softening).** The bhāva
-> under-score diagnosed below (A.1) is now fixed in the engine: a natural-benefic
-> occupant is no longer blemished for being a *functional* malefic. **ch72 bhāva −4 → −1,
-> ch74 bhāva −2 → 0 (exact); Ch VII within-one 39% → 50%.** Tuned audit unchanged (79%),
-> anchor byte-stable, 237 tests pass. The A.2 (neechabhanga-rescued aspect) and B
-> (kāraka over-credit) targets below remain open. Numbers in the body are the pre-2.6
-> diagnosis that motivated the fix.
+> **Update — Phase 2.6 A.1 + A.2 applied (natural-benefic bhāva influence).** A natural
+> benefic no longer blemishes a bhāva it *occupies* (A.1), *aspects*, or *hems* (A.2) just
+> for being a functional malefic. Fixes: ch72 bhāva −4 → −1, ch74 −2 → **0**; ch73 −4 → −3
+> (Mercury aspect credited); **ch70 −2 → 0** (a false papakartari — Mercury on one side is
+> a natural benefic — suppressed). **Ch VII within-one 39% → 56%**, bhāva mean Δ −0.43;
+> tuned audit unchanged (79%), anchor byte-stable, 241 tests pass. Remaining bhāva misses
+> (ch73 −3, ch94 −4) are Raman's generous grading of rescued/hemmed houses (ch94's
+> subhakartari is blocked by a node in the 8th). Target **B** (kāraka over-credit) open.
+> Body numbers are the pre-2.6 diagnosis that motivated the fixes.
 
 **Full-verdict held-out within-one: 7/18 (39%) across 7 charts — vs ~78% on the tuned
 corpora.** Widening from 5→7 charts *sharpened* the diagnosis rather than just lowering

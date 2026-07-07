@@ -596,6 +596,25 @@ def _is_benefic(chart: RamanChart, planet: str, ref_sign: int | None = None) -> 
     return _planet_nature(chart, planet, ref_sign)[0]
 
 
+def _natural_benefic(chart: RamanChart, planet: str) -> bool:
+    """Natural benefic nature (paksha-based for the Moon), independent of functional
+    lordship -- Raman's measure of a planet's benefic INFLUENCE on a bhava it touches."""
+    if planet == "Moon":
+        lons = chart.bundle.chart.planet_lons
+        return 0.0 <= (lons["Moon"] - lons["Sun"]) % 360.0 < 180.0
+    return planet in _NATURAL_BENEFICS
+
+
+def _bhava_benefic(chart: RamanChart, planet: str, ref_sign: int | None = None) -> bool:
+    """Benefic INFLUENCE of a planet on a bhava it touches (occupies / aspects / hems):
+    functionally benefic (yogakaraka / functional benefic, already credited) OR a natural
+    benefic. Phase 2.6 (A.1/A.2): a functional-malefic natural benefic still influences a
+    house benignly -- functional nature governs the RESULTS it gives as a lord, not its
+    bhava influence (Raman credits Venus/Mercury/Jupiter/waxing-Moon on a house regardless
+    of dusthana/maraka lordship). Natural malefics are unaffected."""
+    return _is_benefic(chart, planet, ref_sign) or _natural_benefic(chart, planet)
+
+
 def _d1_houses(chart: RamanChart) -> dict[str, int]:
     return dict(chart.bundle.kundali.planet_house)
 
@@ -689,21 +708,28 @@ def _neechabhanga(chart: RamanChart, planet: str, sign: int) -> bool:
 
 def _kartari(chart: RamanChart, house: int,
              houses: Mapping[str, int] | None = None,
-             ref_sign: int | None = None
+             ref_sign: int | None = None,
+             natural_benefic_ok: bool = False
              ) -> tuple[str | None, list[str], list[str]]:
     """Papakartari / Subhakartari around a house: occupants of the 2nd AND the
     12th from it all malefic (papa) or all benefic (subha). ``houses`` defaults
     to the Rasi placement map; pass the D9 or from-Moon map for another frame.
-    ``ref_sign`` selects the ascendant for functional benefic/malefic."""
+    ``ref_sign`` selects the ascendant for functional benefic/malefic.
+
+    Phase 2.6 (A.2): with ``natural_benefic_ok`` (set for a bhava's own hemming), a
+    NATURAL benefic hems benignly even when it is a functional malefic -- Raman reads
+    ch94's 9th "hemmed between benefics Moon and Venus ... and Mercury" as subhakartari
+    though the Moon is the 6th lord. See ``_bhava_benefic``."""
+    ben = _bhava_benefic if natural_benefic_ok else _is_benefic
     hm = houses if houses is not None else _d1_houses(chart)
     second = house % 12 + 1
     twelfth = (house - 2) % 12 + 1
     occ2 = [p for p in GRAHAS if hm[p] == second]
     occ12 = [p for p in GRAHAS if hm[p] == twelfth]
     if occ2 and occ12:
-        if all(not _is_benefic(chart, p, ref_sign) for p in occ2 + occ12):
+        if all(not ben(chart, p, ref_sign) for p in occ2 + occ12):
             return "papa", occ2, occ12
-        if all(_is_benefic(chart, p, ref_sign) for p in occ2 + occ12):
+        if all(ben(chart, p, ref_sign) for p in occ2 + occ12):
             return "subha", occ2, occ12
     return None, occ2, occ12
 
@@ -741,8 +767,15 @@ def _aspect_findings(chart, houses, target_house, subject, frame, scale=1.0,
                                frame, "aspect"))
             continue
         ben, tag = _planet_nature(chart, a, ref_sign)
-        w = (_W["aspect"] if ben else -_W["aspect"]) * scale
-        out.append(Finding(f"aspected by {a} ({tag})", round(w, 2), frame, "aspect"))
+        # Phase 2.6 (A.2): for a bhava aspect (dignity_aware), a NATURAL benefic aspects
+        # benignly even when it is a functional malefic -- the aspect analog of A.1 (ch73:
+        # the 4th "aspected by ... Mercury who has obtained neechabhanga -> fairly
+        # powerful", where Mercury is the 6th lord). Planet-facing aspects keep functional
+        # nature (unchanged). See ``_bhava_benefic``.
+        aben = _bhava_benefic(chart, a, ref_sign) if dignity_aware else ben
+        disp = tag if ben or not aben else f"{tag}, natural benefic"
+        w = (_W["aspect"] if aben else -_W["aspect"]) * scale
+        out.append(Finding(f"aspected by {a} ({disp})", round(w, 2), frame, "aspect"))
     return out
 
 
@@ -844,21 +877,11 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
                              _W["conjunct_exalted"], "Rasi", "conjunction"))
             continue
         # Phase 2.6 (A.1): a NATURAL benefic occupant does not blemish the bhava even
-        # when it is a FUNCTIONAL malefic (a dusthana/maraka lord). Functional nature
-        # governs the RESULTS a planet gives as a lord, not its blemishing weight as an
-        # occupant -- Raman credits the natural benefic's presence (ch72 Venus, 7/12
-        # lord for Scorpio: "the 4th is not blemished"; ch74 Venus, 3/8 lord for Pisces:
-        # "feebly blemished"). Only a planet malefic by BOTH natural and functional
-        # measure blemishes as an occupant; a functionally-benefic/yogakaraka planet is
-        # already credited via ``ben``. Natural malefics (the tuned "weak" bhavas) are
-        # untouched -- their nat_ben is False.
-        if p == "Moon":
-            lons = chart.bundle.chart.planet_lons
-            nat_ben = 0.0 <= (lons["Moon"] - lons["Sun"]) % 360.0 < 180.0
-        else:
-            nat_ben = p in _NATURAL_BENEFICS
-        occ_benefic = ben or nat_ben
-        disp = tag if ben or not nat_ben else f"{tag}, natural benefic"
+        # when it is a FUNCTIONAL malefic (a dusthana/maraka lord) -- Raman credits the
+        # natural benefic's presence (ch72 Venus, 7/12 lord: "the 4th is not blemished";
+        # ch74 Venus, 3/8 lord: "feebly blemished"). See ``_bhava_benefic``.
+        occ_benefic = _bhava_benefic(chart, p)
+        disp = tag if ben or not occ_benefic else f"{tag}, natural benefic"
         f.append(Finding(f"occupied by {p} ({disp})",
                          round((_W["conjunct"] if occ_benefic else -_W["conjunct"]), 2),
                          "Rasi", "conjunction"))
@@ -879,7 +902,7 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
     f += ra
     if not ra:
         f.append(Finding("aspected by no planet", 0.0, "Rasi", "aspect"))
-    kind, occ2, occ12 = _kartari(chart, house)
+    kind, occ2, occ12 = _kartari(chart, house, natural_benefic_ok=True)
     if kind == "subha":
         f.append(Finding("hemmed between benefics (Subhakartari)",
                          _W["kartari_subha"], "Rasi", "kartari"))
@@ -890,7 +913,7 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
         d9 = _d9_houses(chart)
         na = _aspect_findings(chart, d9, 1, None, "Navamsa", amul, dignity_aware=True)
         f += na
-        nk, _n2, _n12 = _kartari(chart, 1, d9)
+        nk, _n2, _n12 = _kartari(chart, 1, d9, natural_benefic_ok=True)
         if nk == "subha":
             f.append(Finding("Navamsa lagna hemmed between benefics (Subhakartari)",
                              _W["kartari_subha"], "Navamsa", "kartari"))

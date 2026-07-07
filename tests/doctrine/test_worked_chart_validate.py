@@ -104,6 +104,36 @@ class TestNaturalBeneficBhavaOccupant:
         # ch74 lands moderately good (Raman: feebly blemished), not weak.
         assert fv.label == "moderately good"
 
+    def test_natural_benefic_aspect_on_bhava_is_credited(self):
+        # ch73 (Aries Lagna): the 4th is aspected by Mercury (natural benefic, but 6th
+        # lord = functional malefic). Raman credits it ("neechabhanga -> fairly powerful").
+        ch73 = dict(
+            rasi={"Sun": "Sagittarius", "Moon": "Libra", "Mars": "Aquarius",
+                  "Mercury": "Capricorn", "Jupiter": "Capricorn", "Venus": "Scorpio",
+                  "Saturn": "Leo", "Rahu": "Taurus", "Ketu": "Scorpio"},
+            navamsa={"Sun": "Scorpio", "Moon": "Aquarius", "Mars": "Taurus",
+                     "Mercury": "Pisces", "Jupiter": "Leo", "Venus": "Scorpio",
+                     "Saturn": "Scorpio", "Rahu": "Cancer", "Ketu": "Capricorn"},
+            lagna_rasi="Aries", lagna_navamsa="Gemini")
+        fv = self._bhava(ch73, 4)
+        merc = [f for f in fv.findings if "aspected by Mercury" in f.text]
+        assert merc and merc[0].delta > 0, "natural-benefic Mercury aspect must be credited"
+
+    def test_natural_benefic_hemmer_suppresses_false_papakartari(self):
+        from app.medini.doctrine.domains.house_judgment import _kartari
+        import json
+        # ch70: the 4th is hemmed by Mercury (natural benefic, 5th) on one side and
+        # Mars+Ketu on the other -- NOT papakartari (Raman: "moderately strong").
+        rec = [c for c in json.load(open(
+            "docs/raman_doctrine/validation/corpora/heldout_ch07_4th.json"))["charts"]
+            if c["chart_no"] == 70][0]
+        ch = R.chart_from_raman(rec["rasi"], rec["navamsa"],
+                                rec["lagna_rasi"], rec["lagna_navamsa"])
+        assert _kartari(ch, 4)[0] == "papa"                        # functional -> papa
+        assert _kartari(ch, 4, natural_benefic_ok=True)[0] is None  # natural -> not papa
+        fv = self._bhava(rec, 4)
+        assert not any("Papakartari" in f.text for f in fv.findings)
+
     def test_natural_malefic_occupant_still_blemishes(self):
         # ch64 (Aquarius Lagna): Saturn -- a NATURAL malefic -- occupies the 4th (Taurus).
         # A.1 must NOT credit it; the natural-malefic penalty stands.

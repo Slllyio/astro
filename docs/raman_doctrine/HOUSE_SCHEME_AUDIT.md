@@ -901,3 +901,34 @@ to occupants (the evidenced site); aspects unchanged.
 - **Still open (A.2 / B):** ch73 & ch94 bhāva (−4) are the *neechabhanga-rescued aspect*
   under-credit (a different mechanism); and the kendra-offsets-affliction lord/kāraka
   over-credit (B) — cross-house-confirmed (ch64/70/71/72/73/93), the next candidate.
+
+### Increment 7 — natural-benefic influence on a bhava: aspect + kartari (held-out-driven, DONE)
+
+Phase A.2 of 2.6 — the aspect and hemming analogs of A.1. A.1 fixed the *occupant*; the
+same principle (a **natural benefic influences a bhava benignly regardless of functional
+lordship**) was still missing for aspects and papakartari/subhakartari. Two shared helpers
+now carry it: `_natural_benefic` (paksha-based for the Moon) and `_bhava_benefic`
+(= functionally benefic **or** naturally benefic), reused by the occupant (A.1), the
+bhava-aspect branch of `_aspect_findings` (`dignity_aware`), and `_kartari`
+(`natural_benefic_ok`, set only by the main `_assess_bhava` calls). Planet-facing aspects
+and the reference/from-Moon bhava keep functional nature (unchanged).
+
+- **Held-out effect (two fixes):**
+  - **ch73 bhāva −4 → −3** — the 4th's Mercury aspect (natural benefic, 6th lord) flips
+    −0.35 → +0.35 (Raman credits its neechabhanga). A partial lift — Raman's "fairly
+    powerful" for a twice-aspected empty house out-reaches the additive model.
+  - **ch70 bhāva −2 → 0 (exact)** — the "clean/empty under-score" was really a
+    **false papakartari**: the 4th is hemmed by Mercury (natural benefic, 5th) on one side
+    and Mars+Ketu on the other, so it is *not* papa (Raman: "moderately strong"). A.2
+    suppresses the spurious −1.0.
+- **Ch VII within-one 50% → 56%; pooled (4th+9th) 45% → 50%; bhāva mean Δ −1.25 → −0.43.**
+- **Zero tuned/anchor cost:** the token audit stays **79%** (blind to natural-vs-functional
+  nature), the live anchor byte-stable; natural malefics and node hemmers are unaffected
+  (`_bhava_benefic` False). 241 tests pass; guarded by `TestNaturalBeneficBhavaOccupant`
+  (aspect credited; false papakartari suppressed vs. functional papa).
+- **Not closed:** ch94 (9th) stays −4 — its subhakartari is blocked by **Ketu in the 8th**
+  (Raman ignores the node; excluding nodes from kartari is a separate change, unmade). ch73
+  stays −3 (generous grading). Both are the residual "Raman rates a rescued/hemmed house
+  more generously than the additive model reaches" limit.
+- **Next: B** — the kendra-offsets-affliction lord/kāraka over-credit (ch64/70/71/72/73/93),
+  the positive-saturation frontier, still open.

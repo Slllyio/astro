@@ -1,5 +1,13 @@
 # Held-out validation report — Vol 1 Ch. VII (Fourth House)
 
+> **Update — Phase 2.6 / A.1 applied (natural-benefic bhāva softening).** The bhāva
+> under-score diagnosed below (A.1) is now fixed in the engine: a natural-benefic
+> occupant is no longer blemished for being a *functional* malefic. **ch72 bhāva −4 → −1,
+> ch74 bhāva −2 → 0 (exact); Ch VII within-one 39% → 50%.** Tuned audit unchanged (79%),
+> anchor byte-stable, 237 tests pass. The A.2 (neechabhanga-rescued aspect) and B
+> (kāraka over-credit) targets below remain open. Numbers in the body are the pre-2.6
+> diagnosis that motivated the fix.
+
 **Full-verdict held-out within-one: 7/18 (39%) across 7 charts — vs ~78% on the tuned
 corpora.** Widening from 5→7 charts *sharpened* the diagnosis rather than just lowering
 the number: the engine's misses now resolve into two systematic, opposite-signed and

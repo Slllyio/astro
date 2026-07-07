@@ -843,8 +843,24 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
             f.append(Finding(f"occupied by {p} (exalted)",
                              _W["conjunct_exalted"], "Rasi", "conjunction"))
             continue
-        f.append(Finding(f"occupied by {p} ({tag})",
-                         round((_W["conjunct"] if ben else -_W["conjunct"]), 2),
+        # Phase 2.6 (A.1): a NATURAL benefic occupant does not blemish the bhava even
+        # when it is a FUNCTIONAL malefic (a dusthana/maraka lord). Functional nature
+        # governs the RESULTS a planet gives as a lord, not its blemishing weight as an
+        # occupant -- Raman credits the natural benefic's presence (ch72 Venus, 7/12
+        # lord for Scorpio: "the 4th is not blemished"; ch74 Venus, 3/8 lord for Pisces:
+        # "feebly blemished"). Only a planet malefic by BOTH natural and functional
+        # measure blemishes as an occupant; a functionally-benefic/yogakaraka planet is
+        # already credited via ``ben``. Natural malefics (the tuned "weak" bhavas) are
+        # untouched -- their nat_ben is False.
+        if p == "Moon":
+            lons = chart.bundle.chart.planet_lons
+            nat_ben = 0.0 <= (lons["Moon"] - lons["Sun"]) % 360.0 < 180.0
+        else:
+            nat_ben = p in _NATURAL_BENEFICS
+        occ_benefic = ben or nat_ben
+        disp = tag if ben or not nat_ben else f"{tag}, natural benefic"
+        f.append(Finding(f"occupied by {p} ({disp})",
+                         round((_W["conjunct"] if occ_benefic else -_W["conjunct"]), 2),
                          "Rasi", "conjunction"))
         if dg == "own":
             f.append(Finding(f"occupant {p} in own sign",

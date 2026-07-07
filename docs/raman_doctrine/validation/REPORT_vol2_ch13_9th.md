@@ -1,5 +1,12 @@
 # Held-out validation — Vol 2 Ch. XIII (Ninth House), cross-house extension
 
+> **Update — Phase 2.6 / A.1 applied.** The natural-benefic bhāva softening (motivated
+> partly by this chapter's cross-house confirmation) is now in the engine. It does not
+> touch the 9th-house rows here (ch94's blemisher is the *natural malefic* Sun, not a
+> natural benefic), so the two divergences below stand — they are the A.2 and B targets,
+> still open. Pooled Ch VII + Vol 2 within-one rose 35% → 45% from the fix landing on the
+> 4th-house Venus cases.
+
 **Purpose:** widen the held-out set beyond the 4th house (Ch VII pilot) into a different
 house, lord, and kāraka — the 9th house (father), 9th-lord Venus/Mercury, Pitrukāraka
 **Sun** — to test whether the engine's two diagnosed biases are 4th-house-specific or

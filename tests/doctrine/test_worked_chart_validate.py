@@ -74,3 +74,47 @@ class TestVerdictMap:
         pats = W.load_verdict_map()
         # bare 'good' without an intensifier is intentionally unmapped.
         assert W.map_verdict("the results are good", pats) is None
+
+
+class TestNaturalBeneficBhavaOccupant:
+    """Phase 2.6 (A.1): a NATURAL benefic occupant does not blemish a bhava even when it
+    is a FUNCTIONAL malefic; only a planet malefic by BOTH measures blemishes."""
+
+    # ch74 -- Venus (natural benefic, but lord of 3/8 for Pisces = functional malefic)
+    # occupies the 4th (Gemini). Raman: "feebly blemished" (moderately good), NOT weak.
+    _CH74 = dict(
+        rasi={"Sun": "Cancer", "Moon": "Taurus", "Mars": "Taurus", "Mercury": "Cancer",
+              "Jupiter": "Scorpio", "Venus": "Gemini", "Saturn": "Sagittarius",
+              "Rahu": "Scorpio", "Ketu": "Taurus"},
+        navamsa={"Sun": "Virgo", "Moon": "Pisces", "Mars": "Leo", "Mercury": "Aquarius",
+                 "Jupiter": "Libra", "Venus": "Pisces", "Saturn": "Gemini",
+                 "Rahu": "Sagittarius", "Ketu": "Gemini"},
+        lagna_rasi="Pisces", lagna_navamsa="Capricorn")
+
+    def _bhava(self, rec, house):
+        from app.medini.doctrine.domains.house_judgment import _assess_bhava
+        ch = R.chart_from_raman(rec["rasi"], rec["navamsa"],
+                                rec["lagna_rasi"], rec["lagna_navamsa"])
+        return _assess_bhava(ch, house)
+
+    def test_natural_benefic_functional_malefic_occupant_is_credited(self):
+        fv = self._bhava(self._CH74, 4)
+        occ = [f for f in fv.findings if "occupied by Venus" in f.text]
+        assert occ and occ[0].delta > 0, "natural-benefic Venus occupant must be credited"
+        # ch74 lands moderately good (Raman: feebly blemished), not weak.
+        assert fv.label == "moderately good"
+
+    def test_natural_malefic_occupant_still_blemishes(self):
+        # ch64 (Aquarius Lagna): Saturn -- a NATURAL malefic -- occupies the 4th (Taurus).
+        # A.1 must NOT credit it; the natural-malefic penalty stands.
+        ch64 = dict(
+            rasi={"Sun": "Cancer", "Moon": "Taurus", "Mars": "Leo", "Mercury": "Leo",
+                  "Jupiter": "Scorpio", "Venus": "Leo", "Saturn": "Taurus",
+                  "Rahu": "Pisces", "Ketu": "Virgo"},
+            navamsa={"Sun": "Aquarius", "Moon": "Leo", "Mars": "Libra", "Mercury": "Leo",
+                     "Jupiter": "Scorpio", "Venus": "Gemini", "Saturn": "Taurus",
+                     "Rahu": "Aquarius", "Ketu": "Leo"},
+            lagna_rasi="Aquarius", lagna_navamsa="Capricorn")
+        fv = self._bhava(ch64, 4)
+        sat = [f for f in fv.findings if "occupied by Saturn" in f.text]
+        assert sat and sat[0].delta < 0, "natural-malefic Saturn occupant must still blemish"

@@ -873,3 +873,31 @@ Mainpuri's house-1 Mars (lo −0.6) is untouched, keeping the anchor byte-stable
 - **Still open:** ch70 lord/kāraka (+3) is a *different* mechanism — the kendra +1.2
   over-credits **in the Rāśi itself** (rasi +0.23 where Raman sees affliction), the
   positive-saturation frontier; and the clean/empty-house under-score (ch70 bhāva −2).
+
+### Increment 6 — natural-benefic occupant is not blemished by functional-malefic status (held-out-driven, DONE)
+
+Phase A.1 of 2.6, the cleaner of the two cross-house-confirmed bhāva gaps. The widened
+held-out set (Ch VII → 7 charts + Vol 2 Ch XIII 9th house) showed `_assess_bhava`
+driving a **natural benefic** occupant to −0.70 whenever it happened to be a **functional
+malefic** (a dusthāna/maraka lord): ch72 Venus (7/12 lord for Scorpio) and ch74 Venus
+(3/8 lord for Pisces). Raman credits the natural benefic's presence outright — ch72 "the
+fourth is **not blemished**", ch74 "**feebly blemished**" — because functional nature
+governs the *results a planet gives as a lord*, not its blemishing weight as an occupant.
+
+`_assess_bhava` now credits an occupant as benefic if it is functionally benefic
+(`ben`, already handled — yogakāraka/functional benefic) **or** a natural benefic
+(`nat_ben`). Only a planet malefic by **both** measures blemishes as an occupant. Scoped
+to occupants (the evidenced site); aspects unchanged.
+
+- **Held-out effect:** ch72 bhāva **−4 → −1** (within-one) and ch74 bhāva **−2 → 0**
+  (exact). Pooled (4th + 9th) within-one **35% → 45%**; Ch VII within-one **39% → 50%**;
+  bhāva per-factor within-one 3/8 → 5/8.
+- **Zero tuned/anchor cost:** the token audit is blind to natural-vs-functional nature
+  (corpus occupant tokens carry only a `benefic` flag), so tuned stays **79%** and the
+  live-engine anchor is **byte-stable** — the tuned "weak" bhāvas are all blemished by
+  *natural* malefics (`nat_ben` False), untouched. 237 doctrine tests pass; guarded by
+  `TestNaturalBeneficBhavaOccupant` (credit for a natural-benefic functional malefic;
+  penalty preserved for a natural malefic).
+- **Still open (A.2 / B):** ch73 & ch94 bhāva (−4) are the *neechabhanga-rescued aspect*
+  under-credit (a different mechanism); and the kendra-offsets-affliction lord/kāraka
+  over-credit (B) — cross-house-confirmed (ch64/70/71/72/73/93), the next candidate.

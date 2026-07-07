@@ -1,0 +1,603 @@
+{
+ "source": "HTJAH Vol 1 Ch VIII (5th house) -- held-out (non-tuned); vision-agent extract, gate-verified",
+ "house": 5,
+ "charts": [
+  {
+   "chart_no": 96,
+   "birth_line": "Chart No. 96.—Born on 28-3-1913 at 8-35 p.m. (I.S.T.) (Lat. 29° N., Long. 72° 40' E.)",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": null,
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Sagittarius",
+    "Mars": "Aquarius",
+    "Mercury": "Pisces",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aries",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Taurus",
+    "Mars": "Sagittarius",
+    "Mercury": "Scorpio",
+    "Jupiter": "Scorpio",
+    "Venus": "Libra",
+    "Saturn": "Pisces",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth: Years 4-0-22.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th house in Chart No. 96 is Kumbha or Aquarius, a fixed sign, and is occupied by Mars, a first-rate malefic. This is a bad disposition. The 5th is further aspected by Saturn, another first-rate malefic thus augmenting the evil considerably."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 5th lord Saturn is no doubt in a benefic sign, aspecting the 5th house. But Saturn is aspected by Mars, so that the mutual aspects between Saturn and Mars involving the 5th house are capable of destroying the 5th house indications."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter, the karaka, is in his own house with the Moon otherwise unafflicted."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Rasi fully prose-verified (lagna Libra; 5th=Aquarius w/Mars; Saturn Taurus 10th-aspects it; Jupiter+Moon own house Sagittarius; Rahu Pisces/Ketu Virgo opposite). Navamsa planets read from p240 AMSA (Rahu Libra/Ketu Aries opposite); navamsa Lagna cell present but its box ambiguous (left column), left null rather than guess.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 97,
+   "birth_line": "Chart No. 97.—Born on 25/24-12-1914 at 2-30 a.m. (I.S.T.) (Lat. 22° 43' N., Long. 71° 43' E.)",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Gemini",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Sagittarius",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Virgo",
+    "Venus": "Leo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth: Years 16-9-29.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 97 the 5th is Kumbha. Rahu's presence there, and Putrakaraka being hemmed in between malefics are unfortunate combinations. The 5th is not aspected by any benefics or malefics."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn the 5th lord is in Gemini aspected by malefics the Sun, Mars and Mercury. The 5th lord is therefore subjected to considerable affliction."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter, Putrakaraka, has all the evil influences, to which the 5th house is subject, focussed on him."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Rasi and navamsa both clean and prose-consistent (5th=Aquarius w/Rahu; Saturn 5th lord Gemini aspected by Sun/Mars/Mercury from Sagittarius; navamsa Lagna Sagittarius labelled; Rahu/Ketu opposite in both). Chart-97 Conclusion (p241): 'As all the three factors, viz., the house, the lord and the karaka are considerably afflicted, the 5th house is spoilt.'",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 98,
+   "birth_line": "Chart No. 98.—Born on 24-5-1901 at 1-36 p.m. (L.M.T.) (Lat. 17° 0' N., Long. 81° 50' E.)",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Leo",
+    "Mercury": "Taurus",
+    "Jupiter": "Sagittarius",
+    "Venus": "Taurus",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Taurus",
+    "Mars": "Leo",
+    "Mercury": "Cancer",
+    "Jupiter": "Libra",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth: Years 6-5-27.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 98, the 5th is Capricorn a movable sign and is not afflicted either by association or aspect. From Chandra Lagna however the 5th, being occupied by Saturn and Putrakaraka, is not a desirable feature."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn the 5th lord occupying the 12th from the 5th has rendered the 5th house weak from Chandra Lagna. The 5th lord, in association with Saturn, though in his own house, has weakened the lord."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter, the karaka, occupies the 12th from the 5th (from Lagna) and the 5th from Chandra Lagna. He is in association with malefic Saturn. Jupiter is therefore rendered feebly weak."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Rasi prose-verified (lagna Virgo; 5th=Capricorn empty; Saturn+Jupiter in Sagittarius = 12th-from-5th = 5th-from-Chandra since Moon Leo; Ketu Taurus/Rahu Scorpio opposite). Navamsa read from p242 AMSA (Rahu Cancer/Ketu Capricorn opposite anchored); Saturn/Jupiter/Sun-Moon and nav-Lagna cells partly inferred by position.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 99,
+   "birth_line": "Chart No. 99.—Born on 12-4-1892 at 12-45 p.m. (L.M.T.) (Lat. 11° 36' N., Long. 71° 5' E.)",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Libra",
+    "Mars": "Sagittarius",
+    "Mercury": "Aries",
+    "Jupiter": "Pisces",
+    "Venus": "Taurus",
+    "Saturn": "Virgo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Libra",
+    "Mars": "Sagittarius",
+    "Mercury": "Cancer",
+    "Jupiter": "Scorpio",
+    "Venus": "Taurus",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth: Years 2-3-2.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 99, the 5th house, a fixed sign, is subjected to Papakarthari Yoga. It is aspected by two benefics, viz., Jupiter and Venus, and a first-rate malefic Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars the 5th lord is in the 6th from Lagna in a benefic sign otherwise unafflicted. His being in a kendra from Saturn is not desirable."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter, the karaka is in his own sign, aspecting the 5th house and aspected by Mars and Saturn."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Rasi prose-verified (lagna Cancer; 5th=Scorpio fixed empty aspected by Jupiter/Venus/Saturn; Mars 5th-lord in 6th=Sagittarius, mutual kendra w/Saturn Virgo which 3rd-aspects Scorpio; Jupiter own Pisces 9th-aspects Scorpio; Rahu Aries/Ketu Libra opposite). Navamsa from p244 (Rahu Sag/Ketu Gemini opposite); navamsa Saturn cell (Aquarius) inferred by position.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 100,
+   "birth_line": "Chart No. 100.—Born on 3/2-6-1897 at 5-30 a.m. (L.M.T.) (Lat. 16° 8' N., Long. 80° 41' E.)",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Gemini",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Leo",
+    "Venus": "Aries",
+    "Saturn": "Scorpio",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Cancer",
+    "Venus": "Cancer",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth: Years 0-11-26.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Virgo happens to be the 5th house. It is free from affliction. From Chandra Lagna the 5th house happens to be Libra and it is aspected by Mars. In the Navamsa the 5th house is aspected by Jupiter. Hence the 5th house is nominally or feebly strong."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 5th lord Mercury is in Lagna with a malefic Sun and aspected by another malefic Saturn and hence afflicted. From Chandra Lagna, the 5th lord Venus aspects the 5th and Venus in his turn is aspected by Jupiter. In the Navamsa the 5th lord is Mars and he is with Ketu in Sagittarius. Hence the 5th lord is weak."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter, Putrakaraka, occupying a malefic sign, is aspected by Saturn from another malefic sign Scorpio. In the Navamsa Jupiter is no doubt exalted but his association with the Sun and his being aspected by Mars are not good features."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Both squares fully prose-verified: rasi lagna Taurus, Sun+Mercury there, Venus Aries 7th-aspects Libra, Mars+Ketu Cancer, Jupiter Leo 10th-aspected by Saturn Scorpio, Rahu Capricorn/Ketu Cancer. Navamsa: Mars+Ketu in Sagittarius (stated), Jupiter exalted Cancer with Sun (stated), nav-Lagna Cancer, Rahu Gemini/Ketu Sag opposite; Jupiter Cancer 5th-aspects Scorpio (nav 5th) & aspected by Mars Sag — all as prose states.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 101,
+   "birth_line": "Chart No. 101.—Born on 6-5-1891 at 5-10 p.m. (L.M.T.) (Lat. 18° 54' N., Long. 72° 49' E.)",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Aries",
+    "Mars": "Taurus",
+    "Mercury": "Taurus",
+    "Jupiter": "Aquarius",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Aries",
+    "Mars": "Cancer",
+    "Mercury": "Capricorn",
+    "Jupiter": "Aries",
+    "Venus": "Sagittarius",
+    "Saturn": "Virgo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth: Year 6-3-12.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th house is Aquarius and it is occupied by Jupiter Putrakaraka and hence bad. The 5th is aspected by Saturn the 5th lord. This is good. The 5th from Chandra Lagna is occupied by the malefic Saturn and aspected by another malefic Mars. Hence the 5th house is strongly blemished."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The fifth lord Saturn is in the house of an enemy but aspected by Jupiter and Mars. Hence he is neither good nor bad."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter is Putrakaraka in the fifth house is not a good position. His being aspected by Saturn (ignoring the fact that Saturn is lord of the 5th) is not desirable."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Rasi prose-verified (lagna Libra; 5th=Aquarius w/Jupiter; Saturn 5th-lord in Leo enemy house, 7th-aspects Aquarius; 5th-from-Chandra = Leo (Moon Aries) has Saturn aspected by Mars Taurus; Rahu Taurus/Ketu Scorpio opposite). Navamsa from p245 AMSA (Rahu Taurus/Ketu Scorpio opposite anchor); Mars/Mercury/Moon-Jupiter nav cells inferred by position — no navamsa prose to cross-check.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 102,
+   "birth_line": "Chart No. 102.—Born on 29-12-1880 at 10-10 a.m. (L.M.T.) (Lat. 22° 35' N., Long. 88° 23' E.)",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Scorpio",
+    "Mars": "Scorpio",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Pisces",
+    "Venus": "Capricorn",
+    "Saturn": "Aries",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Scorpio",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth: Years 4-7-9.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th house, viz., Gemini, is occupied by Ketu and aspected by malefics Sun, Mars and Mercury. Hence the 5th is considerably afflicted. From Chandra Lagna the 5th is occupied by Jupiter, who is not only Putrakaraka but lord of the 5th from the Moon."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The fifth lord Mercury is afflicted by his association with malefics Sun and Rahu. In the Navamsa also Mercury is strongly blemished by association with Saturn and being subjected to Papakartari Yoga."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Whilst his position in his own house is good, his being in the 5th from Chandra Lagna, as Putrakaraka, is harmful."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Both squares prose-verified: rasi lagna Aquarius, 5th=Gemini w/Ketu aspected by Sun/Mars/Mercury; Mercury 5th-lord w/Sun+Rahu in Sagittarius; Jupiter own Pisces = 5th-from-Moon(Scorpio); Rahu Sag/Ketu Gemini. Navamsa: Mercury+Saturn conjunct in Aries under Papakartari (hemmed by Mars Pisces & Rahu Taurus) as stated; Rahu Taurus/Ketu Scorpio opposite.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 103,
+   "birth_line": "Chart No. 103.—Born on 5/6-12-1906 at 1-10 a.m. (I.S.T.) (Lat. 10° 44' N., Long. 79° 6' E.)",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Cancer",
+    "Mars": "Libra",
+    "Mercury": "Scorpio",
+    "Jupiter": "Taurus",
+    "Venus": "Scorpio",
+    "Saturn": "Aquarius",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Sagittarius",
+    "Mars": "Scorpio",
+    "Mercury": "Libra",
+    "Jupiter": "Pisces",
+    "Venus": "Scorpio",
+    "Saturn": "Pisces",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth: Years 3-1-19.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 5th house is fairly well disposed"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the 5th lord Saturn and Putrakaraka are both considerably afflicted, the former being associated with three malefics Sun, Mercury and Moon and aspected by Mars"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Putrakaraka ... the latter being aspected by Mars"
+    }
+   ],
+   "confidence": "medium",
+   "notes": "From chart 103 Raman drops the labelled House/Lord/Karaka headers and grades in running prose (p248-249); phrases quoted verbatim from the sentence 'Mark, while the 5th house is fairly well disposed, the 5th lord Saturn and Putrakaraka are both considerably afflicted...'. Also stated: 'Ketu is in the 5th house aspected by Mars.' Rasi: lagna Virgo, Ketu in 5th=Capricorn; Moon Cancer (5th-from-Chandra=Scorpio holds Sun/Mercury/Venus); Rahu Cancer/Ketu Capricorn opposite. Jupiter cell (Taurus vs Aries) and several navamsa cells inferred by position.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 104,
+   "birth_line": "Chart No. 104.—Born on 11-4-1907 at 6-50 p.m. (I.S.T.) (Lat. 11° 15' N., Long. 75° 45' E.)",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Pisces",
+    "Jupiter": "Taurus",
+    "Venus": "Aquarius",
+    "Saturn": "Pisces",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Sagittarius",
+    "Mars": "Leo",
+    "Mercury": "Cancer",
+    "Jupiter": "Capricorn",
+    "Venus": "Aries",
+    "Saturn": "Cancer",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth: Years 3-2-6.",
+   "verdicts": [],
+   "confidence": "low",
+   "notes": "Chart 104 is presented as a data illustration only (p249) — Raman gives NO per-factor grading; surrounding text is general method for counting children by navamsas ('The 5th lord Venus...' there belongs to chart 105, not 104), so verdicts left empty. Rasi anchors solid: Sun/Moon/Mercury/Saturn stacked in Pisces (top-left), Venus Aquarius, Mars Sagittarius, Rahu Cancer/Ketu Capricorn opposite. LAGNA UNCERTAIN: 'Lagna' sits in bottom row (Scorpio/Libra/Virgo) with no prose to fix it — recorded Libra as best read. Jupiter (Taurus vs Gemini) and navamsa cells also uncertain.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 105,
+   "birth_line": "Chart No. 105.—Born on 6-1-1906 at 5-24 p.m. (I.S.T.) (Lat. 30° N., Long. 78° E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Taurus",
+    "Mars": "Aquarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Taurus",
+    "Venus": "Sagittarius",
+    "Saturn": "Aquarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Aquarius",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Aquarius",
+    "Venus": "Leo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth: Years 1-7-21.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 105, the 5th house is unafflicted as no benefic or malefic occupies or aspects it. From Chandra Lagna, however, both Mars and Jupiter aspect the 5th house ... Consequently the 5th house is fairly well disposed."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 5th lord Venus is with the Sun and Mercury"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Jupiter Putrakaraka, having caused Gajakesari, is aspected by Mars."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Running-prose grading (labelled headers dropped). Rasi prose-verified: lagna Gemini, 5th=Libra empty; Venus 5th-lord w/Sun+Mercury in Sagittarius; Moon+Jupiter Gajakesari in Taurus; Mars Aquarius & Jupiter Taurus both aspect 5th-from-Chandra (Virgo); Rahu Leo/Ketu Aquarius opposite. Navamsa consistent w/prose 'Venus aspected by Moon and Jupiter' (Venus Leo, Moon+Jupiter Aquarius 7th-aspect) and 'Rahu ... Aries the 1st Navamsa'; nav-Lagna Taurus; Rahu Aries/Ketu Libra opposite. Lord phrase is descriptive (not explicitly graded).",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 106,
+   "birth_line": "Chart No. 106.—Born on 30/29-5-1902 at 3-19 a.m. (L.T.) (Lat. 17° N., Long. 81° 46' E.)",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Gemini",
+    "Jupiter": "Capricorn",
+    "Venus": "Aries",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Libra",
+    "Mars": "Capricorn",
+    "Mercury": "Libra",
+    "Jupiter": "Leo",
+    "Venus": "Taurus",
+    "Saturn": "Aquarius",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth: Years 14-1-1.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th house in Chart No. 106 is highly significant. From Lagna the 5th is aspected by Mars Lagnadhipathi and by the Moon. The aspect of Mars a natural malefic is bad but as Lagnadhipathi it is good. The Moon's aspect produces beneficial influence favouring the birth of more of female children."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The fifth lord Sun is with Mars in a benefic (though inimical) sign and is aspected by Jupiter who has obtained neechabhanga."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Putrakaraka Jupiter is neechabhanga but has joined Saturn."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Birth line OCR garbled ('30129-5-1902', 'L.T.', 'Lot. 17° N.') — normalized to 30/29-5-1902, L.T., Lat. 17° N. Rasi prose-verified: lagna Aries (Mars Lagnadhipathi); 5th=Leo aspected by Mars Taurus & Moon Aquarius; Sun 5th-lord w/Mars in Taurus (benefic-inimical) aspected by Jupiter Capricorn (neechabhanga) joined by Saturn; Mercury Gemini = 5th-from-Chandra(Aquarius); Rahu Libra/Ketu Aries opposite. Navamsa: Sun vargottama Taurus (stated); other nav cells inferred by position; Rahu Capricorn/Ketu Cancer opposite.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 107,
+   "birth_line": "Chart No. 107.—Born on 24/23-10-1907 at 2 a.m. (I.S.T.) (Lat. 23° 2' N., Long. 72° 19' E.)",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Capricorn",
+    "Mercury": "Scorpio",
+    "Jupiter": "Cancer",
+    "Venus": "Libra",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Pisces",
+    "Mars": "Taurus",
+    "Mercury": "Cancer",
+    "Jupiter": "Capricorn",
+    "Venus": "Pisces",
+    "Saturn": "Cancer",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of the Sun Dasa at birth: Year 1-0-7.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th from Lagna is an even sign occupied by a hermaphrodite planet Mercury and subject to Papakarthari Yoga."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 5th lord is, of course, Mars ... Mars has gained five Navamsas. Mars is in a benefic Navamsa and aspected by the benefic Jupiter."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "The exaltation of Putrakaraka and the ... lord of 5th house renders the 5th house sound"
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Running-prose grading. Rasi prose-verified: lagna Cancer; 5th=Scorpio (even) w/Mercury under Papakarthari; 5th lord Mars; Jupiter exalted in Cancer (lagna); 5th-from-Chandra=Virgo (Moon Taurus) even/feminine, Mercury lord, aspected by Saturn Pisces; Rahu Gemini/Ketu Sagittarius opposite (vargottama nodes). Navamsa: Mars in benefic navamsa Taurus aspected by Jupiter Capricorn (stated); nav-Lagna Sagittarius; Rahu Gemini/Ketu Sag opposite. Mars rasi cell (Capricorn) and a few nav cells inferred by position.",
+   "house_judged": 5
+  },
+  {
+   "chart_no": 108,
+   "birth_line": "Chart No. 108.—Born on 29/28-1-1905 at 5 a.m. (I.S.T.) (Lat. 9° 43' N., Long. 76° 13' E.)",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Libra",
+    "Mars": "Libra",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Pisces",
+    "Saturn": "Aquarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Gemini",
+    "Mars": "Aquarius",
+    "Mercury": "Scorpio",
+    "Jupiter": "Aries",
+    "Venus": "Cancer",
+    "Saturn": "Libra",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth: Years 4-4-24.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Putrakaraka in the 5th house aspected by Mars and the 5th house from the Moon being occupied by Saturn—Ketu association is a clear case of the spoiling of the 5th house."
+    },
+    {
+     "factor": "lord",
+     "phrase": "As Mars is lord of the 5th and aspects the 5th, there is affliction on account of the birth and death of children. Mars, the 5th lord, has gained 5 Navamsas."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Since Mars is in the 11th from Putrakaraka in Navamsa and otherwise unafflicted, the total number of children is shown to be about 10."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Running-prose grading. Rasi prose-verified: lagna Sagittarius; Putrakaraka Jupiter in 5th=Aries aspected by Mars Libra (7th); Mars 5th-lord Libra; Saturn+Ketu in Aquarius = 5th-from-Moon(Libra); Rahu Leo/Ketu Aquarius opposite. Navamsa: Jupiter Aries with Mars in 11th (Aquarius) as stated (both solid), nav-Lagna Virgo, Rahu Virgo/Ketu Pisces opposite; Sun/Moon/Venus/Mercury/Saturn nav cells inferred by position.",
+   "house_judged": 5
+  }
+ ]
+}

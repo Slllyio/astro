@@ -1,0 +1,531 @@
+{
+ "source": "HTJAH Vol 1 Ch IX (6th house) -- held-out (non-tuned); vision-agent extract, gate-verified",
+ "house": 6,
+ "charts": [
+  {
+   "chart_no": 109,
+   "birth_line": "Chart No. 109.—Born on 28-1-1919 at 3-58 p.m. (I.S.T.) (Lat. 22° 40' N., Long. 88° 30' E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Sagittarius",
+    "Mars": "Aquarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Gemini",
+    "Venus": "Aquarius",
+    "Saturn": "Leo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Aries",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Taurus",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : Years 5-5-0.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Note Venus is in association with the lord of the 6th Mars and aspected by Saturn lord of the 8th."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "note the Sun being lord of the 3rd is in the 8th, in the 12th from Mars, karaka of the 6th bhava"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Typhoid/pneumonia/malaria case ('Remarks.' style, not 'Sixth House/Lord/Conclusion'). Lagna Gemini confirmed: 6th lord Mars, Sun (3rd lord) in 8th=Capricorn, 12th from Mars; Mars+Venus in Aquarius; Saturn Leo opposes Venus.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 110,
+   "birth_line": "Chart No. 110.—Born on 2/3-9-1921 at 3 a.m. (I.S.T.) (Lat. 8° 45' N., Long. 73° 45' E.)",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Leo",
+    "Mars": "Cancer",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Cancer",
+    "Saturn": "Virgo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Sagittarius",
+    "Mars": "Pisces",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Aquarius",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : Years 4-11-9.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Rahu, the major lord, is in association with Jupiter lord of the 6th from Lagna and Saturn lord of the 6th from Chandra Lagna. Jupiter as sub-lord is fully capable of causing the disease which he has done."
+    }
+   ],
+   "confidence": "high",
+   "notes": "M.A.,B.T. lady, died 27th year, T.B. Lagna Cancer confirmed (Jupiter=6th lord from lagna; Sun+Moon in Leo=12th from Rahu/Jupiter in Virgo; Saturn=6th lord from Chandra Lagna). Saturn called Ayushkaraka (longevity), not 6th-bhava karaka, so no karaka verdict.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 111,
+   "birth_line": "Chart No. 111.—Born on 26-7-1914 at 5-24 p.m. (I.S.T.) (Lat. 29° N., Long. 77° 40' E.)",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Leo",
+    "Mars": "Leo",
+    "Mercury": "Gemini",
+    "Jupiter": "Capricorn",
+    "Venus": "Leo",
+    "Saturn": "Gemini",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Scorpio",
+    "Mars": "Sagittarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : Years 2-3-18.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The major lord Moon, owning the 8th, is in the 9th in conjunction with Venus the sub-lord who owns the 6th and Mars (karaka for 6th bhava) and with Ketu."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Mars (karaka for 6th bhava)"
+    }
+   ],
+   "confidence": "high",
+   "notes": "IB attack. Lagna Sagittarius confirmed (Moon owns 8th=Cancer, in 9th=Leo; Venus owns 6th=Taurus; Sun in 8th=Cancer; Saturn=6th lord from Chandra Lagna aspects the combination).",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 112,
+   "birth_line": "Chart No. 112.—Born on 15-6-1912 at 5-23 a.m. (I.S.T.) (Lat. 25° 23' N., Long. 86° 31' E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Taurus",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Scorpio",
+    "Venus": "Taurus",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Virgo",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Leo",
+    "Saturn": "Aquarius",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : Years 4-3-29.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The lord of the 6th Mars is in the 2nd (vision) and lord of the 2nd Moon (ruler of eyes) is in the 12th with Saturn, lord of the 8th. The native is suffering from myopia."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Myopia. Lagna Gemini confirmed (6th lord Mars in 2nd=Cancer; 2nd lord Moon in 12th=Taurus with Saturn 8th lord). No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 114,
+   "birth_line": "Chart No. 114.—Born on 9-9-1911 at 11-18 p.m. (I.S.T.) (Lat. 22° 53' N., Long. 88° 27' E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Pisces",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Virgo",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Pisces",
+    "Venus": "Aquarius",
+    "Saturn": "Sagittarius",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : Years 12-5-27.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "From the Moon the 6th and the 6th lord are aspected by Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The lord of the 6th Mars, who is also the Rogakaraka, is in the 12th aspecting the 6th."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "The lord of the 6th Mars, who is also the Rogakaraka"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Liver/spleen, spermatorrhoea, hydrocele. Lagna Gemini confirmed (6th lord Mars in 12th=Taurus; Venus neecha in Virgo; Saturn+Rahu in Aries; Sun+Mercury in Leo aspected by Mars).",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 115,
+   "birth_line": "Chart No. 115.—Born on 19-5-1916 at 6-10 a.m. (I.S.T.) (Lat. 22° 5' N., Long. 82° 4' E.)",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Scorpio",
+    "Mars": "Leo",
+    "Mercury": "Taurus",
+    "Jupiter": "Aries",
+    "Venus": "Gemini",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Aries",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : Years 4-6-9.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Venus, the major lord, owns the Lagna as well as the 6th and occupies the 2nd with Saturn. Venus and Saturn are almost in conjunction."
+    },
+    {
+     "factor": "bhava",
+     "phrase": "Mark the disposition of the 6th lord and Saturn in Gemini, an airy sign."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Typhoid then bronchitis. Lagna Taurus confirmed (Venus owns lagna+6th, Venus+Saturn in 2nd=Gemini). Latitude read as '22° 5' N' (scan showed a 'V'-shaped minutes glyph). No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 116,
+   "birth_line": "Chart No. 116.—Born on 4/5-5-1895 at 4-00 a.m. (L.M.T.) (Lat. 13° 2' N., Long. 77° 35' E.)",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Virgo",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Gemini",
+    "Venus": "Gemini",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Capricorn",
+    "Mars": "Pisces",
+    "Mercury": "Scorpio",
+    "Jupiter": "Capricorn",
+    "Venus": "Libra",
+    "Saturn": "Capricorn",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : Years 4-5-19.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 116 the 6th is occupied by Ketu while the Moon is in Virgo subjected to powerful Papakarthari Yoga."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 6th lord Sun is in the 2nd with Mercury lord of the 4th. The 6th from the Moon is occupied by Rahu and the 6th lord Saturn is in the 2nd from the Moon aspected by Sun and Mercury."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Appendicitis, fatal operation Aug 1926. Lagna Pisces confirmed (6th lord Sun in 2nd=Aries with Mercury; Ketu in 6th=Leo; Moon Virgo; Rahu Aquarius=6th from Moon; Saturn Libra=2nd from Moon). No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 117,
+   "birth_line": "Chart No. 117.—Data of birth withheld for obvious reasons.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Virgo",
+    "Mars": "Cancer",
+    "Mercury": "Leo",
+    "Jupiter": "Leo",
+    "Venus": "Libra",
+    "Saturn": "Gemini",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Virgo",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Libra",
+    "Saturn": "Aquarius",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": null,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Mars, lord of the 6th (disease), is in the 2nd—a watery sign."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Leprosy case, birth data withheld (no balance-of-dasa line printed). Lagna Gemini and navamsa watery (Pisces) stated in text and confirmed; Venus Vargottama (Libra in both); 6th lord Mars in Leo navamsa. No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 118,
+   "birth_line": "Chart No. 118—Born on 23-8-1889 at 12-10 p.m. (L.M.T.) (Lat. 13° N., Long. 77° 35' E.)",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Leo",
+    "Jupiter": "Libra",
+    "Venus": "Leo",
+    "Saturn": "Scorpio",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Virgo",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Aquarius",
+    "Venus": "Aries",
+    "Saturn": "Aquarius",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": null,
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 6th is Aries and it is aspected by Mars, the lord of that house."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Lord of the 6th (and Lagna) Mars in Virgo aspected by the Moon in Pisces gives a tendency to dropsical conditions."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lady, paralysis of limbs/arms. No balance-of-dasa line printed. Lagna Scorpio confirmed (6th=Aries, lord Mars in Virgo; Moon Pisces; Sun+Venus+Mercury in Leo=6th from Moon; Saturn in Scorpio/lagna). Birth year read '18V9' in scan, taken as 1889. No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 119,
+   "birth_line": "Chart No. 119.—Born on 12-4-1912 at 12-5 p.m. (I.S.T.) (Lat. 13° N., Long. 77° 35' E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Aquarius",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Scorpio",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Libra",
+    "Mars": "Capricorn",
+    "Mercury": "Taurus",
+    "Jupiter": "Aquarius",
+    "Venus": "Virgo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": null,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Mark the presence of Mars, lord of the 6th in Lagna, almost in exact conjunction with the ascendant point, aspected further by debilitated Saturn."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Facial paralysis. No balance-of-dasa line printed. Lagna Gemini confirmed (6th lord Mars in lagna=Gemini; Saturn debilitated in Aries with Sun/Mercury/Rahu, aspects Gemini by 3rd). No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 120,
+   "birth_line": "Chart No. 120.—Born on 19-7-1902 at 3-45 a.m. (L.M.T.) (Lat. 18° 40' N., Long. 87° 0' E.)",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Leo",
+    "Mars": "Gemini",
+    "Mercury": "Gemini",
+    "Jupiter": "Capricorn",
+    "Venus": "Taurus",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Scorpio",
+    "Mars": "Libra",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Leo",
+    "Venus": "Cancer",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : Years 2-9-27.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Mark the affliction of the 6th lord Mars. He is in Lagna with Mercury, lord of Lagna and the Sun, lord of the 3rd."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Infantile paralysis / debts illustration. Lagna Gemini confirmed (6th lord Mars in lagna with Mercury+Sun; Venus in 12th=Taurus; Rahu in 5th=Libra aspected by Saturn 8th lord). Scan of the date shows a leading '10' artifact ('1019-7-1902'); read as 19-7-1902. No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 121,
+   "birth_line": "Chart No. 121.—Born on 16-3-1908 at 10-56 a.m. (I.S.T.) (Lat. 15° 24' N., Long. 75° 39' E.)",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aquarius",
+    "Jupiter": "Cancer",
+    "Venus": "Aries",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Cancer",
+    "Mars": "Scorpio",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Libra",
+    "Venus": "Leo",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : Year 0-0-13.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "In Chart No. 121 lord of Lagna and the 6th, viz., Venus is in the 12th with Mars. From Chandra Lagna, the lords of Chandra Lagna and the 6th are in conjunction in the 8th."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Congressman convicted for political offences. Lagna Taurus confirmed (Venus lord of lagna+6th in 12th=Aries with Mars; Moon in Leo=Chandra lagna, Sun & Saturn conjunct in Pisces=8th from Moon). No 6th karaka named.",
+   "house_judged": 6
+  },
+  {
+   "chart_no": 122,
+   "birth_line": "Chart No. 122.—Born on 23-7-1856 at 6-24 a.m. (L.M.T.) (Lat. 18° 32' N., Long. 75° 53' E.)",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Libra",
+    "Mercury": "Gemini",
+    "Jupiter": "Pisces",
+    "Venus": "Cancer",
+    "Saturn": "Gemini",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Sagittarius",
+    "Mars": "Scorpio",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Libra",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : Years 13-8-14.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Lord of Lagna viz., the Moon is in association with Jupiter lord of the 6th joined by Rahu and aspected by Saturn."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Bandhana Yoga; political leader imprisoned for sedition. Lagna Cancer confirmed (lagna lord Moon with Jupiter=6th lord + Rahu in Pisces; Saturn in Gemini aspects Pisces by 10th). No 6th karaka named.",
+   "house_judged": 6
+  }
+ ]
+}

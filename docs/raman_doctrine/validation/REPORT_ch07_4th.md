@@ -1,27 +1,28 @@
 # Held-out validation report — Vol 1 Ch. VII (Fourth House)
 
-**Full-verdict held-out within-one: 6/12 (50%) across 5 charts — vs ~78% on the tuned
-corpora. The engine overfits, with two systematic, opposite-signed biases: it
-over-rates the lord/kāraka (mean Δ +1.5/+1.67) and under-rates clean houses (bhāva
-mean Δ −0.6).** This is the honest feedback the tuned corpora could not give, and it is
-the target Phase B (ML weight-fitting) exists to correct.
+**Full-verdict held-out within-one: 7/18 (39%) across 7 charts — vs ~78% on the tuned
+corpora.** Widening from 5→7 charts *sharpened* the diagnosis rather than just lowering
+the number: the engine's misses now resolve into two systematic, opposite-signed and
+mechanistically-named biases — it **under-scores benefic/clean bhāvas** (bhāva mean Δ
+−1.57) and **over-rates the malefic-afflicted lord/kāraka** (kāraka mean Δ +1.83). These
+are the targets the next structural increment (2.6) must hit.
 
 ## Method
 Reconstruct each chart from Raman's printed Rāśi **and** Navāṁśa diagrams (read from the
-PDF page scans via PyMuPDF — the djvu OCR flattens the squares unusably), run
+PDF page scans via PyMuPDF — djvu OCR flattens the squares unusably), run
 `judge_house_doctrine`, map his verbatim verdict via the **pre-registered**
 `verdict_grade_map.json`, compare on the 9-grade scale. Fully held-out (tuned set =
 houses 2/7/9/11 + ch. IV anchor). Each square read with the fixed South-Indian sign key
-(Pisces top-left, clockwise) and **every planet cross-checked by the (rāśi, navāṁśa)
-reachability gate** — charts 64/70/71/74 passed all 9; chart 69's navāṁśa Mars was
-unreadable so it is scored rāśi-axis. Post Phase 2.5.
+(Pisces top-left, clockwise), Rāhu/Ketu forced opposite, and **every planet cross-checked
+by the (rāśi, navāṁśa) reachability gate** — charts 64/70/71/72/73/74 pass all 9; chart
+69's navāṁśa Mars is unreadable so it is scored rāśi-axis. Post Phase 2.5.
 
-**Multi-kāraka.** Raman judges the 4th by several significators (Moon = Matrukāraka /
-mother, Mars = Bhūmikāraka / property, Mercury = Vidyākāraka / education). Each `karaka`
-row now names its planet and the harness assesses **that** planet, so a Moon verdict is
-never scored against a Mars significator. (Here every kāraka row is the Matrukāraka Moon.)
+**Multi-kāraka.** Each `karaka` row names its significator and the harness assesses that
+planet. All seven charts here are Matrukāraka (Moon = mother) cases; the remaining Ch VII
+charts (76–81) are the **Vidyā/education** sub-section, whose verdicts describe
+educational outcomes rather than 9-grade strength — excluded as un-gradable (see below).
 
-## Results (charts 64, 70, 71, 74 full-verdict; 69 rāśi-axis)
+## Results (64, 70, 71, 72, 73, 74 full-verdict; 69 rāśi-axis)
 | chart | factor | engine | Raman | Δ |
 |-------|--------|--------|-------|---|
 | 64 | bhāva | fairly good | fairly strong | −1 |
@@ -33,55 +34,62 @@ never scored against a Mars significator. (Here every kāraka row is the Matruk�
 | 70 | kāraka (Moon) | moderately good | afflicted | **+3** |
 | 71 | bhāva | fairly powerful | fairly strong | +1 |
 | 71 | kāraka (Moon) | moderate | afflicted | **+2** |
+| 72 | bhāva | weak | fairly strong | **−4** |
+| 72 | lord (Saturn) | afflicted | afflicted | **0** |
+| 72 | kāraka (Moon) | moderately good | afflicted | **+3** |
+| 73 | bhāva | moderate | fairly powerful | **−4** |
+| 73 | lord (Moon) | fairly good | moderate | **+2** |
+| 73 | kāraka (Moon) | fairly good | moderate | **+2** |
 | 74 | bhāva | weak | moderately good | **−2** |
 | 74 | lord | moderately good | moderately good | **0** |
 | 74 | kāraka (Moon) | moderately good | moderately good | **0** |
 
-exact 2/12, within-one 6/12 (50%), mean Δ +0.667; per-factor within-one: bhāva 3/5
-(mean −0.6), lord 1/3 (mean +1.67), kāraka 2/4 (mean +1.5).
+exact 3/18, within-one 7/18 (39%), mean Δ +0.389; per-factor within-one: bhāva 3/7
+(mean −1.57), lord 2/5 (mean +1.4), kāraka 2/6 (mean +1.83).
 
-## Two systematic biases, opposite-signed
-### 1. The kāraka / lord is over-rated (mean Δ +1.5 / +1.67)
-Raman repeatedly grades the Matrukāraka Moon **afflicted**; the engine says **moderately
-good** (ch70 +3, ch71 +2) and the lord similarly (ch64 +2, ch70 +3). Two mechanisms:
-1. **Dusthāna lordship** (ch64 kāraka, Moon owns the 6th) — addressed by **Phase 2.4**;
-   it is now within-one (+1) once the real Navāṁśa is included.
-2. **Non-dusthāna affliction the engine under-weighs** (ch70/ch71): the Moon conjoins
-   Rahu / sits with malefics, which Raman treats as heavy affliction of the kāraka, but
-   the engine's kendra-placement credit and optimistic cross-varga blend keep it
-   "moderately good". This is the **positive-saturation / kendra-over-credit frontier**
-   — a single strong Rāśi vector saturates the total before real Navāṁśa blemishes can
-   pull it down. The remaining structural knob (Phase 2.6 candidate).
+## Two systematic, opposite-signed biases (the 2.6 targets)
+### A. Benefic / clean bhāvas are under-scored (bhāva mean Δ −1.57)
+The widening made this the dominant miss, and split it into three named mechanisms:
+1. **Natural-benefic occupant penalized as a functional malefic** — ch72 (−4) and ch74
+   (−2). Venus occupies the 4th; Raman calls it *unblemished* / *feebly blemished*
+   ("natural benefic Venus"), but the engine's `_planet_nature` flags Venus a **functional
+   malefic** (lord of 7/12 for Scorpio; 3/8 for Pisces) and drives the occupant −0.70. A
+   natural benefic that is only functionally malefic blemishes far less than a natural
+   malefic — a distinction Raman applies explicitly and the engine does not.
+2. **Debilitated / neechabhanga-rescued aspect under-credited** — ch73 (−4). The 4th is
+   aspected by a debilitated Jupiter and a Mercury that has neechabhanga; Raman reads the
+   cancellation as strength ("fairly powerful"), the engine does not credit it.
+3. **Clean / empty house under-scored** — ch70 (−2): a papakartari-hemmed but
+   benefic-aspected empty 4th, which Raman still grades *moderately strong*.
 
-### 2. Clean / empty houses are under-scored (bhāva mean Δ −0.6)
-`ch70 bhāva −2` and `ch74 bhāva −2`: Raman rates a 4th house free of malefic
-intervention **moderately good**, but the engine treats a clean house as a zero-baseline
-neutral rather than crediting structural purity. This recurs at larger N (both −2 charts
-are bhāva rows) and is now the clearest second target — a **structural-purity lift** the
-engine does not yet encode.
+Crucially, the tuned "weak" bhāvas that a naive floor would break (h2/42, h7/1, h7/15)
+are all blemished by **natural malefics** — so a natural-benefic-scoped softening (A.1)
+leaves them untouched. The widening is what raised A.1 from a 1-chart knife-edge to a
+2-chart, tuned-corpus-safe signal.
 
-## What the widening changed
-- **Multi-kāraka scoring** removed the significator-collision risk and, with the
-  `verdict_grade_map.json` "blemish" extension (feebly/moderately/considerably blemished →
-  moderately good / moderate / weak; unblemished → fairly strong), landed **ch74 lord and
-  kāraka exactly (Δ 0)** — the first exact factor rows in the held-out set.
-- Confirmed both biases persist at N=12 rather than being 4-chart noise: the report now
-  gives Phase B two clean, opposite-signed targets instead of one.
+### B. The malefic-afflicted lord / kāraka is over-rated (kāraka mean Δ +1.83)
+~6 data points: ch70 lord/kāraka +3, ch72 kāraka +3, ch64 lord +2, ch71 kāraka +2,
+ch73 lord/kāraka +2. One mechanism — a kendra placement (+1.2) plus a strong dignity
+(exaltation/vargottama) offsets *stacked malefic aspects/conjunctions*, where Raman grades
+the planet "afflicted". This is exactly what Phase B's optimizer independently attacked
+(it lowered `pos_knee` and `kendra_trikona`). Note the engine gets *clear* afflictions
+right: ch72 lord (Saturn neecha + papakartari) is graded **afflicted, exactly** — the
+over-credit is specific to a positively-placed planet that is *also* heavily aspected.
 
 ## Method validation
-The Navāṁśa reads are trustworthy: all four full charts passed the reachability gate (a
-mis-read almost always yields an impossible rāśi→navāṁśa pair). Full-verdict differs from
-rāśi-axis (ch64 kāraka +3 rāśi → +1 full), confirming the Navāṁśa carries real signal —
-so full-verdict is the honest test.
+All six full charts pass the reachability gate; Rāhu/Ketu enforced opposite; key
+placements cross-checked against Raman's prose (e.g. ch72 Lagna Scorpio ⇒ 4th Aquarius,
+Saturn neecha in the 6th). Chart 74's diagram was independently re-confirmed off a second
+page scan. Chart 76 was **dropped**: its Navāṁśa forces Venus→Libra, unreachable from the
+Rāśi read — an internal inconsistency the gate rightly rejects rather than guess.
 
 ## Caveats & next
-- N=12 verdict rows / 5 charts — a seed, but direction is now consistent across the
-  pilot, the rāśi-axis pass, the tuned-corpus audit, and this widening.
-- Extraction is mechanical now (crop each square, fixed-sign key, gate-check);
-  chart 69's Mars still needs a cleaner re-crop to promote it to full-verdict.
-- Engine: the two standing structural gaps are (a) the **kāraka over-credit**
-  (kendra + optimistic blend vs Raman's affliction) and (b) the **clean-house
-  under-score** (no structural-purity lift) — both are v2 saturation/baseline frontiers,
-  approached as structural changes, not weight tweaks.
-- These 12 rows are the disjoint **test set** for Phase B (ML weight-fitting); the tuned
-  corpora are the train set (the wall is fit-on-tuned / validate-on-held-out).
+- N=18 rows / 7 charts. Ch VII's remaining mother-charts are exhausted; charts 76–81 are
+  the Vidyā/education sub-section with outcome-based (non-9-grade) verdicts, so they are
+  not clean strength labels — cross-house diversity (a Vol 2 chapter) is the better path
+  to reach ~30 rows.
+- Engine: 2.6 now has two well-supported targets — **(A.1) natural-benefic functional-
+  malefic bhāva softening** (2 clean held-out examples, tuned-corpus-safe) and **(B) the
+  kāraka over-credit** (~6 examples, corroborated by Phase B). Both remain gated by the
+  anchor + audit checks.
+- These 18 rows are the disjoint **test set** for Phase B (ML weight-fitting).

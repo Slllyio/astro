@@ -156,6 +156,96 @@
    "confidence": "high"
   },
   {
+   "chart_no": 72,
+   "house_judged": 4,
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Aries",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Virgo",
+    "Venus": "Aquarius",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Gemini",
+    "Mars": "Leo",
+    "Mercury": "Taurus",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is unblemished"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is considerably afflicted"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Scorpio; 4th Aquarius w/ natural-benefic Venus (unblemished); 4th lord Saturn neecha in 6th + Papakartari + Matrukaraka Moon w/ Saturn, both considerably afflicted (Conclusion p181). Gate 9/9."
+  },
+  {
+   "chart_no": 73,
+   "house_judged": 4,
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Libra",
+    "Mars": "Aquarius",
+    "Mercury": "Capricorn",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Pisces",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Scorpio",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is fairly powerful"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is moderately blemished"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is moderately blemished"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aries; 4th Cancer empty, aspected by debilitated Jupiter+Mercury (neechabhanga in nav) -> fairly powerful; 4th lord Moon = Matrukaraka in Libra aspected by Saturn -> moderately blemished (Conclusion p182). Gate 9/9."
+  },
+  {
    "chart_no": 74,
    "house_judged": 4,
    "lagna_rasi": "Pisces",

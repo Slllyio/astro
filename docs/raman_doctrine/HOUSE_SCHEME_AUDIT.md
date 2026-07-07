@@ -932,3 +932,37 @@ and the reference/from-Moon bhava keep functional nature (unchanged).
   more generously than the additive model reaches" limit.
 - **Next: B** — the kendra-offsets-affliction lord/kāraka over-credit (ch64/70/71/72/73/93),
   the positive-saturation frontier, still open.
+
+### Increment 8 — the lord/kāraka over-credit (B): NOT closable on current features (documented negative result)
+
+B is the target Phase B's optimizer flagged (it lowered `pos_knee`/`kendra_trikona`) and the
+one the held-out set most consistently misses: a kendra/dignity placement offsets stacked
+malefic testimony where Raman grades the planet **afflicted** (ch64/70/71/72/73/93,
+Δ +2/+3). Two routes were tested against the anchor-as-hard-constraint and **both fail**:
+
+1. **Blanket `pos_knee` / `kendra_trikona` reduction (the Phase-B direction, in isolation).**
+   A sweep of `pos_knee ∈ {1.6..1.2} × kendra_trikona ∈ {1.2..0.8}` lifts pooled held-out
+   50% → 60% but **drops the ch. IV anchor 8/8 → 5/8** the moment `pos_knee < 1.6`, and
+   pulls the tuned audit to ≤77%. The anchor charts are legitimately strong *without* heavy
+   malefic siege, so saturating their positives earlier mis-grades them. Phase B kept the
+   anchor at 100% only by co-moving ~20 other params; the two knobs in isolation cannot.
+
+2. **A targeted "malefic-siege" penalty (≥2 malefic aspects/conjunctions on the planet).**
+   This does *not* separate the classes: the anchor's **ch14 kāraka (Sun)** has siege
+   rasi = **2** and Raman grades it **moderate**; the held-out **ch70/ch72 kāraka (Moon)**
+   have siege rasi = **2** and Raman grades them **afflicted**. Same feature value, opposite
+   labels — and ch14's siege is *conjunctions* (stronger) vs ch70's *aspects*, yet graded
+   higher. No threshold on siege / kendra / dignity separates the over-credited held-out
+   kārakas from the correctly-graded anchor kārakas.
+
+**Conclusion:** the over-credit is **not linearly/threshold separable on the features the
+sign-reconstructed engine has**. Closing it needs information the additive point-scheme (and
+the sign-only reconstruction) does not carry — degree-based aspect strength, the dispositor's
+condition, or Raman's holistic benefic-vs-malefic weighing — not a re-weighting. This is the
+expressiveness ceiling: Phase B plateaued at 58% for the same reason. **No engine change made**
+(an anchor-breaking or non-separating change would be worse than the honest ceiling).
+
+- **Options for a future pass (not done here):** (a) accept the additive ceiling (~50–56%
+  held-out); (b) reconstruct with *degrees* (from birth data, not sign diagrams) to expose
+  aspect-strength/dispositor features, then re-fit; (c) grow the held-out kāraka set further
+  to search for a finer separating feature. Each is a distinct project.

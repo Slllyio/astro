@@ -40,7 +40,8 @@
     },
     {
      "factor": "karaka",
-     "phrase": "Matrukaraka is definitely afflicted"
+     "phrase": "Matrukaraka is definitely afflicted",
+     "karaka": "Moon"
     }
    ],
    "confidence": "high"
@@ -108,7 +109,8 @@
     },
     {
      "factor": "karaka",
-     "phrase": "The fourth lord and Matrukaraka are considerably afflicted"
+     "phrase": "The fourth lord and Matrukaraka are considerably afflicted",
+     "karaka": "Moon"
     }
    ],
    "confidence": "high"
@@ -147,7 +149,8 @@
     },
     {
      "factor": "karaka",
-     "phrase": "The Matrukaraka Moon is considerably afflicted"
+     "phrase": "The Matrukaraka Moon is considerably afflicted",
+     "karaka": "Moon"
     }
    ],
    "confidence": "high"

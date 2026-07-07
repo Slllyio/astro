@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from app.medini.doctrine.domains.house_judgment import (
-    VERDICT_SCALE, _verdict_label, judge_house_doctrine,
+    VERDICT_SCALE, _assess_planet, _verdict_label, judge_house_doctrine,
 )
 from app.medini.doctrine.validation import reconstruct as R
 
@@ -102,10 +102,22 @@ def validate_record(rec: dict, patterns: list[tuple[str, str]]) -> dict[str, Any
             rows.append({"factor": factor, "phrase": v["phrase"],
                          "excluded": "unmappable_phrase"})
             continue
-        eng = label(judgment, factor)
+        # Multi-karaka: Raman judges the 4th by several significators (Moon =
+        # Matrukaraka/mother, Mars = Bhumikaraka/property, Mercury = Vidyakaraka/
+        # education). A karaka row may name its planet so the engine assesses THAT
+        # planet, not the house's default karaka -- otherwise a Mars-property verdict
+        # would be compared to the Moon and log a spurious divergence.
+        if factor == "karaka" and v.get("karaka"):
+            kv = _assess_planet(chart, v["karaka"], "Karaka")
+            eng = _verdict_label(kv.rasi_score) if rasi_only else kv.label
+        else:
+            eng = label(judgment, factor)
         d = _IDX[eng] - _IDX[raman_grade]
-        rows.append({"factor": factor, "phrase": v["phrase"], "raman": raman_grade,
-                     "engine": eng, "delta": d, "axis": "rasi" if rasi_only else "full"})
+        row = {"factor": factor, "phrase": v["phrase"], "raman": raman_grade,
+               "engine": eng, "delta": d, "axis": "rasi" if rasi_only else "full"}
+        if v.get("karaka"):
+            row["karaka"] = v["karaka"]
+        rows.append(row)
     return {"chart": rec.get("chart_no"), "house": house, "rows": rows}
 
 

@@ -36,9 +36,14 @@ Emit one JSON object per worked chart with EXACTLY these keys:
 - `lagna_rasi`, `lagna_navamsa`: the ascendant's Rāśi and Navāṁśa sign,
 - `dasha_balance`: the balance-of-daśā line verbatim (or null if absent),
 - `house_judged`: the house number (1–12) this chart is analysed for in this chapter,
-- `verdicts`: array of `{factor, phrase}` where `factor ∈ {bhava, lord, karaka, overall}`
-  and `phrase` is Raman's VERBATIM strength statement (e.g. "the fourth house is
-  moderately strong", "the lord is fairly powerful", "considerably afflicted").
+- `verdicts`: array of `{factor, phrase[, karaka]}` where `factor ∈ {bhava, lord,
+  karaka, overall}` and `phrase` is Raman's VERBATIM strength statement (e.g. "the
+  fourth house is moderately strong", "the lord is fairly powerful", "considerably
+  afflicted"). For a `karaka` row, ALSO record the significator planet in `karaka`
+  (Sun/Moon/Mars/Mercury/Jupiter/Venus/Saturn) — Raman shifts kārakas by topic
+  (4th house: Moon=Matrukāraka/mother, Mars=Bhūmikāraka/property, Mercury=Vidyākāraka/
+  education). Keep each significator's verdict a SEPARATE row so they don't collapse;
+  the harness scores each against that exact planet.
 - `confidence`: "high" | "medium" | "low" — your read on OCR clarity for this chart,
 - `notes`: any ambiguity, garbled cells, or a planet you could not place.
 

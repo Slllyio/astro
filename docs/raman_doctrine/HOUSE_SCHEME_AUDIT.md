@@ -820,3 +820,29 @@ and has high blast radius on Mainpuri (Mercury+Mars are combust in the 11th → 
 undo the 2.1 gain). The remaining frontier is positive-cap saturation, bounded on
 both sides (over>1=10 stacked positives; the "very strong" tail of under>1) — a
 structural saturation change, not more features, is what moves it next.
+
+### Increment 4 — dusthāna-lordship penalty (held-out-driven, DONE)
+
+The **held-out** validation (Vol 1 Ch. VII, `docs/raman_doctrine/validation/`) surfaced
+the gap the tuned corpora could not: `_assess_planet` scored a planet's placement /
+dignity / aspects / conjunctions but never penalised it for **being a functional
+malefic by dusthāna lordship** (Raman, Chart 64: "the Moon owns the 6th and hence
+afflicted"). `_planet_nature` already knew a dusthāna lord is a functional malefic —
+but only for how it afflicts *others*, never itself.
+
+`_assess_planet` now adds a `dusthana_lord` finding (−1.0) when the planet owns a
+dusthāna (6/8/12) from the Lagna — the **Lagna lord exempt** (its ascendant lordship
+redeems a coincidental dusthāna ownership; this also keeps house-1 byte-stable, since
+Mainpuri's Mars owns Scorpio-1 AND Aries-6).
+
+- **Held-out effect:** the one true dusthāna case (ch64 kāraka Moon, owns 6th) improved
+  **+3 → +2**; mean Δ +1.1 → +1.0; **no held-out row regressed**; 233 tests pass. It
+  does NOT fully close ch64 — the +1.2 kendra-placement credit (Moon in the 4th) still
+  props the kāraka to "moderate"; closing it needs the companion **kendra-over-credit**
+  fix (the v2 positive-saturation frontier).
+- **Blast radius (Mainpuri):** 4 houses whose lord/kāraka owns 8/12 (H7/8/11/12). Note
+  the **dignity interaction**: exalted Mercury owns the 8th → now "weak"; a flat −1.0
+  may over-penalise a strongly-dignified dusthāna lord. No held-out evidence yet either
+  way — flagged for calibration when the gold set grows (+ Navāṁśa).
+- The token audit harness is blind to this feature (corpus rows don't encode lordship),
+  so the **held-out set is its judge**. As the gold set grows it is also Phase B's test.

@@ -455,7 +455,7 @@ _DIGNITY_W = {"exalted": 1.6, "own": 1.2, "friendly": 0.8, "neutral": 0.0,
               "inimical": -0.8, "debilitated": -1.6}
 _W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
           kartari_subha=1.0, kartari_papa=-1.0, aspect=0.7, conjunct=0.7,
-          conjunct_exalted=1.6, bhava_aspect_mul=0.5)
+          conjunct_exalted=1.6, bhava_aspect_mul=0.5, dusthana_lord=-1.0)
 
 # Consolidation (post-twelve-house-walk): diminishing returns on STACKED POSITIVES.
 # The held-out audit of every strength-graded house (2-5, 7, 9, 11) showed the same
@@ -772,6 +772,16 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     elif h in set(KENDRA) | set(TRIKONA):
         f.append(Finding(f"placed in the {h}th (kendra/trikona)",
                          _W["kendra_trikona"], "Rasi", "placement"))
+    # Phase 2.4: a planet that OWNS a dusthana (6/8/12 from the Lagna) is a functional
+    # malefic and thereby afflicted in itself (Raman, Chart 64: "the Moon owns the 6th
+    # and hence afflicted"). The Lagna lord is exempt -- its ascendant lordship redeems
+    # a coincidental dusthana ownership. Reckoned from the Lagna only (ref_sign None).
+    if ref_sign is None:
+        owned = [dh for dh in DUSTHANA if _lord_of(chart, dh) == planet]
+        if owned and planet != _lord_of(chart, 1):
+            f.append(Finding(
+                f"owns the {owned[0]}th (dusthana lord → functional malefic)",
+                _W["dusthana_lord"], "Rasi", "lordship"))
     # vargottama (same sign in both vargas) — decoded top-tier; counts with Rasi.
     if sign1 == sign9:
         f.append(Finding("vargottama (same sign in Rasi & Navamsa)",

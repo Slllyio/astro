@@ -228,6 +228,17 @@ class TestStrengthAssessor:
         venus = [f for f in b.findings if "Venus" in f.text and f.frame == "Rasi"]
         assert len(venus) == 1 and venus[0].criterion == "conjunction"
 
+    def test_dusthana_lord_penalised_lagna_lord_exempt(self, mainpuri):
+        # Phase 2.4 -- a planet owning a dusthana (6/8/12) is a functional malefic and
+        # afflicted in itself (Raman: "the Moon owns the 6th and hence afflicted").
+        # Mainpuri: the 8th lord Mercury (owns Gemini=8th) is penalised; the lagna lord
+        # Mars (owns Scorpio=1 AND Aries=6) is EXEMPT -- its ascendant lordship redeems
+        # the coincidental 6th ownership (so house-1 stays byte-stable).
+        merc = _assess_lord(mainpuri, 8)
+        assert any("dusthana lord" in f.text and f.delta < 0 for f in merc.findings)
+        mars = _assess_lord(mainpuri, 1)
+        assert not any("dusthana lord" in f.text for f in mars.findings)
+
     def test_exalted_aspect_on_bhava_is_credited(self, mainpuri):
         # Phase 2.3 -- an EXALTED planet aspecting a bhava strengthens it, whatever
         # its functional nature (mirrors conjunct_exalted / occupant-exalted). On

@@ -1,0 +1,2607 @@
+{
+ "source": "HTJAH Vol 2 Ch XIV (10th house) -- held-out (non-tuned); vision-agent extract (5 batches), gate-verified",
+ "house": 10,
+ "charts": [
+  {
+   "chart_no": 114,
+   "birth_line": "Chart No. 114.- Born 14-11-1889 at 11-03 p.m. (L.M.T.) at 25 N 25. 82 E.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Cancer",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Sagittarius",
+    "Venus": "Libra",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 13 years. 7 months and days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Mercury",
+     "phrase": "Mercury is powerfully placed in the 4th house in Libra"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Likely Jawaharlal Nehru. Chart illustrates Mercury as career/writing significator; the only strength grade is the karaka Mercury 'powerfully placed'. Rahu Gemini / Ketu Sagittarius both visible in rasi; Rahu Aquarius / Ketu Leo in navamsa. Dasa-balance days figure lost in scan ('7 months and days'). Prose is profession-focused (political/intellectual), no bhava or lord strength grading.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 115,
+   "birth_line": "Chart No. 115.—Born 29-4-1901 at 10-10 p.m. (L.M.T.) at 35 N 40, 139 E 40.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Virgo",
+    "Mars": "Leo",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aries",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Scorpio",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 3 years, 9 months and 24 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord is Mercury and he occupies the Navamsa of Mars in great strength. He is Vargottama (occupies the same sign in Rasi and Navamsa)."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Emperor Hirohito. Ketu clearly in Taurus in rasi; Rahu not visibly printed in rasi but forced to Scorpio by the 6-sign opposition (also astronomically correct). Navamsa Rahu Cancer / Ketu Capricorn both visible. Lord verdict grades 10th lord Mercury's strength (great strength / Vargottama); prose otherwise profession-focused (military).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 117,
+   "birth_line": "Chart No. 117.-Born 10-4-1954 at 7-20 p.m. (I.S.T.) at 12N18, 76 E 42.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Cancer",
+    "Mars": "Sagittarius",
+    "Mercury": "Pisces",
+    "Jupiter": "Taurus",
+    "Venus": "Aries",
+    "Saturn": "Libra",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Cancer",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Leo",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : 0 year, 4 months and 15 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "College teacher. Cross-checks confirm: Moon (10th lord) in Cancer=10th, Saturn exalted in Libra=Lagna, Mars in Sagittarius. Prose describes profession (teaching) via placements/aspects only — no explicit strength grading of 10th house/lord/karaka, so no verdicts extracted.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 118,
+   "birth_line": "Chart No. 118.—Born 18-4-1904 at 5-57 p.m. (L.M.T.) at 25 N 18, 83 E 00.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Taurus",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Pisces",
+    "Venus": "Pisces",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Sagittarius",
+    "Saturn": "Virgo",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Sun's Dasa at birth : 1 year, 0 month and 13 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Saturn, the Yogakaraka, occupies another kendra and both luminaries are exalted, lifting the chart well above average."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Newspaper magnate. Ketu clearly in Pisces in rasi; Rahu not visibly printed in rasi (Virgo cell blank in scan) but forced to Virgo by 6-sign opposition (astronomically correct). Navamsa Rahu Aquarius / Ketu Leo both visible. Lord verdict retained because the 10th lord Moon is one of the 'both luminaries are exalted'; phrase is chart-level, not solely the 10th lord. Rest of prose is career navamsa analysis (newspapers), no direct 10th grading.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 119,
+   "birth_line": "Chart No. 119.— Born 13-1-1944 at 1-49 p.m. (L.M.T.) at 22 N 35, 88 E 23.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Leo",
+    "Mars": "Taurus",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Taurus",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Aries",
+    "Mars": "Aries",
+    "Mercury": "Libra",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth . 5 years, 11 months.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "It is aspected by sign lord Venus and is powerful indicating a job connected with finances."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Accounts officer. Ascendant Taurus with 10th lord Saturn in it; verdict sentence's 'It' = the 10th lord Saturn (occupied in Taurus), graded 'is powerful'. Rahu Cancer / Ketu Capricorn (rasi) and Rahu Scorpio / Ketu Taurus (navamsa) all 6 apart and visible.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 120,
+   "birth_line": "Chart No. 120.—Born 29-6-1864 at about 3-55 a.m. (LM.T.) at 22 N 35, 88 E.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Aries",
+    "Mars": "Aries",
+    "Mercury": "Taurus",
+    "Jupiter": "Libra",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Virgo",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Cancer",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 15 years, 6 months and 9 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Educationist/mathematician/jurist. Prose grades Lagna and Gemini (2nd) for learning/intelligence, not the 10th house/lord/karaka, so no 10th strength verdict extracted. Placements cross-checked: Mercury in Taurus (Lagna) in parivartana with Venus in Gemini; Saturn (Virgo) and Jupiter (Libra) aspect Gemini; Ketu Aries / Rahu Libra.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 121,
+   "birth_line": "Chart No. 121.—Born 28 5-1944 at 9-50 a.m. (I.S.T.) at 13 N, 77 E35.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Cancer",
+    "Mars": "Cancer",
+    "Mercury": "Aries",
+    "Jupiter": "Cancer",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Aquarius",
+    "Mars": "Libra",
+    "Mercury": "Libra",
+    "Jupiter": "Pisces",
+    "Venus": "Pisces",
+    "Saturn": "Scorpio",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 6 years, 1 month and 28 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Alcohol technologist. Cancer Lagna holds Moon, 10th lord Mars, exalted Jupiter (9th lord) and Rahu; Ketu Capricorn opposite. Prose treats the 10th lord Mars as giving a technological/alcohol vocation (occupation, not a strength grade), so no 10th strength verdict extracted.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 122,
+   "birth_line": "Chart No. 122.- Born 12-5-1897 at 10-19 a.m. (L.M.T.) at 9 N 51, 78 E 37.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Leo",
+    "Venus": "Aries",
+    "Saturn": "Scorpio",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Sagittarius",
+    "Mars": "Leo",
+    "Mercury": "Taurus",
+    "Jupiter": "Gemini",
+    "Venus": "Cancer",
+    "Saturn": "Virgo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 4 years, 6 months and 27 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Diagram on p275 (both squares present); the interpretive prose for this chart falls on p276, which is not in the supplied pages, so no verdict text available. Placements read directly: Cancer Lagna with Ketu and Mars, Rahu Capricorn opposite; navamsa Rahu Gemini / Ketu Sagittarius. Chart sits under the general 'Leo' occupation section.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 126,
+   "birth_line": "Chart No. 126.-Born 8-8-1912 at 7-35 p.m. (I.S.T.) at 13° N, 77 E 30.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Leo",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Taurus",
+    "Saturn": "Aries",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 6 years, 1 month and 6 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Diagram on p280; this chart's interpretive prose would fall on p279 (not supplied), so no verdict text. Placements read directly and cross-verified by Rahu Pisces / Ketu Virgo (rasi) and Rahu Aquarius / Ketu Leo (navamsa). Moon+Saturn confirmed in Taurus (col3) by zoomed top-row crop.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 127,
+   "birth_line": "Chart No. 127.-Born 3-12-1884 at 8-45 am. (L.M T.) at 25 N 36, 95 E 10.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Taurus",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Leo",
+    "Venus": "Libra",
+    "Saturn": "Gemini",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Leo",
+    "Mars": "Gemini",
+    "Mercury": "Taurus",
+    "Jupiter": "Leo",
+    "Venus": "Aquarius",
+    "Saturn": "Libra",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Mars Oasa at birth : 5 years, 10 months and 17 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "the pivot of a powerful Rajayoga involving 5th lord Mars, Lagna lord Jupiter, 10th lord Mercury and Saturn. Mercury, Saturn and Jupiter (Vargottama) influence Sagittarius powerfully indicating the native's legal career."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Dr. Rajendra Prasad, first President of India (lawyer). Diagram on p281, verdict prose on p280. Verdict grades the 10th lord Mercury as part of a powerful Rajayoga influencing the Lagna; phrase is Rajayoga/Lagna-centred but explicitly names 10th lord Mercury. Jupiter Vargottama (Leo in both). Rahu Virgo / Ketu Pisces (rasi), Rahu Gemini / Ketu Sagittarius (navamsa).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 128,
+   "birth_line": "Chart No. 128.—Born 19-12-1952 at 11-16 p m. (I.ST.) at 11 N05, 77 E 20.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Capricorn",
+    "Mars": "Capricorn",
+    "Mercury": "Scorpio",
+    "Jupiter": "Aries",
+    "Venus": "Capricorn",
+    "Saturn": "Virgo",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Aries",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Virgo",
+    "Venus": "Gemini",
+    "Saturn": "Aquarius",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of the Moon Dasa at birth : 9 years, 2 months and 3 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Diagram on p281 (both squares present); this chart's interpretive prose falls on p282 (not supplied), so no verdict text. Placements read directly; Rahu Capricorn / Ketu Cancer (rasi) and Rahu Cancer / Ketu Capricorn (navamsa) both 6 apart.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 131,
+   "birth_line": "Born 11-12-1922 at 3-46 p.m. (L.M.T.) at 34 N 1, 71 E 34.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Leo",
+    "Mars": "Aquarius",
+    "Mercury": "Scorpio",
+    "Jupiter": "Libra",
+    "Venus": "Scorpio",
+    "Saturn": "Virgo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Scorpio",
+    "Mars": "Capricorn",
+    "Mercury": "Pisces",
+    "Jupiter": "Pisces",
+    "Venus": "Leo",
+    "Saturn": "Virgo",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 3 years, 7 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the Sasi-Mangala Yoga in the 10th house ... have resulted in an excellent Raja Yoga for fame, money and success"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Yogakaraka Saturn Vargottama in the 5th"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mercury",
+     "phrase": "Mercury is the Atmakaraka and has given great skill in dramatics and voice modulation"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Actor. Rasi & navamsa fully legible; both node axes opposite (Rahu Virgo/Ketu Pisces rasi, Rahu Aquarius/Ketu Leo navamsa). Sun+Mercury+Venus conjunct in Scorpio (bottom-left cell shows Venus/Mercury/Sun).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 132,
+   "birth_line": "Born 12-3-1946 at 7-30 a.m. at 34 N 03, 118 W 17.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Gemini",
+    "Mars": "Gemini",
+    "Mercury": "Pisces",
+    "Jupiter": "Libra",
+    "Venus": "Pisces",
+    "Saturn": "Gemini",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Gemini",
+    "Mars": "Taurus",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Scorpio",
+    "Venus": "Virgo",
+    "Saturn": "Taurus",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Jupiter's Dasa at birth : 6 years, 8 months and 5 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Jupiter is in Libra, a venusian sign indicative of a career in the show-world"
+    }
+   ],
+   "confidence": 0.85,
+   "notes": "Actress (Hollywood). Rasi Ketu NOT printed in the square; placed in Sagittarius by the Rahu/Ketu opposition (Rahu clearly in Gemini with Mars/Saturn/Moon). Navamsa fully legible, Rahu Scorpio/Ketu Taurus opposite confirms axis. No explicit 10th-house strength verdict; prose grades the Pisces lagna, not the 10th.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 133,
+   "birth_line": "Born 11-1-1894 at 4-55 p.m. (L.M.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Aquarius",
+    "Mars": "Scorpio",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Taurus",
+    "Venus": "Aquarius",
+    "Saturn": "Libra",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Pisces",
+    "Mars": "Scorpio",
+    "Mercury": "Virgo",
+    "Jupiter": "Capricorn",
+    "Venus": "Capricorn",
+    "Saturn": "Scorpio",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 1 year, 7 months and 21 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house is Pisces, a spiritual sign, occupied by Rahu"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Jupiter is in Taurus aspected by Mars. In Navamsa, the 10th lord Jupiter occupies Capricorn with the Sun and Venus aspected by Saturn. The 10th lord in the 12th signifies a vocation connected with religion and rituals"
+    }
+   ],
+   "confidence": 0.94,
+   "notes": "Archak (temple priest). Both squares fully legible; nodes opposite in both (Rahu Pisces/Ketu Virgo rasi; Rahu Aquarius/Ketu Leo navamsa). Prose cross-checks all placements.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 134,
+   "birth_line": "Born 8-2-1857 at 8-30 a.m. (L.M.T.) at 42 N 39, 71 W 8.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Aquarius",
+    "Mercury": "Capricorn",
+    "Jupiter": "Pisces",
+    "Venus": "Pisces",
+    "Saturn": "Gemini",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Aquarius",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Scorpio",
+    "Saturn": "Pisces",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 7 years, 3 months and 20 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house in Chart No. 134 is aspected by Saturn"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Jupiter occupies his own sign Pisces with exalted Venus and Rahu ... Jupiter's occupation of his own Navamsa with Rahu enabled the native to produce many valuable books"
+    }
+   ],
+   "confidence": 0.93,
+   "notes": "Astrologer. Both squares fully legible; nodes opposite (Rahu Pisces/Ketu Virgo rasi; Rahu Sagittarius/Ketu Gemini navamsa). Jupiter+Venus form Hamsa & Malavya yogas per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 135,
+   "birth_line": "Born 31-1-1887 at 11-1 p.m. (G.M.T.) at 50 N 43, 2 W 25.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Aries",
+    "Mars": "Aquarius",
+    "Mercury": "Capricorn",
+    "Jupiter": "Libra",
+    "Venus": "Aquarius",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Leo",
+    "Mars": "Sagittarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Aquarius",
+    "Venus": "Scorpio",
+    "Saturn": "Taurus",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth: 15 years, 0 month and 27 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house is aspected by Jupiter from the 2nd house ... Jupiter's aspect on the 10th house and the 10th lord Mercury in his own Navamsa made him a prolific writer in his subject"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th and 5th lords. Mercury and Saturn respectively, are in parivartana ... the 10th lord Mercury in his own Navamsa made him a prolific writer"
+    }
+   ],
+   "confidence": 0.93,
+   "notes": "Astrologer (Western astrology writer). Both squares fully legible; nodes opposite (Rahu Leo/Ketu Aquarius rasi; Rahu Gemini/Ketu Sagittarius navamsa). Mercury-Saturn parivartana and Mercury in own Gemini navamsa confirmed.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 136,
+   "birth_line": "Born 12/13-9-1897 at 2-51 a.m. (L.M.T.) at 26 N 17, 72 E 58.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Cancer",
+    "Saturn": "Scorpio",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Sagittarius",
+    "Mars": "Cancer",
+    "Mercury": "Gemini",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Leo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth: 11 years and 9 months.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house is Aries with no planets in it ... The 10th house is also aspected by Jupiter ... The native is a rich and prosperous banker consistent with the influences of Mercury (money transactions) and Jupiter (from the 2nd house) on the 10th house"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mars aspects the 10th from a mercurial sign and is with exalted Mercury"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "The 10th house is also aspected by Jupiter, the 5th lord and Dhanakaraka, who associates very closely with the 2nd lord Sun"
+    }
+   ],
+   "confidence": 0.9,
+   "notes": "Banker. Both squares fully legible; nodes opposite (Rahu Capricorn/Ketu Cancer rasi; Rahu Aries/Ketu Libra navamsa). Ketu conjoins Lagna & Venus in Cancer.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 138,
+   "birth_line": "Born 8-7-1929 at 6-30 a.m. (I.S.T.) at 11 N 31, 79 E 52.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Cancer",
+    "Mars": "Leo",
+    "Mercury": "Gemini",
+    "Jupiter": "Taurus",
+    "Venus": "Taurus",
+    "Saturn": "Sagittarius",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Libra",
+    "Mars": "Cancer",
+    "Mercury": "Libra",
+    "Jupiter": "Taurus",
+    "Venus": "Pisces",
+    "Saturn": "Taurus",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Saturn's Dasa at birth : 8 years, 6 months and 1 day.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Rahu ruling potions, poisons and chemicals is in the 10th"
+    },
+    {
+     "factor": "lord",
+     "phrase": "This further indicated by 10th lord Mars in Leo which sign also refers to callings connected with chemicals"
+    }
+   ],
+   "confidence": 0.93,
+   "notes": "Chemicals-firm employee. Both squares fully legible; nodes opposite (Rahu Aries/Ketu Libra rasi; Rahu Sagittarius/Ketu Gemini navamsa). Rahu is Atmakaraka (not in the karaka set), so no karaka verdict.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 139,
+   "birth_line": "Born 30-12-1907 at 9-55 p.m. (L.M.T.) at 13 N 45, 76 E 30.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Libra",
+    "Mars": "Pisces",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Cancer",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Gemini",
+    "Jupiter": "Capricorn",
+    "Venus": "Gemini",
+    "Saturn": "Cancer",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 0 year, 3 months and 7 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house is Taurus aspected by Saturn ... The 10th house from the Moon is aspected by Moon-sign lord Venus and occupied by exalted Jupiter"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Venus is in the 6th house ruling the judiciary aspected by exalted Jupiter"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Chief Justice / jurist. Both squares fully legible; nodes opposite (Rahu Gemini/Ketu Sagittarius rasi; Rahu Taurus/Ketu Scorpio navamsa). Navamsa Jupiter placed in Capricorn per Vipareeta-yoga prose (8th lord Jupiter in 6th).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 141,
+   "birth_line": "Born 4-8-1911 at 4-19 p.m. (L.M.T.) at 13 N, 77 E.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Scorpio",
+    "Mars": "Aries",
+    "Mercury": "Leo",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Sagittarius",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Aquarius",
+    "Venus": "Capricorn",
+    "Saturn": "Sagittarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 16 years, 7 months and 5 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 141 the 10th house Virgo is occupied by the 6th and 11th lord Venus"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mercury is in the 9th house in a constellation ruled by Venus"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Coffee merchant. Both squares fully legible; nodes opposite (Rahu Aries/Ketu Libra rasi; Rahu Leo/Ketu Aquarius navamsa — Ketu conjoins Jupiter in Aquarius navamsa).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 143,
+   "birth_line": "Born 18-9-1940 at 7-23 p.m. (I.S.T.) at 8 N 48, 78 E 11.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Leo",
+    "Mercury": "Virgo",
+    "Jupiter": "Aries",
+    "Venus": "Cancer",
+    "Saturn": "Aries",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Sagittarius",
+    "Mercury": "Taurus",
+    "Jupiter": "Scorpio",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 6 years, 0 month and 28 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house is aspected by the 10th lord Jupiter who occupies Scorpio Navamsa ruled by Mars"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th house is aspected by the 10th lord Jupiter who occupies Scorpio Navamsa ruled by Mars"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "The native is a cardiologist, cardiology being ruled by the Sun. The Sun placed strongly with an exalted Mercury gives an intelligent and research-oriented approach to his work in heart-surgery"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Cardiologist. Both squares fully legible; nodes opposite (Rahu Virgo/Ketu Pisces rasi; Rahu Cancer/Ketu Capricorn navamsa). Sun+Rahu conjunction (with exalted Mercury) in Virgo per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 144,
+   "birth_line": "Born 16-3-1882 at 9-30 p.m. (L.M.T.) at 32 N 19, 72 E 30.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Capricorn",
+    "Mars": "Gemini",
+    "Mercury": "Aquarius",
+    "Jupiter": "Taurus",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Leo",
+    "Mars": "Aquarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Libra",
+    "Saturn": "Virgo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 5 years, 10 months and 26 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house Cancer is aspected by its lord the Moon"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Moon is in Capricorn aspected by Mars and Saturn ... The 10th lord Moon in a kendra influenced by 3 planets gave him a post of authority"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Chief Medical Officer (State Inspector-General of Civil Hospitals). Both squares fully legible; nodes opposite (Rahu Scorpio/Ketu Taurus rasi; Rahu Libra/Ketu Aries navamsa).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 145,
+   "birth_line": "Born 8-5-1907 at 10-17 p.m. (L.M.T.) at 10 N 40, 76 E 30.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Aries",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Pisces",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Libra",
+    "Mars": "Scorpio",
+    "Mercury": "Gemini",
+    "Jupiter": "Pisces",
+    "Venus": "Capricorn",
+    "Saturn": "Cancer",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Saturn's Dasa at birth : 5 years, 0 month and 13 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 145 the 10th house is aspected by exalted Venus, the Moon and Saturn"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Cloth/textile merchant. Both squares fully legible; nodes opposite (Rahu Cancer/Ketu Capricorn rasi; Rahu Leo/Ketu Aquarius navamsa). 10th lord (Mercury) not graded in prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 146,
+   "birth_line": "Born 31-12-1912 at 4-44 p.m. (L.M.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Virgo",
+    "Mars": "Sagittarius",
+    "Mercury": "Scorpio",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aquarius",
+    "Jupiter": "Gemini",
+    "Venus": "Libra",
+    "Saturn": "Pisces",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 5 years, 4 months and 26 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house is occupied by Rahu and aspected by the Moon and Mars ... Rahu in the 10th does not give a conventional calling"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Sagittarius occupied by 10th lord rules the legs referring to a career closely related to footwork such as dancing"
+    }
+   ],
+   "confidence": 0.92,
+   "notes": "Dancer. Both squares fully legible; nodes opposite (Rahu Pisces/Ketu Virgo rasi; Rahu Scorpio/Ketu Taurus navamsa). Saturn-Venus parivartana per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 147,
+   "birth_line": "Born 11-8-1921 at 8-18 p.m. (I.S.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Libra",
+    "Mars": "Cancer",
+    "Mercury": "Cancer",
+    "Jupiter": "Leo",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Scorpio",
+    "Mercury": "Scorpio",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Rahu's Dasa at birth : 1 year, 2 months and 17 days.",
+   "verdicts": [],
+   "confidence": 0.85,
+   "notes": "Both squares fully legible; nodes opposite (Rahu Virgo/Ketu Pisces rasi; Rahu Virgo/Ketu Pisces navamsa). No verdict prose available: the profession/analysis paragraph for chart 147 falls on p.302, which is beyond the supplied page-scans (p288-p301), so verdicts are empty. Navamsa lagna read as Taurus (moderate confidence on exact lagna cell).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 148,
+   "birth_line": "Born 7/8-8-1894 at 5-30 a.m. (L.M.T) at 13 N 6,78 E 7.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Libra",
+    "Mars": "Aries",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Pisces",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Rahu's Dasa at birth : 0 year, 5 months and 4 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th is the positive and fiery sign, Aries. It is occupied by Mars, an aggressive planet who also happens to be the 10th lord"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The Lagna lord Moon aspects the 10th house and the 10th lord and, in turn, is aspected by Mars giving a strong, bold and spirited personality which is also firm and stable as indicated by the presence of the Lagna lord in the sign of the balance"
+    }
+   ],
+   "confidence": 0.9,
+   "notes": "Superintendent of Police. Moon=Libra ('sign of the balance') confirmed by prose. Rahu(Pisces)/Ketu(Virgo) opposition verified in rasi; Rahu(Libra)/Ketu(Aries) in navamsa.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 149,
+   "birth_line": "Born 5/6-10-1942 at 1-00 a.m. (W.T.) at 12 N 58, 77 E 34.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Cancer",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Cancer",
+    "Venus": "Virgo",
+    "Saturn": "Taurus",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Cancer",
+    "Venus": "Pisces",
+    "Saturn": "Cancer",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 3 years, 8 months and 3 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house is Pisces fortified by the aspects of an exalted 10th lord Jupiter from the 2nd house (with the 2nd lord Moon) and the 6th and 11th lord Mars, 3rd lord Sun and 5th and 12th lord Venus"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the 10th lord Jupiter is exalted and in vargottama position"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "the aspects of Mars and the Sun are stronger, being to the exact degree of the 10th cusp, and determines the nature of work"
+    }
+   ],
+   "confidence": 0.9,
+   "notes": "Superintendent of Police. Lagna Gemini derived from 10th=Pisces; all placements cross-checked. Rahu(Leo)/Ketu(Aquarius) rasi opposition verified; navamsa Jupiter exalted in Cancer per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 152,
+   "birth_line": "Born 23-5-1932 at 5-24 p.m. (IST.) at 18 N 31, 73 E 52.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Cancer",
+    "Venus": "Gemini",
+    "Saturn": "Capricorn",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Scorpio",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Aquarius",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 1 year, 6 months and 18 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house in Chart No. 152 is Cancer occupied by an exalted 6th lord Jupiter aspected by a powerful Mars"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "the 10th house ... Cancer occupied by an exalted 6th lord Jupiter"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "The 10th house is aspected by Saturn from his own sign"
+    }
+   ],
+   "confidence": 0.85,
+   "notes": "Doctor. Lagna Libra from 10th=Cancer; Saturn in own sign Capricorn aspects Cancer (10th aspect) confirmed. Rahu(Pisces)/Ketu(Virgo) rasi opposition verified. Navamsa Moon placement (Scorpio) moderate confidence.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 154,
+   "birth_line": "Born 24-6-1896 at 4-58 p.m. (L.M.T.) at 13 N 4, 80 E 15.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Taurus",
+    "Jupiter": "Cancer",
+    "Venus": "Gemini",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Aries",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : 5 years, 10 months and 14 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord the Sun occupies a mercurial sign in a martian constellation which made the native a dynamic and forceful newspaperman"
+    }
+   ],
+   "confidence": 0.85,
+   "notes": "Editor/newspaperman. Lagna Scorpio (prose); 10th=Leo. Atmakaraka Mercury 'occupies Leo' refers to navamsa Leo (rasi Mercury=Taurus), which also satisfies 'Mercury aspected by Jupiter in Navamsa' (Jupiter Sag 9th-aspect). Rasi has 2 exalted (Jupiter Cancer, Saturn Libra) + Mars moolatrikona Aries. Rahu(Aquarius)/Ketu(Leo) rasi opposition; Ketu at Leo(2,3) inferred (node axis).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 155,
+   "birth_line": "Born 29-4-1948 at 9-48 a.m. (I.S.T.) at 12 N 52. 74 E 53.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Sagittarius",
+    "Mars": "Leo",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Gemini",
+    "Saturn": "Cancer",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Scorpio",
+    "Mars": "Aries",
+    "Mercury": "Virgo",
+    "Jupiter": "Gemini",
+    "Venus": "Libra",
+    "Saturn": "Aquarius",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 2 years, 10 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "the 10th lord Jupiter aspects the Ascendant Gemini powerfully with the Moon"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "karaka Sun occupies a mercurial sign with exalted Mercury"
+    }
+   ],
+   "confidence": 0.82,
+   "notes": "Engineer. Lagna Gemini (prose); Sun+Mercury+Rahu in fiery Aries; Venus in Lagna(Gemini). Rahu(Aries)/Ketu(Libra) rasi opposition verified. Navamsa Rahu(Libra)/Ketu(Aries) opposition + Mercury exalted Virgo (vargottama-supporting). Mars=Leo(2,3) rasi from stacked right column.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 158,
+   "birth_line": "Born 2-2-1942 at 6-54 p.m. (I.S.T.) at 18 N 58, 72 E 50.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aquarius",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Gemini",
+    "Venus": "Cancer",
+    "Saturn": "Capricorn",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : 4 years, 1 month and 20 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mars occupies his own sign in great strength"
+    },
+    {
+     "factor": "bhava",
+     "phrase": "the 10th lord Mars forms a powerful Ruchaka Yoga in the 10th house, the most powerful quadrant"
+    }
+   ],
+   "confidence": 0.88,
+   "notes": "Flight Lieutenant. Lagna Cancer (prose); 10th=Aries with own-sign Mars (Ruchaka Yoga). Rahu(Leo)/Ketu(Aquarius) rasi opposition + Rahu(Scorpio)/Ketu(Taurus) navamsa opposition verified.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 159,
+   "birth_line": "Born 13-1-1919 at 10-49 p.m. (L.M.T) at 17 N 26, 78 E 27.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Taurus",
+    "Mars": "Capricorn",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Leo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Virgo",
+    "Mercury": "Gemini",
+    "Jupiter": "Pisces",
+    "Venus": "Taurus",
+    "Saturn": "Taurus",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 4 years, 11 months and 10 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house is occupied by Jupiter who has exchanged signs with the 10th lord Mercury"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mercury is in his own Navamsa while the 10th occupant Jupiter occupies own Navamsa"
+    }
+   ],
+   "confidence": 0.8,
+   "notes": "Governor/Chief Minister. Lagna Virgo not marked in chart; inferred from 'Mars 3rd&8th lord', Gemini-Sagittarius parivartana (10th=Gemini), and 6th-lord-Saturn-in-12th Vipareeta forcing Saturn=Leo(2,3). Sun vargottama (Capricorn rasi & navamsa) confirmed. Rahu(Scorpio)/Ketu(Taurus) rasi + Rahu(Sag)/Ketu(Gemini) navamsa oppositions verified.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 161,
+   "birth_line": "Born 24-3-1906 at 6-53 a.m. (L.M.T.) at 13 N 30, 74 E 45.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Taurus",
+    "Venus": "Pisces",
+    "Saturn": "Aquarius",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Cancer",
+    "Mars": "Leo",
+    "Mercury": "Pisces",
+    "Jupiter": "Aries",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa's at birth : 2 years, 9 months and 11 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house is Sagittarius which is not aspected or occupied by any planet"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is exalted in Lagna in parivartana with Lagna and 10th lord Jupiter in Taurus"
+    }
+   ],
+   "confidence": 0.88,
+   "notes": "Hotelier. Lagna Pisces with 4 planets (Sun/Moon/Mercury/Venus, Venus exalted); 10th=Sagittarius empty. Jupiter(Taurus)-Venus(Pisces) parivartana. Rahu(Cancer)/Ketu(Capricorn) rasi + Rahu(Pisces)/Ketu(Virgo) navamsa oppositions verified.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 162,
+   "birth_line": "Born 29-9-1933 at 10-15 a.m. (I.S.T.) at 10 N 50,78 E 42.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Sagittarius",
+    "Mercury": "Virgo",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Capricorn",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Aries",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 6 years, 5 months and 18 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house is occupied by Rahu and aspected by Mars"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn is the 10th lord here and in the bhagyasthana"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mercury",
+     "phrase": "the powerful combinations for financial prosperity caused by 2nd and 5th lord Mercury exalted and vargottama in the 5th house combining with 11th lord Jupiter"
+    }
+   ],
+   "confidence": 0.75,
+   "notes": "Industrialist (textiles). Lagna Taurus from Mercury exalted+vargottama in 5th(Virgo); 10th=Aquarius with Rahu; 10th lord Saturn in 9th(Capricorn/bhagyasthana) with Moon. Mercury=Virgo rasi & navamsa (vargottama) confirmed. Venus=Libra(3,2) rasi and Ketu=Leo(2,3) moderate confidence. Rahu(Aquarius)/Ketu(Leo) rasi + Rahu(Scorpio)/Ketu(Taurus) navamsa oppositions verified.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 163,
+   "birth_line": "Born 12-4-1899 at 7-30 a.m. (L.M.T.) at 13 N15, 77E35.",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Aries",
+    "Mars": "Cancer",
+    "Mercury": "Aries",
+    "Jupiter": "Scorpio",
+    "Venus": "Aquarius",
+    "Saturn": "Sagittarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Scorpio",
+    "Mars": "Virgo",
+    "Mercury": "Aries",
+    "Jupiter": "Pisces",
+    "Venus": "Aries",
+    "Saturn": "Aries",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 3 years and 9 months.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Mars who gets neechabhanga aspects the 10th house in great strength"
+    }
+   ],
+   "confidence": 0.72,
+   "notes": "Inspector of Police. Lagna Aries with exalted vargottama Sun; 10th=Capricorn aspected by neechabhanga Mars (from Cancer). Saturn navamsa in martian sign (Aries) per prose confirmed. Rahu(Sagittarius)/Ketu(Gemini) rasi opposition verified. Navamsa Rahu(Cancer)/Ketu(Capricorn) and Jupiter(Pisces) placements moderate confidence (crowded scan).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 164,
+   "birth_line": "Born 16-3-1929 at 11-15 p.m. (I.S.T.) 18 N 13, 73E52.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Taurus",
+    "Mars": "Gemini",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aries",
+    "Venus": "Aries",
+    "Saturn": "Sagittarius",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Taurus",
+    "Mars": "Capricorn",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Virgo",
+    "Venus": "Leo",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Moon's Dasa at birth : 7 years, 4 months and 11 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house Leo is aspected by Mercury and Jupiter, both planets indicating intelligence and writing"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The Sun is subject to a subha-kartari yoga being hemmed between benefics Mercury on one side and Jupiter and Venus on the other"
+    }
+   ],
+   "confidence": 0.82,
+   "notes": "Journalist (prose mislabels as 'Chart No. 169' but positions match chart 164). Lagna Scorpio; 10th=Leo; 10th lord Sun in Pisces subha-kartari (Mercury Aquarius one side, Jupiter+Venus Aries other). Rahu(Taurus)/Ketu(Scorpio) rasi + Rahu(Capricorn)/Ketu(Cancer) navamsa oppositions verified.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 165,
+   "birth_line": "Born 29-6-1924 at 11-18 am. (I.S.T.) at 12 N 20, 76 E 38.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Taurus",
+    "Mars": "Aquarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Libra",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Capricorn",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Pisces",
+    "Saturn": "Scorpio",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Moon's Dasa at birth : 7 years, 8 months and 12 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "The planet of justice is exalted in the 3rd house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Judicial officer. Saturn exalted in Libra = 3rd from Leo lagna (cross-checks prose). Sun in Gemini (sidereal). Rahu Leo / Ketu Aquarius opposite in both vargas.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 166,
+   "birth_line": "Born 4-10-1895 at 6-03 a.m. (L.M.T.) at 11 N, 76 E.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Cancer",
+    "Venus": "Leo",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Capricorn",
+    "Mars": "Cancer",
+    "Mercury": "Aquarius",
+    "Jupiter": "Scorpio",
+    "Venus": "Sagittarius",
+    "Saturn": "Aquarius",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 11 years, 11 months and 9 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Chart No. 166 has both Jupiter and Saturn ruling law and justice exaited."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "The 10th lord Mercury occupies Libra, the sign of the balance, with exalted Saturn, the planet of justice."
+    }
+   ],
+   "confidence": "high",
+   "notes": "High Court Judge. 10th house Gemini; 10th lord Mercury in Libra; Jupiter exalted in Cancer (11th), Saturn exalted in Libra. Moon in Pisces (7th, a quadrant) per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 167,
+   "birth_line": "Born 21-11-1915 at 7-30 a.m. (I.S.T.) at 18 N 50, 75 E 40.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Aries",
+    "Mars": "Cancer",
+    "Mercury": "Libra",
+    "Jupiter": "Aquarius",
+    "Venus": "Scorpio",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Sagittarius",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Gemini",
+    "Venus": "Aquarius",
+    "Saturn": "Taurus",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of the Sun's Dasa at birth : 4 years, 9 months and 29 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "Chart No. 167 is not so powerful since Jupiter and Saturn have no particular dignity."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Chart No. 167 is not so powerful since Jupiter and Saturn have no particular dignity."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Civil judge. 10th house Leo aspected by Jupiter (Aquarius) & Saturn (Gemini). 10th lord Sun in Ascendant (Scorpio) with Venus. Moon in Aries = 6th dusthana per prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 168,
+   "birth_line": "Born 17-12-1893 at 8-02 a.m. (L.M.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Pisces",
+    "Mars": "Libra",
+    "Mercury": "Scorpio",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Libra",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Libra",
+    "Mars": "Gemini",
+    "Mercury": "Scorpio",
+    "Jupiter": "Capricorn",
+    "Venus": "Cancer",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Saturn's Dasa at birth : 5 years, 5 months and 16 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mercury is in the 12th house vargottama aspected by Jupiter from the 6th house."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "The planet of law and justice Saturn is very strong being both exalted and vargottama and aspects the Lagna."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "High Court Judge. 10th house Virgo occupied by Ketu; 10th lord Mercury in 12th (Scorpio) vargottama; Saturn exalted+vargottama in Libra. Navamsa Ketu placed in Leo by 6-sign opposition to Rahu (Aquarius) — that cell reads blank in the scan.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 169,
+   "birth_line": "Born 16-3-1908 at 10-56 a.m. (L.M.T.) at 15 N 24, 75 E 39.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aquarius",
+    "Jupiter": "Cancer",
+    "Venus": "Aries",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Cancer",
+    "Mars": "Scorpio",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Libra",
+    "Venus": "Leo",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Ketu's Dasa at birth : 0 year, 0 month and 13 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "aspected by an exalted 11th lord Jupiter"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Landlord and Banker. 10th house Aquarius occupied by Mercury; 10th lord Saturn in 11th (Pisces) with Sun; Jupiter exalted in Cancer aspecting Pisces. Navamsa Rahu Pisces / Ketu Virgo (opposition forces Rahu to Pisces cell).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 170,
+   "birth_line": "Born 30/31-8-1913 at 4-52 a.m. (L.M.T.) at 26 N 17, 72 E 56.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Leo",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Taurus",
+    "Mars": "Virgo",
+    "Mercury": "Aries",
+    "Jupiter": "Virgo",
+    "Venus": "Virgo",
+    "Saturn": "Leo",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Ketu's Dasa at birth : 5 years, 1 month and 3 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Lawyer. 10th house Taurus occupied by Saturn & Mars; 10th lord Venus in Cancer aspected by Saturn. No graded strength verdict in prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 171,
+   "birth_line": "Born 5-11-1870 at 6-49 a.m. (L.M.T.) at 22 N 40, 88 E 30.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Pisces",
+    "Mars": "Leo",
+    "Mercury": "Libra",
+    "Jupiter": "Gemini",
+    "Venus": "Libra",
+    "Saturn": "Sagittarius",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Scorpio",
+    "Mars": "Cancer",
+    "Mercury": "Capricorn",
+    "Jupiter": "Scorpio",
+    "Venus": "Aquarius",
+    "Saturn": "Taurus",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : 1 year, 3 months and 4 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Legal luminary. Lagna Scorpio (martian); Lagna lord Mars in 10th (Leo); 10th lord Sun in 12th (Libra) with Mercury. No exaltation/vargottama-type grade for the 10th factors in prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 172,
+   "birth_line": "Born 10/11-7-1891 at 1-18 a.m. (L.M.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Leo",
+    "Mars": "Cancer",
+    "Mercury": "Cancer",
+    "Jupiter": "Aquarius",
+    "Venus": "Gemini",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Libra",
+    "Mars": "Leo",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 9 years, 8 months and 3 days.",
+   "verdicts": [],
+   "confidence": "low",
+   "notes": "No verdict prose available (page 324 outside supplied scans). SOURCE ANOMALY: navamsa prints Mars in TWO cells — a standalone Leo cell AND inside the Libra cluster 'Moon Saturn Mars Ketu'. Mars recorded in Leo; the Libra cell then reads Moon/Saturn/Ketu. Likely a print duplication.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 178,
+   "birth_line": "Born 2/3-7-1828 at 5-30 a.m. (I.S.T.) at 13 N 5, 80 E 15.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Gemini",
+    "Jupiter": "Aries",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Virgo",
+    "Mars": "Leo",
+    "Mercury": "Aquarius",
+    "Jupiter": "Leo",
+    "Venus": "Aries",
+    "Saturn": "Capricorn",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 12 years, 9 months and 27 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "No verdict prose available in supplied pages. Placements clear; Rahu/Ketu opposition verified in both vargas.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 179,
+   "birth_line": "Born 18-4-1904 at 5-46 p.m. (Madras Time) at 22 N 18, 83 E 00.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Taurus",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Pisces",
+    "Venus": "Pisces",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Sagittarius",
+    "Saturn": "Virgo",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Sun's Dasa at birth : 1 year, 0 months and 13 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "No verdict prose in supplied pages. Rasi Rahu placed in Virgo by opposition to Ketu (Pisces, clearly printed); its own cell was not directly legible.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 180,
+   "birth_line": "Born 6-2-1912 at 11 p.m. (I.S.T.) at 15 N 30, 73 E 51.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Taurus",
+    "Mercury": "Capricorn",
+    "Jupiter": "Scorpio",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Taurus",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Sagittarius",
+    "Venus": "Virgo",
+    "Saturn": "Libra",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Moon's Dasa at birth : 5 years, 7 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "debilitated Saturn makes the native trade in common-place articles signified by Venus."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Store proprietor. 10th lord Mercury in 5th (Capricorn) with 12th lord Sun; Saturn debilitated in Aries.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 181,
+   "birth_line": "Born 29/30-12-1879 at 1 a.m. (L.M.T.) at 9 N 50, 78 E 15.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Gemini",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Aquarius",
+    "Venus": "Scorpio",
+    "Saturn": "Pisces",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Gemini",
+    "Mars": "Scorpio",
+    "Mercury": "Aquarius",
+    "Jupiter": "Pisces",
+    "Venus": "Cancer",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : 4 years, 1 month and 20 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The Moon is the atmakaraka and is very strongly placed in vargoltama aspected by Jupiter, the divine planet."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Philosopher (jnani). Lagna Libra vargottama; 10th lord Moon (Gemini) is the graded factor — very strongly placed, vargottama.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 182,
+   "birth_line": "Born 13-3-1925 at 10-12 a.m. (I.S.T.) at 8 N 40, 77 E 41.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Libra",
+    "Mars": "Taurus",
+    "Mercury": "Pisces",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Libra",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Libra",
+    "Mars": "Capricorn",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Aries",
+    "Saturn": "Aries",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 2 years, 2 months and 21 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Saturn is exalted in the 6th house with the Moon."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Photographer. 10th house Aquarius occupied by lagna lord Venus; parivartana Venus-Saturn; 10th lord Saturn exalted in Libra (6th). Navamsa bottom-row cell assignment (Jupiter Scorpio / Moon Libra / Mercury Virgo) is the less certain part.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 183,
+   "birth_line": "Born 13-9-1945 at 1-00 p.m. (Standard Time) at 16 S 30, 68 W 09.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Scorpio",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Cancer",
+    "Saturn": "Cancer",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Sagittarius",
+    "Mars": "Capricorn",
+    "Mercury": "Leo",
+    "Jupiter": "Aries",
+    "Venus": "Aquarius",
+    "Saturn": "Cancer",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 16 years, 0 month and 16 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mercury is with the 9th lord in Rasi and is vargottama."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Physician (research-oriented). 10th house Virgo occupied by lagna lord Jupiter, aspected by Mars(+Rahu) and Saturn from Cancer; 10th lord Mercury vargottama in Leo with 9th lord Sun.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 184,
+   "birth_line": "Born 15-8-1872 at 5-17 a.m. (L.M.T.) at 22 N 30, 88 E 20.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Sagittarius",
+    "Mars": "Cancer",
+    "Mercury": "Leo",
+    "Jupiter": "Cancer",
+    "Venus": "Leo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Gemini",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Aquarius",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : 3 years, 2 months and 22 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Jupiter",
+     "phrase": "The Lagna is conspicuously strong as it is occupied by exalted Jupiter, gnanakaraka and the lord of the 9th or dharmasthana"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "The Sun and Mercury, planets of intelligence, are in the 2nd forming a powerful Budha-Aditya Yoga"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mercury",
+     "phrase": "The Sun and Mercury, planets of intelligence, are in the 2nd forming a powerful Budha-Aditya Yoga"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Poet. Prose grades karakas: Jupiter exalted in Lagna (Cancer), Budha-Aditya (Sun+Mercury) in 2nd (Leo). Venus (planet of poetry) in 2nd.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 185,
+   "birth_line": "Born 3-4-1905 at 2-34 p.m. (I.S.T.) at 14 N 13, 75 E 52.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Scorpio",
+    "Mercury": "Aries",
+    "Jupiter": "Aries",
+    "Venus": "Aries",
+    "Saturn": "Aquarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Leo",
+    "Mercury": "Cancer",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Sagittarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : 12 years, 3 months and 2 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Politician/minister. Lagna Scorpio (martian) with Mars; 10th house Leo occupied by Rahu, aspected by Saturn. No exaltation/vargottama grade for the 10th factors.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 186,
+   "birth_line": "Born 27-11-1920 at 8-37 p.m. (I.S.T.) at 17 N 45, 82 E 30.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Gemini",
+    "Mars": "Capricorn",
+    "Mercury": "Libra",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Virgo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Scorpio",
+    "Mars": "Pisces",
+    "Mercury": "Taurus",
+    "Jupiter": "Scorpio",
+    "Venus": "Libra",
+    "Saturn": "Capricorn",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 0 year, 7 months and 7 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Sub-postmaster. 10th house Pisces (empty) ruled by Jupiter, aspected by Saturn; 10th lord Jupiter in 3rd (Leo). No graded strength verdict. Navamsa Mars cell (Pisces vs Aries) slightly uncertain.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 187,
+   "birth_line": "Born 8-8-1913 at 4-30 p.m. (I.S.T.) at 13 N 17, 77 E 35.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Aquarius",
+    "Mars": "Virgo",
+    "Mercury": "Cancer",
+    "Jupiter": "Virgo",
+    "Venus": "Leo",
+    "Saturn": "Capricorn",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Gemini",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : 5 years, 7 months and 28 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th and 9th lords combine in the 8th forming the Raja Yoga for success and fame."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "As 5th lord Mars, vargottama in the 10th gives a forceful and hammering approach in the native's dealing with cases."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Public prosecutor. Birth-year misprinted '9133' in scan; corrected to 1913 from context. 10th house Virgo occupied by Jupiter & Mars (Mars vargottama); 10th & 9th lords (Mercury, Sun) combine in 8th (Cancer). Mars is not a canonical 10th karaka but tagged karaka for the verbatim strength grade.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 188,
+   "birth_line": "Born 17-10-1915 at 8-00 p.m. (I.S.T.) at 25 N 23, 68 E 21.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Capricorn",
+    "Mars": "Cancer",
+    "Mercury": "Libra",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Capricorn",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 4 years, 9 months and 10 days.",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "The 10th house in Chart No. 188 is occupied by Jupiter and aspected by debilitated Mars who gets cancellation of debilitation."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Publisher. 10th house Aquarius occupied by Jupiter, aspected by debilitated Mars (Cancer) with neechabhanga. Mars tagged karaka for the verbatim strength grade though not a canonical 10th karaka.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 190,
+   "birth_line": "Born 30-77-7858 at 4-25 p.m. (L.M.T.) at 23 N 33, 90 E 3.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Virgo",
+    "Mars": "Capricorn",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Taurus",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Gemini",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Leo",
+    "Venus": "Gemini",
+    "Saturn": "Capricorn",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Moon's Dasa at birth : 2 years, 3 months and 0 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Saturn is in Cancer aspected by exalted Mars from an earthy sign"
+    },
+    {
+     "factor": "bhava",
+     "phrase": "Saturn's aspect on the 10th house and Aquarius with Rahu on the 10th cusp made the native a scientific mystic"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Scientist/physicist (J. C. Bose). Birth-line digits garbled in source scan (date/longitude); recorded verbatim as printed.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 191,
+   "birth_line": "Born 6-7-7920 at 72-77 p.m. (I.S.T.) at 10, N 50. 78E42.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Aquarius",
+    "Mars": "Libra",
+    "Mercury": "Cancer",
+    "Jupiter": "Cancer",
+    "Venus": "Gemini",
+    "Saturn": "Leo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Pisces",
+    "Venus": "Taurus",
+    "Saturn": "Leo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 3 years, 2 months and 2 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord occupies Cancer with exalted Jupiter"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Script-writer. Birth-line digits garbled in source scan; recorded verbatim as printed. Prose confirms Venus in 10th (Gemini) and 10th lord Mercury in navamsa Sagittarius.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 192,
+   "birth_line": "Born 21/22-3-1901 at 0-39 a.m. (LMT) at 27 N 55. 68 E 45.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Leo",
+    "Mercury": "Aquarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Virgo",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 2 years, 8 months and 4 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 10th house Virgo is aspected by the 8th lord vargottama Moon and 2nd and 3rd lord Saturn"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 10th lord Mercury is with the 6th and 11th lord Venus aspected by 5th and 12th lord Mars and Saturn"
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Theatre-owner and money-lender. RASI Rahu is not explicitly printed in the scan; inferred to Scorpio as the required opposite of the printed Ketu (Taurus). Navamsa nodes printed and consistent (Leo/Aquarius).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 193,
+   "birth_line": "Born 6/7-9-1936 at 4-30 a.m. (DST) at 35 N 0. 106 W 40.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Taurus",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Virgo",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Aquarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Aquarius",
+    "Venus": "Aries",
+    "Saturn": "Gemini",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Moon's Dasa at birth : 6 years, 11 months and 16 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "the 10th lord Mars in Chart No. 193 occupies his debility sign Cancer but gets cancellation of debility because Jupiter who gets exalted in Cancer is in a quadrant from the Moon"
+    }
+   ],
+   "confidence": "high",
+   "notes": "University lecturer / college professor. Navamsa Sun placement (Libra) slightly uncertain vs Scorpio; not a node.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 194,
+   "birth_line": "Born 13-3-1948 at 10-30 a.m. (I.S.T.) at 11 N 06, 79 E 42.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Aquarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aries",
+    "Saturn": "Cancer",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Pisces",
+    "Mercury": "Scorpio",
+    "Jupiter": "Taurus",
+    "Venus": "Leo",
+    "Saturn": "Aquarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 3 years, 9 months and 27 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 10th house from Lagna has the intellectual planet Mercury while the 10th house from the Sun and the Moon is occupied by Jupiter"
+    }
+   ],
+   "confidence": "high",
+   "notes": "University lecturer / college lecturer.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 197,
+   "birth_line": "Born 23-1-1897 at about 12 Noon (L.M.T.) at 5 E 44. 20 N 38.",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Taurus",
+    "Mercury": "Capricorn",
+    "Jupiter": "Leo",
+    "Venus": "Aquarius",
+    "Saturn": "Sagittarius",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Pisces",
+    "Jupiter": "Virgo",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "balance of Sun's Dasa at birth: 0 year, 4 months and 15 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the presence of the Sun, Rahu and Mercury in the 10th or house of career and occupation"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "Rahu eclipsing the political planet Sun in the 10th house in a sign owned by Saturn"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Subhas Chandra Bose. RASI Moon read at Virgo (bottom-right corner); could alternatively be Libra, not a node.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 198,
+   "birth_line": "Born 14-11-1889 at 11-03 p.m. (L.M.T.) at 25 N 25, 82 E.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Cancer",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Sagittarius",
+    "Venus": "Libra",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 13 years, 7 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Five planets—Jupiter, Sun, Mercury, Venus and Mars—aspecting the 10th were mainly responsible for making him the idol of India"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Jawaharlal Nehru.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 199,
+   "birth_line": "Born 8-5-1884 at 4-26 p.m. (L.M.T.) at 39 N 7,94 W 30.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Libra",
+    "Mars": "Cancer",
+    "Mercury": "Taurus",
+    "Jupiter": "Cancer",
+    "Venus": "Gemini",
+    "Saturn": "Taurus",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Aquarius",
+    "Mars": "Aquarius",
+    "Mercury": "Aries",
+    "Jupiter": "Virgo",
+    "Venus": "Capricorn",
+    "Saturn": "Gemini",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Rahu's Dasa at birth : 7 years, 5 months and 27 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Jupiter exalted is actually in the 10th Bhava though in the 11th Rasi"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Harry S. Truman. Lagna vargottama (Virgo in both rasi and navamsa).",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 201,
+   "birth_line": "Born 21-4-1926 at 1-40 p.m. (G.M.T.) at 51 N 30, 0 W 05.",
+   "lagna_rasi": "Capricorn",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Cancer",
+    "Mars": "Capricorn",
+    "Mercury": "Pisces",
+    "Jupiter": "Aquarius",
+    "Venus": "Pisces",
+    "Saturn": "Scorpio",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Capricorn",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Libra",
+    "Venus": "Capricorn",
+    "Saturn": "Cancer",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 11 years, 9 months and 23 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "An unsullied 10th house aspected by karaka exalted the Sun and a weak cuspal 3rd and 12th lord indicates a spotless reign"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "An unsullied 10th house aspected by karaka exalted the Sun"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Queen Elizabeth II. Lagna and nodes vargottama (Capricorn lagna, Gemini/Sagittarius nodes in both charts), confirming prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 205,
+   "birth_line": "Born 9-9-1913 at 9-30 p.m. (P.S.T.) at 33 N 53, 117 W 49.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Capricorn",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aquarius",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Virgo",
+    "Mars": "Gemini",
+    "Mercury": "Gemini",
+    "Jupiter": "Cancer",
+    "Venus": "Capricorn",
+    "Saturn": "Aquarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 4 years, 1 month and 4 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Saturn in the 10th is not at all desirable for although it confers initial success, it also gives defeat and humiliation in politically oriented charts"
+    }
+   ],
+   "confidence": "high",
+   "notes": "US President elected in Mercury Dasa who fell in a corruption scandal (Nixon). Sun (Lagna lord) vargottama in Sagittarius (both charts), confirming prose.",
+   "house_judged": 10
+  },
+  {
+   "chart_no": 206,
+   "birth_line": "Born 19-11-1917 at 11-13 p.m. (I.S.T.) at 25 N 27, 81 E 51.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Capricorn",
+    "Mars": "Leo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Taurus",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Taurus",
+    "Venus": "Libra",
+    "Saturn": "Capricorn",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Sun's Dasa at birth : 1 year, 3 months and 25 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Indira Gandhi. Prose discusses parivartana/vargottama Rajayogas generally; no explicitly graded strength verdict specific to the 10th house/lord/karaka. Moon-Saturn exchange, Jupiter & Mercury vargottama all confirmed by placements.",
+   "house_judged": 10
+  }
+ ]
+}

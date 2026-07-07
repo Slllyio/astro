@@ -307,6 +307,20 @@ class TestCalibration:
     12-14; scratchpad/htjah_h1_calibration.json) and must reproduce his stated
     per-factor verdicts within one grade."""
 
+    def test_mild_frame_does_not_rescue_a_deeply_afflicted_one(self):
+        # Phase 2.5 -- a DEEPLY-afflicted frame (< -1.0) is not fully rescued by a
+        # merely-mild opposite frame: the optimistic 30% discount is withheld
+        # (Raman grades such a karaka "afflicted", not "moderately good"). A MILDLY
+        # afflicted frame is still rescued as before, keeping the change narrow.
+        deep = [Finding("deep affliction", -1.5, "Rasi", "dignity"),
+                Finding("mild plus", 0.8, "Navamsa", "dignity")]
+        score, _r, _n = _combine(deep, additive=False)
+        assert score < -0.3            # NOT rescued to a positive "moderately good"
+        mild = [Finding("mild affliction", -0.6, "Rasi", "dignity"),
+                Finding("nav plus", 0.9, "Navamsa", "dignity")]
+        score2, _r2, _n2 = _combine(mild, additive=False)
+        assert score2 > 0.5            # a mild affliction is still optimistically rescued
+
     def test_unassessed_frame_does_not_rescue_affliction(self):
         # Phase 2.2 -- an UN-assessed varga must not stand in as a phantom 0 that
         # rescues an afflicted Rasi via the optimistic blend. A planet with only

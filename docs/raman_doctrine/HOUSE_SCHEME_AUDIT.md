@@ -846,3 +846,30 @@ Mainpuri's Mars owns Scorpio-1 AND Aries-6).
   way — flagged for calibration when the gold set grows (+ Navāṁśa).
 - The token audit harness is blind to this feature (corpus rows don't encode lordship),
   so the **held-out set is its judge**. As the gold set grows it is also Phase B's test.
+
+### Increment 5 — mild frame cannot rescue a deeply-afflicted one (held-out-driven, DONE)
+
+The full-verdict held-out set (Ch VII) exposed the next over-credit: the optimistic
+cross-varga blend `hi + 0.3·lo` rescued a **deeply-afflicted** frame via a **mild**
+opposite one. Chart 71 kāraka Moon: Rāśi **−1.34** (afflicted — kendra +1.2, dusthāna
+−1.0, then Ketu/Saturn/Rahu), Navāṁśa **+0.8** (Moon merely "friendly", one finding) →
+blend `0.8 + 0.3·(−1.34) = +0.4` = "moderately good". Raman: **afflicted**. The optimism
+was calibrated on a *strong* Navāṁśa rescue (Chart 12 exaltation), not a mild one.
+
+`_combine` now withholds the 30% discount from a **deeply-afflicted** weaker frame
+(`lo < _AFFLICT_FLOOR = −1.0`, i.e. worse than one full malefic) when the rescuer is
+itself **mild** (`hi < _RESCUE_KNEE = 1.2`), applying `_RESCUE_W_WEAK = 0.9` instead.
+Gated on affliction **depth** so a *mild* affliction is still rescued as before —
+Mainpuri's house-1 Mars (lo −0.6) is untouched, keeping the anchor byte-stable.
+
+- **Effect:** ch71 kāraka **+3 → +2** (moderately good → moderate, score +0.4 → −0.41);
+  held-out mean Δ +1.22 → +1.11. **Zero regression:** the branch almost never fires in
+  the token corpora, so tuned stays 89/112 within-one, anchor 8/8, house-1 byte-stable;
+  234 tests pass. Auditable (unlike 2.4) since it lives in `_combine`.
+- **Honest limit:** it does not cross ch71 into within-one. An ungated version (any
+  affliction, w 0.9) did move held-out 4→5/9 **but shifted house-1's mildly-afflicted
+  Mars** — over-reaching for N=9. So 2.5 is the *conservative, principled* fix; fully
+  closing the kāraka gap needs more held-out N to calibrate the magnitude.
+- **Still open:** ch70 lord/kāraka (+3) is a *different* mechanism — the kendra +1.2
+  over-credits **in the Rāśi itself** (rasi +0.23 where Raman sees affliction), the
+  positive-saturation frontier; and the clean/empty-house under-score (ch70 bhāva −2).

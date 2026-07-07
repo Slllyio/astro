@@ -467,6 +467,9 @@ _W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
 # ONLY -- the negative side is already correct (every afflicted/dusthana factor and
 # ch. VIII's childless charts matched), and the knee is set so no mid-range verdict
 # and no ch. IV calibration anchor (Charts 12-14) shifts out of within-one.
+_RESCUE_KNEE = 1.2      # a stronger frame at/above this "earns" the optimistic rescue
+_RESCUE_W_WEAK = 0.9    # discount on a DEEPLY-afflicted weaker frame when rescuer is mild
+_AFFLICT_FLOOR = -1.0   # a weaker frame below this is "deeply afflicted" (>1 malefic)
 _POS_KNEE = 1.6
 _POS_SLOPE = 0.1
 
@@ -660,7 +663,16 @@ def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, flo
     # not "moderate"). Blend only across frames that carry findings.
     if rasi_ds and nav_ds:
         hi, lo = (rasi, nav) if rasi >= nav else (nav, rasi)
-        return round(hi + 0.3 * lo, 3), rasi, nav
+        # Phase 2.5: the optimistic 30% discount on the weaker frame is EARNED only
+        # when the stronger frame is genuinely strong (Chart 12: a Navamsa exaltation
+        # rescues an afflicted Rasi). A merely-mild frame must NOT rescue a strongly
+        # afflicted one -- there the affliction counts more (Raman grades such a
+        # karaka "afflicted", not "moderately good"). The optimistic 30% discount is
+        # withheld only from a DEEPLY-afflicted weaker frame (below _AFFLICT_FLOOR)
+        # when the rescuer is itself mild -- a mild affliction is still rescued as
+        # before, keeping the change narrow (house-1 Mars, lo -0.6, is untouched).
+        w = (_RESCUE_W_WEAK if (lo < _AFFLICT_FLOOR and hi < _RESCUE_KNEE) else 0.3)
+        return round(hi + w * lo, 3), rasi, nav
     return (rasi if rasi_ds else nav), rasi, nav
 
 

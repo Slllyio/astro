@@ -35,10 +35,26 @@ def delta_of(feat: dict) -> float:
     if t == "aspect":
         return _W["aspect"] if feat["benefic"] else -_W["aspect"]
     if t == "bhava_aspect":
+        # Phase 2.3: an exalted planet aspecting the bhava is credited like an
+        # exalted companion (conjunct_exalted), scaled to the bhava-aspect weight.
+        if feat.get("exalted"):
+            return _W["conjunct_exalted"] * _W["bhava_aspect_mul"]
         base = _W["aspect"] if feat["benefic"] else -_W["aspect"]
         return base * _W["bhava_aspect_mul"]
     if t == "occupant":
-        return _W["conjunct"] if feat["benefic"] else -_W["conjunct"]
+        # Phase 2.1: an occupant's dignity colours the bhava. Mirror _assess_bhava:
+        # exalted replaces the ±0.7 nature; own/debil/neechabhanga add to it.
+        dg = feat.get("dignity")
+        if dg == "exalted":
+            return _W["conjunct_exalted"]
+        base = _W["conjunct"] if feat["benefic"] else -_W["conjunct"]
+        if dg == "own":
+            return base + _DIGNITY_W["own"]
+        if dg == "debilitated":
+            return base + _DIGNITY_W["debilitated"]
+        if dg == "neechabhanga":
+            return base + _W["neechabhanga"]
+        return base
     if t == "conjunct":
         if feat.get("exalted"):
             return _W["conjunct_exalted"]

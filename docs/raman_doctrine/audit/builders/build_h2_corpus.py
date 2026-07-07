@@ -7,16 +7,16 @@ def VG(): return {"type":"vargottama","frame":B,"why":"vargottama"}
 def NB(): return {"type":"neechabhanga","why":"neechabhanga"}
 def DIG(s,fr=R): return {"type":"dignity","state":s,"frame":fr,"why":f"{s} ({fr})"}
 def ASP(b,fr=R): return {"type":"aspect","benefic":b,"frame":fr,"why":f"aspect ({fr})"}
-def BASP(b): return {"type":"bhava_aspect","benefic":b,"why":"house aspect"}
-def OCC(b): return {"type":"occupant","benefic":b,"why":"occupant"}
+def BASP(b,ex=False): return {"type":"bhava_aspect","benefic":b,"exalted":ex,"why":"house aspect"+(" (exalted)" if ex else "")}
+def OCC(b,dig=None): return {"type":"occupant","benefic":b,"dignity":dig,"why":"occupant"+(f" ({dig})" if dig else "")}
 def CNJ(b,fr=R,ex=False): return {"type":"conjunct","benefic":b,"frame":fr,"exalted":ex,"why":f"conjunct ({fr})"}
 def KTR(k): return {"type":"kartari","kind":k,"why":f"{k}kartari"}
 def row(chart,role,subject,additive,findings,expected,note=""):
     return {"chart":chart,"role":role,"subject":subject,"additive":additive,"findings":findings,"expected":expected,"note":note}
 rows=[
  # Chart 40 (TRAIN)
- row(40,"Bhava","2nd (4 planets, cancellations)",True,[OCC(False),OCC(False),OCC(False),OCC(True),BASP(True)],"very strong",
-     "own-sign Mars + neechabhanga Moon + exalted-Jupiter aspect = 'very strongly situated'; occupant cancellations unseen by scheme"),
+ row(40,"Bhava","2nd (4 planets, cancellations)",True,[OCC(False,"own"),OCC(True,"neechabhanga"),OCC(False),OCC(True),BASP(True,ex=True)],"very strong",
+     "own-sign Mars + neechabhanga Moon + exalted-Jupiter aspect = 'very strongly situated'; now encoded via occupant/aspect dignity (Phase 2.1/2.3)"),
  row(40,"Lord","Mars (2L own, 2nd)",False,[DIG("own"),CNJ(True),ASP(True)],"very strong"),
  row(40,"Dhana","Jupiter (exalt, 10th)",False,[P("kendra_trikona"),DIG("exalted"),ASP(True)],"very strong"),
  # Chart 41 (TRAIN)

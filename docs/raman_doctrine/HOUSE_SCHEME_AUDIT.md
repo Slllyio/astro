@@ -793,3 +793,30 @@ over-credit" into two mechanisms:
    damping the positive cap would only trade over for under (confirming the v2
    negative result). Closing this needs new FEATURES (combustion, upagraha,
    parivartana, nodal constellation), not a cap tweak — the next Phase-2 increments.
+
+### Increment 3 — bhāva-aspect dignity + audit-honesty sync (DONE)
+
+The residual mispredictions (audit `-v`) showed the worst misses are BHĀVA
+under-predictions where an occupant's or aspecting planet's **dignity** is unseen —
+worst of all chart 40's 2nd bhāva (d=−6): "own-sign Mars + neechabhaṅga Moon +
+exalted-Jupiter aspect", which Raman calls "very strong". Two gaps behind it:
+
+1. **Engine (new feature): bhāva-aspect dignity.** `_assess_bhava`/`_aspect_findings`
+   now credit an **exalted** planet aspecting a house like an exalted companion
+   (`conjunct_exalted × bhava_aspect_mul`), whatever its functional nature — the same
+   dignity-over-nature logic as the occupant (2.1) and conjunction credits.
+   Blast radius on Mainpuri is one house: **5th bhāva `weak → moderate`** (exalted
+   Mercury aspects it). 224 tests pass; `test_exalted_aspect_on_bhava_is_credited`.
+2. **Audit honesty:** the harness still scored occupants flat ±0.7 — stale vs the 2.1
+   engine — so the audit *under-reported* the engine's real accuracy. `delta_of` now
+   models occupant dignity (2.1) and aspect dignity (2.3), and chart 40's occupant/
+   aspect dignities are encoded from Raman's own note. Result: chart 40's 2nd bhāva
+   **d=−6 → −2**; within-one holds at 81, anchor 8/8, under-count unchanged.
+
+The features now fire correctly; chart 40 stops two grades short of "very strong"
+only because the positive soft-cap holds the score near 1.0. Combustion was
+**rejected** for this increment: it appears in ~1 corpus row (chart 45's Venus+Sun)
+and has high blast radius on Mainpuri (Mercury+Mars are combust in the 11th → would
+undo the 2.1 gain). The remaining frontier is positive-cap saturation, bounded on
+both sides (over>1=10 stacked positives; the "very strong" tail of under>1) — a
+structural saturation change, not more features, is what moves it next.

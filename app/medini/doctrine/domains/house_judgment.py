@@ -710,10 +710,22 @@ def _dignity_findings(chart, planet, sign, frame, scale=1.0) -> list[Finding]:
 
 
 def _aspect_findings(chart, houses, target_house, subject, frame, scale=1.0,
-                     ref_sign=None) -> list[Finding]:
+                     ref_sign=None, dignity_aware=False) -> list[Finding]:
     out: list[Finding] = []
+    signs = (chart.bundle.chart.planet_signs if frame == "Rasi"
+             else {p: chart.varga_signs[p][9] for p in GRAHAS}) if dignity_aware else None
     for a in planets_aspecting_bhava(target_house, houses):
         if a == subject:
+            continue
+        # An EXALTED planet aspecting a bhava strengthens it, whatever its
+        # functional nature -- the same credit an exalted occupant/companion gets
+        # (Raman, Chart 40: an exalted-Jupiter aspect helps make the 2nd "very
+        # strongly situated"). dignity_aware is set only for bhava aspects.
+        if (dignity_aware and a in _CLASSICAL
+                and dignity_state(a, signs[a]) == "exalted"):
+            out.append(Finding(f"aspected by {a} (exalted)",
+                               round(_W["conjunct_exalted"] * scale, 2),
+                               frame, "aspect"))
             continue
         ben, tag = _planet_nature(chart, a, ref_sign)
         w = (_W["aspect"] if ben else -_W["aspect"]) * scale
@@ -824,7 +836,7 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
                                  _DIGNITY_W["debilitated"], "Rasi", "dignity"))
     if not occ:
         f.append(Finding("occupied by no planet", 0.0, "Rasi", "conjunction"))
-    ra = _aspect_findings(chart, d1, house, None, "Rasi", amul)
+    ra = _aspect_findings(chart, d1, house, None, "Rasi", amul, dignity_aware=True)
     f += ra
     if not ra:
         f.append(Finding("aspected by no planet", 0.0, "Rasi", "aspect"))
@@ -837,7 +849,7 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
                          _W["kartari_papa"], "Rasi", "kartari"))
     if house == 1:                        # the Navamsa lagna: aspects on it (×0.5)
         d9 = _d9_houses(chart)
-        na = _aspect_findings(chart, d9, 1, None, "Navamsa", amul)
+        na = _aspect_findings(chart, d9, 1, None, "Navamsa", amul, dignity_aware=True)
         f += na
         nk, _n2, _n12 = _kartari(chart, 1, d9)
         if nk == "subha":

@@ -32,7 +32,7 @@ PYTHONPATH=. python3 docs/raman_doctrine/audit/validate_house.py \
 `-v` prints every row that misses by more than one grade (the tuning signal). Holdout
 rows are `chart_no % 3 == 0`; TRAIN/HOLDOUT/OVERALL are reported separately.
 
-## Current baseline (post Phase 2.2)
+## Current baseline (post Phase 2.3)
 
 | set | n | within-one | exact | over>1 | under>1 | mean |
 |-----|---|-----------|-------|--------|---------|------|
@@ -40,14 +40,22 @@ rows are `chart_no % 3 == 0`; TRAIN/HOLDOUT/OVERALL are reported separately.
 | full corpus (h2,7,9,11) | 104 | 81 (78%) | 52 (50%) | 10 | 13 | −0.02 |
 
 Phase 2.2 (no-phantom-frame blend) raised within-one 79→81 and exact 44→52 while
-**leaving under>1 flat at 13** — an un-assessed varga no longer stands in as a
-phantom 0 that rescues an afflicted Rasi. This was a real logic fix, not the v2
-zero-sum weight-tuning frontier.
+leaving under>1 flat at 13 — an un-assessed varga no longer rescues an afflicted Rasi.
 
-The remaining `over>1` (10) is stacked positives (kendra + dignity + benefic
-conjunctions saturating just under the ceiling) — the v2-exhausted tuning frontier;
-closing it needs new *features* (combustion, upagraha, parivartana, nodal), not a
-cap tweak.
+Phase 2.3 synced the **harness** to the engine's occupant dignity (2.1) and added
+**bhāva-aspect dignity** (an exalted planet aspecting a house is credited like an
+exalted companion). Within-one is unchanged (81), but the worst outlier collapses:
+chart 40's 2nd bhāva (own Mars + neechabhaṅga Moon + exalted-Jupiter aspect) moves
+from **d=−6 (weak) to d=−2 (fairly strong)**. It stops two grades short of Raman's
+"very strong" only because the positive soft-cap holds the score near 1.0 — the
+dignity *features* now fire correctly, and the residual is purely positive-cap
+saturation.
+
+That frontier now bounds the corpus on both sides: the `over>1` (10, stacked
+positives just under the ceiling) and the tail of `under>1` (multi-positive bhāvas
+Raman calls "very strong"). The cap cannot be both looser (to reach "very strong")
+and tighter (to stop over-crediting "moderate"), so further movement needs a
+structural change to how positives saturate — not more features.
 
 `tests/doctrine/test_audit_anchor.py` gates the anchor (8/8) and the corpus
 within-one floor (81) so a future scheme edit cannot silently regress the calibration.

@@ -228,6 +228,16 @@ class TestStrengthAssessor:
         venus = [f for f in b.findings if "Venus" in f.text and f.frame == "Rasi"]
         assert len(venus) == 1 and venus[0].criterion == "conjunction"
 
+    def test_exalted_aspect_on_bhava_is_credited(self, mainpuri):
+        # Phase 2.3 -- an EXALTED planet aspecting a bhava strengthens it, whatever
+        # its functional nature (mirrors conjunct_exalted / occupant-exalted). On
+        # Mainpuri, exalted Mercury aspects the 5th: a positive aspect finding, not
+        # the -0.35 malefic aspect it scored before.
+        b = _assess_bhava(mainpuri, 5)
+        asp = [f for f in b.findings
+               if "aspected by Mercury" in f.text and f.frame == "Rasi"]
+        assert asp and "(exalted)" in asp[0].text and asp[0].delta > 0
+
     def test_is_benefic_waxing_moon(self, mainpuri):
         # Mainpuri Moon (Aqu 19) vs Sun (Vir 26): elongation ~ 142 -> waxing -> benefic
         assert _is_benefic(mainpuri, "Moon")

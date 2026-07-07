@@ -12,31 +12,36 @@
     {
      "type": "occupant",
      "benefic": false,
-     "why": "occupant"
+     "dignity": "own",
+     "why": "occupant (own)"
+    },
+    {
+     "type": "occupant",
+     "benefic": true,
+     "dignity": "neechabhanga",
+     "why": "occupant (neechabhanga)"
     },
     {
      "type": "occupant",
      "benefic": false,
-     "why": "occupant"
-    },
-    {
-     "type": "occupant",
-     "benefic": false,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "occupant",
      "benefic": true,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "bhava_aspect",
      "benefic": true,
-     "why": "house aspect"
+     "exalted": true,
+     "why": "house aspect (exalted)"
     }
    ],
    "expected": "very strong",
-   "note": "own-sign Mars + neechabhanga Moon + exalted-Jupiter aspect = 'very strongly situated'; occupant cancellations unseen by scheme"
+   "note": "own-sign Mars + neechabhanga Moon + exalted-Jupiter aspect = 'very strongly situated'; now encoded via occupant/aspect dignity (Phase 2.1/2.3)"
   },
   {
    "chart": 40,
@@ -103,16 +108,19 @@
     {
      "type": "occupant",
      "benefic": false,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "occupant",
      "benefic": true,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "occupant",
      "benefic": false,
+     "dignity": null,
      "why": "occupant"
     }
    ],
@@ -177,11 +185,13 @@
     {
      "type": "occupant",
      "benefic": false,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "bhava_aspect",
      "benefic": false,
+     "exalted": false,
      "why": "house aspect"
     }
    ],
@@ -292,11 +302,13 @@
     {
      "type": "occupant",
      "benefic": false,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "bhava_aspect",
      "benefic": false,
+     "exalted": false,
      "why": "house aspect"
     }
    ],
@@ -351,6 +363,7 @@
     {
      "type": "bhava_aspect",
      "benefic": true,
+     "exalted": false,
      "why": "house aspect"
     }
    ],
@@ -433,11 +446,13 @@
     {
      "type": "occupant",
      "benefic": false,
+     "dignity": null,
      "why": "occupant"
     },
     {
      "type": "bhava_aspect",
      "benefic": true,
+     "exalted": false,
      "why": "house aspect"
     }
    ],
@@ -468,6 +483,7 @@
     {
      "type": "bhava_aspect",
      "benefic": true,
+     "exalted": false,
      "why": "house aspect"
     }
    ],

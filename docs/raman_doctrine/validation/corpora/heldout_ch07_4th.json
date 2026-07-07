@@ -1,12 +1,12 @@
 {
- "source": "HTJAH Vol.1 Ch.VII (4th house), p.170-171",
+ "source": "HTJAH Vol.1 Ch.VII (4th house), scans p.170-181",
  "chapter": "ch07_4th",
+ "axis": "rasi",
  "charts": [
   {
    "chart_no": 64,
    "house_judged": 4,
    "axis": "rasi",
-   "birth_line": "Born on 8-8-1912 A.D. at 7-35 p.m. (I.S.T.) Lat. 13 N., Long. 5h.10m.20s. E.",
    "lagna_rasi": "Aquarius",
    "rasi": {
     "Sun": "Cancer",
@@ -19,7 +19,6 @@
     "Rahu": "Pisces",
     "Ketu": "Virgo"
    },
-   "dasha_balance": "Balance of Mars Dasa at birth: Years 6-1-6.",
    "verdicts": [
     {
      "factor": "bhava",
@@ -34,8 +33,87 @@
      "phrase": "Matrukaraka is definitely afflicted"
     }
    ],
-   "confidence": "high",
-   "notes": "Rasi cross-verified from scan + prose aspect/hemming logic; navamsa not encoded (rasi-axis)."
+   "confidence": "high"
+  },
+  {
+   "chart_no": 69,
+   "house_judged": 4,
+   "axis": "rasi",
+   "lagna_rasi": "Aries",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Aquarius",
+    "Jupiter": "Leo",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is moderately strong"
+    }
+   ],
+   "confidence": "high"
+  },
+  {
+   "chart_no": 70,
+   "house_judged": 4,
+   "axis": "rasi",
+   "lagna_rasi": "Aries",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is moderately strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The fourth lord and Matrukaraka are considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "The fourth lord and Matrukaraka are considerably afflicted"
+    }
+   ],
+   "confidence": "high"
+  },
+  {
+   "chart_no": 71,
+   "house_judged": 4,
+   "axis": "rasi",
+   "lagna_rasi": "Aquarius",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Leo",
+    "Mars": "Virgo",
+    "Mercury": "Cancer",
+    "Jupiter": "Virgo",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is fairly strong"
+    }
+   ],
+   "confidence": "high"
   }
  ]
 }

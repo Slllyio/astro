@@ -80,6 +80,16 @@ def consistency_errors(rasi: dict, navamsa: dict) -> list[str]:
     return bad
 
 
+def chart_from_rasi(rasi: dict, lagna_rasi):
+    """Build a chart from Rāśi signs ALONE (navāṁśa parked at a fixed pada). The
+    Navāṁśa frame is then a deterministic placeholder — only the Rāśi-axis verdict
+    (``FactorVerdict.rasi_score``) is meaningful. Use when the printed Navāṁśa can't be
+    extracted reliably; validate the Rāśi axis only."""
+    nav = {g: navamsa_sign_of_pada(sign_num(rasi[g]), 4) for g in rasi}
+    return chart_from_raman(rasi, nav, lagna_rasi,
+                            navamsa_sign_of_pada(sign_num(lagna_rasi), 4))
+
+
 def chart_from_raman(rasi: dict, navamsa: dict, lagna_rasi, lagna_navamsa):
     """Build a RamanChart from printed Rāśi + Navāṁśa sign diagrams.
 

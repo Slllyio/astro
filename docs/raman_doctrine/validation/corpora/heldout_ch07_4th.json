@@ -1,0 +1,41 @@
+{
+ "source": "HTJAH Vol.1 Ch.VII (4th house), p.170-171",
+ "chapter": "ch07_4th",
+ "charts": [
+  {
+   "chart_no": 64,
+   "house_judged": 4,
+   "axis": "rasi",
+   "birth_line": "Born on 8-8-1912 A.D. at 7-35 p.m. (I.S.T.) Lat. 13 N., Long. 5h.10m.20s. E.",
+   "lagna_rasi": "Aquarius",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Leo",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "dasha_balance": "Balance of Mars Dasa at birth: Years 6-1-6.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is fairly strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord Venus is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "Matrukaraka is definitely afflicted"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Rasi cross-verified from scan + prose aspect/hemming logic; navamsa not encoded (rasi-axis)."
+  }
+ ]
+}

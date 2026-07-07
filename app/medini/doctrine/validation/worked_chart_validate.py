@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from app.medini.doctrine.domains.house_judgment import (
-    VERDICT_SCALE, judge_house_doctrine,
+    VERDICT_SCALE, _verdict_label, judge_house_doctrine,
 )
 from app.medini.doctrine.validation import reconstruct as R
 
@@ -57,20 +57,37 @@ def _engine_label(judgment, factor: str) -> str:
     return obj.label
 
 
+def _engine_label_rasi(judgment, factor: str) -> str:
+    """The Rāśi-axis label for a factor (from FactorVerdict.rasi_score). 'overall' has
+    no Rāśi-only form and is skipped in rāśi-only mode."""
+    obj = getattr(judgment, _FACTOR_ATTR[factor])
+    return _verdict_label(obj.rasi_score)
+
+
 def validate_record(rec: dict, patterns: list[tuple[str, str]]) -> dict[str, Any]:
     """Validate one worked chart. Returns a result dict with per-verdict deltas, or an
-    ``excluded`` reason (bad extraction / unmappable / unjudged)."""
-    rasi, nav = rec["rasi"], rec["navamsa"]
-    bad = R.consistency_errors(rasi, nav)
-    if bad:
-        return {"chart": rec.get("chart_no"), "excluded": "inconsistent", "detail": bad}
+    ``excluded`` reason (bad extraction / unmappable / unjudged).
+
+    ``rec['axis'] == 'rasi'`` (or a record with no ``navamsa``) scores the Rāśi-axis
+    verdict only — used when the printed Navāṁśa can't be extracted reliably."""
+    rasi = rec["rasi"]
+    rasi_only = rec.get("axis") == "rasi" or "navamsa" not in rec
     try:
-        chart = R.chart_from_raman(rasi, nav, rec["lagna_rasi"], rec["lagna_navamsa"])
+        if rasi_only:
+            chart = R.chart_from_rasi(rasi, rec["lagna_rasi"])
+        else:
+            bad = R.consistency_errors(rasi, rec["navamsa"])
+            if bad:
+                return {"chart": rec.get("chart_no"), "excluded": "inconsistent",
+                        "detail": bad}
+            chart = R.chart_from_raman(rasi, rec["navamsa"], rec["lagna_rasi"],
+                                       rec["lagna_navamsa"])
     except (ValueError, KeyError) as e:
         return {"chart": rec.get("chart_no"), "excluded": "reconstruct_error",
                 "detail": str(e)}
     house = int(rec["house_judged"])
     judgment = judge_house_doctrine(chart, house)
+    label = _engine_label_rasi if rasi_only else _engine_label
     rows = []
     for v in rec.get("verdicts", []):
         factor = v["factor"]
@@ -78,14 +95,17 @@ def validate_record(rec: dict, patterns: list[tuple[str, str]]) -> dict[str, Any
         if factor not in _FACTOR_ATTR:
             rows.append({"factor": factor, "excluded": "unknown_factor"})
             continue
+        if rasi_only and factor == "overall":
+            rows.append({"factor": factor, "excluded": "overall_needs_navamsa"})
+            continue
         if raman_grade is None:
             rows.append({"factor": factor, "phrase": v["phrase"],
                          "excluded": "unmappable_phrase"})
             continue
-        eng = _engine_label(judgment, factor)
+        eng = label(judgment, factor)
         d = _IDX[eng] - _IDX[raman_grade]
         rows.append({"factor": factor, "phrase": v["phrase"], "raman": raman_grade,
-                     "engine": eng, "delta": d})
+                     "engine": eng, "delta": d, "axis": "rasi" if rasi_only else "full"})
     return {"chart": rec.get("chart_no"), "house": house, "rows": rows}
 
 

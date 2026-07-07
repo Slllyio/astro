@@ -1,0 +1,52 @@
+{
+  "params": {
+    "dg.exalted": 1.6556,
+    "dg.own": 1.2205,
+    "dg.friendly": 0.6042,
+    "dg.inimical": -0.8602,
+    "dg.debilitated": -1.4451,
+    "w.dusthana": -0.8759,
+    "w.kendra_trikona": 0.9126,
+    "w.vargottama": 1.2257,
+    "w.neechabhanga": 0.2199,
+    "w.kartari_subha": 1.0889,
+    "w.kartari_papa": -0.8658,
+    "w.aspect": 0.6909,
+    "w.conjunct": 0.5795,
+    "w.conjunct_exalted": 1.6137,
+    "w.bhava_aspect_mul": 0.5321,
+    "w.dusthana_lord": -0.9406,
+    "s.pos_knee": 1.2981,
+    "s.pos_slope": 0.125,
+    "s.blend_w": 0.2823,
+    "s.rescue_knee": 1.1166,
+    "s.rescue_w_weak": 0.8455,
+    "s.afflict_floor": -1.0284,
+    "t.base": -1.5852,
+    "t.gap1": 0.9963,
+    "t.gap2": 0.7973,
+    "t.gap3": 0.253,
+    "t.gap4": 0.3115,
+    "t.gap5": 0.3238,
+    "t.gap6": 0.4853,
+    "t.gap7": 0.6433
+  },
+  "boundaries": [
+    -1.5852,
+    -0.5889,
+    0.2084,
+    0.4615,
+    0.773,
+    1.0968,
+    1.5821,
+    2.2253
+  ],
+  "train": {
+    "n": 112,
+    "exact": 53,
+    "within1": 93,
+    "mean": -0.062
+  },
+  "heldout_within1_pct": 58.3,
+  "anchor_100pct": true
+}

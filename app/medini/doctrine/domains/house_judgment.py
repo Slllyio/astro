@@ -470,6 +470,7 @@ _W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
 _RESCUE_KNEE = 1.2      # a stronger frame at/above this "earns" the optimistic rescue
 _RESCUE_W_WEAK = 0.9    # discount on a DEEPLY-afflicted weaker frame when rescuer is mild
 _AFFLICT_FLOOR = -1.0   # a weaker frame below this is "deeply afflicted" (>1 malefic)
+_BLEND_W = 0.3          # optimistic cross-varga blend: score = max + _BLEND_W*min
 _POS_KNEE = 1.6
 _POS_SLOPE = 0.1
 
@@ -671,7 +672,7 @@ def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, flo
         # withheld only from a DEEPLY-afflicted weaker frame (below _AFFLICT_FLOOR)
         # when the rescuer is itself mild -- a mild affliction is still rescued as
         # before, keeping the change narrow (house-1 Mars, lo -0.6, is untouched).
-        w = (_RESCUE_W_WEAK if (lo < _AFFLICT_FLOOR and hi < _RESCUE_KNEE) else 0.3)
+        w = (_RESCUE_W_WEAK if (lo < _AFFLICT_FLOOR and hi < _RESCUE_KNEE) else _BLEND_W)
         return round(hi + w * lo, 3), rasi, nav
     return (rasi if rasi_ds else nav), rasi, nav
 

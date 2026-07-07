@@ -1,0 +1,471 @@
+{
+ "source": "HTJAH Vol 1 Ch VI (3rd house) -- held-out (non-tuned); extracted by general-purpose agent, gate-verified",
+ "house": 3,
+ "charts": [
+  {
+   "chart_no": 52,
+   "birth_line": "Born on 12-2-1856 at 12-21 p.m. (L.T.) Lat. 18° N., Long. 84° E.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Libra",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Virgo",
+    "Mars": "Libra",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Libra",
+    "Saturn": "Libra",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : Years 12-3-9.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Hence it is fairly strong."
+    },
+    {
+     "factor": "lord",
+     "phrase": "the third lord rather weak"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Mars ordinary"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Taurus, 3rd house Cancer per prose. Moon (3rd lord) in 12th/Aries with Rahu, Mars+Ketu in 6th/Libra, all confirmed by prose. Rahu Aries/Ketu Libra opposite in rasi; Rahu Taurus/Ketu Scorpio opposite in navamsa. Navamsa lagna Aries. Verdict phrases: bhava from Third House para; lord/karaka from Conclusion ('Mars ordinary and the third lord rather weak').",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 53,
+   "birth_line": "Born on 24-8-18[?]0 at 8-44 p.m. (L.T.) Lat. 13° N., Long. 5h. [?]0m. 20s. E.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Scorpio",
+    "Mars": "Scorpio",
+    "Mercury": "Virgo",
+    "Jupiter": "Capricorn",
+    "Venus": "Virgo",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Aquarius",
+    "Mars": "Aquarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Taurus",
+    "Venus": "Leo",
+    "Saturn": "Leo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : Years 5-10-25.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the third house is not good"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The third lord Venus is more powerful than the planets aspecting the third."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "the third lord and Mars are well disposed"
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Birth year smudged in scan (likely 1880); longitude line partially illegible. Lagna Pisces, 3rd house Taurus (Rahu there) per prose. Firmly placed via prose: Rahu Taurus, Ketu Scorpio, Moon+Mars Scorpio, Venus+Merc Virgo. Sun/Saturn (together in Leo) and Jupiter (Capricorn) are the uncertain leftover placements from pixels. Navamsa lagna Capricorn triangulated from prose ('Venus in 8th navamsa = 8th from Capricorn = Leo' and 'between 1st and 8th navamsa lie Mars, Jupiter, Sun'); all navamsa placements consistent with that.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 54,
+   "birth_line": "Born on 7-8-1887 at 1-35 p.m. (L.T.) Lat. 11° N., Long. 5h. 8m. E.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Gemini",
+    "Mercury": "Cancer",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Cancer",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Taurus",
+    "Mercury": "Virgo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : Year 0-2-12.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "This is aspected by the Sun, Mercury, Rahu, Saturn and Mars—all malefics."
+    },
+    {
+     "factor": "lord",
+     "phrase": "the third lord is more powerful than the third house or Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Mars is in the 8th (9th bhava) and aspected by Jupiter."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Scorpio, 3rd house Capricorn (Ketu there) per prose. Rasi solid: Ketu Capricorn, Rahu+Sun+Merc+Saturn Cancer (Saturn's 7th aspect hits Capricorn), Mars Gemini (8th), Moon Pisces, Jupiter Libra, Venus Virgo. Navamsa fine placements (Sun Capricorn, Jupiter Sagittarius, Lagna Scorpio, Saturn Leo) read from pixels; Rahu Pisces/Ketu Virgo opposite confirmed. Prose 'Saturn in the 2nd Navamsa' appears to be a brother-count metric rather than a house-position statement.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 55,
+   "birth_line": "Born on 10-9-1889 at about sunrise. Lat. 13° N., Long. 5h. 10m. 20s. E.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Cancer",
+    "Mars": "Sagittarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Cancer",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : Years 3-0-6.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Saturn lord of the 6th aspects the third."
+    },
+    {
+     "factor": "lord",
+     "phrase": "lord of the third Venus is in the 12th with Mars who aspects the third."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Both Mars and Venus are subject to Papakarthari Yoga."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Leo, 3rd house Libra (Venus lord in 12th/Cancer) per prose. Rasi confirmed via prose: Venus+Mars Cancer (12th), Sun+Saturn+Lagna Leo, Rahu Gemini/Ketu Sagittarius opposite. Navamsa read from pixels: Rahu Aquarius/Ketu Leo opposite; navamsa lagna Sagittarius (with Mars+Venus). Verdicts from the grouped prose paragraph (charts 55-57 share brief prose).",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 57,
+   "birth_line": "Born on 9-3-1864 at 11-27 a.m. (L.T.) Lat. 13° N., Long. 77° 35' E.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Pisces",
+    "Mars": "Capricorn",
+    "Mercury": "Aquarius",
+    "Jupiter": "Scorpio",
+    "Venus": "Capricorn",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Libra",
+    "Mars": "Aries",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Virgo",
+    "Venus": "Cancer",
+    "Saturn": "Leo",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth ; Years 7-0-22.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the third is aspected by Mars and Venus—lord of the 12th and 6th respectively."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The third lord Moon is aspected by Saturn."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Taurus, 3rd house Cancer (3rd lord Moon). Rasi resolved via prose (grid columns ambiguous): Moon Pisces, Ketu+Lagna Taurus (3rd-from-Moon = Ketu), Rahu Scorpio (with Jupiter), Sun+Merc Aquarius, Mars+Venus Capricorn (both aspect Cancer by opposition), Saturn Virgo (7th aspect to Moon in Pisces, per prose). Rahu Scorpio/Ketu Taurus opposite. Navamsa fine placements (Mars Aries, Moon Libra, Merc Sagittarius) read from pixels with lower certainty; Rahu Cancer/Ketu Capricorn opposite. Grouped prose gives no dedicated karaka verdict (Mars cited only as 12th lord), so karaka phrase is null.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 58,
+   "birth_line": "Born on 28-8-1901 at 4-30 p.m. (L.T.) Lat. 16° 18' N., Long. 80° 41' E.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Scorpio",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Virgo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Aquarius",
+    "Mars": "Scorpio",
+    "Mercury": "Taurus",
+    "Jupiter": "Cancer",
+    "Venus": "Pisces",
+    "Saturn": "Virgo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : Years 12-0-25.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The first is the bad but the second is good."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Therefore the third lord is weak in the horoscope."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "He is therefore subject to the same afflictions as the lord."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aquarius, 3rd house Aries (Ketu there); 3rd lord Mars in 9th/Libra with Rahu per prose. Saturn in Sagittarius (with Jupiter, its own sign) confirmed by both the grid and 1901 sidereal Saturn position; Jupiter's 5th aspect from Sagittarius reaches Aries as prose states. Prose 'Saturn placed in a kendra from Lagna afflicting Mars' refers to the NAVAMSA: navamsa Saturn in Virgo is a kendra (10th) from the Sagittarius navamsa-lagna and its 3rd aspect hits navamsa Mars+Ketu in Scorpio ('Mars in 12th in own house with Ketu'). Rahu Libra/Ketu Aries opposite (rasi); Rahu Taurus/Ketu Scorpio opposite (navamsa). Mandi ignored.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 59,
+   "birth_line": "Born on 9-7-1928 at 8-50 a.m. (I.S.T.) Long. 77° 45' E., Lat. 9° 25' N.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Aries",
+    "Mercury": "Gemini",
+    "Jupiter": "Aries",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Virgo",
+    "Mars": "Virgo",
+    "Mercury": "Capricorn",
+    "Jupiter": "Cancer",
+    "Venus": "Gemini",
+    "Saturn": "Capricorn",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : Years 12-10-14.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The bhava suffers on this account as Mars is a natural malefic."
+    },
+    {
+     "factor": "lord",
+     "phrase": "This makes him weak in the chart."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Altogether his position is fair in the chart."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Leo, 3rd house Libra (unoccupied). 3rd lord Venus in Gemini and Vargottama (Gemini in both rasi and navamsa) per prose, combust with Sun. Mars+Jupiter in 9th/Aries (Mars own house). Rahu Taurus/Ketu Scorpio opposite in both squares. Navamsa lagna Aries; Mars+Moon+Mandi in navamsa Virgo (6th, 'evil house'). Mandi ignored.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 60,
+   "birth_line": "Born on 21-10-1896 at 6 a.m. (L.T.) Lat. 9° 58' N., Long. 78° 2' E.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Aries",
+    "Mars": "Gemini",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Libra",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Cancer",
+    "Mars": "Sagittarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Cancer",
+    "Venus": "Leo",
+    "Saturn": "Gemini",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasar at birth : Years 0-9-14.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "But still the bhava is not sufficiently strong."
+    },
+    {
+     "factor": "lord",
+     "phrase": "As such the third lord is not sufficiently strong."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "His disposition is not very good in the chart."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Libra, 3rd house Sagittarius (occupied by Mandi). 3rd lord Jupiter in 11th/Leo (per prose 'occupies the 11th from Lagna'), exalted in navamsa Cancer. Mars in 9th/Gemini (enemy sign). Prose 'he is with the Sun aspected by Saturn' refers to the NAVAMSA (Mars+Sun+Lagna in navamsa Sagittarius, Saturn in navamsa Gemini opposing). Rahu Capricorn/Ketu Cancer opposite (rasi); Rahu Virgo/Ketu Pisces opposite (navamsa). Mandi ignored.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 61,
+   "birth_line": "Born on 29-12-1880 at 10-10 a.m. (L.T.) Lat. 22° 35' N., Long. 88° 23' E.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Scorpio",
+    "Mars": "Scorpio",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Pisces",
+    "Venus": "Capricorn",
+    "Saturn": "Aries",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Scorpio",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : Years 4-7-19.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Still the house is not sufficiently strong."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Hence the situation of the third lord is not very good in the chart."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "The strength of the 'Karaka' is not much."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aquarius, 3rd house Aries occupied by debilitated Saturn (Aquarius/Lagna lord) per prose. 3rd lord = Mars = karaka, in Scorpio (own, kendra), 8th from 3rd, with Moon (6th lord). Jupiter in Pisces (own, 12th from 3rd) aspects Mars by 9th. Rahu Sagittarius/Ketu Gemini opposite (rasi); Saturn debilitated in navamsa Aries (3rd), Rahu Taurus/Ketu Scorpio opposite, navamsa lagna Aquarius; navamsa 3rd (Aries) under Papakarthari (Mars in Pisces / Rahu in Taurus). Mandi ignored.",
+   "house_judged": 3
+  },
+  {
+   "chart_no": 62,
+   "birth_line": "Born on 24-8-1889 at 5-41 p.m. (L.T.) Lat. 16° 4' N., Long. 82° 23' E.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Cancer",
+    "Mars": "Cancer",
+    "Mercury": "Leo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Gemini",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Sagittarius",
+    "Mars": "Capricorn",
+    "Mercury": "Scorpio",
+    "Jupiter": "Gemini",
+    "Venus": "Gemini",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : Years 16-8-29.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Though the third house is somewhat favourable"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Hence there is considerable affliction to the lord of the third."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Mars",
+     "phrase": "Mars, the karaka, is subject to the same afflictions as the lord."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aquarius, 3rd house Aries (unoccupied, ruled by Mars) per prose. 3rd lord Mars in 6th/Cancer, debilitated, with waning Moon (6th lord). Jupiter+Ketu in 11th/Sagittarius aspect the 3rd (Jupiter vitiated by Ketu). Sun+Merc+Saturn in Leo. Rahu Gemini/Ketu Sagittarius opposite (rasi). Mars exalted in navamsa Capricorn, aspected by Sun in navamsa Cancer; Rahu Pisces/Ketu Virgo opposite (navamsa); navamsa lagna Libra. Mandi ignored.",
+   "house_judged": 3
+  }
+ ]
+}

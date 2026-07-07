@@ -1,13 +1,12 @@
 {
- "source": "HTJAH Vol.1 Ch.VII (4th house), scans p.170-181",
+ "source": "HTJAH Vol.1 Ch.VII (4th house), PDF scans",
  "chapter": "ch07_4th",
- "axis": "rasi",
  "charts": [
   {
    "chart_no": 64,
    "house_judged": 4,
-   "axis": "rasi",
    "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Capricorn",
    "rasi": {
     "Sun": "Cancer",
     "Moon": "Taurus",
@@ -18,6 +17,17 @@
     "Saturn": "Taurus",
     "Rahu": "Pisces",
     "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Taurus",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
    },
    "verdicts": [
     {
@@ -57,13 +67,14 @@
      "phrase": "The fourth house is moderately strong"
     }
    ],
-   "confidence": "high"
+   "confidence": "high",
+   "notes": "navamsa Mars unreadable -> rasi-axis"
   },
   {
    "chart_no": 70,
    "house_judged": 4,
-   "axis": "rasi",
    "lagna_rasi": "Aries",
+   "lagna_navamsa": "Leo",
    "rasi": {
     "Sun": "Virgo",
     "Moon": "Capricorn",
@@ -74,6 +85,17 @@
     "Saturn": "Scorpio",
     "Rahu": "Sagittarius",
     "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Taurus",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Leo",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
    },
    "verdicts": [
     {
@@ -94,8 +116,8 @@
   {
    "chart_no": 71,
    "house_judged": 4,
-   "axis": "rasi",
    "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Gemini",
    "rasi": {
     "Sun": "Gemini",
     "Moon": "Leo",
@@ -107,10 +129,25 @@
     "Rahu": "Leo",
     "Ketu": "Aquarius"
    },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Pisces",
+    "Venus": "Taurus",
+    "Saturn": "Aries",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
    "verdicts": [
     {
      "factor": "bhava",
      "phrase": "The fourth house is fairly strong"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "The Matrukaraka Moon is considerably afflicted"
     }
    ],
    "confidence": "high"

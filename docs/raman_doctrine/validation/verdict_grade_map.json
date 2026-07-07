@@ -1,0 +1,33 @@
+{
+  "_about": "Pre-registered mapping from B. V. Raman's strength-verdict phrases (HTJAH) onto the engine's 9-grade VERDICT_SCALE. COMMITTED BEFORE ANY SCORING so it cannot be tuned to flatter the engine. Patterns are matched against the lowercased verdict phrase, MOST-SPECIFIC FIRST (first hit wins). A phrase matching no pattern is 'unmappable' -> excluded from scoring and logged, never guessed.",
+  "scale": ["afflicted", "weak", "moderate", "moderately good", "fairly good", "fairly strong", "fairly powerful", "very strong", "very powerful"],
+  "patterns": [
+    ["considerably afflicted", "afflicted"],
+    ["severely afflicted", "afflicted"],
+    ["afflicted severely", "afflicted"],
+    ["full and very powerful", "very powerful"],
+    ["very powerfully", "very powerful"],
+    ["very powerful", "very powerful"],
+    ["very strongly", "very strong"],
+    ["very strong", "very strong"],
+    ["quite strongly", "fairly strong"],
+    ["quite strong", "fairly strong"],
+    ["fairly powerful", "fairly powerful"],
+    ["fairly strong", "fairly strong"],
+    ["fairly good", "fairly good"],
+    ["moderately powerful", "moderately good"],
+    ["moderately strong", "moderately good"],
+    ["moderately good", "moderately good"],
+    ["moderately", "moderately good"],
+    ["inclining towards good", "moderate"],
+    ["feebly", "weak"],
+    ["afflicted", "afflicted"],
+    ["weak", "weak"]
+  ],
+  "notes": {
+    "feebly": "'feebly weak' / 'feebly strong' both denote a barely-present strength -> weak (1).",
+    "quite strong": "Raman's 'quite strong[ly]' sits just under 'fairly powerful' -> fairly strong (5).",
+    "inclining towards good": "a tentative positive, below a settled 'good' -> moderate (2).",
+    "bare roots": "bare 'strong'/'powerful'/'good' WITHOUT an intensifier are intentionally NOT mapped (too ambiguous) -> unmappable/excluded."
+  }
+}

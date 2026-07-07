@@ -154,6 +154,51 @@
     }
    ],
    "confidence": "high"
+  },
+  {
+   "chart_no": 74,
+   "house_judged": 4,
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Taurus",
+    "Mercury": "Cancer",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Leo",
+    "Mercury": "Aquarius",
+    "Jupiter": "Libra",
+    "Venus": "Pisces",
+    "Saturn": "Gemini",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is feebly blemished"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is feebly blemished"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is feebly blemished"
+    }
+   ],
+   "confidence": "high",
+   "notes": "all three feebly blemished (Conclusion p192)"
   }
  ]
 }

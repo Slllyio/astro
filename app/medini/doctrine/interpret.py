@@ -431,6 +431,7 @@ def interpret_chart(
     reading_model: str = READING_MODEL,
     synthesis_model: str = SYNTHESIS_MODEL,
     max_tokens: int = 8192,
+    style_exemplars: bool = True,
 ) -> dict[str, Any]:
     """Hybrid, cached, structured whole-chart interpretation.
 
@@ -457,6 +458,12 @@ def interpret_chart(
 
     system_blocks = [{"type": "text", "text": _SYSTEM + "\n\n" + _READING_TASK,
                       "cache_control": {"type": "ephemeral"}}]
+    if style_exemplars:
+        from app.medini.doctrine.worked_analyses import exemplar_block
+        block = exemplar_block(list(range(1, 13)), k=2)
+        if block:
+            system_blocks.append({"type": "text", "text": block,
+                                  "cache_control": {"type": "ephemeral"}})
     user_content = [
         {"type": "text", "text": dossier_block,
          "cache_control": {"type": "ephemeral"}},

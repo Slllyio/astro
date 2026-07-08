@@ -32,5 +32,17 @@ def test_bhava_is_the_positive_predictor():
     # ...while the lord/karaka (general benefic-strength) do not (trend negative).
     assert sp["lord"]["rho"] < 0
     assert sp["karaka"]["rho"] < 0
-    # bhava is the strongest positive signal of the four factors
+    # bhava is the strongest positive signal of all factors
     assert sp["bhava"]["rho"] == max(v["rho"] for v in sp.values())
+
+
+def test_ayushkaraka_fix_does_not_work():
+    """Track L result: the Āyushkāraka gap is NOT closable by re-scoping the karaka.
+    Every lord/karaka strength anti-correlates with longevity (Raman selects afflicted-
+    looking-yet-long-lived teaching charts), and the dignity+placement scoping -- the
+    hypothesised Ayurdaya fix -- is the WORST, not a rescue."""
+    sp = L.run()["spearman"]
+    assert sp["karaka_digplace"]["rho"] < 0          # the "fix" fails...
+    assert sp["karaka_digplace"]["rho"] < sp["karaka"]["rho"]   # ...and is worse than the raw karaka
+    # only the bhava (and, weakly, the Lagna) carry the longevity signal
+    assert sp["bhava"]["rho"] > 0 and sp["lagna"]["rho"] > 0

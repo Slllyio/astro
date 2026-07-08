@@ -27,7 +27,7 @@ from app.medini.doctrine.validation import reconstruct as R
 _DIR = Path(__file__).resolve().parents[4] / "docs/raman_doctrine/validation/corpora"
 _LABELS = _DIR / "heldout_longevity_ch12_8th.json"
 _GRIDS = _DIR / "heldout_ch12_8th.json"
-_FACTORS = ("lord", "karaka", "bhava", "concl")
+_FACTORS = ("bhava", "lagna", "lord", "karaka", "karaka_digplace", "concl")
 
 
 def _spearman(xs: list[float], ys: list[float]) -> tuple[float, float]:
@@ -118,10 +118,19 @@ def run(labels_path: Path = _LABELS, grids_path: Path = _GRIDS) -> dict[str, Any
             skipped.append({"chart": cn, "why": str(e)})
             continue
         j = judge_house_doctrine(chart, 8)
+        j1 = judge_house_doctrine(chart, 1)
+        lagna = j1.lagna_verdict.score if j1.lagna_verdict.score < 90 else 2.4
+        # a longevity-scoped karaka score: dignity + placement only, dropping the
+        # benefic/malefic-nature aspect/conjunction penalties -- the hypothesised
+        # Ayurdaya reading (a well-placed but afflicted Saturn still gives long life).
+        kdp = round(sum(f.delta for f in j.karaka_verdict.findings
+                        if f.criterion in ("placement", "dignity", "vargottama")), 2)
         rows.append({"chart": cn, "class": lab["class"], "ord": lab["class_ord"],
                      "lord": round(j.lord_verdict.score, 2),
                      "karaka": round(j.karaka_verdict.score, 2),
+                     "karaka_digplace": kdp,
                      "bhava": round(j.lagna_verdict.score, 2),
+                     "lagna": round(lagna, 2),
                      "concl": round(j.conclusion.score, 2)})
     rows.sort(key=lambda r: r["ord"])
     ords = [r["ord"] for r in rows]

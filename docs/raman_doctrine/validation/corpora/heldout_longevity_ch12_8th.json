@@ -1,0 +1,111 @@
+{
+ "source": "B. V. Raman, HTJAH Vol II Ch XII (8th house) -- longevity CLASS labels, held-out",
+ "house": 8,
+ "classes": {
+  "Balarishta": 0,
+  "Alpayu": 1,
+  "Madhyayu": 2,
+  "Purnayu": 3
+ },
+ "note": "Raman states a longevity class per 8th-house chart (Balarishta<Alpayu<Madhyayu<Purnayu). Labels are his explicit class term (with the \"should have given X but is Y\" correction), or derived from the stated death age (bands: <8 Balarishta, <32 Alpayu, <=70 Madhyayu, >70 Purnayu). Every label hand-verified against prose; death-age-derived and explicit labels agree where both exist. Grids joined from heldout_ch12_8th.json on chart_no.",
+ "labels": [
+  {
+   "chart_no": 39,
+   "class": "Balarishta",
+   "class_ord": 0,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 43,
+   "class": "Alpayu",
+   "class_ord": 1,
+   "source": "explicit",
+   "death_age": 16
+  },
+  {
+   "chart_no": 45,
+   "class": "Alpayu",
+   "class_ord": 1,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 47,
+   "class": "Alpayu",
+   "class_ord": 1,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 49,
+   "class": "Madhyayu",
+   "class_ord": 2,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 53,
+   "class": "Madhyayu",
+   "class_ord": 2,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 57,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit",
+   "death_age": 89
+  },
+  {
+   "chart_no": 58,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit",
+   "death_age": 84
+  },
+  {
+   "chart_no": 59,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 61,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit(corrected)",
+   "death_age": null
+  },
+  {
+   "chart_no": 62,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 63,
+   "class": "Purnayu",
+   "class_ord": 3,
+   "source": "explicit",
+   "death_age": null
+  },
+  {
+   "chart_no": 70,
+   "class": "Madhyayu",
+   "class_ord": 2,
+   "source": "age=38.22",
+   "death_age": 38.22
+  },
+  {
+   "chart_no": 72,
+   "class": "Madhyayu",
+   "class_ord": 2,
+   "source": "age=36",
+   "death_age": 36
+  }
+ ]
+}

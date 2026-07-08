@@ -39,3 +39,14 @@ def test_run_on_corpus_matches_all_mds():
     # every event lands in the mahadasha Raman names; every bhukti is within one of his.
     assert s["md_exact"] == s["n_events"]
     assert s["ad_within_one_bhukti"] == s["ad_n"]
+
+
+def test_pooled_with_8th_house_holds_at_scale():
+    """The 8th-house (Ch XII) death-timing scale-up doubles N; MD stays exact and every
+    bhukti stays within one of Raman's, at N=8."""
+    base = "docs/raman_doctrine/validation/corpora/heldout_timing.json"
+    eighth = "docs/raman_doctrine/validation/corpora/heldout_timing_ch12_8th.json"
+    s = T.run([base, eighth])
+    assert s["n_events"] == 8
+    assert s["md_exact"] == s["n_events"]          # MD 8/8 exact holds at 2x sample
+    assert s["ad_within_one_bhukti"] == s["ad_n"]  # AD within one bhukti, all events

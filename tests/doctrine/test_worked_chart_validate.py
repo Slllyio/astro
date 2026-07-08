@@ -75,6 +75,27 @@ class TestVerdictMap:
         # bare 'good' without an intensifier is intentionally unmapped.
         assert W.map_verdict("the results are good", pats) is None
 
+    def test_b1_word_boundary_afflicted_not_inside_unafflicted(self):
+        """Bug B1: 'afflicted' must NOT match inside 'unafflicted' (word-bounded)."""
+        pats = W.load_verdict_map()
+        # ch99 / ch105 — an UN-afflicted factor is not afflicted.
+        assert W.map_verdict("in a benefic sign otherwise unafflicted", pats) == "moderate"
+        assert W.map_verdict("the 5th house is unafflicted", pats) == "moderate"
+        # ch105's stated conclusion wins over the 'unafflicted' reason.
+        assert W.map_verdict("unafflicted ... the 5th house is fairly well disposed", pats) == "fairly good"
+        # ch201 — 'unsullied' is a positive verdict, not shadowed by a later 'weak'.
+        assert W.map_verdict("An unsullied 10th house ... and a weak cuspal 3rd lord", pats) == "fairly strong"
+
+    def test_b2_subject_afflicted_beats_another_planets_blemish(self):
+        """Bug B2: bare 'afflicted' (the subject's verdict) ranks above bare 'blemished'
+        (usually a different planet's), so wrong-subject grabs are fixed."""
+        pats = W.load_verdict_map()
+        # ch254 / ch102 — the SUBJECT is afflicted; 'blemished' describes another planet.
+        assert W.map_verdict("Venus, the karaka, is afflicted by a blemished Mercury", pats) == "afflicted"
+        assert W.map_verdict("Mercury is afflicted ... strongly blemished by Saturn", pats) == "afflicted"
+        # but a specific '<x> blemished' subject verdict is unchanged.
+        assert W.map_verdict("the 4th is feebly blemished", pats) == "moderately good"
+
 
 class TestNaturalBeneficBhavaOccupant:
     """Phase 2.6 (A.1): a NATURAL benefic occupant does not blemish a bhava even when it

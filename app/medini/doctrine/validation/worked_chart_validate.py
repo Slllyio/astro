@@ -20,6 +20,7 @@ CLI:
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -44,10 +45,12 @@ def load_verdict_map(path: Path = _MAP_PATH) -> list[tuple[str, str]]:
 
 def map_verdict(phrase: str, patterns: list[tuple[str, str]]) -> str | None:
     """Raman phrase -> 9-grade label (most-specific pattern first), or None if
-    unmappable (never guessed)."""
+    unmappable (never guessed). Matching is WORD-BOUNDED so a pattern does not match
+    inside a larger word -- e.g. 'afflicted' must not match inside 'unafflicted'
+    (bug fixed 2026-07-08; see verdict_grade_map.json)."""
     low = phrase.lower()
     for pat, grade in patterns:
-        if pat in low:
+        if re.search(r"\b" + re.escape(pat) + r"\b", low):
             return grade
     return None
 

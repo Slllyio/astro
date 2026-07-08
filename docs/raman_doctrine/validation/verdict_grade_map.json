@@ -1,5 +1,6 @@
 {
-  "_about": "Pre-registered mapping from B. V. Raman's strength-verdict phrases (HTJAH) onto the engine's 9-grade VERDICT_SCALE. COMMITTED BEFORE ANY SCORING so it cannot be tuned to flatter the engine. Patterns are matched against the lowercased verdict phrase, MOST-SPECIFIC FIRST (first hit wins). A phrase matching no pattern is 'unmappable' -> excluded from scoring and logged, never guessed.",
+  "_about": "Pre-registered mapping from B. V. Raman's strength-verdict phrases (HTJAH) onto the engine's 9-grade VERDICT_SCALE. COMMITTED BEFORE ANY SCORING so it cannot be tuned to flatter the engine. Patterns are matched WORD-BOUNDED against the lowercased verdict phrase, MOST-SPECIFIC FIRST (first hit wins). A phrase matching no pattern is 'unmappable' -> excluded from scoring and logged, never guessed.",
+  "_bugfix_2026_07_08": "Two matcher/vocabulary defects fixed after a forensic pass (see notes): (B1) matching is now WORD-BOUNDED so 'afflicted' no longer matches inside 'unafflicted', and 'unafflicted'/'unsullied'/'well disposed' get their own faithful patterns; (B2) bare 'afflicted' (a subject's verdict) now ranks ABOVE bare 'blemished' (usually another planet's), so 'Venus is afflicted by a blemished Mercury' maps to afflicted, not moderate. Specific '<x> blemished' subject verdicts (feebly/moderately/considerably) are unchanged and still rank first.",
   "scale": ["afflicted", "weak", "moderate", "moderately good", "fairly good", "fairly strong", "fairly powerful", "very strong", "very powerful"],
   "patterns": [
     ["considerably afflicted", "afflicted"],
@@ -7,10 +8,14 @@
     ["afflicted severely", "afflicted"],
     ["not much afflicted", "fairly good"],
     ["not afflicted", "fairly good"],
+    ["unsullied", "fairly strong"],
     ["unblemished", "fairly strong"],
+    ["well disposed", "fairly good"],
+    ["unafflicted", "moderate"],
     ["feebly blemished", "moderately good"],
     ["moderately blemished", "moderate"],
     ["considerably blemished", "weak"],
+    ["afflicted", "afflicted"],
     ["blemished", "moderate"],
     ["full and very powerful", "very powerful"],
     ["very powerfully", "very powerful"],
@@ -28,13 +33,15 @@
     ["moderately", "moderately good"],
     ["inclining towards good", "moderate"],
     ["feebly", "weak"],
-    ["afflicted", "afflicted"],
     ["weak", "weak"]
   ],
   "notes": {
     "feebly": "'feebly weak' / 'feebly strong' both denote a barely-present strength -> weak (1).",
     "quite strong": "Raman's 'quite strong[ly]' sits just under 'fairly powerful' -> fairly strong (5).",
     "inclining towards good": "a tentative positive, below a settled 'good' -> moderate (2).",
+    "unafflicted": "mere absence of affliction (often qualified, e.g. 'otherwise unafflicted ... not desirable') -> a neutral-positive baseline, moderate (2). Distinct from the stronger 'not afflicted' -> fairly good.",
+    "unsullied": "'unsullied' ~ 'unblemished' -> fairly strong (5).",
+    "well disposed": "'(fairly) well disposed' -> fairly good (4).",
     "bare roots": "bare 'strong'/'powerful'/'good' WITHOUT an intensifier are intentionally NOT mapped (too ambiguous) -> unmappable/excluded."
   }
 }

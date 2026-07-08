@@ -105,6 +105,36 @@ class TestTiming:
         assert j.timing.active_outcomes == ()
 
 
+class TestAshtakavargaFeature:
+    """Increment 9 (documented NEGATIVE): the ashtakavarga strength machinery is wired
+    but DORMANT (weight 0) -- it did not improve held-out agreement. These guard the
+    machinery: the bindu count matches the rule-path computation, it is inert at the
+    committed weight, and it moves the score when a weight is enabled."""
+
+    def test_sav_bindu_count_matches_rule_path(self, mainpuri):
+        from app.medini.doctrine.domains.house_judgment import _ashtakavarga
+        from app.core.ashtakavarga import compute_ashtakavarga
+        c = mainpuri.bundle.chart
+        d1 = {p: {"sign": s} for p, s in c.planet_signs.items()}
+        assert _ashtakavarga(mainpuri)["sav"] == compute_ashtakavarga(d1, {"sign": c.asc_sign})["sav"]
+
+    def test_dormant_at_committed_weight(self, mainpuri):
+        from app.medini.doctrine.domains.house_judgment import _sav_finding, _bav_finding, _W
+        assert _W["av_bindu"] == 0.0 and _W["bav_bindu"] == 0.0
+        assert _sav_finding(mainpuri, 8).delta == 0.0          # measured but unweighted
+        bf = _bav_finding(mainpuri, "Saturn")
+        assert bf is not None and bf.delta == 0.0
+
+    def test_weight_activates_the_feature(self, mainpuri):
+        from app.medini.doctrine.domains import house_judgment as HJ
+        base = HJ._sav_finding(mainpuri, 8).delta
+        HJ._W["av_bindu"] = 0.05
+        try:
+            assert HJ._sav_finding(mainpuri, 8).delta != base   # a live weight bites
+        finally:
+            HJ._W["av_bindu"] = 0.0
+
+
 class TestAntardashaTiming:
     """Vimshottari antardasha (bhukti) nesting + Raman's MD x AD fructification
     tiers (HTJAH pp. 44-48)."""

@@ -971,3 +971,38 @@ expressiveness ceiling: Phase B plateaued at 58% for the same reason. **No engin
   held-out); (b) reconstruct with *degrees* (from birth data, not sign diagrams) to expose
   aspect-strength/dispositor features, then re-fit; (c) grow the held-out kāraka set further
   to search for a finer separating feature. Each is a distinct project.
+
+### Increment 9 — Ashtakavarga bindu strength (DOCUMENTED NEGATIVE, no accuracy change)
+
+Motivated by the "new terms, not re-weighting" conclusion above and the survey finding that
+Raman's **own numeric strength tool, ashtakavarga**, was fully implemented
+(`app/core/ashtakavarga.py`, sign-computable) but never read by the numeric strength scorer
+(only by the DSL rule-predicate path). Wired two features into the live scorer: a bhāva's
+**Sarvashtakavarga** total (`_sav_finding` in `_assess_bhava`) and a planet's own
+**Bhinnashtakavarga** in its sign (`_bav_finding` in `_assess_planet`), each scored per bindu
+above the chart's own average, sharing the exact `compute_ashtakavarga` call the rule path
+uses.
+
+**Result — it does not improve held-out agreement with Raman's strength verdicts.** Sweeping
+the two weights against the 24/51 (47.1%) held-out baseline (all 168 charts / 51 scoreable
+rows):
+
+| feature | weight swept | held-out within-one |
+|---|---|---|
+| SAV (bhāva) | 0.02 → 0.14 | **strictly falls** 24 → 23 → 22 (bhāva 9 → 7) |
+| BAV (planet) | 0.05, 0.10 | **neutral** (24) |
+
+**Why:** the engine already over-scores on held-out — every factor's mean Δ is *positive*
+(bhāva +0.56, lord +0.76, kāraka +1.19). Ashtakavarga is a *positive fortification* term, so
+adding it additively deepens the over-credit rather than correcting it. Raman's own SAV/BAV,
+added linearly, does not encode what his *strength verdicts* encode — corroborating increment
+8's conclusion that the residual gap is **structural (holistic weighing / the over-credit),
+not a missing linear feature**. A re-fit cannot rescue it: `fit_weights` sign-constrains a
+fortification weight to ≥0, and positive AV hurts-or-neutral, so the optimizer converges the
+AV weight to 0.
+
+**Disposition:** kept **wired but dormant** (`_W["av_bindu"]=_W["bav_bindu"]=0.0`) — the bindu
+count is measured and shown in the findings for display, and the machinery (cross-checked
+against the rule path, guarded by `TestAshtakavargaFeature`) is available for a degree-era or
+longevity-scoped use where it may weigh differently. Engine behaviour is byte-identical to the
+pre-increment baseline (held-out 24/51, anchor 8/8). Measurement + dormant wiring only.

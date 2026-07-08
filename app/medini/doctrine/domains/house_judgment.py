@@ -26,6 +26,7 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Mapping, Sequence
 
+from app.core.ashtakavarga import compute_ashtakavarga
 from app.core.bhava_judge import _NATURAL_BENEFICS, _NATURAL_MALEFICS
 from app.core.dignity import dignity_state, SIGN_RULERS
 from app.core.drishti_argala import aspects_from_planet, planets_aspecting_bhava
@@ -455,7 +456,17 @@ _DIGNITY_W = {"exalted": 1.6, "own": 1.2, "friendly": 0.8, "neutral": 0.0,
               "inimical": -0.8, "debilitated": -1.6}
 _W = dict(dusthana=-1.0, kendra_trikona=1.2, vargottama=1.2, neechabhanga=0.2,
           kartari_subha=1.0, kartari_papa=-1.0, aspect=0.7, conjunct=0.7,
-          conjunct_exalted=1.6, bhava_aspect_mul=0.5, dusthana_lord=-1.0)
+          conjunct_exalted=1.6, bhava_aspect_mul=0.5, dusthana_lord=-1.0,
+          # Increment 9 (DOCUMENTED NEGATIVE): Ashtakavarga bindu strength (Raman's own
+          # numeric fortification measure) -- a bhava's Sarvashtakavarga, a planet's
+          # Bhinnashtakavarga in its sign, per bindu above the chart's own average. Added
+          # additively it does NOT improve held-out agreement (SAV strictly hurts held-out
+          # within-one 24->22 as its weight rises; BAV is neutral), because the engine
+          # already over-scores (all factor mean-deltas positive) and AV is a positive
+          # term. Kept wired but DORMANT (weight 0) -- the bindu count is measured and shown
+          # for display, and the machinery is available for a degree-era / longevity-scoped
+          # use. See HOUSE_SCHEME_AUDIT.md increment 9.
+          av_bindu=0.0, bav_bindu=0.0)
 
 # Consolidation (post-twelve-house-walk): diminishing returns on STACKED POSITIVES.
 # The held-out audit of every strength-graded house (2-5, 7, 9, 11) showed the same
@@ -621,6 +632,41 @@ def _d1_houses(chart: RamanChart) -> dict[str, int]:
 
 def _d9_houses(chart: RamanChart) -> dict[str, int]:
     return {p: chart.house_of(p, "navamsa") for p in GRAHAS}
+
+
+def _ashtakavarga(chart: RamanChart) -> dict:
+    """The chart's ashtakavarga matrix (sign-computable, no degrees). Same call as the
+    rule-path (`engine/predicates.py::_bav`) so the numeric scorer and the DSL predicates
+    read one shared computation."""
+    c = chart.bundle.chart
+    d1 = {p: {"sign": s} for p, s in c.planet_signs.items()}
+    return compute_ashtakavarga(d1, {"sign": c.asc_sign})
+
+
+def _sav_finding(chart: RamanChart, house: int) -> "Finding":
+    """Bhava fortification by Sarvashtakavarga (Raman uses SAV as a house-strength gauge):
+    per bindu of the house's sign ABOVE the chart's own SAV average (~28)."""
+    m = _ashtakavarga(chart)
+    sav = m["sav"]
+    sign = (chart.bundle.chart.asc_sign - 1 + house - 1) % 12
+    neutral = sum(sav) / 12.0
+    delta = round(_W.get("av_bindu", 0.0) * (sav[sign] - neutral), 2)
+    return Finding(f"{sav[sign]} ashtakavarga bindus in the {house}th (avg {neutral:.0f})",
+                   delta, "Rasi", "ashtakavarga")
+
+
+def _bav_finding(chart: RamanChart, planet: str) -> "Finding | None":
+    """Planet strength by its own Bhinnashtakavarga in its sign: per bindu above the
+    planet's per-sign average (its BAV total / 12). Classical planets only."""
+    if planet not in _CLASSICAL:
+        return None
+    m = _ashtakavarga(chart)
+    bav = m["bav_per_planet"][planet]
+    sign = chart.bundle.chart.planet_signs[planet] - 1
+    neutral = sum(bav) / 12.0
+    delta = round(_W.get("bav_bindu", 0.0) * (bav[sign] - neutral), 2)
+    return Finding(f"{bav[sign]} own bindus in its sign (bhinnashtakavarga, avg {neutral:.1f})",
+                   delta, "Rasi", "ashtakavarga")
 
 
 def _lord_of(chart: RamanChart, house: int) -> str:
@@ -847,6 +893,10 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     f += _dignity_findings(chart, planet, sign9, "Navamsa")
     f += _aspect_findings(chart, d9, d9[planet], planet, "Navamsa", ref_sign=ref_sign)
     f += _conjunction_findings(chart, d9, planet, "Navamsa", ref_sign=ref_sign)
+    # Increment 9: the planet's own Bhinnashtakavarga strength in its sign.
+    bavf = _bav_finding(chart, planet)
+    if bavf is not None:
+        f.append(bavf)
     score, rasi, nav = _combine(f, additive=False)
     return FactorVerdict(role, planet, _verdict_label(score), score, tuple(f),
                          rasi_score=rasi, navamsa_score=nav)
@@ -909,6 +959,8 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
     elif kind == "papa":
         f.append(Finding("hemmed between malefics (Papakartari)",
                          _W["kartari_papa"], "Rasi", "kartari"))
+    # Increment 9: Sarvashtakavarga fortification of the house (Raman's numeric gauge).
+    f.append(_sav_finding(chart, house))
     if house == 1:                        # the Navamsa lagna: aspects on it (×0.5)
         d9 = _d9_houses(chart)
         na = _aspect_findings(chart, d9, 1, None, "Navamsa", amul, dignity_aware=True)

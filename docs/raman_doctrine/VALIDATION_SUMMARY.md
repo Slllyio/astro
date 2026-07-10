@@ -124,6 +124,14 @@ not a resolution artifact**: what remains is Raman's holistic weighing of placem
 against association, which no feature — sign *or* degree — has closed. Timing and balance are
 already at their useful ceiling and are wired into the reading output.
 
+**Update (ML research track, [ML_RESEARCH.md](ML_RESEARCH.md)):** that remaining residual has now
+been shown to be **learnable** — a small interpretable model over the engine's own findings scores
+**63.5% within-one under LOCO-CV vs the engine's 51.9% on identical rows** (and 62.5% vs 46.9% on
+the untouched NH degree pool), while a blinded frontier-LLM scorer manages only 47.1% with zero
+contamination gap. The learned combine is **not landed** (the pre-registered ch. IV anchor gate
+failed in its typed representation — increment 15); the landing path is anchor re-derivation in
+engine representation.
+
 ## Report index
 
 Strength & ceiling: [recalibration](validation/REPORT_recalibration.md) ·

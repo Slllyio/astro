@@ -1135,3 +1135,23 @@ have rescued the ceiling — cusp-accurate placement and degree-accurate dignity
 two that fail, because Raman's own method is whole-sign and sign-dignity based. Degree resolution
 yields a real but modest combustion gain and confirms the ~53% sign ceiling is structural. Full
 report: `validation/REPORT_degree_engine.md`.
+
+### Increment 15 — learned combine (A2): synthesis hypothesis CONFIRMED as measurement; landing gate-blocked
+
+The ML_RESEARCH track-A test of the ceiling's diagnosis. Keeping feature extraction
+byte-identical and replacing only `_combine`/`_THRESH` with small interpretable models
+(ordinal logistic; depth-3 tree) over (delta, frame) finding tokens: LOCO-CV over the 7
+held-out chapters **63.5% within-one vs the live engine's 51.9% on identical rows** (N=52);
+NH degree pool single-shot **62.5% vs 46.9%** (N=32, in no training fold). The tree's root
+split is the hypothesized gate made visible: `sum_neg_rasi ≤ −1.22 → afflicted` regardless
+of positional credits. The residual above the ceiling IS learnable — it is Raman's
+non-linear weighing, not noise (a blinded frontier-LLM scorer on the same rows managed only
+47.1% with zero real-vs-perturbed-twin gap, so generic astrological expertise does not
+substitute for fitting HIS weighing).
+
+**Disposition: NOT landed.** The pre-registered ch. IV anchor gate failed (ordinal 2/8,
+tree 1/8) — confounded with representation shift (the anchor exists only in the audit's
+typed-finding vocabulary), but the gate is the gate. Landing path: grid-extract the ch. IV
+anchor charts, re-run the gate in engine representation, land only on 9/9. Engine
+byte-identical to increment 14. Full data: `validation/ml_research/`; report:
+`ML_RESEARCH.md`.

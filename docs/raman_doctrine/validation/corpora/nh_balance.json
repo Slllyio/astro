@@ -1,0 +1,336 @@
+{
+ "source": "Notable Horoscopes (B.V. Raman) -- 30 golden cases matched by name to Raman's PRINTED \"Balance of X Dasa at birth: Y-M-D\" line. moon_lon = the stored Raman-frame Moon longitude; printed_balance = Raman's verbatim printed line. Direct check of the engine balance-from-Moon (calculate_vimshottari_mahadasha) vs Raman.",
+ "n": 30,
+ "rows": [
+  {
+   "key": "buddha",
+   "name": "Sri Gautama Buddha",
+   "moon_lon": 200.75,
+   "printed_balance": {
+    "lord": "Jupiter",
+    "years": 15,
+    "months": 1,
+    "days": 6
+   }
+  },
+  {
+   "key": "alexander",
+   "name": "Alexander the Great",
+   "moon_lon": 208.517,
+   "printed_balance": {
+    "lord": "Jupiter",
+    "years": 5,
+    "months": 9,
+    "days": 11
+   }
+  },
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "moon_lon": 303.917,
+   "printed_balance": {
+    "lord": "Mars",
+    "years": 1,
+    "months": 5,
+    "days": 10
+   }
+  },
+  {
+   "key": "sankara",
+   "name": "Sri Adi Sankaracharya",
+   "moon_lon": 69.2,
+   "printed_balance": {
+    "lord": "Rahu",
+    "years": 14,
+    "months": 6,
+    "days": 29
+   }
+  },
+  {
+   "key": "jesus",
+   "name": "Jesus Christ",
+   "moon_lon": 336.683,
+   "printed_balance": {
+    "lord": "Saturn",
+    "years": 14,
+    "months": 0,
+    "days": 21
+   }
+  },
+  {
+   "key": "ramanuja",
+   "name": "Sri Ramanujacharya",
+   "moon_lon": 73.833,
+   "printed_balance": {
+    "lord": "Jupiter",
+    "years": 4,
+    "months": 1,
+    "days": 20
+   }
+  },
+  {
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "moon_lon": 79.9,
+   "printed_balance": {
+    "lord": "Rahu",
+    "years": 0,
+    "months": 1,
+    "days": 18
+   }
+  },
+  {
+   "key": "chaitanya",
+   "name": "Sri Chaitanya",
+   "moon_lon": 142.867,
+   "printed_balance": {
+    "lord": "Venus",
+    "years": 5,
+    "months": 8,
+    "days": 12
+   }
+  },
+  {
+   "key": "aurangzeb",
+   "name": "Aurangzeb",
+   "moon_lon": 35.233,
+   "printed_balance": {
+    "lord": "Sun",
+    "years": 2,
+    "months": 1,
+    "days": 20
+   }
+  },
+  {
+   "key": "shivaji",
+   "name": "Shivaji the Great",
+   "moon_lon": 178.8,
+   "printed_balance": {
+    "lord": "Mars",
+    "years": 4,
+    "months": 1,
+    "days": 17
+   }
+  },
+  {
+   "key": "hyderali",
+   "name": "Hyderali",
+   "moon_lon": 227.7,
+   "printed_balance": {
+    "lord": "Mercury",
+    "years": 15,
+    "months": 8,
+    "days": 6
+   }
+  },
+  {
+   "key": "tippu",
+   "name": "Tippu Sultan",
+   "moon_lon": 24.4,
+   "printed_balance": {
+    "lord": "Venus",
+    "years": 3,
+    "months": 4,
+    "days": 24
+   }
+  },
+  {
+   "key": "marie_antoinette",
+   "name": "Marie Antoinette",
+   "moon_lon": 182.0,
+   "printed_balance": {
+    "lord": "Mars",
+    "years": 2,
+    "months": 5,
+    "days": 9
+   }
+  },
+  {
+   "key": "thyagaraja",
+   "name": "Sri Thyagaraja",
+   "moon_lon": 96.683,
+   "printed_balance": {
+    "lord": "Saturn",
+    "years": 13,
+    "months": 9,
+    "days": 9
+   }
+  },
+  {
+   "key": "lincoln",
+   "name": "Abraham Lincoln",
+   "moon_lon": 275.333,
+   "printed_balance": {
+    "lord": "Sun",
+    "years": 2,
+    "months": 1,
+    "days": 6
+   }
+  },
+  {
+   "key": "tennyson",
+   "name": "Lord Tennyson",
+   "moon_lon": 53.75,
+   "printed_balance": {
+    "lord": "Rahu",
+    "years": 6,
+    "months": 1,
+    "days": 26
+   }
+  },
+  {
+   "key": "tilak",
+   "name": "Bala Gangadhara Tilak",
+   "moon_lon": 349.25,
+   "printed_balance": {
+    "lord": "Mercury",
+    "years": 13,
+    "months": 8,
+    "days": 14
+   }
+  },
+  {
+   "key": "narasimha_bharathi",
+   "name": "Sri Narasimha Bharathi",
+   "moon_lon": 283.75,
+   "printed_balance": {
+    "lord": "Moon",
+    "years": 7,
+    "months": 2,
+    "days": 7
+   }
+  },
+  {
+   "key": "havelock_ellis",
+   "name": "Havelock Ellis",
+   "moon_lon": 285.067,
+   "printed_balance": {
+    "lord": "Moon",
+    "years": 6,
+    "months": 2,
+    "days": 12
+   }
+  },
+  {
+   "key": "vivekananda",
+   "name": "Swami Vivekananda",
+   "moon_lon": 168.9,
+   "printed_balance": {
+    "lord": "Moon",
+    "years": 3,
+    "months": 3,
+    "days": 27
+   }
+  },
+  {
+   "key": "ashutosh",
+   "name": "Sir Ashutosh Mukerjee",
+   "moon_lon": 16.317,
+   "printed_balance": {
+    "lord": "Venus",
+    "years": 15,
+    "months": 6,
+    "days": 9
+   }
+  },
+  {
+   "key": "mussolini",
+   "name": "Benito Mussolini",
+   "moon_lon": 48.45,
+   "printed_balance": {
+    "lord": "Moon",
+    "years": 3,
+    "months": 8,
+    "days": 26
+   }
+  },
+  {
+   "key": "wadiyar",
+   "name": "Krishnaraja Wadiyar IV",
+   "moon_lon": 182.933,
+   "printed_balance": {
+    "lord": "Mars",
+    "years": 1,
+    "months": 11,
+    "days": 16
+   }
+  },
+  {
+   "key": "rajendra_prasad",
+   "name": "Rajendra Prasad",
+   "moon_lon": 55.467,
+   "printed_balance": {
+    "lord": "Mars",
+    "years": 5,
+    "months": 10,
+    "days": 17
+   }
+  },
+  {
+   "key": "nizam",
+   "name": "The Nizam of Hyderabad",
+   "moon_lon": 19.167,
+   "printed_balance": {
+    "lord": "Venus",
+    "years": 11,
+    "months": 3,
+    "days": 0
+   }
+  },
+  {
+   "key": "kasturi",
+   "name": "Kasturi Srinivasan",
+   "moon_lon": 332.767,
+   "printed_balance": {
+    "lord": "Jupiter",
+    "years": 0,
+    "months": 8,
+    "days": 5
+   }
+  },
+  {
+   "key": "sivananda",
+   "name": "Swami Sivananda",
+   "moon_lon": 24.217,
+   "printed_balance": {
+    "lord": "Venus",
+    "years": 3,
+    "months": 8,
+    "days": 0
+   }
+  },
+  {
+   "key": "nehru",
+   "name": "Jawaharlal Nehru",
+   "moon_lon": 109.333,
+   "printed_balance": {
+    "lord": "Mercury",
+    "years": 13,
+    "months": 7,
+    "days": 6
+   }
+  },
+  {
+   "key": "godse",
+   "name": "Nathuram Godse",
+   "moon_lon": 160.717,
+   "printed_balance": {
+    "lord": "Moon",
+    "years": 9,
+    "months": 5,
+    "days": 16
+   }
+  },
+  {
+   "key": "ramana",
+   "name": "Sri Ramana Maharshi",
+   "moon_lon": 89.967,
+   "printed_balance": {
+    "lord": "Jupiter",
+    "years": 4,
+    "months": 1,
+    "days": 20
+   }
+  }
+ ]
+}

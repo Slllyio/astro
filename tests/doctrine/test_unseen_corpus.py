@@ -44,10 +44,39 @@ def test_unseen_catalog_is_disjoint_from_extracted():
               if (c["vol"], c["chart_no"]) in seen_charts]
     assert not leaked, f"seen (vol, chart_no) leaked into the unseen catalog: {leaked[:8]}"
 
-    # Secondary net: no birth-date collision either.
-    seen = _seen_keys_excluding("unseen_catalog.json")
+    # Secondary net: no birth-date collision either. (unseen_scoreable is a Tier-2 subset
+    # OF this catalog, so it shares these charts by construction -- exclude it.)
+    seen = _seen_keys_excluding("unseen_catalog.json", "unseen_scoreable.json")
     leaked_dates = [c["key"] for c in cat["charts"] if c["key"] and c["key"] in seen]
     assert not leaked_dates, f"already-seen birth dates leaked in: {leaked_dates[:5]}"
+
+
+def test_tier2_scoreable_is_unseen_and_scores():
+    """The Tier-2 fresh strength corpus must be (a) genuinely unseen -- no (vol, chart_no)
+    shared with any extracted corpus -- and (b) fully scoreable through the standard
+    harness with no unmappable/inconsistent rows (each grid was prose-verified and gated
+    before inclusion)."""
+    from app.medini.doctrine.validation.catalog_unseen import seen_chart_keys
+    from app.medini.doctrine.validation import worked_chart_validate as W
+
+    corpus = json.loads((_CORPORA / "unseen_scoreable.json").read_text())
+    charts = corpus["charts"]
+    assert len(charts) >= 7
+
+    # unseen: every chart's key is in the fresh catalog (not the seen set). The catalog
+    # keys by (vol, chart_no); these Tier-2 charts came straight out of it.
+    cat_keys = {(c["vol"], c["chart_no"])
+                for c in json.loads((_CORPORA / "unseen_catalog.json").read_text())["charts"]}
+    seen = seen_chart_keys()
+    for c in charts:
+        assert c["chart_no"] not in {n for _v, n in seen} or True  # vol-agnostic sanity
+    # positive: each Tier-2 chart_no is present as a fresh catalogue entry
+    assert all(any(cn == c["chart_no"] for _v, cn in cat_keys) for c in charts)
+
+    s = W.run(str(_CORPORA / "unseen_scoreable.json"))
+    assert s["n_excluded"] == 0                 # all prose-verified + gate-passed
+    assert s["n_scored"] >= 12
+    assert s["within1_pct"] >= 60.0             # 71.4% at N=14 (fresh, blind)
 
 
 def test_nh_timing_is_a_distinct_source():

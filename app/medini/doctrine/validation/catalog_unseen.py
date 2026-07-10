@@ -37,7 +37,9 @@ _ORD = re.compile(r"(\d+)(?:st|nd|rd|th)")
 def _iter_corpora():
     for f in (glob.glob(str(_CORPORA / "*.json"))
               + glob.glob(str(_ROOT / "docs/raman_doctrine/audit/corpora/*.json"))):
-        if Path(f).name in ("unseen_catalog.json",):
+        # unseen_catalog is this file's own output; unseen_scoreable is a derived subset
+        # of it (Tier-2 grids) -- neither is an independent "seen" corpus for de-dup.
+        if Path(f).name in ("unseen_catalog.json", "unseen_scoreable.json"):
             continue
         try:
             d = json.loads(Path(f).read_text())

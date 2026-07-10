@@ -33,6 +33,7 @@ from app.medini.doctrine.domains.house_judgment import (
     _antardasha_spans,
     _birth_elapsed_into_md,
     _maha_sequence,
+    _verdict_label,
     judge_all_houses_doctrine,
     judge_house_doctrine,
 )
@@ -380,6 +381,9 @@ def build_chart_grounding(
     out: dict[str, Any] = {"planets": planets, "houses": houses}
     if dasha is not None:
         out["dasha"] = dasha
+    longevity = longevity_indication(js)
+    if longevity is not None:                   # only when the 8th house was judged
+        out["longevity"] = longevity
     return out
 
 
@@ -387,6 +391,41 @@ def _as_judgment_list(judgments) -> list[HouseJudgment]:
     if isinstance(judgments, dict):
         return [judgments[h] for h in sorted(judgments)]
     return list(judgments)
+
+
+# ------------------------------------------------------------ longevity signal
+# Held-out finding (REPORT_longevity.md): of the engine's 8th-house factors, ONLY the
+# 8th-BHĀVA fortification tracks Raman's stated longevity class (Spearman ρ = +0.52,
+# p ≈ 0.056, N=14). The 8th-lord and Āyushkāraka (Saturn) strength trend the WRONG way,
+# so they are deliberately excluded. This surfaces that one validated predictor -- as a
+# graded indication with its honest confidence, never a deterministic life-span.
+_LONGEVITY_ABOVE = {"very strong", "strong", "fairly strong", "fairly good", "moderately good"}
+_LONGEVITY_BELOW = {"weak", "afflicted", "very afflicted", "considerably afflicted"}
+
+
+def longevity_indication(judgments) -> "dict[str, Any] | None":
+    """The validated 8th-bhāva longevity indication, or None if the 8th isn't judged."""
+    j8 = next((j for j in _as_judgment_list(judgments) if j.house == 8), None)
+    if j8 is None:
+        return None
+    score = j8.lagna_verdict.score                      # the 8th-BHĀVA fortification score
+    grade = _verdict_label(score)
+    if grade in _LONGEVITY_ABOVE:
+        band = "above-average life support"
+    elif grade in _LONGEVITY_BELOW:
+        band = "below-average life support"
+    else:
+        band = "average life support"
+    return {
+        "basis": "8th-bhāva fortification — the sole held-out-validated longevity predictor "
+                 "(Spearman ρ = +0.52, p ≈ 0.056, N=14). The 8th-lord and Āyushkāraka "
+                 "strength do NOT track longevity and are excluded.",
+        "eighth_bhava_score": round(score, 2),
+        "eighth_bhava_grade": grade,
+        "indication": band,
+        "confidence": "moderate rank correlation, directional only — a longevity tendency, "
+                      "NOT a deterministic life-span or class.",
+    }
 
 
 # -------------------------------------------- structured reading output schema

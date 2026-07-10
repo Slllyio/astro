@@ -104,3 +104,14 @@ This confirms a **third validation dimension** (after strength and daśā-timing
 the Āyushkāraka does — Raman's teaching-example selection puts the signal out of the kāraka's
 reach on sign-only features, and a true lifespan model needs degree arithmetic. Measurement
 only; no engine change. Guarded by `tests/doctrine/test_longevity_validate.py`.
+
+## Productionized (2026-07-10)
+The one validated predictor — the **8th-bhāva fortification** (ρ = +0.52) — is now surfaced
+in the production reading grounding as `interpret.longevity_indication` / the `longevity`
+block of `build_chart_grounding`. It exposes the 8th-bhāva score + grade mapped to a
+directional band (above/average/below-average life support), with the honest confidence
+attached (moderate rank correlation, **not** a deterministic life-span or class), and the
+8th-lord/Āyushkāraka strength deliberately **excluded** (they trend the wrong way). Emitted
+only when the 8th house is judged. Guarded by `tests/doctrine/test_longevity_grounding.py`.
+The daśā timeline (94% held-out MD placement) was already wired via `resolve_current_dasha`
+and the `dasha` block of the same grounding.

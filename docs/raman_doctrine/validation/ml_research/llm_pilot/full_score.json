@@ -1,0 +1,45 @@
+{
+ "real": {
+  "n": 85,
+  "invalid_label": 0,
+  "exact": 17,
+  "within1": 40,
+  "within1_pct": 47.1,
+  "mean_delta": 0.94,
+  "sign": {
+   "n": 53,
+   "within1_pct": 43.4,
+   "mean_delta": 1.04
+  },
+  "nh": {
+   "n": 32,
+   "within1_pct": 53.1,
+   "mean_delta": 0.78
+  }
+ },
+ "twin": {
+  "n": 82,
+  "invalid_label": 0,
+  "exact": 14,
+  "within1": 39,
+  "within1_pct": 47.6,
+  "mean_delta": 1.01,
+  "sign": {
+   "n": 50,
+   "within1_pct": 48.0,
+   "mean_delta": 1.12
+  },
+  "nh": {
+   "n": 32,
+   "within1_pct": 46.9,
+   "mean_delta": 0.84
+  }
+ },
+ "engine_on_same_rows": {
+  "n": 85,
+  "within1_pct": 49.4,
+  "mean_delta": 0.56
+ },
+ "contamination_gap_pp": -0.5,
+ "n_graded_of_total": "167/167"
+}

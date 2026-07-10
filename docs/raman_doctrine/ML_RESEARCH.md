@@ -1,9 +1,9 @@
 # ML & AI for astrological pattern-finding — research report + roadmap
 
-**Status: Stage-1 checkpoint (2026-07-10).** A2 complete; pilot A1 at 139/167 (slice re-run
-pending); literature section pending adversarial verification (the deep-research verification
-pass died on a session token limit and resumes from cache). Every internal number traces to a
-banked artifact under `validation/ml_research/` or a live validator.
+**Status: Stage-2 checkpoint (2026-07-10).** A2 complete; **pilot A1 complete (167/167)**;
+literature section pending adversarial verification (the deep-research verification pass died on
+a session token limit and has been resumed from cache). Every internal number traces to a banked
+artifact under `validation/ml_research/` or a live validator.
 
 ## The question, split honestly in two
 
@@ -69,7 +69,7 @@ trains on live engine findings — a representation shift, not necessarily a tru
 representation; if the gate then passes, landing the learned combine becomes a reviewed
 increment with the drift-guard renumbered.
 
-## NEW — Track A experiment 2 (A1): the blinded LLM-as-scorer pilot (139/167 graded)
+## NEW — Track A experiment 2 (A1): the blinded LLM-as-scorer pilot (complete, 167/167)
 
 Can a frontier LLM's *holistic* reading beat the engine? Design
 (`app/medini/doctrine/validation/llm_scorer_pilot.py`, artifacts under
@@ -81,20 +81,20 @@ judged factor's engine-finding multiset is unchanged, so the structural question
 but the chart matches no published nativity. The real-vs-twin gap is the memorization detector.
 Zero-shot, opaque ids, graded on the same 9-grade lattice as the validators.
 
-Partial result (139/167; slice 4 lost to the token limit, re-run pending):
+Final result (167/167 graded; [`full_score.json`](validation/ml_research/llm_pilot/full_score.json)):
 
 | | within-one | mean Δ |
 |---|---|---|
-| LLM zero-shot, real rows (n=70) | 47.1% | +1.11 |
-| LLM zero-shot, perturbed twins (n=69) | 47.8% | +1.20 |
-| live engine on the same real rows | **52.9%** | +0.59 |
+| LLM zero-shot, real rows (n=85) | 47.1% | +0.94 |
+| LLM zero-shot, perturbed twins (n=82) | 47.6% | +1.01 |
+| live engine on the same real rows | **49.4%** | +0.56 |
 
-Three findings, stable enough at n=139 to state:
-- **The LLM does not beat the engine** zero-shot, and it over-credits harder (+1.11 vs +0.59) —
-  the same positive bias Raman's engine had to be beaten out of by increments.
-- **No contamination detected**: the real-vs-twin gap is −0.7pp ≈ 0. The blinding + twin design
+Three findings:
+- **The LLM does not beat the engine** zero-shot (47.1% vs 49.4%), and it over-credits harder
+  (+0.94 vs +0.56) — the same positive bias Raman's engine had to be beaten out of by increments.
+- **No contamination detected**: the real-vs-twin gap is −0.5pp ≈ 0. The blinding + twin design
   worked; the LLM's score reflects reasoning over the blinded structure, not book recall.
-- It reads **degree charts better than sign grids** (57.7% vs 40.9%) — plausibly because
+- It reads **degree charts better than sign grids** (53.1% vs 43.4%) — plausibly because
   longitudes let it compute what the grids leave implicit.
 
 Taken together with A2, the story is coherent and important: **the residual is learnable, but by
@@ -136,7 +136,7 @@ documentation-bias account of the Mars effect is the template for B1's kill prot
 
 | # | experiment | data | protocol | status |
 |---|---|---|---|---|
-| A1′ | finish the pilot (slice 4, 28 prompts) | on disk | same blinded design | pending token reset |
+| A1′ | finish the pilot (slice 4, 28 prompts) | on disk | same blinded design | **done** — final numbers above |
 | A2′ | anchor re-derivation → landing decision | ch. IV grids (extract) | gate re-run in engine representation; land only if 9/9 | next increment |
 | A3 | symbolic regression / program synthesis over chart primitives | tuned+held-out | discovered rule admitted only if it matches a sutra | after A2′ |
 | B1 | kill-or-confirm marriage XGBoost (+0.043 AUC) | holos/parquet rebuild via ETL | permutation null shuffling charts **within birth-decade × region cohorts** (outer planets encode era) | needs data rebuild |

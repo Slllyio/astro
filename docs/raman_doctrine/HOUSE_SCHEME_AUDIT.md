@@ -1061,3 +1061,39 @@ negatives risks the held-out (the debilitation itself is *already* handled corre
 neechabhāṅga-in-kendra rule is faithful doctrine but cannot close the ch52 class on the current
 (capped, additive) scorer. **Reverted** — no weight added; engine byte-identical to increment
 11. Recorded as a negative, alongside increments 8 (kāraka over-credit) and 9 (ashtakavarga).
+
+### Increment 13 — true-degree affliction (combustion + conjunction-orb): reduces but does NOT separate the over-credit (documented negative)
+
+**Hypothesis (from the NH degree-accurate held-out).** The fresh *Notable Horoscopes* strength
+test — charts reconstructed from Raman's **printed degrees**, the doctrine engine never tuned on
+them — exposed a clean, systematic **+1.13-grade over-credit** on afflicted factors
+(`REPORT_nh_strength.md`). The over-credit is proven non-separable on **sign-only** features
+(increments 8, 12; Phase D.0; Phase-2 recalibration breaks the anchor). NH supplies the one thing
+never tried against it: **true degrees**. Two degree-only terms were built and measured —
+**combustion** (`planet_state.is_combust`, a phenomenon the sign engine is entirely blind to) and
+a **malefic-conjunction orb multiplier** (tight orb → harder affliction). Both fire only when
+degree resolution is present, so the stored-findings paths (anchor, tuned floor, `fit_weights`
+self-check) are **byte-stable by construction** and stayed green throughout.
+
+**Result — degrees carry *some* signal, but not enough, and the weight can't be calibrated.**
+- **Combustion is directionally correct.** NH Buddha's 7th lord Saturn *is* combust and Raman
+  calls it "afflicted"; the term moved it one grade the right way (Δ+4 → +3) and pulled the
+  over-credit **mean** toward Raman on both held-out sets (NH +1.13 → +1.00; HTJAH held-out +0.49
+  → +0.38) with **zero within-one regression** anywhere and longevity ρ unchanged.
+- **But it does not SEPARATE the over-credit.** NH within-one stayed **46.7% at every combustion
+  weight tried** (−0.7 … −1.6) — the misses are 2-4 grades off; combustion moves ~1. The
+  pre-registered go/no-go ("NH within-one up") is **not met**.
+- **The orb multiplier was inert.** NH within-one and mean were unchanged across
+  `affliction_orb` 0 → 1.5, because the NH misses are **bhāva**-driven (house occupants/aspects),
+  not the assessed lord's conjunctions. Dropped.
+- **The weight is uncalibratable without ground truth.** Combustion necessarily changes any
+  chart with a combust factor — e.g. Mainpuri's combust lagna-lord Mars drops fairly-good → weak
+  at −1.6 — and there is no Raman verdict to say the new grade is better. Chasing the NH **mean**
+  by a weight that shifts already-calibrated verdicts would be overfitting N=15.
+
+**Disposition: reverted; engine byte-identical to increment 11.** Recorded as a negative
+alongside increments 8, 9, 12. The definitive finding: a **bolt-on true-degree affliction feature
+does not close the over-credit** — the sign-only strength engine is at its structural ceiling, and
+further strength gains need the full real-birth degree engine (a separate, larger effort), not a
+degree term grafted onto the sign scorer. The measurement stands on its own: **true degrees reduce
+the over-credit magnitude but do not separate the grade.**

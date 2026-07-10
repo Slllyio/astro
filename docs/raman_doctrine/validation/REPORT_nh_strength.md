@@ -56,5 +56,9 @@ moderate / *fairly powerful*:
   afflictions at hardship/death), stated up front.
 - Measurement only — no engine change; anchor + tuned floor + HTJAH held-out untouched. Guarded
   by `tests/doctrine/test_nh_strength.py`. `nh_strength_validate.py` reproduces the table.
-- Follow-on (separately gated) only if a *fixable*, anchor-safe mechanism emerges; the observed
-  over-credit is the known non-separable ceiling, so none is proposed here.
+- Follow-on **attempted and recorded as a negative** (increment 13, `HOUSE_SCHEME_AUDIT.md`):
+  true-degree combustion + a conjunction-orb multiplier — the one lever NH's degree accuracy
+  makes testable — **reduce** the over-credit mean (NH +1.13 → +1.00; HTJAH +0.49 → +0.38, zero
+  within-one regression) but **do not separate** it (NH within-one unmoved at every weight; the
+  orb term inert). A bolt-on degree feature doesn't close the over-credit; the sign-only strength
+  engine is at its structural ceiling. Reverted.

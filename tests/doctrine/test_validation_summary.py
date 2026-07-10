@@ -52,12 +52,33 @@ def test_summary_strength_fresh_blind():
 
 
 def test_summary_strength_nh_degree_accurate():
-    # Row: "Strength — NH degree-accurate | within-one 46.7% (exact 33.3%, Δ +1.13) | N=15".
+    # Row: "Strength — NH degree-accurate | within-one 46.7% (exact 33.3%, Δ +1.07) | N=15".
+    # Δ is +1.07 (not +1.13) since the degree layer's combustion term is on for the
+    # degree-resolved NH charts; within-one is unchanged (combustion is within-one-neutral
+    # on the original 15 -- see REPORT_degree_engine.md).
     s = N.run()
     assert s["n"] == 15
     assert s["n_excluded"] == 0
     assert abs(s["within1_pct"] - 46.7) <= _TOL
-    assert abs(s["mean_delta"] - 1.13) <= 0.02
+    assert abs(s["mean_delta"] - 1.07) <= 0.02
+
+
+def test_summary_strength_nh_degree_pooled_grown():
+    # Row: "Strength — NH degree pooled (grown) | within-one 43.8% (Δ +0.69) | N=32".
+    # The grown degree-accurate held-out (15 + 17 fresh), degree feature layer on
+    # (combustion). 0 excluded. Beats the 40.6% sign-baseline on the same corpus.
+    import json
+    import tempfile
+    a = json.loads((_CORP / "nh_strength.json").read_text())["rows"]
+    b = json.loads((_CORP / "nh_strength_grow.json").read_text())["rows"]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        json.dump({"rows": a + b}, fh)
+        pooled = fh.name
+    s = N.run(pooled)
+    assert s["n"] == 32
+    assert s["n_excluded"] == 0
+    assert abs(s["within1_pct"] - 43.8) <= _TOL
+    assert abs(s["mean_delta"] - 0.69) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------

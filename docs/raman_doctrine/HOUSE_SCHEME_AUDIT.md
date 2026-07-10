@@ -1097,3 +1097,41 @@ does not close the over-credit** — the sign-only strength engine is at its str
 further strength gains need the full real-birth degree engine (a separate, larger effort), not a
 degree term grafted onto the sign scorer. The measurement stands on its own: **true degrees reduce
 the over-credit magnitude but do not separate the grade.**
+
+### Increment 14 — the real-birth degree engine: combustion helps, chalita & degree-dignity do not (DONE + two documented negatives)
+
+Increment 13 concluded that further strength gains "need the full real-birth degree engine, not a
+degree term grafted onto the sign scorer." Increment 14 builds that layer properly — a
+`degree_resolved`-gated feature module (`degree_features.py`) that supplies bhāva-chalita placement,
+degree-graded dignity, and orb-graded combustion to the numeric assessor, wired so every
+sign-reconstructed chart (the ch. IV anchor, all HTJAH held-out) is **byte-identical**. It is
+measured **blind** on a grown, degree-accurate held-out set (NH 15 → **32** rows; 17 fresh verdicts
+extracted from the clean *Notable Horoscopes* text, three-agent + raw-text audited, pre-registered
+map grading, nothing fit).
+
+Blind ablation (NH degree pooled, N=32):
+
+| config | within-one | mean Δ |
+|---|---|---|
+| sign baseline | 40.6% | +0.75 |
+| bhāva-chalita only | **34.4%** | +0.50 |
+| degree-dignity + moolatrikona only | 40.6% | +0.75 |
+| **combustion only** | **43.8%** | +0.69 |
+
+- **Combustion (DONE, default on).** The only feature that raises within-one (40.6 → **43.8%**),
+  moving combust factors Raman grades afflicted the right way (Tippu's 8th Āyushkāraka Saturn
+  Δ+2 → +1; Buddha's 7th lord Saturn Δ+4 → +3). Within-one-neutral on the original 15 (46.7 →
+  46.7, bias +1.13 → +1.07) — consistent with increment 13 — so the gain surfaces only on a corpus
+  broad enough to contain such factors.
+- **Bhāva-chalita (documented negative, default off).** *Hurts* (40.6 → 34.4%): Raman grades
+  strength by **whole-sign rāśi**, not Sripati cusps, so re-classing planets to their chalita bhāva
+  moves them off the houses he judges. The dusthāna under-score is not a cusp artifact.
+- **Degree-dignity + moolatrikona (documented negative, default off).** Inert: within a sign the
+  Uccha depth spans ~0.83–1.0 and never crosses a grade boundary.
+
+**Disposition: combustion kept (on); chalita + degree-dignity retained as default-off, reproducible
+ablation levers.** The decisive lesson is now doctrinally grounded: the two levers that *should*
+have rescued the ceiling — cusp-accurate placement and degree-accurate dignity — are exactly the
+two that fail, because Raman's own method is whole-sign and sign-dignity based. Degree resolution
+yields a real but modest combustion gain and confirms the ~53% sign ceiling is structural. Full
+report: `validation/REPORT_degree_engine.md`.

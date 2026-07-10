@@ -553,10 +553,15 @@ class TestChapterRules:
 
     def test_house1_unchanged_by_chapter_map(self, mainpuri):
         # House 1 is deliberately absent from HOUSE_CHAPTERS -> its verdicts stand.
+        # mainpuri is a degree_resolved (printed-positions) chart, so the degree
+        # engine's combustion term applies: its lagna lord Mars is combust (conjunct
+        # the Sun), which drops the lord one grade (fairly good -> moderate) and the
+        # conclusion with it (fairly strong -> fairly good). See Increment 14 /
+        # REPORT_degree_engine.md; sign-reconstructed charts are unaffected.
         j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
         assert j.lagna_verdict.label == "very powerful"
-        assert j.lord_verdict.label == "fairly good"
-        assert j.conclusion.label == "fairly strong"
+        assert j.lord_verdict.label == "moderate"
+        assert j.conclusion.label == "fairly good"
 
     def test_house3_reads_ch6(self, mainpuri):
         # HOUSE_CHAPTERS[3] -> the 3rd house reads its own ch. VI rules.

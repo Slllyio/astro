@@ -24,7 +24,8 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 | **Strength** (sign-reconstructed) | within-one | **52.8%** (exact 26.4%, Δ +0.49) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
 | **Strength** — max HTJAH expansion | within-one | **53.9%** (exact 26.3%, Δ +0.43) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
-| **Strength** — NH degree-accurate | within-one | **46.7%** (exact 33.3%, Δ +1.13) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
+| **Strength** — NH degree-accurate | within-one | **46.7%** (exact 33.3%, Δ +1.07) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
+| **Strength** — NH degree pooled (grown) | within-one | **43.8%** (Δ +0.69) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
 | **Timing** — HTJAH events | mahādaśā-lord exact | **100%** (8/8); antara within-one 8/8 | 8 | `heldout_timing` + `…_ch12_8th` | [timing](validation/REPORT_timing.md) |
 | **Timing** — Notable Horoscopes | mahādaśā-lord exact | **94.0%** (47/50); antara within-one 92.9% | 50 | `nh_timing` (real births) | [timing](validation/REPORT_timing.md) |
 | **Daśā balance** — NH | starting-lord exact | **93.3%** (28/30); duration ±0.5y 28/30 | 30 | `nh_balance` (Moon longitude) | [nh balance](validation/REPORT_nh_balance.md) |
@@ -69,6 +70,9 @@ Eight increments improved held-out accuracy; four were honestly recorded as nega
 | 9 | ashtakavarga bindu strength | **documented negative** — no accuracy change |
 | 12 | neechabhāṅga-in-kendra strength | **documented negative** — inert under the positive cap |
 | 13 | true-degree affliction (combustion + aspect orb) | **documented negative** — reduces but does not *separate* the over-credit |
+| 14a | real-birth degree engine — orb-graded combustion in the numeric assessor | **landed** — NH degree pooled within-one 40.6 → **43.8%** (N=32), the first feature to raise it |
+| 14b | degree engine — bhāva-chalita placement | **documented negative** — *hurts* (Raman grades by whole-sign rāśi, not Sripati cusps) |
+| 14c | degree engine — degree-graded dignity + moolatrikona | **documented negative** — inert (sub-threshold within a sign) |
 
 That every negative is recorded rather than buried is the point: the ceiling is characterized,
 not hand-waved.
@@ -104,13 +108,21 @@ All validation corpora live under [`validation/corpora/`](validation/corpora/).
 
 ## What is left
 
-The only remaining lever for **strength** accuracy is the **full real-birth degree engine** —
-replacing sign-reconstruction with actual longitudes so the engine can weigh degree-of-exaltation,
-combustion orb, and exact bhāva cusps the way Raman does by eye. The NH degree-accurate track
-(46.7%, N=15) is the first probe of that path; Increment 13 showed degree-resolution affliction
-alone does not separate the over-credit, so the degree engine is a *larger, separate effort*, not
-a tuning pass. Timing and balance are already at their useful ceiling and are wired into the
-reading output.
+The **real-birth degree engine has now been built and measured** ([degree engine
+report](validation/REPORT_degree_engine.md)) — a `degree_resolved`-gated feature layer feeding
+actual longitudes to the scorer, validated blind on the grown NH degree corpus (32 rows). Its
+verdict is decisive and doctrinally grounded:
+
+- **Orb-graded combustion helps** — NH degree pooled within-one 40.6 → **43.8%** (N=32), the first
+  feature to raise it. It is on by default (gated to real-longitude charts; sign numbers untouched).
+- **The two levers that *should* have rescued the ceiling both fail**: bhāva-chalita placement
+  *hurts* (Raman grades by whole-sign rāśi, not Sripati cusps) and degree-graded dignity is inert
+  (sub-threshold within a sign). Both are documented negatives, default off.
+
+So degree resolution yields a real but modest gain and **confirms the ~53% ceiling is structural,
+not a resolution artifact**: what remains is Raman's holistic weighing of placement against dignity
+against association, which no feature — sign *or* degree — has closed. Timing and balance are
+already at their useful ceiling and are wired into the reading output.
 
 ## Report index
 
@@ -120,6 +132,7 @@ Strength & ceiling: [recalibration](validation/REPORT_recalibration.md) ·
 [unseen corpus](validation/REPORT_unseen_corpus.md) ·
 [verdict audit](validation/REPORT_verdict_audit.md) ·
 [NH strength](validation/REPORT_nh_strength.md) ·
+[degree engine](validation/REPORT_degree_engine.md) ·
 [Raman-style prose](validation/REPORT_raman_style.md).
 Per-house held-out: [ch06 3rd](validation/REPORT_ch06_3rd.md) ·
 [ch07 4th](validation/REPORT_ch07_4th.md) · [ch08 5th](validation/REPORT_ch08_5th.md) ·

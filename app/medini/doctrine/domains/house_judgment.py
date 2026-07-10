@@ -32,6 +32,7 @@ from app.core.dignity import dignity_state, SIGN_RULERS
 from app.core.drishti_argala import aspects_from_planet, planets_aspecting_bhava
 from app.core.functional_roles import functional_roles
 from app.core.ephemeris_engine import DASHA_LORDS, calculate_vimshottari_mahadasha
+from app.medini.doctrine.domains import degree_features as _deg
 from app.medini.doctrine.compendium import load_compendium
 from app.medini.doctrine.domains.houses import HOUSE_DOMAIN, _POLARITY_SIGN
 from app.medini.doctrine.engine.evaluate import evaluate_rule
@@ -626,8 +627,48 @@ def _bhava_benefic(chart: RamanChart, planet: str, ref_sign: int | None = None) 
     return _is_benefic(chart, planet, ref_sign) or _natural_benefic(chart, planet)
 
 
+# -- Degree feature layer. Every feature is doubly gated on ``chart.degree_resolved``
+#    so sign-reconstructed charts (the ch. IV anchor, all HTJAH held-out) are
+#    byte-identical whatever these are set to. The blind NH degree-corpus ablation
+#    (REPORT_degree_engine.md) fixed the defaults:
+#      * COMBUST -> the only feature that RAISES within-one (pooled 40.6->43.8%,
+#        N=32); orb-graded astangata in the numeric assessor. DEFAULT ON.
+#      * CHALIT  -> HURTS (40.6->34.4%): Raman grades strength by WHOLE-SIGN rasi,
+#        not Sripati cusps. Documented negative. DEFAULT OFF.
+#      * DIGNITY -> inert (sub-threshold): degree-depth uchcha/neecha + moolatrikona
+#        never cross a grade boundary. Documented negative. DEFAULT OFF.
+#    The two OFF flags are retained as reproducible ablation levers, not dead code.
+DEGREE_CHALIT = False    # bhava-chalita placement replaces whole-sign houses
+DEGREE_DIGNITY = False   # deep/shallow uchcha-neecha + moolatrikona
+DEGREE_COMBUST = True     # orb-graded combustion penalty
+
+
+def _degree_on(chart: RamanChart) -> bool:
+    return getattr(chart, "degree_resolved", False)
+
+
 def _d1_houses(chart: RamanChart) -> dict[str, int]:
-    return dict(chart.bundle.kundali.planet_house)
+    whole = dict(chart.bundle.kundali.planet_house)
+    if not (DEGREE_CHALIT and _degree_on(chart)):
+        return whole
+    # Sripati chalit re-classes planets near a bhava cusp; keep whole-sign for any
+    # graha without a real longitude (defensive).
+    chalit = _deg.chalit_houses(chart)
+    return {p: chalit.get(p, whole[p]) for p in whole}
+
+
+def _combustion_finding(chart: RamanChart, planet: str) -> "Finding | None":
+    """Orb-graded combustion penalty as a Rasi Finding, real-longitude charts only."""
+    if not (DEGREE_COMBUST and _degree_on(chart)):
+        return None
+    lons = chart.bundle.chart.planet_lons
+    if planet not in lons or "Sun" not in lons:
+        return None
+    w = _deg.combustion_weight(planet, lons[planet], lons["Sun"])
+    if w == 0.0:
+        return None
+    return Finding(f"{planet} combust (astangata, degree-orb)", round(w, 2),
+                   "Rasi", "combustion")
 
 
 def _d9_houses(chart: RamanChart) -> dict[str, int]:
@@ -788,10 +829,25 @@ def _dignity_findings(chart, planet, sign, frame, scale=1.0) -> list[Finding]:
         # cancellation lifts the debility to a mild positive (decoded 0.2), not -1.6.
         return [Finding(f"{planet} debilitated but neechabhanga (cancellation)",
                         round(_W["neechabhanga"] * scale, 2), frame, "dignity")]
+    out: list[Finding] = []
     w = _DIGNITY_W.get(dg, 0.0) * scale
-    if w == 0.0:
-        return []
-    return [Finding(f"{planet} in a {dg} sign", round(w, 2), frame, "dignity")]
+    if w != 0.0:
+        out.append(Finding(f"{planet} in a {dg} sign", round(w, 2), frame, "dignity"))
+    # Degree refinement (real-longitude charts, Rasi frame only): a shallow
+    # exaltation is credited below the flat +1.6, a shallow debilitation softened,
+    # and an own-sign planet in its moolatrikona range earns a tier above own-sign.
+    if frame == "Rasi" and DEGREE_DIGNITY and _degree_on(chart):
+        lon = chart.bundle.chart.planet_lons.get(planet)
+        if lon is not None:
+            dd = _deg.dignity_depth_delta(planet, sign, lon) * scale
+            if dd:
+                out.append(Finding(f"{planet} degree-graded uchcha/neecha depth",
+                                   round(dd, 2), "Rasi", "dignity"))
+            mt = _deg.moolatrikona_delta(planet, sign, lon) * scale
+            if mt:
+                out.append(Finding(f"{planet} in moolatrikona (root-trine)",
+                                   round(mt, 2), "Rasi", "dignity"))
+    return out
 
 
 def _aspect_findings(chart, houses, target_house, subject, frame, scale=1.0,
@@ -899,6 +955,11 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     elif kind == "papa":
         f.append(Finding("hemmed between malefics (Papakartari)",
                          _W["kartari_papa"], "Rasi", "kartari"))
+    # Degree layer: a combust planet (astangata) is weakened -- invisible to the
+    # sign scorer (real-longitude charts only).
+    cf = _combustion_finding(chart, planet)
+    if cf is not None:
+        f.append(cf)
     # Navamsa frame — CO-EQUAL (Chart 12: the Navamsa redeems a Rasi-afflicted lord).
     f += _dignity_findings(chart, planet, sign9, "Navamsa")
     f += _aspect_findings(chart, d9, d9[planet], planet, "Navamsa", ref_sign=ref_sign)

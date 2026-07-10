@@ -80,6 +80,10 @@ class RamanChart:
     arudha_lagna_sign: int
     atmakaraka: str
     karakamsa_sign: int
+    # True only when planet_lons are REAL printed/ephemeris longitudes (not
+    # pada-midpoint sign reconstructions). Gates the degree feature layer in
+    # house_judgment so sign-reconstructed charts stay byte-identical.
+    degree_resolved: bool = False
 
     # -- frame-aware house lookup: the one code path every house-valued
     #    DSL leaf goes through ------------------------------------------
@@ -115,7 +119,7 @@ class RamanChart:
         raise ValueError(f"unknown frame {frame!r}; expected one of {FRAMES}")
 
 
-def _build(bundle: ChartBundle, ayanamsa: str) -> RamanChart:
+def _build(bundle: ChartBundle, ayanamsa: str, *, degree_resolved: bool = False) -> RamanChart:
     lons = bundle.chart.planet_lons
     lagna_lon = bundle.chart.asc_lon
     varga_signs = {
@@ -138,6 +142,7 @@ def _build(bundle: ChartBundle, ayanamsa: str) -> RamanChart:
         arudha_lagna_sign=arudha_lagna(bundle.chart).arudha_sign,
         atmakaraka=atmakaraka,
         karakamsa_sign=varga_signs[atmakaraka][9],
+        degree_resolved=degree_resolved,
     )
 
 
@@ -149,15 +154,19 @@ def from_positions(
     person_id: str = "",
     ayanamsa: str = "lahiri",
     retrograde: Mapping[str, bool] | None = None,
+    degree_resolved: bool = False,
 ) -> RamanChart:
-    """Build from sidereal longitudes already expressed in ``ayanamsa``."""
+    """Build from sidereal longitudes already expressed in ``ayanamsa``.
+
+    ``degree_resolved`` marks the longitudes as REAL (printed/ephemeris) rather
+    than pada-midpoint sign reconstructions, enabling the degree feature layer."""
     if ayanamsa not in AYANAMSAS:
         raise ValueError(f"unknown ayanamsa {ayanamsa!r}; expected one of {AYANAMSAS}")
     bundle = bundle_from_positions(
         planet_lons, lagna_lon, birth_jd=birth_jd,
         person_id=person_id, retrograde=retrograde,
     )
-    return _build(bundle, ayanamsa)
+    return _build(bundle, ayanamsa, degree_resolved=degree_resolved)
 
 
 def from_printed_positions(
@@ -169,10 +178,11 @@ def from_printed_positions(
     retrograde: Mapping[str, bool] | None = None,
 ) -> RamanChart:
     """Golden-case constructor: Raman's PRINTED positions, his ayanamsa,
-    zero ephemeris noise (mirrors bundle_from_positions semantics)."""
+    zero ephemeris noise (mirrors bundle_from_positions semantics). These are
+    real degree positions, so the degree feature layer is enabled."""
     return from_positions(
         planet_lons, lagna_lon, birth_jd=birth_jd, person_id=person_id,
-        ayanamsa="raman", retrograde=retrograde,
+        ayanamsa="raman", retrograde=retrograde, degree_resolved=True,
     )
 
 

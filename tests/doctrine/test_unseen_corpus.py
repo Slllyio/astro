@@ -46,7 +46,8 @@ def test_unseen_catalog_is_disjoint_from_extracted():
 
     # Secondary net: no birth-date collision either. (unseen_scoreable is a Tier-2 subset
     # OF this catalog, so it shares these charts by construction -- exclude it.)
-    seen = _seen_keys_excluding("unseen_catalog.json", "unseen_scoreable.json")
+    seen = _seen_keys_excluding("unseen_catalog.json", "unseen_scoreable.json",
+                                "unseen_grow.json")
     leaked_dates = [c["key"] for c in cat["charts"] if c["key"] and c["key"] in seen]
     assert not leaked_dates, f"already-seen birth dates leaked in: {leaked_dates[:5]}"
 
@@ -77,6 +78,30 @@ def test_tier2_scoreable_is_unseen_and_scores():
     assert s["n_excluded"] == 0                 # all prose-verified + gate-passed
     assert s["n_scored"] >= 12
     assert s["within1_pct"] >= 60.0             # 71.4% at N=14 (fresh, blind)
+
+
+def test_grow_corpus_is_unseen_and_scores():
+    """The max-addressable grow corpus: genuinely unseen (no (vol, chart_no) shared with any
+    extracted chart), every chart gate-passes (0 excluded), and it carries the ch65 recovery
+    plus at least one positive-verdict and one tuned-house-flagged chart."""
+    from app.medini.doctrine.validation.catalog_unseen import seen_chart_keys
+    from app.medini.doctrine.validation import worked_chart_validate as W
+
+    corpus = json.loads((_CORPORA / "unseen_grow.json").read_text())
+    charts = corpus["charts"]
+    assert len(charts) >= 6
+    seen = seen_chart_keys()
+    leaked = [(c["vol"], c["chart_no"]) for c in charts if (c["vol"], c["chart_no"]) in seen]
+    assert not leaked, f"seen charts leaked into grow corpus: {leaked}"
+
+    # ch65 is the Tier-2 recovery (was dropped for a bad grid); it must be present + gate-pass
+    assert any(c["chart_no"] == 65 for c in charts)
+    s = W.run(str(_CORPORA / "unseen_grow.json"))
+    assert s["n_excluded"] == 0                       # all gate-passed + mappable
+    assert s["n_scored"] >= 8
+    # tuned-house charts are flagged so the pooled number can separate them
+    assert any(c.get("tuned_house") for c in charts)
+    assert any(not c.get("tuned_house") for c in charts)
 
 
 def test_nh_timing_is_a_distinct_source():

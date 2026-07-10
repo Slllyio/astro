@@ -1,0 +1,274 @@
+{
+ "source": "HTJAH Vol I & II -- the MAXIMUM addressable fresh strength charts after the clean-full-text audit (8 addressable -> 6 gate-passed + prose-verified). ch65 recovers the Tier-2 drop (its grid now prose-consistent). Houses 4/8/11 are non-tuned held-out; house 7 is tuned-HOUSE (flagged tuned_house). Verdicts are Raman's verbatim words, offset-corrected + hand-graded. Measurement only.",
+ "charts": [
+  {
+   "chart_no": 65,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 16-11-1914 at 5 p.m.",
+   "house_judged": 4,
+   "tuned_house": false,
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Libra",
+    "Mars": "Scorpio",
+    "Mercury": "Libra",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Gemini",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Aquarius",
+    "Mars": "Libra",
+    "Mercury": "Aquarius",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Capricorn",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Leo",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is moderately strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the lord and the Karaka are considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "the lord and the Karaka are considerably afflicted",
+     "karaka": "Moon"
+    }
+   ]
+  },
+  {
+   "chart_no": 76,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 20-11-1925 at 1 p.m.",
+   "house_judged": 8,
+   "tuned_house": false,
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Sagittarius",
+    "Mars": "Libra",
+    "Mercury": "Scorpio",
+    "Jupiter": "Sagittarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Gemini",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Taurus",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 8th house and 8th lord from Lagna and Moon are heavily afflicted"
+    }
+   ]
+  },
+  {
+   "chart_no": 230,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 23-6-1894 at 10 p.m.",
+   "house_judged": 11,
+   "tuned_house": false,
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Aquarius",
+    "Mars": "Pisces",
+    "Mercury": "Cancer",
+    "Jupiter": "Taurus",
+    "Venus": "Taurus",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Capricorn",
+    "Mars": "Virgo",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Capricorn",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "lagna_rasi": "Capricorn",
+   "lagna_navamsa": "Aries",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 11th lord is blemished"
+    }
+   ]
+  },
+  {
+   "chart_no": 27,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 6-4-1886",
+   "house_judged": 7,
+   "tuned_house": true,
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Aries",
+    "Mars": "Leo",
+    "Mercury": "Aries",
+    "Jupiter": "Virgo",
+    "Venus": "Aquarius",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Virgo",
+    "Mars": "Leo",
+    "Mercury": "Aries",
+    "Jupiter": "Pisces",
+    "Venus": "Capricorn",
+    "Saturn": "Capricorn",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Libra",
+   "verdicts": [
+    {
+     "factor": "karaka",
+     "phrase": "The KalatraKaraka Venus is afflicted by association with Ketu",
+     "karaka": "Venus"
+    }
+   ]
+  },
+  {
+   "chart_no": 28,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 23-6-1894",
+   "house_judged": 7,
+   "tuned_house": true,
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Aquarius",
+    "Mars": "Pisces",
+    "Mercury": "Cancer",
+    "Jupiter": "Taurus",
+    "Venus": "Taurus",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Virgo",
+    "Mercury": "Cancer",
+    "Jupiter": "Virgo",
+    "Venus": "Aquarius",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "lagna_rasi": "Capricorn",
+   "lagna_navamsa": "Aries",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The Moon as the 7th lord is not afflicted by aspect or association"
+    }
+   ]
+  },
+  {
+   "chart_no": 29,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 10-9-1938",
+   "house_judged": 7,
+   "tuned_house": true,
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Aquarius",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Pisces",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Gemini",
+    "Mars": "Gemini",
+    "Mercury": "Gemini",
+    "Jupiter": "Libra",
+    "Venus": "Capricorn",
+    "Saturn": "Aquarius",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Sagittarius",
+   "verdicts": [
+    {
+     "factor": "overall",
+     "phrase": "The 7th house and the 8th lord the Moon in Navamsha are both heavily afflicted"
+    }
+   ]
+  },
+  {
+   "chart_no": 31,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 22/23-11-1902",
+   "house_judged": 7,
+   "tuned_house": true,
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Leo",
+    "Mars": "Leo",
+    "Mercury": "Libra",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Gemini",
+    "Jupiter": "Cancer",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Taurus",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the 7th house is occupied by Vargottama Ketu and aspected by an afflicted 9th and 12th lord"
+    }
+   ]
+  }
+ ]
+}

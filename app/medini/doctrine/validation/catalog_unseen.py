@@ -39,7 +39,8 @@ def _iter_corpora():
               + glob.glob(str(_ROOT / "docs/raman_doctrine/audit/corpora/*.json"))):
         # unseen_catalog is this file's own output; unseen_scoreable is a derived subset
         # of it (Tier-2 grids) -- neither is an independent "seen" corpus for de-dup.
-        if Path(f).name in ("unseen_catalog.json", "unseen_scoreable.json"):
+        if Path(f).name in ("unseen_catalog.json", "unseen_scoreable.json",
+                             "unseen_grow.json"):
             continue
         try:
             d = json.loads(Path(f).read_text())

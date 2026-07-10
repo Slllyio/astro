@@ -79,7 +79,8 @@ def clean_charts() -> dict[tuple[str, int], dict]:
         if d:
             dates.setdefault((vol, int(m.group(1))), d)
 
-    # factor headers in order; a House header sets the current (vol, chart) context
+    # factor headers in order; a House header sets the current (vol, chart) context AND
+    # the house judged (its ordinal). The following Lord/Karaka/Conclusion inherit both.
     heads = [("bhava", rf"The\s+(?:{_ORDRX})\s+House"),
              ("lord", rf"(?:The\s+)?(?:{_ORDRX})\s+Lord"),
              ("karaka", r"[A-Z][a-z]+-?[Kk]araka"),
@@ -87,22 +88,29 @@ def clean_charts() -> dict[tuple[str, int], dict]:
     events = []
     for fac, rx in heads:
         for m in re.finditer(rx + r"\s*[.:—-]+([^§]{0,340})", txt, re.IGNORECASE):
-            events.append((m.start(), fac, m.group(1).strip()[:320]))
-    events.sort()
+            events.append((m.start(), fac, m.group(1).strip()[:320], m.group(0)))
+    events.sort(key=lambda e: e[0])
 
     charts: dict[tuple[str, int], dict] = {}
     cur: tuple[str, int] | None = None
-    for pos, fac, phrase in events:
+    for pos, fac, phrase, header in events:
         if fac == "bhava":
+            om = re.search(rf"({_ORDRX})\s+House", header, re.IGNORECASE)
+            house = _ORD[om.group(1).lower()] if om else None
             cm = re.match(r"[^.]*?Chart No\.?\s*(\d+)", phrase)
             if cm:
                 vol = "htjah_vol1" if pos < boundary else "htjah_vol2"
                 cur = (vol, int(cm.group(1)))
+                if cur in charts:
+                    charts[cur]["house"] = house
         if cur is None:
             continue
-        charts.setdefault(cur, {"verdicts": {}})["verdicts"].setdefault(fac, phrase)
+        c = charts.setdefault(cur, {"verdicts": {}, "house": None})
+        c["verdicts"].setdefault(fac, phrase)
+        if fac == "bhava" and c.get("house") is None:
+            c["house"] = house
     for key, d in dates.items():
-        charts.setdefault(key, {"verdicts": {}})["date"] = d
+        charts.setdefault(key, {"verdicts": {}, "house": None})["date"] = d
     return charts
 
 

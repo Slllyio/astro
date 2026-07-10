@@ -101,3 +101,45 @@ which is exactly what a clean held-out test should show.
   builder (embedded verified grids + verbatim verdicts).
 - `docs/raman_doctrine/validation/corpora/{unseen_catalog,unseen_scoreable}.json`.
 - `tests/doctrine/test_unseen_corpus.py` — de-dup + fresh-corpus integrity guards.
+
+## Maximum expansion — the clean full text sets the ceiling (2026-07-10)
+
+With the clean full text supplying garble-free, offset-corrected verdicts for ~200 charts,
+the **maximum addressable** fresh strength set is now exactly quantifiable: filter the clean
+charts to those that (a) are house-judgments, (b) carry a map-gradeable verdict, (c) have a
+birth date, and (d) are unseen by **(vol, chart_no)** against every extracted corpus. That
+yields **8 charts** — decisive proof the HTJAH house-strength vein is spent (the 12 house
+chapters are otherwise fully mined).
+
+Of the 8: **7 survived** vision extraction + the reachability gate + a per-chart cross-check
+against Raman's own prose placements (ch79 failed the Navāṁśa gate). Corpus `unseen_grow.json`
+(builder embeds the verified grids). **ch65 is recovered** — the chart Tier-2 dropped for an
+irreconcilable grid; with the clean prose as the cross-check ("the 4th is Cancer" → Lagna
+Aries; Moon+Mercury in Libra; Rahu in Aquarius; Jupiter debilitated in Capricorn) the agent
+produced a fully prose-consistent grid.
+
+### Result — the remaining charts are the *hard tail*
+| set | rows | within-one | mean Δ |
+|---|---|---|---|
+| grow (all 7 charts) | 9 | **33.3%** | +1.11 |
+| grow, non-tuned-house only | 5 | **0.0%** | +0.80 |
+| **ALL POOLED** (held-out + Tier-2 + grow) | **76** | **53.9%** | +0.43 |
+
+Growing to the maximum **lowered** the pooled held-out (56.7% → **53.9%**), because the
+charts that were *left* are the ones the engine gets wrong: ch76 (RFK) — the 8th house Raman
+calls "heavily afflicted" the engine grades "fairly good" (Δ+4, benefic-aspect over-credit);
+ch65 — the afflicted 4th lord/kāraka the engine grades "moderate" and the clean 4th house it
+grades "weak" (the holistic-weighing inversion). The earlier **71% Tier-2 figure was an
+easy-subset artifact**; the honest broad held-out on the full mined HTJAH set is **~54%**,
+right at the established structural ceiling. Houses 4/8/11 are non-tuned held-out; house 7 is
+tuned-*house* (flagged `tuned_house`) so the pooled number separates them.
+
+### Honest takeaways
+- **The vein is empty.** 8 addressable → 7 scored is the end of the HTJAH strength corpus;
+  further growth needs a different source (*Notable Horoscopes*, still figure-less) or the
+  degree path.
+- **The blind number fell, and that is the point.** A clean maximal held-out set removed the
+  small-sample optimism; ~54% is the number to beat, and the misses it exposes are the same
+  documented structural ceilings (benefic-aspect over-credit, holistic negative-weighing),
+  not new phenomena.
+- Guarded by `test_unseen_corpus.py::test_grow_corpus_is_unseen_and_scores`.

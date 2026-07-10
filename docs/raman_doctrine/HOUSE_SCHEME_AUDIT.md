@@ -1006,3 +1006,34 @@ count is measured and shown in the findings for display, and the machinery (cros
 against the rule path, guarded by `TestAshtakavargaFeature`) is available for a degree-era or
 longevity-scoped use where it may weigh differently. Engine behaviour is byte-identical to the
 pre-increment baseline (held-out 24/51, anchor 8/8). Measurement + dormant wiring only.
+
+### Increment 11 — a lord at home in its own dusthāna is redeemed (fresh-held-out-driven, DONE)
+
+The Tier-2 **blind** corpus (`unseen_scoreable.json`, charts the engine was never tuned on)
+surfaced a concrete, recurring structural miss: **ch35** — the 8th lord Moon occupies its own
+sign Cancer *in the 8th house* with exalted Jupiter; Raman grades it **"full and very
+powerful"**, the engine graded it **weak** (Δ−7). The scorer applied a flat `dusthana = −1.0`
+placement penalty (`_assess_planet`, `:862`) **and** the Phase-2.4 `dusthana_lord = −1.0`
+functional-malefic penalty, so own-sign strength (+1.2) and the exalted-Jupiter conjunction
+(+1.6) were dragged under by −2.0.
+
+**Rule:** a lord occupying **the very house it rules**, in its own sign, is "at home" — the
+dusthāna does not afflict it. Both the placement and the dusthāna-lordship penalties are
+cancelled; the own-sign dignity finding stands. Scoped to `h == own_house` (`_assess_lord`
+passes the judged house) so it fires only for a lord *in its own house*, not a lord merely
+displaced into a coincidental dusthāna.
+
+**The scope is load-bearing — it is what makes this a clean, not a regressing, change.** A
+first, blanket "own-sign redeems any dusthāna" cut the held-out within-one **52.8 → 49.1%**
+because it wrongly redeemed **ch103** (the 5th lord Saturn sits in the *6th* in own sign, yet
+Raman still calls it **"afflicted"** — its affliction is aspect-driven, and it is *displaced*,
+not at home). Restricting to `h == own_house` protects ch103 (h6 ≠ judged-5) while keeping the
+ch35 gain.
+
+**Result:** held-out within-one **52.8% (unchanged, no regression)**; anchor **byte-stable
+8/8**; tuned floor + `fit_weights` self-check green (269 doctrine tests pass). On the fresh
+blind set ch35's 8th lord moves **weak (−0.91) → fairly strong (+1.09)**, shrinking its miss
+from Δ−7 to Δ−3 and lifting the fresh mean Δ **−0.50 → −0.21**. The coarse within-one metric
+does not flip (Δ−3 is still a "miss"), but the engine is measurably more faithful to Raman on
+the dusthāna-own-sign class at **zero cost** to every gate. Guarded by
+`test_lord_at_home_in_own_dusthana_is_redeemed`.

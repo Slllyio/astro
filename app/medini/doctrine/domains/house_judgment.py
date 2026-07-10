@@ -847,7 +847,8 @@ def _conjunction_findings(chart, houses, planet, frame, scale=1.0,
 
 def _assess_planet(chart: RamanChart, planet: str, role: str, *,
                    ref_sign: int | None = None,
-                   houses: Mapping[str, int] | None = None) -> FactorVerdict:
+                   houses: Mapping[str, int] | None = None,
+                   own_house: int | None = None) -> FactorVerdict:
     """Grade a planet on Raman's criteria. Defaults reckon placement + functional
     nature from the Lagna; pass ``ref_sign`` (the Moon's sign) and ``houses`` (the
     from-Moon map) to grade the same planet 'from Chandra Lagna'. Dignity, aspects,
@@ -859,7 +860,15 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     sign9 = chart.varga_signs[planet][9]
     f: list[Finding] = []
     h = d1[planet]
-    if h in DUSTHANA:
+    # A lord occupying THE VERY HOUSE it rules, in its own sign, is "at home" even when that
+    # house is a dusthana -- Raman does not afflict it for the placement (ch35: the 8th lord
+    # in own Cancer, in the 8th, is "full and very powerful"). This redeems BOTH the
+    # placement and the dusthana-lordship penalties; the own-sign dignity finding stands.
+    # Scoped to h == own_house so a lord merely DISPLACED into a coincidental dusthana is
+    # NOT redeemed (ch103: the 5th lord Saturn in the 6th in own sign is still "afflicted").
+    own_at_home_in_dusthana = (h in DUSTHANA and h == own_house
+                               and dignity_state(planet, sign1) == "own")
+    if h in DUSTHANA and not own_at_home_in_dusthana:
         f.append(Finding(f"placed in the {h}th (dusthana)", _W["dusthana"], "Rasi", "placement"))
     elif h in set(KENDRA) | set(TRIKONA):
         f.append(Finding(f"placed in the {h}th (kendra/trikona)",
@@ -867,8 +876,9 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     # Phase 2.4: a planet that OWNS a dusthana (6/8/12 from the Lagna) is a functional
     # malefic and thereby afflicted in itself (Raman, Chart 64: "the Moon owns the 6th
     # and hence afflicted"). The Lagna lord is exempt -- its ascendant lordship redeems
-    # a coincidental dusthana ownership. Reckoned from the Lagna only (ref_sign None).
-    if ref_sign is None:
+    # a coincidental dusthana ownership; likewise a lord at home in its own dusthana.
+    # Reckoned from the Lagna only (ref_sign None).
+    if ref_sign is None and not own_at_home_in_dusthana:
         owned = [dh for dh in DUSTHANA if _lord_of(chart, dh) == planet]
         if owned and planet != _lord_of(chart, 1):
             f.append(Finding(
@@ -986,7 +996,7 @@ def _assess_lagna(chart): return _assess_bhava(chart, 1)
 
 
 def _assess_lord(chart, house):
-    return _assess_planet(chart, _lord_of(chart, house), "Lord")
+    return _assess_planet(chart, _lord_of(chart, house), "Lord", own_house=house)
 
 
 def _assess_karaka(chart, house):

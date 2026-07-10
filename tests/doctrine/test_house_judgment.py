@@ -743,3 +743,34 @@ class TestChartGroundingCostAndTiming:
         # House number out of the 1..12 range is rejected by the schema.
         with pytest.raises(pydantic.ValidationError):
             ChartReadings(readings=[{"house": 13, "reading": "x"}])
+
+
+def test_lord_at_home_in_own_dusthana_is_redeemed():
+    """A lord occupying THE house it rules, in its own sign, is not afflicted by that
+    dusthana placement (Raman ch35: the 8th lord in own Cancer, in the 8th, is "full and
+    very powerful"). But a lord merely DISPLACED into a coincidental dusthana in own sign
+    is still afflicted (Raman ch103: the 5th lord Saturn in the 6th)."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import reconstruct as R
+    from app.medini.doctrine.domains.house_judgment import _lord_of
+
+    fresh = json.loads(Path(
+        "docs/raman_doctrine/validation/corpora/unseen_scoreable.json").read_text())
+    ch35 = next(c for c in fresh["charts"] if c["chart_no"] == 35)
+    chart = R.chart_from_rasi(ch35["rasi"], ch35["lagna_rasi"])
+    # 8th lord in the 8th, own sign -> redeemed: no dusthana / functional-malefic finding.
+    v = _assess_lord(chart, 8)
+    texts = " ".join(f.text for f in v.findings)
+    assert "dusthana" not in texts.lower()          # placement + lordship both redeemed
+    assert _verdict_label(v.rasi_score) not in ("weak", "afflicted")
+
+    held = json.loads(Path(
+        "docs/raman_doctrine/validation/corpora/heldout_ch08_5th.json").read_text())
+    ch103 = next(c for c in held["charts"] if c["chart_no"] == 103)
+    chart2 = R.chart_from_raman(ch103["rasi"], ch103["navamsa"],
+                                ch103["lagna_rasi"], ch103["lagna_navamsa"])
+    # 5th lord displaced into the 6th (own sign) -> NOT redeemed: dusthana penalty stands.
+    v2 = _assess_lord(chart2, 5)
+    assert _lord_of(chart2, 5) == "Saturn"
+    assert any("dusthana" in f.text.lower() for f in v2.findings)

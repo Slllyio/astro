@@ -1037,3 +1037,27 @@ from Δ−7 to Δ−3 and lifting the fresh mean Δ **−0.50 → −0.21**. The
 does not flip (Δ−3 is still a "miss"), but the engine is measurably more faithful to Raman on
 the dusthāna-own-sign class at **zero cost** to every gate. Guarded by
 `test_lord_at_home_in_own_dusthana_is_redeemed`.
+
+### Increment 12 — neechabhāṅga-in-kendra strength: INERT under the positive cap (documented negative)
+
+**Hypothesis (fresh-blind ch52):** the debilitated 8th lord Sun sits in the 10th (a kendra)
+with its debility *cancelled* (neechabhāṅga); classically this is a **Neecha-Bhaṅga Rāja
+Yoga**, a strength — Raman grades it **"fairly strong"**, the engine **"afflicted"** (Δ−5).
+The engine already cancels the debility (+0.2 instead of −1.6) but does not upgrade the
+cancellation to a yoga. A candidate weight `neechabhanga_kendra = 1.2` was added (fires only
+when cancellation *is* detected AND the planet is in a kendra — so ch87's **raw** debilitation,
+no cancellation, is untouched and stays correctly "afflicted").
+
+**Result: no measurable effect.** ch52's 8th lord moved only −1.26 → −1.16 (still "weak"),
+because its Rāśi positive stack is **already saturated by `_cap_positive`** (kendra +1.2 +
+vargottama +1.2 sit past the `_POS_KNEE = 1.6` knee), so the extra +1.0 of raja-yoga credit is
+absorbed. Held-out within-one unchanged (52.8%), fresh within-one unchanged (71.4%).
+
+**Diagnosis:** ch52's low grade is driven by its **uncapped negative load** — malefic aspects
+(Jupiter-as-functional-malefic, Ketu, Mars) plus the functional-malefic lordship penalty — not
+by a missing dignity term. This is the **same holistic-weighing ceiling as increment 8**: once
+the positive side is capped, only reducing the negatives moves the grade, and re-weighting the
+negatives risks the held-out (the debilitation itself is *already* handled correctly). The
+neechabhāṅga-in-kendra rule is faithful doctrine but cannot close the ch52 class on the current
+(capped, additive) scorer. **Reverted** — no weight added; engine byte-identical to increment
+11. Recorded as a negative, alongside increments 8 (kāraka over-credit) and 9 (ashtakavarga).

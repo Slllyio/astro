@@ -41,6 +41,16 @@ def test_run_on_corpus_matches_all_mds():
     assert s["ad_within_one_bhukti"] == s["ad_n"]
 
 
+def test_notable_horoscopes_fresh_timing_holds_at_scale():
+    """Fresh, UNSEEN validation from a different book (Notable Horoscopes): the engine's
+    Vimshottari MD arithmetic places 50 famous deaths in Raman's stated mahadasha at 94%,
+    AD within-one at >=90% -- a large-N independent confirmation of the timing result."""
+    s = T.run("docs/raman_doctrine/validation/corpora/nh_timing.json")
+    assert s["n_events"] == 50
+    assert s["md_exact"] >= 46                       # 47/50 (94%)
+    assert s["ad_within_one_bhukti"] / s["ad_n"] >= 0.9
+
+
 def test_pooled_with_8th_house_holds_at_scale():
     """The 8th-house (Ch XII) death-timing scale-up doubles N; MD stays exact and every
     bhukti stays within one of Raman's, at N=8."""

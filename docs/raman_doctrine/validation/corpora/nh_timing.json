@@ -1,0 +1,955 @@
+{
+ "source": "B. V. Raman, Notable Horoscopes (archive.org NotableHoroscopesBVR) -- 50 golden cases; UNSEEN by the doctrine engine (distinct book). Balance-of-dasa computed from the stated Moon position via calculate_vimshottari_mahadasha (Raman prints no balance line); the 94% MD match validates both the MD arithmetic AND the balance-from-Moon computation.",
+ "charts": [
+  {
+   "chart_no": "Sri Gautama Buddha",
+   "birth_line": "buddha",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 15,
+    "months": 1,
+    "days": 6
+   },
+   "events": [
+    {
+     "desc": "death, age 80.0",
+     "age_years": 80.0,
+     "md": "Sun",
+     "ad": "Mars"
+    }
+   ]
+  },
+  {
+   "chart_no": "Alexander the Great",
+   "birth_line": "alexander",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 5,
+    "months": 9,
+    "days": 11
+   },
+   "events": [
+    {
+     "desc": "death, age 32.0",
+     "age_years": 32.0,
+     "md": "Mercury",
+     "ad": "Moon"
+    }
+   ]
+  },
+  {
+   "chart_no": "Augustus Caesar",
+   "birth_line": "augustus",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 1,
+    "months": 5,
+    "days": 10
+   },
+   "events": [
+    {
+     "desc": "death, age 75.92",
+     "age_years": 75.92,
+     "md": "Ketu",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Adi Sankaracharya",
+   "birth_line": "sankara",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 14,
+    "months": 6,
+    "days": 29
+   },
+   "events": [
+    {
+     "desc": "death, age 32.0",
+     "age_years": 32.0,
+     "md": "Saturn",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Jesus Christ",
+   "birth_line": "jesus",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 14,
+    "months": 2,
+    "days": 22
+   },
+   "events": [
+    {
+     "desc": "death, age 35.33",
+     "age_years": 35.33,
+     "md": "Ketu",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Emperor Nero",
+   "birth_line": "nero",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 11,
+    "months": 5,
+    "days": 12
+   },
+   "events": [
+    {
+     "desc": "death, age 30.5",
+     "age_years": 30.5,
+     "md": "Mars",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Ramanujacharya",
+   "birth_line": "ramanuja",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 8,
+    "months": 3,
+    "days": 27
+   },
+   "events": [
+    {
+     "desc": "death, age 120.0",
+     "age_years": 120.0,
+     "md": "Rahu",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": "Omar Khayyam",
+   "birth_line": "omar",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 0,
+    "months": 1,
+    "days": 19
+   },
+   "events": [
+    {
+     "desc": "death, age 75.17",
+     "age_years": 75.17,
+     "md": "Venus",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Chengiz Khan",
+   "birth_line": "chengiz",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 2,
+    "months": 5,
+    "days": 5
+   },
+   "events": [
+    {
+     "desc": "death, age 40.92",
+     "age_years": 40.92,
+     "md": "Venus",
+     "ad": "Sun"
+    }
+   ]
+  },
+  {
+   "chart_no": "Guru Nanak",
+   "birth_line": "nanak",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 0,
+    "months": 9,
+    "days": 5
+   },
+   "events": [
+    {
+     "desc": "death, age 68.83",
+     "age_years": 68.83,
+     "md": "Saturn",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Chaitanya",
+   "birth_line": "chaitanya",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 5,
+    "months": 8,
+    "days": 12
+   },
+   "events": [
+    {
+     "desc": "death, age 47.0",
+     "age_years": 47.0,
+     "md": "Jupiter",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Akbar the Great",
+   "birth_line": "akbar",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 13,
+    "months": 6,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "death, age 62.92",
+     "age_years": 62.92,
+     "md": "Mercury",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "John Milton",
+   "birth_line": "milton",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 8,
+    "months": 3,
+    "days": 9
+   },
+   "events": [
+    {
+     "desc": "death, age 65.92",
+     "age_years": 65.92,
+     "md": "Saturn",
+     "ad": "Rahu"
+    }
+   ]
+  },
+  {
+   "chart_no": "Aurangzeb",
+   "birth_line": "aurangzeb",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 2,
+    "months": 1,
+    "days": 22
+   },
+   "events": [
+    {
+     "desc": "death, age 88.33",
+     "age_years": 88.33,
+     "md": "Mercury",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Shivaji the Great",
+   "birth_line": "shivaji",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 4,
+    "months": 1,
+    "days": 17
+   },
+   "events": [
+    {
+     "desc": "death, age 50.17",
+     "age_years": 50.17,
+     "md": "Saturn",
+     "ad": "Mars"
+    }
+   ]
+  },
+  {
+   "chart_no": "Hyderali",
+   "birth_line": "hyderali",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 15,
+    "months": 8,
+    "days": 6
+   },
+   "events": [
+    {
+     "desc": "death, age 60.0",
+     "age_years": 60.0,
+     "md": "Mars",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "J. W. von Goethe",
+   "birth_line": "goethe",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 12,
+    "months": 4,
+    "days": 24
+   },
+   "events": [
+    {
+     "desc": "death, age 82.58",
+     "age_years": 82.58,
+     "md": "Moon",
+     "ad": "Mars"
+    }
+   ]
+  },
+  {
+   "chart_no": "Tippu Sultan",
+   "birth_line": "tippu",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 3,
+    "months": 4,
+    "days": 24
+   },
+   "events": [
+    {
+     "desc": "death, age 47.42",
+     "age_years": 47.42,
+     "md": "Jupiter",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Marie Antoinette",
+   "birth_line": "marie_antoinette",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 2,
+    "months": 5,
+    "days": 12
+   },
+   "events": [
+    {
+     "desc": "death, age 37.92",
+     "age_years": 37.92,
+     "md": "Saturn",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Thyagaraja",
+   "birth_line": "thyagaraja",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 14,
+    "months": 2,
+    "days": 22
+   },
+   "events": [
+    {
+     "desc": "death, age 85.0",
+     "age_years": 85.0,
+     "md": "Rahu",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "Abraham Lincoln",
+   "birth_line": "lincoln",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 2,
+    "months": 1,
+    "days": 6
+   },
+   "events": [
+    {
+     "desc": "death, age 56.17",
+     "age_years": 56.17,
+     "md": "Saturn",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": "Lord Tennyson",
+   "birth_line": "tennyson",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 6,
+    "months": 9,
+    "days": 11
+   },
+   "events": [
+    {
+     "desc": "death, age 83.17",
+     "age_years": 83.17,
+     "md": "Ketu",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Karl Marx",
+   "birth_line": "marx",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 3,
+    "months": 9,
+    "days": 18
+   },
+   "events": [
+    {
+     "desc": "death, age 64.83",
+     "age_years": 64.83,
+     "md": "Saturn",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": "Queen Victoria",
+   "birth_line": "victoria",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 7,
+    "months": 3,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "death, age 81.67",
+     "age_years": 81.67,
+     "md": "Mercury",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "B. Suryanarain Rao",
+   "birth_line": "suryanarain_rao",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 12,
+    "months": 3,
+    "days": 9
+   },
+   "events": [
+    {
+     "desc": "death, age 81.42",
+     "age_years": 81.42,
+     "md": "Saturn",
+     "ad": "Moon"
+    }
+   ]
+  },
+  {
+   "chart_no": "Bala Gangadhara Tilak",
+   "birth_line": "tilak",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 13,
+    "months": 8,
+    "days": 14
+   },
+   "events": [
+    {
+     "desc": "death, age 64.08",
+     "age_years": 64.08,
+     "md": "Rahu",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Narasimha Bharathi",
+   "birth_line": "narasimha_bharathi",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 7,
+    "months": 2,
+    "days": 8
+   },
+   "events": [
+    {
+     "desc": "death, age 54.33",
+     "age_years": 54.33,
+     "md": "Saturn",
+     "ad": "Ketu"
+    }
+   ]
+  },
+  {
+   "chart_no": "Jagadish Chandra Bose",
+   "birth_line": "jc_bose",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 2,
+    "months": 6,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "death, age 79.0",
+     "age_years": 79.0,
+     "md": "Ketu",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Havelock Ellis",
+   "birth_line": "havelock_ellis",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 6,
+    "months": 2,
+    "days": 12
+   },
+   "events": [
+    {
+     "desc": "death, age 80.42",
+     "age_years": 80.42,
+     "md": "Mercury",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Rabindranath Tagore",
+   "birth_line": "tagore",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 10,
+    "months": 2,
+    "days": 20
+   },
+   "events": [
+    {
+     "desc": "death, age 80.25",
+     "age_years": 80.25,
+     "md": "Jupiter",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "Swami Vivekananda",
+   "birth_line": "vivekananda",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 3,
+    "months": 3,
+    "days": 27
+   },
+   "events": [
+    {
+     "desc": "death, age 39.5",
+     "age_years": 39.5,
+     "md": "Jupiter",
+     "ad": "Sun"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sayaji Rao III",
+   "birth_line": "sayaji_rao",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 8,
+    "months": 9,
+    "days": 5
+   },
+   "events": [
+    {
+     "desc": "death, age 75.92",
+     "age_years": 75.92,
+     "md": "Rahu",
+     "ad": "Venus"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sir Ashutosh Mukerjee",
+   "birth_line": "ashutosh",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 15,
+    "months": 6,
+    "days": 9
+   },
+   "events": [
+    {
+     "desc": "death, age 61.08",
+     "age_years": 61.08,
+     "md": "Jupiter",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Chittaranjan Das",
+   "birth_line": "crdas",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 1,
+    "months": 3,
+    "days": 3
+   },
+   "events": [
+    {
+     "desc": "death, age 54.58",
+     "age_years": 54.58,
+     "md": "Moon",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "Aurobindo Ghose",
+   "birth_line": "aurobindo",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Ketu",
+    "years": 3,
+    "months": 2,
+    "days": 3
+   },
+   "events": [
+    {
+     "desc": "death, age 78.33",
+     "age_years": 78.33,
+     "md": "Jupiter",
+     "ad": "Rahu"
+    }
+   ]
+  },
+  {
+   "chart_no": "Franklin D. Roosevelt",
+   "birth_line": "fdr",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 6,
+    "months": 7,
+    "days": 20
+   },
+   "events": [
+    {
+     "desc": "death, age 63.25",
+     "age_years": 63.25,
+     "md": "Ketu",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Benito Mussolini",
+   "birth_line": "mussolini",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 3,
+    "months": 7,
+    "days": 29
+   },
+   "events": [
+    {
+     "desc": "death, age 61.75",
+     "age_years": 61.75,
+     "md": "Saturn",
+     "ad": "Jupiter"
+    }
+   ]
+  },
+  {
+   "chart_no": "Krishnaraja Wadiyar IV",
+   "birth_line": "wadiyar",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 1,
+    "months": 11,
+    "days": 16
+   },
+   "events": [
+    {
+     "desc": "death, age 56.17",
+     "age_years": 56.17,
+     "md": "Mercury",
+     "ad": "Mercury"
+    }
+   ]
+  },
+  {
+   "chart_no": "Rajendra Prasad",
+   "birth_line": "rajendra_prasad",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 5,
+    "months": 10,
+    "days": 17
+   },
+   "events": [
+    {
+     "desc": "death, age 78.17",
+     "age_years": 78.17,
+     "md": "Ketu",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "The Nizam of Hyderabad",
+   "birth_line": "nizam",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 11,
+    "months": 3,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "death, age 80.83",
+     "age_years": 80.83,
+     "md": "Saturn",
+     "ad": "Rahu"
+    }
+   ]
+  },
+  {
+   "chart_no": "Kasturi Srinivasan",
+   "birth_line": "kasturi",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 0,
+    "months": 8,
+    "days": 5
+   },
+   "events": [
+    {
+     "desc": "death, age 71.92",
+     "age_years": 71.92,
+     "md": "Moon",
+     "ad": "Rahu"
+    }
+   ]
+  },
+  {
+   "chart_no": "Swami Sivananda",
+   "birth_line": "sivananda",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 3,
+    "months": 8,
+    "days": 3
+   },
+   "events": [
+    {
+     "desc": "death, age 75.83",
+     "age_years": 75.83,
+     "md": "Saturn",
+     "ad": null
+    }
+   ]
+  },
+  {
+   "chart_no": "Jawaharlal Nehru",
+   "birth_line": "nehru",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 13,
+    "months": 7,
+    "days": 6
+   },
+   "events": [
+    {
+     "desc": "death, age 74.5",
+     "age_years": 74.5,
+     "md": "Rahu",
+     "ad": "Ketu"
+    }
+   ]
+  },
+  {
+   "chart_no": "King George VI",
+   "birth_line": "george_vi",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 18,
+    "months": 1,
+    "days": 22
+   },
+   "events": [
+    {
+     "desc": "death, age 56.17",
+     "age_years": 56.17,
+     "md": "Venus",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Subhas Chandra Bose",
+   "birth_line": "sc_bose",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 0,
+    "months": 3,
+    "days": 29
+   },
+   "events": [
+    {
+     "desc": "death, age 48.58",
+     "age_years": 48.58,
+     "md": "Jupiter",
+     "ad": "Mars"
+    }
+   ]
+  },
+  {
+   "chart_no": "M. S. Golwalkar",
+   "birth_line": "golwalkar",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 18,
+    "months": 3,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "death, age 67.33",
+     "age_years": 67.33,
+     "md": "Jupiter",
+     "ad": "Venus"
+    }
+   ]
+  },
+  {
+   "chart_no": "Nathuram Godse",
+   "birth_line": "godse",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 9,
+    "months": 5,
+    "days": 17
+   },
+   "events": [
+    {
+     "desc": "death, age 39.5",
+     "age_years": 39.5,
+     "md": "Jupiter",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Mahatma Gandhi",
+   "birth_line": "gandhi",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Ketu",
+    "years": 6,
+    "months": 10,
+    "days": 29
+   },
+   "events": [
+    {
+     "desc": "death, age 78.25",
+     "age_years": 78.25,
+     "md": "Jupiter",
+     "ad": "Sun"
+    }
+   ]
+  },
+  {
+   "chart_no": "Sri Ramana Maharshi",
+   "birth_line": "ramana",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 4,
+    "months": 0,
+    "days": 15
+   },
+   "events": [
+    {
+     "desc": "death, age 70.33",
+     "age_years": 70.33,
+     "md": "Sun",
+     "ad": "Saturn"
+    }
+   ]
+  },
+  {
+   "chart_no": "Albert Einstein",
+   "birth_line": "einstein",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 7,
+    "months": 10,
+    "days": 26
+   },
+   "events": [
+    {
+     "desc": "death, age 76.08",
+     "age_years": 76.08,
+     "md": "Jupiter",
+     "ad": null
+    }
+   ]
+  }
+ ]
+}

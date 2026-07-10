@@ -10,6 +10,16 @@ each event by age:
 Both AD "misses" are age-rounding, not arithmetic error — the event falls right at a
 bhukti boundary and Raman's age phrasing is coarse ("about 32", "the 36th year").
 
+> **FRESH-SOURCE scale-up — Notable Horoscopes, 2026-07-08. MD 47/50 (94%) on an unseen
+> book.** The 57 golden cases from B. V. Raman's *Notable Horoscopes* (famous nativities,
+> a different book the doctrine engine has never touched) were scored through the same
+> `timing_validate` MD arithmetic: **MD exact 47/50 (94%), AD exact 28/42 (67%), AD
+> within-one 39/42 (93%)**. Because the balance-of-daśā was **computed from each chart's
+> stated Moon position** (Raman prints no balance line for these), the 94% match validates
+> BOTH the MD placement AND the balance-from-Moon computation the "Not validated here" note
+> below had deferred. The 3 MD misses are honest: Ramanujacharya (age 120) exceeds the
+> 120-year Vimśottarī cycle, plus two ±1 boundary cases. Corpus: `corpora/nh_timing.json`.
+
 > **Scale-up — 8th house (Ch XII, longevity), 2026-07-08. The N=4 result now holds at
 > N=8:** pooling the four Ch VII / Vol II parental-death events with four hand-verified
 > **death-of-native** events from the 8th-house longevity chapter gives **MD 8/8 exact

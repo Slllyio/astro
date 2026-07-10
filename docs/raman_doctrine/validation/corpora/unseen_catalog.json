@@ -1,11 +1,15 @@
 {
- "source": "HTJAH Vol I & II -- catalog of worked charts UNSEEN by the engine (de-duped by birth-date against every existing corpus). Tier-1 TEXT index: metadata + heuristic reading-type tags. Sign grids + exact verdicts are added in Tier 2 (vision extraction).",
- "n_fresh": 164,
+ "source": "HTJAH Vol I & II -- worked charts UNSEEN by the engine, de-duped against every existing corpus by (vol, chart_no) first (robust: HTJAH restarts chart numbering per volume, and the tuned/anchor corpora carry a chart number but no birth line) and by birth-date as a secondary net. Tier-1 TEXT index: metadata + heuristic reading-type tags. Sign grids + exact verdicts added in Tier 2 (vision).",
+ "n_fresh": 115,
  "reading_type_counts": {
   "longevity": 4,
-  "yoga": 38,
-  "death_timing": 23,
-  "strength": 60
+  "yoga": 28,
+  "death_timing": 12,
+  "strength": 38
+ },
+ "excluded_as_seen": {
+  "by_chart_no": 202,
+  "by_birth_date": 32
  },
  "charts": [
   {
@@ -72,24 +76,6 @@
    "birth_line": "Born on 22-2-1863 at 10-16p",
    "key": "22-2-1863",
    "reading_types": []
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 12,
-   "birth_line": "Born on 16-10-1918 at 2-20 p",
-   "key": "16-10-1918",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 14,
-   "birth_line": "Born on 7-8-1878 at 1-30 p",
-   "key": "7-8-1878",
-   "reading_types": [
-    "strength"
-   ]
   },
   {
    "vol": "htjah_vol1",
@@ -252,69 +238,6 @@
   },
   {
    "vol": "htjah_vol1",
-   "chart_no": 40,
-   "birth_line": "Born on 13/ 14-12-1895 at 3-5 a",
-   "key": "14-12-1895",
-   "reading_types": [
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 41,
-   "birth_line": "Born on 3/4-2-1900 at 4-00 a",
-   "key": "4-2-1900",
-   "reading_types": [
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 42,
-   "birth_line": "Born on 3-7-1909 at 9-14 p",
-   "key": "3-7-1909",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 43,
-   "birth_line": "Born on 24-8-1890 at 8-44 p",
-   "key": "24-8-1890",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 44,
-   "birth_line": "Born on 29/30-9-1888 at 4-35 a",
-   "key": "30-9-1888",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 45,
-   "birth_line": "Born on 22-1-1898 at 10-7 p",
-   "key": "22-1-1898",
-   "reading_types": [
-    "strength",
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 46,
-   "birth_line": "Born on 30-1-1891 at 7-0 p",
-   "key": "30-1-1891",
-   "reading_types": [
-    "strength",
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
    "chart_no": 47,
    "birth_line": "Born on 24-8-1890 at 8-44 p",
    "key": "24-8-1890",
@@ -324,28 +247,10 @@
   },
   {
    "vol": "htjah_vol1",
-   "chart_no": 48,
-   "birth_line": "Born on 20/21-10-1887 at about 3-10 a",
-   "key": "21-10-1887",
-   "reading_types": [
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
    "chart_no": 50,
    "birth_line": "Born on 15-4-1883 at 1-30 p",
    "key": "15-4-1883",
    "reading_types": []
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 53,
-   "birth_line": "Born on 24-8-18*0 at 8-44 p",
-   "key": null,
-   "reading_types": [
-    "strength"
-   ]
   },
   {
    "vol": "htjah_vol1",
@@ -389,46 +294,6 @@
    "chart_no": 68,
    "birth_line": "Born on 13-10-1896 at 7-56 a",
    "key": "13-10-1896",
-   "reading_types": [
-    "strength",
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 69,
-   "birth_line": "Born on 10-2-1909 at 11-33 a",
-   "key": "10-2-1909",
-   "reading_types": [
-    "strength",
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 70,
-   "birth_line": "Born on 25-9-1898 at 7-30 a",
-   "key": "25-9-1898",
-   "reading_types": [
-    "strength",
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 73,
-   "birth_line": "Born on 5-1-1891 at 12-30 p",
-   "key": "5-1-1891",
-   "reading_types": [
-    "strength",
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 74,
-   "birth_line": "Born on 21-7-1900 at 10-38 a",
-   "key": "21-7-1900",
    "reading_types": [
     "strength",
     "yoga"
@@ -560,107 +425,6 @@
     "strength",
     "yoga"
    ]
-  },
-  {
-   "vol": "htjah_vol1",
-   "chart_no": 118,
-   "birth_line": "Born on 23-8-18V9 at 12-10 p",
-   "key": null,
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 1,
-   "birth_line": "Born 16-8-1937 at 8-31 a",
-   "key": "16-8-1937",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 2,
-   "birth_line": "Born 3-8-1942 at 7-23 a",
-   "key": "3-8-1942",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 3,
-   "birth_line": "Born 3/4-12-1953 at 5-17 a",
-   "key": "4-12-1953",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 4,
-   "birth_line": "Born 20-11-1950 at 3 a",
-   "key": "20-11-1950",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 5,
-   "birth_line": "Born 8-10-1935 at 11-30 a",
-   "key": "8-10-1935",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 6,
-   "birth_line": "Born 24-3-7883 at 6 a",
-   "key": "24-3-7883",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 9,
-   "birth_line": "Born on 311-1940 at 7-00 a",
-   "key": null,
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 11,
-   "birth_line": "Born 26-12-1953 at 11-47 p",
-   "key": "26-12-1953",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 12,
-   "birth_line": "Born 21-5-1940 at 7-50 a",
-   "key": "21-5-1940",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 14,
-   "birth_line": "Born 3-11-1957 at 10-20 a",
-   "key": "3-11-1957",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 15,
-   "birth_line": "Born 8-12-1941 at 1-20 a",
-   "key": "8-12-1941",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 16,
-   "birth_line": "Born 25-2-1953 at 6-54 a",
-   "key": "25-2-1953",
-   "reading_types": []
   },
   {
    "vol": "htjah_vol2",
@@ -798,15 +562,6 @@
   },
   {
    "vol": "htjah_vol2",
-   "chart_no": 71,
-   "birth_line": "Born 25-10-1904 at 8-57p",
-   "key": "25-10-1904",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
    "chart_no": 76,
    "birth_line": "Born 20-11-1925 at 1-00 p",
    "key": "20-11-1925",
@@ -822,90 +577,6 @@
    "reading_types": [
     "strength"
    ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 86,
-   "birth_line": "Born 14-4-1857 at 1-45 p",
-   "key": "14-4-1857",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 87,
-   "birth_line": "Born 23-4-1877at 10-25 p",
-   "key": "23-4-1877",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 88,
-   "birth_line": "Born 6-10-1950 at 2-18 p",
-   "key": "6-10-1950",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 89,
-   "birth_line": "Born 2-5-7947 at 7-20 p",
-   "key": "2-5-7947",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 90,
-   "birth_line": "Born 29-10-1951 at 12-48 noon (I",
-   "key": "29-10-1951",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 91,
-   "birth_line": "Born 1-8-1949 at 12-42 noon (I",
-   "key": "1-8-1949",
-   "reading_types": [
-    "strength",
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 94,
-   "birth_line": "Born 24-10-1949 at 3-33 p",
-   "key": "24-10-1949",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 95,
-   "birth_line": "Born 12-5-1925 at 7-30 a",
-   "key": "12-5-1925",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 96,
-   "birth_line": "Born 4-8-1958 at 6-40 a",
-   "key": "4-8-1958",
-   "reading_types": [
-    "strength",
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 97,
-   "birth_line": "Born 12-12-1954 at 7-30 a",
-   "key": "12-12-1954",
-   "reading_types": []
   },
   {
    "vol": "htjah_vol2",
@@ -976,15 +647,6 @@
    "birth_line": "Born 29-9-1946 at 11-58 a",
    "key": "29-9-1946",
    "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 121,
-   "birth_line": "Born 28 5-1944 at 9-50 a",
-   "key": null,
-   "reading_types": [
-    "yoga"
-   ]
   },
   {
    "vol": "htjah_vol2",
@@ -1144,83 +806,6 @@
    "birth_line": "Born 8-2-1722 (N S",
    "key": "8-2-1722",
    "reading_types": [
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 210,
-   "birth_line": "Born 16-8-1937 at 8-31 a",
-   "key": "16-8-1937",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 211,
-   "birth_line": "Born 21-5-1940 at 7-50 a",
-   "key": "21-5-1940",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 212,
-   "birth_line": "Born 29-9-1946 at 11-58 am",
-   "key": "29-9-1946",
-   "reading_types": [
-    "death_timing"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 213,
-   "birth_line": "Born 6-1-1974 at 12-40 noon (I",
-   "key": "6-1-1974",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 214,
-   "birth_line": "Born 30-12-1943 at 9-19 p",
-   "key": "30-12-1943",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 215,
-   "birth_line": "Born 26-2-1953 at 9-20 p",
-   "key": "26-2-1953",
-   "reading_types": []
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 216,
-   "birth_line": "Born 12-5-1925 at 7-30 a",
-   "key": "12-5-1925",
-   "reading_types": [
-    "strength"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 217,
-   "birth_line": "Born 28-10-1922 at 8-40 p",
-   "key": "28-10-1922",
-   "reading_types": [
-    "strength",
-    "yoga"
-   ]
-  },
-  {
-   "vol": "htjah_vol2",
-   "chart_no": 218,
-   "birth_line": "Born 18-4-7904 at 5-57 p",
-   "key": "18-4-7904",
-   "reading_types": [
-    "strength",
     "yoga"
    ]
   },

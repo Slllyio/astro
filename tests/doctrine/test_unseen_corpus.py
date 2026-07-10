@@ -31,10 +31,23 @@ def _seen_keys_excluding(*exclude):
 
 def test_unseen_catalog_is_disjoint_from_extracted():
     cat = json.loads((_CORPORA / "unseen_catalog.json").read_text())
-    assert cat["n_fresh"] >= 150                       # ~164 fresh charts
+    assert cat["n_fresh"] >= 100                       # ~115 fresh charts
+
+    # Robust de-dup: no (vol, chart_no) may match an already-extracted chart. HTJAH
+    # restarts numbering per volume and the tuned/anchor corpora carry a chart number
+    # but no birth line, so the (vol, chart_no) key -- not the date -- is what proves
+    # the catalog is genuinely unseen (the anchor Charts 12-14 and tuned h2/h7/h9/h11
+    # leaked in when only birth-date was checked).
+    from app.medini.doctrine.validation.catalog_unseen import seen_chart_keys
+    seen_charts = seen_chart_keys()
+    leaked = [(c["vol"], c["chart_no"]) for c in cat["charts"]
+              if (c["vol"], c["chart_no"]) in seen_charts]
+    assert not leaked, f"seen (vol, chart_no) leaked into the unseen catalog: {leaked[:8]}"
+
+    # Secondary net: no birth-date collision either.
     seen = _seen_keys_excluding("unseen_catalog.json")
-    leaked = [c["key"] for c in cat["charts"] if c["key"] and c["key"] in seen]
-    assert not leaked, f"already-seen charts leaked into the unseen catalog: {leaked[:5]}"
+    leaked_dates = [c["key"] for c in cat["charts"] if c["key"] and c["key"] in seen]
+    assert not leaked_dates, f"already-seen birth dates leaked in: {leaked_dates[:5]}"
 
 
 def test_nh_timing_is_a_distinct_source():

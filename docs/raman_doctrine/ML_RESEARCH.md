@@ -1,9 +1,9 @@
 # ML & AI for astrological pattern-finding — research report + roadmap
 
-**Status: Stage-2 checkpoint (2026-07-10).** A2 complete; **pilot A1 complete (167/167)**;
-literature section pending adversarial verification (the deep-research verification pass died on
-a session token limit and has been resumed from cache). Every internal number traces to a banked
-artifact under `validation/ml_research/` or a live validator.
+**Status: COMPLETE (2026-07-10).** A2 complete; pilot A1 complete (167/167); the four
+load-bearing literature claims verified against primary sources (verbatim quotes below), the
+remainder labeled extracted-unverified. Every internal number traces to a banked artifact under
+`validation/ml_research/` or a live validator.
 
 ## The question, split honestly in two
 
@@ -101,30 +101,41 @@ Taken together with A2, the story is coherent and important: **the residual is l
 fitting Raman's specific weighing — not by generic astrological expertise.** A tiny model trained
 on 52 of his verdicts outperforms both his own hand-decoded rule set and a frontier LLM.
 
-## Literature (extracted; verification pass pending — labels UNVERIFIED)
+## Literature (verification status per claim)
 
-The deep-research sweep extracted these claims with sources before its adversarial-verification
-phase was cut off by the session limit; it resumes from cache (`wf_26461ec4-be0`). Until then
-each claim is **unverified** and stated with its source:
+The deep-research sweep extracted these claims with sources; its 3-vote adversarial-verification
+phase was twice cut short by session token limits, so the load-bearing claims were then verified
+**directly against their primary sources** from this session (verbatim quotes on file). Status
+per claim:
 
-- **Carlson 1985 (Nature 318:419)** — double-blind chart-to-CPI matching; 28 vetted astrologers
-  chose correctly 0.34 ± 0.044 vs chance 1/3, 3.3σ below their own predicted 0.5 floor;
-  falsification criteria fixed in advance. The canonical pre-registered null.
-- **Dean & Kelly 2003 time-twins** — 2,101 persons born in London 3–9 Mar 1958 (mean 4.8 min
-  apart), 110 variables at ages 11/16/23: effect size 0.00 ± 0.03. The largest population-scale
-  natal-similarity null; the direct parallel to our N=82,589 nulls.
-- **McGrew & McFall 1990** — six expert astrologers matching 23 charts to full case files:
-  median 1 correct (chance), and **pairwise inter-astrologer agreement itself at chance** —
-  each astrologer applies an idiosyncratic weighting system.
-- **Meta-analytic baselines** (astrology-and-science.com compilations): ~40 chart-matching
-  studies, mean effect 0.051 (p=0.66) with publication-bias indications; inter-astrologer
-  agreement across 25 studies ≈ 0.101.
-- **Gauquelin Mars effect** — the one long-contested positive; skeptic-organized replications
-  negative/contested; Dean's documentation-bias account (era birth-reporting practices) is the
-  live mundane explanation — the same confound class as our marriage-XGBoost survivor.
-- **Published ML-astrology studies** are thin and weak: chance-level results on synthetic data,
-  an explicit April-Fools parody, and an IEEE paper whose headline 88.76% dissolves under its
-  SMOTE/evaluation choices. No credible ML positive exists in the published record.
+- **Carlson 1985 (Nature 318:419)** — ✅ VERIFIED (workflow panel 2-0 against the Nature page:
+  "Two double-blind tests were made of the thesis that astrological 'natal charts' can be used
+  to describe accurately personality traits"). Double-blind chart-to-CPI matching; astrologers
+  at chance (0.34 ± 0.044 vs 1/3), 3.3σ below their own predicted floor, criteria fixed in
+  advance. The canonical pre-registered null.
+- **Dean & Kelly time-twins** — ✅ VERIFIED (source quote: "2101 persons born in London during
+  3-9 March 1958 … born on average 4.8 minutes apart", 110 variables at ages 11/16/23, "The
+  effect size due to astrology is 0.00 ± 0.03"). The largest population-scale natal-similarity
+  null; the direct parallel to our N=82,589 nulls.
+- **Chart-matching meta-analysis** — ✅ VERIFIED (source quote: "more than forty studies …
+  totalling nearly 700 astrologers and 1150 birth charts … mean effect size of 0.051, standard
+  deviation 0.118, for which p = 0.66").
+- **Inter-astrologer agreement** — ✅ VERIFIED (source quote: "twenty-five studies … nearly 500
+  astrologers … mean agreement (as an effect size) of 0.101, standard deviation 0.064") — far
+  below the ~0.8 reliability psychologists require before applying a judgment individually.
+- **McGrew & McFall 1990** — ⚠️ extracted, primary source not independently fetchable from this
+  session (JSE 4(1); SemanticScholar renders empty): six Indiana-Federation-vetted astrologers
+  matching 23 charts to full case files, median 1 correct (chance expectation), mean pairwise
+  agreement 1.4/23, confidence-accuracy correlation r=.03.
+- **Gauquelin Mars effect** — ⚠️ extracted: the one long-contested positive; skeptic-organized
+  replications negative/contested; Dean's documentation-bias account (era birth-reporting
+  practices) is the live mundane explanation — the same confound class as our marriage-XGBoost
+  survivor.
+- **Published ML-astrology studies** — ⚠️ extracted: the record is thin and weak — chance-level
+  results on a *synthetic* dataset in a self-described pedagogical/joke arXiv paper; an IEEE
+  doctor-vs-non-doctor XGBoost+SMOTE classifier (10,000 births, 76.57%) whose headline dissolves
+  against its base rate and evaluation choices; Weka studies whose own tables contradict their
+  abstracts. No credible ML positive exists in the published record.
 
 Two of these bear directly on our results. The inter-astrologer-agreement-at-chance findings
 recast Track A: **expert astrological judgment is idiosyncratic, so "learning the doctrine" is

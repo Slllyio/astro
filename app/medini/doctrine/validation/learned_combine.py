@@ -108,8 +108,9 @@ def heldout_rows() -> list[dict]:
     recalibrate.build_cache, which caches each scored row's live findings)."""
     rows = []
     for r in RC.build_cache():
-        rows.append({"corpus": r["corpus"], "tokens": _tokens_from_engine(r["findings"]),
-                     "additive": r["additive"], "y": r["raman"]})
+        rows.append({"corpus": r["chapter"], "tokens": _tokens_from_engine(r["findings"]),
+                     "additive": r["additive"], "y": r["raman"],
+                     "_findings": r["findings"]})
     return rows
 
 
@@ -136,7 +137,8 @@ def nh_rows() -> list[dict]:
                       "karaka": _assess_karaka}[r["factor"]]
             v = assess(chart, int(r["house"]))
             rows.append({"corpus": "nh", "tokens": _tokens_from_engine(v.findings),
-                         "additive": r["factor"] == "bhava", "y": W._IDX[raman]})
+                         "additive": r["factor"] == "bhava", "y": W._IDX[raman],
+                         "_findings": v.findings})
     return rows
 
 
@@ -231,9 +233,24 @@ def run() -> dict[str, Any]:
             preds[te] = m.predict(Xh[te])
         return _within1(preds, yh), float(np.mean(preds - yh))
 
+    # Engine incumbent ON THE SAME ROWS (the cache excludes rasi-only rows, so the pooled
+    # 52.8%/43.8% headline numbers are not the right baseline here): re-run the live
+    # _combine + thresholds over each cached row's findings.
+    from app.medini.doctrine.domains import house_judgment as HJ
+
+    def engine_within1(rows) -> float:
+        ok = 0
+        for r in rows:
+            score = HJ._combine(r["_findings"], additive=r["additive"])[0]
+            pred = W._IDX[HJ._verdict_label(score)]
+            ok += int(abs(pred - r["y"]) <= _TOL)
+        return round(100 * ok / len(rows), 1) if rows else 0.0
+
     out: dict[str, Any] = {"n_heldout": len(ho), "n_nh": len(nh), "n_tuned": len(tuned),
                            "n_anchor": len(anchor), "n_vocab": len(vocab),
-                           "engine_incumbent": {"heldout_within1": 52.8, "nh_within1": 43.8}}
+                           "engine_incumbent_same_rows": {
+                               "heldout_within1_pct": engine_within1(ho),
+                               "nh_within1_pct": engine_within1(nh)}}
 
     # model selection by LOCO (small pinned grid — no peeking beyond held-out folds)
     grid: dict[str, Any] = {}

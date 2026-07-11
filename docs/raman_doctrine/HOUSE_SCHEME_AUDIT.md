@@ -1354,6 +1354,40 @@ strong-lagna under-credit is weight surgery, which the increment-18 trades showe
 over-credit for every point of anchor gain. The honest position: the sign-only strength engine is at
 its structural ceiling.
 
+### Increment 22 — natal-scope firing filter: no horary / electional / past-life rule fires on a birth chart
+
+A domain-expert review of the Mainpuri reading (increment 21's firing surface) caught a real category
+error: rules from *Prasna Marga* (horary) and HPA's Muhurtha (electional) chapters were firing in the
+**natal** judgment because their antecedents happen to be true of the birth chart. Verified on Mainpuri:
+the 2nd-house reading fired *"Benefics in 3, 5, 7 and 11 of the Prasna chart: success in speculation"*
+and the 4th fired *"When the Prasna Lagna falls in a fixed sign … the article was stolen by a near
+relative"* — horary query rules with no natal meaning — plus two after-death "loka" **definition**
+records. The pre-existing domain-candidate path surfaced 7 such rules; increment 21's chart-global pass
+was already clean, but the per-house path was not.
+
+**The fix.** In `judge_house_doctrine`'s fired loop, a rule is dropped unless it is
+`natal_scope.in_natal_scope(...)` OR its rule_type is a genuine natal-timing type
+(`dasha_timing` / `transit`, which the timing sub-verdict legitimately consumes). This catches the
+subtle case the first cut missed: Muhurtha rules carry an election `timing` and so classify into the
+`"timing"` bucket, so a bucket-based exemption would have let them through — the type-based exemption
+does not. Result on Mainpuri: **out-of-scope firings 7 → 0**; the daśā/transit timing sub-verdict is
+untouched.
+
+**Grade-safe by construction.** The excluded types (electional/prasna/definition/method) are not in
+`ADMITTED_RULE_TYPES` and were never scored, so every verdict is byte-identical (live anchor 1/8,
+held-out 54.7%, NH 53.1% — all drift-guard pins hold; full suite 304 passed). This is pure reading
+correctness. Pinned by `test_mainpuri_firing_audit.test_no_out_of_scope_rule_fires_on_natal_chart`.
+
+**Still open (honest, from the same review).** Two further critiques are correct and *not* yet fixed:
+(1) **Kemadruma has no bhaṅga** — only the raw yoga is encoded; the cancellation when a kendra from
+lagna/Moon is occupied (Venus in the 1st, here) is not modelled, so the engine over-states it.
+(2) **Balariṣṭa (infant-mortality) rules scatter across adult house readings** (9 houses on Mainpuri)
+because they route by the dusthāna houses their antecedents name; they belong to the longevity context.
+Both are encoding/routing refinements, scoped as follow-ups. The **House-11 "weak" verdict** the review
+flags (exalted 11th-lord + rājayoga read down by the navāṁśa-debilitation) is not a bug but the
+documented **synthesis ceiling** (increments 8/12/13/18) — the engine layers testimony where Raman
+weighs it holistically.
+
 ### Increment 21 — fire every applicable natal sutra (firing-coverage, grade-safe by construction)
 
 A Mainpuri-chart diagnostic exposed a firing-coverage gap distinct from the scoring question: the

@@ -1395,12 +1395,23 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         evaluable += 1
         if not outcome.fired:
             continue
+        bucket = _classify(rule, house)
+        # Natal-scope firing filter (increment 22): a birth-chart judgment must not fire
+        # horary / electional / past-life rules whose antecedents are only coincidentally
+        # true on a natal chart (Prasna Marga speculation & lost-property, Muhurtha
+        # election — note these often carry an election `timing` and so classify into the
+        # "timing" bucket — and 'loka' after-death definitions). Genuine natal-timing types
+        # (dasha_timing / transit) ARE kept: the timing sub-verdict legitimately consumes
+        # them. Out-of-scope types are not in ADMITTED_RULE_TYPES, so the numeric grade is
+        # byte-identical; this only cleans the reading.
+        if not (_natal.in_natal_scope(rule)
+                or rule["rule_type"] in ("dasha_timing", "transit")):
+            continue
         n_fired += 1
         fired_ids.add(rule["id"])
         ev = FiredEvidence(rule["id"], rule["consequent"]["polarity"],
                            rule["consequent"]["text"], rule["book"],
                            rule["consequent"].get("magnitude"))
-        bucket = _classify(rule, house)
         # a named yoga is surfaced as a Combination even when it is dasa-timed
         # (Raman's 'Lagna lord joins the Nth lord in the Nth' set) — collected here
         # in addition to its bucket so both the step vote and the yoga list see it.

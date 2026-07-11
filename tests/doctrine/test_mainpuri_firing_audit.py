@@ -104,6 +104,19 @@ def test_each_rule_surfaces_once(monkeypatch, mainpuri):
     assert not (chart_global & house), "a chart-global rule also appears in a house verdict"
 
 
+def test_no_out_of_scope_rule_fires_on_natal_chart(mainpuri, rules_by_id):
+    # Increment 22: horary / electional / past-life rules whose antecedents are only
+    # coincidentally true on a natal chart (Prasna Marga speculation & lost-property,
+    # Muhurtha election, 'loka' after-death definitions) must NOT surface in a birth-chart
+    # judgment. Timing rules (dasha/transit) are exempt — the timing sub-verdict uses them.
+    cd = HJ.judge_chart_doctrine(mainpuri, dasha=_DASHA)
+    surfaced = set().union(*(j.fired_rule_ids for j in cd.houses.values()))
+    surfaced |= {g.rule_id for g in cd.chart_global}
+    HARD_OUT = {"electional", "prasna", "definition"}
+    leaked = sorted(i for i in surfaced if rules_by_id[i]["rule_type"] in HARD_OUT)
+    assert not leaked, f"out-of-scope rules fired on a natal chart: {leaked}"
+
+
 def test_natal_firing_is_on_and_grade_safe():
     # Increment 21 landed with the flag ON: firing coverage is the default. It is grade-safe
     # by construction — the widened candidates surface for READING (buckets/combinations/

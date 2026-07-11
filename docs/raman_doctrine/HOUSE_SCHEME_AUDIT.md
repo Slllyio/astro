@@ -1155,3 +1155,24 @@ typed-finding vocabulary), but the gate is the gate. Landing path: grid-extract 
 anchor charts, re-run the gate in engine representation, land only on 9/9. Engine
 byte-identical to increment 14. Full data: `validation/ml_research/`; report:
 `ML_RESEARCH.md`.
+
+### Increment 15b — A2′ landing attempt: the frozen anchor has drifted from the live engine
+
+Attempting to land the learned combine (increment 15) required evaluating the pre-registered
+ch. IV anchor gate in engine representation. Investigation found the gate cannot validly gate a
+live-engine model:
+
+- The frozen anchor (`htjah_anchor_calibration.json`) is 8 hand-decoded typed-finding rows in a
+  retired weight vocabulary (e.g. a `1.0` kendra delta the engine long ago moved to `1.2`), 1–3
+  findings per row vs the engine's dense output.
+- Casting the three anchor charts (HTJAH Nos. 12–14) from their real birth data in Raman's
+  ayanamsa produces FAITHFUL charts — Chart 12's rāśi and navāṁśa match Raman's prose exactly
+  (Saturn 8th-Leo; Saturn navāṁśa Taurus "with Jupiter in Venus's sign"; Sun vargottama) — yet the
+  **live engine grades its own calibration anchor at 2/8 within-one**, under-crediting by 3–5
+  grades (Chart 12 lord: engine "weak" vs Raman "fairly good"). `test_audit_anchor` reads 8/8 only
+  because it runs the frozen findings through `validate_house.predict`, not `judge_house_doctrine`.
+
+**Disposition:** the learned combine remains a validated measurement (increment 15), NOT landed;
+the anchor gate is itself stale and must be rebuilt as a grid-backed corpus re-baselined through
+the live engine before it can gate anything. Data: `validation/ml_research/a2prime_anchor_diagnostic.json`;
+full discussion in `ML_RESEARCH.md`. Engine byte-identical (measurement only).

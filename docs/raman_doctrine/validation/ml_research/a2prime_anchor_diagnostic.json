@@ -1,0 +1,64 @@
+{
+ "note": "Anchor ch IV Charts 12-14 cast from real birth data (prose in HTJAH), Raman ayanamsa, judged live at house 1. Rasi+navamsa verified faithful to Raman's prose (Chart 12 Saturn 8th-Leo, navamsa Taurus 'with Jupiter in Venus sign'; Sun vargottama). Divergence is engine SCORING, not casting.",
+ "rows": [
+  {
+   "chart": "12",
+   "role": "bhava",
+   "raman": "moderate",
+   "live_engine": "moderate",
+   "delta": 0
+  },
+  {
+   "chart": "12",
+   "role": "lord",
+   "raman": "fairly good",
+   "live_engine": "weak",
+   "delta": -3
+  },
+  {
+   "chart": "12",
+   "role": "karaka",
+   "raman": "moderately good",
+   "live_engine": "afflicted",
+   "delta": -3
+  },
+  {
+   "chart": "13",
+   "role": "bhava",
+   "raman": "fairly strong",
+   "live_engine": "afflicted",
+   "delta": -5
+  },
+  {
+   "chart": "13",
+   "role": "lord",
+   "raman": "fairly powerful",
+   "live_engine": "weak",
+   "delta": -5
+  },
+  {
+   "chart": "13",
+   "role": "karaka",
+   "raman": "fairly powerful",
+   "live_engine": "weak",
+   "delta": -5
+  },
+  {
+   "chart": "14",
+   "role": "lord",
+   "raman": "very strong",
+   "live_engine": "fairly good",
+   "delta": -3
+  },
+  {
+   "chart": "14",
+   "role": "karaka",
+   "raman": "moderate",
+   "live_engine": "weak",
+   "delta": -1
+  }
+ ],
+ "n_within1": 2,
+ "n": 8,
+ "live_engine_anchor_within1": "2/8"
+}

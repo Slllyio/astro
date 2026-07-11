@@ -61,13 +61,35 @@ regardless of positional credits (unless positives pile past 3.5) — the "besie
 broken" override a linear checklist cannot express
 ([tree rules](validation/ml_research/a2_tree_rules.json)).
 
-**Why it is NOT landed:** the pre-registered ch. IV anchor gate failed (ordinal 2/8, tree 1/8
-within-one), so per protocol the model is rejected as an engine change. The failure is
-confounded: the anchor exists only in the audit's old *typed*-finding vocabulary while the model
-trains on live engine findings — a representation shift, not necessarily a true regression.
-**Landing path:** grid-extract the ch. IV anchor charts so the anchor can be scored in engine
-representation; if the gate then passes, landing the learned combine becomes a reviewed
-increment with the drift-guard renumbered.
+**Why it is NOT landed — and why the gate itself is the deeper problem.** The pre-registered
+ch. IV anchor gate failed (ordinal 2/8, tree 1/8 within-one). A landing attempt (A2′) investigated
+whether that was a fixable representation artifact, and found something more fundamental:
+
+- **Diagnosis of the failure:** the frozen anchor is 8 hand-decoded *typed*-finding rows using a
+  retired weight vocabulary — e.g. a `1.0` kendra delta the live engine changed to `1.2` long ago,
+  plus `0.35`/`−1.0` Navāṁśa tokens that never occur in the live-engine training data, and only
+  1–3 findings per row vs the engine's dense output. The ordinal model, trained on current dense
+  engine findings, has no learned weight for those stale tokens and defaults the sparse rows toward
+  "afflicted". So the gate failure is not evidence the model breaks calibration.
+- **The attempted fix exposed a bigger issue.** To score the anchor in engine representation, the
+  three ch. IV charts (Nos. 12–14) were cast from their real birth data (printed verbatim in HTJAH)
+  in Raman's ayanamsa and judged live. The casts are **faithful** — Chart 12's rāśi *and* navāṁśa
+  match Raman's prose exactly (Saturn in the 8th in Leo; Saturn's navāṁśa Taurus "with Jupiter in
+  the sign of Venus"; the Sun vargottama). Yet the **live engine scores its own calibration anchor
+  at 2/8 within-one** ([`a2prime_anchor_diagnostic.json`](validation/ml_research/a2prime_anchor_diagnostic.json)),
+  under-crediting by 3–5 grades (Chart 12's lord Saturn: engine "weak" vs Raman "fairly good" vs the
+  frozen anchor's "fairly good"). The `test_audit_anchor` 8/8 passes only because it runs the frozen
+  hand-decoded findings through the old `validate_house.predict`, **not** `judge_house_doctrine` —
+  so the anchor test and the live engine have themselves diverged over the intervening increments.
+- **Consequence:** the pre-registered anchor gate cannot validly gate a live-engine model, because
+  it targets hand-decoded grades the live engine no longer produces even for the engine itself.
+  Ephemeris casting cannot substitute in general (navāṁśa is degree-hypersensitive — Charts 13/14
+  drift where 12 happened to match), and the printed sign-diagram grids for Nos. 12–14 are not in
+  the text-only source. **Landing path (a separate increment):** rebuild the anchor as a
+  grid-backed corpus scored through the *live* engine (re-baselining what 9/9 means for the current
+  engine), then re-run the gate. Until then the learned combine stands as a validated measurement,
+  not an engine change — and the finding that the frozen anchor has drifted from the live engine is
+  itself an actionable result for the calibration-integrity story.
 
 ## NEW — Track A experiment 2 (A1): the blinded LLM-as-scorer pilot (complete, 167/167)
 

@@ -1388,6 +1388,26 @@ flags (exalted 11th-lord + rājayoga read down by the navāṁśa-debilitation) 
 documented **synthesis ceiling** (increments 8/12/13/18) — the engine layers testimony where Raman
 weighs it holistically.
 
+### Increment 23 — Kemadruma-bhaṅga: a cancelled yoga no longer surfaces
+
+The first of the two review follow-ups, now landed. Raman (HTJAH / *300 Combinations*): Kemadruma
+"ceases to exist" when a planet other than the Sun/Moon occupies a kendra (1/4/7/10) from the Lagna or
+the Moon (or the Moon is conjoined/aspected by a benefic). The raw yoga encodes only its *definition*
+(no planet in the 2nd/12th from the Moon), so the engine printed the full "misery and poverty" text on
+charts where the cancellation clearly holds. On Mainpuri, **Venus in the 1st is a kendra from both the
+Lagna and the Moon → the bhaṅga holds**, yet both Kemadruma records (`hpa.xx.kemadruma`,
+`three_hundred.y005.kemadruma`) were firing.
+
+**Fix.** `_kemadruma_cancelled(chart)` tests the kendra-occupancy leg; `_is_cancelled_yoga(rule, chart)`
+gates it in both firing paths (per-house loop and the chart-global pass). A cancelled yoga is dropped
+before it surfaces. **Grade-safe:** the drift-guard confirms every held-out / NH / anchor number is
+byte-identical (the `y005` yoga is scoring-admitted, but suppressing it moved no grade on any corpus;
+full suite green). Reading-only correctness, pinned by
+`test_mainpuri_firing_audit.test_kemadruma_bhanga_suppresses_the_yoga` and honoured as a legitimate
+non-firing exception in the coverage test. Still open from the review: the Balariṣṭa (infant-mortality)
+rules that scatter across adult house readings (a longevity-context routing refinement) and the
+House-11 synthesis ceiling (structural, not a bug).
+
 ### Increment 21 — fire every applicable natal sutra (firing-coverage, grade-safe by construction)
 
 A Mainpuri-chart diagnostic exposed a firing-coverage gap distinct from the scoring question: the

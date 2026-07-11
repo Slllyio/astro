@@ -70,7 +70,11 @@ def _surfaced(chart_doctrine):
 
 def test_every_applicable_natal_sutra_fires(monkeypatch, mainpuri, rules_by_id):
     applicable = _applicable(mainpuri, rules_by_id)
-    natal = {i for i, r in applicable.items() if NS.in_natal_scope(r)}
+    # A yoga whose documented bhanga (cancellation) holds is a LEGITIMATE non-firing
+    # exception (increment 23: Kemadruma is cancelled here by Venus in a kendra), so it is
+    # not part of the "must fire" set.
+    natal = {i for i, r in applicable.items()
+             if NS.in_natal_scope(r) and not HJ._is_cancelled_yoga(r, mainpuri)}
 
     monkeypatch.setattr(HJ, "NATAL_FIRING_WIDEN", True)
     house, chart_global = _surfaced(HJ.judge_chart_doctrine(mainpuri, dasha=_DASHA))
@@ -115,6 +119,16 @@ def test_no_out_of_scope_rule_fires_on_natal_chart(mainpuri, rules_by_id):
     HARD_OUT = {"electional", "prasna", "definition"}
     leaked = sorted(i for i in surfaced if rules_by_id[i]["rule_type"] in HARD_OUT)
     assert not leaked, f"out-of-scope rules fired on a natal chart: {leaked}"
+
+
+def test_kemadruma_bhanga_suppresses_the_yoga(mainpuri):
+    # Increment 23: on Mainpuri, Venus in the 1st is a kendra from both the Lagna and the
+    # Moon, so Kemadruma-bhanga holds and the yoga must not surface (Raman: it 'ceases to
+    # exist'). Reading-only suppression; grades are guarded by the drift-guard suite.
+    cd = HJ.judge_chart_doctrine(mainpuri, dasha=_DASHA)
+    fired = set().union(*(j.fired_rule_ids for j in cd.houses.values()))
+    fired |= {g.rule_id for g in cd.chart_global}
+    assert not [i for i in fired if "kemadruma" in i], "Kemadruma fired despite its bhanga"
 
 
 def test_natal_firing_is_on_and_grade_safe():

@@ -301,6 +301,35 @@ def _is_combination(rule: dict) -> bool:
     return len(houses) >= 2 or len(planets) >= 2 or len(lordships) >= 2
 
 
+def _kemadruma_cancelled(chart: RamanChart) -> bool:
+    """Kemadruma-bhaṅga (increment 23). Raman (HTJAH / 300 Combinations): Kemadruma is
+    cancelled — it 'ceases to exist' — when a planet other than the Sun/Moon occupies a
+    kendra (1/4/7/10) reckoned from the Lagna OR from the Moon, or the Moon is conjoined /
+    aspected by a benefic. The raw yoga records only its definition (no planet in the 2nd/12th
+    from the Moon), so the engine over-states it without this check. Here we test the
+    kendra-occupancy leg (the decisive one on most charts)."""
+    ph = chart.bundle.chart.planet_houses
+    moon_h = ph.get("Moon")
+    if moon_h is None:
+        return False
+    kendra_lagna = {1, 4, 7, 10}
+    kendra_moon = {((moon_h - 1 + k) % 12) + 1 for k in (0, 3, 6, 9)}
+    for p, h in ph.items():
+        if p in ("Sun", "Moon"):
+            continue
+        if h in kendra_lagna or h in kendra_moon:
+            return True
+    return False
+
+
+def _is_cancelled_yoga(rule: dict, chart: RamanChart) -> bool:
+    """A fired yoga whose named bhaṅga (cancellation) holds on this chart must not surface.
+    Currently models Kemadruma-bhaṅga; extend per documented cancellations."""
+    if "kemadruma" in rule["id"]:
+        return _kemadruma_cancelled(chart)
+    return False
+
+
 def _classify(rule: dict, house: int) -> str:
     """Assign a fired rule to Raman's analytical bucket by its antecedent shape."""
     nodes = _walk(rule["antecedent"])
@@ -1407,6 +1436,9 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         if not (_natal.in_natal_scope(rule)
                 or rule["rule_type"] in ("dasha_timing", "transit")):
             continue
+        # A yoga whose documented bhaṅga (cancellation) holds must not surface (incr. 23).
+        if _is_cancelled_yoga(rule, chart):
+            continue
         n_fired += 1
         fired_ids.add(rule["id"])
         ev = FiredEvidence(rule["id"], rule["consequent"]["polarity"],
@@ -1601,7 +1633,8 @@ def judge_chart_doctrine(chart: RamanChart, *,
             for r in rules:
                 if (r["id"] in seen
                         or not _natal.in_natal_scope(r)
-                        or not _natal.is_chart_global(r)):
+                        or not _natal.is_chart_global(r)
+                        or _is_cancelled_yoga(r, chart)):
                     continue
                 if evaluate_rule(r, ctx).fired:
                     seen.add(r["id"])

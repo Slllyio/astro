@@ -204,17 +204,17 @@
   {
    "label": "XXVII",
    "title": "Prasna Sastra or Horary Astrology",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 34,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
    "label": "XXVIII",
    "title": "Unknown Birth Times",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 19,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
@@ -236,9 +236,9 @@
   {
    "label": "XXXI",
    "title": "Mundane Astrology",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 42,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {

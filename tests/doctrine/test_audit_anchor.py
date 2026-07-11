@@ -1,10 +1,16 @@
-"""Regression gate on the HTJAH calibration corpora.
+"""Regression gate on the HTJAH calibration corpora — HARNESS representation only.
 
-The corpora in docs/raman_doctrine/audit/ calibrate the strength point-scheme
-against Raman's worked verdicts. This pins two invariants so a future scheme edit
-cannot silently drift the calibration:
+SCOPE (re-framed at P0 of the engine overhaul; HOUSE_SCHEME_AUDIT increment 16): these
+corpora store hand-decoded typed findings in the audit harness's own weight vocabulary,
+evaluated through ``validate_house.predict`` — NOT through the live
+``judge_house_doctrine``. The 8/8 anchor below therefore pins the DECODED-HARNESS
+calibration against silent drift of `validate_house`, and nothing more. Increment 15b
+proved the live engine can (and did) drift on these very charts while this test stayed
+green. **The authoritative live-engine anchor gate is ``test_anchor_live.py``**, backed
+by the faithfulness-gated cast corpus ``htjah_anchor_live.json``.
 
-- the ch. IV Charts 12-14 anchor stays 8/8 within-one (a fixed calibration point);
+Pinned here:
+- the ch. IV Charts 12-14 anchor stays 8/8 within-one under the harness;
 - the pooled corpus stays at or above its established within-one floor.
 
 The harness lives under docs/ (provenance, not shipped code), so it is imported by

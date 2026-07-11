@@ -26,6 +26,7 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — NH degree-accurate | within-one | **46.7%** (exact 33.3%, Δ +1.07) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
 | **Strength** — NH degree pooled (grown) | within-one | **43.8%** (Δ +0.69) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
+| **Strength** — ch. IV LIVE anchor | within-one | **12.5%** (1/8, Δ −3.75, all under-credits) | 8 | `htjah_anchor_live` (faithfulness-gated casts; the frozen 8/8 gates only the old harness) | audit increment 16 |
 | **Timing** — HTJAH events | mahādaśā-lord exact | **100%** (8/8); antara within-one 8/8 | 8 | `heldout_timing` + `…_ch12_8th` | [timing](validation/REPORT_timing.md) |
 | **Timing** — Notable Horoscopes | mahādaśā-lord exact | **94.0%** (47/50); antara within-one 92.9% | 50 | `nh_timing` (real births) | [timing](validation/REPORT_timing.md) |
 | **Daśā balance** — NH | starting-lord exact | **93.3%** (28/30); duration ±0.5y 28/30 | 30 | `nh_balance` (Moon longitude) | [nh balance](validation/REPORT_nh_balance.md) |
@@ -96,8 +97,12 @@ All validation corpora live under [`validation/corpora/`](validation/corpora/).
 
 - **Held-out is held-out.** No corpus in the held-out/blind tables above was used to fit any
   weight or map entry. Blind corpora are (vol, chart_no)-disjoint from everything else.
-- **The anchor is frozen.** Ch. IV (Charts 12–14) stays 9/9 and byte-stable; this is asserted in
-  `tests/doctrine/test_audit_anchor.py`.
+- **Two anchors, two scopes.** The frozen ch. IV anchor (hand-decoded findings) stays 8/8 under
+  the audit harness (`tests/doctrine/test_audit_anchor.py` — harness representation only). The
+  **live-engine** anchor (`htjah_anchor_live.json`, faithfulness-gated casts) is gated by
+  `tests/doctrine/test_anchor_live.py` with a ratchet floor + per-row grade ledger; its honest
+  current state (1/8, audit increment 16) is the overhaul's declared starting point — the
+  frozen-vs-live drift can never hide again.
 - **Verdicts are pre-registered.** Raman's strength phrases are mapped to grades once, in the
   verdict map, and the map is verified before scoring — the engine cannot be graded against a
   moving target ([verdict audit](validation/REPORT_verdict_audit.md)).

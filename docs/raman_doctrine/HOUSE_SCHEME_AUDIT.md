@@ -1185,3 +1185,30 @@ Two separate true findings: the frozen anchor test has drifted from the live eng
 Landing needs house-1 training rows + a grid-backed anchor re-baselined through the live engine.
 Data: `validation/ml_research/a2prime_anchor_diagnostic.json`; full discussion in `ML_RESEARCH.md`.
 Engine byte-identical (measurement only).
+
+### Increment 16 — LIVE ch. IV anchor rebuilt (P0 of the engine overhaul); Chart 14 birth data repaired
+
+The overhaul's measurement foundation. The frozen anchor gates only the old harness
+(increment 15b); this increment builds the authoritative live-engine anchor:
+
+- **Builder** `audit/builders/build_anchor_live_corpus.py`: Charts 12–14 cast from printed
+  birth data in Raman's ayanamsa, HARD-GATED against 25 mechanical facts stated in his own
+  ch. IV walkthrough prose (per-planet rasi/navamsa signs, houses, vargottama, hemming
+  occupants). All three charts pass.
+- **Chart 14 repair**: the printed "7-8-1878" cannot be right — no 1878 date puts Saturn+Rahu
+  in Cancer as Raman states. A constrained ephemeris search over ALL his stated facts
+  (Sun+Mercury+Saturn+Rahu in Cancer, Mars in Gemini, Scorpio lagna vargottama, Mars navamsa
+  Taurus, Sun ≈18° from Saturn) uniquely selects **7-8-1887** — an OCR digit transposition
+  (87↔78). Sun–Saturn casts to 15.9°.
+- **The honest number: the live engine scores Raman's own calibration examples 1/8 within-one
+  (mean Δ −3.75), every miss an UNDER-credit** — worse than 15b's 2/8 because the corrected
+  Chart 14 exposes the bhāva confound: Raman counts Mars "in the 9th house (8th Rashi)" while
+  whole-sign reads Gemini as the 8th from Scorpio → dusthāna penalties on a lord he grades
+  "very strong" (Δ−7). The vargottama-lagna structural override still matches (very powerful ✓).
+- **Guards**: `anchor_live_validate.py` (re-checks every expected sign at load — varga-math
+  drift trips it) + `tests/doctrine/test_anchor_live.py` (RATCHET floor 1/8 + a per-row grade
+  LEDGER any intentional change must update in the same commit). `test_audit_anchor.py`
+  re-scoped to the harness representation it actually gates.
+
+Measurement only; engine byte-identical. Every subsequent increment (17+: sutra strength,
+rebalance) is dual-gated on THIS anchor plus the held-out corpora.

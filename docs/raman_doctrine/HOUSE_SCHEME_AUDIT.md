@@ -1315,3 +1315,41 @@ Coverage: all 36 HPA chapters swept except **XVII "Key-Planets for Each Sign"**,
 is complete but the chapter's prose remarks are not separately encoded. `three_hundred` remains
 truncated at yoga 162 (no retrievable source, unchanged). Compendium now **1,913 rules across 10
 books**; COMPENDIUM_STATUS / COVERAGE / SOURCES updated to match.
+
+### Increment 20 — widening the admitted rule-types is inert (documented negative)
+
+Increment 19 finished HPA encoding but left the grades unmoved *by policy*: only
+`ADMITTED_RULE_TYPES = {bhava_judgment, yoga, graha_effect}` feed the sutra-strength scorer
+(`sutra_strength.py`). The natural next question — does admitting the newly-abundant rule-types
+(`functional_role`, `cancellation`, `strength`, `transit`, `dasha_timing`, …) into the scorer break
+the ceiling? — was measured directly and answered **no**.
+
+A diagnostic that admitted **every** rule-type and instrumented the live judge across the anchor +
+pooled held-out + NH corpora counted how many fired rules would contribute *novel, factor-targeted*
+testimony under each type. Result:
+
+| rule_type | novel+targeted contributions | distinct rules | status |
+|---|---:|---:|---|
+| bhava_judgment | 133 | 51 | already admitted |
+| graha_effect | 90 | 22 | already admitted |
+| yoga | 33 | 5 | already admitted |
+| **cancellation** | **3** | **1** | the only excluded type with *any* signal |
+| functional_role / strength / transit / dasha_timing / electional / prasna / definition / method | **0** | 0 | contribute nothing |
+
+The excluded types are inert not because of the gate but because of the **two disciplines upstream
+of it**: the novelty filter drops rules whose antecedents restate what the mechanical assessor
+already scores (e.g. `strength`/avastha rules built from `exalted`/`own_sign`/`combust` —
+REDUNDANT_OPS), and `target_factor` drops rules that don't tie an atom to the judged house. The
+rule-type gate is therefore **not** the bottleneck.
+
+The one live candidate, **`+cancellation`, was run through the full tri-gate and is byte-identical to
+baseline** (anchor 1/8, held-out 54.7% / Δ +0.17, NH 53.1% / Δ +0.41): its 3 contributions from a
+single rule never cross a grade boundary. Engine untouched; recorded as a documented negative.
+
+**What this establishes:** encoding more doctrine (increment 19) and admitting more of it into scoring
+(this increment) are both spent levers — the strength engine's ~53–55% within-one ceiling and the
+1/8 live anchor are held by the *holistic-weighing* residual (increments 8, 12, 13, 18's rejected
+trades), not by coverage or by the rule-type whitelist. The remaining lever for the anchor's
+strong-lagna under-credit is weight surgery, which the increment-18 trades showed spends NH
+over-credit for every point of anchor gain. The honest position: the sign-only strength engine is at
+its structural ceiling.

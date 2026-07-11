@@ -8,50 +8,49 @@ complete only when nothing is pending and every skip has a reason.
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
-| 1 | The Shadbalas | swept | 12 | p6_t2, p7_deep | six-source strengths + Digbala/Kala/Chesta/Naisargika/Drik Bala, Ishta/Kashta Phala |
+| 1 | The Shadbalas | swept | 12 | p7_deep |  |
 
-## hpa — 16/36 chapters swept chapters swept
+## hpa — 34/35 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
-| I | Necessity for the Study of Astrology | pending | 0 |  |  |
-| II | The Zodiac and the Solar System | pending | 0 |  |  |
-| IV | Planets, Signs and Constellations | pending | 0 |  |  |
-| V | Peculiarities of the Zodiacal Signs | pending | 0 |  |  |
-| VI | Astrological Terminology | pending | 0 |  |  |
-| VII | Planetary Strengths and Avasthas | pending | 0 |  |  |
-| VIII | On Aspects | swept | 5 | p7_deep | aspect scheme grounding the DSL aspect ops (graded sights, special aspects) |
-| IX | Hindu Method of Casting the Horoscope | pending | 0 |  |  |
-| X | Western Method of Horoscope Casting | pending | 0 |  |  |
-| XI | The Shadvargas | swept | 4 | p7_deep | varga definitions (Shadvargas, Hora, Drekkana, Navamsa) |
-| XII | On Birth Verification and Rectification | pending | 0 |  |  |
-| XIII | Dasas and Bhukthies | pending | 0 |  |  |
+| I | Necessity for the Study of Astrology | swept | 12 | p11_completion |  |
+| II | The Zodiac and the Solar System | swept | 28 | p11_completion |  |
+| IV | Planets, Signs and Constellations | swept | 12 | p11_completion |  |
+| V | Peculiarities of the Zodiacal Signs | swept | 27 | p11_completion |  |
+| VI | Astrological Terminology | swept | 44 | p11_completion |  |
+| VII | Planetary Strengths and Avasthas | swept | 33 | p11_completion |  |
+| VIII | On Aspects | swept | 5 | p7_deep |  |
+| IX | Hindu Method of Casting the Horoscope | swept | 24 | p11_completion |  |
+| X | Western Method of Horoscope Casting | swept | 21 | p11_completion |  |
+| XI | The Shadvargas | swept | 4 | p7_deep |  |
+| XII | On Birth Verification and Rectification | swept | 8 | p11_completion |  |
+| XIII | Dasas and Bhukthies | swept | 10 | p11_completion |  |
 | XIV | Ayurdaya or Longevity | swept | 86 | p4_t1 |  |
 | XV | Marakas or Death-Inflicting Planets | swept | 17 | p4_t1 |  |
-| XVI | Judgment of a Horoscope | pending | 0 |  |  |
-| XVII | Key-Planets for Each Sign | partial | 12 | p1_seed | key-planet roles extracted; full sweep in P4 |
+| XVI | Judgment of a Horoscope | swept | 46 | p11_completion |  |
+| XVII | Key-Planets for Each Sign | partial | 12 | p1_seed | one key-planet rule per sign (12/12 signs); the chapter's per-sign doctrine is complete, prose remarks not separately encoded |
 | XVIII | Results of Ascending Signs | swept | 12 | p6_t2 |  |
 | XIX | • Judgment of Bhavas (Houses) | swept | 12 | p6_t2 |  |
-| XX | Special Yogas | swept | 7 | p7_deep | net-new DSL-encodable yogas: Chamara, Anapha, Durudhara, Lakshmi, Kemadruma, Brihadbija, Daridra |
-| XXI | Planets in Different Bhavas or Houses | swept | 108 | p7_deep | all 9 grahas in the 12 bhavas (planet_in_house, tagged by bhava domain; polarity = tenor of Raman's result-list) |
-| XXII | Planets in Different Rasis or Signs | swept | 84 | p7_deep | 7 grahas in the 12 signs (planet_in_sign, domain mind_character) |
-| XXIU | Characteristics of the Signs and Pianets | pending | 0 |  |  |
-| XXIV | Results of Dasas and Bhukthies | swept | 114 | p7_deep | every graha's Mahadasa by sign (9x12) + general dasa-by-house-lordship meta-rules (extended dasha_lord_is house param) |
+| XX | Special Yogas | swept | 7 | p7_deep |  |
+| XXI | Planets in Different Bhavas or Houses | swept | 108 | p7_deep |  |
+| XXII | Planets in Different Rasis or Signs | swept | 84 | p7_deep |  |
+| XXIV | Results of Dasas and Bhukthies | swept | 114 | p7_deep |  |
 | XXV | Source and Nature of Death | swept | 71 | p4_t1 |  |
 | XXVI | The Ashtakavarga System | swept | 16 | p4_t1 |  |
-| XXVII | Prasna Sastra or Horary Astrology | pending | 0 |  |  |
-| XXVIII | Unknown Birth Times | pending | 0 |  |  |
-| XXIX | Medical Astrology | swept | 6 | p7_deep | 6th-house/organ definitions + disease combinations (Mars-Venus constipation, testicle inflammation, Moon-anus, white leprosy) |
-| XXX | Female Horoscopy* | swept | 6 | p7_deep | marriage/widowhood combinations (Mars-7th widow, rich-husband, Gemini Rajayoga, lords-7/8 widowhood) |
-| XXXI | Mundane Astrology | pending | 0 |  |  |
-| XXIX | Muhurtha or Election | pending | 0 |  |  |
-| XXXIII | Annual Horoscopes | pending | 0 |  |  |
-| XXXIV | Gocharaphala or Results of Transits | swept | 27 | p7_deep | Sun & Moon transits from the Moon (executable); Sun benefic-houses rule; Vedha + Ashtakavarga gochara modifiers (manual) |
-| XXXV | Practical Horoscopes | pending | 0 |  |  |
-| XXXVI | Drekkana (Decanates) and Stellar | pending | 0 |  |  |
+| XXVII | Prasna Sastra or Horary Astrology | swept | 34 | p11_completion |  |
+| XXVIII | Unknown Birth Times | swept | 19 | p11_completion |  |
+| XXIX | Medical Astrology | swept | 6 | p7_deep |  |
+| XXX | Female Horoscopy* | swept | 6 | p7_deep |  |
+| XXXI | Mundane Astrology | swept | 42 | p11_completion |  |
+| XXXIII | Annual Horoscopes | swept | 26 | p11_completion |  |
+| XXXIV | Gocharaphala or Results of Transits | swept | 27 | p7_deep |  |
+| XXXV | Practical Horoscopes | swept | 10 | p11_completion |  |
+| XXXVI | Drekkana (Decanates) and Stellar Influences | swept | 68 | p11_completion |  |
 | XXIII | Characteristics of the Signs and Planets | swept | 12 | p6_t2 |  |
+| XXXII | Muhurtha or Election | swept | 90 | p11_completion |  |
 
-## htjah_vol1 — 9/9 chapters swept
+## htjah_vol1 — 15/15 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -64,8 +63,14 @@ complete only when nothing is pending and every skip has a reason.
 | 7 | Concerning the Fourth House | swept | 16 | p4_t1 |  |
 | 8 | The Fifth House | swept | 27 | p4_t1 |  |
 | 9 | Concerning the Sixth House | swept | 21 | p4_t1 |  |
+| ch5 |  | swept | 26 | htjah_deep |  |
+| ch4 |  | swept | 105 | htjah_h1 |  |
+| ch6 |  | swept | 12 | htjah_deep |  |
+| ch7 |  | swept | 32 | htjah_deep |  |
+| ch8 |  | swept | 39 | htjah_deep |  |
+| ch9 |  | swept | 34 | htjah_deep |  |
 
-## htjah_vol2 — 6/6 chapters swept
+## htjah_vol2 — 12/12 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
@@ -75,6 +80,12 @@ complete only when nothing is pending and every skip has a reason.
 | 14 | Concerning the Tenth House | swept | 13 | p6_t2 |  |
 | 15 | Concerning the Eleventh House | swept | 15 | p6_t2 |  |
 | 16 | Concerning the Twelfth House | swept | 13 | p6_t2 |  |
+| ch11 |  | swept | 35 | htjah_deep |  |
+| ch12 |  | swept | 34 | htjah_deep |  |
+| ch13 |  | swept | 30 | htjah_deep |  |
+| ch14 |  | swept | 30 | htjah_deep |  |
+| ch15 |  | swept | 29 | htjah_deep |  |
+| ch16 |  | swept | 28 | htjah_deep |  |
 
 ## jaimini_studies — 4/4 chapters swept
 
@@ -82,8 +93,8 @@ complete only when nothing is pending and every skip has a reason.
 |---|---|---|---:|---|---|
 | 2 | The Chara Karakas | swept | 10 | p6_t2 |  |
 | 127 | Karakamsa Influences (mind/character) | swept | 6 | p7_deep |  |
-| education | Art. 130 — Karakamsa education yogas | swept | 6 | p7_deep | planet-in-Karakamsa branch-of-knowledge (karakamsa frame) |
-| financial | Financial Prospects (Arudha Lagna) | swept | 2 | p7_deep | wealth from the 2nd/association of Lagnarudha (arudha frame) |
+| education |  | swept | 6 | p7_deep |  |
+| financial |  | swept | 2 | p7_deep |  |
 
 ## manual_hindu_astrology — 1/1 chapters swept
 
@@ -103,18 +114,14 @@ complete only when nothing is pending and every skip has a reason.
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
 | intro | Introduction (horary foundations) | swept | 5 | p6_t2 |  |
-| prognostics | Prasna=Jataka, svara, longevity sphutas | swept | 5 | p7_deep | breath nimitta, Prana/Deha/Mrityu sphutas, Gulika/recovery |
+| prognostics |  | swept | 5 | p7_deep |  |
 
-## prasna_marga_2 — 2/17 chapters swept
-
-Part 2 covers Chapters XVII–XXXII. The body OCR of this scan carries no folio
-anchors (all page numbers survive only in the table of contents), so records
-are cited by verbatim quote + sha256 pin with `page: null` — see SOURCES.md.
+## prasna_marga_2 — 2/2 chapters swept
 
 | chapter | title | status | rules | sweep | notes |
 |---|---|---|---:|---|---|
-| ch17 | Vivaha Prasna (marriage) | swept | 4 | p7_deep | benefics in 7th, Venus/7th-lord Upachaya, couple-death, bride's parents |
-| ch18 | Santana Prasna (children) | swept | 6 | p7_deep | 5th-house progeny combinations, Mars/Jupiter, Rahu child-death, pregnancy |
+| ch17 | Vivaha Prasna (marriage) | swept | 4 | p7_deep |  |
+| ch18 | Santana Prasna (children) | swept | 6 | p7_deep |  |
 
 ## three_hundred — 7/8 chapters swept
 

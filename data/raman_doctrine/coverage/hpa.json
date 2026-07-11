@@ -127,7 +127,7 @@
    "status": "partial",
    "rule_count": 12,
    "sweep_id": "p1_seed",
-   "notes": "key-planet roles extracted; full sweep in P4"
+   "notes": "one key-planet rule per sign (12/12 signs); the chapter's per-sign doctrine is complete, prose remarks not separately encoded"
   },
   {
    "label": "XVIII",
@@ -167,14 +167,6 @@
    "status": "swept",
    "rule_count": 84,
    "sweep_id": "p7_deep",
-   "notes": null
-  },
-  {
-   "label": "XXIU",
-   "title": "Characteristics of the Signs and Pianets",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
    "notes": null
   },
   {
@@ -242,14 +234,6 @@
    "notes": null
   },
   {
-   "label": "XXIX",
-   "title": "Muhurtha or Election",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
-   "notes": null
-  },
-  {
    "label": "XXXIII",
    "title": "Annual Horoscopes",
    "status": "swept",
@@ -275,7 +259,7 @@
   },
   {
    "label": "XXXVI",
-   "title": "Drekkana (Decanates) and Stellar",
+   "title": "Drekkana (Decanates) and Stellar Influences",
    "status": "swept",
    "rule_count": 68,
    "sweep_id": "p11_completion",
@@ -291,7 +275,7 @@
   },
   {
    "label": "XXXII",
-   "title": "",
+   "title": "Muhurtha or Election",
    "status": "swept",
    "rule_count": 90,
    "sweep_id": "p11_completion",

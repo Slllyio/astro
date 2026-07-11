@@ -60,17 +60,17 @@
   {
    "label": "IX",
    "title": "Hindu Method of Casting the Horoscope",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
    "label": "X",
    "title": "Western Method of Horoscope Casting",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 21,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {

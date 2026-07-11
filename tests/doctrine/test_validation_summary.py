@@ -27,21 +27,23 @@ _TOL = 0.2  # percentage-point tolerance on reproduced within-one / exact figure
 # ---- Strength (sign-reconstructed) ------------------------------------------------------
 
 def test_summary_strength_pooled_heldout():
-    # Row: "Strength (sign-reconstructed) | within-one 52.8% (exact 26.4%, Δ +0.49) | N=53".
+    # Row: "Strength (sign-reconstructed) | within-one 54.7% (exact 24.5%, Δ +0.32) | N=53".
+    # Re-pinned at increment 17 (sutra-fed strength; was 52.8/26.4/+0.49).
     s = W.run(_HELDOUT)
     assert s["n_scored"] == 53
-    assert abs(s["within1_pct"] - 52.8) <= _TOL
-    assert abs(s["exact_pct"] - 26.4) <= _TOL
-    assert abs(s["mean_delta"] - 0.49) <= 0.02
+    assert abs(s["within1_pct"] - 54.7) <= _TOL
+    assert abs(s["exact_pct"] - 24.5) <= _TOL
+    assert abs(s["mean_delta"] - 0.32) <= 0.02
 
 
 def test_summary_strength_max_expansion():
-    # Row: "Strength — max HTJAH expansion | within-one 53.9% (exact 26.3%, Δ +0.43) | N=76".
+    # Row: "Strength — max HTJAH expansion | within-one 55.3% (exact 25.0%, Δ +0.30) | N=76".
+    # Re-pinned at increment 17 (was 53.9/26.3/+0.43).
     maxset = _HELDOUT + [str(_CORP / "unseen_scoreable.json"), str(_CORP / "unseen_grow.json")]
     s = W.run(maxset)
     assert s["n_scored"] == 76
-    assert abs(s["within1_pct"] - 53.9) <= _TOL
-    assert abs(s["mean_delta"] - 0.43) <= 0.02
+    assert abs(s["within1_pct"] - 55.3) <= _TOL
+    assert abs(s["mean_delta"] - 0.30) <= 0.02
 
 
 def test_summary_strength_fresh_blind():
@@ -52,19 +54,20 @@ def test_summary_strength_fresh_blind():
 
 
 def test_summary_strength_nh_degree_accurate():
-    # Row: "Strength — NH degree-accurate | within-one 46.7% (exact 33.3%, Δ +1.07) | N=15".
+    # Row: "Strength — NH degree-accurate | within-one 53.3% (exact 26.7%, Δ +1.07) | N=15".
+    # Re-pinned at increment 17 (was 46.7/33.3).
     # Δ is +1.07 (not +1.13) since the degree layer's combustion term is on for the
     # degree-resolved NH charts; within-one is unchanged (combustion is within-one-neutral
     # on the original 15 -- see REPORT_degree_engine.md).
     s = N.run()
     assert s["n"] == 15
     assert s["n_excluded"] == 0
-    assert abs(s["within1_pct"] - 46.7) <= _TOL
+    assert abs(s["within1_pct"] - 53.3) <= _TOL
     assert abs(s["mean_delta"] - 1.07) <= 0.02
 
 
 def test_summary_strength_nh_degree_pooled_grown():
-    # Row: "Strength — NH degree pooled (grown) | within-one 43.8% (Δ +0.69) | N=32".
+    # Row: "Strength — NH degree pooled (grown) | within-one 53.1% (Δ +0.44) | N=32".
     # The grown degree-accurate held-out (15 + 17 fresh), degree feature layer on
     # (combustion). 0 excluded. Beats the 40.6% sign-baseline on the same corpus.
     import json
@@ -77,8 +80,9 @@ def test_summary_strength_nh_degree_pooled_grown():
     s = N.run(pooled)
     assert s["n"] == 32
     assert s["n_excluded"] == 0
-    assert abs(s["within1_pct"] - 43.8) <= _TOL
-    assert abs(s["mean_delta"] - 0.69) <= 0.02
+    # Re-pinned at increment 17 (was 43.8/+0.69).
+    assert abs(s["within1_pct"] - 53.1) <= _TOL
+    assert abs(s["mean_delta"] - 0.44) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------
@@ -117,7 +121,8 @@ def test_summary_longevity_bhava_predicts_and_benefic_strength_does_not():
     s = L.run()
     assert s["n"] == 14
     sp = s["spearman"]
-    assert abs(sp["bhava"]["rho"] - 0.52) <= 0.01
+    # Re-pinned at increment 17: rho 0.52 -> 0.50 (8th-bhava scores shift slightly).
+    assert abs(sp["bhava"]["rho"] - 0.50) <= 0.01
     # the discriminating claim: bhava-strength predicts, general benefic-strength anti-predicts.
     assert sp["lord"]["rho"] < 0
     assert sp["karaka"]["rho"] < 0

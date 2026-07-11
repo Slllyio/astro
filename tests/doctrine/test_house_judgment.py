@@ -551,17 +551,19 @@ class TestChapterRules:
         j = judge_house_doctrine(mainpuri, 2, dasha={"md": "Mercury", "ad": "Mercury"})
         assert any("debator" in c.rule_id for c in j.combinations)
 
-    def test_house1_unchanged_by_chapter_map(self, mainpuri):
-        # House 1 is deliberately absent from HOUSE_CHAPTERS -> its verdicts stand.
-        # mainpuri is a degree_resolved (printed-positions) chart, so the degree
-        # engine's combustion term applies: its lagna lord Mars is combust (conjunct
-        # the Sun), which drops the lord one grade (fairly good -> moderate) and the
-        # conclusion with it (fairly strong -> fairly good). See Increment 14 /
-        # REPORT_degree_engine.md; sign-reconstructed charts are unaffected.
+    def test_house1_reads_ch4_on_sutra_path(self, mainpuri):
+        # House 1 is absent from HOUSE_CHAPTERS (default-path byte-stability), but the
+        # SUTRA_STRENGTH path (increment 17) consults _HOUSE_CHAPTERS_SUTRA so ch. IV
+        # doctrine reaches the first house. On mainpuri (degree_resolved, combust lagna
+        # lord Mars per increment 14) the h1 lord now also carries y114 dehakashta
+        # (unfavorable) + lagna-lord-in-11 (favorable) sutra testimony: lord
+        # moderate -> weak, conclusion fairly good -> moderately good.
         j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
         assert j.lagna_verdict.label == "very powerful"
-        assert j.lord_verdict.label == "moderate"
-        assert j.conclusion.label == "fairly good"
+        assert j.lord_verdict.label == "weak"
+        assert j.conclusion.label == "moderately good"
+        sut = [f for f in j.lord_verdict.findings if f.criterion == "sutra"]
+        assert sut, "sutra findings should reach the house-1 lord on the sutra path"
 
     def test_house3_reads_ch6(self, mainpuri):
         # HOUSE_CHAPTERS[3] -> the 3rd house reads its own ch. VI rules.
@@ -713,6 +715,12 @@ class TestChartGroundingCostAndTiming:
             p = build_grounding(J[h])
             for role in ("lord", "karaka"):
                 for f in p[role]["findings"]:
+                    # criterion 'sutra' findings (increment 17) are house-contextual
+                    # (a lord-of-4-in-2 sutra exists only in house 4's judgment); the
+                    # per-planet dossier is context-free by design, so they are scoped
+                    # to the per-house grounding and excluded from the collapse check.
+                    if f["observation"].startswith("sutra: "):
+                        continue
                     assert (f["observation"], f["contribution"]) in dossier
 
     def test_resolver_picks_bracketing_period(self, mainpuri):

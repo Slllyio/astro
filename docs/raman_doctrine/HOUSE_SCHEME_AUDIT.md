@@ -1212,3 +1212,33 @@ The overhaul's measurement foundation. The frozen anchor gates only the old harn
 
 Measurement only; engine byte-identical. Every subsequent increment (17+: sutra strength,
 rebalance) is dual-gated on THIS anchor plus the held-out corpora.
+
+### Increment 17 — sutra-fed strength: the encoded doctrine finally feeds the grades (LANDED; largest single gain)
+
+Root cause 1 (increment 16 context): all 1,359 encoded sutras fired into an unscored path.
+This increment routes them into the factor verdicts under three disciplines
+(`domains/sutra_strength.py`): NOVELTY (rules restating what the assessors already score
+mechanically are dropped; only lord-of-X-in-Y, yogas/compounds, varga/AV/nakshatra/nodal
+testimony contributes), DOCTRINE-FIXED WEIGHTS (polarity × the rule's own printed magnitude
+class, valued in the assessor's units — nothing fit), and BOUNDED CONTRIBUTION (per-factor
+±1.6 clamp, positives saturate through the existing `_cap_positive`). Corrective
+planet-in-house sutras that CONTRADICT the mechanical occupant sign flip it (17b). The
+strong-affliction gate (17c) is wired but dormant — no row trips it on any corpus.
+
+Ladder (all gates green; OFF-path byte-identical, full suite):
+
+| corpus | before | after |
+|---|---|---|
+| pooled held-out (N=53) | 52.8% | **54.7%** (Δ +0.49 → +0.32) |
+| max HTJAH expansion (N=76) | 53.9% | **55.3%** |
+| fresh blind (N=14) | 71.4% | 71.4% (unchanged) |
+| NH degree-accurate (N=15) | 46.7% | **53.3%** |
+| NH degree pooled (N=32) | 43.8% | **53.1%** (Δ +0.69 → +0.44) |
+| live anchor | 1/8 | 1/8 (intra-band shuffles only; 13-bhava −5→−3, 12-lord −3→−4 — ch. IV
+lord-in-dusthana sutras fire unfavorably, testimony Raman himself overrides: P3's case) |
+| longevity ρ | +0.52 | +0.50 |
+
+The house-1 chapter (ch. IV) participates only on the sutra path (`_HOUSE_CHAPTERS_SUTRA`)
+so the default path stays byte-identical with flags off. The largest single accuracy gain in
+the project's history, and it came from CONTENT, not weights — fourteen weight/feature
+increments could not move what routing the doctrine's own rules did.

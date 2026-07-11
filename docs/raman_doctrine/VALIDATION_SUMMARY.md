@@ -21,31 +21,35 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 
 | Axis | Metric | Result | N | Corpus | Report |
 |---|---|---|---|---|---|
-| **Strength** (sign-reconstructed) | within-one | **52.8%** (exact 26.4%, Δ +0.49) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
-| **Strength** — max HTJAH expansion | within-one | **53.9%** (exact 26.3%, Δ +0.43) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
+| **Strength** (sign-reconstructed) | within-one | **54.7%** (exact 24.5%, Δ +0.32) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
+| **Strength** — max HTJAH expansion | within-one | **55.3%** (exact 25.0%, Δ +0.30) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
-| **Strength** — NH degree-accurate | within-one | **46.7%** (exact 33.3%, Δ +1.07) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
-| **Strength** — NH degree pooled (grown) | within-one | **43.8%** (Δ +0.69) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
+| **Strength** — NH degree-accurate | within-one | **53.3%** (exact 26.7%, Δ +1.07) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
+| **Strength** — NH degree pooled (grown) | within-one | **53.1%** (Δ +0.44) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
 | **Strength** — ch. IV LIVE anchor | within-one | **12.5%** (1/8, Δ −3.75, all under-credits) | 8 | `htjah_anchor_live` (faithfulness-gated casts; the frozen 8/8 gates only the old harness) | audit increment 16 |
 | **Timing** — HTJAH events | mahādaśā-lord exact | **100%** (8/8); antara within-one 8/8 | 8 | `heldout_timing` + `…_ch12_8th` | [timing](validation/REPORT_timing.md) |
 | **Timing** — Notable Horoscopes | mahādaśā-lord exact | **94.0%** (47/50); antara within-one 92.9% | 50 | `nh_timing` (real births) | [timing](validation/REPORT_timing.md) |
 | **Daśā balance** — NH | starting-lord exact | **93.3%** (28/30); duration ±0.5y 28/30 | 30 | `nh_balance` (Moon longitude) | [nh balance](validation/REPORT_nh_balance.md) |
-| **Longevity** — 8th bhāva | Spearman ρ vs Raman's longevity order | **+0.52** (p≈0.06) | 14 | `heldout_longevity_ch12_8th` | [longevity](validation/REPORT_longevity.md) |
+| **Longevity** — 8th bhāva | Spearman ρ vs Raman's longevity order | **+0.50** (p≈0.07) | 14 | `heldout_longevity_ch12_8th` | [longevity](validation/REPORT_longevity.md) |
 
 **Reading the table.** Timing, balance, and longevity are *strong*: the daśā arithmetic
 reproduces Raman's printed mahādaśā lord 94% of the time on real births (50 events), the
-balance line 93%, and 8th-bhāva strength predicts his longevity ordering (ρ +0.52) while general
+balance line 93%, and 8th-bhāva strength predicts his longevity ordering (ρ +0.50) while general
 benefic-strength *anti*-predicts it (ρ −0.35, see below) — a discriminating result, not a
-coincidence. **Strength sits at a ceiling of ~53% within-one** and that is the honest,
-load-bearing finding of the whole effort.
+coincidence. **Strength stood at a ~53%-within-one ceiling through fourteen increments; the
+sutra-fed strength layer (increment 17) is the first content change to move it — to ~55% on
+sign-reconstructed held-out and +9 points on the degree-accurate NH pool** — by fixing root
+cause 1: the encoded doctrine never fed the grades.
 
 ## The strength ceiling — stated plainly
 
 The sign-only strength engine reconstructs each chart from Raman's two printed diagrams (Rāśi +
 Navāṁśa signs, no longitudes) and grades bhāva/lord/kāraka strength on a 9-grade scale. Across
-every held-out cut it lands at **~53% within-one, ~26% exact, with a small positive bias
-(Δ ≈ +0.4 to +0.5: the engine over-credits)**. This ceiling is **structural, not parametric** —
-it was probed directly and does not yield to re-weighting:
+every held-out cut it long sat at **~53% within-one, ~26% exact, with a positive bias
+(Δ ≈ +0.4 to +0.5: the engine over-credits)**. That ceiling was **structural, not parametric** —
+probed directly, it does not yield to re-weighting (the negatives below). What finally moved it
+was *content*: increment 17 routes the encoded sutras into the grades (held-out 54.7%, Δ +0.32);
+the ~55% level is the new baseline the P3 rebalance works from:
 
 - The [ceiling diagnostic](validation/REPORT_ceiling_diagnostic.md) shows the residual error is
   not separable by any single existing feature — the misses are holistic judgments (Raman
@@ -74,6 +78,9 @@ Eight increments improved held-out accuracy; four were honestly recorded as nega
 | 14a | real-birth degree engine — orb-graded combustion in the numeric assessor | **landed** — NH degree pooled within-one 40.6 → **43.8%** (N=32), the first feature to raise it |
 | 14b | degree engine — bhāva-chalita placement | **documented negative** — *hurts* (Raman grades by whole-sign rāśi, not Sripati cusps) |
 | 14c | degree engine — degree-graded dignity + moolatrikona | **documented negative** — inert (sub-threshold within a sign) |
+| **17** | **sutra-fed strength: NOVEL fired rules become factor findings** | **landed** — the largest single gain: held-out 52.8 → **54.7%**, NH pooled 43.8 → **53.1%**; root cause 1 (the 1,359 sutras never fed the grades) fixed |
+| 17b | corrective occupant overrides (planet-in-house sutras contradicting the mechanical sign) | **landed** (with 17) |
+| 17c | strong-affliction sutra gate | wired **dormant** — no row trips it on any corpus |
 
 That every negative is recorded rather than buried is the point: the ceiling is characterized,
 not hand-waved.

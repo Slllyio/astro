@@ -42,12 +42,16 @@ def test_anchor_live_within_one_floor(summary):
 
 # LEDGER: the current per-row engine grades. An intentional engine change that moves
 # any of these must update this dict IN THE SAME COMMIT, citing its audit increment.
+# Updated at increment 17 (sutra-fed strength): within-one unchanged at 1/8, mean
+# delta unchanged (-3.75); intra-band shuffles only -- 13-bhava improved (-5 -> -3),
+# 12/13-lord moved weak -> afflicted (ch. IV lord-in-8th/12th sutras fire unfavorably;
+# doctrinally correct testimony Raman himself overrides on these charts -- P3's case).
 _LEDGER = {
     (12, "bhava"): "moderate",
-    (12, "lord"): "weak",
+    (12, "lord"): "afflicted",
     (12, "karaka"): "afflicted",
-    (13, "bhava"): "afflicted",
-    (13, "lord"): "weak",
+    (13, "bhava"): "moderate",
+    (13, "lord"): "afflicted",
     (13, "karaka"): "weak",
     (14, "lord"): "afflicted",
     (14, "karaka"): "afflicted",

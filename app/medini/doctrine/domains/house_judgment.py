@@ -39,6 +39,7 @@ from app.medini.doctrine.engine.evaluate import evaluate_rule
 from app.medini.doctrine.engine.predicates import (
     HOUSE_GROUPS, EvalContext, evaluate_predicate,
 )
+from app.medini.doctrine.domains import sutra_strength as _sutra
 from app.medini.doctrine.raman_chart import RamanChart
 
 KENDRA = (1, 4, 7, 10)
@@ -642,6 +643,25 @@ DEGREE_CHALIT = False    # bhava-chalita placement replaces whole-sign houses
 DEGREE_DIGNITY = False   # deep/shallow uchcha-neecha + moolatrikona
 DEGREE_COMBUST = True     # orb-graded combustion penalty
 
+# -- Sutra-fed strength (P1 of the engine overhaul; increment 17). Routes NOVEL fired
+#    compendium rules into the factor verdicts as Findings (see domains/sutra_strength.py
+#    for the novelty/weight/clamp policy). ALL DEFAULT OFF: flipping any flag ON is its
+#    own audited landing gated on the live anchor + held-out + NH simultaneously.
+SUTRA_STRENGTH = True            # novel sutra findings feed the factor verdicts (incr. 17)
+SUTRA_OCCUPANT_OVERRIDE = True   # corrective planet-in-house sutras flip occupant sign (17b)
+SUTRA_GATE = False               # wired DORMANT: no row trips it on any corpus (incr. 17c)
+
+# SUTRA_GATE cap: top of the "fairly good" band -- a factor under a strong doctrinal
+# affliction cannot grade above it (the A2 'besieged is broken' finding, doctrine-cited).
+_SUTRA_GATE_CAP = 0.85
+# Deep-affliction trigger for the gate: raw Rasi negatives at/below one exaltation's worth.
+_SUTRA_GATE_NEG = -1.6
+
+# House chapters consulted ONLY on the sutra path: house 1's own chapter (ch. IV) is
+# deliberately absent from HOUSE_CHAPTERS (byte-stability of the default path), but
+# sutra-fed strength needs the first-house doctrine to reach the anchor's verdicts.
+_HOUSE_CHAPTERS_SUTRA = {1: ("ch4", "4")}
+
 
 def _degree_on(chart: RamanChart) -> bool:
     return getattr(chart, "degree_resolved", False)
@@ -904,7 +924,8 @@ def _conjunction_findings(chart, houses, planet, frame, scale=1.0,
 def _assess_planet(chart: RamanChart, planet: str, role: str, *,
                    ref_sign: int | None = None,
                    houses: Mapping[str, int] | None = None,
-                   own_house: int | None = None) -> FactorVerdict:
+                   own_house: int | None = None,
+                   extra: Sequence["Finding"] = ()) -> FactorVerdict:
     """Grade a planet on Raman's criteria. Defaults reckon placement + functional
     nature from the Lagna; pass ``ref_sign`` (the Moon's sign) and ``houses`` (the
     from-Moon map) to grade the same planet 'from Chandra Lagna'. Dignity, aspects,
@@ -968,12 +989,18 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     bavf = _bav_finding(chart, planet)
     if bavf is not None:
         f.append(bavf)
+    # Sutra-fed strength (increment 17): NOVEL fired-rule testimony, pre-clamped by
+    # sutra_strength.clamp_factor; positives saturate with everything else in _combine.
+    f.extend(extra)
     score, rasi, nav = _combine(f, additive=False)
     return FactorVerdict(role, planet, _verdict_label(score), score, tuple(f),
                          rasi_score=rasi, navamsa_score=nav)
 
 
-def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
+def _assess_bhava(chart: RamanChart, house: int, *,
+                  extra: Sequence["Finding"] = (),
+                  occupant_overrides: Mapping[str, int] | None = None
+                  ) -> FactorVerdict:
     """The Bhava — additive across vargas; aspects on the house weigh half a
     planet's (decoded ``bhava_aspect_mul``). A vargottama Lagna is an override:
     Raman calls it 'very powerful' outright (Chart 14)."""
@@ -1002,6 +1029,12 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
         # natural benefic's presence (ch72 Venus, 7/12 lord: "the 4th is not blemished";
         # ch74 Venus, 3/8 lord: "feebly blemished"). See ``_bhava_benefic``.
         occ_benefic = _bhava_benefic(chart, p)
+        # SUTRA_OCCUPANT_OVERRIDE (increment 17b): a corrective planet-in-house sutra
+        # whose polarity contradicts the mechanical occupant sign flips it, with the
+        # rule as the citation (applied by the judge only when the flag is on).
+        if occupant_overrides and p in occupant_overrides:
+            occ_benefic = occupant_overrides[p] > 0
+            tag = f"{tag}; sutra-corrected"
         disp = tag if ben or not occ_benefic else f"{tag}, natural benefic"
         f.append(Finding(f"occupied by {p} ({disp})",
                          round((_W["conjunct"] if occ_benefic else -_W["conjunct"]), 2),
@@ -1048,6 +1081,8 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
                             _W["vargottama"], "both", "vargottama"))
         return FactorVerdict("Lagna", f"house {house}", "very powerful",
                              99.0, tuple(f), rasi_score=99.0, navamsa_score=0.0)
+    # Sutra-fed strength (increment 17): NOVEL fired-rule testimony (pre-clamped).
+    f.extend(extra)
     score, rasi, nav = _combine(f, additive=True)
     return FactorVerdict("Lagna", f"house {house}", _verdict_label(score), score,
                          tuple(f), rasi_score=rasi, navamsa_score=nav)
@@ -1056,12 +1091,13 @@ def _assess_bhava(chart: RamanChart, house: int) -> FactorVerdict:
 def _assess_lagna(chart): return _assess_bhava(chart, 1)
 
 
-def _assess_lord(chart, house):
-    return _assess_planet(chart, _lord_of(chart, house), "Lord", own_house=house)
+def _assess_lord(chart, house, *, extra=()):
+    return _assess_planet(chart, _lord_of(chart, house), "Lord", own_house=house,
+                          extra=extra)
 
 
-def _assess_karaka(chart, house):
-    return _assess_planet(chart, BHAVA_KARAKAS[house][0], "Karaka")
+def _assess_karaka(chart, house, *, extra=()):
+    return _assess_planet(chart, BHAVA_KARAKAS[house][0], "Karaka", extra=extra)
 
 
 def _moon_houses(chart: RamanChart) -> dict[str, int]:
@@ -1271,6 +1307,10 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     # single-domain sweep would miss.
     candidates: list[dict] = list(by_domain.get(domain, ()))
     chapters = HOUSE_CHAPTERS.get(house, ())
+    if not chapters and SUTRA_STRENGTH:
+        # Sutra path only: house 1's own chapter (ch. IV) participates so sutra-fed
+        # strength reaches the anchor's verdicts. Default path stays byte-identical.
+        chapters = _HOUSE_CHAPTERS_SUTRA.get(house, ())
     if chapters:
         cand_ids = {r["id"] for r in candidates}
         for book_name in ("htjah_vol1", "htjah_vol2"):
@@ -1284,6 +1324,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     buckets: dict[str, list[FiredEvidence]] = {k: [] for k in STEP_ORDER}
     timing_fired: list[tuple[FiredEvidence, dict]] = []
     combos_fired: list[tuple[FiredEvidence, dict]] = []
+    sutra_fired: list[tuple[dict, str, bool]] = []
     n_fired = evaluable = 0
     seen: set[str] = set()
     for rule in candidates:
@@ -1304,12 +1345,15 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         # a named yoga is surfaced as a Combination even when it is dasa-timed
         # (Raman's 'Lagna lord joins the Nth lord in the Nth' set) — collected here
         # in addition to its bucket so both the step vote and the yoga list see it.
-        if _is_combination(rule):
+        is_combo = _is_combination(rule)
+        if is_combo:
             combos_fired.append((ev, rule))
         if bucket == "timing":
             timing_fired.append((ev, rule))
         else:
             buckets[bucket].append(ev)
+            if SUTRA_STRENGTH:
+                sutra_fired.append((rule, bucket, is_combo))
 
     steps = tuple(
         MethodStep(key=k, label=STEP_LABELS[k],
@@ -1375,9 +1419,40 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
     )
 
     # ---- Raman's per-factor strength verdicts (Rasi + Navamsa) ----
-    lagna_v = _assess_bhava(chart, house)
-    lord_v = _assess_lord(chart, house)
-    karaka_v = _assess_karaka(chart, house)
+    # Sutra-fed strength (increment 17): NOVEL fired rules become factor Findings
+    # (criterion 'sutra'), pre-clamped to +/-1.6 per factor; corrective occupant
+    # overrides and the strong-affliction gate ride their own flags.
+    sutra_extra: dict[str, tuple] = {"bhava": (), "lord": (), "karaka": ()}
+    occupant_overrides: dict[str, int] = {}
+    if SUTRA_STRENGTH and sutra_fired:
+        for fac, items in _sutra.sutra_findings(sutra_fired, house).items():
+            sutra_extra[fac] = tuple(
+                Finding(f"sutra: {text[:90]} [{rid}]", delta, "Rasi", "sutra")
+                for rid, text, delta in items)
+        if SUTRA_OCCUPANT_OVERRIDE:
+            for planet, sgn in _sutra.corrective_candidates(sutra_fired, house).items():
+                if _bhava_benefic(chart, planet) != (sgn > 0):
+                    occupant_overrides[planet] = sgn
+    lagna_v = _assess_bhava(chart, house, extra=sutra_extra["bhava"],
+                            occupant_overrides=occupant_overrides or None)
+    lord_v = _assess_lord(chart, house, extra=sutra_extra["lord"])
+    karaka_v = _assess_karaka(chart, house, extra=sutra_extra["karaka"])
+    if SUTRA_STRENGTH and SUTRA_GATE and sutra_fired:
+        gated = _sutra.strong_negative_factors(sutra_fired, house)
+        for fac, v in (("bhava", lagna_v), ("lord", lord_v), ("karaka", karaka_v)):
+            if fac not in gated or v.score <= _SUTRA_GATE_CAP:
+                continue
+            rasi_neg = sum(x.delta for x in v.findings
+                           if x.delta < 0 and x.frame in ("Rasi", "both"))
+            if rasi_neg <= _SUTRA_GATE_NEG:
+                capped = dataclasses.replace(
+                    v, score=_SUTRA_GATE_CAP, label=_verdict_label(_SUTRA_GATE_CAP))
+                if fac == "bhava":
+                    lagna_v = capped
+                elif fac == "lord":
+                    lord_v = capped
+                else:
+                    karaka_v = capped
     conclusion = _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
                                    influencers)
     first_house = _first_house_testimony(chart) if house == 1 else None

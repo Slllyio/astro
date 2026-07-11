@@ -1271,3 +1271,47 @@ sides of the engine's calibration, and per-mechanism fixes inherit the recalibra
 global trade unless (like M-C) they correct an outright double-count. The lever that breaks the
 trade is CONTENT (increment 17), not weights; further anchor recovery likely needs the P2
 encoding completion (more, finer rules) rather than more weight surgery.
+
+### Increment 19 — P2 encoding completion: HPA finished (599 → 1,153 rules), compendium at 1,913
+
+The engine-overhaul diagnosis named incomplete coverage as one of the three root causes: HPA had
+~20 of 36 chapters un-swept, **including ch. XVI "Judgment of a Horoscope"** — the one chapter most
+directly about strength synthesis. This increment closes that gap. The user supplied the full HPA
+text; its `<pre>` body verified **byte-identical** to the pinned OCR (sha256 `4af231cc…`), so the
+sweep ran against the canonical text with no provenance caveat and the 599 existing rules were
+untouched.
+
+Encoded in seven checkpointed batches (commit → tri-gate → suite → push per batch), each rule a
+verbatim-quoted, gate-verified span — **never cherry-picked for accuracy**:
+
+| batch | chapters | rules | notes |
+|---|---|---:|---|
+| 19a | XVI Judgment of a Horoscope | 46 | the highest strength-value chapter |
+| 19b | XII Birth Verification, XIII Dasas & Bhukthies | 18 | |
+| 19c | IX Hindu Casting, X Western Casting | 45 | method/definition only |
+| 19d | I, II, IV, V, VI, VII | 156 | VII Planetary Strengths & Avasthas carries DSL antecedents |
+| 19e | XXVII Prasna, XXVIII Unknown Birth Times, XXXI Mundane | 95 | 20 executable prasna/horary rules |
+| 19f | XXXV Practical Horoscopes, XXXVI Drekkanas & Stellar | 78 | 36 drekkana + 27 nakshatra definitions |
+| 19g | XXXII Muhurtha, XXXIII Annual/Varshaphal | 116 | electional + varshaphal |
+
+**Grade impact: essentially nil, by policy.** Only rule_types {bhava_judgment, yoga, graha_effect}
+are admitted to the sutra-fed strength path (ADMITTED_RULE_TYPES, increment 17). HPA's remaining
+chapters are overwhelmingly method / definition / electional / prasna / dasha_timing / transit —
+outside that whitelist — so the scored path stayed byte-stable across all seven merges: live anchor
+1/8 (mean Δ −3.62), pooled held-out 54.7%, NH pooled 53.1% (Δ +0.41), full doctrine suite 299
+passed at every checkpoint. The one measurable move was 19a: a few admitted ch. XVI rules shaved
+the NH over-credit (mean Δ +0.44 → +0.41, exact 25.0 → 28.1%) with zero within-one movement —
+drift-guard + summary re-pinned in that commit.
+
+**Two runtime bugs the compile-only sweep gate could not catch** surfaced in batch 19g against the
+whole-compendium evaluation test (which *evaluates* every rule against the printed-chart smoke set,
+not just compiles it): 6 antecedents named the node `Kethu` (→ `Ketu`, KeyError at eval) and 7
+`lagna_sign_is` antecedents passed a sign *list* where the op takes a single sign (→ wrapped each in
+an `any()` of single-sign checks, TypeError at eval). Both fixed in the draft before the final merge;
+the evaluation test is now part of the per-batch gate.
+
+Coverage: all 36 HPA chapters swept except **XVII "Key-Planets for Each Sign"**, which stays
+"partial" honestly — it carries one key-planet rule per sign (12/12 signs), so its per-sign doctrine
+is complete but the chapter's prose remarks are not separately encoded. `three_hundred` remains
+truncated at yoga 162 (no retrievable source, unchanged). Compendium now **1,913 rules across 10
+books**; COMPENDIUM_STATUS / COVERAGE / SOURCES updated to match.

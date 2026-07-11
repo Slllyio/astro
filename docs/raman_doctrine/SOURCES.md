@@ -46,6 +46,11 @@ Page maps (mechanical char-offset -> printed-page): `data/raman_doctrine/page_ma
 
 - **hpa**: `jmbQ_hindu-predictive-astrology-b.-v.-raman` was rejected — it is
   a Devanagari-script scan (english_ratio 0.00; the "hpa2.txt" precedent).
+- **hpa (P2 completion, increments 19a–19g)**: the ~20 remaining HPA chapters
+  were encoded from a user-supplied full text rather than a re-fetch. Its
+  `<pre>` body was verified **byte-identical** (sha256 `4af231cc…`, 488,502
+  bytes) to the pinned OCR above, so the existing page map and every prior
+  `quote_sha256` apply unchanged and no source re-pin was needed.
 - **htjah_vol1 + htjah_vol2**: one item (`raman-how-to-judge-horoscope-2`)
   carries both volumes' OCR files. Folios are running heads
   ("50 How to Judge a Horoscope" / "Concerning the Seventh House 51"),

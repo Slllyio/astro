@@ -84,6 +84,7 @@ Eight increments improved held-out accuracy; four were honestly recorded as nega
 | 18/M-C | vargottama dignity counted once (same-sign dignity was charged in both frames) | **landed** — anchor mean Δ −3.75 → −3.62, held-out bias +0.32 → +0.17, within-one everywhere unchanged |
 | 18/M-A | neechabhāṅga kendra-from-the-Moon (textbook second leg, Raman-asserted in ch. IV) | **documented negative** — anchor 1/8 → 2/8 but NH 53.1 → 50.0: a trade |
 | 18/M-B | navāṁśa associations read by natural nature (Raman, Chart 12) | **documented negative** — same trade shape (anchor up, NH down) |
+| **19** | **P2 encoding completion — HPA finished (599 → 1,153 rules; compendium 1,913 across 10 books)** | **landed, grade-neutral by policy** — all 36 HPA chapters swept (root cause 2 closed); the new rules are method/definition/electional/prasna/transit, outside ADMITTED_RULE_TYPES, so live anchor / held-out / NH stayed byte-stable (19a shaved NH Δ +0.44 → +0.41 only) |
 
 That every negative is recorded rather than buried is the point: the ceiling is characterized,
 not hand-waved.

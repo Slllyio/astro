@@ -84,17 +84,17 @@
   {
    "label": "XII",
    "title": "On Birth Verification and Rectification",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 8,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
    "label": "XIII",
    "title": "Dasas and Bhukthies",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 10,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
@@ -116,9 +116,9 @@
   {
    "label": "XVI",
    "title": "Judgment of a Horoscope",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 46,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {

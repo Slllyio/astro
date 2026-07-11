@@ -1172,7 +1172,16 @@ live-engine model:
   grades (Chart 12 lord: engine "weak" vs Raman "fairly good"). `test_audit_anchor` reads 8/8 only
   because it runs the frozen findings through `validate_house.predict`, not `judge_house_doctrine`.
 
-**Disposition:** the learned combine remains a validated measurement (increment 15), NOT landed;
-the anchor gate is itself stale and must be rebuilt as a grid-backed corpus re-baselined through
-the live engine before it can gate anything. Data: `validation/ml_research/a2prime_anchor_diagnostic.json`;
-full discussion in `ML_RESEARCH.md`. Engine byte-identical (measurement only).
+- **Decisive test:** scoring the anchor in engine representation on the faithful casts, **vs
+  Raman**, the live engine is 2/8 and the learned combine is **0/8 -- it collapses to "afflicted"
+  on every house-1 row**. The learned model's LOCO folds are dusthana-heavy held-out chapters; it
+  overfits "dense negatives -> afflicted" and fails out-of-distribution on strong lagnas. The
+  pre-registered gate did its job.
+
+**Disposition:** the learned combine (increment 15) is a validated *in-distribution* measurement
+(63.5% LOCO), NOT landed -- it does not generalize to house 1, and the gate correctly rejects it.
+Two separate true findings: the frozen anchor test has drifted from the live engine (8/8 stale vs
+2/8 live), AND the learned model is worse than the engine outside its training distribution.
+Landing needs house-1 training rows + a grid-backed anchor re-baselined through the live engine.
+Data: `validation/ml_research/a2prime_anchor_diagnostic.json`; full discussion in `ML_RESEARCH.md`.
+Engine byte-identical (measurement only).

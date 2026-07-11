@@ -54,12 +54,15 @@ results: [`validation/ml_research/a2_learned_combine.json`](validation/ml_resear
 | NH degree pool, single-shot (N=32, in no fold) | **62.5%** | 46.9% |
 | tuned-corpora-only training (robustness) | 61.5% / 50.0% | — |
 
-**The residual above the engine's ceiling is learnable** — +11.6 points under the same LOCO
-discipline the Phase-2 recalibration used, +15.6 on a pool the model never trained on. And the
-learned gates are legible: the depth-3 tree's root split is `sum_neg_rasi ≤ −1.22 → afflicted`
-regardless of positional credits (unless positives pile past 3.5) — the "besieged factor is
-broken" override a linear checklist cannot express
-([tree rules](validation/ml_research/a2_tree_rules.json)).
+**The residual above the engine's ceiling is learnable — within the training distribution**
+(+11.6 points under the same LOCO discipline the Phase-2 recalibration used, +15.6 on a pool the
+model never trained on). And the learned gates are legible: the depth-3 tree's root split is
+`sum_neg_rasi ≤ −1.22 → afflicted` regardless of positional credits (unless positives pile past
+3.5) — the "besieged factor is broken" override a linear checklist cannot express
+([tree rules](validation/ml_research/a2_tree_rules.json)). **The gain does not generalize
+out-of-distribution** — see the anchor test below, where it collapses to "afflicted" on house-1
+charts absent from the held-out chapters. So this is a real but *bounded* result: learnable where
+there is training signal, not a universal replacement for `_combine`.
 
 **Why it is NOT landed — and why the gate itself is the deeper problem.** The pre-registered
 ch. IV anchor gate failed (ordinal 2/8, tree 1/8 within-one). A landing attempt (A2′) investigated
@@ -81,15 +84,24 @@ whether that was a fixable representation artifact, and found something more fun
   frozen anchor's "fairly good"). The `test_audit_anchor` 8/8 passes only because it runs the frozen
   hand-decoded findings through the old `validate_house.predict`, **not** `judge_house_doctrine` —
   so the anchor test and the live engine have themselves diverged over the intervening increments.
-- **Consequence:** the pre-registered anchor gate cannot validly gate a live-engine model, because
-  it targets hand-decoded grades the live engine no longer produces even for the engine itself.
-  Ephemeris casting cannot substitute in general (navāṁśa is degree-hypersensitive — Charts 13/14
-  drift where 12 happened to match), and the printed sign-diagram grids for Nos. 12–14 are not in
-  the text-only source. **Landing path (a separate increment):** rebuild the anchor as a
-  grid-backed corpus scored through the *live* engine (re-baselining what 9/9 means for the current
-  engine), then re-run the gate. Until then the learned combine stands as a validated measurement,
-  not an engine change — and the finding that the frozen anchor has drifted from the live engine is
-  itself an actionable result for the calibration-integrity story.
+- **The decisive test — and the gate is vindicated.** Scoring the anchor in engine representation
+  on the faithful casts settles it: on the same 8 rows, **vs Raman**, the live engine is 2/8 and
+  **the learned combine is 0/8 — it predicts "afflicted" for every anchor row**. The learned
+  model's LOCO training folds are the held-out chapters, which are dusthāna-heavy (houses
+  3/5/6/8/9/10/12) and skewed toward afflicted verdicts; it learned "dense findings with negatives
+  → afflicted" and **collapses out-of-distribution on the house-1 anchor charts** (strong lagnas
+  with mixed testimony it never saw). So the pre-registered gate did exactly its job — it caught
+  that the **63.5% LOCO gain is distribution-bound and does not generalize to house 1.** The
+  landing is correctly rejected, not on a technicality but on substance.
+- **Two true findings, kept separate:** (a) the frozen anchor test has drifted from the live engine
+  — `test_audit_anchor` reads 8/8 on stale hand-decoded findings while the live engine scores the
+  same charts 2/8 vs Raman; (b) the learned combine, though better than the engine *within* the
+  held-out distribution, is worse *outside* it. **Landing path (a separate increment):** the
+  learned combine needs house-1 (and kendra-strong) training rows before it can generalize, and the
+  anchor gate needs rebuilding as a grid-backed corpus re-baselined through the live engine. Until
+  both hold, the learned combine stands as a validated *in-distribution* measurement, not an engine
+  change. The honest headline: the ceiling residual is learnable, but only where you have training
+  signal — and the calibration anchor is doing real work by refusing an overfit model.
 
 ## NEW — Track A experiment 2 (A1): the blinded LLM-as-scorer pilot (complete, 167/167)
 

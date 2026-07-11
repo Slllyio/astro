@@ -252,9 +252,9 @@
   {
    "label": "XXXIII",
    "title": "Annual Horoscopes",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 26,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
@@ -287,6 +287,14 @@
    "status": "swept",
    "rule_count": 12,
    "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "XXXII",
+   "title": "",
+   "status": "swept",
+   "rule_count": 90,
+   "sweep_id": "p11_completion",
    "notes": null
   }
  ]

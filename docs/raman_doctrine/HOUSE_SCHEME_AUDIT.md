@@ -1242,3 +1242,32 @@ The house-1 chapter (ch. IV) participates only on the sutra path (`_HOUSE_CHAPTE
 so the default path stays byte-identical with flags off. The largest single accuracy gain in
 the project's history, and it came from CONTENT, not weights — fourteen weight/feature
 increments could not move what routing the doctrine's own rules did.
+
+### Increment 18 — P3 rebalance, round 1: one landed, two doctrinally-real trades rejected
+
+Mechanisms proposed from the live-anchor findings dump (each dual-gated on live anchor AND
+pooled held-out AND NH pooled):
+
+- **M-A, neechabhāṅga kendra-from-the-Moon (REJECTED — documented negative).** The textbook
+  second leg, asserted by Raman twice in ch. IV (Chart 13's neecha Sun and Venus: "Raja-Yoga
+  is caused"). Lifts the live anchor 1/8 → 2/8 (all three Chart-13 rows improve) but regresses
+  NH pooled 53.1 → 50.0: Marie Antoinette's 5th-bhāva occupant gains a cancellation Raman does
+  not grant. A trade, not a gain; any narrowing that keeps Chart 13 and excludes her would be
+  corpus-fitting. Recorded in `_neechabhanga`'s docstring for revisit as the anchor corpus grows.
+- **M-B, navāṁśa associations read by natural nature (REJECTED — documented negative).** Raman,
+  Chart 12: functional-malefic Jupiter with Saturn "in the sign of a friend. Hence ... fairly
+  good." Same trade shape: anchor 1/8 → 2/8, NH 53.1 → 50.0. The `natural_benefic_ok` lever on
+  `_conjunction_findings` is retained for reproducibility; nav calls stay functional-natured.
+- **M-C, vargottama dignity counted once (LANDED).** A vargottama planet was charged the same
+  sign's dignity in BOTH frames (Chart 12's neecha-sign Sun: −1.6 twice) while also credited
+  vargottama — Raman weighs the enemy sign once ("vargottama but in an enemy's sign →
+  inclining towards good"). Fix: skip the navāṁśa dignity finding when sign1 == sign9. Effect:
+  anchor mean Δ −3.75 → −3.62 (Chart 12 kāraka afflicted → weak), held-out 54.7% and NH 53.1%
+  byte-unchanged. Zero-cost doctrinal correctness.
+
+The recurring pattern is itself a finding: every mechanism that lifts the anchor's strong-lagna
+under-credit spends the same rows' worth of NH over-credit — the two corpora sit on opposite
+sides of the engine's calibration, and per-mechanism fixes inherit the recalibration report's
+global trade unless (like M-C) they correct an outright double-count. The lever that breaks the
+trade is CONTENT (increment 17), not weights; further anchor recovery likely needs the P2
+encoding completion (more, finer rules) rather than more weight surgery.

@@ -805,7 +805,15 @@ def _combine(findings: Sequence[Finding], *, additive: bool) -> tuple[float, flo
 
 def _neechabhanga(chart: RamanChart, planet: str, sign: int) -> bool:
     """Common neechabhanga: the dispositor of the debilitation sign sits in a
-    kendra from the Lagna (a standard cancellation rule)."""
+    kendra from the Lagna (a standard cancellation rule).
+
+    Increment 18/M-A (documented negative): extending to kendra-from-the-Moon --
+    the textbook second leg, and asserted by Raman twice in the ch. IV anchor
+    walkthrough (Chart 13's neecha Sun and Venus) -- lifts the live anchor 1/8 ->
+    2/8 but regresses NH pooled 53.1 -> 50.0 (Marie Antoinette's 5th-bhava
+    occupant gains a cancellation Raman does not grant). A trade, not a gain;
+    rejected under the dual gate and recorded here for revisit when the anchor-
+    side corpus grows."""
     from app.core.dignity import SIGN_RULERS
     dispositor = SIGN_RULERS.get(sign)
     if not dispositor:
@@ -902,7 +910,7 @@ def _aspect_findings(chart, houses, target_house, subject, frame, scale=1.0,
 
 
 def _conjunction_findings(chart, houses, planet, frame, scale=1.0,
-                          ref_sign=None) -> list[Finding]:
+                          ref_sign=None, natural_benefic_ok=False) -> list[Finding]:
     out: list[Finding] = []
     signs = (chart.bundle.chart.planet_signs if frame == "Rasi"
              else {p: chart.varga_signs[p][9] for p in GRAHAS})
@@ -910,6 +918,11 @@ def _conjunction_findings(chart, houses, planet, frame, scale=1.0,
         if c == planet or houses.get(c) != houses.get(planet):
             continue
         ben, tag = _planet_nature(chart, c, ref_sign)
+        # M-B (increment 18): in the NAVAMSA frame Raman reads a companion by its
+        # NATURAL nature -- ch. IV Chart 12: functional-malefic Jupiter with Saturn
+        # "in the sign of a friend. Hence ... fairly good."
+        if natural_benefic_ok and not ben and _bhava_benefic(chart, c, ref_sign):
+            ben, tag = True, f"{tag}, natural benefic"
         exalt = c in _CLASSICAL and dignity_state(c, signs[c]) == "exalted"
         if exalt:                          # an exalted companion is strongly good
             w = _W["conjunct_exalted"] * scale
@@ -982,7 +995,18 @@ def _assess_planet(chart: RamanChart, planet: str, role: str, *,
     if cf is not None:
         f.append(cf)
     # Navamsa frame — CO-EQUAL (Chart 12: the Navamsa redeems a Rasi-afflicted lord).
-    f += _dignity_findings(chart, planet, sign9, "Navamsa")
+    # M-C (increment 18): a VARGOTTAMA planet's sign dignity is counted once -- the
+    # Rasi finding covers it and the vargottama credit above carries the doubling;
+    # ch. IV Chart 12's Sun is "vargottama but in an enemy's sign -> inclining
+    # towards good", one enemy-sign debit, not two.
+    if sign1 != sign9:
+        f += _dignity_findings(chart, planet, sign9, "Navamsa")
+    # M-B (increment 18, documented negative): reading navamsa associations by
+    # NATURAL nature (Raman, ch. IV Chart 12: functional-malefic Jupiter with Saturn
+    # "in the sign of a friend. Hence ... fairly good") lifts the live anchor 1/8 ->
+    # 2/8 but regresses NH pooled 53.1 -> 50.0 -- a trade, rejected under the dual
+    # gate. The natural_benefic_ok lever on _conjunction_findings is retained for
+    # reproducibility; both nav calls stay functional-natured.
     f += _aspect_findings(chart, d9, d9[planet], planet, "Navamsa", ref_sign=ref_sign)
     f += _conjunction_findings(chart, d9, planet, "Navamsa", ref_sign=ref_sign)
     # Increment 9: the planet's own Bhinnashtakavarga strength in its sign.

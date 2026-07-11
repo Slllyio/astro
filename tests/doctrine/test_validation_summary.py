@@ -27,23 +27,24 @@ _TOL = 0.2  # percentage-point tolerance on reproduced within-one / exact figure
 # ---- Strength (sign-reconstructed) ------------------------------------------------------
 
 def test_summary_strength_pooled_heldout():
-    # Row: "Strength (sign-reconstructed) | within-one 54.7% (exact 24.5%, Δ +0.32) | N=53".
-    # Re-pinned at increment 17 (sutra-fed strength; was 52.8/26.4/+0.49).
+    # Row: "Strength (sign-reconstructed) | within-one 54.7% (exact 24.5%, Δ +0.17) | N=53".
+    # Re-pinned at increments 17 (sutra-fed strength; was 52.8/26.4/+0.49) and 18/M-C
+    # (vargottama dignity counted once; Δ +0.32 -> +0.17, within-one/exact unchanged).
     s = W.run(_HELDOUT)
     assert s["n_scored"] == 53
     assert abs(s["within1_pct"] - 54.7) <= _TOL
     assert abs(s["exact_pct"] - 24.5) <= _TOL
-    assert abs(s["mean_delta"] - 0.32) <= 0.02
+    assert abs(s["mean_delta"] - 0.17) <= 0.02
 
 
 def test_summary_strength_max_expansion():
-    # Row: "Strength — max HTJAH expansion | within-one 55.3% (exact 25.0%, Δ +0.30) | N=76".
-    # Re-pinned at increment 17 (was 53.9/26.3/+0.43).
+    # Row: "Strength — max HTJAH expansion | within-one 55.3% (exact 25.0%, Δ +0.20) | N=76".
+    # Re-pinned at increments 17 (was 53.9/26.3/+0.43) and 18/M-C (Δ +0.30 -> +0.20).
     maxset = _HELDOUT + [str(_CORP / "unseen_scoreable.json"), str(_CORP / "unseen_grow.json")]
     s = W.run(maxset)
     assert s["n_scored"] == 76
     assert abs(s["within1_pct"] - 55.3) <= _TOL
-    assert abs(s["mean_delta"] - 0.30) <= 0.02
+    assert abs(s["mean_delta"] - 0.20) <= 0.02
 
 
 def test_summary_strength_fresh_blind():

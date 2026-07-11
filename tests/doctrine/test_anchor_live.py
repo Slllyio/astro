@@ -49,7 +49,7 @@ def test_anchor_live_within_one_floor(summary):
 _LEDGER = {
     (12, "bhava"): "moderate",
     (12, "lord"): "afflicted",
-    (12, "karaka"): "afflicted",
+    (12, "karaka"): "weak",  # increment 18/M-C: vargottama dignity counted once
     (13, "bhava"): "moderate",
     (13, "lord"): "afflicted",
     (13, "karaka"): "weak",

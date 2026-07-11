@@ -21,8 +21,8 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 
 | Axis | Metric | Result | N | Corpus | Report |
 |---|---|---|---|---|---|
-| **Strength** (sign-reconstructed) | within-one | **54.7%** (exact 24.5%, Δ +0.32) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
-| **Strength** — max HTJAH expansion | within-one | **55.3%** (exact 25.0%, Δ +0.30) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
+| **Strength** (sign-reconstructed) | within-one | **54.7%** (exact 24.5%, Δ +0.17) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
+| **Strength** — max HTJAH expansion | within-one | **55.3%** (exact 25.0%, Δ +0.20) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — NH degree-accurate | within-one | **53.3%** (exact 26.7%, Δ +1.07) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
 | **Strength** — NH degree pooled (grown) | within-one | **53.1%** (Δ +0.44) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
@@ -48,7 +48,7 @@ Navāṁśa signs, no longitudes) and grades bhāva/lord/kāraka strength on a 9
 every held-out cut it long sat at **~53% within-one, ~26% exact, with a positive bias
 (Δ ≈ +0.4 to +0.5: the engine over-credits)**. That ceiling was **structural, not parametric** —
 probed directly, it does not yield to re-weighting (the negatives below). What finally moved it
-was *content*: increment 17 routes the encoded sutras into the grades (held-out 54.7%, Δ +0.32);
+was *content*: increment 17 routes the encoded sutras into the grades (held-out 54.7%, Δ +0.17 after 18/M-C);
 the ~55% level is the new baseline the P3 rebalance works from:
 
 - The [ceiling diagnostic](validation/REPORT_ceiling_diagnostic.md) shows the residual error is
@@ -81,6 +81,9 @@ Eight increments improved held-out accuracy; four were honestly recorded as nega
 | **17** | **sutra-fed strength: NOVEL fired rules become factor findings** | **landed** — the largest single gain: held-out 52.8 → **54.7%**, NH pooled 43.8 → **53.1%**; root cause 1 (the 1,359 sutras never fed the grades) fixed |
 | 17b | corrective occupant overrides (planet-in-house sutras contradicting the mechanical sign) | **landed** (with 17) |
 | 17c | strong-affliction sutra gate | wired **dormant** — no row trips it on any corpus |
+| 18/M-C | vargottama dignity counted once (same-sign dignity was charged in both frames) | **landed** — anchor mean Δ −3.75 → −3.62, held-out bias +0.32 → +0.17, within-one everywhere unchanged |
+| 18/M-A | neechabhāṅga kendra-from-the-Moon (textbook second leg, Raman-asserted in ch. IV) | **documented negative** — anchor 1/8 → 2/8 but NH 53.1 → 50.0: a trade |
+| 18/M-B | navāṁśa associations read by natural nature (Raman, Chart 12) | **documented negative** — same trade shape (anchor up, NH down) |
 
 That every negative is recorded rather than buried is the point: the ceiling is characterized,
 not hand-waved.

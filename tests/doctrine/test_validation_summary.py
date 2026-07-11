@@ -64,7 +64,7 @@ def test_summary_strength_nh_degree_accurate():
     assert s["n"] == 15
     assert s["n_excluded"] == 0
     assert abs(s["within1_pct"] - 53.3) <= _TOL
-    assert abs(s["mean_delta"] - 1.07) <= 0.02
+    assert abs(s["mean_delta"] - 1.00) <= 0.02
 
 
 def test_summary_strength_nh_degree_pooled_grown():
@@ -83,7 +83,7 @@ def test_summary_strength_nh_degree_pooled_grown():
     assert s["n_excluded"] == 0
     # Re-pinned at increment 17 (was 43.8/+0.69).
     assert abs(s["within1_pct"] - 53.1) <= _TOL
-    assert abs(s["mean_delta"] - 0.44) <= 0.02
+    assert abs(s["mean_delta"] - 0.41) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------

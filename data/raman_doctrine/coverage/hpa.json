@@ -268,17 +268,17 @@
   {
    "label": "XXXV",
    "title": "Practical Horoscopes",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 10,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {
    "label": "XXXVI",
    "title": "Drekkana (Decanates) and Stellar",
-   "status": "pending",
-   "rule_count": 0,
-   "sweep_id": null,
+   "status": "swept",
+   "rule_count": 68,
+   "sweep_id": "p11_completion",
    "notes": null
   },
   {

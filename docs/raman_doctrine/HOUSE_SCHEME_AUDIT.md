@@ -1353,3 +1353,36 @@ trades), not by coverage or by the rule-type whitelist. The remaining lever for 
 strong-lagna under-credit is weight surgery, which the increment-18 trades showed spends NH
 over-credit for every point of anchor gain. The honest position: the sign-only strength engine is at
 its structural ceiling.
+
+### Increment 21 — fire every applicable natal sutra (firing-coverage, grade-safe by construction)
+
+A Mainpuri-chart diagnostic exposed a firing-coverage gap distinct from the scoring question: the
+judge only makes a rule a candidate if its `domain` equals the house's single `HOUSE_DOMAIN` mapping
+(or it lives in that house's HTJAH chapter). But `HOUSE_DOMAIN` maps 12 houses to 12 of the
+compendium's 18 domains — the orphan domains **`general` (713 rules)** and **`mind_character` (159)**
+map to NO house, so every rule tagged with them (present yogas, avasthas/balas, functional-role,
+planet-in-sign character) could never fire. On Mainpuri, of **137** applicable (antecedent-true)
+sutras, only **~87** natal-relevant ones surfaced; **all 114 natal-scope applicable rules should
+fire, and ~27 never did.**
+
+**The fix (`NATAL_FIRING_WIDEN`, default ON).** A new pure module `natal_scope.py` supplies the
+doctrinal scope filter (`IN_SCOPE_RULE_TYPES` = bhava_judgment/yoga/graha_effect/strength/
+functional_role/cancellation; the rest carry `OUT_OF_SCOPE_REASONS`) and house routing
+(`referenced_houses`, skipping `frame:moon` atoms so Moon-frame yogas aren't mis-filed to a Rasi
+house). `judge_house_doctrine` adds, as candidates, every in-scope rule that references the judged
+house — from **any** book/domain — and a new `judge_chart_doctrine` fires the chart-global rules
+(no house anchor: yogas, balas, planet-in-sign) **once**, deduped and disjoint from the house
+verdicts. Result on Mainpuri: surfaced rules **101 → 135**, and **114/114 natal-scope applicable
+sutras now fire**; the ~23 out-of-scope applicable rules (electional/prasna/dasha_timing/transit/
+definition — meaningless for a birth) stay excluded by design.
+
+**Grade-safe by construction — the key discipline.** Feeding the newly-fired rules into the numeric
+grade was measured and **regresses every axis** (anchor Δ −3.62→−4.00, held-out 54.7→52.8%
+Δ+0.17→+0.51, NH 53.1→50.0% Δ+0.41→+0.66) — the same over-credit lesson as increments 12/13/20. So
+the widened candidates surface for **reading only**: only the original domain+chapter `scoring_ids`
+reach `sutra_fired`, and the numeric verdicts stay **byte-identical** to the pre-increment path
+(live anchor 1/8 Δ −3.62, held-out 54.7% Δ +0.17, NH 53.1% Δ +0.41 — all pins unchanged; full
+doctrine suite green). The firing coverage (what the encoded doctrine engages for the interpreter)
+and the scoring policy (what moves the verdict) are cleanly separated: the doctrine now *fires*
+completely, while the grade stays under the audited increment-17 path. Pinned by
+`tests/doctrine/test_mainpuri_firing_audit.py` (coverage, exclusion-by-design, once-firing).

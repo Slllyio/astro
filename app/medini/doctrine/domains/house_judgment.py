@@ -40,6 +40,7 @@ from app.medini.doctrine.engine.predicates import (
     HOUSE_GROUPS, EvalContext, evaluate_predicate,
 )
 from app.medini.doctrine.domains import sutra_strength as _sutra
+from app.medini.doctrine.domains import natal_scope as _natal
 from app.medini.doctrine.raman_chart import RamanChart
 
 KENDRA = (1, 4, 7, 10)
@@ -215,6 +216,7 @@ class HouseJudgment:
     first_house: "FirstHouseTestimony | None" = None
     chandra: "ReferenceJudgment | None" = None
     combinations: tuple["Combination", ...] = ()
+    fired_rule_ids: frozenset[str] = frozenset()
 
     @property
     def method_records_cited(self) -> frozenset[str]:
@@ -661,6 +663,17 @@ _SUTRA_GATE_NEG = -1.6
 # deliberately absent from HOUSE_CHAPTERS (byte-stability of the default path), but
 # sutra-fed strength needs the first-house doctrine to reach the anchor's verdicts.
 _HOUSE_CHAPTERS_SUTRA = {1: ("ch4", "4")}
+
+# -- Natal firing-coverage (increment 21). Without this, the candidate set is one domain
+#    per house + HTJAH chapters, so rules in the orphan domains `general`/`mind_character`
+#    (present yogas, avasthas/balas, functional-role, planet-in-sign character) never fire.
+#    ON (default): every in-natal-scope rule that references THIS house is also a candidate,
+#    and chart-global rules (no house anchor) fire once via judge_chart_doctrine. The widened
+#    candidates surface for READING only — they do NOT feed the numeric grade (only the
+#    original domain+chapter `scoring_ids` reach `sutra_fired`), so verdicts are byte-identical
+#    to the pre-increment path (measurement showed feeding them over-credits — see increment
+#    21 / test_mainpuri_firing_audit). Set False to restore the pre-21 reading surface.
+NATAL_FIRING_WIDEN = True
 
 
 def _degree_on(chart: RamanChart) -> bool:
@@ -1344,11 +1357,32 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
                     candidates.append(r)
                     cand_ids.add(r["id"])
 
+    # Rules eligible to feed the numeric strength grade (the audited sutra-scoring path):
+    # the original domain + HTJAH-chapter candidates only. The natal-firing widening below
+    # adds READING candidates (buckets/combinations/coverage) but MUST NOT feed grades —
+    # measurement (increment 21) showed those extra rules over-credit the verdicts. So the
+    # widening surfaces every applicable sutra while grades stay under the increment-17 path.
+    scoring_ids = {r["id"] for r in candidates}
+    if NATAL_FIRING_WIDEN:
+        # Increment 21: any in-natal-scope rule that references THIS house becomes a
+        # candidate, regardless of its coarse domain tag or book — closing the
+        # orphan-domain gap (general / mind_character map to no house). Chart-global
+        # rules (no house anchor) are handled once in judge_chart_doctrine, not here.
+        cand_ids = {r["id"] for r in candidates}
+        for rules in books.values():
+            for r in rules:
+                if (r["id"] not in cand_ids
+                        and _natal.in_natal_scope(r)
+                        and house in _natal.referenced_houses(r)):
+                    candidates.append(r)
+                    cand_ids.add(r["id"])
+
     ctx = EvalContext(chart=chart, dasha=dasha)
     buckets: dict[str, list[FiredEvidence]] = {k: [] for k in STEP_ORDER}
     timing_fired: list[tuple[FiredEvidence, dict]] = []
     combos_fired: list[tuple[FiredEvidence, dict]] = []
     sutra_fired: list[tuple[dict, str, bool]] = []
+    fired_ids: set[str] = set()
     n_fired = evaluable = 0
     seen: set[str] = set()
     for rule in candidates:
@@ -1362,6 +1396,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         if not outcome.fired:
             continue
         n_fired += 1
+        fired_ids.add(rule["id"])
         ev = FiredEvidence(rule["id"], rule["consequent"]["polarity"],
                            rule["consequent"]["text"], rule["book"],
                            rule["consequent"].get("magnitude"))
@@ -1376,7 +1411,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
             timing_fired.append((ev, rule))
         else:
             buckets[bucket].append(ev)
-            if SUTRA_STRENGTH:
+            if SUTRA_STRENGTH and rule["id"] in scoring_ids:
                 sutra_fired.append((rule, bucket, is_combo))
 
     steps = tuple(
@@ -1504,6 +1539,7 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
         lagna_verdict=lagna_v, lord_verdict=lord_v, karaka_verdict=karaka_v,
         conclusion=conclusion, first_house=first_house, chandra=chandra,
         combinations=tuple(combos),
+        fired_rule_ids=frozenset(fired_ids),
     )
 
 
@@ -1513,3 +1549,55 @@ def judge_all_houses_doctrine(chart: RamanChart, *,
     books = load_compendium()
     return {h: judge_house_doctrine(chart, h, books=books, dasha=dasha)
             for h in range(1, 13)}
+
+
+@dataclasses.dataclass(frozen=True)
+class ChartGlobalRule:
+    """A fired natal rule with no single-house anchor — a present yoga, a bala/avastha, a
+    functional-nature assignment, or a planet-in-sign character result. Surfaced once for
+    the whole chart (never per-house), display-only for the strength verdicts."""
+    rule_id: str
+    rule_type: str
+    polarity: str
+    magnitude: str | None
+    text: str
+    book: str
+
+
+@dataclasses.dataclass(frozen=True)
+class ChartDoctrine:
+    houses: dict[int, HouseJudgment]
+    chart_global: tuple[ChartGlobalRule, ...] = ()
+
+
+def judge_chart_doctrine(chart: RamanChart, *,
+                         dasha: Mapping[str, str] | None = None) -> ChartDoctrine:
+    """Full-chart judgment: the 12 house verdicts PLUS (when NATAL_FIRING_WIDEN is on) the
+    chart-global rules that fire once — present yogas, balas/avasthas, functional roles,
+    planet-in-sign character. Dedup is by rule_id, so each surfaces exactly once."""
+    books = load_compendium()
+    houses = {h: judge_house_doctrine(chart, h, books=books, dasha=dasha)
+              for h in range(1, 13)}
+    globals_: tuple[ChartGlobalRule, ...] = ()
+    if NATAL_FIRING_WIDEN:
+        ctx = EvalContext(chart=chart, dasha=dasha)
+        # already surfaced in a house verdict (via domain/chapter/house-widening) — a
+        # chart-global rule that also fired in some house stays there; it is not repeated
+        # here, so every rule surfaces exactly once across houses + chart_global.
+        seen: set[str] = set().union(*(j.fired_rule_ids for j in houses.values()))
+        out: list[ChartGlobalRule] = []
+        for rules in books.values():
+            for r in rules:
+                if (r["id"] in seen
+                        or not _natal.in_natal_scope(r)
+                        or not _natal.is_chart_global(r)):
+                    continue
+                if evaluate_rule(r, ctx).fired:
+                    seen.add(r["id"])
+                    c = r["consequent"]
+                    out.append(ChartGlobalRule(
+                        rule_id=r["id"], rule_type=r["rule_type"],
+                        polarity=c["polarity"], magnitude=c.get("magnitude"),
+                        text=c["text"], book=r["book"]))
+        globals_ = tuple(out)
+    return ChartDoctrine(houses=houses, chart_global=globals_)

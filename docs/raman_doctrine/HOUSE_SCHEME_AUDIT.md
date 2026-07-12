@@ -1440,3 +1440,31 @@ doctrine suite green). The firing coverage (what the encoded doctrine engages fo
 and the scoring policy (what moves the verdict) are cleanly separated: the doctrine now *fires*
 completely, while the grade stays under the audited increment-17 path. Pinned by
 `tests/doctrine/test_mainpuri_firing_audit.py` (coverage, exclusion-by-design, once-firing).
+
+### Increment 24 — synthesis_v2: a doctrine-derived non-linear scorer breaks the strength ceiling
+
+The whole audit trail (increments 8/12/13/18/20, then the A2 ML experiment) converged on one
+diagnosis: the ~53–55% within-one ceiling is held by the engine's **additive-linear** synthesis, not
+by coverage or weights. Raman judges *conditionally* — a besieged planet is broken regardless of
+credit; stacked affliction halts the house like a broken gear. A2 proved a fitted non-linear combine
+beats the engine in-distribution (63.5% vs 51.9% LOCO) but **collapsed the ch. IV anchor to 0/8** and
+was unlandable.
+
+**synthesis_v2** (`app/medini/doctrine/domains/synthesis_v2.py`) encodes that non-linearity as
+*doctrine*, not a fit, in a **standalone parallel scorer — the live engine is byte-untouched** (zero
+drift risk). It takes each factor's engine grade as the base, then applies Raman's structural
+overrides: **A** besiegement veto (papakartari → capped "weak"), **B** deep-affliction gate (summed
+Rāśi negatives ≤ −2.45 → afflicted, ≤ −1.22 → weak — the two thresholds are the A2 tree's split,
+declared as such), and a collinearity guard (combustion counted as the tight-orb case of
+Sun-proximity, not a second penalty).
+
+**Result (A+B, `synthesis_v2_validate`):** pooled HTJAH held-out **54.7 → 64.2%**, NH degree pool
+**53.1 → 62.5%**, ch. IV anchor **held at parity (1/8)**. This matches the A2 in-distribution gain from
+pure doctrine and, unlike the fitted model, does not sacrifice the anchor — the two-axis win no linear
+trade reached. The ablation shows the strong-promise floor (P) is inert on sign charts and the dignity
+floor (C) lifts the anchor 1→2 only by costing ~17 pts of held-out — a **documented negative** proving
+the anchor's residual under-credit is a *feature-space* limit (the strength signal is in
+yogas/degrees absent from the sign chart), not a synthesis failure. Full write-up:
+`validation/REPORT_synthesis_v2.md`; pinned by `tests/doctrine/test_synthesis_v2.py` (7 gate/guard
+units + a three-axis ratchet). synthesis_v2 stays a parallel scorer; promoting it to the live grade
+path (with an anchor-ledger re-pin) is a separate, deliberately un-taken decision.

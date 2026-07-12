@@ -21,11 +21,11 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 
 | Axis | Metric | Result | N | Corpus | Report |
 |---|---|---|---|---|---|
-| **Strength** (sign-reconstructed) | within-one | **50.0%** (Δ −0.12) | 58 | pooled held-out `heldout_ch*` (increment 27: verdict-map v2 recovered 5 strong-graded phrases, N 53→58; was 54.7%/N=53) | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
-| **Strength** — max HTJAH expansion | within-one | **51.9%** (Δ −0.01) | 81 | held-out + fresh blind (increment 27 map v2; was 55.3%/N=76) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
+| **Strength** (sign-reconstructed) | within-one | **56.9%** (exact 34.5%, Δ −0.76) | 58 | pooled held-out `heldout_ch*` (increment 28: synthesis_v2 promoted live — additive baseline 50.0%; map-v2 pool N=58) | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
+| **Strength** — max HTJAH expansion | within-one | **61.7%** (Δ −0.63) | 81 | held-out + fresh blind (increment 28 promoted; additive 51.9%) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
-| **Strength** — NH degree-accurate | within-one | **41.7%** (Δ +1.08) | 12 | real-birth `nh_strength` (increment 26: attribution audit removed 3 frame-error rows; was 53.3%/N=15) | [nh strength](validation/REPORT_nh_strength.md) |
-| **Strength** — NH degree pooled (grown) | within-one | **51.9%** (Δ +0.11) | 27 | `nh_strength` + `nh_strength_grow` (increment 26: 5 bad gold rows removed — see `corpora/nh_strength_removed.json`; was 53.1%/N=32) | [degree engine](validation/REPORT_degree_engine.md) |
+| **Strength** — NH degree-accurate | within-one | **58.3%** (Δ +0.67) | 12 | real-birth `nh_strength` (increment 28 promoted; additive 41.7%; increment-26 audit N=12) | [nh strength](validation/REPORT_nh_strength.md) |
+| **Strength** — NH degree pooled (grown) | within-one | **63.0%** (Δ −0.41) | 27 | `nh_strength` + `nh_strength_grow` (increment 28 promoted; additive 51.9%; increment-26 audit N=27) | [degree engine](validation/REPORT_degree_engine.md) |
 | **Strength** — NH full degree pool (grow2–grow4) | within-one | additive **39.7%** / synthesis_v2 **46.6%** | 73 | all five NH corpora (increment 27: map-v2 recovery added 17 strong-graded rows both scorers under-credit) | [synthesis_v2](validation/REPORT_synthesis_v2.md) |
 | **Strength** — ch. IV LIVE anchor | within-one | **12.5%** (1/8, Δ −3.75, all under-credits) | 8 | `htjah_anchor_live` (faithfulness-gated casts; the frozen 8/8 gates only the old harness) | audit increment 16 |
 | **Timing** — HTJAH events | mahādaśā-lord exact | **100%** (8/8); antara within-one 8/8 | 8 | `heldout_timing` + `…_ch12_8th` | [timing](validation/REPORT_timing.md) |

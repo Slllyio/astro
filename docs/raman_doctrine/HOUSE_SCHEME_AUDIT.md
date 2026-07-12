@@ -1510,3 +1510,15 @@ both pool mean-Δs turn negative. v2's lead holds (+6.9 full pool; +11.1 default
 keep winning the afflicted side; the strong side is a FEATURE gap (yogas/dispositor chains absent
 from the Finding vocabulary), the next feature-side target. Full detail:
 `validation/REPORT_synthesis_v2.md` § increment 27.
+
+### Increment 28 — synthesis_v2 promoted to the live grade path
+
+`SYNTHESIS_V2_LIVE = True`: `judge_house_doctrine`'s factor/conclusion/chandra LABELS now come from
+the doctrine-derived gated-override scorer (increments 24–27); the additive scores are untouched and
+the additive baseline stays reproducible (helper + flag-off in `fit_weights.heldout()` + score-derived
+baseline in `synthesis_v2_validate`). Promoted ledger, all measured: held-out 50.0→**56.9** (N=58),
+max-expansion 51.9→**61.7** (N=81), fresh-blind 71.4 (level), NH base 41.7→**58.3**, NH pooled
+51.9→**63.0**, NH full 39.7→**46.6** (N=73), anchor **1/8 parity** (two intra-band ledger shifts).
+Every axis improves or holds. Re-pinned in the same commit: anchor `_LEDGER`, all validation-summary
+strength rows, the Mainpuri h1 exact labels (lord weak→afflicted, conclusion moderately good→moderate).
+Full detail: `validation/REPORT_synthesis_v2.md` § increment 28.

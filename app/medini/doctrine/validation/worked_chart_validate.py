@@ -25,6 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from app.medini.doctrine.domains import house_judgment as _HJ
 from app.medini.doctrine.domains.house_judgment import (
     VERDICT_SCALE, _assess_planet, _verdict_label, judge_house_doctrine,
 )
@@ -61,9 +62,12 @@ def _engine_label(judgment, factor: str) -> str:
 
 
 def _engine_label_rasi(judgment, factor: str) -> str:
-    """The Rāśi-axis label for a factor (from FactorVerdict.rasi_score). 'overall' has
-    no Rāśi-only form and is skipped in rāśi-only mode."""
+    """The Rāśi-axis label for a factor. 'overall' has no Rāśi-only form and is skipped in
+    rāśi-only mode. Under SYNTHESIS_V2_LIVE the Rāśi-only grade goes through the same
+    promoted path as full-axis rows (no mixed-scheme scoring within one corpus)."""
     obj = getattr(judgment, _FACTOR_ATTR[factor])
+    if _HJ.SYNTHESIS_V2_LIVE:
+        return _HJ.apply_synthesis_v2(obj, rasi_only=True)
     return _verdict_label(obj.rasi_score)
 
 
@@ -112,7 +116,12 @@ def validate_record(rec: dict, patterns: list[tuple[str, str]]) -> dict[str, Any
         # would be compared to the Moon and log a spurious divergence.
         if factor == "karaka" and v.get("karaka"):
             kv = _assess_planet(chart, v["karaka"], "Karaka")
-            eng = _verdict_label(kv.rasi_score) if rasi_only else kv.label
+            if _HJ.SYNTHESIS_V2_LIVE:
+                # named-karaka rows grade through the same promoted path as default-karaka
+                # rows (the direct _assess_planet label is the raw additive grade)
+                eng = _HJ.apply_synthesis_v2(kv, rasi_only=rasi_only)
+            else:
+                eng = _verdict_label(kv.rasi_score) if rasi_only else kv.label
         else:
             eng = label(judgment, factor)
         d = _IDX[eng] - _IDX[raman_grade]

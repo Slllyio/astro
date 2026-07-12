@@ -46,11 +46,14 @@ def test_anchor_live_within_one_floor(summary):
 # delta unchanged (-3.75); intra-band shuffles only -- 13-bhava improved (-5 -> -3),
 # 12/13-lord moved weak -> afflicted (ch. IV lord-in-8th/12th sutras fire unfavorably;
 # doctrinally correct testimony Raman himself overrides on these charts -- P3's case).
+# Increment 28 (synthesis_v2 promoted): the deep-affliction gate moves two rows down a
+# band (12-karaka weak -> afflicted, 13-bhava moderate -> weak); within-one floor
+# unchanged at 1/8 -- the anchor's under-credit is the documented feature-space limit.
 _LEDGER = {
     (12, "bhava"): "moderate",
     (12, "lord"): "afflicted",
-    (12, "karaka"): "weak",  # increment 18/M-C: vargottama dignity counted once
-    (13, "bhava"): "moderate",
+    (12, "karaka"): "afflicted",
+    (13, "bhava"): "weak",
     (13, "lord"): "afflicted",
     (13, "karaka"): "weak",
     (14, "lord"): "afflicted",

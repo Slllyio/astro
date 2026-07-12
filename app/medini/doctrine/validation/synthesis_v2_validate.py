@@ -154,11 +154,13 @@ def run_nh(paths: list[Path] = _NH) -> dict[str, Any]:
             judgment = judge_house_doctrine(chart, house)
             if r["factor"] == "overall":
                 eng = _v2_overall(judgment, house)
-                live = judgment.conclusion.label
+                live = HJ._verdict_label(judgment.conclusion.score)
             else:
                 fv = getattr(judgment, _FACTOR_ATTR[r["factor"]])
                 eng = _v2_factor(fv)
-                live = fv.label
+                live = HJ._verdict_label(fv.score)
+            # `live` = the ADDITIVE baseline, recomputed from the untouched score so the
+            # comparison stays v2-vs-additive whatever SYNTHESIS_V2_LIVE is set to.
             live_d = idx[live] - idx[raman]
             live_within1 += abs(live_d) <= 1
             live_delta_sum += live_d

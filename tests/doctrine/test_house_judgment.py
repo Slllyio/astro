@@ -558,10 +558,13 @@ class TestChapterRules:
         # lord Mars per increment 14) the h1 lord now also carries y114 dehakashta
         # (unfavorable) + lagna-lord-in-11 (favorable) sutra testimony: lord
         # moderate -> weak, conclusion fairly good -> moderately good.
+        # Increment 28 (synthesis_v2 promoted to the live grade path): the deep-affliction
+        # gate reads the combust+besieged h1 lord down (weak -> afflicted) and the promoted
+        # house synthesis concludes moderate. The vargottama-lagna sentinel is unchanged.
         j = judge_house_doctrine(mainpuri, 1, dasha={"md": "Mercury", "ad": "Mercury"})
         assert j.lagna_verdict.label == "very powerful"
-        assert j.lord_verdict.label == "weak"
-        assert j.conclusion.label == "moderately good"
+        assert j.lord_verdict.label == "afflicted"
+        assert j.conclusion.label == "moderate"
         sut = [f for f in j.lord_verdict.findings if f.criterion == "sutra"]
         assert sut, "sutra findings should reach the house-1 lord on the sutra path"
 

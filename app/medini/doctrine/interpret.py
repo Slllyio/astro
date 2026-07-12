@@ -82,6 +82,9 @@ def _finding(f) -> dict[str, Any]:
 
 
 def _verdict(v) -> dict[str, Any]:
+    # `verdict` is the doctrine grade (synthesis_v2-promoted when SYNTHESIS_V2_LIVE);
+    # `score`/`rasi_score` are the raw additive testimony. label != threshold(score)
+    # by design since increment 28.
     return {
         "role": v.role,
         "subject": v.subject,

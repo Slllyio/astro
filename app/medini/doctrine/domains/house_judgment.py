@@ -519,6 +519,19 @@ _POS_KNEE = 1.6
 _POS_SLOPE = 0.1
 
 
+def apply_synthesis_v2(fv: "FactorVerdict", *, rasi_only: bool = False) -> str:
+    """The promoted (synthesis_v2) label for a FactorVerdict — the live grade path when
+    SYNTHESIS_V2_LIVE. `rasi_only` grades the Rāśi axis alone (used by the sign-only
+    validation path where no printed Navāṁśa exists). Lazy import: synthesis_v2 imports
+    this module at load, so a top-level import here would be circular."""
+    from app.medini.doctrine.domains import synthesis_v2 as _s2
+    if rasi_only:
+        fv = dataclasses.replace(
+            fv, score=fv.rasi_score, navamsa_score=0.0,
+            findings=tuple(f for f in fv.findings if f.frame in ("Rasi", "both")))
+    return _s2.label(_s2.grade_factor(fv)[0])
+
+
 def _cap_positive(total_pos: float) -> float:
     """Soft-cap the summed positive contributions of a frame (diminishing returns)."""
     if total_pos <= _POS_KNEE:
@@ -681,6 +694,15 @@ DEGREE_COMBUST = True     # orb-graded combustion penalty
 SUTRA_STRENGTH = True            # novel sutra findings feed the factor verdicts (incr. 17)
 SUTRA_OCCUPANT_OVERRIDE = True   # corrective planet-in-house sutras flip occupant sign (17b)
 SUTRA_GATE = False               # wired DORMANT: no row trips it on any corpus (incr. 17c)
+
+# Increment 28: synthesis_v2 (the doctrine-derived gated-override scorer, increments 24-27) is
+# PROMOTED to the live grade path. When on, judge_house_doctrine's factor/conclusion/chandra
+# LABELS come from synthesis_v2 (engine base + besiegement veto + deep-affliction gate); the
+# additive SCORES are untouched, so `label == _verdict_label(score)` no longer holds by design —
+# the score is the raw additive testimony, the label is the doctrine grade. Validated leads:
+# held-out 56.9 vs 50.0 (N=58), NH default 63.0 vs 51.9 (N=27), NH full 46.6 vs 39.7 (N=73),
+# anchor parity. The additive baseline stays reproducible via _verdict_label(fv.score).
+SYNTHESIS_V2_LIVE = True
 
 # SUTRA_GATE cap: top of the "fairly good" band -- a factor under a strong doctrinal
 # affliction cannot grade above it (the A2 'besieged is broken' finding, doctrine-cited).
@@ -1555,10 +1577,25 @@ def judge_house_doctrine(chart: RamanChart, house: int, *,
                     lord_v = capped
                 else:
                     karaka_v = capped
+    if SYNTHESIS_V2_LIVE:
+        # Promotion (increment 28): re-label the three factors through synthesis_v2 BEFORE the
+        # conclusion is built, so the conclusion's synthesis prose embeds the promoted labels.
+        lagna_v = dataclasses.replace(lagna_v, label=apply_synthesis_v2(lagna_v))
+        lord_v = dataclasses.replace(lord_v, label=apply_synthesis_v2(lord_v))
+        karaka_v = dataclasses.replace(karaka_v, label=apply_synthesis_v2(karaka_v))
     conclusion = _build_conclusion(chart, house, books, lagna_v, lord_v, karaka_v,
                                    influencers)
     first_house = _first_house_testimony(chart) if house == 1 else None
     chandra = _assess_from_moon(chart, house)
+    if SYNTHESIS_V2_LIVE:
+        from app.medini.doctrine.domains import synthesis_v2 as _s2
+        g, _tr = _s2.synthesize_house(lagna_v, lord_v, karaka_v, house)
+        conclusion = dataclasses.replace(conclusion, label=_s2.label(g))
+        # the Chandra-Lagna view grades on the same scale as the main verdicts
+        chandra = dataclasses.replace(
+            chandra,
+            bhava=dataclasses.replace(chandra.bhava, label=apply_synthesis_v2(chandra.bhava)),
+            lord=dataclasses.replace(chandra.lord, label=apply_synthesis_v2(chandra.lord)))
 
     # ---- named combinations (yogas) that fired for this house ----
     combos: list[Combination] = []

@@ -32,10 +32,11 @@ def test_summary_strength_pooled_heldout():
     # (vargottama dignity counted once; Δ +0.32 -> +0.17), and 27 (verdict-map v2: five
     # previously-unmappable STRONG-graded gold phrases now map, N 53 -> 58; both scorers
     # under-credit them — was 54.7/24.5/+0.17 on N=53).
+    # Increment 28: synthesis_v2 promoted to the live grade path — 50.0 -> 56.9.
     s = W.run(_HELDOUT)
     assert s["n_scored"] == 58
-    assert abs(s["within1_pct"] - 50.0) <= _TOL
-    assert abs(s["mean_delta"] - (-0.12)) <= 0.02
+    assert abs(s["within1_pct"] - 56.9) <= _TOL
+    assert abs(s["mean_delta"] - (-0.76)) <= 0.02
 
 
 def test_summary_strength_max_expansion():
@@ -43,10 +44,11 @@ def test_summary_strength_max_expansion():
     # Re-pinned at increments 17 (was 53.9/26.3/+0.43), 18/M-C (Δ +0.30 -> +0.20), and 27
     # (verdict-map v2 recoveries, N 76 -> 81; was 55.3/+0.20).
     maxset = _HELDOUT + [str(_CORP / "unseen_scoreable.json"), str(_CORP / "unseen_grow.json")]
+    # Increment 28: promoted — 51.9 -> 61.7.
     s = W.run(maxset)
     assert s["n_scored"] == 81
-    assert abs(s["within1_pct"] - 51.9) <= _TOL
-    assert abs(s["mean_delta"] - (-0.01)) <= 0.02
+    assert abs(s["within1_pct"] - 61.7) <= _TOL
+    assert abs(s["mean_delta"] - (-0.63)) <= 0.02
 
 
 def test_summary_strength_fresh_blind():
@@ -65,11 +67,12 @@ def test_summary_strength_nh_degree_accurate():
     # Re-pinned at increment 26: the attribution audit removed 3 bad gold rows from the base
     # corpus (frame errors: milton H5, sankara H8, nehru H4 were NAVAMSA verdicts shipped as
     # Rasi-frame gold) -> N 15 -> 12. See corpora/nh_strength_removed.json.
+    # Increment 28: promoted — 41.7 -> 58.3.
     s = N.run()
     assert s["n"] == 12
     assert s["n_excluded"] == 0
-    assert abs(s["within1_pct"] - 41.7) <= _TOL
-    assert abs(s["mean_delta"] - 1.08) <= 0.02
+    assert abs(s["within1_pct"] - 58.3) <= _TOL
+    assert abs(s["mean_delta"] - 0.67) <= 0.02
 
 
 def test_summary_strength_nh_degree_pooled_grown():
@@ -88,10 +91,11 @@ def test_summary_strength_nh_degree_pooled_grown():
     # errors + 2 grow misattributions: gandhi H1 belonged to the anonymous 'Example for
     # Poverty' chart, einstein H9 to the Ramana chapter) -> N 32 -> 27. Previously re-pinned
     # at increment 17 (43.8 -> 53.1 on the uncorrected pool).
+    # Increment 28: promoted — 51.9 -> 63.0.
     assert s["n"] == 27
     assert s["n_excluded"] == 0
-    assert abs(s["within1_pct"] - 51.9) <= _TOL
-    assert abs(s["mean_delta"] - 0.11) <= 0.02
+    assert abs(s["within1_pct"] - 63.0) <= _TOL
+    assert abs(s["mean_delta"] - (-0.41)) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------

@@ -302,10 +302,15 @@ def apply_to_engine(dg, w, s, b):
 
 
 def heldout(dg, w, s, b):
+    # The fit optimizes the ADDITIVE engine, so measure it with the synthesis_v2 label
+    # promotion (increment 28) switched off for the duration.
     restore = apply_to_engine(dg, w, s, b)
+    v2_live = HJ.SYNTHESIS_V2_LIVE
+    HJ.SYNTHESIS_V2_LIVE = False
     try:
         return WCV.run(str(HELDOUT))
     finally:
+        HJ.SYNTHESIS_V2_LIVE = v2_live
         restore()
 
 

@@ -201,3 +201,39 @@ strong-heavy rows), the map covers Raman's full verdict vocabulary, and the unde
 measured, reproducible target for the next feature-side increment. Pinned by
 `test_grow4_corpus_integrity`, the re-pinned full-pool ratchet (N=73, ≥44%, ≥4-pt lead), and the
 73-triple cross-corpus dedup check.
+
+---
+
+## Increment 28 — synthesis_v2 PROMOTED to the live grade path
+
+Lever 2 of "implement both levers." `SYNTHESIS_V2_LIVE = True` in `house_judgment.py`:
+`judge_house_doctrine` now re-labels the three factor verdicts through `synthesis_v2` BEFORE the
+conclusion is built (so the synthesis prose embeds the promoted labels), grades the conclusion via
+`synthesize_house`, and re-labels the Chandra-Lagna view on the same scale. The additive SCORES are
+untouched — `label == _verdict_label(score)` no longer holds by design: the score is the raw additive
+testimony, the label is the doctrine grade. The additive baseline stays reproducible from scores
+(`apply_synthesis_v2` helper; `fit_weights.heldout()` forces the flag off; `synthesis_v2_validate`'s
+baseline is recomputed from `.score`, so the v2-vs-additive comparison is preserved forever).
+
+### The promoted ledger (all measured, `_TOL`-pinned)
+
+| axis | additive baseline | **promoted (live)** |
+|---|---|---|
+| pooled HTJAH held-out (N=58) | 50.0% | **56.9%** (exact 34.5%) |
+| max HTJAH expansion (N=81) | 51.9% | **61.7%** |
+| fresh blind (N=14) | 71.4% | **71.4%** |
+| NH degree-accurate (N=12) | 41.7% | **58.3%** |
+| NH degree pooled (N=27) | 51.9% | **63.0%** |
+| NH full pool (N=73) | 39.7% | **46.6%** |
+| ch. IV anchor (N=8) | 1/8 | **1/8** (two intra-band ledger shifts) |
+
+Every axis improves or holds; nothing regresses. The anchor ledger moved on two rows
+(12-karaka weak→afflicted, 13-bhava moderate→weak — the deep-affliction gate reading down testimony
+Raman overrides on those charts; the documented feature-space limit, within-one unchanged).
+
+### Consumer notes
+- The reading path (`interpret.build_grounding`) now serves doctrine grades as `verdict` beside the
+  raw additive `score` fields (documented in `_verdict`).
+- `worked_chart_validate`'s rāśi-only and named-karaka paths route through the same promoted helper —
+  no mixed-scheme scoring within a corpus.
+- The vargottama-lagna sentinel ("very powerful") is unchanged by construction.

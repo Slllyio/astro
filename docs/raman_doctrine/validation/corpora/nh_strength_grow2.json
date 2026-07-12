@@ -1,0 +1,132 @@
+{
+ "source": "Notable Horoscopes (BVR) — clean full text; second growth batch (grow2): 27 unmined degree-usable nativities sectioned, 62 raw candidates -> 19 after the mechanical triage (unmappable/Navamsa-frame/bare/no-house culled) -> 18 after the unanimous 3-agent adversarial attribution audit (1 refuted 3/3: a truncated scope qualifier). Extraction FROZEN before any engine scoring.",
+ "note": "Growth of nh_strength.json + nh_strength_grow.json. Every row: verbatim Lagna-frame verdict, graded by docs/raman_doctrine/validation/verdict_grade_map.json (unchanged, pre-registered). Karaka rows verified to match the engine's default BHAVA_KARAKAS.",
+ "rows": [
+  {
+   "key": "akbar",
+   "name": "Akbar the Great",
+   "house": 3,
+   "factor": "lord",
+   "phrase": "the weak disposition of Jupiter as lord of the 3rd in an inimical sign"
+  },
+  {
+   "key": "aurangzeb",
+   "name": "Aurangzeb",
+   "house": 6,
+   "factor": "lord",
+   "phrase": "the lord of the 6th fairly Strong"
+  },
+  {
+   "key": "godse",
+   "name": "Nathuram Godse",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "who in his turn is violently afflicted"
+  },
+  {
+   "key": "goethe",
+   "name": "J. W. von Goethe",
+   "house": 3,
+   "factor": "bhava",
+   "phrase": "The 3rd house is afflicted considerably by the presence of Rahu and Saturn's aspect"
+  },
+  {
+   "key": "hyderali",
+   "name": "Hyder Ali",
+   "house": 5,
+   "factor": "karaka",
+   "phrase": "not well disposed"
+  },
+  {
+   "key": "hyderali",
+   "name": "Hyder Ali",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "not afflicted and is well disposed"
+  },
+  {
+   "key": "hyderali",
+   "name": "Hyder Ali",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "completely unafflicted"
+  },
+  {
+   "key": "mussolini",
+   "name": "Benito Mussolini",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "all afflicted conside- ri bly"
+  },
+  {
+   "key": "mussolini",
+   "name": "Benito Mussolini",
+   "house": 10,
+   "factor": "lord",
+   "phrase": "all afflicted conside- ri bly"
+  },
+  {
+   "key": "mussolini",
+   "name": "Benito Mussolini",
+   "house": 9,
+   "factor": "bhava",
+   "phrase": "all afflicted conside- ri bly"
+  },
+  {
+   "key": "narasimha_bharathi",
+   "name": "Sri Narasimha Bharathi",
+   "house": 2,
+   "factor": "lord",
+   "phrase": "occupies the 2nd unafflicted"
+  },
+  {
+   "key": "rajendra_prasad",
+   "name": "Rajendra Prasad",
+   "house": 2,
+   "factor": "karaka",
+   "phrase": "Being Vargottama, he is very strongly disposed"
+  },
+  {
+   "key": "ramanuja",
+   "name": "Sri Ramanujacharya",
+   "house": 4,
+   "factor": "lord",
+   "phrase": "otherwise unafflicted"
+  },
+  {
+   "key": "ramanuja",
+   "name": "Sri Ramanujacharya",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "The 5th, house of children, is considerably afflicted"
+  },
+  {
+   "key": "sc_bose",
+   "name": "Subhas Chandra Bose",
+   "house": 3,
+   "factor": "karaka",
+   "phrase": "afflicted"
+  },
+  {
+   "key": "tagore",
+   "name": "Rabindranath Tagore",
+   "house": 5,
+   "factor": "lord",
+   "phrase": "not only unafflicted but is highly fortified"
+  },
+  {
+   "key": "thyagaraja",
+   "name": "Sri Thyagaraja",
+   "house": 7,
+   "factor": "lord",
+   "phrase": "fairly well disposed"
+  },
+  {
+   "key": "wadiyar",
+   "name": "Krishnaraja Wadiyar IV",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the 5th itself is afflicted by the aspect of three malefics"
+  }
+ ]
+}

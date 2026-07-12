@@ -28,6 +28,11 @@ fitted model, which collapsed the anchor to 0/8 — it does not sacrifice the an
 sign-reconstructed charts; C lifts the anchor 1→2 but costs ~17 pts of held-out (the anchor's strong
 verdicts are not separable from held-out's weak ones in the sign feature space) — so both are OFF by
 default, retained as documented ablation switches.
+
+DEGREE-POOL UPDATE (grow2, N=50): the lead generalizes to fully unseen degree data (52.0% vs the
+live engine's 44.0%), and the floors are now REFUTED rather than untested — on degrees Gate P's
+precondition binds (13/50 strong-Rāśi factors) and it costs 2 points; C stays catastrophic. A+B
+stands. See REPORT_synthesis_v2.md § grow2.
 """
 from __future__ import annotations
 

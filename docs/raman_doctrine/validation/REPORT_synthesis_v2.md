@@ -78,3 +78,43 @@ firing, v2 == engine). Then Raman's structural conditions apply as overrides, in
   and the drift-guard), deliberately not taken here.
 - Pinned by `tests/doctrine/test_synthesis_v2.py` (7 unit gates + a three-axis ratchet at
   ≥62% / ≥60% / ≥1-of-8).
+
+---
+
+## Degree corpus grow2 — the P/C floors tested where they can finally bind (2026-07-12)
+
+The increment-24 diagnosis said the strong-promise floor (P) was untestable on sign charts (factors
+rarely reach a strong Rāśi grade) and predicted the floors' real test needed degrees. So the degree
+pool was grown: **all 27 unmined degree-usable NH nativities** sectioned from the clean full text,
+**62 raw candidates → 19 after mechanical triage** (unmappable stems / Navāṁśa-frame / bare / no-house
+culled; the pre-registered verdict map UNCHANGED) **→ 18 after a unanimous 3-agent adversarial
+attribution audit** (1 refuted 3/3 — a truncated "so far as military operations are concerned" scope
+qualifier). Extraction frozen before any scoring. Shipped: `corpora/nh_strength_grow2.json` — 18 rows,
+13 fresh nativities → **degree pool 32 → 50 rows, 36 nativities**. The pinned N=32 numbers and every
+drift guard are untouched (grow2 lives only in `synthesis_v2_validate._NH_ALL`).
+
+### The lead generalizes to fully unseen data
+
+| pool | live engine | synthesis_v2 (A+B) | lead |
+|---|---|---|---|
+| N=32 pinned | 53.1% | 62.5% | +9.4 |
+| **N=50 enlarged** | **44.0%** | **52.0%** | **+8.0** |
+| grow2-only slice (N=18) | 5/18 | 6/18 | +1 row |
+
+The fresh rows are hard for both scorers (the live baseline drops to 44%), but the doctrine gates'
+lead is stable (+8.0 vs +9.4) on data neither scorer nor its thresholds ever saw. That is the
+generalization the fitted A2 model failed.
+
+### The floors: tested and refuted (documented negative)
+
+P/C ablation on the enlarged pool (A+B always on): **A+B 52.0% · +P 50.0% · +C 28.0% · +P+C 26.0%.**
+The bind-rate diagnostic shows this is a REAL test now: **13/50 factors reach a strong Rāśi grade**
+on degree charts (vs almost none on sign reconstructions), so Gate P fires — and it *costs* 2 points.
+The pool contains strong-Rāśi factors that Raman himself grades down; flooring them at "fairly good"
+is doctrine the data rejects. C remains catastrophic on degrees (28%), consistent with the sign-chart
+result. **Both floors stay off; A+B stands as the validated configuration** — no longer just "P never
+fires," but "P fires and hurts," which closes the question.
+
+Pinned by `test_grow2_corpus_integrity` (18 rows, keys degree-usable, phrases map) and
+`test_synthesis_v2_enlarged_degree_pool` (N=50, ≥50% within-one, ≥4-pt lead over the live engine on
+the same rows).

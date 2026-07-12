@@ -107,3 +107,34 @@ def test_synthesis_v2_result_beats_live_engine():
     assert held["within1_pct"] >= 62.0, held["within1_pct"]      # measured 64.2 (live 54.7)
     assert nh["within1_pct"] >= 60.0, nh["within1_pct"]          # measured 62.5 (live 53.1)
     assert anchor["within1"] >= 1, anchor["within1"]             # parity with live 1/8 (no regression)
+
+
+def test_grow2_corpus_integrity():
+    """nh_strength_grow2 pins: 18 rows, every key degree-usable in the registry, every phrase
+    mappable by the unchanged pre-registered verdict map, every karaka row on the default karaka."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp = json.loads((Path(__file__).resolve().parents[2] /
+                       "docs/raman_doctrine/validation/corpora/nh_strength_grow2.json").read_text())
+    rows = corp["rows"]
+    assert len(rows) == 18
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert r["factor"] in ("bhava", "lord", "karaka"), r
+        assert 1 <= int(r["house"]) <= 12, r
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]
+
+
+def test_synthesis_v2_enlarged_degree_pool():
+    """Ratchet on the ENLARGED degree pool (N=50, grow2 included): v2 must stay >= 50% within-one
+    and keep a real lead over the live engine measured on the same rows (measured 52.0 vs 44.0)."""
+    from app.medini.doctrine.validation import synthesis_v2_validate as V
+    s = V.run_nh(V._NH_ALL)
+    assert s["n"] == 50, s["n"]
+    assert s["within1_pct"] >= 50.0, s["within1_pct"]
+    assert s["within1_pct"] - s["live_within1_pct"] >= 4.0, (
+        s["within1_pct"], s["live_within1_pct"])

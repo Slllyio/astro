@@ -1468,3 +1468,16 @@ yogas/degrees absent from the sign chart), not a synthesis failure. Full write-u
 `validation/REPORT_synthesis_v2.md`; pinned by `tests/doctrine/test_synthesis_v2.py` (7 gate/guard
 units + a three-axis ratchet). synthesis_v2 stays a parallel scorer; promoting it to the live grade
 path (with an anchor-ledger re-pin) is a separate, deliberately un-taken decision.
+
+### Increment 25 — degree corpus grow2: the synthesis_v2 lead generalizes; the floors are refuted
+
+The degree pool grew 32 → **50 rows** (18 new rows from 13 fresh nativities; all 27 unmined
+degree-usable NH cases swept; 62 candidates → 18 through mechanical triage + a unanimous 3-agent
+adversarial audit; verdict map unchanged; extraction frozen before scoring —
+`corpora/nh_strength_grow2.json`). Results: (1) **synthesis_v2's lead holds on fully unseen degree
+data** — 52.0% vs the live engine's 44.0% on N=50 (+8.0, vs +9.4 on the pinned N=32) — the
+generalization the fitted A2 model failed; (2) **the strong-promise floor (P) is now refuted, not
+just untested**: on degrees its precondition binds (13/50 factors reach a strong Rāśi grade) and it
+COSTS 2 points (52.0 → 50.0) — Raman himself grades some strong-Rāśi factors down; (3) the dignity
+floor (C) remains catastrophic (28.0%). A+B stands. Pinned N=32 numbers and all drift guards
+byte-untouched. Full detail: `validation/REPORT_synthesis_v2.md`.

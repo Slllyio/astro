@@ -33,6 +33,10 @@ _ROOT = Path(__file__).resolve().parents[4]
 _CORP = _ROOT / "docs/raman_doctrine/validation/corpora"
 _HELDOUT = sorted(str(p) for p in _CORP.glob("heldout_ch*.json"))
 _NH = [_CORP / "nh_strength.json", _CORP / "nh_strength_grow.json"]
+# grow2 (18 rows, 13 fresh nativities) extends the degree pool to N=50. The pinned N=32 numbers
+# (nh_strength_validate's default and the drift guards) are untouched; run_nh(_NH_ALL) reports the
+# enlarged pool with its own re-measured live baseline for a fair side-by-side.
+_NH_ALL = _NH + [_CORP / "nh_strength_grow2.json"]
 _FACTOR_ATTR = W._FACTOR_ATTR if hasattr(W, "_FACTOR_ATTR") else {
     "bhava": "lagna_verdict", "lord": "lord_verdict",
     "karaka": "karaka_verdict", "overall": "conclusion"}
@@ -130,6 +134,7 @@ def run_nh(paths: list[Path] = _NH) -> dict[str, Any]:
     idx = W._IDX
     cases = {c.key: c for c in load_registry()}
     rows, excluded = [], 0
+    live_within1 = live_delta_sum = 0
     for p in paths:
         for r in json.loads(Path(p).read_text())["rows"]:
             case = cases.get(r["key"])
@@ -145,13 +150,23 @@ def run_nh(paths: list[Path] = _NH) -> dict[str, Any]:
             judgment = judge_house_doctrine(chart, house)
             if r["factor"] == "overall":
                 eng = _v2_overall(judgment, house)
+                live = judgment.conclusion.label
             else:
                 fv = getattr(judgment, _FACTOR_ATTR[r["factor"]])
                 eng = _v2_factor(fv)
+                live = fv.label
+            live_d = idx[live] - idx[raman]
+            live_within1 += abs(live_d) <= 1
+            live_delta_sum += live_d
             rows.append({"name": r["name"], "house": house, "factor": r["factor"],
-                         "raman": raman, "engine": eng, "delta": idx[eng] - idx[raman]})
+                         "raman": raman, "engine": eng, "live": live,
+                         "delta": idx[eng] - idx[raman], "live_delta": live_d})
     out = _score(rows)
     out["n_excluded"] = excluded
+    n = out["n"]
+    out["live_within1"] = live_within1
+    out["live_within1_pct"] = round(100 * live_within1 / n, 1) if n else 0.0
+    out["live_mean_delta"] = round(live_delta_sum / n, 3) if n else 0.0
     return out
 
 
@@ -195,6 +210,10 @@ def main() -> None:
     print("synthesis_v2 (gated overrides) vs live engine — three axes\n")
     print(_line("pooled HTJAH held-out", res["heldout"], LIVE["heldout"]))
     print(_line("NH degree pool", res["nh"], LIVE["nh"]))
+    nh50 = run_nh(_NH_ALL)
+    print(f"  {'NH enlarged (grow2)':<22} within-one {nh50['within1']:>3}/{nh50['n']:<3} "
+          f"({nh50['within1_pct']:>5}%)  Δ {nh50['mean_delta']:+.2f}"
+          f"   [live measured {nh50['live_within1_pct']}%]")
     a = res["anchor"]
     print(f"  {'ch. IV live anchor':<22} within-one {a['within1']:>3}/{a['n']:<3} "
           f"({a['within1_pct']:>5}%)  Δ {a['mean_delta']:+.2f}   [live 1/8 = 12.5%]")

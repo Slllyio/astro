@@ -104,7 +104,9 @@ def test_synthesis_v2_result_beats_live_engine():
     held = V.run_heldout()
     nh = V.run_nh()
     anchor = V.run_anchor()
-    assert held["within1_pct"] >= 62.0, held["within1_pct"]      # measured 64.2 (live 54.7)
+    # Held-out re-pinned at increment 27 (map v2 grew the pool 53 -> 58 with strong-graded
+    # rows both scorers under-credit): measured 56.9 (additive baseline 50.0). Lead intact.
+    assert held["within1_pct"] >= 55.0, held["within1_pct"]
     # NH default pool re-pinned at increment 26 (N=27 after the attribution audit):
     # measured 63.0 (live 51.9).
     assert nh["within1_pct"] >= 60.0, nh["within1_pct"]
@@ -132,13 +134,15 @@ def test_grow2_corpus_integrity():
 
 
 def test_synthesis_v2_enlarged_degree_pool():
-    """Ratchet on the FULL degree pool (N=56: corrected base+grow 27 + grow2 18 + grow3 11):
-    v2 must stay >= 50% within-one and keep a real lead over the live engine measured on the
-    same rows (increment 26: measured 53.6 vs 44.6)."""
+    """Ratchet on the FULL degree pool (N=73: corrected base+grow 27 + grow2 18 + grow3 11 +
+    grow4 17). Increment 27: the map-v2 recovery added 17 mostly STRONG-graded rows that both
+    scorers under-credit (the anchor failure mode, now visible in held-out gold), so the
+    absolute level drops — but v2 must keep a real lead over the additive baseline on the same
+    rows (measured 46.6 vs 39.7)."""
     from app.medini.doctrine.validation import synthesis_v2_validate as V
     s = V.run_nh(V._NH_ALL)
-    assert s["n"] == 56, s["n"]
-    assert s["within1_pct"] >= 50.0, s["within1_pct"]
+    assert s["n"] == 73, s["n"]
+    assert s["within1_pct"] >= 44.0, s["within1_pct"]
     assert s["within1_pct"] - s["live_within1_pct"] >= 4.0, (
         s["within1_pct"], s["live_within1_pct"])
 
@@ -161,7 +165,49 @@ def test_grow3_corpus_integrity():
         assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]
     triples = []
     for f in ("nh_strength.json", "nh_strength_grow.json", "nh_strength_grow2.json",
-              "nh_strength_grow3.json"):
+              "nh_strength_grow3.json", "nh_strength_grow4.json"):
         for r in json.loads((corp_dir / f).read_text())["rows"]:
             triples.append((r["key"], int(r["house"]), r["factor"]))
-    assert len(triples) == len(set(triples)) == 56, len(triples)
+    assert len(triples) == len(set(triples)) == 73, len(triples)
+
+
+def test_verdict_map_gold_pins():
+    """Increment 27 (map v2): every shipped NH row's gold grade is pinned. A future map edit that
+    re-grades a shipped row must update the fixture explicitly — silent gold drift fails here.
+    The two increment-27 corrections (omar H7, hyderali H5: 'not well disposed' negation bug,
+    fairly good -> weak) are already reflected in the fixture."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    corp = Path(__file__).resolve().parents[2] / "docs/raman_doctrine/validation/corpora"
+    pins = json.loads((corp / "nh_gold_grade_pins.json").read_text())["pins"]
+    patterns = W.load_verdict_map()
+    seen = 0
+    for f in ("nh_strength.json", "nh_strength_grow.json", "nh_strength_grow2.json",
+              "nh_strength_grow3.json", "nh_strength_grow4.json"):
+        for r in json.loads((corp / f).read_text())["rows"]:
+            key = f"{r['key']}|{r['house']}|{r['factor']}"
+            assert key in pins, f"unpinned row {key}"
+            got = W.map_verdict(r["phrase"], patterns)
+            assert got == pins[key], (key, got, pins[key])
+            seen += 1
+    assert seen == len(pins), (seen, len(pins))
+
+
+def test_grow4_corpus_integrity():
+    """nh_strength_grow4 pins: 17 rows recovered under map v2, every key degree-usable, every
+    phrase mappable. (Cross-corpus dedup is covered by test_grow3_corpus_integrity's 73-triple
+    check; gold grades by test_verdict_map_gold_pins.)"""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp = json.loads((Path(__file__).resolve().parents[2] /
+                       "docs/raman_doctrine/validation/corpora/nh_strength_grow4.json").read_text())
+    rows = corp["rows"]
+    assert len(rows) == 17
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]

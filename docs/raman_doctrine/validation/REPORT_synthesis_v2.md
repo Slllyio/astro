@@ -161,3 +161,43 @@ total 56) and the re-pinned `test_synthesis_v2_enlarged_degree_pool` (N=56, ≥5
 **Honest note on the pre-registered map.** 25 of the 45 grow3 raw candidates fell to unmappable stems
 ("well fortified", "free from affliction", "null and void") — the frozen map is conservative by
 design; extending it is possible future work but must happen before any extraction round that uses it.
+
+---
+
+## Increment 27 — verdict map v2 + grow4: the culled stems recovered, and the under-credit regime exposed
+
+**Map v2.** The pre-registered verdict map was extended (BLIND — assignments derived from the map's own
+intensity ladder before any re-scoring; rationale per family in the map's notes): the fortified /
+affliction-freedom / placement / power / destruction families, plus a **negation-bug fix** — "not well
+disposed" matched the positive `well disposed` pattern, so two shipped rows (omar H7, hyderali H5)
+re-grade fairly good → **weak** (the only deliberate re-grades; every other shipped phrase grades
+identically, now pinned per-row by `nh_gold_grade_pins.json` + `test_verdict_map_gold_pins` so gold
+can never drift silently again).
+
+**grow4.** The 46 map-v1 culls re-triaged under v2: 18 newly-mappable (gandhi's dropped — its phrase
+verified absent from Gandhi's true chapter) → **17 shipped** after the 3-agent adversarial audit
+(1 refuted 3/3: nero's Sun graded qua daśā lord). `corpora/nh_strength_grow4.json` — 17 rows,
+12 nativities, and a finally strong-heavy spread (1 very powerful, 5 very strong, 3 fairly strong).
+**Full degree pool: 56 → 73 rows.**
+
+### Results — the strong-graded gold exposes the under-credit regime
+
+| pool | additive baseline | synthesis_v2 (A+B) | lead |
+|---|---|---|---|
+| default (N=27) | 51.9% | **63.0%** | +11.1 |
+| **full (N=73)** | 39.7% (Δ −0.10) | **46.6%** (Δ −0.59) | **+6.9** |
+| grow4-only slice (N=17) | 2/17 | 2/17 | 0 |
+
+The recovered rows are mostly STRONG-graded gold — and **both scorers fail them almost completely
+(2/17)**. This is the ch. IV anchor's all-under-credit signature, now visible in held-out gold at
+scale: on factors Raman grades *very strong/fortified*, the engine's features (and the gates, which
+only cap downward) systematically under-credit. Both pool-level mean-Δs turn negative for the first
+time. v2's lead holds (+6.9) because the A+B gates keep winning on the afflicted/weak side — but the
+strong side is a feature gap no synthesis can bridge (consistent with the increment-24/25 diagnosis:
+the strength signal lives in yogas/dispositor chains the Finding vocabulary doesn't carry).
+
+**What this buys:** the corpus now has real statistical power on BOTH tails (afflicted-heavy AND
+strong-heavy rows), the map covers Raman's full verdict vocabulary, and the under-credit regime is a
+measured, reproducible target for the next feature-side increment. Pinned by
+`test_grow4_corpus_integrity`, the re-pinned full-pool ratchet (N=73, ≥44%, ≥4-pt lead), and the
+73-triple cross-corpus dedup check.

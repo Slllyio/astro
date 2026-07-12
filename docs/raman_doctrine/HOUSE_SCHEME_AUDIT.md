@@ -1495,3 +1495,18 @@ pooled 32→**27** (live 51.9%, Δ+0.11 — the bias nearly vanishes on clean go
 N=**56**. synthesis_v2's lead on the corrected default pool WIDENS to **+11.1** (63.0 vs 51.9) and
 holds at **+9.0** on the full pool (53.6 vs 44.6) — the removed rows were noise. Full detail:
 `validation/REPORT_synthesis_v2.md` § grow3.
+
+### Increment 27 — verdict map v2 + grow4: culled stems recovered, gold pinned per-row
+
+The pre-registered verdict map was extended BLIND (fortified/affliction-freedom/placement/power/
+destruction families, assignments from the map's own intensity ladder) and a negation bug fixed
+("not well disposed" matched `well disposed` → two shipped rows corrected to weak). Gold is now
+pinned per-row (`nh_gold_grade_pins.json` + `test_verdict_map_gold_pins`) so no future map edit can
+re-grade shipped gold silently. The 46 map-v1 culls re-triaged: 17 shipped (`nh_strength_grow4.json`)
+after the 3-agent audit (nero's Sun refuted 3/3 as daśā-scoped) — full degree pool **56 → 73 rows**,
+finally strong-heavy. Decisive finding: **both scorers fail the strong-graded slice almost completely
+(2/17)** — the ch. IV anchor's under-credit signature is now measured in held-out gold at scale, and
+both pool mean-Δs turn negative. v2's lead holds (+6.9 full pool; +11.1 default) because the gates
+keep winning the afflicted side; the strong side is a FEATURE gap (yogas/dispositor chains absent
+from the Finding vocabulary), the next feature-side target. Full detail:
+`validation/REPORT_synthesis_v2.md` § increment 27.

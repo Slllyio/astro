@@ -33,18 +33,20 @@ _ROOT = Path(__file__).resolve().parents[4]
 _CORP = _ROOT / "docs/raman_doctrine/validation/corpora"
 _HELDOUT = sorted(str(p) for p in _CORP.glob("heldout_ch*.json"))
 _NH = [_CORP / "nh_strength.json", _CORP / "nh_strength_grow.json"]
-# grow2 (18 rows) + grow3 (11 rows, second-verdict sweep) extend the degree pool. The increment-26
-# attribution audit removed 5 bad gold rows (frame errors / misattributions) from the base corpora,
-# so the default pool is N=27 and the full pool N=56. run_nh(_NH_ALL) reports the full pool with its
-# own re-measured live baseline for a fair side-by-side.
-_NH_ALL = _NH + [_CORP / "nh_strength_grow2.json", _CORP / "nh_strength_grow3.json"]
+# grow2 (18) + grow3 (11, second-verdict sweep) + grow4 (17, map-v2 recovery of the culled stems)
+# extend the degree pool. The increment-26 attribution audit removed 5 bad gold rows from the base
+# corpora (default pool N=27); the full pool is N=73. run_nh(_NH_ALL) reports the full pool with its
+# own re-measured additive baseline for a fair side-by-side.
+_NH_ALL = _NH + [_CORP / "nh_strength_grow2.json", _CORP / "nh_strength_grow3.json",
+                 _CORP / "nh_strength_grow4.json"]
 _FACTOR_ATTR = W._FACTOR_ATTR if hasattr(W, "_FACTOR_ATTR") else {
     "bhava": "lagna_verdict", "lord": "lord_verdict",
     "karaka": "karaka_verdict", "overall": "conclusion"}
 
 # Pinned live-engine baselines (VALIDATION_SUMMARY.md) — the numbers v2 must beat/hold.
-# NH re-pinned at increment 26 (attribution audit removed 5 bad gold rows; default pool N=27).
-LIVE = {"heldout": (54.7, 24.5, 0.17, 53), "nh": (51.9, 25.9, 0.11, 27), "anchor": (12.5, 1, 8)}
+# NH re-pinned at increment 26 (attribution audit; default pool N=27); held-out re-pinned at
+# increment 27 (verdict-map v2 grew the HTJAH pool 53 -> 58).
+LIVE = {"heldout": (50.0, 22.4, -0.12, 58), "nh": (51.9, 25.9, 0.11, 27), "anchor": (12.5, 1, 8)}
 
 
 # ── v2 re-graders (the only thing that differs from the live harnesses) ──────────────────────────

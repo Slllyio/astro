@@ -1,0 +1,83 @@
+{
+ "source": "Notable Horoscopes (BVR) — third growth batch (grow3): second-verdict sweep of the 23 already-mined nativities. 45 raw candidates -> 12 after mechanical triage (unmappable/bare/frame/timing flags + (key,house,factor) dedup vs all shipped rows) -> 11 after the 3-agent adversarial audit (1 refuted 3/3: dasa-scoped). Extraction FROZEN before any engine scoring.",
+ "note": "Every row: verbatim Lagna-frame verdict, graded by verdict_grade_map.json (unchanged).",
+ "rows": [
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "house": 4,
+   "factor": "lord",
+   "phrase": "While the 4th lord is no doubt. afflicted, the 4th is aspected by exalted Jupiter."
+  },
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "house": 7,
+   "factor": "karaka",
+   "phrase": "The 7th lord Mars as well as Kalatrakaraka Venus are both afflicted."
+  },
+  {
+   "key": "chaitanya",
+   "name": "Sri Chaitanya",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "The house of children is completely afflicted by being occupied by the Sun and Rahu."
+  },
+  {
+   "key": "crdas",
+   "name": "Chittaranjan Das",
+   "house": 10,
+   "factor": "lord",
+   "phrase": "The political planet Sun is neecha in Lagna Bhava but has obtained neechabhanga and is other- wise unblemished."
+  },
+  {
+   "key": "marie_antoinette",
+   "name": "Marie Antoinette",
+   "house": 7,
+   "factor": "karaka",
+   "phrase": "Venus being afflicted has no relief"
+  },
+  {
+   "key": "nizam",
+   "name": "The Nizam of Hyderabad",
+   "house": 7,
+   "factor": "karaka",
+   "phrase": "Kalatrakaraka Venus is equally strongly afflicted"
+  },
+  {
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "house": 4,
+   "factor": "karaka",
+   "phrase": "Both the Matru- karaka and the 4th house are well disposed"
+  },
+  {
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "The 7th or house of marriage is not well disposed"
+  },
+  {
+   "key": "shivaji",
+   "name": "Shivaji the Great",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the 5th is considerably afflicted by the position of Ketu and the: aspect of Mars and Saturn"
+  },
+  {
+   "key": "sivananda",
+   "name": "Swami Sivananda",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Lagna lord the Moon occupying the tenth a martian sign, and otherwise unafflicted"
+  },
+  {
+   "key": "tippu",
+   "name": "Tippu Sultan",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Lagna lord weak"
+  }
+ ]
+}

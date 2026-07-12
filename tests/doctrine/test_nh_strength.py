@@ -5,8 +5,10 @@ from app.medini.doctrine.validation import nh_strength_validate as N
 
 
 def test_nh_strength_scores_all_rows_from_degree_positions():
+    # Increment 26: the attribution audit removed 3 frame-error rows from this corpus (15 -> 12),
+    # so the floor drops to 12; the over-credit signature persists on the clean gold.
     s = N.run()
-    assert s["n"] >= 14
+    assert s["n"] >= 12
     assert s["n_excluded"] == 0                     # every row maps + every case has positions
     # this corpus is afflicted-skewed and degree-exact; the engine over-credits it -> mean Δ > 0
     assert s["mean_delta"] > 0.5

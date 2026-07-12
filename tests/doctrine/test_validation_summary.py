@@ -60,11 +60,14 @@ def test_summary_strength_nh_degree_accurate():
     # Δ is +1.07 (not +1.13) since the degree layer's combustion term is on for the
     # degree-resolved NH charts; within-one is unchanged (combustion is within-one-neutral
     # on the original 15 -- see REPORT_degree_engine.md).
+    # Re-pinned at increment 26: the attribution audit removed 3 bad gold rows from the base
+    # corpus (frame errors: milton H5, sankara H8, nehru H4 were NAVAMSA verdicts shipped as
+    # Rasi-frame gold) -> N 15 -> 12. See corpora/nh_strength_removed.json.
     s = N.run()
-    assert s["n"] == 15
+    assert s["n"] == 12
     assert s["n_excluded"] == 0
-    assert abs(s["within1_pct"] - 53.3) <= _TOL
-    assert abs(s["mean_delta"] - 1.00) <= 0.02
+    assert abs(s["within1_pct"] - 41.7) <= _TOL
+    assert abs(s["mean_delta"] - 1.08) <= 0.02
 
 
 def test_summary_strength_nh_degree_pooled_grown():
@@ -79,11 +82,14 @@ def test_summary_strength_nh_degree_pooled_grown():
         json.dump({"rows": a + b}, fh)
         pooled = fh.name
     s = N.run(pooled)
-    assert s["n"] == 32
+    # Re-pinned at increment 26: the attribution audit removed 5 bad gold rows (3 base frame
+    # errors + 2 grow misattributions: gandhi H1 belonged to the anonymous 'Example for
+    # Poverty' chart, einstein H9 to the Ramana chapter) -> N 32 -> 27. Previously re-pinned
+    # at increment 17 (43.8 -> 53.1 on the uncorrected pool).
+    assert s["n"] == 27
     assert s["n_excluded"] == 0
-    # Re-pinned at increment 17 (was 43.8/+0.69).
-    assert abs(s["within1_pct"] - 53.1) <= _TOL
-    assert abs(s["mean_delta"] - 0.41) <= 0.02
+    assert abs(s["within1_pct"] - 51.9) <= _TOL
+    assert abs(s["mean_delta"] - 0.11) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------

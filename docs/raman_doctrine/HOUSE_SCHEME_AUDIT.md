@@ -1481,3 +1481,17 @@ just untested**: on degrees its precondition binds (13/50 factors reach a strong
 COSTS 2 points (52.0 → 50.0) — Raman himself grades some strong-Rāśi factors down; (3) the dignity
 floor (C) remains catastrophic (28.0%). A+B stands. Pinned N=32 numbers and all drift guards
 byte-untouched. Full detail: `validation/REPORT_synthesis_v2.md`.
+
+### Increment 26 — grow3 + the NH attribution audit: 5 bad gold rows removed, pools re-pinned
+
+The grow3 second-verdict sweep (45 candidates → 11 shipped, `nh_strength_grow3.json`) surfaced a
+misattribution in the EXISTING gold: the shipped gandhi H1 row belongs to the anonymous "Example for
+Poverty" chart. A full attribution audit of all 50 shipped rows followed (phrase located in the full
+text; chapter + Rāśi/Lagna frame checked): **5 bad gold rows removed** — 2 misattributions (gandhi H1,
+einstein H9 — both section-bleed artifacts) and 3 frame errors (milton H5, sankara H8, nehru H4 — all
+"In the Navamsa…" verdicts shipped as Rāśi-frame gold). Removed rows recorded in
+`corpora/nh_strength_removed.json`; 45 rows verified sound. Re-pinned: NH base 15→12 (41.7%), default
+pooled 32→**27** (live 51.9%, Δ+0.11 — the bias nearly vanishes on clean gold), full degree pool
+N=**56**. synthesis_v2's lead on the corrected default pool WIDENS to **+11.1** (63.0 vs 51.9) and
+holds at **+9.0** on the full pool (53.6 vs 44.6) — the removed rows were noise. Full detail:
+`validation/REPORT_synthesis_v2.md` § grow3.

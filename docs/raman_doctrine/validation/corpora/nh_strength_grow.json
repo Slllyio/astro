@@ -1,5 +1,5 @@
 {
- "source": "Notable Horoscopes (BVR) \u2014 clean full text; per-case strength verdicts hand-verified against Raman's prose (3-agent audit + raw-text attribution + pre-registered verdict-map grading). Degree-accurate (registry printed positions).",
+ "source": "Notable Horoscopes (BVR) — clean full text; per-case strength verdicts hand-verified against Raman's prose (3-agent audit + raw-text attribution + pre-registered verdict-map grading). Degree-accurate (registry printed positions).",
  "note": "Growth of nh_strength.json. Every row: verbatim Lagna-frame verdict, graded by docs/raman_doctrine/validation/verdict_grade_map.json.",
  "rows": [
   {
@@ -31,13 +31,6 @@
    "phrase": "Dhanadhipati (2nd lord) is neecha but otherwise unafflicted."
   },
   {
-   "key": "einstein",
-   "name": "Albert Einstein",
-   "house": 9,
-   "factor": "karaka",
-   "phrase": "Pltrukaraka, Sun, afflicted by Rahu's association and the 9th lord being aspected by Mars, rendered the native fatherless"
-  },
-  {
    "key": "tippu",
    "name": "Tippu Sultan",
    "house": 8,
@@ -50,13 +43,6 @@
    "house": 1,
    "factor": "karaka",
    "phrase": "The Moon is the Atmakaraka and is very strongly placed in Vargottama aspected powerfully by Jupiter the divine planet."
-  },
-  {
-   "key": "gandhi",
-   "name": "Mahatma Gandhi",
-   "house": 1,
-   "factor": "bhava",
-   "phrase": "The Lagna is therefore weak rendering the general structure of the horoscope shaky."
   },
   {
    "key": "chaitanya",
@@ -121,5 +107,6 @@
    "factor": "bhava",
    "phrase": "We have already seen how the Lagna and the lord are very powerful."
   }
- ]
+ ],
+ "curation_2026_07_12": "Attribution audit (increment 26): every row's phrase was located in the full text and checked for chapter attribution and Rasi/Lagna frame. Removed rows are recorded in nh_strength_removed.json. Light paraphrases with verified subject+grade+frame retained."
 }

@@ -24,8 +24,9 @@ Four independent axes are validated. "Held-out" = the engine was never tuned on 
 | **Strength** (sign-reconstructed) | within-one | **54.7%** (exact 24.5%, Δ +0.17) | 53 | pooled held-out `heldout_ch*` | [recalibration](validation/REPORT_recalibration.md), [crosshouse](validation/REPORT_crosshouse_heldout.md) |
 | **Strength** — max HTJAH expansion | within-one | **55.3%** (exact 25.0%, Δ +0.20) | 76 | held-out + fresh blind | [unseen corpus](validation/REPORT_unseen_corpus.md) |
 | **Strength** — fresh blind only | within-one | **71.4%** (Δ −0.21) | 14 | `unseen_scoreable` (engine-unseen) | [unseen corpus](validation/REPORT_unseen_corpus.md) |
-| **Strength** — NH degree-accurate | within-one | **53.3%** (exact 33.3%, Δ +1.00) | 15 | real-birth `nh_strength` (0 excluded) | [nh strength](validation/REPORT_nh_strength.md) |
-| **Strength** — NH degree pooled (grown) | within-one | **53.1%** (exact 28.1%, Δ +0.41) | 32 | `nh_strength` + `nh_strength_grow` (degree layer on) | [degree engine](validation/REPORT_degree_engine.md) |
+| **Strength** — NH degree-accurate | within-one | **41.7%** (Δ +1.08) | 12 | real-birth `nh_strength` (increment 26: attribution audit removed 3 frame-error rows; was 53.3%/N=15) | [nh strength](validation/REPORT_nh_strength.md) |
+| **Strength** — NH degree pooled (grown) | within-one | **51.9%** (Δ +0.11) | 27 | `nh_strength` + `nh_strength_grow` (increment 26: 5 bad gold rows removed — see `corpora/nh_strength_removed.json`; was 53.1%/N=32) | [degree engine](validation/REPORT_degree_engine.md) |
+| **Strength** — NH full degree pool (grow2+grow3) | within-one | live **44.6%** / synthesis_v2 **53.6%** | 56 | all four NH corpora; parallel-scorer comparison | [synthesis_v2](validation/REPORT_synthesis_v2.md) |
 | **Strength** — ch. IV LIVE anchor | within-one | **12.5%** (1/8, Δ −3.75, all under-credits) | 8 | `htjah_anchor_live` (faithfulness-gated casts; the frozen 8/8 gates only the old harness) | audit increment 16 |
 | **Timing** — HTJAH events | mahādaśā-lord exact | **100%** (8/8); antara within-one 8/8 | 8 | `heldout_timing` + `…_ch12_8th` | [timing](validation/REPORT_timing.md) |
 | **Timing** — Notable Horoscopes | mahādaśā-lord exact | **94.0%** (47/50); antara within-one 92.9% | 50 | `nh_timing` (real births) | [timing](validation/REPORT_timing.md) |

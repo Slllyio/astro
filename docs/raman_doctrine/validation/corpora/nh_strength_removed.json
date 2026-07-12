@@ -1,0 +1,50 @@
+{
+ "note": "Rows removed from the NH gold corpora by the increment-26 attribution audit (bad gold: frame errors and misattributions). Kept for the record; never scored again.",
+ "rows": [
+  {
+   "file": "nh_strength.json",
+   "key": "sankara",
+   "name": "Sri Adi Sankaracharya",
+   "house": 8,
+   "factor": "bhava",
+   "phrase": "the eighth house is considerably afflicted",
+   "reason": "frame_error: source is 'In the Navamsa again, the 8th house is considerably afflicted'"
+  },
+  {
+   "file": "nh_strength.json",
+   "key": "milton",
+   "name": "John Milton",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the fifth house is strongly afflicted",
+   "reason": "frame_error: source is 'In the Navamsa again, the 5th house is equally strongly afflicted'"
+  },
+  {
+   "file": "nh_strength.json",
+   "key": "nehru",
+   "name": "Jawaharlal Nehru",
+   "house": 4,
+   "factor": "bhava",
+   "phrase": "the fourth house is well disposed",
+   "reason": "frame_error: only source is 'In the Navamsa also, the 4th house is well disposed'"
+  },
+  {
+   "file": "nh_strength_grow.json",
+   "key": "einstein",
+   "name": "Albert Einstein",
+   "house": 9,
+   "factor": "karaka",
+   "phrase": "Pltrukaraka, Sun, afflicted by Rahu's association and the 9th lord being aspected by Mars, rendered the native fatherless",
+   "reason": "misattributed: sentence is in the Sri Ramana Maharshi chapter (section bleed)"
+  },
+  {
+   "file": "nh_strength_grow.json",
+   "key": "gandhi",
+   "name": "Mahatma Gandhi",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "The Lagna is therefore weak rendering the general structure of the horoscope shaky.",
+   "reason": "misattributed: phrase belongs to 'No. 73 — An Example for Poverty' (anonymous chart)"
+  }
+ ]
+}

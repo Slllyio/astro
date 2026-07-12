@@ -105,7 +105,9 @@ def test_synthesis_v2_result_beats_live_engine():
     nh = V.run_nh()
     anchor = V.run_anchor()
     assert held["within1_pct"] >= 62.0, held["within1_pct"]      # measured 64.2 (live 54.7)
-    assert nh["within1_pct"] >= 60.0, nh["within1_pct"]          # measured 62.5 (live 53.1)
+    # NH default pool re-pinned at increment 26 (N=27 after the attribution audit):
+    # measured 63.0 (live 51.9).
+    assert nh["within1_pct"] >= 60.0, nh["within1_pct"]
     assert anchor["within1"] >= 1, anchor["within1"]             # parity with live 1/8 (no regression)
 
 
@@ -130,11 +132,36 @@ def test_grow2_corpus_integrity():
 
 
 def test_synthesis_v2_enlarged_degree_pool():
-    """Ratchet on the ENLARGED degree pool (N=50, grow2 included): v2 must stay >= 50% within-one
-    and keep a real lead over the live engine measured on the same rows (measured 52.0 vs 44.0)."""
+    """Ratchet on the FULL degree pool (N=56: corrected base+grow 27 + grow2 18 + grow3 11):
+    v2 must stay >= 50% within-one and keep a real lead over the live engine measured on the
+    same rows (increment 26: measured 53.6 vs 44.6)."""
     from app.medini.doctrine.validation import synthesis_v2_validate as V
     s = V.run_nh(V._NH_ALL)
-    assert s["n"] == 50, s["n"]
+    assert s["n"] == 56, s["n"]
     assert s["within1_pct"] >= 50.0, s["within1_pct"]
     assert s["within1_pct"] - s["live_within1_pct"] >= 4.0, (
         s["within1_pct"], s["live_within1_pct"])
+
+
+def test_grow3_corpus_integrity():
+    """nh_strength_grow3 pins: 11 rows, every key degree-usable, every phrase mappable by the
+    unchanged pre-registered verdict map, and NO (key, house, factor) duplicate across the four
+    NH corpora (the grow3 dedup guarantee)."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp_dir = Path(__file__).resolve().parents[2] / "docs/raman_doctrine/validation/corpora"
+    rows3 = json.loads((corp_dir / "nh_strength_grow3.json").read_text())["rows"]
+    assert len(rows3) == 11
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows3:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]
+    triples = []
+    for f in ("nh_strength.json", "nh_strength_grow.json", "nh_strength_grow2.json",
+              "nh_strength_grow3.json"):
+        for r in json.loads((corp_dir / f).read_text())["rows"]:
+            triples.append((r["key"], int(r["house"]), r["factor"]))
+    assert len(triples) == len(set(triples)) == 56, len(triples)

@@ -118,3 +118,46 @@ fires," but "P fires and hurts," which closes the question.
 Pinned by `test_grow2_corpus_integrity` (18 rows, keys degree-usable, phrases map) and
 `test_synthesis_v2_enlarged_degree_pool` (N=50, ≥50% within-one, ≥4-pt lead over the live engine on
 the same rows).
+
+---
+
+## grow3 + the attribution audit — mining the remaining, and cleaning the gold (2026-07-12)
+
+**grow3 (second-verdict sweep).** All 23 already-mined nativities re-swept for verdicts the earlier
+passes missed, with a hard dedup rule (no candidate whose (key, house, factor) matches a shipped row):
+**45 raw candidates → 12 after mechanical triage → 11 after the 3-agent adversarial audit** (1 refuted
+3/3: a daśā-scoped nizam grade). Shipped: `corpora/nh_strength_grow3.json` — 11 rows, 9 nativities.
+
+**The attribution audit (the sweep's real find).** A batch-0 extractor noticed the shipped gandhi row's
+source sentence sits in the anonymous **"No. 73 — An Example for Poverty"** chapter, not Gandhi's. That
+triggered a mechanical + agent audit of ALL 50 previously-shipped rows (phrase located in the full
+text; chapter attribution and Rāśi/Lagna frame checked). Verdict: 45 sound (verbatim-modulo-OCR or
+subject/grade-correct paraphrases), **5 bad gold removed** (recorded in `nh_strength_removed.json`):
+
+| row | defect |
+|---|---|
+| gandhi H1 bhava (grow) | misattributed — anonymous "Example for Poverty" chart |
+| einstein H9 kāraka (grow) | misattributed — Ramana-chapter section bleed |
+| milton H5 bhava (base) | frame error — "In the Navamsa again, the 5th house is…" |
+| sankara H8 bhava (base) | frame error — "In the Navamsa again, the 8th house is…" |
+| nehru H4 bhava (base) | frame error — "In the Navamsa also, the 4th house is…" |
+
+Corrected pools (drift guards re-pinned at increment 26): base N=15→12 (41.7%), default pooled
+N=32→**27** (live 51.9%, Δ+0.11), full pool N=**56**.
+
+### Results on the corrected pools
+
+| pool | live engine | synthesis_v2 (A+B) | lead |
+|---|---|---|---|
+| default (N=27, corrected) | 51.9% | **63.0%** | **+11.1** |
+| **full (N=56)** | **44.6%** | **53.6%** | **+9.0** |
+| grow3-only slice (N=11) | 6/11 | 7/11 | +1 row |
+
+Removing the bad gold *widened* v2's lead on the default pool (+9.4 → +11.1) — the removed rows were
+noise, not signal. The full-pool lead is stable at +9.0 across 56 rows spanning 38 nativities. Pinned
+by `test_grow3_corpus_integrity` (11 rows; no (key,house,factor) duplicate across all four corpora;
+total 56) and the re-pinned `test_synthesis_v2_enlarged_degree_pool` (N=56, ≥50%, ≥4-pt lead).
+
+**Honest note on the pre-registered map.** 25 of the 45 grow3 raw candidates fell to unmappable stems
+("well fortified", "free from affliction", "null and void") — the frozen map is conservative by
+design; extending it is possible future work but must happen before any extraction round that uses it.

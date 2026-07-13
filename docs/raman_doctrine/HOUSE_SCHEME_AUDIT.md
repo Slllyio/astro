@@ -1676,3 +1676,16 @@ family, Dhurdhura, Chatussagara, Sakata, the *-muladdhana* dhana yogas, …). (A
 tail is the mechanical reason the increment-30 yoga-participation strength token was weak. Closing the
 cleanly-definable part is increment 35. Measurement only, engine byte-untouched; pinned by
 `test_yoga_coverage`. Detail: `validation/REPORT_yoga_coverage.md`.
+
+### Increment 35 — close the cleanly-definable yoga-coverage gap (26.6% → 37.5%)
+
+Encoded 8 occupancy-only yogas the increment-34 audit surfaced, each faithful to Raman's stated
+Definition and computable from sign/house occupancy alone (no daśā, no lord-strength): Dhurdhura (No.4),
+Chatussagara (No.8), Vasumathi (No.9), Sakata (No.12), Chakra (No.84), and the Nābhasa Saṅkhyā trio
+Gola/Yuga/Sula (No.101). Added to `app/core/yoga_library.py` `YOGA_DETECTORS` (29 → 37 detectors).
+Coverage against Raman's book rose **17/64 → 24/64 (26.6% → 37.5%)**. All 46 existing yoga unit tests
+stay green; the additions are in the `app/core` reading library, so `house_judgment.py` and
+`synthesis_v2.py` are byte-untouched (no strength-grade impact). Pinned by `test_yoga_coverage` (a
+coverage floor + a per-detector faithfulness check). The residual ~40 missing yogas need
+lord-strength/exaltation/daśā conditions (Sankha, Sreenatha, Mridanga) or are OCR-garbled duplicates —
+a further increment, not force-fit. Detail: `validation/REPORT_yoga_coverage.md`.

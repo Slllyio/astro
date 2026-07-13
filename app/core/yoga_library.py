@@ -940,6 +940,138 @@ def detect_adhi(chart: Chart) -> Yoga:
     )
 
 
+# ─── Raman "Three Hundred Important Combinations" additions (increment 35) ───
+# Occupancy-only yogas the library lacked, surfaced by the yoga_coverage audit
+# against Raman's book. Each is faithful to Raman's stated Definition (cited) and
+# computable from sign/house occupancy alone (no daśā, no lord-strength).
+
+_SEVEN: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+_UPACHAYAS: Final[frozenset[int]] = frozenset({3, 6, 10, 11})
+
+
+def detect_dhurdhura(chart: Chart) -> Yoga:
+    """Planets (not Sun/nodes) on BOTH sides of the Moon — 2nd AND 12th from it.
+    Raman, 300 Combinations No. 4 (Sunapha + Anapha together)."""
+    excl = frozenset({"Sun", "Moon", "Rahu", "Ketu"})
+    a, wa = _luminary_adjacency(chart, "Moon", 2, excl)
+    b, wb = _luminary_adjacency(chart, "Moon", 12, excl)
+    active = a and b
+    return Yoga(
+        name="Dhurdhura", sanskrit="धुरुधुरा", active=active,
+        intensity=0.7 if active else 0.0, participants=("Moon",) + wa + wb,
+        reference="Raman, 300 Combinations No.4",
+        description="Planets on both sides of the Moon (2nd and 12th from it).",
+    )
+
+
+def detect_chatussagara(chart: Chart) -> Yoga:
+    """All four kendras (1,4,7,10) occupied by planets.
+    Raman, 300 Combinations No. 8."""
+    occupied = {chart.house_of(p) for p in chart.planet_signs}
+    active = _KENDRAS.issubset(occupied)
+    who = tuple(sorted(p for p in chart.planet_signs if chart.house_of(p) in _KENDRAS))
+    return Yoga(
+        name="Chatussagara", sanskrit="चतुस्सागर", active=active,
+        intensity=0.8 if active else 0.0, participants=who,
+        reference="Raman, 300 Combinations No.8",
+        description="All four kendras (1st, 4th, 7th, 10th) occupied by planets.",
+    )
+
+
+def detect_vasumathi(chart: Chart) -> Yoga:
+    """Natural benefics in the upachayas (3,6,10,11) from the ascendant OR the Moon.
+    Raman, 300 Combinations No. 9."""
+    moon_sign = chart.sign_of("Moon")
+    who: list[str] = []
+    for b in ("Jupiter", "Venus", "Mercury"):
+        h, s = chart.house_of(b), chart.sign_of(b)
+        from_lagna = h in _UPACHAYAS
+        from_moon = (
+            moon_sign is not None and s is not None
+            and (((s - moon_sign) % 12) + 1) in _UPACHAYAS
+        )
+        if from_lagna or from_moon:
+            who.append(b)
+    active = bool(who)
+    return Yoga(
+        name="Vasumathi", sanskrit="वसुमती", active=active,
+        intensity=min(1.0, 0.4 * len(who)) if active else 0.0, participants=tuple(who),
+        reference="Raman, 300 Combinations No.9",
+        description="Benefics in the upachayas (3,6,10,11) from the ascendant or Moon.",
+    )
+
+
+def detect_sakata(chart: Chart) -> Yoga:
+    """The Moon in the 6th, 8th or 12th sign from Jupiter.
+    Raman, 300 Combinations No. 12."""
+    ms, js = chart.sign_of("Moon"), chart.sign_of("Jupiter")
+    active = (
+        ms is not None and js is not None
+        and (((ms - js) % 12) + 1) in {6, 8, 12}
+    )
+    return Yoga(
+        name="Sakata", sanskrit="शकट", active=active,
+        intensity=0.5 if active else 0.0, participants=("Moon", "Jupiter"),
+        reference="Raman, 300 Combinations No.12",
+        description="Moon in the 6th, 8th or 12th from Jupiter (a fluctuating-fortune yoga).",
+    )
+
+
+def detect_chakra(chart: Chart) -> Yoga:
+    """All seven planets occupy odd houses (1,3,5,7,9,11).
+    Raman, 300 Combinations No. 84 (an Ākṛti/dala yoga)."""
+    houses = {chart.house_of(p) for p in _SEVEN}
+    active = None not in houses and houses.issubset({1, 3, 5, 7, 9, 11})
+    return Yoga(
+        name="Chakra", sanskrit="चक्र", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.84",
+        description="All seven planets in odd houses (1,3,5,7,9,11).",
+    )
+
+
+def _nabhasa_sign_count(chart: Chart) -> int:
+    """Distinct signs occupied by the seven (non-nodal) planets."""
+    return len({chart.sign_of(p) for p in _SEVEN if chart.sign_of(p) is not None})
+
+
+def detect_gola(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: all seven planets in a single sign.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 1
+    return Yoga(
+        name="Gola", sanskrit="गोल", active=active,
+        intensity=1.0 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="All seven planets occupy a single sign (Nābhasa Saṅkhyā).",
+    )
+
+
+def detect_yuga(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: the seven planets confined to two signs.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 2
+    return Yoga(
+        name="Yuga", sanskrit="युग", active=active,
+        intensity=0.8 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="The seven planets confined to two signs (Nābhasa Saṅkhyā).",
+    )
+
+
+def detect_sula(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: the seven planets confined to three signs.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 3
+    return Yoga(
+        name="Sula", sanskrit="शूल", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="The seven planets confined to three signs (Nābhasa Saṅkhyā).",
+    )
+
+
 # ─── Registry ────────────────────────────────────────────────────────
 
 
@@ -961,6 +1093,9 @@ YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
     # Phase B additions (5)
     detect_akhanda_samrajya, detect_sarpa_dosha,
     detect_pitra_dosha, detect_matr_dosha, detect_parijata,
+    # Raman "300 Combinations" additions — increment 35 (8)
+    detect_dhurdhura, detect_chatussagara, detect_vasumathi, detect_sakata,
+    detect_chakra, detect_gola, detect_yuga, detect_sula,
 )
 
 

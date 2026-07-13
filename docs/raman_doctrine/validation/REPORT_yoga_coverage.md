@@ -48,5 +48,26 @@ absent on many of the yogas Raman cites. Closing the cleanly-definable part of t
 (below); the outcome corpus + example charts are the durable data that validate it, and the 39 charts'
 balance-of-daśā lines also feed the timing corpus.
 
-Reproduce: `PYTHONPATH=. python3 -m app.medini.doctrine.validation.yoga_coverage`. Measurement only;
-no engine change. Pinned by `tests/doctrine/test_yoga_coverage.py`.
+Reproduce: `PYTHONPATH=. python3 -m app.medini.doctrine.validation.yoga_coverage`. Pinned by
+`tests/doctrine/test_yoga_coverage.py`.
+
+## Increment 35 — closing the cleanly-definable gap (26.6% → 37.5%)
+Encoded 8 occupancy-only yogas the audit surfaced, each faithful to Raman's stated Definition and
+computable from sign/house occupancy alone (no daśā, no lord-strength), added to
+`app/core/yoga_library.py` `YOGA_DETECTORS` (29 → 37 detectors):
+
+| yoga | Raman No. | definition encoded |
+|---|---|---|
+| Dhurdhura | 4 | planets on both sides of the Moon (2nd AND 12th from it) |
+| Chatussagara | 8 | all four kendras (1,4,7,10) occupied |
+| Vasumathi | 9 | benefics in the upachayas (3,6,10,11) from Lagna or Moon |
+| Sakata | 12 | Moon in the 6th/8th/12th from Jupiter |
+| Chakra | 84 | all seven planets in odd houses (1,3,5,7,9,11) |
+| Gola / Yuga / Sula | 101 | the seven planets confined to one / two / three signs (Nābhasa Saṅkhyā) |
+
+Coverage rose **17/64 → 24/64 (26.6% → 37.5%)**. All 46 existing yoga unit tests stay green;
+`house_judgment.py` and `synthesis_v2.py` are byte-untouched (the additions live in the `app/core`
+reading library). Pinned by `test_yoga_coverage` (coverage floor + a faithfulness check that each new
+detector fires on a chart built to its definition and is silent otherwise). The remaining ~40 missing
+yogas need lord-strength / exaltation / daśā conditions (Sankha, Sreenatha, Mridanga) or are OCR-garbled
+duplicates — a further increment, not force-fit here.

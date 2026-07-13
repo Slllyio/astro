@@ -1554,3 +1554,19 @@ direction. The discriminator is holistic/configuration-specific, not recoverable
 features; the remaining lever is a richer representation, not more feature engineering.
 `house_judgment.py`/`synthesis_v2.py` unchanged; pinned by `test_structural_separability.py`. Full
 detail: `validation/REPORT_synthesis_v2.md` § increment 30.
+
+### Track 2 — measuring the two promoted-but-unmeasured live components (synthesize_house, Chandra-Lagna)
+
+synthesis_v2's promotion (incr. 28) put two never-validated labels on the live path: the OVERALL
+house conclusion (`synthesize_house`) and the Chandra-Lagna from-the-Moon sub-verdict. **Finding 1
+(read-only yield probe over 168 held-out charts vs the sha-verified worked_analyses.jsonl prose):
+both are unmeasurable DIRECTLY** — Raman's overall-house verdicts map to a 9-grade in only 3/168
+cases, Chandra-Lagna in 1/67; his overall/from-Moon statements are narrative ("the house is good",
+"occupied by exalted Jupiter") or woven into bhava/lord phrases, which the pre-registered map
+correctly won't grade. They stay reading-side by design. **Finding 2 (the honest substitute):**
+against the central tendency of Raman's crisp factor verdicts, `synthesize_house`'s fusion FORMULA is
+sound — fuse(Raman's grades) lands within-one of their median 12/14 (85.7%) on the ≥2-factor slice —
+and end-to-end it tracks Raman's central tendency at 50–67% (N=6/14), in line with per-factor accuracy
+(the fusion does not degrade the signal). N is small: a first spot-measurement, not a validation. No
+engine change; pinned by `test_overall_consistency.py`; reproducible via
+`validation/overall_consistency.py`. Full detail: `validation/REPORT_house_moon.md`.

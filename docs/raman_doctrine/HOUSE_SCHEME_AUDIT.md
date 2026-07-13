@@ -1658,3 +1658,20 @@ ML/representation lever: no learned scorer over the sign/degree Finding vocabula
 engine while holding the anchor. Affirmation: the a-priori doctrine gates generalize to the anchor where
 BOTH fitted models fail. Pinned by `test_identity_scorer`; engine byte-untouched. Detail:
 `validation/REPORT_identity_scorer.md`.
+
+### Increment 34 — Three Hundred Combinations: fresh yoga corpus + engine coverage audit
+
+With the 9-grade strength vein exhausted across all Raman's books (a full archive.org catalog check
+confirmed only HTJAH + Notable Horoscopes carry graded strength verdicts, both mined; Graha-and-Bhava-
+Balas is a shadbala method book), the user pivoted to fresh **yoga-outcome** data. Fetched *Three
+Hundred Important Combinations* (archive.org djvu) → durable corpus
+`validation/corpora/three_hundred_yogas.json`: **64 yogas** (Definition + Results + coarse outcome
+class) + **39 example-chart birth lines**. Honest scope: the coverage question is answered (non-
+circular); outcome PREDICTION is not (Raman's yoga→outcome is doctrine → circular; needs real-
+population outcomes = deferred Track B). **Finding:** the engine's yoga library covers only **13/64 =
+20.3%** of Raman's named yogas (blind to the Pancha-Mahapurusha family by member name, Sakata, Sankha,
+Chatussagara, Parvata, the *-muladdhana* dhana yogas, …). This is the mechanical reason the increment-30
+yoga-participation strength token was a documented negative — the detector is absent on ~4/5 of Raman's
+combinations. Closing the gap (encoding the missing detectors) is a defined future increment; the
+corpus + charts are the data that would validate it. Measurement only, engine byte-untouched; pinned by
+`test_yoga_coverage`. Detail: `validation/REPORT_yoga_coverage.md`.

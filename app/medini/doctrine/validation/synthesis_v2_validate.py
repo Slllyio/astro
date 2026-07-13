@@ -205,6 +205,24 @@ def run_all() -> dict[str, Any]:
     return {"heldout": run_heldout(), "nh": run_nh(), "anchor": run_anchor()}
 
 
+def _slice(rows: list[dict], lo: int, hi: int) -> dict[str, Any]:
+    """within-one over the subset of rows whose Raman grade index is in [lo, hi]."""
+    sel = [r for r in rows if lo <= W._IDX[r["raman"]] <= hi]
+    w1 = sum(1 for r in sel if abs(r["delta"]) <= 1)
+    return {"within1": w1, "n": len(sel),
+            "within1_pct": round(100 * w1 / len(sel), 1) if sel else 0.0}
+
+
+def run_slices() -> dict[str, Any]:
+    """Gate F's decisive diagnostic: the strong-graded slice (raman >= fairly strong — what Gate F
+    must lift) and the mid/weak slice (raman <= fairly good — the over-lift cost) pooled across
+    held-out + NH-enlarged + anchor."""
+    rows = run_heldout()["rows"] + run_nh(_NH_ALL)["rows"] + run_anchor()["rows"]
+    return {"strong": _slice(rows, W._IDX["fairly strong"], 8),
+            "afflicted": _slice(rows, 0, W._IDX["weak"]),
+            "mid": _slice(rows, W._IDX["moderate"], W._IDX["fairly good"])}
+
+
 def _line(name: str, s: dict, live: tuple) -> str:
     return (f"  {name:<22} within-one {s['within1']:>3}/{s['n']:<3} ({s['within1_pct']:>5}%)  "
             f"exact {s['exact_pct']:>5}%  Δ {s['mean_delta']:+.2f}"
@@ -223,12 +241,21 @@ def main() -> None:
     a = res["anchor"]
     print(f"  {'ch. IV live anchor':<22} within-one {a['within1']:>3}/{a['n']:<3} "
           f"({a['within1_pct']:>5}%)  Δ {a['mean_delta']:+.2f}   [live 1/8 = 12.5%]")
+    sl = run_slices()
+    print(f"\n  strong-graded slice   within-one {sl['strong']['within1']:>2}/{sl['strong']['n']:<3} "
+          f"({sl['strong']['within1_pct']:>5}%)   [Gate F target]")
+    print(f"  mid-graded slice      within-one {sl['mid']['within1']:>2}/{sl['mid']['n']:<3} "
+          f"({sl['mid']['within1_pct']:>5}%)   [over-lift guard]")
+    print(f"  afflicted slice       within-one {sl['afflicted']['within1']:>2}/{sl['afflicted']['n']:<3} "
+          f"({sl['afflicted']['within1_pct']:>5}%)")
+    print(f"  GATE_F={S2.GATE_F}  F1={S2.FORT_F1} F2={S2.FORT_F2} min_neg={S2.FORT_MIN_NEG}")
     print("\n  anchor rows:")
     for r in a["rows"]:
         mark = "OK  " if abs(r["delta"]) <= 1 else "MISS"
         print(f"    {mark} chart {r['chart']:>2} {r['factor']:6} raman={r['raman']:16} "
               f"v2={r['engine']:16} Δ{r['delta']:+d}")
     if "--json" in sys.argv:
+        res["slices"] = sl
         print(json.dumps(res, indent=1))
 
 

@@ -16,6 +16,7 @@ engine exactly). The overrides are Raman's structural conditions, applied in doc
     B  deep-affliction gate  — stacked Rāśi negatives break it (afflicted / weak)
     P  strong-promise floor   — a strong Rāśi promise is not broken by a weak Navāṁśa (D9 = sequence)
     C  dignity floor          — an exalted/own factor cannot collapse
+    F  fortification floor    — a decisively fortified factor is credited even from a bad placement
 
 Nothing here is fit to the held-out labels. The two affliction thresholds (−1.22 / −2.45) are the
 load-bearing split of the A2 decision tree (`ml_research/a2_tree_rules.json`), declared as such; every
@@ -33,6 +34,19 @@ DEGREE-POOL UPDATE (grow2, N=50): the lead generalizes to fully unseen degree da
 live engine's 44.0%), and the floors are now REFUTED rather than untested — on degrees Gate P's
 precondition binds (13/50 strong-Rāśi factors) and it costs 2 points; C stays catastrophic. A+B
 stands. See REPORT_synthesis_v2.md § grow2.
+
+INCREMENT 29 — Gate F (fortification floor) is the THIRD documented negative, joining P and C.
+Motivation: increments 24–28 built only REDUCING gates, so the strong-graded held-out slice stayed
+floored (5/29 within-one); the misses are fortified-but-badly-placed factors Raman credits
+("in the 12th though … highly fortified by the combined aspects of Saturn, Jupiter and
+Mars-yogakāraka"). Gate F reads a fortification tally over the SAME findings and floors UP. The
+ablation (7 threshold configs + 2 gentle-floor variants) is unanimous: EVERY config regresses
+held-out (−3..−7) and NH (−11..−33) to buy the strong-slice lift, because the corpora carry 68
+afflicted-graded rows (A+B scores 82.4% of them within-one) that carry the SAME fortifier tags —
+so a tag-level floor over-fires on them exactly as Gate C did. The strong-side under-credit is a
+FEATURE gap (yoga/dispositor structure absent from the Finding vocabulary), not a synthesis gap:
+no floor over the existing tags separates it. GATE_F OFF by default, kept as a reproducible
+ablation switch. See REPORT_synthesis_v2.md § increment 29.
 """
 from __future__ import annotations
 
@@ -56,6 +70,26 @@ FLOOR_EXALTED = MOD_GOOD  # 3
 FLOOR_OWN = MODERATE      # 2
 STRONG_BAND = FAIRLY_STRONG   # 5 — a "strong Rāśi promise" (Gate P threshold)
 
+# Gate F (fortification floor) — the positive mirror of Gate B. A factor that is DECISIVELY
+# fortified is credited by Raman even from a bad placement ("in the 12th though … rendered highly
+# fortified by the combined aspects of Saturn, Jupiter and Mars-yogakāraka"). Gate B reads the
+# frame's negative sum and floors DOWN; Gate F reads a fortification tally over the SAME findings
+# and floors UP. The unit weights rank the fortifiers by Raman's own hierarchy (yogakāraka contact
+# strongest; exaltation/vargottama decisive; own-sign/neechabhāṅga/kendra moderate; a benefic
+# aspect the weakest) — declared, not fit. F1/F2 are ablation-selected within a doctrine-principled
+# range (see REPORT_synthesis_v2.md § increment 29).
+FORT_W = {"yogakaraka": 2.0, "exalted": 1.6, "vargottama": 1.2, "own": 0.8,
+          "kendra": 0.5, "benefic": 0.4}
+FORT_F1 = 2.0             # fortification tally at/above this → floor at "fairly strong"
+FORT_F2 = 3.0             # …at/above this → floor at "very strong"
+FLOOR_FORT_1 = FAIRLY_STRONG   # 5
+FLOOR_FORT_2 = VERY_STRONG     # 7
+# Suppress Gate F when the frame is deeper-afflicted than this (−99 = never suppress). The held-out
+# corpora carry NO weak-graded rows at deep negatives, so suppressing here forfeits strong recall
+# for zero protective gain — hence the default lets fortification lift even a deeply-pressed factor,
+# exactly as Raman credits the fortified-but-badly-placed graha. Kept as an ablation switch.
+FORT_MIN_NEG = -99.0
+
 # Context-dependent house-class weights (w_lord, w_bhava, w_karaka), each cited in the audit note.
 _WEIGHTS = {
     "lord_led":         (0.50, 0.30, 0.20),   # 1,2,4,5,7,9 — house judged chiefly by its lord
@@ -77,6 +111,13 @@ GATE_A = True
 GATE_B = True
 GATE_P = False
 GATE_C = False
+GATE_F = False  # fortification floor (increment 29) — DOCUMENTED NEGATIVE, joins P/C. The ablation
+                # (REPORT_synthesis_v2.md § increment 29) shows every threshold config regresses
+                # held-out (−3..−7) and NH (−11..−33) while lifting the strong slice: the same
+                # fortification findings Raman treats as decisive on his strong-graded factors are
+                # ALSO present on the factors he grades afflicted, so a tag-level floor cannot
+                # separate them (identical failure mode to Gate C). Kept OFF, retained as a
+                # reproducible ablation switch.
 
 
 def label(grade: int) -> str:
@@ -89,6 +130,7 @@ class FrameState:
     sum_neg: float            # total malefic pressure in the frame (Gate B)
     tier: str                 # decisive dignity: "exalted" | "own" | "none" (Gate C)
     besieged: bool            # papakartari — hemmed between malefics (Gate A)
+    fort: float = 0.0         # fortification tally (Gate F)
 
 
 # ── 1. per-frame reduction + collinearity guard ─────────────────────────────────────────────────
@@ -120,13 +162,36 @@ def _dignity_tier(frame_findings: list[Finding]) -> str:
     return "none"
 
 
+def _fortification(frame_findings: list[Finding]) -> float:
+    """Gate F's fortification tally over a frame's POSITIVE testimony, ranked by Raman's hierarchy.
+    Each fortifier is counted at most once in its strongest category (a yogakāraka aspect is not
+    also double-counted as a plain benefic aspect)."""
+    total = 0.0
+    for f in frame_findings:
+        t = f.text.lower()
+        if f.delta > 0 and "yogakaraka" in t:
+            total += FORT_W["yogakaraka"]
+        elif f.criterion == "vargottama":
+            total += FORT_W["vargottama"]
+        elif "exalted" in t or (f.criterion == "dignity" and f.delta >= 1.6):
+            total += FORT_W["exalted"]
+        elif (f.criterion == "dignity" and 1.15 <= f.delta < 1.6) or "neechabhanga" in t \
+                or "own sign" in t:
+            total += FORT_W["own"]
+        elif f.delta > 0 and f.criterion == "placement":
+            total += FORT_W["kendra"]
+        elif f.delta > 0 and f.criterion in ("aspect", "conjunction"):
+            total += FORT_W["benefic"]
+    return round(total, 3)
+
+
 def _reduce_frame(frame_findings: list[Finding]) -> FrameState:
     """The gate inputs for one frame, AFTER the collinearity guard (so a de-duped combustion cannot
     inflate the negative sum that Gate B reads)."""
     fr, _merged = _collinearity_guard(frame_findings)
     sum_neg = sum(f.delta for f in fr if f.delta < 0)
     besieged = any(f.criterion == "kartari" and f.delta < 0 for f in fr)
-    return FrameState(round(sum_neg, 3), _dignity_tier(fr), besieged)
+    return FrameState(round(sum_neg, 3), _dignity_tier(fr), besieged, _fortification(fr))
 
 
 # ── the public per-factor scorer: engine base + doctrinal overrides ──────────────────────────────
@@ -154,6 +219,8 @@ def grade_factor(fv: FactorVerdict) -> tuple[int, dict]:
       P  strong-promise floor  — a strong Rāśi promise is not broken by a weak Navāṁśa (the
                                  lattice's load-bearing cell: floors at "fairly good")
       C  dignity floor         — an exalted/own factor cannot collapse (the piece A2 lacked)
+      F  fortification floor   — a decisively fortified factor is credited even from a bad
+                                 placement (increment 29 — documented negative, OFF by default)
 
     The collinearity guard is folded into the base by un-double-counting combustion vs Sun-conj.
     """
@@ -189,8 +256,17 @@ def grade_factor(fv: FactorVerdict) -> tuple[int, dict]:
         if g < floor:
             gates.append(f"C:dignity_floor({'exalted' if exalted else 'own'})")
         g = max(g, floor)
+    # Gate F — fortification floor (the positive mirror of B). A decisively fortified factor is
+    # credited even from a bad placement; besiegement (Gate A's papakartari) still vetoes — a hemmed
+    # graha is broken regardless of incoming aid.
+    if GATE_F and not rst.besieged and rst.fort >= FORT_F1 and rst.sum_neg > FORT_MIN_NEG:
+        floor = FLOOR_FORT_2 if rst.fort >= FORT_F2 else FLOOR_FORT_1
+        if g < floor:
+            gates.append(f"F:fortified({rst.fort})")
+        g = max(g, floor)
     g = max(0, min(8, g))
-    return g, {"base": base, "rasi": r_grade, "grade": g, "gates": gates, "decisive": decisive}
+    return g, {"base": base, "rasi": r_grade, "grade": g, "gates": gates, "decisive": decisive,
+               "fort": rst.fort}
 
 
 # ── 4. context-dependent house synthesis ────────────────────────────────────────────────────────

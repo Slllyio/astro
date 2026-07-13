@@ -237,3 +237,67 @@ Raman overrides on those charts; the documented feature-space limit, within-one 
 - `worked_chart_validate`'s rāśi-only and named-karaka paths route through the same promoted helper —
   no mixed-scheme scoring within a corpus.
 - The vargottama-lagna sentinel ("very powerful") is unchanged by construction.
+
+---
+
+## Increment 29 — Gate F (fortification floor): a third documented negative
+
+### Motivation
+Increments 24–28 built only *reducing* gates (A besiegement, B deep-affliction), so the
+**strong-graded held-out slice stayed floored**: pooled across held-out + NH-enlarged + anchor,
+only **5/29 (17.2%)** of the factors Raman grades ≥ *fairly strong* land within-one. Increment 27
+had already localised the cause — those misses are **fortified-but-badly-placed** factors Raman
+credits despite the placement (Sankara's Moon "in the 12th though … rendered highly fortified by
+the combined aspects of Saturn (7th), Jupiter (9th) and Mars (yogakāraka)"). Gate F is the positive
+mirror of Gate B: it reads a **fortification tally** over the *same* findings and floors the grade
+**up**, where B floors it down.
+
+### Mechanism
+`FrameState.fort` sums the Rāśi-frame positive testimony, ranked by Raman's own hierarchy
+(each fortifier counted once, in its strongest category):
+
+| fortifier | weight | rationale |
+|---|---|---|
+| yogakāraka contact (aspect/conjunction) | 2.0 | the strongest single fortifier in the doctrine |
+| exaltation (dignity ≥ 1.6) | 1.6 | decisive dignity (`_DIGNITY_W["exalted"]`) |
+| vargottama | 1.2 | cross-varga confirmation |
+| own-sign / moolatrikōṇa / neechabhāṅga | 0.8 | own dignity / cancelled debilitation |
+| kendra placement | 0.5 | angular strength |
+| benefic aspect/conjunction | 0.4 | the weakest incremental fortifier |
+
+Gate F: *if NOT besieged AND fort ≥ F1 → floor at "fairly strong"; fort ≥ F2 → floor at "very
+strong".* Besiegement (Gate A) still vetoes — a hemmed graha is broken regardless of incoming aid.
+F1/F2 were swept; a gentler floor variant (fairly-good / fairly-strong) was also tested.
+
+### Ablation — every config regresses the drift-guards
+Pooled slices: **strong** = Raman ≥ fairly strong (N=29, Gate F's target); **aff** = Raman ≤ weak
+(N=68, the guard). Baseline is A+B (Gate F off).
+
+| config | held-out | NH default | NH enlarged | anchor | strong slice | aff slice |
+|---|---|---|---|---|---|---|
+| **A+B baseline** | **56.9%** | **63.0%** | **46.6%** | **1/8** | 5/29 (17%) | 56/68 (82%) |
+| F1=1.6 F2=2.8 | 51.7 | 29.6 | 32.9 | 2/8 | 12/29 | — |
+| F1=1.6 F2=3.0 | 50.0 | 29.6 | 32.9 | 2/8 | 11/29 | — |
+| F1=2.0 F2=3.0 | 51.7 | 40.7 | 37.0 | 1/8 | 10/29 | — |
+| F1=2.4 F2=3.2 | 48.3 | 48.1 | 42.5 | 1/8 | 6/29 | — |
+| F1=2.0 F2=3.0 min_neg=−2.45 | 53.4 | 51.9 | 42.5 | 1/8 | 8/29 | — |
+| gentle floors (4,5) F1=2.0 F2=3.0 | 55.2 | 40.7 | 35.6 | 2/8 | 9/29 | 41/68 |
+
+**Not one config clears the gate** (held-out ≥ baseline AND NH not regressing). The trade is
+structural, not a threshold-tuning artifact: the corpora carry **68 afflicted-graded rows that A+B
+scores 82.4% within-one**, and those rows carry the *same* fortifier tags (exaltation, kendra,
+benefic aspects) as the strong-graded misses — so any tag-level floor over-fires on them. The
+gentle-floor run makes the mechanism explicit: the afflicted slice collapses **56 → 41 within-one
+(−15 rows over-lifted)** to buy 4 strong-slice rows, and mean Δ swings from −0.59 to +0.41 (the
+over-credit that A+B fixed comes straight back).
+
+### Verdict — documented negative (joins P and C)
+The strong-side under-credit is a **feature gap, not a synthesis gap**: Raman's discriminator
+between "fortification that overrides the affliction" (his strong verdict) and "fortification that
+fails to override it" (his afflicted verdict) is **not present in the Finding vocabulary** —
+it lives in yoga/dispositor structure the assessors never emit. No floor over the existing tags can
+separate the two, exactly as Gate C (dignity floor) could not. `GATE_F = False` by default; the
+mechanism is retained as a reproducible ablation switch (`synthesis_v2_validate.run_slices` prints
+the strong/mid/afflicted slices; `test_gate_F_when_enabled_floors_a_fortified_factor` pins the
+switch). Closing the strong side requires **new features** (yoga/dispositor/fortification-chain
+tokens fed into the assessors), the next feature-side increment — not another synthesis gate.

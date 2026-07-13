@@ -1522,3 +1522,18 @@ max-expansion 51.9→**61.7** (N=81), fresh-blind 71.4 (level), NH base 41.7→*
 Every axis improves or holds. Re-pinned in the same commit: anchor `_LEDGER`, all validation-summary
 strength rows, the Mainpuri h1 exact labels (lord weak→afflicted, conclusion moderately good→moderate).
 Full detail: `validation/REPORT_synthesis_v2.md` § increment 28.
+
+### Increment 29 — Gate F (fortification floor): third documented negative
+
+synthesis_v2's gates A/B only REDUCE, so the strong-graded held-out slice stayed floored (5/29
+within-one pooled). Gate F is the positive mirror of B — a fortification tally over the SAME findings
+(yogakāraka 2.0 › exalted 1.6 › vargottama 1.2 › own 0.8 › kendra 0.5 › benefic 0.4) that floors the
+grade UP (≥ fairly strong / very strong), besiegement still vetoing. **Ablation verdict: documented
+negative, joins P/C.** Every one of 7 threshold configs + 2 gentle-floor variants regresses held-out
+(−3..−7) and NH (−11..−33) to buy the strong-slice lift, because the corpora carry 68 afflicted-graded
+rows (A+B scores 82.4% within-one) bearing the SAME fortifier tags — a tag-level floor over-fires on
+them (afflicted slice collapses 56→41, mean Δ swings −0.59→+0.41). The strong-side under-credit is a
+FEATURE gap (yoga/dispositor structure absent from the Finding vocabulary), not a synthesis gap: no
+floor over existing tags separates Raman's "fortification overrides affliction" from "fortification
+fails to". `GATE_F=False` by default (reproducible ablation switch); live grades byte-identical to
+increment 28. Full detail: `validation/REPORT_synthesis_v2.md` § increment 29.

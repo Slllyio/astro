@@ -30,9 +30,35 @@ def _grade(fv):
 
 
 def test_config_is_the_landing_ablation():
-    # A + B are the two doctrine gates that break the ceiling; P/C are off (documented negatives).
+    # A + B are the two doctrine gates that break the ceiling; P/C/F are off (documented negatives).
     assert S2.GATE_A and S2.GATE_B
     assert not S2.GATE_P and not S2.GATE_C
+    assert not S2.GATE_F   # increment 29: fortification floor regresses held-out+NH (see REPORT)
+
+
+def test_gate_F_when_enabled_floors_a_fortified_factor():
+    """Increment 29 mechanism pin: Gate F is a real, working switch (default OFF). When enabled, a
+    non-besieged factor whose fortification tally clears F1 is floored UP; besiegement still vetoes.
+    The gate is OFF by default because the ablation (REPORT § increment 29) shows the floor over-
+    fires on Raman's afflicted-graded factors (which carry the same fortifier tags)."""
+    # a deeply-pressed lord that is nonetheless exalted + kendra-placed + benefic-aspected:
+    # base is driven to weak/afflicted by the negatives, fortification tally clears F1.
+    fv = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+              Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+              Finding("aspected by Jupiter (benefic)", 0.7, "Rasi", "aspect"),
+              Finding("conjunct Saturn (malefic)", -1.6, "Rasi", "conjunction"),
+              Finding("aspected by Mars (malefic)", -1.0, "Rasi", "aspect")])
+    assert _IDX[_grade(fv)] <= S2.WEAK          # OFF: Gate B floors it down, no F rescue
+    S2.GATE_F = True
+    try:
+        assert _IDX[_grade(fv)] >= S2.FAIRLY_STRONG   # ON: Gate F floors it up
+        # besiegement (Gate A) still vetoes a fortified-but-hemmed factor
+        besieged = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                        Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                        Finding("hemmed between malefics (papakartari)", -1.0, "Rasi", "kartari")])
+        assert _IDX[_grade(besieged)] <= S2.WEAK
+    finally:
+        S2.GATE_F = False
 
 
 def test_base_reproduces_engine_when_no_gate_fires():

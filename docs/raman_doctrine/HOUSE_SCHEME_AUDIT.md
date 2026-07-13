@@ -1570,3 +1570,18 @@ and end-to-end it tracks Raman's central tendency at 50–67% (N=6/14), in line 
 (the fusion does not degrade the signal). N is small: a first spot-measurement, not a validation. No
 engine change; pinned by `test_overall_consistency.py`; reproducible via
 `validation/overall_consistency.py`. Full detail: `validation/REPORT_house_moon.md`.
+
+### Track 3 (T3.0) — transit/gochara: not pursued (documented decision)
+
+A read-only feasibility/yield probe (the plan's T3.0 checkpoint) found the transit dimension has thin
+substrate: Raman's STATED transit-at-event prose is near-nil in available sources (~11 sentences in
+htjah_vol1.txt, 3 in worked_analyses.jsonl; the transit-rich death chapters and NH prose are not
+present as text), and the `nh_timing.json` 50 dated deaths are daśā-timed (md/ad + age), not
+transit-annotated. The only machine-checkable path — computing transits at the 50 dated deaths and
+testing whether Raman's gochara death-doctrine (Saturn/Mars from Moon/8th, double-transit) is
+SATISFIED — tests doctrine-satisfaction rather than agreement-with-Raman and overlaps prior ML
+death-timing work already found null under controls. A full gochara engine (`app/core/gochara_engine.py`,
+`app/integration/transit_engine.py`) exists but is disconnected from the doctrine grade path
+(`EvalContext.transit` never populated; the transit timing clock unwired). Decision (user, 2026-07-13):
+**conclude the validation effort** rather than build a large transit validator on weak ground. Scoped
+for a future session if the death-chapter transit prose is extracted. No engine change.

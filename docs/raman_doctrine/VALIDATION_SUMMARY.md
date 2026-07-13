@@ -155,6 +155,36 @@ contamination gap. The learned combine is **not landed** (the pre-registered ch.
 failed in its typed representation — increment 15); the landing path is anchor re-derivation in
 engine representation.
 
+**Update (synthesis_v2, [REPORT_synthesis_v2.md](validation/REPORT_synthesis_v2.md)):** the learned
+gain was then reproduced from PURE DOCTRINE and **landed live**. `synthesis_v2` replaces additive
+point-summing with Raman's structural override gates (A besiegement, B deep-affliction) and was
+promoted to the live grade path (increment 28): pooled held-out **56.9%**, NH pooled **63.0%**, anchor
+held — every axis up or level. Its strong-side ceiling was then closed as a research question by
+**four documented negatives**: the fitted A2 tree's anchor collapse, and gates P, C, F plus
+structural feature tokens (increments 29–30) — every gate or feature over the sign/degree
+representation that could lift Raman's strong-graded-yet-afflicted factors *also* lifts his
+afflicted-graded ones, because the discriminator is holistic, not in any aggregate feature.
+
+**Effort conclusion (2026-07-13).** Validation against Raman's own verdicts has reached saturation:
+- **Strength** — landed at held-out 56.9% / NH 63.0% via synthesis_v2; the residual is a *holistic*
+  gap no sign-or-degree feature closes (proven by the four negatives). Further gain needs a richer
+  representation (the not-yet-landed learned combine, or a full configuration-level model), not more
+  doctrine features.
+- **`synthesize_house` / Chandra-Lagna** — stay reading-side-by-design: Raman's overall and
+  from-the-Moon verdicts are narrative and map to a 9-grade in only 3/168 and 1/67 charts; the fusion
+  is spot-confirmed sound against his factor central tendency at small N
+  ([REPORT_house_moon.md](validation/REPORT_house_moon.md)).
+- **Transit / gochara** — *not pursued*: the T3.0 yield probe found Raman's stated transit-at-event
+  prose near-nil in available sources, and the only computable path (gochara doctrine-satisfaction at
+  the 50 dated deaths) tests satisfaction rather than agreement and overlaps prior null ML
+  death-timing work. A full gochara engine exists but is disconnected from the doctrine grade path;
+  wiring it is scoped but deferred as low-expected-value.
+- **Timing (94% MD) / balance (93%) / longevity (ρ +0.52)** were already at their useful ceiling.
+
+The honest final position: the doctrine is faithfully encoded (1,913 rules across 10 books, wired
+into the grades at increment 17) and validated on every axis that admits a crisp Raman verdict; where
+it plateaus, the reason is characterized and reproducible, not hand-waved.
+
 ## Report index
 
 Strength & ceiling: [recalibration](validation/REPORT_recalibration.md) ·

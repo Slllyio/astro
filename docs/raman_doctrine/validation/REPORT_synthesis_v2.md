@@ -301,3 +301,57 @@ mechanism is retained as a reproducible ablation switch (`synthesis_v2_validate.
 the strong/mid/afflicted slices; `test_gate_F_when_enabled_floors_a_fortified_factor` pins the
 switch). Closing the strong side requires **new features** (yoga/dispositor/fortification-chain
 tokens fed into the assessors), the next feature-side increment — not another synthesis gate.
+
+---
+
+## Increment 30 — structural feature tokens: a fourth documented negative (feature-side)
+
+### Motivation
+Increment 29 (Gate F) proved the strong-side under-credit is a **feature gap**: synthesis_v2's gates
+read Finding *tags*, and the tags marking Raman's strong-graded-yet-afflicted factors (exaltation,
+kendra, benefic aspect) are identical to those on his afflicted-graded factors — no gate over the
+current vocabulary separates them. Increment 30 tests the natural successor: do **new structural
+features**, absent from the Finding vocabulary but computable from the same chart, separate the two?
+
+### Design — inert tokens, fail-fast (no engine change)
+Rather than wire new findings into the live scorer (an engine change with a full re-pin cascade),
+the increment first runs a **read-only separability diagnostic**
+(`app/medini/doctrine/validation/structural_separability.py`) on three candidate features, each
+targeting a documented strong-side miss:
+
+| feature | definition | targets |
+|---|---|---|
+| yoga-participation | the factor's planet (house LORD for a bhava) participates in a POSITIVE yoga (`detect_yogas`, true participants) | Sankara's Moon "highly fortified", raja/dhana yogas |
+| dispositor-strength | the factor planet's dispositor (`SIGN_RULERS`) itself grades ≥ fairly strong under synthesis_v2 | "the lord is in the sign of a strong planet" |
+| benefic-cluster | ≥3 benefic/yogakāraka grahas aspect or conjoin the factor's house | the "combined aspect of Saturn, Jupiter, Mars-yogakāraka" structure |
+
+The go/no-go is a single question: do the tokens appear on the **strong** slice (raman ≥ fairly
+strong) and **not** the **afflicted** slice (raman ≤ weak)? If they anti-separate, a gate on them
+cannot help, and the negative is established with the live engine untouched.
+
+### Result — the features ANTI-separate
+Pooled across held-out + NH-enlarged + anchor (N strong = 30, mid = 42, afflicted = 68):
+
+| signal | strong | mid | afflicted |
+|---|---|---|---|
+| yoga-participation | 11/30 (37%) | 15/42 (36%) | **29/68 (43%)** |
+| dispositor ≥ fairly strong | **0/30 (0%)** | 7/42 (17%) | 8/68 (12%) |
+| benefic-cluster ≥3 | **0/30 (0%)** | 1/42 (2%) | 1/68 (1%) |
+| any signal | 11/30 (37%) | 20/42 (48%) | **33/68 (49%)** |
+
+Every signal is at least as common on Raman's afflicted-graded factors as on his strong-graded ones
+— dispositor-strength and benefic-cluster **never fire on the strong slice at all**. A gate keyed on
+any of them would lift the afflicted slice *more* than the strong slice, re-introducing the exact
+over-credit A+B fixed. This is stronger than the increment-29 finding: it is not merely that the
+*current* tags fail to separate — *new* structural tags computable from the sign+navāṁśa feature
+space fail too, and in the wrong direction.
+
+### Verdict — documented negative (feature-side)
+The discriminator Raman uses to credit a strong-but-afflicted factor is **not recoverable** from
+yoga-participation, dispositor-strength, or benefic-cluster structure over this representation. It is
+genuinely holistic — weighing the specific configuration in a way no aggregate feature over the
+sign/degree chart captures. synthesis_v2 and house_judgment are **unchanged** (the inert-token design
+delivered the negative read-only, at near-zero cost — no wiring, no ablation compute). Pinned by
+`test_structural_separability.py`. The remaining lever for the strong side is not feature engineering
+over the current chart representation but a richer representation (e.g. an LLM-judge over the full
+configuration, or the real-birth degree engine's deeper resolution) — a separate, larger effort.

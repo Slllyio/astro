@@ -1537,3 +1537,20 @@ FEATURE gap (yoga/dispositor structure absent from the Finding vocabulary), not 
 floor over existing tags separates Raman's "fortification overrides affliction" from "fortification
 fails to". `GATE_F=False` by default (reproducible ablation switch); live grades byte-identical to
 increment 28. Full detail: `validation/REPORT_synthesis_v2.md` § increment 29.
+
+### Increment 30 — structural feature tokens: fourth documented negative (feature-side)
+
+Increment 29 localised the strong-side under-credit to a FEATURE gap. Increment 30 tests whether NEW
+structural features — yoga-participation, dispositor-strength, benefic-cluster, all computable from
+the existing sign+navāṁśa data but absent from the Finding vocabulary — separate Raman's strong-graded
+factors from his afflicted-graded ones. **Verdict: documented negative — they ANTI-separate.** A
+read-only diagnostic (`validation/structural_separability.py`, the inert-token design's fail-fast
+step) shows, pooled across held-out + NH + anchor (strong N=30, afflicted N=68): yoga-participation
+37%/43% (strong/afflicted), dispositor≥fairly-strong 0%/12%, benefic-cluster 0%/1%, any 37%/49%.
+Every signal is at least as common on the afflicted slice as the strong slice — dispositor-strength
+and cluster never fire on the strong slice at all — so a gate on them would worsen the over-credit.
+This is stronger than incr. 29: even NEW tags over this feature space fail, and in the wrong
+direction. The discriminator is holistic/configuration-specific, not recoverable from aggregate
+features; the remaining lever is a richer representation, not more feature engineering.
+`house_judgment.py`/`synthesis_v2.py` unchanged; pinned by `test_structural_separability.py`. Full
+detail: `validation/REPORT_synthesis_v2.md` § increment 30.

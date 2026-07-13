@@ -26,35 +26,24 @@ wealth 27 · authority 20 · fame 19 · character 13 · learning 13 · longevity
   real-birth people with known life outcomes — the deferred population track (Track B). No accuracy
   number is claimed here.
 
-## Result — the engine covers the major yogas, is blind to the long tail
-`yoga_coverage.run()`: the engine's yoga library (`app/core/yoga_library.py`, `YOGA_DETECTORS`)
-exposes **29** distinct detectors; **17 / 64 = 26.6%** of Raman's named yogas match. (An earlier pass
-reported 13/64 = 20.3% — a *measurement* undercount: the name extractor missed the Pancha-Mahāpuruṣa
-factory and solar/lunar positional names. Corrected here. The 64-count denominator also includes a few
-OCR-garbled duplicates — "Adhl", "Daiida", "Gola"×2 — so true coverage is a little above 26.6%.)
+## Result — the engine covers the major yogas, was blind to the long tail
+`yoga_coverage.run()` scores coverage on the corpus's **distinct** yogas (OCR duplicates like "Gola"×2
+deduped) with **exact** stem matching (an earlier loose substring matcher gave false positives —
+"Hala"⊂"Kahala", "Raja"⊂"Rajalakshana" — and its name extractor also undercounted the engine by missing
+the Pancha-Mahāpuruṣa factory + solar/lunar positional names; both corrected). On that honest basis the
+engine's yoga library (`app/core/yoga_library.py`, `YOGA_DETECTORS`) started at **15 / 62 = 24.2%** —
+it knew the *major* classical yogas (the full Mahāpuruṣa family, the luminary and big dhana/rāja yogas)
+but was blind to the long tail (Nabhasa, Chatussagara, Sakata, Dhurdhura, the lord-config dhana yogas).
+That tail is the mechanical reason the increment-30 yoga-participation strength token was weak — the
+detector was absent on many of the yogas Raman cites.
 
-- **Covered (17):** the whole **Pancha-Mahāpuruṣa** family (Ruchaka, Bhadra, Hamsa, Malavya, Sasa),
-  Gajakesari, Sunapha, Anapha, Amala, Budha-Aditya, Daridra, Kemadruma, Lakshmi, Parijata(ha),
-  Rajalakshana, Sarpa, Vasi.
-- **Missing (long tail, ~47):** the **Nabhasa Ākṛti** family (Gola, Yupa, Sula, Kedara, Hala, Chapa,
-  Chakra, Damini, …), the lunar **Dhurdhura**, **Chatussagara** (all kendras occupied), **Sakata**,
-  Sankha, Bheri, Gauri, Mahabhagya, Vasumathi, and the *-muladdhana* dhana yogas — plus OCR-garbled
-  duplicates that inflate the count.
-
-**The concrete finding:** the engine knows the *major* classical yogas (the full Mahāpuruṣa family, the
-luminary and big dhana/rāja yogas) but is blind to the long tail of combination yogas Raman catalogues.
-That tail is the mechanical reason the increment-30 yoga-participation strength token was weak — it was
-absent on many of the yogas Raman cites. Closing the cleanly-definable part of the gap is increment 35
-(below); the outcome corpus + example charts are the durable data that validate it, and the 39 charts'
-balance-of-daśā lines also feed the timing corpus.
-
-Reproduce: `PYTHONPATH=. python3 -m app.medini.doctrine.validation.yoga_coverage`. Pinned by
+Increments 35–36 encode the cleanly-definable part of the tail, raising coverage **24.2% → 41.9%**
+(15 → 26 of 62 distinct yogas). Reproduce:
+`PYTHONPATH=. python3 -m app.medini.doctrine.validation.yoga_coverage`; pinned by
 `tests/doctrine/test_yoga_coverage.py`.
 
-## Increment 35 — closing the cleanly-definable gap (26.6% → 37.5%)
-Encoded 8 occupancy-only yogas the audit surfaced, each faithful to Raman's stated Definition and
-computable from sign/house occupancy alone (no daśā, no lord-strength), added to
-`app/core/yoga_library.py` `YOGA_DETECTORS` (29 → 37 detectors):
+## Increment 35 — occupancy-only yogas (no daśā, no lord-strength)
+8 yogas computable from sign/house occupancy alone, each faithful to Raman's stated Definition:
 
 | yoga | Raman No. | definition encoded |
 |---|---|---|
@@ -65,9 +54,25 @@ computable from sign/house occupancy alone (no daśā, no lord-strength), added 
 | Chakra | 84 | all seven planets in odd houses (1,3,5,7,9,11) |
 | Gola / Yuga / Sula | 101 | the seven planets confined to one / two / three signs (Nābhasa Saṅkhyā) |
 
-Coverage rose **17/64 → 24/64 (26.6% → 37.5%)**. All 46 existing yoga unit tests stay green;
-`house_judgment.py` and `synthesis_v2.py` are byte-untouched (the additions live in the `app/core`
-reading library). Pinned by `test_yoga_coverage` (coverage floor + a faithfulness check that each new
-detector fires on a chart built to its definition and is silent otherwise). The remaining ~40 missing
-yogas need lord-strength / exaltation / daśā conditions (Sankha, Sreenatha, Mridanga) or are OCR-garbled
+## Increment 36 — lord-based yogas (definitions taken from a cleaner OCR edition)
+The increment-34 djvu was noisy ("plawts", "Mo('n"); a cleaner archive.org edition
+(`ThreeHundredImportantCombinationsInVedicAstrology`, 0 garble hits) supplied the exact wording. 7
+yogas computable from lord placement + dignity (no navāṁśa, no daśā):
+
+| yoga | Raman No. | definition encoded |
+|---|---|---|
+| Parvata | 14 | benefics in kendras; 6th & 8th empty or benefic-occupied |
+| Kahala | 15 | 4th & 9th lords in mutual kendras with a strong Lagna lord |
+| Chapa | 31 | exalted Lagna lord with a 4th–10th lord exchange (parivartana) |
+| Sreenatha | 32 | exalted 7th lord in the 10th, 10th lord in the 9th |
+| Sankha | 45 | 5th & 6th lords in mutual kendras with a strong Lagna lord |
+| Bheri | 46 | Venus, Lagna lord & Jupiter in mutual kendras; strong 9th lord |
+| Samudra | 72 | all seven planets in even houses (2,4,6,8,10,12) |
+
+Added to `YOGA_DETECTORS` (29 → 44 detectors across both increments). All 46 existing yoga unit tests
+stay green; `house_judgment.py` and `synthesis_v2.py` are byte-untouched (the additions live in the
+`app/core` reading library — no strength-grade impact). Pinned by `test_yoga_coverage` (coverage floor +
+per-detector faithfulness checks: each new yoga fires on a chart built to its definition and is silent
+otherwise, incl. a Kahala negative when the Lagna lord is weak). The residual ~36 missing yogas need
+navāṁśa (Mridanga, the other Gola), full-Moon, or intricate multi-lord conditions, or are OCR-garbled
 duplicates — a further increment, not force-fit here.

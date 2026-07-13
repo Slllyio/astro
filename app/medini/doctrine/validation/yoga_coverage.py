@@ -65,18 +65,28 @@ def run() -> dict[str, Any]:
     known = engine_yoga_stems()
 
     def is_known(name: str) -> bool:
-        st = _stem(name)
-        return any(st == k or st in k or k in st for k in known)
+        # EXACT stem match (after the OCR/alias normalisation) — loose substring matching
+        # inflated coverage with false positives (e.g. "Hala"⊂"Kahala", "Raja"⊂"Rajalakshana").
+        return _stem(name) in known
 
-    covered = [r["name"] for r in rows if is_known(r["name"])]
-    missing = [r["name"] for r in rows if not is_known(r["name"])]
+    # dedupe the corpus by normalised stem — the OCR has a few duplicate headers ("Gola"×2,
+    # "Chapa"×2) that would otherwise double-count both numerator and denominator.
+    best: dict[str, str] = {}
+    for r in rows:
+        st = _stem(r["name"])
+        if st and st not in best:
+            best[st] = r["name"]
+    distinct = sorted(best.items())
+    covered = [nm for st, nm in distinct if st in known]
+    missing = [nm for st, nm in distinct if st not in known]
     from collections import Counter
     oc = Counter(c for r in rows for c in r["outcome_classes"])
     return {
-        "n_yogas": len(rows), "n_example_charts": corpus["n_example_charts"],
+        "n_yogas": len(rows), "n_distinct_yogas": len(distinct),
+        "n_example_charts": corpus["n_example_charts"],
         "n_engine_known": len(known),
         "covered": len(covered), "missing": len(missing),
-        "coverage_pct": round(100 * len(covered) / len(rows), 1) if rows else 0.0,
+        "coverage_pct": round(100 * len(covered) / len(distinct), 1) if distinct else 0.0,
         "covered_names": sorted(covered), "missing_names": sorted(missing),
         "outcome_distribution": dict(oc.most_common()),
         "n_with_outcome_class": sum(1 for r in rows if r["outcome_classes"]),
@@ -89,7 +99,8 @@ def main() -> None:
     print(f"  corpus: {o['n_yogas']} yogas, {o['n_example_charts']} example charts, "
           f"{o['n_with_outcome_class']} with a coarse outcome class")
     print(f"  engine yoga library knows {o['n_engine_known']} distinct stems")
-    print(f"  COVERAGE: {o['covered']}/{o['n_yogas']} = {o['coverage_pct']}% of Raman's named yogas\n")
+    print(f"  COVERAGE: {o['covered']}/{o['n_distinct_yogas']} distinct = {o['coverage_pct']}% "
+          f"of Raman's named yogas\n")
     print("  covered :", ", ".join(o["covered_names"]))
     print("\n  MISSING (engine blind to these — the gap):")
     for n in o["missing_names"]:

@@ -1639,3 +1639,22 @@ tag-identical between Raman's mid- and afflicted-graded factors → no threshold
 confirms increment 29's finding from a third angle: the residual is a **feature gap, not a synthesis
 gap**. No gate built; pinned by `test_mid_slice_decomposition`; `synthesis_v2.py`/`house_judgment.py`
 byte-untouched. Full detail: `validation/REPORT_synthesis_v2.md` § increment 32.
+
+### Increment 33 — identity-preserving learned scorer: the ML/representation lever, a decisive negative
+
+The root-cause analysis said the ceiling is an aggregation collapse: 36 of 37 pairs Raman separates on the
+same additive score differ in structured *identity* features the scalar sums away. The A2 experiment tried
+a learned model at the "aggregation altitude" ((delta,frame) tokens) and failed the anchor; the user chose
+to try a richer model. Increment 33 built the one representation never tried — **identity-preserving
+features** (per-frame criterion counts, aspect-source nature, tier/besieged/fort, SAV diff; 50 dims),
+uniform across held-out + NH + the LIVE anchor (removing A2's vocabulary artifact), strictly nesting A2's
+aggregates. Harness `validation/identity_scorer.py`; measurement only. **Result — decisive negative:** best
+identity LOCO **57.9%** vs best A2 token **61.4%** vs live engine **58.6%** on the same held-out folds —
+the richer representation LOSES and overfits more (identity gaps +9..+23 vs A2's best +3.2); the full-fit
+identity model FAILS the live anchor gate **0/9** (engine 2/9), the same collapse A2 hit, now on the
+uniform representation so it is not a vocabulary artifact. The identity signal is real in the pairs but
+NOT learnable at N≈130 — more expressive representation + tiny data = worse generalization. This closes the
+ML/representation lever: no learned scorer over the sign/degree Finding vocabulary beats the doctrine-gated
+engine while holding the anchor. Affirmation: the a-priori doctrine gates generalize to the anchor where
+BOTH fitted models fail. Pinned by `test_identity_scorer`; engine byte-untouched. Detail:
+`validation/REPORT_identity_scorer.md`.

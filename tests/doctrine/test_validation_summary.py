@@ -33,10 +33,11 @@ def test_summary_strength_pooled_heldout():
     # previously-unmappable STRONG-graded gold phrases now map, N 53 -> 58; both scorers
     # under-credit them — was 54.7/24.5/+0.17 on N=53).
     # Increment 28: synthesis_v2 promoted to the live grade path — 50.0 -> 56.9.
+    # Increment 31: Gate D (dignity/decompression floor) — 56.9 -> 58.6.
     s = W.run(_HELDOUT)
     assert s["n_scored"] == 58
-    assert abs(s["within1_pct"] - 56.9) <= _TOL
-    assert abs(s["mean_delta"] - (-0.76)) <= 0.02
+    assert abs(s["within1_pct"] - 58.6) <= _TOL
+    assert abs(s["mean_delta"] - (-0.66)) <= 0.02
 
 
 def test_summary_strength_max_expansion():
@@ -44,18 +45,18 @@ def test_summary_strength_max_expansion():
     # Re-pinned at increments 17 (was 53.9/26.3/+0.43), 18/M-C (Δ +0.30 -> +0.20), and 27
     # (verdict-map v2 recoveries, N 76 -> 81; was 55.3/+0.20).
     maxset = _HELDOUT + [str(_CORP / "unseen_scoreable.json"), str(_CORP / "unseen_grow.json")]
-    # Increment 28: promoted — 51.9 -> 61.7.
+    # Increment 28: promoted — 51.9 -> 61.7.  Increment 31: Gate D — 61.7 -> 64.2.
     s = W.run(maxset)
     assert s["n_scored"] == 81
-    assert abs(s["within1_pct"] - 61.7) <= _TOL
-    assert abs(s["mean_delta"] - (-0.63)) <= 0.02
+    assert abs(s["within1_pct"] - 64.2) <= _TOL
+    assert abs(s["mean_delta"] - (-0.53)) <= 0.02
 
 
 def test_summary_strength_fresh_blind():
-    # Row: "Strength — fresh blind only | within-one 71.4% (Δ -0.21) | N=14".
+    # Row: "Strength — fresh blind only | within-one 78.6% | N=14" (Gate D, increment 31: 71.4 -> 78.6).
     s = W.run([str(_CORP / "unseen_scoreable.json")])
     assert s["n_scored"] == 14
-    assert abs(s["within1_pct"] - 71.4) <= _TOL
+    assert abs(s["within1_pct"] - 78.6) <= _TOL
 
 
 def test_summary_strength_nh_degree_accurate():
@@ -69,10 +70,11 @@ def test_summary_strength_nh_degree_accurate():
     # Rasi-frame gold) -> N 15 -> 12. See corpora/nh_strength_removed.json.
     # Increment 28: promoted — 41.7 -> 58.3.
     s = N.run()
+    # Increment 31: Gate D — mean_delta 0.67 -> 0.75 (within-one held at 58.3).
     assert s["n"] == 12
     assert s["n_excluded"] == 0
     assert abs(s["within1_pct"] - 58.3) <= _TOL
-    assert abs(s["mean_delta"] - 0.67) <= 0.02
+    assert abs(s["mean_delta"] - 0.75) <= 0.02
 
 
 def test_summary_strength_nh_degree_pooled_grown():
@@ -92,10 +94,11 @@ def test_summary_strength_nh_degree_pooled_grown():
     # Poverty' chart, einstein H9 to the Ramana chapter) -> N 32 -> 27. Previously re-pinned
     # at increment 17 (43.8 -> 53.1 on the uncorrected pool).
     # Increment 28: promoted — 51.9 -> 63.0.
+    # Increment 31: Gate D — mean_delta -0.41 -> -0.37 (within-one held at 63.0).
     assert s["n"] == 27
     assert s["n_excluded"] == 0
     assert abs(s["within1_pct"] - 63.0) <= _TOL
-    assert abs(s["mean_delta"] - (-0.41)) <= 0.02
+    assert abs(s["mean_delta"] - (-0.37)) <= 0.02
 
 
 # ---- Timing ------------------------------------------------------------------------------

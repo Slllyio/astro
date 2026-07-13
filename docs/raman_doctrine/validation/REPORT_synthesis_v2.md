@@ -355,3 +355,63 @@ delivered the negative read-only, at near-zero cost — no wiring, no ablation c
 `test_structural_separability.py`. The remaining lever for the strong side is not feature engineering
 over the current chart representation but a richer representation (e.g. an LLM-judge over the full
 configuration, or the real-birth degree engine's deeper resolution) — a separate, larger effort.
+
+---
+
+## Increment 31 — Gate D (dignity/decompression floor): the first strong-side WIN
+
+### Motivation
+The root-cause analysis (`ROOT_CAUSE_ANALYSIS.md`) reframed the ceiling: it is an *aggregation* defect,
+not label noise or missing exotic features. A read-only diagnostic (`incr31_probe`) then decomposed the
+24 strong-graded floored misses by which lever could fix each:
+
+| category | count | fixable by |
+|---|---|---|
+| deep-afflicted (sum_neg ≤ −1.22) | 15 | nothing — the documented-negative fortified-but-afflicted residual |
+| clean under-detection (engine sees ~no positive testimony) | 6 | nothing — Raman graded on evidence absent from the reconstructed chart |
+| **clean dignity crushed** (shallow neg, decisive dignity, strong positives) | **3** | **Gate D** |
+
+The tractable group: factors with **decisive dignity + strong positive testimony that `_cap_positive`
+crushed to grade 1–2 where Raman says "very strong"** — ch168 karaka (Saturn exalted + vargottama,
+sum_pos 2.8, sum_neg −0.70), Rajendra-Prasad karaka (kendra + vargottama, sum_pos 3.2, −0.70), Tilak
+bhava. This is exactly where **Gate C failed**: it floored on ANY dignity and so over-fired on the
+deep-afflicted rows. The diagnostic named the missing condition — **neg-depth**.
+
+Two other levers the analysis proposed were tested and **refuted** by the same diagnostic (recorded as
+this increment's negatives, not built): range-decompression alone touches only 3/24 misses; and the
+**from-the-Moon** disposition of the factor does NOT separate — of 24 strong-floored misses only 1 is
+strong from the Moon (4%), *less* than the afflicted slice (5%), so folding it into the factor would
+lower the strong slice, not lift it.
+
+### Mechanism (`synthesis_v2.py`)
+Gate D floors the grade UP, firing ONLY in the **shallow-negative regime** (`sum_neg > NEG_GATE = −1.22`
+— disjoint from Gate B's deep-affliction floor and from the afflicted slice, which carries deep
+negatives): a non-besieged factor with decisive dignity (`tier != "none"`) and strong positive
+testimony gets `max(g, floor)` where `floor = VERY_STRONG` if `sum_pos ≥ 2.8` and exalted-tier, else
+`FAIRLY_STRONG` if `sum_pos ≥ 2.0`. A lone exaltation (sum_pos 1.6) is deliberately **not** enough — it
+takes exaltation plus further fortification (the ablation is indifferent between the 1.6 and 2.0 bar on
+the corpora, so the conservative bar is chosen).
+
+### Ablation — lands cleanly (robust across threshold configs)
+| axis | A+B baseline | **A+B+D** |
+|---|---|---|
+| pooled held-out (N=58) | 56.9% (Δ −0.76) | **58.6%** (Δ −0.66) |
+| max HTJAH expansion (N=81) | 61.7% | **64.2%** |
+| fresh blind (N=14) | 71.4% | **78.6%** |
+| NH degree-accurate (N=12) | 58.3% | 58.3% (Δ 0.67→0.75) |
+| NH degree pooled (N=27) | 63.0% | 63.0% (Δ −0.41→−0.37) |
+| NH full pool (N=73) | 46.6% | **47.9%** |
+| ch. IV live anchor (N=8) | 1/8 | 1/8 (unchanged — anchor factors are deep-neg, Gate D correctly silent) |
+| STRONG slice | 5/29 (17%) | **7/29 (24%)** |
+| mid / afflicted slices | 16% / 82% | 16% / 82% (held) |
+
+Every axis improves or holds; nothing regresses. Gate D is **live** (`GATE_D = True`); `house_judgment.py`
+byte-untouched; pinned by `test_synthesis_v2` (config + a shallow-neg-lifts / deep-neg-stays-broken unit
+pin) and the re-pinned `test_validation_summary`.
+
+### Honest scope
+A real but **modest** win (~+1.7 pts pooled held-out; strong slice 17→24%). It closes only the
+*tractable* sub-slice — the shallow-negative dignity cases the scalar crushed. It does **not** touch the
+two irreducible residuals the diagnostic isolated (the 15 deep-afflicted "fortified-but-afflicted"
+misses, and the 6 under-detection cases where the engine sees no positive testimony Raman graded on) —
+those remain the holistic ceiling that no sign/degree feature has closed.

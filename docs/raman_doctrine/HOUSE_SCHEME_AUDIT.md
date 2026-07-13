@@ -1603,3 +1603,22 @@ the ceiling residual is learnable IN-DISTRIBUTION but NOT landable. No engine ch
 `test_learned_combine_landing.py`; banked in `validation/ml_research/a2_landing_result.json`. (Noted:
 `learned_combine.py`'s legacy `tuned_rows()` path has bit-rotted — `fit_weights.load_rows` raises
 KeyError on a since-changed audit-corpus schema; the landing test does not use it.)
+
+### Increment 31 — Gate D (dignity/decompression floor): the first strong-side WIN
+
+The root-cause analysis reframed the ceiling as an aggregation collapse. A diagnostic decomposed the 24
+strong-graded floored misses: 15 deep-afflicted (the documented-negative residual), 6 clean
+under-detection (engine sees no positive testimony Raman graded on), and **3 clean-dignity-crushed** —
+factors with decisive dignity + strong positives (ch168 Saturn exalted+vargottama, Rajendra-Prasad
+kendra+vargottama, Tilak) that `_cap_positive` floored to grade 1–2 where Raman says "very strong". This
+is where **Gate C failed** (it floored on ANY dignity, over-firing on deep-afflicted rows). Gate D adds
+the condition the diagnostic named: fire ONLY in the **shallow-negative regime** (sum_neg > NEG_GATE,
+disjoint from Gate B and the afflicted slice), flooring a non-besieged decisive-dignity factor with
+strong positives up to fairly/very strong. **Ablation LANDS:** held-out 56.9→**58.6%**, max-expansion
+61.7→**64.2%**, fresh-blind 71.4→**78.6%**, NH full 46.6→**47.9%**, strong slice 17→**24%**;
+NH-default/mid/afflicted/anchor all held (anchor factors are deep-neg → Gate D correctly silent, 1/8
+unchanged). `GATE_D=True` live; `house_judgment.py` byte-untouched; drift-guards re-pinned same commit.
+Two sibling levers the analysis proposed were tested and REFUTED (recorded, not built): range-
+decompression alone touches 3/24; from-the-Moon anti-separates (1/24 strong-floored are strong from the
+Moon, < the afflicted slice's 5%). Modest but real; the 15 deep-afflicted + 6 under-detection misses
+remain the holistic residual. Full detail: `validation/REPORT_synthesis_v2.md` § increment 31.

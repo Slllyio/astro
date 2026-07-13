@@ -167,6 +167,22 @@ separate the strong slice AND generalize?*
 Raman's own self-consistency. Not 80%+; that would require breaking Raman's own ±1-grade noise floor,
 which no engine can.
 
+### RESULT (increment 31 — Gate D landed)
+The recommended experiment was run. A diagnostic (`incr31_probe`) decomposed the 24 strong-graded
+floored misses: **15 deep-afflicted** (the irreducible fortified-but-afflicted residual), **6 clean
+under-detection** (the engine sees no positive testimony Raman graded on — the ~1/37 genuine-holistic
+residual, at scale), and **3 clean dignity crushed** — decisive dignity + strong positives that
+`_cap_positive` floored to grade 1–2. The last group is tractable and became **Gate D** (dignity/
+decompression floor, gated on *shallow* negatives — the condition the old Gate C lacked). It **landed**:
+held-out 56.9→**58.6%**, max-expansion 61.7→**64.2%**, fresh-blind 71.4→**78.6%**, strong slice
+17→**24%**, mid/afflicted/anchor all held (`REPORT_synthesis_v2.md` § increment 31). The two sibling
+levers were **refuted** by the same diagnostic and *not* built: range-decompression alone touches only
+3/24 misses; the **from-the-Moon** fold anti-separates (1/24 strong-floored are strong from the Moon,
+below the afflicted slice's 5%). Net: the analysis was right about the mechanism (aggregation collapse,
+range compression) and right that the fix is identity-preserving doctrine over the existing findings —
+but only the shallow-negative dignity sub-slice was recoverable; the 15 deep-afflicted + 6
+under-detection misses remain the holistic ceiling, exactly as the ~1/37 residual predicted.
+
 ---
 
 ## Reproduce

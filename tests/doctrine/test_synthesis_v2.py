@@ -30,9 +30,27 @@ def _grade(fv):
 
 
 def test_config_is_the_landing_ablation():
-    # A + B are the two doctrine gates that break the ceiling; P/C/F are off (documented negatives).
-    assert S2.GATE_A and S2.GATE_B
-    assert not S2.GATE_P and not S2.GATE_C
+    # A + B break the ceiling; D (dignity/decompression, incr. 31) closes the tractable strong-side
+    # sub-slice; P/C/F are off (documented negatives).
+    assert S2.GATE_A and S2.GATE_B and S2.GATE_D
+    assert not S2.GATE_P and not S2.GATE_C and not S2.GATE_F
+
+
+def test_gate_D_floors_shallow_neg_dignity_but_not_deep_affliction():
+    # Gate D: a factor with decisive dignity + strong positive testimony (sum_pos >= 2.0) and only
+    # SHALLOW negatives is floored UP (the `_cap_positive` crush the diagnostic isolated)…
+    lift = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                Finding("aspected by Mars (malefic)", -0.7, "Rasi", "aspect")])   # sum_neg −0.7 (shallow)
+    assert _IDX[_grade(lift)] >= S2.FAIRLY_STRONG, _grade(lift)
+    # …but the SAME dignity under DEEP affliction stays broken — Gate B wins, Gate D is neg-gated off
+    # (this is exactly the condition the old Gate C lacked).
+    deep = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                Finding("conjunct Saturn (malefic)", -0.9, "Rasi", "conjunction"),
+                Finding("aspected by Mars (malefic)", -0.9, "Rasi", "aspect"),
+                Finding("aspected by Rahu (malefic)", -0.9, "Rasi", "aspect")])   # sum_neg −2.7 (deep)
+    assert _grade(deep) == "afflicted", _grade(deep)
     assert not S2.GATE_F   # increment 29: fortification floor regresses held-out+NH (see REPORT)
 
 

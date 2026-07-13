@@ -19,9 +19,11 @@ def test_structural_tokens_do_not_separate_strong_from_afflicted():
     def frac(d, key):
         return d[key] / d["n"] if d["n"] else 0.0
 
-    # dispositor-strength never fires on the strong slice (the strong factors' dispositors are not
-    # themselves strong) — the cleanest anti-separation.
-    assert strong["disp_ge5"] == 0, strong["disp_ge5"]
+    # dispositor-strength barely fires on the strong slice (the strong factors' dispositors are mostly
+    # not themselves strong). Increment 31's Gate D lifts a couple of dispositor grades through
+    # grade_factor, so this is a small count, not exactly 0 — the anti-separation below is the real
+    # claim (disp_ge5 stays MORE common on the afflicted slice regardless).
+    assert strong["disp_ge5"] <= 3, strong["disp_ge5"]
     # every signal is at least as common on the afflicted slice as on the strong slice (a gate on
     # any of them would lift afflicted rows at least as much → cannot close the strong gap).
     for key in ("yoga_pos", "disp_ge5", "cluster", "any"):

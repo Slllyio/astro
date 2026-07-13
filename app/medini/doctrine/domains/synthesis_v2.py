@@ -90,6 +90,21 @@ FLOOR_FORT_2 = VERY_STRONG     # 7
 # exactly as Raman credits the fortified-but-badly-placed graha. Kept as an ablation switch.
 FORT_MIN_NEG = -99.0
 
+# Gate D (dignity/decompression floor, increment 31) — the ONE lever the root-cause diagnostic isolated
+# as safe. The engine's `_cap_positive` crushes stacked positives, so a factor with decisive dignity
+# (exalted Saturn +1.6, vargottama +1.2, kendra +1.2) and only SHALLOW negatives is floored to 1–2
+# where Raman says "very strong" (ch168 karaka, Rajendra-Prasad karaka, Tilak bhava). This is where
+# Gate C failed: it floored on ANY dignity and so over-fired on the deep-afflicted rows. Gate D adds
+# the missing condition the diagnostic named — it fires ONLY on the SHALLOW-negative regime
+# (sum_neg > NEG_GATE), which is DISJOINT from Gate B's deep-affliction floor and from the afflicted
+# slice (afflicted rows carry deep negatives). Floor scales with the positive testimony.
+DECOMP_POS_HI = 2.8      # sum_pos at/above this (≈ exalted + vargottama/kendra) with decisive dignity → very strong
+DECOMP_POS_LO = 2.0      # …at/above this → fairly strong (a lone exaltation, 1.6, is NOT enough — it
+                         # takes exaltation PLUS further fortification; the ablation is indifferent
+                         # between 1.6 and 2.0 on the corpora, so the conservative bar is chosen)
+FLOOR_DECOMP_HI = VERY_STRONG    # 7
+FLOOR_DECOMP_LO = FAIRLY_STRONG  # 5
+
 # Context-dependent house-class weights (w_lord, w_bhava, w_karaka), each cited in the audit note.
 _WEIGHTS = {
     "lord_led":         (0.50, 0.30, 0.20),   # 1,2,4,5,7,9 — house judged chiefly by its lord
@@ -100,17 +115,23 @@ _HOUSE_CLASS = {1: "lord_led", 2: "lord_led", 4: "lord_led", 5: "lord_led", 7: "
                 9: "lord_led", 3: "occupancy_led", 6: "occupancy_led", 10: "occupancy_led",
                 11: "occupancy_led", 8: "karaka_intrinsic", 12: "karaka_intrinsic"}
 
-# Landing configuration (ablation-selected). A (besiegement veto) + B (deep-affliction gate) are the
-# two doctrine-derived non-linearities that break the ceiling: held-out 54.7→64.2%, NH 53.1→62.5%,
-# anchor held at parity (1/8). P (strong-promise floor) is inert on sign-reconstructed charts (factors
-# rarely reach a strong Rāśi grade there); C (dignity floor) lifts the anchor 1→2 but costs ~17 pts of
-# held-out (the same dignity+affliction pattern is Raman-weak on held-out yet Raman-strong on the
-# anchor — the distinguishing signal is not in the sign features). Both OFF by default, kept as
-# documented, reproducible ablation switches.
+# Landing configuration (ablation-selected). A (besiegement veto) + B (deep-affliction gate) break the
+# ceiling; D (dignity/decompression floor, increment 31) closes the tractable strong-side sub-slice.
+# P (strong-promise floor) is inert on sign-reconstructed charts; C (dignity floor) lifts the anchor
+# 1→2 but costs ~17 pts of held-out because it fired on the deep-afflicted rows too — D fixes exactly
+# that by gating on neg-depth. F (fortification floor) is a documented negative. P/C/F stay OFF, kept
+# as reproducible ablation switches; A/B/D are live.
 GATE_A = True
 GATE_B = True
 GATE_P = False
 GATE_C = False
+GATE_D = True   # dignity/decompression floor (increment 31) — LANDED. The root-cause diagnostic
+                # isolated the ONE tractable strong-side sub-slice: shallow-negative factors with
+                # decisive dignity + strong positive testimony that `_cap_positive` crushed to grade
+                # 1–2 where Raman says "very strong" (ch168, Rajendra-Prasad, Tilak). Firing ONLY in
+                # the shallow-neg regime (sum_neg > NEG_GATE, disjoint from Gate B and the afflicted
+                # slice) is the condition Gate C lacked. Ablation: held-out 56.9→58.6, NH full
+                # 46.6→47.9, strong slice 17→24%, mid/afflicted/anchor all held. REPORT § increment 31.
 GATE_F = False  # fortification floor (increment 29) — DOCUMENTED NEGATIVE, joins P/C. The ablation
                 # (REPORT_synthesis_v2.md § increment 29) shows every threshold config regresses
                 # held-out (−3..−7) and NH (−11..−33) while lifting the strong slice: the same
@@ -131,6 +152,7 @@ class FrameState:
     tier: str                 # decisive dignity: "exalted" | "own" | "none" (Gate C)
     besieged: bool            # papakartari — hemmed between malefics (Gate A)
     fort: float = 0.0         # fortification tally (Gate F)
+    sum_pos: float = 0.0      # total positive testimony in the frame (Gate D)
 
 
 # ── 1. per-frame reduction + collinearity guard ─────────────────────────────────────────────────
@@ -190,8 +212,10 @@ def _reduce_frame(frame_findings: list[Finding]) -> FrameState:
     inflate the negative sum that Gate B reads)."""
     fr, _merged = _collinearity_guard(frame_findings)
     sum_neg = sum(f.delta for f in fr if f.delta < 0)
+    sum_pos = sum(f.delta for f in fr if f.delta > 0)
     besieged = any(f.criterion == "kartari" and f.delta < 0 for f in fr)
-    return FrameState(round(sum_neg, 3), _dignity_tier(fr), besieged, _fortification(fr))
+    return FrameState(round(sum_neg, 3), _dignity_tier(fr), besieged, _fortification(fr),
+                      round(sum_pos, 3))
 
 
 # ── the public per-factor scorer: engine base + doctrinal overrides ──────────────────────────────
@@ -256,6 +280,21 @@ def grade_factor(fv: FactorVerdict) -> tuple[int, dict]:
         if g < floor:
             gates.append(f"C:dignity_floor({'exalted' if exalted else 'own'})")
         g = max(g, floor)
+    # Gate D — dignity/decompression floor (increment 31). Fires ONLY in the shallow-negative regime
+    # (sum_neg > NEG_GATE, disjoint from Gate B and from the afflicted slice): a factor with decisive
+    # dignity AND strong positive testimony that `_cap_positive` crushed cannot be graded low. This is
+    # Gate C with the neg-depth condition the root-cause diagnostic showed it was missing.
+    if GATE_D and not rst.besieged and rst.sum_neg > NEG_GATE and rst.tier != "none":
+        if rst.sum_pos >= DECOMP_POS_HI and rst.tier == "exalted":
+            floor = FLOOR_DECOMP_HI
+        elif rst.sum_pos >= DECOMP_POS_LO:
+            floor = FLOOR_DECOMP_LO
+        else:
+            floor = -1
+        if floor >= 0:
+            if g < floor:
+                gates.append(f"D:decompress({rst.tier},pos={rst.sum_pos})")
+            g = max(g, floor)
     # Gate F — fortification floor (the positive mirror of B). A decisively fortified factor is
     # credited even from a bad placement; besiegement (Gate A's papakartari) still vetoes — a hemmed
     # graha is broken regardless of incoming aid.

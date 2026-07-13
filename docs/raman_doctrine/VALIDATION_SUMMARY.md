@@ -155,6 +155,16 @@ contamination gap. The learned combine is **not landed** (the pre-registered ch.
 failed in its typed representation — increment 15); the landing path is anchor re-derivation in
 engine representation.
 
+**Update (learned-combine landing, 2026-07-13):** the learned combine was given both documented
+landing prerequisites — the anchor re-derived in live engine representation, and the strong-heavy NH
+pool added to training — and **the landing was definitively refused**: it scores **0/8 within-one on
+the house-1 live anchor in every training regime** (`learned_combine_landing.py`), predicting
+"afflicted" for all 8 rows. Adding strong training signal does not cure the out-of-distribution
+collapse; the anchor's strong-lagna verdicts are not feature-separable from afflicted ones (the same
+holistic gap increments 29–30 proved). So the ceiling residual is learnable *in-distribution* but NOT
+landable — and its one transferable discovery (Gate B) is already live in synthesis_v2, which holds
+anchor parity via the engine-base floor the model lacks.
+
 **Update (synthesis_v2, [REPORT_synthesis_v2.md](validation/REPORT_synthesis_v2.md)):** the learned
 gain was then reproduced from PURE DOCTRINE and **landed live**. `synthesis_v2` replaces additive
 point-summing with Raman's structural override gates (A besiegement, B deep-affliction) and was

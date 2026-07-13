@@ -103,6 +103,22 @@ whether that was a fixable representation artifact, and found something more fun
   change. The honest headline: the ceiling residual is learnable, but only where you have training
   signal — and the calibration anchor is doing real work by refusing an overfit model.
 
+**LANDING TEST — the decisive close (2026-07-13, `learned_combine_landing.py`).** Both landing
+prerequisites were supplied and the test run: (a) the anchor scored in **live engine representation**
+(grid-backed ch. IV casts via `anchor_live_validate` → `judge_house_doctrine` → `_tokens_from_engine`),
+and (b) the model trained under three regimes, one injecting the **strong-heavy NH degree pool**
+(73 rows, 15 strong-graded — the "house-1/kendra-strong training rows" prerequisite). Result:
+**0/8 within-one on the live anchor in EVERY regime** (held-out only, held-out + full NH, NH only;
+ordinal and depth-3 tree alike) — the tree predicts "afflicted" for all 8 house-1 rows. **Adding
+strong training signal does not cure the OOD collapse.** The anchor's house-1 strong-lagna verdicts
+are not feature-separable from afflicted ones — the same holistic gap increments 29–30 proved
+unclosable. The model is strictly worse on the anchor than the live engine (0/8 vs 2/8) because it
+lacks the engine-base floor. So the learned combine is **definitively not landable**; its one
+transferable discovery (Gate B = the tree's `sum_neg ≤ −1.22` split) is already live in synthesis_v2,
+which holds anchor parity via that floor. The pre-registered anchor gate is vindicated at the model
+level. Pinned by `test_learned_combine_landing.py`; result banked in
+`validation/ml_research/a2_landing_result.json`.
+
 ## NEW — Track A experiment 2 (A1): the blinded LLM-as-scorer pilot (complete, 167/167)
 
 Can a frontier LLM's *holistic* reading beat the engine? Design
@@ -182,7 +198,7 @@ documentation-bias account of the Mars effect is the template for B1's kill prot
 | # | experiment | data | protocol | status |
 |---|---|---|---|---|
 | A1′ | finish the pilot (slice 4, 28 prompts) | on disk | same blinded design | **done** — final numbers above |
-| A2′ | anchor re-derivation → landing decision | ch. IV grids (extract) | gate re-run in engine representation; land only if 9/9 | next increment |
+| A2′ | anchor re-derivation → landing decision | ch. IV live casts + strong NH pool | gate re-run in engine representation, +strong training rows | **done — landing refused** (0/8 live anchor in every regime; `learned_combine_landing.py`); residual learnable in-distribution, not landable |
 | A3 | symbolic regression / program synthesis over chart primitives | tuned+held-out | discovered rule admitted only if it matches a sutra | after A2′ |
 | B1 | kill-or-confirm marriage XGBoost (+0.043 AUC) | holos/parquet rebuild via ETL | permutation null shuffling charts **within birth-decade × region cohorts** (outer planets encode era) | needs data rebuild |
 | B2 | kill-or-confirm Career→10H (lift 1.37) | parquet rebuild | BH-FDR across the full house×verdict×class family + K=100 label permutation + corpus split | needs data rebuild |

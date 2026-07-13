@@ -1585,3 +1585,21 @@ death-timing work already found null under controls. A full gochara engine (`app
 (`EvalContext.transit` never populated; the transit timing clock unwired). Decision (user, 2026-07-13):
 **conclude the validation effort** rather than build a large transit validator on weak ground. Scoped
 for a future session if the death-chapter transit prose is extracted. No engine change.
+
+### A2′ learned-combine landing test — definitively refused (2026-07-13)
+
+The un-landed learned combine (incr. 15: 63.5% LOCO vs engine 51.9%) was given BOTH documented landing
+prerequisites and re-tested (`validation/learned_combine_landing.py`): (a) the ch. IV anchor scored in
+LIVE engine representation (grid-backed casts via `anchor_live_validate` + `judge_house_doctrine`), not
+the retired typed vocabulary; (b) the model trained under three regimes, one injecting the strong-heavy
+NH degree pool (73 rows, 15 strong-graded — the house-1/kendra-strong training signal). **Result: 0/8
+within-one on the live anchor in every regime** (ordinal + depth-3 tree; the tree predicts "afflicted"
+for all 8 house-1 rows). Adding strong training signal does NOT cure the out-of-distribution collapse —
+the anchor's strong-lagna verdicts are not feature-separable from afflicted ones (the same holistic gap
+increments 29–30 proved). The model is strictly worse on the anchor than the live engine (0/8 vs 2/8)
+for lack of an engine-base floor; synthesis_v2 already landed the one transferable discovery (Gate B)
+with that floor, holding anchor parity. The pre-registered anchor gate is vindicated at the model level:
+the ceiling residual is learnable IN-DISTRIBUTION but NOT landable. No engine change; pinned by
+`test_learned_combine_landing.py`; banked in `validation/ml_research/a2_landing_result.json`. (Noted:
+`learned_combine.py`'s legacy `tuned_rows()` path has bit-rotted — `fit_weights.load_rows` raises
+KeyError on a since-changed audit-corpus schema; the landing test does not use it.)

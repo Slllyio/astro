@@ -1622,3 +1622,20 @@ Two sibling levers the analysis proposed were tested and REFUTED (recorded, not 
 decompression alone touches 3/24; from-the-Moon anti-separates (1/24 strong-floored are strong from the
 Moon, < the afflicted slice's 5%). Modest but real; the 15 deep-afflicted + 6 under-detection misses
 remain the holistic residual. Full detail: `validation/REPORT_synthesis_v2.md` § increment 31.
+
+### Increment 32 — mid slice: fifth documented negative (the same feature gap, third angle)
+
+After Gate D closed the tractable strong side, the **mid slice** (Raman moderate..fairly-good) was the
+worst pool — 16.7% within-one, N=42. A committed read-only diagnostic
+(`validation/mid_slice_decomposition`) decomposes its 35 misses: 25 under-credit (deep-neg **18**,
+besieged 1, shallow-non-besieged **6 — all with decisive-dignity 0**, i.e. `tier=none`/~zero positive
+testimony) + 10 over-credit. So the "shallow-neg under-credit → build a gate" hypothesis is **refuted by
+the data**: the shallow candidates are pure under-detection (empty house + minor aspect, graded
+holistically), disjoint from Gate D. The dominant driver is Gate B flooring deep-negative rows Raman
+graded mid, and the decisive experiment shows loosening Gate B is a **PURE TRADE**: mid rises 16.7→23.8%
+but afflicted collapses 82.4→**54.4%** and pooled held-out drops 58.6→**50.0%** (`deep-only off` ==
+DEFAULT — it is the shallow −1.22→weak gate doing the flooring). The deep-negative testimony is
+tag-identical between Raman's mid- and afflicted-graded factors → no threshold separates them. This
+confirms increment 29's finding from a third angle: the residual is a **feature gap, not a synthesis
+gap**. No gate built; pinned by `test_mid_slice_decomposition`; `synthesis_v2.py`/`house_judgment.py`
+byte-untouched. Full detail: `validation/REPORT_synthesis_v2.md` § increment 32.

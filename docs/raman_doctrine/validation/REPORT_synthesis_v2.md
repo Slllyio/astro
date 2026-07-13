@@ -415,3 +415,58 @@ A real but **modest** win (~+1.7 pts pooled held-out; strong slice 17→24%). It
 two irreducible residuals the diagnostic isolated (the 15 deep-afflicted "fortified-but-afflicted"
 misses, and the 6 under-detection cases where the engine sees no positive testimony Raman graded on) —
 those remain the holistic ceiling that no sign/degree feature has closed.
+
+## Increment 32 — mid slice: a fifth documented negative (the same feature gap, third angle)
+
+### Motivation
+After Gate D closed the tractable strong-side sub-slice, the **mid slice** (Raman
+moderate..fairly-good) remained the worst-performing and largest pool — **16.7% within-one, N=42**.
+Same proven method: a read-only diagnostic (`mid_slice_decomposition`, committed) decomposes its
+misses by direction and, for the under-credit misses, by why the engine floored them, then runs the
+decisive threshold experiment.
+
+### Decomposition (held-out + NH-full + anchor, 140 rows)
+| mid rows | misses | under-credit | over-credit |
+|---|---|---|---|
+| 42 | 35 | 25 | 10 |
+
+The under-credit splits:
+
+| group | count | fixable by |
+|---|---|---|
+| **deep-neg** (sum_neg ≤ −1.22) | **18** | nothing at the tag level — Gate B floors them (the trade group below) |
+| besieged (papakartari) | 1 | Gate A veto (doctrine-correct) |
+| shallow-non-besieged | 6 | nothing — **decisive-dignity 0**, ~zero positive testimony (pure under-detection, disjoint from Gate D) |
+
+So the "likely shallow-neg under-credit → build a gate" hypothesis is **refuted by the data**: all 6
+shallow candidates carry `tier=none` and near-zero `sum_pos` (empty house + a minor malefic aspect;
+Raman graded them fairly-good holistically). There is nothing in the current vocabulary to floor on —
+exactly the under-detection residual increment 31 already named.
+
+### The decisive experiment — loosening Gate B is a PURE TRADE
+The dominant driver (18/25 under-credit) is Gate B flooring deep-negative rows Raman graded *mid*.
+The only lever that could lift them is loosening Gate B — which trades directly against the afflicted
+slice Gate B correctly floors:
+
+| Gate-B config (NEG_GATE / DEEP) | afflicted | mid | pooled held-out | NH-full |
+|---|---|---|---|---|
+| **DEFAULT −1.22 / −2.45** | **82.4%** | 16.7% | **58.6%** | 47.9% |
+| looser −1.6 / −2.8 | 75.0% | 19.0% | 51.7% | 49.3% |
+| looser −2.0 / −3.2 | 73.5% | 21.4% | 53.4% | 47.9% |
+| looser −2.45 / −3.6 | 63.2% | 23.8% | 51.7% | 41.1% |
+| both off −99 / −99 | 54.4% | 23.8% | 50.0% | 35.6% |
+
+Every point gained on the mid slice (16.7→23.8%) costs **2–3× as much** on the afflicted slice
+(82.4→54.4%) and drops the pooled held-out headline (58.6→50.0%). Note `deep-only off` (not shown,
+−1.22/−99) is byte-identical to DEFAULT: the *deep* gate never fires on the mid under-credits — it is
+the shallower −1.22→weak gate, and loosening *that* is what collapses the afflicted slice.
+
+### Verdict — documented negative (joins P, C, Gate F, structural tokens)
+The deep-negative testimony is **tag-identical** between Raman's mid-graded and afflicted-graded
+factors, so no Gate-B threshold separates them. This is increment 29's (Gate F) conclusion confirmed
+from a third angle: the mid-slice residual is a **feature gap, not a synthesis gap** — the current
+sign/degree Finding vocabulary cannot distinguish a factor Raman calls "moderate despite deep
+negatives" from one he calls "afflicted." No gate was built; the negative is pinned by
+`test_mid_slice_decomposition` (shallow-candidates carry no dignity; no looser threshold beats the
+DEFAULT held-out; afflicted always drops when mid rises). `synthesis_v2.py` and `house_judgment.py`
+byte-untouched.

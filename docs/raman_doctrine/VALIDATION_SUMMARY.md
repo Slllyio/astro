@@ -63,8 +63,8 @@ the ~55% level is the new baseline the P3 rebalance works from:
 
 ### What landed vs what is a documented negative
 
-Eight increments improved held-out accuracy; four were honestly recorded as negatives that did
-**not** move it (full detail in [`HOUSE_SCHEME_AUDIT.md`](HOUSE_SCHEME_AUDIT.md)):
+Many increments improved held-out accuracy; many others were honestly recorded as negatives that
+did **not** move it (full detail in [`HOUSE_SCHEME_AUDIT.md`](HOUSE_SCHEME_AUDIT.md)):
 
 | # | Increment | Outcome |
 |---|---|---|
@@ -93,6 +93,7 @@ Eight increments improved held-out accuracy; four were honestly recorded as nega
 | 30 | structural feature tokens (yoga-participation / dispositor-strength / benefic-cluster) | **documented negative** — a read-only separability diagnostic shows the NEW tokens ANTI-separate: each is ≥ as common on the afflicted slice as the strong slice (dispositor/cluster never fire on strong). The strong-side discriminator is holistic, not recoverable from aggregate features over the sign/degree representation; the remaining lever is a richer representation, not more features |
 | T2 | measure `synthesize_house` + Chandra-Lagna (promoted-but-unmeasured live labels) | **low-yield finding + spot-check** — Raman's overall/from-Moon verdicts are narrative (map to a 9-grade in 3/168 and 1/67), so both stay reading-side by design; against the central tendency of his crisp factor verdicts the fusion FORMULA is sound (12/14 = 85.7% within-one, ≥2-factor slice) and end-to-end tracks it at 50–67% (N=6/14) — a first measurement, no engine change |
 | 31 | synthesis_v2 Gate D (dignity/decompression floor) | **landed — the first strong-side WIN.** A diagnostic decomposed the 24 strong-floored misses (15 deep-afflicted + 6 under-detection = residual; 3 clean-dignity-crushed = tractable). Gate D floors decisive-dignity factors with strong positives in the SHALLOW-negative regime (the neg-depth condition Gate C lacked): held-out 56.9→**58.6%**, max-exp 61.7→**64.2%**, fresh-blind 71.4→**78.6%**, strong slice 17→**24%**; mid/afflicted/anchor held. Range-decompression (3/24) and from-the-Moon (anti-separates) refuted, not built |
+| 32 | mid slice (worst pool, 16.7% within-one, N=42) | **documented negative** — a committed diagnostic (`mid_slice_decomposition`) shows the under-credit is deep-neg 18 / shallow-non-besieged 6 (all with decisive-dignity 0 → disjoint from Gate D, pure under-detection). Loosening Gate B to recover the deep-neg misses is a PURE TRADE: mid 16.7→23.8% but afflicted 82.4→**54.4%** and held-out 58.6→**50.0%**. Deep-negative tags are identical on Raman's mid- and afflicted-graded factors → no threshold separates them. Confirms incr. 29 from a third angle: a FEATURE gap, not a synthesis gap |
 
 That every negative is recorded rather than buried is the point: the ceiling is characterized,
 not hand-waved.

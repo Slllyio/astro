@@ -1668,10 +1668,11 @@ Hundred Important Combinations* (archive.org djvu) → durable corpus
 `validation/corpora/three_hundred_yogas.json`: **64 yogas** (Definition + Results + coarse outcome
 class) + **39 example-chart birth lines**. Honest scope: the coverage question is answered (non-
 circular); outcome PREDICTION is not (Raman's yoga→outcome is doctrine → circular; needs real-
-population outcomes = deferred Track B). **Finding:** the engine's yoga library covers only **13/64 =
-20.3%** of Raman's named yogas (blind to the Pancha-Mahapurusha family by member name, Sakata, Sankha,
-Chatussagara, Parvata, the *-muladdhana* dhana yogas, …). This is the mechanical reason the increment-30
-yoga-participation strength token was a documented negative — the detector is absent on ~4/5 of Raman's
-combinations. Closing the gap (encoding the missing detectors) is a defined future increment; the
-corpus + charts are the data that would validate it. Measurement only, engine byte-untouched; pinned by
+population outcomes = deferred Track B). **Finding:** the engine's yoga library (`YOGA_DETECTORS`, 29
+detectors) covers **17/64 = 26.6%** of Raman's named yogas — it knows the major yogas (full Pancha-
+Mahapurusha family, luminary + big dhana/raja yogas) but is blind to the long tail (Nabhasa Akriti
+family, Dhurdhura, Chatussagara, Sakata, the *-muladdhana* dhana yogas, …). (An earlier pass said 20.3%
+— a measurement undercount that missed the PMP factory + solar/lunar positional names; corrected.) This
+tail is the mechanical reason the increment-30 yoga-participation strength token was weak. Closing the
+cleanly-definable part is increment 35. Measurement only, engine byte-untouched; pinned by
 `test_yoga_coverage`. Detail: `validation/REPORT_yoga_coverage.md`.

@@ -26,24 +26,27 @@ wealth 27 · authority 20 · fame 19 · character 13 · learning 13 · longevity
   real-birth people with known life outcomes — the deferred population track (Track B). No accuracy
   number is claimed here.
 
-## Result — the engine is blind to ~four-fifths of Raman's catalogued yogas
-`yoga_coverage.run()`: the engine's live yoga library exposes **24** distinct detectable stems;
-**13 / 64 = 20.3%** of Raman's named yogas match.
+## Result — the engine covers the major yogas, is blind to the long tail
+`yoga_coverage.run()`: the engine's yoga library (`app/core/yoga_library.py`, `YOGA_DETECTORS`)
+exposes **29** distinct detectors; **17 / 64 = 26.6%** of Raman's named yogas match. (An earlier pass
+reported 13/64 = 20.3% — a *measurement* undercount: the name extractor missed the Pancha-Mahāpuruṣa
+factory and solar/lunar positional names. Corrected here. The 64-count denominator also includes a few
+OCR-garbled duplicates — "Adhl", "Daiida", "Gola"×2 — so true coverage is a little above 26.6%.)
 
-- **Covered:** Gajakesari, Sunapha, Anapha, Amala, Budha-Aditya, Daridra, Kemadruma, Lakshmi,
-  Parijata(ha), Rajalakshana, Ardha-Chandra, Sarpa, Vasi.
-- **Missing (blind spots, 34):** the entire **Pancha-Mahāpuruṣa** family by member name (Bhadra, Hamsa,
-  Malavya, Ruchaka, Sasa — the engine references "Mahapurusha" only as a group, not each member), plus
-  Sakata, Sankha, Chatussagara, Parvata, Hamsa, Bheri, Chapa, Gauri, Mahabhagya, Vasumathi, the
-  *-muladdhana* dhana yogas, and more.
+- **Covered (17):** the whole **Pancha-Mahāpuruṣa** family (Ruchaka, Bhadra, Hamsa, Malavya, Sasa),
+  Gajakesari, Sunapha, Anapha, Amala, Budha-Aditya, Daridra, Kemadruma, Lakshmi, Parijata(ha),
+  Rajalakshana, Sarpa, Vasi.
+- **Missing (long tail, ~47):** the **Nabhasa Ākṛti** family (Gola, Yupa, Sula, Kedara, Hala, Chapa,
+  Chakra, Damini, …), the lunar **Dhurdhura**, **Chatussagara** (all kendras occupied), **Sakata**,
+  Sankha, Bheri, Gauri, Mahabhagya, Vasumathi, and the *-muladdhana* dhana yogas — plus OCR-garbled
+  duplicates that inflate the count.
 
-**This is the concrete finding:** the yoga detector — the same machinery the increment-30 strength
-token drew on — recognizes only ~1 in 4 of the combinations Raman actually names. That blindness is a
-direct, mechanical reason the yoga-participation feature could not separate the strong slice: it was
-absent on most of the yogas that carry Raman's strongest testimony. Closing this gap (encoding the
-missing 34 detectors) is a well-defined future engine increment; the outcome corpus + example charts
-are the durable data that would validate it, and also feed the daśā-timing corpus (the 41 charts carry
-balance-of-daśā lines).
+**The concrete finding:** the engine knows the *major* classical yogas (the full Mahāpuruṣa family, the
+luminary and big dhana/rāja yogas) but is blind to the long tail of combination yogas Raman catalogues.
+That tail is the mechanical reason the increment-30 yoga-participation strength token was weak — it was
+absent on many of the yogas Raman cites. Closing the cleanly-definable part of the gap is increment 35
+(below); the outcome corpus + example charts are the durable data that validate it, and the 39 charts'
+balance-of-daśā lines also feed the timing corpus.
 
 Reproduce: `PYTHONPATH=. python3 -m app.medini.doctrine.validation.yoga_coverage`. Measurement only;
 no engine change. Pinned by `tests/doctrine/test_yoga_coverage.py`.

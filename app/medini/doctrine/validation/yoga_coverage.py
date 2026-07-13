@@ -45,16 +45,18 @@ def _stem(name: str) -> str:
 
 
 def engine_yoga_stems() -> set[str]:
+    """Authoritative set of yoga names the engine's detectors emit — read from the actual `Yoga`
+    records' `name=` fields, the Pancha-Mahapurusha factory's positional names, and the name/sanskrit
+    pairs. (An earlier regex-only pass undercounted by missing the PMP factory + solar/lunar names.)"""
     names: set[str] = set()
     for f in _CORE:
         t = f.read_text(errors="ignore")
+        names |= set(re.findall(r"name\s*=\s*[\"']([A-Za-z][A-Za-z\- ]+?)[\"']", t))
+        names |= set(re.findall(r"_pmp_template\(\s*[\"'][A-Za-z]+[\"'],\s*[\"']([A-Za-z]+)[\"']", t))
+        names |= set(re.findall(r"[\"']([A-Z][a-z]+)[\"']\s*,\s*[\"'][ऀ-ॿ]", t))
         for m in re.findall(r"\"([A-Za-z][A-Za-z ]+?) ?[Yy]oga\"", t):
-            names.add(_stem(m))
-        for m in re.findall(r"([A-Z][a-z]+(?:kesari|sari|pha|druma))", t):
-            names.add(_stem(m))
-        for m in re.findall(r"name\s*=\s*[\"']([A-Za-z ]+)", t):
-            names.add(_stem(m))
-    return {n for n in names if len(n) > 2}
+            names.add(m)
+    return {_stem(n) for n in names if len(n) > 2}
 
 
 def run() -> dict[str, Any]:

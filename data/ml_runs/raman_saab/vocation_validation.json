@@ -1,0 +1,249 @@
+{
+ "n_persons": 60540,
+ "k_tests": 19,
+ "bonferroni_alpha": 0.002631578947368421,
+ "g1_threshold_rr": 1.2,
+ "mars_plus_zone_base_rate": 0.1709,
+ "family1_karaka_vocation": [
+  {
+   "observed": 5829.0,
+   "expected": 5821.44,
+   "rr": 1.0013,
+   "z": 0.192,
+   "p_one_sided": 0.42374419545230757,
+   "expected_ge_10": true,
+   "vocation": "voc_sports",
+   "karaka": "Mars",
+   "n_group": 8703,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 2563.0,
+   "expected": 2518.17,
+   "rr": 1.0178,
+   "z": 1.642,
+   "p_one_sided": 0.050332175952702576,
+   "expected_ge_10": true,
+   "vocation": "voc_military",
+   "karaka": "Mars",
+   "n_group": 3770,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 1384.0,
+   "expected": 1388.32,
+   "rr": 0.9969,
+   "z": -0.209,
+   "p_one_sided": 0.5826115855463336,
+   "expected_ge_10": true,
+   "vocation": "voc_medical",
+   "karaka": "Mars",
+   "n_group": 2090,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 8563.0,
+   "expected": 8539.46,
+   "rr": 1.0028,
+   "z": 0.491,
+   "p_one_sided": 0.31154388941802175,
+   "expected_ge_10": true,
+   "vocation": "voc_writers",
+   "karaka": "Mercury",
+   "n_group": 13191,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 1912.0,
+   "expected": 1880.62,
+   "rr": 1.0167,
+   "z": 1.285,
+   "p_one_sided": 0.09933289272080577,
+   "expected_ge_10": true,
+   "vocation": "voc_science",
+   "karaka": "Mercury",
+   "n_group": 2901,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 3005.0,
+   "expected": 2980.15,
+   "rr": 1.0083,
+   "z": 0.801,
+   "p_one_sided": 0.21156320090227115,
+   "expected_ge_10": true,
+   "vocation": "voc_business",
+   "karaka": "Mercury",
+   "n_group": 4605,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 3707.0,
+   "expected": 3747.52,
+   "rr": 0.9892,
+   "z": -1.322,
+   "p_one_sided": 0.9068410111935699,
+   "expected_ge_10": true,
+   "vocation": "voc_education",
+   "karaka": "Jupiter",
+   "n_group": 5209,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 1498.0,
+   "expected": 1509.13,
+   "rr": 0.9926,
+   "z": -0.552,
+   "p_one_sided": 0.7096349028159487,
+   "expected_ge_10": true,
+   "vocation": "voc_law",
+   "karaka": "Jupiter",
+   "n_group": 2098,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 938.0,
+   "expected": 960.85,
+   "rr": 0.9762,
+   "z": -1.413,
+   "p_one_sided": 0.9211620373117186,
+   "expected_ge_10": true,
+   "vocation": "voc_religion",
+   "karaka": "Jupiter",
+   "n_group": 1337,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 12254.0,
+   "expected": 12202.48,
+   "rr": 1.0042,
+   "z": 0.975,
+   "p_one_sided": 0.1647593638138931,
+   "expected_ge_10": true,
+   "vocation": "voc_entertainment",
+   "karaka": "Venus",
+   "n_group": 18775,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 2320.0,
+   "expected": 2355.32,
+   "rr": 0.985,
+   "z": -1.268,
+   "p_one_sided": 0.8976094369945067,
+   "expected_ge_10": true,
+   "vocation": "voc_art",
+   "karaka": "Venus",
+   "n_group": 3667,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 4684.0,
+   "expected": 4740.87,
+   "rr": 0.988,
+   "z": -1.423,
+   "p_one_sided": 0.9226104451797068,
+   "expected_ge_10": true,
+   "vocation": "voc_politics",
+   "karaka": "Sun",
+   "n_group": 7798,
+   "verdict": "refuted"
+  }
+ ],
+ "family2_eminence_yogas": [
+  {
+   "observed": 1455.0,
+   "expected": 1418.04,
+   "rr": 1.0261,
+   "z": 1.268,
+   "p_one_sided": 0.10235430969812895,
+   "expected_ge_10": true,
+   "signal": "pmp",
+   "n_eminent": 4214,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 2886.0,
+   "expected": 2888.0,
+   "rr": 0.9993,
+   "z": -0.069,
+   "p_one_sided": 0.527628866877504,
+   "expected_ge_10": true,
+   "signal": "raja",
+   "n_eminent": 4214,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 1799.0,
+   "expected": 1789.12,
+   "rr": 1.0055,
+   "z": 0.321,
+   "p_one_sided": 0.3742081067484767,
+   "expected_ge_10": true,
+   "signal": "tenth_lord_strong",
+   "n_eminent": 4214,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 3711.0,
+   "expected": 3681.14,
+   "rr": 1.0081,
+   "z": 1.443,
+   "p_one_sided": 0.07453113674058398,
+   "expected_ge_10": true,
+   "signal": "eminence_union",
+   "n_eminent": 4214,
+   "verdict": "refuted"
+  }
+ ],
+ "family3_gauquelin_mars": [
+  {
+   "observed": 344.0,
+   "expected": 356.85,
+   "rr": 0.964,
+   "z": -0.769,
+   "p_one_sided": 0.7790198549603264,
+   "expected_ge_10": true,
+   "population": "eminent_sports",
+   "n_pop": 2084,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 37.0,
+   "expected": 37.98,
+   "rr": 0.9742,
+   "z": -0.175,
+   "p_one_sided": 0.5696045278116473,
+   "expected_ge_10": true,
+   "population": "eminent_military",
+   "n_pop": 225,
+   "verdict": "refuted"
+  },
+  {
+   "observed": 369.0,
+   "expected": 385.93,
+   "rr": 0.9561,
+   "z": -0.973,
+   "p_one_sided": 0.8348359098849505,
+   "expected_ge_10": true,
+   "population": "eminent_sports_or_military",
+   "n_pop": 2257,
+   "verdict": "refuted"
+  }
+ ],
+ "validity": {
+  "null_calibration": {
+   "reps": 300,
+   "z_mean": 0.015,
+   "z_sd": 0.976
+  },
+  "planted_rr120": {
+   "target_rr": 1.2,
+   "base_rate": 0.6675,
+   "n_label": 4214,
+   "rr": 1.1992,
+   "z": 19.022,
+   "p_one_sided": 5.627123665429935e-81
+  }
+ }
+}

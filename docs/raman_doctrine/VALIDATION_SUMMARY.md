@@ -198,9 +198,31 @@ afflicted-graded ones, because the discriminator is holistic, not in any aggrega
   wiring it is scoped but deferred as low-expected-value.
 - **Timing (94% MD) / balance (93%) / longevity (ρ +0.52)** were already at their useful ceiling.
 
+## Track B — population reality axis (non-circular, real outcomes)
+
+Independent of the doctrine-fidelity axis above (which scores the encoder against Raman's *own* stated
+verdicts), Track B scores the engine's output against **real biography**. Two powered, pre-registered
+refutations now stand — nulls calibrated to N(0,1) and G1-sized planted effects recovered, so the
+absences are genuine, not underpower:
+
+- **Death timing / longevity** — Raman's dāśā death rules **refuted** at N=82,589 (Wikidata) under a
+  confound-controlled permutation null; house-based maraka rules null at N=4,586 (Rodden-timed). Whole
+  family halted by the ratchet's 3-refutation kill criterion.
+  ([death VERDICT](../ml_runs/raman_saab_death_timing_VERDICT.md))
+- **Vocation & eminence** — the first population test of the *house/kāraka/**yoga*** doctrine (incl. the
+  increments-34–38 yoga library) on **N=60,540** Rodden-timed Astro-Databank charts. All **19**
+  pre-registered tests null (RR ∈ [0.956, 1.026] vs a G1 bar of 1.20): kārakas don't predict vocation,
+  the engine's Pañca-Mahāpuruṣa/Rāja/10th-strength signals don't enrich among the "top 5 % of
+  profession", and the Gauquelin Mars-effect doesn't replicate. Null powered (planted RR 1.20 →
+  recovered 1.199, z=19). ([vocation VERDICT](../ml_runs/raman_saab_vocation_VERDICT.md),
+  [PREREG](../raman_saab/VOCATION_PREREG.md)) These say only that the doctrine, **faithfully encoded**,
+  does not predict these real outcomes at population scale — the encoding fidelity and 90 %
+  yoga-coverage are unaffected.
+
 The honest final position: the doctrine is faithfully encoded (1,913 rules across 10 books, wired
 into the grades at increment 17) and validated on every axis that admits a crisp Raman verdict; where
-it plateaus, the reason is characterized and reproducible, not hand-waved.
+it plateaus, the reason is characterized and reproducible, not hand-waved. On the independent
+population-outcome axis it is refuted at high power — reported plainly, not buried.
 
 ## Report index
 

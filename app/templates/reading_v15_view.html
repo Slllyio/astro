@@ -378,6 +378,29 @@
     .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 18px; }
     .glossary-grid dt { font-weight: 700; color: #2a1a4e; font-size: 0.86rem; margin-top: 4px; }
     .glossary-grid dd { margin: 0 0 4px; font-size: 0.82rem; color: #4a3a5a; line-height: 1.35; }
+    /* domain decision dashboard (#1,2,3,6,8) */
+    .dom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+    .dom-card { border: 1px solid #e0d8c8; border-radius: 10px; background: #fffcf6; padding: 14px 16px; display: flex; flex-direction: column; }
+    .dom-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .dom-name { font-weight: 700; color: #2a1a4e; font-size: 1rem; }
+    .dom-score { font-size: 1.5rem; font-weight: 800; line-height: 1; padding: 4px 10px; border-radius: 8px; color: #23324a; }
+    .dom-modern { font-size: 0.74rem; color: #778; margin: 3px 0 8px; line-height: 1.25; }
+    .dom-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .dom-badges .badge { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); }
+    .badge.tim-active { background:#d3ecd0; color:#2a7e4e; }
+    .badge.tim-warm   { background:#f6e6c2; color:#8a6a1a; }
+    .badge.tim-quiet  { background:#eee; color:#777; }
+    .badge.cf-very-high { background:#b8e3cf; color:#1f7e78; }
+    .badge.cf-high { background:#d3ecd0; color:#2a7e4e; }
+    .badge.cf-medium { background:#f2e2c2; color:#8a6a1a; }
+    .badge.cf-conflicting { background:#f3d4d4; color:#8a2a2a; }
+    .dom-verdict { font-size: 0.86rem; color: #3a2a5a; line-height: 1.4; margin-bottom: 6px; }
+    .dom-why { margin-top: auto; }
+    .dom-why summary { cursor: pointer; font-size: 0.78rem; color: #7a5a9a; font-weight: 600; }
+    .dom-why ul { list-style: none; padding: 0; margin: 6px 0 0; }
+    .dom-why li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 6px; color: #3a2a5a; }
+    .dom-why li .s { font-weight: 700; }
+    .dom-why li .s.p { color:#2a8e5e; } .dom-why li .s.n { color:#b0504d; }
   </style>
 </head>
 <body>
@@ -511,6 +534,52 @@
       <div class="fidelity-note">{{ house_doctrine.fidelity_note }}</div>
       {% endif %}
       {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Life domains — decision view (#1,2,3,6,8,11,14) ============== #}
+    {% set decisions = extras.domain_decisions or [] %}
+    {% if decisions %}
+    <div class="section">
+      <h2>Life domains — decision view
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">potential · timing · confidence, aggregated from the whole chart</span></h2>
+      <p class="explorer-hint">
+        Each score is a transparent roll-up of the real evidence — house grades, planet strength and the
+        daśā running now. It is a <strong>doctrine potential</strong> (0–100), not a probability that an
+        event will happen. <em>Potential</em> is the natal promise; <em>timing</em> is how strongly today's
+        period activates it; the two are resolved into one verdict rather than left contradictory.
+      </p>
+      <div class="dom-grid">
+        {% for d in decisions %}
+        {% set gi = (d.potential_index|round|int) %}
+        {% set gi = 0 if gi < 0 else (8 if gi > 8 else gi) %}
+        {% set cf = (d.confidence|lower|replace(' ', '-')) %}
+        {% set tm = 'active' if d.timing == 'Active now' else 'warm' if d.timing == 'Warming up' else 'quiet' %}
+        <div class="dom-card">
+          <div class="dom-head">
+            <span class="dom-name">{{ d.label }}</span>
+            <span class="dom-score g{{ gi }}" title="doctrine potential 0–100">{{ d.score }}</span>
+          </div>
+          <div class="dom-modern">{{ d.modern }}</div>
+          <div class="dom-badges">
+            <span class="badge g{{ gi }}">Potential: {{ d.potential }}</span>
+            <span class="badge tim-{{ tm }}">{{ d.timing }}{% if d.current_tier %} · {{ d.current_tier }}{% endif %}</span>
+            <span class="badge cf-{{ cf }}">{{ d.confidence }}</span>
+          </div>
+          <div class="dom-verdict">{{ d.verdict }}</div>
+          {% if d.contributors_pos or d.contributors_neg %}
+          <details class="dom-why">
+            <summary>Why this score</summary>
+            <ul>
+              {% for c in d.contributors_pos %}<li><span class="s p">+</span><span>{{ c }}</span></li>{% endfor %}
+              {% for c in d.contributors_neg %}<li><span class="s n">−</span><span>{{ c }}</span></li>{% endfor %}
+            </ul>
+          </details>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if house_doctrine.fidelity_note %}<div class="fidelity-note" style="margin-top:10px;">{{ house_doctrine.fidelity_note }}</div>{% endif %}
     </div>
     {% endif %}
 

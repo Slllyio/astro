@@ -239,3 +239,23 @@ class TestPresentTenseAndDoctrineEnrichments:
         for t in tensions or []:
             assert t["kind"] in ("d1d9", "factor_clash")
             assert 1 <= t["house"] <= 12 and t["text"]
+
+    def test_domain_decisions_are_question_centric_and_honest(self):
+        """extras.domain_decisions gives per-domain potential + timing +
+        confidence — a transparent roll-up, ranked strongest-first, with a
+        0–100 doctrine potential (never a fabricated probability)."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        dd = extras.get("domain_decisions") or []
+        assert len(dd) == 8  # the eight life domains
+        keys = {d["key"] for d in dd}
+        assert {"career", "wealth", "marriage", "health"} <= keys
+        scores = [d["score"] for d in dd]
+        assert scores == sorted(scores, reverse=True)  # strongest-first
+        for d in dd:
+            assert 0 <= d["score"] <= 100
+            assert d["potential"] in (
+                "Excellent", "Strong", "Good", "Moderate", "Challenging")
+            assert d["timing"] in ("Active now", "Warming up", "Quiet")
+            assert d["confidence"] in (
+                "Very high", "High", "Medium", "Low", "Conflicting indications")
+            assert d["verdict"]

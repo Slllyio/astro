@@ -632,6 +632,204 @@ def _chart_tensions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
         return []
 
 
+# Life domains → the houses/kāraka/varga that testify to them, with a
+# modern-language gloss (#11). Primary house first (double-weighted).
+# References: Raman, HTJAH — house significations; classical kārakas.
+_DOMAINS_SPEC: tuple[dict[str, Any], ...] = (
+    {"key": "career", "label": "Career", "houses": [10, 6, 11],
+     "karakas": ["Sun", "Saturn", "Mercury"], "varga": "D10_Dasamsa",
+     "modern": "profession, leadership, public standing, promotion"},
+    {"key": "wealth", "label": "Wealth & money", "houses": [2, 11],
+     "karakas": ["Jupiter", "Venus"], "varga": "D2_Hora",
+     "modern": "income, savings, assets, financial stability"},
+    {"key": "marriage", "label": "Marriage & partnership", "houses": [7],
+     "karakas": ["Venus", "Jupiter"], "varga": "D9_Navamsa",
+     "modern": "spouse, committed relationships, business partners"},
+    {"key": "health", "label": "Health & vitality", "houses": [1, 6],
+     "karakas": ["Sun", "Saturn"], "varga": "D1",
+     "modern": "energy, resilience, chronic-risk areas"},
+    {"key": "education", "label": "Education & learning", "houses": [5, 4],
+     "karakas": ["Mercury", "Jupiter"], "varga": "D24_Chaturvimsamsa",
+     "modern": "study, degrees, skills, intellect"},
+    {"key": "children", "label": "Children & creativity", "houses": [5],
+     "karakas": ["Jupiter"], "varga": "D7_Saptamsa",
+     "modern": "children, creative output, mentoring"},
+    {"key": "foreign", "label": "Foreign & travel", "houses": [12, 9, 3],
+     "karakas": ["Rahu", "Jupiter"], "varga": "D1",
+     "modern": "relocation, travel, overseas work, immigration"},
+    {"key": "spirituality", "label": "Fortune & spirituality", "houses": [9, 12],
+     "karakas": ["Jupiter", "Ketu"], "varga": "D20_Vimsamsa",
+     "modern": "luck, dharma, inner growth, guidance"},
+)
+
+
+def _potential_label(idx: float) -> str:
+    """Map a mean 0–8 doctrine grade to a domain potential band."""
+    if idx >= 6.0:
+        return "Excellent"
+    if idx >= 4.5:
+        return "Strong"
+    if idx >= 3.0:
+        return "Good"
+    if idx >= 1.5:
+        return "Moderate"
+    return "Challenging"
+
+
+def _domain_decisions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """The question-centric inference layer: for each life domain, aggregate the
+    REAL evidence the engine already produced into a decision view —
+    **potential** (natal doctrine), **timing** (the daśā running now), the
+    **positive/negative contributors**, a **confidence** from how the
+    independent signals agree, and a conflict-resolved one-line verdict.
+
+    Every number is a transparent roll-up of engine output (house grades,
+    findings, planet strength, yogas, daśā activation) — a *doctrine potential*,
+    never a probability that an event will occur. Fail-soft → []."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        if not hd:
+            return []
+        # planet strength lookup (for kāraka-strength confidence signal).
+        pstr = {r["planet"]: r for r in
+                ((extras.get("planet_strength") or {}).get("planets") or [])}
+
+        out: list[dict[str, Any]] = []
+        for spec in _DOMAINS_SPEC:
+            houses = spec["houses"]
+            # --- potential: weighted mean of the domain houses' doctrine grades.
+            idxs: list[tuple[int, float]] = []
+            for w, h in [(2.0 if i == 0 else 1.0, hh) for i, hh in enumerate(houses)]:
+                gi = (hd.get(str(h)) or {}).get("verdict_index")
+                if gi is not None:
+                    idxs.append((w, float(gi)))
+            if not idxs:
+                continue
+            mean_idx = sum(w * v for w, v in idxs) / sum(w for w, _ in idxs)
+            score100 = round(mean_idx / 8.0 * 100)
+
+            primary = hd.get(str(houses[0])) or {}
+
+            # --- contributors: real findings on the primary house's factors.
+            pos: list[str] = []
+            neg: list[str] = []
+            for factor in ("lagna", "lord", "karaka"):
+                for f in (primary.get(factor) or {}).get("findings", []) or []:
+                    d = float(f.get("delta", 0.0))
+                    txt = f.get("text", "")
+                    if not txt or d == 0:
+                        continue
+                    entry = f"{txt} ({'+' if d > 0 else ''}{round(d, 1)})"
+                    (pos if d > 0 else neg).append(entry)
+            pos = _dedup_keep(pos)[:6]
+            neg = _dedup_keep(neg)[:5]
+
+            # --- timing: the REAL MD×AD fructification tier the engine computed
+            # for the running daśā, taken as the best tier across the domain's
+            # houses (par excellence > predominant > limited > dormant).
+            _TIER_RANK = {"par excellence": 3, "predominant": 2, "limited": 1,
+                          "dormant": 0}
+            best_tier, best_rank = None, -1
+            for h in houses:
+                t = (((hd.get(str(h)) or {}).get("timing")) or {}).get("current_tier")
+                r = _TIER_RANK.get(str(t or "").lower(), -1)
+                if r > best_rank:
+                    best_rank, best_tier = r, t
+            tier = best_tier
+            is_active = best_rank >= 2                       # predominant or better
+            is_mild = best_rank == 1
+            activated_houses = sorted({
+                str(h) for h in houses
+                if _TIER_RANK.get(str(
+                    (((hd.get(str(h)) or {}).get("timing")) or {}).get("current_tier")
+                    or "").lower(), -1) >= 1
+            })
+
+            # --- confidence: how the independent signals agree.
+            signals: list[bool] = []
+            signals.append(mean_idx >= 4.0)                      # natal grade
+            d1d9 = (primary.get("d1d9") or {}).get("house")
+            if d1d9 in ("concur", "diverge"):
+                signals.append(d1d9 == "concur")                 # D1/D9 support
+            # kāraka strength
+            for k in spec["karakas"][:1]:
+                kr = pstr.get(k) or {}
+                vim = kr.get("vimsopaka")
+                if vim is not None:
+                    signals.append(vim >= 10.0)                  # kāraka strong
+            total = len(signals)
+            natal_ok = mean_idx >= 4.0
+            # Confidence = how CONSISTENTLY the independent signals point the same
+            # way as the headline potential (agreement), not how good it is.
+            direction = natal_ok
+            agree = sum(1 for s in signals if s == direction)
+            frac = agree / total if total else 0.0
+            # Genuine conflict: strong natal promise but the daśā is dormant, or a
+            # top-tier activation landing on weak natal support.
+            timing_conflict = ((natal_ok and best_rank <= 0)
+                               or (not natal_ok and best_rank >= 3))
+            if timing_conflict:
+                band = "Conflicting indications"
+            elif total == 0:
+                band = "Medium"
+            elif frac >= 0.999:
+                band = "Very high"
+            elif frac >= 0.5:
+                band = "High"
+            else:
+                band = "Medium"
+
+            # --- conflict-resolved verdict line (potential vs timing).
+            pot = _potential_label(mean_idx)
+            timing_label = ("Active now" if is_active
+                            else "Warming up" if is_mild else "Quiet")
+            if natal_ok and is_active:
+                line = f"{pot} potential and currently active — a favourable window."
+            elif natal_ok and is_mild:
+                line = (f"{pot} potential; the current daśā touches it mildly — "
+                        f"steady rather than dramatic progress.")
+            elif natal_ok and not is_active:
+                line = (f"{pot} potential, but the current daśā is quiet here — "
+                        f"results favour later periods than sudden breakthroughs.")
+            elif not natal_ok and is_active:
+                line = ("The period activates this area, yet natal support is "
+                        "limited — effort meets friction; progress with obstacles.")
+            else:
+                line = f"{pot} natal support and quiet timing — a background area for now."
+
+            out.append({
+                "key": spec["key"], "label": spec["label"],
+                "modern": spec["modern"], "houses": houses,
+                "score": score100,
+                "potential": pot,
+                "potential_index": round(mean_idx, 2),
+                "timing": timing_label,
+                "current_tier": tier,
+                "activated_houses": activated_houses,
+                "confidence": band,
+                "contributors_pos": pos,
+                "contributors_neg": neg,
+                "verdict": line,
+            })
+        # Present strongest-first for the dashboard.
+        out.sort(key=lambda d: d["score"], reverse=True)
+        return out
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def _dedup_keep(items: list[str]) -> list[str]:
+    """Order-preserving de-duplication for contributor lists."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for it in items:
+        if it not in seen:
+            seen.add(it)
+            out.append(it)
+    return out
+
+
 def _augment_present_and_doctrine(
     reading: dict[str, Any], chart_input: ChartInput,
 ) -> None:
@@ -705,6 +903,11 @@ def _augment_present_and_doctrine(
     tensions = _chart_tensions(reading)
     if tensions:
         extras["tensions"] = tensions
+
+    # --- Phase 3 (#1,2,3,6,8,11,14): the question-centric domain decision layer.
+    decisions = _domain_decisions(reading)
+    if decisions:
+        extras["domain_decisions"] = decisions
 
     # --- Phase 1b: the deterministic executive summary (reads the blocks above).
     summary = _executive_summary(reading)

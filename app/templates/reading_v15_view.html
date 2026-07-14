@@ -110,6 +110,20 @@
     .verdict-direction.negative { background: #f0d4d4; color: #6a1a1a; }
     .verdict-direction.mixed    { background: #f4e0c0; color: #6a4a0a; }
     .verdict-direction.neutral  { background: #d8dde0; color: #2a3a4a; }
+    .dasha-timeline { list-style: none; margin: 0; padding: 0; }
+    .dasha-row {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.4rem 0.6rem; border-left: 3px solid transparent; border-radius: 4px;
+    }
+    .dasha-row + .dasha-row { margin-top: 0.2rem; }
+    .dasha-row.past { opacity: 0.55; }
+    .dasha-row.current { background: #f3ecfa; border-left-color: #7a5a9a; }
+    .dasha-row .dasha-lord { font-weight: 600; min-width: 5.5rem; }
+    .dasha-row .dasha-window { color: #555; font-size: 0.85rem; }
+    .dasha-badge {
+      margin-left: auto; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      background: #7a5a9a; color: #fff; padding: 0.1rem 0.45rem; border-radius: 999px;
+    }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -215,6 +229,10 @@
   {% set prac_by_module = practitioner.by_module or {} %}
   {% set yogas_all = prac_by_module.yogas_extended or [] %}
   {% set yogas_top = yogas_all[:5] %}
+  {% set panchanga = extras.panchanga or {} %}
+  {% set ad_judgments = sequences.ad_judgments or [] %}
+  {% set adns = namespace(current=none) %}
+  {% for a in ad_judgments %}{% if a.is_current %}{% set adns.current = a %}{% endif %}{% endfor %}
   {% set contradictions = reading.contradictions or [] %}
   {% set warnings = reading.warnings or [] %}
 
@@ -290,6 +308,39 @@
       </div>
     </div>
 
+    {# ============== Panchānga (five limbs of the birth day) ============== #}
+    {% if panchanga %}
+    <div class="section">
+      <h2>Panchānga — the five limbs of the birth day</h2>
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="k">Vāra (weekday)</div>
+          <div class="v">{{ panchanga.vara.name if panchanga.vara else "—" }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Tithi</div>
+          <div class="v">
+            {% if panchanga.tithi %}{{ panchanga.tithi.name }}{% if panchanga.tithi.paksha %} ({{ panchanga.tithi.paksha }}){% endif %}{% else %}—{% endif %}
+          </div>
+        </div>
+        <div class="kv">
+          <div class="k">Nakshatra</div>
+          <div class="v">
+            {% if panchanga.nakshatra %}{{ panchanga.nakshatra.name }}{% if panchanga.nakshatra.pada %} · pāda {{ panchanga.nakshatra.pada }}{% endif %}{% if panchanga.nakshatra.lord %} · lord {{ panchanga.nakshatra.lord }}{% endif %}{% else %}—{% endif %}
+          </div>
+        </div>
+        <div class="kv">
+          <div class="k">Yoga</div>
+          <div class="v">{{ panchanga.yoga.name if panchanga.yoga else "—" }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Karana</div>
+          <div class="v">{{ panchanga.karana.name if panchanga.karana else "—" }}</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     {# ============== Current Mahadasha summary ============== #}
     {% if current_md %}
     <div class="section">
@@ -320,6 +371,45 @@
           </div>
         </div>
       </div>
+    </div>
+    {% endif %}
+
+    {# ============== Current Antardasha (bhukti within the MD) ============== #}
+    {% if adns.current %}
+    <div class="section">
+      <h2>Current Antardasha — {{ adns.current.ad_lord }}
+        <span style="font-weight: normal; color: #7a5a9a;">in {{ adns.current.md_lord }} Mahādaśā</span></h2>
+      {% set aov = adns.current.overall_verdict %}
+      {% if aov %}
+      <div class="verdict {{ aov.direction }}">
+        <span class="verdict-direction {{ aov.direction }}">{{ aov.direction }}</span>
+        {{ aov.verdict }}
+      </div>
+      {% endif %}
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="k">Window</div>
+          <div class="v">{{ adns.current.start_date }} → {{ adns.current.end_date }}</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {# ============== Mahadasha timeline ============== #}
+    {% if md_judgments %}
+    <div class="section">
+      <h2>Mahādaśā timeline</h2>
+      <ul class="dasha-timeline">
+        {% for m in md_judgments %}
+        <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+          {% set mov = m.overall_verdict %}
+          <span class="verdict-direction {{ mov.direction if mov else 'neutral' }}">{{ mov.direction if mov else 'n/a' }}</span>
+          <span class="dasha-lord">{{ m.md_lord }}</span>
+          <span class="dasha-window">{{ m.start_date }} → {{ m.end_date }}</span>
+          {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
     </div>
     {% endif %}
 

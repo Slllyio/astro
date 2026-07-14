@@ -120,6 +120,7 @@ def _classical_yogas(
             ClassicalYoga(
                 name=y.name, sanskrit=y.sanskrit, reference=y.reference,
                 description=y.description, intensity=round(float(y.intensity), 3),
+                participants=tuple(y.participants),
             )
             for y in active_yogas(chart)
         ]
@@ -525,34 +526,73 @@ def _ordinal(n: int) -> str:
     return f"{n}{suffix}"
 
 
-def _planet_strength(chart: Any) -> dict[str, Any]:
-    """Real per-planet strength numbers from the cast bundle — no fabrication.
+_DIGNITY_SCORE: dict[str, float] = {
+    "exalted": 1.0, "moolatrikona": 0.95, "own": 0.85, "friendly": 0.68,
+    "neutral": 0.5, "inimical": 0.32, "debilitated": 0.1, "enemy": 0.32,
+}
+_BALADI_SCORE: dict[str, float] = {
+    "bala": 0.5, "kumara": 0.75, "yuva": 1.0, "vriddha": 0.35, "mrita": 0.1,
+}
+_JAGRAD_SCORE: dict[str, float] = {
+    "jagrad": 1.0, "jagrat": 1.0, "swapna": 0.6, "sushupta": 0.3,
+}
 
-    Vimsopaka (0–20 rupas, the Shodashavarga composite) and Ṣaḍbala (total ÷
-    required virūpa, so ≥1.0 = meets the classical threshold), plus dignity,
-    combustion, house and Navāṁśa sign. These are the same measures the engine
-    computes internally; here they are surfaced for the reader. Fail-soft."""
+
+def _stars(frac: float) -> int:
+    """0..1 → a 0–5 star rating."""
+    return max(0, min(5, round(float(frac) * 5)))
+
+
+def _planet_strength(chart: Any, avasthas: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Real per-planet strength from the cast bundle, with an honest composite
+    (#13). Five real components — Dignity, Ṣaḍbala, Digbala, Vimsopaka, Avasthā
+    — each rated 0–5 and averaged into a 0–100 composite. Every input is a
+    measure the engine already computes; nothing is fabricated. Fail-soft."""
     if chart is None:
         return {}
     try:
         from app.core.dignity import dignity_state
+        from app.core.shadbala import dig_bala
 
         bundle = chart.bundle
         signs = bundle.chart.planet_signs
         houses = bundle.kundali.planet_house
+        av = avasthas or {}
         rows: list[dict[str, Any]] = []
         for g in _GRAHAS_9:
             if g not in signs:
                 continue
             vim = bundle.strength.get(g)              # 0..1 (composite/20)
             shad = bundle.shadbala_ratio.get(g)       # total/threshold; nodes: none
+            house = houses.get(g)
             try:
                 dig = dignity_state(g, int(signs[g]))
             except Exception:  # noqa: BLE001
                 dig = None
+            # --- component fractions (0..1), each from a real measure.
+            comp: dict[str, float | None] = {}
+            comp["dignity"] = _DIGNITY_SCORE.get(str(dig or "").lower()) if dig else None
+            comp["shadbala"] = (min(1.0, float(shad) / 1.2) if shad is not None else None)
+            comp["vimsopaka"] = float(vim) if vim is not None else None
+            try:
+                comp["digbala"] = (min(1.0, dig_bala(g, int(house)) / 60.0)
+                                   if house else None)
+            except Exception:  # noqa: BLE001
+                comp["digbala"] = None
+            entry = av.get(g) or {}
+            bal = _BALADI_SCORE.get(str(entry.get("baladi", "")).lower())
+            jag = _JAGRAD_SCORE.get(str(entry.get("jagradadi", "")).lower())
+            if bal is not None and jag is not None:
+                comp["avastha"] = (bal + jag) / 2.0
+            elif bal is not None:
+                comp["avastha"] = bal
+            else:
+                comp["avastha"] = None
+            present = [v for v in comp.values() if v is not None]
+            composite = round(sum(present) / len(present) * 100) if present else None
             rows.append({
                 "planet": g,
-                "house": houses.get(g),
+                "house": house,
                 "sign": int(signs[g]),
                 "navamsa_sign": bundle.navamsa_sign.get(g),
                 "vimsopaka": round(vim * 20.0, 1) if vim is not None else None,
@@ -560,15 +600,20 @@ def _planet_strength(chart: Any) -> dict[str, Any]:
                 "shadbala_ratio": round(float(shad), 2) if shad is not None else None,
                 "dignity": dig,
                 "combust": bool(bundle.combust.get(g, False)),
+                "composite": composite,
+                "stars": {k: (_stars(v) if v is not None else None)
+                          for k, v in comp.items()},
             })
         if not rows:
             return {}
         return {
             "planets": rows,
+            "components": ["dignity", "shadbala", "digbala", "vimsopaka", "avastha"],
             "note": (
-                "Vimsopaka is the 16-varga composite (0–20 rupas); Ṣaḍbala is the "
-                "six-fold strength as a fraction of the classical requirement "
-                "(≥1.0 meets it). Nodes take their dispositor's strength."
+                "Composite (0–100) averages five real measures — Dignity, Ṣaḍbala "
+                "(vs the classical requirement), Digbala (directional), Vimsopaka "
+                "(16-varga) and Avasthā (baladi + jāgradādi). Nodes take their "
+                "dispositor's Vimsopaka."
             ),
         }
     except Exception:  # noqa: BLE001
@@ -997,8 +1042,8 @@ def _augment_present_and_doctrine(
     if hd:
         extras["house_doctrine"] = hd
 
-    # --- Phase 2 (#4): real per-planet strength (Vimsopaka + Ṣaḍbala).
-    ps = _planet_strength(raman_chart_obj)
+    # --- Phase 2 (#4,#13): real per-planet strength + composite (5 components).
+    ps = _planet_strength(raman_chart_obj, extras.get("avasthas"))
     if ps:
         extras["planet_strength"] = ps
 

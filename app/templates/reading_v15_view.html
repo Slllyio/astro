@@ -371,6 +371,14 @@
     .dig-inimical, .dig-enemy { background:#f3e2c8; color:#7a531a; }
     .dig-debilitated { background:#f3d4d4; color:#7a1a1a; }
     .combust-flag { color:#b0504d; font-weight:700; font-size:0.72rem; }
+    .stars { color: #d8a13a; letter-spacing: 1px; font-size: 0.82rem; white-space: nowrap; }
+    .stars .star-off { color: #e3ddd0; }
+    .yoga-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .yoga-strength { font-size: 0.72rem; color: #7a5a9a; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .yoga-bar { width: 64px; height: 6px; border-radius: 3px; background: #ece3d0; overflow: hidden; display: inline-block; }
+    .yoga-bar > span { display: block; height: 100%; background: linear-gradient(90deg,#c8902a,#5aa85a); border-radius: 3px; }
+    .yoga-parts { font-size: 0.74rem; color: #667; margin-top: 3px; }
+    .yoga-desc { font-size: 0.85rem; color: #3a2a5a; margin-top: 3px; line-height: 1.4; }
     /* tensions (#10) */
     .tension-list { list-style: none; padding: 0; margin: 0; }
     .tension-list li { padding: 9px 12px; margin-bottom: 8px; background: #fdf6f0; border: 1px solid #f0dcc8; border-left: 3px solid #d08a4a; border-radius: 4px; font-size: 0.86rem; color: #5a3a1a; }
@@ -765,28 +773,31 @@
     </div>
     {% endif %}
 
-    {# ============== Planet strength — Vimsopaka + Ṣaḍbala (#4) ============== #}
+    {# ============== Planet strength — composite + 5 components (#4,#13) ============== #}
     {% set pstr = extras.planet_strength or {} %}
+    {% macro stars(n) %}{% if n is none %}<span style="color:#bbb;">—</span>{% else %}<span class="stars">{% for i in range(5) %}{% if i < n %}★{% else %}<span class="star-off">★</span>{% endif %}{% endfor %}</span>{% endif %}{% endmacro %}
     {% if pstr.planets %}
     <div class="section">
-      <h2>Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">Vimsopaka (0–20) · Ṣaḍbala vs requirement · dignity</span></h2>
+      <h2>Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">composite 0–100 from five classical measures</span></h2>
       <table class="strength-table">
         <thead>
           <tr>
-            <th>Planet</th><th>House</th><th>Dignity</th>
-            <th>Vimsopaka</th><th style="width: 120px;">strength</th>
-            <th class="num">Ṣaḍbala</th>
+            <th>Planet</th><th class="num">Composite</th>
+            <th>Dignity</th><th>Ṣaḍbala</th><th>Digbala</th>
+            <th>Vimsopaka</th><th>Avasthā</th>
           </tr>
         </thead>
         <tbody>
           {% for r in pstr.planets %}
+          {% set ci = ((r.composite or 0) / 100 * 8)|round|int %}
           <tr>
-            <td><strong>{{ r.planet }}</strong>{% if r.combust %} <span class="combust-flag" title="combust — too close to the Sun">☉ combust</span>{% endif %}</td>
-            <td>{{ r.house or '—' }}</td>
-            <td>{% if r.dignity %}<span class="dig-tag dig-{{ r.dignity }}">{{ r.dignity }}</span>{% else %}—{% endif %}</td>
-            <td class="num">{{ r.vimsopaka if r.vimsopaka is not none else '—' }}</td>
-            <td><div class="str-bar"><span style="width: {{ ((r.vimsopaka_frac or 0) * 100)|round|int }}%;"></span></div></td>
-            <td class="num">{% if r.shadbala_ratio is not none %}{{ "%.2f"|format(r.shadbala_ratio) }}×{% else %}—{% endif %}</td>
+            <td><strong>{{ r.planet }}</strong> <span style="color:#889;font-size:0.72rem;">H{{ r.house or '—' }}</span>{% if r.combust %} <span class="combust-flag" title="combust — too close to the Sun">☉</span>{% endif %}</td>
+            <td class="num"><span class="grade-pill g{{ ci if ci <= 8 else 8 }}" style="font-size:0.9rem;">{{ r.composite if r.composite is not none else '—' }}</span></td>
+            <td>{{ stars(r.stars.dignity) }} <span class="dig-tag dig-{{ r.dignity }}" style="font-size:0.62rem;">{{ r.dignity or '' }}</span></td>
+            <td>{{ stars(r.stars.shadbala) }}</td>
+            <td>{{ stars(r.stars.digbala) }}</td>
+            <td>{{ stars(r.stars.vimsopaka) }}</td>
+            <td>{{ stars(r.stars.avastha) }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -1178,9 +1189,17 @@
       {% if classical_yogas %}
         <ul class="yogas-list">
           {% for y in classical_yogas|sort(attribute='intensity', reverse=true) %}
+            {% set pct = (y.intensity * 100)|round|int %}
             <li>
-              <strong>{{ y.name }}</strong>{% if y.sanskrit %} <span style="color:#7a5a9a;">{{ y.sanskrit }}</span>{% endif %}
-              {% if y.description %}— {{ y.description }}{% endif %}
+              <div class="yoga-head">
+                <span><strong>{{ y.name }}</strong>{% if y.sanskrit %} <span style="color:#7a5a9a;">{{ y.sanskrit }}</span>{% endif %}</span>
+                <span class="yoga-strength" title="how fully the yoga is formed">
+                  <span class="yoga-bar"><span style="width: {{ pct }}%;"></span></span>
+                  {{ pct }}%{% if y.intensity >= 1.0 %} · full{% elif y.intensity >= 0.5 %} · partial{% endif %}
+                </span>
+              </div>
+              {% if y.participants %}<div class="yoga-parts">formed by {{ y.participants|join(', ') }}</div>{% endif %}
+              {% if y.description %}<div class="yoga-desc">{{ y.description }}</div>{% endif %}
               {% if y.reference %}<div class="rule" style="font-family: ui-monospace, monospace; font-size: 0.75rem; color: #7a5a9a;">{{ y.reference }}</div>{% endif %}
             </li>
           {% endfor %}

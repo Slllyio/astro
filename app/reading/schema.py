@@ -551,6 +551,7 @@ class ClassicalYoga(BaseModel):
     reference: str = ""
     description: str = ""
     intensity: float = 0.0
+    participants: tuple[str, ...] = ()   # the grahas that form the yoga (#7)
 
 
 class SequencesBlock(BaseModel):

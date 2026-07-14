@@ -279,6 +279,37 @@
       border: 1px solid #e2d4ef; border-radius: 10px;
       padding: 18px 20px; margin-bottom: 18px;
     }
+    /* ---- Master summary — the report's governing judgement ---- */
+    .master-card {
+      background: linear-gradient(135deg, #2a1a4e 0%, #3d2a63 100%);
+      color: #f4eefb; border-radius: 12px; padding: 22px 24px; margin-bottom: 20px;
+      box-shadow: 0 4px 18px rgba(42,26,78,0.18);
+    }
+    .master-card h2 { margin: 0 0 4px; color: #fff; }
+    .master-sub { font-weight: normal; color: #c8b3e6; font-size: 0.82rem; display: block; margin-top: 2px; }
+    .master-theme { font-size: 1.05rem; line-height: 1.55; color: #f0e7fb; margin: 10px 0 16px; font-style: italic; }
+    .master-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .master-tile { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 12px 14px; }
+    .master-tile-h { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #b79fe0; margin-bottom: 4px; }
+    .master-tile-v { font-size: 1.05rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .master-tile-d { font-size: 0.85rem; line-height: 1.45; color: #dccff0; }
+    .master-cite { color: #a98fd0; font-size: 0.8rem; }
+    .master-caps { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 14px; }
+    .master-cap-h { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #b79fe0; margin-right: 8px; }
+    .master-chip { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; margin: 2px 4px 2px 0; }
+    .master-chip.pos { background: rgba(120,220,150,0.18); color: #b6f0c6; border: 1px solid rgba(120,220,150,0.3); }
+    .master-chip.neg { background: rgba(240,150,150,0.16); color: #f2c2c2; border: 1px solid rgba(240,150,150,0.28); }
+    .master-decisive { background: rgba(255,255,255,0.05); border-radius: 9px; padding: 6px 14px; margin-top: 6px; }
+    .master-decisive > summary { cursor: pointer; font-weight: 600; color: #f0e7fb; padding: 6px 0; }
+    .master-cnt { font-weight: normal; color: #b79fe0; font-size: 0.85rem; }
+    .master-factor-list { list-style: none; padding: 0; margin: 8px 0; }
+    .master-factor-list li { font-size: 0.88rem; line-height: 1.5; color: #e6dbf5; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .master-factor-list li:last-child { border-bottom: none; }
+    .master-pol { display: inline-block; width: 18px; font-weight: 700; text-align: center; }
+    .master-pol.positive { color: #7fe0a0; }
+    .master-pol.negative { color: #f09a9a; }
+    .master-factor-dom { color: #a98fd0; font-size: 0.76rem; margin-left: 6px; }
+    .master-foot { font-size: 0.8rem; color: #b79fe0; margin: 8px 0 4px; line-height: 1.45; }
     .exec-card h2 { margin-top: 0; }
     .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
     .exec-lines li {
@@ -484,7 +515,7 @@
     .nav-tools { margin-left: auto; display: flex; gap: 6px; padding-left: 10px; }
     .nav-btn { font-size: 0.76rem; cursor: pointer; padding: 4px 10px; border-radius: 14px; border: 1px solid #d8c8f0; background: #fff; color: #5a3a7e; }
     .nav-btn:hover { background: #f0e8f8; }
-    h2[id], .exec-card[id], .section[id] { scroll-margin-top: 56px; }
+    h2[id], .exec-card[id], .section[id], .master-card[id] { scroll-margin-top: 56px; }
     /* ---- dark mode (toggled via data-theme on <html>) ---- */
     :root[data-theme="dark"] body { background: linear-gradient(135deg,#15131f 0%,#1c1830 100%); color: #d7d2e2; }
     :root[data-theme="dark"] .section,
@@ -557,6 +588,7 @@
   {% set house_doctrine = extras.house_doctrine or {} %}
   {% set hd_houses = house_doctrine.houses or {} %}
   {% set exec_summary = extras.executive_summary or [] %}
+  {% set master = extras.master or {} %}
   {% set GRAHAS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'] %}
   {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
   {% set ad_judgments = sequences.ad_judgments or [] %}
@@ -619,6 +651,7 @@
   <nav class="topic-nav">
     <div class="container" style="max-width: 920px;">
       <div class="inner">
+        {% if extras.master %}<a href="#s-master">Master</a>{% endif %}
         {% if extras.classical_narrative %}<a href="#s-classical-read">Reading</a>{% endif %}
         <a href="#s-summary">Summary</a>
         {% if extras.domain_decisions %}<a href="#s-domains">Domains</a>{% endif %}
@@ -651,6 +684,74 @@
         Reading id: <code>{{ reading_id }}</code>
       </span>
     </div>
+
+    {# ============== Master summary — the ONE governing judgement (leads the report) ============== #}
+    {% if master %}
+    <div class="master-card" id="s-master">
+      <h2>Master summary
+        <span class="master-sub">the single judgement the whole reading derives from</span></h2>
+      {% if master.life_theme %}<p class="master-theme">{{ master.life_theme }}</p>{% endif %}
+      <div class="master-grid">
+        {% if master.dominant_planet %}
+        <div class="master-tile">
+          <div class="master-tile-h">Chart ruler</div>
+          <div class="master-tile-v">{{ master.dominant_planet.planet }}</div>
+          <div class="master-tile-d">{{ master.dominant_planet.reason }}</div>
+        </div>
+        {% endif %}
+        {% if master.dominant_yoga %}
+        <div class="master-tile">
+          <div class="master-tile-h">Defining combination</div>
+          <div class="master-tile-v">{{ master.dominant_yoga.name }}{% if master.dominant_yoga.sanskrit %} <em>({{ master.dominant_yoga.sanskrit }})</em>{% endif %}</div>
+          <div class="master-tile-d">{{ master.dominant_yoga.effect }}{% if master.dominant_yoga.reference %} <span class="master-cite">— {{ master.dominant_yoga.reference }}</span>{% endif %}</div>
+        </div>
+        {% endif %}
+        {% if master.dominant_challenge %}
+        <div class="master-tile">
+          <div class="master-tile-h">Recurring challenge</div>
+          <div class="master-tile-v">{{ master.dominant_challenge.label }}</div>
+          <div class="master-tile-d">{{ master.dominant_challenge.reason }}</div>
+        </div>
+        {% endif %}
+        {% if master.current_phase %}
+        <div class="master-tile">
+          <div class="master-tile-h">Phase now running</div>
+          <div class="master-tile-v">{{ master.current_phase.md_lord }} daśā{% if master.current_phase.span %} · {{ master.current_phase.span }}{% endif %}</div>
+          <div class="master-tile-d">{{ master.current_phase.summary }}</div>
+        </div>
+        {% endif %}
+      </div>
+      {% if master.core_strengths or master.core_weaknesses %}
+      <div class="master-caps">
+        {% if master.core_strengths %}
+        <div class="master-cap"><span class="master-cap-h">Core strengths</span>
+          {% for s in master.core_strengths %}<span class="master-chip pos">{{ s.label }}{% if s.potential %} · {{ s.potential }}{% endif %}</span>{% endfor %}
+        </div>
+        {% endif %}
+        {% if master.core_weaknesses %}
+        <div class="master-cap"><span class="master-cap-h">Asks for care</span>
+          {% for s in master.core_weaknesses %}<span class="master-chip neg">{{ s.label }}{% if s.potential %} · {{ s.potential }}{% endif %}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if master.decisive_factors %}
+      <details class="master-decisive" open>
+        <summary>What actually decides this reading <span class="master-cnt">({{ master.decisive_factors|length }} decisive factors)</span></summary>
+        <ul class="master-factor-list">
+          {% for f in master.decisive_factors %}
+          <li>
+            <span class="master-pol {{ f.polarity }}">{{ '+' if f.polarity == 'positive' else '−' }}</span>
+            {{ f.text }}
+            <span class="master-factor-dom">{{ f.domain }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <p class="master-foot">These are the pieces of evidence carrying the most weight across every domain — the reading leads with these; the full evidence sits in each section below.</p>
+      </details>
+      {% endif %}
+    </div>
+    {% endif %}
 
     {# ============== A classical reading — in the manner of B. V. Raman (comes FIRST) ============== #}
     {% set narrative = extras.classical_narrative or [] %}

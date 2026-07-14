@@ -260,6 +260,50 @@ class TestPresentTenseAndDoctrineEnrichments:
                 "Very high", "High", "Medium", "Low", "Conflicting indications")
             assert d["verdict"]
 
+    def test_master_synthesis_is_the_governing_judgement(self):
+        """extras.master reduces every block into ONE coherent judgement — a
+        dominant planet cross-checked with its functional role, core
+        strengths/weaknesses from the real domain grades, the running daśā
+        phase, a life theme, and the ≤10 decisive factors (anti-rule-dumping).
+        Every field is real engine output, never a fabricated probability."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        master = extras.get("master") or {}
+        assert master, "the master synthesis block must be present"
+
+        # --- dominant planet is drawn from the REAL composite + functional role.
+        dp = master["dominant_planet"]
+        assert dp and dp["planet"] and dp["reason"]
+        ps_planets = {r["planet"] for r in
+                      (extras.get("planet_strength") or {}).get("planets", [])}
+        assert dp["planet"] in ps_planets
+        assert 0 <= dp["composite"] <= 100
+
+        # --- core strengths/weaknesses come from the ranked domain decisions.
+        dd_keys = {d["key"] for d in (extras.get("domain_decisions") or [])}
+        for cap in master["core_strengths"] + master["core_weaknesses"]:
+            assert cap["domain"] in dd_keys
+            assert 0 <= cap["score"] <= 100
+
+        # --- decisive factors: the anti-rule-dumping cap (≤10), each real.
+        decisive = master["decisive_factors"]
+        assert isinstance(decisive, list) and len(decisive) <= 10
+        # ranked by |contrib| descending (the strongest evidence leads).
+        mags = [abs(f["contrib"]) for f in decisive]
+        assert mags == sorted(mags, reverse=True)
+        for f in decisive:
+            assert f["text"] and f["polarity"] in ("positive", "negative")
+            assert f["domain"]
+
+        # --- current phase is the daśā running NOW, not a probability.
+        phase = master.get("current_phase")
+        if phase:
+            assert phase["md_lord"] and phase["summary"]
+            dn_lord = ((extras.get("dasha_now") or {}).get("md") or {}).get("md_lord")
+            assert phase["md_lord"] == dn_lord
+
+        # --- life theme is a single synthesised sentence.
+        assert isinstance(master["life_theme"], str)
+
     def test_narrative_and_risk_opportunity_are_derived(self):
         """extras.narrative/risks/opportunities are deterministic lay-language
         derived from the decision layer — cohesive, honest, no invented events."""

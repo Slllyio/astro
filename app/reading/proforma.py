@@ -1352,6 +1352,19 @@ def _augment_present_and_doctrine(
         except Exception:  # noqa: BLE001
             pass
 
+    # --- Master Synthesis Layer (the spine): reduce ALL the blocks above into
+    # ONE governing judgement — dominant planet / yoga / challenge, core
+    # strengths & weaknesses, life theme, current phase, and the ≤10 decisive
+    # factors the report leads with (anti-rule-dumping). Runs LAST so every
+    # input exists; every field is real engine output, never a probability.
+    try:
+        from app.reading.master_synthesis import build_master
+        master = build_master(reading, extras)
+        if master:
+            extras["master"] = master
+    except Exception:  # noqa: BLE001
+        pass
+
 
 # ---------------------------------------------------------------------------
 # Input parsing helpers

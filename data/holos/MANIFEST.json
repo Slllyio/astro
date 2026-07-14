@@ -1,0 +1,25 @@
+{
+  "fetched_at": "2026-07-14T04:57:50.513016+00:00",
+  "files": {
+    "holos_clean.csv": {
+      "url": "https://raw.githubusercontent.com/jfsagro-glitch/ASTROCRM/main/holos_clean.csv",
+      "path": "data/holos/holos_clean.csv",
+      "bytes": 6486614,
+      "sha256": "3b1a0a79fee0cab5cad4fe5b69b280fbd00f40fab3604dd7aa1f849a8beb6b47"
+    },
+    "astro_people.csv": {
+      "url": "https://raw.githubusercontent.com/jfsagro-glitch/ASTROCRM/main/astro_people.csv",
+      "path": "data/holos/astro_people.csv",
+      "bytes": 32442579,
+      "sha256": "b3ce21407a3346ffe3a93bf7fee570df6a947aed21beb48469dbb97af86200be"
+    },
+    "astro_analytics_quality.csv": {
+      "url": "https://raw.githubusercontent.com/jfsagro-glitch/ASTROCRM/main/astro_analytics_quality.csv",
+      "path": "data/holos/astro_analytics_quality.csv",
+      "bytes": 33728943,
+      "sha256": "f0ffa9921b48c8e2f3991cca80bdae43918f7f22c0a30c4d240724e20cc7786b"
+    }
+  },
+  "lapaas": {},
+  "required_complete": true
+}

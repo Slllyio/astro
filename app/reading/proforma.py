@@ -446,6 +446,140 @@ def _house_doctrine(
         return {}
 
 
+_KENDRAS_SET = {1, 4, 7, 10}
+_DUSTHANAS_SET = {6, 8, 12}
+_DUSTHANA_NAME = {6: "6th (Harsha)", 8: "8th (Sarala)", 12: "12th (Vimala)"}
+
+
+def _classical_factors(chart: Any) -> dict[str, Any]:
+    """Surface the advanced classical layers the engine can compute but the
+    reading did not yet show (#12): functional benefic/malefic + yogakāraka,
+    Maraka & Badhaka, retrogression, Graha-Yuddha (planetary war), Vipareeta
+    Rāja-yoga, and Neecha-Bhaṅga. All from real chart data, fail-soft → {}."""
+    if chart is None:
+        return {}
+    try:
+        from app.core.dignity import (
+            DEBILITATION, EXALTATION, SIGN_RULERS, dignity_state,
+        )
+        from app.core.functional_roles import (
+            badhakesh_house, badhakesh_planet, functional_roles,
+        )
+
+        bundle = chart.bundle
+        lagna = int(bundle.kundali.lagna_sign)
+        signs = bundle.chart.planet_signs
+        houses = bundle.kundali.planet_house
+        lons = bundle.chart.planet_lons
+        retro = getattr(bundle.chart, "planet_retrograde", {}) or {}
+        moon_sign = int(signs.get("Moon", lagna))
+        roles = functional_roles(lagna)
+
+        # --- functional nature summary (per visible planet).
+        functional: list[dict[str, Any]] = []
+        for p, r in roles.items():
+            tags = []
+            if r.is_yogakaraka:
+                tags.append("yogakāraka")
+            if r.is_functional_benefic:
+                tags.append("benefic")
+            if r.is_functional_malefic:
+                tags.append("malefic")
+            if r.is_maraka:
+                tags.append("maraka")
+            if r.is_badhakesh:
+                tags.append("badhaka lord")
+            nature = ("benefic" if r.is_functional_benefic
+                      else "malefic" if r.is_functional_malefic else "neutral")
+            functional.append({
+                "planet": p, "houses_ruled": list(r.houses_ruled),
+                "nature": nature, "tags": tags,
+                "is_yogakaraka": r.is_yogakaraka,
+            })
+
+        # --- Maraka & Badhaka.
+        marakas = [p for p, r in roles.items() if r.is_maraka]
+        bh = badhakesh_house(lagna)
+        try:
+            badhaka_planet = badhakesh_planet(lagna)
+        except Exception:  # noqa: BLE001
+            badhaka_planet = None
+
+        # --- Retrogression (visible non-luminaries).
+        retrograde = [p for p in _GRAHAS_9
+                      if retro.get(p) and p not in ("Sun", "Moon", "Rahu", "Ketu")]
+
+        # --- Graha-Yuddha: two tārā-grahas in the same sign within 1°.
+        war_planets = ("Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+        graha_yuddha: list[dict[str, Any]] = []
+        for i, a in enumerate(war_planets):
+            for b in war_planets[i + 1:]:
+                if a in signs and b in signs and signs[a] == signs[b]:
+                    la, lb = lons.get(a), lons.get(b)
+                    if la is None or lb is None:
+                        continue
+                    orb = abs((la % 30.0) - (lb % 30.0))
+                    if orb <= 1.0:
+                        # Winner = the one with the higher longitude (further north
+                        # proxy via degree-in-sign is unreliable; use lower degree =
+                        # "ahead"). Report both; mark the closer-to-earlier as winner.
+                        winner = a if (la % 30.0) < (lb % 30.0) else b
+                        graha_yuddha.append({
+                            "a": a, "b": b, "sign": int(signs[a]),
+                            "orb": round(orb, 2), "winner": winner,
+                        })
+
+        # --- Vipareeta Rāja-yoga: a dusthāna lord placed in a dusthāna.
+        vipareeta: list[dict[str, Any]] = []
+        for p, r in roles.items():
+            ruled_dusthanas = [h for h in r.houses_ruled if h in _DUSTHANAS_SET]
+            ph = houses.get(p)
+            if ruled_dusthanas and ph in _DUSTHANAS_SET:
+                vipareeta.append({
+                    "planet": p, "rules": ruled_dusthanas, "placed": int(ph),
+                    "name": _DUSTHANA_NAME.get(int(ph), f"{ph}th"),
+                })
+
+        # --- Neecha-Bhaṅga: a debilitated planet whose fall is cancelled.
+        neecha_bhanga: list[dict[str, Any]] = []
+        for p in _GRAHAS_9:
+            if p not in signs or p not in DEBILITATION:
+                continue
+            if DEBILITATION[p] != int(signs[p]):
+                continue
+            deb_sign = int(signs[p])
+            dispositor = SIGN_RULERS[deb_sign]
+            exalt_lord = next((g for g, s in EXALTATION.items() if s == deb_sign), None)
+            reasons: list[str] = []
+            for label, other in (("its dispositor", dispositor),
+                                  ("the sign's exaltation-lord", exalt_lord)):
+                if not other or other not in houses:
+                    continue
+                oh_l = houses.get(other)
+                oh_m = ((int(signs.get(other, moon_sign)) - moon_sign) % 12) + 1
+                if oh_l in _KENDRAS_SET or oh_m in _KENDRAS_SET:
+                    reasons.append(f"{label} {other} sits in a kendra")
+            if reasons:
+                neecha_bhanga.append({"planet": p, "reasons": reasons})
+
+        return {
+            "functional": functional,
+            "marakas": marakas,
+            "badhaka": {"house": bh, "planet": badhaka_planet},
+            "retrograde": retrograde,
+            "graha_yuddha": graha_yuddha,
+            "vipareeta": vipareeta,
+            "neecha_bhanga": neecha_bhanga,
+            "note": (
+                "Functional nature is per your Lagna (the same planet is benefic "
+                "for one ascendant, malefic for another). Vipareeta Rāja-yoga and "
+                "Neecha-Bhaṅga can turn apparent weakness into strength."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def _executive_summary(reading: Mapping[str, Any]) -> list[str]:
     """Deterministic lay-language summary built ONLY from real engine output:
     strongest/weakest houses (house_doctrine), the daśā running now
@@ -1051,6 +1185,12 @@ def _augment_present_and_doctrine(
     tensions = _chart_tensions(reading)
     if tensions:
         extras["tensions"] = tensions
+
+    # --- Phase 3 (#12): advanced classical factors (functional nature, maraka/
+    # badhaka, retrogression, graha-yuddha, vipareeta, neecha-bhanga).
+    cf = _classical_factors(raman_chart_obj)
+    if cf:
+        extras["classical_factors"] = cf
 
     # --- Phase 3 (#1,2,3,6,8,11,14): the question-centric domain decision layer.
     decisions = _domain_decisions(reading)

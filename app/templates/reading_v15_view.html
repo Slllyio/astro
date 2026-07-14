@@ -379,6 +379,13 @@
     .yoga-bar > span { display: block; height: 100%; background: linear-gradient(90deg,#c8902a,#5aa85a); border-radius: 3px; }
     .yoga-parts { font-size: 0.74rem; color: #667; margin-top: 3px; }
     .yoga-desc { font-size: 0.85rem; color: #3a2a5a; margin-top: 3px; line-height: 1.4; }
+    .cf-chip { display: inline-block; font-size: 0.68rem; padding: 1px 7px; margin: 1px 3px 1px 0; border-radius: 8px; background: #efe8f6; color: #5a3a8a; border: 1px solid #ddd0ee; }
+    .cf-callouts { margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+    .cf-note { font-size: 0.84rem; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0d8c8; background: #fdfbf6; color: #3a2a5a; line-height: 1.4; }
+    .cf-note.ok { background: #eef6ee; border-color: #cfe6cf; color: #234f2a; }
+    .cf-note.warn { background: #fbf1ea; border-color: #eed6c4; color: #6a3a1a; }
+    :root[data-theme="dark"] .cf-note { background:#241f36; border-color:#342e4a; color:#c9c2dc; }
+    :root[data-theme="dark"] .cf-chip { background:#2c2540; color:#c8b8f0; border-color:#3a3352; }
     /* tensions (#10) */
     .tension-list { list-style: none; padding: 0; margin: 0; }
     .tension-list li { padding: 9px 12px; margin-bottom: 8px; background: #fdf6f0; border: 1px solid #f0dcc8; border-left: 3px solid #d08a4a; border-radius: 4px; font-size: 0.86rem; color: #5a3a1a; }
@@ -577,6 +584,7 @@
         {% if extras.dasha_now %}<a href="#s-now">Now</a>{% endif %}
         <a href="#s-charts">Charts</a>
         {% if extras.planet_strength %}<a href="#s-strength">Strength</a>{% endif %}
+        {% if extras.classical_factors %}<a href="#s-classical">Classical</a>{% endif %}
         {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
         <a href="#s-timeline">Timeline</a>
         <a href="#s-yogas">Yogas</a>
@@ -874,6 +882,39 @@
         </tbody>
       </table>
       {% if pstr.note %}<div class="fidelity-note">{{ pstr.note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Advanced classical factors (#12) ============== #}
+    {% set cf = extras.classical_factors or {} %}
+    {% if cf.functional %}
+    <div class="section" id="s-classical">
+      <h2>Advanced classical factors
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">functional nature · maraka/badhaka · retrogression · yogas of reversal</span></h2>
+      <table class="strength-table">
+        <thead><tr><th>Planet</th><th>Functional nature</th><th>Rules houses</th><th>Roles</th></tr></thead>
+        <tbody>
+          {% for f in cf.functional %}
+          <tr>
+            <td><strong>{{ f.planet }}</strong></td>
+            <td><span class="dig-tag {{ 'dig-own' if f.nature=='benefic' else 'dig-debilitated' if f.nature=='malefic' else 'dig-neutral' }}">{{ f.nature }}</span></td>
+            <td>{{ f.houses_ruled|join(', ') if f.houses_ruled else '—' }}</td>
+            <td>{% for t in f.tags %}<span class="cf-chip">{{ t }}</span>{% endfor %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="cf-callouts">
+        {% set yks = cf.functional|selectattr('is_yogakaraka')|map(attribute='planet')|list %}
+        {% if yks %}<div class="cf-note ok"><strong>Yogakāraka:</strong> {{ yks|join(', ') }} — a single planet giving both power and fortune.</div>{% endif %}
+        {% if cf.marakas %}<div class="cf-note"><strong>Maraka (life-limiting) lords:</strong> {{ cf.marakas|join(', ') }} — significant in end-of-life daśās, not day-to-day.</div>{% endif %}
+        {% if cf.badhaka and cf.badhaka.planet %}<div class="cf-note"><strong>Badhaka:</strong> the {{ cf.badhaka.house }}th lord {{ cf.badhaka.planet }} — the classical “obstructor” for your Lagna.</div>{% endif %}
+        {% if cf.retrograde %}<div class="cf-note"><strong>Retrograde:</strong> {{ cf.retrograde|join(', ') }} — inward, revisiting themes; results often mature later.</div>{% endif %}
+        {% for g in cf.graha_yuddha %}<div class="cf-note warn"><strong>Graha-Yuddha:</strong> {{ g.a }} and {{ g.b }} are at war in sign {{ g.sign }} (orb {{ g.orb }}°) — {{ g.winner }} prevails.</div>{% endfor %}
+        {% for v in cf.vipareeta %}<div class="cf-note ok"><strong>Vipareeta Rāja-yoga:</strong> {{ v.planet }} rules the {{ v.rules|join('/') }} and sits in the {{ v.name }} house — adversity turned to gain.</div>{% endfor %}
+        {% for n in cf.neecha_bhanga %}<div class="cf-note ok"><strong>Neecha-Bhaṅga:</strong> {{ n.planet }}'s debilitation is cancelled ({{ n.reasons|join('; ') }}) — weakness redeemed.</div>{% endfor %}
+      </div>
+      {% if cf.note %}<div class="fidelity-note">{{ cf.note }}</div>{% endif %}
     </div>
     {% endif %}
 

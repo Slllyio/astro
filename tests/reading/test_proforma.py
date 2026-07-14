@@ -276,3 +276,18 @@ class TestPresentTenseAndDoctrineEnrichments:
             assert vals is None or (
                 isinstance(vals, list) and len(vals) <= 6
                 and all(isinstance(v, str) and v for v in vals))
+
+    def test_classical_factors_are_computed(self):
+        """extras.classical_factors surfaces the advanced doctrine layers (#12)
+        from real chart data — functional nature for all 7 visible planets,
+        maraka/badhaka, and the reversal-yoga detectors."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        cf = extras.get("classical_factors") or {}
+        assert cf, "classical_factors should be populated for a valid chart"
+        assert len(cf["functional"]) == 7  # the 7 visible planets
+        for f in cf["functional"]:
+            assert f["nature"] in ("benefic", "malefic", "neutral")
+        assert isinstance(cf["marakas"], list)
+        assert cf["badhaka"]["house"] in (7, 9, 11)  # dual/fixed/movable lagna
+        for group in ("retrograde", "graha_yuddha", "vipareeta", "neecha_bhanga"):
+            assert isinstance(cf[group], list)

@@ -29,6 +29,7 @@ Phase 7 wiring discipline:
 from __future__ import annotations
 
 import logging
+import re as _re
 import sys
 from datetime import UTC, datetime
 from typing import Any, Callable
@@ -358,31 +359,19 @@ def _build_raman_chart(chart_input: ChartInput) -> Any | None:
         return None
 
 
-def _house_doctrine(
-    chart: Any, dasha_lords: Mapping[str, str] | None = None,
-) -> dict[str, Any]:
-    """Run the REAL encoded Raman per-house engine over a pre-cast chart and
-    serialise the 12 house verdicts for the reading.
+def _house_doctrine(judged: Mapping[int, Any] | None) -> dict[str, Any]:
+    """Serialise the 12 REAL encoded-Raman house verdicts for the reading.
 
     This is the honest backbone for the executive summary, confidence
-    checklist, "why" breakdowns, and house-health meter — it is the exact
-    engine (`judge_all_houses_doctrine`) validated across the doctrine suite,
-    not a reinvented rollup. Fail-soft: returns {} on any error so a reading
-    never breaks.
-
-    ``dasha_lords`` is the MD/AD running TODAY (from dasha_now), so each
-    house's activation ``current_tier`` reflects the present period, not birth.
-    """
-    if chart is None:
+    checklist, "why" breakdowns, and house-health meter — it consumes the
+    exact engine (`judge_house_doctrine`, validated across the doctrine suite)
+    output, not a reinvented rollup. ``judged`` is the pre-computed
+    ``{house -> HouseJudgment}`` map (from a single ``judge_chart_doctrine``
+    pass so the doctrine engine runs once per reading). Fail-soft → {}."""
+    if not judged:
         return {}
     try:
-        from app.medini.doctrine.domains.house_judgment import (
-            VERDICT_SCALE,
-            judge_all_houses_doctrine,
-        )
-
-        dasha = dict(dasha_lords) if dasha_lords else None
-        judged = judge_all_houses_doctrine(chart, dasha=dasha)
+        from app.medini.doctrine.domains.house_judgment import VERDICT_SCALE
 
         houses: dict[str, Any] = {}
         for h, j in judged.items():
@@ -574,6 +563,115 @@ def _classical_factors(chart: Any) -> dict[str, Any]:
                 "Functional nature is per your Lagna (the same planet is benefic "
                 "for one ascendant, malefic for another). Vipareeta Rāja-yoga and "
                 "Neecha-Bhaṅga can turn apparent weakness into strength."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+_RAMAN_BOOKS: dict[str, str] = {
+    "htjah_vol1": "How to Judge a Horoscope, Vol. I",
+    "htjah_vol2": "How to Judge a Horoscope, Vol. II",
+    "hpa": "Hindu Predictive Astrology",
+    "three_hundred": "Three Hundred Important Combinations",
+    "jaimini_studies": "Studies in Jaimini Astrology",
+    "manual_hindu_astrology": "A Manual of Hindu Astrology",
+    "graha_bhava_balas": "Graha and Bhava Balas",
+    "muhurtha": "Muhurtha (Electional Astrology)",
+    "prasna_marga_1": "Prasna Marga",
+    "prasna_marga_2": "Prasna Marga",
+}
+# Hard safety filter: the doctrine's death/longevity claims were REFUTED at
+# population scale (Track B), and blunt fatalistic/harsh text must never be
+# shown as a personal statement. Only favourable, benign combinations surface.
+_RAMAN_UNSAFE = _re.compile(
+    r"death|die|dead|mortal|maraka|balarish|arisht|mrityu|life|fatal|kill|widow|"
+    r"abort|miscarr|brahminicide|suicide|assassin|blind|leper|lepro|insan|lunat|"
+    r"imprison|disease|poison|drown|accident|idiot|ignor|poor|cruel|wicked|sinful|"
+    r"immoral|adulter|prostitut|servil|vile|stupid|foolish|miser|debauch|quarrel|"
+    r"sickly|broken|dumb|deaf|bastard|thief|beggar",
+    _re.IGNORECASE,
+)
+
+
+def _clean_ocr(text: str) -> str:
+    """Tidy OCR artefacts (soft hyphens, mid-word line breaks) for display."""
+    t = text.replace("­", "").replace("¬\n", "").replace("¬", "")
+    t = t.replace("-\n", "").replace("\n", " ")
+    return _re.sub(r"\s+", " ", t).strip()
+
+
+def _raman_doctrine(cd: Any) -> dict[str, Any]:
+    """Surface the B. V. Raman knowledge base applied to THIS chart: the count of
+    doctrine rules from his corpus that fire, the source books, and the
+    **favourable** cited combinations his texts state for the chart's
+    configurations (verbatim + citation). Consumes the pre-computed
+    ``ChartDoctrine`` (single doctrine pass). Cautionary factors are
+    deliberately left to the measured tensions/risks layers — blunt fatalistic/
+    longevity text (refuted by Track B) is never surfaced. Fail-soft → {}."""
+    if cd is None:
+        return {}
+    try:
+        from app.medini.doctrine.domains.house_judgment import load_compendium
+        books = load_compendium()
+        id2rule = {r["id"]: r for rules in books.values() for r in rules}
+
+        fired: set[str] = set()
+        house_of: dict[str, int] = {}
+        for h, j in cd.houses.items():
+            for rid in j.fired_rule_ids:
+                fired.add(rid)
+                house_of.setdefault(rid, h)
+        for g in cd.chart_global:
+            fired.add(g.rule_id)
+
+        safe_types = {"graha_effect", "yoga", "bhava_judgment"}
+        favorable: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        book_counts: dict[str, int] = {}
+        for rid in fired:
+            r = id2rule.get(rid)
+            if not r:
+                continue
+            book_counts[r["book"]] = book_counts.get(r["book"], 0) + 1
+            c = r.get("consequent") or {}
+            if (r["rule_type"] not in safe_types
+                    or c.get("polarity") != "favorable"):
+                continue
+            text = _clean_ocr(str(c.get("text", "")))
+            if not text or _RAMAN_UNSAFE.search(text):
+                continue
+            key = text.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            favorable.append({
+                "text": text,
+                "book": r["book"],
+                "book_label": _RAMAN_BOOKS.get(r["book"], r["book"]),
+                "house": house_of.get(rid),
+            })
+        favorable.sort(key=lambda n: (n["house"] is None, n["house"] or 0))
+        favorable = favorable[:14]
+
+        used_books = [
+            {"id": b, "label": _RAMAN_BOOKS.get(b, b), "fired": book_counts[b]}
+            for b in sorted(book_counts, key=lambda b: book_counts[b], reverse=True)
+            if b in _RAMAN_BOOKS
+        ]
+        if not fired:
+            return {}
+        return {
+            "total_applicable": len(fired),
+            "books": used_books,
+            "favorable": favorable,
+            "note": (
+                "The engine is B. V. Raman's own doctrine encoded rule-by-rule. "
+                "Above are favourable combinations his texts state for your chart, "
+                "each cited to its source. Cautionary factors are covered by the "
+                "measured Chart-tensions and Risks sections rather than by blunt "
+                "classical prognostications (which the population validation did "
+                "not bear out)."
             ),
         }
     except Exception:  # noqa: BLE001
@@ -1171,8 +1269,21 @@ def _augment_present_and_doctrine(
     # --- Cast the RamanChart once; shared by house-doctrine + planet-strength.
     raman_chart_obj = _build_raman_chart(chart_input)
 
+    # --- Run the encoded-Raman doctrine engine ONCE; both the per-house verdicts
+    # and the fired-rule knowledge base derive from this single pass.
+    chart_doctrine = None
+    if raman_chart_obj is not None:
+        try:
+            from app.medini.doctrine.domains.house_judgment import (
+                judge_chart_doctrine,
+            )
+            _dasha = dict(dasha_lords) if dasha_lords else None
+            chart_doctrine = judge_chart_doctrine(raman_chart_obj, dasha=_dasha)
+        except Exception:  # noqa: BLE001
+            chart_doctrine = None
+
     # --- Phase 1a: the real encoded Raman per-house verdicts.
-    hd = _house_doctrine(raman_chart_obj, dasha_lords)
+    hd = _house_doctrine(chart_doctrine.houses if chart_doctrine else None)
     if hd:
         extras["house_doctrine"] = hd
 
@@ -1191,6 +1302,11 @@ def _augment_present_and_doctrine(
     cf = _classical_factors(raman_chart_obj)
     if cf:
         extras["classical_factors"] = cf
+
+    # --- B. V. Raman knowledge base: cited favourable combinations + provenance.
+    rd = _raman_doctrine(chart_doctrine)
+    if rd:
+        extras["raman_doctrine"] = rd
 
     # --- Phase 3 (#1,2,3,6,8,11,14): the question-centric domain decision layer.
     decisions = _domain_decisions(reading)

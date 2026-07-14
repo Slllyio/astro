@@ -291,3 +291,26 @@ class TestPresentTenseAndDoctrineEnrichments:
         assert cf["badhaka"]["house"] in (7, 9, 11)  # dual/fixed/movable lagna
         for group in ("retrograde", "graha_yuddha", "vipareeta", "neecha_bhanga"):
             assert isinstance(cf[group], list)
+
+    def test_raman_doctrine_is_cited_and_safe(self):
+        """extras.raman_doctrine surfaces the B. V. Raman knowledge base applied
+        to the chart — favourable, cited combinations only; blunt fatalistic /
+        longevity text (refuted by Track B) must never leak in."""
+        import re as _re
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        rd = extras.get("raman_doctrine") or {}
+        assert rd, "raman_doctrine should be populated for a valid chart"
+        assert rd["total_applicable"] > 0
+        # Every source book is one of B. V. Raman's works.
+        raman_books = {
+            "How to Judge a Horoscope, Vol. I", "How to Judge a Horoscope, Vol. II",
+            "Hindu Predictive Astrology", "Three Hundred Important Combinations",
+            "Studies in Jaimini Astrology", "A Manual of Hindu Astrology",
+            "Graha and Bhava Balas", "Muhurtha (Electional Astrology)", "Prasna Marga",
+        }
+        for b in rd["books"]:
+            assert b["label"] in raman_books
+        unsafe = _re.compile(r"death|\bdie\b|mortal|balarish|fatal|\bkill", _re.I)
+        for f in rd["favorable"]:
+            assert f["text"] and f["book_label"] in raman_books
+            assert not unsafe.search(f["text"]), f["text"]

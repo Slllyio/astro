@@ -386,6 +386,16 @@
     .cf-note.warn { background: #fbf1ea; border-color: #eed6c4; color: #6a3a1a; }
     :root[data-theme="dark"] .cf-note { background:#241f36; border-color:#342e4a; color:#c9c2dc; }
     :root[data-theme="dark"] .cf-chip { background:#2c2540; color:#c8b8f0; border-color:#3a3352; }
+    .raman-list { list-style: none; padding: 0; margin: 0; }
+    .raman-list li { padding: 9px 0; border-bottom: 1px dotted #ece3d0; }
+    .raman-list li:last-child { border-bottom: none; }
+    .raman-text { color: #33244e; font-size: 0.9rem; line-height: 1.45; }
+    .raman-cite { display: block; font-size: 0.75rem; color: #8a6a5a; margin-top: 2px; }
+    .raman-books { margin-top: 12px; font-size: 0.8rem; color: #5a4a6a; line-height: 1.5; padding-top: 10px; border-top: 1px solid #ede4d3; }
+    :root[data-theme="dark"] .raman-text { color: #d7d2e2; }
+    :root[data-theme="dark"] .raman-cite { color: #b09a8a; }
+    :root[data-theme="dark"] .raman-list li { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .raman-books { color: #b6afc9; border-top-color: #342e4a; }
     /* tensions (#10) */
     .tension-list { list-style: none; padding: 0; margin: 0; }
     .tension-list li { padding: 9px 12px; margin-bottom: 8px; background: #fdf6f0; border: 1px solid #f0dcc8; border-left: 3px solid #d08a4a; border-radius: 4px; font-size: 0.86rem; color: #5a3a1a; }
@@ -587,6 +597,7 @@
         {% if extras.classical_factors %}<a href="#s-classical">Classical</a>{% endif %}
         {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
         <a href="#s-timeline">Timeline</a>
+        {% if extras.raman_doctrine %}<a href="#s-raman">Raman</a>{% endif %}
         <a href="#s-yogas">Yogas</a>
         <div class="nav-tools">
           <button type="button" class="nav-btn" id="toggle-details" title="Expand or collapse all sections">Expand all</button>
@@ -1293,6 +1304,35 @@
         <p class="empty">No classical yogas detected.</p>
       {% endif %}
     </div>
+
+    {# ============== In B. V. Raman's words — cited favourable combinations ============== #}
+    {% set rd = extras.raman_doctrine or {} %}
+    {% if rd.favorable %}
+    <div class="section" id="s-raman">
+      <h2>In B. V. Raman's words
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">favourable combinations his texts state for your chart — verbatim &amp; cited</span></h2>
+      <p class="explorer-hint">
+        The engine is B. V. Raman's own doctrine encoded rule-by-rule; <strong>{{ rd.total_applicable }}</strong>
+        of his rules apply to your chart. Below are the favourable ones his books state — cautions are
+        covered by the measured Chart-tensions and Risks sections above, not by blunt classical
+        prognostications (which the population validation did not bear out).
+      </p>
+      <ul class="raman-list">
+        {% for f in rd.favorable %}
+        <li>
+          <span class="raman-text">{{ f.text }}</span>
+          <span class="raman-cite">— B. V. Raman, <em>{{ f.book_label }}</em>{% if f.house %} · {{ f.house }}{{ {1:'st',2:'nd',3:'rd'}.get(f.house,'th') if f.house not in [11,12,13] else 'th' }} house{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if rd.books %}
+      <div class="raman-books"><strong>Grounded in B. V. Raman's works:</strong>
+        {% for b in rd.books %}{{ b.label }} <span style="color:#8a7a9a;">({{ b.fired }})</span>{% if not loop.last %} · {% endif %}{% endfor %}
+      </div>
+      {% endif %}
+      {% if rd.note %}<div class="fidelity-note">{{ rd.note }}</div>{% endif %}
+    </div>
+    {% endif %}
 
     {# ============== Classical yogas (full named catalog, cited) ============== #}
     {% set classical_yogas = reading.classical_yogas or [] %}

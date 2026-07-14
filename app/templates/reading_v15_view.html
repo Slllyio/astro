@@ -357,6 +357,27 @@
     .why-sign.pos { color: #2a8e5e; } .why-sign.neg { color: #b0504d; } .why-sign.zero { color:#aaa; }
     .why-frame { font-size: 0.68rem; color: #8a7a9a; margin-left: auto; white-space: nowrap; }
     .why-col { font-size: 0.74rem; text-transform: uppercase; letter-spacing:.03em; color:#7a5a9a; margin: 8px 0 2px; }
+    /* planet-strength table (#4) */
+    .strength-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .strength-table th, .strength-table td { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .strength-table th { color: #7a5a9a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .03em; }
+    .strength-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .str-bar { position: relative; height: 8px; border-radius: 4px; background: #ece3d0; min-width: 70px; overflow: hidden; }
+    .str-bar > span { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg,#c8902a,#5aa85a); }
+    .dig-tag { font-size: 0.7rem; padding: 1px 6px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); }
+    .dig-exalted, .dig-moolatrikona, .dig-own { background:#d8efd8; color:#24632a; }
+    .dig-friendly { background:#e6f0e0; color:#3a5a2a; }
+    .dig-neutral { background:#f0efe6; color:#666; }
+    .dig-inimical, .dig-enemy { background:#f3e2c8; color:#7a531a; }
+    .dig-debilitated { background:#f3d4d4; color:#7a1a1a; }
+    .combust-flag { color:#b0504d; font-weight:700; font-size:0.72rem; }
+    /* tensions (#10) */
+    .tension-list { list-style: none; padding: 0; margin: 0; }
+    .tension-list li { padding: 9px 12px; margin-bottom: 8px; background: #fdf6f0; border: 1px solid #f0dcc8; border-left: 3px solid #d08a4a; border-radius: 4px; font-size: 0.86rem; color: #5a3a1a; }
+    /* glossary (#15) */
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 18px; }
+    .glossary-grid dt { font-weight: 700; color: #2a1a4e; font-size: 0.86rem; margin-top: 4px; }
+    .glossary-grid dd { margin: 0 0 4px; font-size: 0.82rem; color: #4a3a5a; line-height: 1.35; }
   </style>
 </head>
 <body>
@@ -601,6 +622,62 @@
         </div>
         {% endif %}
       </div>
+      {# ---- extra vargas: D10 career, D7 children, D12 parents (#11) ---- #}
+      {% set d10chart = (extras.divisional_charts or {}).D10_Dasamsa or {} %}
+      {% set d7chart = (extras.divisional_charts or {}).D7_Saptamsa or {} %}
+      {% set d12chart = (extras.divisional_charts or {}).D12_Dwadasamsa or {} %}
+      {% if d10chart or d7chart or d12chart %}
+      <div class="charts-row" style="margin-top: 14px;">
+        {% if d10chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Daśāṁśa (D10) — career</div>
+          {{ south_chart(d10chart, dlag.D10, 'D10') }}
+        </div>
+        {% endif %}
+        {% if d7chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Saptāṁśa (D7) — children</div>
+          {{ south_chart(d7chart, dlag.D7, 'D7') }}
+        </div>
+        {% endif %}
+        {% if d12chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Dvādaśāṁśa (D12) — parents</div>
+          {{ south_chart(d12chart, dlag.D12, 'D12') }}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Planet strength — Vimsopaka + Ṣaḍbala (#4) ============== #}
+    {% set pstr = extras.planet_strength or {} %}
+    {% if pstr.planets %}
+    <div class="section">
+      <h2>Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">Vimsopaka (0–20) · Ṣaḍbala vs requirement · dignity</span></h2>
+      <table class="strength-table">
+        <thead>
+          <tr>
+            <th>Planet</th><th>House</th><th>Dignity</th>
+            <th>Vimsopaka</th><th style="width: 120px;">strength</th>
+            <th class="num">Ṣaḍbala</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in pstr.planets %}
+          <tr>
+            <td><strong>{{ r.planet }}</strong>{% if r.combust %} <span class="combust-flag" title="combust — too close to the Sun">☉ combust</span>{% endif %}</td>
+            <td>{{ r.house or '—' }}</td>
+            <td>{% if r.dignity %}<span class="dig-tag dig-{{ r.dignity }}">{{ r.dignity }}</span>{% else %}—{% endif %}</td>
+            <td class="num">{{ r.vimsopaka if r.vimsopaka is not none else '—' }}</td>
+            <td><div class="str-bar"><span style="width: {{ ((r.vimsopaka_frac or 0) * 100)|round|int }}%;"></span></div></td>
+            <td class="num">{% if r.shadbala_ratio is not none %}{{ "%.2f"|format(r.shadbala_ratio) }}×{% else %}—{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if pstr.note %}<div class="fidelity-note">{{ pstr.note }}</div>{% endif %}
     </div>
     {% endif %}
 
@@ -889,6 +966,21 @@
     </div>
     {% endif %}
 
+    {# ============== Chart tensions / contradictions (#10) ============== #}
+    {% set tensions = extras.tensions or [] %}
+    {% if tensions %}
+    <div class="section">
+      <h2>Chart tensions <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">where the testimony is divided — read these with nuance</span></h2>
+      <p class="explorer-hint">
+        Real splits the engine found: the Rāśi (promise) and Navāṁśa (fruition) disagree, or a house's
+        lord and kāraka pull opposite ways. They temper a headline verdict rather than overturn it.
+      </p>
+      <ul class="tension-list">
+        {% for t in tensions %}<li>{{ t.text }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
     {# ============== 6 Domains ============== #}
     <div class="section">
       <h2>Life-domain syntheses</h2>
@@ -1054,6 +1146,26 @@
       </div>
     </details>
     {% endif %}
+
+    {# ============== Glossary of terms (#15) ============== #}
+    <details class="section" style="margin-top: 4px;">
+      <summary style="cursor:pointer;"><h2 style="display:inline;">Glossary — the terms in this reading</h2></summary>
+      <dl class="glossary-grid" style="margin-top: 12px;">
+        <dt>Rāśi (D1)</dt><dd>The main birth chart — the "promise" of the horoscope.</dd>
+        <dt>Navāṁśa (D9)</dt><dd>The ninth-division chart — the "fruition", how the promise actually plays out.</dd>
+        <dt>Mahādaśā</dt><dd>A major planetary period (years to decades) in the Vimśottarī system that colours a whole life-phase.</dd>
+        <dt>Antardaśā (bhukti)</dt><dd>A sub-period within a mahādaśā — the more immediate texture of the time.</dd>
+        <dt>Lord</dt><dd>The planet that rules a house's sign; its condition is the house's chief testimony.</dd>
+        <dt>Kāraka</dt><dd>The natural significator of a matter (e.g. Venus for marriage), judged alongside the house.</dd>
+        <dt>Vimsopaka</dt><dd>A 0–20 composite of a planet's strength across sixteen divisional charts.</dd>
+        <dt>Ṣaḍbala</dt><dd>The classical "six-fold strength"; shown as a fraction of the required minimum (≥1.0 meets it).</dd>
+        <dt>Sarvāṣṭakavarga</dt><dd>A points (bindu) system rating each house's overall support (≥28 strong, ≤25 weak).</dd>
+        <dt>Combustion</dt><dd>A planet too close to the Sun, which weakens its ability to give results.</dd>
+        <dt>Sade-Sati</dt><dd>The ~7½-year phase while Saturn transits the signs around the natal Moon.</dd>
+        <dt>Papakartari</dt><dd>"Scissors" affliction — a planet or house hemmed between two malefics.</dd>
+        <dt>Doctrine grade</dt><dd>A verdict on B. V. Raman's 9-step strength scale — a faithful reading of the method, not a probability.</dd>
+      </dl>
+    </details>
 
     {# ============== Contradictions (only if any) ============== #}
     {% if contradictions %}

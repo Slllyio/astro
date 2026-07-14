@@ -216,3 +216,26 @@ class TestPresentTenseAndDoctrineEnrichments:
         summary = extras.get("executive_summary") or []
         assert isinstance(summary, list) and summary
         assert all(isinstance(line, str) and line for line in summary)
+
+    def test_planet_strength_carries_real_numbers(self):
+        """extras.planet_strength surfaces the bundle's real Vimsopaka (0–20)
+        and Ṣaḍbala ratios — measured, not fabricated."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        ps = extras.get("planet_strength") or {}
+        planets = ps.get("planets") or []
+        assert len(planets) == 9  # 7 visible + Rahu + Ketu
+        for r in planets:
+            assert r["planet"]
+            if r["vimsopaka"] is not None:
+                assert 0.0 <= r["vimsopaka"] <= 20.0
+
+    def test_tensions_are_bounded_and_derived(self):
+        """extras.tensions is a capped list of real D1/D9 or lord-vs-kāraka
+        splits from house_doctrine (never fabricated, never floods)."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        tensions = extras.get("tensions")
+        # May be empty for a harmonious chart, but must never exceed the cap.
+        assert tensions is None or (isinstance(tensions, list) and len(tensions) <= 6)
+        for t in tensions or []:
+            assert t["kind"] in ("d1d9", "factor_clash")
+            assert 1 <= t["house"] <= 12 and t["text"]

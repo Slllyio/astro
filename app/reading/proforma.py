@@ -202,7 +202,7 @@ def _divisional_lagnas(lagna_longitude: float) -> dict[str, int]:
         from app.core.shodashavarga import compute_divisional_longitude
 
         out = {"D1": int(lagna_longitude % 360 // 30) + 1}
-        for name, div in (("D9", 9), ("D10", 10)):
+        for name, div in (("D9", 9), ("D10", 10), ("D7", 7), ("D12", 12)):
             out[name] = int(compute_divisional_longitude(lagna_longitude, div) % 360.0 // 30) + 1
         return out
     except Exception:  # noqa: BLE001
@@ -336,11 +336,32 @@ def _d1d9_agreement(fv: Any) -> str:
     return "concur" if (r > 0) == (n > 0) else "diverge"
 
 
+def _build_raman_chart(chart_input: ChartInput) -> Any | None:
+    """Cast a RamanChart from birth data in the repo-default Lahiri frame so the
+    doctrine grades explain the SAME chart the reading displays (houses/signs
+    match the rendered kundali). Returns None on any failure. Built once and
+    shared by the house-doctrine + planet-strength enrichments."""
+    try:
+        from app.medini.doctrine import raman_chart
+        from app.medini.ml.raman_saab.chart_bundle import build_bundle
+
+        year, month, day, hour, minute, tz_offset = _parse_chart_input(chart_input)
+        bundle = build_bundle(
+            year, month, day, hour, minute, tz_offset,
+            chart_input.lat, chart_input.lon,
+        )
+        if bundle is None:
+            return None
+        return raman_chart._build(bundle, "lahiri")
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _house_doctrine(
-    chart_input: ChartInput, dasha_lords: Mapping[str, str] | None = None,
+    chart: Any, dasha_lords: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
-    """Run the REAL encoded Raman per-house engine over a freshly-cast chart
-    and serialise the 12 house verdicts for the reading.
+    """Run the REAL encoded Raman per-house engine over a pre-cast chart and
+    serialise the 12 house verdicts for the reading.
 
     This is the honest backbone for the executive summary, confidence
     checklist, "why" breakdowns, and house-health meter — it is the exact
@@ -351,24 +372,13 @@ def _house_doctrine(
     ``dasha_lords`` is the MD/AD running TODAY (from dasha_now), so each
     house's activation ``current_tier`` reflects the present period, not birth.
     """
+    if chart is None:
+        return {}
     try:
-        from app.medini.doctrine import raman_chart
         from app.medini.doctrine.domains.house_judgment import (
             VERDICT_SCALE,
             judge_all_houses_doctrine,
         )
-        from app.medini.ml.raman_saab.chart_bundle import build_bundle
-
-        year, month, day, hour, minute, tz_offset = _parse_chart_input(chart_input)
-        bundle = build_bundle(
-            year, month, day, hour, minute, tz_offset,
-            chart_input.lat, chart_input.lon,
-        )
-        if bundle is None:
-            return {}
-        # Cast in the repo-default Lahiri frame so the grades explain the SAME
-        # chart the reading displays (houses/signs match the rendered kundali).
-        chart = raman_chart._build(bundle, "lahiri")
 
         dasha = dict(dasha_lords) if dasha_lords else None
         judged = judge_all_houses_doctrine(chart, dasha=dasha)
@@ -515,6 +525,113 @@ def _ordinal(n: int) -> str:
     return f"{n}{suffix}"
 
 
+def _planet_strength(chart: Any) -> dict[str, Any]:
+    """Real per-planet strength numbers from the cast bundle — no fabrication.
+
+    Vimsopaka (0–20 rupas, the Shodashavarga composite) and Ṣaḍbala (total ÷
+    required virūpa, so ≥1.0 = meets the classical threshold), plus dignity,
+    combustion, house and Navāṁśa sign. These are the same measures the engine
+    computes internally; here they are surfaced for the reader. Fail-soft."""
+    if chart is None:
+        return {}
+    try:
+        from app.core.dignity import dignity_state
+
+        bundle = chart.bundle
+        signs = bundle.chart.planet_signs
+        houses = bundle.kundali.planet_house
+        rows: list[dict[str, Any]] = []
+        for g in _GRAHAS_9:
+            if g not in signs:
+                continue
+            vim = bundle.strength.get(g)              # 0..1 (composite/20)
+            shad = bundle.shadbala_ratio.get(g)       # total/threshold; nodes: none
+            try:
+                dig = dignity_state(g, int(signs[g]))
+            except Exception:  # noqa: BLE001
+                dig = None
+            rows.append({
+                "planet": g,
+                "house": houses.get(g),
+                "sign": int(signs[g]),
+                "navamsa_sign": bundle.navamsa_sign.get(g),
+                "vimsopaka": round(vim * 20.0, 1) if vim is not None else None,
+                "vimsopaka_frac": round(float(vim), 3) if vim is not None else None,
+                "shadbala_ratio": round(float(shad), 2) if shad is not None else None,
+                "dignity": dig,
+                "combust": bool(bundle.combust.get(g, False)),
+            })
+        if not rows:
+            return {}
+        return {
+            "planets": rows,
+            "note": (
+                "Vimsopaka is the 16-varga composite (0–20 rupas); Ṣaḍbala is the "
+                "six-fold strength as a fraction of the classical requirement "
+                "(≥1.0 meets it). Nodes take their dispositor's strength."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _chart_tensions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Honest contradiction detector built from the REAL per-house doctrine:
+    surface houses where the Rāśi (promise) and Navāṁśa (fruition) disagree, or
+    where the lord and kāraka verdicts point in opposite directions. These are
+    genuine chart tensions the engine already computes — not invented. → []."""
+    try:
+        hd = ((reading.get("chart") or {}).get("extras") or {}) \
+            .get("house_doctrine") or {}
+        houses = hd.get("houses") or {}
+        out: list[dict[str, Any]] = []
+        for h in range(1, 13):
+            hv = houses.get(str(h))
+            if not isinstance(hv, dict):
+                continue
+            area = hv.get("life_area", "")
+            # D1/D9 divergence — surfaced only when BOTH frames are substantial
+            # (|score| ≥ 0.5) and opposite in sign, so marginal splits stay quiet.
+            best: tuple[float, str] | None = None
+            for factor, key in (("house", "lagna"), ("lord", "lord"), ("karaka", "karaka")):
+                fv = hv.get(key) or {}
+                r = float(fv.get("rasi_score", 0.0))
+                n = float(fv.get("navamsa_score", 0.0))
+                if abs(r) >= 0.5 and abs(n) >= 0.5 and (r > 0) != (n > 0):
+                    mag = abs(r) + abs(n)
+                    if best is None or mag > best[0]:
+                        rich = ("a strong Rāśi promise but a weak Navāṁśa fruition"
+                                if r > 0 else
+                                "a weak Rāśi promise but a strong Navāṁśa recovery")
+                        best = (mag, f"its {factor} carries {rich}")
+            if best is not None:
+                out.append({
+                    "house": h, "life_area": area, "kind": "d1d9", "weight": best[0],
+                    "text": (
+                        f"The {_ordinal(h)} house ({area}): {best[1]} — results may "
+                        f"come, but with friction or delay."
+                    ),
+                })
+            # Lord vs kāraka opposition — the two independent testimonies clash.
+            li = (hv.get("lord") or {}).get("grade_index")
+            ki = (hv.get("karaka") or {}).get("grade_index")
+            if li is not None and ki is not None and abs(li - ki) >= 4:
+                strong, weak = ("lord", "kāraka") if li > ki else ("kāraka", "lord")
+                out.append({
+                    "house": h, "life_area": area, "kind": "factor_clash",
+                    "weight": float(abs(li - ki)),
+                    "text": (
+                        f"The {_ordinal(h)} house ({area}): the {strong} is strong "
+                        f"while the {weak} is weak — a divided testimony to weigh."
+                    ),
+                })
+        # Rank by severity and keep the most salient handful.
+        out.sort(key=lambda t: t.get("weight", 0.0), reverse=True)
+        return out[:6]
+    except Exception:  # noqa: BLE001
+        return []
+
+
 def _augment_present_and_doctrine(
     reading: dict[str, Any], chart_input: ChartInput,
 ) -> None:
@@ -571,10 +688,23 @@ def _augment_present_and_doctrine(
     except Exception:  # noqa: BLE001
         pass
 
+    # --- Cast the RamanChart once; shared by house-doctrine + planet-strength.
+    raman_chart_obj = _build_raman_chart(chart_input)
+
     # --- Phase 1a: the real encoded Raman per-house verdicts.
-    hd = _house_doctrine(chart_input, dasha_lords)
+    hd = _house_doctrine(raman_chart_obj, dasha_lords)
     if hd:
         extras["house_doctrine"] = hd
+
+    # --- Phase 2 (#4): real per-planet strength (Vimsopaka + Ṣaḍbala).
+    ps = _planet_strength(raman_chart_obj)
+    if ps:
+        extras["planet_strength"] = ps
+
+    # --- Phase 2 (#10): chart tensions derived from the D1/D9 + factor clashes.
+    tensions = _chart_tensions(reading)
+    if tensions:
+        extras["tensions"] = tensions
 
     # --- Phase 1b: the deterministic executive summary (reads the blocks above).
     summary = _executive_summary(reading)

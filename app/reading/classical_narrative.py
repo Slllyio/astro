@@ -175,6 +175,18 @@ def build_classical_narrative(
         decisions = extras.get("domain_decisions") or []
         dn = extras.get("dasha_now") or {}
 
+        # Raman's own verbatim statements for this chart, mapped to the house
+        # each pertains to, so they can be woven into the relevant chapter.
+        cites_by_house: dict[int, list[str]] = {}
+        cites_global: list[str] = []
+        for c in ((extras.get("raman_doctrine") or {}).get("favorable") or []):
+            q = f'"{str(c.get("text", "")).rstrip(".")}." ({c.get("book_label", "")})'
+            h = c.get("house")
+            if h:
+                cites_by_house.setdefault(int(h), []).append(q)
+            else:
+                cites_global.append(q)
+
         def hidx(h: int) -> int | None:
             return (hd.get(str(h)) or {}).get("verdict_index")
 
@@ -248,6 +260,8 @@ def build_classical_narrative(
                 f"On the other hand, {areas} are less favoured, and these temper "
                 f"the fuller fruition of the horoscope's promise."
             )
+        if cites_global:
+            p1.append("The texts are explicit on the point: " + cites_global[0])
         chapters.append({"n": 1, "title": "General estimate of the horoscope",
                          "paras": [" ".join(p1)]})
 
@@ -310,6 +324,9 @@ def build_classical_narrative(
             sh = _PLANET_QUALITY[weaknesses[0]][1]
             portrait.append(
                 f"The chief failing to be guarded against is {sh}.")
+        if cites_by_house.get(1):
+            portrait.append("Of the ascendant the texts observe: "
+                            + " ".join(cites_by_house[1][:2]))
         chapters.append({"n": 2, "title": "The Ascendant and the native's character",
                          "paras": [" ".join(s), " ".join(portrait)]})
 
@@ -416,13 +433,17 @@ def build_classical_narrative(
             lord = SIGN_RULERS[((lagna_sign - 1 + h - 1) % 12) + 1]
             lh = houses.get(lord)
             lv = (hd.get(str(h)) or {}).get("lord") or {}
-            lord_sentences.append(
+            sent = (
                 f"The {_HOUSE_ORD[h]} lord {lord}, in the "
                 f"{_HOUSE_ORD.get(lh, str(lh))} house, is "
                 f"{_grade_word(lv.get('grade_index'))}, so that matters of "
                 f"{_HOUSE_SIG[h].split(',')[0]} are "
                 f"{_fav_phrase(lv.get('grade_index'))}."
             )
+            # Weave the house's own cited Raman phrase here (house 1 handled in ch.2).
+            if h != 1 and cites_by_house.get(h):
+                sent += " Here the texts note: " + cites_by_house[h][0]
+            lord_sentences.append(sent)
         # group into two paragraphs of six for readability
         chapters.append({
             "n": 7, "title": "The house lords",
@@ -515,16 +536,6 @@ def build_classical_narrative(
                 )
         if recon:
             paras9_all.append(" ".join(recon))
-
-        # Weave one or two of Raman's own verbatim statements for this chart.
-        fav_cites = ((extras.get("raman_doctrine") or {}).get("favorable") or [])[:2]
-        if fav_cites:
-            quoted = " ".join(
-                f'"{c["text"].rstrip(".")}." ({c["book_label"]})'
-                for c in fav_cites
-            )
-            paras9_all.append("In the words of Raman's own texts on such placements: "
-                              + quoted)
 
         chapters.append({"n": 9, "title": "Synthesis of the several bhāvas",
                          "paras": paras9_all})

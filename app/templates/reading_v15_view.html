@@ -405,6 +405,16 @@
     :root[data-theme="dark"] .method-steps li { color: #cec8de; border-bottom-color: #2e2942; }
     :root[data-theme="dark"] .valid-table td { border-bottom-color: #2e2942; }
     :root[data-theme="dark"] .valid-table td.num { color: #6ec49a; }
+    /* classical judicial narrative — the "book" reading */
+    .classical-narrative { background: #fdfbf5; }
+    .cn-intro { font-size: 0.85rem; color: #6a5a4a; font-style: italic; margin: 0 0 16px; line-height: 1.5; }
+    .cn-chapter { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; color: #4a2a6e; margin: 20px 0 8px; font-weight: 600; }
+    .cn-chapter:first-of-type { margin-top: 6px; }
+    .cn-para { font-family: Georgia, "Times New Roman", serif; font-size: 0.98rem; line-height: 1.72; color: #2c2438; margin: 0 0 12px; text-align: justify; }
+    :root[data-theme="dark"] .classical-narrative { background: #201c30; }
+    :root[data-theme="dark"] .cn-chapter { color: #c9b8f0; }
+    :root[data-theme="dark"] .cn-para { color: #d3cde2; }
+    :root[data-theme="dark"] .cn-intro { color: #a99ab0; }
     :root[data-theme="dark"] .raman-text { color: #d7d2e2; }
     :root[data-theme="dark"] .raman-cite { color: #b09a8a; }
     :root[data-theme="dark"] .raman-list li { border-bottom-color: #2e2942; }
@@ -602,6 +612,7 @@
   <nav class="topic-nav">
     <div class="container" style="max-width: 920px;">
       <div class="inner">
+        {% if extras.classical_narrative %}<a href="#s-classical-read">Reading</a>{% endif %}
         <a href="#s-summary">Summary</a>
         {% if extras.domain_decisions %}<a href="#s-domains">Domains</a>{% endif %}
         {% if extras.dasha_now %}<a href="#s-now">Now</a>{% endif %}
@@ -633,6 +644,25 @@
         Reading id: <code>{{ reading_id }}</code>
       </span>
     </div>
+
+    {# ============== A classical reading — in the manner of B. V. Raman (comes FIRST) ============== #}
+    {% set narrative = extras.classical_narrative or [] %}
+    {% if narrative %}
+    <div class="section classical-narrative" id="s-classical-read">
+      <h2>A classical reading — in the manner of B. V. Raman
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the judicial assessment, in his own sequence of reasoning</span></h2>
+      <p class="cn-intro">
+        Read from the horoscope itself — the ascendant, its lord, the Moon, the planets, the house
+        lords and the yogas judged in order, and only then the timing — in measured terms, as in
+        <em>How to Judge a Horoscope</em>. The numerical dashboard below expresses the same
+        judgments quantitatively.
+      </p>
+      {% for c in narrative %}
+        <h3 class="cn-chapter">{{ c.n }}. {{ c.title }}</h3>
+        {% for p in c.paras %}{% if p %}<p class="cn-para">{{ p }}</p>{% endif %}{% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
 
     {# ============== Executive summary + house-health meter (Phase 1b/1e) ============== #}
     {% if exec_summary or hd_houses %}

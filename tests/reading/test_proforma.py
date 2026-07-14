@@ -314,3 +314,22 @@ class TestPresentTenseAndDoctrineEnrichments:
         for f in rd["favorable"]:
             assert f["text"] and f["book_label"] in raman_books
             assert not unsafe.search(f["text"]), f["text"]
+
+    def test_classical_narrative_follows_ramans_hierarchy(self):
+        """extras.classical_narrative is the ten-chapter judicial reading in
+        Raman's sequence — connected prose derived from the real engine output,
+        no scores in the text."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        narrative = extras.get("classical_narrative") or []
+        assert len(narrative) == 10
+        titles = [c["title"] for c in narrative]
+        # The Raman hierarchy: general → ascendant → lord → Moon → Sun → ...
+        assert "General estimate" in titles[0]
+        assert "Ascendant" in titles[1] and "lord" in titles[2].lower()
+        assert "Moon" in titles[3] and "Sun" in titles[4]
+        assert "yoga" in titles[7].lower() and "Timing" in titles[9]
+        for c in narrative:
+            assert c["paras"]
+            for p in c["paras"]:
+                # Judicial prose must not leak raw numeric scores like "(+1.2)".
+                assert "+0." not in p and "/100" not in p

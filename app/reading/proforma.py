@@ -1327,6 +1327,21 @@ def _augment_present_and_doctrine(
     if summary:
         extras["executive_summary"] = summary
 
+    # --- Classical judicial narrative in the manner of B. V. Raman — a
+    # continuous, measured reading following his hierarchy (Ascendant → lord →
+    # Moon → Sun → planets → house lords → yogas → synthesis → timing). Reasons
+    # from the SAME real engine output the dashboard shows. Fail-soft.
+    if raman_chart_obj is not None:
+        try:
+            from app.reading.classical_narrative import build_classical_narrative
+            narrative_chapters = build_classical_narrative(
+                reading, raman_chart_obj.bundle,
+            )
+            if narrative_chapters:
+                extras["classical_narrative"] = narrative_chapters
+        except Exception:  # noqa: BLE001
+            pass
+
 
 # ---------------------------------------------------------------------------
 # Input parsing helpers

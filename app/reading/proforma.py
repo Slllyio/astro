@@ -581,6 +581,20 @@ _RAMAN_BOOKS: dict[str, str] = {
     "prasna_marga_1": "Prasna Marga",
     "prasna_marga_2": "Prasna Marga",
 }
+# Weight of evidence WITHIN Raman's own encoded corpus (#13). We do NOT have
+# Parashara / Saravali / Phaladeepika encoded, so a literal cross-authority
+# table cannot be built; instead, when Raman's own sources bear on the same
+# point, his systematic judicial texts (HTJAH) outrank the predictive manual
+# (HPA), which outranks the combination catalogue (Three Hundred) and the
+# minor/aphoristic works. Stated as scope, never presented as more than it is.
+_RAMAN_SOURCE_TIER: dict[str, int] = {
+    "htjah_vol1": 5, "htjah_vol2": 5,          # the systematic judicial method
+    "hpa": 4,                                   # the predictive manual
+    "graha_bhava_balas": 4,
+    "three_hundred": 3,                         # the combination catalogue
+    "jaimini_studies": 2, "manual_hindu_astrology": 2,
+    "muhurtha": 1, "prasna_marga_1": 1, "prasna_marga_2": 1,
+}
 # Hard safety filter: the doctrine's death/longevity claims were REFUTED at
 # population scale (Track B), and blunt fatalistic/harsh text must never be
 # shown as a personal statement. Only favourable, benign combinations surface.
@@ -649,14 +663,21 @@ def _raman_doctrine(cd: Any) -> dict[str, Any]:
                 "text": text,
                 "book": r["book"],
                 "book_label": _RAMAN_BOOKS.get(r["book"], r["book"]),
+                "authority": _RAMAN_SOURCE_TIER.get(r["book"], 2),
                 "house": house_of.get(rid),
             })
-        favorable.sort(key=lambda n: (n["house"] is None, n["house"] or 0))
+        # order by house, then by source authority (HTJAH > HPA > Three Hundred)
+        # so the most authoritative combination leads within each house (#13).
+        favorable.sort(key=lambda n: (n["house"] is None, n["house"] or 0,
+                                      -n["authority"]))
         favorable = favorable[:14]
 
         used_books = [
-            {"id": b, "label": _RAMAN_BOOKS.get(b, b), "fired": book_counts[b]}
-            for b in sorted(book_counts, key=lambda b: book_counts[b], reverse=True)
+            {"id": b, "label": _RAMAN_BOOKS.get(b, b), "fired": book_counts[b],
+             "authority": _RAMAN_SOURCE_TIER.get(b, 2)}
+            for b in sorted(book_counts,
+                            key=lambda b: (_RAMAN_SOURCE_TIER.get(b, 2),
+                                           book_counts[b]), reverse=True)
             if b in _RAMAN_BOOKS
         ]
         if not fired:
@@ -672,6 +693,15 @@ def _raman_doctrine(cd: Any) -> dict[str, Any]:
                 "measured Chart-tensions and Risks sections rather than by blunt "
                 "classical prognostications (which the population validation did "
                 "not bear out)."
+            ),
+            "source_scope": (
+                "The encoded corpus is B. V. Raman's own works. Where his sources "
+                "bear on the same point, the systematic method (How to Judge a "
+                "Horoscope) is weighted above the predictive manual (Hindu "
+                "Predictive Astrology), then the combination catalogue (Three "
+                "Hundred). The classical predecessors he drew on — Parāśara, "
+                "Sārāvalī, Phaladīpikā — are NOT encoded here, so no cross-"
+                "authority weighting beyond Raman's own corpus is claimed."
             ),
         }
     except Exception:  # noqa: BLE001
@@ -1232,7 +1262,27 @@ def _augment_present_and_doctrine(
     assembled reading dict, in place. Each block is independently fail-soft;
     all output lands under ``chart.extras.*``. Called at the very end of
     ``compute()`` so the full timeline (sequences.md_judgments) is available
-    and nothing downstream can drop the new fields."""
+    and nothing downstream can drop the new fields.
+
+    Derivation order (the multi-pass reasoning, #3) — each pass reads the
+    output of the passes before it, so the derivation is explicit and no later
+    pass ever precedes an input it needs:
+
+      1. present tense .... dasha_now, transits_now
+      2. planets/houses ... house_doctrine (single judge_chart_doctrine pass),
+                            planet_strength, classical_factors, raman_doctrine
+      3. domains ......... domain_decisions
+      4. contradictions .. tensions, judgements (weighted conflict-resolution)
+      5. lay layer ....... risks/opportunities/narrative, executive_summary,
+                            classical_narrative, native_profile
+      6. MASTER .......... the governing judgement over ALL the evidence above
+                            (dominant planet/yoga/challenge, life theme, decisive
+                            factors), then threaded back into the executive
+                            summary (#16) so every section derives from it.
+      7. derive-from-master  planet_stories (dominant flagged as the central
+                            thread) + interactions.
+      8. timing .......... life_timeline (full-life daśā arc + cycle meter).
+    """
     chart_block = reading.get("chart")
     if not isinstance(chart_block, dict):
         return
@@ -1387,6 +1437,14 @@ def _augment_present_and_doctrine(
         master = build_master(reading, extras)
         if master:
             extras["master"] = master
+            # Thread the master through the report: open the executive summary
+            # with the one governing life-theme so the summary and every
+            # downstream section derive from the same coherent judgement (#16).
+            theme = master.get("life_theme")
+            if theme:
+                summ = extras.get("executive_summary")
+                if isinstance(summ, list) and theme not in summ:
+                    extras["executive_summary"] = [theme] + summ
     except Exception:  # noqa: BLE001
         pass
 

@@ -399,6 +399,32 @@ class TestPresentTenseAndDoctrineEnrichments:
         for e in eras:
             assert e["tone"] in ("favourable", "challenging", "mixed")
 
+    def test_master_is_threaded_and_sources_are_scoped(self):
+        """Phase E: the master's life theme opens the executive summary (so the
+        report derives from one judgement), and the Raman knowledge base weights
+        WITHIN his own corpus (HTJAH > HPA > Three Hundred) with the honest scope
+        that the classical predecessors are not encoded."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        master = extras.get("master") or {}
+        summary = extras.get("executive_summary") or []
+        theme = master.get("life_theme")
+        if theme and summary:
+            assert summary[0] == theme  # threaded as the opening line
+
+        rd = extras.get("raman_doctrine") or {}
+        if rd:
+            # every source carries an authority tier; HTJAH outranks HPA outranks
+            # Three Hundred.
+            tiers = {b["id"]: b["authority"] for b in rd.get("books", [])}
+            for f in rd.get("favorable", []):
+                assert isinstance(f["authority"], int)
+            if "htjah_vol1" in tiers and "hpa" in tiers:
+                assert tiers["htjah_vol1"] > tiers["hpa"]
+            if "hpa" in tiers and "three_hundred" in tiers:
+                assert tiers["hpa"] > tiers["three_hundred"]
+            # the scope is stated honestly (predecessors not encoded).
+            assert "Parāśara" in rd["source_scope"]
+
     def test_narrative_and_risk_opportunity_are_derived(self):
         """extras.narrative/risks/opportunities are deterministic lay-language
         derived from the decision layer — cohesive, honest, no invented events."""

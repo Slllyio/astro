@@ -82,6 +82,25 @@ _KENDRAS = {1, 4, 7, 10}
 _TRIKONAS = {1, 5, 9}
 _DUSTHANAS = {6, 8, 12}
 
+# Each planet's higher expression (when well placed) and its shadow (when
+# afflicted) — for the character portrait and the per-planet paragraphs.
+_PLANET_QUALITY = {
+    "Sun": ("dignity, a firm will and a love of honour",
+            "an inclination to pride or a domineering temper"),
+    "Moon": ("a receptive, contented and sympathetic mind",
+             "changefulness of mood and emotional dependence"),
+    "Mars": ("courage, decision and executive capacity",
+             "haste, irritability or a combative streak"),
+    "Mercury": ("quickness of intellect and an aptitude for learning and affairs",
+                "restlessness and a want of steadiness in thought"),
+    "Jupiter": ("wisdom, generosity, faith and good fortune",
+                "over-optimism or a tendency to excess"),
+    "Venus": ("refinement, artistic taste and domestic happiness",
+              "an over-fondness for ease and pleasure"),
+    "Saturn": ("patience, endurance and a capacity for sustained labour",
+               "melancholy, delay and a want of self-confidence"),
+}
+
 
 def _grade_word(idx: int | None) -> str:
     return {
@@ -176,6 +195,30 @@ def build_classical_narrative(
                 bits.append("vargottama, which lends it stability")
             return _andlist(bits)
 
+        def well_placed(p: str) -> bool | None:
+            """True = its higher qualities show, False = its shadow, None = mixed."""
+            dig = str((pstr.get(p) or {}).get("dignity") or "").lower()
+            comp = (pstr.get(p) or {}).get("composite")
+            if dig in ("exalted", "own", "moolatrikona") and not combust.get(p):
+                return True
+            if dig == "debilitated" or combust.get(p):
+                return False
+            if comp is not None:
+                return True if comp >= 55 else False if comp < 42 else None
+            return None
+
+        def quality_clause(p: str) -> str:
+            good, shadow = _PLANET_QUALITY.get(p, ("", ""))
+            if not good:
+                return ""
+            w = well_placed(p)
+            if w is True:
+                return f"Being well placed, it gives {good}."
+            if w is False:
+                return (f"Being here afflicted, its influence inclines rather to "
+                        f"{shadow}, which the native does well to temper.")
+            return f"It confers a fair measure of {good}."
+
         chapters: list[dict[str, Any]] = []
 
         # ---- 1. General estimate --------------------------------------------
@@ -232,8 +275,43 @@ def build_classical_narrative(
             f"The constitution may be taken as {_fav_phrase(l1)}"
             f"{'; the native should nonetheless guard against nervous strain' if (l1 or 0) <= 2 else ''}."
         )
-        chapters.append({"n": 2, "title": "The Ascendant",
-                         "paras": [" ".join(s)]})
+        # A fuller portrait of character — temperament, mind, will, courage —
+        # drawn before any prediction of events, as Raman was wont to do.
+        moon_w = well_placed("Moon")
+        sun_w = well_placed("Sun")
+        mars_w = well_placed("Mars")
+        portrait = [
+            "As to character, the disposition given by the rising sign is "
+            f"deepened by the several planets. The emotional nature, read from the "
+            f"Moon, is "
+            + ("warm, steady and sympathetic"
+               if moon_w is True else "sensitive and somewhat changeful"
+               if moon_w is False else "of an even temper") + "."
+        ]
+        portrait.append(
+            "In will and ambition the native is "
+            + ("resolute and desirous of honour"
+               if sun_w is True else "of a modest and unassuming turn"
+               if sun_w is False else "moderately ambitious") + ". In courage and "
+            "enterprise the native is "
+            + ("bold and self-reliant"
+               if mars_w is True else "cautious, and better suited to steady effort than to contest"
+               if mars_w is False else "capable when the occasion demands") + "."
+        )
+        # name one governing strength and one weakness from the planets
+        strengths = [p for p in ("Jupiter", "Venus", "Mercury", "Sun", "Mars")
+                     if well_placed(p) is True]
+        weaknesses = [p for p in ("Saturn", "Mars", "Mercury", "Moon")
+                      if well_placed(p) is False]
+        if strengths:
+            g = _PLANET_QUALITY[strengths[0]][0]
+            portrait.append(f"The horoscope inclines the native to {g}.")
+        if weaknesses:
+            sh = _PLANET_QUALITY[weaknesses[0]][1]
+            portrait.append(
+                f"The chief failing to be guarded against is {sh}.")
+        chapters.append({"n": 2, "title": "The Ascendant and the native's character",
+                         "paras": [" ".join(s), " ".join(portrait)]})
 
         # ---- 3. The Ascendant lord ------------------------------------------
         llh = houses.get(lagna_lord)
@@ -279,6 +357,9 @@ def build_classical_narrative(
                else "sensitive and at times unsettled")
             + ", and the native's happiness of mind should be judged largely from this."
         )
+        qm = quality_clause("Moon")
+        if qm:
+            s.append(qm)
         chapters.append({"n": 4, "title": "The Moon and the mind",
                          "paras": [" ".join(s)]})
 
@@ -296,6 +377,9 @@ def build_classical_narrative(
              else "It confers a measured degree of authority")
             + f"; the state of the father may be inferred from the {_HOUSE_ORD.get(sh, '')} house it tenants."
         )
+        qs = quality_clause("Sun")
+        if qs:
+            s.append(qs)
         chapters.append({"n": 5, "title": "The Sun, authority and the father",
                          "paras": [" ".join(s)]})
 
@@ -306,9 +390,11 @@ def build_classical_narrative(
             ph = houses.get(p)
             if ph is None:
                 continue
+            qc = quality_clause(p)
             parts.append(
                 f"{p}, signifying {_PLANET_SIG[p]}, is in the "
                 f"{_HOUSE_ORD.get(ph, str(ph))} house, {planet_state_clause(p)}."
+                + (f" {qc}" if qc else "")
             )
         node_bits = []
         for p in ("Rahu", "Ketu"):
@@ -352,11 +438,17 @@ def build_classical_narrative(
             full = float(y.get("intensity", 0.0)) >= 1.0
             afflicted_p = [p for p in parts_ if combust.get(p)
                            or (pstr.get(p) or {}).get("dignity") == "debilitated"]
+            # Keep only the plain-language effect; drop engine shorthand tails.
+            desc = str(y.get("description", ""))
+            for cut in ("Triggers:", " — ", "  "):
+                if cut in desc:
+                    desc = desc.split(cut)[0]
+            desc = desc.split(". ")[0].rstrip(". ")
             sent = (
                 f"{y.get('name', '')} is present"
                 f"{', formed by ' + _andlist(list(parts_)) if parts_ else ''}, "
-                f"{'fully constituted' if full else 'partially constituted'}. "
-                f"{y.get('description', '').rstrip('.')}."
+                f"{'fully constituted' if full else 'partly constituted'} — "
+                f"{desc}."
             )
             if afflicted_p:
                 sent += (f" The {'combustion' if combust.get(afflicted_p[0]) else 'weakness'} "
@@ -398,8 +490,44 @@ def build_classical_narrative(
             paras9.append(
                 f"In the matter of {label[k].lower()}, the prospects are {fav}, {tclause}."
             )
+        paras9_all = [" ".join(paras9)] if paras9 else []
+
+        # Reconcile the leading contradiction, as Raman habitually did.
+        idxof = {d["key"]: int(round(d.get("potential_index") or 0)) for d in decisions}
+        recon = []
+        car, wl, gn = idxof.get("career"), idxof.get("wealth"), None
+        if car is not None and wl is not None and car >= 4 and wl <= 2:
+            recon.append(
+                "A characteristic contradiction deserves notice: recognition and "
+                "position in the world are promised, yet the accumulation of wealth "
+                "may not keep pace with the professional standing, and the native "
+                "should temper worldly expectation accordingly."
+            )
+        elif idxof:
+            hi = max(idxof, key=lambda k: idxof[k])
+            lo = min(idxof, key=lambda k: idxof[k])
+            if idxof[hi] - idxof[lo] >= 3 and hi != lo:
+                recon.append(
+                    f"The horoscope favours {label.get(hi, hi).lower()} far more than "
+                    f"{label.get(lo, lo).lower()}; these opposite indications must be "
+                    "held together in judgement, the one being promised where the "
+                    "other is wanting."
+                )
+        if recon:
+            paras9_all.append(" ".join(recon))
+
+        # Weave one or two of Raman's own verbatim statements for this chart.
+        fav_cites = ((extras.get("raman_doctrine") or {}).get("favorable") or [])[:2]
+        if fav_cites:
+            quoted = " ".join(
+                f'"{c["text"].rstrip(".")}." ({c["book_label"]})'
+                for c in fav_cites
+            )
+            paras9_all.append("In the words of Raman's own texts on such placements: "
+                              + quoted)
+
         chapters.append({"n": 9, "title": "Synthesis of the several bhāvas",
-                         "paras": [" ".join(paras9)] if paras9 else []})
+                         "paras": paras9_all})
 
         # ---- 10. Timing ------------------------------------------------------
         md = (dn.get("md") or {}).get("md_lord")

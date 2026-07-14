@@ -1390,6 +1390,23 @@ def _augment_present_and_doctrine(
     except Exception:  # noqa: BLE001
         pass
 
+    # --- Planet stories + interaction matrix: one narrative per graha (dominant
+    # flagged as the central thread) and the pairwise relationships between them
+    # (conjunction / aspect / exchange / war) reduced to a combined effect.
+    # Runs AFTER master so each story can flag the chart's dominant planet.
+    try:
+        from app.reading.planet_story import (
+            build_interactions, build_planet_stories,
+        )
+        stories = build_planet_stories(reading, extras)
+        if stories:
+            extras["planet_stories"] = stories
+        interactions = build_interactions(reading, extras)
+        if interactions:
+            extras["interactions"] = interactions
+    except Exception:  # noqa: BLE001
+        pass
+
 
 # ---------------------------------------------------------------------------
 # Input parsing helpers

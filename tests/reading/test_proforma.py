@@ -345,6 +345,32 @@ class TestPresentTenseAndDoctrineEnrichments:
         assert lex.well_placed("debilitated", 90, False) is False
         assert lex.well_placed(None, 50, False) is None
 
+    def test_planet_stories_and_interactions(self):
+        """extras.planet_stories gives one narrative per graha (dominant flagged
+        as the central thread) and extras.interactions gives the pairwise
+        relationships reduced to a combined effect — both from real chart data."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        stories = extras.get("planet_stories") or []
+        assert stories, "planet stories must be present"
+        ps_planets = {r["planet"] for r in
+                      (extras.get("planet_strength") or {}).get("planets", [])}
+        for s in stories:
+            assert s["planet"] in ps_planets and s["text"]
+            assert s["condition"] in ("well placed", "under strain", "mixed")
+        # at most one planet is the central thread, and it matches the master.
+        doms = [s["planet"] for s in stories if s["is_dominant"]]
+        assert len(doms) <= 1
+        master_dp = ((extras.get("master") or {}).get("dominant_planet") or {})
+        if doms and master_dp:
+            assert doms[0] == master_dp["planet"]
+            assert stories[0]["is_dominant"]  # dominant kept at the head
+
+        interactions = extras.get("interactions") or []
+        for r in interactions:
+            assert r["relation"] in ("war", "exchange", "conjunct", "mutual", "aspect")
+            assert r["a"] in ps_planets and r["b"] in ps_planets and r["a"] != r["b"]
+            assert r["effect"]
+
     def test_narrative_and_risk_opportunity_are_derived(self):
         """extras.narrative/risks/opportunities are deterministic lay-language
         derived from the decision layer — cohesive, honest, no invented events."""

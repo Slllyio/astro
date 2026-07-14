@@ -325,6 +325,30 @@
     .native-gov { font-weight: normal; color: #8a72b0; font-size: 0.76rem; }
     .native-t { font-size: 0.88rem; line-height: 1.5; color: #3a2a56; }
     :root[data-theme="dark"] .native-t { color: #cabbe4; }
+    /* ---- Planet stories + interaction matrix ---- */
+    .pstory-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .pstory { border: 1px solid #e6e0ee; border-radius: 8px; padding: 11px 14px; background: #fdfcff; }
+    :root[data-theme="dark"] .pstory { background: #1e1a2c; border-color: #362f4a; }
+    .pstory-dom { border: 1px solid #b79fe0; box-shadow: 0 1px 8px rgba(122,90,154,0.14); }
+    .pstory-h { font-weight: 600; color: #2a1a4e; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+    :root[data-theme="dark"] .pstory-h { color: #e8ddf7; }
+    .pstory-badge { font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; background: #7a5a9a; border-radius: 10px; padding: 2px 8px; }
+    .pstory-cond { font-size: 0.7rem; margin-left: auto; padding: 1px 8px; border-radius: 10px; }
+    .pstory-cond.cond-well-placed { background: #e2f5ea; color: #2c7d54; }
+    .pstory-cond.cond-under-strain { background: #f8e6e6; color: #9a4444; }
+    .pstory-cond.cond-mixed { background: #f6efdd; color: #8a6d2a; }
+    .pstory-t { font-size: 0.86rem; line-height: 1.5; color: #3a2a56; }
+    :root[data-theme="dark"] .pstory-t { color: #c7b9e2; }
+    .pstory-inter-h { margin-top: 18px; color: #4a3570; font-size: 1rem; }
+    .pstory-inter { list-style: none; padding: 0; margin: 8px 0 0; }
+    .pstory-inter li { font-size: 0.88rem; line-height: 1.5; color: #33244e; padding: 6px 0; border-bottom: 1px solid #efe9f5; }
+    :root[data-theme="dark"] .pstory-inter li { color: #cabbe4; border-color: #2c2740; }
+    .pstory-inter li:last-child { border-bottom: none; }
+    .pstory-rel { display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; padding: 1px 8px; border-radius: 10px; margin-right: 6px; }
+    .pstory-rel.rel-war { background: #f6dede; color: #a03030; }
+    .pstory-rel.rel-exchange { background: #e0ecf8; color: #2a5a8a; }
+    .pstory-rel.rel-conjunct { background: #ece3f5; color: #6a4a8a; }
+    .pstory-rel.rel-mutual, .pstory-rel.rel-aspect { background: #eef0f2; color: #556; }
     .exec-card h2 { margin-top: 0; }
     .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
     .exec-lines li {
@@ -674,6 +698,7 @@
         {% if extras.dasha_now %}<a href="#s-now">Now</a>{% endif %}
         <a href="#s-charts">Charts</a>
         {% if extras.planet_strength %}<a href="#s-strength">Strength</a>{% endif %}
+        {% if extras.planet_stories %}<a href="#s-planets">Planets</a>{% endif %}
         {% if extras.classical_factors %}<a href="#s-classical">Classical</a>{% endif %}
         {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
         <a href="#s-timeline">Timeline</a>
@@ -1088,6 +1113,33 @@
         </tbody>
       </table>
       {% if pstr.note %}<div class="fidelity-note">{{ pstr.note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Planet stories + interaction matrix (Phase C) ============== #}
+    {% set stories = extras.planet_stories or [] %}
+    {% set interactions = extras.interactions or [] %}
+    {% if stories %}
+    <div class="section" id="s-planets">
+      <h2>The planets in your chart
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">each graha's role, condition and arc — the dominant one is your central thread</span></h2>
+      <div class="pstory-list">
+        {% for s in stories %}
+        <div class="pstory{% if s.is_dominant %} pstory-dom{% endif %}">
+          <div class="pstory-h">{{ s.planet }}{% if s.is_dominant %} <span class="pstory-badge">central thread</span>{% endif %}
+            <span class="pstory-cond cond-{{ s.condition|replace(' ', '-') }}">{{ s.condition }}</span></div>
+          <div class="pstory-t">{{ s.text }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if interactions %}
+      <h3 class="pstory-inter-h">How your planets interact</h3>
+      <ul class="pstory-inter">
+        {% for r in interactions %}
+        <li><span class="pstory-rel rel-{{ r.relation }}">{{ r.relation }}</span> {{ r.effect }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
     {% endif %}
 

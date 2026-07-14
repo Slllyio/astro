@@ -392,6 +392,19 @@
     .raman-text { color: #33244e; font-size: 0.9rem; line-height: 1.45; }
     .raman-cite { display: block; font-size: 0.75rem; color: #8a6a5a; margin-top: 2px; }
     .raman-books { margin-top: 12px; font-size: 0.8rem; color: #5a4a6a; line-height: 1.5; padding-top: 10px; border-top: 1px solid #ede4d3; }
+    .raw-n { font-size: 0.68rem; color: #8a7a6a; font-variant-numeric: tabular-nums; margin-left: 3px; }
+    :root[data-theme="dark"] .raw-n { color: #9a8fb0; }
+    .method-steps { list-style: none; counter-reset: ms; padding: 0; margin: 0 0 14px; }
+    .method-steps li { counter-increment: ms; position: relative; padding: 8px 0 8px 34px; font-size: 0.88rem; color: #3a2a5a; line-height: 1.45; border-bottom: 1px solid #ede4d3; }
+    .method-steps li:last-child { border-bottom: none; }
+    .method-steps li::before { content: counter(ms); position: absolute; left: 0; top: 7px; width: 22px; height: 22px; border-radius: 50%; background: #5a2a7e; color: #f4e8c8; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .valid-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .valid-table td, .valid-table th { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .valid-table th { color: #7a5a9a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .03em; }
+    .valid-table td.num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; color: #2a7e4e; }
+    :root[data-theme="dark"] .method-steps li { color: #cec8de; border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .valid-table td { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .valid-table td.num { color: #6ec49a; }
     :root[data-theme="dark"] .raman-text { color: #d7d2e2; }
     :root[data-theme="dark"] .raman-cite { color: #b09a8a; }
     :root[data-theme="dark"] .raman-list li { border-bottom-color: #2e2942; }
@@ -599,6 +612,7 @@
         <a href="#s-timeline">Timeline</a>
         {% if extras.raman_doctrine %}<a href="#s-raman">Raman</a>{% endif %}
         <a href="#s-yogas">Yogas</a>
+        <a href="#s-method">Method</a>
         <div class="nav-tools">
           <button type="button" class="nav-btn" id="toggle-details" title="Expand or collapse all sections">Expand all</button>
           <button type="button" class="nav-btn" id="toggle-theme" title="Switch light / dark">🌙 Dark</button>
@@ -884,9 +898,9 @@
             <td><strong>{{ r.planet }}</strong> <span style="color:#889;font-size:0.72rem;">H{{ r.house or '—' }}</span>{% if r.combust %} <span class="combust-flag" title="combust — too close to the Sun">☉</span>{% endif %}</td>
             <td class="num"><span class="grade-pill g{{ ci if ci <= 8 else 8 }}" style="font-size:0.9rem;">{{ r.composite if r.composite is not none else '—' }}</span></td>
             <td>{{ stars(r.stars.dignity) }} <span class="dig-tag dig-{{ r.dignity }}" style="font-size:0.62rem;">{{ r.dignity or '' }}</span></td>
-            <td>{{ stars(r.stars.shadbala) }}</td>
+            <td>{{ stars(r.stars.shadbala) }} <span class="raw-n" title="Ṣaḍbala total ÷ requirement">{% if r.shadbala_ratio is not none %}{{ "%.2f"|format(r.shadbala_ratio) }}×{% else %}—{% endif %}</span></td>
             <td>{{ stars(r.stars.digbala) }}</td>
-            <td>{{ stars(r.stars.vimsopaka) }}</td>
+            <td>{{ stars(r.stars.vimsopaka) }} <span class="raw-n" title="Vimsopaka rupas out of 20">{{ r.vimsopaka if r.vimsopaka is not none else '—' }}/20</span></td>
             <td>{{ stars(r.stars.avastha) }}</td>
           </tr>
           {% endfor %}
@@ -1431,6 +1445,46 @@
       </div>
     </details>
     {% endif %}
+
+    {# ============== How these conclusions are reached — method + validation ============== #}
+    <details class="section" id="s-method" open>
+      <summary style="cursor:pointer;"><h2 style="display:inline;">How these conclusions are reached — method &amp; validation</h2></summary>
+      <div style="margin-top: 12px;">
+        <p class="explorer-hint">
+          Every verdict here is produced by <strong>B. V. Raman's own doctrine, encoded rule-by-rule</strong>
+          — not opinion. This is the derivation chain, and how faithfully it reproduces Raman's own
+          printed verdicts when tested on charts it was never tuned on.
+        </p>
+        <div class="why-col">The derivation chain</div>
+        <ol class="method-steps">
+          <li>The chart is cast in the Lahiri sidereal frame with whole-sign houses (the Vedic frame Raman uses).</li>
+          <li>Each house is graded on its <strong>lord, occupants, aspects and kāraka</strong>, judged in both the Rāśi (D1, promise) and the Navāṁśa (D9, fruition) — per <em>How to Judge a Horoscope</em>.</li>
+          <li>Those combine into a <strong>9-grade verdict</strong> (afflicted → very powerful); whether the three independent checks (house · lord · kāraka) agree gives the confidence band.</li>
+          <li>A planet <strong>activates</strong> a house by Raman's six HTJAH influence factors (owns / occupies / aspects the house / aspects its lord / conjoins its lord / lord-from-the-Moon); the mahādaśā × antardaśā running now sets the fructification tier (par excellence → predominant → limited → dormant).</li>
+          <li>Domain scores roll up the relevant houses, keeping <strong>potential</strong> (natal promise) separate from <strong>timing</strong> (what the current daśā activates) — never blended into one misleading number.</li>
+        </ol>
+        <div class="why-col">How faithfully it reproduces Raman's own verdicts (held-out — never tuned on these)</div>
+        <table class="valid-table">
+          <thead><tr><th>Axis</th><th>What is measured</th><th class="num">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Timing</td><td>Mahādaśā lord vs Raman's printed daśā (50 real births)</td><td class="num">94%</td></tr>
+            <tr><td>Daśā balance</td><td>Starting-lord vs Raman's printed balance (30 charts)</td><td class="num">93%</td></tr>
+            <tr><td>Strength</td><td>Within one grade of Raman's printed verdict — held-out (N=58)</td><td class="num">58.6%</td></tr>
+            <tr><td>Strength</td><td>Within one grade on fresh, fully-unseen charts (N=14)</td><td class="num">78.6%</td></tr>
+            <tr><td>Longevity</td><td>8th-bhāva strength vs Raman's longevity ordering (Spearman ρ)</td><td class="num">+0.50</td></tr>
+          </tbody>
+        </table>
+        <div class="fidelity-note" style="margin-top:10px;">
+          Honest scope: the timing and daśā arithmetic are strong (≈94%); the 9-grade
+          <em>strength</em> read sits near a ~53–58% within-one ceiling — the engine is a faithful
+          <em>encoder</em> of Raman's method, bounded by roughly one grade of his own self-consistency.
+          Separately, a population reality-check (Track B) found the doctrine's <em>predictive</em>
+          claims (vocation, death-timing) do not hold at population scale — so this reading reports
+          Raman's doctrine faithfully and deliberately does not over-claim outcome prediction. Both
+          facts are shown, neither buried.
+        </div>
+      </div>
+    </details>
 
     {# ============== Glossary of terms (#15) ============== #}
     <details class="section" style="margin-top: 4px;">

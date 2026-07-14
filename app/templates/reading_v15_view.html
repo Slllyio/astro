@@ -153,6 +153,19 @@
       position: absolute; inset: 25%; display: flex; align-items: center; justify-content: center;
       font-weight: 600; color: #7a5a9a; pointer-events: none; text-align: center;
     }
+    .sav-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .sav-cell {
+      flex: 1 1 3rem; min-width: 3rem; text-align: center; border-radius: 5px;
+      padding: 0.3rem 0.2rem; border: 1px solid #ddd;
+    }
+    .sav-cell .sav-house { font-size: 0.62rem; color: #888; }
+    .sav-cell .sav-bindu { font-weight: 700; font-size: 1rem; }
+    .sav-cell.strong { background: #d4e8d4; border-color: #a8ceac; }
+    .sav-cell.weak   { background: #f0d4d4; border-color: #d8b0b0; }
+    .sav-cell.mid    { background: #f4efe2; border-color: #ddd2b8; }
+    .avastha-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .avastha-table th, .avastha-table td { text-align: left; padding: 0.3rem 0.5rem; border-bottom: 1px solid #eee; }
+    .avastha-table th { color: #7a5a9a; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -260,6 +273,10 @@
   {% set yogas_all = prac_by_module.yogas_extended or [] %}
   {% set yogas_top = yogas_all[:5] %}
   {% set panchanga = extras.panchanga or {} %}
+  {% set sav = (extras.ashtakavarga or {}).sav or [] %}
+  {% set avasthas = extras.avasthas or {} %}
+  {% set chara = (sequences.chara_dasha or {}).timeline or [] %}
+  {% set yogini = (sequences.yogini_dasha or {}).timeline or [] %}
   {% set ad_judgments = sequences.ad_judgments or [] %}
   {% set adns = namespace(current=none) %}
   {% for a in ad_judgments %}{% if a.is_current %}{% set adns.current = a %}{% endif %}{% endfor %}
@@ -598,6 +615,77 @@
         <p class="empty">No classical yogas present in this chart.</p>
       {% endif %}
     </div>
+
+    {# ============== Sarvāṣṭakavarga (bhāva strength) ============== #}
+    {% if sav and sav|length == 12 %}
+    <div class="section">
+      <h2>Sarvāṣṭakavarga <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">bindus per bhāva (≥28 strong · ≤25 weak)</span></h2>
+      <div class="sav-row">
+        {% for b in sav %}
+        <div class="sav-cell {% if b >= 28 %}strong{% elif b <= 25 %}weak{% else %}mid{% endif %}">
+          <div class="sav-house">H{{ loop.index }}</div>
+          <div class="sav-bindu">{{ b }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# ============== Alternative daśās (collapsed) ============== #}
+    {% if chara or yogini %}
+    <details class="domain-card">
+      <summary><span>Alternative daśās — Chara &amp; Yogini</span></summary>
+      <div class="domain-body">
+        {% if chara %}
+        <div class="chart-caption">Chara daśā (Jaimini, sign-based)</div>
+        <ul class="dasha-timeline">
+          {% for m in chara %}
+          <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+            <span class="dasha-lord">{{ m.md_sign_name }}</span>
+            <span class="dasha-window">{{ m.start_date }} → {{ m.end_date }}</span>
+            {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if yogini %}
+        <div class="chart-caption" style="margin-top: 0.8rem;">Yogini daśā</div>
+        <ul class="dasha-timeline">
+          {% for m in yogini %}
+          <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+            <span class="dasha-lord">{{ m.yogini }}</span>
+            <span class="dasha-window">{{ m.ruling_planet }} · {{ m.start_date }} → {{ m.end_date }}</span>
+            {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
+
+    {# ============== Planetary avasthās (collapsed) ============== #}
+    {% if avasthas %}
+    <details class="domain-card">
+      <summary><span>Planetary avasthās (states)</span></summary>
+      <div class="domain-body">
+        <table class="avastha-table">
+          <thead><tr><th>Planet</th><th>Bālādi</th><th>Jāgradādi</th><th>Benefic asp.</th><th>Malefic asp.</th></tr></thead>
+          <tbody>
+            {% for p, a in avasthas.items() %}
+            <tr>
+              <td>{{ p }}</td>
+              <td>{{ a.baladi or "—" }}</td>
+              <td>{{ a.jagradadi or "—" }}</td>
+              <td>{{ a.benefic_aspects if a.benefic_aspects is not none else "—" }}</td>
+              <td>{{ a.malefic_aspects if a.malefic_aspects is not none else "—" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
+    {% endif %}
 
     {# ============== Contradictions (only if any) ============== #}
     {% if contradictions %}

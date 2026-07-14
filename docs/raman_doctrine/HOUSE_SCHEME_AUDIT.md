@@ -1690,6 +1690,22 @@ gave false positives and undercounted the engine). Honest coverage rose **15/62 
 41.9%)**. All 46 existing yoga unit tests stay green; the additions are in the `app/core` reading
 library, so `house_judgment.py` and `synthesis_v2.py` are byte-untouched (no strength-grade impact).
 Pinned by `test_yoga_coverage` (coverage floor + per-detector faithfulness checks incl. a Kahala
-negative). The residual ~36 missing yogas need navāṁśa / full-Moon / intricate multi-lord conditions or
-are OCR-garbled duplicates — a further increment, not force-fit. Detail:
-`validation/REPORT_yoga_coverage.md`.
+negative). Detail: `validation/REPORT_yoga_coverage.md`.
+
+### Increment 37 — Nabhāsa family + navāṁśa-dependent yogas (41.9% → 74.2%)
+
+The two biggest remaining cleanly-encodable groups, both from the clean archive.org edition. **32 new
+detectors** (44 → 76 in `YOGA_DETECTORS`). The whole Nabhāsa Ākṛti/Saṅkhyā/Dala block (Nos. 75–106) is
+pure D1 occupancy — a single `_occupied_arc(houses) → (start, span)` helper drives the contiguous-arc
+yogas (Yupa/Ishu/Sakti/**Danda**, Nauka/Kuta/Chatra/**Ardha Chandra**), plus shape (Vihaga, Yava, Vajra,
+Hala, Sringhataka, Kamala, Vapi), modality (Rajju/Musala/**Nala**), sign-count (**Vallaki/Damini/Pasa/
+Kedara**) and Dala (Srik/**Sarpa**) members, and **Matsya** (47). The 3 navāṁśa-dependent yogas
+(**Gauri** 28, **Bharathi** 29, **Mridanga** 48) reach the D9 chart from the `Chart` via
+`int(compute_divisional_longitude(lon,9) % 360 // 30) + 1` → `SIGN_RULERS[...]`; where Mridanga says
+"friendly or exalted" the computable own-or-exalted subset is used (under-fires, never guesses). Solar:
+**Ubhayachari** (18), **Ravi**, **Indra** (66), **Trilochana** (71). Six OCR-garbled corpus spellings
+map through the existing `_ALIAS` layer (incl. `adhl→adhi`, a free win). Honest coverage **26/62 →
+46/62 (41.9% → 74.2%)**. `house_judgment.py`/`synthesis_v2.py` byte-untouched; pinned by
+`test_increment_37_nabhasa_and_navamsa_detectors`. This is a **detection-completeness** gain for the
+reading engine, not a strength claim (Raman: Ākṛti yogas "give clues as regards means of livelihood").
+Residual 16 = intricate multi-lord *muladdhana*/dhana yogas + an OCR-garbled tail.

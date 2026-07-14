@@ -35,7 +35,10 @@ _CORE = [_ROOT / "app/core" / f for f in ("yoga_library.py", "yogas.py", "arisht
 # engine references "Mahapurusha" only as a family, not each member by name — a real detection gap by
 # the member names Raman uses (documented in REPORT_yoga_coverage.md, not aliased away).
 _ALIAS = {"neechabhanga": "neecha bhanga", "vipareeta": "vipareeta raja", "akhanda": "akhanda samrajya",
-          "veshi": "vesi", "vosi": "vasi", "parijatha": "parijata"}
+          "veshi": "vesi", "vosi": "vasi", "parijatha": "parijata",
+          # increment 37 — OCR spellings of names the engine now emits cleanly
+          "vapee": "vapi", "obhayachari": "ubhayachari", "daiida": "danda",
+          "imdra": "indra", "thriiochana": "trilochana", "adhl": "adhi"}
 
 
 def _stem(name: str) -> str:

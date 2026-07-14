@@ -76,3 +76,51 @@ per-detector faithfulness checks: each new yoga fires on a chart built to its de
 otherwise, incl. a Kahala negative when the Lagna lord is weak). The residual ~36 missing yogas need
 navāṁśa (Mridanga, the other Gola), full-Moon, or intricate multi-lord conditions, or are OCR-garbled
 duplicates — a further increment, not force-fit here.
+
+## Increment 37 — Nabhāsa Ākṛti/Saṅkhyā/Dala family + navāṁśa-dependent yogas
+The two largest cleanly-encodable groups Raman defines were still unencoded. Both were taken from the
+clean archive.org edition (0 OCR garble) used in increment 36. **Coverage 41.9% → 74.2%** (26 → 46 of
+62 distinct yogas); 32 new detectors (44 → 76 in `YOGA_DETECTORS`).
+
+**Nabhāsa family (Nos. 75–106) — pure D1 occupancy.** Every member is defined by *which house/sign
+group the seven planets (Rahu/Ketu excluded, per convention) occupy*, so all are computable from the
+`Chart` alone. A single `_occupied_arc(houses) → (start, span)` helper (complement of the widest empty
+run on the 12-house circle) drives the contiguous-arc yogas:
+
+| group | members encoded | condition |
+|---|---|---|
+| Ākṛti contiguous-4 | Yupa, Ishu, Sakti, **Danda** | seven planets in a 4-house arc from a kendra |
+| Ākṛti contiguous-7 | Nauka, Kuta, Chatra, **Ardha Chandra** | 7-house arc; kendra start vs. non-kendra (half-moon) |
+| Ākṛti shapes | **Vihaga, Yava**, Vajra, **Hala**, Sringhataka, Kamala, **Vapi** | planets confined to 4th&10th / kendra benefic-malefic split / trine sets / panapara-apoklima |
+| Ākṛti modality | Rajju, Musala, **Nala** | all seven in movable / fixed / dual signs |
+| Saṅkhyā (sign count) | **Vallaki** (7), **Damini** (6), Pasa (5), **Kedara** (4) | seven planets across N distinct signs |
+| Dala | Srik, **Sarpa** | kendras occupied exclusively by benefics / malefics |
+| special | **Matsya** (47) | malefics in 1/4/8/9, a mixed 5th |
+
+**Navāṁśa-dependent (D9) — Gauri (28), Bharathi (29), Mridanga (48).** These need the lord of a
+planet's navāṁśa sign, reached from the `Chart` via the established idiom
+`int(compute_divisional_longitude(lon, 9) % 360 // 30) + 1` (from `app/core/shodashavarga.py`), then
+`SIGN_RULERS[...]`. Where Mridanga's clause says "friendly or exalted sign", the computable subset
+own-or-exalted is used — the detector under-fires rather than guessing a friendship table.
+
+**Solar/other:** **Ubhayachari** (18, planets flanking the Sun — reuses `_luminary_adjacency`), **Ravi**
+(Sun in the 10th with the 10th lord in the 3rd with Saturn), **Indra** (66, 5th–11th exchange + Moon in
+5th), **Trilochana** (71, Sun/Moon/Mars in mutual trines).
+
+Six OCR-garbled corpus spellings the engine now emits cleanly are mapped through the existing
+`_ALIAS` layer (`vapee→vapi`, `obhayachari→ubhayachari`, `daiida→danda`, `imdra→indra`,
+`thriiochana→trilochana`, `adhl→adhi` — the last a free win, the engine already had Adhi).
+
+**Guarantees.** `house_judgment.py` and `synthesis_v2.py` are byte-untouched (git-verified) — the
+additions live in the `app/core` reading library, no strength-grade impact. All existing yoga tests
+stay green; `test_increment_37_nabhasa_and_navamsa_detectors` pins per-path faithfulness (each new yoga
+fires on a chart built to its Raman definition and is silent on a violating one — incl. an Ardha-Chandra
+negative on a kendra start and a Sarpa negative when a benefic sits in a kendra; the navāṁśa trio built
+forward through the real D9 map). Raman himself notes (clean ed., §Ākṛti) that "Ākṛti Yogas by
+themselves cannot [contribute much]… they give clues as regards the means of livelihood" — so this is a
+**detection-completeness** gain for the reading engine, not a strength-accuracy claim.
+
+**Residual (16 missing).** The intricate multi-lord *muladdhana* wealth yogas (Bahudravyarjana, Balya
+Dhana, Matru/Putra/Satru-muladdhana), day/night-gender Mahabhagya, and a tail of OCR-garbled or
+loosely-defined names (Dehapushti, Jada, Jaya, Pushkala, Rajalakshana, Sada Sanchara, Sareera Soukhya,
+Vanchanachorabheethi, Vimala, Pari-H-Asa-Ka) — documented, not force-fit.

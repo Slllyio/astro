@@ -425,6 +425,57 @@
     .opprisk-col.opps li::before { content: "▲"; position: absolute; left: 9px; top: 9px; color: #3f9e5e; font-size: 0.7rem; }
     .opprisk-col.risks li { background: #fbf1ea; border: 1px solid #eed6c4; color: #6a3a1a; }
     .opprisk-col.risks li::before { content: "!"; position: absolute; left: 10px; top: 8px; color: #c0703a; font-weight: 800; }
+    /* ---- sticky topic nav + controls (UI polish) ---- */
+    .topic-nav {
+      position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(6px); border-bottom: 1px solid #e0d8c8;
+      padding: 8px 0; margin-bottom: 18px; overflow-x: auto;
+    }
+    .topic-nav .inner { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+    .topic-nav a { font-size: 0.8rem; color: #5a3a7e; text-decoration: none; padding: 4px 10px; border-radius: 14px; border: 1px solid transparent; }
+    .topic-nav a:hover { background: #f0e8f8; border-color: #d8c8f0; }
+    .nav-tools { margin-left: auto; display: flex; gap: 6px; padding-left: 10px; }
+    .nav-btn { font-size: 0.76rem; cursor: pointer; padding: 4px 10px; border-radius: 14px; border: 1px solid #d8c8f0; background: #fff; color: #5a3a7e; }
+    .nav-btn:hover { background: #f0e8f8; }
+    h2[id], .exec-card[id], .section[id] { scroll-margin-top: 56px; }
+    /* ---- dark mode (toggled via data-theme on <html>) ---- */
+    :root[data-theme="dark"] body { background: linear-gradient(135deg,#15131f 0%,#1c1830 100%); color: #d7d2e2; }
+    :root[data-theme="dark"] .section,
+    :root[data-theme="dark"] .exec-card,
+    :root[data-theme="dark"] .narrative-card,
+    :root[data-theme="dark"] .dom-card,
+    :root[data-theme="dark"] .now-tile,
+    :root[data-theme="dark"] .domain-card,
+    :root[data-theme="dark"] .doctrine-card {
+      background: #211d31; border-color: #342e4a; color: #d7d2e2; box-shadow: none;
+    }
+    :root[data-theme="dark"] .section h2,
+    :root[data-theme="dark"] .dom-name, :root[data-theme="dark"] .dc-house,
+    :root[data-theme="dark"] .exec-card h2, :root[data-theme="dark"] .narrative-card p,
+    :root[data-theme="dark"] .glossary-grid dt { color: #ece6fa; border-color: #342e4a; }
+    :root[data-theme="dark"] .section h2 { border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .exec-lines li { color: #d7d2e2; border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .dom-modern, :root[data-theme="dark"] .glossary-grid dd,
+    :root[data-theme="dark"] .explorer-hint, :root[data-theme="dark"] .dom-verdict,
+    :root[data-theme="dark"] .why-list li, :root[data-theme="dark"] .fidelity-note { color: #b6afc9; }
+    :root[data-theme="dark"] .strength-table th { color: #b9a9e0; }
+    :root[data-theme="dark"] .strength-table td, :root[data-theme="dark"] .avastha-table td { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .health-cell, :root[data-theme="dark"] .grade-pill { color: #1b1826; }
+    :root[data-theme="dark"] .topic-nav { background: rgba(28,24,48,0.94); border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .topic-nav a, :root[data-theme="dark"] .nav-btn { color: #c8b8f0; }
+    :root[data-theme="dark"] .nav-btn { background: #262035; border-color: #342e4a; }
+    :root[data-theme="dark"] .narrative-card { background: #241f36; border-color: #383152; }
+    :root[data-theme="dark"] code { color: #c9a8f0; }
+    /* ---- print / PDF ---- */
+    @media print {
+      .topic-nav, .action-bar, .nav-tools { display: none !important; }
+      body { background: #fff !important; }
+      .section, .exec-card, .dom-card, .doctrine-card, .narrative-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+      details > summary { display: none; }
+      details > *:not(summary) { display: revert !important; }
+      .section h2 { break-after: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
   </style>
 </head>
 <body>
@@ -517,6 +568,26 @@
     </div>
   </div>
 
+  {# ---- sticky topic navigation + theme/collapse controls (UI polish) ---- #}
+  <nav class="topic-nav">
+    <div class="container" style="max-width: 920px;">
+      <div class="inner">
+        <a href="#s-summary">Summary</a>
+        {% if extras.domain_decisions %}<a href="#s-domains">Domains</a>{% endif %}
+        {% if extras.dasha_now %}<a href="#s-now">Now</a>{% endif %}
+        <a href="#s-charts">Charts</a>
+        {% if extras.planet_strength %}<a href="#s-strength">Strength</a>{% endif %}
+        {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
+        <a href="#s-timeline">Timeline</a>
+        <a href="#s-yogas">Yogas</a>
+        <div class="nav-tools">
+          <button type="button" class="nav-btn" id="toggle-details" title="Expand or collapse all sections">Expand all</button>
+          <button type="button" class="nav-btn" id="toggle-theme" title="Switch light / dark">🌙 Dark</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
   <div class="container" style="max-width: 920px;">
     <div class="action-bar">
       <a href="/reading/v15/" class="btn btn-outline-secondary btn-sm">← New reading</a>
@@ -532,7 +603,7 @@
 
     {# ============== Executive summary + house-health meter (Phase 1b/1e) ============== #}
     {% if exec_summary or hd_houses %}
-    <div class="exec-card">
+    <div class="exec-card" id="s-summary">
       <h2>Your reading at a glance</h2>
       {% set narrative = extras.narrative or [] %}
       {% if narrative %}
@@ -571,7 +642,7 @@
     {% set decisions = extras.domain_decisions or [] %}
     {% if decisions %}
     <div class="section">
-      <h2>Life domains — decision view
+      <h2 id="s-domains">Life domains — decision view
         <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">potential · timing · confidence, aggregated from the whole chart</span></h2>
       <p class="explorer-hint">
         Each score is a transparent roll-up of the real evidence — house grades, planet strength and the
@@ -639,7 +710,7 @@
     {# ============== Where you are now — present-tense daśā + transits (Phase 0) ============== #}
     {% if dn_md or transits_now %}
     <div class="section">
-      <h2>Where you are now <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the period &amp; transits running today</span></h2>
+      <h2 id="s-now">Where you are now <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the period &amp; transits running today</span></h2>
       <div class="now-strip">
         {% if dn_md.md_lord %}
         <div class="now-tile">
@@ -731,7 +802,7 @@
     {% set d9chart = (extras.divisional_charts or {}).D9_Navamsa or {} %}
     {% if chart.planets %}
     <div class="section">
-      <h2>Chart diagrams <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">South-Indian · abbrev. Su Mo Ma Me Ju Ve Sa Ra Ke, La = lagna</span></h2>
+      <h2 id="s-charts">Chart diagrams <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">South-Indian · abbrev. Su Mo Ma Me Ju Ve Sa Ra Ke, La = lagna</span></h2>
       <div class="charts-row">
         <div class="chart-cell">
           <div class="chart-caption">Rāśi (D1)</div>
@@ -778,7 +849,7 @@
     {% macro stars(n) %}{% if n is none %}<span style="color:#bbb;">—</span>{% else %}<span class="stars">{% for i in range(5) %}{% if i < n %}★{% else %}<span class="star-off">★</span>{% endif %}{% endfor %}</span>{% endif %}{% endmacro %}
     {% if pstr.planets %}
     <div class="section">
-      <h2>Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">composite 0–100 from five classical measures</span></h2>
+      <h2 id="s-strength">Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">composite 0–100 from five classical measures</span></h2>
       <table class="strength-table">
         <thead>
           <tr>
@@ -1002,7 +1073,7 @@
     {# ============== Mahadasha timeline ============== #}
     {% if md_judgments %}
     <div class="section">
-      <h2>Mahādaśā timeline</h2>
+      <h2 id="s-timeline">Mahādaśā timeline</h2>
       <ul class="dasha-timeline">
         {% for m in md_judgments %}
         {% set is_now = dn_md.md_lord and m.md_lord == dn_md.md_lord and m.start_date == dn_md.start_date %}
@@ -1022,7 +1093,7 @@
     {# ============== House-by-house — B. V. Raman's method (Phase 1c/1d) ============== #}
     {% if hd_houses %}
     <div class="section">
-      <h2>House-by-house — Raman's method
+      <h2 id="s-houses">House-by-house — Raman's method
         <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">how each verdict is reached · why · the evidence</span></h2>
       <p class="explorer-hint">
         Each house is graded on its lord, occupants, aspects and kāraka — in both the Rāśi (D1, promise)
@@ -1185,7 +1256,7 @@
     {# ============== Classical yogas (full named catalog, cited) ============== #}
     {% set classical_yogas = reading.classical_yogas or [] %}
     <div class="section">
-      <h2>Classical yogas {% if classical_yogas %}({{ classical_yogas|length }} present){% endif %}</h2>
+      <h2 id="s-yogas">Classical yogas {% if classical_yogas %}({{ classical_yogas|length }} present){% endif %}</h2>
       {% if classical_yogas %}
         <ul class="yogas-list">
           {% for y in classical_yogas|sort(attribute='intensity', reverse=true) %}
@@ -1340,5 +1411,38 @@
       Enrichment: {{ "on" if reading.meta.enrichment_enabled else "off" }}
     </div>
   </div>
+
+  <script>
+    // Theme: honour saved choice, else the OS preference. Toggle persists.
+    (function () {
+      var root = document.documentElement;
+      var saved = null;
+      try { saved = localStorage.getItem('reading-theme'); } catch (e) {}
+      var initial = saved || (window.matchMedia
+        && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      root.setAttribute('data-theme', initial);
+      var themeBtn = document.getElementById('toggle-theme');
+      function paintThemeBtn() {
+        if (!themeBtn) return;
+        themeBtn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️ Light' : '🌙 Dark';
+      }
+      paintThemeBtn();
+      if (themeBtn) themeBtn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('reading-theme', next); } catch (e) {}
+        paintThemeBtn();
+      });
+
+      // Expand / collapse all <details> sections.
+      var detBtn = document.getElementById('toggle-details');
+      if (detBtn) detBtn.addEventListener('click', function () {
+        var dets = document.querySelectorAll('details');
+        var anyClosed = Array.prototype.some.call(dets, function (d) { return !d.open; });
+        Array.prototype.forEach.call(dets, function (d) { d.open = anyClosed; });
+        detBtn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+      });
+    })();
+  </script>
 </body>
 </html>

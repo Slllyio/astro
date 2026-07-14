@@ -166,6 +166,24 @@
     .avastha-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .avastha-table th, .avastha-table td { text-align: left; padding: 0.3rem 0.5rem; border-bottom: 1px solid #eee; }
     .avastha-table th { color: #7a5a9a; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .explorer-hint { color: #555; font-size: 0.88rem; margin: 0.2rem 0 0.8rem; }
+    .explorer-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .explorer-controls label { font-weight: 600; font-size: 0.85rem; }
+    .explorer-controls select { margin-left: 0.3rem; padding: 0.2rem 0.4rem; font-size: 0.9rem; }
+    .explorer-legend { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .explorer-legend .lg { padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; border: 1px solid #ddd; }
+    .lg-note { font-size: 0.72rem; color: #888; }
+    #dasha-explorer-grid { grid-template-columns: repeat(4, 5rem); grid-auto-rows: 5rem; }
+    #dasha-explorer-grid .act-cell { transition: background 0.15s; }
+    .act-full    { background: #cfe8cf; }
+    .act-partial { background: #f6e6c2; }
+    .act-none    { background: #fff; }
+    .act-house { position: absolute; top: 1px; left: 3px; font-size: 0.58rem; color: #999; }
+    .act-bodies { display: block; margin-top: 0.95rem; font-size: 0.74rem; color: #222; line-height: 1.2; }
+    .act-marks { position: absolute; bottom: 2px; left: 3px; display: flex; gap: 0.25rem; }
+    .act-mark { font-size: 0.56rem; font-weight: 700; padding: 0 0.2rem; border-radius: 3px; }
+    .act-mark.lvl2 { background: #2a7e4e; color: #fff; }
+    .act-mark.lvl1 { background: #c8902a; color: #fff; }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -277,6 +295,9 @@
   {% set avasthas = extras.avasthas or {} %}
   {% set chara = (sequences.chara_dasha or {}).timeline or [] %}
   {% set yogini = (sequences.yogini_dasha or {}).timeline or [] %}
+  {% set dasha_act = extras.dasha_activation or {} %}
+  {% set GRAHAS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'] %}
+  {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
   {% set ad_judgments = sequences.ad_judgments or [] %}
   {% set adns = namespace(current=none) %}
   {% for a in ad_judgments %}{% if a.is_current %}{% set adns.current = a %}{% endif %}{% endfor %}
@@ -412,6 +433,87 @@
         {% endif %}
       </div>
     </div>
+    {% endif %}
+
+    {# ============== Daśā activation explorer (interactive) ============== #}
+    {% if dasha_act.planets and chart.planets %}
+    {% set lag = dasha_act.lagna_sign %}
+    {% set cur_md_lord = (extras.current_mahadasha or {}).mahadasha_lord %}
+    {% set cur_ad_lord = adns.current.ad_lord if adns.current else none %}
+    <div class="section">
+      <h2>Daśā activation explorer</h2>
+      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — the kundali lights up each bhāva by how strongly the period activates it. <b>Fully</b> = the lord occupies or owns the house (or both lords touch it); <b>Partial</b> = the lord aspects it; <b>None</b> = neither.</p>
+      <div class="explorer-controls">
+        <label>MD lord
+          <select id="md-lord-sel">
+            {% for g in GRAHAS %}{% if g in dasha_act.planets %}<option value="{{ g }}"{% if g == cur_md_lord %} selected{% endif %}>{{ g }}</option>{% endif %}{% endfor %}
+          </select>
+        </label>
+        <label>AD lord
+          <select id="ad-lord-sel">
+            {% for g in GRAHAS %}{% if g in dasha_act.planets %}<option value="{{ g }}"{% if g == cur_ad_lord %} selected{% endif %}>{{ g }}</option>{% endif %}{% endfor %}
+          </select>
+        </label>
+        <span class="explorer-legend">
+          <span class="lg act-full">Fully</span>
+          <span class="lg act-partial">Partial</span>
+          <span class="lg act-none">None</span>
+          <span class="lg-note">● occupies/owns · ○ aspects</span>
+        </span>
+      </div>
+      <div class="south-grid" id="dasha-explorer-grid">
+        {% set LAYOUT = [12,1,2,3, 11,0,0,4, 10,0,0,5, 9,8,7,6] %}
+        {% for sgn in LAYOUT %}
+          {% if sgn == 0 %}
+            <div class="south-cell south-center"></div>
+          {% else %}
+            {% set hse = ((sgn - lag) % 12) + 1 %}
+            <div class="south-cell act-cell act-none" data-sign="{{ sgn }}" data-house="{{ hse }}">
+              <span class="south-signno">{{ sgn }}</span>
+              <span class="act-house">H{{ hse }}{% if sgn == lag %} · La{% endif %}</span>
+              <span class="act-bodies">{% for p, info in chart.planets.items() %}{% if info.sign == sgn and p in ABBR %}{{ ABBR[p] }} {% endif %}{% endfor %}</span>
+              <span class="act-marks"></span>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="south-label">Rāśi</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var ACT = {{ dasha_act | tojson }};
+        if (!ACT || !ACT.planets) return;
+        var mdSel = document.getElementById('md-lord-sel');
+        var adSel = document.getElementById('ad-lord-sel');
+        var cells = document.querySelectorAll('#dasha-explorer-grid .act-cell');
+        function levelFor(lord, h) {
+          var p = ACT.planets[lord];
+          if (!p) return 0;
+          if (p.occ === h || p.owns.indexOf(h) >= 0) return 2;
+          if (p.aspects.indexOf(h) >= 0) return 1;
+          return 0;
+        }
+        function mark(label, lvl) {
+          if (!lvl) return '';
+          return '<span class="act-mark lvl' + lvl + '">' + label + (lvl === 2 ? '●' : '○') + '</span>';
+        }
+        function paint() {
+          var md = mdSel.value, ad = adSel.value;
+          cells.forEach(function (cell) {
+            var h = parseInt(cell.getAttribute('data-house'), 10);
+            var mdL = levelFor(md, h), adL = levelFor(ad, h);
+            var comb = Math.max(mdL, adL);
+            if (mdL >= 1 && adL >= 1) comb = 2;
+            cell.classList.remove('act-full', 'act-partial', 'act-none');
+            cell.classList.add(comb === 2 ? 'act-full' : comb === 1 ? 'act-partial' : 'act-none');
+            cell.querySelector('.act-marks').innerHTML = mark('MD', mdL) + mark('AD', adL);
+          });
+        }
+        mdSel.addEventListener('change', paint);
+        adSel.addEventListener('change', paint);
+        paint();
+      })();
+    </script>
     {% endif %}
 
     {# ============== Panchānga (five limbs of the birth day) ============== #}

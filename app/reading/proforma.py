@@ -127,6 +127,33 @@ def _classical_yogas(
         return []
 
 
+def _dasha_activation(d1_chart: dict[str, Any], lagna_longitude: float) -> dict[str, Any]:
+    """Per-graha house activation for the daśā-activation explorer: the houses
+    each planet occupies, owns (lordship), and fully aspects — all from the
+    lagna, so the view can light up the bhāvas a chosen MD/AD lord activates.
+    Fail-soft."""
+    try:
+        from app.core.drishti_argala import aspects_from_planet
+        from app.core.functional_roles import houses_ruled_by
+
+        lagna_sign = int(lagna_longitude % 360.0 // 30) + 1
+        planets: dict[str, dict[str, Any]] = {}
+        for g in _GRAHAS_9:
+            entry = d1_chart.get(g) or {}
+            s = entry.get("sign")
+            if s is None:
+                continue
+            occ = ((int(s) - lagna_sign) % 12) + 1
+            planets[g] = {
+                "occ": occ,
+                "owns": list(houses_ruled_by(g, lagna_sign)),
+                "aspects": list(aspects_from_planet(g, occ)),
+            }
+        return {"lagna_sign": lagna_sign, "planets": planets}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def _divisional_lagnas(lagna_longitude: float) -> dict[str, int]:
     """Ascendant sign (1..12) in D1/D9/D10 — lets the view mark the lagna cell in
     the divisional chart grids. Fail-soft."""
@@ -317,6 +344,7 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             "current_mahadasha": chart.get("current_mahadasha"),
             "divisional_charts": divisional_charts,
             "divisional_lagnas": _divisional_lagnas(lagna_longitude),
+            "dasha_activation": _dasha_activation(d1_chart, lagna_longitude),
             "panchanga": chart.get("panchanga"),
             "ashtakavarga": chart.get("ashtakavarga"),
             "avasthas": chart.get("avasthas"),

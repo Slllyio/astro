@@ -172,3 +172,47 @@ class TestCompute:
         assert bare["meta"]["enrichment_enabled"] is False
         enriched = _apply_tier3_enrichments(bare, CANONICAL_INPUT)
         assert enriched["meta"]["enrichment_enabled"] is True
+
+
+class TestPresentTenseAndDoctrineEnrichments:
+    """Phase 0/1: compute() attaches present-tense + real-doctrine blocks under
+    chart.extras — the daśā running TODAY (not birth), live transits, the
+    encoded Raman per-house verdicts, and the executive summary."""
+
+    def test_dasha_now_is_present_day_not_birth(self):
+        """extras.dasha_now.md must be the MD covering TODAY, distinct from the
+        birth balance — the fix for the impossible 'Current Mahadasha' window."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        dn = extras.get("dasha_now") or {}
+        md = dn.get("md") or {}
+        bb = dn.get("birth_balance") or {}
+        assert md.get("md_lord"), "dasha_now.md must carry a running mahādaśā lord"
+        # The running MD must cover the present moment: age_now falls inside the window.
+        assert md["age_at_start_years"] <= md["age_now_years"] < md["age_at_end_years"]
+        # And it must be labelled distinctly from the birth balance.
+        assert bb.get("md_lord"), "birth_balance must be surfaced separately"
+        assert bool(md.get("is_at_birth")) is False
+
+    def test_house_doctrine_grades_all_twelve_houses(self):
+        """extras.house_doctrine.houses carries a real Raman verdict per house,
+        each with a 0..8 grade index and the evidence findings (the 'why')."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        hd = extras.get("house_doctrine") or {}
+        houses = hd.get("houses") or {}
+        assert len(houses) == 12
+        for h in range(1, 13):
+            hv = houses[str(h)]
+            assert hv["verdict_label"] in hd["scale"]
+            assert hv["verdict_index"] is None or 0 <= hv["verdict_index"] <= 8
+            # Confidence is a real N-of-3 vote, never a fabricated probability.
+            conf = hv["confidence"]
+            assert conf["graded"] <= 3
+            assert 0 <= conf["agreement"] <= conf["graded"]
+
+    def test_executive_summary_is_populated(self):
+        """extras.executive_summary is a deterministic list of lay-language
+        lines built from the real engine output."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        summary = extras.get("executive_summary") or []
+        assert isinstance(summary, list) and summary
+        assert all(isinstance(line, str) and line for line in summary)

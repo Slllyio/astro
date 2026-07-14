@@ -210,6 +210,379 @@ def _divisional_lagnas(lagna_longitude: float) -> dict[str, int]:
 
 
 # ---------------------------------------------------------------------------
+# "Present tense" + real-doctrine enrichments (Phase 0 + Phase 1).
+#
+# These turn a birth-frozen developer report into a consultation:
+#   - dasha_now:      the mahādaśā/antardaśā running TODAY (not at birth) —
+#                     fixes the "Current Mahadasha: Venus 1957-1977" for a
+#                     1970 native. Reuses app/integration/dasha_now.
+#   - transits_now:   live gochara (Sade-Sati, Saturn-from-Moon, double
+#                     transits). Reuses app/integration/transit_engine.
+#   - house_doctrine: the real encoded Raman per-house verdicts from
+#                     judge_all_houses_doctrine — the SAME engine validated
+#                     all session — giving honest grades + the "why" factors
+#                     + Rāśi/Navāṁśa agreement + the running-daśā activation
+#                     tier per house.
+#   - executive_summary: a deterministic lay-language restatement of the
+#                     above (no invented numbers).
+#
+# Every block is fail-soft: any error yields an empty section, never a
+# broken reading. All output lands under chart.extras.* (a free-form dict),
+# so nothing here can break the ReadingOutput schema.
+# ---------------------------------------------------------------------------
+
+# Plain-language life area per whole-sign house (for the lay summary).
+_HOUSE_LIFE_AREA: dict[int, str] = {
+    1: "self, body & vitality",
+    2: "wealth, speech & family",
+    3: "courage, siblings & effort",
+    4: "home, mother & inner peace",
+    5: "children, creativity & intellect",
+    6: "health, service & adversaries",
+    7: "marriage & partnerships",
+    8: "longevity, upheaval & the hidden",
+    9: "fortune, dharma & the father",
+    10: "career & public standing",
+    11: "gains, income & aspirations",
+    12: "loss, expenditure & liberation",
+}
+
+
+def _verdict_index(label: str) -> int | None:
+    """Position of a Raman verdict on the 9-grade VERDICT_SCALE (0..8), or None.
+
+    afflicted(0) … moderate(2) … fairly good(4) … very powerful(8).
+    """
+    scale = (
+        "afflicted", "weak", "moderate", "moderately good", "fairly good",
+        "fairly strong", "fairly powerful", "very strong", "very powerful",
+    )
+    try:
+        return scale.index(str(label).strip().lower())
+    except ValueError:
+        return None
+
+
+def _factor_to_dict(fv: Any) -> dict[str, Any]:
+    """Serialise a FactorVerdict into a JSON-friendly dict for the view.
+
+    Keeps the real findings (the "why"), the grade + its 0..8 index, and the
+    Rāśi vs Navāṁśa sub-scores (the D1/D9 agreement)."""
+    idx = _verdict_index(getattr(fv, "label", ""))
+    return {
+        "role": getattr(fv, "role", ""),
+        "subject": getattr(fv, "subject", ""),
+        "label": getattr(fv, "label", ""),
+        "grade_index": idx,                       # 0..8 on VERDICT_SCALE
+        "score": round(float(getattr(fv, "score", 0.0)), 3),
+        "rasi_score": round(float(getattr(fv, "rasi_score", 0.0)), 3),
+        "navamsa_score": round(float(getattr(fv, "navamsa_score", 0.0)), 3),
+        "findings": [
+            {
+                "text": getattr(f, "text", ""),
+                "delta": round(float(getattr(f, "delta", 0.0)), 3),
+                "frame": getattr(f, "frame", ""),
+                "criterion": getattr(f, "criterion", ""),
+            }
+            for f in getattr(fv, "findings", ()) or ()
+        ],
+    }
+
+
+def _confidence_from_factors(lagna: Any, lord: Any, karaka: Any) -> dict[str, Any]:
+    """Honest ConfidenceScore-style vote: do the 3 independent checks (house,
+    lord, kāraka) concur in direction? Returns real counts, never a fabricated
+    probability. A factor "votes positive" if its grade sits at or above
+    "moderately good" (index 3). Agreement = size of the majority bloc."""
+    votes: dict[str, str | None] = {}
+    positives = 0
+    graded = 0
+    for name, fv in (("house", lagna), ("lord", lord), ("karaka", karaka)):
+        idx = _verdict_index(getattr(fv, "label", ""))
+        if idx is None:
+            votes[name] = None
+            continue
+        graded += 1
+        direction = "positive" if idx >= 3 else "guarded"
+        votes[name] = direction
+        if direction == "positive":
+            positives += 1
+    guarded = graded - positives
+    majority = max(positives, guarded)
+    return {
+        "votes": votes,                     # {house/lord/karaka -> positive|guarded|None}
+        "graded": graded,                   # how many of the 3 checks were computable
+        "positive": positives,
+        "guarded": guarded,
+        "agreement": majority,              # N of `graded` checks that concur
+        "band": (
+            "strong" if graded and majority == graded and graded == 3
+            else "mixed" if graded and majority < graded
+            else "partial"
+        ),
+    }
+
+
+def _d1d9_agreement(fv: Any) -> str:
+    """Do Rāśi (promise) and Navāṁśa (fruition) point the same way?
+
+    concur  — both sub-scores share sign (or one is ~0)
+    diverge — opposite signs (a chart-level contradiction the reader should see)
+    """
+    r = float(getattr(fv, "rasi_score", 0.0))
+    n = float(getattr(fv, "navamsa_score", 0.0))
+    if abs(r) < 0.15 or abs(n) < 0.15:
+        return "neutral"
+    return "concur" if (r > 0) == (n > 0) else "diverge"
+
+
+def _house_doctrine(
+    chart_input: ChartInput, dasha_lords: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """Run the REAL encoded Raman per-house engine over a freshly-cast chart
+    and serialise the 12 house verdicts for the reading.
+
+    This is the honest backbone for the executive summary, confidence
+    checklist, "why" breakdowns, and house-health meter — it is the exact
+    engine (`judge_all_houses_doctrine`) validated across the doctrine suite,
+    not a reinvented rollup. Fail-soft: returns {} on any error so a reading
+    never breaks.
+
+    ``dasha_lords`` is the MD/AD running TODAY (from dasha_now), so each
+    house's activation ``current_tier`` reflects the present period, not birth.
+    """
+    try:
+        from app.medini.doctrine import raman_chart
+        from app.medini.doctrine.domains.house_judgment import (
+            VERDICT_SCALE,
+            judge_all_houses_doctrine,
+        )
+        from app.medini.ml.raman_saab.chart_bundle import build_bundle
+
+        year, month, day, hour, minute, tz_offset = _parse_chart_input(chart_input)
+        bundle = build_bundle(
+            year, month, day, hour, minute, tz_offset,
+            chart_input.lat, chart_input.lon,
+        )
+        if bundle is None:
+            return {}
+        # Cast in the repo-default Lahiri frame so the grades explain the SAME
+        # chart the reading displays (houses/signs match the rendered kundali).
+        chart = raman_chart._build(bundle, "lahiri")
+
+        dasha = dict(dasha_lords) if dasha_lords else None
+        judged = judge_all_houses_doctrine(chart, dasha=dasha)
+
+        houses: dict[str, Any] = {}
+        for h, j in judged.items():
+            timing = getattr(j, "timing", None)
+            conclusion = getattr(j, "conclusion", None)
+            influencers = []
+            for inf in getattr(conclusion, "influencers", ()) or ():
+                influencers.append({
+                    "planet": getattr(inf, "planet", ""),
+                    "factors": list(getattr(inf, "factors", ()) or ()),
+                    "tier": getattr(inf, "tier", ""),
+                    "is_benefic": bool(getattr(inf, "is_benefic", False)),
+                    "nature": getattr(inf, "nature", ""),
+                })
+            houses[str(h)] = {
+                "house": h,
+                "life_area": _HOUSE_LIFE_AREA.get(h, ""),
+                "verdict_label": getattr(conclusion, "label", getattr(j, "blend_label", "")),
+                "verdict_index": _verdict_index(
+                    getattr(conclusion, "label", "") or getattr(j, "blend_label", "")
+                ),
+                "blend_label": getattr(j, "blend_label", ""),
+                "synthesis": getattr(conclusion, "synthesis", ""),
+                "lagna": _factor_to_dict(j.lagna_verdict),
+                "lord": _factor_to_dict(j.lord_verdict),
+                "karaka": _factor_to_dict(j.karaka_verdict),
+                "confidence": _confidence_from_factors(
+                    j.lagna_verdict, j.lord_verdict, j.karaka_verdict,
+                ),
+                "d1d9": {
+                    "house": _d1d9_agreement(j.lagna_verdict),
+                    "lord": _d1d9_agreement(j.lord_verdict),
+                    "karaka": _d1d9_agreement(j.karaka_verdict),
+                },
+                "timing": {
+                    "current_md": getattr(timing, "current_md", None),
+                    "current_ad": getattr(timing, "current_ad", None),
+                    "current_tier": getattr(timing, "current_tier", None),
+                    "current_is_activator": bool(
+                        getattr(timing, "current_is_activator", False)
+                    ),
+                    "influencers": list(getattr(timing, "influencers", ()) or ()),
+                } if timing is not None else {},
+                "influencers": influencers,
+            }
+        return {
+            "scale": list(VERDICT_SCALE),
+            "ayanamsa": "lahiri",
+            "houses": houses,
+            "method": (
+                "B. V. Raman, How to Judge a Horoscope — each house graded on its "
+                "lord, occupants, aspects and kāraka (Rāśi and Navāṁśa)."
+            ),
+            "fidelity_note": (
+                "Grades are the engine's faithful encoding of Raman's method "
+                "(measured ~53–58% within one grade of Raman's own printed "
+                "verdicts) — a doctrine grade, not a probability."
+            ),
+        }
+    except Exception:  # noqa: BLE001 — never block a reading
+        return {}
+
+
+def _executive_summary(reading: Mapping[str, Any]) -> list[str]:
+    """Deterministic lay-language summary built ONLY from real engine output:
+    strongest/weakest houses (house_doctrine), the daśā running now
+    (dasha_now) and which houses it lights up (dasha_activation), and the
+    standout classical yogas. No invented numbers. Fail-soft → []."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        lines: list[str] = []
+
+        # 1) Strongest / weakest houses by the real conclusion grade.
+        graded = [
+            (int(v["house"]), v.get("verdict_index"), v.get("verdict_label", ""),
+             v.get("life_area", ""))
+            for v in hd.values()
+            if isinstance(v, dict) and v.get("verdict_index") is not None
+        ]
+        if graded:
+            graded.sort(key=lambda t: (t[1] if t[1] is not None else -1), reverse=True)
+            strong = [g for g in graded if (g[1] or 0) >= 5][:3]      # ≥ fairly strong
+            weak = [g for g in reversed(graded) if (g[1] or 0) <= 1][:3]  # ≤ weak
+            if strong:
+                areas = "; ".join(f"the {_ordinal(h)} house ({area}, {lbl})"
+                                  for h, _, lbl, area in strong)
+                lines.append(f"Strongest in your chart: {areas}.")
+            if weak:
+                areas = "; ".join(f"the {_ordinal(h)} house ({area}, {lbl})"
+                                  for h, _, lbl, area in weak)
+                lines.append(f"Needing care: {areas}.")
+
+        # 2) The daśā running NOW and which houses its lord activates.
+        dn = extras.get("dasha_now") or {}
+        md = dn.get("md") or {}
+        ad = dn.get("ad") or {}
+        if md.get("md_lord"):
+            span = ""
+            if md.get("start_date") and md.get("end_date"):
+                span = f" ({md['start_date'][:4]}–{md['end_date'][:4]})"
+            theme = ""
+            act = extras.get("dasha_activation") or {}
+            planets = act.get("planets") or {}
+            lit = sorted({
+                int(hh)
+                for hh in (planets.get(md["md_lord"], {}).get("influences") or {})
+            })
+            if lit:
+                area_bits = ", ".join(_HOUSE_LIFE_AREA.get(h, "").split(",")[0]
+                                      for h in lit[:4] if _HOUSE_LIFE_AREA.get(h))
+                if area_bits:
+                    theme = f" — activating {area_bits}"
+            ad_bit = f", {ad['ad_lord']} antardaśā" if ad.get("ad_lord") else ""
+            lines.append(
+                f"You are currently in {md['md_lord']} mahādaśā{span}{ad_bit}{theme}."
+            )
+
+        # 3) Standout classical yogas.
+        yogas = reading.get("classical_yogas") or []
+        if yogas:
+            top = sorted(
+                (y for y in yogas if isinstance(y, dict)),
+                key=lambda y: float(y.get("intensity", 0.0)), reverse=True,
+            )[:3]
+            names = ", ".join(y.get("name", "") for y in top if y.get("name"))
+            if names:
+                lines.append(f"Notable combinations present: {names}.")
+
+        return lines
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def _ordinal(n: int) -> str:
+    """1 -> '1st', 2 -> '2nd', … for lay-language house references."""
+    if 10 <= (n % 100) <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
+
+
+def _augment_present_and_doctrine(
+    reading: dict[str, Any], chart_input: ChartInput,
+) -> None:
+    """Attach the present-tense + real-doctrine enrichments to a fully
+    assembled reading dict, in place. Each block is independently fail-soft;
+    all output lands under ``chart.extras.*``. Called at the very end of
+    ``compute()`` so the full timeline (sequences.md_judgments) is available
+    and nothing downstream can drop the new fields."""
+    chart_block = reading.get("chart")
+    if not isinstance(chart_block, dict):
+        return
+    extras = chart_block.setdefault("extras", {})
+    if not isinstance(extras, dict):
+        return
+
+    # --- Phase 0a: the daśā running NOW (and the correctly-labelled birth balance).
+    dasha_lords: dict[str, str] | None = None
+    try:
+        from app.integration import dasha_now as _dn
+
+        block: dict[str, Any] = {}
+        try:
+            block["md"] = _dn.md_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["ad"] = _dn.ad_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["pd"] = _dn.pd_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["birth_balance"] = _dn.md_at_birth(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        if block:
+            extras["dasha_now"] = block
+            md_lord = (block.get("md") or {}).get("md_lord")
+            ad_lord = (block.get("ad") or {}).get("ad_lord")
+            if md_lord:
+                dasha_lords = {"md": md_lord}
+                if ad_lord:
+                    dasha_lords["ad"] = ad_lord
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Phase 0b: live transits (gochara now).
+    try:
+        from app.integration import transit_engine as _te
+
+        extras["transits_now"] = _te.transit_at_now(reading).model_dump(mode="json")
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Phase 1a: the real encoded Raman per-house verdicts.
+    hd = _house_doctrine(chart_input, dasha_lords)
+    if hd:
+        extras["house_doctrine"] = hd
+
+    # --- Phase 1b: the deterministic executive summary (reads the blocks above).
+    summary = _executive_summary(reading)
+    if summary:
+        extras["executive_summary"] = summary
+
+
+# ---------------------------------------------------------------------------
 # Input parsing helpers
 # ---------------------------------------------------------------------------
 
@@ -1225,6 +1598,9 @@ def compute(chart_input: ChartInput, enrich: bool = True) -> dict[str, Any]:
         A dict matching the `ReadingOutput` Pydantic schema.
     """
     base = _run_core_pipeline(chart_input)
-    if not enrich:
-        return base
-    return _apply_tier3_enrichments(base, chart_input)
+    result = base if not enrich else _apply_tier3_enrichments(base, chart_input)
+    # Present-tense + real-doctrine enrichments (daśā-now, live transits, the
+    # encoded Raman per-house verdicts, executive summary). Fail-soft, additive,
+    # under chart.extras — runs last so the full timeline is available.
+    _augment_present_and_doctrine(result, chart_input)
+    return result

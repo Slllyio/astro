@@ -273,6 +273,90 @@
       color: #5a2a7e;
       background: transparent;
     }
+    /* ---- Executive summary + present-tense + house-doctrine (Phase 0/1) ---- */
+    .exec-card {
+      background: linear-gradient(135deg, #fbf7ff 0%, #f4f0e6 100%);
+      border: 1px solid #e2d4ef; border-radius: 10px;
+      padding: 18px 20px; margin-bottom: 18px;
+    }
+    .exec-card h2 { margin-top: 0; }
+    .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
+    .exec-lines li {
+      padding: 8px 0 8px 26px; position: relative; font-size: 0.95rem;
+      color: #2a1a4e; line-height: 1.4; border-bottom: 1px solid #ece3f2;
+    }
+    .exec-lines li:last-child { border-bottom: none; }
+    .exec-lines li::before {
+      content: "✦"; position: absolute; left: 4px; top: 8px; color: #8a6ab0;
+    }
+    .fidelity-note {
+      font-size: 0.76rem; color: #6a5a7a; font-style: italic;
+      margin-top: 6px; line-height: 1.35;
+    }
+    /* 12-house health meter */
+    .health-strip { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 10px; }
+    .health-cell {
+      flex: 1 1 4.6rem; min-width: 4.6rem; border-radius: 6px; padding: 6px 4px 5px;
+      text-align: center; border: 1px solid rgba(0,0,0,0.08); color: #23324a;
+    }
+    .health-cell .hc-house { font-size: 0.58rem; color: #566; letter-spacing: .02em; }
+    .health-cell .hc-area  { font-size: 0.58rem; color: #667; line-height: 1.05; display: block; margin: 1px 0 3px; min-height: 2.1em; }
+    .health-cell .hc-grade { font-size: 0.66rem; font-weight: 700; }
+    .health-bar { height: 5px; border-radius: 3px; margin-top: 4px; background: rgba(0,0,0,0.08); overflow: hidden; }
+    .health-bar > span { display: block; height: 100%; border-radius: 3px; }
+    /* 9-grade colour ramp: afflicted(0)→weak→moderate→…→very powerful(8) */
+    .g0 { background: #e9c4c4; } .g0 .health-bar>span { background:#c0504d; }
+    .g1 { background: #efd0c0; } .g1 .health-bar>span { background:#d07d3a; }
+    .g2 { background: #f2e2c2; } .g2 .health-bar>span { background:#c8a02a; }
+    .g3 { background: #eef0c6; } .g3 .health-bar>span { background:#b0b83a; }
+    .g4 { background: #e2eec6; } .g4 .health-bar>span { background:#8fb84a; }
+    .g5 { background: #d3ecd0; } .g5 .health-bar>span { background:#5aa85a; }
+    .g6 { background: #c6e8cc; } .g6 .health-bar>span { background:#3f9e5e; }
+    .g7 { background: #b8e3cf; } .g7 .health-bar>span { background:#2a8e6e; }
+    .g8 { background: #a8d5c9; } .g8 .health-bar>span { background:#1f7e78; }
+    .gNA { background: #f0f0f0; } .gNA .health-bar>span { background:#bbb; }
+    /* "Where you are now" strip */
+    .now-strip { display: flex; flex-wrap: wrap; gap: 12px; }
+    .now-tile {
+      flex: 1 1 12rem; border: 1px solid #e0d8c8; border-radius: 8px;
+      background: #fffcf6; padding: 12px 14px;
+    }
+    .now-tile .nt-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: .04em; color: #7a5a9a; }
+    .now-tile .nt-value { font-size: 1.05rem; font-weight: 700; color: #2a1a4e; margin: 2px 0; }
+    .now-tile .nt-sub { font-size: 0.8rem; color: #555; }
+    .now-progress { height: 6px; border-radius: 3px; background: #ece3d0; overflow: hidden; margin-top: 6px; }
+    .now-progress > span { display: block; height: 100%; background: #8a6ab0; }
+    .birth-daza-note { font-size: 0.8rem; color: #6a4a1a; background: #fff8f0; border: 1px solid #f0d8b0; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; }
+    /* house-doctrine detailed cards */
+    .doctrine-card { border: 1px solid #e0d8c8; border-radius: 8px; margin-bottom: 12px; background: #fffcf6; }
+    .doctrine-card summary {
+      cursor: pointer; padding: 12px 16px; list-style: none; display: flex;
+      align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .doctrine-card summary::-webkit-details-marker { display: none; }
+    .doctrine-card summary::after { content: "+"; margin-left: auto; color: #8a7a6a; font-size: 1.3rem; }
+    .doctrine-card[open] summary::after { content: "−"; }
+    .dc-house { font-weight: 700; color: #2a1a4e; }
+    .dc-area { color: #667; font-size: 0.82rem; }
+    .grade-pill { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); }
+    .doctrine-body { padding: 4px 16px 16px; }
+    .conf-checklist { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+    .conf-check { font-size: 0.78rem; padding: 3px 9px; border-radius: 12px; border: 1px solid #ddd; }
+    .conf-check.positive { background: #d8efd8; border-color: #a8ceac; color: #24632a; }
+    .conf-check.guarded  { background: #f3e2c8; border-color: #ddc79a; color: #7a531a; }
+    .conf-check.na       { background: #eee; color: #888; }
+    .conf-band { font-size: 0.78rem; color: #555; }
+    .d1d9-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); }
+    .d1d9-badge.concur { background:#d8efd8; color:#24632a; }
+    .d1d9-badge.diverge { background:#f3d4d4; color:#7a1a1a; }
+    .d1d9-badge.neutral { background:#eee; color:#777; }
+    .why-list { list-style: none; padding: 0; margin: 6px 0 0; }
+    .why-list li { font-size: 0.82rem; padding: 5px 0; border-bottom: 1px dotted #ece3d0; color: #3a2a5a; display:flex; gap:8px; }
+    .why-list li:last-child { border-bottom: none; }
+    .why-sign { font-weight: 700; width: 1.2em; text-align: center; }
+    .why-sign.pos { color: #2a8e5e; } .why-sign.neg { color: #b0504d; } .why-sign.zero { color:#aaa; }
+    .why-frame { font-size: 0.68rem; color: #8a7a9a; margin-left: auto; white-space: nowrap; }
+    .why-col { font-size: 0.74rem; text-transform: uppercase; letter-spacing:.03em; color:#7a5a9a; margin: 8px 0 2px; }
   </style>
 </head>
 <body>
@@ -298,6 +382,15 @@
   {% set chara = (sequences.chara_dasha or {}).timeline or [] %}
   {% set yogini = (sequences.yogini_dasha or {}).timeline or [] %}
   {% set dasha_act = extras.dasha_activation or {} %}
+  {# ----- Phase 0/1: present-tense + real Raman per-house doctrine ----- #}
+  {% set dasha_now = extras.dasha_now or {} %}
+  {% set dn_md = dasha_now.md or {} %}
+  {% set dn_ad = dasha_now.ad or {} %}
+  {% set dn_birth = dasha_now.birth_balance or {} %}
+  {% set transits_now = extras.transits_now or {} %}
+  {% set house_doctrine = extras.house_doctrine or {} %}
+  {% set hd_houses = house_doctrine.houses or {} %}
+  {% set exec_summary = extras.executive_summary or [] %}
   {% set GRAHAS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'] %}
   {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
   {% set ad_judgments = sequences.ad_judgments or [] %}
@@ -368,6 +461,80 @@
         Reading id: <code>{{ reading_id }}</code>
       </span>
     </div>
+
+    {# ============== Executive summary + house-health meter (Phase 1b/1e) ============== #}
+    {% if exec_summary or hd_houses %}
+    <div class="exec-card">
+      <h2>Your reading at a glance</h2>
+      {% if exec_summary %}
+      <ul class="exec-lines">
+        {% for line in exec_summary %}<li>{{ line }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if hd_houses %}
+      <div class="why-col">House health — B. V. Raman's method (doctrine grade, not a probability)</div>
+      <div class="health-strip">
+        {% for h in range(1, 13) %}
+          {% set hv = hd_houses[h|string] or {} %}
+          {% set gi = hv.verdict_index %}
+          {% set gc = 'g' ~ gi if gi is not none else 'gNA' %}
+          <div class="health-cell {{ gc }}" title="{{ hv.verdict_label or 'not graded' }}">
+            <div class="hc-house">{{ h }}{{ {1:'st',2:'nd',3:'rd'}.get(h, 'th') if h not in [11,12,13] else 'th' }} house</div>
+            <span class="hc-area">{{ hv.life_area or '' }}</span>
+            <div class="hc-grade">{{ hv.verdict_label or '—' }}</div>
+            <div class="health-bar"><span style="width: {{ ((gi + 1) * 100 / 9)|round(0, 'floor')|int if gi is not none else 0 }}%;"></span></div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if house_doctrine.fidelity_note %}
+      <div class="fidelity-note">{{ house_doctrine.fidelity_note }}</div>
+      {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Where you are now — present-tense daśā + transits (Phase 0) ============== #}
+    {% if dn_md or transits_now %}
+    <div class="section">
+      <h2>Where you are now <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the period &amp; transits running today</span></h2>
+      <div class="now-strip">
+        {% if dn_md.md_lord %}
+        <div class="now-tile">
+          <div class="nt-label">Mahādaśā running now</div>
+          <div class="nt-value">{{ dn_md.md_lord }}</div>
+          <div class="nt-sub">{{ dn_md.start_date }} → {{ dn_md.end_date }}
+            {% if dn_md.age_now_years is not none %}· age {{ "%.0f"|format(dn_md.age_now_years) }}{% endif %}</div>
+          {% if dn_ad.md_progress_fraction is not none %}
+          <div class="now-progress"><span style="width: {{ (dn_ad.md_progress_fraction * 100)|round|int }}%;"></span></div>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if dn_ad.ad_lord %}
+        <div class="now-tile">
+          <div class="nt-label">Antardaśā running now</div>
+          <div class="nt-value">{{ dn_ad.ad_lord }}</div>
+          <div class="nt-sub">{{ dn_ad.start_date }} → {{ dn_ad.end_date }}</div>
+        </div>
+        {% endif %}
+        {% if transits_now %}
+        <div class="now-tile">
+          <div class="nt-label">Saturn transit</div>
+          <div class="nt-value">{{ "Sade-Sati" if transits_now.sade_sati_active else "House " ~ transits_now.saturn_from_moon }}</div>
+          <div class="nt-sub">
+            {% if transits_now.sade_sati_active %}7½-yr Saturn phase active{% else %}Saturn {{ transits_now.saturn_from_moon }}th from the Moon{% endif %}
+            {% if transits_now.active_double_transit_bhavas %} · double transit on {{ transits_now.active_double_transit_bhavas|join(', ') }}{% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% if dn_birth.md_lord %}
+      <div class="birth-daza-note" style="margin-top: 12px;">
+        <strong>At birth</strong> you were in the balance of <strong>{{ dn_birth.md_lord }}</strong> mahādaśā
+        ({{ dn_birth.start_date }} → {{ dn_birth.end_date }}) — that is the daśā <em>at your birth</em>, not today's.
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
 
     {# ============== Chart overview ============== #}
     <div class="section">
@@ -573,10 +740,11 @@
     </div>
     {% endif %}
 
-    {# ============== Current Mahadasha summary ============== #}
+    {# ============== Mahādaśā at birth (balance) — this is birth-relative, NOT today ============== #}
     {% if current_md %}
     <div class="section">
-      <h2>Current Mahadasha — {{ current_md.md_lord }}</h2>
+      <h2>Mahādaśā at birth — {{ current_md.md_lord }}
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the daśā running when you were born · today's period is under “Where you are now”</span></h2>
       {% set ov = current_md.overall_verdict %}
       {% if ov %}
       <div class="verdict {{ ov.direction }}">
@@ -635,15 +803,89 @@
       <h2>Mahādaśā timeline</h2>
       <ul class="dasha-timeline">
         {% for m in md_judgments %}
-        <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+        {% set is_now = dn_md.md_lord and m.md_lord == dn_md.md_lord and m.start_date == dn_md.start_date %}
+        <li class="dasha-row {% if is_now %}current{% elif m.is_past %}past{% else %}future{% endif %}">
           {% set mov = m.overall_verdict %}
           <span class="verdict-direction {{ mov.direction if mov else 'neutral' }}">{{ mov.direction if mov else 'n/a' }}</span>
           <span class="dasha-lord">{{ m.md_lord }}</span>
           <span class="dasha-window">{{ m.start_date }} → {{ m.end_date }}</span>
-          {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+          {% if is_now %}<span class="dasha-badge">running now</span>{% endif %}
+          {% if m.is_current %}<span class="dasha-badge" style="background:#e6dcc4; color:#6a4a1a;">at birth</span>{% endif %}
         </li>
         {% endfor %}
       </ul>
+    </div>
+    {% endif %}
+
+    {# ============== House-by-house — B. V. Raman's method (Phase 1c/1d) ============== #}
+    {% if hd_houses %}
+    <div class="section">
+      <h2>House-by-house — Raman's method
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">how each verdict is reached · why · the evidence</span></h2>
+      <p class="explorer-hint">
+        Each house is graded on its lord, occupants, aspects and kāraka — in both the Rāśi (D1, promise)
+        and the Navāṁśa (D9, fruition). The three checks below are independent; when they agree, confidence is high.
+      </p>
+      {% for h in range(1, 13) %}
+        {% set hv = hd_houses[h|string] or {} %}
+        {% if hv %}
+        {% set gi = hv.verdict_index %}
+        {% set conf = hv.confidence or {} %}
+        <details class="doctrine-card">
+          <summary>
+            <span class="dc-house">{{ h }}{{ {1:'st',2:'nd',3:'rd'}.get(h,'th') if h not in [11,12,13] else 'th' }} house</span>
+            <span class="dc-area">{{ hv.life_area }}</span>
+            <span class="grade-pill {{ 'g' ~ gi if gi is not none else 'gNA' }}">{{ hv.verdict_label or '—' }}</span>
+            {% if hv.timing and hv.timing.current_tier %}
+            <span class="grade-pill" style="background:#efe6ff;border-color:#d8c8f0;color:#5a3a8a;" title="how strongly the daśā running today activates this house">daśā now: {{ hv.timing.current_tier }}</span>
+            {% endif %}
+          </summary>
+          <div class="doctrine-body">
+            {% if hv.synthesis %}<p style="font-size:0.9rem;color:#3a2a5a;margin:6px 0 10px;">{{ hv.synthesis }}</p>{% endif %}
+
+            {# ---- 1c: evidence-based confidence checklist ---- #}
+            <div class="conf-checklist">
+              {% for chk in ['house','lord','karaka'] %}
+                {% set vote = (conf.votes or {})[chk] %}
+                <span class="conf-check {{ vote if vote else 'na' }}">
+                  {% if vote == 'positive' %}✓{% elif vote == 'guarded' %}~{% else %}·{% endif %}
+                  {{ chk }} check{% if not vote %} (n/a){% endif %}
+                </span>
+              {% endfor %}
+              <span class="conf-band">— {{ conf.agreement or 0 }} of {{ conf.graded or 0 }} checks concur ({{ conf.band or 'partial' }})</span>
+            </div>
+
+            {# ---- 1c: D1/D9 agreement per factor ---- #}
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+              {% for chk in ['house','lord','karaka'] %}
+                {% set ag = (hv.d1d9 or {})[chk] or 'neutral' %}
+                <span class="d1d9-badge {{ ag }}" title="Rāśi (promise) vs Navāṁśa (fruition)">{{ chk }}: D1/D9 {{ ag }}</span>
+              {% endfor %}
+            </div>
+
+            {# ---- 1d: the "why" — real engine findings per factor ---- #}
+            {% for factor in ['lagna','lord','karaka'] %}
+              {% set fv = hv[factor] or {} %}
+              {% if fv.findings %}
+              <div class="why-col">{{ fv.role or factor }} — {{ fv.subject }} · {{ fv.label }}</div>
+              <ul class="why-list">
+                {% for f in fv.findings %}
+                <li>
+                  <span class="why-sign {{ 'pos' if f.delta > 0 else 'neg' if f.delta < 0 else 'zero' }}">{{ '+' if f.delta > 0 else '−' if f.delta < 0 else '·' }}</span>
+                  <span>{{ f.text }}</span>
+                  <span class="why-frame">{{ f.frame }}{% if f.criterion %} · {{ f.criterion }}{% endif %}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </details>
+        {% endif %}
+      {% endfor %}
+      {% if house_doctrine.fidelity_note %}
+      <div class="fidelity-note">{{ house_doctrine.fidelity_note }} · {{ house_doctrine.method }}</div>
+      {% endif %}
     </div>
     {% endif %}
 

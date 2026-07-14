@@ -30,35 +30,19 @@ from typing import Any, Mapping
 
 from app.core.dignity import SIGN_RULERS
 
+from app.reading._planet_lexicon import (
+    PLANET_QUALITY,
+    PLANET_SIG,
+    SIGN_TEMPERAMENT,
+    well_placed as _lex_well_placed,
+)
+
 _SIGN_NAMES = (
     "", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra",
     "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
 )
-_SIGN_TEMPERAMENT = {
-    1: "energetic, pioneering and somewhat impulsive, with a martial cast of mind",
-    2: "steady, patient and fond of comfort, with fixity of purpose",
-    3: "intellectual, versatile and communicative, fond of learning and movement",
-    4: "sensitive, imaginative and domestic, with a somewhat changeful mind",
-    5: "ambitious, dignified and generous, with a marked desire for recognition",
-    6: "analytical, discriminating and methodical, at times over-critical",
-    7: "balanced, refined and sociable, fond of harmony and the arts",
-    8: "intense, reserved and determined, with considerable reserves of will",
-    9: "frank, philosophical and optimistic, inclined to religion and travel",
-    10: "practical, cautious and persevering, with organising ability",
-    11: "humane, independent and reflective, with a philosophical bent",
-    12: "kind, emotional and impressionable, with a spiritual inclination",
-}
-_PLANET_SIG = {
-    "Sun": "will, authority, vitality and the father",
-    "Moon": "the mind, the emotions and the mother",
-    "Mars": "energy, courage, initiative and enterprise",
-    "Mercury": "intellect, speech, reasoning and commerce",
-    "Jupiter": "wisdom, fortune, progeny and devotion",
-    "Venus": "refinement, comforts, marriage and the arts",
-    "Saturn": "discipline, endurance, labour and longevity",
-    "Rahu": "worldly ambition, the unconventional and the foreign",
-    "Ketu": "detachment, intuition and spiritual tendencies",
-}
+_SIGN_TEMPERAMENT = SIGN_TEMPERAMENT
+_PLANET_SIG = PLANET_SIG
 _HOUSE_SIG = {
     1: "the body, health and temperament",
     2: "wealth, family and speech",
@@ -84,22 +68,8 @@ _DUSTHANAS = {6, 8, 12}
 
 # Each planet's higher expression (when well placed) and its shadow (when
 # afflicted) — for the character portrait and the per-planet paragraphs.
-_PLANET_QUALITY = {
-    "Sun": ("dignity, a firm will and a love of honour",
-            "an inclination to pride or a domineering temper"),
-    "Moon": ("a receptive, contented and sympathetic mind",
-             "changefulness of mood and emotional dependence"),
-    "Mars": ("courage, decision and executive capacity",
-             "haste, irritability or a combative streak"),
-    "Mercury": ("quickness of intellect and an aptitude for learning and affairs",
-                "restlessness and a want of steadiness in thought"),
-    "Jupiter": ("wisdom, generosity, faith and good fortune",
-                "over-optimism or a tendency to excess"),
-    "Venus": ("refinement, artistic taste and domestic happiness",
-              "an over-fondness for ease and pleasure"),
-    "Saturn": ("patience, endurance and a capacity for sustained labour",
-               "melancholy, delay and a want of self-confidence"),
-}
+# Sourced from the shared lexicon so the native profile reads identically.
+_PLANET_QUALITY = PLANET_QUALITY
 
 
 def _grade_word(idx: int | None) -> str:
@@ -208,16 +178,12 @@ def build_classical_narrative(
             return _andlist(bits)
 
         def well_placed(p: str) -> bool | None:
-            """True = its higher qualities show, False = its shadow, None = mixed."""
-            dig = str((pstr.get(p) or {}).get("dignity") or "").lower()
-            comp = (pstr.get(p) or {}).get("composite")
-            if dig in ("exalted", "own", "moolatrikona") and not combust.get(p):
-                return True
-            if dig == "debilitated" or combust.get(p):
-                return False
-            if comp is not None:
-                return True if comp >= 55 else False if comp < 42 else None
-            return None
+            """True = its higher qualities show, False = its shadow, None = mixed.
+            Delegates to the shared lexicon predicate so both readings agree."""
+            row = pstr.get(p) or {}
+            return _lex_well_placed(
+                row.get("dignity"), row.get("composite"), bool(combust.get(p)),
+            )
 
         # Varied phrasings (indexed per planet) so the prose never reads from a
         # template — no repeated "Being well placed…" / "It confers…".

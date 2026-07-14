@@ -310,6 +310,21 @@
     .master-pol.negative { color: #f09a9a; }
     .master-factor-dom { color: #a98fd0; font-size: 0.76rem; margin-left: 6px; }
     .master-foot { font-size: 0.8rem; color: #b79fe0; margin: 8px 0 4px; line-height: 1.45; }
+    /* ---- Who you are — the native profile ---- */
+    .native-card { }
+    .native-clarity { background: #f4f0e6; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; color: #3a2a56; margin-bottom: 14px; }
+    :root[data-theme="dark"] .native-clarity { background: #241f36; color: #d8ccf0; }
+    .native-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .native-tile { border: 1px solid #e2d4ef; border-left-width: 4px; border-radius: 8px; padding: 11px 14px; background: #fdfbff; }
+    :root[data-theme="dark"] .native-tile { background: #201c30; border-color: #3a3350; }
+    .native-tile.cond-true { border-left-color: #4caf7d; }
+    .native-tile.cond-false { border-left-color: #d98a8a; }
+    .native-tile.cond-none { border-left-color: #c9a94e; }
+    .native-h { font-weight: 600; color: #2a1a4e; font-size: 0.95rem; margin-bottom: 5px; }
+    :root[data-theme="dark"] .native-h { color: #e8ddf7; }
+    .native-gov { font-weight: normal; color: #8a72b0; font-size: 0.76rem; }
+    .native-t { font-size: 0.88rem; line-height: 1.5; color: #3a2a56; }
+    :root[data-theme="dark"] .native-t { color: #cabbe4; }
     .exec-card h2 { margin-top: 0; }
     .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
     .exec-lines li {
@@ -652,6 +667,7 @@
     <div class="container" style="max-width: 920px;">
       <div class="inner">
         {% if extras.master %}<a href="#s-master">Master</a>{% endif %}
+        {% if extras.native_profile %}<a href="#s-native">Who you are</a>{% endif %}
         {% if extras.classical_narrative %}<a href="#s-classical-read">Reading</a>{% endif %}
         <a href="#s-summary">Summary</a>
         {% if extras.domain_decisions %}<a href="#s-domains">Domains</a>{% endif %}
@@ -753,6 +769,29 @@
     </div>
     {% endif %}
 
+    {# ============== Who you are — the native profile (before the predictions) ============== #}
+    {% set native = extras.native_profile or {} %}
+    {% if native.styles %}
+    <div class="section native-card" id="s-native">
+      <h2>Who you are
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">your make-up, read from the governing grahas — before the life predictions</span></h2>
+      <div class="native-clarity">
+        <strong>{{ native.clarity_pct }}%</strong> of your governing grahas express their higher nature
+        ({{ native.clear }} clear, {{ native.strained }} under strain of {{ native.total }}) —
+        an internal reading of the chart's own signals, not a probability of events.
+      </div>
+      <div class="native-grid">
+        {% for s in native.styles %}
+        <div class="native-tile cond-{{ s.well_placed|string|lower }}">
+          <div class="native-h">{{ s.label }}
+            <span class="native-gov">{{ s.governor }}{% if s.planet_house_ord %} · {{ s.planet_house_ord }} house{% endif %}</span></div>
+          <div class="native-t">{{ s.text }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
     {# ============== A classical reading — in the manner of B. V. Raman (comes FIRST) ============== #}
     {% set narrative = extras.classical_narrative or [] %}
     {% if narrative %}
@@ -838,7 +877,7 @@
           <div class="dom-badges">
             <span class="badge g{{ gi }}">Potential: {{ d.potential }}</span>
             <span class="badge tim-{{ tm }}">{{ d.timing }}{% if d.current_tier %} · {{ d.current_tier }}{% endif %}</span>
-            <span class="badge cf-{{ cf }}">{{ d.confidence }}</span>
+            <span class="badge cf-{{ cf }}" title="{{ d.confidence_reason }}">{{ d.confidence }}{% if d.confidence_pct is not none %} · {{ d.confidence_pct }}%{% endif %}</span>
           </div>
           {# the single reconciled verdict (conflict-resolution engine) #}
           <div class="dom-verdict">{{ jg.verdict or d.verdict }}</div>

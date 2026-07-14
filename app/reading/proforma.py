@@ -1075,6 +1075,19 @@ def _domain_decisions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
             else:
                 line = f"{pot} natal support and quiet timing — a background area for now."
 
+            # confidence as an honest percentage: the share of independent
+            # signals that agree with the headline direction (internal
+            # agreement, NEVER an event probability). A genuine conflict caps it.
+            conf_pct = 0 if timing_conflict else (round(frac * 100) if total else 50)
+            conf_reason = (
+                f"{agree} of {total} independent signals agree"
+                if total and not timing_conflict
+                else "strong natal promise but the daśā is quiet here"
+                if timing_conflict and natal_ok
+                else "the period activates an area of limited natal support"
+                if timing_conflict
+                else "too few independent signals to judge"
+            )
             out.append({
                 "key": spec["key"], "label": spec["label"],
                 "modern": spec["modern"], "houses": houses,
@@ -1085,6 +1098,8 @@ def _domain_decisions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
                 "current_tier": tier,
                 "activated_houses": activated_houses,
                 "confidence": band,
+                "confidence_pct": conf_pct,
+                "confidence_reason": conf_reason,
                 "contributors_pos": pos,
                 "contributors_neg": neg,
                 "verdict": line,
@@ -1351,6 +1366,16 @@ def _augment_present_and_doctrine(
                 extras["classical_narrative"] = narrative_chapters
         except Exception:  # noqa: BLE001
             pass
+
+    # --- Native profile ("Who you are"): eight behavioural styles reasoned from
+    # the real planet-strength table + an honest internal-clarity figure.
+    try:
+        from app.reading.native_profile import build_native_profile
+        native = build_native_profile(reading, extras)
+        if native:
+            extras["native_profile"] = native
+    except Exception:  # noqa: BLE001
+        pass
 
     # --- Master Synthesis Layer (the spine): reduce ALL the blocks above into
     # ONE governing judgement — dominant planet / yoga / challenge, core

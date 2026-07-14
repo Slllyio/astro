@@ -304,6 +304,47 @@ class TestPresentTenseAndDoctrineEnrichments:
         # --- life theme is a single synthesised sentence.
         assert isinstance(master["life_theme"], str)
 
+    def test_native_profile_reads_who_you_are(self):
+        """extras.native_profile is eight behavioural styles reasoned from the
+        real planet-strength table (shared lexicon), plus an honest internal
+        clarity figure — never a probability."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        np_ = extras.get("native_profile") or {}
+        assert np_, "native profile must be present"
+        styles = np_["styles"]
+        keys = {s["key"] for s in styles}
+        assert {"decision_making", "emotional", "leadership", "communication",
+                "risk_tolerance", "learning", "financial", "relationship"} == keys
+        # each style is reasoned from a real graha in the strength table.
+        ps_planets = {r["planet"] for r in
+                      (extras.get("planet_strength") or {}).get("planets", [])}
+        for s in styles:
+            assert s["planet"] in ps_planets
+            assert s["text"] and s["condition"] in ("well placed", "under strain", "mixed")
+        # clarity is a bounded internal-signal percentage.
+        assert 0 <= np_["clarity_pct"] <= 100
+        assert np_["clear"] + np_["strained"] <= np_["total"] == len(styles)
+
+    def test_domain_confidence_is_an_honest_percentage(self):
+        """Each domain decision carries a confidence PERCENTAGE with a reason —
+        internal agreement of independent signals, never an event probability."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        for d in (extras.get("domain_decisions") or []):
+            assert 0 <= d["confidence_pct"] <= 100
+            assert d["confidence_reason"]
+
+    def test_shared_lexicon_is_single_source(self):
+        """The classical narrative and the native profile read the same
+        vocabulary from _planet_lexicon (no drift between the two readings)."""
+        from app.reading import _planet_lexicon as lex
+        from app.reading import classical_narrative as cn
+        assert cn._PLANET_QUALITY is lex.PLANET_QUALITY
+        assert cn._SIGN_TEMPERAMENT is lex.SIGN_TEMPERAMENT
+        # the shared predicate behaves as documented.
+        assert lex.well_placed("exalted", None, False) is True
+        assert lex.well_placed("debilitated", 90, False) is False
+        assert lex.well_placed(None, 50, False) is None
+
     def test_narrative_and_risk_opportunity_are_derived(self):
         """extras.narrative/risks/opportunities are deterministic lay-language
         derived from the decision layer — cohesive, honest, no invented events."""

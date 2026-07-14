@@ -1407,6 +1407,18 @@ def _augment_present_and_doctrine(
     except Exception:  # noqa: BLE001
         pass
 
+    # --- Life timeline (#12,#8,#9): the full-life mahādaśā sequence
+    # reconstructed from the birth balance (past + present + future eras), each
+    # with its life areas + tone, and the current period's cycle label (the
+    # timing strength meter). Deterministic Vimśottarī; needs dasha_now.
+    try:
+        from app.reading.life_timeline import build_life_timeline
+        life_timeline = build_life_timeline(reading, extras)
+        if life_timeline:
+            extras["life_timeline"] = life_timeline
+    except Exception:  # noqa: BLE001
+        pass
+
 
 # ---------------------------------------------------------------------------
 # Input parsing helpers

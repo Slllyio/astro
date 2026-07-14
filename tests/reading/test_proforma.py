@@ -371,6 +371,34 @@ class TestPresentTenseAndDoctrineEnrichments:
             assert r["a"] in ps_planets and r["b"] in ps_planets and r["a"] != r["b"]
             assert r["effect"]
 
+    def test_life_timeline_reconstructs_the_full_sequence(self):
+        """extras.life_timeline is the whole-life mahādaśā sequence rebuilt from
+        the birth balance — nine eras spanning birth into the future, exactly
+        one flagged current, with a cycle label + progress on that one."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        lt = extras.get("life_timeline") or {}
+        eras = lt.get("eras") or []
+        assert len(eras) == 9, "the full 9-lord Vimśottarī sequence"
+        # eras are contiguous and non-decreasing in age, starting at birth.
+        assert eras[0]["age_start"] == 0
+        for a, b in zip(eras, eras[1:]):
+            assert a["age_end"] == b["age_start"]
+        # each lord appears once; statuses are consistent with age_now.
+        lords = [e["lord"] for e in eras]
+        assert len(set(lords)) == 9
+        currents = [e for e in eras if e["status"] == "current"]
+        assert len(currents) == 1
+        cur = currents[0]
+        assert cur["cycle"] in ("Building", "Peak", "Closing", "Handover")
+        assert 0 <= cur["progress_pct"] <= 100
+        assert lt["current"]["lord"] == cur["lord"]
+        # the reconstructed current MD matches the real dasha_now lord.
+        dn_lord = ((extras.get("dasha_now") or {}).get("md") or {}).get("md_lord")
+        assert cur["lord"] == dn_lord
+        # every era carries its tone (from the lord's real strength).
+        for e in eras:
+            assert e["tone"] in ("favourable", "challenging", "mixed")
+
     def test_narrative_and_risk_opportunity_are_derived(self):
         """extras.narrative/risks/opportunities are deterministic lay-language
         derived from the decision layer — cohesive, honest, no invented events."""

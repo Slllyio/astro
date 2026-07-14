@@ -349,6 +349,24 @@
     .pstory-rel.rel-exchange { background: #e0ecf8; color: #2a5a8a; }
     .pstory-rel.rel-conjunct { background: #ece3f5; color: #6a4a8a; }
     .pstory-rel.rel-mutual, .pstory-rel.rel-aspect { background: #eef0f2; color: #556; }
+    /* ---- Life timeline (era strip) ---- */
+    .life-eras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+    .life-era { border: 1px solid #e6e0ee; border-top-width: 4px; border-radius: 6px; padding: 9px 11px; background: #fdfcff; }
+    :root[data-theme="dark"] .life-era { background: #1e1a2c; border-color: #362f4a; }
+    .life-era.tone-favourable { border-top-color: #4caf7d; }
+    .life-era.tone-challenging { border-top-color: #d98a8a; }
+    .life-era.tone-mixed { border-top-color: #c9a94e; }
+    .life-era.era-current { box-shadow: 0 2px 10px rgba(122,90,154,0.2); border-color: #b79fe0; }
+    .life-era.era-past { opacity: 0.62; }
+    .life-era-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .life-lord { font-weight: 600; color: #2a1a4e; }
+    :root[data-theme="dark"] .life-lord { color: #e8ddf7; }
+    .life-cycle { font-size: 0.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; background: #7a5a9a; border-radius: 9px; padding: 1px 7px; }
+    .life-era-span { font-size: 0.8rem; color: #4a3570; margin: 3px 0; }
+    :root[data-theme="dark"] .life-era-span { color: #b8a6d8; }
+    .life-age { color: #9a8bb8; font-size: 0.72rem; margin-left: 4px; }
+    .life-areas { font-size: 0.76rem; color: #667; line-height: 1.35; }
+    :root[data-theme="dark"] .life-areas { color: #a99cc4; }
     .exec-card h2 { margin-top: 0; }
     .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
     .exec-lines li {
@@ -702,6 +720,7 @@
         {% if extras.classical_factors %}<a href="#s-classical">Classical</a>{% endif %}
         {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
         <a href="#s-timeline">Timeline</a>
+        {% if extras.life_timeline %}<a href="#s-life">Life arc</a>{% endif %}
         {% if extras.raman_doctrine %}<a href="#s-raman">Raman</a>{% endif %}
         <a href="#s-yogas">Yogas</a>
         <a href="#s-method">Method</a>
@@ -1366,6 +1385,29 @@
         </div>
       </div>
       {{ house_activation(adns.current.checks) }}
+    </div>
+    {% endif %}
+
+    {# ============== Life timeline — full-life mahādaśā eras (Phase D) ============== #}
+    {% set life_timeline = extras.life_timeline or {} %}
+    {% if life_timeline.eras %}
+    <div class="section" id="s-life">
+      <h2>Your life in periods
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the whole mahādaśā sequence — past, present and future — with each period's areas</span></h2>
+      <div class="life-eras">
+        {% for e in life_timeline.eras %}
+        <div class="life-era era-{{ e.status }} tone-{{ e.tone }}">
+          <div class="life-era-top">
+            <span class="life-lord">{{ e.lord }}</span>
+            {% if e.status == 'current' %}<span class="life-cycle">{{ e.cycle }} · {{ e.progress_pct }}%</span>{% endif %}
+          </div>
+          <div class="life-era-span">{% if e.year_start %}{{ e.year_start }}–{{ e.year_end }}{% endif %}
+            <span class="life-age">age {{ e.age_start }}–{{ e.age_end }}</span></div>
+          {% if e.areas %}<div class="life-areas">{{ e.areas|join(' · ') }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if life_timeline.note %}<div class="fidelity-note">{{ life_timeline.note }}</div>{% endif %}
     </div>
     {% endif %}
 

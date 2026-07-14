@@ -170,14 +170,15 @@
     .explorer-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
     .explorer-controls label { font-weight: 600; font-size: 0.85rem; }
     .explorer-controls select { margin-left: 0.3rem; padding: 0.2rem 0.4rem; font-size: 0.9rem; }
-    .explorer-legend { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-    .explorer-legend .lg { padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; border: 1px solid #ddd; }
-    .lg-note { font-size: 0.72rem; color: #888; }
+    .tier-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .tier-legend .lg { padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.12); }
+    .tier-legend .lg small { font-weight: 400; color: #555; margin-left: 0.3rem; }
     #dasha-explorer-grid { grid-template-columns: repeat(4, 6.4rem); grid-auto-rows: 6.4rem; }
     #dasha-explorer-grid .act-cell { transition: background 0.15s; overflow: hidden; }
-    .act-full    { background: #cfe8cf; }
-    .act-partial { background: #f6e6c2; }
-    .act-none    { background: #fff; }
+    .tier-par { background: #a8d5a8; }
+    .tier-pre { background: #d3ecd3; }
+    .tier-lim { background: #f6e6c2; }
+    .tier-dor { background: #fff; }
     .act-house { position: absolute; top: 1px; left: 3px; font-size: 0.56rem; color: #999; }
     .act-bodies { display: block; margin-top: 0.85rem; font-size: 0.72rem; color: #222; line-height: 1.15; }
     .act-marks { display: flex; flex-direction: column; gap: 0.12rem; margin-top: 0.15rem; }
@@ -443,7 +444,7 @@
     {% set cur_ad_lord = adns.current.ad_lord if adns.current else none %}
     <div class="section">
       <h2>Daśā activation explorer</h2>
-      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — each bhāva lights up by Raman's fructification tier (HTJAH ch. IV). A lord <b>activates</b> a house by any of six factors: <i>owns · occupies · aspects the house · aspects its lord · conjoins its lord · is its lord from the Moon</i>. <b>Fully</b> = both MD &amp; AD lords activate it (<i>par excellence</i> when the two are associated, else <i>predominant</i>); <b>Partial</b> = one lord (<i>limited</i>); <b>None</b> = neither (<i>dormant</i> — no results of that house this period).</p>
+      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — each bhāva is coloured by Raman's fructification tier (HTJAH ch. IV). A lord <b>activates</b> a house by any of six factors: <i>owns · occupies · aspects the house · aspects its lord · conjoins its lord · is its lord from the Moon</i>. The MD × AD tier ladder is: <b>par excellence</b> → <b>predominant</b> → <b>limited</b> → <b>dormant</b>.</p>
       <div class="explorer-controls">
         <label>MD lord
           <select id="md-lord-sel">
@@ -455,11 +456,12 @@
             {% for g in GRAHAS %}{% if g in dasha_act.planets %}<option value="{{ g }}"{% if g == cur_ad_lord %} selected{% endif %}>{{ g }}</option>{% endif %}{% endfor %}
           </select>
         </label>
-        <span class="explorer-legend">
-          <span class="lg act-full">Fully</span>
-          <span class="lg act-partial">Partial</span>
-          <span class="lg act-none">None</span>
-        </span>
+      </div>
+      <div class="tier-legend">
+        <span class="lg tier-par" title="both lords influence the house AND are mutually associated">par excellence <small>both lords + associated</small></span>
+        <span class="lg tier-pre" title="both the major and sub lords influence the house">predominant <small>both lords</small></span>
+        <span class="lg tier-lim" title="only one of the two lords influences the house">limited <small>one lord</small></span>
+        <span class="lg tier-dor" title="neither lord influences the house — no results of this house">dormant <small>neither — no results</small></span>
       </div>
       <p id="dasha-explorer-note" class="explorer-note"></p>
       <div class="south-grid" id="dasha-explorer-grid">
@@ -469,7 +471,7 @@
             <div class="south-cell south-center"></div>
           {% else %}
             {% set hse = ((sgn - lag) % 12) + 1 %}
-            <div class="south-cell act-cell act-none" data-sign="{{ sgn }}" data-house="{{ hse }}">
+            <div class="south-cell act-cell tier-dor" data-sign="{{ sgn }}" data-house="{{ hse }}">
               <span class="south-signno">{{ sgn }}</span>
               <span class="act-house">H{{ hse }}{% if sgn == lag %} · La{% endif %}</span>
               <span class="act-bodies">{% for p, info in chart.planets.items() %}{% if info.sign == sgn and p in ABBR %}{{ ABBR[p] }} {% endif %}{% endfor %}</span>
@@ -503,16 +505,18 @@
           if (pa.occ === pb.occ) return true;                        // conjoined
           return pa.aspects.indexOf(pb.occ) >= 0 || pb.aspects.indexOf(pa.occ) >= 0;
         }
+        var TIER_CLASS = {'par excellence': 'tier-par', 'predominant': 'tier-pre',
+                          'limited': 'tier-lim', 'dormant': 'tier-dor'};
         function paint() {
           var md = mdSel.value, ad = adSel.value, assoc = associated(md, ad);
           cells.forEach(function (cell) {
             var h = cell.getAttribute('data-house');
-            var mF = factors(md, h), aF = factors(ad, h), tier, cls;
-            if (mF && aF) { tier = assoc ? 'par excellence' : 'predominant'; cls = 'act-full'; }
-            else if (mF || aF) { tier = 'limited'; cls = 'act-partial'; }
-            else { tier = 'dormant'; cls = 'act-none'; }
-            cell.classList.remove('act-full', 'act-partial', 'act-none');
-            cell.classList.add(cls);
+            var mF = factors(md, h), aF = factors(ad, h), tier;
+            if (mF && aF) tier = assoc ? 'par excellence' : 'predominant';
+            else if (mF || aF) tier = 'limited';
+            else tier = 'dormant';
+            cell.classList.remove('tier-par', 'tier-pre', 'tier-lim', 'tier-dor');
+            cell.classList.add(TIER_CLASS[tier]);
             var marks = '';
             if (mF) marks += '<span class="act-mark lvl2">MD ' + ab(mF) + '</span>';
             if (aF) marks += '<span class="act-mark lvl1">AD ' + ab(aF) + '</span>';

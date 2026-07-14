@@ -401,6 +401,22 @@
     .dom-why li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 6px; color: #3a2a5a; }
     .dom-why li .s { font-weight: 700; }
     .dom-why li .s.p { color:#2a8e5e; } .dom-why li .s.n { color:#b0504d; }
+    /* consultation narrative (#17) */
+    .narrative-card { background: #f7f4fb; border: 1px solid #e2d4ef; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+    .narrative-card p { margin: 0 0 8px; font-size: 0.95rem; line-height: 1.55; color: #33244e; }
+    .narrative-card p:last-child { margin-bottom: 0; }
+    /* opportunities / risks (#9,#10) */
+    .opprisk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .opprisk-row { grid-template-columns: 1fr; } }
+    .opprisk-col h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 8px; }
+    .opprisk-col.opps h3 { color: #2a7e4e; }
+    .opprisk-col.risks h3 { color: #a05028; }
+    .opprisk-col ul { list-style: none; padding: 0; margin: 0; }
+    .opprisk-col li { font-size: 0.86rem; padding: 8px 10px 8px 26px; position: relative; margin-bottom: 7px; border-radius: 5px; line-height: 1.4; }
+    .opprisk-col.opps li { background: #eef6ee; border: 1px solid #cfe6cf; color: #234f2a; }
+    .opprisk-col.opps li::before { content: "▲"; position: absolute; left: 9px; top: 9px; color: #3f9e5e; font-size: 0.7rem; }
+    .opprisk-col.risks li { background: #fbf1ea; border: 1px solid #eed6c4; color: #6a3a1a; }
+    .opprisk-col.risks li::before { content: "!"; position: absolute; left: 10px; top: 8px; color: #c0703a; font-weight: 800; }
   </style>
 </head>
 <body>
@@ -510,6 +526,12 @@
     {% if exec_summary or hd_houses %}
     <div class="exec-card">
       <h2>Your reading at a glance</h2>
+      {% set narrative = extras.narrative or [] %}
+      {% if narrative %}
+      <div class="narrative-card">
+        {% for para in narrative %}<p>{{ para }}</p>{% endfor %}
+      </div>
+      {% endif %}
       {% if exec_summary %}
       <ul class="exec-lines">
         {% for line in exec_summary %}<li>{{ line }}</li>{% endfor %}
@@ -580,6 +602,29 @@
         {% endfor %}
       </div>
       {% if house_doctrine.fidelity_note %}<div class="fidelity-note" style="margin-top:10px;">{{ house_doctrine.fidelity_note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Opportunities & risks (#9,#10) ============== #}
+    {% set opportunities = extras.opportunities or [] %}
+    {% set risks = extras.risks or [] %}
+    {% if opportunities or risks %}
+    <div class="section">
+      <h2>Opportunities &amp; risks <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">where to lean in, and where to take care</span></h2>
+      <div class="opprisk-row">
+        <div class="opprisk-col opps">
+          <h3>Lean into</h3>
+          {% if opportunities %}
+          <ul>{% for o in opportunities %}<li>{{ o }}</li>{% endfor %}</ul>
+          {% else %}<p class="empty">No standout strengths clear the bar on this chart — progress comes from steady effort.</p>{% endif %}
+        </div>
+        <div class="opprisk-col risks">
+          <h3>Take care of</h3>
+          {% if risks %}
+          <ul>{% for r in risks %}<li>{{ r }}</li>{% endfor %}</ul>
+          {% else %}<p class="empty">No pronounced risk areas surfaced.</p>{% endif %}
+        </div>
+      </div>
     </div>
     {% endif %}
 

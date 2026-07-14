@@ -830,6 +830,109 @@ def _dedup_keep(items: list[str]) -> list[str]:
     return out
 
 
+# House-specific cautions when a classic risk house is weakly graded (#9).
+_RISK_HOUSE_PHRASE: dict[int, str] = {
+    2: "cash-flow swings and family or speech friction — keep a buffer",
+    4: "domestic or property unrest and inner restlessness — protect your base",
+    6: "debts, disputes or recurring health niggles — address them early",
+    7: "relationship strain — patience and clear agreements with partners",
+    8: "sudden disruptions, unexpected expenses or health scares — avoid speculation",
+    12: "unplanned expenditure, losses and energy drain — watch the outflows",
+}
+# Opportunity phrasing when a domain is strongly graded (#10).
+_OPP_DOMAIN_PHRASE: dict[str, str] = {
+    "career": "leadership roles, promotion and public recognition",
+    "wealth": "building assets and steady income growth",
+    "marriage": "partnership, commitment and mutual support",
+    "health": "vitality and stamina to draw on",
+    "education": "study, credentials and skill-building",
+    "children": "children, mentoring and creative output",
+    "foreign": "travel, relocation or overseas openings",
+    "spirituality": "guidance, fortune and inner growth",
+}
+
+
+def _risks_opportunities_narrative(
+    reading: Mapping[str, Any],
+) -> tuple[list[str], list[str], list[str]]:
+    """Derive (risks, opportunities, narrative) from the real decision layer —
+    honest, lay-language, no invented events. Returns three lists; any may be
+    empty. Fail-soft → ([], [], [])."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        decisions = extras.get("domain_decisions") or []
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        if not decisions:
+            return [], [], []
+        by_key = {d["key"]: d for d in decisions}
+
+        # --- Opportunities (#10): strongly-graded domains, active ones first.
+        opps: list[str] = []
+        for d in decisions:
+            if d["potential_index"] >= 4.0:  # ≥ fairly good
+                phrase = _OPP_DOMAIN_PHRASE.get(d["key"], d["modern"].split(",")[0])
+                when = (" — supported now" if d["timing"] == "Active now"
+                        else " — building" if d["timing"] == "Warming up" else "")
+                opps.append(f"{phrase.capitalize()}{when}.")
+        opps = opps[:5]
+
+        # --- Risks (#9): concrete house cautions first, then a few weak domains.
+        house_risks: list[str] = []
+        for h, phrase in _RISK_HOUSE_PHRASE.items():
+            gi = (hd.get(str(h)) or {}).get("verdict_index")
+            if gi is not None and gi <= 1:  # afflicted/weak
+                house_risks.append(f"Watch the {_ordinal(h)} house: {phrase}.")
+        domain_risks = [
+            f"{d['label']} needs patience — {d['modern'].split(',')[0]} may "
+            f"progress slowly; set realistic expectations."
+            for d in decisions if d["potential_index"] <= 2.0
+        ][:3]
+        risks = _dedup_keep(house_risks + domain_risks)[:6]
+
+        # --- Cohesive narrative (#17): potential + timing, no fabricated events.
+        narrative: list[str] = []
+        strongest = decisions[0] if decisions else None
+        weakest = decisions[-1] if decisions else None
+        dn = extras.get("dasha_now") or {}
+        md = (dn.get("md") or {}).get("md_lord")
+        ad = (dn.get("ad") or {}).get("ad_lord")
+        active = [d for d in decisions if d["timing"] == "Active now"]
+        if strongest:
+            narrative.append(
+                f"Your chart's clearest strength is {strongest['label'].lower()} "
+                f"({strongest['potential'].lower()} potential), with "
+                f"{decisions[1]['label'].lower()} also well supported."
+                if len(decisions) > 1 else
+                f"Your chart's clearest strength is {strongest['label'].lower()} "
+                f"({strongest['potential'].lower()} potential).")
+        if md:
+            theme = (f", and it currently activates "
+                     + ", ".join(a["label"].lower() for a in active[:2])
+                     if active else "")
+            narrative.append(
+                f"You are running the {md} mahādaśā"
+                f"{(' with ' + ad + ' antardaśā') if ad else ''}{theme}.")
+        # Reconcile the headline potential vs the present timing (the anti-
+        # contradiction sentence).
+        if strongest:
+            if strongest["timing"] == "Active now":
+                narrative.append(
+                    f"This is a constructive window for {strongest['label'].lower()} — "
+                    f"the natal promise and the present period align.")
+            else:
+                narrative.append(
+                    f"The pattern favours sustained progress over sudden breakthroughs: "
+                    f"{strongest['label'].lower()}'s promise ripens more fully in a later "
+                    f"period than the one running now.")
+        if weakest and weakest["potential_index"] <= 2.0:
+            narrative.append(
+                f"Give extra patience to {weakest['label'].lower()}, the least "
+                f"supported area, and avoid overcommitting there.")
+        return risks, opps, narrative
+    except Exception:  # noqa: BLE001
+        return [], [], []
+
+
 def _augment_present_and_doctrine(
     reading: dict[str, Any], chart_input: ChartInput,
 ) -> None:
@@ -908,6 +1011,15 @@ def _augment_present_and_doctrine(
     decisions = _domain_decisions(reading)
     if decisions:
         extras["domain_decisions"] = decisions
+
+    # --- Phase 3 (#9,#10,#17): risks, opportunities, cohesive narrative.
+    risks, opps, narrative = _risks_opportunities_narrative(reading)
+    if risks:
+        extras["risks"] = risks
+    if opps:
+        extras["opportunities"] = opps
+    if narrative:
+        extras["narrative"] = narrative
 
     # --- Phase 1b: the deterministic executive summary (reads the blocks above).
     summary = _executive_summary(reading)

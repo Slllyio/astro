@@ -259,3 +259,20 @@ class TestPresentTenseAndDoctrineEnrichments:
             assert d["confidence"] in (
                 "Very high", "High", "Medium", "Low", "Conflicting indications")
             assert d["verdict"]
+
+    def test_narrative_and_risk_opportunity_are_derived(self):
+        """extras.narrative/risks/opportunities are deterministic lay-language
+        derived from the decision layer — cohesive, honest, no invented events."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        narrative = extras.get("narrative") or []
+        assert isinstance(narrative, list)
+        # A chart with decisions must yield a cohesive multi-sentence narrative.
+        if extras.get("domain_decisions"):
+            assert len(narrative) >= 2
+            assert all(isinstance(p, str) and p for p in narrative)
+        # Risks/opportunities are bounded lists of strings when present.
+        for key in ("risks", "opportunities"):
+            vals = extras.get(key)
+            assert vals is None or (
+                isinstance(vals, list) and len(vals) <= 6
+                and all(isinstance(v, str) and v for v in vals))

@@ -173,17 +173,18 @@
     .explorer-legend { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     .explorer-legend .lg { padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; border: 1px solid #ddd; }
     .lg-note { font-size: 0.72rem; color: #888; }
-    #dasha-explorer-grid { grid-template-columns: repeat(4, 5rem); grid-auto-rows: 5rem; }
-    #dasha-explorer-grid .act-cell { transition: background 0.15s; }
+    #dasha-explorer-grid { grid-template-columns: repeat(4, 6.4rem); grid-auto-rows: 6.4rem; }
+    #dasha-explorer-grid .act-cell { transition: background 0.15s; overflow: hidden; }
     .act-full    { background: #cfe8cf; }
     .act-partial { background: #f6e6c2; }
     .act-none    { background: #fff; }
-    .act-house { position: absolute; top: 1px; left: 3px; font-size: 0.58rem; color: #999; }
-    .act-bodies { display: block; margin-top: 0.95rem; font-size: 0.74rem; color: #222; line-height: 1.2; }
-    .act-marks { position: absolute; bottom: 2px; left: 3px; display: flex; gap: 0.25rem; }
-    .act-mark { font-size: 0.56rem; font-weight: 700; padding: 0 0.2rem; border-radius: 3px; }
+    .act-house { position: absolute; top: 1px; left: 3px; font-size: 0.56rem; color: #999; }
+    .act-bodies { display: block; margin-top: 0.85rem; font-size: 0.72rem; color: #222; line-height: 1.15; }
+    .act-marks { display: flex; flex-direction: column; gap: 0.12rem; margin-top: 0.15rem; }
+    .act-mark { font-size: 0.5rem; font-weight: 600; padding: 0.02rem 0.2rem; border-radius: 3px; line-height: 1.25; }
     .act-mark.lvl2 { background: #2a7e4e; color: #fff; }
     .act-mark.lvl1 { background: #c8902a; color: #fff; }
+    .explorer-note { font-size: 0.8rem; color: #555; margin: 0.2rem 0 0.7rem; min-height: 1em; }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -442,7 +443,7 @@
     {% set cur_ad_lord = adns.current.ad_lord if adns.current else none %}
     <div class="section">
       <h2>Daśā activation explorer</h2>
-      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — the kundali lights up each bhāva by how strongly the period activates it. <b>Fully</b> = the lord occupies or owns the house (or both lords touch it); <b>Partial</b> = the lord aspects it; <b>None</b> = neither.</p>
+      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — each bhāva lights up by Raman's fructification tier (HTJAH ch. IV). A lord <b>activates</b> a house by any of six factors: <i>owns · occupies · aspects the house · aspects its lord · conjoins its lord · is its lord from the Moon</i>. <b>Fully</b> = both MD &amp; AD lords activate it (<i>par excellence</i> when the two are associated, else <i>predominant</i>); <b>Partial</b> = one lord (<i>limited</i>); <b>None</b> = neither (<i>dormant</i> — no results of that house this period).</p>
       <div class="explorer-controls">
         <label>MD lord
           <select id="md-lord-sel">
@@ -458,9 +459,9 @@
           <span class="lg act-full">Fully</span>
           <span class="lg act-partial">Partial</span>
           <span class="lg act-none">None</span>
-          <span class="lg-note">● occupies/owns · ○ aspects</span>
         </span>
       </div>
+      <p id="dasha-explorer-note" class="explorer-note"></p>
       <div class="south-grid" id="dasha-explorer-grid">
         {% set LAYOUT = [12,1,2,3, 11,0,0,4, 10,0,0,5, 9,8,7,6] %}
         {% for sgn in LAYOUT %}
@@ -481,33 +482,52 @@
     </div>
     <script>
       (function () {
+        // Mirrors app/medini/doctrine/domains/house_judgment.py _pair_tier/_associated.
         var ACT = {{ dasha_act | tojson }};
         if (!ACT || !ACT.planets) return;
         var mdSel = document.getElementById('md-lord-sel');
         var adSel = document.getElementById('ad-lord-sel');
+        var noteEl = document.getElementById('dasha-explorer-note');
         var cells = document.querySelectorAll('#dasha-explorer-grid .act-cell');
-        function levelFor(lord, h) {
+        var FAB = {'owns': 'own', 'occupies': 'occ', 'aspects house': 'asp-H',
+                   'aspects lord': 'asp-L', 'conjoins lord': 'con-L', 'lord from Moon': 'MoonL'};
+        function ab(fs) { return fs.map(function (x) { return FAB[x] || x; }).join(', '); }
+        function factors(lord, h) {
           var p = ACT.planets[lord];
-          if (!p) return 0;
-          if (p.occ === h || p.owns.indexOf(h) >= 0) return 2;
-          if (p.aspects.indexOf(h) >= 0) return 1;
-          return 0;
+          return (p && p.influences[h]) ? p.influences[h] : null;   // array or null
         }
-        function mark(label, lvl) {
-          if (!lvl) return '';
-          return '<span class="act-mark lvl' + lvl + '">' + label + (lvl === 2 ? '●' : '○') + '</span>';
+        function associated(a, b) {
+          if (a === b) return false;
+          var pa = ACT.planets[a], pb = ACT.planets[b];
+          if (!pa || !pb) return false;
+          if (pa.occ === pb.occ) return true;                        // conjoined
+          return pa.aspects.indexOf(pb.occ) >= 0 || pb.aspects.indexOf(pa.occ) >= 0;
         }
         function paint() {
-          var md = mdSel.value, ad = adSel.value;
+          var md = mdSel.value, ad = adSel.value, assoc = associated(md, ad);
           cells.forEach(function (cell) {
-            var h = parseInt(cell.getAttribute('data-house'), 10);
-            var mdL = levelFor(md, h), adL = levelFor(ad, h);
-            var comb = Math.max(mdL, adL);
-            if (mdL >= 1 && adL >= 1) comb = 2;
+            var h = cell.getAttribute('data-house');
+            var mF = factors(md, h), aF = factors(ad, h), tier, cls;
+            if (mF && aF) { tier = assoc ? 'par excellence' : 'predominant'; cls = 'act-full'; }
+            else if (mF || aF) { tier = 'limited'; cls = 'act-partial'; }
+            else { tier = 'dormant'; cls = 'act-none'; }
             cell.classList.remove('act-full', 'act-partial', 'act-none');
-            cell.classList.add(comb === 2 ? 'act-full' : comb === 1 ? 'act-partial' : 'act-none');
-            cell.querySelector('.act-marks').innerHTML = mark('MD', mdL) + mark('AD', adL);
+            cell.classList.add(cls);
+            var marks = '';
+            if (mF) marks += '<span class="act-mark lvl2">MD ' + ab(mF) + '</span>';
+            if (aF) marks += '<span class="act-mark lvl1">AD ' + ab(aF) + '</span>';
+            cell.querySelector('.act-marks').innerHTML = marks;
+            cell.setAttribute('title', 'House ' + h + ' — ' + tier
+              + (mF ? '\nMD ' + md + ': ' + mF.join(', ') : '')
+              + (aF ? '\nAD ' + ad + ': ' + aF.join(', ') : ''));
           });
+          if (noteEl) {
+            noteEl.textContent = 'MD ' + md + ' & AD ' + ad + (md === ad
+              ? ' (same lord)'
+              : assoc
+                ? ' are associated — shared houses fructify “par excellence”.'
+                : ' are not associated — shared houses are “predominant”.');
+          }
         }
         mdSel.addEventListener('change', paint);
         adSel.addEventListener('change', paint);

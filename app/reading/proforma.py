@@ -128,27 +128,68 @@ def _classical_yogas(
 
 
 def _dasha_activation(d1_chart: dict[str, Any], lagna_longitude: float) -> dict[str, Any]:
-    """Per-graha house activation for the daśā-activation explorer: the houses
-    each planet occupies, owns (lordship), and fully aspects — all from the
-    lagna, so the view can light up the bhāvas a chosen MD/AD lord activates.
-    Fail-soft."""
+    """Per-graha bhāva activation following Raman's ENCODED HTJAH influence
+    doctrine — faithfully mirrors ``_influence_factors`` / ``_pair_tier`` in
+    ``app/medini/doctrine/domains/house_judgment.py`` (HTJAH Vol.I ch.IV,
+    pp.44-48). A planet **activates house H** by any of Raman's six factors:
+
+      (a) owns H · (b) occupies H · (c) aspects H (graha dṛṣṭi) ·
+      (d) aspects H's lord · (e) conjoins H's lord · (f) is lord of H from the Moon.
+
+    The period's fructification tier (computed client-side from the two lords'
+    influence maps) is par-excellence/predominant when BOTH the MD and AD lords
+    influence H, limited when one does, dormant when neither — the doctrine's
+    fully / partial / none. (The engine's ``_influence_factors`` needs a heavy
+    ``RamanChart``/``ChartBundle``; this reuses the identical rule on the
+    reading's D1 primitives.) Fail-soft."""
     try:
+        from app.core.dignity import SIGN_RULERS
         from app.core.drishti_argala import aspects_from_planet
-        from app.core.functional_roles import houses_ruled_by
 
         lagna_sign = int(lagna_longitude % 360.0 // 30) + 1
-        planets: dict[str, dict[str, Any]] = {}
+        ph: dict[str, int] = {}      # planet -> whole-sign house from Lagna
+        moon_sign: int | None = None
         for g in _GRAHAS_9:
-            entry = d1_chart.get(g) or {}
-            s = entry.get("sign")
+            s = (d1_chart.get(g) or {}).get("sign")
             if s is None:
                 continue
-            occ = ((int(s) - lagna_sign) % 12) + 1
-            planets[g] = {
-                "occ": occ,
-                "owns": list(houses_ruled_by(g, lagna_sign)),
-                "aspects": list(aspects_from_planet(g, occ)),
-            }
+            ph[g] = ((int(s) - lagna_sign) % 12) + 1
+            if g == "Moon":
+                moon_sign = int(s)
+        if moon_sign is None or len(ph) < len(_GRAHAS_9):
+            return {}
+
+        def lord_of(house: int) -> str:                      # sign-lord of Hth bhava
+            return SIGN_RULERS[((lagna_sign - 1 + house - 1) % 12) + 1]
+
+        def lord_from_moon(house: int) -> str:               # factor (f)
+            return SIGN_RULERS[((moon_sign + house - 2) % 12) + 1]
+
+        def factors(planet: str, house: int) -> list[str]:
+            lord = lord_of(house)
+            asp = aspects_from_planet(planet, ph[planet])
+            facs: list[str] = []
+            if planet == lord:
+                facs.append("owns")
+            if ph[planet] == house:
+                facs.append("occupies")
+            if house in asp:
+                facs.append("aspects house")
+            if planet != lord:
+                if ph[lord] in asp:
+                    facs.append("aspects lord")
+                if ph[planet] == ph[lord]:
+                    facs.append("conjoins lord")
+            if planet == lord_from_moon(house) and "owns" not in facs:
+                facs.append("lord from Moon")
+            return facs
+
+        planets: dict[str, dict[str, Any]] = {}
+        for g in ph:
+            infl = {str(h): f for h in range(1, 13) if (f := factors(g, h))}
+            planets[g] = {"occ": ph[g],
+                          "aspects": list(aspects_from_planet(g, ph[g])),
+                          "influences": infl}
         return {"lagna_sign": lagna_sign, "planets": planets}
     except Exception:  # noqa: BLE001
         return {}

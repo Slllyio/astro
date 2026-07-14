@@ -124,3 +124,34 @@ themselves cannot [contribute much]… they give clues as regards the means of l
 Dhana, Matru/Putra/Satru-muladdhana), day/night-gender Mahabhagya, and a tail of OCR-garbled or
 loosely-defined names (Dehapushti, Jada, Jaya, Pushkala, Rajalakshana, Sada Sanchara, Sareera Soukhya,
 Vanchanachorabheethi, Vimala, Pari-H-Asa-Ka) — documented, not force-fit.
+
+## Increment 38 — the definable dhana/lord tail (74.2% → 90.3%)
+Twelve more yogas, each cleanly lord-definable from the clean edition, into `app/core/yoga_library.py`
+(76 → 88 detectors). **Coverage 74.2% → 90.3%** (46 → 56 of 62 distinct yogas).
+
+| yoga | No. | definition encoded |
+|---|---|---|
+| Bahudravyarjana | 133 | L1 in 2nd, L2 in 11th, L11 in Lagna (cyclic) |
+| Matrumooladdhana | 142 | L2 conjunct or aspected by L4 |
+| Putramuladdhana | 143 | strong L2 conjunct L5 or Jupiter, strong Lagna lord |
+| Satrumuladdhana | 144 | strong L2 conjunct L6 or Mars, strong Lagna lord |
+| Balya Dhana | 139 | L2 & L10 conjunct in a kendra, aspected by the Lagna-lord's navāṁśa lord |
+| Vimala / Harsha / Sarala | 111 | 12th / 6th / 8th lord in its own dusthāna (Viparīta trio, by name) |
+| Sareera Soukhya | 112 | Lagna lord, Jupiter or Venus in a kendra |
+| Sada Sanchara | 121 | Lagna lord or its dispositor in a movable sign |
+| Jaya | 73 | 6th lord debilitated and 10th lord exalted |
+| Pushkala | 26 | lord of the Moon's sign conjunct the Lagna lord in a kendra, strong planet in Lagna |
+
+**Faithful simplifications (documented, not guessed):** Putra/Satru name "Vaiśeṣikāṁśa" (a shadvarga
+navāṁśa dignity the `Chart` cannot express) → the computable `_is_strong` proxy; Pushkala's "intimate
+friend's house" / "aspecting Lagna" alternatives are omitted (the conjunct-in-kendra core is kept). All
+under-fire rather than over-claim.
+
+`house_judgment.py`/`synthesis_v2.py` byte-untouched; pinned by
+`test_increment_38_definable_tail_detectors` (positive per definition + a weak-2nd-lord Putra negative +
+the Balya-Dhana navāṁśa-aspect case built forward through the D9 map).
+
+**Residual (6, honestly unencoded).** Mahabhagya needs birth gender + day/night (not on the `Chart`);
+Vanchanachorabheethi needs Gulika (computed in `sensitive_points.py` but not carried on `Chart`); and
+Dehapushti, Jada, Rajalakshana, Pari-H-Asa-Ka have no recoverable definition in the clean OCR under any
+spelling. These are documented gaps, not force-fit — the practical ceiling of this corpus.

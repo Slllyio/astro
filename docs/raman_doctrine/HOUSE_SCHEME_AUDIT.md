@@ -1709,3 +1709,18 @@ map through the existing `_ALIAS` layer (incl. `adhl→adhi`, a free win). Hones
 `test_increment_37_nabhasa_and_navamsa_detectors`. This is a **detection-completeness** gain for the
 reading engine, not a strength claim (Raman: Ākṛti yogas "give clues as regards means of livelihood").
 Residual 16 = intricate multi-lord *muladdhana*/dhana yogas + an OCR-garbled tail.
+
+### Increment 38 — finish the definable dhana/lord tail (74.2% → 90.3%)
+
+12 more lord-definable yogas (76 → 88 detectors): the *muladdhana* dhana set (**Bahudravyarjana** 133,
+**Matru/Putra/Satru-muladdhana** 142–144, **Balya Dhana** 139), the Viparīta trio by name
+(**Vimala/Harsha/Sarala** 111), **Sareera Soukhya** (112), **Sada Sanchara** (121), **Jaya** (73) and
+**Pushkala** (26). Raman's "Vaiśeṣikāṁśa" clauses (a shadvarga navāṁśa dignity the `Chart` cannot
+express) use the computable `_is_strong` proxy, and Pushkala's "friend's house"/"aspecting Lagna"
+alternatives are dropped — documented under-fires, never guesses. Coverage **46/62 → 56/62 (74.2% →
+90.3%)**. `house_judgment.py`/`synthesis_v2.py` byte-untouched; pinned by
+`test_increment_38_definable_tail_detectors`. The residual 6 are honestly unencoded: Mahabhagya (needs
+birth gender + day/night), Vanchanachorabheethi (needs Gulika, computed but not carried on `Chart`), and
+Dehapushti/Jada/Rajalakshana/Pari-H-Asa-Ka (no recoverable OCR definition) — the practical corpus
+ceiling. Next: surface the 88-detector library in the served reading (it currently shows only the
+9-detector `yogas_extended` set).

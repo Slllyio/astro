@@ -24,10 +24,10 @@ def test_three_hundred_yoga_corpus_and_engine_coverage_gap():
 
     o = YC.run()
     # coverage is computed on DISTINCT yogas (OCR duplicates deduped) with EXACT stem matching.
-    # After the increment-37 Nabhāsa + navāṁśa batch the engine covers ~74% of Raman's named
-    # yogas (increments 35+36 reached ~42%; pre-35 was ~24%).
-    assert 70 <= o["coverage_pct"] < 90, o["coverage_pct"]
-    assert o["covered"] >= 44, o["covered"]
+    # After the increment-38 definable dhana/lord tail the engine covers ~90% of Raman's named
+    # yogas (37 reached ~74%; 35+36 ~42%; pre-35 ~24%).
+    assert 88 <= o["coverage_pct"] < 98, o["coverage_pct"]
+    assert o["covered"] >= 54, o["covered"]
     assert o["n_distinct_yogas"] >= 55, o["n_distinct_yogas"]
     # the increment-35 (occupancy) and increment-36 (lord-based) additions are present
     covered_lower = {n.lower() for n in o["covered_names"]}
@@ -42,6 +42,10 @@ def test_three_hundred_yoga_corpus_and_engine_coverage_gap():
     for added in ("kedara", "damini", "vallaki", "nala", "sarpa", "matsya", "vihaga", "yava",
                   "hala", "ardha chandra", "vapee", "daiida", "obhayachari", "ravi", "imdra",
                   "thriiochana", "gauri", "bharathi", "mridanga", "adhl"):
+        assert any(added in n for n in covered_lower), added
+    # increment-38 definable dhana/lord tail
+    for added in ("bahudravyarjana", "matrumooladdhana", "putramuladdhana", "satrumuladdhana",
+                  "balya dhana", "vimala", "sareera soukhya", "sada sanchara", "jaya", "pushkala"):
         assert any(added in n for n in covered_lower), added
 
 
@@ -193,3 +197,67 @@ def test_increment_37_nabhasa_and_navamsa_detectors():
     m_lons["Mars"] = 5.0
     m_lons["Sun"] = sun_lon
     assert fires(chart(m_signs, m_lons), "Mridanga")
+
+
+def test_increment_38_definable_tail_detectors():
+    """The increment-38 lord-based dhana tail fires on charts built to each Raman definition
+    and is silent on a violating chart. All charts use an Aries ascendant (house == sign)."""
+    from app.core import yoga_library as YL
+    from app.core.chart_model import Chart
+    from app.core.shodashavarga import compute_divisional_longitude
+    from app.core.dignity import SIGN_RULERS
+
+    def chart(signs, lons=None):
+        return Chart(planet_signs=signs, planet_houses={p: ((s - 1) % 12) + 1 for p, s in signs.items()},
+                     planet_lons=lons or {p: (s - 1) * 30 + 15.0 for p, s in signs.items()},
+                     asc_sign=1, asc_lon=5.0)
+
+    def fires(c, name):
+        return next(y for y in YL.detect_all(c) if y.name == name).active
+
+    # Bahudravyarjana: L1=Mars in 2nd, L2=Venus in 11th, L11=Saturn in Lagna
+    assert fires(chart({"Mars": 2, "Venus": 11, "Saturn": 1, "Sun": 3, "Moon": 4, "Mercury": 5,
+                        "Jupiter": 6, "Rahu": 7, "Ketu": 1}), "Bahudravyarjana")
+    # Matru: L2=Venus conjunct L4=Moon
+    assert fires(chart({"Venus": 5, "Moon": 5, "Sun": 1, "Mars": 2, "Mercury": 3, "Jupiter": 6,
+                        "Saturn": 7, "Rahu": 8, "Ketu": 2}), "Matrumooladdhana")
+    # Putra: strong L2=Venus (own Libra) conjunct L5=Sun; strong L1=Mars (own Aries)
+    assert fires(chart({"Venus": 7, "Sun": 7, "Mars": 1, "Moon": 2, "Mercury": 3, "Jupiter": 4,
+                        "Saturn": 6, "Rahu": 8, "Ketu": 2}), "Putramuladdhana")
+    # Satru: strong L2=Venus conjunct L6=Mercury; strong L1=Mars
+    assert fires(chart({"Venus": 7, "Mercury": 7, "Mars": 1, "Moon": 2, "Sun": 3, "Jupiter": 4,
+                        "Saturn": 6, "Rahu": 8, "Ketu": 2}), "Satrumuladdhana")
+    # a WEAK 2nd lord must not fire Putra (Venus in a neutral, non-strong sign)
+    assert not fires(chart({"Venus": 3, "Sun": 3, "Mars": 1, "Moon": 2, "Mercury": 4, "Jupiter": 5,
+                            "Saturn": 6, "Rahu": 8, "Ketu": 2}), "Putramuladdhana")
+    # Vimala: L12=Jupiter in the 12th
+    assert fires(chart({"Jupiter": 12, "Sun": 1, "Moon": 2, "Mars": 3, "Mercury": 4, "Venus": 5,
+                        "Saturn": 6, "Rahu": 7, "Ketu": 1}), "Vimala")
+    # Sareera Soukhya: Jupiter in a kendra
+    assert fires(chart({"Jupiter": 1, "Sun": 2, "Moon": 3, "Mars": 5, "Mercury": 6, "Venus": 8,
+                        "Saturn": 9, "Rahu": 11, "Ketu": 5}), "Sareera Soukhya")
+    # Sada Sanchara: L1=Mars in a movable sign (Cancer)
+    assert fires(chart({"Mars": 4, "Sun": 2, "Moon": 3, "Mercury": 5, "Jupiter": 6, "Venus": 8,
+                        "Saturn": 9, "Rahu": 11, "Ketu": 5}), "Sada Sanchara")
+    # Jaya: L6=Mercury debilitated (Pisces), L10=Saturn exalted (Libra)
+    assert fires(chart({"Mercury": 12, "Saturn": 7, "Sun": 1, "Moon": 2, "Mars": 3, "Jupiter": 4,
+                        "Venus": 5, "Rahu": 8, "Ketu": 2}), "Jaya")
+    # Pushkala: lord of Moon's sign (Leo→Sun) conjunct L1=Mars in a kendra, a strong planet in Lagna
+    assert fires(chart({"Moon": 5, "Sun": 1, "Mars": 1, "Jupiter": 1, "Mercury": 3, "Venus": 6,
+                        "Saturn": 9, "Rahu": 8, "Ketu": 2},
+                       {"Moon": 4 * 30 + 15, "Sun": 10.0, "Mars": 5.0, "Jupiter": 0.0,
+                        "Mercury": 2 * 30 + 15, "Venus": 5 * 30 + 15, "Saturn": 8 * 30 + 15,
+                        "Rahu": 7 * 30, "Ketu": 30}), "Pushkala")
+
+    # Balya Dhana: L2=Venus & L10=Saturn conjunct in a kendra (Capricorn/10th), aspected by the
+    # navāṁśa lord of the Lagna lord (Mars). Pick a Mars longitude whose navāṁśa lord is Jupiter
+    # (distinct from L2/L10), placed in the 4th so its 7th aspect falls on the 10th.
+    def nsign(lon):
+        return int(compute_divisional_longitude(lon, 9) % 360.0 // 30) + 1
+
+    mars_lon = next(x * 0.5 for x in range(720) if SIGN_RULERS[nsign(x * 0.5)] == "Jupiter")
+    b_signs = {"Venus": 10, "Saturn": 10, "Mars": 1, "Jupiter": 4, "Sun": 2, "Moon": 3,
+               "Mercury": 5, "Rahu": 7, "Ketu": 1}
+    b_lons = {p: (s - 1) * 30 + 15.0 for p, s in b_signs.items()}
+    b_lons["Mars"] = mars_lon
+    assert fires(chart(b_signs, b_lons), "Balya Dhana")

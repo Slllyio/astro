@@ -449,6 +449,13 @@
     .dom-why li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 6px; color: #3a2a5a; }
     .dom-why li .s { font-weight: 700; }
     .dom-why li .s.p { color:#2a8e5e; } .dom-why li .s.n { color:#b0504d; }
+    .ev-list { list-style: none; padding: 0; margin: 6px 0 0; }
+    .ev-list li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 8px; color: #3a2a5a; align-items: baseline; }
+    .ev-w { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 2.4em; text-align: right; }
+    .ev-w.p { color:#2a8e5e; } .ev-w.n { color:#b0504d; }
+    .ev-foot { font-size: 0.7rem; color: #8a7a9a; margin-top: 6px; font-style: italic; }
+    :root[data-theme="dark"] .ev-list li { color:#cec8de; }
+    :root[data-theme="dark"] .ev-foot { color:#9a8fb0; }
     /* consultation narrative (#17) */
     .narrative-card { background: #f7f4fb; border: 1px solid #e2d4ef; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
     .narrative-card p { margin: 0 0 8px; font-size: 0.95rem; line-height: 1.55; color: #33244e; }
@@ -713,12 +720,14 @@
         event will happen. <em>Potential</em> is the natal promise; <em>timing</em> is how strongly today's
         period activates it; the two are resolved into one verdict rather than left contradictory.
       </p>
+      {% set judgements = extras.judgements or {} %}
       <div class="dom-grid">
         {% for d in decisions %}
         {% set gi = (d.potential_index|round|int) %}
         {% set gi = 0 if gi < 0 else (8 if gi > 8 else gi) %}
         {% set cf = (d.confidence|lower|replace(' ', '-')) %}
         {% set tm = 'active' if d.timing == 'Active now' else 'warm' if d.timing == 'Warming up' else 'quiet' %}
+        {% set jg = judgements[d.key] or {} %}
         <div class="dom-card">
           <div class="dom-head">
             <span class="dom-name">{{ d.label }}</span>
@@ -730,14 +739,16 @@
             <span class="badge tim-{{ tm }}">{{ d.timing }}{% if d.current_tier %} · {{ d.current_tier }}{% endif %}</span>
             <span class="badge cf-{{ cf }}">{{ d.confidence }}</span>
           </div>
-          <div class="dom-verdict">{{ d.verdict }}</div>
-          {% if d.contributors_pos or d.contributors_neg %}
+          {# the single reconciled verdict (conflict-resolution engine) #}
+          <div class="dom-verdict">{{ jg.verdict or d.verdict }}</div>
+          {% if jg.positive or jg.negative %}
           <details class="dom-why">
-            <summary>Why this score</summary>
-            <ul>
-              {% for c in d.contributors_pos %}<li><span class="s p">+</span><span>{{ c }}</span></li>{% endfor %}
-              {% for c in d.contributors_neg %}<li><span class="s n">−</span><span>{{ c }}</span></li>{% endfor %}
+            <summary>How the evidence was weighed (+{{ jg.weighted_positive }} vs −{{ jg.weighted_negative }})</summary>
+            <ul class="ev-list">
+              {% for c in jg.positive %}<li><span class="ev-w p">+{{ c.contrib }}</span><span>{{ c.text }}</span></li>{% endfor %}
+              {% for c in jg.negative %}<li><span class="ev-w n">{{ c.contrib }}</span><span>{{ c.text }}</span></li>{% endfor %}
             </ul>
+            <div class="ev-foot">Weighted by Raman's hierarchy (lagna · lord · Moon · 9th/10th lords rank highest); the dominant side decides the verdict.</div>
           </details>
           {% endif %}
         </div>

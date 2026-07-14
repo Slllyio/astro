@@ -219,17 +219,41 @@ def build_classical_narrative(
                 return True if comp >= 55 else False if comp < 42 else None
             return None
 
+        # Varied phrasings (indexed per planet) so the prose never reads from a
+        # template — no repeated "Being well placed…" / "It confers…".
+        _POS_T = (
+            "Well placed, it lends {g}.",
+            "From so strong a position it gives {g}.",
+            "Its condition here favours {g}.",
+            "So situated, it bestows {g}.",
+            "Standing thus, it yields {g}.",
+        )
+        _NEG_T = (
+            "Afflicted here, it turns rather to {s}, which the native does well to temper.",
+            "In this weakened state it inclines to {s}.",
+            "Its affliction here shows as {s}.",
+            "Compromised in this place, it leans toward {s}.",
+            "Under strain here, its expression tends to {s}.",
+        )
+        _MIX_T = (
+            "It affords a fair measure of {g}.",
+            "It gives a moderate share of {g}.",
+            "Its expression of {g} is of a middling order.",
+        )
+        _P_IDX = {p: i for i, p in enumerate(
+            ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"))}
+
         def quality_clause(p: str) -> str:
             good, shadow = _PLANET_QUALITY.get(p, ("", ""))
             if not good:
                 return ""
+            i = _P_IDX.get(p, 0)
             w = well_placed(p)
             if w is True:
-                return f"Being well placed, it gives {good}."
+                return _POS_T[i % len(_POS_T)].format(g=good)
             if w is False:
-                return (f"Being here afflicted, its influence inclines rather to "
-                        f"{shadow}, which the native does well to temper.")
-            return f"It confers a fair measure of {good}."
+                return _NEG_T[i % len(_NEG_T)].format(s=shadow)
+            return _MIX_T[i % len(_MIX_T)].format(g=good)
 
         chapters: list[dict[str, Any]] = []
 
@@ -490,10 +514,17 @@ def build_classical_narrative(
                  "health": "Health and constitution", "education": "Education and learning",
                  "foreign": "Travel and foreign residence",
                  "spirituality": "Fortune and spiritual life"}
+        judgements = extras.get("judgements") or {}
         paras9 = []
         for k in order:
             d = dmap.get(k)
             if not d:
+                continue
+            # Prefer the conflict-resolution engine's single reconciled verdict so
+            # the narrative and the dashboard deliver the SAME judgement.
+            jv = (judgements.get(k) or {}).get("verdict")
+            if jv:
+                paras9.append(jv)
                 continue
             idx = int(round((d.get("potential_index") or 0)))
             fav = _fav_phrase(idx)

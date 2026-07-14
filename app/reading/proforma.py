@@ -1313,6 +1313,16 @@ def _augment_present_and_doctrine(
     if decisions:
         extras["domain_decisions"] = decisions
 
+    # --- Conflict-resolution / weighted-synthesis engine: one reconciled
+    # verdict per domain from weighted positive-vs-negative evidence.
+    try:
+        from app.reading.judgement import build_judgements
+        judgements = build_judgements(extras)
+        if judgements:
+            extras["judgements"] = judgements
+    except Exception:  # noqa: BLE001
+        pass
+
     # --- Phase 3 (#9,#10,#17): risks, opportunities, cohesive narrative.
     risks, opps, narrative = _risks_opportunities_narrative(reading)
     if risks:

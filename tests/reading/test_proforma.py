@@ -315,6 +315,24 @@ class TestPresentTenseAndDoctrineEnrichments:
             assert f["text"] and f["book_label"] in raman_books
             assert not unsafe.search(f["text"]), f["text"]
 
+    def test_judgements_are_conflict_resolved_and_weighted(self):
+        """extras.judgements: one reconciled verdict per domain plus the weighted
+        positive/negative evidence that produced it (no raw contradictions)."""
+        extras = compute(CANONICAL_INPUT)["chart"]["extras"]
+        j = extras.get("judgements") or {}
+        assert j, "judgements should be populated"
+        for key, d in j.items():
+            assert d["verdict"] and isinstance(d["verdict"], str)
+            assert d["dominant"] in ("positive", "negative")
+            assert d["weighted_positive"] >= 0 and d["weighted_negative"] >= 0
+            # evidence carries a signed weighted contribution, deduped
+            texts = [e["text"] for e in d["positive"]]
+            assert len(texts) == len(set(texts))  # no double-counted evidence
+            for e in d["positive"]:
+                assert e["contrib"] > 0 and e["weight"] in (1, 2, 3, 5)
+            for e in d["negative"]:
+                assert e["contrib"] < 0
+
     def test_classical_narrative_follows_ramans_hierarchy(self):
         """extras.classical_narrative is the ten-chapter judicial reading in
         Raman's sequence — connected prose derived from the real engine output,

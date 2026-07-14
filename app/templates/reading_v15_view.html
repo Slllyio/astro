@@ -135,6 +135,24 @@
       padding: 0.25rem 0; font-size: 0.9rem; border-bottom: 1px solid #f0ecf4;
     }
     .activation-list li:last-child { border-bottom: none; }
+    .charts-row { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .chart-cell { flex: 0 0 auto; }
+    .chart-caption { font-weight: 600; margin-bottom: 0.4rem; color: #444; }
+    .south-grid {
+      position: relative; display: grid;
+      grid-template-columns: repeat(4, 3.7rem); grid-auto-rows: 3.7rem;
+      border: 2px solid #7a5a9a; background: #fff;
+    }
+    .south-cell { border: 1px solid #e2d8ef; position: relative; padding: 2px 3px; }
+    .south-center { border: none; }
+    .south-lagna { background: #f3ecfa; }
+    .south-signno { position: absolute; top: 1px; right: 3px; color: #b8a8d0; font-size: 0.58rem; }
+    .south-bodies { display: block; margin-top: 0.75rem; line-height: 1.2; font-size: 0.72rem; color: #333; }
+    .south-bodies sub { color: #b14a4a; }
+    .south-label {
+      position: absolute; inset: 25%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #7a5a9a; pointer-events: none; text-align: center;
+    }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -265,6 +283,24 @@
     </div>
     {% endif %}
   {% endmacro %}
+  {# South-Indian chart: signs fixed in the 12 perimeter cells; planets placed by sign #}
+  {% macro south_chart(planets, lagna_sign, label) %}
+    {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
+    {% set LAYOUT = [12,1,2,3, 11,0,0,4, 10,0,0,5, 9,8,7,6] %}
+    <div class="south-grid">
+      {% for sgn in LAYOUT %}
+        {% if sgn == 0 %}
+          <div class="south-cell south-center"></div>
+        {% else %}
+          <div class="south-cell{% if sgn == lagna_sign %} south-lagna{% endif %}">
+            <span class="south-signno">{{ sgn }}</span>
+            <span class="south-bodies">{% if sgn == lagna_sign %}<b>La</b> {% endif %}{% for p, info in planets.items() %}{% if info.sign == sgn and p in ABBR %}{{ ABBR[p] }}{% if info.is_retrograde %}<sub>r</sub>{% endif %} {% endif %}{% endfor %}</span>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="south-label">{{ label }}</div>
+    </div>
+  {% endmacro %}
   {% set contradictions = reading.contradictions or [] %}
   {% set warnings = reading.warnings or [] %}
 
@@ -339,6 +375,27 @@
         </div>
       </div>
     </div>
+
+    {# ============== Chart diagrams (Rāśi + Navāṁśa) ============== #}
+    {% set dlag = extras.divisional_lagnas or {} %}
+    {% set d9chart = (extras.divisional_charts or {}).D9_Navamsa or {} %}
+    {% if chart.planets %}
+    <div class="section">
+      <h2>Chart diagrams <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">South-Indian · abbrev. Su Mo Ma Me Ju Ve Sa Ra Ke, La = lagna</span></h2>
+      <div class="charts-row">
+        <div class="chart-cell">
+          <div class="chart-caption">Rāśi (D1)</div>
+          {{ south_chart(chart.planets, dlag.D1, 'Rāśi') }}
+        </div>
+        {% if d9chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Navāṁśa (D9)</div>
+          {{ south_chart(d9chart, dlag.D9, 'Navāṁśa') }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
 
     {# ============== Panchānga (five limbs of the birth day) ============== #}
     {% if panchanga %}

@@ -127,6 +127,20 @@ def _classical_yogas(
         return []
 
 
+def _divisional_lagnas(lagna_longitude: float) -> dict[str, int]:
+    """Ascendant sign (1..12) in D1/D9/D10 — lets the view mark the lagna cell in
+    the divisional chart grids. Fail-soft."""
+    try:
+        from app.core.shodashavarga import compute_divisional_longitude
+
+        out = {"D1": int(lagna_longitude % 360 // 30) + 1}
+        for name, div in (("D9", 9), ("D10", 10)):
+            out[name] = int(compute_divisional_longitude(lagna_longitude, div) % 360.0 // 30) + 1
+        return out
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 # ---------------------------------------------------------------------------
 # Input parsing helpers
 # ---------------------------------------------------------------------------
@@ -302,6 +316,7 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             "weekday": weekday,
             "current_mahadasha": chart.get("current_mahadasha"),
             "divisional_charts": divisional_charts,
+            "divisional_lagnas": _divisional_lagnas(lagna_longitude),
             "panchanga": chart.get("panchanga"),
             "ashtakavarga": chart.get("ashtakavarga"),
             "avasthas": chart.get("avasthas"),

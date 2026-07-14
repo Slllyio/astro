@@ -124,6 +124,17 @@
       margin-left: auto; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
       background: #7a5a9a; color: #fff; padding: 0.1rem 0.45rem; border-radius: 999px;
     }
+    .activation { margin-top: 0.8rem; }
+    .activation-title {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      color: #7a5a9a; margin-bottom: 0.35rem;
+    }
+    .activation-list { list-style: none; margin: 0; padding: 0; }
+    .activation-list li {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      padding: 0.25rem 0; font-size: 0.9rem; border-bottom: 1px solid #f0ecf4;
+    }
+    .activation-list li:last-child { border-bottom: none; }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -220,10 +231,11 @@
   {% set current_md_info = extras.current_mahadasha or {} %}
   {% set sequences = reading.sequences or {} %}
   {% set md_judgments = sequences.md_judgments or [] %}
-  {% set current_md = none %}
+  {% set mdns = namespace(current=none) %}
   {% for m in md_judgments %}
-    {% if m.is_current %}{% set current_md = m %}{% endif %}
+    {% if m.is_current %}{% set mdns.current = m %}{% endif %}
   {% endfor %}
+  {% set current_md = mdns.current %}
   {% set domains = reading.domains or {} %}
   {% set practitioner = reading.practitioner or {} %}
   {% set prac_by_module = practitioner.by_module or {} %}
@@ -233,6 +245,26 @@
   {% set ad_judgments = sequences.ad_judgments or [] %}
   {% set adns = namespace(current=none) %}
   {% for a in ad_judgments %}{% if a.is_current %}{% set adns.current = a %}{% endif %}{% endfor %}
+  {# houses a dasha lord activates: what it occupies, deposits into, and aspects #}
+  {% macro house_activation(checks) %}
+    {% if checks %}
+    <div class="activation">
+      <div class="activation-title">Houses activated this period</div>
+      <ul class="activation-list">
+        {% for kk in ['bhaav_from_lagna', 'rashi_depositor', 'bhaavs_aspected_fully', 'commonality_significations',
+                      'house_placement_of_ad_lord', 'rulership_of_ad_lord', 'mutual_position_md_ad'] %}
+          {% set c = checks[kk] %}
+          {% if c and c.verdict %}
+          <li>
+            <span class="verdict-direction {{ c.direction }}">{{ c.direction }}</span>
+            {{ c.verdict }}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  {% endmacro %}
   {% set contradictions = reading.contradictions or [] %}
   {% set warnings = reading.warnings or [] %}
 
@@ -371,6 +403,7 @@
           </div>
         </div>
       </div>
+      {{ house_activation(current_md.checks) }}
     </div>
     {% endif %}
 
@@ -392,6 +425,7 @@
           <div class="v">{{ adns.current.start_date }} → {{ adns.current.end_date }}</div>
         </div>
       </div>
+      {{ house_activation(adns.current.checks) }}
     </div>
     {% endif %}
 

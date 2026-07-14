@@ -102,6 +102,22 @@ class TestRunCorePipeline:
         }
         assert required <= set(output.keys())
 
+    def test_classical_yogas_surfaced_with_citations(self):
+        """The core 88-detector yoga library is surfaced in the reading as
+        `classical_yogas`, each carrying a name + classical reference. This
+        guards the modern-life re-assembly, which must carry the field through
+        (it rebuilds a fresh ReadingOutput and previously dropped it)."""
+        output = _run_core_pipeline(CANONICAL_INPUT)
+        assert "classical_yogas" in output
+        cy = output["classical_yogas"]
+        # a real natal chart lights up several classical yogas
+        assert len(cy) >= 3, len(cy)
+        for y in cy:
+            assert y["name"] and y["reference"]
+        # enrich=True (through Tier-3) must not drop them either
+        enriched = compute(CANONICAL_INPUT, enrich=True)
+        assert len(enriched["classical_yogas"]) == len(cy)
+
 
 class TestCompute:
     """`compute` is the public orchestrator with optional Tier-3 wrapping."""

@@ -116,6 +116,7 @@ def _enrich_object(
         domains=new_domains,
         contradictions=reading.contradictions,
         warnings=reading.warnings,
+        classical_yogas=reading.classical_yogas,
     )
 
 

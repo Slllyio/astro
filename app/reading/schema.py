@@ -538,6 +538,21 @@ class PractitionerBlock(BaseModel):
     by_module: dict[str, list[Finding]] = Field(default_factory=dict)
 
 
+class ClassicalYoga(BaseModel):
+    """One yoga detected by the core 88-detector library (`app/core/yoga_library`),
+    surfaced in the reading with its classical citation. Distinct from the
+    practitioner `yogas_extended` Findings (a 9-detector subset that carries a
+    graded verdict); this is the wider named-yoga catalog with source references."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    name: str
+    sanskrit: str = ""
+    reference: str = ""
+    description: str = ""
+    intensity: float = 0.0
+
+
 class SequencesBlock(BaseModel):
     """Stage 5 — the named sequence-result models.
 
@@ -642,3 +657,4 @@ class ReadingOutput(BaseModel):
     domains: DomainsBlock
     contradictions: list[Contradiction] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
+    classical_yogas: list[ClassicalYoga] = Field(default_factory=list)

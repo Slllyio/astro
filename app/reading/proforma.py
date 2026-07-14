@@ -36,6 +36,7 @@ from typing import Any, Callable
 from app.reading.schema import (
     ChartBlock,
     ChartInput,
+    ClassicalYoga,
     Contradiction,
     DoctrineConfig,
     DomainsBlock,
@@ -83,6 +84,47 @@ def _python_version() -> str:
 def _generated_at_iso() -> str:
     """Current UTC instant as ISO-8601 (timezone-aware)."""
     return datetime.now(UTC).isoformat()
+
+
+_GRAHAS_9: tuple[str, ...] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu",
+)
+
+
+def _classical_yogas(
+    d1_chart: dict[str, Any], asc_sign: int, lagna_longitude: float,
+) -> list[ClassicalYoga]:
+    """Run the core 88-detector yoga library over the D1 chart and return the
+    active yogas with their classical citations, for the reading's
+    classical-yogas section. Fail-soft: any error yields ``[]`` so a missing
+    or partial chart never blocks a reading."""
+    try:
+        from app.core.chart_model import Chart
+        from app.core.yoga_library import active_yogas
+
+        signs: dict[str, int] = {}
+        lons: dict[str, float] = {}
+        for g in _GRAHAS_9:
+            entry = d1_chart.get(g) or {}
+            if entry.get("sign") is not None and entry.get("longitude") is not None:
+                signs[g] = int(entry["sign"])
+                lons[g] = float(entry["longitude"])
+        if len(signs) < len(_GRAHAS_9):
+            return []
+        houses = {g: ((signs[g] - asc_sign) % 12) + 1 for g in signs}
+        chart = Chart(
+            planet_signs=signs, planet_houses=houses, planet_lons=lons,
+            asc_sign=asc_sign, asc_lon=lagna_longitude,
+        )
+        return [
+            ClassicalYoga(
+                name=y.name, sanskrit=y.sanskrit, reference=y.reference,
+                description=y.description, intensity=round(float(y.intensity), 3),
+            )
+            for y in active_yogas(chart)
+        ]
+    except Exception:  # noqa: BLE001 — cosmetic section; never block a reading
+        return []
 
 
 # ---------------------------------------------------------------------------
@@ -842,6 +884,13 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
         warnings.append(f"rookie_guards.import failed: {type(exc).__name__}: {exc}")
 
     # -----------------------------------------------------------------------
+    # Classical yogas — the core 88-detector library, surfaced with citations.
+    # (The practitioner `yogas_extended` module is a 9-detector graded subset;
+    # this is the wider named-yoga catalog. Cosmetic, fail-soft.)
+    # -----------------------------------------------------------------------
+    classical_yogas_payload = _classical_yogas(d1_chart, asc_sign, lagna_longitude)
+
+    # -----------------------------------------------------------------------
     # Stage 7: Assembly
     # -----------------------------------------------------------------------
     meta = Meta(
@@ -874,6 +923,7 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             domains=DomainsBlock(**dom_block_payload),
             contradictions=[],
             warnings=warnings,
+            classical_yogas=classical_yogas_payload,
         )
     except Exception as exc:  # noqa: BLE001
         # Last-resort fallback: emit an empty-blocks reading with the

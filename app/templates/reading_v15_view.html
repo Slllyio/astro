@@ -399,6 +399,25 @@
       {% endif %}
     </div>
 
+    {# ============== Classical yogas (full named catalog, cited) ============== #}
+    {% set classical_yogas = reading.classical_yogas or [] %}
+    <div class="section">
+      <h2>Classical yogas {% if classical_yogas %}({{ classical_yogas|length }} present){% endif %}</h2>
+      {% if classical_yogas %}
+        <ul class="yogas-list">
+          {% for y in classical_yogas|sort(attribute='intensity', reverse=true) %}
+            <li>
+              <strong>{{ y.name }}</strong>{% if y.sanskrit %} <span style="color:#7a5a9a;">{{ y.sanskrit }}</span>{% endif %}
+              {% if y.description %}— {{ y.description }}{% endif %}
+              {% if y.reference %}<div class="rule" style="font-family: ui-monospace, monospace; font-size: 0.75rem; color: #7a5a9a;">{{ y.reference }}</div>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No classical yogas present in this chart.</p>
+      {% endif %}
+    </div>
+
     {# ============== Contradictions (only if any) ============== #}
     {% if contradictions %}
     <div class="section">

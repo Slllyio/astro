@@ -16,7 +16,7 @@
     {"event_type": "career_change", "year": 2026, "month": 3, "day": null, "description": "deep turn to technical/occult research work", "weight": 1.0}
   ],
   "facts": [
-    {"subject": "mother", "house": 4, "observed": "afflicted", "description": "recurring health trouble, non-fatal", "weight": 1.0}
+    {"subject": "property", "house": 4, "observed": "favourable", "description": "property acquisitions booming since 2021 (the ayanamsa discriminator: raman judges H4 property favourable, lahiri afflicted; the earlier mother discriminator was retired once the catastrophic-nodal fix made raman's mother favourable too)", "weight": 1.0}
   ],
   "history": [],
   "engine_fingerprint": ""

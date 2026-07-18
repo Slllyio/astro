@@ -35,7 +35,7 @@ class TestEvaluate:
     def test_facts_run_only_on_the_top_k(self, tmp_path) -> None:
         """The Tier-F fact channel is restricted to the event-score survivors."""
         s = _seeded(tmp_path)
-        s.add_fact(resolve_fact("mother", "afflicted"))
+        s.add_fact(resolve_fact("property", "favourable"))
         report = s.evaluate(top_k=2)
         with_facts = [cs for cs in report.ranked if cs.fact_scores]
         assert 0 < len(with_facts) <= 2

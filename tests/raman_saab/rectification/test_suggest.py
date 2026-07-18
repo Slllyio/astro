@@ -66,14 +66,16 @@ class TestEventSuggestions:
 
 
 class TestFactSuggestions:
-    def test_mother_is_surfaced_as_the_ayanamsa_discriminator(self, ranked_and_cache):
-        """The pinned 'mother' move: raman judges H4 mother afflicted, lahiri
-        favourable -> a zero-date question that picks the ayanamsa."""
+    def test_property_is_surfaced_as_the_ayanamsa_discriminator(self, ranked_and_cache):
+        """A sharp H4 splitter is surfaced as a zero-date question: raman judges property
+        favourable, lahiri afflicted -> answering it picks the ayanamsa. (The mother
+        discriminator was retired when the catastrophic-nodal fix made raman's mother
+        favourable too.)"""
         ranked, cache, _ = ranked_and_cache
         sugg = SG.suggest_facts(ranked, cache, frozenset())
-        assert any(s.key == "mother" for s in sugg)
-        mother = next(s for s in sugg if s.key == "mother")
-        assert "ayanamsa" in mother.detail
+        assert any(s.key == "property" for s in sugg)
+        prop = next(s for s in sugg if s.key == "property")
+        assert "ayanamsa" in prop.detail
 
     def test_supplied_subjects_are_excluded(self, ranked_and_cache):
         ranked, cache, _ = ranked_and_cache

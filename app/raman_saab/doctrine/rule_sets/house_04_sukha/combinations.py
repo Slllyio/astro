@@ -181,10 +181,27 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # bphs-doctrine-reviewer SOUND-WITH-CAVEAT (doctrine HIGH; n=2 worked charts 64/66).
     RuleRecord(
         id="H4.C.18a", house=4, signification="mother", group="combination", kind="evaluable",
-        condition=C.And(C.InRashiHouse("Moon", 4), _ConjunctAnyMalefic("Moon")),
+        # DECISIVE early-death of the mother requires a CRUEL (non-nodal) malefic conjoining
+        # the Matru-Karaka Moon — Mars or Saturn, the fatality signature. Raman's worked
+        # instance is Saturn+Moon-in-4th (Chart 64/h4_01, HTJAH-I:4404 "the Matru-Karaka is
+        # definitely afflicted; early death of mother"). A NODAL conjunction (Rahu/Ketu-Moon)
+        # is a Grahana/eclipse affliction of the mother's HEALTH/mind, not the decisive
+        # longevity-kill — it is still scored as ordinary malefic pressure via H4.P.Rahu +
+        # H4.C.18 (aspect arm), routing the mother to a preponderance-weighed mixed rather than
+        # a false "early death". (Field-case fix #2: the owner's living, cordial mother has a
+        # Rahu-Moon-in-4th that this rule previously over-called as maternal death.)
+        # bphs-doctrine-reviewer VALIDATED (HIGH): Raman's distilled list names Saturn as THE
+        # 4th-conjoined instance (HTJAH-I:4401-4402); Chart 71 (HTJAH-I:4616-4621) is a real
+        # Rahu-conjunct-Moon Matru-Karaka whose mother LIVED to the native's 36th year (death
+        # then via Mars/Saturn marakas) -- direct proof nodal-Moon is not the fatal signature;
+        # Rahu/Ketu+Moon = "honour/health in jeopardy" (HTJAH-I:6386) / "mental derangement"
+        # (HTJAH-I:6171). CAVEAT (watch): a deeply combust amavasya Moon (Sun+Moon) is a severe
+        # affliction carried by the SEPARATE combustion path (combust_fraction), not this rule.
+        condition=C.And(C.InRashiHouse("Moon", 4),
+                        C.Or(C.Conjunct("Moon", "Mars"), C.Conjunct("Moon", "Saturn"))),
         fortified=None,
-        afflicted="the Moon (Matru-Karaka) in the 4th conjoined by an evil planet → the mother's "
-                  "longevity is killed; early death of the mother",
+        afflicted="the Moon (Matru-Karaka) in the 4th conjoined by a cruel malefic (Mars/Saturn) "
+                  "→ the mother's longevity is killed; early death of the mother",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 4224)),
     RuleRecord(
         id="H4.C.19", house=4, signification="happiness", group="combination", kind="evaluable",

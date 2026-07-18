@@ -109,14 +109,16 @@ class TestFactChannelAndGuard:
         with pytest.raises(ValueError, match="Tier-F"):
             S.score_fact(_chart("raman"), resolve_fact("mother", "afflicted"))
 
-    def test_mother_fact_discriminates_the_ayanamsa(self) -> None:
-        """The session's ayanamsa discriminator, pinned: raman puts Rahu in the 4th ->
-        mother afflicted (agreement +1 with an 'afflicted' observation); lahiri moves
-        the nodes to 3/9 -> mother favourable (agreement -1)."""
+    def test_property_fact_discriminates_the_ayanamsa(self) -> None:
+        """A natal fact discriminates the ayanamsa: raman judges H4 property favourable
+        (agreement +1 with the owner's confirmed 'favourable'), lahiri afflicted
+        (agreement -1). (The earlier mother discriminator was retired when the
+        catastrophic-nodal fix H4.C.18a made raman's mother favourable too — property is
+        the surviving sharp H4 splitter, and points to raman, the rectified frame.)"""
         from app.raman_saab.chart.adapter import cast_chart
         birth = BirthData(name="x", year=1989, month=10, day=12, hour=10, minute=2,
                           tz_offset=_TZ, latitude=_LAT, longitude=_LON)
-        fact = resolve_fact("mother", "afflicted")
+        fact = resolve_fact("property", "favourable")
         raman = S.score_fact(cast_chart(birth, ayanamsa="raman"), fact)
         lahiri = S.score_fact(cast_chart(birth, ayanamsa="lahiri"), fact)
         assert raman.agreement == 1.0

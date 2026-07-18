@@ -33,10 +33,10 @@
     {"event_type": "career_change", "year": 2026, "month": 3, "day": null, "note": "deep turn to technical/occult research work"}
   ],
   "baseline": {
-    "static_within1": 47,
+    "static_within1": 48,
     "static_total": 50,
     "timing_hits": 14,
     "timing_total": 14,
-    "note": "Ratchet floors under raman ayanamsa. static_within1: 44->47 after the catastrophic-severity gate (accidents/incarceration/left_eye demoted afflicted->mixed, now within-1 of favourable; ZERO Raman-golden regression, 209/241 held). Remaining 3 distance>=2 gaps: H3.siblings, H3.courage (three real malefic rules fire -- HOLD, overfit risk), H4.mother (H4.C.18a nodal over-fire -- Fix B pending). timing_hits = every dated event's house activates in its period; must never regress."
+    "note": "Ratchet floors under raman ayanamsa. static_within1: 44->47 (catastrophic-severity gate: accidents/incarceration/left_eye afflicted->mixed) ->48 (Fix #2: H4.C.18a restricted to CRUEL malefics Mars/Saturn, so the nodal Rahu-Moon-in-4th no longer over-calls maternal death -> mother afflicted->favourable, exact). Both ZERO Raman-golden regression (209/241 strict + 229/241 within-1 held; h4_01 Saturn-death stays afflicted). Remaining 2 distance>=2 gaps: H3.siblings, H3.courage (three real malefic rules fire -- HELD, overfit risk against Raman's genuine afflicted-3rd doctrine). timing_hits = every dated event's house activates in its period; must never regress."
   }
 }

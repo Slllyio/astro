@@ -66,9 +66,11 @@ class TestSessionConclusion:
         assert "career_start" in report.discriminators
         assert report.correlated_pairs
 
-    def test_mother_fact_scores_raman_up_and_lahiri_down(self, outcome) -> None:
-        """The fact channel (raman: Rahu on the 4th -> afflicted agrees +1; lahiri:
-        favourable disagrees -1) contributes the frame-picking margin."""
+    def test_discriminating_fact_scores_raman_up(self, outcome) -> None:
+        """The fact channel (raman: H4 property favourable agrees +1 with the confirmed
+        'favourable'; lahiri: afflicted disagrees -1) contributes the frame-picking
+        margin. (Uses property since the catastrophic-nodal fix H4.C.18a made raman's
+        mother favourable too, retiring it as a discriminator.)"""
         _, report = outcome
         raman_best = next(cs for cs in report.ranked
                           if cs.candidate.ayanamsa == "raman" and cs.fact_scores)

@@ -130,6 +130,18 @@ _DUSTHANA_AFFLICTION_KEYS: Final[frozenset[str]] = frozenset({
     "death",                                                                # H8 (manner/cause)
 })
 
+# CATASTROPHIC sub-significations — bodily/liberty ruin (imprisonment, blindness, grave
+# accident) that Raman pronounces ONLY on a MULTIPLY-afflicted configuration, never on a
+# lone malefic. His own worked charts show it: h12_13 "the 2nd AND the 12th heavily
+# afflicted, the Sun in papakartari"; h12_14 "the 12th lord afflicted by the nodes in Rasi
+# AND in Navamsa". Empirically EVERY confirmed-afflicted incarceration/left_eye golden
+# carries >= 3 fired malefic rules; an ordinary dusthana matter (disease/enemies/debts)
+# fires on one. The severity gate below encodes that bar so a thin single/no-malefic
+# affliction cannot escalate to "you were jailed / went blind / had a grave accident".
+_CATASTROPHIC_KEYS: Final[frozenset[str]] = frozenset({
+    "incarceration", "left_eye", "accidents"})
+_CATASTROPHIC_MIN_MALEFIC: Final[int] = 3
+
 # Rule ids the judge treats as DECISIVE afflictions (Stage-3 H3/H7 rule-authoring). A fired
 # MALEFIC rule whose id is listed here confirms 'afflicted' in _decide clause-1.6, even
 # against a strong-pillar preponderance and a benefic aspect — the rule-level analogue of
@@ -921,6 +933,42 @@ def _decisive_affliction(
     return ("afflicted", True) if fired_decisive else (verdict, False)
 
 
+def _catastrophic_severity_gate(
+    sig: Signification, verdict: Verdict, lead: FrameLedger,
+) -> tuple[Verdict, Metadata]:
+    """CATASTROPHIC-KEY SEVERITY GATE. Bodily/liberty ruin — imprisonment, blindness (left_eye),
+    a grave accident — is a catastrophic pronouncement Raman makes only on a MULTIPLY-afflicted
+    configuration (h12_13: "the 2nd AND the 12th heavily afflicted, the Sun in papakartari";
+    h12_14: "the 12th lord afflicted by the nodes in Rasi AND Navamsa"). Empirically every
+    confirmed-afflicted incarceration/left_eye golden carries >= 3 fired malefic rules, while an
+    ordinary dusthana matter (disease/enemies/debts) fires on one. So for a CATASTROPHIC key an
+    'afflicted' resting on fewer than ``_CATASTROPHIC_MIN_MALEFIC`` fired malefic rules is
+    over-escalated: the affliction is real (dusthana pressure exists) but not to the
+    life-shattering grade — DEMOTE it to 'mixed' (never to favourable; the engine cannot assert
+    the matter is clean). DEMOTE-ONLY, scoped to _CATASTROPHIC_KEYS; a genuinely multiply-
+    afflicted chart (>= 3 malefic) is untouched, so every Raman jail/blind golden stays
+    afflicted (over-fire scanned).
+
+    bphs-doctrine-reviewer SOUND-WITH-CAVEAT/KEEP -- core principle VALIDATED (HIGH for
+    incarceration/left_eye, MEDIUM for accidents). Raman draws this exact line himself:
+    a SINGLE malefic gives 'defective vision' (HTJAH-II:16465) / left eye 'affected'
+    (HTJAH-II:16473), while MULTIPLE afflictions make one 'born blind' (HTJAH-II:16451);
+    imprisonment doctrine is inherently plural -- 'Malefics in the 2nd, 5th, 9th and 12th
+    houses cause captivity' (HTJAH-II:16426), 'joining Rahu or Ketu' (HTJAH-II:16438). Recorded
+    caveats: (1) 'accidents' is analogy-grounded (no accidents golden; inferred from the
+    death/maraka corpus HTJAH-I:6649/6361) -- re-test the bar if an accidents golden is later
+    authored; (2) 'mixed' here means a REAL but MILD affliction (Raman's 'affected/defective',
+    HTJAH-II:16473), NOT a clean matter -- downstream text must not read it as 'no issue';
+    (3) the count is on the LEAD frame only, so revisit if the frame-selection heuristic
+    changes."""
+    if sig.key not in _CATASTROPHIC_KEYS or verdict != "afflicted":
+        return verdict, ()
+    if len(lead.fired_malefic) >= _CATASTROPHIC_MIN_MALEFIC:
+        return verdict, ()
+    return "mixed", (("catastrophic_gate",
+                      f"{sig.key}:demote(malefic<{_CATASTROPHIC_MIN_MALEFIC})"),)
+
+
 #: H11 gains matters eligible for the Dhana-yoga floor (wealth-accumulation only).
 _DHANA_FLOOR_KEYS: Final[frozenset[str]] = frozenset({"gains", "acquisitions"})
 
@@ -1528,6 +1576,7 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
 
     verdict, shifted = _decide(lead)
     verdict, dec_shifted = _decisive_affliction(verdict, lead, sig)
+    verdict, cat_md = _catastrophic_severity_gate(sig, verdict, lead)
     fired_yogas: tuple[FiredYoga, ...] = ctx.get_or_compute(
         "fired_yogas", lambda: detect_yogas(chart))
     verdict, yoga_shifted, yoga_md = _yoga_modulate(verdict, lead, sig, fired_yogas)
@@ -1547,10 +1596,10 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     av_md = _ashtakavarga_overlay(chart, sig)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + dhana_kendra_md + blem_md + gate_md + longev_md + bond_md + occ_md
-        + marg_md + yk_md + varga_md + av_md + timing_md + lookup_md))
-    shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted
-                   or late_shifted)
+        cat_md + yoga_md + dhana_md + dhana_kendra_md + blem_md + gate_md + longev_md + bond_md
+        + occ_md + marg_md + yk_md + varga_md + av_md + timing_md + lookup_md))
+    shifted_any = (shifted or dec_shifted or bool(cat_md) or yoga_shifted or dhana_shifted
+                   or blem_shifted or late_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak
     # avastha demote the degree one step (intensity only; the verdict is untouched). Avasthas
     # are computed once per chart and cached on ctx.

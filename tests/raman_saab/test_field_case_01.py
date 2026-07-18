@@ -92,13 +92,14 @@ class TestStaticAxis:
         assert total == case["baseline"]["static_total"]
 
     def test_documented_gaps_are_the_known_fix_targets(self, chart, case) -> None:
-        """The current distance>=2 misses are exactly the 6 catastrophic/binary
-        over-afflictions the feedback loop identified — no NEW real-life divergences
-        have crept in (any new one would be a regression to investigate)."""
+        """After the catastrophic-severity gate the remaining distance>=2 misses are the
+        3 known targets — H3 siblings/courage (three real malefic rules; held to avoid
+        overfitting) and H4 mother (the H4.C.18a nodal over-fire, Fix B pending). Any NEW
+        divergence, or a catastrophic key (accidents/incarceration/left_eye) regressing
+        back to distance>=2, fails here."""
         _, _, misses = _static_scoreboard(chart, case)
         keys = {m.split(":")[0] for m in misses}
-        expected = {"H3.siblings", "H3.courage", "H4.mother", "H6.accidents",
-                    "H12.incarceration", "H12.left_eye"}
+        expected = {"H3.siblings", "H3.courage", "H4.mother"}
         assert keys <= expected, f"unexpected new real-life miss: {keys - expected}"
 
 

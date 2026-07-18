@@ -1,11 +1,13 @@
 """Vargavisesha (Parijatadi amsas) — GBB-3 Art.28: own-varga counts over the saptavarga.
 
 Raman: "the greater the number of times a planet occupies its own varga the more
-powerful it becomes" (GBB-3:356, Art.28 "Planets occupying more than one Own Varga"),
-with his ladder of special amsas (GBB-3:383-395): twice -> Parijatamsa, thrice ->
-Parvathamsa, ... twelve -> Vaiseshikamsam. Worked Example 7 (GBB-3:397-405, the
-Standard Horoscope): Ravi/Kuja/Sukra each twice in own varga -> Parijatamsa; "the
-other planets have only one Swavarga and consequently they have no special amsas."
+auspicious it becomes and special results are ascribed to such occupancy"
+(GBB-3:357-360, Art.28 "Planets occupying more than one Own Varga" at :356), with his
+ladder of special amsas (labels at GBB-3:385-395, counts at :368-381): twice ->
+Parijatamsa, thrice -> Parvathamsa, ... twelve -> Vaiseshikamsam. Worked Example 7
+(GBB-3:397-406, the Standard Horoscope): Ravi/Kuja/Sukra each twice in own varga ->
+Parijatamsa; "the other planets have only one Swavarga and consequently they have no
+special amsas."
 
 NOTE (Raman wins): BPHS's Vargavisesha ladders use DIFFERENT names per varga-scheme
 (Shadvarga: Kimsuka(2)..Kundala; Dasavarga: Parijata(2)..Sridhama(10); Shodasavarga:

@@ -82,20 +82,23 @@ DOMAINS: Final[tuple[VargaDomain, ...]] = (
     VargaDomain(12, "Dwadasamsa", "father and mother", (4, 9), ("Moon", "Sun"),
                 Citation("HPA-11", 147),
                 notes="EXPLICIT in Raman's pointer: 'Dwadasamsa for parents' "
-                      "(HPA-11:198); definition at HPA-11:147-163; used as an ear/throat "
-                      "aggravator at HTJAH-I:3468."),
+                      "(HPA-11:198-199); definition at HPA-11:147-163; used as an "
+                      "ear/throat aggravator at HTJAH-I:3468."),
     VargaDomain(16, "Shodasamsa", "vehicles, conveyances and comforts", (4,), ("Venus",),
                 Citation("HPA-11", 195),
-                notes="Classical domain via Raman's pointer; Vahana-karaka Venus "
-                      "(HTJAH-I:4951-4952 reads vehicles through Venus and shashtiamsas)."),
+                notes="Classical domain via Raman's pointer; 'Vahana-Karaka is Venus and "
+                      "Vahana-Sthana is fourth' (HTJAH-I:4934, the direct vehicles line; "
+                      "shashtiamsa/thrimsamsa combinations at :4951-4952)."),
     VargaDomain(20, "Vimsamsa", "worship, religious practice and spiritual progress",
                 (9,), ("Jupiter",),
                 Citation("HPA-11", 195),
                 notes="Classical domain via Raman's pointer (BPHS ch.6 upasana)."),
-    VargaDomain(24, "Siddhamsa", "learning and education", (4,), ("Mercury",),
+    VargaDomain(24, "Siddhamsa", "learning and education", (4,), ("Jupiter", "Mercury"),
                 Citation("HPA-11", 195),
                 notes="Classical domain via Raman's pointer; education is a 4th-house "
-                      "matter in Raman (AFB-6:23-26) with karaka Mercury/Jupiter."),
+                      "matter in Raman with Jupiter 'the Vidyakaraka or lord of "
+                      "education' (AFB-6:23-25, gate-corrected Jupiter-first) and "
+                      "Mercury jointly (AFB-6:27-28)."),
     VargaDomain(27, "Bhamsa", "general strength and weakness", (), (),
                 Citation("HPA-11", 195),
                 notes="Classical domain via Raman's pointer (nakshatramsa)."),

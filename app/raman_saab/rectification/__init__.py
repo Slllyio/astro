@@ -12,5 +12,8 @@ from __future__ import annotations
 
 from app.raman_saab.rectification.events import (
     EVENT_TAXONOMY, EventSpec, LifeEvent, NatalFact, resolve_fact)
+from app.raman_saab.rectification.report import RectificationReport, to_markdown, to_text
+from app.raman_saab.rectification.session import RectificationSession
 
-__all__ = ["EVENT_TAXONOMY", "EventSpec", "LifeEvent", "NatalFact", "resolve_fact"]
+__all__ = ["EVENT_TAXONOMY", "EventSpec", "LifeEvent", "NatalFact", "resolve_fact",
+           "RectificationReport", "RectificationSession", "to_markdown", "to_text"]

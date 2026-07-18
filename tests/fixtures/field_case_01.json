@@ -1,0 +1,42 @@
+{
+  "_comment": "Anonymized REAL-NATIVITY golden (field_case_01). Owner-confirmed ground truth for a real life, elicited house-by-house on 2026-07-18. Kept SEPARATE from raman_goldens.jsonl (Raman's own worked charts) per the Prime Directive's textbook-vs-real-outcome distinction: this is the first entry in a real-outcome GENERALIZATION track. NO name/place (personal data). Frame: raman (the rectified frame; the raman-owns-2016-21 vs Lahiri-owns-2024-25 timing split is a documented open question deferred to the ayanamsa search). Two axes are pinned: (1) STATIC per-signification verdicts (engine must stay within-1 of the owner's real verdict) and (2) TIMING (each dated life event's house must be ACTIVATED in the period running at its date). The 6 distance>=2 static misses below (siblings, courage, mother, accidents, incarceration, left_eye — all engine=afflicted where the owner's life is favourable) are the catastrophic/binary over-affliction fix targets; a severity/corroboration gate should convert them, lifting static_within1 toward 50.",
+  "birth": {"year": 1989, "month": 10, "day": 12, "hour": 10, "minute": 2, "tz_offset": 5.5, "latitude": 27.23, "longitude": 79.03},
+  "ayanamsa": "raman",
+  "confirmed_verdicts": {
+    "1":  {"self": "favourable", "body": "favourable", "health": "mixed"},
+    "2":  {"wealth": "favourable", "family": "favourable", "speech": "favourable", "vision": "favourable"},
+    "3":  {"siblings": "favourable", "courage": "favourable", "short_journeys": "mixed", "ear_throat": "favourable"},
+    "4":  {"mother": "favourable", "happiness": "favourable", "education": "favourable", "property": "favourable", "home_comforts": "favourable"},
+    "5":  {"children": "afflicted", "intellect": "favourable", "poorvapunya": "favourable"},
+    "6":  {"enemies_disease": "afflicted", "accidents": "favourable", "debts": "favourable", "enemies": "afflicted", "disease_chronic": "mixed"},
+    "7":  {"spouse": "favourable", "marital_happiness": "mixed", "virility": "favourable", "coverture": "mixed", "partnership": "mixed"},
+    "8":  {"longevity": "favourable", "legacies": "favourable"},
+    "9":  {"father": "favourable", "fortune": "favourable", "dharma": "favourable", "higher_learning": "favourable", "long_journeys": "favourable"},
+    "10": {"career": "favourable", "profession_authority": "favourable", "profession_trade": "favourable", "profession_learned": "favourable", "profession_labour": "favourable", "status_honour": "favourable"},
+    "11": {"gains": "favourable", "friends": "favourable", "acquisitions": "favourable"},
+    "12": {"expenditure": "favourable", "foreign_residence": "mixed", "moksha": "favourable", "incarceration": "favourable", "left_eye": "favourable"}
+  },
+  "events": [
+    {"event_type": "education_milestone", "year": 2008, "month": 7, "day": null, "note": "IIT enrolment"},
+    {"event_type": "career_start", "year": 2016, "month": 2, "day": null, "note": "state service selection"},
+    {"event_type": "marriage", "year": 2017, "month": 12, "day": 4, "note": ""},
+    {"event_type": "foreign_travel", "year": 2018, "month": 3, "day": null, "note": "study tour abroad"},
+    {"event_type": "childbirth", "year": 2018, "month": 9, "day": 1, "note": "first child"},
+    {"event_type": "illness_accident", "year": 2019, "month": 5, "day": null, "note": "acute stress; chronic-BP medication begins"},
+    {"event_type": "litigation", "year": 2019, "month": 5, "day": null, "note": "disciplinary threat #1, escaped"},
+    {"event_type": "property_acquisition", "year": 2021, "month": 1, "day": null, "note": "property acquisitions begin"},
+    {"event_type": "illness_accident", "year": 2024, "month": 1, "day": null, "note": "panic-attack hospitalization (near-death)"},
+    {"event_type": "childbirth", "year": 2024, "month": 3, "day": 26, "note": "second child"},
+    {"event_type": "litigation", "year": 2024, "month": 11, "day": null, "note": "disciplinary threat #2, escaped"},
+    {"event_type": "honour_promotion", "year": 2025, "month": 1, "day": null, "note": "reputation cemented"},
+    {"event_type": "spiritual_turn", "year": 2025, "month": 7, "day": null, "note": "deepening practice"},
+    {"event_type": "career_change", "year": 2026, "month": 3, "day": null, "note": "deep turn to technical/occult research work"}
+  ],
+  "baseline": {
+    "static_within1": 44,
+    "static_total": 50,
+    "timing_hits": 14,
+    "timing_total": 14,
+    "note": "Ratchet floors under raman ayanamsa. static_within1 rises toward 50 as the catastrophic-affliction fixes land (bump in the same commit). timing_hits = every dated event's house activates in its period; must never regress."
+  }
+}

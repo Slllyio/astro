@@ -1008,6 +1008,56 @@ def _dhana_floor(
     return new, new != verdict, (("dhana_floor", f"{dhana_ids[0]}:{action}"),)
 
 
+def _powerful_dhana_kendra_floor(
+    chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+) -> tuple[Verdict, Metadata]:
+    """DECISIVE gains-favourable floor for Raman's "powerful combination of the 2nd, 7th, 9th
+    and 11th lords in a kendra" Dhana yoga (HTJAH-II:15273-15289 -- Chart 218: "The Eleventh
+    Lord: The Sun occupies a kendra in exaltation joining the 2nd lord Mars and 9th lord
+    Mercury ... The powerful combination of the 2nd, 7th, 9th and 11th lords in the 7th house,
+    a kendra, has generated a very strong yoga for gains" -> a newspaper magnate).
+
+    Fires only when the 11th lord -- the gains significator itself -- is the yoga's strong
+    anchor: Shadbala-strong AND exalted/own AND occupying a kendra, with >= 2 of the OTHER
+    {2,7,9,11} lords conjunct it there. That is a genuinely powerful multi-lord wealth yoga whose
+    strength Raman reads as decisively favourable even when the generic gains karaka (Jupiter) is
+    weak, so it OVERRIDES the clause-2 navamsa-weakens guard that otherwise leaves the
+    contradicted matter 'afflicted' (the same override authority granted to _dhana_floor). Never
+    demotes: a favourable verdict is returned unchanged; only afflicted/mixed is lifted.
+
+    Scoped to H11 gains/acquisitions; deferred under the longevity guard. The four-clause
+    discriminator (strong + exalted/own + kendra + >= 2 conjunct artha-lords) fires on Chart 218
+    ALONE across the H11 golden corpus (over-fire scanned).
+
+    bphs-doctrine-reviewer SOUND-WITH-CAVEAT/KEEP (HIGH). Recorded caveats (all conservative --
+    they can only UNDER-fire): (1) the own-sign arm is a dignity-generalization not exercised by
+    Chart 218's verbatim "in exaltation"; (2) clause-1 quantifies Raman's positional "well placed"
+    as Shadbala is_powerful -- a tightening beyond the words; (3) anchoring on the 11th lord
+    narrows Raman's stated aggregate cause ("powerful combination of the 2nd, 7th, 9th and 11th
+    lords") -- safe for a lift-only floor but misses a non-11th-lord-anchored variant; (4) the
+    navamsa override is inferred from the CONFIRMED favourable outcome, not a verbatim Raman D9
+    statement."""
+    if (sig.house != 11 or sig.key not in _DHANA_FLOOR_KEYS
+            or "LONGEVITY_GUARD" in lead.flags or verdict == "favourable"):
+        return verdict, ()
+    l11 = _lord_of_sign(chart.asc_sign, 11)
+    p = chart.planets.get(l11)
+    if p is None or p.rasi_house not in (1, 4, 7, 10):            # 11th lord in a kendra
+        return verdict, ()
+    if _strong(l11, chart) is not True:                          # and Shadbala-strong
+        return verdict, ()
+    exalted_or_own = ((l11 in r.EXALTATION and p.sign == r.EXALTATION[l11][0])
+                      or SIGN_LORDS[p.sign] == l11)               # "in exaltation" / own sign
+    if not exalted_or_own:
+        return verdict, ()
+    others = {_lord_of_sign(chart.asc_sign, h) for h in (2, 7, 9, 11)} - {l11}
+    conjunct = sum(1 for o in others
+                   if (q := chart.planets.get(o)) is not None and q.rasi_house == p.rasi_house)
+    if conjunct < 2:                                             # >= 2 other artha-lords joining
+        return verdict, ()
+    return "favourable", (("dhana_kendra_floor", "Y.DHANA.KENDRA:favourable"),)
+
+
 _AYURDAYA_VERDICT: dict[str, Verdict] = {
     "alpa": "afflicted", "madhya": "mixed", "purna": "favourable"}
 
@@ -1490,14 +1540,15 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
     verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
+    verdict, dhana_kendra_md = _powerful_dhana_kendra_floor(chart, sig, verdict, lead)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)
     late_shifted = verdict != _v_before_gates       # a gate/longevity/timing moved the verdict
     varga_md = _matter_varga_overlay(chart, sig, lead.lord, lead.karaka)
     av_md = _ashtakavarga_overlay(chart, sig)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        yoga_md + dhana_md + blem_md + gate_md + longev_md + bond_md + occ_md + marg_md
-        + yk_md + varga_md + av_md + timing_md + lookup_md))
+        yoga_md + dhana_md + dhana_kendra_md + blem_md + gate_md + longev_md + bond_md + occ_md
+        + marg_md + yk_md + varga_md + av_md + timing_md + lookup_md))
     shifted_any = (shifted or dec_shifted or yoga_shifted or dhana_shifted or blem_shifted
                    or late_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak

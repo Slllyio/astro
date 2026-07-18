@@ -56,6 +56,26 @@ def dwadasamsa_lord_of(lon: float) -> str:
     return SIGN_LORDS[((sign - 1 + part) % 12) + 1]
 
 
+def varga_lord_of(lon: float, n: int) -> str:
+    """Varga lord for the GBB saptavarga set {1,2,3,7,9,12,30}: the ruler of the
+    divisional sign holding ``lon`` in D-``n``. Mirrors ``shadbala.sthana._varga_lord``
+    (GBB-3:447-543) as a public dispatcher WITHOUT touching the Shadbala path; the
+    special-scheme divisions (D2 hora, D7 saptamsa, D12 dwadasamsa, D30 thrimsamsa)
+    use their dedicated lord functions, the sign-scheme ones (D1/D3/D9) the sign lord."""
+    from app.raman_saab.chart import varga as _v
+    if n == 2:
+        return hora_lord_of(lon)
+    if n == 7:
+        return saptamsa_lord_of(lon)
+    if n == 12:
+        return dwadasamsa_lord_of(lon)
+    if n == 30:
+        return thrimsamsa_lord_of(lon)
+    if n in (1, 3, 9):
+        return SIGN_LORDS[_v.varga_sign(lon, n)]
+    raise ValueError(f"varga_lord_of supports the saptavarga {{1,2,3,7,9,12,30}}, got D{n}")
+
+
 def thrimsamsa_lord_of(lon: float) -> str:
     """D30 thrimsamsa lord.
 

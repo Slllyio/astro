@@ -1,0 +1,23 @@
+{
+  "_comment": "Anonymized rectification golden (2026-07-18 worked session). A real nativity whose birth time and ayanamsa were rectified interactively against five dated life events + one natal fact; the module must reproduce the session's conclusion autonomously: the raman-ayanamsa class containing the stated time ranks first, driven by the 2024 childbirth (Jupiter putrakaraka AD) and the 2026 career_change (Mercury MD opening), with the marriage/first-childbirth pair flagged as correlated Venus-natured witnesses. NO name or place strings by design (personal data).",
+  "mode": "rectify",
+  "date": [1989, 10, 12],
+  "latitude": 27.23,
+  "longitude": 79.03,
+  "tz_offset": 5.5,
+  "stated_time": [10, 2],
+  "window_minutes": 30,
+  "ayanamsas": ["raman", "lahiri"],
+  "events": [
+    {"event_type": "career_start", "year": 2016, "month": 2, "day": null, "description": "state-service appointment result", "weight": 1.0},
+    {"event_type": "marriage", "year": 2017, "month": 12, "day": 4, "description": "", "weight": 1.0},
+    {"event_type": "childbirth", "year": 2018, "month": 9, "day": 1, "description": "first child", "weight": 1.0},
+    {"event_type": "childbirth", "year": 2024, "month": 3, "day": 26, "description": "second child", "weight": 1.0},
+    {"event_type": "career_change", "year": 2026, "month": 3, "day": null, "description": "deep turn to technical/occult research work", "weight": 1.0}
+  ],
+  "facts": [
+    {"subject": "mother", "house": 4, "observed": "afflicted", "description": "recurring health trouble, non-fatal", "weight": 1.0}
+  ],
+  "history": [],
+  "engine_fingerprint": ""
+}

@@ -263,6 +263,72 @@ def to_text(rep: RectificationReport) -> str:
     return "\n".join(out)
 
 
+def to_dict(rep: RectificationReport) -> dict:
+    """JSON-safe rendering for the HTTP API — the full ranked report with per-channel
+    subtotals, both ayanamsa tracks, per-event fit (lords + active-house panel), the
+    ayanamsa verdict, orthogonality, the computed resolution statement, and the next
+    questions. Deterministic key order."""
+    def _event_score(es) -> dict:
+        return {
+            "event_type": es.event_type,
+            "house": es.house,
+            "lords_part": round(es.lords_part, 3),
+            "houses_part": round(es.houses_part, 3),
+            "subtotal": round(es.subtotal, 3),
+            "active_grade": es.active_grade,
+            "active_panel": list(es.active_panel),
+            "levels": [{"level": lm.level, "lord": lm.lord, "matched": lm.matched,
+                        "scorable": lm.scorable} for lm in es.levels],
+            "notes": list(es.notes),
+        }
+
+    def _candidate(rank: int, cs) -> dict:
+        c, ch = cs.candidate, cs.channels
+        return {
+            "rank": rank,
+            "ayanamsa": c.ayanamsa,
+            "class_interval_local": list(c.interval_local),
+            "representative_time": c.time_str,
+            "birth": {"year": c.birth.year, "month": c.birth.month, "day": c.birth.day,
+                      "hour": c.birth.hour, "minute": c.birth.minute},
+            "boundaries": list(c.boundaries),
+            "channels": {"event_lords": round(ch.event_lords, 3),
+                         "event_houses": round(ch.event_houses, 3),
+                         "facts": round(ch.facts, 3),
+                         "arithmetic": round(ch.arithmetic, 3),
+                         "total": round(ch.total, 3)},
+            "events": [_event_score(es) for es in cs.event_scores],
+            "facts": [{"subject": fs.subject, "engine_verdict": fs.engine_verdict,
+                       "agreement": fs.agreement} for fs in cs.fact_scores],
+        }
+
+    av = rep.ayanamsa_verdict
+    return {
+        "mode": rep.mode,
+        "n_candidate_classes": rep.n_candidates,
+        "resolution_statement": rep.resolution_statement,
+        "confidence": {"margin_top2": round(rep.confidence.margin_top2, 3),
+                       "n_surviving": rep.confidence.n_surviving,
+                       "wording": rep.confidence.wording},
+        "ayanamsa_verdict": {
+            "winner": av.winner, "margin": round(av.margin, 3),
+            "best_by_ayanamsa": [{"ayanamsa": a, "time": t, "total": round(v, 3)}
+                                 for a, t, v in av.best_by_ayanamsa],
+            "driving_events": list(av.driving_events),
+            "statement": av.statement},
+        "orthogonality": {"discriminators": list(rep.discriminators),
+                          "flat_events": list(rep.flat_events),
+                          "correlated_pairs": [list(p) for p in rep.correlated_pairs]},
+        "suggestions": list(rep.suggestions),
+        "events": [{"event_type": ev.event_type, "year": ev.year, "month": ev.month,
+                    "day": ev.day, "precision": ev.precision} for ev in rep.events],
+        "facts": [{"subject": f.subject, "house": f.house, "observed": f.observed}
+                  for f in rep.facts],
+        "ranked": [_candidate(i, cs) for i, cs in enumerate(rep.ranked, 1)],
+        "markdown": to_markdown(rep),
+    }
+
+
 def to_markdown(rep: RectificationReport) -> str:
     """Markdown rendering — same content, table-formed."""
     out: list[str] = []

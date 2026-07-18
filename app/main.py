@@ -20,6 +20,7 @@ from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
 from app.api.reading_routes import reading_router
+from app.api.rectification_routes import rectification_router
 from app.api.routes import chart_router, profile_router
 from app.core.auth import limiter
 from app.core.config import settings
@@ -86,6 +87,7 @@ app.include_router(forecast_router)  # Phase 2: multi-day Mundane Forecast (/med
 app.include_router(almanac_router)   # Phase 2: backward-looking Mundane Almanac (/medini/almanac/*)
 app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (/medini/reading/*)
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
+app.include_router(rectification_router)  # Birth-time rectification / discovery (/rectify/*)
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

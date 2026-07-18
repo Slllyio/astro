@@ -1,7 +1,7 @@
-"""Shodasavarga report rendering — deterministic, ASCII-safe text and markdown.
+"""Shodasavarga report rendering — deterministic, ASCII-safe text, markdown, and JSON.
 
 Usage:
-    from app.raman_saab.render_varga import to_text, to_markdown
+    from app.raman_saab.render_varga import to_text, to_markdown, to_dict
     print(to_text(build_shodasavarga_report(chart)))
 """
 from __future__ import annotations
@@ -55,6 +55,50 @@ def to_text(report: ShodasavargaReport) -> str:
         vargas = ",".join(v.own_vargas) or "-"
         out.append(f"    {v.planet:8} {v.own_varga_count}x [{vargas}]  {label}")
     return "\n".join(out)
+
+
+def _sign_name(sign: int) -> str:
+    return _SIGNS[sign - 1]
+
+
+def _pillar_dict(p: PillarReading) -> dict:
+    return {"planet": p.planet, "role": p.role, "sign": p.varga_sign,
+            "sign_name": _sign_name(p.varga_sign), "house": p.varga_house,
+            "dignity": p.dignity, "vargottama": p.vargottama}
+
+
+def _reading_dict(r: VargaReading) -> dict:
+    return {
+        "n": r.n, "name": r.name, "domain": r.domain,
+        "related_houses": list(r.related_houses),
+        "citation": f"{r.source.work}:{r.source.line}",
+        "lagna": {"sign": r.chart.lagna_sign, "sign_name": _sign_name(r.chart.lagna_sign),
+                  "lord": r.chart.lagna_lord, "vargottama": r.chart.lagna_vargottama},
+        "lagna_lord": _pillar_dict(r.lagna_lord),
+        "karakas": [_pillar_dict(k) for k in r.karakas],
+        "benefics_on_lagna": list(r.benefics_on_lagna),
+        "malefics_on_lagna": list(r.malefics_on_lagna),
+        "benefics_in_kendra": list(r.benefics_in_kendra),
+        "malefics_in_kendra": list(r.malefics_in_kendra),
+        "status": r.status,
+        "notes": {k: v for k, v in r.notes},
+    }
+
+
+def to_dict(report: ShodasavargaReport) -> dict:
+    """JSON-serialisable form of the whole report (for the HTTP surface). The D1 lagna
+    is surfaced once at the top; every division carries its own lagna + citation."""
+    d1 = report.readings[0].chart
+    return {
+        "lagna": {"sign": d1.lagna_sign, "sign_name": _sign_name(d1.lagna_sign),
+                  "lord": d1.lagna_lord},
+        "readings": [_reading_dict(r) for r in report.readings],
+        "vargavisesha": [
+            {"planet": v.planet, "own_varga_count": v.own_varga_count,
+             "own_vargas": list(v.own_vargas), "label": v.label,
+             "citation": f"{v.source.work}:{v.source.line}"}
+            for v in report.vargavisesha],
+    }
 
 
 def to_markdown(report: ShodasavargaReport) -> str:

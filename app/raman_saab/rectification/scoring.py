@@ -132,14 +132,18 @@ class CandidateScore:
     channels: ChannelScores
 
 
-def _timer_union(chart: RamanChart, event: LifeEvent) -> frozenset[str]:
-    """timer_set over the event's house + aux houses, plus its named karakas."""
-    spec = event.spec
+def timer_union_for_spec(chart: RamanChart, spec) -> frozenset[str]:
+    """timer_set over an EventSpec's house + aux houses, plus its named karakas.
+    Public: the suggester scores HYPOTHETICAL event types with it."""
     timers = set(vim.timer_set(chart, spec.house))
     for h in spec.aux_houses:
         timers |= vim.timer_set(chart, h)
     timers |= set(spec.karakas)
     return frozenset(timers)
+
+
+def _timer_union(chart: RamanChart, event: LifeEvent) -> frozenset[str]:
+    return timer_union_for_spec(chart, event.spec)
 
 
 def _relative_marakas(chart: RamanChart, house: int) -> frozenset[str]:

@@ -95,6 +95,19 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_suggest(args: argparse.Namespace) -> int:
+    session = RectificationSession.load(Path(args.session))
+    if not session.events and not session.facts:
+        raise SystemExit("no evidence yet — add-event / add-fact first")
+    report = session.evaluate(top_k=args.top)
+    session.save(Path(args.session))
+    if not report.suggestions:
+        print("no discriminating questions found (candidate set may already be settled)")
+    for s in report.suggestions:
+        print(f"* {s}")
+    return 0
+
+
 def _cmd_status(args: argparse.Namespace) -> int:
     session = RectificationSession.load(Path(args.session))
     print(f"mode={session.mode}  birth={session.year}-{session.month:02d}-"
@@ -160,6 +173,11 @@ def main(argv: list[str] | None = None) -> int:
     p_st = sub.add_parser("status", help="show session state from history (no recompute)")
     p_st.add_argument("--session", required=True)
     p_st.set_defaults(fn=_cmd_status)
+
+    p_sg = sub.add_parser("suggest", help="print the next most-discriminating questions")
+    p_sg.add_argument("--session", required=True)
+    p_sg.add_argument("--top", type=int, default=8)
+    p_sg.set_defaults(fn=_cmd_suggest)
 
     args = parser.parse_args(argv)
     return args.fn(args)

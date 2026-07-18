@@ -64,12 +64,6 @@ class RectificationReport:
 # Construction
 # ---------------------------------------------------------------------------
 
-def _event_match_vector(cs: CandidateScore) -> tuple[bool, ...]:
-    """Per-event 'any scorable level matched' — the basic discrimination signature."""
-    return tuple(any(lm.matched and lm.scorable for lm in es.levels)
-                 for es in cs.event_scores)
-
-
 def _ayanamsa_verdict(scored: tuple[CandidateScore, ...],
                       events: tuple[LifeEvent, ...]) -> AyanamsaVerdict:
     best: dict[str, CandidateScore] = {}
@@ -85,9 +79,9 @@ def _ayanamsa_verdict(scored: tuple[CandidateScore, ...],
         return AyanamsaVerdict(ay, 0.0, rows, (),
                                "single-ayanamsa run — no cross-frame verdict")
     margin = rows[0][2] - rows[1][2]
-    va, vb = _event_match_vector(best[rows[0][0]]), _event_match_vector(best[rows[1][0]])
-    driving = tuple(events[i].event_type for i in range(min(len(va), len(vb)))
-                    if va[i] != vb[i])
+    ea, eb = best[rows[0][0]].event_scores, best[rows[1][0]].event_scores
+    driving = tuple(events[i].event_type for i in range(min(len(ea), len(eb)))
+                    if abs(ea[i].subtotal - eb[i].subtotal) > 0.25)
     if margin < 1e-9:
         stmt = "the two ayanamsas tie on this evidence — supply a discriminating event"
         winner = None
@@ -133,9 +127,44 @@ def _confidence(ranked: tuple[CandidateScore, ...], n_candidates: int) -> Confid
     return ConfidenceStatement(margin, n_candidates, wording)
 
 
+_DISCRIM_SPREAD: float = 0.5
+
+
+def _orthogonality(ranked: tuple[CandidateScore, ...], events: tuple[LifeEvent, ...],
+                   ) -> tuple[tuple[str, ...], tuple[str, ...],
+                              tuple[tuple[str, str], ...]]:
+    """(discriminators, flat, correlated_pairs) from the per-event SCORE VECTORS across
+    the ranked candidates. An event whose subtotal spread across candidates exceeds
+    ``_DISCRIM_SPREAD`` separates the set (a discriminator); near-zero spread = flat
+    (it fits every candidate alike — e.g. a Venus-natured marriage matching both
+    ayanamsas). Two discriminators whose per-candidate score ORDERINGS coincide are
+    correlated — same significator nature, count as ONE witness."""
+    if len(ranked) < 2 or not events:
+        return (), (), ()
+    vectors: dict[int, tuple[float, ...]] = {
+        i: tuple(cs.event_scores[i].subtotal for cs in ranked)
+        for i in range(len(events))}
+    spread = {i: max(v) - min(v) for i, v in vectors.items()}
+    disc_idx = [i for i in vectors if spread[i] > _DISCRIM_SPREAD]
+    discriminators = tuple(events[i].event_type for i in disc_idx)
+    flat = tuple(events[i].event_type for i in vectors if spread[i] <= _DISCRIM_SPREAD)
+
+    def _order(v: tuple[float, ...]) -> tuple[int, ...]:
+        return tuple(sorted(range(len(v)), key=lambda k: (-v[k], k)))
+
+    correlated: list[tuple[str, str]] = []
+    for pos, i in enumerate(disc_idx):
+        for j in disc_idx[pos + 1:]:
+            if (_order(vectors[i]) == _order(vectors[j])
+                    and events[i].event_type != events[j].event_type):
+                correlated.append((events[i].event_type, events[j].event_type))
+    return discriminators, flat, tuple(correlated)
+
+
 def build_report(*, mode: str, scored: tuple[CandidateScore, ...],
                  events: tuple[LifeEvent, ...], facts: tuple[NatalFact, ...],
-                 top_k: int = 8) -> RectificationReport:
+                 top_k: int = 8,
+                 suggestions: tuple[str, ...] = ()) -> RectificationReport:
     ordered = sorted(scored, key=lambda cs: cs.channels.total, reverse=True)
     ranked_list = list(ordered[:top_k])
     # Dual-ayanamsa mandate: even when one frame sweeps the top-K, the OTHER frame's
@@ -146,12 +175,15 @@ def build_report(*, mode: str, scored: tuple[CandidateScore, ...],
             ranked_list.append(cs)
             present.add(cs.candidate.ayanamsa)
     ranked = tuple(ranked_list)
+    discriminators, flat, correlated = _orthogonality(ranked, events)
     return RectificationReport(
         mode=mode, n_candidates=len(scored), ranked=ranked, events=events, facts=facts,
         ayanamsa_verdict=_ayanamsa_verdict(scored, events),
         resolution_statement=_resolution_statement(events, facts,
                                                    ranked[0] if ranked else None),
-        confidence=_confidence(ranked, len(scored)))
+        confidence=_confidence(ranked, len(scored)),
+        discriminators=discriminators, flat_events=flat, correlated_pairs=correlated,
+        suggestions=suggestions)
 
 
 # ---------------------------------------------------------------------------

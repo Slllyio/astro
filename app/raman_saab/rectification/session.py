@@ -65,6 +65,7 @@ class RoundRecord:
     n_facts: int
     n_candidates: int
     top: tuple[tuple[str, str, float], ...]      # (ayanamsa, time_str, total) top 5
+    suggested_next: tuple[str, ...] = ()         # rendered next-question suggestions
 
 
 @dataclass
@@ -140,23 +141,41 @@ class RectificationSession:
                 out.append(cs)
         return tuple(out)
 
-    def evaluate(self, *, top_k: int = 8) -> RectificationReport:
-        """Run the mode's search, score every candidate class, record the round."""
+    def evaluate(self, *, top_k: int = 8,
+                 with_suggestions: bool = True) -> RectificationReport:
+        """Run the mode's search, score every candidate class, compute the next-question
+        suggestions, and record the round."""
+        from app.raman_saab.rectification import suggest as SG
         cache = C.ChartCache()
         if self.mode == "rectify":
             cands = self._generate(self._window_hours())
         else:
             cands = self._discover_candidates(cache)
         scored = self._score_all(cands, cache, top_k=top_k)
+        suggestions: tuple[str, ...] = ()
+        if with_suggestions and len(scored) >= 2:
+            ranked = tuple(sorted(scored, key=lambda cs: cs.channels.total,
+                                  reverse=True))
+            birth_jd = min(c.birth_jd for c in cands)
+            horizon = datetime.now(timezone.utc)
+            horizon_jd = birth_jd + max(
+                0.0, (horizon - datetime(self.year, self.month, self.day,
+                                         tzinfo=timezone.utc)).days)
+            sugg = SG.suggest_events(
+                ranked, cache, frozenset(ev.event_type for ev in self.events),
+                birth_jd=birth_jd, horizon_jd=horizon_jd)
+            sugg += SG.suggest_facts(
+                ranked, cache, frozenset(f.subject for f in self.facts))
+            suggestions = tuple(s.render() for s in sugg)
         report = build_report(mode=self.mode, scored=scored,
                               events=tuple(self.events), facts=tuple(self.facts),
-                              top_k=top_k)
+                              top_k=top_k, suggestions=suggestions)
         top5 = tuple((cs.candidate.ayanamsa, cs.candidate.time_str,
                       round(cs.channels.total, 3)) for cs in report.ranked[:5])
         self.history.append(RoundRecord(
             timestamp=datetime.now(timezone.utc).isoformat(timespec="seconds"),
             n_events=len(self.events), n_facts=len(self.facts),
-            n_candidates=len(cands), top=top5))
+            n_candidates=len(cands), top=top5, suggested_next=suggestions[:3]))
         return report
 
     def _discover_candidates(self, cache: C.ChartCache) -> tuple[C.CandidateChart, ...]:
@@ -228,7 +247,8 @@ class RectificationSession:
             facts=[NatalFact(**f) for f in d.get("facts", [])],
             history=[RoundRecord(timestamp=r["timestamp"], n_events=r["n_events"],
                                  n_facts=r["n_facts"], n_candidates=r["n_candidates"],
-                                 top=tuple(tuple(t) for t in r["top"]))
+                                 top=tuple(tuple(t) for t in r["top"]),
+                                 suggested_next=tuple(r.get("suggested_next", ())))
                      for r in d.get("history", [])],
             engine_fingerprint=d.get("engine_fingerprint", ""))
         current = _engine_fingerprint()

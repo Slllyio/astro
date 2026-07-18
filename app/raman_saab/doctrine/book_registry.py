@@ -47,6 +47,14 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Graha and Bhava Balas"),
     BookEntry("NH", "notable_horoscopes_raman", False, "live",
               "chapter_001_full-text-unsplit.md", "Notable Horoscopes", "NotableHoroscopesBVR"),
+    # AFB added 2026-07-18 (rectification module P1): Raman's own Parashari-natal primer.
+    # Its ch.9-10 event->dasha-lord lists (marriage AFB-9:98, children AFB-9:142, the
+    # per-lord Dasa menu AFB-10:449-476) are the corpus's sharpest event-timing statements
+    # and anchor the rectification EVENT_TAXONOMY. In-scope: natal, Parashari, Raman.
+    # (Its ch.11 horary / ch.12 gochara chapters are simply never cited — the tag being
+    # live does not admit out-of-scope CONTENT; rules cite specific lines.)
+    BookEntry("AFB", "astrology_for_beginners_raman", True, "live",
+              None, "Astrology for Beginners", "AstrologyForBeginners_201705"),
     # --- CATALOG-ONLY, OUT OF SCOPE (different systems): present, NON-citable (divergence firewall) ---
     BookEntry("JAIMINI", "studies_jaimini_raman", True, "catalog-only-out-of-scope",
               None, "Studies in Jaimini Astrology (Jaimini system)"),

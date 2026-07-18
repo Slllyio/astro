@@ -48,11 +48,14 @@ _TOTAL_YEARS: Final[int] = 120
 @dataclass(frozen=True)
 class DashaPeriod:
     """A running period: its Mahadasha lord, its Bhukti (antar) lord (None for an
-    MD-level span), and its [start, end) bounds in Julian Days."""
+    MD-level span), its [start, end) bounds in Julian Days, and — when the span is a
+    Pratyantardasha (sub-sub-period) — its Pratyantar lord (None for MD/Bhukti-level
+    spans, so every existing 4-argument construction is unchanged)."""
     maha: str
     antar: Optional[str]
     start_jd: float
     end_jd: float
+    pratyantar: Optional[str] = None
 
     def contains(self, jd: float) -> bool:
         return self.start_jd <= jd < self.end_jd
@@ -112,6 +115,43 @@ def dasha_on(chart: RamanChart, jd: float) -> Optional[DashaPeriod]:
                     return bh
             return md
     return None
+
+
+def pratyantars(bh: DashaPeriod) -> list[DashaPeriod]:
+    """The 9 Pratyantardashas (sub-sub-periods) of a Bhukti, proportional and ordered
+    from the Bhukti lord onward — the SAME ``lord_years / 120`` split ``bhuktis()``
+    applies one level up, in JD space (HPA ch.24 treats Dasa/Bhukti/Antara as one
+    self-similar proportional hierarchy; HTJAH-II:668-702 names all three levels —
+    "as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as
+    lords of the Antaras" — as carriers of a house's results).
+
+    ``bh`` must be a Bhukti-level span (``antar`` set); raises ValueError otherwise.
+    """
+    if bh.antar is None:
+        raise ValueError("pratyantars() needs a Bhukti-level DashaPeriod (antar set), "
+                         "got an MD-level span")
+    total_years = (bh.end_jd - bh.start_jd) / DAYS_PER_VEDIC_YEAR
+    out: list[DashaPeriod] = []
+    cursor = bh.start_jd
+    for pd_lord in _sequence_from(bh.antar):
+        years = total_years * _LORD_YEARS[pd_lord] / _TOTAL_YEARS
+        end = cursor + years * DAYS_PER_VEDIC_YEAR
+        out.append(DashaPeriod(bh.maha, bh.antar, cursor, end, pd_lord))
+        cursor = end
+    return out
+
+
+def pratyantar_on(chart: RamanChart, jd: float) -> Optional[DashaPeriod]:
+    """The (Mahadasha, Bhukti, Pratyantar) period running on Julian Day `jd`, or None
+    outside the timeline. A NEW resolver — ``dasha_on`` is deliberately untouched so
+    every existing caller keeps its exact Bhukti-level behaviour."""
+    bh = dasha_on(chart, jd)
+    if bh is None or bh.antar is None:
+        return bh
+    for pd in pratyantars(bh):
+        if pd.contains(jd):
+            return pd
+    return bh
 
 
 @dataclass(frozen=True)

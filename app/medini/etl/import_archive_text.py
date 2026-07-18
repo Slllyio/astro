@@ -282,6 +282,16 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
     _Book(
+        identifier="AstrologyForBeginners_201705",
+        filename="Astrology For Beginners BVRaman_djvu.txt",
+        book_slug="astrology_for_beginners_raman",
+        book_title="Astrology for Beginners",
+        author="B. V. Raman",
+        translator="(original English)",
+        classical_ref_prefix="Raman.AFB",
+        header_regex=_DEFAULT_HEADER_REGEX,
+    ),
+    _Book(
         identifier="how-to-judge-a-horoscope-r.-santhanam",
         filename="How to Judge a Horoscope - R. Santhanam_djvu.txt",
         book_slug="how_to_judge_a_horoscope_raman",

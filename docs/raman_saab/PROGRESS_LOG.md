@@ -1146,3 +1146,77 @@ confidence=0.3 (215 verdict rows). Widened the schema book enum to allow NH. DRA
 ratchet is UNCHANGED (120/154, 140/154); they await human confirmation against the text (denominator
 honesty: confirm engine-matches, keep mismatches DRAFT until a mechanism exists). raman harness 3271 green.
 Review manifest: scratchpad/nh_draft_manifest.json. Birth coords/tz are auto-recovered -> verify on confirm.
+
+### 2026-07-22 — D-7 (Sapthamsa) children layer: the child-varga now judges the H5 verdict
+Promoted the Sapthamsa from a report-only surface to a real verdict-path layer FOR THE H5
+children/progeny matter only — the exact parallel of the proven D9 layer (branch
+`varga-interpretations`; see `docs/raman_saab/D7_LAYER_SCOPE.md`). Two new helpers in
+`judges/house_template.py`: `_saptamsa_status(lord, karaka, chart)` (the D-7 mirror of
+`_navamsa_status` — reads the 5th lord + Putrakaraka Jupiter in the cast D-7 via the reviewer-
+validated four-principle model: confirms on vargottama/D7-exalt/own, weakens on D7-debil or
+6/8/12-from-D7-lagna) and `_saptamsa_gate(...)` (children-scoped; nudges only a borderline
+'mixed' one step, decisive verdicts frozen — the `_navamsa_modulate` discipline). Runs after
+yoga/floors and BEFORE the decisive Beeja/Kshetra `_fertility_gate`, which keeps final say.
+Emits `("saptamsa", status)` report metadata (the `beeja_kshetra` style). Cited HPA-11:198
+("Saptamsa for children"), HtJaH:979 (rasi=promise/varga=fruit), and the varga_judge principles
+(GBB-3 dignity, HTJAH occupancy, HPA-20 vargottama).
+
+bphs-doctrine-reviewer (MANDATORY, per the varga_judge non-D9 clause): PARTIAL — KEEP with FLAG
+(0 BUG, 0 REVERSAL; A/D FAITHFUL, B FAITHFUL-label-caveat, C/E PARTIAL). All 3 flags addressed,
+not deferred: (1) MEDIUM sphuta authority asymmetry — the fertility gate denies but never
+affirms, so a weakening D-7 could beat two strong sphutas -> FIXED (both-strong guard suppresses
+the weakens->afflicted push); (2) LOW-MED vargottama double-count across D9/D-7 -> FIXED (the
+D1==D9 vargottama credit removed from _saptamsa_status; the D-7 now reads only its own
+exalt/own/debil + 6-8-12-from-D7-lagna); (3) LOW docstring over-claim -> FIXED.
+
+Over-fire/impact scan (gate ON vs OFF, all 190 birth goldens, post-fix): D-7 status neutral 84 /
+weakens 61 / confirms 45; EXACTLY 2 borderline-'mixed' moves — h5_15 mixed->favourable (improves
+toward Raman, but DRAFT/not-asserted) and h7_07 mixed->afflicted on the CHILDREN matter of a
+chart pinning H7 (no conflict); h6_03 (which moved pre-fix) is now spared by the both-strong
+guard. Ratchet UNCHANGED by construction: no CONFIRMED H5 verdict moves, no Tier-3 record pins
+H5, metadata is not snapshotted. Full suite: exact 209/241, within-1 229/241 (`test_goldens.py`
+green; 557 passed / 21 skipped). Unit suites `test_saptamsa_status.py` (7) + `test_saptamsa_gate.py`
+(7) green; fertility gate still authoritative. field_case_01 children surfaces saptamsa='neutral',
+verdict afflicted unchanged. ADDITIVE — all 16 divisional charts + the full shodasavarga report
+(varga_judge) are untouched; the D-7 layer only ADDS a children gate on top. DEFERRED (D7-4, HIGH
+risk): occupant D-7 dignity, judging the 5th-from-D7-lagna, and netting a DECISIVE children
+verdict (behind the tune_thresholds holdout, as D9-6/B1 require).
+
+### 2026-07-22 — D-7 children READING surface (report-only) + methodology + worked reading
+"How do we decipher a D-7 for children?" — codified as a provenance-honest, REPORT-ONLY surface,
+plus the exhaustive methodology doc and a worked reading of the eldest daughter from the confirmed
+field_case_01 (father's chart, "mine d7 for her"). GOVERNING FACT (Explore digest, 0 counter-hits
+on disk): Raman DEFINES the Saptamsa and names it the children varga (HPA-11:187-199) but NEVER
+casts/reads a D-7 for children in HTJAH or NH; his real progeny engine is Rasi 5th + Navamsa +
+Beeja/Kshetra (HTJAH-I:5517-5527, 5902-5904). Successive-child houses + the D-7-lagna reading are
+ABSENT in Raman (only non-citable KP 5->7->9 and Sanjay Rath Manduka-gati); gender + child
+affliction ARE Raman-explicit but from the RASI 5th.
+
+New code: `app/raman_saab/judges/saptamsa_reading.py` — `build_saptamsa_children_reading(chart)`
+returns `raman_core` (the AUTHORITATIVE verdict, delegated to judge_house(chart,5) + beeja_kshetra)
++ `d7_overlay` (report-only), every element carrying a `Provenance` tag {RAMAN_EXPLICIT |
+RAMAN_GENERAL_PRINCIPLE | CLASSICAL_NONCITABLE | ABSENT_IN_RAMAN}. Raman's Rasi-5th planet effects
+(Ketu 5293, Mars 5270, ...) are applied to a D-7 locus BY ANALOGY (tagged GENERAL_PRINCIPLE);
+eldest child = D-7 lagna (GENERAL_PRINCIPLE); successive = KP/Rath scheme (NONCITABLE). Plus
+`render_saptamsa.py` (ASCII-safe text render) and `tools/raman_saab/saptamsa_reading.py` (CLI:
+`--fixture` or birth flags). REPORT-ONLY invariant enforced by test (verdict path never imports
+saptamsa_reading; judge_house output unchanged). Tests `test_saptamsa_reading.py` green (12);
+ratchet UNCHANGED 209/241 (560 passed in the reading+varga+goldens run). Docs:
+`methodology/D7_saptamsa_reading.md` (the exhaustive decipher procedure, provenance-tagged, mapped
+to engine primitives) + `readings/elder_daughter_d7.md` (field_case_01: 5th-lord/Putrakaraka
+Jupiter in the 8th + both barren sphutas -> afflicted; Mars+Ketu on the D-7 eldest-child seat
+[Ketu 5293 "lacks the human touch towards one or two issues"]; Jupiter navamsa-own = the
+afflicted-but-not-annihilated mitigant; the "recovery" question hedged as affliction-vs-relief +
+dasha timing, NOT medical advice, confidence stated). bphs-doctrine-reviewer (MANDATORY):
+**FAITHFUL - clears the doctrine gate** (0 MISREAD; all 14+ citations verified verbatim on-disk;
+the "Raman never reads a D-7" governing fact corroborated - 0 Saptamsa hits across HTJAH I/II + NH).
+5 minor precision corrections applied: (1) de-stitched composite quotes to single-line cites
+(Mars 5270 "children die after some time", Rahu 5262 "will lose a number of children", Saturn 5259,
+Sun 5232; Ketu 5293 restored "in his approach"); (2) re-tagged the single-even-sign gender indicator
+RAMAN_EXPLICIT -> RAMAN_GENERAL_PRINCIPLE (Raman's Chart-107 needs a feminine CONFLUENCE, not one
+even sign); (3) replaced an uncited over-strong navamsa maxim ("debilitated in Rasi but exalted in
+Navamsa...") in the reading with the correctly-scaled general principle (Jupiter is 8th-dusthana +
+navamsa-OWN, not debil->exalt); (4) softened the "strongest denial signal" phrasing to the
+life-consistent afflicted (not childless) register; (5) reconciled the report-only wording vs the
+separate borderline `_saptamsa_gate` nudge. Kept occupant==aspect affliction (aspect IS affliction
+in Raman; the render already distinguishes "on"/"aspects").

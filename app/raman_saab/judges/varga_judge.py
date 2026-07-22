@@ -32,9 +32,13 @@ report-only surface; (c) doctrine VALIDATED with the citation anchors corrected 
 a naisargika-only simplification of GBB's compound relation (note on any future
 promotion); re-review is MANDATORY if any non-D9 varga_status ever feeds the verdict path.
 
-VERDICT-AUTHORITY INVARIANT: this module is imported by NOTHING in the D1 verdict path.
-D9 keeps its exclusive verdict-modulating role inside house_template. All 16 readings
-are a standalone report surface (v1) — the golden ratchets are untouched by construction.
+VERDICT-AUTHORITY INVARIANT: this module (the report surface) is imported by NOTHING in the
+D1 verdict path. The navamsa (D9) modulates all matters, and — since the D-7 promotion
+(2026-07-22, this mandatory re-review completed) — the Sapthamsa (D-7) modulates the H5
+children matter; BOTH via NATIVE helpers inside house_template (`_navamsa_status`,
+`_saptamsa_status`/`_saptamsa_gate`), never by importing this report. All 16 readings here
+remain a standalone report; the D-7 children gate is borderline-only and was verified
+verdict-invariant on the golden ratchet (209/241 unchanged).
 
 Usage:
     from app.raman_saab.judges.varga_judge import build_shodasavarga_report

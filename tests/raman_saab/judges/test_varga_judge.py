@@ -66,11 +66,20 @@ class TestSparseChart:
 
 class TestVerdictAuthorityInvariant:
     def test_house_template_does_not_import_varga_judge(self) -> None:
-        """D9 keeps its exclusive D1-verdict role: the verdict path never imports the
-        varga judge (report-only surface in v1)."""
+        """The verdict path stays DECOUPLED from the varga REPORT module: house_template must
+        never IMPORT varga_judge.
+
+        v2 note: the navamsa (D9) modulates all matters and the Sapthamsa (D-7) now modulates
+        the H5 children matter — but both via NATIVE helpers inside house_template
+        (`_navamsa_status`, `_saptamsa_status`), NOT by importing this report surface. So the
+        report/verdict decoupling is preserved even though D9 is no longer the sole verdict
+        varga (the D-7 promotion passed the mandatory bphs-doctrine re-review). Prose mentions
+        of the module name in docstrings are allowed; an actual import is not."""
         import app.raman_saab.judges.house_template as ht
         src = Path(ht.__file__).read_text(encoding="utf-8")
-        assert "varga_judge" not in src
+        import_lines = [ln for ln in src.splitlines()
+                        if ln.startswith(("import ", "from ")) and "varga_judge" in ln]
+        assert not import_lines, f"verdict path must not import the varga report: {import_lines}"
 
     def test_d1_judgment_unchanged_by_import(self) -> None:
         """Importing/building the varga report leaves judge_house output identical."""

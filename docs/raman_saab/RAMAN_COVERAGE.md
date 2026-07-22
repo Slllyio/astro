@@ -15,7 +15,7 @@ against the 845 encoded rules + 21 primitives.
 | Dashas (Vimshottari) | HPA Ch.13 | **ENCODED** | Raman's chosen dasha; full MD/Bhukti |
 | Ashtakavarga | HPA | **ENCODED** | BAV/SAV, 337 checksum |
 | Transits (Gochara) | HPA | **ENCODED** | Moon-frame + AV + Sade-Sati |
-| Divisional charts | various | **ENCODED** | all 16 Shodashavarga |
+| Divisional charts | various | **ENCODED** | all 16 cast; D9 + D7-children feed verdicts, rest report-only |
 | Longevity (math) | HTJAH II | **ENCODED** | Pindayu/Amsayu/maraka/balarishta primitives |
 | **Yogas** | **300 Combinations** | **~13%** | **biggest depth gap — see below** |
 | **Avasthas** | **HPA Ch.7** | **PARTIAL** | Baladi+Jagradadi only; **Deeptadi (10) MISSING** |

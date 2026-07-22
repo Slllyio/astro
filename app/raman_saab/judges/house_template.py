@@ -42,6 +42,7 @@ from typing import Final, Literal, Optional
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart import varga
+from app.raman_saab.chart.varga_chart import cast_varga_chart
 from app.raman_saab.primitives import ashtakavarga
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
@@ -88,6 +89,9 @@ _COMBUST_HARD_FRACTION: float = 0.5            # half-combust counts (all planet
 
 # Dusthana houses (6/8/12) counted from the navamsa lagna weaken the D9 verdict.
 _D9_WEAK_HOUSES: frozenset[int] = frozenset({6, 8, 12})
+# 6/8/12 counted from ANY varga lagna weaken that varga's testimony — the same dusthana
+# principle _navamsa_status applies in D9. Used by the D-7 (Sapthamsa) children layer.
+_VARGA_DUSTHANA: frozenset[int] = frozenset({6, 8, 12})
 
 # ── Round-8 wiring constants (yoga modifier + sphuta gate + lookup surfacing) ──
 _SIGN_NAMES: Final[tuple[str, ...]] = (
@@ -589,6 +593,61 @@ def _navamsa_status(lord: str, karaka: str, chart: RamanChart,
             weakens = True
         d9_house = ((nav - nav_lagna_sign) % 12) + 1
         if d9_house in _D9_WEAK_HOUSES:
+            weakens = True
+    if not saw_any:
+        return "unknown"
+    if confirms and not weakens:
+        return "confirms"
+    if weakens and not confirms:
+        return "weakens"
+    return "neutral"
+
+
+def _saptamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
+    """Confirm/weaken from the Sapthamsa (D-7) — the CHILDREN/progeny varga.
+
+    The D-7 confirmation read, scoped to progeny. Where the navamsa is Raman's GENERAL
+    confirmation varga, the Sapthamsa is the child-specific one ("Saptamsa for children",
+    HPA-11:198; rasi = promise, the varga = fruit, HtJaH:979). It reads the two children
+    significators — the D-1 5th ``lord`` and Putrakaraka ``karaka`` (Jupiter) — INSIDE the
+    cast D-7 chart, by the dignity + dusthana subset of the reviewer-validated per-varga
+    model (``judges/varga_judge.py``); benefic/malefic occupancy is deliberately not weighed
+    here (a one-step borderline nudge, like the D9 modulation). This is a
+    significators-in-the-varga read (mirroring ``_navamsa_status``), distinct from the
+    varga_judge REPORT row, which instead reads the D-7 *lagna* lord.
+
+    confirms : a pillar is D-7-exalted, or in its own D-7 sign;
+    weakens  : a pillar is D-7-debilitated, or sits in a 6/8/12 from the D-7 lagna;
+    unknown  : D-7 data absent for both pillars (sparse / Track-B) — a safe no-op.
+
+    NOTE (deliberate): the D1==D9 ``vargottama`` credit is NOT counted here. Vargottama is a
+    *navamsa* fact already weighed by ``_navamsa_status`` in the verdict path; crediting it
+    again in the D-7 would double-use one datum across two varga layers and let a "D-7 confirm"
+    rest on evidence that is not the Sapthamsa's own. So this status is purely D-7-native.
+
+    Works on Track-B: ``cast_varga_chart`` needs only ``asc_lon`` + per-planet ``lon``.
+    Pure read — imported into the verdict path ONLY via the children-scoped ``_saptamsa_gate``
+    (which nudges a borderline 'mixed' one step, never a decisive verdict)."""
+    vc = cast_varga_chart(chart, 7)
+    saw_any = False
+    confirms = False
+    weakens = False
+    for name in (lord, karaka):
+        pos = vc.positions.get(name)
+        if pos is None:
+            continue
+        saw_any = True
+        sign = pos.sign
+        # confirms: the D-7 sign is the planet's exaltation or own sign (D-7-native only —
+        # vargottama is a D9 fact and is intentionally excluded; see the docstring NOTE).
+        if name in r.EXALTATION and sign == r.EXALTATION[name][0]:
+            confirms = True
+        elif SIGN_LORDS.get(sign) == name:
+            confirms = True
+        # weakens: D-7 debilitation, or a 6/8/12 from the D-7 lagna.
+        if name in r.DEBILITATION and sign == r.DEBILITATION[name][0]:
+            weakens = True
+        if pos.house is not None and pos.house in _VARGA_DUSTHANA:
             weakens = True
     if not saw_any:
         return "unknown"
@@ -1416,6 +1475,55 @@ def _fertility_gate(
     return verdict, (("beeja_kshetra", "numeric_partial"),), lead
 
 
+def _saptamsa_gate(
+    chart: RamanChart, sig: Signification, verdict: Verdict,
+    lead: FrameLedger, ctx: EvalContext,
+) -> tuple[Verdict, Metadata]:
+    """D-7 (Sapthamsa) CHILDREN layer — the child-varga's confirm/weaken testimony modulates
+    a BORDERLINE children verdict; the exact parallel of the D9 navamsa modulation.
+
+    Scope: the H5 children/progeny matter ONLY (the fertility-gate scope). The Sapthamsa is
+    Raman's child-specific varga ("Saptamsa for children", HPA-11:198; rasi = promise, the
+    varga = fruit, HtJaH:979), so for progeny its testimony is at least as pertinent as the
+    general navamsa. Discipline is identical to ``_navamsa_modulate``: only a borderline
+    'mixed' moves, one step (confirms -> favourable, weakens -> afflicted); a decisive
+    favourable/afflicted NEVER shifts, so the golden ratchet is invariant except where a
+    children verdict was genuinely borderline. The confirm/weaken read uses the same
+    reviewer-validated four-principle varga model the per-varga judge documents
+    (``judges/varga_judge.py``).
+
+    Order: runs AFTER the yoga/floor modulators and BEFORE the decisive Beeja/Kshetra
+    ``_fertility_gate``. The Putra-sphuta test (HTJAH-I:5517-5527) is Raman's SPECIFIC,
+    decisive fertility signal and outranks the casual D-7 in BOTH directions:
+      * a both-barren-sphuta DENIAL overrides a confirming D-7 downstream (barren seed begets
+        no child, however promising the amsa) — enforced by ``_fertility_gate`` running last;
+      * a both-strong-sphuta AFFIRMATION must not be overridden by a weakening D-7 — but the
+        fertility gate only denies, it never lifts, so that guard is enforced HERE: the
+        ``weakens -> afflicted`` push is suppressed when both sphutas are strong.
+
+    Always surfaces ``("saptamsa", status)`` as report metadata (the ``("beeja_kshetra", …)``
+    style), except when the D-7 is unresolvable (Track-B / sparse) -> no metadata, no effect.
+    """
+    if sig.house != 5 or not (
+            sig.key in _FERTILITY_KEYS or "progeny" in sig.rule_tags):
+        return verdict, ()
+    status = ctx.get_or_compute(
+        "saptamsa_status_h5",
+        lambda: _saptamsa_status(lead.lord, lead.karaka, chart))
+    if status == "unknown":
+        return verdict, ()
+    if verdict == "mixed" and status == "confirms":
+        verdict = "favourable"
+    elif verdict == "mixed" and status == "weakens":
+        # The decisive Putra-sphuta test outranks the casual D-7: when BOTH seed (Beeja) and
+        # field (Kshetra) are strong — Raman's positive fertility signal — the child-varga's
+        # weakening must not deny progeny. Otherwise the D-7 tempers the borderline downward.
+        bk = ctx.get_or_compute("beeja_kshetra", lambda: beeja_kshetra(chart))
+        if not (bk is not None and bk.beeja_strong and bk.kshetra_strong):
+            verdict = "afflicted"
+    return verdict, (("saptamsa", status),)
+
+
 def _occupants_ordered(chart: RamanChart, house: int) -> tuple[str, ...]:
     """Occupants of whole-sign `house` in canonical graha order (deterministic)."""
     return tuple(p for p in _PLANET_ORDER
@@ -1583,6 +1691,7 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, dhana_shifted, dhana_md = _dhana_floor(verdict, lead, sig, fired_yogas)
     verdict, blem_shifted, blem_md = _blemishless_venus_floor(chart, sig, verdict, lead)
     _v_before_gates = verdict                       # capture for the late-shift (gates/longevity/timing) flag
+    verdict, saptamsa_md = _saptamsa_gate(chart, sig, verdict, lead, ctx)
     verdict, gate_md, lead = _fertility_gate(chart, sig, verdict, lead, ctx)
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict, blem_lifted=blem_shifted)
@@ -1596,8 +1705,9 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     av_md = _ashtakavarga_overlay(chart, sig)
     lookup_md = _lookup_metadata(chart, sig, lead)
     metadata: Metadata = tuple(dict.fromkeys(
-        cat_md + yoga_md + dhana_md + dhana_kendra_md + blem_md + gate_md + longev_md + bond_md
-        + occ_md + marg_md + yk_md + varga_md + av_md + timing_md + lookup_md))
+        cat_md + yoga_md + dhana_md + dhana_kendra_md + blem_md + saptamsa_md + gate_md
+        + longev_md + bond_md + occ_md + marg_md + yk_md + varga_md + av_md + timing_md
+        + lookup_md))
     shifted_any = (shifted or dec_shifted or bool(cat_md) or yoga_shifted or dhana_shifted
                    or blem_shifted or late_shifted)
     # Layer-A avastha deepening: the lead frame's deliverers (lord + karaka) in a net-weak

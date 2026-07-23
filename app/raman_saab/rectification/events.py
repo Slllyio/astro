@@ -137,6 +137,18 @@ EVENT_TAXONOMY: Final[dict[str, EventSpec]] = {
             notes="H6 fructification; 8th aux for life-threat; Mars/Saturn the "
                   "affliction karakas."),
         EventSpec(
+            "developmental_diagnosis", 5, (2,), ("Mercury", "Jupiter"), "intellect",
+            "When was a developmental / intellectual / speech condition first diagnosed?",
+            Citation("HTJAH-I", 5012),
+            notes="Mental-faculty (Budhi) onset — points at the intellect/speech houses the "
+                  "condition actually concerns, NOT the generic illness_accident H6/H8 disease "
+                  "register. House anchor: the 5th is Budhi/intellect (intellect signification "
+                  "source HTJAH-I:5012). Aux-2 = speech/vak (speech signification HTJAH-I:2316, "
+                  "which carries Mercury as a secondary karaka). Karaka Mercury = Budha, the "
+                  "significator of intellect and speech; Jupiter = the H5 intellect primary "
+                  "karaka. NEW 2026-07-23; the faculty-over-disease register choice is the "
+                  "deliberate correction and warrants a bphs-doctrine-reviewer confirmation."),
+        EventSpec(
             "litigation", 6, (), ("Mars",), "enemies",
             "When did a court case / open enmity peak?",
             Citation("HTJAH-I", 6270)),

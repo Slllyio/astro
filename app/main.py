@@ -22,6 +22,7 @@ from app.api.medini_routes import medini_router
 from app.api.reading_routes import reading_router
 from app.api.rectification_routes import rectification_router
 from app.api.routes import chart_router, profile_router
+from app.api.soul_routes import soul_router
 from app.api.varga_routes import varga_router
 from app.core.auth import limiter
 from app.core.config import settings
@@ -90,6 +91,7 @@ app.include_router(reading_router)   # Round 10: per-chart RAG-grounded reader (
 app.include_router(interpret_router)  # LLM narrative layer (/interpret/*)
 app.include_router(rectification_router)  # Birth-time rectification / discovery (/rectify/*)
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
+app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) — Jaimini firewall lifted
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

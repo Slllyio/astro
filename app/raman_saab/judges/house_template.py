@@ -42,7 +42,7 @@ from typing import Final, Literal, Optional
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.chart import varga
-from app.raman_saab.chart.varga_chart import cast_varga_chart
+from app.raman_saab.chart.varga_chart import VargaChart, cast_varga_chart
 from app.raman_saab.primitives import ashtakavarga
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
@@ -58,7 +58,8 @@ from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives import vimshottari
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
 from app.raman_saab.primitives.dignity import dignity
-from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS, is_yogakaraka
+from app.raman_saab.primitives.functional_nature import (
+    NATURAL_BENEFICS, NATURAL_MALEFICS, is_yogakaraka)
 from app.raman_saab.primitives.shadbala import bhava_bala as bhava_bala_mod
 from app.raman_saab.primitives.shadbala import total as shadbala_total
 from app.raman_saab.primitives.sphutas import beeja_kshetra
@@ -603,7 +604,8 @@ def _navamsa_status(lord: str, karaka: str, chart: RamanChart,
     return "neutral"
 
 
-def _saptamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
+def _saptamsa_status(lord: str, karaka: str, chart: RamanChart,
+                     extra: tuple[str, ...] = (), include_seats: bool = False) -> NavStatus:
     """Confirm/weaken from the Sapthamsa (D-7) — the CHILDREN/progeny varga.
 
     The D-7 confirmation read, scoped to progeny. Where the navamsa is Raman's GENERAL
@@ -611,14 +613,26 @@ def _saptamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
     HPA-11:198; rasi = promise, the varga = fruit, HtJaH:979). It reads the two children
     significators — the D-1 5th ``lord`` and Putrakaraka ``karaka`` (Jupiter) — INSIDE the
     cast D-7 chart, by the dignity + dusthana subset of the reviewer-validated per-varga
-    model (``judges/varga_judge.py``); benefic/malefic occupancy is deliberately not weighed
-    here (a one-step borderline nudge, like the D9 modulation). This is a
-    significators-in-the-varga read (mirroring ``_navamsa_status``), distinct from the
-    varga_judge REPORT row, which instead reads the D-7 *lagna* lord.
+    model (``judges/varga_judge.py``). This is a significators-in-the-varga read (mirroring
+    ``_navamsa_status``), distinct from the varga_judge REPORT row, which reads the D-7 *lagna* lord.
+
+    ``include_seats`` (D7-4 Item 2): when True, a malefic-afflicted D-7 child-seat
+    (``_d7_seat_occupancy``) folds in as an extra WEAKEN (weaken-only — a benefic seat never
+    lifts; see that helper). This is the one place occupancy feeds a varga status — justified
+    because the D-7 lagna IS the eldest-child seat, not a generic varga lagna. Off by default,
+    so every existing caller keeps the pillars-only read.
+
+    Pillars = ``lord`` and ``karaka``, PLUS ``extra`` (D7-4: the 5th house's HOLLOW/REDEEMED
+    occupants — the exact D-7 mirror of the D9-4/D9-6 occupant the caller selects for
+    ``_navamsa_status``. An occupant exalted in the rashi but debilitated in the D-7 has its
+    promised good withheld in the child-varga → routes through the weakens branch; the mirror
+    (debilitated in rashi but exalted in the D-7) redeems, routing through confirms. The caller
+    (``_saptamsa_gate`` via ``_d7_hollow_redeemed_occupants``) selects only that surgical
+    subset, exactly as the D9-4 caller does — the broad "all occupants" form was rejected there.)
 
     confirms : a pillar is D-7-exalted, or in its own D-7 sign;
     weakens  : a pillar is D-7-debilitated, or sits in a 6/8/12 from the D-7 lagna;
-    unknown  : D-7 data absent for both pillars (sparse / Track-B) — a safe no-op.
+    unknown  : D-7 data absent for all pillars (sparse / Track-B) — a safe no-op.
 
     NOTE (deliberate): the D1==D9 ``vargottama`` credit is NOT counted here. Vargottama is a
     *navamsa* fact already weighed by ``_navamsa_status`` in the verdict path; crediting it
@@ -632,7 +646,7 @@ def _saptamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
     saw_any = False
     confirms = False
     weakens = False
-    for name in (lord, karaka):
+    for name in (lord, karaka, *extra):
         pos = vc.positions.get(name)
         if pos is None:
             continue
@@ -649,12 +663,83 @@ def _saptamsa_status(lord: str, karaka: str, chart: RamanChart) -> NavStatus:
             weakens = True
         if pos.house is not None and pos.house in _VARGA_DUSTHANA:
             weakens = True
+    if include_seats and _d7_seat_occupancy(vc) == "weakens":
+        # Weaken-only: a malefic-afflicted D-7 child-seat tempers a borderline verdict down;
+        # it can never lift one (deny-but-never-affirm; see _d7_seat_occupancy).
+        saw_any = True
+        weakens = True
     if not saw_any:
         return "unknown"
     if confirms and not weakens:
         return "confirms"
     if weakens and not confirms:
         return "weakens"
+    return "neutral"
+
+
+def _d7_hollow_redeemed_occupants(chart: RamanChart, lord: str, karaka: str) -> tuple[str, ...]:
+    """The 5th house's HOLLOW / REDEEMED occupants for the D-7 (D7-4) — the exact mirror of the
+    D9-4/D9-6 occupant the caller selects for ``_navamsa_status``.
+
+    HOLLOW  : an occupant EXALTED in the rashi but DEBILITATED in the D-7 — the promise set up
+              in the rasi is withheld in the child-varga (Grahanam Amsakam Balam applied to the
+              Sapthamsa); it contributes a weakens.
+    REDEEMED: the mirror — DEBILITATED in the rashi but EXALTED in the D-7 — contributes a
+              confirms.
+
+    Only that surgical subset is returned (the broad "all strong occupants" form regressed
+    borderline verdicts in D9-4 and is deliberately not used). ``lord``/``karaka`` are excluded
+    (already pillars). The confirm/weaken direction is decided downstream by ``_saptamsa_status``
+    reading each occupant's own D-7 dignity, so this helper only SELECTS."""
+    out: list[str] = []
+    for nm, p in chart.planets.items():
+        if p.rasi_house != 5 or nm in (lord, karaka):
+            continue
+        d7 = varga.saptamsa_sign(p.lon)
+        exalt_rasi = nm in r.EXALTATION and p.sign == r.EXALTATION[nm][0]
+        debil_d7 = nm in r.DEBILITATION and d7 == r.DEBILITATION[nm][0]
+        debil_rasi = nm in r.DEBILITATION and p.sign == r.DEBILITATION[nm][0]
+        exalt_d7 = nm in r.EXALTATION and d7 == r.EXALTATION[nm][0]
+        if (exalt_rasi and debil_d7) or (debil_rasi and exalt_d7):
+            out.append(nm)
+    return tuple(out)
+
+
+def _d7_seat_occupancy(vc: VargaChart) -> NavStatus:
+    """D7-4 Item 2: the malefic OCCUPANCY of the two child-seats in the D-7. WEAKEN-ONLY.
+
+    Seats: the D-7 lagna (house 1) — the eldest-child seat (D7 methodology §3; the whole D-7
+    overlay reading centres on it, e.g. Mars+Ketu there in field_case_01) — and the
+    5th-from-D-7-lagna (house 5), the continuity / child-of-the-child seat. A malefic on a
+    child-seat afflicts progeny — Raman's Rāśi-5th malefic-occupancy doctrine
+    (``saptamsa_reading._MALEFIC_5TH_EFFECT``: Sun/Mars/Saturn/Rahu/Ketu each cited;
+    H5.C.18-19 HTJAH-I:5205-5206) applied to the D-7's own child-seats by the general varga
+    principle. This is the FIRST place occupancy feeds a varga *status* (report-only in
+    ``varga_judge``, absent from ``_navamsa_status``); warranted HERE because the D-7 lagna is
+    not a generic varga lagna — it IS the eldest-child seat.
+
+    WEAKEN-ONLY, not symmetric (bphs-doctrine-reviewer ruling, 2026-07-23): Raman's progeny
+    apparatus DENIES but never AFFIRMS — the malefic-in-5th map is malefic-only (no "benefic
+    confers children" verse), and a benefic-lift would break the same deny-but-never-affirm
+    asymmetry the fertility gate and the Item-1 sphuta guard already enforce. So a benefic on a
+    child-seat can only OFFSET a malefic ON THE SAME SEAT, never lift a verdict.
+
+    PER-SEAT (not pooled net): each seat is judged on its own occupants, so a benefic on the
+    continuity seat (house 5) cannot cancel a malefic on the primary eldest seat (house 1) —
+    the eldest seat is the citable locus (``saptamsa_reading.py`` eldest=general-principle).
+    Uses the full locked NATURAL_MALEFICS set (Sun + nodes included; cruel-only does not
+    transfer to children — Raman names the Sun and both nodes as 5th-house progeny afflictors)."""
+    for house in (1, 5):
+        ben = mal = 0
+        for name, pos in vc.positions.items():
+            if pos.house != house:
+                continue
+            if name in NATURAL_BENEFICS:
+                ben += 1
+            elif name in NATURAL_MALEFICS:
+                mal += 1
+        if mal > ben:
+            return "weakens"
     return "neutral"
 
 
@@ -1509,7 +1594,10 @@ def _saptamsa_gate(
         return verdict, ()
     status = ctx.get_or_compute(
         "saptamsa_status_h5",
-        lambda: _saptamsa_status(lead.lord, lead.karaka, chart))
+        lambda: _saptamsa_status(
+            lead.lord, lead.karaka, chart,
+            _d7_hollow_redeemed_occupants(chart, lead.lord, lead.karaka),
+            include_seats=True))
     if status == "unknown":
         return verdict, ()
     if verdict == "mixed" and status == "confirms":

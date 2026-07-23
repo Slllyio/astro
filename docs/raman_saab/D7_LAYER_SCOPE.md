@@ -99,13 +99,50 @@ decisive sphuta gate.
   navamsa-lagna + Beeja/Kshetra; the borderline-only, sphuta-outranked posture matches that
   casual weight (proportional, not overbroad).
 
-## Deferred — D7-4 (HIGH risk, note only)
+## D7-4 Item 1 — occupant D-7 dignity — SHIPPED (2026-07-23)
 
-The D-7 analogues of the D9-4/5/6 backlog, behind the same holdout/threshold-tuner discipline:
-- **occupant D-7 dignity** — weigh the D-7 dignity of the 5th house's strong *occupants*, not
-  only lord+karaka (the D-7 mirror of the D9-4 "hollow occupant");
-- **judge the 5th-from-D-7-lagna house** and the D-7 lagna itself (benefic/malefic occupancy),
-  not only the two pillars;
+The D-7 mirror of the D9-4/D9-6 "hollow/redeemed occupant" is now live, but only in its
+**surgical** slice (narrower than the deferred bullet below):
+- `_saptamsa_status(lord, karaka, chart, extra=())` now takes `extra` occupants, exactly like
+  `_navamsa_status`; `_d7_hollow_redeemed_occupants(chart, lord, karaka)` selects **only** the
+  5th-house occupants whose rashi↔D-7 dignity FLIPS (exalt-rashi/debil-D7 = hollow → weakens;
+  debil-rashi/exalt-D7 = redeemed → confirms). The broad "all strong occupants" form is NOT
+  used (it regressed borderline verdicts in D9-4). `_saptamsa_gate` wires it in.
+- **Guardrail unchanged**: still borderline-only (moves a `mixed` H5 one step, never decisive;
+  the both-strong-sphuta suppression stands). The borderline-gate discipline substitutes for the
+  holdout tuner because the shipped slice is the de-risked flip-only subset.
+- **Validation**: 19/19 D-7 unit tests green (5 new occupant tests in `test_saptamsa_status.py`);
+  **golden ratchet UNCHANGED — 209/241 exact, 229/241 within-1** (`test_goldens.py`, 539 passed);
+  `bphs-doctrine-reviewer` **PARTIAL / KEEP-WITH-FLAG** (0 BUG, 0 REVERSAL; Q2/Q3/Q4 FAITHFUL,
+  Q1 PARTIAL = a principled analogical extension of a navamsa rule to the children varga, so it
+  **inherits** the base D-7 layer's PARTIAL rather than upgrading it — Raman never casts a D-7).
+
+## D7-4 Item 2 — child-seat malefic occupancy — SHIPPED (2026-07-23)
+
+Judges the two D-7 child-seats — the D-7 lagna (house 1 = eldest-child seat) and the
+5th-from-D-7-lagna (house 5 = continuity seat) — for **malefic occupancy**, the FIRST place
+benefic/malefic occupancy feeds a varga *status* (it is report-only in `varga_judge` and absent
+from `_navamsa_status`). `_d7_seat_occupancy(vc)` + `_saptamsa_status(..., include_seats=True)`.
+- **WEAKEN-ONLY** (bphs-doctrine-reviewer decisive ruling): a malefic-afflicted child-seat
+  tempers a borderline `mixed` H5 down; a benefic seat can NEVER lift it. Raman's progeny
+  apparatus denies but never affirms — the malefic-in-5th map is malefic-only, and a benefic-lift
+  would break the same asymmetry the fertility gate + Item-1 sphuta guard enforce. (This does NOT
+  touch Item-1's redeemed-occupant confirm, which has a cited uplift rule — Grahaṇam Aṁśakam Balam.)
+- **PER-SEAT** (reviewer Q3): each seat judged on its own occupants, so a benefic on the
+  continuity seat (house 5) cannot cancel a malefic on the primary eldest seat (house 1).
+- **ALL natural malefics** (reviewer Q4: Sun + nodes included — cruel-only does not transfer to
+  children; Raman names the Sun and both nodes as 5th-house progeny afflictors).
+- **Fires, correctly**: field_case_01 (father) D-7 lagna Leo carries Mars+Ketu → seat weakens,
+  flipping the status neutral→weakens (matching the elder-daughter reading). His verdict stays
+  decisively `afflicted`, so the borderline gate leaves it untouched.
+- **Validation**: 26/26 D-7 unit tests green (6 new seat tests); **golden ratchet UNCHANGED —
+  209/241 exact, 229/241 within-1** (`test_goldens.py`, 539 passed); `bphs-doctrine-reviewer`
+  **PARTIAL / KEEP-WITH-FLAG** (0 BUG, 0 REVERSAL; the weaken-only + per-seat ruling was applied,
+  not deferred).
+
+## Deferred — D7-4 item 3 (HIGH risk, note only)
+
+Still behind the holdout/threshold-tuner discipline:
 - **netting a decisive verdict** — letting the D-7 temper/redeem a *decisive* children verdict
   (not merely a borderline `mixed`) — the biggest behavioural change; deferred until it can go
   through `tools/raman_saab/tune_thresholds.py` with a holdout lock, exactly as D9-6 / B1 require.

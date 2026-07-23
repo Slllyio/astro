@@ -109,7 +109,10 @@ is a chart reading, **not a medical statement about a real child.**
 ## 5. Honest caveats
 
 1. Raman never cast a D-7; the D-7 layer here is corroboration by analogy, clearly tagged.
-2. This reads the **father's** chart for the child ("mine d7 for her"). A fuller reading would
-   cross-reference the **daughter's own nativity** and the **mother's chart** (Raman: judge both
-   spouses' 5th houses, HTJAH-I:5436) — not done here.
+2. This reads the **father's** chart for the child ("mine d7 for her"). Raman judges progeny from
+   **both** spouses' 5th houses (HTJAH-I:5436); the **mother's chart is now cross-referenced** in
+   [`two_spouse_children.md`](./two_spouse_children.md) (both parents read `afflicted`; the
+   affliction is a two-witness concordance, the redemptive Navāṁśa-own Jupiter likewise). What
+   remains is the **daughter's own nativity** (Avika, 2018-09-01) — and that is a **D-30 Trimsāṁśa**
+   health reading, *not* a D-7 (a person's own health is not read from the parent's children-varga).
 3. Not medical advice. Hold it lightly, alongside the care she is actually receiving.

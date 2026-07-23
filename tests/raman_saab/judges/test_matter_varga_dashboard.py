@@ -23,10 +23,12 @@ class TestMatterVargaDashboard:
     def dash(self) -> mvd.MatterVargaDashboard:
         return mvd.build_matter_varga_dashboard(cast_chart(_BASELINE, ayanamsa="raman"))
 
-    def test_five_matters_mapped_to_their_vargas(self, dash: mvd.MatterVargaDashboard) -> None:
-        """children→D7, marriage→D9, career→D10, education→D24, health→D30."""
+    def test_all_matters_mapped_to_their_vargas(self, dash: mvd.MatterVargaDashboard) -> None:
+        """Every life-matter maps to its divisional home (12 matters across the shodasavarga)."""
         got = {e.matter: e.varga for e in dash.entries}
-        assert got == {"children": 7, "marriage": 9, "career": 10, "education": 24, "health": 30}
+        assert got == {"wealth": 2, "siblings": 3, "mother": 12, "property": 4, "children": 7,
+                       "marriage": 9, "father": 12, "career": 10, "comforts": 16, "spiritual": 20,
+                       "education": 24, "health": 30}
 
     def test_every_verdict_is_a_real_verdict(self, dash: mvd.MatterVargaDashboard) -> None:
         """Each matter carries an authoritative (Raman-method) verdict from its deep reader."""

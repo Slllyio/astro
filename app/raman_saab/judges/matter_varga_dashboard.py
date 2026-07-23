@@ -26,6 +26,8 @@ from typing import Final
 
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.judges.dasamsa_career_reading import build_dasamsa_career_reading
+from app.raman_saab.judges.dwadasamsa_parents_reading import build_dwadasamsa_parents_reading
+from app.raman_saab.judges.matter_varga_reading import build_matter_varga_reading
 from app.raman_saab.judges.navamsa_marriage_reading import build_navamsa_marriage_reading
 from app.raman_saab.judges.saptamsa_reading import Tagged, build_saptamsa_children_reading
 from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
@@ -49,14 +51,24 @@ class MatterVargaDashboard:
     notes: tuple[Tagged, ...]
 
 
-# (matter, varga, varga name, dedicated reader module) — the dispatch table.
+# (matter, varga, varga name, dedicated reader module) — the dispatch table, ordered by house.
 _DISPATCH: Final[tuple[tuple[str, int, str, str], ...]] = (
+    ("wealth", 2, "Horā", "matter_varga_reading"),
+    ("siblings", 3, "Drekkāṇa", "matter_varga_reading"),
+    ("mother", 12, "Dvādaśāṁśa", "dwadasamsa_parents_reading"),
+    ("property", 4, "Chaturthāṁśa", "matter_varga_reading"),
     ("children", 7, "Sapthāṁśa", "saptamsa_reading"),
     ("marriage", 9, "Navāṁśa", "navamsa_marriage_reading"),
+    ("father", 12, "Dvādaśāṁśa", "dwadasamsa_parents_reading"),
     ("career", 10, "Daśāṁśa", "dasamsa_career_reading"),
+    ("comforts", 16, "Ṣoḍaśāṁśa", "matter_varga_reading"),
+    ("spiritual", 20, "Viṁśāṁśa", "matter_varga_reading"),
     ("education", 24, "Siddhāṁśa", "siddhamsa_education_reading"),
     ("health", 30, "Triṁśāṁśa", "trimsamsa_health_reading"),
 )
+
+_GENERIC: Final[frozenset[str]] = frozenset(
+    {"wealth", "siblings", "property", "comforts", "spiritual"})
 
 
 def _verdict_for(matter: str, chart: RamanChart) -> str:
@@ -70,6 +82,12 @@ def _verdict_for(matter: str, chart: RamanChart) -> str:
         return build_siddhamsa_education_reading(chart).core.education_verdict
     if matter == "health":
         return build_trimsamsa_health_reading(chart).core.disease_verdict
+    if matter == "mother":
+        return build_dwadasamsa_parents_reading(chart).mother.verdict
+    if matter == "father":
+        return build_dwadasamsa_parents_reading(chart).father.verdict
+    if matter in _GENERIC:
+        return build_matter_varga_reading(chart, matter).core.verdict
     return "insufficient-evidence"
 
 

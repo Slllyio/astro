@@ -82,3 +82,6 @@ Every elimination above used direct evidence, not argument: an external answer k
 pre-registered re-tests (#2), an instrument bypass (#3), a measured distribution comparison (#4),
 and dual-direction controls (#5). This is the Prime Directive's "measure honestly" applied to the
 question "why did it fail" — the answer is not a guess.
+
+
+> Per-case atlas — WHERE it fails, house by house, with named lives: [FAILURE_ATLAS.md](FAILURE_ATLAS.md)

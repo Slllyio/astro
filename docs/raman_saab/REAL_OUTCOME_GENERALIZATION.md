@@ -167,3 +167,6 @@ Secondary finding for the engine's own roadmap (monitoring-axis only, golden sov
 the verdict layer OVER-AFFLICTS ordinary charts (children 76%/incarceration 65%/death 72%
 afflicted on random controls) — a population-calibration property invisible to the golden corpus,
 now quantified.
+
+
+> Per-case atlas — WHERE it fails, house by house, with named lives: [FAILURE_ATLAS.md](FAILURE_ATLAS.md)

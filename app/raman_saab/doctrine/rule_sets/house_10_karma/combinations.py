@@ -27,6 +27,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 
@@ -78,6 +79,33 @@ class _AllKendrasHaveClass(C.Condition):
         return all(any(name in group and p.rasi_house == h
                        for name, p in ctx.chart.planets.items())
                    for h in _KENDRAS)
+
+
+class _HouseInfluencedByClass(C.Condition):
+    """A natural planet of `klass` OCCUPIES OR ASPECTS whole-sign `house` (from the Lagna) — the
+    benefic/malefic house-influence used to judge whether the 10th (Karma) is fortified by benefics
+    or afflicted by malefics (HTJAH-II:11064 'benefics in the 10th -> noble; malefics -> evil'; the
+    aspect arm per Raman's standard 'the 10th aspected by a benefic' readings, e.g. :9617/:11241).
+    Placement-based, so it fires on a Track-B chart with no Shadbala. With `exclude_debil` a
+    DEBILITATED benefic is not counted as a fortifier (a light strength gate — bphs-reviewer flag:
+    Raman does not let a debilitated significator fortify, HTJAH-II:10177-10178; combustion is the
+    other weakener but is not computable on a Track-B stated-positions chart, so it is documented
+    rather than gated here)."""
+    def __init__(self, house: int, klass: str, exclude_debil: bool = False) -> None:
+        self.house = house
+        self.exclude_debil = exclude_debil
+        self.group = NATURAL_MALEFICS if klass == "malefic" else NATURAL_BENEFICS
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        ch = ctx.chart
+        for name, p in ch.planets.items():
+            if name not in self.group:
+                continue
+            if self.exclude_debil and dignity(name, ch) == "debil":
+                continue
+            if p.rasi_house == self.house or drishti.aspects_house(name, self.house, ch):
+                return True
+        return False
 
 
 # ── RULES ─────────────────────────────────────────────────────────────────────
@@ -254,4 +282,31 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "the 7th from its own sign) are dasa-phala. TODO(predicate: Dasa timing — Phase-F)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 13313)),
+
+    # ===== D. Benefic-influenced, malefic-free 10th -> favourable career =====
+    # HTJAH-II:10181-10191 contrasts the benefic-influenced 10th (distinction, eminence, prosperity)
+    # with the afflicted 10th (poverty, loss of position); :11064 'benefics in the 10th -> noble';
+    # and :3231-3233 gives the exact structure the rule computes — a significator 'in association
+    # with or aspected by a benefic and free of malefic aspects'. This is the placement-based
+    # FAVOURABLE-career signal that fires WITHOUT Shadbala (so it reaches Track-B charts, where the
+    # strength pillars are absent and the career verdict otherwise abstains). The malefic-free guard
+    # is load-bearing: a raja/mahapurusha yoga does NOT lift an afflicted 10th (Hitler/Tilak/Gandhi
+    # have raja yogas but afflicted careers via malefics ON the 10th). bphs-doctrine-reviewer
+    # VALIDATED direction+magnitude (KEEP), with documented edges: (a) the debilitated-benefic case
+    # is gated out (exclude_debil, per HTJAH-II:10177-10178); combustion is not computable on Track-B
+    # and is left documented; (b) natural (not functional) benefic/malefic classification is used —
+    # consistent with the project's fixed NATURAL sets — so a functionally-malefic benefic on the
+    # 10th could over-count (accepted limit); (c) a waning Moon / a nodal 7th-aspect are the residual
+    # edges. Empirically over-fire-clean: across the golden career charts this holds ONLY on
+    # favourable careers (7/0/0), and it does NOT name/claim the Subhakartari hemming yoga (which is
+    # the distinct 2nd+12th-flanking configuration, HTJAH-II:18736).
+    RuleRecord(
+        id="H10.C.61", house=10, signification="career", group="combination", kind="evaluable",
+        condition=C.And(_HouseInfluencedByClass(10, "benefic", exclude_debil=True),
+                        C.Not(_HouseInfluencedByClass(10, "malefic"))),
+        fortified="the 10th (Karma) fortified by an undebilitated benefic — occupying or aspecting "
+                  "it — AND free of any malefic occupation or aspect: distinction, eminence and a "
+                  "prosperous career",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 10181)),
 )

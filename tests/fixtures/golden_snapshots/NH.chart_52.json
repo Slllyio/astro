@@ -1,42 +1,44 @@
 {
   "H10": {
     "citations": [
+      "HTJAH-II:10181",
       "HTJAH-II:9467"
     ],
     "fired_rule_ids": [
+      "H10.C.61",
       "H10.L.2"
     ],
-    "rollup": "insufficient-evidence",
+    "rollup": "favourable",
     "significations": {
       "career": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "profession_authority": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "profession_labour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "profession_learned": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "profession_trade": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       }
     }
   },

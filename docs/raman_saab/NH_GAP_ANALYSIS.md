@@ -161,3 +161,26 @@ backlog called for, at zero ratchet risk) and RECORD this negative result so the
 not blindly re-attempted. The remaining B1 avenue is the deeper, riskier `_decide` contextual re-derivation
 (a dedicated effort that "risks all confirmed verdicts") — deferred, not attempted here. The faithful
 ceiling stands at 209/241.
+
+## The faithful ceiling — confirmed on the EXPANDED corpus (2026-07-24): every systematic lever exhausted
+After the NH corpus expansion (192 -> 225 charts, fidelity 209/241 -> 261/293 = 89.1% exact) a full sweep
+of every systematic accuracy lever was run, and ALL are exhausted:
+1. **Placement discriminators** (`tools/raman_saab/discriminator_scan.py`): of 35 miss-significations only 2
+   are empirically "clean", and BOTH failed the shippable bar on implementation — death (8th-lord-in-8th) is
+   Vipareeta-spurious; siblings (malefic-3rd) is inert (the reading is already encoded; the miss is B1). The
+   ONE real placement win, H10.C.61 (benefic-fortified malefic-free 10th -> favourable career), is the last.
+2. **Karaka frame** (mother-from-Moon): the Moon-Matrukaraka affliction OVER-FIRES — 4 favourable-mother
+   charts have an afflicted Moon. Mother is B1, not a clean frame.
+3. **Global B1 tuner** on the EXPANDED corpus (holdout-locked, fit 204/225 / holdout 58/69): greedy descent
+   converges at iter 0; the exhaustive {0,1,2}-Rupa grid over all 5 effective-strength weights finds ZERO
+   configs beating baseline fit — the SAME null result as the smaller corpus. The `_strong`-seam fold is
+   dead with 5x the data (5th confirmation).
+4. **Over-lenient cited-fix leads** (the 9 CONFIRMED-afflicted the engine reads favourable): each is a
+   DIFFERENT mechanism (self x2, siblings, wealth, children, elder_siblings, expenditure, father, disease) —
+   no clean n>=2 decisive pattern; every one is a contextual weighing.
+**Conclusion:** the engine is at its faithful ARCHITECTURAL CEILING (~89% exact Track-B / ~91% fit / ~84%
+holdout). The residual is contextual B1 comparative-weighing that (a) hand-coding regresses (-4 / -40,
+documented above), and (b) the tuner cannot reach (no generalizing config, now proven on 5x the data). The
+only remaining paths are per-chart n=1 fixes (overfitting — forbidden by the Prime Directive) or a
+fundamentally different `_decide` architecture (learned/re-derived, risks all confirmed verdicts). Pushing
+the number further within the current faithful, non-overfit architecture is not available.

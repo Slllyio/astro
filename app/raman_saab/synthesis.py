@@ -100,6 +100,33 @@ def _panchanga_line(birth: BirthData, chart: RamanChart) -> Optional[str]:
             f"Nityayoga {p.yoga.name} | Karana {p.karana.name}{caution}")
 
 
+def _live_windows(activation: tuple[str, ...], birth_year: int) -> list[str]:
+    """Activation windows that fall (at least partly) within the native's life.
+
+    The Mahadasha ladder is notional from the nakshatra balance, so the first entries can start
+    BEFORE the birth (e.g. "Mercury(timer) 1978-1995" on a 1990 birth) — meaningless to a reader.
+    ``activation`` arrives as a tuple whose members are themselves "; "-joined, so flatten first.
+    """
+    out: list[str] = []
+    for blob in activation:
+        for win in str(blob).split(";"):
+            win = win.strip()
+            if not win:
+                continue
+            head, _, tail = win.rpartition(" ")                 # ("Mercury(timer)", "1978-1995")
+            try:
+                start, end = (int(x) for x in tail.split("-"))
+            except ValueError:
+                out.append(win)                                 # unparsable -> keep, don't lie
+                continue
+            if end < birth_year:                                # wholly before the native existed
+                continue
+            # the Mahadasha ladder is notional from the nakshatra balance, so a first period can
+            # open before birth; clip the displayed start so the reader never sees a pre-birth year
+            out.append(f"{head} {max(start, birth_year)}-{end}")
+    return out
+
+
 def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
              transit_note: Optional[str], activation: tuple[str, ...] = ()) -> str:
     parts = [f"the rashi reads **{verdict}**"]
@@ -118,6 +145,14 @@ def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str
     if transit_note:
         parts.append(transit_note)
     return "; ".join(p for p in parts if p)
+
+
+def _compose_v2(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
+                transit_note: Optional[str], activation: tuple[str, ...],
+                birth_year: int) -> str:
+    """`_compose` with pre-birth activation windows dropped (reader-facing correctness)."""
+    return _compose(verdict, navamsa, varga, sav, transit_note,
+                    tuple(_live_windows(activation, birth_year)))
 
 
 def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
@@ -153,8 +188,10 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         active_now = " — ACTIVE in the running period" if h in active else ""
         matters.append(MatterReading(
             house=h, name=_HOUSE[h], verdict=pf.rollup, navamsa=led.navamsa_status,
-            matter_varga=varga, ashtakavarga=sav, activation=activ, transit_note=tnote,
-            reading=_compose(pf.rollup, led.navamsa_status, varga, sav, tnote, activ) + active_now))
+            matter_varga=varga, ashtakavarga=sav,
+            activation=tuple(_live_windows(activ, birth.year)), transit_note=tnote,
+            reading=_compose_v2(pf.rollup, led.navamsa_status, varga, sav, tnote,
+                                activ, birth.year) + active_now))
 
     al = sp.arudha_lagna(chart).sign
     ul = arudha.upapada_lagna(chart)

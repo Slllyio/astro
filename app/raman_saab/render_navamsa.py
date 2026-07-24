@@ -41,7 +41,14 @@ def to_text(r: NavamsaMarriageReading) -> str:
              f"{c.venus_navamsa_dignity} navamsa")
     L.append(f"  Navamsa lagna : {_sign(c.navamsa_lagna_sign)}; spouse significator "
              f"(7th-from-navamsa-lagna lord): {c.navamsa_seventh_lord}")
-    L.append(f"  Kuja (Mangal) dosha: {c.kuja_dosha}")
+    L.append(f"  Kuja (Mangal) dosha: {'present' if c.kuja_dosha else 'absent'}"
+             " [reckoned from the Lagna only]")
+    if c.kuja_dosha:
+        L.append("     NOTE: this project tested Kuja dosha directly on 2,322 real charts and it")
+        L.append("     did NOT distinguish divorced from long-married (odds ratio 1.09, null).")
+        L.append("     Reported for doctrinal completeness; it carries no demonstrated predictive")
+        L.append("     weight. Raman also reckons it from the Moon and Venus, and gives per-sign")
+        L.append("     exceptions and cancellations (HTJAH-II:2579-2622) not yet encoded here.")
     L.append(f"  >>> SPOUSE: {c.spouse_verdict.upper()}   MARITAL HAPPINESS: "
              f"{c.marital_verdict.upper()} <<<")
     L.append("")

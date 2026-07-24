@@ -54,6 +54,54 @@ class TestReportHtml:
         for tier in ("par excellence", "ordinary", "limited", "feeble"):
             assert f">{tier}</span>" in body
 
+    def test_calibration_row_shows_the_verdict(self, body):
+        """Every calibrated row carries its verdict chip — without it the reader cannot see why a
+        house rolled up as it did (this was the H10 'afflicted vs favourable career' contradiction)."""
+        assert body.count('class="cal-row"') >= 50
+        # a verdict chip must appear inside cal-rows, not only on house heads
+        assert 'class="cal-row"><span class="sig-name"' in body
+        assert body.count("chip chip--") > body.count('class="house-head"')
+
+    def test_new_sections_all_render(self, body):
+        """Info box, distinctive table, positions, yogas, SAV, now-box, glossary, ToC."""
+        for marker in ('class="infobox"', 'id="stands-out"', 'id="positions"', 'id="yogas"',
+                       'id="sav"', 'class="nowbox"', 'id="glossary"', 'class="toc"'):
+            assert marker in body
+
+    def test_house_pillars_and_driver(self, body):
+        """Raman's pillars (lord/karaka/navamsa) and the rollup driver reach the HTML."""
+        assert 'class="pillars"' in body
+        assert "<b>Lord</b>" in body and "<b>Karaka</b>" in body
+        assert 'class="driver"' in body
+
+    def test_renderer_parity_with_markdown(self, report, body):
+        """Every non-empty Synthesis field the markdown shows must also appear in the HTML."""
+        s = report.synthesis
+        for value in (s.lagna, s.navamsa_lagna, s.atmakaraka, s.arudha_lagna, s.karakamsa,
+                      s.upapada, s.spouse_significator, s.chara):
+            assert value in body, f"HTML dropped {value!r}"
+        if s.sade_sati:
+            assert "Sade-Sati" in body
+        if s.panchanga:
+            assert "Panchanga" in body
+        if s.deeptadi:
+            assert "Deeptadi" in body
+
+    def test_grading_is_not_duplicated_in_the_presenter(self):
+        """Both renderers must consume the single hoisted grading implementation."""
+        import inspect
+
+        from app.raman_saab import report_html
+        src = inspect.getsource(report_html)
+        assert "graded_buckets" in src
+        assert "bhukti_tier(" not in src          # no second copy of the doctrine grading
+
+    def test_print_and_accessibility_fixes(self, body):
+        """Print stylesheet, meter midpoint, and no opacity-dimmed text."""
+        assert "@media print" in body
+        assert "meter-mid" in body
+        assert "translateX(-50%)" in body        # meter mark cannot clip at 100%
+
     def test_grade_legend_and_plain_summary(self, body):
         """A plain-language legend and per-bhukti plain summary make the jargon readable."""
         assert "grade-legend" in body

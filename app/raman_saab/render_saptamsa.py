@@ -17,6 +17,11 @@ _SIGN = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
          "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
 
 
+def _yn(v: object) -> str:
+    """Render a flag for a human reader, never as a Python boolean."""
+    return "yes" if v is True else "no" if v is False else "unknown"
+
+
 def _sign(n: int) -> str:
     return _SIGN[n] if 0 < n < 13 else "?"
 
@@ -59,10 +64,14 @@ def to_text(reading: SaptamsaChildrenReading) -> str:
         L.append(f"  5th aspected by: {', '.join(rc.rasi_fifth_aspecting)}")
     L.append(f"  Putrakaraka {rc.putrakaraka}: house {rc.putrakaraka_house}, "
              f"{rc.putrakaraka_dignity} in Rasi / {rc.putrakaraka_navamsa_dignity} in Navamsa")
-    L.append(f"  Beeja strong   : {rc.beeja_strong}    Kshetra strong: {rc.kshetra_strong}")
+    L.append(f"  Beeja (male fertility point) strong: {_yn(rc.beeja_strong)}    "
+             f"Kshetra (female) strong: {_yn(rc.kshetra_strong)}")
     L.append(f"  >>> CHILDREN VERDICT: {rc.children_verdict.upper()} <<<")
     if rc.verdict_metadata:
-        L.append(f"  verdict factors: {dict(rc.verdict_metadata)}")
+        for _k, _v in rc.verdict_metadata:          # never dump a raw dict repr at a reader
+            if _k == "active_periods":             # shown (birth-clipped) in the house section
+                continue
+            L.append(f"  - {_k.replace('_', ' ')}: {_v}")
     L.append("")
     L.append("-- D-7 OVERLAY (report-only corroboration) --")
     L.append(f"  D-7 lagna : {_sign(ov.lagna_sign)} (lord {ov.lagna_lord})"

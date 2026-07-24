@@ -34,19 +34,28 @@ from app.raman_saab.judges.calibrated_reading import (
     CalibratedHouseReading,
     build_calibrated_reading,
 )
+from app.raman_saab.chart.model import PlanetPos
+from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
+from app.raman_saab.judges.chart_overview import ChartOverview, chart_overview
 from app.raman_saab.judges.dasamsa_career_reading import build_dasamsa_career_reading
 from app.raman_saab.judges.dwadasamsa_parents_reading import build_dwadasamsa_parents_reading
 from app.raman_saab.judges.navamsa_marriage_reading import build_navamsa_marriage_reading
 from app.raman_saab.judges.saptamsa_reading import build_saptamsa_children_reading
 from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
 from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
-from app.raman_saab.primitives import ayurdaya
+from app.raman_saab.judges.house_template import HouseProforma
+from app.raman_saab.primitives import ashtakavarga, ayurdaya, nakshatra_signature
+from app.raman_saab.primitives.balarishta import BalarishtaState
+from app.raman_saab.proforma import read_chart
 from app.raman_saab.reading_timeline import DashaTimeline, reading_timeline
 from app.raman_saab.synthesis import Synthesis, synthesize
 
 _HOUSE_NAME = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mother/Home",
                5: "Children/Mind", 6: "Health/Enemies", 7: "Spouse/Partnership", 8: "Longevity",
                9: "Father/Fortune", 10: "Career", 11: "Gains", 12: "Loss/Moksha/Spirituality"}
+
+_SIGN_NAME = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
+              "Sagittarius", "Capricorn", "Aquarius", "Pisces")
 
 #: lay-reader life-area names (for the plain-language bhukti summary).
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
@@ -61,6 +70,124 @@ _TIER_MEANING = {
     "limited": "slight results — only the current sub-period (bhukti) lord touches it",
     "feeble": "faint results — only the major-period (Mahadasha) lord touches it",
 }
+
+
+#: plain-language glossary — ONE source of truth, consumed by both renderers.
+GLOSSARY: dict[str, str] = {
+    "rasi": "the main birth chart (the 12 zodiac signs and where the planets sit in them)",
+    "bhava": "a house — one of the 12 life-areas of the chart",
+    "navamsa": "the 1/9th divisional chart; Raman treats it as the test of whether a promise is "
+               "actually delivered",
+    "karaka": "the natural significator of a matter (e.g. Jupiter for children, Venus for marriage)",
+    "lord": "the planet that rules a house's sign, and therefore carries that house's affairs",
+    "Ashtakavarga": "a bindu (dot) scoring system; more bindus in a sign = more support there. "
+                    "Raman rates it corroborative, not decisive",
+    "vargottama": "a planet in the same sign in the birth chart and the navamsa — doubly strong",
+    "Arudha Lagna": "the chart's public image — how life appears to others, as distinct from "
+                    "what it is",
+    "Karakamsa": "the navamsa sign of the Atmakaraka — the Jaimini soul axis",
+    "Upapada": "the marriage/spouse image point",
+    "Sade-Sati": "Saturn's ~7.5-year passage over and around the natal Moon",
+    "maraka": "literally 'killer' — a planet or period the classics associate with the end of life",
+    "Balarishta": "classical combinations for early-childhood danger, and their cancellations",
+    "Kuja dosha": "the 'Mars affliction' for marriage. NOTE: tested on 2,322 real charts by this "
+                  "project it did NOT distinguish divorced from long-married (odds ratio 1.09)",
+    "Deeptadi avastha": "each planet's result-state (Deepta = blazing, Deena = wretched, etc.)",
+    "Beeja / Kshetra": "the male and female fertility points",
+    "Atmakaraka": "the planet at the highest degree — the 'soul indicator' in Jaimini",
+    "par excellence": "full, strong results (both period-lords reinforce the house)",
+    "Mahadasha": "a major planetary period in the Vimshottari system (years to decades)",
+    "Antardasha": "a sub-period (bhukti) inside a Mahadasha",
+}
+
+
+@dataclass(frozen=True)
+class InfoContent:
+    """How much of this reading actually distinguishes THIS chart (the honesty headline)."""
+    total: int
+    modal_verdict: str
+    modal_count: int
+    near_universal: int
+    inverted: int
+    distinctive: int
+
+    @property
+    def sentence(self) -> str:
+        return (
+            f"{self.total} readings. {self.modal_count} return the single most common verdict "
+            f"({self.modal_verdict}). {self.near_universal} are near-universal — held by half the "
+            f"population or more. {self.inverted} sit on channels this project's validation "
+            f"program proved run backwards. {self.distinctive} are genuinely distinctive. "
+            f"This is a disclosure about the method's output, not a statement about a life.")
+
+
+def _all_entries(calibration: dict[int, CalibratedHouseReading]):
+    """(house, entry) for every calibrated signification, house order."""
+    for house in sorted(calibration):
+        for e in calibration[house].entries:
+            yield house, e
+
+
+def information_content(calibration: dict[int, CalibratedHouseReading]) -> InfoContent:
+    """Aggregate the calibration overlay into the report's honesty headline."""
+    pairs = list(_all_entries(calibration))
+    scored = [(h, e) for h, e in pairs if e.favourability_percentile is not None]
+    counts: dict[str, int] = {}
+    for _h, e in scored:
+        key = f"{e.verdict} ({e.degree})"
+        counts[key] = counts.get(key, 0) + 1
+    modal_verdict, modal_count = max(counts.items(), key=lambda kv: kv[1]) if counts else ("-", 0)
+    return InfoContent(
+        total=len(pairs), modal_verdict=modal_verdict, modal_count=modal_count,
+        near_universal=sum(1 for _h, e in scored if (e.band_share or 0) >= 0.5),
+        inverted=sum(1 for _h, e in pairs if e.inverted_warning),
+        distinctive=sum(1 for _h, e in scored if e.rarity != "common"),
+    )
+
+
+def distinctive_entries(calibration: dict[int, CalibratedHouseReading], n: int = 7):
+    """The n readings that most distinguish this chart — furthest from the population midpoint,
+    rare readings first. Returns [(house, entry)] ranked. Pure information content, not prediction."""
+    scored = [(h, e) for h, e in _all_entries(calibration)
+              if e.favourability_percentile is not None]
+    scored.sort(key=lambda he: (-(0 if he[1].rarity == "common" else 1),
+                                -abs(he[1].favourability_percentile - 0.5)))
+    return tuple(scored[:n])
+
+
+def rollup_driver(reading: CalibratedHouseReading, rollup: str) -> str | None:
+    """Which signification drove the house rollup — the engine grades a bhava by its WORST decided
+    matter, so one afflicted signification makes the whole house read afflicted. Naming it prevents
+    the reader seeing a contradiction when the other significations look sound."""
+    hits = [e.signification for e in reading.entries if e.verdict == rollup]
+    return hits[0] if hits else None
+
+
+ROLLUP_RULE = ("A bhava is graded by its weakest decided matter — one afflicted signification "
+               "makes the whole house read afflicted even when the rest are sound.")
+
+
+def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
+    """(AD-associated-with-MD, {tier: [ActivatedHouseReading]}) for one bhukti.
+
+    Hoisted here so BOTH renderers consume one implementation — the doctrine grading must never
+    be duplicated in presentation code where the two could silently drift apart.
+    """
+    from app.raman_saab.primitives import vimshottari as vd
+    maha, antar = tp.period.maha, tp.period.antar
+    associated = antar is not None and vd.lords_associated(chart, maha, antar)
+    buckets: dict[str, list] = {"par excellence": [], "ordinary": [], "limited": [], "feeble": []}
+    for a in tp.activated:
+        tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
+        if tier:
+            buckets[tier].append(a)
+    return associated, buckets
+
+
+def planet_rows(chart: RamanChart) -> tuple[tuple[str, PlanetPos], ...]:
+    """Planets in canonical order for the positions table (a reading must be checkable)."""
+    order = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+    return tuple((n, chart.planets[n]) for n in order if n in chart.planets)
 
 
 def _human_list(items: list[str]) -> str:
@@ -119,9 +246,16 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
-    chart: RamanChart                                # kept for the dasha-predominance lookup
+    chart: RamanChart                                # kept for pillars / positions / grading
     synthesis: Synthesis
     calibration: dict[int, CalibratedHouseReading]   # house -> per-signification calibration
+    proformas: tuple[HouseProforma, ...]             # per-house lord + rule evidence (Raman's core)
+    overview: ChartOverview                          # stronger frame, functional natures
+    yogas: tuple[FiredYoga, ...]                     # fired yogas, each with its citation
+    sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
+    info: InfoContent                                # the honesty headline
+    distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
+    balarishta: BalarishtaState | None
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
@@ -174,8 +308,17 @@ def build_detailed_report(
     calib = {h: build_calibrated_reading(chart, h) for h in range(1, 13)}
     ayur = ayurdaya.longevity(chart)
     timeline, ref_jd = _windowed_timeline(birth, on, ayanamsa, years_back, years_forward)
+    reading = read_chart(birth, ayanamsa=ayanamsa)       # carries the per-house pillars + evidence
+    try:
+        sav = ashtakavarga.sarvashtakavarga(chart)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        sav = {}
     return DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
+        proformas=reading.proformas, overview=chart_overview(chart),
+        yogas=detect_yogas(chart), sav=sav,
+        info=information_content(calib), distinctive=distinctive_entries(calib),
+        balarishta=getattr(chart, "balarishta", None),
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -216,48 +359,161 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
 
     # ── the two-voice preamble ────────────────────────────────────────────────
-    L.append("> **How to read this.** Each house first states Raman's verdict, faithful to his "
-             "texts. Beneath it, in _italics_, the instrument discloses how that verdict compares "
-             "with 16,450 real charts — its information content, NOT a validated prediction about "
-             "your life. " + _VALIDITY.split("(the astrobank")[0].strip())
+    pop = r.calibration[1].population_n
+    L.append(f"> **How to read this.** Each house first states Raman's verdict, faithful to his "
+             f"texts. Beneath it, in _italics_, the instrument discloses how that verdict compares "
+             f"with {pop:,} real charts — its information content, NOT a validated prediction about "
+             f"your life.")
     L.append("")
+
+    # ── the honesty headline (aggregate information content) ──────────────────
+    L.append("## Information content of this reading")
+    L.append("")
+    L.append(r.info.sentence)
+    L.append("")
+
+    # ── what actually distinguishes this chart ────────────────────────────────
+    if r.distinctive:
+        L.append("## What stands out in this chart")
+        L.append("")
+        L.append("_The readings furthest from the population midpoint — where this chart is least "
+                 "like everyone else's. Rare readings first._")
+        L.append("")
+        L.append("| house | matter | verdict | percentile | share |")
+        L.append("|---|---|---|---:|---:|")
+        for house, e in r.distinctive:
+            L.append(f"| H{house} {_HOUSE_NAME[house]} | {e.signification} | "
+                     f"{e.verdict} ({e.degree}) | {e.favourability_percentile:.0%} | "
+                     f"{e.band_share:.0%} ({e.rarity}) |")
+        L.append("")
 
     # ── chart signature ───────────────────────────────────────────────────────
     L.append("## Chart signature")
     L.append("")
     L.append(f"- **Lagna** {s.lagna}  |  **Navamsa Lagna** {s.navamsa_lagna}  |  "
              f"**Atmakaraka** {s.atmakaraka}  |  **Arudha Lagna** {s.arudha_lagna}")
+    moon = r.chart.planets.get("Moon")
+    if moon is not None:
+        sig = nakshatra_signature.signature_for(moon.nakshatra)
+        if sig is not None:
+            L.append(f"- **Birth nakshatra** (Moon) — {sig.name} pada {moon.pada}, "
+                     f"devata {sig.devata}, gana {sig.gana} — _{sig.soul_keyword}_")
+    L.append(f"- **Stronger frame** — {r.overview.stronger_frame.upper()} "
+             f"(Raman: begin from the ascendant or the Moon, whichever is stronger; HTJAH-I:645-646)")
     L.append(f"- **Jaimini** — Karakamsa {s.karakamsa}  |  Upapada {s.upapada}  |  "
              f"spouse-lord (7th-from-D9) {s.spouse_significator}")
     L.append(f"- **Running periods** — Vimshottari {s.running_md} MD / {s.running_ad} AD  |  "
              f"Chara dasha {s.chara}" + (f"  |  {s.sade_sati}" if s.sade_sati else ""))
     if s.panchanga:
         L.append(f"- **Panchanga** — {s.panchanga}")
+    if r.overview.functional_natures:
+        nat = "; ".join(f"{p} {n}" for p, n in r.overview.functional_natures)
+        L.append(f"- **Functional nature for this Lagna** — {nat}")
     L.append("")
 
-    # ── longevity ─────────────────────────────────────────────────────────────
-    L.append("## Longevity (Ayurdaya)")
+    # ── planet positions (a reading must be checkable) ────────────────────────
+    L.append("## Planetary positions")
     L.append("")
-    L.append(f"Numeric span {r.longevity_years:g} years ({y}y {mo}m {d}d) — **{r.longevity_class}**.")
-    if s.longevity_combos:
+    L.append("| graha | sign | house | nakshatra (pada) | navamsa | notes |")
+    L.append("|---|---|---:|---|---|---|")
+    for name, p in planet_rows(r.chart):
+        nk = nakshatra_signature.signature_for(p.nakshatra)
+        notes = []
+        if p.retrograde:
+            notes.append("retrograde")
+        if p.vargottama:
+            notes.append("vargottama")
+        if getattr(p, "combust_fraction", 0) >= 0.5:
+            notes.append("combust")
+        L.append(f"| {name} | {_SIGN_NAME[p.sign]} | {p.rasi_house} | "
+                 f"{nk.name if nk else '?'} ({p.pada}) | {_SIGN_NAME[p.navamsa_sign]} | "
+                 f"{', '.join(notes) or '-'} |")
+    L.append("")
+
+    # ── fired yogas ───────────────────────────────────────────────────────────
+    L.append("## Yogas present in this chart")
+    L.append("")
+    if r.yogas:
+        L.append("_Each carries its citation. A yoga's effect depends on the strength of the "
+                 "planets causing it (HTJAH-I:611)._")
         L.append("")
-        L.append("Fired longevity combinations (HTJAH-II):")
-        for lcx in s.longevity_combos:
-            L.append(f"- {lcx}")
+        for yg in r.yogas:
+            L.append(f"- **{yg.name}** ({yg.kind}) — {yg.effect}  "
+                     f"`{yg.source.work}:{yg.source.line}`")
+    else:
+        L.append("_No encoded yoga fires on this chart._")
     L.append("")
 
-    # ── house-by-house, with calibration ──────────────────────────────────────
+    # ── Ashtakavarga strength row ─────────────────────────────────────────────
+    if r.sav:
+        L.append("## Ashtakavarga (Sarvashtakavarga bindus by sign)")
+        L.append("")
+        L.append("| " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
+        L.append("|" + "---:|" * 12)
+        L.append("| " + " | ".join(str(r.sav.get(i, 0)) for i in range(1, 13)) + " |")
+        L.append("")
+        L.append("_Average is 28 per sign (total 337). Raman rates Ashtakavarga corroborative, "
+                 "not decisive: \"it does not seem to be quite reliable\" (HTJAH-II:4453-4456)._")
+        L.append("")
+
+    # ── house-by-house, with pillars + calibration ────────────────────────────
     L.append("## House-by-house reading")
+    L.append("")
+    L.append(f"_{ROLLUP_RULE}_")
     for mr in s.matters:
+        pf = r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None
+        cal_reading = r.calibration[mr.house]
         L.append("")
-        L.append(f"### House {mr.house} — {mr.name}")
+        driver = rollup_driver(cal_reading, mr.verdict)
+        head = f"### House {mr.house} — {mr.name}: {mr.verdict.upper()}"
+        if driver:
+            head += f" (driven by _{driver}_)"
+        L.append(head)
         L.append("")
+        if pf is not None:
+            led = pf.significations[0].ledger
+            lord_p = r.chart.planets.get(pf.lord)
+            lord_bits = f"**Lord** {pf.lord}"
+            if lord_p is not None:
+                lord_bits += f" in H{lord_p.rasi_house}"
+            if led.lord_strong is not None:
+                lord_bits += f" ({'strong' if led.lord_strong else 'weak'})"
+            kar_bits = f"**Karaka** {led.karaka}"
+            if led.karaka_strong is not None:
+                kar_bits += f" ({'strong' if led.karaka_strong else 'weak'})"
+            if not led.karaka_intact:
+                kar_bits += " [afflicted]"
+            bb = f"  |  **Bhava Bala** {led.bhava_bala:.1f}" if led.bhava_bala is not None else ""
+            L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {led.navamsa_status}")
+            L.append("")
         L.append(mr.reading)
-        cal = _calibration_lines(r.calibration[mr.house])
+        cal = _calibration_lines(cal_reading)
         if cal:
             L.append("")
             L.append("_Population context:_")
             L.extend(cal)
+
+    # ── longevity (band FIRST, per Raman's own order) ─────────────────────────
+    L.append("")
+    L.append("## Longevity")
+    L.append("")
+    L.append("_Raman's order: first establish the band by combination (Balarishta / Alpayu / "
+             "Madhyayu / Purnayu), THEN fix the period by the marakas (HTJAH-II:4465-4472). The "
+             "numeric span is a cross-check, never a prediction of death._")
+    L.append("")
+    if r.balarishta is not None:
+        bal = ("applies" if r.balarishta.applies and not r.balarishta.cancelled
+               else "cancelled" if r.balarishta.cancelled else "does not apply")
+        L.append(f"1. **Balarishta** (early-childhood danger): {bal}"
+                 + (f" — {'; '.join(r.balarishta.reasons)}" if r.balarishta.reasons else ""))
+    if s.longevity_combos:
+        L.append("2. **Band by combination** (HTJAH-II):")
+        for lcx in s.longevity_combos:
+            L.append(f"   - {lcx}")
+    L.append(f"3. **Numeric cross-check (Ayurdaya)**: about **{round(r.longevity_years)} years** "
+             f"({y}y {mo}m {d}d) — class **{r.longevity_class}**. Treat as a band, not a date; the "
+             f"engine's own health layer defers lifespan.")
+    L.append("")
 
     # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────
     from app.raman_saab.render import _jd_to_date
@@ -285,12 +541,8 @@ def to_markdown(r: DetailedReport) -> str:
             cur_md = maha
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
-        associated = antar is not None and vd.lords_associated(r.chart, maha, antar)
-        buckets: dict[str, list[str]] = {k: [] for k in _TIER_LABEL}
-        for a in rows:
-            tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
-            if tier:
-                buckets[tier].append(f"H{a.house} {a.natal_verdict}")
+        associated, raw = graded_buckets(tp, r.chart)     # ONE grading implementation
+        buckets = {k: [f"H{a.house} {a.natal_verdict}" for a in v] for k, v in raw.items()}
         assoc = "own bhukti" if antar == maha else \
             ("AD associated with MD" if associated else "AD not associated with MD")
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
@@ -336,11 +588,18 @@ def to_markdown(r: DetailedReport) -> str:
         for line in s.karakamsa_reading:
             L.append(f"- {line}")
 
+    # ── glossary ──────────────────────────────────────────────────────────────
+    L.append("")
+    L.append("## Glossary")
+    L.append("")
+    for term, meaning in GLOSSARY.items():
+        L.append(f"- **{term}** — {meaning}")
+
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")
     L.append("---")
     L.append(f"_Italicised population context is EMPIRICAL_ASTRODATABANK provenance (n="
-             f"{r.calibration[1].population_n:,}) - explicitly not Raman. {_VALIDITY}_")
+             f"{pop:,}) - explicitly not Raman. {_VALIDITY}_")
     return _fold_ascii("\n".join(L))
 
 

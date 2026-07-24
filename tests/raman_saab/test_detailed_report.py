@@ -104,6 +104,61 @@ class TestDetailedReport:
         assert lords_associated(ch, "Sun", "Jupiter") is True    # co-located in the 10th
         assert lords_associated(ch, "Sun", "Sun") is True        # own bhukti
 
+    def test_information_content_is_an_honest_aggregate(self, report, markdown):
+        """The honesty headline counts the whole calibration, not a sample."""
+        i = report.info
+        assert i.total == sum(len(hr.entries) for hr in report.calibration.values())
+        assert 0 < i.modal_count <= i.total
+        assert i.near_universal >= 0 and i.inverted >= 2   # H3 courage + H12 incarceration
+        assert "Information content of this reading" in markdown
+        assert "not a statement about a life" in markdown
+
+    def test_distinctive_entries_are_ranked_and_rare_first(self, report):
+        """Distinctive readings are furthest from the midpoint, non-common rarity first."""
+        d = report.distinctive
+        assert d and len(d) <= 7
+        rar = [0 if e.rarity == "common" else 1 for _h, e in d]
+        assert rar == sorted(rar, reverse=True)            # rare/notable before common
+        dist = [abs(e.favourability_percentile - 0.5) for _h, e in d if e.rarity != "common"]
+        assert dist == sorted(dist, reverse=True)
+
+    def test_evidentiary_layer_present(self, report, markdown):
+        """Yogas, positions, Ashtakavarga, nakshatra and pillars all reach the page."""
+        assert report.yogas                                 # canonical chart fires several
+        assert "## Yogas present in this chart" in markdown
+        assert "## Planetary positions" in markdown and "Revati" in markdown
+        assert "## Ashtakavarga" in markdown
+        assert "**Lord**" in markdown and "**Karaka**" in markdown
+        assert report.overview.stronger_frame in ("lagna", "moon")
+        assert sum(report.sav.values()) == 337              # SAV invariant
+
+    def test_house_head_names_the_rollup_driver(self, markdown):
+        """A house states WHY it rolled up as it did — no silent contradiction."""
+        assert "driven by _" in markdown
+        assert "weakest decided matter" in markdown         # the rule is stated
+
+    def test_longevity_is_band_first_and_not_false_precision(self, markdown):
+        """Raman's order (band, then period) and no two-decimal lifespan."""
+        assert "Balarishta" in markdown and "Band by combination" in markdown
+        assert "88.24" not in markdown
+        assert "never a prediction of death" in markdown
+
+    def test_no_pre_birth_activation_windows(self, report, markdown):
+        """Activation windows are clipped to the native's life (was 1978 on a 1990 birth)."""
+        import re
+        for start, end in re.findall(r"\((?:lord|karaka|timer|maraka|afflictor)\) "
+                                     r"(\d{4})-(\d{4})", markdown):
+            assert int(end) >= report.birth.year
+            assert int(start) >= report.birth.year
+
+    def test_glossary_defines_the_jargon(self, markdown):
+        """Every technical term the report uses has a plain-language entry."""
+        from app.raman_saab.detailed_report import GLOSSARY
+        assert "## Glossary" in markdown
+        for term in ("karaka", "bhava", "maraka", "Sade-Sati", "Kuja dosha"):
+            assert term in GLOSSARY
+        assert "odds ratio 1.09" in GLOSSARY["Kuja dosha"]   # the empirical disclosure
+
     def test_bhukti_tier_is_the_four_grade_scheme(self):
         """The HTJAH-I four grades map exactly (uniform for every house)."""
         from app.raman_saab.primitives.vimshottari import bhukti_tier

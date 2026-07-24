@@ -1,36 +1,133 @@
 {
-  "H1": {
+  "H12": {
     "citations": [
-      "HTJAH-I:1023",
-      "HTJAH-I:1105",
-      "HTJAH-I:1127",
-      "HTJAH-I:1131",
-      "HTJAH-I:1133",
-      "HTJAH-I:1330",
-      "HTJAH-I:1499"
+      "HTJAH-II:16152",
+      "HTJAH-II:16236",
+      "HTJAH-II:16252",
+      "HTJAH-II:16260",
+      "HTJAH-II:16262",
+      "HTJAH-II:16270",
+      "HTJAH-II:16275",
+      "HTJAH-II:16312",
+      "HTJAH-II:16314",
+      "HTJAH-II:16410",
+      "HTJAH-II:16470",
+      "HTJAH-II:16506",
+      "HTJAH-II:16615",
+      "HTJAH-II:16625"
     ],
     "fired_rule_ids": [
-      "H1.B.13",
-      "H1.C.26a",
-      "H1.C.28b",
-      "H1.C.30",
-      "H1.L.4",
-      "H1.M.S06",
-      "H1.P.Sun"
+      "H12.C.A10",
+      "H12.C.A2",
+      "H12.C.A3",
+      "H12.C.A4",
+      "H12.C.A7",
+      "H12.C.A9",
+      "H12.C.C5",
+      "H12.C.F4",
+      "H12.C.H2",
+      "H12.C.I3",
+      "H12.C.J11",
+      "H12.L.3",
+      "H12.P.Mars",
+      "H12.P.Mercury"
     ],
     "rollup": "afflicted",
     "significations": {
-      "body": {
+      "expenditure": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "foreign_residence": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
-      "health": {
+      "incarceration": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
-      "self": {
+      "left_eye": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "loss_moksha": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "moksha": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5147",
+      "HTJAH-I:5183"
+    ],
+    "fired_rule_ids": [
+      "H5.C.1",
+      "H5.L.7"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "children": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "intellect": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "poorvapunya": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H9": {
+    "citations": [
+      "HTJAH-II:7389",
+      "HTJAH-II:7481",
+      "HTJAH-II:8648"
+    ],
+    "fired_rule_ids": [
+      "H9.B.31",
+      "H9.D.42",
+      "H9.L.12"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "dharma": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "father": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "fortune": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "higher_learning": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "afflicted"

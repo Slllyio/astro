@@ -1,34 +1,210 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1023",
-      "HTJAH-I:1109",
-      "HTJAH-I:1110",
-      "HTJAH-I:1131",
-      "HTJAH-I:1133",
-      "HTJAH-I:1369"
+      "HTJAH-II:9467"
     ],
     "fired_rule_ids": [
-      "H1.B.17",
-      "H1.B.18",
-      "H1.C.29",
-      "H1.C.30",
-      "H1.L.4",
-      "H1.M.S08"
+      "H10.L.2"
+    ],
+    "rollup": "insufficient-evidence",
+    "significations": {
+      "career": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "profession_authority": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      }
+    }
+  },
+  "H2": {
+    "citations": [
+      "HTJAH-I:2332",
+      "HTJAH-I:2436",
+      "HTJAH-I:2440",
+      "HTJAH-I:2456",
+      "HTJAH-I:2461",
+      "HTJAH-I:2464",
+      "HTJAH-I:2465",
+      "HTJAH-I:2466",
+      "HTJAH-I:2469",
+      "HTJAH-I:2472",
+      "HTJAH-I:2474",
+      "HTJAH-I:2540",
+      "HTJAH-I:2544",
+      "HTJAH-I:2549",
+      "HTJAH-I:2553",
+      "HTJAH-I:2557",
+      "HTJAH-I:2567",
+      "HTJAH-I:2637",
+      "HTJAH-I:2652",
+      "HTJAH-I:2710",
+      "HTJAH-I:2800",
+      "HTJAH-I:2879",
+      "HTJAH-I:2948"
+    ],
+    "fired_rule_ids": [
+      "H2.C.1",
+      "H2.C.14",
+      "H2.C.18",
+      "H2.C.21",
+      "H2.C.22",
+      "H2.C.23",
+      "H2.C.25",
+      "H2.C.26",
+      "H2.C.28",
+      "H2.C.47",
+      "H2.C.5",
+      "H2.C.50",
+      "H2.C.62",
+      "H2.C.65",
+      "H2.C.66",
+      "H2.C.69",
+      "H2.L.2",
+      "H2.P.Jupiter",
+      "H2.P.Mars",
+      "H2.P.Mercury",
+      "H2.P.Moon",
+      "H2.P.Saturn",
+      "H2.P.Sun"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "family": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "speech": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "vision": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "wealth": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5119",
+      "HTJAH-I:5193",
+      "HTJAH-I:5206"
+    ],
+    "fired_rule_ids": [
+      "H5.C.10",
+      "H5.C.21",
+      "H5.L.2"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "children": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "intellect": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "poorvapunya": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H9": {
+    "citations": [
+      "HTJAH-II:7310",
+      "HTJAH-II:7429",
+      "HTJAH-II:7431",
+      "HTJAH-II:7443",
+      "HTJAH-II:7463",
+      "HTJAH-II:7467",
+      "HTJAH-II:7477",
+      "HTJAH-II:7479",
+      "HTJAH-II:7503",
+      "HTJAH-II:7505",
+      "HTJAH-II:7507",
+      "HTJAH-II:7588",
+      "HTJAH-II:8648",
+      "HTJAH-II:9388",
+      "HTJAH-II:9398",
+      "HTJAH-II:9416"
+    ],
+    "fired_rule_ids": [
+      "H9.A.13",
+      "H9.A.7",
+      "H9.A.8",
+      "H9.B.23",
+      "H9.B.24",
+      "H9.B.29",
+      "H9.B.30",
+      "H9.C.35",
+      "H9.D.40",
+      "H9.D.41",
+      "H9.D.42",
+      "H9.D.43",
+      "H9.D.48",
+      "H9.D.51",
+      "H9.L.2",
+      "H9.P.Rahu"
     ],
     "rollup": "favourable",
     "significations": {
-      "body": {
+      "dharma": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "health": {
+      "father": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "self": {
+      "fortune": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "higher_learning": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"

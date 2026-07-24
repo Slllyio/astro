@@ -45,9 +45,10 @@ def _ocr_int(raw: str) -> int | None:
 
 
 def _deg(text: str, name: str) -> float | None:
-    """First 'NAME  DDD° MM' occurrence -> a 0..360 longitude, or None. Tolerant of OCR noise
-    (missing minutes, a trailing '*', 'V' for the minute tick)."""
-    m = re.search(rf"{name}\s+(\d{{1,3}})\s*°\s*(\d{{1,2}})?", text)
+    """First 'NAME  DDD° MM' occurrence -> a 0..360 longitude, or None. Tolerant of OCR noise:
+    the degree glyph ° is frequently mis-OCR'd (Q / D / o / O / *), and minutes may be absent or
+    the tick may be 'V'. The degree marker class below accepts the common substitutes."""
+    m = re.search(rf"{name}\s+(\d{{1,3}})\s*[°ºoODQ*']\s*(\d{{1,2}})?", text)
     if not m:
         return None
     deg = int(m.group(1))

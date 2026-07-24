@@ -170,3 +170,36 @@ now quantified.
 
 
 > Per-case atlas — WHERE it fails, house by house, with named lives: [FAILURE_ATLAS.md](FAILURE_ATLAS.md)
+
+---
+
+# STAGE 10 (2026-07-24) — the pre-registered confirmatory study (the program's last word)
+
+Pre-registration committed BEFORE computation (`tools/raman_saab/astrobank/CONFIRMATORY_PREREG.md`,
+commit 27a9f61): three one-sided primaries, α=.05 each, BH q=.10 family. Results verbatim:
+
+| study | sample | result | verdict |
+|---|---|---|---|
+| **S1 CONFIRMATORY — suicide → afflicted H8** | 218 HELD-OUT tier-C suicide cases (zero overlap with the 341 exploratory) vs 4,898 controls | **AUC 0.528, CI (0.493, 0.564), p=.062** — the point estimate landed on the pre-registered prediction (0.53), direction right, sham companion null (0.493) | **NOT confirmed** at α=.05 |
+| **S2 NEW DOCTRINE — Kuja dosha → divorce** (direct chart test, Mars in 2/4/7/8/12, HTJAH-II:2579) | 793 divorced vs 1,529 long-married | dosha rate **41.9% vs 39.8%**, OR 1.09 (0.91–1.30), p=.18; from-Moon secondary OR 0.92 | **null** |
+| **S3 NEW DOCTRINE — Saturn-afflicted Moon → suicide** (direct chart test) | 341 suicide vs 8,000+ controls | **35.8% vs 33.0%**, OR 1.13 (0.90–1.42), p=.16. Secondaries: waning+Saturn OR 1.23 (p=.08, trend); Mars comparator OR 1.00 exactly | **null** (with a doctrinally-shaped, non-significant pattern: Saturn>Mars, dark-Moon amplifying) |
+
+Family BH q=.10: **all three fail.**
+
+## Honest reading
+
+- **The suicide thread is not dead — and not confirmed.** The effect size REPLICATED almost exactly
+  (exploratory 0.535 → held-out 0.528, no regression to null), which is what a real-but-small
+  effect looks like at n=218 (post-hoc: ~50% power for AUC 0.53 at this n; confirmation would need
+  ~500 held-out cases, which the corpus does not contain). Status: *suggestive, twice-observed,
+  never confirmed* — permanently recorded as such, claimable by nobody.
+- **Kuja dosha — the most famous marriage claim in Vedic astrology — tested directly on raw chart
+  geometry (immune to every engine-layer critique) does not distinguish divorced from long-married
+  on 2,322 real lives.** Both reckonings (Lagna, Moon) null.
+- **The Moon-Saturn suicide doctrine**: null at threshold, though the *shape* of the secondaries
+  (Saturn carries what little there is; Mars exactly nothing; waning amplifies) is the one place
+  the classical structure echoes faintly. Descriptive only.
+
+This closes the astrobank program's question list. Fidelity proven (89%); generalization null
+across engine verdicts, raw evidence, rule conditionals, timing, and now the doctrine's own
+primitives tested directly; one small twice-seen thread left honestly unresolved for want of data.

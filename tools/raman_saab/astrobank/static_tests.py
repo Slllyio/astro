@@ -70,6 +70,7 @@ def _vals(pids, scored, house, sig, master, tiers):
     sub = scored[(scored.house == house) & (scored.signification == sig)
                  & scored.person_id.isin(ok.index)]
     merged = sub.merge(ok[["stratum"]], left_on="person_id", right_index=True)
+    merged = merged.dropna(subset=["score"])   # insufficient-evidence verdicts carry no ordinal
     return merged.score.to_numpy(), merged.stratum.to_numpy(), merged.person_id.to_numpy()
 
 

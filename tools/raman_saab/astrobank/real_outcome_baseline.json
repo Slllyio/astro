@@ -1,0 +1,50 @@
+{
+  "mapping_version": 2,
+  "mapping_sha256": "8faf7b833a30857e",
+  "person_master_sha256": "a6162ad235619a11",
+  "engine_git_sha": "48e292456f9d",
+  "created": "2026-07-24 14:40",
+  "metrics": {
+    "H5_children": {
+      "metric": "auc",
+      "value": 0.523,
+      "floor": 0.5036,
+      "n": 391,
+      "ci": [
+        0.4965,
+        0.5488
+      ]
+    },
+    "H8_ayurdaya": {
+      "metric": "auc",
+      "value": 0.5017,
+      "floor": 0.4836,
+      "n": 685,
+      "ci": [
+        0.4778,
+        0.5243
+      ]
+    },
+    "H12_prison": {
+      "metric": "auc",
+      "value": 0.4751,
+      "floor": 0.4549,
+      "n": 430,
+      "ci": [
+        0.4502,
+        0.5028
+      ]
+    },
+    "timing_death_maraka_primary": {
+      "metric": "mean_lift",
+      "value": -0.0074,
+      "floor": -0.0231,
+      "n": 2377,
+      "ci": [
+        -0.0286,
+        0.0125
+      ]
+    }
+  },
+  "_note": "Floors = observed - 1.5*SE. Only core-tier statics + non-withheld timing ratchet. The honest headline lives in docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md."
+}

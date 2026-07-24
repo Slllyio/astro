@@ -33,6 +33,9 @@ EVENT_TESTS = [
     ("marriage_H7", r"marriage", r"death of|divorce", 7, "timing"),
     ("divorce_H7", r"divorce", r"death of", 7, "timing"),
     ("death_maraka", r"^death", r"death of", "maraka", "timing"),
+    # pre-registered sensitivity tiers (tighter instruments for the saturation gate):
+    ("death_maraka_primary", r"^death", r"death of", "maraka_primary", "timing"),
+    ("death_maraka_both", r"^death", r"death of", "maraka_both", "timing"),
 ]
 
 
@@ -120,8 +123,12 @@ def main() -> int:
             if span_hi - span_lo < 3 * _YEAR:
                 continue                    # graceful drop (pre-registered)
             # instrument windows
-            if instrument == "maraka":
+            if isinstance(instrument, str) and instrument.startswith("maraka"):
                 g = mar_by_pid.get(pid)
+                if g is not None and instrument == "maraka_primary":
+                    g = g[g.antar_weight >= 3]          # primary maraka antar only
+                elif g is not None and instrument == "maraka_both":
+                    g = g[(g.md_weight >= 1) & (g.antar_weight >= 1)]   # both lords maraka
                 wins = g[["jd_start", "jd_end"]].to_numpy() if g is not None else np.empty((0, 2))
             else:
                 g = sig_by_pid.get(pid)

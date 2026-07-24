@@ -48,7 +48,7 @@ def _deg(text: str, name: str) -> float | None:
     """First 'NAME  DDD° MM' occurrence -> a 0..360 longitude, or None. Tolerant of OCR noise:
     the degree glyph ° is frequently mis-OCR'd (Q / D / o / O / *), and minutes may be absent or
     the tick may be 'V'. The degree marker class below accepts the common substitutes."""
-    m = re.search(rf"{name}\s+(\d{{1,3}})\s*[°ºoODQ*']\s*(\d{{1,2}})?", text)
+    m = re.search(rf"{name}\s+(\d{{1,3}})\s*[°ºoODQ*'\"]\s*(\d{{1,2}})?", text)
     if not m:
         return None
     deg = int(m.group(1))
@@ -114,14 +114,20 @@ def _stated_from_positions(pos: str) -> dict[str, dict[str, object]] | None:
     if lag is None:
         return None
     lagna_sign = int(lag // 30) + 1
-    stated: dict[str, dict[str, object]] = {}
+    lons: dict[str, float] = {}
     for g in _GRAHAS:
-        lon = _deg(pos, "Moon" if g == "Moon" else g)
+        lon = _deg(pos, g)
         if lon is None:
-            return None
-        sign = int(lon // 30) + 1
-        stated[g] = {"lon": round(lon, 4), "bhava": ((sign - lagna_sign) % 12) + 1,
-                     "position_source": "printed_degree"}
+            # Ketu is ALWAYS exactly opposite Rahu; when the OCR drops it, infer it (faithful,
+            # not a fabrication). Any OTHER missing graha -> skip the chart.
+            if g == "Ketu" and "Rahu" in lons:
+                lon = (lons["Rahu"] + 180.0) % 360.0
+            else:
+                return None
+        lons[g] = lon
+    stated: dict[str, dict[str, object]] = {
+        g: {"lon": round(lons[g], 4), "bhava": ((int(lons[g] // 30) + 1 - lagna_sign) % 12) + 1,
+            "position_source": "printed_degree"} for g in _GRAHAS}
     stated["_lagna_sign"] = lagna_sign  # sentinel, popped by the caller
     return stated
 

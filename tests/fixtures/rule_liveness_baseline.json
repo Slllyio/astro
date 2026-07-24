@@ -1,9 +1,9 @@
 {
   "_comment": "Rule-liveness ratchet baseline (tools/raman_saab/rule_liveness.py over the golden corpus). never_fired / yogas_never are the counts that MUST NOT INCREASE. Adding a rule no golden exercises, or breaking one so it stops firing, raises the count and fails test_rule_liveness. Fixing/covering rules lowers it -> re-baseline down. Re-based after the +25 NH Track-B charts (corpus 192->217): never_fired 88->84.",
   "evaluable_total": 716,
-  "evaluable_fired": 633,
-  "never_fired": 83,
+  "evaluable_fired": 634,
+  "never_fired": 82,
   "yogas_total": 72,
-  "yogas_fired": 48,
-  "yogas_never": 24
+  "yogas_fired": 49,
+  "yogas_never": 23
 }

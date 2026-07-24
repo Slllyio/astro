@@ -21,11 +21,14 @@ own primitives tested directly on chart geometry (Kuja dosha vs divorce; Saturn-
 suicide) show no chart-specific correspondence with real outcomes. The mechanism of the paradox —
 a system that feels overwhelmingly true yet predicts nothing — was then measured: **the median
 chart simultaneously carries 19 afflicted and 31 favourable significations**, indications abundant
-enough to explain any life retrospectively and therefore non-differential prospectively. One small
-thread remains honestly unresolved: suicide → afflicted 8th house replicated in effect size on
-held-out data (0.535 → 0.528, p=.062, underpowered), with a doctrinally-shaped secondary pattern
-(Saturn on the Moon carries the residue; Mars exactly nothing). Every claim below is reproducible
-from committed code and pre-registrations.
+enough to explain any life retrospectively and therefore non-differential prospectively. A second,
+methodologically independent program — the medini machine-learning pipeline, which threw a
+193-feature "Vedic tensor" and a composite astrologer's-lens framework at the same charts across
+twelve rounds — reached the same null, and its three apparent survivors were then put through a
+pre-registered *Survivors' Gauntlet*: all three fell (a marriage "signal" that was a birth-place
+confound; a career "signal" that was a cohort-composition artifact; and the suicide thread, which
+weakened rather than confirmed on a third, enlarged sample — 0.535 → 0.528 → 0.515). Every claim
+below is reproducible from committed code and pre-registrations.
 
 ---
 
@@ -94,7 +97,42 @@ null too), holism (the full synthesis IS holistic and nulls; ML on all features 
 context (tested on its own terms), population selection (within-corpus contrasts; exact-null sham),
 regime shift (rules fire at 0.061 on Raman's charts vs 0.065 on humanity — identical).
 
-## Part IV — The mechanism
+## Part IV — The second witness: the medini ML program and the Survivors' Gauntlet
+
+The astrobank program tested Raman's *encoded doctrine* directly. Running beside it, an independent
+effort — the **medini** pipeline — asked whether *machine learning* could find in the same charts
+what the doctrine could not. It built a 193-feature "Vedic tensor" (planetary dignities, house
+occupancies, yoga flags, dasha state) and a composite "astrologer's-lens framework" of
+multi-condition AND-gate verdicts, and ran twelve rounds of population-scale prediction. Its
+headline was the same null, and taught the same lesson from the other side: the strongest apparent
+result — death-age AUC 0.81 — **collapsed to 0.50–0.61 the moment it was stratified by birth era**,
+because slow-planet longitudes silently encode the birth decade and the corpus's death dates are
+bounded by scrape year. What looked like astrology was a calendar.
+
+Between the two programs, twelve-plus rounds left exactly **three positives that outlived their
+first tests**. An independent ML audit (`docs/medini/ML_AUDIT_2026-07-24.md`) found the pipeline's
+recurring leaks — row-level splits on multi-row-per-person corpora, era-truncation in the death
+regressor, name-as-key joins — and defined exactly what a clean re-run must fix. Each survivor was
+then re-tested under a pre-registered maximum-rigor protocol, directions and success criteria
+locked before computation:
+
+| lane | exploratory claim | clean re-run | result |
+|---|---|---|---|
+| **G2** — WD marriage chart-lift | +0.043 AUC over a cyclic-date baseline ("REAL SIGNAL") | added a **geography** arm; all 32,932 charts are default-time, so chart columns only re-encode birth *place* | **falls** — geography alone worth +0.107; charts add −0.0026 with lat/lon present (CI excludes 0) |
+| **G1** — framework career→10H | lift **1.37** on 11,753 events ("first project-wide positive signal") | same machinery on both arms; each event vs the **same person** at year-shifted control dates | **falls** — paired lift **1.000** (CI 1.000–1.000); **0 of 11,626** events changed label at any control date |
+| **G3** — suicide → afflicted 8th | 0.535 exploratory, 0.528 held-out (p=.062) | enlarged never-tested sample (+29 fresh casts, n=247) | **weakens** — 0.515, p=.198; fading across three looks |
+
+The two falls are instructive because each is a *named* artifact, not a mere failure to replicate.
+**G1's** verdict label was proven date-invariant by construction: `reading_composer` derives it from
+the natal bhava alone, while transit and dasha context only set a *separate* `gochara_triggered`
+flag (`reading_composer.py:142`) — so the "event" and "control" readings are identical for a person
+on every date, and the 1.37 was entirely cohort composition (career-cohort people carry a natal 10H
+strong-rate 1.41× the population, driven by the corpus's 77% Wikidata mix). **G2's** +0.043
+replicated exactly and then dissolved into birth-place documentation bias. Different program,
+different tools, same verdict: **no chart-specific correspondence with real outcomes survives an
+honest control.**
+
+## Part V — The mechanism
 
 Why does a system that feels true to millions predict nothing? Measured, not argued:
 
@@ -112,7 +150,7 @@ fire-rates identical to the population), his verdicts are 89% rule-predictable, 
 null against reality — **his books are a gallery of agreement**, the automatic residue of sincere
 practice under unbounded flexibility.
 
-## Part V — What stands at the end
+## Part VI — What stands at the end
 
 1. **The scholarly instrument.** A verified, ratcheted encoding of Raman's system that answers
    "what would Raman say about this chart" at 89% — of genuine value to the study of the tradition,
@@ -123,20 +161,27 @@ practice under unbounded flexibility.
    speaks.
 3. **The laboratory.** 22k verified charts, the failure atlas, the paired engine-reality matrix,
    and pre-registered machinery that turns any future hypothesis into an afternoon's query.
-4. **The open thread.** Suicide and the afflicted 8th — twice seen, never confirmed, honestly
-   parked with its pre-registered study (`confirmatory_study.py`) awaiting data that does not yet
-   exist.
-5. **The verdicts, side by side, never averaged:**
+4. **The Survivors' Gauntlet.** Across both programs, the only three findings that ever outlived
+   their first test were re-run under pre-registered maximum rigor — and all three fell (two to
+   named artifacts, one to a weakening trend). The null is not the absence of a signal we failed to
+   find; it is a signal we chased down three times and watched dissolve.
+5. **The open thread.** Suicide and the afflicted 8th — now thrice seen and *fading* (0.535 → 0.528
+   → 0.515), never confirmed, honestly parked with its pre-registered study
+   (`confirmatory_study.py`) awaiting a genuinely large independent sample that does not yet exist.
+6. **The verdicts, side by side, never averaged:**
 
 > **Fidelity to Raman: 89.1% — proven, ceilinged, permanent.**
-> **Correspondence with reality: null everywhere tested, by the doctrine's own preferred questions,
+> **Correspondence with reality: null everywhere tested, by two methodologically independent
+> programs, by the doctrine's own preferred questions, with every apparent survivor chased down and
 > with controls honest in both directions.**
 
 ## Provenance
 
-Canonical detail: `REAL_OUTCOME_GENERALIZATION.md` (results),
+Canonical detail: `REAL_OUTCOME_GENERALIZATION.md` (results, including the three Gauntlet lanes),
 `WHY_THE_ENGINE_FAILS_ON_REAL_CHARTS.md` (root cause, two levels), `FAILURE_ATLAS.md` (per-case),
-`tools/raman_saab/astrobank/METHODOLOGY.md` + `CONFIRMATORY_PREREG.md` (protocol,
-pre-registrations), the golden-ratchet lineage in `tests/fixtures/golden_accuracy_baseline.json`.
-All results reproduce from committed code; the corpus stays local. The Prime Directive's last
-clause — *measure honestly, report both* — is the sentence this document exists to obey.
+`tools/raman_saab/astrobank/METHODOLOGY.md` + `CONFIRMATORY_PREREG.md` + `GAUNTLET_PREREG.md`
+(protocol, pre-registrations), `docs/medini/ML_AUDIT_2026-07-24.md` (the second program's leak
+audit) with the clean re-runs in `app/medini/ml/gauntlet_g1_career.py` and `gauntlet_g2_marriage.py`,
+and the golden-ratchet lineage in `tests/fixtures/golden_accuracy_baseline.json`. All results
+reproduce from committed code; the corpus stays local. The Prime Directive's last clause — *measure
+honestly, report both* — is the sentence this document exists to obey.

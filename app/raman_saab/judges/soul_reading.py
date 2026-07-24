@@ -1,4 +1,4 @@
-"""Soul-destiny reading — a REPORT-ONLY, provenance-honest surface. (EXPERIMENT BRANCH)
+"""Soul-destiny reading — a REPORT-ONLY, provenance-honest surface.
 
 Reads a nativity as a SOUL with a scripted karmic path, in two provenance regimes:
 
@@ -10,9 +10,10 @@ Reads a nativity as a SOUL with a scripted karmic path, in two provenance regime
     ``judge_house``. This is what stands.
   * ``jaimini_overlay`` — the Jaimini soul-script: the 7 chara karakas, the 12-bhavas-from-
     Karakāṁśa soul-purpose map, the Karakāṁśa occupant professions, the Chara Dasha "script", and
-    the Arudha Lagna. On MOST branches the Jaimini corpus is firewalled (non-citable); on THIS
-    ``soul-destiny-experiment`` branch it is unlocked (book_registry.py sentinel
-    ``EXPERIMENT-BRANCH-ONLY (soul-destiny)``), so these carry ``JAIMINI_EXPLICIT`` citations.
+    the Arudha Lagna. The Jaimini corpus is FIREWALLED (non-citable) per the merge re-review
+    (2026-07-24, book_registry.py): the ``JAIMINI_EXPLICIT`` tags remain as free-text textual
+    provenance only — the corpus does not vouch for them (`sources.verify` declines them and the
+    paired citation test skips).
   * ``nakshatra_signature`` — the AK / Moon / Lagna birth-star archetype. Deity/gana are
     ``CLASSICAL_NONCITABLE``; the archetype phrasing is ``EDITORIAL_SYNTHESIS``.
 
@@ -354,9 +355,9 @@ def build_soul_reading(chart: RamanChart) -> SoulReading:
     notes = (
         SoulTagged("REPORT-ONLY: imported by nothing in the D1 verdict path; the golden ratchet is "
                    "untouched by construction.", "RAMAN_GENERAL_PRINCIPLE"),
-        SoulTagged("EXPERIMENT BRANCH: the Jaimini citation firewall is deliberately lifted here so "
-                   "the Jaimini soul-script carries citations — do not merge to main without "
-                   "re-review.", "JAIMINI_EXPLICIT", "JAIMINI-49"),
+        SoulTagged("The Jaimini citation firewall is LOCKED (merge re-review 2026-07-24): the "
+                   "Jaimini references in this overlay are free-text textual provenance only; the "
+                   "corpus does not vouch for them.", "JAIMINI_EXPLICIT", "JAIMINI-49"),
         SoulTagged("Nodes cast the 7th aspect only in this engine (not 5/9); Ketu is the mokṣa/"
                    "past-life significator.", "RAMAN_GENERAL_PRINCIPLE"),
         SoulTagged("A scripted destiny is a promise and a tendency, not a fixed fate; the Parashari "

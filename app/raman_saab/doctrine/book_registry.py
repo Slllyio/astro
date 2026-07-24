@@ -55,19 +55,14 @@ BOOKS: tuple[BookEntry, ...] = (
     # live does not admit out-of-scope CONTENT; rules cite specific lines.)
     BookEntry("AFB", "astrology_for_beginners_raman", True, "live",
               None, "Astrology for Beginners", "AstrologyForBeginners_201705"),
-    # ===== EXPERIMENT-BRANCH-ONLY (soul-destiny): the Jaimini firewall is DELIBERATELY LIFTED =====
-    # These two tags are made `live` (CITABLE) so the report-only soul-reading layer can cite the
-    # Jaimini soul-doctrine (Atmakaraka/Karakamsa/chara dasha). This OVERRIDES the divergence
-    # firewall documented in this module's header (lines 4-11). It is confined to the
-    # `soul-destiny-experiment` branch and MUST NEVER MERGE TO MAIN without re-review. To revert:
-    # restore JAIMINI's status to "catalog-only-out-of-scope" and delete the JS entry.
-    # `git grep "EXPERIMENT-BRANCH-ONLY (soul-destiny)"` enumerates the whole blast radius.
-    BookEntry("JAIMINI", "studies_jaimini_raman", True, "live",   # EXPERIMENT-BRANCH-ONLY (soul-destiny)
-              None, "Studies in Jaimini Astrology (Jaimini system)"),
-    BookEntry("JS", "jaimini_sutras", True, "live",               # EXPERIMENT-BRANCH-ONLY (soul-destiny)
-              None, "Jaimini Sutras (Maharishi Jaimini)"),
-    # ===== end EXPERIMENT-BRANCH-ONLY block =====
     # --- CATALOG-ONLY, OUT OF SCOPE (different systems): present, NON-citable (divergence firewall) ---
+    # NOTE (2026-07-24, merge re-review): the soul-destiny experiment temporarily made JAIMINI + JS
+    # `live` on its branch. RE-LOCKED at merge per the pre-registered re-review: the firewall below
+    # is authoritative again; the report-only soul layer's Jaimini references remain as free-text
+    # provenance (Tagged.cite) only — the corpus no longer vouches for them (its citation test
+    # skips gracefully).
+    BookEntry("JAIMINI", "studies_jaimini_raman", True, "catalog-only-out-of-scope",
+              None, "Studies in Jaimini Astrology (Jaimini system)"),
     BookEntry("PRASNA", "prasna_tantra_raman", True, "catalog-only-out-of-scope",
               None, "Prasna Tantra (horary)"),
     BookEntry("MUHURTHA", "muhurtha_raman", True, "catalog-only-out-of-scope",

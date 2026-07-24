@@ -5,6 +5,64 @@ This file is loaded into every Claude Code session in this repo. It captures
 shape the right way to add code here.** Update sparingly; this is the
 team-shared brain.
 
+## ★ PRIME DIRECTIVE — the North Star (never forget this)
+
+**The one aim: build the truest, most accurate Vedic-astrology engine ever encoded
+to Sri B. V. Raman's system.** Everything else — architecture, speed, product
+polish — is subordinate to *fidelity to Raman's siddhanta*.
+
+We are building this as a **fresh unified engine** (see `unified_engine/`, kept
+local). Because it is fresh, we take **every step and process required** for maximal
+truth and accuracy to Raman — no shortcuts that trade doctrinal correctness for
+convenience:
+
+- **Doctrine first.** Every rule, verdict, dignity, aspect, dasha, and longevity
+  judgment must trace to Raman's own texts (*How to Judge a Horoscope* Vol I & II,
+  *Hindu Predictive Astrology*, *Three Hundred Combinations*, *Studies in Jaimini*)
+  with a verbatim citation. If Raman and another authority disagree, **Raman wins.**
+- **Verify against Raman, never against engine self-output.** Pin accuracy on his
+  own published worked nativities (e.g. the Mainpuri chart) and printed verdicts.
+- **No silent approximation.** Where a technique has variants, encode the one Raman
+  taught, name it, and cite it; document any deliberate omission.
+- **Measure honestly.** Distinguish textbook fidelity from real-outcome
+  generalization; report both; overfitting to worked examples is not accuracy.
+- **Take all the steps.** Full ephemeris precision, full doctrine coverage, adversarial
+  validation, regression guardrails — completeness over expedience, always.
+
+This directive overrides expedience. When in doubt, choose the path that makes the
+engine *more faithful to B. V. Raman*.
+
+### ★★ MEASURED TRUTH (2026-07-24) — the directive's own verdict, binding on all future sessions
+
+The directive was carried out in full, and then honored to its last clause ("measure honestly;
+report both"). The results are settled and MUST NOT be re-litigated by re-running what is closed:
+
+- **Textbook fidelity: ACHIEVED and at its proven ceiling — 261/293 = 89.1% exact** against
+  Raman's own printed verdicts, externally verified casting (96.7% ascendant agreement with
+  AstroDatabank's published placements). Five independent methods proved the ceiling cannot be
+  faithfully exceeded (placement harvest exhausted, karaka frames over-fire, tuner null on 5x data,
+  no clean cited-fix patterns, ML on the same features loses to the hand-tuned judge). **Do not
+  chase accuracy further; it is not there without overfitting.**
+- **Real-outcome generalization: NULL — measured, not assumed.** 22,177 verified charts, 47k dated
+  events, pre-registered, sham-gated, controls valid in both directions: engine verdicts, raw rule
+  evidence, the 91 classical conditionals, dasha/maraka timing, and the doctrine's own primitives
+  tested directly (Kuja dosha OR 1.09; Moon-Saturn OR 1.13) — all null. One thread remains
+  suggestive-unconfirmed (suicide → afflicted 8th: 0.535 exploratory, 0.528 held-out, p=.062,
+  underpowered; `confirmatory_study.py` is pre-registered and waiting if ~500 new cases arrive).
+- **The mechanism is measured**: the median chart carries 19 afflicted AND 31 favourable
+  significations simultaneously (97.1% of charts offer both poles at all times) — indications
+  abundant enough to explain any life are non-differential and cannot predict one. Raman's books
+  validate at 89% because they are a curated gallery of agreement (his charts are astronomically
+  ordinary — rule fire-rates identical to the population).
+- **What the engine IS**: a faithful scholarly instrument answering "what would Raman say"
+  (legitimate, preserved, ratcheted) + the population-calibration overlay that makes every reading
+  disclose its own information content — NOT a validated predictor of lives, and it must never be
+  presented as one.
+- Canonical records: `docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md` (that it fails),
+  `WHY_THE_ENGINE_FAILS_ON_REAL_CHARTS.md` (why — two levels), `FAILURE_ATLAS.md` (where, per
+  case). Guards: the golden ratchet (fidelity) + `test_astrobank_ratchet.py` (generalization
+  floors). The two axes are reported side by side, never averaged.
+
 ## Project shape
 
 - Python **3.12** primary interpreter (`py -3.12` on Windows, `.venv/Scripts/python.exe` for the local venv).

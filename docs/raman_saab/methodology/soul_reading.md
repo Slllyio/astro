@@ -92,3 +92,6 @@ there is no group verdict (`ABSENT_IN_RAMAN`); the synthesis is the reader's.
 - **Everything here is report-only and imported by nothing in the D1 verdict path** — the golden
   ratchet is untouched by construction. A soul reading is a contemplative lens, never a fixed fate,
   and never medical or life advice.
+
+
+> **Merge re-review (2026-07-24):** the experiment's Jaimini citation unlock was RE-LOCKED at merge (book_registry.py firewall restored; the JS entry removed). The soul layer's Jaimini references stand as free-text textual provenance only.

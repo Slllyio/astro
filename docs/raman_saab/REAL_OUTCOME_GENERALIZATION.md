@@ -203,3 +203,23 @@ Family BH q=.10: **all three fail.**
 This closes the astrobank program's question list. Fidelity proven (89%); generalization null
 across engine verdicts, raw evidence, rule conditionals, timing, and now the doctrine's own
 primitives tested directly; one small twice-seen thread left honestly unresolved for want of data.
+
+
+---
+
+# STAGE 11 (2026-07-24) — the Survivors' Gauntlet, lane G3 (addendum result)
+
+Per GAUNTLET_PREREG.md (committed before computation): the 52 medini-sourced new suicide cases
+resolved to 50 master persons, of whom **29 were strictly never-tested** (never in the exploratory
+matrix, never in the store). Cast fresh, added to the 218 held-out tier-C cases:
+
+> **G3 addendum: n=247 never-tested suicide cases vs 4,898 controls — AUC 0.515, CI (0.479, 0.548),
+> p=.198 — not confirmed.**
+
+The honest trajectory of the thread across three looks: exploratory 0.535 → held-out 0.528 →
+enlarged 0.515. The effect is FADING with each fresh sample, not strengthening — the signature of
+an effect that is either smaller than first estimated or not there at all. The suicide/8th thread
+remains unconfirmed and now carries a weakening trend; its definitive resolution still requires a
+genuinely large independent sample. Lanes G1 (framework career→10H under person-id joins +
+censored windows) and G2 (WD marriage under the clean template + era/source arms) remain open, as
+pre-registered.

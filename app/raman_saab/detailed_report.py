@@ -23,6 +23,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+from app.raman_saab import (
+    render_dasamsa, render_dwadasamsa, render_navamsa, render_saptamsa,
+    render_siddhamsa, render_trimsamsa,
+)
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges.calibrated_reading import (
@@ -30,8 +34,41 @@ from app.raman_saab.judges.calibrated_reading import (
     CalibratedHouseReading,
     build_calibrated_reading,
 )
+from app.raman_saab.judges.dasamsa_career_reading import build_dasamsa_career_reading
+from app.raman_saab.judges.dwadasamsa_parents_reading import build_dwadasamsa_parents_reading
+from app.raman_saab.judges.navamsa_marriage_reading import build_navamsa_marriage_reading
+from app.raman_saab.judges.saptamsa_reading import build_saptamsa_children_reading
+from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
+from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
 from app.raman_saab.primitives import ayurdaya
 from app.raman_saab.synthesis import Synthesis, synthesize
+
+#: Shodasavarga deep-reads: (label, build_reading(chart), render.to_text(reading)).
+_DIVISIONAL: tuple[tuple[str, object, object], ...] = (
+    ("D-9 Marriage (Navamsa)", build_navamsa_marriage_reading, render_navamsa.to_text),
+    ("D-10 Career (Dasamsa)", build_dasamsa_career_reading, render_dasamsa.to_text),
+    ("D-7 Children (Saptamsa)", build_saptamsa_children_reading, render_saptamsa.to_text),
+    ("D-12 Parents (Dwadasamsa)", build_dwadasamsa_parents_reading, render_dwadasamsa.to_text),
+    ("D-30 Health (Trimsamsa)", build_trimsamsa_health_reading, render_trimsamsa.to_text),
+    ("D-24 Education (Siddhamsa)", build_siddhamsa_education_reading, render_siddhamsa.to_text),
+)
+
+
+def _clean_box(text: str) -> str:
+    """Drop a renderer's own ==== rule lines (we supply the markdown heading instead)."""
+    return "\n".join(ln for ln in text.splitlines()
+                     if not (ln.strip() and set(ln.strip()) <= {"="}))
+
+
+def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
+    """Full varga deep-reads; a varga that cannot be cast on this chart is skipped."""
+    out: list[tuple[str, str]] = []
+    for label, build, render in _DIVISIONAL:
+        try:
+            out.append((label, _clean_box(render(build(chart)))))
+        except Exception:  # noqa: BLE001 — same silent-skip contract as synthesis
+            continue
+    return tuple(out)
 
 
 @dataclass(frozen=True)
@@ -43,6 +80,7 @@ class DetailedReport:
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
+    divisional: tuple[tuple[str, str], ...]          # (label, full varga deep-read body)
 
 
 def build_detailed_report(
@@ -56,7 +94,7 @@ def build_detailed_report(
     return DetailedReport(
         birth=birth, synthesis=syn, calibration=calib,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
-        longevity_class=ayur.longevity_class,
+        longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
     )
 
 
@@ -136,6 +174,21 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("_Population context:_")
             L.extend(cal)
 
+    # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
+    if r.divisional:
+        L.append("")
+        L.append("## Divisional deep-reads (Shodasavarga)")
+        L.append("")
+        L.append("_Each divisional chart magnifies one matter. The Raman core is authoritative; "
+                 "the varga block corroborates (report-only)._")
+        for label, body in r.divisional:
+            L.append("")
+            L.append(f"### {label}")
+            L.append("")
+            L.append("```")
+            L.append(body.strip("\n"))
+            L.append("```")
+
     # ── the parallel doctrine layers ──────────────────────────────────────────
     if s.career:
         L.append("")
@@ -159,5 +212,14 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("---")
     L.append(f"_Italicised population context is EMPIRICAL_ASTRODATABANK provenance (n="
              f"{r.calibration[1].population_n:,}) - explicitly not Raman. {_VALIDITY}_")
-    from app.raman_saab.render import _ascii          # ASCII-safe like every other renderer
-    return _ascii("\n".join(L))
+    return _fold_ascii("\n".join(L))
+
+
+def _fold_ascii(s: str) -> str:
+    """ASCII-safe, but FOLD Sanskrit diacritics to base letters (Navamsa, karaka) rather than
+    blanking them to '?' — the varga renderers emit UTF-8 IAST that a raw ascii-replace mangles."""
+    import unicodedata
+
+    from app.raman_saab.render import _ascii
+    folded = "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+    return _ascii(folded)

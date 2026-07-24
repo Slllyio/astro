@@ -55,6 +55,19 @@ class TestDetailedReport:
         """Rendered like every other renderer: ASCII-safe for CP1252 consoles."""
         assert markdown.isascii()
 
+    def test_divisional_deep_reads_present(self, report, markdown):
+        """The Shodasavarga deep-reads (D9/D10/D7/D12/D30/D24) are composed and rendered."""
+        assert len(report.divisional) >= 5
+        assert "## Divisional deep-reads (Shodasavarga)" in markdown
+        assert "### D-9 Marriage (Navamsa)" in markdown
+        assert "### D-10 Career (Dasamsa)" in markdown
+        assert "RAMAN CORE" in markdown          # the authoritative core block
+
+    def test_diacritics_folded_not_blanked(self, markdown):
+        """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""
+        assert "Navamsa" in markdown
+        assert "Nav?" not in markdown and "k?raka" not in markdown
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

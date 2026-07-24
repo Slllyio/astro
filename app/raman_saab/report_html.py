@@ -103,10 +103,13 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .md-group{margin:1.5rem 0 0}
 .md-head{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--doctrine);
   margin:0 0 .1rem}
-.theme-line{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin:.15rem 0 .5rem}
 .theme-label{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
   margin-right:.15rem}
-.chip.focus{outline:2px solid var(--doctrine);outline-offset:1px}
+.sup-line{margin-top:.35rem;font-size:.84rem}
+.sup{color:var(--ink-soft)}
+.sup b{color:var(--doctrine);font-weight:600}
+.sup--ad b{color:var(--instrument)}
+.sup--own{font-style:italic}
 .timeline{list-style:none;padding:0;margin:0}
 .period{padding:.7rem .6rem .7rem 1.1rem;border-left:2px solid var(--rule);position:relative}
 .period::before{content:"";position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;
@@ -180,17 +183,31 @@ def _house_section(mr, cal) -> str:
         f'&mdash; empirical, not Raman</div>{rows}</div></section>')
 
 
-def _house_chip(a, *, focus: bool = False) -> str:
-    """A house chip carrying its natal verdict (title = full verdict); focus = both MD+AD lords."""
-    ring = " focus" if focus else ""
-    return (f'<span class="chip chip--{_vclass(a.natal_verdict)}{ring}" '
+def _house_chip(a) -> str:
+    """A focus-house chip carrying its natal verdict (title = full verdict)."""
+    return (f'<span class="chip chip--{_vclass(a.natal_verdict)}" '
             f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
             f'({_esc(a.natal_degree)})">H{a.house}</span>')
 
 
+def _supersession(pred) -> str:
+    """The 'which lord supersedes' phrase for one Antardasha (HTJAH-II predominance rule)."""
+    if pred is None:
+        return ""
+    if pred.predominant == pred.other:
+        return (f'<span class="sup sup--own">{_esc(pred.predominant)}’s own AD '
+                f'&middot; undivided</span>')
+    if pred.by_antar:
+        return (f'<span class="sup sup--ad"><b>{_esc(pred.predominant)}</b> (AD) supersedes '
+                f'{_esc(pred.other)} (MD) &middot; {_esc(pred.basis)}</span>')
+    return (f'<span class="sup sup--md"><b>{_esc(pred.predominant)}</b> (MD) predominates &middot; '
+            f'{_esc(pred.other)} (AD) modifies &middot; {_esc(pred.basis)}</span>')
+
+
 def _timeline(r: DetailedReport) -> str:
-    """Windowed MD -> AD narrative: each MD's theme houses (owns/occupies/aspects), each AD's
-    trigger houses, the MD+AD convergence ringed as the period focus. Current AD marked."""
+    """Windowed MD -> AD narrative: for each Antardasha, which lord supersedes (the stronger of the
+    two period-lords) and the houses where both converge (par-excellence). Current AD marked."""
+    from app.raman_saab.primitives import vimshottari as vd
     out: list[str] = []
     cur: str | None = None
     for tp in r.timeline.periods:
@@ -199,17 +216,12 @@ def _timeline(r: DetailedReport) -> str:
             if cur is not None:
                 out.append("</ol></div>")
             cur = tp.period.maha
-            theme = "".join(_house_chip(a) for a in rows if a.md_activates)
-            out.append(
-                f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
-                f'<div class="theme-line"><span class="theme-label">MD theme &middot; '
-                f'owns / occupies / aspects</span>{theme or "&mdash;"}</div>'
-                f'<ol class="timeline">')
-        focus_h = {a.house for a in rows if a.grade == "par_excellence"}
-        trig = "".join(_house_chip(a, focus=a.house in focus_h)
-                       for a in rows if a.antar_activates)
-        body = f'<div class="lit-chips">{trig}</div>' if trig \
-            else '<div class="no-pe">no house triggered this Antardasha</div>'
+            out.append(f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
+                       f'<ol class="timeline">')
+        pred = vd.dasha_predominance(r.chart, tp.period.maha, tp.period.antar)
+        chips = "".join(_house_chip(a) for a in rows if a.grade == "par_excellence")
+        focus = (f'<div class="lit-chips"><span class="theme-label">focus</span>{chips}</div>'
+                 if chips else "")
         now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
         badge = '<span class="now-badge">now</span>' if now else ""
         ad = tp.period.antar or tp.period.maha
@@ -217,7 +229,8 @@ def _timeline(r: DetailedReport) -> str:
             f'<li class="period{" now" if now else ""}"><div class="period-head">'
             f'<span class="period-md">{_esc(ad)} AD</span>'
             f'<span class="period-dates">{_jd_to_date(tp.period.start_jd)} &ndash; '
-            f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>{body}</li>')
+            f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>'
+            f'<div class="sup-line">{_supersession(pred)}</div>{focus}</li>')
     if cur is not None:
         out.append("</ol></div>")
     return "".join(out)
@@ -278,9 +291,9 @@ def to_html(r: DetailedReport) -> str:
   <h2 class="section">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
-    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A lord activates the houses it owns,
-    occupies and aspects (HTJAH-I:1586-1596); a house both lords reach (ringed) is the period's
-    focus. Verdicts are the unchanged natal readings.</p>
+    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). The stronger of the MD and AD lord
+    supersedes (HTJAH-II) &mdash; its results predominate, the weaker only modifies; focus houses are
+    where both converge. Verdicts are the unchanged natal readings.</p>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

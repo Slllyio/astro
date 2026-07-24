@@ -47,11 +47,11 @@ class TestReportHtml:
         assert body.count('class="varga"') >= 5
         assert body.count('class="period"') >= 5
 
-    def test_timeline_shows_md_theme_and_focus(self, body):
-        """The MD-theme (owns/occupies/aspects) line and the ringed MD+AD focus chip render."""
-        assert "theme-label" in body
-        assert "owns / occupies / aspects" in body
-        assert "chip--" in body and "focus" in body
+    def test_timeline_shows_supersession(self, body):
+        """Each Antardasha states which lord supersedes (predominance rule) + focus houses."""
+        assert 'class="sup' in body
+        assert "supersedes" in body or "predominates" in body
+        assert "Shadbala" in body
 
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""

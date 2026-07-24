@@ -80,6 +80,7 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
+    chart: RamanChart                                # kept for the dasha-predominance lookup
     synthesis: Synthesis
     calibration: dict[int, CalibratedHouseReading]   # house -> per-signification calibration
     longevity_years: float
@@ -112,11 +113,9 @@ def _windowed_timeline(
         from datetime import datetime, timezone
         t = datetime.now(timezone.utc)
         y, m, d = t.year, t.month, t.day
-    from app.raman_saab.primitives.vimshottari import active_houses_strict
     ref_jd = swe.julday(y, m, d, 12.0)
     lo, hi = ref_jd - back * _DAYS_PER_VEDIC_YEAR, ref_jd + forward * _DAYS_PER_VEDIC_YEAR
-    full = reading_timeline(birth, ayanamsa=ayanamsa, expand_bhuktis=True,
-                            active_fn=active_houses_strict)
+    full = reading_timeline(birth, ayanamsa=ayanamsa, expand_bhuktis=True)
     periods = tuple(p for p in full.periods
                     if p.period.end_jd >= lo and p.period.start_jd <= hi)
     return DashaTimeline(birth=full.birth, promise=full.promise, periods=periods), ref_jd
@@ -137,7 +136,7 @@ def build_detailed_report(
     ayur = ayurdaya.longevity(chart)
     timeline, ref_jd = _windowed_timeline(birth, on, ayanamsa, years_back, years_forward)
     return DetailedReport(
-        birth=birth, synthesis=syn, calibration=calib,
+        birth=birth, chart=chart, synthesis=syn, calibration=calib,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -228,29 +227,34 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     L.append(f"## Life-narrative (Vimshottari Dasha) - {w_lo} to {w_hi}")
     L.append("")
+    from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
-             f"{r.window_forward} years ahead). A lord activates the houses it OWNS, OCCUPIES, and "
-             f"ASPECTS (HTJAH-I:1586-1596); when the MD and AD lord converge on a house it is the "
-             f"period's FOCUS. Verdicts are the UNCHANGED natal readings above._")
+             f"{r.window_forward} years ahead). Each period-lord gives the results of the houses it "
+             f"signifies; the STRONGER of the MD and AD lord SUPERSEDES (HTJAH-II) -- its results "
+             f"predominate, the weaker only modifies. Houses shown are where both lords converge "
+             f"(par-excellence). Verdicts are the UNCHANGED natal readings above._")
     cur_md: Optional[str] = None
     for tp in r.timeline.periods:
         rows = tp.activated
         if tp.period.maha != cur_md:
             cur_md = tp.period.maha
-            theme = "; ".join(f"H{a.house} {a.natal_verdict}" for a in rows if a.md_activates)
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
-            L.append(f"_MD theme - houses {cur_md} owns/occupies/aspects: {theme or '(none)'}_")
-        trig = "; ".join(f"H{a.house} {a.natal_verdict}" for a in rows if a.antar_activates)
+        pred = vd.dasha_predominance(r.chart, tp.period.maha, tp.period.antar)
+        if pred is None:
+            sup = ""
+        elif pred.predominant == pred.other:
+            sup = f"**{pred.predominant}'s own Antardasha** - undivided results"
+        elif pred.by_antar:
+            sup = f"**{pred.predominant} (AD) supersedes** {pred.other} (MD) - {pred.basis}"
+        else:
+            sup = f"{pred.predominant} (MD) predominates; {pred.other} (AD) modifies - {pred.basis}"
         focus = ", ".join(f"H{a.house} {a.natal_verdict}"
-                          for a in rows if a.grade == "par_excellence")
+                          for a in rows if a.grade == "par_excellence") or "(none)"
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
         ad = tp.period.antar or tp.period.maha
-        line = (f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
-                f"{_jd_to_date(tp.period.end_jd)}){now} - AD triggers: {trig or '(none)'}")
-        if focus:
-            line += f"; **focus (MD+AD): {focus}**"
-        L.append(line)
+        L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
+                 f"{_jd_to_date(tp.period.end_jd)}){now} - {sup}; focus houses: {focus}")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

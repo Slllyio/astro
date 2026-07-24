@@ -64,9 +64,27 @@ discriminator, extend `_CANDIDATES` (name -> (predicted_verdict, fires(chart, ho
 recomputes purity/support/misses-closed against Raman's verdicts automatically. A candidate that
 reaches purity 1.00 / support>=2 / closes>=1 is a harvest lead; anything less is left as B1.
 
-## Status of the 2 harvest leads
+## Status of the 2 harvest leads — BOTH FAILED the shippable bar (harvest confirmed exhausted)
 
-Both are clean (purity 1.00, support >=2, direction validated on CONFIRMED charts). Small yield
-(1 miss each). Not yet shipped — pending citation + bphs-doctrine-reviewer + the Marie-Antoinette
-chart-cast double-check (a possible lagna-OCR discrepancy on chart_22 means its death-miss should be
-re-verified before being confirmed).
+On implementation, **neither** empirical lead yielded a shippable fidelity win — a crucial refinement
+of the tool's output:
+
+- **Death (8th-lord-in-dusthana):** doctrinally **spurious**. All 3 charts have the 8th lord in the
+  8th (its OWN house) — a Vipareeta-adjacent placement that classically can be *favourable*; the
+  corpus even says the dusthana-8th-lord *reduces* death-intensity (HTJAH-II:2923). The 3 violent
+  deaths trace to the drekkana / Mars, not the lord placement. Rejected — "purity 1.00 / n=3" was a
+  small-sample correlation against the doctrine, not a real signal.
+- **Siblings (malefic-afflicted, benefic-free 3rd):** doctrinally sound (the afflicted mirror of
+  HTJAH-I:3428) but **inert on the verdict path**. The benefic-3rd->brothers reading is ALREADY
+  encoded (`_BeneficOccupiesOrAspects3rd`, rule #7), and adding the malefic mirror changed **zero**
+  verdicts — Nehru stays *mixed* (the synthesis absorbs the malefic signal). His *mixed*-vs-Raman's
+  *afflicted* is B1 comparative-weighing, not a missing clause. Reverted (an inert rule does not earn
+  its place).
+
+**Lesson (strengthens the meta-finding):** the discriminator scan's "purity 1.00 / support>=2 /
+closes>=1" is a *lead*, not a green light — it counts the discriminator FIRING, not the judge
+FLIPPING, and does not test doctrinal soundness. Passing it additionally requires: (a) the direction
+is Raman-doctrinal (not a Vipareeta/upachaya-confounded correlation), and (b) the rule is DECISIVE
+enough to move the synthesis (or the case is B1). After H10.C.61, **no residual miss in the corpus
+clears all three bars** — the placement-rule harvest is complete. The remaining levers are the
+karaka-frame encodings and the B1 tuner.

@@ -223,3 +223,36 @@ remains unconfirmed and now carries a weakening trend; its definitive resolution
 genuinely large independent sample. Lanes G1 (framework career→10H under person-id joins +
 censored windows) and G2 (WD marriage under the clean template + era/source arms) remain open, as
 pre-registered.
+
+---
+
+# STAGE 11 (2026-07-24) — the Survivors' Gauntlet, lane G2 (WD marriage)
+
+Per GAUNTLET_PREREG.md. The Round-11 medini result (`disambiguation_v1.json`) reported chart
+features adding **+0.043 AUC** over an explicit cyclic-date baseline on Wikidata marriage
+(n=32,932) and declared "REAL SIGNAL". Pre-run diagnostics changed the question: **every chart in
+this corpus is `time_precision='day'` / `birth_time_confidence=0.0`** — all charts were cast at a
+default clock time, so the ascendant and all house columns are deterministic functions of
+(birth_date, birth_place); the corpus contains no birth-time information at all. And condition B
+controlled date but never place — while Wikidata marriage documentation varies strongly by country.
+
+Four arms under the clean template (`app/medini/ml/gauntlet_g2_marriage.py`; one-row-per-person
+asserted; 5 seeds × 5 person-disjoint folds; 2,000-resample person bootstrap on paired OOF AUCs):
+
+| arm | features | mean AUC |
+|---|---|---|
+| B (original baseline) | birth_jd + cyclic date | 0.6367 |
+| D (original chart arm) | B + 28 chart cols | 0.6771 |
+| G (geography baseline, NEW) | B + birth_lat + birth_lon | 0.7440 |
+| DG (decisive) | G + 28 chart cols | 0.7410 |
+
+| lift | value | 95% CI | reading |
+|---|---|---|---|
+| D − B (replication) | **+0.0404** | (+0.0352, +0.0453) | the original +0.043 replicates exactly |
+| G − B (geography alone) | **+0.1069** | (+0.1005, +0.1132) | lat/lon adds 2.6× what charts ever did |
+| **DG − G (decisive)** | **−0.0026** | (−0.0037, −0.0015) | charts add *negative* value once place is known |
+
+> **G2 FALLS.** The +0.043 was birth-place information leaking through default-time chart columns.
+> With geography in the baseline, the 28 chart features are pure noise drag (CI excludes zero on
+> the negative side). Interpretation lock from the prereg holds: even had it survived, a corpus
+> with zero real birth times cannot testify about birth-time astrology.

@@ -193,6 +193,31 @@ class _LordAspectedBy(C.Condition):
                 and drishti.aspects_planet(self.aspector, lord, ctx.chart))
 
 
+class _DispositorOfNthLordIs(C.Condition):
+    """The dispositor of the `house`-lord — the lord of the sign that lord occupies — is
+    `planet`. Backs Asatyavadi: 'the lord of the house occupied by the lord of the 2nd is
+    Saturn' (HPA-20:225)."""
+
+    def __init__(self, house: int, planet: str) -> None:
+        self.house, self.planet = house, planet
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_house_lord(self.house, ctx.chart))
+        return p is not None and SIGN_LORDS[p.sign] == self.planet
+
+
+class _PlanetSignModality(C.Condition):
+    """`planet` occupies a sign of the given modality — movable / fixed / common (chara /
+    sthira / dvisvabhava). Backs Kusuma's 'Venus in a fixed sign' (HPA-20:200)."""
+
+    def __init__(self, planet: str, modality: str) -> None:
+        self.planet, self.modality = planet, modality
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(self.planet)
+        return p is not None and ("movable", "fixed", "common")[(p.sign - 1) % 3] == self.modality
+
+
 # ── record forms ─────────────────────────────────────────────────────────────
 @dataclass(frozen=True)
 class YogaRecord:
@@ -837,6 +862,62 @@ YOGAS: tuple[YogaRecord, ...] = (
         condition=C.And(C.Parivartana(2, 9), _LordInHouses(1, _KENDRAS | _TRIKONAS)),
         effect="Religiously inclined; courageous, strong, of penetrating intelligence.",
         source=Citation("HPA-20", 184)),
+    # — HPA Ch.20, the remaining purely-geometric named yogas (no 'powerful lord' proxy;
+    #   each encodes Raman's printed geometry verbatim, so it is faithful by construction) —
+    # NOTE: Matsya (HPA-20:116) is DEFERRED — the OCR text ("malefics in the 4th and [8th]")
+    #   reads as a malefic in each of 1/4/5/8/9, which is UNSATISFIABLE (only 5 malefics exist and
+    #   Rahu/Ketu are physically opposite, but no two of those houses are opposite). Other classical
+    #   editions read "benefics in the 4th"; the definition needs cross-verification (3HC has a
+    #   Matsya entry) before encoding. Never ship a rule that can never fire.
+    YogaRecord(
+        id="Y.SARADA", name="Sarada Yoga", kind="other",
+        # HPA-20:106-114, three disjuncts printed as "...; or...; or...":
+        #   (1) Jupiter in a trine (5/9) from the Moon AND Mars in a trine from Mercury;
+        #   (2) Jupiter in the 11th from Mercury;
+        #   (3) the 10th lord in the 5th, Mercury in a quadrant, and the Sun in his own sign.
+        condition=C.Or(
+            C.And(C.Or(C.InHouseFrom("Jupiter", "MOON", 5), C.InHouseFrom("Jupiter", "MOON", 9)),
+                  C.Or(C.InHouseFrom("Mars", "Mercury", 5), C.InHouseFrom("Mars", "Mercury", 9))),
+            C.InHouseFrom("Jupiter", "Mercury", 11),
+            C.And(_LordInHouses(10, frozenset({5})),
+                  C.InHouseClass("Mercury", "kendra"),
+                  C.HasDignity("Sun", {"own", "moolatrikona"}))),
+        effect=("Respector of preceptors and religiously inclined; praised by royalty and the "
+                "aristocracy, a saintly disposition, a patron of the fine arts and sciences."),
+        source=Citation("HPA-20", 106)),
+    YogaRecord(
+        id="Y.KUSUMA", name="Kusuma Yoga", kind="raja",
+        # HPA-20:200-202: "Venus in a fixed sign, in a quadrant, a weak Moon in a trine and the
+        # Sun in the 10th house." 'Weak Moon' is read as a waning (Krishna-paksha) Moon — the
+        # standard sense of lunar weakness — placed in a trikona (5/9).
+        condition=C.And(_PlanetSignModality("Venus", "fixed"),
+                        C.InHouseClass("Venus", "kendra"),
+                        C.InHouseClass("Moon", "trikona"), C.MoonPhase("waning"),
+                        C.InRashiHouse("Sun", 10)),
+        effect=("Extremely liberal, war-like, possessed of an unsullied reputation and good "
+                "enjoyment."),
+        source=Citation("HPA-20", 200)),
+    # — HPA Ch.20 BAD YOGAS (arishta / character defect), also purely geometric —
+    YogaRecord(
+        id="Y.BRIHADBIJA", name="Brihadbija Yoga", kind="arishta",
+        # HPA-20:216-219: "Rahu with Mars and Saturn in the ascendant; OR the lord of the
+        # ascendant in the 8th with Rahu and malefics." Arm B needs Rahu PLUS another malefic
+        # in the 8th (>=2 malefics there, Rahu being one) with the lagna lord.
+        condition=C.Or(
+            C.And(C.InRashiHouse("Rahu", 1), C.InRashiHouse("Mars", 1),
+                  C.InRashiHouse("Saturn", 1)),
+            C.And(_LordInHouses(1, frozenset({8})), C.InRashiHouse("Rahu", 8),
+                  C.CountInHouse(8, 2, "malefic"))),
+        effect=("Swelling of the testicles and venereal complaints."),
+        source=Citation("HPA-20", 216)),
+    YogaRecord(
+        id="Y.ASATYAVADI", name="Asatyavadi Yoga", kind="other",
+        # HPA-20:225-226: "If the lord of the house occupied by the lord of the 2nd is Saturn."
+        # I.e. the dispositor of the 2nd lord is Saturn. Base rate ~1/6 (Saturn rules 2 of the 12
+        # signs) — a common condition by construction, exactly as Raman states it, NOT a mis-encode.
+        condition=_DispositorOfNthLordIs(2, "Saturn"),
+        effect=("Always loving falsehood and indulging in fraudulent schemes."),
+        source=Citation("HPA-20", 225)),
 )
 # DEFERRED HPA-20 yogas (over-fire under the current primitives; documented limits):
 #   Y.SHANKHA (HPA-20:77), Y.KAHALA (HPA-20:151) — hinge on a holistic "powerful lord" the
@@ -845,6 +926,10 @@ YOGAS: tuple[YogaRecord, ...] = (
 #   Y.LAKSHMI (HPA-20:190) — even the strict dignity arm (9th-lord exalt/moolatrikona) fires
 #     16/164; its discriminating form needs lagna-lord involvement the geometry can't isolate
 #     (matches the prior B5 finding). Re-attempt with B1.
+#   Y.BHERI (HPA-20:96) — both arms hinge on a "powerful" 10th/9th lord (arm A: powerful 10th lord
+#     with three planets in 1/2/7/12; arm B: powerful 9th lord with Venus & the lagna lord in
+#     quadrants from Jupiter). Same is_powerful-proxy liberality as Shankha/Kahala; deferred with
+#     them pending the B1 effective-strength measure.
 
 
 # ── detection API ────────────────────────────────────────────────────────────

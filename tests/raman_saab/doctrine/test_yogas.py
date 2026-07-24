@@ -318,6 +318,80 @@ class TestDhanaChain:
         assert _yoga("Y.DHANA.CHAIN").fires(_chart({"Mars": 65.0})) is False
 
 
+# ── HPA-20 remaining named yogas (the purely-geometric batch) ─────────────────
+class TestSarada:
+    """Aries lagna: 10th lord = Saturn, Sun's own sign = Leo (h5)."""
+
+    def test_arm1_jupiter_trine_from_moon_and_mars_trine_from_mercury_fires(self):
+        """Jupiter in the 5th from the Moon AND Mars in the 5th from Mercury (HPA-20:106)."""
+        assert _yoga("Y.SARADA").fires(
+            _chart({"Moon": 35.0, "Jupiter": 165.0, "Mercury": 65.0, "Mars": 195.0})) is True
+
+    def test_arm2_jupiter_in_eleventh_from_mercury_fires(self):
+        """Jupiter in the 11th from Mercury is a self-standing Sarada disjunct."""
+        assert _yoga("Y.SARADA").fires(_chart({"Mercury": 5.0, "Jupiter": 315.0})) is True
+
+    def test_arm3_tenth_lord_in_fifth_mercury_kendra_sun_own_fires(self):
+        """10th lord (Saturn) in the 5th, Mercury in a quadrant, the Sun in his own sign (Leo)."""
+        assert _yoga("Y.SARADA").fires(
+            _chart({"Saturn": 135.0, "Mercury": 95.0, "Sun": 145.0})) is True
+
+    def test_no_arm_does_not_fire(self):
+        """Jupiter conjunct Mercury in the Lagna satisfies none of the three arms."""
+        assert _yoga("Y.SARADA").fires(_chart({"Jupiter": 35.0, "Mercury": 35.0})) is False
+
+
+class TestKusuma:
+    """Taurus lagna (asc_lon=30): the four kendras are all fixed signs; h5/h9 are trikonas;
+    h10 = Aquarius."""
+
+    def test_venus_fixed_kendra_weak_moon_trine_sun_tenth_fires(self):
+        """Venus in a fixed quadrant, a waning Moon in a trine, the Sun in the 10th (HPA-20:200)."""
+        assert _yoga("Y.KUSUMA").fires(
+            _chart({"Venus": 45.0, "Moon": 165.0, "Sun": 315.0}, asc_lon=30.0)) is True
+
+    def test_waxing_moon_does_not_fire(self):
+        """A strong (waxing) Moon fails the 'weak Moon' clause even with the rest intact."""
+        assert _yoga("Y.KUSUMA").fires(
+            _chart({"Venus": 45.0, "Moon": 45.0, "Sun": 315.0}, asc_lon=30.0)) is False
+
+    def test_sun_outside_tenth_does_not_fire(self):
+        """The Sun away from the 10th breaks the yoga."""
+        assert _yoga("Y.KUSUMA").fires(
+            _chart({"Venus": 45.0, "Moon": 165.0, "Sun": 200.0}, asc_lon=30.0)) is False
+
+
+class TestBrihadbija:
+    """Aries lagna: lagna lord = Mars, 8th house = Scorpio (h8)."""
+
+    def test_arm_a_rahu_mars_saturn_in_lagna_fires(self):
+        """Rahu with Mars and Saturn in the ascendant (HPA-20:216)."""
+        assert _yoga("Y.BRIHADBIJA").fires(
+            _chart({"Rahu": 10.0, "Mars": 12.0, "Saturn": 14.0})) is True
+
+    def test_arm_b_lagna_lord_in_eighth_with_rahu_and_a_malefic_fires(self):
+        """Lagna lord (Mars) in the 8th with Rahu and a second malefic (two malefics there)."""
+        assert _yoga("Y.BRIHADBIJA").fires(_chart({"Mars": 225.0, "Rahu": 227.0})) is True
+
+    def test_rahu_and_mars_alone_in_lagna_does_not_fire(self):
+        """Only two of the three ascendant malefics (Saturn elsewhere) does not form arm A."""
+        assert _yoga("Y.BRIHADBIJA").fires(
+            _chart({"Rahu": 10.0, "Mars": 12.0, "Saturn": 200.0})) is False
+
+
+class TestAsatyavadi:
+    """Aries lagna: 2nd lord = Venus. The yoga needs Venus' dispositor to be Saturn,
+    i.e. Venus in Capricorn or Aquarius."""
+
+    def test_second_lord_dispositor_saturn_fires(self):
+        """Venus (the 2nd lord) in Capricorn -> its dispositor is Saturn (HPA-20:225)."""
+        assert _yoga("Y.ASATYAVADI").fires(_chart({"Venus": 285.0})) is True
+
+    def test_second_lord_in_own_sign_does_not_fire(self):
+        """Venus in Taurus is dispositor-of-self (Venus, not Saturn) -> no yoga."""
+        assert _yoga("Y.ASATYAVADI").fires(_chart({"Venus": 35.0})) is False
+
+
 # ── detection API ────────────────────────────────────────────────────────────
 class TestDetectYogas:
     def test_returns_fired_yogas_with_verifying_citations(self):

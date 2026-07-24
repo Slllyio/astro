@@ -1,43 +1,121 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1078",
-      "HTJAH-I:1105",
-      "HTJAH-I:1109",
-      "HTJAH-I:1127",
-      "HTJAH-I:1131",
-      "HTJAH-I:1139",
-      "HTJAH-I:1260",
-      "HTJAH-I:1499",
-      "HTJAH-I:1505"
+      "HTJAH-II:9556"
     ],
     "fired_rule_ids": [
-      "H1.B.13",
-      "H1.B.17",
-      "H1.C.26b",
-      "H1.C.28b",
-      "H1.C.34",
-      "H1.L.12",
-      "H1.M.S02",
-      "H1.P.Moon",
-      "H1.P.Sun"
+      "H10.L.11"
     ],
     "rollup": "favourable",
     "significations": {
-      "body": {
+      "career": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "health": {
+      "profession_authority": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "self": {
+      "profession_labour": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5169",
+      "HTJAH-I:5183",
+      "HTJAH-I:5193",
+      "HTJAH-I:5265"
+    ],
+    "fired_rule_ids": [
+      "H5.C.1",
+      "H5.C.9",
+      "H5.L.12",
+      "H5.P.Ketu"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "children": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "intellect": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "poorvapunya": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H7": {
+    "citations": [
+      "HTJAH-II:1773",
+      "HTJAH-II:2579",
+      "HTJAH-II:323",
+      "HTJAH-II:374"
+    ],
+    "fired_rule_ids": [
+      "H7.C.86",
+      "H7.K.2",
+      "H7.KD.1",
+      "H7.L.11"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "coverture": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "marital_happiness": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "partnership": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "spouse": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "virility": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "wealth_through_marriage": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
       }
     }
   }

@@ -1,33 +1,77 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1039",
-      "HTJAH-I:1110",
-      "HTJAH-I:1238",
-      "HTJAH-I:1244"
+      "HTJAH-II:9564"
     ],
     "fired_rule_ids": [
-      "H1.B.18",
-      "H1.L.6",
-      "H1.M.G3",
-      "H1.M.S01"
+      "H10.L.12"
     ],
     "rollup": "afflicted",
     "significations": {
-      "body": {
+      "career": {
         "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
-      "health": {
+      "profession_authority": {
         "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "afflicted"
       },
-      "self": {
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "profession_learned": {
+        "degree": "strong",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "profession_trade": {
+        "degree": "strong",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "status_honour": {
         "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "afflicted"
+      }
+    }
+  },
+  "H8": {
+    "citations": [
+      "HTJAH-II:2957",
+      "HTJAH-II:3087",
+      "HTJAH-II:3900"
+    ],
+    "fired_rule_ids": [
+      "H8.C.24",
+      "H8.C.3",
+      "H8.L.5"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "death": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "legacies": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "longevity": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "sudden_gains": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
       }
     }
   }

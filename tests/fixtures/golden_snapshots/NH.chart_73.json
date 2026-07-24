@@ -1,39 +1,141 @@
 {
-  "H1": {
+  "H2": {
     "citations": [
-      "HTJAH-I:1023",
-      "HTJAH-I:1106",
-      "HTJAH-I:1133",
-      "HTJAH-I:1138",
-      "HTJAH-I:1139",
-      "HTJAH-I:1330",
-      "HTJAH-I:1417",
-      "HTJAH-I:1420"
+      "HTJAH-I:2355"
     ],
     "fired_rule_ids": [
-      "H1.B.14",
-      "H1.C.30",
-      "H1.C.33",
-      "H1.C.34",
-      "H1.L.4",
-      "H1.M.S06",
-      "H1.S.6",
-      "H1.S.7"
+      "H2.L.4"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "family": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "speech": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "vision": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "wealth": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H3": {
+    "citations": [
+      "HTJAH-I:3399",
+      "HTJAH-I:3428",
+      "HTJAH-I:3430",
+      "HTJAH-I:3432",
+      "HTJAH-I:3436",
+      "HTJAH-I:3458",
+      "HTJAH-I:3459",
+      "HTJAH-I:3460",
+      "HTJAH-I:3462",
+      "HTJAH-I:3466"
+    ],
+    "fired_rule_ids": [
+      "H3.C.10",
+      "H3.C.19",
+      "H3.C.21",
+      "H3.C.22",
+      "H3.C.24",
+      "H3.C.26",
+      "H3.C.28",
+      "H3.C.6",
+      "H3.C.7",
+      "H3.C.8",
+      "H3.L.10"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "courage": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "ear_throat": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "short_journeys": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "siblings": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H4": {
+    "citations": [
+      "HTJAH-I:4180",
+      "HTJAH-I:4224",
+      "HTJAH-I:4226",
+      "HTJAH-I:4227",
+      "HTJAH-I:4268",
+      "HTJAH-I:4273",
+      "HTJAH-I:4717",
+      "HTJAH-I:4720",
+      "HTJAH-I:4919",
+      "HTJAH-I:4921",
+      "HTJAH-I:4946"
+    ],
+    "fired_rule_ids": [
+      "H4.C.19",
+      "H4.C.20",
+      "H4.C.21",
+      "H4.C.34",
+      "H4.C.37",
+      "H4.C.40",
+      "H4.C.41",
+      "H4.C.46",
+      "H4.L.10",
+      "H4.P.Rahu",
+      "H4.P.Saturn"
     ],
     "rollup": "mixed",
     "significations": {
-      "body": {
-        "degree": "moderate",
+      "education": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
-      "health": {
-        "degree": "moderate",
+      "happiness": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
-      "self": {
-        "degree": "moderate",
+      "home_comforts": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "mother": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "property": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "vehicles": {
+        "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       }

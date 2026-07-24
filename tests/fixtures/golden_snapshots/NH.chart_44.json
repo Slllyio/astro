@@ -1,41 +1,102 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1039",
-      "HTJAH-I:1106",
-      "HTJAH-I:1108",
-      "HTJAH-I:1112",
-      "HTJAH-I:1139",
-      "HTJAH-I:1260",
-      "HTJAH-I:1525",
-      "HTJAH-I:1711"
+      "HTJAH-II:9484"
     ],
     "fired_rule_ids": [
-      "H1.B.14",
-      "H1.B.16",
-      "H1.B.19",
-      "H1.C.34",
-      "H1.L.6",
-      "H1.M.S02",
-      "H1.N.39",
-      "H1.P.Jupiter"
+      "H10.L.4"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "career": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_authority": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_labour": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H9": {
+    "citations": [
+      "HTJAH-II:7352",
+      "HTJAH-II:7425",
+      "HTJAH-II:7429",
+      "HTJAH-II:7443",
+      "HTJAH-II:7450",
+      "HTJAH-II:7481",
+      "HTJAH-II:7488",
+      "HTJAH-II:7490",
+      "HTJAH-II:7505",
+      "HTJAH-II:8648",
+      "HTJAH-II:9400",
+      "HTJAH-II:9415",
+      "HTJAH-II:9416"
+    ],
+    "fired_rule_ids": [
+      "H9.A.13",
+      "H9.A.17",
+      "H9.A.5",
+      "H9.A.7",
+      "H9.B.31",
+      "H9.D.37",
+      "H9.D.38",
+      "H9.D.41",
+      "H9.D.42",
+      "H9.D.49",
+      "H9.D.50",
+      "H9.D.51",
+      "H9.L.7"
     ],
     "rollup": "mixed",
     "significations": {
-      "body": {
+      "dharma": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "father": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
-      "health": {
+      "fortune": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
-      "self": {
+      "higher_learning": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
+      },
+      "long_journeys": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
       }
     }
   }

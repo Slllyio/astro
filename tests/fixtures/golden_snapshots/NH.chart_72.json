@@ -1,53 +1,103 @@
 {
-  "H1": {
+  "H12": {
     "citations": [
-      "HTJAH-I:1078",
-      "HTJAH-I:1105",
-      "HTJAH-I:1107",
-      "HTJAH-I:1110",
-      "HTJAH-I:1127",
-      "HTJAH-I:1131",
-      "HTJAH-I:1133",
-      "HTJAH-I:1138",
-      "HTJAH-I:1139",
-      "HTJAH-I:1238",
-      "HTJAH-I:1288",
-      "HTJAH-I:1330",
-      "HTJAH-I:1511",
-      "HTJAH-I:1786"
+      "HTJAH-II:16207",
+      "HTJAH-II:16236",
+      "HTJAH-II:16260",
+      "HTJAH-II:16262",
+      "HTJAH-II:16268",
+      "HTJAH-II:16270",
+      "HTJAH-II:16299",
+      "HTJAH-II:16310",
+      "HTJAH-II:16314",
+      "HTJAH-II:16426",
+      "HTJAH-II:16465",
+      "HTJAH-II:16506",
+      "HTJAH-II:16603",
+      "HTJAH-II:16625",
+      "HTJAH-II:16649"
     ],
     "fired_rule_ids": [
-      "H1.B.13",
-      "H1.B.15",
-      "H1.B.18",
-      "H1.C.26b",
-      "H1.C.28b",
-      "H1.C.30",
-      "H1.C.33",
-      "H1.C.34",
-      "H1.L.12",
-      "H1.M.G3",
-      "H1.M.S06",
-      "H1.N.64",
-      "H1.P.Mars",
-      "H1.S.3"
+      "H12.C.A10",
+      "H12.C.A3",
+      "H12.C.A4",
+      "H12.C.A6",
+      "H12.C.A7",
+      "H12.C.A8",
+      "H12.C.D1",
+      "H12.C.E3",
+      "H12.C.F4",
+      "H12.C.H2",
+      "H12.C.J9",
+      "H12.L.10",
+      "H12.P.Mercury",
+      "H12.P.Rahu",
+      "H12.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
-      "body": {
+      "expenditure": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
-      "health": {
-        "degree": "mild",
+      "foreign_residence": {
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
       },
-      "self": {
+      "incarceration": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "left_eye": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "loss_moksha": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "moksha": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "afflicted"
+      }
+    }
+  },
+  "H8": {
+    "citations": [
+      "HTJAH-II:3042",
+      "HTJAH-II:3900"
+    ],
+    "fired_rule_ids": [
+      "H8.C.24",
+      "H8.L.11"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "death": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "legacies": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "longevity": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "sudden_gains": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
       }
     }
   }

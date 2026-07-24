@@ -1,33 +1,171 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1057",
-      "HTJAH-I:1106",
-      "HTJAH-I:1139",
-      "HTJAH-I:1452"
+      "HTJAH-II:9537"
     ],
     "fired_rule_ids": [
-      "H1.B.14",
-      "H1.C.34",
-      "H1.L.8",
-      "H1.M.S12"
+      "H10.L.9"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
-      "body": {
+      "career": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_authority": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H2": {
+    "citations": [
+      "HTJAH-I:2417",
+      "HTJAH-I:2444",
+      "HTJAH-I:2458",
+      "HTJAH-I:2464",
+      "HTJAH-I:2472",
+      "HTJAH-I:2937",
+      "HTJAH-I:2945"
+    ],
+    "fired_rule_ids": [
+      "H2.C.16",
+      "H2.C.20",
+      "H2.C.26",
+      "H2.C.6",
+      "H2.C.65a",
+      "H2.C.70",
+      "H2.L.12"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "family": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "speech": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "vision": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "wealth": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H4": {
+    "citations": [
+      "HTJAH-I:4175",
+      "HTJAH-I:4226",
+      "HTJAH-I:4717",
+      "HTJAH-I:4720",
+      "HTJAH-I:4931"
+    ],
+    "fired_rule_ids": [
+      "H4.C.20",
+      "H4.C.34",
+      "H4.C.37",
+      "H4.C.43",
+      "H4.L.9"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "education": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "happiness": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "home_comforts": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "mother": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "property": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "vehicles": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H8": {
+    "citations": [
+      "HTJAH-II:3011",
+      "HTJAH-II:3084",
+      "HTJAH-II:3510",
+      "HTJAH-II:3906"
+    ],
+    "fired_rule_ids": [
+      "H8.C.1",
+      "H8.C.26",
+      "H8.L.9",
+      "H8.P.Mars"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "death": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "legacies": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "longevity": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
-      "health": {
+      "sudden_gains": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
-      },
-      "self": {
-        "degree": "mild",
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "insufficient-evidence"
       }
     }
   }

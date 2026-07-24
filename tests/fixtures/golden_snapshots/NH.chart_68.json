@@ -1,37 +1,127 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1009",
-      "HTJAH-I:1106",
-      "HTJAH-I:1131",
-      "HTJAH-I:1138",
-      "HTJAH-I:1139",
-      "HTJAH-I:1330"
+      "HTJAH-II:11064",
+      "HTJAH-II:11478",
+      "HTJAH-II:9525",
+      "HTJAH-II:9685",
+      "HTJAH-II:9815",
+      "HTJAH-II:9850",
+      "HTJAH-II:9894"
     ],
     "fired_rule_ids": [
-      "H1.B.14",
-      "H1.C.29",
-      "H1.C.33",
-      "H1.C.34",
-      "H1.L.2",
-      "H1.M.S06"
+      "H10.C.1",
+      "H10.C.33",
+      "H10.C.4",
+      "H10.L.8",
+      "H10.P.Mercury",
+      "H10.P.Rahu",
+      "H10.P.Sun"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
-      "body": {
+      "career": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "profession_authority": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5160",
+      "HTJAH-I:5183",
+      "HTJAH-I:5193",
+      "HTJAH-I:5226",
+      "HTJAH-I:5248"
+    ],
+    "fired_rule_ids": [
+      "H5.C.1",
+      "H5.C.10",
+      "H5.C.35",
+      "H5.L.10",
+      "H5.P.Jupiter"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "children": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "intellect": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "poorvapunya": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H8": {
+    "citations": [
+      "HTJAH-II:2916",
+      "HTJAH-II:3084",
+      "HTJAH-II:3550",
+      "HTJAH-II:3625",
+      "HTJAH-II:3902"
+    ],
+    "fired_rule_ids": [
+      "H8.C.1",
+      "H8.C.25",
+      "H8.K.3",
+      "H8.L.2",
+      "H8.P.Saturn"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "death": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "legacies": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "longevity": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "health": {
+      "sudden_gains": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
-      },
-      "self": {
-        "degree": "mild",
-        "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "insufficient-evidence"
       }
     }
   }

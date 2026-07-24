@@ -1,35 +1,176 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1057",
-      "HTJAH-I:1106",
-      "HTJAH-I:1138",
-      "HTJAH-I:1238",
-      "HTJAH-I:1260"
+      "HTJAH-II:11064",
+      "HTJAH-II:9537",
+      "HTJAH-II:9685",
+      "HTJAH-II:9815",
+      "HTJAH-II:9850"
     ],
     "fired_rule_ids": [
-      "H1.B.14",
-      "H1.C.33",
-      "H1.L.8",
-      "H1.M.G3",
-      "H1.M.S02"
+      "H10.C.1",
+      "H10.C.33",
+      "H10.L.9",
+      "H10.P.Mercury",
+      "H10.P.Sun"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
-      "body": {
+      "career": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
-      "health": {
+      "profession_authority": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
-      "self": {
+      "profession_labour": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H4": {
+    "citations": [
+      "HTJAH-I:4184",
+      "HTJAH-I:4717"
+    ],
+    "fired_rule_ids": [
+      "H4.C.34",
+      "H4.L.11"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "education": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "happiness": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "home_comforts": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "mother": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "property": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "vehicles": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      }
+    }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5156",
+      "HTJAH-I:5183",
+      "HTJAH-I:5193",
+      "HTJAH-I:5236",
+      "HTJAH-I:5265"
+    ],
+    "fired_rule_ids": [
+      "H5.C.1",
+      "H5.C.9",
+      "H5.L.9",
+      "H5.P.Ketu",
+      "H5.P.Moon"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "children": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "intellect": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "poorvapunya": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      }
+    }
+  },
+  "H7": {
+    "citations": [
+      "HTJAH-II:1773",
+      "HTJAH-II:2579",
+      "HTJAH-II:271",
+      "HTJAH-II:374",
+      "HTJAH-II:961"
+    ],
+    "fired_rule_ids": [
+      "H7.C.77",
+      "H7.C.86",
+      "H7.K.2",
+      "H7.KD.1",
+      "H7.L.5"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "coverture": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "marital_happiness": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "partnership": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "spouse": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "virility": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "wealth_through_marriage": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
       }
     }
   }

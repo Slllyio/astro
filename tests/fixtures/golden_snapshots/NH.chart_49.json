@@ -1,35 +1,199 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1048",
-      "HTJAH-I:1133",
-      "HTJAH-I:1139",
-      "HTJAH-I:1428",
-      "HTJAH-I:1751"
+      "HTJAH-II:11027",
+      "HTJAH-II:9517"
     ],
     "fired_rule_ids": [
-      "H1.C.30",
-      "H1.C.34",
-      "H1.L.7",
-      "H1.M.S11",
-      "H1.N.51"
+      "H10.C.54a",
+      "H10.L.7"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "career": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_authority": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H12": {
+    "citations": [
+      "HTJAH-II:16169",
+      "HTJAH-II:16236",
+      "HTJAH-II:16252",
+      "HTJAH-II:16262",
+      "HTJAH-II:16268",
+      "HTJAH-II:16299",
+      "HTJAH-II:16328",
+      "HTJAH-II:16337",
+      "HTJAH-II:16410",
+      "HTJAH-II:16461"
+    ],
+    "fired_rule_ids": [
+      "H12.C.A16",
+      "H12.C.A17",
+      "H12.C.A2",
+      "H12.C.A4",
+      "H12.C.A6",
+      "H12.C.C5",
+      "H12.C.E3",
+      "H12.C.H2",
+      "H12.C.J6",
+      "H12.L.5"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "expenditure": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "foreign_residence": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "incarceration": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "left_eye": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "loss_moksha": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "moksha": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      }
+    }
+  },
+  "H3": {
+    "citations": [
+      "HTJAH-I:3351",
+      "HTJAH-I:3371",
+      "HTJAH-I:3430",
+      "HTJAH-I:3432",
+      "HTJAH-I:3435",
+      "HTJAH-I:3436",
+      "HTJAH-I:3458",
+      "HTJAH-I:3465",
+      "HTJAH-I:3467",
+      "HTJAH-I:3476",
+      "HTJAH-I:4087"
+    ],
+    "fired_rule_ids": [
+      "H3.C.1",
+      "H3.C.10",
+      "H3.C.19",
+      "H3.C.30",
+      "H3.C.31",
+      "H3.C.32",
+      "H3.C.34",
+      "H3.C.35",
+      "H3.C.7",
+      "H3.C.8",
+      "H3.C.9",
+      "H3.L.6",
+      "H3.P.Moon"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "courage": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "ear_throat": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "short_journeys": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "siblings": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  },
+  "H4": {
+    "citations": [
+      "HTJAH-I:4168",
+      "HTJAH-I:4213"
+    ],
+    "fired_rule_ids": [
+      "H4.C.7",
+      "H4.L.7"
     ],
     "rollup": "favourable",
     "significations": {
-      "body": {
+      "education": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "happiness": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "home_comforts": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "mother": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "property": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "health": {
+      "vehicles": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
-      },
-      "self": {
-        "degree": "mild",
-        "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "insufficient-evidence"
       }
     }
   }

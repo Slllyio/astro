@@ -1,28 +1,41 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1072",
-      "HTJAH-I:1138",
-      "HTJAH-I:1347"
+      "HTJAH-II:9556",
+      "HTJAH-II:9841"
     ],
     "fired_rule_ids": [
-      "H1.C.33",
-      "H1.L.11",
-      "H1.M.S07"
+      "H10.L.11",
+      "H10.P.Mars"
     ],
     "rollup": "favourable",
     "significations": {
-      "body": {
+      "career": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "health": {
+      "profession_authority": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
-      "self": {
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "favourable"

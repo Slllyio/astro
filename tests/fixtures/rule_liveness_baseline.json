@@ -1,8 +1,8 @@
 {
-  "_comment": "Rule-liveness ratchet baseline (tools/raman_saab/rule_liveness.py over the golden corpus). never_fired / yogas_never are the counts that MUST NOT INCREASE. Adding a rule no golden exercises, or breaking one so it stops firing, raises the count and fails test_rule_liveness. Fixing/covering rules lowers it -> re-baseline down. Captured on soul-destiny-experiment with H1.C.35/36 activated + the 4 HPA-20 yogas.",
+  "_comment": "Rule-liveness ratchet baseline (tools/raman_saab/rule_liveness.py over the golden corpus). never_fired / yogas_never are the counts that MUST NOT INCREASE. Adding a rule no golden exercises, or breaking one so it stops firing, raises the count and fails test_rule_liveness. Fixing/covering rules lowers it -> re-baseline down. Re-based after the +25 NH Track-B charts (corpus 192->217): never_fired 88->84.",
   "evaluable_total": 716,
-  "evaluable_fired": 628,
-  "never_fired": 88,
+  "evaluable_fired": 632,
+  "never_fired": 84,
   "yogas_total": 72,
   "yogas_fired": 48,
   "yogas_never": 24

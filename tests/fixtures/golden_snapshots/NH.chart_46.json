@@ -1,0 +1,38 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1009",
+      "HTJAH-I:1086",
+      "HTJAH-I:1109",
+      "HTJAH-I:1131",
+      "HTJAH-I:1139",
+      "HTJAH-I:1278"
+    ],
+    "fired_rule_ids": [
+      "H1.B.17",
+      "H1.C.1c",
+      "H1.C.29",
+      "H1.C.34",
+      "H1.L.2",
+      "H1.M.S03"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "body": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "health": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "self": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

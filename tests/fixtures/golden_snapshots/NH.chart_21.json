@@ -1,0 +1,34 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1039",
+      "HTJAH-I:1110",
+      "HTJAH-I:1238",
+      "HTJAH-I:1244"
+    ],
+    "fired_rule_ids": [
+      "H1.B.18",
+      "H1.L.6",
+      "H1.M.G3",
+      "H1.M.S01"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "body": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "health": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "self": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      }
+    }
+  }
+}

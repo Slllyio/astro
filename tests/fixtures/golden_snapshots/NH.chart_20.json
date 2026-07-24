@@ -1,0 +1,42 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1078",
+      "HTJAH-I:1105",
+      "HTJAH-I:1109",
+      "HTJAH-I:1110",
+      "HTJAH-I:1127",
+      "HTJAH-I:1139",
+      "HTJAH-I:1428",
+      "HTJAH-I:1541"
+    ],
+    "fired_rule_ids": [
+      "H1.B.13",
+      "H1.B.17",
+      "H1.B.18",
+      "H1.C.26b",
+      "H1.C.34",
+      "H1.L.12",
+      "H1.M.S11",
+      "H1.P.Saturn"
+    ],
+    "rollup": "favourable",
+    "significations": {
+      "body": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "health": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "self": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  }
+}

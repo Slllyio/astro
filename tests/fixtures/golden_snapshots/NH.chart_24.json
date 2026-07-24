@@ -1,0 +1,50 @@
+{
+  "H1": {
+    "citations": [
+      "HTJAH-I:1068",
+      "HTJAH-I:1105",
+      "HTJAH-I:1106",
+      "HTJAH-I:1131",
+      "HTJAH-I:1133",
+      "HTJAH-I:1138",
+      "HTJAH-I:1407",
+      "HTJAH-I:1428",
+      "HTJAH-I:1499",
+      "HTJAH-I:1519",
+      "HTJAH-I:1711",
+      "HTJAH-I:19252"
+    ],
+    "fired_rule_ids": [
+      "H1.B.13",
+      "H1.B.14",
+      "H1.C.26c",
+      "H1.C.29",
+      "H1.C.30",
+      "H1.C.33",
+      "H1.L.10",
+      "H1.M.S10",
+      "H1.N.39",
+      "H1.P.Mercury",
+      "H1.P.Sun",
+      "H1.S.8"
+    ],
+    "rollup": "mixed",
+    "significations": {
+      "body": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "health": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      },
+      "self": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "mixed"
+      }
+    }
+  }
+}

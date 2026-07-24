@@ -38,5 +38,37 @@
         "verdict": "favourable"
       }
     }
+  },
+  "H5": {
+    "citations": [
+      "HTJAH-I:5112",
+      "HTJAH-I:5183",
+      "HTJAH-I:5206",
+      "HTJAH-I:5236"
+    ],
+    "fired_rule_ids": [
+      "H5.C.1",
+      "H5.C.21",
+      "H5.L.1",
+      "H5.P.Moon"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "children": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "intellect": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "poorvapunya": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
   }
 }

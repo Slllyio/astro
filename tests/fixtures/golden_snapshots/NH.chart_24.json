@@ -1,49 +1,79 @@
 {
-  "H1": {
+  "H10": {
     "citations": [
-      "HTJAH-I:1068",
-      "HTJAH-I:1105",
-      "HTJAH-I:1106",
-      "HTJAH-I:1131",
-      "HTJAH-I:1133",
-      "HTJAH-I:1138",
-      "HTJAH-I:1407",
-      "HTJAH-I:1428",
-      "HTJAH-I:1499",
-      "HTJAH-I:1519",
-      "HTJAH-I:1711",
-      "HTJAH-I:19252"
+      "HTJAH-II:14020",
+      "HTJAH-II:9537",
+      "HTJAH-II:9881"
     ],
     "fired_rule_ids": [
-      "H1.B.13",
-      "H1.B.14",
-      "H1.C.26c",
-      "H1.C.29",
-      "H1.C.30",
-      "H1.C.33",
-      "H1.L.10",
-      "H1.M.S10",
-      "H1.N.39",
-      "H1.P.Mercury",
-      "H1.P.Sun",
-      "H1.S.8"
+      "H10.C.36",
+      "H10.L.9",
+      "H10.P.Saturn"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
-      "body": {
+      "career": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_authority": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_labour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_learned": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "profession_trade": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      },
+      "status_honour": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "favourable"
+      }
+    }
+  },
+  "H8": {
+    "citations": [
+      "HTJAH-II:2902",
+      "HTJAH-II:3906"
+    ],
+    "fired_rule_ids": [
+      "H8.C.26",
+      "H8.L.1"
+    ],
+    "rollup": "afflicted",
+    "significations": {
+      "death": {
+        "degree": "moderate",
+        "lead_frame": "lagna",
+        "verdict": "afflicted"
+      },
+      "legacies": {
+        "degree": "mild",
+        "lead_frame": "lagna",
+        "verdict": "insufficient-evidence"
+      },
+      "longevity": {
         "degree": "mild",
         "lead_frame": "lagna",
         "verdict": "mixed"
       },
-      "health": {
+      "sudden_gains": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
-      },
-      "self": {
-        "degree": "mild",
-        "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "insufficient-evidence"
       }
     }
   }

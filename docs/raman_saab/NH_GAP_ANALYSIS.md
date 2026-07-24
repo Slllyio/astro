@@ -138,3 +138,26 @@ yogakaraka-Lagna (+1 chart_69). Plus the 69-miss MISS_TABLE (77% B1) and the B1 
 hand-codeable: -40). Refused as over-firing/unfaithful and documented: B1 effective-strength, benefic-
 occupant-fortifies, neecha-lord, Mars-on-progeny, B3, B4. Every shipped gate: over-fire-scanned, reviewer-
 KEEP, zero-regression, human-bumped.
+
+## B1 harness + exhaustive holdout-gated search (2026-07-24): the `_strong`-seam fold is confirmed dead
+Built the parameterized B1 seam the earlier sessions said was the ONLY viable path: `_effective_strength`
+(`judges/house_template.py`) folds five affliction weights — `EFF_W_{PAPAKARTARI,DUSTHANA,NODE,COMBUST,
+DIGNITY}` (`primitives/shadbala/total.py`) — into the raw Rupas before `is_powerful`, and extended
+`tools/raman_saab/tune_thresholds.py` to search them holdout-locked. All weights DEFAULT 0.0 -> a strict
+no-op (early return), so the shipped engine is byte-identical (ratchet 209/241, verified).
+- **Greedy coordinate descent (0.5-Rupa steps, --holdout-lock):** converged at iter 0 — no single step
+  crosses a `MIN_REQUIRED` threshold, and B1 is a multi-factor interaction descent can't see.
+- **Exhaustive coarse grid (each weight in {0,1,2} Rupa, 242 configs, fit n=189 / holdout n=53):** BEST
+  fit correct = 168 = baseline. **ZERO configs beat baseline fit.** The mechanism is NOT inert — a
+  validity check shows it flips 9–24 fit verdicts per aggressive config, but essentially every flip is
+  WRONG (all=2 -> +1/-22; papakartari=2 -> 0/-9; dusthana=2 -> 0/-14; dignity=2 -> +1/-3). This
+  independently reproduces the -4/-40 hand-attempts a 4th time.
+**Root cause (reconfirmed, now with an exhaustive holdout gate):** penalising afflictions AT THE `_strong`
+GATE double-counts — `_decide`'s downstream clauses already price these afflictions CONTEXTUALLY (only when
+uncompensated), so an unconditional strength-gate penalty wrongly demotes tuned-correct verdicts. The fold
+belongs (if anywhere) INSIDE `_decide`'s comparative weighing, not at the raw `_strong` gate.
+**Decision:** KEEP the no-op harness (it is the reusable, holdout-gated weight-search infrastructure the
+backlog called for, at zero ratchet risk) and RECORD this negative result so the `_strong`-seam approach is
+not blindly re-attempted. The remaining B1 avenue is the deeper, riskier `_decide` contextual re-derivation
+(a dedicated effort that "risks all confirmed verdicts") — deferred, not attempted here. The faithful
+ceiling stands at 209/241.

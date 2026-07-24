@@ -76,6 +76,13 @@ _BHAVA_BALA_BOUNDS: tuple[float, float] = (180.0, 420.0)  # Shashtiamsas
 # a matter — so the sweep starts at 2 (only 3 pillars exist, so 3 is the strict ceiling).
 _CONTRA_PILLAR_STEPS: tuple[int, ...] = (2, 3, 99)
 
+# B1 effective-strength affliction weights (Rupas) — `shadbala_total.EFF_W_*`, read live by
+# `house_template._effective_strength`. Default 0.0 (a strict no-op). Bounded [0, 3] Rupa, step 0.5.
+_EFF_WEIGHT_NAMES: tuple[str, ...] = (
+    "EFF_W_PAPAKARTARI", "EFF_W_DUSTHANA", "EFF_W_NODE", "EFF_W_COMBUST", "EFF_W_DIGNITY")
+_EFF_WEIGHT_STEP: float = 0.5
+_EFF_WEIGHT_BOUNDS: tuple[float, float] = (0.0, 3.0)
+
 # ---------------------------------------------------------------------------
 # Holdout membership (STABLE — must NOT churn as records are added).
 # ---------------------------------------------------------------------------
@@ -113,19 +120,22 @@ class Thresholds:
     bhava_bala_min: float
     contra_pillar_afflict: int
     contra_pillar_favour: int
+    eff_weights: dict[str, float]      # EFF_W_* name -> Rupa weight (B1 effective-strength fold)
 
     @classmethod
     def current(cls) -> "Thresholds":
         return cls(min_required=dict(shadbala_total.MIN_REQUIRED),
                    bhava_bala_min=float(shadbala_total.BHAVA_BALA_MIN_SH),
                    contra_pillar_afflict=int(shadbala_total.CONTRA_PILLAR_AFFLICT),
-                   contra_pillar_favour=int(shadbala_total.CONTRA_PILLAR_FAVOUR))
+                   contra_pillar_favour=int(shadbala_total.CONTRA_PILLAR_FAVOUR),
+                   eff_weights={n: float(getattr(shadbala_total, n)) for n in _EFF_WEIGHT_NAMES})
 
     def clone(self) -> "Thresholds":
         return Thresholds(min_required=dict(self.min_required),
                           bhava_bala_min=self.bhava_bala_min,
                           contra_pillar_afflict=self.contra_pillar_afflict,
-                          contra_pillar_favour=self.contra_pillar_favour)
+                          contra_pillar_favour=self.contra_pillar_favour,
+                          eff_weights=dict(self.eff_weights))
 
 
 # ---------------------------------------------------------------------------
@@ -146,17 +156,21 @@ class _ApplyThresholds:
         self._saved_bb: Optional[float] = None
         self._saved_afflict: Optional[int] = None
         self._saved_favour: Optional[int] = None
+        self._saved_eff: Optional[dict[str, float]] = None
 
     def __enter__(self) -> None:
         self._saved_min = dict(shadbala_total.MIN_REQUIRED)
         self._saved_bb = shadbala_total.BHAVA_BALA_MIN_SH
         self._saved_afflict = shadbala_total.CONTRA_PILLAR_AFFLICT
         self._saved_favour = shadbala_total.CONTRA_PILLAR_FAVOUR
+        self._saved_eff = {n: getattr(shadbala_total, n) for n in _EFF_WEIGHT_NAMES}
         shadbala_total.MIN_REQUIRED.clear()
         shadbala_total.MIN_REQUIRED.update(self.th.min_required)
         shadbala_total.BHAVA_BALA_MIN_SH = self.th.bhava_bala_min
         shadbala_total.CONTRA_PILLAR_AFFLICT = self.th.contra_pillar_afflict
         shadbala_total.CONTRA_PILLAR_FAVOUR = self.th.contra_pillar_favour
+        for name, val in self.th.eff_weights.items():
+            setattr(shadbala_total, name, val)
 
     def __exit__(self, *exc: Any) -> None:
         shadbala_total.MIN_REQUIRED.clear()
@@ -164,6 +178,8 @@ class _ApplyThresholds:
         shadbala_total.BHAVA_BALA_MIN_SH = self._saved_bb
         shadbala_total.CONTRA_PILLAR_AFFLICT = self._saved_afflict
         shadbala_total.CONTRA_PILLAR_FAVOUR = self._saved_favour
+        for name, val in (self._saved_eff or {}).items():
+            setattr(shadbala_total, name, val)
 
 
 # ---------------------------------------------------------------------------
@@ -271,6 +287,14 @@ def _neighbours(th: Thresholds) -> list[tuple[str, Thresholds]]:
             cand = th.clone()
             cand.contra_pillar_favour = step
             out.append((f"CONTRA_PILLAR_FAVOUR {th.contra_pillar_favour}->{step}", cand))
+    # B1 effective-strength affliction weights: +-step on each, bounded [0, 3] Rupa.
+    for name, val in th.eff_weights.items():
+        for delta in (-_EFF_WEIGHT_STEP, _EFF_WEIGHT_STEP):
+            nv = round(val + delta, 3)
+            if _EFF_WEIGHT_BOUNDS[0] <= nv <= _EFF_WEIGHT_BOUNDS[1]:
+                cand = th.clone()
+                cand.eff_weights[name] = nv
+                out.append((f"{name} {val}->{nv}", cand))
     return out
 
 
@@ -336,6 +360,10 @@ def _candidate_diff(base: Thresholds, tuned: Thresholds) -> str:
         lines.append(f"#   CONTRA_PILLAR_FAVOUR: "
                      f"{base.contra_pillar_favour} -> {tuned.contra_pillar_favour}")
         changed = True
+    for name in tuned.eff_weights:
+        if tuned.eff_weights[name] != base.eff_weights.get(name):
+            lines.append(f"#   {name}: {base.eff_weights.get(name)} -> {tuned.eff_weights[name]}")
+            changed = True
     if not changed:
         lines.append("#   (no change -- current thresholds already optimal on this corpus)")
     return "\n".join(lines)

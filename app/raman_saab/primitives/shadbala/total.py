@@ -53,6 +53,23 @@ BHAVA_BALA_MIN_SH: float = 300.0
 CONTRA_PILLAR_AFFLICT: int = 3
 CONTRA_PILLAR_FAVOUR: int = 2
 
+# ── B1 effective-strength affliction weights (Rupas) ─────────────────────────────────────────
+# Raman reads a planet's "strength" as its Bala FOLDED WITH the afflictions/dignities he weighs
+# alongside it (NH_GAP_ANALYSIS Theme 1): papakartari (hemmed by malefics), a dusthana (6/8/12)
+# placement, conjunction with a node, and combustion drag the effective strength DOWN; a dignified
+# planet (exalt/own/moolatrikona, or a cancelled debilitation) lifts it UP.
+# `judges/house_template._effective_strength` subtracts/adds these weights from the raw total before
+# `is_powerful` reads it. ALL DEFAULT TO 0.0 -> the fold is a strict NO-OP and `is_powerful` sees
+# the raw Shadbala unchanged (golden ratchet untouched). The holdout-locked threshold tuner
+# (tools/raman_saab/tune_thresholds.py) searches these; a nonzero config ships ONLY if it improves
+# the fit set WITHOUT dropping the held-out set (the anti-overfit gate). These are golden-tuned
+# knobs (like MIN_REQUIRED) — intentionally NOT ``Final`` so the tuner can rebind them live.
+EFF_W_PAPAKARTARI: float = 0.0
+EFF_W_DUSTHANA: float = 0.0
+EFF_W_NODE: float = 0.0
+EFF_W_COMBUST: float = 0.0
+EFF_W_DIGNITY: float = 0.0
+
 # Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.
 MIN_REQUIRED: dict[str, float] = {

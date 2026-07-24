@@ -46,7 +46,7 @@ from app.raman_saab.chart.varga_chart import VargaChart, cast_varga_chart
 from app.raman_saab.primitives import ashtakavarga
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine import lookups
-from app.raman_saab.doctrine.conditions import EvalContext
+from app.raman_saab.doctrine.conditions import EvalContext, HemmedBy
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
 from app.raman_saab.doctrine.significations import Signification, significations_of
 from app.raman_saab.doctrine.sources import Citation
@@ -285,12 +285,49 @@ def _lord_of_sign(sign: int, house_offset: int) -> str:
     return SIGN_LORDS[((sign - 1) + (house_offset - 1)) % 12 + 1]
 
 
+def _effective_strength(planet: str, raw_rupas: float, chart: RamanChart) -> float:
+    """Raman's B1 'effective' strength: the raw total Shadbala (Rupas) folded with the afflictions
+    and dignities he weighs alongside Bala (NH_GAP_ANALYSIS Theme 1). Papakartari (hemmed by
+    malefics), a dusthana (6/8/12) placement, a node-conjunction, and combustion penalise the
+    reading; a dignified planet (exalt/own/moolatrikona, or a cancelled debilitation) credits it.
+    Every weight lives on ``shadbala_total`` and DEFAULTS TO 0.0 — with the shipped defaults this
+    returns ``raw_rupas`` UNCHANGED via an early return (a strict no-op; the golden ratchet is
+    untouched and no affliction work runs). The holdout-locked tuner searches the weights; a
+    nonzero config ships only if it improves the fit set without dropping the held-out set."""
+    w_pk = shadbala_total.EFF_W_PAPAKARTARI
+    w_du = shadbala_total.EFF_W_DUSTHANA
+    w_no = shadbala_total.EFF_W_NODE
+    w_co = shadbala_total.EFF_W_COMBUST
+    w_di = shadbala_total.EFF_W_DIGNITY
+    if not (w_pk or w_du or w_no or w_co or w_di):
+        return raw_rupas                      # all weights zero -> strict no-op, no affliction work
+    p = chart.planets.get(planet)
+    if p is None:
+        return raw_rupas
+    eff = raw_rupas
+    if w_pk and HemmedBy(planet, "malefic").evaluate(EvalContext(chart)):
+        eff -= w_pk
+    if w_du and p.rasi_house in (6, 8, 12):
+        eff -= w_du
+    if w_no and any(chart.planets.get(n) is not None and chart.planets[n].rasi_house == p.rasi_house
+                    for n in ("Rahu", "Ketu") if n != planet):
+        eff -= w_no
+    if w_co:
+        eff -= w_co * (p.combust_fraction or 0.0)
+    if w_di and (dignity(planet, chart) in ("exalt", "own", "moolatrikona")
+                 or neecha_bhanga(planet, chart)):
+        eff += w_di
+    return eff
+
+
 def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
-    """Legacy ``house_judge._strong`` semantics: None on Track-B, else is_powerful."""
+    """Legacy ``house_judge._strong`` semantics: None on Track-B, else is_powerful — now read off
+    the B1 effective strength (a strict no-op at the shipped all-zero affliction weights)."""
     p = chart.planets.get(planet)
     if p is None or p.shadbala_rupas is None:
         return None
-    return shadbala_total.is_powerful(planet, p.shadbala_rupas.total / 60.0)
+    eff = _effective_strength(planet, p.shadbala_rupas.total / 60.0, chart)
+    return shadbala_total.is_powerful(planet, eff)
 
 
 def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:

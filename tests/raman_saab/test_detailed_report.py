@@ -74,28 +74,28 @@ class TestDetailedReport:
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
         assert "Mahadasha" in markdown and " AD** (" in markdown
-        assert "supersedes" in markdown or "predominates" in markdown   # the supersession rule
+        # the HTJAH-I:1592-1640 grading vocabulary
+        assert "par excellence" in markdown and "limited (one lord)" in markdown
+        assert "associated with MD" in markdown
         assert "<- now**" in markdown          # the current AD is flagged
 
-    def test_predominance_is_the_stronger_lord(self):
-        """The superseding lord is the one with higher Shadbala (HTJAH-II predominance rule)."""
+    def test_lords_associated_conjunction_and_self(self):
+        """Sun/Jupiter/Venus conjoin in H10 on the canonical chart -> associated; a lord is
+        trivially associated with itself (own bhukti)."""
         from app.raman_saab.chart.adapter import cast_chart
-        from app.raman_saab.primitives.vimshottari import _lord_rupas, dasha_predominance
+        from app.raman_saab.primitives.vimshottari import lords_associated
         ch = cast_chart(_CANONICAL, ayanamsa="lahiri")
-        # Sun (9.7 rupas) vs Moon (6.7): the stronger Sun predominates whichever is MD.
-        assert dasha_predominance(ch, "Sun", "Moon").predominant == "Sun"
-        assert dasha_predominance(ch, "Moon", "Sun").predominant == "Sun"
-        assert dasha_predominance(ch, "Moon", "Sun").by_antar is True   # AD Sun supersedes MD Moon
-        # a lord's own Antardasha collapses to itself
-        own = dasha_predominance(ch, "Venus", "Venus")
-        assert own.predominant == own.other == "Venus"
+        assert lords_associated(ch, "Sun", "Jupiter") is True    # co-located in the 10th
+        assert lords_associated(ch, "Sun", "Sun") is True        # own bhukti
 
-    def test_dasha_predominance_none_without_antar(self):
-        """MD-only period (no AD lord) has no predominance contest."""
-        from app.raman_saab.chart.adapter import cast_chart
-        from app.raman_saab.primitives.vimshottari import dasha_predominance
-        ch = cast_chart(_CANONICAL, ayanamsa="lahiri")
-        assert dasha_predominance(ch, "Sun", None) is None
+    def test_par_excellence_requires_association(self, report):
+        """A bhukti's both-lord houses are par-excellence iff the AD lord is associated with the
+        MD lord (HTJAH-I:1635-1640) — so association and the tier word co-vary."""
+        from app.raman_saab.primitives.vimshottari import lords_associated
+        md_markdown = to_markdown(report)
+        # at least one associated (par-excellence) AND one non-associated (ordinary) bhukti exist
+        assert "par excellence (both lords)" in md_markdown
+        assert "ordinary (both lords)" in md_markdown
 
     def test_diacritics_folded_not_blanked(self, markdown):
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""

@@ -229,32 +229,35 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
-             f"{r.window_forward} years ahead). Each period-lord gives the results of the houses it "
-             f"signifies; the STRONGER of the MD and AD lord SUPERSEDES (HTJAH-II) -- its results "
-             f"predominate, the weaker only modifies. Houses shown are where both lords converge "
-             f"(par-excellence). Verdicts are the UNCHANGED natal readings above._")
+             f"{r.window_forward} years ahead). A planet influences a house by owning, occupying or "
+             f"aspecting the house OR its lord (HTJAH-I:1586-1629). In a bhukti the houses BOTH "
+             f"lords influence give results PAR EXCELLENCE when the AD lord is associated "
+             f"(conjunct/aspect) with the MD lord, else ORDINARY; a house only one lord influences "
+             f"gives LIMITED results (HTJAH-I:1592-1640). Verdicts are the UNCHANGED natal readings "
+             f"above._")
     cur_md: Optional[str] = None
     for tp in r.timeline.periods:
-        rows = tp.activated
-        if tp.period.maha != cur_md:
-            cur_md = tp.period.maha
+        rows, maha, antar = tp.activated, tp.period.maha, tp.period.antar
+        if maha != cur_md:
+            cur_md = maha
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
-        pred = vd.dasha_predominance(r.chart, tp.period.maha, tp.period.antar)
-        if pred is None:
-            sup = ""
-        elif pred.predominant == pred.other:
-            sup = f"**{pred.predominant}'s own Antardasha** - undivided results"
-        elif pred.by_antar:
-            sup = f"**{pred.predominant} (AD) supersedes** {pred.other} (MD) - {pred.basis}"
-        else:
-            sup = f"{pred.predominant} (MD) predominates; {pred.other} (AD) modifies - {pred.basis}"
-        focus = ", ".join(f"H{a.house} {a.natal_verdict}"
-                          for a in rows if a.grade == "par_excellence") or "(none)"
+        associated = antar is not None and vd.lords_associated(r.chart, maha, antar)
+        both = [f"H{a.house} {a.natal_verdict}" for a in rows if a.grade == "par_excellence"]
+        lim = [f"H{a.house} {a.natal_verdict}" for a in rows if a.grade == "limited"]
+        tier = "par excellence" if associated else "ordinary"
+        assoc = "own bhukti" if antar == maha else \
+            ("AD associated with MD" if associated else "AD not associated with MD")
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
-        ad = tp.period.antar or tp.period.maha
+        ad = antar or maha
+        seg = []
+        if both:
+            seg.append(f"**{tier} (both lords): {', '.join(both)}**")
+        if lim:
+            seg.append(f"limited (one lord): {', '.join(lim)}")
         L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
-                 f"{_jd_to_date(tp.period.end_jd)}){now} - {sup}; focus houses: {focus}")
+                 f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
+                 f"{'; '.join(seg) or '(no house influenced)'}")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

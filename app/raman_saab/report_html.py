@@ -104,12 +104,11 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .md-head{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--doctrine);
   margin:0 0 .1rem}
 .theme-label{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
-  margin-right:.15rem}
-.sup-line{margin-top:.35rem;font-size:.84rem}
-.sup{color:var(--ink-soft)}
-.sup b{color:var(--doctrine);font-weight:600}
-.sup--ad b{color:var(--instrument)}
-.sup--own{font-style:italic}
+  margin-right:.15rem;align-self:center}
+.chip.focus{outline:2px solid var(--doctrine);outline-offset:1px}
+.assoc-note{margin-top:.35rem;font-size:.8rem;color:var(--ink-soft);font-style:italic}
+.assoc-note b{color:var(--doctrine);font-style:normal}
+.lit-chips.lim{opacity:.6;margin-top:.25rem}
 .timeline{list-style:none;padding:0;margin:0}
 .period{padding:.7rem .6rem .7rem 1.1rem;border-left:2px solid var(--rule);position:relative}
 .period::before{content:"";position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;
@@ -183,54 +182,48 @@ def _house_section(mr, cal) -> str:
         f'&mdash; empirical, not Raman</div>{rows}</div></section>')
 
 
-def _house_chip(a) -> str:
-    """A focus-house chip carrying its natal verdict (title = full verdict)."""
-    return (f'<span class="chip chip--{_vclass(a.natal_verdict)}" '
+def _house_chip(a, *, ring: bool = False) -> str:
+    """A house chip carrying its natal verdict (title = full verdict); ring = par-excellence."""
+    return (f'<span class="chip chip--{_vclass(a.natal_verdict)}{" focus" if ring else ""}" '
             f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
             f'({_esc(a.natal_degree)})">H{a.house}</span>')
 
 
-def _supersession(pred) -> str:
-    """The 'which lord supersedes' phrase for one Antardasha (HTJAH-II predominance rule)."""
-    if pred is None:
-        return ""
-    if pred.predominant == pred.other:
-        return (f'<span class="sup sup--own">{_esc(pred.predominant)}’s own AD '
-                f'&middot; undivided</span>')
-    if pred.by_antar:
-        return (f'<span class="sup sup--ad"><b>{_esc(pred.predominant)}</b> (AD) supersedes '
-                f'{_esc(pred.other)} (MD) &middot; {_esc(pred.basis)}</span>')
-    return (f'<span class="sup sup--md"><b>{_esc(pred.predominant)}</b> (MD) predominates &middot; '
-            f'{_esc(pred.other)} (AD) modifies &middot; {_esc(pred.basis)}</span>')
-
-
 def _timeline(r: DetailedReport) -> str:
-    """Windowed MD -> AD narrative: for each Antardasha, which lord supersedes (the stronger of the
-    two period-lords) and the houses where both converge (par-excellence). Current AD marked."""
+    """Windowed MD -> AD narrative graded per HTJAH-I:1592-1640: houses both lords influence are
+    par-excellence when the AD lord is associated with the MD lord, else ordinary; a house only one
+    lord influences is limited. Current AD marked."""
     from app.raman_saab.primitives import vimshottari as vd
     out: list[str] = []
     cur: str | None = None
     for tp in r.timeline.periods:
-        rows = tp.activated
-        if tp.period.maha != cur:
+        rows, maha, antar = tp.activated, tp.period.maha, tp.period.antar
+        if maha != cur:
             if cur is not None:
                 out.append("</ol></div>")
-            cur = tp.period.maha
+            cur = maha
             out.append(f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
                        f'<ol class="timeline">')
-        pred = vd.dasha_predominance(r.chart, tp.period.maha, tp.period.antar)
-        chips = "".join(_house_chip(a) for a in rows if a.grade == "par_excellence")
-        focus = (f'<div class="lit-chips"><span class="theme-label">focus</span>{chips}</div>'
-                 if chips else "")
+        associated = antar is not None and vd.lords_associated(r.chart, maha, antar)
+        tier = "par excellence" if associated else "ordinary"
+        assoc = ("its own bhukti" if antar == maha
+                 else f'AD <b>{"is" if associated else "is not"}</b> associated with MD')
+        both = "".join(_house_chip(a, ring=associated)
+                       for a in rows if a.grade == "par_excellence")
+        lim = "".join(_house_chip(a) for a in rows if a.grade == "limited")
+        blocks = f'<div class="assoc-note">{assoc}</div>'
+        if both:
+            blocks += (f'<div class="lit-chips"><span class="theme-label">{tier}</span>{both}</div>')
+        if lim:
+            blocks += f'<div class="lit-chips lim"><span class="theme-label">limited</span>{lim}</div>'
         now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
         badge = '<span class="now-badge">now</span>' if now else ""
-        ad = tp.period.antar or tp.period.maha
+        ad = antar or maha
         out.append(
             f'<li class="period{" now" if now else ""}"><div class="period-head">'
             f'<span class="period-md">{_esc(ad)} AD</span>'
             f'<span class="period-dates">{_jd_to_date(tp.period.start_jd)} &ndash; '
-            f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>'
-            f'<div class="sup-line">{_supersession(pred)}</div>{focus}</li>')
+            f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>{blocks}</li>')
     if cur is not None:
         out.append("</ol></div>")
     return "".join(out)
@@ -291,9 +284,11 @@ def to_html(r: DetailedReport) -> str:
   <h2 class="section">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
-    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). The stronger of the MD and AD lord
-    supersedes (HTJAH-II) &mdash; its results predominate, the weaker only modifies; focus houses are
-    where both converge. Verdicts are the unchanged natal readings.</p>
+    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A planet influences a house by owning,
+    occupying or aspecting the house or its lord (HTJAH-I:1586-1629); houses both lords influence are
+    <em>par excellence</em> when the AD lord is associated with the MD lord, else <em>ordinary</em>;
+    one-lord houses are <em>limited</em> (HTJAH-I:1592-1640). Verdicts are the unchanged natal
+    readings.</p>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

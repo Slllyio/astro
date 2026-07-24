@@ -503,48 +503,16 @@ def lord_quality(chart: RamanChart, lord: str) -> LordQuality:
                        _delivery_tag(strong, dig, combust, p.vargottama))
 
 
-@dataclass(frozen=True)
-class Predominance:
-    """Which of the two running period-lords SUPERSEDES — whose results predominate in the
-    sub-period. Raman/classical rule (HTJAH-II:10004-10008 & the dasha chapters): the MORE
-    POWERFUL of the Dasha (MD) and Bhukti (AD) lord gives its own results predominantly; the
-    weaker only modifies. Strength is Shadbala; when a node (no Shadbala) is involved, delivery
-    quality decides, and the MD keeps the theme when it cannot be told apart."""
-    predominant: str                # the superseding lord
-    other: str
-    by_antar: bool                  # True if the AD lord supersedes the MD lord
-    basis: str                      # how it was decided (Shadbala figures / node fallback)
+def lords_associated(chart: RamanChart, a: str, b: str) -> bool:
+    """Two planets are 'associated' in Raman's sense — CONJOINED (same rasi) or in mutual aspect.
 
-
-_TAG_RANK: Final[dict[str, int]] = {"well": 3, "mixed": 2, "unknown": 1, "poorly": 0}
-
-
-def _lord_rupas(chart: RamanChart, lord: str) -> Optional[float]:
-    p = chart.planets.get(lord)
-    if p is None or p.shadbala_rupas is None:
-        return None
-    return p.shadbala_rupas.total / 60.0
-
-
-def dasha_predominance(chart: RamanChart, md_lord: str, antar_lord: Optional[str]) -> Optional[Predominance]:
-    """Resolve which period-lord supersedes (see ``Predominance``). None if there is no AD lord."""
-    if antar_lord is None:
-        return None
-    if antar_lord == md_lord:                               # the lord's own sub-period
-        return Predominance(md_lord, md_lord, False, "own sub-period")
-    md_r, ad_r = _lord_rupas(chart, md_lord), _lord_rupas(chart, antar_lord)
-    if md_r is not None and ad_r is not None:
-        by_antar = ad_r > md_r
-        basis = f"Shadbala {ad_r:.1f} vs {md_r:.1f}"
-    else:                                                   # node involved: no Shadbala
-        md_t, ad_t = _TAG_RANK[lord_quality(chart, md_lord).tag], \
-            _TAG_RANK[lord_quality(chart, antar_lord).tag]
-        if ad_t != md_t:
-            by_antar = ad_t > md_t
-            basis = "delivery quality (node, no Shadbala)"
-        else:
-            by_antar = False                                # MD keeps the theme when indistinct
-            basis = "indistinct (node) - MD theme holds"
-    winner = antar_lord if by_antar else md_lord
-    loser = md_lord if by_antar else antar_lord
-    return Predominance(predominant=winner, other=loser, by_antar=by_antar, basis=basis)
+    This drives the bhukti grading of HTJAH-I:1635-1640: during the Mahadasha of a planet
+    influencing a house, the sub-period of ANOTHER planet that also influences that house gives its
+    results *par excellence* **when that Bhukti lord is associated with the Mahadasha lord**; if it
+    influences the house but is NOT associated with the MD lord, only ORDINARY results follow."""
+    pa, pb = chart.planets.get(a), chart.planets.get(b)
+    if pa is None or pb is None:
+        return False
+    if pa.rasi_house == pb.rasi_house:                      # conjunction
+        return True
+    return drishti.aspects_planet(a, b, chart) or drishti.aspects_planet(b, a, chart)

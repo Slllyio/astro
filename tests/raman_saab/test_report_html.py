@@ -47,11 +47,11 @@ class TestReportHtml:
         assert body.count('class="varga"') >= 5
         assert body.count('class="period"') >= 5
 
-    def test_timeline_shows_supersession(self, body):
-        """Each Antardasha states which lord supersedes (predominance rule) + focus houses."""
-        assert 'class="sup' in body
-        assert "supersedes" in body or "predominates" in body
-        assert "Shadbala" in body
+    def test_timeline_shows_bhukti_grading(self, body):
+        """Each Antardasha shows the HTJAH-I grading: association note + par-excellence/limited."""
+        assert "assoc-note" in body
+        assert "associated with MD" in body
+        assert "par excellence" in body and "limited" in body
 
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""

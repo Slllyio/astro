@@ -303,3 +303,38 @@ three positives that outlived their first tests. Under maximum rigor — geograp
 same-machinery within-person controls, enlarged never-tested samples — **none survived.** The
 real-outcome generalization axis is null without exception; the one remaining thread (suicide/8th)
 is not merely unconfirmed but weakening with each fresh sample. This closes the Survivors' Gauntlet.
+
+---
+
+# STAGE 12 (2026-07-24) — the Certified Cohort's first result (matched pairs on the certified slice)
+
+`CERTIFIED_COHORT_DESIGN.md` specifies a fresh, consented, birth-certificate-collected laboratory
+whose primary analysis is the **matched-discordant-pair** design (§5). Fresh human collection is a
+governance-gated program that cannot be launched from a code session — but its *analysis engine*
+was built now (`tools/raman_saab/astrobank/certified_matched_pairs.py`) and run against the
+**certified slice of the existing corpus**: quality-tier A only — AA Rodden rating AND minute time
+precision, i.e. **birth-certificate-sourced charts**. This is the cleanest cut the current data
+allows and a design we had never run: era + geography held constant by 1:1 matching, the chart free
+to vary, testing the *relative* affliction rank rather than an absolute threshold.
+
+**Flagship domain — divorce vs long-marriage → 7th-house marital-happiness affliction:**
+
+| arm | n (certified, tier-A) | matched pairs | paired AUC | 95% CI | signed-rank p |
+|---|---|---|---|---|---|
+| **Sham** (off-target 10th/career) | 341 / 612 | 296 | 0.508 | (0.463, 0.556) | 0.60 |
+| **Primary** (7th/marital_happiness, afflicted) | 341 / 612 | 296 | **0.495** | (0.443, 0.546) | 0.67 |
+
+> **NULL, sham-gated.** On birth-certificate-certified charts, matched on era and geography, divorced
+> and long-married people are indistinguishable by 7th-house affliction — the point estimate sits
+> dead-centre on 0.5 (case mean marital-happiness score 1.156 vs control 1.131), not a suppressed
+> positive. This is the same convergent null the whole program has found, now reproduced on the
+> **certified minute-precision slice** under the design's **own fairest test** (relative rank within
+> matched pairs). It narrows the "bad birth times" escape hatch further: the null holds even when the
+> times are certificate-grade.
+
+**What this does and does not close.** The matched design controls era + geography + population and
+the AA tier controls birth-time quality — so two of the program's escape hatches are shut on this
+result. The remaining hatch is **celebrity selection** (the corpus is still notable people; sex is
+also unavailable as a matching key). That hatch closes only with the fresh cohort — which is exactly
+why the Certified Cohort program exists. Power note: 296 pairs powers ~AUC 0.57 at 80%; a
+suicide-thread-sized effect (~0.53) would be under-powered here and needs the fresh, larger sample.

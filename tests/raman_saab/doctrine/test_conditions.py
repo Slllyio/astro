@@ -54,6 +54,47 @@ def test_in_house_from_origin():
     assert C.InHouseFrom("Mars", "MOON", 4).evaluate(ctx) is False
 
 
+def test_tara_of():
+    # Moon @5.0 -> nakshatra 1 (Janma). Saturn @30.0 -> nakshatra 3 -> the 3rd (vipat) tara.
+    ctx = _ctx({"Moon": 5.0, "Saturn": 30.0})
+    assert C.TaraOf("Saturn", {3, 5, 7}).evaluate(ctx) is True     # vipat
+    assert C.TaraOf("Saturn", {1, 4}).evaluate(ctx) is False
+    # Dynamic subject: Aries lagna lord = Mars. Mars @60.0 -> nakshatra 5 -> the 5th (pratyak) tara.
+    ctx2 = _ctx({"Moon": 5.0, "Mars": 60.0})
+    assert C.TaraOf("LORD_OF:1", {3, 5, 7}).evaluate(ctx2) is True  # pratyak
+    # Mars @45.0 -> nakshatra 4 -> the 4th (kshema) tara, not a malefic tara.
+    ctx3 = _ctx({"Moon": 5.0, "Mars": 45.0})
+    assert C.TaraOf("LORD_OF:1", {3, 5, 7}).evaluate(ctx3) is False
+
+
+def test_tara_of_is_none_safe():
+    # No Moon (no Janma nakshatra) or absent subject -> False, never an error.
+    assert C.TaraOf("Saturn", {3}).evaluate(_ctx({"Saturn": 30.0})) is False
+    assert C.TaraOf("Mars", {3}).evaluate(_ctx({"Moon": 5.0})) is False
+
+
+def test_neecha_bhanga_resolves_dynamic_lord_subject():
+    # Aries lagna, 1st lord = Mars debilitated in Cancer (h4); the Moon (Cancer's dispositor) is
+    # in a kendra from itself -> cancellation. "LORD_OF:1" must resolve to Mars, same as a static name.
+    ctx = _ctx({"Moon": 70.0, "Mars": 100.0})
+    assert C.NeechaBhanga("Mars").evaluate(ctx) is True
+    assert C.NeechaBhanga("LORD_OF:1").evaluate(ctx) is True
+    # Absent subject -> False, never an error.
+    assert C.NeechaBhanga("LORD_OF:1").evaluate(_ctx({"Sun": 5.0})) is False
+
+
+def test_lord_has_dignity():
+    # Aries lagna: 1st lord = Mars. Mars in Aries (own); 4th lord = Moon exalted in Taurus.
+    ctx = _ctx({"Mars": 5.0, "Moon": 45.0})
+    assert C.LordHasDignity(1, {"own", "moolatrikona"}).evaluate(ctx) is True
+    assert C.LordHasDignity(4, {"exalt"}).evaluate(ctx) is True
+    assert C.LordHasDignity(1, {"debil"}).evaluate(ctx) is False
+    # Mars debilitated in Cancer (the 4th) -> LordHasDignity(1, {debil}).
+    assert C.LordHasDignity(1, {"debil"}).evaluate(_ctx({"Mars": 100.0})) is True
+    # Absent lord -> False, not an error.
+    assert C.LordHasDignity(1, {"own"}).evaluate(_ctx({"Sun": 5.0})) is False
+
+
 def test_in_house_class_and_vargottama():
     ctx = _ctx({"Sun": 5.0, "Saturn": 65.0})  # Sun 1st(kendra), Saturn 3rd(upachaya)
     assert C.InHouseClass("Sun", "kendra").evaluate(ctx) is True

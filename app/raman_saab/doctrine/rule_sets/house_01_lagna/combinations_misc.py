@@ -33,7 +33,8 @@ from __future__ import annotations
 
 from typing import Final
 
-from app.raman_saab.doctrine.conditions import CountInHouse, LordIn, Or
+from app.raman_saab.doctrine.conditions import (
+    And, CountInHouse, LordHasDignity, LordIn, NeechaBhanga, Not, Or, TaraOf)
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
 
@@ -135,11 +136,15 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # HTJAH-I:1142-1145: "when Lagnadhipati is not strong and well disposed, but occupies the
     # 3rd (vipat), 5th (pratyak) and 7th (naidhana) constellations from Janma Nakshatra …
     # the evil indications would be intensified."
-    # TODO(predicate: TaraOf) — requires computing the Tara (3rd/5th/7th nakshatra from the
-    # radical Moon's star). Descriptive until TaraOf predicate is implemented.
+    # ACTIVATED with the TaraOf predicate. Strength ("weak") uses the conservative dignity proxy
+    # LordHasDignity(1, {debil}) — a strict subset of Raman's "not strong" — EXCLUDING a
+    # Neecha-Bhanga-cancelled debilitation (a cancelled-debilitation lord is not truly weak, per
+    # Raman; bphs-doctrine-reviewer FLAG 2026-07-24). So it can only UNDER-fire, pending the B1
+    # effective-strength measure. Fires only for the rare uncancelled-debil-lagna-lord AND bad-Tara.
     RuleRecord(
-        id="H1.C.35", house=1, signification="self", group="combination", kind="descriptive",
-        condition=None,  # TODO(predicate: TaraOf) — needs TaraOf(planet, moon_nak, [3,5,7])
+        id="H1.C.35", house=1, signification="self", group="combination", kind="evaluable",
+        condition=And(LordHasDignity(1, {"debil"}), Not(NeechaBhanga("LORD_OF:1")),
+                      TaraOf("LORD_OF:1", {3, 5, 7})),
         fortified=None,
         afflicted="evil indications intensified (Lagnadhipati weak AND occupies 3rd vipat / "
                   "5th pratyak / 7th naidhana constellation from Janma Nakshatra)",
@@ -148,10 +153,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # ── #36 — Lagnadhipati strong + in same 3rd/5th/7th star → favourable indications lessened
     # HTJAH-I:1145-1146: "Conversely when Lagnadhipati is strong but occupies the above
     # constellational positions, there will be a lessening of the favourable indications."
-    # TODO(predicate: TaraOf) — descriptive until TaraOf predicate is implemented.
+    # ACTIVATED with TaraOf. "Strong" uses the conservative dignity proxy
+    # LordHasDignity(1, {exalt,own,moolatrikona}) — the unambiguous core of Raman's "strong",
+    # under-approximating pending the B1 measure. Fires only for the rare exalt/own-lagna-lord AND
+    # bad-Tara intersection; polarity 'neutral' (a lessening modifier, not an affliction).
     RuleRecord(
-        id="H1.C.36", house=1, signification="self", group="combination", kind="descriptive",
-        condition=None,  # TODO(predicate: TaraOf) — needs TaraOf(planet, moon_nak, [3,5,7])
+        id="H1.C.36", house=1, signification="self", group="combination", kind="evaluable",
+        condition=And(LordHasDignity(1, {"exalt", "own", "moolatrikona"}),
+                      TaraOf("LORD_OF:1", {3, 5, 7})),
         fortified="favourable indications lessened (Lagnadhipati strong but in 3rd/5th/7th "
                   "Tara constellation from Janma Nakshatra)",
         afflicted=None,

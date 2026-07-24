@@ -11,10 +11,11 @@ leaves; frame-relative `InHouseFrom` (C1: LAGNA/MOON/planet/house/"LORD_OF:n" or
 `FunctionalNature` (C4); `InStarOf` (C3); `MoonPhase` (H4); `CountInHouse` (H10);
 `Vargottama`/`NeechaBhanga`; varga overlays `InVargaHouseFrom`/`VargaDignity` (C2, D9);
 Dwirdwadasha `PlanetPairIn2_12`/`AllPlanetsInDwirdwadasha` (H7); `LordsConjunct`;
-sign-class data `SUSHKA_SIGNS`/`WATERY_SIGNS` (+ `SignIsSushka`/`SignIsWatery`).
+sign-class data `SUSHKA_SIGNS`/`WATERY_SIGNS` (+ `SignIsSushka`/`SignIsWatery`);
+`TaraOf` (Tara-Bala, H1); `LordHasDignity` (dynamic-lord dignity, a conservative strength proxy).
 **Still to add:** KARAKA / STRONGEST_OF / KARAKAMSA origins; `Strongest`/`Weakest`
-(Shadbala aggregates); `TaraOf`; sphuta/Saham predicates; `ShashtiamsaClass`/
-`VaiseshikamsaGrade` (H5).
+(Shadbala aggregates — the B1 effective-strength measure); sphuta/Saham predicates;
+`ShashtiamsaClass`/`VaiseshikamsaGrade` (H5).
 
 Usage:
     from app.raman_saab.doctrine import conditions as C
@@ -281,6 +282,24 @@ class HasDignity(Condition):
         return self.planet in ctx.chart.planets and dignity(self.planet, ctx.chart) in self.states
 
 
+class LordHasDignity(Condition):
+    """The D1 lord of whole-sign `house` (1..12 from the Lagna) has a compound dignity in
+    `states`. The dynamic-lord form of :class:`HasDignity` — resolves the lord per chart. Used as a
+    CONSERVATIVE 'strong'/'weak' proxy: {'exalt','own','moolatrikona'} for Raman's "strong",
+    {'debil'} for "not strong". It deliberately UNDER-approximates Raman's broader Shadbala
+    "strength" pending the B1 effective-strength measure. NOTE: `dignity()` reports `debil`
+    POSITIONALLY (no Neecha-Bhanga cancellation), so a {'debil'} gate can over-fire on a
+    debilitated-but-cancelled lord — a 'weak' branch must additionally exclude
+    Not(NeechaBhanga(...)), as H1.C.35 does. The {'exalt','own','moolatrikona'} 'strong' gate never
+    over-fires (it cannot mislabel a genuinely weak lord as strong)."""
+    def __init__(self, house: int, states: set[str]) -> None:
+        self.house, self.states = house, states
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        lord = _lord_of(self.house, ctx.chart)
+        return lord in ctx.chart.planets and dignity(lord, ctx.chart) in self.states
+
+
 class Retrograde(Condition):
     def __init__(self, planet: str) -> None:
         self.planet = planet
@@ -311,11 +330,15 @@ class IsYogaKaraka(Condition):
 
 
 class NeechaBhanga(Condition):
+    """`planet` (a name, or a "LORD_OF:n" dynamic reference) is debilitated AND its debilitation is
+    cancelled (Neecha Bhanga). Resolving "LORD_OF:n" lets it guard a dynamic-lord rule — e.g.
+    Not(NeechaBhanga("LORD_OF:1")) excludes a cancelled-debilitation lagna lord from a 'weak' gate."""
     def __init__(self, planet: str) -> None:
         self.planet = planet
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        return neecha_bhanga(self.planet, ctx.chart)
+        subject = _resolve_planet(self.planet, ctx.chart)
+        return subject in ctx.chart.planets and neecha_bhanga(subject, ctx.chart)
 
 
 class Vargottama(Condition):
@@ -576,6 +599,23 @@ class InStarOf(Condition):
     def evaluate(self, ctx: EvalContext) -> bool:
         p = ctx.chart.planets.get(self.planet)
         return p is not None and nakshatra.nakshatra_lord(p.nakshatra) == self.lord
+
+
+class TaraOf(Condition):
+    """`planet` (a name, or a "LORD_OF:n" dynamic reference) occupies one of the Tara positions in
+    `taras` — the 1..9 tara counted from the natal Moon's Janma nakshatra: 1 janma, 2 sampat,
+    3 vipat, 4 kshema, 5 pratyak, 6 sadhaka, 7 naidhana, 8 mitra, 9 param_mitra. Backs Raman's
+    Tara-Bala qualifier: the lagna lord in the 3rd/5th/7th (vipat/pratyak/naidhana) constellations
+    from Janma (HTJAH-I:1142-1146). None-safe: False if the subject planet or the Moon is absent."""
+    def __init__(self, planet: str, taras: set[int]) -> None:
+        self.planet, self.taras = planet, taras
+
+    def evaluate(self, ctx: EvalContext) -> bool:
+        subject = _resolve_planet(self.planet, ctx.chart)
+        sp, moon = ctx.chart.planets.get(subject), ctx.chart.planets.get("Moon")
+        if sp is None or moon is None or sp.nakshatra is None or moon.nakshatra is None:
+            return False
+        return nakshatra.tara_position(subject, ctx.chart) in self.taras
 
 
 # ── luminary (H4) & aggregates (H10) ─────────────────────────────────────────

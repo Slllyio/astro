@@ -19,8 +19,8 @@ misses are declared **over-fit-risk, not fixable by faithful general rules** (`D
 
 | Item | Status | Anchor | What's missing |
 |---|---|---|---|
-| **Gochara Vedha** (transit obstruction) | ABSENT | `primitives/transits.py` (from-Moon + BAV + Sade-Sati present) | the Vedha cancellation table — *core* to Raman's Gochara chapter, a fixed lookup. **Top value/effort.** |
-| **300 Combinations breadth** | ~68 of ~300 | `doctrine/yogas.py` (3HC ~13% encoded) | the largest uncovered surface: Akriti/shape yogas, the named Raja/Dhana tail, HPA-20 named yogas (Bherī, Śāradā …). Framework exists; each cheap. |
+| ~~**Gochara Vedha** (transit obstruction)~~ | ✅ DONE (23e2efc) | `primitives/transits.py` — `_VEDHA` table + exempt pairs + `net_good` on `TransitRow` | — the Vedha cancellation table is now wired, with a table-completeness invariant. |
+| **300 Combinations breadth** | ~72 of ~300 | `doctrine/yogas.py` (3HC + HPA-20) | the Akriti/shape set + named Raja/Dhana tail are DONE; the 4 clean HPA-20 named yogas landed (Sāradā/Kusuma/Brihadbija/Asatyavadi, 4cabcac). Remaining: Bherī/Shankha/Kahala/Lakshmi (deferred, need the B1 strength measure); Matsya (definition needs cross-verification — the OCR reading is unsatisfiable). |
 | **Ashtakavarga sodhana + kakshya** | PARTIAL | `primitives/ashtakavarga.py` (raw BAV/SAV present) | Trikoṇa + Ekādhipatya *sodhana* reductions; Kakṣyā 8-fold transit subdivision; Sodhya-Piṇḍa AV longevity. |
 | **H10 career-by-sign / trade-by-navāṁśa** | ABSENT | `rule_sets/house_10_karma/combinations.py:13` | the ~460-line HTJAH-II:10249-10800 catalogue — the single largest unencoded block (why H10 is the thinnest house). |
 | Nisargāyu · Lajjitādi avasthas · Deeptadi 'Bhīta' | small gaps | `ayurdaya.py`, `primitives/deeptadi.py:37` | self-contained completeness items. |
@@ -30,8 +30,11 @@ misses are declared **over-fit-risk, not fixable by faithful general rules** (`D
 **~130 inert `RuleRecord(kind="descriptive", condition=None)` + 125 `TODO(predicate:…)` markers**
 (~16% of the 828 rules) are cited Raman dicta that *cannot fire* — each blocked on a named missing
 predicate. Landing one predicate unlocks a cluster:
-- **Missing predicates** (`conditions.py:15` "still to add"): `ArudhaLagna`, `MarakaDetection`,
-  `NavamsaDispositor`, lord-strength on dynamic lords, `StrongerThan`/`WeakerThan`,
+- **Landed (4cabcac):** `TaraOf` (Tara-Bala, unlocked H1.C.35/36) and `LordHasDignity` (a
+  conservative dynamic-lord strength proxy); `NeechaBhanga` now resolves `LORD_OF:n` subjects.
+- **Missing predicates** (`conditions.py` "still to add"): `ArudhaLagna`, `MarakaDetection`,
+  `NavamsaDispositor`, `StrongerThan`/`WeakerThan` + the B1 Shadbala `Strongest`/`Weakest`
+  (the effective-strength measure that unblocks the bulk of the strength-gated inert cluster),
   `KARAKAMSA`-origin, `STRONGEST_OF`.
 - **Biggest inert clusters**: H12 (22), H1 navāṁśa-qualifiers (10 still descriptive), H11 (21),
   H2 (19).

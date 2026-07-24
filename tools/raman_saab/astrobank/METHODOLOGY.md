@@ -70,6 +70,35 @@
 - **Death timing:** real death date vs controls against maraka windows; controls capped at
   death−1yr; no leakage (predicted-span windows only).
 
+## Stage 6 amendment (v3, pre-registered 2026-07-24 BEFORE computation) — the corrected question
+
+The Stage-3 instrument diagnostic revealed the cohort-AUC question was partly WRONG for this
+doctrine, in two provable ways:
+1. **Instrument skew:** on the ordinary-chart control population the verdict rollup is
+   near-constant for the null-testing significations (children 76% afflicted, incarceration 65%,
+   death 72%) — an engine calibrated on Raman's curated affliction-showcase charts over-afflicts
+   ordinary charts, leaving almost no variance to discriminate cohorts with. (H7
+   marital_happiness/coverture DO have variance — those nulls stand as informative.)
+2. **Dilution:** the doctrine asserts rare conditionals (combination -> outcome), not population
+   classifiers. A rule firing on ~4% of charts cannot move cohort AUC detectably even at high
+   precision. Cohort AUC could not have detected doctrine-consistent effects of the doctrine's own
+   form.
+
+**Corrected questions (directions locked now):**
+- **RULE-LEVEL ENRICHMENT:** for every evaluable engine rule on the outcome-linked significations
+  (H5 children, H12 incarceration, H7 marital_happiness/coverture/spouse, H2 wealth, H8 death),
+  with >=30 fires in the store population: enrichment = P(outcome-label | rule fires) /
+  P(outcome-label in the eligible population). Registered direction: malefic-polarity rules enrich
+  the afflicted-outcome labels (childless, prison, divorced, widowed, bankrupt, suicide);
+  benefic-polarity rules enrich the favourable labels (prolific, long-marriage, wealthy).
+  Significance: two-sided binomial vs base rate; BH q=0.10 across the family. This tests each
+  classical combination AS THE CONDITIONAL CLAIM RAMAN MADE.
+- **DEATH-WINDOW CONTAINMENT (the doctrinal death-timing instrument):** the Stage-4 death test used
+  lifetime maraka windows; doctrine says death strikes in a maraka period NEAR THE EXHAUSTION OF THE
+  AYURDAYA SPAN — the engine's `death_window(chart)` (span-anchored maraka bhuktis) is the actual
+  instrument. Question: fraction of real deaths inside death_window vs the null expectation
+  (the window-fraction of each person's adult span, paired). Direction: containment > expectation.
+
 ## Ratchet (Stage 5)
 
 `real_outcome_baseline.json` records mapping/person-master/engine hashes + per-core-test floors

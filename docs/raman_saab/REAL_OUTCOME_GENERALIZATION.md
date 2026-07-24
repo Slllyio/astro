@@ -119,3 +119,51 @@ the engine's development gate, and the two axes are reported side by side, never
 > Real-outcome generalization: statistically null on all pre-registered core tests (n=22,177).**
 
 That pair of numbers, stated together, is the Prime Directive's "measure honestly" fulfilled.
+
+---
+
+# STAGE 6 (2026-07-24) — the "wrong question" challenge, and the corrected tests
+
+A fair methodological challenge was raised: *the cohort tests may ask the engine the wrong
+question.* The diagnostic proved the challenge substantially RIGHT, in three ways:
+
+1. **Instrument skew (proven):** on the ordinary-chart control population the verdict rollup is
+   near-constant for the null-testing significations — children **76% afflicted**, incarceration
+   65%, death 72%. An engine calibrated on Raman's curated affliction-showcase charts over-afflicts
+   ordinary charts, leaving cohort tests almost nothing to discriminate with. (This is also a real
+   finding about the ENGINE: its verdicts are book-regime-calibrated, not population-calibrated.)
+2. **Question-form mismatch (mathematical):** the doctrine asserts rare conditionals; a rule firing
+   on ~4% of charts cannot move cohort AUC visibly even at high precision. The pre-registered AUC
+   test could not have detected doctrine-consistent effects of the doctrine's own form.
+3. **Wrong timing instrument:** Stage 4 used lifetime maraka windows; the doctrinal instrument is
+   the span-anchored `death_window`.
+
+## The corrected tests (pre-registered as v3 BEFORE computation)
+
+**A. Rule-level enrichment** — every evaluable rule on the outcome significations, tested as the
+conditional claim Raman made: P(outcome | combination fires) vs base rate, binomial, BH q=0.10,
+min 30 fires. Result: **91 rule-outcome tests, 0 survive BH.** Top hits are weak and directionally
+scattered (e.g. Saturn-in-5th trends LESS childless, 0.69x). The classical combinations, tested in
+their own native conditional form on real lives, do not validate.
+
+**B. Death-window containment** — 2,164 real deaths vs the engine's span-anchored maraka windows:
+observed 32.3% in-window vs 11.6% naive expectation — an apparently massive lift (+0.208, CI
++0.189..+0.227). **The falsification control killed it:** testing each death against OTHER
+people's windows (age-aligned) gives 32.4% — chart-specific excess = **−0.001**. The entire
+"signal" is age structure (windows sit at typical death ages for everyone); the windows carry zero
+chart-specific timing information. The controls work in both directions: the sham caught no fake
+negatives; the cross-chart null caught this fake positive.
+
+## Final verdict of the program (strengthened by the challenge)
+
+The corrected questions make the null far stronger, because it now survives the question-form
+critique: **tested as population classifiers, as rare conditionals (the doctrine's own form), and
+with the doctrine's own timing instrument — all with validated controls — the engine's predictions
+carry no detectable chart-specific information about real-life outcomes.** The lone residual is the
+exploratory suicide/afflicted-8th association (AUC 0.535, perm p=.005), which awaits an independent
+confirmatory slice.
+
+Secondary finding for the engine's own roadmap (monitoring-axis only, golden sovereignty holds):
+the verdict layer OVER-AFFLICTS ordinary charts (children 76%/incarceration 65%/death 72%
+afflicted on random controls) — a population-calibration property invisible to the golden corpus,
+now quantified.

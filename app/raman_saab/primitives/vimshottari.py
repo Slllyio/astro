@@ -462,6 +462,55 @@ def active_houses(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
     return tuple(out)
 
 
+def dasha_result_houses(chart: RamanChart, lord: str) -> frozenset[int]:
+    """The houses a Dasha lord gives the results of, per Raman's CORE dasha-phala rule
+    (HTJAH-I:1586-1596): the house(s) it OWNS, the house it OCCUPIES, and the houses it ASPECTS.
+
+    This is placement-specific — unlike the broad recall `timer_set` (which pulls in karakas,
+    the lord's aspecters, the lord-from-Moon, etc. to maximise event-timing recall). Because it
+    is specific, different period-lords light DIFFERENT houses, which is what a Dasha READING
+    needs. Nodes own no rasi but still occupy and aspect (5/9 per the project's locked drishti)."""
+    houses: set[int] = set()
+    for h in range(1, 13):
+        if _lord_of_house(chart, h) == lord:                    # owns
+            houses.add(h)
+    p = chart.planets.get(lord)
+    if p is not None:
+        houses.add(p.rasi_house)                                # occupies
+        for h in range(1, 13):
+            if drishti.aspects_house(lord, h, chart):           # aspects
+                houses.add(h)
+    return frozenset(houses)
+
+
+def active_houses_strict(chart: RamanChart, jd: float) -> tuple[ActiveHouse, ...]:
+    """`active_houses` graded by Raman's placement-specific own/occupy/aspect rule
+    (`dasha_result_houses`) instead of the broad event-timing `timer_set`. Both period-lords give
+    the house -> ``par_excellence``; exactly one -> ``limited``. This is the correct basis for the
+    life-narrative — a lord lights only the houses it actually owns/occupies/aspects, so successive
+    Mahadashas and Antardashas differ. `active_houses` is left untouched for event-timing."""
+    if getattr(chart, "jd_ut", None) is None:
+        return ()
+    period = dasha_on(chart, jd)
+    if period is None:
+        return ()
+    md, antar = period.maha, period.antar
+    md_houses = dasha_result_houses(chart, md)
+    ad_houses = dasha_result_houses(chart, antar) if antar is not None else frozenset()
+    out: list[ActiveHouse] = []
+    for house in range(1, 13):
+        md_hit, antar_hit = house in md_houses, house in ad_houses
+        if md_hit and antar_hit:
+            grade = "par_excellence"
+        elif md_hit or antar_hit:
+            grade = "limited"
+        else:
+            continue
+        out.append(ActiveHouse(house, grade, md_hit, antar_hit, md, antar))
+    out.sort(key=lambda a: (0 if a.grade == "par_excellence" else 1, a.house))
+    return tuple(out)
+
+
 @dataclass(frozen=True)
 class LordQuality:
     """How WELL a Dasha lord delivers the houses it activates — a strength/dignity DESCRIPTOR, not

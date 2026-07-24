@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Callable, Optional
 
 import swisseph as swe
 
@@ -102,17 +102,26 @@ def read_chart_on_date(birth: BirthData, jd: Optional[float] = None, *,
     return DashaSnapshot(birth=birth, jd=jd, period=period, activated=rows, promise=promise)
 
 
+#: Signature of a "which houses does the running period light" function.
+ActiveFn = Callable[[object, float], "tuple[ActiveHouse, ...]"]
+
+
 def reading_timeline(birth: BirthData, *, ayanamsa: str = "lahiri",
-                     expand_bhuktis: bool = False) -> DashaTimeline:
+                     expand_bhuktis: bool = False,
+                     active_fn: Optional[ActiveFn] = None) -> DashaTimeline:
     """Life-narrative: walk the Vimshottari timeline (Mahadasha, or Mahadasha->Bhukti when
-    `expand_bhuktis`), listing each period's active houses — Raman's Dasha-by-Dasha structure."""
+    `expand_bhuktis`), listing each period's active houses — Raman's Dasha-by-Dasha structure.
+
+    `active_fn` selects the activation rule: the default broad `active_houses` (event-timing
+    recall) or, e.g., `vimshottari.active_houses_strict` (Raman's own/occupy/aspect dasha-phala
+    rule — the correct basis for a reading, where different lords light different houses)."""
+    active = active_fn or vd.active_houses
     chart = cast_chart(birth, ayanamsa=ayanamsa)
     promise = read_chart(birth, ayanamsa=ayanamsa)
     periods: list[TimelinePeriodReading] = []
     for md in vd.mahadasha_timeline(chart):
         for span in (vd.bhuktis(md) if expand_bhuktis else [md]):
             sample = max(span.start_jd + 1.0, chart.jd_ut)   # clamp the pre-birth balance period
-            rows = tuple(_activated_row(chart, promise, a)
-                         for a in vd.active_houses(chart, sample))
+            rows = tuple(_activated_row(chart, promise, a) for a in active(chart, sample))
             periods.append(TimelinePeriodReading(period=span, activated=rows))
     return DashaTimeline(birth=birth, promise=promise, periods=tuple(periods))

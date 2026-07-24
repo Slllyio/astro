@@ -74,7 +74,25 @@ class TestDetailedReport:
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
         assert "Mahadasha" in markdown and " AD** (" in markdown
+        assert "owns/occupies/aspects" in markdown   # Raman's dasha-phala rule is named
         assert "<- now**" in markdown          # the current AD is flagged
+
+    def test_activation_is_lord_specific(self, report):
+        """Raman's own/occupy/aspect rule (HTJAH-I:1586-1596) lights DIFFERENT houses for
+        different lords — the fix for the old broad timer_set that lit nearly every house
+        in every period."""
+        sets = {frozenset(a.house for a in tp.activated
+                          if a.md_activates or a.antar_activates)
+                for tp in report.timeline.periods}
+        assert len(sets) >= 3                  # genuinely differentiated across the window
+
+    def test_dasha_result_houses_owns_occupies_aspects(self):
+        """Canonical chart (lahiri): Jupiter occupies H10, owns H4/H7, aspects H2/H4/H6."""
+        from app.raman_saab.chart.adapter import cast_chart
+        from app.raman_saab.primitives.vimshottari import dasha_result_houses
+        ch = cast_chart(_CANONICAL, ayanamsa="lahiri")
+        assert set(dasha_result_houses(ch, "Jupiter")) == {2, 4, 6, 7, 10}
+        assert set(dasha_result_houses(ch, "Sun")) == {4, 10, 12}
 
     def test_diacritics_folded_not_blanked(self, markdown):
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""

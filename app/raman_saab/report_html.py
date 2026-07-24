@@ -103,6 +103,10 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .md-group{margin:1.5rem 0 0}
 .md-head{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--doctrine);
   margin:0 0 .1rem}
+.theme-line{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin:.15rem 0 .5rem}
+.theme-label{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
+  margin-right:.15rem}
+.chip.focus{outline:2px solid var(--doctrine);outline-offset:1px}
 .timeline{list-style:none;padding:0;margin:0}
 .period{padding:.7rem .6rem .7rem 1.1rem;border-left:2px solid var(--rule);position:relative}
 .period::before{content:"";position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;
@@ -176,24 +180,36 @@ def _house_section(mr, cal) -> str:
         f'&mdash; empirical, not Raman</div>{rows}</div></section>')
 
 
+def _house_chip(a, *, focus: bool = False) -> str:
+    """A house chip carrying its natal verdict (title = full verdict); focus = both MD+AD lords."""
+    ring = " focus" if focus else ""
+    return (f'<span class="chip chip--{_vclass(a.natal_verdict)}{ring}" '
+            f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
+            f'({_esc(a.natal_degree)})">H{a.house}</span>')
+
+
 def _timeline(r: DetailedReport) -> str:
-    """Windowed MD -> AD narrative, grouped by Mahadasha, with the current AD marked."""
+    """Windowed MD -> AD narrative: each MD's theme houses (owns/occupies/aspects), each AD's
+    trigger houses, the MD+AD convergence ringed as the period focus. Current AD marked."""
     out: list[str] = []
     cur: str | None = None
     for tp in r.timeline.periods:
+        rows = tp.activated
         if tp.period.maha != cur:
             if cur is not None:
                 out.append("</ol></div>")
             cur = tp.period.maha
-            out.append(f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
-                       f'<ol class="timeline">')
-        pe = [a for a in tp.activated if a.grade == "par_excellence"]
-        chips = "".join(
-            f'<span class="chip chip--{_vclass(a.natal_verdict)}" '
-            f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
-            f'({_esc(a.natal_degree)})">H{a.house}</span>' for a in pe)
-        body = f'<div class="lit-chips">{chips}</div>' if chips \
-            else '<div class="no-pe">no par-excellence house this period</div>'
+            theme = "".join(_house_chip(a) for a in rows if a.md_activates)
+            out.append(
+                f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
+                f'<div class="theme-line"><span class="theme-label">MD theme &middot; '
+                f'owns / occupies / aspects</span>{theme or "&mdash;"}</div>'
+                f'<ol class="timeline">')
+        focus_h = {a.house for a in rows if a.grade == "par_excellence"}
+        trig = "".join(_house_chip(a, focus=a.house in focus_h)
+                       for a in rows if a.antar_activates)
+        body = f'<div class="lit-chips">{trig}</div>' if trig \
+            else '<div class="no-pe">no house triggered this Antardasha</div>'
         now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
         badge = '<span class="now-badge">now</span>' if now else ""
         ad = tp.period.antar or tp.period.maha
@@ -262,8 +278,9 @@ def to_html(r: DetailedReport) -> str:
   <h2 class="section">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
-    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}) &mdash; verdicts are the unchanged natal
-    readings.</p>
+    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A lord activates the houses it owns,
+    occupies and aspects (HTJAH-I:1586-1596); a house both lords reach (ringed) is the period's
+    focus. Verdicts are the unchanged natal readings.</p>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

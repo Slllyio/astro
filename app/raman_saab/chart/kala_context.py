@@ -104,19 +104,28 @@ def _sunrise_sunset(b: BirthData, ayanamsa: str) -> tuple[float, float]:
     """
     geopos: tuple[float, float, float] = (b.longitude, b.latitude, 0.0)
     jd_midnight = _local_midnight_jd(b)
-    with sidereal_mode(ayanamsa):
-        _ret_r, tret_r = swe.rise_trans(
-            jd_midnight, swe.SUN,
-            swe.CALC_RISE | swe.BIT_DISC_CENTER,
-            geopos, 0.0, 0.0, swe.FLG_SWIEPH,
-        )
-        sunrise = float(tret_r[0])
-        _ret_s, tret_s = swe.rise_trans(
-            sunrise, swe.SUN,
-            swe.CALC_SET | swe.BIT_DISC_CENTER,
-            geopos, 0.0, 0.0, swe.FLG_SWIEPH,
-        )
-        sunset = float(tret_s[0])
+    try:
+        with sidereal_mode(ayanamsa):
+            _ret_r, tret_r = swe.rise_trans(
+                jd_midnight, swe.SUN,
+                swe.CALC_RISE | swe.BIT_DISC_CENTER,
+                geopos, 0.0, 0.0, swe.FLG_SWIEPH,
+            )
+            sunrise = float(tret_r[0])
+            _ret_s, tret_s = swe.rise_trans(
+                sunrise, swe.SUN,
+                swe.CALC_SET | swe.BIT_DISC_CENTER,
+                geopos, 0.0, 0.0, swe.FLG_SWIEPH,
+            )
+            sunset = float(tret_s[0])
+    except swe.Error as exc:
+        # No ordinary sunrise/sunset — polar day/night at extreme latitude (rise_trans returns no
+        # event / the search runs off the Moshier range). Kala Bala is genuinely undefined there;
+        # fail with a CLEAN domain error instead of leaking the low-level swisseph.Error.
+        raise ValueError(
+            f"sunrise/sunset undefined at latitude {b.latitude} on "
+            f"{b.year:04d}-{b.month:02d}-{b.day:02d}: Kala Bala requires a real day/night span; "
+            f"extreme-latitude (polar day/night) charts are out of scope ({exc})") from exc
     return sunrise, sunset
 
 

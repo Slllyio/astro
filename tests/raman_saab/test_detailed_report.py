@@ -63,6 +63,12 @@ class TestDetailedReport:
         assert "### D-10 Career (Dasamsa)" in markdown
         assert "RAMAN CORE" in markdown          # the authoritative core block
 
+    def test_life_narrative_present(self, report, markdown):
+        """The Vimshottari MD-by-MD life-narrative is composed and rendered."""
+        assert len(report.timeline.periods) >= 5
+        assert "## Life-narrative (Vimshottari Dasha)" in markdown
+        assert " Dasha (" in markdown          # e.g. "### Mercury Dasha (1978-.. )"
+
     def test_diacritics_folded_not_blanked(self, markdown):
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""
         assert "Navamsa" in markdown

@@ -41,7 +41,12 @@ from app.raman_saab.judges.saptamsa_reading import build_saptamsa_children_readi
 from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
 from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
 from app.raman_saab.primitives import ayurdaya
+from app.raman_saab.reading_timeline import DashaTimeline, reading_timeline
 from app.raman_saab.synthesis import Synthesis, synthesize
+
+_HOUSE_NAME = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mother/Home",
+               5: "Children/Mind", 6: "Health/Enemies", 7: "Spouse/Partnership", 8: "Longevity",
+               9: "Father/Fortune", 10: "Career", 11: "Gains", 12: "Loss/Moksha/Spirituality"}
 
 #: Shodasavarga deep-reads: (label, build_reading(chart), render.to_text(reading)).
 _DIVISIONAL: tuple[tuple[str, object, object], ...] = (
@@ -81,6 +86,7 @@ class DetailedReport:
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
     divisional: tuple[tuple[str, str], ...]          # (label, full varga deep-read body)
+    timeline: DashaTimeline                          # Vimshottari life-narrative (MD by MD)
 
 
 def build_detailed_report(
@@ -95,6 +101,7 @@ def build_detailed_report(
         birth=birth, synthesis=syn, calibration=calib,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
+        timeline=reading_timeline(birth, ayanamsa=ayanamsa),
     )
 
 
@@ -173,6 +180,28 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append("_Population context:_")
             L.extend(cal)
+
+    # ── life-narrative (Vimshottari Dasha, MD by MD) ──────────────────────────
+    L.append("")
+    L.append("## Life-narrative (Vimshottari Dasha)")
+    L.append("")
+    L.append("_The same natal promises, read as they ripen: each Mahadasha lights the houses its "
+             "lord activates. Verdicts are the UNCHANGED natal readings above._")
+    from app.raman_saab.render import _jd_to_date
+    for tp in r.timeline.periods:
+        L.append("")
+        L.append(f"### {tp.period.maha} Dasha ({_jd_to_date(tp.period.start_jd)} .. "
+                 f"{_jd_to_date(tp.period.end_jd)})")
+        pe = [a for a in tp.activated if a.grade == "par_excellence"]
+        if pe:
+            for a in pe:
+                L.append(f"- **House {a.house} ({_HOUSE_NAME[a.house]}):** "
+                         f"{a.natal_verdict} ({a.natal_degree})")
+        else:
+            L.append("- (no par-excellence house activated this period)")
+        lim = [a.house for a in tp.activated if a.grade == "limited"]
+        if lim:
+            L.append(f"- _limited:_ {', '.join(map(str, lim))}")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

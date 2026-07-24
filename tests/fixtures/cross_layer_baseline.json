@@ -1,0 +1,7 @@
+{
+  "_comment": "Cross-layer convergence baseline (tools/raman_saab/cross_layer_report.py). Compares each varga's INDEPENDENT status (confirms/weakens, from the divisional chart) to the D1 rollup of its related house(s). HONEST READING: the OVERALL agreement is only marginally above chance because the naive confirms<->favourable mapping is doctrinally ambiguous for dusthana-governed vargas (D30->6/8: a 'favourable 8th' has inverted polarity). The MEANINGFUL signal is D9 Navamsa (the one varga wired into the D1 verdict via _navamsa_status): it corroborates strongly (76% of polar cases). The overall rate is used only as a non-tautology + regression guard; d9_polar_agreement is the real convergence assertion. Captured on soul-destiny-experiment over 192 goldens / 1278 signalled pairs.",
+  "total_signalled": 1278,
+  "agreement_rate": 0.4836,
+  "hard_rate": 0.4046,
+  "d9_polar_agreement": 0.7639
+}

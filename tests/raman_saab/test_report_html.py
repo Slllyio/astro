@@ -54,6 +54,12 @@ class TestReportHtml:
         for tier in ("par excellence", "ordinary", "limited", "feeble"):
             assert f">{tier}</span>" in body
 
+    def test_grade_legend_and_plain_summary(self, body):
+        """A plain-language legend and per-bhukti plain summary make the jargon readable."""
+        assert "grade-legend" in body
+        assert 'class="plain"' in body
+        assert "In plain terms" in body
+
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""
         evil = BirthData("<script>alert(1)</script>", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)

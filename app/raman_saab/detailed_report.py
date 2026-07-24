@@ -48,6 +48,45 @@ _HOUSE_NAME = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mo
                5: "Children/Mind", 6: "Health/Enemies", 7: "Spouse/Partnership", 8: "Longevity",
                9: "Father/Fortune", 10: "Career", 11: "Gains", 12: "Loss/Moksha/Spirituality"}
 
+#: lay-reader life-area names (for the plain-language bhukti summary).
+_PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
+               4: "home & mother", 5: "children & creativity", 6: "health & rivals",
+               7: "marriage & partnership", 8: "longevity", 9: "fortune & father",
+               10: "career", 11: "gains", 12: "losses & spirituality"}
+
+#: one-line plain meaning of each fructification grade (shown once as a legend).
+_TIER_MEANING = {
+    "par excellence": "full, strong results — both period-lords reinforce the house",
+    "ordinary": "normal results — both lords touch it, but do not reinforce",
+    "limited": "slight results — only the current sub-period (bhukti) lord touches it",
+    "feeble": "faint results — only the major-period (Mahadasha) lord touches it",
+}
+
+
+def _human_list(items: list[str]) -> str:
+    """Join names for prose: 'a', 'a and b', 'a, b and c'."""
+    if len(items) <= 1:
+        return items[0] if items else ""
+    return ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def plain_bhukti_summary(rows, associated: bool) -> str:
+    """A lay-reader gloss of one bhukti: its overall intensity (from the association tier) and the
+    life-areas under strain (the afflicted houses at that tier, named). A plain restatement of
+    Raman's reading — never a prediction of real events."""
+    from app.raman_saab.primitives.vimshottari import bhukti_tier
+    top = "par excellence" if associated else "ordinary"
+    strained = sorted({(a.house, _PLAIN_AREA[a.house]) for a in rows
+                       if a.natal_verdict == "afflicted"
+                       and bhukti_tier(a.md_activates, a.antar_activates, associated) == top})
+    intensity = ("a strong, well-supported stretch" if associated
+                 else "a steady, ordinary stretch")
+    s = f"In plain terms: {intensity}; most matters run supportively"
+    if strained:
+        names = [name for _, name in strained]
+        s += f", but {_human_list(names)} {'meets' if len(names) == 1 else 'meet'} friction"
+    return s + "."
+
 #: Shodasavarga deep-reads: (label, build_reading(chart), render.to_text(reading)).
 _DIVISIONAL: tuple[tuple[str, object, object], ...] = (
     ("D-9 Marriage (Navamsa)", build_navamsa_marriage_reading, render_navamsa.to_text),
@@ -234,6 +273,9 @@ def to_markdown(r: DetailedReport) -> str:
              f"HTJAH-I:1592-1640, 2588-2599): both lords influence + AD associated with MD = PAR "
              f"EXCELLENCE, both but not associated = ORDINARY, bhukti lord only = LIMITED, MD lord "
              f"only = FEEBLE. Verdicts are the UNCHANGED natal readings above._")
+    L.append("")
+    L.append("**What the grades mean:** " + "; ".join(
+        f"_{k}_ = {v}" for k, v in _TIER_MEANING.items()) + ".")
     _TIER_LABEL = {"par excellence": "par excellence", "ordinary": "ordinary",
                    "limited": "limited (bhukti lord only)", "feeble": "feeble (MD lord only)"}
     cur_md: Optional[str] = None
@@ -259,6 +301,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
                  f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
                  f"{'; '.join(seg) or '(no house influenced)'}")
+        L.append(f"  - _{plain_bhukti_summary(rows, associated)}_")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

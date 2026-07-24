@@ -14,7 +14,11 @@ from __future__ import annotations
 import html
 import re
 
-from app.raman_saab.detailed_report import DetailedReport
+from app.raman_saab.detailed_report import (
+    _TIER_MEANING,
+    DetailedReport,
+    plain_bhukti_summary,
+)
 from app.raman_saab.render import _jd_to_date
 
 _HOUSE_NAME = {1: "Self / Body", 2: "Wealth / Family", 3: "Siblings / Courage", 4: "Mother / Home",
@@ -109,6 +113,13 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .assoc-note{margin-top:.35rem;font-size:.8rem;color:var(--ink-soft);font-style:italic}
 .assoc-note b{color:var(--doctrine);font-style:normal}
 .lit-chips.lim{opacity:.6;margin-top:.25rem}
+.grade-legend{margin:.2rem 0 1.2rem;padding:.8rem 1rem;border:1px solid var(--rule);
+  border-radius:10px;background:var(--surface);font-size:.82rem;color:var(--ink-soft);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.4rem .9rem}
+.grade-legend b{color:var(--doctrine)}
+.plain{margin-top:.45rem;font-size:.86rem;color:var(--ink);
+  border-left:2px solid var(--instrument);padding-left:.7rem}
+.plain b{color:var(--instrument);font-weight:600}
 .timeline{list-style:none;padding:0;margin:0}
 .period{padding:.7rem .6rem .7rem 1.1rem;border-left:2px solid var(--rule);position:relative}
 .period::before{content:"";position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;
@@ -223,6 +234,9 @@ def _timeline(r: DetailedReport) -> str:
             chips = "".join(_house_chip(a, ring=(tier == "par excellence")) for a in items)
             blocks += (f'<div class="lit-chips{dim}"><span class="theme-label" '
                        f'title="{_TITLE[tier]}">{tier}</span>{chips}</div>')
+        plain = plain_bhukti_summary(rows, associated)
+        head, _, tail = plain.partition(":")
+        blocks += f'<div class="plain"><b>{_esc(head)}:</b>{_esc(tail)}</div>'
         now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
         badge = '<span class="now-badge">now</span>' if now else ""
         ad = antar or maha
@@ -296,6 +310,8 @@ def to_html(r: DetailedReport) -> str:
     house): both lords influence + AD associated with MD = <em>par excellence</em>, both but not
     associated = <em>ordinary</em>, bhukti lord only = <em>limited</em>, MD lord only =
     <em>feeble</em> (HTJAH-I:1592-1640, 2588-2599). Verdicts are the unchanged natal readings.</p>
+  <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
+      for k, v in _TIER_MEANING.items())}</div>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

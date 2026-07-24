@@ -80,6 +80,20 @@ class TestDetailedReport:
             assert tier in markdown
         assert "associated with MD" in markdown
         assert "<- now**" in markdown          # the current AD is flagged
+        # a plain-language legend + a per-bhukti plain summary for lay readers
+        assert "What the grades mean:" in markdown
+        assert "In plain terms:" in markdown
+
+    def test_plain_summary_reads_for_a_layperson(self, report):
+        """The plain gloss names life-areas, not house numbers, and grades intensity."""
+        from app.raman_saab.detailed_report import plain_bhukti_summary
+        # a strongly-associated (par-excellence) bhukti reads as a strong stretch
+        assoc_rows = next(tp.activated for tp in report.timeline.periods
+                          if tp.period.antar == tp.period.maha)   # own bhukti = associated
+        s = plain_bhukti_summary(assoc_rows, associated=True)
+        assert s.startswith("In plain terms:")
+        assert "strong, well-supported" in s
+        assert "H10" not in s and "career" in s.lower()   # named area, not a house number
 
     def test_lords_associated_conjunction_and_self(self):
         """Sun/Jupiter/Venus conjoin in H10 on the canonical chart -> associated; a lord is

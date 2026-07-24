@@ -83,5 +83,95 @@ pre-registered re-tests (#2), an instrument bypass (#3), a measured distribution
 and dual-direction controls (#5). This is the Prime Directive's "measure honestly" applied to the
 question "why did it fail" — the answer is not a guess.
 
+---
+
+# LEVEL 2 (2026-07-24) — why the DOCTRINE itself fails: the measured mechanism
+
+Level 1 located the broken link (Raman → reality). This level answers the deeper question: **why
+does a system that feels overwhelmingly true to its practitioners — and validated itself for Raman
+on his own cases — predict nothing?** Four classical defenses are closed empirically, and then the
+mechanism itself is measured.
+
+## The four defenses, each closed with data already in hand
+
+1. **"Birth times need rectification; recorded times aren't true times."** Closed twice over:
+   (a) minute-precision birth-certificate charts (tier A) test IDENTICALLY null to round-hour ones
+   (mean AUC 0.500 vs 0.496); (b) the Stage-10 direct tests used **time-insensitive features** —
+   the Moon's sign holds for ~2.2 days, Saturn's aspect on it for months, Mars-from-Moon for days —
+   features immune to any plausible birth-time error *and* to every ascendant/house question. They
+   null too (OR 1.13, 1.09, 0.92). No rectification argument survives features that don't depend on
+   the birth time. (Rectification as practiced — adjusting the time until the chart fits the life —
+   is the flexibility mechanism below, formalized.)
+2. **"The chart works as a WHOLE; single factors can't capture it."** The engine's verdict IS the
+   whole-chart synthesis — three pillars, yogas, vargas, aspects, exactly Raman's integration — and
+   it nulls. ML models given every ledger feature at once null. The 56×23 diagonal test nulls. The
+   holistic reading was tested *as a whole* and in parts; the defense is closed unless "holism"
+   means something no encoding could contain — which is unfalsifiable, i.e., not a claim.
+3. **"The chart only PROMISES; the dasha DELIVERS — static labels miss the timing."** Timing was
+   tested on its own terms: within-chart control dates against significator windows and maraka
+   periods, at MD and AD level, with the span-anchored death_window. Null, with the one apparent
+   positive exposed as pure age-structure (chart-specific excess −0.001).
+4. **"Celebrities are an unrepresentative population."** All primary contrasts are within-corpus
+   (divorced celebrities vs long-married celebrities — same selection process on both sides), the
+   sham stayed exactly null, and strata controlled era/geography.
+
+## The mechanism, measured: unbounded explanatory flexibility
+
+Across 22,177 real charts, judged on all 56 significations by Raman's own integrated method:
+
+- the **median chart simultaneously carries 19 afflicted AND 31 favourable significations**;
+- **98.5%** of charts hold at least 5 of each; **86.8%** hold at least 10 of each;
+- **97.1%** of humanity has, at every moment, BOTH an afflicted house and a favourable house
+  available in the same chart.
+
+This single measurement explains both halves of the paradox:
+
+- **Why the system always *feels* true:** whatever happens in a life — divorce, riches,
+  childlessness, prison, early death — a supporting indication exists in essentially *every*
+  chart. A retrospective reading can never fail. Raman, reading the biography of a man he knew to
+  be childless, had an afflicted indication available 76% of the time by our census — and where
+  the 5th was clean, the doctrine supplies sanctioned alternates (Beeja/Kshetra, the karaka, the
+  7th from the 5th, the navamsa…). The reading always lands. The conviction is sincere, and
+  structurally guaranteed.
+- **Why it can never predict:** the same abundance means the indications are not *differential*.
+  An indication present in nearly everyone distinguishes no one. Prediction requires the sign to
+  be present when the outcome is coming and absent when it is not — and that difference, measured
+  every way the doctrine itself would choose, is zero.
+
+The Failure Atlas's "saturation" finding was not a bug in our engine after all — it is the
+doctrine's own architecture surfacing: rules generous enough to explain any life are exactly the
+rules that cannot predict one.
+
+## The curation asymmetry (why Raman's books validate at 89% while reality nulls)
+
+Three already-established numbers combine into the answer: (a) the rules fire at IDENTICAL rates
+on Raman's book charts and on random humanity (0.061 vs 0.065 — his charts are not astronomically
+special); (b) the engine predicts his verdicts from his charts at 89% (his verdict process was
+consistent and rule-shaped); (c) those same verdicts null against reality at scale. The resolution:
+**his books are a gallery of agreement** — nativities selected, among the flexible abundance of
+indications, precisely because doctrine and known biography could be shown aligning. The charts
+where they clash (the statistical majority, per our nulls) could not become clean worked examples.
+This is not an accusation of dishonesty; it is what sincere practice under unbounded flexibility
+produces automatically — every practitioner's case file fills itself with confirmations.
+
+## What still glimmers (recorded, not claimed)
+
+The faint structure clusters in ONE region and nowhere else: death-manner and the afflicted mind.
+Suicide → afflicted 8th replicated in effect size on held-out data (0.535 → 0.528, p=.062,
+underpowered); Saturn on the Moon carries what little there is (OR 1.13) while Mars carries
+exactly nothing (OR 1.00 — the specificity doctrine predicts); the waning Moon amplifies (OR 1.23,
+p=.08). All below threshold, all pre-registered, all honestly unresolved. If the tradition retains
+a grain of differential truth anywhere in this corpus, it is here — small, dark, and unconfirmed.
+
+## The complete answer, in three sentences
+
+The engine does not fail: it reproduces Raman at 89%, on verified-correct charts, with rules firing
+exactly as they do in his books. The doctrine fails to predict because its indications are
+non-differential by construction — present in abundance in every chart, they can explain
+everything and therefore foresee nothing — and its historical validation was the curated residue of
+that same flexibility. What survives is one small, twice-seen, never-confirmed thread at the 8th
+house and the darkened Moon, and an instrument that now, uniquely among its kind, tells the truth
+about itself.
+
 
 > Per-case atlas — WHERE it fails, house by house, with named lives: [FAILURE_ATLAS.md](FAILURE_ATLAS.md)

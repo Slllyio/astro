@@ -256,3 +256,50 @@ asserted; 5 seeds × 5 person-disjoint folds; 2,000-resample person bootstrap on
 > With geography in the baseline, the 28 chart features are pure noise drag (CI excludes zero on
 > the negative side). Interpretation lock from the prereg holds: even had it survived, a corpus
 > with zero real birth times cannot testify about birth-time astrology.
+
+---
+
+# STAGE 11 (2026-07-24) — the Survivors' Gauntlet, lane G1 (framework career→10H)
+
+Per GAUNTLET_PREREG.md. The 2026-05-29 result (`framework_validation_v1_VERDICT.md`) reported the
+10H "strong" verdict at **lift 1.37** on 11,753 career events — "the first project-wide positive
+doctrinal signal across 12 rounds." The re-run (`app/medini/ml/gauntlet_g1_career.py`) replaced the
+apples-to-oranges comparison at its root: the original pitted a **dynamic** event-time reading
+(transit + dasha overlay) against a **static** natal baseline pooled over all 75,149 persons. The
+clean design composes the *same* machinery on both arms and compares each event only against the
+**same person** at year-shifted, age-near control dates (±2..7 yr, JD arithmetic; windows capped at
+`min(death−1yr, scrape)`; ≥3 controls; 2,000 person-clustered bootstrap).
+
+Result on 11,626 career events (7,674 persons):
+
+| quantity | value | reading |
+|---|---|---|
+| within-person paired lift | **1.000**, CI (1.000, 1.000) | zero timing effect |
+| paired excess (event − control strong-rate) | **0.000**, CI (0.000, 0.000) | zero |
+| events whose 10H label changed at ANY control date | **0 of 11,626** | the label is date-invariant |
+| replication vs the original static baseline | **1.366** | reproduces the reported 1.37 exactly |
+| cohort selection lift (stored labels, career cohort vs all, *no composition*) | **1.412** | the whole effect |
+
+> **G1 FALLS — and the mechanism is now proven, not inferred.** `reading_composer` computes
+> `verdict_label` from the **natal** bhava alone; the gochara/dasha context only sets a *separate*
+> `gochara_triggered` flag and never moves the label (`reading_composer.py:142`). So the reading is
+> identical for a person on every date — the "event arm" and any "control arm" return the same
+> label by construction, and the paired lift is exactly 1.0. The original 1.37 measured **who has
+> documented career events**, not **when** they happen: career-cohort persons carry a natal 10H
+> strong-rate 1.41× the population (77% Wikidata, whose natal strong-rate is itself the highest of
+> the three corpora). Coarse era×geography standardization within Wikidata already collapses the
+> residual toward ~1.13. No timing signal exists; the number was a cohort-composition artifact.
+
+## The Gauntlet's verdict — all three survivors fell
+
+| lane | exploratory claim | clean result | status |
+|---|---|---|---|
+| G3 | suicide → afflicted H8 (0.535, p=.062) | 0.515, CI (0.479, 0.548), p=.198 — fading across 3 looks | unconfirmed |
+| G2 | WD marriage chart-lift +0.043 | −0.0026 vs geography baseline, CI excludes 0 | **falls** |
+| G1 | framework career→10H lift 1.37 | 1.000, CI (1.000, 1.000); artifact proven | **falls** |
+
+Twelve-plus rounds across both programs (raman_saab doctrine-encoding + medini ML) produced exactly
+three positives that outlived their first tests. Under maximum rigor — geography controls,
+same-machinery within-person controls, enlarged never-tested samples — **none survived.** The
+real-outcome generalization axis is null without exception; the one remaining thread (suicide/8th)
+is not merely unconfirmed but weakening with each fresh sample. This closes the Survivors' Gauntlet.

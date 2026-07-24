@@ -13,7 +13,7 @@ def _parse(argv: list[str] | None) -> argparse.Namespace:
     ap.add_argument("--lat", type=float, required=True); ap.add_argument("--lon", type=float, required=True)
     ap.add_argument("--ayanamsa", default="lahiri", choices=["raman", "lahiri"])
     ap.add_argument("--format", default="json",
-                    choices=["json", "text", "reading", "markdown", "synthesis"])
+                    choices=["json", "text", "reading", "markdown", "synthesis", "report"])
     ap.add_argument("--at")                # YYYY-MM-DD: Dasha snapshot (what is active on this date)
     ap.add_argument("--timeline", action="store_true")   # Dasha-by-Dasha life-narrative
     ap.add_argument("--bhuktis", action="store_true")    # expand the timeline to MD->Bhukti (needs --timeline)
@@ -30,6 +30,11 @@ def main(argv: list[str] | None = None) -> int:
         from app.raman_saab.synthesis import synthesize, to_text
         on = tuple(int(x) for x in a.at.split("-")) if a.at else None
         print(to_text(synthesize(birth, on=on, ayanamsa=a.ayanamsa)))
+        return 0
+    if a.format == "report":                               # full detailed report + honesty overlay
+        from app.raman_saab.detailed_report import build_detailed_report, to_markdown
+        on = tuple(int(x) for x in a.at.split("-")) if a.at else None
+        print(to_markdown(build_detailed_report(birth, on=on, ayanamsa=a.ayanamsa)))
         return 0
     if a.at or a.timeline:                                  # Dasha-driven prioritized reading
         from app.raman_saab import reading_timeline as rt

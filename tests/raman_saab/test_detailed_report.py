@@ -63,11 +63,18 @@ class TestDetailedReport:
         assert "### D-10 Career (Dasamsa)" in markdown
         assert "RAMAN CORE" in markdown          # the authoritative core block
 
-    def test_life_narrative_present(self, report, markdown):
-        """The Vimshottari MD-by-MD life-narrative is composed and rendered."""
+    def test_life_narrative_is_windowed_md_ad(self, report, markdown):
+        """The narrative is MD -> AD and clipped to [now-back, now+forward] with a 'now' marker."""
         assert len(report.timeline.periods) >= 5
-        assert "## Life-narrative (Vimshottari Dasha)" in markdown
-        assert " Dasha (" in markdown          # e.g. "### Mercury Dasha (1978-.. )"
+        # every shown period is an Antardasha (has an antar lord) inside the window
+        lo = report.ref_jd - report.window_back * 365.2425
+        hi = report.ref_jd + report.window_forward * 365.2425
+        for tp in report.timeline.periods:
+            assert tp.period.antar is not None
+            assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
+        assert "## Life-narrative (Vimshottari Dasha) -" in markdown
+        assert "Mahadasha" in markdown and " AD** (" in markdown
+        assert "<- now**" in markdown          # the current AD is flagged
 
     def test_diacritics_folded_not_blanked(self, markdown):
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""

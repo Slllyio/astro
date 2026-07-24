@@ -100,17 +100,23 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
   margin-left:.35rem;vertical-align:middle}
 .tag--warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
 .tag--univ{background:var(--tag-bg);color:var(--tag-ink)}
+.md-group{margin:1.5rem 0 0}
+.md-head{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--doctrine);
+  margin:0 0 .1rem}
 .timeline{list-style:none;padding:0;margin:0}
-.period{padding:.8rem 0 .8rem 1.1rem;border-left:2px solid var(--rule);position:relative}
-.period::before{content:"";position:absolute;left:-5px;top:1.15rem;width:8px;height:8px;
+.period{padding:.7rem .6rem .7rem 1.1rem;border-left:2px solid var(--rule);position:relative}
+.period::before{content:"";position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;
   border-radius:50%;background:var(--doctrine)}
+.period.now{background:var(--instrument-soft);border-radius:0 8px 8px 0}
+.period.now::before{background:var(--instrument);box-shadow:0 0 0 3px var(--instrument-soft)}
 .period-head{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline}
-.period-md{font-family:var(--serif);font-weight:600;font-size:1.02rem}
-.period-dates{font-family:var(--mono);font-size:.75rem;color:var(--ink-soft)}
-.lit{list-style:none;padding:0;margin:.4rem 0 0;display:flex;flex-direction:column;gap:.2rem}
-.lit li{font-size:.85rem;display:flex;gap:.5rem;align-items:baseline}
-.lit .hlabel{color:var(--ink-soft);min-width:9.5rem}
-.limited{font-size:.78rem;color:var(--ink-soft);margin-top:.35rem}
+.period-md{font-family:var(--serif);font-weight:600;font-size:.98rem}
+.period-dates{font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.now-badge{font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--instrument)}
+.lit-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}
+.lit-chips .chip{cursor:default}
+.no-pe{font-size:.78rem;color:var(--ink-soft);margin-top:.4rem;font-style:italic}
 details.varga{border:1px solid var(--rule);border-radius:10px;margin:.7rem 0;background:var(--surface)}
 details.varga summary{cursor:pointer;padding:.7rem 1rem;font-family:var(--serif);font-weight:600;
   font-size:1rem;list-style-position:inside}
@@ -171,25 +177,34 @@ def _house_section(mr, cal) -> str:
 
 
 def _timeline(r: DetailedReport) -> str:
-    items = []
+    """Windowed MD -> AD narrative, grouped by Mahadasha, with the current AD marked."""
+    out: list[str] = []
+    cur: str | None = None
     for tp in r.timeline.periods:
-        lit = ""
-        for a in tp.activated:
-            if a.grade == "par_excellence":
-                lit += (f'<li><span class="chip chip--{_vclass(a.natal_verdict)}">H{a.house}</span>'
-                        f'<span class="hlabel">{_esc(_HOUSE_NAME[a.house])}</span>'
-                        f'<span>{_esc(a.natal_verdict)} ({_esc(a.natal_degree)})</span></li>')
-        if not lit:
-            lit = '<li class="limited">(no par-excellence house this period)</li>'
-        limited = [str(a.house) for a in tp.activated if a.grade == "limited"]
-        lim = f'<div class="limited">limited: {", ".join(limited)}</div>' if limited else ""
-        items.append(
-            f'<li class="period"><div class="period-head">'
-            f'<span class="period-md">{_esc(tp.period.maha)} Dasha</span>'
+        if tp.period.maha != cur:
+            if cur is not None:
+                out.append("</ol></div>")
+            cur = tp.period.maha
+            out.append(f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
+                       f'<ol class="timeline">')
+        pe = [a for a in tp.activated if a.grade == "par_excellence"]
+        chips = "".join(
+            f'<span class="chip chip--{_vclass(a.natal_verdict)}" '
+            f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
+            f'({_esc(a.natal_degree)})">H{a.house}</span>' for a in pe)
+        body = f'<div class="lit-chips">{chips}</div>' if chips \
+            else '<div class="no-pe">no par-excellence house this period</div>'
+        now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
+        badge = '<span class="now-badge">now</span>' if now else ""
+        ad = tp.period.antar or tp.period.maha
+        out.append(
+            f'<li class="period{" now" if now else ""}"><div class="period-head">'
+            f'<span class="period-md">{_esc(ad)} AD</span>'
             f'<span class="period-dates">{_jd_to_date(tp.period.start_jd)} &ndash; '
-            f'{_jd_to_date(tp.period.end_jd)}</span></div>'
-            f'<ul class="lit">{lit}</ul>{lim}</li>')
-    return '<ol class="timeline">' + "".join(items) + "</ol>"
+            f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>{body}</li>')
+    if cur is not None:
+        out.append("</ol></div>")
+    return "".join(out)
 
 
 def to_html(r: DetailedReport) -> str:
@@ -245,7 +260,10 @@ def to_html(r: DetailedReport) -> str:
   {houses}
 
   <h2 class="section">Life-narrative</h2>
-  <p class="section-sub">Vimshottari Dasha &mdash; the same promises, read as they ripen.</p>
+  <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
+    {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
+    {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}) &mdash; verdicts are the unchanged natal
+    readings.</p>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

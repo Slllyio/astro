@@ -86,22 +86,60 @@ class DetailedReport:
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
     divisional: tuple[tuple[str, str], ...]          # (label, full varga deep-read body)
-    timeline: DashaTimeline                          # Vimshottari life-narrative (MD by MD)
+    timeline: DashaTimeline                          # windowed Vimshottari MD -> AD narrative
+    ref_jd: float                                    # the "now" anchor (on-date or today)
+    window_back: int                                 # years of past shown
+    window_forward: int                              # years of future shown
+
+
+_DAYS_PER_VEDIC_YEAR: float = 365.2425
+
+
+def _windowed_timeline(
+    birth: BirthData, on: Optional[tuple[int, int, int]], ayanamsa: str,
+    back: int, forward: int,
+) -> tuple[DashaTimeline, float]:
+    """MD -> AD (bhukti) timeline clipped to [ref - back yr, ref + forward yr].
+
+    ref = the on-date (if given) else today. JD arithmetic per project convention. The full-life
+    bhukti walk is built once, then filtered to the periods overlapping the window.
+    """
+    import swisseph as swe
+
+    if on is not None:
+        y, m, d = on
+    else:
+        from datetime import datetime, timezone
+        t = datetime.now(timezone.utc)
+        y, m, d = t.year, t.month, t.day
+    ref_jd = swe.julday(y, m, d, 12.0)
+    lo, hi = ref_jd - back * _DAYS_PER_VEDIC_YEAR, ref_jd + forward * _DAYS_PER_VEDIC_YEAR
+    full = reading_timeline(birth, ayanamsa=ayanamsa, expand_bhuktis=True)
+    periods = tuple(p for p in full.periods
+                    if p.period.end_jd >= lo and p.period.start_jd <= hi)
+    return DashaTimeline(birth=full.birth, promise=full.promise, periods=periods), ref_jd
 
 
 def build_detailed_report(
     birth: BirthData, *, on: Optional[tuple[int, int, int]] = None, ayanamsa: str = "lahiri",
+    years_back: int = 10, years_forward: int = 20,
 ) -> DetailedReport:
-    """Assemble the full reading + calibration for one chart (no verdict is re-judged)."""
+    """Assemble the full reading + calibration for one chart (no verdict is re-judged).
+
+    The life-narrative is focused on [now - years_back, now + years_forward] and expanded to
+    Mahadasha -> Antardasha, so the near-term periods are the ones detailed.
+    """
     chart: RamanChart = cast_chart(birth, ayanamsa=ayanamsa)
     syn = synthesize(birth, on=on, ayanamsa=ayanamsa)
     calib = {h: build_calibrated_reading(chart, h) for h in range(1, 13)}
     ayur = ayurdaya.longevity(chart)
+    timeline, ref_jd = _windowed_timeline(birth, on, ayanamsa, years_back, years_forward)
     return DetailedReport(
         birth=birth, synthesis=syn, calibration=calib,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
-        timeline=reading_timeline(birth, ayanamsa=ayanamsa),
+        timeline=timeline, ref_jd=ref_jd,
+        window_back=years_back, window_forward=years_forward,
     )
 
 
@@ -181,27 +219,29 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("_Population context:_")
             L.extend(cal)
 
-    # ── life-narrative (Vimshottari Dasha, MD by MD) ──────────────────────────
-    L.append("")
-    L.append("## Life-narrative (Vimshottari Dasha)")
-    L.append("")
-    L.append("_The same natal promises, read as they ripen: each Mahadasha lights the houses its "
-             "lord activates. Verdicts are the UNCHANGED natal readings above._")
+    # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────
     from app.raman_saab.render import _jd_to_date
+    w_lo = _jd_to_date(r.ref_jd - r.window_back * _DAYS_PER_VEDIC_YEAR)
+    w_hi = _jd_to_date(r.ref_jd + r.window_forward * _DAYS_PER_VEDIC_YEAR)
+    L.append("")
+    L.append(f"## Life-narrative (Vimshottari Dasha) - {w_lo} to {w_hi}")
+    L.append("")
+    L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
+             f"{r.window_forward} years ahead). Each period lists the houses it lights; verdicts "
+             f"are the UNCHANGED natal readings above._")
+    cur_md: Optional[str] = None
     for tp in r.timeline.periods:
-        L.append("")
-        L.append(f"### {tp.period.maha} Dasha ({_jd_to_date(tp.period.start_jd)} .. "
-                 f"{_jd_to_date(tp.period.end_jd)})")
+        if tp.period.maha != cur_md:
+            cur_md = tp.period.maha
+            L.append("")
+            L.append(f"### {cur_md} Mahadasha")
         pe = [a for a in tp.activated if a.grade == "par_excellence"]
-        if pe:
-            for a in pe:
-                L.append(f"- **House {a.house} ({_HOUSE_NAME[a.house]}):** "
-                         f"{a.natal_verdict} ({a.natal_degree})")
-        else:
-            L.append("- (no par-excellence house activated this period)")
-        lim = [a.house for a in tp.activated if a.grade == "limited"]
-        if lim:
-            L.append(f"- _limited:_ {', '.join(map(str, lim))}")
+        houses = "; ".join(f"H{a.house} {a.natal_verdict}({a.natal_degree})" for a in pe) \
+            or "(no par-excellence house)"
+        now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
+        ad = tp.period.antar or tp.period.maha
+        L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
+                 f"{_jd_to_date(tp.period.end_jd)}){now}: {houses}")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

@@ -1,0 +1,4 @@
+control_id,kind,pattern,match_type,house,signification_key,expected,notes
+SHAM_EXPATRIATE_H5,sham_mapping,lifestyle : home : expatriate,exact_token,5,children,null,"Doctrine-irrelevant category (n~2,463) mapped to H5 children. MUST show null (AUC CI covering 0.5) BEFORE any Tier-1 result is read — the pipeline-validity gate. A 'significant' sham = a pipeline/confound bug, stop and fix."
+SPECIFICITY_MATRIX,off_target,,,,,"mapped house in top-3 by |effect|","Each core cohort is scored against ALL 12 house rollups; the mapped house must rank in the top 3 by |AUC-0.5|. A cohort 'significant' everywhere = confound (era/geography), not doctrine."
+PERMUTATION_NULL,permutation,,,,,uniform p,"1,000 within-stratum (decade x latitude-band) label shuffles per test; empirical p from the permuted AUC distribution. Permutation p-values across tests must look uniform under the null."

@@ -17,10 +17,21 @@ The single biggest cluster is **H10 career** — 11 misses, split between:
   favourable vs engine-afflicted — Rahu-in-10th "good work"), chart_64 (afflicted vs favourable),
   chart_21/49/76 (mixed vs the engine's pole).
 
-This **empirically confirms `DOCTRINE_ROADMAP.md`**: H10 is the thinnest house because the ~460-line
-HTJAH-II:10249-10800 career-by-sign / profession-by-navamsa catalogue
-(`rule_sets/house_10_karma/combinations.py`) is unencoded. **Encoding it is the single highest-value
-next lever** — it would close ~11 misses at once.
+This **empirically confirms `DOCTRINE_ROADMAP.md`**: H10 is the thinnest house.
+
+### UPDATE (2026-07-24): H10.C.61 shipped; the career gap is confirmed B1 (not a clean catalogue)
+
+A diagnostic scan showed the Track-B career misses are largely a **no-Shadbala artifact** (strength
+pillars None -> the career verdict abstains), and that **no placement signature separates favourable
+from afflicted careers** — a blanket "raja yoga -> favourable" over-fires (Hitler/Tilak/Gandhi have
+raja yogas but afflicted careers). So the career gap is confirmed **B1 comparative-weighing**, NOT a
+clean sign-by-sign catalogue. The ONE clean, over-fire-free discriminator — the 10th influenced by an
+**undebilitated benefic AND free of any malefic occupation/aspect** (holds 7/0/0 on the golden career
+charts) — was encoded as **H10.C.61** (HTJAH-II:10181/11064/3232; fires without Shadbala, reaches
+Track-B; bphs-doctrine-reviewer VALIDATED/KEEP). It closed **3 career misses** (chart_19/52/61) with
+zero regression. The **remaining ~8 career misses are B1** (raja lifts *unless* the 10th is afflicted;
+the benefic-predominance weighing Raman uses for Nehru's malefic-touched-but-favourable 10th) — the
+tuner-gated verdict-path track, not clause work.
 
 ## Second cluster: H4 mother / education (7 misses)
 

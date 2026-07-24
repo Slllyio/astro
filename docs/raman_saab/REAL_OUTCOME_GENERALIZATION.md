@@ -338,3 +338,36 @@ result. The remaining hatch is **celebrity selection** (the corpus is still nota
 also unavailable as a matching key). That hatch closes only with the fresh cohort — which is exactly
 why the Certified Cohort program exists. Power note: 296 pairs powers ~AUC 0.57 at 80%; a
 suicide-thread-sized effect (~0.53) would be under-powered here and needs the fresh, larger sample.
+
+## STAGE 12b — the full certified matched-pair sweep (every domain on the tier-A slice)
+
+The flagship divorce test was then extended to **every** outcome domain with a certified (tier-A =
+AA + minute) cohort, directions and sham (off-target 10th/career) frozen before the sweep
+(`tools/raman_saab/astrobank/certified_sweep.py`). Two design flavours: **labelled contrasts** (case
+vs a labelled opposite — cleanest) and **pooled controls** (case vs all certified non-cases — used
+where no labelled opposite exists; weaker).
+
+| domain | design | pairs | paired AUC | 95% CI | signed-rank p | sham | verdict |
+|---|---|---|---|---|---|---|---|
+| H5 childless vs prolific | labelled | 120 | 0.533 | (0.471, 0.596) | .159 | 0.504 ok | null |
+| H7 divorced vs long-married | labelled | 332 | 0.500 | (0.449, 0.550) | .840 | 0.532 ok | null |
+| H7 widowed vs long-married | labelled | 171 | 0.471 | (0.404, 0.538) | .474 | 0.520 ok | null |
+| H8 short- vs long-life | labelled | 81 | 0.537 | (0.457, 0.617) | .165 | 0.574 ok | null |
+| H2 bankrupt vs wealthy | labelled | 9 | — | — | — | — | insufficient N |
+| H12 prison vs pool | pooled | 216 | 0.509 | (0.454, 0.565) | .226 | 0.507 ok | null |
+| H8 suicide vs pool | pooled | 126 | 0.504 | (0.436, 0.571) | .110 | **0.587 FAIL** | sham-invalid |
+| H8 accident vs pool | pooled | 223 | 0.491 | (0.437, 0.547) | .713 | 0.509 ok | null |
+
+> **0 of 7 interpretable certified domains show signal after BH q=0.10.** Every clean
+> labelled-contrast domain — children, marriage, widowhood, longevity — is null with its sham gate
+> open, on birth-certificate-grade charts, under the design's fairest within-pair test.
+
+**Two honest caveats, both informative.** (1) `H2_wealth` has only 9 certified bankrupts — not a
+test. (2) The `H8_suicide` **pooled-control sham failed** (career-house affliction *also* separates
+suicide cases from the pool, 0.587): suicide cases differ from the general certified pool in a
+*non-specific* way, across houses unrelated to the hypothesis. That is exactly the confound the
+pre-registration warned pooled controls carry, and it is why labelled contrasts are the trustworthy
+arm — the suicide thread's real evidence remains the dedicated tier-C confirmatory (Stage 10) and
+the G3 addendum, not this pooled sham-invalid cell. Net: the convergent null now spans the full
+certified slice; the only surviving thread stays exactly where it was — twice-seen, fading,
+unconfirmed — awaiting the fresh cohort the design exists to build.

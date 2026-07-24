@@ -69,31 +69,32 @@ def _score_frame(verdicts: pd.DataFrame, house: int, signification: str) -> pd.S
 
 def _build_cohort(
     master: pd.DataFrame, labels: pd.DataFrame, scores: pd.Series,
-    case_map: str, control_map: str,
+    case_map: str, control_map: str | None = None, exclude: frozenset[str] = frozenset(),
 ) -> pd.DataFrame:
-    """Certified (tier-A) case+control people with score + matching covariates."""
+    """Certified (tier-A) case+control people with score + matching covariates.
+
+    control_map=None => POOLED control: every certified scored person who is not a case and
+    not in ``exclude`` (used for outcomes with no labelled opposite, e.g. prison / suicide).
+    """
     by_map = {m: set(g.person_id) for m, g in labels.groupby("map_id")}
-    cases, controls = by_map.get(case_map, set()), by_map.get(control_map, set())
-    rows = []
-    for pid in (cases | controls) & set(master.index) & set(scores.index):
-        r = master.loc[pid]
-        if r.quality_tier != "A":            # certified only: AA + minute precision
-            continue
-        try:
-            decade = int(str(r.birth_date)[:4]) // 10 * 10
-        except (ValueError, TypeError):
-            continue
-        rows.append({
-            "person_id": pid,
-            "is_case": pid in cases,
-            "score": float(scores[pid]),
-            "decade": decade,
-            "lat_band": int(np.digitize(r.latitude, _LAT_BINS)),
-            "lon_band": int(np.digitize(r.longitude, _LON_BINS)),
-        })
-    df = pd.DataFrame(rows)
-    # a person labelled as both case and control (contradiction) is dropped
-    return df[~(df.is_case & df.person_id.isin(controls & cases))]
+    cases = by_map.get(case_map, set())
+    score_ids = set(scores.index) & set(master.index)
+    if control_map is None:
+        controls = score_ids - cases - set(exclude)
+    else:
+        controls = by_map.get(control_map, set()) - cases          # contradiction -> not a control
+    sub = master.loc[sorted((cases | controls) & score_ids)].copy()
+    sub = sub[sub["quality_tier"] == "A"]                          # certified: AA + minute
+    year = sub["birth_date"].astype(str).str[:4]
+    sub = sub[year.str.fullmatch(r"\d{4}")]
+    sub["is_case"] = sub.index.isin(cases)
+    sub["score"] = sub.index.map(scores).astype(float)
+    sub["decade"] = sub["birth_date"].astype(str).str[:4].astype(int) // 10 * 10
+    sub["lat_band"] = np.digitize(sub["latitude"].to_numpy(), _LAT_BINS)
+    sub["lon_band"] = np.digitize(sub["longitude"].to_numpy(), _LON_BINS)
+    out = sub.reset_index()[
+        ["person_id", "is_case", "score", "decade", "lat_band", "lon_band"]]
+    return out.dropna(subset=["score"])
 
 
 def _match_pairs(cohort: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
@@ -147,6 +148,49 @@ def _paired_stats(
             "control_mean_score": round(float(pairs.control_score.mean()), 4)}
 
 
+def analyze_domain(
+    master: pd.DataFrame, labels: pd.DataFrame, verdicts: pd.DataFrame,
+    case_map: str, control_map: str | None, house: int, signification: str, direction: str,
+    sham_house: int, sham_signification: str,
+    exclude: frozenset[str] = frozenset(), n_boot: int = 2000,
+) -> dict:
+    """Sham-gated matched-pair analysis for one domain against pre-loaded frames."""
+    # ── SHAM FIRST (anti-peeking): off-target house must be null ──────────────
+    sham_scores = _score_frame(verdicts, sham_house, sham_signification)
+    sham_pairs = _match_pairs(_build_cohort(master, labels, sham_scores,
+                                            case_map, control_map, exclude))
+    sham = _paired_stats(sham_pairs, direction, n_boot=n_boot)
+    sham_ok = sham["ci95"][0] <= 0.5 <= sham["ci95"][1]
+
+    # ── REAL target ───────────────────────────────────────────────────────────
+    scores = _score_frame(verdicts, house, signification)
+    cohort = _build_cohort(master, labels, scores, case_map, control_map, exclude)
+    real = _paired_stats(_match_pairs(cohort), direction, n_boot=n_boot)
+    n_case, n_ctrl = int(cohort.is_case.sum()), int((~cohort.is_case).sum())
+
+    insufficient = real["n_pairs"] < 30
+    passes = (not insufficient and sham_ok and real["ci95"][0] > 0.5
+              and (real["signed_rank_p"] or 1.0) < 0.05)
+    if insufficient:
+        verdict = f"INSUFFICIENT N: only {real['n_pairs']} matched pairs — not interpretable."
+    elif passes:
+        verdict = (f"SIGNAL: paired AUC {real['paired_auc']} CI{real['ci95']} — mapped-house "
+                   "affliction distinguishes the outcome within era+geography-matched certified pairs.")
+    else:
+        verdict = (f"NULL: paired AUC {real['paired_auc']} CI{real['ci95']} "
+                   f"(sham {sham['paired_auc']}, {'gate open' if sham_ok else 'GATE FAILED'}) — "
+                   "no distinction within era+geography-matched certified pairs.")
+
+    return {
+        "case": case_map, "control": control_map or "__POOLED__",
+        "target": {"house": house, "signification": signification, "direction": direction},
+        "n_certified_case": n_case, "n_certified_control": n_ctrl,
+        "sham_gate": {"house": sham_house, "signification": sham_signification,
+                      **sham, "null_gate_open": sham_ok},
+        "primary": real, "insufficient_n": insufficient, "verdict": verdict,
+    }
+
+
 def run(
     case_map: str, control_map: str, house: int, signification: str, direction: str,
     sham_house: int, sham_signification: str, n_boot: int = 2000,
@@ -155,54 +199,16 @@ def run(
     master = pd.read_parquet(_STORE / "person_master.parquet").set_index("person_id")
     labels = pd.read_parquet(_STORE / "labels.parquet")
     verdicts = pd.read_parquet(_STORE / "verdicts.parquet")
-
-    # ── SHAM FIRST (anti-peeking): off-target house must be null ──────────────
-    sham_scores = _score_frame(verdicts, sham_house, sham_signification)
-    sham_cohort = _build_cohort(master, labels, sham_scores, case_map, control_map)
-    sham_pairs = _match_pairs(sham_cohort)
-    sham = _paired_stats(sham_pairs, direction, n_boot=n_boot)
-    sham_ok = sham["ci95"][0] <= 0.5 <= sham["ci95"][1]
-    logger.info("SHAM house %d/%s: paired AUC %.3f CI%s -> %s",
-                sham_house, sham_signification, sham["paired_auc"], sham["ci95"],
-                "NULL (gate open)" if sham_ok else "NON-NULL (gate FAILED)")
-
-    # ── REAL target ───────────────────────────────────────────────────────────
-    scores = _score_frame(verdicts, house, signification)
-    cohort = _build_cohort(master, labels, scores, case_map, control_map)
-    pairs = _match_pairs(cohort)
-    real = _paired_stats(pairs, direction, n_boot=n_boot)
-    n_case = int(cohort.is_case.sum())
-    n_ctrl = int((~cohort.is_case).sum())
-
-    passes = sham_ok and real["ci95"][0] > 0.5 and (real["signed_rank_p"] or 1.0) < 0.05
-    verdict = (
-        f"{'SIGNAL' if passes else 'NULL'}: certified matched-pair paired AUC "
-        f"{real['paired_auc']} CI{real['ci95']} (sham {sham['paired_auc']}, "
-        f"{'gate open' if sham_ok else 'GATE FAILED'}). "
-        + ("The mapped-house affliction distinguishes the outcome within era+geography-matched "
-           "certified pairs." if passes else
-           "Within era+geography-matched certified pairs, the mapped-house affliction does not "
-           "distinguish the outcome — consistent with the program's convergent null, now on the "
-           "birth-certificate-certified slice under the matched-pair design.")
-    )
-
+    res = analyze_domain(master, labels, verdicts, case_map, control_map, house,
+                         signification, direction, sham_house, sham_signification, n_boot=n_boot)
     result = {
         "experiment": "Certified Cohort — matched-discordant-pair (Phase-2 engine on tier-A data)",
         "design_doc": "docs/raman_saab/CERTIFIED_COHORT_DESIGN.md",
         "certification": "quality_tier A only (AA Rodden + minute precision = birth-certificate)",
-        "case": case_map, "control": control_map,
-        "target": {"house": house, "signification": signification, "direction": direction},
-        "n_certified_case": n_case, "n_certified_control": n_ctrl,
         "matching": "decade x lat_band x lon_band (confounds only; chart free to vary)",
-        "sham_gate": {"house": sham_house, "signification": sham_signification,
-                      **sham, "null_gate_open": sham_ok},
-        "primary": real,
-        "power_note": f"{real['n_pairs']} pairs powers ~AUC 0.57+ at 80%; a suicide-thread-sized "
-                      "effect (~0.53) is under-powered here and would need the fresh cohort.",
-        "limitation": "celebrity corpus — the matched design controls era+geography+population but "
-                      "NOT celebrity selection; sex unavailable as a matching key. Both close only "
-                      "with fresh certified collection.",
-        "verdict": verdict,
+        "limitation": "celebrity corpus — matched design controls era+geography+population but NOT "
+                      "celebrity selection; sex unavailable as a matching key.",
+        **res,
     }
     _OUT.write_text(json.dumps(result, indent=2), encoding="utf-8")
     logger.info("wrote %s", _OUT)

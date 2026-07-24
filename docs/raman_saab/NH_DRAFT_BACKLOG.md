@@ -40,6 +40,26 @@ insufficient-evidence (chart_18/23/31/49 H4). This corroborates the roadmap's **
 mother-from-Moon frame** (`significations.py:218` declares `alternate_frame_core="Moon"` but
 `house_04_sukha/` has zero frame rules) and the thin H4 alternate-signification coverage.
 
+### UPDATE (2026-07-24): H4 has NO clean placement discriminator — it is a karaka-frame cluster
+
+Unlike H10 career (one clean B+/M- win -> H10.C.61), a full diagnostic found **no** clean,
+non-over-firing, n>=2 placement rule for H4 mother or education. Every candidate over-fires on a
+CONFIRMED-favourable chart:
+- **B+/M- 4th** (the H10.C.61 pattern): does not separate — chart_74 (mixed) is B+/M+; favourable
+  mothers span B+/M+, B-/M+.
+- **Papakartari on the 4th**: over-fires — a confirmed favourable education (h4_03) has it, and a
+  favourable mother (chart_31) has it (mother is judged from the Moon, not the 4th house).
+- **4th-lord in a dusthana**: over-fires — chart_67 (favourable happiness) has the 4th lord in the 8th.
+- **Mercury (Vidyakaraka) affliction** for education: the only clean signal is a *debilitated*
+  Mercury (chart_18 afflicted), but that is n=1 — below the anti-overfit threshold; malefic
+  conjunction/aspect counts do NOT separate (favourable h4_04/chart_70 carry 2 malefic aspects).
+
+**Conclusion:** the H4 misses need the KARAKA FRAME — the **Moon-as-Matrukaraka** reading for the
+mother (the roadmap's unimplemented mother-from-Moon frame: chart_31 favourable via a well-disposed
+Matrukaraka, chart_23/73 afflicted via Moon affliction) and the **Mercury-Vidyakaraka + 4th-lord**
+reading for education — not a single placement clause. That is a Tier-2 frame-encoding effort, not a
+clean one-rule win; it is deferred rather than forced (no over-firing/n=1 rule shipped).
+
 ## Full miss tally by signification
 
 | sig | misses | | sig | misses |

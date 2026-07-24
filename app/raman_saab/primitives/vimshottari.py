@@ -516,3 +516,25 @@ def lords_associated(chart: RamanChart, a: str, b: str) -> bool:
     if pa.rasi_house == pb.rasi_house:                      # conjunction
         return True
     return drishti.aspects_planet(a, b, chart) or drishti.aspects_planet(b, a, chart)
+
+
+def bhukti_tier(md_influences: bool, antar_influences: bool, associated: bool) -> Optional[str]:
+    """Raman's fructification tier for ONE house in a given Mahadasha/bhukti. UNIFORM across all
+    twelve houses — Raman states this explicitly (HTJAH-I:1588-1589 and repeats it for every house:
+    "the general principles enunciated in regard to the 1st house lord hold equally good", 2617,
+    3522, 4333, 8294, 16435) — applied to each house with ITS OWN significators.
+
+    The four grades (HTJAH-I:1592-1596, 1635-1640 [1st]; 2588-2599 [2nd, incl. 'feeble']; the
+    'feeble' grade recurs at 16404 [11th] / 17746 [12th]):
+      both lords influence the house + AD lord ASSOCIATED with the MD lord -> 'par excellence'
+      both lords influence the house + AD lord NOT associated with MD lord  -> 'ordinary'
+      only the AD (bhukti) lord influences the house (MD does not)          -> 'limited'
+      only the MD lord influences the house (the current bhukti does not)   -> 'feeble'
+    Returns None if neither period-lord influences the house."""
+    if md_influences and antar_influences:
+        return "par excellence" if associated else "ordinary"
+    if antar_influences:
+        return "limited"
+    if md_influences:
+        return "feeble"
+    return None

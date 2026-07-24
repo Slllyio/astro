@@ -74,8 +74,10 @@ class TestDetailedReport:
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
         assert "Mahadasha" in markdown and " AD** (" in markdown
-        # the HTJAH-I:1592-1640 grading vocabulary
-        assert "par excellence" in markdown and "limited (one lord)" in markdown
+        # the HTJAH-I four-tier grading vocabulary all appears across the window
+        for tier in ("par excellence", "ordinary", "limited (bhukti lord only)",
+                     "feeble (MD lord only)"):
+            assert tier in markdown
         assert "associated with MD" in markdown
         assert "<- now**" in markdown          # the current AD is flagged
 
@@ -88,14 +90,14 @@ class TestDetailedReport:
         assert lords_associated(ch, "Sun", "Jupiter") is True    # co-located in the 10th
         assert lords_associated(ch, "Sun", "Sun") is True        # own bhukti
 
-    def test_par_excellence_requires_association(self, report):
-        """A bhukti's both-lord houses are par-excellence iff the AD lord is associated with the
-        MD lord (HTJAH-I:1635-1640) — so association and the tier word co-vary."""
-        from app.raman_saab.primitives.vimshottari import lords_associated
-        md_markdown = to_markdown(report)
-        # at least one associated (par-excellence) AND one non-associated (ordinary) bhukti exist
-        assert "par excellence (both lords)" in md_markdown
-        assert "ordinary (both lords)" in md_markdown
+    def test_bhukti_tier_is_the_four_grade_scheme(self):
+        """The HTJAH-I four grades map exactly (uniform for every house)."""
+        from app.raman_saab.primitives.vimshottari import bhukti_tier
+        assert bhukti_tier(True, True, associated=True) == "par excellence"
+        assert bhukti_tier(True, True, associated=False) == "ordinary"
+        assert bhukti_tier(False, True, associated=False) == "limited"   # bhukti lord only
+        assert bhukti_tier(True, False, associated=False) == "feeble"    # MD lord only
+        assert bhukti_tier(False, False, associated=True) is None        # neither influences
 
     def test_diacritics_folded_not_blanked(self, markdown):
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""

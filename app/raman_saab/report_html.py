@@ -205,17 +205,24 @@ def _timeline(r: DetailedReport) -> str:
             out.append(f'<div class="md-group"><div class="md-head">{_esc(cur)} Mahadasha</div>'
                        f'<ol class="timeline">')
         associated = antar is not None and vd.lords_associated(r.chart, maha, antar)
-        tier = "par excellence" if associated else "ordinary"
         assoc = ("its own bhukti" if antar == maha
                  else f'AD <b>{"is" if associated else "is not"}</b> associated with MD')
-        both = "".join(_house_chip(a, ring=associated)
-                       for a in rows if a.grade == "par_excellence")
-        lim = "".join(_house_chip(a) for a in rows if a.grade == "limited")
+        buckets: dict[str, list] = {"par excellence": [], "ordinary": [], "limited": [], "feeble": []}
+        for a in rows:
+            tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
+            if tier:
+                buckets[tier].append(a)
         blocks = f'<div class="assoc-note">{assoc}</div>'
-        if both:
-            blocks += (f'<div class="lit-chips"><span class="theme-label">{tier}</span>{both}</div>')
-        if lim:
-            blocks += f'<div class="lit-chips lim"><span class="theme-label">limited</span>{lim}</div>'
+        _TITLE = {"limited": "bhukti lord only", "feeble": "MD lord only",
+                  "par excellence": "both lords, AD associated with MD",
+                  "ordinary": "both lords, not associated"}
+        for tier, items in buckets.items():
+            if not items:
+                continue
+            dim = " lim" if tier in ("limited", "feeble") else ""
+            chips = "".join(_house_chip(a, ring=(tier == "par excellence")) for a in items)
+            blocks += (f'<div class="lit-chips{dim}"><span class="theme-label" '
+                       f'title="{_TITLE[tier]}">{tier}</span>{chips}</div>')
         now = tp.period.start_jd <= r.ref_jd < tp.period.end_jd
         badge = '<span class="now-badge">now</span>' if now else ""
         ad = antar or maha
@@ -285,10 +292,10 @@ def to_html(r: DetailedReport) -> str:
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
     {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A planet influences a house by owning,
-    occupying or aspecting the house or its lord (HTJAH-I:1586-1629); houses both lords influence are
-    <em>par excellence</em> when the AD lord is associated with the MD lord, else <em>ordinary</em>;
-    one-lord houses are <em>limited</em> (HTJAH-I:1592-1640). Verdicts are the unchanged natal
-    readings.</p>
+    occupying or aspecting the house or its lord (HTJAH-I:1586-1629). Grades (uniform for every
+    house): both lords influence + AD associated with MD = <em>par excellence</em>, both but not
+    associated = <em>ordinary</em>, bhukti lord only = <em>limited</em>, MD lord only =
+    <em>feeble</em> (HTJAH-I:1592-1640, 2588-2599). Verdicts are the unchanged natal readings.</p>
   {_timeline(r)}
 
   <h2 class="section">Divisional deep-reads</h2>

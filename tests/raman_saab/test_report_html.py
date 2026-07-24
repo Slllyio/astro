@@ -47,11 +47,12 @@ class TestReportHtml:
         assert body.count('class="varga"') >= 5
         assert body.count('class="period"') >= 5
 
-    def test_timeline_shows_bhukti_grading(self, body):
-        """Each Antardasha shows the HTJAH-I grading: association note + par-excellence/limited."""
+    def test_timeline_shows_four_tier_grading(self, body):
+        """Each Antardasha shows the HTJAH-I grading: association note + all four grade labels."""
         assert "assoc-note" in body
         assert "associated with MD" in body
-        assert "par excellence" in body and "limited" in body
+        for tier in ("par excellence", "ordinary", "limited", "feeble"):
+            assert f">{tier}</span>" in body
 
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""

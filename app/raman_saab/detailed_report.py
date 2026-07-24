@@ -230,11 +230,12 @@ def to_markdown(r: DetailedReport) -> str:
     from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
              f"{r.window_forward} years ahead). A planet influences a house by owning, occupying or "
-             f"aspecting the house OR its lord (HTJAH-I:1586-1629). In a bhukti the houses BOTH "
-             f"lords influence give results PAR EXCELLENCE when the AD lord is associated "
-             f"(conjunct/aspect) with the MD lord, else ORDINARY; a house only one lord influences "
-             f"gives LIMITED results (HTJAH-I:1592-1640). Verdicts are the UNCHANGED natal readings "
-             f"above._")
+             f"aspecting the house OR its lord (HTJAH-I:1586-1629). Grades (uniform for every house, "
+             f"HTJAH-I:1592-1640, 2588-2599): both lords influence + AD associated with MD = PAR "
+             f"EXCELLENCE, both but not associated = ORDINARY, bhukti lord only = LIMITED, MD lord "
+             f"only = FEEBLE. Verdicts are the UNCHANGED natal readings above._")
+    _TIER_LABEL = {"par excellence": "par excellence", "ordinary": "ordinary",
+                   "limited": "limited (bhukti lord only)", "feeble": "feeble (MD lord only)"}
     cur_md: Optional[str] = None
     for tp in r.timeline.periods:
         rows, maha, antar = tp.activated, tp.period.maha, tp.period.antar
@@ -243,18 +244,18 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
         associated = antar is not None and vd.lords_associated(r.chart, maha, antar)
-        both = [f"H{a.house} {a.natal_verdict}" for a in rows if a.grade == "par_excellence"]
-        lim = [f"H{a.house} {a.natal_verdict}" for a in rows if a.grade == "limited"]
-        tier = "par excellence" if associated else "ordinary"
+        buckets: dict[str, list[str]] = {k: [] for k in _TIER_LABEL}
+        for a in rows:
+            tier = vd.bhukti_tier(a.md_activates, a.antar_activates, associated)
+            if tier:
+                buckets[tier].append(f"H{a.house} {a.natal_verdict}")
         assoc = "own bhukti" if antar == maha else \
             ("AD associated with MD" if associated else "AD not associated with MD")
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
         ad = antar or maha
-        seg = []
-        if both:
-            seg.append(f"**{tier} (both lords): {', '.join(both)}**")
-        if lim:
-            seg.append(f"limited (one lord): {', '.join(lim)}")
+        seg = [f"{'**' if k in ('par excellence', 'ordinary') else ''}{_TIER_LABEL[k]}: "
+               f"{', '.join(buckets[k])}{'**' if k in ('par excellence', 'ordinary') else ''}"
+               for k in _TIER_LABEL if buckets[k]]
         L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
                  f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
                  f"{'; '.join(seg) or '(no house influenced)'}")

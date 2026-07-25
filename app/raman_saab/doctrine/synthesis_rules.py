@@ -720,6 +720,179 @@ def _chk_n4(ctx: SynthesisContext) -> Optional[str]:
     return f"AD lord {p.antar} sits in house {seat} counted from MD lord {p.maha}: {read}"
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase C — the AV band (CLASSICAL_NONCITABLE; Raman's own caveat governs it and
+# is printed at the band head by the renderers; never outranks the bands above)
+# ─────────────────────────────────────────────────────────────────────────────
+
+AV_RULES: Final[tuple[SynthesisRule, ...]] = (
+    SynthesisRule(
+        "SYN_N7_AV_DASHA_SEAT", "av", "N7",
+        "The dasha graded by its lord's own bindus at his seat", "evaluable", _C,
+        "A planet's Dasha is auspicious when the sign he occupies at birth carries an excess of "
+        "bindus in his OWN Ashtakavarga; adverse when deficient; mixed when balanced "
+        "(Ashtakavarga of Patel ch015:996-1034, proportional 8=full down to 5=quarter).",
+        "A period's promise can be read from the dot-score under its ruler's own feet.",
+        ("Life-narrative", "Ashtakavarga"), None),
+    SynthesisRule(
+        "SYN_N7_AV_ANTARDASHA", "av", "N7",
+        "The bhukti graded inside the MD lord's Ashtakavarga", "evaluable", _C,
+        "The Antardasha of the lord of a bhava carrying only 1-3 bindus in the Mahadasha lord's "
+        "Ashtakavarga brings distress; of a bhava carrying 5 or more, benefit "
+        "(Ashtakavarga of Patel ch015:1140).",
+        "Sub-periods are coloured by how the main period's own chart of dots scores the "
+        "sub-lord's houses.",
+        ("Life-narrative", "Ashtakavarga"), None),
+    SynthesisRule(
+        "SYN_N8_SAV_THRESHOLD", "av", "N8",
+        "Sarvashtakavarga thresholds by house", "evaluable", _C,
+        "A sign with more than 30 bindus is very good, 25-30 middling, below 25 bad — and a "
+        "planet in a dusthana with a high bindu count still gives good results (the bindus can "
+        "override position; Ashtakavarga of Patel ch014:185-306). The per-bhava minima table "
+        "is left on record unencoded.",
+        "The dot-totals grade every house on an absolute scale, sometimes overriding placement.",
+        ("Ashtakavarga", "House-by-house"), None),
+    SynthesisRule(
+        "SYN_N9_KAKSHYA_TRANSIT", "av", "N9",
+        "Kakshya-level transits over bindus", "descriptive", _C,
+        "A transiting planet gives good or bad kakshya by kakshya (eighth-of-sign) according to "
+        "the presence of a bindu in that kakshya of its own Ashtakavarga — with roughly 4-day "
+        "resolution (Ashtakavarga of Patel ch016:59-97; Phaladeepika ch28 sl.41: high-bindu "
+        "signs give good transits even in the 6th/8th/12th). (Kakshya positions not computed.)",
+        "The finest classical transit clock — each planet's path is scored segment by segment.",
+        ("Current transits", "Ashtakavarga"), None),
+    SynthesisRule(
+        "SYN_N10_AV_LONGEVITY", "av", "N10",
+        "Ashtakavarga longevity and the Shodhyapinda timing", "descriptive", _C,
+        "Longevity summed from bindu-spans across the eight Ashtakavargas, and bhava-destruction "
+        "timed by Saturn's transit over the Shodhyapinda-derived nakshatra (BPHS vol2 ch071:40; "
+        "Patel ch014:941-1027, ch015:132-674). Raman's caveat is aimed PRECISELY here: the AV "
+        "method of longevity 'does not seem to be quite reliable' (HTJAH-II:4453-4456). "
+        "(Shodhyapinda not computed; on record only.)",
+        "The classics could turn the dot-tables into a lifespan clock — Raman himself did not "
+        "trust that use.",
+        ("Longevity", "Ashtakavarga"), None),
+    SynthesisRule(
+        "SYN_N11_TRANSIT_VOID", "av", "N11",
+        "A transit voided by the planet's own natal state", "evaluable", _C,
+        "A planet transiting a favourable house while natally debilitated (or eclipsed) yields "
+        "void results; transiting an unfavourable house while debilitated, aggravated ones "
+        "(Phaladeepika ch28 sl.31-32).",
+        "A transit is only as good as the planet making it.",
+        ("Current transits", "Planetary positions"), None),
+    SynthesisRule(
+        "SYN_N13_VARGOTTAMA_SAV", "av", "N13",
+        "Vargottama amplified or reversed by the bindu-count", "evaluable", _C,
+        "A vargottama planet in a sign carrying 30 or more SAV bindus enhances the good results "
+        "to the greatest extent; with a low count the reverse (Navamsa of Patel ch003:297-306).",
+        "Double-strength placement delivers only where the dot-support exists.",
+        ("Planetary positions", "Ashtakavarga"), None),
+    SynthesisRule(
+        "SYN_N14_MODERN_PROTOCOL", "av", "N14",
+        "Multi-system agreement (modern practice)", "descriptive", "MODERN",
+        "K.N. Rao's protocol: a prediction stands only when Vimshottari, Chara and a third dasha "
+        "concur, checked against transit Saturn/Jupiter and the Ashtakavarga points — applied "
+        "simultaneously and synthesised (Advanced Techniques:5458, 5833, 9039). On record as "
+        "modern practice, not doctrine.",
+        "Modern practitioners demand that several independent clocks agree before trusting one.",
+        ("Life-narrative", "Current transits"), None),
+)
+
+
+def _chk_n7_seat(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None:
+        return None
+    pos = ctx.chart.planets.get(p.maha)
+    if pos is None:
+        return None
+    try:
+        bav = ashtakavarga.bhinnashtakavarga(ctx.chart, p.maha)
+    except Exception:  # noqa: BLE001 — nodes have no BAV
+        return None
+    b = bav.get(pos.sign)
+    if b is None:
+        return None
+    read = "auspicious (excess)" if b >= 5 else "adverse (deficit)" if b <= 3 else "mixed (4)"
+    return (f"MD lord {p.maha} sits in {_SIGN[pos.sign]} holding {b} bindus in his own "
+            f"Ashtakavarga — his Dasha reads {read} by this method")
+
+
+def _chk_n7_ad(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or p.antar is None or p.antar == p.maha:
+        return None
+    try:
+        md_bav = ashtakavarga.bhinnashtakavarga(ctx.chart, p.maha)
+    except Exception:  # noqa: BLE001
+        return None
+    outs = []
+    for house in _lordships(ctx.chart, p.antar):
+        sign = (ctx.chart.asc_sign - 1 + house - 1) % 12 + 1
+        b = md_bav.get(sign)
+        if b is None:
+            continue
+        if b <= 3:
+            outs.append(f"H{house} (which {p.antar} rules) holds only {b} bindus in "
+                        f"{p.maha}'s Ashtakavarga — distress-leaning")
+        elif b >= 5:
+            outs.append(f"H{house} holds {b} bindus in {p.maha}'s Ashtakavarga — "
+                        f"benefit-leaning")
+    return "; ".join(outs) if outs else None
+
+
+def _chk_n8(ctx: SynthesisContext) -> Optional[str]:
+    if not ctx.sav:
+        return None
+    asc = ctx.chart.asc_sign
+    by_house = {h: ctx.sav.get((asc - 1 + h - 1) % 12 + 1, 0) for h in range(1, 13)}
+    good = [f"H{h} ({b})" for h, b in by_house.items() if b > 30]
+    bad = [f"H{h} ({b})" for h, b in by_house.items() if b < 25]
+    if not good and not bad:
+        return None
+    bits = []
+    if good:
+        bits.append("very good by bindu-count: " + ", ".join(good))
+    if bad:
+        bits.append("weak by bindu-count: " + ", ".join(bad))
+    return "; ".join(bits)
+
+
+def _chk_n11(ctx: SynthesisContext) -> Optional[str]:
+    outs = []
+    for g in ctx.gochara:
+        try:
+            nat = _dig.dignity(g.planet, ctx.chart)
+        except Exception:  # noqa: BLE001
+            continue
+        if nat != "debil":
+            continue
+        if g.gochara_good:
+            outs.append(f"{g.planet}'s favourable transit is VOID — natally debilitated")
+        else:
+            outs.append(f"{g.planet}'s adverse transit is AGGRAVATED — natally debilitated")
+    return "; ".join(outs) if outs else None
+
+
+def _chk_n13(ctx: SynthesisContext) -> Optional[str]:
+    if not ctx.sav:
+        return None
+    outs = []
+    for name, pos in ctx.chart.planets.items():
+        if not getattr(pos, "vargottama", False):
+            continue
+        b = ctx.sav.get(pos.sign)
+        if b is None:
+            continue
+        if b >= 30:
+            outs.append(f"vargottama {name} in {_SIGN[pos.sign]} with {b} SAV bindus — "
+                        f"enhanced to the greatest extent")
+        elif b < 20:
+            outs.append(f"vargottama {name} in {_SIGN[pos.sign]} with only {b} bindus — "
+                        f"the enhancement reverses")
+    return "; ".join(outs) if outs else None
+
+
 _register_checkers({
     "SYN_N1_LP_MATRIX": _chk_n1_matrix,
     "SYN_N1_OWN_BHUKTI": _chk_n1_own,
@@ -728,9 +901,14 @@ _register_checkers({
     "SYN_N3_KENDRADHIPATYA": _chk_n3_kendra,
     "SYN_N3_EIGHTH_LORD": _chk_n3_eighth,
     "SYN_N4_AD_FROM_MD": _chk_n4,
+    "SYN_N7_AV_DASHA_SEAT": _chk_n7_seat,
+    "SYN_N7_AV_ANTARDASHA": _chk_n7_ad,
+    "SYN_N8_SAV_THRESHOLD": _chk_n8,
+    "SYN_N11_TRANSIT_VOID": _chk_n11,
+    "SYN_N13_VARGOTTAMA_SAV": _chk_n13,
 })
 
-SYNTHESIS_RULES: Final[tuple[SynthesisRule, ...]] = RAMAN_RULES + CLASSICAL_RULES
+SYNTHESIS_RULES: Final[tuple[SynthesisRule, ...]] = RAMAN_RULES + CLASSICAL_RULES + AV_RULES
 
 
 def descriptive_rules(band: Optional[Band] = None) -> tuple[SynthesisRule, ...]:

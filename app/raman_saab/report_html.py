@@ -227,9 +227,88 @@ details.glossary dd{margin:.1rem 0 0;color:var(--ink-soft)}
 .lit-chips.lim{opacity:1}
 .lit-chips.lim .chip{background:transparent;border:1px dashed var(--rule);color:var(--ink-soft)}
 
+/* ── sticky progress bar ─────────────────────────────────────────── */
+.stickybar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;
+  gap:1rem;align-items:center;padding:.5rem clamp(1rem,4vw,2rem);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--rule);font-size:.76rem}
+.sb-sec{font-weight:600;color:var(--doctrine);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.sb-now{color:var(--instrument);font-weight:600;white-space:nowrap}
+
+/* ── chart diagrams ──────────────────────────────────────────────── */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem}
+.chartfig{margin:0}
+.chartfig figcaption{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);font-weight:600;margin-bottom:.4rem}
+.chartgrid{position:relative;display:grid;gap:2px;aspect-ratio:1;
+  grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);
+  grid-template-areas:"s12 s1 s2 s3" "s11 mid mid s4" "s10 mid mid s5" "s9 s8 s7 s6";
+  background:var(--rule);border:2px solid var(--rule)}
+.cbox{background:var(--surface);padding:.25rem .3rem;display:flex;flex-direction:column;gap:.15rem;
+  min-height:0;overflow:hidden}
+.cbox.asc{background:color-mix(in srgb,var(--doctrine) 10%,var(--surface));
+  box-shadow:inset 0 0 0 2px var(--doctrine)}
+.csign{font-size:.58rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+.cgrahas{display:flex;flex-wrap:wrap;gap:.15rem}
+.cgrahas i{font-style:normal;font-size:.72rem;font-weight:600;color:var(--doctrine);
+  font-family:var(--mono)}
+.cmid{grid-area:mid;background:var(--surface);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-family:var(--serif);font-size:.9rem;
+  color:var(--doctrine)}
+.cmid span{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* ── varga cards ─────────────────────────────────────────────────── */
+.vbody{padding:.9rem 1rem 1rem;display:flex;flex-direction:column;gap:.8rem}
+.vsec{border-radius:10px;padding:.7rem .85rem}
+.vcore{background:color-mix(in srgb,var(--doctrine) 7%,transparent);
+  border-left:3px solid var(--doctrine)}
+.voverlay{background:var(--instrument-soft);border-left:3px solid var(--instrument)}
+.vsec-label{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-soft);margin-bottom:.45rem}
+.vcore .vsec-label{color:var(--doctrine)}
+.voverlay .vsec-label{color:var(--instrument)}
+.vrow{display:grid;grid-template-columns:minmax(120px,1fr) 2fr;gap:.6rem;padding:.16rem 0;
+  font-size:.83rem;border-bottom:1px solid color-mix(in srgb,var(--rule) 60%,transparent)}
+.vrow:last-child{border-bottom:0}
+.vk{color:var(--ink-soft)}
+.vv{font-weight:500}
+.vtext{font-size:.83rem;color:var(--ink-soft);padding:.16rem 0}
+.vbanner{margin:.5rem 0 .1rem;padding:.35rem .6rem;border-radius:7px;font-weight:700;
+  font-size:.8rem;letter-spacing:.03em;background:var(--doctrine);color:var(--surface);
+  display:inline-block}
+details.vnotes{font-size:.78rem}
+details.vnotes summary{cursor:pointer;color:var(--ink-soft);font-size:.7rem;
+  letter-spacing:.08em;text-transform:uppercase}
+details.vnotes ul{margin:.4rem 0 0;padding-left:1.1rem;color:var(--ink-soft)}
+details.vnotes li{margin:.25rem 0}
+
+/* ── house filters ───────────────────────────────────────────────── */
+.filters{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.filters button{font:inherit;font-size:.76rem;font-weight:600;cursor:pointer;
+  padding:.3rem .7rem;border-radius:999px;border:1px solid var(--rule);
+  background:var(--surface);color:var(--ink-soft)}
+.filters button:hover{border-color:var(--instrument);color:var(--instrument)}
+.filters button.on{background:var(--doctrine);border-color:var(--doctrine);color:var(--surface)}
+.house[hidden]{display:none}
+
+/* ── glossary-linked header chips ────────────────────────────────── */
+a.sig-chip{text-decoration:none;color:inherit}
+a.sig-chip.has-gloss{border-bottom-style:dotted;cursor:help}
+a.sig-chip.has-gloss:hover{border-color:var(--instrument);color:var(--instrument)}
+
+/* ── caveat tags: bordered + iconised so disclaimers cannot be skimmed past ── */
+.tag--warn{border:1px solid var(--warn)}
+.tag--warn::before{content:"\\26A0  ";font-weight:700}
+.tag--univ{border:1px dashed var(--tag-ink)}
+.tag--univ::before{content:"\\2261  "}
+.tag--rare::before{content:"\\2726  "}
+
 @media (max-width:480px){
   .cal-row{grid-template-columns:1fr;gap:.15rem}
   .infostats b{font-size:1.25rem}
+  .vrow{grid-template-columns:1fr;gap:0}
+  .stickybar{font-size:.7rem}
 }
 
 @media print{
@@ -238,9 +317,16 @@ details.glossary dd{margin:.1rem 0 0;color:var(--ink-soft)}
   details.varga,details.glossary{border:1px solid #ccc}
   details.varga>summary,details.glossary>summary{list-style:none}
   details[open]>*{display:revert}
-  .house,.period,.yogalist li{break-inside:avoid}
-  .infobox,.instrument{background:transparent;border:1px solid #999}
+  .house,.period,.yogalist li,.vsec,.chartfig,.md-group,.infobox,.nowbox,
+  table.grid tr{break-inside:avoid}
+  h2.section{break-after:avoid}
+  .infobox,.instrument,.nowbox{background:transparent;border:1px solid #999}
   a{color:#000;text-decoration:none}
+  .stickybar,.filters{display:none}
+  details.varga,details.glossary,details.vnotes,details.md-group{display:block}
+  details>summary{list-style:none}
+  details:not([open])>*:not(summary){display:revert !important}
+  .house[hidden]{display:block !important}
 }
 """
 
@@ -285,10 +371,15 @@ def _cal_row(e) -> str:
         f'<span class="cal-note">{note}{tags}</span></div>')
 
 
-def _house_section(mr, cal, pf, chart) -> str:
+def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset()) -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay."""
-    active = '<span class="active-badge">active now</span>' if "ACTIVE in the running" in mr.reading \
-        else ""
+    is_active = "ACTIVE in the running" in mr.reading
+    active = '<span class="active-badge">active now</span>' if is_active else ""
+    flags = [_vclass(mr.verdict)]
+    if is_active:
+        flags.append("active")
+    if mr.house in distinctive_houses:
+        flags.append("distinctive")
     rows = "".join(_cal_row(e) for e in cal.entries)
     driver = rollup_driver(cal, mr.verdict)
     drv = (f'<span class="driver">driven by <b>{_esc(driver)}</b></span>' if driver else "")
@@ -311,7 +402,7 @@ def _house_section(mr, cal, pf, chart) -> str:
         pillars = f'<div class="pillars">{" &middot; ".join(bits)}</div>'
 
     return (
-        f'<section class="house"><div class="house-head">'
+        f'<section class="house" data-flags="{" ".join(flags)}"><div class="house-head">'
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>{drv}{active}</div>'
         f'{pillars}<p class="doctrine">{_bold(mr.reading)}</p>'
@@ -403,15 +494,127 @@ def _sav(r: DetailedReport) -> str:
     if not r.sav:
         return ""
     head = "".join(f"<th>{_SIGN_NAME[i][:3]}</th>" for i in range(1, 13))
-    cells = "".join(
-        f'<td class="num{" strong" if r.sav.get(i, 0) >= 30 else " weakc" if r.sav.get(i, 0) <= 25 else ""}">'
-        f'{r.sav.get(i, 0)}</td>' for i in range(1, 13))
+    vals = [r.sav.get(i, 0) for i in range(1, 13)]
+    lo, hi = min(vals), max(vals)
+    span = max(hi - 28, 28 - lo, 1)
+    cells = ""
+    for i, v in enumerate(vals, start=1):
+        # heat: deviation from the 28-bindu average, green above / terracotta below
+        t = min(abs(v - 28) / span, 1.0)
+        hue = "--favourable" if v >= 28 else "--afflicted"
+        cells += (f'<td class="num heat" style="background:color-mix(in srgb,var({hue}) '
+                  f'{t * 32:.0f}%,transparent)" title="{_esc(_SIGN_NAME[i])}: {v} bindus '
+                  f'({v - 28:+d} vs average)">{v}</td>')
     return ('<h2 class="section" id="sav">Ashtakavarga</h2>'
             '<p class="section-sub">Sarvashtakavarga bindus per sign; average 28 (total 337). '
             'Raman rates it corroborative, not decisive &mdash; <em>&ldquo;it does not seem to be '
             'quite reliable&rdquo;</em> (HTJAH-II:4453-4456).</p>'
             f'<div class="tablewrap"><table class="grid sav"><thead><tr>{head}</tr></thead>'
             f'<tbody><tr>{cells}</tr></tbody></table></div>')
+
+
+#: South-Indian fixed-sign layout: 4x4 grid, signs clockwise from Pisces top-left.
+_SI_LAYOUT: tuple[tuple[int, ...], ...] = ((12, 1, 2, 3), (11, 0, 0, 4), (10, 0, 0, 5),
+                                           (9, 8, 7, 6))
+_GRAHA_ABBR = {"Sun": "Su", "Moon": "Mo", "Mars": "Ma", "Mercury": "Me", "Jupiter": "Ju",
+               "Venus": "Ve", "Saturn": "Sa", "Rahu": "Ra", "Ketu": "Ke"}
+
+
+def _chart_grid(r: DetailedReport, *, navamsa: bool) -> str:
+    """A traditional South-Indian 12-box chart (signs fixed, Asc marked) as a CSS grid."""
+    asc = r.chart.asc_sign
+    if navamsa:
+        from app.raman_saab.primitives import special_points as sp
+        try:
+            asc = sp.navamsa_lagna(r.chart).sign
+        except Exception:  # noqa: BLE001
+            pass
+    occupants: dict[int, list[str]] = {s: [] for s in range(1, 13)}
+    for name, p in planet_rows(r.chart):
+        sign = p.navamsa_sign if navamsa else p.sign
+        occupants[sign].append(_GRAHA_ABBR.get(name, name[:2]))
+
+    cells = []
+    for row in _SI_LAYOUT:
+        for sign in row:
+            if sign == 0:
+                continue
+            is_asc = sign == asc
+            body = "".join(f'<i>{g}</i>' for g in occupants[sign])
+            cells.append(
+                f'<div class="cbox{" asc" if is_asc else ""}" '
+                f'style="grid-area:s{sign}">'
+                f'<span class="csign">{_esc(_SIGN_NAME[sign][:3])}'
+                f'{" &middot; Asc" if is_asc else ""}</span>'
+                f'<div class="cgrahas">{body}</div></div>')
+    label = "Navamsa (D-9)" if navamsa else "Rasi (D-1)"
+    return (f'<figure class="chartfig"><figcaption>{label}</figcaption>'
+            f'<div class="chartgrid">{"".join(cells)}'
+            f'<div class="cmid">{_esc(_SIGN_NAME[asc])}<span>lagna</span></div>'
+            f'</div></figure>')
+
+
+def _varga_card(label: str, body: str) -> str:
+    """Turn a varga renderer's monospace block into a structured card.
+
+    The renderers share one shape: provenance notes (`* [TAG] (cite) text`), a
+    `-- RAMAN CORE --` section, then a `-- D-x OVERLAY --` section, with `key : value`
+    rows and `>>> VERDICT <<<` banners. Parsed rather than re-implemented so the doctrine
+    text stays the single source.
+    """
+    notes: list[str] = []
+    sections: list[tuple[str, list[str]]] = []
+    cur: list[str] = []
+    cur_title = ""
+    for raw in body.splitlines():
+        line = raw.rstrip()
+        if not line.strip() or set(line.strip()) <= {"="}:
+            continue
+        if line.startswith("* "):
+            notes.append(line[2:].strip())
+            continue
+        if line.strip().startswith("--") and line.strip().endswith("--"):
+            if cur_title or cur:
+                sections.append((cur_title, cur))
+            cur_title, cur = line.strip().strip("- ").strip(), []
+            continue
+        if not cur_title and line.isupper():          # the renderer's own title line
+            continue
+        cur.append(line)
+    if cur_title or cur:
+        sections.append((cur_title, cur))
+
+    def _rows(lines: list[str]) -> str:
+        out = []
+        for ln in lines:
+            t = ln.strip()
+            if t.startswith(">>>"):
+                out.append(f'<div class="vbanner">{_esc(t.strip("&gt;&lt;> ").strip())}</div>')
+                continue
+            if t.startswith("- "):
+                t = t[2:]
+            key, sep, val = t.partition(":")
+            if sep and len(key) < 42:
+                out.append(f'<div class="vrow"><span class="vk">{_esc(key.strip())}</span>'
+                           f'<span class="vv">{_esc(val.strip())}</span></div>')
+            else:
+                out.append(f'<div class="vtext">{_esc(t)}</div>')
+        return "".join(out)
+
+    note_html = "".join(
+        f'<li>{_esc(n)}</li>' for n in notes)
+    sec_html = ""
+    for title, lines in sections:
+        core = "RAMAN CORE" in title.upper()
+        sec_html += (
+            f'<div class="vsec {"vcore" if core else "voverlay"}">'
+            f'<div class="vsec-label">{_esc(title)}</div>{_rows(lines)}</div>')
+    return (
+        f'<details class="varga"><summary>{_esc(label)}</summary>'
+        f'<div class="vbody">{sec_html}'
+        + (f'<details class="vnotes"><summary>provenance &amp; citations</summary>'
+           f'<ul>{note_html}</ul></details>' if note_html else "")
+        + "</div></details>")
 
 
 def _now_box(r: DetailedReport) -> str:
@@ -447,16 +650,29 @@ def _timeline(r: DetailedReport) -> str:
     """Windowed MD -> AD narrative graded per HTJAH-I:1592-1640: houses both lords influence are
     par-excellence when the AD lord is associated with the MD lord, else ordinary; a house only one
     lord influences is limited. Current AD marked."""
+    running_md = next((tp.period.maha for tp in r.timeline.periods
+                       if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    # count the bhuktis per MD so the accordion summary is informative while collapsed
+    spans: dict[str, list[float]] = {}
+    for tp in r.timeline.periods:
+        spans.setdefault(tp.period.maha, [tp.period.start_jd, tp.period.end_jd])
+        spans[tp.period.maha][1] = tp.period.end_jd
     out: list[str] = []
     cur: str | None = None
     for tp in r.timeline.periods:
         rows, maha, antar = tp.activated, tp.period.maha, tp.period.antar
         if maha != cur:
             if cur is not None:
-                out.append("</ol></div>")
+                out.append("</ol></details>")
             cur = maha
-            out.append(f'<div class="md-group"><h3 class="md-head">{_esc(cur)} Mahadasha</h3>'
-                       f'<ol class="timeline">')
+            lo, hi = spans[cur]
+            is_now = cur == running_md
+            out.append(
+                f'<details class="md-group"{" open" if is_now else ""}>'
+                f'<summary class="md-head">{_esc(cur)} Mahadasha'
+                f'<span class="period-dates">{_jd_to_date(lo)} &ndash; {_jd_to_date(hi)}</span>'
+                + ('<span class="now-badge">running</span>' if is_now else "")
+                + f'</summary><ol class="timeline">')
         associated, buckets = graded_buckets(tp, r.chart)   # ONE grading implementation
         assoc = ("its own bhukti" if antar == maha
                  else f'AD <b>{"is" if associated else "is not"}</b> associated with MD')
@@ -483,7 +699,7 @@ def _timeline(r: DetailedReport) -> str:
             f'<span class="period-dates">{_jd_to_date(tp.period.start_jd)} &ndash; '
             f'{_jd_to_date(tp.period.end_jd)}</span>{badge}</div>{blocks}</li>')
     if cur is not None:
-        out.append("</ol></div>")
+        out.append("</ol></details>")
     return "".join(out)
 
 
@@ -505,13 +721,29 @@ def to_html(r: DetailedReport) -> str:
         sig.append(("Sade-Sati", s.sade_sati.replace("Sade-Sati:", "").strip()))
     if s.panchanga:
         sig.append(("Panchanga", s.panchanga))
-    sig_html = "".join(f'<span class="sig-chip"><b>{_esc(k)}</b> {_esc(v)}</span>' for k, v in sig)
+    # header chips carry a plain-language tooltip pulled from the one glossary
+    def _chip(k: str, v: str) -> str:
+        gloss = next((g for term, g in GLOSSARY.items() if term.lower() in k.lower()), None)
+        if gloss:
+            return (f'<a class="sig-chip has-gloss" href="#glossary" title="{_esc(k)}: {_esc(gloss)}">'
+                    f'<b>{_esc(k)}</b> {_esc(v)}</a>')
+        return f'<span class="sig-chip"><b>{_esc(k)}</b> {_esc(v)}</span>'
 
+    sig_html = "".join(_chip(k, str(v)) for k, v in sig)
+
+    dist_houses = frozenset(h for h, _e in r.distinctive)
     houses = "".join(
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
-                       r.chart)
+                       r.chart, dist_houses)
         for mr in s.matters)
+    filters = ('<div class="filters" role="group" aria-label="filter houses">'
+               + "".join(f'<button type="button" data-filter="{f}"'
+                         f'{" class=\'on\'" if f == "all" else ""}>{lbl}</button>'
+                         for f, lbl in (("all", "All 12"), ("active", "Active now"),
+                                        ("favourable", "Favourable"), ("afflicted", "Afflicted"),
+                                        ("distinctive", "Distinctive")))
+               + "</div>")
 
     combos = "".join(f"<li>{_esc(c)}</li>" for c in s.longevity_combos)
     combos_html = f'<ul class="long-combos">{combos}</ul>' if combos else ""
@@ -522,10 +754,7 @@ def to_html(r: DetailedReport) -> str:
                        f'{bal}</p><p class="long-step"><b>2. Band by combination</b></p>'
                        + combos_html)
 
-    vargas = "".join(
-        f'<details class="varga"{" open" if i == 0 else ""}><summary>{_esc(label)}</summary>'
-        f'<pre>{_esc(body.strip())}</pre></details>'
-        for i, (label, body) in enumerate(r.divisional))
+    vargas = "".join(_varga_card(label, body) for label, body in r.divisional)
 
     extras = ""
     if s.career:
@@ -541,6 +770,10 @@ def to_html(r: DetailedReport) -> str:
                    f'inclination</p><ul class="doclist">{km}</ul>')
 
     return f"""<style>{_CSS}</style>
+<div class="stickybar" id="stickybar">
+  <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
+  <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
+</div>
 <main class="doc">
   <header>
     <div class="eyebrow">Vedic reading &middot; Sri B. V. Raman's system</div>
@@ -553,7 +786,8 @@ def to_html(r: DetailedReport) -> str:
       unchanged. Beneath it the <span class="v-sans">instrument</span> discloses how that verdict
       compares with {r.calibration[1].population_n:,} real charts &mdash; its information content,
       <em>not</em> a validated prediction about a life.</div>
-    <nav class="toc"><a href="#stands-out">What stands out</a><a href="#positions">Positions</a>
+    <nav class="toc"><a href="#stands-out">What stands out</a><a href="#charts">Charts</a>
+      <a href="#positions">Positions</a>
       <a href="#yogas">Yogas</a><a href="#sav">Ashtakavarga</a><a href="#houses">Houses</a>
       <a href="#longevity">Longevity</a><a href="#now">Now</a><a href="#timeline">Timeline</a>
       <a href="#vargas">Divisionals</a><a href="#glossary">Glossary</a></nav>
@@ -565,6 +799,10 @@ def to_html(r: DetailedReport) -> str:
 
   {_distinctive(r)}
 
+  <h2 class="section" id="charts">The charts</h2>
+  <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant is marked.</p>
+  <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}</div>
+
   {_positions(r)}
 
   {_yogas(r)}
@@ -574,7 +812,8 @@ def to_html(r: DetailedReport) -> str:
   <h2 class="section" id="houses">House by house</h2>
   <p class="section-sub">Each bhava: Raman's pillars (lord, karaka, navamsa), his verdict, then the
     population context. {_esc(ROLLUP_RULE)}</p>
-  {houses}
+  {filters}
+  <div class="houses">{houses}</div>
 
   <h2 class="section" id="longevity">Longevity</h2>
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
@@ -610,7 +849,33 @@ def to_html(r: DetailedReport) -> str:
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.
     Percentiles state how this chart's reading compares with real charts under Raman's method &mdash;
     a statement about the method's output, not a validated prediction about life outcomes.</div>
-</main>"""
+</main>
+<script>
+(function () {{
+  var houses = document.querySelector('.houses');
+  var bar = document.querySelector('.filters');
+  if (houses && bar) {{
+    bar.addEventListener('click', function (ev) {{
+      var btn = ev.target.closest('button[data-filter]');
+      if (!btn) return;
+      var want = btn.dataset.filter;
+      bar.querySelectorAll('button').forEach(function (b) {{ b.classList.toggle('on', b === btn); }});
+      houses.querySelectorAll('.house').forEach(function (h) {{
+        var flags = (h.dataset.flags || '').split(' ');
+        h.hidden = !(want === 'all' || flags.indexOf(want) !== -1);
+      }});
+    }});
+  }}
+  var label = document.getElementById('sb-sec');
+  var secs = Array.prototype.slice.call(document.querySelectorAll('h2.section[id]'));
+  if (label && secs.length && 'IntersectionObserver' in window) {{
+    var io = new IntersectionObserver(function (entries) {{
+      entries.forEach(function (e) {{ if (e.isIntersecting) label.textContent = e.target.textContent; }});
+    }}, {{ rootMargin: '-45% 0px -50% 0px' }});
+    secs.forEach(function (sec) {{ io.observe(sec); }});
+  }}
+}})();
+</script>"""
 
 
 def standalone_html(r: DetailedReport, *, title: str | None = None) -> str:

@@ -96,6 +96,41 @@ class TestReportHtml:
         assert "graded_buckets" in src
         assert "bhukti_tier(" not in src          # no second copy of the doctrine grading
 
+    def test_charts_are_drawn_and_astronomically_correct(self, report, body):
+        """Rasi + Navamsa South-Indian grids render, with each graha in its computed sign."""
+        import re
+        assert body.count('class="chartgrid"') == 2
+        rasi = body.split('class="chartgrid"')[1]
+        for name, abbr in (("Sun", "Su"), ("Saturn", "Sa"), ("Moon", "Mo")):
+            sign = report.chart.planets[name].sign
+            cell = re.search(rf'grid-area:s{sign}">.*?</div>', rasi, re.S)
+            assert cell and abbr in cell.group(0), f"{name} missing from sign {sign}"
+        assert 'class="cbox asc"' in body          # ascendant is marked
+
+    def test_divisional_blocks_are_cards_not_pre_dumps(self, body):
+        """Varga readings render as structured cards, core visually split from overlay."""
+        assert "<pre>" not in body
+        assert "vsec vcore" in body and "vsec voverlay" in body
+        assert 'class="vrow"' in body and 'class="vbanner"' in body
+
+    def test_timeline_accordion_opens_only_the_running_md(self, body):
+        """Mahadasha groups collapse; exactly the running one is expanded."""
+        assert body.count('<details class="md-group"') >= 4
+        assert body.count('<details class="md-group" open>') == 1
+
+    def test_filters_tooltips_heatmap_and_sticky_bar(self, body):
+        """Interactive affordances: filters, glossary tooltips, SAV heat, sticky header."""
+        assert 'data-filter="all"' in body and 'data-filter="distinctive"' in body
+        assert 'data-flags="' in body
+        assert "has-gloss" in body and "cursor:help" in body
+        assert 'class="num heat"' in body and "color-mix" in body
+        assert 'id="stickybar"' in body and "IntersectionObserver" in body
+
+    def test_caveat_tags_are_iconised(self, body):
+        """INVERTED / NEAR-UNIVERSAL tags carry a border and glyph so they cannot be skimmed."""
+        assert ".tag--warn::before" in body and ".tag--univ::before" in body
+        assert "border:1px solid var(--warn)" in body
+
     def test_print_and_accessibility_fixes(self, body):
         """Print stylesheet, meter midpoint, and no opacity-dimmed text."""
         assert "@media print" in body

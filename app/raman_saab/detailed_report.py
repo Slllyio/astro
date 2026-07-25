@@ -191,15 +191,18 @@ class InfoContent:
     near_universal: int
     inverted: int
     distinctive: int
+    inverted_locations: tuple[str, ...] = ()   # e.g. ("H3 courage", "H12 incarceration")
 
     @property
     def sentence(self) -> str:
+        where = f" ({', '.join(self.inverted_locations)})" if self.inverted_locations else ""
         return (
             f"{self.total} readings. {self.modal_count} return the single most common verdict "
             f"({self.modal_verdict}). {self.near_universal} are near-universal — held by half the "
             f"population or more. {self.inverted} sit on channels this project's validation "
-            f"program proved run backwards. {self.distinctive} are genuinely distinctive. "
-            f"This is a disclosure about the method's output, not a statement about a life.")
+            f"program proved run backwards{where} — treat any house driven by one of these with "
+            f"maximal skepticism. {self.distinctive} are genuinely distinctive. This is a "
+            f"disclosure about the method's output, not a statement about a life.")
 
 
 def _all_entries(calibration: dict[int, CalibratedHouseReading]):
@@ -218,11 +221,13 @@ def information_content(calibration: dict[int, CalibratedHouseReading]) -> InfoC
         key = f"{e.verdict} ({e.degree})"
         counts[key] = counts.get(key, 0) + 1
     modal_verdict, modal_count = max(counts.items(), key=lambda kv: kv[1]) if counts else ("-", 0)
+    inv_locs = tuple(f"H{h} {e.signification}" for h, e in pairs if e.inverted_warning)
     return InfoContent(
         total=len(pairs), modal_verdict=modal_verdict, modal_count=modal_count,
         near_universal=sum(1 for _h, e in scored if (e.band_share or 0) >= 0.5),
         inverted=sum(1 for _h, e in pairs if e.inverted_warning),
         distinctive=sum(1 for _h, e in scored if e.rarity != "common"),
+        inverted_locations=inv_locs,
     )
 
 
@@ -236,16 +241,76 @@ def distinctive_entries(calibration: dict[int, CalibratedHouseReading], n: int =
     return tuple(scored[:n])
 
 
-def rollup_driver(reading: CalibratedHouseReading, rollup: str) -> str | None:
-    """Which signification drove the house rollup — the engine grades a bhava by its WORST decided
-    matter, so one afflicted signification makes the whole house read afflicted. Naming it prevents
-    the reader seeing a contradiction when the other significations look sound."""
-    hits = [e.signification for e in reading.entries if e.verdict == rollup]
+def driver_entry(reading: CalibratedHouseReading, rollup: str):
+    """The CalibratedEntry that drove the house rollup (first signification sharing the
+    house's verdict) — the engine grades a bhava by its WORST decided matter, so one afflicted
+    signification makes the whole house read afflicted. Returning the entry (not just its name)
+    lets a caller check whether that specific driver sits on an atlas-proven inverted channel."""
+    hits = [e for e in reading.entries if e.verdict == rollup]
     return hits[0] if hits else None
+
+
+def rollup_driver(reading: CalibratedHouseReading, rollup: str) -> str | None:
+    """Which signification drove the house rollup (name only). See ``driver_entry``."""
+    e = driver_entry(reading, rollup)
+    return e.signification if e else None
 
 
 ROLLUP_RULE = ("A bhava is graded by its weakest decided matter — one afflicted signification "
                "makes the whole house read afflicted even when the rest are sound.")
+
+
+@dataclass(frozen=True)
+class TenorSplit:
+    """How a house's significations actually split, independent of the weakest-link headline.
+    Answers the reader's real question directly: is this house MOSTLY favourable with one sore
+    spot, or genuinely afflicted throughout?"""
+    favourable: int
+    afflicted: int
+    mixed: int
+    total: int
+    majority: str            # "favourable" | "afflicted" | "mixed" | "insufficient-evidence"
+
+
+def signification_tenor_split(reading: CalibratedHouseReading) -> TenorSplit:
+    """Count each house's significations by their OWN verdict (never re-judged) and report the
+    majority tenor — the counterweight to the single-worst-wins headline."""
+    counts = {"favourable": 0, "afflicted": 0, "mixed": 0}
+    for e in reading.entries:
+        if e.verdict in counts:
+            counts[e.verdict] += 1
+    decided = sum(counts.values())
+    if decided == 0:
+        majority = "insufficient-evidence"
+    else:
+        top = max(counts.values())
+        tied = [k for k, v in counts.items() if v == top]
+        majority = tied[0] if len(tied) == 1 else "mixed"   # a genuine tie reads as mixed
+    return TenorSplit(favourable=counts["favourable"], afflicted=counts["afflicted"],
+                      mixed=counts["mixed"], total=len(reading.entries), majority=majority)
+
+
+def tenor_note(split: TenorSplit, rollup: str) -> str | None:
+    """A plain sentence when the majority tenor disagrees with the weakest-link headline —
+    None when they already agree (no need to belabour a house that is genuinely afflicted)."""
+    if split.total <= 1 or split.majority == rollup or split.majority == "insufficient-evidence":
+        return None
+    if split.majority == "favourable":
+        return (f"{split.favourable} of {split.total} sub-readings are actually favourable — "
+                f"the headline follows the single weakest decided matter, not the majority.")
+    if split.majority == "afflicted":
+        return (f"{split.afflicted} of {split.total} sub-readings are actually afflicted — "
+                f"the headline follows the single weakest decided matter, not the majority.")
+    # majority == "mixed": either a genuine mixed-verdict plurality, or signification_tenor_split
+    # resolved a favourable/afflicted TIE to "mixed" — the two need different wording.
+    if split.mixed > 0 and split.mixed >= split.favourable and split.mixed >= split.afflicted:
+        return (f"{split.mixed} of {split.total} sub-readings are genuinely mixed — the "
+                f"headline follows the single weakest decided matter, not the majority.")
+    if split.favourable == split.afflicted and split.favourable > 0:
+        return (f"an even split ({split.favourable} favourable vs {split.afflicted} afflicted) "
+                f"— the headline follows the single weakest decided matter, not a genuine "
+                f"consensus either way.")
+    return None
 
 
 def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
@@ -623,16 +688,29 @@ def to_markdown(r: DetailedReport) -> str:
     # ── house-by-house, with pillars + calibration ────────────────────────────
     L.append("## House-by-house reading")
     L.append("")
-    L.append(f"_{ROLLUP_RULE}_")
+    L.append(f"_{ROLLUP_RULE} Where the majority of a house's significations disagree with that "
+             f"headline, a **Split status** note says so — and where the headline is driven by "
+             f"an atlas-proven inverted channel, a **WARNING** is shown inline._")
     for mr in s.matters:
         pf = r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None
         cal_reading = r.calibration[mr.house]
         L.append("")
-        driver = rollup_driver(cal_reading, mr.verdict)
+        drv_entry = driver_entry(cal_reading, mr.verdict)
+        driver = drv_entry.signification if drv_entry else None
         head = f"### House {mr.house} — {mr.name}: {mr.verdict.upper()}"
         if driver:
             head += f" (driven by _{driver}_)"
         L.append(head)
+        split = signification_tenor_split(cal_reading)
+        note = tenor_note(split, mr.verdict)
+        if note:
+            L.append("")
+            L.append(f"> **Split status**: {note}")
+        if drv_entry is not None and drv_entry.inverted_warning:
+            L.append("")
+            L.append(f"> **WARNING**: the driver, _{driver}_, is an atlas-proven INVERTED "
+                     f"channel — real cases ran opposite to this reading; treat this house's "
+                     f"headline with maximal skepticism.")
         L.append("")
         if pf is not None:
             led = pf.significations[0].ledger

@@ -104,6 +104,13 @@ class TestDetailedReport:
         assert lords_associated(ch, "Sun", "Jupiter") is True    # co-located in the 10th
         assert lords_associated(ch, "Sun", "Sun") is True        # own bhukti
 
+    def test_information_content_names_inverted_locations(self, report, markdown):
+        """The top-level honesty headline names WHICH houses/significations are proven
+        inverted, not just a bare count — addressing 'flag these in the summary' feedback."""
+        assert report.info.inverted_locations == ("H3 courage", "H12 incarceration")
+        assert "H3 courage" in markdown and "H12 incarceration" in markdown
+        assert "treat any house driven by one of these" in markdown
+
     def test_information_content_is_an_honest_aggregate(self, report, markdown):
         """The honesty headline counts the whole calibration, not a sample."""
         i = report.info
@@ -195,6 +202,58 @@ class TestDetailedReport:
         """Sanskrit IAST from the varga renderers folds to base letters, never '?' mojibake."""
         assert "Navamsa" in markdown
         assert "Nav?" not in markdown and "k?raka" not in markdown
+
+    def test_split_status_note_when_majority_disagrees_with_headline(self, report, markdown):
+        """H10/H12 on the canonical chart are afflicted headlines driven by one signification
+        while the majority reads favourable — the split status must say so, without touching
+        the verdict itself."""
+        from app.raman_saab.detailed_report import (
+            driver_entry, signification_tenor_split, tenor_note,
+        )
+        for house in (10, 12):
+            mr = next(m for m in report.synthesis.matters if m.house == house)
+            cal = report.calibration[house]
+            split = signification_tenor_split(cal)
+            assert split.majority == "favourable"
+            note = tenor_note(split, mr.verdict)
+            assert note is not None and "favourable" in note
+        assert "Split status" in markdown
+        assert "the headline follows the single weakest decided matter" in markdown
+
+    def test_split_status_silent_when_headline_matches_majority(self, report):
+        """A genuinely afflicted house (majority itself afflicted) gets no split note — the
+        note exists to prevent false alarm, not to annotate every house."""
+        from app.raman_saab.detailed_report import signification_tenor_split, tenor_note
+        mr6 = next(m for m in report.synthesis.matters if m.house == 6)
+        split = signification_tenor_split(report.calibration[6])
+        assert split.majority == mr6.verdict           # canonical H6 is genuinely afflicted
+        assert tenor_note(split, mr6.verdict) is None
+
+    def test_tenor_split_tie_reads_as_even_split_not_zero_mixed(self):
+        """A 2-favourable/2-afflicted tie must read as 'an even split', never as a nonsensical
+        '0 of N mixed' (the bug caught while implementing this)."""
+        from app.raman_saab.detailed_report import TenorSplit, tenor_note
+        tie = TenorSplit(favourable=2, afflicted=2, mixed=0, total=4, majority="mixed")
+        note = tenor_note(tie, "afflicted")
+        assert note is not None
+        assert "even split" in note
+        assert "0 of 4" not in note
+
+    def test_genuine_mixed_majority_reads_correctly(self):
+        """A true mixed-verdict plurality (not a tie) is worded distinctly from a tie."""
+        from app.raman_saab.detailed_report import TenorSplit, tenor_note
+        genuinely_mixed = TenorSplit(favourable=1, afflicted=0, mixed=3, total=4, majority="mixed")
+        note = tenor_note(genuinely_mixed, "afflicted")
+        assert note is not None and "3 of 4" in note and "genuinely mixed" in note
+
+    def test_driver_entry_flags_inverted_channel_inline(self, report, markdown):
+        """H12's driver (incarceration) is the atlas-proven inverted channel — the house head
+        must carry an explicit WARNING, not just the small per-row tag."""
+        from app.raman_saab.detailed_report import driver_entry
+        mr12 = next(m for m in report.synthesis.matters if m.house == 12)
+        d = driver_entry(report.calibration[12], mr12.verdict)
+        assert d is not None and d.signification == "incarceration" and d.inverted_warning
+        assert "WARNING" in markdown and "atlas-proven INVERTED channel" in markdown
 
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.

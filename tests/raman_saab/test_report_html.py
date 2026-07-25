@@ -143,6 +143,20 @@ class TestReportHtml:
         assert 'class="plain"' in body
         assert "In plain terms" in body
 
+    def test_info_box_names_inverted_locations(self, body):
+        """The top-level info box lists inverted channels by house, not just a bare count."""
+        assert "Inverted channels in this chart" in body
+        assert "H3 courage" in body and "H12 incarceration" in body
+        assert "infonote--warn" in body
+
+    def test_split_status_badge_and_inverted_banner(self, body):
+        """The majority-tenor badge and the inverted-driver banner both reach the HTML,
+        addressing the H10/H12 weakest-link contradiction directly in the house head."""
+        assert "split-badge" in body
+        assert "split-note" in body
+        assert "split-note--warn" in body
+        assert "atlas-proven" in body and "INVERTED channel" in body
+
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""
         evil = BirthData("<script>alert(1)</script>", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)

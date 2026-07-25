@@ -44,6 +44,34 @@ banner) — plus a doctrine-on-record list and the excluded-techniques note.
 (The HTML renderer places the signature chips in the page header and adds the HTML-only
 now-box/chart-grid sections; its document order is `HTML_SECTION_ORDER` in the same module.)
 
+**Content amendment (2026-07-26) — the weakest-link contradiction.** External review of a
+generated report identified a real readability defect: `house_template._rollup` grades a bhava by
+its single WORST decided signification (HTJAH-I:1592-1640's own design), so one afflicted
+sub-matter — e.g. Property in House 4, D-7 Children in House 5, the classical Maraka trigger in
+House 8 — stamps the WHOLE house's headline afflicted even when 4-6 of its other significations
+read favourable. The verdict itself is correct and un-touchable (the rollup is Raman's own rule,
+protected by the golden ratchet and the verdict-authority invariant); what needed fixing was that
+the report gave the reader no way to see the split. Fixed as three **presentation-only** additions
+inside existing sections (no new SectionSpec row, no contract change):
+- **Split-status note** (`detailed_report.signification_tenor_split` / `tenor_note`, section #12
+  House-by-house): counts each house's significations by their OWN verdict and states the
+  majority tenor whenever it disagrees with the weakest-link headline — e.g. *"5 of 6 sub-readings
+  are actually favourable — the headline follows the single weakest decided matter, not the
+  majority."* Silent when the house is genuinely afflicted throughout (majority agrees).
+- **Inline inverted-channel warning** (section #12): when the specific signification driving the
+  headline (`driver_entry`) is itself an atlas-proven inverted channel (H3 courage, H12
+  incarceration), the house head carries an explicit WARNING, not just the small per-row tag.
+- **Named inverted locations at the top level** (`InfoContent.inverted_locations`, section #3
+  Information content): the honesty headline now names WHICH houses/significations are proven
+  inverted (e.g. "H3 courage, H12 incarceration"), not just a bare count — so the reader meets the
+  warning before reaching the house-by-house detail.
+
+Deliberately NOT done: re-weighting or replacing the rollup verdict itself (would break the
+verdict-authority invariant and the golden ratchet), and a formal "internal capacity vs external
+event" signification taxonomy (the driver-naming + split-status combination already tells the
+reader which specific sub-matter is the exception and how many others are sound, without inventing
+a new classification scheme).
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

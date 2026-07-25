@@ -22,9 +22,12 @@ from app.raman_saab.detailed_report import (
     _TIER_MEANING,
     DetailedReport,
     graded_buckets,
+    driver_entry,
     plain_bhukti_summary,
     planet_rows,
     rollup_driver,
+    signification_tenor_split,
+    tenor_note,
 )
 from app.raman_saab.primitives import nakshatra_signature
 from app.raman_saab.render import _jd_to_date
@@ -171,6 +174,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--doctrine);outline-
 .infostats span{font-size:.72rem;color:var(--ink-soft)}
 .infostats .hi b{color:var(--doctrine)}
 .infonote{font-size:.84rem;color:var(--ink-soft);margin:.8rem 0 0}
+.infonote--warn{color:var(--warn)}
+.infonote--warn .tag--warn{margin-right:.3rem}
 
 /* ── running-now box ─────────────────────────────────────────────── */
 .nowbox{margin:1.8rem 0 0;padding:1.1rem 1.2rem;border:2px solid var(--doctrine);
@@ -208,6 +213,14 @@ table.sav .weakc{color:var(--afflicted);font-weight:700}
 .driver{font-size:.72rem;color:var(--ink-soft)}
 .driver b{color:var(--ink)}
 .long-step{margin:.3rem 0;font-size:.9rem}
+
+/* ── split status: the majority tenor vs the weakest-link headline ───────── */
+.split-badge{opacity:.85;font-weight:500;cursor:help}
+.split-note{margin:.5rem 0 0;padding:.5rem .75rem;border-radius:8px;font-size:.82rem;
+  background:var(--tag-bg);color:var(--tag-ink);border-left:3px solid var(--instrument)}
+.split-note--warn{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);
+  border-left-color:var(--warn);font-weight:500}
+.split-note--warn b{color:var(--warn)}
 
 /* ── glossary ────────────────────────────────────────────────────── */
 details.glossary{margin:2.4rem 0 0;border:1px solid var(--rule);border-radius:10px;
@@ -397,8 +410,29 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     if mr.house in distinctive_houses:
         flags.append("distinctive")
     rows = "".join(_cal_row(e) for e in cal.entries)
-    driver = rollup_driver(cal, mr.verdict)
+    drv_entry = driver_entry(cal, mr.verdict)
+    driver = drv_entry.signification if drv_entry else None
     drv = (f'<span class="driver">driven by <b>{_esc(driver)}</b></span>' if driver else "")
+
+    split = signification_tenor_split(cal)
+    note = tenor_note(split, mr.verdict)
+    split_badge = split_note_html = inverted_note_html = ""
+    if note:
+        if split.favourable == split.afflicted and split.mixed == 0:
+            badge_label = f"{split.favourable}-{split.afflicted} split"
+        else:
+            n = {"favourable": split.favourable, "afflicted": split.afflicted,
+                 "mixed": split.mixed}[split.majority]
+            badge_label = f"{n}/{split.total} {split.majority}"
+        split_badge = (f'<span class="chip chip--{_vclass(split.majority)} split-badge" '
+                       f'title="{_esc(note)}">{_esc(badge_label)}</span>')
+        split_note_html = f'<div class="split-note">Split status: {_esc(note)}</div>'
+    if drv_entry is not None and drv_entry.inverted_warning:
+        inverted_note_html = (
+            '<div class="split-note split-note--warn">&#9888; The driver, '
+            f'<b>{_esc(driver)}</b>, is an atlas-proven <b>INVERTED channel</b> — real cases '
+            'ran opposite to this reading; treat this house’s headline with maximal '
+            'skepticism.</div>')
 
     pillars = ""
     if pf is not None and pf.significations:
@@ -420,7 +454,9 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     return (
         f'<section class="house" data-flags="{" ".join(flags)}"><div class="house-head">'
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
-        f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>{drv}{active}</div>'
+        f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
+        f'{split_badge}{drv}{active}</div>'
+        f'{split_note_html}{inverted_note_html}'
         f'{pillars}<p class="doctrine">{_bold(mr.reading)}</p>'
         f'<div class="instrument"><div class="instrument-label">Population context '
         f'&mdash; empirical, not Raman</div>{rows}</div></section>')
@@ -436,6 +472,13 @@ def _house_chip(a, *, ring: bool = False) -> str:
 def _info_box(r: DetailedReport) -> str:
     """The honesty headline: how much of this document actually distinguishes this chart."""
     i = r.info
+    inv_line = ""
+    if i.inverted_locations:
+        chips = "".join(f'<span class="tag tag--warn">{_esc(loc)}</span>'
+                        for loc in i.inverted_locations)
+        inv_line = (f'<p class="infonote infonote--warn"><b>Inverted channels in this chart:</b> '
+                   f'{chips} &mdash; any house headline driven by one of these ran opposite to '
+                   f'real cases in the validation program; treat with maximal skepticism.</p>')
     return (
         f'<div class="infobox"><div class="infobox-label">Information content of this reading</div>'
         f'<div class="infostats">'
@@ -447,7 +490,7 @@ def _info_box(r: DetailedReport) -> str:
         f'</div><p class="infonote">Most of this document is generic: {i.modal_count} of '
         f'{i.total} readings return the single most common verdict ({_esc(i.modal_verdict)}). '
         f'This is a disclosure about the method&rsquo;s output, not a statement about a life.</p>'
-        f'</div>')
+        f'{inv_line}</div>')
 
 
 def _distinctive(r: DetailedReport) -> str:
@@ -1005,7 +1048,9 @@ def to_html(r: DetailedReport) -> str:
 
   <h2 class="section" id="houses">House by house</h2>
   <p class="section-sub">Each bhava: Raman's pillars (lord, karaka, navamsa), his verdict, then the
-    population context. {_esc(ROLLUP_RULE)}</p>
+    population context. {_esc(ROLLUP_RULE)} Where the majority of a house&rsquo;s significations
+    disagree with that headline, a <b>split-status</b> badge says so &mdash; and where the
+    headline is driven by an atlas-proven inverted channel, a warning is shown inline.</p>
   {filters}
   <div class="houses">{houses}</div>
 

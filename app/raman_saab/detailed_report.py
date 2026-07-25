@@ -24,8 +24,9 @@ from dataclasses import dataclass
 from typing import Optional
 
 from app.raman_saab import (
-    render_dasamsa, render_dwadasamsa, render_navamsa, render_saptamsa,
-    render_siddhamsa, render_trimsamsa,
+    render_dasamsa, render_dwadasamsa, render_general_varga, render_matter_varga,
+    render_navamsa, render_pitru, render_saptamsa, render_siddhamsa, render_soul,
+    render_trimsamsa,
 )
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
@@ -43,8 +44,20 @@ from app.raman_saab.judges.navamsa_marriage_reading import build_navamsa_marriag
 from app.raman_saab.judges.saptamsa_reading import build_saptamsa_children_reading
 from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
 from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
+from app.raman_saab.judges.general_varga_reading import build_general_varga_reading
 from app.raman_saab.judges.house_template import HouseProforma
+from app.raman_saab.judges.matter_varga_dashboard import (
+    MatterVargaDashboard,
+    build_matter_varga_dashboard,
+)
+from app.raman_saab.judges.matter_varga_reading import build_matter_varga_reading
+from app.raman_saab.judges.pitru_dosha_reading import (
+    PitruDoshaReading,
+    build_pitru_dosha_reading,
+)
+from app.raman_saab.judges.soul_reading import SoulReading, build_soul_reading
 from app.raman_saab.primitives import ashtakavarga, ayurdaya, nakshatra_signature
+from app.raman_saab.primitives import transits as tr
 from app.raman_saab.primitives.balarishta import BalarishtaState
 from app.raman_saab.proforma import read_chart
 from app.raman_saab.reading_timeline import DashaTimeline, reading_timeline
@@ -98,7 +111,67 @@ GLOSSARY: dict[str, str] = {
     "par excellence": "full, strong results (both period-lords reinforce the house)",
     "Mahadasha": "a major planetary period in the Vimshottari system (years to decades)",
     "Antardasha": "a sub-period (bhukti) inside a Mahadasha",
+    "Shadbala": "the classical six-fold strength measure (positional, directional, temporal, "
+                "motional, natural, aspectual), totalled in rupas",
+    "Gochara": "the current transits, read from the natal Moon. Raman: secondary, catalytic — "
+               "conclusions rest on the dashas",
+    "Vedha": "an obstruction point: a planet transiting the Vedha position cancels an otherwise "
+             "favourable transit",
+    "Ishta-Devata": "the guiding deity indicated by the Karakamsa (Jaimini)",
+    "chara dasha": "Jaimini's sign-based period system, running parallel to Vimshottari",
+    "Hora": "the D-2 divisional chart (wealth)",
 }
+
+
+@dataclass(frozen=True)
+class SectionSpec:
+    """One contracted report section: its id, stable output markers, and the version that
+    introduced it. `md_marker` / `html_marker` are None when the section exists in only one
+    renderer (e.g. the chart grids are HTML-only)."""
+    section_id: str
+    md_marker: str | None
+    html_marker: str | None
+    since: str
+
+
+#: THE REPORT TEMPLATE CONTRACT (docs/raman_saab/REPORT_TEMPLATE.md). Append-only: rows may be
+#: ADDED (with a new `since`), but existing rows must never be removed, renamed, or reordered —
+#: tests/raman_saab/test_report_template_contract.py enforces both renderers emitting every marker
+#: in this order, and that the v1 prefix is byte-stable.
+SECTION_CONTRACT: tuple[SectionSpec, ...] = (
+    SectionSpec("title", "# Detailed reading", 'class="name"', "v1"),
+    SectionSpec("now_box", None, 'class="nowbox"', "v1"),
+    SectionSpec("info_content", "## Information content of this reading", 'class="infobox"', "v1"),
+    SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
+    SectionSpec("dashboard", "## The twelve matters at a glance", 'id="dashboard"', "v2"),
+    SectionSpec("chart_signature", "## Chart signature", 'class="sig"', "v1"),
+    SectionSpec("chart_grids", None, 'id="charts"', "v1"),
+    SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
+    SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
+    SectionSpec("yogas", "## Yogas present in this chart", 'id="yogas"', "v1"),
+    SectionSpec("ashtakavarga", "## Ashtakavarga", 'id="sav"', "v1"),
+    SectionSpec("houses", "## House-by-house reading", 'id="houses"', "v1"),
+    SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
+    SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
+    SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
+    SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
+    SectionSpec("divisional", "## Divisional deep-reads (Shodasavarga)", 'id="vargas"', "v1"),
+    SectionSpec("career", "## Career (HTJAH-II", 'id="career"', "v1"),
+    SectionSpec("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"', "v1"),
+    SectionSpec("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"', "v1"),
+    SectionSpec("soul", "## Soul & destiny", 'id="soul"', "v2"),
+    SectionSpec("pitru", "## Pitru dosha", 'id="pitru"', "v2"),
+    SectionSpec("glossary", "## Glossary", 'id="glossary"', "v1"),
+)
+
+#: The HTML renderer's document order (the signature chips live in the page header, and the
+#: chart grids/now-box are HTML-only). Same append-only rule applies.
+HTML_SECTION_ORDER: tuple[str, ...] = (
+    "title", "chart_signature", "now_box", "info_content", "stands_out", "dashboard",
+    "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
+    "maraka", "timeline", "gochara", "divisional", "career", "deeptadi", "karakamsa",
+    "soul", "pitru", "glossary",
+)
 
 
 @dataclass(frozen=True)
@@ -214,14 +287,33 @@ def plain_bhukti_summary(rows, associated: bool) -> str:
         s += f", but {_human_list(names)} {'meets' if len(names) == 1 else 'meet'} friction"
     return s + "."
 
+def _matter(m: str):
+    return lambda chart: build_matter_varga_reading(chart, m)
+
+
+def _general(n: int):
+    return lambda chart: build_general_varga_reading(chart, n)
+
+
 #: Shodasavarga deep-reads: (label, build_reading(chart), render.to_text(reading)).
+#: The FULL sixteen minus D-1 (which is the main reading): the six matter deep-reads that
+#: shipped first, then D2/D3/D4 (after D-12), D16/D20 (after D-30), D27/D40/D45/D60 (after D-24).
 _DIVISIONAL: tuple[tuple[str, object, object], ...] = (
     ("D-9 Marriage (Navamsa)", build_navamsa_marriage_reading, render_navamsa.to_text),
     ("D-10 Career (Dasamsa)", build_dasamsa_career_reading, render_dasamsa.to_text),
     ("D-7 Children (Saptamsa)", build_saptamsa_children_reading, render_saptamsa.to_text),
     ("D-12 Parents (Dwadasamsa)", build_dwadasamsa_parents_reading, render_dwadasamsa.to_text),
+    ("D-2 Wealth (Hora)", _matter("wealth"), render_matter_varga.to_text),
+    ("D-3 Siblings (Drekkana)", _matter("siblings"), render_matter_varga.to_text),
+    ("D-4 Property (Chaturthamsa)", _matter("property"), render_matter_varga.to_text),
     ("D-30 Health (Trimsamsa)", build_trimsamsa_health_reading, render_trimsamsa.to_text),
+    ("D-16 Comforts (Shodasamsa)", _matter("comforts"), render_matter_varga.to_text),
+    ("D-20 Spiritual (Vimsamsa)", _matter("spiritual"), render_matter_varga.to_text),
     ("D-24 Education (Siddhamsa)", build_siddhamsa_education_reading, render_siddhamsa.to_text),
+    ("D-27 Strength (Bhamsa)", _general(27), render_general_varga.to_text),
+    ("D-40 Auspiciousness (Khavedamsa)", _general(40), render_general_varga.to_text),
+    ("D-45 Character (Akshavedamsa)", _general(45), render_general_varga.to_text),
+    ("D-60 Totality (Shashtiamsa)", _general(60), render_general_varga.to_text),
 )
 
 
@@ -256,6 +348,11 @@ class DetailedReport:
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
     balarishta: BalarishtaState | None
+    dashboard: MatterVargaDashboard                  # the 12-matter executive verdict table
+    soul: SoulReading                                # extended Jaimini soul/destiny reading
+    pitru: PitruDoshaReading                         # ancestral screen (non-Raman provenance)
+    gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
+    maraka_period_now: bool                          # is the running period maraka-tier?
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
@@ -313,12 +410,28 @@ def build_detailed_report(
         sav = ashtakavarga.sarvashtakavarga(chart)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
         sav = {}
+    import swisseph as swe
+
+    from app.raman_saab.primitives.vimshottari import is_maraka_period
+    ry, rm, rd, _ = swe.revjul(ref_jd, swe.GREG_CAL)
+    try:
+        gochara_rows = tr.gochara(chart, int(ry), int(rm), int(rd), ayanamsa=ayanamsa)
+    except Exception:  # noqa: BLE001 — sparse chart
+        gochara_rows = ()
+    try:
+        maraka_now = is_maraka_period(chart, ref_jd)
+    except Exception:  # noqa: BLE001
+        maraka_now = False
     return DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=detect_yogas(chart), sav=sav,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
+        dashboard=build_matter_varga_dashboard(chart),
+        soul=build_soul_reading(chart),
+        pitru=build_pitru_dosha_reading(chart),
+        gochara=tuple(gochara_rows), maraka_period_now=maraka_now,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -387,6 +500,18 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{e.band_share:.0%} ({e.rarity}) |")
         L.append("")
 
+    # ── the twelve matters at a glance (executive dashboard) ──────────────────
+    L.append("## The twelve matters at a glance")
+    L.append("")
+    L.append("_Each matter's authoritative verdict from its dedicated deep reader (Raman's method "
+             "decides; the divisional chart corroborates). Detail in the deep-read sections below._")
+    L.append("")
+    L.append("| matter | divisional | verdict |")
+    L.append("|---|---|---|")
+    for en in r.dashboard.entries:
+        L.append(f"| {en.matter} | D-{en.varga} {en.varga_name} | **{en.verdict}** |")
+    L.append("")
+
     # ── chart signature ───────────────────────────────────────────────────────
     L.append("## Chart signature")
     L.append("")
@@ -429,6 +554,29 @@ def to_markdown(r: DetailedReport) -> str:
                  f"{nk.name if nk else '?'} ({p.pada}) | {_SIGN_NAME[p.navamsa_sign]} | "
                  f"{', '.join(notes) or '-'} |")
     L.append("")
+
+    # ── Shadbala (the numbers behind every 'strong'/'weak') ───────────────────
+    sb_rows = [(n, p) for n, p in planet_rows(r.chart) if p.shadbala_rupas is not None]
+    if sb_rows:
+        from app.raman_saab.primitives.shadbala.total import is_powerful
+        L.append("## Shadbala (six-fold strength, rupas)")
+        L.append("")
+        L.append("_The strength measure behind every 'strong/weak' in this report (Raman: a yoga's "
+                 "effect depends on Shadbala; HTJAH-I:611, Graha and Bhava Balas)._")
+        L.append("")
+        L.append("| graha | sthana | dig | kala | cheshta | naisargika | drik | **total** | "
+                 "powerful? | ishta/kashta |")
+        L.append("|---|---:|---:|---:|---:|---:|---:|---:|---|---|")
+        for name, p in sb_rows:
+            sb = p.shadbala_rupas
+            strong = is_powerful(name, sb.total / 60.0)
+            ik = (f"{p.ishta:.1f}/{p.kashta:.1f}"
+                  if p.ishta is not None and p.kashta is not None else "-")
+            cells = " | ".join(f"{v / 60.0:.2f}" for v in
+                               (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
+            L.append(f"| {name} | {cells} | **{sb.total / 60.0:.2f}** | "
+                     f"{'yes' if strong else 'no'} | {ik} |")
+        L.append("")
 
     # ── fired yogas ───────────────────────────────────────────────────────────
     L.append("## Yogas present in this chart")
@@ -515,6 +663,29 @@ def to_markdown(r: DetailedReport) -> str:
              f"engine's own health layer defers lifespan.")
     L.append("")
 
+    # ── the maraka scheme (Raman's step 2, after the band) ────────────────────
+    mp = getattr(r.chart, "maraka_points", None)
+    if mp is not None:
+        L.append("## The maraka scheme (death-dealing determinants)")
+        L.append("")
+        L.append("_Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:"
+                 "4485-4546): the 2nd and 7th are the houses of death; their lords, occupants and "
+                 "associates carry maraka power in their periods. A DISCLOSURE OF THE METHOD, not "
+                 "a prediction — the validation program measured no chart-specific death-timing "
+                 "signal (REAL_OUTCOME_GENERALIZATION.md)._")
+        L.append("")
+        for tier in ("primary", "secondary", "tertiary"):
+            names = [u.graha for u in mp.units if u.tier == tier]
+            if names:
+                L.append(f"- **{tier}**: {', '.join(names)}")
+        L.append(f"- **22nd drekkana lord**: {mp.drekkana22_lord}  |  "
+                 f"**64th navamsa lord**: {mp.navamsa64_lord}")
+        L.append(f"- **Running period ({s.running_md} MD / {s.running_ad} AD)**: "
+                 + ("carries a maraka-tier lord" if r.maraka_period_now
+                    else "carries no maraka-tier lord")
+                 + " (broad, low-discrimination flag by design)")
+        L.append("")
+
     # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────
     from app.raman_saab.render import _jd_to_date
     w_lo = _jd_to_date(r.ref_jd - r.window_back * _DAYS_PER_VEDIC_YEAR)
@@ -555,6 +726,26 @@ def to_markdown(r: DetailedReport) -> str:
                  f"{'; '.join(seg) or '(no house influenced)'}")
         L.append(f"  - _{plain_bhukti_summary(rows, associated)}_")
 
+    # ── current transits with Vedha (the honest gochara table) ────────────────
+    if r.gochara:
+        L.append("")
+        L.append("## Current transits (Gochara) with Vedha")
+        L.append("")
+        L.append("_At the reference date, from the natal Moon. Raman: transits are secondary, "
+                 "catalytic — conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). The NET column "
+                 "applies Vedha (obstruction): a favourable transit obstructed by a planet in its "
+                 "Vedha position does not deliver._")
+        L.append("")
+        L.append("| planet | sign | from Moon | classical | AV bindus | Vedha by | **net** |")
+        L.append("|---|---|---:|---|---|---|---|")
+        for g in r.gochara:
+            av = str(g.bav_bindus) if g.bav_bindus is not None else "-"
+            vedha = ", ".join(g.vedha_by) if g.vedha_by else "-"
+            L.append(f"| {g.planet} | {_SIGN_NAME[g.sign]} | {g.house_from_moon} | "
+                     f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {vedha} | "
+                     f"**{'favourable' if g.net_good else 'obstructed/adverse'}** |")
+        L.append("")
+
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:
         L.append("")
@@ -587,6 +778,27 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
         for line in s.karakamsa_reading:
             L.append(f"- {line}")
+
+    # ── soul & destiny (the full Jaimini reading behind the stub above) ───────
+    L.append("")
+    L.append("## Soul & destiny (extended Jaimini reading)")
+    L.append("")
+    L.append("```")
+    L.append(_clean_box(render_soul.to_text(r.soul)).strip("\n"))
+    L.append("```")
+
+    # ── pitru dosha screen (non-Raman provenance, clearly bannered) ───────────
+    L.append("")
+    L.append("## Pitru dosha screen")
+    L.append("")
+    L.append("> **Provenance notice.** Only the children verdict below is Raman "
+             "(HTJAH-I:5018). The curse-yoga screens are CLASSICAL_NONCITABLE "
+             "(BPHS / Prasna Marga) — reported for completeness, outside Raman's canon, and "
+             "carrying no demonstrated predictive weight.")
+    L.append("")
+    L.append("```")
+    L.append(_clean_box(render_pitru.to_text(r.pitru)).strip("\n"))
+    L.append("```")
 
     # ── glossary ──────────────────────────────────────────────────────────────
     L.append("")

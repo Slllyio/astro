@@ -159,6 +159,29 @@ class TestDetailedReport:
             assert term in GLOSSARY
         assert "odds ratio 1.09" in GLOSSARY["Kuja dosha"]   # the empirical disclosure
 
+    def test_complementary_sections_content(self, report, markdown):
+        """v2 sections carry their substance: 12 matters, full Shodasavarga, soul, framed maraka."""
+        assert len(report.dashboard.entries) == 12
+        assert len(report.divisional) == 15          # the full Shodasavarga minus D-1
+        for label in ("D-2 Wealth", "D-16 Comforts", "D-27 Strength", "D-60 Totality"):
+            assert label in markdown
+        assert len(report.soul.jaimini_overlay.chara_karakas) == 7   # strict 7-karaka Jaimini
+        assert "not a prediction" in markdown        # the maraka framing
+        assert "22nd drekkana lord" in markdown
+
+    def test_pitru_banner_is_mandatory(self, markdown):
+        """The pitru section may never appear without its non-Raman provenance notice."""
+        pit = markdown.find("## Pitru dosha")
+        assert pit >= 0
+        assert "Provenance notice" in markdown[pit:pit + 600]
+        assert "CLASSICAL_NONCITABLE" in markdown[pit:pit + 600]
+
+    def test_gochara_net_verdict_applies_vedha(self, report, markdown):
+        """The transit table's net column = classical verdict minus Vedha obstruction."""
+        assert "## Current transits (Gochara) with Vedha" in markdown
+        for g in report.gochara:
+            assert g.net_good == (g.gochara_good and not g.vedha_by)
+
     def test_bhukti_tier_is_the_four_grade_scheme(self):
         """The HTJAH-I four grades map exactly (uniform for every house)."""
         from app.raman_saab.primitives.vimshottari import bhukti_tier

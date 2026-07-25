@@ -292,6 +292,11 @@ details.vnotes li{margin:.25rem 0}
 .filters button.on{background:var(--doctrine);border-color:var(--doctrine);color:var(--surface)}
 .house[hidden]{display:none}
 
+/* ── provenance banner (non-Raman sections) ──────────────────────── */
+.provenance-banner{margin:2.2rem 0 .6rem;padding:.7rem .95rem;border:1px solid var(--warn);
+  border-radius:10px;font-size:.8rem;color:var(--warn);
+  background:color-mix(in srgb,var(--warn) 7%,transparent)}
+
 /* ── glossary-linked header chips ────────────────────────────────── */
 a.sig-chip{text-decoration:none;color:inherit}
 a.sig-chip.has-gloss{border-bottom-style:dotted;cursor:help}
@@ -639,6 +644,121 @@ def _now_box(r: DetailedReport) -> str:
         f'{sade}<p class="plain">{_esc(plain)}</p></div>')
 
 
+def _dashboard(r: DetailedReport) -> str:
+    rows = "".join(
+        f'<tr><td>{_esc(en.matter)}</td><td>D-{en.varga} {_esc(en.varga_name)}</td>'
+        f'<td><span class="chip chip--{_vclass(en.verdict)}">{_esc(en.verdict)}</span></td></tr>'
+        for en in r.dashboard.entries)
+    return ('<h2 class="section" id="dashboard">The twelve matters at a glance</h2>'
+            '<p class="section-sub">Each matter&rsquo;s authoritative verdict from its dedicated '
+            'deep reader (Raman&rsquo;s method decides; the divisional corroborates).</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>matter</th>'
+            '<th>divisional</th><th>verdict</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div>')
+
+
+def _shadbala(r: DetailedReport) -> str:
+    from app.raman_saab.primitives.shadbala.total import is_powerful
+    sb_rows = [(n, p) for n, p in planet_rows(r.chart) if p.shadbala_rupas is not None]
+    if not sb_rows:
+        return ""
+    rows = ""
+    for name, p in sb_rows:
+        sb = p.shadbala_rupas
+        strong = is_powerful(name, sb.total / 60.0)
+        ik = (f"{p.ishta:.1f}/{p.kashta:.1f}"
+              if p.ishta is not None and p.kashta is not None else "&ndash;")
+        cells = "".join(f'<td class="num">{v / 60.0:.2f}</td>' for v in
+                        (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
+        rows += (f'<tr><td><b>{_esc(name)}</b></td>{cells}'
+                 f'<td class="num"><b>{sb.total / 60.0:.2f}</b></td>'
+                 f'<td>{"yes" if strong else "no"}</td><td class="num">{ik}</td></tr>')
+    return ('<h2 class="section" id="shadbala">Shadbala &mdash; six-fold strength</h2>'
+            '<p class="section-sub">The numbers behind every &ldquo;strong / weak&rdquo; in this '
+            'report, in rupas (Raman: a yoga&rsquo;s effect depends on Shadbala; HTJAH-I:611).</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
+            '<th class="num">sthana</th><th class="num">dig</th><th class="num">kala</th>'
+            '<th class="num">cheshta</th><th class="num">naisargika</th><th class="num">drik</th>'
+            '<th class="num">total</th><th>powerful?</th><th class="num">ishta/kashta</th>'
+            f'</tr></thead><tbody>{rows}</tbody></table></div>')
+
+
+def _maraka(r: DetailedReport) -> str:
+    mp = getattr(r.chart, "maraka_points", None)
+    if mp is None:
+        return ""
+    tiers = ""
+    for tier in ("primary", "secondary", "tertiary"):
+        names = [u.graha for u in mp.units if u.tier == tier]
+        if names:
+            tiers += (f'<div class="vrow"><span class="vk">{tier}</span>'
+                      f'<span class="vv">{_esc(", ".join(names))}</span></div>')
+    s = r.synthesis
+    running = ("carries a maraka-tier lord" if r.maraka_period_now
+               else "carries no maraka-tier lord")
+    return ('<h2 class="section" id="maraka">The maraka scheme</h2>'
+            '<p class="section-sub">Raman&rsquo;s second step after the longevity band '
+            '(HTJAH-I:761-814): the 2nd and 7th are the houses of death; their lords, occupants '
+            'and associates carry maraka power in their periods. A disclosure of the method, not '
+            'a prediction &mdash; the validation program measured no chart-specific death-timing '
+            'signal.</p>'
+            f'<div class="vsec vcore">{tiers}'
+            f'<div class="vrow"><span class="vk">22nd drekkana lord</span>'
+            f'<span class="vv">{_esc(mp.drekkana22_lord)}</span></div>'
+            f'<div class="vrow"><span class="vk">64th navamsa lord</span>'
+            f'<span class="vv">{_esc(mp.navamsa64_lord)}</span></div>'
+            f'<div class="vrow"><span class="vk">running period</span>'
+            f'<span class="vv">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD &mdash; '
+            f'{running} (broad flag by design)</span></div></div>')
+
+
+def _gochara_table(r: DetailedReport) -> str:
+    if not r.gochara:
+        return ""
+    rows = ""
+    for g in r.gochara:
+        av = str(g.bav_bindus) if g.bav_bindus is not None else "&ndash;"
+        vedha = _esc(", ".join(g.vedha_by)) if g.vedha_by else "&ndash;"
+        net = ("favourable" if g.net_good else "obstructed/adverse")
+        rows += (f'<tr><td><b>{_esc(g.planet)}</b></td><td>{_esc(_SIGN_NAME[g.sign])}</td>'
+                 f'<td class="num">{g.house_from_moon}</td>'
+                 f'<td>{"favourable" if g.gochara_good else "adverse"}</td>'
+                 f'<td class="num">{av}</td><td>{vedha}</td>'
+                 f'<td><span class="chip chip--{"favourable" if g.net_good else "afflicted"}">'
+                 f'{net}</span></td></tr>')
+    return ('<h2 class="section" id="gochara">Current transits (Gochara) with Vedha</h2>'
+            '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
+            'secondary, catalytic &mdash; conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). '
+            'The net column applies Vedha: an obstructed transit does not deliver.</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>sign</th>'
+            '<th class="num">from Moon</th><th>classical</th><th class="num">AV</th>'
+            '<th>Vedha by</th><th>net</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div>')
+
+
+def _soul_section(r: DetailedReport) -> str:
+    from app.raman_saab.detailed_report import _clean_box
+    body = _varga_card("Soul & destiny (extended Jaimini reading)",
+                       _clean_box(render_soul_text(r)))
+    return f'<div id="soul">{body}</div>'
+
+
+def render_soul_text(r: DetailedReport) -> str:
+    from app.raman_saab import render_soul
+    return render_soul.to_text(r.soul)
+
+
+def _pitru_section(r: DetailedReport) -> str:
+    from app.raman_saab import render_pitru
+    from app.raman_saab.detailed_report import _clean_box
+    banner = ('<div class="provenance-banner">Provenance notice: only the children verdict is '
+              'Raman (HTJAH-I:5018). The curse-yoga screens are CLASSICAL_NONCITABLE '
+              '(BPHS / Prasna Marga) &mdash; reported for completeness, outside Raman&rsquo;s '
+              'canon, and carrying no demonstrated predictive weight.</div>')
+    body = _varga_card("Pitru dosha screen", _clean_box(render_pitru.to_text(r.pitru)))
+    return f'<div id="pitru">{banner}{body}</div>'
+
+
 def _glossary() -> str:
     items = "".join(f'<dt>{_esc(k)}</dt><dd>{_esc(v)}</dd>' for k, v in GLOSSARY.items())
     return ('<details class="glossary" id="glossary"><summary>Glossary &mdash; the technical '
@@ -758,16 +878,20 @@ def to_html(r: DetailedReport) -> str:
 
     extras = ""
     if s.career:
-        extras += (f'<h2 class="section">Career</h2><p class="section-sub">HTJAH-II &mdash; '
-                   f'navamsa-dispositor of the 10th lord</p><p class="doctrine">{_bold(s.career)}</p>')
+        extras += (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
+                   f'&mdash; navamsa-dispositor of the 10th lord</p>'
+                   f'<p class="doctrine">{_bold(s.career)}</p>')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
-        extras += ('<h2 class="section">Deeptadi avasthas</h2>'
+        extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
     if s.karakamsa_reading:
         km = "".join(f"<li>{_esc(x)}</li>" for x in s.karakamsa_reading)
-        extras += (f'<h2 class="section">Jaimini Karakamsa</h2><p class="section-sub">the soul\'s '
-                   f'inclination</p><ul class="doclist">{km}</ul>')
+        extras += (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
+                   f'<p class="section-sub">the soul\'s inclination</p>'
+                   f'<ul class="doclist">{km}</ul>')
+    extras += _soul_section(r)
+    extras += _pitru_section(r)
 
     return f"""<style>{_CSS}</style>
 <div class="stickybar" id="stickybar">
@@ -786,11 +910,13 @@ def to_html(r: DetailedReport) -> str:
       unchanged. Beneath it the <span class="v-sans">instrument</span> discloses how that verdict
       compares with {r.calibration[1].population_n:,} real charts &mdash; its information content,
       <em>not</em> a validated prediction about a life.</div>
-    <nav class="toc"><a href="#stands-out">What stands out</a><a href="#charts">Charts</a>
-      <a href="#positions">Positions</a>
+    <nav class="toc"><a href="#stands-out">What stands out</a><a href="#dashboard">12 matters</a>
+      <a href="#charts">Charts</a><a href="#positions">Positions</a>
+      <a href="#shadbala">Shadbala</a>
       <a href="#yogas">Yogas</a><a href="#sav">Ashtakavarga</a><a href="#houses">Houses</a>
-      <a href="#longevity">Longevity</a><a href="#now">Now</a><a href="#timeline">Timeline</a>
-      <a href="#vargas">Divisionals</a><a href="#glossary">Glossary</a></nav>
+      <a href="#longevity">Longevity</a><a href="#maraka">Marakas</a><a href="#now">Now</a>
+      <a href="#timeline">Timeline</a><a href="#gochara">Transits</a>
+      <a href="#vargas">Divisionals</a><a href="#soul">Soul</a><a href="#glossary">Glossary</a></nav>
   </header>
 
   {_now_box(r)}
@@ -799,11 +925,15 @@ def to_html(r: DetailedReport) -> str:
 
   {_distinctive(r)}
 
+  {_dashboard(r)}
+
   <h2 class="section" id="charts">The charts</h2>
   <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant is marked.</p>
   <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}</div>
 
   {_positions(r)}
+
+  {_shadbala(r)}
 
   {_yogas(r)}
 
@@ -824,6 +954,8 @@ def to_html(r: DetailedReport) -> str:
     class <b>{_esc(r.longevity_class)}</b>. Treat as a band; the engine's own health layer defers
     lifespan.</p>
 
+  {_maraka(r)}
+
   <h2 class="section" id="timeline">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
@@ -835,6 +967,8 @@ def to_html(r: DetailedReport) -> str:
   <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
       for k, v in _TIER_MEANING.items())}</div>
   {_timeline(r)}
+
+  {_gochara_table(r)}
 
   <h2 class="section" id="vargas">Divisional deep-reads</h2>
   <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one matter (Raman core

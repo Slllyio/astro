@@ -47,7 +47,9 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.primitives import ashtakavarga
+from app.raman_saab.primitives import dignity as _dig
 from app.raman_saab.primitives import vimshottari as vd
+from app.raman_saab.primitives.functional_nature import is_yogakaraka
 from app.raman_saab.primitives.shadbala import total as _sb_total
 from app.raman_saab.primitives.transits import TransitRow
 
@@ -497,7 +499,238 @@ _CHECKERS: Final[dict[str, Callable[[SynthesisContext], Optional[str]]]] = {
 }
 
 
-SYNTHESIS_RULES: Final[tuple[SynthesisRule, ...]] = RAMAN_RULES
+def _register_checkers(mapping: dict[str, Callable[[SynthesisContext], Optional[str]]]) -> None:
+    """Later phases extend the checker table without re-declaring it."""
+    _CHECKERS.update(mapping)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase B — the CLASSICAL band (CLASSICAL_NONCITABLE; refs quoted in the text)
+# ─────────────────────────────────────────────────────────────────────────────
+
+_C = "CLASSICAL_NONCITABLE"
+
+
+def _lp_label(chart: RamanChart, planet: str) -> str:
+    """Laghu Parashari functional label (LP v1:967/1155/2124): yogakaraka > trikona-benefic >
+    trishadaya-malefic > neutral (kendra/2/8/12 only)."""
+    if is_yogakaraka(planet, chart.asc_sign):
+        return "yogakaraka"
+    owned = set(_lordships(chart, planet))
+    if owned & {1, 5, 9}:
+        return "functional benefic (trikona lord)"
+    if owned & {3, 6, 11}:
+        return "functional malefic (trishadaya lord)"
+    return "neutral"
+
+
+def _sambandha(chart: RamanChart, a: str, b: str) -> Optional[str]:
+    """The relation between two lords, ranked per LP v1:2415: exchange > mutual aspect >
+    conjunction (dispositor-aspect omitted — weakest and rarely decisive)."""
+    pa, pb = chart.planets.get(a), chart.planets.get(b)
+    if pa is None or pb is None or a == b:
+        return None
+    if SIGN_LORDS[pa.sign] == b and SIGN_LORDS[pb.sign] == a:
+        return "exchange (the most powerful relation)"
+    from app.raman_saab.doctrine import drishti
+    if drishti.aspects_planet(a, b, chart) and drishti.aspects_planet(b, a, chart):
+        return "mutual aspect (the second relation)"
+    if pa.rasi_house == pb.rasi_house:
+        return "conjunction (the least of the ranked relations)"
+    return None
+
+
+CLASSICAL_RULES: Final[tuple[SynthesisRule, ...]] = (
+    SynthesisRule(
+        "SYN_N1_LP_MATRIX", "classical", "N1",
+        "Laghu Parashari MD x AD grading matrix", "evaluable", _C,
+        "The result of a Mahadasha-Antardasha follows the two lords' functional characters AND "
+        "their relation: related lords of the same character give the Dasha lord's results "
+        "exclusively; related but opposite characters give very few; unrelated same-character "
+        "gives the Dasha lord's results; unrelated opposites give mixed results "
+        "(Laghu Parashari v1:4569-4601).",
+        "Whether a period delivers cleanly, weakly or mixed depends on how its two ruling "
+        "planets stand to each other — by role and by relation.",
+        ("Life-narrative", "Chart signature"), None),
+    SynthesisRule(
+        "SYN_N1_OWN_BHUKTI", "classical", "N1",
+        "A lord's own bhukti is muted", "evaluable", _C,
+        "When the Dasha and Bhukti lord are one and the same planet, he does not give his "
+        "entire results (Laghu Parashari v1:4366).",
+        "A planet's own sub-period inside its own major period under-delivers.",
+        ("Life-narrative",), None),
+    SynthesisRule(
+        "SYN_N1_YK_ORDER", "classical", "N1",
+        "Yogakaraka fructification order", "evaluable", _C,
+        "A Yogakaraka's Dasha yields least in a related maraka's bhukti and to the full extent "
+        "in a related fellow-yogakaraka's bhukti — an ascending order of fruition "
+        "(Laghu Parashari v1:4844-4852).",
+        "Even a excellent period ripens unevenly — best in the sub-periods of its allies.",
+        ("Life-narrative", "Chart signature"), None),
+    SynthesisRule(
+        "SYN_N2_SAMBANDHA_RANK", "classical", "N2",
+        "The relation between the period lords, ranked", "evaluable", _C,
+        "Two lords combine only through a fixed set of relations, ranked by potency: mutual "
+        "exchange of houses is the most powerful, next mutual aspect, then aspect by "
+        "dispositor, and the least is occupation of the same house (Laghu Parashari v1:2415).",
+        "HOW two planets are linked matters as much as THAT they are linked.",
+        ("Life-narrative", "Planetary positions"), None),
+    SynthesisRule(
+        "SYN_N3_KENDRADHIPATYA", "classical", "N3",
+        "Kendradhipatya dosha, graded", "evaluable", _C,
+        "A natural benefic owning kendras loses its benefic yield — the blemish descending in "
+        "magnitude Jupiter > Venus > Mercury > Moon (Laghu Parashari v1:1155, 1923).",
+        "A gentle planet saddled with power-houses becomes a reluctant giver.",
+        ("Chart signature", "Life-narrative"), None),
+    SynthesisRule(
+        "SYN_N3_EIGHTH_LORD", "classical", "N3",
+        "The 8th lord's period", "evaluable", _C,
+        "The 8th lord is deadly evil unless he is also the lord of the Lagna "
+        "(Laghu Parashari v1:1769, 1811).",
+        "The planet ruling the 8th house runs hard periods — unless it also rules the self.",
+        ("Life-narrative", "The maraka scheme"), None),
+    SynthesisRule(
+        "SYN_N4_AD_FROM_MD", "classical", "N4",
+        "The AD lord's seat counted from the MD lord", "evaluable", _C,
+        "Antardasha results are conditioned on the sub-lord's position reckoned FROM the Dasha "
+        "lord: kendra/trikona from him favourable, 6th/8th/12th from him adverse "
+        "(BPHS vol2 ch.52-64, e.g. ch052:87).",
+        "Where the sub-period's planet sits relative to the main period's planet colours the "
+        "whole stretch.",
+        ("Life-narrative", "Planetary positions"), None),
+    SynthesisRule(
+        "SYN_N5_BPHS_ISHTA_ROOT", "classical", "N5",
+        "Ishta/Kashta as the dasha discriminator (BPHS root)", "descriptive", _C,
+        "BPHS: 'the benefic and evil tendencies of the planets based on which the Dasa effects "
+        "— good or bad — can be decided' (vol1 ch028:28-110) — the classical root of Raman's "
+        "GBB treatment (rule SYN_R5).",
+        "The good-vs-hard scoring of periods is ancient, not modern.",
+        ("Shadbala", "Life-narrative"), None),
+    SynthesisRule(
+        "SYN_N6_UK_TRIPOD", "classical", "N6",
+        "Bhava + lord + karaka judged as one tripod", "descriptive", _C,
+        "Uttara Kalamrita: a house is ruined only when the bhava, its lord AND its karaka are "
+        "all hemmed by malefics, conjoined with malefics and weak, with hostile navamsa "
+        "dispositors (ch003:1594-1599) — the full three-legged test. (Encoded pending a "
+        "hemming primitive; the engine's three-pillar judge is the Raman-side analogue.)",
+        "A life-area truly fails only when all three of its supports fail together.",
+        ("House-by-house",), None),
+    SynthesisRule(
+        "SYN_N12_SUBPERIOD_ALLOCATION", "classical", "N12",
+        "Sub-period share by seat from the dasha lord", "descriptive", _C,
+        "Saravali: sub-periods are allotted by the sub-lord's seat from the dasha lord "
+        "(conjunct 1/2; 3rd/9th 1/3; 7th 1/7; 4th/8th 1/4) and ripen according to their own "
+        "nature (ch042:23-33). (On record; Vimshottari's fixed proportions govern this "
+        "project's timeline.)",
+        "The classics also apportioned sub-periods by geometry, not only by fixed fractions.",
+        ("Life-narrative",), None),
+)
+
+
+def _chk_n1_matrix(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or p.antar is None or p.antar == p.maha:
+        return None
+    la, lb = _lp_label(ctx.chart, p.maha), _lp_label(ctx.chart, p.antar)
+    related = vd.lords_associated(ctx.chart, p.maha, p.antar) or \
+        _sambandha(ctx.chart, p.maha, p.antar) is not None
+    benefic_like = {"yogakaraka", "functional benefic (trikona lord)"}
+    same = (la in benefic_like) == (lb in benefic_like)
+    if related and same:
+        cell = "the Dasha lord's results, exclusively and fully"
+    elif related and not same:
+        cell = "very few results — the lords pull opposite ways despite the link"
+    elif not related and same:
+        cell = "the Dasha lord's results (no reinforcing link)"
+    else:
+        cell = "mixed results"
+    return (f"{p.maha} MD ({la}) x {p.antar} AD ({lb}), "
+            f"{'related' if related else 'unrelated'} -> {cell}")
+
+
+def _chk_n1_own(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or p.antar != p.maha:
+        return None
+    return f"{p.maha}'s own bhukti runs — he does not give his entire results here"
+
+
+def _chk_n1_yk(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or not is_yogakaraka(p.maha, ctx.chart.asc_sign):
+        return None
+    return (f"MD lord {p.maha} is the Yogakaraka for this Lagna — his Dasha ripens least in a "
+            f"related maraka's bhukti and fully in a related ally's bhukti")
+
+
+def _chk_n2(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or p.antar is None or p.antar == p.maha:
+        return None
+    rel = _sambandha(ctx.chart, p.maha, p.antar)
+    if rel is None:
+        return f"{p.maha} and {p.antar} form NO ranked relation — the weakest configuration"
+    return f"{p.maha} and {p.antar} are linked by {rel}"
+
+
+def _chk_n3_kendra(ctx: SynthesisContext) -> Optional[str]:
+    grade = {"Jupiter": "greatest", "Venus": "second", "Mercury": "third", "Moon": "least"}
+    outs = []
+    for planet in ("Jupiter", "Venus", "Mercury", "Moon"):
+        owned = set(_lordships(ctx.chart, planet))
+        # the dosha needs kendra lordship WITHOUT any trikona share — and the Lagna counts as
+        # a trikona (it is kendra AND kona), so lagna-lords are exempt (LP v1:1155 scheme)
+        if owned & {4, 7, 10} and not owned & {1, 5, 9}:
+            kendras = sorted(owned & {4, 7, 10})
+            outs.append(f"{planet} (lord of {'/'.join(map(str, kendras))}) carries the "
+                        f"kendradhipatya blemish to the {grade[planet]} degree")
+    return "; ".join(outs) if outs else None
+
+
+def _chk_n3_eighth(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None:
+        return None
+    for role, lord in (("MD", p.maha), ("AD", p.antar)):
+        if lord is None:
+            continue
+        owned = set(_lordships(ctx.chart, lord))
+        if 8 in owned:
+            if 1 in owned:
+                return (f"{role} lord {lord} rules the 8th but ALSO the Lagna — the classical "
+                        f"exemption applies")
+            return f"{role} lord {lord} rules the 8th house — the classics read his period hard"
+    return None
+
+
+def _chk_n4(ctx: SynthesisContext) -> Optional[str]:
+    p = ctx.period
+    if p is None or p.antar is None or p.antar == p.maha:
+        return None
+    pa, pb = ctx.chart.planets.get(p.maha), ctx.chart.planets.get(p.antar)
+    if pa is None or pb is None:
+        return None
+    seat = (pb.rasi_house - pa.rasi_house) % 12 + 1
+    if seat in (1, 4, 7, 10, 5, 9):
+        read = "a kendra/trikona from him — favourable by the BPHS reckoning"
+    elif seat in (6, 8, 12):
+        read = "the 6th/8th/12th from him — adverse by the BPHS reckoning"
+    else:
+        read = "a neutral seat"
+    return f"AD lord {p.antar} sits in house {seat} counted from MD lord {p.maha}: {read}"
+
+
+_register_checkers({
+    "SYN_N1_LP_MATRIX": _chk_n1_matrix,
+    "SYN_N1_OWN_BHUKTI": _chk_n1_own,
+    "SYN_N1_YK_ORDER": _chk_n1_yk,
+    "SYN_N2_SAMBANDHA_RANK": _chk_n2,
+    "SYN_N3_KENDRADHIPATYA": _chk_n3_kendra,
+    "SYN_N3_EIGHTH_LORD": _chk_n3_eighth,
+    "SYN_N4_AD_FROM_MD": _chk_n4,
+})
+
+SYNTHESIS_RULES: Final[tuple[SynthesisRule, ...]] = RAMAN_RULES + CLASSICAL_RULES
 
 
 def descriptive_rules(band: Optional[Band] = None) -> tuple[SynthesisRule, ...]:

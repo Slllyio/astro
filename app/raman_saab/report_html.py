@@ -292,6 +292,17 @@ details.vnotes li{margin:.25rem 0}
 .filters button.on{background:var(--doctrine);border-color:var(--doctrine);color:var(--surface)}
 .house[hidden]{display:none}
 
+/* ── integrated insights ─────────────────────────────────────────── */
+.insight{margin:.8rem 0;padding:.8rem 1rem;border:1px solid var(--rule);border-radius:10px;
+  background:var(--surface)}
+.insight-head b{font-family:var(--serif);font-size:1rem;color:var(--doctrine)}
+.insight-head code{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);
+  margin-left:.4rem}
+.insight .doctrine{font-size:.92rem;margin:.35rem 0 0}
+.insight .plain{margin-top:.4rem}
+.insight-links{margin-top:.4rem;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--instrument)}
+
 /* ── provenance banner (non-Raman sections) ──────────────────────── */
 .provenance-banner{margin:2.2rem 0 .6rem;padding:.7rem .95rem;border:1px solid var(--warn);
   border-radius:10px;font-size:.8rem;color:var(--warn);
@@ -759,6 +770,58 @@ def _pitru_section(r: DetailedReport) -> str:
     return f'<div id="pitru">{banner}{body}</div>'
 
 
+_SYN_BAND = {
+    "raman": ("Raman's own combination doctrine", None, "vcore"),
+    "classical": ("Classical corroboration",
+                  "Provenance notice: CLASSICAL_NONCITABLE (Laghu Parashari, BPHS, Uttara "
+                  "Kalamrita, Saravali) — outside Raman's citable canon; where they conflict "
+                  "with Raman, Raman wins.", "voverlay"),
+    "av": ("Ashtakavarga combinations",
+           "Raman's own caveat governs this band: “Ashtakavarga method is equally "
+           "important. But, it does not seem to be quite reliable” (HTJAH-II:4453-4456). "
+           "These never override an insight from the bands above.", "voverlay"),
+}
+
+
+def _synthesis_section(r: DetailedReport) -> str:
+    """The integrated-insights section: fired cross-feature rules, banded by provenance."""
+    from app.raman_saab.detailed_report import descriptive_rules
+    parts = ['<h2 class="section" id="synthesis">Integrated insights</h2>'
+             '<p class="section-sub">Where the report&rsquo;s sections meet: encoded '
+             'combination doctrine connecting Shadbala, yogas, dashas, transits, Ashtakavarga '
+             'and the houses. How the method reads this chart &mdash; not a prediction.</p>']
+    cur = None
+    for ins in r.insights:
+        if ins.rule.band != cur:
+            cur = ins.rule.band
+            head, banner, _tint = _SYN_BAND[cur]
+            parts.append(f'<h3 class="md-head">{_esc(head)}</h3>')
+            if banner:
+                parts.append(f'<div class="provenance-banner">{_esc(banner)}</div>')
+        cite = (f'<code>{_esc(ins.rule.source.work)}:{ins.rule.source.line}</code>'
+                if ins.rule.source else
+                f'<span class="tag tag--univ">{_esc(ins.rule.provenance)}</span>')
+        parts.append(
+            f'<div class="insight"><div class="insight-head"><b>{_esc(ins.rule.name)}</b> '
+            f'{cite}</div>'
+            f'<p class="doctrine">{_esc(ins.rule.doctrine)}</p>'
+            f'<div class="plain"><b>This chart:</b> {_esc(ins.detail)}</div>'
+            f'<div class="plain"><b>In plain terms:</b> {_esc(ins.rule.simple_meaning)}</div>'
+            f'<div class="insight-links">links: {_esc(" x ".join(ins.rule.links))}</div></div>')
+    on_record = descriptive_rules()
+    if on_record:
+        items = "".join(
+            f'<li><b>{_esc(d.name)}</b>'
+            + (f' <code>{_esc(d.source.work)}:{d.source.line}</code>' if d.source else "")
+            + f' &mdash; {_esc(d.doctrine)}</li>' for d in on_record)
+        parts.append('<details class="vnotes"><summary>further combination doctrine on record '
+                     f'(not yet computed)</summary><ul>{items}</ul></details>')
+    parts.append('<p class="section-sub">Excluded by project locks (recorded, not encoded): '
+                 'Argala rasi-dasha grading; the KP sub-lord chain; nodal Vedha. No combination '
+                 'was invented beyond what the texts state.</p>')
+    return "".join(parts)
+
+
 def _glossary() -> str:
     items = "".join(f'<dt>{_esc(k)}</dt><dd>{_esc(v)}</dd>' for k, v in GLOSSARY.items())
     return ('<details class="glossary" id="glossary"><summary>Glossary &mdash; the technical '
@@ -916,7 +979,8 @@ def to_html(r: DetailedReport) -> str:
       <a href="#yogas">Yogas</a><a href="#sav">Ashtakavarga</a><a href="#houses">Houses</a>
       <a href="#longevity">Longevity</a><a href="#maraka">Marakas</a><a href="#now">Now</a>
       <a href="#timeline">Timeline</a><a href="#gochara">Transits</a>
-      <a href="#vargas">Divisionals</a><a href="#soul">Soul</a><a href="#glossary">Glossary</a></nav>
+      <a href="#vargas">Divisionals</a><a href="#soul">Soul</a>
+      <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a></nav>
   </header>
 
   {_now_box(r)}
@@ -976,6 +1040,8 @@ def to_html(r: DetailedReport) -> str:
   {vargas}
 
   {extras}
+
+  {_synthesis_section(r)}
 
   {_glossary()}
 

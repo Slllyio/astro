@@ -32,7 +32,14 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 20 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
 | 21 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
 | 22 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 23 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 23 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 24 | Glossary | `## Glossary` | `#glossary` | v1 |
+
+**v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
+(conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
+renders the fired `SYNTHESIS_RULES` (doctrine/synthesis_rules.py) in three provenance bands —
+Raman (citable), classical (CLASSICAL_NONCITABLE banner), Ashtakavarga (Raman's own caveat
+banner) — plus a doctrine-on-record list and the excluded-techniques note.
 
 (The HTML renderer places the signature chips in the page header and adds the HTML-only
 now-box/chart-grid sections; its document order is `HTML_SECTION_ORDER` in the same module.)

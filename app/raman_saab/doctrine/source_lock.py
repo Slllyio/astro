@@ -34,6 +34,7 @@ def iter_citations() -> Iterator[Citation]:
     (All resolve to HTJAH-I/II/3HC today; the enumeration is exhaustive so a NEW citation into a
     new file is caught by the lock test.)"""
     from app.raman_saab.doctrine.rule_sets import ALL_RULES
+    from app.raman_saab.doctrine.synthesis_rules import SYNTHESIS_RULES
     from app.raman_saab.doctrine.yogas import YOGAS
     from app.raman_saab.doctrine.significations import SIGNIFICATIONS
     from app.raman_saab.doctrine.lookups.bhavartha_ratnakara import KARAKA_IN_12_INVERSIONS
@@ -46,6 +47,9 @@ def iter_citations() -> Iterator[Citation]:
 
     for rule in ALL_RULES:
         yield rule.source
+    for syn in SYNTHESIS_RULES:                 # cross-feature synthesis (raman band only cites)
+        if syn.source is not None:
+            yield syn.source
     for yoga in YOGAS:
         yield yoga.source
     for sigs in SIGNIFICATIONS.values():

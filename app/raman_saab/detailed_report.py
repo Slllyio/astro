@@ -36,6 +36,11 @@ from app.raman_saab.judges.calibrated_reading import (
     build_calibrated_reading,
 )
 from app.raman_saab.chart.model import PlanetPos
+from app.raman_saab.doctrine.synthesis_rules import (
+    FiredInsight,
+    descriptive_rules,
+    detect_synthesis,
+)
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.judges.chart_overview import ChartOverview, chart_overview
 from app.raman_saab.judges.dasamsa_career_reading import build_dasamsa_career_reading
@@ -161,6 +166,9 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"', "v1"),
     SectionSpec("soul", "## Soul & destiny", 'id="soul"', "v2"),
     SectionSpec("pitru", "## Pitru dosha", 'id="pitru"', "v2"),
+    # v3 (2026-07-25, conscious amendment): inserted BEFORE glossary so the reference material
+    # stays last; _FROZEN in the contract test was amended in the same commit per the procedure.
+    SectionSpec("synthesis", "## Integrated insights", 'id="synthesis"', "v3"),
     SectionSpec("glossary", "## Glossary", 'id="glossary"', "v1"),
 )
 
@@ -170,7 +178,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "chart_signature", "now_box", "info_content", "stands_out", "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
     "maraka", "timeline", "gochara", "divisional", "career", "deeptadi", "karakamsa",
-    "soul", "pitru", "glossary",
+    "soul", "pitru", "synthesis", "glossary",
 )
 
 
@@ -353,6 +361,7 @@ class DetailedReport:
     pitru: PitruDoshaReading                         # ancestral screen (non-Raman provenance)
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
     maraka_period_now: bool                          # is the running period maraka-tier?
+    insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
     longevity_ymd: tuple[int, int, int]
     longevity_class: str
@@ -422,10 +431,17 @@ def build_detailed_report(
         maraka_now = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
         maraka_now = False
+    fired_yogas = detect_yogas(chart)
+    bhava_balas = {pf.house: pf.significations[0].ledger.bhava_bala
+                   for pf in reading.proformas
+                   if pf.significations and pf.significations[0].ledger.bhava_bala is not None}
+    insights = detect_synthesis(
+        chart, ref_jd, gochara=tuple(gochara_rows), yogas=fired_yogas, sav=sav,
+        bhava_balas=bhava_balas, maraka_now=maraka_now)
     return DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
-        yogas=detect_yogas(chart), sav=sav,
+        yogas=fired_yogas, sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
         dashboard=build_matter_varga_dashboard(chart),
@@ -799,6 +815,57 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("```")
     L.append(_clean_box(render_pitru.to_text(r.pitru)).strip("\n"))
     L.append("```")
+
+    # ── integrated insights (cross-feature synthesis) ─────────────────────────
+    L.append("")
+    L.append("## Integrated insights (cross-feature synthesis)")
+    L.append("")
+    L.append("_Where the report's sections meet: encoded combination doctrine connecting "
+             "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Every insight "
+             "names its text; the plain line restates it simply. As everywhere in this report: "
+             "how the method reads this chart, not a prediction._")
+    _BAND_HEAD = {
+        "raman": ("### Raman's own combination doctrine", None),
+        "classical": ("### Classical corroboration",
+                      "> **Provenance notice.** The rules below are CLASSICAL_NONCITABLE "
+                      "(Laghu Parashari, BPHS, Uttara Kalamrita, Saravali) — outside Raman's "
+                      "citable canon; where they conflict with Raman, Raman wins."),
+        "av": ("### Ashtakavarga combinations",
+               "> **Raman's own caveat governs this band**: \"Ashtakavarga method is equally "
+               "important. But, it does not seem to be quite reliable\" (HTJAH-II:4453-4456, "
+               "said of longevity determination). These classical AV methods never override "
+               "an insight from the bands above."),
+    }
+    cur_band: Optional[str] = None
+    for ins in r.insights:
+        if ins.rule.band != cur_band:
+            cur_band = ins.rule.band
+            head, banner = _BAND_HEAD[cur_band]
+            L.append("")
+            L.append(head)
+            if banner:
+                L.append("")
+                L.append(banner)
+        cite = f"  `{ins.rule.source.work}:{ins.rule.source.line}`" if ins.rule.source else ""
+        L.append("")
+        L.append(f"- **{ins.rule.name}**{cite} — {ins.rule.doctrine}")
+        L.append(f"  - _This chart_: {ins.detail}")
+        L.append(f"  - _In plain terms_: {ins.rule.simple_meaning}")
+        L.append(f"  - _links_: {' x '.join(ins.rule.links)}")
+    on_record = descriptive_rules()
+    if on_record:
+        L.append("")
+        L.append("### Further combination doctrine on record (not yet computed)")
+        L.append("")
+        for dr_ in on_record:
+            cite = f" `{dr_.source.work}:{dr_.source.line}`" if dr_.source else ""
+            L.append(f"- **{dr_.name}**{cite} — {dr_.doctrine}")
+    L.append("")
+    L.append("_Excluded by project locks (recorded, not encoded): BPHS rasi-dasha Argala "
+             "grading; the KP sub-lord chain (non-Lahiri); nodal Vedha. Absence findings "
+             "honoured: Raman states no direct Shadbala x Ashtakavarga rule, no numeric "
+             "requisite-Shadbala minima, no Bhava Bala cutoff, no Sade-Sati x Moon doctrine "
+             "— none were invented._")
 
     # ── glossary ──────────────────────────────────────────────────────────────
     L.append("")

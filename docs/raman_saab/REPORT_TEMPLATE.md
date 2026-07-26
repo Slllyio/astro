@@ -422,6 +422,18 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-27) — per-yoga record leans for the eighth witness.** The
+yoga-bearing testimony previously left every "other"- and lunar-kind yoga neutral (deliberate
+under-claiming). The prior review noted that leaning the yogas whose PRINTED effect is
+unambiguous — with their own citations — would be legitimate. Done: a curated
+`_BENEFIC_RECORD_YOGAS` (the five Pancha Mahapurusha, Budha-Aditya, Vasumathi, Jaya) and
+`_ADVERSE_RECORD_YOGAS` (Daridra "heavy debts, very poor" 3HC:7289; Asatyavadi "loving
+falsehood... fraudulent schemes" HPA-20:225) override the kind-based lean; every leaned yoga
+still carries its own citation in the Yogas section. Lunar stays neutral (a conditionally-
+benefic lunar yoga can be nullified in dusthana formation). The Nabhasa/Akriti shapes never
+reach here (they resolve no constituents). Two tests pin the id-validity and lean discipline.
+Report-only; golden ratchet unchanged; suite 4472 passed.
+
 **Content amendment (2026-07-27) — the v13-v15 synthesis reaches the plain layers.** "Your
 Reading" and the Nichod predated the higher-order synthesis sections and never mentioned them.
 Presentation-only weaving, into existing fields (no dataclass change): the Nichod's identity

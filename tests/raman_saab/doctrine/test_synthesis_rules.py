@@ -230,25 +230,46 @@ class TestYogaHouseBearings:
 
 
 class TestYogaTestimonyLeanDiscipline:
-    """The eighth preponderance witness leans only by unambiguous encoded kinds."""
+    """The eighth preponderance witness leans by encoded kind PLUS a per-record override for
+    the directionally-unambiguous 'other'-kind yogas (Task 5)."""
 
-    def test_only_raja_dhana_arishta_carry_direction(self):
-        """On the canonical report, every yoga testimony row's lean follows its kind exactly:
-        raja/dhana favourable-leaning, arishta adverse-leaning, lunar/other neutral."""
+    def test_lean_follows_kind_or_the_record_override(self):
+        """On the canonical report, every yoga testimony row's lean follows its kind
+        (raja/dhana favourable, arishta adverse) unless the yoga is one of the curated
+        printed-effect records; a plain other/lunar yoga is neutral."""
         from app.raman_saab.chart.model import BirthData
-        from app.raman_saab.detailed_report import build_detailed_report
+        from app.raman_saab.detailed_report import (
+            _ADVERSE_RECORD_YOGAS, _BENEFIC_RECORD_YOGAS, build_detailed_report)
         r = build_detailed_report(BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5,
                                             12.97, 77.59))
+        # id lookup for the fired yogas by display name (the testimony carries the name)
+        by_name = {y.name: y.id for y in r.yogas}
         seen = 0
         for ht_ in r.preponderance.houses:
             for t in ht_.testimonies:
                 if not t.name.startswith("yoga: "):
                     continue
                 seen += 1
-                if t.value in ("raja", "dhana"):
+                yid = by_name.get(t.name[len("yoga: "):])
+                if yid in _BENEFIC_RECORD_YOGAS:
+                    assert t.lean == "favourable-leaning"
+                elif yid in _ADVERSE_RECORD_YOGAS:
+                    assert t.lean == "adverse-leaning"
+                elif t.value in ("raja", "dhana"):
                     assert t.lean == "favourable-leaning"
                 elif t.value == "arishta":
                     assert t.lean == "adverse-leaning"
                 else:
                     assert t.lean == "neutral", (t.name, t.value)
         assert seen > 0    # the canonical chart fires resolvable yogas
+
+    def test_record_lean_uses_real_yoga_ids(self):
+        """Every curated record-lean id is a real registered yoga of the expected direction —
+        no stale/typo id, and each has its own citation (leaned by its printed effect)."""
+        from app.raman_saab.detailed_report import (
+            _ADVERSE_RECORD_YOGAS, _BENEFIC_RECORD_YOGAS)
+        from app.raman_saab.doctrine.yogas import YOGAS
+        by_id = {y.id: y for y in YOGAS}
+        for yid in _BENEFIC_RECORD_YOGAS | _ADVERSE_RECORD_YOGAS:
+            assert yid in by_id, yid
+            assert by_id[yid].source is not None      # each carries its own citation

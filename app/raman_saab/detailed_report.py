@@ -1472,6 +1472,32 @@ def _lean_word(favourable: bool) -> str:
     return "favourable-leaning" if favourable else "adverse-leaning"
 
 
+#: The specific "other"-kind yogas whose PRINTED effect is unambiguously directional, leaned by
+#: record (each still carries its own citation, shown in the Yogas section). The Pancha
+#: Mahapurusha (a leader/king, HTJAH-3HC), Budha-Aditya ("highly intelligent, of good repute"),
+#: Vasumathi ("always commands plenty of wealth", 3HC:2708) and Jaya ("ever successful,
+#: victorious", 3HC:5670) read benefic; Daridra ("contracts heavy debts and is very poor",
+#: 3HC:7289) and Asatyavadi ("loving falsehood... fraudulent schemes", HPA-20:225) read
+#: adverse. The bucket's mixed members (the Nabhasa/Akriti shapes) never reach here — they
+#: resolve no constituents, so produce no bearing row. lunar stays neutral (Gajakesari-type
+#: yogas are only conditionally benefic — nullified in dusthana formation, HTJAH-I:2948-2956).
+_BENEFIC_RECORD_YOGAS: Final[frozenset[str]] = frozenset({
+    "Y.RUCHAKA", "Y.BHADRA", "Y.HAMSA", "Y.MALAVYA", "Y.SASA",
+    "Y.BUDHA_ADITYA", "Y.VASUMATHI", "Y.JAYA"})
+_ADVERSE_RECORD_YOGAS: Final[frozenset[str]] = frozenset({"Y.DARIDRA", "Y.ASATYAVADI"})
+
+
+def _yoga_record_lean(y: FiredYoga) -> str:
+    """The preponderance-witness lean for a bearing yoga: a per-record override for the
+    directionally-unambiguous 'other'-kind yogas, else the encoded-kind lean, else neutral."""
+    if y.id in _BENEFIC_RECORD_YOGAS:
+        return "favourable-leaning"
+    if y.id in _ADVERSE_RECORD_YOGAS:
+        return "adverse-leaning"
+    return {"raja": "favourable-leaning", "dhana": "favourable-leaning",
+            "arishta": "adverse-leaning"}.get(y.kind, "neutral")
+
+
 def build_preponderance(r: DetailedReport) -> PreponderanceReading:
     """Assemble the per-house testimony ledgers from an already-fully-built DetailedReport —
     every testimony is a value the report renders elsewhere (lagna-frame lord strength, karaka
@@ -1592,20 +1618,18 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
 
         # Yogas bearing on this house (Raman's Primary Considerations, HTJAH-I:4135-4139),
         # via the constituents' own/occupy/aspect link his worked charts use. One row per
-        # bearing yoga. Lean ONLY by the encoded kinds: raja/dhana favourable, arishta
-        # adverse; lunar/other DELIBERATELY neutral — a refusal to encode per-yoga record
-        # leans (under-claiming by design; Raman's own effect texts do classify e.g. Daridra
-        # adverse and the Mahapurushas benefic, so a per-record lean with those citations
-        # would be legitimate future work — this default just never inflates a count).
+        # bearing yoga. Lean by the encoded kind (raja/dhana favourable, arishta adverse) and
+        # by a per-record override for the specific "other"-kind yogas whose PRINTED EFFECT is
+        # unambiguously directional (`_yoga_record_lean`); the remaining other/lunar yogas stay
+        # neutral (Nabhasa shapes resolve no constituents so never reach here; Gajakesari-type
+        # lunar yogas are only conditionally benefic).
         here = [y for y, bh in bearings if bh is not None and h in bh]
         if not here:
             tst.append(Testimony("yogas bearing", "none of the fired yogas resolves onto "
                                                   "this house", "absent"))
         else:
             for y in here:
-                lean = {"raja": "favourable-leaning", "dhana": "favourable-leaning",
-                        "arishta": "adverse-leaning"}.get(y.kind, "neutral")
-                tst.append(Testimony(f"yoga: {y.name}", y.kind, lean))
+                tst.append(Testimony(f"yoga: {y.name}", y.kind, _yoga_record_lean(y)))
 
         fav = sum(1 for t in tst if t.lean == "favourable-leaning")
         adv = sum(1 for t in tst if t.lean == "adverse-leaning")
@@ -2553,10 +2577,14 @@ def to_markdown(r: DetailedReport) -> str:
                  "formation can nullify Gajakesari (HTJAH-I:2948-2956) and can bring "
                  "Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a "
                  "dusthana-formed raja yoga may lean favourable here despite a possible "
-                 "bhanga. A yoga row leans only by its encoded kind (raja/dhana favourable, "
-                 "arishta adverse); lunar and other kinds are deliberately left neutral — a "
-                 "refusal to encode per-yoga leans, under-claiming by design. Bhava-Bala "
-                 "rank is shown as a magnitude and carries no direction._")
+                 "bhanga. A yoga row leans by its encoded kind (raja/dhana favourable, arishta "
+                 "adverse) and, for the specific yogas whose classical printed effect is "
+                 "unambiguous, by that effect — the Pancha Mahapurusha, Budha-Aditya, "
+                 "Vasumathi and Jaya favourable; Daridra and Asatyavadi adverse (each with its "
+                 "own citation in the Yogas section). Lunar and the remaining other-kind yogas "
+                 "stay neutral (a conditionally-benefic lunar yoga can be nullified in dusthana "
+                 "formation). Bhava-Bala rank is shown as a magnitude and carries no "
+                 "direction._")
         L.append("")
         L.append("| House | Matter | Verdict | For | Against | Neutral | Absent | "
                  "Preponderance | Status |")

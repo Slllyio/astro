@@ -95,6 +95,15 @@ class TestPage:
         assert "fetch('/report'" in html          # client fetches the JSON report
         assert "/report/source" in html            # click-to-source wiring
         assert "format:'json'" in html or 'format:"json"' in html
+        # the page must render EVERY section of the full report — not a curated subset
+        for heading in ("Your Reading", "Chart signature", "Ruler of the nativity",
+                        "Planetary positions", "Yogas", "Ashtakavarga", "House-by-house",
+                        "House strength cross-check", "Preponderance of testimonies",
+                        "The twelve matters", "Longevity", "Life-narrative", "Life-chapters",
+                        "Transits", "Divisional deep-reads", "Soul & destiny", "Pitru dosha",
+                        "Integrated insights", "What stands out", "Information content",
+                        "Nichod"):
+            assert heading in html, f"interactive page dropped section: {heading}"
 
 
 class TestSource:

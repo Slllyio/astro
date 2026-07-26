@@ -43,14 +43,74 @@ class TestSerpentCurse:
         assert pd._serpent_curse(c, 5, "Sun") == ()
 
 
-class TestAncestralCurse:
-    def test_pitru_curse_needs_9th_affliction_and_struck_sun(self) -> None:
-        """Father's-curse: the 9th afflicted by a malefic AND the Sun (pitṛ-kāraka) debilitated."""
-        # asc Aries -> 9th = Sagittarius(9). Saturn in Sagittarius afflicts the 9th; Sun in
-        # Libra(7) is debilitated.
-        c = _chart({"Saturn": 250.0, "Sun": 190.0})
-        yogas = pd._ancestral_curse(c, 9, "Sun", "father's curse (pitṛ-śrāpa)", "BPHS-83:30")
-        assert yogas and "pitṛ-śrāpa" in yogas[0].text
+class TestBphsCurseYogas:
+    """The faithful per-verse encodings of BPHS Ch.83's own curse-yogas — each Track-B chart
+    below constructs exactly one verse's condition (Aries ascendant unless stated: H5 = Leo,
+    lord Sun; H10 = Capricorn, lord Saturn; H8 = Scorpio; H12 = Pisces)."""
+
+    def test_father_5_exchange_of_5th_and_10th_lords(self) -> None:
+        """Father #5 (BPHS-83:53): 5th/10th lords exchanged + malefics occupying Asc and 5th.
+        Aries asc: Sun (5th lord) in Capricorn (10th), Saturn (10th lord) in Leo (5th) — the
+        exchange; Saturn in Leo is also the 5th-house malefic; Mars in Aries the Asc malefic."""
+        c = _chart({"Sun": 285.0, "Saturn": 125.0, "Mars": 5.0})
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#5" in t.text and "father's curse" in t.text for t in fired)
+        assert any(t.cite == "BPHS-83:53" for t in fired)
+
+    def test_father_10_lord_chain(self) -> None:
+        """Father #10 (BPHS-83:89): 12th lord in Asc, 8th lord in 5th, 10th lord in 8th.
+        Aries asc: Jupiter (12th lord, Pisces) in Aries; Mars (8th lord, Scorpio) in Leo;
+        Saturn (10th lord) in Scorpio."""
+        c = _chart({"Jupiter": 5.0, "Mars": 125.0, "Saturn": 215.0})
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#10" in t.text and "father's curse" in t.text for t in fired)
+
+    def test_mother_2_saturn_11th_moon_debilitated_in_5th(self) -> None:
+        """Mother #2 (BPHS-83-ii:118): Saturn in the 11th, malefics in the 4th, Moon in the
+        5th in debilitation. Cancer asc (so the 5th is Scorpio — the Moon's debilitation
+        sign): Saturn in Taurus (11th), Mars in Libra (4th), Moon at Scorpio 3° (deep
+        debilitation)."""
+        c = _chart({"Saturn": 45.0, "Mars": 190.0, "Moon": 213.0}, asc_lon=95.0)
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#2" in t.text and "mother's curse" in t.text for t in fired)
+        assert any(t.cite == "BPHS-83-ii:118" for t in fired)
+
+    def test_mother_13_the_8th_house_cluster(self) -> None:
+        """Mother #13 (BPHS-83-ii:165): Mars+Rahu+Jupiter in the 8th, Saturn+Moon in the 5th.
+        Aries asc: 8th = Scorpio, 5th = Leo."""
+        c = _chart({"Mars": 215.0, "Rahu": 220.0, "Jupiter": 225.0,
+                    "Saturn": 125.0, "Moon": 130.0})
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#13" in t.text and "mother's curse" in t.text for t in fired)
+
+    def test_no_yoga_fires_on_a_clean_chart(self) -> None:
+        """A lone benefic chart fires none of the encoded verse-combinations."""
+        c = _chart({"Jupiter": 5.0})
+        assert pd._bphs_curse_yogas(c) == ()
+
+    def test_every_encoded_yoga_carries_a_per_verse_cite(self) -> None:
+        """Every registered combination cites its own source line (BPHS-83:<n> for the father
+        list, BPHS-83-ii:<n> for the recovered mother list) — no pooled or heading cites."""
+        for _num, cite, _text in pd._FATHER_CURSE_YOGAS:
+            assert cite.startswith("BPHS-83:")
+        for _num, cite, _text in pd._MOTHER_CURSE_YOGAS:
+            assert cite.startswith("BPHS-83-ii:")
+        assert len(pd._FATHER_CURSE_YOGAS) == 9      # of 11 (2 on record: hemming)
+        assert len(pd._MOTHER_CURSE_YOGAS) == 11     # of 13 (2 on record: hemming/garble)
+
+    def test_recovered_source_file_backs_the_mother_cites(self) -> None:
+        """The BPHS-83-ii cites resolve into the RECOVERED source fragment on disk: each cited
+        line of vol2_chapter_083_ii.md actually starts that verse's numbered combination.
+        (Skipped where the knowledge library is not vendored — data/ is gitignored, so CI has
+        no corpus; the established corpus-skip pattern.)"""
+        src = (Path(__file__).resolve().parents[3] / "data" / "knowledge_library" / "sources"
+               / "bphs" / "vol2_chapter_083_ii.md")
+        if not src.exists():
+            pytest.skip("bphs corpus not vendored on this machine")
+        lines = src.read_text(encoding="utf-8").splitlines()
+        for num, cite, _text in pd._MOTHER_CURSE_YOGAS:
+            n = int(cite.split(":")[1])
+            assert lines[n - 1].lstrip().startswith(f"({num})"), (cite, lines[n - 1])
 
 
 class TestBuildAndInvariant:
@@ -69,20 +129,27 @@ class TestBuildAndInvariant:
         assert "pitru_dosha" not in Path(ht.__file__).read_text(encoding="utf-8")
 
     def test_notes_layer_ancestral_curse_apart_from_the_houses_own_significations(self) -> None:
-        """Regression test for a real tension found in a close reading of a generated report:
-        'father's curse'/'mother's curse' ancestral language reads alongside a favourable House 9
-        (father/fortune) or House 4 (mother/home) verdict elsewhere in the report with no note
-        on how they relate. A note must name both House-by-house reading and Your Reading as the
-        sections carrying the native's own significations, must acknowledge the curse-yoga test
-        and the house verdict share the SAME house/karaka data (not claim false independence — a
-        bphs-doctrine-reviewer pass found the first draft's 'independent classical layers' wording
-        overstated this), and must state that a favourable house reading and a curse-yoga firing
-        can still coexist because the house verdict weighs more factors, not because the two
-        layers are unrelated."""
+        """The layering note must name both House-by-house reading and Your Reading as the
+        sections carrying the native's own father/mother significations, state coexistence
+        without contradiction, and never claim the layers are 'independent' (a reviewer-flagged
+        overstatement in an early draft). Since the faithful re-encoding, the curse-yogas test
+        BPHS's own 5th/Ascendant (father) and 4th/5th/Moon (mother) chains — a genuinely
+        different region from the House 9/4 significations — and the note says so."""
         r = pd.build_pitru_dosha_reading(cast_chart(_BASELINE, ayanamsa="raman"))
-        note = next((n for n in r.notes if "SAME GROUND" in n.text), None)
+        note = next((n for n in r.notes if "DIFFERENT LAYER" in n.text), None)
         assert note is not None, [n.text for n in r.notes]
         assert "House-by-house reading" in note.text and "Your Reading" in note.text
         assert "coexist" in note.text
-        assert "SAME house and" in note.text          # shares data, not "independent"
+        assert "5th house/Ascendant" in note.text      # BPHS's own father-curse region
         assert "independent" not in note.text.lower()  # the overstated framing the reviewer flagged
+
+    def test_notes_disclose_the_encoding_scope(self) -> None:
+        """The scope note names what is encoded (9 of 11 father, 11 of 13 mother), what is on
+        record and why (hemming primitive, OCR garble, Gulika), and that the old editorial
+        proxy was retired."""
+        r = pd.build_pitru_dosha_reading(cast_chart(_BASELINE, ayanamsa="raman"))
+        note = next((n for n in r.notes if "verse-combinations" in n.text), None)
+        assert note is not None, [n.text for n in r.notes]
+        assert "9 of 11" in note.text and "11 of 13" in note.text
+        assert "hemming" in note.text and "Gulika" in note.text
+        assert "RETIRED" in note.text

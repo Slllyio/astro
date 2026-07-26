@@ -422,6 +422,30 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-26) — the curse-yogas re-encoded faithfully (the editorial proxy
+retired).** The pitru surface's `_ancestral_curse` proxy (9th+Sun / 4th+Moon malefic-touch,
+flagged with an honest-scope note when a reviewer found it tests a region BPHS-83's verses
+never use) is replaced by per-verse encodings of BPHS Ch.83's OWN numbered combinations.
+Father's curse: 9 of the 11 combinations from `bphs/vol2_chapter_083_i.md` (verse 20.30,
+L33-93), each with a per-verse cite (BPHS-83:41...92). Mother's curse: the missing BPHS source
+block was RECOVERED from the same archive.org scan the library's scrape drew from (the scrape
+had cut off at the section heading — `BPHS-83:130` cited a heading, not doctrine) and saved as
+`bphs/vol2_chapter_083_ii.md` with a provenance frontmatter; 11 of its 13 combinations (verses
+34-50, L114-166) are encoded with per-verse cites (BPHS-83-ii:114...165). On record, unencoded,
+each with its reason printed in the reading's notes: father #1-2 and mother #9 (need a
+papakartari/hemming primitive — the SYN_N6 precedent), mother #1's hemming disjunct, mother
+#10 (OCR-garbled), and Praśna Mārga's father's-curse variant (needs Gulika). Interpretation
+conventions (association = co-occupancy; father #3's degenerate-true clause; mother #5's
+strict-set reading) are documented in the module. The layering note is rewritten: the
+curse-yogas now demonstrably test the 5th/Ascendant (father) and 4th/5th/Moon (mother) chains
+— a genuinely different region from the House 9/4 personal significations, making the
+no-contradiction separation cleaner than the proxy allowed. A per-verse cite test pins every
+BPHS-83-ii cite to the exact line of the recovered file that starts its numbered combination.
+NOTE ON REVIEW: the standing pre-commit bphs-doctrine-reviewer workflow FAILED on session
+usage limits for this change; an inline line-by-line source verification of all 20 encoded
+checkers against their verses was performed and documented in its place, and the independent
+workflow pass remains re-runnable (`resumeFromRunId wf_e7ad74a3-5e9`).
+
 **Content amendment (2026-07-26) — yogas become the eighth witness
 (`yoga_house_bearings`).** The Preponderance section's one disclosed omission is closed: yogas
 (Raman's Primary Considerations, HTJAH-I:4135-4139) are now tallied per house. The mapping is

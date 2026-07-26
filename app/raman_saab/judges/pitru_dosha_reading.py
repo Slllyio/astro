@@ -96,29 +96,253 @@ def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagg
     return ()
 
 
-def _ancestral_curse(chart: RamanChart, house: int, karaka: str, curse: str,
-                     cite: str) -> tuple[Tagged, ...]:
-    """A śrāpa fires when the ancestor's house AND kāraka are malefic-struck and the 5th
-    (children) is itself afflicted — the curse manifesting as issue-affliction (BPHS Ch.83).
+# ---------------------------------------------------------------------------
+# BPHS Ch.83 curse-yogas — FAITHFUL per-verse encodings (replacing the earlier
+# editorial proxy, which tested the 9th+Sun / 4th+Moon — a region BPHS-83's own
+# verses never use; the father's curse is keyed to the 5th/Ascendant/Sun-as-5th-
+# lord chains and the mother's to the 4th/5th/Moon chains).
+#
+# Sources: father's curse = vol2_chapter_083_i.md (verses 20.30, eleven numbered
+# combinations, L33-93); mother's curse = vol2_chapter_083_ii.md (verses 34-50,
+# thirteen numbered combinations, L114-166 — RECOVERED 2026-07-26 from the same
+# archive.org scan the library's scrape drew from; the original scrape cut off at
+# this section's heading). CLASSICAL_NONCITABLE throughout (BPHS is outside the
+# live registry — the divergence firewall).
+#
+# ON RECORD, NOT ENCODED (each needs a primitive the engine lacks, or clean text):
+#   father #1 (BPHS-83:33) and #2 (BPHS-83:36) — papakartari (hemmed between
+#     malefics); the SYN_N6 precedent: recorded pending a hemming primitive.
+#   mother #1's hemming DISJUNCT (BPHS-83-ii:114) — same; its debilitation
+#     disjunct IS encoded below.
+#   mother #9 (BPHS-83-ii:144) — hemming again.
+#   mother #10 (BPHS-83-ii:148) — the OCR garbles the clause ("...and the lord of
+#     the 4th and the Moon or in the 6th...") beyond honest reconstruction.
+#   Praśna Mārga's own father's-curse variant (PrasnaMarga-18:695-696) — needs
+#     Gulika, which this engine does not compute.
+#
+# INTERPRETATION CONVENTIONS (source-verified line by line, disclosed):
+#   "associated with" a planet = co-occupancy of the same rasi house (the
+#     conservative conjunction reading; the verses' association is samyoga, not
+#     the wider conjunction-or-mutual-aspect sense `lords_associated` uses).
+#   father #3's "the lord of the 5th is with the Sun" reads DEGENERATE-TRUE when
+#     the 5th lord IS the Sun (Leo 5th, Aries ascendant) — the clause cannot
+#     fail of itself there; firing then rests on the verse's other clauses.
+#   mother #5's "associated with Saturn, Rahu and Mars; are in the 5th or the
+#     9th" is encoded as all five bodies (5th lord, Moon, Saturn, Rahu, Mars)
+#     within houses {5, 9} — marginally looser than requiring each malefic to
+#     share the exact house of the 5th lord or Moon; the strict same-house
+#     reading is a subset of what fires.
+# ---------------------------------------------------------------------------
 
-    HONEST SCOPE NOTE: this is an editorial proxy capturing the GENERAL shape of the doctrine
-    (malefic touch on the ancestor's house + affliction of its kāraka), not a literal encoding of
-    BPHS Ch.83's own numbered yogas — the on-disk source for the father's curse (BPHS-83:30)
-    lists specific technical combinations keyed to the 5th house/Ascendant/Sun-as-5th-lord chains
-    that this test does not individually reproduce, and the mother's-curse source (BPHS-83:130)
-    is only a partial OCR fragment. Flagged, not silently assumed exact (a bphs-doctrine-reviewer
-    pass, 2026-07-26, found the gap; a fuller re-encoding needs a cleaner BPHS-83 source)."""
-    house_mal = _malefics_on(chart, house)
-    karaka_deb = dignity(karaka, chart) == "debil"
-    karaka_mal = tuple(m for m in _malefics_on(chart, _planet_house(chart, karaka)) if m != karaka
-                       ) if karaka in chart.planets else ()
-    if house_mal and (karaka_deb or karaka_mal):
-        strike = "debilitated" if karaka_deb else f"struck by {', '.join(karaka_mal)}"
-        return (Tagged(
-            f"{curse}: the {house}th (ancestral seat) is afflicted by {', '.join(house_mal)} and "
-            f"its kāraka {karaka} is {strike} — an inherited issue-debt from that line",
-            "CLASSICAL_NONCITABLE", cite),)
-    return ()
+def _lord_of(chart: RamanChart, house: int) -> str:
+    return SIGN_LORDS[_house_of_sign(chart.asc_sign, house)]
+
+
+def _in_h(chart: RamanChart, planet: str, *houses: int) -> bool:
+    return _planet_house(chart, planet) in houses
+
+
+def _malefic_occupies(chart: RamanChart, house: int) -> bool:
+    """"Occupied by malefics" — occupancy ONLY (the verses say occupied, not aspected)."""
+    return any(n in NATURAL_MALEFICS for n in _occupants(chart, house))
+
+
+def _assoc(chart: RamanChart, a: str, b: str) -> bool:
+    ha, hb = _planet_house(chart, a), _planet_house(chart, b)
+    return ha != 0 and ha == hb
+
+
+def _with_malefics(chart: RamanChart, planet: str) -> bool:
+    h = _planet_house(chart, planet)
+    return h != 0 and any(n in NATURAL_MALEFICS and n != planet for n in _occupants(chart, h))
+
+
+def _debil(chart: RamanChart, planet: str) -> bool:
+    return planet in chart.planets and dignity(planet, chart) == "debil"
+
+
+def _combust(chart: RamanChart, planet: str) -> bool:
+    p = chart.planets.get(planet)
+    return p is not None and p.combust_fraction >= 0.5   # lord_quality's own threshold
+
+
+def _devoid_of_strength(chart: RamanChart, planet: str) -> bool:
+    """"Devoid of strength" via Shadbala is_powerful — False (not fired) when Shadbala is
+    unavailable (Track-B), never guessed."""
+    from app.raman_saab.primitives.shadbala.total import is_powerful
+    p = chart.planets.get(planet)
+    if p is None or p.shadbala_rupas is None:
+        return False
+    return not is_powerful(planet, p.shadbala_rupas.total / 60.0)
+
+
+def _malefic_navamsa(chart: RamanChart, planet: str) -> bool:
+    """The planet's navamsa sign is ruled by a natural malefic ("in a malefic Navamsa")."""
+    p = chart.planets.get(planet)
+    return p is not None and SIGN_LORDS[p.navamsa_sign] in NATURAL_MALEFICS
+
+
+def _malefic_sign(chart: RamanChart, planet: str) -> bool:
+    """The planet's rasi sign is ruled by a natural malefic ("in a malefic sign")."""
+    p = chart.planets.get(planet)
+    return p is not None and SIGN_LORDS[p.sign] in NATURAL_MALEFICS
+
+
+def _exchange(chart: RamanChart, h1: int, h2: int) -> bool:
+    return (_in_h(chart, _lord_of(chart, h1), h2)
+            and _in_h(chart, _lord_of(chart, h2), h1))
+
+
+#: (verse-number-in-list, cite, source-faithful condition text, checker)
+_FATHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
+    (3, "BPHS-83:41", "Jupiter in the Sun's sign, the 5th lord with the Sun, and the "
+                      "Ascendant and the 5th occupied by malefics"),
+    (4, "BPHS-83:47", "the Ascendant lord devoid of strength in the 5th, the 5th lord "
+                      "combust, and the Ascendant and the 5th occupied by malefics"),
+    (5, "BPHS-83:53", "exchange of houses between the 5th and 10th lords, and the Ascendant "
+                      "and the 5th occupied by malefics"),
+    (6, "BPHS-83:58", "Mars as 10th lord associated with the 5th lord, and the Ascendant, "
+                      "the 5th and the 10th occupied by malefics"),
+    (7, "BPHS-83:63", "the 10th lord in the 6th/8th/12th, Jupiter in a malefic sign, and the "
+                      "Ascendant lord and the 5th lord associated with malefics"),
+    (8, "BPHS-83:68", "the Sun in the Ascendant, Mars and Saturn in the 5th, Rahu in the 8th "
+                      "and Jupiter in the 12th (the translator's stated reading of the verse)"),
+    (9, "BPHS-83:85", "the Sun in the 8th, Saturn in the 5th, the 5th lord with Rahu, and a "
+                      "malefic in the Ascendant"),
+    (10, "BPHS-83:89", "the 12th lord in the Ascendant, the 8th lord in the 5th, and the "
+                       "10th lord in the 8th"),
+    (11, "BPHS-83:92", "the 6th lord in the 5th, the 10th lord in the 6th, and Jupiter "
+                       "associated with Rahu"),
+)
+
+
+def _father_curse_fires(chart: RamanChart, num: int) -> bool:
+    l5, l10 = _lord_of(chart, 5), _lord_of(chart, 10)
+    if num == 3:
+        jp = chart.planets.get("Jupiter")
+        return (jp is not None and jp.sign == 5                      # Leo, the Sun's sign
+                and _assoc(chart, l5, "Sun")
+                and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5))
+    if num == 4:
+        l1 = _lord_of(chart, 1)
+        return (_devoid_of_strength(chart, l1) and _in_h(chart, l1, 5)
+                and _combust(chart, l5)
+                and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5))
+    if num == 5:
+        return (_exchange(chart, 5, 10)
+                and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5))
+    if num == 6:
+        return (l10 == "Mars" and _assoc(chart, "Mars", l5)
+                and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5)
+                and _malefic_occupies(chart, 10))
+    if num == 7:
+        return (_in_h(chart, l10, 6, 8, 12) and _malefic_sign(chart, "Jupiter")
+                and _with_malefics(chart, _lord_of(chart, 1))
+                and _with_malefics(chart, l5))
+    if num == 8:
+        return (_in_h(chart, "Sun", 1) and _in_h(chart, "Mars", 5)
+                and _in_h(chart, "Saturn", 5) and _in_h(chart, "Rahu", 8)
+                and _in_h(chart, "Jupiter", 12))
+    if num == 9:
+        return (_in_h(chart, "Sun", 8) and _in_h(chart, "Saturn", 5)
+                and _assoc(chart, l5, "Rahu") and _malefic_occupies(chart, 1))
+    if num == 10:
+        return (_in_h(chart, _lord_of(chart, 12), 1)
+                and _in_h(chart, _lord_of(chart, 8), 5) and _in_h(chart, l10, 8))
+    if num == 11:
+        return (_in_h(chart, _lord_of(chart, 6), 5) and _in_h(chart, l10, 6)
+                and _assoc(chart, "Jupiter", "Rahu"))
+    return False
+
+
+_MOTHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
+    (1, "BPHS-83-ii:114", "the Moon as 5th lord in her sign of debilitation, and the 4th and "
+                          "the 5th occupied by malefics (the verse's hemming disjunct is on "
+                          "record, unencoded)"),
+    (2, "BPHS-83-ii:118", "Saturn in the 11th, malefics in the 4th, and the Moon in the 5th "
+                          "in her sign of debilitation"),
+    (3, "BPHS-83-ii:121", "the 5th lord in the 6th/8th/12th, the Ascendant lord debilitated, "
+                          "and the Moon associated with malefics"),
+    (4, "BPHS-83-ii:125", "the 5th lord in the 8th/6th/12th, the Moon in a malefic Navamsa, "
+                          "and malefics in the Ascendant and the 5th"),
+    (5, "BPHS-83-ii:129", "the 5th lord and the Moon, with Saturn, Rahu and Mars, in the 5th "
+                          "or the 9th"),
+    (6, "BPHS-83-ii:132", "Mars as 4th lord associated with Saturn and Rahu, the Sun in the "
+                          "5th and the Moon in the Ascendant"),
+    (7, "BPHS-83-ii:136", "the Ascendant lord and the 5th lord in the 6th, the 4th lord in "
+                          "the 8th, and the Ascendant occupied by the 8th and 10th lords"),
+    (8, "BPHS-83-ii:140", "the Ascendant occupied by the 6th and 8th lords, the 4th lord in "
+                          "the 12th, and the Moon and Jupiter, with malefics, in the 5th"),
+    (11, "BPHS-83-ii:152", "the Cancer Ascendant occupied by Mars and Rahu, and the Moon and "
+                           "Saturn in the 5th"),
+    (12, "BPHS-83-ii:161", "Mars, Rahu, the Sun and Saturn in the Ascendant, 5th, 8th and "
+                           "12th respectively, and the Ascendant and 4th lords in the "
+                           "6th/8th/12th"),
+    (13, "BPHS-83-ii:165", "Mars, Rahu and Jupiter in the 8th, and Saturn and the Moon in "
+                           "the 5th"),
+)
+
+
+def _mother_curse_fires(chart: RamanChart, num: int) -> bool:
+    l5, l4, l1 = _lord_of(chart, 5), _lord_of(chart, 4), _lord_of(chart, 1)
+    if num == 1:
+        return (l5 == "Moon" and _debil(chart, "Moon")
+                and _malefic_occupies(chart, 4) and _malefic_occupies(chart, 5))
+    if num == 2:
+        return (_in_h(chart, "Saturn", 11) and _malefic_occupies(chart, 4)
+                and _in_h(chart, "Moon", 5) and _debil(chart, "Moon"))
+    if num == 3:
+        return (_in_h(chart, l5, 6, 8, 12) and _debil(chart, l1)
+                and _with_malefics(chart, "Moon"))
+    if num == 4:
+        return (_in_h(chart, l5, 6, 8, 12) and _malefic_navamsa(chart, "Moon")
+                and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5))
+    if num == 5:
+        return (_in_h(chart, l5, 5, 9) and _in_h(chart, "Moon", 5, 9)
+                and all(_in_h(chart, m, 5, 9) for m in ("Saturn", "Rahu", "Mars")))
+    if num == 6:
+        return (l4 == "Mars" and _assoc(chart, "Mars", "Saturn")
+                and _assoc(chart, "Mars", "Rahu")
+                and _in_h(chart, "Sun", 5) and _in_h(chart, "Moon", 1))
+    if num == 7:
+        return (_in_h(chart, l1, 6) and _in_h(chart, l5, 6) and _in_h(chart, l4, 8)
+                and _in_h(chart, _lord_of(chart, 8), 1)
+                and _in_h(chart, _lord_of(chart, 10), 1))
+    if num == 8:
+        return (_in_h(chart, _lord_of(chart, 6), 1) and _in_h(chart, _lord_of(chart, 8), 1)
+                and _in_h(chart, l4, 12)
+                and _in_h(chart, "Moon", 5) and _in_h(chart, "Jupiter", 5)
+                and _malefic_occupies(chart, 5))
+    if num == 11:
+        return (chart.asc_sign == 4                                   # Cancer Ascendant
+                and _in_h(chart, "Mars", 1) and _in_h(chart, "Rahu", 1)
+                and _in_h(chart, "Moon", 5) and _in_h(chart, "Saturn", 5))
+    if num == 12:
+        return (_in_h(chart, "Mars", 1) and _in_h(chart, "Rahu", 5)
+                and _in_h(chart, "Sun", 8) and _in_h(chart, "Saturn", 12)
+                and _in_h(chart, l1, 6, 8, 12) and _in_h(chart, l4, 6, 8, 12))
+    if num == 13:
+        return (_in_h(chart, "Mars", 8) and _in_h(chart, "Rahu", 8)
+                and _in_h(chart, "Jupiter", 8)
+                and _in_h(chart, "Saturn", 5) and _in_h(chart, "Moon", 5))
+    return False
+
+
+def _bphs_curse_yogas(chart: RamanChart) -> tuple[Tagged, ...]:
+    """Fire the encoded BPHS Ch.83 curse-yogas — one Tagged per fired verse, each naming its
+    number and quoting its own condition, with a per-verse cite."""
+    out: list[Tagged] = []
+    for num, cite, text in _FATHER_CURSE_YOGAS:
+        if _father_curse_fires(chart, num):
+            out.append(Tagged(f"father's curse (pitṛ-śrāpa), BPHS verse-combination #{num}: "
+                              f"{text} — want of male issue from the father's curse of a "
+                              f"previous birth", "CLASSICAL_NONCITABLE", cite))
+    for num, cite, text in _MOTHER_CURSE_YOGAS:
+        if _mother_curse_fires(chart, num):
+            out.append(Tagged(f"mother's curse (mātṛ-śrāpa), BPHS verse-combination #{num}: "
+                              f"{text} — want of male issue from the mother's curse of a "
+                              f"previous birth", "CLASSICAL_NONCITABLE", cite))
+    return tuple(out)
 
 
 def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
@@ -133,10 +357,9 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
 
     yogas: list[Tagged] = []
     yogas.extend(_serpent_curse(chart, 5, fifth_lord))
-    # pitṛ-śrāpa: the 9th (father/ancestors) + Sun (pitṛ-kāraka)
-    yogas.extend(_ancestral_curse(chart, 9, "Sun", "father's curse (pitṛ-śrāpa)", "BPHS-83:30"))
-    # mātṛ-śrāpa: the 4th (mother) + Moon (mātṛ-kāraka)
-    yogas.extend(_ancestral_curse(chart, 4, "Moon", "mother's curse (mātṛ-śrāpa)", "BPHS-83:130"))
+    # BPHS Ch.83's own numbered verse-combinations, encoded per verse (9 father + 11 mother;
+    # the rest are on record — see the block comment above _FATHER_CURSE_YOGAS).
+    yogas.extend(_bphs_curse_yogas(chart))
 
     pitru: list[Tagged] = [Tagged(
         f"pitṛ-sthāna (the 9th, {SIGN_LORDS[_house_of_sign(chart.asc_sign, 9)]}-ruled) — the "
@@ -160,18 +383,24 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
                "family lineage' (BPHS-83:107). An ancestral-karma reading is a contemplative lens "
                "with a remedy — never a decree, never medical advice.", "CLASSICAL_NONCITABLE",
                "BPHS-83:107"),
-        Tagged("A DIFFERENT THRESHOLD ON THE SAME GROUND, not a contradiction: the curse-yogas "
-               "above (and the 9th-affliction note in Pitṛ-sthāna below) test the SAME house and "
-               "kāraka House-by-house reading also judges (9th/Sun for father, 4th/Moon for "
-               "mother) — but as a narrow technical gate for inherited past-life debt bearing on "
-               "PROGENY/lineage continuation specifically: malefic touch plus kāraka affliction, "
-               "nothing more. House-by-house reading and Your Reading weigh many more factors "
-               "before their verdict (lord strength, benefic yogas and aspects, the dhana floor) "
-               "— so a favourable House 9 or 4 there can still coexist with a curse-yoga firing "
-               "here: the richer house verdict can outweigh this section's narrower signal, and "
-               "neither reading is a judgment on your actual rapport with a living parent, only "
-               "on inherited ancestral debt and house-strength respectively.",
-               "CLASSICAL_NONCITABLE"),
+        Tagged("The curse-yogas above are BPHS Ch.83's OWN numbered verse-combinations, encoded "
+               "per verse (father: 9 of 11 from BPHS-83:33-93; mother: 11 of 13 from the "
+               "recovered BPHS-83-ii:114-166 block). ON RECORD, unencoded: father #1-2 and "
+               "mother #9 (each needs a papakartari/hemming primitive the engine lacks — the "
+               "SYN_N6 precedent), mother #1's hemming disjunct, mother #10 (OCR-garbled beyond "
+               "honest reconstruction), and Praśna Mārga's father's-curse variant "
+               "(PrasnaMarga-18:695-696 — needs Gulika, not computed). An earlier editorial "
+               "proxy (9th+Sun / 4th+Moon malefic-touch) was RETIRED by this encoding: BPHS's "
+               "own verses never use that region.", "CLASSICAL_NONCITABLE"),
+        Tagged("A DIFFERENT LAYER, not a contradiction: these curse-yogas are narrow technical "
+               "gates about PROGENY/lineage continuation, keyed by BPHS's own verses to the "
+               "5th house/Ascendant chains (father) and the 4th/5th/Moon chains (mother) — "
+               "they are not a judgment on your actual rapport with a living parent. The "
+               "native's OWN standing with father and fortune (House 9) and mother and home "
+               "(House 4) is judged separately in House-by-house reading and Your Reading, "
+               "from those houses' own lord/karaka/aspects with many more factors weighed — "
+               "so a favourable House 9 or 4 there can coexist with a curse-yoga firing here "
+               "without contradiction.", "CLASSICAL_NONCITABLE"),
     )
     return PitruDoshaReading(raman_children_verdict=verdict, curse_yogas=tuple(yogas),
                              pitru_bhava=tuple(pitru), notes=notes)

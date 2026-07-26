@@ -701,6 +701,11 @@ def house_conclusion(r: "DetailedReport", house: int) -> str:
 
     ht_row = next((x for x in r.preponderance.houses if x.house == house), None)
     if ht_row is not None:
+        bearing_names = [t.name[len("yoga: "):] for t in ht_row.testimonies
+                         if t.name.startswith("yoga: ")]
+        if bearing_names:
+            bits.append(f"fired yogas bearing on it (via their planets' own/occupy/aspect): "
+                        f"{', '.join(bearing_names)}")
         # Counts are labelled by TENOR (favourable/adverse, the preponderance table's own
         # column sense) — "for/against" read as headline-relative and inverted on an
         # afflicted headline (bphs-doctrine-reviewer finding).
@@ -1475,6 +1480,10 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
     and displayed, never re-decided and never counted in its own tally."""
     hs_by_house = {row.house: row for row in r.house_strength}
     dash_by_matter = {e.matter: e for e in r.dashboard.entries}
+    # yoga -> houses it bears on (Raman's Primary Considerations link, resolved via each
+    # yoga's constituent planets' own/occupy/aspect — see yoga_house_bearings' docstring).
+    from app.raman_saab.doctrine.synthesis_rules import yoga_house_bearings
+    bearings = [(y, yoga_house_bearings(r.chart, y)) for y in r.yogas]
 
     houses: list[HouseTestimonies] = []
     for pf in r.proformas:
@@ -1580,6 +1589,23 @@ def build_preponderance(r: DetailedReport) -> PreponderanceReading:
         else:
             tst.append(Testimony("majority tenor", split.majority,
                                  _lean_word(split.majority == "favourable")))
+
+        # Yogas bearing on this house (Raman's Primary Considerations, HTJAH-I:4135-4139),
+        # via the constituents' own/occupy/aspect link his worked charts use. One row per
+        # bearing yoga. Lean ONLY by the encoded kinds: raja/dhana favourable, arishta
+        # adverse; lunar/other DELIBERATELY neutral — a refusal to encode per-yoga record
+        # leans (under-claiming by design; Raman's own effect texts do classify e.g. Daridra
+        # adverse and the Mahapurushas benefic, so a per-record lean with those citations
+        # would be legitimate future work — this default just never inflates a count).
+        here = [y for y, bh in bearings if bh is not None and h in bh]
+        if not here:
+            tst.append(Testimony("yogas bearing", "none of the fired yogas resolves onto "
+                                                  "this house", "absent"))
+        else:
+            for y in here:
+                lean = {"raja": "favourable-leaning", "dhana": "favourable-leaning",
+                        "arishta": "adverse-leaning"}.get(y.kind, "neutral")
+                tst.append(Testimony(f"yoga: {y.name}", y.kind, lean))
 
         fav = sum(1 for t in tst if t.lean == "favourable-leaning")
         adv = sum(1 for t in tst if t.lean == "adverse-leaning")
@@ -2485,11 +2511,21 @@ def to_markdown(r: DetailedReport) -> str:
                  "witnesses split, not that the verdict is wrong. (3) The witnesses are NOT "
                  "independent votes: lord, karaka and navamsa are the verdict's own inputs "
                  "restated by name, and the majority tenor derives from the same "
-                 "significations as the headline. Yogas bearing on a house are among Raman's "
-                 "Primary Considerations (e.g. HTJAH-I:4135-4139, the 4th-house instance of "
-                 "his recurring template) but are NOT tallied — this engine has no "
-                 "yoga-to-house mapping primitive; an honest omission, not a judgment. "
-                 "Bhava-Bala rank is shown as a magnitude and carries no direction._")
+                 "significations as the headline. Yogas bearing on a house (Raman's Primary "
+                 "Considerations, e.g. HTJAH-I:4135-4139) ARE now tallied, mapped on his "
+                 "worked-chart principle — the houses each yoga's constituent planets own, "
+                 "occupy or aspect (\"the nature of ownership of the planets causing the "
+                 "yoga,\" HTJAH-I:2879-2890 — the principle, not an exact derivation; his own "
+                 "example there names one house this mapping cannot produce) — with disclosed "
+                 "limits: whole-chart pattern yogas carry no constituent identity and are "
+                 "unmapped, and formation-strength modifiers are not graded — dusthana "
+                 "formation can nullify Gajakesari (HTJAH-I:2948-2956) and can bring "
+                 "Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a "
+                 "dusthana-formed raja yoga may lean favourable here despite a possible "
+                 "bhanga. A yoga row leans only by its encoded kind (raja/dhana favourable, "
+                 "arishta adverse); lunar and other kinds are deliberately left neutral — a "
+                 "refusal to encode per-yoga leans, under-claiming by design. Bhava-Bala "
+                 "rank is shown as a magnitude and carries no direction._")
         L.append("")
         L.append("| House | Matter | Verdict | For | Against | Neutral | Absent | "
                  "Preponderance | Status |")

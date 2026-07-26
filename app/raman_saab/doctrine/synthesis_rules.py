@@ -233,6 +233,59 @@ def _yoga_planets(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
     return tuple(dict.fromkeys(pls)) if pls else None
 
 
+def yoga_house_bearings(chart: RamanChart, y: FiredYoga) -> Optional[frozenset[int]]:
+    """The houses a fired yoga "has a bearing on" (Raman's Primary Considerations phrase,
+    HTJAH-I:4135-4139) — REPORT-ONLY.
+
+    Raman's own operationalization, taken from where he works charts rather than the template
+    (which never defines it): a yoga bears on the houses its CONSTITUENT PLANETS own, occupy
+    or aspect. His worked examples DEMONSTRATE ownership and occupancy: Chandramangala — "the
+    nature of results depends also on the nature of ownership of the planets causing the
+    yoga" (HTJAH-I:2879-2890; the passage's own Libra-Lagna example names the 2nd and 11th,
+    of which only the 2nd is derivable from the constituents' own/occupy/aspect — the cite
+    supports the ownership PRINCIPLE, not an exact house-set derivation); Truman's Gajakesari
+    "has reference to the 2nd, the 10th, the 4th and the 7th houses" via the constituents'
+    placements (HTJAH-I:15824-15826); Dhana and Raja yogas repeatedly named FOR the houses
+    their constituent lords own (HTJAH-I:17049-17052, 15831-15832). The ASPECT factor is
+    included by extension from "if Jupiter is connected in any way with the second house...
+    he is bound to make a person earn well" (HTJAH-I:2955-2956), not by a worked
+    demonstration.
+
+    SCOPE — the DIRECT factors only (ownership, occupancy, whole-sign aspect): the first
+    three of the locked five/six-factor influence method (HTJAH-I:1586-1596). The remaining
+    factors (planets aspecting/conjoining the house LORD, the lord-from-the-Moon, the karaka
+    — the full `vimshottari.timer_set`) are the dasha-fructification extensions; including
+    them saturates multi-planet yogas onto all twelve houses. Even so, this mapping is
+    deliberately COARSER than Raman's demonstrated four (typically 5-8 houses for a
+    two-planet yoga): under the locked whole-sign convention it reproduces the Truman set
+    3-of-4 (his bhava-reckoned 10th reads as the 11th rasi here) plus aspect-derived houses
+    he does not name. A disclosed approximation built only from locked-doctrine factors —
+    never a new influence rule.
+
+    Returns None for the whole-chart pattern yogas `_yoga_planets` cannot resolve (the
+    Nabhasa/Akriti/Sankhya shapes carry no constituent-planet identity — an honest gap,
+    disclosed by callers, never guessed). Formation-strength modifiers are NOT graded here
+    and callers must disclose them: dusthana formation can nullify Gajakesari
+    (HTJAH-I:2948-2956) and can bring Raja-Yoga Bhanga (HTJAH-I:15903, 16139) — though not
+    absolutely (HTJAH-I:15531 credits an 8th-house-formed Raja yoga; 16111-16112 lets a
+    powerful yoga set the bhanga right)."""
+    from app.raman_saab.doctrine import drishti   # function-level, matching _sambandha
+    pls = _yoga_planets(chart, y)
+    if not pls:
+        return None
+    houses: set[int] = set()
+    for p in pls:
+        pos = chart.planets.get(p)
+        if pos is None:
+            continue
+        for h in range(1, 13):
+            sign = ((chart.asc_sign - 1) + (h - 1)) % 12 + 1
+            if (SIGN_LORDS[sign] == p or pos.rasi_house == h
+                    or drishti.aspects_house(p, h, chart)):
+                houses.add(h)
+    return frozenset(houses) or None
+
+
 def _yoga_planets_impl(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
     n = y.name.lower()
 

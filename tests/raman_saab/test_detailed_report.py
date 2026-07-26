@@ -1083,7 +1083,8 @@ class TestPreponderanceOfTestimonies:
         """CIRCULARITY GUARD: no testimony row is named after the headline verdict itself —
         the witness list contains only the seven distinct named axes."""
         allowed_prefixes = ("lord (lagna frame)", "karaka", "navamsa", "bhava bala rank",
-                            "SAV band", "matter-varga", "majority tenor")
+                            "SAV band", "matter-varga", "majority tenor", "yogas bearing",
+                            "yoga: ")
         for ht_ in report.preponderance.houses:
             for t in ht_.testimonies:
                 assert t.name.startswith(allowed_prefixes), t.name

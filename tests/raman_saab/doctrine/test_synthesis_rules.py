@@ -171,3 +171,84 @@ class TestYogaPlanets:
                 pls = _yoga_planets(chart, stub)
                 if pls is not None:
                     assert len(pls) == len(set(pls)), rec.name
+
+
+class TestYogaHouseBearings:
+    """yoga_house_bearings — the yoga->house link, mapped the way Raman's worked charts do it
+    (constituent planets' own/occupy/aspect; HTJAH-I:2879-2890, 15824-15826)."""
+
+    @pytest.fixture(scope="class")
+    def bearings(self, chart):
+        from app.raman_saab.doctrine.synthesis_rules import yoga_house_bearings
+        from app.raman_saab.doctrine.yogas import detect_yogas
+        return [(y, yoga_house_bearings(chart, y)) for y in detect_yogas(chart)]
+
+    def test_bearing_iff_a_constituent_owns_occupies_or_aspects(self, chart, bearings):
+        """Cross-check BOTH directions against the raw primitives: house H is in a yoga's
+        bearings iff some constituent planet owns H's sign, occupies H, or aspects H."""
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+        for y, bh in bearings:
+            pls = _yoga_planets(chart, y)
+            if pls is None:
+                assert bh is None
+                continue
+            for h in range(1, 13):
+                sign = ((chart.asc_sign - 1) + (h - 1)) % 12 + 1
+                expected = any(
+                    SIGN_LORDS[sign] == p
+                    or (chart.planets.get(p) is not None
+                        and chart.planets[p].rasi_house == h)
+                    or drishti.aspects_house(p, h, chart)
+                    for p in pls if p in chart.planets)
+                assert ((bh is not None) and (h in bh)) == expected, (y.name, h)
+
+    def test_unresolvable_pattern_yogas_have_no_bearings(self, chart, bearings):
+        """The Nabhasa/Akriti/Sankhya whole-chart shapes carry no constituent identity —
+        they must map to None, never to a guessed house set."""
+        from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+        for y, bh in bearings:
+            if _yoga_planets(chart, y) is None:
+                assert bh is None
+
+    def test_report_only_no_verdict_calls(self):
+        """The bearing mapper never judges — pure lordship/occupancy/aspect lookups."""
+        import inspect
+        from app.raman_saab.doctrine.synthesis_rules import yoga_house_bearings
+        src = inspect.getsource(yoga_house_bearings)
+        assert "judge_house" not in src and "_decide(" not in src
+
+    def test_canonical_gajakesari_bearings(self, chart, bearings):
+        """Canonical chart pin: Gajakesari (Jupiter+Moon) bears on the houses those two own,
+        occupy or aspect — a differential set, never all twelve (the anti-saturation pin
+        behind the deliberate direct-factors-only scope)."""
+        gk = next(((y, bh) for y, bh in bearings if "Gajakesari" in y.name), None)
+        assert gk is not None
+        _y, bh = gk
+        assert bh is not None and 1 <= len(bh) < 12
+
+
+class TestYogaTestimonyLeanDiscipline:
+    """The eighth preponderance witness leans only by unambiguous encoded kinds."""
+
+    def test_only_raja_dhana_arishta_carry_direction(self):
+        """On the canonical report, every yoga testimony row's lean follows its kind exactly:
+        raja/dhana favourable-leaning, arishta adverse-leaning, lunar/other neutral."""
+        from app.raman_saab.chart.model import BirthData
+        from app.raman_saab.detailed_report import build_detailed_report
+        r = build_detailed_report(BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5,
+                                            12.97, 77.59))
+        seen = 0
+        for ht_ in r.preponderance.houses:
+            for t in ht_.testimonies:
+                if not t.name.startswith("yoga: "):
+                    continue
+                seen += 1
+                if t.value in ("raja", "dhana"):
+                    assert t.lean == "favourable-leaning"
+                elif t.value == "arishta":
+                    assert t.lean == "adverse-leaning"
+                else:
+                    assert t.lean == "neutral", (t.name, t.value)
+        assert seen > 0    # the canonical chart fires resolvable yogas

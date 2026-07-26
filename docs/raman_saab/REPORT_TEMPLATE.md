@@ -422,6 +422,30 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-26) — yogas become the eighth witness
+(`yoga_house_bearings`).** The Preponderance section's one disclosed omission is closed: yogas
+(Raman's Primary Considerations, HTJAH-I:4135-4139) are now tallied per house. The mapping is
+Raman's own worked-chart method, not an invention: a yoga bears on the houses its CONSTITUENT
+PLANETS own, occupy or aspect ("the nature of results depends also on the nature of ownership
+of the planets causing the yoga... predominantly those of the 2nd and 11th houses",
+Chandramangala, HTJAH-I:2879-2890; Truman's Gajakesari "has reference to the 2nd, the 10th,
+the 4th and the 7th houses", HTJAH-I:15824-15826; Dhana/Raja yogas named FOR their constituent
+lords' houses, HTJAH-I:17049-17052, 15831-15832). `synthesis_rules.yoga_house_bearings()`
+resolves constituents via the existing `_yoga_planets` and tests the DIRECT factors only
+(ownership/occupancy/whole-sign aspect — the first three of the locked HTJAH-I:1586-1596
+five-factor method): including the full `timer_set` (lord-association + karaka +
+lord-from-Moon factors, the dasha-fructification extensions) saturates multi-planet yogas onto
+all twelve houses, where Raman's own worked example names FOUR — a deliberate, disclosed
+narrowing using only locked-doctrine factors. Each bearing yoga is one testimony row leaning
+ONLY by its encoded kind (raja/dhana favourable, arishta adverse; lunar/other neutral — the
+"other" bucket mixes Daridra with the Mahapurushas, so leaning it would invent a
+classification). Disclosed limits, printed in the intro: whole-chart pattern yogas carry no
+constituent identity and are unmapped; the forming-house strength modifier (dusthana
+formation nullifies, HTJAH-I:2948-2956) is not graded. The per-house Conclusion line names
+the bearing yogas, mention-only. Canonical-chart effect worth recording: H6 moved from
+well-corroborated to contested (a raja-kind yoga bearing on it added a favourable witness
+against the afflicted headline) — the tally is disclosure, the verdict unchanged.
+
 **Content amendment (2026-07-26) — the per-house Conclusion line (the faithful "Net
 Confluence").** A user proposed a "Net Confluence Synthesis Engine": collapse verdict +
 preponderance + Bhava-Bala rank + SAV into ONE of five named archetypes per house

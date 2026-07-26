@@ -29,6 +29,7 @@ from app.raman_saab import (
     render_trimsamsa,
 )
 from app.raman_saab.chart.adapter import cast_chart
+from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
@@ -78,6 +79,33 @@ _HOUSE_NAME = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mo
 
 _SIGN_NAME = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
               "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+
+#: Raman's strongest-planet temperament lines, lightly condensed (OCR-normalized) from
+#: HTJAH-I:6248-6268 — "The strongest planet in the horoscope determines the predominance of
+#: the physical, mental and spiritual peculiarities of the person" (6248-6250). The Moon is
+#: deliberately ABSENT: Raman's passage names Sun, Mars, Mercury, Jupiter, Venus and Saturn
+#: only — an honest absence, nothing invented. Two distinct categories of clause are omitted:
+#: (a) the grade-gated weak/afflicted clauses (Sun "predominantly weak" blindness/heart cluster,
+#: 6252-6254; Mars "highly afflicted" scaffold, 6256-6257), genuinely inapplicable to a
+#: strongest-planet reading; and (b) the named-disease and appearance clauses Raman attaches
+#: even to the strongest case (Sun fire accidents 6251-6252; Mars apoplexy/skin 6255-6256;
+#: Venus 6262-6264; Saturn varicose veins / insanity escalation / uncouth appearance
+#: 6265-6268) — a DISCLOSED editorial condensation under the card's "shorthand for tendencies,
+#: never medical statements" framing, not a claim of inapplicability.
+_RULER_TEMPERAMENT: Final[dict[str, str]] = {
+    "Sun": "enjoys well-balanced health and looks only at the bright side of things; "
+           "the weak point is the eyesight",
+    "Mars": "the sanguine temperament — the blood is rich; runs a great risk of wounds "
+            "in quarrels",
+    "Mercury": "endowed with a bilious temperament; the weak points are the nervous system, "
+               "liver and digestive organs",
+    "Jupiter": "the temperament is both phlegmatic and sanguine; may suffer from excessive "
+               "indulgence in eating and drinking",
+    "Venus": "strong, healthy and happy — sensual, fond of the good things of life; "
+             "the disposition is cheerful",
+    "Saturn": "worries a great deal and suffers from a chronic melancholic tendency; "
+              "the spinal column requires special care",
+}
 
 
 def _jd_ym(jd: float) -> str:
@@ -377,6 +405,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
     SectionSpec("dashboard", "## The twelve matters at a glance", 'id="dashboard"', "v2"),
     SectionSpec("chart_signature", "## Chart signature", 'class="sig"', "v1"),
+    # v13 (2026-07-26, conscious amendment): Raman's own first-impression move — "first of all
+    # consider the ruler of the nativity" (HTJAH-I:16001-16002) — placed directly after the
+    # Chart signature it opens from; the natural narrative position (v6-v12 precedent).
+    SectionSpec("ruler", "## Ruler of the nativity", 'id="ruler"', "v13"),
     SectionSpec("chart_grids", None, 'id="charts"', "v1"),
     SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
     SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
@@ -390,6 +422,11 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # cross-checks the verdicts just shown against two independent strength measures — the
     # natural narrative position (read the verdicts, then see how strong their ground is).
     SectionSpec("house_strength", "## House strength cross-check", 'id="house-strength"', "v8"),
+    # v14 (2026-07-26, conscious amendment): the per-house testimony ledgers — Raman's
+    # "judgment is the summing up of the influence of planets" (HTJAH-I:983-991) applied to
+    # every already-computed axis — placed right after the House strength cross-check it
+    # generalizes from two axes to all of them; the natural narrative position.
+    SectionSpec("preponderance", "## Preponderance of testimonies", 'id="preponderance"', "v14"),
     SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
     SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
     # v11 (2026-07-26, conscious amendment): inserted right after The maraka scheme, since it
@@ -411,6 +448,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # MD-lord condition, and now this) — placed last of the three since it is AV-tier, the
     # weakest doctrinal standing of the group, under Raman's own reliability caveat.
     SectionSpec("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"', "v12"),
+    # v15 (2026-07-26, conscious amendment): one woven prose chapter per Mahadasha — the
+    # Napoleon-narration shape (HTJAH-I:15950-15999) merging what Life-narrative and its three
+    # companion tables show separately; placed as the capstone of that companion cluster.
+    SectionSpec("life_chapters", "## Life-chapters", 'id="life-chapters"', "v15"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
     # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
     # references the Life-narrative (timeline) and Gochara sections directly above it — the
@@ -434,11 +475,12 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "now_box", "info_content", "stands_out",
+    "title", "plain_reading", "chart_signature", "ruler", "now_box", "info_content", "stands_out",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
-    "house_strength", "longevity",
+    "house_strength", "preponderance", "longevity",
     "maraka", "maraka_saturn", "timeline", "ishta_kashta", "md_condition", "av_dasha_seat",
+    "life_chapters",
     "gochara", "dasha_transit",
     "divisional", "career",
     "deeptadi",
@@ -674,9 +716,11 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
 @dataclass(frozen=True)
 class ConfluenceWindow:
     """A stretch where the running Mahadasha or Antardasha LORD is, at the same time, undergoing
-    its own favourable Gochara transit — Raman's own reason this matters (transits are secondary,
-    catalytic to the Dasha, HTJAH-II:4679: "a good transit only delivers what the running period
-    already permits") applied concretely: the clearest confirmation is when the period's own
+    its own favourable Gochara transit — Raman's own reason this matters (HTJAH-II:4679-4687:
+    "Transits are always secondary in importance. They are like catalytic agents. All
+    conclusions must be primarily drawn on the basis of Dasa-vichara" — i.e. a transit only
+    catalyses what the running period permits) applied concretely: the clearest confirmation
+    is when the period's own
     planet is well-placed by transit too. `role` is "MD" or "AD"; the overlap window is the
     INTERSECTION of the bhukti's bounds and the planet's own favourable Gochara segment — both
     already computed elsewhere in the report (DashaTimeline, gochara_outlook); nothing here is a
@@ -1053,6 +1097,9 @@ class DetailedReport:
     window_forward: int                              # years of future shown
     nichod: "Nichod"                                 # the one deep-level integration of it all
     plain_reading: "PlainReading"                    # the plain-English reading, read FIRST
+    ruler: "RulerOfNativity"                         # Raman's first-impression card (v13)
+    preponderance: "PreponderanceReading"            # per-house testimony ledgers (v14)
+    life_chapters: "LifeChapters"                    # one woven chapter per MD run (v15)
 
 
 @dataclass(frozen=True)
@@ -1101,6 +1148,537 @@ _EMPTY_NICHOD: Final[Nichod] = Nichod(
     matters_tally="", current_period="", live_transits="", spotlight=None, caution=None,
     essence="",
 )
+
+
+@dataclass(frozen=True)
+class RulerOfNativity:
+    """Raman's own opening move, made nowhere else in the report: "In order to obtain a first
+    impression we must first of all consider the ruler of the nativity" (HTJAH-I:16001-16002 —
+    where the ruler he examines is the LAGNA LORD), and separately "The strongest planet in the
+    horoscope determines the predominance of the physical, mental and spiritual peculiarities
+    of the person" (HTJAH-I:6248-6250). These are TWO distinct concepts that Raman's own worked
+    chart praises when they coincide: "He is by far the strongest planet in the horoscope and
+    since he is also the Lagnadhipati, the foundation is quite sound" (HTJAH-I:3880-3882). For
+    nature and appearance he compares the strongest planet against the lord of the Navamsa
+    Lagna — the more powerful stamps them (HTJAH-I:3892-3897). Presentation-only: every field
+    is a pure re-read of values the report already computes; no verdict is touched."""
+    lagna_lord: str                                   # the "ruler of the nativity" proper
+    lagna_lord_house: Optional[int]
+    lagna_lord_sign: Optional[int]
+    strongest: Optional[str]                          # strongest Shadbala-bearing graha
+    strongest_rupas: Optional[float]
+    coincide: bool                                    # strongest == lagna lord
+    navamsa_lagna_lord: Optional[str]
+    nl_lord_rupas: Optional[float]
+    stamps_nature: Optional[str]                      # HTJAH-I:3892-3897 comparison winner
+    temperament: Optional[str]                        # _RULER_TEMPERAMENT; None for Moon (absent)
+    functional_nature: Optional[str]                  # of the strongest, for this Lagna
+    avastha: Optional[str]                            # Deeptadi state of the strongest
+    ik_lean: Optional[str]                            # "good" | "hard" | "balanced"
+    house: Optional[int]                              # placement of the strongest
+    sign: Optional[int]
+    navamsa_sign: Optional[int]
+    vargottama: bool
+    retrograde: bool
+    yogas_involving: tuple[str, ...]                  # fired yogas the strongest participates in
+    md_windows: tuple[tuple[float, float], ...]       # its own MD runs inside the window
+    gochara_good_windows: tuple[tuple[float, float], ...]
+    slow_mover: bool                                  # tracked by the 4-planet Gochara outlook?
+    signature: str                                    # the knitted first-impression paragraph
+
+
+_EMPTY_RULER: Final[RulerOfNativity] = RulerOfNativity(
+    lagna_lord="", lagna_lord_house=None, lagna_lord_sign=None, strongest=None,
+    strongest_rupas=None, coincide=False, navamsa_lagna_lord=None, nl_lord_rupas=None,
+    stamps_nature=None, temperament=None, functional_nature=None, avastha=None, ik_lean=None,
+    house=None, sign=None, navamsa_sign=None, vargottama=False, retrograde=False,
+    yogas_involving=(), md_windows=(), gochara_good_windows=(), slow_mover=False, signature="",
+)
+
+
+def build_ruler(r: DetailedReport) -> RulerOfNativity:
+    """Assemble the first-impression card from an already-fully-built DetailedReport — pure
+    re-reads (Shadbala totals, functional natures, Deeptadi states, fired yogas, MD runs and
+    Gochara segments the report renders elsewhere); nothing is judged here."""
+    chart = r.chart
+    lagna_lord = SIGN_LORDS[chart.asc_sign]
+    ll_pos = chart.planets.get(lagna_lord)
+
+    order = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+    sb = [(n, chart.planets[n].shadbala_rupas.total / 60.0) for n in order
+          if n in chart.planets and chart.planets[n].shadbala_rupas is not None]
+    strongest: Optional[str] = None
+    rupas: Optional[float] = None
+    if sb:
+        # max by rupas; an exact tie is broken by canonical planet order for determinism —
+        # disclosed here rather than silent: an exact float-sum rupa tie between two grahas is
+        # practically unreachable, so the tie-break is reader-invisible by construction (the
+        # nature/appearance comparison below, where a tie IS meaningful doctrine, abstains
+        # instead — HTJAH-I:3892-3897 gives no tiebreaker).
+        strongest, rupas = max(sb, key=lambda kv: (kv[1], -order.index(kv[0])))
+
+    nl_lord: Optional[str] = None
+    if r.synthesis.navamsa_lagna in _SIGN_NAME[1:]:
+        nl_lord = SIGN_LORDS[_SIGN_NAME.index(r.synthesis.navamsa_lagna)]
+    nl_rupas: Optional[float] = None
+    if nl_lord is not None:
+        np_ = chart.planets.get(nl_lord)
+        if np_ is not None and np_.shadbala_rupas is not None:
+            nl_rupas = np_.shadbala_rupas.total / 60.0
+    stamps: Optional[str] = None
+    if strongest is not None and nl_lord is not None:
+        if nl_lord == strongest:
+            stamps = strongest
+        elif rupas is not None and nl_rupas is not None and rupas != nl_rupas:
+            stamps = strongest if rupas > nl_rupas else nl_lord
+
+    pos = chart.planets.get(strongest) if strongest else None
+    avastha = None
+    if strongest is not None:
+        avastha = next((x.split(" ", 1)[1] for x in r.synthesis.deeptadi
+                        if x.startswith(strongest + " ")), None)
+
+    yogas_involving: list[str] = []
+    if strongest is not None:
+        for y in r.yogas:
+            pls = _yoga_planets(chart, y)
+            if pls and strongest in pls and y.name not in yogas_involving:
+                yogas_involving.append(y.name)
+
+    md_windows = tuple((s0, e0) for m, s0, e0 in _md_runs(r.timeline) if m == strongest)
+    slow_mover = strongest in r.gochara_outlook if strongest else False
+    good_windows = tuple((seg.start_jd, seg.end_jd)
+                         for seg in r.gochara_outlook.get(strongest or "", ())
+                         if seg.gochara_good)
+
+    coincide = strongest is not None and strongest == lagna_lord
+    fn = dict(r.overview.functional_natures).get(strongest) if strongest else None
+
+    bits: list[str] = []
+    ll_bit = f"{lagna_lord}, lord of the {_SIGN_NAME[chart.asc_sign]} Lagna"
+    if ll_pos is not None:
+        ll_bit += f", placed in house {ll_pos.rasi_house}"
+    bits.append(f"The first impression begins with the ruler of the nativity: {ll_bit}.")
+    if strongest is not None and rupas is not None:
+        s_bit = f"The strongest planet by Shadbala is {strongest} ({rupas:.1f} rupas)"
+        if coincide:
+            s_bit += " — the ruler itself, and \"the foundation is quite sound\""
+        bits.append(s_bit + ".")
+        if stamps is not None and nl_lord is not None and nl_lord != strongest:
+            bits.append(f"As between the strongest planet and the lord of the Navamsa Lagna "
+                        f"({nl_lord}), {stamps} is the more powerful and stamps the nature "
+                        f"and appearance.")
+        temper = _RULER_TEMPERAMENT.get(strongest)
+        if temper is not None:
+            bits.append(f"Classical temperament for a {strongest}-dominant chart: {temper}.")
+        cond_bits = []
+        if fn is not None:
+            cond_bits.append(f"{fn} for this Lagna")
+        if avastha is not None:
+            cond_bits.append(f"in {avastha} avastha")
+        lean = _ishta_kashta_lean(chart, strongest)
+        if lean is not None:
+            cond_bits.append(f"with a {lean} Ishta/Kashta lean")
+        if cond_bits:
+            bits.append(f"{strongest} stands {', '.join(cond_bits)}.")
+    else:
+        bits.append("No Shadbala is available on this chart, so the strongest planet cannot "
+                    "be determined by strength — nothing is guessed in its place.")
+    signature = " ".join(bits)
+
+    return RulerOfNativity(
+        lagna_lord=lagna_lord,
+        lagna_lord_house=ll_pos.rasi_house if ll_pos is not None else None,
+        lagna_lord_sign=ll_pos.sign if ll_pos is not None else None,
+        strongest=strongest, strongest_rupas=rupas, coincide=coincide,
+        navamsa_lagna_lord=nl_lord, nl_lord_rupas=nl_rupas, stamps_nature=stamps,
+        temperament=_RULER_TEMPERAMENT.get(strongest) if strongest else None,
+        functional_nature=fn, avastha=avastha,
+        ik_lean=_ishta_kashta_lean(chart, strongest) if strongest else None,
+        house=pos.rasi_house if pos is not None else None,
+        sign=pos.sign if pos is not None else None,
+        navamsa_sign=pos.navamsa_sign if pos is not None else None,
+        vargottama=pos.vargottama if pos is not None else False,
+        retrograde=pos.retrograde if pos is not None else False,
+        yogas_involving=tuple(yogas_involving), md_windows=md_windows,
+        gochara_good_windows=good_windows, slow_mover=slow_mover, signature=signature,
+    )
+
+
+#: Which D1 house each matter-varga dashboard matter is anchored to — verified against each
+#: deep reader's OWN documented anchor: wealth→2, siblings→3, property→4, comforts→4,
+#: spiritual→9 (`matter_varga_reading.py` module docstring); mother→4 (HTJAH-I:4387) and
+#: father→9 (`dwadasamsa_parents_reading.py`); children→5 (`saptamsa_reading`); marriage→7
+#: (`navamsa_marriage_reading`); career→10 (`dasamsa_career_reading`); education→4 (AFB-6:23,
+#: HTJAH-I:4701 — `siddhamsa_education_reading.py`); health→6 (`trimsamsa_health_reading`,
+#: the disease/chronic axis). Houses 1, 8, 11 and 12 have no dedicated matter reader — they
+#: get an explicit "absent" testimony row, never a guessed one.
+_MATTER_HOUSE: Final[dict[str, int]] = {
+    "wealth": 2, "siblings": 3, "mother": 4, "property": 4, "comforts": 4, "education": 4,
+    "children": 5, "health": 6, "marriage": 7, "father": 9, "spiritual": 9, "career": 10,
+}
+
+
+@dataclass(frozen=True)
+class Testimony:
+    """One already-computed axis, restated as a named witness for or against a house's own
+    headline verdict. `lean` is direction-of-corroboration only — never a re-judgment."""
+    name: str
+    value: str
+    lean: str        # "favourable-leaning" | "adverse-leaning" | "neutral" | "absent"
+
+
+@dataclass(frozen=True)
+class HouseTestimonies:
+    """One house's full testimony ledger. The `verdict` is the authoritative House-by-house
+    rollup, displayed but deliberately EXCLUDED from its own tally (counting the headline as a
+    witness to itself would be circular — the ledger exists to test the headline against its
+    witnesses). Counts are an inventory in Raman's own qualitative vocabulary (HTJAH-I:8870
+    "preponderance"), never a score: Raman states no numeric N-testimonies rule (HTJAH-I:495
+    says only "all these must be properly weighed")."""
+    house: int
+    verdict: str
+    testimonies: tuple[Testimony, ...]
+    favourable: int
+    adverse: int
+    neutral: int
+    absent: int
+    preponderance: str   # "benefic" | "adverse" | "evenly balanced" | "insufficient"
+    status: str          # "well-corroborated" | "contested" | "thinly attested" | "(mixed/undecided headline)"
+
+
+@dataclass(frozen=True)
+class PreponderanceReading:
+    """The whole-chart testimony cross-tabulation (v14) — Raman's 'judgment is the summing up
+    of the influence of planets' (HTJAH-I:983-991) applied to every already-computed axis the
+    report holds, per house. Presentation-only; no verdict is touched."""
+    houses: tuple[HouseTestimonies, ...]
+    most_corroborated_favourable: Optional[int]
+    most_corroborated_afflicted: Optional[int]
+    most_contested: Optional[int]
+
+
+_EMPTY_PREPONDERANCE: Final[PreponderanceReading] = PreponderanceReading(
+    houses=(), most_corroborated_favourable=None, most_corroborated_afflicted=None,
+    most_contested=None,
+)
+
+
+def _lean_word(favourable: bool) -> str:
+    return "favourable-leaning" if favourable else "adverse-leaning"
+
+
+def build_preponderance(r: DetailedReport) -> PreponderanceReading:
+    """Assemble the per-house testimony ledgers from an already-fully-built DetailedReport —
+    every testimony is a value the report renders elsewhere (lagna-frame lord strength, karaka
+    strength, navamsa status, Bhava-Bala rank, SAV band, the matter-varga dashboard verdicts,
+    the calibration majority tenor). Pure re-reads; the headline verdict is `pf.rollup`, read
+    and displayed, never re-decided and never counted in its own tally."""
+    hs_by_house = {row.house: row for row in r.house_strength}
+    dash_by_matter = {e.matter: e for e in r.dashboard.entries}
+
+    houses: list[HouseTestimonies] = []
+    for pf in r.proformas:
+        h = pf.house
+        verdict = str(pf.rollup)
+        led = _lagna_ledger(pf.significations[0]) if pf.significations else None
+        tst: list[Testimony] = []
+
+        affliction_matter = led is not None and "AFFLICTION_MATTER" in led.flags
+
+        # Lord strength is directional in Raman's own words — "if the strength of the lord is
+        # full or complete there will be in general a good influence on the house"
+        # (HTJAH-I:497) — EXCEPT on a dusthana affliction matter, where the engine's own
+        # clause-1.5 doctrine is "a strong dusthana lord strengthens [the affliction], never
+        # rescues": there a strong lord is an adverse witness. The weak-lord converse on an
+        # affliction matter is NOT engine-encoded, so it reads neutral, not guessed.
+        if led is None or led.lord_strong is None:
+            tst.append(Testimony("lord (lagna frame)", "no data", "absent"))
+        elif affliction_matter and led.lord_strong:
+            tst.append(Testimony("lord (lagna frame)",
+                                 "strong [feeds the affliction — a strong dusthana lord "
+                                 "strengthens, never rescues]", "adverse-leaning"))
+        elif affliction_matter:
+            tst.append(Testimony("lord (lagna frame)",
+                                 "weak (affliction matter — no directional read encoded)",
+                                 "neutral"))
+        else:
+            tst.append(Testimony("lord (lagna frame)", "strong" if led.lord_strong else "weak",
+                                 _lean_word(led.lord_strong)))
+
+        # A broken karaka (karaka_intact False) is the clause-1 VETO the headline actually
+        # obeyed — it must never tally as a favourable witness, whatever its raw strength.
+        if led is None or led.karaka_strong is None:
+            tst.append(Testimony("karaka", "no data", "absent"))
+        elif not led.karaka_intact:
+            tst.append(Testimony("karaka",
+                                 ("strong" if led.karaka_strong else "weak")
+                                 + " but broken [the affliction veto the headline obeyed]",
+                                 "adverse-leaning"))
+        else:
+            tst.append(Testimony("karaka", "strong" if led.karaka_strong else "weak",
+                                 _lean_word(led.karaka_strong)))
+
+        # Navamsa is direction-ABSOLUTE, the same monotone sense the verdict path gives it
+        # (house_template._navamsa_modulate and the clause-2 navamsa guard): "confirms" is a
+        # D9-dignity lift and always a favourable witness; "weakens" a D9 debility/dusthana
+        # seat and always adverse — on an afflicted headline a weakens CORROBORATES it (it may
+        # even have caused it) and a confirms CONTESTS it. (A first draft read this
+        # verdict-relative; a bphs-doctrine-reviewer pass showed that inverts the engine's own
+        # semantics.)
+        nav = led.navamsa_status if led is not None else "unknown"
+        if nav == "confirms":
+            tst.append(Testimony("navamsa", nav, "favourable-leaning"))
+        elif nav == "weakens":
+            tst.append(Testimony("navamsa", nav, "adverse-leaning"))
+        else:
+            tst.append(Testimony("navamsa", nav,
+                                 "neutral" if nav == "neutral" else "absent"))
+
+        # Bhava-Bala rank is a MAGNITUDE — how fully the house's indications are enjoyed
+        # (GBB-9:32-34), ranked without any cutoff (GBB-9:332) — so it is shown but carries NO
+        # direction. (A first draft leaned it by top/bottom half; a bphs-doctrine-reviewer
+        # pass flagged that as an invented threshold contradicting the report's own
+        # magnitude-vs-direction explainer.)
+        hs = hs_by_house.get(h)
+        if hs is None or hs.bhava_bala_rank is None:
+            tst.append(Testimony("bhava bala rank", "no data", "absent"))
+        else:
+            tst.append(Testimony("bhava bala rank",
+                                 f"{hs.bhava_bala_rank} of 12 (magnitude, not direction)",
+                                 "neutral"))
+
+        if hs is None or hs.sav_bindus is None:
+            tst.append(Testimony("SAV band", "no data", "absent"))
+        else:
+            band_lean = {"strong": "favourable-leaning", "weak": "adverse-leaning"}.get(
+                hs.sav_band, "neutral")
+            tst.append(Testimony("SAV band", f"{hs.sav_bindus} bindus ({hs.sav_band})",
+                                 band_lean))
+
+        matters_here = [m for m, mh in _MATTER_HOUSE.items() if mh == h]
+        if not matters_here:
+            tst.append(Testimony("matter-varga", "no dedicated matter-varga reader for this "
+                                                 "house", "absent"))
+        else:
+            for m in sorted(matters_here, key=lambda x: list(_MATTER_HOUSE).index(x)):
+                en = dash_by_matter.get(m)
+                if en is None:
+                    tst.append(Testimony(f"matter-varga: {m}", "no data", "absent"))
+                elif en.verdict in ("favourable", "afflicted"):
+                    tst.append(Testimony(f"matter-varga: {m}", en.verdict,
+                                         _lean_word(en.verdict == "favourable")))
+                elif en.verdict == "mixed":
+                    tst.append(Testimony(f"matter-varga: {m}", en.verdict, "neutral"))
+                else:
+                    tst.append(Testimony(f"matter-varga: {m}", en.verdict, "absent"))
+
+        split = signification_tenor_split(r.calibration[h]) if h in r.calibration else None
+        if split is None or split.majority == "insufficient-evidence":
+            tst.append(Testimony("majority tenor", "insufficient evidence", "absent"))
+        elif split.majority == "mixed":
+            tst.append(Testimony("majority tenor", "mixed", "neutral"))
+        else:
+            tst.append(Testimony("majority tenor", split.majority,
+                                 _lean_word(split.majority == "favourable")))
+
+        fav = sum(1 for t in tst if t.lean == "favourable-leaning")
+        adv = sum(1 for t in tst if t.lean == "adverse-leaning")
+        neu = sum(1 for t in tst if t.lean == "neutral")
+        ab = sum(1 for t in tst if t.lean == "absent")
+        if fav > adv:
+            prep = "benefic"
+        elif adv > fav:
+            prep = "adverse"
+        elif fav:                        # fav == adv > 0
+            prep = "evenly balanced"
+        else:
+            prep = "insufficient"
+
+        if verdict == "favourable":
+            status = ("well-corroborated" if prep == "benefic"
+                      else "contested" if prep in ("adverse", "evenly balanced")
+                      else "thinly attested")
+        elif verdict == "afflicted":
+            status = ("well-corroborated" if prep == "adverse"
+                      else "contested" if prep in ("benefic", "evenly balanced")
+                      else "thinly attested")
+        elif verdict == "mixed":
+            status = "(mixed headline)"
+        else:
+            status = "(undecided headline)"
+
+        houses.append(HouseTestimonies(
+            house=h, verdict=verdict, testimonies=tuple(tst), favourable=fav, adverse=adv,
+            neutral=neu, absent=ab, preponderance=prep, status=status))
+
+    def _pick(cands: list[HouseTestimonies], key) -> Optional[int]:
+        if not cands:
+            return None
+        return min(cands, key=lambda ht_: (-key(ht_), ht_.house)).house
+
+    fav_c = [x for x in houses if x.verdict == "favourable" and x.preponderance == "benefic"]
+    aff_c = [x for x in houses if x.verdict == "afflicted" and x.preponderance == "adverse"]
+    con_c = [x for x in houses if x.status == "contested"]
+    return PreponderanceReading(
+        houses=tuple(houses),
+        most_corroborated_favourable=_pick(fav_c, lambda x: x.favourable),
+        most_corroborated_afflicted=_pick(aff_c, lambda x: x.adverse),
+        most_contested=_pick(con_c, lambda x: (x.adverse if x.verdict == "favourable"
+                                               else x.favourable)),
+    )
+
+
+#: Tier order for the best-tier-per-house aggregation in Life-chapters — Raman's own four
+#: grades in descending strength (HTJAH-I:1592-1596, 1635-1640; the same vocabulary
+#: `graded_buckets` buckets by). Ordering only — no new grading is invented here.
+_TIER_ORDER: Final[tuple[str, ...]] = ("par excellence", "ordinary", "limited", "feeble")
+
+
+@dataclass(frozen=True)
+class LifeChapter:
+    """One Mahadasha run, narrated as a single woven chapter — the shape of Raman's own
+    worked-nativity narration (Chart No. 203, HTJAH-I:15950-15999, where each dasha period is
+    read from yoga + lord condition + house placement + directional influence in one
+    paragraph), and his blending doctrine ("Astrological predictions can be accurate when the
+    influences of birth chart are blended with those of Gochara and Ashtakavarga, together
+    with Vedha or obstructing forces", HPA-34:369-381 — Vedha itself is applied in the Gochara
+    table and sampled in the Dasha x Transit table, not re-narrated per chapter). Every field
+    is a pure JOIN of rows the report already renders in the
+    Life-narrative companions above it; the narrative orders natal factors first and transits
+    last per HTJAH-I:8410-8411 ("Primary importance must be given to the natal positions and
+    Dasha and only secondary consideration to transiting planets")."""
+    maha: str
+    start_jd: float
+    end_jd: float
+    is_current: bool
+    condition: Optional[MdLordCondition]              # joined from r.md_condition
+    lean: Optional[str]                               # maha_lean from r.ishta_kashta
+    av_seat: Optional[AvDashaSeat]                    # joined from r.av_dasha_seats
+    yogas_ripening: tuple[YogaTiming, ...]            # r.yoga_timing rows inside the run
+    houses_lit: tuple[tuple[int, str, str], ...]      # (house, best_tier, natal_verdict)
+    confluences: tuple[ConfluenceWindow, ...]         # r.dasha_transit overlapping the run
+    maraka_overlaps: tuple[MarakaSaturnConfluence, ...]
+    narrative: str
+
+
+@dataclass(frozen=True)
+class LifeChapters:
+    """The per-Mahadasha chapter view (v15) — one prose chapter per MD run, merging what the
+    Life-narrative and its three companion tables show separately. Presentation-only."""
+    chapters: tuple[LifeChapter, ...]
+
+
+_EMPTY_LIFE_CHAPTERS: Final[LifeChapters] = LifeChapters(chapters=())
+
+
+def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
+                       cond: Optional[MdLordCondition], lean: Optional[str],
+                       seat: Optional[AvDashaSeat], yts: tuple[YogaTiming, ...],
+                       houses_lit: tuple[tuple[int, str, str], ...],
+                       conf: tuple[ConfluenceWindow, ...],
+                       mar: tuple[MarakaSaturnConfluence, ...]) -> str:
+    """Knit one chapter paragraph — natal factors FIRST, transits LAST (HTJAH-I:8410-8411)."""
+    bits: list[str] = []
+    fn = dict(r.overview.functional_natures).get(maha)
+    # "in view", not "rules": _md_runs bounds are clipped to the report's display window, so a
+    # Mahadasha may begin before or continue past the dates shown — asserting "rules X to Y"
+    # on a clipped run would state a false rulership span (bphs-doctrine-reviewer finding).
+    lead = f"{maha}'s Mahadasha is in view {_jd_month_year(lo)} to {_jd_month_year(hi)}"
+    if fn is not None:
+        lead += f"; {maha} is a {fn} for this Lagna"
+    cond_words: list[str] = []
+    if cond is not None:
+        if cond.strong is not None:
+            cond_words.append("strong in Shadbala" if cond.strong else "weak in Shadbala")
+        if cond.vargottama:
+            cond_words.append("vargottama")
+        if cond.at_maximum:
+            cond_words.append("at the strength maximum — strong in both rasi and navamsa "
+                              "(HPA-24:51-86; Raman's full maximum further requires freedom "
+                              "from malefic aspect, not graded here)")
+    else:
+        cond_words.append("lord condition unavailable on this chart")
+    if lean is not None:
+        cond_words.append(f"a {lean} Ishta/Kashta lean")
+    bits.append(f"{lead}: {', '.join(cond_words)}.")
+    if yts:
+        names = ", ".join(f"{t.yoga_name} ({t.role})" for t in yts)
+        bits.append(f"Yogas ripening here: {names} — a yoga's lord delivers its results in "
+                    f"his own Dasha or Bhukti (HTJAH-I:4324).")
+    if houses_lit:
+        hl = ", ".join(f"H{h} ({tier}; natal {v})" for h, tier, v in houses_lit)
+        bits.append(f"Houses whose indications fructify across its bhuktis — peak tier "
+                    f"reached in at least one bhukti, see the Life-narrative rows above for "
+                    f"which sub-period: {hl} — each delivering per its unchanged natal "
+                    f"verdict.")
+    if seat is not None and seat.bindus is not None:
+        bits.append(f"His own Ashtakavarga seat reads {seat.read} ({seat.bindus} bindus) — "
+                    f"under Raman's own reliability caveat for the AV tier.")
+    # transits LAST — secondary to the natal positions and Dasha (HTJAH-I:8410-8411)
+    if conf:
+        bits.append(f"Secondarily, {len(conf)} transit-reinforcement window(s) fall in these "
+                    f"years (the period lord favourably placed by its own transit — see Dasha "
+                    f"x Transit confluence).")
+    if mar:
+        bits.append("A maraka-window x Saturn-transit overlap also falls in this stretch — a "
+                    "statement of the classical method only, not a prediction (see the Maraka "
+                    "x Saturn-transit section and its null real-outcome disclosure).")
+    return " ".join(bits)
+
+
+def build_life_chapters(r: DetailedReport) -> LifeChapters:
+    """Assemble one chapter per Mahadasha run — pure joins of the already-computed
+    `md_condition` / `ishta_kashta` / `av_dasha_seats` / `yoga_timing` / `dasha_transit` /
+    `maraka_saturn` rows onto `_md_runs`, with houses lit aggregated through the ONE existing
+    grading helper `graded_buckets` (best tier per house across the run's bhuktis; tier order
+    fixed by `_TIER_ORDER` — ordering only, nothing re-graded)."""
+    chapters: list[LifeChapter] = []
+    for maha, lo, hi in _md_runs(r.timeline):
+        cond = next((c for c in r.md_condition if c.maha == maha and c.start_jd == lo), None)
+        if cond is None:   # interval fallback (md_condition skips lords absent from the chart)
+            cond = next((c for c in r.md_condition
+                         if c.maha == maha and c.start_jd < hi and c.end_jd > lo), None)
+        lean = next((ik.maha_lean for ik in r.ishta_kashta
+                     if ik.maha == maha and lo <= ik.start_jd < hi), None)
+        seat = next((a for a in r.av_dasha_seats if a.maha == maha and a.start_jd == lo), None)
+        if seat is None:
+            seat = next((a for a in r.av_dasha_seats
+                         if a.maha == maha and a.start_jd < hi and a.end_jd > lo), None)
+
+        seen: set[tuple[str, str]] = set()
+        yts: list[YogaTiming] = []
+        for t in r.yoga_timing:
+            if (lo <= t.period_start_jd and t.period_end_jd <= hi
+                    and (t.yoga_id, t.role) not in seen):
+                seen.add((t.yoga_id, t.role))
+                yts.append(t)
+
+        best: dict[int, tuple[int, str]] = {}
+        for tp in r.timeline.periods:
+            if tp.period.maha != maha or not (lo <= tp.period.start_jd < hi):
+                continue
+            _assoc, buckets = graded_buckets(tp, r.chart)
+            for idx, tier in enumerate(_TIER_ORDER):
+                for a in buckets[tier]:
+                    cur = best.get(a.house)
+                    if cur is None or idx < cur[0]:
+                        best[a.house] = (idx, str(a.natal_verdict))
+        houses_lit = tuple(sorted(
+            ((h, _TIER_ORDER[i], v) for h, (i, v) in best.items()),
+            key=lambda x: (_TIER_ORDER.index(x[1]), x[0])))
+
+        conf = tuple(c for c in r.dasha_transit
+                     if c.overlap_start_jd < hi and c.overlap_end_jd > lo)
+        mar = tuple(m for m in r.maraka_saturn
+                    if m.overlap_start_jd < hi and m.overlap_end_jd > lo)
+        chapters.append(LifeChapter(
+            maha=maha, start_jd=lo, end_jd=hi, is_current=lo <= r.ref_jd < hi,
+            condition=cond, lean=lean, av_seat=seat, yogas_ripening=tuple(yts),
+            houses_lit=houses_lit, confluences=conf, maraka_overlaps=mar,
+            narrative=_chapter_narrative(r, maha, lo, hi, cond, lean, seat, tuple(yts),
+                                         houses_lit, conf, mar)))
+    return LifeChapters(chapters=tuple(chapters))
 
 
 def build_nichod(r: DetailedReport) -> Nichod:
@@ -1377,12 +1955,16 @@ def build_detailed_report(
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
         window_back=years_back, window_forward=years_forward,
-        nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING,
+        nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING, ruler=_EMPTY_RULER,
+        preponderance=_EMPTY_PREPONDERANCE, life_chapters=_EMPTY_LIFE_CHAPTERS,
     )
-    # nichod + plain_reading are computed LAST, from the fully-assembled report — both only
-    # select, count and knit together fields the rest of this function already produced.
+    # nichod + plain_reading + ruler are computed LAST, from the fully-assembled report — each
+    # only selects, counts and knits together fields the rest of this function already produced.
     return _dc_replace(provisional, nichod=build_nichod(provisional),
-                       plain_reading=build_plain_reading(provisional))
+                       plain_reading=build_plain_reading(provisional),
+                       ruler=build_ruler(provisional),
+                       preponderance=build_preponderance(provisional),
+                       life_chapters=build_life_chapters(provisional))
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
@@ -1496,6 +2078,89 @@ def to_markdown(r: DetailedReport) -> str:
     if r.overview.functional_natures:
         nat = "; ".join(f"{p} {n}" for p, n in r.overview.functional_natures)
         L.append(f"- **Functional nature for this Lagna** — {nat}")
+    L.append("")
+
+    # ── ruler of the nativity (Raman's own first-impression move, v13) ───────
+    ru = r.ruler
+    L.append("## Ruler of the nativity")
+    L.append("")
+    L.append("**In simple terms:** Raman opens a judgment from here: \"in order to obtain a "
+             "first impression we must first of all consider the ruler of the nativity\" — the "
+             "Lagna lord (HTJAH-I:16001-16002) — and separately, \"the strongest planet in the "
+             "horoscope determines the predominance of the physical, mental and spiritual "
+             "peculiarities of the person\" (HTJAH-I:6248-6250). This card gathers what the "
+             "report already computes about those one or two planets into a single first "
+             "impression. The classical temperament lines are shorthand for tendencies, never "
+             "medical statements — and as everywhere in this report: how the method reads this "
+             "chart, not a prediction.")
+    L.append("")
+    ll_bit = f"{ru.lagna_lord}, lord of the {_SIGN_NAME[r.chart.asc_sign]} Lagna"
+    if ru.lagna_lord_house is not None:
+        ll_bit += f", in house {ru.lagna_lord_house}"
+    L.append(f"- **Ruler of the nativity (Lagna lord)** — {ll_bit}")
+    if ru.strongest is not None and ru.strongest_rupas is not None:
+        s_bit = f"{ru.strongest} ({ru.strongest_rupas:.1f} rupas)"
+        if ru.coincide:
+            s_bit += (" — the ruler itself: \"the foundation is quite sound\" "
+                      "(HTJAH-I:3880-3882)")
+        L.append(f"- **Strongest planet (Shadbala)** — {s_bit}")
+        if ru.navamsa_lagna_lord is not None:
+            if ru.navamsa_lagna_lord == ru.strongest:
+                L.append(f"- **Nature & appearance** — the lord of the Navamsa Lagna is the "
+                         f"strongest planet itself ({ru.strongest}); it stamps the nature and "
+                         f"appearance either way (HTJAH-I:3892-3897)")
+            elif ru.stamps_nature is not None:
+                L.append(f"- **Nature & appearance** — as between the strongest planet and the "
+                         f"lord of the Navamsa Lagna ({ru.navamsa_lagna_lord}), "
+                         f"**{ru.stamps_nature}** is the more powerful and stamps the nature "
+                         f"and appearance (HTJAH-I:3892-3897)")
+            else:
+                L.append(f"- **Nature & appearance** — the strongest planet and the lord of "
+                         f"the Navamsa Lagna ({ru.navamsa_lagna_lord}) cannot be ranked here "
+                         f"(equal or unmeasured strength) — no winner is guessed "
+                         f"(HTJAH-I:3892-3897)")
+        if ru.temperament is not None:
+            L.append(f"- **Classical temperament** — {ru.temperament} (HTJAH-I:6248-6268)")
+        else:
+            L.append("- **Classical temperament** — Raman's strongest-planet passage "
+                     "(HTJAH-I:6248-6268) gives no line for the Moon — an honest absence, "
+                     "nothing invented")
+        cond = []
+        if ru.functional_nature is not None:
+            cond.append(f"{ru.functional_nature} for this Lagna")
+        if ru.avastha is not None:
+            cond.append(f"{ru.avastha} avastha (HPA Ch.7)")
+        if ru.ik_lean is not None:
+            cond.append(f"{ru.ik_lean} Ishta/Kashta lean (GBB-10:134)")
+        if ru.vargottama:
+            cond.append("vargottama")
+        if ru.retrograde:
+            cond.append("retrograde")
+        if cond:
+            L.append(f"- **Condition of the strongest** — {'; '.join(cond)}")
+        if ru.yogas_involving:
+            L.append(f"- **Yogas it participates in** — {', '.join(ru.yogas_involving)}")
+        else:
+            L.append("- **Yogas it participates in** — none of the fired yogas resolves to it")
+        if ru.md_windows:
+            spans = ", ".join(f"{_jd_month_year(s0)} to {_jd_month_year(e0)}"
+                              for s0, e0 in ru.md_windows)
+            L.append(f"- **Its own Mahadasha in the window** — {spans}")
+        else:
+            L.append("- **Its own Mahadasha in the window** — does not fall inside the "
+                     "displayed window")
+        if ru.slow_mover:
+            L.append(f"- **Its transit outlook** — {len(ru.gochara_good_windows)} favourable "
+                     f"window(s) in the Gochara outlook below")
+        else:
+            L.append(f"- **Its transit outlook** — {ru.strongest} is not one of the four slow "
+                     f"movers the Gochara outlook tracks (coverage gap, disclosed — not a "
+                     f"reading)")
+    else:
+        L.append("- **Strongest planet (Shadbala)** — no Shadbala on this chart; the strongest "
+                 "planet cannot be determined by strength, and nothing is guessed in its place")
+    L.append("")
+    L.append(f"_{ru.signature}_")
     L.append("")
 
     # ── planet positions (a reading must be checkable) ────────────────────────
@@ -1684,6 +2349,66 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{bb_rank} | {sav_cell} |")
         L.append("")
 
+    # ── preponderance of testimonies (v14, the full per-house ledger) ─────────
+    if r.preponderance.houses:
+        L.append("")
+        L.append("## Preponderance of testimonies")
+        L.append("")
+        L.append("**In simple terms:** Raman defines judgment itself as \"the summing up of "
+                 "the influence of planets\" — the house, its lord, its occupants and its "
+                 "karaka weighed together (HTJAH-I:983-991), with everything \"properly "
+                 "weighed before any result can be deduced\" (HTJAH-I:495; HTJAH-II:654-661 "
+                 "repeats the injunction for marriage, and \"never... on the basis of one or "
+                 "two combinations\" is his own wording, said of mental diagnosis, "
+                 "HTJAH-I:6245-6246). This table lines up, per house, every already-computed "
+                 "testimony the report holds elsewhere and counts where the balance lies — "
+                 "Raman's own conclusion word: \"there is a preponderance of benefic "
+                 "influences...\" (HTJAH-I:8870).")
+        L.append("")
+        L.append("_Three honesty rules govern this table. (1) The Verdict column is the "
+                 "authoritative House-by-house verdict, unchanged — and it is deliberately "
+                 "NOT counted among its own witnesses (a headline cannot corroborate itself). "
+                 "(2) Raman states NO numeric rule for how many testimonies decide a matter "
+                 "(HTJAH-I:495 says only that all must be properly weighed — and his own "
+                 "worked conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the "
+                 "Preponderance column here is a simple equal-weight majority of leaning "
+                 "witnesses — a presentation convention borrowing his vocabulary, not his "
+                 "weighing — it never alters a verdict, and a 'contested' row means the "
+                 "witnesses split, not that the verdict is wrong. (3) The witnesses are NOT "
+                 "independent votes: lord, karaka and navamsa are the verdict's own inputs "
+                 "restated by name, and the majority tenor derives from the same "
+                 "significations as the headline. Yogas bearing on a house are among Raman's "
+                 "Primary Considerations (e.g. HTJAH-I:4135-4139, the 4th-house instance of "
+                 "his recurring template) but are NOT tallied — this engine has no "
+                 "yoga-to-house mapping primitive; an honest omission, not a judgment. "
+                 "Bhava-Bala rank is shown as a magnitude and carries no direction._")
+        L.append("")
+        L.append("| House | Matter | Verdict | For | Against | Neutral | Absent | "
+                 "Preponderance | Status |")
+        L.append("|---|---|---|---|---|---|---|---|---|")
+        for ht_ in r.preponderance.houses:
+            L.append(f"| H{ht_.house} | {_HOUSE_NAME.get(ht_.house, '')} | {ht_.verdict} | "
+                     f"{ht_.favourable} | {ht_.adverse} | {ht_.neutral} | {ht_.absent} | "
+                     f"{ht_.preponderance} | {ht_.status} |")
+        L.append("")
+        for ht_ in r.preponderance.houses:
+            detail = "; ".join(f"{t.name} {t.value}" for t in ht_.testimonies
+                               if t.lean != "absent")
+            L.append(f"- **H{ht_.house}** — {detail if detail else 'no decided testimony'}")
+        pr = r.preponderance
+        L.append("")
+        if pr.most_corroborated_favourable is not None:
+            L.append(f"- **Most-corroborated favourable house** — "
+                     f"H{pr.most_corroborated_favourable}")
+        if pr.most_corroborated_afflicted is not None:
+            L.append(f"- **Most-corroborated afflicted house** — "
+                     f"H{pr.most_corroborated_afflicted}")
+        if pr.most_contested is not None:
+            L.append(f"- **Most-contested house** — H{pr.most_contested} (its witnesses lean "
+                     f"against its own headline — read that house's own section with extra "
+                     f"care)")
+        L.append("")
+
     # ── longevity (band FIRST, per Raman's own order) ─────────────────────────
     L.append("")
     L.append("## Longevity")
@@ -1868,6 +2593,40 @@ def to_markdown(r: DetailedReport) -> str:
             bindus_cell = str(a.bindus) if a.bindus is not None else "n/a"
             L.append(f"| {a.maha} | {_outlook_window_label(a.start_jd, a.end_jd)} | "
                      f"{_SIGN_NAME[a.sign]} | {bindus_cell} | {a.read} |")
+        L.append("")
+
+    # ── life-chapters (v15, one woven chapter per Mahadasha) ──────────────────
+    if r.life_chapters.chapters:
+        L.append("")
+        L.append("## Life-chapters")
+        L.append("")
+        L.append("**In simple terms:** the Life-narrative above and its three companion tables "
+                 "(Ishta/Kashta, MD-lord condition, AV dasha-seat) each paint ONE lens across "
+                 "the same years. This section reads them TOGETHER, one chapter per Mahadasha "
+                 "— the way Raman himself narrates a nativity (his Chart No. 203 reads each "
+                 "dasha from yoga + lord condition + house placement + directional influence "
+                 "in one paragraph, HTJAH-I:15950-15999), and the way his blending doctrine "
+                 "demands: \"astrological predictions can be accurate when the influences of "
+                 "birth chart are blended with those of Gochara and Ashtakavarga, together "
+                 "with Vedha or obstructing forces\" (HPA-34:369-381; Vedha is not "
+                 "re-narrated per chapter — it is applied in the Gochara table and sampled as "
+                 "interference in the Dasha x Transit confluence table). Nothing here is a "
+                 "new judgment — every clause re-reads a row already shown in the sections "
+                 "above, and chapter spans are clipped to the report's display window (a "
+                 "Mahadasha may begin before or continue past its shown dates). Within each "
+                 "chapter the natal factors come FIRST and transits LAST: \"primary "
+                 "importance must be given to the natal positions and Dasha and only "
+                 "secondary consideration to transiting planets\" (HTJAH-I:8410-8411; "
+                 "HTJAH-II:4679-4687 repeats it — transits are secondary, catalytic, "
+                 "conclusions rest on Dasa-vichara). As everywhere in this report: how the "
+                 "method reads this chart, not a prediction.")
+        for ch in r.life_chapters.chapters:
+            now_tag = " — now" if ch.is_current else ""
+            L.append("")
+            L.append(f"### {ch.maha} Mahadasha "
+                     f"({_outlook_window_label(ch.start_jd, ch.end_jd)}){now_tag}")
+            L.append("")
+            L.append(ch.narrative)
         L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────

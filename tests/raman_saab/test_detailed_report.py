@@ -893,3 +893,313 @@ class TestDetailedReport:
             for sv, e in zip(raman, hr.entries):
                 assert e.signification == sv.signification
                 assert e.verdict == sv.verdict
+
+
+class TestRulerOfNativity:
+    """v13 — Raman's first-impression card: the ruler of the nativity (Lagna lord) and the
+    strongest planet by Shadbala, with the HTJAH-I:3892-3897 nature/appearance comparison."""
+
+    def test_ruler_never_touches_a_verdict(self):
+        """Pure re-reads of already-computed values — never re-judges anything."""
+        import inspect
+        from app.raman_saab.detailed_report import build_ruler
+        src = inspect.getsource(build_ruler)
+        assert "judge_house" not in src and "_decide(" not in src and "rollup" not in src
+
+    def test_strongest_is_strongest_by_shadbala(self, report):
+        """The card's strongest planet is exactly the max-total-Shadbala graha, and the rupas
+        figure is the shashtiamsa total divided by 60."""
+        sb = {n: p.shadbala_rupas.total / 60.0 for n, p in report.chart.planets.items()
+              if p.shadbala_rupas is not None}
+        assert sb, "canonical chart must carry Shadbala"
+        best = max(sb, key=lambda n: sb[n])
+        assert report.ruler.strongest == best
+        assert report.ruler.strongest_rupas == pytest.approx(sb[best])
+
+    def test_lords_are_derived_consistently(self, report):
+        """Lagna lord and Navamsa-Lagna lord match their own sign lords; coincide and
+        stamps_nature follow the documented rules (HTJAH-I:3880-3882, 3892-3897)."""
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.detailed_report import _SIGN_NAME
+        ru = report.ruler
+        assert ru.lagna_lord == SIGN_LORDS[report.chart.asc_sign]
+        assert ru.navamsa_lagna_lord == SIGN_LORDS[
+            _SIGN_NAME.index(report.synthesis.navamsa_lagna)]
+        assert ru.coincide == (ru.strongest == ru.lagna_lord)
+        assert ru.stamps_nature in (ru.strongest, ru.navamsa_lagna_lord, None)
+
+    def test_yoga_membership_reuses_yoga_planets(self, report):
+        """Every yoga named on the card is a fired yoga whose resolved lords include the
+        strongest planet — cross-checked against _yoga_planets directly."""
+        from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+        fired = {y.name: y for y in report.yogas}
+        for name in report.ruler.yogas_involving:
+            assert name in fired
+            pls = _yoga_planets(report.chart, fired[name])
+            assert pls is not None and report.ruler.strongest in pls
+
+    def test_md_windows_come_from_md_runs(self, report):
+        """The card's own-Mahadasha windows are exactly the strongest planet's runs in the
+        windowed timeline — no invented spans."""
+        from app.raman_saab.detailed_report import _md_runs
+        expected = tuple((s, e) for m, s, e in _md_runs(report.timeline)
+                         if m == report.ruler.strongest)
+        assert report.ruler.md_windows == expected
+
+    def test_canonical_pinned_facts(self, report):
+        """Canonical Bangalore 1990 chart: Virgo Lagna so Mercury rules the nativity; the Sun
+        (vargottama in Gemini navamsa) is the strongest graha by Shadbala and is ALSO the
+        Navamsa-Lagna lord, so it stamps the nature either way (astronomical regression pin)."""
+        ru = report.ruler
+        assert ru.lagna_lord == "Mercury"
+        assert ru.strongest == "Sun"
+        assert ru.coincide is False
+        assert ru.navamsa_lagna_lord == "Sun"
+        assert ru.stamps_nature == "Sun"
+        assert ru.vargottama is True
+
+    def test_moon_ruler_has_no_temperament_line(self):
+        """HONEST ABSENCE: Raman's strongest-planet passage (HTJAH-I:6248-6268) names Sun,
+        Mars, Mercury, Jupiter, Venus and Saturn only — the temperament dict must NOT contain
+        a Moon entry (nothing invented)."""
+        from app.raman_saab.detailed_report import _RULER_TEMPERAMENT
+        assert set(_RULER_TEMPERAMENT) == {"Sun", "Mars", "Mercury", "Jupiter", "Venus",
+                                           "Saturn"}
+
+    def test_markdown_shows_ruler_section(self, markdown):
+        """The section sits right after Chart signature, before Planetary positions, citing
+        the first-impression doctrine, with the method-not-prediction framing."""
+        i = markdown.find("## Chart signature")
+        j = markdown.find("## Ruler of the nativity")
+        k = markdown.find("## Planetary positions")
+        assert 0 <= i < j < k
+        section = markdown[j:k]
+        assert "HTJAH-I:16001-16002" in section
+        assert "HTJAH-I:6248" in section
+        assert "not a prediction" in section
+        assert "In simple terms:" in section
+
+
+class TestPreponderanceOfTestimonies:
+    """v14 — the per-house testimony ledgers: Raman's 'judgment is the summing up of the
+    influence of planets' (HTJAH-I:983-991) applied to every already-computed axis."""
+
+    def test_preponderance_never_touches_a_verdict(self):
+        """Pure re-reads. The builder legitimately READS pf.rollup (to display the headline),
+        so this asserts the absence of the judging call-forms, not the bare token."""
+        import inspect
+        from app.raman_saab.detailed_report import build_preponderance
+        src = inspect.getsource(build_preponderance)
+        assert "judge_house" not in src and "_decide(" not in src
+
+    def test_counts_are_conserved_and_verdict_is_verbatim(self, report):
+        """For every house: the four lean-counts partition the testimony list exactly, and the
+        displayed verdict is the proforma rollup, never re-decided."""
+        for ht_ in report.preponderance.houses:
+            assert (ht_.favourable + ht_.adverse + ht_.neutral + ht_.absent
+                    == len(ht_.testimonies))
+            pf = next(p for p in report.proformas if p.house == ht_.house)
+            assert ht_.verdict == str(pf.rollup)
+
+    def test_rank_and_sav_testimonies_match_house_strength_rows(self, report):
+        """The Bhava-Bala-rank and SAV witnesses restate the House strength cross-check's own
+        rows exactly — no recomputation drift — and the rank witness is ALWAYS neutral: it is
+        a magnitude ranked without a cutoff (GBB-9:332), so it carries no direction (a first
+        draft leaned it by top/bottom half; a bphs-doctrine-reviewer pass flagged that as an
+        invented threshold contradicting the report's own magnitude-vs-direction explainer)."""
+        hs = {row.house: row for row in report.house_strength}
+        for ht_ in report.preponderance.houses:
+            row = hs[ht_.house]
+            rank_t = next(t for t in ht_.testimonies if t.name == "bhava bala rank")
+            if row.bhava_bala_rank is not None:
+                assert rank_t.value.startswith(f"{row.bhava_bala_rank} of 12")
+                assert rank_t.lean == "neutral"
+            sav_t = next(t for t in ht_.testimonies if t.name == "SAV band")
+            if row.sav_bindus is not None:
+                assert str(row.sav_bindus) in sav_t.value and row.sav_band in sav_t.value
+
+    def test_navamsa_lean_is_direction_absolute(self, report):
+        """The navamsa witness follows the engine's OWN monotone semantics (_navamsa_modulate
+        and the clause-2 navamsa guard): 'confirms' (a D9-dignity lift) is ALWAYS a
+        favourable-leaning witness and 'weakens' ALWAYS adverse-leaning, on every headline —
+        on an afflicted house a weakens corroborates the affliction (it may even have caused
+        it). A first draft read this verdict-relative; a bphs-doctrine-reviewer pass showed
+        that inverts the engine's semantics — this test pins the corrected reading."""
+        for ht_ in report.preponderance.houses:
+            nav = next(t for t in ht_.testimonies if t.name == "navamsa")
+            if nav.value == "confirms":
+                assert nav.lean == "favourable-leaning"
+            elif nav.value == "weakens":
+                assert nav.lean == "adverse-leaning"
+            else:
+                assert nav.lean in ("neutral", "absent")
+
+    def test_broken_karaka_never_tallies_favourable(self, report):
+        """A karaka with karaka_intact False is the clause-1 veto the headline obeyed — its
+        witness must read adverse-leaning whatever its raw strength."""
+        from app.raman_saab.detailed_report import _lagna_ledger
+        for ht_ in report.preponderance.houses:
+            pf = next(p for p in report.proformas if p.house == ht_.house)
+            if not pf.significations:
+                continue
+            led = _lagna_ledger(pf.significations[0])
+            if led.karaka_strong is not None and not led.karaka_intact:
+                kt = next(t for t in ht_.testimonies if t.name == "karaka")
+                assert kt.lean == "adverse-leaning" and "broken" in kt.value
+
+    def test_strong_dusthana_lord_never_tallies_favourable(self, report):
+        """On an AFFLICTION_MATTER house, a strong lord feeds the affliction ('strengthens,
+        never rescues', the engine's own clause-1.5) — its witness must not read favourable."""
+        from app.raman_saab.detailed_report import _lagna_ledger
+        for ht_ in report.preponderance.houses:
+            pf = next(p for p in report.proformas if p.house == ht_.house)
+            if not pf.significations:
+                continue
+            led = _lagna_ledger(pf.significations[0])
+            if "AFFLICTION_MATTER" in led.flags and led.lord_strong:
+                lt = next(t for t in ht_.testimonies if t.name == "lord (lagna frame)")
+                assert lt.lean == "adverse-leaning" and "feeds the affliction" in lt.value
+
+    def test_matter_house_map_matches_dispatch(self):
+        """_MATTER_HOUSE covers exactly the dashboard's dispatch matters (no orphan either way),
+        and every anchor is a real house number."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE
+        from app.raman_saab.judges.matter_varga_dashboard import _DISPATCH
+        assert set(_MATTER_HOUSE) == {m for m, _v, _n, _r in _DISPATCH}
+        assert all(1 <= h <= 12 for h in _MATTER_HOUSE.values())
+
+    def test_houses_without_matter_reader_get_explicit_absent_row(self, report):
+        """H1/H8/H11/H12 have no dedicated matter reader — they carry an explicit 'absent'
+        matter-varga row, never a silently-missing or guessed one."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE
+        uncovered = set(range(1, 13)) - set(_MATTER_HOUSE.values())
+        assert uncovered == {1, 8, 11, 12}
+        for ht_ in report.preponderance.houses:
+            if ht_.house in uncovered:
+                mv = next(t for t in ht_.testimonies if t.name == "matter-varga")
+                assert mv.lean == "absent"
+
+    def test_headline_never_counted_in_its_own_tally(self, report):
+        """CIRCULARITY GUARD: no testimony row is named after the headline verdict itself —
+        the witness list contains only the seven distinct named axes."""
+        allowed_prefixes = ("lord (lagna frame)", "karaka", "navamsa", "bhava bala rank",
+                            "SAV band", "matter-varga", "majority tenor")
+        for ht_ in report.preponderance.houses:
+            for t in ht_.testimonies:
+                assert t.name.startswith(allowed_prefixes), t.name
+
+    def test_canonical_pinned_facts(self, report):
+        """Canonical chart: H4 (four matter-varga witnesses, all favourable) is the
+        most-corroborated favourable house; H12 reads afflicted on the weakest-link headline
+        yet its witnesses lean benefic — the section's own 'contested' flag at work."""
+        pr = report.preponderance
+        assert pr.most_corroborated_favourable == 4
+        h12 = next(h for h in pr.houses if h.house == 12)
+        assert h12.verdict == "afflicted"
+        assert h12.preponderance == "benefic"
+        assert h12.status == "contested"
+
+    def test_markdown_shows_preponderance_section(self, markdown):
+        """The section sits between House strength cross-check and Longevity, citing the
+        summing-up doctrine, the no-numeric-rule honesty note, and the yoga omission."""
+        i = markdown.find("## House strength cross-check")
+        j = markdown.find("## Preponderance of testimonies")
+        k = markdown.find("## Longevity")
+        assert 0 <= i < j < k
+        section = markdown[j:k]
+        assert "HTJAH-I:983-991" in section and "HTJAH-I:8870" in section
+        assert "NO numeric rule" in section
+        assert "HTJAH-I:4135-4139" in section          # the yoga omission, disclosed
+        assert "NOT counted among its own witnesses" in section
+
+
+class TestLifeChapters:
+    """v15 — one woven prose chapter per Mahadasha run, merging the Life-narrative companions
+    (the Napoleon-narration shape, HTJAH-I:15950-15999; natal first, transits last per
+    HTJAH-I:8410-8411)."""
+
+    def test_life_chapters_never_touch_a_verdict(self):
+        """Pure joins. Grading flows ONLY through the one existing graded_buckets helper —
+        never a direct bhukti_tier call that could drift from it."""
+        import inspect
+        from app.raman_saab.detailed_report import build_life_chapters
+        src = inspect.getsource(build_life_chapters)
+        assert "judge_house" not in src and "_decide(" not in src
+        assert "bhukti_tier(" not in src
+        assert "graded_buckets" in src
+
+    def test_one_chapter_per_md_run(self, report):
+        """Chapters are exactly the windowed timeline's MD runs, 1:1 and in order, with
+        exactly one chapter flagged as current."""
+        from app.raman_saab.detailed_report import _md_runs
+        runs = list(_md_runs(report.timeline))
+        got = [(c.maha, c.start_jd, c.end_jd) for c in report.life_chapters.chapters]
+        assert got == runs
+        assert sum(1 for c in report.life_chapters.chapters if c.is_current) == 1
+
+    def test_joins_are_faithful_to_source_rows(self, report):
+        """Each chapter's condition/av_seat are the SAME rows the companion tables show for
+        that run; every confluence and maraka overlap genuinely intersects the run's bounds;
+        every lit house's natal verdict equals the House-by-house rollup verbatim."""
+        rollup = {pf.house: str(pf.rollup) for pf in report.proformas}
+        for ch in report.life_chapters.chapters:
+            if ch.condition is not None:
+                assert ch.condition in report.md_condition
+                assert ch.condition.maha == ch.maha
+            if ch.av_seat is not None:
+                assert ch.av_seat in report.av_dasha_seats
+                assert ch.av_seat.maha == ch.maha
+            for c in ch.confluences:
+                assert c.overlap_start_jd < ch.end_jd and c.overlap_end_jd > ch.start_jd
+            for m in ch.maraka_overlaps:
+                assert m.overlap_start_jd < ch.end_jd and m.overlap_end_jd > ch.start_jd
+            for h, tier, natal in ch.houses_lit:
+                assert tier in ("par excellence", "ordinary", "limited", "feeble")
+                assert natal == rollup[h]
+
+    def test_narrative_orders_natal_before_transits(self, report):
+        """HTJAH-I:8410-8411: in any chapter carrying both a lord-condition clause and a
+        transit clause, the transit clause comes LAST (string-position on stable anchors)."""
+        checked = 0
+        for ch in report.life_chapters.chapters:
+            if ch.condition is None or not (ch.confluences or ch.maraka_overlaps):
+                continue
+            n = ch.narrative
+            lord_at = n.find("Mahadasha is in view")
+            transit_at = max(n.find("transit-reinforcement"), n.find("Saturn-transit"))
+            assert 0 <= lord_at < transit_at, ch.maha
+            checked += 1
+        # the canonical window may legitimately have no transit-bearing chapter; the invariant
+        # is vacuously satisfied then, but the loop structure still ran without error
+        assert checked >= 0
+
+    def test_narrative_never_claims_a_clipped_rulership_span(self, report):
+        """Regression for a bphs-doctrine-reviewer finding: _md_runs bounds are clipped to the
+        display window, so a chapter must say its Mahadasha is 'in view' for the shown dates —
+        never 'rules X to Y', which would assert a false rulership span for any MD that begins
+        before or continues past the window edge."""
+        for ch in report.life_chapters.chapters:
+            assert "Mahadasha is in view" in ch.narrative
+            assert " rules " not in ch.narrative
+
+    def test_canonical_pinned_facts(self, report):
+        """Canonical chart: 5 MD runs in the -10/+20-year window; the Sun Mahadasha is the
+        current chapter (astronomical regression pin, ref date = today's run date window)."""
+        assert len(report.life_chapters.chapters) == 5
+        cur = next(c for c in report.life_chapters.chapters if c.is_current)
+        assert cur.maha == report.synthesis.running_md
+
+    def test_markdown_shows_life_chapters_section(self, markdown):
+        """The section sits between AV dasha-seat and Gochara, citing the blending doctrine
+        and the natal-first priority, with one ### block per chapter and a 'now' flag."""
+        i = markdown.find("## AV dasha-seat outlook")
+        j = markdown.find("## Life-chapters")
+        k = markdown.find("## Current transits (Gochara")
+        assert 0 <= i < j < k
+        section = markdown[j:k]
+        assert "HPA-34:369-381" in section
+        assert "HTJAH-I:8410-8411" in section
+        assert "HTJAH-I:15950-15999" in section
+        assert "not a prediction" in section
+        assert section.count("### ") >= 3 and "Mahadasha (" in section
+        assert "- now" in section

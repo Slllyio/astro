@@ -58,6 +58,32 @@ class TestReportHtml:
         """Every calibrated row carries its verdict chip — without it the reader cannot see why a
         house rolled up as it did (this was the H10 'afflicted vs favourable career' contradiction)."""
         assert body.count('class="cal-row"') >= 50
+
+    def test_preponderance_renders_between_house_strength_and_longevity(self, body):
+        """v14: the testimony-ledger table sits right after the House strength cross-check it
+        generalizes, before Longevity, with one row per house and the honesty rules printed."""
+        h_start = body.find('id="house-strength"')
+        p_start = body.find('id="preponderance"')
+        l_start = body.find('id="longevity"')
+        assert 0 <= h_start < p_start < l_start
+        section = body[p_start:l_start]
+        assert "HTJAH-I:983-991" in section and "HTJAH-I:8870" in section
+        assert "NO numeric rule" in section
+        assert "NOT counted among its own witnesses" in section
+        assert section.count("<tr>") == 13    # header + 12 houses
+
+    def test_ruler_of_nativity_renders_after_header(self, body):
+        """v13: the Ruler of the nativity card sits right after the header (the chart signature
+        chips live inside it) and before the Running-now box, citing the first-impression
+        doctrine (HTJAH-I:16001-16002) and the strongest-planet passage (HTJAH-I:6248)."""
+        h_start = body.find('class="sig"')
+        r_start = body.find('id="ruler"')
+        n_start = body.find('id="now"')
+        assert 0 <= h_start < r_start < n_start
+        section = body[r_start:n_start]
+        assert "HTJAH-I:16001-16002" in section
+        assert "HTJAH-I:6248" in section
+        assert "not a prediction" in section
         # a verdict chip must appear inside cal-rows, not only on house heads
         assert 'class="cal-row"><span class="sig-name"' in body
         assert body.count("chip chip--") > body.count('class="house-head"')
@@ -261,11 +287,12 @@ class TestReportHtml:
         assert section.count("<tr>") >= 2   # header + at least one yoga-timing row
 
     def test_house_strength_cross_check_renders(self, body):
-        """House strength cross-check sits right after House-by-house and before Longevity,
-        with one row per house, ranks and SAV bindus shown, doctrine cited."""
+        """House strength cross-check sits right after House-by-house and before the
+        Preponderance section that generalizes it (v14 moved the slice boundary — previously
+        Longevity was the next anchor), with one row per house, ranks and SAV bindus shown."""
         h_start = body.find('id="houses"')
         s_start = body.find('id="house-strength"')
-        l_start = body.find('id="longevity"')
+        l_start = body.find('id="preponderance"')
         assert 0 <= h_start < s_start < l_start
         section = body[s_start:l_start]
         assert "In simple terms:" in section

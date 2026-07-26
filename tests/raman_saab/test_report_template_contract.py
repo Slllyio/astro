@@ -35,6 +35,9 @@ _FROZEN = (
     ("stands_out", "## What stands out in this chart", 'id="stands-out"'),
     ("dashboard", "## The twelve matters at a glance", 'id="dashboard"'),
     ("chart_signature", "## Chart signature", 'class="sig"'),
+    # v13 amendment (2026-07-26, conscious, same-commit as the module): Ruler of the nativity —
+    # Raman's own first-impression move — inserted right after the Chart signature it opens from.
+    ("ruler", "## Ruler of the nativity", 'id="ruler"'),
     ("chart_grids", None, 'id="charts"'),
     ("positions", "## Planetary positions", 'id="positions"'),
     ("shadbala", "## Shadbala", 'id="shadbala"'),
@@ -47,6 +50,10 @@ _FROZEN = (
     # v8 amendment (2026-07-26, conscious, same-commit as the module): House strength
     # cross-check inserted right after House-by-house — the natural narrative position.
     ("house_strength", "## House strength cross-check", 'id="house-strength"'),
+    # v14 amendment (2026-07-26, conscious, same-commit as the module): Preponderance of
+    # testimonies — the full per-house ledger — inserted right after the House strength
+    # cross-check it generalizes.
+    ("preponderance", "## Preponderance of testimonies", 'id="preponderance"'),
     ("longevity", "## Longevity", 'id="longevity"'),
     ("maraka", "## The maraka scheme", 'id="maraka"'),
     # v11 amendment (2026-07-26, conscious, same-commit as the module): Maraka x Saturn-transit
@@ -63,6 +70,10 @@ _FROZEN = (
     # v12 amendment (2026-07-26, conscious, same-commit as the module): the third Life-narrative
     # companion, AV-tier, shown last of the three under Raman's own reliability caveat.
     ("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"'),
+    # v15 amendment (2026-07-26, conscious, same-commit as the module): Life-chapters — one
+    # woven prose chapter per Mahadasha — placed as the capstone of the Life-narrative
+    # companion cluster it merges.
+    ("life_chapters", "## Life-chapters", 'id="life-chapters"'),
     ("gochara", "## Current transits (Gochara", 'id="gochara"'),
     # v6 amendment (2026-07-26, conscious, same-commit as the module): the Dasha x Transit
     # confluence, inserted right after Gochara — the natural narrative position, since it
@@ -151,9 +162,12 @@ class TestTemplateContract:
         v3 cross-feature synthesis, v4 the Nichod capstone, v5 Your Reading, v6 the Dasha x
         Transit confluence, v7 Yoga x Dasha timing, v8 the House strength cross-check, v9 the
         Ishta/Kashta outlook, v10 the MD-lord condition outlook, v11 the Maraka x Saturn-transit
-        confluence, v12 the AV dasha-seat outlook — completing the candidate menu)."""
+        confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
+        Preponderance of testimonies, v15 the Life-chapters — the higher-order synthesis
+        sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
-            "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12"}
+            "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
+            "v14", "v15"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -166,3 +180,6 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v10") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v11") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v12") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v13") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v14") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v15") == 1

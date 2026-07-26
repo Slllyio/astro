@@ -620,6 +620,69 @@ def _house_strength_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _preponderance_section(r: DetailedReport) -> str:
+    """The full per-house testimony ledgers (v14) — Raman's 'judgment is the summing up of the
+    influence of planets' (HTJAH-I:983-991) applied to every already-computed axis; the verdict
+    column is the House-by-house rollup, displayed but never counted in its own tally."""
+    if not r.preponderance.houses:
+        return ""
+    rows = "".join(
+        f'<tr><td>H{ht_.house} {_esc(_HOUSE_NAME[ht_.house])}</td>'
+        f'<td><span class="chip chip--{_vclass(ht_.verdict)}">{_esc(ht_.verdict)}</span></td>'
+        f'<td class="num">{ht_.favourable}</td><td class="num">{ht_.adverse}</td>'
+        f'<td class="num">{ht_.neutral}</td><td class="num">{ht_.absent}</td>'
+        f'<td>{_esc(ht_.preponderance)}</td><td>{_esc(ht_.status)}</td></tr>'
+        for ht_ in r.preponderance.houses)
+    details = "".join(
+        f'<div class="now-row"><span class="theme-label">H{ht_.house}</span>'
+        + _esc("; ".join(f"{t.name} {t.value}" for t in ht_.testimonies
+                         if t.lean != "absent") or "no decided testimony") + '</div>'
+        for ht_ in r.preponderance.houses)
+    pr = r.preponderance
+    picks = []
+    if pr.most_corroborated_favourable is not None:
+        picks.append(f'most-corroborated favourable: H{pr.most_corroborated_favourable}')
+    if pr.most_corroborated_afflicted is not None:
+        picks.append(f'most-corroborated afflicted: H{pr.most_corroborated_afflicted}')
+    if pr.most_contested is not None:
+        picks.append(f'most-contested: H{pr.most_contested}')
+    picks_html = (f'<p class="plain">{_esc(" | ".join(picks))}</p>' if picks else "")
+    return (
+        '<h2 class="section" id="preponderance">Preponderance of testimonies</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> Raman defines judgment itself as '
+        '&ldquo;the summing up of the influence of planets&rdquo; &mdash; the house, its lord, '
+        'its occupants and its karaka weighed together (HTJAH-I:983-991), with everything '
+        '&ldquo;properly weighed before any result can be deduced&rdquo; (HTJAH-I:495; '
+        'HTJAH-II:654-661 repeats the injunction for marriage, and &ldquo;never&hellip; on '
+        'the basis of one or two combinations&rdquo; is his own wording, said of mental '
+        'diagnosis, HTJAH-I:6245-6246). This table lines up, per house, every already-computed '
+        'testimony the report holds elsewhere and counts where the balance lies &mdash; '
+        'Raman&rsquo;s own conclusion word: &ldquo;there is a preponderance of benefic '
+        'influences&hellip;&rdquo; (HTJAH-I:8870).</p>'
+        '<p class="section-sub"><i>Three honesty rules govern this table.</i> (1) The Verdict '
+        'column is the authoritative House-by-house verdict, unchanged &mdash; and it is '
+        'deliberately NOT counted among its own witnesses (a headline cannot corroborate '
+        'itself). (2) Raman states NO numeric rule for how many testimonies decide a matter '
+        '(HTJAH-I:495 says only that all must be properly weighed &mdash; and his own worked '
+        'conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the Preponderance column '
+        'here is a simple equal-weight majority of leaning witnesses &mdash; a presentation '
+        'convention borrowing his vocabulary, not his weighing &mdash; it never alters a '
+        'verdict, and a &ldquo;contested&rdquo; row means the witnesses split, not that the '
+        'verdict is wrong. (3) The witnesses are NOT independent votes: lord, karaka and '
+        'navamsa are the verdict&rsquo;s own inputs restated by name, and the majority tenor '
+        'derives from the same significations as the headline. Yogas bearing on a house are '
+        'among Raman&rsquo;s Primary Considerations (e.g. HTJAH-I:4135-4139, the 4th-house '
+        'instance of his recurring template) but are NOT tallied &mdash; this engine has no '
+        'yoga-to-house mapping primitive; an honest omission, not a judgment. Bhava-Bala rank '
+        'is shown as a magnitude and carries no direction.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
+        '<th class="num">for</th><th class="num">against</th><th class="num">neutral</th>'
+        '<th class="num">absent</th><th>preponderance</th><th>status</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>'
+        f'<div class="instrument">{details}</div>'
+        f'{picks_html}')
+
+
 def _yoga_timing_section(r: DetailedReport) -> str:
     """When does each fired yoga's own lord run as MD or AD — extends the Yogas section above
     with WHEN, reusing the same lord_quality strength read Life-narrative already computes."""
@@ -774,6 +837,88 @@ def _varga_card(label: str, body: str) -> str:
         + (f'<details class="vnotes"><summary>provenance &amp; citations</summary>'
            f'<ul>{note_html}</ul></details>' if note_html else "")
         + "</div></details>")
+
+
+def _ruler_section(r: DetailedReport) -> str:
+    """Raman's first-impression card (v13): the ruler of the nativity (Lagna lord) and the
+    strongest planet by Shadbala, with the HTJAH-I:3892-3897 nature/appearance comparison —
+    pure re-reads of already-computed values (see `detailed_report.build_ruler`)."""
+    from app.raman_saab.detailed_report import _SIGN_NAME, _jd_month_year
+    ru = r.ruler
+    rows: list[str] = []
+    ll_bit = f"{_esc(ru.lagna_lord)}, lord of the {_esc(_SIGN_NAME[r.chart.asc_sign])} Lagna"
+    if ru.lagna_lord_house is not None:
+        ll_bit += f", in house {ru.lagna_lord_house}"
+    rows.append(f'<div class="now-row"><span class="theme-label">Ruler (Lagna lord)</span>'
+                f'{ll_bit}</div>')
+    if ru.strongest is not None and ru.strongest_rupas is not None:
+        s_bit = f"{_esc(ru.strongest)} ({ru.strongest_rupas:.1f} rupas)"
+        if ru.coincide:
+            s_bit += (' &mdash; the ruler itself: &ldquo;the foundation is quite sound&rdquo; '
+                      '(HTJAH-I:3880-3882)')
+        rows.append(f'<div class="now-row"><span class="theme-label">Strongest (Shadbala)'
+                    f'</span>{s_bit}</div>')
+        if ru.navamsa_lagna_lord is not None:
+            if ru.navamsa_lagna_lord == ru.strongest:
+                cmp_bit = (f'the lord of the Navamsa Lagna is the strongest planet itself '
+                           f'({_esc(ru.strongest)}); it stamps the nature and appearance '
+                           f'either way (HTJAH-I:3892-3897)')
+            elif ru.stamps_nature is not None:
+                cmp_bit = (f'as between the strongest planet and the lord of the Navamsa Lagna '
+                           f'({_esc(ru.navamsa_lagna_lord)}), <b>{_esc(ru.stamps_nature)}</b> '
+                           f'is the more powerful and stamps the nature and appearance '
+                           f'(HTJAH-I:3892-3897)')
+            else:
+                cmp_bit = (f'the strongest planet and the lord of the Navamsa Lagna '
+                           f'({_esc(ru.navamsa_lagna_lord)}) cannot be ranked here &mdash; '
+                           f'no winner is guessed (HTJAH-I:3892-3897)')
+            rows.append(f'<div class="now-row"><span class="theme-label">Nature &amp; '
+                        f'appearance</span>{cmp_bit}</div>')
+        temper = (_esc(ru.temperament) + " (HTJAH-I:6248-6268)" if ru.temperament is not None
+                  else "Raman&rsquo;s strongest-planet passage (HTJAH-I:6248-6268) gives no "
+                       "line for the Moon &mdash; an honest absence, nothing invented")
+        rows.append(f'<div class="now-row"><span class="theme-label">Temperament</span>'
+                    f'{temper}</div>')
+        cond = []
+        if ru.functional_nature is not None:
+            cond.append(f"{_esc(ru.functional_nature)} for this Lagna")
+        if ru.avastha is not None:
+            cond.append(f"{_esc(ru.avastha)} avastha (HPA Ch.7)")
+        if ru.ik_lean is not None:
+            cond.append(f"{_esc(ru.ik_lean)} Ishta/Kashta lean (GBB-10:134)")
+        if ru.vargottama:
+            cond.append("vargottama")
+        if ru.retrograde:
+            cond.append("retrograde")
+        if cond:
+            rows.append(f'<div class="now-row"><span class="theme-label">Condition</span>'
+                        f'{"; ".join(cond)}</div>')
+        yb = (", ".join(_esc(n) for n in ru.yogas_involving) if ru.yogas_involving
+              else "none of the fired yogas resolves to it")
+        rows.append(f'<div class="now-row"><span class="theme-label">Yogas</span>{yb}</div>')
+        if ru.md_windows:
+            spans = ", ".join(f"{_jd_month_year(s0)} to {_jd_month_year(e0)}"
+                              for s0, e0 in ru.md_windows)
+            rows.append(f'<div class="now-row"><span class="theme-label">Own Mahadasha</span>'
+                        f'{spans}</div>')
+        else:
+            rows.append('<div class="now-row"><span class="theme-label">Own Mahadasha</span>'
+                        'does not fall inside the displayed window</div>')
+    else:
+        rows.append('<div class="now-row"><span class="theme-label">Strongest (Shadbala)'
+                    '</span>no Shadbala on this chart &mdash; nothing is guessed in its '
+                    'place</div>')
+    return (
+        '<h2 class="section" id="ruler">Ruler of the nativity</h2>'
+        '<p class="section-sub">Raman&rsquo;s own opening move: &ldquo;in order to obtain a '
+        'first impression we must first of all consider the ruler of the nativity&rdquo; '
+        '(HTJAH-I:16001-16002) &mdash; and separately, &ldquo;the strongest planet in the '
+        'horoscope determines the predominance of the physical, mental and spiritual '
+        'peculiarities of the person&rdquo; (HTJAH-I:6248-6250). The classical temperament '
+        'lines are shorthand for tendencies, never medical statements &mdash; how the method '
+        'reads this chart, not a prediction.</p>'
+        f'<div class="instrument">{"".join(rows)}</div>'
+        f'<p class="plain">{_esc(ru.signature)}</p>')
 
 
 def _now_box(r: DetailedReport) -> str:
@@ -1363,6 +1508,43 @@ def _av_dasha_seat_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _life_chapters_section(r: DetailedReport) -> str:
+    """One woven prose chapter per Mahadasha run (v15) — the Napoleon-narration shape
+    (HTJAH-I:15950-15999) merging the Life-narrative companions; natal factors first,
+    transits last (HTJAH-I:8410-8411)."""
+    if not r.life_chapters.chapters:
+        return ""
+    blocks = []
+    for ch in r.life_chapters.chapters:
+        now_tag = " &mdash; now" if ch.is_current else ""
+        blocks.append(
+            f'<h3 class="md-head">{_esc(ch.maha)} Mahadasha '
+            f'({_outlook_window_label(ch.start_jd, ch.end_jd)}){now_tag}</h3>'
+            f'<p class="doctrine">{_esc(ch.narrative)}</p>')
+    return (
+        '<h2 class="section" id="life-chapters">Life-chapters</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> the Life-narrative above and its three '
+        'companion tables (Ishta/Kashta, MD-lord condition, AV dasha-seat) each paint ONE lens '
+        'across the same years. This section reads them TOGETHER, one chapter per Mahadasha '
+        '&mdash; the way Raman himself narrates a nativity (his Chart No. 203 reads each dasha '
+        'from yoga + lord condition + house placement + directional influence in one '
+        'paragraph, HTJAH-I:15950-15999), and the way his blending doctrine demands: '
+        '&ldquo;astrological predictions can be accurate when the influences of birth chart '
+        'are blended with those of Gochara and Ashtakavarga, together with Vedha or '
+        'obstructing forces&rdquo; (HPA-34:369-381; Vedha is not re-narrated per chapter '
+        '&mdash; it is applied in the Gochara table and sampled as interference in the Dasha '
+        'x Transit confluence table). Nothing here is a new judgment &mdash; every clause '
+        're-reads a row already shown in the sections above, and chapter spans are clipped to '
+        'the report&rsquo;s display window (a Mahadasha may begin before or continue past its '
+        'shown dates). Within each chapter the natal factors come FIRST and transits LAST: '
+        '&ldquo;primary importance must be given to the natal positions and Dasha and only '
+        'secondary consideration to transiting planets&rdquo; (HTJAH-I:8410-8411; '
+        'HTJAH-II:4679-4687 repeats it &mdash; transits are secondary, catalytic, conclusions '
+        'rest on Dasa-vichara). As everywhere in this report: how the method reads this '
+        'chart, not a prediction.</p>'
+        + "".join(blocks))
+
+
 def to_html(r: DetailedReport) -> str:
     """Body content + inline <style> — ready to drop into an Artifact skeleton."""
     s, b = r.synthesis, r.birth
@@ -1462,6 +1644,8 @@ def to_html(r: DetailedReport) -> str:
       <a href="#nichod">Nichod</a></nav>
   </header>
 
+  {_ruler_section(r)}
+
   {_now_box(r)}
 
   {_info_box(r)}
@@ -1494,6 +1678,8 @@ def to_html(r: DetailedReport) -> str:
 
   {_house_strength_section(r)}
 
+  {_preponderance_section(r)}
+
   <h2 class="section" id="longevity">Longevity</h2>
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
     by the marakas (HTJAH-II:4465-4472). The numeric span is a cross-check, never a date.</p>
@@ -1524,6 +1710,8 @@ def to_html(r: DetailedReport) -> str:
   {_md_condition_section(r)}
 
   {_av_dasha_seat_section(r)}
+
+  {_life_chapters_section(r)}
 
   {_gochara_table(r)}
 

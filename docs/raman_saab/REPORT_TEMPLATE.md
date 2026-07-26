@@ -17,32 +17,34 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 5 | What stands out | `## What stands out in this chart` | `#stands-out` | v1 |
 | 6 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
 | 7 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
-| 8 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
-| 9 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
-| 10 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
-| 11 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
-| 12 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
-| 13 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
-| 14 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
-| 15 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
-| 16 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
-| 17 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 18 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
-| 19 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 20 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
-| 21 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
-| 22 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
-| 23 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 24 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 25 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 26 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 27 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 28 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 29 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 30 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 31 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 32 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 33 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 8 | **Ruler of the nativity (first impression)** | `## Ruler of the nativity` | `#ruler` | v13 |
+| 9 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
+| 10 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
+| 11 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
+| 12 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
+| 13 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
+| 14 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
+| 15 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
+| 16 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
+| 17 | **Preponderance of testimonies** | `## Preponderance of testimonies` | `#preponderance` | v14 |
+| 18 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
+| 19 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
+| 20 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
+| 21 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 22 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
+| 23 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
+| 24 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
+| 25 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 26 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 27 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 28 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 29 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 30 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 31 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 32 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 33 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 34 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 35 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -323,6 +325,102 @@ HTJAH-II:4453-4456) printed at the section head in both renderers, and placed LA
 Life-narrative companions (after Ishta/Kashta and MD-lord condition, both Raman-band) as v12;
 `_FROZEN` updated in the same commit. This completes the six-candidate menu discussed with the
 user one by one.
+
+**v13 amendment (2026-07-26) — Ruler of the nativity.** First of three higher-order synthesis
+sections (the user asked for sections that are "the result of analysis of many sections",
+thinking like Raman himself). This is Raman's own opening move, previously made nowhere in the
+report: "in order to obtain a first impression we must first of all consider the ruler of the
+nativity" (HTJAH-I:16001-16002). Source verification during implementation surfaced a real
+doctrinal distinction the design then honoured: in Chart No. 204 the "ruler of the nativity"
+Raman examines is the LAGNA LORD, while the temperament passage keys on "the strongest planet in
+the horoscope" (HTJAH-I:6248-6249) — two distinct concepts his own worked chart praises when they
+coincide ("he is by far the strongest planet... and since he is also the Lagnadhipati, the
+foundation is quite sound", HTJAH-I:3880-3882). The card presents both, plus the nature/appearance
+comparison against the Navamsa-Lagna lord (the more powerful stamps them, HTJAH-I:3892-3897), the
+strongest planet's temperament line (`_RULER_TEMPERAMENT`, lightly condensed from
+HTJAH-I:6248-6268 — the Moon is deliberately absent because Raman's passage names no Moon line,
+an honest absence), its functional nature / Deeptadi avastha / Ishta-Kashta lean, the fired yogas
+it participates in (via `_yoga_planets`), its own MD runs in the window (via `_md_runs`), and its
+Gochara outlook windows when it is one of the four tracked slow movers. `build_ruler()` is a pure
+re-read of already-computed report fields (the `build_nichod` pattern) — no verdict is touched,
+tested by inspection. Inserted right after Chart signature (the natural narrative position — it
+IS the first impression); `_FROZEN` updated in the same commit; negative-checked.
+
+**v14 amendment (2026-07-26) — Preponderance of testimonies.** Second of the three higher-order
+synthesis sections. Raman defines judgment itself as "the summing up of the influence of
+planets" — house, lord, occupants, karaka weighed together (HTJAH-I:983-991), never "on the
+basis of one or two combinations" (HTJAH-I:6245-6246), everything "properly weighed before any
+result can be deduced" (HTJAH-I:495; HTJAH-II:654-661); his own worked-chart conclusions speak
+of "a preponderance of benefic influences" (HTJAH-I:8870). `build_preponderance()` lines up, per
+house, the seven ALREADY-COMPUTED witnesses (lagna-frame lord strength via `_lagna_ledger`,
+karaka strength, navamsa status, Bhava-Bala rank, SAV band, the matter-varga dashboard
+verdict(s) via a new `_MATTER_HOUSE` anchor map verified against each deep reader's own
+documented house, and the calibration majority tenor), tallies the leaning ones, and words the
+balance in Raman's own preponderance vocabulary. Printed honesty rules: the authoritative
+verdict is displayed but NEVER counted among its own witnesses (circularity guard); Raman
+states NO numeric N-testimonies rule and his own worked conclusion weighs witnesses unequally
+(HTJAH-I:8870-8876), so the equal-weight majority is DISCLOSED as a presentation convention
+borrowing his vocabulary, not his weighing; the witnesses are named as the verdict's own
+inputs, not independent votes; yogas-bearing-on-a-house (e.g. HTJAH-I:4135-4139, the 4th-house
+instance of the recurring Primary Considerations template) are excluded because no yoga→house
+mapping primitive exists — a disclosed omission. Houses 1/8/11/12 carry an explicit "absent"
+matter-varga row (no dedicated reader). Summary lines name the most-corroborated
+favourable/afflicted and most-contested houses (rankings, no cutoffs).
+
+**A bphs-doctrine-reviewer pass corrected the first draft's methodology in three real ways
+before shipping** (each correction is pinned by its own regression test): (1) the navamsa
+witness was first read verdict-relative ("confirms" on an afflicted house = adverse-leaning);
+the reviewer showed this INVERTS the engine's own monotone semantics (`_navamsa_modulate` and
+the clause-2 navamsa guard treat "confirms" as always-a-lift and "weakens" as always-adverse) —
+corrected to direction-absolute. (2) The Bhava-Bala rank was first leaned by top/bottom half
+(rank 1-6 favourable) — an invented numeric cutoff that also assigned direction to a measure
+the report's own explainer calls a magnitude (GBB-9:32-34, GBB-9:332 ranks without a cutoff) —
+corrected to a neutral, magnitude-only witness. (3) Two scoped over-generalizations in the
+lord/karaka witnesses were fixed: on an AFFLICTION_MATTER house a strong lord now reads
+adverse-leaning ("a strong dusthana lord strengthens, never rescues" — the engine's own
+clause-1.5), and a broken karaka (`karaka_intact` False, the clause-1 veto the headline
+actually obeyed) never tallies favourable whatever its raw strength. Also disclosed on review:
+HTJAH-I:6245-6246 ("never on one or two combinations") is Raman's wording about mental
+diagnosis specifically — the intro now says so, leading with the fully-general HTJAH-I:495.
+Inserted right after the House strength cross-check it generalizes; `_FROZEN` updated same
+commit; negative-checked.
+
+**v15 amendment (2026-07-26) — Life-chapters.** Third of the higher-order synthesis sections:
+one woven prose chapter per Mahadasha run, merging what Life-narrative and its three companion
+tables (Ishta/Kashta, MD-lord condition, AV dasha-seat) show as separate parallel paintings.
+The narration shape is Raman's own — his Chart No. 203 (Napoleon) reads each dasha period from
+yoga + lord condition + house placement + directional influence in ONE paragraph
+(HTJAH-I:15950-15999) — and the blending doctrine is his: "astrological predictions can be
+accurate when the influences of birth chart are blended with those of Gochara and Ashtakavarga"
+(HPA-34:369-381). `build_life_chapters()` is pure JOINS on `_md_runs`: `md_condition` /
+`ishta_kashta` / `av_dasha_seats` rows matched per run, `yoga_timing` rows falling inside it
+(deduped by yoga+role), houses lit aggregated through the ONE existing `graded_buckets` helper
+(best tier per house across the run's bhuktis; `_TIER_ORDER` is ordering only, nothing
+re-graded; each house carries its UNCHANGED natal verdict), and `dasha_transit` /
+`maraka_saturn` overlaps by interval intersection. Within each chapter the natal factors come
+FIRST and transits LAST per Raman's stated priority ("primary importance must be given to the
+natal positions and Dasha and only secondary consideration to transiting planets",
+HTJAH-I:8410-8411, co-cited HTJAH-II:4679-4687); any maraka overlap repeats the
+method-not-prediction disclosure. Placed as the capstone of the Life-narrative companion
+cluster (right after AV dasha-seat); `_FROZEN` updated same commit; negative-checked.
+
+**A bphs-doctrine-reviewer pass corrected the first draft before shipping** (chart number,
+range and style description of the Napoleon citation all verified exact): (1) the chapter lead
+first said "{lord} rules X to Y" — but `_md_runs` bounds are CLIPPED to the display window, so
+that asserted a false rulership span for any MD extending past the window edge (a real case:
+the canonical chart shows a ~7-year slice of Venus's 20-year MD); corrected to "Mahadasha is
+in view X to Y" with the clipping disclosed in the intro, pinned by a regression test. (2) The
+HPA-34 blending quote was materially truncated — the sentence ends "together with Vedha or
+obstructing forces"; completed, with a disclosure of WHERE Vedha is actually applied (the
+Gochara and Dasha x Transit tables, not re-narrated per chapter). (3) "Houses lit... at their
+best tier" risked reading a single-bhukti peak as MD-wide and used non-Raman vocabulary;
+reworded to "houses whose indications fructify... peak tier reached in at least one bhukti"
+with a pointer to the Life-narrative rows for which sub-period. (4) The HPA-24 "stated
+maximum" clause now discloses Raman's full maximum also requires freedom from malefic aspect
+(not graded by the inherited `at_maximum` flag). (5) A PRE-EXISTING defect found in passing
+was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation marks as if
+verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
+importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
 **Content amendment (2026-07-26) — the confluence audit: real bugs fixed, genuine multi-axis
 divergences explained.** The user asked for a full-report pass ("apply your astrological brain at

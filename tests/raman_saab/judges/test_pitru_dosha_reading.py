@@ -88,6 +88,21 @@ class TestBphsCurseYogas:
         c = _chart({"Jupiter": 5.0})
         assert pd._bphs_curse_yogas(c) == ()
 
+    def test_mother_5_requires_association_not_mere_placement(self) -> None:
+        """Regression for the independent doctrine review's one substantive finding: mother #5's
+        operative condition is the ASSOCIATION (samyoga) of Saturn/Rahu/Mars with the 5th lord
+        or the Moon — a first placement-only encoding fired when the malefics sat together in
+        the OTHER of the two houses, associated with neither. Aries asc, 5th = Leo (lord Sun),
+        9th = Sagittarius. Divergent case: Sun+Moon in Leo (5th), Saturn+Rahu+Mars together in
+        Sagittarius (9th) — placement satisfied, association absent -> must NOT fire. Faithful
+        case: all five together in Leo -> fires."""
+        c_apart = _chart({"Sun": 125.0, "Moon": 130.0,
+                          "Saturn": 245.0, "Rahu": 250.0, "Mars": 255.0})
+        assert not pd._mother_curse_fires(c_apart, 5)
+        c_together = _chart({"Sun": 125.0, "Moon": 130.0,
+                             "Saturn": 126.0, "Rahu": 127.0, "Mars": 128.0})
+        assert pd._mother_curse_fires(c_together, 5)
+
     def test_every_encoded_yoga_carries_a_per_verse_cite(self) -> None:
         """Every registered combination cites its own source line (BPHS-83:<n> for the father
         list, BPHS-83-ii:<n> for the recovered mother list) — no pooled or heading cites."""

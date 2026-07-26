@@ -120,18 +120,26 @@ def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagg
 #   Praśna Mārga's own father's-curse variant (PrasnaMarga-18:695-696) — needs
 #     Gulika, which this engine does not compute.
 #
-# INTERPRETATION CONVENTIONS (source-verified line by line, disclosed):
+# INTERPRETATION CONVENTIONS (source-verified line by line; independently
+# re-verified by a bphs-doctrine-reviewer pass — father list CONFIRMED 9/9
+# clause-faithful, mother #5 tightened on its finding):
 #   "associated with" a planet = co-occupancy of the same rasi house (the
 #     conservative conjunction reading; the verses' association is samyoga, not
 #     the wider conjunction-or-mutual-aspect sense `lords_associated` uses).
-#   father #3's "the lord of the 5th is with the Sun" reads DEGENERATE-TRUE when
-#     the 5th lord IS the Sun (Leo 5th, Aries ascendant) — the clause cannot
-#     fail of itself there; firing then rests on the verse's other clauses.
-#   mother #5's "associated with Saturn, Rahu and Mars; are in the 5th or the
-#     9th" is encoded as all five bodies (5th lord, Moon, Saturn, Rahu, Mars)
-#     within houses {5, 9} — marginally looser than requiring each malefic to
-#     share the exact house of the 5th lord or Moon; the strict same-house
-#     reading is a subset of what fires.
+#   plural "malefics" occupying a house fires on AT LEAST ONE natural-malefic
+#     occupant (the conventional reading, applied uniformly to both lists).
+#   DEGENERATE-TRUE self-association: father #3's "the lord of the 5th is with
+#     the Sun" when the 5th lord IS the Sun (Aries ascendant, Leo 5th), and
+#     father #6's "Mars as the lord of the 10th is associated with the lord of
+#     the 5th" when Mars rules BOTH (Cancer ascendant) — the clause cannot fail
+#     of itself there; firing then rests on the verse's other clauses.
+#   mother #1's "the 4th and the 5th are occupied by malefics" is read as a
+#     shared conjunct across BOTH disjuncts (the stricter parse; the rival
+#     debilitation-alone parse would only fire more easily).
+#   mother #10 stays on record: the OCR garble admits a plausible single-char
+#     reconstruction ("or" -> "are": 5th/8th-lord exchange + 4th lord and Moon
+#     in dusthanas) but also a rival second-exchange parse — conservative
+#     non-encoding until a cleaner source settles it.
 # ---------------------------------------------------------------------------
 
 def _lord_of(chart: RamanChart, house: int) -> str:
@@ -298,8 +306,14 @@ def _mother_curse_fires(chart: RamanChart, num: int) -> bool:
         return (_in_h(chart, l5, 6, 8, 12) and _malefic_navamsa(chart, "Moon")
                 and _malefic_occupies(chart, 1) and _malefic_occupies(chart, 5))
     if num == 5:
+        # The verse's operative condition is the ASSOCIATION ("associated with Saturn, Rahu
+        # and Mars") — each malefic must co-occupy the 5th lord's or the Moon's house; their
+        # {5,9} placement then follows as a corollary. (A first placement-only encoding was
+        # tightened by the independent doctrine review: it fired when the malefics sat
+        # together in the OTHER of the two houses, associated with neither.)
         return (_in_h(chart, l5, 5, 9) and _in_h(chart, "Moon", 5, 9)
-                and all(_in_h(chart, m, 5, 9) for m in ("Saturn", "Rahu", "Mars")))
+                and all(_assoc(chart, m, l5) or _assoc(chart, m, "Moon")
+                        for m in ("Saturn", "Rahu", "Mars")))
     if num == 6:
         return (l4 == "Mars" and _assoc(chart, "Mars", "Saturn")
                 and _assoc(chart, "Mars", "Rahu")

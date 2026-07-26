@@ -441,10 +441,21 @@ curse-yogas now demonstrably test the 5th/Ascendant (father) and 4th/5th/Moon (m
 — a genuinely different region from the House 9/4 personal significations, making the
 no-contradiction separation cleaner than the proxy allowed. A per-verse cite test pins every
 BPHS-83-ii cite to the exact line of the recovered file that starts its numbered combination.
-NOTE ON REVIEW: the standing pre-commit bphs-doctrine-reviewer workflow FAILED on session
-usage limits for this change; an inline line-by-line source verification of all 20 encoded
-checkers against their verses was performed and documented in its place, and the independent
-workflow pass remains re-runnable (`resumeFromRunId wf_e7ad74a3-5e9`).
+NOTE ON REVIEW: the standing pre-commit bphs-doctrine-reviewer workflow first FAILED on
+session usage limits; an inline line-by-line source verification of all 20 encoded checkers
+was performed and documented in its place, and the commit shipped on that basis. The
+independent pass was then re-run after the limit reset (2026-07-27) and COMPLETED: the
+father list was CONFIRMED 9/9 clause-faithful (one documentation note — father #6's
+Cancer-lagna degenerate-true case, now disclosed alongside #3's); the mother list surfaced
+ONE substantive finding — #5's first encoding was placement-only and dropped the verse's
+operative samyoga condition (it fired when the malefics sat together in the OTHER of the two
+houses, associated with neither); tightened to require each of Saturn/Rahu/Mars to co-occupy
+the 5th lord's or the Moon's house, pinned by a divergent-case regression test. The reviewer
+also independently confirmed the recovered `vol2_chapter_083_ii.md` block byte-matches the
+original scrape's tail (no mis-splice) and that every per-verse cite line is exact. Three
+further conventions were added to the module's disclosure block on its notes (plural
+"malefics" = at-least-one; mother #1's stricter shared-conjunct parse; mother #10's plausible
+"or"→"are" reconstruction, still conservatively on record).
 
 **Content amendment (2026-07-26) — yogas become the eighth witness
 (`yoga_house_bearings`).** The Preponderance section's one disclosed omission is closed: yogas

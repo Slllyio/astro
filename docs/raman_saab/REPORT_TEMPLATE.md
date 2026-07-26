@@ -426,13 +426,19 @@ importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 yoga-bearing testimony previously left every "other"- and lunar-kind yoga neutral (deliberate
 under-claiming). The prior review noted that leaning the yogas whose PRINTED effect is
 unambiguous — with their own citations — would be legitimate. Done: a curated
-`_BENEFIC_RECORD_YOGAS` (the five Pancha Mahapurusha, Budha-Aditya, Vasumathi, Jaya) and
-`_ADVERSE_RECORD_YOGAS` (Daridra "heavy debts, very poor" 3HC:7289; Asatyavadi "loving
+`_BENEFIC_RECORD_YOGAS` (the five Pancha Mahapurusha, Budha-Aditya, Vasumathi, Jaya, Parvata)
+and `_ADVERSE_RECORD_YOGAS` (Daridra "heavy debts, very poor" 3HC:7289; Asatyavadi "loving
 falsehood... fraudulent schemes" HPA-20:225) override the kind-based lean; every leaned yoga
 still carries its own citation in the Yogas section. Lunar stays neutral (a conditionally-
 benefic lunar yoga can be nullified in dusthana formation). The Nabhasa/Akriti shapes never
 reach here (they resolve no constituents). Two tests pin the id-validity and lean discipline.
-Report-only; golden ratchet unchanged; suite 4472 passed.
+The bphs-doctrine-reviewer pass CONFIRMED the directions and forced two fixes: **Parvata** was a
+missing member (resolvable, "wealthy, prosperous... head of a town" 3HC:3170, structurally like
+Vasumathi/Jaya) — added; and the docstring's "unambiguously directional" claim over-reached for
+the five Pancha Mahapurusha (Sasa carries a mixed-character clause, 3HC:3741-3745) — reworded to
+base their lean on raja-status, with Sasa's mixed clause noted as set aside on the fortune axis,
+Asatyavadi flagged as a high-base-rate contributor, and Chatussagara noted as
+qualifying-on-effect-but-unresolvable. Report-only; golden ratchet unchanged; suite 4472 passed.
 
 **Content amendment (2026-07-27) — the v13-v15 synthesis reaches the plain layers.** "Your
 Reading" and the Nichod predated the higher-order synthesis sections and never mentioned them.

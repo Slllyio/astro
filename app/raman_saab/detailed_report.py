@@ -1472,18 +1472,24 @@ def _lean_word(favourable: bool) -> str:
     return "favourable-leaning" if favourable else "adverse-leaning"
 
 
-#: The specific "other"-kind yogas whose PRINTED effect is unambiguously directional, leaned by
-#: record (each still carries its own citation, shown in the Yogas section). The Pancha
-#: Mahapurusha (a leader/king, HTJAH-3HC), Budha-Aditya ("highly intelligent, of good repute"),
-#: Vasumathi ("always commands plenty of wealth", 3HC:2708) and Jaya ("ever successful,
-#: victorious", 3HC:5670) read benefic; Daridra ("contracts heavy debts and is very poor",
-#: 3HC:7289) and Asatyavadi ("loving falsehood... fraudulent schemes", HPA-20:225) read
-#: adverse. The bucket's mixed members (the Nabhasa/Akriti shapes) never reach here — they
-#: resolve no constituents, so produce no bearing row. lunar stays neutral (Gajakesari-type
+#: The specific "other"-kind yogas leaned by record (each still carries its own citation, shown
+#: in the Yogas section). Benefic on the worldly-fortune axis this tally uses: Budha-Aditya
+#: ("highly intelligent, of good repute"), Vasumathi ("always commands plenty of wealth",
+#: 3HC:2708), Jaya ("ever successful, victorious", 3HC:5670), Parvata ("wealthy, prosperous...
+#: head of a town", 3HC:3170) — all unambiguously favourable printed effects — PLUS the five
+#: Pancha Mahapurusha (Ruchaka/Bhadra/Hamsa/Malavya/Sasa), leaned on their raja-status ("great
+#: men", Raman groups all five as Raja Yogas, 3HC) rather than an unambiguous printed effect:
+#: Sasa in particular carries an explicit mixed-character clause ("character questionable...
+#: covetous", 3HC:3741-3745) that the fortune-axis tally deliberately sets aside. Adverse:
+#: Daridra ("heavy debts and very poor", 3HC:7289) and Asatyavadi ("loving falsehood...
+#: fraudulent schemes", HPA-20:225 — a high-base-rate ~1/6 contributor, so its recurring
+#: adverse row should not be over-weighted). The set is complete among CURRENTLY-RESOLVABLE
+#: other-kind yogas: Chatussagara qualifies on effect but resolves no constituents (no bearing
+#: row); the Nabhasa/Akriti shapes likewise resolve none. lunar stays neutral (Gajakesari-type
 #: yogas are only conditionally benefic — nullified in dusthana formation, HTJAH-I:2948-2956).
 _BENEFIC_RECORD_YOGAS: Final[frozenset[str]] = frozenset({
     "Y.RUCHAKA", "Y.BHADRA", "Y.HAMSA", "Y.MALAVYA", "Y.SASA",
-    "Y.BUDHA_ADITYA", "Y.VASUMATHI", "Y.JAYA"})
+    "Y.BUDHA_ADITYA", "Y.VASUMATHI", "Y.JAYA", "Y.PARVATA"})
 _ADVERSE_RECORD_YOGAS: Final[frozenset[str]] = frozenset({"Y.DARIDRA", "Y.ASATYAVADI"})
 
 

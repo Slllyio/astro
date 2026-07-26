@@ -81,6 +81,146 @@ _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings"
                7: "marriage & partnership", 8: "longevity", 9: "fortune & father",
                10: "career", 11: "gains", 12: "losses & spirituality"}
 
+#: hand-written (never templated) plain-English lines for each of the 12-matter dashboard's
+#: matters, by verdict — the actual content of "Your Reading". Deliberately warm, honest, and
+#: free of jargon; afflicted lines name real friction without alarm; this is prose written for
+#: a person, not a restatement of a technical verdict.
+_PLAIN_MATTER: dict[str, dict[str, str]] = {
+    "wealth": {
+        "favourable": "money and material comfort come to you relatively easily, and your "
+                      "resources tend to grow over time",
+        "afflicted": "financial ease may take real effort on your part — steady habits will "
+                     "matter more than luck here",
+        "mixed": "your finances show a real mix of ease and effort — some years flow, others "
+                 "ask for discipline"},
+    "siblings": {
+        "favourable": "you share a warm, supportive bond with your brothers and sisters",
+        "afflicted": "relationships with siblings may carry some friction or distance at times",
+        "mixed": "your bond with siblings runs hot and cold — close at times, strained at "
+                 "others"},
+    "mother": {
+        "favourable": "your relationship with your mother, and your sense of home, tend to be "
+                      "a genuine source of comfort",
+        "afflicted": "home life or your bond with your mother may need patience and conscious "
+                     "care",
+        "mixed": "home and your mother's influence bring both comfort and occasional friction"},
+    "property": {
+        "favourable": "property, land and material assets tend to work out favourably for you "
+                      "over time",
+        "afflicted": "property matters — buying, holding or inheriting land or a home — may "
+                     "involve extra complication",
+        "mixed": "property dealings show a mixed pattern — real gains alongside real "
+                 "complications"},
+    "children": {
+        "favourable": "the chart favours ease and joy around children",
+        "afflicted": "this chart shows real strain around children — fertility, timing, or the "
+                     "parent-child bond may ask for patience. This is one of the more sensitive "
+                     "readings here and deserves a compassionate, unhurried view, not alarm",
+        "mixed": "children bring both joy and real challenge in this chart — a mixed but not "
+                 "unusual pattern"},
+    "marriage": {
+        "favourable": "marriage and partnership read favourably — a supportive, workable bond "
+                      "is indicated",
+        "afflicted": "marriage may need real effort and patience — the chart shows genuine "
+                     "friction to work through, not a smooth path",
+        "mixed": "marriage shows both real warmth and real friction — a genuine partnership, "
+                 "not an easy one"},
+    "father": {
+        "favourable": "your relationship with your father, and your broader sense of fortune, "
+                      "read as a genuine asset",
+        "afflicted": "your bond with your father, or your sense of fortune, may carry some "
+                     "distance or difficulty",
+        "mixed": "fortune and your father's influence bring both support and occasional "
+                 "strain"},
+    "career": {
+        "favourable": "career and public standing read strongly — recognition and steady "
+                      "progress are indicated",
+        "afflicted": "career may involve real struggle — slower recognition or harder-won "
+                     "progress than you'd like",
+        "mixed": "career shows both real opportunity and real obstacles — success here takes "
+                 "deliberate effort"},
+    "comforts": {
+        "favourable": "material comforts and the pleasures of life come easily to you",
+        "afflicted": "comfort and ease may need to be earned rather than given",
+        "mixed": "comfort in life is uneven — some abundance, some austerity"},
+    "spiritual": {
+        "favourable": "you carry a genuine pull toward spiritual life and inner growth",
+        "afflicted": "spiritual life may develop later, or through real struggle rather than "
+                     "ease",
+        "mixed": "your spiritual path shows both genuine seeking and real obstacles"},
+    "education": {
+        "favourable": "learning comes naturally to you, and formal education tends to go well",
+        "afflicted": "education may involve real struggle — interrupted schooling or hard-won "
+                     "qualifications",
+        "mixed": "your educational path shows both natural ability and real interruption"},
+    "health": {
+        "favourable": "overall vitality and physical resilience read as a genuine strength",
+        "afflicted": "health needs real attention — this chart does not favour taking your "
+                     "wellbeing for granted",
+        "mixed": "health shows both real resilience and real vulnerability — worth ongoing "
+                 "attention, not alarm"},
+}
+
+#: how each period-lord's classical theme reads in plain English (for "Right now").
+_PLANET_THEME: dict[str, str] = {
+    "Sun": "confidence, authority and recognition", "Moon": "emotional life, home and the public",
+    "Mars": "action, courage and drive", "Mercury": "communication, learning and business",
+    "Jupiter": "growth, wisdom and expanding opportunity",
+    "Venus": "relationships, comfort and creativity",
+    "Saturn": "discipline, patience and long-term effort",
+    "Rahu": "ambition and unconventional drive", "Ketu": "detachment and inner reflection",
+}
+
+#: how the 12 matters group into a few readable life-domain paragraphs.
+_PLAIN_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("Money, property and comfort", ("wealth", "property", "comforts")),
+    ("Family and home", ("mother", "father", "siblings")),
+    ("Career and learning", ("career", "education")),
+    ("Relationships and children", ("marriage", "children")),
+    ("Health and inner life", ("health", "spiritual")),
+)
+
+#: plain-English gloss for every signification key (doctrine/significations.py) — so "Your
+#: Reading" never leaks a Sanskrit or technical term (e.g. "poorvapunya", "coverture").
+#: Any key not listed falls back to a simple underscore-to-space conversion.
+_SIGNIFICATION_PLAIN: dict[str, str] = {
+    "self": "your sense of self", "body": "physical vitality", "health": "health",
+    "wealth": "wealth", "family": "family life", "speech": "speech and communication",
+    "vision": "eyesight", "siblings": "siblings", "courage": "courage and drive",
+    "short_journeys": "short journeys", "ear_throat": "ear and throat health",
+    "mother": "your bond with your mother", "happiness": "domestic happiness",
+    "education": "education", "vehicles": "vehicles and conveyances",
+    "property": "property and land", "home_comforts": "comfort at home",
+    "children": "children", "intellect": "intellect and reasoning",
+    "poorvapunya": "merit carried from the past",
+    "enemies_disease": "resistance to illness and rivals", "accidents": "accident-proneness",
+    "debts": "debt and financial obligations", "enemies": "open rivals and conflict",
+    "disease_chronic": "resistance to chronic illness",
+    "spouse": "your spouse", "marital_happiness": "happiness in marriage",
+    "virility": "vitality and drive", "coverture": "security within marriage",
+    "wealth_through_marriage": "wealth gained through marriage",
+    "partnership": "partnership and cooperation",
+    "longevity": "longevity", "death": "life-span", "legacies": "inheritance",
+    "sudden_gains": "sudden windfalls",
+    "father": "your bond with your father", "fortune": "fortune and luck",
+    "dharma": "sense of purpose", "higher_learning": "higher education",
+    "long_journeys": "travel abroad",
+    "career": "career", "profession_authority": "authority in your career",
+    "profession_trade": "career in trade or business",
+    "profession_learned": "career in a learned profession",
+    "profession_labour": "career built on hands-on work",
+    "status_honour": "public standing and honour",
+    "gains": "gains and income", "elder_siblings": "elder siblings",
+    "friends": "friendships", "acquisitions": "acquiring possessions",
+    "loss_moksha": "release and letting go", "expenditure": "spending",
+    "foreign_residence": "living abroad", "moksha": "spiritual liberation",
+    "incarceration": "confinement", "left_eye": "left-eye health",
+}
+
+
+def _plain_signification(key: str) -> str:
+    return _SIGNIFICATION_PLAIN.get(key, key.replace("_", " "))
+
 #: one-line plain meaning of each fructification grade (shown once as a legend).
 _TIER_MEANING = {
     "par excellence": "full, strong results — both period-lords reinforce the house",
@@ -145,6 +285,13 @@ class SectionSpec:
 #: in this order, and that the v1 prefix is byte-stable.
 SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("title", "# Detailed reading", 'class="name"', "v1"),
+    # v5 (2026-07-26, conscious amendment): "Your Reading" inserted right after the title — the
+    # ONE deliberate exception to "append at the end". Every prior amendment (v2/v3/v4) only
+    # ever grew the list downward; this one must come FIRST, because it exists specifically to
+    # be the plain-English answer a reader meets before any technical section, including the
+    # report's own self-referential "Information content" statistics. _FROZEN in the contract
+    # test was reordered to match, in the same commit, per the procedure.
+    SectionSpec("plain_reading", "## Your Reading", 'id="plain-reading"', "v5"),
     SectionSpec("now_box", None, 'class="nowbox"', "v1"),
     SectionSpec("info_content", "## Information content of this reading", 'class="infobox"', "v1"),
     SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
@@ -178,7 +325,8 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "chart_signature", "now_box", "info_content", "stands_out", "dashboard",
+    "title", "plain_reading", "chart_signature", "now_box", "info_content", "stands_out",
+    "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
     "maraka", "timeline", "gochara", "divisional", "career", "deeptadi", "karakamsa",
     "soul", "pitru", "synthesis", "glossary", "nichod",
@@ -439,6 +587,26 @@ class DetailedReport:
     window_back: int                                 # years of past shown
     window_forward: int                              # years of future shown
     nichod: "Nichod"                                 # the one deep-level integration of it all
+    plain_reading: "PlainReading"                    # the plain-English reading, read FIRST
+
+
+@dataclass(frozen=True)
+class PlainReading:
+    """'Your Reading' — the report's genuine plain-English answer, meant to be read FIRST,
+    before any technical detail. Every clause is hand-written prose (never a templated
+    restatement of a verdict string) built from the SAME already-computed verdicts the rest of
+    the report shows — this is a translation, not a new judgment. No house numbers, no
+    Sanskrit terms, no percentiles as the primary voice."""
+    opening: str
+    life_paragraphs: tuple[tuple[str, str], ...]     # (theme, paragraph)
+    now: str
+    notable: str
+    closing: str
+
+
+_EMPTY_PLAIN_READING: Final[PlainReading] = PlainReading(
+    opening="", life_paragraphs=(), now="", notable="", closing="",
+)
 
 
 @dataclass(frozen=True)
@@ -590,6 +758,61 @@ def build_nichod(r: DetailedReport) -> Nichod:
     )
 
 
+#: rough percentile -> plain-English intensity word, for the "what's distinctive" paragraph.
+def _plain_intensity(pct: float) -> str:
+    if pct >= 0.80:
+        return "unusually strong"
+    if pct >= 0.65:
+        return "distinctly favourable"
+    if pct <= 0.20:
+        return "distinctly challenging"
+    if pct <= 0.35:
+        return "notably challenging"
+    return "worth noting"
+
+
+def build_plain_reading(r: DetailedReport) -> PlainReading:
+    """Assemble 'Your Reading' — the report's one genuinely plain-English section, meant to be
+    read FIRST. Translates the already-computed 12-matter dashboard, the running period, and
+    the distinctive readings into hand-written prose; invents no new judgment."""
+    name = r.birth.name.strip() or "this chart"
+    opening = (f"Here is what {name}'s chart says, in plain terms — before any of the "
+               f"technical detail below.")
+
+    by_matter = {en.matter: en.verdict for en in r.dashboard.entries}
+    life_paragraphs: list[tuple[str, str]] = []
+    for theme, matters in _PLAIN_GROUPS:
+        sentences = []
+        for m in matters:
+            verdict = by_matter.get(m)
+            line = _PLAIN_MATTER.get(m, {}).get(verdict) if verdict else None
+            if line:
+                sentences.append(line[0].upper() + line[1:])
+        if sentences:
+            life_paragraphs.append((theme, ". ".join(sentences) + "."))
+
+    md_theme = _PLANET_THEME.get(r.synthesis.running_md, "this planet's classical themes")
+    now = (f"You're currently in a {r.synthesis.running_md}-led chapter of life "
+          f"(with {r.synthesis.running_ad} adding its own flavour within it) — classically a "
+          f"time that brings out {md_theme}.")
+
+    if r.distinctive:
+        bits = [f"{_plain_signification(e.signification)} ({_plain_intensity(e.favourability_percentile)})"
+                for _h, e in r.distinctive[:3]]
+        notable = ("A few things stand out as distinctly this chart's own, not the generic "
+                  "picture most charts show: " + "; ".join(bits) + ".")
+    else:
+        notable = ("Nothing in this chart strays far from what most charts show — a fairly "
+                  "even, unremarkable spread across the board.")
+
+    closing = ("This is a plain-language reading of what the classical method sees in the "
+              "pattern of the birth chart — not a prediction of specific events. The full "
+              "technical report below shows exactly how each conclusion was reached.")
+
+    return PlainReading(opening=opening, life_paragraphs=tuple(life_paragraphs), now=now,
+                        notable=notable, closing=closing)
+
+
 _DAYS_PER_VEDIC_YEAR: float = 365.2425
 
 
@@ -670,11 +893,12 @@ def build_detailed_report(
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
         window_back=years_back, window_forward=years_forward,
-        nichod=_EMPTY_NICHOD,
+        nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING,
     )
-    # the nichod is computed LAST, from the fully-assembled report — it only selects, counts
-    # and knits together fields the rest of this function already produced.
-    return _dc_replace(provisional, nichod=build_nichod(provisional))
+    # nichod + plain_reading are computed LAST, from the fully-assembled report — both only
+    # select, count and knit together fields the rest of this function already produced.
+    return _dc_replace(provisional, nichod=build_nichod(provisional),
+                       plain_reading=build_plain_reading(provisional))
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
@@ -717,7 +941,23 @@ def to_markdown(r: DetailedReport) -> str:
              f"your life.")
     L.append("")
 
+    # ── your reading: the one genuinely plain-English section, read FIRST ──────
+    pr = r.plain_reading
+    L.append("## Your Reading")
+    L.append("")
+    L.append(pr.opening)
+    for theme, para in pr.life_paragraphs:
+        L.append("")
+        L.append(f"**{theme}.** {para}")
+    L.append("")
+    L.append(pr.now)
+    L.append("")
+    L.append(pr.notable)
+    L.append("")
+    L.append(f"_{pr.closing}_")
+
     # ── the honesty headline (aggregate information content) ──────────────────
+    L.append("")
     L.append("## Information content of this reading")
     L.append("")
     L.append(r.info.sentence)

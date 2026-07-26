@@ -11,36 +11,57 @@ updating the contract test's frozen list in the same, conscious commit.*
 | # | section | markdown heading | HTML anchor | since |
 |---|---|---|---|---|
 | 1 | Title & two-voice preamble | `# Detailed reading` | `.name` | v1 |
-| 2 | Running now (HTML only) | — | `.nowbox` | v1 |
-| 3 | Information content (honesty headline) | `## Information content of this reading` | `.infobox` | v1 |
-| 4 | What stands out | `## What stands out in this chart` | `#stands-out` | v1 |
-| 5 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
-| 6 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
-| 7 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
-| 8 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
-| 9 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
-| 10 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
-| 11 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
-| 12 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
-| 13 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
-| 14 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 15 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 16 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 17 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 18 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 19 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 20 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 21 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 22 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 23 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 24 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 25 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 2 | **Your Reading (plain English, read first)** | `## Your Reading` | `#plain-reading` | v5 |
+| 3 | Running now (HTML only) | — | `.nowbox` | v1 |
+| 4 | Information content (honesty headline) | `## Information content of this reading` | `.infobox` | v1 |
+| 5 | What stands out | `## What stands out in this chart` | `#stands-out` | v1 |
+| 6 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
+| 7 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
+| 8 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
+| 9 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
+| 10 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
+| 11 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
+| 12 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
+| 13 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
+| 14 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
+| 15 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
+| 16 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 17 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 18 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 19 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 20 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 21 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 22 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 23 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 24 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 25 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 26 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
 renders the fired `SYNTHESIS_RULES` (doctrine/synthesis_rules.py) in three provenance bands —
 Raman (citable), classical (CLASSICAL_NONCITABLE banner), Ashtakavarga (Raman's own caveat
 banner) — plus a doctrine-on-record list and the excluded-techniques note.
+
+**v5 amendment (2026-07-26) — Your Reading.** A user read the full 24-section report end to end
+(~10,700 words on a real chart) and reported, correctly, that the content was not meaningful —
+users would struggle to understand it. On inspection every section was individually faithful but
+the report had no plain-English answer anywhere: the house-by-house prose repeated a dense
+"activated in X(timer)/(lord)/(karaka) YYYY-YYYY" clause 12 times with zero gloss, the
+population-context lines repeated the same statistical sentence template ~56 times, and even the
+v4 Nichod — built specifically to be the "deep integration" answer — was itself full of unexplained
+jargon (Shadbala rupas, par excellence, bindus). `detailed_report.PlainReading` /
+`build_plain_reading()` is the fix: hand-written (never templated) prose, grouped into five
+life-domain paragraphs from the SAME 12-matter dashboard verdicts the rest of the report already
+shows, a plain description of the current dasha period via `_PLANET_THEME`, and the top distinctive
+readings translated through `_plain_signification` (which glosses every one of the 56 signification
+keys, e.g. "poorvapunya" -> "merit carried from the past") so no Sanskrit or house-number token
+ever appears. **This is the ONE deliberate exception to "append at the end"**: `plain_reading` is
+inserted as section #2, right after the title, because its entire purpose is to be read BEFORE
+every technical section — including the report's own "Information content" statistics. `_FROZEN`
+in the contract test was reordered to match, in the same commit, per the procedure; negative-checked
+(mutating the heading fails two contract tests, reverting restores green). All existing sections
+are otherwise untouched and still render exactly as before, unmoved relative to each other.
 
 (The HTML renderer places the signature chips in the page header and adds the HTML-only
 now-box/chart-grid sections; its document order is `HTML_SECTION_ORDER` in the same module.)

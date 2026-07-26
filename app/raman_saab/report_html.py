@@ -76,6 +76,19 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
   background:var(--surface);font-size:.86rem;color:var(--ink-soft)}
 .legend .v-serif{font-family:var(--serif);color:var(--ink);font-weight:600}
 .legend .v-sans{color:var(--instrument);font-weight:600}
+
+/* ── Your Reading: the plain-English section, read first ─────────────────── */
+.plain-reading{margin:1.6rem 0 0;padding:1.5rem 1.7rem;border-radius:16px;
+  background:color-mix(in srgb,var(--doctrine) 5%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--doctrine) 18%,var(--rule))}
+.plain-reading p{font-family:var(--serif);font-size:1.08rem;line-height:1.6;color:var(--ink);
+  margin:.75rem 0 0}
+.plain-reading p:first-child{margin-top:0}
+.plain-reading .pr-opening{font-size:1.18rem;color:var(--doctrine)}
+.plain-reading p b{color:var(--doctrine)}
+.plain-reading .pr-closing{font-family:var(--sans);font-size:.82rem;font-style:italic;
+  color:var(--ink-soft);margin-top:1.1rem;padding-top:.9rem;
+  border-top:1px solid color-mix(in srgb,var(--doctrine) 15%,var(--rule))}
 h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6rem 0 .3rem;
   padding-top:1.6rem;border-top:1px solid var(--rule);text-wrap:balance}
 .section-sub{color:var(--ink-soft);font-size:.86rem;margin:.2rem 0 1.2rem}
@@ -879,6 +892,21 @@ def _glossary() -> str:
             f'<dl>{items}</dl></details>')
 
 
+def _plain_reading_section(r: DetailedReport) -> str:
+    """'Your Reading' — the report's one genuinely plain-English section, rendered first."""
+    p = r.plain_reading
+    paras = "".join(f'<p><b>{_esc(theme)}.</b> {_esc(para)}</p>'
+                    for theme, para in p.life_paragraphs)
+    return (
+        '<section class="plain-reading" id="plain-reading">'
+        f'<p class="pr-opening">{_esc(p.opening)}</p>'
+        f'{paras}'
+        f'<p>{_esc(p.now)}</p>'
+        f'<p>{_esc(p.notable)}</p>'
+        f'<p class="pr-closing">{_esc(p.closing)}</p>'
+        '</section>')
+
+
 def _nichod_section(r: DetailedReport) -> str:
     """The capstone: the report's whole distilled into one deep-level read. Nothing here is a
     new judgment — see Nichod's docstring in detailed_report.py."""
@@ -1043,6 +1071,7 @@ def to_html(r: DetailedReport) -> str:
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
       (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
+    {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
     <div class="legend">This reading speaks in two voices. The
       <span class="v-serif">doctrine</span> (serif) is Raman's verdict, faithful to his texts and

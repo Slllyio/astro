@@ -279,6 +279,60 @@ class TestDetailedReport:
         assert d is not None and d.signification == "incarceration" and d.inverted_warning
         assert "WARNING" in markdown and "atlas-proven INVERTED channel" in markdown
 
+    def test_your_reading_is_first_and_jargon_free(self, report, markdown):
+        """'Your Reading' is the section right after the title/preamble, before any technical
+        content — and it must NEVER leak the jargon that made earlier report versions hard to
+        understand (Shadbala, bindus, tier names, MD/AD, raw house numbers)."""
+        title_pos = markdown.find("# Detailed reading")
+        pr_pos = markdown.find("## Your Reading")
+        info_pos = markdown.find("## Information content")
+        assert 0 <= title_pos < pr_pos < info_pos
+
+        from app.raman_saab.detailed_report import _fold_ascii
+        pr = report.plain_reading
+        section = markdown[pr_pos:info_pos]
+        # the renderer ASCII-folds output (em dashes -> hyphens etc.); fold both sides to compare
+        assert _fold_ascii(pr.opening) in section
+        for _theme, para in pr.life_paragraphs:
+            assert _fold_ascii(para) in section
+        assert _fold_ascii(pr.now) in section
+        assert _fold_ascii(pr.notable) in section
+        assert _fold_ascii(pr.closing) in section
+
+        banned = ("Shadbala", "rupas", "bindus", "Ashtakavarga", "Vedha", "Ishta", "Kashta",
+                  "Karakamsa", "par excellence", "vargottama", "Navamsa", "Bhava Bala")
+        for term in banned:
+            assert term not in section, f"jargon leaked into Your Reading: {term!r}"
+        for h in range(1, 13):
+            assert f"H{h} " not in section and f"H{h}:" not in section, \
+                f"raw house number leaked into Your Reading: H{h}"
+
+    def test_your_reading_names_the_person_and_current_chapter(self, report):
+        """The opening names the chart owner; 'now' names the actual running MD lord's theme,
+        not a jargon label."""
+        pr = report.plain_reading
+        assert report.birth.name in pr.opening
+        assert report.synthesis.running_md in pr.now
+
+    def test_your_reading_never_calls_judge_house(self):
+        """build_plain_reading must only read the already-assembled report — a translation,
+        never a new judgment."""
+        import inspect
+
+        from app.raman_saab.detailed_report import build_plain_reading
+        src = inspect.getsource(build_plain_reading)
+        assert "judge_house" not in src
+
+    def test_plain_signification_translates_known_jargon(self):
+        """Sanskrit/technical signification keys get a genuine plain-English gloss, not a bare
+        underscore-to-space pass-through."""
+        from app.raman_saab.detailed_report import _plain_signification
+        assert _plain_signification("poorvapunya") == "merit carried from the past"
+        assert _plain_signification("coverture") == "security within marriage"
+        assert _plain_signification("incarceration") == "confinement"
+        # an unlisted key still degrades gracefully, never raises
+        assert _plain_signification("totally_unknown_key") == "totally unknown key"
+
     def test_nichod_integrates_every_section(self, report, markdown):
         """The Nichod section pulls a concrete value from each major report block and appears
         as the final section, after the Glossary."""

@@ -177,6 +177,13 @@ class TestReportHtml:
         assert "<script>alert(1)</script>" not in out
         assert "&lt;script&gt;" in out
 
+    def test_html_plain_reading_precedes_signature_chips(self, body):
+        """In the HTML document, 'Your Reading' renders before the technical signature chips —
+        the plain answer comes first, the jargon-dense detail after."""
+        pr_pos = body.find('id="plain-reading"')
+        sig_pos = body.find('class="sig"')
+        assert 0 <= pr_pos < sig_pos
+
     def test_nichod_section_rendered_last(self, body):
         """The Nichod capstone renders with its essence blockquote, appears after the
         Glossary, and its ingredients reuse the existing .vsec/.vrow component pattern."""

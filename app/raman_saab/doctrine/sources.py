@@ -10,9 +10,11 @@ Tags follow the methodology-overview §0 convention:
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional
 
 from app.raman_saab.doctrine import book_registry
 
@@ -66,3 +68,39 @@ def verify(citation: Citation) -> bool:
     path = _resolve_file(citation.work)
     return (path is not None and path.is_file()
             and 1 <= citation.line <= _line_count(path))
+
+
+#: A citation token: WORK:line or WORK:start-end (WORK may itself contain hyphens,
+#: e.g. "HTJAH-I", "GBB-9", "BPHS-83-iii"; the line-spec is after the FINAL colon).
+_CITE_RE = re.compile(r"^(?P<work>.+):(?P<start>\d+)(?:-(?P<end>\d+))?$")
+
+
+def passage(cite: str, *, context: int = 0) -> Optional[dict]:
+    """The verbatim source lines a citation token points to — the click-to-source backend.
+
+    Returns ``{"work", "start", "end", "text"}`` or None. None when the token is malformed OR
+    its work is outside the citable registry (the divergence firewall — CLASSICAL_NONCITABLE
+    works like BPHS / Praśna Mārga are deliberately NOT resolved here; the caller shows a
+    "classical corroboration, outside Raman's citable canon" note instead). `context` widens the
+    returned window by N lines on each side for readability without changing the cited span."""
+    m = _CITE_RE.match(cite.strip())
+    if m is None:
+        return None
+    work = m.group("work")
+    start = int(m.group("start"))
+    end = int(m.group("end") or start)
+    if end < start:
+        start, end = end, start
+    path = _resolve_file(work)
+    if path is None or not path.is_file():
+        return None
+    try:
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    if start > len(lines):
+        return None
+    lo = max(1, start - context)
+    hi = min(len(lines), end + context)
+    return {"work": work, "start": start, "end": end,
+            "text": "\n".join(lines[lo - 1:hi]).strip()}

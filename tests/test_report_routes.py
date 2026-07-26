@@ -68,3 +68,43 @@ class TestReport:
     async def test_rejects_unknown_field(self, client):
         resp = await client.post("/report", json={**_BIRTH, "bogus": 1})
         assert resp.status_code == 422        # extra="forbid"
+
+    @pytest.mark.asyncio
+    async def test_json_format_returns_the_structured_report(self, client):
+        """format=json returns the structured grounding contract, not a rendered string."""
+        resp = await client.post("/report", json={**_BIRTH, "format": "json"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["format"] == "json"
+        rep = body["report"]
+        assert isinstance(rep, dict)
+        assert rep["ruler"]["lagna_lord"] == "Mercury"
+        assert len(rep["house_strength"]) == 12
+        assert rep["yogas"][0]["source"].keys() >= {"work", "line"}
+
+
+class TestSource:
+    @pytest.mark.asyncio
+    async def test_resolves_a_canon_citation_to_verbatim_lines(self, client):
+        """A Raman-canon citation token returns the exact source lines (click-to-source)."""
+        resp = await client.get("/report/source", params={"cite": "HTJAH-I:468-478"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["resolved"] is True
+        assert body["work"] == "HTJAH-I" and body["start"] == 468 and body["end"] == 478
+        assert "strength of the house" in body["text"].lower()
+
+    @pytest.mark.asyncio
+    async def test_classical_noncitable_is_deferred_not_shown(self, client):
+        """A CLASSICAL_NONCITABLE token (BPHS) is not resolved — the firewall holds — and the
+        response says so truthfully rather than returning the verse."""
+        resp = await client.get("/report/source", params={"cite": "BPHS-83-iii:70"})
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["resolved"] is False
+        assert "classical" in body["note"].lower()
+
+    @pytest.mark.asyncio
+    async def test_malformed_cite_is_handled(self, client):
+        resp = await client.get("/report/source", params={"cite": "not-a-citation"})
+        assert resp.status_code == 200 and resp.json()["resolved"] is False

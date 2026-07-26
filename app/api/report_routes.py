@@ -32,7 +32,9 @@ from app.raman_saab.detailed_report import (
     build_detailed_report,
     to_markdown,
 )
+from app.raman_saab.doctrine import sources
 from app.raman_saab.report_html import standalone_html
+from app.raman_saab.report_json import to_report_dict
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +55,7 @@ class ReportRequest(BaseModel):
     tz_offset: float = Field(..., ge=-12.0, le=14.0)
     name: str = Field("api", max_length=120)
     ayanamsa: Literal["raman", "lahiri"] = "lahiri"
-    fmt: Literal["markdown", "html"] = Field("markdown", alias="format")
+    fmt: Literal["markdown", "html", "json"] = Field("markdown", alias="format")
     years_back: int = Field(10, ge=0, le=120)
     years_forward: int = Field(20, ge=0, le=120)
 
@@ -97,6 +99,26 @@ async def sections() -> dict:
     }
 
 
+@report_router.get("/source")
+async def source(cite: str, context: int = 0) -> dict:
+    """The verbatim source lines a citation token points to — the click-to-source backend.
+
+    `cite` is a citation token as it appears in the report (e.g. ``HTJAH-I:468-478``,
+    ``3HC:7289``, ``GBB-9:32-34``). Returns the exact lines from the corpus. CLASSICAL_NONCITABLE
+    works (BPHS / Praśna Mārga) are deliberately NOT resolved (the divergence firewall) — they
+    return ``resolved: false`` with a truthful note, not the verse text."""
+    if not 0 <= context <= 20:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="context must be 0..20")
+    p = sources.passage(cite, context=context)
+    if p is None:
+        return {"cite": cite, "resolved": False,
+                "note": "This citation is outside Raman's citable canon (classical "
+                        "corroboration such as BPHS or Praśna Mārga), or the token is "
+                        "malformed / not vendored on this machine — the verse text is not "
+                        "shown here."}
+    return {"cite": cite, "resolved": True, **p}
+
+
 @report_router.post("")
 async def post_report(req: ReportRequest) -> dict:
     """Cast the nativity and return its full detailed reading in the requested format, plus a
@@ -113,13 +135,12 @@ async def post_report(req: ReportRequest) -> dict:
                           latitude=req.latitude, longitude=req.longitude)
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
-        rendered = standalone_html(r) if req.fmt == "html" else to_markdown(r)
-        return {
-            "ayanamsa": req.ayanamsa,
-            "format": req.fmt,
-            "summary": _summary(r),
-            "report": rendered,
-        }
+        out: dict = {"ayanamsa": req.ayanamsa, "format": req.fmt, "summary": _summary(r)}
+        if req.fmt == "json":
+            out["report"] = to_report_dict(r)           # the structured grounding contract
+        else:
+            out["report"] = standalone_html(r) if req.fmt == "html" else to_markdown(r)
+        return out
 
     try:
         return await asyncio.to_thread(_build)

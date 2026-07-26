@@ -388,6 +388,46 @@ class TestDetailedReport:
         assert SECTION_CONTRACT[-1].section_id == "nichod"
         assert SECTION_CONTRACT[-1].since == "v4"
 
+    def test_gochara_outlook_covers_the_four_slow_movers(self, report):
+        """The multi-year outlook is attached for exactly Jupiter/Saturn/Rahu/Ketu, spanning the
+        same [window_back, window_forward] the rest of the report already uses."""
+        assert set(report.gochara_outlook.keys()) == {"Jupiter", "Saturn", "Rahu", "Ketu"}
+        for planet, segs in report.gochara_outlook.items():
+            assert segs, planet
+            assert segs[0].start_jd == pytest.approx(
+                report.ref_jd - report.window_back * 365.2425, abs=1.0)
+            assert segs[-1].end_jd == pytest.approx(
+                report.ref_jd + report.window_forward * 365.2425, abs=1.0)
+
+    def test_gochara_outlook_never_touches_a_verdict(self, report):
+        """The outlook is a pure transit-geometry computation — it must not appear anywhere near
+        a house verdict path (mirrors the synthesis-layer import-boundary guard)."""
+        import inspect
+        from app.raman_saab.primitives import transits as tr
+        src = inspect.getsource(tr.gochara_timeline)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_favourable_transit_windows(self, markdown):
+        """The Gochara section gains a plain, doctrine-cited table of favourable windows across
+        time, answering 'which years ahead/behind are favourable' rather than only 'right now'."""
+        assert "### Favourable transit windows" in markdown
+        i = markdown.find("## Current transits (Gochara) with Vedha")
+        j = markdown.find("### Favourable transit windows")
+        assert 0 <= i < j                                 # nested under the existing section
+        assert "HTJAH-II:4679" in markdown[j:j + 2000]     # transit-secondary-to-Dasha caveat
+        assert "Vedha (sampled)" in markdown
+
+    def test_favourable_windows_drop_sub_month_noise(self, report, markdown):
+        """Station-wobble slivers under ~a month are documented as dropped, not silently shown."""
+        assert "dropped as sampling noise" in markdown
+        j = markdown.find("### Favourable transit windows")
+        table = markdown[j:j + 4000]
+        from app.raman_saab.detailed_report import _jd_ym
+        for segs in report.gochara_outlook.values():
+            for seg in segs:
+                if seg.gochara_good and (seg.end_jd - seg.start_jd) < 25:
+                    assert f"{_jd_ym(seg.start_jd)} to {_jd_ym(seg.end_jd)}" not in table
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

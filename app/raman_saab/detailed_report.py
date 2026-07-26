@@ -75,6 +75,29 @@ _HOUSE_NAME = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mo
 _SIGN_NAME = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
               "Sagittarius", "Capricorn", "Aquarius", "Pisces")
 
+
+def _jd_ym(jd: float) -> str:
+    """Julian Day -> 'YYYY-MM' (calendar month, GREG_CAL) — display-only, per CLAUDE.md's
+    'JD arithmetic for calendar dates' rule (no datetime.timedelta anywhere upstream)."""
+    import swisseph as swe
+    y, m, _d, _h = swe.revjul(jd, swe.GREG_CAL)
+    return f"{int(y)}-{int(m):02d}"
+
+
+def _vedha_word(frac: float) -> str:
+    """Plain word for a Gochara outlook window's sampled Vedha-obstruction share — the fraction
+    is a coarse, week-resolution estimate (see `GocharaSegment`), so it is deliberately reported
+    as a word, not a false-precision percentage, in the reader-facing table."""
+    if frac >= 0.7:
+        return "sustained — mostly cancelled across this window"
+    if frac >= 0.4:
+        return "frequent"
+    if frac >= 0.15:
+        return "occasional"
+    if frac > 0:
+        return "rare"
+    return "none sampled"
+
 #: lay-reader life-area names (for the plain-language bhukti summary).
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
                4: "home & mother", 5: "children & creativity", 6: "health & rivals",
@@ -576,6 +599,7 @@ class DetailedReport:
     soul: SoulReading                                # extended Jaimini soul/destiny reading
     pitru: PitruDoshaReading                         # ancestral screen (non-Raman provenance)
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
+    gochara_outlook: dict[str, tuple[tr.GocharaSegment, ...]]  # Jupiter/Saturn/Rahu/Ketu, over time
     maraka_period_now: bool                          # is the running period maraka-tier?
     insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
@@ -869,6 +893,11 @@ def build_detailed_report(
     except Exception:  # noqa: BLE001 — sparse chart
         gochara_rows = ()
     try:
+        gochara_outlook = tr.gochara_timeline(
+            chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa)
+    except Exception:  # noqa: BLE001 — sparse chart
+        gochara_outlook = {}
+    try:
         maraka_now = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
         maraka_now = False
@@ -888,7 +917,7 @@ def build_detailed_report(
         dashboard=build_matter_varga_dashboard(chart),
         soul=build_soul_reading(chart),
         pitru=build_pitru_dosha_reading(chart),
-        gochara=tuple(gochara_rows), maraka_period_now=maraka_now,
+        gochara=tuple(gochara_rows), gochara_outlook=gochara_outlook, maraka_period_now=maraka_now,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -1236,6 +1265,40 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {vedha} | "
                      f"**{'favourable' if g.net_good else 'obstructed/adverse'}** |")
         L.append("")
+
+    # ── the same Gochara scheme, over time: which windows in the past/future are favourable ──
+    if r.gochara_outlook:
+        good = sorted(
+            (seg for segs in r.gochara_outlook.values() for seg in segs
+             if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25),
+            key=lambda s: s.start_jd)
+        if good:
+            lo_y = _jd_ym(r.ref_jd - r.window_back * 365.2425)[:4]
+            hi_y = _jd_ym(r.ref_jd + r.window_forward * 365.2425)[:4]
+            L.append(f"### Favourable transit windows ({lo_y} to {hi_y})")
+            L.append("")
+            L.append("_Method: a window is a continuous span where the planet occupies a "
+                     "classical Gochara-benefic house from your Moon (HPA/HTJAH). \"AV support\" "
+                     "is that planet's own Ashtakavarga bindus in the transited sign — 4+ is "
+                     "Raman's own threshold for a stronger result (HPA-34:127). \"Vedha "
+                     "(sampled)\" estimates, across the whole window, how often another planet "
+                     "sat in the paired obstruction house — day-exact Vedha is the snapshot table "
+                     "above, not this; dates here are accurate to about a week. Per Raman, "
+                     "transits are always secondary to the Dasha (HTJAH-II:4679) — a favourable "
+                     "window below matters most when it falls inside a favourable period in "
+                     "Life-narrative below, not on its own. Windows shorter than about a month "
+                     "(a planet stationing back across a sign boundary) are dropped as sampling "
+                     "noise, not real transits._")
+            L.append("")
+            L.append("| Planet | Window | Sign | AV support | Vedha (sampled) |")
+            L.append("|---|---|---|---|---|")
+            for seg in good:
+                bav = (f"{seg.bav_bindus} bindus ({'supported' if seg.bav_bindus >= 4 else 'weak'})"
+                       if seg.bav_bindus is not None else "n/a")
+                L.append(f"| {seg.planet} | {_jd_ym(seg.start_jd)} to {_jd_ym(seg.end_jd)} | "
+                         f"{_SIGN_NAME[seg.sign]} | {bav} | "
+                         f"{_vedha_word(seg.vedha_sample_fraction)} |")
+            L.append("")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

@@ -196,6 +196,25 @@ class TestReportHtml:
         assert 'class="vsec vcore"' in nichod_section
         assert 'class="vrow"' in nichod_section
 
+    def test_gochara_outlook_svg_renders_in_the_gochara_section(self, body):
+        """The multi-year outlook is an SVG nested inside the existing #gochara section, not a
+        new top-level section (the split-status precedent: enrich in place, no contract row)."""
+        g_start = body.find('id="gochara"')
+        g_end = body.find('id="vargas"')          # the next section after Gochara
+        assert 0 <= g_start < g_end
+        section = body[g_start:g_end]
+        assert 'id="gochara-outlook"' in section
+        assert section.count("<svg") == 1
+        assert section.count('class="gochara-bar"') > 0
+
+    def test_gochara_outlook_bars_carry_hover_detail_and_today_marker(self, body):
+        """Each bar exposes its exact dates/AV/Vedha via a native <title> tooltip, and a 'today'
+        marker orients the reader on the 25-year span."""
+        g_start = body.find('id="gochara-outlook"')
+        section = body[g_start:body.find('id="vargas"')]
+        assert "<title>" in section and "AV support" in section
+        assert ">today<" in section
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

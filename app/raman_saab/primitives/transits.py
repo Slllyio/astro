@@ -16,7 +16,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Final
 
+import swisseph as swe
+
+from app.core.ephemeris_engine import DAYS_PER_VEDIC_YEAR
 from app.raman_saab.chart.adapter import cast_chart
+from app.raman_saab.chart.ayanamsa import sidereal_mode
+from app.raman_saab.chart.constants import SWE_PLANETS
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.primitives import ashtakavarga as av
 
@@ -134,3 +139,117 @@ def sade_sati(natal: RamanChart, year: int, month: int, day: int, *,
     h = ((sat.sign - moon.sign) % 12) + 1
     return {12: "Sade-Sati: rising (12th from Moon)", 1: "Sade-Sati: peak (over the Moon)",
             2: "Sade-Sati: setting (2nd from Moon)"}.get(h)
+
+
+# ---------------------------------------------------------------------------
+# Gochara outlook (multi-year) — the same Gochara/Vedha scheme, over a span of time
+# ---------------------------------------------------------------------------
+
+#: The four slow movers a multi-year outlook is judged from. Their Gochara good/bad status
+#: changes only at each sign ingress (~1 year for Jupiter, ~2.5 years for Saturn/Rahu/Ketu) — the
+#: natural resolution for a 25-year graph. Mars and the faster grahas already have a point-in-time
+#: reading in `gochara()`; a 25-year table at their ~45-day-or-faster cadence would fragment into
+#: hundreds of slivers and stop being readable.
+_TIMELINE_PLANETS: Final[tuple[str, ...]] = ("Jupiter", "Saturn", "Rahu", "Ketu")
+
+_FLAGS_LIGHT: Final[int] = swe.FLG_SWIEPH | swe.FLG_SIDEREAL
+
+
+@dataclass(frozen=True)
+class GocharaSegment:
+    """One continuous span in which `planet` occupies a single transiting sign. `gochara_good`
+    and `bav_bindus` are constant for the whole span (both are functions of the sign alone).
+    `vedha_sample_fraction` is the share of SAMPLED dates within the span where a Vedha
+    obstruction was active — an intentionally coarse estimate: a fast mover (Moon, Mercury...)
+    can start and end a Vedha cancellation within days, faster than this multi-year view samples.
+    Read it as "rare" / "frequent" / "sustained", not as exact obstructed dates — the day-exact
+    check is the `gochara()` snapshot elsewhere in the report."""
+    planet: str
+    start_jd: float
+    end_jd: float
+    sign: int
+    house_from_moon: int
+    gochara_good: bool
+    bav_bindus: int | None
+    vedha_sample_fraction: float
+
+
+def _transiting_signs(year: int, month: int, day: int, *, ayanamsa: str) -> dict[str, int]:
+    """Sign (1..12) of all 9 grahas at noon UT. Deliberately skips `cast_chart`'s Shadbala/
+    maraka/upagraha passes — a multi-year timeline sampled every few days cannot afford to
+    recompute those per sample, and a Gochara outlook needs only the transiting sign."""
+    jd = swe.julday(year, month, day, 12.0, swe.GREG_CAL)
+    with sidereal_mode(ayanamsa):
+        signs: dict[str, int] = {}
+        for name, pid in SWE_PLANETS.items():
+            res, _ = swe.calc_ut(jd, pid, _FLAGS_LIGHT)
+            signs[name] = int((float(res[0]) % 360.0) // 30) + 1
+        node, _ = swe.calc_ut(jd, swe.MEAN_NODE, _FLAGS_LIGHT)
+        rahu_lon = float(node[0]) % 360.0
+        signs["Rahu"] = int(rahu_lon // 30) + 1
+        signs["Ketu"] = int(((rahu_lon + 180.0) % 360.0) // 30) + 1
+    return signs
+
+
+def gochara_timeline(
+    natal: RamanChart, ref_jd: float, years_back: float, years_forward: float, *,
+    ayanamsa: str | None = None, planets: tuple[str, ...] = _TIMELINE_PLANETS,
+    step_days: float = 5.0,
+) -> dict[str, tuple[GocharaSegment, ...]]:
+    """The Jupiter/Saturn/Rahu/Ketu Gochara outlook across
+    [ref_jd - years_back*365.2425, ref_jd + years_forward*365.2425] — one chronological tuple of
+    `GocharaSegment` per planet, so a report can answer "which windows in the past/future are
+    favourable" rather than only "is it favourable right now" (`gochara()` above).
+
+    Segment boundaries are exact sign ingresses to within `step_days` (default 5) — a real
+    boundary can fall anywhere in the sampling gap either side of what's reported; that is stated
+    explicitly wherever this is rendered, per the project's no-silent-approximation rule.
+    """
+    az = ayanamsa or getattr(natal, "ayanamsa", "lahiri")
+    moon = natal.planets.get("Moon")
+    moon_sign = moon.sign if moon else natal.asc_sign
+    start_jd = ref_jd - years_back * DAYS_PER_VEDIC_YEAR
+    end_jd = ref_jd + years_forward * DAYS_PER_VEDIC_YEAR
+
+    open_seg: dict[str, dict] = {}
+    out: dict[str, list[GocharaSegment]] = {p: [] for p in planets}
+
+    def _close(planet: str, end: float) -> None:
+        st = open_seg.pop(planet, None)
+        if st is None:
+            return
+        good = st["good"]
+        bav = (av.bhinnashtakavarga(natal, planet)[st["sign"]]
+               if good and planet in av.PLANETS else None)
+        frac = (st["vedha_hits"] / st["total"]) if good and st["total"] else 0.0
+        out[planet].append(GocharaSegment(
+            planet=planet, start_jd=st["start"], end_jd=end, sign=st["sign"],
+            house_from_moon=st["hfm"], gochara_good=good, bav_bindus=bav,
+            vedha_sample_fraction=round(frac, 3)))
+
+    jd = start_jd
+    while jd <= end_jd:
+        y, m, d, _h = swe.revjul(jd, swe.GREG_CAL)
+        signs = _transiting_signs(int(y), int(m), int(d), ayanamsa=az)
+        hfm_of = {g: ((s - moon_sign) % 12) + 1 for g, s in signs.items()}
+        for planet in planets:
+            sign = signs.get(planet)
+            if sign is None:
+                continue
+            hfm = hfm_of[planet]
+            good = hfm in _GOCHARA_GOOD.get(planet, frozenset())
+            cur = open_seg.get(planet)
+            if cur is None or cur["sign"] != sign:
+                _close(planet, jd)
+                open_seg[planet] = {"start": jd, "sign": sign, "hfm": hfm, "good": good,
+                                    "vedha_hits": 0, "total": 0}
+                cur = open_seg[planet]
+            if good:
+                _vh, obstr = _vedha(planet, hfm, hfm_of)
+                if obstr:
+                    cur["vedha_hits"] += 1
+            cur["total"] += 1
+        jd += step_days
+    for planet in planets:
+        _close(planet, end_jd)
+    return {p: tuple(segs) for p, segs in out.items()}

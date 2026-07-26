@@ -1,6 +1,8 @@
 """Gochara (transits) — judged from the natal Moon + Ashtakavarga support, with Sade-Sati."""
 from __future__ import annotations
 
+import swisseph as swe
+
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.primitives import transits as tr
@@ -40,3 +42,54 @@ def test_sade_sati_absent_when_saturn_far_from_moon():
 def test_transit_chart_casts():
     tc = tr.transit_chart(2026, 6, 28)
     assert len(tc.planets) == 9 and 1 <= tc.planets["Saturn"].sign <= 12
+
+
+class TestGocharaTimeline:
+    """Multi-year outlook — the same Gochara/Vedha scheme as `gochara()`, spread over time."""
+
+    def _ref_jd(self):
+        return swe.julday(2026, 7, 26, 12.0)
+
+    def test_segments_are_chronological_contiguous_and_cover_the_window(self):
+        natal = _natal()
+        ref_jd = self._ref_jd()
+        tl = tr.gochara_timeline(natal, ref_jd, 5, 10, step_days=10)
+        assert set(tl.keys()) == {"Jupiter", "Saturn", "Rahu", "Ketu"}
+        start_jd = ref_jd - 5 * tr.DAYS_PER_VEDIC_YEAR
+        end_jd = ref_jd + 10 * tr.DAYS_PER_VEDIC_YEAR
+        for planet, segs in tl.items():
+            assert segs, planet
+            assert segs[0].start_jd == start_jd
+            assert segs[-1].end_jd == end_jd
+            for a, b in zip(segs, segs[1:]):
+                assert a.end_jd == b.start_jd          # contiguous, no gaps or overlaps
+                assert a.sign != b.sign                 # each segment is exactly one sign
+
+    def test_good_flag_and_bindus_match_the_snapshot_definition(self):
+        natal = _natal()
+        tl = tr.gochara_timeline(natal, self._ref_jd(), 3, 3, step_days=10)
+        moon_sign = natal.planets["Moon"].sign
+        for planet, segs in tl.items():
+            for seg in segs:
+                hfm = ((seg.sign - moon_sign) % 12) + 1
+                assert seg.house_from_moon == hfm
+                assert seg.gochara_good == (hfm in tr._GOCHARA_GOOD[planet])
+                if not seg.gochara_good:
+                    assert seg.bav_bindus is None
+                    assert seg.vedha_sample_fraction == 0.0
+                assert 0.0 <= seg.vedha_sample_fraction <= 1.0
+
+    def test_rahu_ketu_have_no_ashtakavarga_bindus(self):
+        """Rahu/Ketu carry no Bhinnashtakavarga in classical doctrine — bav_bindus stays None
+        even on their favourable windows."""
+        natal = _natal()
+        tl = tr.gochara_timeline(natal, self._ref_jd(), 5, 5, step_days=10,
+                                 planets=("Rahu", "Ketu"))
+        for segs in tl.values():
+            for seg in segs:
+                assert seg.bav_bindus is None
+
+    def test_restricting_to_fewer_planets_returns_only_those(self):
+        natal = _natal()
+        tl = tr.gochara_timeline(natal, self._ref_jd(), 2, 2, step_days=15, planets=("Jupiter",))
+        assert set(tl.keys()) == {"Jupiter"}

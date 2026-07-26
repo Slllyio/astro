@@ -112,6 +112,38 @@ signification already feeding the house calibration — comparing them would be 
 a genuine independent cross-check, and encoding a new ad-hoc D9/D10 verdict instead would have
 meant inventing an unaudited judgment outside `house_template`.
 
+**Content amendment (2026-07-26) — the Gochara outlook over time.** A user asked, of the
+point-in-time "Current transits (Gochara) with Vedha" table: "can we make a temporal graph to show
+in what period of past N years and M years ahead which times are favourable." `primitives/
+transits.gochara_timeline()` extends the SAME Gochara/Vedha scheme (`_GOCHARA_GOOD`, `_VEDHA`,
+`_VEDHA_EXEMPT` — no new doctrine, no new citation needed) across
+`[ref_jd - window_back, ref_jd + window_forward]` — the identical span the report's own
+Life-narrative section already uses (`DetailedReport.window_back`/`window_forward`), so the two
+stay coherent without a second window parameter. Restricted to the four slow movers (Jupiter,
+Saturn, Rahu, Ketu): their Gochara good/bad status changes only at each sign ingress (~1 year for
+Jupiter, ~2.5 for the others), the natural resolution for a multi-year graph — Mars and the faster
+grahas would fragment into hundreds of unreadable slivers and stay covered by the existing
+snapshot. Rendered as **presentation only, inside the existing Gochara section** (`gochara_outlook`
+field on `DetailedReport`, no new SectionSpec row — the same enrich-in-place precedent as the
+split-status fix): a "Favourable transit windows" table in Markdown, an SVG Gantt-style bar chart
+in HTML (solid = clear, faded = often Vedha-cancelled — hover for exact dates/AV/Vedha).
+
+Two honesty disclosures are stated explicitly, not silently assumed:
+- **Sampling resolution.** Segment boundaries are computed at 5-day steps (not exact ephemeris
+  root-finding), so a real sign-ingress date can fall anywhere within a few days of what's shown;
+  windows under ~a month (a planet stationing back across a cusp near a retrograde turn) are
+  dropped as sampling noise, not shown as if they were real transits.
+- **Vedha at this scale is an estimate, not an exact window.** A fast mover (Moon, Mercury...) can
+  start and cancel a Vedha obstruction within days — faster than a 25-year view samples. Rather
+  than fabricate exact obstructed sub-dates, each favourable span reports the SHARE of sampled
+  dates across its whole run where Vedha was active, in words (rare/occasional/frequent/
+  sustained), directing the reader to the existing day-exact snapshot table for "is it obstructed
+  right now."
+- Per Raman's own doctrine (already cited in `synthesis_rules.SYN_R8_TRANSIT_CATALYST`,
+  HTJAH-II:4679), transits are secondary to the Dasha — the caveat text repeats this at the point
+  of use so a favourable bar is never read as sufficient on its own, only alongside the
+  Life-narrative period it falls inside.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

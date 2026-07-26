@@ -20,6 +20,7 @@ from app.raman_saab.detailed_report import (
     _HOUSE_NAME as _MD_HOUSE_NAME,
     _SIGN_NAME,
     _TIER_MEANING,
+    _vedha_word,
     DetailedReport,
     graded_buckets,
     driver_entry,
@@ -200,6 +201,12 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--doctrine);outline-
   align-items:baseline}
 .now-head b{color:var(--doctrine)}
 .now-row{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin-top:.6rem}
+
+/* ── gochara outlook (multi-year Gantt) ──────────────────────────── */
+.gochara-outlook{margin-top:1.1rem}
+.gochara-outlook svg{display:block;overflow:visible}
+.gochara-bar{cursor:help;transition:fill-opacity .15s}
+.gochara-bar:hover{fill-opacity:1 !important}
 
 /* ── tables ──────────────────────────────────────────────────────── */
 .tablewrap{overflow-x:auto}
@@ -805,7 +812,92 @@ def _gochara_table(r: DetailedReport) -> str:
             '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>sign</th>'
             '<th class="num">from Moon</th><th>classical</th><th class="num">AV</th>'
             '<th>Vedha by</th><th>net</th></tr></thead>'
-            f'<tbody>{rows}</tbody></table></div>')
+            f'<tbody>{rows}</tbody></table></div>'
+            f'{_gochara_outlook_svg(r)}')
+
+
+def _gochara_outlook_svg(r: DetailedReport) -> str:
+    """A multi-year Gantt-style outlook for Jupiter/Saturn/Rahu/Ketu — the same Gochara scheme
+    as the snapshot table above, spread across [ref - window_back, ref + window_forward]. Solid
+    bars are classically-benefic windows; fainter bars were more often Vedha-obstructed across
+    their span (see `_vedha_word` / GocharaSegment.vedha_sample_fraction for the honesty caveat
+    on that estimate's resolution)."""
+    if not r.gochara_outlook:
+        return ""
+    import swisseph as swe
+
+    start_jd = r.ref_jd - r.window_back * 365.2425
+    end_jd = r.ref_jd + r.window_forward * 365.2425
+    span = end_jd - start_jd
+    if span <= 0:
+        return ""
+    planets = [p for p in ("Jupiter", "Saturn", "Rahu", "Ketu") if r.gochara_outlook.get(p)]
+    if not planets:
+        return ""
+    width, ml, mr, mt, mb = 860, 78, 16, 26, 22
+    row_h = 40
+    height = mt + mb + row_h * len(planets)
+    cw = width - ml - mr
+
+    def x_of(jd: float) -> float:
+        return ml + (jd - start_jd) / span * cw
+
+    y0 = int(swe.revjul(start_jd, swe.GREG_CAL)[0])
+    y1 = int(swe.revjul(end_jd, swe.GREG_CAL)[0]) + 1
+    parts: list[str] = []
+    for yr in range(y0, y1 + 1):
+        gx = x_of(swe.julday(yr, 1, 1, 0.0, swe.GREG_CAL))
+        if gx < ml or gx > width - mr:
+            continue
+        parts.append(f'<line x1="{gx:.1f}" y1="{mt}" x2="{gx:.1f}" y2="{height - mb}" '
+                     f'style="stroke:var(--rule)" stroke-width="1"/>')
+        parts.append(f'<text x="{gx:.1f}" y="{height - mb + 13}" font-size="9" '
+                     f'text-anchor="middle" style="fill:var(--ink-soft)">{yr}</text>')
+
+    for i, planet in enumerate(planets):
+        ry = mt + i * row_h
+        cy = ry + row_h / 2
+        parts.append(f'<text x="{ml - 8}" y="{cy + 3:.1f}" font-size="11" text-anchor="end" '
+                     f'style="fill:var(--ink)">{_esc(planet)}</text>')
+        parts.append(f'<line x1="{ml}" y1="{cy:.1f}" x2="{width - mr}" y2="{cy:.1f}" '
+                     f'style="stroke:var(--rule)" stroke-width="1"/>')
+        for seg in r.gochara_outlook[planet]:
+            if not seg.gochara_good or (seg.end_jd - seg.start_jd) < 25:
+                continue
+            x0, x1 = max(x_of(seg.start_jd), ml), min(x_of(seg.end_jd), width - mr)
+            if x1 <= x0:
+                continue
+            opacity = max(0.32, 0.92 - 0.6 * seg.vedha_sample_fraction)
+            bav = f"{seg.bav_bindus} bindus" if seg.bav_bindus is not None else "n/a"
+            title = (f"{planet} in {_SIGN_NAME[seg.sign]}: {_jd_to_date(seg.start_jd)} to "
+                    f"{_jd_to_date(seg.end_jd)} — AV support {bav}; Vedha "
+                    f"{_vedha_word(seg.vedha_sample_fraction)}")
+            parts.append(
+                f'<rect class="gochara-bar" x="{x0:.1f}" y="{ry + 6:.1f}" '
+                f'width="{(x1 - x0):.1f}" height="{row_h - 12:.1f}" rx="4" '
+                f'style="fill:var(--favourable);fill-opacity:{opacity:.2f}">'
+                f'<title>{_esc(title)}</title></rect>')
+
+    today_x = x_of(r.ref_jd)
+    parts.append(
+        f'<line x1="{today_x:.1f}" y1="{mt - 8}" x2="{today_x:.1f}" y2="{height - mb}" '
+        f'style="stroke:var(--warn)" stroke-width="1.5" stroke-dasharray="3,2"/>'
+        f'<text x="{today_x:.1f}" y="{mt - 11}" font-size="9" text-anchor="middle" '
+        f'style="fill:var(--warn)">today</text>')
+
+    return (
+        '<div id="gochara-outlook" class="gochara-outlook">'
+        '<h3>Favourable transit windows, mapped over time</h3>'
+        '<p class="section-sub">Solid = classically favourable and rarely Vedha-obstructed; '
+        'faded = favourable on paper but frequently cancelled across the window (hover a bar for '
+        'exact dates, sign, and Ashtakavarga support). Only Jupiter, Saturn, Rahu and Ketu are '
+        'graphed here &mdash; they change sign slowly enough to read at a multi-year scale; Mars '
+        'and the faster grahas stay in the snapshot table above. Per Raman, a transit is always '
+        'secondary to the Dasha (HTJAH-II:4679) &mdash; read a bar here together with the '
+        'Life-narrative period it falls inside, not on its own.</p>'
+        f'<svg viewBox="0 0 {width} {height}" width="100%" style="max-width:{width}px" '
+        f'role="img" aria-label="Gochara favourability over time">'
+        f'{"".join(parts)}</svg></div>')
 
 
 def _soul_section(r: DetailedReport) -> str:

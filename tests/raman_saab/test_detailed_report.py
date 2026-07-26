@@ -382,6 +382,33 @@ class TestDetailedReport:
             for loc in report.info.inverted_locations:
                 assert loc in n.caution
 
+    def test_plain_layers_carry_the_synthesis(self, report):
+        """The v13-v15 synthesis is woven into the plain layers a lay reader meets first: the
+        Nichod names the ruler of the nativity and the most-contested house, and Your Reading
+        opens with the temperament-shaping strongest planet and flags the least-settled area —
+        so the reader meets the first impression and the key tension without reaching the
+        technical sections. Everything is read, never re-judged."""
+        n, pr = report.nichod, report.plain_reading
+        assert f"ruler of the nativity {report.ruler.lagna_lord}" in n.identity
+        if report.ruler.strongest is not None:
+            assert report.ruler.strongest in pr.opening
+            assert "shapes the overall temperament" in pr.opening
+        mc = report.preponderance.most_contested
+        if mc is not None:
+            assert f"H{mc} is the most-contested house" in (n.caution or "")
+            # Your Reading names the same tension in plain, house-number-free terms
+            from app.raman_saab.detailed_report import _PLAIN_AREA
+            assert _PLAIN_AREA[mc] in pr.notable
+            assert "less settled" in pr.notable
+
+    def test_plain_reading_stays_free_of_house_numbers(self, report):
+        """Your Reading is the no-jargon layer — the woven synthesis must not smuggle in a bare
+        'H10'-style house number (the ruler/contested adds use planet names and life-area
+        words, never house indices)."""
+        import re
+        for field in (report.plain_reading.opening, report.plain_reading.notable):
+            assert not re.search(r"\bH\d\b", field), field
+
     def test_nichod_section_is_v4_and_appended_last(self):
         """The Nichod is registered as v4 and sits after every other contracted section."""
         from app.raman_saab.detailed_report import SECTION_CONTRACT

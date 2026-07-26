@@ -422,6 +422,19 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-27) — the v13-v15 synthesis reaches the plain layers.** "Your
+Reading" and the Nichod predated the higher-order synthesis sections and never mentioned them.
+Presentation-only weaving, into existing fields (no dataclass change): the Nichod's identity
+line now names the ruler of the nativity, its essence opens with the first-impression clause
+(and "the foundation is quite sound" when ruler == strongest), and its caution flags the
+most-contested house; "Your Reading" opens by naming the strongest planet that most shapes the
+temperament (in plain, house-number-free terms via `_PLANET_THEME`) and its notable paragraph
+flags the least-settled life-area (the most-contested house mapped through `_PLAIN_AREA`). To
+feed this, `build_detailed_report` now builds ruler/preponderance/life-chapters BEFORE the two
+plain builders, which read the enriched report rather than the empty sentinels. Two regression
+tests pin the weave and the no-house-numbers rule of the plain layer. Golden ratchet unchanged;
+suite 4471 passed.
+
 **Content amendment (2026-07-27) — BPHS's own serpent's-curse verses recovered and encoded.**
 The block between the childlessness yogas (tail of BPHS ch.82) and the father's-curse yogas
 (head of ch.83) — BPHS Ch.83 verses 9-16, the SERPENT'S curse, eight numbered combinations —

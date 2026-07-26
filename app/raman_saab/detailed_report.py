@@ -1816,7 +1816,8 @@ def build_nichod(r: DetailedReport) -> Nichod:
     moon = chart.planets.get("Moon")
     nak = nakshatra_signature.signature_for(moon.nakshatra) if moon is not None else None
     nak_bit = f", Moon in {nak.name} (pada {moon.pada})" if nak is not None else ""
-    identity = (f"{s.lagna} Lagna, {r.overview.stronger_frame.upper()} the stronger frame, "
+    identity = (f"{s.lagna} Lagna, ruler of the nativity {r.ruler.lagna_lord}, "
+               f"{r.overview.stronger_frame.upper()} the stronger frame, "
                f"Atmakaraka {s.atmakaraka}, Karakamsa {s.karakamsa}{nak_bit}")
 
     sb = [(n, p.shadbala_rupas.total / 60.0) for n, p in chart.planets.items()
@@ -1903,10 +1904,25 @@ def build_nichod(r: DetailedReport) -> Nichod:
             f"this chart carries atlas-proven inverted channels at "
             f"{', '.join(r.info.inverted_locations)} — any headline they drive should be read "
             f"with extra skepticism")
+    if r.preponderance.most_contested is not None:
+        mc = r.preponderance.most_contested
+        caution_bits.append(
+            f"H{mc} is the most-contested house — its own witnesses lean against its headline "
+            f"(see Preponderance of testimonies); read that house's section with extra care")
     caution = "; ".join(caution_bits) if caution_bits else None
 
+    # the first-impression line, from the Ruler of the nativity card (HTJAH-I:16001-16002)
+    ruler_bit = f"The ruler of the nativity is {r.ruler.lagna_lord}"
+    if r.ruler.strongest is not None:
+        if r.ruler.coincide:
+            ruler_bit += (f", which is also the strongest planet — \"the foundation is quite "
+                          f"sound\"")
+        else:
+            ruler_bit += f"; the strongest planet by Shadbala is {r.ruler.strongest}"
+    ruler_bit += ". "
+
     essence = (
-        f"{identity}. {longevity}. "
+        f"{identity}. {ruler_bit}{longevity}. "
         + (f"Yogas present: {yogas}. " if r.yogas else "")
         + f"Across the twelve matters, {matters_tally}. "
         + f"What most distinguishes this chart: {stands_out}. "
@@ -1946,6 +1962,12 @@ def build_plain_reading(r: DetailedReport) -> PlainReading:
     name = r.birth.name.strip() or "this chart"
     opening = (f"Here is what {name}'s chart says, in plain terms — before any of the "
                f"technical detail below.")
+    # the plain first impression: the planet that most shapes the overall temperament
+    # (the Ruler of the nativity card, HTJAH-I:6248-6250)
+    if r.ruler.strongest is not None:
+        theme = _PLANET_THEME.get(r.ruler.strongest, "its own classical themes")
+        opening += (f" The planet that most shapes the overall temperament here is "
+                    f"{r.ruler.strongest} — classically bringing out {theme}.")
 
     by_matter = {en.matter: en.verdict for en in r.dashboard.entries}
     life_paragraphs: list[tuple[str, str]] = []
@@ -1972,6 +1994,11 @@ def build_plain_reading(r: DetailedReport) -> PlainReading:
     else:
         notable = ("Nothing in this chart strays far from what most charts show — a fairly "
                   "even, unremarkable spread across the board.")
+    if r.preponderance.most_contested is not None:
+        area = _PLAIN_AREA.get(r.preponderance.most_contested, "one area")
+        notable += (f" One area reads less settled than the rest — {area} — where the "
+                   f"underlying signals pull in different directions; the report weighs "
+                   f"them out below rather than forcing a single verdict.")
 
     closing = ("This is a plain-language reading of what the classical method sees in the "
               "pattern of the birth chart — not a prediction of specific events. The full "
@@ -2083,13 +2110,17 @@ def build_detailed_report(
         nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING, ruler=_EMPTY_RULER,
         preponderance=_EMPTY_PREPONDERANCE, life_chapters=_EMPTY_LIFE_CHAPTERS,
     )
-    # nichod + plain_reading + ruler are computed LAST, from the fully-assembled report — each
-    # only selects, counts and knits together fields the rest of this function already produced.
-    return _dc_replace(provisional, nichod=build_nichod(provisional),
-                       plain_reading=build_plain_reading(provisional),
-                       ruler=build_ruler(provisional),
-                       preponderance=build_preponderance(provisional),
-                       life_chapters=build_life_chapters(provisional))
+    # Ruler / preponderance / life-chapters are built FIRST (they read only the base fields
+    # above), then the plain layers (Nichod + Your Reading) are built from that ENRICHED
+    # report — they now weave in the ruler of the nativity and the most-contested house, so
+    # they must see populated synthesis fields, not the empty sentinels. Each stage only
+    # selects, counts and knits fields already produced; no verdict is re-judged.
+    enriched = _dc_replace(provisional,
+                           ruler=build_ruler(provisional),
+                           preponderance=build_preponderance(provisional),
+                           life_chapters=build_life_chapters(provisional))
+    return _dc_replace(enriched, nichod=build_nichod(enriched),
+                       plain_reading=build_plain_reading(enriched))
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:

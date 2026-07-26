@@ -38,6 +38,7 @@ from app.raman_saab.judges.calibrated_reading import (
 from app.raman_saab.chart.model import PlanetPos
 from app.raman_saab.doctrine.synthesis_rules import (
     FiredInsight,
+    _yoga_planets,
     descriptive_rules,
     detect_synthesis,
 )
@@ -63,6 +64,7 @@ from app.raman_saab.judges.pitru_dosha_reading import (
 from app.raman_saab.judges.soul_reading import SoulReading, build_soul_reading
 from app.raman_saab.primitives import ashtakavarga, ayurdaya, nakshatra_signature
 from app.raman_saab.primitives import transits as tr
+from app.raman_saab.primitives import vimshottari as vd
 from app.raman_saab.primitives.balarishta import BalarishtaState
 from app.raman_saab.proforma import read_chart
 from app.raman_saab.reading_timeline import DashaTimeline, reading_timeline
@@ -361,6 +363,9 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
     SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
     SectionSpec("yogas", "## Yogas present in this chart", 'id="yogas"', "v1"),
+    # v7 (2026-07-26, conscious amendment): inserted right after Yogas, since it directly extends
+    # that section with WHEN each yoga's own lord runs — the natural narrative position.
+    SectionSpec("yoga_timing", "## Yoga x Dasha timing", 'id="yoga-timing"', "v7"),
     SectionSpec("ashtakavarga", "## Ashtakavarga", 'id="sav"', "v1"),
     SectionSpec("houses", "## House-by-house reading", 'id="houses"', "v1"),
     SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
@@ -391,7 +396,8 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "now_box", "info_content", "stands_out",
     "dashboard",
-    "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
+    "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
+    "longevity",
     "maraka", "timeline", "gochara", "dasha_transit", "divisional", "career", "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
@@ -673,6 +679,65 @@ def _dasha_transit_confluences(
 
 
 @dataclass(frozen=True)
+class YogaTiming:
+    """A stretch where a fired yoga's own constituent lord runs as MD or AD — Raman's own rule
+    that a yoga ripens in its lord's Dasha or Bhukti made concrete (HTJAH-I:4324), with magnitude
+    scaling to that lord's strength/vargottama (HTJAH-I:5372: "the rank conferred is consistent
+    with the strength of the lords concerned; when they attain Vargottama the position acquired
+    is the highest"). `quality` reuses `vimshottari.lord_quality` — the SAME strength read
+    Life-narrative already computes for its own MD/AD delivery quality (previously computed
+    there but never rendered); nothing here is a new judgment."""
+    yoga_id: str
+    yoga_name: str
+    yoga_kind: str
+    planet: str
+    role: str                    # "MD" | "AD"
+    period_start_jd: float
+    period_end_jd: float
+    quality: "vd.LordQuality"
+
+
+def _md_runs(timeline: DashaTimeline) -> tuple[tuple[str, float, float], ...]:
+    """Collapse the windowed bhukti-level timeline into contiguous Mahadasha spans — one row per
+    MD run, not one per bhukti (a windowed timeline lists ~9 bhuktis per MD; a yoga-lord MD
+    confluence is one continuous stretch, not 9 near-duplicate rows)."""
+    runs: list[list] = []
+    for tp in timeline.periods:
+        p = tp.period
+        if runs and runs[-1][0] == p.maha and runs[-1][2] == p.start_jd:
+            runs[-1][2] = p.end_jd
+        else:
+            runs.append([p.maha, p.start_jd, p.end_jd])
+    return tuple(tuple(r) for r in runs)
+
+
+def _yoga_dasha_confluences(
+    chart: RamanChart, timeline: DashaTimeline, yogas: tuple[FiredYoga, ...],
+) -> tuple[YogaTiming, ...]:
+    """When does each fired yoga's own lord run as MD or AD — only for the 3 yoga families whose
+    constituent lords are structurally certain (`_yoga_planets`: Gajakesari, Budha-Aditya, 9th/
+    10th-lord Raja yoga). A fired yoga outside these contributes no rows here — a coverage gap
+    the renderer states plainly, not a judgment that it lacks timing."""
+    out: list[YogaTiming] = []
+    md_runs = _md_runs(timeline)
+    for y in yogas:
+        pls = _yoga_planets(chart, y)
+        if not pls:
+            continue
+        for lord, start_jd, end_jd in md_runs:
+            if lord in pls:
+                out.append(YogaTiming(y.id, y.name, y.kind, lord, "MD", start_jd, end_jd,
+                                      vd.lord_quality(chart, lord)))
+        for tp in timeline.periods:
+            p = tp.period
+            if p.antar is not None and p.antar in pls:
+                out.append(YogaTiming(y.id, y.name, y.kind, p.antar, "AD", p.start_jd, p.end_jd,
+                                      vd.lord_quality(chart, p.antar)))
+    out.sort(key=lambda w: w.period_start_jd)
+    return tuple(out)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -682,6 +747,7 @@ class DetailedReport:
     proformas: tuple[HouseProforma, ...]             # per-house lord + rule evidence (Raman's core)
     overview: ChartOverview                          # stronger frame, functional natures
     yogas: tuple[FiredYoga, ...]                     # fired yogas, each with its citation
+    yoga_timing: tuple[YogaTiming, ...]               # when a yoga's own lord runs as MD/AD
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -995,6 +1061,7 @@ def build_detailed_report(
         maraka_now = False
     dasha_transit = _dasha_transit_confluences(timeline, gochara_outlook)
     fired_yogas = detect_yogas(chart)
+    yoga_timing = _yoga_dasha_confluences(chart, timeline, fired_yogas)
     bhava_balas = {pf.house: pf.significations[0].ledger.bhava_bala
                    for pf in reading.proformas
                    if pf.significations and pf.significations[0].ledger.bhava_bala is not None}
@@ -1004,7 +1071,7 @@ def build_detailed_report(
     provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
-        yogas=fired_yogas, sav=sav, insights=insights,
+        yogas=fired_yogas, yoga_timing=yoga_timing, sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
         dashboard=build_matter_varga_dashboard(chart),
@@ -1192,6 +1259,30 @@ def to_markdown(r: DetailedReport) -> str:
     else:
         L.append("_No encoded yoga fires on this chart._")
     L.append("")
+
+    # ── yoga x dasha timing: when does a fired yoga's own lord actually run? ──
+    if r.yoga_timing:
+        L.append("## Yoga x Dasha timing")
+        L.append("")
+        L.append("**In simple terms:** a yoga is not always \"on\" — Raman says it ripens most "
+                 "clearly during the periods of its own ruling planet(s) (HTJAH-I:4324). "
+                 "\"Delivery\" is how well-placed that planet is in your natal chart (well / "
+                 "mixed / poorly / unknown) — the same strength read the rest of this report "
+                 "already uses; magnitude scales with it, and doubles at Vargottama "
+                 "(HTJAH-I:5372).")
+        L.append("")
+        L.append("_Only 3 yoga families can be pinned to specific ruling planets by this engine "
+                 "(Gajakesari, Budha-Aditya, and a 9th/10th-lord Raja yoga) — any other fired "
+                 "yoga above simply has no row here. That is a coverage gap in what this "
+                 "cross-check computes, not a judgment that it lacks timing._")
+        L.append("")
+        L.append("| Yoga | Period | Planet | Window | Delivery |")
+        L.append("|---|---|---|---|---|")
+        for t in r.yoga_timing:
+            L.append(f"| {t.yoga_name} | {t.role} | {t.planet} | "
+                     f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
+                     f"{t.quality.tag} |")
+        L.append("")
 
     # ── Ashtakavarga strength row ─────────────────────────────────────────────
     if r.sav:

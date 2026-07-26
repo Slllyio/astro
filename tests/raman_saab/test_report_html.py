@@ -227,6 +227,19 @@ class TestReportHtml:
         assert "HTJAH-II:4679" in section
         assert section.count("<tr>") >= 2   # header + at least one confluence row
 
+    def test_yoga_dasha_timing_section_renders(self, body):
+        """Yoga x Dasha timing sits right after Yogas and before Ashtakavarga, with a row per
+        yoga-lord confluence, and states the 3-family coverage gap."""
+        y_start = body.find('id="yogas"')
+        t_start = body.find('id="yoga-timing"')
+        s_start = body.find('id="sav"')
+        assert 0 <= y_start < t_start < s_start
+        section = body[t_start:s_start]
+        assert "In simple terms:" in section
+        assert "HTJAH-I:4324" in section
+        assert "coverage gap" in section
+        assert section.count("<tr>") >= 2   # header + at least one yoga-timing row
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

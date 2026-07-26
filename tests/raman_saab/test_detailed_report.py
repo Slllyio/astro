@@ -496,6 +496,52 @@ class TestDetailedReport:
         assert "HTJAH-II:4679" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
+    def test_yoga_timing_only_covers_the_three_resolvable_families(self, report):
+        """Every yoga_timing row names a yoga whose constituent lords are structurally resolved
+        (Gajakesari, Budha-Aditya, or a 9th/10th-lord Raja yoga) — never a guessed constituent
+        for some other fired yoga."""
+        assert report.yoga_timing
+        for t in report.yoga_timing:
+            name = t.yoga_name.lower()
+            assert ("gajakesari" in name or "budha-aditya" in name or "budha aditya" in name
+                   or "9th-10th" in name or "9th and 10th" in name), t.yoga_name
+
+    def test_yoga_timing_md_runs_are_merged_not_per_bhukti(self, report):
+        """An MD-role row spans the WHOLE contiguous Mahadasha run, not a single ~2-3 year
+        bhukti slice — proving _md_runs collapses the windowed bhukti list correctly."""
+        from app.raman_saab.primitives.vimshottari import DAYS_PER_VEDIC_YEAR
+        for t in report.yoga_timing:
+            if t.role != "MD":
+                continue
+            span_years = (t.period_end_jd - t.period_start_jd) / DAYS_PER_VEDIC_YEAR
+            # a single bhukti is a small slice of its 120-year-cycle share; an MD run for any
+            # of the 9 Vimshottari lords is at least several years (Ketu's, the shortest, is 7)
+            assert span_years >= 5, f"{t.yoga_name} MD span looks bhukti-sized: {span_years:.1f}y"
+
+    def test_yoga_timing_reuses_lord_quality_not_a_new_scale(self, report):
+        """'Delivery' is exactly vimshottari.lord_quality's own tag vocabulary — no new grading
+        scale invented for this section."""
+        for t in report.yoga_timing:
+            assert t.quality.tag in ("well", "poorly", "mixed", "unknown")
+
+    def test_yoga_timing_never_touches_a_verdict(self):
+        """Pure lookup of yoga-lord membership in the MD/AD timeline — no verdict path."""
+        import inspect
+        from app.raman_saab.detailed_report import _yoga_dasha_confluences
+        src = inspect.getsource(_yoga_dasha_confluences)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_yoga_dasha_timing_section(self, markdown):
+        """The new section sits right after Yogas, before Ashtakavarga, and states the 3-family
+        coverage gap plainly rather than implying full yoga coverage."""
+        assert "## Yoga x Dasha timing" in markdown
+        i = markdown.find("## Yogas present in this chart")
+        j = markdown.find("## Yoga x Dasha timing")
+        k = markdown.find("## Ashtakavarga")
+        assert 0 <= i < j < k
+        assert "HTJAH-I:4324" in markdown[j:k]
+        assert "coverage gap" in markdown[j:k]
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

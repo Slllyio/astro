@@ -577,6 +577,33 @@ def _yogas(r: DetailedReport) -> str:
             f'<ul class="yogalist">{items}</ul>')
 
 
+def _yoga_timing_section(r: DetailedReport) -> str:
+    """When does each fired yoga's own lord run as MD or AD — extends the Yogas section above
+    with WHEN, reusing the same lord_quality strength read Life-narrative already computes."""
+    if not r.yoga_timing:
+        return ""
+    rows = "".join(
+        f'<tr><td><b>{_esc(t.yoga_name)}</b></td><td>{_esc(t.role)}</td>'
+        f'<td>{_esc(t.planet)}</td>'
+        f'<td>{_outlook_window_label(t.period_start_jd, t.period_end_jd)}</td>'
+        f'<td>{_esc(t.quality.tag)}</td></tr>'
+        for t in r.yoga_timing)
+    return (
+        '<h2 class="section" id="yoga-timing">Yoga &times; Dasha timing</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> a yoga is not always "on" &mdash; Raman '
+        'says it ripens most clearly during the periods of its own ruling planet(s) '
+        '(HTJAH-I:4324). "Delivery" is how well-placed that planet is in your natal chart (well '
+        '/ mixed / poorly / unknown) &mdash; the same strength read the rest of this report '
+        'already uses; magnitude scales with it, and doubles at Vargottama (HTJAH-I:5372). Only '
+        '3 yoga families can be pinned to specific ruling planets by this engine (Gajakesari, '
+        'Budha-Aditya, and a 9th/10th-lord Raja yoga) &mdash; any other fired yoga above simply '
+        'has no row here, a coverage gap in what this cross-check computes, not a judgment that '
+        'it lacks timing.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>yoga</th><th>period</th>'
+        '<th>planet</th><th>window</th><th>delivery</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def _sav(r: DetailedReport) -> str:
     if not r.sav:
         return ""
@@ -1273,6 +1300,8 @@ def to_html(r: DetailedReport) -> str:
   {_shadbala(r)}
 
   {_yogas(r)}
+
+  {_yoga_timing_section(r)}
 
   {_sav(r)}
 

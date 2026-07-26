@@ -21,22 +21,23 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 9 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
 | 10 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
 | 11 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
-| 12 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
-| 13 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
-| 14 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
-| 15 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 16 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 17 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 18 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 19 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 20 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 21 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 22 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 23 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 24 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 25 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 26 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 27 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 12 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
+| 13 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
+| 14 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
+| 15 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
+| 16 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
+| 17 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 18 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 19 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 20 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 21 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 22 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 23 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 24 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 25 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 26 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 27 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 28 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -180,6 +181,25 @@ the Sun/Moon/Mars/Mercury/Venus simply contributes no row; the renderer states t
 gap, not a judgment that the period lacks support. Inserted right after Gochara (the natural
 narrative position, matching the v2/v3 precedent of inserting new rows where they are read, not
 only at the tuple's tail) — `_FROZEN` updated in the same commit.
+
+**v7 amendment (2026-07-26) — Yoga x Dasha timing.** First of a walked-through menu of candidate
+cross-reference analyses (the user asked to go through them "one by one" for feedback before
+building each — see the session's discussion for the full menu and why this one was picked
+first). `detailed_report.YogaTiming` / `_yoga_dasha_confluences()` answer: a fired yoga is not
+always "on" — Raman says it ripens most clearly during its own constituent lord's Dasha/Bhukti
+(HTJAH-I:4324), with magnitude scaling to that lord's strength and doubling at Vargottama
+(HTJAH-I:5372, `SYN_R3_YOGA_LORD_PERIOD` / `SYN_R13_RAJA_VARGOTTAMA_RANK`). For each fired yoga
+whose constituent lords are structurally resolved (`synthesis_rules._yoga_planets` — only
+Gajakesari, Budha-Aditya, and a 9th/10th-lord Raja yoga; the project deliberately never guesses
+a constituent for any other yoga family), the section lists every MD or AD window that lord runs
+in the windowed timeline, alongside `vimshottari.lord_quality`'s existing "well / mixed / poorly
+/ unknown" delivery tag — a strength read that was already computed for Life-narrative's own
+MD/AD quality but had never actually been rendered anywhere until now. `_md_runs()` collapses the
+windowed bhukti-level timeline into contiguous Mahadasha spans first, so an MD-role confluence is
+ONE row for the whole ~7-19-year run, not nine near-duplicate bhukti-sized rows. Inserted right
+after Yogas (the natural narrative position — it directly extends that section with WHEN);
+`_FROZEN` updated in the same commit. A fired yoga outside the 3 resolvable families contributes
+no row, stated in the renderer as a coverage gap, not a judgment that it lacks timing.
 
 ## Standing rules
 

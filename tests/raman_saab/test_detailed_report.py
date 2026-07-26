@@ -496,15 +496,55 @@ class TestDetailedReport:
         assert "HTJAH-II:4679" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
-    def test_yoga_timing_only_covers_the_three_resolvable_families(self, report):
-        """Every yoga_timing row names a yoga whose constituent lords are structurally resolved
-        (Gajakesari, Budha-Aditya, or a 9th/10th-lord Raja yoga) — never a guessed constituent
-        for some other fired yoga."""
+    def test_yoga_timing_never_names_a_whole_chart_pattern_yoga(self, report):
+        """The Nabhasa whole-chart-distribution yogas (Asraya/Dala/Sankhya/Akriti) and the
+        deferred multi-arm HPA-20 yogas have no single structurally-certain 'lord' in Raman's
+        own definition (they are properties of all seven visible planets together, not caused
+        by one/two/three specific ones) — they must never appear as a yoga_timing row."""
         assert report.yoga_timing
+        excluded = (
+            "rajju", "musala", "nala yoga", "mala (srik)", "sarpa", "veena", "damini",
+            "pasa yoga", "kedara", "sula yoga", "yuga yoga", "gola", "yupa", "ishu", "sakti",
+            "danda", "nava (nauka)", "kuta yoga", "chatra", "chapa", "ardha-chandra", "chakra",
+            "samudra", "gada yoga", "sakata yoga (akriti)", "vihaga", "vajra", "yava yoga",
+            "sringhataka", "hala yoga", "kamala yoga", "vapee", "chatussagara", "sarada",
+            "brihadbija",
+        )
         for t in report.yoga_timing:
             name = t.yoga_name.lower()
-            assert ("gajakesari" in name or "budha-aditya" in name or "budha aditya" in name
-                   or "9th-10th" in name or "9th and 10th" in name), t.yoga_name
+            assert not any(s in name for s in excluded), t.yoga_name
+
+    def test_yoga_planets_resolves_well_beyond_the_original_three_families(self):
+        """_yoga_planets covers Pancha Mahapurusha, Dhana/Raja lordship yogas, and the
+        candidate-discriminated flank/benefic yogas too — not just Gajakesari/Budha-Aditya/
+        9th-10th (the original, narrower Phase-A scope)."""
+        from app.raman_saab.chart.adapter import cast_chart
+        from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+        from app.raman_saab.doctrine.yogas import YOGAS, FiredYoga
+        chart = cast_chart(_CANONICAL, ayanamsa="lahiri")
+        resolved_ids = set()
+        for rec in YOGAS:
+            stub = FiredYoga(id=rec.id, name=rec.name, kind=rec.kind, effect=rec.effect,
+                             source=rec.source)
+            if _yoga_planets(chart, stub):
+                resolved_ids.add(rec.id)
+        assert len(resolved_ids) >= 20, resolved_ids
+        assert "Y.RUCHAKA" in resolved_ids or "Y.HAMSA" in resolved_ids  # Pancha Mahapurusha
+
+    def test_yoga_planets_never_returns_a_duplicate_planet(self):
+        """Two different houses can share a lord (e.g. Mars rules Aries and Scorpio) — a
+        multi-house lookup must dedupe, never report the same planet twice in one tuple."""
+        from app.raman_saab.chart.adapter import cast_chart
+        from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+        from app.raman_saab.doctrine.yogas import YOGAS, FiredYoga
+        for birth in (_CANONICAL,):
+            chart = cast_chart(birth, ayanamsa="lahiri")
+            for rec in YOGAS:
+                stub = FiredYoga(id=rec.id, name=rec.name, kind=rec.kind, effect=rec.effect,
+                                 source=rec.source)
+                pls = _yoga_planets(chart, stub)
+                if pls:
+                    assert len(pls) == len(set(pls)), (rec.name, pls)
 
     def test_yoga_timing_md_runs_are_merged_not_per_bhukti(self, report):
         """An MD-role row spans the WHOLE contiguous Mahadasha run, not a single ~2-3 year

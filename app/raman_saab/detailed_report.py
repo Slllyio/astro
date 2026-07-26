@@ -714,10 +714,13 @@ def _md_runs(timeline: DashaTimeline) -> tuple[tuple[str, float, float], ...]:
 def _yoga_dasha_confluences(
     chart: RamanChart, timeline: DashaTimeline, yogas: tuple[FiredYoga, ...],
 ) -> tuple[YogaTiming, ...]:
-    """When does each fired yoga's own lord run as MD or AD — only for the 3 yoga families whose
-    constituent lords are structurally certain (`_yoga_planets`: Gajakesari, Budha-Aditya, 9th/
-    10th-lord Raja yoga). A fired yoga outside these contributes no rows here — a coverage gap
-    the renderer states plainly, not a judgment that it lacks timing."""
+    """When does each fired yoga's own lord run as MD or AD — for every yoga whose constituent
+    lords `_yoga_planets` can structurally resolve (a fixed named planet, a lordship that is a
+    deterministic function of the Lagna, or a small exactly-checkable candidate set — Pancha
+    Mahapurusha, Gajakesari, Budha-Aditya, the Raja/Dhana lordship yogas, the flank/benefic
+    yogas, and more). The Nabhasa whole-chart-distribution yogas (Asraya/Dala/Sankhya/Akriti)
+    have no single "lord" in Raman's own definition and contribute no rows here — a genuine
+    coverage gap the renderer states plainly, not a judgment that they lack timing."""
     out: list[YogaTiming] = []
     md_runs = _md_runs(timeline)
     for y in yogas:
@@ -1271,10 +1274,15 @@ def to_markdown(r: DetailedReport) -> str:
                  "already uses; magnitude scales with it, and doubles at Vargottama "
                  "(HTJAH-I:5372).")
         L.append("")
-        L.append("_Only 3 yoga families can be pinned to specific ruling planets by this engine "
-                 "(Gajakesari, Budha-Aditya, and a 9th/10th-lord Raja yoga) — any other fired "
-                 "yoga above simply has no row here. That is a coverage gap in what this "
-                 "cross-check computes, not a judgment that it lacks timing._")
+        L.append("_Most named yogas above can be pinned to specific ruling planets by this "
+                 "engine — a fixed planet (e.g. Ruchaka is always Mars), a house-lordship "
+                 "(e.g. the 9th/10th lords), or a small checkable set (e.g. which planet "
+                 "actually sits in the required position for Sunapha/Vesi/Amala). The whole-"
+                 "chart-pattern yogas — where all seven visible planets together form a shape "
+                 "or count, not any specific one or two of them (Rajju/Musala/Nala, the Sankhya "
+                 "count yogas, the Akriti shape yogas) — have no single \"lord\" in Raman's own "
+                 "definition and simply have no row here. That is a genuine coverage gap, not a "
+                 "judgment that they lack timing._")
         L.append("")
         L.append("| Yoga | Period | Planet | Window | Delivery |")
         L.append("|---|---|---|---|---|")

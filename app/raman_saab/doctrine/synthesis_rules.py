@@ -47,6 +47,7 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.primitives import ashtakavarga
+from app.raman_saab.primitives import bhangas
 from app.raman_saab.primitives import dignity as _dig
 from app.raman_saab.primitives import vimshottari as vd
 from app.raman_saab.primitives.functional_nature import is_yogakaraka
@@ -129,17 +130,200 @@ def _md_window(ctx: SynthesisContext, lord: str) -> Optional[tuple[float, float]
     return None
 
 
+def _house_lord(chart: RamanChart, house: int) -> str:
+    """Lord of whole-sign house `house` (1..12) counted from the Lagna — the same computation
+    `yogas.py`'s own `_house_lord` uses, duplicated here rather than imported to keep this a
+    pure REPORT-layer module (VERDICT-AUTHORITY INVARIANT: no import from house_template/
+    proforma; yogas.py itself is a doctrine sibling, safe to import for FiredYoga/detect_yogas,
+    but its private helper is not re-exported)."""
+    asc = chart.asc_sign
+    return SIGN_LORDS[((asc - 1) + (house - 1)) % 12 + 1]
+
+
+#: Pancha Mahapurusha yogas — each is caused by exactly ONE named planet (3HC:3434-3973, the
+#: five citations already verified in yogas.py: Hamsa 3434, Malavya 3680, Ruchaka 3884, Sasa
+#: 3737, Bhadra 3973).
+_MAHAPURUSHA_PLANET: Final[dict[str, str]] = {
+    "ruchaka": "Mars", "bhadra": "Mercury", "hamsa": "Jupiter",
+    "malavya": "Venus", "sasa": "Saturn",
+}
+
+#: Sunapha/Anapha/Durudhara/Vesi/Vasi/Ubhayachari candidates: "a planet other than the Moon"
+#: (3HC:1834-1846) — the Sun and the chaya-grahas never count either, per the same passage.
+_FLANK_CANDIDATES: Final[tuple[str, ...]] = ("Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+
+#: Amala/Parvata candidates: the natural benefics this project's own functional_nature module
+#: already uses (Jupiter, Venus, Mercury, Moon) — see primitives/functional_nature.py.
+_BENEFIC_CANDIDATES: Final[tuple[str, ...]] = ("Jupiter", "Venus", "Mercury", "Moon")
+
+
+def _house_from(rasi_house: int, origin_rasi_house: int) -> int:
+    """Whole-sign house of `rasi_house` counted from `origin_rasi_house` — the same arithmetic
+    `conditions._house_from` uses (duplicated for the same import-boundary reason as
+    `_house_lord`)."""
+    return ((rasi_house - origin_rasi_house) % 12) + 1
+
+
+def _which_of(chart: RamanChart, candidates: tuple[str, ...], origin_rasi_house: int,
+             n: int) -> tuple[str, ...]:
+    """WHICH of `candidates` actually sits in the `n`th house from `origin_rasi_house` — the
+    concrete planet(s) behind a "some planet satisfies X" yoga condition (Vesi/Vasi/Sunapha/
+    Anapha/Durudhara/Ubhayachari are all "a planet other than the Moon/Sun" — the condition
+    fires on ANY of 5 candidates, but a specific chart has a definite, checkable answer)."""
+    return tuple(p for p in candidates
+                if chart.planets.get(p) is not None
+                and _house_from(chart.planets[p].rasi_house, origin_rasi_house) == n)
+
+
+#: Kendra x trikona house-pairs to try, in priority order: the 10th/9th lords FIRST — Raman
+#: names that combination the STRONGEST form of this yoga (HTJAH-I:625-626, separately encoded
+#: as Y.RAJA.910X/910A) — then every other pair in a FIXED house order. A plain `set` iteration
+#: (Python's string-hash order, not guaranteed stable across process runs) would make `_kt_pair`
+#: report a different pair for the same chart on different runs whenever more than one pair is
+#: valid; a fixed list has no such risk.
+_KT_HOUSE_PAIRS: Final[tuple[tuple[int, int], ...]] = (
+    (10, 9), *((k, t) for k in (1, 4, 7, 10) for t in (1, 5, 9) if (k, t) != (10, 9)))
+
+
+def _kt_pair(chart: RamanChart) -> Optional[tuple[str, str]]:
+    """The SPECIFIC kendra-lord/trikona-lord pair that is conjunct — re-derives exactly what
+    `yogas._KendraTrikonaLordsConjoined.evaluate` already found, but keeps WHICH pair instead of
+    discarding it as a bare boolean (HTJAH-I:622-623)."""
+    for k_house, t_house in _KT_HOUSE_PAIRS:
+        k, t = _house_lord(chart, k_house), _house_lord(chart, t_house)
+        if k == t:
+            continue
+        pk, pt = chart.planets.get(k), chart.planets.get(t)
+        if pk is not None and pt is not None and pk.rasi_house == pt.rasi_house:
+            return (k, t)
+    return None
+
+
+def _vipareeta_pair(chart: RamanChart) -> Optional[tuple[str, ...]]:
+    """The SPECIFIC dusthana lords (of 6/8/12) conjunct in a dusthana — re-derives exactly what
+    `yogas._DusthanaLordsConjoinedInDusthana.evaluate` already found (HTJAH-I:6302-6303)."""
+    seen: dict[int, set[str]] = {}
+    for h in (6, 8, 12):
+        lord = _house_lord(chart, h)
+        p = chart.planets.get(lord)
+        if p is not None:
+            seen.setdefault(p.rasi_house, set()).add(lord)
+    for house, lords in seen.items():
+        if house in (6, 8, 12) and len(lords) >= 2:
+            return tuple(sorted(lords))
+    return None
+
+
 #: Yoga constituents where they are structurally certain. Anything else returns None and the
-#: yoga-specific rules simply do not fire for it (never guess a constituent).
+#: yoga-specific rules simply do not fire for it (never guess a constituent). Covers the yogas
+#: whose "who" is a fixed named planet, a specific house-lord (a deterministic function of the
+#: Lagna, same technique as the original 9th/10th case), or a small, exactly-checkable candidate
+#: set (the "which planet satisfies this" flank/benefic yogas). Left UNRESOLVED, deliberately:
+#: the Nabhasa whole-chart-distribution yogas (Asraya/Dala/Sankhya/Akriti — ~33 records) have no
+#: single "lord" in Raman's own definition, since they are properties of all seven visible
+#: planets together, not caused by one, two or three specific ones; and the rare multi-arm
+#: HPA-20 yogas (Sarada, Brihadbija) are deferred — discriminating which of their several,
+#: differently-worded disjuncts fired needs more care than this pass gives it.
 def _yoga_planets(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
+    """Public entry point: dedupes `_yoga_planets_impl`'s result. Two DIFFERENT houses can share
+    the same lord (e.g. Mars rules both Aries and Scorpio), so a fixed multi-house lookup like
+    Khadga's (2nd/9th/1st lords) can legitimately name the same planet twice — collapsed here to
+    one entry, preserving first-seen order, so a report row never reads "Venus, Venus, Mercury"."""
+    pls = _yoga_planets_impl(chart, y)
+    return tuple(dict.fromkeys(pls)) if pls else None
+
+
+def _yoga_planets_impl(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
     n = y.name.lower()
+
+    for key, planet in _MAHAPURUSHA_PLANET.items():
+        if key in n:
+            return (planet,)
     if "gajakesari" in n:
         return ("Jupiter", "Moon")
     if "budha-aditya" in n or "budha aditya" in n:
         return ("Sun", "Mercury")
+    if "chandramangala" in n:
+        return ("Moon", "Mars")
+    if "vasumathi" in n:                                  # 3HC:2708 — all three, jointly
+        return ("Jupiter", "Venus", "Mercury")
+    if n == "adhi yoga":                                  # 3HC:2461-2466 — all three, jointly
+        return ("Mercury", "Jupiter", "Venus")
+    if "sakata" in n and "akriti" not in n:               # arishta Sakata: Moon x Jupiter houses
+        return ("Moon", "Jupiter")
+    if "kusuma" in n:                                     # HPA-20:200 — Venus, waning Moon, Sun
+        return ("Venus", "Moon", "Sun")
+    if "kemadruma" in n:                                  # 3HC:2172 — the Moon's own isolation
+        return ("Moon",)
     if "9th-10th" in n or "9th and 10th" in n:
-        asc = chart.asc_sign
-        return (SIGN_LORDS[(asc - 1 + 8) % 12 + 1], SIGN_LORDS[(asc - 1 + 9) % 12 + 1])
+        return (_house_lord(chart, 9), _house_lord(chart, 10))
+    if "5th and 9th lords in own houses" in n:
+        return (_house_lord(chart, 5), _house_lord(chart, 9))
+    if "bahudravyarjana" in n:
+        return (_house_lord(chart, 1), _house_lord(chart, 2), _house_lord(chart, 11))
+    if "1st-2nd-11th lord chain" in n:                    # Y.DHANA.CHAIN — discriminate which
+        hits = []                                         # of the 3 disjuncts actually fired
+        for h, in_h in ((1, 2), (2, 11), (11, 1)):
+            lord = _house_lord(chart, h)
+            p = chart.planets.get(lord)
+            if p is not None and p.rasi_house == in_h:
+                hits.append(lord)
+        return tuple(dict.fromkeys(hits)) or None
+    if "venus-5th" in n:                                  # Y.DHANA.122
+        return ("Venus", "Saturn")
+    if "sun own-5th" in n:                                # Y.DHANA.125
+        return ("Sun", "Moon", "Jupiter")
+    if "jaya yoga" in n:
+        return (_house_lord(chart, 6), _house_lord(chart, 10))
+    if "daridra" in n:
+        return (_house_lord(chart, 11),)
+    if "khadga" in n:
+        return (_house_lord(chart, 2), _house_lord(chart, 9), _house_lord(chart, 1))
+    if "sreenatha" in n:
+        return (_house_lord(chart, 7), _house_lord(chart, 9), _house_lord(chart, 10))
+    if "chamara" in n:
+        return (_house_lord(chart, 1), "Jupiter")
+    if "asatyavadi" in n:
+        return (_house_lord(chart, 2), "Saturn")
+    if "2nd-5th" in n:                                    # Y.DHANA.EXCH — discriminate the
+        if bhangas.parivartana(2, 5, chart):              # branch that actually fired
+            return (_house_lord(chart, 2), _house_lord(chart, 5))
+        if bhangas.parivartana(2, 11, chart):
+            return (_house_lord(chart, 2), _house_lord(chart, 11))
+        return None
+    if "kendra-trikona" in n:
+        return _kt_pair(chart)
+    if "vipareeta" in n:
+        return _vipareeta_pair(chart)
+
+    sun = chart.planets.get("Sun")
+    moon = chart.planets.get("Moon")
+    if "vesi" in n and sun is not None:
+        return _which_of(chart, _FLANK_CANDIDATES, sun.rasi_house, 2) or None
+    if "vasi" in n and "ubhaya" not in n and sun is not None:
+        return _which_of(chart, _FLANK_CANDIDATES, sun.rasi_house, 12) or None
+    if "ubhayachari" in n and sun is not None:
+        hits = (_which_of(chart, _FLANK_CANDIDATES, sun.rasi_house, 2)
+               + _which_of(chart, _FLANK_CANDIDATES, sun.rasi_house, 12))
+        return tuple(dict.fromkeys(hits)) or None
+    if "sunapha" in n and moon is not None:
+        return _which_of(chart, _FLANK_CANDIDATES, moon.rasi_house, 2) or None
+    if "anapha" in n and moon is not None:
+        return _which_of(chart, _FLANK_CANDIDATES, moon.rasi_house, 12) or None
+    if "durudhara" in n and moon is not None:
+        hits = (_which_of(chart, _FLANK_CANDIDATES, moon.rasi_house, 2)
+               + _which_of(chart, _FLANK_CANDIDATES, moon.rasi_house, 12))
+        return tuple(dict.fromkeys(hits)) or None
+    if "amala" in n:
+        hits = _which_of(chart, _BENEFIC_CANDIDATES, 1, 10)   # 10th from Lagna
+        if moon is not None:
+            hits += _which_of(chart, _BENEFIC_CANDIDATES, moon.rasi_house, 10)  # 10th from Moon
+        return tuple(dict.fromkeys(hits)) or None
+    if "parvata" in n:
+        hits = tuple(p for p in _BENEFIC_CANDIDATES
+                    if chart.planets.get(p) is not None
+                    and chart.planets[p].rasi_house in (1, 4, 7, 10))
+        return hits or None
     return None
 
 

@@ -189,17 +189,42 @@ first). `detailed_report.YogaTiming` / `_yoga_dasha_confluences()` answer: a fir
 always "on" — Raman says it ripens most clearly during its own constituent lord's Dasha/Bhukti
 (HTJAH-I:4324), with magnitude scaling to that lord's strength and doubling at Vargottama
 (HTJAH-I:5372, `SYN_R3_YOGA_LORD_PERIOD` / `SYN_R13_RAJA_VARGOTTAMA_RANK`). For each fired yoga
-whose constituent lords are structurally resolved (`synthesis_rules._yoga_planets` — only
-Gajakesari, Budha-Aditya, and a 9th/10th-lord Raja yoga; the project deliberately never guesses
-a constituent for any other yoga family), the section lists every MD or AD window that lord runs
-in the windowed timeline, alongside `vimshottari.lord_quality`'s existing "well / mixed / poorly
+whose constituent lords are structurally resolved (`synthesis_rules._yoga_planets`), the section
+lists every MD or AD window that lord runs in the windowed timeline, alongside
+`vimshottari.lord_quality`'s existing "well / mixed / poorly
 / unknown" delivery tag — a strength read that was already computed for Life-narrative's own
 MD/AD quality but had never actually been rendered anywhere until now. `_md_runs()` collapses the
 windowed bhukti-level timeline into contiguous Mahadasha spans first, so an MD-role confluence is
 ONE row for the whole ~7-19-year run, not nine near-duplicate bhukti-sized rows. Inserted right
 after Yogas (the natural narrative position — it directly extends that section with WHEN);
-`_FROZEN` updated in the same commit. A fired yoga outside the 3 resolvable families contributes
-no row, stated in the renderer as a coverage gap, not a judgment that it lacks timing.
+`_FROZEN` updated in the same commit. A fired yoga outside the resolvable set contributes no row,
+stated in the renderer as a coverage gap, not a judgment that it lacks timing.
+
+**Content amendment (2026-07-26) — `_yoga_planets` widened from 3 families to ~30+.** The v7
+build above shipped resolving only Gajakesari, Budha-Aditya, and the 9th/10th-lord Raja yoga; a
+direct follow-up question ("why not all?") prompted reading every one of the ~72 encoded
+`YogaRecord`s in `doctrine/yogas.py` to check which ones genuinely have a single, structurally-
+certain "lord" versus which are properties of the whole chart. The answer: most do. Added,
+with citations verified against the actual `Condition` class each yoga is built from (never
+guessed): the five Pancha Mahapurusha (a single fixed planet each — Ruchaka=Mars, Bhadra=Mercury,
+Hamsa=Jupiter, Malavya=Venus, Sasa=Saturn), Chandramangala, Vasumathi, Adhi, the arishta Sakata,
+Kusuma, Kemadruma (the Moon's own isolation), every Dhana/Raja yoga whose lords are a
+deterministic function of the Lagna (5th/9th, 1-2-11 chain and cyclic chain, Venus-5th/
+Saturn-11th, Sun-5th/Moon-Jupiter-11th, Jaya, Daridra, Khadga, Sreenatha, Chamara, Asatyavadi),
+and — the harder case — the "some planet satisfies X" flank/benefic yogas (Vesi, Vasi,
+Ubhayachari, Sunapha, Anapha, Durudhara, Amala, Parvata), resolved by checking WHICH of a small,
+exactly-defined candidate set (e.g. "a planet other than the Moon", 3HC:1834-1846) actually sits
+in the required house on that specific chart — and two Raja/arishta yogas (kendra-trikona lords,
+Vipareeta) whose condition classes search over candidate pairs for A match without keeping it;
+`_kt_pair`/`_vipareeta_pair` re-run the identical search, keeping the pair instead of discarding
+it as a bare boolean. `_yoga_planets` public entry point now dedupes its own result (two
+different houses can share a lord — e.g. Mars rules both Aries and Scorpio — so a fixed
+multi-house lookup can legitimately name the same planet twice; collapsed to one, tested
+directly). What remains genuinely unresolved, and stays that way: the Nabhasa whole-chart-
+distribution yogas (Asraya x3, Dala x2, Sankhya x7, Akriti x20, Chatussagara) — properties of
+all seven visible planets together, with no single causing planet in Raman's own definition —
+plus two rare multi-arm HPA-20 yogas (Sarada, Brihadbija) deferred because discriminating which
+of their differently-worded disjuncts fired needs more care than this pass gives it.
 
 ## Standing rules
 

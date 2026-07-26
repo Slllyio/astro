@@ -899,9 +899,9 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("## Integrated insights (cross-feature synthesis)")
     L.append("")
     L.append("_Where the report's sections meet: encoded combination doctrine connecting "
-             "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Every insight "
-             "names its text; the plain line restates it simply. As everywhere in this report: "
-             "how the method reads this chart, not a prediction._")
+             "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Each insight leads "
+             "with a plain-language reading, backed by the exact text it draws from. As "
+             "everywhere in this report: how the method reads this chart, not a prediction._")
     _BAND_HEAD = {
         "raman": ("### Raman's own combination doctrine", None),
         "classical": ("### Classical corroboration",
@@ -926,9 +926,9 @@ def to_markdown(r: DetailedReport) -> str:
                 L.append(banner)
         cite = f"  `{ins.rule.source.work}:{ins.rule.source.line}`" if ins.rule.source else ""
         L.append("")
-        L.append(f"- **{ins.rule.name}**{cite} — {ins.rule.doctrine}")
+        L.append(f"- **{ins.rule.name}**{cite} — {ins.rule.simple_meaning}")
         L.append(f"  - _This chart_: {ins.detail}")
-        L.append(f"  - _In plain terms_: {ins.rule.simple_meaning}")
+        L.append(f"  - _The text says_: \"{ins.rule.doctrine}\"")
         L.append(f"  - _links_: {' x '.join(ins.rule.links)}")
     on_record = descriptive_rules()
     if on_record:

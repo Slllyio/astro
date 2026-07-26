@@ -313,6 +313,8 @@ details.vnotes li{margin:.25rem 0}
   margin-left:.4rem}
 .insight .doctrine{font-size:.92rem;margin:.35rem 0 0}
 .insight .plain{margin-top:.4rem}
+.source-quote{margin-top:.4rem;font-size:.82rem;font-style:italic;color:var(--ink-soft)}
+.source-quote b{font-style:normal}
 .insight-links{margin-top:.4rem;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
   color:var(--instrument)}
 
@@ -832,7 +834,8 @@ def _synthesis_section(r: DetailedReport) -> str:
     parts = ['<h2 class="section" id="synthesis">Integrated insights</h2>'
              '<p class="section-sub">Where the report&rsquo;s sections meet: encoded '
              'combination doctrine connecting Shadbala, yogas, dashas, transits, Ashtakavarga '
-             'and the houses. How the method reads this chart &mdash; not a prediction.</p>']
+             'and the houses. Each insight leads with a plain-language reading, backed by the '
+             'exact text it draws from &mdash; not a prediction.</p>']
     cur = None
     for ins in r.insights:
         if ins.rule.band != cur:
@@ -847,9 +850,10 @@ def _synthesis_section(r: DetailedReport) -> str:
         parts.append(
             f'<div class="insight"><div class="insight-head"><b>{_esc(ins.rule.name)}</b> '
             f'{cite}</div>'
-            f'<p class="doctrine">{_esc(ins.rule.doctrine)}</p>'
+            f'<p class="doctrine">{_esc(ins.rule.simple_meaning)}</p>'
             f'<div class="plain"><b>This chart:</b> {_esc(ins.detail)}</div>'
-            f'<div class="plain"><b>In plain terms:</b> {_esc(ins.rule.simple_meaning)}</div>'
+            f'<div class="source-quote"><b>The text says:</b> '
+            f'&ldquo;{_esc(ins.rule.doctrine)}&rdquo;</div>'
             f'<div class="insight-links">links: {_esc(" x ".join(ins.rule.links))}</div></div>')
     on_record = descriptive_rules()
     if on_record:

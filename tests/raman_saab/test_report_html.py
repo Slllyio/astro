@@ -157,6 +157,19 @@ class TestReportHtml:
         assert "split-note--warn" in body
         assert "atlas-proven" in body and "INVERTED channel" in body
 
+    def test_synthesis_insight_does_not_repeat_itself(self, body):
+        """The HTML insight card leads with the plain reading once, then a distinctly-styled
+        source quote — no duplicate 'In plain terms' restatement of the doctrine line. Scoped
+        to the Integrated-insights section: the Life-narrative section legitimately keeps its
+        OWN 'In plain terms:' label (plain_bhukti_summary) and must not be touched."""
+        start = body.find('id="synthesis"')
+        end = body.find('id="glossary"')
+        assert 0 <= start < end
+        section = body[start:end]
+        assert "source-quote" in section
+        assert "The text says:" in section
+        assert "In plain terms:</b>" not in section   # that label belonged to the old, redundant line
+
     def test_html_escapes_untrusted_name(self):
         """A name with markup is escaped, never injected as live HTML."""
         evil = BirthData("<script>alert(1)</script>", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)

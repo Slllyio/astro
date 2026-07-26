@@ -166,6 +166,30 @@ class TestDetailedReport:
             assert term in GLOSSARY
         assert "odds ratio 1.09" in GLOSSARY["Kuja dosha"]   # the empirical disclosure
 
+    def test_synthesis_insight_does_not_repeat_itself(self, report, markdown):
+        """Each fired insight states its plain reading ONCE, then quotes the source text
+        distinctly ('The text says') rather than paraphrasing the same sentence twice back
+        to back — the redundancy a reader flagged between the doctrine line and the old
+        'In plain terms' restatement. Scoped to the Integrated-insights section only: the
+        Life-narrative section legitimately uses its OWN, unrelated 'In plain terms:' label
+        (plain_bhukti_summary) and must not be touched."""
+        start = markdown.find("## Integrated insights")
+        end = markdown.find("## Glossary")
+        assert 0 <= start < end
+        section = markdown[start:end]
+        assert "_The text says_:" in section
+        assert "_In plain terms_:" not in section   # the old, redundant label is gone HERE
+        from app.raman_saab.detailed_report import _fold_ascii
+        for ins in report.insights:
+            block_start = section.find(f"**{ins.rule.name}**")
+            assert block_start >= 0
+            next_item = section.find("\n- **", block_start + 1)
+            block = section[block_start:next_item if next_item > 0 else len(section)]
+            # the output is ASCII-folded (em dashes -> hyphens etc.), so fold both sides
+            # before comparing. The plain meaning appears once (as the lead), not duplicated.
+            assert block.count(_fold_ascii(ins.rule.simple_meaning)) == 1
+            assert _fold_ascii(ins.rule.doctrine) in block
+
     def test_complementary_sections_content(self, report, markdown):
         """v2 sections carry their substance: 12 matters, full Shodasavarga, soul, framed maraka."""
         assert len(report.dashboard.entries) == 12

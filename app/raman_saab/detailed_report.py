@@ -53,7 +53,7 @@ from app.raman_saab.judges.saptamsa_reading import build_saptamsa_children_readi
 from app.raman_saab.judges.siddhamsa_education_reading import build_siddhamsa_education_reading
 from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
 from app.raman_saab.judges.general_varga_reading import build_general_varga_reading
-from app.raman_saab.judges.house_template import HouseProforma
+from app.raman_saab.judges.house_template import FrameLedger, HouseProforma, SignificationVerdict
 from app.raman_saab.judges.matter_varga_dashboard import (
     MatterVargaDashboard,
     build_matter_varga_dashboard,
@@ -138,6 +138,22 @@ def _outlook_strength_word(bav: int | None) -> str:
     if bav >= 4:
         return "supportive"
     return "mildly supportive"
+
+
+def _lagna_ledger(sv: SignificationVerdict) -> FrameLedger:
+    """The LAGNA-frame ledger for a signification. `sv.ledger` is the LEAD ledger — it may be
+    the MOON-frame ledger when the moon-frame lord out-strengths the lagna lord — while
+    `HouseProforma.lord` (what every renderer displays as the house's Lord) is always the
+    LAGNA-frame lord's name. Reading `lord_strong` or `navamsa_status` (both depend on the
+    frame's own lord) off the lead ledger would pair the lagna lord's NAME with a DIFFERENT
+    planet's strength/navamsa — `house_template.HouseProforma.as_house_verdict` already guards
+    against exactly this for its own `lord_strong` readout (see its docstring); this is the same
+    lookup, reused here because the renderers read the ledger directly rather than going through
+    `as_house_verdict`. `karaka`/`karaka_strong`/`bhava_bala` are frame-independent (the karaka is
+    fixed per signification and Bhava Bala is computed from the house alone, not from `lord`), so
+    only the lord-dependent fields need this correction."""
+    return next((L for L in (sv.ledger,) + sv.alt_ledgers if L.frame == "lagna"), sv.ledger)
+
 
 #: lay-reader life-area names (for the plain-language bhukti summary).
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
@@ -779,7 +795,8 @@ class HouseStrengthRow:
     bhava_bala: Optional[float]
     bhava_bala_rank: Optional[int]        # 1 = strongest of the 12, 12 = weakest
     sav_bindus: Optional[int]
-    sav_band: str                         # "above average" | "average" | "below average" | "n/a"
+    sav_band: str                         # "strong" | "average" | "weak" | "n/a" — SAME wording
+                                           # as house_template._ashtakavarga_overlay's own band
     verdict: str
 
 
@@ -798,9 +815,14 @@ def _house_strength_rows(
     for pf in proformas:
         sign = ((asc_sign - 1) + (pf.house - 1)) % 12 + 1
         bindus = sav.get(sign)
+        # SAME thresholds/wording as house_template._ashtakavarga_overlay (the House-by-house
+        # prose's own band rule) — the two used to disagree (this table's old >28/<28 cutoff
+        # called 26-27 bindus "below average" while the prose called the identical count
+        # "average"); aligned here rather than touching the older, more widely-depended-on
+        # judge-layer function.
         band = ("n/a" if bindus is None else
-               "above average" if bindus > 28 else
-               "below average" if bindus < 28 else "average")
+               "strong" if bindus >= 30 else
+               "weak" if bindus <= 25 else "average")
         rows.append(HouseStrengthRow(
             house=pf.house, bhava_bala=bhava_balas.get(pf.house),
             bhava_bala_rank=rank_of.get(pf.house),
@@ -1602,19 +1624,20 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
         if pf is not None:
             led = pf.significations[0].ledger
+            lagna_led = _lagna_ledger(pf.significations[0])
             lord_p = r.chart.planets.get(pf.lord)
             lord_bits = f"**Lord** {pf.lord}"
             if lord_p is not None:
                 lord_bits += f" in H{lord_p.rasi_house}"
-            if led.lord_strong is not None:
-                lord_bits += f" ({'strong' if led.lord_strong else 'weak'})"
+            if lagna_led.lord_strong is not None:
+                lord_bits += f" ({'strong' if lagna_led.lord_strong else 'weak'})"
             kar_bits = f"**Karaka** {led.karaka}"
             if led.karaka_strong is not None:
                 kar_bits += f" ({'strong' if led.karaka_strong else 'weak'})"
             if not led.karaka_intact:
                 kar_bits += " [afflicted]"
             bb = f"  |  **Bhava Bala** {led.bhava_bala:.1f}" if led.bhava_bala is not None else ""
-            L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {led.navamsa_status}")
+            L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {lagna_led.navamsa_status}")
             L.append("")
         L.append(mr.reading)
         cal = _calibration_lines(cal_reading)

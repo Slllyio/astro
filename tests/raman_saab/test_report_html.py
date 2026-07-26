@@ -74,6 +74,26 @@ class TestReportHtml:
         assert "<b>Lord</b>" in body and "<b>Karaka</b>" in body
         assert 'class="driver"' in body
 
+    def test_html_lord_tag_uses_the_lagna_frame_strength(self, report, body):
+        """Regression test for a real bug: the HTML '<b>Lord</b> X (...)' strength word must
+        match the lagna-frame ledger's own lord_strong, not whichever frame won as the lead
+        signification's ledger (symptom on a real chart: 'Lord Mars (strong) | Karaka Mars
+        (weak)' for the identical planet). Scoped to each house's own <section> block."""
+        import re
+        from app.raman_saab.detailed_report import _lagna_ledger
+        blocks = body.split('<section class="house"')[1:]   # one entry per house, in H1..H12 order
+        assert len(blocks) == 12
+        for pf, block in zip(report.proformas, blocks):
+            if not pf.significations:
+                continue
+            lagna_led = _lagna_ledger(pf.significations[0])
+            if lagna_led.lord_strong is None:
+                continue
+            pattern = rf"<b>Lord</b> {re.escape(pf.lord)}(?: in H\d+)? \((strong|weak)\)"
+            m = re.search(pattern, block)
+            assert m is not None, f"no Lord tag found for house {pf.house} ({pf.lord})"
+            assert m.group(1) == ("strong" if lagna_led.lord_strong else "weak")
+
     def test_renderer_parity_with_markdown(self, report, body):
         """Every non-empty Synthesis field the markdown shows must also appear in the HTML."""
         s = report.synthesis

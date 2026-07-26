@@ -47,6 +47,20 @@ class TestStructureAndProvenance:
         r = build_saptamsa_children_reading(_field_chart())
         assert any("never casts or reads a D-7" in n.text for n in r.notes)
 
+    def test_notes_soften_the_classical_affliction_wording(self) -> None:
+        """A close reading of a real generated report found real tonal whiplash: the report's
+        own plain-English 'Your Reading' section explicitly asks the reader not to feel alarm
+        about a children-affliction reading, then the D-7 overlay narrates the SAME affliction
+        in stark classical language ('deprives the person of children', 'children die after
+        some time') with no gloss. A note must explain these are classical shorthand for
+        DEGREES of difficulty, not literal stand-alone predictions, and must point back to the
+        report's own calibrated House-5 reading as the thing that actually decides the verdict."""
+        r = build_saptamsa_children_reading(_field_chart())
+        note = next((n for n in r.notes if "shorthand for" in n.text), None)
+        assert note is not None, [n.text for n in r.notes]
+        assert "not literal" in note.text
+        assert "House-by-house" in note.text or "Population context" in note.text
+
 
 class TestReportOnlyInvariant:
     def test_verdict_path_never_imports_the_reading(self) -> None:

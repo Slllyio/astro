@@ -246,9 +246,11 @@ def _soul_narrative(chart: RamanChart, core: SoulCore, overlay: JaiminiOverlay) 
         f"It carries {core.poorvapunya_verdict} merit from past births and walks {art} "
         f"{core.dharma_verdict} dharma.",
         f"Its purpose-mantra (5th from Karakāṁśa) works through {held(5)}, its worldly mission "
-        f"(10th) through {held(10)}, and its guru-lineage (9th) through {held(9)}.",
-        f"Its mokṣa-vehicle (12th) is held by {held(12)}, its iṣṭa-devatā is {overlay.ishta_devata}, "
-        f"and the after-death state reads {core.moksha_verdict}.",
+        f"(10th from Karakāṁśa — NOT your birth-chart 10th house/Career) through {held(10)}, "
+        f"and its guru-lineage (9th from Karakāṁśa — NOT your birth-chart 9th house/Father) "
+        f"through {held(9)}.",
+        f"Its mokṣa-vehicle (12th from Karakāṁśa) is held by {held(12)}, its iṣṭa-devatā is "
+        f"{overlay.ishta_devata}, and the after-death state reads {core.moksha_verdict}.",
     ]
     if core.ketu_kaivalya:
         parts.append("Ketu in the 12th from the Karakāṁśa marks a Kaivalya (final-emancipation) "

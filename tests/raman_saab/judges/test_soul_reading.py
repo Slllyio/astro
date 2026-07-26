@@ -115,6 +115,19 @@ class TestSoulReadingSmoke:
         """The soul-purpose narrative is a readable paragraph naming the soul-significator."""
         assert reading.narrative and "soul-significator" in reading.narrative
 
+    def test_narrative_disambiguates_karakamsa_houses_from_d1_houses(
+            self, reading: sr.SoulReading) -> None:
+        """Regression test for a real naming collision found in a close reading of a generated
+        report: the narrative's '10th'/'9th' (Jaimini houses counted from Karakamsa) are
+        identically-worded to, but completely different signs/lords from, the D1 birth-chart
+        9th (Father/Fortune) and 10th (Career) discussed everywhere else in the report. Every
+        bare Jaimini house reference in the narrative must be qualified as counted 'from
+        Karakamsa', and the 10th/9th specifically must name which D1 house they are NOT."""
+        n = reading.narrative
+        assert "10th from Karak" in n and "9th from Karak" in n and "12th from Karak" in n
+        assert "NOT your birth-chart 10th house" in n
+        assert "NOT your birth-chart 9th house" in n
+
     def test_argala_lines_if_present_are_cited(self, reading: sr.SoulReading) -> None:
         """Karakāṁśa argala lines (when they fire) carry the JS-1 Jaimini citation."""
         for line in reading.jaimini_overlay.lines:

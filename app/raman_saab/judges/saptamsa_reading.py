@@ -295,5 +295,14 @@ def build_saptamsa_children_reading(chart: RamanChart) -> SaptamsaChildrenReadin
         Tagged("Successive-child loci (2nd, 3rd) use the classical KP/Rath house scheme - ABSENT "
                "in Raman; treat as suggestive, not authoritative.",
                "CLASSICAL_NONCITABLE"),
+        Tagged("The phrases below ('deprives of children', 'children die after some time', "
+               "etc.) are classical shorthand for DEGREES of difficulty around children - delay, "
+               "fewer than hoped for, a health or timing concern - drawn verbatim from Raman's "
+               "5th-house effect lines, not literal, stand-alone predictions. The VERDICT above "
+               "is decided by this report's own calibrated, population-compared reading of the "
+               "same house-5 signification (see 'Population context' under House 5 in the "
+               "House-by-house section) - read this overlay as classical colour on that "
+               "calibrated reading, not a separate, harsher one.",
+               "RAMAN_GENERAL_PRINCIPLE"),
     )
     return SaptamsaChildrenReading(raman_core=raman_core, d7_overlay=overlay, notes=notes)

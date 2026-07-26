@@ -599,18 +599,39 @@ class TestDetailedReport:
         for row in report.house_strength:
             assert row.verdict == by_house[row.house]
 
-    def test_house_strength_sav_band_matches_the_28_average_convention(self, report):
-        """The SAV band reuses the SAME >=28 threshold already shown in the Ashtakavarga
-        section's own text ('Average is 28 per sign') — no new cutoff invented."""
+    def test_house_strength_sav_band_matches_the_house_by_house_prose_convention(self, report):
+        """Regression test for a real bug: this table's SAV band must use the SAME thresholds
+        AND wording as house_template._ashtakavarga_overlay (the House-by-house section's own
+        prose) — they used to disagree (26-27 bindus read "average" in the prose but "below
+        average" here). Verified independently against the raw bindus_in_house count, not via
+        _house_strength_rows itself."""
+        from app.raman_saab.primitives import ashtakavarga
         for row in report.house_strength:
             if row.sav_bindus is None:
                 assert row.sav_band == "n/a"
-            elif row.sav_bindus > 28:
-                assert row.sav_band == "above average"
-            elif row.sav_bindus < 28:
-                assert row.sav_band == "below average"
+                continue
+            assert ashtakavarga.bindus_in_house(report.chart, row.house) == row.sav_bindus
+            if row.sav_bindus >= 30:
+                assert row.sav_band == "strong"
+            elif row.sav_bindus <= 25:
+                assert row.sav_band == "weak"
             else:
                 assert row.sav_band == "average"
+
+    def test_house_strength_sav_band_agrees_with_house_by_house_prose_for_every_house(
+            self, report, markdown):
+        """End-to-end: the House strength cross-check table's SAV band word must never
+        contradict the House-by-house section's own 'Ashtakavarga <band> (<n> bindus)' phrase
+        for the same house — this is the exact contradiction a close reading of a real generated
+        report found (the same bindu count called "average" in one place and "below average" in
+        the other)."""
+        import re
+        for row in report.house_strength:
+            if row.sav_bindus is None:
+                continue
+            m = re.search(rf"Ashtakavarga (\w+) \({row.sav_bindus} bindus\)", markdown)
+            if m is not None:
+                assert m.group(1) == row.sav_band, (row.house, row.sav_bindus)
 
     def test_house_strength_never_touches_a_verdict(self):
         """Pure ranking/lookup of already-computed values — no verdict path."""
@@ -783,6 +804,62 @@ class TestDetailedReport:
         section = markdown[j:k]
         assert "HTJAH-II:4453-4456" in section
         assert "does not seem to be quite reliable" in section
+
+    def test_house_lord_strength_tag_matches_the_displayed_lord_not_the_lead_ledger(self, report):
+        """Regression test for a real bug: the Lord-strength tag must always describe pf.lord
+        itself, never a DIFFERENT planet borrowed from whichever frame (lagna/moon) happened to
+        win as the lead signification's ledger. Verified independently against
+        house_template._strong (the raw Shadbala primitive), not via _lagna_ledger itself, so a
+        regression in _lagna_ledger's own logic would still be caught."""
+        from app.raman_saab.judges import house_template as ht
+        from app.raman_saab.detailed_report import _lagna_ledger
+        chart = report.chart
+        for pf in report.proformas:
+            if not pf.significations:
+                continue
+            lagna_led = _lagna_ledger(pf.significations[0])
+            expected = ht._strong(pf.lord, chart)
+            assert lagna_led.lord_strong == expected, (
+                pf.house, pf.lord, lagna_led.lord_strong, expected)
+
+    def test_lagna_ledger_is_actually_the_lagna_frame(self, report):
+        """_lagna_ledger must return a ledger whose .frame is 'lagna' whenever one exists among
+        the signification's ledger + alt_ledgers — never silently fall through to a non-lagna
+        frame while one is available."""
+        from app.raman_saab.detailed_report import _lagna_ledger
+        for pf in report.proformas:
+            for sv in pf.significations:
+                available_frames = {sv.ledger.frame} | {L.frame for L in sv.alt_ledgers}
+                lagna_led = _lagna_ledger(sv)
+                if "lagna" in available_frames:
+                    assert lagna_led.frame == "lagna"
+
+    def test_markdown_lord_tag_uses_the_lagna_frame_strength(self, report, markdown):
+        """End-to-end: for every house, the rendered '**Lord** X (...)' strength word in the
+        markdown output matches the lagna-frame ledger's own lord_strong, not the lead ledger's
+        (this is the exact symptom that was visibly wrong on a real chart: 'Lord Mars (strong) |
+        Karaka Mars (weak)' for the identical planet). Scoped to each house's OWN block, since
+        pf.lord can repeat across multiple houses and a whole-document search would find the
+        wrong occurrence."""
+        import re
+        from app.raman_saab.detailed_report import _lagna_ledger
+        starts = [(pf.house, markdown.find(f"### House {pf.house} -")) for pf in report.proformas]
+        starts_by_house = dict(starts)
+        for pf in report.proformas:
+            if not pf.significations:
+                continue
+            lagna_led = _lagna_ledger(pf.significations[0])
+            if lagna_led.lord_strong is None:
+                continue
+            start = starts_by_house[pf.house]
+            assert start >= 0, pf.house
+            next_starts = [s for h, s in starts if s > start]
+            end = min(next_starts) if next_starts else len(markdown)
+            block = markdown[start:end]
+            pattern = rf"\*\*Lord\*\* {re.escape(pf.lord)}(?: in H\d+)? \((strong|weak)\)"
+            m = re.search(pattern, block)
+            assert m is not None, f"no Lord line found for house {pf.house} ({pf.lord})"
+            assert m.group(1) == ("strong" if lagna_led.lord_strong else "weak")
 
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.

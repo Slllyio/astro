@@ -21,6 +21,7 @@ from app.raman_saab.detailed_report import (
     _PLANET_THEME,
     _SIGN_NAME,
     _TIER_MEANING,
+    _lagna_ledger,
     _outlook_strength_word,
     _outlook_window_label,
     _vedha_word,
@@ -465,16 +466,17 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     pillars = ""
     if pf is not None and pf.significations:
         led = pf.significations[0].ledger
+        lagna_led = _lagna_ledger(pf.significations[0])
         lp = chart.planets.get(pf.lord)
         bits = [f'<b>Lord</b> {_esc(pf.lord)}'
                 + (f' in H{lp.rasi_house}' if lp is not None else "")
-                + ("" if led.lord_strong is None else
-                   f' ({"strong" if led.lord_strong else "weak"})'),
+                + ("" if lagna_led.lord_strong is None else
+                   f' ({"strong" if lagna_led.lord_strong else "weak"})'),
                 f'<b>Karaka</b> {_esc(led.karaka)}'
                 + ("" if led.karaka_strong is None else
                    f' ({"strong" if led.karaka_strong else "weak"})')
                 + ("" if led.karaka_intact else " [afflicted]"),
-                f'<b>Navamsa</b> {_esc(led.navamsa_status)}']
+                f'<b>Navamsa</b> {_esc(lagna_led.navamsa_status)}']
         if led.bhava_bala is not None:
             bits.append(f'<b>Bhava Bala</b> {led.bhava_bala:.0f}')
         pillars = f'<div class="pillars">{" &middot; ".join(bits)}</div>'

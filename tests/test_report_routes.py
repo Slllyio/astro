@@ -83,6 +83,20 @@ class TestReport:
         assert rep["yogas"][0]["source"].keys() >= {"work", "line"}
 
 
+class TestPage:
+    @pytest.mark.asyncio
+    async def test_report_page_serves_the_interactive_shell(self, client):
+        """GET /report/page returns the static shell wired to POST /report?format=json and the
+        /report/source click-to-source backend."""
+        resp = await client.get("/report/page")
+        assert resp.status_code == 200
+        html = resp.text
+        assert "<!DOCTYPE html>" in html
+        assert "fetch('/report'" in html          # client fetches the JSON report
+        assert "/report/source" in html            # click-to-source wiring
+        assert "format:'json'" in html or 'format:"json"' in html
+
+
 class TestSource:
     @pytest.mark.asyncio
     async def test_resolves_a_canon_citation_to_verbatim_lines(self, client):

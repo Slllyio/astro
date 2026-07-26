@@ -21,9 +21,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from pathlib import Path
 from typing import Literal, Optional
 
 from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.raman_saab.chart.model import BirthData
@@ -41,6 +43,7 @@ logger = logging.getLogger(__name__)
 report_router = APIRouter(prefix="/report", tags=["Detailed Reading"])
 
 _SUPPORTED_AYANAMSAS: tuple[str, ...] = ("raman", "lahiri")
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "medini" / "templates"
 
 
 class ReportRequest(BaseModel):
@@ -97,6 +100,18 @@ async def sections() -> dict:
             for s in SECTION_CONTRACT
         ],
     }
+
+
+@report_router.get("/page", response_class=HTMLResponse)
+async def report_page() -> HTMLResponse:
+    """The interactive detailed-reading page: a birth form that POSTs to /report?format=json
+    and renders the structured report client-side with per-section drill-down and
+    click-any-citation-to-source."""
+    html_path = _TEMPLATES_DIR / "report.html"
+    if not html_path.exists():
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Report template missing at {html_path}")
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
 
 
 @report_router.get("/source")

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Detailed Reading — Raman Engine</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --surface:#fffdf8; --surface-2:#efe9dc; --ink:#241f18; --ink-2:#5c5343;
+    --line:#d9cfba; --accent:#8a5a2b; --accent-2:#3a5a4a;
+    --fav:#2f6b46; --aff:#9a3b3b; --mix:#8a6d2b; --neu:#6b6355;
+    --chip:#efe6d3; --panel:#fbf8f1;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#14120e; --surface:#1c1a15; --surface-2:#26231c; --ink:#ece4d4; --ink-2:#a89e8a;
+      --line:#3a352b; --accent:#d59a5c; --accent-2:#8fbfa6; --chip:#2b271f; --panel:#1a1813;
+      --fav:#7fc79b; --aff:#e08b8b; --mix:#d8bd77; --neu:#9a917f; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  a{color:var(--accent)}
+  header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--line);background:var(--surface);
+    display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+  header h1{font-family:var(--serif);font-size:1.15rem;margin:0;font-weight:600}
+  header .sub{color:var(--ink-2);font-size:.82rem}
+  header .note{color:var(--ink-2);font-size:.72rem;margin-left:auto;max-width:40ch;text-align:right}
+  .wrap{display:grid;grid-template-columns:1fr;gap:0;max-width:1180px;margin:0 auto}
+  main{padding:1.2rem 1.4rem 4rem}
+  form.birth{display:flex;flex-wrap:wrap;gap:.5rem;align-items:end;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:.9rem 1rem;margin-bottom:1.2rem}
+  form.birth label{display:flex;flex-direction:column;font-size:.68rem;color:var(--ink-2);
+    letter-spacing:.04em;text-transform:uppercase;gap:.2rem}
+  form.birth input,form.birth select{font:inherit;font-size:.9rem;padding:.32rem .45rem;
+    border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:6.4rem}
+  form.birth input.name{width:11rem}
+  form.birth button{font:inherit;font-weight:600;padding:.45rem 1.1rem;border:none;border-radius:7px;
+    background:var(--accent);color:#fff;cursor:pointer}
+  form.birth button:disabled{opacity:.5;cursor:default}
+  .presets{display:flex;gap:.4rem;margin:.3rem 0 0}
+  .presets button{background:var(--chip);color:var(--ink-2);border:1px solid var(--line);
+    font-size:.72rem;padding:.25rem .6rem;border-radius:20px;cursor:pointer}
+  h2.sec{font-family:var(--serif);font-size:1.05rem;margin:1.8rem 0 .5rem;padding-bottom:.3rem;
+    border-bottom:1px solid var(--line)}
+  .lede{font-family:var(--serif);font-size:1.02rem;line-height:1.65;margin:.4rem 0}
+  .muted{color:var(--ink-2);font-size:.82rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.7rem}
+  details.card{background:var(--surface);border:1px solid var(--line);border-radius:9px;
+    padding:0;overflow:hidden}
+  details.card>summary{list-style:none;cursor:pointer;padding:.6rem .8rem;display:flex;
+    align-items:center;gap:.5rem;font-weight:600;font-size:.9rem}
+  details.card>summary::-webkit-details-marker{display:none}
+  details.card>summary::after{content:"▸";margin-left:auto;color:var(--ink-2);transition:.15s}
+  details.card[open]>summary::after{transform:rotate(90deg)}
+  details.card .body{padding:.2rem .8rem .8rem;font-size:.86rem}
+  .chip{display:inline-block;font-size:.7rem;padding:.12rem .5rem;border-radius:20px;
+    background:var(--chip);border:1px solid var(--line);white-space:nowrap}
+  .v-favourable{color:var(--fav)} .v-afflicted{color:var(--aff)}
+  .v-mixed{color:var(--mix)} .v-insufficient-evidence{color:var(--neu)}
+  .lean-favourable-leaning{color:var(--fav)} .lean-adverse-leaning{color:var(--aff)}
+  .lean-neutral,.lean-absent{color:var(--neu)}
+  table{border-collapse:collapse;width:100%;font-size:.82rem;margin:.4rem 0}
+  th,td{text-align:left;padding:.32rem .5rem;border-bottom:1px solid var(--line)}
+  th{color:var(--ink-2);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+  tr.drill{cursor:pointer} tr.drill:hover{background:var(--surface-2)}
+  .witnesses{font-size:.8rem;margin:.2rem 0 .6rem;padding-left:.2rem}
+  .witnesses div{padding:.12rem 0;border-bottom:1px dashed var(--line)}
+  cite.src{font-style:normal;color:var(--accent);cursor:pointer;border-bottom:1px dotted var(--accent);
+    font-size:.9em;white-space:nowrap}
+  cite.src:hover{background:var(--chip)}
+  #srcpanel{position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);background:var(--panel);
+    border-left:1px solid var(--line);box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(102%);
+    transition:transform .18s;z-index:50;display:flex;flex-direction:column}
+  #srcpanel.open{transform:none}
+  #srcpanel .head{padding:.9rem 1rem;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.6rem}
+  #srcpanel .head b{font-family:var(--serif)}
+  #srcpanel .head button{margin-left:auto;background:none;border:none;font-size:1.2rem;color:var(--ink-2);cursor:pointer}
+  #srcpanel pre{margin:0;padding:1rem;overflow:auto;white-space:pre-wrap;font-family:var(--serif);
+    font-size:.9rem;line-height:1.6}
+  .loading,.err{padding:1.4rem;color:var(--ink-2);font-style:italic}
+  .err{color:var(--aff);font-style:normal}
+  .pillrow{display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>Detailed Reading</h1>
+  <span class="sub">Sri B. V. Raman's system — the engine's own reading, click any citation for its source</span>
+  <span class="note">Answers "what would Raman say", faithfully to his texts — not a validated prediction of a life.</span>
+</header>
+<div class="wrap"><main>
+  <form class="birth" id="f" onsubmit="return false">
+    <label>Name<input class="name" id="name" value="Canonical Baseline"></label>
+    <label>Year<input id="year" type="number" value="1990"></label>
+    <label>Month<input id="month" type="number" value="7"></label>
+    <label>Day<input id="day" type="number" value="15"></label>
+    <label>Hour<input id="hour" type="number" value="12"></label>
+    <label>Min<input id="minute" type="number" value="0"></label>
+    <label>Lat<input id="latitude" type="number" step="0.0001" value="12.97"></label>
+    <label>Lon<input id="longitude" type="number" step="0.0001" value="77.59"></label>
+    <label>TZ<input id="tz_offset" type="number" step="0.5" value="5.5"></label>
+    <label>Ayanamsa<select id="ayanamsa"><option>lahiri</option><option>raman</option></select></label>
+    <button id="go" onclick="run()">Read chart</button>
+    <div class="presets">
+      <button onclick="preset('mainpuri')">Mainpuri 1989</button>
+      <button onclick="preset('canonical')">Bangalore 1990</button>
+    </div>
+  </form>
+  <div id="out"><p class="muted">Enter a birth and press <b>Read chart</b>.</p></div>
+</main></div>
+
+<aside id="srcpanel">
+  <div class="head"><b id="src-cite">Source</b><span class="muted" id="src-work"></span>
+    <button onclick="closeSrc()">×</button></div>
+  <pre id="src-text"></pre>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+const el = (t, a={}, ...kids) => { const n=document.createElement(t);
+  for(const k in a){ if(k==='class')n.className=a[k]; else if(k==='html')n.innerHTML=a[k]; else n.setAttribute(k,a[k]); }
+  for(const c of kids){ if(c==null)continue; n.append(c.nodeType?c:document.createTextNode(c)); } return n; };
+
+const PRESETS = {
+  mainpuri:{name:'Mainpuri',year:1989,month:10,day:12,hour:10,minute:2,latitude:27.2351,longitude:79.0276,tz_offset:5.5},
+  canonical:{name:'Canonical Baseline',year:1990,month:7,day:15,hour:12,minute:0,latitude:12.97,longitude:77.59,tz_offset:5.5},
+};
+function preset(k){ const p=PRESETS[k]; for(const f in p) $(f).value=p[f]; }
+
+// ---- click-to-source: wrap any WORK:line token into a clickable <cite> ----
+const CITE_RE = /(\b\d?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*:\d+(?:-\d+)?)/g;
+function citeText(str){
+  // returns a DocumentFragment with citation tokens made clickable
+  const frag=document.createDocumentFragment();
+  let last=0, m;
+  CITE_RE.lastIndex=0;
+  while((m=CITE_RE.exec(str))!==null){
+    if(m.index>last) frag.append(str.slice(last,m.index));
+    const c=el('cite',{class:'src',title:'View the source passage'},m[1]);
+    c.onclick=()=>openSrc(m[1]);
+    frag.append(c);
+    last=m.index+m[1].length;
+  }
+  if(last<str.length) frag.append(str.slice(last));
+  return frag;
+}
+function para(str, cls){ const p=el('p',{class:cls||''}); p.append(citeText(String(str||''))); return p; }
+
+async function openSrc(cite){
+  $('src-cite').textContent=cite; $('src-work').textContent='loading…'; $('src-text').textContent='';
+  $('srcpanel').classList.add('open');
+  try{
+    const r=await fetch('/report/source?cite='+encodeURIComponent(cite)+'&context=1');
+    const d=await r.json();
+    if(d.resolved){ $('src-work').textContent=d.work+' · lines '+d.start+(d.end!==d.start?'–'+d.end:''); $('src-text').textContent=d.text; }
+    else { $('src-work').textContent=''; $('src-text').textContent=d.note||'Not resolvable.'; }
+  }catch(e){ $('src-text').textContent='Error loading source: '+e.message; }
+}
+function closeSrc(){ $('srcpanel').classList.remove('open'); }
+
+function vchip(v){ return el('span',{class:'chip v-'+v},v); }
+
+function run(){
+  const btn=$('go'); btn.disabled=true; btn.textContent='Reading…';
+  const out=$('out'); out.replaceChildren(el('div',{class:'loading'},'Casting the chart and composing the reading…'));
+  const body={ name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
+    hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value,
+    longitude:+$('longitude').value, tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, format:'json' };
+  fetch('/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(r=>r.ok?r.json():r.json().then(e=>Promise.reject(e.detail||r.statusText)))
+    .then(d=>render(d.report,d.summary))
+    .catch(e=>{ out.replaceChildren(el('div',{class:'err'},'Error: '+(typeof e==='string'?e:JSON.stringify(e)))); })
+    .finally(()=>{ btn.disabled=false; btn.textContent='Read chart'; });
+}
+
+function render(R, S){
+  const out=$('out'); out.replaceChildren();
+
+  // ---- Your Reading (plain) ----
+  out.append(el('h2',{class:'sec'},'Your Reading'));
+  const pr=R.plain_reading||{};
+  if(pr.opening) out.append(para(pr.opening,'lede'));
+  for(const [theme,txt] of (pr.life_paragraphs||[])) out.append(para((theme?theme+': ':'')+txt,'lede'));
+  if(pr.now) out.append(para(pr.now,'lede'));
+  if(pr.notable) out.append(para(pr.notable,'lede'));
+
+  // ---- Ruler of the nativity ----
+  const ru=R.ruler||{};
+  out.append(el('h2',{class:'sec'},'Ruler of the nativity'));
+  out.append(para('Ruler of the nativity (Lagna lord): '+ru.lagna_lord+
+    (ru.strongest?('.  Strongest planet by Shadbala: '+ru.strongest+
+      (ru.coincide?' — the ruler itself: "the foundation is quite sound".':'.')):'')));
+  if(ru.temperament) out.append(para('Classical temperament: '+ru.temperament,'muted'));
+
+  // ---- House-by-house (join proforma + calibration + preponderance + houseStrength) ----
+  out.append(el('h2',{class:'sec'},'House-by-house'));
+  const prep = Object.fromEntries((R.preponderance?.houses||[]).map(h=>[h.house,h]));
+  const hs = Object.fromEntries((R.house_strength||[]).map(r=>[r.house,r]));
+  const g=el('div',{class:'grid'});
+  for(const pf of (R.proformas||[])){
+    const cal=(R.calibration?.[pf.house]||{}).entries||[];
+    const P=prep[pf.house], HS=hs[pf.house];
+    const d=el('details',{class:'card'});
+    const sm=el('summary'); sm.append('H'+pf.house+' · ',vchip(pf.rollup),
+      el('span',{class:'muted'},' lord '+pf.lord));
+    d.append(sm);
+    const b=el('div',{class:'body'});
+    if(HS) b.append(para('Bhava Bala rank '+(HS.bhava_bala_rank??'n/a')+' of 12; SAV '+
+      (HS.sav_bindus??'n/a')+' ('+HS.sav_band+')','muted'));
+    // significations
+    const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'karaka')));
+    for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),
+      el('td',{},vchip(sv.verdict)),el('td',{},sv.karaka)));
+    b.append(st);
+    // preponderance witnesses
+    if(P){
+      b.append(el('div',{class:'muted'},'Witnesses — '+P.preponderance+' ('+P.status+'): '+
+        P.favourable+' favourable, '+P.adverse+' adverse, '+P.neutral+' neutral'));
+      const w=el('div',{class:'witnesses'});
+      for(const t of P.testimonies){ if(t.lean==='absent')continue;
+        w.append(el('div',{class:'lean-'+t.lean},t.name+' — '+t.value)); }
+      b.append(w);
+    }
+    d.append(b); g.append(d);
+  }
+  out.append(g);
+
+  // ---- Preponderance summary ----
+  const pp=R.preponderance||{};
+  if(pp.most_contested!=null){
+    out.append(el('h2',{class:'sec'},'Preponderance of testimonies'));
+    out.append(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+
+      ' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+
+      ' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its headline).'));
+  }
+
+  // ---- Yogas ----
+  out.append(el('h2',{class:'sec'},'Yogas'));
+  const yg=el('div',{class:'pillrow'});
+  for(const y of (R.yogas||[])){ const c=el('span',{class:'chip'},y.name+' ('+y.kind+')');
+    if(y.source){ c.append(' '); const s=el('cite',{class:'src'},y.source.work+':'+y.source.line);
+      s.onclick=()=>openSrc(y.source.work+':'+y.source.line); c.append(s);} yg.append(c); }
+  out.append(yg);
+
+  // ---- Life-chapters ----
+  out.append(el('h2',{class:'sec'},'Life-chapters'));
+  for(const ch of (R.life_chapters||[])){
+    const d=el('details',{class:'card'}); const sm=el('summary');
+    sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':''));
+    d.append(sm); const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b);
+    out.append(d);
+  }
+
+  // ---- Integrated insights ----
+  if((R.insights||[]).length){
+    out.append(el('h2',{class:'sec'},'Integrated insights'));
+    for(const ins of R.insights){
+      const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(ins.name);
+      if(ins.source){ sm.append(' '); const s=el('cite',{class:'src'},ins.source.work+':'+ins.source.line);
+        s.onclick=(e)=>{e.preventDefault();openSrc(ins.source.work+':'+ins.source.line);}; sm.append(s);}
+      d.append(sm); const b=el('div',{class:'body'}); b.append(para(ins.simple_meaning));
+      b.append(para('This chart: '+ins.detail,'muted')); d.append(b); out.append(d);
+    }
+  }
+
+  // ---- Nichod ----
+  const n=R.nichod||{};
+  if(n.essence){ out.append(el('h2',{class:'sec'},'Nichod (the essence)')); out.append(para(n.essence,'lede'));
+    if(n.caution) out.append(para('Caution: '+n.caution,'muted')); }
+}
+</script>
+</body>
+</html>

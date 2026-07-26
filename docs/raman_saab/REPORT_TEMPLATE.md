@@ -422,6 +422,16 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-27) — BPHS's own serpent's-curse verses recovered and encoded.**
+The block between the childlessness yogas (tail of BPHS ch.82) and the father's-curse yogas
+(head of ch.83) — BPHS Ch.83 verses 9-16, the SERPENT'S curse, eight numbered combinations —
+was skipped by the original library scrape. Recovered from the same archive.org djvu as
+`bphs/vol2_chapter_083_iii.md` and encoded per verse (`_SERPENT_CURSE_YOGAS`): 7 of the 8 (only
+#5, which needs Gulika, stays on record). These are BPHS's own, more specific than the
+Prasna-Marga serpent summary the engine already carried in `_serpent_curse` (e.g. #1 requires a
+Mars aspect, #2 a Moon-in-5th aspected by Saturn) — both are now surfaced as distinct classical
+sources. Report-only; golden ratchet unchanged; suite 4469 passed.
+
 **Content amendment (2026-07-27) — the papakartari (hemming) primitive; four more curse-yogas
 encoded.** A new pure-geometry module `doctrine/hemming.py` implements kartari (hemming) in
 both forms Raman uses: the PLANET form (malefics in the signs flanking a planet, already

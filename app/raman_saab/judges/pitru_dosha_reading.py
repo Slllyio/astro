@@ -82,7 +82,10 @@ def _planet_house(chart: RamanChart, planet: str) -> int:
 
 def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagged, ...]:
     """Sarpa-śrāpa (Praśna Mārga): Rahu in the 5th, or Rahu with the 5th lord, without a benefic
-    aspect on the 5th → loss of issue by the serpent-curse."""
+    aspect on the 5th → loss of issue by the serpent-curse. This is the Praśna-Mārga SUMMARY;
+    BPHS's own eight serpent-curse verses (more specific — e.g. requiring a Mars aspect, or a
+    Moon-in-5th aspected by Saturn) are encoded separately as `_SERPENT_CURSE_YOGAS`, both
+    surfaced as distinct classical sources."""
     rahu_h = _planet_house(chart, "Rahu")
     lord_h = _planet_house(chart, fifth_lord)
     with_lord = rahu_h != 0 and rahu_h == lord_h
@@ -113,11 +116,18 @@ def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagg
 #   mother #1's hemming disjunct, and mother #9 (Ascendant house-hemming). The
 #   "on record pending a hemming primitive" gap that mirrored SYN_N6 is closed.
 #
+# SERPENT'S curse: BPHS Ch.83 verses 9-16 (eight combinations), recovered
+#   2026-07-27 as vol2_chapter_083_iii.md — the block between the childlessness
+#   yogas (tail of ch82) and the father's curse (head of ch83-i) that the
+#   original scrape skipped. 7 of 8 encoded (`_SERPENT_CURSE_YOGAS`); these are
+#   BPHS's own, more specific than the Prasna-Marga summary in `_serpent_curse`.
+#
 # STILL ON RECORD, NOT ENCODED:
+#   serpent #5 (BPHS-83-iii:86) and Praśna Mārga's father's-curse variant
+#     (PrasnaMarga-18:695-696) — both need Gulika, which this engine does not
+#     compute.
 #   mother #10 (BPHS-83-ii:148) — the OCR garbles the clause ("...and the lord of
 #     the 4th and the Moon or in the 6th...") beyond honest reconstruction.
-#   Praśna Mārga's own father's-curse variant (PrasnaMarga-18:695-696) — needs
-#     Gulika, which this engine does not compute.
 #
 # INTERPRETATION CONVENTIONS (source-verified line by line; independently
 # re-verified by a bphs-doctrine-reviewer pass — father list CONFIRMED 9/9
@@ -384,6 +394,55 @@ def _mother_curse_fires(chart: RamanChart, num: int) -> bool:
     return False
 
 
+# BPHS's OWN serpent's-curse verses (Ch.83 verses 9-16, eight numbered combinations,
+# recovered 2026-07-27 as vol2_chapter_083_iii.md — the block the original scrape skipped).
+# These are BPHS's more-specific counterpart to the Prasna-Marga serpent summary the engine
+# already carries in `_serpent_curse` (PM-18:682); both are surfaced (different sources,
+# different combinations). Verse #5 needs Gulika (Ascendant occupied by Rahu AND Gulika) — on
+# record. All others computable from existing primitives.
+_SERPENT_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
+    (1, "BPHS-83-iii:70", "Rahu in the 5th house, aspected by Mars"),
+    (2, "BPHS-83-iii:72", "the 5th lord associated with Rahu, and the Moon in the 5th aspected "
+                          "by Saturn"),
+    (3, "BPHS-83-iii:76", "Jupiter associated with Rahu, the 5th lord devoid of strength, and "
+                          "the Ascendant lord with Mars"),
+    (4, "BPHS-83-iii:81", "Jupiter associated with Mars, Rahu in the Ascendant, and the 5th "
+                          "lord in the 6th/8th/12th"),
+    (6, "BPHS-83-iii:90", "the 5th sign Aries or Scorpio (Mars-ruled) and the 5th lord "
+                          "associated with Rahu or Mercury"),
+    (7, "BPHS-83-iii:94", "the 5th occupied by the Sun, Saturn, Mars, Rahu, Mercury and "
+                          "Jupiter, and the 5th and Ascendant lords devoid of strength"),
+    (8, "BPHS-83-iii:99", "the Ascendant lord or Jupiter associated with Rahu, and the 5th "
+                          "lord in conjunction with Mars"),
+)
+
+
+def _serpent_curse_fires(chart: RamanChart, num: int) -> bool:
+    l5, l1 = _lord_of(chart, 5), _lord_of(chart, 1)
+    if num == 1:
+        return _in_h(chart, "Rahu", 5) and drishti.aspects_house("Mars", 5, chart)
+    if num == 2:
+        return (_assoc(chart, l5, "Rahu") and _in_h(chart, "Moon", 5)
+                and drishti.aspects_house("Saturn", 5, chart))
+    if num == 3:
+        return (_assoc(chart, "Jupiter", "Rahu") and _devoid_of_strength(chart, l5)
+                and _assoc(chart, l1, "Mars"))
+    if num == 4:
+        return (_assoc(chart, "Jupiter", "Mars") and _in_h(chart, "Rahu", 1)
+                and _in_h(chart, l5, 6, 8, 12))
+    if num == 6:
+        return (_house_of_sign(chart.asc_sign, 5) in (1, 8)          # 5th sign Aries/Scorpio
+                and (_assoc(chart, l5, "Rahu") or _assoc(chart, l5, "Mercury")))
+    if num == 7:
+        return (all(_in_h(chart, p, 5) for p in
+                    ("Sun", "Saturn", "Mars", "Rahu", "Mercury", "Jupiter"))
+                and _devoid_of_strength(chart, l5) and _devoid_of_strength(chart, l1))
+    if num == 8:
+        return ((_assoc(chart, l1, "Rahu") or _assoc(chart, "Jupiter", "Rahu"))
+                and _assoc(chart, l5, "Mars"))
+    return False
+
+
 def _bphs_curse_yogas(chart: RamanChart) -> tuple[Tagged, ...]:
     """Fire the encoded BPHS Ch.83 curse-yogas — one Tagged per fired verse, each naming its
     number and quoting its own condition, with a per-verse cite."""
@@ -397,6 +456,11 @@ def _bphs_curse_yogas(chart: RamanChart) -> tuple[Tagged, ...]:
         if _mother_curse_fires(chart, num):
             out.append(Tagged(f"mother's curse (mātṛ-śrāpa), BPHS verse-combination #{num}: "
                               f"{text} — want of male issue from the mother's curse of a "
+                              f"previous birth", "CLASSICAL_NONCITABLE", cite))
+    for num, cite, text in _SERPENT_CURSE_YOGAS:
+        if _serpent_curse_fires(chart, num):
+            out.append(Tagged(f"serpent's curse (sarpa-śrāpa), BPHS verse-combination #{num}: "
+                              f"{text} — want of male issue from the serpent's curse of a "
                               f"previous birth", "CLASSICAL_NONCITABLE", cite))
     return tuple(out)
 
@@ -441,14 +505,14 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
                "BPHS-83:107"),
         Tagged("The curse-yogas above are BPHS Ch.83's OWN numbered verse-combinations, encoded "
                "per verse (father: 11 of 11 from BPHS-83:33-93; mother: 12 of 13 from the "
-               "recovered BPHS-83-ii:114-166 block). The papakartari (hemming) combinations — "
-               "father #1-2, mother #1's hemming disjunct, mother #9 (Ascendant house-hemming) "
-               "— are now encoded via a dedicated hemming primitive (the SYN_N6 gap closed). "
-               "STILL ON RECORD, unencoded: mother #10 (OCR-garbled beyond honest "
-               "reconstruction) and Praśna Mārga's father's-curse variant (PrasnaMarga-18:"
-               "695-696 — needs Gulika, not computed). An earlier editorial proxy (9th+Sun / "
-               "4th+Moon malefic-touch) was RETIRED by this encoding: BPHS's own verses never "
-               "use that region.", "CLASSICAL_NONCITABLE"),
+               "recovered BPHS-83-ii:114-166 block; serpent: 7 of 8 from the recovered "
+               "BPHS-83-iii:70-99 block). The papakartari (hemming) combinations — father "
+               "#1-2, mother #1's hemming disjunct, mother #9 (Ascendant house-hemming) — are "
+               "encoded via a dedicated hemming primitive (the SYN_N6 gap closed). STILL ON "
+               "RECORD, unencoded: mother #10 (OCR-garbled), and serpent #5 plus Praśna Mārga's "
+               "father's-curse variant (both need Gulika, not computed). An earlier editorial "
+               "proxy (9th+Sun / 4th+Moon malefic-touch) was RETIRED by this encoding: BPHS's "
+               "own verses never use that region.", "CLASSICAL_NONCITABLE"),
         Tagged("A DIFFERENT LAYER, not a contradiction: these curse-yogas are narrow technical "
                "gates about PROGENY/lineage continuation, keyed by BPHS's own verses to the "
                "5th house/Ascendant chains (father) and the 4th/5th/Moon chains (mother) — "

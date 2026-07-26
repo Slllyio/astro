@@ -12,6 +12,7 @@ import pytest
 
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.judges import pitru_dosha_reading as pd
 
 _BASELINE = BirthData(name="baseline", year=1990, month=7, day=15, hour=12, minute=0,
@@ -83,6 +84,35 @@ class TestBphsCurseYogas:
         fired = pd._bphs_curse_yogas(c)
         assert any("#13" in t.text and "mother's curse" in t.text for t in fired)
 
+    def test_serpent_1_rahu_in_5th_aspected_by_mars(self) -> None:
+        """Serpent #1 (BPHS-83-iii:70): Rahu in the 5th, aspected by Mars. Aries asc, 5th =
+        Leo: Rahu in Leo; Mars in Aries (1st) casts its 5th-house-reaching aspect? Mars aspects
+        the 4th and 8th from itself — from Aries(1) that is Cancer(4) and Scorpio(8), not Leo.
+        Put Mars where it aspects Leo(5): Mars in Aquarius(11) aspects the 4th (Taurus) and 8th
+        (Virgo)... use the 7th aspect — Mars in Aquarius(11) aspects Leo(5) by the 7th. So Mars
+        in Aquarius, Rahu in Leo."""
+        c = _chart({"Rahu": 130.0, "Mars": 310.0})   # Leo(5th), Aquarius(11th) — 7th aspect
+        assert drishti.aspects_house("Mars", 5, c)
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#1" in t.text and "serpent's curse" in t.text for t in fired)
+
+    def test_serpent_7_the_crowded_fifth(self) -> None:
+        """Serpent #7 (BPHS-83-iii:94): the 5th holds Sun, Saturn, Mars, Rahu, Mercury and
+        Jupiter together, and the 5th and Ascendant lords are devoid of strength. Track-B
+        charts have no Shadbala, so _devoid_of_strength reads False and the yoga cannot fire —
+        the structural (six-in-the-5th) precondition is checked directly instead."""
+        leo = {p: 125.0 + i for i, p in enumerate(
+            ("Sun", "Saturn", "Mars", "Rahu", "Mercury", "Jupiter"))}
+        c = _chart(leo)
+        assert all(pd._in_h(c, p, 5) for p in leo)     # the six-in-the-5th precondition holds
+        assert not pd._serpent_curse_fires(c, 7)        # but no Shadbala -> devoid-of-strength False
+
+    def test_serpent_5_stays_on_record_gulika(self) -> None:
+        """Serpent #5 needs Gulika (Ascendant occupied by Rahu AND Gulika) — not computed, so
+        it is absent from the encoded list."""
+        assert 5 not in {num for num, _c, _t in pd._SERPENT_CURSE_YOGAS}
+        assert len(pd._SERPENT_CURSE_YOGAS) == 7        # of 8 (only #5, Gulika, on record)
+
     def test_no_yoga_fires_on_a_clean_chart(self) -> None:
         """A lone benefic chart fires none of the encoded verse-combinations."""
         c = _chart({"Jupiter": 5.0})
@@ -143,8 +173,11 @@ class TestBphsCurseYogas:
             assert cite.startswith("BPHS-83:")
         for _num, cite, _text in pd._MOTHER_CURSE_YOGAS:
             assert cite.startswith("BPHS-83-ii:")
+        for _num, cite, _text in pd._SERPENT_CURSE_YOGAS:
+            assert cite.startswith("BPHS-83-iii:")
         assert len(pd._FATHER_CURSE_YOGAS) == 11     # all 11 (hemming now encoded)
         assert len(pd._MOTHER_CURSE_YOGAS) == 12     # of 13 (#10 OCR-garbled, on record)
+        assert len(pd._SERPENT_CURSE_YOGAS) == 7     # of 8 (#5 needs Gulika, on record)
 
     def test_recovered_source_file_backs_the_mother_cites(self) -> None:
         """The BPHS-83-ii cites resolve into the RECOVERED source fragment on disk: each cited
@@ -199,5 +232,6 @@ class TestBuildAndInvariant:
         note = next((n for n in r.notes if "verse-combinations" in n.text), None)
         assert note is not None, [n.text for n in r.notes]
         assert "11 of 11" in note.text and "12 of 13" in note.text
+        assert "7 of 8" in note.text                      # the recovered serpent block
         assert "hemming" in note.text and "Gulika" in note.text
         assert "RETIRED" in note.text

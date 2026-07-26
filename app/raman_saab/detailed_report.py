@@ -38,6 +38,7 @@ from app.raman_saab.judges.calibrated_reading import (
 from app.raman_saab.chart.model import PlanetPos
 from app.raman_saab.doctrine.synthesis_rules import (
     FiredInsight,
+    _rupas,
     _yoga_planets,
     descriptive_rules,
     detect_synthesis,
@@ -375,6 +376,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
     SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
+    # v9 (2026-07-26, conscious amendment): inserted right after Life-narrative, since it paints
+    # the SAME windowed MD/AD timeline with each lord's Ishta/Kashta lean — the natural
+    # narrative position, a colour-strip companion to the section directly above it.
+    SectionSpec("ishta_kashta", "## Ishta/Kashta outlook", 'id="ishta-kashta"', "v9"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
     # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
     # references the Life-narrative (timeline) and Gochara sections directly above it — the
@@ -402,7 +407,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "longevity",
-    "maraka", "timeline", "gochara", "dasha_transit", "divisional", "career", "deeptadi",
+    "maraka", "timeline", "ishta_kashta", "gochara", "dasha_transit", "divisional", "career",
+    "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
 
@@ -786,6 +792,57 @@ def _house_strength_rows(
 
 
 @dataclass(frozen=True)
+class IshtaKashtaPeriod:
+    """One bhukti's Ishta/Kashta reading, painted across the WHOLE windowed timeline — Raman's
+    rule that a planet with more Ishta Phala inclines to good results in its Dasha/Bhukti, more
+    Kashta to harder ones (GBB-10:134), and the stronger (by Shadbala) period-lord's character
+    prevails in the sub-period (GBB-10:145-152 states only the MD-predominates direction; no
+    converse is asserted — the same one-directional reading `SYN_R5_ISHTA_KASHTA_PERIOD` already
+    encodes for the CURRENT period only). Both Ishta/Kashta and Shadbala are natal-fixed values —
+    this is a pure lookup onto the already-built timeline, not a new computation."""
+    maha: str
+    antar: Optional[str]
+    start_jd: float
+    end_jd: float
+    maha_lean: Optional[str]        # "good" | "hard" | "balanced" | None (no data)
+    antar_lean: Optional[str]
+    prevails: Optional[str]         # e.g. "Jupiter's character prevails" (MD-predominates only)
+
+
+def _ishta_kashta_lean(chart: RamanChart, planet: Optional[str]) -> Optional[str]:
+    if planet is None:
+        return None
+    p = chart.planets.get(planet)
+    if p is None or p.ishta is None or p.kashta is None:
+        return None
+    if p.ishta > p.kashta:
+        return "good"
+    if p.kashta > p.ishta:
+        return "hard"
+    return "balanced"
+
+
+def _ishta_kashta_periods(
+    chart: RamanChart, timeline: DashaTimeline,
+) -> tuple[IshtaKashtaPeriod, ...]:
+    """Paint every bhukti in the windowed timeline with its MD/AD lords' Ishta/Kashta lean —
+    the full-timeline version of `SYN_R5_ISHTA_KASHTA_PERIOD`'s current-period-only one-liner."""
+    out: list[IshtaKashtaPeriod] = []
+    for tp in timeline.periods:
+        p = tp.period
+        prevails = None
+        if p.antar is not None and p.antar != p.maha:
+            rm, ra = _rupas(chart, p.maha), _rupas(chart, p.antar)
+            if rm is not None and ra is not None and rm >= ra:
+                prevails = f"{p.maha}'s character prevails"
+        out.append(IshtaKashtaPeriod(
+            maha=p.maha, antar=p.antar, start_jd=p.start_jd, end_jd=p.end_jd,
+            maha_lean=_ishta_kashta_lean(chart, p.maha),
+            antar_lean=_ishta_kashta_lean(chart, p.antar), prevails=prevails))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -797,6 +854,7 @@ class DetailedReport:
     yogas: tuple[FiredYoga, ...]                     # fired yogas, each with its citation
     yoga_timing: tuple[YogaTiming, ...]               # when a yoga's own lord runs as MD/AD
     house_strength: tuple[HouseStrengthRow, ...]      # Bhava Bala rank + SAV band per house
+    ishta_kashta: tuple[IshtaKashtaPeriod, ...]       # Ishta/Kashta lean per MD/AD, whole timeline
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -1118,10 +1176,12 @@ def build_detailed_report(
         chart, ref_jd, gochara=tuple(gochara_rows), yogas=fired_yogas, sav=sav,
         bhava_balas=bhava_balas, maraka_now=maraka_now)
     house_strength = _house_strength_rows(reading.proformas, chart.asc_sign, sav, bhava_balas)
+    ishta_kashta = _ishta_kashta_periods(chart, timeline)
     provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=fired_yogas, yoga_timing=yoga_timing, house_strength=house_strength,
+        ishta_kashta=ishta_kashta,
         sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
@@ -1524,6 +1584,33 @@ def to_markdown(r: DetailedReport) -> str:
                  f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
                  f"{'; '.join(seg) or '(no house influenced)'}")
         L.append(f"  - _{plain_bhukti_summary(rows, associated)}_")
+
+    # ── ishta/kashta outlook: the SAME windowed timeline, painted good/hard ────
+    if r.ishta_kashta:
+        L.append("")
+        L.append("## Ishta/Kashta outlook")
+        L.append("")
+        L.append("**In simple terms:** a planet with more Ishta Phala (its own \"good "
+                 "tendency\") inclines to give good results in its Dasha or Bhukti; more Kashta "
+                 "Phala (\"hard tendency\") inclines to harder ones (GBB-10:134). This paints "
+                 "that SAME lean across every period in the Life-narrative timeline above, not "
+                 "just the one running now. Where a bhukti's own lord is stronger (by Shadbala) "
+                 "than the Mahadasha lord, no general rule is stated for whose character wins — "
+                 "so only the MD-predominates direction is shown (GBB-10:145-152).")
+        L.append("")
+        cur_md_ik: Optional[str] = None
+        for ik in r.ishta_kashta:
+            if ik.maha != cur_md_ik:
+                cur_md_ik = ik.maha
+                lean_word = ik.maha_lean or "no Ishta/Kashta data"
+                L.append("")
+                L.append(f"### {cur_md_ik} Mahadasha — {lean_word}")
+            ad = ik.antar or ik.maha
+            lean_word = ik.antar_lean or "no data"
+            tail = f" — {ik.prevails}" if ik.prevails else ""
+            L.append(f"- **{ad} AD** ({_outlook_window_label(ik.start_jd, ik.end_jd)}): "
+                     f"{lean_word}{tail}")
+        L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────
     if r.gochara:

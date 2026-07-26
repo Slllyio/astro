@@ -28,17 +28,18 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 16 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
 | 17 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
 | 18 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 19 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 20 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 21 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 22 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 23 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 24 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 25 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 26 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 27 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 28 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 29 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 19 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
+| 20 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 21 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 22 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 23 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 24 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 25 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 26 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 27 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 28 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 29 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 30 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -258,6 +259,20 @@ the closing line of a YOGA-interpretation method scoped to yogakaraka planetary 
 general house Bhava Bala; and the "not a direction" claim ignored the signed Bhava Drig Bala term
 this project's own code already computes) before it shipped — corrected to HTJAH-I:468-478 and
 the honest "tendency, not an absolute rule" framing above.
+
+**v9 amendment (2026-07-26) — Ishta/Kashta outlook.** Third of the walked-through menu of
+candidate cross-reference analyses. `detailed_report.IshtaKashtaPeriod` /
+`_ishta_kashta_periods()` paint the SAME windowed Vimshottari timeline Life-narrative already
+shows with each period-lord's Ishta/Kashta lean — Raman's rule that a planet with more Ishta
+Phala inclines to good results in its Dasha/Bhukti, more Kashta to harder ones (GBB-10:134),
+extending `SYN_R5_ISHTA_KASHTA_PERIOD`'s current-period-only one-liner to every bhukti in the
+window. Both Ishta/Kashta and Shadbala are natal-fixed values, so this is a pure lookup onto the
+already-built timeline, not a new computation — one row per bhukti, matching `r.timeline.periods`
+1:1 (tested directly). Where a bhukti's own lord out-strengths the Mahadasha lord, `prevails`
+still only states the MD-predominates direction (GBB-10:145-152 asserts no converse, mirroring
+SYN_R5's own encoding) — never claims the AD lord's character wins. Inserted right after
+Life-narrative (the natural narrative position: a colour-strip companion to the section directly
+above it) as v9; `_FROZEN` updated in the same commit.
 
 ## Standing rules
 

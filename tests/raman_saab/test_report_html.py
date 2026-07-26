@@ -253,6 +253,18 @@ class TestReportHtml:
         assert section.count("<tr>") == 13    # header + 12 houses
         assert "of 12" in section
 
+    def test_ishta_kashta_outlook_renders(self, report, body):
+        """Ishta/Kashta outlook sits right after Life-narrative and before Gochara, one row per
+        bhukti in the windowed timeline, doctrine cited."""
+        t_start = body.find('id="timeline"')
+        i_start = body.find('id="ishta-kashta"')
+        g_start = body.find('id="gochara"')
+        assert 0 <= t_start < i_start < g_start
+        section = body[i_start:g_start]
+        assert "In simple terms:" in section
+        assert "GBB-10:134" in section
+        assert section.count("<tr>") == len(report.ishta_kashta) + 1   # header + one per bhukti
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

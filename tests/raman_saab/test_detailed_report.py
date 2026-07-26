@@ -630,6 +630,48 @@ class TestDetailedReport:
         assert "GBB-9:332" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
+    def test_ishta_kashta_covers_every_bhukti_in_the_window(self, report):
+        """One row per bhukti in the windowed timeline — same count and same (maha, antar,
+        start, end) as the Life-narrative section already shows, no periods dropped or added."""
+        assert len(report.ishta_kashta) == len(report.timeline.periods)
+        for ik, tp in zip(report.ishta_kashta, report.timeline.periods):
+            assert ik.maha == tp.period.maha and ik.antar == tp.period.antar
+            assert ik.start_jd == tp.period.start_jd and ik.end_jd == tp.period.end_jd
+
+    def test_ishta_kashta_lean_is_good_hard_or_balanced(self, report):
+        """Every non-None lean is one of the three words the doctrine defines — no other
+        vocabulary invented."""
+        for ik in report.ishta_kashta:
+            for lean in (ik.maha_lean, ik.antar_lean):
+                assert lean is None or lean in ("good", "hard", "balanced")
+
+    def test_ishta_kashta_prevails_only_states_the_md_predominates_direction(self, report):
+        """GBB-10:145-152 states only the MD-predominates direction; no converse is asserted —
+        `prevails` must never name the AD lord, only the MD lord, and only when its own bhukti
+        isn't itself the MD (antar != maha)."""
+        for ik in report.ishta_kashta:
+            if ik.prevails is not None:
+                assert ik.prevails == f"{ik.maha}'s character prevails"
+                assert ik.antar != ik.maha
+
+    def test_ishta_kashta_never_touches_a_verdict(self):
+        """Pure lookup of natal-fixed Ishta/Kashta and Shadbala values onto the already-built
+        timeline — no verdict path."""
+        import inspect
+        from app.raman_saab.detailed_report import _ishta_kashta_periods
+        src = inspect.getsource(_ishta_kashta_periods)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_ishta_kashta_outlook(self, markdown):
+        """The new section sits right after Life-narrative, before Gochara, and cites GBB-10."""
+        assert "## Ishta/Kashta outlook" in markdown
+        i = markdown.find("## Life-narrative")
+        j = markdown.find("## Ishta/Kashta outlook")
+        k = markdown.find("## Current transits (Gochara")
+        assert 0 <= i < j < k
+        assert "GBB-10:134" in markdown[j:k]
+        assert "In simple terms:" in markdown[j:j + 600]
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

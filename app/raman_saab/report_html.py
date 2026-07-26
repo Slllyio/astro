@@ -1227,6 +1227,36 @@ def _timeline(r: DetailedReport) -> str:
     return "".join(out)
 
 
+def _ishta_kashta_section(r: DetailedReport) -> str:
+    """The SAME windowed MD/AD timeline as _timeline() above, painted with each lord's Ishta/
+    Kashta lean (GBB-10:134) — a colour-strip companion, not a new timeline."""
+    if not r.ishta_kashta:
+        return ""
+    _LEAN_CHIP = {"good": "favourable", "hard": "afflicted", "balanced": "mixed"}
+    rows = "".join(
+        f'<tr><td>{_esc(ik.maha)}</td>'
+        f'<td><span class="chip chip--{_LEAN_CHIP.get(ik.maha_lean, "mixed")}">'
+        f'{_esc(ik.maha_lean or "no data")}</span></td>'
+        f'<td>{_esc(ik.antar or ik.maha)}</td>'
+        f'<td><span class="chip chip--{_LEAN_CHIP.get(ik.antar_lean, "mixed")}">'
+        f'{_esc(ik.antar_lean or "no data")}</span></td>'
+        f'<td>{_outlook_window_label(ik.start_jd, ik.end_jd)}</td>'
+        f'<td>{_esc(ik.prevails or "")}</td></tr>'
+        for ik in r.ishta_kashta)
+    return (
+        '<h2 class="section" id="ishta-kashta">Ishta &amp; Kashta outlook</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> a planet with more Ishta Phala (its own '
+        '&ldquo;good tendency&rdquo;) inclines to give good results in its Dasha or Bhukti; '
+        'more Kashta Phala (&ldquo;hard tendency&rdquo;) inclines to harder ones (GBB-10:134). '
+        'This paints that SAME lean across every period in the Life-narrative timeline above, '
+        'not just the one running now. Where a bhukti&rsquo;s own lord is stronger (by '
+        'Shadbala) than the Mahadasha lord, no general rule is stated for whose character wins '
+        '&mdash; so only the MD-predominates direction is shown (GBB-10:145-152).</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>MD</th><th>MD lean</th>'
+        '<th>AD</th><th>AD lean</th><th>window</th><th>notes</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def to_html(r: DetailedReport) -> str:
     """Body content + inline <style> — ready to drop into an Artifact skeleton."""
     s, b = r.synthesis, r.birth
@@ -1380,6 +1410,8 @@ def to_html(r: DetailedReport) -> str:
   <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
       for k, v in _TIER_MEANING.items())}</div>
   {_timeline(r)}
+
+  {_ishta_kashta_section(r)}
 
   {_gochara_table(r)}
 

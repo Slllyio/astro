@@ -266,16 +266,43 @@ class TestReportHtml:
         assert section.count("<tr>") == len(report.ishta_kashta) + 1   # header + one per bhukti
 
     def test_md_condition_outlook_renders(self, report, body):
-        """MD-lord condition outlook sits right after Ishta/Kashta and before Gochara, one row
-        per Mahadasha RUN (not per bhukti), doctrine cited."""
+        """MD-lord condition outlook sits right after Ishta/Kashta and before the AV dasha-seat
+        outlook, one row per Mahadasha RUN (not per bhukti), doctrine cited."""
         i_start = body.find('id="ishta-kashta"')
         m_start = body.find('id="md-condition"')
-        g_start = body.find('id="gochara"')
-        assert 0 <= i_start < m_start < g_start
-        section = body[m_start:g_start]
+        a_start = body.find('id="av-dasha-seat"')
+        assert 0 <= i_start < m_start < a_start
+        section = body[m_start:a_start]
         assert "In simple terms:" in section
         assert "HPA-24:51-86" in section
         assert section.count("<tr>") == len(report.md_condition) + 1   # header + one per MD run
+
+    def test_av_dasha_seat_outlook_renders(self, report, body):
+        """AV dasha-seat outlook sits right after MD-lord condition and before Gochara, one row
+        per Mahadasha run, Raman's own AV-reliability caveat printed at the section head."""
+        m_start = body.find('id="md-condition"')
+        a_start = body.find('id="av-dasha-seat"')
+        g_start = body.find('id="gochara"')
+        assert 0 <= m_start < a_start < g_start
+        section = body[a_start:g_start]
+        assert "HTJAH-II:4453-4456" in section
+        assert "does not seem to be quite reliable" in section
+        assert "In simple terms:" in section
+        assert section.count("<tr>") == len(report.av_dasha_seats) + 1
+
+    def test_maraka_saturn_confluence_renders_when_present(self, body):
+        """When the maraka x Saturn-transit section fires, it sits right after The maraka
+        scheme and before Life-narrative, framed as method-not-prediction."""
+        if 'id="maraka-saturn"' not in body:
+            return   # this chart's death-window may not overlap the tracked Saturn span
+        mk_start = body.find('id="maraka"')
+        ms_start = body.find('id="maraka-saturn"')
+        t_start = body.find('id="timeline"')
+        assert 0 <= mk_start < ms_start < t_start
+        section = body[ms_start:t_start]
+        assert "HTJAH-II:4846-4849" in section
+        assert "not a prediction" in section
+        assert "real-outcome validation measured NO death-timing signal" in section
 
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""

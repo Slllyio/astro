@@ -49,6 +49,10 @@ _FROZEN = (
     ("house_strength", "## House strength cross-check", 'id="house-strength"'),
     ("longevity", "## Longevity", 'id="longevity"'),
     ("maraka", "## The maraka scheme", 'id="maraka"'),
+    # v11 amendment (2026-07-26, conscious, same-commit as the module): Maraka x Saturn-transit
+    # confluence inserted right after The maraka scheme — it cross-references that section's
+    # own death-window against transiting Saturn.
+    ("maraka_saturn", "## Maraka x Saturn-transit confluence", 'id="maraka-saturn"'),
     ("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"'),
     # v9 amendment (2026-07-26, conscious, same-commit as the module): Ishta/Kashta outlook
     # inserted right after Life-narrative — a colour-strip companion to that section.
@@ -56,6 +60,9 @@ _FROZEN = (
     # v10 amendment (2026-07-26, conscious, same-commit as the module): MD-lord condition
     # outlook grouped right after Ishta/Kashta — both are Life-narrative companions.
     ("md_condition", "## MD-lord condition outlook", 'id="md-condition"'),
+    # v12 amendment (2026-07-26, conscious, same-commit as the module): the third Life-narrative
+    # companion, AV-tier, shown last of the three under Raman's own reliability caveat.
+    ("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"'),
     ("gochara", "## Current transits (Gochara", 'id="gochara"'),
     # v6 amendment (2026-07-26, conscious, same-commit as the module): the Dasha x Transit
     # confluence, inserted right after Gochara — the natural narrative position, since it
@@ -143,9 +150,10 @@ class TestTemplateContract:
         """Every row declares the version that introduced it (v1 freeze, v2 complements,
         v3 cross-feature synthesis, v4 the Nichod capstone, v5 Your Reading, v6 the Dasha x
         Transit confluence, v7 Yoga x Dasha timing, v8 the House strength cross-check, v9 the
-        Ishta/Kashta outlook, v10 the MD-lord condition outlook)."""
+        Ishta/Kashta outlook, v10 the MD-lord condition outlook, v11 the Maraka x Saturn-transit
+        confluence, v12 the AV dasha-seat outlook — completing the candidate menu)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
-            "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"}
+            "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -156,3 +164,5 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v8") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v9") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v10") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v11") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v12") == 1

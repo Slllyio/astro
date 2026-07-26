@@ -376,6 +376,12 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("house_strength", "## House strength cross-check", 'id="house-strength"', "v8"),
     SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
     SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
+    # v11 (2026-07-26, conscious amendment): inserted right after The maraka scheme, since it
+    # cross-references that section's own death-window against transiting Saturn — framed
+    # strictly as textbook doctrine (this project's real-outcome research measured no
+    # death-timing signal; see docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md).
+    SectionSpec("maraka_saturn", "## Maraka x Saturn-transit confluence",
+                'id="maraka-saturn"', "v11"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
     # v9 (2026-07-26, conscious amendment): inserted right after Life-narrative, since it paints
     # the SAME windowed MD/AD timeline with each lord's Ishta/Kashta lean — the natural
@@ -385,6 +391,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # it — both are Life-narrative companions painting a different natal-fixed lens (strength/
     # vargottama here, Ishta/Kashta lean there) across the SAME MD timeline.
     SectionSpec("md_condition", "## MD-lord condition outlook", 'id="md-condition"', "v10"),
+    # v12 (2026-07-26, conscious amendment): the third Life-narrative companion (Ishta/Kashta,
+    # MD-lord condition, and now this) — placed last of the three since it is AV-tier, the
+    # weakest doctrinal standing of the group, under Raman's own reliability caveat.
+    SectionSpec("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"', "v12"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
     # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
     # references the Life-narrative (timeline) and Gochara sections directly above it — the
@@ -412,7 +422,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "longevity",
-    "maraka", "timeline", "ishta_kashta", "md_condition", "gochara", "dasha_transit",
+    "maraka", "maraka_saturn", "timeline", "ishta_kashta", "md_condition", "av_dasha_seat",
+    "gochara", "dasha_transit",
     "divisional", "career",
     "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
@@ -886,6 +897,103 @@ def _md_lord_conditions(
 
 
 @dataclass(frozen=True)
+class MarakaSaturnConfluence:
+    """A stretch where a maraka-tier Bhukti (from the ayurdaya-anchored `death_window`) overlaps
+    transiting Saturn sitting on the NATAL Saturn's own rasi or trine — Raman's classical "last
+    signal" of a maraka period (HTJAH-II:4846-4849: the signal is given by Ayushkaraka Saturn
+    transiting the Rasi... he occupied at birth, or its trines). RASI HALF ONLY — the Amsa
+    (navamsa) half of the classical signature is not computed here, same honest scope as
+    `SYN_R9_MARAKA_SATURN_SIGNAL`'s current-period-only reading.
+
+    STRICTLY A STATEMENT OF THE METHOD, NOT A PREDICTION: this project's own real-outcome
+    validation measured NO death-timing signal from maraka checks generally (see
+    docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md) — this section exists to show what Raman's
+    textbook method says, faithfully, never as a strengthened death signal."""
+    maha: str
+    antar: str
+    window_start_jd: float      # the death_window's own bounds (ayurdaya-anchored)
+    window_end_jd: float
+    overlap_start_jd: float     # intersection with Saturn's rasi/trine transit segment
+    overlap_end_jd: float
+    sign: int
+    score: int                  # the DeathWindow's own maraka tier-score (MD-weight + AD-weight)
+
+
+def _maraka_saturn_confluences(
+    chart: RamanChart, ref_jd: float, ayanamsa: str,
+) -> tuple[MarakaSaturnConfluence, ...]:
+    """Cross-reference the ayurdaya-anchored maraka death-window (`vimshottari.death_window`)
+    against transiting Saturn's own rasi/trine signal (HTJAH-II:4846-4849). Saturn's transit is
+    computed FRESH across the death-window's own span — which can run decades beyond the
+    report's usual -10/+20-year display window, since the death window is anchored to the
+    ayurdaya estimate, not to "today" — rather than reused from the report's own
+    `gochara_outlook`, which would silently miss the relevant years for most charts."""
+    dws = vd.death_window(chart)
+    sat = chart.planets.get("Saturn")
+    if not dws or sat is None:
+        return ()
+    lo_jd = min(dw.start_jd for dw in dws)
+    hi_jd = max(dw.end_jd for dw in dws)
+    years_back = max(0.0, (ref_jd - lo_jd) / _DAYS_PER_VEDIC_YEAR)
+    years_forward = max(0.0, (hi_jd - ref_jd) / _DAYS_PER_VEDIC_YEAR)
+    sat_segments = tr.gochara_timeline(
+        chart, ref_jd, years_back, years_forward, ayanamsa=ayanamsa,
+        planets=("Saturn",)).get("Saturn", ())
+    trines = {sat.sign, (sat.sign - 1 + 4) % 12 + 1, (sat.sign - 1 + 8) % 12 + 1}
+    out: list[MarakaSaturnConfluence] = []
+    for dw in dws:
+        for seg in sat_segments:
+            if seg.sign not in trines:
+                continue
+            lo, hi = max(dw.start_jd, seg.start_jd), min(dw.end_jd, seg.end_jd)
+            if lo < hi:
+                out.append(MarakaSaturnConfluence(
+                    maha=dw.maha, antar=dw.antar, window_start_jd=dw.start_jd,
+                    window_end_jd=dw.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
+                    sign=seg.sign, score=dw.score))
+    out.sort(key=lambda c: c.overlap_start_jd)
+    return tuple(out)
+
+
+@dataclass(frozen=True)
+class AvDashaSeat:
+    """One Mahadasha run's lord graded by his OWN Ashtakavarga bindus at his natal seat —
+    CLASSICAL_NONCITABLE (Patel ch015:996-1034: 5+ bindus auspicious, <=3 adverse, 4 mixed),
+    under Raman's own caveat that Ashtakavarga "does not seem to be quite reliable"
+    (HTJAH-II:4453-4456). Extends `SYN_N7_AV_DASHA_SEAT`'s current-MD-only reading across the
+    whole windowed timeline. Bindus are natal-fixed — a pure lookup onto `_md_runs`, not a new
+    computation. AV-TIER: never overrides a Raman-band insight elsewhere in this report."""
+    maha: str
+    start_jd: float
+    end_jd: float
+    sign: int
+    bindus: Optional[int]
+    read: str            # "auspicious" | "adverse" | "mixed" | "no data"
+
+
+def _av_dasha_seats(chart: RamanChart, timeline: DashaTimeline) -> tuple[AvDashaSeat, ...]:
+    """The full-timeline version of `SYN_N7_AV_DASHA_SEAT`'s current-MD-only one-liner — one row
+    per contiguous Mahadasha run. Nodes (Rahu/Ketu) carry no classical Ashtakavarga and are
+    skipped, same as the existing one-liner checker."""
+    out: list[AvDashaSeat] = []
+    for maha, start_jd, end_jd in _md_runs(timeline):
+        pos = chart.planets.get(maha)
+        if pos is None:
+            continue
+        try:
+            bav = ashtakavarga.bhinnashtakavarga(chart, maha)
+        except Exception:  # noqa: BLE001 — nodes have no BAV
+            bav = None
+        bindus = bav.get(pos.sign) if bav else None
+        read = ("no data" if bindus is None else
+               "auspicious" if bindus >= 5 else
+               "adverse" if bindus <= 3 else "mixed")
+        out.append(AvDashaSeat(
+            maha=maha, start_jd=start_jd, end_jd=end_jd, sign=pos.sign, bindus=bindus, read=read))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -899,6 +1007,8 @@ class DetailedReport:
     house_strength: tuple[HouseStrengthRow, ...]      # Bhava Bala rank + SAV band per house
     ishta_kashta: tuple[IshtaKashtaPeriod, ...]       # Ishta/Kashta lean per MD/AD, whole timeline
     md_condition: tuple[MdLordCondition, ...]         # MD lord strength/vargottama, whole timeline
+    maraka_saturn: tuple[MarakaSaturnConfluence, ...]  # maraka window x Saturn rasi/trine signal
+    av_dasha_seats: tuple[AvDashaSeat, ...]           # MD lord's own BAV bindus, whole timeline
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -1222,11 +1332,17 @@ def build_detailed_report(
     house_strength = _house_strength_rows(reading.proformas, chart.asc_sign, sav, bhava_balas)
     ishta_kashta = _ishta_kashta_periods(chart, timeline)
     md_condition = _md_lord_conditions(chart, timeline)
+    try:
+        maraka_saturn = _maraka_saturn_confluences(chart, ref_jd, ayanamsa)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        maraka_saturn = ()
+    av_dasha_seats = _av_dasha_seats(chart, timeline)
     provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=fired_yogas, yoga_timing=yoga_timing, house_strength=house_strength,
         ishta_kashta=ishta_kashta, md_condition=md_condition,
+        maraka_saturn=maraka_saturn, av_dasha_seats=av_dasha_seats,
         sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
@@ -1590,6 +1706,34 @@ def to_markdown(r: DetailedReport) -> str:
                  + " (broad, low-discrimination flag by design)")
         L.append("")
 
+    # ── maraka x saturn-transit confluence: the classical "last signal" ──────
+    if r.maraka_saturn:
+        L.append("## Maraka x Saturn-transit confluence")
+        L.append("")
+        L.append("**In simple terms:** Raman names one specific classical signal for a maraka "
+                 "period — Ayushkaraka Saturn transiting back over the sign it occupied at your "
+                 "birth, or its trines, during a maraka-tier Dasha/Bhukti (HTJAH-II:4846-4849). "
+                 "The windows below are where BOTH conditions the classical method asks for line "
+                 "up. This shows only the RASI half of that signature — the Navamsa half is not "
+                 "computed here. \"Maraka tier\" is how strong a death-signal the Bhukti's own "
+                 "lords carry (primary=3, secondary=2, tertiary=1 per lord, summed) — a higher "
+                 "number means both the MD and AD lord are more central to the classical maraka "
+                 "set, not a stronger prediction.")
+        L.append("")
+        L.append("_A STATEMENT OF THE METHOD, NOT A PREDICTION: this project's own real-outcome "
+                 "validation measured NO death-timing signal from maraka checks generally "
+                 "(REAL_OUTCOME_GENERALIZATION.md). This section exists to show what Raman's "
+                 "textbook method says, faithfully — never as a strengthened death signal._")
+        L.append("")
+        L.append("| Maraka Bhukti | Bhukti window | Confluence window | Sign | Maraka tier |")
+        L.append("|---|---|---|---|---|")
+        for c in r.maraka_saturn:
+            L.append(f"| {c.maha}/{c.antar} | "
+                     f"{_outlook_window_label(c.window_start_jd, c.window_end_jd)} | "
+                     f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
+                     f"{_SIGN_NAME[c.sign]} | {c.score} |")
+        L.append("")
+
     # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────
     from app.raman_saab.render import _jd_to_date
     w_lo = _jd_to_date(r.ref_jd - r.window_back * _DAYS_PER_VEDIC_YEAR)
@@ -1677,6 +1821,30 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"| {c.maha} | {_outlook_window_label(c.start_jd, c.end_jd)} | "
                      f"{strong_word} | {'yes' if c.vargottama else 'no'} | {nav} | "
                      f"{'yes' if c.at_maximum else 'no'} |")
+        L.append("")
+
+    # ── av dasha-seat outlook: the MD lord graded by his own bindus (AV-tier) ──
+    if r.av_dasha_seats:
+        L.append("## AV dasha-seat outlook")
+        L.append("")
+        L.append("> **Raman's own caveat governs this section**: \"Ashtakavarga method is "
+                 "equally important. But, it does not seem to be quite reliable\" "
+                 "(HTJAH-II:4453-4456). This classical method never overrides the Raman-band "
+                 "readings elsewhere in this report — it is shown last among the Life-narrative "
+                 "companions for that reason.")
+        L.append("")
+        L.append("**In simple terms:** a Dasha's lord can also be graded by how many "
+                 "Ashtakavarga bindus he holds in his OWN natal sign — 5 or more reads "
+                 "auspicious, 3 or fewer adverse, exactly 4 mixed (Patel ch015:996-1034). "
+                 "Painted across every Mahadasha in the window; bindus are fixed at birth, so "
+                 "this is a lookup, not a new judgment.")
+        L.append("")
+        L.append("| Mahadasha | Window | Sign | Bindus | Reading |")
+        L.append("|---|---|---|---|---|")
+        for a in r.av_dasha_seats:
+            bindus_cell = str(a.bindus) if a.bindus is not None else "n/a"
+            L.append(f"| {a.maha} | {_outlook_window_label(a.start_jd, a.end_jd)} | "
+                     f"{_SIGN_NAME[a.sign]} | {bindus_cell} | {a.read} |")
         L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────

@@ -707,6 +707,83 @@ class TestDetailedReport:
         assert "HPA-24:51-86" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
+    def test_maraka_saturn_confluences_are_real_overlaps(self, report):
+        """Every confluence is a genuine time-overlap between a death_window Bhukti and a
+        Saturn segment whose SIGN is the natal-Saturn sign or one of its two trines."""
+        assert report.maraka_saturn
+        sat_sign = report.chart.planets["Saturn"].sign
+        trines = {sat_sign, (sat_sign - 1 + 4) % 12 + 1, (sat_sign - 1 + 8) % 12 + 1}
+        from app.raman_saab.primitives.vimshottari import death_window
+        dws = {(dw.maha, dw.antar, dw.start_jd, dw.end_jd) for dw in death_window(report.chart)}
+        for c in report.maraka_saturn:
+            assert c.sign in trines
+            assert c.overlap_start_jd < c.overlap_end_jd
+            assert c.window_start_jd <= c.overlap_start_jd
+            assert c.overlap_end_jd <= c.window_end_jd
+            assert (c.maha, c.antar, c.window_start_jd, c.window_end_jd) in dws
+
+    def test_maraka_saturn_never_touches_a_verdict(self):
+        """Pure overlap of the ayurdaya-anchored death window against Saturn's own transit
+        sign — no verdict path, no new judgment."""
+        import inspect
+        from app.raman_saab.detailed_report import _maraka_saturn_confluences
+        src = inspect.getsource(_maraka_saturn_confluences)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_maraka_saturn_confluence_as_method_not_prediction(self, markdown):
+        """The section sits right after The maraka scheme, before Life-narrative, and states
+        plainly that this project's own research found no death-timing signal."""
+        assert "## Maraka x Saturn-transit confluence" in markdown
+        i = markdown.find("## The maraka scheme")
+        j = markdown.find("## Maraka x Saturn-transit confluence")
+        k = markdown.find("## Life-narrative")
+        assert 0 <= i < j < k
+        section = markdown[j:k]
+        assert "HTJAH-II:4846-4849" in section
+        assert "NOT A PREDICTION" in section
+        assert "measured NO death-timing signal" in section
+
+    def test_av_dasha_seats_cover_every_md_run(self, report):
+        """One row per contiguous Mahadasha run, same count as the MD-lord condition outlook
+        (both derive from the SAME _md_runs collapse)."""
+        assert report.av_dasha_seats
+        assert len(report.av_dasha_seats) == len(report.md_condition)
+        for a, c in zip(report.av_dasha_seats, report.md_condition):
+            assert a.maha == c.maha and a.start_jd == c.start_jd and a.end_jd == c.end_jd
+
+    def test_av_dasha_seat_reading_matches_the_bindu_bands(self, report):
+        """5+ bindus -> auspicious, <=3 -> adverse, exactly 4 -> mixed, no data -> 'no data' —
+        no other threshold invented (Patel ch015:996-1034)."""
+        for a in report.av_dasha_seats:
+            if a.bindus is None:
+                assert a.read == "no data"
+            elif a.bindus >= 5:
+                assert a.read == "auspicious"
+            elif a.bindus <= 3:
+                assert a.read == "adverse"
+            else:
+                assert a.read == "mixed"
+
+    def test_av_dasha_seat_never_touches_a_verdict(self):
+        """Pure lookup of natal-fixed Ashtakavarga bindus onto the already-built MD timeline —
+        no verdict path."""
+        import inspect
+        from app.raman_saab.detailed_report import _av_dasha_seats
+        src = inspect.getsource(_av_dasha_seats)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_av_dasha_seat_outlook_with_reliability_caveat(self, markdown):
+        """The section sits right after MD-lord condition, before Gochara, and carries Raman's
+        own AV-reliability caveat at its head."""
+        assert "## AV dasha-seat outlook" in markdown
+        i = markdown.find("## MD-lord condition outlook")
+        j = markdown.find("## AV dasha-seat outlook")
+        k = markdown.find("## Current transits (Gochara")
+        assert 0 <= i < j < k
+        section = markdown[j:k]
+        assert "HTJAH-II:4453-4456" in section
+        assert "does not seem to be quite reliable" in section
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

@@ -864,6 +864,39 @@ def _maraka(r: DetailedReport) -> str:
             f'{running} (broad flag by design)</span></div></div>')
 
 
+def _maraka_saturn_section(r: DetailedReport) -> str:
+    """The classical 'last signal' of a maraka period — RASI half only, strictly the method,
+    never a strengthened death signal (this project's own real-outcome research measured none)."""
+    if not r.maraka_saturn:
+        return ""
+    rows = "".join(
+        f'<tr><td>{_esc(c.maha)}/{_esc(c.antar)}</td>'
+        f'<td>{_outlook_window_label(c.window_start_jd, c.window_end_jd)}</td>'
+        f'<td>{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)}</td>'
+        f'<td>{_esc(_SIGN_NAME[c.sign])}</td>'
+        f'<td class="num">{c.score}</td></tr>'
+        for c in r.maraka_saturn)
+    return (
+        '<h2 class="section" id="maraka-saturn">Maraka &times; Saturn-transit confluence</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> Raman names one specific classical '
+        'signal for a maraka period &mdash; Ayushkaraka Saturn transiting back over the sign it '
+        'occupied at your birth, or its trines, during a maraka-tier Dasha/Bhukti '
+        '(HTJAH-II:4846-4849). The windows below are where BOTH conditions line up. This shows '
+        'only the RASI half of that signature &mdash; the Navamsa half is not computed here. '
+        '&ldquo;Maraka tier&rdquo; is how strong a death-signal the Bhukti&rsquo;s own lords '
+        'carry (primary=3, secondary=2, tertiary=1 per lord, summed) &mdash; a higher number '
+        'means both the MD and AD lord are more central to the classical maraka set, not a '
+        'stronger prediction.</p>'
+        '<p class="section-sub"><i>A statement of the method, not a prediction:</i> this '
+        'project&rsquo;s own real-outcome validation measured NO death-timing signal from '
+        'maraka checks generally. This section exists to show what Raman&rsquo;s textbook '
+        'method says, faithfully &mdash; never as a strengthened death signal.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>maraka bhukti</th>'
+        '<th>bhukti window</th><th>confluence window</th><th>sign</th>'
+        '<th class="num">maraka tier</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def _gochara_table(r: DetailedReport) -> str:
     if not r.gochara:
         return ""
@@ -1284,6 +1317,35 @@ def _md_condition_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _av_dasha_seat_section(r: DetailedReport) -> str:
+    """The MD lord graded by his own Ashtakavarga bindus, painted across the whole timeline —
+    AV-tier, shown last among the Life-narrative companions under Raman's own caveat."""
+    if not r.av_dasha_seats:
+        return ""
+    rows = "".join(
+        f'<tr><td>{_esc(a.maha)}</td>'
+        f'<td>{_outlook_window_label(a.start_jd, a.end_jd)}</td>'
+        f'<td>{_esc(_SIGN_NAME[a.sign])}</td>'
+        f'<td class="num">{a.bindus if a.bindus is not None else "n/a"}</td>'
+        f'<td>{_esc(a.read)}</td></tr>'
+        for a in r.av_dasha_seats)
+    return (
+        '<h2 class="section" id="av-dasha-seat">AV dasha-seat outlook</h2>'
+        '<p class="section-sub"><i>Raman&rsquo;s own caveat governs this section:</i> '
+        '&ldquo;Ashtakavarga method is equally important. But, it does not seem to be quite '
+        'reliable&rdquo; (HTJAH-II:4453-4456). This classical method never overrides the '
+        'Raman-band readings elsewhere in this report &mdash; it is shown last among the '
+        'Life-narrative companions for that reason.</p>'
+        '<p class="section-sub"><b>In simple terms:</b> a Dasha&rsquo;s lord can also be '
+        'graded by how many Ashtakavarga bindus he holds in his OWN natal sign &mdash; 5 or '
+        'more reads auspicious, 3 or fewer adverse, exactly 4 mixed (Patel ch015:996-1034). '
+        'Painted across every Mahadasha in the window; bindus are fixed at birth, so this is a '
+        'lookup, not a new judgment.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>Mahadasha</th><th>window</th>'
+        '<th>sign</th><th class="num">bindus</th><th>reading</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def to_html(r: DetailedReport) -> str:
     """Body content + inline <style> — ready to drop into an Artifact skeleton."""
     s, b = r.synthesis, r.birth
@@ -1426,6 +1488,8 @@ def to_html(r: DetailedReport) -> str:
 
   {_maraka(r)}
 
+  {_maraka_saturn_section(r)}
+
   <h2 class="section" id="timeline">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
@@ -1441,6 +1505,8 @@ def to_html(r: DetailedReport) -> str:
   {_ishta_kashta_section(r)}
 
   {_md_condition_section(r)}
+
+  {_av_dasha_seat_section(r)}
 
   {_gochara_table(r)}
 

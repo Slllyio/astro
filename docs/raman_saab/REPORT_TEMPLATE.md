@@ -27,20 +27,22 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 15 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
 | 16 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
 | 17 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 18 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 19 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
-| 20 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
-| 21 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 22 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 23 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 24 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 25 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 26 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 27 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 28 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 29 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 30 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 31 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 18 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
+| 19 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 20 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
+| 21 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
+| 22 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
+| 23 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 24 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 25 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 26 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 27 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 28 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 29 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 30 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 31 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 32 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 33 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -287,6 +289,40 @@ bhukti (tested directly: `at_maximum` can only be true when BOTH `strong` and `v
 Grouped right after the Ishta/Kashta outlook (both are Life-narrative companions painting a
 different natal-fixed lens across the same MD timeline) as v10; `_FROZEN` updated in the same
 commit.
+
+**v11 amendment (2026-07-26) — Maraka x Saturn-transit confluence.** Fifth of the menu, and the
+one flagged from the start as needing careful framing: this is exactly the territory the
+project's own real-outcome research measured as NULL (`REAL_OUTCOME_GENERALIZATION.md`).
+`detailed_report.MarakaSaturnConfluence` / `_maraka_saturn_confluences()` cross-reference the
+ayurdaya-anchored maraka death-window (`vimshottari.death_window()`) against transiting Saturn
+sitting on the NATAL Saturn's own rasi or trine — Raman's classical "last signal" of a maraka
+period (HTJAH-II:4846-4849), the RASI HALF ONLY (the Amsa/navamsa half is not computed, same
+honest scope as `SYN_R9_MARAKA_SATURN_SIGNAL`'s one-liner). Saturn's transit is computed FRESH
+across the death-window's own span via a dedicated `gochara_timeline()` call — NOT reused from
+the report's default -10/+20-year `gochara_outlook`, since the ayurdaya-anchored death window
+routinely runs decades beyond that display window (confirmed on the Mainpuri chart: confluences
+land in the 2060s-2070s while the default outlook only covers 2016-2046) and silently missing
+those years would be exactly the kind of silent approximation the project's conventions forbid.
+Both the Markdown and HTML renderings repeat, verbatim, that this is **a statement of the method,
+not a prediction** and name the null real-outcome finding explicitly — this section must never be
+read as a strengthened death signal. Inserted right after The maraka scheme (the section it
+directly extends) as v11; `_FROZEN` updated in the same commit.
+
+**v12 amendment (2026-07-26) — AV dasha-seat outlook.** Sixth and last of the menu — the
+candidate flagged in advance as weakest, since it is AV-tier and must never visually outweigh the
+Raman-band content. `detailed_report.AvDashaSeat` / `_av_dasha_seats()` extend
+`SYN_N7_AV_DASHA_SEAT`'s current-MD-only reading (a Mahadasha lord graded by his own
+Ashtakavarga bindus at his natal seat — 5+ auspicious, <=3 adverse, 4 mixed, Patel ch015:996-1034)
+across every Mahadasha run, the same `_md_runs` collapse `_md_lord_conditions` already uses.
+Deliberately kept to the SIMPLER "dasha seat" half of N7 only — the companion `SYN_N7_AV_ANTARDASHA`
+one-liner (grading the bhukti lord's houses inside the MD lord's own Ashtakavarga) has a
+different, per-house shape not well suited to a flat look-ahead table, and was left as the
+existing one-liner rather than force-fit. Rendered with Raman's own reliability caveat
+("Ashtakavarga method is equally important. But, it does not seem to be quite reliable",
+HTJAH-II:4453-4456) printed at the section head in both renderers, and placed LAST of the three
+Life-narrative companions (after Ishta/Kashta and MD-lord condition, both Raman-band) as v12;
+`_FROZEN` updated in the same commit. This completes the six-candidate menu discussed with the
+user one by one.
 
 ## Standing rules
 

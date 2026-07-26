@@ -1123,7 +1123,22 @@ def _synthesis_section(r: DetailedReport) -> str:
              '<p class="section-sub">Where the report&rsquo;s sections meet: encoded '
              'combination doctrine connecting Shadbala, yogas, dashas, transits, Ashtakavarga '
              'and the houses. Each insight leads with a plain-language reading, backed by the '
-             'exact text it draws from &mdash; not a prediction.</p>']
+             'exact text it draws from &mdash; not a prediction.</p>'
+             '<p class="section-sub">How to read several strength measures at once (the '
+             'general form of the House strength cross-check&rsquo;s own finding above): '
+             'Raman&rsquo;s system tracks a house/planet/period along SEVERAL INDEPENDENT '
+             'axes, not one score. The VERDICT (favourable/afflicted) comes from aspect, '
+             'lordship and association &mdash; a direction (HTJAH-I:468-478 lists a '
+             'house&rsquo;s strength and its aspects/qualities as separate considerations). '
+             'Bhava Bala/Shadbala is mostly a MAGNITUDE &mdash; how fully results are enjoyed, '
+             'not whether they are good (GBB-9:32-34). Avastha is a STATE the planet acts '
+             'from (Deeptadi avasthas, HPA Ch.7). Ishta/Kashta is a period&rsquo;s own '
+             'good-vs-hard TENDENCY (GBB-10:134). Ashtakavarga bindus are a separate, '
+             'lower-reliability CORROBORATING tier by Raman&rsquo;s own admission '
+             '(&ldquo;it does not seem to be quite reliable,&rdquo; HTJAH-II:4453-4456). '
+             'These axes are not meant to always agree &mdash; a planet can be strong yet in '
+             'a hard state, or favourable yet thin &mdash; and reading two of them apart is '
+             'not a contradiction to resolve.</p>']
     cur = None
     for ins in r.insights:
         if ins.rule.band != cur:

@@ -2018,6 +2018,20 @@ def to_markdown(r: DetailedReport) -> str:
              "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Each insight leads "
              "with a plain-language reading, backed by the exact text it draws from. As "
              "everywhere in this report: how the method reads this chart, not a prediction._")
+    L.append("")
+    L.append("_How to read several strength measures at once (the general form of the House "
+             "strength cross-check's own finding above): Raman's system tracks a house/planet/"
+             "period along SEVERAL INDEPENDENT axes, not one score. The VERDICT (favourable/"
+             "afflicted) comes from aspect, lordship and association — a direction "
+             "(HTJAH-I:468-478 lists a house's strength and its aspects/qualities as separate "
+             "considerations). Bhava Bala/Shadbala is mostly a MAGNITUDE — how fully results are "
+             "enjoyed, not whether they are good (GBB-9:32-34). Avastha is a STATE the planet "
+             "acts from (Deeptadi avasthas, HPA Ch.7). Ishta/Kashta is a period's own good-vs-"
+             "hard TENDENCY (GBB-10:134). Ashtakavarga bindus are a separate, lower-reliability "
+             "CORROBORATING tier by Raman's own admission (\"it does not seem to be quite "
+             "reliable,\" HTJAH-II:4453-4456). These axes are not meant to always agree — a "
+             "planet can be strong yet in a hard state, or favourable yet thin — and reading two "
+             "of them apart is not a contradiction to resolve._")
     _BAND_HEAD = {
         "raman": ("### Raman's own combination doctrine", None),
         "classical": ("### Classical corroboration",

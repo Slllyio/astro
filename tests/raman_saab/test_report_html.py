@@ -273,6 +273,21 @@ class TestReportHtml:
         assert section.count("<tr>") == 13    # header + 12 houses
         assert "of 12" in section
 
+    def test_integrated_insights_generalizes_the_multi_axis_principle(self, body):
+        """Item #8 of the confluence audit: right after the Integrated insights heading, a
+        second section-sub paragraph must generalize the House strength cross-check's
+        magnitude-vs-direction finding to Avastha (state), Ishta/Kashta (tendency) and AV
+        bindus (a lower-reliability corroboration tier) as independent axes."""
+        s_start = body.find('id="synthesis"')
+        g_start = body.find('id="glossary"')
+        assert 0 <= s_start < g_start
+        section = body[s_start:g_start]
+        assert "independent axes" in section.lower()
+        assert "Deeptadi avasthas" in section and "HPA Ch.7" in section
+        assert "GBB-10:134" in section
+        assert "HTJAH-II:4453-4456" in section
+        assert "not a contradiction" in section
+
     def test_ishta_kashta_outlook_renders(self, report, body):
         """Ishta/Kashta outlook sits right after Life-narrative and before the MD-lord
         condition outlook, one row per bhukti in the windowed timeline, doctrine cited."""

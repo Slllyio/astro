@@ -67,3 +67,22 @@ class TestBuildAndInvariant:
         """The D1 verdict path imports nothing from this surface — ratchet untouched."""
         import app.raman_saab.judges.house_template as ht
         assert "pitru_dosha" not in Path(ht.__file__).read_text(encoding="utf-8")
+
+    def test_notes_layer_ancestral_curse_apart_from_the_houses_own_significations(self) -> None:
+        """Regression test for a real tension found in a close reading of a generated report:
+        'father's curse'/'mother's curse' ancestral language reads alongside a favourable House 9
+        (father/fortune) or House 4 (mother/home) verdict elsewhere in the report with no note
+        on how they relate. A note must name both House-by-house reading and Your Reading as the
+        sections carrying the native's own significations, must acknowledge the curse-yoga test
+        and the house verdict share the SAME house/karaka data (not claim false independence — a
+        bphs-doctrine-reviewer pass found the first draft's 'independent classical layers' wording
+        overstated this), and must state that a favourable house reading and a curse-yoga firing
+        can still coexist because the house verdict weighs more factors, not because the two
+        layers are unrelated."""
+        r = pd.build_pitru_dosha_reading(cast_chart(_BASELINE, ayanamsa="raman"))
+        note = next((n for n in r.notes if "SAME GROUND" in n.text), None)
+        assert note is not None, [n.text for n in r.notes]
+        assert "House-by-house reading" in note.text and "Your Reading" in note.text
+        assert "coexist" in note.text
+        assert "SAME house and" in note.text          # shares data, not "independent"
+        assert "independent" not in note.text.lower()  # the overstated framing the reviewer flagged

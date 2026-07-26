@@ -651,6 +651,23 @@ class TestDetailedReport:
         assert "GBB-9:332" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
+    def test_integrated_insights_generalizes_the_multi_axis_principle(self, markdown):
+        """Item #8 of the confluence audit: the House strength cross-check's magnitude-vs-
+        direction finding must be generalized, near the top of Integrated insights, to the
+        other independent axes a reader meets throughout the report (Avastha's state,
+        Ishta/Kashta's tendency, AV bindus' lower-reliability corroboration) — so a reader
+        who sees a planet read as both strong AND in a hard Avastha, or favourable yet Kashta,
+        understands these are independent axes by design, not a contradiction."""
+        i = markdown.find("## Integrated insights")
+        assert i != -1
+        window = markdown[i:i + 2000]
+        assert "independent axes" in window.lower()
+        assert "Deeptadi avasthas" in window and "HPA Ch.7" in window
+        assert "GBB-10:134" in window          # Ishta/Kashta tendency
+        assert "GBB-9:32-34" in window          # Bhava Bala magnitude
+        assert "HTJAH-II:4453-4456" in window   # AV reliability caveat
+        assert "not a contradiction" in window
+
     def test_ishta_kashta_covers_every_bhukti_in_the_window(self, report):
         """One row per bhukti in the windowed timeline — same count and same (maha, antar,
         start, end) as the Life-narrative section already shows, no periods dropped or added."""

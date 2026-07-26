@@ -99,7 +99,15 @@ def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagg
 def _ancestral_curse(chart: RamanChart, house: int, karaka: str, curse: str,
                      cite: str) -> tuple[Tagged, ...]:
     """A śrāpa fires when the ancestor's house AND kāraka are malefic-struck and the 5th
-    (children) is itself afflicted — the curse manifesting as issue-affliction (BPHS Ch.83)."""
+    (children) is itself afflicted — the curse manifesting as issue-affliction (BPHS Ch.83).
+
+    HONEST SCOPE NOTE: this is an editorial proxy capturing the GENERAL shape of the doctrine
+    (malefic touch on the ancestor's house + affliction of its kāraka), not a literal encoding of
+    BPHS Ch.83's own numbered yogas — the on-disk source for the father's curse (BPHS-83:30)
+    lists specific technical combinations keyed to the 5th house/Ascendant/Sun-as-5th-lord chains
+    that this test does not individually reproduce, and the mother's-curse source (BPHS-83:130)
+    is only a partial OCR fragment. Flagged, not silently assumed exact (a bphs-doctrine-reviewer
+    pass, 2026-07-26, found the gap; a fuller re-encoding needs a cleaner BPHS-83 source)."""
     house_mal = _malefics_on(chart, house)
     karaka_deb = dignity(karaka, chart) == "debil"
     karaka_mal = tuple(m for m in _malefics_on(chart, _planet_house(chart, karaka)) if m != karaka
@@ -152,6 +160,18 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
                "family lineage' (BPHS-83:107). An ancestral-karma reading is a contemplative lens "
                "with a remedy — never a decree, never medical advice.", "CLASSICAL_NONCITABLE",
                "BPHS-83:107"),
+        Tagged("A DIFFERENT THRESHOLD ON THE SAME GROUND, not a contradiction: the curse-yogas "
+               "above (and the 9th-affliction note in Pitṛ-sthāna below) test the SAME house and "
+               "kāraka House-by-house reading also judges (9th/Sun for father, 4th/Moon for "
+               "mother) — but as a narrow technical gate for inherited past-life debt bearing on "
+               "PROGENY/lineage continuation specifically: malefic touch plus kāraka affliction, "
+               "nothing more. House-by-house reading and Your Reading weigh many more factors "
+               "before their verdict (lord strength, benefic yogas and aspects, the dhana floor) "
+               "— so a favourable House 9 or 4 there can still coexist with a curse-yoga firing "
+               "here: the richer house verdict can outweigh this section's narrower signal, and "
+               "neither reading is a judgment on your actual rapport with a living parent, only "
+               "on inherited ancestral debt and house-strength respectively.",
+               "CLASSICAL_NONCITABLE"),
     )
     return PitruDoshaReading(raman_children_verdict=verdict, curse_yogas=tuple(yogas),
                              pitru_bhava=tuple(pitru), notes=notes)

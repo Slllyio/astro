@@ -86,6 +86,22 @@ class TestDetector:
         for mod in (house_template, proforma):
             assert "synthesis_rules" not in inspect.getsource(mod)
 
+    def test_lp_matrix_names_itself_a_different_framework_than_ramans_own(self):
+        """Regression test for a real reader-confusion found in a close reading of a generated
+        report: the Laghu Parashari N1 matrix's 'functional benefic/malefic' role labels and
+        grades (e.g. 'very few results') can visibly clash with Raman's OWN per-Lagna
+        functional-nature table (Chart signature) and Bhukti-tier grading (Life-narrative) for
+        the SAME planet/period, with no note on which one governs. The rule's plain-language
+        text must name both of Raman's own competing surfaces and state that Raman's own
+        grading wins wherever they diverge (this project's own governance, not a new doctrine)."""
+        rule = next(r for r in SYNTHESIS_RULES if r.id == "SYN_N1_LP_MATRIX")
+        text = rule.simple_meaning
+        assert "Chart signature" in text and "Life-narrative" in text
+        assert "different" in text.lower() and "narrower" in text.lower()
+        assert "authoritative" in text.lower() and "diverge" in text.lower()
+        assert "HTJAH-I:523-604" in text
+        assert "HTJAH-I:1588-1596, 1635-1640" in text
+
 
 class TestYogaPlanets:
     """`_yoga_planets` — which planet(s) are a fired yoga's constituent 'lord(s)', widened from

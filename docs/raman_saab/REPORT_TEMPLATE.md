@@ -324,6 +324,72 @@ Life-narrative companions (after Ishta/Kashta and MD-lord condition, both Raman-
 `_FROZEN` updated in the same commit. This completes the six-candidate menu discussed with the
 user one by one.
 
+**Content amendment (2026-07-26) — the confluence audit: real bugs fixed, genuine multi-axis
+divergences explained.** The user asked for a full-report pass ("apply your astrological brain at
+peak, find the confluence points") after noticing lingering contradictions across the ~30
+sections built this session. A close-read (Explore agent) plus a root-cause investigation split
+the findings into two kinds, per the project's own doctrine — errors get fixed, genuine classical
+divergences get explained, never forced to agree:
+
+*Real bugs, fixed (presentation-only — no `Verdict` value changed):*
+- **Lord/Karaka strength mislabel.** The house-pillar line paired `pf.lord`'s name (always the
+  LAGNA-frame lord) with `lord_strong`/`navamsa_status` from whichever frame (lagna or Moon) had
+  won as the "lead" ledger — so a Moon-frame win could label the WRONG planet's strength next to
+  the lagna-frame lord's name (confirmed: "Lord Mars (strong) | Karaka Mars (weak)" for the same
+  planet). `HouseProforma.as_house_verdict()` already had the correct lagna-frame lookup, unused
+  by the renderers. Fixed via a new `_lagna_ledger()` helper in `detailed_report.py`, applied in
+  both renderers.
+- **SAV band wording disagreement.** `_house_strength_rows()`'s `>28/<28/==28` cutoff disagreed
+  with the older, more-depended-on `_ashtakavarga_overlay()`'s `>=30/<=25/else` cutoff for the SAME
+  bindu count (26-27 read "average" in one place, "below average" in the other). Aligned the newer
+  code to the established thresholds.
+- **D-7 (Saptamsa children) softened.** Added a plain-language note (mirroring the Kuja-dosha
+  precedent in `render_navamsa.py`) explaining the classical affliction phrases are shorthand for
+  DEGREES of difficulty, not stand-alone predictions, cross-referencing the calibrated House-5
+  reading as the thing that actually decides the verdict.
+- **Jaimini 9th/10th disambiguated.** Soul & destiny's Karakamsa-counted 9th/10th (Jaimini) reads
+  as ordinary D1 house numbers unless qualified — every bare reference now says "Xth from
+  Karakāṁśa" and names, for the 9th and 10th specifically, which D1 house it is NOT.
+
+*Genuine multi-axis divergences, explained (no verdict touched, an explainer added at the point of
+visible clash):*
+- **`SYN_N1_LP_MATRIX`'s `simple_meaning`** (`doctrine/synthesis_rules.py`) now states that the
+  Laghu Parashari functional-role/relation scheme is a DIFFERENT, narrower classical framework
+  than both Raman's own per-Lagna functional-nature table (Chart signature, HTJAH-I:523-604 +
+  yogakaraka overlay, HTJAH-I:606) and his Bhukti-tier grading (Life-narrative,
+  HTJAH-I:1588-1596, 1635-1640, 2588-2599) — and that per this project's own governance, Raman's
+  own grading wins wherever they diverge.
+- **Pitru dosha's new layering note** (`judges/pitru_dosha_reading.py`) explains that the
+  ancestral-curse yogas and the House 9/4 "father"/"mother" significations test the SAME
+  house/kāraka data at DIFFERENT thresholds (a narrow malefic-touch-plus-kāraka-affliction gate
+  here vs. `judge_signification`'s full multi-factor aggregation there) — not unrelated layers, so
+  a favourable House 9 or 4 verdict and a firing curse-yoga are not mutually exclusive.
+- **Integrated insights gained a general "how to read several strength measures at once" intro
+  paragraph**, generalizing the already-shipped House-strength-cross-check note (magnitude vs.
+  direction) to the FULL set of independent axes a reader meets in this report: verdict
+  (direction, HTJAH-I:468-478), Bhava Bala/Shadbala (magnitude, GBB-9:32-34), Avastha (state, HPA
+  Ch.7), Ishta/Kashta (tendency, GBB-10:134), and AV bindus (a separate, lower-reliability
+  corroborating tier, HTJAH-II:4453-4456) — stating plainly that these axes are not meant to
+  always agree, so reading two of them apart is not a contradiction to resolve.
+
+**Adversarial review.** All three explainer texts above went through a parallel
+bphs-doctrine-reviewer pass (a Workflow run, not a single sequential Agent call, per the session's
+"ultracode" mode) before shipping. Two real issues surfaced and were fixed: the `SYN_N1_LP_MATRIX`
+text had folded yogakaraka status into the wrong citation range (HTJAH-I:523-604 covers the
+per-Lagna table only; yogakaraka is HTJAH-I:606, a separate section) — split into two citations;
+and the Pitru-dosha note's first draft called the two layers "independent," which the reviewer
+correctly flagged as overstating a genuine data-sharing relationship — reworded to "a different
+threshold on the same ground." One reviewer finding (HTJAH-II:4453-4456 supposedly not resolving
+in the source) was independently re-verified and found to be a FALSE POSITIVE: the reviewer had
+searched the Volume-I source directory instead of the separate Volume-II directory
+(`how_to_judge_horoscope_raman2/`), where the quote resolves exactly at the cited lines — the
+original citation was restored unchanged. A genuine, lower-confidence, PRE-EXISTING gap also
+surfaced (out of this amendment's scope, not fixed here): `_ancestral_curse()`'s malefic-touch
+test is an editorial proxy for BPHS-83's curse doctrine, not a literal encoding of its specific
+numbered yogas (the on-disk BPHS-83 source is itself a partial OCR fragment) — flagged with an
+honest scope note in the function's own docstring; a fuller re-encoding needs a cleaner BPHS-83
+source and is left for a future session.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

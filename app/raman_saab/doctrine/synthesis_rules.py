@@ -733,8 +733,17 @@ CLASSICAL_RULES: Final[tuple[SynthesisRule, ...]] = (
         "exclusively; related but opposite characters give very few; unrelated same-character "
         "gives the Dasha lord's results; unrelated opposites give mixed results "
         "(Laghu Parashari v1:4569-4601).",
-        "Whether a period delivers cleanly, weakly or mixed depends on how its two ruling "
-        "planets stand to each other — by role and by relation.",
+        "Whether a period delivers cleanly, weakly or mixed here depends on how its two ruling "
+        "planets' Laghu Parashari roles stand to each other by relation — a narrower, "
+        "house-ownership-only role scheme, NOT the same as Raman's own per-Lagna functional-nature "
+        "table printed in Chart signature above (that one also weighs natural nature, "
+        "HTJAH-I:523-604, and yogakaraka status, HTJAH-I:606, separately). The resulting grade "
+        "is likewise a different, narrower classical framework than Raman's own Bhukti-tier "
+        "grading in Life-narrative (the house-influence-plus-association test, "
+        "HTJAH-I:1588-1596, 1635-1640, 2588-2599) — the two "
+        "measure different things and can legitimately read differently for the same period; "
+        "per this project's own governance, Raman's own grading is authoritative wherever they "
+        "diverge.",
         ("Life-narrative", "Chart signature"), None),
     SynthesisRule(
         "SYN_N1_OWN_BHUKTI", "classical", "N1",

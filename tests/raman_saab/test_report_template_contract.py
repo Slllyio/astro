@@ -51,6 +51,9 @@ _FROZEN = (
     # inserted before the glossary so reference material stays last.
     ("synthesis", "## Integrated insights", 'id="synthesis"'),
     ("glossary", "## Glossary", 'id="glossary"'),
+    # v4 amendment (2026-07-26, conscious, same-commit as the module): the Nichod capstone,
+    # appended LAST — after reference material — since it distils the whole document.
+    ("nichod", "## Nichod", 'id="nichod"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -118,8 +121,9 @@ class TestTemplateContract:
 
     def test_since_tags_are_recorded(self):
         """Every row declares the version that introduced it (v1 freeze, v2 complements,
-        v3 cross-feature synthesis)."""
-        assert {s.since for s in SECTION_CONTRACT} <= {"v1", "v2", "v3"}
+        v3 cross-feature synthesis, v4 the Nichod capstone)."""
+        assert {s.since for s in SECTION_CONTRACT} <= {"v1", "v2", "v3", "v4"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v4") == 1

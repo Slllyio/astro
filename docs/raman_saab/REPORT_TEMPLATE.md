@@ -34,6 +34,7 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 22 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
 | 23 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
 | 24 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 25 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -71,6 +72,24 @@ verdict-authority invariant and the golden ratchet), and a formal "internal capa
 event" signification taxonomy (the driver-naming + split-status combination already tells the
 reader which specific sub-matter is the exception and how many others are sound, without inventing
 a new classification scheme).
+
+**v4 amendment (2026-07-26) — the Nichod.** The report's 24 sections were each individually
+faithful but never integrated into one final read. `detailed_report.Nichod` / `build_nichod()`
+distils the WHOLE document — identity, Shadbala strength profile, longevity band, fired yogas,
+what stands out, the 12-matter tally, the running dasha period and the houses it lights (with
+split-status caution reused from the v3-adjacent fix), live transits (Vedha/AV already applied),
+and one spotlighted cross-feature synthesis insight — into a single distilled paragraph plus its
+labelled "ingredients" so the essence can be checked against its parts. **Nothing here is a new
+judgment**: every clause selects, counts, or quotes a value the rest of the report already
+computed and displayed elsewhere; `build_nichod` takes the fully-assembled `DetailedReport` as
+its only input and never calls `judge_house` or any verdict path directly. Appended as the FINAL
+section (after the Glossary — an intentional exception to "reference material stays last," since
+a capstone belongs at the very end). A cross-varga "does D-9/D-10 corroborate the Rasi house"
+check was considered and explicitly REJECTED: `NavamsaMarriageReading.core.marital_verdict` and
+`DasamsaCareerReading.core.career_verdict` are computed by calling `judge_house` on the SAME
+signification already feeding the house calibration — comparing them would be tautological, not
+a genuine independent cross-check, and encoding a new ad-hoc D9/D10 verdict instead would have
+meant inventing an unaudited judgment outside `house_template`.
 
 ## Standing rules
 

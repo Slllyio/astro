@@ -155,6 +155,9 @@ details.varga pre{margin:0;padding:1rem;overflow-x:auto;font-family:var(--mono);
 .doclist li{margin:.25rem 0;font-size:.92rem}
 .provenance{margin-top:2.6rem;padding-top:1.4rem;border-top:1px solid var(--rule);
   font-size:.78rem;color:var(--ink-soft)}
+.nichod-essence{margin:1rem 0 1.1rem;padding:1.2rem 1.4rem;border-left:4px solid var(--doctrine);
+  border-radius:0 12px 12px 0;background:color-mix(in srgb,var(--doctrine) 6%,transparent);
+  font-family:var(--serif);font-size:1.08rem;line-height:1.55;color:var(--ink)}
 a:focus-visible,summary:focus-visible{outline:2px solid var(--doctrine);outline-offset:2px}
 @media (prefers-reduced-motion:no-preference){details.varga{transition:background .2s}}
 
@@ -876,6 +879,32 @@ def _glossary() -> str:
             f'<dl>{items}</dl></details>')
 
 
+def _nichod_section(r: DetailedReport) -> str:
+    """The capstone: the report's whole distilled into one deep-level read. Nothing here is a
+    new judgment — see Nichod's docstring in detailed_report.py."""
+    n = r.nichod
+    rows = [("Identity", n.identity), ("Strength profile", n.strength_profile),
+            ("Longevity", n.longevity), ("Yogas", n.yogas), ("What stands out", n.stands_out),
+            ("The twelve matters", n.matters_tally), ("Running now", n.current_period),
+            ("Live transits", n.live_transits)]
+    if n.spotlight:
+        rows.append(("Cross-feature spotlight", n.spotlight))
+    ingredients = "".join(
+        f'<div class="vrow"><span class="vk">{_esc(k)}</span><span class="vv">{_esc(v)}</span>'
+        f'</div>' for k, v in rows)
+    caution_html = (f'<div class="split-note split-note--warn">{_esc(n.caution)}</div>'
+                   if n.caution else "")
+    return (
+        '<h2 class="section" id="nichod">Nichod</h2>'
+        '<p class="section-sub">The distilled essence: every section above, squeezed into one. '
+        'Nothing here is a new judgment &mdash; each clause selects, counts, or quotes what the '
+        'report already showed. Not a prediction.</p>'
+        f'<blockquote class="nichod-essence">{_esc(n.essence)}</blockquote>'
+        f'{caution_html}'
+        '<div class="vsec vcore"><div class="vsec-label">Ingredients</div>'
+        f'{ingredients}</div>')
+
+
 def _timeline(r: DetailedReport) -> str:
     """Windowed MD -> AD narrative graded per HTJAH-I:1592-1640: houses both lords influence are
     par-excellence when the AD lord is associated with the MD lord, else ordinary; a house only one
@@ -1027,7 +1056,8 @@ def to_html(r: DetailedReport) -> str:
       <a href="#longevity">Longevity</a><a href="#maraka">Marakas</a><a href="#now">Now</a>
       <a href="#timeline">Timeline</a><a href="#gochara">Transits</a>
       <a href="#vargas">Divisionals</a><a href="#soul">Soul</a>
-      <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a></nav>
+      <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a>
+      <a href="#nichod">Nichod</a></nav>
   </header>
 
   {_now_box(r)}
@@ -1093,6 +1123,8 @@ def to_html(r: DetailedReport) -> str:
   {_synthesis_section(r)}
 
   {_glossary()}
+
+  {_nichod_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

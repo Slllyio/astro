@@ -279,6 +279,61 @@ class TestDetailedReport:
         assert d is not None and d.signification == "incarceration" and d.inverted_warning
         assert "WARNING" in markdown and "atlas-proven INVERTED channel" in markdown
 
+    def test_nichod_integrates_every_section(self, report, markdown):
+        """The Nichod section pulls a concrete value from each major report block and appears
+        as the final section, after the Glossary."""
+        n = report.nichod
+        assert report.synthesis.lagna in n.identity
+        assert report.overview.stronger_frame.upper() in n.identity
+        assert str(round(report.longevity_years)) in n.longevity
+        assert report.longevity_class in n.longevity
+        if report.yogas:
+            assert report.yogas[0].name in n.yogas
+        if report.distinctive:
+            h0, e0 = report.distinctive[0]
+            assert f"H{h0}" in n.stands_out and e0.signification in n.stands_out
+        assert "of 12 matters" in n.matters_tally
+        assert n.essence and n.essence.endswith(
+            "should be read against the population-context percentiles shown throughout this "
+            "report.")
+        glossary_pos = markdown.find("## Glossary")
+        nichod_pos = markdown.find("## Nichod")
+        assert 0 <= glossary_pos < nichod_pos          # nichod is the true final section
+
+    def test_nichod_essence_never_a_new_judgment(self, report):
+        """build_nichod must never call judge_house or any verdict-deciding path directly —
+        it may only read the already-assembled DetailedReport (the same invariant the rest of
+        the report honours)."""
+        import inspect
+
+        from app.raman_saab.detailed_report import build_nichod
+        src = inspect.getsource(build_nichod)
+        assert "judge_house" not in src
+        assert "_decide(" not in src
+
+    def test_nichod_caution_reuses_the_split_status_fix(self, report):
+        """When the current period lights a house whose weakest-link headline disagrees with
+        its majority, the Nichod's caution names it — the same machinery as the house-by-house
+        split-status fix, not a re-derivation."""
+        n = report.nichod
+        if n.caution and "5 of 6" in n.caution:
+            assert "H10" in n.caution or "H12" in n.caution   # the canonical chart's known cases
+
+    def test_nichod_names_inverted_locations_when_present(self, report):
+        """If the chart carries atlas-proven inverted channels, the Nichod's caution says so —
+        it must not silently omit the report's own top-level honesty flag."""
+        n = report.nichod
+        if report.info.inverted_locations:
+            assert n.caution is not None
+            for loc in report.info.inverted_locations:
+                assert loc in n.caution
+
+    def test_nichod_section_is_v4_and_appended_last(self):
+        """The Nichod is registered as v4 and sits after every other contracted section."""
+        from app.raman_saab.detailed_report import SECTION_CONTRACT
+        assert SECTION_CONTRACT[-1].section_id == "nichod"
+        assert SECTION_CONTRACT[-1].since == "v4"
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

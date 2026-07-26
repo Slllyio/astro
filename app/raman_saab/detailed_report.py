@@ -20,8 +20,8 @@ Usage:
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, replace as _dc_replace
+from typing import Final, Optional
 
 from app.raman_saab import (
     render_dasamsa, render_dwadasamsa, render_general_varga, render_matter_varga,
@@ -170,6 +170,9 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # stays last; _FROZEN in the contract test was amended in the same commit per the procedure.
     SectionSpec("synthesis", "## Integrated insights", 'id="synthesis"', "v3"),
     SectionSpec("glossary", "## Glossary", 'id="glossary"', "v1"),
+    # v4 (2026-07-26, conscious amendment): the capstone integration, appended LAST — after
+    # reference material — since it distils sections that appear throughout the whole document.
+    SectionSpec("nichod", "## Nichod", 'id="nichod"', "v4"),
 )
 
 #: The HTML renderer's document order (the signature chips live in the page header, and the
@@ -178,7 +181,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "chart_signature", "now_box", "info_content", "stands_out", "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
     "maraka", "timeline", "gochara", "divisional", "career", "deeptadi", "karakamsa",
-    "soul", "pitru", "synthesis", "glossary",
+    "soul", "pitru", "synthesis", "glossary", "nichod",
 )
 
 
@@ -435,6 +438,156 @@ class DetailedReport:
     ref_jd: float                                    # the "now" anchor (on-date or today)
     window_back: int                                 # years of past shown
     window_forward: int                              # years of future shown
+    nichod: "Nichod"                                 # the one deep-level integration of it all
+
+
+@dataclass(frozen=True)
+class Nichod:
+    """The report's final distillation — 'nichod', the concentrated essence squeezed from every
+    section above into one deep-level read. NOTHING here is a new judgment: every clause
+    selects, counts, or quotes something the rest of the report has already computed and
+    disclosed (yogas from detect_yogas, the tally from the 12-matter dashboard, the split-status
+    machinery from the house-by-house fix, the running period from the timeline, transits with
+    Vedha already applied, a spotlighted cross-feature insight already fired). Presentation-only;
+    the verdict path is never touched by, nor feeds, this composition."""
+    identity: str              # Lagna, stronger frame, Atmakaraka, Karakamsa, birth nakshatra
+    strength_profile: str      # strongest/weakest graha by Shadbala
+    longevity: str             # band + years + Balarishta state
+    yogas: str                 # fired yogas, named
+    stands_out: str            # the chart's most distinctive readings
+    matters_tally: str         # the 12-matter dashboard, tallied
+    current_period: str        # running MD/AD + the houses it lights, tiered
+    live_transits: str         # net-favourable count under Vedha, subordinate to the dasha
+    spotlight: Optional[str]   # one live cross-feature synthesis insight, if any fired
+    caution: Optional[str]     # split-status / inverted-channel flags on what's active NOW
+    essence: str               # the single distilled paragraph knitting all of the above
+
+
+_EMPTY_NICHOD: Final[Nichod] = Nichod(
+    identity="", strength_profile="", longevity="", yogas="", stands_out="",
+    matters_tally="", current_period="", live_transits="", spotlight=None, caution=None,
+    essence="",
+)
+
+
+def build_nichod(r: DetailedReport) -> Nichod:
+    """Assemble the Nichod from an already-fully-built DetailedReport (every input below is
+    something the report renders elsewhere; this only selects, counts, and knits)."""
+    from collections import Counter
+
+    s, chart = r.synthesis, r.chart
+
+    moon = chart.planets.get("Moon")
+    nak = nakshatra_signature.signature_for(moon.nakshatra) if moon is not None else None
+    nak_bit = f", Moon in {nak.name} (pada {moon.pada})" if nak is not None else ""
+    identity = (f"{s.lagna} Lagna, {r.overview.stronger_frame.upper()} the stronger frame, "
+               f"Atmakaraka {s.atmakaraka}, Karakamsa {s.karakamsa}{nak_bit}")
+
+    sb = [(n, p.shadbala_rupas.total / 60.0) for n, p in chart.planets.items()
+          if p.shadbala_rupas is not None]
+    if sb:
+        sb.sort(key=lambda kv: -kv[1])
+        hi, lo = sb[0], sb[-1]
+        strength_profile = (f"{hi[0]} is the strongest graha by Shadbala ({hi[1]:.1f} rupas); "
+                           f"{lo[0]} the weakest ({lo[1]:.1f})")
+    else:
+        strength_profile = "Shadbala unavailable for this chart"
+
+    y, mo, d = r.longevity_ymd
+    bal_bit = ""
+    if r.balarishta is not None:
+        if r.balarishta.applies and not r.balarishta.cancelled:
+            bal_bit = " (Balarishta applies)"
+        elif r.balarishta.cancelled:
+            bal_bit = " (Balarishta cancelled)"
+    longevity = f"{r.longevity_class} band, about {round(r.longevity_years)} years{bal_bit}"
+
+    if r.yogas:
+        names = [yg.name for yg in r.yogas[:3]]
+        extra = f" (+{len(r.yogas) - 3} more)" if len(r.yogas) > 3 else ""
+        yogas = "; ".join(names) + extra
+    else:
+        yogas = "no encoded yoga fires on this chart"
+
+    if r.distinctive:
+        stands_out = "; ".join(f"H{h} {e.signification} ({e.favourability_percentile:.0%})"
+                               for h, e in r.distinctive[:3])
+    else:
+        stands_out = "no signification strays far from the population midpoint"
+
+    tally = Counter(en.verdict for en in r.dashboard.entries)
+    matters_tally = (f"{tally.get('favourable', 0)} of {len(r.dashboard.entries)} matters read "
+                     f"favourable, {tally.get('afflicted', 0)} afflicted"
+                     + (f", {tally.get('mixed', 0)} mixed" if tally.get("mixed") else ""))
+
+    caution_bits: list[str] = []
+    cur_tp = next((tp for tp in r.timeline.periods
+                  if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    if cur_tp is not None:
+        associated, buckets = graded_buckets(cur_tp, chart)
+        tier = "par excellence" if associated else "ordinary"
+        focus_houses = sorted({a.house for a in buckets[tier]})
+        current_period = (f"{cur_tp.period.maha} MD / {cur_tp.period.antar or cur_tp.period.maha} "
+                          f"AD, {tier}"
+                          + (f" — lighting H{', H'.join(map(str, focus_houses))}"
+                             if focus_houses else ""))
+        for h in focus_houses:
+            cal_h, mr_h = r.calibration.get(h), next(
+                (m for m in s.matters if m.house == h), None)
+            if cal_h is None or mr_h is None:
+                continue
+            note_h = tenor_note(signification_tenor_split(cal_h), mr_h.verdict)
+            if note_h:
+                caution_bits.append(f"H{h}: {note_h}")
+            drv = driver_entry(cal_h, mr_h.verdict)
+            if drv is not None and drv.inverted_warning:
+                caution_bits.append(f"H{h}'s headline is driven by an atlas-proven INVERTED "
+                                    f"channel ({drv.signification}) — treat with skepticism")
+    else:
+        current_period = "no running period resolved for this reference date"
+
+    if r.gochara:
+        fav = sum(1 for g in r.gochara if g.net_good)
+        live_transits = (f"{fav} of {len(r.gochara)} current transits read net favourable "
+                        f"(Vedha and Ashtakavarga already applied) — subordinate to the dasha")
+    else:
+        live_transits = "no transit data available for this chart"
+
+    spotlight = None
+    for ins in r.insights:
+        if ins.rule.band == "raman" and "Life-narrative" in ins.rule.links:
+            spotlight = f"{ins.rule.name} — {ins.detail}"
+            break
+    if spotlight is None and r.insights:
+        top = r.insights[0]
+        spotlight = f"{top.rule.name} — {top.detail}"
+
+    if r.info.inverted_locations:
+        caution_bits.append(
+            f"this chart carries atlas-proven inverted channels at "
+            f"{', '.join(r.info.inverted_locations)} — any headline they drive should be read "
+            f"with extra skepticism")
+    caution = "; ".join(caution_bits) if caution_bits else None
+
+    essence = (
+        f"{identity}. {longevity}. "
+        + (f"Yogas present: {yogas}. " if r.yogas else "")
+        + f"Across the twelve matters, {matters_tally}. "
+        + f"What most distinguishes this chart: {stands_out}. "
+        + f"Right now, the running period is {current_period}; "
+        + f"live transits: {live_transits}."
+        + (f" {caution}." if caution else "")
+        + " This is a distillation of the method's own reading, assembled entirely from the "
+          "sections above — not a prediction of events, and every distinctive claim here "
+          "should be read against the population-context percentiles shown throughout this "
+          "report."
+    )
+
+    return Nichod(
+        identity=identity, strength_profile=strength_profile, longevity=longevity, yogas=yogas,
+        stands_out=stands_out, matters_tally=matters_tally, current_period=current_period,
+        live_transits=live_transits, spotlight=spotlight, caution=caution, essence=essence,
+    )
 
 
 _DAYS_PER_VEDIC_YEAR: float = 365.2425
@@ -503,7 +656,7 @@ def build_detailed_report(
     insights = detect_synthesis(
         chart, ref_jd, gochara=tuple(gochara_rows), yogas=fired_yogas, sav=sav,
         bhava_balas=bhava_balas, maraka_now=maraka_now)
-    return DetailedReport(
+    provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=fired_yogas, sav=sav, insights=insights,
@@ -517,7 +670,11 @@ def build_detailed_report(
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
         window_back=years_back, window_forward=years_forward,
+        nichod=_EMPTY_NICHOD,
     )
+    # the nichod is computed LAST, from the fully-assembled report — it only selects, counts
+    # and knits together fields the rest of this function already produced.
+    return _dc_replace(provisional, nichod=build_nichod(provisional))
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
@@ -951,6 +1108,32 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     for term, meaning in GLOSSARY.items():
         L.append(f"- **{term}** — {meaning}")
+
+    # ── nichod: the capstone integration of every section above ───────────────
+    n = r.nichod
+    L.append("")
+    L.append("## Nichod")
+    L.append("")
+    L.append("_The distilled essence: every section above, squeezed into one. Nothing here is "
+             "a new judgment — each clause selects, counts, or quotes what the report already "
+             "showed. Not a prediction._")
+    L.append("")
+    L.append(f"> {n.essence}")
+    L.append("")
+    L.append("**Ingredients** (so the essence can be checked against its parts):")
+    L.append("")
+    L.append(f"- **Identity**: {n.identity}")
+    L.append(f"- **Strength profile**: {n.strength_profile}")
+    L.append(f"- **Longevity**: {n.longevity}")
+    L.append(f"- **Yogas**: {n.yogas}")
+    L.append(f"- **What stands out**: {n.stands_out}")
+    L.append(f"- **The twelve matters**: {n.matters_tally}")
+    L.append(f"- **Running now**: {n.current_period}")
+    L.append(f"- **Live transits**: {n.live_transits}")
+    if n.spotlight:
+        L.append(f"- **Cross-feature spotlight**: {n.spotlight}")
+    if n.caution:
+        L.append(f"- **Caution**: {n.caution}")
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

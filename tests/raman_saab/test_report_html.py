@@ -177,6 +177,18 @@ class TestReportHtml:
         assert "<script>alert(1)</script>" not in out
         assert "&lt;script&gt;" in out
 
+    def test_nichod_section_rendered_last(self, body):
+        """The Nichod capstone renders with its essence blockquote, appears after the
+        Glossary, and its ingredients reuse the existing .vsec/.vrow component pattern."""
+        assert 'id="nichod"' in body
+        assert 'class="nichod-essence"' in body
+        glossary_pos = body.find('id="glossary"')
+        nichod_pos = body.find('id="nichod"')
+        assert 0 <= glossary_pos < nichod_pos
+        nichod_section = body[nichod_pos:]
+        assert 'class="vsec vcore"' in nichod_section
+        assert 'class="vrow"' in nichod_section
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

@@ -242,6 +242,23 @@ directly that the two never disagree and that the function never calls `judge_ho
 right after House-by-house (the natural narrative position: read the verdicts, then see how
 strong their ground is) as v8; `_FROZEN` updated in the same commit.
 
+**Content amendment (2026-07-26) — what a strength/verdict divergence means.** The v8 table
+surfaced a striking real case (Mainpuri chart: H1 favourable yet ranked weakest, H5 afflicted yet
+ranked strongest) and the user asked for deep research into what Raman's texts say this means.
+Answer, added as an explanatory paragraph in both renderers: Raman lists a house's own strength
+and its aspects/qualities as SEPARATE considerations when judging a house (HTJAH-I:468-478 —
+"the strength of the house itself" and "the natural qualities of the house... or the planets...
+having aspects" are numbered separately); Bhava Bala is mostly a magnitude, how fully a house's
+indications are enjoyed (GBB-9:32-34), THOUGH not perfectly independent of direction — one of its
+three components, Bhava Drig Bala, is itself signed by benefic/malefic aspect (GBB-9:180-219;
+`primitives/shadbala/bhava_bala.py`'s `bhava_drig_bala()` encodes exactly this). A first draft of
+this paragraph cited `3HC:1367-1371` for the "separate axes" claim and stated strength as flatly
+"not a direction" — a bphs-doctrine-reviewer pass caught both as overstatements (3HC:1367-1371 is
+the closing line of a YOGA-interpretation method scoped to yogakaraka planetary dignity, not
+general house Bhava Bala; and the "not a direction" claim ignored the signed Bhava Drig Bala term
+this project's own code already computes) before it shipped — corrected to HTJAH-I:468-478 and
+the honest "tendency, not an absolute rule" framing above.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

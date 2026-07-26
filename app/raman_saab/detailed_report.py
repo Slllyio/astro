@@ -1417,6 +1417,20 @@ def to_markdown(r: DetailedReport) -> str:
                  "Neither measure changes the verdict shown above — they say whether it is "
                  "well-supported or sits on thinner ground.")
         L.append("")
+        L.append("_What a strong-yet-afflicted or weak-yet-favourable house means: Raman lists "
+                 "a house's own strength and its aspects/qualities as SEPARATE considerations "
+                 "when judging a house — \"the strength of the house itself\" and \"the natural "
+                 "qualities of the house... or the planets... having aspects\" are numbered "
+                 "separately (HTJAH-I:468-478). Bhava Bala is mostly a magnitude — HOW FULLY a "
+                 "house's indications are enjoyed (\"otherwise he will not sufficiently enjoy "
+                 "them,\" GBB-9:32-34) — though not perfectly independent of direction: one of "
+                 "its three components, Bhava Drig Bala, is itself signed positive or negative "
+                 "by benefic or malefic aspect (GBB-9:180-219). In practice the lord's Shadbala "
+                 "(always a magnitude, never signed) dominates the total, so a strong-but-"
+                 "afflicted house tends to deliver its difficulty with unusual force and "
+                 "certainty, and a weak-but-favourable house tends to deliver real good "
+                 "results only mildly or partly enjoyed — a tendency, not an absolute rule._")
+        L.append("")
         L.append("| House | Matter | Verdict | Bhava Bala rank | SAV bindus |")
         L.append("|---|---|---|---|---|")
         for row in r.house_strength:

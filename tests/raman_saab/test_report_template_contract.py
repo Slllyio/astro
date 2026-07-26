@@ -45,6 +45,10 @@ _FROZEN = (
     ("maraka", "## The maraka scheme", 'id="maraka"'),
     ("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"'),
     ("gochara", "## Current transits (Gochara", 'id="gochara"'),
+    # v6 amendment (2026-07-26, conscious, same-commit as the module): the Dasha x Transit
+    # confluence, inserted right after Gochara — the natural narrative position, since it
+    # cross-references the Life-narrative and Gochara sections directly above it.
+    ("dasha_transit", "## Dasha x Transit confluence", 'id="dasha-transit"'),
     ("divisional", "## Divisional deep-reads (Shodasavarga)", 'id="vargas"'),
     ("career", "## Career (HTJAH-II", 'id="career"'),
     ("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"'),
@@ -125,10 +129,12 @@ class TestTemplateContract:
 
     def test_since_tags_are_recorded(self):
         """Every row declares the version that introduced it (v1 freeze, v2 complements,
-        v3 cross-feature synthesis, v4 the Nichod capstone, v5 Your Reading)."""
-        assert {s.since for s in SECTION_CONTRACT} <= {"v1", "v2", "v3", "v4", "v5"}
+        v3 cross-feature synthesis, v4 the Nichod capstone, v5 Your Reading, v6 the Dasha x
+        Transit confluence)."""
+        assert {s.since for s in SECTION_CONTRACT} <= {"v1", "v2", "v3", "v4", "v5", "v6"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v4") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v5") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v6") == 1

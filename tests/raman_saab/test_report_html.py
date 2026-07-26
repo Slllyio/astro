@@ -215,6 +215,18 @@ class TestReportHtml:
         assert "<title>" in section and "AV support" in section
         assert ">today<" in section
 
+    def test_dasha_transit_confluence_section_renders(self, body):
+        """The Dasha x Transit confluence section sits between Gochara and Divisional deep-reads,
+        with a row per confluence window."""
+        g_start = body.find('id="gochara"')
+        d_start = body.find('id="dasha-transit"')
+        v_start = body.find('id="vargas"')
+        assert 0 <= g_start < d_start < v_start
+        section = body[d_start:v_start]
+        assert "In simple terms:" in section
+        assert "HTJAH-II:4679" in section
+        assert section.count("<tr>") >= 2   # header + at least one confluence row
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

@@ -27,15 +27,16 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 15 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
 | 16 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
 | 17 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 18 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 19 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 20 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 21 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 22 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 23 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 24 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 25 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 26 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 18 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 19 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 20 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 21 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 22 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 23 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 24 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 25 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 26 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 27 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -161,6 +162,24 @@ user") refined the outlook above rather than adding new doctrine:
   not live in hover tooltips alone (a printed page cannot hover).
 No new doctrine, no new citation, no change to `gochara_timeline`'s underlying computation —
 purely how the same already-computed windows are labelled and explained.
+
+**v6 amendment (2026-07-26) — Dasha x Transit confluence.** A user asked to "interconnect the MD
+and AD with Gochara to have a separate analysis" — a genuinely new cross-reference, not a
+presentation tweak to an existing section, so it is registered as a new contracted section (the
+same bar Nichod/synthesis met) rather than folded quietly into Gochara or Life-narrative.
+`detailed_report.ConfluenceWindow` / `_dasha_transit_confluences()` walk the ALREADY-COMPUTED
+windowed Vimshottari timeline (`DetailedReport.timeline`) against the ALREADY-COMPUTED Gochara
+outlook (`DetailedReport.gochara_outlook`) and report every stretch where a bhukti's MD or AD
+LORD is, at the same time, in one of its own favourable Gochara windows — the overlap is a plain
+intersection of two existing computations, nothing new is judged. The doctrinal basis is the
+same citation the outlook section already carries (`SYN_R8_TRANSIT_CATALYST`, HTJAH-II:4679:
+"a good transit only delivers what the running period already permits") — a confluence is the
+concrete, checkable form of that principle: the planet already ruling the period is also
+well-placed by transit. Only Jupiter/Saturn/Rahu/Ketu are tracked long-range, so a bhukti led by
+the Sun/Moon/Mars/Mercury/Venus simply contributes no row; the renderer states this is a coverage
+gap, not a judgment that the period lacks support. Inserted right after Gochara (the natural
+narrative position, matching the v2/v3 precedent of inserting new rows where they are read, not
+only at the tuple's tail) — `_FROZEN` updated in the same commit.
 
 ## Standing rules
 

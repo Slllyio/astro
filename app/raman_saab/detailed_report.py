@@ -367,6 +367,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
+    # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
+    # references the Life-narrative (timeline) and Gochara sections directly above it — the
+    # natural narrative position, the same precedent as v2/v3 mid-document insertions.
+    SectionSpec("dasha_transit", "## Dasha x Transit confluence", 'id="dasha-transit"', "v6"),
     SectionSpec("divisional", "## Divisional deep-reads (Shodasavarga)", 'id="vargas"', "v1"),
     SectionSpec("career", "## Career (HTJAH-II", 'id="career"', "v1"),
     SectionSpec("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"', "v1"),
@@ -388,8 +392,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "now_box", "info_content", "stands_out",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "ashtakavarga", "houses", "longevity",
-    "maraka", "timeline", "gochara", "divisional", "career", "deeptadi", "karakamsa",
-    "soul", "pitru", "synthesis", "glossary", "nichod",
+    "maraka", "timeline", "gochara", "dasha_transit", "divisional", "career", "deeptadi",
+    "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
 
 
@@ -619,6 +623,56 @@ def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
 
 
 @dataclass(frozen=True)
+class ConfluenceWindow:
+    """A stretch where the running Mahadasha or Antardasha LORD is, at the same time, undergoing
+    its own favourable Gochara transit — Raman's own reason this matters (transits are secondary,
+    catalytic to the Dasha, HTJAH-II:4679: "a good transit only delivers what the running period
+    already permits") applied concretely: the clearest confirmation is when the period's own
+    planet is well-placed by transit too. `role` is "MD" or "AD"; the overlap window is the
+    INTERSECTION of the bhukti's bounds and the planet's own favourable Gochara segment — both
+    already computed elsewhere in the report (DashaTimeline, gochara_outlook); nothing here is a
+    new judgment, only an overlap of two existing computations."""
+    planet: str
+    role: str                    # "MD" | "AD"
+    period_start_jd: float
+    period_end_jd: float
+    overlap_start_jd: float
+    overlap_end_jd: float
+    sign: int
+    bav_bindus: int | None
+    vedha_sample_fraction: float
+
+
+def _dasha_transit_confluences(
+    timeline: DashaTimeline, outlook: dict[str, tuple[tr.GocharaSegment, ...]],
+) -> tuple[ConfluenceWindow, ...]:
+    """Cross-reference the windowed Vimshottari timeline against the Gochara outlook: every
+    stretch where a bhukti's MD or AD lord is ALSO, at the same time, in one of its own
+    favourable Gochara windows. Only Jupiter/Saturn/Rahu/Ketu are tracked long-range (the same
+    four `gochara_timeline` covers) — a bhukti whose lord is Sun/Moon/Mars/Mercury/Venus simply
+    contributes no rows here, which the renderer states explicitly rather than implying an
+    absence of support."""
+    out: list[ConfluenceWindow] = []
+    for tp in timeline.periods:
+        p = tp.period
+        for role, lord in (("MD", p.maha), ("AD", p.antar)):
+            if lord is None or lord not in outlook:
+                continue
+            for seg in outlook[lord]:
+                if not seg.gochara_good:
+                    continue
+                lo, hi = max(p.start_jd, seg.start_jd), min(p.end_jd, seg.end_jd)
+                if lo < hi:
+                    out.append(ConfluenceWindow(
+                        planet=lord, role=role, period_start_jd=p.start_jd,
+                        period_end_jd=p.end_jd, overlap_start_jd=lo, overlap_end_jd=hi,
+                        sign=seg.sign, bav_bindus=seg.bav_bindus,
+                        vedha_sample_fraction=seg.vedha_sample_fraction))
+    out.sort(key=lambda c: c.overlap_start_jd)
+    return tuple(out)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -637,6 +691,7 @@ class DetailedReport:
     pitru: PitruDoshaReading                         # ancestral screen (non-Raman provenance)
     gochara: tuple[tr.TransitRow, ...]               # transits at ref date, WITH Vedha/net
     gochara_outlook: dict[str, tuple[tr.GocharaSegment, ...]]  # Jupiter/Saturn/Rahu/Ketu, over time
+    dasha_transit: tuple[ConfluenceWindow, ...]      # MD/AD lord x its own favourable transit
     maraka_period_now: bool                          # is the running period maraka-tier?
     insights: tuple[FiredInsight, ...]               # fired cross-feature synthesis rules
     longevity_years: float
@@ -938,6 +993,7 @@ def build_detailed_report(
         maraka_now = is_maraka_period(chart, ref_jd)
     except Exception:  # noqa: BLE001
         maraka_now = False
+    dasha_transit = _dasha_transit_confluences(timeline, gochara_outlook)
     fired_yogas = detect_yogas(chart)
     bhava_balas = {pf.house: pf.significations[0].ledger.bhava_bala
                    for pf in reading.proformas
@@ -954,7 +1010,8 @@ def build_detailed_report(
         dashboard=build_matter_varga_dashboard(chart),
         soul=build_soul_reading(chart),
         pitru=build_pitru_dosha_reading(chart),
-        gochara=tuple(gochara_rows), gochara_outlook=gochara_outlook, maraka_period_now=maraka_now,
+        gochara=tuple(gochara_rows), gochara_outlook=gochara_outlook,
+        dasha_transit=dasha_transit, maraka_period_now=maraka_now,
         longevity_years=round(ayur.total_years, 2), longevity_ymd=ayur.ymd(),
         longevity_class=ayur.longevity_class, divisional=_divisional_sections(chart),
         timeline=timeline, ref_jd=ref_jd,
@@ -1342,6 +1399,32 @@ def to_markdown(r: DetailedReport) -> str:
                      "day, for that reason; windows under a month (a planet stationing back "
                      "across a sign boundary) are dropped as sampling noise, not real transits._")
             L.append("")
+
+    # ── dasha x transit confluence: where the running period's own lord is well-transited ──
+    if r.dasha_transit:
+        L.append("## Dasha x Transit confluence")
+        L.append("")
+        L.append("**In simple terms:** these are the specific stretches where your running "
+                 "Mahadasha (MD) or Antardasha (AD) lord is *also*, at the same time, transiting "
+                 "favourably in the sky. Raman treats a transit as secondary to the Dasha "
+                 "(HTJAH-II:4679) — \"a good transit only delivers what the running period "
+                 "already permits\" — so a confluence below is the clearest confirmation this "
+                 "report can offer: the very planet already ruling this stretch of your life is "
+                 "also well placed by transit.")
+        L.append("")
+        L.append("_Only Jupiter, Saturn, Rahu and Ketu are tracked long-range (the same four the "
+                 "outlook above covers). A period led by the Sun, Moon, Mars, Mercury or Venus "
+                 "simply has no row here — that is a gap in what this cross-check computes, not a "
+                 "judgment that the period lacks support._")
+        L.append("")
+        L.append("| Period | Planet | Overlap | Supports | Strength | Interference |")
+        L.append("|---|---|---|---|---|---|")
+        for c in r.dasha_transit:
+            L.append(f"| {c.role} | {c.planet} | "
+                     f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
+                     f"{_PLANET_THEME[c.planet]} | {_outlook_strength_word(c.bav_bindus)} | "
+                     f"{_vedha_word(c.vedha_sample_fraction).split(' ')[0]} |")
+        L.append("")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:

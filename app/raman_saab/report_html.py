@@ -944,6 +944,37 @@ def _gochara_outlook_svg(r: DetailedReport) -> str:
         f'<tbody>{table_rows}</tbody></table></div></div>')
 
 
+def _dasha_transit_section(r: DetailedReport) -> str:
+    """The Dasha x Transit confluence: stretches where the running MD/AD lord is also, at the
+    same time, in one of its own favourable Gochara windows — a genuine cross-reference of the
+    Life-narrative and Gochara sections above, not a new judgment (see ConfluenceWindow's
+    docstring)."""
+    if not r.dasha_transit:
+        return ""
+    rows = "".join(
+        f'<tr><td><b>{_esc(c.role)}</b></td><td>{_esc(c.planet)}</td>'
+        f'<td>{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)}</td>'
+        f'<td>{_esc(_PLANET_THEME[c.planet])}</td>'
+        f'<td>{_esc(_outlook_strength_word(c.bav_bindus))}</td>'
+        f'<td>{_esc(_vedha_word(c.vedha_sample_fraction).split(" ")[0])}</td></tr>'
+        for c in r.dasha_transit)
+    return (
+        '<h2 class="section" id="dasha-transit">Dasha &times; Transit confluence</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> these are the specific stretches where '
+        'your running Mahadasha (MD) or Antardasha (AD) lord is <i>also</i>, at the same time, '
+        'transiting favourably in the sky. Raman treats a transit as secondary to the Dasha '
+        '(HTJAH-II:4679) &mdash; "a good transit only delivers what the running period already '
+        'permits" &mdash; so a confluence below is the clearest confirmation this report can '
+        'offer: the very planet already ruling this stretch of your life is also well placed by '
+        'transit. Only Jupiter, Saturn, Rahu and Ketu are tracked long-range (the same four the '
+        'outlook above covers); a period led by the Sun, Moon, Mars, Mercury or Venus simply has '
+        'no row here &mdash; a gap in what this cross-check computes, not a judgment that the '
+        'period lacks support.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>period</th><th>planet</th>'
+        '<th>overlap</th><th>what it supports</th><th>strength</th><th>interference</th></tr>'
+        f'</thead><tbody>{rows}</tbody></table></div>')
+
+
 def _soul_section(r: DetailedReport) -> str:
     from app.raman_saab.detailed_report import _clean_box
     body = _varga_card("Soul & destiny (extended Jaimini reading)",
@@ -1277,6 +1308,8 @@ def to_html(r: DetailedReport) -> str:
   {_timeline(r)}
 
   {_gochara_table(r)}
+
+  {_dasha_transit_section(r)}
 
   <h2 class="section" id="vargas">Divisional deep-reads</h2>
   <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one matter (Raman core

@@ -452,6 +452,50 @@ class TestDetailedReport:
                     assert f"{_jd_month_year(seg.start_jd)} to {_jd_month_year(seg.end_jd)}" \
                         not in table
 
+    def test_dasha_transit_confluences_are_real_overlaps(self, report):
+        """Every confluence window is a genuine time-overlap between a bhukti period and that
+        SAME planet's own favourable Gochara segment — not an invented combination."""
+        assert report.dasha_transit
+        outlook = report.gochara_outlook
+        periods = {(tp.period.maha, tp.period.antar, tp.period.start_jd, tp.period.end_jd)
+                   for tp in report.timeline.periods}
+        for c in report.dasha_transit:
+            assert c.role in ("MD", "AD")
+            assert c.overlap_start_jd < c.overlap_end_jd
+            assert c.period_start_jd <= c.overlap_start_jd < c.overlap_end_jd <= c.period_end_jd
+            # the overlap genuinely sits inside one of the timeline's own bhukti periods
+            assert any(c.planet in (maha, antar) and lo <= c.overlap_start_jd
+                      and c.overlap_end_jd <= hi
+                      for maha, antar, lo, hi in periods)
+            # ...and inside one of that planet's own favourable Gochara segments
+            assert any(seg.gochara_good and seg.start_jd <= c.overlap_start_jd
+                      and c.overlap_end_jd <= seg.end_jd
+                      for seg in outlook.get(c.planet, ()))
+
+    def test_dasha_transit_only_tracks_the_four_slow_movers(self, report):
+        """No confluence row names a planet outside Jupiter/Saturn/Rahu/Ketu — those are the
+        only ones gochara_timeline computes long-range."""
+        for c in report.dasha_transit:
+            assert c.planet in ("Jupiter", "Saturn", "Rahu", "Ketu")
+
+    def test_dasha_transit_never_touches_a_verdict(self):
+        """Pure overlap of two already-computed timelines — no verdict path involved."""
+        import inspect
+        from app.raman_saab.detailed_report import _dasha_transit_confluences
+        src = inspect.getsource(_dasha_transit_confluences)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_dasha_transit_confluence_section(self, markdown):
+        """The new section is nested right after Gochara, before Divisional deep-reads, and
+        cites the same transit-secondary-to-Dasha doctrine as the outlook above it."""
+        assert "## Dasha x Transit confluence" in markdown
+        i = markdown.find("## Current transits (Gochara) with Vedha")
+        j = markdown.find("## Dasha x Transit confluence")
+        k = markdown.find("## Divisional deep-reads")
+        assert 0 <= i < j < k
+        assert "HTJAH-II:4679" in markdown[j:k]
+        assert "In simple terms:" in markdown[j:j + 600]
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

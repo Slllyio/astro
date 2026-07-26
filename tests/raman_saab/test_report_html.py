@@ -59,6 +59,13 @@ class TestReportHtml:
         house rolled up as it did (this was the H10 'afflicted vs favourable career' contradiction)."""
         assert body.count('class="cal-row"') >= 50
 
+    def test_every_house_closes_with_a_conclusion_line(self, body):
+        """Each of the 12 house sections carries the Conclusion note (Raman's own closing
+        device), rendered from the same house_conclusion composer the markdown uses."""
+        assert body.count("<b>Conclusion</b>") == 12
+        first_house = body.find('class="house"')
+        assert body.find("<b>Conclusion</b>") > first_house >= 0
+
     def test_preponderance_renders_between_house_strength_and_longevity(self, body):
         """v14: the testimony-ledger table sits right after the House strength cross-check it
         generalizes, before Longevity, with one row per house and the honesty rules printed."""

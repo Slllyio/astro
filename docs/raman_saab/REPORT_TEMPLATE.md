@@ -422,6 +422,35 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-26) — the per-house Conclusion line (the faithful "Net
+Confluence").** A user proposed a "Net Confluence Synthesis Engine": collapse verdict +
+preponderance + Bhava-Bala rank + SAV into ONE of five named archetypes per house
+("Unshakeable Peak", "Latent/Mitigated Friction", ...) with rank-cutoff criteria, and asked
+for a critical review. The underlying need was accepted — the report showed the full jury roll
+with no per-house summation — and corpus research found the need is met by RAMAN'S OWN closing
+device: essentially every worked HTJAH analysis ends with a "Conclusion.—" summation weighing
+house, lord and karaka in free prose (~149 occurrences in HTJAH-I, ~107 in HTJAH-II; e.g.
+HTJAH-I:4485, 8513, 8870). `detailed_report.house_conclusion()` now composes exactly that — a
+free-prose closing line per house from already-computed rows, consumed by BOTH renderers.
+
+**The proposal's mechanism was REJECTED on review, and the rejections are on record so they
+are not re-proposed:** (1) the five named archetypes — the corpus shows Raman's only fixed
+label taxonomy is longevity's four bands (HTJAH-I:9699-9705); every house conclusion of his is
+free prose, and labels like "Unshakeable"/"Low-impact" are implicit life predictions the
+Measured Truth forbids; (2) the rank cutoffs (top-6/1-5/8-12) — GBB-9:332 ranks with NO
+cutoff (the v14 review had already removed exactly such a threshold); only the superlative
+pair (rank 1 / rank 12, his own "most powerful... least powerful" vocabulary) triggers a
+tendency clause, and those clauses are verbatim reuses of the already-reviewed v8 note; (3)
+witness-majority as mitigation ("6-1 benefic ⇒ affliction is superficial") — a verdict
+override of Raman's own weakest-link rule, contradicting v14's printed honesty rule and
+double-counting non-independent witnesses; on contested houses the Conclusion says instead
+"disclosure, not re-weighing: the headline follows the weakest-link rule and stands"; (4)
+real-world severity claims ("rarely causes acute damage") — the null real-outcome finding
+forbids them; a regression test bans the mitigation vocabulary outright. One genuinely new
+hedged clause (rank-12 + afflicted: low strength reads as indications less fully manifest, a
+tendency not a rule) was flagged to the doctrine reviewer explicitly. Presentation-only, no
+new SectionSpec row (the split-status-note precedent).
+
 **Content amendment (2026-07-26) — the confluence audit: real bugs fixed, genuine multi-axis
 divergences explained.** The user asked for a full-report pass ("apply your astrological brain at
 peak, find the confluence points") after noticing lingering contradictions across the ~30

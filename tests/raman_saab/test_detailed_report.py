@@ -1203,3 +1203,92 @@ class TestLifeChapters:
         assert "not a prediction" in section
         assert section.count("### ") >= 3 and "Mahadasha (" in section
         assert "- now" in section
+
+
+class TestHouseConclusion:
+    """The per-house Conclusion line — Raman's own closing device (a 'Conclusion.—' summation
+    ends essentially every worked HTJAH analysis), composed strictly from already-computed
+    rows. Built as the FAITHFUL version of a proposed 'Net Confluence' archetype engine whose
+    mechanism (named archetypes, rank cutoffs, witness-majority mitigation, real-world
+    severity claims) was rejected on doctrine review — several tests below pin the rejections."""
+
+    def test_conclusion_never_touches_a_verdict(self):
+        """Pure composition of computed rows — never re-judges."""
+        import inspect
+        from app.raman_saab.detailed_report import house_conclusion
+        src = inspect.getsource(house_conclusion)
+        assert "judge_house" not in src and "_decide(" not in src
+
+    def test_conclusion_facts_match_source_rows(self, report):
+        """The verdict word is the rollup verbatim; witness counts match the v14 row; the
+        rank and SAV figures match the v8 row — no recomputation drift anywhere."""
+        from app.raman_saab.detailed_report import house_conclusion
+        hs = {row.house: row for row in report.house_strength}
+        pr = {x.house: x for x in report.preponderance.houses}
+        for pf in report.proformas:
+            c = house_conclusion(report, pf.house)
+            assert f"reads {pf.rollup}" in c
+            row = hs[pf.house]
+            if row.bhava_bala_rank is not None and row.sav_bindus is not None:
+                assert f"({row.sav_bindus} bindus)" in c
+            x = pr[pf.house]
+            if x.status in ("well-corroborated", "contested"):
+                # tenor-labelled counts (a doctrine-review fix: "for/against" read as
+                # headline-relative and inverted on an afflicted headline)
+                assert f"({x.favourable} favourable, {x.adverse} adverse)" in c
+
+    def test_superlative_only_rank_clauses(self, report):
+        """ANTI-THRESHOLD GUARD: only rank 1 and rank 12 (GBB-9:332's own 'most powerful /
+        least powerful' vocabulary) may trigger a tendency clause — every middle rank renders
+        neutrally. This pins the rejection of the proposed top-6/1-5/8-12 cutoffs."""
+        from app.raman_saab.detailed_report import house_conclusion
+        hs = {row.house: row for row in report.house_strength}
+        for pf in report.proformas:
+            rank = hs[pf.house].bhava_bala_rank
+            c = house_conclusion(report, pf.house)
+            if rank is not None and 2 <= rank <= 11:
+                assert "unusual force" not in c
+                assert "mildly or partly enjoyed" not in c
+                assert "highest Bhava Bala" not in c and "lowest Bhava Bala" not in c
+                assert "a magnitude, not a direction" in c
+
+    def test_no_mitigation_vocabulary_ever(self, report):
+        """REJECTION PIN: a witness split is disclosure, never a severity demotion — the
+        vocabulary of the rejected 'Latent/Mitigated Friction' archetype must never appear."""
+        from app.raman_saab.detailed_report import house_conclusion
+        for pf in report.proformas:
+            c = house_conclusion(report, pf.house).lower()
+            for banned in ("mitigated", "superficial", "low-impact", "rarely"):
+                assert banned not in c, (pf.house, banned)
+
+    def test_contested_house_states_the_headline_stands(self, report):
+        """On every contested house the Conclusion must say the headline STANDS — the split
+        can never read as outvoting Raman's weakest-link rule."""
+        from app.raman_saab.detailed_report import house_conclusion
+        for x in report.preponderance.houses:
+            if x.status == "contested":
+                c = house_conclusion(report, x.house)
+                assert "the headline follows the weakest-link rule and stands" in c
+
+    def test_broken_karaka_wording(self, report):
+        """The broken-karaka veto wording appears exactly when karaka_intact is False."""
+        from app.raman_saab.detailed_report import _lagna_ledger, house_conclusion
+        for pf in report.proformas:
+            if not pf.significations:
+                continue
+            led = _lagna_ledger(pf.significations[0])
+            c = house_conclusion(report, pf.house)
+            if led.karaka_strong is not None and not led.karaka_intact:
+                assert "the karaka is broken" in c
+            else:
+                assert "the karaka is broken" not in c
+
+    def test_markdown_has_twelve_conclusion_lines(self, markdown):
+        """Every house block closes with its Conclusion line (blockquote, after the reading,
+        before the population context), and the section intro names Raman's own device."""
+        i = markdown.find("## House-by-house reading")
+        j = markdown.find("## House strength cross-check")
+        section = markdown[i:j]
+        assert section.count("> **Conclusion**") == 12
+        assert "Raman's own closing device" in section
+        assert "HTJAH-I:4485" in section

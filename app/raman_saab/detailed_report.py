@@ -619,6 +619,105 @@ def tenor_note(split: TenorSplit, rollup: str) -> str | None:
     return None
 
 
+#: Ordinal suffixes for the Conclusion line's neutral rank clause ("stands 7th of 12").
+def _ordinal(n: int) -> str:
+    return f"{n}{'th' if 11 <= n % 100 <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def house_conclusion(r: "DetailedReport", house: int) -> str:
+    """Raman's own closing device, applied to our house blocks: essentially every worked
+    per-house analysis in HTJAH ends with a "Conclusion.—" summation weighing house strength,
+    lord and karaka in one free-prose sentence (~149 occurrences in HTJAH-I, ~107 in HTJAH-II
+    — e.g. "The fourth house is moderately strong, but the lord and the Karaka are
+    considerably afflicted", HTJAH-I:4485; "quite strongly disposed but the malefic influences
+    are not negligible", HTJAH-I:8513; "a preponderance of benefic influences", HTJAH-I:8870).
+    His conclusions are ALWAYS free prose — his only fixed named taxonomy is longevity's four
+    bands (HTJAH-I:9699-9705) — so this composes prose, never an archetype label.
+
+    STRICT COMPOSITION RULES (each refusing a specific unfaithful mechanism):
+    - The verdict is restated verbatim, never re-derived and never outvoted — the witness
+      split is DISCLOSURE ("the headline follows the weakest-link rule and stands"), never
+      mitigation; no real-world severity claim is ever composed.
+    - The ONLY rank-conditional clauses are the two superlatives, rank 1 and rank 12 —
+      GBB-9:332's own vocabulary ("the most powerful Bhava... the least powerful") licenses
+      exactly those; every other rank renders neutrally as a magnitude. No cutoffs.
+    - Ashtakavarga is mentioned as support, never decisive (Raman's own reliability caveat).
+    - Missing inputs degrade clause-by-clause to omission — nothing is guessed.
+    One helper consumed by BOTH renderers (the `graded_buckets` no-drift precedent)."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ""
+    verdict = str(pf.rollup)
+    name = _HOUSE_NAME.get(house, "")
+    bits: list[str] = [f"The {name} house reads {verdict}"]
+
+    led = _lagna_ledger(pf.significations[0]) if pf.significations else None
+    if led is not None:
+        pillar: list[str] = []
+        if led.lord_strong is not None:
+            # On an AFFLICTION_MATTER house a bare "the lord is strong" would carry a
+            # mitigating implicature the v14 ledger explicitly reads the opposite way —
+            # reuse the ledger's own shipped gloss (bphs-doctrine-reviewer finding).
+            if led.lord_strong and "AFFLICTION_MATTER" in led.flags:
+                pillar.append("the lord is strong — on this affliction matter it feeds the "
+                              "affliction, never rescues")
+            else:
+                pillar.append(f"the lord is {'strong' if led.lord_strong else 'weak'}")
+        if led.karaka_strong is not None:
+            if not led.karaka_intact:
+                pillar.append("the karaka is broken — the affliction veto the headline obeyed")
+            else:
+                pillar.append(f"the karaka {'strong' if led.karaka_strong else 'weak'}")
+        if pillar:
+            bits.append("; ".join(pillar))
+
+    hs = next((row for row in r.house_strength if row.house == house), None)
+    if hs is not None and hs.bhava_bala_rank is not None:
+        rank = hs.bhava_bala_rank
+        if rank == 1 and verdict == "afflicted":
+            bits.append("it carries the highest Bhava Bala of the twelve — the "
+                        "strong-yet-afflicted tendency above applies: the difficulty tends "
+                        "to be delivered with unusual force and certainty")
+        elif rank == 1 and verdict == "favourable":
+            bits.append("it carries the highest Bhava Bala of the twelve — its good "
+                        "indications the most fully enjoyed")
+        elif rank == 12 and verdict == "favourable":
+            bits.append("it stands on the chart's lowest Bhava Bala — real good, mildly or "
+                        "partly enjoyed (a tendency, not an absolute rule)")
+        elif rank == 12 and verdict == "afflicted":
+            # Attributed to the report's own v8 magnitude reading, NOT to GBB-9 directly —
+            # GBB-9:32-34 is enjoyment-framed; the symmetric extension to an affliction's
+            # fullness is this project's synthesis (bphs-doctrine-reviewer finding).
+            bits.append("it stands on the chart's lowest Bhava Bala — by the magnitude "
+                        "reading in the strength cross-check above, even its difficulty "
+                        "tends to be less fully manifest (a tendency, not a rule — and never "
+                        "a reprieve)")
+        else:
+            bits.append(f"it stands {_ordinal(rank)} of 12 in Bhava Bala (a magnitude, not "
+                        f"a direction)")
+        if hs.sav_bindus is not None:
+            bits[-1] += (f", with {hs.sav_band} Ashtakavarga support ({hs.sav_bindus} "
+                         f"bindus)")
+
+    ht_row = next((x for x in r.preponderance.houses if x.house == house), None)
+    if ht_row is not None:
+        # Counts are labelled by TENOR (favourable/adverse, the preponderance table's own
+        # column sense) — "for/against" read as headline-relative and inverted on an
+        # afflicted headline (bphs-doctrine-reviewer finding).
+        if ht_row.status == "well-corroborated":
+            bits.append(f"its witnesses agree ({ht_row.favourable} favourable, "
+                        f"{ht_row.adverse} adverse) — a preponderance in the headline's own "
+                        f"direction")
+        elif ht_row.status == "contested":
+            bits.append(f"its witnesses split ({ht_row.favourable} favourable, "
+                        f"{ht_row.adverse} adverse) — disclosure, not re-weighing: the "
+                        f"headline follows the weakest-link rule and stands")
+        else:
+            bits.append("for the sub-matter split behind this headline, see the Split "
+                        "status note above")
+    return ". ".join(b[0].upper() + b[1:] for b in bits) + "."
+
+
 def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
     """(AD-associated-with-MD, {tier: [ActivatedHouseReading]}) for one bhukti.
 
@@ -2265,7 +2364,12 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     L.append(f"_{ROLLUP_RULE} Where the majority of a house's significations disagree with that "
              f"headline, a **Split status** note says so — and where the headline is driven by "
-             f"an atlas-proven inverted channel, a **WARNING** is shown inline._")
+             f"an atlas-proven inverted channel, a **WARNING** is shown inline. Each house "
+             f"closes with a **Conclusion** line — Raman's own closing device (essentially "
+             f"every worked analysis in HTJAH ends with a \"Conclusion.—\" summation weighing "
+             f"house, lord and karaka in free prose, e.g. HTJAH-I:4485, 8513, 8870) — a "
+             f"summation of rows already shown above and in the strength/preponderance "
+             f"sections below; nothing new is judged in it._")
     for mr in s.matters:
         pf = r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None
         cal_reading = r.calibration[mr.house]
@@ -2305,6 +2409,10 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {lagna_led.navamsa_status}")
             L.append("")
         L.append(mr.reading)
+        conclusion = house_conclusion(r, mr.house)
+        if conclusion:
+            L.append("")
+            L.append(f"> **Conclusion** — {conclusion}")
         cal = _calibration_lines(cal_reading)
         if cal:
             L.append("")

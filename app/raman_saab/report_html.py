@@ -429,8 +429,11 @@ def _cal_row(e) -> str:
         f'<span class="cal-note">{note}{tags}</span></div>')
 
 
-def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset()) -> str:
-    """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay."""
+def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
+                   conclusion: str = "") -> str:
+    """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
+    `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
+    closing device) — passed in, not computed here, so both renderers share one composer."""
     is_active = "ACTIVE in the running" in mr.reading
     active = '<span class="active-badge">active now</span>' if is_active else ""
     flags = [_vclass(mr.verdict)]
@@ -488,7 +491,9 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}'
         f'{pillars}<p class="doctrine">{_bold(mr.reading)}</p>'
-        f'<div class="instrument"><div class="instrument-label">Population context '
+        + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
+           if conclusion else "")
+        + f'<div class="instrument"><div class="instrument-label">Population context '
         f'&mdash; empirical, not Raman</div>{rows}</div></section>')
 
 
@@ -1573,11 +1578,12 @@ def to_html(r: DetailedReport) -> str:
 
     sig_html = "".join(_chip(k, str(v)) for k, v in sig)
 
+    from app.raman_saab.detailed_report import house_conclusion
     dist_houses = frozenset(h for h, _e in r.distinctive)
     houses = "".join(
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
-                       r.chart, dist_houses)
+                       r.chart, dist_houses, conclusion=house_conclusion(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'

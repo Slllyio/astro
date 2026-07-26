@@ -254,16 +254,28 @@ class TestReportHtml:
         assert "of 12" in section
 
     def test_ishta_kashta_outlook_renders(self, report, body):
-        """Ishta/Kashta outlook sits right after Life-narrative and before Gochara, one row per
-        bhukti in the windowed timeline, doctrine cited."""
+        """Ishta/Kashta outlook sits right after Life-narrative and before the MD-lord
+        condition outlook, one row per bhukti in the windowed timeline, doctrine cited."""
         t_start = body.find('id="timeline"')
         i_start = body.find('id="ishta-kashta"')
-        g_start = body.find('id="gochara"')
-        assert 0 <= t_start < i_start < g_start
-        section = body[i_start:g_start]
+        m_start = body.find('id="md-condition"')
+        assert 0 <= t_start < i_start < m_start
+        section = body[i_start:m_start]
         assert "In simple terms:" in section
         assert "GBB-10:134" in section
         assert section.count("<tr>") == len(report.ishta_kashta) + 1   # header + one per bhukti
+
+    def test_md_condition_outlook_renders(self, report, body):
+        """MD-lord condition outlook sits right after Ishta/Kashta and before Gochara, one row
+        per Mahadasha RUN (not per bhukti), doctrine cited."""
+        i_start = body.find('id="ishta-kashta"')
+        m_start = body.find('id="md-condition"')
+        g_start = body.find('id="gochara"')
+        assert 0 <= i_start < m_start < g_start
+        section = body[m_start:g_start]
+        assert "In simple terms:" in section
+        assert "HPA-24:51-86" in section
+        assert section.count("<tr>") == len(report.md_condition) + 1   # header + one per MD run
 
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""

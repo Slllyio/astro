@@ -39,6 +39,7 @@ from app.raman_saab.chart.model import PlanetPos
 from app.raman_saab.doctrine.synthesis_rules import (
     FiredInsight,
     _rupas,
+    _strong,
     _yoga_planets,
     descriptive_rules,
     detect_synthesis,
@@ -380,6 +381,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # the SAME windowed MD/AD timeline with each lord's Ishta/Kashta lean — the natural
     # narrative position, a colour-strip companion to the section directly above it.
     SectionSpec("ishta_kashta", "## Ishta/Kashta outlook", 'id="ishta-kashta"', "v9"),
+    # v10 (2026-07-26, conscious amendment): grouped with the Ishta/Kashta outlook, right after
+    # it — both are Life-narrative companions painting a different natal-fixed lens (strength/
+    # vargottama here, Ishta/Kashta lean there) across the SAME MD timeline.
+    SectionSpec("md_condition", "## MD-lord condition outlook", 'id="md-condition"', "v10"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
     # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
     # references the Life-narrative (timeline) and Gochara sections directly above it — the
@@ -407,7 +412,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "longevity",
-    "maraka", "timeline", "ishta_kashta", "gochara", "dasha_transit", "divisional", "career",
+    "maraka", "timeline", "ishta_kashta", "md_condition", "gochara", "dasha_transit",
+    "divisional", "career",
     "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
@@ -843,6 +849,43 @@ def _ishta_kashta_periods(
 
 
 @dataclass(frozen=True)
+class MdLordCondition:
+    """One Mahadasha RUN's own lord condition, painted across the WHOLE windowed timeline —
+    extends `SYN_R4_MD_LORD_CONDITION`'s current-period-only reading. Raman: a Dasha's result is
+    modified by its lord's strength/weakness and Navamsa disposition, reaching its maximum only
+    when strong in BOTH the rasi and navamsa charts (HPA-24:51-86). Strength, vargottama and
+    navamsa are all natal-fixed — a pure lookup onto the already-built MD timeline (via
+    `_md_runs`), not a new computation. Scoped to the MD lord only, matching SYN_R4's own scope
+    (it never checks the AD/bhukti lord)."""
+    maha: str
+    start_jd: float
+    end_jd: float
+    strong: Optional[bool]      # Shadbala is_powerful; None if no Shadbala data
+    vargottama: bool
+    navamsa_sign: Optional[int]
+    at_maximum: bool            # strong AND vargottama — HPA-24's stated maximum
+
+
+def _md_lord_conditions(
+    chart: RamanChart, timeline: DashaTimeline,
+) -> tuple[MdLordCondition, ...]:
+    """The full-timeline version of `SYN_R4_MD_LORD_CONDITION`'s current-MD-only one-liner —
+    one row per contiguous Mahadasha run (`_md_runs`, not per bhukti, since the rule is scoped
+    to the MD lord alone)."""
+    out: list[MdLordCondition] = []
+    for maha, start_jd, end_jd in _md_runs(timeline):
+        pos = chart.planets.get(maha)
+        if pos is None:
+            continue
+        strong = _strong(chart, maha)
+        out.append(MdLordCondition(
+            maha=maha, start_jd=start_jd, end_jd=end_jd, strong=strong,
+            vargottama=pos.vargottama, navamsa_sign=pos.navamsa_sign,
+            at_maximum=bool(strong) and pos.vargottama))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -855,6 +898,7 @@ class DetailedReport:
     yoga_timing: tuple[YogaTiming, ...]               # when a yoga's own lord runs as MD/AD
     house_strength: tuple[HouseStrengthRow, ...]      # Bhava Bala rank + SAV band per house
     ishta_kashta: tuple[IshtaKashtaPeriod, ...]       # Ishta/Kashta lean per MD/AD, whole timeline
+    md_condition: tuple[MdLordCondition, ...]         # MD lord strength/vargottama, whole timeline
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -1177,11 +1221,12 @@ def build_detailed_report(
         bhava_balas=bhava_balas, maraka_now=maraka_now)
     house_strength = _house_strength_rows(reading.proformas, chart.asc_sign, sav, bhava_balas)
     ishta_kashta = _ishta_kashta_periods(chart, timeline)
+    md_condition = _md_lord_conditions(chart, timeline)
     provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=fired_yogas, yoga_timing=yoga_timing, house_strength=house_strength,
-        ishta_kashta=ishta_kashta,
+        ishta_kashta=ishta_kashta, md_condition=md_condition,
         sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
@@ -1610,6 +1655,28 @@ def to_markdown(r: DetailedReport) -> str:
             tail = f" — {ik.prevails}" if ik.prevails else ""
             L.append(f"- **{ad} AD** ({_outlook_window_label(ik.start_jd, ik.end_jd)}): "
                      f"{lean_word}{tail}")
+        L.append("")
+
+    # ── md-lord condition outlook: strength/vargottama painted onto the MD timeline ──
+    if r.md_condition:
+        L.append("## MD-lord condition outlook")
+        L.append("")
+        L.append("**In simple terms:** a Dasha delivers in proportion to how well-placed its "
+                 "own ruling planet actually is — its strength, and its Navamsa disposition — "
+                 "reaching its stated maximum only when strong in BOTH the main chart and the "
+                 "Navamsa (HPA-24:51-86). This is the SAME check the Life-narrative timeline "
+                 "above already runs for whichever Mahadasha is current, painted onto every "
+                 "Mahadasha in the window — Shadbala strength, Vargottama and Navamsa are all "
+                 "fixed at birth, so this is a lookup, not a new judgment.")
+        L.append("")
+        L.append("| Mahadasha | Window | Shadbala | Vargottama | Navamsa | At maximum |")
+        L.append("|---|---|---|---|---|---|")
+        for c in r.md_condition:
+            strong_word = "strong" if c.strong else "weak" if c.strong is False else "unknown"
+            nav = _SIGN_NAME[c.navamsa_sign] if c.navamsa_sign else "n/a"
+            L.append(f"| {c.maha} | {_outlook_window_label(c.start_jd, c.end_jd)} | "
+                     f"{strong_word} | {'yes' if c.vargottama else 'no'} | {nav} | "
+                     f"{'yes' if c.at_maximum else 'no'} |")
         L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────

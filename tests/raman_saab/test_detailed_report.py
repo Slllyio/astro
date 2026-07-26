@@ -672,6 +672,41 @@ class TestDetailedReport:
         assert "GBB-10:134" in markdown[j:k]
         assert "In simple terms:" in markdown[j:j + 600]
 
+    def test_md_condition_covers_every_md_run_not_every_bhukti(self, report):
+        """One row per contiguous Mahadasha run — fewer rows than r.timeline.periods (which is
+        bhukti-level), since SYN_R4 is scoped to the MD lord only."""
+        assert report.md_condition
+        assert len(report.md_condition) <= len(report.timeline.periods)
+        # no two consecutive rows name the same MD lord (that would mean _md_runs failed to merge)
+        for a, b in zip(report.md_condition, report.md_condition[1:]):
+            assert a.maha != b.maha or a.end_jd != b.start_jd
+
+    def test_md_condition_at_maximum_requires_both_strong_and_vargottama(self, report):
+        """HPA-24:51-86's stated maximum needs BOTH conditions — at_maximum must never be True
+        when either is missing."""
+        for c in report.md_condition:
+            if c.at_maximum:
+                assert c.strong is True and c.vargottama is True
+
+    def test_md_condition_never_touches_a_verdict(self):
+        """Pure lookup of natal-fixed Shadbala/vargottama/navamsa onto the already-built MD
+        timeline — no verdict path."""
+        import inspect
+        from app.raman_saab.detailed_report import _md_lord_conditions
+        src = inspect.getsource(_md_lord_conditions)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_markdown_shows_md_condition_outlook(self, markdown):
+        """The new section sits right after Ishta/Kashta outlook, before Gochara, and cites
+        HPA-24 for the strong-in-both-charts maximum."""
+        assert "## MD-lord condition outlook" in markdown
+        i = markdown.find("## Ishta/Kashta outlook")
+        j = markdown.find("## MD-lord condition outlook")
+        k = markdown.find("## Current transits (Gochara")
+        assert 0 <= i < j < k
+        assert "HPA-24:51-86" in markdown[j:k]
+        assert "In simple terms:" in markdown[j:j + 600]
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

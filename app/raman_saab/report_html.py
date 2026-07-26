@@ -1257,6 +1257,33 @@ def _ishta_kashta_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _md_condition_section(r: DetailedReport) -> str:
+    """The full-timeline version of SYN_R4's current-MD-only strength/vargottama check —
+    painted across every Mahadasha run in the window, one row each."""
+    if not r.md_condition:
+        return ""
+    rows = "".join(
+        f'<tr><td>{_esc(c.maha)}</td>'
+        f'<td>{_outlook_window_label(c.start_jd, c.end_jd)}</td>'
+        f'<td>{"strong" if c.strong else "weak" if c.strong is False else "unknown"}</td>'
+        f'<td>{"yes" if c.vargottama else "no"}</td>'
+        f'<td>{_esc(_SIGN_NAME[c.navamsa_sign]) if c.navamsa_sign else "n/a"}</td>'
+        f'<td>{"yes" if c.at_maximum else "no"}</td></tr>'
+        for c in r.md_condition)
+    return (
+        '<h2 class="section" id="md-condition">MD-lord condition outlook</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> a Dasha delivers in proportion to how '
+        'well-placed its own ruling planet actually is &mdash; its strength, and its Navamsa '
+        'disposition &mdash; reaching its stated maximum only when strong in BOTH the main '
+        'chart and the Navamsa (HPA-24:51-86). This is the SAME check the Life-narrative '
+        'timeline above already runs for whichever Mahadasha is current, painted onto every '
+        'Mahadasha in the window &mdash; Shadbala strength, Vargottama and Navamsa are all '
+        'fixed at birth, so this is a lookup, not a new judgment.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>Mahadasha</th><th>window</th>'
+        '<th>Shadbala</th><th>vargottama</th><th>navamsa</th><th>at maximum</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def to_html(r: DetailedReport) -> str:
     """Body content + inline <style> — ready to drop into an Artifact skeleton."""
     s, b = r.synthesis, r.birth
@@ -1412,6 +1439,8 @@ def to_html(r: DetailedReport) -> str:
   {_timeline(r)}
 
   {_ishta_kashta_section(r)}
+
+  {_md_condition_section(r)}
 
   {_gochara_table(r)}
 

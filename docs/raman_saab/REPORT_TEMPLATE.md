@@ -29,17 +29,18 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 17 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
 | 18 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
 | 19 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
-| 20 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 21 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 22 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 23 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 24 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 25 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 26 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 27 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 28 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 29 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 30 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 20 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
+| 21 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 22 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 23 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 24 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 25 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 26 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 27 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 28 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 29 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 30 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 31 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -273,6 +274,19 @@ still only states the MD-predominates direction (GBB-10:145-152 asserts no conve
 SYN_R5's own encoding) — never claims the AD lord's character wins. Inserted right after
 Life-narrative (the natural narrative position: a colour-strip companion to the section directly
 above it) as v9; `_FROZEN` updated in the same commit.
+
+**v10 amendment (2026-07-26) — MD-lord condition outlook.** Fourth of the walked-through menu.
+`detailed_report.MdLordCondition` / `_md_lord_conditions()` extend `SYN_R4_MD_LORD_CONDITION`'s
+current-MD-only reading to every Mahadasha RUN in the windowed timeline — Raman's rule that a
+Dasha's result is modified by its lord's strength/weakness and Navamsa disposition, reaching its
+stated maximum only when strong in BOTH the rasi and Navamsa charts (HPA-24:51-86). Scoped to the
+MD lord only (SYN_R4 never checks the AD/bhukti lord, and neither does this). Strength,
+Vargottama and Navamsa are all natal-fixed — a pure lookup onto `_md_runs` (the same MD-run
+collapse `_yoga_dasha_confluences` already uses), one row per contiguous Mahadasha, not one per
+bhukti (tested directly: `at_maximum` can only be true when BOTH `strong` and `vargottama` hold).
+Grouped right after the Ishta/Kashta outlook (both are Life-narrative companions painting a
+different natal-fixed lens across the same MD timeline) as v10; `_FROZEN` updated in the same
+commit.
 
 ## Standing rules
 

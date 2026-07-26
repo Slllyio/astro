@@ -857,8 +857,10 @@ CLASSICAL_RULES: Final[tuple[SynthesisRule, ...]] = (
         "Bhava + lord + karaka judged as one tripod", "descriptive", _C,
         "Uttara Kalamrita: a house is ruined only when the bhava, its lord AND its karaka are "
         "all hemmed by malefics, conjoined with malefics and weak, with hostile navamsa "
-        "dispositors (ch003:1594-1599) — the full three-legged test. (Encoded pending a "
-        "hemming primitive; the engine's three-pillar judge is the Raman-side analogue.)",
+        "dispositors (ch003:1594-1599) — the full three-legged test. (On record: the hemming "
+        "primitive it needed now exists — `doctrine.hemming` covers both the planet-leg (lord/"
+        "karaka) and the house-leg (the bhava) — so the tripod is buildable; the engine's "
+        "three-pillar judge remains the Raman-side analogue that already decides the verdict.)",
         "A life-area truly fails only when all three of its supports fail together.",
         ("House-by-house",), None),
     SynthesisRule(

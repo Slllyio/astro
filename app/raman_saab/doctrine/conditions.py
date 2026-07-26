@@ -562,22 +562,14 @@ class LordsConjunct(Condition):
 
 class HemmedBy(Condition):
     """Papakartari/Subhakartari: both the 2nd and 12th from `target` hold a planet of
-    `klass` ∈ {"malefic","benefic"} (H1)."""
+    `klass` ∈ {"malefic","benefic"} (H1). The planet-form of the shared `doctrine.hemming`
+    geometry (target is a planet name; an absent planet reads False)."""
     def __init__(self, target: str, klass: str) -> None:
         self.target, self.klass = target, klass
 
     def evaluate(self, ctx: EvalContext) -> bool:
-        t = ctx.chart.planets.get(self.target)
-        if t is None:
-            return False
-        group = NATURAL_MALEFICS if self.klass == "malefic" else NATURAL_BENEFICS
-        second = (t.rasi_house % 12) + 1
-        twelfth = ((t.rasi_house - 2) % 12) + 1
-        houses = {n: False for n in (second, twelfth)}
-        for name, p in ctx.chart.planets.items():
-            if name != self.target and name in group and p.rasi_house in houses:
-                houses[p.rasi_house] = True
-        return all(houses.values())
+        from app.raman_saab.doctrine import hemming
+        return hemming.hemmed_planet(ctx.chart, self.target, self.klass)
 
 
 # ── functional nature (C4) & nakshatra (C3) ──────────────────────────────────

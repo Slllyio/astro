@@ -32,7 +32,7 @@ from typing import Final
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
-from app.raman_saab.doctrine import drishti
+from app.raman_saab.doctrine import drishti, hemming
 from app.raman_saab.judges.house_template import judge_house
 from app.raman_saab.judges.saptamsa_reading import Tagged
 from app.raman_saab.primitives.dignity import dignity
@@ -109,12 +109,11 @@ def _serpent_curse(chart: RamanChart, fifth: int, fifth_lord: str) -> tuple[Tagg
 # this section's heading). CLASSICAL_NONCITABLE throughout (BPHS is outside the
 # live registry — the divergence firewall).
 #
-# ON RECORD, NOT ENCODED (each needs a primitive the engine lacks, or clean text):
-#   father #1 (BPHS-83:33) and #2 (BPHS-83:36) — papakartari (hemmed between
-#     malefics); the SYN_N6 precedent: recorded pending a hemming primitive.
-#   mother #1's hemming DISJUNCT (BPHS-83-ii:114) — same; its debilitation
-#     disjunct IS encoded below.
-#   mother #9 (BPHS-83-ii:144) — hemming again.
+# NOW ENCODED via the `doctrine.hemming` primitive (2026-07-27): father #1-2,
+#   mother #1's hemming disjunct, and mother #9 (Ascendant house-hemming). The
+#   "on record pending a hemming primitive" gap that mirrored SYN_N6 is closed.
+#
+# STILL ON RECORD, NOT ENCODED:
 #   mother #10 (BPHS-83-ii:148) — the OCR garbles the clause ("...and the lord of
 #     the 4th and the Moon or in the 6th...") beyond honest reconstruction.
 #   Praśna Mārga's own father's-curse variant (PrasnaMarga-18:695-696) — needs
@@ -201,8 +200,30 @@ def _exchange(chart: RamanChart, h1: int, h2: int) -> bool:
             and _in_h(chart, _lord_of(chart, h2), h1))
 
 
+def _malefic_aspects(chart: RamanChart, planet: str) -> bool:
+    """A natural malefic casts a whole-sign aspect on `planet` (drishti, the CLAUDE.md lock)."""
+    return any(a in NATURAL_MALEFICS for a in drishti.aspecting_planets(planet, chart))
+
+
+def _in_saturn_navamsa(chart: RamanChart, planet: str) -> bool:
+    p = chart.planets.get(planet)
+    return p is not None and SIGN_LORDS[p.navamsa_sign] == "Saturn"
+
+
+def _waning_moon(chart: RamanChart) -> bool:
+    """Krishna-paksha Moon — Moon 180°+ ahead of the Sun (the `conditions.MoonPhase` formula)."""
+    moon, sun = chart.planets.get("Moon"), chart.planets.get("Sun")
+    if moon is None or sun is None:
+        return False
+    return (moon.lon - sun.lon) % 360.0 >= 180.0
+
+
 #: (verse-number-in-list, cite, source-faithful condition text, checker)
 _FATHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
+    (1, "BPHS-83:33", "the Sun in the 5th, debilitated and in Saturn's Navamsa, hemmed in "
+                      "between malefics (papakartari)"),
+    (2, "BPHS-83:36", "the Sun as 5th lord in a trikona with a malefic, hemmed in between "
+                      "malefics, and aspected by a malefic"),
     (3, "BPHS-83:41", "Jupiter in the Sun's sign, the 5th lord with the Sun, and the "
                       "Ascendant and the 5th occupied by malefics"),
     (4, "BPHS-83:47", "the Ascendant lord devoid of strength in the 5th, the 5th lord "
@@ -226,6 +247,15 @@ _FATHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
 
 def _father_curse_fires(chart: RamanChart, num: int) -> bool:
     l5, l10 = _lord_of(chart, 5), _lord_of(chart, 10)
+    if num == 1:
+        return (_in_h(chart, "Sun", 5) and _debil(chart, "Sun")
+                and _in_saturn_navamsa(chart, "Sun")
+                and hemming.hemmed_planet(chart, "Sun"))
+    if num == 2:
+        return (l5 == "Sun" and _in_h(chart, "Sun", 1, 5, 9)
+                and _with_malefics(chart, "Sun")
+                and hemming.hemmed_planet(chart, "Sun")
+                and _malefic_aspects(chart, "Sun"))
     if num == 3:
         jp = chart.planets.get("Jupiter")
         return (jp is not None and jp.sign == 5                      # Leo, the Sun's sign
@@ -264,9 +294,8 @@ def _father_curse_fires(chart: RamanChart, num: int) -> bool:
 
 
 _MOTHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
-    (1, "BPHS-83-ii:114", "the Moon as 5th lord in her sign of debilitation, and the 4th and "
-                          "the 5th occupied by malefics (the verse's hemming disjunct is on "
-                          "record, unencoded)"),
+    (1, "BPHS-83-ii:114", "the Moon as 5th lord in her sign of debilitation OR hemmed in "
+                          "between malefics, and the 4th and the 5th occupied by malefics"),
     (2, "BPHS-83-ii:118", "Saturn in the 11th, malefics in the 4th, and the Moon in the 5th "
                           "in her sign of debilitation"),
     (3, "BPHS-83-ii:121", "the 5th lord in the 6th/8th/12th, the Ascendant lord debilitated, "
@@ -281,6 +310,9 @@ _MOTHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
                           "the 8th, and the Ascendant occupied by the 8th and 10th lords"),
     (8, "BPHS-83-ii:140", "the Ascendant occupied by the 6th and 8th lords, the 4th lord in "
                           "the 12th, and the Moon and Jupiter, with malefics, in the 5th"),
+    (9, "BPHS-83-ii:144", "the Ascendant hemmed in between malefics (papakartari), a waning "
+                          "Moon in the 7th, and Rahu and Saturn in the 4th and the 5th "
+                          "respectively"),
     (11, "BPHS-83-ii:152", "the Cancer Ascendant occupied by Mars and Rahu, and the Moon and "
                            "Saturn in the 5th"),
     (12, "BPHS-83-ii:161", "Mars, Rahu, the Sun and Saturn in the Ascendant, 5th, 8th and "
@@ -294,7 +326,11 @@ _MOTHER_CURSE_YOGAS: Final[tuple[tuple[int, str, str], ...]] = (
 def _mother_curse_fires(chart: RamanChart, num: int) -> bool:
     l5, l4, l1 = _lord_of(chart, 5), _lord_of(chart, 4), _lord_of(chart, 1)
     if num == 1:
-        return (l5 == "Moon" and _debil(chart, "Moon")
+        # "in her sign of debilitation OR is hemmed in between malefics" — both disjuncts now
+        # encoded (the hemming disjunct via the doctrine.hemming primitive); the 4th/5th-
+        # malefic clause is the shared conjunct across both (the stricter parse, disclosed).
+        return (l5 == "Moon"
+                and (_debil(chart, "Moon") or hemming.hemmed_planet(chart, "Moon"))
                 and _malefic_occupies(chart, 4) and _malefic_occupies(chart, 5))
     if num == 2:
         return (_in_h(chart, "Saturn", 11) and _malefic_occupies(chart, 4)
@@ -327,6 +363,12 @@ def _mother_curse_fires(chart: RamanChart, num: int) -> bool:
                 and _in_h(chart, l4, 12)
                 and _in_h(chart, "Moon", 5) and _in_h(chart, "Jupiter", 5)
                 and _malefic_occupies(chart, 5))
+    if num == 9:
+        # "the Ascendant is hemmed in between malefics" — the HOUSE-form hemming (the
+        # capability the planet-only leaf lacked), on a possibly-empty Lagna.
+        return (hemming.hemmed_house(chart, 1) and _waning_moon(chart)
+                and _in_h(chart, "Moon", 7)
+                and _in_h(chart, "Rahu", 4) and _in_h(chart, "Saturn", 5))
     if num == 11:
         return (chart.asc_sign == 4                                   # Cancer Ascendant
                 and _in_h(chart, "Mars", 1) and _in_h(chart, "Rahu", 1)
@@ -398,14 +440,15 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
                "with a remedy — never a decree, never medical advice.", "CLASSICAL_NONCITABLE",
                "BPHS-83:107"),
         Tagged("The curse-yogas above are BPHS Ch.83's OWN numbered verse-combinations, encoded "
-               "per verse (father: 9 of 11 from BPHS-83:33-93; mother: 11 of 13 from the "
-               "recovered BPHS-83-ii:114-166 block). ON RECORD, unencoded: father #1-2 and "
-               "mother #9 (each needs a papakartari/hemming primitive the engine lacks — the "
-               "SYN_N6 precedent), mother #1's hemming disjunct, mother #10 (OCR-garbled beyond "
-               "honest reconstruction), and Praśna Mārga's father's-curse variant "
-               "(PrasnaMarga-18:695-696 — needs Gulika, not computed). An earlier editorial "
-               "proxy (9th+Sun / 4th+Moon malefic-touch) was RETIRED by this encoding: BPHS's "
-               "own verses never use that region.", "CLASSICAL_NONCITABLE"),
+               "per verse (father: 11 of 11 from BPHS-83:33-93; mother: 12 of 13 from the "
+               "recovered BPHS-83-ii:114-166 block). The papakartari (hemming) combinations — "
+               "father #1-2, mother #1's hemming disjunct, mother #9 (Ascendant house-hemming) "
+               "— are now encoded via a dedicated hemming primitive (the SYN_N6 gap closed). "
+               "STILL ON RECORD, unencoded: mother #10 (OCR-garbled beyond honest "
+               "reconstruction) and Praśna Mārga's father's-curse variant (PrasnaMarga-18:"
+               "695-696 — needs Gulika, not computed). An earlier editorial proxy (9th+Sun / "
+               "4th+Moon malefic-touch) was RETIRED by this encoding: BPHS's own verses never "
+               "use that region.", "CLASSICAL_NONCITABLE"),
         Tagged("A DIFFERENT LAYER, not a contradiction: these curse-yogas are narrow technical "
                "gates about PROGENY/lineage continuation, keyed by BPHS's own verses to the "
                "5th house/Ascendant chains (father) and the 4th/5th/Moon chains (mother) — "

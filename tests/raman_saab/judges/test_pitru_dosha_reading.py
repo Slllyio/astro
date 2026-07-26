@@ -88,6 +88,39 @@ class TestBphsCurseYogas:
         c = _chart({"Jupiter": 5.0})
         assert pd._bphs_curse_yogas(c) == ()
 
+    def test_father_1_hemmed_sun_in_5th(self) -> None:
+        """Father #1 (BPHS-83:33): Sun in the 5th, debilitated, in Saturn's navamsa, hemmed
+        between malefics. Aries asc, 5th = Leo. The Sun is not debilitated in Leo — use a
+        sign where Sun IS debilitated AND lands in the 5th: Libra ascendant makes the 5th
+        Aquarius; the Sun in Libra (debilitation) is the 1st, not the 5th. So this needs the
+        Sun debilitated (Libra, sign 7) sitting in house 5 -> ascendant sign 3 (Gemini): 5th
+        = Libra. Sun at Libra with a Saturn-ruled navamsa, flanked by malefics in Virgo (4th)
+        and Scorpio (6th)."""
+        # Gemini asc (asc_lon ~65°): house of a planet = ((sign-3)%12)+1. Libra(7) -> house 5.
+        sun_lon = 190.0            # Libra ~10°; navamsa of Libra 10° is Gemini... adjust below
+        # find a Libra longitude whose navamsa sign is Saturn-ruled (Capricorn/Aquarius)
+        from app.raman_saab.chart import varga
+        sun_lon = next(l for l in (180 + 0.5 * k for k in range(60))
+                       if varga.navamsa_sign(l) in (10, 11))
+        c = _chart({"Sun": sun_lon, "Mars": 160.0, "Saturn": 220.0}, asc_lon=65.0)
+        # Virgo(6)=4th, Scorpio(8)=6th flank Libra(7)=5th; Mars in Virgo, Saturn in Scorpio
+        assert pd.hemming.hemmed_planet(c, "Sun")
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#1" in t.text and "father's curse" in t.text for t in fired)
+
+    def test_mother_9_ascendant_house_hemming(self) -> None:
+        """Mother #9 (BPHS-83-ii:144): the (empty) Ascendant hemmed between malefics, a waning
+        Moon in the 7th, Rahu in the 4th and Saturn in the 5th. Aries asc: malefics in Pisces
+        (12th) and Taurus (2nd) hem the empty Lagna; a waning Moon (>=180° from the Sun) in
+        Libra (7th); Rahu in Cancer (4th); Saturn in Leo (5th)."""
+        c = _chart({"Sun": 5.0, "Ketu": 345.0, "Mars": 45.0,   # Ketu Pisces(12), Mars Taurus(2)
+                    "Moon": 195.0,                              # Libra, and 190° behind... waning
+                    "Rahu": 100.0, "Saturn": 130.0})
+        assert pd.hemming.hemmed_house(c, 1)       # Lagna is empty yet hemmed — the house form
+        assert pd._waning_moon(c)
+        fired = pd._bphs_curse_yogas(c)
+        assert any("#9" in t.text and "mother's curse" in t.text for t in fired)
+
     def test_mother_5_requires_association_not_mere_placement(self) -> None:
         """Regression for the independent doctrine review's one substantive finding: mother #5's
         operative condition is the ASSOCIATION (samyoga) of Saturn/Rahu/Mars with the 5th lord
@@ -110,8 +143,8 @@ class TestBphsCurseYogas:
             assert cite.startswith("BPHS-83:")
         for _num, cite, _text in pd._MOTHER_CURSE_YOGAS:
             assert cite.startswith("BPHS-83-ii:")
-        assert len(pd._FATHER_CURSE_YOGAS) == 9      # of 11 (2 on record: hemming)
-        assert len(pd._MOTHER_CURSE_YOGAS) == 11     # of 13 (2 on record: hemming/garble)
+        assert len(pd._FATHER_CURSE_YOGAS) == 11     # all 11 (hemming now encoded)
+        assert len(pd._MOTHER_CURSE_YOGAS) == 12     # of 13 (#10 OCR-garbled, on record)
 
     def test_recovered_source_file_backs_the_mother_cites(self) -> None:
         """The BPHS-83-ii cites resolve into the RECOVERED source fragment on disk: each cited
@@ -159,12 +192,12 @@ class TestBuildAndInvariant:
         assert "independent" not in note.text.lower()  # the overstated framing the reviewer flagged
 
     def test_notes_disclose_the_encoding_scope(self) -> None:
-        """The scope note names what is encoded (9 of 11 father, 11 of 13 mother), what is on
-        record and why (hemming primitive, OCR garble, Gulika), and that the old editorial
-        proxy was retired."""
+        """The scope note names what is encoded (all 11 father, 12 of 13 mother since the
+        hemming primitive closed the gap), what is still on record and why (OCR garble,
+        Gulika), and that the old editorial proxy was retired."""
         r = pd.build_pitru_dosha_reading(cast_chart(_BASELINE, ayanamsa="raman"))
         note = next((n for n in r.notes if "verse-combinations" in n.text), None)
         assert note is not None, [n.text for n in r.notes]
-        assert "9 of 11" in note.text and "11 of 13" in note.text
+        assert "11 of 11" in note.text and "12 of 13" in note.text
         assert "hemming" in note.text and "Gulika" in note.text
         assert "RETIRED" in note.text

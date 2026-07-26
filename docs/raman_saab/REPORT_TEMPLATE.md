@@ -422,6 +422,20 @@ was fixed: `ConfluenceWindow`'s docstring presented a paraphrase in quotation ma
 verbatim HTJAH-II:4679 — replaced with Raman's actual words ("Transits are always secondary in
 importance. They are like catalytic agents...", HTJAH-II:4679-4687).
 
+**Content amendment (2026-07-27) — the papakartari (hemming) primitive; four more curse-yogas
+encoded.** A new pure-geometry module `doctrine/hemming.py` implements kartari (hemming) in
+both forms Raman uses: the PLANET form (malefics in the signs flanking a planet, already
+covered by the DSL leaf `conditions.HemmedBy`, now refactored to delegate to the shared
+geometry) and the HOUSE form (malefics in the 2nd and 12th from a possibly-EMPTY bhava — the
+capability nothing had, needed by "the Ascendant is hemmed" verses and the SYN_N6 bhava leg).
+Geometry pinned to the 2nd/12th (HTJAH-I:1181-1184), natural malefics as flankers with the
+nodes counted (HTJAH-I:1127); cancellation is deliberately left to callers as a separate
+doctrine layer (HTJAH-I:2532-2533). This closes the "on record pending a hemming primitive"
+gap: BPHS father's-curse #1-2, mother's-curse #1's hemming disjunct, and mother #9 (the empty
+Ascendant hemmed) are now encoded — father is 11 of 11, mother 12 of 13 (only #10, OCR-garbled,
+remains on record with Praśna Mārga's Gulika variant). SYN_N6's note is updated to record the
+primitive now exists. Report-only; golden ratchet unchanged (261/293); suite 4466 passed.
+
 **Content amendment (2026-07-26) — the curse-yogas re-encoded faithfully (the editorial proxy
 retired).** The pitru surface's `_ancestral_curse` proxy (9th+Sun / 4th+Moon malefic-touch,
 flagged with an honest-scope note when a reviewer found it tests a region BPHS-83's verses

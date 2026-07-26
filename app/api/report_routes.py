@@ -165,3 +165,125 @@ async def post_report(req: ReportRequest) -> dict:
         logger.exception("detailed reading failed")
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"detailed reading failed: {exc}") from exc
+
+
+# ── grounded LLM explainer + Q&A (Phase 3) ──────────────────────────────────────
+
+_HONESTY_NOTE = ("This is a plain-language explanation of what the engine computed — it answers "
+                 "'what would Raman say', faithfully to his texts, and is NOT a validated "
+                 "prediction about a life.")
+
+
+class ExplainRequest(ReportRequest):
+    scope: str = Field("summary", description="'summary', 'house:5', or 'section:<key>'")
+
+
+class AskRequest(ReportRequest):
+    question: str = Field(..., min_length=1, max_length=500)
+    scope: str = Field("whole", description="evidence scope; 'whole' grounds in the full chart")
+    history: list[tuple[str, str]] = Field(default_factory=list, max_length=20)
+
+
+def _explainer_client():
+    """The grounded-explainer LLM client, or None when disabled/unavailable (-> fallback)."""
+    from app.core.config import settings
+    if not settings.REPORT_LLM_ENABLED:
+        return None
+    from app.llm.client import AnthropicClient, AnthropicUnavailable
+    from app.llm.report_explainer import EXPLAINER_SYSTEM
+    try:
+        return AnthropicClient(system=EXPLAINER_SYSTEM)
+    except AnthropicUnavailable:
+        return None
+
+
+def _fallback_answer(r, scope: str) -> dict:
+    """Deterministic, truthful fallback when the LLM is disabled/unavailable — the report's own
+    plain prose for the scope, never an invented explanation."""
+    from app.raman_saab.report_json import to_report_dict
+    R = to_report_dict(r)
+    if scope == "summary" or scope.startswith("section:plain"):
+        pr = R["plain_reading"]
+        text = " ".join(filter(None, [pr.get("opening"), pr.get("now"), pr.get("notable")]))
+    elif scope.startswith("house:"):
+        h = int(scope.split(":", 1)[1])
+        pf = next((p for p in R["proformas"] if p["house"] == h), None)
+        text = (f"House {h} reads {pf['rollup']} (lord {pf['lord']}); "
+                + ", ".join(f"{s['signification']} {s['verdict']}" for s in pf["significations"])
+                + ".") if pf else "The engine does not compute that."
+    else:
+        text = R["nichod"].get("essence", "")
+    return {"text": text, "source": "fallback", "grounding_ratio": 1.0,
+            "anchors_used": [], "forbidden_moves": [], "honesty_note": _HONESTY_NOTE,
+            "note": "The grounded LLM explainer is disabled or unavailable; this is the "
+                    "engine's own deterministic plain-language text for this scope."}
+
+
+async def _grounded(req, question: Optional[str]) -> dict:
+    from app.core.config import settings
+    from app.llm.client import AnthropicUnavailable
+    from app.llm.report_explainer import build_evidence, explain, refusal_reason
+
+    def _work() -> dict:
+        birth = BirthData(name=req.name, year=req.year, month=req.month, day=req.day,
+                          hour=req.hour, minute=req.minute, tz_offset=req.tz_offset,
+                          latitude=req.latitude, longitude=req.longitude)
+        r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
+                                  years_back=req.years_back, years_forward=req.years_forward)
+        scope = getattr(req, "scope", "summary")
+        client = _explainer_client()
+        if client is None:
+            return _fallback_answer(r, scope)
+        ev = build_evidence(to_report_dict(r), scope)
+        # sanitize client-supplied history: only 'user'/'assistant' turns, never a forged
+        # 'system' line — the client controls both role and text (prompt-injection defence).
+        hist = tuple((role, text) for role, text in getattr(req, "history", [])
+                     if role in ("user", "assistant"))
+        try:
+            ans = explain(ev, question, client, history=hist)
+        except (AnthropicUnavailable, Exception):  # noqa: BLE001 — any LLM failure -> fallback
+            logger.warning("explainer LLM failed; serving deterministic fallback")
+            return _fallback_answer(r, scope)
+        # REFUSE (serve the deterministic fallback, discard the LLM text) on ANY hard guard —
+        # a misbehaving or prompt-injected model must never reach the user as Raman's ruling.
+        reason = refusal_reason(ans, settings.REPORT_LLM_GROUNDING_MIN)
+        if reason is not None:
+            logger.warning("explainer answer refused (%s); serving deterministic fallback", reason)
+            fb = _fallback_answer(r, scope)
+            fb["refused_llm"] = True
+            fb["refusal_reason"] = reason
+            return fb
+        return {"text": ans.text, "source": ans.source, "model": ans.model,
+                "grounding_ratio": ans.grounding_ratio, "anchors_used": list(ans.anchors_used),
+                "honesty_note": _HONESTY_NOTE,
+                "evidence": [{"n": f.n, "text": f.text, "cite": f.cite} for f in ev.facts]}
+
+    try:
+        return await asyncio.to_thread(_work)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("grounded explainer failed")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"grounded explainer failed: {exc}") from exc
+
+
+@report_router.post("/explain")
+async def post_explain(req: ExplainRequest) -> dict:
+    """A grounded, plain-language explanation of a scope of the report ('summary', 'house:N',
+    'section:<key>'). Every factual sentence is anchored to a computed finding; the answer is
+    never a new verdict or a prediction. Falls back to the report's own deterministic prose
+    when the LLM is disabled/unavailable."""
+    if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
+    return await _grounded(req, question=None)
+
+
+@report_router.post("/ask")
+async def post_ask(req: AskRequest) -> dict:
+    """A grounded Q&A turn about the chart — answered ONLY from the engine's computed, cited
+    findings, deferring ('the engine does not compute that') out of scope, never predicting.
+    `history` carries prior turns for multi-turn context (the client holds the conversation)."""
+    if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
+    return await _grounded(req, question=req.question)

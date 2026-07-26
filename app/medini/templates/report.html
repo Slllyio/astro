@@ -81,6 +81,20 @@
   .loading,.err{padding:1.4rem;color:var(--ink-2);font-style:italic}
   .err{color:var(--aff);font-style:normal}
   .pillrow{display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
+  h2.sec .explain{float:right;font:inherit;font-size:.66rem;font-weight:600;text-transform:uppercase;
+    letter-spacing:.06em;background:var(--chip);border:1px solid var(--line);color:var(--ink-2);
+    border-radius:20px;padding:.15rem .6rem;cursor:pointer;margin-top:.1rem}
+  .explained{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent-2);
+    border-radius:8px;padding:.7rem .9rem;margin:.3rem 0;font-family:var(--serif);line-height:1.6}
+  .explained .meta{font-family:var(--sans);font-size:.7rem;color:var(--ink-2);margin-top:.4rem}
+  #ask{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);
+    box-shadow:0 -6px 24px rgba(0,0,0,.12);padding:.6rem max(1rem,calc(50vw - 580px));z-index:30}
+  .ask-log{max-height:34vh;overflow:auto;margin-bottom:.4rem}
+  .ask-log .q{font-weight:600;margin:.4rem 0 .1rem} .ask-log .a{font-family:var(--serif);line-height:1.6;margin-bottom:.3rem}
+  .ask-form{display:flex;gap:.5rem}
+  .ask-form input{flex:1;font:inherit;padding:.45rem .6rem;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+  .ask-form button{font:inherit;font-weight:600;padding:.45rem 1.1rem;border:none;border-radius:7px;background:var(--accent-2);color:#fff;cursor:pointer}
+  .ask-note{font-size:.68rem;color:var(--ink-2);margin-top:.3rem}
 </style>
 </head>
 <body>
@@ -109,6 +123,15 @@
   </form>
   <div id="out"><p class="muted">Enter a birth and press <b>Read chart</b>.</p></div>
 </main></div>
+
+<div id="ask" style="display:none">
+  <div class="ask-log" id="ask-log"></div>
+  <form class="ask-form" onsubmit="return ask()">
+    <input id="ask-q" placeholder="Ask about this chart — e.g. why is my career contested?" autocomplete="off">
+    <button id="ask-go">Ask</button>
+  </form>
+  <div class="ask-note">Answers come only from what the engine computed, with citations — never a prediction.</div>
+</div>
 
 <aside id="srcpanel">
   <div class="head"><b id="src-cite">Source</b><span class="muted" id="src-work"></span>
@@ -199,11 +222,56 @@ function run(){
     .finally(()=>{ btn.disabled=false; btn.textContent='Read chart'; });
 }
 
-function H2(t){ const h=el('h2',{class:'sec'},t); h.id='sec-'+t.replace(/[^a-z]/gi,'').toLowerCase(); return h; }
+// map a section heading to an explainer scope
+const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Ruler of the nativity':'section:ruler',
+  'Preponderance of testimonies':'section:preponderance','Integrated insights':'section:insights','Yogas':'section:yogas',
+  'Nichod (the essence)':'section:nichod'};
+function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
+  hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
+  tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value }; }
+function H2(t){ const h=el('h2',{class:'sec'},t); h.id='sec-'+t.replace(/[^a-z]/gi,'').toLowerCase();
+  const scope=SCOPE[t]; if(scope){ const b=el('button',{class:'explain',type:'button'},'explain');
+    b.onclick=()=>explainSection(t,scope,h); h.append(b);} return h; }
+
+async function explainSection(title,scope,afterEl){
+  let box=afterEl.nextElementSibling;
+  if(box&&box.classList.contains('explained')){ box.remove(); return; }  // toggle off
+  box=el('div',{class:'explained'},'Explaining…'); afterEl.after(box);
+  try{
+    const r=await fetch('/report/explain',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...birthBody(),scope})});
+    const d=await r.json(); box.replaceChildren(citeText(d.text||'(no text)'));
+    const meta=el('div',{class:'meta'}); meta.append(d.honesty_note||'');
+    if(d.refused_llm) meta.append(' · ⚠ LLM answer withheld ('+(d.refusal_reason||'guard tripped')+') — engine text shown');
+    else if(d.source==='fallback') meta.append(' · (engine text — the LLM explainer is off)');
+    box.append(meta);
+  }catch(e){ box.textContent='Explain failed: '+e.message; }
+}
+
+async function ask(){
+  const q=$('ask-q').value.trim(); if(!q) return false;
+  const log=$('ask-log'); log.append(el('div',{class:'q'},'❯ '+q));
+  const a=el('div',{class:'a'},'…'); log.append(a); log.scrollTop=log.scrollHeight;
+  $('ask-q').value=''; $('ask-go').disabled=true;
+  try{
+    const r=await fetch('/report/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...birthBody(),question:q})});
+    const d=await r.json(); a.replaceChildren(citeText(d.text||'(no answer)'));
+    // always show the honesty caveat + any guard warning on the free-text Q&A surface
+    if(d.honesty_note) a.append(el('div',{class:'ask-note'},d.honesty_note));
+    if(d.refused_llm) a.append(el('div',{class:'ask-note'},'⚠ the LLM answer was withheld ('+(d.refusal_reason||'guard tripped')+'); showing the engine’s own text instead.'));
+    else if(d.warning) a.append(el('div',{class:'ask-note'},'⚠ '+d.warning));
+    else if(d.source==='fallback') a.append(el('div',{class:'ask-note'},'(engine text — the LLM explainer is off; enable REPORT_LLM_ENABLED + ANTHROPIC_API_KEY for grounded answers)'));
+  }catch(e){ a.textContent='Ask failed: '+e.message; }
+  finally{ $('ask-go').disabled=false; log.scrollTop=log.scrollHeight; }
+  return false;
+}
 
 function render(R, S){
   const out=$('out'); out.replaceChildren();
   const add=(...n)=>out.append(...n.filter(Boolean));
+  const ap=$('ask'); if(ap) ap.style.display='block';   // reveal the Q&A panel once a report exists
+  document.querySelector('main').style.paddingBottom='42vh';
 
   // ===== Your Reading (plain) =====
   add(H2('Your Reading'));

@@ -84,6 +84,18 @@ class Settings(BaseSettings):
     INTERPRET_CITATIONS_ENABLED: bool = False
     INTERPRET_CITATIONS_TOP_N: int = 3
 
+    # Grounded LLM explainer / Q&A over the detailed report (/report/explain, /report/ask).
+    # Disabled by default: fresh checkouts and CI serve the deterministic fallback (the
+    # report's own plain prose) without needing an ANTHROPIC_API_KEY. Set true (and provide
+    # the key) to enable the Sonnet-backed grounded explainer. The explainer NEVER generates a
+    # verdict — it only translates the engine's already-computed, already-cited findings.
+    REPORT_LLM_ENABLED: bool = False
+    # Minimum share of sentences that must carry a VALID [Fact N]/[Ref N] anchor for an LLM
+    # answer to be served at all; below this (or on any forbidden move / fabricated citation /
+    # bad anchor) the route REFUSES the LLM text and serves the deterministic fallback instead.
+    # 0.8 is deliberately strict — a safety-critical layer that could put words in Raman's mouth.
+    REPORT_LLM_GROUNDING_MIN: float = 0.8
+
     # extra="forbid" makes Settings(...) instantiation reject unknown kwargs.
     # It does NOT scan os.environ for unknown keys — pydantic-settings only
     # reads vars matching declared fields — so unrelated env vars (PATH etc.)

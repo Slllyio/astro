@@ -104,6 +104,9 @@ class TestPage:
                         "Integrated insights", "What stands out", "Information content",
                         "Nichod"):
             assert heading in html, f"interactive page dropped section: {heading}"
+        # the grounded explainer + Q&A wiring is present
+        assert "/report/explain" in html and "/report/ask" in html
+        assert "never a prediction" in html
 
 
 class TestSource:
@@ -131,3 +134,38 @@ class TestSource:
     async def test_malformed_cite_is_handled(self, client):
         resp = await client.get("/report/source", params={"cite": "not-a-citation"})
         assert resp.status_code == 200 and resp.json()["resolved"] is False
+
+
+class TestExplainAndAsk:
+    """The grounded LLM endpoints. In CI the LLM is disabled (no key), so both must serve the
+    truthful deterministic fallback — never a fabricated explanation, always the honesty note."""
+
+    @pytest.mark.asyncio
+    async def test_explain_falls_back_to_engine_prose_without_a_key(self, client):
+        resp = await client.post("/report/explain", json={**_BIRTH, "scope": "house:1"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["source"] == "fallback"
+        assert "not a validated prediction" in body["honesty_note"].lower()
+        assert "House 1 reads" in body["text"]
+
+    @pytest.mark.asyncio
+    async def test_explain_summary_scope(self, client):
+        resp = await client.post("/report/explain", json={**_BIRTH, "scope": "summary"})
+        assert resp.status_code == 200
+        assert resp.json()["source"] == "fallback"
+        assert resp.json()["text"]
+
+    @pytest.mark.asyncio
+    async def test_ask_falls_back_and_carries_the_honesty_note(self, client):
+        resp = await client.post("/report/ask",
+                                 json={**_BIRTH, "question": "why is my career contested?"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["source"] == "fallback"
+        assert body["honesty_note"]
+
+    @pytest.mark.asyncio
+    async def test_ask_requires_a_question(self, client):
+        resp = await client.post("/report/ask", json={**_BIRTH})
+        assert resp.status_code == 422        # question is required

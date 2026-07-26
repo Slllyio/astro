@@ -144,6 +144,24 @@ Two honesty disclosures are stated explicitly, not silently assumed:
   of use so a favourable bar is never read as sufficient on its own, only alongside the
   Life-narrative period it falls inside.
 
+**Content amendment (2026-07-26) — the Gochara outlook, made plain and by month.** A follow-up ask
+("should be more fine include months also and what does it mean clearly in simple, tell the
+user") refined the outlook above rather than adding new doctrine:
+- **Dates now read "Mar 2024", not "2024-03"** (`_jd_month_year` / `_outlook_window_label`), and a
+  window that rounds to the same calendar month at both ends (a real but short, >=25-day window)
+  collapses to that one month instead of the confusing "Apr 2019 to Apr 2019".
+- **A "what it supports" column replaces raw jargon.** Each row now names the life theme the
+  planet governs (`_PLANET_THEME`, the same map "Your Reading" already uses) and a plain
+  "strength" word (`_outlook_strength_word`, from the same Ashtakavarga-bindus threshold, HPA-
+  34:127) instead of a bare bindus count — the table leads with meaning, the citation moves to a
+  short footer note (the same plain-leads/technical-follows pattern as the Integrated-insights
+  fix).
+- **The HTML gained a data table matching the Markdown one**, directly below the SVG graph, plus
+  quarter tick-marks and an inline month-range label on wide bars — so the timing information does
+  not live in hover tooltips alone (a printed page cannot hover).
+No new doctrine, no new citation, no change to `gochara_timeline`'s underlying computation —
+purely how the same already-computed windows are labelled and explained.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

@@ -18,8 +18,11 @@ from app.raman_saab.detailed_report import (
     GLOSSARY,
     ROLLUP_RULE,
     _HOUSE_NAME as _MD_HOUSE_NAME,
+    _PLANET_THEME,
     _SIGN_NAME,
     _TIER_MEANING,
+    _outlook_strength_word,
+    _outlook_window_label,
     _vedha_word,
     DetailedReport,
     graded_buckets,
@@ -816,12 +819,24 @@ def _gochara_table(r: DetailedReport) -> str:
             f'{_gochara_outlook_svg(r)}')
 
 
+# Duplicated from detailed_report._MONTH_ABBR on purpose to keep this a display-only helper.
+_MONTH_ABBR = ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+def _compact_month(jd: float) -> str:
+    """'Mar'24' — a narrow month+year label that fits inside a Gantt bar."""
+    import swisseph as swe
+    y, m, _d, _h = swe.revjul(jd, swe.GREG_CAL)
+    return f"{_MONTH_ABBR[int(m)]}'{int(y) % 100:02d}"
+
+
 def _gochara_outlook_svg(r: DetailedReport) -> str:
     """A multi-year Gantt-style outlook for Jupiter/Saturn/Rahu/Ketu — the same Gochara scheme
     as the snapshot table above, spread across [ref - window_back, ref + window_forward]. Solid
     bars are classically-benefic windows; fainter bars were more often Vedha-obstructed across
     their span (see `_vedha_word` / GocharaSegment.vedha_sample_fraction for the honesty caveat
-    on that estimate's resolution)."""
+    on that estimate's resolution). A data table below the graph repeats every window in plain
+    words (not only on hover), since a printed page cannot hover."""
     if not r.gochara_outlook:
         return ""
     import swisseph as swe
@@ -835,7 +850,7 @@ def _gochara_outlook_svg(r: DetailedReport) -> str:
     if not planets:
         return ""
     width, ml, mr, mt, mb = 860, 78, 16, 26, 22
-    row_h = 40
+    row_h = 52
     height = mt + mb + row_h * len(planets)
     cw = width - ml - mr
 
@@ -846,17 +861,24 @@ def _gochara_outlook_svg(r: DetailedReport) -> str:
     y1 = int(swe.revjul(end_jd, swe.GREG_CAL)[0]) + 1
     parts: list[str] = []
     for yr in range(y0, y1 + 1):
-        gx = x_of(swe.julday(yr, 1, 1, 0.0, swe.GREG_CAL))
-        if gx < ml or gx > width - mr:
-            continue
-        parts.append(f'<line x1="{gx:.1f}" y1="{mt}" x2="{gx:.1f}" y2="{height - mb}" '
-                     f'style="stroke:var(--rule)" stroke-width="1"/>')
-        parts.append(f'<text x="{gx:.1f}" y="{height - mb + 13}" font-size="9" '
-                     f'text-anchor="middle" style="fill:var(--ink-soft)">{yr}</text>')
+        for month in (1, 4, 7, 10):                     # quarter ticks — finer than year alone
+            gx = x_of(swe.julday(yr, month, 1, 0.0, swe.GREG_CAL))
+            if gx < ml or gx > width - mr:
+                continue
+            if month == 1:
+                parts.append(f'<line x1="{gx:.1f}" y1="{mt}" x2="{gx:.1f}" y2="{height - mb}" '
+                             f'style="stroke:var(--rule)" stroke-width="1"/>')
+                parts.append(f'<text x="{gx:.1f}" y="{height - mb + 13}" font-size="9" '
+                             f'text-anchor="middle" style="fill:var(--ink-soft)">{yr}</text>')
+            else:
+                parts.append(f'<line x1="{gx:.1f}" y1="{height - mb - 5}" x2="{gx:.1f}" '
+                             f'y2="{height - mb}" style="stroke:var(--rule)" stroke-width="1" '
+                             f'opacity="0.55"/>')
 
+    good_rows: list[tuple[str, "object"]] = []           # (planet, seg) for the table below
     for i, planet in enumerate(planets):
         ry = mt + i * row_h
-        cy = ry + row_h / 2
+        cy = ry + 17
         parts.append(f'<text x="{ml - 8}" y="{cy + 3:.1f}" font-size="11" text-anchor="end" '
                      f'style="fill:var(--ink)">{_esc(planet)}</text>')
         parts.append(f'<line x1="{ml}" y1="{cy:.1f}" x2="{width - mr}" y2="{cy:.1f}" '
@@ -864,19 +886,26 @@ def _gochara_outlook_svg(r: DetailedReport) -> str:
         for seg in r.gochara_outlook[planet]:
             if not seg.gochara_good or (seg.end_jd - seg.start_jd) < 25:
                 continue
+            good_rows.append((planet, seg))
             x0, x1 = max(x_of(seg.start_jd), ml), min(x_of(seg.end_jd), width - mr)
             if x1 <= x0:
                 continue
+            bar_w = x1 - x0
             opacity = max(0.32, 0.92 - 0.6 * seg.vedha_sample_fraction)
             bav = f"{seg.bav_bindus} bindus" if seg.bav_bindus is not None else "n/a"
-            title = (f"{planet} in {_SIGN_NAME[seg.sign]}: {_jd_to_date(seg.start_jd)} to "
-                    f"{_jd_to_date(seg.end_jd)} — AV support {bav}; Vedha "
-                    f"{_vedha_word(seg.vedha_sample_fraction)}")
+            title = (f"{planet} ({_PLANET_THEME[planet]}) in {_SIGN_NAME[seg.sign]}: "
+                    f"{_outlook_window_label(seg.start_jd, seg.end_jd)} — AV "
+                    f"support {bav}; Vedha {_vedha_word(seg.vedha_sample_fraction)}")
             parts.append(
                 f'<rect class="gochara-bar" x="{x0:.1f}" y="{ry + 6:.1f}" '
-                f'width="{(x1 - x0):.1f}" height="{row_h - 12:.1f}" rx="4" '
+                f'width="{bar_w:.1f}" height="26" rx="4" '
                 f'style="fill:var(--favourable);fill-opacity:{opacity:.2f}">'
                 f'<title>{_esc(title)}</title></rect>')
+            if bar_w >= 56:                              # room for a compact month label
+                cm0, cm1 = _compact_month(seg.start_jd), _compact_month(seg.end_jd)
+                label = cm0 if cm0 == cm1 else f"{cm0}–{cm1}"
+                parts.append(f'<text x="{(x0 + x1) / 2:.1f}" y="{ry + 44:.1f}" font-size="8.5" '
+                             f'text-anchor="middle" style="fill:var(--ink-soft)">{label}</text>')
 
     today_x = x_of(r.ref_jd)
     parts.append(
@@ -885,19 +914,34 @@ def _gochara_outlook_svg(r: DetailedReport) -> str:
         f'<text x="{today_x:.1f}" y="{mt - 11}" font-size="9" text-anchor="middle" '
         f'style="fill:var(--warn)">today</text>')
 
+    good_rows.sort(key=lambda pw: pw[1].start_jd)
+    table_rows = "".join(
+        f'<tr><td><b>{_esc(planet)}</b></td>'
+        f'<td>{_outlook_window_label(seg.start_jd, seg.end_jd)}</td>'
+        f'<td>{_esc(_PLANET_THEME[planet])}</td>'
+        f'<td>{_esc(_outlook_strength_word(seg.bav_bindus))}</td>'
+        f'<td>{_esc(_vedha_word(seg.vedha_sample_fraction).split(" ")[0])}</td></tr>'
+        for planet, seg in good_rows)
+
     return (
         '<div id="gochara-outlook" class="gochara-outlook">'
         '<h3>Favourable transit windows, mapped over time</h3>'
-        '<p class="section-sub">Solid = classically favourable and rarely Vedha-obstructed; '
-        'faded = favourable on paper but frequently cancelled across the window (hover a bar for '
-        'exact dates, sign, and Ashtakavarga support). Only Jupiter, Saturn, Rahu and Ketu are '
-        'graphed here &mdash; they change sign slowly enough to read at a multi-year scale; Mars '
-        'and the faster grahas stay in the snapshot table above. Per Raman, a transit is always '
-        'secondary to the Dasha (HTJAH-II:4679) &mdash; read a bar here together with the '
-        'Life-narrative period it falls inside, not on its own.</p>'
+        '<p class="section-sub"><b>In simple terms:</b> these are the months ahead (and behind) '
+        'when Jupiter, Saturn, Rahu or Ketu sits in a position that classically supports the side '
+        'of life that planet governs (see "what it supports" below). A solid bar is well backed '
+        'and rarely blocked; a faded bar looks supportive on paper but was often blunted by '
+        'another planet&rsquo;s position across that stretch (hover a bar, or see the table, for '
+        'exact months). Only Jupiter, Saturn, Rahu and Ketu are graphed &mdash; they change sign '
+        'slowly enough to read at this scale; Mars and the faster grahas stay in the snapshot '
+        'table above. Per Raman, a transit is always secondary to the Dasha (HTJAH-II:4679) '
+        '&mdash; read a window here as <i>added</i> support during whatever your running period '
+        '(Life-narrative, below) already indicates, not on its own.</p>'
         f'<svg viewBox="0 0 {width} {height}" width="100%" style="max-width:{width}px" '
         f'role="img" aria-label="Gochara favourability over time">'
-        f'{"".join(parts)}</svg></div>')
+        f'{"".join(parts)}</svg>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>window</th>'
+        '<th>what it supports</th><th>strength</th><th>interference</th></tr></thead>'
+        f'<tbody>{table_rows}</tbody></table></div></div>')
 
 
 def _soul_section(r: DetailedReport) -> str:

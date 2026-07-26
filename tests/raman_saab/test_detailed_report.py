@@ -415,18 +415,42 @@ class TestDetailedReport:
         j = markdown.find("### Favourable transit windows")
         assert 0 <= i < j                                 # nested under the existing section
         assert "HTJAH-II:4679" in markdown[j:j + 2000]     # transit-secondary-to-Dasha caveat
-        assert "Vedha (sampled)" in markdown
+        assert "In simple terms:" in markdown[j:j + 800]
+        assert "What it supports" in markdown              # plain theme column, not raw jargon
+
+    def test_favourable_windows_name_the_planets_life_theme(self, report, markdown):
+        """Each row translates the planet into what it governs (reused from 'Your Reading''s
+        _PLANET_THEME), not just a bare planet name and bindus count."""
+        from app.raman_saab.detailed_report import _PLANET_THEME
+        j = markdown.find("### Favourable transit windows")
+        table = markdown[j:j + 6000]
+        seen_planets = {seg.planet for segs in report.gochara_outlook.values() for seg in segs
+                        if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25}
+        for planet in seen_planets:
+            assert _PLANET_THEME[planet] in table
+
+    def test_favourable_windows_show_month_names_not_bare_numbers(self, report, markdown):
+        """Dates read as 'Mar 2024', not '2024-03' — the plain, reader-facing format."""
+        from app.raman_saab.detailed_report import _jd_month_year
+        j = markdown.find("### Favourable transit windows")
+        table = markdown[j:j + 6000]
+        for segs in report.gochara_outlook.values():
+            for seg in segs:
+                if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25:
+                    assert _jd_month_year(seg.start_jd) in table
+                    break
 
     def test_favourable_windows_drop_sub_month_noise(self, report, markdown):
         """Station-wobble slivers under ~a month are documented as dropped, not silently shown."""
         assert "dropped as sampling noise" in markdown
         j = markdown.find("### Favourable transit windows")
-        table = markdown[j:j + 4000]
-        from app.raman_saab.detailed_report import _jd_ym
+        table = markdown[j:j + 6000]
+        from app.raman_saab.detailed_report import _jd_month_year
         for segs in report.gochara_outlook.values():
             for seg in segs:
                 if seg.gochara_good and (seg.end_jd - seg.start_jd) < 25:
-                    assert f"{_jd_ym(seg.start_jd)} to {_jd_ym(seg.end_jd)}" not in table
+                    assert f"{_jd_month_year(seg.start_jd)} to {_jd_month_year(seg.end_jd)}" \
+                        not in table
 
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.

@@ -98,6 +98,43 @@ def _vedha_word(frac: float) -> str:
         return "rare"
     return "none sampled"
 
+
+_MONTH_ABBR: Final[tuple[str, ...]] = (
+    "", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+def _jd_month_year(jd: float) -> str:
+    """Julian Day -> 'Mon YYYY' (e.g. 'Mar 2024') — the plain, reader-facing date format for the
+    Gochara outlook. Month-only, not day, matching the ~week sampling-resolution honesty note
+    (see `gochara_timeline`'s docstring) — showing an exact day would overclaim precision this
+    computation doesn't have."""
+    import swisseph as swe
+    y, m, _d, _h = swe.revjul(jd, swe.GREG_CAL)
+    return f"{_MONTH_ABBR[int(m)]} {int(y)}"
+
+
+def _outlook_window_label(start_jd: float, end_jd: float) -> str:
+    """'Mar 2024 to Oct 2025', or just 'Apr 2019' when a genuinely-real but short window (>=25
+    days, past the retrograde-station noise floor) rounds to the same displayed month at both
+    ends — avoids the misleading 'Apr 2019 to Apr 2019' (reads as zero-length) at month
+    resolution."""
+    lo, hi = _jd_month_year(start_jd), _jd_month_year(end_jd)
+    return lo if lo == hi else f"{lo} to {hi}"
+
+
+def _outlook_strength_word(bav: int | None) -> str:
+    """Plain strength word for a favourable Gochara window, from that planet's own Ashtakavarga
+    bindus in the transited sign (HPA-34:127: 4+ bindus is Raman's own threshold for a stronger
+    result). Rahu/Ketu carry no Ashtakavarga in classical doctrine (bav is None) — reported as
+    plain "supportive", not scored, rather than guessing a number that isn't there."""
+    if bav is None:
+        return "supportive"
+    if bav >= 6:
+        return "strongly supportive"
+    if bav >= 4:
+        return "supportive"
+    return "mildly supportive"
+
 #: lay-reader life-area names (for the plain-language bhukti summary).
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
                4: "home & mother", 5: "children & creativity", 6: "health & rivals",
@@ -1273,31 +1310,37 @@ def to_markdown(r: DetailedReport) -> str:
              if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25),
             key=lambda s: s.start_jd)
         if good:
-            lo_y = _jd_ym(r.ref_jd - r.window_back * 365.2425)[:4]
-            hi_y = _jd_ym(r.ref_jd + r.window_forward * 365.2425)[:4]
+            lo_y = _jd_month_year(r.ref_jd - r.window_back * 365.2425)[-4:]
+            hi_y = _jd_month_year(r.ref_jd + r.window_forward * 365.2425)[-4:]
             L.append(f"### Favourable transit windows ({lo_y} to {hi_y})")
             L.append("")
-            L.append("_Method: a window is a continuous span where the planet occupies a "
-                     "classical Gochara-benefic house from your Moon (HPA/HTJAH). \"AV support\" "
-                     "is that planet's own Ashtakavarga bindus in the transited sign — 4+ is "
-                     "Raman's own threshold for a stronger result (HPA-34:127). \"Vedha "
-                     "(sampled)\" estimates, across the whole window, how often another planet "
-                     "sat in the paired obstruction house — day-exact Vedha is the snapshot table "
-                     "above, not this; dates here are accurate to about a week. Per Raman, "
-                     "transits are always secondary to the Dasha (HTJAH-II:4679) — a favourable "
-                     "window below matters most when it falls inside a favourable period in "
-                     "Life-narrative below, not on its own. Windows shorter than about a month "
-                     "(a planet stationing back across a sign boundary) are dropped as sampling "
-                     "noise, not real transits._")
+            L.append("**In simple terms:** these are the months ahead (and behind) when Jupiter, "
+                     "Saturn, Rahu or Ketu sits in a position that classically supports the side "
+                     "of life that planet governs — see \"what it supports\" below. \"Strength\" "
+                     "is how well-backed that support is; \"interference\" says how often, across "
+                     "that whole stretch, another planet's position was blocking some of it, so "
+                     "the support was real but partly blunted. Raman treats a transit as "
+                     "secondary to your Dasha (HTJAH-II:4679) — read a window below as *added* "
+                     "support during whatever your running period (Life-narrative, below) already "
+                     "indicates, not as a stand-alone prediction.")
             L.append("")
-            L.append("| Planet | Window | Sign | AV support | Vedha (sampled) |")
+            L.append("| Planet | Window | What it supports | Strength | Interference |")
             L.append("|---|---|---|---|---|")
             for seg in good:
-                bav = (f"{seg.bav_bindus} bindus ({'supported' if seg.bav_bindus >= 4 else 'weak'})"
-                       if seg.bav_bindus is not None else "n/a")
-                L.append(f"| {seg.planet} | {_jd_ym(seg.start_jd)} to {_jd_ym(seg.end_jd)} | "
-                         f"{_SIGN_NAME[seg.sign]} | {bav} | "
-                         f"{_vedha_word(seg.vedha_sample_fraction)} |")
+                L.append(f"| {seg.planet} | {_outlook_window_label(seg.start_jd, seg.end_jd)} | "
+                         f"{_PLANET_THEME[seg.planet]} | "
+                         f"{_outlook_strength_word(seg.bav_bindus)} | "
+                         f"{_vedha_word(seg.vedha_sample_fraction).split(' ')[0]} |")
+            L.append("")
+            L.append("_How this is measured: a window is a continuous span where the planet "
+                     "occupies a classical Gochara-benefic house from your Moon (HPA/HTJAH); "
+                     "strength reflects that planet's own Ashtakavarga bindus in the transited "
+                     "sign (HPA-34:127); interference estimates, from samples across the whole "
+                     "window, how often another planet sat in the paired Vedha (obstruction) "
+                     "house — a coarse read, not exact dates (the exact-day check is the snapshot "
+                     "table above). Dates are accurate to about a week and shown by month, not "
+                     "day, for that reason; windows under a month (a planet stationing back "
+                     "across a sign boundary) are dropped as sampling noise, not real transits._")
             L.append("")
 
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────

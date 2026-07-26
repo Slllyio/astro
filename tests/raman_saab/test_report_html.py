@@ -240,6 +240,19 @@ class TestReportHtml:
         assert "coverage gap" in section
         assert section.count("<tr>") >= 2   # header + at least one yoga-timing row
 
+    def test_house_strength_cross_check_renders(self, body):
+        """House strength cross-check sits right after House-by-house and before Longevity,
+        with one row per house, ranks and SAV bindus shown, doctrine cited."""
+        h_start = body.find('id="houses"')
+        s_start = body.find('id="house-strength"')
+        l_start = body.find('id="longevity"')
+        assert 0 <= h_start < s_start < l_start
+        section = body[s_start:l_start]
+        assert "In simple terms:" in section
+        assert "GBB-9:332" in section
+        assert section.count("<tr>") == 13    # header + 12 houses
+        assert "of 12" in section
+
     def test_standalone_wraps_document(self, report):
         """The standalone wrapper is a full, titled UTF-8 document."""
         doc = standalone_html(report, title="My Reading")

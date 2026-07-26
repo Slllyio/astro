@@ -24,20 +24,21 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 12 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
 | 13 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
 | 14 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
-| 15 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
-| 16 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 17 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 18 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 19 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 20 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 21 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 22 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 23 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 24 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 25 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 26 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 27 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 28 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 15 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
+| 16 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
+| 17 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
+| 18 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 19 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 20 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 21 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 22 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 23 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 24 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 25 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 26 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 27 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 28 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 29 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It
@@ -225,6 +226,21 @@ distribution yogas (Asraya x3, Dala x2, Sankhya x7, Akriti x20, Chatussagara) �
 all seven visible planets together, with no single causing planet in Raman's own definition —
 plus two rare multi-arm HPA-20 yogas (Sarada, Brihadbija) deferred because discriminating which
 of their differently-worded disjuncts fired needs more care than this pass gives it.
+
+**v8 amendment (2026-07-26) — House strength cross-check.** Second of the walked-through menu of
+candidate cross-reference analyses. `detailed_report.HouseStrengthRow` / `_house_strength_rows()`
+cross-tabulate two INDEPENDENT strength measures against each house's already-computed verdict —
+Bhava Bala (the house-lord's Shadbala plus Bhavadig and Bhava-Drig, RANKED 1st-strongest to
+12th-weakest across the chart; Raman gives no numeric cutoff, only a ranking, GBB-9:332,
+`SYN_R6_BHAVA_BALA_RANK`) and Sarvashtakavarga bindus (that house's sign, against the existing
+28-per-sign average already stated in the Ashtakavarga section — no new threshold invented). Both
+values were already computed elsewhere (Bhava Bala feeds the one-line `SYN_R6` insight and a
+per-house detail note in House-by-house; SAV bindus are the existing `#sav` table) but never
+CROSS-TABULATED against the verdict as a single 12-row view answering "is this verdict standing
+on strong or shaky ground." `verdict` is `HouseProforma.rollup`, read not re-derived — tested
+directly that the two never disagree and that the function never calls `judge_house`. Inserted
+right after House-by-house (the natural narrative position: read the verdicts, then see how
+strong their ground is) as v8; `_FROZEN` updated in the same commit.
 
 ## Standing rules
 

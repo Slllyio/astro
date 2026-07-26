@@ -368,6 +368,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("yoga_timing", "## Yoga x Dasha timing", 'id="yoga-timing"', "v7"),
     SectionSpec("ashtakavarga", "## Ashtakavarga", 'id="sav"', "v1"),
     SectionSpec("houses", "## House-by-house reading", 'id="houses"', "v1"),
+    # v8 (2026-07-26, conscious amendment): inserted right after House-by-house, since it
+    # cross-checks the verdicts just shown against two independent strength measures — the
+    # natural narrative position (read the verdicts, then see how strong their ground is).
+    SectionSpec("house_strength", "## House strength cross-check", 'id="house-strength"', "v8"),
     SectionSpec("longevity", "## Longevity", 'id="longevity"', "v1"),
     SectionSpec("maraka", "## The maraka scheme", 'id="maraka"', "v2"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
@@ -397,7 +401,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "now_box", "info_content", "stands_out",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
-    "longevity",
+    "house_strength", "longevity",
     "maraka", "timeline", "gochara", "dasha_transit", "divisional", "career", "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
@@ -741,6 +745,47 @@ def _yoga_dasha_confluences(
 
 
 @dataclass(frozen=True)
+class HouseStrengthRow:
+    """One house's verdict cross-checked against two INDEPENDENT strength measures Raman also
+    uses — Bhava Bala (the lord's Shadbala + Bhavadig + Bhava-Drig, RANKED 1st-strongest to
+    12th-weakest across the chart; Raman gives no numeric cutoff, only a ranking, GBB-9:332) and
+    Sarvashtakavarga bindus (that house's sign, average 28 per sign out of 337 total). Neither
+    measure changes `verdict` — the same rollup the House-by-house section already shows; this
+    only says whether that verdict stands on strong or shaky ground."""
+    house: int
+    bhava_bala: Optional[float]
+    bhava_bala_rank: Optional[int]        # 1 = strongest of the 12, 12 = weakest
+    sav_bindus: Optional[int]
+    sav_band: str                         # "above average" | "average" | "below average" | "n/a"
+    verdict: str
+
+
+def _house_strength_rows(
+    proformas: tuple[HouseProforma, ...], asc_sign: int, sav: dict[int, int],
+    bhava_balas: dict[int, float],
+) -> tuple[HouseStrengthRow, ...]:
+    """Cross-tabulate Bhava Bala rank + SAV band against each house's own (unchanged) verdict —
+    pure selection and ranking of values the rest of the report already computes
+    (`HouseProforma.rollup`, the SAME `bhava_balas` dict `SYN_R6_BHAVA_BALA_RANK` already ranks
+    for its one-line fired insight, and Sarvashtakavarga bindus); no new judgment — this is the
+    full 12-house table version of that one-liner."""
+    ranked = sorted(bhava_balas, key=lambda h: -bhava_balas[h])
+    rank_of = {house: i + 1 for i, house in enumerate(ranked)}
+    rows: list[HouseStrengthRow] = []
+    for pf in proformas:
+        sign = ((asc_sign - 1) + (pf.house - 1)) % 12 + 1
+        bindus = sav.get(sign)
+        band = ("n/a" if bindus is None else
+               "above average" if bindus > 28 else
+               "below average" if bindus < 28 else "average")
+        rows.append(HouseStrengthRow(
+            house=pf.house, bhava_bala=bhava_balas.get(pf.house),
+            bhava_bala_rank=rank_of.get(pf.house),
+            sav_bindus=bindus, sav_band=band, verdict=pf.rollup))
+    return tuple(rows)
+
+
+@dataclass(frozen=True)
 class DetailedReport:
     """Everything the engine can say about one chart, plus the honesty overlay."""
     birth: BirthData
@@ -751,6 +796,7 @@ class DetailedReport:
     overview: ChartOverview                          # stronger frame, functional natures
     yogas: tuple[FiredYoga, ...]                     # fired yogas, each with its citation
     yoga_timing: tuple[YogaTiming, ...]               # when a yoga's own lord runs as MD/AD
+    house_strength: tuple[HouseStrengthRow, ...]      # Bhava Bala rank + SAV band per house
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -1071,10 +1117,12 @@ def build_detailed_report(
     insights = detect_synthesis(
         chart, ref_jd, gochara=tuple(gochara_rows), yogas=fired_yogas, sav=sav,
         bhava_balas=bhava_balas, maraka_now=maraka_now)
+    house_strength = _house_strength_rows(reading.proformas, chart.asc_sign, sav, bhava_balas)
     provisional = DetailedReport(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
-        yogas=fired_yogas, yoga_timing=yoga_timing, sav=sav, insights=insights,
+        yogas=fired_yogas, yoga_timing=yoga_timing, house_strength=house_strength,
+        sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
         balarishta=getattr(chart, "balarishta", None),
         dashboard=build_matter_varga_dashboard(chart),
@@ -1353,6 +1401,30 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append("_Population context:_")
             L.extend(cal)
+
+    # ── house strength cross-check: is each verdict on strong or shaky ground? ──
+    if r.house_strength:
+        L.append("")
+        L.append("## House strength cross-check")
+        L.append("")
+        L.append("**In simple terms:** every house above got a verdict — favourable, afflicted "
+                 "or mixed — but not every house stands on equally strong ground. This table "
+                 "cross-checks each verdict against two independent strength measures Raman "
+                 "also uses: Bhava Bala (the house's own strength — its lord's Shadbala plus "
+                 "positional strength — RANKED 1st-strongest to 12th-weakest across your chart; "
+                 "Raman gives no numeric cutoff, only a ranking, GBB-9:332) and its "
+                 "Sarvashtakavarga bindus (that sign's share of the 337 total, average 28). "
+                 "Neither measure changes the verdict shown above — they say whether it is "
+                 "well-supported or sits on thinner ground.")
+        L.append("")
+        L.append("| House | Matter | Verdict | Bhava Bala rank | SAV bindus |")
+        L.append("|---|---|---|---|---|")
+        for row in r.house_strength:
+            bb_rank = f"{row.bhava_bala_rank} of 12" if row.bhava_bala_rank else "n/a"
+            sav_cell = f"{row.sav_bindus} ({row.sav_band})" if row.sav_bindus is not None else "n/a"
+            L.append(f"| H{row.house} | {_HOUSE_NAME.get(row.house, '')} | {row.verdict} | "
+                     f"{bb_rank} | {sav_cell} |")
+        L.append("")
 
     # ── longevity (band FIRST, per Raman's own order) ─────────────────────────
     L.append("")

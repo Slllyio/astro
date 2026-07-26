@@ -577,6 +577,33 @@ def _yogas(r: DetailedReport) -> str:
             f'<ul class="yogalist">{items}</ul>')
 
 
+def _house_strength_section(r: DetailedReport) -> str:
+    """Cross-checks each house's verdict against Bhava Bala rank + SAV band — extends the
+    House-by-house section above with whether each verdict stands on strong or shaky ground."""
+    if not r.house_strength:
+        return ""
+    rows = "".join(
+        f'<tr><td>H{row.house} {_esc(_HOUSE_NAME[row.house])}</td>'
+        f'<td><span class="chip chip--{row.verdict}">{_esc(row.verdict)}</span></td>'
+        f'<td class="num">{row.bhava_bala_rank or "n/a"} of 12</td>'
+        f'<td class="num">{row.sav_bindus if row.sav_bindus is not None else "n/a"} '
+        f'({_esc(row.sav_band)})</td></tr>'
+        for row in r.house_strength)
+    return (
+        '<h2 class="section" id="house-strength">House strength cross-check</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> every house above got a verdict '
+        '&mdash; favourable, afflicted or mixed &mdash; but not every house stands on equally '
+        'strong ground. This table cross-checks each verdict against two independent strength '
+        'measures Raman also uses: Bhava Bala (the house&rsquo;s own strength, RANKED '
+        '1st-strongest to 12th-weakest across your chart; Raman gives no numeric cutoff, only a '
+        'ranking, GBB-9:332) and its Sarvashtakavarga bindus (that sign&rsquo;s share of the 337 '
+        'total, average 28). Neither measure changes the verdict shown above &mdash; they say '
+        'whether it is well-supported or sits on thinner ground.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
+        '<th class="num">Bhava Bala rank</th><th class="num">SAV bindus</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def _yoga_timing_section(r: DetailedReport) -> str:
     """When does each fired yoga's own lord run as MD or AD — extends the Yogas section above
     with WHEN, reusing the same lord_quality strength read Life-narrative already computes."""
@@ -1314,6 +1341,8 @@ def to_html(r: DetailedReport) -> str:
     headline is driven by an atlas-proven inverted channel, a warning is shown inline.</p>
   {filters}
   <div class="houses">{houses}</div>
+
+  {_house_strength_section(r)}
 
   <h2 class="section" id="longevity">Longevity</h2>
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period

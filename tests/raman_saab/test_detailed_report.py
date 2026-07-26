@@ -582,6 +582,54 @@ class TestDetailedReport:
         assert "HTJAH-I:4324" in markdown[j:k]
         assert "coverage gap" in markdown[j:k]
 
+    def test_house_strength_covers_all_twelve_houses(self, report):
+        """One row per house, verdict unchanged from the proforma rollup, ranks 1..12 with no
+        gaps or repeats."""
+        assert len(report.house_strength) == 12
+        houses = {row.house for row in report.house_strength}
+        assert houses == set(range(1, 13))
+        ranks = sorted(row.bhava_bala_rank for row in report.house_strength
+                      if row.bhava_bala_rank is not None)
+        assert ranks == list(range(1, len(ranks) + 1))
+
+    def test_house_strength_verdict_matches_the_proforma_unchanged(self, report):
+        """The verdict column is exactly HouseProforma.rollup — a cross-check, not a new
+        judgment; the house-by-house section and this table must never disagree."""
+        by_house = {pf.house: pf.rollup for pf in report.proformas}
+        for row in report.house_strength:
+            assert row.verdict == by_house[row.house]
+
+    def test_house_strength_sav_band_matches_the_28_average_convention(self, report):
+        """The SAV band reuses the SAME >=28 threshold already shown in the Ashtakavarga
+        section's own text ('Average is 28 per sign') — no new cutoff invented."""
+        for row in report.house_strength:
+            if row.sav_bindus is None:
+                assert row.sav_band == "n/a"
+            elif row.sav_bindus > 28:
+                assert row.sav_band == "above average"
+            elif row.sav_bindus < 28:
+                assert row.sav_band == "below average"
+            else:
+                assert row.sav_band == "average"
+
+    def test_house_strength_never_touches_a_verdict(self):
+        """Pure ranking/lookup of already-computed values — no verdict path."""
+        import inspect
+        from app.raman_saab.detailed_report import _house_strength_rows
+        src = inspect.getsource(_house_strength_rows)
+        assert "judge_house" not in src and "_decide(" not in src
+
+    def test_markdown_shows_house_strength_cross_check(self, markdown):
+        """The new section sits right after House-by-house, before Longevity, and cites the
+        Bhava-Bala-ranking-only doctrine."""
+        assert "## House strength cross-check" in markdown
+        i = markdown.find("## House-by-house reading")
+        j = markdown.find("## House strength cross-check")
+        k = markdown.find("## Longevity")
+        assert 0 <= i < j < k
+        assert "GBB-9:332" in markdown[j:k]
+        assert "In simple terms:" in markdown[j:j + 600]
+
     def test_verdict_authority_invariant(self, report):
         """The overlay never alters a verdict — every calibrated verdict is a Raman verdict.
 

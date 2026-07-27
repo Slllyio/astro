@@ -55,6 +55,35 @@ class TestEvidence:
         assert "anchoring every factual sentence" in prompt or "[Fact N]" in prompt
 
 
+class TestRicherExplains:
+    """Phase C: a section/house explanation now carries the CONNECTIVE facts the engine already
+    holds — the individual testimony witnesses, the reading's information content, and the
+    cross-feature insights that bridge into the section — so the explanation is deeper and
+    connected, without any new judgment."""
+
+    def test_house_evidence_surfaces_its_individual_witnesses(self, rdict):
+        ev = build_evidence(rdict, "house:5")
+        assert any("individual witnesses" in f.text.lower() for f in ev.facts)
+
+    def test_house_evidence_states_information_content_for_distinctive_readings(self, rdict):
+        target = next((h for h, e in rdict["distinctive"]
+                       if e.get("rarity") and e["rarity"] != "common"), None)
+        if target is None:
+            pytest.skip("no rare/notable reading on this chart")
+        ev = build_evidence(rdict, f"house:{target}")
+        info = [f for f in ev.facts if "information content" in f.text.lower()]
+        assert info
+        assert info[0].cite is None          # population data carries NO Raman citation
+
+    def test_section_explain_surfaces_linked_cross_feature_insights(self, rdict):
+        links_yogas = any("yogas" in link.lower()
+                          for ins in rdict["insights"] for link in ins.get("links", []))
+        if not links_yogas:
+            pytest.skip("no insight links into the Yogas section on this chart")
+        ev = build_evidence(rdict, "section:yogas")
+        assert any("cross-feature insight" in f.text.lower() for f in ev.facts)
+
+
 class TestProvenanceGuard:
     def _ev(self, rdict):
         return build_evidence(rdict, "summary")

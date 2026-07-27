@@ -149,12 +149,51 @@ def _house_facts(R: dict, house: int) -> list[Fact]:
         _f(facts, f"Its testimony ledger reads {P['preponderance']} ({P['status']}): "
                   f"{P['favourable']} favourable, {P['adverse']} adverse, {P['neutral']} neutral.",
            "HTJAH-I:8870")
+        # the individual witnesses behind that tally — connects the headline to the specific axes
+        # (lord, karaka, navamsa, Bhava-Bala, SAV, matter-varga, calibration, yogas) that back it.
+        leaning = [(t["name"], t["lean"]) for t in P.get("testimonies", [])
+                   if t.get("lean") not in ("absent", None)]
+        if leaning:
+            wit = "; ".join(f"{n} leans {l.replace('-leaning', '')}" for n, l in leaning[:6])
+            _f(facts, f"Its individual witnesses: {wit}.", "HTJAH-I:8870")
     cal = (R.get("calibration", {}).get(str(house), {}) or {}).get("entries", [])
     inv = [e["signification"] for e in cal if e.get("inverted_warning")]
     if inv:
         _f(facts, f"Atlas-proven inverted channel(s) here: {', '.join(inv)} — real cases ran "
                   f"opposite to the reading; treat the headline with skepticism.")
+    # information content: how distinctive this house's readings are against the population (an
+    # honesty disclosure, never a prediction) — only the rare/notable ones carry information.
+    for e in cal:
+        if e.get("rarity") and e["rarity"] != "common" and e.get("band_share") is not None:
+            _f(facts, f"Information content — the reading '{e['signification']}: {e['verdict']}' is "
+                      f"distinctive: only {e['band_share']:.0%} of charts share it ({e['rarity']}). "
+                      f"This is about the reading, not a prediction about a life.")
     return facts
+
+
+#: which insight `links` label(s) a named section corresponds to — so explaining a section can also
+#: surface the cross-feature insights that bridge INTO it (each insight's own `links` names it). Uses
+#: the engine's real `FiredInsight.rule.links`, never a guessed connection.
+_SECTION_LINK_LABELS: dict[str, tuple[str, ...]] = {
+    "yogas": ("Yogas",),
+    "ruler": ("Shadbala",),
+    "preponderance": ("House-by-house",),
+    "timeline": ("Life-narrative",),
+    "gochara": ("Current transits",),
+}
+
+
+def _append_linked_insights(R: dict, key: str, facts: list) -> None:
+    """Append the fired cross-feature insights whose `links` name this section — the connective
+    facts that make a section explanation richer without adding any judgment."""
+    labels = _SECTION_LINK_LABELS.get(key, ())
+    for ins in R.get("insights", []):
+        links = ins.get("links", [])
+        if any(lab.lower() in link.lower() for lab in labels for link in links):
+            cite = (f"{ins['source']['work']}:{ins['source']['line']}"
+                    if ins.get("source") else None)
+            _f(facts, f"A cross-feature insight bearing on this section — {ins['name']}: "
+                      f"{ins['simple_meaning']} (this chart: {ins['detail']}).", cite)
 
 
 def _section_facts(R: dict, key: str) -> list[Fact]:
@@ -168,6 +207,7 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
         for h in pp.get("houses", []):
             _f(facts, f"House {h['house']} ({h['verdict']}): {h['preponderance']}, {h['status']} "
                       f"({h['favourable']} favourable, {h['adverse']} adverse).")
+        _append_linked_insights(R, key, facts)
         return facts
     if key == "insights":
         for ins in R.get("insights", []):
@@ -179,6 +219,7 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
         for y in R.get("yogas", []):
             cite = f"{y['source']['work']}:{y['source']['line']}" if y.get("source") else None
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
+        _append_linked_insights(R, key, facts)
         return facts
     if isinstance(val, dict):          # a slotted prose section (nichod / plain_reading)
         for k, v in val.items():
@@ -188,6 +229,7 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
     if isinstance(val, list):
         for row in val[:20]:
             _f(facts, str(row))
+        _append_linked_insights(R, key, facts)
         return facts
     return facts
 

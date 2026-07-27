@@ -343,7 +343,7 @@
 <div id="ask" style="display:none">
   <div class="ask-head"><b>Ask about this chart</b><button type="button" class="ask-close" onclick="toggleAsk()" title="close">×</button></div>
   <div class="ask-log" id="ask-log"></div>
-  <form class="ask-form" onsubmit="return ask()">
+  <form class="ask-form" onsubmit="ask();return false">
     <input id="ask-q" placeholder="e.g. why is my career contested?" autocomplete="off">
     <button id="ask-go" type="button" onclick="ask()">Ask</button>
   </form>

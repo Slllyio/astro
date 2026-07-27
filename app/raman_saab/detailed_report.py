@@ -46,6 +46,7 @@ from app.raman_saab.doctrine.synthesis_rules import (
     detect_synthesis,
 )
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
+from app.raman_saab.insight_digest import InsightDigest, build_insight_digest
 from app.raman_saab.judges.chart_overview import ChartOverview, chart_overview
 from app.raman_saab.judges.dasamsa_career_reading import build_dasamsa_career_reading
 from app.raman_saab.judges.dwadasamsa_parents_reading import build_dwadasamsa_parents_reading
@@ -1204,6 +1205,7 @@ class DetailedReport:
     ruler: "RulerOfNativity"                         # Raman's first-impression card (v13)
     preponderance: "PreponderanceReading"            # per-house testimony ledgers (v14)
     life_chapters: "LifeChapters"                    # one woven chapter per MD run (v15)
+    digest: "InsightDigest"                          # ranked "what matters most" (pure re-read)
 
 
 @dataclass(frozen=True)
@@ -1725,6 +1727,7 @@ class LifeChapters:
 
 
 _EMPTY_LIFE_CHAPTERS: Final[LifeChapters] = LifeChapters(chapters=())
+_EMPTY_DIGEST: Final[InsightDigest] = InsightDigest(headline="", items=())
 
 
 def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
@@ -2139,16 +2142,19 @@ def build_detailed_report(
         window_back=years_back, window_forward=years_forward,
         nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING, ruler=_EMPTY_RULER,
         preponderance=_EMPTY_PREPONDERANCE, life_chapters=_EMPTY_LIFE_CHAPTERS,
+        digest=_EMPTY_DIGEST,
     )
     # Ruler / preponderance / life-chapters are built FIRST (they read only the base fields
-    # above), then the plain layers (Nichod + Your Reading) are built from that ENRICHED
-    # report — they now weave in the ruler of the nativity and the most-contested house, so
-    # they must see populated synthesis fields, not the empty sentinels. Each stage only
-    # selects, counts and knits fields already produced; no verdict is re-judged.
+    # above), then the digest RANKS what those enriched fields hold, and finally the plain
+    # layers (Nichod + Your Reading) are built from that ENRICHED report — they now weave in
+    # the ruler of the nativity and the most-contested house, so they must see populated
+    # synthesis fields, not the empty sentinels. Each stage only selects, counts and knits
+    # fields already produced; no verdict is re-judged.
     enriched = _dc_replace(provisional,
                            ruler=build_ruler(provisional),
                            preponderance=build_preponderance(provisional),
                            life_chapters=build_life_chapters(provisional))
+    enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     return _dc_replace(enriched, nichod=build_nichod(enriched),
                        plain_reading=build_plain_reading(enriched))
 

@@ -102,6 +102,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "plain_reading": _ad(r.plain_reading),
         "nichod": _ad(r.nichod),
 
+        # the engine's ranked "what matters most" — a re-read of the sections below, cross-linked
+        "digest": _ad(r.digest),
+
         # chart signature + first impression
         "synthesis": _ad(r.synthesis),
         "overview": _ad(r.overview),

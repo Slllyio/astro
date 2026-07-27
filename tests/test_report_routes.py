@@ -169,3 +169,15 @@ class TestExplainAndAsk:
     async def test_ask_requires_a_question(self, client):
         resp = await client.post("/report/ask", json={**_BIRTH})
         assert resp.status_code == 422        # question is required
+
+    @pytest.mark.asyncio
+    async def test_insights_falls_back_to_the_ranked_digest(self, client):
+        """The prioritized whole-chart synthesis. With no key it must serve the engine's OWN ranked
+        digest as prose — the honesty headline plus the ranked items — never a fabricated reading."""
+        resp = await client.post("/report/insights", json={**_BIRTH})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["source"] == "fallback"
+        assert "not a validated prediction" in body["honesty_note"].lower()
+        assert "readings" in body["text"]            # the info-content headline is present
+        assert len(body["text"]) > 100               # the ranked items, not an empty stub

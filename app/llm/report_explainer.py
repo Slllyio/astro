@@ -208,13 +208,31 @@ def _whole_facts(R: dict) -> list[Fact]:
     return facts
 
 
+def _digest_facts(R: dict) -> list[Fact]:
+    """The engine's ranked 'what matters most' digest, as ordered evidence. Fact 1 is the honesty
+    frame; each subsequent fact is one DigestItem IN THE ENGINE'S RANK ORDER (the model narrates
+    this order, it never re-ranks). Each item's first citation rides along for transparency; the
+    full cite list reaches the frontend via the digest dict, not here."""
+    facts: list[Fact] = []
+    dg = R.get("digest", {}) or {}
+    if dg.get("headline"):
+        _f(facts, "Information content of this reading (an honesty disclosure about the method's "
+                  "output, NOT a prediction about a life): " + dg["headline"])
+    for it in dg.get("items", []):
+        cite = it["cites"][0] if it.get("cites") else None
+        _f(facts, f"{it['title']}: {it['detail']}", cite)
+    return facts
+
+
 def build_evidence(report_dict: dict, scope: str = "summary") -> Evidence:
-    """Assemble numbered evidence for a scope. `scope` is 'summary', 'whole', 'house:N', or
-    'section:<key>'. RAG passages are added by the caller if the index is available."""
+    """Assemble numbered evidence for a scope. `scope` is 'summary', 'whole', 'digest', 'house:N',
+    or 'section:<key>'. RAG passages are added by the caller if the index is available."""
     if scope == "summary":
         facts = _summary_facts(report_dict)
     elif scope == "whole":
         facts = _whole_facts(report_dict)
+    elif scope == "digest":
+        facts = _digest_facts(report_dict)
     elif scope.startswith("house:"):
         facts = _house_facts(report_dict, int(scope.split(":", 1)[1]))
     elif scope.startswith("section:"):
@@ -247,6 +265,20 @@ def build_prompt(ev: Evidence, question: Optional[str],
         parts.append(f"QUESTION: {question}\n\nAnswer the question using ONLY the evidence above, "
                      f"anchoring every factual sentence with [Fact N]/[Ref N]. If the evidence "
                      f"does not cover it, say 'The engine does not compute that.'")
+    elif ev.scope == "digest":
+        # the findings are ALREADY the engine's ranked selection; the model narrates that order,
+        # it does not decide importance (deciding importance is a judgment the engine owns).
+        parts.append(
+            "The findings above are the ENGINE'S OWN ranking of what matters most in this chart, "
+            "most important first (Fact 1 is the honesty frame for the whole reading). Weave them, "
+            "IN THIS ORDER, into one warm, flowing plain-language reading for the person whose "
+            "chart this is: say what each finding is and, where the ranking places several that "
+            "lean the same way, note that they point in the same direction. You may LINK findings "
+            "narratively, but do NOT claim that any finding strengthens, amplifies, reinforces, "
+            "combines with, or causes another, or that together they make any outcome stronger — "
+            "the engine computed each finding on its own and never computed such an interaction. "
+            "Do NOT re-rank, do NOT add any finding not in the evidence, and add no judgment of "
+            "your own. Anchor every factual sentence with [Fact N]. Predict nothing.")
     else:
         parts.append("Explain the findings above for the person whose chart this is — in plain, "
                      "warm language, anchoring every factual sentence with [Fact N]/[Ref N].")

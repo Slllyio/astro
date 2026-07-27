@@ -151,6 +151,45 @@ class TestProvenanceGuard:
         assert "[Fact 1]" in stub.last_prompt
 
 
+class TestDigestScope:
+    """The prioritized whole-chart synthesis scope. The digest arrives PRE-RANKED by the engine;
+    the narrator must weave it in order and never re-rank or predict."""
+
+    def test_digest_evidence_leads_with_the_honesty_frame(self, rdict):
+        ev = build_evidence(rdict, "digest")
+        assert ev.facts
+        assert "honesty disclosure" in ev.facts[0].text.lower()
+        assert all(f.n == i + 1 for i, f in enumerate(ev.facts))    # contiguous numbering
+
+    def test_digest_prompt_instructs_synthesis_not_reranking(self, rdict):
+        ev = build_evidence(rdict, "digest")
+        prompt = build_prompt(ev, question=None)
+        low = prompt.lower()
+        assert "ranking of what matters most" in low
+        assert "do not re-rank" in low
+        assert "predict nothing" in low
+        assert "[Fact 1]" in prompt
+        # doctrine-review fix: the model may LINK findings but must never claim they strengthen/
+        # reinforce/combine into a bigger effect (a compound claim the engine never computed).
+        assert "reinforce" in low and "amplif" in low
+        assert "the engine computed each finding on its own" in low
+
+    def test_digest_answer_grounds_and_is_served(self, rdict):
+        ev = build_evidence(rdict, "digest")
+        draft = ("Your chart's clearest strength is home and family [Fact 2].\n\n"
+                 "Overall the reading is favourable but ordinary [Fact 1].")
+        ans = explain(ev, None, StubClient(draft))
+        assert ans.grounding_ratio == 1.0
+        assert refusal_reason(ans, 0.6) is None
+
+    def test_digest_prediction_is_still_refused(self, rdict):
+        """The synthesis prompt does not weaken the guard: a planted prediction is refused even in
+        digest scope, and the deterministic ranked digest is served instead."""
+        ev = build_evidence(rdict, "digest")
+        ans = explain(ev, None, StubClient("You will marry a wealthy partner in 2027 [Fact 2]."))
+        assert refusal_reason(ans, 0.6) is not None
+
+
 class TestSystemPromptContract:
     def test_the_prompt_forbids_judgment_prediction_and_injection(self):
         low = EXPLAINER_SYSTEM.lower()

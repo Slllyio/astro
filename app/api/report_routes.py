@@ -184,6 +184,10 @@ class AskRequest(ReportRequest):
     history: list[tuple[str, str]] = Field(default_factory=list, max_length=20)
 
 
+class InsightsRequest(ReportRequest):
+    scope: str = Field("digest", description="fixed to the engine's ranked 'what matters most'")
+
+
 def _explainer_client():
     """The grounded-explainer LLM client, or None when disabled/unavailable (-> fallback)."""
     from app.core.config import settings
@@ -202,7 +206,12 @@ def _fallback_answer(r, scope: str) -> dict:
     plain prose for the scope, never an invented explanation."""
     from app.raman_saab.report_json import to_report_dict
     R = to_report_dict(r)
-    if scope == "summary" or scope.startswith("section:plain"):
+    if scope == "digest":
+        dg = R.get("digest", {}) or {}
+        lines = [dg.get("headline", "")]
+        lines += [f"{it['title']}. {it['detail']}" for it in dg.get("items", [])]
+        text = "\n\n".join(filter(None, lines))
+    elif scope == "summary" or scope.startswith("section:plain"):
         pr = R["plain_reading"]
         text = " ".join(filter(None, [pr.get("opening"), pr.get("now"), pr.get("notable")]))
     elif scope.startswith("house:"):
@@ -274,6 +283,17 @@ async def post_explain(req: ExplainRequest) -> dict:
     'section:<key>'). Every factual sentence is anchored to a computed finding; the answer is
     never a new verdict or a prediction. Falls back to the report's own deterministic prose
     when the LLM is disabled/unavailable."""
+    if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
+    return await _grounded(req, question=None)
+
+
+@report_router.post("/insights")
+async def post_insights(req: InsightsRequest) -> dict:
+    """The prioritized whole-chart synthesis — the engine's ranked 'what matters most' narrated in
+    plain language, most important first. The RANKING is the engine's (deterministic); the LLM only
+    orders and connects it, anchoring every claim and predicting nothing. Falls back to the engine's
+    own ranked digest as prose when the LLM is disabled/unavailable."""
     if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
     return await _grounded(req, question=None)

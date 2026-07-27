@@ -6,14 +6,16 @@ chart's many readings actually distinguishes it. This module assembles that view
 pure RE-READ and TRANSPOSITION of fields the engine has already computed; it recomputes no
 verdict, so it can never move the golden ratchet.
 
-Crucially, **the ranking is the engine's, not an LLM's.** Deciding what matters most is itself an
-astrological judgment, so it must stay deterministic: every DigestItem's importance is drawn from
-a number the engine already produced —
-  - `PreponderanceReading.most_corroborated_favourable / _afflicted / most_contested`
-    (which houses' own witnesses most agree/contest their headline),
-  - the band-precedence order of `insights` (raman > classical > av, already sorted),
-  - the rarity-sorted `distinctive` entries (furthest from the population midpoint),
-  - the currently-running `LifeChapter`.
+Crucially, **the ranking is deterministic engine code, not an LLM's.** Deciding what matters most
+is itself an astrological judgment, so it must never be delegated to the model. Two things set the
+order, both in Python here:
+  - the WITHIN-category order is the engine's own already-computed ranking — the
+    `PreponderanceReading.most_corroborated_favourable / _afflicted / most_contested` picks, the
+    band-precedence order of `insights` (raman > classical > av), and the rarity-sorted
+    `distinctive` entries (furthest from the population midpoint);
+  - the CROSS-category sequence (convergence -> current period -> insights -> tension ->
+    distinctive) is a fixed editorial template in `build_insight_digest` below — a deterministic
+    choice, not a number the engine emitted, and not the model's.
 The grounded LLM layer (`report_explainer`) then only NARRATES this pre-ranked digest into plain
 language; it never re-orders or re-weighs it.
 
@@ -88,14 +90,17 @@ class InsightDigest:
 
 def _lean_of(verdict: str) -> str:
     """Map an already-decided verdict string to a coarse direction — a re-READING of the engine's
-    own word, not a re-judgment."""
+    own word, not a re-judgment. Adverse keywords are tested BEFORE favourable ones so that a
+    compound like "strongly afflicted" (were the vocabulary ever to drift to include degree words)
+    can never be mislabelled favourable by matching "strong" first — the safe failure is toward
+    caution, never a silent direction reversal."""
     v = (verdict or "").lower()
     if any(w in v for w in ("mixed", "contest", "split", "even")):
         return "mixed"
-    if any(w in v for w in ("favour", "favor", "good", "benefic", "strong", "auspicious")):
-        return "favourable"
     if any(w in v for w in ("afflict", "advers", "malefic", "weak", "bad", "poor", "danger")):
         return "adverse"
+    if any(w in v for w in ("favour", "favor", "good", "benefic", "strong", "auspicious")):
+        return "favourable"
     return "neutral"
 
 

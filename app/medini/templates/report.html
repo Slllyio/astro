@@ -376,6 +376,93 @@ function chartGrid(R, mode){
   fig.append(grid); return fig;
 }
 
+// horizontal / diverging bar chart (shared by Shadbala, Bhava-Bala)
+function hbars(items, opts){ opts=opts||{}; const W=560, rowH=opts.rowH||22, padL=opts.padL||96, padR=opts.padR||70, top=6;
+  const H=top+items.length*rowH+8; const s=svgBox(W,H);
+  const maxV=opts.max||Math.max(1,...items.map(i=>i.value||0));
+  items.forEach((it,i)=>{ const y=top+i*rowH;
+    s.append(sv('text',{x:padL-6,y:y+rowH*0.66,'font-size':10,fill:'var(--ink-2)','text-anchor':'end'}, it.label));
+    s.append(sv('rect',{x:padL,y:y+3,width:W-padL-padR,height:rowH-8,rx:2,fill:'var(--surface-2)',opacity:.55}));
+    const w=Math.max(0,((it.value||0)/maxV)*(W-padL-padR));
+    s.append(tip(sv('rect',{x:padL,y:y+3,width:w,height:rowH-8,rx:2,fill:it.fill||'var(--accent)'}), it.note||''));
+    s.append(sv('text',{x:padL+w+4,y:y+rowH*0.66,'font-size':10,fill:'var(--ink-2)'}, (it.mark?it.mark+' ':'')+(it.valLabel!=null?it.valLabel:it.value))); });
+  if(opts.refX!=null){ const rx=padL+(opts.refX/maxV)*(W-padL-padR);
+    s.append(sv('line',{x1:rx,y1:top,x2:rx,y2:H-8,stroke:'var(--ink-2)',strokeWidth:1,strokeDasharray:'3 2',opacity:.6})); }
+  return s; }
+
+function shadbalaBars(R){ const nat=natureMap(R);
+  const items=Object.entries((R.chart&&R.chart.planets)||{}).filter(x=>x[1].shadbala_rupas!=null)
+    .map(x=>({name:x[0],val:x[1].shadbala_rupas})).sort((a,b)=>b.val-a.val);
+  if(!items.length) return null;
+  const strongest=(R.ruler&&R.ruler.strongest), lord=(R.ruler&&R.ruler.lagna_lord);
+  return hbars(items.map(it=>({label:it.name,value:it.val,fill:natureVar(nat[it.name]),
+    mark:it.name===strongest?'★':(it.name===lord?'○':''),
+    note:it.name+' — '+it.val+' rupas'+(it.name===strongest?' (strongest by Shadbala)':'')+(it.name===lord?' (Lagna lord — the ruler)':'')})),
+    {max:Math.max(...items.map(i=>i.val)), refX:5, rowH:22}); }
+
+function bhavaBalaBars(R){ const rows=(R.house_strength||[]).filter(r=>r.bhava_bala!=null);
+  if(!rows.length) return null; const mx=Math.max(...rows.map(r=>r.bhava_bala));
+  return hbars(rows.map(r=>({label:'H'+r.house,value:r.bhava_bala,fill:verdictColor(r.verdict),
+    mark:r.bhava_bala_rank===1?'★':'', valLabel:'#'+r.bhava_bala_rank+' · '+Math.round(r.bhava_bala),
+    note:'House '+r.house+' — verdict '+r.verdict+'; Bhava-Bala '+Math.round(r.bhava_bala)+' (rank '+r.bhava_bala_rank+'/12); SAV '+r.sav_bindus+' ('+r.sav_band+')'})),
+    {max:mx, rowH:20, padR:110}); }
+
+function savColumns(R){ const sav=R.sav||{}; const signs=[];
+  for(let s=1;s<=12;s++){ const v=sav[String(s)]!=null?sav[String(s)]:sav[s]; if(v!=null) signs.push({s:s,v:v}); }
+  if(!signs.length) return null;
+  const W=580,H=210,padL=24,padB=30,top=14; const vals=signs.map(x=>x.v); const vmax=Math.max(56,...vals),vmin=Math.min(0,...vals);
+  const box=svgBox(W,H); const y=v=>lin(v,vmin,vmax,H-padB,top); const cw=(W-padL-8)/12; const y28=y(28);
+  box.append(sv('line',{x1:padL,y1:y28,x2:W-8,y2:y28,stroke:'var(--ink-2)',strokeWidth:1,strokeDasharray:'4 2'}));
+  box.append(sv('text',{x:W-8,y:y28-3,'font-size':9,fill:'var(--ink-2)','text-anchor':'end'},'avg 28 · total 337'));
+  signs.forEach((x,i)=>{ const cx=padL+i*cw, yy=y(x.v), h=Math.abs(yy-y28);
+    box.append(tip(sv('rect',{x:cx+2,y:Math.min(yy,y28),width:cw-4,height:Math.max(1,h),rx:1,fill:x.v>=28?'var(--fav)':'var(--aff)',opacity:.75}), SIGN[x.s]+' — '+x.v+' bindus'));
+    box.append(sv('text',{x:cx+cw/2,y:Math.min(yy,y28)-2,'font-size':9,fill:'var(--ink-2)','text-anchor':'middle'},x.v));
+    box.append(sv('text',{x:cx+cw/2,y:H-padB+12,'font-size':8,fill:'var(--ink-2)','text-anchor':'middle'},SIGN[x.s].slice(0,3))); });
+  return box; }
+
+// the composite Life Panel — MD ribbon + AD ribbon + Ishta/Kashta strip + house×time heatmap,
+// all on ONE shared JD axis (so period, goodness and activation read against each other).
+function lifePanel(R){
+  const A=lifeAxis(R); if(A.ref==null||!(R.timeline||[]).length) return null;
+  const W=900, x0=30, x1=W-6, DPY=365.2425; const jx=jd=>A.jx(jd,x0,x1);
+  const laneMD=6, laneAD=laneMD+19, laneIK=laneAD+19, heatTop=laneIK+24, rowH=13, H=heatTop+12*rowH+22;
+  const s=svgBox(W,H);
+  // gridlines + future shade + now line
+  const g=sv('g');
+  g.append(sv('rect',{x:jx(A.ref),y:laneMD,width:Math.max(0,x1-jx(A.ref)),height:H-16-laneMD,fill:'var(--ink-2)',opacity:.05}));
+  for(let jd=A.d0; jd<=A.d1; jd+=2*DPY){ const x=jx(jd);
+    g.append(sv('line',{x1:x,y1:laneMD,x2:x,y2:H-16,stroke:'var(--line)',strokeWidth:1,opacity:.45}));
+    g.append(sv('text',{x:x,y:H-4,'font-size':9,fill:'var(--ink-2)','text-anchor':'middle'}, jdYM(jd))); }
+  g.append(sv('line',{x1:jx(A.ref),y1:0,x2:jx(A.ref),y2:H-16,stroke:'var(--accent)',strokeWidth:1.5,strokeDasharray:'3 2'}));
+  g.append(sv('text',{x:jx(A.ref)+2,y:8,'font-size':9,fill:'var(--accent)','font-weight':600},'now'));
+  s.append(g);
+  // MD ribbon (contiguous maha runs)
+  const runs=[]; for(const t of R.timeline){ let r=runs[runs.length-1]; if(!r||r.maha!==t.maha){ r={maha:t.maha,s:t.start_jd,e:t.end_jd}; runs.push(r);} r.e=t.end_jd; }
+  for(const r of runs){ const xa=jx(r.s), xb=jx(r.e), strong=(R.md_condition||[]).some(m=>m.maha===r.maha&&m.strong);
+    s.append(tip(sv('rect',{x:xa,y:laneMD,width:Math.max(1,xb-xa),height:16,rx:2,fill:'var(--accent-2)',opacity:strong?.85:.5,stroke:'var(--surface)',strokeWidth:1}),
+      r.maha+' Mahadasha ('+jdYM(r.s)+' – '+jdYM(r.e)+')'+(strong?' — MD lord strong':'')));
+    if(xb-xa>26) s.append(sv('text',{x:(xa+xb)/2,y:laneMD+11,'font-size':9,'font-weight':600,fill:'var(--surface)','text-anchor':'middle'}, r.maha)); }
+  // AD ribbon (tinted by antar Ishta/Kashta lean; par-excellence = accent border)
+  for(const t of R.timeline){ const xa=jx(t.start_jd), xb=jx(t.end_jd);
+    const ik=(R.ishta_kashta||[]).find(k=>k.maha===t.maha&&k.antar===t.antar&&Math.abs(k.start_jd-t.start_jd)<1);
+    const rect=sv('rect',{x:xa,y:laneAD,width:Math.max(1,xb-xa),height:16,fill:ik?leanColor(ik.antar_lean):'var(--surface-2)',opacity:.85,stroke:'var(--surface)',strokeWidth:.5});
+    if(t.associated) rect.style.stroke='var(--accent)';
+    s.append(tip(rect, t.antar+' AD in '+t.maha+' MD ('+jdYM(t.start_jd)+' – '+jdYM(t.end_jd)+')'+(t.associated?' — AD associated with MD (par excellence)':''))); }
+  // Ishta/Kashta goodness strip (top half = MD lean, bottom = AD lean)
+  for(const ik of (R.ishta_kashta||[])){ const xa=jx(ik.start_jd), w=Math.max(1,jx(ik.end_jd)-xa);
+    s.append(tip(sv('rect',{x:xa,y:laneIK,width:w,height:9,fill:leanColor(ik.maha_lean),opacity:.8}), ik.maha+' MD lean: '+ik.maha_lean));
+    s.append(tip(sv('rect',{x:xa,y:laneIK+9,width:w,height:9,fill:leanColor(ik.antar_lean),opacity:.8}), ik.antar+' AD lean: '+ik.antar_lean+' — '+ik.prevails)); }
+  // house × time heatmap (rows H1..H12; fill = natal verdict, opacity = fructification tier)
+  for(let h=1;h<=12;h++){ const y=heatTop+(h-1)*rowH;
+    s.append(sv('text',{x:x0-3,y:y+rowH-3,'font-size':8,fill:'var(--ink-2)','text-anchor':'end'},'H'+h));
+    s.append(sv('line',{x1:x0,y1:y+rowH-1,x2:x1,y2:y+rowH-1,stroke:'var(--line)',strokeWidth:.5,opacity:.35})); }
+  for(const t of R.timeline){ const xa=jx(t.start_jd), w=Math.max(1,jx(t.end_jd)-xa);
+    for(const a of (t.activated||[])){ const y=heatTop+(a.house-1)*rowH;
+      s.append(tip(sv('rect',{x:xa,y:y+1,width:w,height:rowH-3,fill:verdictColor(a.natal_verdict),opacity:TIER_OP[a.tier]||TIER_OP[a.grade]||.4}),
+        'H'+a.house+' lit in '+t.maha+'/'+t.antar+' — '+(a.tier||a.grade)+', natal '+a.natal_verdict)); } }
+  return s;
+}
+
 function run(){
   const btn=$('go'); btn.disabled=true; btn.textContent='Reading…';
   const out=$('out'); out.replaceChildren(el('div',{class:'loading'},'Casting the chart and composing the reading…'));
@@ -599,6 +686,9 @@ function render(R, S){
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
+  const _sb=shadbalaBars(R);
+  if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
+    'Bars rank the six-source Shadbala total (rupas) per planet; colour = functional nature for this Lagna. ★ = strongest planet, ○ = Lagna lord (the ruler of the nativity); the dashed line ≈ 5 rupas is Raman’s "strong" mark. Rahu/Ketu carry no Shadbala. Exact totals are the "Shadbala" column above.'));
 
   // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
   add(H2('Yogas'));
@@ -610,6 +700,9 @@ function render(R, S){
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ add(H2('Ashtakavarga (Sarvashtakavarga)'));
+    const _svc=savColumns(R);
+    if(_svc) add(vizCard('SAV per sign — columns diverge from the 28-point average', _svc,
+      'Each sign’s Sarvashtakavarga bindus as a column above/below the population average of 28 (green above, red below) — above/below the mean becomes a colour, not mental arithmetic. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456). Exact bindus are in the table below.'));
     const t=el('table'); t.append(el('tr',{},...Object.keys(R.sav).map(k=>el('th',{},SIGN[+k]||k))));
     t.append(el('tr',{},...Object.values(R.sav).map(v=>el('td',{},String(v))))); add(t);
     add(para('Average 28 per sign, 337 total. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456).','muted')); }
@@ -643,6 +736,9 @@ function render(R, S){
 
   // ===== House strength cross-check =====
   add(H2('House strength cross-check'));
+  const _bb=bhavaBalaBars(R);
+  if(_bb) add(vizCard('Bhava-Bala per house — bar = strength, colour = verdict', _bb,
+    'House order H1→H12. A long RED bar = an afflicted verdict standing on strong ground; a short GREEN bar = favourable but weakly supported. ★ = the strongest house (rank 1/12). The full table is below.'));
   add(rows(R.house_strength));
 
   // ===== Preponderance of testimonies (full witness ledger per house) =====
@@ -676,6 +772,10 @@ function render(R, S){
 
   // ===== Life-narrative timeline + companions =====
   add(H2('Life-narrative (Vimshottari)'));
+  const _lp=lifePanel(R);
+  if(_lp){ add(vizCard('Life at a glance — dasha periods · goodness · house activation on one timeline', _lp,
+    'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). The dashed line is now. The full graded per-bhukti detail is in the cards below.'));
+    add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
   add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
   add(sectionTable('MD-lord condition outlook', R.md_condition));

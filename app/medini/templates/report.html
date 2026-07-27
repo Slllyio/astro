@@ -129,6 +129,43 @@
   .tier-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);
     min-width:8.5em;font-weight:600}
   .house-chip{font-size:.72rem;padding:.08rem .42rem;font-weight:600}
+  /* ---- data-visualizations (self-contained SVG/CSS, theme-aware; supplement the tables) ---- */
+  :root{ --mono:"SF Mono","Cascadia Mono","Consolas",ui-monospace,monospace }
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin:.6rem 0}
+  .chartfig{margin:0}
+  .chartfig figcaption{font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-2);font-weight:600;margin-bottom:.35rem}
+  .chartgrid{position:relative;display:grid;gap:2px;aspect-ratio:1;
+    grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);
+    grid-template-areas:"s12 s1 s2 s3" "s11 mid mid s4" "s10 mid mid s5" "s9 s8 s7 s6";
+    background:var(--line);border:2px solid var(--line);border-radius:4px;overflow:hidden}
+  .cbox{background:var(--surface);padding:.22rem .28rem;display:flex;flex-direction:column;gap:.12rem;min-height:0;overflow:hidden}
+  .cbox.asc{box-shadow:inset 0 0 0 2px var(--accent)}
+  .csign{font-size:.54rem;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-2);
+    display:flex;justify-content:space-between;gap:.2rem;line-height:1.1}
+  .csign .chnum{color:var(--accent);font-weight:600}
+  .cgrahas{display:flex;flex-wrap:wrap;gap:.1rem .2rem;align-items:baseline}
+  .gr{font-size:.74rem;font-weight:600;font-family:var(--mono);line-height:1.15;white-space:nowrap}
+  .gr sup{font-size:.62em;font-weight:400}
+  .cmid{grid-area:mid;background:var(--surface);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;font-family:var(--serif);font-size:.82rem;color:var(--accent);text-align:center;gap:.05rem;padding:.2rem}
+  .cmid span{font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+  .viz-scroll{overflow-x:auto;max-width:100%}
+  .vz svg{display:block;width:100%;height:auto}
+  .vz-note{font-size:.72rem;color:var(--ink-2);margin:.3rem 0}
+  .vz-legend{display:flex;gap:.8rem;flex-wrap:wrap;font-size:.7rem;color:var(--ink-2);margin:.35rem 0}
+  .vz-legend .sw{display:inline-block;width:.72rem;height:.72rem;border-radius:2px;margin-right:.28rem;vertical-align:-1px}
+  .vz-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:.5rem;margin:.5rem 0}
+  .vz-tile{border:1px solid var(--line);border-left:3px solid var(--neu);border-radius:8px;padding:.45rem .6rem;background:var(--surface)}
+  .vz-tile b{font-family:var(--serif);font-size:1.15rem;display:block;line-height:1.1}
+  .vz-tile .lbl{font-size:.62rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+  .vz-tile.alert{border-left-color:var(--aff)}
+  .mtile{border:1px solid var(--line);border-left:3px solid var(--neu);border-radius:8px;padding:.4rem .55rem}
+  .mtile .m-name{font-family:var(--serif);font-weight:600;font-size:.9rem}
+  .mtile .m-sub{font-size:.62rem;color:var(--ink-2)}
+  .pct-strip{position:relative;height:.5rem;border-radius:4px;margin:.25rem 0 .1rem;
+    background:linear-gradient(90deg,var(--aff),var(--neu),var(--fav))}
+  .pct-dot{position:absolute;top:50%;width:.6rem;height:.6rem;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--surface)}
 </style>
 </head>
 <body>
@@ -248,6 +285,96 @@ function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
+
+// ===== data-visualization helpers (self-contained SVG/CSS, theme-aware) =====
+const SVGNS='http://www.w3.org/2000/svg';
+// SVG factory: fills/strokes/opacity MUST go through .style — CSS var() does NOT resolve in an
+// SVG presentation ATTRIBUTE but DOES as a CSS property. This keeps every SVG theme-aware.
+function sv(tag, attrs={}, ...kids){ const n=document.createElementNS(SVGNS,tag);
+  for(const k in attrs){ const v=attrs[k]; if(v==null) continue;
+    if(k==='fill'||k==='stroke'||k==='opacity'||k==='fillOpacity'||k==='strokeWidth'||k==='strokeDasharray')
+      n.style[k]=v; else n.setAttribute(k,v); }
+  for(const c of kids){ if(c==null)continue; n.append(c.nodeType?c:document.createTextNode(String(c))); } return n; }
+function tip(node,text){ if(text){ const t=document.createElementNS(SVGNS,'title'); t.textContent=text; node.append(t);} return node; }
+function svgBox(w,h){ const s=sv('svg',{viewBox:'0 0 '+w+' '+h,width:'100%',preserveAspectRatio:'xMinYMin meet'});
+  s.style.height='auto'; s.style.display='block'; s.dataset&&(s.dataset.w=w); s._w=w; s._h=h; return s; }
+function legend(items){ const d=el('div',{class:'vz-legend'}); for(const [color,label] of items){
+  const sw=el('span',{class:'sw'}); sw.style.background=color; d.append(el('span',{},sw,label)); } return d; }
+function vizCard(title, node, note){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+  const sm=el('summary'); sm.append(title); d.append(sm); const b=el('div',{class:'body'});
+  const sc=el('div',{class:'viz-scroll vz'}); sc.append(node); b.append(sc);
+  if(note) b.append(para(note,'vz-note')); d.append(b); return d; }
+
+// --- color mappers: return existing CSS tokens so light+dark both work ---
+function verdictColor(v){ v=String(v||'').toLowerCase();
+  if(/afflict|advers|\bbad\b|weak|malefic|danger|poor/.test(v)) return 'var(--aff)';
+  if(/favour|favor|good|strong|benefic|auspic/.test(v)) return 'var(--fav)';
+  if(/mix|contest|split/.test(v)) return 'var(--mix)';
+  return 'var(--neu)'; }
+function leanColor(l){ l=String(l||'').toLowerCase();
+  if(/good|ishta|favour/.test(l)) return 'var(--fav)';
+  if(/hard|kashta|advers/.test(l)) return 'var(--aff)';
+  if(/balanc|mix|neutral/.test(l)) return 'var(--mix)';
+  return 'var(--neu)'; }
+function goodVar(b){ return b===true?'var(--fav)':b===false?'var(--aff)':'var(--neu)'; }
+function natureVar(n){ n=String(n||'').toLowerCase();
+  if(/benefic|yoga/.test(n)) return 'var(--fav)'; if(/malefic|maraka/.test(n)) return 'var(--aff)'; return 'var(--ink)'; }
+function tintBg(c){ return 'color-mix(in srgb,'+c+' 12%,var(--surface))'; }
+const TIER_OP={'par excellence':1,'ordinary':.72,'limited':.45,'feeble':.28,'par_excellence':1};
+
+// --- sign / house / planet lookups ---
+const GABBR={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',Saturn:'Sa',Rahu:'Ra',Ketu:'Ke'};
+const _SI_ROWS=[[12,1,2,3],[11,0,0,4],[10,0,0,5],[9,8,7,6]];
+function signOfHouse(asc,h){ return ((asc-1)+(h-1))%12+1; }
+function houseOfSign(sign,asc){ return ((sign-asc+12)%12)+1; }
+function natureMap(R){ const m={}; for(const x of ((R.overview&&R.overview.functional_natures)||[])) m[x[0]]=x[1]; return m; }
+function navAscSign(R){ const nm=String((R.synthesis&&R.synthesis.navamsa_lagna)||'').toLowerCase();
+  for(let s=1;s<=12;s++) if(nm.includes(SIGN[s].toLowerCase())) return s; return 0; }
+// linear scale d in [d0,d1] -> [r0,r1]
+function lin(d,d0,d1,r0,r1){ if(d1===d0) return r0; return r0+((d-d0)/(d1-d0))*(r1-r0); }
+function lifeAxis(R){ const w=R.window||{}; const DPY=365.2425;
+  const ref=w.ref_jd, d0=ref-(w.back||0)*DPY, d1=ref+(w.forward||0)*DPY;
+  return {d0,d1,ref,jx:(jd,r0,r1)=>lin(jd,d0,d1,r0,r1)}; }
+
+// ONE South-Indian square-chart builder — serves rasi / navamsa / gochara / verdict-wheel.
+function chartGrid(R, mode){
+  const asc = mode==='navamsa' ? navAscSign(R) : ((R.chart&&R.chart.asc_sign)||1);
+  const nat = natureMap(R);
+  const rollup={}; for(const pf of (R.proformas||[])) rollup[pf.house]=pf.rollup;
+  const moonSign = (R.chart&&R.chart.planets&&R.chart.planets.Moon)?R.chart.planets.Moon.sign:0;
+  const occ={}; for(let s=1;s<=12;s++) occ[s]=[];
+  if(mode==='gochara'){
+    for(const g of (R.gochara||[])){ const s=g.sign; if(!s)continue; const vedha=g.vedha_by&&g.vedha_by.length;
+      occ[s].push({abbr:GABBR[g.planet]||String(g.planet).slice(0,2), ink:goodVar(g.net_good), sup:String(g.house_from_moon||''), strike:!!vedha,
+        title:g.planet+' in '+SIGN[s]+' — '+g.house_from_moon+' from Moon, '+g.house_from_lagna+' from Lagna; BAV '+g.bav_bindus+'; net '+(g.net_good?'favourable':'adverse')+(vedha?('; obstructed by '+g.vedha_by.join(', ')):'')}); }
+  } else {
+    for(const [name,p] of Object.entries((R.chart&&R.chart.planets)||{})){ const s=mode==='navamsa'?p.navamsa_sign:p.sign; if(!s)continue;
+      const combust=p.combust_fraction>=0.5;
+      occ[s].push({abbr:(p.vargottama?'★':'')+(GABBR[name]||name.slice(0,2)), ink:natureVar(nat[name]), sup:p.retrograde?'℞':'',
+        dim:combust, strong:p.shadbala_rupas!=null&&p.shadbala_rupas>=5,
+        title:name+' — '+SIGN[s]+(p.nakshatra?(' · nak '+p.nakshatra+' pada '+p.pada):'')+(p.shadbala_rupas!=null?(' · '+p.shadbala_rupas+' rupas'):'')+(p.vargottama?' · vargottama':'')+(p.retrograde?' · retrograde':'')+(combust?' · combust':'')}); }
+  }
+  const grid=el('div',{class:'chartgrid'});
+  for(const row of _SI_ROWS) for(const s of row){ if(s===0)continue; const isAsc=s===asc;
+    const box=el('div',{class:'cbox'+(isAsc?' asc':'')}); box.style.gridArea='s'+s;
+    if(mode!=='gochara' && rollup[s]!=null) box.style.background=tintBg(verdictColor(rollup[s]));
+    const sign=el('div',{class:'csign'}); sign.append(el('span',{},SIGN[s].slice(0,3)+(isAsc?' · Asc':'')));
+    if(mode==='gochara' && s===moonSign) sign.append(el('span',{class:'chnum'},'☾'));
+    else if(mode!=='navamsa') sign.append(el('span',{class:'chnum'},'H'+houseOfSign(s,asc)));
+    box.append(sign);
+    const gr=el('div',{class:'cgrahas'});
+    for(const o of occ[s]){ const sp=el('span',{class:'gr',title:o.title}); sp.style.color=o.ink;
+      if(o.dim) sp.style.opacity='.5'; if(o.strike) sp.style.textDecoration='line-through';
+      if(o.strong){ sp.style.borderBottom='2px solid currentColor'; }
+      sp.append(o.abbr); if(o.sup) sp.append(el('sup',{},o.sup)); if(o.strike) sp.append('⊗'); gr.append(sp); }
+    box.append(gr); grid.append(box);
+  }
+  const mid=el('div',{class:'cmid'}); mid.append(asc?SIGN[asc]:'—');
+  mid.append(el('span',{}, mode==='gochara'?'transit sky':'lagna')); grid.append(mid);
+  const fig=el('figure',{class:'chartfig'});
+  fig.append(el('figcaption',{}, mode==='rasi'?'Rasi (D-1)':mode==='navamsa'?'Navamsa (D-9)':'Gochara (transit)'));
+  fig.append(grid); return fig;
+}
 
 function run(){
   const btn=$('go'); btn.disabled=true; btn.textContent='Reading…';
@@ -452,6 +579,15 @@ function render(R, S){
   if(ru.stamps_nature) add(para('As between the strongest planet and the Navamsa-Lagna lord ('+(ru.navamsa_lagna_lord||'—')+'), '+ru.stamps_nature+' stamps the nature and appearance (HTJAH-I:3892-3897).','muted'));
   if(ru.temperament) add(para('Classical temperament: '+ru.temperament+' (HTJAH-I:6248-6268)','muted'));
   if(ru.signature) add(para(ru.signature));
+
+  // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
+  if(R.chart&&R.chart.planets){ add(H2('Charts — Rasi · Navamsa · Gochara'));
+    const cw=el('div',{class:'charts'});
+    cw.append(chartGrid(R,'rasi'), chartGrid(R,'navamsa'));
+    if((R.gochara||[]).length) cw.append(chartGrid(R,'gochara'));
+    add(cw);
+    add(para('South-Indian layout — signs are fixed, the ascendant is ringed. Rasi & Navamsa: graha ink is its functional nature for this Lagna, ★ vargottama, ℞ retrograde, faded = combust, underline = strong by Shadbala; the corner badge counts the house from the Lagna, and each cell is faintly tinted by that house’s verdict. Gochara: ink is the net-favourable light (BAV bindus net of Vedha, not the raw transit), the superscript is the house from the Moon (Raman’s transit frame, HTJAH-I:8410-8411), ⊗ marks a planet obstructed by Vedha, and ☾ marks the natal Moon sign.'+(R.maraka_period_now?' A maraka period is currently running.':''),'vz-note'));
+    if((R.gochara||[]).length) add(legend([['var(--fav)','net-favourable transit'],['var(--aff)','net-adverse transit'],['var(--accent)','ascendant']])); }
 
   // ===== Planetary positions =====
   add(H2('Planetary positions'));

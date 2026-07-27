@@ -460,8 +460,50 @@ function lifePanel(R){
     for(const a of (t.activated||[])){ const y=heatTop+(a.house-1)*rowH;
       s.append(tip(sv('rect',{x:xa,y:y+1,width:w,height:rowH-3,fill:verdictColor(a.natal_verdict),opacity:TIER_OP[a.tier]||TIER_OP[a.grade]||.4}),
         'H'+a.house+' lit in '+t.maha+'/'+t.antar+' — '+(a.tier||a.grade)+', natal '+a.natal_verdict)); } }
+  // --- overlays on the ribbon lanes (bands stop above the heatmap so it stays legible) ---
+  const bandBot=heatTop-2, bandH=bandBot-laneMD;
+  for(const c of (R.dasha_transit||[])){ const xa=jx(c.overlap_start_jd), xb=jx(c.overlap_end_jd); if(xb<=xa)continue;
+    s.append(tip(sv('rect',{x:xa,y:laneMD,width:Math.max(1.5,xb-xa),height:bandH,fill:'var(--accent-2)',opacity:0.06+((c.bav_bindus||0)/8)*0.10}),
+      c.planet+' '+c.role+' × its favourable transit ('+jdYM(c.overlap_start_jd)+' – '+jdYM(c.overlap_end_jd)+') · BAV '+c.bav_bindus)); }
+  for(const m of (R.maraka_saturn||[])){ const xa=jx(m.overlap_start_jd), xb=jx(m.overlap_end_jd); if(xb<=xa)continue;
+    s.append(tip(sv('rect',{x:xa,y:laneMD,width:Math.max(1.5,xb-xa),height:bandH,fill:'var(--aff)',opacity:0.05+((m.score||0)/10)*0.10}),
+      'Maraka × Saturn-transit window ('+jdYM(m.overlap_start_jd)+' – '+jdYM(m.overlap_end_jd)+') · score '+m.score+' — textbook method, not a prediction')); }
+  for(const yg of (R.yoga_timing||[])){ const x=jx(yg.period_start_jd); if(x<x0-1||x>x1+1)continue;
+    const k=String(yg.yoga_kind||'').toLowerCase(), col=/raja|dhana|maha/.test(k)?'var(--fav)':/arishta|maraka|daridra/.test(k)?'var(--aff)':'var(--neu)';
+    const sz=(yg.quality&&yg.quality.strong)?4:2.6;
+    s.append(tip(sv('polygon',{points:(x-sz)+',6 '+(x+sz)+',6 '+x+','+(6-sz*1.7),fill:col,opacity:.9}),
+      yg.yoga_name+' ripens in '+yg.planet+' '+yg.role+' ('+jdYM(yg.period_start_jd)+')'+((yg.quality&&yg.quality.strong)?' — its lord strong':''))); }
+  const nx=jx(A.ref);
+  s.append(tip(sv('polygon',{points:(nx-4)+',0 '+(nx+4)+',0 '+nx+',6',fill:'var(--accent)'}),'you are here — '+jdYM(A.ref)));
+  if(R.maraka_period_now) s.append(tip(sv('text',{x:nx+6,y:5,'font-size':9,'font-weight':600,fill:'var(--aff)'},'⚠ maraka'),'a maraka period is currently running'));
   return s;
 }
+
+// gochara outlook — slow-mover transits over time (one lane each), shared JD axis
+function gocharaOutlook(R){ const go=R.gochara_outlook||{}; const planets=Object.keys(go).filter(p=>(go[p]||[]).length); if(!planets.length) return null;
+  const A=lifeAxis(R); if(A.ref==null) return null;
+  const W=900,x0=54,x1=W-6,laneH=20,top=6,DPY=365.2425,jx=jd=>A.jx(jd,x0,x1),H=top+planets.length*laneH+22,s=svgBox(W,H);
+  for(let jd=A.d0; jd<=A.d1; jd+=2*DPY){ const x=jx(jd); s.append(sv('line',{x1:x,y1:top,x2:x,y2:H-16,stroke:'var(--line)',strokeWidth:1,opacity:.4}));
+    s.append(sv('text',{x:x,y:H-4,'font-size':9,'text-anchor':'middle',fill:'var(--ink-2)'},jdYM(jd))); }
+  s.append(sv('line',{x1:jx(A.ref),y1:top,x2:jx(A.ref),y2:H-16,stroke:'var(--accent)',strokeWidth:1.5,strokeDasharray:'3 2'}));
+  planets.forEach((p,i)=>{ const y=top+i*laneH;
+    s.append(sv('text',{x:x0-4,y:y+laneH*0.62,'font-size':10,'text-anchor':'end',fill:'var(--ink-2)'},p));
+    for(const seg of go[p]){ const xa=jx(seg.start_jd), xb=jx(seg.end_jd); if(xb<xa)continue;
+      s.append(tip(sv('rect',{x:xa,y:y+2,width:Math.max(1,xb-xa),height:laneH-5,fill:goodVar(seg.gochara_good),opacity:seg.bav_bindus!=null?(0.4+seg.bav_bindus/8*0.55):0.65}),
+        p+' in '+SIGN[seg.sign]+' ('+jdYM(seg.start_jd)+' – '+jdYM(seg.end_jd)+') — '+seg.house_from_moon+' from the Moon; '+(seg.gochara_good?'favourable':'adverse')+(seg.bav_bindus!=null?('; BAV '+seg.bav_bindus):'')));
+      if(xb-xa>16) s.append(sv('text',{x:(xa+xb)/2,y:y+laneH*0.62,'font-size':8,'text-anchor':'middle',fill:'var(--ink)'},SIGN[seg.sign].slice(0,3))); } });
+  return s; }
+
+// current transits placed by house FROM THE MOON (Raman's transit frame)
+function gocharaFromMoon(R){ const g=R.gochara||[]; if(!g.length) return null;
+  const byH={}; for(const t of g)(byH[t.house_from_moon]=byH[t.house_from_moon]||[]).push(t);
+  const grid=el('div',{}); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(12,1fr)'; grid.style.gap='2px'; grid.style.margin='.4rem 0';
+  for(let h=1;h<=12;h++){ const cell=el('div',{}); cell.style.cssText='border:1px solid var(--line);border-radius:4px;padding:.25rem;min-height:2.5rem;font-size:.7rem';
+    cell.append(el('div',{class:'muted',style:'font-size:.58rem'},h+' from ☾'));
+    for(const t of (byH[h]||[])){ const sp=el('span',{class:'gr',title:t.planet+' — '+(t.net_good?'net favourable':'net adverse')+'; BAV '+t.bav_bindus+(t.supported?'; supported':'')+(t.vedha_by&&t.vedha_by.length?('; vedha by '+t.vedha_by.join(', ')):'')});
+      sp.style.color=goodVar(t.net_good); sp.append((GABBR[t.planet]||t.planet.slice(0,2))); cell.append(' '); cell.append(sp); }
+    grid.append(cell); }
+  return grid; }
 
 // house-verdict wheel: 12 houses in their sign cells, tinted by rollup verdict
 function verdictWheel(R){ const asc=(R.chart&&R.chart.asc_sign)||1;
@@ -827,7 +869,19 @@ function render(R, S){
     // population context
     const cal=(R.calibration?.[String(pf.house)]||R.calibration?.[pf.house]||{}).entries||[];
     if(cal.length){ const invs=cal.filter(e=>e.inverted_warning);
-      if(invs.length) b.append(para('⚠ inverted channel(s): '+invs.map(e=>e.signification).join(', ')+' — real cases ran opposite; treat with skepticism.','muted')); }
+      if(invs.length) b.append(para('⚠ inverted channel(s): '+invs.map(e=>e.signification).join(', ')+' — real cases ran opposite; treat with skepticism.','muted'));
+      // per-signification calibration percentile strips (information content, empirical — not Raman)
+      const cs=el('div',{style:'margin:.3rem 0'});
+      for(const e of cal){ if(e.favourability_percentile==null) continue;
+        const row=el('div',{style:'font-size:.72rem;margin:.2rem 0'});
+        row.append(el('div',{}, e.signification+' — '+e.verdict+' ('+e.degree+')'));
+        const strip=el('div',{class:'pct-strip'}), dot=el('div',{class:'pct-dot',title:e.note||''});
+        dot.style.left=(e.favourability_percentile*100)+'%'; dot.style.background=verdictColor(e.verdict);
+        if(e.inverted_warning) dot.style.borderColor='var(--aff)';
+        strip.append(dot); row.append(strip);
+        row.append(el('div',{class:'muted',style:'font-size:.62rem'}, Math.round(e.favourability_percentile*100)+'% more favourable than the population · this exact reading in '+Math.round((e.band_share||0)*100)+'% ('+e.rarity+')'));
+        cs.append(row); }
+      if(cs.children.length) b.append(el('div',{class:'muted',style:'font-size:.64rem;margin-top:.3rem'},'Information content (empirical, not Raman) — dot = this chart on a red→green favourability scale:'), cs); }
     if(P){ b.append(el('div',{class:'muted'},'Witnesses — '+P.preponderance+' ('+P.status+'): '+P.favourable+' favourable, '+P.adverse+' adverse, '+P.neutral+' neutral'));
       const w=el('div',{class:'witnesses'});
       for(const t of P.testimonies){ if(t.lean==='absent')continue; w.append(el('div',{class:'lean-'+t.lean},t.name+' — '+t.value)); }
@@ -885,7 +939,7 @@ function render(R, S){
   add(H2('Life-narrative (Vimshottari)'));
   const _lp=lifePanel(R);
   if(_lp){ add(vizCard('Life at a glance — dasha periods · goodness · house activation on one timeline', _lp,
-    'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). The dashed line is now. The full graded per-bhukti detail is in the cards below.'));
+    'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
     add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
   add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
@@ -900,6 +954,12 @@ function render(R, S){
 
   // ===== Transits =====
   add(H2('Transits (Gochara)'));
+  const _fm=gocharaFromMoon(R);
+  if(_fm) add(vizCard('Current transits by house from the Moon', _fm,
+    'Each slow transit placed in its house counted from the natal Moon (Raman’s transit frame, HTJAH-I:8410-8411); ink = net-favourable (BAV net of Vedha). The raw rows with Vedha are below.'));
+  const _go=gocharaOutlook(R);
+  if(_go) add(vizCard('Slow-mover transit outlook over time', _go,
+    'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
   add(sectionTable('Current transits with Vedha', R.gochara));
   add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
 

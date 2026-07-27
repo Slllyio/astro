@@ -463,6 +463,102 @@ function lifePanel(R){
   return s;
 }
 
+// house-verdict wheel: 12 houses in their sign cells, tinted by rollup verdict
+function verdictWheel(R){ const asc=(R.chart&&R.chart.asc_sign)||1;
+  const byH={}; for(const pf of (R.proformas||[])) byH[pf.house]=pf; if(!Object.keys(byH).length) return null;
+  const hs={}; for(const r of (R.house_strength||[])) hs[r.house]=r;
+  const grid=el('div',{class:'chartgrid'});
+  for(const row of _SI_ROWS) for(const sgn of row){ if(sgn===0)continue; const h=houseOfSign(sgn,asc), pf=byH[h];
+    const box=el('div',{class:'cbox'+(h===1?' asc':'')}); box.style.gridArea='s'+sgn;
+    if(pf) box.style.background=tintBg(verdictColor(pf.rollup));
+    const sign=el('div',{class:'csign'}); sign.append(el('span',{},SIGN[sgn].slice(0,3))); sign.append(el('span',{class:'chnum'},'H'+h)); box.append(sign);
+    if(pf){ const g=el('div',{class:'cgrahas'}); const sp=el('span',{class:'gr',title:'House '+h+' — '+pf.rollup+' (lord '+pf.lord+')'+(hs[h]?('; Bhava-Bala rank '+hs[h].bhava_bala_rank+'/12, SAV '+hs[h].sav_bindus):'')});
+      sp.style.color=verdictColor(pf.rollup); sp.append((hs[h]&&hs[h].bhava_bala_rank===1?'★':'')+pf.lord); g.append(sp); box.append(g); }
+    grid.append(box); }
+  const mid=el('div',{class:'cmid'}); mid.append('Verdicts'); mid.append(el('span',{},'by house')); grid.append(mid);
+  const fig=el('figure',{class:'chartfig'}); fig.append(el('figcaption',{},'House verdicts')); fig.append(grid); return fig; }
+
+// preponderance diverging witness bars (favourable right, adverse left)
+function prepBars(R){ const hs=(R.preponderance&&R.preponderance.houses)||[]; if(!hs.length) return null;
+  const P=R.preponderance, flagged=new Set([P.most_corroborated_favourable,P.most_corroborated_afflicted,P.most_contested]);
+  const W=560,rowH=20,padL=34,top=6,H=top+hs.length*rowH+8,cx=padL+(W-padL-24)/2+12,maxT=Math.max(1,...hs.map(h=>h.favourable+h.adverse+h.neutral)),half=(W-padL-24)/2;
+  const s=svgBox(W,H); s.append(sv('line',{x1:cx,y1:top,x2:cx,y2:H-8,stroke:'var(--ink-2)',strokeWidth:1,opacity:.4}));
+  hs.forEach((h,i)=>{ const y=top+i*rowH; if(flagged.has(h.house)) s.append(sv('rect',{x:padL,y:y,width:W-padL,height:rowH,fill:'var(--surface-2)',opacity:.5}));
+    s.append(sv('text',{x:6,y:y+rowH*0.68,'font-size':10,fill:verdictColor(h.verdict)},'H'+h.house));
+    const fw=(h.favourable/maxT)*half, aw=(h.adverse/maxT)*half;
+    s.append(tip(sv('rect',{x:cx,y:y+3,width:Math.max(0,fw),height:rowH-7,rx:1,fill:'var(--fav)',opacity:.85}), h.favourable+' favourable'));
+    s.append(tip(sv('rect',{x:cx-aw,y:y+3,width:Math.max(0,aw),height:rowH-7,rx:1,fill:'var(--aff)',opacity:.85}), h.adverse+' adverse'));
+    s.append(sv('text',{x:W-4,y:y+rowH*0.68,'font-size':9,'text-anchor':'end',fill:'var(--ink-2)'}, h.status)); });
+  return s; }
+
+// twelve-matter verdict tiles + a stacked verdict tally
+function matterTiles(R){ const e=(R.dashboard&&R.dashboard.entries)||[]; if(!e.length) return null; const wrap=el('div',{});
+  const tg=el('div',{class:'vz-tiles'});
+  for(const m of e){ const t=el('div',{class:'mtile',title:'decided by '+m.reader}); t.style.borderLeftColor=verdictColor(m.verdict); t.style.background=tintBg(verdictColor(m.verdict));
+    t.append(el('div',{class:'m-name'},m.matter)); t.append(el('div',{class:'m-sub'},'D-'+m.varga+' '+m.varga_name+' · '+m.verdict)); tg.append(t); }
+  wrap.append(tg);
+  const counts={}; for(const m of e){ const c=verdictColor(m.verdict); counts[c]=(counts[c]||0)+1; }
+  const order=['var(--fav)','var(--mix)','var(--aff)','var(--neu)'], tot=e.length, W=560,H=26, s=svgBox(W,H); let x=0;
+  for(const c of order){ const n=counts[c]||0; if(!n)continue; const w=(n/tot)*W; s.append(tip(sv('rect',{x:x,y:2,width:w,height:18,fill:c,opacity:.85}), n+' matters'));
+    if(w>16) s.append(sv('text',{x:x+w/2,y:15,'font-size':10,'text-anchor':'middle','font-weight':600,fill:'var(--surface)'}, n)); x+=w; }
+  wrap.append(s); return wrap; }
+
+// distinctive dot plot on the 0..1 favourability-percentile axis
+function distinctivePlot(R){ const d=R.distinctive||[]; if(!d.length) return null;
+  const W=580,rowH=20,padL=150,top=8,H=top+d.length*rowH+16,x0=padL,x1=W-16,midx=x0+(x1-x0)/2; const s=svgBox(W,H);
+  s.append(sv('rect',{x:x0,y:top,width:(x1-x0)/2,height:H-top-16,fill:'var(--aff)',opacity:.05}));
+  s.append(sv('rect',{x:midx,y:top,width:(x1-x0)/2,height:H-top-16,fill:'var(--fav)',opacity:.05}));
+  s.append(sv('line',{x1:midx,y1:top,x2:midx,y2:H-16,stroke:'var(--ink-2)',strokeWidth:1,strokeDasharray:'3 2',opacity:.6}));
+  s.append(sv('text',{x:midx,y:H-4,'font-size':9,'text-anchor':'middle',fill:'var(--ink-2)'},'population median'));
+  d.forEach((row,i)=>{ const h=row[0],e=row[1],y=top+i*rowH+rowH/2,px=x0+(e.favourability_percentile||0.5)*(x1-x0);
+    s.append(sv('text',{x:padL-6,y:y+3,'font-size':9,'text-anchor':'end',fill:'var(--ink-2)'},'H'+h+' '+e.signification));
+    s.append(sv('line',{x1:midx,y1:y,x2:px,y2:y,stroke:'var(--line)',strokeWidth:1,opacity:.5}));
+    const r=e.rarity==='rare'?6:e.rarity==='notable'?4.5:3.5;
+    const c=tip(sv('circle',{cx:px,cy:y,r:r,fill:verdictColor(e.verdict),opacity:.9}), 'H'+h+' '+e.signification+' — '+e.verdict+' ('+e.degree+'); more favourable than '+Math.round((e.favourability_percentile||0)*100)+'% of charts; this reading in '+Math.round((e.band_share||0)*100)+'% ('+e.rarity+')');
+    if(e.inverted_warning){ c.style.stroke='var(--aff)'; c.style.strokeWidth='2'; s.append(sv('text',{x:px+r+3,y:y+3,'font-size':10,fill:'var(--aff)'},'⚠')); }
+    s.append(c); });
+  return s; }
+
+// information-content stat tiles + composition bar (the honesty view)
+function infoTiles(R){ const I=R.info; if(!I) return null; const wrap=el('div',{});
+  const tiles=[['total','all readings',I.total,''],['modal',I.modal_verdict,I.modal_count,verdictColor(I.modal_verdict)],
+    ['near-universal','little information',I.near_universal,'var(--neu)'],['distinctive','distinguish this chart',I.distinctive,'var(--accent-2)'],
+    ['inverted','run backwards',I.inverted,I.inverted>0?'var(--aff)':'var(--neu)']];
+  const tg=el('div',{class:'vz-tiles'});
+  for(const [lbl,sub,val,c] of tiles){ const t=el('div',{class:'vz-tile'+(lbl==='inverted'&&I.inverted>0?' alert':'')});
+    if(c) t.style.borderLeftColor=c; if(lbl==='inverted'&&(I.inverted_locations||[]).length) t.setAttribute('title',I.inverted_locations.join(', '));
+    t.append(el('b',{},String(val))); t.append(el('div',{class:'lbl'},lbl)); t.append(el('div',{class:'m-sub'},sub)); tg.append(t); }
+  wrap.append(tg);
+  const tot=I.total||1, rem=Math.max(0,tot-I.near_universal-I.inverted-I.distinctive);
+  const segs=[[I.near_universal,'var(--neu)','near-universal'],[I.inverted,'var(--aff)','inverted'],[I.distinctive,'var(--accent-2)','distinctive'],[rem,'var(--surface-2)','ordinary']];
+  const W=560,H=28,s=svgBox(W,H); let x=0;
+  for(const [n,c,lbl] of segs){ if(!n)continue; const w=(n/tot)*W; s.append(tip(sv('rect',{x:x,y:3,width:w,height:18,fill:c,opacity:.85}), n+' '+lbl));
+    if(w>24) s.append(sv('text',{x:x+w/2,y:16,'font-size':9,'text-anchor':'middle',fill:'var(--ink)'}, n)); x+=w; }
+  wrap.append(s); return wrap; }
+
+// ishta / kashta per planet — the benefic share (fields shown nowhere else on the page)
+function ishtaKashtaBars(R){ const items=Object.entries((R.chart&&R.chart.planets)||{}).filter(x=>x[1].ishta!=null&&x[1].kashta!=null).map(x=>({name:x[0],i:x[1].ishta,k:x[1].kashta}));
+  if(!items.length) return null; const W=560,rowH=22,padL=40,padR=90,top=6,H=top+items.length*rowH+8,bw=W-padL-padR; const s=svgBox(W,H);
+  s.append(sv('line',{x1:padL+bw/2,y1:top,x2:padL+bw/2,y2:H-8,stroke:'var(--ink-2)',strokeWidth:1,strokeDasharray:'3 2',opacity:.5}));
+  items.forEach((it,idx)=>{ const y=top+idx*rowH,tot=(it.i+it.k)||1,iw=(it.i/tot)*bw;
+    s.append(sv('text',{x:padL-6,y:y+rowH*0.66,'font-size':10,'text-anchor':'end',fill:'var(--ink-2)'},it.name));
+    s.append(tip(sv('rect',{x:padL,y:y+3,width:iw,height:rowH-8,fill:'var(--fav)',opacity:.8}), it.name+' ishta '+it.i));
+    s.append(tip(sv('rect',{x:padL+iw,y:y+3,width:bw-iw,height:rowH-8,fill:'var(--aff)',opacity:.8}), it.name+' kashta '+it.k));
+    s.append(sv('text',{x:padL+bw+4,y:y+rowH*0.66,'font-size':9,fill:'var(--ink-2)'}, it.i+' / '+it.k)); });
+  return s; }
+
+// longevity / Ayurdaya gauge (0..100 years)
+function longevityGauge(R){ const L=R.longevity; if(!L||L.years==null) return null;
+  const W=560,H=54,y=24,x0=8,x1=W-8,s=svgBox(W,H);
+  s.append(sv('rect',{x:x0,y:y,width:x1-x0,height:12,rx:6,fill:'var(--surface-2)'}));
+  for(let d=0;d<=100;d+=20){ const x=lin(d,0,100,x0,x1); s.append(sv('line',{x1:x,y1:y-3,x2:x,y2:y+15,stroke:'var(--line)',strokeWidth:1}));
+    s.append(sv('text',{x:x,y:y+30,'font-size':9,'text-anchor':'middle',fill:'var(--ink-2)'},d)); }
+  const mx=lin(Math.min(100,L.years),0,100,x0,x1);
+  s.append(sv('rect',{x:x0,y:y,width:mx-x0,height:12,rx:6,fill:'var(--accent-2)',opacity:.7}));
+  const ymd=(L.ymd||[]); s.append(tip(sv('circle',{cx:mx,cy:y+6,r:6,fill:'var(--accent)',stroke:'var(--surface)',strokeWidth:2}), Math.round(L.years)+' years — '+L['class']+' band'+(ymd.length?(' ('+ymd[0]+'y '+ymd[1]+'m '+ymd[2]+'d)'):'')));
+  s.append(sv('text',{x:mx,y:y-6,'font-size':10,'text-anchor':'middle','font-weight':600,fill:'var(--accent)'}, Math.round(L.years)+'y · '+L['class']));
+  return s; }
+
 function run(){
   const btn=$('go'); btn.disabled=true; btn.textContent='Reading…';
   const out=$('out'); out.replaceChildren(el('div',{class:'loading'},'Casting the chart and composing the reading…'));
@@ -689,6 +785,9 @@ function render(R, S){
   const _sb=shadbalaBars(R);
   if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
     'Bars rank the six-source Shadbala total (rupas) per planet; colour = functional nature for this Lagna. ★ = strongest planet, ○ = Lagna lord (the ruler of the nativity); the dashed line ≈ 5 rupas is Raman’s "strong" mark. Rahu/Ketu carry no Shadbala. Exact totals are the "Shadbala" column above.'));
+  const _ikb=ishtaKashtaBars(R);
+  if(_ikb) add(vizCard('Ishta / Kashta — each planet’s benefic share', _ikb,
+    'For each planet, the green (ishta — benefic potential) vs red (kashta — malefic potential) split, with the dashed centre marking the 50% tipping point. These fields appear nowhere else in the report.'));
 
   // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
   add(H2('Yogas'));
@@ -709,6 +808,9 @@ function render(R, S){
 
   // ===== House-by-house (proforma + strength + witnesses) =====
   add(H2('House-by-house'));
+  const _vw=verdictWheel(R);
+  if(_vw){ add(el('div',{class:'charts'}, _vw));
+    add(para('The 12 house verdicts on the chart wheel — each house in its sign cell, tinted by its verdict; label = H# · lord (★ = strongest house). The full detailed cards follow below.','vz-note')); }
   const prep = Object.fromEntries((R.preponderance?.houses||[]).map(h=>[h.house,h]));
   const hs = Object.fromEntries((R.house_strength||[]).map(r=>[r.house,r]));
   const g=el('div',{class:'grid'});
@@ -745,6 +847,9 @@ function render(R, S){
   const pp=R.preponderance||{};
   if((pp.houses||[]).length){ add(H2('Preponderance of testimonies'));
     add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
+    const _pb=prepBars(R);
+    if(_pb) add(vizCard('Witness balance per house — favourable vs adverse', _pb,
+      'Each house’s witnesses diverge from centre: favourable to the right (green), adverse to the left (red). The H# label is tinted by the headline verdict — so a green label over a left-leaning bar is a favourable house its own witnesses contest. Highlighted rows are the most-corroborated / most-contested houses. Full ledgers below.'));
     const flagged=new Set([pp.most_corroborated_favourable,pp.most_corroborated_afflicted,pp.most_contested]);
     const pg=el('div',{class:'grid'});
     for(const h of pp.houses){ const d=el('details',{class:'card'}); if(flagged.has(h.house)) d.setAttribute('open','');
@@ -759,6 +864,9 @@ function render(R, S){
 
   // ===== The twelve matters (dashboard) — full, incl. the deciding reader =====
   if(R.dashboard?.entries){ add(H2('The twelve matters at a glance'));
+    const _mt=matterTiles(R);
+    if(_mt) add(vizCard('Twelve matters — verdict tiles & tally', _mt,
+      'Each life-matter tiled and tinted by its authoritative verdict (from its dedicated divisional reader); the bar tallies the verdict balance across all twelve. The full table with the deciding reader is below.'));
     add(rows(R.dashboard.entries));
     if((R.dashboard.notes||[]).length) for(const nt of R.dashboard.notes)
       add(para((typeof nt==='object'?(nt.text||JSON.stringify(nt)):nt),'muted')); }
@@ -768,6 +876,9 @@ function render(R, S){
   const lg=R.longevity||{};
   add(para('Longevity: '+lg.class+' band — about '+Math.round(lg.years||0)+' years'+
     (lg.balarishta&&lg.balarishta.applies?(lg.balarishta.cancelled?' (Balarishta cancelled)':' (Balarishta applies)'):'')+'.'));
+  const _lgg=longevityGauge(R);
+  if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
+    'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
 
   // ===== Life-narrative timeline + companions =====
@@ -820,12 +931,18 @@ function render(R, S){
   // ===== What stands out (full detail — rare first) =====
   if((R.distinctive||[]).length){ add(H2('What stands out'));
     add(para('The readings that most distinguish this chart from the population, rarest first — information content, not a prediction.','muted'));
+    const _dp=distinctivePlot(R);
+    if(_dp) add(vizCard('Distance from the population median', _dp,
+      'Each distinctive reading as a dot on the 0→1 favourability-percentile axis; left of the dashed median = rarer-adverse, right = rarer-favourable. Dot colour = verdict, size = rarity; a red ring + ⚠ marks an atlas-proven inverted channel. The full table follows.'));
     add(rows(R.distinctive.map(([h,e])=>({house:'H'+h, signification:e.signification, verdict:e.verdict,
       degree:e.degree, 'more favourable than':Math.round((e.favourability_percentile||0)*100)+'% of charts',
       'this reading in':Math.round((e.band_share||0)*100)+'% ('+e.rarity+')',
       inverted:e.inverted_warning?'⚠ inverted channel':'—'})))); }
   // ===== Information content (every field of the honesty headline) =====
   if(R.info){ add(H2('Information content of this reading')); const I=R.info;
+    const _it=infoTiles(R);
+    if(_it) add(vizCard('The reading’s information content', _it,
+      'How much of this chart’s reading actually distinguishes it: the composition bar splits every reading into near-universal, inverted, distinctive, and ordinary. Most is non-differential — an honest disclosure, per the engine’s measured truth. The full sentence follows.'));
     add(para(I.total+' calibrated readings. '+I.modal_count+' return the single most common verdict ('+
       I.modal_verdict+'). '+I.near_universal+' are near-universal — held by half the population or more, carrying little information. '+
       I.inverted+' sit on atlas-proven inverted channels'+

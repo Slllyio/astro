@@ -76,3 +76,16 @@ class TestSerializer:
         assert {"sign", "rasi_house", "shadbala_rupas"} <= set(sun)
         assert isinstance(rjson["timeline"], list) and rjson["timeline"]
         assert {"maha", "antar", "activated"} <= set(rjson["timeline"][0])
+
+    def test_timeline_activated_houses_carry_the_four_tier_grade(self, rjson):
+        """Each bhukti serializes WHICH houses it lights and their FOUR-tier fructification grade
+        (par excellence / ordinary / limited / feeble) + the AD-associated flag — so the interactive
+        page shows the same grading as the standalone report, not a bare count (a real regression
+        that dropped the houses-lit detail to a length)."""
+        tiers = {a.get("tier") for t in rjson["timeline"] for a in t["activated"]}
+        assert tiers <= {"par excellence", "ordinary", "limited", "feeble"}
+        assert tiers - {None}                                 # at least one house is graded
+        row = next(t for t in rjson["timeline"] if t["activated"])
+        assert "associated" in row
+        a = row["activated"][0]
+        assert {"house", "tier", "natal_verdict"} <= set(a)

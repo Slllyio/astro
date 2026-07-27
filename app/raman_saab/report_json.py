@@ -25,7 +25,7 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import Any
 
-from app.raman_saab.detailed_report import DetailedReport
+from app.raman_saab.detailed_report import DetailedReport, graded_buckets
 
 
 def _ad(obj: Any) -> Any:
@@ -58,16 +58,23 @@ def _chart_dict(chart) -> dict:
     return {"asc_sign": chart.asc_sign, "planets": planets}
 
 
-def _timeline_dict(timeline) -> list:
-    """Trimmed windowed timeline: one row per bhukti with the houses it lights (best tier)."""
+def _timeline_dict(timeline, chart) -> list:
+    """Trimmed windowed timeline: one row per bhukti with the houses it lights, each graded by
+    Raman's FOUR-tier fructification scheme (par excellence / ordinary / limited / feeble) via the
+    ONE shared `graded_buckets` implementation — so the interactive page shows the SAME grading as
+    the standalone report, not a coarser view. `associated` is whether the AD lord is associated
+    with the MD lord (the distinction between par-excellence and ordinary)."""
     out = []
     for tp in timeline.periods:
         pr = tp.period
+        associated, buckets = graded_buckets(tp, chart)
+        tier_of = {a.house: tier for tier, items in buckets.items() for a in items}
         out.append({
             "maha": pr.maha, "antar": pr.antar,
             "start_jd": pr.start_jd, "end_jd": pr.end_jd,
+            "associated": associated,
             "activated": [
-                {"house": a.house, "grade": a.grade,
+                {"house": a.house, "grade": a.grade, "tier": tier_of.get(a.house),
                  "natal_verdict": str(a.natal_verdict)}
                 for a in tp.activated
             ],
@@ -138,7 +145,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_period_now": r.maraka_period_now,
 
         # the life-narrative and its companions + the woven chapters
-        "timeline": _timeline_dict(r.timeline),
+        "timeline": _timeline_dict(r.timeline, r.chart),
         "ishta_kashta": _each(r.ishta_kashta),
         "md_condition": _each(r.md_condition),
         "av_dasha_seats": _each(r.av_dasha_seats),

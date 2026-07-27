@@ -118,6 +118,16 @@
   .digest-story .meta{font-family:var(--sans);font-size:.7rem;color:var(--ink-2);margin-top:.5rem}
   @keyframes secflash{from{background:var(--chip)}to{background:transparent}}
   h2.sec.flash{animation:secflash .9s ease-out}
+  /* ---- Life-narrative: houses lit per bhukti, graded ---- */
+  .bhukti{padding:.4rem 0;border-bottom:1px dashed var(--line)}
+  .bhukti:last-child{border-bottom:none}
+  .bhukti.now{background:var(--surface-2);border-radius:6px;padding:.4rem .5rem}
+  .bhukti-head{font-weight:600;font-size:.84rem;margin-bottom:.25rem}
+  .lit-row{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:.15rem 0}
+  .lit-row.dim{opacity:.62}
+  .tier-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);
+    min-width:8.5em;font-weight:600}
+  .house-chip{font-size:.72rem;padding:.08rem .42rem;font-weight:600}
 </style>
 </head>
 <body>
@@ -322,6 +332,53 @@ async function readAsStory(btn){
   finally{ btn.disabled=false; btn.textContent=prev; }
 }
 
+// ---- Life-narrative: which houses each bhukti lights, graded per Raman's four-tier scheme ----
+const TIER_ORDER=['par excellence','ordinary','limited','feeble'];
+const TIER_MEAN={'par excellence':'both lords influence the house AND the AD lord is associated with the MD lord',
+  'ordinary':'both lords influence the house, AD not associated with MD',
+  'limited':'only the bhukti (AD) lord influences the house',
+  'feeble':'only the MD lord influences the house'};
+function renderTimeline(R, add){
+  add(para('A planet influences a house by owning, occupying or aspecting the house or its lord '+
+    '(HTJAH-I:1586-1640). Grades (uniform for every house) — '+
+    TIER_ORDER.map(t=>t+': '+TIER_MEAN[t]).join('; ')+'. Verdicts are the unchanged natal readings.','muted'));
+  const refJd=(R.window&&R.window.ref_jd)||null;
+  const groups=[];
+  for(const t of (R.timeline||[])){ let g=groups[groups.length-1];
+    if(!g||g.maha!==t.maha){ g={maha:t.maha,ps:[]}; groups.push(g);} g.ps.push(t); }
+  for(const g of groups){
+    const nowMd=g.ps.some(t=>refJd!=null&&t.start_jd<=refJd&&refJd<t.end_jd);
+    const d=el('details',{class:'card'}); if(nowMd) d.setAttribute('open','');
+    const sm=el('summary'); sm.append(g.maha+' Mahadasha');
+    sm.append(el('span',{class:'muted'},' · '+g.ps.length+' bhukti'));
+    if(nowMd) sm.append(el('span',{class:'chip',style:'margin-left:.5rem'},'running'));
+    d.append(sm);
+    const b=el('div',{class:'body'});
+    for(const t of g.ps){
+      const now=refJd!=null&&t.start_jd<=refJd&&refJd<t.end_jd;
+      const blk=el('div',{class:'bhukti'+(now?' now':'')});
+      const hd=el('div',{class:'bhukti-head'}); hd.append((t.antar||t.maha)+' AD');
+      hd.append(el('span',{class:'muted'},'  '+jdYM(t.start_jd)+' – '+jdYM(t.end_jd)));
+      if(t.antar&&t.antar!==t.maha) hd.append(el('span',{class:'muted'},
+        ' · AD '+(t.associated?'associated with':'not associated with')+' MD'));
+      if(now) hd.append(el('span',{class:'chip',style:'margin-left:.4rem'},'now'));
+      blk.append(hd);
+      const byT={}; for(const a of (t.activated||[])){ const k=a.tier||a.grade; (byT[k]=byT[k]||[]).push(a); }
+      let any=false;
+      for(const tier of TIER_ORDER){ const items=byT[tier]; if(!items||!items.length) continue; any=true;
+        const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble')?' dim':'')});
+        row.append(el('span',{class:'tier-label',title:TIER_MEAN[tier]},tier));
+        for(const a of items) row.append(el('span',{class:'chip house-chip v-'+String(a.natal_verdict).replace(/[^a-z-]/gi,''),
+          title:tier+' · natal verdict: '+a.natal_verdict},'H'+a.house));
+        blk.append(row);
+      }
+      if(!any) blk.append(el('span',{class:'muted'},'— no houses lit this bhukti'));
+      b.append(blk);
+    }
+    d.append(b); add(d);
+  }
+}
+
 function render(R, S){
   const out=$('out'); out.replaceChildren();
   const add=(...n)=>out.append(...n.filter(Boolean));
@@ -464,7 +521,7 @@ function render(R, S){
 
   // ===== Life-narrative timeline + companions =====
   add(H2('Life-narrative (Vimshottari)'));
-  add(sectionTable('Windowed MD→AD timeline', (R.timeline||[]).map(t=>({maha:t.maha,antar:t.antar,from:jdYM(t.start_jd),to:jdYM(t.end_jd),houses_lit:(t.activated||[]).length}))));
+  renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
   add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
   add(sectionTable('MD-lord condition outlook', R.md_condition));
   add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats));

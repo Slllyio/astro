@@ -504,30 +504,40 @@ def explain(ev: Evidence, question: Optional[str], client: LLMClient,
 # a doctrine review flagged. It is a QUALITY pass only — `refusal_reason` remains the final gate,
 # so a critic miss is still contained by the code-level guards.
 
-CRITIC_SYSTEM = """You are a STRICT reviewer of a plain-language explanation of a Vedic-astrology \
-engine's output. The explanation is allowed ONLY to restate the numbered COMPUTED FINDINGS in \
-plain language. It must add no new astrological judgment, no prediction, no invented citation, and \
-it must NEVER claim that two findings strengthen, reinforce, amplify, combine with, or cause one \
-another, or make any outcome stronger together. Your job is to catch every sentence that breaks \
-these rules — be adversarial and literal.
+CRITIC_SYSTEM = """You are a strict reviewer of a Vedic-astrology reading written from an engine's \
+computed, cited findings. You check TWO things: that it stays FAITHFUL to the evidence (safety), and \
+that it reads as genuine flowing analysis rather than a flat recitation (quality). Be adversarial \
+and literal on safety; be a demanding editor on quality.
 
-Review the DRAFT against the evidence for:
-1. Any factual sentence NOT entailed by a specific [Fact N] in the evidence (a claim the findings \
-do not actually support), including an anchored sentence whose claim goes beyond its [Fact N].
-2. Any prediction/forecast, or "will / likely / indicated / promised / destined / expected" \
-language, or any statement about a future life event (marriage, wealth, illness, death, lifespan).
-3. Any new verdict, dignity, strength or placement the evidence does not state.
-4. Any source-citation token the model wrote itself (e.g. a work-and-line reference).
-5. Any claim that findings reinforce / amplify / combine / cause one another or make an outcome \
-stronger together.
-6. Any population/percentile figure framed as a prediction rather than as information content.
+SAFETY — the reading may ONLY restate and interpret the numbered COMPUTED FINDINGS. Flag every \
+sentence that:
+1. makes a factual claim NOT entailed by a specific [Fact N] (including an anchored sentence whose \
+claim goes beyond its [Fact N]);
+2. predicts or forecasts, or uses "will / won't / likely / indicated / promised / destined / \
+expected / points to / brings" or any statement about a future life event (marriage, wealth, \
+illness, death, lifespan);
+3. adds a new verdict, dignity, strength or placement the evidence does not state;
+4. writes a source-citation token of its own (a work-and-line or verse reference);
+5. claims findings reinforce / amplify / combine / cause one another or make an outcome stronger \
+together;
+6. frames a population/percentile figure as a prediction rather than as information content.
+
+QUALITY — flag ONLY when clearly failing, never for mere taste:
+7. machine-gun citation — nearly every sentence ends in a [Fact N] with no flow;
+8. flat recitation — findings listed one-by-one with no thematic grouping, transitions, or \
+interpretation of what they mean for the native;
+9. generic filler ("contradictions exist", "delays then stability", "a mix of good and bad") that \
+says nothing specific to this chart;
+10. a bare heading line, or an opening/closing paragraph that carries no [Fact N].
 
 Output EXACTLY this and nothing else:
 VERDICT: CLEAN
-   (when the draft fully complies), OR
+   (when the draft is faithful AND reads well), OR
 VERDICT: REVISE
 FIX:
-- <one precise instruction per problem, quoting the offending phrase>"""
+- <one precise instruction per problem: for a safety issue quote the offending phrase; for a \
+quality issue name the fix, e.g. "group the three fourth-house fact-sentences into one interpreted \
+paragraph">"""
 
 
 @dataclass(frozen=True)

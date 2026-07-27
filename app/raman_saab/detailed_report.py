@@ -194,14 +194,20 @@ _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings"
 #: matters, by verdict — the actual content of "Your Reading". Deliberately warm, honest, and
 #: free of jargon; afflicted lines name real friction without alarm; this is prose written for
 #: a person, not a restatement of a technical verdict.
-_PLAIN_MATTER: dict[str, dict[str, str]] = {
+_PLAIN_MATTER: dict[str, dict[str, "str | tuple[str, ...]"]] = {
     "wealth": {
-        "favourable": "money and material comfort come to you relatively easily, and your "
-                      "resources tend to grow over time",
-        "afflicted": "financial ease may take real effort on your part — steady habits will "
-                     "matter more than luck here",
-        "mixed": "your finances show a real mix of ease and effort — some years flow, others "
-                 "ask for discipline"},
+        "favourable": ("money and material comfort come to you relatively easily, and your "
+                       "resources tend to grow over time",
+                       "there is a natural ease around money and material security, with resources "
+                       "that build steadily rather than dramatically"),
+        "afflicted": ("financial ease may take real effort on your part — steady habits will "
+                      "matter more than luck here",
+                      "wealth here is earned rather than gifted; discipline and patience carry more "
+                      "weight than fortune in your material life"),
+        "mixed": ("your finances show a real mix of ease and effort — some years flow, others "
+                  "ask for discipline",
+                  "money moves in cycles for you — genuinely comfortable stretches alongside years "
+                  "that call for care")},
     "siblings": {
         "favourable": "you share a warm, supportive bond with your brothers and sisters",
         "afflicted": "relationships with siblings may carry some friction or distance at times",
@@ -221,19 +227,32 @@ _PLAIN_MATTER: dict[str, dict[str, str]] = {
         "mixed": "property dealings show a mixed pattern — real gains alongside real "
                  "complications"},
     "children": {
-        "favourable": "the chart favours ease and joy around children",
-        "afflicted": "this chart shows real strain around children — fertility, timing, or the "
-                     "parent-child bond may ask for patience. This is one of the more sensitive "
-                     "readings here and deserves a compassionate, unhurried view, not alarm",
-        "mixed": "children bring both joy and real challenge in this chart — a mixed but not "
-                 "unusual pattern"},
+        "favourable": ("the chart favours ease and joy around children",
+                       "matters of children read warmly here — ease and gladness rather than "
+                       "difficulty"),
+        "afflicted": ("this chart shows real strain around children — fertility, timing, or the "
+                      "parent-child bond may ask for patience. This is one of the more sensitive "
+                      "readings here and deserves a compassionate, unhurried view, not alarm",
+                      "children are a tender area in this chart — fertility, timing, or the "
+                      "parent-child bond may call for patience. This reading deserves a gentle, "
+                      "unhurried view rather than alarm"),
+        "mixed": ("children bring both joy and real challenge in this chart — a mixed but not "
+                  "unusual pattern",
+                  "the reading around children holds both real gladness and real challenge — a "
+                  "mixed but entirely ordinary pattern")},
     "marriage": {
-        "favourable": "marriage and partnership read favourably — a supportive, workable bond "
-                      "is indicated",
-        "afflicted": "marriage may need real effort and patience — the chart shows genuine "
-                     "friction to work through, not a smooth path",
-        "mixed": "marriage shows both real warmth and real friction — a genuine partnership, "
-                 "not an easy one"},
+        "favourable": ("marriage and partnership read favourably — a supportive, workable bond "
+                       "is the picture here",
+                       "partnership is a genuine strength in this chart — the makings of a "
+                       "supportive, steady marriage"),
+        "afflicted": ("marriage may need real effort and patience — the chart shows genuine "
+                      "friction to work through, not a smooth path",
+                      "partnership here asks for real work; the chart reads friction to be met "
+                      "with patience rather than an effortless union"),
+        "mixed": ("marriage shows both real warmth and real friction — a genuine partnership, "
+                  "not an easy one",
+                  "your partnership carries both real closeness and real challenge — a bond with "
+                  "depth, but one that is worked at")},
     "father": {
         "favourable": "your relationship with your father, and your broader sense of fortune, "
                       "read as a genuine asset",
@@ -242,12 +261,18 @@ _PLAIN_MATTER: dict[str, dict[str, str]] = {
         "mixed": "fortune and your father's influence bring both support and occasional "
                  "strain"},
     "career": {
-        "favourable": "career and public standing read strongly — recognition and steady "
-                      "progress are indicated",
-        "afflicted": "career may involve real struggle — slower recognition or harder-won "
-                     "progress than you'd like",
-        "mixed": "career shows both real opportunity and real obstacles — success here takes "
-                 "deliberate effort"},
+        "favourable": ("career and public standing read strongly — recognition and steady "
+                       "progress are the pattern here",
+                       "professional life is a clear strength — the chart supports recognition and "
+                       "steady advancement"),
+        "afflicted": ("career may involve real struggle — slower recognition or harder-won "
+                      "progress than you'd like",
+                      "professional life here is hard-won; recognition tends to come slowly and "
+                      "through effort rather than smoothly"),
+        "mixed": ("career shows both real opportunity and real obstacles — success here takes "
+                  "deliberate effort",
+                  "your working life mixes genuine opportunity with genuine obstacle — progress "
+                  "that rewards persistence")},
     "comforts": {
         "favourable": "material comforts and the pleasures of life come easily to you",
         "afflicted": "comfort and ease may need to be earned rather than given",
@@ -269,6 +294,23 @@ _PLAIN_MATTER: dict[str, dict[str, str]] = {
         "mixed": "health shows both real resilience and real vulnerability — worth ongoing "
                  "attention, not alarm"},
 }
+
+def _pick_plain_variant(birth, key: str, variants):
+    """Deterministically pick one plain-language phrasing for this chart. A single string is
+    returned as-is; a tuple of variants is indexed by a stable hash of the birth data + key — so
+    the SAME chart always reads the same (reproducible) while DIFFERENT charts get different
+    wording. This breaks the cross-chart sentence repetition of the templated fallback WITHOUT any
+    randomness (an engine value must be reproducible)."""
+    if not isinstance(variants, tuple):
+        return variants
+    if len(variants) == 1:
+        return variants[0]
+    import hashlib
+    seed = (f"{birth.year}-{birth.month}-{birth.day}-{birth.hour}-{birth.minute}-"
+            f"{birth.latitude}-{birth.longitude}-{key}")
+    idx = int(hashlib.blake2b(seed.encode(), digest_size=4).hexdigest(), 16) % len(variants)
+    return variants[idx]
+
 
 #: how each period-lord's classical theme reads in plain English (for "Right now").
 _PLANET_THEME: dict[str, str] = {
@@ -2010,6 +2052,7 @@ def build_plain_reading(r: DetailedReport) -> PlainReading:
             verdict = by_matter.get(m)
             line = _PLAIN_MATTER.get(m, {}).get(verdict) if verdict else None
             if line:
+                line = _pick_plain_variant(r.birth, m + (verdict or ""), line)
                 sentences.append(line[0].upper() + line[1:])
         if sentences:
             life_paragraphs.append((theme, ". ".join(sentences) + "."))

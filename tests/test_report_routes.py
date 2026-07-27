@@ -107,6 +107,10 @@ class TestPage:
         # the grounded explainer + Q&A wiring is present
         assert "/report/explain" in html and "/report/ask" in html
         assert "never a prediction" in html
+        # the "What matters most" digest panel + its grounded synthesis wiring
+        assert "What matters most" in html
+        assert "/report/insights" in html
+        assert "Read this as one story" in html
 
 
 class TestSource:

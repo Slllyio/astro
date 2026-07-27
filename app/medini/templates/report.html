@@ -95,6 +95,29 @@
   .ask-form input{flex:1;font:inherit;padding:.45rem .6rem;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
   .ask-form button{font:inherit;font-weight:600;padding:.45rem 1.1rem;border:none;border-radius:7px;background:var(--accent-2);color:#fff;cursor:pointer}
   .ask-note{font-size:.68rem;color:var(--ink-2);margin-top:.3rem}
+  /* ---- What matters most (the ranked digest) ---- */
+  .digest{display:flex;flex-direction:column;gap:.6rem;margin:.5rem 0}
+  .digest-item{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--neu);
+    border-radius:9px;padding:.6rem .85rem}
+  .digest-item.di-favourable{border-left-color:var(--fav)}
+  .digest-item.di-adverse{border-left-color:var(--aff)}
+  .digest-item.di-mixed{border-left-color:var(--mix)}
+  .digest-item.di-neutral{border-left-color:var(--neu)}
+  .di-head{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.15rem;flex-wrap:wrap}
+  .di-kind{text-transform:uppercase;font-size:.6rem;letter-spacing:.07em;color:var(--ink-2)}
+  .di-title{font-family:var(--serif);font-weight:600;font-size:.98rem}
+  .di-detail{font-size:.86rem;margin:.1rem 0}
+  .di-cites,.di-secs{font-size:.72rem;margin-top:.3rem}
+  .di-cites cite{margin-right:.35rem}
+  .di-secs a{cursor:pointer}
+  .digest-read{font:inherit;font-weight:600;font-size:.8rem;background:var(--accent-2);color:#fff;
+    border:none;border-radius:7px;padding:.42rem .95rem;cursor:pointer;margin:.5rem 0 .2rem}
+  .digest-read:disabled{opacity:.5;cursor:default}
+  .digest-story{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent-2);
+    border-radius:8px;padding:.8rem 1rem;margin:.4rem 0;font-family:var(--serif);line-height:1.7}
+  .digest-story .meta{font-family:var(--sans);font-size:.7rem;color:var(--ink-2);margin-top:.5rem}
+  @keyframes secflash{from{background:var(--chip)}to{background:transparent}}
+  h2.sec.flash{animation:secflash .9s ease-out}
 </style>
 </head>
 <body>
@@ -267,11 +290,71 @@ async function ask(){
   return false;
 }
 
+// ---- digest: click a "draws on" label to jump to that section (best-effort) ----
+function jumpLink(label){
+  const a=el('a',{href:'#'},label);
+  a.onclick=(e)=>{ e.preventDefault();
+    const slug='sec-'+String(label).replace(/[^a-z]/gi,'').toLowerCase();
+    let target=$(slug);
+    if(!target){ const key=String(label).replace(/[^a-z]/gi,'').toLowerCase().slice(0,6);
+      target=[...document.querySelectorAll('h2.sec')].find(h=>h.id.includes(key)); }
+    if(target){ target.scrollIntoView({behavior:'smooth',block:'start'});
+      target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); }
+  };
+  return a;
+}
+
+// ---- digest: fetch the grounded whole-chart synthesis ("read as one story") ----
+async function readAsStory(btn){
+  let box=btn.nextElementSibling;
+  if(box&&box.classList.contains('digest-story')){ box.remove(); return; }   // toggle off
+  btn.disabled=true; const prev=btn.textContent; btn.textContent='Composing…';
+  box=el('div',{class:'digest-story'},'Composing the synthesis…'); btn.after(box);
+  try{
+    const r=await fetch('/report/insights',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(birthBody())});
+    const d=await r.json(); box.replaceChildren(citeText(d.text||'(no text)'));
+    const meta=el('div',{class:'meta'}); meta.append(d.honesty_note||'');
+    if(d.refused_llm) meta.append(' · ⚠ LLM answer withheld ('+(d.refusal_reason||'guard tripped')+') — engine text shown');
+    else if(d.source==='fallback') meta.append(' · (the engine’s own ranked digest — the LLM narrator is off)');
+    box.append(meta);
+  }catch(e){ box.textContent='Synthesis failed: '+e.message; }
+  finally{ btn.disabled=false; btn.textContent=prev; }
+}
+
 function render(R, S){
   const out=$('out'); out.replaceChildren();
   const add=(...n)=>out.append(...n.filter(Boolean));
   const ap=$('ask'); if(ap) ap.style.display='block';   // reveal the Q&A panel once a report exists
   document.querySelector('main').style.paddingBottom='42vh';
+
+  // ===== What matters most (the engine's ranked digest — first thing you see) =====
+  const dg=R.digest||{};
+  if(dg.headline||(dg.items&&dg.items.length)){
+    add(H2('What matters most'));
+    if(dg.headline) add(para(dg.headline,'muted'));
+    const dw=el('div',{class:'digest'});
+    for(const it of (dg.items||[])){
+      const card=el('div',{class:'digest-item di-'+(it.lean||'neutral')});
+      const head=el('div',{class:'di-head'});
+      head.append(el('span',{class:'di-kind'},(it.kind||'').replace(/_/g,' ')));
+      head.append(el('span',{class:'di-title'},it.title||''));
+      card.append(head);
+      card.append(para(it.detail,'di-detail'));
+      if(it.cites&&it.cites.length){ const cr=el('div',{class:'di-cites'});
+        cr.append(el('span',{class:'muted'},'Sources: '));
+        for(const c of it.cites){ const s=el('cite',{class:'src'},c); s.onclick=()=>openSrc(c); cr.append(s,' '); }
+        card.append(cr); }
+      if(it.sections&&it.sections.length){ const sr=el('div',{class:'di-secs muted'});
+        sr.append('Draws on: ');
+        it.sections.forEach((sec,i)=>{ sr.append(jumpLink(sec)); if(i<it.sections.length-1) sr.append(', '); });
+        card.append(sr); }
+      dw.append(card);
+    }
+    add(dw);
+    const rb=el('button',{class:'digest-read',type:'button'},'Read this as one story →');
+    rb.onclick=()=>readAsStory(rb); add(rb);
+  }
 
   // ===== Your Reading (plain) =====
   add(H2('Your Reading'));

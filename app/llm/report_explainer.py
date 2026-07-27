@@ -320,7 +320,16 @@ def build_prompt(ev: Evidence, question: Optional[str],
             "combines with, or causes another, or that together they make any outcome stronger — "
             "the engine computed each finding on its own and never computed such an interaction. "
             "Do NOT re-rank, do NOT add any finding not in the evidence, and add no judgment of "
-            "your own. Anchor every factual sentence with [Fact N]. Predict nothing.")
+            "your own. Anchor every factual sentence with [Fact N], and make EVERY paragraph carry "
+            "at least one [Fact N]: do not write a standalone preamble, transition, or sign-off "
+            "paragraph — fold any framing into a sentence that also states a finding and its "
+            "[Fact N] (the honesty frame is [Fact 1], so cite it when you state it). When you "
+            "mention how common or rare a reading is, state it plainly — 'X% of charts share this', "
+            "or 'common' / 'rare' / 'distinctive' — and NEVER use the words 'likely', 'will', "
+            "'expected', 'tends to', or any other forecasting word, even about frequency. To refer "
+            "to other parts of the reading, write 'the findings below' or 'the sections below' — "
+            "NOT 'you will read/see/find'. Say 'the engine records' or 'the engine found', never "
+            "'points to'. Predict nothing.")
     else:
         parts.append("Explain the findings above for the person whose chart this is — in plain, "
                      "warm language, anchoring every factual sentence with [Fact N]/[Ref N].")

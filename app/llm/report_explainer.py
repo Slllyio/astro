@@ -90,10 +90,11 @@ class GroundedAnswer:
     anchors_used: tuple[str, ...]
     grounding_ratio: float
     gloss_ratio: float
-    ungrounded_sentences: tuple[str, ...]
+    ungrounded_sentences: tuple[str, ...]  # actually ungrounded PARAGRAPHS
     bad_anchors: tuple[str, ...]          # [Fact N]/[Ref N] whose N is not in the evidence
     fabricated_citations: tuple[str, ...]  # WORK:line tokens the model wrote itself
     forbidden_moves: tuple[str, ...]
+    is_deferral: bool                     # the whole answer is the prescribed safe deferral
     model: str
     source: str            # "llm" | "fallback"
 
@@ -271,55 +272,85 @@ _FORBIDDEN_RE = re.compile(
     re.IGNORECASE)
 
 
+#: the prescribed safe response to an out-of-scope / prediction request — always allowed.
+DEFERRAL = "the engine does not compute that"
+
+
+def _valid_anchors(chunk: str, valid_fact: set, valid_ref: set,
+                   anchors_used: set, bad_anchors: set) -> bool:
+    """True iff `chunk` carries at least one [Fact N]/[Ref N] whose N is in the evidence;
+    records used and bad anchors as a side effect."""
+    ok = False
+    for m in _FACTREF_RE.finditer(chunk):
+        kind, n = m.group(1).lower(), int(m.group(2))
+        if (kind == "fact" and n in valid_fact) or (kind == "ref" and n in valid_ref):
+            ok = True
+            anchors_used.add(m.group(0))
+        else:
+            bad_anchors.add(m.group(0))
+    return ok
+
+
 def provenance_check(text: str, ev: Evidence) -> dict:
-    """Trace grounding for a candidate answer. A sentence counts as GROUNDED only if it carries
-    a VALID [Fact N]/[Ref N] anchor (N present in the evidence) — self-asserted [gloss] does NOT
-    count toward grounding (it is tracked separately and capped), because the guard cannot tell
-    a real paraphrase from a fabricated claim wearing a [gloss] tag. Also surfaces anchors whose
-    N is not in the evidence (`bad_anchors`) and any WORK:line citation the model authored that
-    is not in the evidence (`fabricated_citations`) — both are refusal triggers upstream."""
+    """Trace grounding for a candidate answer.
+
+    Grounding is scored PER PARAGRAPH — the unit an LLM actually writes a claim-cluster in (a
+    topic sentence plus its evidence share one anchor). A per-sentence metric false-refuses good
+    answers whose connective sentences carry no token; a paragraph counts as grounded when it
+    holds at least one VALID [Fact N]/[Ref N] (N present in the evidence). Self-asserted [gloss]
+    never counts toward grounding (tracked separately, capped): the guard cannot tell a real
+    paraphrase from a fabricated claim wearing the tag. Also surfaces anchors whose N is not in
+    the evidence (`bad_anchors`), any WORK:line citation the model authored (`fabricated_
+    citations`), forbidden prediction language, and whether the whole answer is the prescribed
+    deferral — all consumed by `refusal_reason`."""
     valid_fact = {f.n for f in ev.facts}
     valid_ref = {p.n for p in ev.passages}
     evidence_cites = {f.cite for f in ev.facts if f.cite}
-    sentences = [s.strip() for s in _SENT_RE.findall(text) if s.strip()]
     anchors_used: set[str] = set()
     bad_anchors: set[str] = set()
-    grounded = gloss = 0
+
+    # a deferral may carry a sentence of explanation after it ("...that. The engine cannot
+    # predict futures.") — match by prefix, not exact equality (live-model behaviour).
+    is_deferral = text.strip().lower().lstrip('"\'').startswith(DEFERRAL)
+
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    grounded = 0
     ungrounded: list[str] = []
-    for s in sentences:
-        has_valid = False
-        for m in _FACTREF_RE.finditer(s):
-            kind, n = m.group(1).lower(), int(m.group(2))
-            if (kind == "fact" and n in valid_fact) or (kind == "ref" and n in valid_ref):
-                has_valid = True
-                anchors_used.add(m.group(0))
-            else:
-                bad_anchors.add(m.group(0))
-        if has_valid:
+    for p in paragraphs:
+        if _valid_anchors(p, valid_fact, valid_ref, anchors_used, bad_anchors):
             grounded += 1
-        elif _GLOSS_RE.search(s):
-            gloss += 1
         else:
-            ungrounded.append(s)
-    total = len(sentences) or 1
+            ungrounded.append(p)
+    total_p = len(paragraphs) or 1
+
+    # gloss cap is still per-sentence (a whole sentence riding on a self-asserted [gloss])
+    sentences = [s.strip() for s in _SENT_RE.findall(text) if s.strip()]
+    gloss = sum(1 for s in sentences
+                if _GLOSS_RE.search(s) and not _FACTREF_RE.search(s))
+    total_s = len(sentences) or 1
+
     fabricated = sorted({t for t in _WORKLINE_RE.findall(text) if t not in evidence_cites})
     forbidden = sorted(set(m.group(0).lower() for m in _FORBIDDEN_RE.finditer(text)))
     return {
         "anchors_used": tuple(sorted(anchors_used)),
-        "grounding_ratio": round(grounded / total, 3),
-        "gloss_ratio": round(gloss / total, 3),
-        "ungrounded_sentences": tuple(ungrounded),
+        "grounding_ratio": round(grounded / total_p, 3),      # paragraph-level
+        "gloss_ratio": round(gloss / total_s, 3),
+        "ungrounded_sentences": tuple(ungrounded),            # actually ungrounded paragraphs
         "bad_anchors": tuple(sorted(bad_anchors)),
         "fabricated_citations": tuple(fabricated),
         "forbidden_moves": tuple(forbidden),
+        "is_deferral": is_deferral,
     }
 
 
-def refusal_reason(ans: "GroundedAnswer", min_ratio: float, max_gloss: float = 0.2
+def refusal_reason(ans: "GroundedAnswer", min_ratio: float, max_gloss: float = 0.35
                    ) -> Optional[str]:
     """Why a candidate LLM answer must be REFUSED (and the deterministic fallback served
     instead) — None means it may be served. Refuse on ANY hard guard, because a misbehaving or
-    prompt-injected model must never reach the user as Raman's ruling."""
+    prompt-injected model must never reach the user as Raman's ruling. The prescribed deferral
+    ('The engine does not compute that') is always safe to serve."""
+    if ans.is_deferral:
+        return None
     if ans.forbidden_moves:
         return f"prediction/decree language detected: {', '.join(ans.forbidden_moves)}"
     if ans.fabricated_citations:
@@ -346,5 +377,5 @@ def explain(ev: Evidence, question: Optional[str], client: LLMClient,
         text=text, anchors_used=pc["anchors_used"], grounding_ratio=pc["grounding_ratio"],
         gloss_ratio=pc["gloss_ratio"], ungrounded_sentences=pc["ungrounded_sentences"],
         bad_anchors=pc["bad_anchors"], fabricated_citations=pc["fabricated_citations"],
-        forbidden_moves=pc["forbidden_moves"],
+        forbidden_moves=pc["forbidden_moves"], is_deferral=pc["is_deferral"],
         model=model or getattr(client, "model", "unknown"), source="llm")

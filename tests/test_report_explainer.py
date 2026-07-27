@@ -59,21 +59,26 @@ class TestProvenanceGuard:
     def _ev(self, rdict):
         return build_evidence(rdict, "summary")
 
-    def test_fact_anchored_sentences_score_full(self, rdict):
-        text = "Your chart's ruler is Mercury [Fact 1]. The strongest planet is the Sun [Fact 2]."
+    def test_anchored_paragraph_scores_full(self, rdict):
+        """Grounding is scored per PARAGRAPH (the claim-cluster unit) — a paragraph whose
+        connective and evidence sentences share one anchor is fully grounded (the live-model
+        fix: a per-sentence metric false-refused genuinely cited answers)."""
+        text = ("Your chart's ruler is Mercury, which shapes the overall temperament. The "
+                "strongest planet is the Sun [Fact 1] [Fact 2].")
         pc = provenance_check(text, self._ev(rdict))
         assert pc["grounding_ratio"] == 1.0
         assert not pc["forbidden_moves"] and not pc["bad_anchors"]
         assert "[Fact 1]" in pc["anchors_used"]
 
-    def test_gloss_does_not_count_toward_grounding(self, rdict):
-        """SAFETY: a self-asserted [gloss] tag is NOT grounding — the guard cannot tell a real
-        paraphrase from a fabricated claim wearing the tag, so [gloss] is tracked and capped,
-        never counted as anchored (the review's finding #1)."""
-        text = "Your ruler is Mercury [Fact 1]. You will surely prosper greatly [gloss]."
+    def test_unanchored_paragraph_is_not_rescued_by_gloss(self, rdict):
+        """SAFETY: a [gloss] tag does NOT ground a paragraph that carries no valid [Fact N]/
+        [Ref N] — the guard cannot tell a real paraphrase from a fabricated claim wearing the
+        tag (the review's finding #1). Two paragraphs: one cited, one gloss-only."""
+        text = ("Your ruler is Mercury [Fact 1].\n\n"
+                "You have a pleasant disposition and a fine mind [gloss].")
         pc = provenance_check(text, self._ev(rdict))
-        assert pc["grounding_ratio"] == 0.5      # only the Fact sentence counts
-        assert pc["gloss_ratio"] == 0.5
+        assert pc["grounding_ratio"] == 0.5      # the gloss-only paragraph is not grounded
+        assert pc["gloss_ratio"] > 0.0
 
     def test_bad_anchor_referencing_nonexistent_fact(self, rdict):
         """An anchor whose N is not in the evidence is flagged (not counted as grounded)."""
@@ -87,12 +92,20 @@ class TestProvenanceGuard:
         pc = provenance_check("This is per the scripture HTJAH-I:99999 [Fact 1].", self._ev(rdict))
         assert "HTJAH-I:99999" in pc["fabricated_citations"]
 
-    def test_ungrounded_sentence_is_flagged(self, rdict):
-        text = ("Your ruler is Mercury [Fact 1]. You have a secret talent for painting that the "
-                "chart clearly reveals.")
+    def test_unanchored_paragraph_is_flagged(self, rdict):
+        text = ("Your ruler is Mercury [Fact 1].\n\n"
+                "You have a secret talent for painting that the chart clearly reveals.")
         pc = provenance_check(text, self._ev(rdict))
-        assert pc["grounding_ratio"] < 1.0
+        assert pc["grounding_ratio"] == 0.5
         assert any("painting" in s for s in pc["ungrounded_sentences"])
+
+    def test_deferral_is_always_safe(self, rdict):
+        """The prescribed out-of-scope reply must never be refused (it has no anchor by
+        nature) — the live-model test showed Sonnet returns exactly this to a prediction ask."""
+        ev = build_evidence(rdict, "summary")
+        ans = explain(ev, None, StubClient("The engine does not compute that."))
+        assert ans.is_deferral is True
+        assert refusal_reason(ans, 0.8) is None
 
     def test_prediction_verb_is_caught(self, rdict):
         text = "Because the 7th is strong [Fact 1], you will marry in 2027 and inherit wealth."

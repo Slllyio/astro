@@ -90,11 +90,14 @@ class Settings(BaseSettings):
     # the key) to enable the Sonnet-backed grounded explainer. The explainer NEVER generates a
     # verdict — it only translates the engine's already-computed, already-cited findings.
     REPORT_LLM_ENABLED: bool = False
-    # Minimum share of sentences that must carry a VALID [Fact N]/[Ref N] anchor for an LLM
-    # answer to be served at all; below this (or on any forbidden move / fabricated citation /
-    # bad anchor) the route REFUSES the LLM text and serves the deterministic fallback instead.
-    # 0.8 is deliberately strict — a safety-critical layer that could put words in Raman's mouth.
-    REPORT_LLM_GROUNDING_MIN: float = 0.8
+    # Minimum share of PARAGRAPHS that must carry a VALID [Fact N]/[Ref N] anchor for an LLM
+    # answer to be served; below this (or on any forbidden move / fabricated citation / bad
+    # anchor) the route REFUSES the LLM text and serves the deterministic fallback. The hard
+    # guards (prediction language, fabricated/absent citations) are the primary safety net and
+    # are absolute; this ratio is the "did the model go off-script" floor. 0.6 is tuned to real
+    # Sonnet output — which anchors each claim-cluster but writes benign unanchored framing/
+    # summary paragraphs, so a stricter 0.8 false-refused genuinely-cited answers in live tests.
+    REPORT_LLM_GROUNDING_MIN: float = 0.6
 
     # extra="forbid" makes Settings(...) instantiation reject unknown kwargs.
     # It does NOT scan os.environ for unknown keys — pydantic-settings only

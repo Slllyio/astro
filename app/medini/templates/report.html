@@ -220,6 +220,13 @@
   #ask .ask-form input{background:var(--leaf-cream-light);border-color:rgba(139,111,71,.4);color:var(--ink-primary)}
   #ask .ask-form button{background:var(--saffron-deep)}
   #ask .ask-note{color:var(--ink-secondary)}
+  /* city picker: collapsible coordinate override on the birth-form folio */
+  .coord-adjust>summary{font-size:.72rem;color:var(--saffron-deep);cursor:pointer;list-style:none;
+    font-variant:small-caps;letter-spacing:.06em;padding:.1rem 0}
+  .coord-adjust>summary::-webkit-details-marker{display:none}
+  .coord-adjust[open]>summary{color:var(--madder)}
+  #city-note{transition:color .2s}
+  #city{font-variant:normal}
 </style>
 </head>
 <body>
@@ -264,12 +271,20 @@
         <div class="panel middle" style="justify-content:center">
           <div class="panel-heading">PLACE</div>
           <div class="panel-heading-deva deva">स्थानम्</div>
-          <div style="margin:.5rem 0 .7rem"><label class="leaf-label">LATITUDE</label><input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.97"></div>
-          <div style="margin-bottom:.7rem"><label class="leaf-label">LONGITUDE</label><input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.59"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.9rem">
-            <div><label class="leaf-label">TZ (UTC±)</label><input class="leaf-input" id="tz_offset" type="number" step="0.5" value="5.5"></div>
-            <div><label class="leaf-label">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          <div style="margin:.5rem 0 .3rem">
+            <label class="leaf-label">CITY / TOWN</label>
+            <input class="leaf-input" id="city" list="cities-dl" value="Bengaluru, Karnataka, India" placeholder="type a city — e.g. Bengaluru" autocomplete="off" oninput="onCity()">
+            <datalist id="cities-dl"></datalist>
+            <div id="city-note" style="font-size:.7rem;color:var(--ink-faded);font-style:italic;margin-top:.2rem">pick a place — coordinates fill in automatically</div>
           </div>
+          <details class="coord-adjust" style="margin:.35rem 0 .7rem"><summary>▸ fine-tune coordinates</summary>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.45rem">
+              <div><label class="leaf-label">LATITUDE</label><input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.97"></div>
+              <div><label class="leaf-label">LONGITUDE</label><input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.59"></div>
+            </div>
+            <div style="margin-top:.45rem"><label class="leaf-label">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
+          </details>
+          <div style="margin-bottom:.9rem"><label class="leaf-label">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
           <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()">Cast the Reading</button></div>
           <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic">a few seconds to cast &amp; compose</div>
         </div>
@@ -346,10 +361,27 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
   for(const c of kids){ if(c==null)continue; n.append(c.nodeType?c:document.createTextNode(c)); } return n; };
 
 const PRESETS = {
-  mainpuri:{name:'Mainpuri',year:1989,month:10,day:12,hour:10,minute:2,latitude:27.2351,longitude:79.0276,tz_offset:5.5},
-  canonical:{name:'Canonical Baseline',year:1990,month:7,day:15,hour:12,minute:0,latitude:12.97,longitude:77.59,tz_offset:5.5},
+  mainpuri:{name:'Mainpuri',year:1989,month:10,day:12,hour:10,minute:2,latitude:27.2351,longitude:79.0276,tz_offset:5.5,city:'Mainpuri, Uttar Pradesh, India'},
+  canonical:{name:'Canonical Baseline',year:1990,month:7,day:15,hour:12,minute:0,latitude:12.97,longitude:77.59,tz_offset:5.5,city:'Bengaluru, Karnataka, India'},
 };
-function preset(k){ const p=PRESETS[k]; for(const f in p) $(f).value=p[f]; }
+function preset(k){ const p=PRESETS[k]; for(const f in p){ const n=$(f); if(n) n.value=p[f]; } onCity(); }
+
+// ---- city / town picker: bundled cities.json -> autocomplete that fills lat/lon/tz ----
+let CITY_MAP={};
+function loadCities(){
+  fetch('/static/geo/cities.json').then(r=>r.json()).then(list=>{
+    const dl=$('cities-dl'); const frag=document.createDocumentFragment();
+    for(const c of list){ const label=c.n+', '+c.a; CITY_MAP[label.toLowerCase()]={lat:c.lat,lon:c.lon,tz:c.tz,label};
+      if(dl) frag.append(el('option',{value:label})); }
+    if(dl) dl.append(frag);
+  }).catch(()=>{ const note=$('city-note'); if(note) note.textContent='city list unavailable — set coordinates below'; });
+}
+function onCity(){ const inp=$('city'); if(!inp) return; const hit=CITY_MAP[inp.value.trim().toLowerCase()]; const note=$('city-note');
+  if(hit){ if($('latitude'))$('latitude').value=hit.lat; if($('longitude'))$('longitude').value=hit.lon; if($('tz_offset'))$('tz_offset').value=hit.tz;
+    if(note){ note.textContent='✓ '+hit.label+' — '+hit.lat.toFixed(2)+'°, '+hit.lon.toFixed(2)+'°, UTC'+(hit.tz>=0?'+':'')+hit.tz; note.style.color='var(--saffron-deep)'; note.style.fontStyle='normal'; } }
+  else if(note){ note.textContent='pick a place from the list — or set coordinates below'; note.style.color='var(--ink-faded)'; note.style.fontStyle='italic'; }
+}
+window.onCity=onCity; loadCities();
 
 // ---- click-to-source: wrap any WORK:line token into a clickable <cite> ----
 const CITE_RE = /(\b\d?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*:\d+(?:-\d+)?)/g;

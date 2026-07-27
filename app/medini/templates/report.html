@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Detailed Reading — Raman Engine</title>
+<title>फलादेशः — Detailed Reading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/manuscript.css">
 <style>
   :root{
-    --bg:#f6f3ec; --surface:#fffdf8; --surface-2:#efe9dc; --ink:#241f18; --ink-2:#5c5343;
-    --line:#d9cfba; --accent:#8a5a2b; --accent-2:#3a5a4a;
-    --fav:#2f6b46; --aff:#9a3b3b; --mix:#8a6d2b; --neu:#6b6355;
-    --chip:#efe6d3; --panel:#fbf8f1;
-    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-    --sans:"Segoe UI",system-ui,-apple-system,sans-serif;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#14120e; --surface:#1c1a15; --surface-2:#26231c; --ink:#ece4d4; --ink-2:#a89e8a;
-      --line:#3a352b; --accent:#d59a5c; --accent-2:#8fbfa6; --chip:#2b271f; --panel:#1a1813;
-      --fav:#7fc79b; --aff:#e08b8b; --mix:#d8bd77; --neu:#9a917f; }
+    /* Adopt the Pothi manuscript palette — rebind the report's own tokens onto manuscript.css
+       variables so every existing table/chart theme-follows the gold/cream book with zero
+       builder changes. One theme (the manuscript IS the theme) — no prefers-color-scheme. */
+    --bg:var(--bg-museum); --surface:var(--leaf-cream-light); --surface-2:var(--leaf-cream-deep);
+    --ink:var(--ink-primary); --ink-2:var(--ink-secondary);
+    --line:rgba(139,111,71,.35); --accent:var(--saffron-deep); --accent-2:var(--gold-deep);
+    --chip:rgba(232,213,168,.6); --panel:rgba(245,227,184,.55);
+    --serif:'EB Garamond',Georgia,serif; --sans:'EB Garamond',Georgia,serif;
+    /* semantic verdict colours kept (the SVG viz bind them via .style) — harmonized to cream/gold */
+    --fav:#3f6b3a; --aff:var(--madder); --mix:var(--saffron-deep); --neu:var(--ink-faded);
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
@@ -166,34 +169,160 @@
   .pct-strip{position:relative;height:.5rem;border-radius:4px;margin:.25rem 0 .1rem;
     background:linear-gradient(90deg,var(--aff),var(--neu),var(--fav))}
   .pct-dot{position:absolute;top:50%;width:.6rem;height:.6rem;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--surface)}
+  /* ============ manuscript adoption — the report re-homed into the Pothi book ============ */
+  body{background:var(--bg-museum);color:var(--ink-primary);font-family:var(--serif)}
+  /* each chapter folio is a single scrollable cream page (the deliberate override of the
+     manuscript's clip-only leaf, so no data is hidden — the no-omission rule) */
+  .leaf-page.single{display:block;grid-template-columns:1fr;padding:0}
+  .folio-scroll{height:100%;overflow-y:auto;overflow-x:hidden;padding:1.5rem clamp(1rem,3.5vw,3rem) 3rem;
+    scrollbar-width:thin;scrollbar-color:var(--saffron) transparent}
+  .folio-scroll::-webkit-scrollbar{width:9px}
+  .folio-scroll::-webkit-scrollbar-thumb{background:var(--saffron);border-radius:5px;border:2px solid transparent;background-clip:padding-box}
+  .folio-scroll .muted{color:var(--ink-secondary)}
+  /* chapter heading — Cinzel small-caps with a madder rule, replacing the plain h2.sec */
+  .folio-scroll h2.sec{font-family:'Cinzel',serif;font-size:1.02rem;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--madder);border-bottom:1px solid rgba(160,40,40,.35);
+    padding-bottom:.35rem;margin:1.6rem 0 .7rem}
+  .folio-scroll h2.sec:first-child{margin-top:.2rem}
+  .folio-scroll h2.sec .explain{font-family:var(--serif);color:var(--saffron-deep);background:rgba(232,213,168,.6);
+    border-color:rgba(139,111,71,.4)}
+  .folio-scroll .lede{font-family:'EB Garamond',serif;color:var(--ink-primary)}
+  /* cards / tables / details on cream */
+  .folio-scroll details.card{background:rgba(245,227,184,.5);border-color:rgba(139,111,71,.35)}
+  .folio-scroll details.card>summary{color:var(--ink-primary)}
+  .folio-scroll table{color:var(--ink-primary)}
+  .folio-scroll th{color:var(--saffron-deep)}
+  .folio-scroll td,.folio-scroll th{border-bottom-color:rgba(139,111,71,.28)}
+  .folio-scroll cite.src{color:var(--madder);border-bottom-color:var(--madder)}
+  .folio-scroll .chip{background:rgba(232,213,168,.6);border-color:rgba(139,111,71,.35)}
+  .folio-scroll .explained{background:rgba(245,227,184,.55);border-left-color:var(--gold-deep)}
+  .folio-scroll .vz-tile,.folio-scroll .mtile,.folio-scroll .digest-item,.folio-scroll .chartfig figcaption{color:var(--ink-primary)}
+  .folio-scroll .chartgrid{background:var(--wood-honey-dark);border-color:var(--wood-honey-dark)}
+  .folio-scroll .cbox{background:var(--leaf-cream-light)}
+  /* colophon (leaf 12) */
+  .colophon-om{font-size:3rem;text-align:center;color:var(--gold-deep);margin-bottom:.3rem}
+  .colophon-title{font-family:'Cinzel',serif;text-align:center;letter-spacing:.2em;color:var(--madder);
+    text-transform:uppercase;font-size:.95rem;margin-bottom:1rem}
+  #leaf12-body .lede{font-family:'EB Garamond',serif;font-size:1.05rem;line-height:1.75;color:var(--ink-primary);text-align:center}
+  /* the loading state shown in a folio while casting */
+  .folio-loading{text-align:center;padding:3rem 1rem;font-style:italic;color:var(--ink-secondary)}
+  /* click-to-source panel — cream/gold, above the leaves & nav */
+  #srcpanel{background:var(--leaf-cream);border-left:2px solid var(--gold-deep);z-index:400}
+  #srcpanel .head{background:rgba(139,111,71,.12);border-bottom-color:rgba(139,111,71,.3)}
+  #srcpanel .head b{font-family:'Cinzel',serif;color:var(--madder)}
+  #srcpanel pre{color:var(--ink-primary);font-family:'EB Garamond',serif}
+  /* Ask Q&A — a bottom overlay above the nav-bar (toggled by ❋ ask) */
+  #ask{position:fixed;left:0;right:0;bottom:104px;z-index:390;max-width:820px;margin:0 auto;
+    background:var(--leaf-cream);border:1px solid var(--gold-deep);border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);padding:.7rem .9rem}
+  #ask .ask-log{max-height:38vh}
+  #ask .ask-log .a{font-family:'EB Garamond',serif;color:var(--ink-primary)}
+  #ask .ask-form input{background:var(--leaf-cream-light);border-color:rgba(139,111,71,.4);color:var(--ink-primary)}
+  #ask .ask-form button{background:var(--saffron-deep)}
+  #ask .ask-note{color:var(--ink-secondary)}
 </style>
 </head>
 <body>
-<header>
-  <h1>Detailed Reading</h1>
-  <span class="sub">Sri B. V. Raman's system — the engine's own reading, click any citation for its source</span>
-  <span class="note">Answers "what would Raman say", faithfully to his texts — not a validated prediction of a life.</span>
-</header>
-<div class="wrap"><main>
-  <form class="birth" id="f" onsubmit="return false">
-    <label>Name<input class="name" id="name" value="Canonical Baseline"></label>
-    <label>Year<input id="year" type="number" value="1990"></label>
-    <label>Month<input id="month" type="number" value="7"></label>
-    <label>Day<input id="day" type="number" value="15"></label>
-    <label>Hour<input id="hour" type="number" value="12"></label>
-    <label>Min<input id="minute" type="number" value="0"></label>
-    <label>Lat<input id="latitude" type="number" step="0.0001" value="12.97"></label>
-    <label>Lon<input id="longitude" type="number" step="0.0001" value="77.59"></label>
-    <label>TZ<input id="tz_offset" type="number" step="0.5" value="5.5"></label>
-    <label>Ayanamsa<select id="ayanamsa"><option>lahiri</option><option>raman</option></select></label>
-    <button id="go" onclick="run()">Read chart</button>
-    <div class="presets">
-      <button onclick="preset('mainpuri')">Mainpuri 1989</button>
-      <button onclick="preset('canonical')">Bangalore 1990</button>
+<div class="dust-layer" id="dust-layer"></div>
+
+<div class="manuscript-stage">
+  <div class="manuscript" id="manuscript">
+    <div class="binding-string left"></div>
+    <div class="binding-string right"></div>
+
+    <!-- Leaf 0 — front cover -->
+    <div class="leaf" data-page="0">
+      <div class="cover">
+        <div class="cover-inscription">
+          <div class="cover-deva-title deva">फलादेशः</div>
+          <div class="cover-english-title">THE READING OF THE BIRTH CHART</div>
+        </div>
+        <div style="position:absolute;left:33.33%;top:50%;transform:translate(-50%,-50%);z-index:3"><div class="binding-hole"></div></div>
+        <div style="position:absolute;left:66.67%;top:50%;transform:translate(-50%,-50%);z-index:3"><div class="binding-hole"></div></div>
+        <div class="cover-tap-hint">tap or press ↓ to enter birth details</div>
+      </div>
     </div>
-  </form>
-  <div id="out"><p class="muted">Enter a birth and press <b>Read chart</b>.</p></div>
-</main></div>
+
+    <!-- Leaf 1 — birth details form -->
+    <div class="leaf" data-page="1">
+      <div class="leaf-page">
+        <div class="panel left">
+          <div class="panel-heading">DATE &amp; TIME</div>
+          <div class="panel-heading-deva deva">तिथिः</div>
+          <div style="margin:.5rem 0 .7rem"><label class="leaf-label">NAME</label><input class="leaf-input" id="name" value="Canonical Baseline"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-bottom:.7rem">
+            <div><label class="leaf-label">DAY</label><input class="leaf-input" id="day" type="number" value="15"></div>
+            <div><label class="leaf-label">MONTH</label><input class="leaf-input" id="month" type="number" value="7"></div>
+            <div><label class="leaf-label">YEAR</label><input class="leaf-input" id="year" type="number" value="1990"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+            <div><label class="leaf-label">HOUR</label><input class="leaf-input" id="hour" type="number" value="12"></div>
+            <div><label class="leaf-label">MINUTE</label><input class="leaf-input" id="minute" type="number" value="0"></div>
+          </div>
+        </div>
+        <div class="binding-zone"><div class="binding-hole"></div></div>
+        <div class="panel middle" style="justify-content:center">
+          <div class="panel-heading">PLACE</div>
+          <div class="panel-heading-deva deva">स्थानम्</div>
+          <div style="margin:.5rem 0 .7rem"><label class="leaf-label">LATITUDE</label><input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.97"></div>
+          <div style="margin-bottom:.7rem"><label class="leaf-label">LONGITUDE</label><input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.59"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.9rem">
+            <div><label class="leaf-label">TZ (UTC±)</label><input class="leaf-input" id="tz_offset" type="number" step="0.5" value="5.5"></div>
+            <div><label class="leaf-label">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          </div>
+          <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()">Cast the Reading</button></div>
+          <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic">a few seconds to cast &amp; compose</div>
+        </div>
+        <div class="binding-zone"><div class="binding-hole"></div></div>
+        <div class="panel right">
+          <div class="panel-heading">PRESETS</div>
+          <div class="panel-heading-deva deva">पूर्व-नियताः</div>
+          <div style="margin-top:.4rem">
+            <div class="preset-card" onclick="preset('canonical')"><div class="name">BANGALORE BASELINE</div><div class="meta">15 Jul 1990 · noon · canonical test</div></div>
+            <div class="preset-card" onclick="preset('mainpuri')"><div class="name">MAINPURI 1989</div><div class="meta">12 Oct 1989 · Raman's worked chart</div></div>
+          </div>
+          <div style="margin-top:.7rem;padding-top:.6rem;border-top:1px dashed var(--ink-faded);text-align:center;font-size:.76rem;font-variant:small-caps;letter-spacing:.1em;color:var(--ink-faded)">
+            also&nbsp;<a href="/medini/knowledge/page" style="color:var(--saffron-deep);text-decoration:none">/library</a>&nbsp;·&nbsp;<a href="/" style="color:var(--saffron-deep);text-decoration:none">/home</a>
+          </div>
+        </div>
+        <div class="folio-mark">folio · birth details</div>
+      </div>
+    </div>
+
+    <!-- Leaves 2–11 — chapter folios (populated after cast) -->
+    <div class="leaf" data-page="2"><div class="leaf-page single"><div class="folio-scroll" id="leaf2-body"></div><div class="folio-mark">folio · what matters most</div></div></div>
+    <div class="leaf" data-page="3"><div class="leaf-page single"><div class="folio-scroll" id="leaf3-body"></div><div class="folio-mark">folio · signature &amp; ruler</div></div></div>
+    <div class="leaf" data-page="4"><div class="leaf-page single"><div class="folio-scroll" id="leaf4-body"></div><div class="folio-mark">folio · the charts</div></div></div>
+    <div class="leaf" data-page="5"><div class="leaf-page single"><div class="folio-scroll" id="leaf5-body"></div><div class="folio-mark">folio · yogas &amp; ashtakavarga</div></div></div>
+    <div class="leaf" data-page="6"><div class="leaf-page single"><div class="folio-scroll" id="leaf6-body"></div><div class="folio-mark">folio · houses</div></div></div>
+    <div class="leaf" data-page="7"><div class="leaf-page single"><div class="folio-scroll" id="leaf7-body"></div><div class="folio-mark">folio · matters &amp; longevity</div></div></div>
+    <div class="leaf" data-page="8"><div class="leaf-page single"><div class="folio-scroll" id="leaf8-body"></div><div class="folio-mark">folio · life-narrative</div></div></div>
+    <div class="leaf" data-page="9"><div class="leaf-page single"><div class="folio-scroll" id="leaf9-body"></div><div class="folio-mark">folio · transits</div></div></div>
+    <div class="leaf" data-page="10"><div class="leaf-page single"><div class="folio-scroll" id="leaf10-body"></div><div class="folio-mark">folio · divisional &amp; soul</div></div></div>
+    <div class="leaf" data-page="11"><div class="leaf-page single"><div class="folio-scroll" id="leaf11-body"></div><div class="folio-mark">folio · insights</div></div></div>
+
+    <!-- Leaf 12 — colophon / back cover -->
+    <div class="leaf" data-page="12"><div class="leaf-page single"><div class="folio-scroll" id="leaf12-scroll">
+      <div class="colophon-om deva">ॐ</div>
+      <div class="colophon-title">निचोडः · THE ESSENCE</div>
+      <div id="leaf12-body"><p class="muted">Cast a chart to read its essence.</p></div>
+      <div style="text-align:center;margin-top:1.4rem"><button class="leaf-button" onclick="reopenManuscript()">CAST ANOTHER CHART</button></div>
+    </div><div class="folio-mark">colophon · nichod</div></div></div>
+
+    <div class="edge-zone top" id="zone-prev"></div>
+    <div class="edge-zone bottom" id="zone-next"></div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" id="btn-prev" title="Previous folio (↑)">↑</button>
+  <div class="nav-status" id="folio-status">COVER</div>
+  <button class="nav-btn" id="btn-next" title="Next folio (↓)">↓</button>
+  <button class="nav-mute" id="btn-mute">🔊 sound</button>
+  <button class="nav-mute" id="btn-ask" onclick="toggleAsk()">❋ ask</button>
+  <a class="nav-page-link" href="/medini/knowledge/page">📖 library</a>
+  <a class="nav-page-link" href="/">🏠 home</a>
+</div>
 
 <div id="ask" style="display:none">
   <div class="ask-log" id="ask-log"></div>
@@ -602,16 +731,18 @@ function longevityGauge(R){ const L=R.longevity; if(!L||L.years==null) return nu
   return s; }
 
 function run(){
-  const btn=$('go'); btn.disabled=true; btn.textContent='Reading…';
-  const out=$('out'); out.replaceChildren(el('div',{class:'loading'},'Casting the chart and composing the reading…'));
+  const btn=$('go'); if(btn){ btn.disabled=true; btn.textContent='Casting…'; }
+  const first=$('leaf2-body');
+  if(first) first.replaceChildren(el('div',{class:'folio-loading'},'Casting the chart and composing the reading…'));
+  if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2);   // flip into the book
   const body={ name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
     hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value,
     longitude:+$('longitude').value, tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, format:'json' };
   fetch('/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(r=>r.ok?r.json():r.json().then(e=>Promise.reject(e.detail||r.statusText)))
-    .then(d=>render(d.report,d.summary))
-    .catch(e=>{ out.replaceChildren(el('div',{class:'err'},'Error: '+(typeof e==='string'?e:JSON.stringify(e)))); })
-    .finally(()=>{ btn.disabled=false; btn.textContent='Read chart'; });
+    .then(d=>{ render(d.report,d.summary); if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2); })
+    .catch(e=>{ if(first) first.replaceChildren(el('div',{class:'err'},'Error: '+(typeof e==='string'?e:JSON.stringify(e)))); })
+    .finally(()=>{ if(btn){ btn.disabled=false; btn.textContent='Cast the Reading'; } });
 }
 
 // map a section heading to an explainer scope
@@ -658,6 +789,11 @@ async function ask(){
   finally{ $('ask-go').disabled=false; log.scrollTop=log.scrollHeight; }
   return false;
 }
+// the Ask Q&A is a bottom overlay above the nav bar, toggled by the ❋ ask button
+function toggleAsk(){ const a=$('ask'); if(!a) return;
+  a.style.display = (a.style.display==='none'||!a.style.display) ? 'block' : 'none';
+  if(a.style.display==='block'){ const q=$('ask-q'); if(q) q.focus(); } }
+window.toggleAsk=toggleAsk;
 
 // ---- digest: click a "draws on" label to jump to that section (best-effort) ----
 function jumpLink(label){
@@ -739,11 +875,12 @@ function renderTimeline(R, add){
 }
 
 function render(R, S){
-  const out=$('out'); out.replaceChildren();
-  const add=(...n)=>out.append(...n.filter(Boolean));
-  const ap=$('ask'); if(ap) ap.style.display='block';   // reveal the Q&A panel once a report exists
-  document.querySelector('main').style.paddingBottom='42vh';
+  // clear every chapter folio, then append each section-group into its leaf via chapter()
+  for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
+  let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
+  const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); };
 
+  chapter(2);
   // ===== What matters most (the engine's ranked digest — first thing you see) =====
   const dg=R.digest||{};
   if(dg.headline||(dg.items&&dg.items.length)){
@@ -781,6 +918,7 @@ function render(R, S){
   if(pr.notable) add(para(pr.notable,'lede'));
   if(pr.closing) add(para(pr.closing,'muted'));
 
+  chapter(3);
   // ===== Chart signature =====
   add(H2('Chart signature'));
   const s=R.synthesis||{}, ov=R.overview||{};
@@ -805,6 +943,7 @@ function render(R, S){
   if(ru.temperament) add(para('Classical temperament: '+ru.temperament+' (HTJAH-I:6248-6268)','muted'));
   if(ru.signature) add(para(ru.signature));
 
+  chapter(4);
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
   if(R.chart&&R.chart.planets){ add(H2('Charts — Rasi · Navamsa · Gochara'));
     const cw=el('div',{class:'charts'});
@@ -831,6 +970,7 @@ function render(R, S){
   if(_ikb) add(vizCard('Ishta / Kashta — each planet’s benefic share', _ikb,
     'For each planet, the green (ishta — benefic potential) vs red (kashta — malefic potential) split, with the dashed centre marking the 50% tipping point. These fields appear nowhere else in the report.'));
 
+  chapter(5);
   // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
   add(H2('Yogas'));
   for(const y of (R.yogas||[])){ const p=el('p',{class:'muted',style:'margin:.25rem 0'});
@@ -848,6 +988,7 @@ function render(R, S){
     t.append(el('tr',{},...Object.values(R.sav).map(v=>el('td',{},String(v))))); add(t);
     add(para('Average 28 per sign, 337 total. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456).','muted')); }
 
+  chapter(6);
   // ===== House-by-house (proforma + strength + witnesses) =====
   add(H2('House-by-house'));
   const _vw=verdictWheel(R);
@@ -916,6 +1057,7 @@ function render(R, S){
       b.append(w); d.append(b); pg.append(d); }
     add(pg); }
 
+  chapter(7);
   // ===== The twelve matters (dashboard) — full, incl. the deciding reader =====
   if(R.dashboard?.entries){ add(H2('The twelve matters at a glance'));
     const _mt=matterTiles(R);
@@ -935,6 +1077,7 @@ function render(R, S){
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
 
+  chapter(8);
   // ===== Life-narrative timeline + companions =====
   add(H2('Life-narrative (Vimshottari)'));
   const _lp=lifePanel(R);
@@ -952,6 +1095,7 @@ function render(R, S){
     const sm=el('summary'); sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
     const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b); add(d); }
 
+  chapter(9);
   // ===== Transits =====
   add(H2('Transits (Gochara)'));
   const _fm=gocharaFromMoon(R);
@@ -963,6 +1107,7 @@ function render(R, S){
   add(sectionTable('Current transits with Vedha', R.gochara));
   add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
 
+  chapter(10);
   // ===== Divisional deep-reads =====
   if((R.divisional||[]).length){ add(H2('Divisional deep-reads (Shodasavarga)'));
     for(const dv of R.divisional){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(dv.label);
@@ -982,6 +1127,7 @@ function render(R, S){
       d.append(sm); const b=el('div',{class:'body'}); for(const t of cur){ b.append(para('['+(t.provenance||'')+(t.cite?' '+t.cite:'')+'] '+t.text,'muted')); } d.append(b); add(d); }
     else add(para('No classical ancestral-curse yoga fires on this chart.','muted')); }
 
+  chapter(11);
   // ===== Integrated insights =====
   if((R.insights||[]).length){ add(H2('Integrated insights'));
     for(const ins of R.insights){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(ins.name);
@@ -1009,6 +1155,7 @@ function render(R, S){
       (I.inverted_locations&&I.inverted_locations.length?(' ('+I.inverted_locations.join(', ')+') — treat any house driven by one with maximal skepticism'):'')+'. '+
       I.distinctive+' are genuinely distinctive. This is a disclosure about the method’s output, not a statement about a life.','muted')); }
 
+  chapter(12);
   // ===== Nichod =====
   const n=R.nichod||{};
   if(n.essence){ add(H2('Nichod (the essence)')); add(para(n.essence,'lede'));
@@ -1016,5 +1163,12 @@ function render(R, S){
     if(n.caution) add(para('Caution: '+n.caution,'muted')); }
 }
 </script>
+<script>
+  // one label per leaf, in order (manuscript.js reads this before it initialises)
+  window.MANUSCRIPT_LABELS = ['COVER','BIRTH DETAILS','WHAT MATTERS MOST','SIGNATURE & RULER',
+    'THE CHARTS','YOGAS & ASHTAKAVARGA','HOUSES','MATTERS & LONGEVITY','LIFE-NARRATIVE',
+    'TRANSITS','DIVISIONAL & SOUL','INSIGHTS','NICHOD'];
+</script>
+<script src="/static/js/manuscript.js"></script>
 </body>
 </html>

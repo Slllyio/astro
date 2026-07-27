@@ -111,6 +111,11 @@ class TestPage:
         assert "What matters most" in html
         assert "/report/insights" in html
         assert "Read this as one story" in html
+        # the Pothi-manuscript book design: shared engine + 13 leaves + labels + cover
+        assert "/static/css/manuscript.css" in html and "/static/js/manuscript.js" in html
+        assert 'data-page="0"' in html and 'data-page="12"' in html   # cover..colophon
+        assert "MANUSCRIPT_LABELS" in html
+        assert "cover-deva-title" in html                              # the brushed-gold cover
 
 
 class TestSource:

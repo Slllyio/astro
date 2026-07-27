@@ -11,13 +11,31 @@ import pytest
 
 from app.llm.client import StubClient
 from app.llm.report_explainer import (
+    CRITIC_SYSTEM,
     EXPLAINER_SYSTEM,
+    _parse_critique,
     build_evidence,
     build_prompt,
+    critique,
     explain,
+    explain_with_critic,
     provenance_check,
     refusal_reason,
 )
+
+
+class SeqStub:
+    """A client double that returns a sequence of responses across successive calls (the last one
+    repeats) — lets one test drive a draft->refine flow where the SAME client is called twice."""
+
+    def __init__(self, *responses: str):
+        self._responses = list(responses)
+        self.model = "seqstub"
+        self.last_prompt = ""
+
+    def complete(self, prompt: str) -> str:
+        self.last_prompt = prompt
+        return self._responses.pop(0) if len(self._responses) > 1 else self._responses[0]
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import build_detailed_report
 from app.raman_saab.report_json import to_report_dict
@@ -217,6 +235,73 @@ class TestDigestScope:
         ev = build_evidence(rdict, "digest")
         ans = explain(ev, None, StubClient("You will marry a wealthy partner in 2027 [Fact 2]."))
         assert refusal_reason(ans, 0.6) is not None
+
+
+class TestCritic:
+    """The honesty-tuned adversarial critic (Phase D) — a QUALITY pass. It must catch the moves the
+    regex/anchor guards cannot (unentailed claims, 'findings reinforce each other'), drive one
+    refinement, and never touch a deferral. `refusal_reason` stays the real gate."""
+
+    def _ev(self, rdict):
+        return build_evidence(rdict, "digest")
+
+    def test_critic_prompt_targets_the_honesty_violations(self):
+        low = CRITIC_SYSTEM.lower()
+        assert "reinforce" in low and "combine" in low        # the compound-claim gap
+        assert "prediction" in low
+        assert "not entailed" in low                          # anchored-but-unentailed
+        assert "verdict: clean" in low and "verdict: revise" in low
+
+    def test_parse_critique_reads_the_verdict_and_fixes(self):
+        clean = _parse_critique("VERDICT: CLEAN")
+        assert clean.clean and clean.must_fix == ()
+        revise = _parse_critique("VERDICT: REVISE\nFIX:\n- Remove the prediction.\n- Drop [gloss].")
+        assert not revise.clean
+        assert len(revise.must_fix) == 2
+
+    def test_parse_critique_fails_open_on_garbled_output(self):
+        """A garbled critique must not block a good answer — the code guard is the real gate."""
+        assert _parse_critique("(model returned nonsense)").clean is True
+
+    def test_critique_never_flags_a_deferral(self, rdict):
+        ans = explain(self._ev(rdict), None, StubClient("The engine does not compute that."))
+        # even a critic that would 'REVISE' everything must pass a deferral through untouched
+        review = critique(ans, self._ev(rdict), StubClient("VERDICT: REVISE\nFIX:\n- anything"))
+        assert review.clean is True
+
+    def test_clean_critique_leaves_the_draft_unchanged(self, rdict):
+        ev = self._ev(rdict)
+        draft_text = "Your home life is your clearest strength [Fact 2]."
+        ans = explain_with_critic(ev, None, StubClient(draft_text),
+                                  critic_client=StubClient("VERDICT: CLEAN"))
+        assert ans.text == draft_text
+
+    def test_critic_drives_a_refinement_when_flagged(self, rdict):
+        ev = self._ev(rdict)
+        bad = "Your home and career reinforce each other to guarantee success [Fact 2]."
+        good = "Your home life is a strength [Fact 2]. Your career is separately contested [Fact 6]."
+        drafter = SeqStub(bad, good)                           # bad draft, then the refined text
+        critic = StubClient("VERDICT: REVISE\nFIX:\n- Remove 'reinforce each other to guarantee'.")
+        ans = explain_with_critic(ev, None, drafter, critic_client=critic)
+        assert ans.text == good                                # the refined draft is returned
+
+    def test_no_critic_client_returns_the_plain_draft(self, rdict):
+        ev = self._ev(rdict)
+        ans = explain_with_critic(ev, None, StubClient("Home is a strength [Fact 2]."),
+                                  critic_client=None)
+        assert ans.text == "Home is a strength [Fact 2]."
+
+    def test_refine_that_worsens_the_answer_is_rejected(self, rdict):
+        """Defense-in-depth: if a (hallucinating) critic drives a refinement that INTRODUCES a
+        prediction the clean draft lacked, the worse rewrite is discarded and the draft kept —
+        the critic can never lower the code-measurable safety."""
+        ev = self._ev(rdict)
+        clean_draft = "Your home life is a strength [Fact 2]."
+        worse = "Your home life means you will marry a wealthy partner in 2027 [Fact 2]."
+        drafter = SeqStub(clean_draft, worse)                  # draft is clean, refine is worse
+        critic = StubClient("VERDICT: REVISE\nFIX:\n- (hallucinated) rephrase Fact 2.")
+        ans = explain_with_critic(ev, None, drafter, critic_client=critic)
+        assert ans.text == clean_draft                         # the worse rewrite was rejected
 
 
 class TestSystemPromptContract:

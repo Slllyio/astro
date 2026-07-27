@@ -90,6 +90,12 @@ class Settings(BaseSettings):
     # the key) to enable the Sonnet-backed grounded explainer. The explainer NEVER generates a
     # verdict — it only translates the engine's already-computed, already-cited findings.
     REPORT_LLM_ENABLED: bool = False
+    # Optional adversarial self-critique over the grounded explainer/synthesis output: the model
+    # drafts, an honesty-tuned critic checks that every claim is entailed by a [Fact N] and that no
+    # prediction / new verdict / "these findings reinforce each other" compound claim leaked, then
+    # the model refines once. A QUALITY pass, not the safety net — `refusal_reason` remains the
+    # final gate regardless. Off by default because it costs 2-3x the LLM calls when enabled.
+    REPORT_LLM_CRITIC_ENABLED: bool = False
     # Minimum share of PARAGRAPHS that must carry a VALID [Fact N]/[Ref N] anchor for an LLM
     # answer to be served; below this (or on any forbidden move / fabricated citation / bad
     # anchor) the route REFUSES the LLM text and serves the deterministic fallback. The hard

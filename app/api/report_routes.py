@@ -201,6 +201,20 @@ def _explainer_client():
         return None
 
 
+def _critic_client():
+    """The honesty-tuned adversarial critic client (own system prompt), or None when the critic is
+    disabled / the LLM is unavailable — in which case the explainer runs without a critique pass."""
+    from app.core.config import settings
+    if not (settings.REPORT_LLM_ENABLED and settings.REPORT_LLM_CRITIC_ENABLED):
+        return None
+    from app.llm.client import AnthropicClient, AnthropicUnavailable
+    from app.llm.report_explainer import CRITIC_SYSTEM
+    try:
+        return AnthropicClient(system=CRITIC_SYSTEM)
+    except AnthropicUnavailable:
+        return None
+
+
 def _fallback_answer(r, scope: str) -> dict:
     """Deterministic, truthful fallback when the LLM is disabled/unavailable — the report's own
     plain prose for the scope, never an invented explanation."""
@@ -231,7 +245,12 @@ def _fallback_answer(r, scope: str) -> dict:
 async def _grounded(req, question: Optional[str]) -> dict:
     from app.core.config import settings
     from app.llm.client import AnthropicUnavailable
-    from app.llm.report_explainer import build_evidence, explain, refusal_reason
+    from app.llm.report_explainer import (
+        build_evidence,
+        explain,
+        explain_with_critic,
+        refusal_reason,
+    )
 
     def _work() -> dict:
         birth = BirthData(name=req.name, year=req.year, month=req.month, day=req.day,
@@ -248,8 +267,12 @@ async def _grounded(req, question: Optional[str]) -> dict:
         # 'system' line — the client controls both role and text (prompt-injection defence).
         hist = tuple((role, text) for role, text in getattr(req, "history", [])
                      if role in ("user", "assistant"))
+        critic = _critic_client()                 # None unless the critic flag is on + LLM available
         try:
-            ans = explain(ev, question, client, history=hist)
+            if critic is not None:
+                ans = explain_with_critic(ev, question, client, history=hist, critic_client=critic)
+            else:
+                ans = explain(ev, question, client, history=hist)
         except (AnthropicUnavailable, Exception):  # noqa: BLE001 — any LLM failure -> fallback
             logger.warning("explainer LLM failed; serving deterministic fallback")
             return _fallback_answer(r, scope)

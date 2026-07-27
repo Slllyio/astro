@@ -439,6 +439,17 @@ def refusal_reason(ans: "GroundedAnswer", min_ratio: float, max_gloss: float = 0
     return None
 
 
+def _answer_from_text(text: str, ev: Evidence, model: str) -> GroundedAnswer:
+    """Wrap a candidate answer string in its provenance trace."""
+    pc = provenance_check(text, ev)
+    return GroundedAnswer(
+        text=text, anchors_used=pc["anchors_used"], grounding_ratio=pc["grounding_ratio"],
+        gloss_ratio=pc["gloss_ratio"], ungrounded_sentences=pc["ungrounded_sentences"],
+        bad_anchors=pc["bad_anchors"], fabricated_citations=pc["fabricated_citations"],
+        forbidden_moves=pc["forbidden_moves"], is_deferral=pc["is_deferral"],
+        model=model, source="llm")
+
+
 def explain(ev: Evidence, question: Optional[str], client: LLMClient,
             history: Sequence[tuple[str, str]] = (), model: str = "") -> GroundedAnswer:
     """One grounded explanation/answer pass + its provenance trace. Raises whatever the client
@@ -446,10 +457,116 @@ def explain(ev: Evidence, question: Optional[str], client: LLMClient,
     not this function, decides whether to serve the text (see `refusal_reason`)."""
     prompt = build_prompt(ev, question, history)
     text = client.complete(prompt)
-    pc = provenance_check(text, ev)
-    return GroundedAnswer(
-        text=text, anchors_used=pc["anchors_used"], grounding_ratio=pc["grounding_ratio"],
-        gloss_ratio=pc["gloss_ratio"], ungrounded_sentences=pc["ungrounded_sentences"],
-        bad_anchors=pc["bad_anchors"], fabricated_citations=pc["fabricated_citations"],
-        forbidden_moves=pc["forbidden_moves"], is_deferral=pc["is_deferral"],
-        model=model or getattr(client, "model", "unknown"), source="llm")
+    return _answer_from_text(text, ev, model or getattr(client, "model", "unknown"))
+
+
+# ─── the honesty-tuned adversarial critic (config-gated quality pass) ────────────
+# NOT the pandit critic (which rewards bold specificity — the opposite posture). This one hunts
+# the honesty-doctrine violations that the regex/anchor guards CANNOT see: an anchored-but-
+# unentailed claim, and the "these findings reinforce/combine into a bigger effect" compound claim
+# a doctrine review flagged. It is a QUALITY pass only — `refusal_reason` remains the final gate,
+# so a critic miss is still contained by the code-level guards.
+
+CRITIC_SYSTEM = """You are a STRICT reviewer of a plain-language explanation of a Vedic-astrology \
+engine's output. The explanation is allowed ONLY to restate the numbered COMPUTED FINDINGS in \
+plain language. It must add no new astrological judgment, no prediction, no invented citation, and \
+it must NEVER claim that two findings strengthen, reinforce, amplify, combine with, or cause one \
+another, or make any outcome stronger together. Your job is to catch every sentence that breaks \
+these rules — be adversarial and literal.
+
+Review the DRAFT against the evidence for:
+1. Any factual sentence NOT entailed by a specific [Fact N] in the evidence (a claim the findings \
+do not actually support), including an anchored sentence whose claim goes beyond its [Fact N].
+2. Any prediction/forecast, or "will / likely / indicated / promised / destined / expected" \
+language, or any statement about a future life event (marriage, wealth, illness, death, lifespan).
+3. Any new verdict, dignity, strength or placement the evidence does not state.
+4. Any source-citation token the model wrote itself (e.g. a work-and-line reference).
+5. Any claim that findings reinforce / amplify / combine / cause one another or make an outcome \
+stronger together.
+6. Any population/percentile figure framed as a prediction rather than as information content.
+
+Output EXACTLY this and nothing else:
+VERDICT: CLEAN
+   (when the draft fully complies), OR
+VERDICT: REVISE
+FIX:
+- <one precise instruction per problem, quoting the offending phrase>"""
+
+
+@dataclass(frozen=True)
+class CritiqueReview:
+    clean: bool
+    must_fix: tuple[str, ...]
+    raw: str
+
+
+_VERDICT_RE = re.compile(r"verdict:\s*(clean|revise)", re.IGNORECASE)
+_FIX_RE = re.compile(r"^\s*[-*]\s+(.+)$", re.MULTILINE)
+
+
+def build_critic_prompt(draft: str, ev: Evidence) -> str:
+    return (_evidence_block(ev) + "\n\nDRAFT EXPLANATION TO REVIEW:\n" + draft
+            + "\n\nReview the draft against the rules and output the VERDICT block.")
+
+
+def _parse_critique(raw: str) -> CritiqueReview:
+    """Parse the critic's VERDICT block. Fail-OPEN (treat as clean) on an unparseable response —
+    the code-level `refusal_reason` is the real guard, so a garbled critique never blocks a good
+    answer, and a genuinely bad answer is still refused downstream."""
+    m = _VERDICT_RE.search(raw or "")
+    clean = not (m and m.group(1).lower() == "revise")
+    fixes = tuple(x.strip() for x in _FIX_RE.findall(raw or "") if x.strip())
+    return CritiqueReview(clean=clean or not fixes, must_fix=fixes, raw=raw or "")
+
+
+def critique(ans: GroundedAnswer, ev: Evidence, client: LLMClient) -> CritiqueReview:
+    """Run the adversarial critic over a draft answer. Never critiques a deferral (it is safe by
+    construction)."""
+    if ans.is_deferral:
+        return CritiqueReview(clean=True, must_fix=(), raw="")
+    return _parse_critique(client.complete(build_critic_prompt(ans.text, ev)))
+
+
+def refine(ev: Evidence, draft: str, review: CritiqueReview, client: LLMClient,
+           question: Optional[str] = None, history: Sequence[tuple[str, str]] = ()) -> str:
+    """Re-prompt the explainer with the critic's must-fix list as hard constraints."""
+    fixes = "\n".join(f"- {x}" for x in review.must_fix) or \
+        "- Remove any sentence not grounded in a specific [Fact N]."
+    prompt = (build_prompt(ev, question, history)
+              + "\n\nA REVIEWER FOUND PROBLEMS with your previous draft:\n" + fixes
+              + "\n\nRewrite the explanation, fixing EVERY problem. Keep only claims grounded in a "
+                "[Fact N], predict nothing, and never claim findings reinforce or combine. Output "
+                "only the rewritten explanation.")
+    return client.complete(prompt)
+
+
+def _hard_hits(a: GroundedAnswer) -> int:
+    """Count of code-measurable hard-guard hits (prediction language, bad/absent anchors, model-
+    authored citations) — the dimension a refine must never make worse."""
+    return len(a.forbidden_moves) + len(a.bad_anchors) + len(a.fabricated_citations)
+
+
+def explain_with_critic(ev: Evidence, question: Optional[str], client: LLMClient,
+                        history: Sequence[tuple[str, str]] = (), model: str = "",
+                        critic_client: Optional[LLMClient] = None) -> GroundedAnswer:
+    """Draft -> adversarial critique -> (if flagged) one refinement pass. A QUALITY pass on top of
+    `explain`; the route still applies `refusal_reason` as the final gate. Deferrals pass straight
+    through. Falls back to the plain draft if no critic client is supplied.
+
+    Defense-in-depth (a doctrine-review caveat): a hallucinating critic could rewrite a compliant
+    draft into a worse one. So the refined answer is accepted only when it is NOT worse on the
+    code-measurable guards than the draft (no new prediction/anchor/citation hit, no lower
+    grounding); otherwise the original draft is kept. `refusal_reason` gates whichever is returned.
+    (The anchored-but-unentailed class the critic targets is code-invisible by nature; the critic
+    reduces it in the common case, and the residual is symmetric with running no critic at all.)"""
+    mdl = model or getattr(client, "model", "unknown")
+    draft = explain(ev, question, client, history, mdl)
+    if draft.is_deferral or critic_client is None:
+        return draft
+    review = critique(draft, ev, critic_client)
+    if review.clean:
+        return draft
+    refined = _answer_from_text(refine(ev, draft.text, review, client, question, history), ev, mdl)
+    if _hard_hits(refined) > _hard_hits(draft) or refined.grounding_ratio < draft.grounding_ratio:
+        return draft                              # never let the critic worsen measurable safety
+    return refined

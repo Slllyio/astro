@@ -64,6 +64,7 @@
   th,td{text-align:left;padding:.32rem .5rem;border-bottom:1px solid var(--line)}
   th{color:var(--ink-2);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
   tr.drill{cursor:pointer} tr.drill:hover{background:var(--surface-2)}
+  .tscroll{overflow-x:auto;max-width:100%}
   .witnesses{font-size:.8rem;margin:.2rem 0 .6rem;padding-left:.2rem}
   .witnesses div{padding:.12rem 0;border-bottom:1px dashed var(--line)}
   cite.src{font-style:normal;color:var(--accent);cursor:pointer;border-bottom:1px dotted var(--accent);
@@ -223,22 +224,28 @@ function jdYM(jd){ if(jd==null) return '—';
   const mo=((Math.floor(h/153)+2)%12)+1, yr=Math.floor(e/1461)-4716+Math.floor((14-mo)/12);
   return yr+'-'+String(mo).padStart(2,'0'); }
 function fmtVal(k,v){ if(v==null) return '—';
+  if(Array.isArray(v)) return v.length?v.map(x=>fmtVal(k,x)).join(', '):'—';
+  if(typeof v==='object') return Object.entries(v)   // nested objects are RENDERED, never dropped
+    .map(([kk,vv])=>kk.replace(/_/g,' ')+': '+fmtVal(kk,vv)).join('; ');
   if(/jd$/.test(k)) return jdYM(v);
-  if(k==='sign'&&typeof v==='number') return SIGN[v]||v;
-  if(typeof v==='number') return Number.isInteger(v)?v:v.toFixed(2);
-  if(typeof v==='boolean') return v?'yes':'—';
+  if((k==='sign'||k==='navamsa_sign')&&typeof v==='number') return SIGN[v]||v;
+  if(typeof v==='number') return Number.isInteger(v)?String(v):v.toFixed(2);
+  if(typeof v==='boolean') return v?'yes':'no';
   return String(v); }
-// generic table over an array of flat row-objects (skips nested objects)
+// generic table over an array of row-objects — renders EVERY column, nested values included
+// (never silently drops a column: locked "report completeness" rule in CLAUDE.md).
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
-  const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)&&
-    (r[k]==null||typeof r[k]!=='object')) keys.push(k);
+  const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
   const t=el('table'); t.append(el('tr',{},...keys.map(k=>el('th',{},k.replace(/_/g,' ')))));
   for(const r of arr){ const tr=el('tr'); for(const k of keys){ const td=el('td');
     td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} t.append(tr);} return t; }
+// visible by default (open) — a section's values are never hidden behind a bare count.
 function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
-  const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(title+' ('+arr.length+')');
-  d.append(sm); const b=el('div',{class:'body'}); b.append(rows(arr,drop)); d.append(b); return d; }
+  const d=el('details',{class:'card'}); d.setAttribute('open','');
+  const sm=el('summary'); sm.append(title+' ('+arr.length+')');
+  d.append(sm); const b=el('div',{class:'body'}); const sc=el('div',{class:'tscroll'});
+  sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
 
@@ -457,12 +464,12 @@ function render(R, S){
   }
   add(pt);
 
-  // ===== Yogas + yoga timing =====
+  // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
   add(H2('Yogas'));
-  const yg=el('div',{class:'pillrow'});
-  for(const y of (R.yogas||[])){ const c=el('span',{class:'chip'},y.name+' ('+y.kind+')');
-    const s2=citeChip(y.source); if(s2){ c.append(' '); c.append(s2);} yg.append(c); }
-  add(yg);
+  for(const y of (R.yogas||[])){ const p=el('p',{class:'muted',style:'margin:.25rem 0'});
+    p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
+    if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
+    add(p); }
   add(sectionTable('Yoga × Dasha timing — when each yoga’s lord runs', R.yoga_timing));
 
   // ===== Ashtakavarga (SAV) =====
@@ -483,8 +490,8 @@ function render(R, S){
     d.append(sm);
     const b=el('div',{class:'body'});
     if(HS) b.append(para('Bhava Bala rank '+(HS.bhava_bala_rank??'n/a')+' of 12; SAV '+(HS.sav_bindus??'n/a')+' ('+HS.sav_band+')','muted'));
-    const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'karaka')));
-    for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),el('td',{},vchip(sv.verdict)),el('td',{},sv.karaka)));
+    const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'degree'),el('th',{},'karaka')));
+    for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),el('td',{},vchip(sv.verdict)),el('td',{},sv.degree||'—'),el('td',{},sv.karaka)));
     b.append(st);
     // population context
     const cal=(R.calibration?.[String(pf.house)]||R.calibration?.[pf.house]||{}).entries||[];
@@ -502,15 +509,27 @@ function render(R, S){
   add(H2('House strength cross-check'));
   add(rows(R.house_strength));
 
-  // ===== Preponderance of testimonies =====
+  // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
   if((pp.houses||[]).length){ add(H2('Preponderance of testimonies'));
-    add(rows((pp.houses||[]).map(h=>({house:'H'+h.house,verdict:h.verdict,for:h.favourable,against:h.adverse,neutral:h.neutral,preponderance:h.preponderance,status:h.status}))));
-    add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted')); }
+    add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
+    const flagged=new Set([pp.most_corroborated_favourable,pp.most_corroborated_afflicted,pp.most_contested]);
+    const pg=el('div',{class:'grid'});
+    for(const h of pp.houses){ const d=el('details',{class:'card'}); if(flagged.has(h.house)) d.setAttribute('open','');
+      const sm=el('summary'); sm.append('H'+h.house+' · ',vchip(h.verdict),
+        el('span',{class:'muted'},' '+h.preponderance+' ('+h.status+')')); d.append(sm);
+      const b=el('div',{class:'body'});
+      b.append(para(h.favourable+' favourable · '+h.adverse+' adverse · '+h.neutral+' neutral · '+h.absent+' absent','muted'));
+      const w=el('div',{class:'witnesses'});
+      for(const t of (h.testimonies||[])) w.append(el('div',{class:'lean-'+t.lean},t.name+' — '+t.value+' ('+t.lean+')'));
+      b.append(w); d.append(b); pg.append(d); }
+    add(pg); }
 
-  // ===== The twelve matters (dashboard) =====
+  // ===== The twelve matters (dashboard) — full, incl. the deciding reader =====
   if(R.dashboard?.entries){ add(H2('The twelve matters at a glance'));
-    add(rows(R.dashboard.entries,['reader'])); }
+    add(rows(R.dashboard.entries));
+    if((R.dashboard.notes||[]).length) for(const nt of R.dashboard.notes)
+      add(para((typeof nt==='object'?(nt.text||JSON.stringify(nt)):nt),'muted')); }
 
   // ===== Longevity + maraka =====
   add(H2('Longevity'));
@@ -528,8 +547,8 @@ function render(R, S){
 
   // ===== Life-chapters =====
   add(H2('Life-chapters'));
-  for(const ch of (R.life_chapters||[])){ const d=el('details',{class:'card'}); const sm=el('summary');
-    sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
+  for(const ch of (R.life_chapters||[])){ const d=el('details',{class:'card'}); if(ch.is_current) d.setAttribute('open','');
+    const sm=el('summary'); sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
     const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b); add(d); }
 
   // ===== Transits =====
@@ -562,12 +581,20 @@ function render(R, S){
       const s3=citeChip(ins.source); if(s3){ sm.append(' '); sm.append(s3);} d.append(sm);
       const b=el('div',{class:'body'}); b.append(para(ins.simple_meaning)); b.append(para('This chart: '+ins.detail,'muted')); d.append(b); add(d); } }
 
-  // ===== What stands out + information content =====
+  // ===== What stands out (full detail — rare first) =====
   if((R.distinctive||[]).length){ add(H2('What stands out'));
-    add(para(R.distinctive.map(([h,e])=>'H'+h+' '+e.signification+' ('+Math.round((e.favourability_percentile||0)*100)+'%)').join('; '),'muted')); }
-  if(R.info){ add(H2('Information content of this reading'));
-    add(para('Of '+R.info.total+' calibrated readings, '+R.info.near_universal+' are near-universal (little information) and '+R.info.distinctive+' distinguish this chart. '+
-      (R.info.inverted_locations&&R.info.inverted_locations.length?('Atlas-proven inverted channels: '+R.info.inverted_locations.join(', ')+'.'):'')+' These are statements about the method’s output, not validated predictions about a life.','muted')); }
+    add(para('The readings that most distinguish this chart from the population, rarest first — information content, not a prediction.','muted'));
+    add(rows(R.distinctive.map(([h,e])=>({house:'H'+h, signification:e.signification, verdict:e.verdict,
+      degree:e.degree, 'more favourable than':Math.round((e.favourability_percentile||0)*100)+'% of charts',
+      'this reading in':Math.round((e.band_share||0)*100)+'% ('+e.rarity+')',
+      inverted:e.inverted_warning?'⚠ inverted channel':'—'})))); }
+  // ===== Information content (every field of the honesty headline) =====
+  if(R.info){ add(H2('Information content of this reading')); const I=R.info;
+    add(para(I.total+' calibrated readings. '+I.modal_count+' return the single most common verdict ('+
+      I.modal_verdict+'). '+I.near_universal+' are near-universal — held by half the population or more, carrying little information. '+
+      I.inverted+' sit on atlas-proven inverted channels'+
+      (I.inverted_locations&&I.inverted_locations.length?(' ('+I.inverted_locations.join(', ')+') — treat any house driven by one with maximal skepticism'):'')+'. '+
+      I.distinctive+' are genuinely distinctive. This is a disclosure about the method’s output, not a statement about a life.','muted')); }
 
   // ===== Nichod =====
   const n=R.nichod||{};

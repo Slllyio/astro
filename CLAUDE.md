@@ -99,6 +99,25 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 - **Tab 3 (Medini)**: Leaflet + OSM (NOT Mapbox), axis-aligned bbox tiling (NOT PostGIS), safe DOM construction (`createElement` + `textContent`, never innerHTML).
 - Single source of truth for Kurma GeoJSON: `/medini/regions` is consumed by both the educational widget and the personalized cartography page.
 
+## ★ REPORT COMPLETENESS — do NOT omit anything (locked 2026-07-27, after a real error)
+
+**Every report surface shows EVERYTHING the report computes. We only ADD, never remove or hide.**
+This is a standing user directive, confirmed twice and once violated — treat it as inviolable:
+
+- The interactive page (`app/medini/templates/report.html`), the standalone HTML
+  (`report_html.py`), and the markdown (`to_markdown`) must each render **every field of every
+  section** the report produces. If the engine computed a value, it appears in the reading.
+- **No collapsing a section to a bare count** (e.g. "Ishta/Kashta outlook (18)" with the rows
+  hidden). A `<details>` drill-down is fine ONLY if its summary already shows the substantive
+  content or it is `open` by default; never hide data behind a click that shows only a number.
+- **No dropping columns.** A generic table renderer must render nested-object / list values
+  (format them), never silently skip a column because its value is not a scalar. This was the
+  exact bug: `gochara.vedha_by`, `yoga_timing.quality`, the dashboard `reader`, and the
+  preponderance `testimonies`/`absent` all vanished this way.
+- When adding a section or field, add it to ALL renderers (append-only per the template contract).
+- If a value is genuinely not meaningful to show, that is a product decision for the USER to make
+  — surface it and ask; do not drop it unilaterally.
+
 ## Test-pinning policy
 
 - **Canonical baseline**: Bangalore 1990-07-15 12:00 IST, lat 12.97, lon 77.59, tz +5.5.

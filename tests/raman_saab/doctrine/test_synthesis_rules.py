@@ -71,6 +71,21 @@ class TestDetector:
         assert r1 is not None
         assert "Jupiter" in r1.detail and "rupas" in r1.detail
 
+    def test_r3_names_exactly_one_yoga_never_two(self, fired):
+        """2026-08-02: R3 used to join up to TWO yogas' fruition timing with '; ' into one
+        citable insight, so a narrator citing it could (and live did) attach the second yoga's
+        planet or MD window to the first yoga's name. R1 was fixed this way on 2026-07-30; this
+        sibling rule was missed. Exactly one yoga name may appear in the detail — the per-yoga
+        windows remain in full in the report's own `yoga_timing` section."""
+        r3 = next((f for f in fired if f.rule.id == "SYN_R3_YOGA_LORD_PERIOD"), None)
+        if r3 is None:
+            pytest.skip("no yoga-period insight fires on the canonical chart")
+        assert "; " not in r3.detail
+        named = [y for y in ("Gajakesari", "Amala", "Budha-Aditya", "Raja", "Mala", "Pasa",
+                             "Vesi", "Vasi", "Ruchaka", "Bhadra", "Hamsa", "Malavya", "Sasa")
+                 if y in r3.detail]
+        assert len(named) <= 1, f"more than one yoga named in one insight: {named}"
+
     def test_descriptive_rules_never_fire(self, fired):
         """Doctrine-on-record entries are listed, not fired."""
         fired_ids = {f.rule.id for f in fired}

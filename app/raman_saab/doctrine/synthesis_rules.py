@@ -513,23 +513,32 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _chk_r1(ctx: SynthesisContext) -> Optional[str]:
-    outs = []
+    """Reports ONLY the single strongest qualifying yoga (locked 2026-07-30) — joining two
+    yogas' planets/timing into one string was a real, live-confirmed source of LLM confusion:
+    the narrator swapped one yoga's lead planet or MD window for the other's when both shared
+    one citable insight. Each yoga still gets its own separate Fact via R["yogas"] regardless
+    (report_explainer.py's _summary_facts); this rule is specifically "who delivers it and
+    when", and now names exactly one clear, unambiguous answer instead of two conflatable ones."""
     for y in ctx.yogas:
         pls = _yoga_planets(ctx.chart, y)
-        if not pls:
+        # a single-constituent yoga has no "stronger of two" to name — skip it rather than
+        # report a degenerate "X outweighs X" (a latent defect this fix's stricter one-answer
+        # return exposed: previously masked because it could still be joined alongside a
+        # second, more meaningful yoga in the same string).
+        if not pls or len(pls) < 2:
             continue
         pairs = [(p, _rupas(ctx.chart, p)) for p in pls]
         if any(r is None for _p, r in pairs):
             continue
         pairs.sort(key=lambda pr: -pr[1])
         lead, sub = pairs[0], pairs[-1]
+        if lead[0] == sub[0]:
+            continue
         win = _md_window(ctx, lead[0])
         when = f" — his MD runs {_jd_date(win[0])}..{_jd_date(win[1])}" if win else ""
-        outs.append(f"{y.name}: {lead[0]} ({lead[1]:.2f} rupas) outweighs {sub[0]} "
-                    f"({sub[1]:.2f}) and delivers the larger part{when}")
-        if len(outs) == 2:
-            break
-    return "; ".join(outs) if outs else None
+        return (f"{y.name}: {lead[0]} ({lead[1]:.2f} rupas) outweighs {sub[0]} "
+                f"({sub[1]:.2f}) and delivers the larger part{when}")
+    return None
 
 
 def _chk_r2(ctx: SynthesisContext) -> Optional[str]:
@@ -544,27 +553,33 @@ def _chk_r2(ctx: SynthesisContext) -> Optional[str]:
 
 
 def _chk_r3(ctx: SynthesisContext) -> Optional[str]:
+    """Reports ONLY the single most decisive qualifying yoga (locked 2026-08-02) — the same fix
+    `_chk_r1` received on 2026-07-30, which this sibling rule was missed by. Joining two yogas'
+    timing into one "; "-separated string put, e.g., "Budha-Aditya Yoga ... (Mercury runs)" and
+    "Amala Yoga ripens in Venus's MD" under ONE citable insight, and the narrator was live-caught
+    swapping the second yoga's planet into the first's claim. A yoga already ripe NOW outranks one
+    that ripens later; ties go to the engine's own yoga order. Nothing is lost: every yoga keeps
+    its own Fact via R["yogas"], and the exhaustive per-yoga fructification windows are their own
+    report section (R["yoga_timing"], one row per yoga per period)."""
     if ctx.period is None:
         return None
     running = {ctx.period.maha, ctx.period.antar} - {None}
-    outs = []
+    later: Optional[str] = None
     for y in ctx.yogas:
         pls = _yoga_planets(ctx.chart, y)
         if not pls:
             continue
         hit = sorted(set(pls) & running)
-        if hit:
-            outs.append(f"{y.name} is capable of fructifying NOW ({'/'.join(hit)} runs)")
-        else:
+        if hit:                                   # ripe NOW — the most decisive answer, take it
+            return f"{y.name} is capable of fructifying NOW ({'/'.join(hit)} runs)"
+        if later is None:
             for p in pls:
                 win = _md_window(ctx, p)
                 if win:
-                    outs.append(f"{y.name} ripens in {p}'s MD "
-                                f"({_jd_date(win[0])}..{_jd_date(win[1])})")
+                    later = (f"{y.name} ripens in {p}'s MD "
+                             f"({_jd_date(win[0])}..{_jd_date(win[1])})")
                     break
-        if len(outs) == 2:
-            break
-    return "; ".join(outs) if outs else None
+    return later
 
 
 def _chk_r4(ctx: SynthesisContext) -> Optional[str]:

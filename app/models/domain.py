@@ -111,6 +111,35 @@ class NatalChart(Base):
     user: Mapped["UserProfile"] = relationship(back_populates="natal_chart")
 
 
+class ChartFeedback(Base):
+    """One answered chart-specific feedback question (see `feedback_questions.py`).
+
+    Anonymous-friendly for the quick-share: `account_id` is nullable and rows are grouped
+    by `chart_key` — a deterministic string of the birth data — so the same chart's answers
+    aggregate without requiring sign-in.
+    """
+
+    __tablename__ = "chart_feedback"
+    __table_args__ = (
+        Index("ix_chart_feedback_chart_question", "chart_key", "question_id"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    # e.g. "1990-07-15T12:00+5.50@12.9700,77.5900" — built by the route, not the client.
+    chart_key: Mapped[str] = mapped_column(String, index=True)
+    # nullable: only populated when the submitter was signed in.
+    account_id: Mapped[int | None] = mapped_column(
+        ForeignKey("accounts.id"), nullable=True, index=True
+    )
+
+    question_id: Mapped[str] = mapped_column(String)
+    question_text: Mapped[str] = mapped_column(String)
+    answer: Mapped[str] = mapped_column(String)          # one of feedback_questions.ANSWER_OPTIONS
+    free_text: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
 class TransitAlert(Base):
     __tablename__ = "transit_alerts"
     __table_args__ = (

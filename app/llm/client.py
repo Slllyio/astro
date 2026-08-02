@@ -41,23 +41,39 @@ class OllamaClient:
         host: str,
         model: str,
         timeout_seconds: float = 30.0,
+        num_ctx: int | None = None,
+        think: bool | None = None,
     ) -> None:
         self.host = host.rstrip("/")
         self.model = model
         self.timeout_seconds = timeout_seconds
+        self.num_ctx = num_ctx
+        self.think = think
 
     def complete(self, prompt: str) -> str:
         """Send a single non-streaming generation request.
 
         Ollama's /api/generate accepts {model, prompt, stream}. With stream=False
         the response is one JSON object whose `response` field is the full text.
+
+        `think` and `num_ctx` exist for REASONING models (2026-08-03). A model whose
+        `/api/show` capabilities include "thinking" — gemma4:12b here — spends its whole token
+        budget in the thinking channel on a long prompt and returns `done_reason="length"` with
+        an EMPTY `response`, which surfaces as `OllamaUnavailable` and silently drops every
+        answer to the deterministic fallback. Measured on a 3.1k-token evidence prompt: empty at
+        957 and 5053 generated tokens, but a clean 252-token grounded answer with `think=False`.
+        Both are omitted from the payload unless set, so non-reasoning models are unaffected.
         """
         url = f"{self.host}/api/generate"
-        payload = {
+        payload: dict = {
             "model": self.model,
             "prompt": prompt,
             "stream": False,
         }
+        if self.think is not None:
+            payload["think"] = self.think
+        if self.num_ctx is not None:
+            payload["options"] = {"num_ctx": self.num_ctx}
         try:
             r = httpx.post(url, json=payload, timeout=self.timeout_seconds)
             r.raise_for_status()
@@ -184,6 +200,24 @@ class AnthropicClient:
         if not full:
             raise AnthropicUnavailable("Anthropic returned empty text")
         return full
+
+
+class SystemPromptWrapper:
+    """Adapt a system-less LLMClient (OllamaClient, StubClient) to a pipeline that
+    expects a per-pipeline system prompt (the way ``AnthropicClient(system=...)``
+    carries one): the system text is prepended to every prompt.
+
+    Keeps the LLMClient Protocol minimal — local models get their instructions
+    inline, exactly as Ollama's /api/generate expects for single-turn prompts.
+    """
+
+    def __init__(self, inner: LLMClient, system: str) -> None:
+        self.inner = inner
+        self.system = system
+        self.model = getattr(inner, "model", "unknown")
+
+    def complete(self, prompt: str) -> str:
+        return self.inner.complete(f"{self.system}\n\n{prompt}")
 
 
 class StubClient:

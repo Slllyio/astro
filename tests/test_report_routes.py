@@ -190,3 +190,204 @@ class TestExplainAndAsk:
         assert "not a validated prediction" in body["honesty_note"].lower()
         assert "readings" in body["text"]            # the info-content headline is present
         assert len(body["text"]) > 100               # the ranked items, not an empty stub
+
+
+class TestGroundedReportSurfaces:
+    """/report/insights and /report/explain write in the grounded LLM voice again as of
+    2026-07-29 — the earlier deterministic-only cost cut existed only because the Anthropic
+    API cost money; now the app's own fine-tuned model (astro-analyst, served free by the
+    local Ollama backend) writes them, so there's no longer a reason to keep them
+    deterministic-only. All three LLM surfaces (insights/explain/ask) must still degrade
+    gracefully to the engine's own deterministic prose when the model is disabled/unavailable
+    — never a 500."""
+
+    @pytest.mark.asyncio
+    async def test_insights_and_explain_attempt_a_model_call(self, client, monkeypatch):
+        """With the LLM enabled, both endpoints now DO construct a model client (the reverse
+        of the old cost-cut pin) — proven by a client factory that raises when touched."""
+        import app.api.report_routes as rr
+        from app.core.config import settings
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+
+        calls = []
+
+        def _spy(system, **kwargs):  # noqa: ANN001
+            calls.append(system)
+            raise RuntimeError("stop before any real network call")
+
+        monkeypatch.setattr(rr, "_make_client", _spy)
+        r1 = await client.post("/report/insights", json=_BIRTH)
+        r2 = await client.post("/report/explain", json={**_BIRTH, "scope": "summary"})
+        assert len(calls) == 2                          # both endpoints reached the client factory
+        # a client-construction failure still degrades to the deterministic fallback, not a 500
+        assert r1.status_code == 200 and r1.json()["source"] == "fallback"
+        assert r2.status_code == 200 and r2.json()["source"] == "fallback"
+
+    @pytest.mark.asyncio
+    async def test_insights_and_explain_degrade_when_ollama_is_down(self, client, monkeypatch):
+        """The default local backend with no Ollama daemon: both endpoints degrade to the
+        deterministic fallback (200 + engine prose), never a 500 — same contract as /report/ask."""
+        from app.core.config import settings
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+        monkeypatch.setattr(settings, "REPORT_LLM_BACKEND", "ollama")
+        monkeypatch.setattr(settings, "OLLAMA_HOST", "http://127.0.0.1:9")   # nothing listens
+        r1 = await client.post("/report/insights", json=_BIRTH)
+        r2 = await client.post("/report/explain", json={**_BIRTH, "scope": "summary"})
+        assert r1.status_code == 200 and r1.json()["source"] == "fallback"
+        assert r2.status_code == 200 and r2.json()["source"] == "fallback"
+
+    @pytest.mark.asyncio
+    async def test_ask_with_ollama_backend_down_degrades_to_fallback(self, client, monkeypatch):
+        """The default local backend with no Ollama daemon: /report/ask degrades to the
+        deterministic fallback (200 + engine prose), never a 500."""
+        from app.core.config import settings
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+        monkeypatch.setattr(settings, "REPORT_LLM_BACKEND", "ollama")
+        monkeypatch.setattr(settings, "OLLAMA_HOST", "http://127.0.0.1:9")   # nothing listens
+        resp = await client.post("/report/ask", json={**_BIRTH, "question": "career?"})
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["source"] == "fallback"
+
+    def test_system_prompt_wrapper_prepends_system(self):
+        """SystemPromptWrapper carries the pipeline system prompt into system-less clients."""
+        from app.llm.client import StubClient, SystemPromptWrapper
+        stub = StubClient("ok")
+        w = SystemPromptWrapper(stub, "SYSTEM RULES")
+        assert w.complete("the prompt") == "ok"
+        assert stub.last_prompt is not None
+        assert stub.last_prompt.startswith("SYSTEM RULES\n\n")
+        assert stub.last_prompt.endswith("the prompt")
+
+
+class TestHindiLanguage:
+    """lang='hi' (2026-07-29): the grounded surfaces translate an already safety-approved
+    English answer into Hindi — they never generate fresh Hindi analysis. Covers the wiring
+    in `_grounded`, not `translate_to_hindi` itself (see test_report_explainer.py)."""
+
+    @pytest.mark.asyncio
+    async def test_lang_hi_without_llm_notes_hindi_needs_the_model(self, client):
+        """LLM disabled entirely: no client exists to translate with, so the response stays
+        English and says so explicitly rather than silently ignoring the language request."""
+        resp = await client.post("/report/insights", json={**_BIRTH, "lang": "hi"})
+        assert resp.status_code == 200
+        assert resp.json()["source"] == "fallback"
+        assert "Hindi needs the LLM enabled" in resp.json()["note"]
+
+    @pytest.mark.asyncio
+    async def test_lang_hi_translates_a_served_answer(self, client, monkeypatch):
+        """A clean, guard-passing English answer gets ONE more pass through
+        translate_to_hindi before being served — proven with a client that recognizes
+        translate_to_hindi's own prompt shape ("ENGLISH TEXT:") and returns a fixed Hindi
+        string carrying the SAME fact-marker count as the English draft. Content-based (not
+        call-count-based): the explainer and translation clients are now separate instances
+        (_translation_client builds its own, unbound-system client — see its docstring for
+        why reusing the explainer's client broke real Hindi translation), so a test that
+        distinguished them by shared call order would no longer reflect reality."""
+        import app.api.report_routes as rr
+        from app.core.config import settings
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+
+        english = "The ruler is Mercury [Fact 1]."
+        hindi = "स्वामी ग्रह बुध है [Fact 1]।"
+
+        class PromptAwareClient:
+            model = "stub"
+            def complete(self, prompt):  # noqa: ANN001
+                return hindi if "ENGLISH TEXT:" in prompt else english
+
+        monkeypatch.setattr(rr, "_make_client", lambda system, **kwargs: PromptAwareClient())
+        resp = await client.post("/report/explain",
+                                 json={**_BIRTH, "scope": "summary", "lang": "hi"})
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["text"] == hindi
+
+    @pytest.mark.asyncio
+    async def test_translation_client_is_built_without_the_explainer_system_prompt(
+            self, client, monkeypatch):
+        """Regression pin for the exact bug caught live against the real fine-tuned model:
+        translate_to_hindi must run on a client built with an EMPTY system prompt, not the
+        explainer's bound client (`_make_client(EXPLAINER_SYSTEM)`). Stacking "write grounded
+        chart analysis" underneath "translate this to Hindi" made a real local model just write
+        more English — text that still carried matching [Fact N] markers, so the marker-count
+        check alone didn't catch it. Asserts `_make_client` is invoked at least once with an
+        empty system string (the translation client) alongside the non-empty EXPLAINER_SYSTEM
+        call (the explain client)."""
+        import app.api.report_routes as rr
+        from app.core.config import settings
+        from app.llm.client import StubClient
+        from app.llm.report_explainer import EXPLAINER_SYSTEM
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+
+        hindi = "स्वामी ग्रह बुध है [Fact 1]।"
+        seen_systems: list[str] = []
+
+        def fake_make_client(system, **kwargs):
+            seen_systems.append(system)
+            return StubClient(hindi if system == "" else "The ruler is Mercury [Fact 1].")
+
+        monkeypatch.setattr(rr, "_make_client", fake_make_client)
+        resp = await client.post("/report/explain",
+                                 json={**_BIRTH, "scope": "summary", "lang": "hi"})
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["text"] == hindi
+        assert "" in seen_systems, "translate_to_hindi's client was never built with an empty system"
+        assert EXPLAINER_SYSTEM in seen_systems, "the explain call itself should still bind EXPLAINER_SYSTEM"
+
+    @pytest.mark.asyncio
+    async def test_lang_hi_leaves_refused_fallback_translatable(self, client, monkeypatch):
+        """A refused (prediction-language) LLM answer still serves the deterministic
+        fallback — and the code path attempts to translate that fallback too when
+        lang='hi', using the same (already-constructed) client the refused answer came
+        from. A StubClient always returns its one canned reply regardless of the prompt
+        it's given, so the "translation" it returns here carries a DIFFERENT fact-marker
+        count than the fallback text — proving translate_to_hindi's safety net rejects it
+        and the response still degrades cleanly to the engine's own English text, not a
+        500 or a corrupted answer."""
+        import app.api.report_routes as rr
+        from app.core.config import settings
+        from app.llm.client import StubClient
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+        monkeypatch.setattr(rr, "_make_client",
+                            lambda system, **kwargs: StubClient("You will marry in 2027 [Fact 1]."))
+        resp = await client.post("/report/ask",
+                                 json={**_BIRTH, "question": "career?", "lang": "hi"})
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["source"] == "fallback" and body.get("refused_llm") is True
+        assert isinstance(body["text"], str) and len(body["text"]) > 0
+        # honesty rule (CLAUDE.md report-completeness: "no silent approximation"): Hindi was
+        # requested but the served text is still English, so that must be disclosed, not
+        # silently absorbed into an English answer with no indication anything was skipped.
+        assert "Hindi translation wasn't available" in body.get("note", "")
+
+    @pytest.mark.asyncio
+    async def test_lang_hi_success_path_notes_when_translation_silently_fails(
+            self, client, monkeypatch):
+        """Mirrors the refused-fallback case above, but for a CLEAN (non-refused) LLM answer:
+        if translate_to_hindi's safety nets reject the translation, the served text stays
+        English — and the response must say so, not stay silent about the mismatch between
+        what was requested (Hindi) and what was served (English)."""
+        import app.api.report_routes as rr
+        from app.core.config import settings
+        from app.llm.client import StubClient
+        monkeypatch.setattr(settings, "REPORT_LLM_ENABLED", True)
+        english = "The ruler is Mercury [Fact 1]."
+        # Always returns the SAME text regardless of prompt — the "translation" call gets the
+        # identical English string back, which is neither a marker-count mismatch (same text,
+        # same markers) nor obviously not-Hindi-shaped in a way marker-count alone would catch,
+        # but IS caught by _looks_like_hindi (no Devanagari at all).
+        monkeypatch.setattr(rr, "_make_client", lambda system, **kwargs: StubClient(english))
+        resp = await client.post("/report/explain",
+                                 json={**_BIRTH, "scope": "summary", "lang": "hi"})
+        assert resp.status_code == 200, resp.text
+        body = resp.json()
+        assert body["text"] == english
+        assert "Hindi translation wasn't available" in body.get("note", "")
+
+    def test_report_request_accepts_lang_field(self):
+        """lang defaults to 'en' and only accepts the two supported values."""
+        from app.api.report_routes import ReportRequest
+        assert ReportRequest(**_BIRTH).lang == "en"
+        assert ReportRequest(**{**_BIRTH, "lang": "hi"}).lang == "hi"
+        with pytest.raises(Exception):
+            ReportRequest(**{**_BIRTH, "lang": "fr"})

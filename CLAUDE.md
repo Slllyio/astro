@@ -117,6 +117,56 @@ This is a standing user directive, confirmed twice and once violated — treat i
 - When adding a section or field, add it to ALL renderers (append-only per the template contract).
 - If a value is genuinely not meaningful to show, that is a product decision for the USER to make
   — surface it and ask; do not drop it unilaterally.
+- **ADDING is always welcome; REMOVING is not.** Data-visualizations, charts (rasi/navamsa/gochara
+  grids, dasha-period timelines, goodness strips, strength bars, heatmaps), derived summaries, and
+  new interactive views are encouraged — but they SUPPLEMENT the full data tables/prose, they never
+  replace them. A chart is an *additional* lens on data that must still be present in full below it.
+- Self-contained only: the interactive page builds every visual with inline SVG/Canvas/CSS via safe
+  DOM (`createElement`, namespaced SVG, `textContent` — never `innerHTML`, never an external chart
+  library/CDN). Theme-aware through the page's CSS custom properties (light + dark).
+
+## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
+
+- **`/report/insights` ("read as one story") and `/report/explain` are DETERMINISTIC — no model
+  call, ever** (the cost cut; `test_insights_and_explain_make_no_model_call` pins it). The engine's
+  own ranked digest / plain prose IS the product there.
+- **`/report/ask` is the grounded LLM voice**, served by the LOCAL backend by default
+  (`REPORT_LLM_BACKEND="ollama"`, `REPORT_LLM_MODEL` — SystemPromptWrapper prepends the system
+  prompt). `refusal_reason` is model-agnostic and stays the final gate; guard-fail → deterministic
+  fallback, never a 500. The Anthropic backend is opt-in and must never be the default on a shared
+  instance.
+- **The narrative model is a STOCK 12B, not the fine-tuned 1.5B (measured 2026-08-03, locked).**
+  `REPORT_LLM_MODEL` is deliberately separate from `OLLAMA_MODEL` (which stays the fast model for
+  high-frequency paths). Head-to-head on 34 genuinely held-out rows: citation-clean **85.3%
+  (gemma4:12b, no fine-tune) vs 44.1% (astro-analyst LoRA) vs 91.2% (Claude teacher)**; guard
+  88.2/73.5, crisp 70.6/47.1. The 12B wins on every axis — including the voice and crispness the
+  LoRA existed to teach — for ~4s more per answer at the same $0 local cost. **The 1.5B is
+  capacity-limited for citation precision across ~20 facts; corpus quality was not the constraint**
+  (the same corpus's teacher rows score 91.2%). `train_llm_local.py` is PARKED, not deleted — the
+  corpus builder and eval harness remain live and are what produced these numbers.
+- **A reasoning model needs `REPORT_LLM_THINK=false` + `REPORT_LLM_NUM_CTX=8192`.** gemma4:12b
+  advertises `thinking`; without these it spends its whole budget in the thinking channel on a
+  ~3.1k-token evidence prompt and returns an EMPTY response, which surfaces as `OllamaUnavailable`
+  and silently degrades EVERY answer to deterministic prose while the app still looks healthy.
+- **The guard line (narrowed 2026-07-28, doctrine-reviewed PASS-WITH-NOTES + hardened):** undated
+  descriptive-indication idiom ("points to", "tends to", "indicates", "signifies") is ALLOWED —
+  it is Raman's own descriptive usage; asserting a future LIFE EVENT is refused (you-will/decree
+  verbs, third-person `he/she/they will|shall <verb>`, dated/age-attached indications like
+  "indicated in 2027"/"at age 30", `promises/brings/foretells/bound to/sure to`, all death tokens).
+  Do not re-widen OR re-narrow without a doctrine review.
+- **`/report/ai-interpret` is the ONE walled speculation surface** (user-approved exception):
+  always labeled ("AI, not the engine, not validated" — `DISCLAIMER` on every response), gentle/bold
+  registers, and death/lifespan/serious-illness/self-harm excluded IN CODE (`excluded_topic` on
+  output + input scrub) — no register or request lifts that. It has NO deterministic fallback: the
+  engine must never author speculation.
+- **Chart feedback** (`/report/feedback*`): questions are a deterministic re-read of the digest
+  (`feedback_questions.py`), answers land in `chart_feedback` keyed by the server-built chart_key;
+  anonymous-first. Wording keeps the Measured-Truth frame (calibration, not validation).
+- **The own-model program**: `build_analysis_corpus.py` (teacher → curated SFT; ONLY guard-passing
+  rows enter the corpus) → `train_llm_local.py` (DirectML LoRA; NO bitsandbytes; Ollama serves the
+  adapter via Modelfile `ADAPTER`) → `eval_analysis_llm.py` (student vs teacher on guard pass-rate).
+  Teacher backend may be Claude (paid) or a big local model via `--backend ollama` ($0) — the
+  curation gate, not the teacher, guarantees corpus safety.
 
 ## Test-pinning policy
 
@@ -181,3 +231,16 @@ The `.claude/settings.json` PreToolUse hook enforces some of this automatically.
 - `.claude/settings.json` hooks: auto-run paired tests on edit; block edits to `.env`/`data/**/*.parquet`.
 
 Invoke a skill with `/<skill-name>`. Dispatch a subagent via the `Agent` tool with `subagent_type="bphs-doctrine-reviewer"` or `"ml-experiment-auditor"`.
+
+## gstack (recommended)
+
+This project uses [gstack](https://github.com/garrytan/gstack) for AI-assisted workflows.
+Install it for the best experience:
+
+```bash
+git clone --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack
+cd ~/.claude/skills/gstack && ./setup --team
+```
+
+Skills like /qa, /ship, /review, /investigate, and /browse become available after install.
+Use /browse for all web browsing. Use ~/.claude/skills/gstack/... for gstack file paths.

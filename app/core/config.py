@@ -58,11 +58,12 @@ class Settings(BaseSettings):
     # Ollama LLM narrative layer. Disabled by default so CI / fresh checkouts
     # serve deterministic-template fallbacks without needing a local Ollama
     # daemon. Set OLLAMA_ENABLED=true and run `ollama serve` to switch to LLM
-    # narratives. The default model is llama3.1; users can swap to qwen2.5,
-    # phi3, etc. via the env var.
+    # narratives. Default model matches the locally-installed quick-share model
+    # (2026-07-28); swap to llama3.1, phi3, or the fine-tuned astro-analyst via
+    # the env var.
     OLLAMA_ENABLED: bool = False
     OLLAMA_HOST: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3.1"
+    OLLAMA_MODEL: str = "qwen2.5:1.5b"
     OLLAMA_TIMEOUT_SECONDS: float = 30.0
 
     # Optional "deep" model override for layers that benefit from a more
@@ -74,6 +75,50 @@ class Settings(BaseSettings):
     # Timeout doubled because deep models take longer.
     OLLAMA_MODEL_DEEP: str = ""
     OLLAMA_DEEP_TIMEOUT_SECONDS: float = 120.0
+
+    # Model override for the Hindi translation pass only (report_routes._translation_client).
+    # Live-tested 2026-07-29: the narrow astro-analyst LoRA (1.5B, fine-tuned only on English
+    # chart analysis) cannot produce Hindi at all — a capability gap, not a prompt bug — while
+    # a larger stock local model (e.g. gemma4:12b) translates correctly. Empty string = fall
+    # through to OLLAMA_MODEL (same behavior as before this setting existed).
+    OLLAMA_MODEL_TRANSLATE: str = ""
+
+    # ── the report narrative model (measured 2026-08-03) ────────────────────────────────
+    # Kept SEPARATE from OLLAMA_MODEL on purpose: OLLAMA_MODEL is the FAST model used by
+    # high-frequency paths (daily summaries are called many times per request), so pointing it
+    # at a 12B would slow those badly. This override applies only to the report's grounded
+    # narrative surfaces, which are called a handful of times per report.
+    #
+    # Why a stock 12B rather than the fine-tuned 1.5B: measured head-to-head on the same 34
+    # held-out rows, scored by the same guard the serving path uses —
+    #   citation-clean answers   gemma4:12b 85.3%  |  astro-analyst LoRA 44.1%  |  Claude 91.2%
+    #   guard pass               88.2%             |  73.5%                     |  100%
+    #   crisp pass               70.6%             |  47.1%                     |  100%
+    #   mis-attributed / answer  0.18              |  1.21                      |  0.09
+    # The 12B wins on every axis WITHOUT any fine-tuning, including the two the LoRA was
+    # trained for (voice, crispness), for ~4s more per answer (11.6s vs 7.6s measured on the
+    # same prompt). The 1.5B is capacity-limited for citation precision across ~20 facts; that
+    # is a size problem no corpus fixes. Empty string = fall through to OLLAMA_MODEL.
+    REPORT_LLM_MODEL: str = "gemma4:12b"
+    # Evidence prompts run ~3.1k tokens, so Ollama's 4k default leaves almost nothing for the
+    # answer. 8192 gives the model room to actually write one.
+    REPORT_LLM_NUM_CTX: int = 8192
+    # Reasoning models (gemma4:12b advertises "thinking" in /api/show capabilities) otherwise
+    # spend their ENTIRE token budget in the thinking channel on a long prompt and return
+    # done_reason="length" with an EMPTY response — which the client raises as
+    # OllamaUnavailable, silently degrading every single answer to the deterministic fallback.
+    # Verified harmless on non-reasoning models (qwen2.5:1.5b ignores it and answers normally).
+    REPORT_LLM_THINK: bool = False
+    # A 12B on this class of hardware takes ~12s for a report answer; the 30s general default
+    # leaves too little headroom for a longer section.
+    REPORT_LLM_TIMEOUT_SECONDS: float = 120.0
+    # A translation pass rewrites a full paragraph (not the short per-item calls the fast
+    # default model is sized for) and, when OLLAMA_MODEL_TRANSLATE points at a larger model,
+    # runs measurably slower besides — live-tested 2026-07-29: gemma4:12b took ~132s to
+    # translate a full ~3.4K-character report explanation on the dev machine's hardware
+    # (a 120s cap clipped it mid-generation); 180s leaves headroom for longer sections.
+    # Longer timeout applies regardless of which model ends up serving the call.
+    OLLAMA_TRANSLATE_TIMEOUT_SECONDS: float = 180.0
 
     # Knowledge-library RAG citations attached to /interpret responses.
     # Disabled by default so tests/CI don't pay the embeddings load cost
@@ -90,11 +135,23 @@ class Settings(BaseSettings):
     # the key) to enable the Sonnet-backed grounded explainer. The explainer NEVER generates a
     # verdict — it only translates the engine's already-computed, already-cited findings.
     REPORT_LLM_ENABLED: bool = False
+    # Which provider backs the grounded LLM surfaces (/report/explain, /report/insights,
+    # /report/ask, and the walled /report/ai-interpret). "ollama" (default) keeps every model
+    # call LOCAL — a shared instance can never spend the Anthropic key — served by
+    # OLLAMA_HOST/OLLAMA_MODEL; if the Ollama daemon is down the routes degrade to the
+    # deterministic fallback. "anthropic" restores the Claude-backed explainer (needs
+    # ANTHROPIC_API_KEY). Re-enabled 2026-07-29: insights/explain were briefly made
+    # deterministic-only during the share-the-app cost cut (when the only backend was paid
+    # Anthropic); that cut no longer applies now that the app's own fine-tuned local model
+    # serves for free, so all four surfaces use this backend again.
+    REPORT_LLM_BACKEND: Literal["anthropic", "ollama"] = "ollama"
     # Optional adversarial self-critique over the grounded explainer/synthesis output: the model
     # drafts, an honesty-tuned critic checks that every claim is entailed by a [Fact N] and that no
     # prediction / new verdict / "these findings reinforce each other" compound claim leaked, then
     # the model refines once. A QUALITY pass, not the safety net — `refusal_reason` remains the
-    # final gate regardless. Off by default because it costs 2-3x the LLM calls when enabled.
+    # final gate regardless. Off by default because it costs 2-3x the LLM calls when enabled —
+    # this was a real $ concern on the "anthropic" backend; on "ollama" (the default since
+    # 2026-07-29) it costs 2-3x the LOCAL latency, not money, so it's worth trying more freely.
     REPORT_LLM_CRITIC_ENABLED: bool = False
     # Minimum share of PARAGRAPHS that must carry a VALID [Fact N]/[Ref N] anchor for an LLM
     # answer to be served; below this (or on any forbidden move / fabricated citation / bad

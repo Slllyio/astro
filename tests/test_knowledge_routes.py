@@ -246,8 +246,11 @@ class TestTopicsEndpoint:
 class TestKnowledgePage:
     @pytest.mark.asyncio
     async def test_page_renders_html(self, client):
-        """Static template — endpoint reads + returns it. 200 + text/html."""
+        """Static template — endpoint reads + returns it. 200 + text/html.
+
+        The title assertion tracks the Pothi redesign (2026-08-03): the page is now
+        'ज्ञानकोशः — Doctrine Search', not the old 'Knowledge Library Search' banner."""
         resp = await client.get("/medini/knowledge/page")
         assert resp.status_code == 200
         assert "text/html" in resp.headers["content-type"]
-        assert "Knowledge Library Search" in resp.text
+        assert "Doctrine Search" in resp.text

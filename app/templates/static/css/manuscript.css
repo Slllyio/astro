@@ -244,7 +244,10 @@ body::after {
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  cursor: pointer;               /* the whole front cover is a tap-to-enter target */
+  touch-action: manipulation;    /* real-device tap reliability, see .leaf-button */
 }
+.cover.closing { cursor: default; }   /* the closing cover has its own explicit button */
 .cover-inscription {
   text-align: center;
   color: var(--ink-primary);
@@ -279,6 +282,10 @@ body::after {
   opacity: 0.55;
   animation: tap-pulse 2.2s ease-in-out infinite;
 }
+/* Two hint variants, one per mode ("tap to enter" for the desktop book vs
+   "scroll down" for the continuous mobile page) — the <=700px breakpoint
+   flips which one is shown; see the mobile block below. */
+.cover-tap-hint.for-scroll { display: none; }
 @keyframes tap-pulse {
   0%, 100% { opacity: 0.3; }
   50%      { opacity: 0.85; }
@@ -339,6 +346,17 @@ body::after {
   gap: 0;
   /* More vertical breathing room on the larger canvas */
   padding: 1.6rem 0;
+}
+/* A leaf that carries a full-width strip ABOVE the triptych (the birth-details leaf's
+   भाषा/Language selector) needs a second row. With the single `grid-template-rows: 100%`
+   above, that strip — spanning `grid-column: 1/-1` — consumed the whole 611px row and the
+   three panels were auto-placed into an implicit row starting at y=637 on a 662px leaf,
+   then clipped by `overflow: hidden`. The leaf showed ONLY the language dropdown and no
+   birth-detail fields at all, with no way to scroll to them (reported 2026-08-03).
+   `minmax(0, 1fr)` (not plain `1fr`) so the panel row can still shrink instead of
+   overflowing when its content is dense. */
+.leaf-page.has-lang {
+  grid-template-rows: auto minmax(0, 1fr);
 }
 .leaf-page::before {
   content: '';
@@ -620,6 +638,10 @@ body::after {
   cursor: pointer;
   transition: all 0.2s;
   text-transform: uppercase;
+  /* skip the mobile browser's ~300ms tap-delay / double-tap-zoom disambiguation —
+     a real-device cause of "tap doesn't seem to work" that never shows up under
+     a mouse-driven test. Applied to every real tap target below too. */
+  touch-action: manipulation;
 }
 .leaf-button:hover {
   background: var(--madder-deep);
@@ -766,6 +788,7 @@ body::after {
   cursor: pointer;
   z-index: 50;
   transition: background 0.3s;
+  touch-action: manipulation;   /* real-device tap reliability, see .leaf-button */
 }
 .edge-zone.top    { top: 0; }
 .edge-zone.bottom { bottom: 0; }
@@ -814,6 +837,7 @@ body::after {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  touch-action: manipulation;   /* real-device tap reliability, see .leaf-button */
 }
 .nav-btn:hover:not(:disabled) {
   background: var(--gold);
@@ -840,6 +864,7 @@ body::after {
   font-family: 'Cinzel', serif;
   letter-spacing: 0.15em;
   text-decoration: none;
+  touch-action: manipulation;   /* real-device tap reliability, see .leaf-button */
 }
 .nav-mute.muted { opacity: 0.5; }
 .nav-page-link:hover { background: rgba(212, 175, 55, 0.15); }
@@ -868,4 +893,141 @@ body::after {
   .leaf-input { font-size: 1rem; }
   .leaf-label { font-size: 0.75rem; }
   .leaf-button { font-size: 0.85rem; padding: 0.6rem 1.3rem; }
+}
+
+/* ============================================================
+   PORTRAIT PHONE (<=700px) — SIMPLIFIED, 2026-07-28 (user-directed):
+   no page-flip book, no fixed bottom toolbar. The report is one
+   continuous scrolling page, like any ordinary mobile web page —
+   every leaf is simply stacked in normal document flow and always
+   visible; the reader scrolls straight through cover -> birth form
+   -> the whole reading -> Ask, at the very end. This trades the
+   desktop book's page-turn ceremony for something a phone is
+   actually good at, and sidesteps entire CLASSES of mobile bugs
+   (fixed-position/dynamic-toolbar drift, safe-area edge gestures,
+   tap-vs-scroll disambiguation, perspective/3D touch quirks) rather
+   than patching them one at a time. Desktop is untouched — this
+   block only fires under 700px. Placed AFTER the 900px block so it
+   wins the cascade on phones.
+============================================================ */
+@media (max-width: 700px) {
+  /* The dark "museum display case" background + vignette exist to frame a
+     single fixed-size book on a spotlit table — fixed to the viewport, they
+     stayed contained around ONE screen's worth of book. Now that the report
+     is a long continuous scroll, that same fixed-to-viewport dark vignette
+     stays glued over whatever's currently visible at every scroll position,
+     and the museum-brown body colour shows through in the gaps between
+     chapters — the whole read looks continuously darker than it should.
+     Swap in the same warm parchment tone the leaves already use. */
+  html, body { overflow: visible; height: auto; background: var(--leaf-cream-light); }
+  body::after { display: none; }
+
+  .dust-layer { display: none; }   /* ambient flourish; one less moving part */
+
+  .manuscript-stage {
+    position: static;
+    display: block;
+    height: auto;
+    padding: 0 0 2rem;
+    perspective: none;
+  }
+  .manuscript {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+  .binding-string, .binding-zone, .binding-hole { display: none; }
+
+  .leaf {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    box-shadow: none;
+    transition: none;
+  }
+  /* Every leaf is always visible in continuous mode — "flipped" (i.e.
+     already scrolled past) carries no special meaning here, so the
+     desktop 3D-flip transform must not apply to it at all. */
+  .leaf.flipped {
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    box-shadow: none;
+  }
+  .leaf + .leaf {
+    margin-top: 1.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px dashed rgba(139, 111, 71, 0.35);
+  }
+
+  .cover {
+    width: 100%; height: auto; min-height: 55vh;
+    padding: 1.5rem 1rem;
+  }
+  .cover .binding-hole { display: none; }
+  .cover-inscription { max-width: 92%; padding: 0; }
+  .cover-deva-title { font-size: 2rem; }
+  .cover-english-title { font-size: 0.8rem; letter-spacing: 0.22em; }
+  /* "tap or press ↓" describes a page-turn that no longer exists here —
+     swap in wording that matches what the reader actually does */
+  .cover-tap-hint.for-book { display: none; }
+  .cover-tap-hint.for-scroll { display: block; }
+
+  .leaf-page {
+    width: 100%; height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    overflow: visible;
+    padding: 0.8rem 0 0;
+  }
+  /* Phones stack every child and scroll, so the desktop two-row fix must not apply here —
+     `.leaf-page.has-lang` would otherwise out-specify the `grid-template-rows: none` above
+     and re-impose a fixed second row on a layout that is meant to flow. */
+  .leaf-page.has-lang { grid-template-rows: none; }
+  /* only the vertical clip needs lifting — keep overflow-x:hidden as the
+     safety net in case any chart/table content isn't already wrapped in
+     its own horizontal scroller (report.html's .chartfig/table rules) */
+  .folio-scroll { height: auto; overflow-y: visible; overflow-x: hidden; }
+  .panel {
+    overflow: visible;
+    min-height: auto;
+    padding: 0.7rem 1.1rem;
+  }
+  .panel.left  { padding-left: 1.1rem; }
+  .panel.right { padding-right: 1.1rem; }
+
+  .edge-zone { display: none; }    /* no pages to turn, nothing to tap-turn */
+  .folio-mark { display: none; }   /* each chapter's own <h2> is the divider now */
+
+  /* The whole bottom toolbar (page arrows, sound, ask-toggle, library/home
+     links) served page-turning — there's nothing left for it to control. */
+  .nav-bar { display: none; }
+
+  /* NOTE: #ask itself is report.html-only markup (no other Pothi page has
+     it) and is styled entirely in report.html's own <style> — including its
+     mobile override. It is NOT styled here: report.html's local stylesheet
+     loads AFTER this file, so a same-specificity #ask rule written here
+     would silently lose to report.html's unconditioned base rule regardless
+     of this media query "winning" logically — the override has to live in
+     the file that's guaranteed to come last. See report.html for the actual
+     continuous-mode #ask positioning. */
+
+  /* Removes the ~300ms grey "flash" a phone browser shows on every tap
+     (button, link, card) while it decides if this is a tap or a zoom gesture
+     — reads as sluggish even though the tap itself already registers fine. */
+  * { -webkit-tap-highlight-color: transparent; }
+}
+
+/* Honour reduced-motion: no 3D flip animation, no drifting dust */
+@media (prefers-reduced-motion: reduce) {
+  .leaf { transition: none; }
+  .dust-mote { animation: none; display: none; }
+  .cover-tap-hint { animation: none; }
 }

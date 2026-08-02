@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>फलादेशः — Detailed Reading</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,7 +87,7 @@
   .pillrow{display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
   h2.sec .explain{float:right;font:inherit;font-size:.66rem;font-weight:600;text-transform:uppercase;
     letter-spacing:.06em;background:var(--chip);border:1px solid var(--line);color:var(--ink-2);
-    border-radius:20px;padding:.15rem .6rem;cursor:pointer;margin-top:.1rem}
+    border-radius:20px;padding:.15rem .6rem;cursor:pointer;margin-top:.1rem;touch-action:manipulation}
   .explained{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent-2);
     border-radius:8px;padding:.7rem .9rem;margin:.3rem 0;font-family:var(--serif);line-height:1.6}
   .explained .meta{font-family:var(--sans);font-size:.7rem;color:var(--ink-2);margin-top:.4rem}
@@ -221,13 +221,99 @@
   #ask .ask-form input{background:var(--leaf-cream-light);border-color:rgba(139,111,71,.4);color:var(--ink-primary)}
   #ask .ask-form button{background:var(--saffron-deep)}
   #ask .ask-note{color:var(--ink-secondary)}
+  /* walled AI-interpretation panel — DELIBERATELY not the manuscript aesthetic:
+     slate ground + mono accents mark it as a different (non-engine) voice */
+  .ai-wall{position:relative;margin:2rem 0 .5rem;padding:1.1rem 1.2rem;border-radius:8px;
+    background:#232733;border:1px dashed #7f8ba3;color:#cfd6e4}
+  .ai-badge{position:absolute;top:-.7rem;left:1rem;background:#7f8ba3;color:#232733;
+    font-family:var(--mono,monospace);font-size:.68rem;font-weight:700;letter-spacing:.12em;
+    padding:.15rem .5rem;border-radius:4px}
+  .ai-head{font-family:var(--mono,monospace);font-size:.8rem;letter-spacing:.14em;color:#aab4c8;
+    margin-bottom:.4rem}
+  .ai-intro{font-size:.85rem;line-height:1.55;color:#aab4c8}
+  .ai-controls{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.7rem 0 .3rem}
+  .ai-open{border-color:#7f8ba3;color:#cfd6e4}
+  .ai-open:hover{background:#7f8ba3;color:#232733}
+  .ai-reg{font-size:.78rem;color:#aab4c8;display:flex;align-items:center;gap:.4rem}
+  .ai-reg-sel{width:auto;background:#2c3140;border-bottom-color:#7f8ba3;color:#cfd6e4;
+    font-size:.85rem;padding:.35rem .6rem}
+  .ai-banner{background:#3a3320;border:1px solid #c9a04a;border-radius:6px;color:#f0d36b;
+    font-size:.8rem;line-height:1.5;padding:.5rem .7rem;margin:.6rem 0}
+  .ai-text{color:#e6eaf2;font-size:.98rem;line-height:1.7;margin:.55rem 0}
+  .ai-wall .folio-loading{color:#aab4c8}
+  .ai-wall .muted{color:#8a94a8}
+  /* feedback card on the colophon — chart-specific calibration questions */
+  .fb-card{margin:1.6rem auto 0;max-width:560px;padding:1rem 1.2rem;background:rgba(232,213,168,.55);
+    border:1px solid var(--ink-faded);border-radius:6px;text-align:left}
+  .fb-title{font-family:'Cinzel',serif;font-size:.88rem;letter-spacing:.18em;color:var(--madder);
+    text-align:center;margin-bottom:.5rem}
+  .fb-intro{font-size:.85rem;line-height:1.5;text-align:center}
+  .fb-q{margin:.9rem 0;padding-top:.7rem;border-top:1px dashed var(--ink-faded)}
+  .fb-text{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.5;color:var(--ink-primary);
+    margin-bottom:.45rem}
+  .fb-opts{display:flex;flex-wrap:wrap;gap:.35rem}
+  .fb-opt{background:transparent;border:1px solid var(--ink-faded);border-radius:14px;
+    padding:.4rem .85rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;
+    color:var(--ink-secondary);cursor:pointer;transition:all .15s;touch-action:manipulation}
+  .fb-opt:hover{border-color:var(--madder);color:var(--madder)}
+  .fb-opt.sel{background:var(--madder);border-color:var(--madder);color:var(--leaf-cream-light)}
+  .fb-free{margin-top:.45rem;font-size:.92rem}
+  .fb-send{display:block;margin:1rem auto .3rem}
+  .fb-note{text-align:center;font-size:.8rem;min-height:1.1em}
+  /* preset chart cards on the birth-form folio — visibly tappable */
+  .preset-card{background:rgba(232,213,168,.55);border:1px solid var(--ink-faded);border-radius:6px;
+    padding:.55rem .75rem;margin-bottom:.45rem;cursor:pointer;transition:background .2s,border-color .2s;
+    touch-action:manipulation}
+  .preset-card:hover{background:rgba(245,227,184,.8);border-color:var(--madder)}
+  .preset-card .name{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.08em;color:var(--madder)}
+  .preset-card .meta{font-size:.72rem;color:var(--ink-secondary);font-style:italic;margin-top:.15rem}
   /* city picker: collapsible coordinate override on the birth-form folio */
   .coord-adjust>summary{font-size:.72rem;color:var(--saffron-deep);cursor:pointer;list-style:none;
-    font-variant:small-caps;letter-spacing:.06em;padding:.1rem 0}
+    font-variant:small-caps;letter-spacing:.06em;padding:.1rem 0;touch-action:manipulation}
   .coord-adjust>summary::-webkit-details-marker{display:none}
   .coord-adjust[open]>summary{color:var(--madder)}
   #city-note{transition:color .2s}
   #city{font-variant:normal}
+  /* ============ portrait phone (<=700px) — report-local companions to the
+     shared manuscript.css breakpoint. Nothing is hidden, only reflowed. ============ */
+  @media (max-width:700px){
+    /* This file's OWN unconditioned `body{background:var(--bg-museum)}` above
+       (a dark "museum table" brown) loads after manuscript.css and wins the
+       cascade there regardless of what that shared file's mobile block says —
+       same story as the #ask fix below. The dark museum tone was fine framing
+       ONE fixed-size book; on a long continuous scroll it shows through in
+       every gap between chapters and reads as "the whole page is darker." */
+    body{background:var(--leaf-cream-light)}
+    /* continuous mode: each chapter is normal-flow content now, not its own
+       internal scroller — padding is just breathing room, not scroll-edge
+       clearance, so the old 2.6rem bottom reserve is gone (the shared
+       .leaf + .leaf divider in manuscript.css handles chapter spacing) */
+    .folio-scroll{padding:0 .9rem}
+    .folio-scroll h2.sec{font-size:.9rem}
+    /* every data table scrolls sideways inside itself — folio-scroll clips X,
+       and a clipped column would hide data (the no-omission rule) */
+    .folio-scroll table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* the D1/varga grid keeps its designed density and scrolls sideways in its figure */
+    .chartfig{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+    .chartgrid{min-width:520px}
+    /* comfortable tap targets on the birth form */
+    .leaf-input{padding:.85rem .9rem}
+    .leaf-button{width:100%;padding:.9rem 1rem}
+    .preset-card{padding:.7rem .8rem}
+    /* Ask is now an inline card at the very end of the continuous page, not
+       a floating overlay toggled from a nav bar that no longer exists.
+       !important overrides the toggle's inline style="display:none" default
+       (and any leftover state from a "×" close click on an earlier visit) —
+       this MUST live here, not in the shared manuscript.css, because this
+       local <style> block loads after that stylesheet and is guaranteed to
+       win the cascade for every property the base #ask rule above also sets. */
+    #ask{display:block!important;position:static;left:auto;right:auto;bottom:auto;
+      max-width:none;margin:1.4rem 1rem 0;box-shadow:none}
+    #ask .ask-log{max-height:32vh}
+    .ask-close{display:none}   /* nothing to dismiss in continuous mode */
+    /* click-to-source panel becomes full-width */
+    #srcpanel{width:100vw;max-width:100vw}
+  }
 </style>
 </head>
 <body>
@@ -243,87 +329,98 @@
       <div class="cover">
         <div class="cover-inscription">
           <div class="cover-deva-title deva">फलादेशः</div>
-          <div class="cover-english-title">THE READING OF THE BIRTH CHART</div>
+          <div class="cover-english-title" data-i18n="THE READING OF THE BIRTH CHART">THE READING OF THE BIRTH CHART</div>
         </div>
         <div style="position:absolute;left:33.33%;top:50%;transform:translate(-50%,-50%);z-index:3"><div class="binding-hole"></div></div>
         <div style="position:absolute;left:66.67%;top:50%;transform:translate(-50%,-50%);z-index:3"><div class="binding-hole"></div></div>
-        <div class="cover-tap-hint">tap or press ↓ to enter birth details</div>
+        <div class="cover-tap-hint for-book" data-i18n="tap or press ↓ to enter birth details">tap or press ↓ to enter birth details</div>
+        <div class="cover-tap-hint for-scroll" data-i18n="scroll down to begin ↓">scroll down to begin ↓</div>
       </div>
     </div>
 
     <!-- Leaf 1 — birth details form -->
     <div class="leaf" data-page="1">
-      <div class="leaf-page">
+      <!-- has-lang: this leaf puts a full-width language strip above the triptych, which needs
+           a second grid row — without it the strip ate the whole leaf and the birth fields were
+           clipped out of sight. See .leaf-page.has-lang in manuscript.css. -->
+      <div class="leaf-page has-lang">
+        <div class="lang-toggle" style="grid-column:1/-1;text-align:center;padding:.3rem 0 .6rem">
+          <label class="leaf-label" style="margin-right:.5rem">भाषा / Language</label>
+          <select id="lang-select" class="leaf-input" style="width:auto;display:inline-block" onchange="setLang(this.value)">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+          </select>
+        </div>
         <div class="panel left">
-          <div class="panel-heading">DATE &amp; TIME</div>
+          <div class="panel-heading" data-i18n="DATE & TIME">DATE &amp; TIME</div>
           <div class="panel-heading-deva deva">तिथिः</div>
-          <div style="margin:.5rem 0 .7rem"><label class="leaf-label">NAME</label><input class="leaf-input" id="name" value="Canonical Baseline"></div>
+          <div style="margin:.5rem 0 .7rem"><label class="leaf-label" data-i18n="NAME">NAME</label><input class="leaf-input" id="name" value="Canonical Baseline"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-bottom:.7rem">
-            <div><label class="leaf-label">DAY</label><input class="leaf-input" id="day" type="number" value="15"></div>
-            <div><label class="leaf-label">MONTH</label><input class="leaf-input" id="month" type="number" value="7"></div>
-            <div><label class="leaf-label">YEAR</label><input class="leaf-input" id="year" type="number" value="1990"></div>
+            <div><label class="leaf-label" data-i18n="DAY">DAY</label><input class="leaf-input" id="day" type="number" value="15"></div>
+            <div><label class="leaf-label" data-i18n="MONTH">MONTH</label><input class="leaf-input" id="month" type="number" value="7"></div>
+            <div><label class="leaf-label" data-i18n="YEAR">YEAR</label><input class="leaf-input" id="year" type="number" value="1990"></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
-            <div><label class="leaf-label">HOUR</label><input class="leaf-input" id="hour" type="number" value="12"></div>
-            <div><label class="leaf-label">MINUTE</label><input class="leaf-input" id="minute" type="number" value="0"></div>
+            <div><label class="leaf-label" data-i18n="HOUR">HOUR</label><input class="leaf-input" id="hour" type="number" value="12"></div>
+            <div><label class="leaf-label" data-i18n="MINUTE">MINUTE</label><input class="leaf-input" id="minute" type="number" value="0"></div>
           </div>
         </div>
         <div class="binding-zone"><div class="binding-hole"></div></div>
         <div class="panel middle" style="justify-content:center">
-          <div class="panel-heading">PLACE</div>
+          <div class="panel-heading" data-i18n="PLACE">PLACE</div>
           <div class="panel-heading-deva deva">स्थानम्</div>
           <div style="margin:.5rem 0 .3rem">
-            <label class="leaf-label">CITY / TOWN</label>
-            <input class="leaf-input" id="city" list="cities-dl" value="Bengaluru, Karnataka, India" placeholder="type a city — e.g. Bengaluru" autocomplete="off" oninput="onCity()">
+            <label class="leaf-label" data-i18n="CITY / TOWN">CITY / TOWN</label>
+            <input class="leaf-input" id="city" list="cities-dl" value="Bengaluru, Karnataka, India" placeholder="type a city — e.g. Bengaluru" data-i18n-ph="type a city — e.g. Bengaluru" autocomplete="off" oninput="onCity()">
             <datalist id="cities-dl"></datalist>
-            <div id="city-note" style="font-size:.7rem;color:var(--ink-faded);font-style:italic;margin-top:.2rem">pick a place — coordinates fill in automatically</div>
+            <div id="city-note" style="font-size:.7rem;color:var(--ink-faded);font-style:italic;margin-top:.2rem" data-i18n="pick a place — coordinates fill in automatically">pick a place — coordinates fill in automatically</div>
           </div>
-          <details class="coord-adjust" style="margin:.35rem 0 .7rem"><summary>▸ fine-tune coordinates</summary>
+          <details class="coord-adjust" style="margin:.35rem 0 .7rem"><summary data-i18n="▸ fine-tune coordinates">▸ fine-tune coordinates</summary>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.45rem">
-              <div><label class="leaf-label">LATITUDE</label><input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.97"></div>
-              <div><label class="leaf-label">LONGITUDE</label><input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.59"></div>
+              <div><label class="leaf-label" data-i18n="LATITUDE">LATITUDE</label><input class="leaf-input" id="latitude" type="number" step="0.0001" value="12.97"></div>
+              <div><label class="leaf-label" data-i18n="LONGITUDE">LONGITUDE</label><input class="leaf-input" id="longitude" type="number" step="0.0001" value="77.59"></div>
             </div>
-            <div style="margin-top:.45rem"><label class="leaf-label">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
+            <div style="margin-top:.45rem"><label class="leaf-label" data-i18n="TIMEZONE (HRS FROM UTC)">TIMEZONE (HRS FROM UTC)</label><input class="leaf-input" id="tz_offset" type="number" step="0.25" value="5.5"></div>
           </details>
-          <div style="margin-bottom:.9rem"><label class="leaf-label">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
-          <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()">Cast the Reading</button></div>
-          <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic">a few seconds to cast &amp; compose</div>
+          <div style="margin-bottom:.9rem"><label class="leaf-label" data-i18n="AYANAMSA">AYANAMSA</label><select class="leaf-input" id="ayanamsa"><option>lahiri</option><option>raman</option></select></div>
+          <div style="text-align:center"><button class="leaf-button" id="go" type="button" onclick="run()" data-i18n="Cast the Reading">Cast the Reading</button></div>
+          <div style="text-align:center;margin-top:.5rem;font-size:.76rem;color:var(--ink-faded);font-style:italic" data-i18n="a few seconds to cast & compose">a few seconds to cast &amp; compose</div>
         </div>
         <div class="binding-zone"><div class="binding-hole"></div></div>
         <div class="panel right">
-          <div class="panel-heading">PRESETS</div>
+          <div class="panel-heading" data-i18n="PRESETS">PRESETS</div>
           <div class="panel-heading-deva deva">पूर्व-नियताः</div>
           <div style="margin-top:.4rem">
-            <div class="preset-card" onclick="preset('canonical')"><div class="name">BANGALORE BASELINE</div><div class="meta">15 Jul 1990 · noon · canonical test</div></div>
-            <div class="preset-card" onclick="preset('mainpuri')"><div class="name">MAINPURI 1989</div><div class="meta">12 Oct 1989 · Raman's worked chart</div></div>
+            <div class="preset-card" onclick="preset('canonical')"><div class="name" data-i18n="BANGALORE BASELINE">BANGALORE BASELINE</div><div class="meta" data-i18n="15 Jul 1990 · noon · canonical test">15 Jul 1990 · noon · canonical test</div></div>
+            <div class="preset-card" onclick="preset('mainpuri')"><div class="name" data-i18n="MAINPURI 1989">MAINPURI 1989</div><div class="meta" data-i18n="12 Oct 1989 · Raman's worked chart">12 Oct 1989 · Raman's worked chart</div></div>
           </div>
           <div style="margin-top:.7rem;padding-top:.6rem;border-top:1px dashed var(--ink-faded);text-align:center;font-size:.76rem;font-variant:small-caps;letter-spacing:.1em;color:var(--ink-faded)">
-            also&nbsp;<a href="/medini/knowledge/page" style="color:var(--saffron-deep);text-decoration:none">/library</a>&nbsp;·&nbsp;<a href="/" style="color:var(--saffron-deep);text-decoration:none">/home</a>
+            <span data-i18n="also">also</span>&nbsp;<a href="/medini/knowledge/page" style="color:var(--saffron-deep);text-decoration:none" data-i18n="/library">/library</a>&nbsp;·&nbsp;<a href="/" style="color:var(--saffron-deep);text-decoration:none" data-i18n="/home">/home</a>
           </div>
         </div>
-        <div class="folio-mark">folio · birth details</div>
+        <div class="folio-mark" data-i18n="folio · birth details">folio · birth details</div>
       </div>
     </div>
 
     <!-- Leaves 2–11 — chapter folios (populated after cast) -->
-    <div class="leaf" data-page="2"><div class="leaf-page single"><div class="folio-scroll" id="leaf2-body"></div><div class="folio-mark">folio · what matters most</div></div></div>
-    <div class="leaf" data-page="3"><div class="leaf-page single"><div class="folio-scroll" id="leaf3-body"></div><div class="folio-mark">folio · signature &amp; ruler</div></div></div>
-    <div class="leaf" data-page="4"><div class="leaf-page single"><div class="folio-scroll" id="leaf4-body"></div><div class="folio-mark">folio · the charts</div></div></div>
-    <div class="leaf" data-page="5"><div class="leaf-page single"><div class="folio-scroll" id="leaf5-body"></div><div class="folio-mark">folio · yogas &amp; ashtakavarga</div></div></div>
-    <div class="leaf" data-page="6"><div class="leaf-page single"><div class="folio-scroll" id="leaf6-body"></div><div class="folio-mark">folio · houses</div></div></div>
-    <div class="leaf" data-page="7"><div class="leaf-page single"><div class="folio-scroll" id="leaf7-body"></div><div class="folio-mark">folio · matters &amp; longevity</div></div></div>
-    <div class="leaf" data-page="8"><div class="leaf-page single"><div class="folio-scroll" id="leaf8-body"></div><div class="folio-mark">folio · life-narrative</div></div></div>
-    <div class="leaf" data-page="9"><div class="leaf-page single"><div class="folio-scroll" id="leaf9-body"></div><div class="folio-mark">folio · transits</div></div></div>
-    <div class="leaf" data-page="10"><div class="leaf-page single"><div class="folio-scroll" id="leaf10-body"></div><div class="folio-mark">folio · divisional &amp; soul</div></div></div>
-    <div class="leaf" data-page="11"><div class="leaf-page single"><div class="folio-scroll" id="leaf11-body"></div><div class="folio-mark">folio · insights</div></div></div>
+    <div class="leaf" data-page="2"><div class="leaf-page single"><div class="folio-scroll" id="leaf2-body"></div><div class="folio-mark" data-i18n="folio · what matters most">folio · what matters most</div></div></div>
+    <div class="leaf" data-page="3"><div class="leaf-page single"><div class="folio-scroll" id="leaf3-body"></div><div class="folio-mark" data-i18n="folio · signature & ruler">folio · signature &amp; ruler</div></div></div>
+    <div class="leaf" data-page="4"><div class="leaf-page single"><div class="folio-scroll" id="leaf4-body"></div><div class="folio-mark" data-i18n="folio · the charts">folio · the charts</div></div></div>
+    <div class="leaf" data-page="5"><div class="leaf-page single"><div class="folio-scroll" id="leaf5-body"></div><div class="folio-mark" data-i18n="folio · yogas & ashtakavarga">folio · yogas &amp; ashtakavarga</div></div></div>
+    <div class="leaf" data-page="6"><div class="leaf-page single"><div class="folio-scroll" id="leaf6-body"></div><div class="folio-mark" data-i18n="folio · houses">folio · houses</div></div></div>
+    <div class="leaf" data-page="7"><div class="leaf-page single"><div class="folio-scroll" id="leaf7-body"></div><div class="folio-mark" data-i18n="folio · matters & longevity">folio · matters &amp; longevity</div></div></div>
+    <div class="leaf" data-page="8"><div class="leaf-page single"><div class="folio-scroll" id="leaf8-body"></div><div class="folio-mark" data-i18n="folio · life-narrative">folio · life-narrative</div></div></div>
+    <div class="leaf" data-page="9"><div class="leaf-page single"><div class="folio-scroll" id="leaf9-body"></div><div class="folio-mark" data-i18n="folio · transits">folio · transits</div></div></div>
+    <div class="leaf" data-page="10"><div class="leaf-page single"><div class="folio-scroll" id="leaf10-body"></div><div class="folio-mark" data-i18n="folio · divisional & soul">folio · divisional &amp; soul</div></div></div>
+    <div class="leaf" data-page="11"><div class="leaf-page single"><div class="folio-scroll" id="leaf11-body"></div><div class="folio-mark" data-i18n="folio · insights">folio · insights</div></div></div>
 
     <!-- Leaf 12 — colophon / back cover -->
     <div class="leaf" data-page="12"><div class="leaf-page single"><div class="folio-scroll" id="leaf12-scroll">
       <div class="colophon-om deva">ॐ</div>
-      <div class="colophon-title">निचोडः · THE ESSENCE</div>
-      <div id="leaf12-body"><p class="muted">Cast a chart to read its essence.</p></div>
-      <div style="text-align:center;margin-top:1.4rem"><button class="leaf-button" onclick="reopenManuscript()">CAST ANOTHER CHART</button></div>
-    </div><div class="folio-mark">colophon · nichod</div></div></div>
+      <div class="colophon-title">निचोडः · <span data-i18n="THE ESSENCE">THE ESSENCE</span></div>
+      <div id="leaf12-body"><p class="muted" data-i18n="Cast a chart to read its essence.">Cast a chart to read its essence.</p></div>
+      <div style="text-align:center;margin-top:1.4rem"><button class="leaf-button" onclick="reopenManuscript()" data-i18n="CAST ANOTHER CHART">CAST ANOTHER CHART</button></div>
+    </div><div class="folio-mark" data-i18n="colophon · nichod">colophon · nichod</div></div></div>
 
     <div class="edge-zone top" id="zone-prev"></div>
     <div class="edge-zone bottom" id="zone-next"></div>
@@ -331,27 +428,27 @@
 </div>
 
 <div class="nav-bar">
-  <button class="nav-btn" id="btn-prev" title="Previous folio (↑)">↑</button>
-  <div class="nav-status" id="folio-status">COVER</div>
-  <button class="nav-btn" id="btn-next" title="Next folio (↓)">↓</button>
-  <button class="nav-mute" id="btn-mute">🔊 sound</button>
-  <button class="nav-mute" id="btn-ask" onclick="toggleAsk()">❋ ask</button>
-  <a class="nav-page-link" href="/medini/knowledge/page">📖 library</a>
-  <a class="nav-page-link" href="/">🏠 home</a>
+  <button class="nav-btn" id="btn-prev" data-i18n-title="Previous folio (↑)" title="Previous folio (↑)">↑</button>
+  <div class="nav-status" id="folio-status" data-i18n="COVER">COVER</div>
+  <button class="nav-btn" id="btn-next" data-i18n-title="Next folio (↓)" title="Next folio (↓)">↓</button>
+  <button class="nav-mute" id="btn-mute">🔊 <span class="nav-lbl" data-i18n="sound">sound</span></button>
+  <button class="nav-mute" id="btn-ask" onclick="toggleAsk()">❋ <span class="nav-lbl" data-i18n="ask">ask</span></button>
+  <a class="nav-page-link" href="/medini/knowledge/page">📖 <span class="nav-lbl" data-i18n="library">library</span></a>
+  <a class="nav-page-link" href="/">🏠 <span class="nav-lbl" data-i18n="home">home</span></a>
 </div>
 
 <div id="ask" style="display:none">
-  <div class="ask-head"><b>Ask about this chart</b><button type="button" class="ask-close" onclick="toggleAsk()" title="close">×</button></div>
+  <div class="ask-head"><b data-i18n="Ask about this chart">Ask about this chart</b><button type="button" class="ask-close" onclick="toggleAsk()" data-i18n-title="close" title="close">×</button></div>
   <div class="ask-log" id="ask-log"></div>
   <form class="ask-form" onsubmit="ask();return false">
-    <input id="ask-q" placeholder="e.g. why is my career contested?" autocomplete="off">
-    <button id="ask-go" type="button" onclick="ask()">Ask</button>
+    <input id="ask-q" placeholder="e.g. why is my career contested?" data-i18n-ph="e.g. why is my career contested?" autocomplete="off">
+    <button id="ask-go" type="button" onclick="ask()" data-i18n="Ask">Ask</button>
   </form>
-  <div class="ask-note">Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.</div>
+  <div class="ask-note" data-i18n="Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.">Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.</div>
 </div>
 
 <aside id="srcpanel">
-  <div class="head"><b id="src-cite">Source</b><span class="muted" id="src-work"></span>
+  <div class="head"><b id="src-cite" data-i18n="Source">Source</b><span class="muted" id="src-work"></span>
     <button onclick="closeSrc()">×</button></div>
   <pre id="src-text"></pre>
 </aside>
@@ -361,6 +458,251 @@ const $ = id => document.getElementById(id);
 const el = (t, a={}, ...kids) => { const n=document.createElement(t);
   for(const k in a){ if(k==='class')n.className=a[k]; else if(k==='html')n.innerHTML=a[k]; else n.setAttribute(k,a[k]); }
   for(const c of kids){ if(c==null)continue; n.append(c.nodeType?c:document.createTextNode(c)); } return n; };
+
+// ---- Hindi / English toggle (2026-07-29): a verified translation dictionary for every
+// static UI string (headings, labels, buttons, disclaimers). LLM-narrated surfaces (Ask,
+// insights, explains, AI-interpretation) get Hindi from the SERVER — it translates its own
+// already safety-approved English answer, never writes fresh Hindi analysis (see
+// app/llm/report_explainer.py:translate_to_hindi). The deep per-house engine prose (verdict
+// words, matter names coming straight from the API) stays English for now — that is a
+// separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
+const I18N_HI = {
+  "Detailed Reading": "विस्तृत फलादेश",
+  "THE READING OF THE BIRTH CHART": "जन्म कुंडली का फलादेश",
+  "tap or press ↓ to enter birth details": "जन्म विवरण भरने के लिए टैप करें या ↓ दबाएँ",
+  "scroll down to begin ↓": "शुरू करने के लिए नीचे स्क्रॉल करें ↓",
+  "DATE & TIME": "तिथि और समय",
+  "NAME": "नाम",
+  "DAY": "दिन",
+  "MONTH": "महीना",
+  "YEAR": "वर्ष",
+  "HOUR": "घंटा",
+  "MINUTE": "मिनट",
+  "PLACE": "स्थान",
+  "CITY / TOWN": "शहर / कस्बा",
+  "type a city — e.g. Bengaluru": "शहर का नाम टाइप करें — जैसे बेंगलुरु",
+  "pick a place — coordinates fill in automatically": "स्थान चुनें — निर्देशांक अपने आप भर जाएँगे",
+  "▸ fine-tune coordinates": "▸ निर्देशांक समायोजित करें",
+  "LATITUDE": "अक्षांश",
+  "LONGITUDE": "देशांतर",
+  "TIMEZONE (HRS FROM UTC)": "समय क्षेत्र (UTC से घंटे)",
+  "AYANAMSA": "अयनांश",
+  "Cast the Reading": "फलादेश तैयार करें",
+  "a few seconds to cast & compose": "कुंडली बनाने और फलादेश लिखने में कुछ सेकंड लगेंगे",
+  "PRESETS": "पूर्वनिर्धारित विकल्प",
+  "BANGALORE BASELINE": "बैंगलोर मानक कुंडली",
+  "15 Jul 1990 · noon · canonical test": "15 जुलाई 1990 · दोपहर · मानक परीक्षण",
+  "MAINPURI 1989": "मैनपुरी 1989",
+  "12 Oct 1989 · Raman's worked chart": "12 अक्टूबर 1989 · रमन की उदाहरण कुंडली",
+  "also": "भी",
+  "/library": "/library",
+  "/home": "/home",
+  "folio · birth details": "पत्र · जन्म विवरण",
+  "folio · what matters most": "पत्र · सबसे महत्वपूर्ण बातें",
+  "folio · signature & ruler": "पत्र · पहचान और स्वामी ग्रह",
+  "folio · the charts": "पत्र · कुंडलियाँ",
+  "folio · yogas & ashtakavarga": "पत्र · योग और अष्टकवर्ग",
+  "folio · houses": "पत्र · भाव",
+  "folio · matters & longevity": "पत्र · विषय और आयु",
+  "folio · life-narrative": "पत्र · जीवन-कथा",
+  "folio · transits": "पत्र · गोचर",
+  "folio · divisional & soul": "पत्र · वर्ग कुंडली और आत्मा",
+  "folio · insights": "पत्र · अंतर्दृष्टि",
+  "THE ESSENCE": "निचोड़",
+  "Cast a chart to read its essence.": "इसका निचोड़ पढ़ने के लिए एक कुंडली बनाएं।",
+  "CAST ANOTHER CHART": "एक और कुंडली बनाएं",
+  "colophon · nichod": "पुष्पिका · निचोड़",
+  "Previous folio (↑)": "पिछला पन्ना (↑)",
+  "COVER": "मुखपृष्ठ",
+  "Next folio (↓)": "अगला पन्ना (↓)",
+  "sound": "ध्वनि",
+  "ask": "पूछें",
+  "library": "पुस्तकालय",
+  "home": "होम",
+  "Ask about this chart": "इस कुंडली के बारे में पूछें",
+  "close": "बंद करें",
+  "e.g. why is my career contested?": "जैसे, मेरा करियर विवादित क्यों है?",
+  "Ask": "पूछें",
+  "Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.": "उत्तर केवल इंजन द्वारा की गई गणना पर आधारित होते हैं, उद्धरणों सहित — यह कभी भविष्यवाणी नहीं होती। पहले उत्तर में लगभग 30 सेकंड लग सकते हैं।",
+  "Source": "स्रोत",
+  "What matters most": "सबसे महत्वपूर्ण बातें",
+  "Your Reading": "आपका फलादेश",
+  "Chart signature": "कुंडली का स्वरूप",
+  "Ruler of the nativity": "जन्म कुंडली का स्वामी ग्रह",
+  "Charts — Rasi · Navamsa · Gochara": "कुंडलियाँ — राशि · नवांश · गोचर",
+  "Planetary positions": "ग्रहों की स्थिति",
+  "Yogas": "योग",
+  "Ashtakavarga (Sarvashtakavarga)": "अष्टकवर्ग (सर्वाष्टकवर्ग)",
+  "House-by-house": "भाव-दर-भाव",
+  "House strength cross-check": "भाव बल की परस्पर जांच",
+  "Preponderance of testimonies": "प्रमाणों की बहुलता",
+  "The twelve matters at a glance": "बारह विषयों पर एक नज़र",
+  "Longevity": "आयु",
+  "Life-narrative (Vimshottari)": "जीवन-वृत्तांत (विंशोत्तरी)",
+  "Life-chapters": "जीवन के अध्याय",
+  "Transits (Gochara)": "पारगमन (गोचर)",
+  "Divisional deep-reads (Shodasavarga)": "विभाजित वर्गों का गहन विश्लेषण (षोडशवर्ग)",
+  "Soul & destiny (Jaimini)": "आत्मा और भाग्य (जैमिनी)",
+  "Pitru dosha screen (classical, non-Raman)": "पितृ दोष जांच (शास्त्रीय, रामन पद्धति से भिन्न)",
+  "Integrated insights": "समग्र अंतर्दृष्टि",
+  "What stands out": "विशेष रूप से उल्लेखनीय",
+  "Information content of this reading": "इस फलादेश की सूचना-सामग्री",
+  "Nichod (the essence)": "निचोड़ (सार)",
+  "explain": "समझाएं",
+  "BIRTH DETAILS": "जन्म विवरण",
+  "SIGNATURE & RULER": "स्वरूप और स्वामी ग्रह",
+  "THE CHARTS": "कुंडलियाँ",
+  "YOGAS & ASHTAKAVARGA": "योग और अष्टकवर्ग",
+  "HOUSES": "भाव",
+  "MATTERS & LONGEVITY": "विषय और आयु",
+  "LIFE-NARRATIVE": "जीवन-वृत्तांत",
+  "TRANSITS": "गोचर",
+  "DIVISIONAL & SOUL": "वर्ग एवं आत्मा",
+  "INSIGHTS": "अंतर्दृष्टि",
+  "NICHOD": "निचोड़",
+  "Yoga × Dasha timing — when each yoga's lord runs": "योग × दशा समय — जब प्रत्येक योग का स्वामी दशा में चलता है",
+  "Ishta/Kashta outlook": "इष्ट/कष्ट अवलोकन",
+  "MD-lord condition outlook": "महादशा-स्वामी स्थिति अवलोकन",
+  "AV dasha-seat outlook": "अष्टकवर्ग दशा-स्थान अवलोकन",
+  "Current transits with Vedha": "वेध सहित वर्तमान गोचर",
+  "Dasha × Transit confluence": "दशा × गोचर संगम",
+  "Maraka × Saturn-transit confluence (method, not a prediction)": "मारक × शनि-गोचर संगम (पद्धति, भविष्यवाणी नहीं)",
+  "Shadbala — planetary strength, ranked": "षड्बल — ग्रहों की शक्ति, क्रमानुसार",
+  "Ishta / Kashta — each planet's benefic share": "इष्ट / कष्ट — प्रत्येक ग्रह का शुभ अंश",
+  "SAV per sign — columns diverge from the 28-point average": "प्रति राशि सर्वाष्टकवर्ग — स्तंभ 28-बिंदु औसत से भिन्न",
+  "Bhava-Bala per house — bar = strength, colour = verdict": "प्रति भाव भाव-बल — बार = शक्ति, रंग = निर्णय",
+  "Witness balance per house — favourable vs adverse": "प्रति भाव साक्ष्य संतुलन — अनुकूल बनाम प्रतिकूल",
+  "Twelve matters — verdict tiles & tally": "बारह विषय — निर्णय-पट्टिकाएँ और गणना",
+  "Ayurdaya span (numeric cross-check)": "आयुर्दाय अवधि (संख्यात्मक जांच)",
+  "Life at a glance — dasha periods · goodness · house activation on one timeline": "एक नज़र में जीवन — दशा अवधि · शुभता · एक ही समयरेखा पर भाव-सक्रियता",
+  "Current transits by house from the Moon": "चंद्रमा से भाव के अनुसार वर्तमान गोचर",
+  "Slow-mover transit outlook over time": "मंद गति ग्रहों का गोचर अवलोकन — समय के साथ",
+  "Distance from the population median": "जनसंख्या माध्यिका से दूरी",
+  "The reading's information content": "फलादेश की सूचना-सामग्री",
+  "Rasi (D-1)": "राशि (D-1)",
+  "Navamsa (D-9)": "नवांश (D-9)",
+  "Gochara (transit)": "गोचर (पारगमन)",
+  "House verdicts": "भाव फल",
+  "transit sky": "गोचर आकाश",
+  "lagna": "लग्न",
+  "Verdicts": "फल",
+  "by house": "भाव के अनुसार",
+  "View the source passage": "मूल उद्धरण देखें",
+  "net-favourable transit": "शुद्ध अनुकूल गोचर",
+  "net-adverse transit": "शुद्ध प्रतिकूल गोचर",
+  "ascendant": "लग्न",
+  "favourable / ishta": "अनुकूल / इष्ट",
+  "afflicted / kashta": "पीड़ित / कष्ट",
+  "mixed": "मिश्रित",
+  "Mahadasha": "महादशा",
+  "par-excellence · now": "सर्वोत्तम · अभी",
+  "total": "कुल",
+  "all readings": "सभी फलादेश",
+  "modal": "बहुलक",
+  "near-universal": "लगभग सार्वभौमिक",
+  "little information": "बहुत कम जानकारी",
+  "distinctive": "विशिष्ट",
+  "distinguish this chart": "इस कुंडली को विशिष्ट बनाना",
+  "inverted": "उलटा",
+  "run backwards": "उल्टे क्रम में चलना",
+  "graha": "ग्रह",
+  "sign": "राशि",
+  "house": "भाव",
+  "nakshatra": "नक्षत्र",
+  "pada": "चरण",
+  "navamsa": "नवांश",
+  "Shadbala": "षड्बल",
+  "notes": "टिप्पणियाँ",
+  "matter": "विषय",
+  "verdict": "फलादेश",
+  "degree": "अंश",
+  "karaka": "कारक",
+  "more favourable than": "से अधिक शुभ",
+  "this reading in": "इस फलादेश में",
+  "⚠ inverted channel": "⚠ उलटा चैनल",
+  "Lagna": "लग्न",
+  "Navamsa Lagna": "नवांश लग्न",
+  "Atmakaraka": "आत्मकारक",
+  "Arudha Lagna": "आरूढ़ लग्न",
+  "Karakamsa": "कारकांश",
+  "Upapada": "उपपद",
+  "Stronger frame": "अधिक प्रबल पक्ष",
+  "Running MD": "चालू महादशा",
+  "Running AD": "चालू अंतर्दशा",
+  "Chara dasha": "चर दशा",
+  "Sade Sati": "साढ़ेसाती",
+  "Panchanga": "पंचांग",
+  "Sources: ": "स्रोत: ",
+  "Draws on: ": "इन पर आधारित: ",
+  "Read this as one story →": "इसे एक ही कहानी के रूप में पढ़ें →",
+  "par excellence": "उत्कृष्ट",
+  "ordinary": "सामान्य",
+  "limited": "सीमित",
+  "feeble": "क्षीण",
+  "— no houses lit this bhukti": "— इस अंतर्दशा में कोई भाव सक्रिय नहीं हुआ",
+  "running": "चालू",
+  "now": "अभी",
+  "AI": "एआई",
+  "AI INTERPRETATION — EXPERIMENTAL": "एआई व्याख्या — प्रायोगिक",
+  "Beyond this wall the text is written by a language model, not by the engine: speculative reflection on this chart's computed facts, with no validated predictive power. Matters of death, lifespan, serious illness, and self-harm are excluded in all registers.": "इस दीवार से आगे का पाठ इंजन द्वारा नहीं, बल्कि एक भाषा मॉडल द्वारा लिखा गया है: यह इस कुंडली के परिकलित तथ्यों पर एक अटकलपूर्ण चिंतन है, जिसकी कोई सत्यापित भविष्यसूचक क्षमता नहीं है। मृत्यु, आयु, गंभीर बीमारी और आत्महानि से जुड़े विषयों को हर संदर्भ में पूरी तरह वर्जित रखा गया है।",
+  "SHOW AI INTERPRETATION (NOT THE ENGINE)": "एआई व्याख्या दिखाएं (इंजन नहीं)",
+  "REGENERATE AI INTERPRETATION": "एआई व्याख्या पुनः तैयार करें",
+  "voice: ": "लहजा: ",
+  "gentle (themes)": "सौम्य (विषयगत)",
+  "bold (direct)": "स्पष्ट (सीधा)",
+  "The model is reflecting…": "मॉडल चिंतन कर रहा है…",
+  "AI interpretation — not the engine, not validated.": "एआई व्याख्या — इंजन नहीं, सत्यापित नहीं।",
+  "The local AI model is not running — this panel stays empty rather than letting the engine speak for it. (Admin: install Ollama and set REPORT_LLM_ENABLED=true.)": "लोकल एआई मॉडल चल नहीं रहा है — इंजन को इसकी ओर से बोलने देने के बजाय यह पैनल खाली रखा गया है। (एडमिन: Ollama इंस्टॉल करें और REPORT_LLM_ENABLED=true सेट करें।)",
+  "(The model's reply touched an excluded topic and was withheld.)": "(मॉडल के उत्तर में एक वर्जित विषय आ गया, इसलिए उसे रोक दिया गया।)",
+  "AI interpretation failed: ": "एआई व्याख्या विफल रही: ",
+  "❦ DID THIS READING MATCH YOUR LIFE?": "❦ क्या यह फलादेश आपके जीवन से मेल खाता है?",
+  "A few questions drawn from this chart's own reading. Answers are stored anonymously and help us calibrate honestly — the engine renders Raman's method faithfully, and your feedback measures how readings meet real lives.": "इस कुंडली के अपने ही फलादेश से लिए गए कुछ प्रश्न। उत्तर गुमनाम रूप से संग्रहीत किए जाते हैं और हमें ईमानदारी से कैलिब्रेट करने में मदद करते हैं — इंजन रामन की पद्धति को निष्ठापूर्वक प्रस्तुत करता है, और आपकी प्रतिक्रिया यह मापती है कि फलादेश वास्तविक जीवन से कितना मेल खाते हैं।",
+  "anything to add? (optional)": "कुछ और जोड़ना है? (वैकल्पिक)",
+  "SEND FEEDBACK": "प्रतिक्रिया भेजें",
+  "Pick at least one answer first.": "पहले कम से कम एक उत्तर चुनें।",
+  "Sending…": "भेजा जा रहा है…",
+  "❦ THANK YOU": "❦ धन्यवाद",
+  "Your {N} answer(s) are stored — they make the honest measurement of this engine possible.": "आपके {N} उत्तर संग्रहीत कर लिए गए हैं — ये इस इंजन का ईमानदार मापन संभव बनाते हैं।",
+  "Could not store: ": "संग्रहीत नहीं किया जा सका: ",
+  "Could not send: ": "भेजा नहीं जा सका: ",
+  "Explaining…": "समझाया जा रहा है…",
+  "(no text)": "(कोई टेक्स्ट नहीं)",
+  "Explain failed: ": "व्याख्या विफल: ",
+  "(no answer)": "(कोई उत्तर नहीं)",
+  "Ask failed: ": "प्रश्न विफल: ",
+  "Composing…": "तैयार हो रहा है…",
+  "Composing the synthesis…": "संश्लेषण तैयार हो रहा है…",
+  "Synthesis failed: ": "संश्लेषण विफल: ",
+  "loading…": "लोड हो रहा है…",
+  "Not resolvable.": "यह स्रोत नहीं खोला जा सका।",
+  "Error loading source: ": "स्रोत लोड करने में त्रुटि: ",
+  "Casting…": "कुंडली बन रही है…",
+  "Casting the chart and composing the reading…": "कुंडली बनाई जा रही है और फलादेश तैयार किया जा रहा है…",
+  "Error: ": "त्रुटि: ",
+  "city list unavailable — set coordinates below": "शहरों की सूची उपलब्ध नहीं है — नीचे निर्देशांक दर्ज करें",
+  "pick a place from the list — or set coordinates below": "सूची में से कोई स्थान चुनें — या नीचे निर्देशांक दर्ज करें",
+  "agree": "सहमत",
+  "partly": "आंशिक रूप से",
+  "disagree": "असहमत",
+  "not sure": "निश्चित नहीं"
+};
+
+let LANG = 'en';
+function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
+// Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
+// and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
+// directly at render time instead, so it's already correct whenever it's (re)built.
+function applyI18n(){
+  document.documentElement.lang = LANG;
+  for(const n of document.querySelectorAll('[data-i18n]')) n.textContent = t(n.dataset.i18n);
+  for(const n of document.querySelectorAll('[data-i18n-ph]')) n.placeholder = t(n.dataset.i18nPh);
+  for(const n of document.querySelectorAll('[data-i18n-title]')) n.title = t(n.dataset.i18nTitle);
+}
+function setLang(l){
+  LANG = (l==='hi') ? 'hi' : 'en';
+  applyI18n();
+  const sel=$('lang-select'); if(sel) sel.value=LANG;
+}
 
 const PRESETS = {
   mainpuri:{name:'Mainpuri',year:1989,month:10,day:12,hour:10,minute:2,latitude:27.2351,longitude:79.0276,tz_offset:5.5,city:'Mainpuri, Uttar Pradesh, India'},
@@ -376,12 +718,12 @@ function loadCities(){
     for(const c of list){ const label=c.n+', '+c.a; CITY_MAP[label.toLowerCase()]={lat:c.lat,lon:c.lon,tz:c.tz,label};
       if(dl) frag.append(el('option',{value:label})); }
     if(dl) dl.append(frag);
-  }).catch(()=>{ const note=$('city-note'); if(note) note.textContent='city list unavailable — set coordinates below'; });
+  }).catch(()=>{ const note=$('city-note'); if(note) note.textContent=t('city list unavailable — set coordinates below'); });
 }
 function onCity(){ const inp=$('city'); if(!inp) return; const hit=CITY_MAP[inp.value.trim().toLowerCase()]; const note=$('city-note');
   if(hit){ if($('latitude'))$('latitude').value=hit.lat; if($('longitude'))$('longitude').value=hit.lon; if($('tz_offset'))$('tz_offset').value=hit.tz;
     if(note){ note.textContent='✓ '+hit.label+' — '+hit.lat.toFixed(2)+'°, '+hit.lon.toFixed(2)+'°, UTC'+(hit.tz>=0?'+':'')+hit.tz; note.style.color='var(--saffron-deep)'; note.style.fontStyle='normal'; } }
-  else if(note){ note.textContent='pick a place from the list — or set coordinates below'; note.style.color='var(--ink-faded)'; note.style.fontStyle='italic'; }
+  else if(note){ note.textContent=t('pick a place from the list — or set coordinates below'); note.style.color='var(--ink-faded)'; note.style.fontStyle='italic'; }
 }
 window.onCity=onCity; loadCities();
 
@@ -394,7 +736,7 @@ function citeText(str){
   CITE_RE.lastIndex=0;
   while((m=CITE_RE.exec(str))!==null){
     if(m.index>last) frag.append(str.slice(last,m.index));
-    const c=el('cite',{class:'src',title:'View the source passage'},m[1]);
+    const c=el('cite',{class:'src',title:t('View the source passage')},m[1]);
     c.onclick=()=>openSrc(m[1]);
     frag.append(c);
     last=m.index+m[1].length;
@@ -405,19 +747,28 @@ function citeText(str){
 function para(str, cls){ const p=el('p',{class:cls||''}); p.append(citeText(String(str||''))); return p; }
 
 async function openSrc(cite){
-  $('src-cite').textContent=cite; $('src-work').textContent='loading…'; $('src-text').textContent='';
+  $('src-cite').textContent=cite; $('src-work').textContent=t('loading…'); $('src-text').textContent='';
   $('srcpanel').classList.add('open');
   try{
     const r=await fetch('/report/source?cite='+encodeURIComponent(cite)+'&context=1');
     const d=await r.json();
     if(d.resolved){ $('src-work').textContent=d.work+' · lines '+d.start+(d.end!==d.start?'–'+d.end:''); $('src-text').textContent=d.text; }
-    else { $('src-work').textContent=''; $('src-text').textContent=d.note||'Not resolvable.'; }
-  }catch(e){ $('src-text').textContent='Error loading source: '+e.message; }
+    else { $('src-work').textContent=''; $('src-text').textContent=d.note||t('Not resolvable.'); }
+  }catch(e){ $('src-text').textContent=t('Error loading source: ')+e.message; }
 }
 function closeSrc(){ $('srcpanel').classList.remove('open'); }
 
 function vchip(v){ return el('span',{class:'chip v-'+v},v); }
 const SIGN=['','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+// 1-indexed to match report_dict's `nakshatra` (same convention as SIGN above, slot 0 unused).
+// Added 2026-08-03: the planetary-positions table printed the raw integer, so a reader saw
+// "26" and "14" instead of "Uttara Bhadrapada" and "Chitra" — the markdown and HTML renderers
+// have always named them. Order matches app/core/nakshatra.py NAKSHATRAS.
+const NAK=['','Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya',
+  'Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha',
+  'Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishta',
+  'Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const nakName=n=>NAK[n]||(n==null?'—':String(n));
 function jdYM(jd){ if(jd==null) return '—';
   const J=Math.floor(jd+0.5); let f=J+1401+Math.floor((Math.floor((4*J+274277)/146097)*3)/4)-38;
   const e=4*f+3, g=Math.floor((e%1461)/4), h=5*g+2;
@@ -437,13 +788,13 @@ function fmtVal(k,v){ if(v==null) return '—';
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
   const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
-  const t=el('table'); t.append(el('tr',{},...keys.map(k=>el('th',{},k.replace(/_/g,' ')))));
+  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(k.replace(/_/g,' '))))));
   for(const r of arr){ const tr=el('tr'); for(const k of keys){ const td=el('td');
-    td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} t.append(tr);} return t; }
+    td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} tbl.append(tr);} return tbl; }
 // visible by default (open) — a section's values are never hidden behind a bare count.
 function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
   const d=el('details',{class:'card'}); d.setAttribute('open','');
-  const sm=el('summary'); sm.append(title+' ('+arr.length+')');
+  const sm=el('summary'); sm.append(t(title)+' ('+arr.length+')');
   d.append(sm); const b=el('div',{class:'body'}); const sc=el('div',{class:'tscroll'});
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
@@ -460,13 +811,18 @@ function sv(tag, attrs={}, ...kids){ const n=document.createElementNS(SVGNS,tag)
   for(const c of kids){ if(c==null)continue; n.append(c.nodeType?c:document.createTextNode(String(c))); } return n; }
 function tip(node,text){ if(text){ const t=document.createElementNS(SVGNS,'title'); t.textContent=text; node.append(t);} return node; }
 function svgBox(w,h){ const s=sv('svg',{viewBox:'0 0 '+w+' '+h,width:'100%',preserveAspectRatio:'xMinYMin meet'});
-  s.style.height='auto'; s.style.display='block'; s.dataset&&(s.dataset.w=w); s._w=w; s._h=h; return s; }
+  s.style.height='auto'; s.style.display='block';
+  // Never render below the designed viewBox width: on a phone the chart keeps its
+  // native (readable) text size and scrolls sideways inside .viz-scroll instead of
+  // shrinking 10px labels to ~4px. On desktop the container is wider, so this is inert.
+  s.style.minWidth=w+'px';
+  s.dataset&&(s.dataset.w=w); s._w=w; s._h=h; return s; }
 function legend(items){ const d=el('div',{class:'vz-legend'}); for(const [color,label] of items){
-  const sw=el('span',{class:'sw'}); sw.style.background=color; d.append(el('span',{},sw,label)); } return d; }
+  const sw=el('span',{class:'sw'}); sw.style.background=color; d.append(el('span',{},sw,t(label))); } return d; }
 function vizCard(title, node, note){ const d=el('details',{class:'card'}); d.setAttribute('open','');
-  const sm=el('summary'); sm.append(title); d.append(sm); const b=el('div',{class:'body'});
+  const sm=el('summary'); sm.append(t(title)); d.append(sm); const b=el('div',{class:'body'});
   const sc=el('div',{class:'viz-scroll vz'}); sc.append(node); b.append(sc);
-  if(note) b.append(para(note,'vz-note')); d.append(b); return d; }
+  if(note) b.append(para(t(note),'vz-note')); d.append(b); return d; }
 
 // --- color mappers: return existing CSS tokens so light+dark both work ---
 function verdictColor(v){ v=String(v||'').toLowerCase();
@@ -515,7 +871,7 @@ function chartGrid(R, mode){
       const combust=p.combust_fraction>=0.5;
       occ[s].push({abbr:(p.vargottama?'★':'')+(GABBR[name]||name.slice(0,2)), ink:natureVar(nat[name]), sup:p.retrograde?'℞':'',
         dim:combust, strong:p.shadbala_rupas!=null&&p.shadbala_rupas>=5,
-        title:name+' — '+SIGN[s]+(p.nakshatra?(' · nak '+p.nakshatra+' pada '+p.pada):'')+(p.shadbala_rupas!=null?(' · '+p.shadbala_rupas+' rupas'):'')+(p.vargottama?' · vargottama':'')+(p.retrograde?' · retrograde':'')+(combust?' · combust':'')}); }
+        title:name+' — '+SIGN[s]+(p.nakshatra?(' · '+nakName(p.nakshatra)+' pada '+p.pada):'')+(p.shadbala_rupas!=null?(' · '+p.shadbala_rupas+' rupas'):'')+(p.vargottama?' · vargottama':'')+(p.retrograde?' · retrograde':'')+(combust?' · combust':'')}); }
   }
   const grid=el('div',{class:'chartgrid'});
   for(const row of _SI_ROWS) for(const s of row){ if(s===0)continue; const isAsc=s===asc;
@@ -533,9 +889,9 @@ function chartGrid(R, mode){
     box.append(gr); grid.append(box);
   }
   const mid=el('div',{class:'cmid'}); mid.append(asc?SIGN[asc]:'—');
-  mid.append(el('span',{}, mode==='gochara'?'transit sky':'lagna')); grid.append(mid);
+  mid.append(el('span',{}, t(mode==='gochara'?'transit sky':'lagna'))); grid.append(mid);
   const fig=el('figure',{class:'chartfig'});
-  fig.append(el('figcaption',{}, mode==='rasi'?'Rasi (D-1)':mode==='navamsa'?'Navamsa (D-9)':'Gochara (transit)'));
+  fig.append(el('figcaption',{}, t(mode==='rasi'?'Rasi (D-1)':mode==='navamsa'?'Navamsa (D-9)':'Gochara (transit)')));
   fig.append(grid); return fig;
 }
 
@@ -597,7 +953,7 @@ function lifePanel(R){
     g.append(sv('line',{x1:x,y1:laneMD,x2:x,y2:H-16,stroke:'var(--line)',strokeWidth:1,opacity:.45}));
     g.append(sv('text',{x:x,y:H-4,'font-size':9,fill:'var(--ink-2)','text-anchor':'middle'}, jdYM(jd))); }
   g.append(sv('line',{x1:jx(A.ref),y1:0,x2:jx(A.ref),y2:H-16,stroke:'var(--accent)',strokeWidth:1.5,strokeDasharray:'3 2'}));
-  g.append(sv('text',{x:jx(A.ref)+2,y:8,'font-size':9,fill:'var(--accent)','font-weight':600},'now'));
+  g.append(sv('text',{x:jx(A.ref)+2,y:8,'font-size':9,fill:'var(--accent)','font-weight':600},t('now')));
   s.append(g);
   // MD ribbon (contiguous maha runs)
   const runs=[]; for(const t of R.timeline){ let r=runs[runs.length-1]; if(!r||r.maha!==t.maha){ r={maha:t.maha,s:t.start_jd,e:t.end_jd}; runs.push(r);} r.e=t.end_jd; }
@@ -680,8 +1036,8 @@ function verdictWheel(R){ const asc=(R.chart&&R.chart.asc_sign)||1;
     if(pf){ const g=el('div',{class:'cgrahas'}); const sp=el('span',{class:'gr',title:'House '+h+' — '+pf.rollup+' (lord '+pf.lord+')'+(hs[h]?('; Bhava-Bala rank '+hs[h].bhava_bala_rank+'/12, SAV '+hs[h].sav_bindus):'')});
       sp.style.color=verdictColor(pf.rollup); sp.append((hs[h]&&hs[h].bhava_bala_rank===1?'★':'')+pf.lord); g.append(sp); box.append(g); }
     grid.append(box); }
-  const mid=el('div',{class:'cmid'}); mid.append('Verdicts'); mid.append(el('span',{},'by house')); grid.append(mid);
-  const fig=el('figure',{class:'chartfig'}); fig.append(el('figcaption',{},'House verdicts')); fig.append(grid); return fig; }
+  const mid=el('div',{class:'cmid'}); mid.append(t('Verdicts')); mid.append(el('span',{},t('by house'))); grid.append(mid);
+  const fig=el('figure',{class:'chartfig'}); fig.append(el('figcaption',{},t('House verdicts'))); fig.append(grid); return fig; }
 
 // preponderance diverging witness bars (favourable right, adverse left)
 function prepBars(R){ const hs=(R.preponderance&&R.preponderance.houses)||[]; if(!hs.length) return null;
@@ -730,14 +1086,14 @@ function infoTiles(R){ const I=R.info; if(!I) return null; const wrap=el('div',{
     ['near-universal','little information',I.near_universal,'var(--neu)'],['distinctive','distinguish this chart',I.distinctive,'var(--accent-2)'],
     ['inverted','run backwards',I.inverted,I.inverted>0?'var(--aff)':'var(--neu)']];
   const tg=el('div',{class:'vz-tiles'});
-  for(const [lbl,sub,val,c] of tiles){ const t=el('div',{class:'vz-tile'+(lbl==='inverted'&&I.inverted>0?' alert':'')});
-    if(c) t.style.borderLeftColor=c; if(lbl==='inverted'&&(I.inverted_locations||[]).length) t.setAttribute('title',I.inverted_locations.join(', '));
-    t.append(el('b',{},String(val))); t.append(el('div',{class:'lbl'},lbl)); t.append(el('div',{class:'m-sub'},sub)); tg.append(t); }
+  for(const [lbl,sub,val,c] of tiles){ const tile=el('div',{class:'vz-tile'+(lbl==='inverted'&&I.inverted>0?' alert':'')});
+    if(c) tile.style.borderLeftColor=c; if(lbl==='inverted'&&(I.inverted_locations||[]).length) tile.setAttribute('title',I.inverted_locations.join(', '));
+    tile.append(el('b',{},String(val))); tile.append(el('div',{class:'lbl'},t(lbl))); tile.append(el('div',{class:'m-sub'},t(sub))); tg.append(tile); }
   wrap.append(tg);
   const tot=I.total||1, rem=Math.max(0,tot-I.near_universal-I.inverted-I.distinctive);
   const segs=[[I.near_universal,'var(--neu)','near-universal'],[I.inverted,'var(--aff)','inverted'],[I.distinctive,'var(--accent-2)','distinctive'],[rem,'var(--surface-2)','ordinary']];
   const W=560,H=28,s=svgBox(W,H); let x=0;
-  for(const [n,c,lbl] of segs){ if(!n)continue; const w=(n/tot)*W; s.append(tip(sv('rect',{x:x,y:3,width:w,height:18,fill:c,opacity:.85}), n+' '+lbl));
+  for(const [n,c,lbl] of segs){ if(!n)continue; const w=(n/tot)*W; s.append(tip(sv('rect',{x:x,y:3,width:w,height:18,fill:c,opacity:.85}), n+' '+t(lbl)));
     if(w>24) s.append(sv('text',{x:x+w/2,y:16,'font-size':9,'text-anchor':'middle',fill:'var(--ink)'}, n)); x+=w; }
   wrap.append(s); return wrap; }
 
@@ -765,18 +1121,24 @@ function longevityGauge(R){ const L=R.longevity; if(!L||L.years==null) return nu
   return s; }
 
 function run(){
-  const btn=$('go'); if(btn){ btn.disabled=true; btn.textContent='Casting…'; }
+  const btn=$('go'); if(btn){ btn.disabled=true; btn.textContent=t('Casting…'); }
   const first=$('leaf2-body');
-  if(first) first.replaceChildren(el('div',{class:'folio-loading'},'Casting the chart and composing the reading…'));
+  if(first) first.replaceChildren(el('div',{class:'folio-loading'},t('Casting the chart and composing the reading…')));
   if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2);   // flip into the book
   const body={ name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
     hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value,
-    longitude:+$('longitude').value, tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, format:'json' };
+    longitude:+$('longitude').value, tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value,
+    lang:LANG, format:'json' };
   fetch('/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(r=>r.ok?r.json():r.json().then(e=>Promise.reject(e.detail||r.statusText)))
-    .then(d=>{ render(d.report,d.summary); if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2); })
-    .catch(e=>{ if(first) first.replaceChildren(el('div',{class:'err'},'Error: '+(typeof e==='string'?e:JSON.stringify(e)))); })
-    .finally(()=>{ if(btn){ btn.disabled=false; btn.textContent='Cast the Reading'; } });
+    .then(d=>{ render(d.report,d.summary,d.feedback_questions); if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2); })
+    // JSON.stringify(new Error(...)) is "{}" — an Error's message/stack are non-enumerable — so
+    // this used to render a bare "Error: {}" and hide every render bug it caught (that is exactly
+    // how the `t()` shadowing above went unnoticed). Prefer .message, and log the real object.
+    .catch(e=>{ console.error('report render failed:', e);
+      const msg = (typeof e==='string') ? e : (e && e.message) ? e.message : JSON.stringify(e);
+      if(first) first.replaceChildren(el('div',{class:'err'},t('Error: ')+msg)); })
+    .finally(()=>{ if(btn){ btn.disabled=false; btn.textContent=t('Cast the Reading'); } });
 }
 
 // map a section heading to an explainer scope
@@ -785,24 +1147,25 @@ const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Rul
   'Nichod (the essence)':'section:nichod'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
-  tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value }; }
-function H2(t){ const h=el('h2',{class:'sec'},t); h.id='sec-'+t.replace(/[^a-z]/gi,'').toLowerCase();
-  const scope=SCOPE[t]; if(scope){ const b=el('button',{class:'explain',type:'button'},'explain');
-    b.onclick=()=>explainSection(t,scope,h); h.append(b);} return h; }
+  tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
+function H2(label){ const h=el('h2',{class:'sec'},t(label)); h.id='sec-'+label.replace(/[^a-z]/gi,'').toLowerCase();
+  const scope=SCOPE[label]; if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
+    b.onclick=()=>explainSection(label,scope,h); h.append(b);} return h; }
 
 async function explainSection(title,scope,afterEl){
   let box=afterEl.nextElementSibling;
   if(box&&box.classList.contains('explained')){ box.remove(); return; }  // toggle off
-  box=el('div',{class:'explained'},'Explaining…'); afterEl.after(box);
+  box=el('div',{class:'explained'},t('Explaining…')); afterEl.after(box);
   try{
     const r=await fetch('/report/explain',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({...birthBody(),scope})});
-    const d=await r.json(); box.replaceChildren(citeText(d.text||'(no text)'));
+    const d=await r.json(); box.replaceChildren(citeText(d.text||t('(no text)')));
     const meta=el('div',{class:'meta'}); meta.append(d.honesty_note||'');
     if(d.refused_llm) meta.append(' · ⚠ LLM answer withheld ('+(d.refusal_reason||'guard tripped')+') — engine text shown');
-    else if(d.source==='fallback') meta.append(' · (engine text — the LLM explainer is off)');
+    else if(d.source==='fallback') meta.append(' · (the engine’s own prose — deterministic, no AI call)');
+    if(d.note) meta.append(' · '+d.note);
     box.append(meta);
-  }catch(e){ box.textContent='Explain failed: '+e.message; }
+  }catch(e){ box.textContent=t('Explain failed: ')+e.message; }
 }
 
 async function ask(){
@@ -813,13 +1176,14 @@ async function ask(){
   try{
     const r=await fetch('/report/ask',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({...birthBody(),question:q})});
-    const d=await r.json(); a.replaceChildren(citeText(d.text||'(no answer)'));
+    const d=await r.json(); a.replaceChildren(citeText(d.text||t('(no answer)')));
     // always show the honesty caveat + any guard warning on the free-text Q&A surface
     if(d.honesty_note) a.append(el('div',{class:'ask-note'},d.honesty_note));
     if(d.refused_llm) a.append(el('div',{class:'ask-note'},'⚠ the LLM answer was withheld ('+(d.refusal_reason||'guard tripped')+'); showing the engine’s own text instead.'));
     else if(d.warning) a.append(el('div',{class:'ask-note'},'⚠ '+d.warning));
-    else if(d.source==='fallback') a.append(el('div',{class:'ask-note'},'(engine text — the LLM explainer is off; enable REPORT_LLM_ENABLED + ANTHROPIC_API_KEY for grounded answers)'));
-  }catch(e){ a.textContent='Ask failed: '+e.message; }
+    else if(d.source==='fallback') a.append(el('div',{class:'ask-note'},'(engine text — the local model is off or unreachable; set REPORT_LLM_ENABLED=true and run `ollama serve` for grounded answers)'));
+    if(d.note) a.append(el('div',{class:'ask-note'},d.note));
+  }catch(e){ a.textContent=t('Ask failed: ')+e.message; }
   finally{ $('ask-go').disabled=false; log.scrollTop=log.scrollHeight; }
   return false;
 }
@@ -847,17 +1211,18 @@ function jumpLink(label){
 async function readAsStory(btn){
   let box=btn.nextElementSibling;
   if(box&&box.classList.contains('digest-story')){ box.remove(); return; }   // toggle off
-  btn.disabled=true; const prev=btn.textContent; btn.textContent='Composing…';
-  box=el('div',{class:'digest-story'},'Composing the synthesis…'); btn.after(box);
+  btn.disabled=true; const prev=btn.textContent; btn.textContent=t('Composing…');
+  box=el('div',{class:'digest-story'},t('Composing the synthesis…')); btn.after(box);
   try{
     const r=await fetch('/report/insights',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(birthBody())});
-    const d=await r.json(); box.replaceChildren(citeText(d.text||'(no text)'));
+    const d=await r.json(); box.replaceChildren(citeText(d.text||t('(no text)')));
     const meta=el('div',{class:'meta'}); meta.append(d.honesty_note||'');
     if(d.refused_llm) meta.append(' · ⚠ LLM answer withheld ('+(d.refusal_reason||'guard tripped')+') — engine text shown');
     else if(d.source==='fallback') meta.append(' · (the engine’s own ranked digest — the LLM narrator is off)');
+    if(d.note) meta.append(' · '+d.note);
     box.append(meta);
-  }catch(e){ box.textContent='Synthesis failed: '+e.message; }
+  }catch(e){ box.textContent=t('Synthesis failed: ')+e.message; }
   finally{ btn.disabled=false; btn.textContent=prev; }
 }
 
@@ -880,19 +1245,24 @@ function renderTimeline(R, add){
     const d=el('details',{class:'card'}); if(nowMd) d.setAttribute('open','');
     const sm=el('summary'); sm.append(g.maha+' Mahadasha');
     sm.append(el('span',{class:'muted'},' · '+g.ps.length+' bhukti'));
-    if(nowMd) sm.append(el('span',{class:'chip',style:'margin-left:.5rem'},'running'));
+    if(nowMd) sm.append(el('span',{class:'chip',style:'margin-left:.5rem'},t('running')));
     d.append(sm);
     const b=el('div',{class:'body'});
-    for(const t of g.ps){
-      const now=refJd!=null&&t.start_jd<=refJd&&refJd<t.end_jd;
+    // NB: the loop variable is `bk`, never `t` — `t()` is the global translation function, and
+    // naming the bhukti row `t` shadowed it, so `t('now')` below called a data object and threw
+    // "t is not a function". That aborted the WHOLE render (no per-section isolation), leaving
+    // every folio blank behind "Error: {}". Fires on any chart whose window holds the running
+    // bhukti, i.e. effectively all of them. Found live 2026-08-03.
+    for(const bk of g.ps){
+      const now=refJd!=null&&bk.start_jd<=refJd&&refJd<bk.end_jd;
       const blk=el('div',{class:'bhukti'+(now?' now':'')});
-      const hd=el('div',{class:'bhukti-head'}); hd.append((t.antar||t.maha)+' AD');
-      hd.append(el('span',{class:'muted'},'  '+jdYM(t.start_jd)+' – '+jdYM(t.end_jd)));
-      if(t.antar&&t.antar!==t.maha) hd.append(el('span',{class:'muted'},
-        ' · AD '+(t.associated?'associated with':'not associated with')+' MD'));
-      if(now) hd.append(el('span',{class:'chip',style:'margin-left:.4rem'},'now'));
+      const hd=el('div',{class:'bhukti-head'}); hd.append((bk.antar||bk.maha)+' AD');
+      hd.append(el('span',{class:'muted'},'  '+jdYM(bk.start_jd)+' – '+jdYM(bk.end_jd)));
+      if(bk.antar&&bk.antar!==bk.maha) hd.append(el('span',{class:'muted'},
+        ' · AD '+(bk.associated?'associated with':'not associated with')+' MD'));
+      if(now) hd.append(el('span',{class:'chip',style:'margin-left:.4rem'},t('now')));
       blk.append(hd);
-      const byT={}; for(const a of (t.activated||[])){ const k=a.tier||a.grade; (byT[k]=byT[k]||[]).push(a); }
+      const byT={}; for(const a of (bk.activated||[])){ const k=a.tier||a.grade; (byT[k]=byT[k]||[]).push(a); }
       let any=false;
       for(const tier of TIER_ORDER){ const items=byT[tier]; if(!items||!items.length) continue; any=true;
         const row=el('div',{class:'lit-row'+((tier==='limited'||tier==='feeble')?' dim':'')});
@@ -901,14 +1271,14 @@ function renderTimeline(R, add){
           title:tier+' · natal verdict: '+a.natal_verdict},'H'+a.house));
         blk.append(row);
       }
-      if(!any) blk.append(el('span',{class:'muted'},'— no houses lit this bhukti'));
+      if(!any) blk.append(el('span',{class:'muted'},t('— no houses lit this bhukti')));
       b.append(blk);
     }
     d.append(b); add(d);
   }
 }
 
-function render(R, S){
+function render(R, S, FQ){
   // clear every chapter folio, then append each section-group into its leaf via chapter()
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
@@ -929,17 +1299,17 @@ function render(R, S){
       card.append(head);
       card.append(para(it.detail,'di-detail'));
       if(it.cites&&it.cites.length){ const cr=el('div',{class:'di-cites'});
-        cr.append(el('span',{class:'muted'},'Sources: '));
+        cr.append(el('span',{class:'muted'},t('Sources: ')));
         for(const c of it.cites){ const s=el('cite',{class:'src'},c); s.onclick=()=>openSrc(c); cr.append(s,' '); }
         card.append(cr); }
       if(it.sections&&it.sections.length){ const sr=el('div',{class:'di-secs muted'});
-        sr.append('Draws on: ');
+        sr.append(t('Draws on: '));
         it.sections.forEach((sec,i)=>{ sr.append(jumpLink(sec)); if(i<it.sections.length-1) sr.append(', '); });
         card.append(sr); }
       dw.append(card);
     }
     add(dw);
-    const rb=el('button',{class:'digest-read',type:'button'},'Read this as one story →');
+    const rb=el('button',{class:'digest-read',type:'button'},t('Read this as one story →'));
     rb.onclick=()=>readAsStory(rb); add(rb);
   }
 
@@ -961,7 +1331,7 @@ function render(R, S){
     ['Stronger frame',ov.stronger_frame],['Running MD',s.running_md],['Running AD',s.running_ad],
     ['Chara dasha',s.chara],['Sade Sati',s.sade_sati],['Panchanga',s.panchanga]];
   const sr=el('div',{class:'pillrow'});
-  for(const [k,v] of sig) if(v) sr.append(el('span',{class:'chip'},k+': '+v));
+  for(const [k,v] of sig) if(v) sr.append(el('span',{class:'chip'},t(k)+': '+v));
   add(sr);
   if(ov.functional_natures&&ov.functional_natures.length)
     add(para('Functional nature for this Lagna — '+ov.functional_natures.map(x=>x[0]+' '+x[1]).join('; '),'muted'));
@@ -993,7 +1363,7 @@ function render(R, S){
   for(const [nm,p] of Object.entries(R.chart?.planets||{})){
     const notes=[p.vargottama?'vargottama':'',p.retrograde?'retrograde':'',(p.combust_fraction>=0.5)?'combust':''].filter(Boolean).join(', ');
     pt.append(el('tr',{},el('td',{},nm),el('td',{},SIGN[p.sign]||p.sign),el('td',{},String(p.rasi_house)),
-      el('td',{},String(p.nakshatra)),el('td',{},String(p.pada)),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
+      el('td',{},nakName(p.nakshatra)),el('td',{},String(p.pada)),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
@@ -1001,7 +1371,7 @@ function render(R, S){
   if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
     'Bars rank the six-source Shadbala total (rupas) per planet; colour = functional nature for this Lagna. ★ = strongest planet, ○ = Lagna lord (the ruler of the nativity); the dashed line ≈ 5 rupas is Raman’s "strong" mark. Rahu/Ketu carry no Shadbala. Exact totals are the "Shadbala" column above.'));
   const _ikb=ishtaKashtaBars(R);
-  if(_ikb) add(vizCard('Ishta / Kashta — each planet’s benefic share', _ikb,
+  if(_ikb) add(vizCard('Ishta / Kashta — each planet\'s benefic share', _ikb,
     'For each planet, the green (ishta — benefic potential) vs red (kashta — malefic potential) split, with the dashed centre marking the 50% tipping point. These fields appear nowhere else in the report.'));
 
   chapter(5);
@@ -1011,7 +1381,7 @@ function render(R, S){
     p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
     if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
     add(p); }
-  add(sectionTable('Yoga × Dasha timing — when each yoga’s lord runs', R.yoga_timing));
+  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing));
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ add(H2('Ashtakavarga (Sarvashtakavarga)'));
@@ -1181,7 +1551,7 @@ function render(R, S){
   // ===== Information content (every field of the honesty headline) =====
   if(R.info){ add(H2('Information content of this reading')); const I=R.info;
     const _it=infoTiles(R);
-    if(_it) add(vizCard('The reading’s information content', _it,
+    if(_it) add(vizCard('The reading\'s information content', _it,
       'How much of this chart’s reading actually distinguishes it: the composition bar splits every reading into near-universal, inverted, distinctive, and ordinary. Most is non-differential — an honest disclosure, per the engine’s measured truth. The full sentence follows.'));
     add(para(I.total+' calibrated readings. '+I.modal_count+' return the single most common verdict ('+
       I.modal_verdict+'). '+I.near_universal+' are near-universal — held by half the population or more, carrying little information. '+
@@ -1189,12 +1559,113 @@ function render(R, S){
       (I.inverted_locations&&I.inverted_locations.length?(' ('+I.inverted_locations.join(', ')+') — treat any house driven by one with maximal skepticism'):'')+'. '+
       I.distinctive+' are genuinely distinctive. This is a disclosure about the method’s output, not a statement about a life.','muted')); }
 
+  // ===== Walled AI-interpretation panel (opt-in; labeled LLM speculation, NOT the engine) =====
+  add(aiInterpretPanel());
+
   chapter(12);
   // ===== Nichod =====
   const n=R.nichod||{};
   if(n.essence){ add(H2('Nichod (the essence)')); add(para(n.essence,'lede'));
     if(n.spotlight) add(para('Spotlight: '+n.spotlight,'muted'));
     if(n.caution) add(para('Caution: '+n.caution,'muted')); }
+
+  // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
+  if(FQ&&FQ.length) add(feedbackCard(FQ));
+}
+
+// ---- walled AI-interpretation panel: opt-in LLM speculation, explicitly labeled as
+// NOT the engine. Off until the reader presses the button; gentle register default,
+// bold on toggle. The disclaimer banner is ALWAYS visible above the text. ----
+function aiInterpretPanel(){
+  const wall=el('div',{class:'ai-wall'});
+  wall.append(el('div',{class:'ai-badge'},t('AI')));
+  wall.append(el('div',{class:'ai-head'},t('AI INTERPRETATION — EXPERIMENTAL')));
+  wall.append(para(t('Beyond this wall the text is written by a language model, not by the '+
+    'engine: speculative reflection on this chart\'s computed facts, with no validated '+
+    'predictive power. Matters of death, lifespan, serious illness, and self-harm are '+
+    'excluded in all registers.'),'ai-intro'));
+  const controls=el('div',{class:'ai-controls'});
+  const btn=el('button',{class:'leaf-button secondary ai-open',type:'button'},
+    t('SHOW AI INTERPRETATION (NOT THE ENGINE)'));
+  const regWrap=el('label',{class:'ai-reg'},t('voice: '));
+  const reg=el('select',{class:'leaf-input ai-reg-sel'});
+  reg.append(el('option',{value:'gentle'},t('gentle (themes)')));
+  reg.append(el('option',{value:'bold'},t('bold (direct)')));
+  regWrap.append(reg);
+  controls.append(btn,regWrap); wall.append(controls);
+  const out=el('div',{class:'ai-out'}); wall.append(out);
+  btn.onclick=async()=>{
+    btn.disabled=true; out.replaceChildren(el('div',{class:'folio-loading'},t('The model is reflecting…')));
+    try{
+      const r=await fetch('/report/ai-interpret',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...birthBody(),register:reg.value})});
+      const d=await r.json();
+      out.replaceChildren();
+      out.append(el('div',{class:'ai-banner'},'⚠ '+(d.disclaimer||t('AI interpretation — not the engine, not validated.'))));
+      if(d.unavailable){ out.append(para(t('The local AI model is not running — this panel stays '+
+        'empty rather than letting the engine speak for it. (Admin: install Ollama and set '+
+        'REPORT_LLM_ENABLED=true.)'),'muted')); }
+      else{ for(const p of String(d.text||'').split(/\n\n+/)){ const cleaned=p.trim().replace(/^#+\s*/,'').replace(/\*\*/g,''); if(cleaned) out.append(para(cleaned,'ai-text')); }
+        if(d.deferred) out.append(para(t('(The model\'s reply touched an excluded topic and was withheld.)'),'muted')); }
+    }catch(e){ out.replaceChildren(para(t('AI interpretation failed: ')+e.message,'muted')); }
+    finally{ btn.disabled=false; btn.replaceChildren(t('REGENERATE AI INTERPRETATION')); }
+  };
+  return wall;
+}
+
+// ---- feedback card: the engine's own questions about this chart; answers POST to
+// /report/feedback (anonymous-friendly). Safe DOM only — no innerHTML (project rule).
+function feedbackCard(questions){
+  const card=el('div',{class:'fb-card'});
+  card.append(el('div',{class:'fb-title'},t('❦ DID THIS READING MATCH YOUR LIFE?')));
+  card.append(para(t('A few questions drawn from this chart\'s own reading. Answers are stored '+
+    'anonymously and help us calibrate honestly — the engine renders Raman\'s method '+
+    'faithfully, and your feedback measures how readings meet real lives.'),'fb-intro muted'));
+  const picked={};                                     // qid -> {answer, free_text}
+  for(const q of questions){
+    const block=el('div',{class:'fb-q'});
+    block.append(el('div',{class:'fb-text'},q.text));   // already localized server-side (lang param)
+    const opts=el('div',{class:'fb-opts'});
+    for(const o of (q.options||[])){
+      // DISPLAY translated, but the STORED answer value stays the raw English option (o) —
+      // the backend validates against ANSWER_OPTIONS in English regardless of display language.
+      const b=el('button',{class:'fb-opt',type:'button'},t(o));
+      b.onclick=()=>{ picked[q.qid]={...(picked[q.qid]||{}),answer:o,question_text:q.text};
+        for(const x of opts.children) x.classList.toggle('sel', x===b); };
+      opts.append(b);
+    }
+    block.append(opts);
+    if(q.allow_free_text){
+      const free=el('input',{class:'leaf-input fb-free',type:'text',maxlength:'2000',
+        placeholder:t('anything to add? (optional)')});
+      free.oninput=()=>{ picked[q.qid]={...(picked[q.qid]||{}),free_text:free.value,
+        question_text:q.text}; };
+      block.append(free);
+    }
+    card.append(block);
+  }
+  const send=el('button',{class:'leaf-button fb-send',type:'button'},t('SEND FEEDBACK'));
+  const note=el('div',{class:'fb-note muted'});
+  send.onclick=async()=>{
+    const answers=Object.entries(picked)
+      .filter(([,v])=>v.answer)                        // only answered questions count
+      .map(([qid,v])=>({qid,question_text:(v.question_text||'').slice(0,500),answer:v.answer,
+                        free_text:v.free_text?v.free_text.slice(0,2000):null}));
+    if(!answers.length){ note.textContent=t('Pick at least one answer first.'); return; }
+    send.disabled=true; note.textContent=t('Sending…');
+    try{
+      const r=await fetch('/report/feedback',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...birthBody(),answers})});
+      const d=await r.json();
+      if(r.ok){ card.replaceChildren(el('div',{class:'fb-title'},t('❦ THANK YOU')),
+        para(t('Your {N} answer(s) are stored — they make the honest measurement of this engine possible.').replace('{N}',d.stored),'fb-intro muted')); }
+      else{ note.textContent=t('Could not store: ')+(d.detail||r.statusText); send.disabled=false; }
+    }catch(e){ note.textContent=t('Could not send: ')+e.message; send.disabled=false; }
+  };
+  card.append(send,note);
+  return card;
 }
 </script>
 <script>

@@ -51,28 +51,32 @@ async def test_root_shell_references_all_surface_urls(client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_shell_tabs_for_new_phase2_surfaces(client) -> None:
-    """Forecast + Almanac + Knowledge each get their own clickable tab in
-    the nav AND their own surface card on the welcome screen. The data-tab
-    attribute is what the JS dispatcher dispatches on; pin both spellings."""
+async def test_shell_links_each_phase2_surface(client) -> None:
+    """Forecast, Almanac, Knowledge and Reading each need a way in from the shell.
+
+    Rewritten 2026-08-03: this used to assert `data-tab="…"` + a `#hash` route, which were
+    the JS dispatcher's mechanism in the old tab shell. The Pothi-manuscript redesign
+    replaced tabs with plain `<a href>` surface cards, so the old assertions pinned a
+    mechanism rather than the contract. The contract is what survives: every surface is
+    reachable from the home leaf."""
     response = await client.get("/")
     body = response.text
-    for tab in ("forecast", "almanac", "knowledge", "reading"):
-        assert f'data-tab="{tab}"' in body, (
-            f"Shell missing data-tab={tab} (tab nav or welcome card)"
-        )
-        assert f'#{tab}' in body, (
-            f"Shell missing hash route for #{tab}"
+    for surface in ("forecast", "almanac", "knowledge", "reading"):
+        assert f'href="/medini/{surface}/page"' in body, (
+            f"Shell has no link to the {surface} surface"
         )
 
 
 @pytest.mark.asyncio
-async def test_root_shell_has_tab_navigation(client) -> None:
-    """Sanity: the shell must have a recognisable nav element."""
+async def test_root_shell_has_navigation(client) -> None:
+    """Sanity: the shell must be the manuscript index, with its own navigation.
+
+    The old assertion looked for `<nav class="tabs">` and the 'Vedic & Nadi Astrology
+    Engine' banner — both removed by the Pothi redesign in favour of leaf navigation."""
     response = await client.get("/")
     body = response.text
-    assert '<nav class="tabs"' in body
-    assert "Vedic &amp; Nadi Astrology Engine" in body or "Vedic & Nadi Astrology Engine" in body
+    assert 'class="section-card"' in body, "shell renders no surface cards"
+    assert 'manuscript.js' in body, "shell does not load the manuscript navigator"
 
 
 # ---------- /chart/page (Nadi calculator) ----------

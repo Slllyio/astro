@@ -17,6 +17,7 @@ htmlcov/
 
 # Virtual environments
 .venv/
+.venv-repos/
 venv/
 env/
 
@@ -81,3 +82,4 @@ Thumbs.db
 
 # Extracted archive
 /Astro_Data/
+.gstack/

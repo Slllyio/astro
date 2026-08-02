@@ -23,6 +23,16 @@
   let currentPage = 0;
   let isFlipping = false;
 
+  // Below 700px the report is ONE continuous scrolling page — no page-flip
+  // book, no bottom toolbar (2026-07-28, user-directed simplification: "let
+  // it simplify... give report continuously... remove [the nav bar] for
+  // mobile version"). Pagination (next/prev/swipe/cover-tap/arrow-keys) only
+  // makes sense when leaves are shown one at a time, so all of it is skipped
+  // here — every leaf is simply visible via CSS, and the page scrolls like
+  // any normal document. Checked once at load, matching how the CSS
+  // breakpoint itself is evaluated (not re-checked on rotate/resize).
+  const paginated = !window.matchMedia('(max-width: 700px)').matches;
+
   const status = document.getElementById('folio-status');
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
@@ -82,7 +92,13 @@
     btnMute.addEventListener('click', () => {
       muted = !muted;
       btnMute.classList.toggle('muted', muted);
-      btnMute.textContent = muted ? '🔇 muted' : '🔊 sound';
+      // Keep the .nav-lbl span (hidden on phones by the portrait breakpoint);
+      // safe DOM construction — no innerHTML (project rule)
+      btnMute.textContent = muted ? '🔇 ' : '🔊 ';
+      const lbl = document.createElement('span');
+      lbl.className = 'nav-lbl';
+      lbl.textContent = muted ? 'muted' : 'sound';
+      btnMute.appendChild(lbl);
     });
   }
 
@@ -104,11 +120,29 @@
     setTimeout(() => { isFlipping = false; }, 550);
   }
   window.reopenManuscript = function () {
+    if (!paginated) {
+      // Continuous mode: "cast another chart" means scroll back up to the
+      // birth-form leaf (leaves[1]) rather than resetting an invisible page
+      // counter — there is no cover-to-hide/page-to-show state to reset.
+      const form = leaves[1];
+      if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     currentPage = 0;
     render();
   };
   window.goToManuscriptPage = function (idx) {
     if (idx < 0 || idx >= totalPages) return;
+    if (!paginated) {
+      // Continuous mode: every leaf is already visible — "going to" a page
+      // means scrolling its section into view (report.html calls this both
+      // when casting starts and when it completes, so the reader's view
+      // still jumps to the fresh reading exactly as it did in the book).
+      const target = leaves[idx];
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     currentPage = idx;
     render();
   };
@@ -120,21 +154,73 @@
   if (zoneNext) zoneNext.addEventListener('click', next);
   if (zonePrev) zonePrev.addEventListener('click', prev);
 
-  document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
-      e.preventDefault(); next();
-    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-      e.preventDefault(); prev();
-    } else if (e.key === 'Home') { currentPage = 0; render(); }
-    else if (e.key === 'End')    { currentPage = totalPages - 1; render(); }
-  });
+  if (paginated) {
+    // The FRONT cover's own on-screen hint promises "tap ... to enter" — the
+    // generic .edge-zone strips can't cover the cover leaf without also
+    // stealing scroll taps on content leaves. Make the whole front cover
+    // tappable directly. `.closing` covers (a book's back/reopen cover, used
+    // on some pages) are excluded — those have their own explicit reopen
+    // button and must not auto-advance on tap.
+    const frontCover = document.querySelector('.cover:not(.closing)');
+    if (frontCover) {
+      frontCover.addEventListener('click', () => { if (currentPage === 0) next(); });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault(); next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault(); prev();
+      } else if (e.key === 'Home') { currentPage = 0; render(); }
+      else if (e.key === 'End')    { currentPage = totalPages - 1; render(); }
+    });
+  }
+
+  // ----- Touch swipe (paginated/book mode only — continuous mode has
+  // nothing to swipe TO, and firing a page-turn rustle sound with no
+  // visible page turn would just feel like a glitch). -----
+  const stage = document.querySelector('.manuscript-stage');
+  if (stage && paginated) {
+    let touchX = 0, touchY = 0, touchOk = false;
+
+    function inHorizontalScroller(el) {
+      for (let n = el; n && n !== stage; n = n.parentElement) {
+        if (n.scrollWidth > n.clientWidth + 8) {
+          const ox = getComputedStyle(n).overflowX;
+          if (ox === 'auto' || ox === 'scroll') return true;
+        }
+      }
+      return false;
+    }
+
+    stage.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) { touchOk = false; return; }
+      const t = e.touches[0];
+      const tag = e.target.tagName;
+      touchOk = tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT' &&
+                tag !== 'BUTTON' && !inHorizontalScroller(e.target);
+      touchX = t.clientX; touchY = t.clientY;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (e) => {
+      if (!touchOk) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchX;
+      const dy = t.clientY - touchY;
+      // Deliberate horizontal swipe: >=60px travel, mostly horizontal
+      if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+      if (dx < 0) next(); else prev();
+    }, { passive: true });
+  }
 
   render();
 
-  // ----- Dust motes -----
+  // ----- Dust motes (paginated/book mode only — the continuous mobile
+  // page hides .dust-layer via CSS too; skipping the spawner outright
+  // avoids the wasted timers/DOM churn entirely, not just the visuals). -----
   const dustLayer = document.getElementById('dust-layer');
-  if (dustLayer) {
+  if (dustLayer && paginated) {
     const MAX_MOTES = 32;
     function spawnMote() {
       const m = document.createElement('div');
@@ -149,9 +235,12 @@
       dustLayer.appendChild(m);
       setTimeout(() => m.remove(), (dur + 3) * 1000);
     }
-    for (let i = 0; i < MAX_MOTES; i++) setTimeout(spawnMote, Math.random() * 8000);
-    setInterval(() => {
-      if (dustLayer.children.length < MAX_MOTES) spawnMote();
-    }, 700);
+    // Both the startup stagger and the steady-state interval must share ONE
+    // gate (children.length < MAX_MOTES) — otherwise, while the staggered
+    // batch is still arriving (up to 8s), the interval independently adds its
+    // own motes on top and briefly overshoots MAX_MOTES.
+    function spawnIfRoom() { if (dustLayer.children.length < MAX_MOTES) spawnMote(); }
+    for (let i = 0; i < MAX_MOTES; i++) setTimeout(spawnIfRoom, Math.random() * 8000);
+    setInterval(spawnIfRoom, 700);
   }
 })();

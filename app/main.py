@@ -34,6 +34,25 @@ from app.daemon.transit_worker import NadiTransitDaemon
 # location is stable regardless of where uvicorn is launched.
 _APP_TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
+
+class _RevalidatingStaticFiles(StaticFiles):
+    """StaticFiles that forces a conditional GET on every load.
+
+    Starlette's default StaticFiles sets Last-Modified/ETag but no Cache-Control, so
+    browsers apply HEURISTIC freshness (commonly ~10% of file age since Last-Modified)
+    and can serve a stale manuscript.css/js from disk cache with NO request reaching the
+    server at all â€” a real bug: after any edit, a visitor's browser can keep running the
+    old script indefinitely with no way to notice. `no-cache` still allows an efficient
+    304 when nothing changed; it just guarantees a change is never missed. Discovered
+    2026-07-28 chasing a report of mobile taps silently not working after a JS fix that
+    had, in fact, already shipped server-side.
+    """
+
+    def file_response(self, *args, **kwargs):  # noqa: ANN002, ANN003
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -103,7 +122,7 @@ app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) â€
 # can be launched from anywhere without breaking the asset path.
 app.mount(
     "/static",
-    StaticFiles(directory=_APP_TEMPLATES_DIR / "static"),
+    _RevalidatingStaticFiles(directory=_APP_TEMPLATES_DIR / "static"),
     name="static",
 )
 

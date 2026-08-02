@@ -48,6 +48,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 
 from app.medini.ml.report_writer import write_report
 from app.medini.ml.shap_rules import Rule, extract_rules, rank_features_by_importance
+from app.medini.ml.tree_shap import tree_shap_values
 
 logger = logging.getLogger(__name__)
 
@@ -220,11 +221,13 @@ def shap_values_for_test(
     model: xgb.XGBClassifier,
     X_test: pd.DataFrame,
 ) -> np.ndarray:
-    """Compute per-sample SHAP values via TreeExplainer."""
-    explainer = shap.TreeExplainer(model)
-    sv = explainer.shap_values(X_test)
-    # XGBoost binary models return a single (n, k) array; multiclass returns list.
-    return np.asarray(sv) if isinstance(sv, list) is False else np.asarray(sv[1])
+    """Compute per-sample TreeSHAP values, straight from XGBoost (see tree_shap.py).
+
+    This used to build a `shap.TreeExplainer`, which raises on xgboost 3.x
+    ("could not convert string to float: '[5E-1]'"). `shap` is still imported by this module
+    for the PLOTS below — `summary_plot`/`dependence_plot` take plain arrays and never parse
+    the model, so they are unaffected."""
+    return tree_shap_values(model, X_test)
 
 
 def _save_summary_plot(

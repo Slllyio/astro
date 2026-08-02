@@ -25,8 +25,9 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import shap
 import xgboost as xgb
+
+from app.medini.ml.tree_shap import tree_shap_values
 
 from app.core.ephemeris_engine import calculate_jd
 from app.medini.etl.feature_engineering import compute_chart_features
@@ -279,12 +280,11 @@ def _top_shap_contributors(
     """Per-feature SHAP contribution for THIS one chart. Returns the top-N
     by |shap_value| with the feature value alongside, so the response reads
     like a story ("Mars in Capricorn contributed +0.18 to the prediction")."""
-    explainer = shap.TreeExplainer(model)
-    # X has shape (1, n_features); shap_values has the same shape (binary).
-    shap_values = explainer.shap_values(X)
-    # XGBoost binary returns a single array, multiclass returns a list.
-    sv = shap_values if not isinstance(shap_values, list) else shap_values[1]
-    sv = np.asarray(sv).reshape(-1)  # flatten to 1D over features
+    # TreeSHAP straight from XGBoost — see tree_shap.py. `shap.TreeExplainer` used to be built
+    # here and raises on xgboost 3.x ("could not convert string to float: '[5E-1]'"), which took
+    # this SERVING path down entirely (/medini/predict).
+    # X has shape (1, n_features); the returned array has the same shape.
+    sv = tree_shap_values(model, X).reshape(-1)  # flatten to 1D over features
 
     contributors: list[dict[str, Any]] = []
     for col, shap_val in zip(X.columns, sv):

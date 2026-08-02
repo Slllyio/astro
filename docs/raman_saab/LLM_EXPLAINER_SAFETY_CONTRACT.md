@@ -26,13 +26,35 @@ the model in a prompt.
    token; `provenance_check` flags any such token not present verbatim in the evidence
    (`fabricated_citations`) and the route refuses on it — otherwise the frontend would render an
    invented verse number as a clickable "Raman source".
+
+   **Citation SUPPORT (added 2026-08-02, `app/llm/citation_support.py`).** Clauses 2 and 3 score
+   citation *presence*: they prove an anchor exists and is real, never that the cited fact
+   actually contains the claim. A sentence asserting a number, planet, sign, nakshatra or yoga
+   that lives in a DIFFERENT fact scored a perfect 1.0 grounding ratio and passed every guard.
+   Measured on the Phase-2 teacher corpus: 12.8% of checkable single-cite sentences failed this
+   check (29.8% of rows carried one), and the student trained on that distribution — which is
+   why "cites a real `[Fact N]` but narrates another fact's numbers" survived the Phase-7
+   evidence decomposition. The two failures are split by severity:
+   - **Mis-attribution** (78%) — the token IS in another fact; the claim is true of the evidence
+     and only the pointer is wrong. Reported (`mis_attributed`) and **still served**: refusing it
+     would drop a correct reading to engine prose. `repair_citations` retargets it
+     deterministically in the TRAINING corpus, so the student learns the right pointer.
+   - **Fabrication** (22%) — no fact supports the token, i.e. the model asserted something the
+     engine never computed. `unsupported_claims` ⇒ **refuse**, same standing as a bad anchor.
+
+   Conservative by construction (a false positive here refuses a good answer): only single-cite
+   sentences are audited, number-WORDS are never checked, and numbers ≥10 match within ±1 for
+   the engine's own rounding while numbers <10 must match exactly. Non-Vedic bodies (Uranus,
+   Neptune, Pluto, Chiron, Lilith) are checkable *specifically so they can never pass* — Raman's
+   system does not compute them, so any mention is by definition unsupported.
 4. **Never judge, never predict.** The prompt forbids new verdicts and any prediction/forecast
    language (marriage, wealth, illness, death, length of life). A broadened denylist
    (`_FORBIDDEN_RE`) is a TRIPWIRE only — because a denylist is necessarily incomplete, a hit is
    not annotated but **refused**, and the other guards (grounding, gloss cap) contain paraphrases
    that slip it.
 5. **Refuse, don't annotate.** `refusal_reason()` returns non-None on ANY hard guard — a
-   forbidden move, a fabricated citation, a bad anchor, sub-threshold paragraph grounding
+   forbidden move, a fabricated citation, a bad anchor, an unsupported claim, sub-threshold
+   paragraph grounding
    (`REPORT_LLM_GROUNDING_MIN`, default 0.6), or excess gloss — and the route then **discards
    the LLM text and serves the deterministic fallback** (the report's own plain prose). The LLM's
    words never reach the user when any guard trips. The hard guards (prediction language,

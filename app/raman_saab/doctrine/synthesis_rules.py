@@ -452,6 +452,15 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         "How much of a house a planet can deliver in its period is itself a measured quantity.",
         ("Life-narrative", "House-by-house"), Citation("GBB-1", 203)),
     SynthesisRule(
+        "SYN_R14_BR_LIBRA_SATURN_DASA", "raman", "R14",
+        "Bhavartha Ratnakara's Libra-Saturn combination", "evaluable", _R,
+        "Bhavartha Ratnakara: one born in Libra becomes fortunate during Saturn's Dasa, provided "
+        "Jupiter is in the 6th or 12th and the Moon is in Lagna. Encoded strictly as stated; "
+        "Raman's own application allowed 'a slight modification' on one chart, which is his "
+        "judgment there rather than a widening of the dictum.",
+        "A classical Libra-ascendant combination that marks Saturn's period as the fortunate one.",
+        ("Life-narrative", "Chart signature"), Citation("NH", 9580)),
+    SynthesisRule(
         "SYN_R8_TRANSIT_CATALYST", "raman", "R8",
         "Transits are catalysts gated by the dasha", "evaluable", _R,
         "Transits must be looked into only after determining the operative Dasha; they are "
@@ -661,6 +670,32 @@ def _chk_r7(ctx: SynthesisContext) -> Optional[str]:
             f"strength — {near} can find expression through him this period")
 
 
+def _chk_r14(ctx: SynthesisContext) -> Optional[str]:
+    """Bhavartha Ratnakara's Libra dictum, as Raman reproduces it (NH:9578-9581).
+
+    "The dictum of Bhavartha Ratnakara, with a slight modification, is eminently applicable in
+    this case. The combination suggests that 'one born in Libra becomes fortunate during Saturn
+    Dasa, provided Jupiter is in the 6th or 12th and the Moon is in Lagna'."
+
+    Encoded in its STRICT form. Raman applied it to Franco with "a slight modification" (there
+    the Moon is exalted in the 8th, not in Lagna) — that relaxation is his judgment on a
+    specific chart, not part of the stated dictum, so widening the rule to match it would be
+    inventing doctrine. BR enters only where a registered Raman book reproduces it; the
+    project's other BR rule (the karaka-in-12th list) is sourced the same way, via HTJAH-II."""
+    if ctx.chart.asc_sign != 7:                       # Libra
+        return None
+    jup, moon = ctx.chart.planets.get("Jupiter"), ctx.chart.planets.get("Moon")
+    if jup is None or moon is None:
+        return None
+    if jup.bhava not in (6, 12) or moon.bhava != 1:
+        return None
+    win = _md_window(ctx, "Saturn")
+    when = (f" — his MD runs {_jd_date(win[0])}..{_jd_date(win[1])}" if win
+            else " — no Saturn MD falls inside the displayed window")
+    return (f"Libra Lagna with Jupiter in the {jup.bhava}th and the Moon in Lagna: Bhavartha "
+            f"Ratnakara's combination for fortune during Saturn's Dasa is present{when}")
+
+
 def _chk_r8(ctx: SynthesisContext) -> Optional[str]:
     if not ctx.gochara or ctx.period is None:
         return None
@@ -775,6 +810,7 @@ _CHECKERS: Final[dict[str, Callable[[SynthesisContext], Optional[str]]]] = {
     "SYN_R11_TRANSIT_BINDU_SCALE": _chk_r11,
     "SYN_R12_YOGA_FUNCTIONAL_DILUTION": _chk_r12,
     "SYN_R13_RAJA_VARGOTTAMA_RANK": _chk_r13,
+    "SYN_R14_BR_LIBRA_SATURN_DASA": _chk_r14,
 }
 
 

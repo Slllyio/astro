@@ -14,22 +14,22 @@
       "H1.L.3",
       "H1.M.S06"
     ],
-    "rollup": "favourable",
+    "rollup": "mixed",
     "significations": {
       "body": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "health": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "self": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

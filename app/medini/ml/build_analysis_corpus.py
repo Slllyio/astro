@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 DOSSIER_PATH = Path("app/medini/data/person_dossier.parquet")
 NOTABLE_TEXT = Path("data/knowledge_library/sources/Notable Horoscopes BV Raman.txt")
-#: the golden-accuracy fixture behind the 261/293 textbook-fidelity ratchet (CLAUDE.md) — each
+#: the golden-accuracy fixture behind the 259/293 textbook-fidelity ratchet (CLAUDE.md) — each
 #: row's `expected_verdicts.*.verdict_prose` is a short, authenticated fragment of Raman's own
 #: diction (terse, declarative, e.g. "Physical features predominantly saturnine — tall, lean,
 #: much hair, fair; not quite healthy."). Repurposed here (2026-07-29) as a SECOND, much larger

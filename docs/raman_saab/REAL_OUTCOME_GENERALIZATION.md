@@ -4,7 +4,8 @@
 > overfitting to worked examples is not accuracy." — CLAUDE.md Prime Directive
 >
 > The golden ratchet measures **textbook fidelity** (does the engine reproduce Raman's printed
-> verdicts — currently 261/293 = 89%). It has never measured **real-outcome generalization** (does
+> verdicts — currently 259/293 = 88.4% exact, 283/293 = 96.6% within one ordinal step). It has
+> never measured **real-outcome generalization** (does
 > the engine predict *actual lives*). Using the AstroDatabank AA-rated corpus (20,218 charts with
 > clean birth times + 47k dated life events, under `data/astro_databank/`, local/gitignored), this is
 > the first at-scale measurement of that second axis. Harness: `tools/raman_saab/real_outcome_test.py`.
@@ -115,7 +116,7 @@ Three honest qualifications, all pre-registered before results were read:
 Governance stands: these results are a monitoring axis only — the golden (textbook) ratchet remains
 the engine's development gate, and the two axes are reported side by side, never averaged:
 
-> **Textbook fidelity: 261/293 = 89.1% (at its proven ceiling).
+> **Textbook fidelity: 259/293 = 88.4% exact / 283/293 = 96.6% within-1 (at its proven ceiling).
 > Real-outcome generalization: statistically null on all pre-registered core tests (n=22,177).**
 
 That pair of numbers, stated together, is the Prime Directive's "measure honestly" fulfilled.

@@ -7,8 +7,8 @@ what the AI is allowed to do, and how the system keeps itself honest. (2026-07-2
 
 ## 1. What this system is
 
-A **deterministic Vedic-astrology engine** encoding B. V. Raman's system (89.1% exact against
-his own printed verdicts), wrapped in a page-turning Pothi-manuscript web report, with a
+A **deterministic Vedic-astrology engine** encoding B. V. Raman's system (88.4% exact /
+96.6% within one ordinal step against his own printed verdicts), wrapped in a page-turning Pothi-manuscript web report, with a
 carefully-walled AI layer on top. The engine is the sole authority; every AI surface either
 translates it, or is explicitly labeled as *not* it.
 
@@ -104,7 +104,8 @@ and every pass grows the corpus at $0).
 3. **Total privacy.** Birth data — the most personal data an astrology app touches — never
    leaves your machine. No third-party API sees a chart.
 4. **Fidelity with receipts.** Every verdict traces to a cited Raman passage you can open in
-   one click; the 261/293 golden ratchet stops any regression permanently.
+   one click; the 259/293 golden ratchet stops any regression permanently (re-based DOWN from
+   261/293 on 2026-08-03 to buy 2 fewer favourable<->afflicted inversions — see B1).
 5. **Safety that survives a bad model.** The guards are *code*, not prompts. A weak or
    jailbroken model can only ever degrade to the engine's own prose — verified live when the
    1.5B model's decree slipped and the guard served engine text instead.
@@ -190,7 +191,19 @@ Every astrological conclusion originates from deterministic calculations, docume
 Artificial intelligence is used exclusively for explanation, summarization, and optional speculative discussion that is explicitly separated from the engine's conclusions.
 
 Key Principles
-PrincipleDescriptionDeterministicSame birth → identical readingExplainableEvery verdict has evidencePrivacyRuns locallySafeAI cannot bypass engineHonestValidation limitations disclosed
+Principle
+Description
+Deterministic
+Same birth → identical reading
+Explainable
+Every verdict has evidence
+Privacy
+Runs locally
+Safe
+AI cannot bypass engine
+Honest
+Validation limitations disclosed
+
 Architecture Overview
 Birth Details
       │
@@ -312,7 +325,35 @@ No information is discarded.
 
 4 The Thirteen-Leaf Report
 Each report resembles a traditional Indian palm manuscript.
-LeafPurposeCoverIntroductionBirthBirth detailsDigestRanked insightsSignatureChart identityChartsHoroscope diagramsYogasClassical combinationsHousesHouse analysisMattersWealth, career, healthTimelineVimshottariTransitCurrent influencesDivisionalVargasInsightsAI & statisticsNichodSummary
+Leaf
+Purpose
+Cover
+Introduction
+Birth
+Birth details
+Digest
+Ranked insights
+Signature
+Chart identity
+Charts
+Horoscope diagrams
+Yogas
+Classical combinations
+Houses
+House analysis
+Matters
+Wealth, career, health
+Timeline
+Vimshottari
+Transit
+Current influences
+Divisional
+Vargas
+Insights
+AI & statistics
+Nichod
+Summary
+
 5 Evidence Generation
 Every statement is accompanied by
 • source rule
@@ -335,7 +376,17 @@ Planetary Positions
 Astronomical Data
 
 6 Four-Voice Contract
-LayerSourceReportEngineAsk PanelLocal LLMAI InterpretationLocal LLMFeedbackEngineEach layer has clearly defined responsibilities.
+Layer
+Source
+Report
+Engine
+Ask Panel
+Local LLM
+AI Interpretation
+Local LLM
+Feedback
+Engine
+Each layer has clearly defined responsibilities.
 
 7 AI Safety
 User Question
@@ -429,12 +480,22 @@ Only grounded responses enter the corpus.
 10 Validation
 Engine
 Golden Tests
-261 / 293
+259 / 293
 Accuracy against published B. V. Raman interpretations
-89.1%
+88.4% exact / 96.6% within-1
 
 Analysis Model
-MetricResultClaude Keep Rate87.5%Gemma Keep Rate100%Cost$0PrivacyLocal
+Metric
+Result
+Claude Keep Rate
+87.5%
+Gemma Keep Rate
+100%
+Cost
+$0
+Privacy
+Local
+
 11 Advantages
 • Explainable reasoning
 • Deterministic outputs

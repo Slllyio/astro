@@ -9,8 +9,9 @@
 We built the most faithful digital encoding of Sri B. V. Raman's Parashari-natal system in
 existence — 845 doctrine rules and 72 yogas, each carrying a verbatim citation to his texts, an
 integrated house-judgment engine, numeric Ayurdaya longevity, Vimshottari/maraka timing — and
-verified it two ways: against Raman's own published verdicts (**261/293 = 89.1% exact**, with the
-ceiling proven un-improvable by five independent methods) and against external astronomy
+verified it two ways: against Raman's own published verdicts (**259/293 = 88.4% exact,
+283/293 = 96.6% within one ordinal step**, with the ceiling proven un-improvable by five
+independent methods) and against external astronomy
 (ascendants agree with AstroDatabank's published placements at 96.7%, median error 0.5°). We then
 did what the system's own author demanded — Raman: *"the purely mathematical methods... must be
 applied to thousands of horoscopes"* (HTJAH-II:3937-3943) — and tested the encoded doctrine
@@ -49,7 +50,10 @@ nativities, never against engine self-output.
 - **The golden ratchet:** 293 confirmed verdicts extracted from Raman's books; accuracy may never
   regress; every re-base is a human, reasoned act recorded in a lineage log.
 
-**Fidelity result: 261/293 = 89.1% exact, 281/293 = 95.9% within one ordinal step.** The ceiling
+**Fidelity result: 259/293 = 88.4% exact, 283/293 = 96.6% within one ordinal step.** (Was
+261/293 = 89.1% exact / 281/293 = 95.9% within-1 until 2026-08-03, when enabling the B1
+dominant-factor guard deliberately traded 2 strict matches for 2 fewer favourable↔afflicted
+inversions — real errors 12 → 10. See `DOCTRINE_BACKLOG` B1.) The ceiling
 was then *proven*: the placement-discriminator harvest is exhausted (a systematic scan of every
 miss-signification found no clean rule left), the karaka frames over-fire, a bounded threshold
 tuner finds no improving configuration (holdout-locked, twice, on 5× data), the residual misses
@@ -170,7 +174,11 @@ practice under unbounded flexibility.
    (`confirmatory_study.py`) awaiting a genuinely large independent sample that does not yet exist.
 6. **The verdicts, side by side, never averaged:**
 
-> **Fidelity to Raman: 89.1% — proven, ceilinged, permanent.**
+> **Fidelity to Raman: 88.4% exact / 96.6% within one ordinal step — proven and ceilinged.**
+> *(The ceiling is permanent — five independent methods proved it un-improvable. Where the line
+> falls BETWEEN "exact" and "within one step" is a deliberate, recorded trade: on 2026-08-03 the
+> B1 dominant-factor guard gave up 2 strict matches to remove 2 favourable↔afflicted inversions.
+> The number moved; the ceiling did not.)*
 > **Correspondence with reality: null everywhere tested, by two methodologically independent
 > programs, by the doctrine's own preferred questions, with every apparent survivor chased down and
 > with controls honest in both directions.**

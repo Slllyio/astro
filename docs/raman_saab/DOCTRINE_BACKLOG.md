@@ -46,8 +46,8 @@ each factor (Shadbala adjusted for combustion / debilitation-uncancelled / dusth
 compared; a decisively-weak dominant factor denies, a decisively-strong one carries. Guard
 hard against regressing chart_54 and the broad ratchet. Shared judge → user sign-off.
 
-**Status 2026-08-03 — BUILT AND MEASURED, SHIPPED DISABLED.**
-`house_template.B1_DOMINANT_FACTOR_GUARD` (default **False**) blocks clause 2's strong-pillar
+**Status 2026-08-03 — BUILT, MEASURED, and ENABLED (user-signed-off).**
+`house_template.B1_DOMINANT_FACTOR_GUARD` (default **True** since 2026-08-03) blocks clause 2's strong-pillar
 FAVOUR lift when the LORD is hard-afflicted — combust or debilitation-uncancelled, the two
 afflictions Raman reads as making a planet powerless in itself (HTJAH-I:3788). Dusthana
 placement is deliberately excluded: Raman's dusthana readings are matter-specific (a strong
@@ -58,9 +58,14 @@ Measured A/B on the golden corpus — it splits the two ratchets:
 
 | metric | guard OFF | guard ON |
 |---|---|---|
-| strict exact | **261/293 = 0.891** | 259/293 = 0.884 (**would fail the ratchet**) |
-| within-1 ordinal | 281/293 = 0.959 | **283/293 = 0.966** |
-| real errors (dist>=2) | 12 | **10** |
+| strict exact | 261/293 = 0.891 | **259/293 = 0.884 — SHIPPED** |
+| within-1 ordinal | 281/293 = 0.959 | **283/293 = 0.966 — SHIPPED** |
+| real errors (dist>=2) | 12 | **10 — SHIPPED** |
+
+Both golden baselines were re-based in the enabling commit (the human-bump rule requires the
+re-base and the change that earns it to land together). This is the **first deliberate DOWNWARD
+strict re-base** in the project's lineage — accepted because a favourable<->afflicted INVERSION is
+a worse doctrinal failure than a favourable/mixed boundary call, and the ordinal headline improves.
 
 Per-chart: **+2 exact** (chart_18 H1, chart_52 H3 — both favourable→mixed, matching Raman),
 **2 real errors downgraded to off-by-one** (chart_20 H1, h12_05 H12), **−4 exact**

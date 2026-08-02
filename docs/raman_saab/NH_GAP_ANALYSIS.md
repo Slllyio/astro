@@ -163,6 +163,12 @@ not blindly re-attempted. The remaining B1 avenue is the deeper, riskier `_decid
 ceiling stands at 209/241.
 
 ## The faithful ceiling — confirmed on the EXPANDED corpus (2026-07-24): every systematic lever exhausted
+> **Later note (2026-08-03).** The 261/293 below is the figure as it stood when this sweep ran, and
+> the sweep's conclusion is unchanged: every systematic lever is still exhausted. The live ratchet
+> is now **259/293 = 88.4% exact / 283/293 = 96.6% within-1** — re-based DOWN deliberately when the
+> B1 dominant-factor guard was enabled, buying real errors 12 -> 10. That was a TRADE, not a lever;
+> it did not beat the ceiling this section proves. See `DOCTRINE_BACKLOG` B1.
+
 After the NH corpus expansion (192 -> 225 charts, fidelity 209/241 -> 261/293 = 89.1% exact) a full sweep
 of every systematic accuracy lever was run, and ALL are exhausted:
 1. **Placement discriminators** (`tools/raman_saab/discriminator_scan.py`): of 35 miss-significations only 2

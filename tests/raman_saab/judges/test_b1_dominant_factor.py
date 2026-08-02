@@ -41,14 +41,16 @@ def _restore_flag():
     ht.B1_DOMINANT_FACTOR_GUARD = original
 
 
-class TestShipsDisabled:
-    def test_guard_is_off_by_default(self):
-        """Enabling it drops the strict ratchet 261->259; that is a human decision (B1)."""
-        assert ht.B1_DOMINANT_FACTOR_GUARD is False
+class TestShippedState:
+    def test_guard_is_on_by_default(self):
+        """ENABLED 2026-08-03 on an explicit user decision. Both golden baselines were re-based
+        in that same commit (strict 261->259, ordinal 281->283) — the first deliberate DOWNWARD
+        strict re-base, accepted because it removes 2 favourable/afflicted inversions."""
+        assert ht.B1_DOMINANT_FACTOR_GUARD is True
 
-    def test_with_the_guard_off_a_hard_afflicted_lord_still_lifts(self):
-        """Proves the default is a strict no-op: the same ledger that the guard would block
-        still reads favourable while the flag is off, so no verdict moves on the shipped path."""
+    def test_turning_it_off_restores_the_old_lift(self):
+        """The flag is a real switch, not decoration: with it off the same ledger lifts again,
+        so the A/B that justified enabling it stays reproducible."""
         ht.B1_DOMINANT_FACTOR_GUARD = False
         verdict, _shifted = ht._decide(_ledger(lord_hard_afflicted=True))
         assert verdict == "favourable"

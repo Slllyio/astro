@@ -20,9 +20,9 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "ear_throat": {
         "degree": "strong",
@@ -30,14 +30,14 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "siblings": {
-        "degree": "moderate",
+        "degree": "mild",
         "lead_frame": "moon",
-        "verdict": "favourable"
+        "verdict": "mixed"
       }
     }
   }

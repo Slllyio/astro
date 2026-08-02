@@ -37,12 +37,21 @@ engine *more faithful to B. V. Raman*.
 The directive was carried out in full, and then honored to its last clause ("measure honestly;
 report both"). The results are settled and MUST NOT be re-litigated by re-running what is closed:
 
-- **Textbook fidelity: ACHIEVED and at its proven ceiling — 261/293 = 89.1% exact** against
-  Raman's own printed verdicts, externally verified casting (96.7% ascendant agreement with
-  AstroDatabank's published placements). Five independent methods proved the ceiling cannot be
-  faithfully exceeded (placement harvest exhausted, karaka frames over-fire, tuner null on 5x data,
-  no clean cited-fix patterns, ML on the same features loses to the hand-tuned judge). **Do not
-  chase accuracy further; it is not there without overfitting.**
+- **Textbook fidelity: ACHIEVED and at its proven ceiling — 259/293 = 88.4% exact and
+  283/293 = 96.6% within one ordinal step** against Raman's own printed verdicts, externally
+  verified casting (96.7% ascendant agreement with AstroDatabank's published placements). Five
+  independent methods proved the ceiling cannot be faithfully exceeded (placement harvest
+  exhausted, karaka frames over-fire, tuner null on 5x data, no clean cited-fix patterns, ML on
+  the same features loses to the hand-tuned judge). **Do not chase accuracy further; it is not
+  there without overfitting.**
+  - **Read the two fidelity axes side by side, never just the strict one.** The strict figure
+    moved DOWN 261→259 on 2026-08-03 — deliberately, user-signed-off — when the B1 dominant-factor
+    guard was enabled (`house_template.B1_DOMINANT_FACTOR_GUARD`). It bought within-1 281→283 and
+    cut REAL errors (distance ≥ 2, i.e. favourable↔afflicted inversions) **12 → 10**. A strict
+    miss that is one ordinal step out is a contestable boundary call; an inversion is the engine
+    saying the opposite of Raman. Trading 2 of the second for 2 of the first is a fidelity GAIN,
+    and the ceiling claim is untouched — it was never beaten, only re-traded. Full measurement
+    and the per-chart diff: `DOCTRINE_BACKLOG` B1 + `tests/fixtures/golden_accuracy_baseline.json`.
 - **Real-outcome generalization: NULL — measured, not assumed.** 22,177 verified charts, 47k dated
   events, pre-registered, sham-gated, controls valid in both directions: engine verdicts, raw rule
   evidence, the 91 classical conditionals, dasha/maraka timing, and the doctrine's own primitives

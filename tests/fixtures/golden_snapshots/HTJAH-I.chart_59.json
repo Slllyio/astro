@@ -26,12 +26,12 @@
       "H3.C.8",
       "H3.L.11"
     ],
-    "rollup": "afflicted",
+    "rollup": "mixed",
     "significations": {
       "courage": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "ear_throat": {
         "degree": "mild",
@@ -39,9 +39,9 @@
         "verdict": "favourable"
       },
       "short_journeys": {
-        "degree": "strong",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "favourable"
+        "verdict": "mixed"
       },
       "siblings": {
         "degree": "mild",

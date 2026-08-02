@@ -335,10 +335,15 @@ def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
     return shadbala_total.is_powerful(planet, eff)
 
 
-#: B1 comparative weighing (DOCTRINE_BACKLOG B1). OFF ships as False until a measured
-#: non-regression on the golden ratchet justifies it — read LIVE off the module so a sweep can
+#: B1 comparative weighing (DOCTRINE_BACKLOG B1). ENABLED 2026-08-03 on an explicit user
+#: decision, knowing it trades strict exact accuracy for fewer catastrophic errors:
+#: strict 261/293 -> 259/293, within-1 ordinal 281/293 -> 283/293, real errors (dist>=2) 12 -> 10.
+#: Both golden baselines were re-based in the same commit, per the human-bump rule. This is the
+#: first DOWNWARD strict re-base in the project's lineage and it is deliberate: a favourable/
+#: afflicted inversion is a worse failure than a favourable/mixed boundary call, and HTJAH-I:3788
+#: is explicit that a powerless lord denies the matter. Read LIVE off the module so a sweep can
 #: rebind it, exactly like the CONTRA_PILLAR_* knobs.
-B1_DOMINANT_FACTOR_GUARD: bool = False
+B1_DOMINANT_FACTOR_GUARD: bool = True
 
 
 def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:

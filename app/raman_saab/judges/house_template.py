@@ -58,6 +58,7 @@ from app.raman_saab.primitives import relationships as r
 from app.raman_saab.primitives import vimshottari
 from app.raman_saab.primitives.bhangas import neecha_bhanga, parivartana
 from app.raman_saab.primitives.dignity import dignity
+from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS, is_yogakaraka)
 from app.raman_saab.primitives.shadbala import bhava_bala as bhava_bala_mod
@@ -193,6 +194,10 @@ class FrameLedger:
     fired_malefic: tuple[rf.FiredRule, ...]
     fired_neutral: tuple[rf.FiredRule, ...]
     flags: tuple[str, ...] = field(default_factory=tuple)
+    #: B1 — the LORD carries a hard placement affliction (combust, or an uncancelled
+    #: debilitation) that Raman reads as powerless independently of its Shadbala total.
+    #: None on Track-B (no positions to judge). See `_lord_hard_afflicted`.
+    lord_hard_afflicted: Optional[bool] = None
 
 
 @dataclass(frozen=True)
@@ -330,6 +335,31 @@ def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
     return shadbala_total.is_powerful(planet, eff)
 
 
+#: B1 comparative weighing (DOCTRINE_BACKLOG B1). OFF ships as False until a measured
+#: non-regression on the golden ratchet justifies it — read LIVE off the module so a sweep can
+#: rebind it, exactly like the CONTRA_PILLAR_* knobs.
+B1_DOMINANT_FACTOR_GUARD: bool = False
+
+
+def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
+    """Does the LORD carry an affliction Raman reads as overriding its Shadbala total?
+
+    HTJAH-I:3788 is the case: "Though the Karaka Mars is well disposed, the fact of the ruler
+    of the third becoming combust and hence powerless, renders the third house weak. This
+    stands against his having any brothers." The lord's Shadbala reads strong; Raman calls it
+    powerless and DENIES the matter — so a strong karaka must not be allowed to carry it.
+
+    Only the two afflictions Raman treats as making a planet powerless in itself count here:
+    combustion and an uncancelled debilitation. Dusthana placement is deliberately excluded —
+    Raman's dusthana readings are matter-specific (a strong dusthana lord FEEDS an affliction,
+    clause 1.5), so folding it in would double-count. None on Track-B."""
+    p = chart.planets.get(lord)
+    if p is None or p.shadbala_rupas is None:
+        return None
+    es = effective_strength(lord, chart)
+    return bool(es.combust > 0.0 or es.debilitated_uncancelled)
+
+
 def _total_shadbala(planet: str, chart: RamanChart) -> Optional[float]:
     p = chart.planets.get(planet)
     if p is None or p.shadbala_rupas is None:
@@ -413,8 +443,17 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
         strong = sum(1 for p in known if p is True)
         if known and weak >= shadbala_total.CONTRA_PILLAR_AFFLICT:
             base = "afflicted"
+        # B1 DOMINANT-FACTOR GUARD (HTJAH-I:3788): a lord that is combust or debilitated-
+        # uncancelled is "powerless" in Raman's own reading, and he DENIES the matter on that
+        # basis even though the karaka is well disposed. Counting pillars cannot express it —
+        # lord-weak + karaka-strong + bhava-strong counts 2 strong and lifts to favourable,
+        # exactly inverting him. So the strong-pillar lift is blocked when the LORD carries a
+        # hard affliction; the matter falls through to 'mixed', where the navamsa modulator
+        # still has its say. Same shape as the navamsa guard above: a contradiction is never
+        # painted over, and the AFFLICTED arm stays untouched.
         elif (known and strong >= shadbala_total.CONTRA_PILLAR_FAVOUR
-                and L.navamsa_status != "weakens"):
+                and L.navamsa_status != "weakens"
+                and not (B1_DOMINANT_FACTOR_GUARD and L.lord_hard_afflicted)):
             base = "favourable"
         else:
             base = "mixed"
@@ -918,6 +957,7 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # Strength pillars. When lord==karaka the two pillars are collapsed to a single value
     # so one affliction is not double-counted.
     lord_strong = _strong(lord, chart)
+    lord_hard = _lord_hard_afflicted(lord, chart)        # B1 (HTJAH-I:3788)
     karaka_strong = lord_strong if lord_karaka_identical else _strong(karaka, chart)
 
     marakas = _maraka_grahas(chart)
@@ -994,7 +1034,7 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
         maraka_active=maraka_active, parivartana_resilient=parivartana_resilient,
         lord_karaka_identical=lord_karaka_identical,
         fired_benefic=benefic, fired_malefic=malefic, fired_neutral=neutral,
-        flags=tuple(dict.fromkeys(flags)))
+        flags=tuple(dict.fromkeys(flags)), lord_hard_afflicted=lord_hard)
 
 
 # ---------------------------------------------------------------------------

@@ -46,6 +46,38 @@ each factor (Shadbala adjusted for combustion / debilitation-uncancelled / dusth
 compared; a decisively-weak dominant factor denies, a decisively-strong one carries. Guard
 hard against regressing chart_54 and the broad ratchet. Shared judge → user sign-off.
 
+**Status 2026-08-03 — BUILT AND MEASURED, SHIPPED DISABLED.**
+`house_template.B1_DOMINANT_FACTOR_GUARD` (default **False**) blocks clause 2's strong-pillar
+FAVOUR lift when the LORD is hard-afflicted — combust or debilitation-uncancelled, the two
+afflictions Raman reads as making a planet powerless in itself (HTJAH-I:3788). Dusthana
+placement is deliberately excluded: Raman's dusthana readings are matter-specific (a strong
+dusthana lord *feeds* an affliction, clause 1.5), so folding it in double-counts.
+`primitives/effective_strength.py` supplies the facts; `_lord_hard_afflicted` reads them.
+
+Measured A/B on the golden corpus — it splits the two ratchets:
+
+| metric | guard OFF | guard ON |
+|---|---|---|
+| strict exact | **261/293 = 0.891** | 259/293 = 0.884 (**would fail the ratchet**) |
+| within-1 ordinal | 281/293 = 0.959 | **283/293 = 0.966** |
+| real errors (dist>=2) | 12 | **10** |
+
+Per-chart: **+2 exact** (chart_18 H1, chart_52 H3 — both favourable→mixed, matching Raman),
+**2 real errors downgraded to off-by-one** (chart_20 H1, h12_05 H12), **−4 exact**
+(chart_54 H3, NH.chart_43 H1, h12_17 + h12_18 H12/moksha).
+
+Two observations for whoever revisits this:
+- chart_52 H3 improves while chart_54 H3 regresses — same matter, opposite directions — so a
+  blanket lord-guard is not the whole of Raman's comparative weighing.
+- **Half the regressions are H12/moksha**, and H12 is an atlas-proven INVERTED channel. Scoping
+  the guard away from inverted channels would likely win on both metrics — but that is fitting
+  to the goldens, which the MEASURED TRUTH lock warns is not accuracy. Deliberate call, not a
+  silent tweak.
+
+The tuner cannot find this: `tune_thresholds --holdout-lock` converges at iteration 0 (fit
+0.907, holdout 0.841, no improving neighbour) because B1 is a *comparison*, not a weight, and
+no swept knob expresses "the dominant factor decides".
+
 ## B2 — Marginal-strength band  `threshold`  (Phase 2b) — ✅ SHIPPED 2026-06-27
 **Status.** `_marginal_karaka_gate` (house_template.py): a MARRIAGE verdict afflicted PURELY by a
 marginally-weak Venus karaka (within 0.2 rupa of MIN_REQUIRED) + a STRONG lord + NO real malefic

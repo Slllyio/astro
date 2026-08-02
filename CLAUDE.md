@@ -127,9 +127,14 @@ This is a standing user directive, confirmed twice and once violated — treat i
 
 ## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
 
-- **`/report/insights` ("read as one story") and `/report/explain` are DETERMINISTIC — no model
-  call, ever** (the cost cut; `test_insights_and_explain_make_no_model_call` pins it). The engine's
-  own ranked digest / plain prose IS the product there.
+- **`/report/insights` ("read as one story") and `/report/explain` DO call the local model**
+  (changed 2026-07-29, corrected here 2026-08-03 — this entry still described the older
+  deterministic-only rule and cited `test_insights_and_explain_make_no_model_call`, a test that no
+  longer exists; it was replaced by `test_insights_and_explain_attempt_a_model_call`, asserting the
+  opposite). The deterministic-only rule was an *Anthropic cost* cut and lapsed once local serving
+  became $0. Both still fall back to the engine's own ranked digest / plain prose whenever the LLM
+  is disabled or unavailable, so the engine's output remains the product floor. **Latency note:**
+  on the 12B these are ~15s (`/explain`) and ~25s (`/insights`) per call, up from ~7s on the 1.5B.
 - **`/report/ask` is the grounded LLM voice**, served by the LOCAL backend by default
   (`REPORT_LLM_BACKEND="ollama"`, `REPORT_LLM_MODEL` — SystemPromptWrapper prepends the system
   prompt). `refusal_reason` is model-agnostic and stays the final gate; guard-fail → deterministic

@@ -44,6 +44,7 @@ from typing import Callable, Final, Literal, Optional
 
 from app.raman_saab.chart.constants import SIGN_LORDS
 from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.primitives.residential_strength import residential_strength
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.doctrine.yogas import FiredYoga, detect_yogas
 from app.raman_saab.primitives import ashtakavarga
@@ -444,10 +445,10 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         ("House-by-house", "Shadbala"), Citation("GBB-9", 332)),
     SynthesisRule(
         "SYN_R7_RESIDENTIAL_QUANTITY", "raman", "R7",
-        "Residential strength quantifies the period's yield", "descriptive", _R,
+        "Residential strength quantifies the period's yield", "evaluable", _R,
         "A planet's residential strength gives the exact quantity of its house's effects, which "
         "finds expression during its Dasha — modified by aspects, the Bhava's own strength and "
-        "the yoga-karakas. (Encoded pending a residential-strength primitive.)",
+        "the yoga-karakas.",
         "How much of a house a planet can deliver in its period is itself a measured quantity.",
         ("Life-narrative", "House-by-house"), Citation("GBB-1", 203)),
     SynthesisRule(
@@ -635,6 +636,31 @@ def _chk_r6(ctx: SynthesisContext) -> Optional[str]:
             f"H{hi[0]}'s indications are enjoyed most fully")
 
 
+def _chk_r7(ctx: SynthesisContext) -> Optional[str]:
+    """The running MD lord's residential strength in the bhava it occupies (GBB-1:203).
+
+    Raman states the quantity plainly — "Jupiter gives 0.64 units of the total effects of the
+    6th Bhava. This effect will materialise during his Dasa or Bhukthi" — so this reports the
+    same measure for the lord whose Dasa is actually running. It is a QUANTITY, never a
+    verdict: Raman immediately qualifies it as "a general statement standing to be modified"
+    by aspects, the Bhava's own strength and the yoga-karakas (GBB-1:207-211), so the text
+    says how much of the house the period can express, not what will happen."""
+    if ctx.period is None:
+        return None
+    lord = ctx.period.maha
+    p = ctx.chart.planets.get(lord)
+    # from_stated_positions charts carry no cusps (jd_ut None) — nothing to measure against.
+    if p is None or len(ctx.chart.bhava_madhyas) != 12 or len(ctx.chart.bhava_sandhis) != 12:
+        return None
+    bhava, strength = residential_strength(
+        p.lon, ctx.chart.bhava_madhyas, ctx.chart.bhava_sandhis)
+    near = ("sitting close to the Bhava Madhya, so nearly the whole of it" if strength >= 0.8
+            else "close to a Bhava Sandhi, so very little of it" if strength <= 0.2
+            else "part-way between the Madhya and a Sandhi, so a moderate part of it")
+    return (f"running MD lord {lord} holds {strength:.2f} of bhava {bhava}'s residential "
+            f"strength — {near} can find expression through him this period")
+
+
 def _chk_r8(ctx: SynthesisContext) -> Optional[str]:
     if not ctx.gochara or ctx.period is None:
         return None
@@ -742,6 +768,7 @@ _CHECKERS: Final[dict[str, Callable[[SynthesisContext], Optional[str]]]] = {
     "SYN_R4_MD_LORD_CONDITION": _chk_r4,
     "SYN_R5_ISHTA_KASHTA_PERIOD": _chk_r5,
     "SYN_R6_BHAVA_BALA_RANK": _chk_r6,
+    "SYN_R7_RESIDENTIAL_QUANTITY": _chk_r7,
     "SYN_R8_TRANSIT_CATALYST": _chk_r8,
     "SYN_R9_MARAKA_SATURN_SIGNAL": _chk_r9,
     "SYN_R10_STRENGTH_OVERRIDES_ARISHTA": _chk_r10,

@@ -68,7 +68,9 @@ def device_label(device: torch.device) -> str:
         # DirectML registers as a `privateuseone` backend in torch.
         try:
             import torch_directml
-            return f"dml:{torch_directml.device_name(0)}"
+            # the DML driver returns a NUL-padded C string; unstripped it lands in run records
+            # and loss logs as a literal "" inside the JSON (seen in astro_analyst_lora_v3).
+            return f"dml:{torch_directml.device_name(0).rstrip(chr(0)).strip()}"
         except Exception:
             return "dml"
     return "cpu"

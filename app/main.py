@@ -15,7 +15,9 @@ from slowapi.errors import RateLimitExceeded
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
+from app.api.electional_routes import electional_router
 from app.api.forecast_routes import almanac_router, forecast_router
+from app.api.horary_routes import horary_router
 from app.api.interpret_routes import interpret_router
 from app.api.knowledge_routes import knowledge_router
 from app.api.medini_routes import medini_router
@@ -113,6 +115,8 @@ app.include_router(rectification_router)  # Birth-time rectification / discovery
 app.include_router(varga_router)  # Shodasavarga 16-divisional-chart reading (/vargas/*)
 app.include_router(report_router)  # Full detailed reading (/report/*)
 app.include_router(soul_router)  # EXPERIMENT: soul-destiny reading (/soul/*) — Jaimini firewall lifted
+app.include_router(electional_router)  # WALLED: Muhurtha elections (/electional/*)
+app.include_router(horary_router)  # WALLED: Prasna horary (/horary/*)
 
 
 # Mount static assets at /static/ — serves the Pothi manuscript design

@@ -483,16 +483,36 @@ all 5). Honest limits, NOT to be force-fixed:
 
 ## ASP ch.XV + ch.XVI mining record (2026-08-03) — so no future session re-mines blind
 
-**ch.XVI (Illustrated Horoscopes).** The preamble states Illustrated No. 1's Sun Ashtakavarga
-cell-by-cell, raw AND reduced (ASP-16:40-51): raw checksums to 48 and ALL SIX printed reduced
-cells reproduce under `trikona_shodhana` exactly (`test_asp_illustrated.py`) — the third
-independent printed-book validation of the subtract reading. The remaining ~8 nativities
-(Roosevelt, Marx, Ford, Mussolini, Tagore, Stalin-era dates...) carry printed longitudes,
-per-planet AV figure strings, Sarvashtakavarga rows and SODYA PINDA tables — fixture gold, but
-the OCR of the longitude/figure strings is too damaged to extract responsibly (Roosevelt's
-month digit corrupted, Moon's longitude lost). RE-EXTRACT BY VISION from the source PDF
-(uploads/…89c0f204…pdf, PDF pages 84-90) in a fresh session; several charts likely overlap
-existing NH goldens (Tagore, Ford) — flag for the golden track, do not confirm unilaterally.
+**ch.XVI (Illustrated Horoscopes) — CLOSED, whole-pipeline validated on 9 nativities, 63/63
+printed Sodya Pindas exact.** The preamble states Illustrated No. 1's Sun Ashtakavarga cell-by-
+cell, raw AND reduced (ASP-16:40-51): raw checksums to 48 and ALL SIX printed reduced cells
+reproduce under `trikona_shodhana` exactly. Vision-re-extracted (PDF pp.84-87) all 12 remaining
+nativities' printed longitudes + Sodya Pindas; ran the full pipeline (BAV -> Trikona ->
+Ekadhipatya -> Rasi+Graha Gunakara -> Sodya Pinda) against each. Result (`test_asp_illustrated.py`):
+- **9 nativities, 63 pindas, EXACT**: "An Eminent Indian", Roosevelt, Marx, Havelock Ellis,
+  Sankaracharya of Govardhan Mutt, Wodiyar, Nehru, Mussolini, Narasimha Bharathi. This
+  definitively settles the earlier ASP-14 Standard-Horoscope delta (Sun 182 printed vs 191
+  computed): the rules are right, that one printed table was a hand-computation slip.
+- **Windsor and Golwalkar, 6/7 exact, Venus off by +3 and +10 respectively** — re-verified
+  2026-08-03 against a clean, fully-legible re-scan (positions cross-checked self-consistent via
+  the printed table's own Rasi+Graha=Sodya arithmetic). Same deltas both times the chart was
+  read independently -> CONFIRMED as isolated Venus-cell slips in Raman's own printed tables,
+  the same error class as ASP-14, not a transcription or engine defect. Not encoded as exact
+  fixtures (only 7/7 matches are); recorded here as closed with a known, bounded, reproducible
+  delta.
+- **Ford, 0/7 total mismatch — genuinely OPEN, re-classified.** Originally suspected as an OCR/
+  vision transcription failure. Re-read on a clean scan (Sun 106°34', Moon 209°12', Mars
+  127°35', Mercury 102°32', Jupiter 179°56', Venus 151°44', Saturn 160°32', Rahu 223°5', Asc
+  211°52', ayanamsa 20°30' — ASP-16, book p.163) gave IDENTICAL positions to the first read, and
+  the resulting raw Bhinnashtakavarga totals check out EXACTLY against the canonical checksums
+  (Sun 48, Moon 49, Mars 39, Mercury 54, Jupiter 56, Venus 52, Saturn 39) — so the positions and
+  the engine's raw-BAV stage are provably correct for this chart. The divergence therefore
+  enters somewhere in Raman's own reduction (Trikona/Ekadhipatya) or Gunakara arithmetic for
+  this one nativity, compounding across all 7 planets rather than one isolated cell — unlike
+  every other slip found in this book, which was always a single planet. Not pursued further
+  (no clean cited-fix pattern, per B1's precedent for not reverse-engineering a book's own
+  errors); flagged for the golden track separately, since Ford may overlap an existing NH
+  golden and any cross-check there should go through that discipline, not this one.
 
 **ch.XV (Miscellaneous), classified per the content-scope rule (a live tag does not admit
 out-of-scope content — the AFB-horary precedent):**

@@ -169,3 +169,52 @@ class TestIllustratedSevenMore:
                 asc_lon=asc, ayanamsa="raman")
             ours = [ashtakavarga_pinda(chart, p).total for p in PLANETS]
             assert ours == printed, f"{name}: {ours} != printed {printed}"
+
+
+#: No. 6 (Windsor) and No. 11 (Golwalkar), read TWICE independently from clean, self-consistent
+#: scans (each printed Sodya table checks Rasi+Graha=Sodya per cell) — both times only Venus
+#: disagreed, by the same +3 and +10. Recorded per-cell, per the ASP-14 precedent, rather than
+#: added to _MORE_CHARTS (which asserts full 7/7 equality).
+_WINDSOR = ({"Sun": _m(71, 24), "Moon": _m(313, 0), "Mars": _m(339, 27), "Mercury": _m(96, 40),
+             "Jupiter": _m(57, 27), "Venus": _m(32, 4), "Saturn": _m(177, 29), "Rahu": _m(344, 57)},
+            _m(283, 4), [232, 125, 159, 200, 83, 181, 123])
+_GOLWALKAR = ({"Sun": _m(308, 15), "Moon": _m(254, 30), "Mars": _m(349, 21), "Mercury": _m(306, 37),
+               "Jupiter": _m(36, 42), "Venus": _m(309, 22), "Saturn": _m(313, 37), "Rahu": _m(119, 17)},
+              _m(274, 57), [155, 127, 96, 149, 98, 130, 100])
+
+
+class TestWindsorAndGolwalkarVenusSlip:
+    """Two more nativities, six of seven pindas each exact — the seventh (Venus) off by a fixed,
+    reproducible amount both times independently read. Same error class as ASP-14: a hand-
+    computation slip in Raman's own printed table, not a reading or engine defect."""
+
+    @staticmethod
+    def _pindas(positions, asc):
+        from app.raman_saab.chart.model import RamanChart
+        from app.raman_saab.primitives.ashtakavarga import PLANETS
+        from app.raman_saab.primitives.ashtakavarga_pinda import ashtakavarga_pinda
+
+        pos = dict(positions)
+        pos["Ketu"] = (pos["Rahu"] + 180.0) % 360.0
+        chart = RamanChart.from_stated_positions(
+            {p: {"lon": lon, "bhava": 1} for p, lon in pos.items()},
+            asc_lon=asc, ayanamsa="raman")
+        return dict(zip(PLANETS, (ashtakavarga_pinda(chart, p).total for p in PLANETS)))
+
+    def test_windsor_six_of_seven_exact_venus_off_by_three(self):
+        ours = self._pindas(*_WINDSOR[:2])
+        printed = dict(zip(("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"), _WINDSOR[2]))
+        for planet, value in printed.items():
+            if planet == "Venus":
+                assert ours[planet] - value == 3
+            else:
+                assert ours[planet] == value, planet
+
+    def test_golwalkar_six_of_seven_exact_venus_off_by_ten(self):
+        ours = self._pindas(*_GOLWALKAR[:2])
+        printed = dict(zip(("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"), _GOLWALKAR[2]))
+        for planet, value in printed.items():
+            if planet == "Venus":
+                assert ours[planet] - value == 10
+            else:
+                assert ours[planet] == value, planet

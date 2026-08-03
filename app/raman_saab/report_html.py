@@ -584,6 +584,47 @@ def _distinctive(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _yoga_deep_section(r: DetailedReport) -> str:
+    """v21 — every fired yoga as a full study; strength is measured rupas, never a %."""
+    if not r.yoga_deep:
+        return ""
+    blocks = []
+    for y in r.yoga_deep:
+        parts = "; ".join(
+            f"{_esc(f.planet)}: house {f.house}, {_esc(_SIGN_NAME[f.sign])}, "
+            f"{_esc(f.dignity)}"
+            + (f" (effective: {_esc(f.effective_dignity)})"
+               if f.effective_dignity != f.dignity else "")
+            + (f", {f.rupas} rupas" if f.rupas is not None else "")
+            for f in y.participants)
+        rows = [
+            ("Definition (verbatim)", f"&ldquo;{_esc(y.definition_quote)}&rdquo; "
+                                      f"({_esc(y.cite)})"),
+            ("Computation", f"<code>{_esc(y.computation)}</code>"),
+            ("Why it qualifies", parts or "&ndash;"),
+            ("Strength (measured)", _esc(y.strength_note)),
+            ("Cancellation", _esc(y.cancellation_note)),
+        ]
+        if y.modifiers:
+            rows.append(("Modifying planets", _esc(", ".join(y.modifiers))))
+        if y.periods:
+            rows.append(("Operating periods", _esc("; ".join(y.periods))))
+        if y.nh_examples:
+            rows.append(("In Notable Horoscopes", _esc(", ".join(y.nh_examples))))
+        rows.append(("Effect (Raman)", _esc(y.effect)))
+        body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                       f'<span class="vv">{v}</span></div>' for k, v in rows)
+        blocks.append(f'<h3>{y.comparison_rank}. {_esc(y.name)} ({_esc(y.kind)})</h3>'
+                      f'<div class="vsec">{body}</div>')
+    return (
+        '<h2 class="section" id="yoga-deep">Yoga deep-read</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> every yoga this chart fires, '
+        'studied in full &mdash; the quoted definition, the exact computed rule, the '
+        'participants and their state, measured strength (rupas &mdash; Raman assigns no '
+        'percentage and none is invented), stated cancellations, operating periods, and '
+        'Notable Horoscopes appearances.</p>' + "".join(blocks))
+
+
 def _planet_bios_section(r: DetailedReport) -> str:
     """v20 — dominant-graha biographies from the judgment-graph census (pure re-read)."""
     if not r.planet_bios:
@@ -1868,6 +1909,8 @@ def to_html(r: DetailedReport) -> str:
   {_yogas(r)}
 
   {_yoga_timing_section(r)}
+
+  {_yoga_deep_section(r)}
 
   {_sav(r)}
 

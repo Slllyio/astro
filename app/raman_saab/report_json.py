@@ -151,6 +151,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         # S1 synthesis layer — the explicit judgment graph (pure re-read; PREC-10 applies)
         "judgment_graph": {"nodes": _each(_jg.nodes), "edges": _each(_jg.edges)},
         "planet_bios": _each(r.planet_bios),         # v20 — dominant-graha biographies (S2)
+        "yoga_deep": _each(r.yoga_deep),             # v21 — per-yoga deep-reads
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

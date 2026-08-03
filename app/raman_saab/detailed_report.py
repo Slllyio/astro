@@ -481,6 +481,11 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # v7 (2026-07-26, conscious amendment): inserted right after Yogas, since it directly extends
     # that section with WHEN each yoga's own lord runs — the natural narrative position.
     SectionSpec("yoga_timing", "## Yoga x Dasha timing", 'id="yoga-timing"', "v7"),
+    # v21 (2026-08-03, user-requested): the yoga deep-read — every fired yoga as a full
+    # study (quoted definition, computation tree, participant facts, measured strength,
+    # cancellation state, modifiers, periods, NH examples, comparison). Placed after the
+    # timing companion it extends. Strength is MEASURED rupas, never a percentage.
+    SectionSpec("yoga_deep", "## Yoga deep-read", 'id="yoga-deep"', "v21"),
     SectionSpec("ashtakavarga", "## Ashtakavarga", 'id="sav"', "v1"),
     SectionSpec("houses", "## House-by-house reading", 'id="houses"', "v1"),
     # v8 (2026-07-26, conscious amendment): inserted right after House-by-house, since it
@@ -554,7 +559,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "ruler", "planet_bios", "now_box",
     "info_content", "interpretation_guide", "stands_out", "digest",
     "dashboard",
-    "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
+    "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "yoga_deep",
+    "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
     "maraka", "maraka_saturn", "health_readout", "timeline", "ishta_kashta", "md_condition",
     "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
@@ -1320,6 +1326,7 @@ class DetailedReport:
     digest: "InsightDigest"                          # ranked "what matters most" (pure re-read)
     health_readout: "HealthReadout"                  # health/vulnerability read-out (v17)
     planet_bios: tuple = ()                          # dominant-graha biographies (v20, S2)
+    yoga_deep: tuple = ()                            # per-yoga deep-reads (v21)
 
 
 @dataclass(frozen=True)
@@ -2443,12 +2450,18 @@ def build_detailed_report(
     except Exception:  # noqa: BLE001
         _recs = ()
     _bios: tuple = ()
+    _deep: tuple = ()
     if _graph is not None:
         try:
             _bios = build_planet_biographies(enriched, _graph)
         except Exception:  # noqa: BLE001
             _bios = ()
-    enriched = _dc_replace(enriched, planet_bios=_bios,
+        try:
+            from app.raman_saab.yoga_deep_read import build_yoga_deep_reads
+            _deep = build_yoga_deep_reads(enriched, _graph)
+        except Exception:  # noqa: BLE001
+            _deep = ()
+    enriched = _dc_replace(enriched, planet_bios=_bios, yoga_deep=_deep,
                            life_chapters=build_life_chapters(
                                enriched, dominant=_bios[0].planet if _bios else None,
                            ))
@@ -2848,6 +2861,42 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
                      f"{t.quality.tag} |")
         L.append("")
+
+    # ── yoga deep-read (v21 — every fired yoga as a full study) ───────────────
+    if r.yoga_deep:
+        L.append("## Yoga deep-read")
+        L.append("")
+        L.append("**In simple terms:** every yoga this chart fires, studied in full — "
+                 "Raman's definition quoted verbatim at its citation, the exact rule the "
+                 "engine computed, who participates and in what state, measured strength "
+                 "(rupas — Raman assigns no percentage and none is invented), any stated "
+                 "cancellation, the periods in which it ripens, and where the same yoga "
+                 "appears in Notable Horoscopes.")
+        L.append("")
+        for y in r.yoga_deep:
+            L.append(f"### {y.comparison_rank}. {y.name} ({y.kind}) — {y.cite}")
+            L.append("")
+            L.append(f"- **Definition (verbatim)** — \"{y.definition_quote}\" ({y.cite})")
+            L.append(f"- **Computation** — `{y.computation}`")
+            if y.participants:
+                pf = "; ".join(
+                    f"{f.planet}: house {f.house}, {_SIGN_NAME[f.sign]}, {f.dignity}"
+                    + (f" (effective: {f.effective_dignity})"
+                       if f.effective_dignity != f.dignity else "")
+                    + (f", {f.rupas} rupas" if f.rupas is not None else "")
+                    for f in y.participants)
+                L.append(f"- **Why it qualifies** — {pf}")
+            L.append(f"- **Strength (measured)** — {y.strength_note}")
+            L.append(f"- **Cancellation** — {y.cancellation_note}")
+            if y.modifiers:
+                L.append(f"- **Modifying planets** (aspecting the participants' houses) "
+                         f"— {', '.join(y.modifiers)}")
+            if y.periods:
+                L.append(f"- **Operating periods** — {'; '.join(y.periods)}")
+            if y.nh_examples:
+                L.append(f"- **In Notable Horoscopes** — {', '.join(y.nh_examples)}")
+            L.append(f"- **Effect (Raman)** — {y.effect}")
+            L.append("")
 
     # ── Ashtakavarga strength row ─────────────────────────────────────────────
     if r.sav:

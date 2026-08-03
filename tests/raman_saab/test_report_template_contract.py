@@ -56,6 +56,9 @@ _FROZEN = (
     # v7 amendment (2026-07-26, conscious, same-commit as the module): Yoga x Dasha timing
     # inserted right after Yogas — it directly extends that section with WHEN.
     ("yoga_timing", "## Yoga x Dasha timing", 'id="yoga-timing"'),
+    # v21 amendment (2026-08-03, conscious, same-commit as the module, user-requested):
+    # the yoga deep-read — every fired yoga as a full study, after the timing companion.
+    ("yoga_deep", "## Yoga deep-read", 'id="yoga-deep"'),
     ("ashtakavarga", "## Ashtakavarga", 'id="sav"'),
     ("houses", "## House-by-house reading", 'id="houses"'),
     # v8 amendment (2026-07-26, conscious, same-commit as the module): House strength
@@ -183,11 +186,11 @@ class TestTemplateContract:
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
         Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
         v17 the Health & vulnerability read-out, v18 the interpretation guide, v19 the
-        ranked digest, v20 the planet biographies — the higher-order synthesis
-        sections)."""
+        ranked digest, v20 the planet biographies, v21 the yoga deep-read — the
+        higher-order synthesis sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16", "v17", "v18", "v19", "v20"}
+            "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -208,6 +211,7 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v18") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v19") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v20") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v21") == 1
 
 
 class TestInterpretationGuide:

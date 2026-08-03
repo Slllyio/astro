@@ -655,6 +655,16 @@ Built: `judgment_graph.py` (S1), `planet_biographies.py` + section v20 (S2),
 (S5). Known recorded limitation: `FiredYoga` carries no participant field, so yoga graph
 edges are citation-only until that field exists (a future append-only lift).
 
+**Graha chapters + Yoga deep-read (same day, user-requested):** the v20 section grew into
+full per-graha chapters and v21 added the per-yoga study — see REPORT_TEMPLATE.md's
+v20/v21 amendment note for the complete record. Doctrinal decisions binding here:
+verbatim-by-frozen-line-range rendering (zero transcription risk; ranges under the source
+lock), stated-absences-never-guesses (the 2 OCR-defeated MD-sign cells, the nodes'
+HPA-22/vocation rows), NO invented yoga percentage (measured rupas only — the
+measured-null lock), and only Raman-stated cancellations. The HPA-24 mining derivation
+(anchor walk over 82 sub-period anchors with 9 OCR aliases, zero Vimshottari-order breaks)
+is reproducible from the module's docstring.
+
 **Pipeline WIRED end-to-end (same day, follow-up commit):** the graph decoupled from
 life_chapters (period nodes/timer edges now from the first-pass timeline, with grades);
 the second pass re-ordered to the diagram (objects → graph → conflicts → themes →

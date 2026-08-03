@@ -75,6 +75,21 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**v20 content amendment + v21 (2026-08-03) — graha CHAPTERS and the yoga deep-read.**
+User-requested. (a) The v20 biographies grew into full chapters for ALL NINE grahas:
+`doctrine/lookups/graha_chapters.py` stores frozen line ranges into HPA-21/22/24/34 and
+renders Raman VERBATIM via `sources.passage` — the 81 Vimshottari bhukti paragraphs
+(anchor-derived, zero order breaks), the 9 per-sign Dasa sections, 96/96 house and 84/84
+sign placement paragraphs, the 7 Gocharaphala sections; disease via the cited organ/
+tridosha tables; the two OCR-defeated MD-sign cells and the nodes' missing HPA-22/vocation
+rows are stated absences, never guesses. (b) v21 "Yoga deep-read": every fired yoga as a
+full study — quoted definition at its citation, the condition tree rendered readable, the
+participants' chart facts, MEASURED strength (rupas; Raman assigns no percentage and none
+is invented — the measured-null lock), stated cancellations only (neecha-bhanga-aware
+effective dignity; Kemadruma folds its own), aspect modifiers from the judgment graph,
+the yoga_timing operating periods, Notable Horoscopes appearances (cited), and a
+comparison ranking. Table rows renumber accordingly.
+
 **Content amendment (2026-08-03) — the pipeline wiring.** The synthesis boxes existed
 after the v20 amendment; this closes the ARROWS: the judgment graph now builds from
 first-pass timeline objects (decoupled from life_chapters, whose backwards dependency it

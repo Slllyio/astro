@@ -99,7 +99,9 @@ def _proforma_dict(pf) -> dict:
 
 def to_report_dict(r: DetailedReport) -> dict:
     """The full structured report as a JSON-safe dict — the shared grounding contract."""
+    from app.raman_saab.judgment_graph import build_judgment_graph
     b = r.birth
+    _jg = build_judgment_graph(r)
     return {
         "birth": {"name": b.name, "year": b.year, "month": b.month, "day": b.day,
                   "hour": b.hour, "minute": b.minute, "tz_offset": b.tz_offset,
@@ -146,6 +148,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_period_now": r.maraka_period_now,
         "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
         "interpretation_guide": INTERPRETATION_GUIDE,  # v18 — chart-independent doctrine metadata
+        # S1 synthesis layer — the explicit judgment graph (pure re-read; PREC-10 applies)
+        "judgment_graph": {"nodes": _each(_jg.nodes), "edges": _each(_jg.edges)},
+        "planet_bios": _each(r.planet_bios),         # v20 — dominant-graha biographies (S2)
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

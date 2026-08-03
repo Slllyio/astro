@@ -45,6 +45,10 @@ _FROZEN = (
     # v13 amendment (2026-07-26, conscious, same-commit as the module): Ruler of the nativity —
     # Raman's own first-impression move — inserted right after the Chart signature it opens from.
     ("ruler", "## Ruler of the nativity", 'id="ruler"'),
+    # v20 amendment (2026-08-03, conscious, same-commit as the module, synthesis layer S2):
+    # planet biographies — the dominant grahas by judgment-graph census, after the ruler
+    # card they generalize.
+    ("planet_bios", "## Planet biographies (dominant grahas)", 'id="planet-bios"'),
     ("chart_grids", None, 'id="charts"'),
     ("positions", "## Planetary positions", 'id="positions"'),
     ("shadbala", "## Shadbala", 'id="shadbala"'),
@@ -179,10 +183,11 @@ class TestTemplateContract:
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
         Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
         v17 the Health & vulnerability read-out, v18 the interpretation guide, v19 the
-        ranked digest — the higher-order synthesis sections)."""
+        ranked digest, v20 the planet biographies — the higher-order synthesis
+        sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16", "v17", "v18", "v19"}
+            "v14", "v15", "v16", "v17", "v18", "v19", "v20"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -202,6 +207,7 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v17") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v18") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v19") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v20") == 1
 
 
 class TestInterpretationGuide:

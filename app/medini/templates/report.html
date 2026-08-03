@@ -1497,7 +1497,33 @@ function render(R, S, FQ){
   for(const [theme,txt] of (pr.life_paragraphs||[])) add(para((theme?theme+': ':'')+txt,'lede'));
   if(pr.now) add(para(pr.now,'lede'));
   if(pr.notable) add(para(pr.notable,'lede'));
+  // S3 — tensions woven, never hidden: both poles + the governing v18 rule per sentence.
+  if((pr.reconciliations||[]).length){
+    add(para(t('Where readings pull in different directions (both poles shown; the reconciling rule is in How to read this report):'),'muted'));
+    for(const rec of pr.reconciliations) add(para('· '+rec,'muted')); }
   if(pr.closing) add(para(pr.closing,'muted'));
+
+  // ===== Planet biographies (v20, S2) + the judgment graph (S1) =====
+  if((R.planet_bios||[]).length){
+    add(H2('Planet biographies (dominant grahas)'));
+    for(const b of R.planet_bios){
+      add(para(b.planet+' — '+b.census_count+' '+t('graph appearances')+' ('+
+        (b.census_by_relation||[]).map(x=>x[0]+' '+x[1]).join(', ')+')','lede'));
+      add(para(b.prose));
+      add(para(t("Raman's vocation words")+' (HTJAH-II:10249-10274) — '+b.themes_raman,'muted'));
+      if((b.themes_modern||[]).length)
+        add(para(t('Modern keywords')+' ['+'MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight'+'] — '+b.themes_modern.join(', '),'muted')); } }
+  if(R.judgment_graph && (R.judgment_graph.edges||[]).length){
+    const jg=R.judgment_graph, byRel={};
+    for(const e of jg.edges) byRel[e.relation]=(byRel[e.relation]||0)+1;
+    add(H2('Judgment graph'));
+    add(para(jg.nodes.length+' '+t('nodes')+', '+jg.edges.length+' '+t('edges')+' — '+
+      Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
+    const d=el('details',{class:'card'});
+    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
+    const body=el('div',{class:'body'});
+    body.append(sectionTable('', jg.edges));
+    d.append(body); add(d); }
 
   chapter(3);
   // ===== Chart signature =====
@@ -1763,7 +1789,10 @@ function render(R, S, FQ){
   const n=R.nichod||{};
   if(n.essence){ add(H2('Nichod (the essence)')); add(para(n.essence,'lede'));
     if(n.spotlight) add(para('Spotlight: '+n.spotlight,'muted'));
-    if(n.caution) add(para('Caution: '+n.caution,'muted')); }
+    if(n.caution) add(para('Caution: '+n.caution,'muted'));
+    if((n.turning_points||[]).length)
+      add(para(t('Turning points (a timing lens, not an event)')+': '+
+        n.turning_points.map(x=>x[0]+' — '+x[1]).join('; '),'muted')); }
 
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
   if(FQ&&FQ.length) add(feedbackCard(FQ));

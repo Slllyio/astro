@@ -20,6 +20,7 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 8 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
 | 9 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
 | 10 | **Ruler of the nativity (first impression)** | `## Ruler of the nativity` | `#ruler` | v13 |
+| 10a | **Planet biographies (dominant grahas)** | `## Planet biographies (dominant grahas)` | `#planet-bios` | v20 |
 | 11 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
 | 12 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
 | 13 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
@@ -55,6 +56,24 @@ updating the contract test's frozen list in the same, conscious commit.*
 and 29 after the v18/v19 renumber) had never been added to this table when their sections
 shipped — repaired in the v17 commit; the whole table was renumbered again in the v18/v19
 commit.
+
+**v20 amendment (2026-08-03) — the synthesis layer (S1-S5).** The user proposed a
+10-phase deterministic synthesis architecture; an inventory showed ~half already existed
+(judgment objects = the frozen dataclasses; ranking = Raman's comparative weighing + the
+v18 axes, numeric weights measured null and deliberately NOT built; life narrative =
+plain_reading/life_chapters; master verdict = nichod; style = the guard). The genuinely
+new pieces: `judgment_graph.py` (S1 — every judgment object as a node, every
+already-computed relation as an edge, closed vocabulary = v18 relations + structural set;
+shipped as JSON `judgment_graph`), `planet_biographies.py` (S2 — this section: dominant
+grahas by graph census, Raman-tier themes cite HTJAH-II:10249-10274, the modern keyword
+tier ALWAYS carries the MODERN_SYNTHESIS banner), `tension_narrator.py` (S3 — tensions
+WOVEN never hidden, per the user decision: one sentence per already-detected conflict
+naming BOTH poles and the governing v18 rule, on `PlainReading.reconciliations`),
+`NON_RAMAN_GROUPINGS` bannered matter edges (S4), and `Nichod.turning_points` (S5 — MD
+boundaries where the Ishta/Kashta lean flips). All pure re-reads (PREC-10); the
+verdict-path wall test extends to all three new modules; every new prose surface passes
+`_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
+generalizes.
 
 **v18 amendment (2026-08-03) — the interpretation guide.** User-requested coherence work
 ("many sections saying the same things — how to interpret"). A coherence audit collected the

@@ -584,6 +584,33 @@ def _distinctive(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _planet_bios_section(r: DetailedReport) -> str:
+    """v20 — dominant-graha biographies from the judgment-graph census (pure re-read)."""
+    if not r.planet_bios:
+        return ""
+    from app.raman_saab.planet_biographies import MODERN_BANNER
+    blocks = []
+    for b in r.planet_bios:
+        census = ", ".join(f"{k} {v}" for k, v in b.census_by_relation)
+        modern = ("" if not b.themes_modern else
+                  f'<p class="section-sub"><b>Modern keywords</b> '
+                  f'<span class="tag tag--warn">{_esc(MODERN_BANNER)}</span> '
+                  f'{_esc(", ".join(b.themes_modern))}</p>')
+        blocks.append(
+            f'<h3>{_esc(b.planet)} &mdash; {b.census_count} graph appearances '
+            f'({_esc(census)})</h3>'
+            f'<p>{_esc(b.prose)}</p>'
+            f'<p class="section-sub"><b>Raman&rsquo;s vocation words</b> '
+            f'(HTJAH-II:10249-10274) &mdash; {_esc(b.themes_raman)}</p>'
+            f'{modern}')
+    return (
+        '<h2 class="section" id="planet-bios">Planet biographies (dominant grahas)</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
+        'this chart&rsquo;s computed readings, counted over the judgment graph, each told '
+        'as one story. Every line re-reads a value shown elsewhere; nothing here is a new '
+        'judgment.</p>' + "".join(blocks))
+
+
 def _digest_section(r: DetailedReport) -> str:
     """v19 — the engine's own ranked digest, previously JSON/interactive-only (the
     coherence audit's completeness repair)."""
@@ -1454,7 +1481,11 @@ def _plain_reading_section(r: DetailedReport) -> str:
         f'{paras}'
         f'<p>{_esc(p.now)}</p>'
         f'<p>{_esc(p.notable)}</p>'
-        f'<p class="pr-closing">{_esc(p.closing)}</p>'
+        + ("" if not p.reconciliations else
+           '<p><b>Where readings pull in different directions</b> (both poles shown; the '
+           'reconciling rule is in How to read this report):</p><ul>'
+           + "".join(f'<li>{_esc(rec)}</li>' for rec in p.reconciliations) + '</ul>')
+        + f'<p class="pr-closing">{_esc(p.closing)}</p>'
         '</section>')
 
 
@@ -1468,6 +1499,9 @@ def _nichod_section(r: DetailedReport) -> str:
             ("Live transits", n.live_transits)]
     if n.spotlight:
         rows.append(("Cross-feature spotlight", n.spotlight))
+    if n.turning_points:
+        rows.append(("Turning points (a timing lens, not an event)",
+                     "; ".join(f"{when}: {what}" for when, what in n.turning_points)))
     ingredients = "".join(
         f'<div class="vrow"><span class="vk">{_esc(k)}</span><span class="vv">{_esc(v)}</span>'
         f'</div>' for k, v in rows)
@@ -1783,6 +1817,8 @@ def to_html(r: DetailedReport) -> str:
   </header>
 
   {_ruler_section(r)}
+
+  {_planet_bios_section(r)}
 
   {_now_box(r)}
 

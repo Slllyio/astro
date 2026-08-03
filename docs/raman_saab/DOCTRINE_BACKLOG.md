@@ -632,3 +632,25 @@ The audit also found the ranked digest (insight_digest.py) was shipped in JSON +
 interactive page but NEVER rendered in markdown/standalone HTML — a REPORT COMPLETENESS
 violation, repaired as v19 ("What matters most"). Full amendment notes:
 docs/raman_saab/REPORT_TEMPLATE.md v18/v19.
+
+## The deterministic synthesis layer (2026-08-03) — S1-S5, report v20
+
+The user proposed a 10-phase synthesis architecture ("no prose generated directly from
+calculations"). Inventory: ~half already existed; the rest was built as five phases, all
+report-layer pure re-reads (PREC-10), the verdict-path wall extended by test. Three user
+decisions bind the deviations from the proposal as pasted:
+1. **Conflicts NARRATED, never hidden** (the proposal's "never expose unresolved
+   contradictions" was rejected as conflicting with REPORT COMPLETENESS/Measured-Truth):
+   `tension_narrator.py` composes one sentence per already-detected tension naming BOTH
+   poles + the governing v18 rule; a test pins both poles' words in every sentence.
+2. **Two doctrine tiers**: Raman-citable core + the MODERN_SYNTHESIS-bannered layer
+   (NON_RAMAN_GROUPINGS matter edges; NON_RAMAN_THEMES keywords) — bannered on every use,
+   never bare (the pitru precedent).
+3. **No numeric evidence weights** (the proposal's fixed weight table): numeric weighting
+   was already MEASURED NULL (the tuner's holdout-locked convergence at iteration 0) and
+   Raman states no numeric rule (HTJAH-I:495) — his comparative weighing (B1) + the v18
+   axes ARE the ranking. Do not re-litigate by re-building weights.
+Built: `judgment_graph.py` (S1), `planet_biographies.py` + section v20 (S2),
+`PlainReading.reconciliations` (S3), bannered groupings (S4), `Nichod.turning_points`
+(S5). Known recorded limitation: `FiredYoga` carries no participant field, so yoga graph
+edges are citation-only until that field exists (a future append-only lift).

@@ -467,6 +467,13 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # consider the ruler of the nativity" (HTJAH-I:16001-16002) — placed directly after the
     # Chart signature it opens from; the natural narrative position (v6-v12 precedent).
     SectionSpec("ruler", "## Ruler of the nativity", 'id="ruler"', "v13"),
+    # v20 (2026-08-03, synthesis layer S2): planet biographies — the dominant grahas by
+    # judgment-graph census, each told as one story (role, strength, helps, obstructs,
+    # activates). Placed after the ruler card it generalizes from one planet to the
+    # dominant set. Pure re-read; Raman-tier themes cite HTJAH-II:10249-10274; the modern
+    # keyword tier always carries the MODERN_SYNTHESIS banner.
+    SectionSpec("planet_bios", "## Planet biographies (dominant grahas)",
+                'id="planet-bios"', "v20"),
     SectionSpec("chart_grids", None, 'id="charts"', "v1"),
     SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
     SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
@@ -544,8 +551,8 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "ruler", "now_box", "info_content",
-    "interpretation_guide", "stands_out", "digest",
+    "title", "plain_reading", "chart_signature", "ruler", "planet_bios", "now_box",
+    "info_content", "interpretation_guide", "stands_out", "digest",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
@@ -1312,6 +1319,7 @@ class DetailedReport:
     life_chapters: "LifeChapters"                    # one woven chapter per MD run (v15)
     digest: "InsightDigest"                          # ranked "what matters most" (pure re-read)
     health_readout: "HealthReadout"                  # health/vulnerability read-out (v17)
+    planet_bios: tuple = ()                          # dominant-graha biographies (v20, S2)
 
 
 @dataclass(frozen=True)
@@ -1326,6 +1334,9 @@ class PlainReading:
     now: str
     notable: str
     closing: str
+    #: S3 (2026-08-03, append-only): tensions WOVEN, never hidden — one sentence per
+    #: already-detected conflict, both poles named, the governing v18 rule cited.
+    reconciliations: tuple[str, ...] = ()
 
 
 _EMPTY_PLAIN_READING: Final[PlainReading] = PlainReading(
@@ -1353,6 +1364,9 @@ class Nichod:
     spotlight: Optional[str]   # one live cross-feature synthesis insight, if any fired
     caution: Optional[str]     # split-status / inverted-channel flags on what's active NOW
     essence: str               # the single distilled paragraph knitting all of the above
+    #: S5 (2026-08-03, append-only): MD boundaries where the Ishta/Kashta lean flips —
+    #: (window label, what changes). Pure re-read of the timeline + ishta_kashta rows.
+    turning_points: tuple[tuple[str, str], ...] = ()
 
 
 _EMPTY_NICHOD: Final[Nichod] = Nichod(
@@ -2184,10 +2198,27 @@ def build_nichod(r: DetailedReport) -> Nichod:
           "report."
     )
 
+    # S5 — turning points: MD boundaries where the Ishta/Kashta MD lean flips (pure
+    # re-read of the ishta_kashta rows; the lean is natal-fixed per lord, GBB-10:134).
+    md_rows = [ik for ik in r.ishta_kashta if ik.antar is None] or [
+        ik for ik in r.ishta_kashta]
+    turning: list[tuple[str, str]] = []
+    prev_maha: Optional[str] = None
+    prev_lean: Optional[str] = None
+    for ik in md_rows:
+        if ik.maha != prev_maha:
+            if (prev_maha is not None and ik.maha_lean and prev_lean
+                    and ik.maha_lean != prev_lean):
+                turning.append((
+                    f"{_jd_month_year(ik.start_jd)}",
+                    f"{prev_maha} MD ({prev_lean}) gives way to {ik.maha} MD "
+                    f"({ik.maha_lean}) — the period lean changes"))
+            prev_maha, prev_lean = ik.maha, ik.maha_lean
     return Nichod(
         identity=identity, strength_profile=strength_profile, longevity=longevity, yogas=yogas,
         stands_out=stands_out, matters_tally=matters_tally, current_period=current_period,
         live_transits=live_transits, spotlight=spotlight, caution=caution, essence=essence,
+        turning_points=tuple(turning),
     )
 
 
@@ -2374,8 +2405,27 @@ def build_detailed_report(
                            life_chapters=build_life_chapters(provisional),
                            health_readout=build_health_readout(provisional))
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
-    return _dc_replace(enriched, nichod=build_nichod(enriched),
-                       plain_reading=build_plain_reading(enriched))
+    # S2 synthesis: biographies read the graph, which reads life_chapters — after both.
+    from app.raman_saab.judgment_graph import build_judgment_graph
+    from app.raman_saab.planet_biographies import build_planet_biographies
+    try:
+        enriched = _dc_replace(
+            enriched, planet_bios=build_planet_biographies(
+                enriched, build_judgment_graph(enriched)))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        pass
+    # S3 synthesis: narrate the already-detected tensions (both poles, rule cited).
+    from app.raman_saab.tension_narrator import narrate_tensions
+    try:
+        _recs = narrate_tensions(enriched)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        _recs = ()
+    final = _dc_replace(enriched, nichod=build_nichod(enriched),
+                        plain_reading=build_plain_reading(enriched))
+    if _recs:
+        final = _dc_replace(final, plain_reading=_dc_replace(
+            final.plain_reading, reconciliations=_recs))
+    return final
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
@@ -2431,6 +2481,12 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     L.append(pr.notable)
     L.append("")
+    if pr.reconciliations:
+        L.append("**Where readings pull in different directions** (both poles shown; "
+                 "the rule that reconciles them is in How to read this report):")
+        for rec in pr.reconciliations:
+            L.append(f"- {rec}")
+        L.append("")
     L.append(f"_{pr.closing}_")
 
     # ── the honesty headline (aggregate information content) ──────────────────
@@ -2623,6 +2679,34 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     L.append(f"_{ru.signature}_")
     L.append("")
+
+    # ── planet biographies (v20, S2 — dominant grahas by judgment-graph census) ─
+    if r.planet_bios:
+        from app.raman_saab.planet_biographies import MODERN_BANNER
+        L.append("## Planet biographies (dominant grahas)")
+        L.append("")
+        L.append("**In simple terms:** the grahas that drive the most of this chart's "
+                 "computed readings (counted over the judgment graph — lordships, "
+                 "occupancy, aspects, karaka duties, dasha rulerships), each told as one "
+                 "story. Every line re-reads a value shown elsewhere; nothing here is a "
+                 "new judgment.")
+        L.append("")
+        for b in r.planet_bios:
+            L.append(f"### {b.planet} — {b.census_count} graph appearances "
+                     f"({', '.join(f'{k} {v}' for k, v in b.census_by_relation)})")
+            L.append("")
+            L.append(b.prose)
+            L.append("")
+            if b.md_windows:
+                spans = ", ".join(f"{_jd_month_year(s0)} to {_jd_month_year(e0)}"
+                                  for s0, e0 in b.md_windows)
+                L.append(f"- **Its own Mahadasha** — {spans}")
+            L.append(f"- **Raman's vocation words** (HTJAH-II:10249-10274) — "
+                     f"{b.themes_raman}")
+            if b.themes_modern:
+                L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
+                         f"{', '.join(b.themes_modern)}")
+            L.append("")
 
     # ── planet positions (a reading must be checkable) ────────────────────────
     L.append("## Planetary positions")
@@ -3404,6 +3488,10 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"- **Cross-feature spotlight**: {n.spotlight}")
     if n.caution:
         L.append(f"- **Caution**: {n.caution}")
+    if n.turning_points:
+        L.append("- **Turning points** (where the period lean changes — a timing lens, "
+                 "not an event): "
+                 + "; ".join(f"{when}: {what}" for when, what in n.turning_points))
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

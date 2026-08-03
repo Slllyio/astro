@@ -67,6 +67,10 @@ def iter_citations() -> Iterator[Citation]:
     from app.raman_saab.horary import CITED_ANCHORS as _HORARY_ANCHORS
     yield from _ELECTIONAL_ANCHORS
     yield from _HORARY_ANCHORS
+    # The graha-chapter line-range tables (HPA-21/22/24/34) — verbatim-quote anchors.
+    from app.raman_saab.doctrine.lookups.graha_chapters import (
+        CITED_ANCHORS as _GRAHA_ANCHORS)
+    yield from _GRAHA_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:

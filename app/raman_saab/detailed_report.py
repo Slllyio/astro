@@ -2728,12 +2728,37 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append(b.prose)
             L.append("")
+            # the graha-chapter subsections — Raman's OWN paragraphs, verbatim by range
+            if b.sign_text:
+                L.append(f"- **In its sign (HPA-22)** — \"{b.sign_text[0]}\" "
+                         f"({b.sign_text[1]})")
+            elif b.planet in ("Rahu", "Ketu"):
+                L.append("- **In its sign** — the nodes are aprakasha grahas; HPA-22 "
+                         "states no per-sign results (HPA-22:522) — an honest absence")
+            if b.house_text:
+                L.append(f"- **In its house (HPA-21)** — \"{b.house_text[0]}\" "
+                         f"({b.house_text[1]})")
+            if b.family_role:
+                L.append(f"- **Family/karaka duties** — {b.family_role}")
+            if b.disease_text:
+                L.append(f"- **Disease indications** — {b.disease_text[0]} "
+                         f"({b.disease_text[1]})")
+            if b.md_result_now:
+                L.append(f"- **Its Mahadasha runs NOW (HPA-24)** — "
+                         f"\"{b.md_result_now[0]}\" ({b.md_result_now[1]})")
+            if b.ad_result_now:
+                L.append(f"- **Its Bhukti runs NOW (HPA-24)** — "
+                         f"\"{b.ad_result_now[0]}\" ({b.ad_result_now[1]})")
+            if b.transit_text:
+                L.append(f"- **Transit results (HPA-34, house-by-house from the Moon)** "
+                         f"— \"{b.transit_text[0]}\" ({b.transit_text[1]})")
             if b.md_windows:
                 spans = ", ".join(f"{_jd_month_year(s0)} to {_jd_month_year(e0)}"
                                   for s0, e0 in b.md_windows)
                 L.append(f"- **Its own Mahadasha** — {spans}")
-            L.append(f"- **Raman's vocation words** (HTJAH-II:10249-10274) — "
-                     f"{b.themes_raman}")
+            if b.themes_raman:
+                L.append(f"- **Raman's vocation words** (HTJAH-II:10249-10274) — "
+                         f"{b.themes_raman}")
             if b.themes_modern:
                 L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
                          f"{', '.join(b.themes_modern)}")

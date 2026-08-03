@@ -596,13 +596,38 @@ def _planet_bios_section(r: DetailedReport) -> str:
                   f'<p class="section-sub"><b>Modern keywords</b> '
                   f'<span class="tag tag--warn">{_esc(MODERN_BANNER)}</span> '
                   f'{_esc(", ".join(b.themes_modern))}</p>')
+
+        def _quote(label: str, pair) -> str:
+            if not pair:
+                return ""
+            return (f'<p class="section-sub"><b>{label}</b> &mdash; '
+                    f'&ldquo;{_esc(pair[0])}&rdquo; <i>({_esc(pair[1])})</i></p>')
+
+        node_sign_note = ("" if b.sign_text or b.planet not in ("Rahu", "Ketu") else
+                          '<p class="section-sub"><b>In its sign</b> &mdash; the nodes '
+                          'are aprakasha grahas; HPA-22 states no per-sign results '
+                          '(HPA-22:522) &mdash; an honest absence.</p>')
+        vocation = ("" if not b.themes_raman else
+                    f'<p class="section-sub"><b>Raman&rsquo;s vocation words</b> '
+                    f'(HTJAH-II:10249-10274) &mdash; {_esc(b.themes_raman)}</p>')
+        family = ("" if not b.family_role else
+                  f'<p class="section-sub"><b>Family/karaka duties</b> &mdash; '
+                  f'{_esc(b.family_role)}</p>')
+        disease = ("" if not b.disease_text else
+                   f'<p class="section-sub"><b>Disease indications</b> &mdash; '
+                   f'{_esc(b.disease_text[0])} <i>({_esc(b.disease_text[1])})</i></p>')
         blocks.append(
             f'<h3>{_esc(b.planet)} &mdash; {b.census_count} graph appearances '
             f'({_esc(census)})</h3>'
             f'<p>{_esc(b.prose)}</p>'
-            f'<p class="section-sub"><b>Raman&rsquo;s vocation words</b> '
-            f'(HTJAH-II:10249-10274) &mdash; {_esc(b.themes_raman)}</p>'
-            f'{modern}')
+            + _quote("In its sign (HPA-22)", b.sign_text) + node_sign_note
+            + _quote("In its house (HPA-21)", b.house_text)
+            + family + disease
+            + _quote("Its Mahadasha runs NOW (HPA-24)", b.md_result_now)
+            + _quote("Its Bhukti runs NOW (HPA-24)", b.ad_result_now)
+            + _quote("Transit results (HPA-34, house-by-house from the Moon)",
+                     b.transit_text)
+            + vocation + modern)
     return (
         '<h2 class="section" id="planet-bios">Planet biographies (dominant grahas)</h2>'
         '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '

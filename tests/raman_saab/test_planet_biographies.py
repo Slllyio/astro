@@ -33,10 +33,13 @@ class TestPlanetBiographies:
         assert a == b
         assert sum(sum(v.values()) for v in a.values()) > 0
 
-    def test_top_n_are_ranked_by_census(self, bios):
+    def test_all_nine_grahas_are_chaptered_dominant_first(self, bios):
+        """The chapter amendment (2026-08-03): every graha, census-ranked."""
         counts = [b.census_count for b in bios]
         assert counts == sorted(counts, reverse=True)
-        assert len(bios) == 4
+        assert len(bios) == 9
+        assert {b.planet for b in bios} == {"Sun", "Moon", "Mars", "Mercury", "Jupiter",
+                                            "Venus", "Saturn", "Rahu", "Ketu"}
 
     def test_every_field_is_a_re_read(self, report, bios):
         """helps/obstructs must agree with the proforma rollups they re-read."""
@@ -47,11 +50,44 @@ class TestPlanetBiographies:
                 assert report.proformas[h - 1].rollup == "afflicted"
 
     def test_raman_and_modern_tiers_are_separate(self, bios):
-        """The Raman vocation words never mix with the bannered modern keywords."""
+        """The Raman vocation words never mix with the bannered modern keywords; the
+        nodes have NO vocation row (an honest absence, HTJAH-II's table excludes them)."""
         for b in bios:
-            assert b.themes_raman                       # HTJAH-II table, always present
+            if b.planet in ("Rahu", "Ketu"):
+                assert b.themes_raman == ""
+                assert "chayagraha" in b.prose
+            else:
+                assert b.themes_raman
             assert tuple(b.themes_modern) == tuple(NON_RAMAN_THEMES.get(b.planet, ()))
         assert "no Raman citation" in MODERN_BANNER
+
+    def test_chapter_fields_carry_verbatim_cited_text(self, bios):
+        """The graha-chapter fields: every present (text, cite) pair resolves, and the
+        seven visible grahas all carry their HPA-21/22 placement paragraphs."""
+        from app.raman_saab.doctrine.sources import Citation, verify
+        for b in bios:
+            for pair in (b.house_text, b.sign_text, b.md_result_now, b.ad_result_now,
+                         b.transit_text, b.disease_text):
+                if pair is not None:
+                    text, cite = pair
+                    assert text and len(text) > 10   # shortest: "governs the feet"
+                    work, line = cite.rsplit(":", 1)
+                    assert verify(Citation(work, int(line))), cite
+            if b.planet not in ("Rahu", "Ketu"):
+                assert b.house_text is not None, b.planet
+                assert b.sign_text is not None, b.planet
+                assert b.transit_text is not None, b.planet
+
+    def test_running_pair_carries_dasha_text(self, report, bios):
+        """The running MD lord shows its HPA-24 per-sign paragraph; the running AD lord
+        its bhukti paragraph — the 'during Mahadasha/Antardasha' chapter requirement."""
+        md = report.synthesis.running_md
+        ad = report.synthesis.running_ad
+        md_bio = next(b for b in bios if b.planet == md)
+        ad_bio = next(b for b in bios if b.planet == ad)
+        assert md_bio.md_result_now is not None
+        assert ad_bio.ad_result_now is not None
+        assert "HPA-24" in md_bio.md_result_now[1]
 
     def test_prose_ends_with_a_conclusion_and_passes_the_guard(self, bios):
         from app.llm.report_explainer import _FORBIDDEN_RE

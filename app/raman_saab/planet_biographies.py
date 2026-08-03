@@ -22,7 +22,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Final, Optional
 
 from app.raman_saab.judgment_graph import JudgmentGraph
 from app.raman_saab.primitives.career import TRADE_BY_NAVAMSA_DISPOSITOR
@@ -70,6 +70,16 @@ class PlanetBiography:
     themes_raman: str                   # HTJAH-II:10249-10274 vocation words
     themes_modern: tuple[str, ...]      # NON_RAMAN_THEMES, bannered at render
     prose: str                          # cause-first narrative ending with "Conclusion:"
+    # ── graha-chapter fields (2026-08-03, append-only): Raman's OWN paragraphs, pulled
+    # verbatim by frozen line range (doctrine/lookups/graha_chapters). Each is
+    # (text, "WORK:line") or None — None is an honest absence, never a guess. ──────────
+    house_text: Optional[tuple[str, str]] = None      # HPA-21, its occupied house
+    sign_text: Optional[tuple[str, str]] = None       # HPA-22, its sign (nodes: None)
+    disease_text: Optional[tuple[str, str]] = None    # disease_map organs/tridosha
+    family_role: str = ""                             # karaka-duty houses, named
+    md_result_now: Optional[tuple[str, str]] = None   # HPA-24 per-sign text (if MD lord now)
+    ad_result_now: Optional[tuple[str, str]] = None   # HPA-24 bhukti text (if in the pair)
+    transit_text: Optional[tuple[str, str]] = None    # HPA-34 Gocharaphala section
 
 
 def planet_census(graph: JudgmentGraph) -> dict[str, dict[str, int]]:
@@ -128,22 +138,36 @@ def _compose_prose(b: "PlanetBiography") -> str:
     if b.md_windows:
         bits.append("Its own Mahadasha marks the years when these indications are "
                     "read most directly.")
-    bits.append(conclusion(
-        f"this chart reads {b.planet} chiefly through {b.themes_raman} (HTJAH-II:10249) "
-        f"— a description of the method's emphasis, never a prediction"))
+    if b.themes_raman:
+        bits.append(conclusion(
+            f"this chart reads {b.planet} chiefly through {b.themes_raman} "
+            f"(HTJAH-II:10249) — a description of the method's emphasis, never a "
+            f"prediction"))
+    else:
+        bits.append(conclusion(
+            f"{b.planet} is a chayagraha — Raman's vocation table names no trade for it "
+            f"(an honest absence), and its influence is read through its placement and "
+            f"periods above"))
     return " ".join(bits)
 
 
 def build_planet_biographies(r: "DetailedReport", graph: JudgmentGraph,
-                             *, top_n: int = 4) -> tuple[PlanetBiography, ...]:
-    """The top-N grahas by census, each as a biography. Visible grahas only (the Raman
-    vocation table has no Rahu/Ketu row — chayagrahas are counted in the census but not
-    biographed under a table that excludes them)."""
+                             *, top_n: int = 9) -> tuple[PlanetBiography, ...]:
+    """Every graha as a CHAPTER (census-ranked, dominant first). The nodes are included —
+    their HPA-21 house paragraphs and HPA-24 dasha paragraphs exist; where a table
+    excludes them (HPA-22 signs, the HTJAH-II vocation rows) the field is an honest
+    absence, never a guess."""
+    from app.raman_saab.doctrine.lookups import graha_chapters as gc
+    from app.raman_saab.doctrine.lookups.disease_map import (PLANET_ORGANS,
+                                                             PLANET_TRIDOSHAS)
     from app.raman_saab.primitives.deeptadi import state as _avastha_state
     from app.raman_saab.primitives.dignity import dignity as _dignity
 
     census = planet_census(graph)
-    ranked = sorted(_VISIBLE, key=lambda p: -sum(census.get(p, {}).values()))
+    all_grahas = (*_VISIBLE, "Rahu", "Ketu")
+    ranked = sorted(all_grahas, key=lambda p: -sum(census.get(p, {}).values()))
+    running_md = getattr(r.synthesis, "running_md", None)
+    running_ad = getattr(r.synthesis, "running_ad", None)
     out: list[PlanetBiography] = []
     for p in ranked[:top_n]:
         by_rel = census.get(p, {})
@@ -167,14 +191,35 @@ def build_planet_biographies(r: "DetailedReport", graph: JudgmentGraph,
         md_windows = tuple((tp.period.start_jd, tp.period.end_jd)
                            for tp in r.timeline.periods
                            if tp.period.maha == p and tp.period.antar is None)
+        sign = int(pl.lon % 360.0 // 30.0) + 1 if pl is not None else 0
+        organs = PLANET_ORGANS.get(p)
+        disease = None
+        if organs is not None:
+            tri = PLANET_TRIDOSHAS.get(p)
+            dtxt = (f"governs the {organs.organ}"
+                    + (f"; tridosha: {tri.tridosha}" if tri is not None else ""))
+            cite = organs.sources[0]
+            disease = (dtxt, f"{cite.work}:{cite.line}")
+        family = ", ".join(
+            f"house {h}" for h in karaka_of) and (
+            "karaka for " + ", ".join(f"house {h}" for h in karaka_of))
+        md_now = (gc.md_sign_result(p, sign)
+                  if running_md == p and sign else None)
+        ad_now = (gc.ad_result(running_md, p)
+                  if running_ad == p and running_md else None)
         bio = PlanetBiography(
             planet=p, census_count=sum(by_rel.values()),
             census_by_relation=tuple(sorted(by_rel.items())),
             lord_of=lord_of, karaka_of=karaka_of, occupies=occupies,
             dignity=dig, avastha=av, helps=helps, obstructs=obstructs,
             md_windows=md_windows,
-            themes_raman=TRADE_BY_NAVAMSA_DISPOSITOR[p],
+            themes_raman=TRADE_BY_NAVAMSA_DISPOSITOR.get(p, ""),
             themes_modern=NON_RAMAN_THEMES.get(p, ()),
-            prose="")
+            prose="",
+            house_text=gc.house_result(p, occupies) if occupies else None,
+            sign_text=gc.sign_result(p, sign) if sign else None,
+            disease_text=disease, family_role=family,
+            md_result_now=md_now, ad_result_now=ad_now,
+            transit_text=gc.transit_result(p))
         out.append(PlanetBiography(**{**bio.__dict__, "prose": _compose_prose(bio)}))
     return tuple(out)

@@ -1,4 +1,8 @@
 {
+  "ashtakavarga_system_raman/chapter_015_miscellaneous.md": {
+    "line_count": 347,
+    "sha256": "b2d3366f23c9b8e6770d4f00621f570c11553db2f318140a93928cb293afcff3"
+  },
   "graha_bhava_balas_raman/chapter_001_chapter.md": {
     "line_count": 218,
     "sha256": "302083218d4337e7d78477131397c68061dd6be3f84fe063a3e77ab1fa5331f0"
@@ -30,6 +34,30 @@
   "how_to_judge_horoscope_raman2/chapter_001_full-text-unsplit.md": {
     "line_count": 18817,
     "sha256": "6ed9d1f85190a82d935237f9388349558a6988e923c4cc0cbcc40aff62766f07"
+  },
+  "muhurtha_raman/chapter_002_general-hints.md": {
+    "line_count": 259,
+    "sha256": "2cba5c4ddf570eecff3b12dbd26a9478c190d3e85e4405e3d552543a34ee9641"
+  },
+  "muhurtha_raman/chapter_003_the-birth-star-and-the-birth-moon.md": {
+    "line_count": 220,
+    "sha256": "d5f9e2b94c76da29e64a7844e2ce64eb1bcb65b27f42f563cb72297457d4c766"
+  },
+  "muhurtha_raman/chapter_004_influence-of-constellations.md": {
+    "line_count": 500,
+    "sha256": "8e9fb8b948bacf9b46baf28054afda9eeb22c90069f77fa7b134f4c7731eaf00"
+  },
+  "muhurtha_raman/chapter_008_post-natal-ceremonies.md": {
+    "line_count": 1251,
+    "sha256": "330ed510abf553193ba6a2ccdef86f77a6dfeec92bbbb66aae4a61c7a81f7afa"
+  },
+  "muhurtha_raman/chapter_010_elections-concerning-general-matters.md": {
+    "line_count": 307,
+    "sha256": "5a602b5523ce0e238a383b9a095b2caf1a210d15350b114e7476778971613806"
+  },
+  "muhurtha_raman/chapter_018_suhmafey.md": {
+    "line_count": 1312,
+    "sha256": "6e7190985c068c33f51ae250245a19fc843f20c051159c3bbea3ff281d29e227"
   },
   "notable_horoscopes_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 14272,

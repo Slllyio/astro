@@ -61,6 +61,10 @@ def iter_citations() -> Iterator[Citation]:
         for record in registry.values():
             for cit in getattr(record, "sources", ()):
                 yield cit
+    # Walled subsystems (post the 2026-08-03 firewall lift) enumerate their anchors so their
+    # corpus lines are pinned exactly like the natal registries'.
+    from app.raman_saab.electional import CITED_ANCHORS as _ELECTIONAL_ANCHORS
+    yield from _ELECTIONAL_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:

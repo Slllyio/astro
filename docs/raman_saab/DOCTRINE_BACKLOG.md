@@ -480,3 +480,30 @@ all 5). Honest limits, NOT to be force-fixed:
   exact). Hence the layer reports a window, not a date.
 - **Timing ANNOTATES, never resolves** the mode-A outcome ambiguity (born-and-lived vs born-and-died):
   the natal verdict is unchanged; timing only adds "when the significators/marakas are active".
+
+## ASP ch.XV + ch.XVI mining record (2026-08-03) — so no future session re-mines blind
+
+**ch.XVI (Illustrated Horoscopes).** The preamble states Illustrated No. 1's Sun Ashtakavarga
+cell-by-cell, raw AND reduced (ASP-16:40-51): raw checksums to 48 and ALL SIX printed reduced
+cells reproduce under `trikona_shodhana` exactly (`test_asp_illustrated.py`) — the third
+independent printed-book validation of the subtract reading. The remaining ~8 nativities
+(Roosevelt, Marx, Ford, Mussolini, Tagore, Stalin-era dates...) carry printed longitudes,
+per-planet AV figure strings, Sarvashtakavarga rows and SODYA PINDA tables — fixture gold, but
+the OCR of the longitude/figure strings is too damaged to extract responsibly (Roosevelt's
+month digit corrupted, Moon's longitude lost). RE-EXTRACT BY VISION from the source PDF
+(uploads/…89c0f204…pdf, PDF pages 84-90) in a fresh session; several charts likely overlap
+existing NH goldens (Tagore, Ford) — flag for the golden track, do not confirm unilaterally.
+
+**ch.XV (Miscellaneous), classified per the content-scope rule (a live tag does not admit
+out-of-scope content — the AFB-horary precedent):**
+- Rules 1-19 (ASP-15:21-168): ELECTIONAL — choosing times/directions for journeys, marriage,
+  studies, factories, conception via Sun/Moon/Mercury/Venus bindu-transits. Category (b),
+  MUHURTHA firewall — deliberately NOT encoded.
+- Rahu Ashtakavarga (ASP-15:~240-260): Raman presents a variant Rahu AV with bindus, while
+  noting "no Kakshya has been assigned to him". The first-edition preface says such
+  controversial matters (Rahu/Lagna AVs) were deliberately avoided in the main exposition;
+  the repo's 7-graha chayagraha lock stands. NOT encoded — recorded as a Raman-presented
+  variant, not Raman doctrine.
+- Rahu's 12-places-from-Moon transit results (ASP-15:263-271): benefic at (3), (6), (11) —
+  CORROBORATES transits.py's existing Rahu Gochara set {3,6,11} exactly. No change needed;
+  noted as an ASP confirmation of the encoded table.

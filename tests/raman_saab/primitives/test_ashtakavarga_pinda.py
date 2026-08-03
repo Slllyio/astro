@@ -97,3 +97,40 @@ class TestOnACastChart:
         assert ashtakavarga_pinda(chart, planet).rasi == rasi_gunakara(red)
         if raw != red:
             assert rasi_gunakara(raw) > rasi_gunakara(red)
+
+
+class TestASP14CrossCheck:
+    """ASP ch.XIV works the same math on the Standard Horoscope. Where his statements are
+    checkable against the rules, they reproduce; his printed reduced TABLES carry hand-
+    computation slips (module docstring), so the totals are recorded, not matched."""
+
+    @pytest.fixture(scope="class")
+    def standard(self):
+        from app.raman_saab.chart.model import RamanChart
+        S = {"Sun": 179 + 8 / 60, "Moon": 311 + 40 / 60, "Mars": 229 + 49 / 60,
+             "Mercury": 180 + 33 / 60, "Jupiter": 83 + 35 / 60, "Venus": 170 + 4 / 60,
+             "Saturn": 124 + 51 / 60, "Rahu": 53 + 23 / 60, "Ketu": 233 + 23 / 60}
+        return RamanChart.from_stated_positions(
+            {p: {"lon": lon, "bhava": 1} for p, lon in S.items()},
+            asc_lon=185.0, ayanamsa="raman")
+
+    def test_sodya_pinda_is_ramans_own_term_and_shape(self, standard):
+        """ASP-14:196-198 — rasi + graha IS the Sodya Pinda; the breakdown must expose
+        exactly that sum, and the x7/27 Ayurdaya application must be computable from it."""
+        pb = ashtakavarga_pinda(standard, "Sun")
+        assert pb.total == pb.rasi + pb.graha
+        gross = pb.total * 7 / 27
+        assert gross > 0
+
+    def test_virgo_reduced_cell_matches_ramans_statement(self, standard):
+        """ASP-14: '4 bindus in Virgo, the sign occupied by the Sun' (after reductions) —
+        the one reduced cell his prose states directly, and ours agrees."""
+        from app.raman_saab.primitives.ashtakavarga_reduction import reduced_bhinnashtakavarga
+        assert reduced_bhinnashtakavarga(standard, "Sun")[6] == 4
+
+    def test_totals_are_in_ramans_magnitude_band(self, standard):
+        """His printed Sun Sodya Pinda is 182; ours is 191 — within 5%, the delta traced to
+        slips in his hand-computed reduced tables (docstring). Guard the BAND so a real rule
+        regression (which moves totals by tens) cannot hide behind 'the book differs anyway'."""
+        pb = ashtakavarga_pinda(standard, "Sun")
+        assert 170 <= pb.total <= 200

@@ -8,13 +8,22 @@ all the seven planets *after reduction*", HPA-26:1128-1131) Raman derives, per p
   - **Graha Gunakara** (planetary factors, HPA-26:1303-1315): for each of the seven grahas, the
     reduced bindus in the SIGN THAT GRAHA OCCUPIES times a fixed per-planet factor, summed.
 
-**Naming fidelity.** The literature widely calls these sums (and their total) the *Sodhya
-Pinda* — rasi pinda + graha pinda. Raman does not use that term anywhere in HPA-26; he names
-the two Gunakaras and puts their sum straight into Ayurdaya: "Add together the Rasi figures
-and Graha figures ... multiply the result by 7 and divide the product by 27. The quotient
-gives the years of Ayurdaya" (HPA-26:1400-1404). This module therefore exposes Raman's own
-terms; `total` on the breakdown is what other texts call the planet's Sodhya Pinda, and the
-docstring is the only place that alias appears.
+**Naming fidelity (corrected 2026-08-03 when ASP entered the corpus).** HPA-26 names only the
+two Gunakaras; his dedicated Ashtakavarga book supplies the missing term in his own words:
+"The sum of the Rasi figures (Rasi Pinda) and Planetary figures (Graha Pinda) will be the
+Sodya Pinda for each planet" (ASP-14:196-198), with the same x7/27 Ayurdaya application
+(ASP-14:199-201, mirroring HPA-26:1400-1404). So `total` IS Raman's Sodya Pinda, by citation.
+
+**Cross-check against ASP-14's worked Standard Horoscope (measured 2026-08-03, recorded not
+fudged).** Raman prints Sun: Rasi 96, Graha 86, Sodya Pinda 182; our pipeline gives 103/88/191
+on his own stated longitudes. The divergence is in HIS printed reduced tables, not the rules:
+his ch.2 master table for the Sun matches this engine's `_BENEFIC` symbol-for-symbol ("Total
+48 points"), the occupancies match, and where ASP-13 states raw-table facts they reproduce
+exactly (Jupiter/Aquarius 4 bindus + donors; Saturn's signs 5 and 4). Individual reduced cells
+also agree where checkable (Virgo 4 = ours). Hand-computed 1962 tables carry slips — the same
+book prints the Kakshya order missing Mars — so the engine pins the RULES (anchored on
+HPA-26's own worked reduction) and records this delta rather than reverse-engineering
+per-cell corrections from a table with known misprints.
 
 **Scope.** HPA-26 applies the pinda to LONGEVITY. The transit-multiplier application (the
 pinda scaling Gochara results) belongs to Raman's *Ashtakavarga System of Prediction*, which

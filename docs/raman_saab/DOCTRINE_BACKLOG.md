@@ -78,6 +78,14 @@ Two observations for whoever revisits this:
   the guard away from inverted channels would likely win on both metrics — but that is fitting
   to the goldens, which the MEASURED TRUTH lock warns is not accuracy. Deliberate call, not a
   silent tweak.
+  - **SCOPING MEASURED AND CLOSED 2026-08-03 — the speculation above was WRONG.** A/B via the
+    new `B1_GUARD_EXEMPT_HOUSES` knob (empty by default, read live, human-set only): exempting
+    H12 (or H3+H12, the atlas set) gives exact 259→261 but within-1 283→282 and **real-errors
+    10→11** — h12_05 H12/expenditure un-softens back to a favourable↔afflicted inversion. It
+    does NOT win on both metrics; it trades back the exact failure category the guard was
+    enabled to fix. Neither variant dominates, and the enablement decision already ranked fewer
+    inversions above strict exact — so the guard stays UNSCOPED and the knob stays empty, kept
+    only so a future re-measurement is a one-line experiment.
 
 The tuner cannot find this: `tune_thresholds --holdout-lock` converges at iteration 0 (fit
 0.907, holdout 0.841, no improving neighbour) because B1 is a *comparison*, not a weight, and
@@ -131,7 +139,20 @@ the Sun-based Vesi/Vasi/Ubhayachari — near-universal (~85/130), inert (kind=ot
 reviewer-KEEP, zero-regression) — **Y.CHAMARA** (HPA-20:65, strict arm), **Y.SREENATHA** (HPA-20:90),
 **Y.KHADGA** (HPA-20:184). Deferred (over-fire under the is_powerful proxy → need B1 effective-strength):
 Shankha (102/164), Kahala (48/164), Lakshmi (strict dignity arm 16/164). Rejected as noise: Sun-based
-Vasi/Vesi/Obhayachari. Un-mined: Bheri, Sarada, Matsya, Mridanga, Konrma, Kusimia, Daridra, Rajju.
+Vasi/Vesi/Obhayachari. Un-mined: Sarada, Matsya, Mridanga, Konrma, Kusimia, Daridra, Rajju.
+
+**RE-ATTEMPT CLOSED 2026-08-03 (negative, measured).** The B1 effective-strength measure now
+exists and was applied to all four deferred yogas on the full 225-chart corpus. It does NOT
+rescue them: Shankha 126→113/225 (50%), Kahala 76→67/225 (30%), Bheri 94→85/225 (38%) under the
+strictly tighter gate (band=="strong" AND not decisively_weak). The original diagnosis was wrong
+— the proxy was never the problem; the GEOMETRY is common by construction (mutual kendras ~1/3
+base rate, movable-sign lords ~1/3), so no strength refinement can make these rare. Lakshmi's
+strict arm IS rare (7/225 geometric, 3/225 gated) but only under one resolution of the
+sentence's comma-parse, which Raman does not disambiguate and whose readings differ by an order
+of magnitude — registering one would be choosing doctrine for him. All four stay deferred; the
+unblocking condition is now "a more specific reading of Raman's text", not a better strength
+measure. Scan: yoga_refire (session scratch, 2026-08-03); full numbers in yogas.py's deferral
+note.
 
 ### (original)
 Add to the yoga detector / rule sets (each cited; mostly low-risk, additive):

@@ -55,6 +55,13 @@ class TestShippedState:
         verdict, _shifted = ht._decide(_ledger(lord_hard_afflicted=True))
         assert verdict == "favourable"
 
+    def test_no_house_is_exempt_by_default(self):
+        """B1_GUARD_EXEMPT_HOUSES ships EMPTY. Measured 2026-08-03: exempting H12 recovers 2
+        strict matches but re-escalates a real favourable<->afflicted inversion (h12_05) —
+        trading back exactly what the guard was enabled to fix. Any entry here is a recorded
+        human decision (DOCTRINE_BACKLOG B1), never a tuner move."""
+        assert ht.B1_GUARD_EXEMPT_HOUSES == frozenset()
+
 
 class TestGuardBehaviour:
     def test_hard_afflicted_lord_blocks_the_favourable_lift(self):

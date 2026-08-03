@@ -919,17 +919,24 @@ YOGAS: tuple[YogaRecord, ...] = (
         effect=("Always loving falsehood and indulging in fraudulent schemes."),
         source=Citation("HPA-20", 225)),
 )
-# DEFERRED HPA-20 yogas (over-fire under the current primitives; documented limits):
-#   Y.SHANKHA (HPA-20:77), Y.KAHALA (HPA-20:151) — hinge on a holistic "powerful lord" the
-#     Shadbala is_powerful proxy reads too liberally (Shankha 102/164, Kahala 48/164). Re-attempt
-#     once an effective-strength (combust/dignity-adjusted) measure exists (DOCTRINE_BACKLOG B1).
-#   Y.LAKSHMI (HPA-20:190) — even the strict dignity arm (9th-lord exalt/moolatrikona) fires
-#     16/164; its discriminating form needs lagna-lord involvement the geometry can't isolate
-#     (matches the prior B5 finding). Re-attempt with B1.
-#   Y.BHERI (HPA-20:96) — both arms hinge on a "powerful" 10th/9th lord (arm A: powerful 10th lord
-#     with three planets in 1/2/7/12; arm B: powerful 9th lord with Venus & the lagna lord in
-#     quadrants from Jupiter). Same is_powerful-proxy liberality as Shankha/Kahala; deferred with
-#     them pending the B1 effective-strength measure.
+# DEFERRED HPA-20 yogas — RE-ATTEMPTED 2026-08-03 with the B1 effective-strength measure and
+# still deferred, now for a MEASURED reason. The original deferral blamed the is_powerful proxy
+# ("re-attempt once an effective-strength measure exists"); the re-attempt disproves that
+# diagnosis. Fire rates on the full 225-chart golden corpus, old proxy -> effective gate
+# (band=="strong" AND not decisively_weak, i.e. strictly tighter):
+#   Y.SHANKHA (HPA-20:77)  126/225 (56%) -> 113/225 (50%)
+#   Y.KAHALA  (HPA-20:151)  76/225 (34%) ->  67/225 (30%)
+#   Y.BHERI   (HPA-20:96)   94/225 (42%) ->  85/225 (38%)
+# The gate is NOT the discriminator: the geometric conditions themselves are common by
+# construction (a mutual-kendra pair holds ~1/3 of the time; a lord in a movable sign ~1/3), so
+# no strength refinement can make these rare. They stay deferred until a fundamentally more
+# specific reading of Raman's text emerges — not until a better strength measure does.
+#   Y.LAKSHMI (HPA-20:190) — the strict arm is genuinely rare (7/225 geometric, 3/225 gated),
+#     but its rarity rests on ONE resolution of the sentence's comma-parse ("Lord of the 9th in
+#     a quadrant, moolathrikona or in deep exaltation or lord of lagna in conjunction with 9th
+#     lord" — kendra AND dignity? or kendra OR dignity?). Raman does not disambiguate, the two
+#     readings differ by an order of magnitude in fire rate, and registering one would be
+#     choosing doctrine for him. Deferred on parse ambiguity, not on strength.
 
 
 # ── detection API ────────────────────────────────────────────────────────────

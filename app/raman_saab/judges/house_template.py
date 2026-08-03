@@ -345,6 +345,14 @@ def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
 #: rebind it, exactly like the CONTRA_PILLAR_* knobs.
 B1_DOMINANT_FACTOR_GUARD: bool = True
 
+#: Houses whose significations the B1 guard does NOT act on. EMPTY by default — the guard
+#: applies everywhere. Exists because the enablement measurement showed half the guard's
+#: regressions were H12/moksha, and H12 is an atlas-proven INVERTED channel; scoping the guard
+#: away from such houses would likely improve both ratchet metrics, but that is fitting to the
+#: goldens (MEASURED TRUTH: overfitting to worked examples is not accuracy), so any entry here
+#: is a HUMAN decision recorded in DOCTRINE_BACKLOG B1, never a tuner move. Read LIVE.
+B1_GUARD_EXEMPT_HOUSES: frozenset[int] = frozenset()
+
 
 def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     """Does the LORD carry an affliction Raman reads as overriding its Shadbala total?
@@ -962,7 +970,8 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # Strength pillars. When lord==karaka the two pillars are collapsed to a single value
     # so one affliction is not double-counted.
     lord_strong = _strong(lord, chart)
-    lord_hard = _lord_hard_afflicted(lord, chart)        # B1 (HTJAH-I:3788)
+    lord_hard = (None if sig.house in B1_GUARD_EXEMPT_HOUSES
+                 else _lord_hard_afflicted(lord, chart))  # B1 (HTJAH-I:3788)
     karaka_strong = lord_strong if lord_karaka_identical else _strong(karaka, chart)
 
     marakas = _maraka_grahas(chart)

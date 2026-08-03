@@ -24,6 +24,7 @@ from app.raman_saab.chart.ayanamsa import sidereal_mode
 from app.raman_saab.chart.constants import SWE_PLANETS
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.primitives import ashtakavarga as av
+from app.raman_saab.primitives import kakshya
 
 #: Houses FROM THE MOON in which a transiting planet gives benefic results (classical Gochara).
 _GOCHARA_GOOD: Final[dict[str, frozenset[int]]] = {
@@ -76,6 +77,18 @@ class TransitRow:
     vedha_house: int | None   # the Vedha (obstruction) house for this transit (None if not benefic)
     vedha_by: tuple[str, ...]  # transiting planets occupying the Vedha house (obstructing)
     net_good: bool            # gochara_good AND not obstructed by Vedha
+    # ── Kakshya micro-transit (ASP-13; added 2026-08-03) ──────────────────────────────────
+    #: the 3¾° Kakshya the planet currently occupies and its ruling reference (None for nodes —
+    #: they have no Ashtakavarga to judge against, per the 7-graha lock).
+    kakshya_lord: str | None = None
+    #: the ASP-13 judgment: did the Kakshya lord CONTRIBUTE a bindu to this sign in the
+    #: transiting planet's own Ashtakavarga? ("Good income can be predicted when Jupiter
+    #: transits the 3rd Kakshya ruled by Mars ... Mars has also contributed a bindu",
+    #: ASP-13:459-474.) None when unjudgeable (nodes).
+    kakshya_favourable: bool | None = None
+    #: Raman's transit proportion, bindus/8 — "good effects ... to the extent of 62%" (5/8,
+    #: ASP-13:280-282), "neutralises the evil to the extent of 75%" (6/8, ASP-13:416).
+    bav_proportion: float | None = None
 
 
 def transit_chart(year: int, month: int, day: int, *, ayanamsa: str = "lahiri") -> RamanChart:
@@ -108,10 +121,19 @@ def gochara(natal: RamanChart, year: int, month: int, day: int, *,
         good = hfm in _GOCHARA_GOOD.get(planet, frozenset())
         bav = av.bhinnashtakavarga(natal, planet)[ts] if planet in av.PLANETS else None
         vedha_house, vedha_by = _vedha(planet, hfm, hfm_of) if good else (None, ())
+        # Kakshya micro-transit (ASP-13): judged from the transiting LONGITUDE against the
+        # NATAL Prasthara of the planet's own Ashtakavarga. Nodes carry None throughout.
+        k_lord: str | None = None
+        k_fav: bool | None = None
+        if planet in av.PLANETS:
+            kr = kakshya.transit_kakshya_reading(natal, planet, p.lon)
+            k_lord, k_fav = kr.kakshya_lord, kr.favourable
         rows.append(TransitRow(
             planet=planet, sign=ts, house_from_moon=hfm, house_from_lagna=hfl,
             gochara_good=good, bav_bindus=bav, supported=None if bav is None else bav >= 4,
-            vedha_house=vedha_house, vedha_by=vedha_by, net_good=good and not vedha_by))
+            vedha_house=vedha_house, vedha_by=vedha_by, net_good=good and not vedha_by,
+            kakshya_lord=k_lord, kakshya_favourable=k_fav,
+            bav_proportion=None if bav is None else round(bav / 8.0, 3)))
     return tuple(rows)
 
 

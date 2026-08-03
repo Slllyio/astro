@@ -1070,10 +1070,16 @@ def _gochara_table(r: DetailedReport) -> str:
         av = str(g.bav_bindus) if g.bav_bindus is not None else "&ndash;"
         vedha = _esc(", ".join(g.vedha_by)) if g.vedha_by else "&ndash;"
         net = ("favourable" if g.net_good else "obstructed/adverse")
+        # Kakshya micro-transit + bindus/8 proportion (ASP-13) — same fields as the markdown.
+        prop = f"{g.bav_proportion:.0%}" if g.bav_proportion is not None else "&ndash;"
+        kak = ("&ndash;" if g.kakshya_lord is None else
+               f'{_esc(g.kakshya_lord)} '
+               f'({"donated" if g.kakshya_favourable else "no bindu"})')
         rows += (f'<tr><td><b>{_esc(g.planet)}</b></td><td>{_esc(_SIGN_NAME[g.sign])}</td>'
                  f'<td class="num">{g.house_from_moon}</td>'
                  f'<td>{"favourable" if g.gochara_good else "adverse"}</td>'
-                 f'<td class="num">{av}</td><td>{vedha}</td>'
+                 f'<td class="num">{av}</td><td class="num">{prop}</td><td>{kak}</td>'
+                 f'<td>{vedha}</td>'
                  f'<td><span class="chip chip--{"favourable" if g.net_good else "afflicted"}">'
                  f'{net}</span></td></tr>')
     return ('<h2 class="section" id="gochara">Current transits (Gochara) with Vedha</h2>'
@@ -1082,6 +1088,7 @@ def _gochara_table(r: DetailedReport) -> str:
             'The net column applies Vedha: an obstructed transit does not deliver.</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>sign</th>'
             '<th class="num">from Moon</th><th>classical</th><th class="num">AV</th>'
+            '<th class="num">proportion</th><th>Kakshya</th>'
             '<th>Vedha by</th><th>net</th></tr></thead>'
             f'<tbody>{rows}</tbody></table></div>'
             f'{_gochara_outlook_svg(r)}')

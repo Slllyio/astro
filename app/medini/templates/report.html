@@ -1019,7 +1019,7 @@ function gocharaFromMoon(R){ const g=R.gochara||[]; if(!g.length) return null;
   const grid=el('div',{}); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(12,1fr)'; grid.style.gap='2px'; grid.style.margin='.4rem 0';
   for(let h=1;h<=12;h++){ const cell=el('div',{}); cell.style.cssText='border:1px solid var(--line);border-radius:4px;padding:.25rem;min-height:2.5rem;font-size:.7rem';
     cell.append(el('div',{class:'muted',style:'font-size:.58rem'},h+' from ☾'));
-    for(const t of (byH[h]||[])){ const sp=el('span',{class:'gr',title:t.planet+' — '+(t.net_good?'net favourable':'net adverse')+'; BAV '+t.bav_bindus+(t.supported?'; supported':'')+(t.vedha_by&&t.vedha_by.length?('; vedha by '+t.vedha_by.join(', ')):'')});
+    for(const t of (byH[h]||[])){ const sp=el('span',{class:'gr',title:t.planet+' — '+(t.net_good?'net favourable':'net adverse')+'; BAV '+t.bav_bindus+(t.bav_proportion!=null?(' ('+Math.round(t.bav_proportion*100)+'%)'):'')+(t.supported?'; supported':'')+(t.kakshya_lord?('; kakshya '+t.kakshya_lord+(t.kakshya_favourable?' (donated)':' (no bindu)')):'')+(t.vedha_by&&t.vedha_by.length?('; vedha by '+t.vedha_by.join(', ')):'')});
       sp.style.color=goodVar(t.net_good); sp.append((GABBR[t.planet]||t.planet.slice(0,2))); cell.append(' '); cell.append(sp); }
     grid.append(cell); }
   return grid; }

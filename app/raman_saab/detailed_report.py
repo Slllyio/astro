@@ -2897,14 +2897,20 @@ def to_markdown(r: DetailedReport) -> str:
                  "applies Vedha (obstruction): a favourable transit obstructed by a planet in its "
                  "Vedha position does not deliver._")
         L.append("")
-        L.append("| planet | sign | from Moon | classical | AV bindus | Vedha by | **net** |")
-        L.append("|---|---|---:|---|---|---|---|")
+        L.append("| planet | sign | from Moon | classical | AV bindus | proportion | Kakshya | Vedha by | **net** |")
+        L.append("|---|---|---:|---|---|---|---|---|---|")
         for g in r.gochara:
             av = str(g.bav_bindus) if g.bav_bindus is not None else "-"
             vedha = ", ".join(g.vedha_by) if g.vedha_by else "-"
+            # Kakshya micro-transit (ASP-13): the 3¾° arc's lord and whether it donated a bindu
+            # to the transited sign — Raman's finer within-sign dial. bindus/8 is his own
+            # proportion law ("to the extent of 62%" = 5/8, ASP-13:280-282).
+            prop = f"{g.bav_proportion:.0%}" if g.bav_proportion is not None else "-"
+            kak = ("-" if g.kakshya_lord is None else
+                   f"{g.kakshya_lord} ({'donated' if g.kakshya_favourable else 'no bindu'})")
             L.append(f"| {g.planet} | {_SIGN_NAME[g.sign]} | {g.house_from_moon} | "
-                     f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {vedha} | "
-                     f"**{'favourable' if g.net_good else 'obstructed/adverse'}** |")
+                     f"{'favourable' if g.gochara_good else 'adverse'} | {av} | {prop} | {kak} | "
+                     f"{vedha} | **{'favourable' if g.net_good else 'obstructed/adverse'}** |")
         L.append("")
 
     # ── the same Gochara scheme, over time: which windows in the past/future are favourable ──

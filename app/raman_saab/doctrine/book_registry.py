@@ -55,6 +55,19 @@ BOOKS: tuple[BookEntry, ...] = (
     # live does not admit out-of-scope CONTENT; rules cite specific lines.)
     BookEntry("AFB", "astrology_for_beginners_raman", True, "live",
               None, "Astrology for Beginners", "AstrologyForBeginners_201705"),
+    # ASP added 2026-08-03 (user-supplied scan, Eighth Edition UBS, ISBN 978-81-85674-25-4;
+    # first edition 1962). Raman's dedicated Ashtakavarga treatise — the book HPA-26's own
+    # Trikona footnote defers to ("for reasons we have dealt with in our book on Ashtakavarga").
+    # Unlocks the doctrine HPA only gestures at: the transit Kakshya scheme + worked 1962 table
+    # (ASP-13:421-451), the bindus/8 transit-proportion law (ASP-13:265-284, 416), the 8-part
+    # Kakshya-order Dasa division (ASP-12), and the Rasi-not-Bhava reckoning lock stated in the
+    # first-edition preface. In-scope: natal/transit Parashari Ashtakavarga, Raman's own text.
+    # OCR NOTE (fidelity): the ch.13 prose sentence listing the Kakshya order (ASP-13:424-425)
+    # omits Mars IN THE PRINT ITSELF (7 names for 8 parts, a printer's slip); Raman's own
+    # longitude table 18 lines later (ASP-13:443-451) carries all 8 with Mars third — the table
+    # is the authority, exactly as with HPA-26's OCR-damaged worked example.
+    BookEntry("ASP", "ashtakavarga_system_raman", True, "live",
+              None, "Ashtakavarga System of Prediction"),
     # --- CATALOG-ONLY, OUT OF SCOPE (different systems): present, NON-citable (divergence firewall) ---
     # NOTE (2026-07-24, merge re-review): the soul-destiny experiment temporarily made JAIMINI + JS
     # `live` on its branch. RE-LOCKED at merge per the pre-registered re-review: the firewall below

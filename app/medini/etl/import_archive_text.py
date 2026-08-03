@@ -291,6 +291,22 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         classical_ref_prefix="Raman.AFB",
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
+    # ASP (2026-08-03): NOT an archive.org import — the chapters were OCR'd locally from a
+    # user-supplied scan (easyocr, two-pages-per-sheet split at the gutter; provenance in each
+    # chapter's front-matter). Listed here because every LIVE registry book must be known to
+    # this bundle (test_registry_slugs_coupled_to_etl_bundle); `identifier`/`filename` record
+    # the local pipeline rather than an archive identifier, and a re-import would re-run that
+    # OCR pipeline, not this ETL.
+    _Book(
+        identifier="(local-scan; no archive.org identifier)",
+        filename="89c0f204-478806521ashtakavargaBVRamanpdf.pdf",
+        book_slug="ashtakavarga_system_raman",
+        book_title="Ashtakavarga System of Prediction",
+        author="B. V. Raman",
+        translator="(original English)",
+        classical_ref_prefix="Raman.ASP",
+        header_regex=_DEFAULT_HEADER_REGEX,
+    ),
     _Book(
         identifier="how-to-judge-a-horoscope-r.-santhanam",
         filename="How to Judge a Horoscope - R. Santhanam_djvu.txt",

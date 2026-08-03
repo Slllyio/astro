@@ -119,8 +119,8 @@ _HOUSE_WORDS: Final[dict[int, tuple[str, ...]]] = {
 _SIGN_WORDS: Final[dict[int, tuple[str, ...]]] = {
     1: ("Aries",), 2: ("Taurus", "Tauras"), 3: ("Gemini",), 4: ("Cancer",),
     5: ("Leo",), 6: ("Virgo",), 7: ("Libra",), 8: ("Scorpio",),
-    9: ("Sagittarius", "Sagittarins"), 10: ("Capricorn",),
-    11: ("Aquarius", "Aqnarius"), 12: ("Pisces",),
+    9: ("Sagittarius", "Sagittarins", "Sagit"), 10: ("Capricorn",),
+    11: ("Aquarius", "Aqnarius", "Aqua"), 12: ("Pisces",),
 }
 
 #: How many houses from the Moon count favourable per transit — already encoded with its

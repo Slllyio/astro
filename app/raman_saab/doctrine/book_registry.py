@@ -102,7 +102,12 @@ BOOKS: tuple[BookEntry, ...] = (
     # Panchaka, Tarabala/Chandrabala, Durmuhurtha all present.
     BookEntry("MUHURTHA", "muhurtha_raman", True, "live",
               None, "Muhurtha (electional)"),
-    BookEntry("VARSHA", "varshaphal_raman", True, "catalog-only-out-of-scope",
+    # VARSHA firewall LIFTED 2026-08-03 (second explicit user decision, same day as PRASNA/
+    # MUHURTHA): needed because Raman's Prasna Tantra defers the Tajika machinery to his
+    # Varshaphal (PRASNA-2:288-291) — the Saham formula table and the fullest yoga definitions
+    # live in VARSHA-7. Citable by the walled horary/electional subsystems ONLY; natal rules
+    # still never cite it. JAIMINI is now the only firewalled book.
+    BookEntry("VARSHA", "varshaphal_raman", True, "live",
               None, "Varshaphal (annual)"),
 )
 

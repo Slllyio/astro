@@ -63,8 +63,24 @@
     "line_count": 14272,
     "sha256": "d75cc598b22ce43daa3417f93a85f3e03a84bdb4cb848455b0954061e00ca97a"
   },
+  "prasna_tantra_raman/chapter_002_bhava-prasna.md": {
+    "line_count": 486,
+    "sha256": "ccb5385d56495f46fa7a64da50f112ab3b2c51a635992e63bc59427d4398e7e6"
+  },
+  "prasna_tantra_raman/chapter_004_miscellaneous-matters.md": {
+    "line_count": 2598,
+    "sha256": "28696496e0b28f7d57d5afaf74c93bf2584bb94888360a58e22cee30eef63a1a"
+  },
+  "prasna_tantra_raman/chapter_049_bhava-prasna.md": {
+    "line_count": 3685,
+    "sha256": "6a7d00074f604d30b0dfe0b29bc31eb1391d0be9843298cdb329dbfaa356a6a7"
+  },
   "three_hundred_combinations_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 8984,
     "sha256": "1838d212cde1931437c76d50f7ff1555583a2bfe5b3f6954e7f2768417dad50a"
+  },
+  "varshaphal_raman/chapter_007_yogas-sahams-etc.md": {
+    "line_count": 255,
+    "sha256": "f882a549583b29f99949701494ea7379763be8937a7e28ef913c61e2dddbbcb8"
   }
 }

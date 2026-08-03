@@ -584,3 +584,26 @@ rule) sits in `varshaphal_raman` ch.7 — still firewalled. Encoding sahams ther
 EITHER a separate user decision to lift VARSHA (scoped to the saham/yoga-definition
 chapters) OR leaving sahams out of the horary package. Punyasaham APPLICATION rules
 (PRASNA-3, PRASNA-49) are citable either way. ASK THE USER AT PHASE 3, not before.
+
+**RESOLVED same day — VARSHA LIFTED (user decision via AskUserQuestion, 2026-08-03,
+Phase 3).** `varshaphal_raman` flipped to `live` with the same walled-subsystem scope.
+JAIMINI is now the ONLY firewalled book. Phase 3 built `app/raman_saab/horary/`:
+- `tajika_aspects.py` — the printed Deeptamsa table (PRASNA-2:262-264), the speed order
+  (PRASNA-4:1085-1088), Ithasala/Poorna (stanzas 54-55), Easarapha (56), Naktha (57),
+  Yamaya (60), Kamboola (61). **Orb rule = the SMALLER of the two deeptamsas** — fixed by
+  VARSHA-7:43-47's own micro-example ("Guru's 9 and Sukra's 7 -> within 7 degrees"), since
+  PRASNA-4's worked figure is OCR-damaged at the digit. Applying/separating resolved in the
+  directed separation space (sep = slower−faster mod 360, strictly decreasing).
+- `sahams.py` — the TEN sahams Raman prints (VARSHA-7:84-171) with day/night swaps, the
+  +30 no-lagna-between rule, saham lords (VARSHA-7:190-192), and the worked Punya
+  arithmetic (105°21'+285°9'=30°30') pinned. "Vidya"/"Karya" sahams (the pasted plan's
+  wish-list) are NOT in Raman's table -> NOT encoded. Mitra's printed formula adds VENUS in
+  place of the lagna term (encoded exactly); its Night line is OCR-mangled and the
+  every-other-saham day/night-swap pattern is applied — recorded, not silently corrected.
+- `prasna_judge.py` — Karyasiddhi: the four full-success configurations (PRASNA-49:107-116),
+  Karyesa = query-house lord (:119-126), the 25/50/75/100% ladder (:137-190). Planet-planet
+  checks use tajika orbs; planet-HOUSE checks are sign-granular (the book's charts are rasi
+  diagrams). Death/lifespan/serious-illness/self-harm topics REFUSED IN CODE. Every verdict
+  carries the Measured-Truth disclaimer.
+Source-lock re-locked add-only (3 PRASNA chapters + VARSHA-7). Walled both directions by
+test. HPA-27/AFB-11 remain citable-but-uncited (no rule needs them yet).

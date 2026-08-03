@@ -64,7 +64,9 @@ def iter_citations() -> Iterator[Citation]:
     # Walled subsystems (post the 2026-08-03 firewall lift) enumerate their anchors so their
     # corpus lines are pinned exactly like the natal registries'.
     from app.raman_saab.electional import CITED_ANCHORS as _ELECTIONAL_ANCHORS
+    from app.raman_saab.horary import CITED_ANCHORS as _HORARY_ANCHORS
     yield from _ELECTIONAL_ANCHORS
+    yield from _HORARY_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:

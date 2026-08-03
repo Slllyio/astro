@@ -107,7 +107,7 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 - Per-account rate limiting via `slowapi` with JWT-aware key function.
 - **Tab 3 (Medini)**: Leaflet + OSM (NOT Mapbox), axis-aligned bbox tiling (NOT PostGIS), safe DOM construction (`createElement` + `textContent`, never innerHTML).
 - Single source of truth for Kurma GeoJSON: `/medini/regions` is consumed by both the educational widget and the personalized cartography page.
-- **PRASNA + MUHURTHA firewalls LIFTED (user decision 2026-08-03)**: horary (`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) are walled subsystems — they may import natal primitives, natal verdict code NEVER imports them; their sources (PRASNA/MUHURTHA tags, + HPA-27/AFB-11/ASP-15:21-183 content) are citable by those subsystems only; outputs carry Measured-Truth framing; death/lifespan queries excluded in code. JAIMINI + VARSHA stay firewalled. Full record: `DOCTRINE_BACKLOG.md` "PRASNA + MUHURTHA firewall LIFT".
+- **PRASNA + MUHURTHA + VARSHA firewalls LIFTED (user decisions 2026-08-03)**: horary (`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) are walled subsystems — they may import natal primitives, natal verdict code NEVER imports them (tested both directions); their sources (PRASNA/MUHURTHA/VARSHA tags, + HPA-27/AFB-11/ASP-15:21-183 content) are citable by those subsystems only; outputs carry Measured-Truth framing; death/lifespan queries excluded in code. **JAIMINI is the only book still firewalled.** Full record: `DOCTRINE_BACKLOG.md` "PRASNA + MUHURTHA firewall LIFT".
 
 ## ★ REPORT COMPLETENESS — do NOT omit anything (locked 2026-07-27, after a real error)
 

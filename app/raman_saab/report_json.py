@@ -143,6 +143,7 @@ def to_report_dict(r: DetailedReport) -> dict:
                       "balarishta": (_ad(r.balarishta) if r.balarishta is not None else None)},
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
+        "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

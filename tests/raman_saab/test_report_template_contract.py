@@ -60,6 +60,10 @@ _FROZEN = (
     # confluence inserted right after The maraka scheme — it cross-references that section's
     # own death-window against transiting Saturn.
     ("maraka_saturn", "## Maraka x Saturn-transit confluence", 'id="maraka-saturn"'),
+    # v17 amendment (2026-08-03, conscious, same-commit as the module, user-approved feature):
+    # the Health & vulnerability read-out — a pure re-read of the D-30 health core, H12 rollup,
+    # maraka tiers and longevity band — closing the longevity/maraka cluster it summarizes.
+    ("health_readout", "## Health & vulnerability read-out", 'id="health-readout"'),
     ("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"'),
     # v9 amendment (2026-07-26, conscious, same-commit as the module): Ishta/Kashta outlook
     # inserted right after Life-narrative — a colour-strip companion to that section.
@@ -166,11 +170,11 @@ class TestTemplateContract:
         Transit confluence, v7 Yoga x Dasha timing, v8 the House strength cross-check, v9 the
         Ishta/Kashta outlook, v10 the MD-lord condition outlook, v11 the Maraka x Saturn-transit
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
-        Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals — the higher-order synthesis
-        sections)."""
+        Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
+        v17 the Health & vulnerability read-out — the higher-order synthesis sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16"}
+            "v14", "v15", "v16", "v17"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -186,3 +190,33 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v13") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v14") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v15") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v16") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v17") == 1
+
+
+class TestHealthReadout:
+    """v17 — the health/vulnerability read-out: populated in every surface, guard-safe prose."""
+
+    def test_section_renders_populated_in_every_surface(self, report, markdown, html):
+        """The canonical chart populates the section in md, HTML and JSON alike — the
+        REPORT COMPLETENESS rule (every computed field appears in every renderer)."""
+        from app.raman_saab.report_json import to_report_dict
+        h = report.health_readout
+        assert h.rows, "health read-out empty on the canonical chart"
+        assert h.caveat
+        assert "## Health & vulnerability read-out" in markdown
+        assert 'id="health-readout"' in html
+        d = to_report_dict(report)["health_readout"]
+        assert d["rows"] and d["caveat"] == h.caveat
+
+    def test_prose_passes_the_llm_guard_tripwire(self, markdown):
+        """The section's whole rendered prose must never trip _FORBIDDEN_RE — the same
+        tripwire that rejects decree/forecast language in LLM answers. This pins the
+        wording contract: descriptive idiom only, no death tokens, no dated indications."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        start = markdown.find("## Health & vulnerability read-out")
+        assert start >= 0
+        end = markdown.find("\n## ", start + 1)
+        section = markdown[start:end if end > 0 else None]
+        m = _FORBIDDEN_RE.search(section)
+        assert m is None, f"health read-out prose trips the guard: {m.group(0)!r}"

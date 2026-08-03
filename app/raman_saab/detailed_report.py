@@ -478,6 +478,13 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # death-timing signal; see docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md).
     SectionSpec("maraka_saturn", "## Maraka x Saturn-transit confluence",
                 'id="maraka-saturn"', "v11"),
+    # v17 (2026-08-03, conscious amendment, user-approved feature): the health/vulnerability
+    # READ-OUT — a pure re-read of the D-30 health core, H12 rollup, maraka tiers and longevity
+    # band, gathered in one place. Placed at the end of the longevity/maraka neighbourhood it
+    # summarizes (the v11 precedent for this cluster); descriptive idiom only, caveat rendered
+    # in every surface, never a medical statement or prediction.
+    SectionSpec("health_readout", "## Health & vulnerability read-out",
+                'id="health-readout"', "v17"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
     # v9 (2026-07-26, conscious amendment): inserted right after Life-narrative, since it paints
     # the SAME windowed MD/AD timeline with each lord's Ishta/Kashta lean — the natural
@@ -526,7 +533,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
-    "maraka", "maraka_saturn", "timeline", "ishta_kashta", "md_condition", "av_dasha_seat",
+    "maraka", "maraka_saturn", "health_readout", "timeline", "ishta_kashta", "md_condition",
+    "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
     "life_chapters",
     "gochara", "dasha_transit",
     "divisional", "career",
@@ -1287,6 +1295,7 @@ class DetailedReport:
     preponderance: "PreponderanceReading"            # per-house testimony ledgers (v14)
     life_chapters: "LifeChapters"                    # one woven chapter per MD run (v15)
     digest: "InsightDigest"                          # ranked "what matters most" (pure re-read)
+    health_readout: "HealthReadout"                  # health/vulnerability read-out (v17)
 
 
 @dataclass(frozen=True)
@@ -1335,6 +1344,116 @@ _EMPTY_NICHOD: Final[Nichod] = Nichod(
     matters_tally="", current_period="", live_transits="", spotlight=None, caution=None,
     essence="",
 )
+
+
+@dataclass(frozen=True)
+class HealthIndicatorRow:
+    """One physical-vulnerability indicator, re-read from an already-computed verdict."""
+    area: str            # e.g. "House 6 — resistance to illness and rivals"
+    verdict: str         # the existing verdict/dignity word, unchanged
+    note: str            # descriptive detail, guard-safe idiom only
+    provenance: str      # which existing layer said it (proforma / D-30 core / HPA-14 ...)
+
+
+@dataclass(frozen=True)
+class HealthReadout:
+    """The health/vulnerability READ-OUT (v17) — a report-only synthesis of verdicts the
+    report already computes elsewhere: the D-30 health core (H1/H6/H8 + Moon/Mercury karakas
+    + balarishta), the H12 proforma rollup, the maraka tiers, and the longevity band.
+    NOTHING here is a new judgment, a medical statement, or a prediction — the caveat field
+    is rendered with the section in every surface."""
+    rows: tuple[HealthIndicatorRow, ...]
+    maraka_tiers: tuple[tuple[str, str], ...]    # (graha, tier), primary/secondary/tertiary
+    drekkana22_lord: str
+    navamsa64_lord: str
+    maraka_period_now: bool
+    longevity_band: str                          # e.g. "Madhyayu — a band, not a date"
+    caveat: str
+
+
+_EMPTY_HEALTH_READOUT: Final[HealthReadout] = HealthReadout(
+    rows=(), maraka_tiers=(), drekkana22_lord="", navamsa64_lord="",
+    maraka_period_now=False, longevity_band="", caveat="",
+)
+
+#: The one fixed caveat sentence for the health read-out — composed from the report's two
+#: existing framings (the "never medical statements" comment and the maraka-section
+#: method-not-prediction idiom). Deliberately free of every guard token.
+_HEALTH_CAVEAT: Final[str] = (
+    "A statement of the method, not a prognosis: these rows re-read verdicts computed "
+    "elsewhere in this report as Raman's method describes a chart's tendencies — never "
+    "medical statements, never a prediction (the project's own validation measured no "
+    "real-outcome signal; REAL_OUTCOME_GENERALIZATION.md)."
+)
+
+
+def build_health_readout(r: DetailedReport) -> HealthReadout:
+    """Second-pass synthesis (the `build_preponderance` species): selects and re-labels
+    already-computed health-adjacent verdicts. Returns the empty sentinel on sparse/Track-B
+    charts where the D-30 health core cannot be assembled."""
+    from app.raman_saab.judges.trimsamsa_health_reading import build_trimsamsa_health_reading
+    try:
+        core = build_trimsamsa_health_reading(r.chart).core
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        return _EMPTY_HEALTH_READOUT
+
+    rows: list[HealthIndicatorRow] = [
+        HealthIndicatorRow(
+            area="House 1 — constitution",
+            verdict=core.health_verdict,
+            note=(f"lagna lord {core.lagna_lord} in house {core.lagna_lord_house}, "
+                  f"dignity {core.lagna_lord_dignity}"),
+            provenance="H1 'health' signification (house proforma)"),
+        HealthIndicatorRow(
+            area="House 6 — resistance to chronic illness",
+            verdict=core.disease_verdict,
+            note="the 6th is read for illness and rivals; its verdict is the one shown in "
+                 "the house-by-house section",
+            provenance="H6 'disease_chronic' signification (house proforma)"),
+        HealthIndicatorRow(
+            area="House 8 — longevity lean",
+            verdict=core.longevity_verdict,
+            note="a lean only — the engine defers lifespan to the Longevity section's band",
+            provenance="H8 'longevity' signification (house proforma)"),
+    ]
+    if len(r.proformas) >= 12:
+        rows.append(HealthIndicatorRow(
+            area="House 12 — confinement and loss",
+            verdict=r.proformas[11].rollup,
+            note=f"house rollup under lord {r.proformas[11].lord}; per-signification detail "
+                 "sits in the house-by-house section",
+            provenance="H12 rollup (house proforma)"))
+    rows.append(HealthIndicatorRow(
+        area="Moon — mind (manas) karaka",
+        verdict=str(core.moon_dignity),
+        note=("afflicted by " + ", ".join(core.moon_afflictions)
+              if core.moon_afflictions else "no natural-malefic affliction"),
+        provenance="D-30 health core (Raman's single-chart method)"))
+    rows.append(HealthIndicatorRow(
+        area="Mercury — nervous-system karaka",
+        verdict=str(core.mercury_dignity),
+        note=("afflicted by " + ", ".join(core.mercury_afflictions)
+              if core.mercury_afflictions else "no natural-malefic affliction"),
+        provenance="D-30 health core (Raman's single-chart method)"))
+    bal = ("applies" if core.balarishta_applies and not core.balarishta_cancelled
+           else "cancelled" if core.balarishta_cancelled else "does not apply")
+    rows.append(HealthIndicatorRow(
+        area="Balarishta — early-childhood danger",
+        verdict=bal,
+        note="; ".join(core.balarishta_reasons) if core.balarishta_reasons else "no yoga fires",
+        provenance="HPA-14 balarishta primitive"))
+
+    mp = getattr(r.chart, "maraka_points", None)
+    tiers = tuple((u.graha, u.tier) for u in mp.units) if mp is not None else ()
+    return HealthReadout(
+        rows=tuple(rows),
+        maraka_tiers=tiers,
+        drekkana22_lord=mp.drekkana22_lord if mp is not None else "",
+        navamsa64_lord=mp.navamsa64_lord if mp is not None else "",
+        maraka_period_now=r.maraka_period_now,
+        longevity_band=f"{r.longevity_class} — a band, not a date",
+        caveat=_HEALTH_CAVEAT,
+    )
 
 
 @dataclass(frozen=True)
@@ -2225,7 +2344,7 @@ def build_detailed_report(
         window_back=years_back, window_forward=years_forward,
         nichod=_EMPTY_NICHOD, plain_reading=_EMPTY_PLAIN_READING, ruler=_EMPTY_RULER,
         preponderance=_EMPTY_PREPONDERANCE, life_chapters=_EMPTY_LIFE_CHAPTERS,
-        digest=_EMPTY_DIGEST,
+        digest=_EMPTY_DIGEST, health_readout=_EMPTY_HEALTH_READOUT,
     )
     # Ruler / preponderance / life-chapters are built FIRST (they read only the base fields
     # above), then the digest RANKS what those enriched fields hold, and finally the plain
@@ -2236,7 +2355,8 @@ def build_detailed_report(
     enriched = _dc_replace(provisional,
                            ruler=build_ruler(provisional),
                            preponderance=build_preponderance(provisional),
-                           life_chapters=build_life_chapters(provisional))
+                           life_chapters=build_life_chapters(provisional),
+                           health_readout=build_health_readout(provisional))
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     return _dc_replace(enriched, nichod=build_nichod(enriched),
                        plain_reading=build_plain_reading(enriched))
@@ -2778,6 +2898,35 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{_outlook_window_label(c.window_start_jd, c.window_end_jd)} | "
                      f"{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)} | "
                      f"{_SIGN_NAME[c.sign]} | {c.score} |")
+        L.append("")
+
+    # ── health & vulnerability read-out (v17, pure re-read of existing verdicts) ─────
+    if r.health_readout.rows:
+        h = r.health_readout
+        L.append("## Health & vulnerability read-out")
+        L.append("")
+        L.append("**In simple terms:** the health-adjacent verdicts this report already computed "
+                 "— the 1st/6th/8th/12th house readings, the Moon and Mercury karakas, the "
+                 "balarishta screen, the maraka tiers and the longevity band — gathered on one "
+                 "page. Every row names the section it re-reads; nothing here is new.")
+        L.append("")
+        L.append(f"_{h.caveat}_")
+        L.append("")
+        L.append("| Indicator | Verdict | Detail | Re-read from |")
+        L.append("|---|---|---|---|")
+        for row in h.rows:
+            L.append(f"| {row.area} | **{row.verdict}** | {row.note} | {row.provenance} |")
+        L.append("")
+        if h.maraka_tiers:
+            tier_txt = ", ".join(f"{g} ({t})" for g, t in h.maraka_tiers)
+            L.append(f"- **Maraka tiers** (re-read from The maraka scheme): {tier_txt}")
+            L.append(f"- **22nd drekkana lord**: {h.drekkana22_lord}  |  "
+                     f"**64th navamsa lord**: {h.navamsa64_lord}")
+        L.append(f"- **Running period**: "
+                 + ("carries a maraka-tier lord" if h.maraka_period_now
+                    else "carries no maraka-tier lord")
+                 + " (broad, low-discrimination flag by design)")
+        L.append(f"- **Longevity band** (re-read from Longevity): {h.longevity_band}")
         L.append("")
 
     # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────

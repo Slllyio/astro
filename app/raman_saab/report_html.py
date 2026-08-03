@@ -1062,6 +1062,42 @@ def _maraka_saturn_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _health_readout_section(r: DetailedReport) -> str:
+    """v17 — the health/vulnerability READ-OUT: a pure re-read of already-computed verdicts,
+    caveat always rendered, descriptive idiom only (never a medical statement or prediction)."""
+    h = r.health_readout
+    if not h.rows:
+        return ""
+    rows = "".join(
+        f'<tr><td><b>{_esc(row.area)}</b></td><td>{_esc(row.verdict)}</td>'
+        f'<td>{_esc(row.note)}</td><td>{_esc(row.provenance)}</td></tr>'
+        for row in h.rows)
+    tier_line = ""
+    if h.maraka_tiers:
+        tier_txt = ", ".join(f"{_esc(g)} ({_esc(t)})" for g, t in h.maraka_tiers)
+        tier_line = (
+            f'<p class="section-sub"><b>Maraka tiers</b> (re-read from The maraka scheme): '
+            f'{tier_txt} &mdash; <b>22nd drekkana lord</b>: {_esc(h.drekkana22_lord)}, '
+            f'<b>64th navamsa lord</b>: {_esc(h.navamsa64_lord)}.</p>')
+    period = ("carries a maraka-tier lord" if h.maraka_period_now
+              else "carries no maraka-tier lord")
+    return (
+        '<h2 class="section" id="health-readout">Health &amp; vulnerability read-out</h2>'
+        '<p class="section-sub"><b>In simple terms:</b> the health-adjacent verdicts this '
+        'report already computed &mdash; the 1st/6th/8th/12th house readings, the Moon and '
+        'Mercury karakas, the balarishta screen, the maraka tiers and the longevity band '
+        '&mdash; gathered on one page. Every row names the section it re-reads; nothing '
+        'here is new.</p>'
+        f'<p class="section-sub caveat"><i>{_esc(h.caveat)}</i></p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>indicator</th>'
+        '<th>verdict</th><th>detail</th><th>re-read from</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>'
+        f'{tier_line}'
+        f'<p class="section-sub"><b>Running period</b>: {period} (broad, low-discrimination '
+        f'flag by design). <b>Longevity band</b> (re-read from Longevity): '
+        f'{_esc(h.longevity_band)}.</p>')
+
+
 def _gochara_table(r: DetailedReport) -> str:
     if not r.gochara:
         return ""
@@ -1736,6 +1772,8 @@ def to_html(r: DetailedReport) -> str:
   {_maraka(r)}
 
   {_maraka_saturn_section(r)}
+
+  {_health_readout_section(r)}
 
   <h2 class="section" id="timeline">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to

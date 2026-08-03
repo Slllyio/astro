@@ -1480,6 +1480,16 @@ function render(R, S, FQ){
   if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
+  // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
+  if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
+    add(H2('Health & vulnerability read-out'));
+    add(para(hr.caveat,'muted'));
+    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows));
+    if((hr.maraka_tiers||[]).length)
+      add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
+        ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
+    add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
+      ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
 
   chapter(8);
   // ===== Life-narrative timeline + companions =====

@@ -30,21 +30,38 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 18 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
 | 19 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
 | 20 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
-| 21 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 22 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
-| 23 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
-| 24 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
-| 25 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 26 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 27 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 28 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 29 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 30 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 31 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 32 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 33 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 34 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 35 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 21 | **Health & vulnerability read-out** | `## Health & vulnerability read-out` | `#health-readout` | v17 |
+| 22 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 23 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
+| 24 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
+| 25 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
+| 26 | Dasha Kakshya intervals | `## Dasha Kakshya intervals` | `#dasa-kakshya` | v16 |
+| 27 | **Life-chapters (one woven chapter per MD)** | `## Life-chapters` | `#life-chapters` | v15 |
+| 28 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 29 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 30 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 31 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 32 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 33 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 34 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 35 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 36 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 37 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 38 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+
+**Table catch-up (2026-08-03).** Rows 26 (v16 Dasha Kakshya) and 27 (v15 Life-chapters) had
+never been added to this table when their sections shipped — repaired here, with the rest
+renumbered, in the same commit as the v17 amendment below.
+
+**v17 amendment (2026-08-03) — Health & vulnerability read-out.** User-approved feature: the
+health-adjacent verdicts the report already computes (the D-30 health core's H1/H6/H8 reads,
+the H12 rollup, Moon/Mercury karaka afflictions, balarishta, the maraka tiers and the
+longevity band) gathered into one section closing the longevity/maraka cluster (the v11
+placement precedent). A pure second-pass re-read (`build_health_readout`), never a new
+judgment; the caveat sentence ("a statement of the method, not a prognosis... never medical
+statements, never a prediction") is part of the dataclass and renders in every surface, and a
+contract test runs the whole rendered section through the LLM guard's `_FORBIDDEN_RE` so
+decree/forecast/death-token wording can never silently enter.
 
 **v3 amendment (2026-07-25):** the Integrated-insights section was inserted before the Glossary
 (conscious amendment; `_FROZEN` updated in the same commit) so reference material stays last. It

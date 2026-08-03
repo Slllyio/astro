@@ -83,3 +83,17 @@ def test_benefic_distribution_matches_raman_text():
     for planet, refs in _RAMAN_BENEFIC.items():
         for ref, houses in refs.items():
             assert set(av._BENEFIC[planet][ref]) == set(houses), f"{planet} from {ref}"
+
+
+def test_prasthara_contributors_sum_to_the_bav_counts():
+    """The Prasthara Chakra is the un-collapsed BAV: per sign, the contributor set's size must
+    equal the bindu count exactly, for every planet on every chart — so the canonical-total
+    checksums above transitively guard the contributor expansion too."""
+    for birth in (_BLR, _MAINPURI):
+        chart = cast_chart(birth, ayanamsa="raman")
+        for planet in av.PLANETS:
+            counts = av.bhinnashtakavarga(chart, planet)
+            contributors = av.prasthara(chart, planet)
+            for s in range(1, 13):
+                assert len(contributors[s]) == counts[s], (planet, s)
+                assert contributors[s] <= set(av._REFS)

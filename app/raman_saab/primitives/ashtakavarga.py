@@ -90,6 +90,26 @@ def bhinnashtakavarga(chart: RamanChart, planet: str) -> dict[int, int]:
     return bindus
 
 
+def prasthara(chart: RamanChart, planet: str) -> dict[int, frozenset[str]]:
+    """The Prasthara Chakra of `planet`'s Ashtakavarga: per sign (1..12), WHICH of the eight
+    references (the seven grahas + "Lagna") contributed a bindu there.
+
+    `bhinnashtakavarga` collapses this to counts; the Prasthara keeps the contributors, which
+    is what Kakshya transit judgment needs — "the number of bindus in a Rasi ... is the sum-
+    total of the contribution of each planet and the Prasthara Chakra reveals the planets that
+    make the contribution" (Raman, Ashtakavarga System of Prediction ch.XIII). Derived from the
+    SAME `_BENEFIC` tables as the counts, so the checksums that guard those guard this too:
+    `len(prasthara[s]) == bhinnashtakavarga[s]` for every sign by construction."""
+    out: dict[int, set[str]] = {s: set() for s in range(1, 13)}
+    for ref, houses in _BENEFIC[planet].items():
+        rs = _ref_sign(ref, chart)
+        if rs is None:
+            continue
+        for h in houses:
+            out[((rs - 1 + h - 1) % 12) + 1].add(ref)
+    return {s: frozenset(refs) for s, refs in out.items()}
+
+
 def sarvashtakavarga(chart: RamanChart) -> dict[int, int]:
     """Bindus per sign (1..12) summed over the seven Bhinnashtakavargas. Total = 337."""
     sav = {s: 0 for s in range(1, 13)}

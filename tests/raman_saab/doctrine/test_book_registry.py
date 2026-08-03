@@ -1,8 +1,10 @@
 """The book registry is the divergence firewall.
 
-`live` books (Parashari-natal Raman) are citable; `catalog-only-out-of-scope` books (Jaimini /
-horary / electional / annual) are present on disk but must NEVER resolve as a citation tag, so no
-rule can pull a different system's doctrine into the engine.
+`live` books are citable; `catalog-only-out-of-scope` books (Jaimini / annual, post the
+2026-08-03 PRASNA+MUHURTHA lift) are present on disk but must NEVER resolve as a citation tag,
+so no rule can pull a different system's doctrine into the engine. PRASNA/MUHURTHA are live for
+their own walled subsystems only — the natal content-scope rule is doctrine, not mechanics,
+and is recorded in book_registry's comments + DOCTRINE_BACKLOG.
 """
 from __future__ import annotations
 

@@ -520,7 +520,9 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
     ),
     _Book(
         identifier="UJrg_prasna-tantra-by-b.-v.-raman-raman-publication",
-        filename="Prasna Tantra by B. V. Raman - Raman Publication_djvu.txt",
+        # Filename corrected 2026-08-03 to the exact name the item serves ("B.V.Raman",
+        # no spaces) — the earlier spelling is why only a partial ingest ever landed.
+        filename="Prasna Tantra by B.V.Raman - Raman Publication_djvu.txt",
         book_slug="prasna_tantra_raman",
         book_title="Prasna Tantra",
         author="(traditional Kerala)",
@@ -579,8 +581,10 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
     _Book(
-        identifier="bwb_P9-EAH-659",
-        filename="Muhurtha or Electional Astrology_djvu.txt",
+        # Repointed 2026-08-03: bwb_P9-EAH-659 is access-restricted (401 on its _djvu.txt),
+        # which is why this book's corpus dir stayed empty. The DLI scan is open.
+        identifier="in.ernet.dli.2015.128092",
+        filename="2015.128092.Muhurtha-Or-Electional-Astrology_djvu.txt",
         book_slug="muhurtha_raman",
         book_title="Muhurtha — Electional Astrology",
         author="B. V. Raman",

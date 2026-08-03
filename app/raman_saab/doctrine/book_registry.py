@@ -1,10 +1,15 @@
 """Book registry — the single source of truth mapping a citation tag to its on-disk corpus
 folder, and recording each book's SCOPE.
 
-The raman_saab engine is **strictly Raman, Parashari natal**. A book is either:
-  * ``live``                      — a Parashari-natal Raman source; its tag is CITABLE.
-  * ``catalog-only-out-of-scope`` — present on disk but a DIFFERENT system (Jaimini / horary /
-                                    electional / annual); its tag is **NON-citable**.
+The NATAL verdict engine is **strictly Raman, Parashari natal**. Since 2026-08-03 (user
+decision) the project ALSO carries two walled non-natal subsystems — horary
+(`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) — whose sources are
+live here but whose content natal rules still never cite. A book is either:
+  * ``live``                      — a Raman source; its tag is CITABLE (by the subsystem whose
+                                    scope it belongs to — natal books by natal rules, PRASNA/
+                                    MUHURTHA by their own subsystems only).
+  * ``catalog-only-out-of-scope`` — present on disk but out of every admitted scope
+                                    (Jaimini / annual); its tag is **NON-citable**.
 
 The non-citable rule is the divergence firewall: `sources._resolve_file` consults this registry
 and returns None for any non-live tag, so no rule can ever cite an out-of-scope book. The
@@ -76,9 +81,26 @@ BOOKS: tuple[BookEntry, ...] = (
     # skips gracefully).
     BookEntry("JAIMINI", "studies_jaimini_raman", True, "catalog-only-out-of-scope",
               None, "Studies in Jaimini Astrology (Jaimini system)"),
-    BookEntry("PRASNA", "prasna_tantra_raman", True, "catalog-only-out-of-scope",
+    # PRASNA + MUHURTHA firewall LIFTED 2026-08-03 (explicit user decision via AskUserQuestion;
+    # DOCTRINE_BACKLOG "Firewall lift" record). Scope rule: horary/electional are SEPARATE
+    # SUBSYSTEMS (app/raman_saab/horary/, app/raman_saab/electional/) — never imported by natal
+    # verdict code; outputs carry the Measured-Truth framing. The lift also releases the
+    # content-scope quarantine on horary/electional chapters inside live books (HPA-27, AFB-11,
+    # ASP-15 rules 1-22) FOR THOSE SUBSYSTEMS ONLY — natal rules still never cite them.
+    # PRASNA corpus note: full text re-ingested 2026-08-03 (was 5 partial chapters from a
+    # filename mismatch; same 5 files, now complete). The "chapter_049" file is an OCR-artifact
+    # heading label for the main Bhava-Prasna body — the number is cosmetic, citations are
+    # stable. Tajika yoga definitions: PRASNA-4:1068-1330 (Ithasala/Easarapha/Naktha/Yamaya/
+    # Kamboola); Deeptamsa orb table: PRASNA-2:258-270. Saham FORMULAS are NOT in this book
+    # (Raman defers to his Varshaphal, PRASNA-2:288-291) — VARSHA stays firewalled, so sahams
+    # are non-citable until that separate decision.
+    BookEntry("PRASNA", "prasna_tantra_raman", True, "live",
               None, "Prasna Tantra (horary)"),
-    BookEntry("MUHURTHA", "muhurtha_raman", True, "catalog-only-out-of-scope",
+    # MUHURTHA corpus note: first actual ingestion 2026-08-03 (dir was empty since registration —
+    # the registered archive.org item was access-restricted; repointed to the open DLI scan
+    # in.ernet.dli.2015.128092, 16 chapters). Rahu Kalam weekday table, Raja/Agni/Chora
+    # Panchaka, Tarabala/Chandrabala, Durmuhurtha all present.
+    BookEntry("MUHURTHA", "muhurtha_raman", True, "live",
               None, "Muhurtha (electional)"),
     BookEntry("VARSHA", "varshaphal_raman", True, "catalog-only-out-of-scope",
               None, "Varshaphal (annual)"),

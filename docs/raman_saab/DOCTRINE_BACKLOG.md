@@ -516,9 +516,12 @@ Ekadhipatya -> Rasi+Graha Gunakara -> Sodya Pinda) against each. Result (`test_a
 
 **ch.XV (Miscellaneous), classified per the content-scope rule (a live tag does not admit
 out-of-scope content — the AFB-horary precedent):**
-- Rules 1-19 (ASP-15:21-168): ELECTIONAL — choosing times/directions for journeys, marriage,
-  studies, factories, conception via Sun/Moon/Mercury/Venus bindu-transits. Category (b),
-  MUHURTHA firewall — deliberately NOT encoded.
+- Rules 1-22 (ASP-15:21-183): ELECTIONAL — choosing times/directions for journeys, marriage,
+  studies, factories, conception via Sun/Moon/Mercury/Venus bindu-transits. (Corrected
+  2026-08-03 from "1-19 / :21-168": rules 20-22 — Saturn-direction siting, least-SAV-rising
+  treatment timing, >30-bindu-SAV-rising elections — are electional too.) Category (b),
+  MUHURTHA firewall — deliberately NOT encoded at mining time; RELEASED to the electional
+  subsystem by the same-day firewall lift (next record).
 - Rahu Ashtakavarga (ASP-15:~240-260): Raman presents a variant Rahu AV with bindus, while
   noting "no Kakshya has been assigned to him". The first-edition preface says such
   controversial matters (Rahu/Lagna AVs) were deliberately avoided in the main exposition;
@@ -527,3 +530,57 @@ out-of-scope content — the AFB-horary precedent):**
 - Rahu's 12-places-from-Moon transit results (ASP-15:263-271): benefic at (3), (6), (11) —
   CORROBORATES transits.py's existing Rahu Gochara set {3,6,11} exactly. No change needed;
   noted as an ASP confirmation of the encoded table.
+
+## PRASNA + MUHURTHA firewall LIFT (2026-08-03) — user decision, binding scope rules
+
+**Decision.** The user (via AskUserQuestion, 2026-08-03) explicitly chose to lift the horary
+(PRASNA) and electional (MUHURTHA) divergence firewalls, alongside approving a report-only
+medical read-out section. JAIMINI and VARSHA remain firewalled; Prasna Marga vols remain
+unregistered. This overturns the "strictly Parashari-natal" project scope deliberately and
+on the record — do not silently revert, and do not silently widen further.
+
+**Standing scope rules (binding on all future sessions):**
+1. Horary and electional are SEPARATE SUBSYSTEMS — `app/raman_saab/horary/` and
+   `app/raman_saab/electional/`. They may import natal primitives; natal verdict code
+   (judges, proforma, house_template, synthesis feeding verdicts) must NEVER import them.
+   This extends the VERDICT-AUTHORITY invariant: the natal ratchet is untouchable by
+   anything these subsystems compute.
+2. The lift releases the content-scope quarantine on horary/electional chapters inside
+   LIVE books — HPA-27 (Prasna Sastra), AFB-11 (horary), ASP-15 rules 1-22 — FOR THOSE
+   SUBSYSTEMS ONLY. Natal rules still never cite them (the AFB-horary precedent stands
+   for natal scope).
+3. Subsystem outputs carry the Measured-Truth framing: "what Raman's method says", never a
+   validated prediction. The horary judge excludes death/lifespan/serious-illness/self-harm
+   queries IN CODE (the /ai-interpret precedent).
+4. Doctrine-first still governs: every rule cites `PRASNA-<ch>:<line>` / `MUHURTHA-<ch>:<line>`
+   verbatim; where Raman's text omits a technique the pasted plan wished for, the technique
+   is NOT encoded (measured example: "Tyajyam" does not appear in the ingested Muhurtha text).
+
+**Corpus actions taken (same day).** `muhurtha_raman` ingested for the FIRST time (its dir
+had been empty since registration — the registered archive item `bwb_P9-EAH-659` is
+access-restricted/401; the ETL entry was repointed to the open DLI scan
+`in.ernet.dli.2015.128092`; 16 chapters, gaps in chapter numbering are OCR heading artifacts).
+`prasna_tantra_raman` re-ingested COMPLETE from its existing identifier (the old ETL filename
+had a spacing mismatch — "B. V. Raman" vs the served "B.V.Raman" — which is why only 5
+partial chapters ever landed; the same 5 chapter files now carry the full text; the odd
+`chapter_049` label is an OCR-artifact heading for the main Bhava-Prasna body and is
+cosmetically wrong but citation-stable). Zero pre-existing citations targeted either tag
+(grep-verified), so no line numbers shifted under anyone. Both registry entries flipped to
+`live` with provenance comments.
+
+**Citable anchors located (for the build phases):** Tajika yoga definitions
+PRASNA-4:1068-1330 (Ithasala incl. Muthaseela + Vartamana/complete grades, Easarapha,
+Naktha, Yamaya, Kamboola incl. quality grades); Deeptamsa orb table PRASNA-2:258-270
+(Sun 15, Moon 12, Mars 7(8?—verify at encode time vs print), Mercury 7, Jupiter 9, Venus 7,
+Saturn 9; aspects themselves have no orb); significator scheme (lagna lord = querent,
+karyesa = house lord) PRASNA-2/49. Muhurtha: Tarabala/Chandrabala ~MUHURTHA-2 (raw ~881-1063),
+Raja/Agni/Chora Panchaka (raw ~944-1037), Rahu Kalam weekday table (raw ~7318 — locate
+post-split chapter at encode time), Durmuhurtha (index -> pp.31-32).
+
+**Known dependency, decision PARKED for Phase 3:** Saham FORMULAS are not in Prasna Tantra —
+Raman himself defers Tajika machinery to his Varshaphal (PRASNA-2:288-291), and the formula
+table (Punya/Guru/Kirti/Mitra/Raja... with day/night variants and the +30° no-lagna-between
+rule) sits in `varshaphal_raman` ch.7 — still firewalled. Encoding sahams therefore requires
+EITHER a separate user decision to lift VARSHA (scoped to the saham/yoga-definition
+chapters) OR leaving sahams out of the horary package. Punyasaham APPLICATION rules
+(PRASNA-3, PRASNA-49) are citable either way. ASK THE USER AT PHASE 3, not before.

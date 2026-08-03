@@ -1477,6 +1477,24 @@ def _ishta_kashta_section(r: DetailedReport) -> str:
         f'<tbody>{rows}</tbody></table></div>')
 
 
+def _dasa_kakshya_section(r: DetailedReport) -> str:
+    if not r.dasa_kakshya:
+        return ""
+    rows = "".join(
+        f'<tr><td><b>{_esc(k.maha)}</b></td><td>{_esc(k.ruler)}</td>'
+        f'<td>{_esc(_outlook_window_label(k.start_jd, k.end_jd))}</td>'
+        f'<td>{"yes" if k.donated else "no"}</td><td>{_esc(k.reading)}</td></tr>'
+        for k in r.dasa_kakshya)
+    return ('<h2 class="section" id="dasa-kakshya">Dasha Kakshya intervals</h2>'
+            '<p class="section-sub">Each Mahadasha split into 8 equal parts ruled in Kakshya order '
+            '(ASP-12:174-182); a part whose ruler donated a bindu to the Dasha lord&rsquo;s natal sign '
+            'inclines favourable, an undonated part runs adverse (ASP-12:211-214) unless relieved '
+            'by the ruler&rsquo;s own signs (ASP-12:215-219). A timing lens, never a verdict.</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>Mahadasha</th>'
+            '<th>interval ruler</th><th>window</th><th>donated</th><th>reading</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div>')
+
+
 def _md_condition_section(r: DetailedReport) -> str:
     """The full-timeline version of SYN_R4's current-MD-only strength/vargottama check —
     painted across every Mahadasha run in the window, one row each."""
@@ -1736,6 +1754,7 @@ def to_html(r: DetailedReport) -> str:
   {_md_condition_section(r)}
 
   {_av_dasha_seat_section(r)}
+  {_dasa_kakshya_section(r)}
 
   {_life_chapters_section(r)}
 

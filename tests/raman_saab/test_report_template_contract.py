@@ -70,6 +70,9 @@ _FROZEN = (
     # v12 amendment (2026-07-26, conscious, same-commit as the module): the third Life-narrative
     # companion, AV-tier, shown last of the three under Raman's own reliability caveat.
     ("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"'),
+    # v16 (2026-08-03, conscious amendment in the same commit as the section): the ASP-12
+    # eightfold Kakshya division of each MD run — the fourth Life-narrative companion.
+    ("dasa_kakshya", "## Dasha Kakshya intervals", 'id="dasa-kakshya"'),
     # v15 amendment (2026-07-26, conscious, same-commit as the module): Life-chapters — one
     # woven prose chapter per Mahadasha — placed as the capstone of the Life-narrative
     # companion cluster it merges.
@@ -163,11 +166,11 @@ class TestTemplateContract:
         Transit confluence, v7 Yoga x Dasha timing, v8 the House strength cross-check, v9 the
         Ishta/Kashta outlook, v10 the MD-lord condition outlook, v11 the Maraka x Saturn-transit
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
-        Preponderance of testimonies, v15 the Life-chapters — the higher-order synthesis
+        Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals — the higher-order synthesis
         sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15"}
+            "v14", "v15", "v16"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1

@@ -351,9 +351,14 @@ class TestReportHtml:
         per Mahadasha run, Raman's own AV-reliability caveat printed at the section head."""
         m_start = body.find('id="md-condition"')
         a_start = body.find('id="av-dasha-seat"')
+        # v16 (2026-08-03): the Dasha-Kakshya section now sits between the AV seat and Gochara,
+        # so the AV slice ends at ITS marker (the row-count assertion below must not swallow
+        # the Kakshya table's rows).
+        k_start = body.find('id="dasa-kakshya"')
         g_start = body.find('id="gochara"')
-        assert 0 <= m_start < a_start < g_start
-        section = body[a_start:g_start]
+        end = k_start if 0 <= k_start < g_start else g_start
+        assert 0 <= m_start < a_start < end
+        section = body[a_start:end]
         assert "HTJAH-II:4453-4456" in section
         assert "does not seem to be quite reliable" in section
         assert "In simple terms:" in section

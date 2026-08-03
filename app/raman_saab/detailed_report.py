@@ -491,6 +491,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # MD-lord condition, and now this) — placed last of the three since it is AV-tier, the
     # weakest doctrinal standing of the group, under Raman's own reliability caveat.
     SectionSpec("av_dasha_seat", "## AV dasha-seat outlook", 'id="av-dasha-seat"', "v12"),
+    # v16 (2026-08-03): the fourth Life-narrative companion — the ASP-12 eightfold Kakshya
+    # division of each MD run, judged by bindu donation. Placed after the AV seat row since
+    # it is the finest-grained of the group.
+    SectionSpec("dasa_kakshya", "## Dasha Kakshya intervals", 'id="dasa-kakshya"', "v16"),
     # v15 (2026-07-26, conscious amendment): one woven prose chapter per Mahadasha — the
     # Napoleon-narration shape (HTJAH-I:15950-15999) merging what Life-narrative and its three
     # companion tables show separately; placed as the capstone of that companion cluster.
@@ -1090,6 +1094,40 @@ class MdLordCondition:
     at_maximum: bool            # strong AND vargottama — HPA-24's stated maximum
 
 
+@dataclass(frozen=True)
+class DasaKakshyaInterval:
+    """One eighth of a Mahadasha run, symbolically ruled in Kakshya order (ASP-12:174-182).
+
+    The judgment is Raman's ch.XII working: the interval of a ruler that did not donate a
+    bindu to the MD lord's natal sign (in the lord's own Ashtakavarga) runs adverse
+    (ASP-12:211-214), relieved when the ruler's own signs hold optimum bindus there
+    (ASP-12:215-219). Raman introduces the division as "some scholars opine" and then works
+    it over his own signature — a timing lens, never a verdict input."""
+    maha: str
+    ruler: str
+    start_jd: float
+    end_jd: float
+    donated: bool
+    neutralised: bool
+    reading: str          # favourable | adverse-neutralised | adverse
+
+
+def _dasa_kakshya_rows(chart: RamanChart, timeline: DashaTimeline) -> tuple[DasaKakshyaInterval, ...]:
+    """The eightfold Kakshya division of each windowed Mahadasha run (ASP-12), via
+    `kakshya_timing.kakshya_intervals`. Nodal MDs yield no rows — the scheme is undefined
+    for a lord with no Ashtakavarga, not adverse."""
+    from app.raman_saab.primitives import kakshya_timing as kt
+    out: list[DasaKakshyaInterval] = []
+    for maha, start_jd, end_jd in _md_runs(timeline):
+        for iv in kt.kakshya_intervals(chart, maha, start_jd, end_jd):
+            reading = ("favourable" if iv.donated
+                       else "adverse-neutralised" if iv.neutralised else "adverse")
+            out.append(DasaKakshyaInterval(
+                maha=maha, ruler=iv.ruler, start_jd=iv.start_jd, end_jd=iv.end_jd,
+                donated=iv.donated, neutralised=iv.neutralised, reading=reading))
+    return tuple(out)
+
+
 def _md_lord_conditions(
     chart: RamanChart, timeline: DashaTimeline,
 ) -> tuple[MdLordCondition, ...]:
@@ -1222,6 +1260,7 @@ class DetailedReport:
     md_condition: tuple[MdLordCondition, ...]         # MD lord strength/vargottama, whole timeline
     maraka_saturn: tuple[MarakaSaturnConfluence, ...]  # maraka window x Saturn rasi/trine signal
     av_dasha_seats: tuple[AvDashaSeat, ...]           # MD lord's own BAV bindus, whole timeline
+    dasa_kakshya: tuple[DasaKakshyaInterval, ...]     # eightfold Kakshya split per MD run (ASP-12)
     sav: dict[int, int]                              # Sarvashtakavarga bindus per sign
     info: InfoContent                                # the honesty headline
     distinctive: tuple[tuple[int, object], ...]      # (house, CalibratedEntry) most distinguishing
@@ -2160,6 +2199,7 @@ def build_detailed_report(
     house_strength = _house_strength_rows(reading.proformas, chart.asc_sign, sav, bhava_balas)
     ishta_kashta = _ishta_kashta_periods(chart, timeline)
     md_condition = _md_lord_conditions(chart, timeline)
+    dasa_kakshya = _dasa_kakshya_rows(chart, timeline)
     try:
         maraka_saturn = _maraka_saturn_confluences(chart, ref_jd, ayanamsa)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
@@ -2169,7 +2209,7 @@ def build_detailed_report(
         birth=birth, chart=chart, synthesis=syn, calibration=calib,
         proformas=reading.proformas, overview=chart_overview(chart),
         yogas=fired_yogas, yoga_timing=yoga_timing, house_strength=house_strength,
-        ishta_kashta=ishta_kashta, md_condition=md_condition,
+        ishta_kashta=ishta_kashta, md_condition=md_condition, dasa_kakshya=dasa_kakshya,
         maraka_saturn=maraka_saturn, av_dasha_seats=av_dasha_seats,
         sav=sav, insights=insights,
         info=information_content(calib), distinctive=distinctive_entries(calib),
@@ -2851,6 +2891,25 @@ def to_markdown(r: DetailedReport) -> str:
             bindus_cell = str(a.bindus) if a.bindus is not None else "n/a"
             L.append(f"| {a.maha} | {_outlook_window_label(a.start_jd, a.end_jd)} | "
                      f"{_SIGN_NAME[a.sign]} | {bindus_cell} | {a.read} |")
+        L.append("")
+
+    # ── Dasha Kakshya intervals (v16, ASP-12 eightfold division per MD run) ─────────────
+    if r.dasa_kakshya:
+        L.append("## Dasha Kakshya intervals")
+        L.append("")
+        L.append("**In simple terms:** each Mahadasha can be split into 8 equal parts ruled in "
+                 "Kakshya order (Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon, Lagna — "
+                 "ASP-12:174-182). A part whose ruler donated a bindu to the Dasha lord's own "
+                 "natal sign inclines favourable; one whose ruler did not runs adverse "
+                 "(ASP-12:211-214), relieved when the ruler's own signs hold optimum bindus "
+                 "there (ASP-12:215-219). Raman reports the scheme from other scholars and "
+                 "then works it over his own signature — a timing lens, never a verdict.")
+        L.append("")
+        L.append("| Mahadasha | Interval ruler | Window | Donated | Reading |")
+        L.append("|---|---|---|---|---|")
+        for k in r.dasa_kakshya:
+            L.append(f"| {k.maha} | {k.ruler} | {_outlook_window_label(k.start_jd, k.end_jd)} | "
+                     f"{'yes' if k.donated else 'no'} | {k.reading} |")
         L.append("")
 
     # ── life-chapters (v15, one woven chapter per Mahadasha) ──────────────────

@@ -148,6 +148,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "timeline": _timeline_dict(r.timeline, r.chart),
         "ishta_kashta": _each(r.ishta_kashta),
         "md_condition": _each(r.md_condition),
+        "dasa_kakshya": _each(r.dasa_kakshya),
         "av_dasha_seats": _each(r.av_dasha_seats),
         "life_chapters": _each(r.life_chapters.chapters),
 

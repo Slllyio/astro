@@ -14,44 +14,67 @@ updating the contract test's frozen list in the same, conscious commit.*
 | 2 | **Your Reading (plain English, read first)** | `## Your Reading` | `#plain-reading` | v5 |
 | 3 | Running now (HTML only) | — | `.nowbox` | v1 |
 | 4 | Information content (honesty headline) | `## Information content of this reading` | `.infobox` | v1 |
-| 5 | What stands out | `## What stands out in this chart` | `#stands-out` | v1 |
-| 6 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
-| 7 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
-| 8 | **Ruler of the nativity (first impression)** | `## Ruler of the nativity` | `#ruler` | v13 |
-| 9 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
-| 10 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
-| 11 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
-| 12 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
-| 13 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
-| 14 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
-| 15 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
-| 16 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
-| 17 | **Preponderance of testimonies** | `## Preponderance of testimonies` | `#preponderance` | v14 |
-| 18 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
-| 19 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
-| 20 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
-| 21 | **Health & vulnerability read-out** | `## Health & vulnerability read-out` | `#health-readout` | v17 |
-| 22 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
-| 23 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
-| 24 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
-| 25 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
-| 26 | Dasha Kakshya intervals | `## Dasha Kakshya intervals` | `#dasa-kakshya` | v16 |
-| 27 | **Life-chapters (one woven chapter per MD)** | `## Life-chapters` | `#life-chapters` | v15 |
-| 28 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
-| 29 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
-| 30 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
-| 31 | Career | `## Career (HTJAH-II` | `#career` | v1 |
-| 32 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
-| 33 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
-| 34 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
-| 35 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
-| 36 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
-| 37 | Glossary | `## Glossary` | `#glossary` | v1 |
-| 38 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
+| 5 | **How to read this report (interpretation guide)** | `## How to read this report` | `#interpretation-guide` | v18 |
+| 6 | What stands out | `## What stands out in this chart` | `#stands-out` | v1 |
+| 7 | **What matters most (ranked digest)** | `## What matters most (ranked digest)` | `#digest` | v19 |
+| 8 | The twelve matters at a glance | `## The twelve matters at a glance` | `#dashboard` | v2 |
+| 9 | Chart signature | `## Chart signature` | `.sig` (page header) | v1 |
+| 10 | **Ruler of the nativity (first impression)** | `## Ruler of the nativity` | `#ruler` | v13 |
+| 11 | Chart grids Rasi/Navamsa (HTML only) | — | `#charts` | v1 |
+| 12 | Planetary positions | `## Planetary positions` | `#positions` | v1 |
+| 13 | Shadbala | `## Shadbala` | `#shadbala` | v2 |
+| 14 | Yogas | `## Yogas present in this chart` | `#yogas` | v1 |
+| 15 | Yoga x Dasha timing | `## Yoga x Dasha timing` | `#yoga-timing` | v7 |
+| 16 | Ashtakavarga | `## Ashtakavarga` | `#sav` | v1 |
+| 17 | House-by-house | `## House-by-house reading` | `#houses` | v1 |
+| 18 | House strength cross-check | `## House strength cross-check` | `#house-strength` | v8 |
+| 19 | **Preponderance of testimonies** | `## Preponderance of testimonies` | `#preponderance` | v14 |
+| 20 | Longevity (band-first) | `## Longevity` | `#longevity` | v1 |
+| 21 | Maraka scheme | `## The maraka scheme` | `#maraka` | v2 |
+| 22 | Maraka x Saturn-transit confluence | `## Maraka x Saturn-transit confluence` | `#maraka-saturn` | v11 |
+| 23 | **Health & vulnerability read-out** | `## Health & vulnerability read-out` | `#health-readout` | v17 |
+| 24 | Life-narrative (MD→AD, 4-tier) | `## Life-narrative (Vimshottari Dasha)` | `#timeline` | v1 |
+| 25 | Ishta/Kashta outlook | `## Ishta/Kashta outlook` | `#ishta-kashta` | v9 |
+| 26 | MD-lord condition outlook | `## MD-lord condition outlook` | `#md-condition` | v10 |
+| 27 | AV dasha-seat outlook | `## AV dasha-seat outlook` | `#av-dasha-seat` | v12 |
+| 28 | Dasha Kakshya intervals | `## Dasha Kakshya intervals` | `#dasa-kakshya` | v16 |
+| 29 | **Life-chapters (one woven chapter per MD)** | `## Life-chapters` | `#life-chapters` | v15 |
+| 30 | Gochara with Vedha | `## Current transits (Gochara` | `#gochara` | v2 |
+| 31 | Dasha x Transit confluence | `## Dasha x Transit confluence` | `#dasha-transit` | v6 |
+| 32 | Divisional deep-reads (15 vargas) | `## Divisional deep-reads (Shodasavarga)` | `#vargas` | v1 |
+| 33 | Career | `## Career (HTJAH-II` | `#career` | v1 |
+| 34 | Deeptadi avasthas | `## Deeptadi avasthas` | `#deeptadi` | v1 |
+| 35 | Jaimini Karakamsa (stub) | `## Jaimini Karakamsa` | `#karakamsa` | v1 |
+| 36 | Soul & destiny (extended) | `## Soul & destiny` | `#soul` | v2 |
+| 37 | Pitru dosha screen (bannered) | `## Pitru dosha` | `#pitru` | v2 |
+| 38 | Integrated insights (cross-feature synthesis) | `## Integrated insights` | `#synthesis` | v3 |
+| 39 | Glossary | `## Glossary` | `#glossary` | v1 |
+| 40 | Nichod (the capstone distillation) | `## Nichod` | `#nichod` | v4 |
 
-**Table catch-up (2026-08-03).** Rows 26 (v16 Dasha Kakshya) and 27 (v15 Life-chapters) had
-never been added to this table when their sections shipped — repaired here, with the rest
-renumbered, in the same commit as the v17 amendment below.
+**Table catch-up (2026-08-03).** The v16 Dasha Kakshya and v15 Life-chapters rows (now 28
+and 29 after the v18/v19 renumber) had never been added to this table when their sections
+shipped — repaired in the v17 commit; the whole table was renumbered again in the v18/v19
+commit.
+
+**v18 amendment (2026-08-03) — the interpretation guide.** User-requested coherence work
+("many sections saying the same things — how to interpret"). A coherence audit collected the
+ELEVEN precedence statements the report already makes locally (each inside the section that
+yields) plus the one derived rule (PREC-1, the dashboard-vs-house-by-house grain
+distinction, doctrine-reviewed before shipping and explicitly tagged project governance) into
+`app/raman_saab/interpretation_guide.py` — a chart-independent constant rendered as this
+section and shipped machine-readable as the JSON `interpretation_guide` key (closed
+`relation` vocabulary so the LLM-grounding path can branch deterministically). Placed after
+the honesty headline: the reader learns how much to believe, then how to read, then reads.
+Where no rule exists the guide says "parallel lenses — side by side, never averaged"; it
+never invents precedence. Tests pin: every named section id exists in the contract, every
+corpus citation resolves, the vocabulary is closed.
+
+**v19 amendment (2026-08-03) — the ranked digest rendered.** The same audit found the
+engine's own ranked digest (`insight_digest.py`) shipped in JSON and the interactive page
+but NEVER rendered in markdown or the standalone HTML — a REPORT COMPLETENESS violation.
+Repaired append-only: `## What matters most (ranked digest)` after What-stands-out (which
+it generalizes), with the digest's fixed cross-category order (convergence → current
+period → insights → tension → distinctive) unchanged.
 
 **v17 amendment (2026-08-03) — Health & vulnerability read-out.** User-approved feature: the
 health-adjacent verdicts the report already computes (the D-30 health core's H1/H6/H8 reads,

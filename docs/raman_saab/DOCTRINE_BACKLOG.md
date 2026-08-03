@@ -607,3 +607,28 @@ JAIMINI is now the ONLY firewalled book. Phase 3 built `app/raman_saab/horary/`:
   carries the Measured-Truth disclaimer.
 Source-lock re-locked add-only (3 PRASNA chapters + VARSHA-7). Walled both directions by
 test. HPA-27/AFB-11 remain citable-but-uncited (no rule needs them yet).
+
+## Coherence audit + interpretation guide (2026-08-03) — report v18/v19
+
+User concern: "many sections saying the same things — how to interpret when taking features
+or output of the engine." A full coherence audit (agent-run, results verified) mapped the
+38 contract sections into 8 clusters and found the report already states precedence in
+ELEVEN places — but only locally, inside the section that yields; nothing collected them.
+Exactly ONE overlapping pair had no shipped statement: dashboard vs house-by-house (the
+former grades ONE named signification via its dedicated reader; the latter grades the whole
+bhava by its WEAKEST decided signification — different grain, not disagreement). That
+derived rule (PREC-1) was doctrine-reviewed before shipping and is tagged project
+governance, not Raman doctrine, in its own rule text.
+
+Encoded as `app/raman_saab/interpretation_guide.py` (chart-independent constant): 12
+precedence records + 4 parallel-lens records + the 5-axis table + the 5-step reading
+order, rendered as report section v18 ("How to read this report", after the honesty
+headline) and shipped machine-readable as the JSON `interpretation_guide` key with a
+CLOSED relation vocabulary (governs/corroborates/different_grain/re_read_of/parallel) so
+the LLM-grounding path branches deterministically. Where no rule exists the guide says
+"parallel lenses — side by side, never averaged"; it never invents precedence.
+
+The audit also found the ranked digest (insight_digest.py) was shipped in JSON + the
+interactive page but NEVER rendered in markdown/standalone HTML — a REPORT COMPLETENESS
+violation, repaired as v19 ("What matters most"). Full amendment notes:
+docs/raman_saab/REPORT_TEMPLATE.md v18/v19.

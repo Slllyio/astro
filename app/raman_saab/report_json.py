@@ -26,6 +26,7 @@ from dataclasses import asdict, is_dataclass
 from typing import Any
 
 from app.raman_saab.detailed_report import DetailedReport, graded_buckets
+from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
 
 
 def _ad(obj: Any) -> Any:
@@ -144,6 +145,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
         "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
+        "interpretation_guide": INTERPRETATION_GUIDE,  # v18 — chart-independent doctrine metadata
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

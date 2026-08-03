@@ -528,6 +528,45 @@ def _info_box(r: DetailedReport) -> str:
         f'{inv_line}</div>')
 
 
+def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 — chart-independent
+    """v18 — how to read this report: the collected precedence rules, reading order,
+    parallel lenses and axes. Pure doctrine metadata (interpretation_guide module)."""
+    from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+    steps = "".join(
+        f'<li><b>{_esc(s["title"])}</b> &mdash; {_esc(s["answers"])} {_esc(s["adds"])}</li>'
+        for s in ig["reading_order"])
+    prec_rows = "".join(
+        f'<tr><td>{_esc(p["id"])}</td><td>{_esc(", ".join(p["sections"]))}</td>'
+        f'<td>{_esc(p["relation"])}</td><td>{_esc(p["rule_text"])}</td></tr>'
+        for p in ig["precedence"])
+    par_items = "".join(
+        f'<li><b>{_esc(p["id"])}</b> ({_esc(", ".join(p["sections"]))}): {_esc(p["why"])}</li>'
+        for p in ig["parallel_lenses"])
+    axis_rows = "".join(
+        f'<tr><td>{_esc(a["axis"])}</td>'
+        f'<td>{_esc(a["means"] + (" — " + a["qualification"] if a.get("qualification") else ""))}</td>'
+        f'<td>{_esc(", ".join(a["sections"]))}</td><td>{_esc(a["citation"])}</td></tr>'
+        for a in ig["axes"])
+    return (
+        '<h2 class="section" id="interpretation-guide">How to read this report</h2>'
+        f'<p class="section-sub"><i>{_esc(ig["preamble"])}</i></p>'
+        '<p class="section-sub"><b>Start here &mdash; five sections answer most '
+        f'questions:</b></p><ol>{steps}</ol>'
+        '<p class="section-sub"><b>When two sections seem to disagree, these rules '
+        'govern</b> (each is a rule this report already states in the section that '
+        'yields):</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>#</th><th>sections</th>'
+        f'<th>relation</th><th>the rule</th></tr></thead><tbody>{prec_rows}</tbody>'
+        '</table></div>'
+        '<p class="section-sub"><b>Parallel lenses</b> &mdash; no ranking exists; read '
+        f'side by side, never averaged:</p><ul>{par_items}</ul>'
+        '<p class="section-sub"><b>The independent axes</b> (disagreement between axes is '
+        'not a contradiction):</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>axis</th>'
+        '<th>measures</th><th>shown in</th><th>citation</th></tr></thead>'
+        f'<tbody>{axis_rows}</tbody></table></div>')
+
+
 def _distinctive(r: DetailedReport) -> str:
     if not r.distinctive:
         return ""
@@ -543,6 +582,25 @@ def _distinctive(r: DetailedReport) -> str:
         '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>matter</th>'
         '<th>verdict</th><th class="num">percentile</th><th class="num">share</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>')
+
+
+def _digest_section(r: DetailedReport) -> str:
+    """v19 — the engine's own ranked digest, previously JSON/interactive-only (the
+    coherence audit's completeness repair)."""
+    if not r.digest.items:
+        return ""
+    rows = "".join(
+        f'<tr><td class="num">{it.priority}</td><td>{_esc(it.kind)}</td>'
+        f'<td><b>{_esc(it.title)}</b> &mdash; {_esc(it.detail)}</td><td>{_esc(it.lean)}</td>'
+        f'<td>{_esc(", ".join(it.sections)) if it.sections else "&ndash;"}</td>'
+        f'<td>{_esc(", ".join(it.cites)) if it.cites else "&ndash;"}</td></tr>'
+        for it in r.digest.items)
+    return (
+        '<h2 class="section" id="digest">What matters most (ranked digest)</h2>'
+        f'<p class="section-sub"><i>{_esc(r.digest.headline)}</i></p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th class="num">#</th>'
+        '<th>kind</th><th>finding</th><th>lean</th><th>bridges</th><th>cites</th></tr>'
+        f'</thead><tbody>{rows}</tbody></table></div>')
 
 
 def _positions(r: DetailedReport) -> str:
@@ -1730,7 +1788,11 @@ def to_html(r: DetailedReport) -> str:
 
   {_info_box(r)}
 
+  {_interpretation_guide_section(r)}
+
   {_distinctive(r)}
+
+  {_digest_section(r)}
 
   {_dashboard(r)}
 

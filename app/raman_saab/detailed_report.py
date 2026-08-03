@@ -445,7 +445,22 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("plain_reading", "## Your Reading", 'id="plain-reading"', "v5"),
     SectionSpec("now_box", None, 'class="nowbox"', "v1"),
     SectionSpec("info_content", "## Information content of this reading", 'class="infobox"', "v1"),
+    # v18 (2026-08-03, conscious amendment, user-requested coherence work): the
+    # interpretation guide — which section governs when two overlap, collected from the
+    # eleven precedence statements the report already makes locally (coherence audit,
+    # DOCTRINE_BACKLOG). Placed directly after the honesty headline: the reader learns how
+    # much to believe, then how to read, then reads. Chart-independent doctrine metadata
+    # (app/raman_saab/interpretation_guide.py), also shipped machine-readable in the JSON.
+    SectionSpec("interpretation_guide", "## How to read this report",
+                'id="interpretation-guide"', "v18"),
     SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
+    # v19 (2026-08-03, conscious amendment, same audit as v18): the engine's own ranked
+    # digest — computed since the share-the-app arc and shipped in JSON + the interactive
+    # page, but never rendered in markdown/standalone HTML: a REPORT COMPLETENESS
+    # violation found by the coherence audit, repaired here. Placed after What-stands-out,
+    # which it generalizes (convergence -> current period -> insights -> tension ->
+    # distinctive, the digest's own fixed cross-category order).
+    SectionSpec("digest", "## What matters most (ranked digest)", 'id="digest"', "v19"),
     SectionSpec("dashboard", "## The twelve matters at a glance", 'id="dashboard"', "v2"),
     SectionSpec("chart_signature", "## Chart signature", 'class="sig"', "v1"),
     # v13 (2026-07-26, conscious amendment): Raman's own first-impression move — "first of all
@@ -529,7 +544,8 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "ruler", "now_box", "info_content", "stands_out",
+    "title", "plain_reading", "chart_signature", "ruler", "now_box", "info_content",
+    "interpretation_guide", "stands_out", "digest",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
@@ -2424,6 +2440,41 @@ def to_markdown(r: DetailedReport) -> str:
     L.append(r.info.sentence)
     L.append("")
 
+    # ── how to read this report (v18, chart-independent interpretation guide) ─
+    from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as _IG
+    L.append("## How to read this report")
+    L.append("")
+    L.append(f"_{_IG['preamble']}_")
+    L.append("")
+    L.append("**Start here — five sections answer most questions:**")
+    L.append("")
+    for step in _IG["reading_order"]:
+        L.append(f"{step['step']}. **{step['title']}** — {step['answers']} {step['adds']}")
+    L.append("")
+    L.append("**When two sections seem to disagree, these rules govern** (each is a rule "
+             "this report already states in the section that yields):")
+    L.append("")
+    L.append("| # | Sections | Relation | The rule |")
+    L.append("|---|---|---|---|")
+    for prec in _IG["precedence"]:
+        L.append(f"| {prec['id']} | {', '.join(prec['sections'])} | {prec['relation']} | "
+                 f"{prec['rule_text']} |")
+    L.append("")
+    L.append("**Parallel lenses — no ranking exists; read side by side, never averaged:**")
+    L.append("")
+    for par in _IG["parallel_lenses"]:
+        L.append(f"- {par['id']} ({', '.join(par['sections'])}): {par['why']}")
+    L.append("")
+    L.append("**The independent axes** (disagreement between axes is not a contradiction):")
+    L.append("")
+    L.append("| axis | measures | shown in | citation |")
+    L.append("|---|---|---|---|")
+    for ax in _IG["axes"]:
+        qual = f" — {ax['qualification']}" if ax.get("qualification") else ""
+        L.append(f"| {ax['axis']} | {ax['means']}{qual} | {', '.join(ax['sections'])} | "
+                 f"{ax['citation']} |")
+    L.append("")
+
     # ── what actually distinguishes this chart ────────────────────────────────
     if r.distinctive:
         L.append("## What stands out in this chart")
@@ -2437,6 +2488,21 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"| H{house} {_HOUSE_NAME[house]} | {e.signification} | "
                      f"{e.verdict} ({e.degree}) | {e.favourability_percentile:.0%} | "
                      f"{e.band_share:.0%} ({e.rarity}) |")
+        L.append("")
+
+    # ── what matters most (v19, the engine's own ranked digest) ───────────────
+    if r.digest.items:
+        L.append("## What matters most (ranked digest)")
+        L.append("")
+        L.append(f"_{r.digest.headline}_")
+        L.append("")
+        L.append("| # | Kind | Finding | Lean | Bridges | Cites |")
+        L.append("|---|---|---|---|---|---|")
+        for it in r.digest.items:
+            bridges = ", ".join(it.sections) if it.sections else "-"
+            cites = ", ".join(it.cites) if it.cites else "-"
+            L.append(f"| {it.priority} | {it.kind} | **{it.title}** — {it.detail} | "
+                     f"{it.lean} | {bridges} | {cites} |")
         L.append("")
 
     # ── the twelve matters at a glance (executive dashboard) ──────────────────

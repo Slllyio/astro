@@ -32,7 +32,14 @@ _FROZEN = (
     ("plain_reading", "## Your Reading", 'id="plain-reading"'),
     ("now_box", None, 'class="nowbox"'),
     ("info_content", "## Information content of this reading", 'class="infobox"'),
+    # v18 amendment (2026-08-03, conscious, same-commit as the module, user-requested
+    # coherence work): the interpretation guide — the report's own precedence rules
+    # collected into one section, placed right after the honesty headline.
+    ("interpretation_guide", "## How to read this report", 'id="interpretation-guide"'),
     ("stands_out", "## What stands out in this chart", 'id="stands-out"'),
+    # v19 amendment (2026-08-03, conscious, same-commit as the module): the ranked digest,
+    # previously JSON/interactive-only — the coherence audit's completeness repair.
+    ("digest", "## What matters most (ranked digest)", 'id="digest"'),
     ("dashboard", "## The twelve matters at a glance", 'id="dashboard"'),
     ("chart_signature", "## Chart signature", 'class="sig"'),
     # v13 amendment (2026-07-26, conscious, same-commit as the module): Ruler of the nativity —
@@ -171,10 +178,11 @@ class TestTemplateContract:
         Ishta/Kashta outlook, v10 the MD-lord condition outlook, v11 the Maraka x Saturn-transit
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
         Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
-        v17 the Health & vulnerability read-out — the higher-order synthesis sections)."""
+        v17 the Health & vulnerability read-out, v18 the interpretation guide, v19 the
+        ranked digest — the higher-order synthesis sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16", "v17"}
+            "v14", "v15", "v16", "v17", "v18", "v19"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -192,6 +200,49 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v15") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v16") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v17") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v18") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v19") == 1
+
+
+class TestInterpretationGuide:
+    """v18 — the guide renders in every surface and its structure is machine-consumable."""
+
+    def test_guide_renders_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        assert "## How to read this report" in markdown
+        assert 'id="interpretation-guide"' in html
+        d = to_report_dict(report)["interpretation_guide"]
+        assert d["version"] == "v18" and d["precedence"] and d["reading_order"]
+
+    def test_relation_vocabulary_is_closed(self):
+        """report_explainer must be able to branch deterministically — every relation
+        value belongs to the declared closed vocabulary."""
+        from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        vocab = set(ig["relation_vocabulary"])
+        for prec in ig["precedence"]:
+            assert prec["relation"] in vocab, prec["id"]
+
+    def test_precedence_sections_exist_in_the_contract(self):
+        """Every section id the guide names must be a real contract section — the guide
+        can never dangle."""
+        from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        ids = {s.section_id for s in SECTION_CONTRACT}
+        for prec in ig["precedence"]:
+            for sid in (*prec["sections"], *prec["governs"], *prec["subordinate"]):
+                assert sid in ids, f"{prec['id']} names unknown section {sid!r}"
+        for par in ig["parallel_lenses"]:
+            for sid in par["sections"]:
+                assert sid in ids, f"{par['id']} names unknown section {sid!r}"
+
+    def test_guide_citations_resolve(self):
+        """Every corpus citation the guide prints must verify against the sources."""
+        from app.raman_saab.doctrine.sources import Citation, verify
+        from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        cites = [c for prec in ig["precedence"] for c in prec["citations"]]
+        cites += [a["citation"] for a in ig["axes"]]
+        for cite in cites:
+            work, line = cite.rsplit(":", 1)
+            assert verify(Citation(work, int(line))), cite
 
 
 class TestHealthReadout:

@@ -274,6 +274,32 @@
   .coord-adjust[open]>summary{color:var(--madder)}
   #city-note{transition:color .2s}
   #city{font-variant:normal}
+  /* ---- Muhurtha ("Today for you") + Prasna — on-demand engine surfaces, not part of
+     the cast reading. Both reuse the page's existing card/table/chip furniture; only the
+     controls and the two verdict-specific tones are new. ---- */
+  .mu-controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:.5rem 0}
+  .mu-act{width:auto;display:inline-block}
+  .mu-fail{color:var(--aff);font-weight:600;margin:.15rem 0}
+  /* the Ask overlay now carries a second (Prasna) panel — cap it to the viewport so an
+     opened panel scrolls inside the card instead of running off the top of the screen */
+  #ask{max-height:calc(100vh - 130px);overflow-y:auto}
+  details.prasna{margin-top:.6rem;border-top:1px dashed var(--line);padding-top:.5rem}
+  details.prasna>summary{cursor:pointer;list-style:none;font-family:'Cinzel',serif;font-size:.72rem;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--madder);touch-action:manipulation}
+  details.prasna>summary::-webkit-details-marker{display:none}
+  .prasna-controls{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.45rem 0;
+    font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-secondary)}
+  .prasna-controls label{display:flex;align-items:center;gap:.35rem}
+  .prasna-controls select,.prasna-controls input{font:inherit;font-size:.85rem;text-transform:none;
+    letter-spacing:normal;padding:.3rem .45rem;border:1px solid var(--line);border-radius:6px;
+    background:var(--leaf-cream-light);color:var(--ink-primary);width:auto}
+  #prasna-out{max-height:42vh;overflow:auto;margin-top:.4rem}
+  #prasna-out .q{font-weight:600;margin:.2rem 0 .3rem}
+  .prasna-refusal{font-family:'EB Garamond',serif;line-height:1.6;color:var(--ink-primary);
+    background:rgba(232,213,168,.5);border-left:3px solid var(--ink-faded);border-radius:6px;
+    padding:.5rem .7rem;margin:.3rem 0}
+  .prasna-ev{margin:.3rem 0;padding-left:1.1rem;font-size:.82rem}
+  .prasna-ev li{margin:.15rem 0}
   /* ============ portrait phone (<=700px) — report-local companions to the
      shared manuscript.css breakpoint. Nothing is hidden, only reflowed. ============ */
   @media (max-width:700px){
@@ -308,7 +334,7 @@
        local <style> block loads after that stylesheet and is guaranteed to
        win the cascade for every property the base #ask rule above also sets. */
     #ask{display:block!important;position:static;left:auto;right:auto;bottom:auto;
-      max-width:none;margin:1.4rem 1rem 0;box-shadow:none}
+      max-width:none;margin:1.4rem 1rem 0;box-shadow:none;max-height:none;overflow:visible}
     #ask .ask-log{max-height:32vh}
     .ask-close{display:none}   /* nothing to dismiss in continuous mode */
     /* click-to-source panel becomes full-width */
@@ -445,6 +471,37 @@
     <button id="ask-go" type="button" onclick="ask()" data-i18n="Ask">Ask</button>
   </form>
   <div class="ask-note" data-i18n="Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.">Answers come only from what the engine computed, with citations — never a prediction. First answer may take ~30s.</div>
+
+  <!-- Prasna (horary): a SECOND, separate voice sitting beside the chart Q&A — it judges the
+       moment the question is asked, not the nativity. Same submit pattern as the form above
+       (onsubmit returns false, button type="button") so Enter never reloads the page. -->
+  <details class="prasna" id="prasna">
+    <summary data-i18n="❖ Ask the Prasna engine — judged at the moment you ask">❖ Ask the Prasna engine — judged at the moment you ask</summary>
+    <form class="ask-form" onsubmit="prasna();return false">
+      <input id="prasna-q" placeholder="e.g. will the alliance be settled?" data-i18n-ph="e.g. will the alliance be settled?" autocomplete="off" maxlength="500">
+      <button id="prasna-go" type="button" onclick="prasna()" data-i18n="Judge">Judge</button>
+    </form>
+    <div class="prasna-controls">
+      <label><span data-i18n="topic">topic</span>
+        <select id="prasna-topic" onchange="onPrasnaTopic()">
+          <option value="marriage">marriage</option>
+          <option value="wealth">wealth</option>
+          <option value="career">career</option>
+          <option value="children">children</option>
+          <option value="travel">travel</option>
+          <option value="property">property</option>
+          <option value="litigation">litigation</option>
+          <option value="education">education</option>
+          <option value="other">other (pick a house)</option>
+        </select>
+      </label>
+      <label id="prasna-house-wrap" style="display:none"><span data-i18n="house">house</span>
+        <input id="prasna-house" type="number" min="1" max="12" step="1" value="1">
+      </label>
+    </div>
+    <div id="prasna-out"></div>
+    <div class="ask-note" data-i18n="Neelakantha's Prasna Tantra as Raman translates it, cast for this moment and this place — a statement of the method, never a validated prediction.">Neelakantha's Prasna Tantra as Raman translates it, cast for this moment and this place — a statement of the method, never a validated prediction.</div>
+  </details>
 </div>
 
 <aside id="srcpanel">
@@ -1193,6 +1250,126 @@ function toggleAsk(){ const a=$('ask'); if(!a) return;
   if(a.style.display==='block'){ const q=$('ask-q'); if(q) q.focus(); } }
 window.toggleAsk=toggleAsk;
 
+// ===== Muhurtha — "Today for you" (GET /electional/today, on demand only) =====
+// Deliberately NOT fetched with the cast: the electional reading is about a DAY, not the
+// nativity, so the reader asks for it. Every field the route returns is rendered, `source`
+// included (the completeness rule) — sectionTable keeps citation columns and citeText makes
+// each WORK:line clickable into the source panel.
+const ELECT_ACTS=['general','marriage','travel','housebuilding','occupation','upanayanam'];
+function electionalParams(act){
+  const b=birthBody(), p=new URLSearchParams();
+  // ElectionalQuery is extra="forbid" — send exactly its fields, never birthBody()'s `lang`.
+  for(const k of ['name','year','month','day','hour','minute','latitude','longitude','tz_offset','ayanamsa'])
+    p.set(k,String(b[k]));
+  if(act&&act!=='general') p.set('act',act);   // "general" = no per-activity exception
+  return p;
+}
+function muhurthaView(d){
+  const out=[], day=d.day||{}, mo=d.moment||{}, nat=d.native||{}, tb=d.tarabala||{}, pk=d.panchaka||{};
+  out.push(para((d.ok?'✓ ':'✗ ')+d.score+t(' of 8 essentials')+' — '+d.date+
+    ' · '+(d.act||t('general'))+(d.ok?'':t(' · a hard failure stands against this day')),'lede'));
+  for(const f of (d.hard_failures||[])) out.push(para('⚠ '+f,'mu-fail'));
+  const chips=el('div',{class:'pillrow'});
+  const facts=[['ayanamsa',d.ayanamsa],['moment',mo.local_iso],['jd',mo.jd!=null?mo.jd.toFixed(4):null],
+    ['sunrise',mo.sunrise],['sunset',mo.sunset],
+    ['janma nakshatra',nakName(nat.janma_nakshatra)],['janma rasi',SIGN[nat.janma_rasi]||nat.janma_rasi],
+    ['moon rasi',SIGN[day.moon_rasi]||day.moon_rasi],['moon nakshatra',nakName(day.moon_nakshatra)],
+    ['lagna',SIGN[day.lagna_sign]||day.lagna_sign],['weekday',day.weekday],['vara',day.vara],
+    ['tithi',day.tithi],['paksha',day.paksha],['tithi in paksha',day.tithi_in_paksha],
+    ['yoga',day.yoga],['karana',day.karana]];
+  for(const [k,v] of facts) if(v!=null&&v!=='') chips.append(el('span',{class:'chip'},t(k)+': '+v));
+  out.push(chips);
+  out.push(sectionTable('Tarabala · Chandrabala · Panchaka',[
+    {judgment:'Tarabala',value:tb.tara+' — '+tb.name,favourable:tb.favourable,
+     negative_opening_ghatis:tb.negative_opening_ghatis,source:tb.source},
+    {judgment:'Chandrabala',value:'Moon from janma rasi '+(SIGN[nat.janma_rasi]||nat.janma_rasi),
+     favourable:d.chandrabala},
+    {judgment:'Panchaka',value:'remainder '+pk.remainder+' — '+pk.name,favourable:pk.favourable,
+     source:pk.source}]));
+  out.push(sectionTable('The five panchanga limbs', d.limbs));
+  out.push(sectionTable('Transit elections against this native\'s Bhinnashtakavarga',
+    (d.transit_elections||[]).map(x=>({...x,transit_sign:SIGN[x.transit_sign]||x.transit_sign}))));
+  out.push(sectionTable('Negative windows today (Rahu Kalam · Durmuhurtha)', d.negative_windows));
+  if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
+  return out.filter(Boolean);
+}
+function muhurthaPanel(){
+  const wrap=el('div',{});
+  const ctl=el('div',{class:'mu-controls'});
+  const sel=el('select',{class:'leaf-input mu-act'});
+  for(const a of ELECT_ACTS) sel.append(el('option',{value:a},t(a)));
+  const btn=el('button',{class:'digest-read',type:'button'},t('Read today'));
+  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn);
+  const out=el('div',{});
+  wrap.append(ctl,out);
+  btn.onclick=async()=>{
+    btn.disabled=true; out.replaceChildren(el('div',{class:'folio-loading'},t('Reading the day…')));
+    try{
+      const r=await fetch('/electional/today?'+electionalParams(sel.value).toString());
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.detail||r.statusText);
+      out.replaceChildren(...muhurthaView(d));
+    }catch(e){ console.error('muhurtha read failed:',e);
+      out.replaceChildren(el('div',{class:'err'},t('Muhurtha reading failed: ')+e.message)); }
+    finally{ btn.disabled=false; btn.replaceChildren(t('Read today')); }
+  };
+  return wrap;
+}
+
+// ===== Prasna — horary judgment of the moment the question is asked (POST /horary/ask) =====
+// A refusal (death / lifespan / serious illness / self-harm) is the WHOLE answer: no verdict,
+// no evidence, no sahams — the route sends none, and this shows only the refusal + disclaimer.
+function onPrasnaTopic(){ const s=$('prasna-topic'), w=$('prasna-house-wrap');
+  if(s&&w) w.style.display = (s.value==='other') ? '' : 'none'; }
+window.onPrasnaTopic=onPrasnaTopic;
+
+function prasnaView(d){
+  const out=[];
+  out.push(el('div',{class:'q'},'❯ '+(d.question||'')));
+  if(d.refusal){ out.push(para(d.refusal,'prasna-refusal'));
+    if(d.disclaimer) out.push(para(d.disclaimer,'ask-note'));
+    return out.filter(Boolean); }
+  const v=d.verdict||{}, mo=d.moment||{}, lg=d.lagna||{};
+  out.push(para(v.success_percent+t('% success')+' — '+t('karyesa ')+v.karyesa+' ('+
+    (v.fulfilled?t('fulfilled'):t('not fulfilled'))+', '+v.success_quarters+t(' of 4 quarters')+')','lede'));
+  const chips=el('div',{class:'pillrow'});
+  const facts=[['topic',d.topic],['query house',d.query_house],['asked',mo.local_iso],
+    ['jd',mo.jd!=null?mo.jd.toFixed(4):null],
+    ['lagna',(SIGN[lg.sign]||lg.sign)+(lg.lon!=null?(' · '+lg.lon.toFixed(2)+'°'):'')],
+    ['day or night',d.is_day?'day':'night'],['ayanamsa',d.ayanamsa]];
+  for(const [k,val] of facts) if(val!=null&&val!=='') chips.append(el('span',{class:'chip'},t(k)+': '+val));
+  out.push(chips);
+  if((d.evidence||[]).length){ const ul=el('ul',{class:'prasna-ev'});
+    for(const e of d.evidence){ const li=el('li'); li.append(citeText(String(e))); ul.append(li); }
+    out.push(ul); }
+  out.push(sectionTable('Sahams at this moment',
+    (d.sahams||[]).map(s=>({...s,rasi:SIGN[s.rasi]||s.rasi}))));
+  if(d.disclaimer) out.push(para(d.disclaimer,'ask-note'));
+  return out.filter(Boolean);
+}
+async function prasna(){
+  const qn=$('prasna-q'); if(!qn) return false;
+  const q=qn.value.trim(); if(!q) return false;
+  const out=$('prasna-out'), btn=$('prasna-go'), topic=$('prasna-topic').value;
+  out.replaceChildren(el('div',{class:'folio-loading'},t('Judging the moment…')));
+  btn.disabled=true;
+  // PrasnaRequest is extra="forbid" — the place/moment only, never the nativity fields.
+  const body={question:q, latitude:+$('latitude').value, longitude:+$('longitude').value,
+    tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value};
+  if(topic==='other') body.query_house=+$('prasna-house').value; else body.topic=topic;
+  try{
+    const r=await fetch('/horary/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.detail||r.statusText);
+    out.replaceChildren(...prasnaView(d));
+  }catch(e){ console.error('prasna judgment failed:',e);
+    out.replaceChildren(el('div',{class:'err'},t('Prasna failed: ')+e.message)); }
+  finally{ btn.disabled=false; }
+  return false;
+}
+window.prasna=prasna;
+
 // ---- digest: click a "draws on" label to jump to that section (best-effort) ----
 function jumpLink(label){
   const a=el('a',{href:'#'},label);
@@ -1521,6 +1698,14 @@ function render(R, S, FQ){
     'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
   add(sectionTable('Current transits with Vedha', R.gochara));
   add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
+
+  // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
+  add(H2('Today for you (Muhurtha)'));
+  add(para('Raman’s Muhurtha read for today at this native’s own janma nakshatra and rasi — '+
+    'Tarabala and Chandrabala, the five panchanga limbs, Panchaka, the transit-band elections read '+
+    'against this chart’s Bhinnashtakavarga, and the day’s negative windows. It is fetched on '+
+    'request, not with the cast, and is a statement of the electional method, never a prediction.','muted'));
+  add(muhurthaPanel());
 
   chapter(10);
   // ===== Divisional deep-reads =====

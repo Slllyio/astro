@@ -512,6 +512,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # in every surface, never a medical statement or prediction.
     SectionSpec("health_readout", "## Health & vulnerability read-out",
                 'id="health-readout"', "v17"),
+    # v22 (2026-08-03, user-requested): Arishta & Bhanga — balarishta with Raman's
+    # antidote passage quoted, the bhanga states, Kemadruma, the fired longevity
+    # protections and the band; closes the longevity cluster it belongs to.
+    SectionSpec("arishta", "## Arishta & Bhanga", 'id="arishta"', "v22"),
     SectionSpec("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"', "v1"),
     # v9 (2026-07-26, conscious amendment): inserted right after Life-narrative, since it paints
     # the SAME windowed MD/AD timeline with each lord's Ishta/Kashta lean — the natural
@@ -540,6 +544,15 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("dasha_transit", "## Dasha x Transit confluence", 'id="dasha-transit"', "v6"),
     SectionSpec("divisional", "## Divisional deep-reads (Shodasavarga)", 'id="vargas"', "v1"),
     SectionSpec("career", "## Career (HTJAH-II", 'id="career"', "v1"),
+    # v23 (2026-08-03, user-requested): the profession synthesis — every encoded angle
+    # (10th sign, navamsa-dispositor, strongest planet, AK, running MD, H10 modes,
+    # career yogas) with a deterministic convergence count; extends the Career line above.
+    SectionSpec("profession", "## Profession synthesis", 'id="profession"', "v23"),
+    # v24 (2026-08-03, user-requested): the wealth chapter — the CHANNELS (earning style,
+    # accumulation, gains, inheritance, speculation, authority, trade, land, foreign)
+    # from the judged significations + the cited source-of-gains tables, with the
+    # expansion periods from the timeline's own H2/H11 activations.
+    SectionSpec("wealth", "## Wealth chapter", 'id="wealth"', "v24"),
     SectionSpec("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"', "v1"),
     SectionSpec("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"', "v1"),
     SectionSpec("soul", "## Soul & destiny", 'id="soul"', "v2"),
@@ -562,11 +575,12 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "yoga_deep",
     "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
-    "maraka", "maraka_saturn", "health_readout", "timeline", "ishta_kashta", "md_condition",
+    "maraka", "maraka_saturn", "health_readout", "arishta", "timeline", "ishta_kashta",
+    "md_condition",
     "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
     "life_chapters",
     "gochara", "dasha_transit",
-    "divisional", "career",
+    "divisional", "career", "profession", "wealth",
     "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
@@ -1327,6 +1341,9 @@ class DetailedReport:
     health_readout: "HealthReadout"                  # health/vulnerability read-out (v17)
     planet_bios: tuple = ()                          # dominant-graha biographies (v20, S2)
     yoga_deep: tuple = ()                            # per-yoga deep-reads (v21)
+    arishta: object = None                           # Arishta & Bhanga chapter (v22)
+    profession: object = None                        # profession synthesis (v23)
+    wealth: object = None                            # the wealth chapter (v24)
 
 
 @dataclass(frozen=True)
@@ -2465,6 +2482,18 @@ def build_detailed_report(
                            life_chapters=build_life_chapters(
                                enriched, dominant=_bios[0].planet if _bios else None,
                            ))
+    # v22-v24 chapters (pure re-reads; life_chapters feeds the expansion periods).
+    from app.raman_saab.arishta_wealth_profession import (build_arishta_chapter,
+                                                          build_profession_synthesis,
+                                                          build_wealth_chapter)
+    # one try per builder — a failure in one chapter must never silence the others
+    for _field, _builder in (("arishta", build_arishta_chapter),
+                             ("profession", build_profession_synthesis),
+                             ("wealth", build_wealth_chapter)):
+        try:
+            enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
+        except Exception:  # noqa: BLE001 — sparse/Track-B chart
+            pass
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     return _dc_replace(enriched, nichod=build_nichod(enriched),
                        plain_reading=build_plain_reading(
@@ -3184,6 +3213,36 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"- **Longevity band** (re-read from Longevity): {h.longevity_band}")
         L.append("")
 
+    # ── Arishta & Bhanga (v22 — the affliction/cancellation chapter) ──────────
+    if r.arishta is not None:
+        a = r.arishta
+        L.append("## Arishta & Bhanga")
+        L.append("")
+        L.append("**In simple terms:** the afflictions Raman screens for and — equally "
+                 "doctrinal — the cancellations that neutralise them. Every row re-reads "
+                 "a computed state; the antidote passage is Raman verbatim.")
+        L.append("")
+        bal = ("applies" if a.balarishta_applies and not a.balarishta_cancelled
+               else "CANCELLED" if a.balarishta_cancelled else "does not apply")
+        L.append(f"- **Balarishta (HPA-14)** — {bal}"
+                 + (f" — {'; '.join(a.balarishta_reasons)}" if a.balarishta_reasons
+                    else ""))
+        L.append(f"- **Raman's antidotes (verbatim)** — \"{a.antidote_quote}\" "
+                 f"({a.antidote_cite})")
+        if a.bhangas:
+            for p, dig, eff in a.bhangas:
+                L.append(f"- **Bhanga** — {p}: {dig} cancelled to effective {eff} "
+                         f"(neecha bhanga)")
+        else:
+            L.append("- **Bhanga** — no debilitation-cancellation operates in this chart")
+        L.append(f"- **Kemadruma** — {a.kemadruma_note}")
+        if a.protections:
+            for pr_line in a.protections:
+                L.append(f"- **Longevity protection** — {pr_line}")
+        L.append(f"- **Band** — {a.band}")
+        L.append(f"- **Maraka context** — {a.maraka_note}")
+        L.append("")
+
     # ── life-narrative (Vimshottari MD -> AD, windowed) ───────────────────────
     from app.raman_saab.render import _jd_to_date
     w_lo = _jd_to_date(r.ref_jd - r.window_back * _DAYS_PER_VEDIC_YEAR)
@@ -3463,6 +3522,51 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("## Career (HTJAH-II — navamsa-dispositor of the 10th lord)")
         L.append("")
         L.append(s.career)
+
+    # ── profession synthesis (v23 — every encoded angle, then the convergence) ─
+    if r.profession is not None:
+        pf = r.profession
+        L.append("")
+        L.append("## Profession synthesis")
+        L.append("")
+        L.append("**In simple terms:** Raman derives profession from several angles; "
+                 "this section runs every encoded one and counts where they converge — "
+                 "a deterministic overlap count, never a new judgment.")
+        L.append("")
+        L.append("| Derivation | Resolves to | Raman's vocation words | Cite |")
+        L.append("|---|---|---|---|")
+        for src in pf.sources:
+            note = f" _{src.note}_" if src.note else ""
+            L.append(f"| {src.source} | {src.key} | {src.trades}{note} | {src.cite} |")
+        if pf.mode_split:
+            L.append("")
+            L.append("- **H10 mode split** — "
+                     + "; ".join(f"{k}: {v}" for k, v in pf.mode_split))
+        if pf.convergent:
+            L.append("- **Convergent trades** (named by 2+ derivations) — "
+                     + ", ".join(f"{w} ({n})" for w, n in pf.convergent))
+        L.append("")
+
+    # ── wealth chapter (v24 — the channels, not a single verdict) ─────────────
+    if r.wealth is not None:
+        w = r.wealth
+        L.append("## Wealth chapter")
+        L.append("")
+        L.append("**In simple terms:** not one wealth verdict but the CHANNELS — how the "
+                 "method reads earning, accumulating, inheriting, speculating, and where "
+                 "expansion periods fall. Every row re-reads a judged signification or a "
+                 "cited source-of-gains table.")
+        L.append("")
+        L.append("| Channel | Reading | Cite |")
+        L.append("|---|---|---|")
+        for row in w.rows:
+            L.append(f"| {row.channel} | {row.reading} | {row.cite} |")
+        L.append("")
+        if w.expansion_periods:
+            L.append("- **Periods of expansion** (H2/H11 activated at ordinary tier or "
+                     "better — a timing lens, never a promise): "
+                     + "; ".join(w.expansion_periods))
+            L.append("")
     if s.deeptadi:
         L.append("")
         L.append("## Deeptadi avasthas (each graha's result-state, HPA Ch.7)")

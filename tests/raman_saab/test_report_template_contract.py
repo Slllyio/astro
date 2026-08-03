@@ -78,6 +78,9 @@ _FROZEN = (
     # the Health & vulnerability read-out — a pure re-read of the D-30 health core, H12 rollup,
     # maraka tiers and longevity band — closing the longevity/maraka cluster it summarizes.
     ("health_readout", "## Health & vulnerability read-out", 'id="health-readout"'),
+    # v22 amendment (2026-08-03, conscious, same-commit as the module, user-requested):
+    # Arishta & Bhanga — closes the longevity cluster.
+    ("arishta", "## Arishta & Bhanga", 'id="arishta"'),
     ("timeline", "## Life-narrative (Vimshottari Dasha)", 'id="timeline"'),
     # v9 amendment (2026-07-26, conscious, same-commit as the module): Ishta/Kashta outlook
     # inserted right after Life-narrative — a colour-strip companion to that section.
@@ -102,6 +105,11 @@ _FROZEN = (
     ("dasha_transit", "## Dasha x Transit confluence", 'id="dasha-transit"'),
     ("divisional", "## Divisional deep-reads (Shodasavarga)", 'id="vargas"'),
     ("career", "## Career (HTJAH-II", 'id="career"'),
+    # v23/v24 amendments (2026-08-03, conscious, same-commit as the module,
+    # user-requested): the profession synthesis and the wealth chapter, after the
+    # Career line they extend.
+    ("profession", "## Profession synthesis", 'id="profession"'),
+    ("wealth", "## Wealth chapter", 'id="wealth"'),
     ("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"'),
     ("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"'),
     ("soul", "## Soul & destiny", 'id="soul"'),
@@ -186,11 +194,12 @@ class TestTemplateContract:
         confluence, v12 the AV dasha-seat outlook, v13 the Ruler of the nativity, v14 the
         Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
         v17 the Health & vulnerability read-out, v18 the interpretation guide, v19 the
-        ranked digest, v20 the planet biographies, v21 the yoga deep-read — the
-        higher-order synthesis sections)."""
+        ranked digest, v20 the planet biographies, v21 the yoga deep-read, v22 Arishta &
+        Bhanga, v23 the profession synthesis, v24 the wealth chapter — the higher-order
+        synthesis sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21"}
+            "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -212,6 +221,56 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v19") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v20") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v21") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v22") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v23") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v24") == 1
+
+
+class TestChaptersV22toV24:
+    """The three user-requested chapters: populated, cited, guard-safe."""
+
+    def test_all_three_render_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        for marker, anchor, key in (
+                ("## Arishta & Bhanga", 'id="arishta"', "arishta"),
+                ("## Profession synthesis", 'id="profession"', "profession"),
+                ("## Wealth chapter", 'id="wealth"', "wealth")):
+            assert marker in markdown, marker
+            assert anchor in html, anchor
+            assert d[key] is not None, key
+
+    def test_arishta_quotes_ramans_antidotes(self, report):
+        a = report.arishta
+        assert a is not None and len(a.antidote_quote) > 100
+        assert a.antidote_cite.startswith("HPA-14:")
+
+    def test_profession_derives_from_multiple_angles(self, report):
+        pf = report.profession
+        assert pf is not None and len(pf.sources) >= 3
+        assert all(src.cite for src in pf.sources)
+        ak_rows = [s for s in pf.sources if s.source == "The Atmakaraka"]
+        for s in ak_rows:
+            assert "Jaimini" in s.note    # the scope note is mandatory
+
+    def test_wealth_rows_are_channels_not_one_verdict(self, report):
+        w = report.wealth
+        assert w is not None and len(w.rows) >= 8
+        channels = {row.channel.split(" (")[0] for row in w.rows}
+        assert len(channels) >= 6         # genuinely different channels
+        assert all(row.cite for row in w.rows)
+
+    def test_chapters_pass_the_guard(self, markdown):
+        """The composed prose (not the verbatim Raman quotes, which are labeled quotes)
+        must never trip the decree/forecast tripwire — checked over the profession and
+        wealth sections whose text is engine-composed."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for start_marker in ("## Profession synthesis", "## Wealth chapter"):
+            s = markdown.find(start_marker)
+            e = markdown.find("\n## ", s + 1)
+            section = markdown[s:e if e > 0 else None]
+            m = _FORBIDDEN_RE.search(section)
+            assert m is None, f"{start_marker}: {m.group(0)!r}"
 
 
 class TestInterpretationGuide:

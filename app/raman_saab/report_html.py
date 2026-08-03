@@ -1249,6 +1249,38 @@ def _health_readout_section(r: DetailedReport) -> str:
         f'{_esc(h.longevity_band)}.</p>')
 
 
+def _arishta_section(r: DetailedReport) -> str:
+    """v22 — Arishta & Bhanga: afflictions AND their doctrinal cancellations."""
+    a = r.arishta
+    if a is None:
+        return ""
+    bal = ("applies" if a.balarishta_applies and not a.balarishta_cancelled
+           else "CANCELLED" if a.balarishta_cancelled else "does not apply")
+    rows = [("Balarishta (HPA-14)",
+             bal + (" — " + "; ".join(a.balarishta_reasons)
+                    if a.balarishta_reasons else "")),
+            ("Raman's antidotes (verbatim)",
+             f"&ldquo;{_esc(a.antidote_quote)}&rdquo; ({_esc(a.antidote_cite)})")]
+    if a.bhangas:
+        for p, dig, eff in a.bhangas:
+            rows.append(("Bhanga", f"{_esc(p)}: {_esc(dig)} cancelled to effective "
+                                   f"{_esc(eff)} (neecha bhanga)"))
+    else:
+        rows.append(("Bhanga", "no debilitation-cancellation operates in this chart"))
+    rows.append(("Kemadruma", _esc(a.kemadruma_note)))
+    for pr_line in a.protections:
+        rows.append(("Longevity protection", _esc(pr_line)))
+    rows.append(("Band", _esc(a.band)))
+    rows.append(("Maraka context", _esc(a.maraka_note)))
+    body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                   f'<span class="vv">{v}</span></div>' for k, v in rows)
+    return ('<h2 class="section" id="arishta">Arishta &amp; Bhanga</h2>'
+            '<p class="section-sub"><b>In simple terms:</b> the afflictions Raman '
+            'screens for and &mdash; equally doctrinal &mdash; the cancellations that '
+            'neutralise them. Every row re-reads a computed state.</p>'
+            f'<div class="vsec">{body}</div>')
+
+
 def _gochara_table(r: DetailedReport) -> str:
     if not r.gochara:
         return ""
@@ -1841,6 +1873,44 @@ def to_html(r: DetailedReport) -> str:
         extras += (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
                    f'&mdash; navamsa-dispositor of the 10th lord</p>'
                    f'<p class="doctrine">{_bold(s.career)}</p>')
+    if r.profession is not None:
+        pf = r.profession
+        prow = "".join(
+            f'<tr><td>{_esc(src.source)}</td><td>{_esc(src.key)}</td>'
+            f'<td>{_esc(src.trades)}'
+            + (f' <i>({_esc(src.note)})</i>' if src.note else "")
+            + f'</td><td>{_esc(src.cite)}</td></tr>' for src in pf.sources)
+        conv = ("" if not pf.convergent else
+                '<p class="section-sub"><b>Convergent trades</b> (named by 2+ '
+                'derivations) &mdash; '
+                + _esc(", ".join(f"{w} ({n})" for w, n in pf.convergent)) + '</p>')
+        modes = ("" if not pf.mode_split else
+                 '<p class="section-sub"><b>H10 mode split</b> &mdash; '
+                 + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
+        extras += (
+            '<h2 class="section" id="profession">Profession synthesis</h2>'
+            '<p class="section-sub"><b>In simple terms:</b> every encoded derivation '
+            'angle, then the deterministic convergence count &mdash; never a new '
+            'judgment.</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>derivation</th>'
+            '<th>resolves to</th><th>vocation words</th><th>cite</th></tr></thead>'
+            f'<tbody>{prow}</tbody></table></div>{modes}{conv}')
+    if r.wealth is not None:
+        wch = r.wealth
+        wrow = "".join(f'<tr><td>{_esc(x.channel)}</td><td>{_esc(x.reading)}</td>'
+                       f'<td>{_esc(x.cite)}</td></tr>' for x in wch.rows)
+        exp = ("" if not wch.expansion_periods else
+               '<p class="section-sub"><b>Periods of expansion</b> (H2/H11 activated at '
+               'ordinary tier or better &mdash; a timing lens, never a promise): '
+               + _esc("; ".join(wch.expansion_periods)) + '</p>')
+        extras += (
+            '<h2 class="section" id="wealth">Wealth chapter</h2>'
+            '<p class="section-sub"><b>In simple terms:</b> the CHANNELS, not one '
+            'verdict &mdash; every row re-reads a judged signification or a cited '
+            'source-of-gains table.</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>channel</th>'
+            '<th>reading</th><th>cite</th></tr></thead>'
+            f'<tbody>{wrow}</tbody></table></div>{exp}')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
         extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
@@ -1940,6 +2010,8 @@ def to_html(r: DetailedReport) -> str:
   {_maraka_saturn_section(r)}
 
   {_health_readout_section(r)}
+
+  {_arishta_section(r)}
 
   <h2 class="section" id="timeline">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to

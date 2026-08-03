@@ -75,6 +75,24 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**v22-v24 amendments (2026-08-03) — Arishta & Bhanga, the profession synthesis, the
+wealth chapter.** User-requested, all pure re-reads + cited tables. v22 gathers the
+affliction/cancellation doctrine on one page: balarishta with Raman's HPA-14:232-266
+antidote passage quoted verbatim, the per-planet neecha-bhanga states (dignity vs
+bhanga-aware effective dignity), Kemadruma with its own cancellation, the fired
+longevity-protection combinations and the band. v23 derives profession from EVERY encoded
+angle — the 10th sign (HTJAH-II CAREER_BY_SIGN), the navamsa-dispositor of the 10th lord,
+the strongest planet, the Atmakaraka (with the mandatory Jaimini-scope note — the
+karakamsa-profession doctrine proper is outside the citable canon), the running MD lord,
+the H10 mode split (authority/trade/learned/labour signification verdicts) — then a
+deterministic convergence count (trades named by 2+ derivations). v24 replaces "wealth
+favourable" with the CHANNELS: earning style (2nd lord's house -> the HTJAH-I
+source-of-gains table), accumulation, the 11th-house gains channels (HTJAH-II:14373+),
+inheritance/sudden gains (H8), speculation (H5), authority/trade/learned/labour (H10),
+land (H4), foreign (H12), and the periods of expansion (MD runs whose activated houses
+include H2/H11 at ordinary tier or better — a timing lens, never a promise). Guard test
+pins the composed prose; the verbatim Raman quotes are labeled quotes.
+
 **v20 content amendment + v21 (2026-08-03) — graha CHAPTERS and the yoga deep-read.**
 User-requested. (a) The v20 biographies grew into full chapters for ALL NINE grahas:
 `doctrine/lookups/graha_chapters.py` stores frozen line ranges into HPA-21/22/24/34 and

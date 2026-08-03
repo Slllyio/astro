@@ -106,3 +106,66 @@ class TestIllustratedEndToEnd:
             chart = self._chart(positions, asc)
             for p in PLANETS:
                 assert ashtakavarga_pinda(chart, p).total == printed[p], p
+
+
+#: Seven more nativities (ASP-16 Nos. 3-12), vision-verified from PDF pages 85-87; positions
+#: as printed, Ketu = Rahu + 180. Each tuple: (positions, asc_lon, printed Sodya Pindas in
+#: PLANETS order). All seven reproduce 7/7 EXACT. Excluded, recorded honestly: Ford (No. 5) —
+#: the cramped print of his longitudes defeated both OCR and vision (0/7 on the attempted
+#: reading, i.e. a transcription failure, not a rules signal); Windsor (No. 6) and Golwalkar
+#: (No. 11) match 6/7 with ONLY the Venus pinda off by 3 and 10 — the same hand-computed
+#: slip class as ASP-14, on tables we cannot re-derive without their full printed AV strings.
+def _m(d, mn):
+    return d + mn / 60
+
+
+_MORE_CHARTS = {
+    "Marx": ({"Sun": _m(24, 18), "Moon": _m(24, 8), "Mars": _m(90, 58), "Mercury": _m(40, 12),
+              "Jupiter": _m(263, 5), "Venus": _m(39, 12), "Saturn": _m(325, 59),
+              "Rahu": _m(18, 39)}, _m(302, 56), [185, 104, 112, 238, 142, 134, 267]),
+    "Ellis": ({"Sun": _m(292, 34), "Moon": _m(285, 4), "Mars": _m(340, 34),
+               "Mercury": _m(270, 34), "Jupiter": _m(51, 4), "Venus": _m(247, 34),
+               "Saturn": _m(108, 4), "Rahu": _m(310, 4)}, _m(307, 4),
+              [150, 93, 210, 122, 46, 194, 113]),
+    "Sankara": ({"Sun": _m(338, 11), "Moon": _m(280, 3), "Mars": _m(320, 41),
+                 "Mercury": _m(319, 45), "Jupiter": _m(331, 51), "Venus": _m(18, 17),
+                 "Saturn": _m(225, 7), "Rahu": _m(133, 22)}, _m(345, 56),
+                [132, 103, 219, 177, 136, 129, 144]),
+    "Wodiyar": ({"Sun": _m(53, 9), "Moon": _m(182, 56), "Mars": _m(128, 54),
+                 "Mercury": _m(32, 44), "Jupiter": _m(101, 28), "Venus": _m(92, 54),
+                 "Saturn": _m(52, 52), "Rahu": _m(179, 37)}, _m(117, 40),
+                [187, 224, 174, 187, 160, 119, 178]),
+    "Nehru": ({"Sun": _m(211, 45), "Moon": _m(109, 30), "Mars": _m(161, 27),
+               "Mercury": _m(198, 40), "Jupiter": _m(256, 39), "Venus": _m(188, 50),
+               "Saturn": _m(132, 17), "Rahu": _m(74, 12)}, _m(118, 15),
+              [205, 158, 141, 167, 162, 156, 158]),
+    "Mussolini": ({"Sun": _m(105, 13), "Moon": _m(48, 21), "Mars": _m(52, 13),
+                   "Mercury": _m(104, 43), "Jupiter": _m(87, 43), "Venus": _m(90, 43),
+                   "Saturn": _m(46, 43), "Rahu": _m(196, 4)}, _m(211, 43),
+                  [140, 117, 234, 312, 107, 96, 184]),
+    "Bharathi": ({"Sun": _m(330, 23), "Moon": _m(283, 45), "Mars": _m(216, 55),
+                  "Mercury": _m(317, 53), "Jupiter": _m(22, 58), "Venus": _m(333, 7),
+                  "Saturn": _m(91, 6), "Rahu": _m(327, 21)}, _m(192, 50),
+                 [73, 79, 132, 209, 175, 178, 182]),
+}
+
+
+class TestIllustratedSevenMore:
+    """Seven further ASP-16 nativities, 49 printed Sodya Pindas, all exact — with the two
+    earlier charts, NINE nativities and 63 pindas reproduce to the digit through the whole
+    pipeline. Marx, Nehru and Mussolini are among them: recognisable, independently
+    re-checkable birth data."""
+
+    def test_all_forty_nine_printed_pindas_reproduce_exactly(self):
+        from app.raman_saab.chart.model import RamanChart
+        from app.raman_saab.primitives.ashtakavarga import PLANETS
+        from app.raman_saab.primitives.ashtakavarga_pinda import ashtakavarga_pinda
+
+        for name, (positions, asc, printed) in _MORE_CHARTS.items():
+            pos = dict(positions)
+            pos["Ketu"] = (pos["Rahu"] + 180.0) % 360.0
+            chart = RamanChart.from_stated_positions(
+                {p: {"lon": lon, "bhava": 1} for p, lon in pos.items()},
+                asc_lon=asc, ayanamsa="raman")
+            ours = [ashtakavarga_pinda(chart, p).total for p in PLANETS]
+            assert ours == printed, f"{name}: {ours} != printed {printed}"

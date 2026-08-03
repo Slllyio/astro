@@ -140,18 +140,35 @@ def build_judgment_graph(r: "DetailedReport") -> JudgmentGraph:
         edges.append(JudgmentEdge(yid, "section:yogas", "links", "FiredYoga",
                                   cite=f"{y.source.work}:{y.source.line}"))
 
-    # ── MD chapters: period nodes, ruling lord, lit houses ────────────────────
-    for i, ch in enumerate(r.life_chapters.chapters):
-        pid = f"dasha_period:{i}:{ch.maha}"
-        add_node(pid, "dasha_period", f"{ch.maha} Mahadasha",
-                 (("is_current", str(ch.is_current)),))
-        if ch.maha in _GRAHAS:
-            edges.append(JudgmentEdge(f"planet:{ch.maha}", pid, "rules_period",
-                                      "LifeChapter.maha"))
-        for entry in ch.houses_lit:
-            house = entry[0] if isinstance(entry, tuple) else entry
+    # ── MD runs from the TIMELINE (a first-pass object — the graph sits UPSTREAM of
+    # the narrative engine per the pipeline wiring, 2026-08-03). The activated rows also
+    # carry the GRADE, which the chapter summaries flatten away. ─────────────────────
+    run_idx = -1
+    cur_maha: Optional[str] = None
+    lit_by_run: dict[int, dict[int, str]] = {}
+    run_meta: dict[int, tuple[str, bool]] = {}
+    for tp in r.timeline.periods:
+        p = tp.period
+        if p.maha != cur_maha:
+            run_idx += 1
+            cur_maha = p.maha
+            run_meta[run_idx] = (p.maha, p.start_jd <= r.ref_jd < p.end_jd)
+        else:
+            maha, was_current = run_meta[run_idx]
+            run_meta[run_idx] = (maha, was_current or p.start_jd <= r.ref_jd < p.end_jd)
+        for a in tp.activated:
+            lit_by_run.setdefault(run_idx, {}).setdefault(a.house, a.grade)
+    for i in sorted(run_meta):
+        maha, is_current = run_meta[i]
+        pid = f"dasha_period:{i}:{maha}"
+        add_node(pid, "dasha_period", f"{maha} Mahadasha",
+                 (("is_current", str(is_current)),))
+        if maha in _GRAHAS:
+            edges.append(JudgmentEdge(f"planet:{maha}", pid, "rules_period",
+                                      "DashaPeriod.maha"))
+        for house, grade in sorted(lit_by_run.get(i, {}).items()):
             edges.append(JudgmentEdge(pid, f"house:{house}", "timer_of",
-                                      "LifeChapter.houses_lit"))
+                                      f"ActivatedHouseReading.grade={grade}"))
 
     # ── maraka tiers ──────────────────────────────────────────────────────────
     mp = getattr(r.chart, "maraka_points", None)

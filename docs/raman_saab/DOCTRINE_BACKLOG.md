@@ -654,3 +654,11 @@ Built: `judgment_graph.py` (S1), `planet_biographies.py` + section v20 (S2),
 `PlainReading.reconciliations` (S3), bannered groupings (S4), `Nichod.turning_points`
 (S5). Known recorded limitation: `FiredYoga` carries no participant field, so yoga graph
 edges are citation-only until that field exists (a future append-only lift).
+
+**Pipeline WIRED end-to-end (same day, follow-up commit):** the graph decoupled from
+life_chapters (period nodes/timer edges now from the first-pass timeline, with grades);
+the second pass re-ordered to the diagram (objects → graph → conflicts → themes →
+narrative); the narrative engine consumes the layers (census-dominant sentence in Your
+Reading's opening beside the Shadbala line — two dominance measures, both said;
+reconciliations composed in, not attached; the dominant graha's own MD chapter marked);
+`raman_style.py` names the writer stage. Order enforced by consumption tests.

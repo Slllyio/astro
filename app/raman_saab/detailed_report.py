@@ -2015,12 +2015,16 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
     return " ".join(bits)
 
 
-def build_life_chapters(r: DetailedReport) -> LifeChapters:
+def build_life_chapters(r: DetailedReport, *, dominant: Optional[str] = None) -> LifeChapters:
     """Assemble one chapter per Mahadasha run — pure joins of the already-computed
     `md_condition` / `ishta_kashta` / `av_dasha_seats` / `yoga_timing` / `dasha_transit` /
     `maraka_saturn` rows onto `_md_runs`, with houses lit aggregated through the ONE existing
     grading helper `graded_buckets` (best tier per house across the run's bhuktis; tier order
-    fixed by `_TIER_ORDER` — ordering only, nothing re-graded)."""
+    fixed by `_TIER_ORDER` — ordering only, nothing re-graded).
+
+    `dominant` (pipeline wiring, 2026-08-03): the census-dominant graha from the S2 theme
+    extraction — when a chapter's MD lord IS that planet, one added sentence marks it. A
+    pure re-read of the census; None (Track-B / sparse) changes nothing."""
     chapters: list[LifeChapter] = []
     for maha, lo, hi in _md_runs(r.timeline):
         cond = next((c for c in r.md_condition if c.maha == maha and c.start_jd == lo), None)
@@ -2060,12 +2064,17 @@ def build_life_chapters(r: DetailedReport) -> LifeChapters:
                      if c.overlap_start_jd < hi and c.overlap_end_jd > lo)
         mar = tuple(m for m in r.maraka_saturn
                     if m.overlap_start_jd < hi and m.overlap_end_jd > lo)
+        narrative = _chapter_narrative(r, maha, lo, hi, cond, lean, seat, tuple(yts),
+                                       houses_lit, conf, mar)
+        if dominant is not None and maha == dominant:
+            narrative += (f" This is {maha}'s own period — the planet that drives more "
+                          f"of this chart's computed readings than any other (the "
+                          f"judgment-graph census; see Planet biographies).")
         chapters.append(LifeChapter(
             maha=maha, start_jd=lo, end_jd=hi, is_current=lo <= r.ref_jd < hi,
             condition=cond, lean=lean, av_seat=seat, yogas_ripening=tuple(yts),
             houses_lit=houses_lit, confluences=conf, maraka_overlaps=mar,
-            narrative=_chapter_narrative(r, maha, lo, hi, cond, lean, seat, tuple(yts),
-                                         houses_lit, conf, mar)))
+            narrative=narrative))
     return LifeChapters(chapters=tuple(chapters))
 
 
@@ -2235,10 +2244,16 @@ def _plain_intensity(pct: float) -> str:
     return "worth noting"
 
 
-def build_plain_reading(r: DetailedReport) -> PlainReading:
+def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] = (),
+                        dominant=None) -> PlainReading:
     """Assemble 'Your Reading' — the report's one genuinely plain-English section, meant to be
     read FIRST. Translates the already-computed 12-matter dashboard, the running period, and
-    the distinctive readings into hand-written prose; invents no new judgment."""
+    the distinctive readings into hand-written prose; invents no new judgment.
+
+    Pipeline wiring (2026-08-03): `reconciliations` are the S3 conflict narrator's woven
+    sentences, composed here (not attached after); `dominant` is the S2 census-leading
+    PlanetBiography — its sentence sits beside the Shadbala one because the two measure
+    DIFFERENT dominances (strength vs breadth of participation), and says so."""
     name = r.birth.name.strip() or "this chart"
     opening = (f"Here is what {name}'s chart says, in plain terms — before any of the "
                f"technical detail below.")
@@ -2248,6 +2263,12 @@ def build_plain_reading(r: DetailedReport) -> PlainReading:
         theme = _PLANET_THEME.get(r.ruler.strongest, "its own classical themes")
         opening += (f" The planet that most shapes the overall temperament here is "
                     f"{r.ruler.strongest} — classically bringing out {theme}.")
+    if dominant is not None:
+        opening += (f" Measured differently — by how many of this report's computed "
+                    f"readings a planet participates in — {dominant.planet} touches the "
+                    f"most ({dominant.census_count} connections in the judgment graph); "
+                    f"its classical themes of {dominant.themes_raman} "
+                    f"(HTJAH-II:10249) run through this chart.")
 
     by_matter = {en.matter: en.verdict for en in r.dashboard.entries}
     life_paragraphs: list[tuple[str, str]] = []
@@ -2286,7 +2307,7 @@ def build_plain_reading(r: DetailedReport) -> PlainReading:
               "technical report below shows exactly how each conclusion was reached.")
 
     return PlainReading(opening=opening, life_paragraphs=tuple(life_paragraphs), now=now,
-                        notable=notable, closing=closing)
+                        notable=notable, closing=closing, reconciliations=reconciliations)
 
 
 _DAYS_PER_VEDIC_YEAR: float = 365.2425
@@ -2399,33 +2420,43 @@ def build_detailed_report(
     # the ruler of the nativity and the most-contested house, so they must see populated
     # synthesis fields, not the empty sentinels. Each stage only selects, counts and knits
     # fields already produced; no verdict is re-judged.
+    # ── the synthesis pipeline, in the diagram's order (wired 2026-08-03) ─────
+    # Judgment objects (provisional) -> ruler/preponderance summaries -> the EVIDENCE
+    # GRAPH (from first-pass objects only) -> the CONFLICT NARRATOR -> THEME EXTRACTION
+    # (census -> biographies) -> the LIFE NARRATIVE ENGINE (chapters + digest + nichod +
+    # plain reading, each consuming the layers above) -> the final report. Prose that
+    # names census values can only exist because the census ran first — the order is
+    # enforced by consumption, not by comments alone.
+    from app.raman_saab.judgment_graph import build_judgment_graph
+    from app.raman_saab.planet_biographies import build_planet_biographies
+    from app.raman_saab.tension_narrator import narrate_tensions
     enriched = _dc_replace(provisional,
                            ruler=build_ruler(provisional),
                            preponderance=build_preponderance(provisional),
-                           life_chapters=build_life_chapters(provisional),
                            health_readout=build_health_readout(provisional))
-    enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
-    # S2 synthesis: biographies read the graph, which reads life_chapters — after both.
-    from app.raman_saab.judgment_graph import build_judgment_graph
-    from app.raman_saab.planet_biographies import build_planet_biographies
     try:
-        enriched = _dc_replace(
-            enriched, planet_bios=build_planet_biographies(
-                enriched, build_judgment_graph(enriched)))
+        _graph = build_judgment_graph(enriched)
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
-        pass
-    # S3 synthesis: narrate the already-detected tensions (both poles, rule cited).
-    from app.raman_saab.tension_narrator import narrate_tensions
+        _graph = None
     try:
         _recs = narrate_tensions(enriched)
-    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+    except Exception:  # noqa: BLE001
         _recs = ()
-    final = _dc_replace(enriched, nichod=build_nichod(enriched),
-                        plain_reading=build_plain_reading(enriched))
-    if _recs:
-        final = _dc_replace(final, plain_reading=_dc_replace(
-            final.plain_reading, reconciliations=_recs))
-    return final
+    _bios: tuple = ()
+    if _graph is not None:
+        try:
+            _bios = build_planet_biographies(enriched, _graph)
+        except Exception:  # noqa: BLE001
+            _bios = ()
+    enriched = _dc_replace(enriched, planet_bios=_bios,
+                           life_chapters=build_life_chapters(
+                               enriched, dominant=_bios[0].planet if _bios else None,
+                           ))
+    enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
+    return _dc_replace(enriched, nichod=build_nichod(enriched),
+                       plain_reading=build_plain_reading(
+                           enriched, reconciliations=_recs,
+                           dominant=_bios[0] if _bios else None))
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:

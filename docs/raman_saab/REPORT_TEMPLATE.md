@@ -75,6 +75,20 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**Content amendment (2026-08-03) — the pipeline wiring.** The synthesis boxes existed
+after the v20 amendment; this closes the ARROWS: the judgment graph now builds from
+first-pass timeline objects (decoupled from life_chapters, whose backwards dependency it
+had; timer edges gained the activation GRADE), the second pass runs in the diagram's
+order (objects → graph → conflict narrator → census/biographies → chapters → digest →
+nichod/plain-reading), and the narrative engine CONSUMES the layers: Your Reading's
+opening gains the census-dominant-planet sentence (beside the Shadbala one — two
+different dominance measures, said so, HTJAH-II:10249 cited), reconciliations are
+composed into `build_plain_reading` rather than attached after, and the dominant graha's
+own Mahadasha chapter carries a marking sentence. `raman_style.py` names the style-writer
+stage (because/weighed/governed_list/conclusion helpers, guard-tested). The order is
+enforced by consumption tests: prose naming census values can only exist because the
+census ran first.
+
 **v18 amendment (2026-08-03) — the interpretation guide.** User-requested coherence work
 ("many sections saying the same things — how to interpret"). A coherence audit collected the
 ELEVEN precedence statements the report already makes locally (each inside the section that

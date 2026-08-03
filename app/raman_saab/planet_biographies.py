@@ -99,7 +99,10 @@ def _influenced_houses(graph: JudgmentGraph, planet: str) -> tuple[int, ...]:
 
 
 def _compose_prose(b: "PlanetBiography") -> str:
-    """Cause before result; descriptive idiom only; ends with a Conclusion sentence."""
+    """The Raman Style Writer applied (raman_style): first impression opens, cause before
+    result, no bare lists, a Conclusion ends the unit — descriptive idiom only."""
+    from app.raman_saab.raman_style import because, conclusion
+
     bits: list[str] = []
     roles = []
     if b.lord_of:
@@ -115,19 +118,19 @@ def _compose_prose(b: "PlanetBiography") -> str:
         bits.append(f"{b.planet} {', '.join(roles)}, in {b.dignity} dignity"
                     + (f" and {b.avastha} avastha" if b.avastha else "") + ".")
     if b.helps:
-        bits.append("Because its lordship and aspects reach "
-                    + ", ".join(f"house {h}" for h in b.helps)
-                    + ", the favourable readings there carry its signature.")
+        bits.append(because(
+            "its lordship and aspects reach " + ", ".join(f"house {h}" for h in b.helps),
+            "the favourable readings there carry its signature"))
     if b.obstructs:
-        bits.append("Because it also touches "
-                    + ", ".join(f"house {h}" for h in b.obstructs)
-                    + ", the afflicted readings there trace back to it as well.")
+        bits.append(because(
+            "it also touches " + ", ".join(f"house {h}" for h in b.obstructs),
+            "the afflicted readings there trace back to it as well"))
     if b.md_windows:
-        bits.append(f"Its own Mahadasha marks the years when these indications are "
-                    f"read most directly.")
-    bits.append(f"Conclusion: this chart reads {b.planet} chiefly through "
-                f"{b.themes_raman} (HTJAH-II:10249) — a description of the method's "
-                f"emphasis, never a prediction.")
+        bits.append("Its own Mahadasha marks the years when these indications are "
+                    "read most directly.")
+    bits.append(conclusion(
+        f"this chart reads {b.planet} chiefly through {b.themes_raman} (HTJAH-II:10249) "
+        f"— a description of the method's emphasis, never a prediction"))
     return " ".join(bits)
 
 

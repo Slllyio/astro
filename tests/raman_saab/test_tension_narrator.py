@@ -54,6 +54,38 @@ class TestTensionNarrator:
         assert narrate_tensions(report) == narrate_tensions(report)
 
 
+class TestPipelineConsumption:
+    """The diagram's arrows, enforced by consumption: prose naming census values can only
+    exist because the census ran upstream of the narrative engine."""
+
+    def test_the_opening_names_the_census_dominant_planet(self, report):
+        dom = report.planet_bios[0]
+        opening = report.plain_reading.opening
+        assert dom.planet in opening
+        assert str(dom.census_count) in opening and "HTJAH-II:10249" in opening
+
+    def test_the_dominant_planets_own_chapter_carries_the_sentence(self, report):
+        dom = report.planet_bios[0].planet
+        own = [c for c in report.life_chapters.chapters if c.maha == dom]
+        if not own:
+            pytest.skip("dominant planet's MD not inside this chart's window")
+        assert any("drives more of this chart's computed readings" in c.narrative
+                   for c in own)
+
+    def test_the_graph_no_longer_reads_life_chapters(self):
+        """The backwards arrow is gone: the graph builds from first-pass objects only."""
+        import inspect
+
+        from app.raman_saab import judgment_graph
+        assert "life_chapters" not in inspect.getsource(judgment_graph)
+
+    def test_timer_edges_carry_the_activation_grade(self, report):
+        from app.raman_saab.judgment_graph import build_judgment_graph
+        g = build_judgment_graph(report)
+        timer = [e for e in g.edges if e.relation == "timer_of"]
+        assert timer and all("grade=" in e.provenance for e in timer)
+
+
 class TestTurningPoints:
     """S5 — MD boundaries where the Ishta/Kashta lean flips, on the Nichod."""
 

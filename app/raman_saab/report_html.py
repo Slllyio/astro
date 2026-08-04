@@ -239,6 +239,11 @@ table.sav .weakc{color:var(--afflicted);font-weight:700}
 .pillars b{color:var(--doctrine);font-weight:600}
 .driver{font-size:.72rem;color:var(--ink-soft)}
 .driver b{color:var(--ink)}
+.badges{margin-top:.3rem;font-size:.72rem;color:var(--ink-soft)}
+.badges code{background:var(--panel-2,rgba(127,127,127,.12));border-radius:4px;
+  padding:.1rem .4rem;margin-right:.35rem;font-family:inherit}
+.method-preamble{font-style:italic}
+.method-order{margin:.15rem 0 .6rem 1.4rem;font-size:.85rem;color:var(--ink-soft)}
 .long-step{margin:.3rem 0;font-size:.9rem}
 
 /* ── split status: the majority tenor vs the weakest-link headline ───────── */
@@ -402,6 +407,19 @@ def _vclass(verdict: str) -> str:
     return verdict if verdict in ("afflicted", "favourable") else "mixed"
 
 
+def _method_preamble_html(section_id: str) -> str:
+    """HTML sibling of detailed_report._method_preamble — the "why astrologers examine
+    this" educational preamble, on the standalone surface too (REPORT COMPLETENESS)."""
+    from app.raman_saab.plain_terms import SECTION_METHOD
+    entry = SECTION_METHOD.get(section_id)
+    if entry is None:
+        return ""
+    why, order = entry
+    steps = "".join(f"<li>{_esc(step)}</li>" for step in order)
+    return (f'<p class="section-sub method-preamble"><b>Why astrologers examine this.</b> '
+            f'{_esc(why)}:</p><ol class="method-order">{steps}</ol>')
+
+
 def _cal_row(e) -> str:
     if e.favourability_percentile is None:
         return f'<div class="cal-row muted"><span>{_esc(e.signification)}: {_esc(e.verdict)} '\
@@ -430,7 +448,7 @@ def _cal_row(e) -> str:
 
 
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
-                   conclusion: str = "") -> str:
+                   conclusion: str = "", ht=None) -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer."""
@@ -484,13 +502,28 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
             bits.append(f'<b>Bhava Bala</b> {led.bhava_bala:.0f}')
         pillars = f'<div class="pillars">{" &middot; ".join(bits)}</div>'
 
+    badges = ""
+    if pf is not None and ht is not None:
+        fired_ct = 0
+        cites: set[str] = set()
+        for sv in pf.significations:
+            for led2 in (sv.ledger, *sv.alt_ledgers):
+                for fr in (*led2.fired_benefic, *led2.fired_malefic, *led2.fired_neutral):
+                    fired_ct += 1
+                    cites.add(f"{fr.rule.source.work}:{fr.rule.source.line}")
+        band = ("High" if "corrobor" in ht.status else "Low" if "contest" in ht.status
+                else "Medium")
+        badges = (f'<div class="badges"><code>Evidence {len(ht.testimonies)}</code> '
+                  f'<code>Rules {fired_ct}</code> <code>Sources {len(cites)}</code> '
+                  f'<code>Support {_esc(band)} ({ht.favourable}F/{ht.adverse}A)</code></div>')
+
     return (
         f'<section class="house" data-flags="{" ".join(flags)}"><div class="house-head">'
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}'
-        f'{pillars}<p class="doctrine">{_bold(mr.reading)}</p>'
+        f'{pillars}{badges}<p class="doctrine">{_bold(mr.reading)}</p>'
         + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
            if conclusion else "")
         + f'<div class="instrument"><div class="instrument-label">Population context '
@@ -1268,6 +1301,7 @@ def _health_readout_section(r: DetailedReport) -> str:
               else "carries no maraka-tier lord")
     return (
         '<h2 class="section" id="health-readout">Health &amp; vulnerability read-out</h2>'
+        f'{_method_preamble_html("health_readout")}'
         '<p class="section-sub"><b>In simple terms:</b> the health-adjacent verdicts this '
         'report already computed &mdash; the 1st/6th/8th/12th house readings, the Moon and '
         'Mercury karakas, the balarishta screen, the maraka tiers and the longevity band '
@@ -1366,6 +1400,7 @@ def _psych_section(r: DetailedReport) -> str:
     body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                    f'<span class="vv">{v}</span></div>' for k, v in rows)
     return ('<h2 class="section" id="psych">Psychological profile</h2>'
+            f'{_method_preamble_html("psych")}'
             f'<p class="section-sub"><i>{_esc(ps.woven)}</i></p>'
             f'<div class="vsec">{body}</div>')
 
@@ -1965,10 +2000,12 @@ def to_html(r: DetailedReport) -> str:
 
     from app.raman_saab.detailed_report import house_conclusion
     dist_houses = frozenset(h for h, _e in r.distinctive)
+    ht_by_house = {h.house: h for h in r.preponderance.houses}
     houses = "".join(
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
-                       r.chart, dist_houses, conclusion=house_conclusion(r, mr.house))
+                       r.chart, dist_houses, conclusion=house_conclusion(r, mr.house),
+                       ht=ht_by_house.get(mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'
@@ -2010,6 +2047,7 @@ def to_html(r: DetailedReport) -> str:
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
         extras += (
             '<h2 class="section" id="profession">Profession synthesis</h2>'
+            f'{_method_preamble_html("profession")}'
             '<p class="section-sub"><b>In simple terms:</b> every encoded derivation '
             'angle, then the deterministic convergence count &mdash; never a new '
             'judgment.</p>'
@@ -2026,6 +2064,7 @@ def to_html(r: DetailedReport) -> str:
                + _esc("; ".join(wch.expansion_periods)) + '</p>')
         extras += (
             '<h2 class="section" id="wealth">Wealth chapter</h2>'
+            f'{_method_preamble_html("wealth")}'
             '<p class="section-sub"><b>In simple terms:</b> the CHANNELS, not one '
             'verdict &mdash; every row re-reads a judged signification or a cited '
             'source-of-gains table.</p>'
@@ -2038,6 +2077,7 @@ def to_html(r: DetailedReport) -> str:
                       for b, t, c in m.fired_kalatra)
         extras += (
             '<h2 class="section" id="marriage">Marriage monograph</h2>'
+            f'{_method_preamble_html("marriage")}'
             f'<p class="section-sub"><b>The 7th house&rsquo;s scope (Raman verbatim):</b> '
             f'&ldquo;{_esc(m.seventh_covers)}&rdquo;</p>'
             f'<p class="section-sub"><b>Headline (unchanged H7 verdict)</b> &mdash; '
@@ -2069,6 +2109,7 @@ def to_html(r: DetailedReport) -> str:
         sig = "; ".join(f"{k}: {v}" for k, v in c.significations)
         extras += (
             '<h2 class="section" id="children">Children chapter</h2>'
+            f'{_method_preamble_html("children")}'
             f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
             f'{_esc(c.verdict)} &middot; {_esc(sig)}</p>'
             + (f'<ul class="doclist">{pr_}</ul>' if pr_ else "")
@@ -2186,6 +2227,7 @@ def to_html(r: DetailedReport) -> str:
   {_preponderance_section(r)}
 
   <h2 class="section" id="longevity">Longevity</h2>
+  {_method_preamble_html("longevity")}
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
     by the marakas (HTJAH-II:4465-4472). The numeric span is a cross-check, never a date.</p>
   {combos_html}

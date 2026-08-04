@@ -147,16 +147,22 @@
       lines.forEach(line => {
         const color = PLANET_COLORS[line.planet] || '#444';
         const style = ANGLE_STYLE[line.angle] || ANGLE_STYLE['Asc'];
-        if (line.coords.length < 2) return;
+        // Draw each CONTINUOUS RUN as its own polyline. A single line breaks where it
+        // crosses the antimeridian and where the planet is circumpolar; feeding the
+        // flattened `coords` to one polyline stitches straight across those breaks and
+        // paints a horizontal streak over the whole map. `segments` carries the runs
+        // the server already computed; `coords` is the fallback for an older payload.
+        const runs = (line.segments && line.segments.length) ? line.segments : [line.coords];
         // Coords from the API are [lat, lon]; Leaflet's L.polyline takes
         // exactly that order. (Note GeoJSON elsewhere uses [lon, lat].)
-        const polyline = L.polyline(line.coords, {
-          color, ...style,
+        runs.forEach(run => {
+          if (!run || run.length < 2) return;
+          const polyline = L.polyline(run, { color, ...style });
+          const tip = el('div');
+          tip.appendChild(el('strong', null, line.planet + ' ' + line.angle));
+          polyline.bindTooltip(tip, { sticky: true });
+          polyline.addTo(linesLayer);
         });
-        const tip = el('div');
-        tip.appendChild(el('strong', null, line.planet + ' ' + line.angle));
-        polyline.bindTooltip(tip, { sticky: true });
-        polyline.addTo(linesLayer);
       });
     }
 

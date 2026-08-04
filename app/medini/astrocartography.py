@@ -68,6 +68,13 @@ class PlanetaryLine(TypedDict):
     planet: str
     angle: str  # "MC" | "IC" | "Asc" | "Desc"
     coords: list[list[float]]  # list of [lat, lon] pairs (Leaflet convention)
+    #: The SAME points, split into continuous runs. A line breaks in two places:
+    #: where it crosses the antimeridian (lon wraps -180/+180) and where the planet
+    #: is circumpolar at that latitude (never rises/sets, so no point exists). Drawing
+    #: `coords` as one polyline stitches straight across those breaks — a horizontal
+    #: streak over the whole map. Renderers should draw each segment separately;
+    #: `coords` is retained unchanged for existing consumers.
+    segments: list[list[list[float]]]
 
 
 def _normalize_longitude(lon_deg: float) -> float:
@@ -98,9 +105,12 @@ def _mc_ic_lines(planet: str, ra_deg: float, gst_deg: float) -> list[PlanetaryLi
 
     mc_coords = [[float(lat), lon_mc] for lat in range(_MC_IC_LAT_MIN, _MC_IC_LAT_MAX + 1, _MC_IC_LAT_STEP)]
     ic_coords = [[float(lat), lon_ic] for lat in range(_MC_IC_LAT_MIN, _MC_IC_LAT_MAX + 1, _MC_IC_LAT_STEP)]
+    # MC/IC are single meridians at a constant longitude — they never cross the
+    # antimeridian mid-line and have no circumpolar break, so each is exactly one
+    # segment. The field is still emitted so every line has the same shape.
     return [
-        {"planet": planet, "angle": "MC", "coords": mc_coords},
-        {"planet": planet, "angle": "IC", "coords": ic_coords},
+        {"planet": planet, "angle": "MC", "coords": mc_coords, "segments": [mc_coords]},
+        {"planet": planet, "angle": "IC", "coords": ic_coords, "segments": [ic_coords]},
     ]
 
 
@@ -148,16 +158,25 @@ def _asc_desc_lines(planet: str, ra_deg: float, dec_deg: float, gst_deg: float) 
         desc_segments[-1].append([float(lat_deg), lon_desc])
         last_desc_lon = lon_desc
 
-    # Flatten segments into single polylines. For v1 we concatenate; the
-    # antimeridian-split logic ensures consecutive segments stay on the
-    # same side of the dateline, but Leaflet's `worldCopyJump` plus our
-    # polyline rendering handle this acceptably without explicit
-    # multi-line emission.
-    asc_coords = [pt for seg in asc_segments for pt in seg]
-    desc_coords = [pt for seg in desc_segments for pt in seg]
+    # Emit BOTH shapes. `coords` stays flattened so existing consumers are untouched;
+    # `segments` carries the splits computed above so a renderer can draw each run as
+    # its own polyline.
+    #
+    # The previous version flattened and discarded the segmentation, with a comment
+    # claiming the split "ensures consecutive segments stay on the same side of the
+    # dateline". That was wrong: flattening concatenates ACROSS the break, so the
+    # renderer draws a straight line from the last point before it to the first point
+    # after — exactly the map-spanning stitch the split existed to prevent. Measured on
+    # a real natal moment, that produced three such streaks (Venus Desc jumped
+    # -179.99 -> +165.95). The circumpolar break has the same failure and is reachable
+    # inside the +-66 scan (Moon at dec 28.7 is circumpolar at lat 62).
+    asc_clean = [seg for seg in asc_segments if len(seg) >= 2]
+    desc_clean = [seg for seg in desc_segments if len(seg) >= 2]
     return [
-        {"planet": planet, "angle": "Asc", "coords": asc_coords},
-        {"planet": planet, "angle": "Desc", "coords": desc_coords},
+        {"planet": planet, "angle": "Asc",
+         "coords": [pt for seg in asc_segments for pt in seg], "segments": asc_clean},
+        {"planet": planet, "angle": "Desc",
+         "coords": [pt for seg in desc_segments for pt in seg], "segments": desc_clean},
     ]
 
 

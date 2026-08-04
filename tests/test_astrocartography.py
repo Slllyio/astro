@@ -157,3 +157,96 @@ def test_base_planets_table_has_8_entries() -> None:
     assert len(_BASE_PLANETS) == 8
     assert "Ketu" not in _BASE_PLANETS
     assert "Rahu" in _BASE_PLANETS
+
+
+# ---------- Segment continuity (2026-08-05) ----------
+#
+# The bug these guard: the module computed segment splits at antimeridian crossings
+# and circumpolar gaps, then flattened them back into one polyline and threw the
+# splits away. Leaflet then drew a straight line across the break — a horizontal
+# streak spanning the whole map. Measured on a real natal moment it produced three
+# (Venus Desc jumped -179.99 -> +165.95). Nothing caught it, because every existing
+# test checks counts, verticality and opposition, all of which a stitched line
+# satisfies. Continuity was the one unchecked property.
+
+from app.medini.astrocartography import _ASC_DESC_LAT_STEP  # noqa: E402
+
+# A natal moment with planets near the dateline, so the antimeridian path is live.
+DATELINE_JD = swe.julday(1989, 10, 12, 4.533, swe.GREG_CAL)   # Mainpuri, UT
+
+
+@pytest.mark.parametrize("jd", [BANGALORE_JD, DATELINE_JD])
+def test_no_segment_jumps_the_antimeridian(jd: float) -> None:
+    """Within a segment, consecutive points must never jump >180 deg of longitude.
+
+    A jump that large is the renderer being told to draw the long way round the
+    globe, which is the streak this fix removes."""
+    for line in compute_planetary_lines(jd):
+        for s_i, seg in enumerate(line["segments"]):
+            for (_la1, lo1), (_la2, lo2) in zip(seg, seg[1:]):
+                assert abs(lo2 - lo1) <= 180.0, (
+                    f"{line['planet']}-{line['angle']} segment {s_i} jumps the "
+                    f"antimeridian: {lo1:.2f} -> {lo2:.2f}"
+                )
+
+
+@pytest.mark.parametrize("jd", [BANGALORE_JD, DATELINE_JD])
+def test_no_segment_skips_a_circumpolar_gap(jd: float) -> None:
+    """Within a segment, latitude must advance by exactly one sample step.
+
+    A larger stride means the segment spans latitudes where the planet is
+    circumpolar (never rises or sets), so the drawn line passes through a region
+    where no such point exists."""
+    for line in compute_planetary_lines(jd):
+        if line["angle"] not in ("Asc", "Desc"):
+            continue
+        for s_i, seg in enumerate(line["segments"]):
+            for (la1, _lo1), (la2, _lo2) in zip(seg, seg[1:]):
+                assert abs(la2 - la1) <= _ASC_DESC_LAT_STEP, (
+                    f"{line['planet']}-{line['angle']} segment {s_i} skips a "
+                    f"circumpolar gap: lat {la1} -> {la2}"
+                )
+
+
+def test_segments_partition_coords_exactly() -> None:
+    """`segments` must be a lossless re-grouping of `coords` — no point invented,
+    dropped or reordered. `coords` stays flattened for existing consumers, so the
+    two views have to agree."""
+    for line in compute_planetary_lines(DATELINE_JD):
+        flat = [pt for seg in line["segments"] for pt in seg]
+        # single-point runs are dropped from segments (undrawable), so segments
+        # may be a subsequence of coords, never a superset or a reordering
+        assert len(flat) <= len(line["coords"])
+        it = iter(line["coords"])
+        assert all(pt in it for pt in flat), (
+            f"{line['planet']}-{line['angle']}: segments are not an ordered "
+            f"subsequence of coords"
+        )
+
+
+def test_the_dateline_chart_actually_exercises_the_antimeridian() -> None:
+    """Guard the guard, and the clearest statement of the bug.
+
+    If this natal moment ever stopped crossing the dateline, the continuity tests
+    above would keep passing while testing nothing. So assert the crossing is real:
+    the flattened `coords` (kept as-is for existing consumers) still contains the raw
+    >180 deg jump, and `segments` — the view renderers draw — contains none. That gap
+    between the two IS the fix.
+
+    Note the split can leave a 1-point run on the far side, which is dropped from
+    `segments` because a polyline needs two points; that is why this asserts on the
+    jump rather than on a segment count."""
+    lines = compute_planetary_lines(DATELINE_JD)
+    flat_jumps = sum(
+        1 for l in lines
+        for a, b in zip(l["coords"], l["coords"][1:]) if abs(b[1] - a[1]) > 180.0
+    )
+    assert flat_jumps >= 1, (
+        "this natal moment no longer crosses the antimeridian — the continuity "
+        "tests would be vacuous; pick a moment that does"
+    )
+    seg_jumps = sum(
+        1 for l in lines for s in l["segments"]
+        for a, b in zip(s, s[1:]) if abs(b[1] - a[1]) > 180.0
+    )
+    assert seg_jumps == 0, "segments must never contain the jump that coords does"

@@ -232,3 +232,108 @@ _SECTION_ALIASES: Final[dict[str, str]] = {
 def _slug(link: str) -> str:
     key = link.strip().lower()
     return _SECTION_ALIASES.get(key, key.replace(" ", "_").replace("-", "_"))
+
+
+# ── reader-facing digest (2026-08-04) — ONE implementation, three surfaces ────────────
+# Measured before designing: build the graph for two unrelated charts and diff it, and 116
+# of 190 edges are byte-IDENTICAL. The section->section doctrine edges (participates_in,
+# parallel, re_read_of, corroborates, different_grain) are 100% constant for EVERY chart
+# ever cast; links/governs ~91%; karaka_of only ~39% chart-specific. Those describe the
+# METHOD, not this nativity. The helpers below therefore digest only what is genuinely this
+# chart's, so markdown, standalone HTML and the interactive page can all say the same thing
+# without three drifting copies of the logic.
+
+#: relation -> plain-English phrase, in the order a reader wants to hear it. Karaka is
+#: deliberately EXCLUDED from the sentence (it is doctrine-fixed — Venus is karaka of the
+#: 7th in every chart) and reported separately, so it cannot bury the chart-specific facts.
+CHART_SPECIFIC_ROLES: Final[tuple[tuple[str, str], ...]] = (
+    ("lord_of", "rules it"), ("occupies", "sits in it"), ("aspects", "aspects it"))
+
+#: relations that are the same for every chart — named honestly, never drawn as personal.
+DOCTRINE_CONSTANT_RELATIONS: Final[frozenset[str]] = frozenset({
+    "participates_in", "parallel", "re_read_of", "corroborates", "different_grain",
+    "governs", "links"})
+
+#: activation tiers in PLAIN words. The judgment-graph section sits between "Your Reading"
+#: and "Information content" — the report's jargon-free zone, enforced by
+#: test_your_reading_is_first_and_jargon_free — so the Sanskrit-derived tier names ("par
+#: excellence") must not surface here. These are the leading phrases of the tier glosses
+#: already in `detailed_report._TIER_MEANING`; the technical names stay in the Life-narrative
+#: section where the four-tier scheme is explained in full.
+PLAIN_TIER: Final[dict[str, str]] = {
+    "par excellence": "full, strong results", "ordinary": "normal results",
+    "limited": "slight results", "feeble": "faint results"}
+
+
+@dataclass(frozen=True)
+class HouseFacts:
+    house: int
+    verdict: str
+    roles: dict[str, tuple[str, ...]]        # relation -> planets, insertion-ordered
+    karakas: tuple[str, ...]
+    timers: tuple[tuple[str, str], ...]      # (dasha lord, activation grade)
+
+
+def house_facts(g: JudgmentGraph) -> dict[int, HouseFacts]:
+    """Per house: who touches it and how, plus the periods that light it. Pure re-read."""
+    import re as _re
+
+    verdicts: dict[int, str] = {}
+    for n in g.nodes:
+        if n.kind == "house":
+            verdicts[int(n.id.split(":")[1])] = dict(n.data).get("verdict", "")
+
+    roles: dict[int, dict[str, list[str]]] = {h: {} for h in range(1, 13)}
+    karakas: dict[int, list[str]] = {h: [] for h in range(1, 13)}
+    timers: dict[int, list[tuple[str, str]]] = {h: [] for h in range(1, 13)}
+    role_keys = {k for k, _p in CHART_SPECIFIC_ROLES}
+
+    for e in g.edges:
+        if not e.dst.startswith("house:"):
+            continue
+        h = int(e.dst.split(":")[1])
+        if h not in roles:
+            continue
+        if e.src.startswith("planet:"):
+            p = e.src.split(":")[1]
+            if e.relation in role_keys:
+                bucket = roles[h].setdefault(e.relation, [])
+                if p not in bucket:
+                    bucket.append(p)
+            elif e.relation == "karaka_of" and p not in karakas[h]:
+                karakas[h].append(p)
+        elif e.relation == "timer_of" and e.src.startswith("dasha_period:"):
+            lord = e.src.split(":")[-1]
+            m = _re.search(r"grade=(\w+)", e.provenance or "")
+            grade = m.group(1).replace("_", " ") if m else ""
+            row = (lord, PLAIN_TIER.get(grade, grade))
+            if row not in timers[h]:
+                timers[h].append(row)
+
+    return {h: HouseFacts(house=h, verdict=verdicts.get(h, ""),
+                          roles={k: tuple(v) for k, v in roles[h].items()},
+                          karakas=tuple(karakas[h]), timers=tuple(timers[h]))
+            for h in range(1, 13)}
+
+
+def house_sentence(f: HouseFacts) -> str:
+    """'Venus rules it and aspects it.' — composed from the relations that ACTUALLY fired."""
+    by_planet: dict[str, list[str]] = {}
+    for rel, phrase in CHART_SPECIFIC_ROLES:
+        for p in f.roles.get(rel, ()):
+            by_planet.setdefault(p, []).append(phrase)
+    if not by_planet:
+        return ("No planet rules, occupies or aspects this house — it is read from its "
+                "natural significators and the periods that light it.")
+    clauses = []
+    for p, phrases in by_planet.items():
+        joined = (phrases[0] if len(phrases) == 1
+                  else ", ".join(phrases[:-1]) + " and " + phrases[-1])
+        clauses.append(f"{p} {joined}")
+    # two clauses take a comma; three or more need semicolons, since the clauses themselves
+    # already contain commas.
+    if len(clauses) == 1:
+        return clauses[0] + "."
+    if len(clauses) == 2:
+        return f"{clauses[0]}, and {clauses[1]}."
+    return "; ".join(clauses[:-1]) + "; and " + clauses[-1] + "."

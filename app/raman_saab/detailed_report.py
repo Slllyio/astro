@@ -2687,32 +2687,36 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("## Judgment graph")
     L.append("")
     try:
-        from app.raman_saab.judgment_graph import build_judgment_graph
+        from app.raman_saab.judgment_graph import (DOCTRINE_CONSTANT_RELATIONS,
+                                                   build_judgment_graph, house_facts,
+                                                   house_sentence)
         _jg = build_judgment_graph(r)
         _by_rel: dict[str, int] = {}
         for _e in _jg.edges:
             _by_rel[_e.relation] = _by_rel.get(_e.relation, 0) + 1
-        L.append("This reading isn't built from isolated verdicts — it's assembled from a "
-                 "reasoning graph connecting every planet to the houses it lords, occupies, "
-                 "aspects, or signifies. This chart's graph: "
-                 f"**{len(_jg.nodes)} nodes, {len(_jg.edges)} edges** — " +
+        L.append("The reasoning behind this reading: every planet linked to the houses it "
+                 "rules, sits in, aspects or signifies, and to the periods that light them.")
+        L.append("")
+        L.append("### What shapes each area of your life")
+        L.append("")
+        L.append("| House | Verdict | What touches it | Natural significators | "
+                 "Periods that light it |")
+        L.append("|---|---|---|---|---|")
+        for _h, _f in sorted(house_facts(_jg).items()):
+            _tm = "; ".join(f"{lord}{f' ({g})' if g else ''}" for lord, g in _f.timers)
+            L.append(f"| {_h} — {_HOUSE_NAME.get(_h, '-')} | {_f.verdict or '-'} | "
+                     f"{house_sentence(_f)} | {', '.join(_f.karakas) or '-'} | {_tm or '-'} |")
+        L.append("")
+        _const = sum(_by_rel.get(k, 0) for k in DOCTRINE_CONSTANT_RELATIONS)
+        if _const:
+            L.append(f"A further **{_const}** edges record how the report's own sections "
+                     f"relate (which section governs another, which re-reads another). Those "
+                     f"are the same for every chart — they describe the method, not this "
+                     f"nativity — and are set out in \"How to read this report\".")
+            L.append("")
+        L.append(f"**{len(_jg.nodes)} nodes, {len(_jg.edges)} edges** — " +
                  ", ".join(f"{k} {v}" for k, v in sorted(_by_rel.items())) + ".")
         L.append("")
-        if r.planet_bios:
-            _dom = r.planet_bios[0].planet
-            _dom_edges = [_e for _e in _jg.edges if _e.src == f"planet:{_dom}"
-                         and _e.dst.startswith("house:")]
-            if _dom_edges:
-                L.append(f"**{_dom}'s own connections** — the planet this reading names as "
-                        f"touching the most ({r.planet_bios[0].census_count} connections):")
-                L.append("")
-                L.append("| Relation | House | Life area |")
-                L.append("|---|---|---|")
-                for _e in _dom_edges:
-                    _h = int(_e.dst.split(":")[1])
-                    L.append(f"| {_e.relation.replace('_', ' ')} | {_h} | "
-                            f"{_HOUSE_NAME.get(_h, '-')} |")
-                L.append("")
     except Exception:  # noqa: BLE001 — sparse/Track-B chart; the graph is a re-read, not a verdict
         L.append("_Graph unavailable for this chart (sparse data) — the readings above stand "
                  "on their own evidence regardless._")

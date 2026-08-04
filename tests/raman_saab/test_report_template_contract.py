@@ -325,6 +325,49 @@ class TestJudgmentGraphSection:
         assert dom in seg
         assert "<svg" in seg
 
+    def test_all_twelve_house_cards_render_in_both_surfaces(self, report, markdown, html):
+        """The reader-facing view: one card per house, on every surface."""
+        from app.raman_saab.judgment_graph import (build_judgment_graph, house_facts,
+                                                   house_sentence)
+        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        assert seg.count('class="jg-house"') == 12
+        facts = house_facts(build_judgment_graph(report))
+        assert len(facts) == 12
+        # every house's composed sentence must actually appear, in BOTH renderers
+        for _h, f in facts.items():
+            sentence = house_sentence(f)
+            assert sentence in markdown, f"markdown lost H{_h}'s summary"
+            assert sentence in seg, f"HTML lost H{_h}'s summary"
+
+    def test_planet_names_are_never_truncated(self, html):
+        """The old aspect network sliced names to 4 chars ('Satu 20', 'Jupi 25'). Gone."""
+        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        for stub in ("Satu ", "Jupi ", "Merc ", "Venu ", "Satu<", "Jupi<"):
+            assert stub not in seg, f"truncated planet name {stub!r} reappeared"
+
+    def test_doctrine_constant_relations_are_not_drawn_as_personal(self, report, markdown):
+        """61% of graph edges are identical across unrelated charts (measured). The
+        section->section doctrine edges describe the METHOD, so they are named and
+        attributed to 'How to read this report' — never rendered as this chart's own."""
+        from app.raman_saab.judgment_graph import (DOCTRINE_CONSTANT_RELATIONS,
+                                                   build_judgment_graph, house_facts)
+        jg = build_judgment_graph(report)
+        # they must not leak into the per-house reader view
+        for f in house_facts(jg).values():
+            assert not (set(f.roles) & DOCTRINE_CONSTANT_RELATIONS)
+        n = sum(1 for e in jg.edges if e.relation in DOCTRINE_CONSTANT_RELATIONS)
+        if n:
+            assert f"**{n}** edges record how the report's own sections relate" in markdown
+            assert "How to read this report" in markdown
+
+    def test_house_sentence_uses_only_chart_specific_roles(self, report):
+        """Karaka is ~39% chart-specific (Venus is karaka of the 7th in EVERY chart), so it
+        is reported separately rather than repeated through the sentence."""
+        from app.raman_saab.judgment_graph import (build_judgment_graph, house_facts,
+                                                   house_sentence)
+        for f in house_facts(build_judgment_graph(report)).values():
+            assert "natural significator" not in house_sentence(f) or not f.roles
+
 
 class TestKarmicEvolution:
     """v30 — the walled Jaimini layer: verbatim doctrine, resolving cite, walls hold."""

@@ -171,6 +171,19 @@
   body{background:var(--bg-museum);color:var(--ink-primary);font-family:var(--serif)}
   /* each chapter folio is a single scrollable cream page (the deliberate override of the
      manuscript's clip-only leaf, so no data is hidden — the no-omission rule) */
+  /* HORIZONTAL-OVERFLOW FIX (2026-08-04): .wrap is a grid and .leaf its item; a grid item's
+     default `min-width:auto` refuses to shrink below its content's min-content width, so a
+     single wide SVG (svgBox sets min-width = its design width; lifePanel is 900px) dragged
+     the WHOLE PAGE wider than a phone viewport — .folio-scroll's overflow-x:hidden then
+     clipped the prose mid-word instead of containing the chart. min-width:0 breaks that
+     min-content propagation so .viz-scroll{overflow-x:auto} can finally do its job and
+     scroll the chart inside its own card. One rule; repairs every visualisation at once. */
+  .leaf,.leaf-page,.folio-scroll{min-width:0}
+  /* judgment-graph house cards: a vertical stack, mobile-native — no horizontal scroll and
+     no glyph legend to decode. The left rule carries the house's own natal verdict colour. */
+  .jg-house{margin:.35rem 0;padding-left:.6rem}
+  .jg-house>summary{cursor:pointer;padding:.35rem 0;font-size:.9rem}
+  .jg-house .body{padding:.2rem 0 .5rem}
   .leaf-page.single{display:block;grid-template-columns:1fr;padding:0}
   .folio-scroll{height:100%;overflow-y:auto;overflow-x:hidden;padding:1.5rem clamp(1rem,3.5vw,3rem) 3rem;
     scrollbar-width:thin;scrollbar-color:var(--saffron) transparent}
@@ -1353,56 +1366,130 @@ function supportMeter(R){
   return svg;
 }
 
-// ===== item 13: the aspect network — drawn from the judgment graph (safe SVG) =====
-function aspectNetwork(jg){
-  try{
-    const NS='http://www.w3.org/2000/svg';
-    const planets=jg.nodes.filter(n=>n.kind==='planet').map(n=>n.label);
-    if(!planets.length) return null;
-    const occ={}, verdict={}, census={};
-    for(const n of jg.nodes) if(n.kind==='house')
-      for(const [k,v] of (n.data||[])) if(k==='verdict') verdict[n.id]=v;
-    for(const e of jg.edges){
-      if(e.relation==='occupies') occ[e.dst]=(occ[e.dst]||[]).concat(e.src.split(':')[1]);
-      if(['lord_of','occupies','aspects','karaka_of','rules_period','maraka_tier'].includes(e.relation)
-         && e.src.startsWith('planet:')){
-        const p=e.src.split(':')[1]; census[p]=(census[p]||0)+1; } }
-    const W=520,H=520,cx=W/2,cy=H/2,rad=200;
-    const svg=document.createElementNS(NS,'svg');
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);
-    svg.setAttribute('style','max-width:100%;height:auto');
-    const pos={};
-    planets.forEach((p,i)=>{ const a=-Math.PI/2+i*2*Math.PI/planets.length;
-      pos[p]=[cx+rad*Math.cos(a), cy+rad*Math.sin(a)]; });
-    for(const e of jg.edges){
-      if(e.relation!=='aspects') continue;
-      const src=e.src.split(':')[1];
-      for(const tgt of (occ[e.dst]||[])){
-        if(tgt===src||!pos[src]||!pos[tgt]) continue;
-        const v=verdict[e.dst]||'';
-        const ln=document.createElementNS(NS,'line');
-        ln.setAttribute('x1',pos[src][0]); ln.setAttribute('y1',pos[src][1]);
-        ln.setAttribute('x2',pos[tgt][0]); ln.setAttribute('y2',pos[tgt][1]);
-        ln.setAttribute('stroke', v==='afflicted'?'var(--aff)':v==='favourable'?'var(--fav)':'var(--mix)');
-        ln.setAttribute('stroke-width','1.1'); ln.setAttribute('opacity','0.55');
-        svg.appendChild(ln); } }
-    const maxC=Math.max(1,...Object.values(census));
-    for(const p of planets){
-      const [x,y]=pos[p];
-      const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',x); c.setAttribute('cy',y);
-      c.setAttribute('r', 8+14*((census[p]||0)/maxC));
-      c.setAttribute('fill','var(--accent-2)'); c.setAttribute('opacity','0.85');
-      svg.appendChild(c);
-      const tx=document.createElementNS(NS,'text');
-      tx.setAttribute('x',x); tx.setAttribute('y',y+4);
-      tx.setAttribute('text-anchor','middle');
-      tx.setAttribute('style','font-size:11px;fill:var(--ink)');
-      tx.textContent=p.slice(0,4)+' '+(census[p]||0);
-      svg.appendChild(tx); }
-    return svg;
-  }catch(e){ console.error('aspect network failed:',e); return null; }
+// ===== the judgment graph, read the way a READER asks it (2026-08-04 rebuild) =====
+// Measured before designing: building the graph for two unrelated charts and diffing gives
+// 116 of 190 edges byte-IDENTICAL. The section->section doctrine edges (participates_in,
+// parallel, re_read_of, corroborates, different_grain) are 100% constant for every chart
+// ever cast; links/governs ~91%. Those describe the METHOD, not this person, so they are
+// named honestly and pointed at "How to read this report" rather than drawn here. What is
+// genuinely chart-specific — lord_of, occupies, aspects, timer_of, rules_period — is what
+// these views spend their space on.
+
+//: relation -> how to say it in plain English, in the order a reader wants to hear it.
+const JG_ROLE=[['lord_of','rules it'],['occupies','sits in it'],
+               ['aspects','aspects it'],['karaka_of','is its natural significator']];
+//: activation tiers in plain words — mirrors judgment_graph.PLAIN_TIER (Python side).
+const JG_PLAIN_TIER={'par excellence':'full, strong results','ordinary':'normal results',
+                     'limited':'slight results','feeble':'faint results'};
+
+// per-house digest of the graph: who touches this house, and how.
+function jgHouseFacts(jg){
+  const facts={}, verdict={};
+  for(let h=1;h<=12;h++) facts[h]={verdict:'',roles:{},timers:[]};
+  for(const n of jg.nodes) if(n.kind==='house'){
+    const h=+n.id.split(':')[1];
+    for(const kv of (n.data||[])) if(kv[0]==='verdict'){ facts[h].verdict=kv[1]; verdict[h]=kv[1]; } }
+  for(const e of jg.edges){
+    if(!e.dst.startsWith('house:')) continue;
+    const h=+e.dst.split(':')[1]; if(!facts[h]) continue;
+    if(e.src.startsWith('planet:')&&JG_ROLE.some(r=>r[0]===e.relation)){
+      const p=e.src.split(':')[1];
+      (facts[h].roles[e.relation]=facts[h].roles[e.relation]||[]);
+      if(facts[h].roles[e.relation].indexOf(p)<0) facts[h].roles[e.relation].push(p); }
+    // timer_of: the dasha periods that light this house — 100% chart-specific, the most
+    // information-dense relation in the graph, and invisible in every previous view.
+    else if(e.relation==='timer_of'&&e.src.startsWith('dasha_period:')){
+      const lord=e.src.split(':').pop();
+      const g=((/grade=(\w+)/.exec(e.provenance||'')||[])[1]||'').replace(/_/g,' ');
+      // plain words, not the Sanskrit-derived tier names: this section sits in the report's
+      // jargon-free zone (mirrors judgment_graph.PLAIN_TIER on the Python side).
+      facts[h].timers.push({lord:lord,grade:JG_PLAIN_TIER[g]||g}); } }
+  return facts;
 }
+
+// "Venus rules it, sits in it and aspects it." — composed from the relations that ACTUALLY
+// fired, never a template with blanks. Karaka is deliberately kept OUT of this sentence and
+// reported separately: it is the one role largely fixed by doctrine (Venus is karaka of the
+// 7th in every chart ever cast — measured only 39% chart-specific), so letting it repeat
+// "is its natural significator" per planet would bury the facts that are actually THIS
+// chart's in the ones that are everybody's.
+function jgHouseSentence(f){
+  const CHART=[['lord_of','rules it'],['occupies','sits in it'],['aspects','aspects it']];
+  const byPlanet={}, order=[];
+  for(const [rel,phrase] of CHART)
+    for(const p of (f.roles[rel]||[])){
+      if(!byPlanet[p]){ byPlanet[p]=[]; order.push(p); }
+      byPlanet[p].push(t(phrase)); }
+  if(!order.length) return t('No planet rules, occupies or aspects this house — it is read from its natural significators and the periods that light it.');
+  const clauses=order.map(p=>{
+    const v=byPlanet[p];
+    return p+' '+(v.length===1?v[0]:v.slice(0,-1).join(', ')+' '+t('and')+' '+v[v.length-1]); });
+  // two clauses take a comma ("A, and B"); three or more need semicolons to stay unambiguous,
+  // since the clauses themselves already contain commas.
+  if(clauses.length===1) return clauses[0]+'.';
+  if(clauses.length===2) return clauses[0]+', '+t('and')+' '+clauses[1]+'.';
+  return clauses.slice(0,-1).join('; ')+'; '+t('and')+' '+clauses[clauses.length-1]+'.';
+}
+
+// PRIMARY view: 12 stacked cards. Vertical by design — no horizontal scroll, no glyph
+// legend to memorise, and it answers the question the reader actually has.
+function jgHouseCards(jg){
+  const facts=jgHouseFacts(jg);
+  const wrap=el('div',{});
+  for(let h=1;h<=12;h++){
+    const f=facts[h], col=verdictColor(f.verdict);
+    const card=el('details',{class:'card jg-house'});
+    card.style.borderLeft='3px solid '+col;
+    const sm=el('summary');
+    sm.append(el('b',{},'H'+h+' · '+HNAME[h]));
+    if(f.verdict) sm.append(el('span',{class:'chip',style:'margin-left:.4rem;color:'+col},f.verdict));
+    card.append(sm);
+    const body=el('div',{class:'body'});
+    body.append(para(jgHouseSentence(f),'lede'));
+    // the role chips — full planet names, never truncated
+    const chips=el('div',{class:'pillrow'});
+    for(const [rel,phrase] of JG_ROLE)
+      for(const p of (f.roles[rel]||[]))
+        chips.append(el('span',{class:'chip',title:p+' '+t(phrase)},p+' — '+t(phrase)));
+    if(chips.children.length) body.append(chips);
+    // karakas said once, compactly — the doctrine-fixed role, kept out of the sentence
+    const kar=f.roles['karaka_of']||[];
+    if(kar.length) body.append(para(t('Natural significators (karaka)')+': '+kar.join(', '),'muted'));
+    if(f.timers.length){
+      const seen={}, tl=[];
+      for(const x of f.timers){ const k=x.lord+'|'+x.grade; if(seen[k])continue; seen[k]=1;
+        tl.push(x.lord+(x.grade?' ('+x.grade+')':'')); }
+      body.append(para(t('Periods that light this house')+': '+tl.join(', '),'muted')); }
+    body.append(para(t('Full reading for this house is in House-by-house below.'),'muted'));
+    card.append(body); wrap.append(card); }
+  return wrap;
+}
+
+// SECONDARY view: planet reach. This is the ONE real insight the old circular aspect
+// network carried (node size = judgment-graph census); as a bar chart it is legible on a
+// phone and keeps full planet names. Replaces that drawing; no edge is lost — every one
+// still appears in the house cards above and the full edge table below.
+function jgReachBars(jg){
+  try{
+    const REL=['lord_of','occupies','aspects','karaka_of','rules_period','maraka_tier'];
+    const census={}, houses={};
+    for(const e of jg.edges){
+      if(!e.src.startsWith('planet:')||REL.indexOf(e.relation)<0) continue;
+      const p=e.src.split(':')[1];
+      census[p]=(census[p]||0)+1;
+      if(e.dst.startsWith('house:')) (houses[p]=houses[p]||{})[e.dst.split(':')[1]]=1; }
+    const items=Object.keys(census).map(p=>({
+      label:p, value:census[p],
+      valLabel:census[p]+(houses[p]?' · '+Object.keys(houses[p]).length+'h':''),
+      fill:'var(--accent-2)',
+      note:p+' — '+census[p]+' connections across '+
+           (houses[p]?Object.keys(houses[p]).length:0)+' houses'}))
+      .sort((a,b)=>b.value-a.value);
+    if(!items.length) return null;
+    return hbars(items,{padL:76,padR:96});
+  }catch(e){ console.error('reach bars failed:',e); return null; }
+}
+
 
 // planet -> house influence MATRIX: distinct from aspectNetwork above — that one draws
 // planet-to-planet lines via shared-house aspects; this one shows the DIRECT planet -> house
@@ -1795,15 +1882,33 @@ function render(R, S, FQ){
     const jg=R.judgment_graph, byRel={};
     for(const e of jg.edges) byRel[e.relation]=(byRel[e.relation]||0)+1;
     add(H2('Judgment graph'));
+    add(para(t('The reasoning behind this reading: every planet linked to the houses it rules, sits in, aspects or signifies, and to the periods that light them.'),'lede'));
+
+    // PRIMARY — what shapes each area of THIS life. Stacked cards, plain sentences.
+    add(para(t('What shapes each area of your life'),'muted'));
+    add(jgHouseCards(jg));
+
+    // SECONDARY — which planet reaches furthest across the chart.
+    const reach=jgReachBars(jg);
+    if(reach) add(vizCard('Planet reach — how much of this chart each planet touches', reach,
+      'One bar per planet: how many connections it holds in the judgment graph (lord of, occupies, aspects, karaka of, rules a period, maraka tier), and across how many houses. This is the breadth-of-participation measure quoted in Your Reading — a different thing from Shadbala strength, which measures power rather than reach. Counts of already-computed relations; never a new judgment.'));
+
+    // TERTIARY — the all-at-once grid, collapsed; and the complete edge list.
+    const pin=planetInfluenceMatrix(jg);
+    if(pin){ const md=el('details',{class:'card'});
+      const ms=el('summary'); ms.append(t('All planets × all houses at once (matrix)')); md.append(ms);
+      const mb=el('div',{class:'body'});
+      mb.append(para(t('Every planet → house connection in one grid: ● lord of · ■ occupies · ▲ aspects · ◆ karaka of. Column headers are tinted by that house\'s own natal verdict. Tap a relation chip to show/hide it, tap a planet or house to focus it.'),'muted'));
+      const sc=el('div',{class:'viz-scroll vz'}); sc.append(pin); mb.append(sc);
+      md.append(mb); add(md); }
+
+    // the doctrine-constant edges, named honestly rather than drawn as if personal
+    const CONST_REL=['participates_in','parallel','re_read_of','corroborates','different_grain','governs','links'];
+    const constN=CONST_REL.reduce((a,k)=>a+(byRel[k]||0),0);
+    if(constN) add(para(t('A further')+' '+constN+' '+t('edges record how the report\'s own sections relate (which section governs another, which re-reads another). Those are the same for every chart — they describe the method, not this nativity — and are set out in How to read this report.'),'muted'));
     add(para(jg.nodes.length+' '+t('nodes')+', '+jg.edges.length+' '+t('edges')+' — '+
       Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
-    // item 13 — the aspect network, drawn FROM the shipped graph (safe namespaced SVG).
-    const net=aspectNetwork(jg);
-    if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
-      'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
-    const pin=planetInfluenceMatrix(jg);
-    if(pin) add(vizCard('Planet influence matrix — which houses each planet touches, and how', pin,
-      'Every planet → house connection the judgment graph already carries, one cell per pair (a grid, not crossing lines — nothing overlaps, so the whole structure reads at a glance). ● lord of that house · ■ occupies it · ▲ casts a whole-sign aspect onto it · ◆ is its karaka (natural significator). Column headers are tinted by the house\'s own natal verdict and carry its classical life-area. Tap a relation chip to show/hide it, tap a planet or a house to focus just its connections, hover any mark for the exact relation and citation. A drawing of the graph, not a new claim.'));
+
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
     const body=el('div',{class:'body'});

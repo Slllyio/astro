@@ -243,6 +243,11 @@ table.sav .weakc{color:var(--afflicted);font-weight:700}
 .badges code{background:var(--panel-2,rgba(127,127,127,.12));border-radius:4px;
   padding:.1rem .4rem;margin-right:.35rem;font-family:inherit}
 .method-preamble{font-style:italic}
+/* judgment-graph house cards — a vertical stack; the left rule carries the house's own
+   natal verdict colour. Mobile-native: no horizontal scroll, no glyph legend to decode. */
+.jg-house{margin:.5rem 0;padding:.1rem 0 .1rem .7rem}
+.jg-house-head{margin:.2rem 0;font-size:.9rem}
+.jg-house .doctrine{margin:.2rem 0}
 .method-order{margin:.15rem 0 .6rem 1.4rem;font-size:.85rem;color:var(--ink-soft)}
 /* progressive disclosure — Summary is the section head above; these are Why/Evidence/
    Calculation/Classical text, each openable independently, nothing ever removed */
@@ -1244,20 +1249,59 @@ def _judgment_graph_section(r: DetailedReport) -> str:
         return ('<h2 class="section" id="judgment-graph">Judgment graph</h2>'
                 '<p class="section-sub caveat">Graph unavailable for this chart (sparse '
                 'data) &mdash; the readings above stand on their own evidence regardless.</p>')
+    from app.raman_saab.judgment_graph import (DOCTRINE_CONSTANT_RELATIONS,
+                                               house_facts, house_sentence)
     by_rel: dict[str, int] = {}
     for e in jg.edges:
         by_rel[e.relation] = by_rel.get(e.relation, 0) + 1
     rel_txt = ", ".join(f"{_esc(k)} {v}" for k, v in sorted(by_rel.items()))
     planets = sorted({e.src.split(":")[1] for e in jg.edges
                       if e.src.startswith("planet:") and e.dst.startswith("house:")})
-    svg = _judgment_graph_svg(jg, planets)
+
+    # PRIMARY — what shapes each area of THIS life, as a vertical stack of plain sentences.
+    cards: list[str] = []
+    for h, f in sorted(house_facts(jg).items()):
+        col = {"favourable": "var(--favourable)", "afflicted": "var(--afflicted)"}.get(
+            _vclass(f.verdict), "var(--mixed)")
+        chips = "".join(
+            f'<span class="tag">{_esc(p)} &mdash; {_esc(phrase)}</span>'
+            for rel, phrase in (("lord_of", "rules it"), ("occupies", "sits in it"),
+                                ("aspects", "aspects it"), ("karaka_of", "natural significator"))
+            for p in (f.karakas if rel == "karaka_of" else f.roles.get(rel, ())))
+        timers = ""
+        if f.timers:
+            timers = ('<p class="section-sub">Periods that light this house: '
+                      + _esc(", ".join(f"{lord}{f' ({g})' if g else ''}"
+                                       for lord, g in f.timers)) + '</p>')
+        cards.append(
+            f'<div class="jg-house" style="border-left:3px solid {col}">'
+            f'<p class="jg-house-head"><b>H{h} &middot; {_esc(_HOUSE_NAME.get(h, ""))}</b>'
+            + (f' <span class="tag" style="color:{col}">{_esc(f.verdict)}</span>'
+               if f.verdict else "")
+            + f'</p><p class="doctrine">{_esc(house_sentence(f))}</p>'
+            + (f'<p class="section-sub">{chips}</p>' if chips else "")
+            + timers + '</div>')
+
+    const_n = sum(by_rel.get(k, 0) for k in DOCTRINE_CONSTANT_RELATIONS)
+    const_line = ("" if not const_n else
+                  f'<p class="section-sub">A further <b>{const_n}</b> edges record how the '
+                  f'report&rsquo;s own sections relate (which section governs another, which '
+                  f're-reads another). Those are the same for every chart &mdash; they '
+                  f'describe the method, not this nativity &mdash; and are set out in '
+                  f'&ldquo;How to read this report&rdquo;.</p>')
+
     return (
         '<h2 class="section" id="judgment-graph">Judgment graph</h2>'
-        '<p class="section-sub">This reading isn&rsquo;t built from isolated verdicts '
-        '&mdash; it&rsquo;s assembled from a reasoning graph connecting every planet to the '
-        'houses it lords, occupies, aspects, or signifies. '
-        f'<b>{len(jg.nodes)} nodes, {len(jg.edges)} edges</b> &mdash; {rel_txt}.</p>'
-        + svg)
+        '<p class="section-sub">The reasoning behind this reading: every planet linked to '
+        'the houses it rules, sits in, aspects or signifies, and to the periods that light '
+        'them.</p>'
+        '<h3 class="sub">What shapes each area of your life</h3>'
+        + "".join(cards)
+        + '<h3 class="sub">All planets &times; all houses at once</h3>'
+        + _judgment_graph_svg(jg, planets)
+        + const_line
+        + f'<p class="section-sub"><b>{len(jg.nodes)} nodes, {len(jg.edges)} edges</b> '
+          f'&mdash; {rel_txt}.</p>')
 
 
 def _ruler_section(r: DetailedReport) -> str:

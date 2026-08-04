@@ -1263,11 +1263,16 @@ def _judgment_graph_section(r: DetailedReport) -> str:
     for h, f in sorted(house_facts(jg).items()):
         col = {"favourable": "var(--favourable)", "afflicted": "var(--afflicted)"}.get(
             _vclass(f.verdict), "var(--mixed)")
+        # karaka is NOT chipped — it gets its own line below (chipping it too said the same
+        # thing twice); the chips carry only the chart-specific roles.
         chips = "".join(
             f'<span class="tag">{_esc(p)} &mdash; {_esc(phrase)}</span>'
             for rel, phrase in (("lord_of", "rules it"), ("occupies", "sits in it"),
-                                ("aspects", "aspects it"), ("karaka_of", "natural significator"))
-            for p in (f.karakas if rel == "karaka_of" else f.roles.get(rel, ())))
+                                ("aspects", "aspects it"))
+            for p in f.roles.get(rel, ()))
+        karaka_line = ("" if not f.karakas else
+                       '<p class="section-sub">Natural significators (karaka): '
+                       + _esc(", ".join(f.karakas)) + '</p>')
         timers = ""
         if f.timers:
             timers = ('<p class="section-sub">Periods that light this house: '
@@ -1280,7 +1285,7 @@ def _judgment_graph_section(r: DetailedReport) -> str:
                if f.verdict else "")
             + f'</p><p class="doctrine">{_esc(house_sentence(f))}</p>'
             + (f'<p class="section-sub">{chips}</p>' if chips else "")
-            + timers + '</div>')
+            + karaka_line + timers + '</div>')
 
     const_n = sum(by_rel.get(k, 0) for k in DOCTRINE_CONSTANT_RELATIONS)
     const_line = ("" if not const_n else

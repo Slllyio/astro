@@ -171,13 +171,14 @@
   body{background:var(--bg-museum);color:var(--ink-primary);font-family:var(--serif)}
   /* each chapter folio is a single scrollable cream page (the deliberate override of the
      manuscript's clip-only leaf, so no data is hidden — the no-omission rule) */
-  /* HORIZONTAL-OVERFLOW FIX (2026-08-04): .wrap is a grid and .leaf its item; a grid item's
-     default `min-width:auto` refuses to shrink below its content's min-content width, so a
-     single wide SVG (svgBox sets min-width = its design width; lifePanel is 900px) dragged
-     the WHOLE PAGE wider than a phone viewport — .folio-scroll's overflow-x:hidden then
-     clipped the prose mid-word instead of containing the chart. min-width:0 breaks that
-     min-content propagation so .viz-scroll{overflow-x:auto} can finally do its job and
-     scroll the chart inside its own card. One rule; repairs every visualisation at once. */
+  /* Defensive, NOT a fix for an observed bug — recorded honestly because the first draft of
+     this rule claimed otherwise. Measured in a real headless Chromium at 390x844 with the
+     full report rendered: documentElement.scrollWidth === innerWidth === 390, both WITH and
+     WITHOUT this rule, even though 402 elements (990px table rows, 662px SVGs) are wider
+     than the viewport — .viz-scroll{overflow-x:auto} and the mobile block's
+     `.folio-scroll table{overflow-x:auto}` already contain every one of them. The rule stays
+     only as cheap insurance for a future viz added OUTSIDE a scroll container, since a
+     grid/flex item's default min-width:auto would then propagate its width to the page. */
   .leaf,.leaf-page,.folio-scroll{min-width:0}
   /* judgment-graph house cards: a vertical stack, mobile-native — no horizontal scroll and
      no glyph legend to decode. The left rule carries the house's own natal verdict colour. */
@@ -1446,11 +1447,13 @@ function jgHouseCards(jg){
     card.append(sm);
     const body=el('div',{class:'body'});
     body.append(para(jgHouseSentence(f),'lede'));
-    // the role chips — full planet names, never truncated
+    // the role chips — full planet names, never truncated. Karaka is NOT chipped here: it
+    // gets its own line below, and chipping it too said the same thing twice.
     const chips=el('div',{class:'pillrow'});
     for(const [rel,phrase] of JG_ROLE)
-      for(const p of (f.roles[rel]||[]))
-        chips.append(el('span',{class:'chip',title:p+' '+t(phrase)},p+' — '+t(phrase)));
+      if(rel!=='karaka_of')
+        for(const p of (f.roles[rel]||[]))
+          chips.append(el('span',{class:'chip',title:p+' '+t(phrase)},p+' — '+t(phrase)));
     if(chips.children.length) body.append(chips);
     // karakas said once, compactly — the doctrine-fixed role, kept out of the sentence
     const kar=f.roles['karaka_of']||[];

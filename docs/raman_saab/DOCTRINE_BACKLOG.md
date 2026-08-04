@@ -684,3 +684,17 @@ narrative); the narrative engine consumes the layers (census-dominant sentence i
 Reading's opening beside the Shadbala line — two dominance measures, both said;
 reconciliations composed in, not attached; the dominant graha's own MD chapter marked);
 `raman_style.py` names the writer stage. Order enforced by consumption tests.
+
+**Report punch-list corrections 1-2 (2026-08-04).** (1) Rectification confidence
+re-measured as a bidirectional per-pillar minute RANGE (a full ±60-min scan) instead of a
+4-fixed-offset flip check, plus the combined "every pillar holds together" window — no
+doctrine change, a pure measurement-precision upgrade to an already-honest instrument.
+Two implementation bugs fixed in the same pass (an ayanamsa mismatch between the base
+chart and the probe casts that could report false sensitivity; an invalid-hour bug in the
+old offset arithmetic near midnight, unreachable at ±5 min but live at ±60). (2) The
+judgment graph is now a first-class section (v32) beside "Your Reading" on all three
+surfaces — it was already used there (the dominant-planet census sentence); this closes
+the gap that it was never actually SHOWN on markdown/standalone HTML, and was shown too
+late (after Planet biographies) on the interactive page. Pure re-read both ways; no new
+astrology, no verdict touched. See `docs/raman_saab/REPORT_TEMPLATE.md`'s v32 note for
+the full technical record.

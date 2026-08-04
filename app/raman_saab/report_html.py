@@ -1127,6 +1127,80 @@ def _varga_card(label: str, body: str) -> str:
         + "</div></details>")
 
 
+def _judgment_graph_svg(jg, planets: list[str]) -> str:
+    """The bipartite planet -> house influence network, ported from the interactive page's
+    `planetInfluenceNetwork` (report.html) to static server-side SVG — `<title>` elements give
+    native hover tooltips with no JS required. Empty string when there is nothing to draw."""
+    rel_style = {"lord_of": ("", 1.6), "occupies": ("", 1.0),
+                 "aspects": ("4,3", 1.0), "karaka_of": ("1,2", 1.4)}
+    edges = [e for e in jg.edges if e.src.startswith("planet:") and e.dst.startswith("house:")
+            and e.relation in rel_style and e.src.split(":")[1] in planets]
+    if not edges or not planets:
+        return ""
+    houses = list(range(1, 13))
+    w, px, hx = 640, 90, 530
+    h_total = max(len(planets), len(houses)) * 26 + 20
+
+    def py(p: str) -> float:
+        return 20 + planets.index(p) * (h_total - 20) / max(1, len(planets) - 1 or 1)
+
+    def hy(h: int) -> float:
+        return 20 + (h - 1) * (h_total - 20) / 11
+
+    parts: list[str] = []
+    for e in edges:
+        p = e.src.split(":")[1]
+        hn = int(e.dst.split(":")[1])
+        dash, sw = rel_style[e.relation]
+        x1, y1, x2, y2 = px + 8.0, py(p), hx - 8.0, hy(hn)
+        mx = (x1 + x2) / 2
+        title = f"{p} {e.relation.replace('_', ' ')} H{hn}" + (f" ({e.cite})" if e.cite else "")
+        parts.append(
+            f'<path d="M{x1:.1f},{y1:.1f} C{mx:.1f},{y1:.1f} {mx:.1f},{y2:.1f} {x2:.1f},{y2:.1f}" '
+            f'fill="none" stroke="var(--ink-soft)" stroke-width="{sw}" '
+            f'stroke-dasharray="{dash}" opacity="0.45"><title>{_esc(title)}</title></path>')
+    for p in planets:
+        y = py(p)
+        parts.append(f'<text x="{px}" y="{y + 4:.1f}" text-anchor="end" '
+                     f'style="font-size:11px;fill:var(--ink);font-weight:600">{_esc(p)}</text>')
+        parts.append(f'<circle cx="{px + 8}" cy="{y:.1f}" r="3.5" fill="var(--doctrine)"/>')
+    for hn in houses:
+        y = hy(hn)
+        parts.append(f'<text x="{hx}" y="{y + 4:.1f}" style="font-size:11px;fill:var(--ink)">'
+                     f'H{hn} &middot; {_esc(_HOUSE_NAME.get(hn, ""))}</text>')
+        parts.append(f'<circle cx="{hx - 8}" cy="{y:.1f}" r="3.5" fill="var(--instrument)"/>')
+    body = "".join(parts)
+    return (f'<svg viewBox="0 0 {w} {h_total}" style="max-width:100%;height:auto" role="img" '
+           f'aria-label="Judgment graph — planet to house influence">{body}</svg>')
+
+
+def _judgment_graph_section(r: DetailedReport) -> str:
+    """v32 — the judgment graph, already USED in Your Reading (the dominant-planet census
+    sentence quotes its count) and now shown right beside it: node/edge counts, the relation
+    breakdown, and the full planet -> house network as a static inline SVG."""
+    from app.raman_saab.judgment_graph import build_judgment_graph
+    try:
+        jg = build_judgment_graph(r)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart; a re-read, not a verdict
+        return ('<h2 class="section" id="judgment-graph">Judgment graph</h2>'
+                '<p class="section-sub caveat">Graph unavailable for this chart (sparse '
+                'data) &mdash; the readings above stand on their own evidence regardless.</p>')
+    by_rel: dict[str, int] = {}
+    for e in jg.edges:
+        by_rel[e.relation] = by_rel.get(e.relation, 0) + 1
+    rel_txt = ", ".join(f"{_esc(k)} {v}" for k, v in sorted(by_rel.items()))
+    planets = sorted({e.src.split(":")[1] for e in jg.edges
+                      if e.src.startswith("planet:") and e.dst.startswith("house:")})
+    svg = _judgment_graph_svg(jg, planets)
+    return (
+        '<h2 class="section" id="judgment-graph">Judgment graph</h2>'
+        '<p class="section-sub">This reading isn&rsquo;t built from isolated verdicts '
+        '&mdash; it&rsquo;s assembled from a reasoning graph connecting every planet to the '
+        'houses it lords, occupies, aspects, or signifies. '
+        f'<b>{len(jg.nodes)} nodes, {len(jg.edges)} edges</b> &mdash; {rel_txt}.</p>'
+        + svg)
+
+
 def _ruler_section(r: DetailedReport) -> str:
     """Raman's first-impression card (v13): the ruler of the nativity (Lagna lord) and the
     strongest planet by Shadbala, with the HTJAH-I:3892-3897 nature/appearance comparison —
@@ -1404,26 +1478,32 @@ def _health_readout_section(r: DetailedReport) -> str:
 
 
 def _rect_confidence_section(r: DetailedReport) -> str:
-    """v31 — birth-time sensitivity, measured; the confidence is a count, never a %."""
+    """v31 — birth-time sensitivity, measured as a bidirectional minute RANGE per pillar
+    (never a fixed pass/fail at one offset, never an invented percentage)."""
     rc = r.rect_confidence
     if rc is None:
         return ""
     def _flips(pl) -> str:
-        return ("; ".join(f"{off:+d} min → {v}" for off, v in pl.flips)
-                if pl.flips else "stable")
+        parts = [f"{off:+d} min &rarr; {_esc(v)}"
+                for off, v in filter(None, (pl.flip_minus, pl.flip_plus))]
+        return ("; ".join(parts) if parts else
+                f"stable beyond &plusmn;{rc.scan_window} min (not tested further)")
     rows = "".join(
         f'<tr><td>{_esc(pl.pillar)}</td><td>{_esc(pl.base_value)}</td>'
-        f'<td>{_esc(_flips(pl))}</td></tr>'
+        f'<td>-{pl.stable_minus} to +{pl.stable_plus}</td>'
+        f'<td>{_flips(pl)}</td></tr>'
         for pl in rc.pillars)
     return (
         '<h2 class="section" id="rect-confidence">Rectification confidence</h2>'
         f'<p class="section-sub"><i>{_esc(rc.frame)}</i></p>'
-        f'<p class="section-sub"><b>Verdict</b> &mdash; {rc.stable_count} of '
-        f'{rc.total_count} pillars stable at &plusmn;5 minutes: '
-        f'<b>{_esc(rc.label)}</b></p>'
+        f'<p class="section-sub"><b>Verdict</b> &mdash; {_esc(rc.label)}</p>'
+        f'<p class="section-sub"><b>Every pillar holds together</b> from '
+        f'-{rc.overall_stable_minus} to +{rc.overall_stable_plus} minutes '
+        f'({rc.stable_count} of {rc.total_count} pillars never flip inside the full '
+        f'&plusmn;{rc.scan_window}-minute scan)</p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>pillar</th>'
-        '<th>at the stated time</th><th>flips</th></tr></thead>'
-        f'<tbody>{rows}</tbody></table></div>')
+        '<th>at the stated time</th><th>stable range (minutes)</th><th>flips to</th></tr>'
+        f'</thead><tbody>{rows}</tbody></table></div>')
 
 
 def _decades_section(r: DetailedReport) -> str:
@@ -2263,6 +2343,8 @@ def to_html(r: DetailedReport) -> str:
       <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a>
       <a href="#nichod">Nichod</a></nav>
   </header>
+
+  {_judgment_graph_section(r)}
 
   {_ruler_section(r)}
 

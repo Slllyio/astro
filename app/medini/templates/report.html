@@ -1182,6 +1182,59 @@ function longevityGauge(R){ const L=R.longevity; if(!L||L.years==null) return nu
   s.append(sv('text',{x:mx,y:y-6,'font-size':10,'text-anchor':'middle','font-weight':600,fill:'var(--accent)'}, Math.round(L.years)+'y · '+L['class']));
   return s; }
 
+// rectification confidence: the full table (completeness) + an interactive dial — moving the
+// slider re-renders which pillars are stable at that exact offset, purely from the measured
+// stable_minus/stable_plus per pillar (no recomputation, no network call, no invented number).
+function rectConfidencePanel(rc){
+  const wrap=el('div',{});
+  wrap.append(para(rc.frame,'muted'));
+  wrap.append(para(t('Verdict')+' — '+rc.label,'lede'));
+  wrap.append(para(t('Every pillar holds together from')+' -'+rc.overall_stable_minus+' '+
+    t('to')+' +'+rc.overall_stable_plus+' '+t('minutes')+' ('+rc.stable_count+' '+t('of')+' '+
+    rc.total_count+' '+t('pillars never flip inside the full')+' ±'+rc.scan_window+
+    t(' minute scan')+')','muted'));
+
+  const tbl=el('table');
+  tbl.append(el('tr',{},...['pillar','at the stated time','stable range (minutes)','flips to']
+    .map(x=>el('th',{},t(x)))));
+  for(const pl of rc.pillars){
+    const flips=[pl.flip_minus,pl.flip_plus].filter(Boolean)
+      .map(f=>(f[0]>0?'+':'')+f[0]+' min → '+f[1]).join('; ') ||
+      (t('stable beyond')+' ±'+rc.scan_window+' '+t('min (not tested further)'));
+    tbl.append(el('tr',{},el('td',{},pl.pillar),el('td',{},pl.base_value),
+      el('td',{},'-'+pl.stable_minus+' to +'+pl.stable_plus),el('td',{},flips)));
+  }
+  wrap.append(tbl);
+
+  const dial=el('div',{class:'card',style:'margin-top:.6rem;padding:.6rem'});
+  dial.append(el('div',{class:'lede'},t('Interactive: move the birth time and see which pillars stay stable')));
+  const valLbl=el('div',{class:'muted',style:'margin:.3rem 0'});
+  const slider=el('input',{type:'range',min:String(-rc.scan_window),max:String(rc.scan_window),
+    value:'0',style:'width:100%'});
+  const list=el('div',{class:'pillrow',style:'margin-top:.4rem'});
+  function renderAt(off){
+    valLbl.textContent = off===0 ? t('At the stated birth time') :
+      (off<0 ? (-off)+' '+t('minutes earlier') : off+' '+t('minutes later'));
+    list.replaceChildren();
+    for(const pl of rc.pillars){
+      const stableHere = off<0 ? (-off)<=pl.stable_minus : off<=pl.stable_plus;
+      const chip=el('span',{class:'chip v-'+(stableHere?'favourable':'afflicted')});
+      if(stableHere) chip.append(pl.pillar+': '+pl.base_value);
+      else{
+        const flip = off<0?pl.flip_minus:pl.flip_plus;
+        chip.append(pl.pillar+': '+(flip ? t('now')+' '+flip[1] :
+          t('flipped (exact value not probed this far)')));
+      }
+      list.append(chip);
+    }
+  }
+  slider.oninput=()=>renderAt(+slider.value);
+  renderAt(0);
+  dial.append(slider, valLbl, list);
+  wrap.append(dial);
+  return wrap;
+}
+
 function run(){
   const btn=$('go'); if(btn){ btn.disabled=true; btn.textContent=t('Casting…'); }
   const first=$('leaf2-body');
@@ -1256,7 +1309,7 @@ function toggleAsk(){ const a=$('ask'); if(!a) return;
 window.toggleAsk=toggleAsk;
 
 // ===== the plain-terms layer (2026-08-04) — R.plain_terms is the ONE gloss source =====
-function glossPopup(term){
+function glossPopup(R,term){
   const g=(R.plain_terms||{})[term]; if(!g) return null;
   const d=el('div',{class:'card'});
   d.append(el('div',{class:'lede'},term+' — '+g.plain));
@@ -1265,16 +1318,16 @@ function glossPopup(term){
   if(g.example) d.append(para(t('Example')+': '+g.example,'muted'));
   return d;
 }
-function glossChip(term){
+function glossChip(R,term){
   const g=(R.plain_terms||{})[term]; if(!g) return document.createTextNode(term);
   const s=el('span',{class:'chip','data-gloss':term,title:g.plain+' — '+g.analogy});
   s.append(term); s.style.cursor='help';
-  s.onclick=()=>{ const p=glossPopup(term); if(p){ const w=$('gloss-pop');
+  s.onclick=()=>{ const p=glossPopup(R,term); if(p){ const w=$('gloss-pop');
     if(w){ w.replaceChildren(p); w.style.display=''; } } };
   return s;
 }
 // testimony support meter — diverging favourable/adverse bars per house
-function supportMeter(){
+function supportMeter(R){
   const ts=R.testimony_support; if(!ts) return null;
   const NS='http://www.w3.org/2000/svg';
   const houses=Object.keys(ts).sort((a,b)=>+a-+b);
@@ -1656,7 +1709,28 @@ function render(R, S, FQ){
     for(const rec of pr.reconciliations) add(para('· '+rec,'muted')); }
   if(pr.closing) add(para(pr.closing,'muted'));
 
-  // ===== Planet biographies (v20, S2) + the judgment graph (S1) =====
+  // ===== Judgment graph (S1) — used already above (Your Reading's dominant-planet census
+  // sentence); shown right beside it, not buried later in the chapter =====
+  if(R.judgment_graph && (R.judgment_graph.edges||[]).length){
+    const jg=R.judgment_graph, byRel={};
+    for(const e of jg.edges) byRel[e.relation]=(byRel[e.relation]||0)+1;
+    add(H2('Judgment graph'));
+    add(para(jg.nodes.length+' '+t('nodes')+', '+jg.edges.length+' '+t('edges')+' — '+
+      Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
+    // item 13 — the aspect network, drawn FROM the shipped graph (safe namespaced SVG).
+    const net=aspectNetwork(jg);
+    if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
+      'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
+    const pin=planetInfluenceNetwork(jg);
+    if(pin) add(vizCard('Planet influence network — which houses each planet touches, and why', pin,
+      'Every planet -> house edge already in the judgment graph, drawn directly: solid = lord of that house, dotted = karaka (natural significator) of it, fine dashed = casts a whole-sign aspect onto it, thin solid = occupies it. Houses carry their classical life-area label. Hover an edge for the exact relation and citation. A drawing of the graph, not a new claim.'));
+    const d=el('details',{class:'card'});
+    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
+    const body=el('div',{class:'body'});
+    body.append(sectionTable('', jg.edges));
+    d.append(body); add(d); }
+
+  // ===== Planet biographies (v20, S2) =====
   if((R.planet_bios||[]).length){
     add(H2('Planet biographies (dominant grahas)'));
     // planet CARDS (2026-08-04): stars = a labeled display transform of the MEASURED
@@ -1687,34 +1761,16 @@ function render(R, S, FQ){
       add(para(t("Raman's vocation words")+' (HTJAH-II:10249-10274) — '+b.themes_raman,'muted'));
       if((b.themes_modern||[]).length)
         add(para(t('Modern keywords')+' ['+'MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight'+'] — '+b.themes_modern.join(', '),'muted')); } }
-  if(R.judgment_graph && (R.judgment_graph.edges||[]).length){
-    const jg=R.judgment_graph, byRel={};
-    for(const e of jg.edges) byRel[e.relation]=(byRel[e.relation]||0)+1;
-    add(H2('Judgment graph'));
-    add(para(jg.nodes.length+' '+t('nodes')+', '+jg.edges.length+' '+t('edges')+' — '+
-      Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
-    // item 13 — the aspect network, drawn FROM the shipped graph (safe namespaced SVG).
-    const net=aspectNetwork(jg);
-    if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
-      'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
-    const pin=planetInfluenceNetwork(jg);
-    if(pin) add(vizCard('Planet influence network — which houses each planet touches, and why', pin,
-      'Every planet -> house edge already in the judgment graph, drawn directly: solid = lord of that house, dotted = karaka (natural significator) of it, fine dashed = casts a whole-sign aspect onto it, thin solid = occupies it. Houses carry their classical life-area label. Hover an edge for the exact relation and citation. A drawing of the graph, not a new claim.'));
-    const d=el('details',{class:'card'});
-    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
-    const body=el('div',{class:'body'});
-    body.append(sectionTable('', jg.edges));
-    d.append(body); add(d); }
 
   // ===== plain-terms layer: testimony support meter + the tap-for-gloss panel =====
-  const _sm2=supportMeter();
+  const _sm2=supportMeter(R);
   if(_sm2) add(vizCard('Testimony support per house — favourable (left) vs adverse (right) witnesses', _sm2,
     'From the preponderance ledgers: each house\'s independent witnesses counted for and against its headline, with the High/Medium/Low support band. Counts, never probabilities — the full ledger is in Preponderance of testimonies.'));
   if(R.plain_terms){
     add(H2('Plain terms — every technical word, with why it matters'));
     add(el('div',{id:'gloss-pop'}));
     const gl=el('div',{class:'pillrow'});
-    for(const term of Object.keys(R.plain_terms).sort()) gl.append(glossChip(term));
+    for(const term of Object.keys(R.plain_terms).sort()) gl.append(glossChip(R,term));
     add(gl);
     add(para(t('Tap any term for its plain name, an analogy, why it matters, and an example. Vocabulary only — never new astrology.'),'muted')); }
 
@@ -1763,6 +1819,8 @@ function render(R, S, FQ){
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
+  if(R.rect_confidence){ add(H2('Rectification confidence'));
+    add(rectConfidencePanel(R.rect_confidence)); }
   const _sb=shadbalaBars(R);
   if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
     'Bars rank the six-source Shadbala total (rupas) per planet; colour = functional nature for this Lagna. ★ = strongest planet, ○ = Lagna lord (the ruler of the nativity); the dashed line ≈ 5 rupas is Raman’s "strong" mark. Rahu/Ketu carry no Shadbala. Exact totals are the "Shadbala" column above.'));

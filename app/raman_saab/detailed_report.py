@@ -443,6 +443,11 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # report's own self-referential "Information content" statistics. _FROZEN in the contract
     # test was reordered to match, in the same commit, per the procedure.
     SectionSpec("plain_reading", "## Your Reading", 'id="plain-reading"', "v5"),
+    # v32 (2026-08-04, user-requested): the judgment graph — used already (Your Reading's
+    # dominant-planet sentence quotes its census count) but never SHOWN. Rides along
+    # immediately after plain_reading, the same non-append-at-the-end exception v5 already
+    # established, so the graph that grounds "Your Reading" sits right beside it.
+    SectionSpec("judgment_graph", "## Judgment graph", 'id="judgment-graph"', "v32"),
     SectionSpec("now_box", None, 'class="nowbox"', "v1"),
     SectionSpec("info_content", "## Information content of this reading", 'class="infobox"', "v1"),
     # v18 (2026-08-03, conscious amendment, user-requested coherence work): the
@@ -594,7 +599,7 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "ruler", "planet_bios", "psych",
+    "title", "plain_reading", "chart_signature", "judgment_graph", "ruler", "planet_bios", "psych",
     "now_box",
     "info_content", "interpretation_guide", "stands_out", "digest",
     "dashboard",
@@ -2565,8 +2570,8 @@ def build_detailed_report(
         pass
     from app.raman_saab.rect_confidence import build_rect_confidence
     try:
-        enriched = _dc_replace(enriched,
-                               rect_confidence=build_rect_confidence(enriched))
+        enriched = _dc_replace(
+            enriched, rect_confidence=build_rect_confidence(enriched, ayanamsa=ayanamsa))
     except Exception:  # noqa: BLE001
         pass
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -2675,6 +2680,43 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"- {rec}")
         L.append("")
     L.append(f"_{pr.closing}_")
+    L.append("")
+
+    # ── judgment graph (v32) — USED already above (the dominant-planet census sentence);
+    # shown here, right beside Your Reading, rather than buried later in the document.
+    L.append("## Judgment graph")
+    L.append("")
+    try:
+        from app.raman_saab.judgment_graph import build_judgment_graph
+        _jg = build_judgment_graph(r)
+        _by_rel: dict[str, int] = {}
+        for _e in _jg.edges:
+            _by_rel[_e.relation] = _by_rel.get(_e.relation, 0) + 1
+        L.append("This reading isn't built from isolated verdicts — it's assembled from a "
+                 "reasoning graph connecting every planet to the houses it lords, occupies, "
+                 "aspects, or signifies. This chart's graph: "
+                 f"**{len(_jg.nodes)} nodes, {len(_jg.edges)} edges** — " +
+                 ", ".join(f"{k} {v}" for k, v in sorted(_by_rel.items())) + ".")
+        L.append("")
+        if r.planet_bios:
+            _dom = r.planet_bios[0].planet
+            _dom_edges = [_e for _e in _jg.edges if _e.src == f"planet:{_dom}"
+                         and _e.dst.startswith("house:")]
+            if _dom_edges:
+                L.append(f"**{_dom}'s own connections** — the planet this reading names as "
+                        f"touching the most ({r.planet_bios[0].census_count} connections):")
+                L.append("")
+                L.append("| Relation | House | Life area |")
+                L.append("|---|---|---|")
+                for _e in _dom_edges:
+                    _h = int(_e.dst.split(":")[1])
+                    L.append(f"| {_e.relation.replace('_', ' ')} | {_h} | "
+                            f"{_HOUSE_NAME.get(_h, '-')} |")
+                L.append("")
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart; the graph is a re-read, not a verdict
+        L.append("_Graph unavailable for this chart (sparse data) — the readings above stand "
+                 "on their own evidence regardless._")
+        L.append("")
 
     # ── the honesty headline (aggregate information content) ──────────────────
     L.append("")
@@ -2973,22 +3015,27 @@ def to_markdown(r: DetailedReport) -> str:
                  f"{', '.join(notes) or '-'} |")
     L.append("")
 
-    # ── rectification confidence (v31 — input sensitivity, measured) ──────────
+    # ── rectification confidence (v31 — input sensitivity, measured as a RANGE) ────
     if r.rect_confidence is not None:
         rc = r.rect_confidence
         L.append("## Rectification confidence")
         L.append("")
         L.append(f"_{rc.frame}_")
         L.append("")
-        L.append(f"- **Verdict** — {rc.stable_count} of {rc.total_count} pillars stable "
-                 f"at ±5 minutes: **{rc.label}**")
+        L.append(f"- **Verdict** — {rc.label}")
+        L.append(f"- **Every pillar holds together** from -{rc.overall_stable_minus} to "
+                 f"+{rc.overall_stable_plus} minutes ({rc.stable_count} of {rc.total_count} "
+                 f"pillars never flip inside the full ±{rc.scan_window}-minute scan)")
         L.append("")
-        L.append("| Pillar | At the stated time | Flips (offset → value) |")
-        L.append("|---|---|---|")
+        L.append("| Pillar | At the stated time | Stable range (minutes) | Flips to |")
+        L.append("|---|---|---|---|")
         for pl in rc.pillars:
-            flips = ("; ".join(f"{off:+d} min → {v}" for off, v in pl.flips)
-                     if pl.flips else "stable")
-            L.append(f"| {pl.pillar} | {pl.base_value} | {flips} |")
+            rng = f"-{pl.stable_minus} to +{pl.stable_plus}"
+            flips = "; ".join(
+                f"{off:+d} min → {v}" for off, v in filter(None, (pl.flip_minus, pl.flip_plus)))
+            if not flips:
+                flips = f"stable beyond ±{rc.scan_window} min (not tested further)"
+            L.append(f"| {pl.pillar} | {pl.base_value} | {rng} | {flips} |")
         L.append("")
 
     # ── Shadbala (the numbers behind every 'strong'/'weak') ───────────────────

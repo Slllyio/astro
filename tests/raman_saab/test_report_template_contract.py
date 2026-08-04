@@ -30,6 +30,10 @@ _FROZEN = (
     # ONE deliberate exception to "append at the end" — it must come FIRST after the title,
     # since it exists specifically to be read before every technical section below it.
     ("plain_reading", "## Your Reading", 'id="plain-reading"'),
+    # v32 amendment (2026-08-04, conscious, same-commit as the module, user-requested):
+    # the judgment graph — used already in Your Reading (the dominant-planet census
+    # sentence) and now shown right beside it, the same non-append exception v5 set.
+    ("judgment_graph", "## Judgment graph", 'id="judgment-graph"'),
     ("now_box", None, 'class="nowbox"'),
     ("info_content", "## Information content of this reading", 'class="infobox"'),
     # v18 amendment (2026-08-03, conscious, same-commit as the module, user-requested
@@ -220,7 +224,7 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -252,10 +256,11 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v29") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v31") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
 
 
 class TestRectConfidence:
-    """v31 — sensitivity measured, never an invented percentage."""
+    """v31 — sensitivity measured as a bidirectional minute RANGE, never a percentage."""
 
     def test_renders_with_ten_pillars_and_a_count_verdict(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
@@ -268,10 +273,57 @@ class TestRectConfidence:
         assert 'id="rect-confidence"' in html
         assert to_report_dict(report)["rect_confidence"] is not None
 
-    def test_flips_carry_the_offset_that_flips_them(self, report):
-        for pl in report.rect_confidence.pillars:
-            for off, _v in pl.flips:
-                assert off in (-5, -2, 2, 5)
+    def test_flips_carry_an_offset_within_the_scan_window(self, report):
+        rc = report.rect_confidence
+        for pl in rc.pillars:
+            for off, _v in filter(None, (pl.flip_minus, pl.flip_plus)):
+                assert 1 <= abs(off) <= rc.scan_window
+
+    def test_stable_range_bounded_by_scan_window(self, report):
+        rc = report.rect_confidence
+        for pl in rc.pillars:
+            assert 0 <= pl.stable_minus <= rc.scan_window
+            assert 0 <= pl.stable_plus <= rc.scan_window
+            # a flip just past the stable edge, or no flip found within the window
+            if pl.flip_minus is not None:
+                assert abs(pl.flip_minus[0]) == pl.stable_minus + 1
+            else:
+                assert pl.stable_minus == rc.scan_window
+            if pl.flip_plus is not None:
+                assert pl.flip_plus[0] == pl.stable_plus + 1
+            else:
+                assert pl.stable_plus == rc.scan_window
+
+    def test_overall_window_is_the_tightest_pillar(self, report):
+        rc = report.rect_confidence
+        assert rc.overall_stable_minus == min(pl.stable_minus for pl in rc.pillars)
+        assert rc.overall_stable_plus == min(pl.stable_plus for pl in rc.pillars)
+        assert 0 <= rc.overall_stable_minus <= rc.scan_window
+        assert 0 <= rc.overall_stable_plus <= rc.scan_window
+
+
+class TestJudgmentGraphSection:
+    """v32 — the judgment graph, used already in Your Reading and now shown right beside it."""
+
+    def test_renders_right_after_your_reading(self, markdown, html):
+        assert "## Judgment graph" in markdown
+        assert 'id="judgment-graph"' in html
+        assert markdown.index("## Your Reading") < markdown.index("## Judgment graph")
+        assert markdown.index("## Judgment graph") < markdown.index("## Information content")
+        assert html.index('id="plain-reading"') < html.index('id="judgment-graph"')
+        assert html.index('id="judgment-graph"') < html.index('id="ruler"')
+
+    def test_counts_match_a_direct_graph_build(self, report, markdown):
+        from app.raman_saab.judgment_graph import build_judgment_graph
+        jg = build_judgment_graph(report)
+        assert f"{len(jg.nodes)} nodes, {len(jg.edges)} edges" in markdown
+
+    def test_dominant_planet_and_a_house_appear_in_the_html_svg(self, report, html):
+        assert report.planet_bios, "canonical chart should have at least one dominant planet"
+        dom = report.planet_bios[0].planet
+        seg = html[html.index('id="judgment-graph"'):html.index('id="ruler"')]
+        assert dom in seg
+        assert "<svg" in seg
 
 
 class TestKarmicEvolution:

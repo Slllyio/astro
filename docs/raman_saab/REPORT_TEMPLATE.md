@@ -12,6 +12,7 @@ updating the contract test's frozen list in the same, conscious commit.*
 |---|---|---|---|---|
 | 1 | Title & two-voice preamble | `# Detailed reading` | `.name` | v1 |
 | 2 | **Your Reading (plain English, read first)** | `## Your Reading` | `#plain-reading` | v5 |
+| 2a | **Judgment graph** | `## Judgment graph` | `#judgment-graph` | v32 |
 | 3 | Running now (HTML only) | — | `.nowbox` | v1 |
 | 4 | Information content (honesty headline) | `## Information content of this reading` | `.infobox` | v1 |
 | 5 | **How to read this report (interpretation guide)** | `## How to read this report` | `#interpretation-guide` | v18 |
@@ -90,6 +91,37 @@ tap-for-gloss chips + the testimony-support diverging-bar meter. The reviewed
 information-architecture upgrades (progressive disclosure levels, "why astrologers
 examine this" preambles, computation badges, planet cards, the remaining vizzes) are the
 recorded NEXT slice of this arc.
+
+**v32 amendment + the rect_confidence rewrite (2026-08-04, user punch-list corrections
+1-2).** Correction 1: `rect_confidence.py` rewritten from four fixed offset probes
+(±2/±5 min) to a bidirectional minute-by-minute scan (1-minute steps, capped at
+`SCAN_WINDOW = 60`; one chart cast checks all 10 pillars at once, so cost is O(window)
+not O(window x pillars)). Each pillar now carries `stable_minus`/`stable_plus` (the
+widest window, each direction, where it still matches the birth-time value) instead of a
+flip/no-flip flag at 4 fixed points; the combined `overall_stable_minus/plus` is the
+window where EVERY pillar holds together — the direct measured answer to "how much
+birth-time error can this reading tolerate." Fixed two real bugs surfaced by the
+rewrite: (1) the offset casts used `ayanamsa="raman"` unconditionally while the base
+chart uses whatever ayanamsa built the report (lahiri by default) — a silent mismatch
+that produced FALSE flips wherever a planet sat near a cusp under one ayanamsa but not
+the other; `build_rect_confidence` now takes an explicit `ayanamsa` parameter threaded
+from `build_detailed_report`. (2) the offset arithmetic used `(hour*60+minute±offset)
+// 60` divmod, which silently produced an invalid negative hour for any offset crossing
+midnight — unreachable at the old ±5 min range, easily reachable at ±60; replaced with
+`datetime + timedelta` (an exact, small, calendar-rollover-aware shift — not the
+multi-year JD-arithmetic case the project's "no timedelta" rule guards against).
+Standalone HTML gained the section for the first time (was markdown/JSON-only before);
+the interactive page gained the section AND a native `<input type="range">` dial — moving
+it re-renders which of the 10 pillars are stable at that exact offset, purely from the
+measured `stable_minus/plus` per pillar (no recomputation, no network call, no invented
+number). Correction 2: the judgment graph — already USED in "Your Reading" (the
+dominant-planet census-count sentence) but never SHOWN there — gets its own section (v32,
+the same non-append-at-the-end exception v5 set for plain_reading) immediately after Your
+Reading on all three surfaces: moved (not duplicated) from its old position after Planet
+biographies on the interactive page; added new to markdown (node/edge/relation counts +
+the dominant planet's own edges as a compact table) and standalone HTML (same prose + a
+ported static inline SVG bipartite planet->house network, `<title>` elements giving
+native hover tooltips with no JS).
 
 **v30-v31 amendments + the item-12/13/14 content amendments (2026-08-04, Wave C +
 karmic).** v30 KARMIC EVOLUTION — the walled Jaimini layer (post-lift): AK, Karakamsa,

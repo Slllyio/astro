@@ -147,6 +147,49 @@ TERM_GLOSS: Final[dict[str, PlainTerm]] = {
 }
 
 
+#: "Why astrologers examine this" — the method's own inspection order per major section,
+#: stating what that section ALREADY does and cites (teaching the method, never adding
+#: doctrine). Rendered as an educational preamble in every surface.
+SECTION_METHOD: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
+    "marriage": (
+        "For marriage, classical astrology inspects a fixed sequence — and this chapter "
+        "follows exactly that order",
+        ("the 7th house and its lord", "Venus, the natural significator",
+         "the Navamsa (the second inspection)", "the Upapada (Jaimini's marriage arudha)",
+         "the Dasha periods that activate the 7th")),
+    "children": (
+        "For children, the classical sequence this chapter follows",
+        ("the 5th house and its lord", "Jupiter, the natural significator",
+         "the Saptamsa D-7 (the children division)",
+         "the classical combination lists", "the periods that activate the 5th")),
+    "profession": (
+        "For profession, Raman's own method inspects, in order",
+        ("the 10th house, its sign and lord",
+         "the navamsa-dispositor of the 10th lord (his primary technique)",
+         "the strongest planet", "the Dasamsa D-10", "the running period's colour")),
+    "wealth": (
+        "For wealth, the classical channels are read separately, in order",
+        ("the 2nd house (accumulation) and its lord's placement",
+         "the 11th house (gains) and its occupants", "the 8th (legacies, sudden gains)",
+         "the 5th (speculation)", "the periods that activate the 2nd and 11th")),
+    "health_readout": (
+        "For health, the classical sequence this read-out re-reads",
+        ("the 1st house (constitution)", "the 6th (disease), 8th (longevity lean), "
+         "12th (confinement)", "the Moon (mind) and Mercury (nerves) as karakas",
+         "the balarishta screen", "the Trimsamsa D-30 corroboration")),
+    "longevity": (
+        "For longevity, Raman's own order — band first, periods second",
+        ("the band by combination (Balarishta / Alpayu / Madhyayu / Purnayu)",
+         "the maraka scheme (2nd and 7th lords and associates)",
+         "the numeric Ayurdaya as a cross-check only")),
+    "psych": (
+        "For temperament and mind, the classical inspection order",
+        ("the rising sign's portrait", "the Moon as manas (mind) karaka",
+         "the strongest planet's temperament", "the Navamsa lagna's stamp",
+         "the Atmakaraka")),
+}
+
+
 def gloss_dict() -> dict[str, dict[str, str]]:
     """The JSON-shape of the glossary — the one source every surface renders from."""
     return {term: {"plain": t.plain, "analogy": t.analogy,

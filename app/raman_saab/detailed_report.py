@@ -2603,6 +2603,20 @@ def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
     return out
 
 
+def _method_preamble(section_id: str) -> list[str]:
+    """'Why astrologers examine this' (2026-08-04): the method's own inspection order for
+    a major section — teaching what the section already does, never adding doctrine."""
+    from app.raman_saab.plain_terms import SECTION_METHOD
+    entry = SECTION_METHOD.get(section_id)
+    if entry is None:
+        return []
+    why, order = entry
+    lines = ["**Why astrologers examine this.** " + why + ":", ""]
+    lines += [f"{i}. {step}" for i, step in enumerate(order, 1)]
+    lines.append("")
+    return lines
+
+
 def passage_quote(cite: str, *, max_chars: int = 260) -> str:
     """Item 14 helper: the verbatim source snippet a citation points to, one clean line,
     trimmed at a sentence boundary within `max_chars`. Empty string when unresolvable."""
@@ -2923,6 +2937,7 @@ def to_markdown(r: DetailedReport) -> str:
         ps = r.psych
         L.append("## Psychological profile")
         L.append("")
+        L.extend(_method_preamble("psych"))
         L.append(f"_{ps.woven}_")
         L.append("")
         L.append(f"- **The rising sign's portrait (Raman verbatim)** — "
@@ -3147,6 +3162,24 @@ def to_markdown(r: DetailedReport) -> str:
             bb = f"  |  **Bhava Bala** {led.bhava_bala:.1f}" if led.bhava_bala is not None else ""
             L.append(f"{lord_bits}  |  {kar_bits}{bb}  |  **Navamsa** {lagna_led.navamsa_status}")
             L.append("")
+            # computation badges (2026-08-04): REAL counts — evidence, fired rules,
+            # distinct sources, and the testimony-support band; never a probability.
+            _ht = next((h for h in r.preponderance.houses if h.house == mr.house), None)
+            _fired_ct = 0
+            _cites: set[str] = set()
+            for _sv in pf.significations:
+                for _led in (_sv.ledger, *_sv.alt_ledgers):
+                    for _fr in (*_led.fired_benefic, *_led.fired_malefic,
+                                *_led.fired_neutral):
+                        _fired_ct += 1
+                        _cites.add(f"{_fr.rule.source.work}:{_fr.rule.source.line}")
+            if _ht is not None:
+                _band = ("High" if "corrobor" in _ht.status else
+                         "Low" if "contest" in _ht.status else "Medium")
+                L.append(f"`Evidence {len(_ht.testimonies)}` · `Rules {_fired_ct}` · "
+                         f"`Sources {len(_cites)}` · `Support {_band} "
+                         f"({_ht.favourable}F/{_ht.adverse}A)`")
+                L.append("")
         L.append(mr.reading)
         conclusion = house_conclusion(r, mr.house)
         if conclusion:
@@ -3290,6 +3323,7 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     L.append("## Longevity")
     L.append("")
+    L.extend(_method_preamble("longevity"))
     L.append("_Raman's order: first establish the band by combination (Balarishta / Alpayu / "
              "Madhyayu / Purnayu), THEN fix the period by the marakas (HTJAH-II:4465-4472). The "
              "numeric span is a cross-check, never a prediction of death._")
@@ -3364,6 +3398,7 @@ def to_markdown(r: DetailedReport) -> str:
         h = r.health_readout
         L.append("## Health & vulnerability read-out")
         L.append("")
+        L.extend(_method_preamble("health_readout"))
         L.append("**In simple terms:** the health-adjacent verdicts this report already computed "
                  "— the 1st/6th/8th/12th house readings, the Moon and Mercury karakas, the "
                  "balarishta screen, the maraka tiers and the longevity band — gathered on one "
@@ -3731,6 +3766,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
         L.append("## Profession synthesis")
         L.append("")
+        L.extend(_method_preamble("profession"))
         L.append("**In simple terms:** Raman derives profession from several angles; "
                  "this section runs every encoded one and counts where they converge — "
                  "a deterministic overlap count, never a new judgment.")
@@ -3754,6 +3790,7 @@ def to_markdown(r: DetailedReport) -> str:
         w = r.wealth
         L.append("## Wealth chapter")
         L.append("")
+        L.extend(_method_preamble("wealth"))
         L.append("**In simple terms:** not one wealth verdict but the CHANNELS — how the "
                  "method reads earning, accumulating, inheriting, speculating, and where "
                  "expansion periods fall. Every row re-reads a judged signification or a "
@@ -3776,6 +3813,7 @@ def to_markdown(r: DetailedReport) -> str:
         m = r.marriage
         L.append("## Marriage monograph")
         L.append("")
+        L.extend(_method_preamble("marriage"))
         L.append(f"**The 7th house's scope (Raman verbatim):** \"{m.seventh_covers}\" "
                  f"(HTJAH-II:{_MI[0]})")
         L.append("")
@@ -3812,6 +3850,7 @@ def to_markdown(r: DetailedReport) -> str:
         c = r.children
         L.append("## Children chapter")
         L.append("")
+        L.extend(_method_preamble("children"))
         L.append(f"- **Headline (unchanged H5 verdict)** — {c.verdict}")
         for key, v in c.significations:
             L.append(f"- **{key}** — {v}")

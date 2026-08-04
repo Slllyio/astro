@@ -1602,6 +1602,27 @@ function render(R, S, FQ){
   // ===== Planet biographies (v20, S2) + the judgment graph (S1) =====
   if((R.planet_bios||[]).length){
     add(H2('Planet biographies (dominant grahas)'));
+    // planet CARDS (2026-08-04): stars = a labeled display transform of the MEASURED
+    // band vs Raman's own minimum (GBB-8:303) — never an invented rating.
+    const cardRow=el('div',{class:'pillrow'});
+    for(const b of R.planet_bios){
+      const pj=((R.chart||{}).planets||{})[b.planet]||{};
+      let stars='–';
+      if(pj.shadbala_rupas!=null&&pj.shadbala_required!=null){
+        const ratio=pj.shadbala_rupas/pj.shadbala_required;
+        stars=ratio>=1.5?'★★★★★':ratio>=1.0?'★★★★':ratio>=0.8?'★★★':'★★'; }
+      const card=el('details',{class:'card'});
+      const sm=el('summary');
+      sm.append(b.planet+'  '+stars+'  ·  '+b.census_count+' '+t('connections')+
+        ((R.synthesis&&R.synthesis.running_md===b.planet)?'  ·  '+t('running MD'):'')+
+        ((R.synthesis&&R.synthesis.running_ad===b.planet)?'  ·  '+t('running AD'):''));
+      card.append(sm);
+      const body=el('div',{class:'body'});
+      body.append(para((pj.shadbala_rupas!=null?pj.shadbala_rupas.toFixed(1)+' '+t('rupas vs required ')+(pj.shadbala_required||'?')+' — ':'')+
+        (b.themes_raman||t('chayagraha — no vocation row (honest absence)')),'muted'));
+      body.append(para(t('Stars are a display of the measured band against Raman\'s own minimum (GBB-8:303) — full chapter below.'),'muted'));
+      card.append(body); cardRow.append(card); }
+    add(cardRow);
     for(const b of R.planet_bios){
       add(para(b.planet+' — '+b.census_count+' '+t('graph appearances')+' ('+
         (b.census_by_relation||[]).map(x=>x[0]+' '+x[1]).join(', ')+')','lede'));

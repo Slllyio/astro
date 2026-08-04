@@ -1,3 +1,12 @@
+---
+title: "Raman doctrine compendium"
+kind: reference
+topic: doctrine
+measured: false
+updated: 2026-06-27
+words: 974
+tags: [raman-saab, reference, doctrine]
+---
 # Raman doctrine compendium
 
 A structured digest of engine-relevant doctrine from the prioritized B.V. Raman corpus,

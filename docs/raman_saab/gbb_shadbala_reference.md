@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — GBB Shadbala Reference (Phase 1c doctrine spec)"
+kind: reference
+topic: doctrine
+measured: false
+updated: 2026-07-24
+words: 2233
+tags: [raman-saab, reference, doctrine]
+---
 # Raman Saab — GBB Shadbala Reference (Phase 1c doctrine spec)
 
 > Line-cited extraction of **B.V. Raman's *Graha & Bhava Balas*** (GBB) Shadbala, the

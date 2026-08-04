@@ -1,3 +1,12 @@
+---
+title: "Root-cause analysis — WHY the engine fails on real-life charts"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 1759
+tags: [raman-saab, analysis, validation]
+---
 # Root-cause analysis — WHY the engine fails on real-life charts (2026-07-24)
 
 > The astrobank program returned null on real outcomes. "The doctrine doesn't generalize" is only

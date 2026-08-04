@@ -1,3 +1,12 @@
+---
+title: "Golden validation worksheet — House 3 (Sahaja / siblings), DRAFT → CONFIRMED"
+kind: worksheet
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 637
+tags: [raman-saab, worksheet, validation]
+---
 # Golden validation worksheet — House 3 (Sahaja / siblings), DRAFT → CONFIRMED
 
 **What this is:** the 12 House-3 DRAFT goldens (`tests/fixtures/raman_goldens.jsonl`, charts 52-63)

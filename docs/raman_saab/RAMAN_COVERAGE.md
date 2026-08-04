@@ -1,3 +1,12 @@
+---
+title: "BV Raman knowledge-coverage map"
+kind: reference
+topic: corpus
+measured: true
+updated: 2026-06-29
+words: 864
+tags: [raman-saab, reference, corpus]
+---
 # BV Raman knowledge-coverage map (2026-06-29)
 
 A coverage audit of everything BV Raman wrote (16 works in the corpus) vs what the engine encodes,

@@ -1,3 +1,12 @@
+---
+title: "Golden validation worksheet — DRAFT → CONFIRMED (user pass #1)"
+kind: worksheet
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 724
+tags: [raman-saab, worksheet, validation]
+---
 # Golden validation worksheet — DRAFT → CONFIRMED (user pass #1)
 
 **What this is:** the 19 DRAFT goldens from `tests/fixtures/raman_goldens.jsonl`, laid out for

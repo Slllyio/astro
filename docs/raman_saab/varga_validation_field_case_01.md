@@ -1,3 +1,12 @@
+---
+title: "Shodasavarga validation — field_case_01 (the confirmed real nativity)"
+kind: worksheet
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 792
+tags: [raman-saab, worksheet, validation]
+---
 # Shodasavarga validation — field_case_01 (the confirmed real nativity)
 
 Generated from `build_shodasavarga_report` on the field_case_01 birth (raman ayanamsa,

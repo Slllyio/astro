@@ -1,3 +1,12 @@
+---
+title: "D9 (Navamsa) Layer — engine-enhancement scope"
+kind: spec
+topic: doctrine
+measured: false
+updated: 2026-06-28
+words: 829
+tags: [raman-saab, spec, doctrine]
+---
 # D9 (Navamsa) Layer — engine-enhancement scope (2026-06-28)
 
 ## Motivation

@@ -1,3 +1,12 @@
+---
+title: "grow the corpus (each pass retries failures, $0):"
+kind: guide
+topic: process
+measured: false
+updated: 2026-08-03
+words: 2233
+tags: [raman-saab, guide, process]
+---
 ﻿# फलादेशः — The Whole Process & Methodology
 
 *The reading app end-to-end: how a birth becomes a manuscript, where every word comes from,

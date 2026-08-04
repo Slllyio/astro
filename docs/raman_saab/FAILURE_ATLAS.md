@@ -1,3 +1,12 @@
+---
+title: "The Failure Atlas — where the engine's readings meet real lives"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 3581
+tags: [raman-saab, analysis, validation]
+---
 # The Failure Atlas — where the engine's readings meet real lives
 
 > Per-case, per-house, per-feature statistics of the raman_saab engine against the AstroDatabank reality corpus (16,450 tier-A/B charts). Descriptive companion to [REAL_OUTCOME_GENERALIZATION.md](REAL_OUTCOME_GENERALIZATION.md) (THAT it fails) and [WHY_THE_ENGINE_FAILS_ON_REAL_CHARTS.md](WHY_THE_ENGINE_FAILS_ON_REAL_CHARTS.md) (WHY). Nothing here is a discovery claim; matched AUCs are the pre-registered Stage-7 numbers, never recomputed.

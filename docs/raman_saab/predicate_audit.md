@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — Predicate Audit (mandatory pre-Phase-1 gate, spec §13)"
+kind: spec
+topic: doctrine
+measured: false
+updated: 2026-07-24
+words: 1529
+tags: [raman-saab, spec, doctrine]
+---
 # Raman Saab — Predicate Audit (mandatory pre-Phase-1 gate, spec §13)
 
 > Finalizes the condition algebra (`doctrine/conditions.py`) **before** any rule encoding.

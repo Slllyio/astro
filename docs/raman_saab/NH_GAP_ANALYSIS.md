@@ -1,3 +1,12 @@
+---
+title: "Notable Horoscopes — engine-vs-Raman gap analysis"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-08-03
+words: 2237
+tags: [raman-saab, analysis, validation]
+---
 # Notable Horoscopes — engine-vs-Raman gap analysis (2026-06-27)
 
 36 NH DRAFT rows where the engine's verdict disagreed with Raman's were each analyzed against Raman's

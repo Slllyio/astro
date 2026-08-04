@@ -1,3 +1,12 @@
+---
+title: "Family connection in Vedic astrology — a provenance-honest research map"
+kind: analysis
+topic: doctrine
+measured: false
+updated: 2026-07-23
+words: 1511
+tags: [raman-saab, analysis, doctrine]
+---
 # Family connection in Vedic astrology — a provenance-honest research map
 
 > **What this is.** A deep-research survey (2026-07-23) of the astrological *theses* and *techniques*

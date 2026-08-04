@@ -1,3 +1,12 @@
+---
+title: "Engine-vs-Raman MISS TABLE — every house-verdict where the engine disagrees with B.V. Raman"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-06-27
+words: 13015
+tags: [raman-saab, analysis, validation]
+---
 # Engine-vs-Raman MISS TABLE — every house-verdict where the engine disagrees with B.V. Raman
 
 _Generated 2026-06-27. 69 misses across the validated corpus (engine 206/240 exact, 226/240 within-1)._  

@@ -1,3 +1,12 @@
+---
+title: "B1 (effective-strength recalibration) — deep per-change analysis vs Raman"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-06-28
+words: 1149
+tags: [raman-saab, analysis, validation]
+---
 # B1 (effective-strength recalibration) — deep per-change analysis vs Raman (2026-06-28)
 
 The refined B1 (fold combustion / debilitation-uncancelled / Papakartari / node-conjunction into a

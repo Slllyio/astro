@@ -1,3 +1,12 @@
+---
+title: "The Certified Cohort — design & governance for a fresh real-outcome laboratory"
+kind: plan
+topic: validation
+measured: false
+updated: 2026-07-24
+words: 2193
+tags: [raman-saab, plan, validation]
+---
 # The Certified Cohort — design & governance for a fresh real-outcome laboratory
 
 *Design document, 2026-07-24. Nothing is collected until this design is reviewed, the governance

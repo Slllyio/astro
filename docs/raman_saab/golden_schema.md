@@ -1,3 +1,12 @@
+---
+title: "Raman Saab golden-harness schema (`tests/fixtures/raman_goldens.jsonl`)"
+kind: spec
+topic: validation
+measured: false
+updated: 2026-07-24
+words: 1455
+tags: [raman-saab, spec, validation]
+---
 # Raman Saab golden-harness schema (`tests/fixtures/raman_goldens.jsonl`)
 
 The golden corpus is the **accuracy ratchet** for the deterministic "Raman Saab"

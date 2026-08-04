@@ -1,0 +1,97 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - 'file.hasTag("raman-saab")'
+
+formulas:
+  age_days: '(today() - date(updated)).days'
+  freshness: 'if((today() - date(updated)).days < 14, "🟢 fresh", if((today() - date(updated)).days < 60, "🟡 ageing", "🔴 stale"))'
+  evidence: 'if(measured, "measured", "design")'
+  size_band: 'if(words > 5000, "long", if(words > 1500, "medium", "short"))'
+
+properties:
+  title:
+    displayName: Document
+  kind:
+    displayName: Kind
+  topic:
+    displayName: Topic
+  updated:
+    displayName: Updated
+  words:
+    displayName: Words
+  formula.evidence:
+    displayName: Evidence
+  formula.age_days:
+    displayName: "Days since"
+  formula.freshness:
+    displayName: Freshness
+  formula.size_band:
+    displayName: Size
+
+views:
+  - type: table
+    name: "All documents"
+    order:
+      - title
+      - kind
+      - topic
+      - formula.evidence
+      - updated
+      - formula.freshness
+      - words
+    groupBy:
+      property: topic
+      direction: ASC
+    summaries:
+      words: Sum
+      formula.age_days: Median
+
+  - type: table
+    name: "Measured results"
+    filters:
+      and:
+        - 'measured == true'
+    order:
+      - title
+      - topic
+      - updated
+      - formula.age_days
+      - words
+    summaries:
+      words: Sum
+
+  - type: table
+    name: "Design and intent"
+    filters:
+      and:
+        - 'measured == false'
+    order:
+      - title
+      - kind
+      - topic
+      - updated
+    groupBy:
+      property: kind
+      direction: ASC
+
+  - type: table
+    name: "Recently touched"
+    limit: 12
+    order:
+      - title
+      - topic
+      - updated
+      - formula.freshness
+      - formula.evidence
+
+  - type: cards
+    name: "By topic"
+    order:
+      - title
+      - kind
+      - formula.evidence
+      - updated
+    groupBy:
+      property: topic
+      direction: ASC

@@ -1,0 +1,70 @@
+# The measured-truth axis, as a queryable surface.
+#
+# This project's binding directive is that the two accuracy axes are reported side by
+# side and never averaged: textbook fidelity to Raman's printed verdicts (achieved,
+# 259/293) versus real-outcome generalization (measured NULL). This base exists so the
+# documents carrying that evidence can be read as one body rather than hunted for.
+
+filters:
+  and:
+    - 'file.hasTag("raman-saab")'
+    - 'topic == "validation"'
+
+formulas:
+  evidence: 'if(measured, "measured", "design")'
+  age_days: '(today() - date(updated)).days'
+  depth: 'if(words > 3000, "deep", if(words > 1000, "substantial", "brief"))'
+
+properties:
+  title:
+    displayName: Document
+  kind:
+    displayName: Kind
+  formula.evidence:
+    displayName: Evidence
+  formula.depth:
+    displayName: Depth
+  formula.age_days:
+    displayName: "Days since"
+
+views:
+  - type: table
+    name: "Everything measured"
+    filters:
+      and:
+        - 'measured == true'
+    order:
+      - title
+      - kind
+      - formula.depth
+      - updated
+      - words
+    groupBy:
+      property: kind
+      direction: ASC
+    summaries:
+      words: Sum
+      formula.age_days: Median
+
+  - type: table
+    name: "Analyses only"
+    filters:
+      and:
+        - 'kind == "analysis"'
+    order:
+      - title
+      - formula.evidence
+      - updated
+      - words
+
+  - type: table
+    name: "Worksheets and specs"
+    filters:
+      or:
+        - 'kind == "worksheet"'
+        - 'kind == "spec"'
+    order:
+      - title
+      - kind
+      - formula.evidence
+      - updated

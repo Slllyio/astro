@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — Detailed Execution Plan to the Truest Engine (v3, 2026-06-12)"
+kind: plan
+topic: process
+measured: false
+updated: 2026-06-12
+words: 5415
+tags: [raman-saab, plan, process]
+---
 # Raman Saab — Detailed Execution Plan to the Truest Engine (v3, 2026-06-12)
 
 ## Context

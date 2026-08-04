@@ -1,3 +1,12 @@
+---
+title: "Comparative-weighing — the real accuracy lever (effort kickoff, 2026-06-28)"
+kind: analysis
+topic: doctrine
+measured: true
+updated: 2026-06-28
+words: 1238
+tags: [raman-saab, analysis, doctrine]
+---
 # Comparative-weighing — the real accuracy lever (effort kickoff, 2026-06-28)
 
 The holdout-locked B1 tuner proved effective-strength recalibration is the WRONG mechanism for the

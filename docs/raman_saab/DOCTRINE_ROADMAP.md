@@ -1,3 +1,12 @@
+---
+title: "Raman-fidelity encoding roadmap — what's left"
+kind: plan
+topic: doctrine
+measured: false
+updated: 2026-07-24
+words: 751
+tags: [raman-saab, plan, doctrine]
+---
 # Raman-fidelity encoding roadmap — what's left
 
 > A prioritized map of what remains to encode for full fidelity to Sri B. V. Raman's natal

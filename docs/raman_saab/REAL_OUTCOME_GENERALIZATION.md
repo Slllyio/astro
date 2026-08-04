@@ -1,3 +1,12 @@
+---
+title: "Real-outcome generalization — the Prime Directive's second axis, measured at scale"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 3782
+tags: [raman-saab, analysis, validation]
+---
 # Real-outcome generalization — the Prime Directive's second axis, measured at scale (2026-07-24)
 
 > "Measure honestly. Distinguish textbook fidelity from real-outcome generalization; report both;

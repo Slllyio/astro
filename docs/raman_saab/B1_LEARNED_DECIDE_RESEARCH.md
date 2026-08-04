@@ -1,3 +1,12 @@
+---
+title: "B1 research — can a LEARNED `_decide` beat the hand-tuned one? (2026-07-24, branch `b1-decide-research`)"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 574
+tags: [raman-saab, analysis, validation]
+---
 # B1 research — can a LEARNED `_decide` beat the hand-tuned one? (2026-07-24, branch `b1-decide-research`)
 
 ## The question

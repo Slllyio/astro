@@ -1,3 +1,12 @@
+---
+title: "D9/Navamsa validation vs Raman's worked charts"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-06-28
+words: 768
+tags: [raman-saab, analysis, validation]
+---
 # D9/Navamsa validation vs Raman's worked charts (2026-06-28)
 
 14 HTJAH-I worked charts where the engine detects vargottama (highest-signal cases) were validated

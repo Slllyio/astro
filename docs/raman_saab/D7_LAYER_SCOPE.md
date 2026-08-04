@@ -1,3 +1,12 @@
+---
+title: "D-7 (Sapthāṁśa) children layer — engine-enhancement scope"
+kind: spec
+topic: doctrine
+measured: false
+updated: 2026-07-23
+words: 1422
+tags: [raman-saab, spec, doctrine]
+---
 # D-7 (Sapthāṁśa) children layer — engine-enhancement scope (2026-07-22)
 
 ## Motivation

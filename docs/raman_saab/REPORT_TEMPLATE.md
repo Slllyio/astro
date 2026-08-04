@@ -1,3 +1,12 @@
+---
+title: "The detailed-report template — FROZEN (append-only)"
+kind: spec
+topic: report
+measured: false
+updated: 2026-08-04
+words: 9787
+tags: [raman-saab, spec, report]
+---
 # The detailed-report template — FROZEN (append-only)
 
 *Locked 2026-07-25. The machine registry is `SECTION_CONTRACT` in

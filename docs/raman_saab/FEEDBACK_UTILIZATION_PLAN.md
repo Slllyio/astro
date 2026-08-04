@@ -1,3 +1,12 @@
+---
+title: "Utilizing owner-confirmed real-outcome feedback — the plan"
+kind: plan
+topic: process
+measured: false
+updated: 2026-07-23
+words: 1045
+tags: [raman-saab, plan, process]
+---
 # Utilizing owner-confirmed real-outcome feedback — the plan
 
 > **Scope.** How the engine turns owner-confirmed *real life* feedback (per-signification verdicts

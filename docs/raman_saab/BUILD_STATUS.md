@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — Build Status & Resume Point"
+kind: record
+topic: process
+measured: false
+updated: 2026-06-01
+words: 2420
+tags: [raman-saab, record, process]
+---
 # Raman Saab — Build Status & Resume Point
 
 > Independent engine replicating **B.V. Raman's *How to Judge a Horoscope*** as a

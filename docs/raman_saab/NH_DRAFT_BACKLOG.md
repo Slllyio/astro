@@ -1,3 +1,12 @@
+---
+title: "NH corpus-expansion engine-gap backlog"
+kind: record
+topic: corpus
+measured: false
+updated: 2026-07-24
+words: 828
+tags: [raman-saab, record, corpus]
+---
 # NH corpus-expansion engine-gap backlog (2026-07-24)
 
 The Notable Horoscopes corpus expansion (28 charts added Track-B from Raman's own printed

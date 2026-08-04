@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — Stage-3/4 calibration target matrix"
+kind: spec
+topic: validation
+measured: false
+updated: 2026-07-24
+words: 861
+tags: [raman-saab, spec, validation]
+---
 # Raman Saab — Stage-3/4 calibration target matrix
 
 Generated from `track_b_scoreboard()`. Ratchet **53/130 (40.8%)**, 77 mismatches across 11 houses (H8=Phase-E).

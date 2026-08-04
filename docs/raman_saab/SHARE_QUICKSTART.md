@@ -1,3 +1,12 @@
+---
+title: "Sharing the reading app — quick-share guide"
+kind: guide
+topic: process
+measured: false
+updated: 2026-08-03
+words: 1033
+tags: [raman-saab, guide, process]
+---
 # Sharing the reading app — quick-share guide
 
 How to let other people use the फलादेशः reading app from your machine, safely and at $0

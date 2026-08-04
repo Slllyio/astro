@@ -1,3 +1,12 @@
+---
+title: "The grounded LLM explainer — safety contract"
+kind: spec
+topic: llm
+measured: false
+updated: 2026-08-02
+words: 912
+tags: [raman-saab, spec, llm]
+---
 # The grounded LLM explainer — safety contract
 
 *Added 2026-07-27. Governs `app/llm/report_explainer.py` + the `/report/explain` and

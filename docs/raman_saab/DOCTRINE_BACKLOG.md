@@ -1,3 +1,12 @@
+---
+title: "Raman doctrine → engine improvement backlog"
+kind: record
+topic: doctrine
+measured: false
+updated: 2026-08-04
+words: 7546
+tags: [raman-saab, record, doctrine]
+---
 # Raman doctrine → engine improvement backlog
 
 Source: the Phase-1 doctrine-extraction sweep over the prioritized B.V. Raman corpus

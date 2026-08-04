@@ -1,3 +1,12 @@
+---
+title: "Thin-house triage — where the engine's misses actually live"
+kind: analysis
+topic: validation
+measured: true
+updated: 2026-07-24
+words: 865
+tags: [raman-saab, analysis, validation]
+---
 # Thin-house triage — where the engine's misses actually live (2026-07-24)
 
 > The meta-finding that emerged from the Notable-Horoscopes corpus expansion (192 -> 225 charts),

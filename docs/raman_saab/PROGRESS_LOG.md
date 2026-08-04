@@ -1,3 +1,12 @@
+---
+title: "Raman Saab — Progress Log (durable, append-only)"
+kind: record
+topic: process
+measured: false
+updated: 2026-07-22
+words: 13613
+tags: [raman-saab, record, process]
+---
 # Raman Saab — Progress Log (durable, append-only)
 
 **Purpose:** chronological build ledger that survives session limits / context compaction. Append

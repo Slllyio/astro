@@ -1,3 +1,12 @@
+---
+title: "An Engine and a Verdict: encoding B. V. Raman's Vedic astrology faithfully, then testing it against 22,000 real lives"
+kind: record
+topic: doctrine
+measured: true
+updated: 2026-08-03
+words: 2101
+tags: [raman-saab, record, doctrine]
+---
 # An Engine and a Verdict: encoding B. V. Raman's Vedic astrology faithfully, then testing it against 22,000 real lives
 
 *The capstone record of the raman_saab program — 2026-07-24.*

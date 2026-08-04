@@ -75,6 +75,20 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**v30-v31 amendments + the item-12/13/14 content amendments (2026-08-04, Wave C +
+karmic).** v30 KARMIC EVOLUTION — the walled Jaimini layer (post-lift): AK, Karakamsa,
+Upapada, JAIMINI-9:799-847 quoted verbatim, D-20/D-60 cores; natal-verdict wall tested.
+v31 RECTIFICATION CONFIDENCE — sensitivity measured at ±2/±5 minutes across ten pillars
+(Lagna sign, Navamsa Lagna, the Moon's nakshatra as Vimshottari anchor, the seven
+whole-sign placements); what flips is listed with its offset; the confidence is a COUNT,
+never a percentage. Item 14 — every house Conclusion now opens with "Raman writes: '...'"
+— the driver signification's own cited source quoted verbatim before the computation
+(the `passage_quote` helper). Item 12 — the divisional cards gain a per-varga strength
+footer (planets in own varga in that division, GBB-3 Art.28). Item 13 — the interactive
+page draws the ASPECT NETWORK from the shipped judgment graph (safe namespaced SVG:
+planets sized by census; edges join a planet to the occupants of houses it aspects,
+colored by the house's natal verdict).
+
 **v28-v29 amendments + the item-15 content amendment (2026-08-04, Wave B).** v28 the
 DECADE INDICATION TIMELINE — renamed from the proposal's "event probability timeline" per
 Measured-Truth (the validation program measured no predictive power; probability language

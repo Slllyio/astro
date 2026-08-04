@@ -54,6 +54,9 @@ _FROZEN = (
     ("psych", "## Psychological profile", 'id="psych"'),
     ("chart_grids", None, 'id="charts"'),
     ("positions", "## Planetary positions", 'id="positions"'),
+    # v31 amendment (2026-08-04, conscious, same-commit as the module): rectification
+    # confidence, with the checkable-inputs cluster.
+    ("rect_confidence", "## Rectification confidence", 'id="rect-confidence"'),
     ("shadbala", "## Shadbala", 'id="shadbala"'),
     ("yogas", "## Yogas present in this chart", 'id="yogas"'),
     # v7 amendment (2026-07-26, conscious, same-commit as the module): Yoga x Dasha timing
@@ -217,7 +220,7 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -248,6 +251,27 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v28") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v29") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v31") == 1
+
+
+class TestRectConfidence:
+    """v31 — sensitivity measured, never an invented percentage."""
+
+    def test_renders_with_ten_pillars_and_a_count_verdict(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        rc = report.rect_confidence
+        assert rc is not None
+        assert rc.total_count == 10          # lagna + nav lagna + moon nak + 7 houses
+        assert 0 <= rc.stable_count <= rc.total_count
+        assert "%" not in rc.label
+        assert "## Rectification confidence" in markdown
+        assert 'id="rect-confidence"' in html
+        assert to_report_dict(report)["rect_confidence"] is not None
+
+    def test_flips_carry_the_offset_that_flips_them(self, report):
+        for pl in report.rect_confidence.pillars:
+            for off, _v in pl.flips:
+                assert off in (-5, -2, 2, 5)
 
 
 class TestKarmicEvolution:

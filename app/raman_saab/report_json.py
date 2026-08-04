@@ -162,6 +162,8 @@ def to_report_dict(r: DetailedReport) -> dict:
         "life_synthesis": (_ad(r.life_synthesis)
                            if r.life_synthesis is not None else None),       # v29
         "karmic": _ad(r.karmic) if r.karmic is not None else None,           # v30
+        "rect_confidence": (_ad(r.rect_confidence)
+                            if r.rect_confidence is not None else None),     # v31
         # item 15 — testimony support per house (a re-read of preponderance)
         "testimony_support": {
             str(ht.house): {"label": ("High" if "corrobor" in ht.status

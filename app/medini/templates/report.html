@@ -1250,6 +1250,57 @@ function toggleAsk(){ const a=$('ask'); if(!a) return;
   if(a.style.display==='block'){ const q=$('ask-q'); if(q) q.focus(); } }
 window.toggleAsk=toggleAsk;
 
+// ===== item 13: the aspect network — drawn from the judgment graph (safe SVG) =====
+function aspectNetwork(jg){
+  try{
+    const NS='http://www.w3.org/2000/svg';
+    const planets=jg.nodes.filter(n=>n.kind==='planet').map(n=>n.label);
+    if(!planets.length) return null;
+    const occ={}, verdict={}, census={};
+    for(const n of jg.nodes) if(n.kind==='house')
+      for(const [k,v] of (n.data||[])) if(k==='verdict') verdict[n.id]=v;
+    for(const e of jg.edges){
+      if(e.relation==='occupies') occ[e.dst]=(occ[e.dst]||[]).concat(e.src.split(':')[1]);
+      if(['lord_of','occupies','aspects','karaka_of','rules_period','maraka_tier'].includes(e.relation)
+         && e.src.startsWith('planet:')){
+        const p=e.src.split(':')[1]; census[p]=(census[p]||0)+1; } }
+    const W=520,H=520,cx=W/2,cy=H/2,rad=200;
+    const svg=document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('style','max-width:100%;height:auto');
+    const pos={};
+    planets.forEach((p,i)=>{ const a=-Math.PI/2+i*2*Math.PI/planets.length;
+      pos[p]=[cx+rad*Math.cos(a), cy+rad*Math.sin(a)]; });
+    for(const e of jg.edges){
+      if(e.relation!=='aspects') continue;
+      const src=e.src.split(':')[1];
+      for(const tgt of (occ[e.dst]||[])){
+        if(tgt===src||!pos[src]||!pos[tgt]) continue;
+        const v=verdict[e.dst]||'';
+        const ln=document.createElementNS(NS,'line');
+        ln.setAttribute('x1',pos[src][0]); ln.setAttribute('y1',pos[src][1]);
+        ln.setAttribute('x2',pos[tgt][0]); ln.setAttribute('y2',pos[tgt][1]);
+        ln.setAttribute('stroke', v==='afflicted'?'var(--aff)':v==='favourable'?'var(--fav)':'var(--mix)');
+        ln.setAttribute('stroke-width','1.1'); ln.setAttribute('opacity','0.55');
+        svg.appendChild(ln); } }
+    const maxC=Math.max(1,...Object.values(census));
+    for(const p of planets){
+      const [x,y]=pos[p];
+      const c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x); c.setAttribute('cy',y);
+      c.setAttribute('r', 8+14*((census[p]||0)/maxC));
+      c.setAttribute('fill','var(--accent-2)'); c.setAttribute('opacity','0.85');
+      svg.appendChild(c);
+      const tx=document.createElementNS(NS,'text');
+      tx.setAttribute('x',x); tx.setAttribute('y',y+4);
+      tx.setAttribute('text-anchor','middle');
+      tx.setAttribute('style','font-size:11px;fill:var(--ink)');
+      tx.textContent=p.slice(0,4)+' '+(census[p]||0);
+      svg.appendChild(tx); }
+    return svg;
+  }catch(e){ console.error('aspect network failed:',e); return null; }
+}
+
 // ===== Muhurtha — "Today for you" (GET /electional/today, on demand only) =====
 // Deliberately NOT fetched with the cast: the electional reading is about a DAY, not the
 // nativity, so the reader asks for it. Every field the route returns is rendered, `source`
@@ -1519,6 +1570,10 @@ function render(R, S, FQ){
     add(H2('Judgment graph'));
     add(para(jg.nodes.length+' '+t('nodes')+', '+jg.edges.length+' '+t('edges')+' — '+
       Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
+    // item 13 — the aspect network, drawn FROM the shipped graph (safe namespaced SVG).
+    const net=aspectNetwork(jg);
+    if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
+      'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
     const body=el('div',{class:'body'});

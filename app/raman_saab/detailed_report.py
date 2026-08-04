@@ -480,6 +480,11 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("psych", "## Psychological profile", 'id="psych"', "v27"),
     SectionSpec("chart_grids", None, 'id="charts"', "v1"),
     SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
+    # v31 (2026-08-04, user-requested): rectification confidence — birth-time
+    # sensitivity measured at ±2/±5 minutes; placed with the checkable-inputs cluster
+    # (a reading must be checkable — and so must its inputs' stability).
+    SectionSpec("rect_confidence", "## Rectification confidence",
+                'id="rect-confidence"', "v31"),
     SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
     SectionSpec("yogas", "## Yogas present in this chart", 'id="yogas"', "v1"),
     # v7 (2026-07-26, conscious amendment): inserted right after Yogas, since it directly extends
@@ -593,7 +598,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "now_box",
     "info_content", "interpretation_guide", "stands_out", "digest",
     "dashboard",
-    "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "yoga_deep",
+    "chart_grids", "positions", "rect_confidence", "shadbala", "yogas", "yoga_timing",
+    "yoga_deep",
     "ashtakavarga", "houses",
     "house_strength", "preponderance", "longevity",
     "maraka", "maraka_saturn", "health_readout", "arishta", "timeline", "ishta_kashta",
@@ -927,13 +933,31 @@ def _clean_box(text: str) -> str:
 
 
 def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
-    """Full varga deep-reads; a varga that cannot be cast on this chart is skipped."""
+    """Full varga deep-reads; a varga that cannot be cast on this chart is skipped.
+
+    Item 12 (2026-08-04, content amendment — the divisional encyclopedia footer): each
+    card gains its own STRENGTH line — the planets standing in OWN VARGA in this division
+    (from `vargavisesha`, GBB-3 Art.28, the same saptavarga count the Parijatadi ladder
+    uses) and the vargottama planets — the varga-level facts previously shown only in
+    aggregate. Pure re-reads of already-computed values."""
     out: list[tuple[str, str]] = []
+    try:
+        from app.raman_saab.primitives.vargavisesha import vargavisesha
+        vv = vargavisesha(chart)
+    except Exception:  # noqa: BLE001 — Track-B sparse
+        vv = ()
     for label, build, render in _DIVISIONAL:
         try:
-            out.append((label, _clean_box(render(build(chart)))))
+            body = _clean_box(render(build(chart)))
         except Exception:  # noqa: BLE001 — same silent-skip contract as synthesis
             continue
+        dtag = label.split(" ", 1)[0]                 # e.g. "D-9"
+        own = [v.planet for v in vv
+               if dtag.replace("-", "") in {ov.replace("-", "") for ov in v.own_vargas}]
+        if own:
+            body += (f"\n\nStrength in this varga (GBB-3 Art.28): "
+                     f"{', '.join(own)} in own varga here.")
+        out.append((label, body))
     return tuple(out)
 
 
@@ -1372,6 +1396,7 @@ class DetailedReport:
     decades: object = None                           # decade indication timeline (v28)
     life_synthesis: object = None                    # the biography-closing chapter (v29)
     karmic: object = None                            # Jaimini karmic evolution (v30)
+    rect_confidence: object = None                   # birth-time sensitivity (v31)
 
 
 @dataclass(frozen=True)
@@ -2538,6 +2563,12 @@ def build_detailed_report(
         enriched = _dc_replace(enriched, karmic=build_karmic_evolution(enriched))
     except Exception:  # noqa: BLE001
         pass
+    from app.raman_saab.rect_confidence import build_rect_confidence
+    try:
+        enriched = _dc_replace(enriched,
+                               rect_confidence=build_rect_confidence(enriched))
+    except Exception:  # noqa: BLE001
+        pass
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     final = _dc_replace(enriched, nichod=build_nichod(enriched),
                         plain_reading=build_plain_reading(
@@ -2570,6 +2601,24 @@ def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
             f"{e.favourability_percentile:.0%} of charts; this exact reading in "
             f"{e.band_share:.0%} ({e.rarity}){tail}")
     return out
+
+
+def passage_quote(cite: str, *, max_chars: int = 260) -> str:
+    """Item 14 helper: the verbatim source snippet a citation points to, one clean line,
+    trimmed at a sentence boundary within `max_chars`. Empty string when unresolvable."""
+    import re as _re
+
+    from app.raman_saab.doctrine.sources import passage as _passage
+    p = _passage(cite, context=1)
+    if not isinstance(p, dict):
+        return ""
+    text = _re.sub(r"[¬­]\s*\n\s*", "", p.get("text", ""))
+    text = _re.sub(r"\s*\n\s*", " ", text).strip()
+    if len(text) > max_chars:
+        cut = text[:max_chars]
+        dot = cut.rfind(". ")
+        text = (cut[:dot + 1] if dot > 60 else cut + "...")
+    return text
 
 
 def to_markdown(r: DetailedReport) -> str:
@@ -2909,6 +2958,24 @@ def to_markdown(r: DetailedReport) -> str:
                  f"{', '.join(notes) or '-'} |")
     L.append("")
 
+    # ── rectification confidence (v31 — input sensitivity, measured) ──────────
+    if r.rect_confidence is not None:
+        rc = r.rect_confidence
+        L.append("## Rectification confidence")
+        L.append("")
+        L.append(f"_{rc.frame}_")
+        L.append("")
+        L.append(f"- **Verdict** — {rc.stable_count} of {rc.total_count} pillars stable "
+                 f"at ±5 minutes: **{rc.label}**")
+        L.append("")
+        L.append("| Pillar | At the stated time | Flips (offset → value) |")
+        L.append("|---|---|---|")
+        for pl in rc.pillars:
+            flips = ("; ".join(f"{off:+d} min → {v}" for off, v in pl.flips)
+                     if pl.flips else "stable")
+            L.append(f"| {pl.pillar} | {pl.base_value} | {flips} |")
+        L.append("")
+
     # ── Shadbala (the numbers behind every 'strong'/'weak') ───────────────────
     sb_rows = [(n, p) for n, p in planet_rows(r.chart) if p.shadbala_rupas is not None]
     if sb_rows:
@@ -3077,6 +3144,22 @@ def to_markdown(r: DetailedReport) -> str:
         if conclusion:
             L.append("")
             L.append(f"> **Conclusion** — {conclusion}")
+        # item 14 (2026-08-04 content amendment): "Raman writes..." — the driver
+        # signification's own cited source, quoted verbatim before the computation.
+        if pf is not None:
+            _dr = next((sv for sv in pf.significations if sv.verdict == pf.rollup),
+                       pf.significations[0] if pf.significations else None)
+            if _dr is not None:
+                from app.raman_saab.doctrine.significations import SIGNIFICATIONS
+                _sig = next((s for s in SIGNIFICATIONS.get(mr.house, ())
+                             if s.key == _dr.signification), None)
+                if _sig is not None and _sig.source is not None:
+                    _q = passage_quote(f"{_sig.source.work}:{_sig.source.line}")
+                    if _q:
+                        L.append("")
+                        L.append(f"> **Raman writes** — \"{_q}\" "
+                                 f"({_sig.source.work}:{_sig.source.line}) — and this "
+                                 f"chart computes: {mr.verdict} for _{_dr.signification}_.")
         cal = _calibration_lines(cal_reading)
         if cal:
             L.append("")

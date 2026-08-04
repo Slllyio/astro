@@ -1249,6 +1249,29 @@ def _health_readout_section(r: DetailedReport) -> str:
         f'{_esc(h.longevity_band)}.</p>')
 
 
+def _rect_confidence_section(r: DetailedReport) -> str:
+    """v31 — birth-time sensitivity, measured; the confidence is a count, never a %."""
+    rc = r.rect_confidence
+    if rc is None:
+        return ""
+    def _flips(pl) -> str:
+        return ("; ".join(f"{off:+d} min → {v}" for off, v in pl.flips)
+                if pl.flips else "stable")
+    rows = "".join(
+        f'<tr><td>{_esc(pl.pillar)}</td><td>{_esc(pl.base_value)}</td>'
+        f'<td>{_esc(_flips(pl))}</td></tr>'
+        for pl in rc.pillars)
+    return (
+        '<h2 class="section" id="rect-confidence">Rectification confidence</h2>'
+        f'<p class="section-sub"><i>{_esc(rc.frame)}</i></p>'
+        f'<p class="section-sub"><b>Verdict</b> &mdash; {rc.stable_count} of '
+        f'{rc.total_count} pillars stable at &plusmn;5 minutes: '
+        f'<b>{_esc(rc.label)}</b></p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>pillar</th>'
+        '<th>at the stated time</th><th>flips</th></tr></thead>'
+        f'<tbody>{rows}</tbody></table></div>')
+
+
 def _decades_section(r: DetailedReport) -> str:
     """v28 — indications per decade; never probabilities."""
     dt = r.decades
@@ -2103,6 +2126,8 @@ def to_html(r: DetailedReport) -> str:
   <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}</div>
 
   {_positions(r)}
+
+  {_rect_confidence_section(r)}
 
   {_shadbala(r)}
 

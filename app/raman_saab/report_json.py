@@ -27,6 +27,8 @@ from typing import Any
 
 from app.raman_saab.detailed_report import DetailedReport, graded_buckets
 from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
+from app.raman_saab.plain_terms import gloss_dict as _gloss
+from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED as _MIN_REQ
 
 
 def _ad(obj: Any) -> Any:
@@ -53,6 +55,9 @@ def _chart_dict(chart) -> dict:
             "combust_fraction": round(p.combust_fraction, 3),
             "shadbala_rupas": (round(p.shadbala_rupas.total / 60.0, 2)
                                if p.shadbala_rupas is not None else None),
+            # Raman's own required minimum (GBB-8:303) — so any consumer can band the
+            # value against HIS threshold, never an invented one.
+            "shadbala_required": _MIN_REQ.get(name),
             "ishta": p.ishta,
             "kashta": p.kashta,
         }
@@ -164,6 +169,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "karmic": _ad(r.karmic) if r.karmic is not None else None,           # v30
         "rect_confidence": (_ad(r.rect_confidence)
                             if r.rect_confidence is not None else None),     # v31
+        # the plain-terms layer (2026-08-04) — the ONE glossary source every surface
+        # renders from; vocabulary only, never new astrology.
+        "plain_terms": _gloss(),
         # item 15 — testimony support per house (a re-read of preponderance)
         "testimony_support": {
             str(ht.house): {"label": ("High" if "corrobor" in ht.status

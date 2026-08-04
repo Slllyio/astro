@@ -1131,23 +1131,57 @@ def _shadbala(r: DetailedReport) -> str:
     if not sb_rows:
         return ""
     rows = ""
-    for name, p in sb_rows:
+    from app.raman_saab.plain_terms import band_rupas
+    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
+    rows = ""
+    bars = ""
+    max_r = max(p.shadbala_rupas.total / 60.0 for _n, p in sb_rows) or 1.0
+    for i, (name, p) in enumerate(sb_rows):
         sb = p.shadbala_rupas
-        strong = is_powerful(name, sb.total / 60.0)
+        tot = sb.total / 60.0
+        strong = is_powerful(name, tot)
+        band = band_rupas(name, tot)
         ik = (f"{p.ishta:.1f}/{p.kashta:.1f}"
               if p.ishta is not None and p.kashta is not None else "&ndash;")
         cells = "".join(f'<td class="num">{v / 60.0:.2f}</td>' for v in
                         (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
         rows += (f'<tr><td><b>{_esc(name)}</b></td>{cells}'
-                 f'<td class="num"><b>{sb.total / 60.0:.2f}</b></td>'
-                 f'<td>{"yes" if strong else "no"}</td><td class="num">{ik}</td></tr>')
+                 f'<td class="num"><b>{tot:.2f}</b></td>'
+                 f'<td>{"yes" if strong else "no"}</td><td class="num">{ik}</td>'
+                 f'<td>{_esc(band)}</td></tr>')
+        # the horsepower bar (inline SVG row): bar to max, tick at Raman's requirement
+        y = 10 + i * 26
+        w = 340.0 * tot / (max_r * 1.15)
+        req = MIN_REQUIRED.get(name)
+        tick = (f'<line x1="{120 + 340.0 * req / (max_r * 1.15):.1f}" y1="{y - 8}" '
+                f'x2="{120 + 340.0 * req / (max_r * 1.15):.1f}" y2="{y + 10}" '
+                f'stroke="var(--ink)" stroke-width="1.5" opacity="0.7"/>'
+                if req else "")
+        color = "var(--fav)" if strong else "var(--aff)"
+        bars += (f'<text x="4" y="{y + 4}" style="font-size:11px;fill:var(--ink)">'
+                 f'{_esc(name)}</text>'
+                 f'<rect x="120" y="{y - 8}" width="{w:.1f}" height="16" rx="3" '
+                 f'fill="{color}" opacity="0.8"/>{tick}'
+                 f'<text x="{124 + w:.1f}" y="{y + 4}" '
+                 f'style="font-size:10px;fill:var(--ink)">{tot:.1f} &mdash; '
+                 f'{_esc(band.split(" — ")[0])}</text>')
+    svg = (f'<svg viewBox="0 0 560 {14 + len(sb_rows) * 26}" '
+           f'style="max-width:100%;height:auto" role="img" '
+           f'aria-label="Shadbala strength bars">{bars}</svg>')
     return ('<h2 class="section" id="shadbala">Shadbala &mdash; six-fold strength</h2>'
-            '<p class="section-sub">The numbers behind every &ldquo;strong / weak&rdquo; in this '
-            'report, in rupas (Raman: a yoga&rsquo;s effect depends on Shadbala; HTJAH-I:611).</p>'
+            '<p class="section-sub"><b>Planetary strength &mdash; think of it as '
+            'horsepower:</b> a powerful engine can pull a heavier load, and a strong '
+            'planet tends to deliver its indications more effectively. Bars below the '
+            'tick fall short of RAMAN&rsquo;S OWN required minimum (GBB-8:303) &mdash; '
+            'the bands are his thresholds, never invented cutoffs. The numbers behind '
+            'every &ldquo;strong / weak&rdquo; in this report (HTJAH-I:611). '
+            'Ishta/Kashta = good-yield / hard-yield potential.</p>'
+            f'{svg}'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
             '<th class="num">sthana</th><th class="num">dig</th><th class="num">kala</th>'
             '<th class="num">cheshta</th><th class="num">naisargika</th><th class="num">drik</th>'
             '<th class="num">total</th><th>powerful?</th><th class="num">ishta/kashta</th>'
+            '<th>in plain terms</th>'
             f'</tr></thead><tbody>{rows}</tbody></table></div>')
 
 

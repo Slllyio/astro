@@ -2980,14 +2980,21 @@ def to_markdown(r: DetailedReport) -> str:
     sb_rows = [(n, p) for n, p in planet_rows(r.chart) if p.shadbala_rupas is not None]
     if sb_rows:
         from app.raman_saab.primitives.shadbala.total import is_powerful
+        from app.raman_saab.plain_terms import band_rupas
         L.append("## Shadbala (six-fold strength, rupas)")
         L.append("")
-        L.append("_The strength measure behind every 'strong/weak' in this report (Raman: a yoga's "
-                 "effect depends on Shadbala; HTJAH-I:611, Graha and Bhava Balas)._")
+        L.append("_**Planetary strength — think of it as horsepower**: a powerful engine "
+                 "can pull a heavier load, and a strong planet tends to deliver its "
+                 "indications more effectively in its periods. The bands below compare "
+                 "each planet against RAMAN'S OWN required minimum (GBB-8:303), never an "
+                 "invented cutoff. This is the strength measure behind every "
+                 "'strong/weak' in this report (HTJAH-I:611, Graha and Bhava Balas). "
+                 "Ishta/Kashta = good-yield / hard-yield potential — the planet's "
+                 "built-in inclination to deliver pleasant or difficult results._")
         L.append("")
         L.append("| graha | sthana | dig | kala | cheshta | naisargika | drik | **total** | "
-                 "powerful? | ishta/kashta |")
-        L.append("|---|---:|---:|---:|---:|---:|---:|---:|---|---|")
+                 "powerful? | ishta/kashta | in plain terms |")
+        L.append("|---|---:|---:|---:|---:|---:|---:|---:|---|---|---|")
         for name, p in sb_rows:
             sb = p.shadbala_rupas
             strong = is_powerful(name, sb.total / 60.0)
@@ -2996,7 +3003,8 @@ def to_markdown(r: DetailedReport) -> str:
             cells = " | ".join(f"{v / 60.0:.2f}" for v in
                                (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
             L.append(f"| {name} | {cells} | **{sb.total / 60.0:.2f}** | "
-                     f"{'yes' if strong else 'no'} | {ik} |")
+                     f"{'yes' if strong else 'no'} | {ik} | "
+                     f"{band_rupas(name, sb.total / 60.0)} |")
         L.append("")
 
     # ── fired yogas ───────────────────────────────────────────────────────────
@@ -3821,10 +3829,21 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"> \"{c.combos_quote}\" (HTJAH-I:5179)")
         L.append("")
     if s.deeptadi:
+        from app.raman_saab.plain_terms import TERM_GLOSS as _TG
         L.append("")
         L.append("## Deeptadi avasthas (each graha's result-state, HPA Ch.7)")
         L.append("")
+        L.append("_**Avastha = the planet's state, its mood** — the same engine can run "
+                 "bright or exhausted, and the state colours HOW a planet delivers what "
+                 "it promises. Each state below carries its plain equivalent._")
+        L.append("")
         L.append(", ".join(s.deeptadi))
+        L.append("")
+        _states = sorted({x.split(" ", 1)[1] if " " in x else x for x in s.deeptadi}
+                         & set(_TG))
+        for st in _states:
+            t = _TG[st]
+            L.append(f"- **{st}** — {t.plain}. {t.analogy}. _{t.why_it_matters}._")
     if s.karakamsa_reading:
         L.append("")
         L.append("## Jaimini Karakamsa (the soul's inclination)")
@@ -3961,6 +3980,19 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
     for term, meaning in GLOSSARY.items():
         L.append(f"- **{term}** — {meaning}")
+    # the plain-terms layer (2026-08-04): four-field entries — plain name, analogy,
+    # why it matters, example — vocabulary only, never new astrology.
+    from app.raman_saab.plain_terms import TERM_GLOSS as _PT
+    L.append("")
+    L.append("### In plain terms (every technical word, with why it matters)")
+    L.append("")
+    for term in sorted(_PT):
+        t = _PT[term]
+        line = (f"- **{term}** — {t.plain}. _{t.analogy}._ "
+                f"**Why it matters:** {t.why_it_matters}.")
+        if t.example:
+            line += f" _Example: {t.example}._"
+        L.append(line)
 
     # ── nichod: the capstone integration of every section above ───────────────
     n = r.nichod

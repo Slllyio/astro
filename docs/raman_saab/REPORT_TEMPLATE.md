@@ -75,6 +75,22 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**The plain-terms + visual layer (2026-08-04, content amendments).** `plain_terms.py` is
+the ONE glossary source (markdown, HTML, JSON `plain_terms`, the interactive page render
+from it): four-field entries — technical term, plain name, analogy, WHY IT MATTERS, and
+a mini example where one teaches instantly. VOCABULARY ONLY, never astrology; every
+string guard-tested. Bands re-label MEASURED values against Raman's own thresholds
+(`band_rupas` vs GBB-8:303 minimums — "Very strong — likely to deliver its indications
+consistently", never a bare word and never an invented cutoff); avastha states carry
+plain equivalents + recognition icons (🔥 Deeptha … ❌ Khala). Applied: the Shadbala
+table's horsepower framing + "in plain terms" column + inline-SVG strength bars with
+requirement ticks (standalone HTML), the Deeptadi plain ladder, the glossary's "In plain
+terms" subsection, the JSON `shadbala_required` per planet, and the interactive page's
+tap-for-gloss chips + the testimony-support diverging-bar meter. The reviewed
+information-architecture upgrades (progressive disclosure levels, "why astrologers
+examine this" preambles, computation badges, planet cards, the remaining vizzes) are the
+recorded NEXT slice of this arc.
+
 **v30-v31 amendments + the item-12/13/14 content amendments (2026-08-04, Wave C +
 karmic).** v30 KARMIC EVOLUTION — the walled Jaimini layer (post-lift): AK, Karakamsa,
 Upapada, JAIMINI-9:799-847 quoted verbatim, D-20/D-60 cores; natal-verdict wall tested.

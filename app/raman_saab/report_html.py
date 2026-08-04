@@ -1249,6 +1249,46 @@ def _health_readout_section(r: DetailedReport) -> str:
         f'{_esc(h.longevity_band)}.</p>')
 
 
+def _decades_section(r: DetailedReport) -> str:
+    """v28 — indications per decade; never probabilities."""
+    dt = r.decades
+    if dt is None:
+        return ""
+    blocks = []
+    for d in dt.decades:
+        if not d.inside_window:
+            blocks.append(f'<h3>{_esc(d.label)}</h3>'
+                          f'<p class="section-sub"><i>{_esc(d.note)}</i></p>')
+            continue
+        rows = [("Running Mahadashas", _esc(", ".join(d.md_lords) or "-")
+                 + (f" (leans: {_esc(', '.join(d.leans))})" if d.leans else ""))]
+        if d.areas_favourable:
+            rows.append(("Read favourably here", _esc("; ".join(d.areas_favourable))))
+        if d.areas_challenged:
+            rows.append(("Read as challenged here", _esc("; ".join(d.areas_challenged))))
+        if d.yogas_ripening:
+            rows.append(("Yogas ripening", _esc("; ".join(d.yogas_ripening))))
+        body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                       f'<span class="vv">{v}</span></div>' for k, v in rows)
+        blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>')
+    return ('<h2 class="section" id="decades">Decade indication timeline</h2>'
+            f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
+
+
+def _life_synthesis_section(r: DetailedReport) -> str:
+    """v29 — the biography-closing chapter; strict re-read."""
+    ls = r.life_synthesis
+    if ls is None:
+        return ""
+    paras = "".join(f'<p><b>{_esc(theme)}.</b> {_esc(para)}</p>'
+                    for theme, para in ls.paragraphs)
+    return ('<h2 class="section" id="life-synthesis">Full life synthesis</h2>'
+            '<p class="section-sub"><b>In simple terms:</b> the report&rsquo;s chapters '
+            'read as one biography &mdash; every line a re-read of a section above, '
+            'nothing judged anew.</p>'
+            f'{paras}<p class="section-sub"><i>{_esc(ls.closing)}</i></p>')
+
+
 def _psych_section(r: DetailedReport) -> str:
     """v27 — the psychological profile: the mind stack woven, lagna portrait verbatim."""
     ps = r.psych
@@ -2105,6 +2145,8 @@ def to_html(r: DetailedReport) -> str:
 
   {_life_chapters_section(r)}
 
+  {_decades_section(r)}
+
   {_gochara_table(r)}
 
   {_dasha_transit_section(r)}
@@ -2117,6 +2159,8 @@ def to_html(r: DetailedReport) -> str:
   {extras}
 
   {_synthesis_section(r)}
+
+  {_life_synthesis_section(r)}
 
   {_glossary()}
 

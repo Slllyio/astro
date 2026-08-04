@@ -75,6 +75,21 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**v28-v29 amendments + the item-15 content amendment (2026-08-04, Wave B).** v28 the
+DECADE INDICATION TIMELINE — renamed from the proposal's "event probability timeline" per
+Measured-Truth (the validation program measured no predictive power; probability language
+would be a false claim): decades from birth sliced over the already-built windowed
+timeline — the running MDs, life-areas read favourably/challenged (natal verdict x
+activation tier), yogas ripening, leans; decades outside the window are labeled, never
+guessed; a test pins the absence of probability language. v29 the FULL LIFE SYNTHESIS —
+the biography-closing chapter weaving temperament/destiny/career/wealth/marriage/
+children/protections/reputation/health/turning-points/dominant-themes, each line a
+re-read; the defect test asserts each paragraph's key value appears verbatim in its
+source field. Item 15 (renamed from "prediction confidence"): the dashboard gains a
+"classical support (testimonies)" column and the JSON a `testimony_support` map —
+High/Medium/Low = the preponderance status bands with the F/A counts; never a
+probability that an event occurs.
+
 **v25-v27 amendments (2026-08-04) — the marriage monograph, children chapter,
 psychological profile (Wave A of items 6-16).** All Raman-verbatim-by-frozen-range +
 fired-rule re-reads. v25: HTJAH-II's Seventh-House chapter mined (scope 198-231, the 7th

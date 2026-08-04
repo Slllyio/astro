@@ -158,6 +158,17 @@ def to_report_dict(r: DetailedReport) -> dict:
         "marriage": _ad(r.marriage) if r.marriage is not None else None,     # v25
         "children": _ad(r.children) if r.children is not None else None,     # v26
         "psych": _ad(r.psych) if r.psych is not None else None,              # v27
+        "decades": _ad(r.decades) if r.decades is not None else None,        # v28
+        "life_synthesis": (_ad(r.life_synthesis)
+                           if r.life_synthesis is not None else None),       # v29
+        # item 15 — testimony support per house (a re-read of preponderance)
+        "testimony_support": {
+            str(ht.house): {"label": ("High" if "corrobor" in ht.status
+                                      else "Low" if "contest" in ht.status
+                                      else "Medium"),
+                            "favourable": ht.favourable, "adverse": ht.adverse,
+                            "neutral": ht.neutral, "status": ht.status}
+            for ht in r.preponderance.houses},
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

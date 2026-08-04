@@ -541,6 +541,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # Napoleon-narration shape (HTJAH-I:15950-15999) merging what Life-narrative and its three
     # companion tables show separately; placed as the capstone of that companion cluster.
     SectionSpec("life_chapters", "## Life-chapters", 'id="life-chapters"', "v15"),
+    # v28 (2026-08-04, user-requested, RENAMED from the proposal's "event probability
+    # timeline" per Measured-Truth): the decade INDICATION timeline — the method's
+    # indications per decade sliced from the windowed timeline; never probabilities.
+    SectionSpec("decades", "## Decade indication timeline", 'id="decades"', "v28"),
     SectionSpec("gochara", "## Current transits (Gochara", 'id="gochara"', "v2"),
     # v6 (2026-07-26, conscious amendment): inserted right after Gochara, since it cross-
     # references the Life-narrative (timeline) and Gochara sections directly above it — the
@@ -568,6 +572,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # v3 (2026-07-25, conscious amendment): inserted BEFORE glossary so the reference material
     # stays last; _FROZEN in the contract test was amended in the same commit per the procedure.
     SectionSpec("synthesis", "## Integrated insights", 'id="synthesis"', "v3"),
+    # v29 (2026-08-04, user-requested): the full life synthesis — the biography-closing
+    # chapter weaving every monograph above; STRICT PREC-10, no new judgments; placed
+    # before the reference material, after everything it re-reads.
+    SectionSpec("life_synthesis", "## Full life synthesis", 'id="life-synthesis"', "v29"),
     SectionSpec("glossary", "## Glossary", 'id="glossary"', "v1"),
     # v4 (2026-07-26, conscious amendment): the capstone integration, appended LAST — after
     # reference material — since it distils sections that appear throughout the whole document.
@@ -587,11 +595,11 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "maraka", "maraka_saturn", "health_readout", "arishta", "timeline", "ishta_kashta",
     "md_condition",
     "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
-    "life_chapters",
+    "life_chapters", "decades",
     "gochara", "dasha_transit",
     "divisional", "career", "profession", "wealth", "marriage", "children",
     "deeptadi",
-    "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
+    "karakamsa", "soul", "pitru", "synthesis", "life_synthesis", "glossary", "nichod",
 )
 
 
@@ -1356,6 +1364,8 @@ class DetailedReport:
     marriage: object = None                          # marriage monograph (v25)
     children: object = None                          # children chapter (v26)
     psych: object = None                             # psychological profile (v27)
+    decades: object = None                           # decade indication timeline (v28)
+    life_synthesis: object = None                    # the biography-closing chapter (v29)
 
 
 @dataclass(frozen=True)
@@ -2512,11 +2522,23 @@ def build_detailed_report(
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
             pass
+    from app.raman_saab.life_arc import build_decade_timeline
+    try:
+        enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
+    except Exception:  # noqa: BLE001
+        pass
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
-    return _dc_replace(enriched, nichod=build_nichod(enriched),
-                       plain_reading=build_plain_reading(
-                           enriched, reconciliations=_recs,
-                           dominant=_bios[0] if _bios else None))
+    final = _dc_replace(enriched, nichod=build_nichod(enriched),
+                        plain_reading=build_plain_reading(
+                            enriched, reconciliations=_recs,
+                            dominant=_bios[0] if _bios else None))
+    # v29 — the life synthesis reads the FULLY-built report (incl. the nichod).
+    from app.raman_saab.life_arc import build_life_synthesis
+    try:
+        final = _dc_replace(final, life_synthesis=build_life_synthesis(final))
+    except Exception:  # noqa: BLE001
+        pass
+    return final
 
 
 def _calibration_lines(reading: CalibratedHouseReading) -> list[str]:
@@ -2658,10 +2680,22 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("_Each matter's authoritative verdict from its dedicated deep reader (Raman's method "
              "decides; the divisional chart corroborates). Detail in the deep-read sections below._")
     L.append("")
-    L.append("| matter | divisional | verdict |")
-    L.append("|---|---|---|")
+    # item 15 (2026-08-04 content amendment): the support column — a re-read of the
+    # preponderance ledgers (High = corroborated, Low = contested, else Medium), with
+    # the testimony counts; NEVER a probability of an event.
+    from app.raman_saab.tension_narrator import _MATTER_HOUSE
+    _supp = {ht.house: ("High" if "corrobor" in ht.status else
+                        "Low" if "contest" in ht.status else "Medium",
+                        f"{ht.favourable}F/{ht.adverse}A")
+             for ht in r.preponderance.houses}
+    L.append("| matter | divisional | verdict | classical support (testimonies) |")
+    L.append("|---|---|---|---|")
     for en in r.dashboard.entries:
-        L.append(f"| {en.matter} | D-{en.varga} {en.varga_name} | **{en.verdict}** |")
+        _h = _MATTER_HOUSE.get(en.matter)
+        _sp = _supp.get(_h)
+        sup = f"{_sp[0]} ({_sp[1]})" if _sp else "-"
+        L.append(f"| {en.matter} | D-{en.varga} {en.varga_name} | **{en.verdict}** | "
+                 f"{sup} |")
     L.append("")
 
     # ── chart signature ───────────────────────────────────────────────────────
@@ -3448,6 +3482,33 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(ch.narrative)
         L.append("")
 
+    # ── decade indication timeline (v28 — NEVER probabilities) ────────────────
+    if r.decades is not None:
+        dt = r.decades
+        L.append("## Decade indication timeline")
+        L.append("")
+        L.append(f"_{dt.frame}_")
+        L.append("")
+        for d in dt.decades:
+            L.append(f"### {d.label}")
+            L.append("")
+            if not d.inside_window:
+                L.append(f"_{d.note}_")
+                L.append("")
+                continue
+            L.append(f"- **Running Mahadashas** — {', '.join(d.md_lords) or '-'}"
+                     + (f" (leans: {', '.join(d.leans)})" if d.leans else ""))
+            if d.areas_favourable:
+                L.append(f"- **Areas the method reads favourably here** — "
+                         f"{'; '.join(d.areas_favourable)}")
+            if d.areas_challenged:
+                L.append(f"- **Areas the method reads as challenged here** — "
+                         f"{'; '.join(d.areas_challenged)}")
+            if d.yogas_ripening:
+                L.append(f"- **Yogas ripening** — {'; '.join(d.yogas_ripening)}")
+            L.append(f"- _{d.note}_")
+            L.append("")
+
     # ── current transits with Vedha (the honest gochara table) ────────────────
     if r.gochara:
         L.append("")
@@ -3765,6 +3826,22 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── glossary ──────────────────────────────────────────────────────────────
     L.append("")
+    # ── full life synthesis (v29 — the biography-closing chapter) ─────────────
+    if r.life_synthesis is not None:
+        ls = r.life_synthesis
+        L.append("## Full life synthesis")
+        L.append("")
+        L.append("**In simple terms:** the report's chapters read as one biography — "
+                 "temperament, destiny, career, wealth, marriage, children, protections, "
+                 "reputation, health, turning points, dominant themes — every line a "
+                 "re-read of a section above, nothing judged anew.")
+        L.append("")
+        for theme, para in ls.paragraphs:
+            L.append(f"**{theme}.** {para}")
+            L.append("")
+        L.append(f"_{ls.closing}_")
+        L.append("")
+
     L.append("## Glossary")
     L.append("")
     for term, meaning in GLOSSARY.items():

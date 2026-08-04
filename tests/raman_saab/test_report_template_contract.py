@@ -101,6 +101,9 @@ _FROZEN = (
     # woven prose chapter per Mahadasha — placed as the capstone of the Life-narrative
     # companion cluster it merges.
     ("life_chapters", "## Life-chapters", 'id="life-chapters"'),
+    # v28 amendment (2026-08-04, conscious, same-commit as the module): the decade
+    # INDICATION timeline (renamed from "probability" per Measured-Truth).
+    ("decades", "## Decade indication timeline", 'id="decades"'),
     ("gochara", "## Current transits (Gochara", 'id="gochara"'),
     # v6 amendment (2026-07-26, conscious, same-commit as the module): the Dasha x Transit
     # confluence, inserted right after Gochara — the natural narrative position, since it
@@ -124,6 +127,9 @@ _FROZEN = (
     # v3 amendment (2026-07-25, conscious, same-commit as the module): Integrated insights
     # inserted before the glossary so reference material stays last.
     ("synthesis", "## Integrated insights", 'id="synthesis"'),
+    # v29 amendment (2026-08-04, conscious, same-commit as the module): the full life
+    # synthesis — the biography-closing chapter, before the reference material.
+    ("life_synthesis", "## Full life synthesis", 'id="life-synthesis"'),
     ("glossary", "## Glossary", 'id="glossary"'),
     # v4 amendment (2026-07-26, conscious, same-commit as the module): the Nichod capstone,
     # appended LAST — after reference material — since it distils the whole document.
@@ -208,7 +214,7 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27"}
+            "v25", "v26", "v27", "v28", "v29"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -236,6 +242,56 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v25") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v26") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v27") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v28") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v29") == 1
+
+
+class TestWaveB:
+    """v28 decades, v29 life synthesis, and the item-15 support labels."""
+
+    def test_both_sections_render_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        assert "## Decade indication timeline" in markdown
+        assert 'id="decades"' in html and d["decades"] is not None
+        assert "## Full life synthesis" in markdown
+        assert 'id="life-synthesis"' in html and d["life_synthesis"] is not None
+
+    def test_decades_never_use_probability_language(self, markdown):
+        s = markdown.find("## Decade indication timeline")
+        e = markdown.find("\n## ", s + 1)
+        section = markdown[s:e]
+        assert "probabilit" not in section.lower() or "never a probability" in section
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        assert _FORBIDDEN_RE.search(section) is None
+
+    def test_decades_outside_the_window_say_so(self, report):
+        outside = [d for d in report.decades.decades if not d.inside_window]
+        for d in outside:
+            assert "not read" in d.note
+            assert not d.md_lords and not d.yogas_ripening
+
+    def test_life_synthesis_only_re_reads(self, report):
+        """The defect test: each paragraph's key value must appear in its source."""
+        ls = report.life_synthesis
+        themes = dict(ls.paragraphs)
+        if "Destiny" in themes:
+            assert report.nichod.essence in themes["Destiny"]
+        if "Marriage" in themes:
+            assert report.marriage.verdict in themes["Marriage"]
+        if "Children" in themes:
+            assert report.children.verdict in themes["Children"]
+        if "Dominant themes" in themes:
+            assert report.planet_bios[0].planet in themes["Dominant themes"]
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for _t, para in ls.paragraphs:
+            assert _FORBIDDEN_RE.search(para) is None, para
+
+    def test_dashboard_carries_the_support_column(self, markdown, report):
+        assert "| classical support (testimonies) |" in markdown
+        from app.raman_saab.report_json import to_report_dict
+        ts = to_report_dict(report)["testimony_support"]
+        assert ts and all(v["label"] in ("High", "Medium", "Low") for v in ts.values())
 
 
 class TestMonographsV25toV27:

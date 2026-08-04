@@ -818,7 +818,7 @@ function closeSrc(){ $('srcpanel').classList.remove('open'); }
 function vchip(v){ return el('span',{class:'chip v-'+v},v); }
 const SIGN=['','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 // the 12 houses' fixed classical life-area labels (doctrine, not computed per-chart —
-// mirrors _HOUSE_NAME in report_html.py / detailed_report.py) — used by planetInfluenceNetwork.
+// mirrors _HOUSE_NAME in report_html.py / detailed_report.py) — used by planetInfluenceMatrix.
 const HNAME=['','Self / Body','Wealth / Family','Siblings / Courage','Mother / Home',
   'Children / Mind','Health / Enemies','Spouse / Partnership','Longevity',
   'Father / Fortune','Career','Gains','Loss / Moksha / Spirituality'];
@@ -1404,56 +1404,136 @@ function aspectNetwork(jg){
   }catch(e){ console.error('aspect network failed:',e); return null; }
 }
 
-// planet -> house influence network (review upgrade #7): distinct from aspectNetwork above —
-// that one draws planet-to-planet lines via shared-house aspects; this one draws the DIRECT
-// planet -> house influence edges the judgment graph already carries (lord_of/occupies/
-// aspects/karaka_of), with houses labeled by their classical life-area (HNAME). A bipartite
-// layout, not a circle, so the reader can trace "what does Jupiter touch" at a glance.
-function planetInfluenceNetwork(jg){
+// planet -> house influence MATRIX: distinct from aspectNetwork above — that one draws
+// planet-to-planet lines via shared-house aspects; this one shows the DIRECT planet -> house
+// influence edges the judgment graph already carries (lord_of/occupies/aspects/karaka_of),
+// with houses labeled by their classical life-area (HNAME).
+function planetInfluenceMatrix(jg){
   try{
-    const NS='http://www.w3.org/2000/svg';
-    const REL={lord_of:{dash:'',w:1.6},occupies:{dash:'',w:1},
-      aspects:{dash:'4,3',w:1},karaka_of:{dash:'1,2',w:1.4}};
-    const edges=jg.edges.filter(e=>e.src.startsWith('planet:')&&e.dst.startsWith('house:')
-      &&REL[e.relation]);
-    if(!edges.length) return null;
-    const planets=[...new Set(edges.map(e=>e.src.split(':')[1]))];
+    // A MATRIX, not a node-link hairball. ~92 planet->house edges drawn as curved lines
+    // cross each other into unreadable spaghetti; a 9x12 grid gives every pair its own
+    // cell, so nothing overlaps and the whole structure is scannable at a glance.
+    // Interactivity: toggle relation types, click a planet or a house to focus it.
+    const REL=[['lord_of','lord of','var(--aff)'],
+               ['occupies','occupies','var(--accent-2)'],
+               ['aspects','aspects','var(--mix)'],
+               ['karaka_of','karaka of','var(--fav)']];
+    const RELKEY=REL.map(r=>r[0]);
+    const pairs={}, cites={};
+    for(const e of jg.edges){
+      if(!e.src.startsWith('planet:')||!e.dst.startsWith('house:')) continue;
+      if(RELKEY.indexOf(e.relation)<0) continue;
+      const p=e.src.split(':')[1], h=+e.dst.split(':')[1], k=p+'|'+h;
+      (pairs[k]=pairs[k]||{})[e.relation]=true;
+      if(e.cite) cites[k+'|'+e.relation]=e.cite;
+    }
+    if(!Object.keys(pairs).length) return null;
+    const ORDER=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+    const present=new Set(Object.keys(pairs).map(k=>k.split('|')[0]));
+    const planets=ORDER.filter(p=>present.has(p));
     const houses=[...Array(12).keys()].map(i=>i+1);
-    const W=640,H=Math.max(planets.length,houses.length)*26+20,px=90,hx=W-110;
-    const py=p=>20+planets.indexOf(p)*(H-20)/Math.max(1,planets.length-1||1);
-    const hy=h=>20+(h-1)*(H-20)/11;
-    const svg=document.createElementNS(NS,'svg');
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);
-    svg.setAttribute('style','max-width:100%;height:auto');
-    for(const e of edges){
-      const p=e.src.split(':')[1], h=+e.dst.split(':')[1], style=REL[e.relation];
-      const ln=document.createElementNS(NS,'path');
-      const x1=px+8,y1=py(p),x2=hx-8,y2=hy(h),mx=(x1+x2)/2;
-      ln.setAttribute('d',`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
-      ln.setAttribute('fill','none'); ln.setAttribute('stroke','var(--ink-2)');
-      ln.setAttribute('stroke-width',style.w); ln.setAttribute('stroke-dasharray',style.dash);
-      ln.setAttribute('opacity','0.45');
-      const ti=document.createElementNS(NS,'title');
-      ti.textContent=p+' '+e.relation.replace('_',' ')+' H'+h+(e.cite?' ('+e.cite+')':'');
-      ln.appendChild(ti); svg.appendChild(ln); }
-    planets.forEach(p=>{ const y=py(p);
-      const t=document.createElementNS(NS,'text');
-      t.setAttribute('x',px); t.setAttribute('y',y+4); t.setAttribute('text-anchor','end');
-      t.setAttribute('style','font-size:11px;fill:var(--ink);font-weight:600'); t.textContent=p;
-      svg.appendChild(t);
-      const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',px+8); c.setAttribute('cy',y); c.setAttribute('r','3.5');
-      c.setAttribute('fill','var(--accent-2)'); svg.appendChild(c); });
-    houses.forEach(h=>{ const y=hy(h);
-      const t=document.createElementNS(NS,'text');
-      t.setAttribute('x',hx); t.setAttribute('y',y+4);
-      t.setAttribute('style','font-size:11px;fill:var(--ink)');
-      t.textContent='H'+h+' · '+HNAME[h]; svg.appendChild(t);
-      const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',hx-8); c.setAttribute('cy',y); c.setAttribute('r','3.5');
-      c.setAttribute('fill','var(--mix)'); svg.appendChild(c); });
-    return svg;
-  }catch(e){ console.error('planet influence network failed:',e); return null; }
+    const verdict={};
+    for(const n of jg.nodes) if(n.kind==='house')
+      for(const kv of (n.data||[])) if(kv[0]==='verdict') verdict[+n.id.split(':')[1]]=kv[1];
+
+    const active={}; RELKEY.forEach(k=>active[k]=true);
+    let focus=null;                       // {kind:'planet'|'house', key}
+    const wrap=el('div',{});
+
+    // ---- relation toggles (also the legend: shape + colour per relation) ----
+    const chips=el('div',{class:'pillrow'});
+    for(const [key,label,color] of REL){
+      const c=el('button',{type:'button',class:'chip',style:'cursor:pointer'});
+      const dot=el('span',{style:'display:inline-block;width:.55rem;height:.55rem;'+
+        'border-radius:'+(key==='lord_of'?'50%':'2px')+';background:'+color+';margin-right:.3rem'});
+      c.append(dot, t(label));
+      c.onclick=()=>{ active[key]=!active[key]; c.style.opacity=active[key]?'1':'.4'; draw(); };
+      chips.append(c);
+    }
+    wrap.append(chips);
+
+    const host=el('div',{});
+    const detail=el('div',{class:'muted',style:'margin-top:.4rem;min-height:2.6em'});
+    wrap.append(host, detail);
+
+    function describe(){
+      detail.replaceChildren();
+      if(!focus){ detail.append(t('Tap a planet or a house to see exactly what connects it — or a cell for one relation.')); return; }
+      const lines=[];
+      if(focus.kind==='planet'){
+        for(const [key,label] of REL){
+          if(!active[key]) continue;
+          const hs=houses.filter(h=>(pairs[focus.key+'|'+h]||{})[key]);
+          if(hs.length) lines.push(label+': '+hs.map(h=>'H'+h+' ('+HNAME[h]+')').join(', '));
+        }
+        detail.append(el('b',{},focus.key), t(lines.length?' — ':' — no connections in the shown relations'));
+      }else{
+        for(const [key,label] of REL){
+          if(!active[key]) continue;
+          const ps=planets.filter(p=>(pairs[p+'|'+focus.key]||{})[key]);
+          if(ps.length) lines.push(label+': '+ps.join(', '));
+        }
+        detail.append(el('b',{},'H'+focus.key+' · '+HNAME[focus.key]),
+          t((verdict[focus.key]?' ('+verdict[focus.key]+')':'')+
+            (lines.length?' — ':' — no connections in the shown relations')));
+      }
+      lines.forEach((ln,i)=>{ if(i) detail.append(t(' · ')); detail.append(t(ln)); });
+    }
+
+    function draw(){
+      const padL=78, padT=44, cw=48, rh=34;
+      const W=padL+houses.length*cw+8, H=padT+planets.length*rh+10;
+      const s=svgBox(W,H);
+      // house column headers — verdict-tinted, clickable
+      houses.forEach((h,ci)=>{
+        const x=padL+ci*cw, dim=focus&&!(focus.kind==='house'&&focus.key===h);
+        const g=sv('g',{style:'cursor:pointer',opacity:dim?.35:1});
+        g.append(tip(sv('rect',{x:x,y:6,width:cw-3,height:padT-12,rx:3,
+          fill:tintBg(verdictColor(verdict[h])),opacity:.9}),
+          'H'+h+' · '+HNAME[h]+(verdict[h]?' — '+verdict[h]:'')));
+        g.append(sv('text',{x:x+(cw-3)/2,y:padT-20,'font-size':11,'text-anchor':'middle',
+          'font-weight':600,fill:verdictColor(verdict[h])},'H'+h));
+        g.append(sv('rect',{x:x,y:padT-12,width:cw-3,height:3,fill:verdictColor(verdict[h])}));
+        g.onclick=()=>{ focus=(focus&&focus.kind==='house'&&focus.key===h)?null:{kind:'house',key:h};
+          draw(); describe(); };
+        s.append(g);
+      });
+      planets.forEach((p,ri)=>{
+        const y=padT+ri*rh, dim=focus&&!(focus.kind==='planet'&&focus.key===p);
+        if(ri%2===0) s.append(sv('rect',{x:padL,y:y,width:houses.length*cw,height:rh,
+          fill:'var(--surface-2)',opacity:.35}));
+        const lg=sv('g',{style:'cursor:pointer',opacity:dim?.35:1});
+        lg.append(sv('text',{x:padL-8,y:y+rh*0.62,'font-size':11,'text-anchor':'end',
+          'font-weight':600,fill:'var(--ink)'},p));
+        lg.onclick=()=>{ focus=(focus&&focus.kind==='planet'&&focus.key===p)?null:{kind:'planet',key:p};
+          draw(); describe(); };
+        s.append(lg);
+        houses.forEach((h,ci)=>{
+          const rels=pairs[p+'|'+h]; if(!rels) return;
+          const on=RELKEY.filter(k=>rels[k]&&active[k]); if(!on.length) return;
+          const cellDim=focus&&!((focus.kind==='planet'&&focus.key===p)||
+                                 (focus.kind==='house'&&focus.key===h));
+          const x=padL+ci*cw;
+          on.forEach(k=>{
+            const idx=RELKEY.indexOf(k), color=REL[idx][2];
+            const gx=x+10+idx*10, gy=y+rh/2;
+            let mark;
+            if(k==='lord_of') mark=sv('circle',{cx:gx,cy:gy,r:4.2,fill:color});
+            else if(k==='occupies') mark=sv('rect',{x:gx-3.6,y:gy-3.6,width:7.2,height:7.2,rx:1,fill:color});
+            else if(k==='aspects') mark=sv('polygon',{points:(gx)+','+(gy-4.4)+' '+(gx+4)+','+(gy+3.4)+' '+(gx-4)+','+(gy+3.4),fill:color});
+            else mark=sv('polygon',{points:(gx)+','+(gy-4.4)+' '+(gx+4.4)+','+gy+' '+(gx)+','+(gy+4.4)+' '+(gx-4.4)+','+gy,fill:color});
+            mark.style.opacity=cellDim?.2:.95;
+            const ck=cites[p+'|'+h+'|'+k];
+            tip(mark, p+' '+REL[idx][1]+' H'+h+' ('+HNAME[h]+')'+(ck?' — '+ck:''));
+            s.append(mark);
+          });
+        });
+      });
+      host.replaceChildren(s);
+    }
+    draw(); describe();
+    return wrap;
+  }catch(e){ console.error('planet influence matrix failed:',e); return null; }
 }
 
 // ===== Muhurtha — "Today for you" (GET /electional/today, on demand only) =====
@@ -1721,9 +1801,9 @@ function render(R, S, FQ){
     const net=aspectNetwork(jg);
     if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
       'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
-    const pin=planetInfluenceNetwork(jg);
-    if(pin) add(vizCard('Planet influence network — which houses each planet touches, and why', pin,
-      'Every planet -> house edge already in the judgment graph, drawn directly: solid = lord of that house, dotted = karaka (natural significator) of it, fine dashed = casts a whole-sign aspect onto it, thin solid = occupies it. Houses carry their classical life-area label. Hover an edge for the exact relation and citation. A drawing of the graph, not a new claim.'));
+    const pin=planetInfluenceMatrix(jg);
+    if(pin) add(vizCard('Planet influence matrix — which houses each planet touches, and how', pin,
+      'Every planet → house connection the judgment graph already carries, one cell per pair (a grid, not crossing lines — nothing overlaps, so the whole structure reads at a glance). ● lord of that house · ■ occupies it · ▲ casts a whole-sign aspect onto it · ◆ is its karaka (natural significator). Column headers are tinted by the house\'s own natal verdict and carry its classical life-area. Tap a relation chip to show/hide it, tap a planet or a house to focus just its connections, hover any mark for the exact relation and citation. A drawing of the graph, not a new claim.'));
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
     const body=el('div',{class:'body'});

@@ -1127,51 +1127,110 @@ def _varga_card(label: str, body: str) -> str:
         + "</div></details>")
 
 
+#: planet -> house relations drawn in the influence matrix: (key, label, colour, glyph).
+#: Order is the column order INSIDE each cell, so the same relation always sits in the same
+#: sub-position and a column can be scanned down at a glance.
+_MATRIX_RELATIONS: tuple[tuple[str, str, str, str], ...] = (
+    ("lord_of", "lord of", "var(--afflicted)", "circle"),
+    ("occupies", "occupies", "var(--doctrine)", "square"),
+    ("aspects", "aspects", "var(--mixed)", "triangle"),
+    ("karaka_of", "karaka of", "var(--favourable)", "diamond"),
+)
+
+
 def _judgment_graph_svg(jg, planets: list[str]) -> str:
-    """The bipartite planet -> house influence network, ported from the interactive page's
-    `planetInfluenceNetwork` (report.html) to static server-side SVG — `<title>` elements give
-    native hover tooltips with no JS required. Empty string when there is nothing to draw."""
-    rel_style = {"lord_of": ("", 1.6), "occupies": ("", 1.0),
-                 "aspects": ("4,3", 1.0), "karaka_of": ("1,2", 1.4)}
-    edges = [e for e in jg.edges if e.src.startswith("planet:") and e.dst.startswith("house:")
-            and e.relation in rel_style and e.src.split(":")[1] in planets]
-    if not edges or not planets:
-        return ""
-    houses = list(range(1, 13))
-    w, px, hx = 640, 90, 530
-    h_total = max(len(planets), len(houses)) * 26 + 20
-
-    def py(p: str) -> float:
-        return 20 + planets.index(p) * (h_total - 20) / max(1, len(planets) - 1 or 1)
-
-    def hy(h: int) -> float:
-        return 20 + (h - 1) * (h_total - 20) / 11
-
-    parts: list[str] = []
-    for e in edges:
+    """The planet -> house influence MATRIX (mirrors the interactive page's
+    `planetInfluenceMatrix`), as static server-side SVG — `<title>` elements give native hover
+    tooltips with no JS. A grid, not a node-link diagram: ~90 planet->house edges drawn as
+    curved lines cross into unreadable spaghetti, whereas one cell per (planet, house) pair
+    never overlaps. Empty string when there is nothing to draw."""
+    rel_keys = [r[0] for r in _MATRIX_RELATIONS]
+    pairs: dict[tuple[str, int], dict[str, str]] = {}
+    for e in jg.edges:
+        if not (e.src.startswith("planet:") and e.dst.startswith("house:")):
+            continue
+        if e.relation not in rel_keys:
+            continue
         p = e.src.split(":")[1]
-        hn = int(e.dst.split(":")[1])
-        dash, sw = rel_style[e.relation]
-        x1, y1, x2, y2 = px + 8.0, py(p), hx - 8.0, hy(hn)
-        mx = (x1 + x2) / 2
-        title = f"{p} {e.relation.replace('_', ' ')} H{hn}" + (f" ({e.cite})" if e.cite else "")
-        parts.append(
-            f'<path d="M{x1:.1f},{y1:.1f} C{mx:.1f},{y1:.1f} {mx:.1f},{y2:.1f} {x2:.1f},{y2:.1f}" '
-            f'fill="none" stroke="var(--ink-soft)" stroke-width="{sw}" '
-            f'stroke-dasharray="{dash}" opacity="0.45"><title>{_esc(title)}</title></path>')
-    for p in planets:
-        y = py(p)
-        parts.append(f'<text x="{px}" y="{y + 4:.1f}" text-anchor="end" '
-                     f'style="font-size:11px;fill:var(--ink);font-weight:600">{_esc(p)}</text>')
-        parts.append(f'<circle cx="{px + 8}" cy="{y:.1f}" r="3.5" fill="var(--doctrine)"/>')
-    for hn in houses:
-        y = hy(hn)
-        parts.append(f'<text x="{hx}" y="{y + 4:.1f}" style="font-size:11px;fill:var(--ink)">'
-                     f'H{hn} &middot; {_esc(_HOUSE_NAME.get(hn, ""))}</text>')
-        parts.append(f'<circle cx="{hx - 8}" cy="{y:.1f}" r="3.5" fill="var(--instrument)"/>')
+        if p not in planets:
+            continue
+        # dedupe: a planet is (say) karaka of a house ONCE, even when several significations
+        # assert it — the mark reflects the relation, not how many edges carry it.
+        pairs.setdefault((p, int(e.dst.split(":")[1])), {})[e.relation] = e.cite or ""
+    if not pairs:
+        return ""
+
+    order = ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+    present = {p for p, _h in pairs}
+    rows = [p for p in order if p in present]
+    houses = list(range(1, 13))
+    verdict = {int(n.id.split(":")[1]): dict(n.data).get("verdict", "")
+               for n in jg.nodes if n.kind == "house"}
+
+    pad_l, pad_t, cw, rh = 78, 44, 48, 34
+    w = pad_l + len(houses) * cw + 8
+    h_total = pad_t + len(rows) * rh + 10
+    parts: list[str] = []
+
+    for ci, hn in enumerate(houses):
+        x = pad_l + ci * cw
+        vc = _vclass(verdict.get(hn, ""))
+        col = {"favourable": "var(--favourable)", "afflicted": "var(--afflicted)"}.get(
+            vc, "var(--mixed)")
+        title = f"H{hn} · {_HOUSE_NAME.get(hn, '')}" + (
+            f" — {verdict[hn]}" if verdict.get(hn) else "")
+        parts.append(f'<rect x="{x}" y="6" width="{cw - 3}" height="{pad_t - 12}" rx="3" '
+                     f'fill="{col}" opacity="0.12"><title>{_esc(title)}</title></rect>')
+        parts.append(f'<text x="{x + (cw - 3) / 2:.1f}" y="{pad_t - 20}" font-size="11" '
+                     f'text-anchor="middle" font-weight="600" fill="{col}">H{hn}</text>')
+        parts.append(f'<rect x="{x}" y="{pad_t - 12}" width="{cw - 3}" height="3" fill="{col}"/>')
+
+    for ri, p in enumerate(rows):
+        y = pad_t + ri * rh
+        if ri % 2 == 0:
+            parts.append(f'<rect x="{pad_l}" y="{y}" width="{len(houses) * cw}" height="{rh}" '
+                         f'fill="var(--ink-soft)" opacity="0.06"/>')
+        parts.append(f'<text x="{pad_l - 8}" y="{y + rh * 0.62:.1f}" font-size="11" '
+                     f'text-anchor="end" font-weight="600" fill="var(--ink)">{_esc(p)}</text>')
+        for ci, hn in enumerate(houses):
+            rels = pairs.get((p, hn))
+            if not rels:
+                continue
+            for idx, (key, label, colour, glyph) in enumerate(_MATRIX_RELATIONS):
+                if key not in rels:
+                    continue
+                gx = pad_l + ci * cw + 10 + idx * 10
+                gy = y + rh / 2
+                cite = rels[key]
+                title = (f"{p} {label} H{hn} ({_HOUSE_NAME.get(hn, '')})"
+                        + (f" — {cite}" if cite else ""))
+                tt = f"<title>{_esc(title)}</title>"
+                if glyph == "circle":
+                    parts.append(f'<circle cx="{gx}" cy="{gy:.1f}" r="4.2" fill="{colour}" '
+                                 f'opacity="0.95">{tt}</circle>')
+                elif glyph == "square":
+                    parts.append(f'<rect x="{gx - 3.6}" y="{gy - 3.6:.1f}" width="7.2" '
+                                 f'height="7.2" rx="1" fill="{colour}" opacity="0.95">{tt}</rect>')
+                elif glyph == "triangle":
+                    parts.append(
+                        f'<polygon points="{gx},{gy - 4.4:.1f} {gx + 4},{gy + 3.4:.1f} '
+                        f'{gx - 4},{gy + 3.4:.1f}" fill="{colour}" opacity="0.95">{tt}</polygon>')
+                else:
+                    parts.append(
+                        f'<polygon points="{gx},{gy - 4.4:.1f} {gx + 4.4},{gy:.1f} '
+                        f'{gx},{gy + 4.4:.1f} {gx - 4.4},{gy:.1f}" fill="{colour}" '
+                        f'opacity="0.95">{tt}</polygon>')
+
+    legend = " &middot; ".join(
+        f'<span style="color:{c}">{"●" if g == "circle" else "■" if g == "square" else "▲" if g == "triangle" else "◆"}</span> {lb}'
+        for _k, lb, c, g in _MATRIX_RELATIONS)
     body = "".join(parts)
-    return (f'<svg viewBox="0 0 {w} {h_total}" style="max-width:100%;height:auto" role="img" '
-           f'aria-label="Judgment graph — planet to house influence">{body}</svg>')
+    return (f'<p class="section-sub">{legend} &mdash; one cell per planet/house pair; column '
+            f'headers are tinted by that house&rsquo;s own natal verdict. Hover any mark for '
+            f'the exact relation and citation.</p>'
+            f'<div class="tablewrap"><svg viewBox="0 0 {w} {h_total}" '
+            f'style="max-width:100%;height:auto;min-width:{w}px" role="img" '
+            f'aria-label="Judgment graph — planet to house influence matrix">{body}</svg></div>')
 
 
 def _judgment_graph_section(r: DetailedReport) -> str:

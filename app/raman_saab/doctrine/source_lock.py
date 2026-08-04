@@ -70,9 +70,11 @@ def iter_citations() -> Iterator[Citation]:
     # The graha-chapter line-range tables (HPA-21/22/24/34) — verbatim-quote anchors.
     from app.raman_saab.doctrine.lookups.graha_chapters import (
         CITED_ANCHORS as _GRAHA_ANCHORS)
+    from app.raman_saab.karmic_evolution import CITED_ANCHORS as _KARMIC_ANCHORS
     from app.raman_saab.monographs import CITED_ANCHORS as _MONOGRAPH_ANCHORS
     yield from _GRAHA_ANCHORS
     yield from _MONOGRAPH_ANCHORS
+    yield from _KARMIC_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:

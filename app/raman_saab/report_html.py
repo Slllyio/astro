@@ -2030,6 +2030,25 @@ def to_html(r: DetailedReport) -> str:
                    f'<p class="section-sub">the soul\'s inclination</p>'
                    f'<ul class="doclist">{km}</ul>')
     extras += _soul_section(r)
+    if r.karmic is not None:
+        kv = r.karmic
+        krows = [("Atmakaraka", _esc(kv.atmakaraka) + " (the 7-karaka scheme, locked)")]
+        if kv.karakamsa:
+            krows.append(("Karakamsa", _esc(kv.karakamsa)))
+        if kv.upapada:
+            krows.append(("Upapada", _esc(kv.upapada)))
+        krows.append(("Raman's Jaimini doctrine (verbatim)",
+                      f"&ldquo;{_esc(kv.doctrine_quote)}&rdquo; "
+                      f"<i>({_esc(kv.doctrine_cite)})</i>"))
+        if kv.d20_core:
+            krows.append(("D-20 Vimsamsa (spiritual) core", _esc(kv.d20_core)))
+        if kv.d60_core:
+            krows.append(("D-60 Shashtiamsa (totality) core", _esc(kv.d60_core)))
+        kbody = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                        f'<span class="vv">{v}</span></div>' for k, v in krows)
+        extras += ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
+                   f'<p class="section-sub"><i>{_esc(kv.frame)}</i></p>'
+                   f'<div class="vsec">{kbody}</div>')
     extras += _pitru_section(r)
 
     return f"""<style>{_CSS}</style>

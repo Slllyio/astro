@@ -568,6 +568,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"', "v1"),
     SectionSpec("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"', "v1"),
     SectionSpec("soul", "## Soul & destiny", 'id="soul"', "v2"),
+    # v30 (2026-08-04, user-requested, enabled by the JAIMINI lift): the karmic-evolution
+    # chapter — AK, Karakamsa, Upapada, the JAIMINI-9 doctrine verbatim, D-20/D-60 cores;
+    # walled (natal verdicts never touched); after the soul reading it deepens.
+    SectionSpec("karmic", "## Karmic evolution (Jaimini)", 'id="karmic"', "v30"),
     SectionSpec("pitru", "## Pitru dosha", 'id="pitru"', "v2"),
     # v3 (2026-07-25, conscious amendment): inserted BEFORE glossary so the reference material
     # stays last; _FROZEN in the contract test was amended in the same commit per the procedure.
@@ -599,7 +603,8 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "gochara", "dasha_transit",
     "divisional", "career", "profession", "wealth", "marriage", "children",
     "deeptadi",
-    "karakamsa", "soul", "pitru", "synthesis", "life_synthesis", "glossary", "nichod",
+    "karakamsa", "soul", "karmic", "pitru", "synthesis", "life_synthesis", "glossary",
+    "nichod",
 )
 
 
@@ -1366,6 +1371,7 @@ class DetailedReport:
     psych: object = None                             # psychological profile (v27)
     decades: object = None                           # decade indication timeline (v28)
     life_synthesis: object = None                    # the biography-closing chapter (v29)
+    karmic: object = None                            # Jaimini karmic evolution (v30)
 
 
 @dataclass(frozen=True)
@@ -2525,6 +2531,11 @@ def build_detailed_report(
     from app.raman_saab.life_arc import build_decade_timeline
     try:
         enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
+    except Exception:  # noqa: BLE001
+        pass
+    from app.raman_saab.karmic_evolution import build_karmic_evolution
+    try:
+        enriched = _dc_replace(enriched, karmic=build_karmic_evolution(enriched))
     except Exception:  # noqa: BLE001
         pass
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
@@ -3745,6 +3756,27 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("```")
     L.append(_clean_box(render_soul.to_text(r.soul)).strip("\n"))
     L.append("```")
+
+    # ── karmic evolution (v30 — the walled Jaimini layer, post-lift) ──────────
+    if r.karmic is not None:
+        kv = r.karmic
+        L.append("")
+        L.append("## Karmic evolution (Jaimini)")
+        L.append("")
+        L.append(f"_{kv.frame}_")
+        L.append("")
+        L.append(f"- **Atmakaraka** — {kv.atmakaraka} (the 7-karaka scheme, locked)")
+        if kv.karakamsa:
+            L.append(f"- **Karakamsa** — {kv.karakamsa}")
+        if kv.upapada:
+            L.append(f"- **Upapada** — {kv.upapada}")
+        L.append(f"- **Raman's Jaimini doctrine (verbatim)** — \"{kv.doctrine_quote}\" "
+                 f"({kv.doctrine_cite})")
+        if kv.d20_core:
+            L.append(f"- **D-20 Vimsamsa (spiritual) core** — {kv.d20_core}")
+        if kv.d60_core:
+            L.append(f"- **D-60 Shashtiamsa (totality) core** — {kv.d60_core}")
+        L.append("")
 
     # ── pitru dosha screen (non-Raman provenance, clearly bannered) ───────────
     L.append("")

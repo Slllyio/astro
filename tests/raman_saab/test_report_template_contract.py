@@ -123,6 +123,9 @@ _FROZEN = (
     ("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"'),
     ("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"'),
     ("soul", "## Soul & destiny", 'id="soul"'),
+    # v30 amendment (2026-08-04, conscious, same-commit as the module, enabled by the
+    # JAIMINI lift): the karmic-evolution chapter, after the soul reading it deepens.
+    ("karmic", "## Karmic evolution (Jaimini)", 'id="karmic"'),
     ("pitru", "## Pitru dosha", 'id="pitru"'),
     # v3 amendment (2026-07-25, conscious, same-commit as the module): Integrated insights
     # inserted before the glossary so reference material stays last.
@@ -214,7 +217,7 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29"}
+            "v25", "v26", "v27", "v28", "v29", "v30"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -244,6 +247,33 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v27") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v28") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v29") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
+
+
+class TestKarmicEvolution:
+    """v30 — the walled Jaimini layer: verbatim doctrine, resolving cite, walls hold."""
+
+    def test_renders_in_every_surface_with_a_resolving_cite(self, report, markdown, html):
+        from app.raman_saab.doctrine.sources import Citation, verify
+        from app.raman_saab.report_json import to_report_dict
+        kv = report.karmic
+        assert kv is not None
+        assert "## Karmic evolution (Jaimini)" in markdown
+        assert 'id="karmic"' in html
+        assert to_report_dict(report)["karmic"] is not None
+        assert len(kv.doctrine_quote) > 200
+        work, line = kv.doctrine_cite.rsplit(":", 1)
+        assert verify(Citation(work, int(line)))
+        assert kv.atmakaraka in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus",
+                                 "Saturn")   # the 7-karaka lock: never a node
+
+    def test_natal_verdict_path_never_imports_the_karmic_layer(self):
+        import inspect
+
+        from app.raman_saab import proforma, synthesis
+        from app.raman_saab.judges import house_judge, house_template
+        for mod in (house_template, house_judge, proforma, synthesis):
+            assert "karmic_evolution" not in inspect.getsource(mod), mod.__name__
 
 
 class TestWaveB:

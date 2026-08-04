@@ -134,3 +134,60 @@ async def test_chart_calculate_still_works_for_shell(client) -> None:
     assert "d1" in body
     assert "ascendant" in body
     assert "current_mahadasha" in body
+
+
+# ---------------------------------------------------------------------------
+# Marketing landing page (2026-08-05) — GET /landing
+#
+# A standalone pitch surface, separate from `/` (the working app shell). It is the
+# one page deliberately built on CDN React/Tailwind/GSAP instead of this repo's
+# self-contained vanilla convention, which is safe only because it carries no data
+# surface. Its COPY, however, is bound by the Measured-Truth directive, and that is
+# what these tests actually guard.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_landing_returns_html(client) -> None:
+    """GET /landing serves the marketing page as HTML, not JSON."""
+    response = await client.get("/landing")
+    assert response.status_code == 200
+    assert "text/html" in response.headers.get("content-type", "")
+
+
+@pytest.mark.asyncio
+async def test_landing_states_both_fidelity_and_the_null_result(client) -> None:
+    """Measured Truth, enforced on the marketing surface.
+
+    The project's binding directive is that the two accuracy axes are reported side by
+    side and never averaged or cherry-picked. A landing page that quoted 88.4% fidelity
+    while quietly dropping the null real-outcome finding would be exactly the overclaim
+    the directive exists to prevent — so both must be present."""
+    body = (await client.get("/landing")).text
+    assert "88.4%" in body, "the measured fidelity figure must appear"
+    assert "NULL" in body, "the null real-outcome result must appear alongside it"
+    assert "22,177" in body, "the tested-chart count must appear"
+
+
+@pytest.mark.asyncio
+async def test_landing_never_claims_to_predict(client) -> None:
+    """No decree/prediction language on the pitch, mirroring the report's own guard."""
+    body = (await client.get("/landing")).text.lower()
+    for banned in ("predict your future", "will happen", "guaranteed", "foretell"):
+        assert banned not in body, f"landing page overclaims: {banned!r}"
+
+
+@pytest.mark.asyncio
+async def test_landing_cdn_scripts_carry_integrity_hashes(client) -> None:
+    """Every CDN script that CAN carry Subresource Integrity does.
+
+    Tailwind is the sole documented exception: cdn.tailwindcss.com sends no
+    Access-Control-Allow-Origin, and SRI requires a CORS fetch, so adding integrity
+    there makes the browser block it and the page renders unstyled."""
+    body = (await client.get("/landing")).text
+    import re
+    tags = re.findall(r'<script[^>]*src="(https://[^"]+)"[^>]*>', body)
+    external = [t for t in tags if "cdn.tailwindcss.com" not in t]
+    assert external, "expected external CDN scripts on the landing page"
+    for src in external:
+        seg = body[body.index(f'src="{src}"'):][:400]
+        assert "integrity=\"sha384-" in seg, f"missing SRI hash for {src}"

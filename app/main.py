@@ -156,3 +156,23 @@ async def root() -> HTMLResponse:
             detail=f"Shell template missing at {html_path}",
         )
     return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+
+
+@app.get("/landing", response_class=HTMLResponse)
+async def landing() -> HTMLResponse:
+    """Marketing landing page — the outward-facing pitch, distinct from `/` (the working
+    app shell). Deliberately built on React/Tailwind/GSAP over CDN rather than this repo's
+    self-contained vanilla convention: it is a standalone marketing artefact with no data
+    surface, so the no-CDN rule that protects the report page does not apply here. It does
+    reuse the app's own manuscript palette so the pitch and the product look like one thing.
+
+    Its copy is bound by the Measured-Truth directive: the page states the 88.4% fidelity
+    figure AND the null real-outcome result, and never presents the engine as a validated
+    predictor of lives."""
+    html_path = _APP_TEMPLATES_DIR / "landing.html"
+    if not html_path.exists():
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Landing template missing at {html_path}",
+        )
+    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))

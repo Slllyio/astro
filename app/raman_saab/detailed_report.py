@@ -2700,7 +2700,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("### What shapes each area of your life")
         L.append("")
         L.append("| House | Verdict | What touches it | Natural significators | "
-                 "Periods that light it |")
+                 "Periods that light it (at best) |")
         L.append("|---|---|---|---|---|")
         for _h, _f in sorted(house_facts(_jg).items()):
             _tm = "; ".join(f"{lord}{f' ({g})' if g else ''}" for lord, g in _f.timers)

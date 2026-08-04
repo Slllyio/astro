@@ -360,6 +360,40 @@ class TestJudgmentGraphSection:
             assert f"**{n}** edges record how the report's own sections relate" in markdown
             assert "How to read this report" in markdown
 
+    def test_timer_grade_is_the_peak_not_whichever_bhukti_came_first(self, report):
+        """A Mahadasha lights a house at different tiers in different bhuktis (measured: 24
+        of 36 pairs on the canonical chart). One grade per MD is a summary, so it must be
+        the STRONGEST the house reaches — the earlier `setdefault` kept whichever bhukti
+        happened to come first and understated 7 of them (Saturn/H2 read 'limited' when it
+        actually reaches 'par excellence'). Every surface labels it 'at best'."""
+        from app.raman_saab.judgment_graph import (PLAIN_TIER, _tier_rank,
+                                                   build_judgment_graph, house_facts)
+        best: dict[tuple[int, str], str] = {}
+        run, cur = -1, None
+        for tp in report.timeline.periods:
+            if tp.period.maha != cur:
+                run, cur = run + 1, tp.period.maha
+            for a in tp.activated:
+                key = (run, a.house)
+                if key not in best or _tier_rank(a.grade) < _tier_rank(best[key]):
+                    best[key] = a.grade
+        peaks: dict[int, set[str]] = {}
+        for (_run, h), g in best.items():
+            peaks.setdefault(h, set()).add(PLAIN_TIER.get(g.replace("_", " "),
+                                                          g.replace("_", " ")))
+        for h, f in house_facts(build_judgment_graph(report)).items():
+            for _lord, grade in f.timers:
+                assert grade in peaks.get(h, set()), (
+                    f"H{h} timer grade {grade!r} is not a peak grade for that house")
+
+    def test_unknown_tier_never_ranks_as_strongest(self):
+        """A grade the scheme does not know must sort LAST, never silently 'best'."""
+        from app.raman_saab.judgment_graph import _tier_rank
+        assert _tier_rank("par excellence") == 0
+        assert _tier_rank("par_excellence") == 0          # underscore form from provenance
+        assert _tier_rank("bogus") > _tier_rank("feeble")
+        assert _tier_rank("") > _tier_rank("feeble")
+
     def test_house_sentence_uses_only_chart_specific_roles(self, report):
         """Karaka is ~39% chart-specific (Venus is karaka of the 7th in EVERY chart), so it
         is reported separately rather than repeated through the sentence."""

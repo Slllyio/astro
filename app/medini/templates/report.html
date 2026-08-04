@@ -1462,7 +1462,7 @@ function jgHouseCards(jg){
       const seen={}, tl=[];
       for(const x of f.timers){ const k=x.lord+'|'+x.grade; if(seen[k])continue; seen[k]=1;
         tl.push(x.lord+(x.grade?' ('+x.grade+')':'')); }
-      body.append(para(t('Periods that light this house')+': '+tl.join(', '),'muted')); }
+      body.append(para(t('Periods that light this house (at best)')+': '+tl.join(', '),'muted')); }
     body.append(para(t('Full reading for this house is in House-by-house below.'),'muted'));
     card.append(body); wrap.append(card); }
   return wrap;

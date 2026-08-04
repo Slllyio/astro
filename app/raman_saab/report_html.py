@@ -1275,7 +1275,7 @@ def _judgment_graph_section(r: DetailedReport) -> str:
                        + _esc(", ".join(f.karakas)) + '</p>')
         timers = ""
         if f.timers:
-            timers = ('<p class="section-sub">Periods that light this house: '
+            timers = ('<p class="section-sub">Periods that light this house (at best): '
                       + _esc(", ".join(f"{lord}{f' ({g})' if g else ''}"
                                        for lord, g in f.timers)) + '</p>')
         cards.append(

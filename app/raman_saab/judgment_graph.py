@@ -80,6 +80,17 @@ class JudgmentGraph:
         return frozenset(n.id for n in self.nodes)
 
 
+#: strongest -> weakest, Raman's four-tier fructification scheme (HTJAH-I:1592-1596).
+#: Mirrors `detailed_report._TIER_ORDER`; kept local so this module stays import-light.
+_TIER_RANK: Final[tuple[str, ...]] = ("par excellence", "ordinary", "limited", "feeble")
+
+
+def _tier_rank(grade: str) -> int:
+    """Rank of a grade, 0 = strongest. Unknown grades sort last (never silently 'best')."""
+    g = (grade or "").replace("_", " ")
+    return _TIER_RANK.index(g) if g in _TIER_RANK else len(_TIER_RANK)
+
+
 def build_judgment_graph(r: "DetailedReport") -> JudgmentGraph:
     """Assemble the graph from the report's already-computed objects. Deterministic:
     node and edge order follows the fixed iteration orders below."""
@@ -157,7 +168,14 @@ def build_judgment_graph(r: "DetailedReport") -> JudgmentGraph:
             maha, was_current = run_meta[run_idx]
             run_meta[run_idx] = (maha, was_current or p.start_jd <= r.ref_jd < p.end_jd)
         for a in tp.activated:
-            lit_by_run.setdefault(run_idx, {}).setdefault(a.house, a.grade)
+            # Keep the STRONGEST grade the house reaches anywhere in this Mahadasha, not
+            # whichever bhukti happened to come first (the previous `setdefault` silently
+            # dropped a later par-excellence in favour of an earlier feeble). Raman grades
+            # the MD/AD COMBINATION, so one grade per MD is already a summary; recording
+            # the peak makes it a defensible one, and consumers label it as a peak.
+            _cur = lit_by_run.setdefault(run_idx, {}).get(a.house)
+            if _cur is None or _tier_rank(a.grade) < _tier_rank(_cur):
+                lit_by_run[run_idx][a.house] = a.grade
     for i in sorted(run_meta):
         maha, is_current = run_meta[i]
         pid = f"dasha_period:{i}:{maha}"
@@ -271,7 +289,11 @@ class HouseFacts:
     verdict: str
     roles: dict[str, tuple[str, ...]]        # relation -> planets, insertion-ordered
     karakas: tuple[str, ...]
-    timers: tuple[tuple[str, str], ...]      # (dasha lord, activation grade)
+    #: (Mahadasha lord, PEAK activation grade in plain words). One grade per Mahadasha is a
+    #: summary — Raman grades the MD/AD combination — so this is the strongest tier the house
+    #: reaches during that period, and every surface labels it "at best" rather than implying
+    #: the whole period holds it.
+    timers: tuple[tuple[str, str], ...]
 
 
 def house_facts(g: JudgmentGraph) -> dict[int, HouseFacts]:

@@ -49,6 +49,9 @@ _FROZEN = (
     # planet biographies — the dominant grahas by judgment-graph census, after the ruler
     # card they generalize.
     ("planet_bios", "## Planet biographies (dominant grahas)", 'id="planet-bios"'),
+    # v27 amendment (2026-08-04, conscious, same-commit as the module, user-requested):
+    # the psychological profile, after the planet cluster it re-reads.
+    ("psych", "## Psychological profile", 'id="psych"'),
     ("chart_grids", None, 'id="charts"'),
     ("positions", "## Planetary positions", 'id="positions"'),
     ("shadbala", "## Shadbala", 'id="shadbala"'),
@@ -110,6 +113,10 @@ _FROZEN = (
     # Career line they extend.
     ("profession", "## Profession synthesis", 'id="profession"'),
     ("wealth", "## Wealth chapter", 'id="wealth"'),
+    # v25/v26 amendments (2026-08-04, conscious, same-commit as the module,
+    # user-requested): the marriage monograph and children chapter.
+    ("marriage", "## Marriage monograph", 'id="marriage"'),
+    ("children", "## Children chapter", 'id="children"'),
     ("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"'),
     ("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"'),
     ("soul", "## Soul & destiny", 'id="soul"'),
@@ -195,11 +202,13 @@ class TestTemplateContract:
         Preponderance of testimonies, v15 the Life-chapters, v16 the Dasha Kakshya intervals,
         v17 the Health & vulnerability read-out, v18 the interpretation guide, v19 the
         ranked digest, v20 the planet biographies, v21 the yoga deep-read, v22 Arishta &
-        Bhanga, v23 the profession synthesis, v24 the wealth chapter — the higher-order
-        synthesis sections)."""
+        Bhanga, v23 the profession synthesis, v24 the wealth chapter, v25 the marriage
+        monograph, v26 the children chapter, v27 the psychological profile — the
+        higher-order synthesis sections)."""
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
-            "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24"}
+            "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
+            "v25", "v26", "v27"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -224,6 +233,55 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v22") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v23") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v24") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v25") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v26") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v27") == 1
+
+
+class TestMonographsV25toV27:
+    """Wave A: marriage, children, psychology — verbatim quotes resolve, walls hold."""
+
+    def test_all_three_render_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        for marker, anchor, key in (
+                ("## Marriage monograph", 'id="marriage"', "marriage"),
+                ("## Children chapter", 'id="children"', "children"),
+                ("## Psychological profile", 'id="psych"', "psych")):
+            assert marker in markdown, marker
+            assert anchor in html, anchor
+            assert d[key] is not None, key
+
+    def test_marriage_quotes_and_fired_rules(self, report):
+        m = report.marriage
+        assert m is not None
+        assert len(m.seventh_covers) > 100          # the scope quote
+        assert len(m.separation_quote) > 100        # the labeled verbatim block
+        assert m.verdict                            # unchanged H7 rollup
+        for _b, _t, cite in m.fired_kalatra:
+            from app.raman_saab.doctrine.sources import Citation, verify
+            work, line = cite.rsplit(":", 1)
+            assert verify(Citation(work, int(line))), cite
+
+    def test_children_combos_quoted_whole(self, report):
+        c = report.children
+        assert c is not None and len(c.combos_quote) > 200
+        assert c.significations and c.verdict
+
+    def test_psych_lagna_quote_matches_the_ascendant(self, report):
+        ps = report.psych
+        assert ps is not None
+        from app.raman_saab.doctrine.sources import Citation, verify
+        work, line = ps.lagna_quote[1].rsplit(":", 1)
+        assert verify(Citation(work, int(line)))
+        from app.raman_saab.monographs import LAGNA_BLOCKS
+        assert int(line) == LAGNA_BLOCKS[report.chart.asc_sign][0]
+
+    def test_composed_prose_passes_the_guard(self, report):
+        """The woven/composed strings (not the labeled verbatim quotes) are guard-safe."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        ps = report.psych
+        assert _FORBIDDEN_RE.search(ps.woven) is None
 
 
 class TestChaptersV22toV24:

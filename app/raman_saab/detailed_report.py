@@ -474,6 +474,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # keyword tier always carries the MODERN_SYNTHESIS banner.
     SectionSpec("planet_bios", "## Planet biographies (dominant grahas)",
                 'id="planet-bios"', "v20"),
+    # v27 (2026-08-04, user-requested): the psychological profile — the computed mind
+    # stack (HPA-18 lagna portrait quoted verbatim, Moon manas state, temperament,
+    # nature stamp, AK) woven into one profile; follows the planet cluster it re-reads.
+    SectionSpec("psych", "## Psychological profile", 'id="psych"', "v27"),
     SectionSpec("chart_grids", None, 'id="charts"', "v1"),
     SectionSpec("positions", "## Planetary positions", 'id="positions"', "v1"),
     SectionSpec("shadbala", "## Shadbala", 'id="shadbala"', "v2"),
@@ -553,6 +557,10 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # from the judged significations + the cited source-of-gains tables, with the
     # expansion periods from the timeline's own H2/H11 activations.
     SectionSpec("wealth", "## Wealth chapter", 'id="wealth"', "v24"),
+    # v25/v26 (2026-08-04, user-requested): the marriage monograph and children chapter —
+    # HTJAH mined verbatim by frozen range + the fired kalatra/putra rules + timing.
+    SectionSpec("marriage", "## Marriage monograph", 'id="marriage"', "v25"),
+    SectionSpec("children", "## Children chapter", 'id="children"', "v26"),
     SectionSpec("deeptadi", "## Deeptadi avasthas", 'id="deeptadi"', "v1"),
     SectionSpec("karakamsa", "## Jaimini Karakamsa", 'id="karakamsa"', "v1"),
     SectionSpec("soul", "## Soul & destiny", 'id="soul"', "v2"),
@@ -569,7 +577,8 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "ruler", "planet_bios", "now_box",
+    "title", "plain_reading", "chart_signature", "ruler", "planet_bios", "psych",
+    "now_box",
     "info_content", "interpretation_guide", "stands_out", "digest",
     "dashboard",
     "chart_grids", "positions", "shadbala", "yogas", "yoga_timing", "yoga_deep",
@@ -580,7 +589,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
     "life_chapters",
     "gochara", "dasha_transit",
-    "divisional", "career", "profession", "wealth",
+    "divisional", "career", "profession", "wealth", "marriage", "children",
     "deeptadi",
     "karakamsa", "soul", "pitru", "synthesis", "glossary", "nichod",
 )
@@ -1344,6 +1353,9 @@ class DetailedReport:
     arishta: object = None                           # Arishta & Bhanga chapter (v22)
     profession: object = None                        # profession synthesis (v23)
     wealth: object = None                            # the wealth chapter (v24)
+    marriage: object = None                          # marriage monograph (v25)
+    children: object = None                          # children chapter (v26)
+    psych: object = None                             # psychological profile (v27)
 
 
 @dataclass(frozen=True)
@@ -2486,10 +2498,16 @@ def build_detailed_report(
     from app.raman_saab.arishta_wealth_profession import (build_arishta_chapter,
                                                           build_profession_synthesis,
                                                           build_wealth_chapter)
+    from app.raman_saab.monographs import (build_children_chapter,
+                                           build_marriage_monograph,
+                                           build_psych_profile)
     # one try per builder — a failure in one chapter must never silence the others
     for _field, _builder in (("arishta", build_arishta_chapter),
                              ("profession", build_profession_synthesis),
-                             ("wealth", build_wealth_chapter)):
+                             ("wealth", build_wealth_chapter),
+                             ("marriage", build_marriage_monograph),
+                             ("children", build_children_chapter),
+                             ("psych", build_psych_profile)):
         try:
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
@@ -2805,6 +2823,27 @@ def to_markdown(r: DetailedReport) -> str:
                 L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
                          f"{', '.join(b.themes_modern)}")
             L.append("")
+
+    # ── psychological profile (v27 — the mind stack woven) ────────────────────
+    if r.psych is not None:
+        ps = r.psych
+        L.append("## Psychological profile")
+        L.append("")
+        L.append(f"_{ps.woven}_")
+        L.append("")
+        L.append(f"- **The rising sign's portrait (Raman verbatim)** — "
+                 f"\"{ps.lagna_quote[0]}\" ({ps.lagna_quote[1]})")
+        if ps.moon_state:
+            L.append(f"- **The mind's significator** — {ps.moon_state}")
+        if ps.temperament:
+            L.append(f"- **Temperament of the strongest planet** — {ps.temperament} "
+                     f"(HTJAH-I:6248-6268)")
+        if ps.nature_stamp:
+            L.append(f"- **Nature & appearance stamped by** — {ps.nature_stamp} "
+                     f"(HTJAH-I:3892-3897)")
+        if ps.atmakaraka:
+            L.append(f"- **Atmakaraka** — {ps.atmakaraka} (the 7-karaka scheme)")
+        L.append("")
 
     # ── planet positions (a reading must be checkable) ────────────────────────
     L.append("## Planetary positions")
@@ -3567,6 +3606,65 @@ def to_markdown(r: DetailedReport) -> str:
                      "better — a timing lens, never a promise): "
                      + "; ".join(w.expansion_periods))
             L.append("")
+
+    # ── marriage monograph (v25) ──────────────────────────────────────────────
+    if r.marriage is not None:
+        from app.raman_saab.monographs import MARRIAGE_INTRO as _MI
+        m = r.marriage
+        L.append("## Marriage monograph")
+        L.append("")
+        L.append(f"**The 7th house's scope (Raman verbatim):** \"{m.seventh_covers}\" "
+                 f"(HTJAH-II:{_MI[0]})")
+        L.append("")
+        L.append(f"- **Headline (unchanged H7 verdict)** — {m.verdict}")
+        if m.lord_period_text:
+            L.append(f"- **The 7th lord in house {m.lord_placement_house} (Raman "
+                     f"verbatim, his periods)** — \"{m.lord_period_text}\" "
+                     f"(HTJAH-II:710)")
+        if m.spouse_sign_text:
+            L.append(f"- **The partner's significator in its sign (HPA-22)** — "
+                     f"\"{m.spouse_sign_text[0]}\" ({m.spouse_sign_text[1]})")
+        if m.upapada:
+            L.append(f"- **Upapada** — {m.upapada}")
+        if m.fired_kalatra:
+            L.append("- **Kalatra rules firing in THIS chart** (of the 50 encoded):")
+            for branch, text, cite in m.fired_kalatra:
+                L.append(f"  - ({branch}) {text} ({cite})")
+        L.append(f"- **Timing doctrine (Raman verbatim)** — \"{m.timing_navamsa}\" "
+                 f"(HTJAH-II:853)")
+        if m.timing_windows:
+            L.append(f"- **H7 activations in the window** — {'; '.join(m.timing_windows)}")
+        if m.children_after:
+            L.append(f"- **Children (H5)** — {m.children_after}")
+        L.append("")
+        L.append("_On separation and loss of the partner, the method's own statements — "
+                 "quoted, not composed; A STATEMENT OF THE METHOD, NOT A PREDICTION "
+                 "(this project's validation measured no real-outcome signal):_")
+        L.append("")
+        L.append(f"> \"{m.separation_quote}\" (HTJAH-II:887)")
+        L.append("")
+
+    # ── children chapter (v26) ────────────────────────────────────────────────
+    if r.children is not None:
+        c = r.children
+        L.append("## Children chapter")
+        L.append("")
+        L.append(f"- **Headline (unchanged H5 verdict)** — {c.verdict}")
+        for key, v in c.significations:
+            L.append(f"- **{key}** — {v}")
+        if c.fired_rules:
+            L.append("- **Putra rules firing in THIS chart:**")
+            for branch, text, cite in c.fired_rules:
+                L.append(f"  - ({branch}) {text} ({cite})")
+        if c.timing_windows:
+            L.append(f"- **H5 activations in the window** — {'; '.join(c.timing_windows)}")
+        L.append("")
+        L.append("_Raman's fifth-house combinations, verbatim (fertility, many issues, "
+                 "delay, loss — the classical spectrum, quoted whole so nothing is "
+                 "cherry-picked):_")
+        L.append("")
+        L.append(f"> \"{c.combos_quote}\" (HTJAH-I:5179)")
+        L.append("")
     if s.deeptadi:
         L.append("")
         L.append("## Deeptadi avasthas (each graha's result-state, HPA Ch.7)")

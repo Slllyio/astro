@@ -75,6 +75,20 @@ verdict-path wall test extends to all three new modules; every new prose surface
 `_FORBIDDEN_RE` by test. Table row 10a (the one new section) sits after the ruler card it
 generalizes.
 
+**v25-v27 amendments (2026-08-04) — the marriage monograph, children chapter,
+psychological profile (Wave A of items 6-16).** All Raman-verbatim-by-frozen-range +
+fired-rule re-reads. v25: HTJAH-II's Seventh-House chapter mined (scope 198-231, the 7th
+lord's period results 710-852 with ordinal sub-extraction, timing-by-navamsa 853-886, and
+the separation/loss statements 887-940 rendered ONLY as a labeled verbatim block under
+the method-not-prediction frame — the engine composes nothing atop them), plus the FIRED
+kalatra rules from the H7 ledgers (chart-specific, cited), the 7th lord's HPA-22 sign
+paragraph, upapada, H7 timeline activations, children-after (H5). v26: HTJAH-I's
+fifth-house combination block (5179-5297) quoted WHOLE so nothing is cherry-picked, the
+H5 significations + fired putra rules + H5 activations. v27: the mind stack woven — the
+HPA-18 lagna portrait quoted verbatim (per-lagna frozen anchors, all 12), the Moon's
+manas state, the strongest planet's temperament, the nature stamp, the AK; the woven
+frame is raman_style-composed and guard-tested.
+
 **v22-v24 amendments (2026-08-03) — Arishta & Bhanga, the profession synthesis, the
 wealth chapter.** User-requested, all pure re-reads + cited tables. v22 gathers the
 affliction/cancellation doctrine on one page: balarishta with Raman's HPA-14:232-266

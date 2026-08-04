@@ -1249,6 +1249,30 @@ def _health_readout_section(r: DetailedReport) -> str:
         f'{_esc(h.longevity_band)}.</p>')
 
 
+def _psych_section(r: DetailedReport) -> str:
+    """v27 — the psychological profile: the mind stack woven, lagna portrait verbatim."""
+    ps = r.psych
+    if ps is None:
+        return ""
+    rows = [("The rising sign's portrait (Raman verbatim)",
+             f"&ldquo;{_esc(ps.lagna_quote[0])}&rdquo; <i>({_esc(ps.lagna_quote[1])})</i>")]
+    if ps.moon_state:
+        rows.append(("The mind's significator", _esc(ps.moon_state)))
+    if ps.temperament:
+        rows.append(("Temperament of the strongest planet",
+                     _esc(ps.temperament) + " (HTJAH-I:6248-6268)"))
+    if ps.nature_stamp:
+        rows.append(("Nature &amp; appearance stamped by",
+                     _esc(ps.nature_stamp) + " (HTJAH-I:3892-3897)"))
+    if ps.atmakaraka:
+        rows.append(("Atmakaraka", _esc(ps.atmakaraka) + " (the 7-karaka scheme)"))
+    body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                   f'<span class="vv">{v}</span></div>' for k, v in rows)
+    return ('<h2 class="section" id="psych">Psychological profile</h2>'
+            f'<p class="section-sub"><i>{_esc(ps.woven)}</i></p>'
+            f'<div class="vsec">{body}</div>')
+
+
 def _arishta_section(r: DetailedReport) -> str:
     """v22 — Arishta & Bhanga: afflictions AND their doctrinal cancellations."""
     a = r.arishta
@@ -1911,6 +1935,51 @@ def to_html(r: DetailedReport) -> str:
             '<div class="tablewrap"><table class="grid"><thead><tr><th>channel</th>'
             '<th>reading</th><th>cite</th></tr></thead>'
             f'<tbody>{wrow}</tbody></table></div>{exp}')
+    if r.marriage is not None:
+        m = r.marriage
+        kal = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(c)})</i></li>'
+                      for b, t, c in m.fired_kalatra)
+        extras += (
+            '<h2 class="section" id="marriage">Marriage monograph</h2>'
+            f'<p class="section-sub"><b>The 7th house&rsquo;s scope (Raman verbatim):</b> '
+            f'&ldquo;{_esc(m.seventh_covers)}&rdquo;</p>'
+            f'<p class="section-sub"><b>Headline (unchanged H7 verdict)</b> &mdash; '
+            f'{_esc(m.verdict)}'
+            + (f' &middot; <b>Upapada</b> {_esc(m.upapada)}' if m.upapada else "")
+            + (f' &middot; <b>Children (H5)</b> {_esc(m.children_after)}'
+               if m.children_after else "") + '</p>'
+            + (f'<p class="section-sub"><b>The 7th lord in house '
+               f'{m.lord_placement_house} (verbatim, his periods)</b> &mdash; '
+               f'&ldquo;{_esc(m.lord_period_text)}&rdquo; (HTJAH-II:710)</p>'
+               if m.lord_period_text else "")
+            + (f'<p class="section-sub"><b>The partner&rsquo;s significator in its '
+               f'sign</b> &mdash; &ldquo;{_esc(m.spouse_sign_text[0])}&rdquo; '
+               f'<i>({_esc(m.spouse_sign_text[1])})</i></p>' if m.spouse_sign_text
+               else "")
+            + (f'<ul class="doclist">{kal}</ul>' if kal else "")
+            + f'<p class="section-sub"><b>Timing doctrine (verbatim)</b> &mdash; '
+              f'&ldquo;{_esc(m.timing_navamsa)}&rdquo; (HTJAH-II:853)</p>'
+            + (f'<p class="section-sub"><b>H7 activations</b> &mdash; '
+               f'{_esc("; ".join(m.timing_windows))}</p>' if m.timing_windows else "")
+            + f'<p class="section-sub caveat"><i>On separation and loss of the partner, '
+              f'the method&rsquo;s own statements &mdash; quoted, not composed; a '
+              f'statement of the method, not a prediction:</i> '
+              f'&ldquo;{_esc(m.separation_quote)}&rdquo; (HTJAH-II:887)</p>')
+    if r.children is not None:
+        c = r.children
+        pr_ = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(ci)})</i></li>'
+                      for b, t, ci in c.fired_rules)
+        sig = "; ".join(f"{k}: {v}" for k, v in c.significations)
+        extras += (
+            '<h2 class="section" id="children">Children chapter</h2>'
+            f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
+            f'{_esc(c.verdict)} &middot; {_esc(sig)}</p>'
+            + (f'<ul class="doclist">{pr_}</ul>' if pr_ else "")
+            + (f'<p class="section-sub"><b>H5 activations</b> &mdash; '
+               f'{_esc("; ".join(c.timing_windows))}</p>' if c.timing_windows else "")
+            + f'<p class="section-sub"><i>Raman&rsquo;s fifth-house combinations, '
+              f'verbatim (quoted whole so nothing is cherry-picked):</i> '
+              f'&ldquo;{_esc(c.combos_quote)}&rdquo; (HTJAH-I:5179)</p>')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
         extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
@@ -1955,6 +2024,8 @@ def to_html(r: DetailedReport) -> str:
   {_ruler_section(r)}
 
   {_planet_bios_section(r)}
+
+  {_psych_section(r)}
 
   {_now_box(r)}
 

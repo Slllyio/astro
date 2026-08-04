@@ -155,6 +155,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "arishta": _ad(r.arishta) if r.arishta is not None else None,        # v22
         "profession": _ad(r.profession) if r.profession is not None else None,  # v23
         "wealth": _ad(r.wealth) if r.wealth is not None else None,           # v24
+        "marriage": _ad(r.marriage) if r.marriage is not None else None,     # v25
+        "children": _ad(r.children) if r.children is not None else None,     # v26
+        "psych": _ad(r.psych) if r.psych is not None else None,              # v27
 
         # the life-narrative and its companions + the woven chapters
         "timeline": _timeline_dict(r.timeline, r.chart),

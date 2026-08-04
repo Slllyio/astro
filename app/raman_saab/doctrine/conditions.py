@@ -128,27 +128,41 @@ def _house_from(rasi_house: int, origin_house: int) -> int:
     return ((rasi_house - origin_house) % 12) + 1
 
 
-@dataclass
+@dataclass(frozen=True)
 class EvalContext:
     """The chart a condition is evaluated against. (Frame/varga overlays land here next.)
 
-    ``chart`` is the only required constructor argument; it is read-only by convention.
+    ``chart`` is the only constructor argument, and it is read-only **by construction**:
+    the class is ``frozen=True``, so rebinding ``ctx.chart`` raises ``FrozenInstanceError``
+    rather than silently leaving every already-memoised value belonging to the previous
+    chart. Freezing blocks attribute *rebinding*, not mutation of a mutable field, so the
+    memo below keeps working untouched.
+
     ``_cache`` is an internal memo store populated lazily via :meth:`get_or_compute` —
     do NOT access it directly.  Phase-added computed fields (functional nature,
     parivartana pairs, varga charts, sahams, longevity) should always go through
     ``get_or_compute`` so they are calculated at most once per context instance.
+    It is ``init=False`` deliberately: a ``default_factory`` field is still an init
+    parameter, so leaving it init-able would make ``dataclasses.replace()`` COPY the old
+    cache into the derived context — reintroducing exactly the staleness this freeze
+    prevents.
+
+    If a modified context is ever needed, derive one with
+    ``dataclasses.replace(ctx, chart=new_chart)`` (which yields a fresh, empty cache).
+    Never unfreeze the class.
     """
     chart: RamanChart
-    _cache: dict[str, Any] = field(default_factory=dict, compare=False, hash=False, repr=False)
+    _cache: dict[str, Any] = field(default_factory=dict, compare=False, hash=False,
+                                   repr=False, init=False)
 
     # A3 — lazy memo ----------------------------------------------------------
     def get_or_compute(self, key: str, compute_fn: Callable[[], Any]) -> Any:
         """Return the cached value for `key`, or call `compute_fn()`, cache, and return it.
 
-        ``compute_fn`` must be a zero-argument callable.  Storing ``None`` is
-        supported — a sentinel distinct from 'not yet computed' is used internally.
+        ``compute_fn`` must be a zero-argument callable.  Storing ``None`` is supported:
+        the membership test below asks whether the KEY is present, never whether the value
+        is falsy, so a cached ``None`` is returned rather than recomputed.
         """
-        _MISSING = object.__new__(object)  # local sentinel type unused for check
         if key not in self._cache:
             self._cache[key] = compute_fn()
         return self._cache[key]

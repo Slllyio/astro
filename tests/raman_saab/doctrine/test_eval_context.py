@@ -4,6 +4,8 @@ TDD — written BEFORE implementation, expected to fail RED until both features 
 """
 from __future__ import annotations
 
+import dataclasses
+
 import pytest
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import conditions as C
@@ -175,3 +177,80 @@ class TestExistingConditionsRegression:
         chart = _chart({"Sun": 10.0})
         ctx = C.EvalContext(chart)
         assert ctx.chart is chart
+
+
+# ---------------------------------------------------------------------------
+# Immutability — the invariant, not the convention (2026-08-04)
+#
+# Surfaced by the knowledge-graph audit: EvalContext is the #3 most-connected node
+# (236 incoming edges, 31 communities) and was the ONLY unfrozen value-object dataclass
+# in app/raman_saab + app/core. Its docstring said `chart` was "read-only by convention".
+# Reassigning it would have left every already-memoised value belonging to the previous
+# chart — a doctrine-corruption bug under the verdict path that no test would have caught.
+# ---------------------------------------------------------------------------
+
+class TestImmutability:
+    """EvalContext is frozen: staleness is impossible by construction, not by etiquette."""
+
+    def test_reassigning_chart_raises(self):
+        """The whole point: ctx.chart cannot be rebound, so the memo can never go stale."""
+        ctx = _ctx({"Sun": 5.0})
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            ctx.chart = _chart({"Moon": 90.0})
+
+    def test_reassigning_cache_raises(self):
+        """The cache dict itself cannot be swapped out wholesale either."""
+        ctx = _ctx({"Sun": 5.0})
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            ctx._cache = {}
+
+    def test_memo_still_works_under_frozen(self):
+        """Freezing blocks attribute REBINDING, not mutation of a mutable field —
+        so get_or_compute must still cache, calling compute_fn exactly once."""
+        ctx = _ctx({"Sun": 5.0})
+        calls = {"n": 0}
+
+        def compute():
+            calls["n"] += 1
+            return "value"
+
+        assert ctx.get_or_compute("k", compute) == "value"
+        assert ctx.get_or_compute("k", compute) == "value"
+        assert calls["n"] == 1, "frozen must not break memoisation"
+
+    def test_context_is_not_hashable(self):
+        """frozen=True synthesises a __hash__, but the chart holds a dict (planets), so
+        hashing still raises. Pins that a ctx can never enter a set or be a dict key."""
+        ctx = _ctx({"Sun": 5.0})
+        with pytest.raises(TypeError, match="unhashable type"):
+            hash(ctx)
+
+    def test_caches_are_isolated_between_instances(self):
+        """Two contexts over the SAME chart must not share a cache (default_factory
+        must produce a fresh dict per instance, frozen or not)."""
+        chart = _chart({"Sun": 5.0})
+        ctx1, ctx2 = C.EvalContext(chart), C.EvalContext(chart)
+        ctx1.get_or_compute("key", lambda: "v1")
+        assert "key" in ctx1._cache
+        assert "key" not in ctx2._cache, "contexts must not share memo state"
+
+    def test_replace_yields_a_fresh_cache(self):
+        """The guard on `_cache = field(..., init=False)`.
+
+        A default_factory field is still an init parameter, so were _cache init-able,
+        dataclasses.replace() would COPY the old cache into the derived context and carry
+        the previous chart's memoised values with it — the exact staleness this class is
+        frozen to prevent. This test fails if init=False is ever removed."""
+        ctx1 = _ctx({"Sun": 5.0})
+        ctx1.get_or_compute("_fn_Mars", lambda: "benefic-for-the-OLD-chart")
+        other = _chart({"Moon": 90.0})
+        ctx2 = dataclasses.replace(ctx1, chart=other)
+        assert ctx2.chart is other
+        assert "_fn_Mars" not in ctx2._cache, "replace() must not carry a stale memo"
+
+    def test_construction_is_still_positional(self):
+        """No call site passes _cache; EvalContext(chart) must keep working unchanged."""
+        chart = _chart({"Mars": 5.0})
+        ctx = C.EvalContext(chart)
+        assert ctx.chart is chart
+        assert ctx._cache == {}

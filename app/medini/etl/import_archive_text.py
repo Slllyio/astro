@@ -624,7 +624,9 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
     ),
     _Book(
         identifier="studies-in-jaimini-astrology-by-b-v-raman-127930441",
-        filename="Studies in Jaimini Astrology by B V Raman_djvu.txt",
+        # Filename corrected 2026-08-04 to the exact name the item serves — the earlier
+        # spelling is why only a partial ingest ever landed (the prasna precedent).
+        filename="Studies-in-jaimini-astrology-by-b-v-raman-127930441_djvu.txt",
         book_slug="studies_jaimini_raman",
         book_title="Studies in Jaimini Astrology",
         author="B. V. Raman",

@@ -79,7 +79,15 @@ BOOKS: tuple[BookEntry, ...] = (
     # is authoritative again; the report-only soul layer's Jaimini references remain as free-text
     # provenance (Tagged.cite) only — the corpus no longer vouches for them (its citation test
     # skips gracefully).
-    BookEntry("JAIMINI", "studies_jaimini_raman", True, "catalog-only-out-of-scope",
+    # JAIMINI firewall LIFTED 2026-08-04 (explicit user decision via AskUserQuestion, the
+    # karmic-evolution chapter) — the LAST firewall. Same walled-subsystem scope as
+    # PRASNA/MUHURTHA/VARSHA: citable by the karmic-evolution layer only; natal verdict
+    # code never imports it; the 2026-07-24 merge re-lock's CONCERN (Jaimini doctrine
+    # leaking into natal verdicts) remains enforced by the content-scope rule + walls,
+    # not by the registry status. Corpus re-ingested complete 2026-08-04 (filename
+    # mismatch fixed — the prasna precedent); chapter numbering is OCR-artifact cosmetic.
+    # Karakamsa doctrine: JAIMINI-9 (the karakamsa-combination summary block).
+    BookEntry("JAIMINI", "studies_jaimini_raman", True, "live",
               None, "Studies in Jaimini Astrology (Jaimini system)"),
     # PRASNA + MUHURTHA firewall LIFTED 2026-08-03 (explicit user decision via AskUserQuestion;
     # DOCTRINE_BACKLOG "Firewall lift" record). Scope rule: horary/electional are SEPARATE

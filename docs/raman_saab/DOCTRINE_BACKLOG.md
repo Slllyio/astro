@@ -608,6 +608,18 @@ JAIMINI is now the ONLY firewalled book. Phase 3 built `app/raman_saab/horary/`:
 Source-lock re-locked add-only (3 PRASNA chapters + VARSHA-7). Walled both directions by
 test. HPA-27/AFB-11 remain citable-but-uncited (no rule needs them yet).
 
+## JAIMINI lift (2026-08-04) — the last firewall falls
+
+User decision (AskUserQuestion, the karmic-evolution chapter, items 6-16 arc):
+`studies_jaimini_raman` flips live for a WALLED karmic-evolution layer — the same pattern
+as PRASNA/MUHURTHA/VARSHA. **No book remains firewalled.** What the firewall used to
+enforce is now carried entirely by the content-scope rule + the walled-subsystem import
+tests: natal verdict code imports none of the lifted layers; the 2026-07-24 merge
+re-lock's concern (Jaimini doctrine leaking into natal verdicts) remains enforced — the
+soul layer's free-text Jaimini references may now also resolve as real citations, but
+NOTHING in the verdict path may cite JAIMINI. Corpus re-ingested complete (the ETL
+filename mismatch fixed — the prasna precedent); karakamsa combinations live in JAIMINI-9.
+
 ## Coherence audit + interpretation guide (2026-08-03) — report v18/v19
 
 User concern: "many sections saying the same things — how to interpret when taking features

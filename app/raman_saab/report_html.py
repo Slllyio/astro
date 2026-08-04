@@ -244,6 +244,16 @@ table.sav .weakc{color:var(--afflicted);font-weight:700}
   padding:.1rem .4rem;margin-right:.35rem;font-family:inherit}
 .method-preamble{font-style:italic}
 .method-order{margin:.15rem 0 .6rem 1.4rem;font-size:.85rem;color:var(--ink-soft)}
+/* progressive disclosure — Summary is the section head above; these are Why/Evidence/
+   Calculation/Classical text, each openable independently, nothing ever removed */
+details.disclosure{margin-top:.4rem;border-top:1px solid var(--rule,rgba(127,127,127,.2))}
+details.disclosure>summary{cursor:pointer;font-size:.82rem;font-weight:600;padding:.3rem 0;
+  color:var(--ink-soft)}
+details.disclosure[open]>summary{color:var(--ink)}
+blockquote.raman-quote{margin:.4rem 0;padding:.4rem .8rem;border-left:3px solid var(--doctrine);
+  font-family:Georgia,serif;font-style:italic;font-size:.88rem}
+blockquote.raman-quote cite{font-style:normal;color:var(--ink-soft);font-size:.78rem}
+abbr.gloss{text-decoration:underline dotted;cursor:help}
 .long-step{margin:.3rem 0;font-size:.9rem}
 
 /* ── split status: the majority tenor vs the weakest-link headline ───────── */
@@ -420,6 +430,43 @@ def _method_preamble_html(section_id: str) -> str:
             f'{_esc(why)}:</p><ol class="method-order">{steps}</ol>')
 
 
+def _apply_glossary_abbrs(html_str: str) -> str:
+    """Clickable glossary everywhere (review upgrade #8, standalone HTML): the FIRST plain-text
+    occurrence of each known term is wrapped in `<abbr title="plain — analogy">` — a hover
+    reveals the plain-terms gloss without leaving the page. Operates only on TEXT segments
+    (tag markup, and <script>/<style> bodies, are walked past untouched) so it can never
+    corrupt an attribute, an id, or embedded JS/CSS."""
+    from app.raman_saab.plain_terms import TERM_GLOSS
+    terms = sorted(TERM_GLOSS.keys(), key=len, reverse=True)
+    pattern = re.compile(r"\b(" + "|".join(re.escape(t) for t in terms) + r")\b")
+    parts = re.split(r"(<[^>]*>)", html_str)
+    seen: set[str] = set()
+    skip_tag: str | None = None
+    for i, part in enumerate(parts):
+        if part.startswith("<"):
+            m = re.match(r"</?\s*([a-zA-Z0-9]+)", part)
+            name = m.group(1).lower() if m else ""
+            if part.startswith("</") and name in ("script", "style"):
+                skip_tag = None
+            elif name in ("script", "style"):
+                skip_tag = name
+            continue
+        if skip_tag:
+            continue
+
+        def _sub(m: re.Match) -> str:
+            term = m.group(1)
+            if term in seen:
+                return term
+            seen.add(term)
+            g = TERM_GLOSS[term]
+            title = html.escape(f"{g.plain} — {g.analogy}")
+            return f'<abbr class="gloss" title="{title}">{term}</abbr>'
+
+        parts[i] = pattern.sub(_sub, part)
+    return "".join(parts)
+
+
 def _cal_row(e) -> str:
     if e.favourability_percentile is None:
         return f'<div class="cal-row muted"><span>{_esc(e.signification)}: {_esc(e.verdict)} '\
@@ -445,6 +492,26 @@ def _cal_row(e) -> str:
         f'<div class="meter" style="--p:{pct}%"><span class="meter-mid"></span>'
         f'<span class="meter-mark"></span></div>'
         f'<span class="cal-note">{note}{tags}</span></div>')
+
+
+def _raman_quote_html(mr, pf) -> str:
+    """HTML sibling of detailed_report's item-14 "Raman writes" block — the driver
+    signification's own cited source, verbatim, for the house's Classical-text level."""
+    if pf is None or not pf.significations:
+        return ""
+    from app.raman_saab.detailed_report import passage_quote
+    from app.raman_saab.doctrine.significations import SIGNIFICATIONS
+    dr = next((sv for sv in pf.significations if sv.verdict == pf.rollup), pf.significations[0])
+    sig = next((s for s in SIGNIFICATIONS.get(mr.house, ()) if s.key == dr.signification), None)
+    if sig is None or sig.source is None:
+        return ""
+    q = passage_quote(f"{sig.source.work}:{sig.source.line}")
+    if not q:
+        return ""
+    return (f'<blockquote class="raman-quote">&ldquo;{_esc(q)}&rdquo; '
+            f'<cite>({sig.source.work}:{sig.source.line})</cite> &mdash; and this chart '
+            f'computes: <b>{_esc(mr.verdict)}</b> for <i>{_esc(dr.signification)}</i>.'
+            f'</blockquote>')
 
 
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
@@ -517,17 +584,36 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
                   f'<code>Rules {fired_ct}</code> <code>Sources {len(cites)}</code> '
                   f'<code>Support {_esc(band)} ({ht.favourable}F/{ht.adverse}A)</code></div>')
 
+    # progressive disclosure (review upgrade #3): Summary is always visible (the head above);
+    # Why stays open by default (no regression from the prior always-visible reading); Evidence /
+    # Calculation / Classical text are closed by default with a substantive <summary> label —
+    # every level's content remains fully present in the document, never dropped.
+    quote_html = _raman_quote_html(mr, pf)
+    testimony_n = len(ht.testimonies) if ht is not None else len(cal.entries)
+    support_word = (("High" if "corrobor" in ht.status else "Low" if "contest" in ht.status
+                     else "Medium") if ht is not None else "")
+    level_why = (
+        '<details class="disclosure" open><summary>Why</summary>'
+        f'<p class="doctrine">{_bold(mr.reading)}</p>'
+        + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
+           if conclusion else "") + '</details>')
+    level_evidence = (
+        f'<details class="disclosure"><summary>Evidence &mdash; {testimony_n} testimonies'
+        f'{f", {support_word} support" if support_word else ""}</summary>'
+        f'{badges}<div class="instrument"><div class="instrument-label">Population context '
+        f'&mdash; empirical, not Raman</div>{rows}</div></details>')
+    level_calc = (f'<details class="disclosure"><summary>Calculation</summary>{pillars}</details>'
+                  if pillars else "")
+    level_classical = (f'<details class="disclosure"><summary>Classical text (Raman '
+                       f'verbatim)</summary>{quote_html}</details>' if quote_html else "")
+
     return (
         f'<section class="house" data-flags="{" ".join(flags)}"><div class="house-head">'
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}'
-        f'{pillars}{badges}<p class="doctrine">{_bold(mr.reading)}</p>'
-        + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
-           if conclusion else "")
-        + f'<div class="instrument"><div class="instrument-label">Population context '
-        f'&mdash; empirical, not Raman</div>{rows}</div></section>')
+        f'{level_why}{level_evidence}{level_calc}{level_classical}</section>')
 
 
 def _house_chip(a, *, ring: bool = False) -> str:
@@ -2149,7 +2235,7 @@ def to_html(r: DetailedReport) -> str:
                    f'<div class="vsec">{kbody}</div>')
     extras += _pitru_section(r)
 
-    return f"""<style>{_CSS}</style>
+    body = f"""<style>{_CSS}</style>
 <div class="stickybar" id="stickybar">
   <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
   <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
@@ -2317,6 +2403,7 @@ def to_html(r: DetailedReport) -> str:
   }}
 }})();
 </script>"""
+    return _apply_glossary_abbrs(body)
 
 
 def standalone_html(r: DetailedReport, *, title: str | None = None) -> str:

@@ -817,6 +817,11 @@ function closeSrc(){ $('srcpanel').classList.remove('open'); }
 
 function vchip(v){ return el('span',{class:'chip v-'+v},v); }
 const SIGN=['','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+// the 12 houses' fixed classical life-area labels (doctrine, not computed per-chart —
+// mirrors _HOUSE_NAME in report_html.py / detailed_report.py) — used by planetInfluenceNetwork.
+const HNAME=['','Self / Body','Wealth / Family','Siblings / Courage','Mother / Home',
+  'Children / Mind','Health / Enemies','Spouse / Partnership','Longevity',
+  'Father / Fortune','Career','Gains','Loss / Moksha / Spirituality'];
 // 1-indexed to match report_dict's `nakshatra` (same convention as SIGN above, slot 0 unused).
 // Added 2026-08-03: the planetary-positions table printed the raw integer, so a reader saw
 // "26" and "14" instead of "Uttara Bhadrapada" and "Chitra" — the markdown and HTML renderers
@@ -1346,6 +1351,58 @@ function aspectNetwork(jg){
   }catch(e){ console.error('aspect network failed:',e); return null; }
 }
 
+// planet -> house influence network (review upgrade #7): distinct from aspectNetwork above —
+// that one draws planet-to-planet lines via shared-house aspects; this one draws the DIRECT
+// planet -> house influence edges the judgment graph already carries (lord_of/occupies/
+// aspects/karaka_of), with houses labeled by their classical life-area (HNAME). A bipartite
+// layout, not a circle, so the reader can trace "what does Jupiter touch" at a glance.
+function planetInfluenceNetwork(jg){
+  try{
+    const NS='http://www.w3.org/2000/svg';
+    const REL={lord_of:{dash:'',w:1.6},occupies:{dash:'',w:1},
+      aspects:{dash:'4,3',w:1},karaka_of:{dash:'1,2',w:1.4}};
+    const edges=jg.edges.filter(e=>e.src.startsWith('planet:')&&e.dst.startsWith('house:')
+      &&REL[e.relation]);
+    if(!edges.length) return null;
+    const planets=[...new Set(edges.map(e=>e.src.split(':')[1]))];
+    const houses=[...Array(12).keys()].map(i=>i+1);
+    const W=640,H=Math.max(planets.length,houses.length)*26+20,px=90,hx=W-110;
+    const py=p=>20+planets.indexOf(p)*(H-20)/Math.max(1,planets.length-1||1);
+    const hy=h=>20+(h-1)*(H-20)/11;
+    const svg=document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('style','max-width:100%;height:auto');
+    for(const e of edges){
+      const p=e.src.split(':')[1], h=+e.dst.split(':')[1], style=REL[e.relation];
+      const ln=document.createElementNS(NS,'path');
+      const x1=px+8,y1=py(p),x2=hx-8,y2=hy(h),mx=(x1+x2)/2;
+      ln.setAttribute('d',`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+      ln.setAttribute('fill','none'); ln.setAttribute('stroke','var(--ink-2)');
+      ln.setAttribute('stroke-width',style.w); ln.setAttribute('stroke-dasharray',style.dash);
+      ln.setAttribute('opacity','0.45');
+      const ti=document.createElementNS(NS,'title');
+      ti.textContent=p+' '+e.relation.replace('_',' ')+' H'+h+(e.cite?' ('+e.cite+')':'');
+      ln.appendChild(ti); svg.appendChild(ln); }
+    planets.forEach(p=>{ const y=py(p);
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('x',px); t.setAttribute('y',y+4); t.setAttribute('text-anchor','end');
+      t.setAttribute('style','font-size:11px;fill:var(--ink);font-weight:600'); t.textContent=p;
+      svg.appendChild(t);
+      const c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',px+8); c.setAttribute('cy',y); c.setAttribute('r','3.5');
+      c.setAttribute('fill','var(--accent-2)'); svg.appendChild(c); });
+    houses.forEach(h=>{ const y=hy(h);
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('x',hx); t.setAttribute('y',y+4);
+      t.setAttribute('style','font-size:11px;fill:var(--ink)');
+      t.textContent='H'+h+' · '+HNAME[h]; svg.appendChild(t);
+      const c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',hx-8); c.setAttribute('cy',y); c.setAttribute('r','3.5');
+      c.setAttribute('fill','var(--mix)'); svg.appendChild(c); });
+    return svg;
+  }catch(e){ console.error('planet influence network failed:',e); return null; }
+}
+
 // ===== Muhurtha — "Today for you" (GET /electional/today, on demand only) =====
 // Deliberately NOT fetched with the cast: the electional reading is about a DAY, not the
 // nativity, so the reader asks for it. Every field the route returns is rendered, `source`
@@ -1640,6 +1697,9 @@ function render(R, S, FQ){
     const net=aspectNetwork(jg);
     if(net) add(vizCard('Aspect network — planets sized by census, red edges = aspects onto afflicted houses', net,
       'Each planet placed on the wheel; node size = its judgment-graph census (breadth of participation). An edge joins planet A to planet B when A casts a whole-sign aspect onto the house B occupies (both facts from the graph). Red edges land on natal-afflicted houses, green on favourable — the same verdicts shown in House-by-house. A drawing of data shown elsewhere; never a new judgment.'));
+    const pin=planetInfluenceNetwork(jg);
+    if(pin) add(vizCard('Planet influence network — which houses each planet touches, and why', pin,
+      'Every planet -> house edge already in the judgment graph, drawn directly: solid = lord of that house, dotted = karaka (natural significator) of it, fine dashed = casts a whole-sign aspect onto it, thin solid = occupies it. Houses carry their classical life-area label. Hover an edge for the exact relation and citation. A drawing of the graph, not a new claim.'));
     const d=el('details',{class:'card'});
     const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
     const body=el('div',{class:'body'});

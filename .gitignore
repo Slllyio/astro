@@ -87,3 +87,6 @@ Thumbs.db
 # graphify knowledge-graph output + extraction caches (generated; the semantic
 # cache under app/graphify-out is a paid LLM extraction, so it is kept on disk)
 graphify-out/
+
+# local dev server log (this repo runs uvicorn by hand during sessions)
+uvicorn.log

@@ -220,3 +220,71 @@ The productive moves are:
    would let it resolve effects of ~0.02 instead of ~0.07.
 3. Treat any future signal as needing to clear the doctrinal prior on **holdout**, paired, with
    an interval that excludes zero — the bar this programme has used throughout.
+
+---
+
+# Phase 2 — wired in: the shipped digest now matches doctrine instead of losing to it
+
+*Measured 2026-08-06, holdout.*
+
+| metric | digest BEFORE | digest NOW | doctrinal constant |
+|---|---|---|---|
+| p@1 | 0.286 | **0.643** | 0.643 |
+| p@3 | 0.357 | **0.429** | 0.500 |
+| r@3 | 0.452 | **0.655** | 0.714 |
+| MRR | 0.507 | **0.783** | 0.810 |
+
+Every difference against the constant now spans zero: what shipped as *significantly worse than
+doctrine* is now statistically indistinguishable from it.
+
+## Two changes, and the measurement says both were needed
+
+Isolating them on holdout:
+
+| configuration | p@1 | p@3 | r@3 | MRR |
+|---|---|---|---|---|
+| neither (as shipped) | 0.286 | 0.357 | 0.452 | 0.507 |
+| Lagna item only | 0.643 | 0.357 | 0.452 | 0.745 |
+| Lagna item + salience re-order | 0.643 | 0.429 | 0.655 | 0.795 |
+
+**The Lagna item earns all of p@1; the re-order earns p@3 and r@3.** Neither alone would have
+done.
+
+### 1. The digest never mentioned the ascendant
+
+Measured, not suspected: the digest named houses **4, 5, 8, 10, 12** on the canonical chart and
+**2, 3, 4, 9** on the Mainpuri chart — **the Lagna on neither**, though Raman opens every reading
+on it (HTJAH-I:16001) and it is the house he emphasises most often across his worked charts.
+"What matters most" was silent about the first thing he judges.
+
+`first_impression` is a new digest kind carrying the rising sign, its lord, that lord's house,
+and the strongest planet. It has its own kind rather than reusing `dominant_theme`, which means
+"the engine's band-sorted cross-feature insights" — a distinct thing.
+
+### 2. Ordering across kinds, never within them
+
+The re-order sorts items by the doctrinal salience of the houses they concern. Two invariants
+constrained how:
+
+- distinctive items must stay in the engine's own rare-first ranking — *the digest re-reads that
+  ranking, it never re-derives it* (PREC-10);
+- dominant-theme items must stay in band precedence, raman > classical > av, which is doctrine.
+
+Both are pinned by tests, and both are real. So each item's score is **clamped to at most its
+predecessor of the same kind**, making every kind's sequence non-increasing; a stable sort then
+cannot reshuffle within a kind while still ordering across kinds. Costs 0.012 MRR against a free
+re-order — worth it to keep two invariants intact rather than overwrite the tests that hold them.
+
+### One abundance trap, caught in passing
+
+Scoring an item by the best of its houses floated the running-period note to the top: it lists
+**every house** its dasha touches, so it inherited the Lagna's score. An item naming most of the
+chart selects nothing, so items spanning more than six houses are now scored neutral. The same
+fallacy the Capstone measured — what is true of every house distinguishes none of them.
+
+## Standing
+
+- Beats what shipped, on held-out charts, on every metric.
+- Does **not** beat doctrine stated as a constant; it now equals it.
+- No verdict recomputed, ratchet unmoved at 259/293, 4,771 passed, all 53 sections still render
+  on all three surfaces.

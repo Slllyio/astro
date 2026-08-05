@@ -51,7 +51,13 @@ class TestDigestShape:
         assert 1 <= len(digest.items) <= 14
 
     def test_every_kind_is_known(self, digest):
-        known = {"dominant_theme", "convergence", "tension", "distinctive", "timing"}
+        # "first_impression" added 2026-08-06, consciously: the Lagna and its lord. Measuring
+        # the digest against Raman's own emphasis showed it named houses 4/5/8/10/12 on one
+        # chart and 2/3/4/9 on another and THE ASCENDANT ON NEITHER, though he opens every
+        # reading on it (HTJAH-I:16001). It carries its own kind rather than reusing
+        # dominant_theme, which means "the engine's cross-feature insights" and is band-sorted.
+        known = {"first_impression", "dominant_theme", "convergence", "tension",
+                 "distinctive", "timing"}
         assert {it.kind for it in digest.items} <= known
 
     def test_every_lean_is_known(self, digest):

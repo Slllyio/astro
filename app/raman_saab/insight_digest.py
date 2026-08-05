@@ -68,7 +68,8 @@ _HOUSE_LABEL: dict[int, str] = {
 class DigestItem:
     """One ranked finding in the digest. Every field is a restatement of already-computed engine
     output — `lean` is the direction the underlying finding already carries, never a new verdict."""
-    kind: str                      # dominant_theme | convergence | tension | distinctive | timing
+    kind: str                      # first_impression | dominant_theme | convergence |
+                                   # tension | distinctive | timing
     title: str
     detail: str
     lean: str                      # "favourable" | "adverse" | "mixed" | "neutral"
@@ -242,12 +243,55 @@ def _timing_item(report: "DetailedReport", priority: int) -> DigestItem | None:
 
 # ─── the assembler ──────────────────────────────────────────────────────────────
 
+def _ruler_item(report: "DetailedReport", priority: int) -> DigestItem | None:
+    """The first impression — the Lagna and its lord.
+
+    Added after measuring: the digest named houses 4, 5, 8, 10, 12 for one chart and 2, 3, 4, 9
+    for another, and **the Lagna in neither**. Raman opens every reading on it ("the first
+    impression", HTJAH-I:16001-16002), and it is the house he emphasises most across his own
+    worked readings, so a "what matters most" that never mentions it is missing his first move.
+    """
+    ru = getattr(report, "ruler", None)
+    lord = getattr(ru, "lagna_lord", None)
+    if ru is None or not lord:
+        return None
+    strongest = getattr(ru, "strongest", None)
+    house = getattr(ru, "lagna_lord_house", None)
+    detail = f"{lord} rules the ascendant"
+    if house:
+        detail += f" and sits in house {house}"
+    if strongest and strongest != lord:
+        detail += f"; {strongest} carries the greatest strength in the chart"
+    elif strongest:
+        detail += " and also carries the greatest strength"
+    temperament = getattr(ru, "temperament", None)
+    if temperament:
+        detail += f". {str(temperament).rstrip('.')}."
+    return DigestItem(
+        kind="first_impression",
+        title=f"The chart is ruled by {lord}",
+        detail=detail + " Raman reads the rising sign and its lord first, before any other "
+                        "matter is judged.",
+        lean="neutral",
+        houses=(1,),
+        sections=("ruler", "chart_signature"),
+        cites=("HTJAH-I:16001-16002",),
+        priority=priority,
+    )
+
+
 def build_insight_digest(report: "DetailedReport",
                          *, max_insights: int = 3, max_distinctive: int = 3) -> InsightDigest:
     """Rank the chart's most important findings from already-computed structures. Pure re-read;
     no verdict is recomputed. Items are returned most-important-first, with `priority` = position."""
     items: list[DigestItem] = []
     pp = report.preponderance
+
+    # 0. the first impression — the Lagna and its lord (HTJAH-I:16001). Without this the digest
+    #    never mentions the ascendant at all, which was measurably the case before it was added.
+    ruler = _ruler_item(report, priority=len(items))
+    if ruler is not None:
+        items.append(ruler)
 
     # 1-2. the strongest agreements (favourable then afflicted convergence)
     if pp.most_corroborated_favourable is not None:
@@ -280,4 +324,69 @@ def build_insight_digest(report: "DetailedReport",
     for house, entry in report.distinctive[:max_distinctive]:
         items.append(_distinctive_item(house, entry, priority=len(items)))
 
-    return InsightDigest(headline=report.info.sentence, items=tuple(items))
+    return InsightDigest(headline=report.info.sentence,
+                         items=_ordered_by_salience(report, items))
+
+
+def _ordered_by_salience(report: "DetailedReport",
+                         items: list[DigestItem]) -> tuple[DigestItem, ...]:
+    """Re-order the SAME items by how much each one's houses deserve attention.
+
+    The slots above are the order the sections were BUILT in, and measuring it exposed what
+    that costs: scored against the houses Raman actually emphasised in his own worked readings,
+    the built order ranked WORSE than simply naming the Lagna, then the 10th, then the 7th
+    (p@1 0.286 vs 0.643 — `docs/raman_saab/SALIENCE_BASELINE.md`). The reason is structural.
+    Slots 1-2 lead with CORROBORATION, which is population-typical by construction — the median
+    chart carries 19 afflicted and 31 favourable significations — and "what most distinguishes
+    this chart" is built last, so the one item carrying chart-specific information arrives last.
+
+    Re-ordering by the doctrinal salience of each item's houses beat the built order on
+    held-out charts: p@3 +0.143 [+0.024, +0.238], r@3 +0.262 [+0.083, +0.464],
+    MRR +0.302 [+0.083, +0.503].
+
+    REPORT COMPLETENESS: this REORDERS, it never drops. Every item built above is returned.
+    An item with no house (the running-period note) is neutral-scored so it neither floats to
+    the top nor sinks — it is orientation, not a finding.
+    """
+    from dataclasses import replace
+
+    from app.raman_saab.salience import house_salience
+
+    try:
+        scored = house_salience(report)
+    except Exception:                                              # noqa: BLE001
+        return tuple(items)                                        # never lose the digest
+
+    neutral = (sum(s.score for s in scored.values()) / len(scored)) if scored else 0.0
+
+    # An item naming most of the chart selects nothing — the running-period note lists every
+    # house its dasha touches, and scoring it by its best house floated it straight to the top
+    # on the strength of the Lagna it happened to include. Same abundance fallacy the whole
+    # programme keeps meeting: what is true of every house distinguishes none of them.
+    _UNSELECTIVE = 6
+
+    def key(entry: tuple[int, DigestItem]) -> tuple[float, int]:
+        idx, item = entry
+        if not item.houses or len(item.houses) > _UNSELECTIVE:
+            return (-neutral, idx)
+        best = max((scored[h].score for h in item.houses if h in scored), default=neutral)
+        return (-best, idx)                                        # idx keeps the sort stable
+
+    # Order ACROSS kinds by salience, but never WITHIN one. Two invariants depend on the
+    # within-kind order and both are real: distinctive items must stay in the engine's own
+    # rare-first ranking (the digest re-reads that ranking, it does not re-derive it — PREC-10),
+    # and the dominant-theme items must stay in band precedence, raman > classical > av, which
+    # is doctrine. Clamping each item's score to at most its predecessor OF THE SAME KIND makes
+    # every kind's sequence non-increasing, so a stable sort cannot reshuffle it.
+    scores = [(-key((i, it))[0], it) for i, it in enumerate(items)]
+    last_of_kind: dict[str, float] = {}
+    clamped: list[float] = []
+    for value, item in scores:
+        prev = last_of_kind.get(item.kind)
+        value = value if prev is None else min(value, prev)
+        last_of_kind[item.kind] = value
+        clamped.append(value)
+
+    ordered = [it for _s, _i, it in
+               sorted(((-clamped[i], i, it) for i, it in enumerate(items)))]
+    return tuple(replace(it, priority=i) for i, it in enumerate(ordered))

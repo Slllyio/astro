@@ -288,3 +288,73 @@ fallacy the Capstone measured — what is true of every house distinguishes none
 - Does **not** beat doctrine stated as a constant; it now equals it.
 - No verdict recomputed, ratchet unmoved at 259/293, 4,771 passed, all 53 sections still render
   on all three surfaces.
+
+---
+
+# Phase 3 — a second benchmark, 7x larger, and the negative result holds
+
+*Built 2026-08-06 from `tests/fixtures/raman_goldens.jsonl`.*
+
+## Correcting the plan
+
+Phase 1b recommended growing the benchmark from "the 293 golden verdicts **and** the HTJAH I/II
+worked examples". That was double-counting: the golden set **is** those worked examples —
+HTJAH-II 93, HTJAH-I 72, Notable Horoscopes 60 — and NH overlaps the prose benchmark too.
+
+The real opportunity was different and better: Raman states `expected_verdicts` only for houses
+he actually pronounces on, a **median of one house per example**. That is a sharp record of
+selection, already curated and castable, pointed at a different purpose.
+
+`tests/fixtures/golden_attention.json` — **190 admitted**, 95 tune / 95 holdout. Admission is
+the same Lagna check as before: **164 of 164 stating a Lagna matched the cast, zero mismatches.**
+
+| | prose benchmark (NH) | golden benchmark |
+|---|---|---|
+| castable charts | 31 | **190** |
+| houses per chart | 2 (median) | **1** |
+| trivial baseline p@1 | 0.63 | **0.24** |
+| resolvable effect | ~0.071 | **~0.005** |
+
+**They measure different questions and are never pooled.** The prose benchmark scores EMPHASIS in
+a free reading of a whole life; this one scores SELECTION in a targeted illustration.
+
+## The finding: no chart-specific signal helps, at 7x the sample size
+
+Tune split, n=95, against a benchmark-derived most-frequent-house baseline:
+
+| variant | p@1 | p@3 | r@3 | MRR |
+|---|---|---|---|---|
+| **trivial (always H7, then H9, H1)** | **0.242** | **0.193** | **0.377** | **0.411** |
+| doctrine prior alone | 0.158 | 0.175 | 0.318 | 0.333 |
+| + surprisal (w .15 / .35) | 0.158 | 0.154 / 0.140 | | |
+| + extremity | 0.137 | 0.179 / 0.151 | | |
+| + centrality | 0.137 | 0.140 / 0.130 | | |
+| + occupancy | 0.137 | 0.161 / 0.144 | | |
+| + dignity | 0.168 | 0.158 / 0.154 | | |
+| + house-lord shadbala | 0.158 | 0.154 / 0.119 | | |
+| + yoga by kind | 0.126 | 0.158 / 0.165 | | |
+
+Every signal is worse than the prior alone, and the prior is worse than frequency. **The Phase 1b
+conclusion was not a small-sample artefact.** Across two independent benchmarks and sample sizes
+of 14 and 95, nothing the engine computes about a specific chart predicts where Raman looked.
+
+## The doctrinal prior is not universal — and that is coherent
+
+It **won** on the prose benchmark (p@1 0.643 vs 0.286 for the shipped digest) and **loses** here
+(0.158 vs 0.242). That is not a contradiction; it is the two questions coming apart:
+
+- **Free reading** — he opens on the Lagna (HTJAH-I:16001). Doctrine-first is right.
+- **Targeted illustration** — he picks a chart to demonstrate a rule, and the rules he chose to
+  illustrate cluster on marriage, fortune and wealth. Frequency-first is right.
+
+So Phase 2's shipped ordering stays correct for the report, which is a reading, not a rule
+catalogue. This benchmark measures something the report is not trying to do — worth having
+precisely because it draws that line.
+
+## Standing of the programme
+
+- **Doctrine, wired in, measured, shipped.** That was the winnable part and it is won.
+- **Chart-specific statistical salience: falsified twice**, on two benchmarks, at n=14 and n=95.
+  Not "unproven at this sample size" any more — measured, and negative.
+- Anything further should target the *content* of what is said about a house, not the
+  *selection* of which house. Selection appears to be doctrine and habit, not chart-reading.

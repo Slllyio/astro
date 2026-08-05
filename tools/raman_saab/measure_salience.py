@@ -25,8 +25,37 @@ import statistics
 from pathlib import Path
 from typing import Callable, Optional
 
+from datetime import datetime
+
+from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import build_detailed_report
 from tools.raman_saab.admit_attention_charts import parse_birth
+
+
+def _truth_and_birth(rec: dict, target: str):
+    """Read either benchmark. `notable_attention.json` records EMPHASIS in free prose and carry
+    a printed birth-details string; `golden_attention.json` records the house Raman PRONOUNCED
+    on in a worked example and carry structured birth data. Different questions, one harness."""
+    if "pronounced_houses" in rec:
+        b = rec.get("birth") or {}
+        try:
+            when = datetime.fromisoformat(str(b.get("dt")))
+        except (TypeError, ValueError):
+            return set(), None
+        if b.get("lat") is None or b.get("lon") is None:
+            return set(), None
+        tz = b.get("tz")
+        birth = BirthData(rec.get("name") or rec.get("id") or "?", when.year, when.month,
+                          when.day, when.hour, when.minute,
+                          float(tz if tz is not None else b["lon"] / 15.0),
+                          float(b["lat"]), float(b["lon"]))
+        return set(rec.get("pronounced_houses") or []), birth
+    if target == "emphasis":
+        truth = set(rec.get("emphasised_houses") or [])
+    else:
+        hs = {int(k): v for k, v in (rec.get("houses") or {}).items()}
+        truth = {h for h, _ in sorted(hs.items(), key=lambda kv: -kv[1])[:3]}
+    return truth, parse_birth(rec)
 
 BENCH = "tests/fixtures/notable_attention.json"
 
@@ -101,24 +130,16 @@ def main() -> None:
     args = ap.parse_args()
 
     data = json.loads(Path(args.bench).read_text(encoding="utf-8"))
-    charts = [c for c in data["charts"] if c.get("admitted")
+    charts = [c for c in data["charts"]
+              if (c.get("admitted") or "pronounced_houses" in c)
               and (args.split == "all" or c.get("split") == args.split)]
 
     rows: list[tuple[str, dict, dict]] = []
     skipped: list[str] = []
     for rec in charts:
-        truth: set[int]
-        if args.target == "emphasis":
-            truth = set(rec.get("emphasised_houses") or [])
-        else:
-            hs = {int(k): v for k, v in (rec.get("houses") or {}).items()}
-            truth = {h for h, _ in sorted(hs.items(), key=lambda kv: -kv[1])[:3]}
-        if not truth:
-            skipped.append(rec["name"])
-            continue
-        birth = parse_birth(rec)
-        if birth is None:
-            skipped.append(rec["name"])
+        truth, birth = _truth_and_birth(rec, args.target)
+        if not truth or birth is None:
+            skipped.append(str(rec.get("name") or rec.get("id")))
             continue
         # Read the chart DURING the life, not in 2026. Two reasons: the Vimshottari sequence is
         # generated for 120 years from birth, so anyone born before ~1906 has no "currently
@@ -130,7 +151,7 @@ def main() -> None:
         except Exception as exc:                                     # noqa: BLE001
             skipped.append(f"{rec['name']} ({exc})")
             continue
-        rows.append((rec["name"],
+        rows.append((str(rec.get("name") or rec.get("id")),
                      score(RANKERS[args.ranker](report), truth),
                      score(rank_trivial(report), truth)))
 

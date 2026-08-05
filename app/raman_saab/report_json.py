@@ -161,6 +161,16 @@ def to_report_dict(r: DetailedReport) -> dict:
                       "balarishta": (_ad(r.balarishta) if r.balarishta is not None else None)},
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
+
+        # The maraka scheme itself (HTJAH-I:761-814) — Raman's second step after the longevity
+        # band. Previously computed for the markdown/HTML renderers but never exposed here, so
+        # the interactive page had no way to show it (REPORT COMPLETENESS repair, v33).
+        "maraka": ({
+            "units": [{"graha": u.graha, "tier": u.tier, "strength_rank": u.strength_rank}
+                      for u in r.chart.maraka_points.units],
+            "drekkana22_lord": r.chart.maraka_points.drekkana22_lord,
+            "navamsa64_lord": r.chart.maraka_points.navamsa64_lord,
+        } if getattr(r.chart, "maraka_points", None) is not None else None),
         "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
         "interpretation_guide": INTERPRETATION_GUIDE,  # v18 — chart-independent doctrine metadata
         # S1 synthesis layer — the explicit judgment graph (pure re-read; PREC-10 applies)

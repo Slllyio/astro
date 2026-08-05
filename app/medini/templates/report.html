@@ -2262,7 +2262,210 @@ function render(R, S, FQ){
       add(para(t('Turning points (a timing lens, not an event)')+': '+
         n.turning_points.map(x=>x[0]+' — '+x[1]).join('; '),'muted')); }
 
+  // ===== REPORT COMPLETENESS repair (v33) ================================================
+  // Everything below was computed by the engine and reachable in the report JSON, but this
+  // surface never rendered it — the page showed 28 of 53 contracted sections, and Movement V
+  // ("the matters of life") was the worst hit at 2/10: career, wealth, marriage and children
+  // are exactly what a reader opens the page for. Order here does not matter: sections are
+  // buffered by id and flushed per movement, so each lands where the arc puts it.
+
+  // ---- Movement I ----------------------------------------------------------------------
+  // The nativity header. The manuscript cover already carries the name, but the cover is a
+  // book device, not a section — without this the reading itself never states whose chart it
+  // is or on what basis it was cast.
+  const _b=R.birth||{};
+  if(_b.name||_b.year){ sec('title'); add(H2('The nativity'));
+    const p2=n=>String(n).padStart(2,'0');
+    add(para((_b.name||'—')+' · '+_b.year+'-'+p2(_b.month)+'-'+p2(_b.day)+' '
+      +p2(_b.hour)+':'+p2(_b.minute)+' (tz '+(_b.tz_offset>=0?'+':'')+_b.tz_offset+')','lede'));
+    add(para(t('Latitude')+' '+Number(_b.latitude).toFixed(4)+' · '+t('longitude')+' '
+      +Number(_b.longitude).toFixed(4)+' · '+t('ayanamsa')+' '
+      +((R.window&&R.window.ayanamsa)||'Lahiri sidereal'),'muted')); }
+
+  // the running period lives on R.synthesis; the `summary` object carries only a prebuilt
+  // `running_period` string, which is why reading S.running_md here rendered nothing.
+  const _sy=R.synthesis||{};
+  sec('now_box');
+  if(_sy.running_md||_sy.running_ad){ add(H2('Running now'));
+    add(para('Mahadasha '+(_sy.running_md||'—')+' · Antardasha '+(_sy.running_ad||'—')
+      +(R.maraka_period_now?' · the running period carries a maraka-tier lord'
+                           :' · the running period carries no maraka-tier lord'),'lede'));
+    if(_sy.chara) add(para(t('Chara dasha')+': '+_sy.chara,'muted'));
+    if(_sy.sade_sati) add(para(_sy.sade_sati,'muted'));
+    if(_sy.panchanga) add(para(t('Panchanga')+': '+_sy.panchanga,'muted')); }
+  const psy=R.psych||{};
+  if(psy.woven||psy.temperament){ sec('psych'); add(H2('Psychological profile'));
+    if(psy.woven) add(para(psy.woven));
+    for(const [k,lbl] of [['lagna_quote','Rising sign'],['moon_state','Moon (manas)'],
+                          ['temperament','Temperament'],['nature_stamp','Nature stamp'],
+                          ['atmakaraka','Atmakaraka']])
+      if(psy[k]) add(para(t(lbl)+': '+psy[k],'muted')); }
+
+  // ---- Movement II ---------------------------------------------------------------------
+  const ig=R.interpretation_guide||{};
+  if(ig.preamble||(ig.precedence||[]).length){ sec('interpretation_guide');
+    add(H2('How to read this report'));
+    if(ig.preamble) add(para(ig.preamble));
+    if((ig.reading_order||[]).length) add(sectionTable('Reading order',ig.reading_order));
+    if((ig.precedence||[]).length) add(sectionTable('Precedence rules',ig.precedence));
+    if((ig.parallel_lenses||[]).length) add(sectionTable('Parallel lenses',ig.parallel_lenses));
+    if((ig.axes||[]).length) add(sectionTable('Axes',ig.axes));
+    if((ig.not_a_contradiction||[]).length)
+      add(sectionTable('Not a contradiction',ig.not_a_contradiction)); }
+
+  // ---- Movement III --------------------------------------------------------------------
+  const _pl=(R.chart&&R.chart.planets)||null;
+  if(_pl){ const sb=Object.keys(_pl).filter(k=>_pl[k].shadbala_rupas!=null)
+      .map(k=>({graha:k,rupas:_pl[k].shadbala_rupas,sign:_pl[k].sign,retrograde:_pl[k].retrograde}))
+      .sort((a,b)=>b.rupas-a.rupas);
+    if(sb.length){ sec('shadbala'); add(H2('Shadbala'));
+      add(para(t('Six-source planetary strength, in rupas — the numbers behind every '+
+        '"strong" and "weak" used elsewhere in this reading.'),'muted'));
+      add(rows(sb)); } }
+
+  // ---- Movement IV ---------------------------------------------------------------------
+  if((R.yoga_deep||[]).length){ sec('yoga_deep'); add(H2('Yoga deep-read'));
+    for(const y of R.yoga_deep){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+      d.append(el('summary',{},(y.name||'')+(y.kind?' · '+y.kind:'')));
+      const b=el('div',{class:'body'});
+      if(y.effect) b.append(para(y.effect));
+      if(y.definition_quote) b.append(para('“'+y.definition_quote+'”'+(y.cite?' ('+y.cite+')':''),'muted'));
+      if(y.computation) b.append(para(t('How it was computed')+': '+y.computation,'muted'));
+      if((y.participants||[]).length) b.append(para(t('Participants')+': '+y.participants.join(', '),'muted'));
+      if(y.strength_note) b.append(para(y.strength_note,'muted'));
+      d.append(b); add(d); } }
+  const dp=(R.synthesis||{}).deeptadi;
+  if(dp&&dp.length){ sec('deeptadi'); add(H2('Deeptadi avasthas'));
+    add(para(t('Each graha’s result-state (HPA Ch.7).'),'muted'));
+    add(para(Array.isArray(dp)?dp.join(', '):String(dp))); }
+
+  // ---- Movement V — the matters of life ------------------------------------------------
+  const car=(R.synthesis||{}).career;
+  if(car){ sec('career'); add(H2('Career'));
+    add(para(t('HTJAH-II — the navamsa-dispositor of the 10th lord, Raman’s primary method.'),'muted'));
+    add(para(car)); }
+  const pf=R.profession||{};
+  if((pf.sources||[]).length){ sec('profession'); add(H2('Profession synthesis'));
+    add(para(t('Every encoded derivation angle, then the deterministic convergence count — '+
+      'never a new judgment.'),'muted'));
+    add(rows(pf.sources));
+    if((pf.convergent||[]).length) add(para(t('Convergent trades (named by 2+ derivations)')+': '
+      +pf.convergent.map(c=>Array.isArray(c)?c[0]+' ('+c[1]+')':c).join(', '),'muted'));
+    if((pf.mode_split||[]).length) add(para(t('H10 mode split')+': '
+      +pf.mode_split.map(m=>Array.isArray(m)?m[0]+': '+m[1]:m).join('; '),'muted')); }
+  const wl=R.wealth||{};
+  if((wl.rows||[]).length){ sec('wealth'); add(H2('Wealth chapter'));
+    add(para(t('The CHANNELS, not one verdict — every row re-reads a judged signification '+
+      'or a cited source-of-gains table.'),'muted'));
+    add(rows(wl.rows));
+    if((wl.expansion_periods||[]).length) add(para(t('Periods of expansion (a timing lens, '+
+      'never a promise)')+': '+wl.expansion_periods.join('; '),'muted')); }
+  const mg=R.marriage||{};
+  if(mg.verdict||(mg.fired_kalatra||[]).length){ sec('marriage'); add(H2('Marriage monograph'));
+    if(mg.seventh_covers) add(para(t('The 7th house’s scope (Raman verbatim)')+': “'+mg.seventh_covers+'”','muted'));
+    if(mg.verdict) add(para(t('Headline (unchanged H7 verdict)')+' — '+mg.verdict
+      +(mg.upapada?' · '+t('Upapada')+' '+mg.upapada:'')));
+    if(mg.lord_period_text) add(para(t('The 7th lord in house ')+mg.lord_placement_house
+      +' — “'+mg.lord_period_text+'” (HTJAH-II:710)','muted'));
+    if((mg.spouse_sign_text||[]).length) add(para('“'+mg.spouse_sign_text[0]+'” ('
+      +(mg.spouse_sign_text[1]||'')+')','muted'));
+    if((mg.fired_kalatra||[]).length){ const ul=el('ul',{class:'doclist'});
+      for(const k of mg.fired_kalatra) ul.append(el('li',{},Array.isArray(k)
+        ? '('+k[0]+') '+k[1]+' ['+(k[2]||'')+']' : String(k)));
+      add(ul); }
+    if(mg.timing_navamsa) add(para(t('Timing doctrine (verbatim)')+' — “'+mg.timing_navamsa+'” (HTJAH-II:853)','muted'));
+    if((mg.timing_windows||[]).length) add(para(t('H7 activations')+' — '+mg.timing_windows.join('; '),'muted')); }
+  const ch=R.children||{};
+  if(ch.verdict||(ch.fired_rules||[]).length){ sec('children'); add(H2('Children chapter'));
+    if(ch.verdict) add(para(t('Headline (unchanged H5 verdict)')+' — '+ch.verdict));
+    if((ch.significations||[]).length) add(para(ch.significations
+      .map(s=>Array.isArray(s)?s[0]+': '+s[1]:s).join(' · '),'muted'));
+    if((ch.fired_rules||[]).length){ const ul=el('ul',{class:'doclist'});
+      for(const k of ch.fired_rules) ul.append(el('li',{},Array.isArray(k)
+        ? '('+k[0]+') '+k[1]+' ['+(k[2]||'')+']' : String(k)));
+      add(ul); }
+    if((ch.timing_windows||[]).length) add(para(t('H5 activations')+' — '+ch.timing_windows.join('; '),'muted'));
+    if(ch.combos_quote) add(para(t('Raman’s fifth-house combinations, verbatim')+': “'
+      +ch.combos_quote+'” (HTJAH-I:5179)','muted')); }
+  const ar=R.arishta||{};
+  if(ar.antidote_quote||(ar.bhangas||[]).length||ar.balarishta_applies!=null){
+    sec('arishta'); add(H2('Arishta & Bhanga'));
+    add(para(t('Balarishta (early-childhood danger)')+': '
+      +(ar.balarishta_applies?t('applies'):t('does not apply'))
+      +(ar.balarishta_cancelled?' · '+t('cancelled'):'')
+      +(ar.band?' · '+t('band')+' '+ar.band:''),'muted'));
+    if((ar.balarishta_reasons||[]).length) add(para(ar.balarishta_reasons.join('; '),'muted'));
+    if((ar.bhangas||[]).length) add(sectionTable('Bhangas (cancellations)',ar.bhangas));
+    if((ar.protections||[]).length) add(sectionTable('Protections',ar.protections));
+    if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
+    if(ar.antidote_quote) add(para('“'+ar.antidote_quote+'”'
+      +(ar.antidote_cite?' ('+ar.antidote_cite+')':''),'muted')); }
+  const mk=R.maraka||{};
+  if((mk.units||[]).length){ sec('maraka'); add(H2('The maraka scheme'));
+    add(para(t('Raman’s second step after the longevity band (HTJAH-I:761-814): the 2nd '+
+      'and 7th are the houses of death; their lords, occupants and associates carry maraka '+
+      'power in their periods. A disclosure of the method, not a prediction.'),'muted'));
+    add(rows(mk.units));
+    if(mk.drekkana22_lord) add(para(t('22nd drekkana lord')+': '+mk.drekkana22_lord,'muted'));
+    if(mk.navamsa64_lord) add(para(t('64th navamsa lord')+': '+mk.navamsa64_lord,'muted')); }
+  if((R.maraka_saturn||[]).length){ sec('maraka_saturn');
+    add(H2('Maraka × Saturn-transit confluence'));
+    add(para(t('Where a maraka-tier period overlaps a Saturn transit — the classical '+
+      '"last signal" cross-check. A statement of the method, never a date.'),'muted'));
+    add(rows(R.maraka_saturn)); }
+
+  // ---- Movement VI — in time -----------------------------------------------------------
+  if((R.yoga_timing||[]).length){ sec('yoga_timing'); add(H2('Yoga × Dasha timing'));
+    add(para(t('A yoga’s lord delivers its results in his own Dasha or Bhukti '+
+      '(HTJAH-I:4324).'),'muted'));
+    add(rows(R.yoga_timing,['quality'])); }
+  if((R.ishta_kashta||[]).length){ sec('ishta_kashta'); add(H2('Ishta/Kashta outlook'));
+    add(para(t('The same windowed timeline, painted by each period’s benefic/malefic '+
+      'lean.'),'muted'));
+    add(rows(R.ishta_kashta)); }
+  if((R.md_condition||[]).length){ sec('md_condition'); add(H2('MD-lord condition outlook'));
+    add(para(t('Strength and vargottama status painted onto the Mahadasha timeline.'),'muted'));
+    add(rows(R.md_condition)); }
+  if((R.av_dasha_seats||[]).length){ sec('av_dasha_seat'); add(H2('AV dasha-seat outlook'));
+    add(para(t('Each Mahadasha lord graded by his own Ashtakavarga bindus, under Raman’s '+
+      'own reliability caveat.'),'muted'));
+    add(rows(R.av_dasha_seats)); }
+  if((R.dasa_kakshya||[]).length){ sec('dasa_kakshya'); add(H2('Dasha Kakshya intervals'));
+    add(para(t('The ASP-12 eightfold Kakshya division of each Mahadasha run.'),'muted'));
+    add(rows(R.dasa_kakshya)); }
+  const dc_=R.decades||{};
+  if((dc_.decades||[]).length){ sec('decades'); add(H2('Decade indication timeline'));
+    if(dc_.frame) add(para(dc_.frame,'muted'));
+    add(rows(dc_.decades)); }
+  if((R.dasha_transit||[]).length){ sec('dasha_transit'); add(H2('Dasha × Transit confluence'));
+    add(para(t('Where the running period’s own lord is also well-transited — transits are '+
+      'subordinate to the Dasha (HTJAH-II:4679).'),'muted'));
+    add(rows(R.dasha_transit)); }
+
+  // ---- Movement VII — the summing up ---------------------------------------------------
+  const kr=(R.synthesis||{}).karakamsa_reading;
+  if(kr&&kr.length){ sec('karakamsa'); add(H2('Jaimini Karakamsa'));
+    add(para(t('The soul’s inclination.'),'muted'));
+    const ul=el('ul',{class:'doclist'});
+    for(const x of kr) ul.append(el('li',{},String(x)));
+    add(ul); }
+  const kv=R.karmic||{};
+  if(kv.atmakaraka){ sec('karmic'); add(H2('Karmic evolution (Jaimini)'));
+    if(kv.frame) add(para(kv.frame,'muted'));
+    add(para(t('Atmakaraka')+': '+kv.atmakaraka+t(' (the 7-karaka scheme, locked)')));
+    if(kv.karakamsa) add(para(t('Karakamsa')+': '+kv.karakamsa,'muted'));
+    if(kv.upapada) add(para(t('Upapada')+': '+kv.upapada,'muted'));
+    if(kv.d20_core) add(para(t('D-20 Vimsamsa (spiritual) core')+': '+kv.d20_core,'muted'));
+    if(kv.d60_core) add(para(t('D-60 Shashtiamsa (totality) core')+': '+kv.d60_core,'muted'));
+    if(kv.doctrine_quote) add(para('“'+kv.doctrine_quote+'”'
+      +(kv.doctrine_cite?' ('+kv.doctrine_cite+')':''),'muted')); }
+  const ls=R.life_synthesis||{};
+  if((ls.paragraphs||[]).length){ sec('life_synthesis'); add(H2('Full life synthesis'));
+    for(const p of ls.paragraphs) add(para(p));
+    if(ls.closing) add(para(ls.closing,'lede')); }
+
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
+  sec('nichod');
   if(FQ&&FQ.length) add(feedbackCard(FQ));
 
   // ---- flush: one folio per movement, sections in the arc's order ----------------

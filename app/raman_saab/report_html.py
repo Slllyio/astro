@@ -16,6 +16,7 @@ import re
 
 from app.raman_saab.detailed_report import (
     GLOSSARY,
+    HTML_SECTION_ORDER,
     ROLLUP_RULE,
     _HOUSE_NAME as _MD_HOUSE_NAME,
     _PLANET_THEME,
@@ -2300,9 +2301,13 @@ def to_html(r: DetailedReport) -> str:
 
     vargas = "".join(_varga_card(label, body) for label, body in r.divisional)
 
-    extras = ""
+    # Each contracted section's HTML, keyed by section_id, so the document's ORDER is data
+    # (HTML_SECTION_ORDER / report_movements) rather than a property of where the code sits.
+    # These are built here rather than as module-level helpers because they close over locals
+    # computed above — sig_html, filters, houses, combos_html, vargas.
+    chunk: dict[str, str] = {}
     if s.career:
-        extras += (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
+        chunk["career"] = (f'<h2 class="section" id="career">Career</h2><p class="section-sub">HTJAH-II '
                    f'&mdash; navamsa-dispositor of the 10th lord</p>'
                    f'<p class="doctrine">{_bold(s.career)}</p>')
     if r.profession is not None:
@@ -2319,7 +2324,7 @@ def to_html(r: DetailedReport) -> str:
         modes = ("" if not pf.mode_split else
                  '<p class="section-sub"><b>H10 mode split</b> &mdash; '
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
-        extras += (
+        chunk["profession"] = (
             '<h2 class="section" id="profession">Profession synthesis</h2>'
             f'{_method_preamble_html("profession")}'
             '<p class="section-sub"><b>In simple terms:</b> every encoded derivation '
@@ -2336,7 +2341,7 @@ def to_html(r: DetailedReport) -> str:
                '<p class="section-sub"><b>Periods of expansion</b> (H2/H11 activated at '
                'ordinary tier or better &mdash; a timing lens, never a promise): '
                + _esc("; ".join(wch.expansion_periods)) + '</p>')
-        extras += (
+        chunk["wealth"] = (
             '<h2 class="section" id="wealth">Wealth chapter</h2>'
             f'{_method_preamble_html("wealth")}'
             '<p class="section-sub"><b>In simple terms:</b> the CHANNELS, not one '
@@ -2349,7 +2354,7 @@ def to_html(r: DetailedReport) -> str:
         m = r.marriage
         kal = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(c)})</i></li>'
                       for b, t, c in m.fired_kalatra)
-        extras += (
+        chunk["marriage"] = (
             '<h2 class="section" id="marriage">Marriage monograph</h2>'
             f'{_method_preamble_html("marriage")}'
             f'<p class="section-sub"><b>The 7th house&rsquo;s scope (Raman verbatim):</b> '
@@ -2381,7 +2386,7 @@ def to_html(r: DetailedReport) -> str:
         pr_ = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(ci)})</i></li>'
                       for b, t, ci in c.fired_rules)
         sig = "; ".join(f"{k}: {v}" for k, v in c.significations)
-        extras += (
+        chunk["children"] = (
             '<h2 class="section" id="children">Children chapter</h2>'
             f'{_method_preamble_html("children")}'
             f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
@@ -2393,15 +2398,15 @@ def to_html(r: DetailedReport) -> str:
               f'verbatim (quoted whole so nothing is cherry-picked):</i> '
               f'&ldquo;{_esc(c.combos_quote)}&rdquo; (HTJAH-I:5179)</p>')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
-        extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
+        chunk["deeptadi"] = ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
     if s.karakamsa_reading:
         km = "".join(f"<li>{_esc(x)}</li>" for x in s.karakamsa_reading)
-        extras += (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
+        chunk["karakamsa"] = (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
                    f'<p class="section-sub">the soul\'s inclination</p>'
                    f'<ul class="doclist">{km}</ul>')
-    extras += _soul_section(r)
+    chunk["soul"] = _soul_section(r)
     if r.karmic is not None:
         kv = r.karmic
         krows = [("Atmakaraka", _esc(kv.atmakaraka) + " (the 7-karaka scheme, locked)")]
@@ -2418,18 +2423,15 @@ def to_html(r: DetailedReport) -> str:
             krows.append(("D-60 Shashtiamsa (totality) core", _esc(kv.d60_core)))
         kbody = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                         f'<span class="vv">{v}</span></div>' for k, v in krows)
-        extras += ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
+        chunk["karmic"] = ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
                    f'<p class="section-sub"><i>{_esc(kv.frame)}</i></p>'
                    f'<div class="vsec">{kbody}</div>')
-    extras += _pitru_section(r)
+    chunk["pitru"] = _pitru_section(r)
 
-    body = f"""<style>{_CSS}</style>
-<div class="stickybar" id="stickybar">
-  <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
-  <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
-</div>
-<main class="doc">
-  <header>
+    # The <header> physically contains three contracted sections — title, plain_reading and
+    # chart_signature — plus the legend and nav. They ride together as one chunk keyed "title";
+    # HTML_SECTION_ORDER must therefore keep those three adjacent, in that internal order.
+    chunk["title"] = f"""<header>
     <div class="eyebrow">Vedic reading &middot; Sri B. V. Raman's system</div>
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
@@ -2450,59 +2452,24 @@ def to_html(r: DetailedReport) -> str:
       <a href="#vargas">Divisionals</a><a href="#soul">Soul</a>
       <a href="#synthesis">Insights</a><a href="#glossary">Glossary</a>
       <a href="#nichod">Nichod</a></nav>
-  </header>
+  </header>"""
 
-  {_judgment_graph_section(r)}
+    chunk["chart_grids"] = (
+        '<h2 class="section" id="charts">The charts</h2>\n'
+        '  <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant '
+        'is marked.</p>\n'
+        f'  <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}'
+        '</div>')
 
-  {_ruler_section(r)}
-
-  {_planet_bios_section(r)}
-
-  {_psych_section(r)}
-
-  {_now_box(r)}
-
-  {_info_box(r)}
-
-  {_interpretation_guide_section(r)}
-
-  {_distinctive(r)}
-
-  {_digest_section(r)}
-
-  {_dashboard(r)}
-
-  <h2 class="section" id="charts">The charts</h2>
-  <p class="section-sub">South-Indian layout &mdash; signs are fixed, the ascendant is marked.</p>
-  <div class="charts">{_chart_grid(r, navamsa=False)}{_chart_grid(r, navamsa=True)}</div>
-
-  {_positions(r)}
-
-  {_rect_confidence_section(r)}
-
-  {_shadbala(r)}
-
-  {_yogas(r)}
-
-  {_yoga_timing_section(r)}
-
-  {_yoga_deep_section(r)}
-
-  {_sav(r)}
-
-  <h2 class="section" id="houses">House by house</h2>
+    chunk["houses"] = f"""<h2 class="section" id="houses">House by house</h2>
   <p class="section-sub">Each bhava: Raman's pillars (lord, karaka, navamsa), his verdict, then the
     population context. {_esc(ROLLUP_RULE)} Where the majority of a house&rsquo;s significations
     disagree with that headline, a <b>split-status</b> badge says so &mdash; and where the
     headline is driven by an atlas-proven inverted channel, a warning is shown inline.</p>
   {filters}
-  <div class="houses">{houses}</div>
+  <div class="houses">{houses}</div>"""
 
-  {_house_strength_section(r)}
-
-  {_preponderance_section(r)}
-
-  <h2 class="section" id="longevity">Longevity</h2>
+    chunk["longevity"] = f"""<h2 class="section" id="longevity">Longevity</h2>
   {_method_preamble_html("longevity")}
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
     by the marakas (HTJAH-II:4465-4472). The numeric span is a cross-check, never a date.</p>
@@ -2510,17 +2477,9 @@ def to_html(r: DetailedReport) -> str:
   <p class="long"><b>3. Numeric cross-check (Ayurdaya)</b>: about
     <b>{round(r.longevity_years)} years</b> ({y}y {mo}m {d}d) &mdash;
     class <b>{_esc(r.longevity_class)}</b>. Treat as a band; the engine's own health layer defers
-    lifespan.</p>
+    lifespan.</p>"""
 
-  {_maraka(r)}
-
-  {_maraka_saturn_section(r)}
-
-  {_health_readout_section(r)}
-
-  {_arishta_section(r)}
-
-  <h2 class="section" id="timeline">Life-narrative</h2>
+    chunk["timeline"] = f"""<h2 class="section" id="timeline">Life-narrative</h2>
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
     {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A planet influences a house by owning,
@@ -2530,37 +2489,66 @@ def to_html(r: DetailedReport) -> str:
     <em>feeble</em> (HTJAH-I:1592-1640, 2588-2599). Verdicts are the unchanged natal readings.</p>
   <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
       for k, v in _TIER_MEANING.items())}</div>
-  {_timeline(r)}
+  {_timeline(r)}"""
 
-  {_ishta_kashta_section(r)}
+    chunk["divisional"] = (
+        '<h2 class="section" id="vargas">Divisional deep-reads</h2>\n'
+        '  <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one '
+        'matter (Raman core\n    authoritative; varga overlay report-only).</p>\n'
+        f'  {vargas}')
 
-  {_md_condition_section(r)}
+    # the 38 sections whose markup already lives in a dedicated helper
+    chunk.update({
+        "judgment_graph": _judgment_graph_section(r),
+        "ruler": _ruler_section(r),
+        "planet_bios": _planet_bios_section(r),
+        "psych": _psych_section(r),
+        "now_box": _now_box(r),
+        "info_content": _info_box(r),
+        "interpretation_guide": _interpretation_guide_section(r),
+        "stands_out": _distinctive(r),
+        "digest": _digest_section(r),
+        "dashboard": _dashboard(r),
+        "positions": _positions(r),
+        "rect_confidence": _rect_confidence_section(r),
+        "shadbala": _shadbala(r),
+        "yogas": _yogas(r),
+        "yoga_timing": _yoga_timing_section(r),
+        "yoga_deep": _yoga_deep_section(r),
+        "ashtakavarga": _sav(r),
+        "house_strength": _house_strength_section(r),
+        "preponderance": _preponderance_section(r),
+        "maraka": _maraka(r),
+        "maraka_saturn": _maraka_saturn_section(r),
+        "health_readout": _health_readout_section(r),
+        "arishta": _arishta_section(r),
+        "ishta_kashta": _ishta_kashta_section(r),
+        "md_condition": _md_condition_section(r),
+        "av_dasha_seat": _av_dasha_seat_section(r),
+        "dasa_kakshya": _dasa_kakshya_section(r),
+        "life_chapters": _life_chapters_section(r),
+        "decades": _decades_section(r),
+        "gochara": _gochara_table(r),
+        "dasha_transit": _dasha_transit_section(r),
+        "synthesis": _synthesis_section(r),
+        "life_synthesis": _life_synthesis_section(r),
+        "glossary": _glossary(),
+        "nichod": _nichod_section(r),
+    })
 
-  {_av_dasha_seat_section(r)}
-  {_dasa_kakshya_section(r)}
+    # ORDER IS DATA: the document is assembled by walking the contract, not by the position a
+    # fragment happens to occupy in this file. Empty sections (a conditional that did not fire)
+    # drop out exactly as they did when they contributed an empty slot.
+    sections = "\n\n  ".join(
+        chunk[sid] for sid in HTML_SECTION_ORDER if chunk.get(sid, "").strip())
 
-  {_life_chapters_section(r)}
-
-  {_decades_section(r)}
-
-  {_gochara_table(r)}
-
-  {_dasha_transit_section(r)}
-
-  <h2 class="section" id="vargas">Divisional deep-reads</h2>
-  <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one matter (Raman core
-    authoritative; varga overlay report-only).</p>
-  {vargas}
-
-  {extras}
-
-  {_synthesis_section(r)}
-
-  {_life_synthesis_section(r)}
-
-  {_glossary()}
-
-  {_nichod_section(r)}
+    body = f"""<style>{_CSS}</style>
+<div class="stickybar" id="stickybar">
+  <span class="sb-sec" id="sb-sec">{_esc(b.name)}</span>
+  <span class="sb-now">{_esc(s.running_md)} MD / {_esc(s.running_ad)} AD</span>
+</div>
+<main class="doc">
+  {sections}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

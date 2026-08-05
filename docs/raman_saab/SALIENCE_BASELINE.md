@@ -88,3 +88,75 @@ non-differential.
 py -3.12 tools/raman_saab/measure_salience.py --split holdout
 py -3.12 tools/raman_saab/measure_salience.py --split all
 ```
+
+---
+
+# Phase 1 result — doctrine works, statistical distinctiveness does not
+
+*Measured 2026-08-05. Tuning done on the tune split only; holdout measured once, at the end.*
+
+## What beat what
+
+`app/raman_saab/salience.py` ranks houses by a **doctrinal prior** — Lagna first
+(HTJAH-I:16001), then kendras strongest-first (10 > 7 > 4) and trikonas (9 > 5), then dhana and
+labha, then the rest (HPA-6). Held-out, against the **shipped digest**:
+
+| metric | salience | digest | difference | 95% CI |
+|---|---|---|---|---|
+| p@1 | 0.643 | 0.286 | +0.357 | [−0.071, +0.714] |
+| p@3 | 0.500 | 0.357 | **+0.143** | [+0.024, +0.238] |
+| r@3 | 0.714 | 0.452 | **+0.262** | [+0.083, +0.464] |
+| MRR | 0.810 | 0.507 | **+0.302** | [+0.083, +0.503] |
+
+Three of four significant on held-out charts; p@1 more than doubles but its interval spans zero
+at n=14.
+
+Against the **doctrinal constant**: identical on every metric, CI [0.000, 0.000]. The two
+rankings agree on the first four houses, and these metrics only see the top three.
+
+## The negative result, which is the more interesting half
+
+Every chart-specific signal was ablated on the tune split. **All of them made the ranking worse
+than the doctrinal prior alone** (p@1, prior alone = 0.643):
+
+| added signal | p@1 | p@3 |
+|---|---|---|
+| surprisal `−log2(band_share)` | 0.214 | 0.214 |
+| extremity (distance from population median) | 0.357 | 0.167 |
+| judgment-graph centrality | 0.357 | 0.286 |
+| occupancy (stellium) | 0.643 | 0.357 |
+| all together | 0.286 | 0.214 |
+
+So the Phase-1 hypothesis — that **statistical distinctiveness against a modern population
+predicts where a master astrologer looks** — is **not supported**.
+
+The honest reading: Raman's attention is driven by **doctrine**, by which house is structurally
+consequential, not by how unusual a house is against 16,450 strangers. The population overlay is
+a 21st-century addition he never had. It earns its place in this engine by disclosing a
+reading's information content — not by predicting expert attention. The two are orthogonal, and
+that is now measured rather than assumed.
+
+A corollary worth keeping: the "trivial" baseline was never trivial. `1, 10, 7, 9, …` **is**
+Raman's doctrinal house hierarchy. Naming it "trivial" flattered the engine.
+
+## Tie-breaking is doctrine too
+
+The first version gave every kendra and trikona the same 0.75 and broke ties by house number.
+That alone cost **0.10 p@3**. Ordering *within* a tier — the 10th before the 7th before the
+4th — is itself doctrine, not an implementation detail.
+
+## One test that proved vacuous
+
+An "exalted / debilitated / own-sign" signal returned byte-identical scores at two different
+weights — the tell that it was scoring all zeros. `PlanetPos` carries no `dignity` field, so
+the signal never existed. **It is therefore untested, not disproved**, and remains the most
+promising unexplored doctrinal feature: exaltation and debilitation are exactly what Raman
+opens on.
+
+## Where this leaves the programme
+
+- Shippable: an ordering that beats what ships today, on held-out charts, with intervals.
+- Not shippable as "intuition": the per-chart modulation contributes nothing measurable. The
+  ranking is currently a **constant** order with chart-specific *reasons* attached.
+- Next honest attempts, in order of promise: dignity (never actually tested), the strength of
+  each house's own lord, and yoga participation weighted by yoga rank rather than count.

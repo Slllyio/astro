@@ -48,9 +48,16 @@ def rank_trivial(report) -> list[int]:
     return list(TRIVIAL_ORDER)
 
 
+def rank_salience(report) -> list[int]:
+    """The v1 salience engine: doctrinal prior modulated by chart-specific information."""
+    from app.raman_saab.salience import rank_houses
+    return rank_houses(report)
+
+
 RANKERS: dict[str, Callable[[object], list[int]]] = {
     "digest": rank_digest,
     "trivial": rank_trivial,
+    "salience": rank_salience,
 }
 
 

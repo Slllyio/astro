@@ -98,6 +98,20 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
 h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6rem 0 .3rem;
   padding-top:1.6rem;border-top:1px solid var(--rule);text-wrap:balance}
 .section-sub{color:var(--ink-soft);font-size:.86rem;margin:.2rem 0 1.2rem}
+/* v33 movements — the reading arc. A movement heading outranks a section heading, so it
+   carries the doctrine colour and a heavier rule; the passage under it is the connective
+   prose composed from Raman's own compositional rules (report_movements.movement_passage). */
+h2.movement{font-family:var(--serif);font-weight:600;font-size:2rem;line-height:1.15;
+  margin:4.5rem 0 .4rem;padding-top:2.2rem;border-top:3px solid var(--doctrine);
+  color:var(--doctrine);text-wrap:balance;display:flex;align-items:baseline;gap:.7rem}
+h2.movement:first-of-type{margin-top:2.6rem}
+.movement-num{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--sans);color:var(--ink-soft);flex:none}
+.movement-passage{font-family:var(--serif);font-size:1.08rem;line-height:1.55;
+  color:var(--ink-soft);font-style:italic;margin:.1rem 0 2rem;max-width:62ch;
+  border-left:2px solid var(--instrument-soft);padding-left:1rem}
+h2.movement + .movement-passage{margin-top:.5rem}
+@media print{h2.movement{break-before:page;break-after:avoid}}
 .long{font-family:var(--serif);font-size:1.15rem}
 .long b{color:var(--doctrine)}
 .long-combos{list-style:none;padding:0;margin:.7rem 0 0}
@@ -2536,11 +2550,29 @@ def to_html(r: DetailedReport) -> str:
         "nichod": _nichod_section(r),
     })
 
-    # ORDER IS DATA: the document is assembled by walking the contract, not by the position a
-    # fragment happens to occupy in this file. Empty sections (a conditional that did not fire)
-    # drop out exactly as they did when they contributed an empty slot.
-    sections = "\n\n  ".join(
-        chunk[sid] for sid in HTML_SECTION_ORDER if chunk.get(sid, "").strip())
+    # ORDER IS DATA: the document is assembled by walking the v33 reading arc, not by the
+    # position a fragment happens to occupy in this file. Each movement opens with a heading
+    # and its connective passage; every section still renders in full underneath. Empty
+    # sections (a conditional that did not fire) drop out as they always did.
+    from app.raman_saab.report_movements import MOVEMENTS, movement_passage
+
+    parts: list[str] = []
+    for i, mv in enumerate(MOVEMENTS):
+        present = [sid for sid in mv.section_ids if chunk.get(sid, "").strip()]
+        if not present:
+            continue
+        # Movement I opens with the document <header>, so its heading follows that block.
+        lead = "title" if i == 0 and "title" in present else None
+        if lead:
+            parts.append(chunk[lead])
+        head = (f'<h2 class="movement" id="movement-{mv.numeral.lower()}">'
+                f'<span class="movement-num">{_esc(mv.numeral)}</span>{_esc(mv.title)}</h2>')
+        passage = movement_passage(r, i)
+        if passage:
+            head += f'\n  <p class="movement-passage">{_esc(passage)}</p>'
+        parts.append(head)
+        parts.extend(chunk[sid] for sid in present if sid != lead)
+    sections = "\n\n  ".join(parts)
 
     body = f"""<style>{_CSS}</style>
 <div class="stickybar" id="stickybar">

@@ -434,7 +434,18 @@ class SectionSpec:
 #: ADDED (with a new `since`), but existing rows must never be removed, renamed, or reordered —
 #: tests/raman_saab/test_report_template_contract.py enforces both renderers emitting every marker
 #: in this order, and that the v1 prefix is byte-stable.
-SECTION_CONTRACT: tuple[SectionSpec, ...] = (
+def _reading_order() -> tuple[str, ...]:
+    """The v33 reading arc, imported lazily so `report_movements` can annotate against us."""
+    from app.raman_saab.report_movements import flattened_order
+
+    return flattened_order()
+
+
+#: The frozen section SET, in the order the sections were BUILT (v1 -> v32). This literal is
+#: append-only and is never re-ordered; the document's reading order is applied separately,
+#: below, from `report_movements`. Keeping the two apart is what lets the sequence improve
+#: without ever putting the completeness guarantee at risk.
+_SECTION_SPECS: tuple[SectionSpec, ...] = (
     SectionSpec("title", "# Detailed reading", 'class="name"', "v1"),
     # v5 (2026-07-26, conscious amendment): "Your Reading" inserted right after the title — the
     # ONE deliberate exception to "append at the end". Every prior amendment (v2/v3/v4) only
@@ -596,27 +607,26 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("nichod", "## Nichod", 'id="nichod"', "v4"),
 )
 
-#: The HTML renderer's document order (the signature chips live in the page header, and the
-#: chart grids/now-box are HTML-only). Same append-only rule applies.
-HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "judgment_graph", "ruler", "planet_bios", "psych",
-    "now_box",
-    "info_content", "interpretation_guide", "stands_out", "digest",
-    "dashboard",
-    "chart_grids", "positions", "rect_confidence", "shadbala", "yogas", "yoga_timing",
-    "yoga_deep",
-    "ashtakavarga", "houses",
-    "house_strength", "preponderance", "longevity",
-    "maraka", "maraka_saturn", "health_readout", "arishta", "timeline", "ishta_kashta",
-    "md_condition",
-    "av_dasha_seat", "dasa_kakshya",   # dasa_kakshya added here 2026-08-03 (v16 omission repair)
-    "life_chapters", "decades",
-    "gochara", "dasha_transit",
-    "divisional", "career", "profession", "wealth", "marriage", "children",
-    "deeptadi",
-    "karakamsa", "soul", "karmic", "pitru", "synthesis", "life_synthesis", "glossary",
-    "nichod",
-)
+# v33 amendment (2026-08-05, conscious, same-commit, user-requested — the third and largest
+# order amendment after v5's `plain_reading` and v32's `judgment_graph`). The reading SEQUENCE
+# now lives in `report_movements.MOVEMENTS`, which groups all 53 sections into seven movements
+# following a reading arc rather than the order in which they were built.
+#
+# The two invariants the old single tuple conflated are now separate:
+#   * COMPLETENESS stays frozen and append-only — `_SECTION_SPECS` above is untouched, and the
+#     contract test asserts SET equality against its hand-copied `_FROZEN` triples. Nothing is
+#     ever removed or hidden (REPORT COMPLETENESS).
+#   * ORDER is a design decision, versioned separately and pinned by the test's hand-copied
+#     `_ORDER_V33`, so re-sequencing stays as deliberate an act as changing a marker.
+#
+# Both orders are DERIVED from the arc rather than restated, so the registry and the renderers
+# can never silently drift apart.
+SECTION_CONTRACT: tuple[SectionSpec, ...] = tuple(
+    sorted(_SECTION_SPECS, key=lambda spec: _reading_order().index(spec.section_id)))
+
+#: The HTML renderer's document order — the same arc. (`title`, `plain_reading` and
+#: `chart_signature` are one `<header>` element in the HTML and must stay adjacent.)
+HTML_SECTION_ORDER: tuple[str, ...] = _reading_order()
 
 
 @dataclass(frozen=True)
@@ -4229,9 +4239,41 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
 
 
 def to_markdown(r: DetailedReport) -> str:
-    """Render the full detailed report as a Markdown document (ASCII-safe)."""
-    return _fold_ascii(
-        _markdown_sections(r).render(tuple(s.section_id for s in SECTION_CONTRACT)))
+    """Render the full detailed report as a Markdown document (ASCII-safe).
+
+    The document is laid out as the seven v33 movements, each opening with a connective
+    passage that names what the previous movement established. Every section still renders in
+    full underneath — the movements group and introduce them, they never replace them.
+    """
+    from app.raman_saab.report_movements import MOVEMENTS, movement_passage
+
+    acc = _markdown_sections(r)
+    out: list[str] = list(acc.lines_for(_SectionedLines.PREAMBLE))
+
+    for i, mv in enumerate(MOVEMENTS):
+        rendered = {sid: acc.lines_for(sid) for sid in mv.section_ids}
+        if not any(any(x.strip() for x in ls) for ls in rendered.values()):
+            continue  # a movement whose every section was conditional and did not fire
+
+        # Movement I opens with the document's own H1, so its heading follows the title block
+        # rather than preceding it — everywhere else the heading comes first.
+        lead = "title" if i == 0 and rendered.get("title") else None
+        if lead:
+            out.extend(rendered[lead])
+
+        out.append(f"## {mv.numeral}. {mv.title}")
+        out.append("")
+        passage = movement_passage(r, i)
+        if passage:
+            out.append(f"_{passage}_")
+            out.append("")
+
+        for sid in mv.section_ids:
+            if sid != lead:
+                out.extend(rendered[sid])
+
+    out.extend(acc.lines_for(_SectionedLines.FOOTER))
+    return _fold_ascii("\n".join(out))
 
 
 def _fold_ascii(s: str) -> str:

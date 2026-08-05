@@ -196,6 +196,19 @@
     text-transform:uppercase;color:var(--madder);border-bottom:1px solid rgba(160,40,40,.35);
     padding-bottom:.35rem;margin:1.6rem 0 .7rem}
   .folio-scroll h2.sec:first-child{margin-top:.2rem}
+  /* v33 movements — the reading arc, layered onto the manuscript folios. A movement outranks
+     a section heading, so it takes the display face and a full rule; the passage beneath is
+     the connective prose composed from Raman's own rules (report_movements.movement_passage). */
+  .folio-scroll .movement-intro{margin:.2rem 0 1.6rem}
+  .folio-scroll h2.movement{font-family:'Cinzel',serif;font-size:1.32rem;font-weight:600;
+    letter-spacing:.06em;color:var(--saffron-deep);margin:.2rem 0 .5rem;padding-bottom:.5rem;
+    border-bottom:2px solid rgba(139,111,71,.45);display:flex;align-items:baseline;gap:.6rem}
+  .folio-scroll .movement-num{font-size:.7rem;letter-spacing:.18em;color:var(--ink-secondary);
+    font-family:var(--serif);flex:none}
+  .folio-scroll .movement-passage{font-family:'EB Garamond',serif;font-size:1.02rem;
+    line-height:1.6;font-style:italic;color:var(--ink-secondary);margin:0;max-width:60ch;
+    border-left:2px solid rgba(139,111,71,.3);padding-left:.9rem}
+  .folio-scroll .movement-intro + h2.sec{margin-top:.6rem}
   .folio-scroll h2.sec .explain{font-family:var(--serif);color:var(--saffron-deep);background:rgba(232,213,168,.6);
     border-color:rgba(139,111,71,.4)}
   .folio-scroll .lede{font-family:'EB Garamond',serif;color:var(--ink-primary)}
@@ -1835,7 +1848,28 @@ function render(R, S, FQ){
   // clear every chapter folio, then append each section-group into its leaf via chapter()
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
-  const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); };
+
+  // v33 reading arc. The manuscript keeps its own folio shape — an already-coherent grouping
+  // that the page-turn depends on — and LAYERS the movement's connective passage onto it, so
+  // every surface speaks with the same voice even where the grouping differs. Safe DOM only
+  // (createElement + textContent): no innerHTML, no external library (project rule).
+  const MOVEMENT_OF_FOLIO={2:'I',3:'I',4:'III',5:'III',6:'IV',7:'V',8:'VI',9:'VI',10:'VII',11:'II',12:'VII'};
+  const _seenMovement=new Set();
+  function movementIntro(numeral){
+    const mv=(R.movements||[]).find(m=>m.numeral===numeral);
+    if(!mv||_seenMovement.has(numeral)) return null;
+    _seenMovement.add(numeral);
+    const wrap=el('div',{class:'movement-intro'});
+    const h=el('h2',{class:'movement'});
+    h.id='movement-'+numeral.toLowerCase();
+    h.append(el('span',{class:'movement-num'},numeral));
+    h.append(document.createTextNode(t(mv.title)));
+    wrap.append(h);
+    if(mv.passage) wrap.append(el('p',{class:'movement-passage'},mv.passage));
+    return wrap;
+  }
+  const chapter=(i)=>{ _leaf=$('leaf'+i+'-body');
+    const intro=movementIntro(MOVEMENT_OF_FOLIO[i]); if(intro&&_leaf) _leaf.append(intro); };
 
   chapter(2);
   // ===== What matters most (the engine's ranked digest — first thing you see) =====

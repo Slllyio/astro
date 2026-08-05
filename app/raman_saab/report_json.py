@@ -107,11 +107,21 @@ def to_report_dict(r: DetailedReport) -> dict:
     from app.raman_saab.judgment_graph import build_judgment_graph
     b = r.birth
     _jg = build_judgment_graph(r)
+    from app.raman_saab.report_movements import MOVEMENTS, movement_passage
     return {
         "birth": {"name": b.name, "year": b.year, "month": b.month, "day": b.day,
                   "hour": b.hour, "minute": b.minute, "tz_offset": b.tz_offset,
                   "latitude": b.latitude, "longitude": b.longitude},
         "chart": _chart_dict(r.chart),
+
+        # v33 — the reading arc, so every surface can carry the same connective voice. The
+        # interactive page keeps its own manuscript folios (a different, already coherent
+        # shape) and layers these passages onto them rather than being re-cut into seven.
+        "movements": [
+            {"numeral": mv.numeral, "title": mv.title,
+             "sections": list(mv.section_ids), "passage": movement_passage(r, i)}
+            for i, mv in enumerate(MOVEMENTS)
+        ],
 
         # top-of-page human summary layers (labeled prose slots)
         "plain_reading": _ad(r.plain_reading),

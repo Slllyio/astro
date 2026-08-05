@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Evaluations for the astro-raman MCP server.
+
+  Every answer below was COMPUTED by driving the real server over MCP stdio against a
+  running engine, not asserted from memory. Regenerate with the harness that produced
+  them if the engine's doctrine changes.
+
+  Two fixed nativities are used so the answers are stable:
+    MAINPURI  1989-10-12 10:02, lat 27.23, lon 79.03, tz +5.5  (Raman's own worked chart)
+    BANGALORE 1990-07-15 12:00, lat 12.97, lon 77.59, tz +5.5  (the project's test baseline)
+
+  Each question requires at least two tool calls or a non-obvious chain, is read-only,
+  and has a single string-comparable answer. None asks for a prediction, a lifespan or a
+  medical outcome — the server exposes no such tool, and an eval that asked for one would
+  be testing for behaviour this project forbids.
+-->
+<evaluation>
+
+  <qa_pair>
+    <question>Cast the chart for the nativity born 1989-10-12 at 10:02 local time, latitude 27.23, longitude 79.03, UTC offset +5.5. Which zodiac sign is rising (the ascendant)?</question>
+    <answer>Scorpio</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the nativity born 1989-10-12 at 10:02, latitude 27.23, longitude 79.03, UTC offset +5.5: which planet rules the 7th house (spouse and partnerships)?</question>
+    <answer>Venus</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the nativity born 1989-10-12 at 10:02, latitude 27.23, longitude 79.03, UTC offset +5.5: which planetary period (Mahadasha) was running at the moment of birth?</question>
+    <answer>Rahu</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Compare the 7th house lord for two nativities: (A) born 1989-10-12 10:02 at lat 27.23, lon 79.03, tz +5.5, and (B) born 1990-07-15 12:00 at lat 12.97, lon 77.59, tz +5.5. Which planet rules the 7th house of nativity B?</question>
+    <answer>Jupiter</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the nativity born 1989-10-12 at 10:02, lat 27.23, lon 79.03, tz +5.5, examine houses 1, 7 and 10. Which of those three houses has the highest number of favourable testimonies supporting its verdict, and how many does it have? Answer with the house number and count separated by a space.</question>
+    <answer>10 8</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the nativity born 1989-10-12 at 10:02, lat 27.23, lon 79.03, tz +5.5: which planet rules the 10th house (career)?</question>
+    <answer>Sun</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>For the nativity born 1989-10-12 at 10:02, lat 27.23, lon 79.03, tz +5.5: how many adverse testimonies stand against the 7th house verdict?</question>
+    <answer>1</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>How many sections does a complete detailed reading contain, according to the report's own section contract?</question>
+    <answer>53</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Resolve the citation HTJAH-II:4465-4472 to its verbatim source text. It names two Jaimini longevity methods that Raman says yield fairly accurate results. Name the first of the two methods mentioned.</question>
+    <answer>Pindayurdaya</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Attempt to resolve the citation token NOPE-9:1. Does the server report this as an error? Answer yes or no.</question>
+    <answer>yes</answer>
+  </qa_pair>
+
+</evaluation>

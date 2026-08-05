@@ -1,0 +1,22 @@
+{
+  "name": "mcp-astro",
+  "version": "0.1.0",
+  "description": "MCP server for the Raman Vedic astrology engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "tsx": "^4.23.6",
+    "typescript": "^5.9.3"
+  }
+}

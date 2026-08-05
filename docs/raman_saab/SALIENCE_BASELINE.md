@@ -160,3 +160,63 @@ opens on.
   ranking is currently a **constant** order with chart-specific *reasons* attached.
 - Next honest attempts, in order of promise: dignity (never actually tested), the strength of
   each house's own lord, and yoga participation weighted by yoga rank rather than count.
+
+---
+
+# Phase 1b — the signal hunt is exhausted at this sample size
+
+*Measured 2026-08-06, tune split only.*
+
+The Phase-1 write-up flagged one signal as **untested rather than disproved**: exaltation and
+debilitation, which had silently scored all zeros because `PlanetPos` carries no `dignity`
+field. It is now tested properly, via `app.core.dignity.dignity_state`, along with two more
+doctrinal features. Results against the doctrinal prior alone (p@1 0.643, p@3 0.429):
+
+| added signal | p@1 | p@3 | r@3 | MRR |
+|---|---|---|---|---|
+| **prior alone** | 0.643 | 0.429 | 0.595 | 0.746 |
+| dignity — exalted / debilitated / own, w=0.10 | 0.571 | 0.429 | **0.607** | 0.708 |
+| dignity, w=0.20 | 0.429 | 0.381 | 0.512 | 0.617 |
+| house-lord shadbala, w=0.10 | 0.643 | 0.429 | 0.595 | 0.727 |
+| house-lord strength *deviation*, w=0.10 | 0.500 | 0.286 | 0.357 | 0.637 |
+| yoga weighted by kind, w=0.10 | **0.714** | 0.429 | 0.536 | **0.791** |
+
+**Dignity is neutral at best** — a touch better on r@3, worse on p@1 and MRR. It was the most
+promising unexplored feature and it does not deliver.
+
+**Yoga-by-kind is the only positive, and it is one chart.** p@1 0.714 vs 0.643 at n=14 is a
+single chart changing sides; p@3 is unmoved at +0.000. Reporting that as a gain would be
+fitting to noise, so it is not adopted.
+
+## The finding, across eight signals
+
+Surprisal, extremity, graph centrality, occupancy, dignity, house-lord shadbala, lord-strength
+deviation, yoga-by-kind — **none produces a detectable improvement over doctrine alone.**
+
+On this benchmark, at this sample size, **Raman's attention is predicted by doctrine and by
+nothing else the engine computes.**
+
+That is not a failure of the engine's features. It is a statement about what expert attention
+*is*: he looks where the method says to look — the Lagna, then the kendras and trikonas — and
+the chart's particulars shape *what he says* about those houses, not *which houses he picks*.
+The salience question and the content question are separate, and only the second is
+chart-specific.
+
+## Why the hunt should stop here, not continue
+
+With 14 tune and 14 holdout charts, the smallest effect this benchmark can resolve is roughly
+one chart — about 0.07 in p@1. Every signal tested lands inside that. Continuing to try
+features against a benchmark this size is not investigation; it is a search for a subset that
+happens to fit 14 charts, and it will find one eventually whether or not the effect is real.
+
+The productive moves are:
+
+1. **Ship what was actually won.** The doctrinal ordering beats the shipped digest on held-out
+   charts (p@3 +0.143, r@3 +0.262, MRR +0.302). Wiring `salience.py` into the report is a real
+   improvement that is already measured and paid for.
+2. **Grow n before hunting again.** *Notable Horoscopes* yielded 31 admitted charts. The 293
+   printed verdicts behind the golden ratchet, and the worked examples in *How to Judge a
+   Horoscope* I & II, are further sources of Raman's own attention. Tripling the benchmark
+   would let it resolve effects of ~0.02 instead of ~0.07.
+3. Treat any future signal as needing to clear the doctrinal prior on **holdout**, paired, with
+   an interval that excludes zero — the bar this programme has used throughout.

@@ -1,0 +1,38 @@
+{
+  "date": "2026-08-05",
+  "window": "7d",
+  "ref_used": "local main",
+  "guard_note": "origin/main is 609 commits / ~2 months stale; retro run against local main and disclosed",
+  "metrics": {
+    "commits": 58,
+    "contributors": 1,
+    "prs_merged": 0,
+    "insertions": 19188,
+    "deletions": 1421,
+    "net_loc": 17767,
+    "files_changed": 315,
+    "test_loc": 4651,
+    "test_ratio": 0.242,
+    "active_days": 3,
+    "sessions": 16,
+    "deep_sessions": 3,
+    "avg_session_minutes": 36,
+    "active_hours": 9.6,
+    "loc_per_session_hour": 2000,
+    "feat_pct": 0.69,
+    "fix_pct": 0.17,
+    "peak_hour": 11
+  },
+  "authors": {
+    "Akshay": {
+      "commits": 58, "insertions": 19188, "deletions": 1421,
+      "test_ratio": 0.242, "top_area": "app/raman_saab/"
+    }
+  },
+  "streak_days": 3,
+  "test_health": {
+    "total_test_files": 330,
+    "test_files_changed": 51
+  },
+  "tweetable": "Week of Jul 29: 58 commits, 19.2k LOC, 24% tests, 3 active days, peak 11am | 4 latent bugs found by measuring"
+}

@@ -21,7 +21,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass, replace as _dc_replace
-from typing import Final, Optional
+from typing import Final, Iterable, Optional
 
 from app.raman_saab import (
     render_dasamsa, render_dwadasamsa, render_general_varga, render_matter_varga,
@@ -2640,11 +2640,66 @@ def passage_quote(cite: str, *, max_chars: int = 260) -> str:
     return text
 
 
-def to_markdown(r: DetailedReport) -> str:
-    """Render the full detailed report as a Markdown document (ASCII-safe)."""
+class _SectionedLines:
+    """Line accumulator that tags every append with the section being rendered.
+
+    ``to_markdown`` is one long function that appended into a flat list, so the document's
+    ORDER was a property of where the code happened to sit rather than data. Routing the
+    appends by section_id makes the order driven by the registry (and, from v33, by
+    ``report_movements.flattened_order``) without moving a single line of rendering logic:
+    every existing ``L.append(...)`` call is untouched, and only ``L.start(...)`` calls were
+    inserted at the section headings.
+
+    Sections whose heading sits inside a conditional simply never call ``start``; ``render``
+    skips ids it never saw, reproducing the old "emit nothing" behaviour exactly.
+    """
+
+    __slots__ = ("_by_id", "_cur")
+
+    #: anything appended before the first ``start`` — expected empty, emitted first if not.
+    PREAMBLE = "_preamble"
+    #: the closing provenance block, always emitted last whatever the section order.
+    FOOTER = "_footer"
+
+    def __init__(self) -> None:
+        self._by_id: dict[str, list[str]] = {}
+        self._cur = self.PREAMBLE
+
+    def start(self, section_id: str) -> None:
+        """Open a section; every later ``append`` belongs to it until the next ``start``."""
+        self._cur = section_id
+        self._by_id.setdefault(section_id, [])
+
+    def append(self, line: str) -> None:
+        self._by_id.setdefault(self._cur, []).append(line)
+
+    def extend(self, lines: Iterable[str]) -> None:
+        self._by_id.setdefault(self._cur, []).extend(lines)
+
+    def lines_for(self, section_id: str) -> tuple[str, ...]:
+        """The lines one section emitted — lets the contract test pin attribution."""
+        return tuple(self._by_id.get(section_id, ()))
+
+    def render(self, order: tuple[str, ...]) -> str:
+        """Join the sections in ``order``; preamble first, footer last."""
+        out: list[str] = list(self._by_id.get(self.PREAMBLE, ()))
+        for sid in order:
+            out.extend(self._by_id.get(sid, ()))
+        out.extend(self._by_id.get(self.FOOTER, ()))
+        return "\n".join(out)
+
+
+def _markdown_sections(r: DetailedReport) -> _SectionedLines:
+    """Render every section, keyed by section_id — the order is applied by the caller.
+
+    Split out of ``to_markdown`` so the document's sequence is a separate, testable decision
+    from its content: a test can assert each section's chunk opens with its own marker, which
+    is the one thing a same-order render can never prove.
+    """
     s, b = r.synthesis, r.birth
     y, mo, d = r.longevity_ymd
-    L: list[str] = []
+    L = _SectionedLines()
+    L.start("title")
     L.append(f"# Detailed reading — {b.name}")
     L.append("")
     L.append(f"**Born** {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d} "
@@ -2662,6 +2717,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── your reading: the one genuinely plain-English section, read FIRST ──────
     pr = r.plain_reading
+    L.start("plain_reading")
     L.append("## Your Reading")
     L.append("")
     L.append(pr.opening)
@@ -2684,6 +2740,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── judgment graph (v32) — USED already above (the dominant-planet census sentence);
     # shown here, right beside Your Reading, rather than buried later in the document.
+    L.start("judgment_graph")
     L.append("## Judgment graph")
     L.append("")
     try:
@@ -2724,6 +2781,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── the honesty headline (aggregate information content) ──────────────────
     L.append("")
+    L.start("info_content")
     L.append("## Information content of this reading")
     L.append("")
     L.append(r.info.sentence)
@@ -2731,6 +2789,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── how to read this report (v18, chart-independent interpretation guide) ─
     from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as _IG
+    L.start("interpretation_guide")
     L.append("## How to read this report")
     L.append("")
     L.append(f"_{_IG['preamble']}_")
@@ -2766,6 +2825,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── what actually distinguishes this chart ────────────────────────────────
     if r.distinctive:
+        L.start("stands_out")
         L.append("## What stands out in this chart")
         L.append("")
         L.append("_The readings furthest from the population midpoint — where this chart is least "
@@ -2781,6 +2841,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── what matters most (v19, the engine's own ranked digest) ───────────────
     if r.digest.items:
+        L.start("digest")
         L.append("## What matters most (ranked digest)")
         L.append("")
         L.append(f"_{r.digest.headline}_")
@@ -2795,6 +2856,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
 
     # ── the twelve matters at a glance (executive dashboard) ──────────────────
+    L.start("dashboard")
     L.append("## The twelve matters at a glance")
     L.append("")
     L.append("_Each matter's authoritative verdict from its dedicated deep reader (Raman's method "
@@ -2819,6 +2881,7 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("")
 
     # ── chart signature ───────────────────────────────────────────────────────
+    L.start("chart_signature")
     L.append("## Chart signature")
     L.append("")
     L.append(f"- **Lagna** {s.lagna}  |  **Navamsa Lagna** {s.navamsa_lagna}  |  "
@@ -2844,6 +2907,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── ruler of the nativity (Raman's own first-impression move, v13) ───────
     ru = r.ruler
+    L.start("ruler")
     L.append("## Ruler of the nativity")
     L.append("")
     L.append("**In simple terms:** Raman opens a judgment from here: \"in order to obtain a "
@@ -2928,6 +2992,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── planet biographies (v20, S2 — dominant grahas by judgment-graph census) ─
     if r.planet_bios:
         from app.raman_saab.planet_biographies import MODERN_BANNER
+        L.start("planet_bios")
         L.append("## Planet biographies (dominant grahas)")
         L.append("")
         L.append("**In simple terms:** the grahas that drive the most of this chart's "
@@ -2981,6 +3046,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── psychological profile (v27 — the mind stack woven) ────────────────────
     if r.psych is not None:
         ps = r.psych
+        L.start("psych")
         L.append("## Psychological profile")
         L.append("")
         L.extend(_method_preamble("psych"))
@@ -3001,6 +3067,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
 
     # ── planet positions (a reading must be checkable) ────────────────────────
+    L.start("positions")
     L.append("## Planetary positions")
     L.append("")
     L.append("| graha | sign | house | nakshatra (pada) | navamsa | notes |")
@@ -3022,6 +3089,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── rectification confidence (v31 — input sensitivity, measured as a RANGE) ────
     if r.rect_confidence is not None:
         rc = r.rect_confidence
+        L.start("rect_confidence")
         L.append("## Rectification confidence")
         L.append("")
         L.append(f"_{rc.frame}_")
@@ -3047,6 +3115,7 @@ def to_markdown(r: DetailedReport) -> str:
     if sb_rows:
         from app.raman_saab.primitives.shadbala.total import is_powerful
         from app.raman_saab.plain_terms import band_rupas
+        L.start("shadbala")
         L.append("## Shadbala (six-fold strength, rupas)")
         L.append("")
         L.append("_**Planetary strength — think of it as horsepower**: a powerful engine "
@@ -3074,6 +3143,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
 
     # ── fired yogas ───────────────────────────────────────────────────────────
+    L.start("yogas")
     L.append("## Yogas present in this chart")
     L.append("")
     if r.yogas:
@@ -3089,6 +3159,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── yoga x dasha timing: when does a fired yoga's own lord actually run? ──
     if r.yoga_timing:
+        L.start("yoga_timing")
         L.append("## Yoga x Dasha timing")
         L.append("")
         L.append("**In simple terms:** a yoga is not always \"on\" — Raman says it ripens most "
@@ -3118,6 +3189,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── yoga deep-read (v21 — every fired yoga as a full study) ───────────────
     if r.yoga_deep:
+        L.start("yoga_deep")
         L.append("## Yoga deep-read")
         L.append("")
         L.append("**In simple terms:** every yoga this chart fires, studied in full — "
@@ -3154,6 +3226,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── Ashtakavarga strength row ─────────────────────────────────────────────
     if r.sav:
+        L.start("ashtakavarga")
         L.append("## Ashtakavarga (Sarvashtakavarga bindus by sign)")
         L.append("")
         L.append("| " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
@@ -3165,6 +3238,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("")
 
     # ── house-by-house, with pillars + calibration ────────────────────────────
+    L.start("houses")
     L.append("## House-by-house reading")
     L.append("")
     L.append(f"_{ROLLUP_RULE} Where the majority of a house's significations disagree with that "
@@ -3261,6 +3335,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── house strength cross-check: is each verdict on strong or shaky ground? ──
     if r.house_strength:
         L.append("")
+        L.start("house_strength")
         L.append("## House strength cross-check")
         L.append("")
         L.append("**In simple terms:** every house above got a verdict — favourable, afflicted "
@@ -3299,6 +3374,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── preponderance of testimonies (v14, the full per-house ledger) ─────────
     if r.preponderance.houses:
         L.append("")
+        L.start("preponderance")
         L.append("## Preponderance of testimonies")
         L.append("")
         L.append("**In simple terms:** Raman defines judgment itself as \"the summing up of "
@@ -3372,6 +3448,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── longevity (band FIRST, per Raman's own order) ─────────────────────────
     L.append("")
+    L.start("longevity")
     L.append("## Longevity")
     L.append("")
     L.extend(_method_preamble("longevity"))
@@ -3396,6 +3473,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── the maraka scheme (Raman's step 2, after the band) ────────────────────
     mp = getattr(r.chart, "maraka_points", None)
     if mp is not None:
+        L.start("maraka")
         L.append("## The maraka scheme (death-dealing determinants)")
         L.append("")
         L.append("_Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:"
@@ -3418,6 +3496,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── maraka x saturn-transit confluence: the classical "last signal" ──────
     if r.maraka_saturn:
+        L.start("maraka_saturn")
         L.append("## Maraka x Saturn-transit confluence")
         L.append("")
         L.append("**In simple terms:** Raman names one specific classical signal for a maraka "
@@ -3447,6 +3526,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── health & vulnerability read-out (v17, pure re-read of existing verdicts) ─────
     if r.health_readout.rows:
         h = r.health_readout
+        L.start("health_readout")
         L.append("## Health & vulnerability read-out")
         L.append("")
         L.extend(_method_preamble("health_readout"))
@@ -3477,6 +3557,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── Arishta & Bhanga (v22 — the affliction/cancellation chapter) ──────────
     if r.arishta is not None:
         a = r.arishta
+        L.start("arishta")
         L.append("## Arishta & Bhanga")
         L.append("")
         L.append("**In simple terms:** the afflictions Raman screens for and — equally "
@@ -3509,6 +3590,7 @@ def to_markdown(r: DetailedReport) -> str:
     w_lo = _jd_to_date(r.ref_jd - r.window_back * _DAYS_PER_VEDIC_YEAR)
     w_hi = _jd_to_date(r.ref_jd + r.window_forward * _DAYS_PER_VEDIC_YEAR)
     L.append("")
+    L.start("timeline")
     L.append(f"## Life-narrative (Vimshottari Dasha) - {w_lo} to {w_hi}")
     L.append("")
     from app.raman_saab.primitives import vimshottari as vd
@@ -3547,6 +3629,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── ishta/kashta outlook: the SAME windowed timeline, painted good/hard ────
     if r.ishta_kashta:
         L.append("")
+        L.start("ishta_kashta")
         L.append("## Ishta/Kashta outlook")
         L.append("")
         L.append("**In simple terms:** a planet with more Ishta Phala (its own \"good "
@@ -3573,6 +3656,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── md-lord condition outlook: strength/vargottama painted onto the MD timeline ──
     if r.md_condition:
+        L.start("md_condition")
         L.append("## MD-lord condition outlook")
         L.append("")
         L.append("**In simple terms:** a Dasha delivers in proportion to how well-placed its "
@@ -3595,6 +3679,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── av dasha-seat outlook: the MD lord graded by his own bindus (AV-tier) ──
     if r.av_dasha_seats:
+        L.start("av_dasha_seat")
         L.append("## AV dasha-seat outlook")
         L.append("")
         L.append("> **Raman's own caveat governs this section**: \"Ashtakavarga method is "
@@ -3619,6 +3704,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── Dasha Kakshya intervals (v16, ASP-12 eightfold division per MD run) ─────────────
     if r.dasa_kakshya:
+        L.start("dasa_kakshya")
         L.append("## Dasha Kakshya intervals")
         L.append("")
         L.append("**In simple terms:** each Mahadasha can be split into 8 equal parts ruled in "
@@ -3639,6 +3725,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── life-chapters (v15, one woven chapter per Mahadasha) ──────────────────
     if r.life_chapters.chapters:
         L.append("")
+        L.start("life_chapters")
         L.append("## Life-chapters")
         L.append("")
         L.append("**In simple terms:** the Life-narrative above and its three companion tables "
@@ -3673,6 +3760,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── decade indication timeline (v28 — NEVER probabilities) ────────────────
     if r.decades is not None:
         dt = r.decades
+        L.start("decades")
         L.append("## Decade indication timeline")
         L.append("")
         L.append(f"_{dt.frame}_")
@@ -3700,6 +3788,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── current transits with Vedha (the honest gochara table) ────────────────
     if r.gochara:
         L.append("")
+        L.start("gochara")
         L.append("## Current transits (Gochara) with Vedha")
         L.append("")
         L.append("_At the reference date, from the natal Moon. Raman: transits are secondary, "
@@ -3765,6 +3854,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── dasha x transit confluence: where the running period's own lord is well-transited ──
     if r.dasha_transit:
+        L.start("dasha_transit")
         L.append("## Dasha x Transit confluence")
         L.append("")
         L.append("**In simple terms:** these are the specific stretches where your running "
@@ -3792,6 +3882,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── divisional deep-reads (Shodasavarga) ──────────────────────────────────
     if r.divisional:
         L.append("")
+        L.start("divisional")
         L.append("## Divisional deep-reads (Shodasavarga)")
         L.append("")
         L.append("_Each divisional chart magnifies one matter. The Raman core is authoritative; "
@@ -3807,6 +3898,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── the parallel doctrine layers ──────────────────────────────────────────
     if s.career:
         L.append("")
+        L.start("career")
         L.append("## Career (HTJAH-II — navamsa-dispositor of the 10th lord)")
         L.append("")
         L.append(s.career)
@@ -3815,6 +3907,7 @@ def to_markdown(r: DetailedReport) -> str:
     if r.profession is not None:
         pf = r.profession
         L.append("")
+        L.start("profession")
         L.append("## Profession synthesis")
         L.append("")
         L.extend(_method_preamble("profession"))
@@ -3839,6 +3932,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── wealth chapter (v24 — the channels, not a single verdict) ─────────────
     if r.wealth is not None:
         w = r.wealth
+        L.start("wealth")
         L.append("## Wealth chapter")
         L.append("")
         L.extend(_method_preamble("wealth"))
@@ -3862,6 +3956,7 @@ def to_markdown(r: DetailedReport) -> str:
     if r.marriage is not None:
         from app.raman_saab.monographs import MARRIAGE_INTRO as _MI
         m = r.marriage
+        L.start("marriage")
         L.append("## Marriage monograph")
         L.append("")
         L.extend(_method_preamble("marriage"))
@@ -3899,6 +3994,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── children chapter (v26) ────────────────────────────────────────────────
     if r.children is not None:
         c = r.children
+        L.start("children")
         L.append("## Children chapter")
         L.append("")
         L.extend(_method_preamble("children"))
@@ -3921,6 +4017,7 @@ def to_markdown(r: DetailedReport) -> str:
     if s.deeptadi:
         from app.raman_saab.plain_terms import TERM_GLOSS as _TG
         L.append("")
+        L.start("deeptadi")
         L.append("## Deeptadi avasthas (each graha's result-state, HPA Ch.7)")
         L.append("")
         L.append("_**Avastha = the planet's state, its mood** — the same engine can run "
@@ -3936,6 +4033,7 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"- **{st}** — {t.plain}. {t.analogy}. _{t.why_it_matters}._")
     if s.karakamsa_reading:
         L.append("")
+        L.start("karakamsa")
         L.append("## Jaimini Karakamsa (the soul's inclination)")
         L.append("")
         for line in s.karakamsa_reading:
@@ -3943,6 +4041,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── soul & destiny (the full Jaimini reading behind the stub above) ───────
     L.append("")
+    L.start("soul")
     L.append("## Soul & destiny (extended Jaimini reading)")
     L.append("")
     L.append("```")
@@ -3953,6 +4052,7 @@ def to_markdown(r: DetailedReport) -> str:
     if r.karmic is not None:
         kv = r.karmic
         L.append("")
+        L.start("karmic")
         L.append("## Karmic evolution (Jaimini)")
         L.append("")
         L.append(f"_{kv.frame}_")
@@ -3972,6 +4072,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── pitru dosha screen (non-Raman provenance, clearly bannered) ───────────
     L.append("")
+    L.start("pitru")
     L.append("## Pitru dosha screen")
     L.append("")
     L.append("> **Provenance notice.** Only the children verdict below is Raman "
@@ -3985,6 +4086,7 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── integrated insights (cross-feature synthesis) ─────────────────────────
     L.append("")
+    L.start("synthesis")
     L.append("## Integrated insights (cross-feature synthesis)")
     L.append("")
     L.append("_Where the report's sections meet: encoded combination doctrine connecting "
@@ -4053,6 +4155,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── full life synthesis (v29 — the biography-closing chapter) ─────────────
     if r.life_synthesis is not None:
         ls = r.life_synthesis
+        L.start("life_synthesis")
         L.append("## Full life synthesis")
         L.append("")
         L.append("**In simple terms:** the report's chapters read as one biography — "
@@ -4066,6 +4169,7 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"_{ls.closing}_")
         L.append("")
 
+    L.start("glossary")
     L.append("## Glossary")
     L.append("")
     for term, meaning in GLOSSARY.items():
@@ -4087,6 +4191,7 @@ def to_markdown(r: DetailedReport) -> str:
     # ── nichod: the capstone integration of every section above ───────────────
     n = r.nichod
     L.append("")
+    L.start("nichod")
     L.append("## Nichod")
     L.append("")
     L.append("_The distilled essence: every section above, squeezed into one. Nothing here is "
@@ -4115,11 +4220,18 @@ def to_markdown(r: DetailedReport) -> str:
                  + "; ".join(f"{when}: {what}" for when, what in n.turning_points))
 
     # ── footer ────────────────────────────────────────────────────────────────
+    L.start("_footer")
     L.append("")
     L.append("---")
     L.append(f"_Italicised population context is EMPIRICAL_ASTRODATABANK provenance (n="
              f"{pop:,}) - explicitly not Raman. {_VALIDITY}_")
-    return _fold_ascii("\n".join(L))
+    return L
+
+
+def to_markdown(r: DetailedReport) -> str:
+    """Render the full detailed report as a Markdown document (ASCII-safe)."""
+    return _fold_ascii(
+        _markdown_sections(r).render(tuple(s.section_id for s in SECTION_CONTRACT)))
 
 
 def _fold_ascii(s: str) -> str:

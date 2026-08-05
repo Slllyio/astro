@@ -135,6 +135,43 @@ This is a standing user directive, confirmed twice and once violated — treat i
   DOM (`createElement`, namespaced SVG, `textContent` — never `innerHTML`, never an external chart
   library/CDN). Theme-aware through the page's CSS custom properties (light + dark).
 
+## ★ REPORT READING ARC — v33 movements, and the split contract (locked 2026-08-05)
+
+**The report's section SET is frozen and append-only; its ORDER is a design decision.** These
+were one invariant until v33 and conflating them is what made the document read as a pile of
+sections: `test_registry_is_append_only` asserted the whole registry *prefix* as an exact
+ordered tuple, so for 32 versions the only legal move was "append at the end" and each section
+landed where the contract allowed rather than where it reads best.
+
+- **`app/raman_saab/report_movements.py` is the single source of truth for the sequence.** Seven
+  movements — Who this is / How to read it honestly / The instrument / The twelve fields / The
+  matters of life / In time / The summing up. `SECTION_CONTRACT` and `HTML_SECTION_ORDER` are
+  both DERIVED from `flattened_order()`; never restate an order anywhere else.
+- **Two separate guards, both required.** `test_section_set_is_append_only` asserts SET equality
+  on the 53 `(id, md_marker, html_marker)` triples (completeness — REPORT COMPLETENESS still
+  stands, nothing is ever removed or hidden). `test_reading_order_is_the_reviewed_arc` asserts
+  the sequence against `_ORDER_V33`, **copied BY HAND into the test file** for exactly the
+  reason `_FROZEN` is: the registry derives its order from `MOVEMENTS`, so a test comparing only
+  those two passes silently when both are edited together. Re-sequencing means editing that
+  tuple, consciously, in the same commit.
+- **Two structural constraints, test-pinned.** `nichod` stays last. `title`/`plain_reading`/
+  `chart_signature` stay adjacent in that order — they are one `<header>` element in the HTML
+  and are emitted as a single chunk.
+- **Connective passages are deterministic**, composed from `raman_style` (`because`/`weighed`/
+  `conclusion` — Raman's own compositional habits) over facts the adjacent sections have already
+  judged. No model call, PREC-10 pure re-read, identical every run, and every passage is checked
+  against `_FORBIDDEN_RE`. The guard is a blunt denylist and has already caught an innocent
+  "brings to" here — **write around it, never widen it.**
+- **Both renderers are order-driven, not position-driven.** `to_markdown` routes its appends
+  through `_SectionedLines`; `to_html` assembles from a section-keyed `chunk` dict. Neither
+  hard-codes sequence any more. The interactive page keeps its own manuscript folios (a
+  different but coherent shape the page-turn depends on) and LAYERS the passages onto them via
+  the `movements` key in the report JSON.
+- **Tests must not slice content to a hardcoded neighbouring section** — that encodes order into
+  assertions about content, and a neighbour moving ahead yields an empty slice that fails
+  against `""`. Use the `section_text` fixture in `tests/raman_saab/conftest.py`; order
+  assertions belong only in `test_report_template_contract.py`.
+
 ## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
 
 - **`/report/insights` ("read as one story") and `/report/explain` DO call the local model**

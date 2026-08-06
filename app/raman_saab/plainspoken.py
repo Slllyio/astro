@@ -391,3 +391,78 @@ SECTION_LEADS.update({                                             # type: ignor
     "psych": _psych_lead,
     "planet_bios": _planet_bios_lead,
 })
+
+
+# ─── timing leads ───────────────────────────────────────────────────────────────────────────
+# The timing sections spoke in bhukti tiers, Julian-day windows and "par excellence" grades.
+# Each lead below says what the section is doing, in the reader's terms, and keeps the
+# Measured-Truth frame these sections carry: a period is read as which areas of life come
+# forward, never as a forecast of events.
+
+def _timeline_lead(r: "DetailedReport") -> str:
+    syn = getattr(r, "synthesis", None)
+    md, ad = getattr(syn, "running_md", None), getattr(syn, "running_ad", None)
+    if not md:
+        return ""
+    lit = 0
+    for tp in getattr(getattr(r, "timeline", None), "periods", ()) or ():
+        if getattr(tp.period, "maha", None) == md and getattr(tp.period, "antar", None) == ad:
+            lit = sum(1 for a in tp.activated if str(a.grade) == "par_excellence")
+            break
+    sub = f" with {ad} as the sub-period" if ad else ""
+    tail = (f" Between them they light {lit} of your houses at the method's top tier — those "
+            f"are the areas it reads as live for you now." if lit else "")
+    return (f"You are in a {md} chapter{sub}.{tail} A period is read here as which areas of "
+            f"life come forward, not as fortune arriving or leaving.")
+
+
+def _life_chapters_lead(r: "DetailedReport") -> str:
+    chapters = getattr(getattr(r, "life_chapters", None), "chapters", ()) or ()
+    cur = next((c for c in chapters if getattr(c, "is_current", False)), None)
+    if cur is None:
+        return ""
+    lit = [h for h, tier, _v in (getattr(cur, "houses_lit", ()) or ())
+           if tier == "par excellence"]
+    # Name the matters, not the house numbers — a reader knows "marriage", not "the 7th".
+    # HOUSE_MATTER is many-to-one (1 and 6 both read health), so dedupe while keeping order.
+    matters: list[str] = []
+    for h in lit:
+        m = HOUSE_MATTER.get(h, "")
+        if m and m not in matters:
+            matters.append(m)
+    where = f" It bears most strongly on {_join(matters)}." if matters else ""
+    return (f"Your life is told below as one chapter per major period, and you are inside "
+            f"{cur.maha}'s.{where} Each chapter is woven from readings already made above — "
+            f"nothing new is judged in them.")
+
+
+def _decades_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(getattr(r, "decades", None), "decades", ()) or ())
+    if not rows:
+        return ""
+    inside = sum(1 for d in rows if getattr(d, "inside_window", False))
+    return (f"{inside} of the {len(rows)} decades below fall inside the window this report "
+            f"actually reads; the rest are listed and left unread rather than quietly filled "
+            f"in. A decade here is the same periods above, sliced differently — an indication "
+            f"of what the method emphasises in a stretch, never a forecast of your years.")
+
+
+def _gochara_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "gochara", ()) or ())
+    if not rows:
+        return ""
+    good = sum(1 for g in rows if getattr(g, "net_good", False))
+    # "0 read net favourable" is arithmetic, not English; say it the way a person would.
+    count = "none" if good == 0 else ("all" if good == len(rows) else str(good))
+    return (f"Of the {len(rows)} slow transits now running over your chart, {count} read net "
+            f"favourable once Vedha and the Ashtakavarga support are applied. In this method "
+            f"transits are secondary to the period you are in — they colour the chapter, they "
+            f"do not replace it.")
+
+
+SECTION_LEADS.update({                                             # type: ignore[union-attr]
+    "timeline": _timeline_lead,
+    "life_chapters": _life_chapters_lead,
+    "decades": _decades_lead,
+    "gochara": _gochara_lead,
+})

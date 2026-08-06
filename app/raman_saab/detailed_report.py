@@ -3681,6 +3681,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.start("timeline")
     L.append(f"## Life-narrative (Vimshottari Dasha) - {w_lo} to {w_hi}")
+    _lead = _plain_section("timeline", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     from app.raman_saab.primitives import vimshottari as vd
     L.append(f"_Mahadasha -> Antardasha across the near term ({r.window_back} years back, "
@@ -3816,6 +3820,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("life_chapters")
         L.append("## Life-chapters")
+        _lead = _plain_section("life_chapters", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** the Life-narrative above and its three companion tables "
                  "(Ishta/Kashta, MD-lord condition, AV dasha-seat) each paint ONE lens across "
@@ -3851,6 +3859,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         dt = r.decades
         L.start("decades")
         L.append("## Decade indication timeline")
+        _lead = _plain_section("decades", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append(f"_{dt.frame}_")
         L.append("")
@@ -3879,6 +3891,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("gochara")
         L.append("## Current transits (Gochara) with Vedha")
+        _lead = _plain_section("gochara", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_At the reference date, from the natal Moon. Raman: transits are secondary, "
                  "catalytic — conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). The NET column "

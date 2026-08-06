@@ -2179,7 +2179,7 @@ function render(R, S, FQ){
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
 
   // ===== Life-narrative timeline + companions =====
-  sec('timeline'); add(H2('Life-narrative (Vimshottari)'));
+  sec('timeline'); add(H2('Life-narrative (Vimshottari)')); plainLead('timeline');
   const _lp=lifePanel(R);
   if(_lp){ add(vizCard('Life at a glance — dasha periods · goodness · house activation on one timeline', _lp,
     'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
@@ -2191,13 +2191,13 @@ function render(R, S, FQ){
   add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats));
 
   // ===== Life-chapters =====
-  sec('life_chapters'); add(H2('Life-chapters'));
+  sec('life_chapters'); add(H2('Life-chapters')); plainLead('life_chapters');
   for(const ch of (R.life_chapters||[])){ const d=el('details',{class:'card'}); if(ch.is_current) d.setAttribute('open','');
     const sm=el('summary'); sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
     const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b); add(d); }
 
   // ===== Transits =====
-  sec('gochara'); add(H2('Transits (Gochara)'));
+  sec('gochara'); add(H2('Transits (Gochara)')); plainLead('gochara');
   const _fm=gocharaFromMoon(R);
   if(_fm) add(vizCard('Current transits by house from the Moon', _fm,
     'Each slow transit placed in its house counted from the natal Moon (Raman’s transit frame, HTJAH-I:8410-8411); ink = net-favourable (BAV net of Vedha). The raw rows with Vedha are below.'));
@@ -2445,7 +2445,7 @@ function render(R, S, FQ){
     add(para(t('The ASP-12 eightfold Kakshya division of each Mahadasha run.'),'muted'));
     add(rows(R.dasa_kakshya)); }
   const dc_=R.decades||{};
-  if((dc_.decades||[]).length){ sec('decades'); add(H2('Decade indication timeline'));
+  if((dc_.decades||[]).length){ sec('decades'); add(H2('Decade indication timeline')); plainLead('decades');
     if(dc_.frame) add(para(dc_.frame,'muted'));
     add(rows(dc_.decades)); }
   if((R.dasha_transit||[]).length){ sec('dasha_transit'); add(H2('Dasha × Transit confluence'));

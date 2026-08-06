@@ -1681,7 +1681,8 @@ def _decades_section(r: DetailedReport) -> str:
                        f'<span class="vv">{v}</span></div>' for k, v in rows)
         blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>')
     return ('<h2 class="section" id="decades">Decade indication timeline</h2>'
-            f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
+        + _plain_lead(r, "decades")
+        + f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
 
 
 def _life_synthesis_section(r: DetailedReport) -> str:
@@ -1777,7 +1778,8 @@ def _gochara_table(r: DetailedReport) -> str:
                  f'<td><span class="chip chip--{"favourable" if g.net_good else "afflicted"}">'
                  f'{net}</span></td></tr>')
     return ('<h2 class="section" id="gochara">Current transits (Gochara) with Vedha</h2>'
-            '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
+        + _plain_lead(r, "gochara")
+        + '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
             'secondary, catalytic &mdash; conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). '
             'The net column applies Vedha: an obstructed transit does not deliver.</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th><th>sign</th>'
@@ -2267,7 +2269,8 @@ def _life_chapters_section(r: DetailedReport) -> str:
             f'<p class="doctrine">{_esc(ch.narrative)}</p>')
     return (
         '<h2 class="section" id="life-chapters">Life-chapters</h2>'
-        '<p class="section-sub"><b>In simple terms:</b> the Life-narrative above and its three '
+        + _plain_lead(r, "life_chapters")
+        + '<p class="section-sub"><b>In simple terms:</b> the Life-narrative above and its three '
         'companion tables (Ishta/Kashta, MD-lord condition, AV dasha-seat) each paint ONE lens '
         'across the same years. This section reads them TOGETHER, one chapter per Mahadasha '
         '&mdash; the way Raman himself narrates a nativity (his Chart No. 203 reads each dasha '
@@ -2527,7 +2530,8 @@ def to_html(r: DetailedReport) -> str:
     class <b>{_esc(r.longevity_class)}</b>. Treat as a band; the engine's own health layer defers
     lifespan.</p>"""
 
-    chunk["timeline"] = f"""<h2 class="section" id="timeline">Life-narrative</h2>
+    chunk["timeline"] = (f"""<h2 class="section" id="timeline">Life-narrative</h2>"""
+        + _plain_lead(r, "timeline") + f"""
   <p class="section-sub">Vimshottari Mahadasha &rarr; Antardasha, {r.window_back} years back to
     {r.window_forward} ahead ({_jd_to_date(r.ref_jd - 365.2425 * r.window_back)} &ndash;
     {_jd_to_date(r.ref_jd + 365.2425 * r.window_forward)}). A planet influences a house by owning,
@@ -2537,7 +2541,7 @@ def to_html(r: DetailedReport) -> str:
     <em>feeble</em> (HTJAH-I:1592-1640, 2588-2599). Verdicts are the unchanged natal readings.</p>
   <div class="grade-legend">{"".join(f"<div><b>{k}</b> &mdash; {v}</div>"
       for k, v in _TIER_MEANING.items())}</div>
-  {_timeline(r)}"""
+  {_timeline(r)}""")
 
     chunk["divisional"] = (
         '<h2 class="section" id="vargas">Divisional deep-reads</h2>\n'

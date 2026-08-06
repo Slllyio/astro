@@ -2010,7 +2010,7 @@ function render(R, S, FQ){
     add(para(t('Tap any term for its plain name, an analogy, why it matters, and an example. Vocabulary only — never new astrology.'),'muted')); }
 
   // ===== Chart signature =====
-  sec('chart_signature'); add(H2('Chart signature'));
+  sec('chart_signature'); add(H2('Chart signature')); plainLead('chart_signature');
   const s=R.synthesis||{}, ov=R.overview||{};
   const sig=[['Lagna',s.lagna],['Navamsa Lagna',s.navamsa_lagna],['Atmakaraka',s.atmakaraka],
     ['Arudha Lagna',s.arudha_lagna],['Karakamsa',s.karakamsa],['Upapada',s.upapada],
@@ -2052,7 +2052,7 @@ function render(R, S, FQ){
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
-  if(R.rect_confidence){ sec('rect_confidence'); add(H2('Rectification confidence'));
+  if(R.rect_confidence){ sec('rect_confidence'); add(H2('Rectification confidence')); plainLead('rect_confidence');
     add(rectConfidencePanel(R.rect_confidence)); }
   const _sb=shadbalaBars(R);
   if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
@@ -2062,7 +2062,7 @@ function render(R, S, FQ){
     'For each planet, the green (ishta — benefic potential) vs red (kashta — malefic potential) split, with the dashed centre marking the 50% tipping point. These fields appear nowhere else in the report.'));
 
   // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
-  sec('yogas'); add(H2('Yogas'));
+  sec('yogas'); add(H2('Yogas')); plainLead('yogas');
   for(const y of (R.yogas||[])){ const p=el('p',{class:'muted',style:'margin:.25rem 0'});
     p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
     if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
@@ -2150,7 +2150,7 @@ function render(R, S, FQ){
     add(pg); }
 
   // ===== The twelve matters (dashboard) — full, incl. the deciding reader =====
-  if(R.dashboard?.entries){ sec('dashboard'); add(H2('The twelve matters at a glance'));
+  if(R.dashboard?.entries){ sec('dashboard'); add(H2('The twelve matters at a glance')); plainLead('dashboard');
     const _mt=matterTiles(R);
     if(_mt) add(vizCard('Twelve matters — verdict tiles & tally', _mt,
       'Each life-matter tiled and tinted by its authoritative verdict (from its dedicated divisional reader); the bar tallies the verdict balance across all twelve. The full table with the deciding reader is below.'));
@@ -2241,7 +2241,7 @@ function render(R, S, FQ){
       const b=el('div',{class:'body'}); b.append(para(ins.simple_meaning)); b.append(para('This chart: '+ins.detail,'muted')); d.append(b); add(d); } }
 
   // ===== What stands out (full detail — rare first) =====
-  if((R.distinctive||[]).length){ sec('stands_out'); add(H2('What stands out'));
+  if((R.distinctive||[]).length){ sec('stands_out'); add(H2('What stands out')); plainLead('stands_out');
     add(para('The readings that most distinguish this chart from the population, rarest first — information content, not a prediction.','muted'));
     const _dp=distinctivePlot(R);
     if(_dp) add(vizCard('Distance from the population median', _dp,
@@ -2461,7 +2461,7 @@ function render(R, S, FQ){
     for(const x of kr) ul.append(el('li',{},String(x)));
     add(ul); }
   const kv=R.karmic||{};
-  if(kv.atmakaraka){ sec('karmic'); add(H2('Karmic evolution (Jaimini)'));
+  if(kv.atmakaraka){ sec('karmic'); add(H2('Karmic evolution (Jaimini)')); plainLead('karmic');
     if(kv.frame) add(para(kv.frame,'muted'));
     add(para(t('Atmakaraka')+': '+kv.atmakaraka+t(' (the 7-karaka scheme, locked)')));
     if(kv.karakamsa) add(para(t('Karakamsa')+': '+kv.karakamsa,'muted'));
@@ -2481,7 +2481,7 @@ function render(R, S, FQ){
     if(txt) add(el('p',{class:'muted plainspoken'},txt)); };
 
   // ---- v34 intuition layer ---------------------------------------------------------------
-  sec('dominance'); add(H2('What governs each house'));
+  sec('dominance'); add(H2('What governs each house')); plainLead('dominance');
   add(para(t('Where a house’s lord and its karaka differ in strength, Raman lets the '+
     'stronger decide, and the weaker one’s indication is replaced rather than averaged '+
     'with it (HTJAH-I:7152).'),'muted'));
@@ -2498,7 +2498,7 @@ function render(R, S, FQ){
       'its karaka differ in strength. That is an answer, not a gap.'),'muted'));
   }
 
-  sec('restraint'); add(H2('How firmly each house stands'));
+  sec('restraint'); add(H2('How firmly each house stands')); plainLead('restraint');
   add(para(t('Not every house is equally decided, and saying so is part of the method: '+
     '“No slip-shod interpretation should be made and a premature conclusion arrived '+
     'at” (HTJAH-I:4299). A house that is uniformly strong is a FIRM reading, not an '+
@@ -2517,7 +2517,7 @@ function render(R, S, FQ){
       'readings stand as reported rather than resolved into a single verdict.'),'muted'));
   }
 
-  sec('analogy'); add(H2('Charts of Raman’s this one recalls'));
+  sec('analogy'); add(H2('Charts of Raman’s this one recalls')); plainLead('analogy');
   add(para(t('Raman compares one worked chart against another and names the axis every time. '+
     'A resemblance points at what he wrote; it carries none of his verdicts here.'),'muted'));
   if((R.analogy||[]).length){

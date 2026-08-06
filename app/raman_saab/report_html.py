@@ -727,6 +727,7 @@ def _distinctive(r: DetailedReport) -> str:
         f'<td class="num">{e.band_share:.0%}</td></tr>' for h, e in r.distinctive)
     return (
         '<h2 class="section" id="stands-out">What stands out</h2>'
+        + _plain_lead(r, "stands_out") + 
         '<p class="section-sub">The readings furthest from the population midpoint &mdash; where '
         'this chart is least like everyone else&rsquo;s.</p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>matter</th>'
@@ -896,6 +897,7 @@ def _yogas(r: DetailedReport) -> str:
         f'<span class="yeffect">{_esc(y.effect)}</span> '
         f'<code>{_esc(y.source.work)}:{y.source.line}</code></li>' for y in r.yogas)
     return ('<h2 class="section" id="yogas">Yogas present in this chart</h2>'
+            + _plain_lead(r, "yogas") + 
             '<p class="section-sub">Each with its citation. A yoga&rsquo;s effect depends on the '
             'strength of the planets causing it (HTJAH-I:611).</p>'
             f'<ul class="yogalist">{items}</ul>')
@@ -1462,6 +1464,7 @@ def _dashboard(r: DetailedReport) -> str:
         f'<td><span class="chip chip--{_vclass(en.verdict)}">{_esc(en.verdict)}</span></td></tr>'
         for en in r.dashboard.entries)
     return ('<h2 class="section" id="dashboard">The twelve matters at a glance</h2>'
+            + _plain_lead(r, "dashboard") + 
             '<p class="section-sub">Each matter&rsquo;s authoritative verdict from its dedicated '
             'deep reader (Raman&rsquo;s method decides; the divisional corroborates).</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>matter</th>'
@@ -1647,6 +1650,7 @@ def _rect_confidence_section(r: DetailedReport) -> str:
         for pl in rc.pillars)
     return (
         '<h2 class="section" id="rect-confidence">Rectification confidence</h2>'
+        + _plain_lead(r, "rect_confidence") + 
         f'<p class="section-sub"><i>{_esc(rc.frame)}</i></p>'
         f'<p class="section-sub"><b>Verdict</b> &mdash; {_esc(rc.label)}</p>'
         f'<p class="section-sub"><b>Every pillar holds together</b> from '
@@ -2478,6 +2482,7 @@ def to_html(r: DetailedReport) -> str:
         kbody = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                         f'<span class="vv">{v}</span></div>' for k, v in krows)
         chunk["karmic"] = ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
+            + _plain_lead(r, "karmic") + 
                    f'<p class="section-sub"><i>{_esc(kv.frame)}</i></p>'
                    f'<div class="vsec">{kbody}</div>')
     chunk["pitru"] = _pitru_section(r)
@@ -2492,6 +2497,7 @@ def to_html(r: DetailedReport) -> str:
       (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
     {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
+    {_plain_lead(r, "chart_signature")}
     <div class="legend">This reading speaks in two voices. The
       <span class="v-serif">doctrine</span> (serif) is Raman's verdict, faithful to his texts and
       unchanged. Beneath it the <span class="v-sans">instrument</span> discloses how that verdict
@@ -2565,6 +2571,7 @@ def to_html(r: DetailedReport) -> str:
             'answer, not a gap.</span></div>')
         chunk["dominance"] = (
             '<h2 class="section" id="dominance">What governs each house</h2>'
+            + _plain_lead(r, "dominance") + 
             '<p class="section-sub">Where a house&rsquo;s lord and its karaka differ in '
             'strength, Raman lets the stronger decide, and the weaker one&rsquo;s indication is '
             'replaced rather than averaged with it (HTJAH-I:7152). These are the houses where '
@@ -2585,6 +2592,7 @@ def to_html(r: DetailedReport) -> str:
                 f'verdict.</p>' if soft else "")
         chunk["restraint"] = (
             '<h2 class="section" id="restraint">How firmly each house stands</h2>'
+            + _plain_lead(r, "restraint") + 
             '<p class="section-sub">Not every house is equally decided, and saying so is part '
             'of the method: <i>&ldquo;No slip-shod interpretation should be made and a '
             'premature conclusion arrived at&rdquo;</i> (HTJAH-I:4299). A house that is '
@@ -2610,6 +2618,7 @@ def to_html(r: DetailedReport) -> str:
                      'coincidence, not a recognition.</p>')
         chunk["analogy"] = (
             '<h2 class="section" id="analogy">Charts of Raman&rsquo;s this one recalls</h2>'
+            + _plain_lead(r, "analogy") + 
             '<p class="section-sub">Raman compares one worked chart against another and names '
             'the axis every time. These are his own published charts that this nativity '
             'resembles, with the respects itemised so each can be checked. A resemblance points '

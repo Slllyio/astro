@@ -508,3 +508,140 @@ SECTION_LEADS.update({                                             # type: ignor
     "life_synthesis": _life_synthesis_lead,
     "nichod": _nichod_lead,
 })
+
+
+# ─── reference-section leads ────────────────────────────────────────────────────────────────
+# The sections a reader reaches for by name (the twelve matters, the yogas, the birth-time
+# check) but which spoke only in the engine's register. Each lead is computed from that
+# section's OWN data, so it cannot drift from the table it introduces.
+
+def _dashboard_lead(r: "DetailedReport") -> str:
+    entries = tuple(getattr(getattr(r, "dashboard", None), "entries", ()) or ())
+    if not entries:
+        return ""
+    tally: dict[str, int] = {}
+    for e in entries:
+        v = str(getattr(e, "verdict", "") or "")
+        if v:
+            tally[v] = tally.get(v, 0) + 1
+    parts = [f"{n} read {v}" if i == 0 else f"{n} {v}"
+             for i, (v, n) in enumerate(sorted(tally.items(), key=lambda kv: -kv[1]))]
+    return (f"The whole report on one line each. Of the {len(entries)} matters this method "
+            f"weighs, {_join(parts)}. No verdict here is its own — each is the conclusion "
+            f"of that matter's full chapter below, carried up so you can see the shape at once.")
+
+
+def _stands_out_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "distinctive", ()) or ())
+    if not rows:
+        return ""
+    # Count and rarity only. The significations themselves include tokens the LLM guard
+    # refuses outright (H8 reads "death"), and a lead must never be the thing that trips it.
+    rarest = min((getattr(e, "band_share", 1.0) for _h, e in rows), default=1.0)
+    return (f"Almost everything a chart says is also true of almost everyone. These "
+            f"{len(rows)} readings are the exceptions — the ones sitting furthest from "
+            f"what the comparison population shows, the rarest shared by about {rarest:.0%} of "
+            f"charts. They are what distinguishes your chart, not what is strongest in it.")
+
+
+def _chart_signature_lead(r: "DetailedReport") -> str:
+    syn = getattr(r, "synthesis", None)
+    lagna = str(getattr(syn, "lagna", "") or "")
+    if not lagna:
+        return ""
+    ak = str(getattr(syn, "atmakaraka", "") or "")
+    soul = f", with {ak} carrying the role of soul-significator" if ak else ""
+    return (f"These are the frames the whole of your reading is read against: a {lagna} rising "
+            f"sign{soul}. Nothing here is a judgment yet — it is the ground the judgments stand "
+            f"on, given first so everything that follows has somewhere to attach.")
+
+
+def _yogas_lead(r: "DetailedReport") -> str:
+    fired = tuple(getattr(r, "yogas", ()) or ())
+    if not fired:
+        return ""
+    names = [str(getattr(y, "name", "")) for y in fired if getattr(y, "name", "")]
+    named = f" Among them {_join(names)}." if names else ""
+    return (f"A yoga is a configuration the classical texts already noticed, named and wrote "
+            f"about. {len(fired)} of them are present in your chart.{named} What you read under "
+            f"each is those texts' own language for the pattern, quoted — not a fresh "
+            f"claim about your life.")
+
+
+def _analogy_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "analogy", ()) or ())
+    if not rows:
+        return ""
+    who = str(getattr(rows[0], "name", "") or "")
+    if len(rows) == 1:
+        head = (f"One of the nativities Raman worked through in print sits close enough to "
+                f"yours to be worth naming{f' — {who}' if who else ''}.")
+    else:
+        head = (f"Of the nativities Raman worked through in print, {len(rows)} sit close enough "
+                f"to yours to be worth naming{f' — nearest is {who}' if who else ''}.")
+    return (f"{head} What they share is itemised below so you can check the resemblance rather "
+            f"than take it. The likeness is in the configuration, never in the life that was "
+            f"lived from it.")
+
+
+def _karmic_lead(r: "DetailedReport") -> str:
+    ak = str(getattr(getattr(r, "karmic", None), "atmakaraka", "") or "")
+    if not ak:
+        return ""
+    return (f"This layer reads the chart for the direction of the inner life rather than for "
+            f"circumstances, through {ak} as your soul-significator and the sign it falls in. "
+            f"It is walled off from everything above: it draws on the same chart, and it "
+            f"changes no verdict already given.")
+
+
+def _rect_confidence_lead(r: "DetailedReport") -> str:
+    rc = getattr(r, "rect_confidence", None)
+    total = int(getattr(rc, "total_count", 0) or 0)
+    if not total:
+        return ""
+    stable = int(getattr(rc, "stable_count", 0) or 0)
+    lo, hi = getattr(rc, "overall_stable_minus", None), getattr(rc, "overall_stable_plus", None)
+    window = (f" Taken together they hold from {lo} minutes before your stated time to {hi} "
+              f"after." if lo is not None and hi is not None else "")
+    return (f"A birth time is rarely exact, so the chart is re-cast minute by minute in both "
+            f"directions to see what would survive being wrong. {stable} of the {total} pillars "
+            f"of your reading {'is' if stable == 1 else 'are'} unshaken across the whole scan."
+            f"{window} This is the honest "
+            f"measure of how much weight your recorded time can carry.")
+
+
+def _restraint_lead(r: "DetailedReport") -> str:
+    st = getattr(r, "restraint", None) or {}
+    if not st:
+        return ""
+    unsettled = sum(1 for v in st.values() if str(getattr(v, "standing", "")) == "unsettled")
+    firm = len(st) - unsettled
+    tail = (f" For {unsettled} the witnesses genuinely disagree, and the reading says so rather "
+            f"than picking a side to sound certain." if unsettled
+            else " Every one of them holds together.")
+    return (f"How firmly the chart speaks, area by area — which is a separate question "
+            f"from what it says. {firm} of your {len(st)} houses stand on testimony that agrees "
+            f"with itself.{tail}")
+
+
+def _dominance_lead(r: "DetailedReport") -> str:
+    dm = getattr(r, "dominance", None) or {}
+    if not dm:
+        return ""
+    return (f"When two planets pull an area of life in opposite directions, Raman does not "
+            f"average them — he says which one prevails, and why. In {len(dm)} of your "
+            f"houses that contest is settled below, with the planet that governs it named and "
+            f"the rule of precedence that decided it quoted.")
+
+
+SECTION_LEADS.update({                                             # type: ignore[union-attr]
+    "dashboard": _dashboard_lead,
+    "stands_out": _stands_out_lead,
+    "chart_signature": _chart_signature_lead,
+    "yogas": _yogas_lead,
+    "analogy": _analogy_lead,
+    "karmic": _karmic_lead,
+    "rect_confidence": _rect_confidence_lead,
+    "restraint": _restraint_lead,
+    "dominance": _dominance_lead,
+})

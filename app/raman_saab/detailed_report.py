@@ -2881,6 +2881,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.distinctive:
         L.start("stands_out")
         L.append("## What stands out in this chart")
+        _lead = _plain_section("stands_out", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_The readings furthest from the population midpoint — where this chart is least "
                  "like everyone else's. Rare readings first._")
@@ -2921,6 +2925,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     # ── the twelve matters at a glance (executive dashboard) ──────────────────
     L.start("dashboard")
     L.append("## The twelve matters at a glance")
+    _lead = _plain_section("dashboard", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.append("_Each matter's authoritative verdict from its dedicated deep reader (Raman's method "
              "decides; the divisional chart corroborates). Detail in the deep-read sections below._")
@@ -2946,6 +2954,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     # ── chart signature ───────────────────────────────────────────────────────
     L.start("chart_signature")
     L.append("## Chart signature")
+    _lead = _plain_section("chart_signature", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.append(f"- **Lagna** {s.lagna}  |  **Navamsa Lagna** {s.navamsa_lagna}  |  "
              f"**Atmakaraka** {s.atmakaraka}  |  **Arudha Lagna** {s.arudha_lagna}")
@@ -3166,6 +3178,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         rc = r.rect_confidence
         L.start("rect_confidence")
         L.append("## Rectification confidence")
+        _lead = _plain_section("rect_confidence", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append(f"_{rc.frame}_")
         L.append("")
@@ -3220,6 +3236,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     # ── fired yogas ───────────────────────────────────────────────────────────
     L.start("yogas")
     L.append("## Yogas present in this chart")
+    _lead = _plain_section("yogas", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     if r.yogas:
         L.append("_Each carries its citation. A yoga's effect depends on the strength of the "
@@ -4175,6 +4195,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("karmic")
         L.append("## Karmic evolution (Jaimini)")
+        _lead = _plain_section("karmic", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append(f"_{kv.frame}_")
         L.append("")
@@ -4362,6 +4386,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if True:
         L.start("dominance")
         L.append("## What governs each house")
+        _lead = _plain_section("dominance", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("Where a house's lord and its karaka differ in strength, Raman lets the "
                  "stronger one decide, and the weaker one's indication is replaced rather than "
@@ -4380,6 +4408,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if res:
         L.start("restraint")
         L.append("## How firmly each house stands")
+        _lead = _plain_section("restraint", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("Not every house is equally decided, and saying so is part of the method: "
                  "_\"No slip-shod interpretation should be made and a premature conclusion "
@@ -4400,6 +4432,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if True:
         L.start("analogy")
         L.append("## Charts of Raman's this one recalls")
+        _lead = _plain_section("analogy", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("Raman compares one worked chart against another and names the axis every "
                  "time. These are his own published charts that this nativity resembles, with "

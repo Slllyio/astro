@@ -469,7 +469,7 @@ async def post_ask(req: AskRequest) -> dict:
 # ── the WALLED AI-interpretation panel (labeled LLM speculation, NOT the engine) ─────────
 
 class AiInterpretRequest(ReportRequest):
-    register: Literal["gentle", "bold"] = "gentle"
+    register: Literal["gentle", "bold", "instinct"] = "gentle"
 
 
 @report_router.post("/ai-interpret")
@@ -503,7 +503,14 @@ async def post_ai_interpret(req: AiInterpretRequest) -> dict:
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
         ev = build_evidence(to_report_dict(r), "digest")
-        prompt = build_interp_prompt(ev, req.register)
+        # The instinct register is aimed at the engine's OWN declines — without them it has
+        # nothing to leap from and collapses into `bold`.
+        unsettled: list[str] = []
+        if req.register == "instinct":
+            for x in (r.restraint or {}).values():
+                if getattr(x, "soften", False):
+                    unsettled.append(f"House {x.house}: {x.reason}")
+        prompt = build_interp_prompt(ev, req.register, unsettled)
         try:
             text = client.complete(prompt)
         except Exception:  # noqa: BLE001 — any model failure -> unavailable, never engine text

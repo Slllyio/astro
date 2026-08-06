@@ -111,9 +111,11 @@ class TestPage:
         assert "What matters most" in html
         assert "/report/insights" in html
         assert "Read this as one story" in html
-        # the Pothi-manuscript book design: shared engine + 13 leaves + labels + cover
+        # The Pothi-manuscript book design: shared engine + labels + cover. v33 re-cut the
+        # chapter folios from eleven to one per reading movement, so the book is now
+        # cover, birth details, seven movements, colophon — pages 0..9, not 0..12.
         assert "/static/css/manuscript.css" in html and "/static/js/manuscript.js" in html
-        assert 'data-page="0"' in html and 'data-page="12"' in html   # cover..colophon
+        assert 'data-page="0"' in html and 'data-page="9"' in html    # cover..colophon
         assert "MANUSCRIPT_LABELS" in html
         assert "cover-deva-title" in html                              # the brushed-gold cover
 

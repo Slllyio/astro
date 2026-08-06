@@ -94,7 +94,14 @@ class HouseSalience:
     extremity: float
     centrality: float
     yogas: int
+    #: Reasons this house holds the POSITION it holds. A line may appear here only if the weight
+    #: behind it is live; otherwise it describes the house without having moved it, and belongs
+    #: in `notable`. Today the prior is the whole ranking, so `why` carries the Lagna and nothing
+    #: else — which is the honest answer, not a missing feature.
     why: tuple[str, ...] = field(default_factory=tuple)
+    #: True, chart-specific observations that did NOT affect the ranking. Kept rather than
+    #: dropped (append-only), under a name that claims description instead of causation.
+    notable: tuple[str, ...] = field(default_factory=tuple)
 
 
 def _z(values: dict[int, float]) -> dict[int, float]:
@@ -130,12 +137,16 @@ def _surprisal_and_extremity(r: "DetailedReport") -> tuple[dict[int, float], dic
     return surprisal, extremity
 
 
-def _centrality(r: "DetailedReport") -> dict[int, float]:
-    """Chart-specific judgment-graph edges touching each house.
+def _centrality(r: "DetailedReport") -> dict[int, float] | None:
+    """Chart-specific judgment-graph edges touching each house, or None if the graph failed.
 
     Only `lord_of` / `occupies` / `aspects` count. The doctrine-constant relations were measured
     byte-identical across unrelated charts, so including them would add a constant to every
     house and wash the signal out.
+
+    Returning None on failure rather than a zero-filled dict matters: all-zeros standardises to
+    all-zeros, which reads as "centrality is flat across this chart" — indistinguishable from a
+    broken graph. The caller must be able to tell "no evidence" from "no variation".
     """
     from app.raman_saab.judgment_graph import CHART_SPECIFIC_ROLES, build_judgment_graph
 
@@ -144,7 +155,7 @@ def _centrality(r: "DetailedReport") -> dict[int, float]:
     try:
         graph = build_judgment_graph(r)
     except Exception:                                              # noqa: BLE001
-        return counts
+        return None
     for edge in graph.edges:
         if edge.relation not in roles:
             continue
@@ -172,7 +183,7 @@ def _yoga_counts(r: "DetailedReport") -> dict[int, int]:
 def house_salience(r: "DetailedReport") -> dict[int, HouseSalience]:
     """Score every house. Pure re-read — no verdict is recomputed (PREC-10)."""
     surprisal, extremity = _surprisal_and_extremity(r)
-    centrality = _centrality(r)
+    centrality = _centrality(r) or {}
     yogas = _yoga_counts(r)
 
     zs, ze, zc = _z(surprisal), _z(extremity), _z(centrality)
@@ -180,27 +191,42 @@ def house_salience(r: "DetailedReport") -> dict[int, HouseSalience]:
 
     for h in range(1, 13):
         prior = DOCTRINAL_PRIOR.get(h, 0.45)
-        s, e, c = zs.get(h, 0.0), ze.get(h, 0.0), zc.get(h, 0.0)
+        # A term this chart carries no evidence for is ABSENT, not average. `_z` returns only the
+        # houses it was actually given, so `.get(h)` is None where there was nothing to
+        # standardise — and substituting 0.0 there would score the house as exactly typical,
+        # because 0.0 IS the mean of a standardised distribution. Silent while the weights are
+        # zero; wrong the moment one is not, which is exactly when it would be trusted.
+        s, e, c = zs.get(h), ze.get(h), zc.get(h)
         y = yogas.get(h, 0)
-        score = (W_PRIOR * prior + W_SURPRISAL * s + W_EXTREMITY * e
-                 + W_CENTRALITY * c + W_YOGA * min(y, 3))
+        score = W_PRIOR * prior + W_YOGA * min(y, 3)
+        for weight, z in ((W_SURPRISAL, s), (W_EXTREMITY, e), (W_CENTRALITY, c)):
+            if z is not None:
+                score += weight * z
 
+        # A line earns a place in `why` only if the weight behind it actually moved the score.
+        # Everything else is a true observation that explains nothing about the ordering, and
+        # goes to `notable` — kept, never dropped.
         why: list[str] = []
+        notable: list[str] = []
         if h == 1:
             why.append("the Lagna, judged first (HTJAH-I:16001)")
-        if s > 0.8:
-            why.append(f"readings here are unusually rare in the population "
-                       f"({surprisal.get(h, 0):.1f} bits)")
-        if e > 0.8:
-            why.append("sits far from the population median")
-        if c > 0.8:
-            why.append(f"{int(centrality.get(h, 0))} chart-specific factors bear on it")
+        observations = (
+            (W_SURPRISAL, s, f"readings here are unusually rare in the population "
+                             f"({surprisal.get(h, 0):.1f} bits)"),
+            (W_EXTREMITY, e, "sits far from the population median"),
+            (W_CENTRALITY, c, f"{int(centrality.get(h, 0))} chart-specific factors bear on it"),
+        )
+        for weight, z, line in observations:
+            if z is not None and z > 0.8:
+                (why if weight else notable).append(line)
         if y:
-            why.append(f"{y} fired yoga{'s' if y > 1 else ''} touch it")
+            (why if W_YOGA else notable).append(
+                f"{y} fired yoga{'s' if y > 1 else ''} touch{'' if y > 1 else 'es'} it")
 
         out[h] = HouseSalience(house=h, score=score, doctrinal_prior=prior,
                                surprisal=surprisal.get(h, 0.0), extremity=extremity.get(h, 0.0),
-                               centrality=centrality.get(h, 0.0), yogas=y, why=tuple(why))
+                               centrality=centrality.get(h, 0.0), yogas=y,
+                               why=tuple(why), notable=tuple(notable))
     return out
 
 

@@ -825,3 +825,86 @@ SECTION_LEADS.update({                                             # type: ignor
     "av_dasha_seat": _av_dasha_seat_lead,
     "dasa_kakshya": _dasa_kakshya_lead,
 })
+
+
+# ─── the three sections whose subject IS the guard's subject ────────────────────────────────
+# longevity, arishta and maraka are where a plain-language layer can do the most harm. The
+# guard's actual line is narrower than "never mention it": it refuses a life event attached to
+# a TIME — `death (around|at|by|near)`, `die (around|at|by|before|after)`, `end of life`,
+# `will/shall die` — and any dated or age-attached indication. Naming the subject is allowed;
+# putting a clock on it is not.
+#
+# So these leads do three things and no more: say what the method is DOING, say what the
+# engine's own measurement found about it, and refuse the clock. Two of the project's own
+# findings belong in the plain sentence rather than the small print, because a reader meeting
+# "about 101 years" needs both at the moment they read it:
+#   - Raman's own order is band-then-period, and the number is a cross-check (HTJAH-II:4465).
+#   - The real-outcome programme measured NO chart-specific timing signal here
+#     (REAL_OUTCOME_GENERALIZATION.md). That is the engine's own verdict on itself.
+
+def _longevity_lead(r: "DetailedReport") -> str:
+    band = str(getattr(r, "longevity_class", "") or "")
+    if not band:
+        return ""
+    years = getattr(r, "longevity_years", None)
+    span = (f" The arithmetic cross-check lands near {float(years):.0f} years."
+            if isinstance(years, (int, float)) else "")
+    return (f"Raman's method sorts a nativity into one of four broad bands rather than naming a "
+            f"span, and yours classifies as {band}.{span} Read the band, not the number: he "
+            f"establishes the band by combination FIRST and only then looks at periods "
+            f"(HTJAH-II:4465-4472), and this engine's own validation found no chart-specific "
+            f"timing signal anywhere in this material. It is a classification the method makes, "
+            f"and it is not a statement about your life.")
+
+
+def _arishta_lead(r: "DetailedReport") -> str:
+    a = getattr(r, "arishta", None)
+    if a is None:
+        return ""
+    applies = bool(getattr(a, "balarishta_applies", False))
+    cancelled = bool(getattr(a, "balarishta_cancelled", False))
+    if not applies:
+        state = ("Balarishta — the classical combination for danger in infancy — does not form "
+                 "in your chart at all")
+    elif cancelled:
+        state = ("Balarishta forms in your chart and is cancelled; the texts treat a cancelled "
+                 "combination as answered, not as a lingering one")
+    else:
+        state = "Balarishta forms in your chart and the antidotes below are the doctrine's reply"
+    protections = len(tuple(getattr(a, "protections", ()) or ()))
+    tail = (f" The chart also carries {protections} protective "
+            f"combination{'s' if protections != 1 else ''}." if protections else "")
+    return (f"This section reads the classical afflictions and, just as carefully, their "
+            f"cancellations — Raman treats the two as one question, never quoting an affliction "
+            f"without its antidote. {state}.{tail} You are reading how the method tests itself, "
+            f"not a finding about what happens to you.")
+
+
+def _maraka_lead(r: "DetailedReport") -> str:
+    mp = getattr(getattr(r, "chart", None), "maraka_points", None)
+    units = tuple(getattr(mp, "units", ()) or ())
+    if not units:
+        return ""
+    primary = [str(u.graha) for u in units if str(getattr(u, "tier", "")) == "primary"]
+    # NOT `_join` here. It caps at three so a lead never becomes an inventory, which is right
+    # everywhere else and wrong in a sentence that reads as the complete list — it printed
+    # "Jupiter, Venus and Saturn" for a chart with four, silently dropping Mars. The set is
+    # small and closed; name all of it.
+    who = ""
+    if primary:
+        named = (primary[0] if len(primary) == 1
+                 else f"{', '.join(primary[:-1])} and {primary[-1]}")
+        who = f" In your chart that marks {named}."
+    return (f"Having placed the band, Raman's method names which planets carry the relevant "
+            f"authority — the lords, occupants and associates of the 2nd and 7th houses, which "
+            f"the tradition assigns this role.{who} This is a disclosure of how the method "
+            f"works, offered so you can see the machinery rather than be handed a conclusion "
+            f"from it. The engine's own outcome study found no chart-specific signal in this "
+            f"scheme, and nothing here is timed against your life.")
+
+
+SECTION_LEADS.update({                                             # type: ignore[union-attr]
+    "longevity": _longevity_lead,
+    "arishta": _arishta_lead,
+    "maraka": _maraka_lead,
+})

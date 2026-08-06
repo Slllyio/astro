@@ -3571,6 +3571,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.start("longevity")
     L.append("## Longevity")
+    _lead = _plain_section("longevity", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.extend(_method_preamble("longevity"))
     L.append("_Raman's order: first establish the band by combination (Balarishta / Alpayu / "
@@ -3596,6 +3600,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if mp is not None:
         L.start("maraka")
         L.append("## The maraka scheme (death-dealing determinants)")
+        _lead = _plain_section("maraka", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:"
                  "4485-4546): the 2nd and 7th are the houses of death; their lords, occupants and "
@@ -3684,6 +3692,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         a = r.arishta
         L.start("arishta")
         L.append("## Arishta & Bhanga")
+        _lead = _plain_section("arishta", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** the afflictions Raman screens for and — equally "
                  "doctrinal — the cancellations that neutralise them. Every row re-reads "

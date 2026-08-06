@@ -2159,7 +2159,7 @@ function render(R, S, FQ){
       add(para((typeof nt==='object'?(nt.text||JSON.stringify(nt)):nt),'muted')); }
 
   // ===== Longevity + maraka =====
-  sec('longevity'); add(H2('Longevity'));
+  sec('longevity'); add(H2('Longevity')); plainLead('longevity');
   const lg=R.longevity||{};
   add(para('Longevity: '+lg.class+' band — about '+Math.round(lg.years||0)+' years'+
     (lg.balarishta&&lg.balarishta.applies?(lg.balarishta.cancelled?' (Balarishta cancelled)':' (Balarishta applies)'):'')+'.'));
@@ -2400,7 +2400,7 @@ function render(R, S, FQ){
       +ch.combos_quote+'” (HTJAH-I:5179)','muted')); }
   const ar=R.arishta||{};
   if(ar.antidote_quote||(ar.bhangas||[]).length||ar.balarishta_applies!=null){
-    sec('arishta'); add(H2('Arishta & Bhanga'));
+    sec('arishta'); add(H2('Arishta & Bhanga')); plainLead('arishta');
     add(para(t('Balarishta (early-childhood danger)')+': '
       +(ar.balarishta_applies?t('applies'):t('does not apply'))
       +(ar.balarishta_cancelled?' · '+t('cancelled'):'')
@@ -2412,7 +2412,7 @@ function render(R, S, FQ){
     if(ar.antidote_quote) add(para('“'+ar.antidote_quote+'”'
       +(ar.antidote_cite?' ('+ar.antidote_cite+')':''),'muted')); }
   const mk=R.maraka||{};
-  if((mk.units||[]).length){ sec('maraka'); add(H2('The maraka scheme'));
+  if((mk.units||[]).length){ sec('maraka'); add(H2('The maraka scheme')); plainLead('maraka');
     add(para(t('Raman’s second step after the longevity band (HTJAH-I:761-814): the 2nd '+
       'and 7th are the houses of death; their lords, occupants and associates carry maraka '+
       'power in their periods. A disclosure of the method, not a prediction.'),'muted'));

@@ -1550,6 +1550,7 @@ def _maraka(r: DetailedReport) -> str:
     running = ("carries a maraka-tier lord" if r.maraka_period_now
                else "carries no maraka-tier lord")
     return ('<h2 class="section" id="maraka">The maraka scheme</h2>'
+            + _plain_lead(r, "maraka") + 
             '<p class="section-sub">Raman&rsquo;s second step after the longevity band '
             '(HTJAH-I:761-814): the 2nd and 7th are the houses of death; their lords, occupants '
             'and associates carry maraka power in their periods. A disclosure of the method, not '
@@ -1760,6 +1761,7 @@ def _arishta_section(r: DetailedReport) -> str:
     body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                    f'<span class="vv">{v}</span></div>' for k, v in rows)
     return ('<h2 class="section" id="arishta">Arishta &amp; Bhanga</h2>'
+            + _plain_lead(r, "arishta") + 
             '<p class="section-sub"><b>In simple terms:</b> the afflictions Raman '
             'screens for and &mdash; equally doctrinal &mdash; the cancellations that '
             'neutralise them. Every row re-reads a computed state.</p>'
@@ -2539,7 +2541,8 @@ def to_html(r: DetailedReport) -> str:
   {filters}
   <div class="houses">{houses}</div>"""
 
-    chunk["longevity"] = f"""<h2 class="section" id="longevity">Longevity</h2>
+    chunk["longevity"] = (f"""<h2 class="section" id="longevity">Longevity</h2>"""
+        + _plain_lead(r, "longevity") + f"""
   {_method_preamble_html("longevity")}
   <p class="section-sub">Raman's order: establish the band by combination first, then fix the period
     by the marakas (HTJAH-II:4465-4472). The numeric span is a cross-check, never a date.</p>
@@ -2547,7 +2550,7 @@ def to_html(r: DetailedReport) -> str:
   <p class="long"><b>3. Numeric cross-check (Ayurdaya)</b>: about
     <b>{round(r.longevity_years)} years</b> ({y}y {mo}m {d}d) &mdash;
     class <b>{_esc(r.longevity_class)}</b>. Treat as a band; the engine's own health layer defers
-    lifespan.</p>"""
+    lifespan.</p>""")
 
     chunk["timeline"] = (f"""<h2 class="section" id="timeline">Life-narrative</h2>"""
         + _plain_lead(r, "timeline") + f"""

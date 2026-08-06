@@ -2972,6 +2972,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     ru = r.ruler
     L.start("ruler")
     L.append("## Ruler of the nativity")
+    _lead = _plain_section("ruler", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.append("**In simple terms:** Raman opens a judgment from here: \"in order to obtain a "
              "first impression we must first of all consider the ruler of the nativity\" — the "
@@ -3057,6 +3061,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.planet_biographies import MODERN_BANNER
         L.start("planet_bios")
         L.append("## Planet biographies (dominant grahas)")
+        _lead = _plain_section("planet_bios", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** the grahas that drive the most of this chart's "
                  "computed readings (counted over the judgment graph — lordships, "
@@ -3111,6 +3119,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         ps = r.psych
         L.start("psych")
         L.append("## Psychological profile")
+        _lead = _plain_section("psych", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("psych"))
         L.append(f"_{ps.woven}_")

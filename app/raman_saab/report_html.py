@@ -821,7 +821,8 @@ def _planet_bios_section(r: DetailedReport) -> str:
             + vocation + modern)
     return (
         '<h2 class="section" id="planet-bios">Planet biographies (dominant grahas)</h2>'
-        '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
+        + _plain_lead(r, "planet_bios")
+        + '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
         'this chart&rsquo;s computed readings, counted over the judgment graph, each told '
         'as one story. Every line re-reads a value shown elsewhere; nothing here is a new '
         'judgment.</p>' + "".join(blocks))
@@ -1421,7 +1422,8 @@ def _ruler_section(r: DetailedReport) -> str:
                     'place</div>')
     return (
         '<h2 class="section" id="ruler">Ruler of the nativity</h2>'
-        '<p class="section-sub">Raman&rsquo;s own opening move: &ldquo;in order to obtain a '
+        + _plain_lead(r, "ruler")
+        + '<p class="section-sub">Raman&rsquo;s own opening move: &ldquo;in order to obtain a '
         'first impression we must first of all consider the ruler of the nativity&rdquo; '
         '(HTJAH-I:16001-16002) &mdash; and separately, &ldquo;the strongest planet in the '
         'horoscope determines the predominance of the physical, mental and spiritual '
@@ -1716,7 +1718,8 @@ def _psych_section(r: DetailedReport) -> str:
     body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                    f'<span class="vv">{v}</span></div>' for k, v in rows)
     return ('<h2 class="section" id="psych">Psychological profile</h2>'
-            f'{_method_preamble_html("psych")}'
+        + _plain_lead(r, "psych")
+        + f'{_method_preamble_html("psych")}'
             f'<p class="section-sub"><i>{_esc(ps.woven)}</i></p>'
             f'<div class="vsec">{body}</div>')
 

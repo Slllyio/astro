@@ -326,3 +326,68 @@ def _join(items: list) -> str:
     if len(items) == 2:
         return f"{items[0]} and {items[1]}"
     return f"{items[0]}, {items[1]} and {items[2]}"
+
+
+# ─── who-you-are leads ──────────────────────────────────────────────────────────────────────
+# These three sections are the ones a reader most expects to be about them, and all three
+# addressed the chart instead. Each lead below is built from that section's own already-computed
+# fields, so it is specific rather than a warm generic opener.
+
+def _ruler_lead(r: "DetailedReport") -> str:
+    ru = getattr(r, "ruler", None)
+    lord = getattr(ru, "lagna_lord", None)
+    strongest = getattr(ru, "strongest", None)
+    if not lord:
+        return ""
+    house = getattr(ru, "lagna_lord_house", None)
+    # "rules your rising sign, WHICH sits in house 1" made the relative pronoun point at the
+    # sign rather than at the planet — and house 1 IS the rising sign, so it read as nonsense.
+    where = f" and stands in house {house}," if house else ","
+    if strongest and strongest != lord:
+        return (f"Two planets shape you here and they are not the same one. {lord} rules your "
+                f"rising sign{where} so it sets the manner you meet the world in; {strongest} "
+                f"is simply the strongest thing in your chart. Where those two differ, this "
+                f"method reads the first for temperament and the second for force.")
+    if strongest:
+        return (f"{lord} both rules your rising sign{where} and is the strongest planet in "
+                f"your chart. That concentration is unusual — the manner you meet the world "
+                f"in and the force behind it come from one place rather than two.")
+    return f"{lord} rules your rising sign{where} and sets the manner you meet the world in."
+
+
+def _psych_lead(r: "DetailedReport") -> str:
+    ps = getattr(r, "psych", None)
+    moon = str(getattr(ps, "moon_state", "") or "")
+    if not moon:
+        return ""
+    ak = getattr(ps, "atmakaraka", None)
+    # `moon_state` reads "the Moon (manas) in house 7, exalt, afflicted by Sun, Mars" — strip
+    # the label and give it a verb, or the sentence is a fragment.
+    state = moon.replace("the Moon (manas) ", "it stands ")
+    lead = (f"Your mind is read from the Moon, and here {state}. That is the instrument every "
+            f"other judgement in this chart is taken with.")
+    if ak:
+        lead += (f" {ak} stands as your Atmakaraka — in this method the planet carrying what "
+                 f"the life is FOR, as distinct from what it contains.")
+    return lead
+
+
+def _planet_bios_lead(r: "DetailedReport") -> str:
+    bios = tuple(getattr(r, "planet_bios", ()) or ())
+    if not bios:
+        return ""
+    top = bios[0]
+    count = getattr(top, "census_count", None)
+    if not count:
+        return ""
+    return (f"{top.planet} runs more of your chart than any other planet — it is involved in "
+            f"{count} of the readings above, by ruling, sitting in or aspecting the houses "
+            f"they judge. Whatever else this chart says, it says it largely in "
+            f"{top.planet}'s voice.")
+
+
+SECTION_LEADS.update({                                             # type: ignore[union-attr]
+    "ruler": _ruler_lead,
+    "psych": _psych_lead,
+    "planet_bios": _planet_bios_lead,
+})

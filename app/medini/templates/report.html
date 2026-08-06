@@ -1967,7 +1967,7 @@ function render(R, S, FQ){
 
   // ===== Planet biographies (v20, S2) =====
   if((R.planet_bios||[]).length){
-    sec('planet_bios'); add(H2('Planet biographies (dominant grahas)'));
+    sec('planet_bios'); add(H2('Planet biographies (dominant grahas)')); plainLead('planet_bios');
     // planet CARDS (2026-08-04): stars = a labeled display transform of the MEASURED
     // band vs Raman's own minimum (GBB-8:303) — never an invented rating.
     const cardRow=el('div',{class:'pillrow'});
@@ -2025,7 +2025,7 @@ function render(R, S, FQ){
 
   // ===== Ruler of the nativity =====
   const ru=R.ruler||{};
-  sec('ruler'); add(H2('Ruler of the nativity'));
+  sec('ruler'); add(H2('Ruler of the nativity')); plainLead('ruler');
   add(para('Ruler of the nativity (Lagna lord): '+ru.lagna_lord+
     (ru.strongest?('.  Strongest planet by Shadbala: '+ru.strongest+
       (ru.coincide?' — the ruler itself: "the foundation is quite sound".':'.')):'')));
@@ -2305,7 +2305,7 @@ function render(R, S, FQ){
     if(_sy.sade_sati) add(para(_sy.sade_sati,'muted'));
     if(_sy.panchanga) add(para(t('Panchanga')+': '+_sy.panchanga,'muted')); }
   const psy=R.psych||{};
-  if(psy.woven||psy.temperament){ sec('psych'); add(H2('Psychological profile'));
+  if(psy.woven||psy.temperament){ sec('psych'); add(H2('Psychological profile')); plainLead('psych');
     if(psy.woven) add(para(psy.woven));
     for(const [k,lbl] of [['lagna_quote','Rising sign'],['moon_state','Moon (manas)'],
                           ['temperament','Temperament'],['nature_stamp','Nature stamp'],

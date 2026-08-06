@@ -77,6 +77,9 @@ class DigestItem:
     sections: tuple[str, ...]      # report sections it bridges (for click-to-jump)
     cites: tuple[str, ...]         # WORK:line tokens already attached to the findings (may be empty)
     priority: int                  # 0 = most important; the engine's rank, not the LLM's
+    #: the same finding said about the PERSON rather than the chart (v35). Empty when there is
+    #: nothing plain to say. ADDS to `detail`, never replaces it — the technical text stays.
+    plain: str = ""
 
 
 @dataclass(frozen=True)
@@ -166,12 +169,28 @@ def _tension_item(report: "DetailedReport", house: int, priority: int) -> Digest
     ht = _testimonies_for(report, house)
     if ht is None:
         return None
+
+    # Name WHICH matter set the headline. Without it a reader meets "7 favourable, 0 adverse"
+    # over a headline of "afflicted" and can only read it as broken. The rule is Raman's
+    # (PREC-1: a house follows its weakest DECIDED matter, not its majority) and the engine
+    # already knows the answer — the Nichod states it — the digest simply never did.
+    pf = next((p for p in report.proformas if p.house == house), None)
+    driver = ""
+    if pf is not None and pf.significations:
+        odd = [s for s in pf.significations if str(s.verdict) == str(pf.rollup)]
+        rest = [s for s in pf.significations if str(s.verdict) != str(pf.rollup)]
+        if odd and rest and len(odd) < len(rest):
+            names = ", ".join(s.signification.replace("_", " ") for s in odd)
+            driver = (f" The headline follows {names} — the one matter reading "
+                      f"{pf.rollup} — while the other {len(rest)} read otherwise; a house "
+                      f"takes its weakest decided matter, not its majority.")
+
     return DigestItem(
         kind="tension",
         title=f"House {house} ({_house_label(house)}) is the most contested area",
         detail=f"Its headline reads {ht.verdict}, yet its own witnesses are divided "
                f"({ht.favourable} favourable, {ht.adverse} adverse, {ht.neutral} neutral — "
-               f"{ht.status}). The engine records the tension rather than resolving it.",
+               f"{ht.status}).{driver} The engine records the tension rather than resolving it.",
         lean="mixed",
         houses=(house,),
         sections=(_SEC_PREPONDERANCE, _SEC_HOUSES),
@@ -389,4 +408,15 @@ def _ordered_by_salience(report: "DetailedReport",
 
     ordered = [it for _s, _i, it in
                sorted(((-clamped[i], i, it) for i, it in enumerate(items)))]
-    return tuple(replace(it, priority=i) for i, it in enumerate(ordered))
+
+    # v35 — give each finding its person-facing voice. Failure here must cost the reader the
+    # sentence, never the finding.
+    def _plain(it: DigestItem) -> str:
+        try:
+            from app.raman_saab.plainspoken import plain_for_item
+            return plain_for_item(report, it)
+        except Exception:                                          # noqa: BLE001
+            return ""
+
+    return tuple(replace(it, priority=i, plain=_plain(it))
+                 for i, it in enumerate(ordered))

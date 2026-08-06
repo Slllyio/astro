@@ -1882,6 +1882,14 @@ function render(R, S, FQ){
   if(dg.headline||(dg.items&&dg.items.length)){
     sec('digest'); add(H2('What matters most'));
     if(dg.headline) add(para(dg.headline,'muted'));
+    // v35 — the same findings, said about the person. Above the cards, never instead of them.
+    const _plain=(dg.items||[]).filter(x=>x.plain);
+    if(_plain.length){
+      add(el('p',{class:'muted'},t('In plain terms')));
+      const ul=el('ul',{class:'doclist plainspoken'});
+      for(const it of _plain) ul.append(el('li',{},it.plain));
+      add(ul);
+    }
     const dw=el('div',{class:'digest'});
     for(const it of (dg.items||[])){
       const card=el('div',{class:'digest-item di-'+(it.lean||'neutral')});

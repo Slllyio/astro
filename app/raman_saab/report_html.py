@@ -827,9 +827,13 @@ def _digest_section(r: DetailedReport) -> str:
         f'<td>{_esc(", ".join(it.sections)) if it.sections else "&ndash;"}</td>'
         f'<td>{_esc(", ".join(it.cites)) if it.cites else "&ndash;"}</td></tr>'
         for it in r.digest.items)
+    plain = "".join(f"<li>{_esc(it.plain)}</li>" for it in r.digest.items if it.plain)
+    plain_block = (f'<p class="section-sub"><b>In plain terms</b></p>'
+                   f'<ul class="doclist plainspoken">{plain}</ul>') if plain else ""
     return (
         '<h2 class="section" id="digest">What matters most (ranked digest)</h2>'
         f'<p class="section-sub"><i>{_esc(r.digest.headline)}</i></p>'
+        f'{plain_block}'
         '<div class="tablewrap"><table class="grid"><thead><tr><th class="num">#</th>'
         '<th>kind</th><th>finding</th><th>lean</th><th>bridges</th><th>cites</th></tr>'
         f'</thead><tbody>{rows}</tbody></table></div>')

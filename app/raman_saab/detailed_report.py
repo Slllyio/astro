@@ -2094,7 +2094,10 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
         cond_words.append("lord condition unavailable on this chart")
     if lean is not None:
         cond_words.append(f"a {lean} Ishta/Kashta lean")
-    bits.append(f"{lead}: {', '.join(cond_words)}.")
+    # Rahu and Ketu carry no Shadbala, are rarely vargottama and often have no Ishta/Kashta
+    # lean, so `cond_words` can be empty — which used to render as "…for this Lagna:." with a
+    # colon introducing nothing.
+    bits.append(f"{lead}: {', '.join(cond_words)}." if cond_words else f"{lead}.")
     if yts:
         names = ", ".join(f"{t.yoga_name} ({t.role})" for t in yts)
         bits.append(f"Yogas ripening here: {names} — a yoga's lord delivers its results in "
@@ -2888,6 +2891,15 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.append(f"_{r.digest.headline}_")
         L.append("")
+        # v35 — the same findings said about the person, above the table that says them about
+        # the chart. ADDS; the technical rows below are untouched.
+        _plain = [it.plain for it in r.digest.items if it.plain]
+        if _plain:
+            L.append("**In plain terms**")
+            L.append("")
+            for line in _plain:
+                L.append(f"- {line}")
+            L.append("")
         L.append("| # | Kind | Finding | Lean | Bridges | Cites |")
         L.append("|---|---|---|---|---|---|")
         for it in r.digest.items:

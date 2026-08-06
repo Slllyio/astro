@@ -2235,7 +2235,7 @@ function render(R, S, FQ){
     else add(para('No classical ancestral-curse yoga fires on this chart.','muted')); }
 
   // ===== Integrated insights =====
-  if((R.insights||[]).length){ sec('synthesis'); add(H2('Integrated insights'));
+  if((R.insights||[]).length){ sec('synthesis'); add(H2('Integrated insights')); plainLead('synthesis');
     for(const ins of R.insights){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(ins.name);
       const s3=citeChip(ins.source); if(s3){ sm.append(' '); sm.append(s3);} d.append(sm);
       const b=el('div',{class:'body'}); b.append(para(ins.simple_meaning)); b.append(para('This chart: '+ins.detail,'muted')); d.append(b); add(d); } }
@@ -2266,7 +2266,7 @@ function render(R, S, FQ){
 
   // ===== Nichod =====
   const n=R.nichod||{};
-  if(n.essence){ sec('nichod'); add(H2('Nichod (the essence)')); add(para(n.essence,'lede'));
+  if(n.essence){ sec('nichod'); add(H2('Nichod (the essence)')); plainLead('nichod'); add(para(n.essence,'lede'));
     if(n.spotlight) add(para('Spotlight: '+n.spotlight,'muted'));
     if(n.caution) add(para('Caution: '+n.caution,'muted'));
     if((n.turning_points||[]).length)
@@ -2471,7 +2471,7 @@ function render(R, S, FQ){
     if(kv.doctrine_quote) add(para('“'+kv.doctrine_quote+'”'
       +(kv.doctrine_cite?' ('+kv.doctrine_cite+')':''),'muted')); }
   const ls=R.life_synthesis||{};
-  if((ls.paragraphs||[]).length){ sec('life_synthesis'); add(H2('Full life synthesis'));
+  if((ls.paragraphs||[]).length){ sec('life_synthesis'); add(H2('Full life synthesis')); plainLead('life_synthesis');
     for(const p of ls.paragraphs) add(para(p));
     if(ls.closing) add(para(ls.closing,'lede')); }
 

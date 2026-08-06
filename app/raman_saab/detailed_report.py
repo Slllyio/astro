@@ -4209,6 +4209,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.start("synthesis")
     L.append("## Integrated insights (cross-feature synthesis)")
+    _lead = _plain_section("synthesis", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.append("_Where the report's sections meet: encoded combination doctrine connecting "
              "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Each insight leads "
@@ -4278,6 +4282,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         ls = r.life_synthesis
         L.start("life_synthesis")
         L.append("## Full life synthesis")
+        _lead = _plain_section("life_synthesis", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** the report's chapters read as one biography — "
                  "temperament, destiny, career, wealth, marriage, children, protections, "
@@ -4314,6 +4322,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.start("nichod")
     L.append("## Nichod")
+    _lead = _plain_section("nichod", r)
+    if _lead:
+        L.append("")
+        L.append(f"_{_lead}_")
     L.append("")
     L.append("_The distilled essence: every section above, squeezed into one. Nothing here is "
              "a new judgment — each clause selects, counts, or quotes what the report already "

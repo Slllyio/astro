@@ -460,9 +460,51 @@ def _gochara_lead(r: "DetailedReport") -> str:
             f"do not replace it.")
 
 
+def _synthesis_lead(r: "DetailedReport") -> str:
+    """The `synthesis` SECTION is Integrated insights (cross-feature rules that fired) — NOT
+    the `Synthesis` dataclass, whose house matters belong to the `houses` section. Two
+    different objects with the same word on them; describe the one actually rendered here."""
+    fired = tuple(getattr(r, "insights", ()) or ())
+    if not fired:
+        return ""
+    own = sum(1 for i in fired
+              if str(getattr(getattr(i, "rule", None), "band", "")) == "raman")
+    whose = (f" {own} of them are Raman's own combination doctrine; the rest are classical "
+             f"corroboration, which never overrides him." if own else "")
+    return (f"Most of this report reads one thing at a time — a house, a planet, a period. "
+            f"These {len(fired)} readings are what appear only when several of them are put "
+            f"side by side.{whose} They combine findings already made above; none of them "
+            f"judges anything new about you.")
+
+
+def _life_synthesis_lead(r: "DetailedReport") -> str:
+    paras = tuple(getattr(getattr(r, "life_synthesis", None), "paragraphs", ()) or ())
+    if not paras:
+        return ""
+    return (f"Told now as continuous prose rather than as tables — {len(paras)} passages, each "
+            f"one drawing together what the sections above found about a single side of your "
+            f"life. Where two of those sections lean different ways, the passage says so rather "
+            f"than picking a winner.")
+
+
+def _nichod_lead(r: "DetailedReport") -> str:
+    n = getattr(r, "nichod", None)
+    if n is None or not getattr(n, "essence", ""):
+        return ""
+    turns = len(tuple(getattr(n, "turning_points", ()) or ()))
+    tail = (f" It also marks {turns} point{'s' if turns != 1 else ''} where the lean of the "
+            f"periods changes." if turns else "")
+    return (f"Nichod is the distillation — the shortest honest account of what this chart says "
+            f"about you, in the method's own terms.{tail} It states the caution alongside the "
+            f"reading, because the two are equally part of the answer.")
+
+
 SECTION_LEADS.update({                                             # type: ignore[union-attr]
     "timeline": _timeline_lead,
     "life_chapters": _life_chapters_lead,
     "decades": _decades_lead,
     "gochara": _gochara_lead,
+    "synthesis": _synthesis_lead,
+    "life_synthesis": _life_synthesis_lead,
+    "nichod": _nichod_lead,
 })

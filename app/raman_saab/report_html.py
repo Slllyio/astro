@@ -1693,6 +1693,7 @@ def _life_synthesis_section(r: DetailedReport) -> str:
     paras = "".join(f'<p><b>{_esc(theme)}.</b> {_esc(para)}</p>'
                     for theme, para in ls.paragraphs)
     return ('<h2 class="section" id="life-synthesis">Full life synthesis</h2>'
+            + _plain_lead(r, "life_synthesis") + 
             '<p class="section-sub"><b>In simple terms:</b> the report&rsquo;s chapters '
             'read as one biography &mdash; every line a re-read of a section above, '
             'nothing judged anew.</p>'
@@ -1986,6 +1987,7 @@ def _synthesis_section(r: DetailedReport) -> str:
     """The integrated-insights section: fired cross-feature rules, banded by provenance."""
     from app.raman_saab.detailed_report import descriptive_rules
     parts = ['<h2 class="section" id="synthesis">Integrated insights</h2>'
+             + _plain_lead(r, "synthesis") + 
              '<p class="section-sub">Where the report&rsquo;s sections meet: encoded '
              'combination doctrine connecting Shadbala, yogas, dashas, transits, Ashtakavarga '
              'and the houses. Each insight leads with a plain-language reading, backed by the '
@@ -2084,6 +2086,7 @@ def _nichod_section(r: DetailedReport) -> str:
                    if n.caution else "")
     return (
         '<h2 class="section" id="nichod">Nichod</h2>'
+        + _plain_lead(r, "nichod") + 
         '<p class="section-sub">The distilled essence: every section above, squeezed into one. '
         'Nothing here is a new judgment &mdash; each clause selects, counts, or quotes what the '
         'report already showed. Not a prediction.</p>'

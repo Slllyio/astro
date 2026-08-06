@@ -816,6 +816,17 @@ def _planet_bios_section(r: DetailedReport) -> str:
         'judgment.</p>' + "".join(blocks))
 
 
+def _plain_lead(r: DetailedReport, section_id: str) -> str:
+    """The person-facing lead for a section, as an italic sub-paragraph. "" when there is none —
+    a phrasing failure must never cost the section its content."""
+    try:
+        from app.raman_saab.plainspoken import plain_for_section
+        text = plain_for_section(r, section_id)
+    except Exception:  # noqa: BLE001
+        return ""
+    return f'<p class="section-sub plainspoken"><i>{_esc(text)}</i></p>' if text else ""
+
+
 def _digest_section(r: DetailedReport) -> str:
     """v19 — the engine's own ranked digest, previously JSON/interactive-only (the
     coherence audit's completeness repair)."""
@@ -1588,7 +1599,8 @@ def _health_readout_section(r: DetailedReport) -> str:
               else "carries no maraka-tier lord")
     return (
         '<h2 class="section" id="health-readout">Health &amp; vulnerability read-out</h2>'
-        f'{_method_preamble_html("health_readout")}'
+        + _plain_lead(r, "health_readout")
+        + f'{_method_preamble_html("health_readout")}'
         '<p class="section-sub"><b>In simple terms:</b> the health-adjacent verdicts this '
         'report already computed &mdash; the 1st/6th/8th/12th house readings, the Moon and '
         'Mercury karakas, the balarishta screen, the maraka tiers and the longevity band '
@@ -2344,7 +2356,8 @@ def to_html(r: DetailedReport) -> str:
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
         chunk["profession"] = (
             '<h2 class="section" id="profession">Profession synthesis</h2>'
-            f'{_method_preamble_html("profession")}'
+            + _plain_lead(r, "profession")
+            + f'{_method_preamble_html("profession")}'
             '<p class="section-sub"><b>In simple terms:</b> every encoded derivation '
             'angle, then the deterministic convergence count &mdash; never a new '
             'judgment.</p>'
@@ -2361,7 +2374,8 @@ def to_html(r: DetailedReport) -> str:
                + _esc("; ".join(wch.expansion_periods)) + '</p>')
         chunk["wealth"] = (
             '<h2 class="section" id="wealth">Wealth chapter</h2>'
-            f'{_method_preamble_html("wealth")}'
+            + _plain_lead(r, "wealth")
+            + f'{_method_preamble_html("wealth")}'
             '<p class="section-sub"><b>In simple terms:</b> the CHANNELS, not one '
             'verdict &mdash; every row re-reads a judged signification or a cited '
             'source-of-gains table.</p>'
@@ -2374,7 +2388,8 @@ def to_html(r: DetailedReport) -> str:
                       for b, t, c in m.fired_kalatra)
         chunk["marriage"] = (
             '<h2 class="section" id="marriage">Marriage monograph</h2>'
-            f'{_method_preamble_html("marriage")}'
+            + _plain_lead(r, "marriage")
+            + f'{_method_preamble_html("marriage")}'
             f'<p class="section-sub"><b>The 7th house&rsquo;s scope (Raman verbatim):</b> '
             f'&ldquo;{_esc(m.seventh_covers)}&rdquo;</p>'
             f'<p class="section-sub"><b>Headline (unchanged H7 verdict)</b> &mdash; '
@@ -2406,7 +2421,8 @@ def to_html(r: DetailedReport) -> str:
         sig = "; ".join(f"{k}: {v}" for k, v in c.significations)
         chunk["children"] = (
             '<h2 class="section" id="children">Children chapter</h2>'
-            f'{_method_preamble_html("children")}'
+            + _plain_lead(r, "children")
+            + f'{_method_preamble_html("children")}'
             f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
             f'{_esc(c.verdict)} &middot; {_esc(sig)}</p>'
             + (f'<ul class="doclist">{pr_}</ul>' if pr_ else "")

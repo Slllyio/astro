@@ -2734,6 +2734,15 @@ class _SectionedLines:
         return "\n".join(out)
 
 
+def _plain_section(section_id: str, r: "DetailedReport") -> str:
+    """A person-facing lead for a section, or "" — never lets a phrasing failure cost content."""
+    try:
+        from app.raman_saab.plainspoken import plain_for_section
+        return plain_for_section(r, section_id)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     """Render every section, keyed by section_id — the order is applied by the caller.
 
@@ -3582,6 +3591,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         h = r.health_readout
         L.start("health_readout")
         L.append("## Health & vulnerability read-out")
+        _lead = _plain_section("health_readout", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("health_readout"))
         L.append("**In simple terms:** the health-adjacent verdicts this report already computed "
@@ -3963,6 +3976,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("profession")
         L.append("## Profession synthesis")
+        _lead = _plain_section("profession", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("profession"))
         L.append("**In simple terms:** Raman derives profession from several angles; "
@@ -3988,6 +4005,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         w = r.wealth
         L.start("wealth")
         L.append("## Wealth chapter")
+        _lead = _plain_section("wealth", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("wealth"))
         L.append("**In simple terms:** not one wealth verdict but the CHANNELS — how the "
@@ -4012,6 +4033,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         m = r.marriage
         L.start("marriage")
         L.append("## Marriage monograph")
+        _lead = _plain_section("marriage", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("marriage"))
         L.append(f"**The 7th house's scope (Raman verbatim):** \"{m.seventh_covers}\" "
@@ -4050,6 +4075,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         c = r.children
         L.start("children")
         L.append("## Children chapter")
+        _lead = _plain_section("children", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.extend(_method_preamble("children"))
         L.append(f"- **Headline (unchanged H5 verdict)** — {c.verdict}")

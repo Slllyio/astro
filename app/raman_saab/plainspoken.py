@@ -138,3 +138,118 @@ _PLAIN_THEME_OVERRIDE: Final[dict[str, str]] = {
     "Rahu": "ambition, disruption and appetite for the unfamiliar",
     "Ketu": "detachment, inwardness and a loosening of old holds",
 }
+
+
+# ─── section leads — the six matters a reader opens the report for ──────────────────────────
+# Measured before writing these: 12 of 54 sections addressed the reader at all, and the 42 that
+# never said "you" included career, wealth, marriage, children and health. The digest had been
+# given a human voice and every room behind it was still a database report. Each lead below is
+# built from that section's OWN computed data, so it is specific to the chart rather than a
+# generic warm sentence — and each says nothing when the data is absent.
+
+def _count_bands(rows, band: str) -> int:
+    return sum(1 for row in rows if str(row[0]).lower() == band)
+
+
+def _career_lead(r: "DetailedReport") -> str:
+    pf = getattr(r, "profession", None)
+    conv = tuple(getattr(pf, "convergent", ()) or ()) if pf else ()
+    n_src = len(getattr(pf, "sources", ()) or ()) if pf else 0
+    if not n_src:
+        return ""
+    if conv:
+        words = ", ".join(str(c[0]) for c in conv)
+        return (f"{n_src} independent methods were applied to your chart to read vocation, and "
+                f"only {words} was named by more than one of them. Where they disagree the "
+                f"reading below shows each derivation separately rather than averaging them "
+                f"into a single answer.")
+    return (f"{n_src} independent methods were applied to your chart to read vocation and no "
+            f"trade was named by more than one of them — which is itself the finding: this "
+            f"chart does not point at one occupation.")
+
+
+def _wealth_lead(r: "DetailedReport") -> str:
+    w = getattr(r, "wealth", None)
+    rows = list(getattr(w, "rows", ()) or []) if w else []
+    if not rows:
+        return ""
+    good = [x.channel.split("(")[0].strip().lower() for x in rows
+            if str(x.reading).startswith("favourable")]
+    weak = [x.channel.split("(")[0].strip().lower() for x in rows
+            if str(x.reading).startswith("afflicted")]
+    if not good and not weak:
+        return ""
+    parts = []
+    if good:
+        parts.append(f"money reaches you through {', '.join(good[:3])}")
+    if weak:
+        parts.append(f"while {', '.join(weak[:3])} read as the weak channels")
+    return (f"Read as channels rather than one verdict: {'; '.join(parts)}. Wealth is not one "
+            f"thing in this method — it matters which route it takes.")
+
+
+def _marriage_lead(r: "DetailedReport") -> str:
+    m = getattr(r, "marriage", None)
+    fired = list(getattr(m, "fired_kalatra", ()) or []) if m else []
+    if not fired:
+        return ""
+    forts = _count_bands(fired, "fortified")
+    affl = _count_bands(fired, "afflicted")
+    if forts and affl:
+        return (f"{forts} of Raman's classical testimonies favour this marriage and {affl} warn "
+                f"about it. That is a genuinely two-sided reading, not a soft one — both sets "
+                f"are quoted below in his own words so you can weigh them yourself.")
+    if forts:
+        return (f"{forts} of Raman's classical testimonies favour this marriage and none warn "
+                f"about it — an unusually one-sided reading for this house.")
+    return (f"{affl} of Raman's classical testimonies warn about this marriage and none favour "
+            f"it. They are quoted below in his own words rather than summarised.")
+
+
+def _children_lead(r: "DetailedReport") -> str:
+    c = getattr(r, "children", None)
+    sigs = tuple(getattr(c, "significations", ()) or ()) if c else ()
+    if not sigs:
+        return ""
+    bits = [f"{str(name).replace('_', ' ')} reads {str(v).split(' ')[0]}"
+            for name, v in sigs]
+    return (f"This part of your chart covers more than children — {', '.join(bits)}. Each is "
+            f"judged separately below, because in this method one of them reading difficult "
+            f"does not make the others so.")
+
+
+def _health_lead(r: "DetailedReport") -> str:
+    h = getattr(r, "health_readout", None)
+    rows = list(getattr(h, "rows", ()) or []) if h else []
+    if not rows:
+        return ""
+    affl = [x for x in rows if str(x.verdict) == "afflicted"]
+    if len(affl) >= 2:
+        areas = ", ".join(x.area.split("—")[-1].strip().lower() for x in affl[:3])
+        return (f"{len(affl)} of the {len(rows)} indicators checked read afflicted for you — "
+                f"{areas}. Where several independent indicators agree, this method treats the "
+                f"area as one to attend to rather than to worry over. It describes your chart, "
+                f"never your body, and it is not a medical opinion.")
+    return (f"Of the {len(rows)} indicators checked, {len(affl)} reads afflicted for you — no "
+            f"pattern of agreement, which this method treats as the quieter finding. It "
+            f"describes your chart, never your body, and it is not a medical opinion.")
+
+
+SECTION_LEADS: Final[dict[str, object]] = {
+    "profession": _career_lead,
+    "wealth": _wealth_lead,
+    "marriage": _marriage_lead,
+    "children": _children_lead,
+    "health_readout": _health_lead,
+}
+
+
+def plain_for_section(r: "DetailedReport", section_id: str) -> str:
+    """A person-facing lead for one report section, or "" when there is nothing plain to say."""
+    fn = SECTION_LEADS.get(section_id)
+    if fn is None:
+        return ""
+    try:
+        return fn(r) or ""                                         # type: ignore[operator]
+    except Exception:                                              # noqa: BLE001
+        return ""

@@ -2166,7 +2166,7 @@ function render(R, S, FQ){
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
-    sec('health_readout'); add(H2('Health & vulnerability read-out'));
+    sec('health_readout'); add(H2('Health & vulnerability read-out')); plainLead('health_readout');
     add(para(hr.caveat,'muted'));
     add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows));
     if((hr.maraka_tiers||[]).length)
@@ -2353,7 +2353,7 @@ function render(R, S, FQ){
     add(para(t('HTJAH-II — the navamsa-dispositor of the 10th lord, Raman’s primary method.'),'muted'));
     add(para(car)); }
   const pf=R.profession||{};
-  if((pf.sources||[]).length){ sec('profession'); add(H2('Profession synthesis'));
+  if((pf.sources||[]).length){ sec('profession'); add(H2('Profession synthesis')); plainLead('profession');
     add(para(t('Every encoded derivation angle, then the deterministic convergence count — '+
       'never a new judgment.'),'muted'));
     add(rows(pf.sources));
@@ -2362,14 +2362,14 @@ function render(R, S, FQ){
     if((pf.mode_split||[]).length) add(para(t('H10 mode split')+': '
       +pf.mode_split.map(m=>Array.isArray(m)?m[0]+': '+m[1]:m).join('; '),'muted')); }
   const wl=R.wealth||{};
-  if((wl.rows||[]).length){ sec('wealth'); add(H2('Wealth chapter'));
+  if((wl.rows||[]).length){ sec('wealth'); add(H2('Wealth chapter')); plainLead('wealth');
     add(para(t('The CHANNELS, not one verdict — every row re-reads a judged signification '+
       'or a cited source-of-gains table.'),'muted'));
     add(rows(wl.rows));
     if((wl.expansion_periods||[]).length) add(para(t('Periods of expansion (a timing lens, '+
       'never a promise)')+': '+wl.expansion_periods.join('; '),'muted')); }
   const mg=R.marriage||{};
-  if(mg.verdict||(mg.fired_kalatra||[]).length){ sec('marriage'); add(H2('Marriage monograph'));
+  if(mg.verdict||(mg.fired_kalatra||[]).length){ sec('marriage'); add(H2('Marriage monograph')); plainLead('marriage');
     if(mg.seventh_covers) add(para(t('The 7th house’s scope (Raman verbatim)')+': “'+mg.seventh_covers+'”','muted'));
     if(mg.verdict) add(para(t('Headline (unchanged H7 verdict)')+' — '+mg.verdict
       +(mg.upapada?' · '+t('Upapada')+' '+mg.upapada:'')));
@@ -2384,7 +2384,7 @@ function render(R, S, FQ){
     if(mg.timing_navamsa) add(para(t('Timing doctrine (verbatim)')+' — “'+mg.timing_navamsa+'” (HTJAH-II:853)','muted'));
     if((mg.timing_windows||[]).length) add(para(t('H7 activations')+' — '+mg.timing_windows.join('; '),'muted')); }
   const ch=R.children||{};
-  if(ch.verdict||(ch.fired_rules||[]).length){ sec('children'); add(H2('Children chapter'));
+  if(ch.verdict||(ch.fired_rules||[]).length){ sec('children'); add(H2('Children chapter')); plainLead('children');
     if(ch.verdict) add(para(t('Headline (unchanged H5 verdict)')+' — '+ch.verdict));
     if((ch.significations||[]).length) add(para(ch.significations
       .map(s=>Array.isArray(s)?s[0]+': '+s[1]:s).join(' · '),'muted'));
@@ -2472,6 +2472,10 @@ function render(R, S, FQ){
     for(const p of ls.paragraphs) add(para(p));
     if(ls.closing) add(para(ls.closing,'lede')); }
 
+
+  // v35 — the person-facing lead for a section, from R.plain_leads. Adds; never replaces.
+  const plainLead=(sid)=>{ const txt=(R.plain_leads||{})[sid];
+    if(txt) add(el('p',{class:'muted plainspoken'},txt)); };
 
   // ---- v34 intuition layer ---------------------------------------------------------------
   sec('dominance'); add(H2('What governs each house'));

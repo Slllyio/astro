@@ -102,6 +102,14 @@ def _proforma_dict(pf) -> dict:
     }
 
 
+def _plain_leads(r: DetailedReport) -> dict:
+    try:
+        from app.raman_saab.plainspoken import SECTION_LEADS, plain_for_section
+        return {sid: t for sid in SECTION_LEADS if (t := plain_for_section(r, sid))}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def to_report_dict(r: DetailedReport) -> dict:
     """The full structured report as a JSON-safe dict — the shared grounding contract."""
     from app.raman_saab.judgment_graph import build_judgment_graph
@@ -163,6 +171,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_period_now": r.maraka_period_now,
 
         # v34 intuition layer — pure re-reads, exposed so the interactive page can show them.
+        # v35 — the person-facing lead for each translated section, so the interactive page
+        # shows the same sentence the other two surfaces do.
+        "plain_leads": _plain_leads(r),
         "dominance": [_ad(d) for _h, d in sorted((r.dominance or {}).items())],
         "restraint": [_ad(x) for _h, x in sorted((r.restraint or {}).items())],
         "analogy": [_ad(m) for m in (r.analogy or ())],

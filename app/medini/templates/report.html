@@ -2070,7 +2070,7 @@ function render(R, S, FQ){
   add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing));
 
   // ===== Ashtakavarga (SAV) =====
-  if(R.sav){ sec('ashtakavarga'); add(H2('Ashtakavarga (Sarvashtakavarga)'));
+  if(R.sav){ sec('ashtakavarga'); add(H2('Ashtakavarga (Sarvashtakavarga)')); plainLead('ashtakavarga');
     const _svc=savColumns(R);
     if(_svc) add(vizCard('SAV per sign — columns diverge from the 28-point average', _svc,
       'Each sign’s Sarvashtakavarga bindus as a column above/below the population average of 28 (green above, red below) — above/below the mean becomes a colour, not mental arithmetic. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456). Exact bindus are in the table below.'));
@@ -2132,7 +2132,7 @@ function render(R, S, FQ){
 
   // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
-  if((pp.houses||[]).length){ sec('preponderance'); add(H2('Preponderance of testimonies'));
+  if((pp.houses||[]).length){ sec('preponderance'); add(H2('Preponderance of testimonies')); plainLead('preponderance');
     add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
     const _pb=prepBars(R);
     if(_pb) add(vizCard('Witness balance per house — favourable vs adverse', _pb,
@@ -2216,7 +2216,7 @@ function render(R, S, FQ){
   add(muhurthaPanel());
 
   // ===== Divisional deep-reads =====
-  if((R.divisional||[]).length){ sec('divisional'); add(H2('Divisional deep-reads (Shodasavarga)'));
+  if((R.divisional||[]).length){ sec('divisional'); add(H2('Divisional deep-reads (Shodasavarga)')); plainLead('divisional');
     for(const dv of R.divisional){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(dv.label);
       d.append(sm); const b=el('div',{class:'body'}); const pre=el('pre',{}); pre.style.whiteSpace='pre-wrap';
       pre.append(citeText(dv.body||'')); pre.style.fontFamily='inherit'; pre.style.fontSize='.82rem'; b.append(pre); d.append(b); add(d); } }
@@ -2329,13 +2329,13 @@ function render(R, S, FQ){
   if(_pl){ const sb=Object.keys(_pl).filter(k=>_pl[k].shadbala_rupas!=null)
       .map(k=>({graha:k,rupas:_pl[k].shadbala_rupas,sign:_pl[k].sign,retrograde:_pl[k].retrograde}))
       .sort((a,b)=>b.rupas-a.rupas);
-    if(sb.length){ sec('shadbala'); add(H2('Shadbala'));
+    if(sb.length){ sec('shadbala'); add(H2('Shadbala')); plainLead('shadbala');
       add(para(t('Six-source planetary strength, in rupas — the numbers behind every '+
         '"strong" and "weak" used elsewhere in this reading.'),'muted'));
       add(rows(sb)); } }
 
   // ---- Movement IV ---------------------------------------------------------------------
-  if((R.yoga_deep||[]).length){ sec('yoga_deep'); add(H2('Yoga deep-read'));
+  if((R.yoga_deep||[]).length){ sec('yoga_deep'); add(H2('Yoga deep-read')); plainLead('yoga_deep');
     for(const y of R.yoga_deep){ const d=el('details',{class:'card'}); d.setAttribute('open','');
       d.append(el('summary',{},(y.name||'')+(y.kind?' · '+y.kind:'')));
       const b=el('div',{class:'body'});
@@ -2346,7 +2346,7 @@ function render(R, S, FQ){
       if(y.strength_note) b.append(para(y.strength_note,'muted'));
       d.append(b); add(d); } }
   const dp=(R.synthesis||{}).deeptadi;
-  if(dp&&dp.length){ sec('deeptadi'); add(H2('Deeptadi avasthas'));
+  if(dp&&dp.length){ sec('deeptadi'); add(H2('Deeptadi avasthas')); plainLead('deeptadi');
     add(para(t('Each graha’s result-state (HPA Ch.7).'),'muted'));
     add(para(Array.isArray(dp)?dp.join(', '):String(dp))); }
 
@@ -2430,18 +2430,18 @@ function render(R, S, FQ){
     add(para(t('A yoga’s lord delivers its results in his own Dasha or Bhukti '+
       '(HTJAH-I:4324).'),'muted'));
     add(rows(R.yoga_timing,['quality'])); }
-  if((R.ishta_kashta||[]).length){ sec('ishta_kashta'); add(H2('Ishta/Kashta outlook'));
+  if((R.ishta_kashta||[]).length){ sec('ishta_kashta'); add(H2('Ishta/Kashta outlook')); plainLead('ishta_kashta');
     add(para(t('The same windowed timeline, painted by each period’s benefic/malefic '+
       'lean.'),'muted'));
     add(rows(R.ishta_kashta)); }
-  if((R.md_condition||[]).length){ sec('md_condition'); add(H2('MD-lord condition outlook'));
+  if((R.md_condition||[]).length){ sec('md_condition'); add(H2('MD-lord condition outlook')); plainLead('md_condition');
     add(para(t('Strength and vargottama status painted onto the Mahadasha timeline.'),'muted'));
     add(rows(R.md_condition)); }
-  if((R.av_dasha_seats||[]).length){ sec('av_dasha_seat'); add(H2('AV dasha-seat outlook'));
+  if((R.av_dasha_seats||[]).length){ sec('av_dasha_seat'); add(H2('AV dasha-seat outlook')); plainLead('av_dasha_seat');
     add(para(t('Each Mahadasha lord graded by his own Ashtakavarga bindus, under Raman’s '+
       'own reliability caveat.'),'muted'));
     add(rows(R.av_dasha_seats)); }
-  if((R.dasa_kakshya||[]).length){ sec('dasa_kakshya'); add(H2('Dasha Kakshya intervals'));
+  if((R.dasa_kakshya||[]).length){ sec('dasa_kakshya'); add(H2('Dasha Kakshya intervals')); plainLead('dasa_kakshya');
     add(para(t('The ASP-12 eightfold Kakshya division of each Mahadasha run.'),'muted'));
     add(rows(R.dasa_kakshya)); }
   const dc_=R.decades||{};
@@ -2455,7 +2455,7 @@ function render(R, S, FQ){
 
   // ---- Movement VII — the summing up ---------------------------------------------------
   const kr=(R.synthesis||{}).karakamsa_reading;
-  if(kr&&kr.length){ sec('karakamsa'); add(H2('Jaimini Karakamsa'));
+  if(kr&&kr.length){ sec('karakamsa'); add(H2('Jaimini Karakamsa')); plainLead('karakamsa');
     add(para(t('The soul’s inclination.'),'muted'));
     const ul=el('ul',{class:'doclist'});
     for(const x of kr) ul.append(el('li',{},String(x)));

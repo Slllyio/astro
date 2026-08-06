@@ -3208,6 +3208,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         from app.raman_saab.plain_terms import band_rupas
         L.start("shadbala")
         L.append("## Shadbala (six-fold strength, rupas)")
+        _lead = _plain_section("shadbala", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_**Planetary strength — think of it as horsepower**: a powerful engine "
                  "can pull a heavier load, and a strong planet tends to deliver its "
@@ -3286,6 +3290,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.yoga_deep:
         L.start("yoga_deep")
         L.append("## Yoga deep-read")
+        _lead = _plain_section("yoga_deep", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** every yoga this chart fires, studied in full — "
                  "Raman's definition quoted verbatim at its citation, the exact rule the "
@@ -3323,6 +3331,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.sav:
         L.start("ashtakavarga")
         L.append("## Ashtakavarga (Sarvashtakavarga bindus by sign)")
+        _lead = _plain_section("ashtakavarga", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("| " + " | ".join(_SIGN_NAME[i][:3] for i in range(1, 13)) + " |")
         L.append("|" + "---:|" * 12)
@@ -3481,6 +3493,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("preponderance")
         L.append("## Preponderance of testimonies")
+        _lead = _plain_section("preponderance", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** Raman defines judgment itself as \"the summing up of "
                  "the influence of planets\" — the house, its lord, its occupants and its "
@@ -3744,6 +3760,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("ishta_kashta")
         L.append("## Ishta/Kashta outlook")
+        _lead = _plain_section("ishta_kashta", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** a planet with more Ishta Phala (its own \"good "
                  "tendency\") inclines to give good results in its Dasha or Bhukti; more Kashta "
@@ -3771,6 +3791,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.md_condition:
         L.start("md_condition")
         L.append("## MD-lord condition outlook")
+        _lead = _plain_section("md_condition", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** a Dasha delivers in proportion to how well-placed its "
                  "own ruling planet actually is — its strength, and its Navamsa disposition — "
@@ -3794,6 +3818,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.av_dasha_seats:
         L.start("av_dasha_seat")
         L.append("## AV dasha-seat outlook")
+        _lead = _plain_section("av_dasha_seat", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("> **Raman's own caveat governs this section**: \"Ashtakavarga method is "
                  "equally important. But, it does not seem to be quite reliable\" "
@@ -3819,6 +3847,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     if r.dasa_kakshya:
         L.start("dasa_kakshya")
         L.append("## Dasha Kakshya intervals")
+        _lead = _plain_section("dasa_kakshya", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("**In simple terms:** each Mahadasha can be split into 8 equal parts ruled in "
                  "Kakshya order (Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon, Lagna — "
@@ -4009,6 +4041,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("divisional")
         L.append("## Divisional deep-reads (Shodasavarga)")
+        _lead = _plain_section("divisional", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_Each divisional chart magnifies one matter. The Raman core is authoritative; "
                  "the varga block corroborates (report-only)._")
@@ -4160,6 +4196,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("deeptadi")
         L.append("## Deeptadi avasthas (each graha's result-state, HPA Ch.7)")
+        _lead = _plain_section("deeptadi", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         L.append("_**Avastha = the planet's state, its mood** — the same engine can run "
                  "bright or exhausted, and the state colours HOW a planet delivers what "
@@ -4176,6 +4216,10 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("")
         L.start("karakamsa")
         L.append("## Jaimini Karakamsa (the soul's inclination)")
+        _lead = _plain_section("karakamsa", r)
+        if _lead:
+            L.append("")
+            L.append(f"_{_lead}_")
         L.append("")
         for line in s.karakamsa_reading:
             L.append(f"- {line}")

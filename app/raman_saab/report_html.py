@@ -769,6 +769,7 @@ def _yoga_deep_section(r: DetailedReport) -> str:
                       f'<div class="vsec">{body}</div>')
     return (
         '<h2 class="section" id="yoga-deep">Yoga deep-read</h2>'
+        + _plain_lead(r, "yoga_deep") + 
         '<p class="section-sub"><b>In simple terms:</b> every yoga this chart fires, '
         'studied in full &mdash; the quoted definition, the exact computed rule, the '
         'participants and their state, measured strength (rupas &mdash; Raman assigns no '
@@ -973,6 +974,7 @@ def _preponderance_section(r: DetailedReport) -> str:
     picks_html = (f'<p class="plain">{_esc(" | ".join(picks))}</p>' if picks else "")
     return (
         '<h2 class="section" id="preponderance">Preponderance of testimonies</h2>'
+        + _plain_lead(r, "preponderance") + 
         '<p class="section-sub"><b>In simple terms:</b> Raman defines judgment itself as '
         '&ldquo;the summing up of the influence of planets&rdquo; &mdash; the house, its lord, '
         'its occupants and its karaka weighed together (HTJAH-I:983-991), with everything '
@@ -1065,6 +1067,7 @@ def _sav(r: DetailedReport) -> str:
                   f'{t * 32:.0f}%,transparent)" title="{_esc(_SIGN_NAME[i])}: {v} bindus '
                   f'({v - 28:+d} vs average)">{v}</td>')
     return ('<h2 class="section" id="sav">Ashtakavarga</h2>'
+            + _plain_lead(r, "ashtakavarga") + 
             '<p class="section-sub">Sarvashtakavarga bindus per sign; average 28 (total 337). '
             'Raman rates it corroborative, not decisive &mdash; <em>&ldquo;it does not seem to be '
             'quite reliable&rdquo;</em> (HTJAH-II:4453-4456).</p>'
@@ -1516,6 +1519,7 @@ def _shadbala(r: DetailedReport) -> str:
            f'style="max-width:100%;height:auto" role="img" '
            f'aria-label="Shadbala strength bars">{bars}</svg>')
     return ('<h2 class="section" id="shadbala">Shadbala &mdash; six-fold strength</h2>'
+            + _plain_lead(r, "shadbala") + 
             '<p class="section-sub"><b>Planetary strength &mdash; think of it as '
             'horsepower:</b> a powerful engine can pull a heavier load, and a strong '
             'planet tends to deliver its indications more effectively. Bars below the '
@@ -2175,6 +2179,7 @@ def _ishta_kashta_section(r: DetailedReport) -> str:
         for ik in r.ishta_kashta)
     return (
         '<h2 class="section" id="ishta-kashta">Ishta &amp; Kashta outlook</h2>'
+        + _plain_lead(r, "ishta_kashta") + 
         '<p class="section-sub"><b>In simple terms:</b> a planet with more Ishta Phala (its own '
         '&ldquo;good tendency&rdquo;) inclines to give good results in its Dasha or Bhukti; '
         'more Kashta Phala (&ldquo;hard tendency&rdquo;) inclines to harder ones (GBB-10:134). '
@@ -2196,6 +2201,7 @@ def _dasa_kakshya_section(r: DetailedReport) -> str:
         f'<td>{"yes" if k.donated else "no"}</td><td>{_esc(k.reading)}</td></tr>'
         for k in r.dasa_kakshya)
     return ('<h2 class="section" id="dasa-kakshya">Dasha Kakshya intervals</h2>'
+            + _plain_lead(r, "dasa_kakshya") + 
             '<p class="section-sub">Each Mahadasha split into 8 equal parts ruled in Kakshya order '
             '(ASP-12:174-182); a part whose ruler donated a bindu to the Dasha lord&rsquo;s natal sign '
             'inclines favourable, an undonated part runs adverse (ASP-12:211-214) unless relieved '
@@ -2220,6 +2226,7 @@ def _md_condition_section(r: DetailedReport) -> str:
         for c in r.md_condition)
     return (
         '<h2 class="section" id="md-condition">MD-lord condition outlook</h2>'
+        + _plain_lead(r, "md_condition") + 
         '<p class="section-sub"><b>In simple terms:</b> a Dasha delivers in proportion to how '
         'well-placed its own ruling planet actually is &mdash; its strength, and its Navamsa '
         'disposition &mdash; reaching its stated maximum only when strong in BOTH the main '
@@ -2246,6 +2253,7 @@ def _av_dasha_seat_section(r: DetailedReport) -> str:
         for a in r.av_dasha_seats)
     return (
         '<h2 class="section" id="av-dasha-seat">AV dasha-seat outlook</h2>'
+        + _plain_lead(r, "av_dasha_seat") + 
         '<p class="section-sub"><i>Raman&rsquo;s own caveat governs this section:</i> '
         '&ldquo;Ashtakavarga method is equally important. But, it does not seem to be quite '
         'reliable&rdquo; (HTJAH-II:4453-4456). This classical method never overrides the '
@@ -2457,11 +2465,13 @@ def to_html(r: DetailedReport) -> str:
               f'&ldquo;{_esc(c.combos_quote)}&rdquo; (HTJAH-I:5179)</p>')
     if s.deeptadi:                       # parity: previously dropped from the HTML entirely
         chunk["deeptadi"] = ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
+            + _plain_lead(r, "deeptadi") + 
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
     if s.karakamsa_reading:
         km = "".join(f"<li>{_esc(x)}</li>" for x in s.karakamsa_reading)
         chunk["karakamsa"] = (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
+            + _plain_lead(r, "karakamsa") + 
                    f'<p class="section-sub">the soul\'s inclination</p>'
                    f'<ul class="doclist">{km}</ul>')
     chunk["soul"] = _soul_section(r)
@@ -2554,6 +2564,7 @@ def to_html(r: DetailedReport) -> str:
 
     chunk["divisional"] = (
         '<h2 class="section" id="vargas">Divisional deep-reads</h2>\n'
+        + _plain_lead(r, "divisional") + 
         '  <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one '
         'matter (Raman core\n    authoritative; varga overlay report-only).</p>\n'
         f'  {vargas}')

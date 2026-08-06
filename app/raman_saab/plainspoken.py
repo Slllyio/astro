@@ -31,7 +31,10 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Final
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:  # pragma: no cover
     from app.raman_saab.detailed_report import DetailedReport
@@ -261,6 +264,12 @@ def plain_for_section(r: "DetailedReport", section_id: str) -> str:
     try:
         return fn(r) or ""                                         # type: ignore[operator]
     except Exception:                                              # noqa: BLE001
+        # Swallowing is right — a phrasing failure must never cost the reader the section. But
+        # swallowing SILENTLY is how a lead that crashes on every chart looks identical to a
+        # lead that has nothing to say: `_SIGN_NAME` is a tuple, one `.get()` call turned the
+        # whole Ashtakavarga lead into "", and only printing every lead by hand caught it.
+        logger.warning("plain lead for section %r raised; section renders without it",
+                       section_id, exc_info=True)
         return ""
 
 
@@ -644,4 +653,175 @@ SECTION_LEADS.update({                                             # type: ignor
     "rect_confidence": _rect_confidence_lead,
     "restraint": _restraint_lead,
     "dominance": _dominance_lead,
+})
+
+
+# ─── measurement-section leads ──────────────────────────────────────────────────────────────
+# The sections that report an instrument reading rather than a verdict. A reader meets a table
+# of rupas or bindus with no idea what the number is FOR; each lead says what the measure means
+# for them and, where Raman qualified the method himself, carries his qualification.
+
+def _shadbala_lead(r: "DetailedReport") -> str:
+    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
+
+    rows = [(n, p.shadbala_rupas.total / 60.0) for n, p in r.chart.planets.items()
+            if getattr(p, "shadbala_rupas", None) is not None]
+    if not rows:
+        return ""
+    meets = sum(1 for n, v in rows if MIN_REQUIRED.get(n) is not None and v >= MIN_REQUIRED[n])
+    strongest = max(rows, key=lambda t: t[1])
+    weakest = min(rows, key=lambda t: t[1])
+    return (f"Strength here means capacity, not luck — how fully a planet can deliver what it "
+            f"already signifies. {meets} of your {len(rows)} planets meet the minimum Raman "
+            f"himself requires (GBB-8:303). {strongest[0]} is your strongest at "
+            f"{strongest[1]:.1f} rupas and {weakest[0]} your weakest at {weakest[1]:.1f}, which "
+            f"matters most during their own periods.")
+
+
+def _ashtakavarga_lead(r: "DetailedReport") -> str:
+    sav = getattr(r, "sav", None) or {}
+    if not sav:
+        return ""
+    above = sum(1 for v in sav.values() if v > 28)
+    best = max(sav.items(), key=lambda kv: kv[1])
+    from app.raman_saab.detailed_report import _SIGN_NAME
+    return (f"Each sign is scored out of an average of 28 — a rough measure of how much support "
+            f"a planet finds when it travels there. {above} of your 12 signs sit above that "
+            f"average, {_SIGN_NAME[best[0]]} highest at {best[1]}. Raman rates this "
+            f"method corroborative rather than decisive and says so plainly: “it does not "
+            f"seem to be quite reliable\u201d (HTJAH-II:4453-4456).")
+
+
+def _divisional_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "divisional", ()) or ())
+    if not rows:
+        return ""
+    return (f"Your main chart shows the whole of a life at once. These {len(rows)} divisional "
+            f"charts each magnify a single part of it — one for your marriage, one for your "
+            f"career, one for children — by dividing every sign again. Where a divisional "
+            f"reading and the "
+            f"main chart disagree, the main chart governs; the division refines the picture, it "
+            f"never overturns it.")
+
+
+def _preponderance_lead(r: "DetailedReport") -> str:
+    p = getattr(r, "preponderance", None)
+    if p is None:
+        return ""
+    fav, aff = getattr(p, "most_corroborated_favourable", None), \
+        getattr(p, "most_corroborated_afflicted", None)
+    con = getattr(p, "most_contested", None)
+    bits = []
+    if fav:
+        bits.append(f"house {fav} is where it most agrees in your favour")
+    if aff:
+        bits.append(f"house {aff} where it most agrees against")
+    if con:
+        bits.append(f"house {con} is the one it argues with itself about most")
+    return (f"Raman weighs a house by counting how many independent testimonies point the same "
+            f"way. Across your chart, {_join(bits)}. Where the testimonies genuinely split, the "
+            f"count is shown rather than resolved — a divided house is a fact about the chart, "
+            f"not a gap in the reading.")
+
+
+def _yoga_deep_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "yoga_deep", ()) or ())
+    if not rows:
+        return ""
+    kinds: dict[str, int] = {}
+    for y in rows:
+        k = str(getattr(y, "kind", "") or "")
+        if k:
+            kinds[k] = kinds.get(k, 0) + 1
+    named = _join([f"{n} {k}" for k, n in sorted(kinds.items(), key=lambda kv: -kv[1])])
+    return (f"Each of the {len(rows)} yogas in your chart is read out in full here rather than "
+            f"just named — what forms it, what the texts say it does, and how strongly it sits. "
+            f"By kind: {named}. A yoga is a pattern, not a promise; what you read is the "
+            f"classical description of the pattern you carry.")
+
+
+def _deeptadi_lead(r: "DetailedReport") -> str:
+    states = tuple(getattr(getattr(r, "synthesis", None), "deeptadi", ()) or ())
+    if not states:
+        return ""
+    distinct = {x.split(" ", 1)[1] for x in states if " " in x}
+    return (f"An avastha is the state a planet is acting FROM — the same planet, signifying the "
+            f"same things, can be radiant or exhausted while it does so. Your {len(states)} "
+            f"grahas occupy {len(distinct)} different states between them. This colours HOW a "
+            f"planet delivers what it already indicates; it does not change what it indicates.")
+
+
+def _karakamsa_lead(r: "DetailedReport") -> str:
+    syn = getattr(r, "synthesis", None)
+    ak, ks = str(getattr(syn, "atmakaraka", "") or ""), str(getattr(syn, "karakamsa", "") or "")
+    if not (ak and ks):
+        return ""
+    return (f"In Jaimini's method the planet at the highest degree becomes the Atmakaraka, the "
+            f"significator of the soul — yours is {ak} — and the sign it occupies in the navamsa "
+            f"is your karakamsa, {ks}. What that sign holds is read as the direction of your "
+            f"inner inclination rather than your circumstances.")
+
+
+def _ishta_kashta_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "ishta_kashta", ()) or ())
+    if not rows:
+        return ""
+    decided = sum(1 for x in rows if getattr(x, "prevails", None))
+    return (f"Ishta is a planet's capacity for good, Kashta its capacity for difficulty; every "
+            f"planet carries both at once. Of the {len(rows)} periods listed, {decided} have one "
+            f"of the two clearly prevailing and the rest are left undecided rather than forced. "
+            f"This is a lean, not a forecast of what happens to you.")
+
+
+def _md_condition_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "md_condition", ()) or ())
+    if not rows:
+        return ""
+    strong = sum(1 for x in rows if getattr(x, "strong", None) is True)
+    return (f"A chapter of your life is only as capable as the planet ruling it. Of the "
+            f"{len(rows)} major periods this report covers for you, {strong} "
+            f"{'is' if strong == 1 else 'are'} ruled by a planet the chart reads as strong. "
+            f"A weak period-lord does not make a hard chapter — it means whatever "
+            f"that chapter indicates arrives with less force behind it.")
+
+
+def _av_dasha_seat_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "av_dasha_seats", ()) or ())
+    if not rows:
+        return ""
+    graded = sum(1 for x in rows if str(getattr(x, "read", "")) not in ("", "no data"))
+    missing = len(rows) - graded
+    tail = (f" {missing} could not be graded and {'is' if missing == 1 else 'are'} left unread "
+            f"rather than filled in." if missing else "")
+    return (f"This grades each major period by how much Ashtakavarga support sits in the sign "
+            f"its lord occupies — {graded} of your {len(rows)} could be graded.{tail} Raman's "
+            f"own caveat governs the whole section, which is why it sits last among the "
+            f"period companions.")
+
+
+def _dasa_kakshya_lead(r: "DetailedReport") -> str:
+    rows = tuple(getattr(r, "dasa_kakshya", ()) or ())
+    if not rows:
+        return ""
+    donated = sum(1 for x in rows if getattr(x, "donated", False))
+    neutral = sum(1 for x in rows if getattr(x, "neutralised", False))
+    return (f"The same periods again, cut finer: each is divided into intervals ruled by one "
+            f"planet's contribution to the Ashtakavarga of the sign involved. Of your "
+            f"{len(rows)} intervals, {donated} carry a donated point and {neutral} are "
+            f"neutralised. Like everything Ashtakavarga, this corroborates the reading above; "
+            f"it never overrides it.")
+
+
+SECTION_LEADS.update({                                             # type: ignore[union-attr]
+    "shadbala": _shadbala_lead,
+    "ashtakavarga": _ashtakavarga_lead,
+    "divisional": _divisional_lead,
+    "preponderance": _preponderance_lead,
+    "yoga_deep": _yoga_deep_lead,
+    "deeptadi": _deeptadi_lead,
+    "karakamsa": _karakamsa_lead,
+    "ishta_kashta": _ishta_kashta_lead,
+    "md_condition": _md_condition_lead,
+    "av_dasha_seat": _av_dasha_seat_lead,
+    "dasa_kakshya": _dasa_kakshya_lead,
 })

@@ -145,6 +145,12 @@ _FROZEN = (
     # v4 amendment (2026-07-26, conscious, same-commit as the module): the Nichod capstone,
     # appended LAST — after reference material — since it distils the whole document.
     ("nichod", "## Nichod", 'id="nichod"'),
+    # v34 amendment (2026-08-06, conscious, same-commit as the module, user-requested): the
+    # intuition layer — which planet governs a contested house, how firmly each house stands,
+    # and which of Raman's own worked charts this one recalls. All three are pure re-reads.
+    ("dominance", "## What governs each house", 'id="dominance"'),
+    ("restraint", "## How firmly each house stands", 'id="restraint"'),
+    ("analogy", "## Charts of Raman's this one recalls", 'id="analogy"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -152,7 +158,7 @@ _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 #: derives its sequence from `report_movements.MOVEMENTS`, so a test that only compared those
 #: two would pass silently when both were edited together. Re-sequencing the report means
 #: editing this tuple too, consciously, in the same commit.
-_ORDER_V33: tuple[str, ...] = (
+_ORDER_V34: tuple[str, ...] = (
     # I. Who this is
     "title", "plain_reading", "chart_signature", "now_box", "ruler", "planet_bios", "psych",
     # II. How to read it honestly
@@ -161,7 +167,8 @@ _ORDER_V33: tuple[str, ...] = (
     # III. The instrument
     "chart_grids", "positions", "rect_confidence", "shadbala", "ashtakavarga", "divisional",
     # IV. The twelve fields
-    "houses", "house_strength", "preponderance", "yogas", "yoga_deep", "deeptadi",
+    "houses", "house_strength", "preponderance", "dominance", "restraint",
+    "yogas", "yoga_deep", "deeptadi",
     # V. The matters of life
     "career", "profession", "wealth", "marriage", "children", "health_readout", "arishta",
     "longevity", "maraka", "maraka_saturn",
@@ -169,8 +176,8 @@ _ORDER_V33: tuple[str, ...] = (
     "timeline", "yoga_timing", "ishta_kashta", "md_condition", "av_dasha_seat", "dasa_kakshya",
     "life_chapters", "decades", "gochara", "dasha_transit",
     # VII. The summing up
-    "karakamsa", "soul", "karmic", "pitru", "synthesis", "life_synthesis", "glossary",
-    "nichod",
+    "karakamsa", "soul", "karmic", "pitru", "analogy", "synthesis", "life_synthesis",
+    "glossary", "nichod",
 )
 
 
@@ -213,12 +220,12 @@ class TestTemplateContract:
 
         `SECTION_CONTRACT` derives its order from `report_movements.MOVEMENTS`, so comparing
         the two would be near-tautological: editing the arc and the registry together would
-        pass silently. `_ORDER_V33` lives here so re-sequencing stays as deliberate an act as
+        pass silently. `_ORDER_V34` lives here so re-sequencing stays as deliberate an act as
         changing a marker.
         """
-        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V33
-        assert tuple(HTML_SECTION_ORDER) == _ORDER_V33
-        assert flattened_order() == _ORDER_V33
+        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V34
+        assert tuple(HTML_SECTION_ORDER) == _ORDER_V34
+        assert flattened_order() == _ORDER_V34
 
     def test_movements_partition_the_contract(self):
         """Every section sits in exactly one movement — no section lost, none duplicated."""
@@ -233,8 +240,8 @@ class TestTemplateContract:
         `chart_signature` are one `<header>` element in the HTML and are emitted as a single
         chunk, so they must remain adjacent in that internal order.
         """
-        assert _ORDER_V33[-1] == "nichod"
-        assert _ORDER_V33[:3] == ("title", "plain_reading", "chart_signature")
+        assert _ORDER_V34[-1] == "nichod"
+        assert _ORDER_V34[:3] == ("title", "plain_reading", "chart_signature")
 
     def test_renderers_emit_the_frozen_markers(self, markdown, html):
         """The OUTPUT (not just the registry) must carry every frozen marker — so changing a
@@ -290,7 +297,10 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32",
+            # v33 was the reading arc — a re-ORDERING, so it added no section and needs no tag.
+            # v34 adds the intuition layer: dominance, restraint and analogy.
+            "v34"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1

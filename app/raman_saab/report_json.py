@@ -162,6 +162,11 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
 
+        # v34 intuition layer — pure re-reads, exposed so the interactive page can show them.
+        "dominance": [_ad(d) for _h, d in sorted((r.dominance or {}).items())],
+        "restraint": [_ad(x) for _h, x in sorted((r.restraint or {}).items())],
+        "analogy": [_ad(m) for m in (r.analogy or ())],
+
         # The maraka scheme itself (HTJAH-I:761-814) — Raman's second step after the longevity
         # band. Previously computed for the markdown/HTML renderers but never exposed here, so
         # the interactive page had no way to show it (REPORT COMPLETENESS repair, v33).

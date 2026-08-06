@@ -2464,6 +2464,66 @@ function render(R, S, FQ){
     for(const p of ls.paragraphs) add(para(p));
     if(ls.closing) add(para(ls.closing,'lede')); }
 
+
+  // ---- v34 intuition layer ---------------------------------------------------------------
+  sec('dominance'); add(H2('What governs each house'));
+  add(para(t('Where a house’s lord and its karaka differ in strength, Raman lets the '+
+    'stronger decide, and the weaker one’s indication is replaced rather than averaged '+
+    'with it (HTJAH-I:7152).'),'muted'));
+  if((R.dominance||[]).length){
+    const dl=el('div',{class:'vsec'});
+    for(const d of R.dominance){
+      const row=el('div',{class:'vrow'});
+      row.append(el('span',{class:'vk'},'House '+d.house));
+      row.append(el('span',{class:'vv'},d.sentence));
+      dl.append(row); }
+    add(dl);
+  } else {
+    add(para(t('On this chart the test settles no house: nowhere do a house’s lord and '+
+      'its karaka differ in strength. That is an answer, not a gap.'),'muted'));
+  }
+
+  sec('restraint'); add(H2('How firmly each house stands'));
+  add(para(t('Not every house is equally decided, and saying so is part of the method: '+
+    '“No slip-shod interpretation should be made and a premature conclusion arrived '+
+    'at” (HTJAH-I:4299). A house that is uniformly strong is a FIRM reading, not an '+
+    'uncertain one.'),'muted'));
+  if((R.restraint||[]).length){
+    const rl=el('div',{class:'vsec'});
+    for(const x of R.restraint){
+      const row=el('div',{class:'vrow'});
+      row.append(el('span',{class:'vk'},'House '+x.house));
+      const v=el('span',{class:'vv'});
+      v.append(x.standing+(x.soften?' — held loosely':'')+' · '+x.reason);
+      row.append(v); rl.append(row); }
+    add(rl);
+    const soft=R.restraint.filter(x=>x.soften).map(x=>x.house);
+    if(soft.length) add(para(t('Houses ')+soft.join(', ')+t(' are not clearly decided; their '+
+      'readings stand as reported rather than resolved into a single verdict.'),'muted'));
+  }
+
+  sec('analogy'); add(H2('Charts of Raman’s this one recalls'));
+  add(para(t('Raman compares one worked chart against another and names the axis every time. '+
+    'A resemblance points at what he wrote; it carries none of his verdicts here.'),'muted'));
+  if((R.analogy||[]).length){
+    for(const m of R.analogy){
+      const d=el('details',{class:'card'}); d.setAttribute('open','');
+      let head=m.book+' — '+m.name;
+      if((m.pronounced_houses||[]).length)
+        head+=' — he pronounced on house '+m.pronounced_houses.join(', ');
+      d.append(el('summary',{},head));
+      const b=el('div',{class:'body'});
+      const ul=el('ul',{class:'doclist'});
+      for(const s of (m.shared||[])) ul.append(el('li',{},s));
+      b.append(ul);
+      for(const c of (m.citations||[])){ const s=el('cite',{class:'src'},c);
+        s.onclick=()=>openSrc(c); b.append(s,' '); }
+      d.append(b); add(d); }
+  } else {
+    add(para(t('No chart among his 190 worked examples resembles this one closely enough to be '+
+      'worth naming. A forced match would be a coincidence, not a recognition.'),'muted'));
+  }
+
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
   sec('nichod');
   if(FQ&&FQ.length) add(feedbackCard(FQ));

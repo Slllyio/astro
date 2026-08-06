@@ -62,6 +62,10 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
     )),
     Movement("IV", "The twelve fields", (
         "houses", "house_strength", "preponderance",
+        # v34 — what governs a contested house, then how firmly each house stands. They sit
+        # here because they are about the twelve fields, and after preponderance because both
+        # re-read its ledger.
+        "dominance", "restraint",
         "yogas", "yoga_deep", "deeptadi",
     )),
     Movement("V", "The matters of life", (
@@ -74,6 +78,9 @@ MOVEMENTS: Final[tuple[Movement, ...]] = (
     )),
     Movement("VII", "The summing up", (
         "karakamsa", "soul", "karmic", "pitru",
+        # v34 — which of Raman's own charts this one recalls: a stepping-back recognition,
+        # so it belongs with the summing up rather than among the house readings.
+        "analogy",
         "synthesis", "life_synthesis", "glossary", "nichod",
     )),
 )

@@ -605,6 +605,13 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     # v4 (2026-07-26, conscious amendment): the capstone integration, appended LAST — after
     # reference material — since it distils sections that appear throughout the whole document.
     SectionSpec("nichod", "## Nichod", 'id="nichod"', "v4"),
+    # v34 (2026-08-06, conscious, same-commit, user-requested): the intuition layer. Appended
+    # here per the append-only rule for the SET; their reading position is set by the arc in
+    # `report_movements` (dominance and restraint with the twelve fields, analogy with the
+    # summing up), which is the whole reason set and order were separated at v33.
+    SectionSpec("dominance", "## What governs each house", 'id="dominance"', "v34"),
+    SectionSpec("restraint", "## How firmly each house stands", 'id="restraint"', "v34"),
+    SectionSpec("analogy", "## Charts of Raman's this one recalls", 'id="analogy"', "v34"),
 )
 
 # v33 amendment (2026-08-05, conscious, same-commit, user-requested — the third and largest
@@ -1412,6 +1419,12 @@ class DetailedReport:
     life_synthesis: object = None                    # the biography-closing chapter (v29)
     karmic: object = None                            # Jaimini karmic evolution (v30)
     rect_confidence: object = None                   # birth-time sensitivity (v31)
+    # v34 — the intuition layer. Each is a pure re-read of values already computed above:
+    # which planet governs a contested house, how firmly each house stands, and which of
+    # Raman's own worked charts this one recalls.
+    dominance: object = None                         # {house: Dominance} (v34)
+    restraint: object = None                         # {house: Restraint} (v34)
+    analogy: object = None                           # tuple[Resemblance, ...] (v34)
 
 
 @dataclass(frozen=True)
@@ -2584,6 +2597,25 @@ def build_detailed_report(
             enriched, rect_confidence=build_rect_confidence(enriched, ayanamsa=ayanamsa))
     except Exception:  # noqa: BLE001
         pass
+    # v34 intuition layer — dominance must precede restraint (restraint reads which houses
+    # dominance settled), and all three are best-effort: a failure here must never cost the
+    # reader the rest of the reading.
+    try:
+        from app.raman_saab.dominance import house_dominance
+        enriched = _dc_replace(enriched, dominance=house_dominance(enriched))
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from app.raman_saab.restraint import house_restraint
+        enriched = _dc_replace(enriched, restraint=house_restraint(enriched))
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from app.raman_saab.analogy import resembles
+        enriched = _dc_replace(enriched, analogy=resembles(enriched.chart))
+    except Exception:  # noqa: BLE001
+        pass
+
     enriched = _dc_replace(enriched, digest=build_insight_digest(enriched))
     final = _dc_replace(enriched, nichod=build_nichod(enriched),
                         plain_reading=build_plain_reading(
@@ -4228,6 +4260,74 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append("- **Turning points** (where the period lean changes — a timing lens, "
                  "not an event): "
                  + "; ".join(f"{when}: {what}" for when, what in n.turning_points))
+
+    # ── v34 intuition layer — dominance, restraint, analogy ───────────────────
+    # Written here at the end of the function; the arc in `report_movements` decides where the
+    # reader meets them, which is exactly what separating set from order at v33 bought.
+    # Always rendered, even empty. "No house is settled by this test on this chart" is a
+    # finding — the same reason `restraint` exists at all — and a section that vanishes when it
+    # has nothing to say is indistinguishable from one that was never computed.
+    dom = getattr(r, "dominance", None) or {}
+    if True:
+        L.start("dominance")
+        L.append("## What governs each house")
+        L.append("")
+        L.append("Where a house's lord and its karaka differ in strength, Raman lets the "
+                 "stronger one decide, and the weaker one's indication is replaced rather than "
+                 "averaged with it (HTJAH-I:7152). These are the houses where that test "
+                 "actually settles the matter.")
+        L.append("")
+        if dom:
+            for _h, d in sorted(dom.items()):
+                L.append(f"- **House {d.house}** — {d.sentence}")
+        else:
+            L.append("_On this chart the test settles no house: nowhere do a house's lord and "
+                     "its karaka differ in strength. That is an answer, not a gap._")
+        L.append("")
+
+    res = getattr(r, "restraint", None) or {}
+    if res:
+        L.start("restraint")
+        L.append("## How firmly each house stands")
+        L.append("")
+        L.append("Not every house is equally decided, and saying so is part of the method: "
+                 "_\"No slip-shod interpretation should be made and a premature conclusion "
+                 "arrived at\"_ (HTJAH-I:4299). A house that is uniformly strong is a FIRM "
+                 "reading, not an uncertain one — only the unsettled ones are held loosely.")
+        L.append("")
+        for _h, x in sorted(res.items()):
+            mark = " _(held loosely)_" if x.soften else ""
+            L.append(f"- **House {x.house}** ({x.standing}){mark} — {x.reason}.")
+        L.append("")
+        soft = [str(x.house) for _h, x in sorted(res.items()) if x.soften]
+        if soft:
+            L.append(f"_Houses {', '.join(soft)} are not clearly decided; their readings below "
+                     f"stand as reported rather than resolved into a single verdict._")
+            L.append("")
+
+    ana = getattr(r, "analogy", None) or ()
+    if True:
+        L.start("analogy")
+        L.append("## Charts of Raman's this one recalls")
+        L.append("")
+        L.append("Raman compares one worked chart against another and names the axis every "
+                 "time. These are his own published charts that this nativity resembles, with "
+                 "the respects itemised so each can be checked. A resemblance points at what "
+                 "he wrote; it carries none of his verdicts here.")
+        L.append("")
+        if not ana:
+            L.append("_No chart among his 190 worked examples resembles this one closely "
+                     "enough to be worth naming. A forced match would be a coincidence, not a "
+                     "recognition._")
+        for m in ana:
+            cite = f" ({', '.join(m.citations)})" if m.citations else ""
+            houses = (f" — he pronounced on house{'s' if len(m.pronounced_houses) > 1 else ''} "
+                      f"{', '.join(str(h) for h in m.pronounced_houses)}"
+                      if m.pronounced_houses else "")
+            L.append(f"- **{m.book} — {m.name}**{houses}{cite}")
+            for s in m.shared:
+                L.append(f"    - {s}")
+        L.append("")
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.start("_footer")

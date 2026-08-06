@@ -2511,6 +2511,70 @@ def to_html(r: DetailedReport) -> str:
         'matter (Raman core\n    authoritative; varga overlay report-only).</p>\n'
         f'  {vargas}')
 
+    # ── v34 intuition layer ────────────────────────────────────────────────────────────────
+    # Always rendered, even empty — "the test settles no house here" is a finding.
+    _dom = getattr(r, "dominance", None) or {}
+    if True:
+        rows = "".join(
+            f'<div class="vrow"><span class="vk">House {d.house}</span>'
+            f'<span class="vv">{_esc(d.sentence)}</span></div>'
+            for _h, d in sorted(_dom.items())) or (
+            '<div class="vrow"><span class="vv">On this chart the test settles no house: '
+            'nowhere do a house&rsquo;s lord and its karaka differ in strength. That is an '
+            'answer, not a gap.</span></div>')
+        chunk["dominance"] = (
+            '<h2 class="section" id="dominance">What governs each house</h2>'
+            '<p class="section-sub">Where a house&rsquo;s lord and its karaka differ in '
+            'strength, Raman lets the stronger decide, and the weaker one&rsquo;s indication is '
+            'replaced rather than averaged with it (HTJAH-I:7152). These are the houses where '
+            'that test actually settles the matter.</p>'
+            f'<div class="vsec">{rows}</div>')
+
+    _res = getattr(r, "restraint", None) or {}
+    if _res:
+        rows = "".join(
+            f'<div class="vrow"><span class="vk">House {x.house}</span>'
+            f'<span class="vv">{_esc(x.standing)}'
+            + ('<b> &mdash; held loosely</b>' if x.soften else '')
+            + f' &middot; {_esc(x.reason)}</span></div>'
+            for _h, x in sorted(_res.items()))
+        soft = [str(x.house) for _h, x in sorted(_res.items()) if x.soften]
+        note = (f'<p class="section-sub caveat">Houses {_esc(", ".join(soft))} are not clearly '
+                f'decided; their readings stand as reported rather than resolved into a single '
+                f'verdict.</p>' if soft else "")
+        chunk["restraint"] = (
+            '<h2 class="section" id="restraint">How firmly each house stands</h2>'
+            '<p class="section-sub">Not every house is equally decided, and saying so is part '
+            'of the method: <i>&ldquo;No slip-shod interpretation should be made and a '
+            'premature conclusion arrived at&rdquo;</i> (HTJAH-I:4299). A house that is '
+            'uniformly strong is a FIRM reading, not an uncertain one &mdash; only the '
+            'unsettled ones are held loosely.</p>'
+            f'<div class="vsec">{rows}</div>{note}')
+
+    _ana = getattr(r, "analogy", None) or ()
+    if True:
+        cards = ""
+        for m in _ana:
+            shared = "".join(f"<li>{_esc(s)}</li>" for s in m.shared)
+            houses = (f' &mdash; he pronounced on house'
+                      f'{"s" if len(m.pronounced_houses) > 1 else ""} '
+                      f'{_esc(", ".join(str(h) for h in m.pronounced_houses))}'
+                      if m.pronounced_houses else "")
+            cites = "".join(f'<cite class="src">{_esc(c)}</cite> ' for c in m.citations)
+            cards += (f'<div class="varga"><b>{_esc(m.book)} &mdash; {_esc(m.name)}</b>'
+                      f'{houses} {cites}<ul class="doclist">{shared}</ul></div>')
+        if not cards:
+            cards = ('<p class="caveat">No chart among his 190 worked examples resembles this '
+                     'one closely enough to be worth naming. A forced match would be a '
+                     'coincidence, not a recognition.</p>')
+        chunk["analogy"] = (
+            '<h2 class="section" id="analogy">Charts of Raman&rsquo;s this one recalls</h2>'
+            '<p class="section-sub">Raman compares one worked chart against another and names '
+            'the axis every time. These are his own published charts that this nativity '
+            'resembles, with the respects itemised so each can be checked. A resemblance points '
+            'at what he wrote; it carries none of his verdicts here.</p>'
+            f'{cards}')
+
     # the 38 sections whose markup already lives in a dedicated helper
     chunk.update({
         "judgment_graph": _judgment_graph_section(r),

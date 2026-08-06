@@ -3322,6 +3322,16 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         if driver:
             head += f" (driven by _{driver}_)"
         L.append(head)
+        # v35 — say it to the person first, then the pillars. Adds; the technical rows below
+        # are untouched.
+        try:
+            from app.raman_saab.plainspoken import plain_for_house
+            _hp = plain_for_house(r, mr.house)
+        except Exception:  # noqa: BLE001
+            _hp = ""
+        if _hp:
+            L.append("")
+            L.append(f"_{_hp}_")
         split = signification_tenor_split(cal_reading)
         note = tenor_note(split, mr.verdict)
         if note:

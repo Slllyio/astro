@@ -2092,6 +2092,9 @@ function render(R, S, FQ){
     const sm=el('summary'); sm.append('H'+pf.house+' · ',vchip(pf.rollup),el('span',{class:'muted'},' lord '+pf.lord));
     d.append(sm);
     const b=el('div',{class:'body'});
+    // v35 — the person-facing lead, above the pillars. Adds; never replaces.
+    const _hp=(R.house_plain||{})[pf.house];
+    if(_hp) b.append(el('p',{class:'muted plainspoken'},_hp));
     if(HS) b.append(para('Bhava Bala rank '+(HS.bhava_bala_rank??'n/a')+' of 12; SAV '+(HS.sav_bindus??'n/a')+' ('+HS.sav_band+')','muted'));
     const st=el('table'); st.append(el('tr',{},el('th',{},'matter'),el('th',{},'verdict'),el('th',{},'degree'),el('th',{},'karaka')));
     for(const sv of pf.significations) st.append(el('tr',{},el('td',{},sv.signification),el('td',{},vchip(sv.verdict)),el('td',{},sv.degree||'—'),el('td',{},sv.karaka)));

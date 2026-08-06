@@ -534,8 +534,17 @@ def _raman_quote_html(mr, pf) -> str:
             f'</blockquote>')
 
 
+def _house_plain(r: DetailedReport, house: int) -> str:
+    """The person-facing lead for one bhava, or "" — never lets phrasing cost the house card."""
+    try:
+        from app.raman_saab.plainspoken import plain_for_house
+        return plain_for_house(r, house)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
-                   conclusion: str = "", ht=None) -> str:
+                   conclusion: str = "", ht=None, plain: str = "") -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer."""
@@ -632,8 +641,10 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
-        f'{split_note_html}{inverted_note_html}'
-        f'{level_why}{level_evidence}{level_calc}{level_classical}</section>')
+        # v35 — the person-facing lead, above the pillars that stay exactly as they were.
+        + (f'<p class="section-sub plainspoken"><i>{_esc(plain)}</i></p>' if plain else "")
+        + f'{split_note_html}{inverted_note_html}'
+        + f'{level_why}{level_evidence}{level_calc}{level_classical}</section>')
 
 
 def _house_chip(a, *, ring: bool = False) -> str:
@@ -2310,7 +2321,7 @@ def to_html(r: DetailedReport) -> str:
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
                        r.chart, dist_houses, conclusion=house_conclusion(r, mr.house),
-                       ht=ht_by_house.get(mr.house))
+                       ht=ht_by_house.get(mr.house), plain=_house_plain(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'

@@ -55,15 +55,24 @@ _FIRMNESS: Final[dict[str, str]] = {
 }
 
 
-def _matter_line(r: "DetailedReport", house: int) -> str:
-    """The hand-written plain line for this house's matter at its own verdict."""
+def _matter_line(r: "DetailedReport", house: int, verdict: str = "") -> str:
+    """The hand-written plain line for this house's matter.
+
+    `verdict` overrides the dashboard's. House sections must pass their own rollup: the heading
+    beside the lead already shows it, and voicing the dashboard verdict there would print
+    "reads strongly" under a heading saying AFFLICTED — the same incoherence the tension item
+    produced before it was made to name both sides.
+    """
     from app.raman_saab.detailed_report import _PLAIN_MATTER
 
     matter = HOUSE_MATTER.get(house)
     if not matter:
         return ""
-    entry = next((e for e in getattr(r.dashboard, "entries", ()) if e.matter == matter), None)
-    verdict = str(getattr(entry, "verdict", "") or "").split(" ")[0].lower()
+    if not verdict:
+        entry = next((e for e in getattr(r.dashboard, "entries", ()) if e.matter == matter),
+                     None)
+        verdict = str(getattr(entry, "verdict", "") or "")
+    verdict = verdict.split(" ")[0].lower()
     options = (_PLAIN_MATTER.get(matter) or {}).get(verdict)
     if not options:
         return ""
@@ -253,3 +262,67 @@ def plain_for_section(r: "DetailedReport", section_id: str) -> str:
         return fn(r) or ""                                         # type: ignore[operator]
     except Exception:                                              # noqa: BLE001
         return ""
+
+
+def plain_for_house(r: "DetailedReport", house: int) -> str:
+    """A person-facing lead for one bhava, or "" when there is nothing plain to say.
+
+    Built from the house's OWN significations rather than a shared dashboard matter. Mapping
+    houses onto the twelve matters collided — houses 1 and 6 both became "health", 2 and 11
+    both "wealth", 8 and 12 both "spiritual" — so a reader met the identical sentence twice.
+    Each house carries a distinct set (H1 self/body/health; H6 enemies/accidents/debts), and
+    `_SIGNIFICATION_PLAIN` already holds a person-facing phrase for all 56 of them.
+    """
+    from app.raman_saab.detailed_report import _SIGNIFICATION_PLAIN
+
+    pf = next((p for p in getattr(r, "proformas", ()) or () if p.house == house), None)
+    if pf is None or not getattr(pf, "significations", None):
+        return ""
+
+    good, bad = [], []
+    for sv in pf.significations:
+        phrase = _SIGNIFICATION_PLAIN.get(sv.signification)
+        if not phrase:
+            continue
+        verdict = str(sv.verdict).split(" ")[0].lower()
+        if verdict == "favourable":
+            good.append(phrase)
+        elif verdict == "afflicted":
+            bad.append(phrase)
+    if not good and not bad:
+        return ""
+
+    if good and bad:
+        out = (f"Of what this part of your life covers, {_join(good)} read well, "
+               f"while {_join(bad)} {'do' if len(bad) > 1 else 'does'} not.")
+    elif good:
+        verb = "all read" if len(good) > 1 else "reads"
+        out = f"{_join(good).capitalize()} {verb} well here."
+    else:
+        out = (f"{_join(bad).capitalize()} {'are' if len(bad) > 1 else 'is'} the difficult "
+               f"part of this house.")
+
+    standing = getattr((getattr(r, "restraint", None) or {}).get(house), "standing", None)
+    if standing in _FIRMNESS:
+        out += " " + _FIRMNESS[standing]
+
+    dom = (getattr(r, "dominance", None) or {}).get(house)
+    if dom is not None:
+        out += (f" {dom.governing} carries this house — stronger here than {dom.yielding}, so "
+                f"the reading follows {dom.governing} rather than splitting the difference.")
+    return out
+
+
+def _join(items: list) -> str:
+    """Oxford-free list join, capped so a lead never becomes an inventory."""
+    items = items[:3]
+    if len(items) == 1:
+        return items[0]
+    # Several phrases already contain "and" ("courage and drive"), so a conjunction join reads
+    # as a stutter — "siblings, courage and drive and short journeys". If ANY item carries one,
+    # comma-join the whole list. (Checking only the last item missed this exact case.)
+    if any(" and " in i for i in items):
+        return ", ".join(items)
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return f"{items[0]}, {items[1]} and {items[2]}"

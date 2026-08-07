@@ -108,6 +108,20 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 - **Tab 3 (Medini)**: Leaflet + OSM (NOT Mapbox), axis-aligned bbox tiling (NOT PostGIS), safe DOM construction (`createElement` + `textContent`, never innerHTML).
 - Single source of truth for Kurma GeoJSON: `/medini/regions` is consumed by both the educational widget and the personalized cartography page.
 - **PRASNA + MUHURTHA + VARSHA firewalls LIFTED (user decisions 2026-08-03)**: horary (`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) are walled subsystems — they may import natal primitives, natal verdict code NEVER imports them (tested both directions); their sources (PRASNA/MUHURTHA/VARSHA tags, + HPA-27/AFB-11/ASP-15:21-183 content) are citable by those subsystems only; outputs carry Measured-Truth framing; death/lifespan queries excluded in code. **JAIMINI lifted 2026-08-04** (karmic-evolution layer) — **NO book remains firewalled; the content-scope rule is now the ONLY wall**: each lifted book is citable by its own walled subsystem, natal verdict code imports none of them, and the golden ratchet is untouchable by construction. Full record: `DOCTRINE_BACKLOG.md` "PRASNA + MUHURTHA firewall LIFT" + the Jaimini addendum.
+- **SALIENCE: every modulation weight is ZERO, and that is a MEASURED RESULT, not a stub**
+  (`app/raman_saab/salience.py`, locked 2026-08-07). Eight chart-specific signals — surprisal,
+  extremity, graph centrality, occupancy, dignity, house-lord shadbala, lord-strength deviation,
+  yoga-by-kind — were ablated across two independent benchmarks at n=14 and n=95, and **none
+  beat the doctrinal prior alone**. Raman's attention follows doctrine and nothing else the
+  engine computes (`docs/raman_saab/SALIENCE_BASELINE.md`). The consequence to know before
+  editing: with the weights at zero, `house_salience` returns the SAME ranking for every chart
+  — `(1, 10, 7, 9, 4, 5, 2, 11, 8, 12, 6, 3)` — and that order drives the digest, the most-read
+  section of the report. `tests/raman_saab/test_salience.py` pins the weights, the constancy,
+  the hand-copied order AND the exact scores (an order-only test passes while a term fires too
+  weakly to reorder). **Raising a weight requires clearing the prior on the HOLDOUT split,
+  paired, with an interval excluding zero, recorded in SALIENCE_BASELINE.md — then update the
+  test deliberately.** Ranking behaviour is otherwise frozen; `why` may only ever cite a term
+  whose weight is live, `notable` carries the rest.
 
 ## ★ REPORT COMPLETENESS — do NOT omit anything (locked 2026-07-27, after a real error)
 
@@ -172,6 +186,40 @@ landed where the contract allowed rather than where it reads best.
   against `""`. Use the `section_text` fixture in `tests/raman_saab/conftest.py`; order
   assertions belong only in `test_report_template_contract.py`.
 
+## ★ PLAINSPOKEN — the report speaks to the reader (v35, locked 2026-08-07)
+
+`app/raman_saab/plainspoken.py` gives each section a **person-facing lead**: one short paragraph,
+above the section's own tables, that says what the section means *for the reader*. Measured
+before and after — **12 of 54 sections addressed the reader at the start, 50 of 54 now.**
+
+- **It ADDS, never replaces.** REPORT COMPLETENESS is untouched: the lead sits above the full
+  data, never in place of it. PREC-10 holds — every lead re-voices a value already decided.
+- **Every lead is computed from its OWN section's data**, so it cannot drift from the table it
+  introduces. A lead that reads a different object than its section renders is the defect that
+  shipped once: `section_id="synthesis"` renders *Integrated insights*, while `r.synthesis` is a
+  different dataclass rendered under `houses`.
+- **Three surfaces, always in step**: markdown (`_plain_section`), standalone HTML
+  (`_plain_lead`), interactive page (`plainLead(sid)`). A lead added to one and not the others
+  is a bug.
+- **Every lead must pass `_FORBIDDEN_RE`.** Write around the guard, never widen it.
+- **`_join` vs `_join_all` is a correctness choice, not style.** `_join` caps at three so a lead
+  never becomes an inventory; use it ONLY where the phrasing signals a selection ("among them",
+  "most strongly"). Where the sentence reads as the complete set, use `_join_all`. The cap
+  silently dropped Mars from a four-planet maraka list, arishta from a four-kind yoga breakdown,
+  and 4 of 7 wealth channels — each in a sentence that read as exhaustive.
+- **A lead must agree with what sits beside it.** `rect_confidence` led with the count surviving
+  the full ±60 scan ("1 of 10") directly above its own label reading *"firm"*. Same class as a
+  plain line saying "reads strongly" under a heading saying AFFLICTED.
+- **Failures are swallowed but LOGGED.** A phrasing bug must never cost the reader a section, so
+  `plain_for_section` catches — but silently swallowing made a crash (`_SIGN_NAME` is a tuple,
+  not a dict) indistinguishable from "nothing to say" and blanked a whole lead unnoticed.
+- **Four sections stay in the engine's voice deliberately**: `positions`, `glossary`,
+  `info_content`, `career`. Reference apparatus; a lead there is padding.
+- **Three checks, none redundant** — the guard regex, a reader-address count
+  (`\byou\b|\byour\b` per section slice), and *reading the leads in document order*. The count
+  caught leads that existed and addressed nobody; only reading caught the truncations, the
+  contradiction, and untranslated jargon (`poorvapunya`). Run all three.
+
 ## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
 
 - **`/report/insights` ("read as one story") and `/report/explain` DO call the local model**
@@ -204,8 +252,15 @@ landed where the contract allowed rather than where it reads best.
   descriptive-indication idiom ("points to", "tends to", "indicates", "signifies") is ALLOWED —
   it is Raman's own descriptive usage; asserting a future LIFE EVENT is refused (you-will/decree
   verbs, third-person `he/she/they will|shall <verb>`, dated/age-attached indications like
-  "indicated in 2027"/"at age 30", `promises/brings/foretells/bound to/sure to`, all death tokens).
+  "indicated in 2027"/"at age 30", `promises/brings/foretells/bound to/sure to`).
   Do not re-widen OR re-narrow without a doctrine review.
+  **Corrected 2026-08-07 — this entry used to end "…, all death tokens", and that is wrong.**
+  Read `_FORBIDDEN_RE` itself: what it refuses is the subject attached to a CLOCK —
+  `end of life`, `death (around|at|by|near)`, `die (around|at|by|before|after)`,
+  `will/shall die`. Naming longevity, maraka or arishta is ALLOWED; timing them is not. The
+  mistaken summary cost real work: it read as "never mention it", which would have made the
+  `longevity`/`arishta`/`maraka` plain leads impossible to write and left three sections
+  permanently mute. **When this file summarises a regex, go read the regex.**
 - **`/report/ai-interpret` is the ONE walled speculation surface** (user-approved exception):
   always labeled ("AI, not the engine, not validated" — `DISCLAIMER` on every response), gentle/bold
   registers, and death/lifespan/serious-illness/self-harm excluded IN CODE (`excluded_topic` on
@@ -226,6 +281,23 @@ landed where the contract allowed rather than where it reads best.
   Produces Mercury MD, Virgo Lagna ~173.99°, Moon at Revati pada 3, Saturn Avastha = Mrita/Swapna.
 - **Pin against externally-verifiable sources**, never engine self-output: Wikipedia, Prokerala, Jagannatha Hora, drikpanchang.com.
 - The PDF `Geo-Astrological Planetary Intelligence Engine.pdf` is the source of truth for the Kurma Chakra 27-nakshatra → region table.
+
+## Known-broken — do NOT rediscover these the hard way
+
+- **Pre-1906 charts crash the report.** `build_detailed_report` raises
+  `AttributeError: 'NoneType' object has no attribute 'maha'` for any nativity whose 120-year
+  Vimshottari span ended before today — there is no "currently running" period, and
+  `synthesize()` dereferences it. Verified on Queen Victoria (1819). **This bites the Prime
+  Directive directly: most of Raman's own worked nativities are 19th century, so the engine
+  cannot produce a report for the charts it is validated against.** The measurement tools work
+  around it with `on=(birth.year + 35, …)`; the report has no such escape. Fixing it needs a
+  product decision first — what "now" means for a chart whose life ended in 1939 (cast at a date
+  inside the life / cycle the sequence / state that the reference date is outside the span).
+- **`app/raman_saab/plainspoken.py` has no test file** (910 lines, 41 lead functions, the layer
+  with the most reader contact). Twelve defects were found in it on 2026-08-06/07 — all by
+  printing output by hand, none by CI. Every class is mechanically checkable: guard-clean,
+  subject-verb agreement at n=1, no truncated list in a sentence claiming completeness, no lead
+  that addresses nobody, no lead contradicting its own section's label.
 
 ## Style conventions
 

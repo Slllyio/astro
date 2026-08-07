@@ -358,3 +358,64 @@ precisely because it draws that line.
   Not "unproven at this sample size" any more — measured, and negative.
 - Anything further should target the *content* of what is said about a house, not the
   *selection* of which house. Selection appears to be doctrine and habit, not chart-reading.
+
+---
+
+# Phase 4 — the result is test-pinned
+
+*Locked 2026-08-07. No new measurement; this records that the finding can no longer be edited
+away by accident.*
+
+Phases 1–3 settled it: doctrine wins, chart-specific statistical salience is falsified twice, and
+`salience.py` encodes that by setting every modulation weight to zero. That was the right answer
+and it was **completely unguarded** — the module had no test file at all, and no test anywhere in
+the tree referenced `house_salience`, `rank_houses` or `DOCTRINAL_PRIOR`.
+
+**A measured zero is indistinguishable from an unfinished stub.** Five weights set to `0.0` with a
+comment persuades a reader; only a test stops an editor. With the weights at zero the ranking is
+the same for every chart in existence — `(1, 10, 7, 9, 4, 5, 2, 11, 8, 12, 6, 3)` — and it drives
+the digest, so one edited constant would silently change what every reader meets first while
+invalidating this entire document.
+
+`tests/raman_saab/test_salience.py` (9 tests) pins four things:
+
+| test | what it stops |
+|---|---|
+| `test_the_prior_is_the_whole_score` | a weight going live without a holdout measurement |
+| `test_unlike_charts_rank_identically` | the constancy silently ending |
+| `test_scores_are_the_prior_itself` | **a term firing too weakly to reorder anything** — an order-only assertion would pass while the arithmetic drifted |
+| `test_doctrinal_order_is_the_reviewed_one` | the order changing; the tuple is **copied by hand**, because a test deriving it from `DOCTRINAL_PRIOR` passes whenever both are edited together (the `_ORDER_V34` lesson) |
+
+## Two defects were latent behind the zeros
+
+Both inert at w=0, both wrong the moment any weight is raised — which is exactly when they would
+be trusted.
+
+- **Absent evidence scored as the population mean.** `zs.get(h, 0.0)` substituted `0.0` for a
+  house with no calibration data, and after standardisation `0.0` **is** the mean. A term the
+  chart carries no evidence for is now omitted from the sum, not zeroed.
+- **A broken judgment graph looked like a flat one.** `_centrality` returned a zero-filled dict on
+  any exception; all-zeros standardises to all-zeros, indistinguishable from "centrality does not
+  vary here". It now returns `None`, routed through the same absent-term path.
+
+## `why` could cite terms that did not rank
+
+`HouseSalience.why` fired on the z-scores of terms contributing zero — it would have told a reader
+a house led *because its readings are rare* when rarity moved nothing. A line now reaches `why`
+only if its weight is live (`(why if weight else notable).append(line)`, so the invariant is
+structural, not remembered); the observations moved to a new `notable` field. Nothing was dropped.
+
+## Verified score-neutral, not asserted
+
+Rank, per-house scores and digest order were captured on three charts **before** the refactor and
+diffed after: byte-identical. `measure_salience.py --split holdout` still reports Phase 2 exactly
+— p@1 0.643 / p@3 0.429 / r@3 0.655 / MRR 0.783. Ratchet unmoved at 259/293 · 283/293 · 10.
+
+## Still open
+
+**Query-conditioned salience for `/report/ask`.** Phase 3 shows the two benchmarks measure
+different acts — doctrine-first wins the free reading (0.643), frequency-first wins the targeted
+illustration (0.242 vs 0.158). `/report/ask` performs the *second* act and currently ranks with
+the prior this benchmark says is wrong for it. `golden_attention` (190 charts, resolvable effect
+~0.005) is the right measuring stick and is already frozen — it presently certifies only a
+negative. Held to the same bar: holdout, paired, interval excluding zero.

@@ -191,11 +191,27 @@ def _wealth_lead(r: "DetailedReport") -> str:
             if str(x.reading).startswith("afflicted")]
     if not good and not weak:
         return ""
+    # The channel labels arrive as raw data ("inheritance / legacies"), and a slash mid-prose
+    # reads as a field separator, not English. Also dedupe: "gains" appeared in both lists on
+    # one chart, which reads as the reading contradicting itself.
+    def _clean(names: list[str]) -> list[str]:
+        seen: list[str] = []
+        for n in names:
+            n = n.replace(" / ", " and ").replace("/", " and ")
+            if n not in seen:
+                seen.append(n)
+        return seen
+
+    good, weak = _clean(good), _clean(weak)
+    weak = [w for w in weak if w not in good]
+    # 13 channels is too many to name, so this one SELECTS — and says so. The count carries the
+    # completeness; `_join` then shows a few without implying they are all of them.
     parts = []
     if good:
-        parts.append(f"money reaches you through {', '.join(good[:3])}")
+        parts.append(f"{len(good)} of your {len(rows)} channels read favourable, money reaching "
+                     f"you through {_join(good)} among others")
     if weak:
-        parts.append(f"while {', '.join(weak[:3])} read as the weak channels")
+        parts.append(f"{len(weak)} read weaker, including {_join(weak)}")
     return (f"Read as channels rather than one verdict: {'; '.join(parts)}. Wealth is not one "
             f"thing in this method — it matters which route it takes.")
 
@@ -223,7 +239,11 @@ def _children_lead(r: "DetailedReport") -> str:
     sigs = tuple(getattr(c, "significations", ()) or ()) if c else ()
     if not sigs:
         return ""
-    bits = [f"{str(name).replace('_', ' ')} reads {str(v).split(' ')[0]}"
+    # Gloss the Sanskrit inline. A plain-language lead that prints "poorvapunya" untranslated
+    # has handed the reader the same jargon the layer exists to remove.
+    _GLOSS = {"poorvapunya": "poorvapunya (merit carried in)"}
+    bits = [f"{_GLOSS.get(str(name), str(name).replace('_', ' '))} "
+            f"reads {str(v).split(' ')[0]}"
             for name, v in sigs]
     return (f"This part of your chart covers more than children — {', '.join(bits)}. Each is "
             f"judged separately below, because in this method one of them reading difficult "
@@ -302,13 +322,13 @@ def plain_for_house(r: "DetailedReport", house: int) -> str:
         return ""
 
     if good and bad:
-        out = (f"Of what this part of your life covers, {_join(good)} read well, "
-               f"while {_join(bad)} {'do' if len(bad) > 1 else 'does'} not.")
+        out = (f"Of what this part of your life covers, {_join_all(good)} read well, "
+               f"while {_join_all(bad)} {'do' if len(bad) > 1 else 'does'} not.")
     elif good:
         verb = "all read" if len(good) > 1 else "reads"
-        out = f"{_join(good).capitalize()} {verb} well here."
+        out = f"{_join_all(good).capitalize()} {verb} well here."
     else:
-        out = (f"{_join(bad).capitalize()} {'are' if len(bad) > 1 else 'is'} the difficult "
+        out = (f"{_join_all(bad).capitalize()} {'are' if len(bad) > 1 else 'is'} the difficult "
                f"part of this house.")
 
     standing = getattr((getattr(r, "restraint", None) or {}).get(house), "standing", None)
@@ -320,6 +340,25 @@ def plain_for_house(r: "DetailedReport", house: int) -> str:
         out += (f" {dom.governing} carries this house — stronger here than {dom.yielding}, so "
                 f"the reading follows {dom.governing} rather than splitting the difference.")
     return out
+
+
+def _join_all(items: list) -> str:
+    """Every item, same grammar as `_join` but with NO cap.
+
+    Use this wherever the sentence reads as the complete set. `_join` truncates at three so a
+    lead never becomes an inventory, which is right when the phrasing signals a selection
+    ("among them", "most strongly") and a silent lie when it does not. It had already dropped
+    Mars from a maraka list of four and arishta from a yoga breakdown of four kinds — in both
+    cases the reader saw a sentence that read as exhaustive and was not.
+    """
+    items = [str(i) for i in items]
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if any(" and " in i for i in items):
+        return ", ".join(items)
+    return f"{', '.join(items[:-1])} and {items[-1]}"
 
 
 def _join(items: list) -> str:
@@ -373,6 +412,13 @@ def _psych_lead(r: "DetailedReport") -> str:
     # `moon_state` reads "the Moon (manas) in house 7, exalt, afflicted by Sun, Mars" — strip
     # the label and give it a verb, or the sentence is a fragment.
     state = moon.replace("the Moon (manas) ", "it stands ")
+    # The raw state ends in a comma-list of afflicting grahas ("afflicted by Sun, Mars"), which
+    # reads as a data dump mid-sentence. Give the last pair a conjunction.
+    if ", " in state.rsplit("by ", 1)[-1] and "by " in state:
+        head, tail = state.rsplit("by ", 1)
+        names = [n.strip() for n in tail.split(",") if n.strip()]
+        if len(names) > 1:
+            state = f"{head}by {', '.join(names[:-1])} and {names[-1]}"
     lead = (f"Your mind is read from the Moon, and here {state}. That is the instrument every "
             f"other judgement in this chart is taken with.")
     if ak:
@@ -610,12 +656,20 @@ def _rect_confidence_lead(r: "DetailedReport") -> str:
         return ""
     stable = int(getattr(rc, "stable_count", 0) or 0)
     lo, hi = getattr(rc, "overall_stable_minus", None), getattr(rc, "overall_stable_plus", None)
-    window = (f" Taken together they hold from {lo} minutes before your stated time to {hi} "
-              f"after." if lo is not None and hi is not None else "")
+    # LEAD WITH THE WINDOW, not with `stable_count`. That count is pillars surviving the FULL
+    # +-60 scan, a deliberately brutal bar — 1 of 10 is normal and says nothing alarming. Printed
+    # first it reads as a fragile chart directly above this section's own label, which for this
+    # nativity says "firm". Same incoherence as a plain line saying "reads strongly" under a
+    # heading saying AFFLICTED: the lead must agree with what sits beside it.
+    if lo is not None and hi is not None:
+        head = (f"Every pillar of your reading holds from {lo} minutes before your stated time "
+                f"to {hi} after, and {stable} of the {total} "
+                f"{'survives' if stable == 1 else 'survive'} the full hour scanned either way.")
+    else:
+        head = (f"{stable} of the {total} pillars of your reading "
+                f"{'survives' if stable == 1 else 'survive'} the full scan either way.")
     return (f"A birth time is rarely exact, so the chart is re-cast minute by minute in both "
-            f"directions to see what would survive being wrong. {stable} of the {total} pillars "
-            f"of your reading {'is' if stable == 1 else 'are'} unshaken across the whole scan."
-            f"{window} This is the honest "
+            f"directions to see what would survive being wrong. {head} This is the honest "
             f"measure of how much weight your recorded time can carry.")
 
 
@@ -733,11 +787,11 @@ def _yoga_deep_lead(r: "DetailedReport") -> str:
         k = str(getattr(y, "kind", "") or "")
         if k:
             kinds[k] = kinds.get(k, 0) + 1
-    named = _join([f"{n} {k}" for k, n in sorted(kinds.items(), key=lambda kv: -kv[1])])
+    named = _join_all([f"{n} {k}" for k, n in sorted(kinds.items(), key=lambda kv: -kv[1])])
     return (f"Each of the {len(rows)} yogas in your chart is read out in full here rather than "
             f"just named — what forms it, what the texts say it does, and how strongly it sits. "
-            f"By kind: {named}. A yoga is a pattern, not a promise; what you read is the "
-            f"classical description of the pattern you carry.")
+            f"By kind: {named}. What you read under each is the classical description of the "
+            f"pattern, not a claim about how it turned out for you.")
 
 
 def _deeptadi_lead(r: "DetailedReport") -> str:
@@ -794,7 +848,8 @@ def _av_dasha_seat_lead(r: "DetailedReport") -> str:
     tail = (f" {missing} could not be graded and {'is' if missing == 1 else 'are'} left unread "
             f"rather than filled in." if missing else "")
     return (f"This grades each major period by how much Ashtakavarga support sits in the sign "
-            f"its lord occupies — {graded} of your {len(rows)} could be graded.{tail} Raman's "
+            f"its lord occupies, and {graded} of your {len(rows)} carry enough data to "
+            f"score.{tail} Raman's "
             f"own caveat governs the whole section, which is why it sits last among the "
             f"period companions.")
 

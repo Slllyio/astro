@@ -1083,21 +1083,21 @@ AV_RULES: Final[tuple[SynthesisRule, ...]] = (
         ("Ashtakavarga", "House-by-house"), None),
     SynthesisRule(
         "SYN_N9_KAKSHYA_TRANSIT", "av", "N9",
-        "Kakshya-level transits over bindus", "descriptive", _C,
+        "Kakshya-level transits over bindus", "evaluable", _C,
         "A transiting planet gives good or bad kakshya by kakshya (eighth-of-sign) according to "
         "the presence of a bindu in that kakshya of its own Ashtakavarga — with roughly 4-day "
         "resolution (Ashtakavarga of Patel ch016:59-97; Phaladeepika ch28 sl.41: high-bindu "
-        "signs give good transits even in the 6th/8th/12th). (Kakshya positions not computed.)",
+        "signs give good transits even in the 6th/8th/12th). ENCODED 2026-08-07 — that note was STALE: gochara rows have carried `kakshya_lord` and `kakshya_favourable` since kakshya_timing landed. Corroborative; the transit verdict is unchanged.",
         "The finest classical transit clock — each planet's path is scored segment by segment.",
         ("Current transits", "Ashtakavarga"), None),
     SynthesisRule(
         "SYN_N10_AV_LONGEVITY", "av", "N10",
-        "Ashtakavarga longevity and the Shodhyapinda timing", "descriptive", _C,
+        "Ashtakavarga longevity and the Shodhyapinda timing", "evaluable", _C,
         "Longevity summed from bindu-spans across the eight Ashtakavargas, and bhava-destruction "
         "timed by Saturn's transit over the Shodhyapinda-derived nakshatra (BPHS vol2 ch071:40; "
         "Patel ch014:941-1027, ch015:132-674). Raman's caveat is aimed PRECISELY here: the AV "
         "method of longevity 'does not seem to be quite reliable' (HTJAH-II:4453-4456). "
-        "(Shodhyapinda not computed; on record only.)",
+        "ENCODED 2026-08-07 — that note was STALE: ashtakavarga_pinda computes the Sodya Pinda (ASP-14:196-198). ONLY the timing limb is encoded (`doctrine.av_pinda_timing`): the Pinda names a nakshatra and Saturn either stands there or does not. The LONGEVITY limb is deliberately left unencoded — Raman's caveat is aimed exactly and only at it.",
         "The classics could turn the dot-tables into a lifespan clock — Raman himself did not "
         "trust that use.",
         ("Longevity", "Ashtakavarga"), None),
@@ -1256,7 +1256,54 @@ def _chk_n6_tripod(ctx: SynthesisContext) -> Optional[str]:
     return "; ".join(rows) + tail
 
 
+def _chk_n9_kakshya(ctx: SynthesisContext) -> Optional[str]:
+    """Kakshya-by-kakshya transit quality, read off the gochara rows.
+
+    A slow transit sits in one eighth of a sign at a time (~3 deg 45'), and the classical
+    reading is whether THAT kakshya's lord donated a bindu in the transiting planet's own
+    Ashtakavarga. The nodes carry no Ashtakavarga of their own, so their rows are undefined and
+    skipped rather than guessed.
+    """
+    rows = [g for g in ctx.gochara if getattr(g, "kakshya_lord", None)]
+    if not rows:
+        return None
+    good = [f"{g.planet} in {g.kakshya_lord}'s kakshya (bindu donated)"
+            for g in rows if getattr(g, "kakshya_favourable", None) is True]
+    bad = [f"{g.planet} in {g.kakshya_lord}'s kakshya (no bindu)"
+           for g in rows if getattr(g, "kakshya_favourable", None) is False]
+    if not (good or bad):
+        return None
+    parts = []
+    if good:
+        parts.append("supported: " + ", ".join(good))
+    if bad:
+        parts.append("unsupported: " + ", ".join(bad))
+    return ("; ".join(parts) + f" — {len(good)} of {len(rows)} slow transits occupy a kakshya "
+            f"whose lord donated a bindu. The sub-sign changes on a scale of days, so this "
+            f"refines the transit reading above rather than replacing it")
+
+
+def _chk_n10_av_pinda(ctx: SynthesisContext) -> Optional[str]:
+    """The Shodhyapinda timing marker — where Saturn stands against each planet's Pinda
+    nakshatra. Reports the marker the classical method uses, never a lifespan."""
+    from app.raman_saab.doctrine.av_pinda_timing import pinda_nakshatras
+
+    rows = pinda_nakshatras(ctx.chart)
+    if not rows:
+        return None
+    on = [r for r in rows if r.saturn_is_there]
+    listing = ", ".join(f"{r.planet} {r.pinda}->{r.nakshatra}" for r in rows)
+    head = (("Saturn stands on the Shodhyapinda nakshatra of "
+             + ", ".join(r.planet for r in on) + " — the marker this classical method uses")
+            if on else "Saturn stands on no planet's Shodhyapinda nakshatra")
+    return (f"{head}. Sodya Pinda by planet: {listing}. The longevity limb of this rule is NOT "
+            f"computed: Raman's caveat is aimed precisely at Ashtakavarga longevity, which "
+            f"'does not seem to be quite reliable' (HTJAH-II:4453-4456)")
+
+
 _register_checkers({
+    "SYN_N9_KAKSHYA_TRANSIT": _chk_n9_kakshya,
+    "SYN_N10_AV_LONGEVITY": _chk_n10_av_pinda,
     "SYN_N6_UK_TRIPOD": _chk_n6_tripod,
     "SYN_N1_LP_MATRIX": _chk_n1_matrix,
     "SYN_N1_OWN_BHUKTI": _chk_n1_own,

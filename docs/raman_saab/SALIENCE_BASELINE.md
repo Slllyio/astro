@@ -419,3 +419,58 @@ illustration (0.242 vs 0.158). `/report/ask` performs the *second* act and curre
 the prior this benchmark says is wrong for it. `golden_attention` (190 charts, resolvable effect
 ~0.005) is the right measuring stick and is already frozen — it presently certifies only a
 negative. Held to the same bar: holdout, paired, interval excluding zero.
+
+---
+
+# Phase 5 — the proposed query-conditioned experiment is NOT testable here
+
+*Measured 2026-08-07, before any implementation. The Phase 0 gate doing its job.*
+
+Phase 4 left one thread open: `/report/ask` performs the act `golden_attention` measures
+(targeted illustration), the doctrinal prior loses on that benchmark (0.158 vs 0.242), so
+conditioning the ranking on the reader's question ought to be measurable against it. That
+proposal was stated as *"falsifiable against a benchmark already frozen, with the bar this
+programme has used throughout."*
+
+**It is not, and the benchmark says so unambiguously.**
+
+Each `expected_verdicts` entry in `raman_goldens.jsonl` carries a `signification` — the topic
+Raman was illustrating — but it is attached TO THE HOUSE. Across the 190 admitted charts:
+
+| | |
+|---|---|
+| (signification, house) pairs | 284 |
+| distinct significations | 48 |
+| significations mapping to exactly ONE house | **48 of 48** |
+| p@1 of a pure signification → house lookup | **1.000** |
+
+`self → 1` (28×), `wealth → 2` (25×), `children → 5` (21×), `father → 9` (21×),
+`marital_happiness → 7` (19×), `career → 10` (16×) — every one deterministic.
+
+A topic-conditioned ranker scored on this benchmark reads its own label and returns 1.000. That
+is not a strong result; it is **no result**, and shipping it as "measured to beat the prior"
+would have been the most misleading number this project has produced — precisely because it
+looks like a triumph over the 0.158 it would be compared against.
+
+## What survives, and what does not
+
+- **DEAD: the claim that query-conditioning is measurably better.** Phase 3's 0.242-vs-0.158
+  compares two UNCONDITIONED predictors. It licenses nothing about a conditioned one.
+- **ALIVE: the feature itself, as doctrine.** A reader asking about marriage should meet
+  7th-house evidence first because Raman judges marriage from the 7th, its lord and its karaka
+  (HTJAH-II:225) — not because a benchmark said so. That is a doctrinal mapping of the same
+  kind as `DOCTRINAL_PRIOR`, and it should be built and labelled as doctrine if it is built.
+- **The hard part was never the part this benchmark touches.** For `/report/ask` the input is
+  free text ("will my marriage work out?"); question → topic is the real problem, and
+  topic → house is a lookup that doctrine already answers. This benchmark tests only the lookup.
+
+## What a real test would need
+
+A record of what Raman was illustrating that is derived INDEPENDENTLY of the house he pronounced
+on — a chapter heading, a section title, the surrounding prose — so the topic is not the label
+wearing a different name. `notable_attention` is closer in spirit (free prose, emphasis markers)
+but scores a different act. Nothing currently in the tree supports the conditioned question.
+
+**Standing: the salience programme is closed.** Doctrine, wired in, measured, shipped, and now
+test-pinned; chart-specific statistical salience falsified twice; and the one remaining idea
+measured as untestable before a line of it was written.

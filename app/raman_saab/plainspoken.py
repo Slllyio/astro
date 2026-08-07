@@ -103,7 +103,11 @@ def plain_for_item(r: "DetailedReport", item: "DigestItem") -> str:
         return ""
 
     if item.kind == "timing" and getattr(r, "synthesis", None):
-        md = getattr(r.synthesis, "running_md", None)
+        from app.raman_saab.synthesis import running_period
+        # NOT `if md:` — the out-of-sequence sentinel is a non-empty string and would produce
+        # "You are living a (beyond computed sequence) chapter".
+        _rp = running_period(r.synthesis)
+        md = _rp[0] if _rp else None
         if md:
             from app.raman_saab.detailed_report import _PLANET_THEME
             theme = _PLAIN_THEME_OVERRIDE.get(md) or _PLANET_THEME.get(md)
@@ -325,11 +329,11 @@ def plain_for_house(r: "DetailedReport", house: int) -> str:
         out = (f"Of what this part of your life covers, {_join_all(good)} read well, "
                f"while {_join_all(bad)} {'do' if len(bad) > 1 else 'does'} not.")
     elif good:
-        verb = "all read" if len(good) > 1 else "reads"
-        out = f"{_join_all(good).capitalize()} {verb} well here."
+        out = (f"Everything this part of your life covers reads well — "
+               f"{_join_all(good)}.")
     else:
-        out = (f"{_join_all(bad).capitalize()} {'are' if len(bad) > 1 else 'is'} the difficult "
-               f"part of this house.")
+        out = (f"This part of your life is the difficult one, across all of what it covers — "
+               f"{_join_all(bad)}.")
 
     standing = getattr((getattr(r, "restraint", None) or {}).get(house), "standing", None)
     if standing in _FIRMNESS:
@@ -340,6 +344,16 @@ def plain_for_house(r: "DetailedReport", house: int) -> str:
         out += (f" {dom.governing} carries this house — stronger here than {dom.yielding}, so "
                 f"the reading follows {dom.governing} rather than splitting the difference.")
     return out
+
+
+def _v(n: int, singular: str, plural: str) -> str:
+    """The verb form for a count, because four leads shipped assuming plurality.
+
+    "1 are neutralised", "1 fired yoga touch it", "1 of the 10 pillars are unshaken",
+    "Travel abroad all read well" — every one only appears at a cardinality the canonical chart
+    never produced, which is why they survived hand-checking. Templates must not assume n > 1.
+    """
+    return singular if n == 1 else plural
 
 
 def _join_all(items: list) -> str:
@@ -456,9 +470,13 @@ SECTION_LEADS.update({                                             # type: ignor
 
 def _timeline_lead(r: "DetailedReport") -> str:
     syn = getattr(r, "synthesis", None)
-    md, ad = getattr(syn, "running_md", None), getattr(syn, "running_ad", None)
-    if not md:
-        return ""
+    from app.raman_saab.synthesis import running_period
+    _rp = running_period(syn)
+    if _rp is None:
+        return ("The date this reading is cast for falls outside your chart's Vimshottari "
+                "sequence, so no period is named as running below. The periods themselves are "
+                "listed in full; only the marker for 'now' is missing.")
+    md, ad = _rp
     lit = 0
     for tp in getattr(getattr(r, "timeline", None), "periods", ()) or ():
         if getattr(tp.period, "maha", None) == md and getattr(tp.period, "antar", None) == ad:
@@ -524,7 +542,8 @@ def _synthesis_lead(r: "DetailedReport") -> str:
         return ""
     own = sum(1 for i in fired
               if str(getattr(getattr(i, "rule", None), "band", "")) == "raman")
-    whose = (f" {own} of them are Raman's own combination doctrine; the rest are classical "
+    whose = (f" {own} of them {_v(own, 'is', 'are')} Raman's own combination doctrine; the rest "
+             f"are classical "
              f"corroboration, which never overrides him." if own else "")
     return (f"Most of this report reads one thing at a time — a house, a planet, a period. "
             f"These {len(fired)} readings are what appear only when several of them are put "
@@ -822,7 +841,8 @@ def _ishta_kashta_lead(r: "DetailedReport") -> str:
         return ""
     decided = sum(1 for x in rows if getattr(x, "prevails", None))
     return (f"Ishta is a planet's capacity for good, Kashta its capacity for difficulty; every "
-            f"planet carries both at once. Of the {len(rows)} periods listed, {decided} have one "
+            f"planet carries both at once. Of the {len(rows)} periods listed, {decided} "
+            f"{_v(decided, 'has', 'have')} one "
             f"of the two clearly prevailing and the rest are left undecided rather than forced. "
             f"This is a lean, not a forecast of what happens to you.")
 
@@ -848,7 +868,8 @@ def _av_dasha_seat_lead(r: "DetailedReport") -> str:
     tail = (f" {missing} could not be graded and {'is' if missing == 1 else 'are'} left unread "
             f"rather than filled in." if missing else "")
     return (f"This grades each major period by how much Ashtakavarga support sits in the sign "
-            f"its lord occupies, and {graded} of your {len(rows)} carry enough data to "
+            f"its lord occupies, and {graded} of your {len(rows)} {_v(graded, 'carries', 'carry')} "
+            f"enough data to "
             f"score.{tail} Raman's "
             f"own caveat governs the whole section, which is why it sits last among the "
             f"period companions.")
@@ -862,7 +883,8 @@ def _dasa_kakshya_lead(r: "DetailedReport") -> str:
     neutral = sum(1 for x in rows if getattr(x, "neutralised", False))
     return (f"The same periods again, cut finer: each is divided into intervals ruled by one "
             f"planet's contribution to the Ashtakavarga of the sign involved. Of your "
-            f"{len(rows)} intervals, {donated} carry a donated point and {neutral} are "
+            f"{len(rows)} intervals, {donated} {_v(donated, 'carries', 'carry')} a donated point "
+            f"and {neutral} {_v(neutral, 'is', 'are')} "
             f"neutralised. Like everything Ashtakavarga, this corroborates the reading above; "
             f"it never overrides it.")
 

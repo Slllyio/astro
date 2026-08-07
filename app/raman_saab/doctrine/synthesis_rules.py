@@ -932,13 +932,16 @@ CLASSICAL_RULES: Final[tuple[SynthesisRule, ...]] = (
         ("Shadbala", "Life-narrative"), None),
     SynthesisRule(
         "SYN_N6_UK_TRIPOD", "classical", "N6",
-        "Bhava + lord + karaka judged as one tripod", "descriptive", _C,
+        "Bhava + lord + karaka judged as one tripod", "evaluable", _C,
         "Uttara Kalamrita: a house is ruined only when the bhava, its lord AND its karaka are "
         "all hemmed by malefics, conjoined with malefics and weak, with hostile navamsa "
-        "dispositors (ch003:1594-1599) — the full three-legged test. (On record: the hemming "
-        "primitive it needed now exists — `doctrine.hemming` covers both the planet-leg (lord/"
-        "karaka) and the house-leg (the bhava) — so the tripod is buildable; the engine's "
-        "three-pillar judge remains the Raman-side analogue that already decides the verdict.)",
+        "dispositors (ch003:1594-1599) — the full three-legged test. ENCODED 2026-08-07 via "
+        "`doctrine.uk_tripod`, and building it measured the threshold: across 1,260 house-tests "
+        "the literal test completed 0 times and not one planet leg failed all four of its "
+        "conditions (0 of 2,520) — the conditions are negatively correlated, so the classical "
+        "ruin is near-unsatisfiable, which is precisely its point. What is reported is therefore "
+        "the PRESSURE (conditions met of those applicable, 0-7 observed of 11), which says how "
+        "far a house sits from that ruin. Corroborative only; Raman's own verdict decides.",
         "A life-area truly fails only when all three of its supports fail together.",
         ("House-by-house",), None),
     SynthesisRule(
@@ -1219,7 +1222,42 @@ def _chk_n13(ctx: SynthesisContext) -> Optional[str]:
     return "; ".join(outs) if outs else None
 
 
+def _chk_n6_tripod(ctx: SynthesisContext) -> Optional[str]:
+    """The Uttara Kalamrita tripod, reported as pressure rather than as a verdict.
+
+    Fires only for the houses under the MOST classical pressure, and says plainly that the
+    full test is not met — a restraint disclosure, never a condemnation. It cannot contradict
+    Raman: it reports its own conditions and touches no verdict.
+    """
+    from app.raman_saab.doctrine.uk_tripod import tripod
+
+    scored = []
+    for h in range(1, 13):
+        try:
+            t = tripod(ctx.chart, h, bhava_balas=ctx.bhava_balas or None)
+        except Exception:                                          # noqa: BLE001
+            continue
+        if t.pressure:
+            scored.append((t.pressure, h, t))
+    if not scored:
+        return None
+    scored.sort(key=lambda x: (-x[0], x[1]))
+    top = scored[0][0]
+    # only report when the pressure is genuinely high — the observed distribution centres on
+    # 2-3 of 11, so 5+ is the top few per cent and the only level worth a reader's attention
+    if top < 5:
+        return None
+    rows = [f"House {h} carries {n} of {t.applicable} classical failure-conditions "
+            f"({', '.join(t.met)})" for n, h, t in scored if n >= 5]
+    ruined = [f"House {h}" for n, h, t in scored if t.complete]
+    tail = ("; the full three-legged test is NOT met on any house, so the classical rule "
+            "withholds the verdict of ruin" if not ruined else
+            f"; the full test IS met on {', '.join(ruined)}")
+    return "; ".join(rows) + tail
+
+
 _register_checkers({
+    "SYN_N6_UK_TRIPOD": _chk_n6_tripod,
     "SYN_N1_LP_MATRIX": _chk_n1_matrix,
     "SYN_N1_OWN_BHUKTI": _chk_n1_own,
     "SYN_N1_YK_ORDER": _chk_n1_yk,

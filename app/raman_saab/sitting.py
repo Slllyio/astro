@@ -10,7 +10,9 @@ The arc here is hand-derived from Raman's own worked readings in *Notable Horosc
 compositional practice, observed and imitated, never claimed as doctrine:
 
 1. he opens on who this is and what the chart rests on;
-2. he names the striking feature early ("Mark the fact that…");
+2. he names the striking feature early (his "Special Features" openings; "Mark the fact"
+   itself recurs THROUGHOUT his readings, mostly inside Important Events — the early-feature
+   move is carried by the openings, per the doctrine review's reading of NH);
 3. his planets are characters with earned epithets ("Gnanakaraka Jupiter", "the philosophical
    planet Saturn"), and he refers back to them ("both together again constituting another…");
 4. he tells the life forward, event first, chart cause second;
@@ -90,6 +92,10 @@ def _epithet(r: "DetailedReport", planet: str) -> CastMember:
         basis.append(f"strongest_by_shadbala={rupas:.2f}")
     ak = getattr(getattr(r, "synthesis", None), "atmakaraka", None)
     if ak == planet:
+        # NH's own word with a different referent: Raman's NH prose uses "Atmakaraka" for the
+        # NATURAL karaka (the Sun, NH:2556); this reads the engine's locked CHARA AK
+        # (strict 7-karaka Jaimini). Named per the doctrine review so nobody takes it as NH
+        # usage (PASS-WITH-NOTES finding 4).
         clauses.append("the Atmakaraka, significator of the soul")
         basis.append("atmakaraka")
     governed = [h for h, d in (getattr(r, "dominance", None) or {}).items()
@@ -113,8 +119,13 @@ def _epithet(r: "DetailedReport", planet: str) -> CastMember:
             houses = " and ".join(_HOUSE_STORY.get(h, f"house {h}") for h in lords[:2])
             clauses.append(f"lord of {houses}")
             basis.append(f"lord_of={lords}")
+    if not clauses and census:
+        # tied to the census, which IS in `basis` — the review flagged the earlier
+        # "a steady presence" fallback as the one sentence in this module not re-reading a
+        # computed value (bphs-doctrine-reviewer, 2026-08-07, PASS-WITH-NOTES finding 2)
+        clauses.append(f"named through {census} of the readings below")
     if not clauses:
-        clauses.append("a steady presence across the chart's readings")
+        clauses.append("one of the grahas this chart keeps returning to")
     return CastMember(planet=planet, epithet=f"{planet}, {clauses[0]}"
                       + ("".join(f" and {c}" for c in clauses[1:2])),
                       basis=tuple(basis), clauses=tuple(clauses[:2]))

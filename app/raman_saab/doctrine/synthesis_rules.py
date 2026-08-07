@@ -933,15 +933,19 @@ CLASSICAL_RULES: Final[tuple[SynthesisRule, ...]] = (
     SynthesisRule(
         "SYN_N6_UK_TRIPOD", "classical", "N6",
         "Bhava + lord + karaka judged as one tripod", "evaluable", _C,
-        "Uttara Kalamrita: a house is ruined only when the bhava, its lord AND its karaka are "
-        "all hemmed by malefics, conjoined with malefics and weak, with hostile navamsa "
-        "dispositors (ch003:1594-1599) — the full three-legged test. ENCODED 2026-08-07 via "
-        "`doctrine.uk_tripod`, and building it measured the threshold: across 1,260 house-tests "
-        "the literal test completed 0 times and not one planet leg failed all four of its "
-        "conditions (0 of 2,520) — the conditions are negatively correlated, so the classical "
-        "ruin is near-unsatisfiable, which is precisely its point. What is reported is therefore "
-        "the PRESSURE (conditions met of those applicable, 0-7 observed of 11), which says how "
-        "far a house sits from that ruin. Corroborative only; Raman's own verdict decides.",
+        "Uttara Kalamrita ch003:1594-1606, verbatim: '(1) When a bhava, its lord, and its "
+        "significator (karaka) (i) are all hemmed between malefics, (ii) are in conjunction "
+        "with malefics and are weak, and (iii) have no aspect from or conjunction with "
+        "benefics. (2) (i) When malefics are in houses 4, 5, 8, 9 and 12 counted from the "
+        "concerned Bhava, its lord and its Karaka, (ii) and when the lords of the navamsas "
+        "having these malefics are inimical, combust, or defeated in Graha Yuddha. Then one "
+        "has to affirm that Bhava is destroyed.' A SUFFICIENT condition, not a necessary one "
+        "— ch003:1569-1576 destroys a bhava on the lord alone. ENCODED 2026-08-07; first "
+        "version FAILED doctrine review (navamsa condition on the wrong subject, benefic "
+        "clause dropped, 'only when' inverted, unsourced threshold) and was rewritten to the "
+        "verse. Reported as PRESSURE (conditions met of 15) because the full test measures "
+        "0 completes in 1,260 house-tests — the verse wants everything to fail at once. "
+        "Corroborative only; Raman's own verdict decides.",
         "A life-area truly fails only when all three of its supports fail together.",
         ("House-by-house",), None),
     SynthesisRule(
@@ -1097,7 +1101,7 @@ AV_RULES: Final[tuple[SynthesisRule, ...]] = (
         "timed by Saturn's transit over the Shodhyapinda-derived nakshatra (BPHS vol2 ch071:40; "
         "Patel ch014:941-1027, ch015:132-674). Raman's caveat is aimed PRECISELY here: the AV "
         "method of longevity 'does not seem to be quite reliable' (HTJAH-II:4453-4456). "
-        "ENCODED 2026-08-07 — that note was STALE: ashtakavarga_pinda computes the Sodya Pinda (ASP-14:196-198). ONLY the timing limb is encoded (`doctrine.av_pinda_timing`): the Pinda names a nakshatra and Saturn either stands there or does not. The LONGEVITY limb is deliberately left unencoded — Raman's caveat is aimed exactly and only at it.",
+        "ENCODED 2026-08-07, and the FIRST version FAILED doctrine review the same day (wrong formula: per-planet bhinna pinda unmultiplied — in none of the cited texts; natal Saturn compared where the rule is a transit clock). Rewritten to Patel ch014 sl.37-38 verbatim: Samudaya Shodhyapinda x the bhava's bindus, /27 remainder counted from Aswini (0 = Revati), the asterism AND its two trines, with the parallel /12 rasi clock — validated against Patel's own worked example (324 x 33 = 10692 -> Revati/Aslesha/Jyeshta, Meena/Kataka/Vrischika). Compared against TRANSIT Saturn at the report's reference date. The LONGEVITY limb stays unencoded — Raman's caveat (HTJAH-II:4453-4456) is aimed exactly and only at it; the rekha good-effects half (Sloka 39) is also omitted and said so. BPHS vol2 ch071:40 attests the longevity limb only.",
         "The classics could turn the dot-tables into a lifespan clock — Raman himself did not "
         "trust that use.",
         ("Longevity", "Ashtakavarga"), None),
@@ -1243,12 +1247,13 @@ def _chk_n6_tripod(ctx: SynthesisContext) -> Optional[str]:
         return None
     scored.sort(key=lambda x: (-x[0], x[1]))
     top = scored[0][0]
-    # only report when the pressure is genuinely high — the observed distribution centres on
-    # 2-3 of 11, so 5+ is the top few per cent and the only level worth a reader's attention
-    if top < 5:
+    # only report when the pressure is genuinely high — the faithful five-condition test
+    # centres on 5-7 of 15 (measured across 105 charts), so 9+ is the top few per cent and
+    # the only level worth a reader's attention
+    if top < 9:
         return None
     rows = [f"House {h} carries {n} of {t.applicable} classical failure-conditions "
-            f"({', '.join(t.met)})" for n, h, t in scored if n >= 5]
+            f"({', '.join(t.met)})" for n, h, t in scored if n >= 9]
     ruined = [f"House {h}" for n, h, t in scored if t.complete]
     tail = ("; the full three-legged test is NOT met on any house, so the classical rule "
             "withholds the verdict of ruin" if not ruined else
@@ -1284,21 +1289,43 @@ def _chk_n9_kakshya(ctx: SynthesisContext) -> Optional[str]:
 
 
 def _chk_n10_av_pinda(ctx: SynthesisContext) -> Optional[str]:
-    """The Shodhyapinda timing marker — where Saturn stands against each planet's Pinda
-    nakshatra. Reports the marker the classical method uses, never a lifespan."""
-    from app.raman_saab.doctrine.av_pinda_timing import pinda_nakshatras
+    """Patel's Saturn-transit clock (ch014 sl.37-38): the Samudaya Shodhyapinda times each
+    bhava's bindus names an asterism triad, and TRANSIT Saturn either stands in one or does
+    not — compared at the report's own reference date, never against the natal position.
+    Reports the marker the classical method uses; the longevity limb stays uncomputed
+    (Raman's caveat, HTJAH-II:4453-4456, is aimed precisely at it)."""
+    from app.raman_saab.doctrine.av_pinda_timing import bhava_saturn_markers
 
-    rows = pinda_nakshatras(ctx.chart)
+    rows = bhava_saturn_markers(ctx.chart, ctx.jd)
     if not rows:
         return None
-    on = [r for r in rows if r.saturn_is_there]
-    listing = ", ".join(f"{r.planet} {r.pinda}->{r.nakshatra}" for r in rows)
-    head = (("Saturn stands on the Shodhyapinda nakshatra of "
-             + ", ".join(r.planet for r in on) + " — the marker this classical method uses")
-            if on else "Saturn stands on no planet's Shodhyapinda nakshatra")
-    return (f"{head}. Sodya Pinda by planet: {listing}. The longevity limb of this rule is NOT "
-            f"computed: Raman's caveat is aimed precisely at Ashtakavarga longevity, which "
-            f"'does not seem to be quite reliable' (HTJAH-II:4453-4456)")
+    on_nak = [r for r in rows if r.saturn_on_nakshatra]
+    on_rasi = [r for r in rows if r.saturn_on_rasi]
+    where = rows[0].saturn_transit_nakshatra
+    if where is None:
+        return None
+    head = (f"Transit Saturn now moves through {where}"
+            f" ({rows[0].saturn_transit_rasi})")
+    def _name(hits: list) -> str:
+        # Patel's own example notes the degenerate case ("the arrived at asterisms and rasis
+        # are the same for all the bhavas") — when every bhava shares the marker, say that,
+        # not a twelve-item list.
+        if len(hits) == len(rows):
+            return "every bhava alike — the triads coincide across this chart, as in "                   "Patel's own worked example"
+        return ", ".join(f"house {r.house}" for r in hits[:4]) +             (f" and {len(hits) - 4} more" if len(hits) > 4 else "")
+    if on_nak:
+        head += (f" — inside the Shodhyapinda asterism triad of {_name(on_nak)}, the marker "
+                 f"this classical method watches")
+    elif on_rasi:
+        head += f" — inside the rasi triad of {_name(on_rasi)} on the coarser twelve-fold clock"
+    else:
+        head += " — inside no bhava's Shodhyapinda triad at this date"
+    pinda = rows[0].samudaya_pinda
+    return (f"{head}. Samudaya Shodhyapinda {pinda}; each bhava's product with its own bindus "
+            f"names its triad (remainder 0 = Revati, per Patel's worked example). The "
+            f"longevity limb of this rule is NOT computed: Raman's caveat is aimed precisely "
+            f"at Ashtakavarga longevity, which 'does not seem to be quite reliable' "
+            f"(HTJAH-II:4453-4456)")
 
 
 _register_checkers({

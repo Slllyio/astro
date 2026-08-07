@@ -1,37 +1,49 @@
-"""The Uttara Kalamrita tripod — a house is ruined only when all three of its supports fail.
+"""The Uttara Kalamrita tripod — bhava, lord and karaka, tested by the verse's own clauses.
 
-    "a house is ruined only when the bhava, its lord AND its karaka are all hemmed by
-     malefics, conjoined with malefics and weak, with hostile navamsa dispositors"
-     — Uttara Kalamrita ch003:1594-1599
+The text, verbatim (UK ch003:1594-1606, spelling as printed):
 
-This is a **restraint** rule, and that is why it earns a place. Everything else in the classical
-band adds a reason to condemn a house; this one names how much has to go wrong before condemning
-is warranted — three legs (bhava, lord, karaka), each failing several conditions at once. On most
-charts it does not fire, and that is the finding: the engine's own verdict for a house is rarely
-corroborated by the full classical test.
+    "(1) When a bhava, its lord, and its significator (karaka) (i) are al[l] hemmed between
+     malefics, (ii) are in conjunction with malefics and are weak, and (iii) have no aspect
+     from or conjunction with benefics.
+     (2) (i) When malefics are in houses 4, 5, 8, 9 and 12 counted from the concerned Bhava,
+     its lord and its Karaka, (ii) and when the lords of the navamsas having these malefics
+     are inimical, combust, or defeated in Graha Yuddha.
+     Then one has to affirm that Bhava is destroyed (literally harmed)."
 
-It was carried as `kind="descriptive"` (on record, never evaluated) because the primitive it
-needed did not exist. It does now — `doctrine.hemming` covers both the planet leg (lord, karaka)
-and the house leg (a bhava, which may be empty) and its docstring names this rule as the reason
-it was built. This module is that rule made evaluable.
+**This module was reviewed and its first version FAILED (bphs-doctrine-reviewer, 2026-08-07).**
+The failures are recorded because each one is a way this class of code goes wrong:
 
-**Band discipline.** CLASSICAL_NONCITABLE. It corroborates, it never overrides: where this and
-Raman disagree, Raman wins, and nothing here touches a verdict. Report-layer only (PREC-10).
+* The navamsa condition had been transplanted to the wrong subject — tested on the lord/karaka's
+  OWN dispositor, when the verse attaches it to THE MALEFICS sitting 4/5/8/9/12 from each
+  support ("the lords of the navamsas having these malefics"). The bhava leg is NOT exempt:
+  malefics can sit in dusthanas from an empty house.
+* Clause 1(iii) — no benefic aspect or conjunction — had been dropped entirely.
+* The verse gives a SUFFICIENT condition for destruction, not a necessary one ("ruined only
+  when" was the implementer's inversion): the preceding verse (ch003:1569-1576) destroys a
+  bhava on the lord alone. This is one classical path to ruin among several.
+* A seven-rupa bhava-weakness threshold had been invented; no such convention exists in the
+  corpus. The engine's one documented knob (`BHAVA_BALA_MIN_SH`, golden-tuned, its own comment
+  stating Raman gives no numeric cutoff) is used instead.
 
-**Conservative on missing data, always.** A condition the chart cannot answer is NOT counted as
-failing, so a leg never completes on absence and the tripod never condemns from ignorance. The
-engine's standing preference for saying less over guessing.
+Interpretive choices that REMAIN, each named so review can find them:
 
-**One interpretive choice, named rather than buried.** "hostile navamsa dispositors" is stated
-for the supports as a group; it is applied here to the LORD and KARAKA, which are planets and
-have navamsa dispositors in the ordinary sense. A bhava is not a planet, so its leg is judged on
-the three conditions that plainly apply to a house — hemmed, occupied by a malefic, weak by
-Bhava Bala. Deliberate, and flagged in `Leg.conditions_applied` so a reader can see which test
-each leg actually faced.
+1. **Raman's karakas inside UK's structure** (`BHAVA_KARAKA`, sourced HTJAH-I:983) — UK ch.4
+   has its own significator lists; "Raman wins" applies.
+2. **"Inimical" is read as naisargika enmity toward the support's planet** (the leg planet, or
+   the bhava's lord for the bhava leg). UK's own notes (ch003:1625-1632) want natural and
+   temporary relations fused; naisargika-only is the engine's available primitive and errs
+   toward not-condemning.
+3. **"Defeated in Graha Yuddha" is left undetermined** — the war test needs the full Shadbala
+   pipeline. Because clause 2(ii) is a disjunction (inimical OR combust OR defeated), treating
+   the war leg as unsatisfied can only under-condemn, which is the module's standing direction
+   of error. Documented, not silent.
+
+**Band discipline** unchanged: CLASSICAL_NONCITABLE, corroborative, report-layer only, no
+verdict feed (PREC-10). **Conservative on missing data**: an unanswerable condition is None
+and a leg never completes on absence.
 
 Usage:
     from app.raman_saab.doctrine.uk_tripod import tripod
-    t = tripod(chart, house=7, bhava_balas=balas)
 """
 from __future__ import annotations
 
@@ -42,31 +54,36 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.hemming import hemmed_house, hemmed_planet
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
 
-#: Natural malefics, per the project's locked Avastha convention (CLAUDE.md).
+#: Locked sets (CLAUDE.md, Avastha convention).
 _MALEFICS: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Saturn", "Rahu", "Ketu"})
+_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
 
-#: Bhava Bala at or below this (in rupas) counts as a weak bhava. Raman gives no numeric Bhava
-#: Bala cutoff — the report says so explicitly among its honoured absence findings — so this is
-#: the classical average (Bhava Bala is conventionally referenced against 7 rupas / 420 virupas)
-#: and is used ONLY inside this classical-band test, never against a Raman verdict.
-_WEAK_BHAVA_RUPAS: Final[float] = 7.0
+#: The dusthana offsets of clause 2(i): houses 4, 5, 8, 9, 12 counted from the support.
+_CLAUSE2_OFFSETS: Final[frozenset[int]] = frozenset({4, 5, 8, 9, 12})
+
+#: The five conditions, applied UNIFORMLY to all three supports — the review's central
+#: correction: the verse exempts nobody.
+_CONDITIONS: Final[tuple[str, ...]] = (
+    "hemmed", "with_malefic_and_weak", "no_benefic_contact",
+    "malefics_in_dusthanas_from", "their_navamsa_lords_afflicted",
+)
 
 
 @dataclass(frozen=True)
 class Leg:
-    """One support of the house, and how it fared against the conditions that apply to it."""
+    """One support, tested by the verse's five conditions. None = the chart cannot answer."""
 
-    what: str                      # "bhava" | "lord" | "karaka"
-    who: str                       # "House 7", or a planet name
+    what: str                                     # "bhava" | "lord" | "karaka"
+    who: str
     hemmed: Optional[bool]
-    with_malefic: Optional[bool]
-    weak: Optional[bool]
-    hostile_navamsa: Optional[bool]
-    conditions_applied: tuple[str, ...]
+    with_malefic_and_weak: Optional[bool]         # clause 1(ii) couples them
+    no_benefic_contact: Optional[bool]            # clause 1(iii)
+    malefics_in_dusthanas_from: Optional[bool]    # clause 2(i)
+    their_navamsa_lords_afflicted: Optional[bool] # clause 2(ii)
+    conditions_applied: tuple[str, ...] = _CONDITIONS
 
     @property
     def failed(self) -> bool:
-        """Every condition that applies to this leg is TRUE. Unknown never counts as failure."""
         vals = [getattr(self, c) for c in self.conditions_applied]
         return bool(vals) and all(v is True for v in vals)
 
@@ -82,7 +99,7 @@ class Tripod:
 
     @property
     def complete(self) -> bool:
-        """The classical condemnation: all three supports fail together."""
+        """The verse's sufficient condition: all three supports fail every clause."""
         return len(self.legs) == 3 and all(leg.failed for leg in self.legs)
 
     @property
@@ -91,22 +108,11 @@ class Tripod:
 
     @property
     def pressure(self) -> int:
-        """How many of the applicable failure-conditions are met, across all three supports.
-
-        MEASURED, and it is why this is the reported quantity rather than `complete`. Across
-        1,260 house-tests on 105 charts the literal test completed **0 times**, and not one
-        planet leg failed all four of its conditions (0 of 2,520) — the conditions are
-        negatively correlated, so a planet hemmed by malefics tends not to ALSO be weak, with a
-        malefic, and in a hostile navamsa. The mechanism is not broken (a constructed all-true
-        leg does fire); Uttara Kalamrita's threshold is simply near-unsatisfiable, which is its
-        whole point — ruin requires everything to fail at once.
-
-        `pressure` is what varies: 0-7 observed of 11 applicable, centred on 2-3. It says how
-        FAR a house sits from the classical ruin, which is informative on every chart, where
-        `complete` is silent on all of them.
-        """
+        """Conditions met of those applicable — the reported quantity, because the full test
+        is nearly unsatisfiable by construction (measured 0 completes pre-review; the verse
+        wants everything to fail at once). Says how far a house sits from the classical ruin."""
         return sum(1 for leg in self.legs
-                   for cond in leg.conditions_applied if getattr(leg, cond) is True)
+                   for c in leg.conditions_applied if getattr(leg, c) is True)
 
     @property
     def applicable(self) -> int:
@@ -114,82 +120,139 @@ class Tripod:
 
     @property
     def met(self) -> tuple[str, ...]:
-        """The conditions actually met, named — so a reader can check the count."""
-        return tuple(f"{leg.what} {cond.replace('_', ' ')}"
+        return tuple(f"{leg.what} {c.replace('_', ' ')}"
                      for leg in self.legs
-                     for cond in leg.conditions_applied if getattr(leg, cond) is True)
+                     for c in leg.conditions_applied if getattr(leg, c) is True)
 
 
-def _occupants(chart: RamanChart, *, sign: Optional[int] = None,
-               bhava: Optional[int] = None, exclude: str = "") -> list[str]:
-    out = []
-    for name, p in chart.planets.items():
-        if name == exclude:
+# ─── shared condition machinery ─────────────────────────────────────────────────────────────
+
+def _occupants_of_house(chart: RamanChart, house: int) -> list[str]:
+    return [n for n, p in chart.planets.items() if getattr(p, "rasi_house", None) == house]
+
+
+def _same_sign(chart: RamanChart, planet: str) -> list[str]:
+    ps = chart.planets[planet].sign
+    return [n for n, p in chart.planets.items() if n != planet and p.sign == ps]
+
+
+def _no_benefic_contact_planet(chart: RamanChart, planet: str) -> bool:
+    """Clause 1(iii) for a planet: no benefic conjoined (same sign) and none aspecting it."""
+    from app.raman_saab.doctrine.drishti import aspects_planet
+    if any(b in _BENEFICS for b in _same_sign(chart, planet)):
+        return False
+    return not any(aspects_planet(b, planet, chart) for b in _BENEFICS
+                   if b in chart.planets)
+
+
+def _no_benefic_contact_house(chart: RamanChart, house: int) -> bool:
+    """Clause 1(iii) for a bhava: no benefic occupant and none aspecting the house."""
+    from app.raman_saab.doctrine.drishti import aspects_house
+    if any(b in _BENEFICS for b in _occupants_of_house(chart, house)):
+        return False
+    return not any(aspects_house(b, house, chart) for b in _BENEFICS
+                   if b in chart.planets)
+
+
+def _clause2(chart: RamanChart, seat_house: int, support_planet: Optional[str]
+             ) -> tuple[bool, Optional[bool]]:
+    """Clause 2 counted FROM the support's house seat.
+
+    Returns (malefics_present_in_dusthanas, their_navamsa_lords_afflicted). The second is the
+    verse's compound: the navamsa lords OF THOSE MALEFICS are inimical (to the support's
+    planet — interpretive choice 2), combust, or defeated in war (undetermined — choice 3).
+    When no malefic sits in the dusthanas, the second condition is vacuously unanswerable and
+    returns None rather than True: absence of afflictors must not read as affliction.
+    """
+    from app.raman_saab.chart.constants import SIGN_LORDS
+    from app.raman_saab.primitives.relationships import naisargika
+
+    afflictors = [n for n, p in chart.planets.items()
+                  if n in _MALEFICS
+                  and ((getattr(p, "rasi_house", 0) - seat_house) % 12) + 1 in _CLAUSE2_OFFSETS]
+    if not afflictors:
+        return False, None
+
+    judge = support_planet  # whom "inimical" is toward (interpretive choice 2)
+    afflicted = []
+    for m in afflictors:
+        nav = getattr(chart.planets[m], "navamsa_sign", None)
+        lord = SIGN_LORDS.get(nav) if nav else None
+        if lord is None or lord not in chart.planets:
+            afflicted.append(None)
             continue
-        if sign is not None and getattr(p, "sign", None) == sign:
-            out.append(name)
-        elif bhava is not None and getattr(p, "bhava", None) == bhava:
-            out.append(name)
-    return out
+        inimical = (judge is not None and naisargika(lord, judge) == "enemy")
+        combust = float(getattr(chart.planets[lord], "combust_fraction", 0.0) or 0.0) > 0.0
+        # defeated-in-yuddha: undetermined (interpretive choice 3) — never satisfies the OR
+        afflicted.append(inimical or combust)
+    if any(a is True for a in afflicted):
+        return True, True
+    if all(a is None for a in afflicted):
+        return True, None
+    return True, False
+
+
+def _planet_weak(chart: RamanChart, planet: str) -> Optional[bool]:
+    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
+    p = chart.planets.get(planet)
+    sb, req = getattr(p, "shadbala_rupas", None), MIN_REQUIRED.get(planet)
+    if sb is None or req is None:
+        return None
+    return (sb.total / 60.0) < req
 
 
 def _planet_leg(chart: RamanChart, what: str, planet: str) -> Leg:
-    from app.raman_saab.primitives.relationships import naisargika
-    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
-
     p = chart.planets.get(planet)
     if p is None:
-        return Leg(what, planet, None, None, None, None,
-                   ("hemmed", "with_malefic", "weak", "hostile_navamsa"))
-
-    with_malefic = any(x in _MALEFICS
-                       for x in _occupants(chart, sign=p.sign, exclude=planet))
-
-    weak: Optional[bool] = None
-    sb, req = getattr(p, "shadbala_rupas", None), MIN_REQUIRED.get(planet)
-    if sb is not None and req is not None:
-        weak = (sb.total / 60.0) < req
-
-    # The dispositor of the sign the planet occupies IN THE NAVAMSA — hostile when the two are
-    # naisargika enemies. Nodes own no sign, so they cannot be a dispositor; the leg stays
-    # unknown rather than being scored as friendly.
-    hostile: Optional[bool] = None
-    nav = getattr(p, "navamsa_sign", None)
-    if nav:
-        from app.raman_saab.chart.constants import SIGN_LORDS
-        lord = SIGN_LORDS.get(nav)
-        if lord and lord != planet:
-            hostile = naisargika(planet, lord) == "enemy"
-        elif lord == planet:
-            hostile = False                       # in its own navamsa: not hostile
-
-    return Leg(what, planet, hemmed_planet(chart, planet), with_malefic, weak, hostile,
-               ("hemmed", "with_malefic", "weak", "hostile_navamsa"))
+        return Leg(what, planet, None, None, None, None, None)
+    with_mal = any(x in _MALEFICS for x in _same_sign(chart, planet))
+    weak = _planet_weak(chart, planet)
+    both = None if (with_mal and weak is None) else (with_mal and bool(weak))
+    seat = getattr(p, "rasi_house", None)
+    if seat:
+        c2_present, c2_afflicted = _clause2(chart, seat, planet)
+    else:
+        c2_present, c2_afflicted = None, None
+    return Leg(what, planet,
+               hemmed=hemmed_planet(chart, planet),
+               with_malefic_and_weak=both,
+               no_benefic_contact=_no_benefic_contact_planet(chart, planet),
+               malefics_in_dusthanas_from=c2_present,
+               their_navamsa_lords_afflicted=c2_afflicted)
 
 
-def _bhava_leg(chart: RamanChart, house: int,
+def _bhava_leg(chart: RamanChart, house: int, lord: Optional[str],
                bhava_balas: Optional[dict[int, float]]) -> Leg:
-    with_malefic = any(x in _MALEFICS for x in _occupants(chart, bhava=house))
+    with_mal = any(x in _MALEFICS for x in _occupants_of_house(chart, house))
     weak: Optional[bool] = None
     if bhava_balas:
         bb = bhava_balas.get(house)
         if bb is not None:
-            # accept rupas or virupas — the engine has carried both
-            weak = (bb / 60.0 if bb > 60 else bb) <= _WEAK_BHAVA_RUPAS
-    return Leg("bhava", f"House {house}", hemmed_house(chart, house), with_malefic, weak, None,
-               ("hemmed", "with_malefic", "weak"))
+            # the engine's ONE documented threshold (shashtiamsas; golden-tuned, its own
+            # comment records that Raman states no numeric cutoff) — never an invented figure
+            from app.raman_saab.primitives.shadbala.total import BHAVA_BALA_MIN_SH
+            sh = bb if bb > 60 else bb * 60.0
+            weak = sh < BHAVA_BALA_MIN_SH
+    both = None if (with_mal and weak is None) else (with_mal and bool(weak))
+    c2_present, c2_afflicted = _clause2(chart, house, lord)
+    return Leg("bhava", f"House {house}",
+               hemmed=hemmed_house(chart, house),
+               with_malefic_and_weak=both,
+               no_benefic_contact=_no_benefic_contact_house(chart, house),
+               malefics_in_dusthanas_from=c2_present,
+               their_navamsa_lords_afflicted=c2_afflicted)
 
 
 def tripod(chart: RamanChart, house: int,
            bhava_balas: Optional[dict[int, float]] = None) -> Tripod:
-    """The three-legged test for one house. Never re-judges — a pure read (PREC-10)."""
+    """The verse's test for one house. Pure read; never re-judges (PREC-10)."""
     from app.raman_saab.doctrine.conditions import _lord_of
 
-    legs = [_bhava_leg(chart, house, bhava_balas)]
     try:
         lord = _lord_of(house, chart)
-    except Exception:                                                  # noqa: BLE001
+    except Exception:                                              # noqa: BLE001
         lord = None
+    legs = [_bhava_leg(chart, house, lord, bhava_balas)]
     if lord:
         legs.append(_planet_leg(chart, "lord", lord))
     karaka = BHAVA_KARAKA.get(house)

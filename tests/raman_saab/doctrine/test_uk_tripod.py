@@ -1,18 +1,16 @@
-"""The Uttara Kalamrita tripod — and the measurement that decided how to report it.
+"""The Uttara Kalamrita tripod — the verse's own five conditions, after the review that
+failed the first version.
 
-The rule sat as `kind="descriptive"` (on record, never evaluated) until the hemming primitive
-existed. Building it revealed why the literal test is the wrong thing to report, and these tests
-pin both the mechanism and that finding.
+The first implementation was reviewed by the bphs-doctrine-reviewer (2026-08-07) and FAILED:
+the navamsa condition had been transplanted to the wrong subject (the leg planet's own
+dispositor, where the verse afflicts THE MALEFICS in 4/5/8/9/12 from each support), the
+no-benefic-contact clause was missing entirely, "ruined only when" inverted a sufficient
+condition into a necessary one, and a "7 rupas" bhava threshold had been invented. These tests
+pin the corrected shape so none of those four errors can quietly return.
 
-**The mechanism can fire.** Asserted directly on a constructed leg, because everything else here
-observes that it does not, and "never fires" is indistinguishable from "cannot fire" without
-this test. That distinction is the one the tautological-dominance bug turned on.
-
-**It essentially never fires on real charts.** 0 of 1,260 house-tests and 0 of 2,520 planet legs
-across 105 charts: the conditions are negatively correlated, so a planet hemmed by malefics
-tends not to ALSO be weak, with a malefic, and in a hostile navamsa. That is Uttara Kalamrita's
-threshold working as intended — ruin requires everything to fail at once — and it is why
-`pressure` is reported instead of `complete`.
+The other property pinned here survived the review unchanged: the mechanism must be SHOWN able
+to fire (on a constructed all-true leg), because every observation on real charts is "does not
+fire" and that is indistinguishable from "cannot fire" without it.
 """
 from __future__ import annotations
 
@@ -20,10 +18,7 @@ import pytest
 
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
-from app.raman_saab.doctrine.uk_tripod import Leg, Tripod, tripod
-
-_C4 = ("hemmed", "with_malefic", "weak", "hostile_navamsa")
-_C3 = ("hemmed", "with_malefic", "weak")
+from app.raman_saab.doctrine.uk_tripod import _CONDITIONS, Leg, Tripod, tripod
 
 _CHARTS = [
     ("mainpuri", BirthData("Mainpuri", 1989, 10, 12, 10, 2, 5.5, 27.23, 79.03)),
@@ -33,91 +28,135 @@ _CHARTS = [
 ]
 
 
+def _leg(**kw) -> Leg:
+    base = dict(what="lord", who="Mars", hemmed=True, with_malefic_and_weak=True,
+                no_benefic_contact=True, malefics_in_dusthanas_from=True,
+                their_navamsa_lords_afflicted=True)
+    base.update(kw)
+    return Leg(**base)
+
+
 @pytest.fixture(scope="module")
 def charts():
     return {n: cast_chart(bd) for n, bd in _CHARTS}
 
 
-class TestTheMechanismCanProduceEitherAnswer:
-    """THE guard. A test that only ever observes 'does not fire' cannot tell a rare rule from a
-    broken one."""
+class TestTheVerseIsTheConditionSet:
+    """The review's corrections, pinned structurally."""
 
-    def test_a_leg_with_every_condition_true_fails(self):
-        assert Leg("lord", "Mars", True, True, True, True, _C4).failed is True
+    def test_all_five_conditions_apply_to_every_support(self, charts):
+        """The bhava leg is NOT exempt from clause 2 — malefics can sit in dusthanas from an
+        empty house, and the verse counts 'from the concerned Bhava' explicitly."""
+        for name, c in charts.items():
+            for h in (1, 7, 10):
+                for leg in tripod(c, h).legs:
+                    assert leg.conditions_applied == _CONDITIONS, f"{name}/{leg.what}"
+
+    def test_the_benefic_clause_exists(self, charts):
+        """Clause 1(iii) was dropped in the first version. It must be present AND able to take
+        both values on real charts."""
+        seen = {leg.no_benefic_contact
+                for c in charts.values() for h in range(1, 13)
+                for leg in tripod(c, h).legs}
+        assert True in seen and False in seen
+
+    def test_clause2_afflicts_the_malefics_not_the_leg(self, charts):
+        """The navamsa condition can be True only when malefics actually sit in the dusthanas
+        counted from the support — it is a statement about THOSE planets' navamsa lords."""
+        for name, c in charts.items():
+            for h in range(1, 13):
+                for leg in tripod(c, h).legs:
+                    if leg.their_navamsa_lords_afflicted is True:
+                        assert leg.malefics_in_dusthanas_from is True, (
+                            f"{name}/H{h}/{leg.what}: navamsa affliction without afflictors")
+
+    def test_absence_of_afflictors_is_not_affliction(self, charts):
+        """No malefic in the dusthanas -> the navamsa condition is None (unanswerable), never
+        True. Absence must not condemn."""
+        for name, c in charts.items():
+            for h in range(1, 13):
+                for leg in tripod(c, h).legs:
+                    if leg.malefics_in_dusthanas_from is False:
+                        assert leg.their_navamsa_lords_afflicted is None, (
+                            f"{name}/H{h}/{leg.what}")
+
+
+class TestTheMechanismCanProduceEitherAnswer:
+    """THE guard: 'never fires' must be distinguishable from 'cannot fire'."""
+
+    def test_an_all_true_leg_fails(self):
+        assert _leg().failed is True
 
     def test_one_false_condition_spares_the_leg(self):
-        assert Leg("lord", "Mars", True, True, False, True, _C4).failed is False
+        assert _leg(no_benefic_contact=False).failed is False
+
+    def test_one_unknown_condition_spares_the_leg(self):
+        leg = _leg(with_malefic_and_weak=None)
+        assert leg.failed is False
+        assert leg.unknown == ("with_malefic_and_weak",)
 
     def test_a_full_tripod_completes(self):
-        t = Tripod(8, (Leg("bhava", "House 8", True, True, True, None, _C3),
-                       Leg("lord", "Mercury", True, True, True, True, _C4),
-                       Leg("karaka", "Saturn", True, True, True, True, _C4)))
+        t = Tripod(8, (_leg(what="bhava", who="House 8"), _leg(what="lord", who="Mercury"),
+                       _leg(what="karaka", who="Saturn")))
         assert t.complete is True
         assert t.failing == ("bhava", "lord", "karaka")
 
 
-class TestItNeverCondemnsFromIgnorance:
-    def test_an_unknown_condition_is_not_a_failure(self):
-        """Conservative on missing data — the engine's standing preference for saying less."""
-        leg = Leg("lord", "Mars", True, True, None, True, _C4)
-        assert leg.failed is False
-        assert leg.unknown == ("weak",)
+class TestSufficientNotNecessary:
+    def test_the_docstring_does_not_say_only_when(self):
+        """'Ruined only when' was the implementer's inversion; UK ch003:1569-1576 destroys a
+        bhava on the lord alone. The module must present the tripod as one sufficient path."""
+        import app.raman_saab.doctrine.uk_tripod as m
+        assert "only when" not in (m.__doc__ or "").lower().replace("'only\n", "")
+        assert "sufficient" in (m.__doc__ or "").lower()
+
+
+class TestNoInventedThreshold:
+    def test_the_bhava_weakness_uses_the_documented_knob(self):
+        """The '7 rupas / 420 virupas convention' existed nowhere in the corpus. Only the
+        engine's one documented (golden-tuned) threshold may decide bhava weakness here."""
+        import pathlib
+        src = pathlib.Path("app/raman_saab/doctrine/uk_tripod.py").read_text(encoding="utf-8")
+        assert "BHAVA_BALA_MIN_SH" in src
+        assert "7 rupas" not in src and "_WEAK_BHAVA_RUPAS" not in src
 
     def test_a_bhava_without_bhava_bala_cannot_complete(self, charts):
-        """`weak` is unanswerable without Bhava Bala, so the bhava leg must not fail — and the
-        tripod must not complete — merely because the caller omitted an optional argument."""
         for name, c in charts.items():
             for h in range(1, 13):
                 bhava = tripod(c, h).legs[0]
-                assert bhava.weak is None and bhava.failed is False, name
-
-    def test_the_bhava_leg_is_not_judged_on_navamsa(self, charts):
-        """A bhava is not a planet. The interpretive choice is deliberate and visible."""
-        leg = tripod(charts["mainpuri"], 7).legs[0]
-        assert "hostile_navamsa" not in leg.conditions_applied
-        assert leg.hostile_navamsa is None
+                assert bhava.failed is False or bhava.with_malefic_and_weak is not None, name
 
 
 class TestPressureIsWhatVaries:
-    def test_pressure_counts_only_conditions_actually_met(self):
-        t = Tripod(1, (Leg("bhava", "House 1", True, False, True, None, _C3),
-                       Leg("lord", "Mars", True, False, False, None, _C4)))
-        assert t.pressure == 3
-        assert t.applicable == 7
-        assert t.met == ("bhava hemmed", "bhava weak", "lord hemmed")
-
-    def test_pressure_varies_across_charts_and_houses(self, charts):
-        seen = {tripod(c, h).pressure for c in charts.values() for h in range(1, 13)}
-        assert len(seen) >= 3, (
-            f"pressure took only {seen} — a quantity that does not vary cannot inform anything")
-
-    def test_pressure_never_exceeds_what_applies(self, charts):
+    def test_pressure_varies_and_is_bounded(self, charts):
+        seen = set()
         for name, c in charts.items():
             for h in range(1, 13):
                 t = tripod(c, h)
                 assert 0 <= t.pressure <= t.applicable, name
+                assert t.applicable == 15
+                seen.add(t.pressure)
+        assert len(seen) >= 4, f"pressure took only {seen} — it cannot inform if it is flat"
+
+    def test_met_names_agree_with_the_count(self, charts):
+        for c in charts.values():
+            for h in (3, 8):
+                t = tripod(c, h)
+                assert len(t.met) == t.pressure
 
 
 class TestTheRuleIsWiredAndCorroborativeOnly:
-    def test_the_rule_is_now_evaluable(self):
-        from app.raman_saab.doctrine.synthesis_rules import descriptive_rules
+    def test_evaluable_in_the_classical_band(self):
+        from app.raman_saab.doctrine.synthesis_rules import SYNTHESIS_RULES, descriptive_rules
         assert "SYN_N6_UK_TRIPOD" not in {r.id for r in descriptive_rules()}
+        r = next(x for x in SYNTHESIS_RULES if x.id == "SYN_N6_UK_TRIPOD")
+        assert r.band == "classical" and r.provenance == "CLASSICAL_NONCITABLE"
 
-    def test_it_stays_in_the_classical_band(self):
-        """Corroborative. It must never sit in the Raman band, where it could appear to decide."""
+    def test_the_rule_text_carries_the_verbatim_verse_and_the_review(self):
+        """The first version's paraphrase-presented-as-quote became the spec the code wrongly
+        implemented. The rule text must now quote the verse and record the failed review."""
         from app.raman_saab.doctrine.synthesis_rules import SYNTHESIS_RULES
         r = next(x for x in SYNTHESIS_RULES if x.id == "SYN_N6_UK_TRIPOD")
-        assert r.band == "classical"
-        assert r.provenance == "CLASSICAL_NONCITABLE"
-
-    def test_it_reports_conditions_rather_than_a_verdict(self):
-        """The detail must state its own evidence and, while the full test is unmet, say so —
-        a restraint disclosure, not a condemnation."""
-        from app.raman_saab.detailed_report import build_detailed_report
-        r = build_detailed_report(_CHARTS[0][1])
-        fired = [i for i in r.insights if i.rule.id == "SYN_N6_UK_TRIPOD"]
-        if not fired:
-            pytest.skip("no house under sufficient pressure on this chart")
-        detail = fired[0].detail
-        assert "classical failure-conditions" in detail
-        assert "NOT met" in detail or "full test IS met" in detail
+        assert "have no aspect from or conjunction with benefics" in r.doctrine
+        assert "FAILED doctrine review" in r.doctrine
+        assert "SUFFICIENT" in r.doctrine

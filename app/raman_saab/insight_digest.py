@@ -225,8 +225,10 @@ def _distinctive_item(house: int, entry, priority: int) -> DigestItem:
     return DigestItem(
         kind="distinctive",
         title=f"House {house} — {entry.signification}: {entry.verdict} ({entry.degree})",
-        detail=f"{share} ({entry.rarity}).{inv} This is a statement about the reading's information "
-               f"content, not a prediction about a life.",
+        # The information-content framing is stated once in the section preamble and the
+        # header legend — repeating it in EVERY row was framing wearing a data field's clothes
+        # (hedge consolidation, 2026-08-07).
+        detail=f"{share} ({entry.rarity}).{inv}",
         lean=_lean_of(entry.verdict),
         houses=(house,),
         sections=(_SEC_STANDS_OUT, _SEC_INFO),

@@ -479,6 +479,11 @@ _SECTION_SPECS: tuple[SectionSpec, ...] = (
     SectionSpec("digest", "## What matters most (ranked digest)", 'id="digest"', "v19"),
     SectionSpec("dashboard", "## The twelve matters at a glance", 'id="dashboard"', "v2"),
     SectionSpec("chart_signature", "## Chart signature", 'class="sig"', "v1"),
+    # v35 (2026-08-07, conscious amendment, user-requested "instinct and flow"): the Sitting —
+    # the reading as ONE continuous piece in Raman's own NH compositional arc (grip, cast,
+    # life-told-forward, callback close). Placed directly after the Chart signature, before the
+    # Ruler section it hands off to — the same narrative-position precedent as v13.
+    SectionSpec("sitting", "## The reading, as one sitting", 'id="sitting"', "v35"),
     # v13 (2026-07-26, conscious amendment): Raman's own first-impression move — "first of all
     # consider the ruler of the nativity" (HTJAH-I:16001-16002) — placed directly after the
     # Chart signature it opens from; the natural narrative position (v6-v12 precedent).
@@ -1425,6 +1430,7 @@ class DetailedReport:
     dominance: object = None                         # {house: Dominance} (v34)
     restraint: object = None                         # {house: Restraint} (v34)
     analogy: object = None                           # tuple[Resemblance, ...] (v34)
+    sitting: object = None                           # Sitting (v35 — the continuous reading)
 
 
 @dataclass(frozen=True)
@@ -2641,6 +2647,14 @@ def build_detailed_report(
         final = _dc_replace(final, life_synthesis=build_life_synthesis(final))
     except Exception:  # noqa: BLE001
         pass
+    # v35 — the Sitting composes from the fully-built report (cast needs the bios, the
+    # closing needs the nichod's turning points). A composition failure costs the section,
+    # never the report.
+    from app.raman_saab.sitting import build_sitting
+    try:
+        final = _dc_replace(final, sitting=build_sitting(final))
+    except Exception:  # noqa: BLE001
+        pass
     return final
 
 
@@ -2991,6 +3005,27 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
         L.append(f"- **Functional nature for this Lagna** — {nat}")
     L.append("")
 
+    # ── the Sitting (v35) — the reading as one continuous piece ──────────────
+    if getattr(r, "sitting", None) is not None:
+        st = r.sitting
+        L.start("sitting")
+        L.append("## The reading, as one sitting")
+        L.append("")
+        L.append("_One continuous reading, in the arc Raman himself used in Notable "
+                 "Horoscopes: the thesis, the striking feature, the cast, the life told "
+                 "forward, and a close that answers the opening. Every sentence re-reads a "
+                 "value the full report below computes and cites; the honest frame stated in "
+                 "the header governs all of it._")
+        L.append("")
+        L.append(st.grip)
+        for heading, text in st.paragraphs:
+            L.append("")
+            L.append(f"**{heading}.** {text}")
+        if st.closing:
+            L.append("")
+            L.append(st.closing)
+        L.append("")
+
     # ── ruler of the nativity (Raman's own first-impression move, v13) ───────
     ru = r.ruler
     L.start("ruler")
@@ -3007,8 +3042,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
              "peculiarities of the person\" (HTJAH-I:6248-6250). This card gathers what the "
              "report already computes about those one or two planets into a single first "
              "impression. The classical temperament lines are shorthand for tendencies, never "
-             "medical statements — and as everywhere in this report: how the method reads this "
-             "chart, not a prediction.")
+             "medical statements.")
     L.append("")
     ll_bit = f"{ru.lagna_lord}, lord of the {_SIGN_NAME[r.chart.asc_sign]} Lagna"
     if ru.lagna_lord_house is not None:
@@ -3918,8 +3952,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
                  "importance must be given to the natal positions and Dasha and only "
                  "secondary consideration to transiting planets\" (HTJAH-I:8410-8411; "
                  "HTJAH-II:4679-4687 repeats it — transits are secondary, catalytic, "
-                 "conclusions rest on Dasa-vichara). As everywhere in this report: how the "
-                 "method reads this chart, not a prediction.")
+                 "conclusions rest on Dasa-vichara).")
         for ch in r.life_chapters.chapters:
             now_tag = " — now" if ch.is_current else ""
             L.append("")
@@ -4307,8 +4340,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.append("_Where the report's sections meet: encoded combination doctrine connecting "
              "Shadbala, yogas, dashas, transits, Ashtakavarga and the houses. Each insight leads "
-             "with a plain-language reading, backed by the exact text it draws from. As "
-             "everywhere in this report: how the method reads this chart, not a prediction._")
+             "with a plain-language reading, backed by the exact text it draws from._")
     L.append("")
     L.append("_How to read several strength measures at once (the general form of the House "
              "strength cross-check's own finding above): Raman's system tracks a house/planet/"
@@ -4420,7 +4452,7 @@ def _markdown_sections(r: DetailedReport) -> _SectionedLines:
     L.append("")
     L.append("_The distilled essence: every section above, squeezed into one. Nothing here is "
              "a new judgment — each clause selects, counts, or quotes what the report already "
-             "showed. Not a prediction._")
+             "showed._")
     L.append("")
     L.append(f"> {n.essence}")
     L.append("")

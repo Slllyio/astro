@@ -47,6 +47,8 @@ _FROZEN = (
     ("digest", "## What matters most (ranked digest)", 'id="digest"'),
     ("dashboard", "## The twelve matters at a glance", 'id="dashboard"'),
     ("chart_signature", "## Chart signature", 'class="sig"'),
+    # v35 (2026-08-07, conscious, same-commit): the Sitting — the continuous reading.
+    ("sitting", "## The reading, as one sitting", 'id="sitting"'),
     # v13 amendment (2026-07-26, conscious, same-commit as the module): Ruler of the nativity —
     # Raman's own first-impression move — inserted right after the Chart signature it opens from.
     ("ruler", "## Ruler of the nativity", 'id="ruler"'),
@@ -158,9 +160,11 @@ _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 #: derives its sequence from `report_movements.MOVEMENTS`, so a test that only compared those
 #: two would pass silently when both were edited together. Re-sequencing the report means
 #: editing this tuple too, consciously, in the same commit.
-_ORDER_V34: tuple[str, ...] = (
+_ORDER_V35: tuple[str, ...] = (
     # I. Who this is
-    "title", "plain_reading", "chart_signature", "now_box", "ruler", "planet_bios", "psych",
+    # v35: "sitting" enters here — after the signature frames, before the technical hand-off.
+    "title", "plain_reading", "chart_signature", "sitting", "now_box", "ruler", "planet_bios",
+    "psych",
     # II. How to read it honestly
     "info_content", "interpretation_guide", "judgment_graph", "stands_out", "digest",
     "dashboard",
@@ -220,12 +224,12 @@ class TestTemplateContract:
 
         `SECTION_CONTRACT` derives its order from `report_movements.MOVEMENTS`, so comparing
         the two would be near-tautological: editing the arc and the registry together would
-        pass silently. `_ORDER_V34` lives here so re-sequencing stays as deliberate an act as
+        pass silently. `_ORDER_V35` lives here so re-sequencing stays as deliberate an act as
         changing a marker.
         """
-        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V34
-        assert tuple(HTML_SECTION_ORDER) == _ORDER_V34
-        assert flattened_order() == _ORDER_V34
+        assert tuple(s.section_id for s in SECTION_CONTRACT) == _ORDER_V35
+        assert tuple(HTML_SECTION_ORDER) == _ORDER_V35
+        assert flattened_order() == _ORDER_V35
 
     def test_movements_partition_the_contract(self):
         """Every section sits in exactly one movement — no section lost, none duplicated."""
@@ -240,8 +244,8 @@ class TestTemplateContract:
         `chart_signature` are one `<header>` element in the HTML and are emitted as a single
         chunk, so they must remain adjacent in that internal order.
         """
-        assert _ORDER_V34[-1] == "nichod"
-        assert _ORDER_V34[:3] == ("title", "plain_reading", "chart_signature")
+        assert _ORDER_V35[-1] == "nichod"
+        assert _ORDER_V35[:3] == ("title", "plain_reading", "chart_signature")
 
     def test_renderers_emit_the_frozen_markers(self, markdown, html):
         """The OUTPUT (not just the registry) must carry every frozen marker — so changing a
@@ -300,7 +304,8 @@ class TestTemplateContract:
             "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32",
             # v33 was the reading arc — a re-ORDERING, so it added no section and needs no tag.
             # v34 adds the intuition layer: dominance, restraint and analogy.
-            "v34"}
+            # v35 adds the Sitting — the continuous reading in Raman's NH arc.
+            "v34", "v35"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1

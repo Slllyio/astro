@@ -187,6 +187,15 @@ def to_report_dict(r: DetailedReport) -> dict:
         "dominance": [_ad(d) for _h, d in sorted((r.dominance or {}).items())],
         "restraint": [_ad(x) for _h, x in sorted((r.restraint or {}).items())],
         "analogy": [_ad(m) for m in (r.analogy or ())],
+        # v35 — the Sitting: the continuous reading, for the interactive page's folio.
+        "sitting": ({
+            "grip": r.sitting.grip,
+            "grip_key": r.sitting.grip_key,
+            "cast": [{"planet": m.planet, "epithet": m.epithet, "basis": list(m.basis)}
+                     for m in r.sitting.cast],
+            "paragraphs": [{"heading": h, "text": x} for h, x in r.sitting.paragraphs],
+            "closing": r.sitting.closing,
+        } if getattr(r, "sitting", None) is not None else None),
 
         # The maraka scheme itself (HTJAH-I:761-814) — Raman's second step after the longevity
         # band. Previously computed for the markdown/HTML renderers but never exposed here, so

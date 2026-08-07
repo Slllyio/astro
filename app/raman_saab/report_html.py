@@ -1356,6 +1356,27 @@ def _judgment_graph_section(r: DetailedReport) -> str:
           f'&mdash; {rel_txt}.</p>')
 
 
+def _sitting_section(r: DetailedReport) -> str:
+    """v35 — the continuous reading. Safe markup only; every string escaped."""
+    st = getattr(r, "sitting", None)
+    if st is None:
+        return ""
+    paras = "".join(
+        f'<p class="sitting-para"><strong>{_esc(h)}.</strong> {_esc(x)}</p>'
+        for h, x in getattr(st, "paragraphs", ()) or ())
+    closing = (f'<p class="sitting-close">{_esc(st.closing)}</p>'
+               if getattr(st, "closing", "") else "")
+    return (
+        '<h2 class="section" id="sitting">The reading, as one sitting</h2>'
+        '<p class="section-sub">One continuous reading, in the arc Raman himself used in '
+        'Notable Horoscopes: the thesis, the striking feature, the cast, the life told '
+        'forward, and a close that answers the opening. Every sentence re-reads a value the '
+        'full report computes and cites; the honest frame in the header governs all of it '
+        '&mdash; how the method reads this chart, not a prediction.</p>'
+        f'<p class="sitting-grip">{_esc(st.grip)}</p>'
+        f'{paras}{closing}')
+
+
 def _ruler_section(r: DetailedReport) -> str:
     """Raman's first-impression card (v13): the ruler of the nativity (Lagna lord) and the
     strongest planet by Shadbala, with the HTJAH-I:3892-3897 nature/appearance comparison —
@@ -2641,6 +2662,7 @@ def to_html(r: DetailedReport) -> str:
 
     # the 38 sections whose markup already lives in a dedicated helper
     chunk.update({
+        "sitting": _sitting_section(r),
         "judgment_graph": _judgment_graph_section(r),
         "ruler": _ruler_section(r),
         "planet_bios": _planet_bios_section(r),

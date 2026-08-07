@@ -49,7 +49,7 @@ class Movement:
 #: HTML they are one `<header>` element and are emitted as a single chunk.
 MOVEMENTS: Final[tuple[Movement, ...]] = (
     Movement("I", "Who this is", (
-        "title", "plain_reading", "chart_signature", "now_box",
+        "title", "plain_reading", "chart_signature", "sitting", "now_box",
         "ruler", "planet_bios", "psych",
     )),
     Movement("II", "How to read it honestly", (

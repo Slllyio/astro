@@ -2023,6 +2023,24 @@ function render(R, S, FQ){
     add(para('Functional nature for this Lagna — '+ov.functional_natures.map(x=>x[0]+' '+x[1]).join('; '),'muted'));
   if(s.deeptadi&&s.deeptadi.length) add(para('Avasthas (Deeptadi): '+s.deeptadi.join('; '),'muted'));
 
+  // ===== The Sitting (v35) — the continuous reading =====
+  if(R.sitting&&R.sitting.grip){
+    const st=R.sitting;
+    sec('sitting'); add(H2('The reading, as one sitting'));
+    add(para('One continuous reading, in the arc Raman himself used in Notable Horoscopes: '+
+      'the thesis, the striking feature, the cast, the life told forward, and a close that '+
+      'answers the opening. Every sentence re-reads a value the full report computes and '+
+      'cites — how the method reads this chart, not a prediction.','muted'));
+    add(para(st.grip,'lede'));
+    for(const pgraf of (st.paragraphs||[])){
+      const pe=el('p');
+      pe.append(el('strong',{},t(pgraf.heading+'. ')));
+      pe.append(t(pgraf.text));
+      add(pe);
+    }
+    if(st.closing) add(para(st.closing,'lede'));
+  }
+
   // ===== Ruler of the nativity =====
   const ru=R.ruler||{};
   sec('ruler'); add(H2('Ruler of the nativity')); plainLead('ruler');

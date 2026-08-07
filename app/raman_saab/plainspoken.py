@@ -341,8 +341,26 @@ def plain_for_house(r: "DetailedReport", house: int) -> str:
 
     dom = (getattr(r, "dominance", None) or {}).get(house)
     if dom is not None:
-        out += (f" {dom.governing} carries this house — stronger here than {dom.yielding}, so "
-                f"the reading follows {dom.governing} rather than splitting the difference.")
+        # THE WEAVE (v35): when the governor is one of the Sitting's cast, refer BACK to the
+        # character the reader has already met — Raman's own habit ("both together again
+        # constituting another Rajayoga"). The epithet is re-used, not re-derived.
+        member = next((m for m in getattr(getattr(r, "sitting", None), "cast", ()) or ()
+                       if m.planet == dom.governing), None)
+        if member is not None:
+            # Call back by a clause NOT earned from this very house — "the same Saturn, the
+            # deciding voice in house 3, carries house 3" is a circle, not a callback. A
+            # member whose other clause survives is still called back by that one; a member
+            # with no surviving clause is called back by name alone, which is the weave at
+            # its plainest ("the same Jupiter").
+            ok = [c for c in (member.clauses or ()) if f"house {house}" not in c]
+            who = f"{member.planet}, {ok[0]}," if ok else member.planet
+            out += (f" And it is the same {who} that carries this house — stronger here "
+                    f"than {dom.yielding}, so the reading follows it rather than splitting "
+                    f"the difference.")
+        else:
+            out += (f" {dom.governing} carries this house — stronger here than "
+                    f"{dom.yielding}, so the reading follows {dom.governing} rather than "
+                    f"splitting the difference.")
     return out
 
 
@@ -482,11 +500,16 @@ def _timeline_lead(r: "DetailedReport") -> str:
         if getattr(tp.period, "maha", None) == md and getattr(tp.period, "antar", None) == ad:
             lit = sum(1 for a in tp.activated if str(a.grade) == "par_excellence")
             break
-    sub = f" with {ad} as the sub-period" if ad else ""
-    tail = (f" Between them they light {lit} of your houses at the method's top tier — those "
-            f"are the areas it reads as live for you now." if lit else "")
-    return (f"You are in a {md} chapter{sub}.{tail} A period is read here as which areas of "
-            f"life come forward, not as fortune arriving or leaving.")
+    sub = f", {ad} beneath it" if ad else ""
+    # Event-first (v35): the life opens the sentence, the mechanism follows — Raman's own
+    # order ("In his 16th year, Gautama was married... Mark the fact that Saturn owns the
+    # 7th"). The engine used to lead with the period name.
+    head = (f"Now, {lit} areas of your life stand forward at the method's top tier — lit by "
+            f"the running {md} chapter{sub}." if lit else
+            f"Now the {md} chapter{sub} is running, and no single area stands forward at the "
+            f"method's top tier.")
+    return (f"{head} A period is read here as which parts of life come forward, not as "
+            f"fortune arriving or leaving.")
 
 
 def _life_chapters_lead(r: "DetailedReport") -> str:
@@ -503,10 +526,11 @@ def _life_chapters_lead(r: "DetailedReport") -> str:
         m = HOUSE_MATTER.get(h, "")
         if m and m not in matters:
             matters.append(m)
-    where = f" It bears most strongly on {_join(matters)}." if matters else ""
-    return (f"Your life is told below as one chapter per major period, and you are inside "
-            f"{cur.maha}'s.{where} Each chapter is woven from readings already made above — "
-            f"nothing new is judged in them.")
+    where = (f"In this stretch of your life, {_join(matters)} come forward — the chapter "
+             f"{cur.maha} rules is the one you are inside. " if matters else
+             f"You are inside the chapter {cur.maha} rules. ")
+    return (f"{where}Your life is told below as one chapter per major period, each woven from "
+            f"readings already made above — nothing new is judged in them.")
 
 
 def _decades_lead(r: "DetailedReport") -> str:
@@ -516,8 +540,8 @@ def _decades_lead(r: "DetailedReport") -> str:
     inside = sum(1 for d in rows if getattr(d, "inside_window", False))
     return (f"{inside} of the {len(rows)} decades below fall inside the window this report "
             f"actually reads; the rest are listed and left unread rather than quietly filled "
-            f"in. A decade here is the same periods above, sliced differently — an indication "
-            f"of what the method emphasises in a stretch, never a forecast of your years.")
+            f"in. A decade here is the same periods above, sliced differently — where the "
+            f"method's emphasis falls in a stretch.")
 
 
 def _gochara_lead(r: "DetailedReport") -> str:
@@ -843,8 +867,7 @@ def _ishta_kashta_lead(r: "DetailedReport") -> str:
     return (f"Ishta is a planet's capacity for good, Kashta its capacity for difficulty; every "
             f"planet carries both at once. Of the {len(rows)} periods listed, {decided} "
             f"{_v(decided, 'has', 'have')} one "
-            f"of the two clearly prevailing and the rest are left undecided rather than forced. "
-            f"This is a lean, not a forecast of what happens to you.")
+            f"of the two clearly prevailing and the rest are left undecided rather than forced.")
 
 
 def _md_condition_lead(r: "DetailedReport") -> str:

@@ -219,6 +219,21 @@ before and after — **12 of 54 sections addressed the reader at the start, 50 o
   (`\byou\b|\byour\b` per section slice), and *reading the leads in document order*. The count
   caught leads that existed and addressed nobody; only reading caught the truncations, the
   contradiction, and untranslated jargon (`poorvapunya`). Run all three.
+- **THE SITTING (v35, user-requested "instinct and flow", 2026-08-07)** — `sitting.py` composes
+  the reading as ONE continuous piece in Raman's NH arc: the Grip (thesis, echoed by the
+  closing — pinned on `grip_key`), the Cast (2-3 census-ranked grahas with EARNED epithets,
+  clauses kept separately so a callback can drop the one that would be circular in its own
+  house), the life told forward (matters whose house is `unsettled` are HELD APART, never
+  counted either way — verdict and firmness are different axes and one continuous reading must
+  honour both), and event-first timing. The weave in `plain_for_house` calls back to cast
+  members ("the same Jupiter, the strongest planet…") — never circularly.
+- **HEDGE CONSOLIDATION (user decision 2026-08-07, sign-off recorded):** the
+  "not a prediction/never a forecast" family appears at most 8 times per reading (was 26) —
+  the header frame, the nichod/life-synthesis distillation line, and the longevity/maraka
+  family, where the subject demands it. Per-lead and per-row restatements were REMOVED as
+  framing repetition, not data. `test_sitting.py::TestTheHedgeCensus` pins both the cap and
+  that the guard trio still carries it. Do not re-add hedges to individual leads; do not
+  strip the trio.
 
 ## ★ REPORT LLM SURFACES — the four-voice contract (locked 2026-07-28, share-the-app arc)
 

@@ -996,7 +996,11 @@ class TestRulerOfNativity:
         section = markdown[j:k]
         assert "HTJAH-I:16001-16002" in section
         assert "HTJAH-I:6248" in section
-        assert "not a prediction" in section
+        # the per-section "not a prediction" restatement was consolidated OUT by user decision
+        # (hedge consolidation, 2026-08-07): the frame speaks once in the header plus the
+        # guard trio. test_sitting.py::TestTheHedgeCensus pins the census; this section must
+        # NOT re-grow its own copy.
+        assert "not a prediction" not in section
         assert "In simple terms:" in section
 
 
@@ -1221,7 +1225,8 @@ class TestLifeChapters:
         assert "HPA-34:369-381" in section
         assert "HTJAH-I:8410-8411" in section
         assert "HTJAH-I:15950-15999" in section
-        assert "not a prediction" in section
+        # consolidated out (hedge consolidation, 2026-08-07) — see the ruler test above.
+        assert "not a prediction" not in section
         assert section.count("### ") >= 3 and "Mahadasha (" in section
         assert "- now" in section
 

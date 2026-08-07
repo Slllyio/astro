@@ -177,8 +177,9 @@ def movement_passage(r: "DetailedReport", index: int) -> str:
 
     if index == 5:
         syn = getattr(r, "synthesis", None)
-        md = getattr(syn, "running_md", None)
-        ad = getattr(syn, "running_ad", None)
+        from app.raman_saab.synthesis import running_period
+        _rp = running_period(syn)          # sentinel is truthy; never truth-test the field
+        md, ad = _rp if _rp else (None, None)
         if md and ad:
             return because(
                 f"{md} is the running Mahadasha with {ad} as bhukti",

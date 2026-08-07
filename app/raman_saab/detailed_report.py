@@ -2391,10 +2391,21 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
         if sentences:
             life_paragraphs.append((theme, ". ".join(sentences) + "."))
 
-    md_theme = _PLANET_THEME.get(r.synthesis.running_md, "this planet's classical themes")
-    now = (f"You're currently in a {r.synthesis.running_md}-led chapter of life "
-          f"(with {r.synthesis.running_ad} adding its own flavour within it) — classically a "
-          f"time that brings out {md_theme}.")
+    from app.raman_saab.synthesis import running_period
+    _rp = running_period(r.synthesis)
+    if _rp is None:
+        # The date this report is cast for lies outside the chart's unrolled Vimshottari span
+        # — normal for a historical nativity, and the honest thing is to say so rather than
+        # name a period the sequence does not cover.
+        now = ("The date this reading is cast for falls outside this chart's Vimshottari "
+               "sequence, so no period is named as running. Everything above is read from the "
+               "chart itself and stands unchanged; only the placing-in-time is unavailable.")
+    else:
+        _md, _ad = _rp
+        md_theme = _PLANET_THEME.get(_md, "this planet's classical themes")
+        now = (f"You're currently in a {_md}-led chapter of life "
+               f"(with {_ad} adding its own flavour within it) — classically a "
+               f"time that brings out {md_theme}.")
 
     if r.distinctive:
         bits = [f"{_plain_signification(e.signification)} ({_plain_intensity(e.favourability_percentile)})"

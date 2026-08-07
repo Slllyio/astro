@@ -344,6 +344,14 @@ async def _grounded(req, question: Optional[str]) -> dict:
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
         scope = getattr(req, "scope", "summary")
+        # Raman judges each matter from its own house (HTJAH-II:225 for the 7th, and the
+        # reviewed _MATTER_HOUSE table for the rest). When the question plainly names one
+        # matter, that house's full breakdown leads the evidence — doctrine, NOT a measured
+        # improvement, and additive: nothing the question would otherwise have seen is removed.
+        _focus = None
+        if question:
+            from app.raman_saab.matter_routing import focus_house as _fh
+            _focus = _fh(question)
         # The WHOLE LLM path — client construction, critic construction, and the actual
         # completion call — is one fallback boundary: any unexpected failure anywhere in it
         # (not just a network error inside .complete()) must degrade to the engine's own
@@ -356,7 +364,7 @@ async def _grounded(req, question: Optional[str]) -> dict:
                 if lang == "hi":
                     fb["note"] += " (Hindi needs the LLM enabled — showing English.)"
                 return fb
-            ev = build_evidence(to_report_dict(r), scope)
+            ev = build_evidence(to_report_dict(r), scope, focus_house=_focus)
             # sanitize client-supplied history: only 'user'/'assistant' turns, never a forged
             # 'system' line — the client controls both role and text (prompt-injection defence).
             hist = tuple((role, text) for role, text in getattr(req, "history", [])

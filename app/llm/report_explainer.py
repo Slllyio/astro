@@ -483,9 +483,18 @@ def _digest_facts(R: dict) -> list[Fact]:
     return facts
 
 
-def build_evidence(report_dict: dict, scope: str = "summary") -> Evidence:
+def build_evidence(report_dict: dict, scope: str = "summary",
+                   focus_house: Optional[int] = None) -> Evidence:
     """Assemble numbered evidence for a scope. `scope` is 'summary', 'whole', 'digest', 'house:N',
-    or 'section:<key>'. RAG passages are added by the caller if the index is available."""
+    or 'section:<key>'. RAG passages are added by the caller if the index is available.
+
+    `focus_house` ADDS that house's own signification breakdown at the FRONT of the evidence,
+    and removes nothing. A whole-chart scope gives each house a single headline line, so a
+    reader asking about marriage got "House 7 (Venus lord) reads 'mixed'" and nothing more,
+    competing with fifty other facts. Narrowing the scope instead would have hidden the dasha,
+    the 2nd and the 8th from that same question — REPORT COMPLETENESS in a new place. This is
+    Raman's own house assignment for the matter (`matter_routing`), never a measured ranking.
+    """
     if scope == "summary":
         facts = _summary_facts(report_dict)
     elif scope == "whole":
@@ -498,6 +507,15 @@ def build_evidence(report_dict: dict, scope: str = "summary") -> Evidence:
         facts = _section_facts(report_dict, scope.split(":", 1)[1])
     else:
         facts = _summary_facts(report_dict)
+
+    if focus_house is not None:
+        lead = _house_facts(report_dict, focus_house)
+        if lead:
+            seen = {f.text for f in lead}
+            merged = lead + [f for f in facts if f.text not in seen]
+            # renumber contiguously — a Fact's `n` is what the answer cites, so a gap or a
+            # duplicate here surfaces as a broken citation in the reader's answer
+            facts = [Fact(n=i, text=f.text, cite=f.cite) for i, f in enumerate(merged, 1)]
     return Evidence(scope=scope, facts=tuple(facts))
 
 

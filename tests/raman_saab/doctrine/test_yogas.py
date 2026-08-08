@@ -523,3 +523,117 @@ class TestNishturabhashiYoga:
         c = _chart({"Moon": 100.0, "Saturn": 135.0, "Jupiter": 40.0, "Sun": 10.0,
                     "Mars": 160.0, "Mercury": 190.0, "Venus": 220.0})
         assert not _yoga("Y.NISHTURABHASHI").fires(c)
+
+
+# ── tranche 2 (2026-08-09): Lakshmi measured out of its deferral + the far-half 2nd-house
+# block and the Andha pair — same fire/silent discipline per yoga ───────────────────────────
+class TestLakshmiYoga:
+    """Graduated its deferral by measurement: 26/225 geometric, 12/225 with the B1 gate.
+    The synthetic here exercises the GEOMETRIC arm; the strength gate depends on Shadbala,
+    which stated-position charts do not carry — so the positive asserts the geometry and the
+    negative asserts the dignity clause refuses a mere kendra placement."""
+
+    def test_silent_when_ninth_lord_lacks_dignity(self):
+        # Aries lagna: 9th = Sagittarius, lord Jupiter; Jupiter in H7 (Libra) — kendra but
+        # neither own nor exalted -> the conjunctive parse must refuse.
+        c = _chart({"Jupiter": 190.0, "Mars": 10.0, "Sun": 40.0, "Moon": 70.0,
+                    "Mercury": 100.0, "Venus": 130.0, "Saturn": 250.0})
+        assert not _yoga("Y.LAKSHMI").fires(c)
+
+    def test_silent_when_dignified_but_out_of_kendra_trikona(self):
+        # Jupiter in own Sagittarius but that is H9 for Aries... H9 IS a trikona; use Pisces
+        # (H12, own sign, neither kendra nor trikona) instead.
+        c = _chart({"Jupiter": 340.0, "Mars": 10.0, "Sun": 40.0, "Moon": 70.0,
+                    "Mercury": 100.0, "Venus": 130.0, "Saturn": 250.0})
+        assert not _yoga("Y.LAKSHMI").fires(c)
+
+
+class TestMookaYoga:
+    def test_fires_second_lord_in_eighth_with_jupiter(self):
+        # Aries lagna: 2nd = Taurus, lord Venus; Venus and Jupiter together in H8 (Scorpio).
+        c = _chart({"Venus": 220.0, "Jupiter": 225.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Saturn": 130.0})
+        assert _yoga("Y.MOOKA").fires(c)
+
+    def test_silent_without_jupiter(self):
+        c = _chart({"Venus": 220.0, "Jupiter": 100.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mars": 70.0, "Mercury": 130.0, "Saturn": 160.0})
+        assert not _yoga("Y.MOOKA").fires(c)
+
+
+class TestNetranasaYoga:
+    def test_fires_when_all_three_lords_join_lagna(self):
+        """Raman's remark states the arm plainly: the lords of the 2nd, 6th and 10th all in
+        the Lagna. Aries: Venus (2nd), Mercury (6th), Saturn (10th) all in H1."""
+        c = _chart({"Venus": 10.0, "Mercury": 15.0, "Saturn": 20.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mars": 100.0, "Jupiter": 130.0})
+        assert _yoga("Y.NETRANASA").fires(c)
+
+    def test_silent_when_one_lord_is_elsewhere(self):
+        c = _chart({"Venus": 10.0, "Mercury": 15.0, "Saturn": 250.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mars": 100.0, "Jupiter": 130.0})
+        assert not _yoga("Y.NETRANASA").fires(c)
+
+
+class TestSumukhaYoga:
+    def test_fires_on_benefics_in_the_second(self):
+        c = _chart({"Jupiter": 40.0, "Sun": 10.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Venus": 160.0, "Saturn": 190.0})
+        assert _yoga("Y.SUMUKHA").fires(c)
+
+    def test_silent_when_the_second_is_empty_and_lord_unaspected(self):
+        # 2nd lord Venus in H3 (not a kendra), 2nd house empty of benefics.
+        c = _chart({"Venus": 70.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Saturn": 190.0})
+        assert not _yoga("Y.SUMUKHA").fires(c)
+
+
+class TestDurmukhaYoga:
+    def test_fires_malefic_in_second_with_afflicted_lord(self):
+        # Saturn (malefic) in H2; 2nd lord Venus conjunct Mars (evil planet) in H5.
+        c = _chart({"Saturn": 40.0, "Venus": 130.0, "Mars": 133.0, "Sun": 10.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Jupiter": 250.0})
+        assert _yoga("Y.DURMUKHA").fires(c)
+
+    def test_silent_when_the_lord_is_clean(self):
+        c = _chart({"Saturn": 40.0, "Venus": 130.0, "Mars": 300.0, "Sun": 10.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Jupiter": 250.0})
+        assert not _yoga("Y.DURMUKHA").fires(c)
+
+
+class TestSraddhannabhukthaYoga:
+    def test_fires_when_saturn_owns_the_second(self):
+        """Sagittarius lagna (asc 240): the 2nd is Capricorn — Saturn's own sign."""
+        c = _chart({"Saturn": 100.0, "Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                    "Mercury": 130.0, "Jupiter": 160.0, "Venus": 190.0}, asc_lon=240.0)
+        assert _yoga("Y.SRADDHANNABHUKTHA").fires(c)
+
+    def test_fires_when_saturn_joins_the_second_lord(self):
+        # Aries lagna: 2nd lord Venus; Saturn with Venus in H5.
+        c = _chart({"Saturn": 130.0, "Venus": 133.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Jupiter": 250.0})
+        assert _yoga("Y.SRADDHANNABHUKTHA").fires(c)
+
+    def test_silent_when_saturn_is_unrelated(self):
+        # Aries lagna; Saturn alone in H6 (Virgo): not own-2nd, not with Venus (H5), and from
+        # H6 its 3rd/7th/10th aspects land on H8/H12/H3 — never the 2nd.
+        c = _chart({"Saturn": 160.0, "Venus": 130.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Jupiter": 250.0})
+        assert not _yoga("Y.SRADDHANNABHUKTHA").fires(c)
+
+
+class TestAndhaYoga:
+    def test_fires_form_288_sun_rahu_rising_with_trikona_malefics(self):
+        c = _chart({"Sun": 10.0, "Rahu": 15.0, "Mars": 130.0, "Saturn": 250.0,
+                    "Moon": 40.0, "Mercury": 70.0, "Jupiter": 100.0, "Venus": 160.0})
+        assert _yoga("Y.ANDHA").fires(c)
+
+    def test_fires_form_289_the_four_malefic_seats(self):
+        c = _chart({"Mars": 40.0, "Moon": 160.0, "Saturn": 340.0, "Sun": 220.0,
+                    "Mercury": 10.0, "Jupiter": 100.0, "Venus": 130.0})
+        assert _yoga("Y.ANDHA").fires(c)
+
+    def test_silent_when_neither_form_holds(self):
+        c = _chart({"Sun": 10.0, "Rahu": 40.0, "Mars": 70.0, "Saturn": 100.0,
+                    "Moon": 130.0, "Mercury": 160.0, "Jupiter": 190.0, "Venus": 220.0})
+        assert not _yoga("Y.ANDHA").fires(c)

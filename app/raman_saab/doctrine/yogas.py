@@ -606,6 +606,31 @@ class _NthLordWithMaleficOrDebilitated(C.Condition):
                    for m in ("Sun", "Mars", "Saturn", "Rahu", "Ketu"))
 
 
+class _Sumukha167(C.Condition):
+    """Sumukha's second printed arm (3HCC:5856, combination 167): the 2nd lord posited in a
+    kendra which is his exaltation, own or friendly sign, AND the lord of that kendra sign
+    attains Gopuramsa. Graduated 2026-08-09 when the varga-attainment primitive landed —
+    rung 8 of Raman's GBB ladder, measured reachable for every planet over the shodasavarga
+    (primitives/varga_attainment.py)."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.relationships import naisargika
+        from app.raman_saab.primitives.varga_attainment import attains_gopuramsa
+        chart = ctx.chart
+        lord2 = _house_lord(2, chart)
+        p = chart.planets.get(lord2)
+        if p is None or p.rasi_house not in _KENDRAS:
+            return False
+        dig = dignity_state(lord2, p.sign)
+        friendly = naisargika(lord2, SIGN_LORDS[p.sign]) == "friend"
+        if dig not in ("own", "exalted", "moolatrikona") and not friendly:
+            return False
+        kendra_lord = SIGN_LORDS[p.sign]
+        return attains_gopuramsa(chart, kendra_lord)
+
+
 class _SaturnOwnsJoinsOrAfflictsSecond(C.Condition):
     """Sraddhannabhuktha (3HCC:5963): Saturn owns the 2nd, OR joins the 2nd lord, OR the 2nd
     is aspected by a debilitated Saturn."""
@@ -1152,11 +1177,12 @@ YOGAS: tuple[YogaRecord, ...] = (
         source=Citation("3HCC", 5810)),
     YogaRecord(
         id="Y.SUMUKHA", name="Sumukha Yoga", kind="other",
-        # combination 166 only: 2nd lord in a kendra aspected by benefics, OR benefics in the
-        # 2nd. Combination 167 needs Gopuramsa (shadvarga attainment) — unmodelled; skipped
-        # with the record below.
+        # combination 166 (2nd lord in a kendra aspected by benefics, OR benefics in the 2nd)
+        # PLUS combination 167 (graduated 2026-08-09: the Gopuramsa primitive now exists —
+        # 2nd lord in a dignified/friendly kendra whose sign-lord attains rung 8).
         condition=C.Or(_NthLordInKendraAspectedByBenefic(2),
-                       C.CountInHouse(2, 1, "benefic")),
+                       C.CountInHouse(2, 1, "benefic"),
+                       _Sumukha167()),
         effect=("An attractive and smiling face."),
         source=Citation("3HCC", 5853)),
     YogaRecord(
@@ -1196,12 +1222,20 @@ YOGAS: tuple[YogaRecord, ...] = (
 # 2nd, 5th and 11th should be exalted" — ALL-three vs ANY-one is undisambiguated and the
 # readings differ by orders of magnitude (the Lakshmi precedent exactly).
 #
-# Tranche-2 skips (2026-08-09): SUMUKHA-167 needs Gopuramsa and BHOJANA SOUKHYA (170) /
-# ANNADANA (171) need Vaiseshikamsa — shadvarga-attainment classifications the engine does
-# not model; DURMUKHA-169 needs Gulika (not computed); PARANNABHOJANA (172) has its
-# definition split across a page-break chart figure in the complete-edition OCR — needs the
-# manual audit before its clauses can be trusted. LAKSHMI itself GRADUATED this tranche:
-# measured 26/225 geometric, 12/225 gated (5.3%), registered as Y.LAKSHMI above.
+# Tranche-2 skips (2026-08-09): DURMUKHA-169 needs Gulika (not computed); PARANNABHOJANA
+# (172) has its definition split across a page-break chart figure in the complete-edition
+# OCR — needs the manual audit before its clauses can be trusted. LAKSHMI GRADUATED tranche
+# 2 (26/225 geometric, 12/225 gated, 5.3%); SUMUKHA-167 GRADUATED tranche 3 when the
+# varga-attainment primitive landed.
+#
+# BHOJANA SOUKHYA (170) and ANNADANA (171) are now a MEASURED deferral, the sharpest kind:
+# both demand the 2nd lord in VAISESHIKAMSA — rung 12 of Raman's GBB amsa ladder — and a
+# 0.05-degree longitude scan over the engine's shodasavarga shows rung 12 is unreachable for
+# most planets under EVERY counting basis measured (own-sign: only Mars; own+exalted+moola:
+# only Sun and Mars). Raman's worked example demonstrates the count on the saptavarga, where
+# twelve is arithmetically impossible. Encoding any reading would either be dead code or a
+# silent redefinition of his count. Full record: primitives/varga_attainment.py, which
+# deliberately does not export a vaiseshikamsa predicate.
 # DEFERRED HPA-20 yogas — RE-ATTEMPTED 2026-08-03 with the B1 effective-strength measure and
 # still deferred, now for a MEASURED reason. The original deferral blamed the is_powerful proxy
 # ("re-attempt once an effective-strength measure exists"); the re-attempt disproves that

@@ -165,25 +165,73 @@ def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, st
     return [anchored[k] for k in sorted(anchored)], unanchored
 
 
-def encoded_citation_lines() -> set[int]:
-    """Every 3HC line number the yoga registry cites."""
+def encoded_yoga_names() -> set[str]:
+    """Normalized names of every registered yoga citing ANY 3HC-family tag (3HC/3HCH/3HCC).
+
+    The original cross-reference counted legacy 3HC:line cites inside a combination's span —
+    blind to the newer copies' tags, so it undercounted (28 while the registry held 84).
+    Names are the stable join key across three differently-numbered editions."""
     text = YOGAS.read_text(encoding="utf-8")
-    return {int(m) for m in re.findall(r"3HC[:-](\d+)", text)}
+    names: set[str] = set()
+    for m in re.finditer(
+            r'name="([^"]+)".*?source=Citation\("(3HC[CH]?)"', text, re.S):
+        names.add(_norm(m.group(1).replace("Yoga", "")))
+    return names
+
+
+def encoded_citation_lines() -> set[int]:
+    """Every legacy-3HC line number the registry cites (kept for span diagnostics)."""
+    text = YOGAS.read_text(encoding="utf-8")
+    return {int(m) for m in re.findall(r"3HC[:-](\d+)", text)}
 
 
 def main() -> int:
     combos, unanchored = parse_combinations()
-    cites = encoded_citation_lines()
+    enc_names = encoded_yoga_names()
     if not combos:
         print("no combinations parsed — source layout changed?", file=sys.stderr)
         return 1
 
-    # a combination counts as encoded when a registry citation lands inside its line-span
-    spans = [(n, name, line,
-              combos[idx + 1][2] if idx + 1 < len(combos) else 10 ** 9)
-             for idx, (n, name, line) in enumerate(combos)]
-    rows = [(n, name, line, any(line <= c < end for c in cites))
-            for n, name, line, end in spans]
+    # a combination counts as encoded when a registered yoga citing any 3HC-family tag
+    # matches it by normalized name (the stable key across three editions)
+    def _edit1(a: str, b: str) -> bool:
+        """Levenshtein distance <= 1 — absorbs single-letter OCR variants
+        (sonapha/sunapha, keraadruma/kemadruma-adjacent) without fuzz libraries."""
+        if abs(len(a) - len(b)) > 1:
+            return False
+        if len(a) > len(b):
+            a, b = b, a
+        i = j = diff = 0
+        while i < len(a) and j < len(b):
+            if a[i] == b[j]:
+                i += 1; j += 1
+            else:
+                diff += 1
+                if diff > 1:
+                    return False
+                if len(a) == len(b):
+                    i += 1
+                j += 1
+        return diff + (len(b) - j) <= 1
+
+    def _is_encoded(name: str) -> bool:
+        base = _norm(re.sub(r"\(group.*?\)", "", name)
+                     .replace("YOGAS", "").replace("YOGA", ""))
+        if not base:
+            return False
+        for k in enc_names:
+            if not k:
+                continue
+            if k == base or _edit1(k, base):
+                return True
+            # containment only for long names of comparable length ("sakata" inside
+            # "sakata akriti" is real; "gaja" inside "gajakesari" is not)
+            if ((k in base or base in k)
+                    and min(len(k), len(base)) >= 6
+                    and min(len(k), len(base)) / max(len(k), len(base)) >= 0.7):
+                return True
+        return False
+    rows = [(n, name, line, _is_encoded(name)) for n, name, line in combos]
 
     acquired = {n for n, *_ in rows}
     last = 300 if SOURCE_COMPLETE.is_file() else 162

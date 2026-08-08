@@ -637,3 +637,23 @@ class TestAndhaYoga:
         c = _chart({"Sun": 10.0, "Rahu": 40.0, "Mars": 70.0, "Saturn": 100.0,
                     "Moon": 130.0, "Mercury": 160.0, "Jupiter": 190.0, "Venus": 220.0})
         assert not _yoga("Y.ANDHA").fires(c)
+
+
+class TestSumukha167Arm:
+    """Combination 167, graduated when the Gopuramsa primitive landed: the 2nd lord in a
+    dignified-or-friendly kendra whose sign-lord attains rung 8 of Raman's ladder."""
+
+    def test_fires_on_the_gopuramsa_chain(self):
+        # Aries lagna: 2nd lord Venus in H7 (Libra — own sign, a kendra) at its best seat
+        # (180.75: 10 own-vargas, >= 8); the kendra's sign-lord is Venus itself, which
+        # therefore attains Gopuramsa. Self-reference satisfies the letter of the text.
+        c = _chart({"Venus": 180.75, "Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                    "Mercury": 100.0, "Jupiter": 130.0, "Saturn": 250.0})
+        assert _yoga("Y.SUMUKHA").fires(c)
+
+    def test_silent_when_the_lord_is_out_of_kendra_and_no_other_arm_holds(self):
+        # Venus (2nd lord) in H3; 2nd empty of benefics; no benefic aspects Venus from a
+        # kendra chain — all three Or-arms must refuse together.
+        c = _chart({"Venus": 70.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Saturn": 190.0})
+        assert not _yoga("Y.SUMUKHA").fires(c)

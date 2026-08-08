@@ -46,9 +46,12 @@ def test_known_anchors_hold():
         assert max(by_num) == 162
 
 
-def test_encoded_count_matches_the_registry():
-    """The 'encoded' bucket is derived from real 3HC citations in doctrine/yogas.py — if the
-    registry grows, this inventory must see it without edits."""
-    cites = inv.encoded_citation_lines()
-    assert cites, "yogas.py cites 3HC today; empty means the cross-reference broke"
-    assert all(isinstance(c, int) and c > 0 for c in cites)
+def test_encoded_join_sees_the_registry():
+    """The 'encoded' bucket joins by normalized NAME across all three 3HC-family tags
+    (updated 2026-08-09 when the legacy line-span join was found blind to 3HCH/3HCC and
+    undercounting 28-vs-84). If the registry grows, the inventory must see it without edits."""
+    names = inv.encoded_yoga_names()
+    assert names, "no 3HC-family-cited yogas found — the cross-reference regex broke"
+    assert "gajakesari" in names            # legacy 3HC cite
+    assert "nishturabhashi" in names        # 3HCC cite (the far half)
+    assert "lakshmi" in names               # 3HCH cite (tranche 2)

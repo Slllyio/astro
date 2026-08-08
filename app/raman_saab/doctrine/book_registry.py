@@ -130,6 +130,12 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Prasna Marga, Vol I (Raman's translation & notes)"),
     BookEntry("PM2", "prasna_marga_vol2", True, "live",
               None, "Prasna Marga, Vol II (Raman's translation & notes)"),
+    # THE COMPLETE 3HC (user's Drive scan, Motilal Banarsidass, 350pp, 2026-08-08) — the first
+    # corpus copy containing combinations 163-300; every circulating scan before it truncated
+    # at 162. Canonical citation target for encoding the far half.
+    BookEntry("3HCC", "three_hundred_combinations_complete", False, "live",
+              "chapter_001_full-text-unsplit.md",
+              "Three Hundred Important Combinations (COMPLETE, Motilal ed.)"),
     # A cleaner OCR of 3HC (user-supplied HOCR searchtext, 2026-08-08). SAME truncation as the
     # existing copies — the circulating scan family ends at combination 162 — but headings and
     # the Definition/Results/Remarks paragraphs come out on single lines, so NEW yoga encodings

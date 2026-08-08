@@ -27,6 +27,10 @@ SOURCE = (ROOT / "data/knowledge_library/sources/three_hundred_combinations_rama
 #: structure) — merged as a second anchor source under its own citation tag
 SOURCE_HOCR = (ROOT / "data/knowledge_library/sources/three_hundred_combinations_hocr/"
                       "chapter_001_full-text-unsplit.md")
+#: THE COMPLETE EDITION (user's Drive scan, 2026-08-08) — the only copy with 163-300.
+#: Anchors carry the 3HCC tag (negative-offset -1_000_000 - line to distinguish from 3HCH).
+SOURCE_COMPLETE = (ROOT / "data/knowledge_library/sources/three_hundred_combinations_complete/"
+                          "chapter_001_full-text-unsplit.md")
 YOGAS = ROOT / "app/raman_saab/doctrine/yogas.py"
 OUT = ROOT / "docs/raman_saab/THREE_HUNDRED_INVENTORY.md"
 
@@ -134,6 +138,30 @@ def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, st
             if 1 <= n <= 300 and n not in anchored and "yoga" in _norm(m.group(2)):
                 anchored[n] = (n, m.group(2).strip().rstrip(".").upper(), -i)
         unanchored = [(n, name) for n, name in unanchored if n not in anchored]
+    # ── the complete edition: same two heading forms, one more OCR quirk (the em-dash after
+    # "Definition" renders as ".-"), numbering runs 1-300. Fills everything the truncated
+    # scans cannot, and backfills stragglers for 1-162 as a third opinion.
+    if SOURCE_COMPLETE.is_file():
+        clines = SOURCE_COMPLETE.read_text(encoding="utf-8", errors="replace").splitlines()
+        chead = re.compile(r"^\s*(\d{1,3})[.,]\s+([A-Za-z][A-Za-z0-9' \-]{2,60}?)\.?\s*$")
+        for i, ln in enumerate(clines, 1):
+            norm = re.sub(r"\s+", " ", ln).strip()
+            r = _RANGE.match(norm)
+            if r and "yoga" in _norm(r.group(3)):
+                a, b = int(r.group(1)), int(r.group(2))
+                if 1 <= a < b <= 300 and (b - a) <= 30:
+                    name = r.group(3).strip().rstrip(".").title()
+                    for n in range(a, b + 1):
+                        if n not in anchored:
+                            anchored[n] = (n, f"{name} (group {a}-{b})", -1_000_000 - i)
+                    continue
+            m = chead.match(norm)
+            if not m:
+                continue
+            n = int(m.group(1))
+            if 1 <= n <= 300 and n not in anchored and "yoga" in _norm(m.group(2)):
+                anchored[n] = (n, m.group(2).strip().rstrip("."), -1_000_000 - i)
+        unanchored = [(n, name) for n, name in unanchored if n not in anchored]
     return [anchored[k] for k in sorted(anchored)], unanchored
 
 
@@ -158,7 +186,7 @@ def main() -> int:
             for n, name, line, end in spans]
 
     acquired = {n for n, *_ in rows}
-    last = 162  # the scan's own final combination (its ToC ends there)
+    last = 300 if SOURCE_COMPLETE.is_file() else 162
     known = acquired | {n for n, _ in unanchored}
     gaps = unanchored
     illegible = sorted(set(range(1, last + 1)) - known)
@@ -185,18 +213,24 @@ def main() -> int:
         f"| **beyond the scan — procurement needed** | **{len(missing)}** "
         f"({missing[0]}-{missing[-1]}) |" if missing else "| beyond the scan | 0 |",
         "",
-        "Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, ending at "
-        "combination 162 (the ToC's own final entry). Encoding beyond 162 requires acquiring a "
-        "complete edition (in print; UBS) — recorded in SOURCE_EXPANSION_RESEARCH.md.",
+        ("**The complete edition is acquired** (user's Drive scan, Motilal ed., ingested "
+         "2026-08-08 as `3HCC`) — the first copy containing 163-300; every earlier circulating "
+         "scan truncated at 162. Cite 3HCC for the far half, 3HCH for 1-162 where its OCR is "
+         "cleaner." if SOURCE_COMPLETE.is_file() else
+         "Both truncated scans end at combination 162; a complete edition must be procured."),
         "",
         "## On disk, not yet encoded",
         "",
         "| # | name | source line |",
         "|---|---|---|",
     ]
-    lines += [f"| {n} | {name} | "
-              f"{'3HCH:' + str(-line) if line < 0 else '3HC:' + str(line)} |"
-              for n, name, line, _ in pending]
+    def _tag(line: int) -> str:
+        if line <= -1_000_000:
+            return f"3HCC:{-line - 1_000_000}"
+        if line < 0:
+            return f"3HCH:{-line}"
+        return f"3HC:{line}"
+    lines += [f"| {n} | {name} | {_tag(line)} |" for n, name, line, _ in pending]
     if illegible:
         lines += ["", "## Not machine-legible (numbers the OCR hides — audit by hand)", "",
                   ", ".join(str(n) for n in illegible)]

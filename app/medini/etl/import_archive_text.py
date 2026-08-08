@@ -519,6 +519,16 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
     _Book(
+        identifier="ThreeHundredImportantCombinations_complete_drive",
+        filename="drive_3hc.pdf",
+        book_slug="three_hundred_combinations_complete",
+        book_title="Three Hundred Important Combinations (complete)",
+        author="B. V. Raman",
+        translator="",
+        classical_ref_prefix="ThreeHundredCombinations",
+        header_regex=_DEFAULT_HEADER_REGEX,
+    ),
+    _Book(
         identifier="ThreeHundredImportantCombinations_hocr",
         filename="ThreeHundredImportantCombinations_hocr_searchtext.txt",
         book_slug="three_hundred_combinations_hocr",

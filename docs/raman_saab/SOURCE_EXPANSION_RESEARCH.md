@@ -115,10 +115,11 @@ against period almanacs like the on-disk 1906 Sharvari panchanga).
    user-supplied cleaner HOCR copy was ingested as 3HCH and the parser learned Raman's
    range-group headings — "33 to 44. Malika Yoga" is twelve combinations under one heading):
    **121 combinations on disk and unencoded** (the immediately-workable frontier), 16 more
-   needing a hand audit (named in the inventory), and **138 (nos. 163-300) absent — every
-   circulating scan checked, including the fresh upload, truncates at combination 162, so a
-   complete edition must be procured**. Still the largest pure-Raman gain; the far half is a
-   purchase, not a coding task.
+   needing a hand audit (named in the inventory), and ****PROCUREMENT FULFILLED 2026-08-08**: the
+   user supplied the complete Motilal edition (350pp) from their Drive within hours of this
+   report naming it — ingested as `3HCC`, the first corpus copy containing 163-300. The
+   inventory now reads **275 of 300 acquired, 247 awaiting encoding, 0 absent** (25 on the
+   manual-audit list). The largest pure-Raman gain is now entirely a coding task.
 4. **HPA-20 named yogas** (with 3HC — same registry).
 5. **Procure the casebook**: My Experiences + Catechism (in print, cheap); the magazine archive
    is the long game — BORI Pune and the eMagazine successor are the leads found.

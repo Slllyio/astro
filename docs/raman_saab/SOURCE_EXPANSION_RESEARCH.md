@@ -111,10 +111,14 @@ against period almanacs like the on-disk 1906 Sharvari panchanga).
 3. **3HC completion** (the big one) — **CORRECTED 2026-08-08 by the inventory tool**
    (`tools/raman_saab/inventory_3hc.py` → `THREE_HUNDRED_INVENTORY.md`): both on-disk copies
    are the SAME truncated scan ending at combination 162, so the original "~260 on disk"
-   claim was wrong. The honest arithmetic: **78 combinations parsed, on disk and unencoded**
-   (the immediately-workable frontier), ~68 more present-but-OCR-mangled (manual-audit list in
-   the inventory), and **138 (nos. 163-300) absent — a complete edition must be procured
-   first**. Still the largest pure-Raman gain; half of it is a purchase, not a coding task.
+   claim was wrong. The honest arithmetic (after the
+   user-supplied cleaner HOCR copy was ingested as 3HCH and the parser learned Raman's
+   range-group headings — "33 to 44. Malika Yoga" is twelve combinations under one heading):
+   **121 combinations on disk and unencoded** (the immediately-workable frontier), 16 more
+   needing a hand audit (named in the inventory), and **138 (nos. 163-300) absent — every
+   circulating scan checked, including the fresh upload, truncates at combination 162, so a
+   complete edition must be procured**. Still the largest pure-Raman gain; the far half is a
+   purchase, not a coding task.
 4. **HPA-20 named yogas** (with 3HC — same registry).
 5. **Procure the casebook**: My Experiences + Catechism (in print, cheap); the magazine archive
    is the long game — BORI Pune and the eMagazine successor are the leads found.

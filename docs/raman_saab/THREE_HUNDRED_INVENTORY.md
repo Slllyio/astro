@@ -7,11 +7,11 @@
 | | count |
 |---|---|
 | combinations in the book | 300 |
-| **acquired on disk** | **89** (1-162) |
+| **acquired on disk** | **137** (1-162) |
 | encoded in `doctrine/yogas.py` (by 3HC citation) | 16 |
-| **on disk, awaiting encoding — the workable frontier** | **73** |
+| **on disk, awaiting encoding — the workable frontier** | **121** |
 | in the ToC but illegible in the body (true OCR gaps) | 9 |
-| invisible to the parser entirely — manual-audit list below | 64 |
+| invisible to the parser entirely — manual-audit list below | 16 |
 | **beyond the scan — procurement needed** | **138** (163-300) |
 
 Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, ending at combination 162 (the ToC's own final entry). Encoding beyond 162 requires acquiring a complete edition (in print; UBS) — recorded in SOURCE_EXPANSION_RESEARCH.md.
@@ -23,16 +23,19 @@ Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, endin
 | 1 | GAJAKESARI YOGA | 3HC:1587 |
 | 3 | ANAPHA YOGA | 3HC:1980 |
 | 4 | DHURDHURA YOGA | 3HC:2064 |
+| 5 | KEMADRUMA YOGA | 3HC:2170 |
 | 9 | VASUMATHI YOGA | 3HC:2710 |
 | 10 | RAJALAKSHAHA YOGA | 3HC:2828 |
 | 11 | VANCHANACHORABHEETHI YOGA | 3HC:2859 |
 | 12 | SAKATA YOGA | 3HC:2982 |
+| 16 | VESI Y06A | 3HC:3265 |
 | 17 | VASI YOGA | 3HC:3384 |
 | 18 | OBHAYACHARI YOGA | 3HC:3400 |
 | 20 | MALAVYA YOGA | 3HC:3678 |
 | 21 | SASA YOGA | 3HC:3735 |
 | 22 | RUCHAKA YOGA | 3HC:3850 |
 | 23 | BHADRA YOGA | 3HC:3971 |
+| 24 | BUDHA-AD1TYA YOGA | 3HC:4057 |
 | 25 | MAHABHAGYA YOGA | 3HC:4078 |
 | 26 | PUSHKALA YOGA | 3HC:4170 |
 | 27 | Lakshmi Yoga | 3HC:4193 |
@@ -41,6 +44,18 @@ Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, endin
 | 30 | KUSUMA YOGAS | 3HC:4649 |
 | 31 | CHAPA YOGA | 3HC:4671 |
 | 32 | SREENATHA YOGA | 3HC:4690 |
+| 33 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 34 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 35 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 36 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 37 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 38 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 39 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 40 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 41 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 42 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 43 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
+| 44 | MALIKA YOGAS (group 33-44) | 3HC:4726 |
 | 45 | SANKHA YOGA | 3HC:4764 |
 | 46 | BHERI YOGA | 3HC:4869 |
 | 47 | MATSYA YOGA | 3HC:4950 |
@@ -48,8 +63,12 @@ Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, endin
 | 49 | PARIJATHA YOGA | 3HC:5087 |
 | 54 | Kusuma Yoga | 3HC:4649 |
 | 55 | Matsya Yoga | 3HC:4950 |
+| 60 | jay a Y'oga | 3HC:5663 |
+| 64 | Vishnu Y'oga | 3HC:5163 |
+| 65 | Brahma Y'oga | 3HC:5230 |
 | 66 | INDRA YOGA | 3HC:5368 |
 | 67 | RAVI YOGA | 3HC:5390 |
+| 69 | Go Y'oga | 3HC:5497 |
 | 70 | GOLA YOGA | 3HC:5606 |
 | 71 | THRIIOCHANA YOGA | 3HC:5625 |
 | 72 | SAMUDRA YOGA | 3HC:5642 |
@@ -84,30 +103,59 @@ Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, endin
 | 110 | Sarala Yoga | 3HC:7316 |
 | 111 | Vimala Yoga | 3HC:7318 |
 | 112 | SAREERA SOUKHYA YOGA | 3HC:7358 |
+| 113 | DIHAPUSHT1 YOGA | 3HC:7375 |
 | 114 | DEHAKASHTA YOGA | 3HC:7393 |
+| 115 | R0GA6RASTHA YOGA | 3HC:7409 |
+| 118 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
+| 119 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
+| 120 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
+| 121 | SADA SANCHARA YOGA | 3HC:7610 |
+| 122 | DHANA YOGAS (group 122-126) | 3HC:7630 |
+| 123 | DHANA YOGAS (group 122-126) | 3HC:7630 |
+| 124 | DHANA YOGAS (group 122-126) | 3HC:7630 |
+| 125 | DHANA YOGAS (group 122-126) | 3HC:7630 |
+| 126 | DHANA YOGAS (group 122-126) | 3HC:7630 |
+| 127 | DHACA YOGA (group 122-132) | 3HCH:376 |
+| 128 | DHACA YOGA (group 122-132) | 3HCH:376 |
+| 129 | DHACA YOGA (group 122-132) | 3HCH:376 |
+| 130 | DHACA YOGA (group 122-132) | 3HCH:376 |
+| 131 | DHACA YOGA (group 122-132) | 3HCH:376 |
 | 133 | BAHUDRAVYARJANA YOGA | 3HC:8184 |
+| 134 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
+| 135 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
+| 136 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
 | 138 | ANTHYAVAYASI DHANA YOGA | 3HC:8421 |
 | 139 | BALYA DHANA YOGA | 3HC:8442 |
 | 142 | MATRUMOOLADDHANA YOGA | 3HC:8543 |
 | 143 | PUTRAMULADDHANA YOGA | 3HC:8558 |
 | 144 | SATRUMULADDHANA YOGA | 3HC:8651 |
+| 148 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 149 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 150 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 151 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 152 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 153 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 154 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 155 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 156 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 157 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 160 | PARSHASAKA YOGA | 3HC:8836 |
 | 162 | JAM YOGA | 3HC:8967 |
 
 ## Not machine-legible (numbers the OCR hides — audit by hand)
 
-6, 16, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 52, 57, 60, 61, 63, 64, 65, 69, 79, 81, 113, 115, 116, 117, 118, 119, 120, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 134, 135, 136, 137, 140, 141, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 161
+52, 61, 63, 79, 81, 116, 117, 137, 140, 141, 145, 146, 147, 158, 159, 161
 
 ## In the ToC, never found in the body
 
-24 (budha-Achtya Yoga), 50 (Gaja Yoga), 51 (Kalanidhi Yoga), 53 (PIanhara Brahma Yoga), 56 (Kurma Yoga), 58 (Makuta Yoga), 59 (Chandtka Yoga), 62 (Gandharva Yoga), 68 (Garada Yoga)
+50 (Gaja Yoga), 51 (Kalanidhi Yoga), 53 (PIanhara Brahma Yoga), 56 (Kurma Yoga), 57 (Devendra Y'oga), 58 (Makuta Yoga), 59 (Chandtka Yoga), 62 (Gandharva Yoga), 68 (Garada Yoga)
 
 ## Already encoded (citation inside the combination's span)
 
 | # | name | source line |
 |---|---|---|
 | 2 | SONAPHA YOGA | 3HC:1832 |
-| 5 | KEMADRUMA YOGA | 3HC:2170 |
+| 6 | CHANDRARAAIIGALA YOGA | 3HC:-114 |
 | 7 | AD HI YOGA | 3HC:2440 |
 | 8 | CHATUSSAGARA YOGA | 3HC:2611 |
 | 13 | AMALA YOGA | 3HC:3035 |
@@ -121,4 +169,4 @@ Both `three_hundred_combinations_raman` and `..._1947` hold the same scan, endin
 | 104 | Nala Yoga | 3HC:7081 |
 | 106 | Sarpa Yoga | 3HC:7173 |
 | 108 | DARIDRA YOGA | 3HC:7289 |
-| 121 | SADA SANCHARA YOGA | 3HC:7610 |
+| 132 | DHACA YOGA (group 122-132) | 3HC:-376 |

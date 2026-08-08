@@ -130,6 +130,13 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Prasna Marga, Vol I (Raman's translation & notes)"),
     BookEntry("PM2", "prasna_marga_vol2", True, "live",
               None, "Prasna Marga, Vol II (Raman's translation & notes)"),
+    # A cleaner OCR of 3HC (user-supplied HOCR searchtext, 2026-08-08). SAME truncation as the
+    # existing copies — the circulating scan family ends at combination 162 — but headings and
+    # the Definition/Results/Remarks paragraphs come out on single lines, so NEW yoga encodings
+    # should cite 3HCH; the 58 existing 3HC cites stay against the old file untouched.
+    BookEntry("3HCH", "three_hundred_combinations_hocr", False, "live",
+              "chapter_001_full-text-unsplit.md",
+              "Three Hundred Important Combinations (HOCR searchtext, 1-162)"),
     # Raman's first book (1935) — natal casting mechanics; cross-checks HPA. Ordinary live scope.
     BookEntry("MANUAL", "manual_hindu_astrology_raman_1935", True, "live",
               None, "A Manual of Hindu Astrology (1935)",

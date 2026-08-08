@@ -519,6 +519,16 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
     _Book(
+        identifier="ThreeHundredImportantCombinations_hocr",
+        filename="ThreeHundredImportantCombinations_hocr_searchtext.txt",
+        book_slug="three_hundred_combinations_hocr",
+        book_title="Three Hundred Important Combinations (HOCR)",
+        author="B. V. Raman",
+        translator="",
+        classical_ref_prefix="ThreeHundredCombinations",
+        header_regex=_DEFAULT_HEADER_REGEX,
+    ),
+    _Book(
         # Registered live 2026-08-08 (SOURCE_EXPANSION_RESEARCH.md) — Raman's first book;
         # already ingested on disk, this entry is the provenance/coupling record.
         identifier="AManualOfHinduAstrologyBVRaman1935Edition",

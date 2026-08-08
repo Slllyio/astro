@@ -23,21 +23,36 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SOURCE = (ROOT / "data/knowledge_library/sources/three_hundred_combinations_raman/"
                  "chapter_001_full-text-unsplit.md")
+#: the cleaner HOCR copy (user-supplied 2026-08-08; SAME 1-162 truncation, far better line
+#: structure) — merged as a second anchor source under its own citation tag
+SOURCE_HOCR = (ROOT / "data/knowledge_library/sources/three_hundred_combinations_hocr/"
+                      "chapter_001_full-text-unsplit.md")
 YOGAS = ROOT / "app/raman_saab/doctrine/yogas.py"
 OUT = ROOT / "docs/raman_saab/THREE_HUNDRED_INVENTORY.md"
 
 #: body headings only — the ToC ends before line ~1300 and lists page numbers, not content
 _BODY_START = 1300
-#: numbered heading, optional trailing period the OCR adds half the time
-_HEAD = re.compile(r"^\s*(\d{1,3})\.\s+([A-Z][A-Za-z' \-]{2,60}?)\.?\s*$")
+#: numbered heading; the OCR renders the dot as "." or "," half the time
+_HEAD = re.compile(r"^\s*(\d{1,3})[.,]\s+([A-Z][A-Za-z0-9' \-]{2,60}?)\.?\s*$")
+#: Raman GROUPS combinations under one heading — "33 to 44. Malika Yoga" is twelve numbers.
+#: The residual runs the first inventory called "illegible" were mostly these groups.
+#: body group headings end at the name ("122 to 126. DHANA YOGAS") — greedy, end-anchored.
+#: (The first version was non-greedy against a permissive tail and captured "DHA", which the
+#: yoga-word filter then rejected — a parser that silently skipped every group it existed for.)
+_RANGE = re.compile(r"^\s*(\d{1,3})\s+to\s+(\d{1,3})[.,]?\s+([A-Za-z][A-Za-z0-9' \-]{2,60})\.?\s*$")
 #: a ToC row: "47. Matsya Yoga ... ... 56"
 #: dot-leaders come out of OCR as "...", "…", "••", ", ,," and mixes — accept any run of them
 _TOC = re.compile(
-    r"^\s*(\d{1,3})\.\s+([A-Za-z][A-Za-z' \-]{2,60}?)\s*(?:[.•,‥…]\s*){2,}.*$")
+    r"^\s*(\d{1,3})\.\s+([A-Za-z][A-Za-z0-9' \-]{2,60}?)\s*(?:[.•,‥…]\s*){2,}.*$")
+
+
+#: OCR substitutes digits for letters inside names ("R0GA6RASTHA YOGA") — map the common
+#: swaps before normalizing, so the yoga-word filter and name search survive them
+_DIGIT_SWAPS = str.maketrans("015689", "oisgbg")
 
 
 def _norm(s: str) -> str:
-    return re.sub(r"[^a-z]", "", s.lower())
+    return re.sub(r"[^a-z]", "", s.lower().translate(_DIGIT_SWAPS))
 
 
 def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, str]]]:
@@ -55,18 +70,28 @@ def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, st
         m = _TOC.match(ln)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 300 and n not in toc and "yoga" in m.group(2).lower():
+            if 1 <= n <= 300 and n not in toc and "yoga" in _norm(m.group(2)):
                 toc[n] = m.group(2).strip().rstrip(".")
 
     body: dict[int, tuple[str, int]] = {}
     for i in range(_BODY_START, len(lines)):
-        m = _HEAD.match(lines[i])
+        norm = re.sub(r"\s+", " ", lines[i]).strip()
+        r = _RANGE.match(norm)
+        if r and "yoga" in _norm(r.group(3)):
+            a, b = int(r.group(1)), int(r.group(2))
+            if 1 <= a < b <= 300 and (b - a) <= 30:
+                name = r.group(3).strip().rstrip(".")
+                for n in range(a, b + 1):
+                    if n not in body:
+                        body[n] = (f"{name} (group {a}-{b})", i + 1)
+                continue
+        m = _HEAD.match(norm)
         if m:
             n = int(m.group(1))
             # every one of the 300 is a named Yoga (the ToC confirms it) — the filter that
             # keeps the introduction's own numbered list ("1. The good and evil lords...")
             # from stealing the low numbers
-            if 1 <= n <= 300 and n not in body and "yoga" in m.group(2).lower():
+            if 1 <= n <= 300 and n not in body and "yoga" in _norm(m.group(2)):
                 body[n] = (m.group(2).strip().rstrip("."), i + 1)
 
     # ToC numbers with no numbered body heading: anchor on the name's first body occurrence
@@ -83,6 +108,32 @@ def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, st
             anchored[n] = (n, name, hit)
         else:
             unanchored.append((n, name))
+    # ── merge the cleaner HOCR copy: same book, same span, far fewer OCR casualties. Its
+    # anchors carry the 3HCH tag so encoding work cites the copy the text actually came from.
+    if SOURCE_HOCR.is_file():
+        hlines = SOURCE_HOCR.read_text(encoding="utf-8", errors="replace").splitlines()
+        # HOCR quirks: runs of spaces ("162.  jADA  YOGA") and case-mangled first letters
+        # ("jADA"). Collapse whitespace and accept any-case names — the mandatory yoga-word
+        # carries the filtering burden.
+        hocr_head = re.compile(r"^\s*(\d{1,3})\.\s+([A-Za-z][A-Za-z0-9' \-]{2,60}?)\.?\s*$")
+        for i, ln in enumerate(hlines, 1):
+            norm = re.sub(r"\s+", " ", ln).strip()
+            r = _RANGE.match(norm)
+            if r and "yoga" in _norm(r.group(3)):
+                a, b = int(r.group(1)), int(r.group(2))
+                if 1 <= a < b <= 300 and (b - a) <= 30:
+                    name = r.group(3).strip().rstrip(".").upper()
+                    for n in range(a, b + 1):
+                        if n not in anchored:
+                            anchored[n] = (n, f"{name} (group {a}-{b})", -i)
+                    continue
+            m = hocr_head.match(norm)
+            if not m:
+                continue
+            n = int(m.group(1))
+            if 1 <= n <= 300 and n not in anchored and "yoga" in _norm(m.group(2)):
+                anchored[n] = (n, m.group(2).strip().rstrip(".").upper(), -i)
+        unanchored = [(n, name) for n, name in unanchored if n not in anchored]
     return [anchored[k] for k in sorted(anchored)], unanchored
 
 
@@ -143,7 +194,9 @@ def main() -> int:
         "| # | name | source line |",
         "|---|---|---|",
     ]
-    lines += [f"| {n} | {name} | 3HC:{line} |" for n, name, line, _ in pending]
+    lines += [f"| {n} | {name} | "
+              f"{'3HCH:' + str(-line) if line < 0 else '3HC:' + str(line)} |"
+              for n, name, line, _ in pending]
     if illegible:
         lines += ["", "## Not machine-legible (numbers the OCR hides — audit by hand)", "",
                   ", ".join(str(n) for n in illegible)]

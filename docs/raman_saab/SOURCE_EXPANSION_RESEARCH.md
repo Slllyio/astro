@@ -108,9 +108,13 @@ against period almanacs like the on-disk 1906 Sharvari panchanga).
    live; the Rao shelf → new LINEAGE band; re-import the empty Chappanna Prasna dir.
 2. **Split NH into chapters** (a day): the text exists; structure unlocks NH-cited rule
    encoding and widens the attention benchmark toward its full ~60-chart run.
-3. **3HC completion** (the big one): ~260 unencoded combinations of pure, citable Raman —
-   the single largest faithfulness gain available anywhere, zero ratchet risk (report-layer
-   yoga registry, same gate as the 48 already in).
+3. **3HC completion** (the big one) — **CORRECTED 2026-08-08 by the inventory tool**
+   (`tools/raman_saab/inventory_3hc.py` → `THREE_HUNDRED_INVENTORY.md`): both on-disk copies
+   are the SAME truncated scan ending at combination 162, so the original "~260 on disk"
+   claim was wrong. The honest arithmetic: **78 combinations parsed, on disk and unencoded**
+   (the immediately-workable frontier), ~68 more present-but-OCR-mangled (manual-audit list in
+   the inventory), and **138 (nos. 163-300) absent — a complete edition must be procured
+   first**. Still the largest pure-Raman gain; half of it is a purchase, not a coding task.
 4. **HPA-20 named yogas** (with 3HC — same registry).
 5. **Procure the casebook**: My Experiences + Catechism (in print, cheap); the magazine archive
    is the long game — BORI Pune and the eMagazine successor are the leads found.

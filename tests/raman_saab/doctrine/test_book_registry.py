@@ -14,7 +14,11 @@ from app.raman_saab.doctrine.sources import Citation, _CORPUS, _resolve_file, ve
 
 def test_registry_status_values_valid():
     for b in br.BOOKS:
-        assert b.status in ("live", "catalog-only-out-of-scope"), f"{b.tag}: bad status {b.status}"
+        # "lineage-catalog" added 2026-08-08 (conscious, same-commit): the Suryanarain Rao
+        # shelf — recorded and findable, non-citable. Any non-live status is firewalled by
+        # test_out_of_scope_books_are_non_citable automatically.
+        assert b.status in ("live", "catalog-only-out-of-scope", "lineage-catalog"), (
+            f"{b.tag}: bad status {b.status}")
 
 
 def test_live_books_resolve_on_disk():

@@ -82,5 +82,12 @@ present but non-citable. Greenfield sub-packages if ever pursued, never core Ram
 
 HTJAH-II (442 citations) + HTJAH-I (403) are saturated. The under-encoded *live* books:
 **3HC** (58 cites, yogas only, ~13%), **HPA-20** named yogas (0 rule-cites beyond mechanics),
-**NH** (0 encoded rules — used only as a golden source; 2 of ~50 chapters acquired). The corpus is
-mined for house-judgment; yogas + the worked casebook are the frontier.
+**NH** (23 cites — used mainly as a golden/attention source, few doctrine rules).
+**CORRECTED 2026-08-08 (SOURCE_EXPANSION_RESEARCH audit): the earlier "2 of ~50 chapters
+acquired" note was STALE — the FULL book is on disk twice** (the citable single-file corpus
+copy ends at the glossary, charts headed "No. N.—NAME"; plus the separate web-scrape text the
+attention tools read). What remains undone for NH is only the chapter SPLIT, deferred
+deliberately: existing NH:line cites live inside tests/fixtures/golden_accuracy_baseline.json,
+and rewriting cite formats inside a golden fixture for plumbing convenience is ratchet-adjacent
+risk with no doctrine gain. The corpus is mined for house-judgment; yogas + the worked casebook
+are the frontier.

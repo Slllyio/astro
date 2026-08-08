@@ -31,6 +31,11 @@ class BookEntry:
     slug: str                   # folder under data/knowledge_library/sources/
     multi_chapter: bool         # True -> 'TAG-CH:line' resolves chapter_{CH:03d}_*.md
     status: str                 # "live" (citable) | "catalog-only-out-of-scope" (non-citable)
+                                # | "lineage-catalog" (B. Suryanarain Rao shelf — Raman's
+                                #   grandfather and teacher; recorded and findable, NON-citable
+                                #   until rules earn them through the review gate. Where Rao and
+                                #   Raman differ, Raman wins: he revised his grandfather
+                                #   deliberately. SOURCE_EXPANSION_RESEARCH.md, 2026-08-08)
     fixed_file: Optional[str] = None   # single-file books: exact filename; None -> first *.md
     title: str = ""
     archive_identifier: str = ""        # provenance (for re-import)
@@ -117,6 +122,30 @@ BOOKS: tuple[BookEntry, ...] = (
     # still never cite it. JAIMINI is now the only firewalled book.
     BookEntry("VARSHA", "varshaphal_raman", True, "live",
               None, "Varshaphal (annual)"),
+    # ── registered 2026-08-08 (SOURCE_EXPANSION_RESEARCH.md — "register what is already
+    # here"). PM-I/PM-II are Raman's own translation of Prasna Marga WITH HIS NOTES — the same
+    # walled-horary content scope as PRASNA: citable by the horary subsystem ONLY, natal rules
+    # never cite them (the wall is the import direction, tested both ways).
+    BookEntry("PM1", "prasna_marga_vol1", True, "live",
+              None, "Prasna Marga, Vol I (Raman's translation & notes)"),
+    BookEntry("PM2", "prasna_marga_vol2", True, "live",
+              None, "Prasna Marga, Vol II (Raman's translation & notes)"),
+    # Raman's first book (1935) — natal casting mechanics; cross-checks HPA. Ordinary live scope.
+    BookEntry("MANUAL", "manual_hindu_astrology_raman_1935", True, "live",
+              None, "A Manual of Hindu Astrology (1935)",
+              "AManualOfHinduAstrologyBVRaman1935Edition"),
+    # ── the lineage shelf: B. Suryanarain Rao. Recorded, findable, NON-citable (status gates
+    # them out of _LIVE, so the existing firewall tests cover them automatically). The empty
+    # chappanna_prasana_sastra_row_1946 dir is NOT registered — nothing to resolve; re-import
+    # first (noted in SOURCE_EXPANSION_RESEARCH.md).
+    BookEntry("ROW-SELF", "astro_self_instructor_row_1893", True, "lineage-catalog",
+              None, "The Astrological Self-Instructor (B. Suryanarain Rao, 1893)"),
+    BookEntry("ROW-BJ", "brihat_jataka_row_1919", True, "lineage-catalog",
+              None, "Brihat Jataka, Rao translation (1919)"),
+    BookEntry("ROW-SC", "sarvartha_chintamani_row_1899", True, "lineage-catalog",
+              None, "Sarvartha Chintamani, Rao translation (1899)"),
+    BookEntry("ROW-INTRO", "intro_astrology_row_1900", True, "lineage-catalog",
+              None, "Introduction to the Study of Astrology (B. Suryanarain Rao, 1900)"),
 )
 
 _LIVE: tuple[BookEntry, ...] = tuple(b for b in BOOKS if b.status == "live")

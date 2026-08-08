@@ -519,6 +519,18 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         header_regex=_DEFAULT_HEADER_REGEX,
     ),
     _Book(
+        # Registered live 2026-08-08 (SOURCE_EXPANSION_RESEARCH.md) — Raman's first book;
+        # already ingested on disk, this entry is the provenance/coupling record.
+        identifier="AManualOfHinduAstrologyBVRaman1935Edition",
+        filename="A Manual of Hindu Astrology B V Raman 1935 edition_djvu.txt",
+        book_slug="manual_hindu_astrology_raman_1935",
+        book_title="A Manual of Hindu Astrology (1935)",
+        author="B. V. Raman",
+        translator="",
+        classical_ref_prefix="ManualHinduAstrology",
+        header_regex=_DEFAULT_HEADER_REGEX,
+    ),
+    _Book(
         identifier="UJrg_prasna-tantra-by-b.-v.-raman-raman-publication",
         # Filename corrected 2026-08-03 to the exact name the item serves ("B.V.Raman",
         # no spaces) — the earlier spelling is why only a partial ingest ever landed.

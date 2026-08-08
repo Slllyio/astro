@@ -432,3 +432,94 @@ class TestHasYoga:
         """A kind outside the YogaKind Literal is rejected at runtime."""
         with pytest.raises(ValueError, match="unknown yoga kind"):
             has_yoga(_chart({"Moon": 35.0}), "bogus")  # type: ignore[arg-type]
+
+
+# ── first 3HC tranche (2026-08-08): each fires on a constructed positive and stays silent on
+# a negative — the can-it-produce-the-other-answer discipline, per yoga ──────────────────────
+class TestMatsyaYoga:
+    def test_fires_on_the_full_occupancy_pattern(self):
+        """3HCH:1814 — malefics in 1 and 9; the 5th holds malefics AND benefics; 4 and 8
+        occupied by malefics. Aries lagna: Sun H1, Mars H9, Saturn+Jupiter H5, Rahu H4,
+        Ketu H8."""
+        c = _chart({"Sun": 10.0, "Mars": 250.0, "Saturn": 128.0, "Jupiter": 133.0,
+                    "Rahu": 95.0, "Ketu": 275.0, "Moon": 40.0, "Mercury": 70.0,
+                    "Venus": 300.0})
+        # Ketu must sit in H8 (Scorpio 210-240)
+        c = _chart({"Sun": 10.0, "Mars": 250.0, "Saturn": 128.0, "Jupiter": 133.0,
+                    "Rahu": 95.0, "Ketu": 215.0, "Moon": 40.0, "Mercury": 70.0,
+                    "Venus": 300.0})
+        assert _yoga("Y.MATSYA").fires(c)
+
+    def test_silent_without_the_benefic_in_the_fifth(self):
+        """Remove the benefic from H5 — the fifth must contain BOTH classes."""
+        c = _chart({"Sun": 10.0, "Mars": 250.0, "Saturn": 128.0, "Jupiter": 40.0,
+                    "Rahu": 95.0, "Ketu": 215.0, "Moon": 45.0, "Mercury": 70.0,
+                    "Venus": 300.0})
+        assert not _yoga("Y.MATSYA").fires(c)
+
+
+class TestRaviYoga:
+    def test_fires_sun_in_10th_with_lord_in_3rd_conjunct_saturn(self):
+        """3HCH:1982. Leo lagna (asc 120): H10 = Taurus, lord Venus; Venus and Saturn
+        together in H3 (Libra); Sun in H10."""
+        c = _chart({"Sun": 45.0, "Venus": 190.0, "Saturn": 195.0, "Moon": 130.0,
+                    "Mars": 10.0, "Mercury": 70.0, "Jupiter": 250.0}, asc_lon=120.0)
+        assert _yoga("Y.RAVI").fires(c)
+
+    def test_silent_when_saturn_is_elsewhere(self):
+        c = _chart({"Sun": 45.0, "Venus": 190.0, "Saturn": 280.0, "Moon": 130.0,
+                    "Mars": 10.0, "Mercury": 70.0, "Jupiter": 250.0}, asc_lon=120.0)
+        assert not _yoga("Y.RAVI").fires(c)
+
+
+class TestGauriYoga:
+    def test_fires_on_the_navamsa_chain(self):
+        """3HCH:1637. Aries lagna: 10th lord Saturn at 282.0 — Capricorn, whose navamsa
+        cycle starts at Capricorn (movable sign, classical scheme), so 282 falls in the ARIES
+        navamsa — its dispositor Mars stands exalted in the 10th and IS the lagna lord,
+        satisfying the conjunction by identity."""
+        c = _chart({"Saturn": 282.0, "Mars": 272.5, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 130.0})
+        assert _yoga("Y.GAURI").fires(c)
+
+    def test_silent_when_the_dispositor_leaves_the_10th(self):
+        c = _chart({"Saturn": 280.0, "Mars": 40.0, "Sun": 10.0, "Moon": 45.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 130.0})
+        assert not _yoga("Y.GAURI").fires(c)
+
+
+class TestBrahmaYoga:
+    def test_fires_on_all_three_benefic_kendra_relations(self):
+        """3HCH:1931. Aries lagna: Jupiter is itself the 9th lord (1st from itself is a
+        kendra by the letter of the text); Venus 4th from Saturn (11th lord); Mercury 7th
+        from Mars (lagna lord)."""
+        c = _chart({"Jupiter": 250.0, "Saturn": 40.0, "Venus": 130.0, "Mars": 10.0,
+                    "Mercury": 190.0, "Sun": 70.0, "Moon": 100.0})
+        assert _yoga("Y.BRAHMA").fires(c)
+
+    def test_silent_when_venus_falls_out_of_kendra(self):
+        c = _chart({"Jupiter": 250.0, "Saturn": 40.0, "Venus": 70.0, "Mars": 10.0,
+                    "Mercury": 190.0, "Sun": 100.0, "Moon": 130.0})
+        assert not _yoga("Y.BRAHMA").fires(c)
+
+
+class TestNishturabhashiYoga:
+    """The first yoga encoded from the complete edition's far half (3HCC:10205)."""
+
+    def test_fires_on_moon_saturn_conjunction(self):
+        c = _chart({"Moon": 100.0, "Saturn": 105.0, "Jupiter": 40.0, "Sun": 10.0,
+                    "Mars": 130.0, "Mercury": 160.0, "Venus": 190.0})
+        assert _yoga("Y.NISHTURABHASHI").fires(c)
+
+    def test_jupiters_aspect_neutralises_it(self):
+        """Raman's own cancellation in the same passage: Jupiter aspecting the conjunction
+        (here from H10, a trine onto H4... whole-sign 9th-aspect H2..; use H12->H4? place
+        Jupiter so a 5/7/9 drishti lands on H4) — Jupiter in H10 casts its 7th onto H4."""
+        c = _chart({"Moon": 100.0, "Saturn": 105.0, "Jupiter": 280.0, "Sun": 10.0,
+                    "Mars": 130.0, "Mercury": 160.0, "Venus": 190.0})
+        assert not _yoga("Y.NISHTURABHASHI").fires(c)
+
+    def test_silent_without_the_conjunction(self):
+        c = _chart({"Moon": 100.0, "Saturn": 135.0, "Jupiter": 40.0, "Sun": 10.0,
+                    "Mars": 160.0, "Mercury": 190.0, "Venus": 220.0})
+        assert not _yoga("Y.NISHTURABHASHI").fires(c)

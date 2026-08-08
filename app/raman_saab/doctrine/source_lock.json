@@ -91,6 +91,14 @@
     "line_count": 1600,
     "sha256": "0400189f48edc283e43738b2c2abd6aa652525473c9ce3c15fc07b692b0b5477"
   },
+  "three_hundred_combinations_complete/chapter_001_full-text-unsplit.md": {
+    "line_count": 12053,
+    "sha256": "c64292c49c7ae70e2fa79bdea0142b10b9c4fa0cbcbdabd9ac2c55f30e74bde1"
+  },
+  "three_hundred_combinations_hocr/chapter_001_full-text-unsplit.md": {
+    "line_count": 3237,
+    "sha256": "650f912639d99197309c873d8357ea760f6cf6e496b9420c12f7c0421ba11584"
+  },
   "three_hundred_combinations_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 8984,
     "sha256": "1838d212cde1931437c76d50f7ff1555583a2bfe5b3f6954e7f2768417dad50a"

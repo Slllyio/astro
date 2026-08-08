@@ -465,6 +465,60 @@ class _DaridraYoga(C.Condition):
         return p is not None and p.rasi_house in (6, 8, 12)
 
 
+class _KendraFromLordOf(C.Condition):
+    """`planet` sits in a kendra (1/4/7/10 whole-sign distance) counted FROM the lord of
+    house `n` — the shape Brahma Yoga is built from (3HCH:1931)."""
+
+    def __init__(self, planet: str, n: int) -> None:
+        self.planet, self.n = planet, n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _house_lord(self.n, ctx.chart)
+        pp, pl = ctx.chart.planets.get(self.planet), ctx.chart.planets.get(lord)
+        if pp is None or pl is None:
+            return False
+        dist = ((pp.rasi_house - pl.rasi_house) % 12) + 1
+        return dist in _KENDRAS
+
+
+class _LordOfHouseInHouseWith(C.Condition):
+    """The lord of house `n` occupies whole-sign house `where`, conjoined (same house) with
+    `companion` — Ravi Yoga's second clause (3HCH:1982)."""
+
+    def __init__(self, n: int, where: int, companion: str) -> None:
+        self.n, self.where, self.companion = n, where, companion
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = ctx.chart.planets.get(_house_lord(self.n, ctx.chart))
+        comp = ctx.chart.planets.get(self.companion)
+        return (lord is not None and comp is not None
+                and lord.rasi_house == self.where
+                and comp.rasi_house == self.where)
+
+
+class _GauriNavamsaChain(C.Condition):
+    """Gauri Yoga (3HCH:1637): the lord of the navamsa occupied by the 10th lord must join
+    the 10th house, exalted, and conjoined with the lord of Lagna. One derived planet, three
+    simultaneous demands — naturally rare, no strength proxy involved."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        chart = ctx.chart
+        tenth_lord = chart.planets.get(_house_lord(10, chart))
+        if tenth_lord is None:
+            return False
+        nav = getattr(tenth_lord, "navamsa_sign", None)
+        y = chart.planets.get(SIGN_LORDS.get(nav)) if nav else None
+        if y is None:
+            return False
+        if y.rasi_house != 10:
+            return False
+        if not C.HasDignity(y.name, "exalted").evaluate(ctx):
+            return False
+        lagna_lord = chart.planets.get(_house_lord(1, chart))
+        return lagna_lord is not None and lagna_lord.rasi_house == y.rasi_house
+
+
 # ── the encoded yogas ────────────────────────────────────────────────────────
 YOGAS: tuple[YogaRecord, ...] = (
     # — Pancha Mahapurusha (the five 'great men' yogas; Varahamihira, 3HC:3432-4060) —
@@ -918,7 +972,70 @@ YOGAS: tuple[YogaRecord, ...] = (
         condition=_DispositorOfNthLordIs(2, "Saturn"),
         effect=("Always loving falsehood and indulging in fraudulent schemes."),
         source=Citation("HPA-20", 225)),
+    # — first 3HC tranche against the clean copies (2026-08-08). Selection governed by the
+    # deferral precedent above: nothing strength-gated, nothing measured-common, nothing whose
+    # parse Raman leaves ambiguous. Skips recorded below the registry. —
+    YogaRecord(
+        id="Y.MATSYA", name="Matsya Yoga", kind="other",
+        # 3HCH:1814: "Malefics should be disposed in Lagna and the 9th; the fifth house should
+        # contain both malefics and benefics; and the fourth and 8th should be occupied by
+        # malefics." Pure occupancy, six clauses, all whole-sign.
+        condition=C.And(
+            C.CountInHouse(1, 1, "malefic"), C.CountInHouse(9, 1, "malefic"),
+            C.CountInHouse(5, 1, "malefic"), C.CountInHouse(5, 1, "benefic"),
+            C.CountInHouse(4, 1, "malefic"), C.CountInHouse(8, 1, "malefic")),
+        effect=("A clever prophet, an ocean of kindness, intelligent, well-behaving, famous "
+                "and learned."),
+        source=Citation("3HCH", 1814)),
+    YogaRecord(
+        id="Y.RAVI", name="Ravi Yoga", kind="other",
+        # 3HCH:1982: "The Sun should join the 10th and the lord of the 10th must be in the 3rd
+        # in conjunction with Saturn."
+        condition=C.And(
+            C.InRashiHouse("Sun", 10),
+            _LordOfHouseInHouseWith(10, 3, "Saturn")),
+        effect=("Respected by rulers, well-versed in sciences, famous after the fifteenth "
+                "year, highly passionate, simple in food, lotus-eyed."),
+        source=Citation("3HCH", 1982)),
+    YogaRecord(
+        id="Y.GAURI", name="Gauri Yoga", kind="other",
+        condition=_GauriNavamsaChain(),
+        effect=("Belongs to a respectable family, owns lands, charitable, performs religious "
+                "rites; sons of good character; praised by all."),
+        source=Citation("3HCH", 1637)),
+    YogaRecord(
+        id="Y.BRAHMA", name="Brahma Yoga", kind="other",
+        # 3HCH:1931: "Jupiter and Venus are in Kendras respectively from the lords of the 9th
+        # and 11th, and Mercury is in a similar position from the lord of either Lagna or the
+        # 10th." All natural benefics involved — Raman remarks so himself.
+        condition=C.And(
+            _KendraFromLordOf("Jupiter", 9),
+            _KendraFromLordOf("Venus", 11),
+            C.Or(_KendraFromLordOf("Mercury", 1), _KendraFromLordOf("Mercury", 10))),
+        effect=("Luxurious living; respected by the learned; highly learned, long-lived, "
+                "charitable and bent on good deeds."),
+        source=Citation("3HCH", 1931)),
+    YogaRecord(
+        id="Y.NISHTURABHASHI", name="Nishturabhashi Yoga", kind="other",
+        # 3HCC:10205 — the FIRST yoga encoded from the complete edition (163-300): "The Moon
+        # must be in conjunction with Saturn." Raman neutralises it under Jupiter aspect in the
+        # same passage; the Not() arm is his cancellation, not an invention.
+        condition=C.And(C.Conjunct("Moon", "Saturn"),
+                        C.Not(C.Aspects("Jupiter", "Moon"))),
+        effect=("Harsh in speech."),
+        source=Citation("3HCC", 10205)),
 )
+
+# ── first-tranche skips (2026-08-08), each with the reason, so the next encoder does not
+# re-tread. MAHABHAGYA (3HCH:1490): needs the native's GENDER and day/night birth — gender is
+# not modelled on RamanChart, and a gender-blind approximation is the silent approximation the
+# Prime Directive forbids. PUSHKALA (3HCH:1527): "house of an intimate friend" (compound
+# relations) plus two strength gates in one sentence. SANKHA (3HCH:1735) and BHERI
+# (3HCH:1776): the SAME yogas as the measured-deferred HPA-20 pair above (50%/38% fire rates
+# on the golden corpus — common by construction; the 3HC wording changes nothing about the
+# base rate). BHARATHI (3HCH:1678): "the lords of the navamsas occupied by the lords of the
+# 2nd, 5th and 11th should be exalted" — ALL-three vs ANY-one is undisambiguated and the
+# readings differ by orders of magnitude (the Lakshmi precedent exactly).
 # DEFERRED HPA-20 yogas — RE-ATTEMPTED 2026-08-03 with the B1 effective-strength measure and
 # still deferred, now for a MEASURED reason. The original deferral blamed the is_powerful proxy
 # ("re-attempt once an effective-strength measure exists"); the re-attempt disproves that
@@ -937,6 +1054,11 @@ YOGAS: tuple[YogaRecord, ...] = (
 #     lord" — kendra AND dignity? or kendra OR dignity?). Raman does not disambiguate, the two
 #     readings differ by an order of magnitude in fire rate, and registering one would be
 #     choosing doctrine for him. Deferred on parse ambiguity, not on strength.
+#     UPDATE 2026-08-08: Raman's OWN 3HC wording resolves the parse — "the lord of the 9th
+#     occupies own or exaltation sign IDENTICAL WITH a Kendra or Thrikona" (3HCH:1557):
+#     dignity AND placement, conjunctive, unambiguous. What remains before encoding is only
+#     the fire-rate measurement on the golden corpus with the lagna-lord strength gate — the
+#     same measurement discipline the SHANKHA/KAHALA/BHERI re-attempt used.
 
 
 # ── detection API ────────────────────────────────────────────────────────────

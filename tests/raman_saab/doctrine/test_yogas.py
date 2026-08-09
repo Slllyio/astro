@@ -1366,3 +1366,146 @@ class TestKalanirdesatPutranasaYoga:
         c = _chart({"Mars": 190.0, "Jupiter": 250.0, "Saturn": 310.0, "Sun": 40.0,
                     "Moon": 130.0, "Mercury": 100.0, "Venus": 160.0, "Rahu": 220.0})
         assert not _yoga("Y.KALANIRDESAT_PUTRANASA").fires(c)
+
+
+# ── tranche 9 (2026-08-09): the buddhi + marriage block ─────────────────────────────────────
+class TestBuddhimaturyaYoga:
+    def test_fires_on_the_printed_definition_arm(self):
+        # Taurus lagna: l5 Mercury (a benefic) in Gemini — its own, benefic-owned sign.
+        c = _chart({"Mercury": 70.0, "Sun": 30.0, "Moon": 100.0, "Mars": 190.0,
+                    "Jupiter": 250.0, "Venus": 220.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert _yoga("Y.BUDDHIMATURYA").fires(c)
+
+    def test_fires_on_ramans_remarks_extension(self):
+        """Aries — one of the five lagnas the printed definition excludes; Raman's own
+        Remarks extension carries it: a benefic occupying the 5th with the 5th lord
+        conjunct a benefic."""
+        c = _chart({"Jupiter": 130.0, "Sun": 40.0, "Venus": 45.0, "Moon": 220.0,
+                    "Mars": 190.0, "Mercury": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.BUDDHIMATURYA").fires(c)
+
+    def test_silent_when_no_arm_holds(self):
+        c = _chart({"Sun": 40.0, "Saturn": 45.0, "Moon": 220.0, "Mars": 190.0,
+                    "Jupiter": 250.0, "Mercury": 280.0, "Venus": 310.0})
+        assert not _yoga("Y.BUDDHIMATURYA").fires(c)
+
+
+class TestTheevrabuddhiYoga:
+    def test_fires_when_the_navamsa_dispositor_is_benefic_touched(self):
+        # l5 Sun at 103.3 falls in the Libra navamsa; its lord Venus sits with Jupiter —
+        # Raman's conjunction extension. Engine-scanned.
+        c = _chart({"Sun": 103.3, "Venus": 250.0, "Jupiter": 255.0, "Moon": 40.0,
+                    "Mars": 10.0, "Mercury": 70.0, "Saturn": 310.0})
+        assert _yoga("Y.THEEVRABUDDHI").fires(c)
+
+    def test_silent_when_the_dispositor_stands_alone(self):
+        c = _chart({"Sun": 103.3, "Venus": 250.0, "Jupiter": 100.0, "Moon": 10.0,
+                    "Mars": 40.0, "Mercury": 315.0, "Saturn": 310.0})
+        assert not _yoga("Y.THEEVRABUDDHI").fires(c)
+
+
+class TestBuddhiJadaYoga:
+    def test_fires_when_saturn_in_fifth_aspects_the_afflicted_lagna_lord(self):
+        # Saturn in H5 casts its 3rd onto H7, where l1 Mars stands — one aspect satisfies
+        # both the affliction and the Saturn-aspect clause.
+        c = _chart({"Mars": 190.0, "Saturn": 130.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert _yoga("Y.BUDDHI_JADA").fires(c)
+
+    def test_silent_when_saturn_leaves_the_fifth(self):
+        c = _chart({"Mars": 190.0, "Saturn": 160.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert not _yoga("Y.BUDDHI_JADA").fires(c)
+
+
+class TestPutraSukhaYoga:
+    def test_fires_on_mercury_in_the_fifth(self):
+        c = _chart({"Mercury": 130.0, "Sun": 10.0, "Moon": 40.0, "Mars": 190.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.PUTRA_SUKHA").fires(c)
+
+    def test_silent_when_the_fifth_is_bare(self):
+        # Aries: the 5th (Leo) is a malefic-owned sign holding only the Sun.
+        c = _chart({"Mercury": 70.0, "Sun": 130.0, "Moon": 40.0, "Mars": 190.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.PUTRA_SUKHA").fires(c)
+
+
+class TestJaraYoga:
+    def test_fires_only_with_ramans_narrowing_satisfied(self):
+        # Aries: l7 Venus (within Raman's Mars-or-Venus narrowing); Venus (also l2) and
+        # Saturn (l10) together in H10.
+        c = _chart({"Venus": 280.0, "Saturn": 285.0, "Sun": 10.0, "Moon": 100.0,
+                    "Mars": 40.0, "Mercury": 70.0, "Jupiter": 130.0})
+        assert _yoga("Y.JARA").fires(c)
+
+    def test_silent_for_a_seventh_lord_outside_the_narrowing(self):
+        """Identical longitudes from Cancer lagna: l7 is Saturn — the very case Raman's
+        Remarks refuse ("unless the 7th lord happens to be Mars or Venus... it is not
+        advisable to conclude")."""
+        c = _chart({"Venus": 280.0, "Saturn": 285.0, "Sun": 10.0, "Moon": 100.0,
+                    "Mars": 40.0, "Mercury": 70.0, "Jupiter": 130.0}, asc_lon=90.0)
+        assert not _yoga("Y.JARA").fires(c)
+
+
+class TestJarajaputraYoga:
+    def test_fires_with_the_strength_gates_patched(self, monkeypatch):
+        # l5 Sun, l7 Venus, l6 Mercury conjunct in H2; Jupiter casts the 9th onto H2;
+        # both lords stubbed B1-strong per the patched-gate discipline.
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+        c = _chart({"Sun": 40.0, "Venus": 45.0, "Mercury": 50.0, "Jupiter": 160.0,
+                    "Moon": 100.0, "Mars": 10.0, "Saturn": 310.0})
+        assert _yoga("Y.JARAJAPUTRA").fires(c)
+
+    def test_silent_when_the_strength_gate_is_real(self):
+        c = _chart({"Sun": 40.0, "Venus": 45.0, "Mercury": 50.0, "Jupiter": 160.0,
+                    "Moon": 100.0, "Mars": 10.0, "Saturn": 310.0})
+        assert not _yoga("Y.JARAJAPUTRA").fires(c)
+
+
+class TestBahuStreeYoga:
+    def test_fires_on_the_lords_in_conjunction(self):
+        c = _chart({"Mars": 70.0, "Venus": 75.0, "Sun": 10.0, "Moon": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.BAHU_STREE").fires(c)
+
+    def test_silent_without_conjunction_or_mutual_aspect(self):
+        # Mars H1 aspects H4/H7/H8; Venus H3 aspects H9 — neither reaches the other, and
+        # the Remarks variant arm is dead (l9 Jupiter in H9, not H7).
+        c = _chart({"Mars": 10.0, "Venus": 75.0, "Sun": 40.0, "Moon": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.BAHU_STREE").fires(c)
+
+
+class TestSatkalatraYoga:
+    def test_fires_on_venus_joined_by_jupiter(self):
+        c = _chart({"Jupiter": 250.0, "Venus": 255.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Saturn": 310.0})
+        assert _yoga("Y.SATKALATRA").fires(c)
+
+    def test_silent_when_neither_target_is_touched(self):
+        # Chart 112's shape: neither the 7th lord nor Venus under Jupiter or Mercury.
+        c = _chart({"Venus": 40.0, "Jupiter": 130.0, "Mercury": 340.0, "Sun": 10.0,
+                    "Moon": 70.0, "Mars": 100.0, "Saturn": 310.0})
+        assert not _yoga("Y.SATKALATRA").fires(c)
+
+
+class TestBhagaChumbanaYoga:
+    def test_fires_on_the_seventh_lord_in_fourth_with_venus(self):
+        # Taurus lagna: l7 Mars in H4 (Leo) conjunct Venus.
+        c = _chart({"Mars": 130.0, "Venus": 135.0, "Sun": 30.0, "Moon": 70.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert _yoga("Y.BHAGA_CHUMBANA").fires(c)
+
+    def test_silent_when_the_conjunction_leaves_the_fourth(self):
+        # Mars to H5; l1 Venus in Leo is neither rasi- nor navamsa-debilitated, so the
+        # Remarks arm stays quiet too.
+        c = _chart({"Mars": 160.0, "Venus": 135.0, "Sun": 30.0, "Moon": 70.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert not _yoga("Y.BHAGA_CHUMBANA").fires(c)

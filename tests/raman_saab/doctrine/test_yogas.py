@@ -722,7 +722,26 @@ class TestVishnuYoga:
 
 class TestGoYoga:
     """The strength gate rides effective_strength, which stated-position charts cannot carry
-    — so the synthetics assert the GEOMETRIC refusals, mirroring the Lakshmi test pattern."""
+    — so the synthetics assert the GEOMETRIC refusals, mirroring the Lakshmi test pattern.
+
+    Plus one FIRE test with the strength gate patched: Y.GO shipped DEAD (2026-08-09 fix) —
+    ``dignity_state`` never returns "moolatrikona", so the original gate always refused and
+    silence-only tests could not see it. Every strength-gated yoga now needs a patched-gate
+    fire proof."""
+
+    def test_fires_when_geometry_holds_and_strength_gate_is_patched(self, monkeypatch):
+        """Jupiter 245.0 (Sagittarius 5, inside the 240-250 Moolatrikona range) with 2nd
+        lord Venus; lagna lord Mars exalted in Capricorn; strength gate stubbed strong."""
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+        c = _chart({"Jupiter": 245.0, "Venus": 247.0, "Mars": 280.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Saturn": 130.0})
+        assert _yoga("Y.GO").fires(c)
 
     def test_silent_when_jupiter_is_out_of_moolatrikona(self):
         c = _chart({"Jupiter": 100.0, "Venus": 105.0, "Mars": 280.0, "Sun": 10.0,

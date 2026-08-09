@@ -708,15 +708,22 @@ class _VishnuChain(C.Condition):
 class _GoYoga(C.Condition):
     """Go Yoga (3HCC:3787): STRONG Jupiter in his Moolatrikona with the 2nd lord, the lagna
     lord in exaltation. The strength gate rides `effective_strength` (the B1 measure) — the
-    Lakshmi precedent, never the is_powerful proxy."""
+    Lakshmi precedent, never the is_powerful proxy.
+
+    DEFECT FIXED 2026-08-09: this condition originally tested
+    ``dignity_state("Jupiter", sign) != "moolatrikona"`` — but ``dignity_state`` is
+    sign-only and BY DESIGN never returns "moolatrikona" (the range is degree-dependent;
+    see its docstring), so the gate ALWAYS refused and Y.GO was dead code whose
+    liveness-never had been rationalized as rarity. The Moolatrikona test must be the
+    longitude-aware ``is_moolatrikona`` (Jupiter: Sagittarius 0-10, lon 240-250)."""
 
     def evaluate(self, ctx: C.EvalContext) -> bool:
-        from app.core.dignity import dignity_state
+        from app.core.dignity import dignity_state, is_moolatrikona
         from app.raman_saab.chart.constants import SIGN_LORDS
         from app.raman_saab.primitives.effective_strength import effective_strength
         chart = ctx.chart
         jup = chart.planets.get("Jupiter")
-        if jup is None or dignity_state("Jupiter", jup.sign) != "moolatrikona":
+        if jup is None or not is_moolatrikona("Jupiter", jup.lon):
             return False
         l2 = chart.planets.get(_house_lord(2, chart))
         if l2 is None or l2.rasi_house != jup.rasi_house:

@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 101 |
-| **on disk, awaiting encoding — the workable frontier** | **186** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 109 |
+| **on disk, awaiting encoding — the workable frontier** | **178** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -120,15 +120,7 @@
 | 184 | Yuddhatpoorvadridhachitta Yoga | 3HCC:6262 |
 | 185 | Yuddhatpaschaddrudha Yoga | 3HCC:6276 |
 | 195 | Bandhubhisthyaktha Yoga | 3HCC:6514 |
-| 196 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
-| 197 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
-| 198 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
-| 199 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
 | 201 | Sahodareesangama yoga | 3HCC:6695 |
-| 205 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
-| 206 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
-| 208 | Matru Sneha Yoga | 3HCC:6811 |
-| 211 | AnapathYa Yoga | 3HCC:6871 |
 | 212 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
 | 213 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
 | 214 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
@@ -311,13 +303,21 @@
 | 192 | Grihanasa Yogas (group 191-192) | 3HCC:6434 |
 | 193 | Bandhu Pujya Yogas (group 193-194) | 3HCC:6458 |
 | 194 | Bandhu Pujya Yogas (group 193-194) | 3HCC:6458 |
+| 196 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
+| 197 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
+| 198 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
+| 199 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
 | 200 | Matrugami Yoga | 3HCC:6665 |
 | 202 | Kapata Yogas (group 202-204) | 3HCC:6710 |
 | 203 | Kapata Yogas (group 202-204) | 3HCC:6710 |
 | 204 | Kapata Yogas (group 202-204) | 3HCC:6710 |
+| 205 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
+| 206 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
 | 207 | Matru Satrutwa Yoga | 3HCC:6797 |
+| 208 | Matru Sneha Yoga | 3HCC:6811 |
 | 209 | Vahana Yogas (group 209-210) | 3HCC:6829 |
 | 210 | Vahana Yogas (group 209-210) | 3HCC:6829 |
+| 211 | AnapathYa Yoga | 3HCC:6871 |
 | 236 | Jara Yoga | 3HCC:7804 |
 | 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 289 | Andha Yogas (group 288-289) | 3HCC:9828 |

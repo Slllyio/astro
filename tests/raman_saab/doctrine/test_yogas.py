@@ -400,7 +400,10 @@ class TestDetectYogas:
         fired = detect_yogas(_chart({"Mercury": 155.0, "Jupiter": 160.0}))
         assert isinstance(fired, tuple)
         assert all(isinstance(f, FiredYoga) for f in fired)
-        assert [f.id for f in fired] == ["Y.VIPAREETA"]
+        # membership, not exact equality: broad sign-level yogas (Nishkapata-205's
+        # benefic-4th-sign arm) legitimately co-fire on this two-planet fixture, and an
+        # exact-list pin would break on every future broad addition
+        assert "Y.VIPAREETA" in [f.id for f in fired]
         assert all(verify(f.source) for f in fired)
 
     def test_empty_chart_fires_nothing(self):
@@ -1013,3 +1016,115 @@ class TestVahanaYoga:
         c = _chart({"Mars": 40.0, "Moon": 130.0, "Sun": 10.0, "Mercury": 160.0,
                     "Jupiter": 190.0, "Venus": 280.0, "Saturn": 310.0})
         assert not _yoga("Y.VAHANA").fires(c)
+
+
+# ── tranche 6 (2026-08-09): the queued bars cleared ─────────────────────────────────────────
+class _StubStrong:
+    band = "strong"
+    decisively_weak = False
+
+
+class _StubWeak:
+    band = "weak"
+    decisively_weak = True
+
+
+class TestMatrudeerghayurYoga:
+    """Strength-gated: fire tests patch the B1 gate (the Y.GO discipline — silences alone
+    cannot tell rare from dead)."""
+
+    def test_fires_on_196_with_the_strength_gate_patched(self, monkeypatch):
+        # Aries: l4 Moon EXALTED in Taurus; Jupiter (a benefic) in H4; Moon stubbed strong.
+        import app.raman_saab.primitives.effective_strength as es_mod
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _StubStrong())
+        c = _chart({"Moon": 40.0, "Jupiter": 100.0, "Mars": 10.0, "Sun": 130.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.MATRUDEERGHAYUR").fires(c)
+
+    def test_fires_on_197_self_dispositor_collapse(self, monkeypatch):
+        """Moon at 93.3 (Cancer) falls in its OWN navamsa — the dispositor chain collapses
+        onto the Moon itself, standing in H4: a kendra from Lagna and trivially from
+        Chandra Lagna. Raman's Chart 90 remark legitimizes the collapse ("the third
+        condition becomes merged with the 2nd"). The 196 arm stays out: own-sign, not
+        exalted."""
+        import app.raman_saab.primitives.effective_strength as es_mod
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _StubStrong())
+        c = _chart({"Moon": 93.3, "Mars": 10.0, "Sun": 130.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.MATRUDEERGHAYUR").fires(c)
+
+    def test_silent_when_the_strength_gate_is_real(self):
+        # Same 196 geometry, unpatched: stated charts carry no Shadbala -> band unknown.
+        c = _chart({"Moon": 40.0, "Jupiter": 100.0, "Mars": 10.0, "Sun": 130.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.MATRUDEERGHAYUR").fires(c)
+
+
+class TestMatrunasaYoga:
+    def test_fires_on_198_moon_conjunct_saturn(self):
+        c = _chart({"Moon": 130.0, "Saturn": 135.0, "Mars": 10.0, "Sun": 40.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Venus": 190.0})
+        assert _yoga("Y.MATRUNASA").fires(c)
+
+    def test_fires_on_the_199_navamsa_chain(self):
+        """Moon (l4) at 103.3 -> Libra navamsa -> Venus; Venus at 130 -> a navamsa owned by
+        Mercury; Mercury stands in H6 — the chain's terminal in a dusthana, with the Moon
+        itself UNAFFLICTED so only the 199 arm carries it. Engine-scanned, not head-math."""
+        c = _chart({"Moon": 103.3, "Mars": 40.0, "Sun": 340.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+        assert _yoga("Y.MATRUNASA").fires(c)
+
+    def test_silent_when_moon_is_clean_and_the_chain_lands_well(self):
+        # Moon 100.0: chain terminal Jupiter in H9 (not a dusthana); same clean layout.
+        c = _chart({"Moon": 100.0, "Mars": 40.0, "Sun": 340.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+        assert not _yoga("Y.MATRUNASA").fires(c)
+
+
+class TestNishkapataYoga:
+    def test_fires_on_a_benefic_fourth_sign(self):
+        # Aries lagna: the 4th is Cancer, Moon-owned — a benefic sign.
+        c = _chart({"Sun": 10.0, "Moon": 40.0, "Mars": 70.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.NISHKAPATA").fires(c)
+
+    def test_silent_for_a_malefic_fourth_with_no_dignified_occupant(self):
+        # Leo lagna: the 4th is Scorpio (Mars-owned), kept empty.
+        c = _chart({"Sun": 130.0, "Moon": 160.0, "Mars": 10.0, "Mercury": 190.0,
+                    "Jupiter": 280.0, "Venus": 100.0, "Saturn": 310.0}, asc_lon=120.0)
+        assert not _yoga("Y.NISHKAPATA").fires(c)
+
+
+class TestMatruSnehaYoga:
+    def test_fires_on_the_common_lord(self):
+        # Gemini lagna: Mercury owns both Lagna and the 4th (Virgo) — Raman's own remark
+        # names Mithuna and Dhanus as the two common-lord lagnas.
+        c = _chart({"Mercury": 100.0, "Sun": 130.0, "Moon": 160.0, "Mars": 190.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0}, asc_lon=60.0)
+        assert _yoga("Y.MATRU_SNEHA").fires(c)
+
+    def test_silent_when_every_arm_fails(self):
+        """Aries: Mars-Moon are NOT mutual natural friends (Mars befriends the Moon, the
+        Moon is neutral back); Moon 5th from Mars makes them mutual TEMPORAL enemies; and
+        benefics stay off Mars so the aspect arm fails too."""
+        c = _chart({"Mars": 10.0, "Moon": 130.0, "Sun": 40.0, "Mercury": 70.0,
+                    "Jupiter": 220.0, "Venus": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.MATRU_SNEHA").fires(c)
+
+
+class TestAnapathyaYoga:
+    def test_fires_when_all_four_are_decisively_weak(self, monkeypatch):
+        # Aries: Jupiter + Mars (l1) + Venus (l7) + Sun (l5), weakness stubbed per the
+        # patched-gate discipline.
+        import app.raman_saab.primitives.effective_strength as es_mod
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _StubWeak())
+        c = _chart({"Jupiter": 40.0, "Mars": 10.0, "Venus": 70.0, "Sun": 130.0,
+                    "Moon": 160.0, "Mercury": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.ANAPATHYA").fires(c)
+
+    def test_silent_when_the_planets_are_well_placed(self):
+        # Same chart, real effective_strength: no dusthana, no combustion, no uncancelled
+        # debilitation -> nobody is decisively weak.
+        c = _chart({"Jupiter": 40.0, "Mars": 10.0, "Venus": 70.0, "Sun": 130.0,
+                    "Moon": 160.0, "Mercury": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.ANAPATHYA").fires(c)

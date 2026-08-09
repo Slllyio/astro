@@ -1509,3 +1509,138 @@ class TestBhagaChumbanaYoga:
         c = _chart({"Mars": 160.0, "Venus": 135.0, "Sun": 30.0, "Moon": 70.0,
                     "Mercury": 100.0, "Jupiter": 250.0, "Saturn": 310.0}, asc_lon=30.0)
         assert not _yoga("Y.BHAGA_CHUMBANA").fires(c)
+
+
+# ── tranche 10 (2026-08-09): fortune + the Raja group opening ───────────────────────────────
+class TestBhagyaYoga:
+    def test_fires_with_the_strength_gate_patched(self, monkeypatch):
+        # Jupiter in Lagna casts the 9th onto H9 — the one benefic Raman notes can raise
+        # the yoga from Lagna; strength stubbed per the patched-gate discipline.
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+        c = _chart({"Jupiter": 10.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 160.0, "Venus": 220.0, "Saturn": 310.0})
+        assert _yoga("Y.BHAGYA").fires(c)
+
+    def test_silent_when_the_strength_gate_is_real(self):
+        c = _chart({"Jupiter": 10.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 160.0, "Venus": 220.0, "Saturn": 310.0})
+        assert not _yoga("Y.BHAGYA").fires(c)
+
+
+class TestJananatpurvamPitruMaranaYoga:
+    def test_fires_when_the_entire_yoga_is_present(self):
+        # Chart 113's structure: Sun in the 8th, l8 in the 9th, l12 in Lagna, l6 in the
+        # 5th — Raman: the ENTIRE yoga, not a part of it.
+        c = _chart({"Sun": 220.0, "Mars": 250.0, "Jupiter": 10.0, "Mercury": 130.0,
+                    "Moon": 40.0, "Venus": 100.0, "Saturn": 310.0})
+        assert _yoga("Y.JANANATPURVAM_PITRU_MARANA").fires(c)
+
+    def test_silent_when_the_sun_leaves_the_dusthanas(self):
+        c = _chart({"Sun": 280.0, "Mars": 250.0, "Jupiter": 10.0, "Mercury": 130.0,
+                    "Moon": 40.0, "Venus": 100.0, "Saturn": 310.0})
+        assert not _yoga("Y.JANANATPURVAM_PITRU_MARANA").fires(c)
+
+
+class TestDhatrutwaYoga:
+    def test_fires_on_the_exalted_ninth_lord_fully_supported(self):
+        # l9 Jupiter exalted in Cancer; Venus casts the 7th onto it; Mercury occupies H9.
+        c = _chart({"Jupiter": 100.0, "Venus": 280.0, "Mercury": 250.0, "Sun": 10.0,
+                    "Moon": 40.0, "Mars": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.DHATRUTWA").fires(c)
+
+    def test_silent_when_the_lord_is_unexalted(self):
+        c = _chart({"Jupiter": 130.0, "Venus": 280.0, "Mercury": 250.0, "Sun": 10.0,
+                    "Moon": 40.0, "Mars": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.DHATRUTWA").fires(c)
+
+
+class TestApakeertiYoga:
+    def test_fires_on_sun_saturn_in_tenth_aspected_by_mars(self):
+        c = _chart({"Sun": 280.0, "Saturn": 285.0, "Mars": 70.0, "Moon": 40.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Venus": 340.0})
+        assert _yoga("Y.APAKEERTI").fires(c)
+
+    def test_silent_in_benefic_amsas_unaspected(self):
+        """Raman's own converse: mere presence in the 10th, unaspected and in benefic
+        navamsas, is NOT the yoga. Sun 291.0 / Saturn 292.5 both fall in Moon-owned
+        navamsas (engine-scanned); Mars parked in H5 aspects H8/H11/H12."""
+        c = _chart({"Sun": 291.0, "Saturn": 292.5, "Mars": 130.0, "Moon": 40.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Venus": 340.0})
+        assert not _yoga("Y.APAKEERTI").fires(c)
+
+
+class TestRaja245:
+    def test_fires_on_three_dignified_planets_in_kendras_and_trikonas(self):
+        # Mars own in H1, Moon own in H4, Saturn exalted in H7.
+        c = _chart({"Mars": 10.0, "Moon": 100.0, "Saturn": 190.0, "Sun": 40.0,
+                    "Mercury": 70.0, "Jupiter": 130.0, "Venus": 220.0})
+        assert _yoga("Y.RAJA_245").fires(c)
+
+    def test_silent_below_the_count(self):
+        # Only Saturn (exalted, H7) qualifies.
+        c = _chart({"Mars": 40.0, "Moon": 70.0, "Saturn": 190.0, "Sun": 160.0,
+                    "Mercury": 220.0, "Jupiter": 130.0, "Venus": 250.0})
+        assert not _yoga("Y.RAJA_245").fires(c)
+
+
+class TestRaja246:
+    def test_fires_on_a_bright_debilitated_planet_outside_dusthanas(self):
+        # Jupiter neecha in Capricorn (H10), uncombust — Chart 116's pattern.
+        c = _chart({"Jupiter": 280.0, "Sun": 10.0, "Moon": 40.0, "Mars": 100.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 220.0})
+        assert _yoga("Y.RAJA_246").fires(c)
+
+    def test_silent_without_a_qualifying_debilitation(self):
+        c = _chart({"Jupiter": 100.0, "Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_246").fires(c)
+
+
+class TestRaja247:
+    def test_fires_on_chart_117s_digbala_pair(self):
+        # Jupiter in Lagna and the Moon in the 4th — the exact pair Raman reads off
+        # Chart 117.
+        c = _chart({"Jupiter": 10.0, "Moon": 100.0, "Sun": 40.0, "Mars": 70.0,
+                    "Mercury": 130.0, "Venus": 220.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJA_247").fires(c)
+
+    def test_silent_when_no_planet_holds_digbala(self):
+        c = _chart({"Jupiter": 40.0, "Moon": 130.0, "Sun": 70.0, "Mars": 100.0,
+                    "Mercury": 160.0, "Venus": 220.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_247").fires(c)
+
+
+class TestRaja249:
+    def test_fires_in_toto(self):
+        # Moon in Lagna, Jupiter in the 4th, Venus in the 10th, Saturn exalted.
+        c = _chart({"Moon": 10.0, "Jupiter": 100.0, "Venus": 280.0, "Saturn": 190.0,
+                    "Sun": 40.0, "Mars": 70.0, "Mercury": 130.0})
+        assert _yoga("Y.RAJA_249").fires(c)
+
+    def test_silent_when_saturn_is_undignified(self):
+        c = _chart({"Moon": 10.0, "Jupiter": 100.0, "Venus": 280.0, "Saturn": 130.0,
+                    "Sun": 40.0, "Mars": 70.0, "Mercury": 160.0})
+        assert not _yoga("Y.RAJA_249").fires(c)
+
+
+class TestRaja250:
+    def test_fires_on_chart_119s_neechabhanga(self):
+        """The Sun neecha in Libra with Saturn — the planet exalted THERE, Raman's
+        resolution of thaduchchanatha via Prof. B. Suryanarain Rao — in a kendra from
+        Lagna: Chart 119's own configuration."""
+        c = _chart({"Sun": 190.0, "Saturn": 280.0, "Moon": 40.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Venus": 160.0})
+        assert _yoga("Y.RAJA_250").fires(c)
+
+    def test_silent_when_no_candidate_reaches_a_kendra(self):
+        # Sun neecha, but Saturn (H3) and Venus (H12) miss every kendra from Lagna and
+        # from the Moon; no other planet is debilitated.
+        c = _chart({"Sun": 190.0, "Saturn": 70.0, "Moon": 40.0, "Mars": 133.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Venus": 340.0})
+        assert not _yoga("Y.RAJA_250").fires(c)

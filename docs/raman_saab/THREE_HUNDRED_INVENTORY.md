@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 134 |
-| **on disk, awaiting encoding — the workable frontier** | **153** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 127 |
+| **on disk, awaiting encoding — the workable frontier** | **160** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -105,6 +105,16 @@
 | 142 | MATRUMOOLADDHANA YOGA | 3HC:8543 |
 | 143 | PUTRAMULADDHANA YOGA | 3HC:8558 |
 | 144 | SATRUMULADDHANA YOGA | 3HC:8651 |
+| 148 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 149 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 150 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 151 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 152 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 153 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 154 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 155 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 156 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
+| 157 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 158 | YUKTHI SAMANWITHAVAGMI YOGA (group 158-159) | 3HCH:3175 |
 | 159 | YUKTHI SAMANWITHAVAGMI YOGA (group 158-159) | 3HCH:3175 |
 | 160 | PARSHASAKA YOGA | 3HC:8836 |
@@ -122,9 +132,6 @@
 | 195 | Bandhubhisthyaktha Yoga | 3HCC:6514 |
 | 201 | Sahodareesangama yoga | 3HCC:6695 |
 | 226 | Suputra Yoga | 3HCC:7442 |
-| 241 | Bhagya yoga | 3HCC:7988 |
-| 242 | Jananatpurvam pitru Marana yoga | 3HCC:8017 |
-| 243 | Dhatrutwa Yoga | 3HCC:8043 |
 | 245 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 246 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 247 | Raja Yogas (group 245-263) | 3HCC:8152 |
@@ -246,16 +253,6 @@
 | 104 | Nala Yoga | 3HC:7081 |
 | 106 | Sarpa Yoga | 3HC:7173 |
 | 108 | DARIDRA YOGA | 3HC:7289 |
-| 148 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 149 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 150 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 151 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 152 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 153 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 154 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 155 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 156 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 157 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 163 | Mooka Yoga | 3HCC:5800 |
 | 164 | Netranasa Yoga | 3HCC:5809 |
 | 165 | Andha yoga | 3HCC:5830 |
@@ -319,6 +316,9 @@
 | 237 | Jarajaputra yoga | 3HCC:7847 |
 | 238 | Bahu Stree yoga | 3HCC:7865 |
 | 239 | Satkalatra yoga | 3HCC:7916 |
+| 241 | Bhagya yoga | 3HCC:7988 |
+| 242 | Jananatpurvam pitru Marana yoga | 3HCC:8017 |
+| 243 | Dhatrutwa Yoga | 3HCC:8043 |
 | 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 289 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 296 | Nishturabhashi Yoga | 3HCC:10204 |

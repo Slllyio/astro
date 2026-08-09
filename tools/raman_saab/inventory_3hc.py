@@ -248,6 +248,13 @@ def main() -> int:
         return diff + (len(b) - j) <= 1
 
     def _is_encoded(name: str) -> bool:
+        # A GROUP row ("245 to 263. Raja Yogas", 19 members) must not be credited whole
+        # by one name match — one encoded "Raja Yoga" would tick 19 boxes and hide the
+        # frontier. Small groups (<=4, e.g. Sarpasapa 212-215) stay name-creditable; the
+        # registry's skip records remain the per-arm authority either way.
+        g = re.search(r"\(group (\d+)-(\d+)\)", name)
+        if g and int(g.group(2)) - int(g.group(1)) + 1 > 4:
+            return False
         # the yoga-suffix strip must be case-insensitive: legacy scans SHOUT ("...YOGA"),
         # the complete edition title-cases ("Grihanasa Yogas") — the uppercase-only strip
         # left the suffix on and silently failed every complete-edition join

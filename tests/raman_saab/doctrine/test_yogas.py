@@ -657,3 +657,122 @@ class TestSumukha167Arm:
         c = _chart({"Venus": 70.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
                     "Mercury": 160.0, "Jupiter": 250.0, "Saturn": 190.0})
         assert not _yoga("Y.SUMUKHA").fires(c)
+
+
+# ── tranche 3 (2026-08-09) ──────────────────────────────────────────────────────────────────
+class TestIndraYoga:
+    def test_fires_on_the_5_11_exchange_with_moon_in_5th(self):
+        # Aries lagna: 5th = Leo (Sun), 11th = Aquarius (Saturn). Sun in H11, Saturn in H5,
+        # Moon in H5.
+        c = _chart({"Sun": 310.0, "Saturn": 130.0, "Moon": 135.0, "Mars": 10.0,
+                    "Mercury": 40.0, "Jupiter": 70.0, "Venus": 100.0})
+        assert _yoga("Y.INDRA").fires(c)
+
+    def test_silent_without_the_moon(self):
+        c = _chart({"Sun": 310.0, "Saturn": 130.0, "Moon": 40.0, "Mars": 10.0,
+                    "Mercury": 45.0, "Jupiter": 70.0, "Venus": 100.0})
+        assert not _yoga("Y.INDRA").fires(c)
+
+
+class TestTrilochanaYoga:
+    def test_fires_on_mutual_trines(self):
+        # Sun H1, Moon H5, Mars H9 — every pair 1/5/9 apart.
+        c = _chart({"Sun": 10.0, "Moon": 130.0, "Mars": 250.0, "Mercury": 40.0,
+                    "Jupiter": 70.0, "Venus": 100.0, "Saturn": 160.0})
+        assert _yoga("Y.TRILOCHANA").fires(c)
+
+    def test_silent_when_one_falls_out(self):
+        c = _chart({"Sun": 10.0, "Moon": 130.0, "Mars": 220.0, "Mercury": 40.0,
+                    "Jupiter": 70.0, "Venus": 100.0, "Saturn": 160.0})
+        assert not _yoga("Y.TRILOCHANA").fires(c)
+
+
+class TestKulavardhanaYoga:
+    def test_fires_all_seven_in_fifth_from_lagna(self):
+        # every graha in H5 (Leo, 120-150)
+        lons = {n: 121.0 + i for i, n in enumerate(
+            ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"))}
+        c = _chart(lons)
+        assert _yoga("Y.KULAVARDHANA").fires(c)
+
+    def test_silent_when_one_strays(self):
+        lons = {n: 121.0 + i for i, n in enumerate(
+            ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus"))}
+        lons["Saturn"] = 200.0
+        c = _chart(lons)
+        assert not _yoga("Y.KULAVARDHANA").fires(c)
+
+
+class TestVishnuYoga:
+    def test_fires_on_the_three_planet_chain_in_the_2nd(self):
+        """Aries lagna: 9th lord Jupiter at 34.0 (Taurus = H2; its navamsa there resolves to
+        a sign whose lord must also stand in H2 with the 10th lord Saturn)."""
+        # Jupiter (9th lord) in H2 at 34.0 -> navamsa: Taurus is fixed; cycle starts 9th from
+        # it (Capricorn); 34.0 is the 2nd navamsa -> Aquarius -> dispositor Saturn, who is
+        # ALSO the 10th lord — both roles land on one planet, placed in H2.
+        c = _chart({"Jupiter": 34.0, "Saturn": 40.0, "Sun": 10.0, "Moon": 70.0,
+                    "Mars": 100.0, "Mercury": 130.0, "Venus": 160.0})
+        assert _yoga("Y.VISHNU").fires(c)
+
+    def test_silent_when_the_ninth_lord_leaves_the_2nd(self):
+        c = _chart({"Jupiter": 250.0, "Saturn": 40.0, "Sun": 10.0, "Moon": 70.0,
+                    "Mars": 100.0, "Mercury": 130.0, "Venus": 160.0})
+        assert not _yoga("Y.VISHNU").fires(c)
+
+
+class TestGoYoga:
+    """The strength gate rides effective_strength, which stated-position charts cannot carry
+    — so the synthetics assert the GEOMETRIC refusals, mirroring the Lakshmi test pattern."""
+
+    def test_silent_when_jupiter_is_out_of_moolatrikona(self):
+        c = _chart({"Jupiter": 100.0, "Venus": 105.0, "Mars": 280.0, "Sun": 10.0,
+                    "Moon": 40.0, "Mercury": 70.0, "Saturn": 130.0})
+        assert not _yoga("Y.GO").fires(c)
+
+    def test_silent_when_the_lagna_lord_is_unexalted(self):
+        # Jupiter in Moolatrikona (Sagittarius early degrees, H9 for Aries) with 2nd lord
+        # Venus beside it — but lagna lord Mars NOT exalted -> must refuse before strength.
+        c = _chart({"Jupiter": 245.0, "Venus": 247.0, "Mars": 10.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Saturn": 130.0})
+        assert not _yoga("Y.GO").fires(c)
+
+
+class TestVakchalanaYoga:
+    def test_fires_malefic_lord_cruel_navamsa_unrelieved_second(self):
+        """Capricorn lagna (asc 270): the 2nd is Aquarius, lord Saturn (a malefic). Saturn at
+        305.0 -> Aquarius (fixed; navamsa cycle starts 9th from it = Libra); 305.0 is the 2nd
+        navamsa -> Scorpio, a MALEFIC-owned (cruel) navamsa. Keep every benefic off H2 and
+        off any aspect to it. Jupiter must avoid H6/H8/H10 (whose 9th/7th/5th land on H2 —
+        the first fixture had him in H6 and his trine relieved the house)."""
+        c = _chart({"Saturn": 305.0, "Sun": 275.0, "Mars": 245.0, "Moon": 155.0,
+                    "Mercury": 150.0, "Jupiter": 15.0, "Venus": 185.0}, asc_lon=270.0)
+        assert _yoga("Y.VAKCHALANA").fires(c)
+
+    def test_silent_when_a_benefic_aspects_the_second(self):
+        # Jupiter moved to H8 (Leo) — its 7th aspect lands on H2 (Aquarius) -> relieved.
+        c = _chart({"Saturn": 305.0, "Sun": 275.0, "Mars": 245.0, "Moon": 155.0,
+                    "Mercury": 150.0, "Jupiter": 125.0, "Venus": 185.0}, asc_lon=270.0)
+        assert not _yoga("Y.VAKCHALANA").fires(c)
+
+
+class TestVishaprayogaYoga:
+    def test_fires_on_the_full_affliction(self):
+        """Capricorn lagna: Mars sits IN H2 (joined); Sun in H8 casts the 7th onto H2
+        (aspected); 2nd lord Saturn in cruel navamsa (305 -> Scorpio) aspected by Mars
+        (Mars in H2 = Aquarius casts its 4th onto... use Mars aspecting Saturn in H2 itself:
+        same house = no; Mars' 4th from H2 is H5, 7th is H8, 8th is H9 — put Saturn IN H2
+        with Mars? conjunction is not aspect. Instead: Saturn stays at 305 (H2), Mars in H7
+        (Cancer) casts its 7th onto H1... recompute: Mars in H11 (Scorpio 220) casts 4th ->
+        H2. So Mars at 220 aspects both house 2 and Saturn in it."""
+        c = _chart({"Saturn": 305.0, "Mars": 220.0, "Sun": 305.5, "Moon": 155.0,
+                    "Mercury": 150.0, "Jupiter": 60.0, "Venus": 185.0}, asc_lon=270.0)
+        # Sun at 305.5 joins H2 (malefic in the 2nd); Mars from H11 aspects H2 and Saturn.
+        assert _yoga("Y.VISHAPRAYOGA").fires(c)
+
+    def test_silent_without_the_cruel_navamsa(self):
+        # Saturn at 331.0 -> Pisces navamsa region... choose 330.5: Aquarius 60.5 deg in?
+        # 330.5 is Pisces sign — wrong house. Use 301.0: Aquarius, navamsa Libra (1st of the
+        # cycle) — Venus-owned, NOT cruel.
+        c = _chart({"Saturn": 301.0, "Mars": 220.0, "Sun": 305.5, "Moon": 155.0,
+                    "Mercury": 150.0, "Jupiter": 60.0, "Venus": 185.0}, asc_lon=270.0)
+        assert not _yoga("Y.VISHAPRAYOGA").fires(c)

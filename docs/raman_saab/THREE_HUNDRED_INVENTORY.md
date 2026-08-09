@@ -7,14 +7,16 @@
 | | count |
 |---|---|
 | combinations in the book | 300 |
-| **acquired on disk** | **275** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 51 |
-| **on disk, awaiting encoding — the workable frontier** | **224** |
-| in the ToC but illegible in the body (true OCR gaps) | 0 |
-| invisible to the parser entirely — manual-audit list below | 25 |
+| **acquired on disk** | **287** (1-300) |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 101 |
+| **on disk, awaiting encoding — the workable frontier** | **186** |
+| in the ToC but illegible in the body (true OCR gaps) | 2 |
+| invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
 
 **The complete edition is acquired** (user's Drive scan, Motilal ed., ingested 2026-08-08 as `3HCC`) — the first copy containing 163-300; every earlier circulating scan truncated at 162. Cite 3HCC for the far half, 3HCH for 1-162 where its OCR is cleaner.
+
+**Group-row caveat:** a grouped heading ("202 to 204. Kapata Yogas") is credited as encoded when ANY registered yoga matches it by name — so a group with a deliberately-skipped arm (204's Gulika clause) still shows encoded. The skip record in `doctrine/yogas.py` is the authority on per-arm coverage.
 
 ## On disk, not yet encoded
 
@@ -27,7 +29,6 @@
 | 16 | VESI Y06A | 3HC:3265 |
 | 25 | MAHABHAGYA YOGA | 3HC:4078 |
 | 26 | PUSHKALA YOGA | 3HC:4170 |
-| 27 | Lakshmi Yoga | 3HC:4193 |
 | 29 | BHARATHI YOGA | 3HC:4552 |
 | 30 | KUSUMA YOGAS | 3HC:4649 |
 | 32 | SREENATHA YOGA | 3HC:4690 |
@@ -48,54 +49,25 @@
 | 47 | MATSYA YOGA | 3HC:4950 |
 | 48 | MRIDANGA YOGA | 3HC:4966 |
 | 49 | PARIJATHA YOGA | 3HC:5087 |
-| 50 | Amsavatara Yoga | 3HCC:212 |
-| 51 | Harihara Brahmi Yoga | 3HCC:213 |
-| 52 | Kusuma Yoga | 3HCC:214 |
-| 53 | Matsya Yoga | 3HCC:215 |
+| 50 | Amsavatara Yoga | 3HCC:3014 |
+| 51 | Harihara Brahma Yoga | 3HCC:3039 |
+| 52 | Kusuma Yoga | 3HCC:3076 |
+| 53 | Matsya Yoga | 3HCC:3169 |
 | 54 | Kusuma Yoga | 3HC:4649 |
 | 55 | Matsya Yoga | 3HC:4950 |
-| 56 | Makuta Yoga | 3HCC:218 |
-| 57 | Chandika Yoga | 3HCC:219 |
-| 58 | Jaya Yoga | 3HCC:220 |
-| 59 | Vidyut Yoga | 3HCC:221 |
+| 56 | Makuta Yoga | 3HCC:3287 |
+| 57 | Chandika Yoga | 3HCC:3308 |
+| 59 | Vidyut Yoga | 3HCC:3407 |
 | 60 | jay a Y'oga | 3HC:5663 |
-| 61 | Siva Yoga | 3HCC:223 |
-| 62 | Vishnu Yoga | 3HCC:224 |
-| 63 | Brahma Yoga | 3HCC:225 |
+| 61 | Siva Yoga | 3HCC:3454 |
 | 64 | Vishnu Y'oga | 3HC:5163 |
 | 65 | Brahma Y'oga | 3HC:5230 |
-| 68 | Gola Yoga | 3HCC:230 |
 | 69 | Go Y'oga | 3HC:5497 |
 | 71 | THRIIOCHANA YOGA | 3HC:5625 |
-| 75 | Yupa Yoga | 3HC:5753 |
 | 76 | Ishu Yoga | 3HC:5755 |
-| 77 | Sakti Yoga | 3HC:5757 |
 | 78 | Datxia Yoga | 3HC:5759 |
-| 80 | Kuta Yoga | 3HC:5957 |
-| 81 | Gada Yoga | 3HCC:4069 |
-| 82 | Chapa Yoga | 3HC:5961 |
-| 84 | Chakra Yoga | 3HC:6025 |
-| 85 | Gada Yoga | 3HC:6047 |
-| 86 | Sakata Yoga | 3HC:6049 |
-| 87 | Vihaga Yoga | 3HC:6051 |
-| 88 | Vajra Yoga | 3HC:6172 |
-| 89 | Yava Yoga | 3HC:6174 |
-| 91 | Hala Yoga | 3HC:6262 |
-| 92 | Kamala Yoga | 3HC:6365 |
-| 93 | Vapee Yoga | 3HC:6367 |
-| 94 | Samudra Yoga | 3HC:6450 |
 | 95 | Vallaki Yoga | 3HC:6487 |
-| 96 | Damini Yoga | 3HC:6590 |
-| 97 | Pasa Yoga | 3HC:6732 |
-| 98 | Kedara Yoga | 3HC:6888 |
-| 99 | Sula Yoga | 3HC:6912 |
-| 100 | Yuga Yoga | 3HC:6914 |
-| 101 | Gola Yoga | 3HC:6916 |
-| 102 | Rajju Yoga | 3HC:7077 |
-| 103 | Musala Yoga | 3HC:7079 |
-| 104 | Nala Yoga | 3HC:7081 |
 | 105 | Srik Yoga | 3HC:7171 |
-| 106 | Sarpa Yoga | 3HC:7173 |
 | 107 | DURYOGA | 3HC:7257 |
 | 109 | Harsha Yoga | 3HC:7314 |
 | 110 | Sarala Yoga | 3HC:7316 |
@@ -104,8 +76,8 @@
 | 113 | DIHAPUSHT1 YOGA | 3HC:7375 |
 | 114 | DEHAKASHTA YOGA | 3HC:7393 |
 | 115 | R0GA6RASTHA YOGA | 3HC:7409 |
-| 116 | Dehasthoulya Yogas (group 114-116) | 3HCC:4895 |
-| 117 | Sada Sanchara Yoga | 3HCC:4945 |
+| 116 | KRISANGA YOGA (group 116-117) | 3HC:7442 |
+| 117 | KRISANGA YOGA (group 116-117) | 3HC:7442 |
 | 118 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
 | 119 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
 | 120 | DEHASTHOULYA YOGAS (group 118-120) | 3HC:7524 |
@@ -125,129 +97,125 @@
 | 134 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
 | 135 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
 | 136 | SWAVEERYADDHANA YOGA (group 134-136) | 3HC:8262 |
-| 137 | Malika Yogas (group 129-140) | 3HCC:11435 |
+| 137 | Bhratrumooladdhanaprapti Yoga (group 136-137) | 3HCC:5358 |
 | 138 | ANTHYAVAYASI DHANA YOGA | 3HC:8421 |
 | 139 | BALYA DHANA YOGA | 3HC:8442 |
-| 140 | Satrumooladdhana Yoga | 3HCC:298 |
-| 141 | Kalatramooladdhana yoga | 3HCC:5438 |
+| 140 | BHRATRUNIOOLADDHANAPRAPTI YOGA (group 140-141) | 3HCH:392 |
+| 141 | BHRATRUNIOOLADDHANAPRAPTI YOGA (group 140-141) | 3HCH:392 |
 | 142 | MATRUMOOLADDHANA YOGA | 3HC:8543 |
 | 143 | PUTRAMULADDHANA YOGA | 3HC:8558 |
 | 144 | SATRUMULADDHANA YOGA | 3HC:8651 |
-| 145 | Marud Yoga | 3HCC:11485 |
-| 158 | Jada Yoga | 3HCC:306 |
-| 159 | Bhaskara Yoga | 3HCC:307 |
+| 158 | YUKTHI SAMANWITHAVAGMI YOGA (group 158-159) | 3HCH:3175 |
+| 159 | YUKTHI SAMANWITHAVAGMI YOGA (group 158-159) | 3HCH:3175 |
 | 160 | PARSHASAKA YOGA | 3HC:8836 |
 | 161 | Saraswathi Yoga | 3HCC:5750 |
 | 162 | JAM YOGA | 3HC:8967 |
-| 163 | Mooka Yoga | 3HCC:311 |
-| 164 | Netranasa Yoga | 3HCC:312 |
-| 165 | Andha Yoga | 3HCC:354 |
+| 170 | Bhojana Soukhya Yoga | 3HCC:5893 |
 | 171 | Annadana yoga | 3HCC:5907 |
-| 172 | Parannabhojana yoga | 3HCC:359 |
-| 174 | Sarpaganda Yoga | 3HCC:361 |
+| 172 | parannabhojana yoga | 3HCC:5949 |
+| 174 | Sarpaganda Yoga | 3HCC:5974 |
 | 178 | Sodaranasa Yoga | 3HCC:6064 |
 | 181 | Sapthasankhya Sahodara yoga | 3HCC:6174 |
-| 182 | Parakrama Yoga | 3HCC:369 |
-| 183 | Yuddha Praveena yoga | 3HCC:370 |
-| 184 | Yuddhatpoorvadridhachitta yoga | 3HCC:371 |
-| 185 | Yuddhatpaschaddrudha yoga | 3HCC:372 |
-| 192 | Netranasa Yoga | 3HCC:11496 |
-| 195 | Bandhubhisthyaktha yoga | 3HCC:379 |
-| 196 | Obhayachari Yoga | 3HCC:11499 |
-| 197 | Parakrama Yoga | 3HCC:11500 |
-| 198 | Parihasaka Yoga | 3HCC:11501 |
-| 201 | Sahodareesangama yoga | 3HCC:383 |
-| 202 | Pisacha Grastha Yoga | 3HCC:11505 |
-| 205 | Pretasapa Yoga | 3HCC:11508 |
-| 206 | Pushkala Yoga | 3HCC:11509 |
-| 207 | Putrakalatraheena Yoga | 3HCC:11510 |
-| 208 | Matru Sneha yoga | 3HCC:387 |
-| 210 | Putra Sukha Yoga | 3HCC:11512 |
+| 183 | Yuddha praveena yoga | 3HCC:6221 |
+| 184 | Yuddhatpoorvadridhachitta Yoga | 3HCC:6262 |
+| 185 | Yuddhatpaschaddrudha Yoga | 3HCC:6276 |
+| 195 | Bandhubhisthyaktha Yoga | 3HCC:6514 |
+| 196 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
+| 197 | Matrudeerghayur Yogas (group 196-197) | 3HCC:6534 |
+| 198 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
+| 199 | Matrunasa Yogas (group 198-199) | 3HCC:6553 |
+| 201 | Sahodareesangama yoga | 3HCC:6695 |
+| 205 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
+| 206 | Niehkapata Yogas (group 205-206) | 3HCC:6766 |
+| 208 | Matru Sneha Yoga | 3HCC:6811 |
 | 211 | AnapathYa Yoga | 3HCC:6871 |
 | 212 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
 | 213 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
 | 214 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
 | 215 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
-| 216 | Pitrusapa Sutakshaya Yoga | 3HCC:432 |
-| 217 | Matrusapa Sutaksbaya Yoga | 3HCC:433 |
-| 218 | Bhratrusapa Sutakshaya Yoga | 3HCC:434 |
-| 219 | Pretasapa Yoga | 3HCC:435 |
-| 220 | Rajabhrashta Yoga | 3HCC:11519 |
-| 221 | Rajalakshana Yoga | 3HCC:11520 |
-| 224 | Aputra Yoga | 3HCC:438 |
-| 225 | Ekaputra Yoga | 3HCC:439 |
-| 226 | Satputra Yoga | 3HCC:440 |
-| 227 | Raja Yogas (group 224-242) | 3HCC:11567 |
-| 228 | Raja Yogas (group 224-242) | 3HCC:11567 |
-| 229 | Raja Yogas (group 224-242) | 3HCC:11567 |
-| 230 | Raja Yogas (group 224-242) | 3HCC:11567 |
-| 231 | Buddhimaturya Yoga | 3HCC:443 |
-| 232 | Theevrabuddhi Yoga | 3HCC:444 |
+| 216 | Pitrusapa Sutakshaya yoga | 3HCC:7012 |
+| 217 | Matrusapa Sutakshaya yoga | 3HCC:7154 |
+| 218 | Bhratrusapa Sutakshaya Yoga | 3HCC:7199 |
+| 219 | pretasapa yoga | 3HCC:7218 |
+| 220 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
+| 221 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
+| 222 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
+| 223 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
+| 224 | Aputra Yoga | 3HCC:7387 |
+| 225 | Ekaputra Yoga | 3HCC:7422 |
+| 226 | Suputra Yoga | 3HCC:7442 |
+| 227 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
+| 228 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
+| 229 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
+| 230 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
+| 231 | Buddhimaturya Yoga | 3HCC:7543 |
+| 232 | Theevrabuddhi Yoga | 3HCC:7624 |
 | 233 | Buddhi Jada Yoga | 3HCC:7656 |
-| 234 | Thrikalagnana Yoga | 3HCC:446 |
-| 235 | Putra Sukha Yoga | 3HCC:447 |
-| 236 | Jara Yoga | 3HCC:448 |
-| 237 | Jarajaputra Yoga | 3HCC:449 |
-| 238 | Bahu Stree Yoga | 3HCC:450 |
-| 239 | Satkalatra Yoga | 3HCC:451 |
-| 240 | Bhaga Chumbana Yoga | 3HCC:452 |
-| 241 | Bhagya Yoga | 3HCC:453 |
-| 242 | Jananatpurvam Pitru Marana Yoga | 3HCC:454 |
-| 243 | Dhatrutwa Yoga | 3HCC:455 |
-| 244 | Rogagrastha yoga | 3HCC:11569 |
-| 245 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 246 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 247 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 248 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 249 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 250 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 251 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 252 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 253 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 254 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 255 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 256 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 257 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 258 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 259 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 260 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 261 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 262 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 263 | Raja Yogas (group 245-263) | 3HCC:457 |
-| 264 | Galakarna Yoga | 3HCC:458 |
-| 265 | Vrana Yoga | 3HCC:459 |
-| 266 | Sisnavyadhi Yoga | 3HCC:460 |
-| 267 | Kalatrashanda Yoga | 3HCC:461 |
-| 268 | Sreenatha Yoga | 3HCC:11590 |
+| 235 | Putra Sukha Yoga | 3HCC:7786 |
+| 237 | Jarajaputra yoga | 3HCC:7847 |
+| 238 | Bahu Stree yoga | 3HCC:7865 |
+| 239 | Satkalatra yoga | 3HCC:7916 |
+| 241 | Bhagya yoga | 3HCC:7988 |
+| 242 | Jananatpurvam pitru Marana yoga | 3HCC:8017 |
+| 243 | Dhatrutwa Yoga | 3HCC:8043 |
+| 245 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 246 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 247 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 248 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 249 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 250 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 251 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 252 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 253 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 254 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 255 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 256 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 257 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 258 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 259 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 260 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 261 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 262 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 263 | Raja Yogas (group 245-263) | 3HCC:8152 |
+| 264 | Galakarna Yoga | 3HCC:8900 |
+| 265 | Vrana Yoga | 3HCC:8913 |
+| 266 | Sisnavyadhi yoga | 3HCC:8986 |
+| 267 | Kalatrashanda Yoga | 3HCC:9025 |
+| 268 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
+| 269 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
 | 271 | Bandhana yoga | 3HCC:9301 |
-| 272 | Karascheda Yoga | 3HCC:465 |
-| 273 | Siracbcheda Yoga | 3HCC:466 |
-| 274 | Durmarana yoga | 3HCC:508 |
-| 275 | yuddhc Marana yoga | 3HCC:509 |
-| 276 | Swetakusta Yoga | 3HCC:11597 |
-| 277 | Theevrabuddhi yoga | 3HCC:11598 |
-| 278 | Pccnasaroga yoga | 3HCC:511 |
-| 279 | pittaroga yoga | 3HCC:512 |
-| 281 | Putrakalatraheena yoga | 3HCC:514 |
+| 272 | Karascheda yoga | 3HCC:9314 |
+| 273 | Sirachchcda yoga | 3HCC:9340 |
+| 274 | Durmarana Yoga | 3HCC:9386 |
+| 275 | Yuddhe Marana yoga | 3HCC:9417 |
+| 276 | Sanghataka Marana Yogas (group 276-277) | 3HCC:9462 |
+| 277 | Sanghataka Marana Yogas (group 276-277) | 3HCC:9462 |
+| 278 | Peenasaroga yoga | 3HCC:9494 |
+| 280 | Vikalangapatni yoga | 3HCC:9587 |
+| 281 | Putrakalatraheena yoga | 3HCC:9600 |
 | 282 | Bharyasahavyabhichara yoga | 3HCC:9620 |
 | 283 | Vamsacheda Yoga | 3HCC:9700 |
-| 284 | Vasi Yoga | 3HCC:11698 |
-| 285 | Angaheena yoga | 3HCC:518 |
+| 285 | Angaheena yoga | 3HCC:9747 |
 | 286 | Swetakushta Yoga | 3HCC:9768 |
-| 287 | Pisacha Grastha-yoga | 3HCC:520 |
+| 287 | Pisacha Grastha Yoga | 3HCC:9791 |
 | 290 | Vatharoga Yoga | 3HCC:9878 |
-| 291 | Matibhramana Yogas (group 291-294) | 3HCC:523 |
-| 292 | Matibhramana Yogas (group 291-294) | 3HCC:523 |
-| 293 | Matibhramana Yogas (group 291-294) | 3HCC:523 |
-| 294 | Matibhramana Yogas (group 291-294) | 3HCC:523 |
-| 295 | Khalawata yoga | 3HCC:524 |
+| 291 | Matibhramana Yogas (group 291-294) | 3HCC:9940 |
+| 292 | Matibhramana Yogas (group 291-294) | 3HCC:9940 |
+| 293 | Matibhramana Yogas (group 291-294) | 3HCC:9940 |
+| 294 | Matibhramana Yogas (group 291-294) | 3HCC:9940 |
+| 295 | Khalwata Yoga | 3HCC:10184 |
 | 297 | Rajabhrashta Yoga | 3HCC:10212 |
-| 298 | Yuddhatpaschaddrubha Yoga - | 3HCC:11712 |
-| 300 | Gohanta yoga | 3HCC:528 |
+| 298 | Raja Yoga Bhangas (group 298-299) | 3HCC:10245 |
+| 299 | Raja Yoga Bhangas (group 298-299) | 3HCC:10245 |
+| 300 | Gohanta Yoga | 3HCC:10285 |
 
 ## Not machine-legible (numbers the OCR hides — audit by hand)
 
-79, 146, 147, 166, 167, 168, 169, 170, 177, 189, 190, 191, 193, 194, 199, 200, 203, 204, 209, 222, 223, 269, 270, 280, 299
+79, 145, 146, 147, 177, 234, 240, 244, 270, 279, 284
+
+## In the ToC, never found in the body
+
+58 (Makuta Yoga), 68 (Garada Yoga)
 
 ## Already encoded (citation inside the combination's span)
 
@@ -272,16 +240,44 @@
 | 22 | RUCHAKA YOGA | 3HC:3850 |
 | 23 | BHADRA YOGA | 3HC:3971 |
 | 24 | BUDHA-AD1TYA YOGA | 3HC:4057 |
+| 27 | Lakshmi Yoga | 3HC:4193 |
 | 28 | GAURl YOGA | 3HC:4446 |
 | 31 | CHAPA YOGA | 3HC:4671 |
+| 62 | Vishnu Yoga | 3HCC:3494 |
+| 63 | Brahma Yoga | 3HCC:3572 |
 | 66 | INDRA YOGA | 3HC:5368 |
 | 67 | RAVI YOGA | 3HC:5390 |
 | 70 | GOLA YOGA | 3HC:5606 |
 | 72 | SAMUDRA YOGA | 3HC:5642 |
 | 73 | JAYA YOGA | 3HC:5663 |
 | 74 | KUIAVARDHANA YOGAS | 3HC:5709 |
+| 75 | Yupa Yoga | 3HC:5753 |
+| 77 | Sakti Yoga | 3HC:5757 |
+| 80 | Kuta Yoga | 3HC:5957 |
+| 81 | Gada Yoga | 3HCC:4069 |
+| 82 | Chapa Yoga | 3HC:5961 |
 | 83 | Ardha Chandra Yoga | 3HC:6008 |
+| 84 | Chakra Yoga | 3HC:6025 |
+| 85 | Gada Yoga | 3HC:6047 |
+| 86 | Sakata Yoga | 3HC:6049 |
+| 87 | Vihaga Yoga | 3HC:6051 |
+| 88 | Vajra Yoga | 3HC:6172 |
+| 89 | Yava Yoga | 3HC:6174 |
 | 90 | Sringhataka Yoga | 3HC:6260 |
+| 91 | Hala Yoga | 3HC:6262 |
+| 92 | Kamala Yoga | 3HC:6365 |
+| 93 | Vapee Yoga | 3HC:6367 |
+| 94 | Samudra Yoga | 3HC:6450 |
+| 96 | Damini Yoga | 3HC:6590 |
+| 97 | Pasa Yoga | 3HC:6732 |
+| 98 | Kedara Yoga | 3HC:6888 |
+| 99 | Sula Yoga | 3HC:6912 |
+| 100 | Yuga Yoga | 3HC:6914 |
+| 101 | Gola Yoga | 3HC:6916 |
+| 102 | Rajju Yoga | 3HC:7077 |
+| 103 | Musala Yoga | 3HC:7079 |
+| 104 | Nala Yoga | 3HC:7081 |
+| 106 | Sarpa Yoga | 3HC:7173 |
 | 108 | DARIDRA YOGA | 3HC:7289 |
 | 148 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 149 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
@@ -293,14 +289,36 @@
 | 155 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 156 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
 | 157 | DARIDRA YOGAS (group 148-157) | 3HC:8726 |
-| 173 | Sraddhannabhuktha yoga | 3HC:-1000360 |
-| 175 | Vakchalana Yoga | 3HC:-1000362 |
-| 176 | Vishaprayoga yoga | 3HC:-1000363 |
-| 179 | Ekabhagini yoga | 3HC:-1000366 |
-| 180 | Dwadasa Sahodara yoga | 3HC:-1000367 |
-| 186 | Satkathadisravana yoga | 3HC:-1000373 |
-| 187 | Uttama Griha Yoga | 3HC:-1000374 |
-| 188 | Vichitra Saudha Prakara yoga | 3HC:-1000375 |
-| 288 | Vakchalana Yoga | 3HC:-1011702 |
-| 289 | Vichitra Saudha Prakara Yoga - | 3HC:-1011703 |
-| 296 | Nishturabhashi Yoga | 3HC:-1010204 |
+| 163 | Mooka Yoga | 3HCC:5800 |
+| 164 | Netranasa Yoga | 3HCC:5809 |
+| 165 | Andha yoga | 3HCC:5830 |
+| 166 | Sumukha Yogas (group 166-167) | 3HCC:5852 |
+| 167 | Sumukha Yogas (group 166-167) | 3HCC:5852 |
+| 168 | Durmukha Yogas (group 168-169) | 3HCC:5877 |
+| 169 | Durmukha Yogas (group 168-169) | 3HCC:5877 |
+| 173 | Sraddhannabhuktha Yoga | 3HCC:5962 |
+| 175 | Vakchalana Yoga | 3HCC:5990 |
+| 176 | Vishaprayoga Yoga | 3HCC:6002 |
+| 179 | Ekabhagini Yoga | 3HCC:6099 |
+| 180 | Dwadasa Sahodara Yoga | 3HCC:6115 |
+| 182 | Parakrama yoga | 3HCC:6193 |
+| 186 | Satkathadisravana yoga | 3HCC:6305 |
+| 187 | Uttama Griha Yoga | 3HCC:6319 |
+| 188 | Vichitra Saudha Prakara Yoga | 3HCC:6357 |
+| 189 | Ayatna Griha Prapta Yogas (group 189-190) | 3HCC:6403 |
+| 190 | Ayatna Griha Prapta Yogas (group 189-190) | 3HCC:6403 |
+| 191 | Grihanasa Yogas (group 191-192) | 3HCC:6434 |
+| 192 | Grihanasa Yogas (group 191-192) | 3HCC:6434 |
+| 193 | Bandhu Pujya Yogas (group 193-194) | 3HCC:6458 |
+| 194 | Bandhu Pujya Yogas (group 193-194) | 3HCC:6458 |
+| 200 | Matrugami Yoga | 3HCC:6665 |
+| 202 | Kapata Yogas (group 202-204) | 3HCC:6710 |
+| 203 | Kapata Yogas (group 202-204) | 3HCC:6710 |
+| 204 | Kapata Yogas (group 202-204) | 3HCC:6710 |
+| 207 | Matru Satrutwa Yoga | 3HCC:6797 |
+| 209 | Vahana Yogas (group 209-210) | 3HCC:6829 |
+| 210 | Vahana Yogas (group 209-210) | 3HCC:6829 |
+| 236 | Jara Yoga | 3HCC:7804 |
+| 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
+| 289 | Andha Yogas (group 288-289) | 3HCC:9828 |
+| 296 | Nishturabhashi Yoga | 3HCC:10204 |

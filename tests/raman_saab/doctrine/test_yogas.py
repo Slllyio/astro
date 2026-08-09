@@ -888,3 +888,128 @@ class TestVichitraSaudhaYoga:
         c = _chart({"Mercury": 130.0, "Jupiter": 132.0, "Saturn": 200.0, "Mars": 136.0,
                     "Sun": 10.0, "Moon": 40.0, "Venus": 205.0}, asc_lon=60.0)
         assert not _yoga("Y.VICHITRA_SAUDHA").fires(c)
+
+
+# ── tranche 5 (2026-08-09): the 4th-house/mother block ──────────────────────────────────────
+class TestAyatnaGrihaYoga:
+    def test_fires_on_189_lords_in_lagna_or_fourth_with_benefic(self):
+        """Aries lagna: l1 Mars in H1, l7 Venus in H4 joined by Jupiter — Raman's Chart 87
+        counts association as the benefic clause. Moon debilitated keeps the 190 arm out."""
+        c = _chart({"Mars": 10.0, "Venus": 100.0, "Jupiter": 105.0, "Moon": 220.0,
+                    "Sun": 130.0, "Mercury": 160.0, "Saturn": 310.0})
+        assert _yoga("Y.AYATNA_GRIHA").fires(c)
+
+    def test_silent_when_neither_arm_holds(self):
+        # l1 Mars in H2 (189 out); l9 Jupiter in H3, not a kendra (190 out).
+        c = _chart({"Mars": 40.0, "Venus": 100.0, "Jupiter": 70.0, "Moon": 220.0,
+                    "Sun": 130.0, "Mercury": 160.0, "Saturn": 310.0})
+        assert not _yoga("Y.AYATNA_GRIHA").fires(c)
+
+
+class TestGrihanasaYoga:
+    def test_fires_on_191_fourth_lord_in_third_aspected_by_malefic(self):
+        """Aries lagna: l4 Moon in H3 (the 12th FROM THE 4TH per Raman's Remarks
+        correction), Saturn in H9 casting the 7th onto it."""
+        c = _chart({"Moon": 70.0, "Saturn": 250.0, "Mars": 10.0, "Sun": 130.0,
+                    "Mercury": 160.0, "Jupiter": 190.0, "Venus": 280.0})
+        assert _yoga("Y.GRIHANASA").fires(c)
+
+    def test_silent_when_the_fourth_lord_leaves_the_third(self):
+        c = _chart({"Moon": 100.0, "Saturn": 250.0, "Mars": 10.0, "Sun": 130.0,
+                    "Mercury": 160.0, "Jupiter": 190.0, "Venus": 280.0})
+        assert not _yoga("Y.GRIHANASA").fires(c)
+
+
+class TestBandhuPujya193:
+    def test_fires_benefic_fourth_lord_aspected_mercury_in_lagna(self):
+        # Aries lagna: l4 Moon (natural benefic) in H4; Jupiter H8 casts the 9th onto it;
+        # Mercury in Lagna.
+        c = _chart({"Moon": 100.0, "Jupiter": 220.0, "Mercury": 10.0, "Mars": 40.0,
+                    "Sun": 130.0, "Venus": 160.0, "Saturn": 310.0})
+        assert _yoga("Y.BANDHU_PUJYA_193").fires(c)
+
+    def test_silent_when_mercury_leaves_lagna(self):
+        c = _chart({"Moon": 100.0, "Jupiter": 220.0, "Mercury": 70.0, "Mars": 40.0,
+                    "Sun": 130.0, "Venus": 160.0, "Saturn": 310.0})
+        assert not _yoga("Y.BANDHU_PUJYA_193").fires(c)
+
+
+class TestBandhuPujya194:
+    def test_fires_when_jupiter_aspects_the_fourth(self):
+        c = _chart({"Jupiter": 220.0, "Moon": 100.0, "Mercury": 10.0, "Mars": 40.0,
+                    "Sun": 130.0, "Venus": 160.0, "Saturn": 310.0})
+        assert _yoga("Y.BANDHU_PUJYA_194").fires(c)
+
+    def test_silent_when_jupiter_touches_neither_house_nor_lord(self):
+        # Jupiter H2 aspects H6/H8/H10; l4 Moon parked in H12 out of reach.
+        c = _chart({"Jupiter": 40.0, "Moon": 340.0, "Mercury": 10.0, "Mars": 70.0,
+                    "Sun": 130.0, "Venus": 160.0, "Saturn": 310.0})
+        assert not _yoga("Y.BANDHU_PUJYA_194").fires(c)
+
+
+class TestMatrugamiYoga:
+    def test_fires_afflicted_moon_in_kendra_with_malefic_in_fourth(self):
+        # Mars in H4 (also supplying the evil-planet-in-4th clause) casts its 4th onto
+        # the Moon in H7.
+        c = _chart({"Mars": 100.0, "Moon": 190.0, "Sun": 130.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.MATRUGAMI").fires(c)
+
+    def test_silent_without_a_malefic_in_the_fourth(self):
+        c = _chart({"Mars": 40.0, "Moon": 130.0, "Sun": 70.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.MATRUGAMI").fires(c)
+
+
+class TestKapataYoga:
+    def test_fires_on_202_malefic_in_fourth_and_afflicted_lord(self):
+        # Sun in H4; l4 Moon conjunct Mars in H7.
+        c = _chart({"Sun": 100.0, "Moon": 190.0, "Mars": 195.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.KAPATA").fires(c)
+
+    def test_fires_on_the_203_four_malefic_stack(self):
+        """Saturn (the l10, itself malefic), Mars and Rahu all in H4, the Sun casting the
+        7th onto Saturn from H10 — the full 203 stack."""
+        c = _chart({"Saturn": 100.0, "Mars": 102.0, "Rahu": 104.0, "Sun": 285.0,
+                    "Moon": 130.0, "Mercury": 160.0, "Jupiter": 220.0, "Venus": 250.0})
+        assert _yoga("Y.KAPATA").fires(c)
+
+    def test_silent_when_the_fourth_is_clean(self):
+        c = _chart({"Sun": 10.0, "Moon": 130.0, "Mars": 40.0, "Mercury": 160.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 165.0})
+        assert not _yoga("Y.KAPATA").fires(c)
+
+
+class TestMatruSatrutwaYoga:
+    def test_fires_only_for_gemini_lagna_with_afflicted_mercury(self):
+        """Raman's Remarks: applicable only to Mithuna Lagna, where Mercury owns both
+        Lagna and the 4th. Saturn conjunct Mercury supplies the affliction."""
+        c = _chart({"Mercury": 100.0, "Saturn": 105.0, "Sun": 130.0, "Moon": 160.0,
+                    "Mars": 190.0, "Jupiter": 250.0, "Venus": 280.0}, asc_lon=60.0)
+        assert _yoga("Y.MATRU_SATRUTWA").fires(c)
+
+    def test_silent_for_any_other_lagna(self):
+        # Identical longitudes, Aries lagna — the Mithuna guard must refuse.
+        c = _chart({"Mercury": 100.0, "Saturn": 105.0, "Sun": 130.0, "Moon": 160.0,
+                    "Mars": 190.0, "Jupiter": 250.0, "Venus": 280.0}, asc_lon=0.0)
+        assert not _yoga("Y.MATRU_SATRUTWA").fires(c)
+
+
+class TestVahanaYoga:
+    def test_fires_on_209_lagna_lord_in_ninth(self):
+        c = _chart({"Mars": 250.0, "Moon": 130.0, "Sun": 10.0, "Mercury": 160.0,
+                    "Jupiter": 190.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.VAHANA").fires(c)
+
+    def test_fires_on_210_exalted_fourth_lord_with_dispositor_in_kendra(self):
+        # l4 Moon exalted in Taurus; its dispositor Venus in H7 (a kendra); l1 Mars kept
+        # out of 4/9/11 so only the 210 arm carries it.
+        c = _chart({"Moon": 40.0, "Venus": 190.0, "Mars": 70.0, "Sun": 10.0,
+                    "Mercury": 160.0, "Jupiter": 220.0, "Saturn": 310.0})
+        assert _yoga("Y.VAHANA").fires(c)
+
+    def test_silent_when_neither_arm_holds(self):
+        c = _chart({"Mars": 40.0, "Moon": 130.0, "Sun": 10.0, "Mercury": 160.0,
+                    "Jupiter": 190.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.VAHANA").fires(c)

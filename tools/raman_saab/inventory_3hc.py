@@ -43,7 +43,10 @@ _HEAD = re.compile(r"^\s*(\d{1,3})[.,]\s+([A-Z][A-Za-z0-9' \-]{2,60}?)\.?\s*$")
 #: body group headings end at the name ("122 to 126. DHANA YOGAS") — greedy, end-anchored.
 #: (The first version was non-greedy against a permissive tail and captured "DHA", which the
 #: yoga-word filter then rejected — a parser that silently skipped every group it existed for.)
-_RANGE = re.compile(r"^\s*(\d{1,3})\s+to\s+(\d{1,3})[.,]?\s+([A-Za-z][A-Za-z0-9' \-]{2,60})\.?\s*$")
+#: the far half also PAIRS combinations ("189 and 190. Ayatna Griha Prapta Yogas",
+#: "193 and 194...", OCR "gnd" for "and") — same expansion semantics as "to".
+_RANGE = re.compile(
+    r"^\s*(\d{1,3})\s+(?:to|and|&|gnd)\s+(\d{1,3})[.,]?\s+([A-Za-z][A-Za-z0-9' \-]{2,60})\.?\s*$")
 #: a ToC row: "47. Matsya Yoga ... ... 56"
 #: dot-leaders come out of OCR as "...", "…", "••", ", ,," and mixes — accept any run of them
 _TOC = re.compile(
@@ -53,6 +56,22 @@ _TOC = re.compile(
 #: OCR substitutes digits for letters inside names ("R0GA6RASTHA YOGA") — map the common
 #: swaps before normalizing, so the yoga-word filter and name search survive them
 _DIGIT_SWAPS = str.maketrans("015689", "oisgbg")
+
+#: ...and letters for digits in the NUMBER token ("2O9. Vahana", "22O gnd 221") — applied
+#: only to a line's leading number-ish token, never to names
+_NUM_SWAPS = str.maketrans("OoIl", "0011")
+
+
+def _fix_leading_number(line: str) -> str:
+    line = re.sub(
+        r"^(\s*)([0-9OoIl]{1,3})(\s+(?:to|and|&|gnd)\s+)([0-9OoIl]{1,3})(?=[.,\s])",
+        lambda m: (m.group(1) + m.group(2).translate(_NUM_SWAPS)
+                   + m.group(3) + m.group(4).translate(_NUM_SWAPS)),
+        line)
+    return re.sub(
+        r"^(\s*)([0-9OoIl]{1,3})(?=[.,])",
+        lambda m: m.group(1) + m.group(2).translate(_NUM_SWAPS),
+        line)
 
 
 def _norm(s: str) -> str:
@@ -144,8 +163,22 @@ def parse_combinations() -> tuple[list[tuple[int, str, int]], list[tuple[int, st
     if SOURCE_COMPLETE.is_file():
         clines = SOURCE_COMPLETE.read_text(encoding="utf-8", errors="replace").splitlines()
         chead = re.compile(r"^\s*(\d{1,3})[.,]\s+([A-Za-z][A-Za-z0-9' \-]{2,60}?)\.?\s*$")
+        # The book's own alphabetical index ("APPENDIX II - INDEX OF YOGAS") numbers yogas
+        # by INDEX POSITION, not combination number. Parsing past it once polluted the
+        # inventory with wrong-numbered rows ("192. Netranasa", "196. Obhayachari") that
+        # SHADOWED the true combinations at those numbers — stop at the appendix. The
+        # edition's own ToC (before combination 1's body heading at line 1020) shadows the
+        # same way with WORSE OCR ("Hapta" for "Prapta") — skip it too.
+        index_start = next(
+            (i for i, ln in enumerate(clines, 1)
+             if re.search(r"IND[BE]X OF YOGAS", ln)), len(clines) + 1)
+        complete_body_start = 1000
         for i, ln in enumerate(clines, 1):
-            norm = re.sub(r"\s+", " ", ln).strip()
+            if i < complete_body_start:
+                continue
+            if i >= index_start:
+                break
+            norm = _fix_leading_number(re.sub(r"\s+", " ", ln).strip())
             r = _RANGE.match(norm)
             if r and "yoga" in _norm(r.group(3)):
                 a, b = int(r.group(1)), int(r.group(2))
@@ -175,7 +208,7 @@ def encoded_yoga_names() -> set[str]:
     names: set[str] = set()
     for m in re.finditer(
             r'name="([^"]+)".*?source=Citation\("(3HC[CH]?)"', text, re.S):
-        names.add(_norm(m.group(1).replace("Yoga", "")))
+        names.add(_norm(re.sub(r"(?i)yogas?", "", m.group(1))))
     return names
 
 
@@ -215,8 +248,10 @@ def main() -> int:
         return diff + (len(b) - j) <= 1
 
     def _is_encoded(name: str) -> bool:
-        base = _norm(re.sub(r"\(group.*?\)", "", name)
-                     .replace("YOGAS", "").replace("YOGA", ""))
+        # the yoga-suffix strip must be case-insensitive: legacy scans SHOUT ("...YOGA"),
+        # the complete edition title-cases ("Grihanasa Yogas") — the uppercase-only strip
+        # left the suffix on and silently failed every complete-edition join
+        base = _norm(re.sub(r"(?i)yogas?", "", re.sub(r"\(group.*?\)", "", name)))
         if not base:
             return False
         for k in enc_names:
@@ -267,6 +302,11 @@ def main() -> int:
          "cleaner." if SOURCE_COMPLETE.is_file() else
          "Both truncated scans end at combination 162; a complete edition must be procured."),
         "",
+        "**Group-row caveat:** a grouped heading (\"202 to 204. Kapata Yogas\") is credited "
+        "as encoded when ANY registered yoga matches it by name — so a group with a "
+        "deliberately-skipped arm (204's Gulika clause) still shows encoded. The skip "
+        "record in `doctrine/yogas.py` is the authority on per-arm coverage.",
+        "",
         "## On disk, not yet encoded",
         "",
         "| # | name | source line |",
@@ -287,7 +327,7 @@ def main() -> int:
                   ", ".join(f"{n} ({name})" for n, name in gaps)]
     lines += ["", "## Already encoded (citation inside the combination's span)", "",
               "| # | name | source line |", "|---|---|---|"]
-    lines += [f"| {n} | {name} | 3HC:{line} |" for n, name, line, _ in encoded]
+    lines += [f"| {n} | {name} | {_tag(line)} |" for n, name, line, _ in encoded]
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"acquired {len(acquired)} | encoded {len(encoded)} | pending {len(pending)} | "

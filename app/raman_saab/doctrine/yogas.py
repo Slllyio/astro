@@ -777,6 +777,121 @@ class _Vishaprayoga(C.Condition):
                    and drishti.aspects_planet(m, lord2, chart) for m in malefics)
 
 
+class _Ekabhagini(C.Condition):
+    """Ekabhagini Yoga (3HCC:6100): Mercury, the 3rd lord, and Mars join the 3rd house, the
+    Moon, and Saturn RESPECTIVELY — a distributive triple."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        merc = chart.planets.get("Mercury")
+        if merc is None or merc.rasi_house != 3:
+            return False
+        l3 = chart.planets.get(_house_lord(3, chart))
+        moon = chart.planets.get("Moon")
+        if l3 is None or moon is None or l3.rasi_house != moon.rasi_house:
+            return False
+        mars, sat = chart.planets.get("Mars"), chart.planets.get("Saturn")
+        return mars is not None and sat is not None and mars.rasi_house == sat.rasi_house
+
+
+class _DwadasaSahodara(C.Condition):
+    """Dwadasa Sahodara Yoga (3HCC:6116): the 3rd lord in a kendra, and EXALTED Mars joins
+    Jupiter in a trikona counted from the 3rd lord."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.core.dignity import dignity_state
+        chart = ctx.chart
+        l3 = chart.planets.get(_house_lord(3, chart))
+        if l3 is None or l3.rasi_house not in _KENDRAS:
+            return False
+        mars, jup = chart.planets.get("Mars"), chart.planets.get("Jupiter")
+        if mars is None or jup is None or mars.rasi_house != jup.rasi_house:
+            return False
+        if dignity_state("Mars", mars.sign) != "exalted":
+            return False
+        dist = ((mars.rasi_house - l3.rasi_house) % 12) + 1
+        return dist in {1, 5, 9}
+
+
+class _Parakrama(C.Condition):
+    """Parakrama Yoga (3HCC:6194): the 3rd lord in a BENEFIC navamsa, aspected by (or
+    conjoined with) benefic planets, and Mars in benefic signs."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        benefics = ("Jupiter", "Venus", "Mercury", "Moon")
+        lord3 = _house_lord(3, chart)
+        p3 = chart.planets.get(lord3)
+        nav = getattr(p3, "navamsa_sign", None) if p3 else None
+        if not nav or SIGN_LORDS[nav] not in set(benefics):
+            return False
+        touched = any(
+            b != lord3 and (bp := chart.planets.get(b)) is not None
+            and (bp.rasi_house == p3.rasi_house or drishti.aspects_planet(b, lord3, chart))
+            for b in benefics)
+        if not touched:
+            return False
+        mars = chart.planets.get("Mars")
+        return mars is not None and SIGN_LORDS[mars.sign] in set(benefics)
+
+
+class _Satkathadisravana(C.Condition):
+    """Satkathadisravana Yoga (3HCC:6306): the 3rd house a benefic sign, aspected by
+    benefics, and the 3rd lord in a benefic amsa."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine import drishti
+        chart = ctx.chart
+        benefics = ("Jupiter", "Venus", "Mercury", "Moon")
+        third_sign = ((chart.asc_sign - 1) + 2) % 12 + 1
+        if SIGN_LORDS[third_sign] not in set(benefics):
+            return False
+        if not any(drishti.aspects_house(b, 3, chart) for b in benefics
+                   if b in chart.planets):
+            return False
+        lord3 = _house_lord(3, chart)
+        p3 = chart.planets.get(lord3)
+        nav = getattr(p3, "navamsa_sign", None) if p3 else None
+        return bool(nav) and SIGN_LORDS[nav] in set(benefics)
+
+
+class _NthLordWithBeneficsInKendraTrikona(C.Condition):
+    """Uttama Griha Yoga (3HCC:6320): the lord of house `n` joins benefics in a kendra or
+    trikona — the lord conjoined with at least one benefic, standing in 1/4/7/10/5/9."""
+
+    def __init__(self, n: int) -> None:
+        self.n = n
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        lord = _house_lord(self.n, chart)
+        p = chart.planets.get(lord)
+        if p is None or p.rasi_house not in {1, 4, 7, 10, 5, 9}:
+            return False
+        return any(b != lord and (bp := chart.planets.get(b)) is not None
+                   and bp.rasi_house == p.rasi_house
+                   for b in ("Jupiter", "Venus", "Mercury", "Moon"))
+
+
+class _FourPlanetConjunction4th10thSaturnMars(C.Condition):
+    """Vichitra Saudha Prakara Yoga (3HCC:6358): the 4th and 10th lords conjoined, and the
+    two together joining Saturn and Mars — Raman's own Remarks call it a four-planet
+    conjunction."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        chart = ctx.chart
+        l4 = chart.planets.get(_house_lord(4, chart))
+        l10 = chart.planets.get(_house_lord(10, chart))
+        mars, sat = chart.planets.get("Mars"), chart.planets.get("Saturn")
+        if any(x is None for x in (l4, l10, mars, sat)):
+            return False
+        seat = l4.rasi_house
+        return all(x.rasi_house == seat for x in (l10, mars, sat))
+
+
 class _SaturnOwnsJoinsOrAfflictsSecond(C.Condition):
     """Sraddhannabhuktha (3HCC:5963): Saturn owns the 2nd, OR joins the 2nd lord, OR the 2nd
     is aspected by a debilitated Saturn."""
@@ -1399,6 +1514,38 @@ YOGAS: tuple[YogaRecord, ...] = (
         condition=_Vishaprayoga(),
         effect=("Subjected to poisoning."),
         source=Citation("3HCC", 6003)),
+    # — tranche 4 (2026-08-09): the 3rd/4th-house block, complete-edition citations. —
+    YogaRecord(
+        id="Y.EKABHAGINI", name="Ekabhagini Yoga", kind="other",
+        condition=_Ekabhagini(),
+        effect=("Has only one sister."),
+        source=Citation("3HCC", 6100)),
+    YogaRecord(
+        id="Y.DWADASA_SAHODARA", name="Dwadasa Sahodara Yoga", kind="other",
+        condition=_DwadasaSahodara(),
+        effect=("The third of twelve siblings — Raman's own remark: the yoga is typical "
+                "inasmuch as it is rare."),
+        source=Citation("3HCC", 6116)),
+    YogaRecord(
+        id="Y.PARAKRAMA", name="Parakrama Yoga", kind="other",
+        condition=_Parakrama(),
+        effect=("Possesses much courage."),
+        source=Citation("3HCC", 6194)),
+    YogaRecord(
+        id="Y.SATKATHADISRAVANA", name="Satkathadisravana Yoga", kind="other",
+        condition=_Satkathadisravana(),
+        effect=("Interested in high-class literature and religious discourse."),
+        source=Citation("3HCC", 6306)),
+    YogaRecord(
+        id="Y.UTTAMA_GRIHA", name="Uttama Griha Yoga", kind="other",
+        condition=_NthLordWithBeneficsInKendraTrikona(4),
+        effect=("Possesses good houses."),
+        source=Citation("3HCC", 6320)),
+    YogaRecord(
+        id="Y.VICHITRA_SAUDHA", name="Vichitra Saudha Prakara Yoga", kind="other",
+        condition=_FourPlanetConjunction4th10thSaturnMars(),
+        effect=("Acquires innumerable mansions."),
+        source=Citation("3HCC", 6358)),
 )
 
 # ── first-tranche skips (2026-08-08), each with the reason, so the next encoder does not
@@ -1423,6 +1570,10 @@ YOGAS: tuple[YogaRecord, ...] = (
 # is walled-horary; using its mechanics for a natal yoga is a decision, not a default).
 # SODARANASA (178): "occupy the 8th (3rd, 5th or 7th) house" — the parenthetical is
 # OCR-garbled and the candidate readings differ materially; manual audit first.
+# Tranche-4 skips: SAPTHASANKHYA SAHODARA (181) and the YUDDHAT pair (184/185) read on
+# from clauses the page-break OCR interleaves with chart figures; YUDDHA PRAVEENA (183) is a
+# navamsa-of-navamsa double chain whose antecedent ("the planet who owns the navamsa in
+# which...") is ambiguous in the printed sentence — manual audit before encoding.
 #
 # BHOJANA SOUKHYA (170) and ANNADANA (171) are now a MEASURED deferral, the sharpest kind:
 # both demand the 2nd lord in VAISESHIKAMSA — rung 12 of Raman's GBB amsa ladder — and a

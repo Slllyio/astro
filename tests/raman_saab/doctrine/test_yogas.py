@@ -776,3 +776,96 @@ class TestVishaprayogaYoga:
         c = _chart({"Saturn": 301.0, "Mars": 220.0, "Sun": 305.5, "Moon": 155.0,
                     "Mercury": 150.0, "Jupiter": 60.0, "Venus": 185.0}, asc_lon=270.0)
         assert not _yoga("Y.VISHAPRAYOGA").fires(c)
+
+
+# ── tranche 4 (2026-08-09): the 3rd/4th-house block ─────────────────────────────────────────
+class TestEkabhaginiYoga:
+    def test_fires_on_the_distributive_triple(self):
+        """Capricorn lagna (asc 270): 3rd = Pisces, lord Jupiter. Mercury in H3 (340),
+        Jupiter joins the Moon (Leo), Mars joins Saturn (Aries) — the three RESPECTIVE
+        pairings of Raman's sentence."""
+        c = _chart({"Mercury": 340.0, "Jupiter": 130.0, "Moon": 135.0,
+                    "Mars": 10.0, "Saturn": 15.0, "Sun": 300.0, "Venus": 200.0},
+                   asc_lon=270.0)
+        assert _yoga("Y.EKABHAGINI").fires(c)
+
+    def test_silent_when_mars_leaves_saturn(self):
+        c = _chart({"Mercury": 340.0, "Jupiter": 130.0, "Moon": 135.0,
+                    "Mars": 10.0, "Saturn": 200.0, "Sun": 300.0, "Venus": 205.0},
+                   asc_lon=270.0)
+        assert not _yoga("Y.EKABHAGINI").fires(c)
+
+
+class TestDwadasaSahodaraYoga:
+    def test_fires_l3_in_kendra_exalted_mars_with_jupiter_in_trikona(self):
+        """Aries lagna: l3 Mercury in H10 (Capricorn, a kendra); Mars EXALTED in
+        Capricorn joins Jupiter there — H10 is the 1st (a trikona seat) from the 3rd lord."""
+        c = _chart({"Mercury": 275.0, "Mars": 280.0, "Jupiter": 285.0,
+                    "Sun": 10.0, "Moon": 40.0, "Venus": 100.0, "Saturn": 130.0})
+        assert _yoga("Y.DWADASA_SAHODARA").fires(c)
+
+    def test_silent_when_mars_is_unexalted(self):
+        # Mars moved to Cancer (debilitation) — the exaltation clause must refuse.
+        c = _chart({"Mercury": 275.0, "Mars": 100.0, "Jupiter": 285.0,
+                    "Sun": 10.0, "Moon": 40.0, "Venus": 105.0, "Saturn": 130.0})
+        assert not _yoga("Y.DWADASA_SAHODARA").fires(c)
+
+
+class TestParakramaYoga:
+    """Navamsa longitudes engine-scanned, not head-math: Mercury at 60.0 (Gemini) falls in
+    the Libra navamsa (Venus-owned, benefic); 63.5 falls in Scorpio (Mars-owned, cruel)."""
+
+    def test_fires_benefic_amsa_benefic_contact_mars_in_benefic_sign(self):
+        # l3 Mercury at 60.0 -> benefic navamsa; Venus conjunct in H3; Mars in Taurus.
+        c = _chart({"Mercury": 60.0, "Venus": 65.0, "Mars": 40.0, "Sun": 10.0,
+                    "Moon": 130.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.PARAKRAMA").fires(c)
+
+    def test_silent_when_the_amsa_turns_cruel(self):
+        c = _chart({"Mercury": 63.5, "Venus": 65.0, "Mars": 40.0, "Sun": 10.0,
+                    "Moon": 130.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.PARAKRAMA").fires(c)
+
+
+class TestSatkathadisravanaYoga:
+    def test_fires_benefic_third_sign_aspected_lord_in_benefic_amsa(self):
+        """Aries lagna: 3rd = Gemini (Mercury-owned, benefic); Jupiter in H9 (Sagittarius)
+        casts the 7th onto H3; l3 Mercury at 60.0 sits in the Libra (benefic) navamsa."""
+        c = _chart({"Mercury": 60.0, "Jupiter": 250.0, "Mars": 10.0,
+                    "Sun": 15.0, "Moon": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.SATKATHADISRAVANA").fires(c)
+
+    def test_silent_when_the_lords_amsa_turns_cruel(self):
+        # Only the amsa clause changes (63.5 -> Scorpio navamsa) — sign and aspect hold.
+        c = _chart({"Mercury": 63.5, "Jupiter": 250.0, "Mars": 10.0,
+                    "Sun": 15.0, "Moon": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.SATKATHADISRAVANA").fires(c)
+
+
+class TestUttamaGrihaYoga:
+    def test_fires_fourth_lord_with_a_benefic_in_a_trikona(self):
+        # Aries lagna: l4 Moon in H5 (Leo, a trikona) joined by Jupiter.
+        c = _chart({"Moon": 130.0, "Jupiter": 135.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 70.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.UTTAMA_GRIHA").fires(c)
+
+    def test_silent_when_the_lord_stands_alone(self):
+        # Jupiter moved to H9 — the lord is in a trikona but joins no benefic.
+        c = _chart({"Moon": 130.0, "Jupiter": 250.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 70.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.UTTAMA_GRIHA").fires(c)
+
+
+class TestVichitraSaudhaYoga:
+    def test_fires_on_the_four_planet_conjunction(self):
+        """Gemini lagna (asc 60): l4 Mercury (Virgo) and l10 Jupiter (Pisces) conjoin
+        Saturn AND Mars in Leo — four DISTINCT planets in one house, exactly the reading
+        Raman's own Remarks fix."""
+        c = _chart({"Mercury": 130.0, "Jupiter": 132.0, "Saturn": 134.0, "Mars": 136.0,
+                    "Sun": 10.0, "Moon": 40.0, "Venus": 200.0}, asc_lon=60.0)
+        assert _yoga("Y.VICHITRA_SAUDHA").fires(c)
+
+    def test_silent_when_saturn_leaves_the_conjunction(self):
+        c = _chart({"Mercury": 130.0, "Jupiter": 132.0, "Saturn": 200.0, "Mars": 136.0,
+                    "Sun": 10.0, "Moon": 40.0, "Venus": 205.0}, asc_lon=60.0)
+        assert not _yoga("Y.VICHITRA_SAUDHA").fires(c)

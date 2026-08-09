@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 119 |
-| **on disk, awaiting encoding — the workable frontier** | **168** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 127 |
+| **on disk, awaiting encoding — the workable frontier** | **160** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -121,15 +121,7 @@
 | 185 | Yuddhatpaschaddrudha Yoga | 3HCC:6276 |
 | 195 | Bandhubhisthyaktha Yoga | 3HCC:6514 |
 | 201 | Sahodareesangama yoga | 3HCC:6695 |
-| 222 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
-| 223 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
-| 224 | Aputra Yoga | 3HCC:7387 |
-| 225 | Ekaputra Yoga | 3HCC:7422 |
 | 226 | Suputra Yoga | 3HCC:7442 |
-| 227 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
-| 228 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
-| 229 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
-| 230 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
 | 231 | Buddhimaturya Yoga | 3HCC:7543 |
 | 232 | Theevrabuddhi Yoga | 3HCC:7624 |
 | 233 | Buddhi Jada Yoga | 3HCC:7656 |
@@ -318,6 +310,14 @@
 | 219 | pretasapa yoga | 3HCC:7218 |
 | 220 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
 | 221 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
+| 222 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
+| 223 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
+| 224 | Aputra Yoga | 3HCC:7387 |
+| 225 | Ekaputra Yoga | 3HCC:7422 |
+| 227 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
+| 228 | Kalanirdesat Putra Yogas (group 227-228) | 3HCC:7465 |
+| 229 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
+| 230 | Kalanirdesat Putranasa Yogas (group 229-230) | 3HCC:7486 |
 | 236 | Jara Yoga | 3HCC:7804 |
 | 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 289 | Andha Yogas (group 288-289) | 3HCC:9828 |

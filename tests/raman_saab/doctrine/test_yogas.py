@@ -1275,3 +1275,94 @@ class TestBahuputraYoga:
         c = _chart({"Venus": 245.0, "Mars": 130.0, "Sun": 10.0, "Moon": 40.0,
                     "Mercury": 160.0, "Jupiter": 300.0, "Saturn": 200.0, "Rahu": 70.0})
         assert not _yoga("Y.BAHUPUTRA").fires(c)
+
+
+# ── tranche 8 (2026-08-09): the progeny block ───────────────────────────────────────────────
+class TestDattaputraYoga:
+    def test_fires_on_222_mars_saturn_in_fifth_lagna_lord_in_mercury_sign(self):
+        # Cancer lagna: l1 Moon in Virgo (a Mercury sign) conjunct Mercury; Mars and
+        # Saturn together in H5 (Scorpio).
+        c = _chart({"Moon": 160.0, "Mercury": 165.0, "Mars": 220.0, "Saturn": 225.0,
+                    "Sun": 100.0, "Jupiter": 300.0, "Venus": 340.0, "Rahu": 40.0},
+                   asc_lon=90.0)
+        assert _yoga("Y.DATTAPUTRA").fires(c)
+
+    def test_fires_on_223_chart_101_shape(self):
+        # Aries: l7 Venus in H11; l5 Sun joins Jupiter; Saturn occupies H5 — the same
+        # three clauses Raman reads off Chart 101.
+        c = _chart({"Venus": 310.0, "Sun": 40.0, "Jupiter": 45.0, "Saturn": 130.0,
+                    "Moon": 70.0, "Mars": 190.0, "Mercury": 100.0, "Rahu": 250.0})
+        assert _yoga("Y.DATTAPUTRA").fires(c)
+
+    def test_silent_when_the_lagna_lord_sits_in_its_own_sign(self):
+        # Moon in Cancer (H1) is not a Mercury sign; the 223 arm fails too (l7 Saturn
+        # not in H11).
+        c = _chart({"Moon": 100.0, "Mercury": 165.0, "Mars": 220.0, "Saturn": 225.0,
+                    "Sun": 130.0, "Jupiter": 300.0, "Venus": 340.0, "Rahu": 40.0},
+                   asc_lon=90.0)
+        assert not _yoga("Y.DATTAPUTRA").fires(c)
+
+
+class TestAputraYoga:
+    def test_fires_on_the_fifth_lord_in_a_dusthana(self):
+        # Aries: l5 Sun in H8. The dusthana trio is 6/8/12 — the printed "5th, 8th and
+        # 12th" is an OCR garble the condition docstring records.
+        c = _chart({"Sun": 220.0, "Moon": 40.0, "Mars": 10.0, "Mercury": 70.0,
+                    "Jupiter": 100.0, "Venus": 130.0, "Saturn": 310.0})
+        assert _yoga("Y.APUTRA").fires(c)
+
+    def test_silent_when_the_lord_is_well_placed(self):
+        c = _chart({"Sun": 280.0, "Moon": 40.0, "Mars": 10.0, "Mercury": 70.0,
+                    "Jupiter": 100.0, "Venus": 130.0, "Saturn": 310.0})
+        assert not _yoga("Y.APUTRA").fires(c)
+
+
+class TestEkaputraYoga:
+    def test_fires_on_the_fifth_lord_in_a_trikona(self):
+        c = _chart({"Sun": 250.0, "Moon": 40.0, "Mars": 10.0, "Mercury": 70.0,
+                    "Jupiter": 100.0, "Venus": 130.0, "Saturn": 310.0})
+        assert _yoga("Y.EKAPUTRA").fires(c)
+
+    def test_silent_when_the_lord_avoids_kendra_and_trikona(self):
+        c = _chart({"Sun": 40.0, "Moon": 70.0, "Mars": 10.0, "Mercury": 100.0,
+                    "Jupiter": 130.0, "Venus": 160.0, "Saturn": 310.0})
+        assert not _yoga("Y.EKAPUTRA").fires(c)
+
+
+class TestKalanirdesatPutraYoga:
+    def test_fires_on_227_jupiter_in_fifth_lord_with_venus(self):
+        c = _chart({"Jupiter": 130.0, "Sun": 40.0, "Venus": 45.0, "Moon": 70.0,
+                    "Mars": 190.0, "Mercury": 100.0, "Saturn": 310.0})
+        assert _yoga("Y.KALANIRDESAT_PUTRA").fires(c)
+
+    def test_fires_on_228_venus_ninth_from_jupiter_with_lagna_lord(self):
+        # Jupiter H9; Venus in the 9th from Jupiter (= H5 from Lagna, Raman's own
+        # simplification) conjunct l1 Mars.
+        c = _chart({"Jupiter": 250.0, "Venus": 130.0, "Mars": 135.0, "Sun": 10.0,
+                    "Moon": 40.0, "Mercury": 70.0, "Saturn": 310.0})
+        assert _yoga("Y.KALANIRDESAT_PUTRA").fires(c)
+
+    def test_silent_when_neither_arm_holds(self):
+        c = _chart({"Jupiter": 70.0, "Venus": 100.0, "Mars": 10.0, "Sun": 160.0,
+                    "Moon": 40.0, "Mercury": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.KALANIRDESAT_PUTRA").fires(c)
+
+
+class TestKalanirdesatPutranasaYoga:
+    def test_fires_on_229_the_threefold_affliction(self):
+        # Rahu in H5, l5 Sun conjunct Saturn, Jupiter debilitated in Capricorn — house,
+        # lord and karaka all afflicted, exactly Raman's reading.
+        c = _chart({"Rahu": 130.0, "Jupiter": 280.0, "Sun": 40.0, "Saturn": 45.0,
+                    "Moon": 70.0, "Mars": 190.0, "Mercury": 100.0, "Venus": 250.0})
+        assert _yoga("Y.KALANIRDESAT_PUTRANASA").fires(c)
+
+    def test_fires_on_230_malefics_in_the_fifth_from_both(self):
+        # Mars in H5 from Lagna; Jupiter in H9 with Saturn in H1 — the 5th from Jupiter.
+        c = _chart({"Mars": 130.0, "Jupiter": 250.0, "Saturn": 10.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mercury": 100.0, "Venus": 160.0, "Rahu": 220.0})
+        assert _yoga("Y.KALANIRDESAT_PUTRANASA").fires(c)
+
+    def test_silent_when_the_fifths_are_clean(self):
+        c = _chart({"Mars": 190.0, "Jupiter": 250.0, "Saturn": 310.0, "Sun": 40.0,
+                    "Moon": 130.0, "Mercury": 100.0, "Venus": 160.0, "Rahu": 220.0})
+        assert not _yoga("Y.KALANIRDESAT_PUTRANASA").fires(c)

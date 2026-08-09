@@ -1128,3 +1128,150 @@ class TestAnapathyaYoga:
         c = _chart({"Jupiter": 40.0, "Mars": 10.0, "Venus": 70.0, "Sun": 130.0,
                     "Moon": 160.0, "Mercury": 190.0, "Saturn": 310.0})
         assert not _yoga("Y.ANAPATHYA").fires(c)
+
+
+# ── tranche 7 (2026-08-09): the sapa (curse) block + Bahuputra ──────────────────────────────
+class TestSarpasapaYoga:
+    def test_fires_on_212_rahu_in_fifth_aspected_by_mars(self):
+        # Aries: Rahu H5 (Leo); Mars in H10 casts its 8th onto H5.
+        c = _chart({"Rahu": 130.0, "Mars": 280.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 70.0, "Jupiter": 220.0, "Venus": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.SARPASAPA").fires(c)
+
+    def test_fires_on_213_fifth_lord_with_rahu_saturn_moon_in_fifth(self):
+        # Aries: l5 Sun conjunct Rahu in H2; Saturn in H5 joined by the Moon.
+        c = _chart({"Sun": 40.0, "Rahu": 45.0, "Saturn": 130.0, "Moon": 135.0,
+                    "Mars": 340.0, "Mercury": 70.0, "Jupiter": 220.0, "Venus": 250.0})
+        assert _yoga("Y.SARPASAPA").fires(c)
+
+    def test_fires_on_214_karaka_with_mars_rahu_in_lagna_lord_in_dusthana(self):
+        # Jupiter+Mars in H10, Rahu in Lagna, l5 Sun in H8. Stated charts carry no
+        # Shadbala, so Raman's strength nullifier stays open and the geometry fires.
+        c = _chart({"Jupiter": 280.0, "Mars": 285.0, "Rahu": 10.0, "Sun": 220.0,
+                    "Moon": 40.0, "Mercury": 70.0, "Venus": 100.0, "Saturn": 160.0})
+        assert _yoga("Y.SARPASAPA").fires(c)
+
+    def test_214_is_nullified_when_jupiter_is_b1_strong(self, monkeypatch):
+        """Raman's own Remarks nullifier: "if he has sufficient Shadbala strength, the
+        yoga becomes null and void" — his worked example had ~8 rupas and 2 living
+        children. Stubbing Jupiter B1-strong must silence the 214 arm."""
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+        c = _chart({"Jupiter": 280.0, "Mars": 285.0, "Rahu": 10.0, "Sun": 220.0,
+                    "Moon": 40.0, "Mercury": 70.0, "Venus": 100.0, "Saturn": 160.0})
+        assert not _yoga("Y.SARPASAPA").fires(c)
+
+    def test_fires_on_215_mars_sign_fifth_with_rahu_and_mercury(self):
+        # Kataka lagna: the 5th is Scorpio (a Mars sign); Rahu there with Mercury.
+        c = _chart({"Rahu": 220.0, "Mercury": 225.0, "Mars": 160.0, "Sun": 100.0,
+                    "Moon": 130.0, "Jupiter": 300.0, "Venus": 340.0, "Saturn": 40.0},
+                   asc_lon=90.0)
+        assert _yoga("Y.SARPASAPA").fires(c)
+
+    def test_silent_when_rahu_leaves_the_picture(self):
+        c = _chart({"Rahu": 70.0, "Sun": 10.0, "Moon": 40.0, "Mercury": 100.0,
+                    "Jupiter": 130.0, "Mars": 190.0, "Venus": 250.0, "Saturn": 160.0})
+        assert not _yoga("Y.SARPASAPA").fires(c)
+
+
+class TestPitrusapaSutakshayaYoga:
+    def test_fires_on_the_debilitated_sun_arm(self):
+        # Gemini lagna: the 5th is Libra — the Sun's debilitation, exactly the one lagna
+        # Raman's Remarks name for this arm.
+        c = _chart({"Sun": 190.0, "Moon": 100.0, "Mars": 130.0, "Mercury": 70.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0}, asc_lon=60.0)
+        assert _yoga("Y.PITRUSAPA_SUTAKSHAYA").fires(c)
+
+    def test_fires_on_the_makara_amsa_arm(self):
+        """Libra lagna, Sun at 312.0 in Aquarius (H5) — engine-scanned to fall in the
+        Makara navamsa (Chart 97's own configuration: Libra Lagna, Sun in the 5th joining
+        Makaramsa)."""
+        c = _chart({"Sun": 312.0, "Moon": 100.0, "Mars": 130.0, "Mercury": 250.0,
+                    "Jupiter": 160.0, "Venus": 220.0, "Saturn": 70.0}, asc_lon=180.0)
+        assert _yoga("Y.PITRUSAPA_SUTAKSHAYA").fires(c)
+
+    def test_silent_when_no_arm_holds(self):
+        # Sun at 300.0: Libra navamsa (Venus-owned), Aquarius is not debilitation, and
+        # the houses flanking H5 are empty.
+        c = _chart({"Sun": 300.0, "Moon": 100.0, "Mars": 130.0, "Mercury": 250.0,
+                    "Jupiter": 160.0, "Venus": 220.0, "Saturn": 70.0}, asc_lon=180.0)
+        assert not _yoga("Y.PITRUSAPA_SUTAKSHAYA").fires(c)
+
+
+class TestMatrusapaSutakshayaYoga:
+    def test_fires_on_the_5_8_parivartana_with_moon_and_l4_in_sixth(self):
+        # Aries: l8 Mars in H5, l5 Sun in H8, Moon (also l4 — the collapse is legitimate)
+        # in H6.
+        c = _chart({"Mars": 130.0, "Sun": 220.0, "Moon": 160.0, "Mercury": 70.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.MATRUSAPA_SUTAKSHAYA").fires(c)
+
+    def test_silent_when_the_moon_leaves_the_sixth(self):
+        c = _chart({"Mars": 130.0, "Sun": 220.0, "Moon": 100.0, "Mercury": 70.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.MATRUSAPA_SUTAKSHAYA").fires(c)
+
+
+class TestBhratrusapaSutakshayaYoga:
+    def test_fires_on_the_full_disposition(self):
+        # Taurus lagna: l1 Venus and l5 Mercury in H8 (Sagittarius); l3 Moon with Mars
+        # and Rahu in H5 (Virgo).
+        c = _chart({"Venus": 250.0, "Mercury": 255.0, "Moon": 160.0, "Mars": 165.0,
+                    "Rahu": 170.0, "Sun": 30.0, "Jupiter": 300.0, "Saturn": 100.0},
+                   asc_lon=30.0)
+        assert _yoga("Y.BHRATRUSAPA_SUTAKSHAYA").fires(c)
+
+    def test_silent_when_rahu_leaves_the_fifth(self):
+        c = _chart({"Venus": 250.0, "Mercury": 255.0, "Moon": 160.0, "Mars": 165.0,
+                    "Rahu": 100.0, "Sun": 30.0, "Jupiter": 300.0, "Saturn": 40.0},
+                   asc_lon=30.0)
+        assert not _yoga("Y.BHRATRUSAPA_SUTAKSHAYA").fires(c)
+
+
+class TestPretasapaYoga:
+    def test_fires_with_the_weakness_gate_patched(self, monkeypatch):
+        # Sun+Saturn H5, Moon H7, Rahu H1, Jupiter H12; Moon weakness stubbed per the
+        # patched-gate discipline.
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Weak:
+            band = "weak"
+            decisively_weak = True
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Weak())
+        c = _chart({"Sun": 130.0, "Saturn": 135.0, "Moon": 190.0, "Rahu": 10.0,
+                    "Jupiter": 340.0, "Mars": 40.0, "Mercury": 70.0, "Venus": 100.0})
+        assert _yoga("Y.PRETASAPA").fires(c)
+
+    def test_silent_when_the_moon_is_not_weak(self):
+        c = _chart({"Sun": 130.0, "Saturn": 135.0, "Moon": 190.0, "Rahu": 10.0,
+                    "Jupiter": 340.0, "Mars": 40.0, "Mercury": 70.0, "Venus": 100.0})
+        assert not _yoga("Y.PRETASAPA").fires(c)
+
+
+class TestBahuputraYoga:
+    def test_fires_on_220_rahu_in_fifth_outside_saturns_amsa(self):
+        # Aries: Rahu at 132.0 (H5) falls in the Cancer navamsa (Moon's) — the exception
+        # Raman highlights to "Rahu in the 5th is harmful".
+        c = _chart({"Rahu": 132.0, "Sun": 10.0, "Moon": 40.0, "Mercury": 70.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Mars": 310.0, "Saturn": 200.0})
+        assert _yoga("Y.BAHUPUTRA").fires(c)
+
+    def test_fires_on_the_221_navamsa_dispositor_route(self):
+        """Chart 100's shape: Mars associates with the 7th lord (Venus, H9); Mars at
+        252.0 occupies the Cancer navamsa, whose lord the Moon stands in H2 —
+        engine-scanned."""
+        c = _chart({"Venus": 245.0, "Mars": 252.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 130.0, "Jupiter": 300.0, "Saturn": 200.0, "Rahu": 70.0})
+        assert _yoga("Y.BAHUPUTRA").fires(c)
+
+    def test_silent_when_neither_route_exists(self):
+        # Rahu off the 5th; no planet shares a house with the 7th lord.
+        c = _chart({"Venus": 245.0, "Mars": 130.0, "Sun": 10.0, "Moon": 40.0,
+                    "Mercury": 160.0, "Jupiter": 300.0, "Saturn": 200.0, "Rahu": 70.0})
+        assert not _yoga("Y.BAHUPUTRA").fires(c)

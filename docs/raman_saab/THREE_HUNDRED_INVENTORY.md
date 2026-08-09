@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 109 |
-| **on disk, awaiting encoding — the workable frontier** | **178** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 119 |
+| **on disk, awaiting encoding — the workable frontier** | **168** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -121,16 +121,6 @@
 | 185 | Yuddhatpaschaddrudha Yoga | 3HCC:6276 |
 | 195 | Bandhubhisthyaktha Yoga | 3HCC:6514 |
 | 201 | Sahodareesangama yoga | 3HCC:6695 |
-| 212 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
-| 213 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
-| 214 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
-| 215 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
-| 216 | Pitrusapa Sutakshaya yoga | 3HCC:7012 |
-| 217 | Matrusapa Sutakshaya yoga | 3HCC:7154 |
-| 218 | Bhratrusapa Sutakshaya Yoga | 3HCC:7199 |
-| 219 | pretasapa yoga | 3HCC:7218 |
-| 220 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
-| 221 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
 | 222 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
 | 223 | Dattaputra Yogas (group 222-223) | 3HCC:7340 |
 | 224 | Aputra Yoga | 3HCC:7387 |
@@ -318,6 +308,16 @@
 | 209 | Vahana Yogas (group 209-210) | 3HCC:6829 |
 | 210 | Vahana Yogas (group 209-210) | 3HCC:6829 |
 | 211 | AnapathYa Yoga | 3HCC:6871 |
+| 212 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
+| 213 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
+| 214 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
+| 215 | Sarpasapa Yogas (group 212-215) | 3HCC:6890 |
+| 216 | Pitrusapa Sutakshaya yoga | 3HCC:7012 |
+| 217 | Matrusapa Sutakshaya yoga | 3HCC:7154 |
+| 218 | Bhratrusapa Sutakshaya Yoga | 3HCC:7199 |
+| 219 | pretasapa yoga | 3HCC:7218 |
+| 220 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
+| 221 | Bahuputra Yogas (group 220-221) | 3HCC:7284 |
 | 236 | Jara Yoga | 3HCC:7804 |
 | 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 289 | Andha Yogas (group 288-289) | 3HCC:9828 |

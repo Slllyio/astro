@@ -1644,3 +1644,180 @@ class TestRaja250:
         c = _chart({"Sun": 190.0, "Saturn": 70.0, "Moon": 40.0, "Mars": 133.0,
                     "Mercury": 100.0, "Jupiter": 250.0, "Venus": 340.0})
         assert not _yoga("Y.RAJA_250").fires(c)
+
+
+# ── tranche 11 (2026-08-10): the Raja group completes ───────────────────────────────────────
+class TestRaja251:
+    def test_fires_with_the_strength_gate_patched(self, monkeypatch):
+        # Moon in H4 (a kendra other than Lagna), Jupiter casting the 7th onto it;
+        # "otherwise powerful" stubbed per the patched-gate discipline.
+        import app.raman_saab.primitives.effective_strength as es_mod
+
+        class _Strong:
+            band = "strong"
+            decisively_weak = False
+
+        monkeypatch.setattr(es_mod, "effective_strength", lambda *a, **k: _Strong())
+        c = _chart({"Moon": 100.0, "Jupiter": 280.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJA_251").fires(c)
+
+    def test_silent_when_the_strength_gate_is_real(self):
+        c = _chart({"Moon": 100.0, "Jupiter": 280.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_251").fires(c)
+
+
+class TestRaja252:
+    def test_fires_when_every_neecha_planet_is_exalted_in_amsa(self):
+        # Jupiter neecha in Capricorn at 291.0 — engine-scanned to fall in the Cancer
+        # (exaltation) navamsa; no other planet debilitated. Chart 122's total reading.
+        c = _chart({"Jupiter": 291.0, "Sun": 10.0, "Moon": 40.0, "Mars": 15.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 220.0})
+        assert _yoga("Y.RAJA_252").fires(c)
+
+    def test_silent_when_the_amsa_is_not_exaltation(self):
+        # Jupiter 279.0 falls in the Pisces navamsa — own, not exalted.
+        c = _chart({"Jupiter": 279.0, "Sun": 10.0, "Moon": 40.0, "Mars": 15.0,
+                    "Mercury": 160.0, "Venus": 190.0, "Saturn": 220.0})
+        assert not _yoga("Y.RAJA_252").fires(c)
+
+
+class TestRaja253:
+    def test_fires_with_self_lordship_satisfying_the_aspect_clause(self):
+        """Aries lagna: Jupiter in Lagna IS the 9th lord (Chart 123's principle —
+        self-lordship satisfies); Mercury in H10 receives the 3rd aspect of the 11th
+        lord Saturn."""
+        c = _chart({"Jupiter": 10.0, "Mercury": 280.0, "Saturn": 220.0, "Sun": 40.0,
+                    "Moon": 70.0, "Mars": 100.0, "Venus": 190.0})
+        assert _yoga("Y.RAJA_253").fires(c)
+
+    def test_silent_when_jupiter_leaves_lagna(self):
+        c = _chart({"Jupiter": 40.0, "Mercury": 280.0, "Saturn": 220.0, "Sun": 10.0,
+                    "Moon": 70.0, "Mars": 100.0, "Venus": 190.0})
+        assert not _yoga("Y.RAJA_253").fires(c)
+
+
+class TestRaja254:
+    def test_fires_on_exalted_saturn_in_trikona_aspected_by_tenth_lord(self):
+        # Gemini lagna: Saturn in Thula (H5, a trikona); l10 Jupiter in Lagna casts the
+        # 5th onto him.
+        c = _chart({"Saturn": 190.0, "Jupiter": 70.0, "Sun": 100.0, "Moon": 130.0,
+                    "Mars": 160.0, "Mercury": 220.0, "Venus": 250.0}, asc_lon=60.0)
+        assert _yoga("Y.RAJA_254").fires(c)
+
+    def test_silent_when_saturn_leaves_thula_and_kumbha(self):
+        c = _chart({"Saturn": 160.0, "Jupiter": 70.0, "Sun": 100.0, "Moon": 130.0,
+                    "Mars": 190.0, "Mercury": 220.0, "Venus": 250.0}, asc_lon=60.0)
+        assert not _yoga("Y.RAJA_254").fires(c)
+
+
+class TestRaja255:
+    def test_fires_on_chandra_mangala_in_second_with_rahu_in_fifth(self):
+        c = _chart({"Moon": 40.0, "Mars": 45.0, "Rahu": 130.0, "Sun": 10.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJA_255").fires(c)
+
+    def test_silent_when_rahu_leaves_the_fifth(self):
+        c = _chart({"Moon": 40.0, "Mars": 45.0, "Rahu": 250.0, "Sun": 10.0,
+                    "Mercury": 70.0, "Jupiter": 130.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_255").fires(c)
+
+
+class TestRaja257:
+    def test_fires_for_a_fixed_lagna_in_full(self):
+        # Taurus (fixed): Jupiter H5, Moon in the 4th from Jupiter (H8), l1 Venus in H10.
+        c = _chart({"Jupiter": 160.0, "Moon": 250.0, "Venus": 310.0, "Sun": 30.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Saturn": 190.0}, asc_lon=30.0)
+        assert _yoga("Y.RAJA_257").fires(c)
+
+    def test_silent_for_a_movable_lagna(self):
+        # Identical longitudes from Aries — the fixed-sign gate must refuse.
+        c = _chart({"Jupiter": 160.0, "Moon": 250.0, "Venus": 310.0, "Sun": 30.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Saturn": 190.0}, asc_lon=0.0)
+        assert not _yoga("Y.RAJA_257").fires(c)
+
+
+class TestRaja258:
+    def test_fires_when_the_moons_amsa_lord_holds_a_trikona(self):
+        # Moon 103.3 -> Libra navamsa -> Venus, standing in H9. Engine-scanned.
+        c = _chart({"Moon": 103.3, "Venus": 250.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 130.0, "Jupiter": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJA_258").fires(c)
+
+    def test_silent_when_the_amsa_lord_misses_both_seats(self):
+        c = _chart({"Moon": 103.3, "Venus": 40.0, "Sun": 10.0, "Mars": 70.0,
+                    "Mercury": 340.0, "Jupiter": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_258").fires(c)
+
+
+class TestRaja259:
+    def test_fires_on_the_sambhu_hora_prakasha_pattern(self):
+        # Taurus Lagna, Moon in it; Saturn/Sun/Jupiter in 10/4/7.
+        c = _chart({"Moon": 40.0, "Saturn": 310.0, "Sun": 130.0, "Jupiter": 220.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Venus": 250.0}, asc_lon=30.0)
+        assert _yoga("Y.RAJA_259").fires(c)
+
+    def test_silent_when_jupiter_leaves_the_seventh(self):
+        c = _chart({"Moon": 40.0, "Saturn": 310.0, "Sun": 130.0, "Jupiter": 250.0,
+                    "Mars": 70.0, "Mercury": 100.0, "Venus": 220.0}, asc_lon=30.0)
+        assert not _yoga("Y.RAJA_259").fires(c)
+
+
+class TestRaja260:
+    def test_fires_on_chart_128s_structure(self):
+        """Makara Lagna (movable), its lord Saturn in Thula (movable); Jupiter neecha at
+        270.0, whose navamsa dispositor Saturn stands in H10 — a kendra. The dispositor
+        collapsing onto the Lagna lord is Chart 128's own shape."""
+        c = _chart({"Saturn": 190.0, "Jupiter": 270.0, "Sun": 100.0, "Moon": 130.0,
+                    "Mars": 40.0, "Mercury": 160.0, "Venus": 220.0}, asc_lon=270.0)
+        assert _yoga("Y.RAJA_260").fires(c)
+
+    def test_silent_when_the_dispositor_misses_kendra_and_trikona(self):
+        # Jupiter 285.0 -> a Venus-owned navamsa; Venus stands in H11.
+        c = _chart({"Saturn": 190.0, "Jupiter": 285.0, "Sun": 100.0, "Moon": 130.0,
+                    "Mars": 40.0, "Mercury": 160.0, "Venus": 220.0}, asc_lon=270.0)
+        assert not _yoga("Y.RAJA_260").fires(c)
+
+
+class TestRaja261:
+    def test_fires_on_chart_129s_structure(self):
+        # Rahu+Saturn in H10 aspected by l9 Jupiter (5th from H2); l1 Mars conjunct the
+        # debilitated Moon in Scorpio.
+        c = _chart({"Rahu": 280.0, "Saturn": 285.0, "Jupiter": 40.0, "Mars": 225.0,
+                    "Moon": 220.0, "Sun": 10.0, "Mercury": 100.0, "Venus": 130.0})
+        assert _yoga("Y.RAJA_261").fires(c)
+
+    def test_silent_when_the_lagna_lord_keeps_clean_company(self):
+        c = _chart({"Rahu": 280.0, "Saturn": 285.0, "Jupiter": 40.0, "Mars": 225.0,
+                    "Moon": 100.0, "Sun": 10.0, "Mercury": 130.0, "Venus": 160.0})
+        assert not _yoga("Y.RAJA_261").fires(c)
+
+
+class TestRaja262:
+    def test_fires_for_a_jupiter_lorded_eleventh(self):
+        # Taurus lagna: Jupiter owns the 11th (Pisces) and, as its lord, stands with the
+        # Moon — the 1st (a kendra seat) from her.
+        c = _chart({"Jupiter": 105.0, "Moon": 100.0, "Sun": 30.0, "Mars": 70.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 250.0}, asc_lon=30.0)
+        assert _yoga("Y.RAJA_262").fires(c)
+
+    def test_silent_where_jupiter_owns_none_of_2_5_11(self):
+        # Aries lagna: Jupiter owns the 9th and 12th — Raman's own lagna restriction.
+        c = _chart({"Jupiter": 105.0, "Moon": 100.0, "Sun": 30.0, "Mars": 70.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 250.0}, asc_lon=0.0)
+        assert not _yoga("Y.RAJA_262").fires(c)
+
+
+class TestRaja263:
+    def test_fires_on_uncombust_jupiter_in_ninth_with_a_friend(self):
+        # Jupiter in H9 joined by the Sun — a naisargika friend — and free of combustion
+        # on a stated chart.
+        c = _chart({"Jupiter": 250.0, "Sun": 255.0, "Moon": 40.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJA_263").fires(c)
+
+    def test_silent_when_no_friendly_planet_touches_the_ninth_occupant(self):
+        c = _chart({"Jupiter": 250.0, "Sun": 130.0, "Moon": 190.0, "Mars": 220.0,
+                    "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJA_263").fires(c)

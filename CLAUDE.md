@@ -108,6 +108,19 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
 - **Tab 3 (Medini)**: Leaflet + OSM (NOT Mapbox), axis-aligned bbox tiling (NOT PostGIS), safe DOM construction (`createElement` + `textContent`, never innerHTML).
 - Single source of truth for Kurma GeoJSON: `/medini/regions` is consumed by both the educational widget and the personalized cartography page.
 - **PRASNA + MUHURTHA + VARSHA firewalls LIFTED (user decisions 2026-08-03)**: horary (`app/raman_saab/horary/`) and electional (`app/raman_saab/electional/`) are walled subsystems — they may import natal primitives, natal verdict code NEVER imports them (tested both directions); their sources (PRASNA/MUHURTHA/VARSHA tags, + HPA-27/AFB-11/ASP-15:21-183 content) are citable by those subsystems only; outputs carry Measured-Truth framing; death/lifespan queries excluded in code. **JAIMINI lifted 2026-08-04** (karmic-evolution layer) — **NO book remains firewalled; the content-scope rule is now the ONLY wall**: each lifted book is citable by its own walled subsystem, natal verdict code imports none of them, and the golden ratchet is untouchable by construction. Full record: `DOCTRINE_BACKLOG.md` "PRASNA + MUHURTHA firewall LIFT" + the Jaimini addendum.
+- **THREE 3HC-COMPLETION DECISIONS (user-approved 2026-08-11, "do all three")**, each with
+  its record in the code: (1) **D60 cruel/benign class** = Phaladeepika ch.3's Krura table
+  (classical corroboration; `primitives/shashtiamsa.py` — CONSISTENCY-GATED, test-pinned, on
+  Raman's three applied rulings, which always win over the table); (2) **the two-ladder
+  finding**: Raman's GBB amsa ladder (Parvathamsa-3/Gopuramsam-8, shodasavarga) and 3HC's
+  ladder (Uttama-3/Gopura-4, SAPTAVARGA — the unique set reproducing both of Raman's worked
+  counts, incl. Chart 125 cast from its printed birth data) are DIFFERENT LADDERS; each is
+  citable only for its own book's yogas (`varga_attainment.THREE_HUNDRED_LADDER`; the
+  Sumukha-167 arm was fixed for borrowing GBB's rung); (3) **Gulika/Mandi natal scope**: the
+  engine's own HPA-cited upagraha layer (`chart/upagrahas.py`) serves natal yoga conditions
+  via `chart.upagrahas` — the Prasna Marga wall was never about these mechanics. With these,
+  **the 3HC far half (163-300) is FULLY encoded or consciously deferred**; the registry's
+  skip notes are the per-arm authority.
 - **SALIENCE: every modulation weight is ZERO, and that is a MEASURED RESULT, not a stub**
   (`app/raman_saab/salience.py`, locked 2026-08-07). Eight chart-specific signals — surprisal,
   extremity, graph centrality, occupancy, dignity, house-lord shadbala, lord-strength deviation,

@@ -12,14 +12,18 @@ the 19th part (9 to 9-1/2 deg) of this division in an odd sign or the 42nd (20-1
 21 deg) part in an even sign" — exactly what the Manual's rule computes (19th forward
 in odd; 61-19 = 42nd in even). The two Raman texts agree; the test pins it.
 
-WHAT THIS MODULE DELIBERATELY DOES NOT EXPORT: a full cruel/benign (krura/saumya)
-classification of the 60. Raman's corpus on disk names the amsas but never tabulates
-their natures; only his APPLIED, pointwise judgments exist (RAMAN_APPLIED_NATURE below,
-each with its citation). Yogas that require the cruel CLASS as such (3HC 272/273/275/
-276/277, 195/201, 248) therefore stay deferred until the classification question is
-settled — importing a classical table would be a band decision, not a default. A test
-asserts the class predicate's absence (the vaiseshikamsa precedent: absences that
-matter get tests).
+THE CRUEL/BENIGN CLASS (added 2026-08-11, USER-APPROVED band decision — "do all
+three"): Raman's corpus names the sixty but never tabulates their natures, so the
+classification is CLASSICAL CORROBORATION, quoted from Phaladeepika ch. 3 (the on-disk
+copy, chapter_05:109-112): "Krura Shashtyamsas or unpropitious portions are 1st, 2nd,
+8th, 9th, 10th, 11th, 12th, 15th, 16th, 30th, 31st, 32nd, 33rd, 34th, 35th, 39th,
+40th, 42nd, 43rd, 44th, 48th, 51st, 52nd and 59th. The rest are Saumya or propitious
+ones. In the case of even signs, it is reverse" — which, because the NAMES also
+reverse in even signs (Manual Art. 127), means the nature attaches to the NAME-index,
+exactly what ``shashtiamsa_index`` returns. THE CONSISTENCY GATE, test-pinned: the
+classical table must agree with every one of Raman's own applied rulings (Rakshas #2
+cruel, Preta Puriha #12 cruel, Mridwamsa #19 benign) — it corroborates him, it never
+overrides him.
 
 Usage:
     from app.raman_saab.primitives.shashtiamsa import shashtiamsa_index, shashtiamsa_name
@@ -61,6 +65,20 @@ RAMAN_APPLIED_NATURE: Final[dict[str, str]] = {
     # 3HC combo 234 uses Mridwamsa ("the mild amsa") for the gift of seership — benign.
     "Mridwamsa": "benign",
 }
+
+
+#: Phaladeepika ch. 3's Krura (unpropitious) name-indices, verbatim (see the module
+#: docstring for the quote, the band decision, and the consistency gate).
+CRUEL_SHASHTIAMSAS: Final[frozenset[int]] = frozenset(
+    {1, 2, 8, 9, 10, 11, 12, 15, 16, 30, 31, 32, 33, 34, 35,
+     39, 40, 42, 43, 44, 48, 51, 52, 59})
+
+
+def is_cruel_shashtiamsa(lon: float) -> bool:
+    """True when ``lon`` falls in a Krura shashtiamsa (Phaladeepika ch. 3 by name-index;
+    nature attaches to the name, so the even-sign reversal is already handled by
+    ``shashtiamsa_index``)."""
+    return shashtiamsa_index(lon) in CRUEL_SHASHTIAMSAS
 
 
 def shashtiamsa_index(lon: float) -> int:

@@ -67,6 +67,28 @@ SAPTAVARGA: Final[tuple[int, ...]] = (1, 2, 3, 7, 9, 12, 30)
 SHODASAVARGA: Final[tuple[int, ...]] = tuple(sorted(SUPPORTED_VARGAS))
 
 
+#: 3HC's OWN attainment ladder (MEASURED 2026-08-11): counts over the SAPTAVARGA — the
+#: unique candidate set that reproduces BOTH of Raman's worked examples in Three Hundred
+#: Important Combinations (combo 234: Jupiter in Dhanus' first degree "having attained
+#: his Swavarga FOUR times" -> saptavarga count 4, where shadvarga gives 3 and dasavarga
+#: 6; combo 256/Chart 125: Saturn at 275.35 "occupies his own vargas THRICE" ->
+#: saptavarga count 3) — carrying the classical ladder names 3HC itself uses (Uttama at
+#: 3, Gopura at 4; Parvata at 6 per the dasavarga naming combo 206 draws on). DISTINCT
+#: from Raman's GBB table above (Parvathamsa 3 / Gopuramsam 8): the two Raman texts use
+#: two different ladders, and each is citable only for its own book's yogas.
+#: Reachability over the saptavarga (0.05-deg scan): maxima Sun 5, Moon 5, Mars 6,
+#: Mercury 4, Jupiter 4, Venus 5, Saturn 4 — so Parvata (6) is reachable ONLY for Mars,
+#: and Devaloka (7) for nobody; consumers must not use count-7 titles.
+THREE_HUNDRED_LADDER: Final[dict[int, str]] = {
+    2: "Parijata", 3: "Uttama", 4: "Gopura", 5: "Simhasana", 6: "Parvata",
+}
+
+
+def three_hundred_count(chart: RamanChart, planet: str) -> int:
+    """The 3HC attainment count: own-sign occurrences over the SAPTAVARGA."""
+    return swavarga_count(chart, planet, SAPTAVARGA)
+
+
 def swavarga_count(chart: RamanChart, planet: str,
                    vargas: tuple[int, ...] = SHODASAVARGA) -> int:
     """How many of `vargas` place `planet` in its OWN sign — Raman's Swavarga definition

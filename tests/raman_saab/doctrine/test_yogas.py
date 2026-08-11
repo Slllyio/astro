@@ -1957,3 +1957,416 @@ class TestGalakarnaYoga:
         c = _chart({"Mars": 67.0, "Sun": 10.0, "Moon": 40.0, "Mercury": 100.0,
                     "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
         assert not _yoga("Y.GALAKARNA").fires(c)
+
+
+# ── tranche 14 (2026-08-11): the batch — D60 class, ladder, Gulika, and the far half ────────
+import dataclasses as _dc
+
+from app.raman_saab.chart.model import SpecialPoint as _SP
+
+
+def _chart_ug(lons, asc_lon=0.0, mandi_sign=None, gulika_sign=None):
+    """A stated chart carrying synthetic upagrahas (the Gulika-condition fixtures)."""
+    c = _chart(lons, asc_lon=asc_lon)
+    ug = {}
+    if mandi_sign:
+        ug["Mandi"] = _SP("Mandi", (mandi_sign - 1) * 30 + 15.0, mandi_sign, 1, 1)
+    if gulika_sign:
+        ug["Gulika"] = _SP("Gulika", (gulika_sign - 1) * 30 + 15.0, gulika_sign, 1, 1)
+    return _dc.replace(c, upagrahas=ug) if ug else c
+
+
+class TestBandhubhisthyakthaYoga:
+    def test_fires_on_the_afflicted_fourth_lord(self):
+        c = _chart({"Moon": 130.0, "Saturn": 135.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert _yoga("Y.BANDHUBHISTHYAKTHA").fires(c)
+
+    def test_silent_when_clean_dignified_and_benign(self):
+        # Moon at 110.7: Cancer own sign, part 42 of an even sign = Mridwamsa (benign),
+        # no malefic contact — all three arms refuse.
+        c = _chart({"Moon": 110.7, "Saturn": 310.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert not _yoga("Y.BANDHUBHISTHYAKTHA").fires(c)
+
+
+class TestSahodareesangamaYoga:
+    def test_fires_on_the_pair_in_fourth_with_external_saturn(self):
+        c = _chart({"Mars": 130.0, "Venus": 135.0, "Saturn": 137.0, "Sun": 70.0,
+                    "Moon": 100.0, "Mercury": 250.0, "Jupiter": 310.0}, asc_lon=30.0)
+        assert _yoga("Y.SAHODAREESANGAMA").fires(c)
+
+    def test_silent_when_unafflicted_in_benign_amsas(self):
+        """A malefic 7th lord does NOT afflict its own partner into the yoga — the
+        afflicting malefic must be external (the defect the engine-scan caught: Mars as
+        l7 self-satisfied the arm)."""
+        c = _chart({"Mars": 129.2, "Venus": 129.4, "Saturn": 280.0, "Sun": 70.0,
+                    "Moon": 100.0, "Mercury": 250.0, "Jupiter": 250.0}, asc_lon=30.0)
+        assert not _yoga("Y.SAHODAREESANGAMA").fires(c)
+
+
+class TestRaja248:
+    def test_fires_on_five_clean_exaltations_from_kumbha(self):
+        # Kumbha lagna, Venus in it; Sun/Moon/Mars/Jupiter/Saturn all exalted, every one
+        # in a benign amsa and a non-malefic navamsa (engine-scanned longitudes).
+        c = _chart({"Venus": 310.0, "Sun": 9.2, "Moon": 50.7, "Mars": 290.7,
+                    "Jupiter": 117.2, "Saturn": 189.2, "Mercury": 130.0}, asc_lon=300.0)
+        assert _yoga("Y.RAJA_248").fires(c)
+
+    def test_silent_when_one_exaltation_turns_cruel(self):
+        # The Sun to 0.2 (Ghora, part 1) — Raman's tyrant clause must refuse.
+        c = _chart({"Venus": 310.0, "Sun": 0.2, "Moon": 50.7, "Mars": 290.7,
+                    "Jupiter": 117.2, "Saturn": 189.2, "Mercury": 130.0}, asc_lon=300.0)
+        assert not _yoga("Y.RAJA_248").fires(c)
+
+
+class TestKaraschedaYoga:
+    def test_fires_only_in_ramans_corrected_form(self):
+        # Saturn H9 and Jupiter H3, both in Ghora (part 1) and both node-afflicted —
+        # the heavy form Raman's Remark requires.
+        c = _chart({"Saturn": 240.2, "Rahu": 242.0, "Jupiter": 60.2, "Ketu": 62.0,
+                    "Sun": 10.0, "Moon": 100.0, "Mars": 280.0, "Mercury": 130.0,
+                    "Venus": 190.0})
+        assert _yoga("Y.KARASCHEDA").fires(c)
+
+    def test_silent_in_benign_amsas(self):
+        # The bare Saturn-9/Jupiter-3 form Raman refuses must NOT fire.
+        c = _chart({"Saturn": 249.2, "Rahu": 242.0, "Jupiter": 69.2, "Ketu": 62.0,
+                    "Sun": 10.0, "Moon": 100.0, "Mars": 280.0, "Mercury": 130.0,
+                    "Venus": 190.0})
+        assert not _yoga("Y.KARASCHEDA").fires(c)
+
+
+class TestSirachchhedaYoga:
+    def test_fires_on_chart_135s_shape(self):
+        # l6 Mercury with Venus; Saturn in a cruel amsa joined by Rahu.
+        c = _chart({"Mercury": 100.0, "Venus": 105.0, "Saturn": 240.2, "Rahu": 242.0,
+                    "Sun": 10.0, "Moon": 130.0, "Mars": 280.0, "Jupiter": 310.0})
+        assert _yoga("Y.SIRACHCHHEDA").fires(c)
+
+    def test_silent_when_the_amsa_is_benign(self):
+        c = _chart({"Mercury": 100.0, "Venus": 105.0, "Saturn": 249.2, "Rahu": 242.0,
+                    "Sun": 9.2, "Moon": 130.0, "Mars": 280.0, "Jupiter": 310.0})
+        assert not _yoga("Y.SIRACHCHHEDA").fires(c)
+
+
+class TestYuddheMaranaYoga:
+    def test_fires_on_the_cruel_amsa_conjunction(self):
+        # l8 Mars conjunct l3 Mercury conjunct Saturn, the two lords in Ghora.
+        c = _chart({"Mars": 240.2, "Mercury": 240.4, "Saturn": 242.0, "Sun": 10.0,
+                    "Moon": 100.0, "Jupiter": 130.0, "Venus": 190.0})
+        assert _yoga("Y.YUDDHE_MARANA").fires(c)
+
+    def test_silent_in_benign_amsas(self):
+        c = _chart({"Mars": 249.2, "Mercury": 249.4, "Saturn": 242.0, "Sun": 10.0,
+                    "Moon": 100.0, "Jupiter": 130.0, "Venus": 190.0})
+        assert not _yoga("Y.YUDDHE_MARANA").fires(c)
+
+
+class TestSanghatakaMaranaYoga:
+    def test_fires_on_276_two_malefics_in_martian_eighth(self):
+        c = _chart({"Saturn": 220.3, "Sun": 220.6, "Moon": 40.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 310.0, "Venus": 340.0})
+        assert _yoga("Y.SANGHATAKA_MARANA").fires(c)
+
+    def test_fires_on_277_the_triple_under_the_eighth_lord(self):
+        # Sun/Rahu/Saturn in cruel amsas, all under l8 Mars' 8th aspect from Lagna.
+        c = _chart({"Sun": 220.3, "Rahu": 220.5, "Saturn": 220.7, "Mars": 10.0,
+                    "Moon": 40.0, "Mercury": 130.0, "Jupiter": 310.0, "Venus": 340.0})
+        assert _yoga("Y.SANGHATAKA_MARANA").fires(c)
+
+    def test_silent_in_benign_amsas(self):
+        c = _chart({"Sun": 229.2, "Rahu": 229.4, "Saturn": 229.6, "Mars": 10.0,
+                    "Moon": 40.0, "Mercury": 130.0, "Jupiter": 310.0, "Venus": 340.0})
+        assert not _yoga("Y.SANGHATAKA_MARANA").fires(c)
+
+
+class TestThrikalagnanaGopuraArm:
+    def test_fires_on_the_measured_gopura_count(self):
+        """Jupiter at 240.5 — the very longitude of Raman's worked example, saptavarga
+        count 4 (Gopura on the measured 3HC ladder) — aspected by Venus from H3."""
+        c = _chart({"Jupiter": 240.5, "Venus": 70.0, "Sun": 10.0, "Moon": 100.0,
+                    "Mars": 130.0, "Mercury": 160.0, "Saturn": 310.0})
+        assert _yoga("Y.THRIKALAGNANA").fires(c)
+
+
+class TestRaja256:
+    def test_fires_on_chart_125s_own_saturn(self):
+        """Saturn at 275.35 — Chart 125's cast position: l10 for Taurus lagna, in H9,
+        own navamsa (admitted per Raman's own application), saptavarga count 3 =
+        Uttamamsa ("his own vargas thrice")."""
+        c = _chart({"Saturn": 275.35, "Sun": 70.0, "Moon": 100.0, "Mars": 130.0,
+                    "Mercury": 160.0, "Jupiter": 190.0, "Venus": 340.0}, asc_lon=30.0)
+        assert _yoga("Y.RAJA_256").fires(c)
+
+    def test_silent_off_the_count(self):
+        c = _chart({"Saturn": 285.0, "Sun": 70.0, "Moon": 100.0, "Mars": 130.0,
+                    "Mercury": 160.0, "Jupiter": 190.0, "Venus": 340.0}, asc_lon=30.0)
+        assert not _yoga("Y.RAJA_256").fires(c)
+
+
+class TestSarpagandaYoga:
+    def test_fires_on_rahu_with_mandi_in_second(self):
+        c = _chart_ug({"Rahu": 40.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
+                       "Mercury": 160.0, "Jupiter": 250.0, "Venus": 280.0,
+                       "Saturn": 310.0}, mandi_sign=2)
+        assert _yoga("Y.SARPAGANDA").fires(c)
+
+    def test_silent_without_upagrahas(self):
+        # Stated charts carry no upagrahas — the None-guard must keep the yoga quiet.
+        c = _chart({"Rahu": 40.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert not _yoga("Y.SARPAGANDA").fires(c)
+
+
+class TestDurmukha169Arm:
+    def test_fires_on_the_evil_second_lord_with_gulika(self):
+        # Capricorn lagna: l2 Saturn (a malefic) joined by Gulika in Taurus.
+        c = _chart_ug({"Saturn": 40.0, "Sun": 100.0, "Moon": 130.0, "Mars": 160.0,
+                       "Mercury": 190.0, "Jupiter": 220.0, "Venus": 250.0},
+                      asc_lon=270.0, gulika_sign=2)
+        assert _yoga("Y.DURMUKHA").fires(c)
+
+
+class TestKapata204Arm:
+    def test_fires_on_the_mandi_stack(self):
+        # l4 Moon with Saturn, Rahu AND Mandi in H4, Mars casting the 4th onto them.
+        c = _chart_ug({"Moon": 100.0, "Saturn": 102.0, "Rahu": 104.0, "Mars": 280.0,
+                       "Sun": 10.0, "Mercury": 130.0, "Jupiter": 250.0, "Venus": 310.0},
+                      mandi_sign=4)
+        assert _yoga("Y.KAPATA").fires(c)
+
+
+class TestGalakarnaMandiArm:
+    def test_fires_on_mandi_and_rahu_in_third(self):
+        c = _chart_ug({"Rahu": 70.0, "Sun": 10.0, "Moon": 100.0, "Mars": 130.0,
+                       "Mercury": 160.0, "Jupiter": 250.0, "Venus": 280.0,
+                       "Saturn": 310.0}, mandi_sign=3)
+        assert _yoga("Y.GALAKARNA").fires(c)
+
+
+class TestKshayarogaYoga:
+    def test_fires_in_full(self):
+        c = _chart_ug({"Rahu": 160.0, "Mars": 220.0, "Sun": 10.0, "Moon": 100.0,
+                       "Mercury": 130.0, "Jupiter": 250.0, "Venus": 280.0,
+                       "Saturn": 310.0}, mandi_sign=1)
+        assert _yoga("Y.KSHAYAROGA").fires(c)
+
+    def test_silent_when_mandi_leaves_the_kendras(self):
+        c = _chart_ug({"Rahu": 160.0, "Mars": 220.0, "Sun": 10.0, "Moon": 100.0,
+                       "Mercury": 130.0, "Jupiter": 250.0, "Venus": 280.0,
+                       "Saturn": 310.0}, mandi_sign=2)
+        assert not _yoga("Y.KSHAYAROGA").fires(c)
+
+
+class TestDurmaranaMandiArm:
+    def test_fires_on_the_restored_mandi_associate(self):
+        # Moon in H8 under l1 Mars' aspect, Saturn and Rahu AWAY — only the restored
+        # Mandi arm carries it.
+        c = _chart_ug({"Moon": 220.0, "Mars": 10.0, "Sun": 40.0, "Mercury": 70.0,
+                       "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0}, mandi_sign=8)
+        assert _yoga("Y.DURMARANA").fires(c)
+
+
+class TestPittarogaYoga:
+    def test_fires_on_the_joined_and_aspected_sun(self):
+        c = _chart({"Sun": 160.0, "Mars": 165.0, "Saturn": 250.0, "Moon": 40.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 310.0})
+        assert _yoga("Y.PITTAROGA").fires(c)
+
+    def test_silent_without_the_second_malefic(self):
+        c = _chart({"Sun": 160.0, "Mars": 165.0, "Saturn": 40.0, "Moon": 45.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 310.0})
+        assert not _yoga("Y.PITTAROGA").fires(c)
+
+
+class TestVikalangapatniYoga:
+    def test_fires_on_both_in_the_set(self):
+        c = _chart({"Venus": 130.0, "Sun": 190.0, "Moon": 10.0, "Mars": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.VIKALANGAPATNI").fires(c)
+
+    def test_silent_when_the_sun_leaves(self):
+        c = _chart({"Venus": 130.0, "Sun": 40.0, "Moon": 10.0, "Mars": 70.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.VIKALANGAPATNI").fires(c)
+
+
+class TestPutrakalatraheenaYoga:
+    def test_fires_on_the_waning_moon_hemmed_by_malefics(self):
+        # Moon H5 waning (Sun in H7 puts the elongation past 180); Mars in Lagna,
+        # Saturn in H12, the Sun himself the malefic in the 7th.
+        c = _chart({"Moon": 130.0, "Sun": 190.0, "Mars": 10.0, "Saturn": 340.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert _yoga("Y.PUTRAKALATRAHEENA").fires(c)
+
+    def test_silent_when_the_moon_leaves_the_fifth(self):
+        c = _chart({"Moon": 100.0, "Sun": 190.0, "Mars": 10.0, "Saturn": 340.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert not _yoga("Y.PUTRAKALATRAHEENA").fires(c)
+
+
+class TestBharyasahavyabhicharaYoga:
+    def test_fires_on_the_four_planet_seventh(self):
+        c = _chart({"Venus": 190.0, "Saturn": 195.0, "Mars": 200.0, "Moon": 205.0,
+                    "Sun": 10.0, "Mercury": 70.0, "Jupiter": 250.0})
+        assert _yoga("Y.BHARYASAHAVYABHICHARA").fires(c)
+
+    def test_silent_without_the_moon(self):
+        c = _chart({"Venus": 190.0, "Saturn": 195.0, "Mars": 200.0, "Moon": 100.0,
+                    "Sun": 10.0, "Mercury": 70.0, "Jupiter": 250.0})
+        assert not _yoga("Y.BHARYASAHAVYABHICHARA").fires(c)
+
+
+class TestVamsachedaYoga:
+    def test_fires_on_the_printed_disposition(self):
+        c = _chart({"Moon": 280.0, "Venus": 190.0, "Mars": 100.0, "Sun": 10.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.VAMSACHEDA").fires(c)
+
+    def test_silent_when_the_fourth_is_clean(self):
+        c = _chart({"Moon": 280.0, "Venus": 190.0, "Mars": 40.0, "Sun": 10.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.VAMSACHEDA").fires(c)
+
+
+class TestGuhyarogaYoga:
+    def test_fires_on_the_cancer_amsa_moon_with_saturn(self):
+        # Moon 93.3 falls in the Cancer navamsa (engine-scanned, the 197 fixture's own
+        # longitude) joined by Saturn.
+        c = _chart({"Moon": 93.3, "Saturn": 95.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert _yoga("Y.GUHYAROGA").fires(c)
+
+    def test_silent_when_the_moon_stands_alone(self):
+        c = _chart({"Moon": 93.3, "Saturn": 310.0, "Sun": 10.0, "Mars": 40.0,
+                    "Mercury": 160.0, "Jupiter": 250.0, "Venus": 280.0})
+        assert not _yoga("Y.GUHYAROGA").fires(c)
+
+
+class TestAngaheenaYoga:
+    def test_fires_counted_from_the_sun(self):
+        # Sun H2: the Moon 10th from him, Mars 7th, Saturn 2nd — the from-Sun counting
+        # is the yoga's whole point.
+        c = _chart({"Sun": 40.0, "Moon": 310.0, "Mars": 220.0, "Saturn": 70.0,
+                    "Mercury": 100.0, "Jupiter": 130.0, "Venus": 190.0})
+        assert _yoga("Y.ANGAHEENA").fires(c)
+
+    def test_silent_when_saturn_slips(self):
+        c = _chart({"Sun": 40.0, "Moon": 310.0, "Mars": 220.0, "Saturn": 100.0,
+                    "Mercury": 70.0, "Jupiter": 130.0, "Venus": 190.0})
+        assert not _yoga("Y.ANGAHEENA").fires(c)
+
+
+class TestSwetakushtaYoga:
+    def test_fires_on_chart_140s_reading(self):
+        c = _chart({"Mars": 40.0, "Saturn": 340.0, "Moon": 10.0, "Sun": 190.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 130.0})
+        assert _yoga("Y.SWETAKUSHTA").fires(c)
+
+    def test_silent_when_the_sun_leaves_the_seventh(self):
+        c = _chart({"Mars": 40.0, "Saturn": 340.0, "Moon": 10.0, "Sun": 220.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 130.0})
+        assert not _yoga("Y.SWETAKUSHTA").fires(c)
+
+
+class TestPisachaGrasthaYoga:
+    def test_fires_on_rahu_moon_lagna_with_trine_malefic(self):
+        c = _chart({"Rahu": 10.0, "Moon": 15.0, "Mars": 130.0, "Sun": 40.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.PISACHA_GRASTHA").fires(c)
+
+    def test_silent_without_a_trine_malefic(self):
+        c = _chart({"Rahu": 10.0, "Moon": 15.0, "Mars": 160.0, "Sun": 40.0,
+                    "Mercury": 70.0, "Jupiter": 100.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.PISACHA_GRASTHA").fires(c)
+
+
+class TestVatharogaYoga:
+    def test_fires_on_the_digbala_pair(self):
+        c = _chart({"Jupiter": 10.0, "Saturn": 190.0, "Sun": 40.0, "Moon": 70.0,
+                    "Mars": 100.0, "Mercury": 130.0, "Venus": 250.0})
+        assert _yoga("Y.VATHAROGA").fires(c)
+
+    def test_silent_when_saturn_leaves_the_seventh(self):
+        c = _chart({"Jupiter": 10.0, "Saturn": 220.0, "Sun": 40.0, "Moon": 70.0,
+                    "Mars": 100.0, "Mercury": 130.0, "Venus": 250.0})
+        assert not _yoga("Y.VATHAROGA").fires(c)
+
+
+class TestMatibhramanaYoga:
+    def test_fires_on_291_jupiter_lagna_mars_seventh(self):
+        c = _chart({"Jupiter": 10.0, "Mars": 190.0, "Sun": 40.0, "Moon": 45.0,
+                    "Mercury": 70.0, "Venus": 130.0, "Saturn": 250.0})
+        assert _yoga("Y.MATIBHRAMANA").fires(c)
+
+    def test_fires_on_293_saturn_with_the_waning_moon_in_twelfth(self):
+        c = _chart({"Saturn": 340.0, "Moon": 345.0, "Sun": 100.0, "Mars": 190.0,
+                    "Mercury": 40.0, "Jupiter": 130.0, "Venus": 250.0})
+        assert _yoga("Y.MATIBHRAMANA").fires(c)
+
+    def test_silent_when_no_arm_holds(self):
+        # Moon in H2 and Mercury in H3 keep even the broad 294 arm quiet.
+        c = _chart({"Jupiter": 40.0, "Mars": 130.0, "Saturn": 250.0, "Moon": 45.0,
+                    "Mercury": 70.0, "Sun": 10.0, "Venus": 310.0})
+        assert not _yoga("Y.MATIBHRAMANA").fires(c)
+
+
+class TestKhalwataYoga:
+    def test_fires_on_a_malefic_lagna_aspected(self):
+        # Aries lagna under Saturn's 3rd aspect from H11.
+        c = _chart({"Saturn": 310.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 160.0, "Venus": 190.0})
+        assert _yoga("Y.KHALWATA").fires(c)
+
+    def test_silent_for_a_lagna_outside_the_set(self):
+        # Identical longitudes from Cancer — outside Raman's sign enumeration.
+        c = _chart({"Saturn": 310.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 160.0, "Venus": 190.0}, asc_lon=90.0)
+        assert not _yoga("Y.KHALWATA").fires(c)
+
+
+class TestRajabhrashtaYoga:
+    def test_fires_on_ramans_own_worked_example(self):
+        """Aries Lagna, Mars in Leo -> Arudha Lagna Sagittarius; 12th lord Jupiter in
+        Gemini -> Dwadasarudha Virgo; the two Arudha lords (Jupiter and Mercury) in
+        conjunction — Raman's Remark verbatim."""
+        c = _chart({"Mars": 130.0, "Jupiter": 70.0, "Mercury": 75.0, "Sun": 10.0,
+                    "Moon": 100.0, "Venus": 190.0, "Saturn": 310.0})
+        assert _yoga("Y.RAJABHRASHTA").fires(c)
+
+    def test_silent_when_the_arudha_lords_separate(self):
+        c = _chart({"Mars": 130.0, "Jupiter": 70.0, "Mercury": 160.0, "Sun": 10.0,
+                    "Moon": 100.0, "Venus": 190.0, "Saturn": 310.0})
+        assert not _yoga("Y.RAJABHRASHTA").fires(c)
+
+
+class TestRajaYogaBhanga:
+    def test_fires_on_298_saturn_in_visakhas_first_pada(self):
+        # Leo lagna, Saturn at Libra 21 deg — inside Raman's own window (Libra 20 to
+        # 23-20), exalted in rasi and debilitated in navamsa: Chart 143's shape.
+        c = _chart({"Saturn": 201.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Venus": 310.0}, asc_lon=120.0)
+        assert _yoga("Y.RAJA_YOGA_BHANGA").fires(c)
+
+    def test_fires_on_299_the_deeply_debilitated_sun(self):
+        c = _chart({"Sun": 189.5, "Saturn": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Venus": 310.0})
+        assert _yoga("Y.RAJA_YOGA_BHANGA").fires(c)
+
+    def test_silent_outside_both_windows(self):
+        c = _chart({"Saturn": 185.0, "Sun": 40.0, "Moon": 70.0, "Mars": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Venus": 310.0}, asc_lon=120.0)
+        assert not _yoga("Y.RAJA_YOGA_BHANGA").fires(c)
+
+
+class TestGohantaYoga:
+    def test_fires_on_the_unrelieved_kendra_malefic(self):
+        c = _chart({"Jupiter": 220.0, "Saturn": 280.0, "Venus": 40.0, "Mercury": 70.0,
+                    "Moon": 130.0, "Sun": 10.0, "Mars": 160.0})
+        assert _yoga("Y.GOHANTA").fires(c)
+
+    def test_silent_when_jupiter_leaves_the_eighth(self):
+        c = _chart({"Jupiter": 250.0, "Saturn": 280.0, "Venus": 40.0, "Mercury": 70.0,
+                    "Moon": 130.0, "Sun": 10.0, "Mars": 160.0})
+        assert not _yoga("Y.GOHANTA").fires(c)

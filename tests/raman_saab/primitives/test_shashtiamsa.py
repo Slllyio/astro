@@ -63,10 +63,21 @@ class TestAppliedNatureIsPointwiseOnly:
         assert sx.RAMAN_APPLIED_NATURE["Preta Puriha"] == "cruel"
         assert sx.RAMAN_APPLIED_NATURE["Mridwamsa"] == "benign"
 
-    def test_no_full_classification_predicate_exists(self):
-        """The cruel/benign CLASS predicate deliberately does not exist: Raman's corpus
-        on disk names the sixty but never tabulates their natures, and importing a
-        classical table is a band decision, not a default. Adding is_cruel_shashtiamsa
-        must first answer that question (the vaiseshikamsa precedent)."""
-        assert not hasattr(sx, "is_cruel_shashtiamsa")
-        assert not hasattr(sx, "CRUEL_SHASHTIAMSAS")
+    def test_classical_table_agrees_with_every_raman_ruling(self):
+        """THE CONSISTENCY GATE (deliberate test update, 2026-08-11, user-approved band
+        decision): the Phaladeepika Krura table corroborates Raman — it must agree with
+        every applied ruling of his. Rakshas #2 and Preta Puriha #12 cruel, Mridwamsa
+        #19 benign. If a future source revision breaks this, the TABLE loses, not
+        Raman."""
+        assert 2 in sx.CRUEL_SHASHTIAMSAS
+        assert 12 in sx.CRUEL_SHASHTIAMSAS
+        assert 19 not in sx.CRUEL_SHASHTIAMSAS
+
+    def test_nature_attaches_to_the_name_across_sign_parity(self):
+        """Ghora (#1, cruel) sits at part 1 of odd signs and part 60 of even signs —
+        is_cruel_shashtiamsa must follow the NAME both ways (Phaladeepika's even-sign
+        reversal composed with the Manual's name reversal)."""
+        assert sx.is_cruel_shashtiamsa(0.2)      # Aries part 1 = Ghora
+        assert sx.is_cruel_shashtiamsa(59.9)     # Taurus part 60 = Ghora
+        assert not sx.is_cruel_shashtiamsa(69.25)  # Mridwamsa, odd
+        assert not sx.is_cruel_shashtiamsa(50.75)  # Mridwamsa, even

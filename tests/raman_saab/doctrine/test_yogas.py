@@ -1821,3 +1821,107 @@ class TestRaja263:
         c = _chart({"Jupiter": 250.0, "Sun": 130.0, "Moon": 190.0, "Mars": 220.0,
                     "Mercury": 130.0, "Venus": 190.0, "Saturn": 310.0})
         assert not _yoga("Y.RAJA_263").fires(c)
+
+
+# ── tranche 12 (2026-08-11): the Arishta chapter's mechanical half ──────────────────────────
+class TestVranaYoga:
+    def test_fires_on_a_malefic_sixth_lord_in_the_tenth(self):
+        # Gemini lagna: l6 Mars (a malefic) in H10 — Chart 131's own house.
+        c = _chart({"Mars": 340.0, "Sun": 70.0, "Moon": 100.0, "Mercury": 130.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0}, asc_lon=60.0)
+        assert _yoga("Y.VRANA").fires(c)
+
+    def test_silent_for_scorpio_per_ramans_exception(self):
+        """Scorpio lagna: the 6th lord IS the Lagna lord (Mars) — the one lagna Raman's
+        Remarks except from the yoga, even with Mars in Lagna."""
+        c = _chart({"Mars": 220.0, "Sun": 70.0, "Moon": 100.0, "Mercury": 130.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0}, asc_lon=210.0)
+        assert not _yoga("Y.VRANA").fires(c)
+
+
+class TestSisnavyadhiYoga:
+    def test_fires_on_mercury_with_both_lords_in_lagna(self):
+        # Taurus lagna: Mercury joined by l6 Venus and l8 Jupiter, all in Lagna.
+        c = _chart({"Mercury": 35.0, "Venus": 40.0, "Jupiter": 45.0, "Sun": 70.0,
+                    "Moon": 100.0, "Mars": 190.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert _yoga("Y.SISNAVYADHI").fires(c)
+
+    def test_silent_when_the_eighth_lord_is_absent(self):
+        c = _chart({"Mercury": 35.0, "Venus": 40.0, "Jupiter": 130.0, "Sun": 70.0,
+                    "Moon": 100.0, "Mars": 190.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert not _yoga("Y.SISNAVYADHI").fires(c)
+
+
+class TestKalatrashandaYoga:
+    def test_fires_on_the_seventh_lord_in_sixth_with_venus(self):
+        # Taurus lagna: l7 Mars in H6 (Libra) joined by Venus.
+        c = _chart({"Mars": 190.0, "Venus": 195.0, "Sun": 70.0, "Moon": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert _yoga("Y.KALATRASHANDA").fires(c)
+
+    def test_silent_when_venus_leaves_the_sixth(self):
+        c = _chart({"Mars": 190.0, "Venus": 280.0, "Sun": 70.0, "Moon": 100.0,
+                    "Mercury": 130.0, "Jupiter": 250.0, "Saturn": 310.0}, asc_lon=30.0)
+        assert not _yoga("Y.KALATRASHANDA").fires(c)
+
+
+class TestKushtarogaYoga:
+    def test_fires_on_268_lagna_lord_mars_mercury_in_twelfth(self):
+        # Aries: l1 IS Mars — the set collapses to Mars+Mercury, together in H12.
+        c = _chart({"Mars": 340.0, "Mercury": 345.0, "Sun": 70.0, "Moon": 100.0,
+                    "Jupiter": 250.0, "Venus": 280.0, "Saturn": 310.0})
+        assert _yoga("Y.KUSHTAROGA").fires(c)
+
+    def test_fires_on_269_jupiter_saturn_moon_in_sixth(self):
+        c = _chart({"Jupiter": 160.0, "Saturn": 165.0, "Moon": 170.0, "Sun": 10.0,
+                    "Mars": 40.0, "Mercury": 70.0, "Venus": 280.0})
+        assert _yoga("Y.KUSHTAROGA").fires(c)
+
+    def test_silent_when_the_moon_leaves_the_sixth(self):
+        c = _chart({"Jupiter": 160.0, "Saturn": 165.0, "Moon": 100.0, "Sun": 10.0,
+                    "Mars": 40.0, "Mercury": 70.0, "Venus": 280.0})
+        assert not _yoga("Y.KUSHTAROGA").fires(c)
+
+
+class TestBandhanaYoga:
+    def test_fires_on_both_lords_seated_with_saturn(self):
+        # Aries: l1 Mars in H10 with Saturn; l6 Mercury in H4 — both lords in kendras,
+        # Saturn conjunct one of them.
+        c = _chart({"Mars": 280.0, "Saturn": 285.0, "Mercury": 100.0, "Sun": 10.0,
+                    "Moon": 40.0, "Jupiter": 250.0, "Venus": 130.0, "Rahu": 70.0})
+        assert _yoga("Y.BANDHANA").fires(c)
+
+    def test_silent_when_no_shadow_malefic_joins_either_lord(self):
+        c = _chart({"Mars": 280.0, "Saturn": 40.0, "Mercury": 100.0, "Sun": 10.0,
+                    "Moon": 70.0, "Jupiter": 250.0, "Venus": 130.0, "Rahu": 70.0})
+        assert not _yoga("Y.BANDHANA").fires(c)
+
+
+class TestDurmaranaYoga:
+    def test_fires_on_the_afflicted_moon_in_the_eighth(self):
+        # Moon in H8 with Saturn; l1 Mars casts its 8th onto H8 from Lagna.
+        c = _chart({"Moon": 220.0, "Saturn": 225.0, "Mars": 10.0, "Sun": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 130.0})
+        assert _yoga("Y.DURMARANA").fires(c)
+
+    def test_silent_when_saturn_and_rahu_leave_the_moon(self):
+        # The Mandi arm is deliberately unencoded (Gulika queue) — with Saturn and Rahu
+        # away the record must stay quiet.
+        c = _chart({"Moon": 220.0, "Saturn": 310.0, "Mars": 10.0, "Sun": 40.0,
+                    "Mercury": 70.0, "Jupiter": 250.0, "Venus": 130.0})
+        assert not _yoga("Y.DURMARANA").fires(c)
+
+
+class TestPeenasarogaYoga:
+    def test_fires_on_the_full_disposition(self):
+        """Moon H6, Saturn H8, the Sun (a malefic) H12, and l1 Mars at 30.0 — falling in
+        a Saturn-owned (cruel) navamsa, engine-scanned."""
+        c = _chart({"Mars": 30.0, "Moon": 160.0, "Saturn": 220.0, "Sun": 340.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Venus": 130.0})
+        assert _yoga("Y.PEENASAROGA").fires(c)
+
+    def test_silent_when_the_lagna_lords_amsa_is_benefic(self):
+        # Mars at 51.0 falls in the Moon-owned navamsa — only that clause flips.
+        c = _chart({"Mars": 51.0, "Moon": 160.0, "Saturn": 220.0, "Sun": 340.0,
+                    "Mercury": 100.0, "Jupiter": 250.0, "Venus": 130.0})
+        assert not _yoga("Y.PEENASAROGA").fires(c)

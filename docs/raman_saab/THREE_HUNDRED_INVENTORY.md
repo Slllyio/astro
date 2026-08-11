@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 127 |
-| **on disk, awaiting encoding — the workable frontier** | **160** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 135 |
+| **on disk, awaiting encoding — the workable frontier** | **152** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -152,19 +152,11 @@
 | 262 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 263 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 264 | Galakarna Yoga | 3HCC:8900 |
-| 265 | Vrana Yoga | 3HCC:8913 |
-| 266 | Sisnavyadhi yoga | 3HCC:8986 |
-| 267 | Kalatrashanda Yoga | 3HCC:9025 |
-| 268 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
-| 269 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
-| 271 | Bandhana yoga | 3HCC:9301 |
 | 272 | Karascheda yoga | 3HCC:9314 |
 | 273 | Sirachchcda yoga | 3HCC:9340 |
-| 274 | Durmarana Yoga | 3HCC:9386 |
 | 275 | Yuddhe Marana yoga | 3HCC:9417 |
 | 276 | Sanghataka Marana Yogas (group 276-277) | 3HCC:9462 |
 | 277 | Sanghataka Marana Yogas (group 276-277) | 3HCC:9462 |
-| 278 | Peenasaroga yoga | 3HCC:9494 |
 | 280 | Vikalangapatni yoga | 3HCC:9587 |
 | 281 | Putrakalatraheena yoga | 3HCC:9600 |
 | 282 | Bharyasahavyabhichara yoga | 3HCC:9620 |
@@ -319,6 +311,14 @@
 | 241 | Bhagya yoga | 3HCC:7988 |
 | 242 | Jananatpurvam pitru Marana yoga | 3HCC:8017 |
 | 243 | Dhatrutwa Yoga | 3HCC:8043 |
+| 265 | Vrana Yoga | 3HCC:8913 |
+| 266 | Sisnavyadhi yoga | 3HCC:8986 |
+| 267 | Kalatrashanda Yoga | 3HCC:9025 |
+| 268 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
+| 269 | Kushtaroga Yogas (group 268-269) | 3HCC:9043 |
+| 271 | Bandhana yoga | 3HCC:9301 |
+| 274 | Durmarana Yoga | 3HCC:9386 |
+| 278 | Peenasaroga yoga | 3HCC:9494 |
 | 288 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 289 | Andha Yogas (group 288-289) | 3HCC:9828 |
 | 296 | Nishturabhashi Yoga | 3HCC:10204 |

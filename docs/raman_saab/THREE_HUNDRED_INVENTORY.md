@@ -8,8 +8,8 @@
 |---|---|
 | combinations in the book | 300 |
 | **acquired on disk** | **287** (1-300) |
-| encoded in `doctrine/yogas.py` (by 3HC citation) | 135 |
-| **on disk, awaiting encoding — the workable frontier** | **152** |
+| encoded in `doctrine/yogas.py` (by 3HC citation) | 136 |
+| **on disk, awaiting encoding — the workable frontier** | **151** |
 | in the ToC but illegible in the body (true OCR gaps) | 2 |
 | invisible to the parser entirely — manual-audit list below | 11 |
 | beyond the scan | 0 |
@@ -151,7 +151,6 @@
 | 261 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 262 | Raja Yogas (group 245-263) | 3HCC:8152 |
 | 263 | Raja Yogas (group 245-263) | 3HCC:8152 |
-| 264 | Galakarna Yoga | 3HCC:8900 |
 | 272 | Karascheda yoga | 3HCC:9314 |
 | 273 | Sirachchcda yoga | 3HCC:9340 |
 | 275 | Yuddhe Marana yoga | 3HCC:9417 |
@@ -311,6 +310,7 @@
 | 241 | Bhagya yoga | 3HCC:7988 |
 | 242 | Jananatpurvam pitru Marana yoga | 3HCC:8017 |
 | 243 | Dhatrutwa Yoga | 3HCC:8043 |
+| 264 | Galakarna Yoga | 3HCC:8900 |
 | 265 | Vrana Yoga | 3HCC:8913 |
 | 266 | Sisnavyadhi yoga | 3HCC:8986 |
 | 267 | Kalatrashanda Yoga | 3HCC:9025 |

@@ -2385,6 +2385,40 @@ class _Peenasaroga(C.Condition):
         return nav is not None and SIGN_LORDS[nav] in set(_T5_MALEFICS)
 
 
+class _Thrikalagnana(C.Condition):
+    """Thrikalagnana 234 (3HCC:7729), the Mrudwamsa arm: Jupiter in his OWN navamsa
+    having obtained Mridwamsa (the D60's 19th part). MEASURED (0.05-deg scan): the
+    engine's classical navamsa plus the Manual's D60 rule reproduce Raman's printed
+    arithmetic exactly — the arm is reachable only at 9-9.5 deg of Mithuna, Thula and
+    Kumbha, precisely the three signs and the half-degree he names. The Gopuramsa arm
+    stays deferred on the varga-set audit (see the tranche-11 skip note); its omission
+    only under-fires."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.primitives.shashtiamsa import shashtiamsa_index
+        jup = ctx.chart.planets.get("Jupiter")
+        if jup is None:
+            return False
+        nav = getattr(jup, "navamsa_sign", None)
+        if nav is None or SIGN_LORDS[nav] != "Jupiter":
+            return False
+        return shashtiamsa_index(jup.lon) == 19
+
+
+class _Galakarna(C.Condition):
+    """Galakarna 264 (3HCC:8901), the Preta-Puriha arm: Mars in the 3rd house in the
+    shashtiamsa of Preta Puriha (the D60's 12th part, Manual Art. 127). The Mandi+Rahu
+    arm stays in the Gulika queue; its omission only under-fires."""
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.shashtiamsa import shashtiamsa_index
+        mars = ctx.chart.planets.get("Mars")
+        if mars is None or mars.rasi_house != 3:
+            return False
+        return shashtiamsa_index(mars.lon) == 12
+
+
 class _SaturnOwnsJoinsOrAfflictsSecond(C.Condition):
     """Sraddhannabhuktha (3HCC:5963): Saturn owns the 2nd, OR joins the 2nd lord, OR the 2nd
     is aspected by a debilitated Saturn."""
@@ -3406,6 +3440,19 @@ YOGAS: tuple[YogaRecord, ...] = (
         effect=("Suffers from disease of the nose (inflammation of the Schneiderian "
                 "membrane)."),
         source=Citation("3HCC", 9495)),
+    # — tranche 13 (2026-08-11): the shashtiamsa (D60) unlocks — the primitive built from
+    #   the Manual (Raman's own pointer in 264's Remark), two queued yogas graduate. —
+    YogaRecord(
+        id="Y.THRIKALAGNANA", name="Thrikalagnana Yoga", kind="other",
+        condition=_Thrikalagnana(),
+        effect=("Capable of reading past, present and future — the faculty of "
+                "seership, as Raman frames it."),
+        source=Citation("3HCC", 7729)),
+    YogaRecord(
+        id="Y.GALAKARNA", name="Galakarna Yoga", kind="arishta",
+        condition=_Galakarna(),
+        effect=("Suffers from ear troubles."),
+        source=Citation("3HCC", 8901)),
 )
 
 # ── first-tranche skips (2026-08-08), each with the reason, so the next encoder does not
@@ -3430,10 +3477,17 @@ YOGAS: tuple[YogaRecord, ...] = (
 # is walled-horary; using its mechanics for a natal yoga is a decision, not a default).
 # SODARANASA (178): "occupy the 8th (3rd, 5th or 7th) house" — the parenthetical is
 # OCR-garbled and the candidate readings differ materially; manual audit first.
-# Tranche-12 skips (2026-08-11) — the Arishta chapter is D60-HEAVY, and the SHASHTIAMSA
-# PRIMITIVE is now the highest-value single unlock in the queue (it gates 195, 201, 234,
-# 248, 264, 272, 273, 275, 276, 277 — ten combos — plus the Mandi overlaps):
-#   GALAKARNA (264): Mandi AND Preta-Puriha shashtiamsa — the double bar.
+# Tranche-13 UPDATE (2026-08-11): the shashtiamsa PRIMITIVE is BUILT
+# (primitives/shashtiamsa.py — the Manual Art. 127 verbatim, cross-pinned against 3HC
+# 234's own degree arithmetic). THRIKALAGNANA (234, Mrudwamsa arm) and GALAKARNA (264,
+# Preta-Puriha arm) graduate on it. What remains deferred is the cruel/benign CLASS:
+# Raman's corpus names the sixty but never tabulates their natures (only pointwise
+# applied rulings exist — RAMAN_APPLIED_NATURE), and importing a classical table is a
+# band decision for the user, not a default. Still gated on the class: 195, 201, 248,
+# 272, 273, 275, 276, 277 (+ the Gulika/Mandi overlaps: 264's first arm, 270, 274's
+# Mandi associate, 204).
+# Tranche-12 skips (2026-08-11) — the Arishta chapter was D60-HEAVY:
+#   GALAKARNA (264): the Mandi+Rahu arm remains in the Gulika queue.
 #   KSHAYAROGA (270): Mandi in a kendra — the Gulika queue.
 #   KARASCHEDA (272): Raman's own Remark REFUSES the bare Saturn-9/Jupiter-3 form ("the
 #     mere presence... cannot make one lose one's limbs") and requires heavy affliction

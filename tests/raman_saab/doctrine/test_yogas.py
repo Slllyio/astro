@@ -1925,3 +1925,35 @@ class TestPeenasarogaYoga:
         c = _chart({"Mars": 51.0, "Moon": 160.0, "Saturn": 220.0, "Sun": 340.0,
                     "Mercury": 100.0, "Jupiter": 250.0, "Venus": 130.0})
         assert not _yoga("Y.PEENASAROGA").fires(c)
+
+
+# ── tranche 13 (2026-08-11): the shashtiamsa (D60) unlocks ──────────────────────────────────
+class TestThrikalagnanaYoga:
+    def test_fires_at_ramans_own_window(self):
+        """Jupiter at 9.25 deg of Thula (lon 189.25) — inside the ONLY windows the
+        reachability scan found (9-9.5 deg of Mithuna/Thula/Kumbha), which are exactly
+        the sign-and-degree bounds Raman's Remark prints."""
+        c = _chart({"Jupiter": 189.25, "Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                    "Mercury": 100.0, "Venus": 250.0, "Saturn": 310.0})
+        assert _yoga("Y.THRIKALAGNANA").fires(c)
+
+    def test_silent_outside_the_mridwamsa(self):
+        # Jupiter at 10.0 deg of Thula: still own navamsa territory but past the 19th
+        # part — only the D60 clause flips.
+        c = _chart({"Jupiter": 190.0, "Sun": 10.0, "Moon": 40.0, "Mars": 70.0,
+                    "Mercury": 100.0, "Venus": 250.0, "Saturn": 310.0})
+        assert not _yoga("Y.THRIKALAGNANA").fires(c)
+
+
+class TestGalakarnaYoga:
+    def test_fires_on_mars_in_third_in_preta_puriha(self):
+        # Aries lagna: H3 is Gemini (odd); the 12th part spans 5.5-6.0 deg -> lon 65.7.
+        c = _chart({"Mars": 65.7, "Sun": 10.0, "Moon": 40.0, "Mercury": 100.0,
+                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+        assert _yoga("Y.GALAKARNA").fires(c)
+
+    def test_silent_when_the_amsa_is_wrong(self):
+        # Mars at Gemini 7.0 (lon 67.0): the 15th part — same house, wrong amsa.
+        c = _chart({"Mars": 67.0, "Sun": 10.0, "Moon": 40.0, "Mercury": 100.0,
+                    "Jupiter": 250.0, "Venus": 130.0, "Saturn": 310.0})
+        assert not _yoga("Y.GALAKARNA").fires(c)

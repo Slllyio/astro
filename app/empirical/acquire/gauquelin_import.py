@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime
 import hashlib
 import logging
 import re
@@ -204,15 +205,24 @@ def natural_key(
     return "gauq_" + hashlib.sha1(payload.encode("utf-8")).hexdigest()[:16]
 
 
-def _data_quality(year: int, profession: str) -> str:
+def _data_quality(year: int, month: int, day: int, profession: str) -> str:
     """Flag rows that are internally implausible, without dropping them.
 
     Silently discarding a bad row hides a defect in the source; silently keeping
     it lets the defect into a cohort. Flagging does neither.
+
+    CURA publishes two impossible civil dates — A3/131 as 1869-02-29 (not a leap
+    year) and A5/1571 as 1888-06-31 (June has 30 days). A chart cannot be cast
+    for a day that did not exist, so these are flagged rather than coerced to a
+    neighbouring date, which would invent a birth moment.
     """
     low, high = _PLAUSIBLE_YEARS
     if not low <= year <= high:
         return f"implausible_year:{year}"
+    try:
+        datetime.date(year, month, day)
+    except ValueError:
+        return f"invalid_date:{year:04d}-{month:02d}-{day:02d}"
     if profession.startswith("unknown_"):
         return profession
     return "ok"
@@ -318,7 +328,7 @@ def parse_volume(html: str, volume: str) -> list[GauquelinRecord]:
                 place_code=code,
                 city=city,
                 time_tier="A",  # provisional; assign_time_tiers decides
-                data_quality=_data_quality(year_i, profession),
+                data_quality=_data_quality(year_i, month_i, day_i, profession),
                 source_url=source_url,
             )
         )

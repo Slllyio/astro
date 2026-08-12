@@ -26,8 +26,11 @@ from typing import Final, Sequence
 
 import numpy as np
 import pandas as pd
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 from app.empirical.tournament.controls import (
     check_chartless_baseline_arm,
@@ -180,7 +183,16 @@ def fit_auc(
         # Degenerate split: no discriminable outcome. 0.5 is the honest answer.
         return 0.5, y[test_mask], np.zeros(test_mask.sum())
 
-    model = LogisticRegression(max_iter=1000, random_state=seed)
+    # Standardize inside the pipeline, fitted on train only so no test statistic
+    # leaks into the scaling. Without it lbfgs does not converge on real feature
+    # banks (birth_year ~1900 alongside sin/cos in [-1, 1]), and an unconverged
+    # fit turns "no signal" into "no optimization" — a null that means nothing.
+    # Median imputation covers the deliberate NaNs from undefined polar houses.
+    model = make_pipeline(
+        SimpleImputer(strategy="median"),
+        StandardScaler(),
+        LogisticRegression(max_iter=5000, random_state=seed),
+    )
     model.fit(features[train_mask], y_train)
     scores = model.predict_proba(features[test_mask])[:, 1]
     return float(roc_auc_score(y[test_mask], scores)), y[test_mask], scores

@@ -31,6 +31,10 @@ pyarrow>=14.0
 # absent here, so a clean install could not collect tests/test_experiment_loader.py
 # or tests/test_duckdb_catalog.py.
 duckdb>=0.10
+# timezonefinder resolves birth coordinates to a tz for the lunarastro ETL, and is
+# imported at module top level by lunarastro_importer + lunarastro_to_natal. Also
+# previously absent, so tests/test_lunarastro_to_natal.py could not be collected.
+timezonefinder>=6.0
 scikit-learn>=1.3
 xgboost>=2.0
 shap>=0.45

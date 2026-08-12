@@ -35,6 +35,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import http.client
 import json
 import logging
 import re
@@ -65,11 +66,17 @@ _USER_AGENT: Final[str] = "astro-empirical/1.0 (research corpus build; github.co
 #: measured to be too aggressive — it drew an HTTP 429 within nine queries.
 _DELAY_SECONDS: Final[float] = 4.0
 
-#: Retries for a rate-limited query, with exponential backoff. The service sends
-#: 429 rather than blocking, so backing off and retrying is the correct response;
-#: giving up would leave a hole in the corpus that is easy not to notice.
+#: Retries with exponential backoff. Measured failure modes over a 50-year run:
+#: 1x 429, 5x HTTP 502, and 5x truncated response (IncompleteRead, or a JSON
+#: parse error on a body cut mid-string). ALL are transient — retrying the same
+#: query succeeds — so all are retried. Retrying only 429, as the first version
+#: did, left 10 of 11 gaps unfilled.
 _MAX_RETRIES: Final[int] = 4
 _BACKOFF_BASE_SECONDS: Final[float] = 15.0
+
+#: Server-side statuses worth retrying. A 400 (bad query) is not here: retrying
+#: a malformed query just wastes the service's time.
+_RETRY_STATUSES: Final[frozenset[int]] = frozenset({429, 500, 502, 503, 504})
 
 #: Wikidata time precision: 11 = day, 10 = month, 9 = year. Only day precision is
 #: admitted — a year-precision death cannot evidence a transit exact for days.
@@ -272,27 +279,38 @@ def fetch_year(
 
     last_error: Exception | None = None
     for attempt in range(_MAX_RETRIES):
+        wait = _BACKOFF_BASE_SECONDS * (2**attempt)
         try:
-            with urllib.request.urlopen(request, timeout=180) as response:  # noqa: S310
-                payload = json.loads(response.read().decode("utf-8"))
+            with urllib.request.urlopen(request, timeout=300) as response:  # noqa: S310
+                raw = response.read()
+            # Parse BEFORE caching. A truncated body must never reach the cache,
+            # or the corruption becomes permanent and silent on every re-run.
+            payload = json.loads(raw.decode("utf-8"))
             cached.write_text(json.dumps(payload), encoding="utf-8")
             time.sleep(_DELAY_SECONDS)
             return payload
         except urllib.error.HTTPError as exc:
             last_error = exc
-            if exc.code != 429:
+            if exc.code not in _RETRY_STATUSES:
                 raise
-            # Honour Retry-After when the service sends one; otherwise back off
-            # exponentially. Being rate-limited is a request to slow down, not a
-            # reason to abandon the year.
+            # Honour Retry-After when the service sends one — being rate-limited
+            # is a request to slow down, not a reason to abandon the year.
             retry_after = exc.headers.get("Retry-After") if exc.headers else None
-            wait = float(retry_after) if retry_after and retry_after.isdigit() else (
-                _BACKOFF_BASE_SECONDS * (2**attempt)
-            )
-            logger.info("year %d rate-limited, waiting %.0fs (attempt %d/%d)",
-                        year, wait, attempt + 1, _MAX_RETRIES)
-            time.sleep(wait)
-    raise RuntimeError(f"year {year}: rate-limited after {_MAX_RETRIES} attempts") from last_error
+            if retry_after and str(retry_after).isdigit():
+                wait = float(retry_after)
+            logger.info("year %d: HTTP %d, waiting %.0fs (attempt %d/%d)",
+                        year, exc.code, wait, attempt + 1, _MAX_RETRIES)
+        except (urllib.error.URLError, http.client.IncompleteRead,
+                json.JSONDecodeError, TimeoutError) as exc:
+            # A body cut mid-stream surfaces either as IncompleteRead or as a
+            # JSON parse error partway through; both mean "ask again".
+            last_error = exc
+            logger.info("year %d: truncated or unreachable (%s), waiting %.0fs (attempt %d/%d)",
+                        year, type(exc).__name__, wait, attempt + 1, _MAX_RETRIES)
+        time.sleep(wait)
+    raise RuntimeError(
+        f"year {year}: failed after {_MAX_RETRIES} attempts ({type(last_error).__name__})"
+    ) from last_error
 
 
 def import_range(

@@ -46,6 +46,7 @@ __all__ = [
     "check_era_coverage",
     "check_person_leak_arm",
     "check_chartless_baseline_arm",
+    "TIMELESS_TIERS",
 ]
 
 #: Fallback tolerance when the sample size is unknown. Prefer
@@ -58,11 +59,27 @@ SHAM_TOLERANCE: Final[float] = 0.03
 #: How many null standard errors from 0.500 still counts as null.
 SHAM_Z: Final[float] = 3.0
 
+#: Birth-time quality ladder.
+#:   A  registry/certified, minute-precise
+#:   B  rounded — a clerk wrote "six o'clock"
+#:   S  self-reported — a time is claimed, but unverified
+#:   C  NO birth time at all (e.g. Wikidata)
+#:
+#: C is not simply the bottom of the ladder: it is a different kind of gap. A/B/S
+#: all have *a* time, so a house or ascendant is computable and merely more or
+#: less trustworthy. With C those quantities are undefined, so any test needing
+#: them must require A, AB or ABS and will exclude C by construction. ``ANY``
+#: exists for tests that genuinely need no birth time — slow-planet transits to a
+#: dated event — and admits everything.
 _TIER_ORDER: Final[dict[str, frozenset[str]]] = {
     "A": frozenset({"A"}),
     "AB": frozenset({"A", "B"}),
     "ABS": frozenset({"A", "B", "S"}),
+    "ANY": frozenset({"A", "B", "S", "C"}),
 }
+
+#: Tiers for which houses, ascendant and Moon-precise features are undefined.
+TIMELESS_TIERS: Final[frozenset[str]] = frozenset({"C"})
 
 
 @dataclass(frozen=True, slots=True)

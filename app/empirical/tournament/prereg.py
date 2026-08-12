@@ -71,8 +71,9 @@ STATISTICS: Final[frozenset[str]] = frozenset({"auc", "cox_hr", "risk_ratio", "w
 STAGES: Final[frozenset[str]] = frozenset({"screening", "confirmatory"})
 
 #: Birth-time quality required for the row to admit a person.
-#: A = registry/certified, AB = A or B, ABS = A, B, or self-reported (exploratory only).
-TIER_REQUIREMENTS: Final[frozenset[str]] = frozenset({"A", "AB", "ABS"})
+#: A = registry/certified; AB = A or B; ABS = adds self-reported (exploratory only);
+#: ANY = no birth time required, and therefore no house-dependent feature may be used.
+TIER_REQUIREMENTS: Final[frozenset[str]] = frozenset({"A", "AB", "ABS", "ANY"})
 
 #: Control arms every locked test must declare. These are not defaults that can be
 #: switched off — a row lacking any of them fails validation.

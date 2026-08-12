@@ -209,6 +209,25 @@ def run_screening(
             )
 
     report = summarize(outcomes)
+    # Every outcome, not just survivors and rejects. A null whose report carries
+    # no per-test detail is indistinguishable from a run that never happened —
+    # the search has to be visible for the result to be readable.
+    report["all_outcomes"] = [
+        {
+            "test_id": o.test_id,
+            "feature_bank": o.feature_bank,
+            "target": o.target,
+            "chart_statistic": round(o.chart_statistic, 4),
+            "chartless_statistic": round(o.chartless_statistic, 4),
+            "delta": round(o.delta, 4),
+            "p_value": round(o.p_value, 4),
+            "sham_statistic": round(o.sham_statistic, 4),
+            "n": o.n,
+            "admitted": o.admitted,
+            "unmet_arms": list(o.unmet_arms),
+        }
+        for o in outcomes
+    ]
     report["stage"] = "screening"
     report["exploratory"] = True
     report["exploratory_reason"] = (

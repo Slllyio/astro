@@ -96,6 +96,20 @@ def _read_corpus(path: str | Path) -> list[ChartRow]:
 
 _CUMULATIVE_DAYS: Final[tuple[int, ...]] = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
 
+#: Sidereal periods in years, used to build a pure-date harmonic basis for the
+#: chartless twin. These are the SAME periods the planets impose on any
+#: sin/cos-encoded chart feature — Mars through Pluto — but computed from the
+#: birth date alone, with no ephemeris and no astronomy.
+#:
+#: Why this belongs in the baseline: sin/cos of a planet's longitude is a
+#: periodic function of time, so handing those to a linear model gives it a
+#: Fourier basis over birth date, i.e. the ability to fit a smooth non-linear
+#: era trend. A twin carrying only decimal_year enters time LINEARLY and cannot
+#: bend. Profession in this corpus has a strongly non-linear era trend (the six
+#: volumes span different date ranges), so without these terms a chart bank wins
+#: on functional form rather than on astrology.
+_DATE_HARMONIC_PERIODS: Final[tuple[float, ...]] = (1.881, 11.862, 29.457, 84.02, 164.8, 248.1)
+
 
 def _day_of_year(year: int, month: int, day: int) -> int:
     """Approximate day-of-year, tolerant of the source's impossible dates."""
@@ -127,7 +141,25 @@ def _chartless_features(row: ChartRow) -> dict[str, float]:
         # Season enters as sin/cos too: December and January are adjacent.
         "cl_season_sin": math.sin(2 * math.pi * day_of_year / 365.25),
         "cl_season_cos": math.cos(2 * math.pi * day_of_year / 365.25),
+        **_date_harmonics(float(row.year) + day_of_year / 365.25),
     }
+
+
+def _date_harmonics(decimal_year: float) -> dict[str, float]:
+    """A Fourier basis over birth date at the planetary periods — no astronomy.
+
+    Derived from the calendar alone. Its only purpose is to give the chartless
+    twin the same *functional flexibility* in time that sin/cos-encoded chart
+    features silently confer, so the tournament compares astrology against
+    astrology rather than a curve against a straight line.
+    """
+    out: dict[str, float] = {}
+    for period in _DATE_HARMONIC_PERIODS:
+        phase = 2 * math.pi * decimal_year / period
+        key = f"{period:g}".replace(".", "p")
+        out[f"cl_date_h{key}_sin"] = math.sin(phase)
+        out[f"cl_date_h{key}_cos"] = math.cos(phase)
+    return out
 
 
 def _western_features(

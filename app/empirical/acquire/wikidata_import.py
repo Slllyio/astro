@@ -39,6 +39,7 @@ import json
 import logging
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass, fields
@@ -60,8 +61,15 @@ _ENDPOINT: Final[str] = "https://query.wikidata.org/sparql"
 _CACHE_DIR: Final[Path] = Path("data/empirical/raw/wikidata")
 _USER_AGENT: Final[str] = "astro-empirical/1.0 (research corpus build; github.com/Slllyio/astro)"
 
-#: Seconds between queries. WDQS is volunteer-run infrastructure.
-_DELAY_SECONDS: Final[float] = 1.5
+#: Seconds between queries. WDQS is volunteer-run infrastructure, and 1.5s was
+#: measured to be too aggressive — it drew an HTTP 429 within nine queries.
+_DELAY_SECONDS: Final[float] = 4.0
+
+#: Retries for a rate-limited query, with exponential backoff. The service sends
+#: 429 rather than blocking, so backing off and retrying is the correct response;
+#: giving up would leave a hole in the corpus that is easy not to notice.
+_MAX_RETRIES: Final[int] = 4
+_BACKOFF_BASE_SECONDS: Final[float] = 15.0
 
 #: Wikidata time precision: 11 = day, 10 = month, 9 = year. Only day precision is
 #: admitted — a year-precision death cannot evidence a transit exact for days.
@@ -261,11 +269,30 @@ def fetch_year(
         data=body,
         headers={"Accept": "application/sparql-results+json", "User-Agent": _USER_AGENT},
     )
-    with urllib.request.urlopen(request, timeout=180) as response:  # noqa: S310 - fixed host
-        payload = json.loads(response.read().decode("utf-8"))
-    cached.write_text(json.dumps(payload), encoding="utf-8")
-    time.sleep(_DELAY_SECONDS)
-    return payload
+
+    last_error: Exception | None = None
+    for attempt in range(_MAX_RETRIES):
+        try:
+            with urllib.request.urlopen(request, timeout=180) as response:  # noqa: S310
+                payload = json.loads(response.read().decode("utf-8"))
+            cached.write_text(json.dumps(payload), encoding="utf-8")
+            time.sleep(_DELAY_SECONDS)
+            return payload
+        except urllib.error.HTTPError as exc:
+            last_error = exc
+            if exc.code != 429:
+                raise
+            # Honour Retry-After when the service sends one; otherwise back off
+            # exponentially. Being rate-limited is a request to slow down, not a
+            # reason to abandon the year.
+            retry_after = exc.headers.get("Retry-After") if exc.headers else None
+            wait = float(retry_after) if retry_after and retry_after.isdigit() else (
+                _BACKOFF_BASE_SECONDS * (2**attempt)
+            )
+            logger.info("year %d rate-limited, waiting %.0fs (attempt %d/%d)",
+                        year, wait, attempt + 1, _MAX_RETRIES)
+            time.sleep(wait)
+    raise RuntimeError(f"year {year}: rate-limited after {_MAX_RETRIES} attempts") from last_error
 
 
 def import_range(

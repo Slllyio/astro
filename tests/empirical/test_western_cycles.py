@@ -244,3 +244,15 @@ class TestTransits:
         """A zero orb has no window to measure."""
         with pytest.raises(ValueError):
             transit_hits(100.0, "Sun", CANONICAL_JD, CANONICAL_JD + 10.0, orb=0.0)
+
+    def test_nonpositive_step_rejected(self):
+        """A non-advancing scan step would hang the loop rather than fail.
+
+        Found in review: with step <= 0, jd_hi never advances past jd_lo and the
+        search spins forever — the worse of the two failure modes.
+        """
+        for bad_step in (0.0, -1.0):
+            with pytest.raises(ValueError, match="step_days"):
+                transit_hits(
+                    100.0, "Sun", CANONICAL_JD, CANONICAL_JD + 10.0, step_days=bad_step
+                )

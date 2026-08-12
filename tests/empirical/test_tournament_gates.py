@@ -12,6 +12,7 @@ import numpy as np
 import pytest
 
 from app.empirical.tournament.controls import (
+    ArmOutcome,
     check_era_coverage,
     check_min_n,
     check_sham_null,
@@ -42,6 +43,18 @@ from app.empirical.tournament.scoring import (
 )
 
 _IDS = [f"p{i:05d}" for i in range(4000)]
+
+
+def _declared_arms(reg: Registration, exclude: set[str] | None = None) -> list[ArmOutcome]:
+    """Passing stubs for a registration's non-sham declared arms.
+
+    The sham is excluded because record_sham() emits it. `exclude` lets a test
+    deliberately omit an arm to prove the coverage check bites.
+    """
+    skip = {"sham_target"} | (exclude or set())
+    return [
+        ArmOutcome(name, True, None, "stub") for name in reg.control_arms if name not in skip
+    ]
 
 
 def _reg(test_id: str = "T001", **overrides) -> Registration:
@@ -245,7 +258,9 @@ class TestAntiPeeking:
 
     def test_real_result_accepted_after_clean_sham(self):
         """The happy path still works."""
-        scorer = GatedScorer(_reg(), sham_tolerance=0.03)
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg))
         scorer.record_sham(0.499)
         scorer.record_real(0.80, 0.74, p_value=0.01, n=1000)
         assert scorer.outcome().delta == pytest.approx(0.06)
@@ -271,11 +286,72 @@ class TestAntiPeeking:
             GatedScorer(_reg()).outcome()
 
 
+class TestArmCoverage:
+    """A declared arm that never ran must block admission.
+
+    Found in review: `all(a.passed for a in arms)` is vacuously true over a short
+    list, so a harness that silently stopped emitting an arm kept admitting
+    results as though the control were still running.
+    """
+
+    def test_missing_declared_arm_blocks_admission(self):
+        """Recording only the sham leaves three declared arms unrun."""
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_sham(0.50)
+        scorer.record_real(0.80, 0.744, p_value=0.001, n=1000)
+        outcome = scorer.outcome()
+        assert not outcome.admitted
+        assert set(outcome.missing_arms) == set(reg.control_arms) - {"sham_target"}
+
+    def test_missing_arm_keeps_a_test_out_of_the_survivor_set(self):
+        """The consequence that matters: it cannot survive."""
+        scorer = GatedScorer(_reg(), sham_tolerance=0.03)
+        scorer.record_sham(0.50)
+        scorer.record_real(0.90, 0.744, p_value=1e-9, n=1000)
+        assert survivors([scorer.outcome()]) == ()
+
+    def test_one_omitted_arm_is_named(self):
+        """The report must say which control did not run."""
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg, exclude={"person_leak_preflight"}))
+        scorer.record_sham(0.50)
+        scorer.record_real(0.80, 0.744, p_value=0.001, n=1000)
+        outcome = scorer.outcome()
+        assert outcome.missing_arms == ("person_leak_preflight",)
+        assert not outcome.admitted
+
+    def test_full_arm_coverage_admits(self):
+        """With every declared arm recorded and passing, admission proceeds."""
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg))
+        scorer.record_sham(0.50)
+        scorer.record_real(0.80, 0.744, p_value=0.001, n=1000)
+        outcome = scorer.outcome()
+        assert outcome.missing_arms == ()
+        assert outcome.admitted
+
+    def test_unmet_arms_merges_failed_and_missing(self):
+        """One accessor for everything blocking admission."""
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls([ArmOutcome("era_stratification", False, None, "thin strata")])
+        scorer.record_sham(0.50)
+        scorer.record_real(0.80, 0.744, p_value=0.001, n=1000)
+        outcome = scorer.outcome()
+        assert "era_stratification" in outcome.unmet_arms
+        assert "chartless_baseline" in outcome.unmet_arms
+
+
 class TestDeltaScoring:
     """A chart model's score is its delta over its own chartless twin."""
 
     def _outcome(self, chart, chartless, p, *, test_id="T001", n=1000, admitted=True):
-        scorer = GatedScorer(_reg(test_id=test_id, min_n=1 if admitted else n + 1), sham_tolerance=0.03)
+        reg = _reg(test_id=test_id, min_n=1 if admitted else n + 1)
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg))
         scorer.record_sham(0.50)
         scorer.record_real(chart, chartless, p_value=p, n=n)
         return scorer.outcome()
@@ -337,7 +413,9 @@ class TestSummary:
 
     def test_null_verdict_is_explicit(self):
         """No survivors must read as a measured null, with the wording to match."""
-        scorer = GatedScorer(_reg(), sham_tolerance=0.03)
+        reg = _reg()
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg))
         scorer.record_sham(0.50)
         scorer.record_real(0.70, 0.744, p_value=0.9, n=1000)
         report = summarize([scorer.outcome()])
@@ -346,7 +424,9 @@ class TestSummary:
 
     def test_summary_lists_what_failed_and_why(self):
         """A null must disclose what was tested and which arms it failed."""
-        scorer = GatedScorer(_reg(min_n=5000), sham_tolerance=0.03)
+        reg = _reg(min_n=5000)
+        scorer = GatedScorer(reg, sham_tolerance=0.03)
+        scorer.record_controls(_declared_arms(reg))
         scorer.record_sham(0.50)
         scorer.record_real(0.80, 0.744, p_value=0.001, n=1000)
         report = summarize([scorer.outcome()])

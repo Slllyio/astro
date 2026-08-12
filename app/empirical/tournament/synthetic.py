@@ -30,8 +30,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
 from app.empirical.tournament.controls import (
+    check_chartless_baseline_arm,
     check_era_coverage,
     check_min_n,
+    check_person_leak_arm,
     check_tier,
     era_strata,
     sham_labels,
@@ -243,6 +245,12 @@ def run_test(
     test_ids = [p for p, keep in zip(person_ids, train_mask) if not keep]
     check_person_leak(train_ids, test_ids)
 
+    # n is the number of rows the statistic was actually computed on, which is
+    # the evaluation split — NOT the corpus size. Using len(frame) here would
+    # overstate the evidence fourfold under a 25% holdout and let an
+    # underpowered result clear its registered min_n.
+    n_scored = int((~train_mask).sum())
+
     all_features = list(corpus.chartless_features) + list(corpus.chart_features)
 
     # Sham first — the gate. Same features, same split, permuted target.
@@ -270,9 +278,10 @@ def run_test(
     scorer = GatedScorer(registration, sham_tolerance=tolerance)
     scorer.record_controls(
         [
-            check_min_n(len(frame), registration.min_n),
+            check_min_n(n_scored, registration.min_n),
             check_tier(frame[corpus.tier_col], registration.tier_requirement),
             check_era_coverage(era_strata(frame[corpus.year_col])),
+            check_person_leak_arm(train_ids, test_ids),
         ]
     )
     sham_outcome = scorer.record_sham(sham_auc)
@@ -288,5 +297,6 @@ def run_test(
     )
     p_value = bootstrap_delta_p(y_test, chart_scores, chartless_scores, seed=seed + 7)
 
-    scorer.record_real(chart_auc, chartless_auc, p_value=p_value, n=len(frame))
+    scorer.record_controls([check_chartless_baseline_arm(chart_auc, chartless_auc)])
+    scorer.record_real(chart_auc, chartless_auc, p_value=p_value, n=n_scored)
     return scorer.outcome()

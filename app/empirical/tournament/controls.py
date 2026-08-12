@@ -24,6 +24,7 @@ Usage:
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass
 from typing import Final, Iterable, Sequence
 
@@ -43,6 +44,8 @@ __all__ = [
     "check_min_n",
     "check_tier",
     "check_era_coverage",
+    "check_person_leak_arm",
+    "check_chartless_baseline_arm",
 ]
 
 #: Fallback tolerance when the sample size is unknown. Prefer
@@ -183,6 +186,47 @@ def check_tier(tiers: Iterable[str], requirement: str) -> ArmOutcome:
         f"all persons within tier {requirement}"
         if passed
         else f"tiers {sorted(bad)} present but requirement is {requirement} ({sorted(allowed)})",
+    )
+
+
+def check_person_leak_arm(train_ids: Iterable[str], holdout_ids: Iterable[str]) -> ArmOutcome:
+    """Person-leak preflight, as a recordable arm.
+
+    ``holdout.check_person_leak`` raises, which is right for a harness but leaves
+    no evidence that the check ran. A declared arm has to produce an outcome, so
+    the scorer can tell "passed" from "never executed".
+    """
+    overlap = set(train_ids) & set(holdout_ids)
+    passed = not overlap
+    return ArmOutcome(
+        "person_leak_preflight",
+        passed,
+        float(len(overlap)),
+        "no person appears on both sides of the split"
+        if passed
+        else f"{len(overlap)} persons in both train and holdout (e.g. {sorted(overlap)[:5]})",
+    )
+
+
+def check_chartless_baseline_arm(
+    chart_statistic: float,
+    chartless_statistic: float,
+) -> ArmOutcome:
+    """Evidence that a chartless twin was actually fitted on the same split.
+
+    The arm asserts the twin *exists and is finite*, not that the chart beat it —
+    losing to the baseline is a legitimate result, but having no baseline at all
+    means the delta is meaningless.
+    """
+    finite = math.isfinite(chartless_statistic) and math.isfinite(chart_statistic)
+    return ArmOutcome(
+        "chartless_baseline",
+        finite,
+        float(chartless_statistic) if finite else None,
+        f"chartless twin scored {chartless_statistic:.4f} on the same split "
+        f"(chart {chart_statistic:.4f}, delta {chart_statistic - chartless_statistic:+.4f})"
+        if finite
+        else "no finite chartless twin statistic — the delta would be meaningless",
     )
 
 

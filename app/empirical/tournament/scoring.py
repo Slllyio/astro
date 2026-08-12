@@ -73,7 +73,11 @@ class TestOutcome:
       p_value: For the delta, under the registered direction.
       sham_statistic: What the permuted target read.
       arms: Every control arm's outcome.
-      admitted: All arms passed and n met the registered floor.
+      missing_arms: Arms the registration declared that produced no outcome at
+        all. Non-empty means the harness did not run a control it promised to,
+        which blocks admission regardless of how the other arms read.
+      admitted: Every declared arm produced a passing outcome and n met the
+        registered floor.
     """
 
     #: Tells pytest this is a domain class, not a test class, despite the name.
@@ -90,12 +94,18 @@ class TestOutcome:
     p_value: float
     sham_statistic: float
     arms: tuple[ArmOutcome, ...]
+    missing_arms: tuple[str, ...]
     admitted: bool
 
     @property
     def failed_arms(self) -> tuple[str, ...]:
-        """Names of arms that did not clear."""
+        """Names of arms that ran and did not clear."""
         return tuple(a.name for a in self.arms if not a.passed)
+
+    @property
+    def unmet_arms(self) -> tuple[str, ...]:
+        """Every arm that failed or never ran — the full admission blockers."""
+        return tuple(sorted(set(self.failed_arms) | set(self.missing_arms)))
 
 
 @dataclass
@@ -174,7 +184,22 @@ class GatedScorer:
             )
         chart, chartless, p_value, n = self._real
         arms = tuple(self._arms)
-        admitted = all(a.passed for a in arms) and n >= self.registration.min_n
+        # A declared arm that never produced an outcome has not been run, and
+        # `all(...)` over a short list is vacuously true — so coverage must be
+        # checked explicitly. Without this, a harness that quietly stopped
+        # emitting an arm would keep admitting results as though it still ran it.
+        missing = tuple(sorted(set(self.registration.control_arms) - {a.name for a in arms}))
+        if missing:
+            logger.warning(
+                "%s: declared control arms produced no outcome: %s — not admitted",
+                self.registration.test_id,
+                list(missing),
+            )
+        admitted = (
+            not missing
+            and all(a.passed for a in arms)
+            and n >= self.registration.min_n
+        )
         return TestOutcome(
             test_id=self.registration.test_id,
             feature_bank=self.registration.feature_bank,
@@ -187,6 +212,7 @@ class GatedScorer:
             p_value=p_value,
             sham_statistic=self._sham.value if self._sham.value is not None else float("nan"),
             arms=arms,
+            missing_arms=missing,
             admitted=admitted,
         )
 
@@ -248,7 +274,12 @@ def summarize(outcomes: Sequence[TestOutcome], *, q: float = FDR_Q) -> dict[str,
             for o in kept
         ],
         "not_admitted": [
-            {"test_id": o.test_id, "failed_arms": list(o.failed_arms), "n": o.n}
+            {
+                "test_id": o.test_id,
+                "failed_arms": list(o.failed_arms),
+                "missing_arms": list(o.missing_arms),
+                "n": o.n,
+            }
             for o in outcomes
             if not o.admitted
         ],

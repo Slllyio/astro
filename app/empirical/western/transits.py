@@ -193,6 +193,10 @@ def transit_hits(
     if orb <= 0.0:
         raise ValueError(f"orb must be positive, got {orb}")
     step = step_days if step_days is not None else _DEFAULT_STEP.get(body, _FALLBACK_STEP)
+    if step <= 0.0:
+        # A non-advancing step makes the scan loop spin forever rather than
+        # return a wrong answer, which is the worse failure mode of the two.
+        raise ValueError(f"step_days must be positive, got {step}")
 
     hits: list[TransitHit] = []
     for adef in aspects:

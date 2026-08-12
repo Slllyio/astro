@@ -30,7 +30,7 @@ def _reg(test_id: str = "T001") -> Registration:
         statistic="auc",
         baseline_model="chartless_v1",
         control_arms=tuple(sorted(MANDATORY_CONTROL_ARMS)),
-        min_n=500,
+        min_n=300,
         tier_requirement="A",
         stage="screening",
         direction="greater",
@@ -131,4 +131,29 @@ class TestProtocolIntegration:
     def test_holdout_is_person_disjoint(self):
         """The harness would raise on a leak; reaching an outcome proves it did not."""
         corpus = make_corpus(n_persons=1500, planted_effect=0.0, seed=7)
-        assert run_test(_reg(), corpus, seed=7).n == 1500
+        assert run_test(_reg(), corpus, seed=7).admitted
+
+    def test_n_counts_scored_rows_not_corpus_size(self):
+        """n is the evaluation split, not the whole corpus.
+
+        Found in review: the statistic is computed only on the ~25% holdout, so
+        reporting the 1500-person corpus size overstated the evidence fourfold
+        and would let an underpowered result clear its registered min_n.
+        """
+        corpus = make_corpus(n_persons=1500, planted_effect=0.0, seed=7)
+        outcome = run_test(_reg(), corpus, seed=7)
+        assert 300 < outcome.n < 500, f"n={outcome.n} should be ~25% of 1500"
+
+    def test_every_declared_arm_produces_an_outcome(self):
+        """The harness must run every control its registration declares."""
+        corpus = make_corpus(n_persons=1500, planted_effect=0.0, seed=7)
+        outcome = run_test(_reg(), corpus, seed=7)
+        assert outcome.missing_arms == ()
+
+    def test_min_n_is_measured_against_scored_rows(self):
+        """A floor above the holdout size excludes the test, even on a big corpus."""
+        import dataclasses
+
+        corpus = make_corpus(n_persons=1500, planted_effect=1.2, seed=7)
+        outcome = run_test(dataclasses.replace(_reg(), min_n=900), corpus, seed=7)
+        assert not outcome.admitted, "900 > ~375 scored rows, so this must not be admitted"

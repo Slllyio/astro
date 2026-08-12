@@ -114,6 +114,14 @@ def _chartless_features(row: ChartRow) -> dict[str, float]:
     day_of_year = _day_of_year(row.year, row.month, row.day)
     return {
         "cl_birth_year": float(row.year),
+        # Full date precision, not just the year. The slow planets (Uranus 84y,
+        # Neptune 165y, Pluto 248y) encode the birth epoch to within days, so a
+        # chartless twin holding only the integer year leaves sub-year date
+        # precision uncontrolled — and any chart bank would then "beat" it merely
+        # by knowing the date better. This is the confound Round 11's
+        # disambiguation experiment was built to test; the baseline has to carry
+        # the date to be a fair bar at all.
+        "cl_birth_decimal_year": float(row.year) + day_of_year / 365.25,
         "cl_latitude": row.latitude,
         "cl_longitude": row.longitude,
         # Season enters as sin/cos too: December and January are adjacent.

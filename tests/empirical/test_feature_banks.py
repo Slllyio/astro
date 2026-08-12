@@ -78,6 +78,25 @@ class TestChartlessBank:
         assert features["cl_latitude"] == pytest.approx(48.85)
         assert features["cl_longitude"] == pytest.approx(2.35)
 
+    def test_carries_full_date_precision_not_just_the_year(self):
+        """The bar must know the date, or a chart bank beats it on date alone.
+
+        The slow planets pin the birth epoch to within days. A twin holding only
+        the integer year leaves sub-year precision uncontrolled, and every chart
+        bank then "wins" by knowing when the person was born more exactly — which
+        is not astrology.
+        """
+        january = _chartless_features(_row(month=1, day=1))
+        december = _chartless_features(_row(month=12, day=31))
+        assert january["cl_birth_decimal_year"] < december["cl_birth_decimal_year"]
+        assert december["cl_birth_decimal_year"] - january["cl_birth_decimal_year"] > 0.9
+
+    def test_decimal_year_orders_across_years(self):
+        """Dec 1899 must sort before Jan 1900."""
+        earlier = _chartless_features(_row(year=1899, month=12, day=31))
+        later = _chartless_features(_row(year=1900, month=1, day=1))
+        assert earlier["cl_birth_decimal_year"] < later["cl_birth_decimal_year"]
+
     def test_season_is_circular(self):
         """December and January are adjacent, so season enters as sin/cos.
 
@@ -164,17 +183,18 @@ class TestCohortFilter:
             "time_tier": ["A", "B", "A", "A"],
             "data_quality": ["ok", "ok", "invalid_date:1888-06-31", "ok"],
             "label": ["scientist"] * 4,
+            "cl_birth_year": [1900.0] * 4,
         })
 
     def test_tier_a_cohort_excludes_rounded_times(self):
         """A rounded time cannot evidence a transit exact for hours."""
-        assert set(_cohort(self._frame(), tier="A")["person_id"]) == {"a", "d"}
+        assert set(_cohort(self._frame(), tier="A", min_per_stratum=0)[0]["person_id"]) == {"a", "d"}
 
     def test_quality_flagged_rows_are_always_excluded(self):
         """A row with an impossible date is out of every cohort."""
         for tier in ("A", "AB"):
-            assert "c" not in set(_cohort(self._frame(), tier=tier)["person_id"])
+            assert "c" not in set(_cohort(self._frame(), tier=tier, min_per_stratum=0)[0]["person_id"])
 
     def test_ab_cohort_admits_tier_b(self):
         """Relaxing the tier admits rounded times but not flagged ones."""
-        assert set(_cohort(self._frame(), tier="AB")["person_id"]) == {"a", "b", "d"}
+        assert set(_cohort(self._frame(), tier="AB", min_per_stratum=0)[0]["person_id"]) == {"a", "b", "d"}

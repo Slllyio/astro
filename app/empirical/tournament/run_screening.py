@@ -60,17 +60,45 @@ _MIN_POSITIVES: Final[int] = 200
 _CHART_BANKS: Final[tuple[str, ...]] = tuple(b for b in BANKS if b != "chartless")
 
 
-def _cohort(frame: pd.DataFrame, *, tier: str) -> pd.DataFrame:
-    """The admissible rows: requested birth-time tier, no quality flags.
+def _cohort(
+    frame: pd.DataFrame,
+    *,
+    tier: str,
+    min_per_stratum: int = 30,
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    """The admissible rows: requested birth-time tier, no quality flags, and no
+    era stratum too thin to support stratified analysis.
 
     Rows CURA publishes with impossible dates or years are excluded here rather
     than silently carried — they were flagged at import precisely so this filter
     could be explicit.
+
+    Thin birth decades are dropped rather than pooled. A decade holding two
+    people contributes noise with a confident-looking point estimate: it is the
+    small-sample positive bias that made Round 11's within-lord RR=1.58 look
+    like signal when the shuffled null sat at exactly the same value. The
+    era_stratification arm demands this be resolved before scoring; dropping is
+    the conservative resolution, and the count is reported rather than absorbed.
+
+    Returns:
+      ``(cohort, drop_counts)`` so the caller can disclose what was removed.
     """
     keep = frame["data_quality"].eq("ok")
     if tier == "A":
         keep &= frame["time_tier"].eq("A")
-    return frame[keep].reset_index(drop=True)
+    cohort = frame[keep].reset_index(drop=True)
+
+    decades = (cohort["cl_birth_year"].astype(int) // 10) * 10
+    counts = decades.value_counts()
+    thin = set(counts[counts < min_per_stratum].index)
+    dropped_thin = int(decades.isin(thin).sum())
+    cohort = cohort[~decades.isin(thin)].reset_index(drop=True)
+
+    return cohort, {
+        "excluded_quality_or_tier": int(len(frame) - int(keep.sum())),
+        "excluded_thin_era": dropped_thin,
+        "thin_decades": sorted(int(d) for d in thin),
+    }
 
 
 def run_screening(
@@ -81,8 +109,10 @@ def run_screening(
 ) -> tuple[list[TestOutcome], dict[str, object]]:
     """Screen every (chart bank x profession) pair against the chartless twin."""
     frame = pd.read_parquet(banks_path)
-    cohort = _cohort(frame, tier=tier)
+    cohort, drops = _cohort(frame, tier=tier)
     logger.info("cohort: %d of %d rows (tier=%s, quality=ok)", len(cohort), len(frame), tier)
+    logger.info("  excluded %d for tier/quality, %d in thin decades %s",
+                drops["excluded_quality_or_tier"], drops["excluded_thin_era"], drops["thin_decades"])
 
     # Freeze the holdout and drop it. Screening never sees these people.
     person_ids = cohort["person_id"].tolist()
@@ -186,6 +216,7 @@ def run_screening(
         "finding; survivors are candidates to re-register for a confirmatory run."
     )
     report["cohort_rows"] = len(cohort)
+    report["cohort_exclusions"] = drops
     report["screening_rows"] = len(screening)
     report["holdout_persons_untouched"] = len(holdout)
     report["tier"] = tier

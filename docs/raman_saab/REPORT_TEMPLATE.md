@@ -837,6 +837,31 @@ numbered yogas (the on-disk BPHS-83 source is itself a partial OCR fragment) —
 honest scope note in the function's own docstring; a fuller re-encoding needs a cleaner BPHS-83
 source and is left for a future session.
 
+### v33 — Aptitude, intelligence & work style (2026-08-14, user-requested)
+
+`## Aptitude, intelligence & work style` / `id="aptitude"`, appended at the END of the contract
+(the append-only default; the markdown/HTML section therefore renders after Nichod). A pure
+re-read (PREC-10) in `app/raman_saab/monographs.py: build_aptitude_profile` covering the three
+trait axes the report never had as output fields:
+
+- **Intelligence (buddhi)** — the H5 intellect verdict + its fired combos (karaka Jupiter,
+  HTJAH-I:5012), Mercury's computed condition and its HPA-21/HPA-22 verbatim paragraphs
+  (graha_chapters frozen ranges), the chart's fired `H1.M.*` Moon-mind rule (per-sign, cited),
+  Jupiter's condition.
+- **Aptitude** — the H3 courage verdict (HTJAH-I:3324), the navamsa-dispositor trade
+  (HTJAH-II:10249), the 10th-sign profile (HTJAH-II:10340), the strongest planet's field.
+- **Work style** — the H10 profession-mode split, the computed conditions of the 10th lord,
+  Saturn and Mars; the Saturn=discipline / Mars=drive keyword glosses are `NON_RAMAN_THEMES`
+  and render ONLY under `MODERN_BANNER` (the v20 precedent).
+
+Where this overlaps the Profession synthesis (v23), the synthesis governs. A verbatim block of
+Raman's master Moon-mind instruction (HTJAH-I ~1231) is deliberately absent until its range can
+be pinned against the vendored corpus on a machine that has it — never from memory. The same
+amendment repaired a REPORT COMPLETENESS violation on the interactive page: `psych` (v27) had
+never been rendered there; `profession`/`wealth`/`marriage`/`children`/`arishta`/`karmic`/
+`decades`/`life_synthesis` remain unrendered on that one surface and are recorded in
+DOCTRINE_BACKLOG as a pending repair for user decision.
+
 ## Standing rules
 
 - **Append-only.** Amendment = add a `SectionSpec` row + update this doc + update the contract

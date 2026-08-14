@@ -187,6 +187,14 @@ SECTION_METHOD: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
         ("the rising sign's portrait", "the Moon as manas (mind) karaka",
          "the strongest planet's temperament", "the Navamsa lagna's stamp",
          "the Atmakaraka")),
+    "aptitude": (
+        "For aptitude, intelligence and the manner of work, the classical inspection order",
+        ("the 5th house with Jupiter its karaka (intellect)",
+         "Mercury's dignity, house and sign (buddhi)",
+         "the Moon's mental disposition (judged from the Moon)",
+         "the 3rd house (courage and initiative)",
+         "the 10th house's modes and the navamsa-dispositor of its lord",
+         "the strongest planet's field")),
 }
 
 

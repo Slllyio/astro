@@ -410,10 +410,14 @@ class TestDetailedReport:
             assert not re.search(r"\bH\d\b", field), field
 
     def test_nichod_section_is_v4_and_appended_last(self):
-        """The Nichod is registered as v4 and sits after every other contracted section."""
+        """The Nichod is registered as v4 and closed the contract until v33 — the append-only
+        default (2026-08-14 amendment, same commit as the module) placed the aptitude chapter
+        after it, so Nichod is now the last row of the pre-v33 contract."""
         from app.raman_saab.detailed_report import SECTION_CONTRACT
-        assert SECTION_CONTRACT[-1].section_id == "nichod"
-        assert SECTION_CONTRACT[-1].since == "v4"
+        assert SECTION_CONTRACT[-2].section_id == "nichod"
+        assert SECTION_CONTRACT[-2].since == "v4"
+        assert SECTION_CONTRACT[-1].section_id == "aptitude"
+        assert SECTION_CONTRACT[-1].since == "v33"
 
     def test_gochara_outlook_covers_the_four_slow_movers(self, report):
         """The multi-year outlook is attached for exactly Jupiter/Saturn/Rahu/Ketu, spanning the

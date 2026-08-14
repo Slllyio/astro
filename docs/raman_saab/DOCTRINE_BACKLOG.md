@@ -707,3 +707,17 @@ the gap that it was never actually SHOWN on markdown/standalone HTML, and was sh
 late (after Planet biographies) on the interactive page. Pure re-read both ways; no new
 astrology, no verdict touched. See `docs/raman_saab/REPORT_TEMPLATE.md`'s v32 note for
 the full technical record.
+
+**v33 Aptitude/intelligence/work-style chapter + an interactive-page completeness gap
+(2026-08-14).** The three trait axes the report never had as output fields shipped as
+one appended chapter (pure re-read; `REPORT_TEMPLATE.md` v33 note carries the record,
+including the corpus-machine follow-up: pinning Raman's master Moon-mind instruction
+range near HTJAH-I:1231 before its verbatim block can render). While wiring the fourth
+surface, a standing REPORT COMPLETENESS violation surfaced: the interactive page
+(`app/medini/templates/report.html`) had never rendered `psych` (v27) — repaired in the
+same commit — and STILL does not render `profession` (v23), `wealth` (v24), `marriage`
+(v25), `children` (v26), `arishta` (v22), `karmic` (v30), `decades` (v28), or
+`life_synthesis` (v29), all of which the markdown and standalone-HTML surfaces carry in
+full. Rendering them is a mechanical repair, but folio placement on that page is a
+product-layout call — per the completeness rule ("surface it and ask"), this is
+recorded here for the USER to schedule rather than done unilaterally.

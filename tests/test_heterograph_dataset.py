@@ -14,7 +14,15 @@ import pandas as pd
 import pytest
 import torch
 
-from app.medini.ml.heterograph_dataset import (
+# torch_geometric is an optional, heavy dependency (it needs wheels matched to the
+# installed torch build). It backs only the R-GCN research modules, whose own
+# hypothesis was falsified in Round 11 — R-GCN MVP 0.548 vs XGBoost 0.679 — so
+# pinning CI to it would cost every run a large install for a closed experiment.
+# Same idiom the repo already uses for xgboost/shap/matplotlib in
+# tests/test_predictor.py.
+pytest.importorskip("torch_geometric")
+
+from app.medini.ml.heterograph_dataset import (  # noqa: E402  (must follow the skip guard)
     NUM_BHAVA, NUM_GRAHA, NUM_NAKSHATRA, NUM_RASI,
     ChartHeteroDataset, build_chart_hetero_data,
 )

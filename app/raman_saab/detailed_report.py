@@ -594,6 +594,12 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # v4 (2026-07-26, conscious amendment): the capstone integration, appended LAST — after
     # reference material — since it distils sections that appear throughout the whole document.
     SectionSpec("nichod", "## Nichod", 'id="nichod"', "v4"),
+    # v33 (2026-08-14, user-requested): aptitude, intelligence & work style — the three
+    # trait axes the report never had as output fields, re-read from already-judged
+    # material (H5 intellect + Jupiter karaka, Mercury via graha_chapters, the fired
+    # H1.M.* Moon-mind rule, H3 courage, the HTJAH-II vocational tables, H10 modes).
+    # Appended at the END per the append-only default; _FROZEN grown in the same commit.
+    SectionSpec("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"', "v33"),
 )
 
 #: The HTML renderer's document order (the signature chips live in the page header, and the
@@ -616,6 +622,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "deeptadi",
     "karakamsa", "soul", "karmic", "pitru", "synthesis", "life_synthesis", "glossary",
     "nichod",
+    "aptitude",   # v33 (2026-08-14): appended at the end, same order as SECTION_CONTRACT
 )
 
 
@@ -1402,6 +1409,7 @@ class DetailedReport:
     life_synthesis: object = None                    # the biography-closing chapter (v29)
     karmic: object = None                            # Jaimini karmic evolution (v30)
     rect_confidence: object = None                   # birth-time sensitivity (v31)
+    aptitude: object = None                          # aptitude/intelligence/work-style (v33)
 
 
 @dataclass(frozen=True)
@@ -2544,7 +2552,8 @@ def build_detailed_report(
     from app.raman_saab.arishta_wealth_profession import (build_arishta_chapter,
                                                           build_profession_synthesis,
                                                           build_wealth_chapter)
-    from app.raman_saab.monographs import (build_children_chapter,
+    from app.raman_saab.monographs import (build_aptitude_profile,
+                                           build_children_chapter,
                                            build_marriage_monograph,
                                            build_psych_profile)
     # one try per builder — a failure in one chapter must never silence the others
@@ -2553,7 +2562,8 @@ def build_detailed_report(
                              ("wealth", build_wealth_chapter),
                              ("marriage", build_marriage_monograph),
                              ("children", build_children_chapter),
-                             ("psych", build_psych_profile)):
+                             ("psych", build_psych_profile),
+                             ("aptitude", build_aptitude_profile)):
         try:
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
@@ -4113,6 +4123,57 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("- **Turning points** (where the period lean changes — a timing lens, "
                  "not an event): "
                  + "; ".join(f"{when}: {what}" for when, what in n.turning_points))
+
+    # ── aptitude, intelligence & work style (v33 — pure re-read) ──────────────
+    if r.aptitude is not None:
+        ap = r.aptitude
+        L.append("")
+        L.append("## Aptitude, intelligence & work style")
+        L.append("")
+        L.extend(_method_preamble("aptitude"))
+        L.append(f"_{ap.woven}_")
+        L.append("")
+        if ap.intellect_verdict:
+            L.append(f"- **Intellect (H5, Jupiter karaka)** — {ap.intellect_verdict} "
+                     f"(HTJAH-I:5012)")
+        for rid, text, cite in ap.intellect_fired:
+            L.append(f"- **Fired intellect combo** [{rid}] — {text} ({cite})")
+        L.append(f"- **Mercury (buddhi)** — {ap.mercury_state}")
+        if ap.mercury_house_text:
+            L.append(f"- **Mercury in its house (Raman verbatim)** — "
+                     f"\"{ap.mercury_house_text[0]}\" ({ap.mercury_house_text[1]})")
+        if ap.mercury_sign_text:
+            L.append(f"- **Mercury in its sign (Raman verbatim)** — "
+                     f"\"{ap.mercury_sign_text[0]}\" ({ap.mercury_sign_text[1]})")
+        for rid, text, cite in ap.moon_mind_fired:
+            L.append(f"- **The Moon's mental disposition** [{rid}] — {text} ({cite})")
+        if ap.jupiter_state:
+            L.append(f"- **Jupiter (intellect karaka)** — {ap.jupiter_state}")
+        if ap.courage_verdict:
+            L.append(f"- **Courage / initiative (H3)** — {ap.courage_verdict} "
+                     f"(HTJAH-I:3324)")
+        if ap.trade_indication:
+            lord, disp, trade = ap.trade_indication
+            L.append(f"- **Navamsa-dispositor trade** — 10th lord {lord}, dispositor "
+                     f"{disp}: {trade} (HTJAH-II:10249)")
+        if ap.tenth_sign_profile:
+            L.append(f"- **10th-sign profile** — sign {ap.tenth_sign_profile[0]}: "
+                     f"{ap.tenth_sign_profile[1]} (HTJAH-II:10340)")
+        if ap.strongest_affinity:
+            L.append(f"- **Strongest planet's field** — {ap.strongest_affinity[0]}: "
+                     f"{ap.strongest_affinity[1]} (HTJAH-II:10249)")
+        for key, verdict in ap.mode_split:
+            L.append(f"- **H10 mode: {key}** — {verdict}")
+        if ap.tenth_lord_state:
+            L.append(f"- **10th lord's condition** — {ap.tenth_lord_state}")
+        if ap.saturn_state:
+            L.append(f"- **Saturn's condition** — {ap.saturn_state}")
+        if ap.mars_state:
+            L.append(f"- **Mars's condition** — {ap.mars_state}")
+        if ap.style_modern:
+            from app.raman_saab.planet_biographies import MODERN_BANNER
+            L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
+                     f"{'; '.join(ap.style_modern)}")
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

@@ -572,12 +572,13 @@ class TestAptitudeV33:
             assert int(rid.removeprefix("H1.M.S")) == moon_sign
 
     def test_modern_gloss_carries_the_banner(self, report, markdown, html):
-        """Saturn/Mars keyword glosses render ONLY under MODERN_BANNER."""
-        from app.raman_saab.planet_biographies import MODERN_BANNER
+        """Saturn/Mars keyword glosses render ONLY under MODERN_BANNER. Asserted via
+        the fold-stable token: to_markdown ends in _fold_ascii, which folds the
+        banner's em-dash, so the constant never appears in markdown byte-for-byte."""
         ap = report.aptitude
         if ap.style_modern:
-            assert MODERN_BANNER in markdown
-            assert MODERN_BANNER in html or "MODERN_SYNTHESIS" in html
+            assert "MODERN_SYNTHESIS" in markdown
+            assert "MODERN_SYNTHESIS" in html
 
     def test_composed_prose_passes_the_guard(self, report):
         from app.llm.report_explainer import _FORBIDDEN_RE

@@ -26,12 +26,17 @@ Sub-packages:
 * ``western/`` — Phase 2 tropical toolkit (positions, houses, aspects,
   progressions, returns, transits, midpoints, harmonics). Pure computation
   over pyswisseph; no corpus dependency.
-
-Planned (not yet built): ``acquire/`` (Phase 1 corpus growth), ``tournament/``
-(Phase 3 pre-registered feature-bank contest), ``engine/`` (Phase 4 shipped
-survivors + calibration).
+* ``acquire/`` — Phase 1 corpus growth (Gauquelin/CURA registry-timed births,
+  Wikidata day-precision lives).
+* ``tournament/`` — Phase 3 pre-registered feature-bank contest (prereg,
+  frozen holdout, sham gates, chartless twins).
+* ``engine/`` — Phase 4 shipped surface (survivor claims or the measured
+  null, with framing).
+* ``natal/`` — the Western natal decode: planets at birth composed into seven
+  trait facets under the ``WESTERN_TRADITION`` banner; tradition disclosed as
+  tradition, never as measurement.
 """
 
 from __future__ import annotations
 
-__all__ = ["western"]
+__all__ = ["western", "acquire", "tournament", "engine", "natal"]

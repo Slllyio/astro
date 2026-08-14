@@ -1987,6 +1987,18 @@ function render(R, S, FQ){
   if(ru.temperament) add(para('Classical temperament: '+ru.temperament+' (HTJAH-I:6248-6268)','muted'));
   if(ru.signature) add(para(ru.signature));
 
+  // ===== Psychological profile (v27) — completeness repair 2026-08-14: computed since
+  // v27 but never rendered on this page (CLAUDE.md REPORT COMPLETENESS) =====
+  if(R.psych){ const ps=R.psych;
+    add(H2('Psychological profile'));
+    if(ps.woven) add(para(ps.woven,'lede'));
+    if(ps.lagna_quote&&ps.lagna_quote.length===2)
+      add(para('The rising sign\'s portrait (Raman verbatim) — "'+ps.lagna_quote[0]+'" ('+ps.lagna_quote[1]+')'));
+    if(ps.moon_state) add(para('The mind\'s significator — '+ps.moon_state,'muted'));
+    if(ps.temperament) add(para('Temperament of the strongest planet — '+ps.temperament+' (HTJAH-I:6248-6268)','muted'));
+    if(ps.nature_stamp) add(para('Nature & appearance stamped by — '+ps.nature_stamp+' (HTJAH-I:3892-3897)','muted'));
+    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted')); }
+
   chapter(4);
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
   if(R.chart&&R.chart.planets){ add(H2('Charts — Rasi · Navamsa · Gochara'));
@@ -2132,6 +2144,27 @@ function render(R, S, FQ){
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
     add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
+
+  // ===== Aptitude, intelligence & work style (v33 — pure re-read) =====
+  if(R.aptitude){ const ap=R.aptitude;
+    add(H2('Aptitude, intelligence & work style'));
+    if(ap.woven) add(para(ap.woven,'lede'));
+    if(ap.intellect_verdict) add(para('Intellect (H5, Jupiter karaka) — '+ap.intellect_verdict+' (HTJAH-I:5012)'));
+    for(const f of (ap.intellect_fired||[])) add(para('Fired intellect combo ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    if(ap.mercury_state) add(para('Mercury (buddhi) — '+ap.mercury_state));
+    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')'));
+    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')'));
+    for(const f of (ap.moon_mind_fired||[])) add(para('The Moon\'s mental disposition ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    if(ap.jupiter_state) add(para('Jupiter (intellect karaka) — '+ap.jupiter_state,'muted'));
+    if(ap.courage_verdict) add(para('Courage / initiative (H3) — '+ap.courage_verdict+' (HTJAH-I:3324)'));
+    if(ap.trade_indication) add(para('Navamsa-dispositor trade — 10th lord '+ap.trade_indication[0]+', dispositor '+ap.trade_indication[1]+': '+ap.trade_indication[2]+' (HTJAH-II:10249)'));
+    if(ap.tenth_sign_profile) add(para('10th-sign profile — sign '+ap.tenth_sign_profile[0]+': '+ap.tenth_sign_profile[1]+' (HTJAH-II:10340)'));
+    if(ap.strongest_affinity) add(para('Strongest planet\'s field — '+ap.strongest_affinity[0]+': '+ap.strongest_affinity[1]+' (HTJAH-II:10249)'));
+    for(const m of (ap.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted'));
+    if(ap.tenth_lord_state) add(para('10th lord\'s condition — '+ap.tenth_lord_state,'muted'));
+    if(ap.saturn_state) add(para('Saturn\'s condition — '+ap.saturn_state,'muted'));
+    if(ap.mars_state) add(para('Mars\'s condition — '+ap.mars_state,'muted'));
+    if((ap.style_modern||[]).length) add(para('Modern keywords [MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight] — '+ap.style_modern.join('; '),'muted')); }
 
   chapter(8);
   // ===== Life-narrative timeline + companions =====

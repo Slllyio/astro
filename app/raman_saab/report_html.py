@@ -1679,6 +1679,68 @@ def _psych_section(r: DetailedReport) -> str:
             f'<div class="vsec">{body}</div>')
 
 
+def _aptitude_section(r: DetailedReport) -> str:
+    """v33 — aptitude, intelligence & work style: the three trait axes re-read."""
+    ap = r.aptitude
+    if ap is None:
+        return ""
+    rows: list[tuple[str, str]] = []
+    if ap.intellect_verdict:
+        rows.append(("Intellect (H5, Jupiter karaka)",
+                     _esc(ap.intellect_verdict) + " (HTJAH-I:5012)"))
+    for rid, text, cite in ap.intellect_fired:
+        rows.append((f"Fired intellect combo [{_esc(rid)}]",
+                     f"{_esc(text)} <i>({_esc(cite)})</i>"))
+    rows.append(("Mercury (buddhi)", _esc(ap.mercury_state)))
+    if ap.mercury_house_text:
+        rows.append(("Mercury in its house (Raman verbatim)",
+                     f"&ldquo;{_esc(ap.mercury_house_text[0])}&rdquo; "
+                     f"<i>({_esc(ap.mercury_house_text[1])})</i>"))
+    if ap.mercury_sign_text:
+        rows.append(("Mercury in its sign (Raman verbatim)",
+                     f"&ldquo;{_esc(ap.mercury_sign_text[0])}&rdquo; "
+                     f"<i>({_esc(ap.mercury_sign_text[1])})</i>"))
+    for rid, text, cite in ap.moon_mind_fired:
+        rows.append((f"The Moon's mental disposition [{_esc(rid)}]",
+                     f"{_esc(text)} <i>({_esc(cite)})</i>"))
+    if ap.jupiter_state:
+        rows.append(("Jupiter (intellect karaka)", _esc(ap.jupiter_state)))
+    if ap.courage_verdict:
+        rows.append(("Courage / initiative (H3)",
+                     _esc(ap.courage_verdict) + " (HTJAH-I:3324)"))
+    if ap.trade_indication:
+        lord, disp, trade = ap.trade_indication
+        rows.append(("Navamsa-dispositor trade",
+                     f"10th lord {_esc(lord)}, dispositor {_esc(disp)}: {_esc(trade)} "
+                     "(HTJAH-II:10249)"))
+    if ap.tenth_sign_profile:
+        rows.append(("10th-sign profile",
+                     f"sign {ap.tenth_sign_profile[0]}: {_esc(ap.tenth_sign_profile[1])} "
+                     "(HTJAH-II:10340)"))
+    if ap.strongest_affinity:
+        rows.append(("Strongest planet's field",
+                     f"{_esc(ap.strongest_affinity[0])}: {_esc(ap.strongest_affinity[1])} "
+                     "(HTJAH-II:10249)"))
+    for key, verdict in ap.mode_split:
+        rows.append((f"H10 mode: {_esc(key)}", _esc(verdict)))
+    if ap.tenth_lord_state:
+        rows.append(("10th lord's condition", _esc(ap.tenth_lord_state)))
+    if ap.saturn_state:
+        rows.append(("Saturn's condition", _esc(ap.saturn_state)))
+    if ap.mars_state:
+        rows.append(("Mars's condition", _esc(ap.mars_state)))
+    if ap.style_modern:
+        from app.raman_saab.planet_biographies import MODERN_BANNER
+        rows.append((f"Modern keywords [{_esc(MODERN_BANNER)}]",
+                     _esc("; ".join(ap.style_modern))))
+    body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
+                   f'<span class="vv">{v}</span></div>' for k, v in rows)
+    return ('<h2 class="section" id="aptitude">Aptitude, intelligence &amp; work style</h2>'
+            f'{_method_preamble_html("aptitude")}'
+            f'<p class="section-sub"><i>{_esc(ap.woven)}</i></p>'
+            f'<div class="vsec">{body}</div>')
+
+
 def _arishta_section(r: DetailedReport) -> str:
     """v22 — Arishta & Bhanga: afflictions AND their doctrinal cancellations."""
     a = r.arishta
@@ -2561,6 +2623,8 @@ def to_html(r: DetailedReport) -> str:
   {_glossary()}
 
   {_nichod_section(r)}
+
+  {_aptitude_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

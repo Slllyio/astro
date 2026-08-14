@@ -144,6 +144,9 @@ _FROZEN = (
     # v4 amendment (2026-07-26, conscious, same-commit as the module): the Nichod capstone,
     # appended LAST — after reference material — since it distils the whole document.
     ("nichod", "## Nichod", 'id="nichod"'),
+    # v33 amendment (2026-08-14, conscious, same-commit as the module, user-requested):
+    # aptitude, intelligence & work style — appended at the END per the append-only default.
+    ("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -224,7 +227,7 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -257,6 +260,7 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v30") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v31") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v33") == 1
 
 
 class TestRectConfidence:
@@ -521,6 +525,58 @@ class TestMonographsV25toV27:
         from app.llm.report_explainer import _FORBIDDEN_RE
         ps = report.psych
         assert _FORBIDDEN_RE.search(ps.woven) is None
+
+
+class TestAptitudeV33:
+    """v33: aptitude, intelligence & work style — populated, cited, bannered, guard-safe."""
+
+    def test_renders_in_every_surface(self, report, markdown, html):
+        from app.raman_saab.report_json import to_report_dict
+        assert "## Aptitude, intelligence & work style" in markdown
+        assert 'id="aptitude"' in html
+        assert to_report_dict(report)["aptitude"] is not None
+
+    def test_pure_reread_pins(self, report):
+        """The chapter restates already-judged verdicts verbatim — never a new judgment."""
+        ap = report.aptitude
+        assert ap is not None
+        sv5 = next(s for s in report.proformas[4].significations
+                   if s.signification == "intellect")
+        assert ap.intellect_verdict == f"{sv5.verdict} ({sv5.degree})"
+        sv3 = next(s for s in report.proformas[2].significations
+                   if s.signification == "courage")
+        assert ap.courage_verdict == f"{sv3.verdict} ({sv3.degree})"
+        allowed = {"profession_authority", "profession_trade",
+                   "profession_learned", "profession_labour"}
+        assert {k for k, _v in ap.mode_split} <= allowed
+
+    def test_fired_rule_cites_resolve(self, report):
+        from app.raman_saab.doctrine.sources import Citation, verify
+        ap = report.aptitude
+        for rows in (ap.intellect_fired, ap.moon_mind_fired):
+            for _rid, _t, cite in rows:
+                work, line = cite.rsplit(":", 1)
+                assert verify(Citation(work, int(line))), cite
+
+    def test_moon_mind_rule_matches_the_moon_sign(self, report):
+        """The fired per-sign rule (H1.M.S<n>) must be the chart's own Moon sign."""
+        ap = report.aptitude
+        sign_rules = [rid for rid, _t, _c in ap.moon_mind_fired if rid.startswith("H1.M.S")]
+        moon_sign = report.chart.planets["Moon"].sign
+        for rid in sign_rules:
+            assert int(rid.removeprefix("H1.M.S")) == moon_sign
+
+    def test_modern_gloss_carries_the_banner(self, report, markdown, html):
+        """Saturn/Mars keyword glosses render ONLY under MODERN_BANNER."""
+        from app.raman_saab.planet_biographies import MODERN_BANNER
+        ap = report.aptitude
+        if ap.style_modern:
+            assert MODERN_BANNER in markdown
+            assert MODERN_BANNER in html or "MODERN_SYNTHESIS" in html
+
+    def test_composed_prose_passes_the_guard(self, report):
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        assert _FORBIDDEN_RE.search(report.aptitude.woven) is None
 
 
 class TestChaptersV22toV24:

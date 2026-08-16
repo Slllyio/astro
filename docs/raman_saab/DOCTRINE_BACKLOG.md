@@ -721,3 +721,14 @@ same commit — and STILL does not render `profession` (v23), `wealth` (v24), `m
 full. Rendering them is a mechanical repair, but folio placement on that page is a
 product-layout call — per the completeness rule ("surface it and ask"), this is
 recorded here for the USER to schedule rather than done unilaterally.
+
+**Interactive-page completeness repair COMPLETED (2026-08-14, user-directed "implement and
+do next").** All eight remaining chapters — `arishta` (v22), `profession` (v23), `wealth`
+(v24), `marriage` (v25), `children` (v26), `decades` (v28), `life_synthesis` (v29),
+`karmic` (v30) — now render on `app/medini/templates/report.html` with every field, via the
+page's safe-DOM helpers. Folio placement: arishta/marriage/children/profession/wealth in
+folio 7 (matters & longevity, before the v33 aptitude chapter), decades closing folio 8
+(life-narrative), karmic in folio 10 (divisional & soul, between Soul and Pitru), full life
+synthesis opening the close of folio 11 (insights). Corpus-quote fields render only when
+non-empty (honest absence off the corpus machine). With this, every chapter the report
+computes appears on all four surfaces; the REPORT COMPLETENESS gap recorded above is closed.

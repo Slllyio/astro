@@ -2145,6 +2145,52 @@ function render(R, S, FQ){
     add(para('Running period '+(hr.maraka_period_now?'carries a maraka-tier lord':'carries no maraka-tier lord')+
       ' (broad, low-discrimination flag by design). Longevity band: '+hr.longevity_band+'.','muted')); }
 
+  // ===== Arishta & Bhanga (v22) — completeness repair 2026-08-14 =====
+  if(R.arishta){ const ar=R.arishta;
+    add(H2('Arishta & Bhanga'));
+    add(para('Balarishta '+(ar.balarishta_applies?('applies'+(ar.balarishta_cancelled?' but is cancelled':'')):'does not apply')+
+      ((ar.balarishta_reasons||[]).length?(' — '+ar.balarishta_reasons.join('; ')):'')+'. Longevity band: '+(ar.band||'—')+'.'));
+    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','muted'));
+    for(const b of (ar.bhangas||[])) add(para('Bhanga: '+b[0]+' — dignity '+b[1]+' → effective '+b[2],'muted'));
+    if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
+    for(const p2 of (ar.protections||[])) add(para('Protection: '+p2,'muted'));
+    if(ar.maraka_note) add(para(ar.maraka_note,'muted')); }
+
+  // ===== Marriage monograph (v25) — completeness repair 2026-08-14 =====
+  if(R.marriage){ const mg=R.marriage;
+    add(H2('Marriage monograph'));
+    add(para('Verdict (H7, unchanged): '+(mg.verdict||'—')+'. The 7th lord sits in house '+mg.lord_placement_house+'. Upapada: '+(mg.upapada||'—')+'.','lede'));
+    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','muted'));
+    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','muted'));
+    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','muted'));
+    for(const f of (mg.fired_kalatra||[])) add(para('Fired kalatra rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
+    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','muted'));
+    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'muted'));
+    if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','muted')); }
+
+  // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
+  if(R.children){ const cc=R.children;
+    add(H2('Children chapter'));
+    add(para('Verdict (H5, unchanged): '+(cc.verdict||'—'),'lede'));
+    for(const s2 of (cc.significations||[])) add(para(s2[0]+' — '+s2[1],'muted'));
+    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','muted'));
+    for(const f of (cc.fired_rules||[])) add(para('Fired rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
+    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'muted')); }
+
+  // ===== Profession synthesis (v23) — completeness repair 2026-08-14 =====
+  if(R.profession){ const pf=R.profession;
+    add(H2('Profession synthesis'));
+    if((pf.convergent||[]).length) add(para('Convergent trades (named by ≥2 angles): '+pf.convergent.map(c=>c[0]+' ('+c[1]+')').join(', '),'lede'));
+    for(const s2 of (pf.sources||[])) add(para(s2.source+' → '+s2.key+': '+s2.trades+' ('+s2.cite+')'+(s2.note?(' — '+s2.note):''),'muted'));
+    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted')); }
+
+  // ===== Wealth chapter (v24) — completeness repair 2026-08-14 =====
+  if(R.wealth){ const wc=R.wealth;
+    add(H2('Wealth chapter'));
+    for(const rw of (wc.rows||[])) add(para(rw.channel+' — '+rw.reading+' ('+rw.cite+')','muted'));
+    for(const ep of (wc.expansion_periods||[])) add(para('Expansion period: '+ep,'muted')); }
+
   // ===== Aptitude, intelligence & work style (v33 — pure re-read) =====
   if(R.aptitude){ const ap=R.aptitude;
     add(H2('Aptitude, intelligence & work style'));
@@ -2185,6 +2231,18 @@ function render(R, S, FQ){
     const sm=el('summary'); sm.append((ch.maha||'')+' Mahadasha'+(ch.is_current?' — now':'')); d.append(sm);
     const b=el('div',{class:'body'}); b.append(para(ch.narrative||'')); d.append(b); add(d); }
 
+  // ===== Decade indication timeline (v28) — completeness repair 2026-08-14 =====
+  if(R.decades&&(R.decades.decades||[]).length){ const dt=R.decades;
+    add(H2('Decade indication timeline'));
+    if(dt.frame) add(para(dt.frame,'muted'));
+    for(const dc of dt.decades){
+      add(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
+      for(const a of (dc.areas_favourable||[])) add(para('Favourable: '+a,'muted'));
+      for(const a of (dc.areas_challenged||[])) add(para('Challenged: '+a,'muted'));
+      for(const y of (dc.yogas_ripening||[])) add(para('Yoga ripening: '+y,'muted'));
+      for(const l2 of (dc.leans||[])) add(para('Lean: '+l2,'muted'));
+      if(dc.note) add(para(dc.note,'muted')); } }
+
   chapter(9);
   // ===== Transits =====
   add(H2('Transits (Gochara)'));
@@ -2218,6 +2276,15 @@ function render(R, S, FQ){
     const lines=(R.soul.jaimini_overlay&&R.soul.jaimini_overlay.lines)||[];
     if(lines.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
       d.append(sm); const b=el('div',{class:'body'}); for(const ln of lines){ b.append(para('['+(ln.provenance||'')+(ln.cite?' '+ln.cite:'')+'] '+ln.text,'muted')); } d.append(b); add(d); } }
+  // ===== Karmic evolution (v30, Jaimini — walled) — completeness repair 2026-08-14 =====
+  if(R.karmic){ const km=R.karmic;
+    add(H2('Karmic evolution (Jaimini)'));
+    if(km.frame) add(para(km.frame,'muted'));
+    add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
+    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','muted'));
+    if(km.d20_core) add(para('Vimsamsa (D-20) core — '+km.d20_core,'muted'));
+    if(km.d60_core) add(para('Shashtiamsa (D-60) core — '+km.d60_core,'muted')); }
+
   if(R.pitru){ add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));
     const cur=R.pitru.curse_yogas||[];
@@ -2252,6 +2319,12 @@ function render(R, S, FQ){
       I.inverted+' sit on atlas-proven inverted channels'+
       (I.inverted_locations&&I.inverted_locations.length?(' ('+I.inverted_locations.join(', ')+') — treat any house driven by one with maximal skepticism'):'')+'. '+
       I.distinctive+' are genuinely distinctive. This is a disclosure about the method’s output, not a statement about a life.','muted')); }
+
+  // ===== Full life synthesis (v29) — completeness repair 2026-08-14 =====
+  if(R.life_synthesis&&(R.life_synthesis.paragraphs||[]).length){ const ls2=R.life_synthesis;
+    add(H2('Full life synthesis'));
+    for(const pgh of ls2.paragraphs){ add(para(pgh[0],'lede')); add(para(pgh[1])); }
+    if(ls2.closing) add(para(ls2.closing,'muted')); }
 
   // ===== Walled AI-interpretation panel (opt-in; labeled LLM speculation, NOT the engine) =====
   add(aiInterpretPanel());

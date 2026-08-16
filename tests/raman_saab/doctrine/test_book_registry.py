@@ -8,6 +8,8 @@ and is recorded in book_registry's comments + DOCTRINE_BACKLOG.
 """
 from __future__ import annotations
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.doctrine import book_registry as br
 from app.raman_saab.doctrine.sources import Citation, _CORPUS, _resolve_file, verify
 
@@ -17,6 +19,7 @@ def test_registry_status_values_valid():
         assert b.status in ("live", "catalog-only-out-of-scope"), f"{b.tag}: bad status {b.status}"
 
 
+@needs_corpus
 def test_live_books_resolve_on_disk():
     """Every live book resolves to a real file (single-file via its tag; multi-chapter via a real
     chapter file under its folder)."""

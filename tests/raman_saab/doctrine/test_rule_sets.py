@@ -11,6 +11,7 @@ from app.raman_saab.doctrine.rule_sets import (
     house_05_putra, house_06_ari, house_07_kalatra, house_08_ayur, house_09_bhagya,
     house_10_karma, house_11_labha, house_12_vyaya)
 from app.raman_saab.doctrine.sources import verify
+from corpus_presence import needs_corpus
 
 # Every encoded house module exposes a `RULES` tuple. Add new houses here as they land.
 ALL_RULE_SETS = [
@@ -39,6 +40,7 @@ def test_rule_ids_are_globally_unique():
     assert len(set(ids)) == len(ids), f"duplicate rule ids: {dupes}"
 
 
+@needs_corpus
 @pytest.mark.parametrize("rule", list(_all_rules()), ids=lambda r: r.id)
 def test_every_rule_cites_a_real_corpus_line(rule):
     assert verify(rule.source), f"{rule.id} cites {rule.source} which does not resolve on disk"

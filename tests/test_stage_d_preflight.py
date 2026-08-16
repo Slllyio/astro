@@ -4,6 +4,10 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
+from corpus_presence import needs_file
+
+_needs_features_smoke = needs_file("app/medini/data/dasha_stage_d_features_smoke.parquet")
+
 from app.medini.ml.stage_d_preflight import (
     PreflightResult,
     check_class_qualification,
@@ -15,11 +19,13 @@ from app.medini.ml.stage_d_preflight import (
 
 
 class TestPreflight:
+    @_needs_features_smoke
     def test_class_qualification_on_full_smoke(self) -> None:
         df = pd.read_parquet("app/medini/data/dasha_stage_d_features_smoke.parquet")
         K, dropped = check_class_qualification(df, min_positives=1)
         assert K >= 19  # smoke covers 19+ of 30 classes (per sub-gate D.0 finding)
 
+    @_needs_features_smoke
     def test_no_jd_in_features(self) -> None:
         df = pd.read_parquet("app/medini/data/dasha_stage_d_features_smoke.parquet")
         result = check_no_jd_in_features(df)

@@ -1,6 +1,10 @@
 """House judge: fired rules + strength pillars -> an ordinal verdict (spec §6.3)."""
 from __future__ import annotations
 
+import pytest
+
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
@@ -37,6 +41,7 @@ def test_mixed_when_benefic_and_malefic_both_fire():
     assert hv.verdict == "mixed"
 
 
+@needs_corpus
 def test_evidence_is_cited():
     from app.raman_saab.doctrine.sources import verify
     chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59), ayanamsa="raman")

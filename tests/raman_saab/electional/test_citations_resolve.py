@@ -2,10 +2,15 @@
 the doctrine-first guarantee, post firewall-lift."""
 from __future__ import annotations
 
+import pytest
+
+from corpus_presence import needs_corpus
+
 from app.raman_saab.doctrine.sources import Citation, verify
 
 
 class TestElectionalCitationsResolve:
+    @needs_corpus
     def test_every_cited_anchor_verifies(self):
         anchors = [
             ("MUHURTHA-3", 41),     # tarabala remainder table

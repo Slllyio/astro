@@ -335,7 +335,7 @@ def run(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="python -m app.medini.ml.chart_reading_research_test",
+        prog="python -m app.medini.ml.chart_reading_research",
     )
     parser.add_argument(
         "--event-corpus", type=Path,

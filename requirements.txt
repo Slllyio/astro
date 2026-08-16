@@ -12,6 +12,7 @@ slowapi
 itsdangerous
 # Vendored portal (Flask app under /portal/) — astro-web-portal probability engine
 flask>=3.0
+a2wsgi>=1.10  # WSGI portal mount; replaces deprecated starlette.middleware.wsgi
 skyfield>=1.46
 jplephem>=2.19
 markdown>=3.5
@@ -24,7 +25,7 @@ python-dateutil>=2.8
 # matplotlib for SHAP plot rendering (must use Agg backend on headless CI).
 requests>=2.31
 beautifulsoup4>=4.12
-pandas>=2.0
+pandas>=2.1
 pyarrow>=14.0
 # duckdb backs the Silver/Gold catalog and experiment_loader, and is imported at
 # module top level by 6 modules including 2 test modules. It was previously
@@ -52,6 +53,8 @@ httpx
 # locked default per CLAUDE.md decision 2026-06-01.
 anthropic>=0.40
 # Stage D dynamic-deephit deps (see docs/superpowers/specs/2026-05-24-fork-a-stage-d-design.md)
-lifelines>=0.27,<0.30
+# lifelines <0.30 caps numpy<2 (dragging shap/timezonefinder backwards) and 0.27.7
+# breaks on scipy>=1.14 (removed trapz); 0.30 drops the numpy cap, same APIs.
+lifelines>=0.30,<0.31
 torch>=2.0,<3.0
 scikit-survival>=0.22,<0.25

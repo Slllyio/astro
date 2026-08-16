@@ -469,7 +469,9 @@ async def post_ask(req: AskRequest) -> dict:
 # ── the WALLED AI-interpretation panel (labeled LLM speculation, NOT the engine) ─────────
 
 class AiInterpretRequest(ReportRequest):
-    register: Literal["gentle", "bold"] = "gentle"
+    # Aliased because a plain `register` field shadows ABCMeta.register through
+    # pydantic's metaclass and warns on import; wire contract stays `register`.
+    register_: Literal["gentle", "bold"] = Field("gentle", alias="register")
 
 
 @report_router.post("/ai-interpret")
@@ -492,7 +494,7 @@ async def post_ai_interpret(req: AiInterpretRequest) -> dict:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
 
     def _work() -> dict:
-        base = {"register": req.register, "disclaimer": DISCLAIMER, "source": "ai"}
+        base = {"register": req.register_, "disclaimer": DISCLAIMER, "source": "ai"}
         client = _make_client(AI_INTERP_SYSTEM) if _ai_enabled() else None
         if client is None:
             return {**base, "text": None, "unavailable": True,
@@ -503,7 +505,7 @@ async def post_ai_interpret(req: AiInterpretRequest) -> dict:
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
         ev = build_evidence(to_report_dict(r), "digest")
-        prompt = build_interp_prompt(ev, req.register)
+        prompt = build_interp_prompt(ev, req.register_)
         try:
             text = client.complete(prompt)
         except Exception:  # noqa: BLE001 — any model failure -> unavailable, never engine text

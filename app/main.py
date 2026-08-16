@@ -141,7 +141,7 @@ app.mount(
 # DOB-only matrix-based reader complementing this app's precise natal-chart
 # engine. See `portal/app.py` for its routes.
 if settings.PORTAL_ENABLED:
-    from starlette.middleware.wsgi import WSGIMiddleware
+    from a2wsgi import WSGIMiddleware  # starlette.middleware.wsgi is deprecated for removal
     from portal.app import app as _portal_flask_app  # heavy import: ephemeris
     app.mount("/portal", WSGIMiddleware(_portal_flask_app))
     logger.info("Vendored Flask portal mounted at /portal/")

@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.sources import verify
 from app.raman_saab.primitives import sphutas
@@ -138,6 +140,7 @@ class TestBeejaKshetraGuards:
         with pytest.raises(Exception):
             bk.beeja_strong = False  # type: ignore[misc]
 
+    @needs_corpus
     def test_citations_resolve_on_disk(self):
         """Every citation carried by the gate resolves against the real corpus."""
         bk = sphutas.beeja_kshetra(_chart({"Sun": 10.0, "Venus": 20.0, "Jupiter": 30.0,
@@ -194,6 +197,7 @@ class TestSpecialDhanaLagna:
         """The remainder is counted from Chandra Lagna: no Moon -> None."""
         assert sphutas.special_dhana_lagna(_chart({"Sun": 10.0}, asc_lon=160.0)) is None
 
+    @needs_corpus
     def test_citations_resolve_on_disk(self):
         dl = sphutas.special_dhana_lagna(_chart({"Moon": 40.0}, asc_lon=160.0))
         assert dl is not None and dl.citations
@@ -269,6 +273,7 @@ class TestSahams:
         out = sphutas.sahams(_chart(lons, asc_lon=_C109_ASC))
         assert "Paradesha" not in out and "Jalapathana" in out
 
+    @needs_corpus
     def test_citations_resolve_on_disk(self):
         out = sphutas.sahams(_chart(_C109, asc_lon=_C109_ASC))
         for s in out.values():

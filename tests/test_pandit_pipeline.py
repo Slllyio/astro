@@ -12,6 +12,13 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_file
+
+_needs_knowledge_corpus = needs_file(
+    "data/knowledge_library/classical_shloka_rules.jsonl",
+    "data/knowledge_library/nadi_corpus.jsonl",
+    "data/knowledge_library/nadi_lagna_contexts.jsonl")
+
 from app.llm.client import (
     AnthropicClient, AnthropicUnavailable, LLMClient, OllamaClient, StubClient,
 )
@@ -102,6 +109,7 @@ class TestRetriever:
         ref_ids = [p.ref_id for p in bundle.passages]
         assert len(ref_ids) == len(set(ref_ids)), "ref_ids must be unique"
 
+    @_needs_knowledge_corpus
     def test_yields_at_least_30_passages_for_dense_chart(self, mainpuri_fingerprint):
         """A chart with 4 active yogas + domain should fan to 30+ passages."""
         bundle = retrieve_for_chart(mainpuri_fingerprint)
@@ -125,6 +133,7 @@ class TestRetriever:
         # Mangal Dosha is in the curated 27 DKP records
         assert "Mangal Dosha" in keys
 
+    @_needs_knowledge_corpus
     def test_nadi_lookup_returns_match_for_scorpio(self, mainpuri_fingerprint):
         """Post N-3 corpus closure, Scorpio Lagna resolves to Deva Keralam."""
         bundle = retrieve_for_chart(mainpuri_fingerprint)
@@ -132,6 +141,7 @@ class TestRetriever:
         assert bundle.nadi_match.found is True
         assert "Deva Keralam" in (bundle.nadi_match.tradition or "")
 
+    @_needs_knowledge_corpus
     def test_lagna_contexts_attached(self, mainpuri_fingerprint):
         bundle = retrieve_for_chart(mainpuri_fingerprint)
         assert len(bundle.nadi_contexts) >= 1
@@ -250,6 +260,7 @@ class TestSynthesizerStubRoundtrip:
         assert isinstance(reading, PanditReading)
         assert "Stub narrative" in reading.narrative
 
+    @_needs_knowledge_corpus
     def test_citation_parsing_extracts_used_refs(self, mainpuri_fingerprint):
         bundle = retrieve_for_chart(mainpuri_fingerprint)
         canned = "Discussion using [Ref 1] and [Ref 3] but not others."

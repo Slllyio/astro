@@ -7,6 +7,7 @@ import swisseph as swe
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.doctrine.sources import verify
+from corpus_presence import HAS_CORPUS
 from app.raman_saab.doctrine.synthesis_rules import (
     SYNTHESIS_RULES,
     descriptive_rules,
@@ -38,7 +39,8 @@ class TestSynthesisRegistry:
     def test_raman_band_citations_verify(self, rule):
         """Every cited rule resolves into a live book at a real line (the corpus vouches)."""
         assert rule.band == "raman"          # only the Raman band may carry live citations
-        assert verify(rule.source)
+        if HAS_CORPUS:
+            assert verify(rule.source)
 
     def test_flagged_bands_carry_no_live_citation(self):
         """Classical/AV/modern rules must NOT cite the corpus (the divergence firewall)."""

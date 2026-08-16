@@ -17,6 +17,8 @@ import dataclasses
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.doctrine.lookups.bhavartha_ratnakara import (
     KARAKA_IN_12_INVERSIONS,
     karaka_in_12_inversion,
@@ -112,6 +114,7 @@ class TestRegistryImmutability:
 class TestCitationIntegrity:
     """Every lookup row cites a real on-disk corpus line."""
 
+    @needs_corpus
     @pytest.mark.parametrize("citation", _CITATION_PARAMS)
     def test_citation_resolves_on_disk(self, citation) -> None:
         """The cited work/line pair exists in the corpus under data/knowledge_library."""

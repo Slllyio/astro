@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import build_detailed_report, to_markdown
 from app.raman_saab.yoga_deep_read import NH_EXAMPLES, describe, participants
@@ -33,6 +35,7 @@ class TestYogaDeepRead:
         assert report.yogas, "canonical chart fires yogas"
         assert len(report.yoga_deep) == len(report.yogas)
 
+    @needs_corpus
     def test_definitions_are_quoted_verbatim_with_resolving_cites(self, report):
         from app.raman_saab.doctrine.sources import Citation, verify
         for y in report.yoga_deep:
@@ -55,6 +58,7 @@ class TestYogaDeepRead:
                 assert 1 <= f.house <= 12 and 1 <= f.sign <= 12
                 assert f.dignity and f.effective_dignity
 
+    @needs_corpus
     def test_nh_example_cites_resolve(self):
         from app.raman_saab.doctrine.sources import Citation, verify
         for cites in NH_EXAMPLES.values():

@@ -28,6 +28,7 @@ from app.raman_saab.doctrine.significations import (
     karaka_for,
 )
 from app.raman_saab.doctrine.sources import verify, Citation
+from corpus_presence import needs_corpus
 
 
 # ---------------------------------------------------------------------------
@@ -72,6 +73,7 @@ def _all_significations() -> list[Signification]:
 class TestEverySignificationCitesARealCorpusLine:
     """Every Signification.source must pass verify()."""
 
+    @needs_corpus
     def test_every_signification_cites_a_real_corpus_line(self) -> None:
         """verify(sig.source) is True for every signification across all 12 houses."""
         bad: list[tuple[int, str, Citation]] = []

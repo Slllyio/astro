@@ -26,6 +26,7 @@ import pytest
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine.rule_sets.house_01_lagna import sign_afflictions
 from app.raman_saab.doctrine.sources import verify
+from corpus_presence import needs_corpus
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -61,6 +62,7 @@ _AQUARIUS_ASC = 315.0   # sign 11
 
 # ── citation and structural tests ─────────────────────────────────────────────
 
+@needs_corpus
 @pytest.mark.parametrize("rule", list(sign_afflictions.RULES), ids=lambda r: r.id)
 def test_citation_resolves(rule):
     """Every S-rule cites a real on-disk corpus line."""

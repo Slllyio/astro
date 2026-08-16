@@ -6,6 +6,7 @@ from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation, verify
+from corpus_presence import needs_corpus
 
 
 def _chart(lons: dict[str, float]) -> RamanChart:
@@ -34,6 +35,7 @@ def test_descriptive_rule_never_boolean_fires():
     assert rule.fires(_chart({"Saturn": 185.0})) is False
 
 
+@needs_corpus
 def test_citations_resolve_to_real_corpus_lines():
     # The corpus files exist on disk; these tags + lines must resolve.
     assert verify(Citation("HTJAH-I", 474)) is True       # 8 Considerations

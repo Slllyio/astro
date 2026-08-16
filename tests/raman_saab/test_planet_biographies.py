@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import build_detailed_report
 from app.raman_saab.judgment_graph import build_judgment_graph
@@ -61,6 +63,7 @@ class TestPlanetBiographies:
             assert tuple(b.themes_modern) == tuple(NON_RAMAN_THEMES.get(b.planet, ()))
         assert "no Raman citation" in MODERN_BANNER
 
+    @needs_corpus
     def test_chapter_fields_carry_verbatim_cited_text(self, bios):
         """The graha-chapter fields: every present (text, cite) pair resolves, and the
         seven visible grahas all carry their HPA-21/22 placement paragraphs."""
@@ -78,6 +81,7 @@ class TestPlanetBiographies:
                 assert b.sign_text is not None, b.planet
                 assert b.transit_text is not None, b.planet
 
+    @needs_corpus
     def test_running_pair_carries_dasha_text(self, report, bios):
         """The running MD lord shows its HPA-24 per-sign paragraph; the running AD lord
         its bhukti paragraph — the 'during Mahadasha/Antardasha' chapter requirement."""

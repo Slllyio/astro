@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 _BIRTH = {
     "year": 1990, "month": 7, "day": 15, "hour": 12, "minute": 0,
     "latitude": 12.97, "longitude": 77.59, "tz_offset": 5.5, "ayanamsa": "lahiri",
@@ -119,6 +121,7 @@ class TestPage:
 
 
 class TestSource:
+    @needs_corpus
     @pytest.mark.asyncio
     async def test_resolves_a_canon_citation_to_verbatim_lines(self, client):
         """A Raman-canon citation token returns the exact source lines (click-to-source)."""

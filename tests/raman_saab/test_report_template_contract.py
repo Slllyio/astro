@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import pytest
 
+from corpus_presence import needs_corpus
+
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import (
     HTML_SECTION_ORDER,
@@ -173,6 +175,7 @@ class TestTemplateContract:
         assert rows[: len(_FROZEN)] == _FROZEN
         assert set(HTML_SECTION_ORDER) <= {s.section_id for s in SECTION_CONTRACT}
 
+    @needs_corpus
     def test_renderers_emit_the_frozen_markers(self, markdown, html):
         """The OUTPUT (not just the registry) must carry every frozen marker — so changing a
         heading in the renderer without amending this file fails, even if the module's registry
@@ -188,6 +191,7 @@ class TestTemplateContract:
         for spec in SECTION_CONTRACT:
             assert spec.md_marker or spec.html_marker, spec.section_id
 
+    @needs_corpus
     def test_markdown_emits_all_sections_in_contract_order(self, markdown):
         """Every markdown marker present, strictly in registry order."""
         pos = -1
@@ -199,6 +203,7 @@ class TestTemplateContract:
             assert i > pos, f"markdown reordered section {spec.section_id!r}"
             pos = i
 
+    @needs_corpus
     def test_html_emits_all_sections_in_contract_order(self, html):
         """Every HTML marker present, strictly in the HTML document order."""
         by_id = {s.section_id: s for s in SECTION_CONTRACT}
@@ -410,6 +415,7 @@ class TestJudgmentGraphSection:
 class TestKarmicEvolution:
     """v30 — the walled Jaimini layer: verbatim doctrine, resolving cite, walls hold."""
 
+    @needs_corpus
     def test_renders_in_every_surface_with_a_resolving_cite(self, report, markdown, html):
         from app.raman_saab.doctrine.sources import Citation, verify
         from app.raman_saab.report_json import to_report_dict
@@ -484,6 +490,7 @@ class TestWaveB:
 class TestMonographsV25toV27:
     """Wave A: marriage, children, psychology — verbatim quotes resolve, walls hold."""
 
+    @needs_corpus
     def test_all_three_render_in_every_surface(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
@@ -495,6 +502,7 @@ class TestMonographsV25toV27:
             assert anchor in html, anchor
             assert d[key] is not None, key
 
+    @needs_corpus
     def test_marriage_quotes_and_fired_rules(self, report):
         m = report.marriage
         assert m is not None
@@ -506,11 +514,13 @@ class TestMonographsV25toV27:
             work, line = cite.rsplit(":", 1)
             assert verify(Citation(work, int(line))), cite
 
+    @needs_corpus
     def test_children_combos_quoted_whole(self, report):
         c = report.children
         assert c is not None and len(c.combos_quote) > 200
         assert c.significations and c.verdict
 
+    @needs_corpus
     def test_psych_lagna_quote_matches_the_ascendant(self, report):
         ps = report.psych
         assert ps is not None
@@ -520,6 +530,7 @@ class TestMonographsV25toV27:
         from app.raman_saab.monographs import LAGNA_BLOCKS
         assert int(line) == LAGNA_BLOCKS[report.chart.asc_sign][0]
 
+    @needs_corpus
     def test_composed_prose_passes_the_guard(self, report):
         """The woven/composed strings (not the labeled verbatim quotes) are guard-safe."""
         from app.llm.report_explainer import _FORBIDDEN_RE
@@ -588,6 +599,7 @@ class TestAptitudeV33:
 class TestChaptersV22toV24:
     """The three user-requested chapters: populated, cited, guard-safe."""
 
+    @needs_corpus
     def test_all_three_render_in_every_surface(self, report, markdown, html):
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
@@ -599,6 +611,7 @@ class TestChaptersV22toV24:
             assert anchor in html, anchor
             assert d[key] is not None, key
 
+    @needs_corpus
     def test_arishta_quotes_ramans_antidotes(self, report):
         a = report.arishta
         assert a is not None and len(a.antidote_quote) > 100
@@ -662,6 +675,7 @@ class TestInterpretationGuide:
             for sid in par["sections"]:
                 assert sid in ids, f"{par['id']} names unknown section {sid!r}"
 
+    @needs_corpus
     def test_guide_citations_resolve(self):
         """Every corpus citation the guide prints must verify against the sources."""
         from app.raman_saab.doctrine.sources import Citation, verify

@@ -29,14 +29,23 @@ def _ev(*texts: str) -> Evidence:
 
 
 class TestExcludedTopics:
-    def test_mortality_and_selfharm_vocabulary_is_caught(self):
-        """Every excluded category trips the output filter regardless of casing."""
+    def test_selfharm_illness_and_decree_death_are_caught(self):
+        """The retained exclusions (2026-08-17 prediction-unblock, user decision):
+        self-harm and serious-illness vocabulary, plus decree-voiced death timing.
+        Death/lifespan/maraka in the classical indication idiom was LIFTED."""
         for bad in ("Your death around 62 approaches.",
-                    "This speaks to a long LIFESPAN.",
                     "thoughts of suicide",
-                    "a terminal illness shadow",
-                    "the maraka planets gather"):
+                    "a terminal illness shadow"):
             assert excluded_topic(bad) is not None, f"missed: {bad}"
+
+    def test_lifted_indication_idiom_passes(self):
+        """Span-band and maraka vocabulary in indication idiom no longer defers
+        (2026-08-17 user decision — the assistant's contrary recommendation and the
+        user's override are recorded in DOCTRINE_BACKLOG 'prediction unblock')."""
+        for ok in ("This speaks to a long LIFESPAN.",
+                   "the maraka planets gather",
+                   "the span reads at the purna band"):
+            assert excluded_topic(ok) is None, f"over-blocked: {ok}"
 
     def test_chart_vocabulary_is_not_a_false_positive(self):
         """Cancer the rasi and the 8th house are legitimate chart words — never filtered."""
@@ -53,14 +62,17 @@ class TestExcludedTopics:
                  "House 10 (career & status) is favourable.")
         prompt = build_interp_prompt(ev, "gentle")
         assert "transformation & upheaval" in prompt
-        assert "madhya" not in prompt                      # the longevity fact is dropped whole
+        # 2026-08-17 unblock: longevity facts are no longer dropped from the input —
+        # the panel may reflect on span in indication idiom.
+        assert "madhya" in prompt
         assert "career & status" in prompt
 
     def test_system_prompt_carries_the_hard_limits(self):
         """The wall is stated in the prompt too (defence in depth with the code filter)."""
         low = AI_INTERP_SYSTEM.lower()
-        assert "never address death" in low
+        assert "never address serious" in low
         assert "suicide" in low and "self" in low
+        assert "never as a decree of a dated death" in low
         assert "not the engine" in low.replace("\\\n", "")
 
 

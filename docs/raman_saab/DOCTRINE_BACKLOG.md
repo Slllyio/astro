@@ -768,3 +768,44 @@ folio 7 (matters & longevity, before the v33 aptitude chapter), decades closing 
 synthesis opening the close of folio 11 (insights). Corpus-quote fields render only when
 non-empty (honest absence off the corpus machine). With this, every chapter the report
 computes appears on all four surfaces; the REPORT COMPLETENESS gap recorded above is closed.
+
+## Prediction unblock (2026-08-17) — user decision, binding guard-policy record
+
+The user directed "unblock prediction part"; two decisions were then taken via explicit
+question-and-answer and are binding until a doctrine review WITH user sign-off says otherwise:
+
+1. **Q1 — scope: "Timed indications."** The guard boundary moved from *timing* to *idiom*.
+   Classical timed-indication phrasing is now ALLOWED on every surface, including dates,
+   ages, and dasha/bhukti attribution: "marriage is indicated during the Venus bhukti,
+   2027–2028", "the 10th house is activated at par-excellence grade in this period",
+   "at age 30 the Saturn bhukti turns classically sensitive for health." This is Raman's
+   own published voice (his worked nativities date their indications throughout HTJAH).
+   The DECREE voice stays refused everywhere: "you will marry", third-person
+   `he/she/they will|shall <verb>`, `is going to`, `destined/certain/guaranteed/bound
+   to/sure to`, `I predict`. Implementation: `_FORBIDDEN_RE` in
+   `app/llm/report_explainer.py` — the 2026-07-28 dated-indication arms were removed,
+   every decree arm kept, and a decree-dated-death arm retained.
+2. **Q2 — the death wall: "Lift fully."** Maraka periods and the longevity span may now be
+   STATED as timed indications on the grounded surfaces ("the maraka periods 2031–2034
+   are classically sensitive", "the span reads at the purna band, around the 83rd year").
+   **The assistant's recorded recommendation was to keep the death wall** (mortality
+   statements are the one category where a mis-read costs the most and the engine's
+   real-outcome generalization is measured NULL); **the user overrode it knowingly** —
+   this line preserves that record. Correspondingly `_EXCLUDED_RE` in
+   `app/llm/ai_interpret.py` dropped its death/lifespan/longevity/maraka tokens.
+
+What did NOT move (kept without being asked, as safety/honesty floor):
+- **Suicide/self-harm and serious/terminal-illness exclusions stay in code** on the walled
+  panel (`_EXCLUDED_RE`, `TOPIC_DEFERRAL`, `AI_INTERP_SYSTEM`) — no register lifts them.
+- **Decree-dated death stays refused on every surface**: "death around 2031", "will die",
+  "dies by 60" trip both `_FORBIDDEN_RE` and a purpose-added decree-death arm in
+  `_EXCLUDED_RE` (so the walled panel cannot decree either).
+- **The Measured-Truth disclosure layer is untouched** (add-only law): every timed
+  indication still ships alongside the calibration framing — the engine answers "what
+  would Raman say", it is not a validated predictor.
+
+Tests pinning the new policy: `tests/test_report_explainer.py`
+(`test_timed_indications_now_pass` allowed-list; decree suites trimmed to decree-only) and
+`tests/test_ai_interpret.py` (`test_lifted_indication_idiom_passes`;
+`test_selfharm_illness_and_decree_death_are_caught`). CLAUDE.md's guard-line and
+ai-interpret bullets were amended the same day to point here.

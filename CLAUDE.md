@@ -163,17 +163,24 @@ This is a standing user directive, confirmed twice and once violated — treat i
   advertises `thinking`; without these it spends its whole budget in the thinking channel on a
   ~3.1k-token evidence prompt and returns an EMPTY response, which surfaces as `OllamaUnavailable`
   and silently degrades EVERY answer to deterministic prose while the app still looks healthy.
-- **The guard line (narrowed 2026-07-28, doctrine-reviewed PASS-WITH-NOTES + hardened):** undated
-  descriptive-indication idiom ("points to", "tends to", "indicates", "signifies") is ALLOWED —
-  it is Raman's own descriptive usage; asserting a future LIFE EVENT is refused (you-will/decree
-  verbs, third-person `he/she/they will|shall <verb>`, dated/age-attached indications like
-  "indicated in 2027"/"at age 30", `promises/brings/foretells/bound to/sure to`, all death tokens).
-  Do not re-widen OR re-narrow without a doctrine review.
+- **The guard line (re-narrowed 2026-08-17, "unblock prediction part" — USER DECISION):** the
+  boundary is now **idiom, not timing**. TIMED INDICATIONS in the classical voice are ALLOWED on
+  every surface ("marriage is indicated during the Venus bhukti, 2027–2028", "the maraka periods
+  2031–2034 are classically sensitive", "the span reads at the purna band, around the 83rd year");
+  the DECREE voice stays refused (you-will/`he/she/they will|shall <verb>`, `is going to`,
+  `destined/certain/guaranteed/bound to/sure to`, `i predict`, and decree-dated death:
+  "death around/at/by <year>", "will die"). The 2026-07-28 dated-indication arms
+  ("indicated in 2027", "at age 30", promises/brings/foretells) were REMOVED by this decision.
+  History: narrowed 2026-07-28 (doctrine-reviewed); death/lifespan wall lifted 2026-08-17 over
+  the assistant's recorded recommendation to keep it — record in DOCTRINE_BACKLOG "prediction
+  unblock". Do not re-widen OR re-narrow without a doctrine review + user sign-off.
 - **`/report/ai-interpret` is the ONE walled speculation surface** (user-approved exception):
   always labeled ("AI, not the engine, not validated" — `DISCLAIMER` on every response), gentle/bold
-  registers, and death/lifespan/serious-illness/self-harm excluded IN CODE (`excluded_topic` on
-  output + input scrub) — no register or request lifts that. It has NO deterministic fallback: the
-  engine must never author speculation.
+  registers, and serious-illness/self-harm excluded IN CODE (`excluded_topic` on output + input
+  scrub) — no register or request lifts that. Death/lifespan tokens were LIFTED from the exclusion
+  2026-08-17 (user decision, "unblock prediction part"): the panel may reflect on longevity in the
+  classical indication idiom; decree-dated death phrasing remains code-refused. It has NO
+  deterministic fallback: the engine must never author speculation.
 - **Chart feedback** (`/report/feedback*`): questions are a deterministic re-read of the digest
   (`feedback_questions.py`), answers land in `chart_feedback` keyed by the server-built chart_key;
   anonymous-first. Wording keeps the Measured-Truth frame (calibration, not validation).

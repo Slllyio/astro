@@ -4180,7 +4180,50 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("---")
     L.append(f"_Italicised population context is EMPIRICAL_ASTRODATABANK provenance (n="
              f"{pop:,}) - explicitly not Raman. {_VALIDITY}_")
-    return _fold_ascii("\n".join(L))
+    return _fold_ascii("\n".join(_inject_plain_layer(L)))
+
+
+#: The ten SECTION_METHOD chapters added 2026-08-17 whose preambles are injected
+#: generically here (the original eight are emitted at their own call sites and
+#: must NOT be duplicated by this pass).
+_INJECTED_PREAMBLE_IDS: frozenset[str] = frozenset(
+    {"yogas", "timeline", "shadbala", "ashtakavarga", "gochara",
+     "divisional", "soul", "ruler", "maraka", "karmic"})
+
+
+def _inject_plain_layer(lines: list[str]) -> list[str]:
+    """Reframe part 2 (2026-08-17): under each section heading, add the section_meta
+    plain-language subtitle + the reader's question, and (for the ten chapters whose
+    SECTION_METHOD entries postdate the per-site wiring) the method preamble.
+
+    Add-only by construction: the pass inserts prose AFTER the first line carrying each
+    contract md_marker — it emits no ``## `` lines, so the frozen markers, the
+    first-occurrence order test, and the guard-slice cuts are all untouched. Subtitle
+    wording is _FORBIDDEN_RE-guarded by tests/raman_saab/test_section_meta.py."""
+    from app.raman_saab.section_meta import SECTION_META
+    blocks: list[tuple[str, list[str]]] = []
+    for spec in SECTION_CONTRACT:
+        if not spec.md_marker or not spec.md_marker.startswith("## "):
+            continue
+        m = SECTION_META.get(spec.section_id)
+        if m is None:
+            continue
+        block = [f"*{m.subtitle_en}* — **Answers:** {m.answers_en}", ""]
+        if spec.section_id in _INJECTED_PREAMBLE_IDS:
+            block += _method_preamble(spec.section_id)
+        blocks.append((spec.md_marker, block))
+    blocks.sort(key=lambda t: -len(t[0]))     # longest marker first: no prefix mis-match
+    seen: set[str] = set()
+    out: list[str] = []
+    for line in lines:
+        out.append(line)
+        for marker, block in blocks:
+            if marker not in seen and line.startswith(marker):
+                seen.add(marker)
+                out.append("")
+                out.extend(block)
+                break
+    return out
 
 
 def _fold_ascii(s: str) -> str:

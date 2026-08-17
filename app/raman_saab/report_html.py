@@ -2657,7 +2657,39 @@ def to_html(r: DetailedReport) -> str:
   }}
 }})();
 </script>"""
-    return _apply_glossary_abbrs(body)
+    return _apply_glossary_abbrs(_apply_section_subtitles(body))
+
+
+#: mirrors detailed_report._INJECTED_PREAMBLE_IDS — the ten post-wiring chapters.
+_INJECTED_PREAMBLE_IDS = frozenset(
+    {"yogas", "timeline", "shadbala", "ashtakavarga", "gochara",
+     "divisional", "soul", "ruler", "maraka", "karmic"})
+
+
+def _apply_section_subtitles(html_str: str) -> str:
+    """Reframe part 2 (2026-08-17): inject the section_meta plain-language subtitle
+    (+ the ten late-wired method preambles) right after each section's first
+    ``<h2 class="section" id="...">`` — the same document-wide-transform shape as
+    ``_apply_glossary_abbrs``. Add-only: markers, ids and order are untouched."""
+    import re as _re
+
+    from app.raman_saab.detailed_report import SECTION_CONTRACT
+    from app.raman_saab.section_meta import SECTION_META
+    for spec in SECTION_CONTRACT:
+        hm = spec.html_marker
+        if not hm or not hm.startswith('id="'):
+            continue
+        m = SECTION_META.get(spec.section_id)
+        if m is None:
+            continue
+        sub = (f'<p class="section-sub"><i>{_esc(m.subtitle_en)}</i> &mdash; '
+               f'<b>Answers:</b> {_esc(m.answers_en)}</p>')
+        if spec.section_id in _INJECTED_PREAMBLE_IDS:
+            sub += _method_preamble_html(spec.section_id)
+        pat = _re.compile(r'(<h2 class="section" ' + _re.escape(hm) + r'>.*?</h2>)',
+                          _re.S)
+        html_str, _n = pat.subn(lambda mo: mo.group(1) + sub, html_str, count=1)
+    return html_str
 
 
 def standalone_html(r: DetailedReport, *, title: str | None = None) -> str:

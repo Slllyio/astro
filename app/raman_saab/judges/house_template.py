@@ -1365,6 +1365,17 @@ _MARITAL_BOND_KEYS: frozenset[str] = frozenset({"spouse", "marital_happiness"})
 _TIMING_MARAKA_KEYS: frozenset[str] = frozenset(
     {"longevity", "death", "coverture", "father", "mother", "spouse"})
 
+# Display caps for the ``active_periods`` line (REPORT_CRITIQUE_2026-08-17 P0). The maraka
+# set can absorb every significator's window (one window per graha, strongest role wins), so
+# an uncapped maraka-first sort made the ENTIRE activation line read "(maraka)" for the
+# relative-death matters (mother/spouse/coverture/father) — five death-labels and zero
+# ordinary fructification windows. At most `_TIMING_MARAKA_DISPLAY_CAP` maraka-tagged windows
+# are shown; ordinary windows (afflictor/lord/karaka/timer) fill the remaining slots up to
+# `_TIMING_DISPLAY_CAP`. DISPLAY-SELECTION ONLY: the computed window set is unchanged, and
+# the verdict is untouched (this composer is metadata-only by contract).
+_TIMING_DISPLAY_CAP: Final[int] = 5
+_TIMING_MARAKA_DISPLAY_CAP: Final[int] = 2
+
 
 def _event_timing(
     chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger, ctx: EvalContext,
@@ -1408,7 +1419,19 @@ def _event_timing(
         # Most event-salient roles first (maraka/afflictor/lord/karaka), then generic timers.
         ordered = sorted(windows, key=lambda w: (
             {"maraka": 0, "afflictor": 1, "lord": 2, "karaka": 3}.get(w.role, 4), w.start_jd))
-        md.append(("active_periods", "; ".join(w.label() for w in ordered[:5])))
+        # Cap the maraka-tagged windows so ordinary fructification windows stay visible
+        # (see _TIMING_MARAKA_DISPLAY_CAP above — selection of what is DISPLAYED only).
+        shown: list[vimshottari.EventWindow] = []
+        n_maraka = 0
+        for w in ordered:
+            if w.role == "maraka":
+                if n_maraka >= _TIMING_MARAKA_DISPLAY_CAP:
+                    continue
+                n_maraka += 1
+            shown.append(w)
+            if len(shown) >= _TIMING_DISPLAY_CAP:
+                break
+        md.append(("active_periods", "; ".join(w.label() for w in shown)))
     return verdict, tuple(md)
 # The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
 # Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in

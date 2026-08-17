@@ -675,14 +675,40 @@ def information_content(calibration: dict[int, CalibratedHouseReading]) -> InfoC
     )
 
 
+#: rarity-band precedence for "what stands out": rare strictly before notable before common
+#: (the old two-way common/non-common split let the sole RARE row sort last — 2026-08-17 fix).
+_RARITY_ORDER: Final[dict[str, int]] = {"rare": 0, "notable": 1, "common": 2}
+
+
 def distinctive_entries(calibration: dict[int, CalibratedHouseReading], n: int = 7):
-    """The n readings that most distinguish this chart — furthest from the population midpoint,
-    rare readings first. Returns [(house, entry)] ranked. Pure information content, not prediction."""
+    """The n readings that most distinguish this chart — rarity band first (rare before
+    notable before common), then furthest from the population midpoint within each band.
+    Returns [(house, entry)] ranked. Pure information content, not prediction."""
     scored = [(h, e) for h, e in _all_entries(calibration)
               if e.favourability_percentile is not None]
-    scored.sort(key=lambda he: (-(0 if he[1].rarity == "common" else 1),
+    scored.sort(key=lambda he: (_RARITY_ORDER.get(he[1].rarity, 3),
                                 -abs(he[1].favourability_percentile - 0.5)))
     return tuple(scored[:n])
+
+
+def distinctive_gloss(e) -> str:
+    """One plain sentence making a distinctive row intelligible: which side of the
+    population midpoint it sits on — with an explicit flag when that direction and the
+    verdict's own direction disagree (a favourable verdict at the 32nd percentile is a
+    real, non-obvious combination, not a typo). Descriptive idiom only, never a claim
+    about a life."""
+    pct = getattr(e, "favourability_percentile", None)
+    if pct is None:
+        return ""
+    if pct >= 0.5:
+        gloss = f"more favourable than {pct:.0%} of charts"
+        if e.verdict == "afflicted":
+            gloss += ", despite the afflicted verdict"
+    else:
+        gloss = f"less favourable than {1 - pct:.0%} of charts"
+        if e.verdict == "favourable":
+            gloss += ", despite the favourable verdict"
+    return gloss
 
 
 def driver_entry(reading: CalibratedHouseReading, rollup: str):
@@ -2066,6 +2092,28 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
     if fn is not None:
         lead += f"; {maha} is a {fn} for this Lagna"
     cond_words: list[str] = []
+    if maha in ("Rahu", "Ketu"):
+        # nodal MD: Shadbala/vargottama words never apply to a chayagraha, which used to
+        # leave cond_words empty and render a dangling "…for this Lagna: ." (2026-08-17 fix).
+        # The doctrine-licensed sentence instead: a node gives the results of its
+        # sign-dispositor / occupied house (HTJAH-I:2764/8566 — the same citation the
+        # vimshottari timer_set already encodes).
+        np_ = r.chart.planets.get(maha)
+        if np_ is not None:
+            disp = SIGN_LORDS[np_.sign]
+            disp_words: list[str] = []
+            dstrong = _strong(r.chart, disp)
+            if dstrong is not None:
+                disp_words.append("strong in Shadbala" if dstrong else "weak in Shadbala")
+            dp = r.chart.planets.get(disp)
+            if dp is not None and dp.vargottama:
+                disp_words.append("vargottama")
+            cond_words.append(
+                f"as a node, {maha} gives the results of its dispositor and of the house "
+                f"it occupies (HTJAH-I:2764/8566) — it occupies {_SIGN_NAME[np_.sign]} "
+                f"(H{np_.rasi_house}), and its dispositor {disp}"
+                + (f" is {', '.join(disp_words)}" if disp_words
+                   else "'s condition is read in its own chapter"))
     if cond is not None:
         if cond.strong is not None:
             cond_words.append("strong in Shadbala" if cond.strong else "weak in Shadbala")
@@ -2075,11 +2123,12 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
             cond_words.append("at the strength maximum — strong in both rasi and navamsa "
                               "(HPA-24:51-86; Raman's full maximum further requires freedom "
                               "from malefic aspect, not graded here)")
-    else:
+    elif not cond_words:
         cond_words.append("lord condition unavailable on this chart")
     if lean is not None:
         cond_words.append(f"a {lean} Ishta/Kashta lean")
-    bits.append(f"{lead}: {', '.join(cond_words)}.")
+    # never a dangling colon: with no condition words at all, close the sentence cleanly.
+    bits.append(f"{lead}: {', '.join(cond_words)}." if cond_words else f"{lead}.")
     if yts:
         names = ", ".join(f"{t.yoga_name} ({t.role})" for t in yts)
         bits.append(f"Yogas ripening here: {names} — a yoga's lord delivers its results in "
@@ -2271,7 +2320,10 @@ def build_nichod(r: DetailedReport) -> Nichod:
         caution_bits.append(
             f"H{mc} is the most-contested house — its own witnesses lean against its headline "
             f"(see Preponderance of testimonies); read that house's section with extra care")
-    caution = "; ".join(caution_bits) if caution_bits else None
+    # chain the bits with "; " AFTER stripping each bit's own sentence-final period —
+    # tenor_note ends with "." and joining raw produced the ".;" seam seen in real output.
+    caution = ("; ".join(bit.rstrip().rstrip(".") for bit in caution_bits)
+               if caution_bits else None)
 
     # the first-impression line, from the Ruler of the nativity card (HTJAH-I:16001-16002)
     ruler_bit = f"The ruler of the nativity is {r.ruler.lagna_lord}"
@@ -2322,7 +2374,14 @@ def build_nichod(r: DetailedReport) -> Nichod:
 
 
 #: rough percentile -> plain-English intensity word, for the "what's distinctive" paragraph.
-def _plain_intensity(pct: float) -> str:
+#: Guarded jointly on verdict direction + percentile (2026-08-17): a favourable verdict must
+#: never carry a "challenging" intensity word (and an afflicted verdict never a "favourable"
+#: one) — when the two directions disagree, a neutral descriptive word is used instead.
+def _plain_intensity(pct: float, verdict: str | None = None) -> str:
+    if pct >= 0.65 and verdict == "afflicted":
+        return "an uncommon reading for this area"
+    if pct <= 0.35 and verdict == "favourable":
+        return "an uncommon reading for this area"
     if pct >= 0.80:
         return "unusually strong"
     if pct >= 0.65:
@@ -2379,7 +2438,8 @@ def build_plain_reading(r: DetailedReport, *, reconciliations: tuple[str, ...] =
           f"time that brings out {md_theme}.")
 
     if r.distinctive:
-        bits = [f"{_plain_signification(e.signification)} ({_plain_intensity(e.favourability_percentile)})"
+        bits = [f"{_plain_signification(e.signification)} "
+                f"({_plain_intensity(e.favourability_percentile, e.verdict)})"
                 for _h, e in r.distinctive[:3]]
         notable = ("A few things stand out as distinctly this chart's own, not the generic "
                   "picture most charts show: " + "; ".join(bits) + ".")
@@ -2650,10 +2710,22 @@ def passage_quote(cite: str, *, max_chars: int = 260) -> str:
     return text
 
 
+def _quote_or_absent(text: str | None, cite: str) -> str:
+    """Render a verbatim doctrine quote with its citation — or, when the corpus is not
+    mounted on this machine (passage()/_pull() legitimately return empty), an honest
+    pointer to the passage instead. NEVER renders an empty string as a quotation
+    (`— "" (CITE)` was a real 2026-08-17 defect)."""
+    if text and text.strip():
+        return f"\"{text}\" ({cite})"
+    return f"passage {cite} - corpus not mounted on this machine"
+
+
 def to_markdown(r: DetailedReport) -> str:
     """Render the full detailed report as a Markdown document (ASCII-safe)."""
     s, b = r.synthesis, r.birth
-    y, mo, d = r.longevity_ymd
+    # deliberately un-shadowable names: a bare `y`/`mo`/`d` here was silently re-bound by a
+    # later loop variable and leaked a dataclass repr into the Longevity sentence (2026-08-17).
+    lon_y, lon_mo, lon_d = r.longevity_ymd
     L: list[str] = []
     L.append(f"# Detailed reading — {b.name}")
     L.append("")
@@ -2779,14 +2851,15 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("## What stands out in this chart")
         L.append("")
         L.append("_The readings furthest from the population midpoint — where this chart is least "
-                 "like everyone else's. Rare readings first._")
+                 "like everyone else's. Rare readings first, then notable, then common; within "
+                 "each band, furthest from the midpoint first._")
         L.append("")
-        L.append("| house | matter | verdict | percentile | share |")
-        L.append("|---|---|---|---:|---:|")
+        L.append("| house | matter | verdict | percentile | share | in plain terms |")
+        L.append("|---|---|---|---:|---:|---|")
         for house, e in r.distinctive:
             L.append(f"| H{house} {_HOUSE_NAME[house]} | {e.signification} | "
                      f"{e.verdict} ({e.degree}) | {e.favourability_percentile:.0%} | "
-                     f"{e.band_share:.0%} ({e.rarity}) |")
+                     f"{e.band_share:.0%} ({e.rarity}) | {distinctive_gloss(e)} |")
         L.append("")
 
     # ── what matters most (v19, the engine's own ranked digest) ───────────────
@@ -3137,29 +3210,29 @@ def to_markdown(r: DetailedReport) -> str:
                  "cancellation, the periods in which it ripens, and where the same yoga "
                  "appears in Notable Horoscopes.")
         L.append("")
-        for y in r.yoga_deep:
-            L.append(f"### {y.comparison_rank}. {y.name} ({y.kind}) — {y.cite}")
+        for yd in r.yoga_deep:            # NOT `y` — it shadowed the longevity unpack above
+            L.append(f"### {yd.comparison_rank}. {yd.name} ({yd.kind}) — {yd.cite}")
             L.append("")
-            L.append(f"- **Definition (verbatim)** — \"{y.definition_quote}\" ({y.cite})")
-            L.append(f"- **Computation** — `{y.computation}`")
-            if y.participants:
+            L.append(f"- **Definition (verbatim)** — \"{yd.definition_quote}\" ({yd.cite})")
+            L.append(f"- **Computation** — `{yd.computation}`")
+            if yd.participants:
                 pf = "; ".join(
                     f"{f.planet}: house {f.house}, {_SIGN_NAME[f.sign]}, {f.dignity}"
                     + (f" (effective: {f.effective_dignity})"
                        if f.effective_dignity != f.dignity else "")
                     + (f", {f.rupas} rupas" if f.rupas is not None else "")
-                    for f in y.participants)
+                    for f in yd.participants)
                 L.append(f"- **Why it qualifies** — {pf}")
-            L.append(f"- **Strength (measured)** — {y.strength_note}")
-            L.append(f"- **Cancellation** — {y.cancellation_note}")
-            if y.modifiers:
+            L.append(f"- **Strength (measured)** — {yd.strength_note}")
+            L.append(f"- **Cancellation** — {yd.cancellation_note}")
+            if yd.modifiers:
                 L.append(f"- **Modifying planets** (aspecting the participants' houses) "
-                         f"— {', '.join(y.modifiers)}")
-            if y.periods:
-                L.append(f"- **Operating periods** — {'; '.join(y.periods)}")
-            if y.nh_examples:
-                L.append(f"- **In Notable Horoscopes** — {', '.join(y.nh_examples)}")
-            L.append(f"- **Effect (Raman)** — {y.effect}")
+                         f"— {', '.join(yd.modifiers)}")
+            if yd.periods:
+                L.append(f"- **Operating periods** — {'; '.join(yd.periods)}")
+            if yd.nh_examples:
+                L.append(f"- **In Notable Horoscopes** — {', '.join(yd.nh_examples)}")
+            L.append(f"- **Effect (Raman)** — {yd.effect}")
             L.append("")
 
     # ── Ashtakavarga strength row ─────────────────────────────────────────────
@@ -3226,18 +3299,21 @@ def to_markdown(r: DetailedReport) -> str:
             # computation badges (2026-08-04): REAL counts — evidence, fired rules,
             # distinct sources, and the testimony-support band; never a probability.
             _ht = next((h for h in r.preponderance.houses if h.house == mr.house), None)
-            _fired_ct = 0
+            # Rules is deduped by rule id, matching Sources' dedup — counting every fired
+            # INSTANCE across significations x frames inflated it under the same visual
+            # grammar (H3 read "Rules 38" for ~9 distinct rules; 2026-08-17 fix).
+            _rule_ids: set[str] = set()
             _cites: set[str] = set()
             for _sv in pf.significations:
                 for _led in (_sv.ledger, *_sv.alt_ledgers):
                     for _fr in (*_led.fired_benefic, *_led.fired_malefic,
                                 *_led.fired_neutral):
-                        _fired_ct += 1
+                        _rule_ids.add(_fr.rule.id)
                         _cites.add(f"{_fr.rule.source.work}:{_fr.rule.source.line}")
             if _ht is not None:
                 _band = ("High" if "corrobor" in _ht.status else
                          "Low" if "contest" in _ht.status else "Medium")
-                L.append(f"`Evidence {len(_ht.testimonies)}` · `Rules {_fired_ct}` · "
+                L.append(f"`Evidence {len(_ht.testimonies)}` · `Rules {len(_rule_ids)}` · "
                          f"`Sources {len(_cites)}` · `Support {_band} "
                          f"({_ht.favourable}F/{_ht.adverse}A)`")
                 L.append("")
@@ -3399,8 +3475,8 @@ def to_markdown(r: DetailedReport) -> str:
         for lcx in s.longevity_combos:
             L.append(f"   - {lcx}")
     L.append(f"3. **Numeric cross-check (Ayurdaya)**: about **{round(r.longevity_years)} years** "
-             f"({y}y {mo}m {d}d) — class **{r.longevity_class}**. Treat as a band, not a date; the "
-             f"engine's own health layer defers lifespan.")
+             f"({lon_y}y {lon_mo}m {lon_d}d) — class **{r.longevity_class}**. Treat as a band, "
+             f"not a date; the engine's own health layer defers lifespan.")
     L.append("")
 
     # ── the maraka scheme (Raman's step 2, after the band) ────────────────────
@@ -3498,8 +3574,8 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"- **Balarishta (HPA-14)** — {bal}"
                  + (f" — {'; '.join(a.balarishta_reasons)}" if a.balarishta_reasons
                     else ""))
-        L.append(f"- **Raman's antidotes (verbatim)** — \"{a.antidote_quote}\" "
-                 f"({a.antidote_cite})")
+        L.append(f"- **Raman's antidotes (verbatim)** — "
+                 f"{_quote_or_absent(a.antidote_quote, a.antidote_cite)}")
         if a.bhangas:
             for p, dig, eff in a.bhangas:
                 L.append(f"- **Bhanga** — {p}: {dig} cancelled to effective {eff} "
@@ -3875,8 +3951,8 @@ def to_markdown(r: DetailedReport) -> str:
         L.append("## Marriage monograph")
         L.append("")
         L.extend(_method_preamble("marriage"))
-        L.append(f"**The 7th house's scope (Raman verbatim):** \"{m.seventh_covers}\" "
-                 f"(HTJAH-II:{_MI[0]})")
+        L.append(f"**The 7th house's scope (Raman verbatim):** "
+                 f"{_quote_or_absent(m.seventh_covers, f'HTJAH-II:{_MI[0]}')}")
         L.append("")
         L.append(f"- **Headline (unchanged H7 verdict)** — {m.verdict}")
         if m.lord_period_text:
@@ -3892,8 +3968,8 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("- **Kalatra rules firing in THIS chart** (of the 50 encoded):")
             for branch, text, cite in m.fired_kalatra:
                 L.append(f"  - ({branch}) {text} ({cite})")
-        L.append(f"- **Timing doctrine (Raman verbatim)** — \"{m.timing_navamsa}\" "
-                 f"(HTJAH-II:853)")
+        L.append(f"- **Timing doctrine (Raman verbatim)** — "
+                 f"{_quote_or_absent(m.timing_navamsa, 'HTJAH-II:853')}")
         if m.timing_windows:
             L.append(f"- **H7 activations in the window** — {'; '.join(m.timing_windows)}")
         if m.children_after:
@@ -3903,7 +3979,7 @@ def to_markdown(r: DetailedReport) -> str:
                  "quoted, not composed; A STATEMENT OF THE METHOD, NOT A PREDICTION "
                  "(this project's validation measured no real-outcome signal):_")
         L.append("")
-        L.append(f"> \"{m.separation_quote}\" (HTJAH-II:887)")
+        L.append(f"> {_quote_or_absent(m.separation_quote, 'HTJAH-II:887')}")
         L.append("")
 
     # ── children chapter (v26) ────────────────────────────────────────────────
@@ -3926,7 +4002,7 @@ def to_markdown(r: DetailedReport) -> str:
                  "delay, loss — the classical spectrum, quoted whole so nothing is "
                  "cherry-picked):_")
         L.append("")
-        L.append(f"> \"{c.combos_quote}\" (HTJAH-I:5179)")
+        L.append(f"> {_quote_or_absent(c.combos_quote, 'HTJAH-I:5179')}")
         L.append("")
     if s.deeptadi:
         from app.raman_saab.plain_terms import TERM_GLOSS as _TG

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from app.raman_saab.judges.saptamsa_reading import Tagged
 from app.raman_saab.judges.two_chart_synastry import KujaProfile, TwoChartSynastry
+from app.raman_saab.ordinals import ordinal
 
 
 def _tag(t: Tagged) -> str:
@@ -21,7 +22,7 @@ def _kuja_line(k: KujaProfile) -> str:
     if not k.strength:
         return f"  [{k.role}]  no Kuja doṣa"
     mit = " (mitigated)" if k.mitigated else ""
-    where = (f"Mars in the {k.house_from_lagna}th from Lagna" if k.house_from_lagna
+    where = (f"Mars in the {ordinal(k.house_from_lagna)} from Lagna" if k.house_from_lagna
              else f"Mars in a Kuja house from {'/'.join(k.refs)}")
     return f"  [{k.role}]  Kuja doṣa on {', '.join(k.refs)} ({where}){mit}"
 

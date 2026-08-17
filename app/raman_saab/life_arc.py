@@ -87,9 +87,13 @@ def build_decade_timeline(r: "DetailedReport") -> Optional[DecadeTimeline]:
                                      "outside the displayed timeline window — not read"))
             continue
         mds: list[str] = []
-        fav: list[str] = []
-        chal: list[str] = []
         leans: list[str] = []
+        # ONE chip per area per decade (2026-08-17 fix): the old key included the tier, so a
+        # house lit in two Mahadashas at different tiers rendered twice ("(H1, limited)" AND
+        # "(H1, par excellence)") unexplained. Aggregate per house, keeping EVERY per-MD tier
+        # attribution (completeness: nothing dropped, only merged into one chip).
+        fav_by_house: dict[int, list[tuple[str, str]]] = {}   # house -> [(tier, maha)]
+        chal_by_house: dict[int, list[tuple[str, str]]] = {}
         for ch in r.life_chapters.chapters:
             if ch.end_jd <= lo or ch.start_jd >= hi:
                 continue
@@ -98,11 +102,20 @@ def build_decade_timeline(r: "DetailedReport") -> Optional[DecadeTimeline]:
             if ch.lean and ch.lean not in leans:
                 leans.append(str(ch.lean))
             for h, tier, natal in ch.houses_lit:
-                area = f"{_AREA.get(h, f'house {h}')} (H{h}, {tier})"
-                if natal == "favourable" and area not in fav:
-                    fav.append(area)
-                elif natal == "afflicted" and area not in chal:
-                    chal.append(area)
+                bucket = (fav_by_house if natal == "favourable"
+                          else chal_by_house if natal == "afflicted" else None)
+                if bucket is None:
+                    continue
+                if (tier, ch.maha) not in bucket.setdefault(h, []):
+                    bucket[h].append((tier, ch.maha))
+
+        def _chip(h: int, attributions: list[tuple[str, str]]) -> str:
+            area = _AREA.get(h, f"house {h}")
+            detail = "; ".join(f"{tier} in {maha} MD" for tier, maha in attributions)
+            return f"{area} (H{h} - {detail})"
+
+        fav = [_chip(h, attrs) for h, attrs in fav_by_house.items()]
+        chal = [_chip(h, attrs) for h, attrs in chal_by_house.items()]
         yogas = []
         for t in r.yoga_timing:
             if t.period_end_jd > lo and t.period_start_jd < hi:

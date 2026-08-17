@@ -121,13 +121,20 @@ class TestDetailedReport:
         assert "not a statement about a life" in markdown
 
     def test_distinctive_entries_are_ranked_and_rare_first(self, report):
-        """Distinctive readings are furthest from the midpoint, non-common rarity first."""
+        """Rarity band strictly first (rare < notable < common), then midpoint distance
+        WITHIN each band — the 2026-08-17 fix: the old common/non-common split let the
+        sole genuinely RARE row (H4 education, 3% share) sort last among the non-common."""
+        from app.raman_saab.detailed_report import _RARITY_ORDER
         d = report.distinctive
         assert d and len(d) <= 7
-        rar = [0 if e.rarity == "common" else 1 for _h, e in d]
-        assert rar == sorted(rar, reverse=True)            # rare/notable before common
-        dist = [abs(e.favourability_percentile - 0.5) for _h, e in d if e.rarity != "common"]
-        assert dist == sorted(dist, reverse=True)
+        bands = [_RARITY_ORDER[e.rarity] for _h, e in d]
+        assert bands == sorted(bands)                      # rare, then notable, then common
+        for band in set(bands):
+            dist = [abs(e.favourability_percentile - 0.5) for _h, e in d
+                    if _RARITY_ORDER[e.rarity] == band]
+            assert dist == sorted(dist, reverse=True)      # within-band: furthest first
+        # the canonical chart's one rare reading leads the list
+        assert d[0][1].rarity == "rare"
 
     def test_evidentiary_layer_present(self, report, markdown):
         """Yogas, positions, Ashtakavarga, nakshatra and pillars all reach the page."""
@@ -1324,3 +1331,208 @@ class TestHouseConclusion:
         assert section.count("> **Conclusion**") == 12
         assert "Raman's own closing device" in section
         assert "HTJAH-I:4485" in section
+
+
+class TestReportCritiqueFixes20260817:
+    """Wave-0 presentation fixes from docs/raman_saab/REPORT_CRITIQUE_2026-08-17.md —
+    each test pins one verified defect so it can never regress."""
+
+    # ── 1. longevity repr leak ────────────────────────────────────────────────
+    def test_no_dataclass_repr_leaks_into_the_longevity_sentence(self, markdown):
+        """The `y, mo, d` longevity unpack was re-bound by the yoga-deep loop variable,
+        printing a YogaDeepRead dataclass repr inside 'about 88 years (...)'."""
+        import re
+        assert "YogaDeepRead(" not in markdown
+        m = re.search(r"about \*\*(\d+) years\*\* \((\d+)y (\d+)m (\d+)d\)", markdown)
+        assert m is not None, "longevity cross-check line missing or malformed"
+
+    # ── 2. empty verbatim quotes ──────────────────────────────────────────────
+    def test_no_empty_string_is_ever_rendered_as_a_quotation(self, markdown):
+        """With the corpus absent, five sites printed `— "" (CITE)`; now every quote
+        renders either the verbatim text or an honest corpus-absent pointer."""
+        assert '"" (' not in markdown
+
+    def test_quote_or_absent_helper_contract(self):
+        """Non-empty text quotes normally; empty/None/whitespace yields the pointer."""
+        from app.raman_saab.detailed_report import _quote_or_absent
+        assert _quote_or_absent("The 7th house rules...", "HTJAH-II:198") == \
+            '"The 7th house rules..." (HTJAH-II:198)'
+        expected = "passage HTJAH-II:887 - corpus not mounted on this machine"
+        assert _quote_or_absent("", "HTJAH-II:887") == expected
+        assert _quote_or_absent(None, "HTJAH-II:887") == expected
+        assert _quote_or_absent("   ", "HTJAH-II:887") == expected
+
+    def test_marriage_and_children_quote_sites_render_something(self, markdown):
+        """The five fixed sites each show a quote or the pointer — never a bare ''."""
+        from corpus_presence import HAS_CORPUS
+        for cite in ("HTJAH-II:853", "HTJAH-II:887", "HTJAH-I:5179"):
+            assert cite in markdown
+            if not HAS_CORPUS:
+                assert f"passage {cite} - corpus not mounted on this machine" in markdown
+
+    # ── 3. what-stands-out gloss ──────────────────────────────────────────────
+    def test_distinctive_gloss_names_the_midpoint_side_and_flags_disagreement(self):
+        """A favourable verdict at the 32nd percentile is glossed as LESS favourable than
+        68% of charts, with the disagreement flagged; agreement carries no flag."""
+        from app.raman_saab.detailed_report import distinctive_gloss
+
+        class _E:
+            def __init__(self, pct, verdict):
+                self.favourability_percentile, self.verdict = pct, verdict
+        assert distinctive_gloss(_E(0.32, "favourable")) == \
+            "less favourable than 68% of charts, despite the favourable verdict"
+        assert distinctive_gloss(_E(0.32, "afflicted")) == \
+            "less favourable than 68% of charts"
+        assert distinctive_gloss(_E(0.88, "favourable")) == \
+            "more favourable than 88% of charts"
+        assert distinctive_gloss(_E(0.88, "afflicted")) == \
+            "more favourable than 88% of charts, despite the afflicted verdict"
+        assert distinctive_gloss(_E(None, "favourable")) == ""
+
+    def test_stands_out_table_carries_the_gloss_column(self, report, markdown):
+        """The markdown table has the appended 'in plain terms' column, populated per row."""
+        from app.raman_saab.detailed_report import distinctive_gloss
+        i = markdown.find("## What stands out in this chart")
+        j = markdown.find("## What matters most")
+        section = markdown[i:j]
+        assert "| in plain terms |" in section
+        for _h, e in report.distinctive:
+            assert distinctive_gloss(e) in section
+
+    def test_report_json_distinctive_entries_carry_the_gloss(self, report):
+        """Append-only JSON field: every distinctive entry gains `gloss`; the existing
+        CalibratedEntry fields are all still present."""
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        assert d["distinctive"]
+        for _h, entry in d["distinctive"]:
+            assert "gloss" in entry and entry["gloss"]
+            for key in ("signification", "verdict", "degree", "favourability_percentile",
+                        "band_share", "rarity"):
+                assert key in entry
+
+    # ── 4. _plain_intensity joint guard ───────────────────────────────────────
+    def test_plain_intensity_never_calls_a_favourable_verdict_challenging(self):
+        """Verdict direction + percentile jointly: a favourable verdict at a low percentile
+        gets a neutral descriptive word, never 'challenging' (and mirrored for afflicted)."""
+        from app.raman_saab.detailed_report import _plain_intensity
+        assert _plain_intensity(0.32, "favourable") == "an uncommon reading for this area"
+        assert _plain_intensity(0.15, "favourable") == "an uncommon reading for this area"
+        assert _plain_intensity(0.86, "afflicted") == "an uncommon reading for this area"
+        # agreement keeps the original vocabulary
+        assert _plain_intensity(0.86, "favourable") == "unusually strong"
+        assert _plain_intensity(0.15, "afflicted") == "distinctly challenging"
+        assert _plain_intensity(0.32, "afflicted") == "notably challenging"
+        # verdict-less callers keep the historical behaviour
+        assert _plain_intensity(0.32) == "notably challenging"
+
+    def test_your_reading_notable_line_never_contradicts_its_verdicts(self, report):
+        """End-to-end: no distinctive row rendered in Your Reading pairs a favourable
+        verdict with a 'challenging' word (or an afflicted verdict with 'favourable')."""
+        from app.raman_saab.detailed_report import _plain_intensity
+        for _h, e in report.distinctive[:3]:
+            word = _plain_intensity(e.favourability_percentile, e.verdict)
+            if e.verdict == "favourable":
+                assert "challenging" not in word
+            if e.verdict == "afflicted":
+                assert "favourable" not in word and "strong" not in word
+
+    # ── 5. nichod caution seam ────────────────────────────────────────────────
+    def test_nichod_caution_chains_sentences_without_period_semicolon_seam(self, report,
+                                                                            markdown):
+        """tenor_note ends with '.'; joining raw produced '...not the majority.; this
+        chart carries...' — the join now strips each bit's own final period."""
+        assert ".;" not in markdown
+        if report.nichod.caution:
+            assert ".;" not in report.nichod.caution
+        assert ".;" not in report.nichod.essence
+
+    # ── 6. ascii fold ─────────────────────────────────────────────────────────
+    def test_middle_dot_and_plus_minus_fold_to_ascii_not_question_marks(self):
+        """The computation badges' separator and the rectification scan's plus-minus fold
+        readably; decorative emoji fold away instead of '?' mojibake."""
+        from app.raman_saab.render import _ascii
+        assert _ascii("`Evidence 10` · `Rules 9`") == "`Evidence 10` - `Rules 9`"
+        assert _ascii("the full ±60-minute scan") == "the full +-60-minute scan"
+        from app.raman_saab.detailed_report import _fold_ascii
+        assert _fold_ascii("🔥 a fully charged battery") == "a fully charged battery"
+        assert _fold_ascii("⚠️ running on the rim") == "running on the rim"
+
+    def test_markdown_carries_no_fold_mojibake(self, markdown):
+        """No ' ? ' produced by folding anywhere in the canonical render, and the
+        rectification scan window renders '+-60', never '?60'."""
+        assert " ? " not in markdown
+        assert "?60" not in markdown
+        if "Rectification confidence" in markdown:
+            assert "+-60" in markdown or "+-" in markdown
+
+    # ── 7. rules badge arithmetic ─────────────────────────────────────────────
+    def test_rules_badge_counts_distinct_rules_matching_sources_dedup(self, report,
+                                                                      markdown):
+        """One arithmetic under one visual grammar: Rules is deduped by rule id exactly
+        as Sources is deduped by citation — verified against a recount per house."""
+        import re
+        badges = re.findall(r"`Rules (\d+)` - `Sources (\d+)`", markdown)
+        assert badges
+        expected = []
+        for mr in report.synthesis.matters:
+            pf = report.proformas[mr.house - 1] if len(report.proformas) >= mr.house else None
+            if pf is None:
+                continue
+            if not any(h.house == mr.house for h in report.preponderance.houses):
+                continue
+            rule_ids, cites = set(), set()
+            for sv in pf.significations:
+                for led in (sv.ledger, *sv.alt_ledgers):
+                    for fr in (*led.fired_benefic, *led.fired_malefic, *led.fired_neutral):
+                        rule_ids.add(fr.rule.id)
+                        cites.add(f"{fr.rule.source.work}:{fr.rule.source.line}")
+            expected.append((str(len(rule_ids)), str(len(cites))))
+        assert badges[:len(expected)] == expected
+
+    # ── 8. nodal MD chapter ───────────────────────────────────────────────────
+    def test_life_chapters_never_render_a_dangling_colon(self, report, markdown):
+        """No chapter (or any line) ends ': .' — the empty-cond_words seam for a node."""
+        assert ": ." not in markdown
+        for ch in report.life_chapters.chapters:
+            assert ": ." not in ch.narrative
+
+    def test_nodal_md_chapter_states_the_dispositor_doctrine(self, report):
+        """A Rahu/Ketu chapter carries the doctrine-licensed sentence — occupied sign,
+        dispositor, and the node-results citation HTJAH-I:2764/8566 — instead of the old
+        empty condition clause."""
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.detailed_report import _SIGN_NAME
+        nodal = [ch for ch in report.life_chapters.chapters if ch.maha in ("Rahu", "Ketu")]
+        assert nodal, "canonical window carries a Rahu MD chapter"
+        for ch in nodal:
+            p = report.chart.planets[ch.maha]
+            assert f"as a node, {ch.maha} gives the results of its dispositor" in ch.narrative
+            assert "HTJAH-I:2764/8566" in ch.narrative
+            assert _SIGN_NAME[p.sign] in ch.narrative
+            assert SIGN_LORDS[p.sign] in ch.narrative
+
+    # ── 9. decade chip duplicates ─────────────────────────────────────────────
+    def test_decade_chips_are_unique_per_area_with_multi_md_attribution(self, report):
+        """One chip per area per decade; a house lit by several Mahadashas carries the
+        per-MD tier attribution inside the ONE chip (nothing dropped, only merged)."""
+        import re
+        assert report.decades is not None
+        for d in report.decades.decades:
+            for chips in (d.areas_favourable, d.areas_challenged):
+                houses = [re.search(r"\(H(\d+) - ", c).group(1) for c in chips]
+                assert len(houses) == len(set(houses)), (d.label, chips)
+                for c in chips:
+                    assert re.search(r"\(H\d+ - [a-z ]+ in \w+ MD", c), c
+
+    def test_decade_multi_md_chip_keeps_every_tier_attribution(self, report):
+        """A decade spanning multiple MDs shows each MD's own tier for the same area —
+        the completeness half of the dedup fix."""
+        assert report.decades is not None
+        multi = [d for d in report.decades.decades
+                 if d.inside_window and len(d.md_lords) >= 2]
+        assert multi, "canonical chart has decades spanning several Mahadashas"
+        found_multi_attribution = any(
+            chip.count(" MD") >= 2
+            for d in multi for chip in (*d.areas_favourable, *d.areas_challenged))
+        assert found_multi_attribution

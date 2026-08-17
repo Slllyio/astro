@@ -64,7 +64,12 @@ def build_karmic_evolution(r: "DetailedReport") -> Optional[KarmicEvolution]:
     if isinstance(p, dict):
         quote = re.sub(r"\s*\n\s*", " ", p.get("text", "")).strip()
     if not quote:
-        return None
+        # REPORT COMPLETENESS: the AK, Karakamsa, Upapada and the D-20/D-60 cores below
+        # are COMPUTED — a missing verbatim pull (corpus not vendored on this machine)
+        # must never hide them. The honest-absence line flows through the existing quote
+        # field, so every renderer shows the section unchanged.
+        quote = (f"Raman's Jaimini doctrine at JAIMINI-9:{KARAKAMSA_DOCTRINE[0]}-"
+                 f"{KARAKAMSA_DOCTRINE[1]} - corpus not mounted on this machine")
     d20 = next((body for label, body in r.divisional if label.startswith("D-20")), None)
     d60 = next((body for label, body in r.divisional if label.startswith("D-60")), None)
     return KarmicEvolution(

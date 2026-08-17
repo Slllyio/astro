@@ -25,7 +25,8 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import Any
 
-from app.raman_saab.detailed_report import DetailedReport, graded_buckets
+from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
+                                            graded_buckets)
 from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
 from app.raman_saab.plain_terms import SECTION_METHOD as _SECTION_METHOD
 from app.raman_saab.plain_terms import gloss_dict as _gloss
@@ -133,7 +134,10 @@ def to_report_dict(r: DetailedReport) -> dict:
         "house_strength": _each(r.house_strength),
         "preponderance": _ad(r.preponderance),
         "dashboard": _ad(r.dashboard),
-        "distinctive": [[h, _ad(e)] for h, e in r.distinctive],
+        # append-only 2026-08-17: `gloss` — the plain-language midpoint-side sentence the
+        # markdown "What stands out" table shows; existing fields untouched.
+        "distinctive": [[h, {**_ad(e), "gloss": distinctive_gloss(e)}]
+                        for h, e in r.distinctive],
         "info": _ad(r.info),
 
         # yogas (each carries its own Citation object) + the synthesis insights

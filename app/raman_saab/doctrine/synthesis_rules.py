@@ -54,6 +54,7 @@ from app.raman_saab.primitives import vimshottari as vd
 from app.raman_saab.primitives.functional_nature import is_yogakaraka
 from app.raman_saab.primitives.shadbala import total as _sb_total
 from app.raman_saab.primitives.transits import TransitRow
+from app.raman_saab.ordinals import ordinal
 
 Band = Literal["raman", "classical", "av"]
 Kind = Literal["evaluable", "descriptive"]
@@ -692,7 +693,7 @@ def _chk_r14(ctx: SynthesisContext) -> Optional[str]:
     win = _md_window(ctx, "Saturn")
     when = (f" — his MD runs {_jd_date(win[0])}..{_jd_date(win[1])}" if win
             else " — no Saturn MD falls inside the displayed window")
-    return (f"Libra Lagna with Jupiter in the {jup.bhava}th and the Moon in Lagna: Bhavartha "
+    return (f"Libra Lagna with Jupiter in the {ordinal(jup.bhava)} and the Moon in Lagna: Bhavartha "
             f"Ratnakara's combination for fortune during Saturn's Dasa is present{when}")
 
 

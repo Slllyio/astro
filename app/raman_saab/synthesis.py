@@ -127,13 +127,40 @@ def _live_windows(activation: tuple[str, ...], birth_year: int) -> list[str]:
     return out
 
 
+#: navamsa-status -> reading clause (lead frame's testimony).
+_NAV_CLAUSE = {"confirms": "and the navamsa confirms it (delivered)",
+               "weakens": "but the navamsa qualifies/withholds it (delivery in doubt)",
+               "neutral": "the navamsa is neutral",
+               "unknown": ""}
+#: navamsa-status -> short restatement, for the frame-disclosure tail.
+_NAV_SHORT = {"confirms": "confirms (delivered)",
+              "weakens": "qualifies/withholds (delivery in doubt)",
+              "neutral": "is neutral",
+              "unknown": "is unread"}
+
+
+def _navamsa_clause(navamsa: str, lead_frame: str, lagna_navamsa: Optional[str]) -> str:
+    """The navamsa clause of the reading line, with the FRAME DISCLOSED when it matters.
+
+    The reading follows the LEAD ledger (which may be the Moon/Karaka frame when that frame's
+    lord out-strengths the lagna lord), while the pillar line every renderer prints reads the
+    LAGNA ledger. When the two frames' navamsa testimonies differ, silently using the lead
+    frame made the two lines contradict (REPORT_CRITIQUE_2026-08-17 P0, H3). The fix is
+    disclosure, not re-judging: name both frames so both lines are true statements about
+    named frames. When the frames agree (or the lead IS the lagna frame) nothing changes."""
+    clause = _NAV_CLAUSE.get(navamsa, "")
+    if (clause and lead_frame != "lagna" and lagna_navamsa is not None
+            and lagna_navamsa != navamsa):
+        clause += (f" - read from the {lead_frame.capitalize()}-frame; from the Lagna "
+                   f"the navamsa {_NAV_SHORT.get(lagna_navamsa, 'is unread')}")
+    return clause
+
+
 def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
-             transit_note: Optional[str], activation: tuple[str, ...] = ()) -> str:
+             transit_note: Optional[str], activation: tuple[str, ...] = (), *,
+             lead_frame: str = "lagna", lagna_navamsa: Optional[str] = None) -> str:
     parts = [f"the rashi reads **{verdict}**"]
-    parts.append({"confirms": "and the navamsa confirms it (delivered)",
-                  "weakens": "but the navamsa qualifies/withholds it (delivery in doubt)",
-                  "neutral": "the navamsa is neutral",
-                  "unknown": ""}.get(navamsa, ""))
+    parts.append(_navamsa_clause(navamsa, lead_frame, lagna_navamsa))
     if varga:                                       # "varga_D10=Sun:own|Mercury:neutral"
         body = varga.split("=", 1)[-1]
         parts.append(f"the matter-varga shows {body}")
@@ -149,10 +176,12 @@ def _compose(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str
 
 def _compose_v2(verdict: str, navamsa: str, varga: Optional[str], sav: Optional[str],
                 transit_note: Optional[str], activation: tuple[str, ...],
-                birth_year: int) -> str:
+                birth_year: int, *, lead_frame: str = "lagna",
+                lagna_navamsa: Optional[str] = None) -> str:
     """`_compose` with pre-birth activation windows dropped (reader-facing correctness)."""
     return _compose(verdict, navamsa, varga, sav, transit_note,
-                    tuple(_live_windows(activation, birth_year)))
+                    tuple(_live_windows(activation, birth_year)),
+                    lead_frame=lead_frame, lagna_navamsa=lagna_navamsa)
 
 
 def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
@@ -173,7 +202,12 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
     matters: list[MatterReading] = []
     for pf in reading.proformas:
         h = pf.house
-        led = pf.significations[0].ledger
+        sv0 = pf.significations[0]
+        led = sv0.ledger
+        # The LAGNA-frame ledger (the lead may be the Moon/Karaka frame) — used to DISCLOSE
+        # the frame in the navamsa clause when the two frames' testimonies differ.
+        lagna_led = next((L for L in (sv0.ledger,) + sv0.alt_ledgers if L.frame == "lagna"),
+                         sv0.ledger)
         md = dict(pf.metadata)
         varga = next((f"{k}={v}" for k, v in pf.metadata if k.startswith("varga_")), None)
         sav = md.get("sav_bindus")
@@ -191,7 +225,8 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
             matter_varga=varga, ashtakavarga=sav,
             activation=tuple(_live_windows(activ, birth.year)), transit_note=tnote,
             reading=_compose_v2(pf.rollup, led.navamsa_status, varga, sav, tnote,
-                                activ, birth.year) + active_now))
+                                activ, birth.year, lead_frame=led.frame,
+                                lagna_navamsa=lagna_led.navamsa_status) + active_now))
 
     al = sp.arudha_lagna(chart).sign
     ul = arudha.upapada_lagna(chart)

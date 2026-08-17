@@ -1,15 +1,25 @@
 """The Yoga deep-read (section v21) — every fired yoga as a complete study.
 
 Per fired yoga: Raman's definition QUOTED verbatim around its 3HC/HPA citation
-(`sources.passage`), the exact computation (the condition tree rendered readable), why it
-qualifies (each participant's chart facts), MEASURED strength (Shadbala rupas +
-bhanga-aware effective dignity — deliberately no invented percentage: numeric weighting
-is measured-null in this project and Raman states no such figure), cancellation state
-(only bhangas Raman states — neecha bhanga via `bhangas.effective_dignity`; Kemadruma
-already folds its own bhanga into firing), modifying planets (aspect edges from the
-judgment graph), operating periods (the existing `yoga_timing` rows), and historical
-importance (Notable Horoscopes mentions, cited). Closes with a comparison ranking the
-chart's fired yogas by their participants' measured strength.
+(`sources.passage`; where the corpus is not mounted an honest absence line plus the
+record's paraphrase is rendered — never an empty quotation), the exact computation (the
+condition tree rendered readable), why it qualifies (each participant's chart facts),
+MEASURED strength (Shadbala rupas + bhanga-aware effective dignity — deliberately no
+invented percentage: numeric weighting is measured-null in this project and Raman states
+no such figure), cancellation state (only the ENCODED bhangas Raman states — neecha
+bhanga via `bhangas.effective_dignity`; Kemadruma already folds its own bhanga into
+firing; dusthana-formation nullification and Raja-Yoga Bhanga are disclosed as
+not-graded), modifying planets (aspect edges from the judgment graph), operating periods
+(the existing `yoga_timing` rows, quality rendered as prose), and historical importance
+(Notable Horoscopes mentions, cited). Closes with a comparison ranking the chart's fired
+yogas by their participants' measured strength.
+
+Participants are resolved SEMANTICALLY via `synthesis_rules._yoga_planets` — the same
+resolver the Yoga×Dasha timing section uses — so a flank yoga names the planet actually
+occupying the flank, not every candidate its condition tree enumerates. The syntactic
+graha-name scan (`participants`) remains only as a last-resort fallback; where neither
+resolves (the Nabhasa whole-chart patterns, multi-arm lordship yogas) the read says so
+plainly instead of claiming the chart lacks Shadbala.
 
 PURE RE-READ (PREC-10): nothing here re-decides whether a yoga fires.
 
@@ -112,6 +122,40 @@ class YogaDeepRead:
     comparison_rank: int                # 1 = strongest participants among fired yogas
 
 
+def _quality_prose(q) -> str:
+    """A `vimshottari.LordQuality` as reader prose — never the dataclass repr.
+
+    e.g. "well - friend, strong" / "poorly - combust, though vargottama (HTJAH-I:5372)".
+    The vargottama reconciliation clause (with Raman's vargottama-doubling citation,
+    HTJAH-I:5372) appears only when the flag is True yet the delivery tag reads
+    poorly/mixed — the case a reader would otherwise find contradictory. ASCII-safe.
+    """
+    bits: list[str] = []
+    if q.dignity and q.dignity not in ("neutral", "unknown"):
+        bits.append(q.dignity)
+    if q.combust:
+        bits.append("combust")
+    if q.strong is True:
+        bits.append("strong")
+    elif q.strong is False:
+        bits.append("weak")
+    if q.vargottama and q.tag not in ("poorly", "mixed"):
+        bits.append("vargottama")
+    prose = q.tag + (" - " + ", ".join(bits) if bits else "")
+    if q.vargottama and q.tag in ("poorly", "mixed"):
+        prose += ", though vargottama (HTJAH-I:5372)"
+    return prose
+
+
+#: Disclosure appended when no encoded cancellation applies — the two Raman-stated
+#: formation-strength modifiers the engine does NOT grade (citations already on record in
+#: `synthesis_rules.yoga_house_bearings`; never invented here).
+_CANCEL_NOT_GRADED: Final[str] = (
+    "none of the encoded Raman-stated cancellations applies; not graded here: "
+    "dusthana-formation nullification (HTJAH-I:2948-2956), Raja-Yoga Bhanga "
+    "(HTJAH-I:15903)")
+
+
 def _participant_facts(planet: str, r: "DetailedReport") -> Optional[ParticipantFacts]:
     from app.raman_saab.doctrine.synthesis_rules import _rupas, _strong
     from app.raman_saab.primitives.bhangas import effective_dignity
@@ -138,7 +182,15 @@ def _participant_facts(planet: str, r: "DetailedReport") -> Optional[Participant
 
 def build_yoga_deep_reads(r: "DetailedReport", graph: JudgmentGraph
                           ) -> tuple[YogaDeepRead, ...]:
-    """One deep-read per FIRED yoga, comparison-ranked by mean participant rupas."""
+    """One deep-read per FIRED yoga, comparison-ranked by mean participant rupas.
+
+    Participants come from the semantic resolver `synthesis_rules._yoga_planets` (the
+    planets that actually CAUSE the yoga on this chart — the same resolver the
+    Yoga×Dasha timing section uses); the syntactic `participants` scan is only a
+    last-resort fallback. A yoga with resolvable participants always ranks above one
+    without — an unresolvable yoga is a disclosed coverage gap, not a weak yoga.
+    """
+    from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
     from app.raman_saab.doctrine.yogas import YOGAS
     from app.raman_saab.render import _jd_to_date
 
@@ -151,7 +203,12 @@ def build_yoga_deep_reads(r: "DetailedReport", graph: JudgmentGraph
         cite = f"{fy.source.work}:{fy.source.line}"
         quote = passage(cite, context=3)
         qtext = (quote or {}).get("text", "").replace("\n", " ").strip()
-        parts = tuple(f for p in participants(rec.condition)
+        if not qtext:
+            # Honest absence — never an empty string rendered as a quotation.
+            qtext = (f"Definition at {cite} - source corpus not mounted on this "
+                     f"machine; paraphrase (from the engine's yoga record): {fy.effect}")
+        names = _yoga_planets(r.chart, fy) or participants(rec.condition)
+        parts = tuple(f for p in names
                       if (f := _participant_facts(p, r)) is not None)
         mean_rupas = (sum(f.rupas for f in parts if f.rupas is not None)
                       / max(1, sum(1 for f in parts if f.rupas is not None))
@@ -159,8 +216,7 @@ def build_yoga_deep_reads(r: "DetailedReport", graph: JudgmentGraph
         cancels = [f"{f.planet}: debilitation cancelled (neecha bhanga) — effective "
                    f"dignity {f.effective_dignity}"
                    for f in parts if f.dignity != f.effective_dignity]
-        cancel_note = ("; ".join(cancels) if cancels else
-                       "no cancellation Raman states applies to this chart's instance")
+        cancel_note = "; ".join(cancels) if cancels else _CANCEL_NOT_GRADED
         mods: list[str] = []
         part_names = {f.planet for f in parts}
         for e in graph.edges:
@@ -173,20 +229,28 @@ def build_yoga_deep_reads(r: "DetailedReport", graph: JudgmentGraph
                         mods.append(src)
         periods = tuple(
             f"{t.planet} {t.role}: {_jd_to_date(t.period_start_jd)} to "
-            f"{_jd_to_date(t.period_end_jd)} ({t.quality})"
+            f"{_jd_to_date(t.period_end_jd)} (delivers {_quality_prose(t.quality)})"
             for t in r.yoga_timing if t.yoga_id == fy.id)
         nh = next((v for k, v in NH_EXAMPLES.items() if k.lower() in fy.name.lower()),
                   ())
-        strength = ("participants' Shadbala mean "
-                    + (f"{mean_rupas:.2f} rupas" if mean_rupas is not None
-                       else "unavailable (no Shadbala on this chart)")
-                    + " — measured values; Raman assigns no percentage and none is "
-                      "invented")
+        if not parts:
+            strength = ("participants could not be resolved for this yoga's pattern "
+                        "(a whole-chart or multi-arm rule with no single causer) — no "
+                        "Shadbala mean is claimed; Raman assigns no percentage and none "
+                        "is invented")
+        else:
+            strength = ("participants' Shadbala mean "
+                        + (f"{mean_rupas:.2f} rupas" if mean_rupas is not None
+                           else "unavailable (no Shadbala on this chart)")
+                        + " — measured values; Raman assigns no percentage and none is "
+                          "invented")
         rows.append(dict(fy=fy, rec=rec, cite=cite, qtext=qtext, parts=parts,
                          mean=mean_rupas if mean_rupas is not None else -1.0,
                          cancel=cancel_note, mods=tuple(mods), periods=periods, nh=nh,
                          strength=strength))
-    rows.sort(key=lambda d: -d["mean"])
+    # Resolvable participants always outrank unresolvable ones; within each group,
+    # higher mean rupas first (the -1.0 sentinel never sinks a RESOLVED yoga).
+    rows.sort(key=lambda d: (0 if d["parts"] else 1, -d["mean"]))
     out: list[YogaDeepRead] = []
     for rank, d in enumerate(rows, 1):
         fy, rec = d["fy"], d["rec"]

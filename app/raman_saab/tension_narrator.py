@@ -17,11 +17,23 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  # pragma: no cover
     from app.raman_saab.detailed_report import DetailedReport
 
-#: dashboard matter -> the house its dedicated reader judges (for the PREC-1 narration).
+#: dashboard matter -> the house its dedicated reader judges (for the PREC-1 narration and
+#: the dashboard support column in the report renderers). The dashboard's matter keys are the
+#: 12 strings in `matter_varga_dashboard._DISPATCH`; each must resolve here or its support
+#: cell renders "-" (REPORT_CRITIQUE_2026-08-17 — 7 of 12 cells were dead). Houses follow
+#: each deep reader's own documented anchor (mirroring `detailed_report._MATTER_HOUSE`):
+#: siblings->3, property->4, comforts->4 (`matter_varga_reading`); mother->4 and father->9
+#: (`dwadasamsa_parents_reading`, HTJAH-I:4387); education->4 (AFB-6:23, HTJAH-I:4701,
+#: `siddhamsa_education_reading`); spiritual->9 — the project defines the matter as DHARMA
+#: (`matter_varga_reading._SPECS`: 9th house, sig "dharma", D-20 Vimsamsa "dharma/worship"),
+#: NOT moksha (12). Legacy per-house keys are kept for back-compat.
 _MATTER_HOUSE: dict[str, int] = {
     "health": 6, "wealth": 2, "courage": 3, "happiness": 4, "children": 5,
     "enemies": 6, "marriage": 7, "longevity": 8, "fortune": 9, "career": 10,
     "gains": 11, "losses": 12,
+    # dashboard matter keys (previously missing -> dead "-" support cells):
+    "siblings": 3, "mother": 4, "property": 4, "father": 9,
+    "comforts": 4, "education": 4, "spiritual": 9,
 }
 
 

@@ -24,6 +24,7 @@ from typing import Final
 
 from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.judges.saptamsa_reading import Tagged
+from app.raman_saab.ordinals import ordinal
 
 # Raman's Kuja-doṣa house set (from Lagna / Moon / Venus): the 2nd, 4th, 7th, 8th, 12th.
 _KUJA_HOUSES: Final[frozenset[int]] = frozenset({2, 4, 7, 8, 12})
@@ -94,7 +95,7 @@ def _kuja_comparison(a: KujaProfile, b: KujaProfile) -> tuple[Tagged, ...]:
     elif a.strength or b.strength:
         who = a if a.strength else b
         out.append(Tagged(
-            f"only the {who.role}'s chart carries Kuja doṣa (Mars in the {who.house_from_lagna}th "
+            f"only the {who.role}'s chart carries Kuja doṣa (Mars in the {ordinal(who.house_from_lagna)} "
             f"from Lagna; on {who.strength} of Lagna/Moon/Venus) → an imbalance to weigh",
             "RAMAN_EXPLICIT", "HTJAH-I:9352"))
     else:
@@ -116,11 +117,11 @@ def _overlay_one_way(a_role: str, a: RamanChart, b_role: str, b: RamanChart) -> 
         h = _house_from(b.asc_sign, p.sign)
         if h in _SUPPORTIVE:
             out.append(Tagged(
-                f"{a_role}'s {planet} falls in {b_role}'s {h}th house (a benefic in a supportive "
+                f"{a_role}'s {planet} falls in {b_role}'s {ordinal(h)} house (a benefic in a supportive "
                 "place) — a harmonising contact", "RAMAN_EXPLICIT", "HTJAH-I:9328"))
         elif h in _DIFFICULT:
             out.append(Tagged(
-                f"{a_role}'s {planet} falls in {b_role}'s {h}th (a 6/8/12 place) — a straining "
+                f"{a_role}'s {planet} falls in {b_role}'s {ordinal(h)} (a 6/8/12 place) — a straining "
                 "contact", "RAMAN_GENERAL_PRINCIPLE"))
     return out
 
@@ -134,7 +135,7 @@ def _sun_moon(a_role: str, a: RamanChart, b_role: str, b: RamanChart) -> tuple[T
         return (Tagged(f"{a_role}'s and {b_role}'s Moons are 2/12 apart (dwirdwādaśā) — a difficult "
                        "mind-contact", "RAMAN_EXPLICIT", "HTJAH-I:9336"),)
     if d in (1, 5, 7, 9):
-        return (Tagged(f"{a_role}'s and {b_role}'s Moons are in harmony ({d}th apart)",
+        return (Tagged(f"{a_role}'s and {b_role}'s Moons are in harmony ({ordinal(d)} apart)",
                        "RAMAN_GENERAL_PRINCIPLE"),)
     return ()
 

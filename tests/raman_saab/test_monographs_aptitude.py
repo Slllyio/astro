@@ -13,7 +13,8 @@ import pytest
 
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.detailed_report import build_detailed_report
-from app.raman_saab.monographs import AptitudeProfile, build_aptitude_profile
+from app.raman_saab.monographs import (AptitudeProfile, PsychProfile,
+                                       build_aptitude_profile, build_psych_profile)
 
 _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 
@@ -93,3 +94,44 @@ class TestBuildAptitudeProfile:
         md = to_markdown(report)
         assert "## Aptitude, intelligence & work style" in md
         assert "Mercury (buddhi)" in md
+
+
+class TestPsychProfileWithoutCorpus:
+    """P0 fix (REPORT_CRITIQUE_2026-08-17): the psych chapter must NEVER vanish just
+    because the HPA-18 verbatim pull is empty — the Moon state, temperament, nature
+    stamp and AK are all computed. The quote field carries an honest-absence line."""
+
+    def test_empty_pull_still_builds_a_renderable_profile(self, report, monkeypatch):
+        """passage() returning None (corpus absent) yields a full PsychProfile, not None."""
+        import app.raman_saab.monographs as mono
+        monkeypatch.setattr(mono, "passage", lambda *a, **k: None)
+        ps = build_psych_profile(report)
+        assert isinstance(ps, PsychProfile)
+        # all COMPUTED rows still present
+        assert ps.moon_state
+        assert ps.woven
+        assert ps.atmakaraka in ("Sun", "Moon", "Mars", "Mercury", "Jupiter",
+                                 "Venus", "Saturn")
+
+    def test_absence_line_reuses_the_existing_citation(self, report, monkeypatch):
+        """The absence line names the per-lagna HPA-18 anchor already in the code —
+        never an invented line number — and flows through the quote field so no
+        renderer needs a change."""
+        import app.raman_saab.monographs as mono
+        from app.raman_saab.monographs import LAGNA_BLOCKS
+        monkeypatch.setattr(mono, "passage", lambda *a, **k: None)
+        ps = build_psych_profile(report)
+        cite = f"HPA-18:{LAGNA_BLOCKS[report.chart.asc_sign][0]}"
+        assert ps.lagna_quote == (
+            f"lagna portrait at {cite} - corpus not mounted on this machine", cite)
+
+    def test_real_quote_still_wins_when_the_corpus_is_present(self, report, monkeypatch):
+        """A non-empty pull renders verbatim — the absence line is the fallback only."""
+        import app.raman_saab.monographs as mono
+        monkeypatch.setattr(
+            mono, "passage",
+            lambda cite, **k: {"work": "HPA-18", "start": 1, "end": 2,
+                               "text": "The native is of noble bearing."})
+        ps = build_psych_profile(report)
+        assert ps.lagna_quote[0] == "The native is of noble bearing."
+        assert "corpus not mounted" not in ps.lagna_quote[0]

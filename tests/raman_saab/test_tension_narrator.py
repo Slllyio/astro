@@ -54,6 +54,36 @@ class TestTensionNarrator:
         assert narrate_tensions(report) == narrate_tensions(report)
 
 
+class TestMatterHouseCoverage:
+    """REPORT_CRITIQUE_2026-08-17 — 7 of the 12 dashboard matters printed '-' in the
+    support column because `_MATTER_HOUSE` mapped only the legacy per-house keys."""
+
+    def test_every_dashboard_matter_resolves_to_a_house(self, report):
+        """Every dashboard matter key maps to the house its dedicated deep reader judges
+        (spiritual is DHARMA -> 9, per `matter_varga_reading._SPECS`, not moksha/12)."""
+        from app.raman_saab.judges.matter_varga_dashboard import _DISPATCH
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE
+        for en in report.dashboard.entries:
+            assert en.matter in _MATTER_HOUSE, f"dead support cell: {en.matter}"
+            assert _MATTER_HOUSE[en.matter] in range(1, 13)
+        assert {m for m, *_ in _DISPATCH} <= set(_MATTER_HOUSE)
+        assert _MATTER_HOUSE["spiritual"] == 9
+        # the mapping mirrors detailed_report's own documented anchors, key for key
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as _dr_map
+        assert all(_MATTER_HOUSE[m] == h for m, h in _dr_map.items())
+
+    def test_dashboard_support_cells_are_live_in_markdown(self, report):
+        """The twelve-matters-at-a-glance table renders a real support readout (High/
+        Medium/Low + testimony counts) for every matter — no '-' cells."""
+        md = to_markdown(report)
+        block = md.split("## The twelve matters at a glance")[1].split("\n## ")[0]
+        rows = [ln for ln in block.splitlines()
+                if ln.startswith("| ") and "**" in ln]
+        assert len(rows) == 12
+        for row in rows:
+            assert not row.rstrip().endswith("| - |"), f"dead support cell: {row}"
+
+
 class TestPipelineConsumption:
     """The diagram's arrows, enforced by consumption: prose naming census values can only
     exist because the census ran upstream of the narrative engine."""

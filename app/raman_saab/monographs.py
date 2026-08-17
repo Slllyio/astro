@@ -240,9 +240,13 @@ def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
     rng = LAGNA_BLOCKS.get(asc)
     if rng is None:
         return None
-    quote = _pull("HPA-18", rng)
-    if not quote:
-        return None
+    cite = f"HPA-18:{rng[0]}"
+    # REPORT COMPLETENESS: the Moon state, temperament, nature stamp and AK below are
+    # COMPUTED — a missing verbatim pull (corpus not vendored on this machine) must never
+    # hide them. The honest-absence line flows through the existing quote field, so every
+    # renderer shows the chapter unchanged.
+    quote = _pull("HPA-18", rng) or (
+        f"lagna portrait at {cite} - corpus not mounted on this machine")
     try:
         core = build_trimsamsa_health_reading(r.chart).core
         moon = (f"the Moon (manas) in house {core.moon_house}, {core.moon_dignity}"
@@ -263,7 +267,7 @@ def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
         "each thread is quoted or re-read from its own section; nothing here is a new "
         "judgment")
     return PsychProfile(
-        lagna_quote=(quote, f"HPA-18:{rng[0]}"),
+        lagna_quote=(quote, cite),
         moon_state=moon,
         temperament=r.ruler.temperament,
         nature_stamp=r.ruler.stamps_nature,

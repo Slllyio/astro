@@ -7,6 +7,7 @@ from __future__ import annotations
 from app.raman_saab.judges.dwadasamsa_parents_reading import (
     DwadasamsaParentsReading, ParentPicture)
 from app.raman_saab.judges.saptamsa_reading import Tagged
+from app.raman_saab.ordinals import ordinal
 
 _SIGN = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
          "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -22,7 +23,7 @@ def _tag(t: Tagged) -> str:
 
 
 def _parent_lines(p: ParentPicture) -> list[str]:
-    out = [f"  [{p.parent}]  {p.house}th : {_sign(p.house_sign)} (lord {p.house_lord} in house "
+    out = [f"  [{p.parent}]  {ordinal(p.house)} : {_sign(p.house_sign)} (lord {p.house_lord} in house "
            f"{p.house_lord_house}, {p.house_lord_dignity}); kāraka {p.karaka} in house "
            f"{p.karaka_house} ({p.karaka_dignity})"]
     if p.house_occupants:

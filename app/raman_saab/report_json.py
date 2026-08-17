@@ -27,7 +27,9 @@ from typing import Any
 
 from app.raman_saab.detailed_report import DetailedReport, graded_buckets
 from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
+from app.raman_saab.plain_terms import SECTION_METHOD as _SECTION_METHOD
 from app.raman_saab.plain_terms import gloss_dict as _gloss
+from app.raman_saab.section_meta import section_meta_json as _section_meta
 from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED as _MIN_REQ
 
 
@@ -153,6 +155,14 @@ def to_report_dict(r: DetailedReport) -> dict:
         "maraka_period_now": r.maraka_period_now,
         "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
         "interpretation_guide": INTERPRETATION_GUIDE,  # v18 — chart-independent doctrine metadata
+        # per-section plain-language layer (2026-08-17 reframe) — chart-independent,
+        # same transport precedent as interpretation_guide. section_meta carries the
+        # EN+HI subtitles / reader-questions / guided-reading steps; section_method
+        # carries the "Why astrologers examine this" preambles already rendered on
+        # the markdown + standalone surfaces, so the interactive page can too.
+        "section_meta": _section_meta(),
+        "section_method": {k: {"why": why, "order": list(order)}
+                           for k, (why, order) in _SECTION_METHOD.items()},
         # S1 synthesis layer — the explicit judgment graph (pure re-read; PREC-10 applies)
         "judgment_graph": {"nodes": _each(_jg.nodes), "edges": _each(_jg.edges)},
         "planet_bios": _each(r.planet_bios),         # v20 — dominant-graha biographies (S2)

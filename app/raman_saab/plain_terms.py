@@ -195,6 +195,62 @@ SECTION_METHOD: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
          "the 3rd house (courage and initiative)",
          "the 10th house's modes and the navamsa-dispositor of its lord",
          "the strongest planet's field")),
+    # 2026-08-17 reframe: ten more chapters gain the same preamble. Rendered on the
+    # interactive page via the generic section_method transport; markdown/standalone
+    # adopt in a later pass (they call _method_preamble per id explicitly).
+    "yogas": (
+        "For yogas, the doctrine asks three things of every named combination",
+        ("does the geometry actually hold in this chart",
+         "are its participating planets strong enough to deliver",
+         "is any cancellation (bhanga) present — only Raman-stated cancellations count")),
+    "timeline": (
+        "For timing, Raman's 'When Do Indications Fructify?' method grades every period",
+        ("does the period lord own, occupy or aspect the house — or its lord",
+         "does the sub-period lord influence the same house",
+         "are the two lords associated (conjunct or in mutual aspect)",
+         "the four tiers that follow: par excellence, ordinary, limited, feeble")),
+    "shadbala": (
+        "For strength, the six classical components are computed separately then summed",
+        ("positional (sthana)", "directional (dig)", "temporal (kala)",
+         "motional (cheshta)", "natural (naisargika)", "aspectual (drik)",
+         "the total in rupas against each planet's required minimum")),
+    "ashtakavarga": (
+        "For the benefic-point grid, each planet contributes points from eight vantages",
+        ("the seven planets and the lagna each donate favourable places",
+         "the sign totals (out of 56) grade every sign's carrying capacity",
+         "transits through high-bindu signs are received better — the gochara cross-check")),
+    "gochara": (
+        "For transits, the classical method reads three layers together",
+        ("each planet's station counted from the natal Moon sign",
+         "the vedha (obstruction) check — another planet can cancel a good station",
+         "the Ashtakavarga bindus of the transited sign as the fine grade")),
+    "divisional": (
+        "For the divisional charts, each varga answers its own domain only",
+        ("the Navamsa for marriage and the strength of every planet",
+         "the Dasamsa for career, the Saptamsa for children",
+         "the Trimsamsa for misfortune, the Shashtiamsa as the final refinement",
+         "a planet judged in the varga that owns the question, never averaged across all")),
+    "soul": (
+        "For the Jaimini reading, the inspection order is fixed",
+        ("the Atmakaraka — the planet of highest degree among the seven",
+         "its Navamsa seat (the Karakamsa) and what sits with or aspects it",
+         "the Arudha lagna for the outer image", "the Upapada for the marriage thread")),
+    "ruler": (
+        "For the ruler of the nativity, two candidates are always compared",
+        ("the lord of the rising sign (ownership)",
+         "the strongest planet by Shadbala (power)",
+         "when they coincide the rulership is emphatic; when they differ both are read")),
+    "maraka": (
+        "For the maraka scheme, the doctrine designates determinants by rule — "
+        "a method Raman teaches, never a prediction",
+        ("the lords of the 2nd and 7th houses",
+         "planets occupying or closely associated with those houses",
+         "their periods are noted as classically sensitive — nothing more is asserted")),
+    "karmic": (
+        "For the karmic-evolution layer, the Jaimini points are read in sequence",
+        ("the Atmakaraka as the soul's chosen burden",
+         "the Karakamsa for the terrain of this life",
+         "the D-20 (worship) and D-60 (accumulated karma) as the finest lenses")),
 }
 
 

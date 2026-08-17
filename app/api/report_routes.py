@@ -279,6 +279,29 @@ def _critic_client():
     return _make_client(CRITIC_SYSTEM)
 
 
+_PROSE_SLOTS = ("opening", "headline", "sentence", "woven", "narrative", "summary",
+                "essence", "frame", "closing", "note", "caveat")
+
+
+def _section_prose(sec) -> str:
+    """The section's own prose, assembled truthfully from whatever shape it has."""
+    if sec is None:
+        return "The engine does not compute that section for this chart."
+    if isinstance(sec, str):
+        return sec
+    if isinstance(sec, list):
+        parts = [_section_prose(x) for x in sec[:12]]
+        return "\n".join(p for p in parts if p)
+    if isinstance(sec, dict):
+        parts = [str(sec[k]) for k in _PROSE_SLOTS if isinstance(sec.get(k), str) and sec[k]]
+        if parts:
+            return "\n\n".join(parts)
+        flat = [f"{k}: {v}" for k, v in sec.items()
+                if isinstance(v, (str, int, float)) and v != ""]
+        return "; ".join(flat) if flat else str(sec)
+    return str(sec)
+
+
 def _fallback_answer(r, scope: str) -> dict:
     """Deterministic, truthful fallback when the LLM is disabled/unavailable — the report's own
     plain prose for the scope, never an invented explanation."""
@@ -298,6 +321,13 @@ def _fallback_answer(r, scope: str) -> dict:
         text = (f"House {h} reads {pf['rollup']} (lord {pf['lord']}); "
                 + ", ".join(f"{s['signification']} {s['verdict']}" for s in pf["significations"])
                 + ".") if pf else "The engine does not compute that."
+    elif scope.startswith("section:") and scope.split(":", 1)[1] in R:
+        # generic section fallback (2026-08-17 reframe: the explain pill now reaches
+        # every heading, so an unknown-to-this-branch section must answer with its
+        # OWN content, not the nichod essence). Prose slots first; else a flat dump
+        # of the section's scalar fields — truthful, never invented.
+        sec = R[scope.split(":", 1)[1]]
+        text = _section_prose(sec)
     else:
         text = R["nichod"].get("essence", "")
     return {"text": text, "source": "fallback", "grounding_ratio": 1.0,

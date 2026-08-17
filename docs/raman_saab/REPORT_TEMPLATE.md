@@ -874,3 +874,38 @@ DOCTRINE_BACKLOG as a pending repair for user decision.
 - **v2 provenance.** The complementary sections (dashboard, Shadbala, maraka, Gochara/Vedha,
   soul, pitru, and the 9 vargas completing the Shodasavarga) were added 2026-07-25 from surfaces
   the engine already computed; no engine logic changed.
+
+### Interactive-page guided-journey reframe (2026-08-17, user-directed) — page-only, add-only
+
+The interactive page (`app/medini/templates/report.html`) was reframed around the v18
+interpretation guide's five reader-questions, per four user decisions taken this day:
+Sanskrit-first headings with plain subtitles beneath (never renames); the guided-journey
+folio order; interactive page first (markdown/standalone unchanged this pass); every new
+string EN+HI together. Mechanics, all ADD-only per REPORT COMPLETENESS:
+
+- **`app/raman_saab/section_meta.py` (new)** — per-section subtitle/reader-question/step/
+  explain-scope for all contract ids + page-only surfaces, shipped chart-independent as
+  `section_meta` + `section_method` in the report JSON (transport precedent:
+  `interpretation_guide`). Guard tests pin `_FORBIDDEN_RE`-cleanliness, EN+HI presence,
+  and key membership. `TERM_GLOSS` recorded as the page's canonical glossary.
+- **The page renders the two missing surfaces**: "How to read this report" (v18 guide,
+  every field) and "Yoga deep-read" (v21) — closing their render-on-2-of-3-surfaces
+  completeness defects on this surface. The four disclosure violations fixed (Jaimini
+  overlay + curse-yogas opened; divisional summaries made substantive; judgment-graph
+  edge-table summary now carries the byRel census).
+- **Folios re-cut cursor-only** (chapter() calls moved; no section block or heading string
+  changed): 1·the reading — 2·matters/chapters/body&span — 3·about-you-measured —
+  4·machinery/yogas/houses/divisional — 5·when — nichod. PAGE_TOC registry + five-question
+  TOC card; flip-aware jump links; mobile sticky step indicator.
+- **Visual hierarchy**, text unchanged: `.quote` for Raman verbatim, `ruleLine()` chips for
+  fired rules, `.timing`, decade cards; client-side first-occurrence glossary `<abbr>`
+  walker (the page counterpart of `_apply_glossary_abbrs`).
+- **SECTION_METHOD extended** by ten chapters (yogas, timeline, shadbala, ashtakavarga,
+  gochara, divisional, soul, ruler, maraka — method-not-prediction wording — and karmic).
+  Rendered on the page via the generic transport; markdown/standalone continue to call
+  `_method_preamble` per-id and adopt these in a later pass (recorded follow-up).
+- New test gate: `tests/raman_saab/test_report_page_js.py` (node --check over the page's
+  inline scripts) + `tests/raman_saab/test_section_meta.py`.
+
+The markdown/standalone surfaces and every frozen marker, order and guard slice are
+untouched this pass — the contract suite is the proof.

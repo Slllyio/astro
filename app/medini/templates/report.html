@@ -196,6 +196,42 @@
     text-transform:uppercase;color:var(--madder);border-bottom:1px solid rgba(160,40,40,.35);
     padding-bottom:.35rem;margin:1.6rem 0 .7rem}
   .folio-scroll h2.sec:first-child{margin-top:.2rem}
+  /* the plain-language layer under every doctrine heading (section_meta) */
+  .sec-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;
+    color:var(--ink-secondary);margin:.1rem 0 .15rem}
+  .sec-answers{font-size:.78rem;color:var(--ink-secondary);opacity:.85;margin:0 0 .55rem}
+  .sec-answers b{font-weight:600}
+  .method{background:rgba(232,213,168,.28);border-left:3px solid var(--saffron-deep);
+    border-radius:4px;padding:.5rem .7rem;margin:.3rem 0 .7rem}
+  .method-why{font-size:.85rem;margin:0 0 .3rem}
+  .method-order{font-size:.8rem;color:var(--ink-secondary);margin:.2rem 0 .1rem 1.1rem;padding:0}
+  .method-order li{margin:.12rem 0}
+  .toc{background:rgba(232,213,168,.22);border:1px solid rgba(139,111,71,.3);border-radius:6px;
+    padding:.6rem .8rem;margin:.4rem 0 1rem}
+  .toc-step{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.08em;color:var(--madder);
+    margin:.45rem 0 .15rem}
+  .toc a{display:inline-block;margin:.1rem .5rem .1rem 0;font-size:.82rem;color:var(--saffron-deep);
+    text-decoration:none;border-bottom:1px dotted rgba(139,111,71,.5)}
+  abbr.gloss{cursor:pointer;text-decoration:underline dotted rgba(139,111,71,.6);
+    text-underline-offset:2px}
+  .quote{font-family:'EB Garamond',serif;font-style:italic;font-size:.92rem;color:var(--ink);
+    border-left:3px solid var(--saffron-deep);padding:.15rem 0 .15rem .6rem;margin:.3rem 0}
+  .rule-id{font-size:.78rem;color:var(--ink-secondary);margin:.15rem 0}
+  .rule-id .tag{display:inline-block;font-family:var(--mono,monospace);font-size:.68rem;
+    background:rgba(139,111,71,.15);border:1px solid rgba(139,111,71,.35);border-radius:3px;
+    padding:0 .3rem;margin-right:.35rem}
+  .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
+  .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
+  .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
+  .decade-cols>div{flex:1 1 180px}
+  .decade .chip{display:inline-block;font-size:.74rem;border-radius:3px;padding:0 .35rem;
+    margin:.08rem .2rem .08rem 0;border:1px solid rgba(139,111,71,.3)}
+  .chip.fav{background:color-mix(in srgb, var(--fav) 18%, transparent)}
+  .chip.aff{background:color-mix(in srgb, var(--aff) 18%, transparent)}
+  .step-now{position:sticky;top:0;z-index:5;background:var(--paper,#f4ead2);font-size:.72rem;
+    padding:.2rem .6rem;border-bottom:1px solid rgba(139,111,71,.3);color:var(--ink-secondary);
+    display:none}
+  @media (max-width:700px){ .step-now{display:block} }
   .folio-scroll h2.sec .explain{font-family:var(--serif);color:var(--saffron-deep);background:rgba(232,213,168,.6);
     border-color:rgba(139,111,71,.4)}
   .folio-scroll .lede{font-family:'EB Garamond',serif;color:var(--ink-primary)}
@@ -443,16 +479,16 @@
     </div>
 
     <!-- Leaves 2–11 — chapter folios (populated after cast) -->
-    <div class="leaf" data-page="2"><div class="leaf-page single"><div class="folio-scroll" id="leaf2-body"></div><div class="folio-mark" data-i18n="folio · what matters most">folio · what matters most</div></div></div>
-    <div class="leaf" data-page="3"><div class="leaf-page single"><div class="folio-scroll" id="leaf3-body"></div><div class="folio-mark" data-i18n="folio · signature & ruler">folio · signature &amp; ruler</div></div></div>
-    <div class="leaf" data-page="4"><div class="leaf-page single"><div class="folio-scroll" id="leaf4-body"></div><div class="folio-mark" data-i18n="folio · the charts">folio · the charts</div></div></div>
-    <div class="leaf" data-page="5"><div class="leaf-page single"><div class="folio-scroll" id="leaf5-body"></div><div class="folio-mark" data-i18n="folio · yogas & ashtakavarga">folio · yogas &amp; ashtakavarga</div></div></div>
-    <div class="leaf" data-page="6"><div class="leaf-page single"><div class="folio-scroll" id="leaf6-body"></div><div class="folio-mark" data-i18n="folio · houses">folio · houses</div></div></div>
-    <div class="leaf" data-page="7"><div class="leaf-page single"><div class="folio-scroll" id="leaf7-body"></div><div class="folio-mark" data-i18n="folio · matters & longevity">folio · matters &amp; longevity</div></div></div>
-    <div class="leaf" data-page="8"><div class="leaf-page single"><div class="folio-scroll" id="leaf8-body"></div><div class="folio-mark" data-i18n="folio · life-narrative">folio · life-narrative</div></div></div>
-    <div class="leaf" data-page="9"><div class="leaf-page single"><div class="folio-scroll" id="leaf9-body"></div><div class="folio-mark" data-i18n="folio · transits">folio · transits</div></div></div>
-    <div class="leaf" data-page="10"><div class="leaf-page single"><div class="folio-scroll" id="leaf10-body"></div><div class="folio-mark" data-i18n="folio · divisional & soul">folio · divisional &amp; soul</div></div></div>
-    <div class="leaf" data-page="11"><div class="leaf-page single"><div class="folio-scroll" id="leaf11-body"></div><div class="folio-mark" data-i18n="folio · insights">folio · insights</div></div></div>
+    <div class="leaf" data-page="2"><div class="leaf-page single"><div class="folio-scroll" id="leaf2-body"></div><div class="folio-mark" data-i18n="folio · 1 · the reading">folio · 1 · the reading</div></div></div>
+    <div class="leaf" data-page="3"><div class="leaf-page single"><div class="folio-scroll" id="leaf3-body"></div><div class="folio-mark" data-i18n="folio · 2 · the twelve matters">folio · 2 · the twelve matters</div></div></div>
+    <div class="leaf" data-page="4"><div class="leaf-page single"><div class="folio-scroll" id="leaf4-body"></div><div class="folio-mark" data-i18n="folio · 2 · matter chapters">folio · 2 · matter chapters</div></div></div>
+    <div class="leaf" data-page="5"><div class="leaf-page single"><div class="folio-scroll" id="leaf5-body"></div><div class="folio-mark" data-i18n="folio · 2 · body & span">folio · 2 · body &amp; span</div></div></div>
+    <div class="leaf" data-page="6"><div class="leaf-page single"><div class="folio-scroll" id="leaf6-body"></div><div class="folio-mark" data-i18n="folio · 3 · about you, measured">folio · 3 · about you, measured</div></div></div>
+    <div class="leaf" data-page="7"><div class="leaf-page single"><div class="folio-scroll" id="leaf7-body"></div><div class="folio-mark" data-i18n="folio · 4 · the machinery">folio · 4 · the machinery</div></div></div>
+    <div class="leaf" data-page="8"><div class="leaf-page single"><div class="folio-scroll" id="leaf8-body"></div><div class="folio-mark" data-i18n="folio · 4 · yogas & ashtakavarga">folio · 4 · yogas &amp; ashtakavarga</div></div></div>
+    <div class="leaf" data-page="9"><div class="leaf-page single"><div class="folio-scroll" id="leaf9-body"></div><div class="folio-mark" data-i18n="folio · 4 · houses">folio · 4 · houses</div></div></div>
+    <div class="leaf" data-page="10"><div class="leaf-page single"><div class="folio-scroll" id="leaf10-body"></div><div class="folio-mark" data-i18n="folio · 4 · divisional & soul">folio · 4 · divisional &amp; soul</div></div></div>
+    <div class="leaf" data-page="11"><div class="leaf-page single"><div class="folio-scroll" id="leaf11-body"></div><div class="folio-mark" data-i18n="folio · 5 · when — the timeline">folio · 5 · when — the timeline</div></div></div>
 
     <!-- Leaf 12 — colophon / back cover -->
     <div class="leaf" data-page="12"><div class="leaf-page single"><div class="folio-scroll" id="leaf12-scroll">
@@ -538,6 +574,25 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
 // words, matter names coming straight from the API) stays English for now — that is a
 // separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
 const I18N_HI = {
+  // section headings added by the 2026-08-17 reframe (plain-language layer)
+  'How to read this report':'यह रिपोर्ट कैसे पढ़ें',
+  'Judgment graph':'निर्णय-जाल',
+  'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
+  'Psychological profile':'मनोवैज्ञानिक चित्र',
+  'Rectification confidence':'जन्म-समय शुद्धि का विश्वास',
+  'Health & vulnerability read-out':'स्वास्थ्य व संवेदनशीलता पाठ',
+  'Arishta & Bhanga':'अरिष्ट और भंग',
+  'Marriage monograph':'विवाह अध्याय',
+  'Children chapter':'संतान अध्याय',
+  'Profession synthesis':'व्यवसाय संश्लेषण',
+  'Wealth chapter':'धन अध्याय',
+  'Aptitude, intelligence & work style':'योग्यता, बुद्धि और कार्यशैली',
+  'Decade indication timeline':'दशक-संकेत समयरेखा',
+  'Today for you (Muhurtha)':'आज आपके लिए (मुहूर्त)',
+  'Karmic evolution (Jaimini)':'कार्मिक विकास (जैमिनी)',
+  'Full life synthesis':'सम्पूर्ण जीवन संश्लेषण',
+  'Plain terms — every technical word, with why it matters':'सरल शब्दावली — हर पारिभाषिक शब्द, उसके महत्व सहित',
+
   "Detailed Reading": "विस्तृत फलादेश",
   "THE READING OF THE BIRTH CHART": "जन्म कुंडली का फलादेश",
   "tap or press ↓ to enter birth details": "जन्म विवरण भरने के लिए टैप करें या ↓ दबाएँ",
@@ -569,6 +624,16 @@ const I18N_HI = {
   "/library": "/library",
   "/home": "/home",
   "folio · birth details": "पत्र · जन्म विवरण",
+  "folio · 1 · the reading": "पत्र · १ · पाठ",
+  "folio · 2 · the twelve matters": "पत्र · २ · बारह विषय",
+  "folio · 2 · matter chapters": "पत्र · २ · विषय-अध्याय",
+  "folio · 2 · body & span": "पत्र · २ · देह और आयु",
+  "folio · 3 · about you, measured": "पत्र · ३ · आपके विषय में, मापा हुआ",
+  "folio · 4 · the machinery": "पत्र · ४ · यंत्र-रचना",
+  "folio · 4 · yogas & ashtakavarga": "पत्र · ४ · योग और अष्टकवर्ग",
+  "folio · 4 · houses": "पत्र · ४ · भाव",
+  "folio · 4 · divisional & soul": "पत्र · ४ · वर्ग और आत्मा",
+  "folio · 5 · when — the timeline": "पत्र · ५ · कब — समयरेखा",
   "folio · what matters most": "पत्र · सबसे महत्वपूर्ण बातें",
   "folio · signature & ruler": "पत्र · पहचान और स्वामी ग्रह",
   "folio · the charts": "पत्र · कुंडलियाँ",
@@ -759,6 +824,10 @@ const I18N_HI = {
 };
 
 let LANG = 'en';
+let RPT = null;
+let CUR_LEAF = 2;      // which manuscript leaf the render cursor is on (chapter())
+let PAGE_TOC = [];     // {label,id,leaf,step} for every rendered H2 — drives the TOC   // the current report JSON — set at render() entry so top-level
+                  // helpers (H2's plain-language layer) can read section_meta.
 function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
 // Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
 // and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
@@ -861,17 +930,28 @@ function fmtVal(k,v){ if(v==null) return '—';
   return String(v); }
 // generic table over an array of row-objects — renders EVERY column, nested values included
 // (never silently drops a column: locked "report completeness" rule in CLAUDE.md).
+// raw engine column names -> reader-facing headers (presentational only — every
+// column still renders; unknown keys keep the default underscore-to-space path).
+const COL_EN={sav_band:'sign score (SAV) band',bhava_bala_rank:'house strength (Bhava Bala) rank',
+  vedha_by:'obstructed (vedha) by',md_lord:'major-period (MD) lord',ad_lord:'sub-period (AD) lord',
+  natal_verdict:'natal verdict',start_jd:'starts',end_jd:'ends',ishta:'benefic score (ishta)',
+  kashta:'malefic score (kashta)',shadbala_rupas:'strength (rupas)',
+  shadbala_required:'required minimum',navamsa_sign:'navamsa sign',rasi_house:'house (rasi)',
+  combust_fraction:'combustion fraction',in_kakshya_of:'sub-division (kakshya) lord',
+  bindus:'benefic points (bindus)',quality:'window quality'};
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
   const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
-  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(k.replace(/_/g,' '))))));
+  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(COL_EN[k]||k.replace(/_/g,' '))))));
   for(const r of arr){ const tr=el('tr'); for(const k of keys){ const td=el('td');
     td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} tbl.append(tr);} return tbl; }
 // visible by default (open) — a section's values are never hidden behind a bare count.
-function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
+function sectionTable(title, arr, drop, note){ if(!arr||!arr.length) return;
   const d=el('details',{class:'card'}); d.setAttribute('open','');
   const sm=el('summary'); sm.append(t(title)+' ('+arr.length+')');
-  d.append(sm); const b=el('div',{class:'body'}); const sc=el('div',{class:'tscroll'});
+  d.append(sm); const b=el('div',{class:'body'});
+  if(note) b.append(para(t(note),'vz-note'));   // plain caption: what the table answers
+  const sc=el('div',{class:'tscroll'});
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
@@ -1274,12 +1354,56 @@ function run(){
 const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Ruler of the nativity':'section:ruler',
   'Preponderance of testimonies':'section:preponderance','Integrated insights':'section:insights','Yogas':'section:yogas',
   'Nichod (the essence)':'section:nichod'};
+// heading label -> SECTION_CONTRACT id, so H2 can pull the section_meta plain-language
+// layer (subtitle + reader-question) without touching any call site. Labels are
+// load-bearing (jumpLink/SCOPE) and stay EXACTLY as they are — this map only annotates.
+const SEC_ID={
+  'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
+  'How to read this report':'interpretation_guide',
+  'Planet biographies (dominant grahas)':'planet_bios',
+  'Plain terms — every technical word, with why it matters':'plain_terms_panel',
+  'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
+  'Charts — Rasi · Navamsa · Gochara':'chart_grids','Planetary positions':'positions',
+  'Rectification confidence':'rect_confidence','Yogas':'yogas',
+  'Ashtakavarga (Sarvashtakavarga)':'ashtakavarga','House-by-house':'houses',
+  'House strength cross-check':'house_strength','Preponderance of testimonies':'preponderance',
+  'The twelve matters at a glance':'dashboard','Longevity':'longevity',
+  'Health & vulnerability read-out':'health_readout','Arishta & Bhanga':'arishta',
+  'Marriage monograph':'marriage','Children chapter':'children','Profession synthesis':'profession',
+  'Wealth chapter':'wealth','Aptitude, intelligence & work style':'aptitude',
+  'Life-narrative (Vimshottari)':'timeline','Life-chapters':'life_chapters',
+  'Decade indication timeline':'decades','Transits (Gochara)':'gochara',
+  'Today for you (Muhurtha)':'muhurtha','Divisional deep-reads (Shodasavarga)':'divisional',
+  'Soul & destiny (Jaimini)':'soul','Karmic evolution (Jaimini)':'karmic',
+  'Pitru dosha screen (classical, non-Raman)':'pitru','Integrated insights':'synthesis',
+  'What stands out':'stands_out','Information content of this reading':'info_content',
+  'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
 function H2(label){ const h=el('h2',{class:'sec'},t(label)); h.id='sec-'+label.replace(/[^a-z]/gi,'').toLowerCase();
-  const scope=SCOPE[label]; if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
-    b.onclick=()=>explainSection(label,scope,h); h.append(b);} return h; }
+  { const sid=SEC_ID[label], mm=sid&&RPT&&RPT.section_meta&&RPT.section_meta[sid];
+    PAGE_TOC.push({label, id:h.id, leaf:CUR_LEAF, step:(mm?mm.step:0)}); }
+  const sid0=SEC_ID[label], m0=sid0&&RPT&&RPT.section_meta&&RPT.section_meta[sid0];
+  const scope=(m0&&m0.explain_scope)||SCOPE[label];
+  if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
+    b.onclick=()=>explainSection(label,scope,h); h.append(b);}
+  // the plain-language layer: doctrine heading stays; subtitle + the reader's
+  // question + the "why astrologers examine this" preamble are ADDED beneath
+  // (section_meta / section_method from the report JSON — add-only by design).
+  const m=m0;
+  if(!m) return h;
+  const hi=(LANG==='hi');
+  const f=document.createDocumentFragment(); f.append(h);
+  f.append(el('p',{class:'sec-sub'}, hi?m.subtitle_hi:m.subtitle_en));
+  const ans=el('p',{class:'sec-answers'}); ans.append(el('b',{}, hi?'उत्तर देता है: ':'Answers: '));
+  ans.append(hi?m.answers_hi:m.answers_en); f.append(ans);
+  const sm=RPT.section_method&&RPT.section_method[sid0];
+  if(sm){ const d=el('div',{class:'method'});
+    d.append(el('p',{class:'method-why'},(hi?'ज्योतिषी इसे क्यों परखते हैं — ':'Why astrologers examine this — ')+sm.why));
+    const ol=el('ol',{class:'method-order'}); (sm.order||[]).forEach(s=>ol.append(el('li',{},s)));
+    d.append(ol); f.append(d); }
+  return f; }
 
 async function explainSection(title,scope,afterEl){
   let box=afterEl.nextElementSibling;
@@ -1747,6 +1871,77 @@ async function prasna(){
 window.prasna=prasna;
 
 // ---- digest: click a "draws on" label to jump to that section (best-effort) ----
+const STEP_Q={1:'1 · What does this chart say, in plain English?',
+  2:'2 · Is this matter favourable?',3:'3 · How much of that is about me?',
+  4:'4 · Why does it read that way?',5:'5 · When?',0:'More'};
+const STEP_Q_HI={1:'१ · यह कुंडली सरल भाषा में क्या कहती है?',
+  2:'२ · क्या यह विषय शुभ है?',3:'३ · इसमें कितना मेरे बारे में है?',
+  4:'४ · यह ऐसा क्यों पढ़ा गया?',5:'५ · कब?',0:'और'};
+function buildToc(){
+  const body=$('leaf2-body'); if(!body||!PAGE_TOC.length) return;
+  const hi=(LANG==='hi');
+  const box=el('div',{class:'toc'});
+  box.append(el('div',{class:'toc-step'}, hi?'इस रिपोर्ट में — पाँच प्रश्न':'In this report — five questions'));
+  for(const step of [1,2,3,4,5,0]){
+    const items=PAGE_TOC.filter(x=>x.step===step);
+    if(!items.length) continue;
+    box.append(el('div',{class:'toc-step'}, hi?STEP_Q_HI[step]:STEP_Q[step]));
+    const row=el('div',{});
+    for(const it of items) row.append(jumpLink(it.label));
+    box.append(row); }
+  body.insertBefore(box, body.firstChild);
+  // mobile continuous mode: a slim sticky indicator tracking the current section
+  if(matchMedia('(max-width:700px)').matches && 'IntersectionObserver' in window){
+    let bar=$('step-now'); if(!bar){ bar=el('div',{class:'step-now'}); bar.id='step-now';
+      const host=$('manuscript')||document.body; host.prepend(bar); }
+    const io=new IntersectionObserver(es=>{ for(const e of es) if(e.isIntersecting){
+      const ent=PAGE_TOC.find(x=>x.id===e.target.id);
+      if(ent) bar.textContent=(hi?STEP_Q_HI[ent.step]:STEP_Q[ent.step])+' — '+t(ent.label); }},
+      {rootMargin:'0px 0px -80% 0px'});
+    document.querySelectorAll('h2.sec').forEach(h=>io.observe(h)); }
+}
+// Walk every folio's text nodes once; wrap the FIRST occurrence of each plain-terms
+// entry in a clickable <abbr class="gloss"> opening the glossary popup. Safe DOM only
+// (splitText + createElement); skips markup where wrapping would corrupt meaning.
+const GLOSS_SKIP=new Set(['CITE','ABBR','SVG','SCRIPT','STYLE','INPUT','BUTTON','SUMMARY','A','CODE']);
+function glossWalk(){
+  const terms=RPT&&RPT.plain_terms; if(!terms) return;
+  const names=Object.keys(terms).sort((a,b)=>b.length-a.length); if(!names.length) return;
+  const seen=new Set();
+  const rx=new RegExp('\\b('+names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','i');
+  for(let leaf=2;leaf<=12;leaf++){
+    const body=$('leaf'+leaf+'-body')||$('leaf'+leaf+'-scroll'); if(!body) continue;
+    const tw=document.createTreeWalker(body,NodeFilter.SHOW_TEXT,{acceptNode(n){
+      for(let e=n.parentElement;e;e=e.parentElement){
+        if(GLOSS_SKIP.has(e.tagName)||e.classList.contains('chip')||e.classList.contains('gloss-chip'))
+          return NodeFilter.FILTER_REJECT; }
+      return NodeFilter.FILTER_ACCEPT; }});
+    const hits=[];
+    for(let n=tw.nextNode();n;n=tw.nextNode()){
+      if(seen.size>=names.length) break;
+      const m=rx.exec(n.nodeValue||''); if(!m) continue;
+      const key=names.find(x=>x.toLowerCase()===m[1].toLowerCase());
+      if(!key||seen.has(key)) continue;
+      seen.add(key); hits.push([n,m.index,m[1].length,key]); }
+    for(const [n,idx,len,key] of hits){
+      const mid=n.splitText(idx); mid.splitText(len);
+      const ab=el('abbr',{class:'gloss'},mid.nodeValue);
+      const g=RPT.plain_terms[key];
+      if(g&&g.plain) ab.title=g.plain+(g.analogy?' — '+g.analogy:'');
+      // show the definition card INLINE beside the term (the #gloss-pop well lives on
+      // another folio, invisible from here in book mode) — click again to dismiss.
+      ab.onclick=(e)=>{e.preventDefault();
+        const host=ab.closest('p,li,td,div')||ab.parentElement;
+        const open=host&&host.nextElementSibling;
+        if(open&&open.classList&&open.classList.contains('gloss-inline')){ open.remove(); return; }
+        const p=glossPopup(RPT,key);
+        if(p&&host){ p.classList.add('gloss-inline'); host.after(p); } };
+      mid.parentNode.replaceChild(ab,mid); } }
+}
+function ruleLine(tag, text, cite){
+  const pp=el('p',{class:'rule-id'});
+  pp.append(el('span',{class:'tag'},String(tag)));
+  pp.append(citeText(String(text)+(cite?' ('+cite+')':''))); return pp; }
 function jumpLink(label){
   const a=el('a',{href:'#'},label);
   a.onclick=(e)=>{ e.preventDefault();
@@ -1754,8 +1949,14 @@ function jumpLink(label){
     let target=$(slug);
     if(!target){ const key=String(label).replace(/[^a-z]/gi,'').toLowerCase().slice(0,6);
       target=[...document.querySelectorAll('h2.sec')].find(h=>h.id.includes(key)); }
-    if(target){ target.scrollIntoView({behavior:'smooth',block:'start'});
-      target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); }
+    if(target){
+      const entry=PAGE_TOC.find(x=>x.id===target.id);
+      const flip=(entry&&typeof window.goToManuscriptPage==='function');
+      if(flip) window.goToManuscriptPage(entry.leaf);
+      // wait out the ~550ms page-flip lock before scrolling within the leaf
+      setTimeout(()=>{ target.scrollIntoView({behavior:'smooth',block:'start'});
+        target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); },
+        flip?620:0); }
   };
   return a;
 }
@@ -1832,10 +2033,12 @@ function renderTimeline(R, add){
 }
 
 function render(R, S, FQ){
+  RPT=R;  // expose to H2's plain-language layer
+  PAGE_TOC=[];
   // clear every chapter folio, then append each section-group into its leaf via chapter()
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
-  const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); };
+  const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); CUR_LEAF=i; };
 
   chapter(2);
   // ===== What matters most (the engine's ranked digest — first thing you see) =====
@@ -1875,10 +2078,40 @@ function render(R, S, FQ){
   if(pr.notable) add(para(pr.notable,'lede'));
   // S3 — tensions woven, never hidden: both poles + the governing v18 rule per sentence.
   if((pr.reconciliations||[]).length){
-    add(para(t('Where readings pull in different directions (both poles shown; the reconciling rule is in How to read this report):'),'muted'));
+    const recIntro=el('p',{class:'muted'});
+    recIntro.append(t('Where readings pull in different directions (both poles shown; the reconciling rule is in '));
+    recIntro.append(jumpLink('How to read this report')); recIntro.append('):');
+    add(recIntro);
     for(const rec of pr.reconciliations) add(para('· '+rec,'muted')); }
   if(pr.closing) add(para(pr.closing,'muted'));
 
+  // ===== How to read this report (v18 interpretation guide — completeness: this
+  // shipped in the JSON since v18 but the page never rendered it; every field shows) =====
+  const ig=R.interpretation_guide;
+  if(ig){
+    add(H2('How to read this report'));
+    if(ig.preamble) add(para(ig.preamble,'lede'));
+    for(const st of (ig.reading_order||[])){
+      const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((st.step!=null?st.step+' · ':'')+(st.answers||st.title||''));
+      c.append(s); const b=el('div',{class:'body'});
+      if(st.title) b.append(para(st.title,'di-title'));
+      if(st.adds) b.append(para(st.adds,'muted'));
+      if(st.section_id) b.append(para(t('Section: ')+st.section_id,'muted'));
+      if(st.caveat_ref) b.append(para(t('Caveat: ')+st.caveat_ref,'muted'));
+      c.append(b); add(c); }
+    add(sectionTable('Precedence rules — which reading governs when two differ', ig.precedence, [],
+      'When two sections disagree about the same matter, these rules say which one governs, which corroborates, and which are simply different grains of the same answer.'));
+    add(sectionTable('Parallel lenses — side by side, never averaged', ig.parallel_lenses));
+    add(sectionTable('The five axes every section reads on', ig.axes));
+    if((ig.not_a_contradiction||[]).length){
+      add(para(t('Pairs that look contradictory but are not:'),'muted'));
+      for(const x of ig.not_a_contradiction) add(para('· '+(typeof x==='string'?x:JSON.stringify(x)),'muted')); }
+    if((ig.relation_vocabulary||[]).length)
+      add(para(t('Relation vocabulary (closed set): ')+ig.relation_vocabulary.join(' · '),'muted'));
+  }
+
+  chapter(7);   // step 4 — WHY: the machinery
   // ===== Judgment graph (S1) — used already above (Your Reading's dominant-planet census
   // sentence); shown right beside it, not buried later in the chapter =====
   if(R.judgment_graph && (R.judgment_graph.edges||[]).length){
@@ -1913,7 +2146,10 @@ function render(R, S, FQ){
       Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
 
     const d=el('details',{class:'card'});
-    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
+    const sm=el('summary');
+    sm.append(t('Every edge (source · relation · target · provenance)')+' — '+jg.edges.length+' '+t('edges')+': '+
+      Object.entries(byRel).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+' '+v).join(' · '));
+    d.append(sm);
     const body=el('div',{class:'body'});
     body.append(sectionTable('', jg.edges));
     d.append(body); add(d); }
@@ -1955,6 +2191,7 @@ function render(R, S, FQ){
   if(_sm2) add(vizCard('Testimony support per house — favourable (left) vs adverse (right) witnesses', _sm2,
     'From the preponderance ledgers: each house\'s independent witnesses counted for and against its headline, with the High/Medium/Low support band. Counts, never probabilities — the full ledger is in Preponderance of testimonies.'));
   if(R.plain_terms){
+    chapter(2);   // step 1 — the glossary belongs with the plain reading
     add(H2('Plain terms — every technical word, with why it matters'));
     add(el('div',{id:'gloss-pop'}));
     const gl=el('div',{class:'pillrow'});
@@ -1962,7 +2199,7 @@ function render(R, S, FQ){
     add(gl);
     add(para(t('Tap any term for its plain name, an analogy, why it matters, and an example. Vocabulary only — never new astrology.'),'muted')); }
 
-  chapter(3);
+  chapter(7);   // step 4 — WHY: the chart's coordinates
   // ===== Chart signature =====
   add(H2('Chart signature'));
   const s=R.synthesis||{}, ov=R.overview||{};
@@ -1987,6 +2224,7 @@ function render(R, S, FQ){
   if(ru.temperament) add(para('Classical temperament: '+ru.temperament+' (HTJAH-I:6248-6268)','muted'));
   if(ru.signature) add(para(ru.signature));
 
+  chapter(4);   // step 2 — a matter chapter
   // ===== Psychological profile (v27) — completeness repair 2026-08-14: computed since
   // v27 but never rendered on this page (CLAUDE.md REPORT COMPLETENESS) =====
   if(R.psych){ const ps=R.psych;
@@ -1999,7 +2237,7 @@ function render(R, S, FQ){
     if(ps.nature_stamp) add(para('Nature & appearance stamped by — '+ps.nature_stamp+' (HTJAH-I:3892-3897)','muted'));
     if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted')); }
 
-  chapter(4);
+  chapter(7);   // step 4 — WHY: the raw chart data
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
   if(R.chart&&R.chart.planets){ add(H2('Charts — Rasi · Navamsa · Gochara'));
     const cw=el('div',{class:'charts'});
@@ -2019,8 +2257,10 @@ function render(R, S, FQ){
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
+  chapter(6);   // step 3 — how much is about YOU
   if(R.rect_confidence){ add(H2('Rectification confidence'));
     add(rectConfidencePanel(R.rect_confidence)); }
+  chapter(7);   // step 4 — strength visuals belong with the machinery
   const _sb=shadbalaBars(R);
   if(_sb) add(vizCard('Shadbala — planetary strength, ranked', _sb,
     'Bars rank the six-source Shadbala total (rupas) per planet; colour = functional nature for this Lagna. ★ = strongest planet, ○ = Lagna lord (the ruler of the nativity); the dashed line ≈ 5 rupas is Raman’s "strong" mark. Rahu/Ketu carry no Shadbala. Exact totals are the "Shadbala" column above.'));
@@ -2028,14 +2268,25 @@ function render(R, S, FQ){
   if(_ikb) add(vizCard('Ishta / Kashta — each planet\'s benefic share', _ikb,
     'For each planet, the green (ishta — benefic potential) vs red (kashta — malefic potential) split, with the dashed centre marking the 50% tipping point. These fields appear nowhere else in the report.'));
 
-  chapter(5);
+  chapter(8);   // step 4 — WHY: yogas
   // ===== Yogas + yoga timing (each yoga's printed EFFECT included) =====
   add(H2('Yogas'));
   for(const y of (R.yogas||[])){ const p=el('p',{class:'muted',style:'margin:.25rem 0'});
     p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
     if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
     add(p); }
-  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing));
+  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing, [],
+    'A yoga tends to deliver during the periods of the planets that form it — each row shows a yoga and the period windows of its lords.'));
+  // v21 yoga deep-read — completeness: shipped in JSON since v21, never rendered here.
+  if((R.yoga_deep||[]).length){
+    add(H2('Yoga deep-read'));
+    for(const y of R.yoga_deep){ const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((y.rank!=null?y.rank+'. ':'')+(y.name||y.id||'')+(y.kind?' ('+y.kind+')':''));
+      c.append(s); const b=el('div',{class:'body'});
+      for(const k in y){ const v=y[k]; if(v==null||v===''||k==='rank'||k==='name'||k==='id'||k==='kind') continue;
+        const row=el('p',{class:(k==='definition_quote'||k==='effect_quote')?'lede':'muted'});
+        row.append(el('b',{},t(k.replace(/_/g,' '))+': ')); row.append(citeText(fmtVal(k,v))); b.append(row); }
+      c.append(b); add(c); } }
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ add(H2('Ashtakavarga (Sarvashtakavarga)'));
@@ -2046,7 +2297,7 @@ function render(R, S, FQ){
     t.append(el('tr',{},...Object.values(R.sav).map(v=>el('td',{},String(v))))); add(t);
     add(para('Average 28 per sign, 337 total. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456).','muted')); }
 
-  chapter(6);
+  chapter(9);   // step 4 — WHY: the houses
   // ===== House-by-house (proforma + strength + witnesses) =====
   add(H2('House-by-house'));
   const _vw=verdictWheel(R);
@@ -2115,7 +2366,7 @@ function render(R, S, FQ){
       b.append(w); d.append(b); pg.append(d); }
     add(pg); }
 
-  chapter(7);
+  chapter(3);   // step 2 — is THIS matter favourable? (the twelve at a glance)
   // ===== The twelve matters (dashboard) — full, incl. the deciding reader =====
   if(R.dashboard?.entries){ add(H2('The twelve matters at a glance'));
     const _mt=matterTiles(R);
@@ -2125,6 +2376,7 @@ function render(R, S, FQ){
     if((R.dashboard.notes||[]).length) for(const nt of R.dashboard.notes)
       add(para((typeof nt==='object'?(nt.text||JSON.stringify(nt)):nt),'muted')); }
 
+  chapter(5);   // step 2 — body & span (method)
   // ===== Longevity + maraka =====
   add(H2('Longevity'));
   const lg=R.longevity||{};
@@ -2133,12 +2385,14 @@ function render(R, S, FQ){
   const _lgg=longevityGauge(R);
   if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
-  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
+  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
+    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast.'));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
     add(H2('Health & vulnerability read-out'));
     add(para(hr.caveat,'muted'));
-    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows));
+    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows, [],
+    'Body areas the chart marks for attention, each re-read from a section above — care indications, not diagnoses.'));
     if((hr.maraka_tiers||[]).length)
       add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
@@ -2150,33 +2404,34 @@ function render(R, S, FQ){
     add(H2('Arishta & Bhanga'));
     add(para('Balarishta '+(ar.balarishta_applies?('applies'+(ar.balarishta_cancelled?' but is cancelled':'')):'does not apply')+
       ((ar.balarishta_reasons||[]).length?(' — '+ar.balarishta_reasons.join('; ')):'')+'. Longevity band: '+(ar.band||'—')+'.'));
-    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','muted'));
+    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','quote'));
     for(const b of (ar.bhangas||[])) add(para('Bhanga: '+b[0]+' — dignity '+b[1]+' → effective '+b[2],'muted'));
     if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
     for(const p2 of (ar.protections||[])) add(para('Protection: '+p2,'muted'));
     if(ar.maraka_note) add(para(ar.maraka_note,'muted')); }
 
+  chapter(4);   // step 2 — the matter chapters
   // ===== Marriage monograph (v25) — completeness repair 2026-08-14 =====
   if(R.marriage){ const mg=R.marriage;
     add(H2('Marriage monograph'));
     add(para('Verdict (H7, unchanged): '+(mg.verdict||'—')+'. The 7th lord sits in house '+mg.lord_placement_house+'. Upapada: '+(mg.upapada||'—')+'.','lede'));
-    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','muted'));
-    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','muted'));
-    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','muted'));
-    for(const f of (mg.fired_kalatra||[])) add(para('Fired kalatra rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
-    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','muted'));
-    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'muted'));
+    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','quote'));
+    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','quote'));
+    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','quote'));
+    for(const f of (mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
+    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
-    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','muted')); }
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote')); }
 
   // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
   if(R.children){ const cc=R.children;
     add(H2('Children chapter'));
     add(para('Verdict (H5, unchanged): '+(cc.verdict||'—'),'lede'));
     for(const s2 of (cc.significations||[])) add(para(s2[0]+' — '+s2[1],'muted'));
-    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','muted'));
-    for(const f of (cc.fired_rules||[])) add(para('Fired rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
-    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'muted')); }
+    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','quote'));
+    for(const f of (cc.fired_rules||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'timing')); }
 
   // ===== Profession synthesis (v23) — completeness repair 2026-08-14 =====
   if(R.profession){ const pf=R.profession;
@@ -2196,11 +2451,11 @@ function render(R, S, FQ){
     add(H2('Aptitude, intelligence & work style'));
     if(ap.woven) add(para(ap.woven,'lede'));
     if(ap.intellect_verdict) add(para('Intellect (H5, Jupiter karaka) — '+ap.intellect_verdict+' (HTJAH-I:5012)'));
-    for(const f of (ap.intellect_fired||[])) add(para('Fired intellect combo ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    for(const f of (ap.intellect_fired||[])) add(ruleLine(f[0],'Fired intellect combo — '+f[1],f[2]));
     if(ap.mercury_state) add(para('Mercury (buddhi) — '+ap.mercury_state));
-    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')'));
-    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')'));
-    for(const f of (ap.moon_mind_fired||[])) add(para('The Moon\'s mental disposition ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')','quote'));
+    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')','quote'));
+    for(const f of (ap.moon_mind_fired||[])) add(ruleLine(f[0],'The Moon\'s mental disposition — '+f[1],f[2]));
     if(ap.jupiter_state) add(para('Jupiter (intellect karaka) — '+ap.jupiter_state,'muted'));
     if(ap.courage_verdict) add(para('Courage / initiative (H3) — '+ap.courage_verdict+' (HTJAH-I:3324)'));
     if(ap.trade_indication) add(para('Navamsa-dispositor trade — 10th lord '+ap.trade_indication[0]+', dispositor '+ap.trade_indication[1]+': '+ap.trade_indication[2]+' (HTJAH-II:10249)'));
@@ -2212,7 +2467,7 @@ function render(R, S, FQ){
     if(ap.mars_state) add(para('Mars\'s condition — '+ap.mars_state,'muted'));
     if((ap.style_modern||[]).length) add(para('Modern keywords [MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight] — '+ap.style_modern.join('; '),'muted')); }
 
-  chapter(8);
+  chapter(11);  // step 5 — WHEN
   // ===== Life-narrative timeline + companions =====
   add(H2('Life-narrative (Vimshottari)'));
   const _lp=lifePanel(R);
@@ -2220,10 +2475,14 @@ function render(R, S, FQ){
     'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
     add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
-  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
-  add(sectionTable('MD-lord condition outlook', R.md_condition));
-  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya));
-  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats));
+  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta, [],
+    'Each period-lord\'s computed benefic (ishta) vs malefic (kashta) balance — a lean for its period, not a verdict.'));
+  add(sectionTable('MD-lord condition outlook', R.md_condition, [],
+    'The state each major-period lord is in — strength, dignity, division — which colours how its period expresses.'));
+  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya, [],
+    'The finest sub-division of the running period: which planet holds each short interval.'));
+  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats, [],
+    'The benefic-point (Ashtakavarga) score of the sign each period-lord sits in — the seat its period rests on.'));
 
   // ===== Life-chapters =====
   add(H2('Life-chapters'));
@@ -2236,15 +2495,20 @@ function render(R, S, FQ){
     add(H2('Decade indication timeline'));
     if(dt.frame) add(para(dt.frame,'muted'));
     for(const dc of dt.decades){
-      add(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
-      for(const a of (dc.areas_favourable||[])) add(para('Favourable: '+a,'muted'));
-      for(const a of (dc.areas_challenged||[])) add(para('Challenged: '+a,'muted'));
-      for(const y of (dc.yogas_ripening||[])) add(para('Yoga ripening: '+y,'muted'));
-      for(const l2 of (dc.leans||[])) add(para('Lean: '+l2,'muted'));
-      if(dc.note) add(para(dc.note,'muted')); } }
+      const card=el('div',{class:'decade'});
+      card.append(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
+      const cols=el('div',{class:'decade-cols'});
+      const cf=el('div',{}); for(const a of (dc.areas_favourable||[])) cf.append(el('span',{class:'chip fav'},a));
+      const ca=el('div',{}); for(const a of (dc.areas_challenged||[])) ca.append(el('span',{class:'chip aff'},a));
+      if(cf.childNodes.length){ cf.prepend(el('div',{class:'muted'},t('Favourable'))); cols.append(cf); }
+      if(ca.childNodes.length){ ca.prepend(el('div',{class:'muted'},t('Challenged'))); cols.append(ca); }
+      if(cols.childNodes.length) card.append(cols);
+      for(const y of (dc.yogas_ripening||[])) card.append(para('Yoga ripening: '+y,'muted'));
+      for(const l2 of (dc.leans||[])) card.append(para('Lean: '+l2,'timing'));
+      if(dc.note) card.append(para(dc.note,'muted'));
+      add(card); } }
 
-  chapter(9);
-  // ===== Transits =====
+  // ===== Transits (still step 5 — WHEN) =====
   add(H2('Transits (Gochara)'));
   const _fm=gocharaFromMoon(R);
   if(_fm) add(vizCard('Current transits by house from the Moon', _fm,
@@ -2252,8 +2516,10 @@ function render(R, S, FQ){
   const _go=gocharaOutlook(R);
   if(_go) add(vizCard('Slow-mover transit outlook over time', _go,
     'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
-  add(sectionTable('Current transits with Vedha', R.gochara));
-  add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
+  add(sectionTable('Current transits with Vedha', R.gochara, [],
+    'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it.'));
+  add(sectionTable('Dasha × Transit confluence', R.dasha_transit, [],
+    'Rows where the running period and today\'s transits point the same way — agreement between the two timing systems.'));
 
   // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
   add(H2('Today for you (Muhurtha)'));
@@ -2266,7 +2532,7 @@ function render(R, S, FQ){
   chapter(10);
   // ===== Divisional deep-reads =====
   if((R.divisional||[]).length){ add(H2('Divisional deep-reads (Shodasavarga)'));
-    for(const dv of R.divisional){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(dv.label);
+    let _dvFirst=true; for(const dv of R.divisional){ const d=el('details',{class:'card'}); if(_dvFirst){d.setAttribute('open','');_dvFirst=false;} const sm=el('summary'); sm.append(dv.label+' — '+String(dv.body||'').replace(/\s+/g,' ').trim().slice(0,110)+'…');
       d.append(sm); const b=el('div',{class:'body'}); const pre=el('pre',{}); pre.style.whiteSpace='pre-wrap';
       pre.append(citeText(dv.body||'')); pre.style.fontFamily='inherit'; pre.style.fontSize='.82rem'; b.append(pre); d.append(b); add(d); } }
 
@@ -2274,25 +2540,25 @@ function render(R, S, FQ){
   if(R.soul){ add(H2('Soul & destiny (Jaimini)'));
     if(R.soul.narrative) add(para(R.soul.narrative));
     const lines=(R.soul.jaimini_overlay&&R.soul.jaimini_overlay.lines)||[];
-    if(lines.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
+    if(lines.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
       d.append(sm); const b=el('div',{class:'body'}); for(const ln of lines){ b.append(para('['+(ln.provenance||'')+(ln.cite?' '+ln.cite:'')+'] '+ln.text,'muted')); } d.append(b); add(d); } }
   // ===== Karmic evolution (v30, Jaimini — walled) — completeness repair 2026-08-14 =====
   if(R.karmic){ const km=R.karmic;
     add(H2('Karmic evolution (Jaimini)'));
     if(km.frame) add(para(km.frame,'muted'));
     add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
-    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','muted'));
+    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','quote'));
     if(km.d20_core) add(para('Vimsamsa (D-20) core — '+km.d20_core,'muted'));
     if(km.d60_core) add(para('Shashtiamsa (D-60) core — '+km.d60_core,'muted')); }
 
   if(R.pitru){ add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));
     const cur=R.pitru.curse_yogas||[];
-    if(cur.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
+    if(cur.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
       d.append(sm); const b=el('div',{class:'body'}); for(const t of cur){ b.append(para('['+(t.provenance||'')+(t.cite?' '+t.cite:'')+'] '+t.text,'muted')); } d.append(b); add(d); }
     else add(para('No classical ancestral-curse yoga fires on this chart.','muted')); }
 
-  chapter(11);
+  chapter(10);  // step 4 — cross-cutting syntheses live with divisional & soul
   // ===== Integrated insights =====
   if((R.insights||[]).length){ add(H2('Integrated insights'));
     for(const ins of R.insights){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(ins.name);
@@ -2300,6 +2566,7 @@ function render(R, S, FQ){
       const b=el('div',{class:'body'}); b.append(para(ins.simple_meaning)); b.append(para('This chart: '+ins.detail,'muted')); d.append(b); add(d); } }
 
   // ===== What stands out (full detail — rare first) =====
+  chapter(6);   // step 3 — how much is about YOU
   if((R.distinctive||[]).length){ add(H2('What stands out'));
     add(para('The readings that most distinguish this chart from the population, rarest first — information content, not a prediction.','muted'));
     const _dp=distinctivePlot(R);
@@ -2322,11 +2589,13 @@ function render(R, S, FQ){
 
   // ===== Full life synthesis (v29) — completeness repair 2026-08-14 =====
   if(R.life_synthesis&&(R.life_synthesis.paragraphs||[]).length){ const ls2=R.life_synthesis;
+    chapter(10);
     add(H2('Full life synthesis'));
     for(const pgh of ls2.paragraphs){ add(para(pgh[0],'lede')); add(para(pgh[1])); }
     if(ls2.closing) add(para(ls2.closing,'muted')); }
 
   // ===== Walled AI-interpretation panel (opt-in; labeled LLM speculation, NOT the engine) =====
+  chapter(11);  // the walled AI panel closes the WHEN folio
   add(aiInterpretPanel());
 
   chapter(12);
@@ -2341,6 +2610,11 @@ function render(R, S, FQ){
 
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
   if(FQ&&FQ.length) add(feedbackCard(FQ));
+
+  // ===== the guided-journey TOC — built from PAGE_TOC after every H2 registered =====
+  buildToc();
+  // ===== first-occurrence glossary marking (client-side _apply_glossary_abbrs) =====
+  glossWalk();
 }
 
 // ---- walled AI-interpretation panel: opt-in LLM speculation, explicitly labeled as
@@ -2440,9 +2714,9 @@ function feedbackCard(questions){
 </script>
 <script>
   // one label per leaf, in order (manuscript.js reads this before it initialises)
-  window.MANUSCRIPT_LABELS = ['COVER','BIRTH DETAILS','WHAT MATTERS MOST','SIGNATURE & RULER',
-    'THE CHARTS','YOGAS & ASHTAKAVARGA','HOUSES','MATTERS & LONGEVITY','LIFE-NARRATIVE',
-    'TRANSITS','DIVISIONAL & SOUL','INSIGHTS','NICHOD'];
+  window.MANUSCRIPT_LABELS = ['COVER','BIRTH DETAILS','1 · THE READING','2 · THE TWELVE MATTERS',
+    '2 · MATTER CHAPTERS','2 · BODY & SPAN','3 · ABOUT YOU, MEASURED','4 · THE MACHINERY',
+    '4 · YOGAS & ASHTAKAVARGA','4 · HOUSES','4 · DIVISIONAL & SOUL','5 · WHEN — THE TIMELINE','NICHOD'];
 </script>
 <script src="/static/js/manuscript.js"></script>
 </body>

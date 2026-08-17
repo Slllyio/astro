@@ -196,6 +196,16 @@
     text-transform:uppercase;color:var(--madder);border-bottom:1px solid rgba(160,40,40,.35);
     padding-bottom:.35rem;margin:1.6rem 0 .7rem}
   .folio-scroll h2.sec:first-child{margin-top:.2rem}
+  /* the plain-language layer under every doctrine heading (section_meta) */
+  .sec-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;
+    color:var(--ink-secondary);margin:.1rem 0 .15rem}
+  .sec-answers{font-size:.78rem;color:var(--ink-secondary);opacity:.85;margin:0 0 .55rem}
+  .sec-answers b{font-weight:600}
+  .method{background:rgba(232,213,168,.28);border-left:3px solid var(--saffron-deep);
+    border-radius:4px;padding:.5rem .7rem;margin:.3rem 0 .7rem}
+  .method-why{font-size:.85rem;margin:0 0 .3rem}
+  .method-order{font-size:.8rem;color:var(--ink-secondary);margin:.2rem 0 .1rem 1.1rem;padding:0}
+  .method-order li{margin:.12rem 0}
   .folio-scroll h2.sec .explain{font-family:var(--serif);color:var(--saffron-deep);background:rgba(232,213,168,.6);
     border-color:rgba(139,111,71,.4)}
   .folio-scroll .lede{font-family:'EB Garamond',serif;color:var(--ink-primary)}
@@ -538,6 +548,24 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
 // words, matter names coming straight from the API) stays English for now — that is a
 // separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
 const I18N_HI = {
+  // section headings added by the 2026-08-17 reframe (plain-language layer)
+  'Judgment graph':'निर्णय-जाल',
+  'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
+  'Psychological profile':'मनोवैज्ञानिक चित्र',
+  'Rectification confidence':'जन्म-समय शुद्धि का विश्वास',
+  'Health & vulnerability read-out':'स्वास्थ्य व संवेदनशीलता पाठ',
+  'Arishta & Bhanga':'अरिष्ट और भंग',
+  'Marriage monograph':'विवाह अध्याय',
+  'Children chapter':'संतान अध्याय',
+  'Profession synthesis':'व्यवसाय संश्लेषण',
+  'Wealth chapter':'धन अध्याय',
+  'Aptitude, intelligence & work style':'योग्यता, बुद्धि और कार्यशैली',
+  'Decade indication timeline':'दशक-संकेत समयरेखा',
+  'Today for you (Muhurtha)':'आज आपके लिए (मुहूर्त)',
+  'Karmic evolution (Jaimini)':'कार्मिक विकास (जैमिनी)',
+  'Full life synthesis':'सम्पूर्ण जीवन संश्लेषण',
+  'Plain terms — every technical word, with why it matters':'सरल शब्दावली — हर पारिभाषिक शब्द, उसके महत्व सहित',
+
   "Detailed Reading": "विस्तृत फलादेश",
   "THE READING OF THE BIRTH CHART": "जन्म कुंडली का फलादेश",
   "tap or press ↓ to enter birth details": "जन्म विवरण भरने के लिए टैप करें या ↓ दबाएँ",
@@ -759,6 +787,8 @@ const I18N_HI = {
 };
 
 let LANG = 'en';
+let RPT = null;   // the current report JSON — set at render() entry so top-level
+                  // helpers (H2's plain-language layer) can read section_meta.
 function t(s){ return LANG==='hi' ? (I18N_HI[s] || s) : s; }
 // Re-apply translation to every [data-i18n] element (static HTML chrome) — called on load
 // and whenever the toggle changes. JS-CONSTRUCTED content (headings, cards) calls t()
@@ -861,17 +891,28 @@ function fmtVal(k,v){ if(v==null) return '—';
   return String(v); }
 // generic table over an array of row-objects — renders EVERY column, nested values included
 // (never silently drops a column: locked "report completeness" rule in CLAUDE.md).
+// raw engine column names -> reader-facing headers (presentational only — every
+// column still renders; unknown keys keep the default underscore-to-space path).
+const COL_EN={sav_band:'sign score (SAV) band',bhava_bala_rank:'house strength (Bhava Bala) rank',
+  vedha_by:'obstructed (vedha) by',md_lord:'major-period (MD) lord',ad_lord:'sub-period (AD) lord',
+  natal_verdict:'natal verdict',start_jd:'starts',end_jd:'ends',ishta:'benefic score (ishta)',
+  kashta:'malefic score (kashta)',shadbala_rupas:'strength (rupas)',
+  shadbala_required:'required minimum',navamsa_sign:'navamsa sign',rasi_house:'house (rasi)',
+  combust_fraction:'combustion fraction',in_kakshya_of:'sub-division (kakshya) lord',
+  bindus:'benefic points (bindus)',quality:'window quality'};
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
   const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
-  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(k.replace(/_/g,' '))))));
+  const tbl=el('table'); tbl.append(el('tr',{},...keys.map(k=>el('th',{},t(COL_EN[k]||k.replace(/_/g,' '))))));
   for(const r of arr){ const tr=el('tr'); for(const k of keys){ const td=el('td');
     td.append(citeText(fmtVal(k,r[k]))); tr.append(td);} tbl.append(tr);} return tbl; }
 // visible by default (open) — a section's values are never hidden behind a bare count.
-function sectionTable(title, arr, drop){ if(!arr||!arr.length) return;
+function sectionTable(title, arr, drop, note){ if(!arr||!arr.length) return;
   const d=el('details',{class:'card'}); d.setAttribute('open','');
   const sm=el('summary'); sm.append(t(title)+' ('+arr.length+')');
-  d.append(sm); const b=el('div',{class:'body'}); const sc=el('div',{class:'tscroll'});
+  d.append(sm); const b=el('div',{class:'body'});
+  if(note) b.append(para(t(note),'vz-note'));   // plain caption: what the table answers
+  const sc=el('div',{class:'tscroll'});
   sc.append(rows(arr,drop)); b.append(sc); d.append(b); return d; }
 function citeChip(src){ if(!src) return null; const s=el('cite',{class:'src'},src.work+':'+src.line);
   s.onclick=(e)=>{e.preventDefault();openSrc(src.work+':'+src.line);}; return s; }
@@ -1274,12 +1315,51 @@ function run(){
 const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Ruler of the nativity':'section:ruler',
   'Preponderance of testimonies':'section:preponderance','Integrated insights':'section:insights','Yogas':'section:yogas',
   'Nichod (the essence)':'section:nichod'};
+// heading label -> SECTION_CONTRACT id, so H2 can pull the section_meta plain-language
+// layer (subtitle + reader-question) without touching any call site. Labels are
+// load-bearing (jumpLink/SCOPE) and stay EXACTLY as they are — this map only annotates.
+const SEC_ID={
+  'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
+  'Planet biographies (dominant grahas)':'planet_bios',
+  'Plain terms — every technical word, with why it matters':'plain_terms_panel',
+  'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
+  'Charts — Rasi · Navamsa · Gochara':'chart_grids','Planetary positions':'positions',
+  'Rectification confidence':'rect_confidence','Yogas':'yogas',
+  'Ashtakavarga (Sarvashtakavarga)':'ashtakavarga','House-by-house':'houses',
+  'House strength cross-check':'house_strength','Preponderance of testimonies':'preponderance',
+  'The twelve matters at a glance':'dashboard','Longevity':'longevity',
+  'Health & vulnerability read-out':'health_readout','Arishta & Bhanga':'arishta',
+  'Marriage monograph':'marriage','Children chapter':'children','Profession synthesis':'profession',
+  'Wealth chapter':'wealth','Aptitude, intelligence & work style':'aptitude',
+  'Life-narrative (Vimshottari)':'timeline','Life-chapters':'life_chapters',
+  'Decade indication timeline':'decades','Transits (Gochara)':'gochara',
+  'Today for you (Muhurtha)':'muhurtha','Divisional deep-reads (Shodasavarga)':'divisional',
+  'Soul & destiny (Jaimini)':'soul','Karmic evolution (Jaimini)':'karmic',
+  'Pitru dosha screen (classical, non-Raman)':'pitru','Integrated insights':'synthesis',
+  'What stands out':'stands_out','Information content of this reading':'info_content',
+  'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
 function H2(label){ const h=el('h2',{class:'sec'},t(label)); h.id='sec-'+label.replace(/[^a-z]/gi,'').toLowerCase();
   const scope=SCOPE[label]; if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
-    b.onclick=()=>explainSection(label,scope,h); h.append(b);} return h; }
+    b.onclick=()=>explainSection(label,scope,h); h.append(b);}
+  // the plain-language layer: doctrine heading stays; subtitle + the reader's
+  // question + the "why astrologers examine this" preamble are ADDED beneath
+  // (section_meta / section_method from the report JSON — add-only by design).
+  const sid=SEC_ID[label], m=sid&&RPT&&RPT.section_meta&&RPT.section_meta[sid];
+  if(!m) return h;
+  const hi=(LANG==='hi');
+  const f=document.createDocumentFragment(); f.append(h);
+  f.append(el('p',{class:'sec-sub'}, hi?m.subtitle_hi:m.subtitle_en));
+  const ans=el('p',{class:'sec-answers'}); ans.append(el('b',{}, hi?'उत्तर देता है: ':'Answers: '));
+  ans.append(hi?m.answers_hi:m.answers_en); f.append(ans);
+  const sm=RPT.section_method&&RPT.section_method[sid];
+  if(sm){ const d=el('div',{class:'method'});
+    d.append(el('p',{class:'method-why'},(hi?'ज्योतिषी इसे क्यों परखते हैं — ':'Why astrologers examine this — ')+sm.why));
+    const ol=el('ol',{class:'method-order'}); (sm.order||[]).forEach(s=>ol.append(el('li',{},s)));
+    d.append(ol); f.append(d); }
+  return f; }
 
 async function explainSection(title,scope,afterEl){
   let box=afterEl.nextElementSibling;
@@ -1832,6 +1912,7 @@ function renderTimeline(R, add){
 }
 
 function render(R, S, FQ){
+  RPT=R;  // expose to H2's plain-language layer
   // clear every chapter folio, then append each section-group into its leaf via chapter()
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
@@ -2035,7 +2116,8 @@ function render(R, S, FQ){
     p.append(el('b',{},y.name+' ('+y.kind+')')); const s2=citeChip(y.source);
     if(s2){ p.append(' '); p.append(s2);} if(y.effect){ p.append(' — '); p.append(citeText(y.effect)); }
     add(p); }
-  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing));
+  add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing, [],
+    'A yoga tends to deliver during the periods of the planets that form it — each row shows a yoga and the period windows of its lords.'));
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ add(H2('Ashtakavarga (Sarvashtakavarga)'));
@@ -2133,12 +2215,14 @@ function render(R, S, FQ){
   const _lgg=longevityGauge(R);
   if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
-  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn));
+  add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
+    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast.'));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
     add(H2('Health & vulnerability read-out'));
     add(para(hr.caveat,'muted'));
-    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows));
+    add(sectionTable('Indicators (each row re-reads an existing section)', hr.rows, [],
+    'Body areas the chart marks for attention, each re-read from a section above — care indications, not diagnoses.'));
     if((hr.maraka_tiers||[]).length)
       add(para('Maraka tiers: '+hr.maraka_tiers.map(t=>t[0]+' ('+t[1]+')').join(', ')+
         ' — 22nd drekkana lord: '+hr.drekkana22_lord+', 64th navamsa lord: '+hr.navamsa64_lord+'.','muted'));
@@ -2220,10 +2304,14 @@ function render(R, S, FQ){
     'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
     add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
-  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta));
-  add(sectionTable('MD-lord condition outlook', R.md_condition));
-  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya));
-  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats));
+  add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta, [],
+    'Each period-lord\'s computed benefic (ishta) vs malefic (kashta) balance — a lean for its period, not a verdict.'));
+  add(sectionTable('MD-lord condition outlook', R.md_condition, [],
+    'The state each major-period lord is in — strength, dignity, division — which colours how its period expresses.'));
+  add(sectionTable('Dasha Kakshya intervals', R.dasa_kakshya, [],
+    'The finest sub-division of the running period: which planet holds each short interval.'));
+  add(sectionTable('AV dasha-seat outlook', R.av_dasha_seats, [],
+    'The benefic-point (Ashtakavarga) score of the sign each period-lord sits in — the seat its period rests on.'));
 
   // ===== Life-chapters =====
   add(H2('Life-chapters'));
@@ -2252,8 +2340,10 @@ function render(R, S, FQ){
   const _go=gocharaOutlook(R);
   if(_go) add(vizCard('Slow-mover transit outlook over time', _go,
     'Jupiter, Saturn, Rahu and Ketu through the signs across the window — green = favourable transit, red = adverse, opacity by Ashtakavarga bindus; the dashed line is now. The confluence table is below.'));
-  add(sectionTable('Current transits with Vedha', R.gochara));
-  add(sectionTable('Dasha × Transit confluence', R.dasha_transit));
+  add(sectionTable('Current transits with Vedha', R.gochara, [],
+    'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it.'));
+  add(sectionTable('Dasha × Transit confluence', R.dasha_transit, [],
+    'Rows where the running period and today\'s transits point the same way — agreement between the two timing systems.'));
 
   // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
   add(H2('Today for you (Muhurtha)'));

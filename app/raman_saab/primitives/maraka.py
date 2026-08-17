@@ -139,11 +139,19 @@ def maraka_points(chart: RamanChart) -> MarakaPoints:
     """
     asc = chart.asc_sign
     seen: dict[str, str] = {}   # graha -> first (strongest) tier assigned
+    reasons: dict[str, list[str]] = {}   # graha -> qualifying clauses AT ITS KEPT TIER
 
-    def add(graha: str, tier: str) -> None:
+    def add(graha: str, tier: str, reason: str) -> None:
         if graha in ("Rahu", "Ketu"):
             return
         seen.setdefault(graha, tier)
+        # Record the clause only when it belongs to the tier the graha is kept at
+        # (setdefault semantics unchanged: first/strongest tier wins; a later, weaker-tier
+        # qualification neither re-tiers the graha nor pollutes its reason list).
+        if seen[graha] == tier:
+            bucket = reasons.setdefault(graha, [])
+            if reason not in bucket:
+                bucket.append(reason)
 
     l2 = _lord_of(2, asc)
     l7 = _lord_of(7, asc)
@@ -159,48 +167,68 @@ def maraka_points(chart: RamanChart) -> MarakaPoints:
         if l in chart.planets
     }
 
+    def _lord_label(lord: str) -> str:
+        """'2nd', '7th' or '2nd/7th' — which maraka house(s) this lord rules (naming the
+        clause precisely; one graha CAN rule both, e.g. Venus for an Aries lagna)."""
+        which = [h for h in (2, 7) if _lord_of(h, asc) == lord]
+        return "/".join({2: "2nd", 7: "7th"}[h] for h in which) or "maraka-house"
+
     # ── primary ──────────────────────────────────────────────────────────────
-    add(l2, "primary")
-    add(l7, "primary")
+    add(l2, "primary", "lord of the 2nd")
+    add(l7, "primary", "lord of the 7th")
     for h in (2, 7):
         for occ in _occupants(h, chart):
             if occ in NATURAL_MALEFICS:
-                add(occ, "primary")
+                add(occ, "primary", f"malefic occupying the {'2nd' if h == 2 else '7th'}")
     # malefic associates of the 2nd/7th lords — conjunct OR aspecting (drishti, Phase 2)
     for name, p in chart.planets.items():
         if name not in NATURAL_MALEFICS:
             continue
-        conjunct = p.rasi_house in death_lord_houses
-        aspects = any(lord in chart.planets and drishti.aspects_planet(name, lord, chart)
-                      for lord in death_lords)
-        if conjunct or aspects:
-            add(name, "primary")
+        for lord in sorted(death_lords):
+            lp = chart.planets.get(lord)
+            if lp is not None and name != lord and p.rasi_house == lp.rasi_house:
+                add(name, "primary",
+                    f"malefic conjunct the {_lord_label(lord)} lord {lord}")
+            if lord in chart.planets and drishti.aspects_planet(name, lord, chart):
+                add(name, "primary",
+                    f"malefic aspecting the {_lord_label(lord)} lord {lord}")
+        # membership unchanged from the pre-reasons implementation: conjunct meant
+        # "in ANY death-lord's house" (including the lord's own house), so keep that arm.
+        if p.rasi_house in death_lord_houses and name not in seen:
+            add(name, "primary", "malefic sharing a maraka-lord's sign")
 
     # ── secondary ────────────────────────────────────────────────────────────
     # benefics conjunct the 2nd/7th lords
     for name, p in chart.planets.items():
         if name in NATURAL_BENEFICS and p.rasi_house in death_lord_houses:
-            add(name, "secondary")
-    add(l3, "secondary")
-    add(l8, "secondary")
+            named = [lord for lord in sorted(death_lords)
+                     if (lp := chart.planets.get(lord)) is not None
+                     and lp.rasi_house == p.rasi_house and lord != name]
+            clause = (f"benefic conjunct the {_lord_label(named[0])} lord {named[0]}"
+                      if named else "benefic sharing a maraka-lord's sign")
+            add(name, "secondary", clause)
+    add(l3, "secondary", "lord of the 3rd")
+    add(l8, "secondary", "lord of the 8th")
 
     # ── tertiary ─────────────────────────────────────────────────────────────
     if "Saturn" in chart.planets and chart.planets["Saturn"].rasi_house in death_lord_houses:
-        add("Saturn", "tertiary")
-    add(l6, "tertiary")
-    add(l8, "tertiary")  # 8th lord gets secondary above; this is a no-op via setdefault
+        add("Saturn", "tertiary", "Saturn sharing a maraka-lord's sign")
+    add(l6, "tertiary", "lord of the 6th")
+    # 8th lord gets secondary above; this is a no-op via setdefault
+    add(l8, "tertiary", "lord of the 8th")
 
     # Weakest planet in the chart (lowest total Shadbala) — only when Shadbala filled.
     totals = _shadbala_totals(chart)
     weakest = _weakest_planet(totals)
     if weakest is not None:
-        add(weakest, "tertiary")
+        add(weakest, "tertiary", "weakest planet in the chart by Shadbala")
 
     # Rank by total Shadbala (1 = strongest); 0 when the chart carries no Shadbala.
     ranks = _strength_ranks(totals)
 
     units = tuple(
-        MarakaUnit(graha=g, tier=t, strength_rank=ranks.get(g, 0))
+        MarakaUnit(graha=g, tier=t, strength_rank=ranks.get(g, 0),
+                   reasons=tuple(reasons.get(g, ())))
         for g, t in seen.items()
     )
     return MarakaPoints(

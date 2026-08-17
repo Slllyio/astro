@@ -573,6 +573,26 @@ def _planet_avastha_score(avasthas: Optional[dict[str, object]], planet: str) ->
     return max(-1, min(1, score))
 
 
+def baladi_jagradadi_states(chart: RamanChart) -> dict[str, dict[str, str]]:
+    """READ-ONLY accessor (2026-08-17, report-completeness): the per-planet Baladi (ageing)
+    and Jagradadi (consciousness) avastha states this judge already computes via
+    ``_safe_avasthas`` and uses ONLY to scale verdict intensity (``_avastha_combined`` ->
+    ``_compute_degree``). Exposed so the report surfaces can SHOW what the judge consumed —
+    it re-reads the same pure computation and touches no verdict logic.
+
+    Provenance (same as the scoring tables above): CLASSICAL_NONCITABLE — Phaladeepika
+    Ch.3 Sl.3/Sl.10/Sl.20 + BPHS Ch.1 Sl.14-16 — outside Raman's own canon.
+
+    Returns {graha: {"baladi": state, "jagradadi": state}}; {} on Track-B stated-position
+    charts where a graha is missing (the same graceful degradation the judge itself uses).
+    """
+    avasthas = _safe_avasthas(chart)
+    if not avasthas:
+        return {}
+    return {planet: {"baladi": str(info["baladi"]), "jagradadi": str(info["jagradadi"])}
+            for planet, info in avasthas.items()}
+
+
 def _avastha_combined(avasthas: Optional[dict[str, object]], lord: str, karaka: str) -> int:
     """The verdict's combined deliverer avastha in {-1, 0, +1}: MIN of the lord's and karaka's
     scores. MIN = 'the weakest deliverer caps the intensity' (mirrors the karaka-veto

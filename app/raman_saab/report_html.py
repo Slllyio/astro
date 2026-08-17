@@ -26,8 +26,13 @@ from app.raman_saab.detailed_report import (
     _outlook_window_label,
     _vedha_word,
     DetailedReport,
+    adverse_transit_windows,
+    ascendant_position,
+    format_longitude,
+    format_maraka_reasons,
     graded_buckets,
     driver_entry,
+    nakshatra_lord,
     plain_bhukti_summary,
     planet_rows,
     rollup_driver,
@@ -822,6 +827,19 @@ def _digest_section(r: DetailedReport) -> str:
 
 def _positions(r: DetailedReport) -> str:
     rows = []
+    # Ascendant row first (2026-08-17 report-critique fix: exact degrees + Ascendant +
+    # nakshatra lord, so the cast is checkable against Jagannatha Hora and the birth
+    # Mahadasha is auditable from the Moon's star-lord).
+    asc_lon_s, asc_nak, asc_pada, asc_nav, asc_sign = ascendant_position(r.chart)
+    asc_nk = nakshatra_signature.signature_for(asc_nak)
+    rows.append(
+        f'<tr><td><b>Ascendant</b></td><td class="num">{_esc(asc_lon_s)}</td>'
+        f'<td>{_esc(_SIGN_NAME[asc_sign])}</td>'
+        f'<td class="num">1</td>'
+        f'<td>{_esc(asc_nk.name if asc_nk else "?")} ({asc_pada})</td>'
+        f'<td>{_esc(nakshatra_lord(asc_nak))}</td>'
+        f'<td>{_esc(_SIGN_NAME[asc_nav])}</td>'
+        f'<td class="muted-cell">&ndash;</td></tr>')
     for name, p in planet_rows(r.chart):
         nk = nakshatra_signature.signature_for(p.nakshatra)
         notes = []
@@ -832,16 +850,22 @@ def _positions(r: DetailedReport) -> str:
         if getattr(p, "combust_fraction", 0) >= 0.5:
             notes.append("combust")
         rows.append(
-            f'<tr><td><b>{_esc(name)}</b></td><td>{_esc(_SIGN_NAME[p.sign])}</td>'
+            f'<tr><td><b>{_esc(name)}</b></td><td class="num">{_esc(format_longitude(p.lon))}</td>'
+            f'<td>{_esc(_SIGN_NAME[p.sign])}</td>'
             f'<td class="num">{p.rasi_house}</td>'
             f'<td>{_esc(nk.name if nk else "?")} ({p.pada})</td>'
+            f'<td>{_esc(nakshatra_lord(p.nakshatra))}</td>'
             f'<td>{_esc(_SIGN_NAME[p.navamsa_sign])}</td>'
             f'<td class="muted-cell">{_esc(", ".join(notes)) or "&ndash;"}</td></tr>')
     return (
         '<h2 class="section" id="positions">Planetary positions</h2>'
-        '<p class="section-sub">So the reading can be checked.</p>'
-        '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th><th>sign</th>'
-        '<th class="num">house</th><th>nakshatra (pada)</th><th>navamsa</th><th>notes</th></tr>'
+        '<p class="section-sub">So the reading can be checked &mdash; exact sidereal (Lahiri) '
+        'longitudes in sign-degree form, Ascendant included; the nakshatra lord is each '
+        'star&rsquo;s Vimshottari lord (the Moon&rsquo;s row explains the birth Mahadasha).</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
+        '<th class="num">longitude</th><th>sign</th>'
+        '<th class="num">house</th><th>nakshatra (pada)</th><th>nak lord</th><th>navamsa</th>'
+        '<th>notes</th></tr>'
         f'</thead><tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -868,6 +892,8 @@ def _house_strength_section(r: DetailedReport) -> str:
         f'<tr><td>H{row.house} {_esc(_HOUSE_NAME[row.house])}</td>'
         f'<td><span class="chip chip--{row.verdict}">{_esc(row.verdict)}</span></td>'
         f'<td class="num">{row.bhava_bala_rank or "n/a"} of 12</td>'
+        f'<td class="num">'
+        f'{f"{row.bhava_bala / 60.0:.2f}" if row.bhava_bala is not None else "n/a"}</td>'
         f'<td class="num">{row.sav_bindus if row.sav_bindus is not None else "n/a"} '
         f'({_esc(row.sav_band)})</td></tr>'
         for row in r.house_strength)
@@ -896,7 +922,8 @@ def _house_strength_section(r: DetailedReport) -> str:
         'deliver real good results only mildly or partly enjoyed &mdash; a tendency, not an '
         'absolute rule.</p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
-        '<th class="num">Bhava Bala rank</th><th class="num">SAV bindus</th></tr></thead>'
+        '<th class="num">Bhava Bala rank</th><th class="num">Bhava Bala (rupas)</th>'
+        '<th class="num">SAV bindus</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>')
 
 
@@ -1020,12 +1047,107 @@ def _sav(r: DetailedReport) -> str:
         cells += (f'<td class="num heat" style="background:color-mix(in srgb,var({hue}) '
                   f'{t * 32:.0f}%,transparent)" title="{_esc(_SIGN_NAME[i])}: {v} bindus '
                   f'({v - 28:+d} vs average)">{v}</td>')
+    # AV completeness (2026-08-17, append-only): deviation row vs the 337/12 average and the
+    # Lagna / Moon-sign columns marked (Gochara is graded FROM the Moon), then the full BAV
+    # 7x12 matrix, the HPA-26 reductions and the Sodya Pinda — the layer the engine always
+    # computed, now shown. Same fields as the markdown renderer.
+    dev_cells = "".join(f'<td class="num">{v - 28:+d}</td>' for v in vals)
+    moon_p = r.chart.planets.get("Moon")
+    moon_sign = moon_p.sign if moon_p is not None else None
+    mark_cells = ""
+    for i in range(1, 13):
+        m = [lbl for lbl, hit in (("Lagna", i == r.chart.asc_sign),
+                                  ("Moon", i == moon_sign)) if hit]
+        mark_cells += f'<td class="strong">{"+".join(m)}</td>' if m else "<td></td>"
+    extra = (
+        '<p class="section-sub">Second row: deviation vs the 28-bindu average. Third row: '
+        'the Lagna column (house 1; count houses from it) and the Moon-sign column (transits '
+        'in the Gochara section are judged from the Moon).</p>')
+    if r.bav_matrix:
+        bav_head = ("<th>Planet</th>"
+                    + "".join(f"<th>{_SIGN_NAME[i][:3]}</th>" for i in range(1, 13))
+                    + "<th>Total</th><th>Natal seat</th>")
+        bav_rows = ""
+        for bm in r.bav_matrix:
+            row_cells = ""
+            for i, v in enumerate(bm.bindus, start=1):
+                cls = ' class="num strong"' if bm.seat_sign == i else ' class="num"'
+                row_cells += f"<td{cls}>{v}</td>"
+            seat = (f"{_esc(_SIGN_NAME[bm.seat_sign][:3])} ({bm.seat_bindus})"
+                    if bm.seat_sign is not None else "n/a")
+            bav_rows += (f"<tr><td>{_esc(bm.planet)}</td>{row_cells}"
+                         f'<td class="num">{bm.total}</td><td>{seat}</td></tr>')
+        extra += (
+            '<h3>Bhinnashtakavarga (BAV) &mdash; each planet&rsquo;s own bindu row</h3>'
+            '<p class="section-sub">The per-planet tables the SAV row above sums (canonical '
+            'Parashari benefic-places tables; each planet&rsquo;s total is a fixed checksum '
+            'and the seven rows always sum to 337). The Gochara table&rsquo;s &ldquo;AV '
+            'bindus&rdquo; and Kakshya columns, and the AV dasha-seat outlook, all read from '
+            'these rows. The highlighted cell is that planet&rsquo;s own natal sign &mdash; '
+            'its seat, shown again in the last column.</p>'
+            f'<div class="tablewrap"><table class="grid sav"><thead><tr>{bav_head}</tr>'
+            f'</thead><tbody>{bav_rows}</tbody></table></div>')
+    if r.bav_reduced:
+        red_head = ("<th>Planet</th>"
+                    + "".join(f"<th>{_SIGN_NAME[i][:3]}</th>" for i in range(1, 13)))
+        tri_rows = "".join(
+            f"<tr><td>{_esc(br.planet)}</td>"
+            + "".join(f'<td class="num">{v}</td>' for v in br.trikona) + "</tr>"
+            for br in r.bav_reduced)
+        fin_rows = "".join(
+            f"<tr><td>{_esc(br.planet)}</td>"
+            + "".join(f'<td class="num">{v}</td>' for v in br.reduced) + "</tr>"
+            for br in r.bav_reduced)
+        extra += (
+            '<h3>HPA-26 reductions (Trikona + Ekadhipathya Sodhana)</h3>'
+            '<p class="section-sub">HPA-26 reductions &mdash; used classically for special '
+            'calculations; shown for completeness; ASP transit application deferred pending '
+            'corpus. Raman: the bindu tables &ldquo;must be subjected to two reductions, '
+            'viz., Thrikona reduction and Ekadhipathya reduction&rdquo; (HPA-26:390-393), in '
+            'that order &mdash; &ldquo;After the Thrikona reduction, the Ekadhipathya '
+            'reduction must be applied&rdquo; (HPA-26:466-467). Trikona follows Raman&rsquo;s '
+            'own stated SUBTRACT reading (HPA-26:423-431), regression-pinned to his worked '
+            'Sun table (HPA-26:432-462).</p>'
+            '<p class="section-sub"><strong>After Trikona Sodhana</strong> '
+            '(HPA-26:403-421):</p>'
+            f'<div class="tablewrap"><table class="grid sav"><thead><tr>{red_head}</tr>'
+            f'</thead><tbody>{tri_rows}</tbody></table></div>'
+            '<p class="section-sub"><strong>After both reductions</strong> (Ekadhipathya '
+            'applied, HPA-26:464-497):</p>'
+            f'<div class="tablewrap"><table class="grid sav"><thead><tr>{red_head}</tr>'
+            f'</thead><tbody>{fin_rows}</tbody></table></div>')
+    if r.sodya_pinda:
+        sp_rows = "".join(
+            f"<tr><td>{_esc(sp.planet)}</td>"
+            f'<td class="num">{sp.rasi}</td><td class="num">{sp.graha}</td>'
+            f'<td class="num">{sp.total}</td></tr>'
+            for sp in r.sodya_pinda)
+        extra += (
+            '<h3>Sodya Pinda (Rasi + Graha Gunakara)</h3>'
+            '<div class="tablewrap"><table class="grid sav"><thead><tr><th>Planet</th>'
+            '<th class="num">Rasi Gunakara</th><th class="num">Graha Gunakara</th>'
+            '<th class="num">Sodya Pinda</th></tr></thead>'
+            f'<tbody>{sp_rows}</tbody></table></div>'
+            '<p class="section-sub">Computed from the reduced tables above: each sign&rsquo;s '
+            'reduced bindus &times; its fixed zodiacal factor (Rasi Gunakara, '
+            'HPA-26:1149-1153), plus the reduced bindus in each graha&rsquo;s occupied sign '
+            '&times; its fixed planetary factor (Graha Gunakara, HPA-26:1311-1315). The sum '
+            'is Raman&rsquo;s Sodya Pinda by his own naming (ASP-14:196-198); HPA-26 applies '
+            'it to LONGEVITY (the &times;7/27 Ayurdaya use, HPA-26:1400-1404 / '
+            'ASP-14:199-201). Honesty note, recorded not fudged: on ASP-14&rsquo;s worked '
+            'Standard Horoscope Raman prints Sun 96/86/182 where this pipeline gives '
+            '103/88/191 on his own stated longitudes &mdash; the divergence is in HIS printed '
+            'reduced tables (the 1962 book carries known misprints), so the engine pins the '
+            'RULES, anchored on HPA-26&rsquo;s own worked reduction, and records this '
+            'delta.</p>')
     return ('<h2 class="section" id="sav">Ashtakavarga</h2>'
             '<p class="section-sub">Sarvashtakavarga bindus per sign; average 28 (total 337). '
             'Raman rates it corroborative, not decisive &mdash; <em>&ldquo;it does not seem to be '
             'quite reliable&rdquo;</em> (HTJAH-II:4453-4456).</p>'
             f'<div class="tablewrap"><table class="grid sav"><thead><tr>{head}</tr></thead>'
-            f'<tbody><tr>{cells}</tr></tbody></table></div>')
+            f'<tbody><tr>{cells}</tr><tr>{dev_cells}</tr><tr>{mark_cells}</tr></tbody>'
+            f'</table></div>'
+            f'{extra}')
 
 
 #: South-Indian fixed-sign layout: 4x4 grid, signs clockwise from Pisces top-left.
@@ -1492,7 +1614,14 @@ def _maraka(r: DetailedReport) -> str:
         return ""
     tiers = ""
     for tier in ("primary", "secondary", "tertiary"):
-        names = [u.graha for u in mp.units if u.tier == tier]
+        # each graha names WHY it qualified (2026-08-17 report-critique fix: the clause was
+        # computed by primitives/maraka.py and discarded before display).
+        names = []
+        for u in mp.units:
+            if u.tier != tier:
+                continue
+            why = format_maraka_reasons(u.reasons)
+            names.append(f"{u.graha} ({why})" if why else u.graha)
         if names:
             tiers += (f'<div class="vrow"><span class="vk">{tier}</span>'
                       f'<span class="vv">{_esc(", ".join(names))}</span></div>')
@@ -1525,7 +1654,8 @@ def _maraka_saturn_section(r: DetailedReport) -> str:
         f'<td>{_outlook_window_label(c.window_start_jd, c.window_end_jd)}</td>'
         f'<td>{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)}</td>'
         f'<td>{_esc(_SIGN_NAME[c.sign])}</td>'
-        f'<td class="num">{c.score}</td></tr>'
+        f'<td class="num">'
+        f'{_esc(f"{c.score} = {c.score_parts}" if c.score_parts else str(c.score))}</td></tr>'
         for c in r.maraka_saturn)
     return (
         '<h2 class="section" id="maraka-saturn">Maraka &times; Saturn-transit confluence</h2>'
@@ -2139,6 +2269,14 @@ def _timeline(r: DetailedReport) -> str:
         assoc = ("its own bhukti" if antar == maha
                  else f'AD <b>{"is" if associated else "is not"}</b> associated with MD')
         blocks = f'<div class="assoc-note">{assoc}</div>'
+        # Wave-1 (2026-08-17): the lord_quality delivery tags — computed on every activation
+        # row (HTJAH-II:10004-10008) but previously dropped by this renderer.
+        if rows:
+            q0 = rows[0]
+            dlv = f"MD {maha} delivers {q0.md_quality.tag}"
+            if antar is not None and antar != maha and q0.antar_quality is not None:
+                dlv += f"; AD {antar} delivers {q0.antar_quality.tag}"
+            blocks += f'<div class="assoc-note">{_esc(dlv)}</div>'
         _TITLE = {"limited": "bhukti lord only", "feeble": "MD lord only",
                   "par excellence": "both lords, AD associated with MD",
                   "ordinary": "both lords, not associated"}
@@ -2163,6 +2301,101 @@ def _timeline(r: DetailedReport) -> str:
     if cur is not None:
         out.append("</ol></details>")
     return "".join(out)
+
+
+def _pratyantar_block(r: DetailedReport) -> str:
+    """Wave-1 (2026-08-17): the CURRENT bhukti's nine Pratyantardashas, dated — the third
+    Vimshottari level Raman names as result-carrying (HTJAH-II:668-702). Same data as the
+    markdown block; running pratyantar marked."""
+    if not r.pratyantar_now:
+        return ""
+    items = ""
+    for pr_ in r.pratyantar_now:
+        now = (' <span class="now-badge">now</span>'
+               if pr_.start_jd <= r.ref_jd < pr_.end_jd else "")
+        items += (f'<li>{_esc(pr_.maha)} MD / {_esc(pr_.antar)} AD / '
+                  f'<b>{_esc(pr_.pratyantar)} PD</b> '
+                  f'({_jd_to_date(pr_.start_jd)} &ndash; {_jd_to_date(pr_.end_jd)}){now}</li>')
+    return ('<h3>Pratyantardasha drill-down (current bhukti)</h3>'
+            '<p class="section-sub">The third level of the Vimshottari hierarchy, for the '
+            'bhukti running now only &mdash; the same proportional lord-years/120 split one '
+            'level down. Raman names all three levels as carriers of a house&rsquo;s results: '
+            '&ldquo;as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or '
+            'as lords of the Antaras&rdquo; (HTJAH-II:668-702).</p>'
+            f'<ul class="tightlist">{items}</ul>')
+
+
+def _chara_sequence_block(r: DetailedReport) -> str:
+    """Wave-1 (2026-08-17): the Chara dasha sequence, dated by plain JD arithmetic from birth
+    (KN Rao convention as encoded), running sign marked — the Chart signature chip names the
+    sign; this dates the whole script."""
+    if not r.chara_sequence:
+        return ""
+    items = ""
+    for cs in r.chara_sequence:
+        now = ' <span class="now-badge">now</span>' if cs.current else ""
+        items += (f'<li>{_esc(_SIGN_NAME[cs.sign])} &mdash; {cs.years}y '
+                  f'({_jd_to_date(cs.start_jd)} &ndash; {_jd_to_date(cs.end_jd)}){now}</li>')
+    return ('<h3>Chara dasha (Jaimini) &mdash; dated sequence</h3>'
+            '<p class="section-sub">The parallel sign-based dasha (see glossary). Dates are '
+            'plain JD arithmetic from birth (period years &times; 365.2425 days) over the '
+            'KN Rao sequence already encoded; the 12-sign cycle repeats. No result judgment '
+            'attaches here &mdash; matters are read from Vimshottari above.</p>'
+            f'<ul class="tightlist">{items}</ul>')
+
+
+def _adverse_windows_table(r: DetailedReport) -> str:
+    """Wave-1 (2026-08-17): the classically-adverse Gochara windows the outlook always
+    computed — the mirror of the favourable table, honestly labeled (mitigation by Raman's
+    bindus/8 proportion law, ASP-13:416; Vedha undefined for adverse spans)."""
+    bad = adverse_transit_windows(r)
+    if not bad:
+        return ""
+    rows = ""
+    for planet, seg, bav in bad:
+        mit = (f"{bav}/8 of the evil neutralised" if bav is not None
+               else "&ndash; (node: no classical Ashtakavarga)")
+        rows += (f'<tr><td><b>{_esc(planet)}</b></td>'
+                 f'<td>{_outlook_window_label(seg.start_jd, seg.end_jd)}</td>'
+                 f'<td>{_esc(_PLANET_THEME[planet])}</td><td>{mit}</td>'
+                 f'<td>&ndash;</td></tr>')
+    return ('<div class="gochara-outlook"><h3>Adverse transit windows</h3>'
+            '<p class="section-sub">The mirror of the favourable table above &mdash; the same '
+            'computation always produced these windows; only the favourable half was shown '
+            'before. &ldquo;What it concerns&rdquo; is the life-area that planet governs, here '
+            'classically unsupported; &ldquo;mitigation&rdquo; applies Raman&rsquo;s own '
+            'proportion law (bindus in the transited sign neutralise the evil to that extent, '
+            'ASP-13:416); Vedha (interference) is defined for favourable transits only, so it '
+            'reads &ndash; here (not computed, not zero). Per Raman a transit stays secondary '
+            'to the Dasha (HTJAH-II:4679).</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>planet</th>'
+            '<th>window</th><th>what it concerns</th><th>mitigation (own AV bindus)</th>'
+            '<th>interference</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div></div>')
+
+
+def _sade_sati_strip(r: DetailedReport) -> str:
+    """Wave-1 (2026-08-17): the dated Sade-Sati phase spans (Saturn in the 12th/1st/2nd from
+    the natal Moon), method-only — no Sade-Sati x Moon result doctrine is on record, so the
+    strip carries dates (plain gochara arithmetic), never an intensity reading."""
+    if not r.sade_sati_phases:
+        return ""
+    items = ""
+    for ph in r.sade_sati_phases:
+        now = ' <span class="now-badge">now</span>' if ph.current else ""
+        items += (f'<li><b>{_esc(ph.phase)}</b> &mdash; Saturn in '
+                  f'{_esc(_SIGN_NAME[ph.sign])}: '
+                  f'{_outlook_window_label(ph.start_jd, ph.end_jd)}{now}</li>')
+    return ('<div class="gochara-outlook">'
+            '<h3>Sade-Sati phase windows (Saturn from the natal Moon)</h3>'
+            '<p class="section-sub">Saturn&rsquo;s ~7.5-year passage across the 12th, 1st and '
+            '2nd signs from the natal Moon &mdash; the episode nearest the reference date, '
+            'current position marked. <b>Method note (dates only):</b> no Sade-Sati &times; '
+            'Moon result doctrine is on record in the encoded corpus, so no intensity or '
+            'result reading is offered &mdash; the dates are plain gochara arithmetic '
+            '(transiting Saturn&rsquo;s sign against the natal Moon sign), at the '
+            'outlook&rsquo;s ~week sampling resolution.</p>'
+            f'<ul class="tightlist">{items}</ul></div>')
 
 
 def _ishta_kashta_section(r: DetailedReport) -> str:
@@ -2458,6 +2691,26 @@ def to_html(r: DetailedReport) -> str:
         extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
+        # Baladi/Jagradadi (2026-08-17 report-critique fix): computed and consumed by the
+        # house judge (intensity demotion), previously never shown on any static surface.
+        from app.raman_saab.judges.house_template import baladi_jagradadi_states
+        _bj = baladi_jagradadi_states(r.chart)
+        if _bj:
+            bj_rows = "".join(
+                f'<tr><td><b>{_esc(n)}</b></td><td>{_esc(_bj[n]["baladi"])}</td>'
+                f'<td>{_esc(_bj[n]["jagradadi"])}</td></tr>'
+                for n, _p in planet_rows(r.chart) if n in _bj)
+            extras += (
+                '<p class="section-sub">Baladi (ageing, by degree-in-sign) and Jagradadi '
+                '(consciousness, by incoming drishti) states &mdash; the judge&rsquo;s '
+                'intensity dial: a house whose deliverers sit in Mrita/Sushupti has its '
+                'verdict DEGREE demoted one step, never the verdict itself. Provenance: '
+                'CLASSICAL_NONCITABLE (Phaladeepika Ch.3 Sl.3/Sl.10/Sl.20; BPHS Ch.1 '
+                'Sl.14-16) &mdash; outside Raman&rsquo;s own canon, shown because the '
+                'judge consumes it.</p>'
+                '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
+                '<th>Baladi (ageing)</th><th>Jagradadi (consciousness)</th></tr></thead>'
+                f'<tbody>{bj_rows}</tbody></table></div>')
     if s.karakamsa_reading:
         km = "".join(f"<li>{_esc(x)}</li>" for x in s.karakamsa_reading)
         extras += (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
@@ -2594,6 +2847,10 @@ def to_html(r: DetailedReport) -> str:
       for k, v in _TIER_MEANING.items())}</div>
   {_timeline(r)}
 
+  {_pratyantar_block(r)}
+
+  {_chara_sequence_block(r)}
+
   {_ishta_kashta_section(r)}
 
   {_md_condition_section(r)}
@@ -2607,7 +2864,18 @@ def to_html(r: DetailedReport) -> str:
 
   {_gochara_table(r)}
 
+  {_adverse_windows_table(r)}
+
+  {_sade_sati_strip(r)}
+
   {_dasha_transit_section(r)}
+
+  <p class="section-sub"><i>Live companion not reproducible here:</i> the interactive report
+    page carries an on-demand &ldquo;Today for you (Muhurtha)&rdquo; panel &mdash;
+    Raman&rsquo;s Muhurtha rules judging the CURRENT day (tarabala/chandrabala, Rahu Kalam,
+    Durmuhurtha) against this native&rsquo;s own janma nakshatra and rasi, computed live at
+    view time. A static report is cast once; that panel is recast
+    every day &mdash; open the interactive page for it.</p>
 
   <h2 class="section" id="vargas">Divisional deep-reads</h2>
   <p class="section-sub">Shodasavarga &mdash; each divisional chart magnifies one matter (Raman core

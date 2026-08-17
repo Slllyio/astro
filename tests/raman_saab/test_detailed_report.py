@@ -126,7 +126,9 @@ class TestDetailedReport:
         sole genuinely RARE row (H4 education, 3% share) sort last among the non-common."""
         from app.raman_saab.detailed_report import _RARITY_ORDER
         d = report.distinctive
-        assert d and len(d) <= 7
+        # 2026-08-17 report-critique fix: no fixed cap — the table carries EVERY entry the
+        # info-content census counts as distinctive (see test_distinctive_matches_census).
+        assert d and all(e.rarity != "common" for _h, e in d)
         bands = [_RARITY_ORDER[e.rarity] for _h, e in d]
         assert bands == sorted(bands)                      # rare, then notable, then common
         for band in set(bands):
@@ -1536,3 +1538,319 @@ class TestReportCritiqueFixes20260817:
             chip.count(" MD") >= 2
             for d in multi for chip in (*d.areas_favourable, *d.areas_challenged))
         assert found_multi_attribution
+
+
+class TestAshtakavargaCompleteness:
+    """AV completeness (2026-08-17): the BAV 7x12 matrix, the HPA-26 reductions and the
+    Sodya Pinda reach the reader, matching the primitives cell-for-cell."""
+
+    def test_bav_matrix_is_seven_rows_of_twelve_matching_the_primitive(self, report):
+        """7 planet rows x 12 sign values; every cell, total and seat equals the primitive's."""
+        from app.raman_saab.primitives import ashtakavarga
+        assert [bm.planet for bm in report.bav_matrix] == list(ashtakavarga.PLANETS)
+        for bm in report.bav_matrix:
+            assert len(bm.bindus) == 12
+            bav = ashtakavarga.bhinnashtakavarga(report.chart, bm.planet)
+            assert bm.bindus == tuple(bav[s] for s in range(1, 13))
+            assert bm.total == sum(bm.bindus) == ashtakavarga.BAV_TOTALS[bm.planet]
+            assert bm.seat_sign == report.chart.planets[bm.planet].sign
+            assert bm.seat_bindus == bav[bm.seat_sign]
+        assert sum(bm.total for bm in report.bav_matrix) == 337
+
+    def test_bav_matrix_renders_with_seat_marks_and_totals(self, report, markdown):
+        """The markdown matrix shows every planet row with its total and bolded natal seat."""
+        assert "### Bhinnashtakavarga (BAV) - each planet's own bindu row" in markdown
+        assert "| Planet | Ari | Tau | Gem |" in markdown
+        for bm in report.bav_matrix:
+            assert f"| {bm.planet} | " in markdown
+            assert f"| {bm.total} | " in markdown
+        assert markdown.count("**") >= 14        # 7 seat cells carry bold marks
+
+    def test_reductions_match_the_primitive_and_carry_the_honesty_label(self, report, markdown):
+        """Reduced rows equal `reduced_bhinnashtakavarga` per sign; the deferred-application
+        frame and Raman's own HPA-26 citations (reused, not invented) are printed."""
+        from app.raman_saab.primitives.ashtakavarga_reduction import reduced_bhinnashtakavarga
+        for br in report.bav_reduced:
+            red = reduced_bhinnashtakavarga(report.chart, br.planet)
+            assert br.reduced == tuple(red[s] for s in range(1, 13))
+            # Trikona-only stage never increases a cell, and the final stage never exceeds it
+            assert all(t <= b for t, b in zip(
+                br.trikona, next(m.bindus for m in report.bav_matrix if m.planet == br.planet)))
+            assert all(f <= t for f, t in zip(br.reduced, br.trikona))
+        assert "### HPA-26 reductions (Trikona + Ekadhipathya Sodhana)" in markdown
+        assert ("HPA-26 reductions - used classically for special calculations; shown for "
+                "completeness; ASP transit application deferred pending corpus") in markdown
+        for cite in ("HPA-26:390-393", "HPA-26:466-467", "HPA-26:423-431", "HPA-26:432-462"):
+            assert cite in markdown
+        assert "**After Trikona Sodhana** (HPA-26:403-421):" in markdown
+        assert "**After both reductions** (Ekadhipathya applied, HPA-26:464-497):" in markdown
+
+    def test_sodya_pinda_matches_the_primitive_and_records_the_misprint_delta(
+            self, report, markdown):
+        """Pinda rows equal `ashtakavarga_pinda`; the ASP-14 naming citation and the module's
+        honestly-recorded delta vs Raman's misprinted 1962 tables are printed."""
+        from app.raman_saab.primitives.ashtakavarga_pinda import ashtakavarga_pinda
+        for sp in report.sodya_pinda:
+            pb = ashtakavarga_pinda(report.chart, sp.planet)
+            assert (sp.rasi, sp.graha, sp.total) == (pb.rasi, pb.graha, pb.total)
+            assert sp.total == sp.rasi + sp.graha
+        assert "### Sodya Pinda (Rasi + Graha Gunakara)" in markdown
+        assert "| Planet | Rasi Gunakara | Graha Gunakara | Sodya Pinda |" in markdown
+        assert "ASP-14:196-198" in markdown
+        assert "103/88/191" in markdown and "96/86/182" in markdown
+        assert "known misprints" in markdown
+
+    def test_sav_grid_marks_lagna_and_moon_columns_with_a_deviation_row(self, report, markdown):
+        """The SAV grid carries the deviation row vs the 28 average and Lagna/Moon markers —
+        canonical chart: Virgo Lagna, Moon in Pisces (Revati)."""
+        i = markdown.find("## Ashtakavarga")
+        sec = markdown[i:markdown.find("## House-by-house")]
+        assert "| Lagna |" in sec and "| Moon |" in sec
+        moon_sign = report.chart.planets["Moon"].sign
+        assert report.chart.asc_sign == 6 and moon_sign == 12
+        dev = "| " + " | ".join(
+            f"{report.sav.get(s, 0) - 28:+d}" for s in range(1, 13)) + " |"
+        assert dev in sec
+        assert "Second row: deviation vs the 28-bindu average" in sec
+        assert "judged from the Moon" in sec
+
+
+class TestWave1ReportCompleteness:
+    """2026-08-17 report-critique Wave-1: exact degrees + Ascendant + nakshatra lord in the
+    positions table, Bhava Bala rupas in the strength cross-check, the FULL distinctive
+    census in 'What stands out', the judge's Baladi/Jagradadi avasthas surfaced, per-planet
+    maraka reasons, confluence tier addends, and the interactive-only Muhurtha pointer."""
+
+    def test_positions_table_carries_longitude_ascendant_and_nak_lord(self, report, markdown):
+        """Canonical pins: Virgo Lagna ~173.99 deg prints as the '23 Vi 59'..' Ascendant row;
+        the Moon's Revati pada 3 row names Vimshottari lord Mercury (the birth-MD audit trail)."""
+        assert ("| graha | longitude | sign | house | nakshatra (pada) | nak lord | "
+                "navamsa | notes |") in markdown
+        assert abs(report.chart.asc_lon - 173.99) < 0.05          # the CLAUDE.md pin itself
+        asc_row = next(ln for ln in markdown.splitlines() if ln.startswith("| Ascendant |"))
+        assert "| 23 Vi 59'" in asc_row and "| Virgo | 1 |" in asc_row
+        moon_row = next(ln for ln in markdown.splitlines() if ln.startswith("| Moon |"))
+        assert "Revati (3) | Mercury |" in moon_row
+
+    def test_format_longitude_is_checkable_and_carries_at_boundaries(self):
+        """Sign-degree form matches Jagannatha Hora's convention; a 60s/60m carry rolls up
+        and across the sign boundary rather than printing 60."""
+        from app.raman_saab.detailed_report import format_longitude, nakshatra_lord
+        assert format_longitude(173.98814637760972) == "23 Vi 59'17\""
+        assert format_longitude(0.0) == "0 Ar 00'00\""
+        assert format_longitude(29.9999999) == "0 Ta 00'00\""     # carry crosses the cusp
+        assert nakshatra_lord(27) == "Mercury"                    # Revati
+        assert nakshatra_lord(1) == "Ketu"                        # Ashwini seeds the cycle
+
+    def test_house_strength_markdown_shows_the_rupas_column(self, report, markdown):
+        """The Bhava Bala magnitude (Shashtiamsas/60 = rupas) joins the rank in the markdown
+        table — it was already in the JSON and the interactive page (append-only repair)."""
+        assert ("| House | Matter | Verdict | Bhava Bala rank | Bhava Bala (rupas) | "
+                "SAV bindus |") in markdown
+        for row in report.house_strength:
+            if row.bhava_bala is not None and row.bhava_bala_rank is not None:
+                assert (f"| {row.bhava_bala_rank} of 12 | {row.bhava_bala / 60.0:.2f} |"
+                        in markdown)
+
+    def test_distinctive_table_matches_the_census_count(self, report, markdown):
+        """The 'What stands out' table shows EVERY reading the info-content census counts as
+        distinctive — the sentence's N and the table's row-count can no longer disagree."""
+        assert len(report.distinctive) == report.info.distinctive
+        i = markdown.find("| house | matter | verdict | percentile | share | in plain terms |")
+        assert i >= 0
+        rows = 0
+        for ln in markdown[i:].splitlines()[2:]:
+            if not ln.startswith("| "):
+                break
+            rows += 1
+        assert rows == report.info.distinctive
+        assert f"{report.info.distinctive} are genuinely distinctive" in markdown
+
+    def test_deeptadi_section_shows_baladi_jagradadi_with_the_canonical_saturn_pin(
+            self, markdown):
+        """The judge's Baladi/Jagradadi states render as a per-planet table inside the
+        Deeptadi section — canonical pin: Saturn = Mrita/Swapna — with the same
+        CLASSICAL_NONCITABLE provenance the judge's scoring tables cite."""
+        i = markdown.find("## Deeptadi avasthas")
+        sec = markdown[i:markdown.find("## Jaimini Karakamsa")]
+        assert "| graha | Baladi (ageing) | Jagradadi (consciousness) |" in sec
+        assert "| Saturn | Mrita | Swapna |" in sec
+        assert "CLASSICAL_NONCITABLE" in sec and "Phaladeepika" in sec
+        assert "never the verdict itself" in sec
+
+    def test_baladi_jagradadi_accessor_is_read_only_and_degrades_on_track_b(self, report):
+        """The house_template accessor re-reads the judge's own computation (Saturn
+        Mrita/Swapna on the canonical chart) and returns {} for a sparse Track-B chart
+        instead of raising — no verdict logic involved."""
+        import inspect
+
+        from app.raman_saab.chart.model import RamanChart
+        from app.raman_saab.judges.house_template import baladi_jagradadi_states
+        bj = baladi_jagradadi_states(report.chart)
+        assert bj["Saturn"] == {"baladi": "Mrita", "jagradadi": "Swapna"}
+        assert set(bj) == set(report.chart.planets)
+        sparse = RamanChart.from_stated_positions(
+            {"Sun": {"lon": 10.0, "bhava": 1}}, asc_lon=0.0, ayanamsa="lahiri")
+        assert baladi_jagradadi_states(sparse) == {}
+        src = inspect.getsource(baladi_jagradadi_states)
+        assert "judge_house" not in src and "rollup" not in src
+
+    def test_maraka_units_carry_reasons_and_the_render_names_them(self, report, markdown):
+        """Every canonical-chart MarakaUnit records WHY it qualified, and the markdown tier
+        lines print the clause (Virgo lagna: Venus = lord of the 2nd, Jupiter = 7th)."""
+        mp = report.chart.maraka_points
+        assert mp is not None and mp.units
+        assert all(u.reasons for u in mp.units)
+        assert "Venus (lord of the 2nd)" in markdown
+        assert "Jupiter (lord of the 7th)" in markdown
+        assert "Mars (lord of the 3rd and the 8th)" in markdown   # merged lordship clause
+
+    def test_maraka_saturn_score_parts_reproduce_the_score(self, report, markdown):
+        """The confluence table's tier addends ('5 = Jupiter 3 + Mercury 2') are the same
+        MarakaSet weights death_window summed — parts always reproduce the score."""
+        assert report.maraka_saturn
+        for c in report.maraka_saturn:
+            assert c.score_parts, "addends must be recorded"
+            terms = c.score_parts.split(" + ")
+            assert sum(int(t.rsplit(" ", 1)[1]) for t in terms) == c.score
+        c0 = report.maraka_saturn[0]
+        assert f"| {c0.score} = {c0.score_parts} |" in markdown
+
+    def test_muhurtha_pointer_present_near_the_timing_close(self, markdown):
+        """One pointer line (no new section heading) tells the reader the interactive page's
+        on-demand 'Today for you (Muhurtha)' panel exists and cannot be reproduced here."""
+        i = markdown.find('"Today for you (Muhurtha)"')
+        assert i >= 0
+        assert markdown.find("## Current transits (Gochara) with Vedha") < i
+        assert i < markdown.find("## Divisional deep-reads (Shodasavarga)")
+        window = markdown[i - 400:i + 600]
+        assert "## Muhurtha" not in window                        # a pointer, not a section
+        assert "computed live at view time" in window
+        # firewall hygiene: the pointer must not name the walled subsystem's module
+        # (tests/raman_saab/electional/test_walled_subsystem.py scans this module's source)
+        assert "electional" not in window
+
+
+class TestWave1TimingSurfaces:
+    """Wave-1 (2026-08-17, REPORT COMPLETENESS, timing appendix): delivery tags on activation
+    rows, the pratyantar drill-down, dated Sade-Sati phases, the adverse transit windows and
+    the dated Chara dasha sequence — all pure re-reads / plain JD arithmetic."""
+
+    def test_delivery_tags_render_on_every_activation_row(self, report, markdown):
+        """The lord_quality tags (HTJAH-II:10004-10008) were computed per row and dropped by
+        the markdown renderer; now every lit house carries its activating lords' tags."""
+        import re
+        assert "**Delivery tags**" in markdown
+        # both-lords tiers carry both tags; limited only the AD tag; feeble only the MD tag
+        assert re.search(r"H\d+ \w+ \(MD (?:well|mixed|poorly|unknown), "
+                         r"AD (?:well|mixed|poorly|unknown)\)", markdown)
+        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD ", markdown)
+        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD ", markdown)
+        # the tag is the SAME lord_quality read the engine already computes, not a new scale
+        from app.raman_saab.primitives import vimshottari as vd
+        tp = report.timeline.periods[0]
+        a = tp.activated[0]
+        assert a.md_quality.tag == vd.lord_quality(report.chart, tp.period.maha).tag
+
+    def test_pratyantar_block_is_the_current_bhukti_partitioned(self, report, markdown):
+        """Exactly the running bhukti's 9 pratyantars, spans partitioning the bhukti bounds
+        in JD space, exactly one running row marked."""
+        from app.raman_saab.primitives import vimshottari as vd
+        rows = report.pratyantar_now
+        assert len(rows) == 9
+        bh = vd.dasha_on(report.chart, report.ref_jd)
+        assert bh is not None and bh.antar is not None
+        assert {(p.maha, p.antar) for p in rows} == {(bh.maha, bh.antar)}
+        assert abs(rows[0].start_jd - bh.start_jd) < 1e-6
+        assert abs(rows[-1].end_jd - bh.end_jd) < 1e-6
+        for prev, nxt in zip(rows, rows[1:]):
+            assert abs(prev.end_jd - nxt.start_jd) < 1e-6
+        assert sum(1 for p in rows if p.start_jd <= report.ref_jd < p.end_jd) == 1
+        s = markdown.find("### Pratyantardasha drill-down (current bhukti)")
+        assert s >= 0
+        section = markdown[s:markdown.find("###", s + 10)]
+        assert section.count(" PD** (") == 9          # all nine rows, dated
+        assert section.count("<- now") == 1           # the running pratyantar, marked once
+        assert "HTJAH-II:668-702" in section          # the recorded three-level citation
+
+    def test_sade_sati_strip_is_dated_and_method_only(self, report, markdown):
+        """The three phase spans (12th/1st/2nd from the Moon) carry calendar dates and the
+        strip states the no-result-doctrine absence note; dates are gochara arithmetic."""
+        import re
+        phases = report.sade_sati_phases
+        assert phases
+        assert {p.phase for p in phases} >= {"rising (12th from Moon)",
+                                             "peak (over the Moon)",
+                                             "setting (2nd from Moon)"}
+        for p in phases:
+            assert p.house_from_moon in (12, 1, 2)
+            assert p.start_jd < p.end_jd
+        starts = [p.start_jd for p in phases]
+        assert starts == sorted(starts)
+        assert sum(1 for p in phases if p.current) <= 1
+        s = markdown.find("### Sade-Sati phase windows (Saturn from the natal Moon)")
+        assert s >= 0
+        section = markdown[s:markdown.find("\n## ", s)]
+        assert "no Sade-Sati x Moon result doctrine is on record" in section
+        assert "plain gochara arithmetic" in section
+        for label in ("rising (12th from Moon)", "peak (over the Moon)",
+                      "setting (2nd from Moon)"):
+            assert f"**{label}** - Saturn in" in section
+        assert re.search(r"Saturn in \w+: [A-Z][a-z]{2} \d{4}", section)   # dated rows
+        assert section.count("<- now") == sum(1 for p in phases if p.current)
+
+    def test_adverse_windows_table_renders_alongside_favourable(self, report, markdown):
+        """The adverse half of the SAME gochara_timeline computation renders as a mirror
+        table after the favourable one, which stays untouched."""
+        f = markdown.find("### Favourable transit windows (")
+        a = markdown.find("### Adverse transit windows (")
+        assert f >= 0 and a > f                       # both present; favourable first
+        from app.raman_saab.detailed_report import adverse_transit_windows
+        rows = adverse_transit_windows(report)
+        assert rows
+        starts = [seg.start_jd for _p, seg, _b in rows]
+        assert starts == sorted(starts)               # chronological
+        for _p, seg, _b in rows:
+            assert not seg.gochara_good
+            assert (seg.end_jd - seg.start_jd) >= 25  # same noise floor as favourable
+        section = markdown[a:markdown.find("###", a + 10)]
+        assert "| Planet | Window | What it concerns | Mitigation (own AV bindus) | " \
+               "Interference |" in section
+        assert "ASP-13:416" in section                # Raman's own proportion law, recorded
+        assert "not computed, not zero" in section    # the honest Vedha disclosure
+
+    def test_chara_sequence_is_dated_with_one_now_marker(self, report, markdown):
+        """Chara rows are dated by JD arithmetic from birth (years x 365.2425), contiguous,
+        exactly one current row, agreeing with the Chart-signature chip's running sign."""
+        import re
+        seq = report.chara_sequence
+        assert len(seq) >= 12
+        assert abs(seq[0].start_jd - report.chart.jd_ut) < 1e-9
+        for prev, nxt in zip(seq, seq[1:]):
+            assert abs(prev.end_jd - nxt.start_jd) < 1e-9
+        for cs in seq:
+            assert abs((cs.end_jd - cs.start_jd) - cs.years * 365.2425) < 1e-6
+        cur = [cs for cs in seq if cs.current]
+        assert len(cur) == 1
+        from app.raman_saab.detailed_report import _SIGN_NAME
+        assert _SIGN_NAME[cur[0].sign] == report.synthesis.chara
+        s = markdown.find("### Chara dasha (Jaimini) - dated sequence")
+        assert s >= 0
+        section = markdown[s:markdown.find("\n## ", s)]
+        assert section.count("<- now") == 1
+        dated = re.findall(r"- \w+ - \d+y \(\d{4}-\d{2}-\d{2} \.\. \d{4}-\d{2}-\d{2}\)",
+                           section)
+        assert len(dated) >= 12                       # every span carries calendar dates
+
+    def test_wave1_sections_pass_the_decree_guard(self, markdown):
+        """All four new timing surfaces stay in the indication idiom — the decree tripwire
+        (the 2026-08-17 guard line) never fires on their prose."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for marker in ("### Pratyantardasha drill-down", "### Chara dasha (Jaimini)",
+                       "### Sade-Sati phase windows", "### Adverse transit windows"):
+            s = markdown.find(marker)
+            assert s >= 0, marker
+            e = markdown.find("\n## ", s)
+            section = markdown[s:e if e > 0 else s + 4000]
+            m = _FORBIDDEN_RE.search(section)
+            assert m is None, f"{marker}: {m.group(0)!r}"

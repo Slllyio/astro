@@ -45,6 +45,8 @@ def _each(seq) -> list:
 
 def _chart_dict(chart) -> dict:
     """Trimmed chart: the planet table a reader/consumer actually needs (not the full model)."""
+    from app.raman_saab.detailed_report import (ascendant_position, format_longitude,
+                                                nakshatra_lord)
     planets = {}
     for name, p in chart.planets.items():
         planets[name] = {
@@ -63,8 +65,26 @@ def _chart_dict(chart) -> dict:
             "shadbala_required": _MIN_REQ.get(name),
             "ishta": p.ishta,
             "kashta": p.kashta,
+            # append-only 2026-08-17 (report-critique: exact degrees + Vimshottari audit
+            # trail): the sidereal longitude, its checkable sign-degree form, and the
+            # nakshatra's Vimshottari lord (Moon's row explains the birth Mahadasha).
+            "lon": round(p.lon, 6),
+            "longitude": format_longitude(p.lon),
+            "nakshatra_lord": nakshatra_lord(p.nakshatra),
         }
-    return {"asc_sign": chart.asc_sign, "planets": planets}
+    # append-only 2026-08-17: the Ascendant as a checkable row of its own.
+    asc_lon_s, asc_nak, asc_pada, asc_nav, asc_sign = ascendant_position(chart)
+    ascendant = {
+        "lon": round(chart.asc_lon, 6),
+        "longitude": asc_lon_s,
+        "sign": asc_sign,
+        "nakshatra": asc_nak,
+        "pada": asc_pada,
+        "nakshatra_lord": nakshatra_lord(asc_nak),
+        "navamsa_sign": asc_nav,
+    }
+    return {"asc_sign": chart.asc_sign, "planets": planets,
+            "asc_lon": round(chart.asc_lon, 6), "ascendant": ascendant}
 
 
 def _timeline_dict(timeline, chart) -> list:
@@ -84,11 +104,24 @@ def _timeline_dict(timeline, chart) -> list:
             "associated": associated,
             "activated": [
                 {"house": a.house, "grade": a.grade, "tier": tier_of.get(a.house),
-                 "natal_verdict": str(a.natal_verdict)}
+                 "natal_verdict": str(a.natal_verdict),
+                 # append-only 2026-08-17 (Wave-1): the lord_quality delivery tags the
+                 # rows always carried (HTJAH-II:10004-10008) — full LordQuality objects,
+                 # so a consumer can show 'MD delivers well, AD mixed' per row.
+                 "md_quality": _ad(a.md_quality),
+                 "antar_quality": (_ad(a.antar_quality)
+                                   if a.antar_quality is not None else None)}
                 for a in tp.activated
             ],
         })
     return out
+
+
+def _baladi_jagradadi(chart) -> dict:
+    """Per-planet Baladi/Jagradadi states, re-read through the judge's own read-only accessor
+    (append-only 2026-08-17). {} on Track-B charts, same degradation the judge uses."""
+    from app.raman_saab.judges.house_template import baladi_jagradadi_states
+    return baladi_jagradadi_states(chart)
 
 
 def _proforma_dict(pf) -> dict:
@@ -157,6 +190,19 @@ def to_report_dict(r: DetailedReport) -> dict:
                       "balarishta": (_ad(r.balarishta) if r.balarishta is not None else None)},
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
+        # append-only 2026-08-17 (report-critique: per-planet maraka reasons): the full
+        # tiered maraka scheme the markdown/HTML "The maraka scheme" section renders —
+        # each unit now carries the qualifying clause(s) recorded at assignment.
+        "maraka": (
+            {"units": _each(r.chart.maraka_points.units),
+             "drekkana22_lord": r.chart.maraka_points.drekkana22_lord,
+             "navamsa64_lord": r.chart.maraka_points.navamsa64_lord}
+            if getattr(r.chart, "maraka_points", None) is not None else None),
+        # append-only 2026-08-17 (report-critique: avasthas computed/used, never shown):
+        # per-planet Baladi + Jagradadi states via the judge's own read-only accessor
+        # (judges/house_template.baladi_jagradadi_states) — CLASSICAL_NONCITABLE
+        # (Phaladeepika Ch.3; BPHS Ch.1), intensity dial only, no verdict logic touched.
+        "baladi_jagradadi": _baladi_jagradadi(r.chart),
         "health_readout": _ad(r.health_readout),     # v17 — pure re-read, caveat included
         "interpretation_guide": INTERPRETATION_GUIDE,  # v18 — chart-independent doctrine metadata
         # per-section plain-language layer (2026-08-17 reframe) — chart-independent,
@@ -211,9 +257,23 @@ def to_report_dict(r: DetailedReport) -> dict:
 
         # ashtakavarga + the divisional deep-reads (prose bodies) + soul/pitru surfaces
         "sav": {str(s): b_ for s, b_ in r.sav.items()},
+        # append-only 2026-08-17 (AV completeness): the full Bhinnashtakavarga matrix, the
+        # HPA-26 reduced tables and the Sodya Pinda — same rows the markdown/HTML AV section
+        # renders; existing keys untouched.
+        "bav_matrix": _each(r.bav_matrix),
+        "bav_reduced": _each(r.bav_reduced),
+        "sodya_pinda": _each(r.sodya_pinda),
         "divisional": [{"label": lbl, "body": body} for lbl, body in r.divisional],
         "soul": _ad(r.soul),
         "pitru": _ad(r.pitru),
 
         "window": {"ref_jd": r.ref_jd, "back": r.window_back, "forward": r.window_forward},
+
+        # Wave-1 timing additions (2026-08-17, append-only): the current bhukti's
+        # pratyantar drill-down, the dated Sade-Sati phase spans (method-only; no
+        # result doctrine on record) and the dated Chara dasha sequence — the same
+        # objects the markdown and standalone-HTML surfaces render.
+        "pratyantar_now": _each(r.pratyantar_now),
+        "sade_sati_phases": _each(r.sade_sati_phases),
+        "chara_sequence": _each(r.chara_sequence),
     }

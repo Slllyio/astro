@@ -36,3 +36,26 @@ def test_chara_dasha_on_returns_a_running_period():
     assert cur is not None and 1 <= cur[0] <= 12
     # age 0 is the first period
     assert cd.chara_dasha_on(ch, 0.0) == cd.chara_dasha(ch)[0]
+
+
+def test_chara_dasha_dated_spans_are_contiguous_jd_arithmetic():
+    """The dated accessor mirrors the undated sequence exactly, spans contiguous from the
+    birth JD with span length == years * 365.2425 (JD arithmetic, never timedelta)."""
+    ch = _ch()
+    spans = cd.chara_dasha_dated(ch)
+    assert [(s, y) for s, y, _lo, _hi in spans[:12]] == cd.chara_dasha(ch)
+    assert abs(spans[0][2] - ch.jd_ut) < 1e-9
+    for (_s1, y1, lo1, hi1), (_s2, _y2, lo2, _hi2) in zip(spans, spans[1:]):
+        assert abs(hi1 - lo2) < 1e-9
+        assert abs((hi1 - lo1) - y1 * 365.2425) < 1e-6
+
+
+def test_chara_dasha_dated_repeats_the_cycle_through_jd():
+    """One cycle by default; a through_jd past the first cycle appends the repeat (KN Rao),
+    in the same sign order."""
+    ch = _ch()
+    one = cd.chara_dasha_dated(ch)
+    assert len(one) == 12
+    two = cd.chara_dasha_dated(ch, through_jd=one[-1][3] + 10.0)
+    assert len(two) == 24
+    assert [s for s, _y, _lo, _hi in two[12:]] == [s for s, _y, _lo, _hi in two[:12]]

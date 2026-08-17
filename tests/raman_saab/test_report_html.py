@@ -384,3 +384,85 @@ class TestReportHtml:
         assert doc.startswith("<!doctype html>")
         assert "<title>My Reading</title>" in doc
         assert 'charset="utf-8"' in doc
+
+
+class TestAshtakavargaCompletenessHtml:
+    """AV completeness (2026-08-17): the HTML AV section shows the BAV matrix, the HPA-26
+    reductions with their honesty label, the Sodya Pinda, and the Lagna/Moon column marks."""
+
+    def test_av_section_carries_matrix_reductions_and_pinda(self, body):
+        """All three new blocks render inside the Ashtakavarga section, before Houses."""
+        s = body.find('id="sav"')
+        e = body.find('id="houses"')
+        sec = body[s:e]
+        assert "Bhinnashtakavarga (BAV)" in sec
+        assert "HPA-26 reductions (Trikona + Ekadhipathya Sodhana)" in sec
+        assert "Sodya Pinda (Rasi + Graha Gunakara)" in sec
+        assert ("used classically for special calculations; shown for completeness; ASP "
+                "transit application deferred pending corpus") in sec
+        assert "ASP-14:196-198" in sec and "103/88/191" in sec
+
+    def test_av_grid_marks_lagna_and_moon_and_deviation(self, report, body):
+        """The SAV grid gains a deviation row and Lagna/Moon marker cells; each of the 7 BAV
+        rows highlights the planet's own natal-seat cell."""
+        s = body.find('id="sav"')
+        sec = body[s:body.find('id="houses"')]
+        assert '<td class="strong">Lagna</td>' in sec
+        assert '<td class="strong">Moon</td>' in sec
+        assert "judged from the Moon" in sec
+        assert sec.count('class="num strong"') == 7      # one seat cell per BAV row
+        for planet, total in (("Sun", 48), ("Jupiter", 56), ("Saturn", 39)):
+            assert f"<td>{planet}</td>" in sec
+            assert f'<td class="num">{total}</td>' in sec
+
+
+class TestWave1CompletenessHtml:
+    """Wave-1 (2026-08-17) standalone-HTML parity: positions gain longitude/Ascendant/nak-lord,
+    house strength gains the rupas column, Baladi/Jagradadi render in the Deeptadi section,
+    maraka tiers name their reasons, confluence rows spell their addends, and the
+    interactive-only Muhurtha panel is pointed at."""
+
+    def test_positions_have_longitude_ascendant_and_nak_lord(self, body):
+        """Ascendant row first with the canonical 23 Vi 59'.. longitude; Moon row names its
+        Vimshottari lord Mercury."""
+        s = body.find('id="positions"')
+        sec = body[s:body.find('id="rect-confidence"')] or body[s:s + 6000]
+        assert "<th>nak lord</th>" in sec and '<th class="num">longitude</th>' in sec
+        # the minute/second quotes are HTML-escaped by _esc (&#x27; / &quot;)
+        assert "<b>Ascendant</b>" in sec and "23 Vi 59&#x27;17&quot;" in sec
+        assert sec.find("<b>Ascendant</b>") < sec.find("<b>Sun</b>")
+        moon_i = sec.find("<b>Moon</b>")
+        assert "<td>Mercury</td>" in sec[moon_i:moon_i + 400]
+
+    def test_house_strength_shows_rupas_column(self, report, body):
+        """The Bhava Bala magnitude joins the rank in the cross-check table."""
+        assert "<th class=\"num\">Bhava Bala (rupas)</th>" in body
+        row0 = report.house_strength[0]
+        assert f'<td class="num">{row0.bhava_bala / 60.0:.2f}</td>' in body
+
+    def test_deeptadi_shows_baladi_jagradadi_table(self, body):
+        """Canonical pin Saturn = Mrita/Swapna appears in the per-planet avastha table with
+        the CLASSICAL_NONCITABLE provenance label."""
+        s = body.find('id="deeptadi"')
+        assert s >= 0
+        sec = body[s:s + 6000]
+        assert "<th>Baladi (ageing)</th>" in sec
+        assert "<b>Saturn</b></td><td>Mrita</td><td>Swapna</td>" in sec
+        assert "CLASSICAL_NONCITABLE" in sec
+
+    def test_maraka_reasons_and_score_parts_render(self, report, body):
+        """Tier rows name each graha's qualifying clause; the confluence table spells the
+        score addends."""
+        assert "Venus (lord of the 2nd)" in body
+        assert "Jupiter (lord of the 7th)" in body
+        if report.maraka_saturn:
+            c0 = report.maraka_saturn[0]
+            assert f"{c0.score} = {c0.score_parts}" in body
+
+    def test_muhurtha_pointer_present(self, body):
+        """The pointer paragraph renders after the timing sections, before the divisionals,
+        and adds no new section heading."""
+        i = body.find("Today for you (Muhurtha)")
+        assert i >= 0
+        assert body.find('id="gochara"') < i < body.find('id="vargas"')
+        assert "computed live at\n    view time" in body

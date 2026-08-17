@@ -212,6 +212,22 @@
     margin:.45rem 0 .15rem}
   .toc a{display:inline-block;margin:.1rem .5rem .1rem 0;font-size:.82rem;color:var(--saffron-deep);
     text-decoration:none;border-bottom:1px dotted rgba(139,111,71,.5)}
+  abbr.gloss{cursor:pointer;text-decoration:underline dotted rgba(139,111,71,.6);
+    text-underline-offset:2px}
+  .quote{font-family:'EB Garamond',serif;font-style:italic;font-size:.92rem;color:var(--ink);
+    border-left:3px solid var(--saffron-deep);padding:.15rem 0 .15rem .6rem;margin:.3rem 0}
+  .rule-id{font-size:.78rem;color:var(--ink-secondary);margin:.15rem 0}
+  .rule-id .tag{display:inline-block;font-family:var(--mono,monospace);font-size:.68rem;
+    background:rgba(139,111,71,.15);border:1px solid rgba(139,111,71,.35);border-radius:3px;
+    padding:0 .3rem;margin-right:.35rem}
+  .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
+  .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
+  .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
+  .decade-cols>div{flex:1 1 180px}
+  .decade .chip{display:inline-block;font-size:.74rem;border-radius:3px;padding:0 .35rem;
+    margin:.08rem .2rem .08rem 0;border:1px solid rgba(139,111,71,.3)}
+  .chip.fav{background:color-mix(in srgb, var(--fav) 18%, transparent)}
+  .chip.aff{background:color-mix(in srgb, var(--aff) 18%, transparent)}
   .step-now{position:sticky;top:0;z-index:5;background:var(--paper,#f4ead2);font-size:.72rem;
     padding:.2rem .6rem;border-bottom:1px solid rgba(139,111,71,.3);color:var(--ink-secondary);
     display:none}
@@ -1884,6 +1900,41 @@ function buildToc(){
       {rootMargin:'0px 0px -80% 0px'});
     document.querySelectorAll('h2.sec').forEach(h=>io.observe(h)); }
 }
+// Walk every folio's text nodes once; wrap the FIRST occurrence of each plain-terms
+// entry in a clickable <abbr class="gloss"> opening the glossary popup. Safe DOM only
+// (splitText + createElement); skips markup where wrapping would corrupt meaning.
+const GLOSS_SKIP=new Set(['CITE','ABBR','SVG','SCRIPT','STYLE','INPUT','BUTTON','SUMMARY','A','CODE']);
+function glossWalk(){
+  const terms=RPT&&RPT.plain_terms; if(!terms) return;
+  const names=Object.keys(terms).sort((a,b)=>b.length-a.length); if(!names.length) return;
+  const seen=new Set();
+  const rx=new RegExp('\\b('+names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','i');
+  for(let leaf=2;leaf<=12;leaf++){
+    const body=$('leaf'+leaf+'-body')||$('leaf'+leaf+'-scroll'); if(!body) continue;
+    const tw=document.createTreeWalker(body,NodeFilter.SHOW_TEXT,{acceptNode(n){
+      for(let e=n.parentElement;e;e=e.parentElement){
+        if(GLOSS_SKIP.has(e.tagName)||e.classList.contains('chip')||e.classList.contains('gloss-chip'))
+          return NodeFilter.FILTER_REJECT; }
+      return NodeFilter.FILTER_ACCEPT; }});
+    const hits=[];
+    for(let n=tw.nextNode();n;n=tw.nextNode()){
+      if(seen.size>=names.length) break;
+      const m=rx.exec(n.nodeValue||''); if(!m) continue;
+      const key=names.find(x=>x.toLowerCase()===m[1].toLowerCase());
+      if(!key||seen.has(key)) continue;
+      seen.add(key); hits.push([n,m.index,m[1].length,key]); }
+    for(const [n,idx,len,key] of hits){
+      const mid=n.splitText(idx); mid.splitText(len);
+      const ab=el('abbr',{class:'gloss'},mid.nodeValue);
+      const g=RPT.plain_terms[key];
+      if(g&&g.plain) ab.title=g.plain+(g.analogy?' — '+g.analogy:'');
+      ab.onclick=(e)=>{e.preventDefault(); if(typeof glossPopup==='function') glossPopup(RPT,key);};
+      mid.parentNode.replaceChild(ab,mid); } }
+}
+function ruleLine(tag, text, cite){
+  const pp=el('p',{class:'rule-id'});
+  pp.append(el('span',{class:'tag'},String(tag)));
+  pp.append(citeText(String(text)+(cite?' ('+cite+')':''))); return pp; }
 function jumpLink(label){
   const a=el('a',{href:'#'},label);
   a.onclick=(e)=>{ e.preventDefault();
@@ -2346,7 +2397,7 @@ function render(R, S, FQ){
     add(H2('Arishta & Bhanga'));
     add(para('Balarishta '+(ar.balarishta_applies?('applies'+(ar.balarishta_cancelled?' but is cancelled':'')):'does not apply')+
       ((ar.balarishta_reasons||[]).length?(' — '+ar.balarishta_reasons.join('; ')):'')+'. Longevity band: '+(ar.band||'—')+'.'));
-    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','muted'));
+    if(ar.antidote_quote) add(para('Raman\'s antidotes (verbatim) — "'+ar.antidote_quote+'" ('+(ar.antidote_cite||'')+')','quote'));
     for(const b of (ar.bhangas||[])) add(para('Bhanga: '+b[0]+' — dignity '+b[1]+' → effective '+b[2],'muted'));
     if(ar.kemadruma_note) add(para(ar.kemadruma_note,'muted'));
     for(const p2 of (ar.protections||[])) add(para('Protection: '+p2,'muted'));
@@ -2357,23 +2408,23 @@ function render(R, S, FQ){
   if(R.marriage){ const mg=R.marriage;
     add(H2('Marriage monograph'));
     add(para('Verdict (H7, unchanged): '+(mg.verdict||'—')+'. The 7th lord sits in house '+mg.lord_placement_house+'. Upapada: '+(mg.upapada||'—')+'.','lede'));
-    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','muted'));
-    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','muted'));
-    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','muted'));
-    for(const f of (mg.fired_kalatra||[])) add(para('Fired kalatra rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
-    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','muted'));
-    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'muted'));
+    if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','quote'));
+    if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','quote'));
+    if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','quote'));
+    for(const f of (mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
+    for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
-    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','muted')); }
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote')); }
 
   // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
   if(R.children){ const cc=R.children;
     add(H2('Children chapter'));
     add(para('Verdict (H5, unchanged): '+(cc.verdict||'—'),'lede'));
     for(const s2 of (cc.significations||[])) add(para(s2[0]+' — '+s2[1],'muted'));
-    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','muted'));
-    for(const f of (cc.fired_rules||[])) add(para('Fired rule ('+f[0]+') — '+f[1]+' ('+f[2]+')','muted'));
-    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'muted')); }
+    if(cc.combos_quote) add(para('The classical combination block (verbatim) — "'+cc.combos_quote+'" (HTJAH-I:5179)','quote'));
+    for(const f of (cc.fired_rules||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const w of (cc.timing_windows||[])) add(para('Window: '+w,'timing')); }
 
   // ===== Profession synthesis (v23) — completeness repair 2026-08-14 =====
   if(R.profession){ const pf=R.profession;
@@ -2393,11 +2444,11 @@ function render(R, S, FQ){
     add(H2('Aptitude, intelligence & work style'));
     if(ap.woven) add(para(ap.woven,'lede'));
     if(ap.intellect_verdict) add(para('Intellect (H5, Jupiter karaka) — '+ap.intellect_verdict+' (HTJAH-I:5012)'));
-    for(const f of (ap.intellect_fired||[])) add(para('Fired intellect combo ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    for(const f of (ap.intellect_fired||[])) add(ruleLine(f[0],'Fired intellect combo — '+f[1],f[2]));
     if(ap.mercury_state) add(para('Mercury (buddhi) — '+ap.mercury_state));
-    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')'));
-    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')'));
-    for(const f of (ap.moon_mind_fired||[])) add(para('The Moon\'s mental disposition ['+f[0]+'] — '+f[1]+' ('+f[2]+')','muted'));
+    if(ap.mercury_house_text) add(para('Mercury in its house (Raman verbatim) — "'+ap.mercury_house_text[0]+'" ('+ap.mercury_house_text[1]+')','quote'));
+    if(ap.mercury_sign_text) add(para('Mercury in its sign (Raman verbatim) — "'+ap.mercury_sign_text[0]+'" ('+ap.mercury_sign_text[1]+')','quote'));
+    for(const f of (ap.moon_mind_fired||[])) add(ruleLine(f[0],'The Moon\'s mental disposition — '+f[1],f[2]));
     if(ap.jupiter_state) add(para('Jupiter (intellect karaka) — '+ap.jupiter_state,'muted'));
     if(ap.courage_verdict) add(para('Courage / initiative (H3) — '+ap.courage_verdict+' (HTJAH-I:3324)'));
     if(ap.trade_indication) add(para('Navamsa-dispositor trade — 10th lord '+ap.trade_indication[0]+', dispositor '+ap.trade_indication[1]+': '+ap.trade_indication[2]+' (HTJAH-II:10249)'));
@@ -2437,12 +2488,18 @@ function render(R, S, FQ){
     add(H2('Decade indication timeline'));
     if(dt.frame) add(para(dt.frame,'muted'));
     for(const dc of dt.decades){
-      add(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
-      for(const a of (dc.areas_favourable||[])) add(para('Favourable: '+a,'muted'));
-      for(const a of (dc.areas_challenged||[])) add(para('Challenged: '+a,'muted'));
-      for(const y of (dc.yogas_ripening||[])) add(para('Yoga ripening: '+y,'muted'));
-      for(const l2 of (dc.leans||[])) add(para('Lean: '+l2,'muted'));
-      if(dc.note) add(para(dc.note,'muted')); } }
+      const card=el('div',{class:'decade'});
+      card.append(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
+      const cols=el('div',{class:'decade-cols'});
+      const cf=el('div',{}); for(const a of (dc.areas_favourable||[])) cf.append(el('span',{class:'chip fav'},a));
+      const ca=el('div',{}); for(const a of (dc.areas_challenged||[])) ca.append(el('span',{class:'chip aff'},a));
+      if(cf.childNodes.length){ cf.prepend(el('div',{class:'muted'},t('Favourable'))); cols.append(cf); }
+      if(ca.childNodes.length){ ca.prepend(el('div',{class:'muted'},t('Challenged'))); cols.append(ca); }
+      if(cols.childNodes.length) card.append(cols);
+      for(const y of (dc.yogas_ripening||[])) card.append(para('Yoga ripening: '+y,'muted'));
+      for(const l2 of (dc.leans||[])) card.append(para('Lean: '+l2,'timing'));
+      if(dc.note) card.append(para(dc.note,'muted'));
+      add(card); } }
 
   // ===== Transits (still step 5 — WHEN) =====
   add(H2('Transits (Gochara)'));
@@ -2483,7 +2540,7 @@ function render(R, S, FQ){
     add(H2('Karmic evolution (Jaimini)'));
     if(km.frame) add(para(km.frame,'muted'));
     add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
-    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','muted'));
+    if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','quote'));
     if(km.d20_core) add(para('Vimsamsa (D-20) core — '+km.d20_core,'muted'));
     if(km.d60_core) add(para('Shashtiamsa (D-60) core — '+km.d60_core,'muted')); }
 
@@ -2549,6 +2606,8 @@ function render(R, S, FQ){
 
   // ===== the guided-journey TOC — built from PAGE_TOC after every H2 registered =====
   buildToc();
+  // ===== first-occurrence glossary marking (client-side _apply_glossary_abbrs) =====
+  glossWalk();
 }
 
 // ---- walled AI-interpretation panel: opt-in LLM speculation, explicitly labeled as

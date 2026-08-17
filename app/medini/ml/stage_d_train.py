@@ -257,7 +257,7 @@ def main(argv=None) -> int:
                         help="Use 100-person smoke parquet (~60K rows).")
     corpus.add_argument("--subsample", action="store_true",
                         help="Use 2000-person subsample parquet (~1.2M rows). "
-                             "Built by scratch_materialize_subsample.py; the "
+                             "Built by app.medini.ml.materialize_subsample; the "
                              "person list lives in dasha_subsample_2000_persons.parquet.")
     p.add_argument("--dataset-v2", action="store_true",
                    help="Use the corrected v2 dataset (event_jd - birth_jd target). "

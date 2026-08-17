@@ -1,8 +1,13 @@
-"""One-shot: filter dasha_stage_d_features.parquet to the 2000-person subsample.
+"""Filter dasha_stage_d_features.parquet to the 2000-person subsample.
 
 Reads the full materialized features (6.17M rows) and writes a new parquet
 containing only rows whose name_norm is in dasha_subsample_2000_persons.parquet.
-Expected ~1.2M rows on disk (~20 MB), ~2 GB in-memory.
+Expected ~1.2M rows on disk (~20 MB), ~2 GB in-memory. This is the builder for
+the parquet that ``stage_d_train --subsample`` reads (promoted from repo-root
+scratch so the Stage-D subsample experiments reproduce from a clean checkout).
+
+Usage:
+    python -m app.medini.ml.materialize_subsample
 """
 from __future__ import annotations
 

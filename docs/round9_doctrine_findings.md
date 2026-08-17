@@ -431,7 +431,7 @@ synthesis, not forecasts.
 
 ```sh
 OLLAMA_ENABLED=true OLLAMA_MODEL=qwen2.5:latest \
-  python -m app.medini.ml.chart_reading_research_test --n-subjects 30
+  python -m app.medini.ml.chart_reading_research --n-subjects 30
 # → data/ml_runs/chart_reading_research/summary.json + per_subject_scores.csv
 ```
 

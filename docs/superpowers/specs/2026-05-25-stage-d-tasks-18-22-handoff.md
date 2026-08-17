@@ -45,7 +45,7 @@ Three execution strategies:
 - Person list: `app/medini/data/dasha_subsample_2000_persons.parquet`
   (seed=42 random sample; 20/30 classes have ≥50 positives, all 30 ≥10)
 - Features parquet: `app/medini/data/dasha_stage_d_features_subsample.parquet`
-  (built by `scratch_materialize_subsample.py`, ~20 MB on disk)
+  (built by `python -m app.medini.ml.materialize_subsample`, ~20 MB on disk)
 - Run via `--subsample` flag on stage_d_train.py (commit 61b3b33).
 - Each seed record carries `corpus: "subsample_2000p"` so DECISION.md can
   footnote the substrate.

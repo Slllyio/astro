@@ -549,6 +549,7 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
 // separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
 const I18N_HI = {
   // section headings added by the 2026-08-17 reframe (plain-language layer)
+  'How to read this report':'यह रिपोर्ट कैसे पढ़ें',
   'Judgment graph':'निर्णय-जाल',
   'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
   'Psychological profile':'मनोवैज्ञानिक चित्र',
@@ -1320,6 +1321,7 @@ const SCOPE={'Your Reading':'summary','Chart signature':'section:synthesis','Rul
 // load-bearing (jumpLink/SCOPE) and stay EXACTLY as they are — this map only annotates.
 const SEC_ID={
   'What matters most':'digest','Your Reading':'plain_reading','Judgment graph':'judgment_graph',
+  'How to read this report':'interpretation_guide',
   'Planet biographies (dominant grahas)':'planet_bios',
   'Plain terms — every technical word, with why it matters':'plain_terms_panel',
   'Chart signature':'chart_signature','Ruler of the nativity':'ruler','Psychological profile':'psych',
@@ -1342,19 +1344,21 @@ function birthBody(){ return { name:$('name').value, year:+$('year').value, mont
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
 function H2(label){ const h=el('h2',{class:'sec'},t(label)); h.id='sec-'+label.replace(/[^a-z]/gi,'').toLowerCase();
-  const scope=SCOPE[label]; if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
+  const sid0=SEC_ID[label], m0=sid0&&RPT&&RPT.section_meta&&RPT.section_meta[sid0];
+  const scope=(m0&&m0.explain_scope)||SCOPE[label];
+  if(scope){ const b=el('button',{class:'explain',type:'button'},t('explain'));
     b.onclick=()=>explainSection(label,scope,h); h.append(b);}
   // the plain-language layer: doctrine heading stays; subtitle + the reader's
   // question + the "why astrologers examine this" preamble are ADDED beneath
   // (section_meta / section_method from the report JSON — add-only by design).
-  const sid=SEC_ID[label], m=sid&&RPT&&RPT.section_meta&&RPT.section_meta[sid];
+  const m=m0;
   if(!m) return h;
   const hi=(LANG==='hi');
   const f=document.createDocumentFragment(); f.append(h);
   f.append(el('p',{class:'sec-sub'}, hi?m.subtitle_hi:m.subtitle_en));
   const ans=el('p',{class:'sec-answers'}); ans.append(el('b',{}, hi?'उत्तर देता है: ':'Answers: '));
   ans.append(hi?m.answers_hi:m.answers_en); f.append(ans);
-  const sm=RPT.section_method&&RPT.section_method[sid];
+  const sm=RPT.section_method&&RPT.section_method[sid0];
   if(sm){ const d=el('div',{class:'method'});
     d.append(el('p',{class:'method-why'},(hi?'ज्योतिषी इसे क्यों परखते हैं — ':'Why astrologers examine this — ')+sm.why));
     const ol=el('ol',{class:'method-order'}); (sm.order||[]).forEach(s=>ol.append(el('li',{},s)));
@@ -1956,9 +1960,38 @@ function render(R, S, FQ){
   if(pr.notable) add(para(pr.notable,'lede'));
   // S3 — tensions woven, never hidden: both poles + the governing v18 rule per sentence.
   if((pr.reconciliations||[]).length){
-    add(para(t('Where readings pull in different directions (both poles shown; the reconciling rule is in How to read this report):'),'muted'));
+    const recIntro=el('p',{class:'muted'});
+    recIntro.append(t('Where readings pull in different directions (both poles shown; the reconciling rule is in '));
+    recIntro.append(jumpLink('How to read this report')); recIntro.append('):');
+    add(recIntro);
     for(const rec of pr.reconciliations) add(para('· '+rec,'muted')); }
   if(pr.closing) add(para(pr.closing,'muted'));
+
+  // ===== How to read this report (v18 interpretation guide — completeness: this
+  // shipped in the JSON since v18 but the page never rendered it; every field shows) =====
+  const ig=R.interpretation_guide;
+  if(ig){
+    add(H2('How to read this report'));
+    if(ig.preamble) add(para(ig.preamble,'lede'));
+    for(const st of (ig.reading_order||[])){
+      const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((st.step!=null?st.step+' · ':'')+(st.answers||st.title||''));
+      c.append(s); const b=el('div',{class:'body'});
+      if(st.title) b.append(para(st.title,'di-title'));
+      if(st.adds) b.append(para(st.adds,'muted'));
+      if(st.section_id) b.append(para(t('Section: ')+st.section_id,'muted'));
+      if(st.caveat_ref) b.append(para(t('Caveat: ')+st.caveat_ref,'muted'));
+      c.append(b); add(c); }
+    add(sectionTable('Precedence rules — which reading governs when two differ', ig.precedence, [],
+      'When two sections disagree about the same matter, these rules say which one governs, which corroborates, and which are simply different grains of the same answer.'));
+    add(sectionTable('Parallel lenses — side by side, never averaged', ig.parallel_lenses));
+    add(sectionTable('The five axes every section reads on', ig.axes));
+    if((ig.not_a_contradiction||[]).length){
+      add(para(t('Pairs that look contradictory but are not:'),'muted'));
+      for(const x of ig.not_a_contradiction) add(para('· '+(typeof x==='string'?x:JSON.stringify(x)),'muted')); }
+    if((ig.relation_vocabulary||[]).length)
+      add(para(t('Relation vocabulary (closed set): ')+ig.relation_vocabulary.join(' · '),'muted'));
+  }
 
   // ===== Judgment graph (S1) — used already above (Your Reading's dominant-planet census
   // sentence); shown right beside it, not buried later in the chapter =====
@@ -1994,7 +2027,10 @@ function render(R, S, FQ){
       Object.entries(byRel).map(([k,v])=>k+' '+v).join(', '),'muted'));
 
     const d=el('details',{class:'card'});
-    const sm=el('summary'); sm.append(t('Every edge (source · relation · target · provenance)')); d.append(sm);
+    const sm=el('summary');
+    sm.append(t('Every edge (source · relation · target · provenance)')+' — '+jg.edges.length+' '+t('edges')+': '+
+      Object.entries(byRel).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+' '+v).join(' · '));
+    d.append(sm);
     const body=el('div',{class:'body'});
     body.append(sectionTable('', jg.edges));
     d.append(body); add(d); }
@@ -2118,6 +2154,16 @@ function render(R, S, FQ){
     add(p); }
   add(sectionTable('Yoga × Dasha timing — when each yoga\'s lord runs', R.yoga_timing, [],
     'A yoga tends to deliver during the periods of the planets that form it — each row shows a yoga and the period windows of its lords.'));
+  // v21 yoga deep-read — completeness: shipped in JSON since v21, never rendered here.
+  if((R.yoga_deep||[]).length){
+    add(H2('Yoga deep-read'));
+    for(const y of R.yoga_deep){ const c=el('details',{class:'card'}); c.setAttribute('open','');
+      const s=el('summary'); s.append((y.rank!=null?y.rank+'. ':'')+(y.name||y.id||'')+(y.kind?' ('+y.kind+')':''));
+      c.append(s); const b=el('div',{class:'body'});
+      for(const k in y){ const v=y[k]; if(v==null||v===''||k==='rank'||k==='name'||k==='id'||k==='kind') continue;
+        const row=el('p',{class:(k==='definition_quote'||k==='effect_quote')?'lede':'muted'});
+        row.append(el('b',{},t(k.replace(/_/g,' '))+': ')); row.append(citeText(fmtVal(k,v))); b.append(row); }
+      c.append(b); add(c); } }
 
   // ===== Ashtakavarga (SAV) =====
   if(R.sav){ add(H2('Ashtakavarga (Sarvashtakavarga)'));
@@ -2356,7 +2402,7 @@ function render(R, S, FQ){
   chapter(10);
   // ===== Divisional deep-reads =====
   if((R.divisional||[]).length){ add(H2('Divisional deep-reads (Shodasavarga)'));
-    for(const dv of R.divisional){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append(dv.label);
+    let _dvFirst=true; for(const dv of R.divisional){ const d=el('details',{class:'card'}); if(_dvFirst){d.setAttribute('open','');_dvFirst=false;} const sm=el('summary'); sm.append(dv.label+' — '+String(dv.body||'').replace(/\s+/g,' ').trim().slice(0,110)+'…');
       d.append(sm); const b=el('div',{class:'body'}); const pre=el('pre',{}); pre.style.whiteSpace='pre-wrap';
       pre.append(citeText(dv.body||'')); pre.style.fontFamily='inherit'; pre.style.fontSize='.82rem'; b.append(pre); d.append(b); add(d); } }
 
@@ -2364,7 +2410,7 @@ function render(R, S, FQ){
   if(R.soul){ add(H2('Soul & destiny (Jaimini)'));
     if(R.soul.narrative) add(para(R.soul.narrative));
     const lines=(R.soul.jaimini_overlay&&R.soul.jaimini_overlay.lines)||[];
-    if(lines.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
+    if(lines.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
       d.append(sm); const b=el('div',{class:'body'}); for(const ln of lines){ b.append(para('['+(ln.provenance||'')+(ln.cite?' '+ln.cite:'')+'] '+ln.text,'muted')); } d.append(b); add(d); } }
   // ===== Karmic evolution (v30, Jaimini — walled) — completeness repair 2026-08-14 =====
   if(R.karmic){ const km=R.karmic;
@@ -2378,7 +2424,7 @@ function render(R, S, FQ){
   if(R.pitru){ add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));
     const cur=R.pitru.curse_yogas||[];
-    if(cur.length){ const d=el('details',{class:'card'}); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
+    if(cur.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Curse-yogas that fire ('+cur.length+')');
       d.append(sm); const b=el('div',{class:'body'}); for(const t of cur){ b.append(para('['+(t.provenance||'')+(t.cite?' '+t.cite:'')+'] '+t.text,'muted')); } d.append(b); add(d); }
     else add(para('No classical ancestral-curse yoga fires on this chart.','muted')); }
 

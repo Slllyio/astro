@@ -117,7 +117,30 @@ decisive affliction. Re-examine via `tools/raman_saab/tune_thresholds.py` (do no
 **Note.** paksha-bala is ALREADY in the stack (`kala.py:81`, GBB-5:215-223) — the Venus gap
 is threshold handling, not a missing bala.
 
-## B3 — Non-death-marital maraka guard  `judge-mechanism`  (Phase 2c)
+## B3 — Non-death-marital maraka guard  `judge-mechanism`  (Phase 2c)  — ✅ SHIPPED 2026-08-17
+**Status.** `MARAKA_NON_DEATH_GUARD`: `_build_frame_ledger` flags `marital_happiness`;
+`_decide` suppresses only maraka's verdict-driving effect under it (karaka veto, fired
+malefics, every other clause keep force; the ledger still records `maraka_active`;
+spouse/coverture/death/longevity unflagged). Companion: `_marginal_karaka_gate`'s trigger
+widened {afflicted}→{afflicted, mixed} (same strict conditions) because the maraka/cliff
+artefact B2 was built to lift no longer forms as 'afflicted' — chart_08's confirmed
+favourable preserved through the mixed route. Anti-double-move added per doctrine-review
+HIGH: a 'mixed' produced by the `_marital_bond_gate` demote (HTJAH-II:2664/2877) is never
+re-lifted (`bond_demoted` mirror of `blem_lifted`).
+**Measured.** Canonical ratchet banner byte-identical: exact 259/293, within-1 283/293,
+real-errors 10. Full A/B over all 450 H7 sig-verdicts on 225 goldens: exactly 5 flips, all
+on rows with NO confirmed expectation (guard-invisible): h4_04 mh favourable→
+insufficient-evidence; chart_35 / NH.chart_43 / NH.chart_65 mh afflicted→
+insufficient-evidence; h7_12 mh afflicted→favourable (widowhood chart — death≠happiness
+under this very doctrine; eyeball h7_12's prose on the corpus machine). On evidence-empty
+ledgers the old artefact now surfaces as insufficient-evidence (not mixed) — arguably more
+honest; recorded per the reviewer's MEDIUM.
+**Corpus-machine follow-ups (content verification impossible on the cloud machine):**
+(1) HTJAH-II:2579 verbatim — death-of-spouse reading; RECONCILE with H7.KD.1 which cites
+the same line for a marital_happiness affliction (possible pre-existing sig
+mis-assignment); (2) h7_12 prose vs the new favourable happiness reading; (3)
+HTJAH-II:1436 (chart_08) spot-check of the mixed-trigger gate route.
+### (original)
 **Doctrine.** Kuja-Dosha / maraka pressure is about the *death* of the spouse (HTJAH-II:2579
 "the death of the husband/wife will occur"), NOT marital *happiness*. The 7th is a maraka
 house, so Venus-the-karaka lands in the maraka set and clause-6 over-afflicts a barely-weak
@@ -128,7 +151,20 @@ matter), mirroring the LONGEVITY_GUARD pattern. Pairs with B2 to fix chart_03/08
 Leo/Aquarius wholly exempt; Mars+Jupiter/Moon conjunction) is **already encoded** in
 `_KujaDosha` (HTJAH-II:2593-2601) — so this is NOT a missing-cancellation gap.
 
-## B4 — Blemishless-/Yogakaraka-Venus marriage override  `new-rule`
+## B4 — Blemishless-/Yogakaraka-Venus marriage override  `new-rule`  — arm 2 ✅ SHIPPED 2026-08-17 (arm 1 shipped 2026-06-15)
+**Status.** `H7.C.87`: benefic `marital_happiness` testimony — `IsYogaKaraka("Venus")` AND
+Venus in a fixed sign {Taurus, Leo, Scorpio, Aquarius} → "fixity of affections"
+(HTJAH-II:1474). Venus is Yogakaraka only for Capricorn/Aquarius lagnas (HTJAH-I:606
+kendra+trikona sense — the conservative, under-firing reading of "Yogakaraka"). Fires on
+20/225 goldens, changes 0 confirmed verdicts (incl. firing WITHOUT flipping the h7_16
+troubled-marriage golden — the right stress case surviving). Doctrine-review
+KEEP-WITH-FLAG: the record re-frames the backlog's "override of the dual-sign stigma" as
+the karaka-QUALITY testimony itself (unconditional benefic, not conditioned on dual-sign
+context) — **corpus-machine follow-up**: verify HTJAH-II:1474 verbatim for (a) the
+technical vs loose "Yogakaraka" sense, (b) whether the statement is conditional on the
+multiplicity context, (c) whether its subject is constancy/happiness or number of
+marriages.
+### (original)
 **Doctrine.** HTJAH-II:1207/368 — a *blemishless* Venus (exalted/own/good-vargas,
 unafflicted) as karaka+7th-lord aspecting the 7th → chaste devoted wife (favourable).
 HTJAH-II:1474 — a *Yogakaraka* Venus in a fixed sign overrides the dual-sign multiplicity

@@ -40,6 +40,7 @@ from app.raman_saab.primitives.functional_nature import (
 # ── sign-class data ───────────────────────────────────────────────────────────
 _ODD_SIGNS: Final[frozenset[int]] = frozenset({1, 3, 5, 7, 9, 11})
 _EVEN_SIGNS: Final[frozenset[int]] = frozenset({2, 4, 6, 8, 10, 12})
+_FIXED_SIGNS: Final[frozenset[int]] = frozenset({2, 5, 8, 11})       # sthira: Taurus, Leo, Scorpio, Aquarius
 _COMMON_SIGNS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})        # dwiswabhava
 # Signs owned by a natural malefic (Sun, Mars, Saturn): Ar Le Sc Cp Aq.
 _MALEFIC_SIGNS: Final[frozenset[int]] = frozenset({1, 5, 8, 10, 11})
@@ -792,4 +793,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted="the 7th lord heavily afflicted (conjunct a node and malefic-aspected, or "
                   "hemmed by papakartari) → a vitiated spouse / disharmonious marriage",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 1773)),
+
+    # ===== B4 arm 2 (DOCTRINE_BACKLOG, encoded 2026-08-17) =====
+    RuleRecord(
+        id="H7.C.87", house=7, signification="marital_happiness", group="combination",
+        kind="evaluable",
+        condition=C.And(C.IsYogaKaraka("Venus"), _PlanetInSigns("Venus", _FIXED_SIGNS)),
+        fortified="a Yogakaraka Venus in a fixed sign → fixity of affections — constancy "
+                  "in the marital bond (the positive answer to the dual-sign multiplicity "
+                  "indications). Arm 1 (the blemishless-Venus floor, HTJAH-II:1207/368) "
+                  "shipped as a gate; this is the karaka-QUALITY testimony itself.",
+        afflicted=None,
+        frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 1474)),
 )

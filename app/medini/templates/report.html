@@ -1928,7 +1928,14 @@ function glossWalk(){
       const ab=el('abbr',{class:'gloss'},mid.nodeValue);
       const g=RPT.plain_terms[key];
       if(g&&g.plain) ab.title=g.plain+(g.analogy?' — '+g.analogy:'');
-      ab.onclick=(e)=>{e.preventDefault(); if(typeof glossPopup==='function') glossPopup(RPT,key);};
+      // show the definition card INLINE beside the term (the #gloss-pop well lives on
+      // another folio, invisible from here in book mode) — click again to dismiss.
+      ab.onclick=(e)=>{e.preventDefault();
+        const host=ab.closest('p,li,td,div')||ab.parentElement;
+        const open=host&&host.nextElementSibling;
+        if(open&&open.classList&&open.classList.contains('gloss-inline')){ open.remove(); return; }
+        const p=glossPopup(RPT,key);
+        if(p&&host){ p.classList.add('gloss-inline'); host.after(p); } };
       mid.parentNode.replaceChild(ab,mid); } }
 }
 function ruleLine(tag, text, cite){

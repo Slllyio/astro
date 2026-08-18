@@ -809,3 +809,69 @@ Tests pinning the new policy: `tests/test_report_explainer.py`
 `tests/test_ai_interpret.py` (`test_lifted_indication_idiom_passes`;
 `test_selfharm_illness_and_decree_death_are_caught`). CLAUDE.md's guard-line and
 ai-interpret bullets were amended the same day to point here.
+
+## Corpus-gated worklist from the chapter audit (2026-08-18) — what the waves deliberately did NOT encode
+
+Waves 0-2 of `REPORT_CRITIQUE_2026-08-17.md` were executed on a machine where the
+doctrine corpus is ABSENT. Every shipped addition is a re-read of already-computed state
+citing only line numbers already recorded in the codebase. The items below were REFUSED
+by the implementers because encoding them would have required minting a citation from
+memory — the one thing the PRIME DIRECTIVE forbids. Each needs a corpus machine to pin
+its exact range, after which it becomes a normal (mostly small) encoding task.
+
+**Doctrine that needs a verified citation before it can be encoded**
+
+1. **10th-from-the-Moon (and from the Sun) career derivation.** `primitives/career.py` is
+   Lagna-only. Raman judges the 10th from Lagna, Moon and Sun and takes the strongest;
+   the profession chapter therefore misses two of his three reference frames. Needs the
+   HTJAH-II / HPA passage that states the three-frame rule.
+2. **Anatomical mapping for Health: sign -> body region (Kalapurusha) and planet ->
+   disease tables.** Grep confirms NO such table exists anywhere in `app/raman_saab`.
+   The health section's own subtitle asks "which body areas does the chart mark" and it
+   answers with house numbers. HPA carries both tables; the chapter+line ranges must be
+   verified before encoding. **This is the single largest genuine content gap in the
+   report** (audit's own words).
+3. **Studies-in-Jaimini chara-dasha x karakamsa pairing.** The dated chara sequence and
+   the karakamsa reading now both render (Wave 1/2), but the sentence that reads the
+   karakamsa indications THROUGH the running chara period is not composed — the passage
+   is unpinned. A navigational cross-reference was shipped instead.
+4. **Spouse-description block** (7th sign nature, the 7th lord's navamsa, the D-9 spouse
+   significator's temperament) and the **computed early/delayed marriage-timing lean**.
+   The primitives exist; the descriptive passages (HTJAH-II 7th-house chapter) need their
+   ranges verified before the block can quote or paraphrase them.
+5. **Balance-of-dasha-at-birth citation.** The row now renders (Wave 2, foundation) as
+   disclosed JD arithmetic with NO citation, because Raman's casting chapter / the
+   Mainpuri proforma line is unpinned.
+6. **Deeptadi precedence rule.** `state()` is priority-ordered (dignity-first) and the
+   report now discloses secondary states, but HPA Ch.7 states no explicit precedence —
+   the ordering is disclosed as the engine's own convention, uncited by design.
+7. **Per-component Shadbala minima (GBB-8).** The "weakest component" pointer shipped as
+   explicitly arithmetic-only ("no per-component minima are encoded"). GBB-8's component
+   requirement table needs verification to make it a real per-component verdict.
+8. **Moderating-factor clause citation.** The clause ("the affliction is qualified - ...")
+   composes from ledger flags (parivartana_resilient / intact karaka / catastrophic-gate)
+   and carries NO citation: Raman's "the affliction is considerably reduced by..." device
+   has no recorded line. Framed as the judge's own disclosure until one is pinned.
+9. **Psych affliction-to-the-mind screen** (Moon/Mercury under malefic aspect, 5th-house
+   affliction). The critique marked it FOR CORPUS VERIFICATION; not implemented.
+10. **Kemadruma-bhanga extended branch** — the benefic-drishti branch is labelled
+    not-3HC in code; if Raman states it elsewhere, pin it and relabel.
+11. **Missing significations** the audit found thin against Raman's chapter tables: H1
+    appearance/character, H3 writing/neighbours, H2 food/sustenance, H5 speculation and
+    upasana, H6 servants/subordinates, H12 bed-comforts. Each is an add-only row in
+    `significations.py` + a rule bucket, but each needs its chapter-table citation.
+12. **HPA-26 pinda -> longevity application** and the **ASP transit-multiplier via pinda**
+    remain deliberately unwired (the reduced tables and Sodya Pinda themselves now render,
+    Wave 1); both were already recorded as deferred pending corpus.
+
+**USER decisions still open** (unchanged by the waves; recorded here so they are not lost):
+Sun `MIN_REQUIRED` 5.0 (tuned) vs GBB-8:303's printed 6.5 — retune or relabel; whether
+raja/dhana yoga-lean should be house-conditional in the preponderance ledger (doctrine
+review); the Jaimini overlay's aspect scheme (rasi drishti vs graha drishti); the decade
+timeline's whole-life mode default; and the Stage-9 holdout gate + the 90% bar vs the
+proven 88.4% ceiling.
+
+**Side effect to be aware of:** the two new digest head items (governing factor,
+longevity foundation) shift the positions of later digest items, so `chart_feedback` rows
+stored under older qids no longer align with the current digest. Harmless for new feedback;
+historical rows should be treated as position-stale if they are ever re-analysed.

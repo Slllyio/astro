@@ -49,6 +49,35 @@ def _each(seq) -> list:
     return [_ad(x) for x in seq]
 
 
+def _marriage_json(m: Any) -> Any:
+    """The marriage monograph, with each fired kalatra rule's maintainer notes routed
+    into their own field instead of reaching client prose.
+
+    ADD-ONLY: `fired_kalatra` keeps the raw rule text exactly as before; the two new
+    parallel keys carry the same rows already split by
+    `monographs.split_maintainer_notes` (the markdown and standalone-HTML surfaces
+    route them the same way). A client renders `fired_kalatra_client` and shows
+    `fired_kalatra_notes` as fine print."""
+    if m is None:
+        return None
+    from app.raman_saab.monographs import split_maintainer_notes
+
+    d = _ad(m)
+    rows = d.get("fired_kalatra") or ()
+    client: list = []
+    notes: list = []
+    for row in rows:
+        row = list(row)
+        text = row[1] if len(row) > 1 else ""
+        kept, note = split_maintainer_notes(str(text))
+        client.append([row[0], kept, *row[2:]])
+        if note:
+            notes.append([row[0], note])
+    d["fired_kalatra_client"] = client
+    d["fired_kalatra_notes"] = notes
+    return d
+
+
 def _chart_dict(chart) -> dict:
     """Trimmed chart: the planet table a reader/consumer actually needs (not the full model)."""
     from app.raman_saab.detailed_report import (ascendant_position, format_longitude,
@@ -288,7 +317,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "arishta": _ad(r.arishta) if r.arishta is not None else None,        # v22
         "profession": _ad(r.profession) if r.profession is not None else None,  # v23
         "wealth": _ad(r.wealth) if r.wealth is not None else None,           # v24
-        "marriage": _ad(r.marriage) if r.marriage is not None else None,     # v25
+        "marriage": _marriage_json(r.marriage),                              # v25
         "children": _ad(r.children) if r.children is not None else None,     # v26
         "psych": _ad(r.psych) if r.psych is not None else None,              # v27
         "decades": _ad(r.decades) if r.decades is not None else None,        # v28

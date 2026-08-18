@@ -179,10 +179,11 @@ class TestYogaTimingContext:
 
     def test_now_marker_present_on_exactly_the_running_rows(self, report, markdown):
         """The NOW cell appears on every table row containing the reference date and on
-        no other row."""
+        no other row. (Wave-3 grouped the rows by yoga into one table per yoga, so the
+        slice is the whole section rather than the first table.)"""
         i = markdown.find("| Yoga | Period | Planet | Window | Delivery | Now |")
         assert i > 0
-        table = markdown[i:markdown.find("\n\n", i)]
+        table = markdown[i:markdown.find("## Yoga deep-read", i)]
         rows = [ln for ln in table.splitlines() if ln.startswith("| ") and "---" not in ln
                 and not ln.startswith("| Yoga |")]
         live = [t for t in report.yoga_timing

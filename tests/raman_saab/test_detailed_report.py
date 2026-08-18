@@ -664,13 +664,27 @@ class TestDetailedReport:
         contradict the House-by-house section's own 'Ashtakavarga <band> (<n> bindus)' phrase
         for the same house — this is the exact contradiction a close reading of a real generated
         report found (the same bindu count called "average" in one place and "below average" in
-        the other)."""
+        the other).
+
+        Wave-3 (2026-08-18): scoped to each house's OWN block (the whole-document
+        first-match form silently pinned whichever phrasing happened to render first) and
+        widened to both phrasings the chapter uses — the Working line's "Ashtakavarga
+        <band> (<n> bindus)" and the Conclusion's "with <band> Ashtakavarga support
+        (<n> bindus)". Strictly stronger than the version it replaces."""
         import re
         for row in report.house_strength:
             if row.sav_bindus is None:
                 continue
-            m = re.search(rf"Ashtakavarga (\w+) \({row.sav_bindus} bindus\)", markdown)
-            if m is not None:
+            i = markdown.find(f"### House {row.house} ")
+            assert i >= 0, row.house
+            j = markdown.find(f"### House {row.house + 1} ", i)
+            block = markdown[i:j if j > i else len(markdown)]
+            for m in re.finditer(rf"(\w+) Ashtakavarga support \({row.sav_bindus} bindus\)",
+                                 block):
+                assert m.group(1) == row.sav_band, (row.house, row.sav_bindus)
+            for m in re.finditer(rf"Ashtakavarga (\w+) \({row.sav_bindus} bindus\)", block):
+                if m.group(1) == "support":          # the Conclusion phrasing, checked above
+                    continue
                 assert m.group(1) == row.sav_band, (row.house, row.sav_bindus)
 
     def test_house_strength_never_touches_a_verdict(self):

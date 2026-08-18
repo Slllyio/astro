@@ -2734,7 +2734,8 @@ function render(R, S, FQ){
     if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','quote'));
     if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','quote'));
     if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','quote'));
-    for(const f of (mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const f of (mg.fired_kalatra_client||mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const n of (mg.fired_kalatra_notes||[])) add(para(n[0]+' — '+n[1],'muted fineprint'));
     if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
     for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));

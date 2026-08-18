@@ -143,6 +143,9 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .tag--warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
 .tag--univ{background:var(--tag-bg);color:var(--tag-ink)}
 .md-group{margin:1.5rem 0 0}
+/* Wave-3: yoga x dasha rows are grouped by yoga; this is the group's own band row. */
+.yoga-group th{text-align:left;background:var(--tag-bg);color:var(--tag-ink);
+  font-size:.72rem;letter-spacing:.04em}
 .md-head{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--doctrine);
   margin:0 0 .1rem}
 .theme-label{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);
@@ -528,16 +531,59 @@ def _raman_quote_html(mr, pf) -> str:
             f'</blockquote>')
 
 
+def _house_strip(rows: tuple) -> str:
+    """Wave-3 (2026-08-18): the verdict-first 12-row strip that opens the house chapter —
+    the markdown strip's HTML twin, built from the SAME `detailed_report.house_strip_rows`
+    composer so the two surfaces cannot drift. A scanning index only: the twelve deep
+    blocks follow it unchanged and in full."""
+    if not rows:
+        return ""
+    body = ""
+    for row in rows:
+        inv = (' <span class="tag tag--warn">INVERTED</span>' if row.inverted else "")
+        split = (f'<span class="chip chip--{_vclass(row.verdict)} split-badge" '
+                 f'title="{_esc(row.split_note)}">{_esc(row.split)}</span>'
+                 if row.split else 'consistent')
+        body += (f'<tr><td><a href="#house-{row.house}">H{row.house}</a></td>'
+                 f'<td>{_esc(row.name)}</td>'
+                 f'<td><span class="chip chip--{_vclass(row.verdict)}">'
+                 f'{_esc(row.verdict)}</span>{inv}</td>'
+                 f'<td>{_esc(row.driver) if row.driver else "&mdash;"}</td>'
+                 f'<td>{split}</td>'
+                 f'<td>{_esc(row.tier) if row.tier else "not lit"}</td></tr>')
+    return ('<p class="section-sub"><b>The twelve houses at a glance</b> &mdash; a '
+            'scanning index; each row&rsquo;s full judgment, evidence and population '
+            'context follows below, unabridged.</p>'
+            '<div class="tablewrap"><table class="grid"><thead><tr><th>#</th>'
+            '<th>house</th><th>verdict</th><th>driver</th><th>split status</th>'
+            '<th>running period</th></tr></thead>'
+            f'<tbody>{body}</tbody></table></div>'
+            '<p class="section-sub"><i>&ldquo;Running period&rdquo; is this house&rsquo;s '
+            'four-tier fructification grade in the bhukti running at the reference date '
+            '(par excellence / ordinary / limited / feeble, HTJAH-I:1592-1596); &ldquo;not '
+            'lit&rdquo; means neither period-lord influences the house. &ldquo;Split '
+            'status&rdquo; repeats the block&rsquo;s own split note; &ldquo;consistent&rdquo; '
+            'means the majority tenor agrees with the headline.</i></p>')
+
+
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
                    conclusion: str = "", ht=None, frame_line: str = "",
-                   tier_line: str = "", chief: tuple = ()) -> str:
+                   tier_line: str = "", chief: tuple = (), cross_refs: tuple = (),
+                   maintainer_notes: str = "", cal_rollup: str = "") -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
     closing device) — passed in, not computed here, so both renderers share one composer.
     Wave-2 (2026-08-18, add-only): `frame_line` / `tier_line` (the pre-composed
     `house_frame_line` / `house_current_tier_line` disclosures) and `chief` (the
     `house_chief_combinations` rows — signification, rule id, Raman's effect prose,
-    citation) are likewise passed in from the shared composers."""
+    citation) are likewise passed in from the shared composers.
+    Wave-3 (2026-08-18, add-only): `cross_refs` (the conditional in-block pointers —
+    PREC-1 dashboard disagreement, the Longevity deferral), `maintainer_notes` (the
+    encoding-scope fine print routed out of the chief-combination prose) and `cal_rollup`
+    (the repeat-band summary above the retained population rows) — all pre-composed in
+    `detailed_report`, all conditional on state the judgment path computed. The
+    Conclusion is now rendered at the HEAD of the block; the machine-composed evidence
+    chain it used to sit under is unchanged and labelled "Working"."""
     is_active = "ACTIVE in the running" in mr.reading
     active = '<span class="active-badge">active now</span>' if is_active else ""
     flags = [_vclass(mr.verdict)]
@@ -562,13 +608,21 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
             badge_label = f"{n}/{split.total} {split.majority}"
         split_badge = (f'<span class="chip chip--{_vclass(split.majority)} split-badge" '
                        f'title="{_esc(note)}">{_esc(badge_label)}</span>')
-        split_note_html = f'<div class="split-note">Split status: {_esc(note)}</div>'
+        from app.raman_saab.detailed_report import SPLIT_POINTER
+        split_note_html = (f'<div class="split-note">Split status: {_esc(note)}</div>'
+                           f'<div class="split-note"><i>{_esc(SPLIT_POINTER)}</i></div>')
     if drv_entry is not None and drv_entry.inverted_warning:
+        from app.raman_saab.detailed_report import INVERTED_POINTER
         inverted_note_html = (
             '<div class="split-note split-note--warn">&#9888; The driver, '
             f'<b>{_esc(driver)}</b>, is an atlas-proven <b>INVERTED channel</b> — real cases '
             'ran opposite to this reading; treat this house’s headline with maximal '
-            'skepticism.</div>')
+            'skepticism.</div>'
+            f'<div class="split-note split-note--warn"><i>{_esc(INVERTED_POINTER)}</i></div>')
+    xref_html = "".join(f'<div class="split-note"><i>{_esc(x)}</i></div>'
+                        for x in cross_refs)
+    conclusion_html = (f'<div class="split-note"><b>Conclusion</b> &mdash; '
+                       f'{_esc(conclusion)}</div>' if conclusion else "")
 
     pillars = ""
     if pf is not None and pf.significations:
@@ -620,36 +674,40 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
                  f'{_esc(tier_line)}</div>' if tier_line else "")
     level_why = (
         '<details class="disclosure" open><summary>Why</summary>'
-        f'<p class="doctrine">{_bold(mr.reading)}</p>'
-        f'{frame_html}{tier_html}'
-        + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
-           if conclusion else "") + '</details>')
+        f'<p class="doctrine"><b>Working</b> &mdash; {_bold(mr.reading)}</p>'
+        f'{frame_html}{tier_html}</details>')
     level_chief = ""
     if chief:
         chief_items = "".join(
             f'<li><i>{_esc(csig)}</i>: <code>{_esc(cid)}</code> &mdash; '
             f'&ldquo;{_esc(ctext)}&rdquo; ({_esc(ccite)})</li>'
             for csig, cid, ctext, ccite in chief)
+        notes_html = (f'<p class="section-sub"><i>Encoding-scope notes (maintainer fine '
+                      f'print, not readings): {_esc(maintainer_notes)}</i></p>'
+                      if maintainer_notes else "")
         level_chief = (
             f'<details class="disclosure" open><summary>Chief combinations &mdash; '
             f'the fired rules that decided, in Raman&rsquo;s own words</summary>'
-            f'<ul>{chief_items}</ul></details>')
+            f'<ul>{chief_items}</ul>{notes_html}</details>')
+    rollup_html = (f'<div class="split-note"><i>{_esc(cal_rollup)}</i></div>'
+                   if cal_rollup else "")
     level_evidence = (
         f'<details class="disclosure"><summary>Evidence &mdash; {testimony_n} testimonies'
         f'{f", {support_word} support" if support_word else ""}</summary>'
         f'{badges}<div class="instrument"><div class="instrument-label">Population context '
-        f'&mdash; empirical, not Raman</div>{rows}</div></details>')
+        f'&mdash; empirical, not Raman</div>{rollup_html}{rows}</div></details>')
     level_calc = (f'<details class="disclosure"><summary>Calculation</summary>{pillars}</details>'
                   if pillars else "")
     level_classical = (f'<details class="disclosure"><summary>Classical text (Raman '
                        f'verbatim)</summary>{quote_html}</details>' if quote_html else "")
 
     return (
-        f'<section class="house" data-flags="{" ".join(flags)}"><div class="house-head">'
+        f'<section class="house" data-flags="{" ".join(flags)}" '
+        f'id="house-{mr.house}"><div class="house-head">'
         f'<h3><span class="house-num">H{mr.house}</span> &middot; {_esc(_HOUSE_NAME[mr.house])}</h3>'
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
-        f'{split_note_html}{inverted_note_html}'
+        f'{split_note_html}{inverted_note_html}{xref_html}{conclusion_html}'
         f'{level_why}{level_chief}{level_evidence}{level_calc}{level_classical}</section>')
 
 
@@ -1153,14 +1211,24 @@ def _yoga_timing_section(r: DetailedReport) -> str:
             + "".join(f'<li><b>{_esc(n)}</b> &mdash; {_esc(s)}</li>'
                       for n, s in ripening)
             + '</ul>')
-    rows = "".join(
-        f'<tr><td><b>{_esc(t.yoga_name)}</b></td>'
-        f'<td>{_esc(f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha else t.role)}</td>'
-        f'<td>{_esc(t.planet)}</td>'
-        f'<td>{_outlook_window_label(t.period_start_jd, t.period_end_jd)}</td>'
-        f'<td>{_esc(t.quality.tag)}</td>'
-        f'<td>{"NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd else ""}</td></tr>'
-        for t in r.yoga_timing)
+    # Wave-3 (2026-08-18): the rows are GROUPED BY YOGA (shared
+    # `detailed_report.yoga_timing_grouped`) instead of interleaved by date — each group
+    # opens with a labelled band row, every window is retained, no column is dropped.
+    from app.raman_saab.detailed_report import yoga_timing_grouped
+    rows = ""
+    for yname, group in yoga_timing_grouped(r):
+        rows += (f'<tr class="yoga-group"><th colspan="6">{_esc(yname)} &mdash; '
+                 f'{len(group)} constituent-lord window'
+                 f'{"s" if len(group) != 1 else ""}</th></tr>')
+        rows += "".join(
+            f'<tr><td><b>{_esc(t.yoga_name)}</b></td>'
+            f'<td>{_esc(f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha else t.role)}'
+            f'</td>'
+            f'<td>{_esc(t.planet)}</td>'
+            f'<td>{_outlook_window_label(t.period_start_jd, t.period_end_jd)}</td>'
+            f'<td>{_esc(t.quality.tag)}</td>'
+            f'<td>{"NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd else ""}</td></tr>'
+            for t in group)
     return (
         '<h2 class="section" id="yoga-timing">Yoga &times; Dasha timing</h2>'
         '<p class="section-sub"><b>In simple terms:</b> a yoga is not always "on" &mdash; Raman '
@@ -2869,12 +2937,28 @@ def to_html(r: DetailedReport) -> str:
 
     sig_html = "".join(_chip(k, str(v)) for k, v in sig)
 
-    from app.raman_saab.detailed_report import (house_chief_combinations,
+    from app.raman_saab.detailed_report import (calibration_rollup_line,
+                                                house_chief_combinations,
                                                 house_conclusion,
                                                 house_current_tier_line,
-                                                house_frame_line)
+                                                house_dashboard_conflicts,
+                                                house_frame_line,
+                                                house_longevity_pointer,
+                                                house_maintainer_notes,
+                                                house_strip_rows)
     dist_houses = frozenset(h for h, _e in r.distinctive)
     ht_by_house = {h.house: h for h in r.preponderance.houses}
+
+    def _xrefs(house: int) -> tuple:
+        # conditional pointers only: each fires from computed state (a dashboard/bhava
+        # verdict disagreement; deferred longevity metadata), never unconditionally.
+        out = list(house_dashboard_conflicts(r, house))
+        lp = house_longevity_pointer(r, house)
+        if lp:
+            out.append(lp)
+        return tuple(out)
+
+    house_strip = _house_strip(house_strip_rows(r))
     houses = "".join(
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
@@ -2882,7 +2966,10 @@ def to_html(r: DetailedReport) -> str:
                        ht=ht_by_house.get(mr.house),
                        frame_line=house_frame_line(r, mr.house),
                        tier_line=house_current_tier_line(r, mr.house),
-                       chief=house_chief_combinations(r, mr.house))
+                       chief=house_chief_combinations(r, mr.house),
+                       cross_refs=_xrefs(mr.house),
+                       maintainer_notes=house_maintainer_notes(r, mr.house),
+                       cal_rollup=calibration_rollup_line(r.calibration[mr.house]))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'
@@ -3263,6 +3350,7 @@ def to_html(r: DetailedReport) -> str:
     population context. {_esc(ROLLUP_RULE)} Where the majority of a house&rsquo;s significations
     disagree with that headline, a <b>split-status</b> badge says so &mdash; and where the
     headline is driven by an atlas-proven inverted channel, a warning is shown inline.</p>
+  {house_strip}
   {filters}
   <div class="houses">{houses}</div>
 

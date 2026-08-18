@@ -932,7 +932,14 @@ def house_chief_combinations(r: "DetailedReport", house: int, per_sig: int = 3,
     first (malefic rows on an afflicted verdict, benefic on favourable), capped at
     `per_sig`, de-duplicated by rule id across the house. Fortified rows whose text is
     the recorded no-variant placeholder are skipped (they are maintenance notes, not
-    effect prose)."""
+    effect prose).
+
+    Wave-3 (2026-08-18): the effect prose is routed through the marriage monograph's own
+    `monographs.split_maintainer_notes` — encoding-scope artifacts ("v1-OOS", "owned by
+    H7.C.60", "TODO(predicate: ...)") leave the client sentence and are re-emitted, in
+    full, by `house_maintainer_notes` as a trailing fine-print line. Routing, never
+    removal; one helper, not a second implementation."""
+    from app.raman_saab.monographs import split_maintainer_notes
     pf = next((p for p in r.proformas if p.house == house), None)
     if pf is None:
         return ()
@@ -954,10 +961,34 @@ def house_chief_combinations(r: "DetailedReport", house: int, per_sig: int = 3,
             if not text or _CHIEF_PLACEHOLDER in text:
                 continue
             seen.add(fr.rule.id)
-            out.append((sv.signification, fr.rule.id, text,
+            client, _notes = split_maintainer_notes(text)
+            out.append((sv.signification, fr.rule.id, client or text,
                         f"{fr.rule.source.work}:{fr.rule.source.line}"))
             taken += 1
     return tuple(out)
+
+
+def house_maintainer_notes(r: "DetailedReport", house: int, per_sig: int = 3) -> str:
+    """The encoding-scope fine print stripped out of this house's chief-combination
+    prose, re-emitted verbatim in ONE trailing line (the marriage monograph's own
+    device). Nothing is lost: `house_chief_combinations` carries the client sentence,
+    this carries the maintainer half, and the raw rule text in the data is untouched."""
+    from app.raman_saab.monographs import split_maintainer_notes
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ""
+    kept = {rid for _s, rid, _t, _c in house_chief_combinations(r, house, per_sig)}
+    notes: list[str] = []
+    for sv in pf.significations:
+        for _led in (sv.ledger,):
+            for fr in (*_led.fired_malefic, *_led.fired_benefic, *_led.fired_neutral):
+                if fr.rule.id not in kept:
+                    continue
+                _client, note = split_maintainer_notes((fr.text or "").strip())
+                row = f"{fr.rule.id}: {note}" if note else ""
+                if row and row not in notes:
+                    notes.append(row)
+    return " | ".join(notes)
 
 
 def house_frame_line(r: "DetailedReport", house: int) -> str:
@@ -995,6 +1026,24 @@ def house_frame_line(r: "DetailedReport", house: int) -> str:
     return line + " - the stronger frame-lord's frame decides (HTJAH-I:645-646)."
 
 
+def house_current_tiers(r: "DetailedReport") -> dict[int, str]:
+    """{house: four-tier grade} for the RUNNING bhukti — computed once through the ONE
+    shared `graded_buckets` implementation (HTJAH-I:1592-1596, 1635-1640). Houses that
+    neither period-lord influences are simply absent from the mapping. Wave-3
+    (2026-08-18): hoisted out of `house_current_tier_line` so the verdict-first strip and
+    the per-house line read the SAME grading rather than each recomputing it."""
+    tp = next((tp for tp in r.timeline.periods
+               if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    if tp is None:
+        return {}
+    _assoc, buckets = graded_buckets(tp, r.chart)
+    out: dict[int, str] = {}
+    for tier, items in buckets.items():          # buckets are already best-tier-first
+        for a in items:
+            out.setdefault(a.house, tier)
+    return out
+
+
 def house_current_tier_line(r: "DetailedReport", house: int) -> str:
     """The running period's fructification tier FOR THIS HOUSE — the same four-tier
     vocabulary (par excellence / ordinary / limited / feeble, HTJAH-I:1592-1596,
@@ -1008,9 +1057,7 @@ def house_current_tier_line(r: "DetailedReport", house: int) -> str:
         return ""
     maha, antar = tp.period.maha, tp.period.antar
     label = f"{maha} MD" + (f" / {antar} AD" if antar else "")
-    _assoc, buckets = graded_buckets(tp, r.chart)
-    tier = next((t for t, items in buckets.items()
-                 if any(a.house == house for a in items)), None)
+    tier = house_current_tiers(r).get(house)
     if tier is None:
         return (f"In the running {label} period neither period-lord influences this "
                 f"house - no fructification grade for the current bhukti "
@@ -1048,6 +1095,154 @@ def house_moderating_clause(r: "DetailedReport", house: int) -> str:
     if not mods:
         return ""
     return "the affliction is qualified - " + "; ".join(mods)
+
+
+# ── Wave-3 (2026-08-18) traversal composers ─────────────────────────────────
+# The house chapter is the report's longest stretch; these compose the SCANNING layer
+# (a verdict-first strip, the in-block cross-references, the calibration rollup) out of
+# state the judgment path already computed. Every one of them is selection or
+# restatement — no verdict, count, band or gate is touched, and nothing below them is
+# removed: the deep blocks render exactly as before, in full.
+
+
+@dataclass(frozen=True)
+class HouseStripRow:
+    """One row of the verdict-first house strip — a pure re-read of the deep block that
+    follows it (same verdict, same driver, same split note, same running-period tier)."""
+    house: int
+    name: str
+    verdict: str
+    driver: str          # the signification that drove the rollup ("" when none decided)
+    split: str           # short split-status badge ("2-2 split" / "5/6 favourable"), "" if none
+    split_note: str      # the full split sentence (tooltip / title text), "" if none
+    tier: str            # running-bhukti four-tier grade, "" when neither period-lord acts
+    inverted: bool       # the driver sits on an atlas-proven INVERTED channel
+
+
+def house_strip_badge(split: "TenorSplit", note: str | None) -> str:
+    """The short split badge label the HTML house-head already composes, hoisted so the
+    markdown strip and the HTML strip cannot drift ("" when the tenor agrees with the
+    headline and no note is emitted)."""
+    if not note:
+        return ""
+    if split.favourable == split.afflicted and split.mixed == 0:
+        return f"{split.favourable}-{split.afflicted} split"
+    n = {"favourable": split.favourable, "afflicted": split.afflicted,
+         "mixed": split.mixed}[split.majority]
+    return f"{n}/{split.total} {split.majority}"
+
+
+def house_strip_rows(r: "DetailedReport") -> tuple[HouseStripRow, ...]:
+    """The twelve-row verdict-first strip that opens the house chapter — house, plain
+    name, verdict, driver, split badge, and whether the running period lights it. Every
+    cell restates a value the deep block below prints in full; the strip decides nothing
+    and hides nothing (REPORT COMPLETENESS: it is a scanning index ABOVE the blocks, not
+    a replacement for them)."""
+    tiers = house_current_tiers(r)
+    rows: list[HouseStripRow] = []
+    for mr in r.synthesis.matters:
+        cal = r.calibration[mr.house]
+        drv = driver_entry(cal, mr.verdict)
+        split = signification_tenor_split(cal)
+        note = tenor_note(split, mr.verdict)
+        rows.append(HouseStripRow(
+            house=mr.house, name=mr.name, verdict=mr.verdict,
+            driver=drv.signification if drv else "",
+            split=house_strip_badge(split, note), split_note=note or "",
+            tier=tiers.get(mr.house, ""),
+            inverted=bool(drv is not None and drv.inverted_warning)))
+    return tuple(rows)
+
+
+def calibration_rollup_line(reading: "CalibratedHouseReading") -> str:
+    """ONE summary line above a house's population-context rows when they repeat — the
+    critique's H1 (three verbatim-identical lines) and H6 (five near-universal rows)
+    case. Fires when >= 3 rows share a verdict+degree band, or >= 3 sit in a
+    near-universal band. ADD-ONLY: every individual row is still rendered beneath it;
+    this only tells the reader in advance that they repeat, so the rows that genuinely
+    differ stand out. Empirical overlay wording — not Raman."""
+    rows = [e for e in reading.entries if e.favourability_percentile is not None]
+    total = len(rows)
+    if total < 3:
+        return ""
+    bands: dict[tuple[str, str], int] = {}
+    for e in rows:
+        key = (str(e.verdict), str(e.degree))
+        bands[key] = bands.get(key, 0) + 1
+    (top_v, top_d), top_n = max(bands.items(), key=lambda kv: (kv[1], kv[0]))
+    near = sum(1 for e in rows if e.band_share is not None and e.band_share >= 0.5)
+    parts: list[str] = []
+    if top_n >= 3:
+        parts.append(f"{top_n} of {total} sub-readings return the same "
+                     f"{top_v} ({top_d}) band")
+    if near >= 3:
+        parts.append(f"{near} of {total} are near-universal - that band carries "
+                     f"little information")
+    if not parts:
+        return ""
+    return "Rollup: " + "; ".join(parts) + ". Every individual row is kept below."
+
+
+def house_dashboard_conflicts(r: "DetailedReport", house: int) -> tuple[str, ...]:
+    """PREC-1 cross-references, in the block where the reader actually stumbles: the
+    dashboard matters whose dedicated-reader verdict differs from THIS house's rollup.
+    Same detection as `tension_narrator.narrate_tensions` item 2 (one `_MATTER_HOUSE`
+    map, one comparison) — re-read per house so the pointer appears only where the
+    disagreement is real. Empty for every house whose matters agree."""
+    from app.raman_saab.tension_narrator import _MATTER_HOUSE
+    if len(r.proformas) < house:
+        return ()
+    rollup = str(r.proformas[house - 1].rollup)
+    out: list[str] = []
+    for en in r.dashboard.entries:
+        if _MATTER_HOUSE.get(en.matter) != house:
+            continue
+        if (en.verdict in ("favourable", "afflicted")
+                and rollup in ("favourable", "afflicted")
+                and en.verdict != rollup):
+            out.append(f"Cross-reference: the dashboard reads {en.matter} "
+                       f"{en.verdict} while this bhava reads {rollup} - the matter is "
+                       f"judged by its dedicated reader, the bhava by its weakest "
+                       f"decided matter. PREC-1 in \"How to read this report\" governs: "
+                       f"ask the dashboard for a matter, this block for the house.")
+    return tuple(out)
+
+
+#: Metadata keys whose detail is deliberately deferred to the Longevity chapter — the H8
+#: block judges the bhava, the Longevity chapter carries the span/maraka detail (PREC-8).
+_LONGEVITY_DEFERRED_KEYS: frozenset[str] = frozenset({"death_window", "decanate_cause"})
+
+
+def house_longevity_pointer(r: "DetailedReport", house: int) -> str:
+    """The deferral pointer for the house that computed longevity metadata it does NOT
+    print (the H8 death-window / 22nd-decanate rows, `house_template._event_timing`).
+    Conditional on the metadata actually being present, so it can never appear on a
+    house that computed nothing to defer."""
+    pf = next((p for p in r.proformas if p.house == house), None)
+    if pf is None:
+        return ""
+    keys = {k for k, _v in pf.metadata}
+    for sv in pf.significations:
+        keys |= {k for k, _v in sv.metadata}
+    if not (keys & _LONGEVITY_DEFERRED_KEYS):
+        return ""
+    return ("Cross-reference: the maraka-bhukti and 22nd-decanate detail this house "
+            "computes is not repeated here - it is carried in the Longevity chapter "
+            "below, where the band is established first and the marakas second "
+            "(PREC-8).")
+
+
+#: One pointer, reused wherever an atlas-proven inverted channel is flagged.
+INVERTED_POINTER = ("Cross-reference: \"Information content of this reading\" above "
+                    "lists every inverted channel in this chart and what the atlas "
+                    "measured; PREC-9 governs - the overlay outranks the verdict as "
+                    "skepticism, never as a re-judgment.")
+
+#: One pointer, reused wherever a split-status note is emitted.
+SPLIT_POINTER = ("Cross-reference: the precedence rules for this disagreement are in "
+                 "\"How to read this report\" above - PREC-1 (a bhava is a different "
+                 "grain from a matter) and PREC-3 (a split is disclosed, never "
+                 "re-voted).")
 
 
 def graded_buckets(tp, chart) -> tuple[bool, dict[str, list]]:
@@ -1515,6 +1710,23 @@ def yoga_next_ripening(r: "DetailedReport") -> tuple[tuple[str, str], ...]:
                         "no further constituent-lord window inside the shown timeline "
                         "(its windows above lie in the past)"))
     return tuple(out)
+
+
+def yoga_timing_grouped(r: "DetailedReport") -> tuple[tuple[str, tuple], ...]:
+    """Wave-3 (2026-08-18): the SAME `yoga_timing` rows, grouped by yoga instead of
+    interleaved by date — the repetition-suppression fix for a table where one Venus
+    Mahadasha printed three verbatim-identical rows under three different yogas.
+    Grouping only: every row appears exactly once, in the chronological order it already
+    had, and no column is dropped (the yoga name becomes each group's own label). Group
+    order follows each yoga's first appearance in the flat table."""
+    order: list[str] = []
+    groups: dict[str, list] = {}
+    for t in r.yoga_timing:
+        if t.yoga_name not in groups:
+            order.append(t.yoga_name)
+            groups[t.yoga_name] = []
+        groups[t.yoga_name].append(t)
+    return tuple((name, tuple(groups[name])) for name in order)
 
 
 @dataclass(frozen=True)
@@ -4520,19 +4732,30 @@ def to_markdown(r: DetailedReport) -> str:
             for _yn, _sent in _ripening:
                 L.append(f"- **{_yn}** — {_sent}")
             L.append("")
-        L.append("| Yoga | Period | Planet | Window | Delivery | Now |")
-        L.append("|---|---|---|---|---|---|")
-        for t in r.yoga_timing:
-            # Wave-2 C: AD rows carry their MD context (Raman's bhukti doctrine is
-            # MD-lord-relative) and the row containing the reference date is marked.
-            _role_cell = (f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha
-                          else t.role)
-            _now_cell = ("NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd
-                         else "")
-            L.append(f"| {t.yoga_name} | {_role_cell} | {t.planet} | "
-                     f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
-                     f"{t.quality.tag} | {_now_cell} |")
+        # Wave-3 (2026-08-18): the full table, GROUPED BY YOGA rather than interleaved
+        # by date — every row is retained (nothing is de-duplicated away), the yoga name
+        # is the group's own label, and the columns are unchanged.
+        L.append("_Every window below is retained; the rows are grouped by yoga (they "
+                 "were previously interleaved by date, which printed one Mahadasha as "
+                 "three verbatim-identical rows under three yogas)._")
         L.append("")
+        for _yname, _rows in yoga_timing_grouped(r):
+            L.append(f"**{_yname}** - {len(_rows)} constituent-lord window"
+                     f"{'s' if len(_rows) != 1 else ''}")
+            L.append("")
+            L.append("| Yoga | Period | Planet | Window | Delivery | Now |")
+            L.append("|---|---|---|---|---|---|")
+            for t in _rows:
+                # Wave-2 C: AD rows carry their MD context (Raman's bhukti doctrine is
+                # MD-lord-relative) and the row containing the reference date is marked.
+                _role_cell = (f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha
+                              else t.role)
+                _now_cell = ("NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd
+                             else "")
+                L.append(f"| {t.yoga_name} | {_role_cell} | {t.planet} | "
+                         f"{_outlook_window_label(t.period_start_jd, t.period_end_jd)} | "
+                         f"{t.quality.tag} | {_now_cell} |")
+            L.append("")
 
     # ── yoga deep-read (v21 — every fired yoga as a full study) ───────────────
     if r.yoga_deep:
@@ -4685,11 +4908,36 @@ def to_markdown(r: DetailedReport) -> str:
     L.append(f"_{ROLLUP_RULE} Where the majority of a house's significations disagree with that "
              f"headline, a **Split status** note says so — and where the headline is driven by "
              f"an atlas-proven inverted channel, a **WARNING** is shown inline. Each house "
-             f"closes with a **Conclusion** line — Raman's own closing device (essentially "
+             f"leads with a **Conclusion** line — Raman's own closing device (essentially "
              f"every worked analysis in HTJAH ends with a \"Conclusion.—\" summation weighing "
              f"house, lord and karaka in free prose, e.g. HTJAH-I:4485, 8513, 8870) — a "
-             f"summation of rows already shown above and in the strength/preponderance "
-             f"sections below; nothing new is judged in it._")
+             f"summation of rows shown in full beneath it and in the strength/preponderance "
+             f"sections below; nothing new is judged in it. The machine-composed evidence "
+             f"chain that used to sit above it is unchanged, and now carries a **Working** "
+             f"label where it stands._")
+    # Wave-3 (2026-08-18): the verdict-first strip — a 12-row scanning index ABOVE the
+    # twelve deep blocks (which follow unchanged, in full). Every cell restates the block
+    # it points at; the strip judges nothing.
+    _strip = house_strip_rows(r)
+    if _strip:
+        L.append("")
+        L.append("**The twelve houses at a glance** — a scanning index; each row's full "
+                 "judgment, evidence and population context follows below, unabridged.")
+        L.append("")
+        L.append("| # | House | Verdict | Driver | Split status | Running period |")
+        L.append("|---|---|---|---|---|---|")
+        for _row in _strip:
+            _v = f"**{_row.verdict}**" + (" [INVERTED]" if _row.inverted else "")
+            _d = f"_{_row.driver}_" if _row.driver else "-"
+            _sp = _row.split or "consistent"
+            _ti = _row.tier if _row.tier else "not lit"
+            L.append(f"| H{_row.house} | {_row.name} | {_v} | {_d} | {_sp} | {_ti} |")
+        L.append("")
+        L.append("_\"Running period\" is this house's four-tier fructification grade in the "
+                 "bhukti running at the reference date (par excellence / ordinary / limited "
+                 "/ feeble, HTJAH-I:1592-1596); \"not lit\" means neither period-lord "
+                 "influences the house. \"Split status\" repeats the block's own split note; "
+                 "\"consistent\" means the majority tenor agrees with the headline._")
     for mr in s.matters:
         pf = r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None
         cal_reading = r.calibration[mr.house]
@@ -4705,11 +4953,33 @@ def to_markdown(r: DetailedReport) -> str:
         if note:
             L.append("")
             L.append(f"> **Split status**: {note}")
+            # Wave-3 cross-reference: the precedence rules live 400 lines up; point at
+            # them AT the moment of confusion, only when a split note actually fired.
+            L.append(f"> _{SPLIT_POINTER}_")
         if drv_entry is not None and drv_entry.inverted_warning:
             L.append("")
             L.append(f"> **WARNING**: the driver, _{driver}_, is an atlas-proven INVERTED "
                      f"channel — real cases ran opposite to this reading; treat this house's "
                      f"headline with maximal skepticism.")
+            L.append(f"> _{INVERTED_POINTER}_")
+        # Wave-3: the PREC-1 pointer, composed from the dashboard's own verdicts — it
+        # appears only on the houses whose matter reader and bhava rollup actually differ.
+        for _xr in house_dashboard_conflicts(r, mr.house):
+            L.append("")
+            L.append(f"> _{_xr}_")
+        # Wave-3: the H8-style deferral pointer, conditional on the deferred metadata
+        # (death_window / decanate_cause) having actually been computed for this house.
+        _lp = house_longevity_pointer(r, mr.house)
+        if _lp:
+            L.append("")
+            L.append(f"> _{_lp}_")
+        # Wave-3: the Conclusion — the block's best prose — promoted from below the
+        # machine-composed evidence chain to the top of the block. MOVE ONLY: the same
+        # `house_conclusion` text, rendered once.
+        conclusion = house_conclusion(r, mr.house)
+        if conclusion:
+            L.append("")
+            L.append(f"> **Conclusion** — {conclusion}")
         L.append("")
         if pf is not None:
             led = pf.significations[0].ledger
@@ -4763,11 +5033,10 @@ def to_markdown(r: DetailedReport) -> str:
                          f"`Sources {len(_cites)}` · `Support {_band} "
                          f"({_ht.favourable}F/{_ht.adverse}A)`")
                 L.append("")
-        L.append(mr.reading)
-        conclusion = house_conclusion(r, mr.house)
-        if conclusion:
-            L.append("")
-            L.append(f"> **Conclusion** — {conclusion}")
+        # Wave-3: the machine-composed evidence chain, unchanged in every character —
+        # now LABELLED for what it is, with the Conclusion it used to sit above promoted
+        # to the head of the block.
+        L.append(f"**Working** — {mr.reading}")
         # Wave-2 D1 (2026-08-18): the chief fired combinations, in Raman's own effect
         # prose with citations — exactly how HTJAH's chapters argue a bhava; previously
         # this chapter rendered only counts (`Rules N`) while the matter monographs
@@ -4781,6 +5050,13 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             for _csig, _cid, _ctext, _ccite in _chief:
                 L.append(f"- _{_csig}_: `{_cid}` — \"{_ctext}\" ({_ccite})")
+            # Wave-3: encoding-scope artifacts routed out of the client sentences into
+            # ONE trailing fine-print line (the marriage monograph's own device, reusing
+            # `monographs.split_maintainer_notes`). Routed, never dropped.
+            _mnotes = house_maintainer_notes(r, mr.house)
+            if _mnotes:
+                L.append(f"  - _Encoding-scope notes (maintainer fine print, not "
+                         f"readings): {_mnotes}_")
         # item 14 (2026-08-04 content amendment): "Raman writes..." — the driver
         # signification's own cited source, quoted verbatim before the computation.
         if pf is not None:
@@ -4801,6 +5077,11 @@ def to_markdown(r: DetailedReport) -> str:
         if cal:
             L.append("")
             L.append("_Population context:_")
+            # Wave-3: ONE rollup line above the rows when they repeat — and then every
+            # individual row, unchanged (add-only; the rows are never collapsed).
+            _rollup = calibration_rollup_line(cal_reading)
+            if _rollup:
+                L.append(f"  - _{_rollup}_")
             L.extend(cal)
 
     # ── house strength cross-check: is each verdict on strong or shaky ground? ──

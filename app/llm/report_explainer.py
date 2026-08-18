@@ -447,11 +447,19 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                   "coherent life-themes; it is a re-read, never a new judgment, and each "
                   "theme's direction is the engine's own house verdict, carried through "
                   "unchanged.")
+        _por = ts.get("portrait") or {}
+        if _por.get("identity"):
+            _f(facts, f"The chart's identity: {_por['identity']}")
+        if _por.get("principal_tension"):
+            _f(facts, f"The chart's principal tension: {_por['principal_tension']}")
         for th in ts.get("themes", []):
-            cv = str(th.get("convergence", "")).replace("_", " ").lower()
+            cv = th.get("convergence_label") or (
+                str(th.get("convergence", "")).replace("_", " ").lower() + " convergence")
             dom = ", ".join(th.get("dominant_planets", [])) or "the chart"
-            _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv} convergence), driven "
+            _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv}), driven "
                       f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
+            for m, v in th.get("sub_matters", []):
+                _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             for c in th.get("contradictions", []):
                 _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
                           f"{c['governing']}: {c['resolution']}")

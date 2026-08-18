@@ -235,6 +235,61 @@ class TestThemeSynthesisContract:
         for f in facts:
             assert _FORBIDDEN_RE.search(f.text) is None, f"decree-guard hit in a themes fact: {f.text!r}"
 
+    def test_portrait_identity_is_the_real_chart(self, mainpuri):
+        """The Executive Portrait names WHO the chart is — Lagna/lord, Atmakaraka+Karakamsa and
+        the Moon's nakshatra — re-read from the synthesis, and it passes the decree guard."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        r, ts = mainpuri
+        idn = ts.portrait.identity
+        assert idn, "the portrait carries no identity line"
+        assert r.synthesis.lagna in idn and r.synthesis.atmakaraka in idn
+        assert _FORBIDDEN_RE.search(idn) is None
+
+    def test_principal_tension_names_a_real_structural_pull(self, mainpuri):
+        """The principal tension is the chart's own favourable-vs-strained pull (or the single
+        most load-bearing contradiction), never a bare method note about the layer itself."""
+        r, ts = mainpuri
+        pt = ts.portrait.principal_tension
+        assert pt and "contradiction is flagged" not in pt   # the old placeholder is gone
+
+    def test_theme_facets_carry_each_matters_own_verdict(self, mainpuri):
+        """A house theme exposes its facets (the dashboard matters that live in it), each with
+        its own dedicated-reader verdict — this is where a house-vs-matter grain split is told
+        ONCE, inside the theme (e.g. H4 mother favourable while property afflicted)."""
+        r, ts = mainpuri
+        by = {t.theme_id: t for t in ts.themes}
+        foundations = by.get("foundations")
+        assert foundations is not None, "the house-based foundations theme did not build"
+        assert foundations.sub_matters, "foundations exposes no facets"
+        matters = {m for m, _v in foundations.sub_matters}
+        assert "mother" in matters and "property" in matters   # several matters share H4
+        for _m, v in foundations.sub_matters:
+            assert v, "a facet carries no verdict"
+
+    def test_convergence_label_is_reader_facing(self, mainpuri, canonical):
+        """Every theme carries a reader-facing convergence phrase distinct from the raw tier
+        (e.g. 'aligned, but lightly evidenced' for a WEAK-but-unopposed theme)."""
+        for r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                assert t.convergence_label
+                if t.convergence == "WEAK":
+                    assert "convergence" not in t.convergence_label   # not the misleading 'weak convergence'
+
+    def test_dasha_evolution_is_differential_not_flooding(self, mainpuri):
+        """K/item-10 — a chapter foregrounds ONLY the themes its Mahadasha lord actually drives
+        (the lord is among each activated theme's driving planets), so a single period never
+        lights every theme at once. At least one chapter must foreground a proper subset."""
+        r, ts = mainpuri
+        by = {t.name: t for t in ts.themes}
+        saw_subset = False
+        for ch in ts.dasha_evolution:
+            for name in ch.activates:
+                assert ch.maha in by[name].dominant_planets, (
+                    f"{ch.maha} MD foregrounds {name!r} but does not drive it")
+            if ch.activates and len(ch.activates) < len(ts.themes):
+                saw_subset = True
+        assert saw_subset, "no chapter foregrounded a proper subset — flooding is back"
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

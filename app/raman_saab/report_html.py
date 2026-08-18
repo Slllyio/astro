@@ -751,6 +751,12 @@ _AXIS_LABEL_HTML = {"verdict": "verdict", "magnitude": "strength", "state": "sta
                     "yoga": "yoga", "citation": "cross-feature"}
 
 
+def _conv_label(t: object) -> str:
+    """Reader-facing convergence phrase — the layer's own label when present, else tier + word."""
+    lbl = getattr(t, "convergence_label", "") or ""
+    return lbl or (getattr(t, "convergence", "").replace("_", " ").lower() + " convergence")
+
+
 def _themes_section(r: DetailedReport) -> str:
     """The v34 integrated-interpretation section (theme synthesis) — a re-read ACROSS the
     sections, above the technical ones. Judges nothing anew; every claim traces to an
@@ -769,6 +775,8 @@ def _themes_section(r: DetailedReport) -> str:
            'own house verdict, unchanged.</p>']
     p = ts.portrait
     out.append('<h3>Executive portrait</h3><ul class="portrait">')
+    if getattr(p, "identity", ""):
+        out.append(f'<li><b>Who the chart is</b> &mdash; {_esc(p.identity)}</li>')
     if p.frame:
         out.append(f'<li><b>Reading frame</b> &mdash; judged chiefly from the {_esc(p.frame)} '
                    'frame (the stronger of the two lagnas here).</li>')
@@ -796,7 +804,7 @@ def _themes_section(r: DetailedReport) -> str:
         out.append('<h3>The interpretive spine</h3><ul>')
         for t in spine:
             out.append(f'<li><b>{_esc(t.name)}</b> &mdash; {_esc(t.headline_verdict)} '
-                       f'({t.convergence.replace("_", " ").lower()} convergence)</li>')
+                       f'({_esc(_conv_label(t))})</li>')
         out.append("</ul>")
 
     out.append("<h3>Major life-themes</h3>")
@@ -804,12 +812,16 @@ def _themes_section(r: DetailedReport) -> str:
         houses = ", ".join(f"H{h}" for h in t.houses)
         dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
         out.append(f'<div class="theme"><h4>{_esc(t.name)} &mdash; <b>{_esc(t.headline_verdict)}</b> '
-                   f'({t.convergence.replace("_", " ").lower()} convergence)</h4>')
+                   f'({_esc(_conv_label(t))})</h4>')
         out.append(f'<p><i>{_esc(t.final_interpretation)}</i></p><ul>')
         out.append(f'<li><b>Network</b> &mdash; {houses}'
                    + (f'; karakas {_esc(", ".join(t.karakas))}' if t.karakas else '')
                    + f'; driven by {_esc(dom)}.</li>')
-        out.append(f'<li><b>Convergence</b> &mdash; {_esc(t.convergence_why)}</li>')
+        if getattr(t, "sub_matters", None):
+            facets = "; ".join(f"{_esc(m)} reads {_esc(v)}" for m, v in t.sub_matters)
+            out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
+        out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
+                   f'{_esc(t.convergence_why)}</li>')
         out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
         if t.activation_span:
             out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
@@ -838,8 +850,9 @@ def _themes_section(r: DetailedReport) -> str:
 
     if getattr(ts, "dasha_evolution", None):
         out.append('<h3>Dasha evolution &mdash; the horoscope through time</h3>'
-                   '<p class="section-sub">Each Mahadasha chapter and the themes it brings to '
-                   'the top tier, split into what newly emerges and what continues.</p>'
+                   '<p class="section-sub">Each Mahadasha chapter foregrounds the themes its '
+                   'lord actually drives &mdash; not every house it touches &mdash; split into '
+                   'what newly emerges and what continues.</p>'
                    '<table class="evidence"><thead><tr><th>chapter</th><th>span</th>'
                    '<th>lean</th><th>newly emphasized</th><th>continuing</th></tr></thead><tbody>')
         for ch in ts.dasha_evolution:

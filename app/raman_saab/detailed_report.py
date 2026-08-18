@@ -4085,6 +4085,15 @@ _AXIS_LABEL = {"verdict": "verdict", "magnitude": "strength", "state": "state",
                "yoga": "yoga", "citation": "cross-feature"}
 
 
+def _theme_conv_label(t: object) -> str:
+    """The reader-facing convergence phrase — the layer's own ``convergence_label`` when present
+    (e.g. 'aligned, but lightly evidenced'), else the plain tier + 'convergence'."""
+    lbl = getattr(t, "convergence_label", "") or ""
+    if lbl:
+        return lbl
+    return getattr(t, "convergence", "").replace("_", " ").lower() + " convergence"
+
+
 def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     """The v34 integrated-interpretation section, in markdown. A re-read ACROSS the sections:
     an Executive Portrait, the dominant-theme spine, and per-theme evidence chains with their
@@ -4109,6 +4118,8 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     p = ts.portrait
     L.append("### Executive portrait")
     L.append("")
+    if getattr(p, "identity", ""):
+        L.append(f"- **Who the chart is** — {p.identity}")
     if p.frame:
         L.append(f"- **Reading frame** — judged chiefly from the {p.frame} "
                  f"(the stronger of the two lagnas here).")
@@ -4143,7 +4154,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append("")
         for t in spine:
             L.append(f"- **{t.name}** — {t.headline_verdict} "
-                     f"({t.convergence.replace('_', ' ').lower()} convergence)")
+                     f"({_theme_conv_label(t)})")
         L.append("")
 
     # every theme, ranked
@@ -4151,8 +4162,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     L.append("")
     for t in ts.themes:
         houses = ", ".join(f"H{h}" for h in t.houses)
-        L.append(f"#### {t.name} — **{t.headline_verdict}** "
-                 f"({t.convergence.replace('_', ' ').lower()} convergence)")
+        L.append(f"#### {t.name} — **{t.headline_verdict}** ({_theme_conv_label(t)})")
         L.append("")
         dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
         L.append(f"_{t.final_interpretation}_")
@@ -4160,8 +4170,11 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append(f"- **Network** — {houses}"
                  + (f"; karakas {', '.join(t.karakas)}" if t.karakas else "")
                  + f"; driven by {dom}.")
-        L.append(f"- **Convergence** — {t.convergence.replace('_', ' ').lower()}: "
-                 f"{t.convergence_why}")
+        # the house's facets — each matter that lives here, with its own dedicated verdict
+        if getattr(t, "sub_matters", None):
+            facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
+            L.append(f"- **Within this house** — {facets}.")
+        L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
         L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
         if t.activation_span:
             L.append(f"- **Timing** — {t.activation_span}")
@@ -4194,9 +4207,10 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     if getattr(ts, "dasha_evolution", None):
         L.append("### Dasha evolution — the horoscope through time")
         L.append("")
-        L.append("_Each Mahadasha chapter and the themes it brings to the top tier "
-                 "(par excellence), split into what newly emerges and what continues from the "
-                 "chapter before — a re-read of the life-narrative, no new timing math:_")
+        L.append("_Each Mahadasha chapter foregrounds the themes its lord actually drives — the "
+                 "Saturn period brings forward what Saturn governs, not every house it touches — "
+                 "split into what newly emerges and what continues from the chapter before. A "
+                 "re-read of the life-narrative, no new timing math:_")
         L.append("")
         L.append("| chapter | span | lean | newly emphasized | continuing |")
         L.append("|---|---|---|---|---|")

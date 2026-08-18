@@ -909,3 +909,73 @@ string EN+HI together. Mechanics, all ADD-only per REPORT COMPLETENESS:
 
 The markdown/standalone surfaces and every frozen marker, order and guard slice are
 untouched this pass — the contract suite is the proof.
+
+### v34 — the chapter-audit waves (2026-08-18, user-directed "execute all waves")
+
+Six specialist reviewers read every chapter twice (scholar + first-time client); the
+consolidated blueprint is `REPORT_CRITIQUE_2026-08-17.md` and was executed in four waves,
+commits `f4652b2..79e64af`. **No verdict moved: the golden ratchet is byte-identical
+throughout (259/293 exact, 283/293 within-1, 10 real errors); the suite went ~3,660 ->
+3,964 green.** Everything below is add-only or a located fix; no section id, marker string
+or order changed, and no `## ` heading was added inside a frozen section.
+
+**Wave 0 - broken output repaired.** `y`-shadowing repr leak in the Longevity sentence;
+five empty-verbatim-quote sites plus the yoga-definition, psych-portrait and karmic-passage
+paths now render honest corpus-absence lines (two whole chapters had been vanishing);
+`yoga_deep_read` participants resolved semantically via `synthesis_rules._yoga_planets`
+(Sunapha/Gajakesari/Vesi/Amala/Raja were describing the wrong planets or claiming "no
+Shadbala on this chart"); `LordQuality` reprs formatted as prose; maraka-flooded H4/H7/H9
+activation lines capped at 2 with ordinary windows always visible; H3's navamsa
+contradiction resolved by frame disclosure; `render._REPL` gained the central dot,
+plus-minus and the decorative emoji (badges and the "+-60-minute scan" no longer print
+"?"); rare-first sort + plain gloss in What-stands-out; rules badge deduped; nodal
+life-chapter sentence (HTJAH-I:2764/8566); decade chips merged with multi-MD attribution;
+`ordinals.ordinal()` shared helper; 7 missing `_MATTER_HOUSE` keys; stale D-9 Kuja note.
+
+**Wave 1 - computed-but-hidden values surfaced** (the REPORT COMPLETENESS debt): BAV 7x12
+matrix with natal seats, HPA-26 Trikona/Ekadhipathya reductions, per-planet Sodya Pinda;
+SAV deviation row + Lagna/Moon markers; per-row `lord_quality` delivery tags; Pratyantar
+drill-down for the current bhukti (HTJAH-II:668-702); dated Sade-Sati phases and an adverse
+transit-window table; dated chara sequence; longitude column + Ascendant row + nakshatra
+lord; Bhava-Bala rupas restored to markdown; the distinctive cap lifted (all 17 render);
+Baladi/Jagradadi table; per-planet maraka reasons + confluence addends; Muhurtha pointer.
+New fields ship on all four surfaces (`bav_matrix`, `bav_reduced`, `sodya_pinda`,
+`pratyantar_now`, `sade_sati_phases`, `chara_sequence`, `baladi_jagradadi`, `maraka`,
+`signature_first_glance`, `deeptadi_table`, `yoga_coverage`, per-entry `gloss`).
+
+**Wave 2 - Raman-licensed additions** (re-reads only; every citation already on record):
+period-pairing across Your Reading / life synthesis / digest (HTJAH-I:1586-1596, now
+carrying dates under the 2026-08-17 guard decision); digest opens with governing-factor
+(HTJAH-I:16001-16002) and longevity-foundation (HTJAH-I:11703) items; ruler condition block
++ foundation line (HTJAH-I:3880-3882) + Chandra-lagna candidate; signature first-glance
+rows; Deeptadi testimony table (HPA Ch.7:46-83) with secondary-state disclosure; Shadbala
+ratio/weakest-component/scale notes; planet biographies as portraits (functional nature,
+itemized drishti, karakatvas, nodes' no-lordship wording); psych Moon-in-sign
+(HTJAH-I:1452) + Mercury buddhi; yoga coverage honesty (72 of ~300, family breakdown,
+cancelled-Kemadruma, notable absences); deep-read placement/functional tags + SYN_R1
+(3HC:1359); yoga-timing MD context, NOW marker, next-ripening; house chief-combinations,
+frame disclosure, moderating clause, current-period tier; preponderance core/overlay
+witness classes (HTJAH-I:983-991); marriage happiness/coverture split + Kuja dosha frame by
+frame (HTJAH-II:2579-2622); children D-7 row with the reframe note placed first; profession
+D-10 row + H10 windows + convergence annotation; wealth dhana/Daridra row +
+non-differential disclosure; balarishta screen disclosure; `timer_roles()` influence-basis
+tags; adverse dasha-transit confluences; gochara synthesis sentences; divisional
+verdict-first summaries + D-27/40/45/60 domain sentences; karmic one-line re-reads (full
+blocks retained at their home sections); Jaimini AK/Karakamsa header.
+Plus `electional/day_scanner.py` - the Muhurtha panel's scan-the-day mode.
+
+**Wave 3 - traversal**: verdict-first 12-house strip; Conclusion promoted above the Working
+line in every house block; calibration rollups (all rows kept); conditional cross-references
+(H10 dashboard vs bhava -> PREC-1, H8 -> Longevity, INVERTED -> Information content, split
+-> precedence rules); yoga-timing rows grouped by yoga; Pitru leads with its finding;
+maintainer notes routed to fine print everywhere (including a
+`fired_kalatra_client`/`_notes` JSON pair so the interactive page stops showing them).
+
+**Deliberately NOT encoded** (would have required minting citations from memory): twelve
+corpus-gated items are listed in `DOCTRINE_BACKLOG.md` "Corpus-gated worklist from the
+chapter audit (2026-08-18)" - chiefly the anatomical sign->body / planet->disease tables,
+the 10th-from-Moon career derivation, the Studies-in-Jaimini chara-karakamsa pairing, and
+six thin signification sets.
+
+**Side effect on record:** the two new digest head items shift later digest positions, so
+`chart_feedback` rows stored under older qids are position-stale.

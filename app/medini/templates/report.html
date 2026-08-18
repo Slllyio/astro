@@ -633,6 +633,28 @@ const I18N_HI = {
 
   // section headings added by the 2026-08-17 reframe (plain-language layer)
   'How to read this report':'यह रिपोर्ट कैसे पढ़ें',
+  // v34 integrated reading (theme synthesis) chrome
+  'The integrated reading':'एकीकृत वाचन',
+  'Executive portrait':'सारांश चित्र',
+  'The interpretive spine':'व्याख्या की रीढ़',
+  'Major life-themes':'प्रमुख जीवन-विषय',
+  'Reading frame':'वाचन-आधार',
+  'judged chiefly from the':'मुख्यतः इससे आँका गया',
+  'frame (the stronger of the two lagnas here).':'आधार (यहाँ दोनों लग्नों में अधिक बलवान)।',
+  'Dominant actors':'प्रमुख ग्रह-कर्ता',
+  'Strongest domains':'सबसे बलवान क्षेत्र',
+  'Areas under strain':'दबाव वाले क्षेत्र',
+  'Protective factors':'रक्षक कारक',
+  'Principal tension':'मुख्य तनाव',
+  'Current chapter':'वर्तमान अध्याय',
+  'Network':'तंत्र',
+  'driven by':'द्वारा संचालित',
+  'Convergence':'अभिसरण',
+  'Divisional (D9)':'वर्ग (D9)',
+  'Timing':'काल',
+  'Tension':'तनाव',
+  'Resolved by':'का समाधान',
+  'Evidence chain (every finding, its source)':'प्रमाण-श्रृंखला (प्रत्येक निष्कर्ष, उसका स्रोत)',
   'Judgment graph':'निर्णय-जाल',
   'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
   'Psychological profile':'मनोवैज्ञानिक चित्र',
@@ -2374,6 +2396,52 @@ function render(R, S, FQ){
     if((ig.relation_vocabulary||[]).length)
       add(para(t('Relation vocabulary (closed set): ')+ig.relation_vocabulary.join(' · '),'muted'));
   }
+
+  // ===== The integrated reading (v34) — the theme synthesis, ABOVE the technical sections.
+  // A re-read across every section into one coherent reading; judges nothing anew. =====
+  (function(){
+    const ts=R.themes; if(!ts||!(ts.themes||[]).length) return;
+    const AX={verdict:'verdict',magnitude:'strength',state:'state',dasha:'timing',
+              varga:'divisional',transit:'transit',yoga:'yoga',citation:'cross-feature'};
+    add(H2('The integrated reading'));
+    add(para(t('One reading across every section above — not a new judgment. Each theme gathers the findings the report already made (house verdict, strength, planetary state, divisional confirmation, yoga, timing) into one mechanism, states how strongly they converge, and names any tension with the precedence rule that resolves it. The direction of every theme is the engine\'s own house verdict, unchanged.'),'lede'));
+    const p=ts.portrait||{};
+    add(para(t('Executive portrait'),'muted'));
+    const ul=el('ul',{class:'portrait'});
+    const li=(html)=>{ const x=el('li'); x.append(citeText(String(html||''))); ul.append(x); };
+    if(p.frame) li(t('Reading frame')+' — '+t('judged chiefly from the')+' '+p.frame+' '+t('frame (the stronger of the two lagnas here).'));
+    if((p.dominant_actors||[]).length) li(t('Dominant actors')+' — '+p.dominant_actors.map(a=>a[0]+' ('+a[1]+')').join('; ')+'.');
+    if((p.strongest_domains||[]).length) li(t('Strongest domains')+' — '+p.strongest_domains.join(', ')+'.');
+    if((p.weakest_domains||[]).length) li(t('Areas under strain')+' — '+p.weakest_domains.join(', ')+'.');
+    if((p.protective_factors||[]).length) li(t('Protective factors')+' — '+p.protective_factors.join('; ')+'.');
+    if(p.principal_tension) li(t('Principal tension')+' — '+p.principal_tension);
+    if(p.current_chapter) li(t('Current chapter')+' — '+p.current_chapter+(p.next_chapter?('; '+p.next_chapter):'')+'.');
+    add(ul);
+    if(p.honesty_note) add(para(p.honesty_note,'muted'));
+    const byId={}; for(const th of ts.themes) byId[th.theme_id]=th;
+    const spine=(ts.spine||[]).map(i=>byId[i]).filter(Boolean);
+    if(spine.length){
+      add(para(t('The interpretive spine'),'muted'));
+      const su=el('ul'); for(const th of spine){ const x=el('li');
+        x.append(th.name+' — '+th.headline_verdict+' ('+String(th.convergence||'').replace(/_/g,' ').toLowerCase()+' convergence)'); su.append(x); }
+      add(su); }
+    add(para(t('Major life-themes'),'muted'));
+    for(const th of ts.themes){
+      const card=el('details',{class:'card'}); card.setAttribute('open','');
+      const sm=el('summary'); sm.append(th.name+' — '+th.headline_verdict+' ('+String(th.convergence||'').replace(/_/g,' ').toLowerCase()+' convergence)');
+      card.append(sm); const b=el('div',{class:'body'});
+      b.append(para(th.final_interpretation,'di-title'));
+      b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; karakas '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||'the chart')+'.','muted'));
+      b.append(para(t('Convergence')+' — '+th.convergence_why,'muted'));
+      b.append(para(t('Divisional (D9)')+' — '+th.varga_relation+'.','muted'));
+      if(th.activation_span) b.append(para(t('Timing')+' — '+th.activation_span,'muted'));
+      const rows=(th.links||[]).map(l=>({axis:AX[l.axis]||l.axis, finding:l.label+': '+l.value,
+        source:(String(l.accessor||'').split('@').pop()||'').trim(), provenance:l.provenance}));
+      const tbl=sectionTable(t('Evidence chain (every finding, its source)'), rows); if(tbl) b.append(tbl);
+      for(const c of (th.contradictions||[])) b.append(para(t('Tension')+' ('+c.kind+') — '+c.poles[0]+' vs '+c.poles[1]+'. '+t('Resolved by')+' '+c.governing+': '+c.resolution,'muted'));
+      card.append(b); add(card);
+    }
+  })();
 
   chapter(7);   // step 4 — WHY: the machinery
   // ===== Judgment graph (S1) — used already above (Your Reading's dominant-planet census

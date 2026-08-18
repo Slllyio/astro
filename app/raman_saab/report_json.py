@@ -327,6 +327,7 @@ def to_report_dict(r: DetailedReport) -> dict:
         "rect_confidence": (_ad(r.rect_confidence)
                             if r.rect_confidence is not None else None),     # v31
         "aptitude": _ad(r.aptitude) if r.aptitude is not None else None,     # v33
+        "themes": _ad(r.themes) if r.themes is not None else None,           # v34 integrated reading
         # the plain-terms layer (2026-08-04) — the ONE glossary source every surface
         # renders from; vocabulary only, never new astrology.
         "plain_terms": _gloss(),

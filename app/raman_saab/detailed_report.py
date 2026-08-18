@@ -458,6 +458,15 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # (app/raman_saab/interpretation_guide.py), also shipped machine-readable in the JSON.
     SectionSpec("interpretation_guide", "## How to read this report",
                 'id="interpretation-guide"', "v18"),
+    # v34 (2026-08-18, user-requested): the integrated interpretation layer — the theme
+    # synthesis reading ACROSS every section into one coherent whole (Executive Portrait,
+    # dominant themes, house networks, contradictions, dasha evolution, varga matrix). A
+    # conscious near-top amendment (the v5/v32 exception): the honesty gate and the
+    # how-to-read precedence come first, then the integrated interpretation opens the
+    # substantive reading, then the technical sections it explains. Re-read only; the
+    # golden ratchet is untouched (theme_synthesis imports nothing in the verdict path).
+    # _FROZEN grown in the same commit per the amendment procedure.
+    SectionSpec("themes", "## The integrated reading", 'id="integrated-reading"', "v34"),
     SectionSpec("stands_out", "## What stands out in this chart", 'id="stands-out"', "v1"),
     # v19 (2026-08-03, conscious amendment, same audit as v18): the engine's own ranked
     # digest — computed since the share-the-app arc and shipped in JSON + the interactive
@@ -607,7 +616,7 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 HTML_SECTION_ORDER: tuple[str, ...] = (
     "title", "plain_reading", "chart_signature", "judgment_graph", "ruler", "planet_bios", "psych",
     "now_box",
-    "info_content", "interpretation_guide", "stands_out", "digest",
+    "info_content", "interpretation_guide", "themes", "stands_out", "digest",
     "dashboard",
     "chart_grids", "positions", "rect_confidence", "shadbala", "yogas", "yoga_timing",
     "yoga_deep",
@@ -2277,6 +2286,7 @@ class DetailedReport:
     karmic: object = None                            # Jaimini karmic evolution (v30)
     rect_confidence: object = None                   # birth-time sensitivity (v31)
     aptitude: object = None                          # aptitude/intelligence/work-style (v33)
+    themes: object = None                            # integrated interpretation / theme synthesis (v34)
     # AV completeness (2026-08-17, REPORT_CRITIQUE yoga_strength appendix 4) — the whole
     # Ashtakavarga layer the engine always computed, now shown. Append-only.
     bav_matrix: tuple = ()                           # BavMatrixRow per graha (7x12 BAV + seats)
@@ -3997,6 +4007,14 @@ def build_detailed_report(
             chara_sequence=_chara_sequence(chart, ref_jd))
     except Exception:  # noqa: BLE001 — sparse/Track-B chart
         pass
+    # v34 — the integrated interpretation layer reads the FULLY-built report (every section
+    # above) and judges nothing anew; it re-reads finished verdicts into one coherent theme
+    # synthesis (docs/raman_saab/SYNTHESIS_LAYER_ARCHITECTURE.md).
+    try:
+        from app.raman_saab.theme_synthesis import build_theme_synthesis
+        final = _dc_replace(final, themes=build_theme_synthesis(final))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        pass
     return final
 
 
@@ -4060,6 +4078,107 @@ def _quote_or_absent(text: str | None, cite: str) -> str:
     if text and text.strip():
         return f"\"{text}\" ({cite})"
     return f"passage {cite} - corpus not mounted on this machine"
+
+
+_AXIS_LABEL = {"verdict": "verdict", "magnitude": "strength", "state": "state",
+               "dasha": "timing", "varga": "divisional", "transit": "transit",
+               "yoga": "yoga", "citation": "cross-feature"}
+
+
+def _integrated_reading_lines(r: DetailedReport) -> list[str]:
+    """The v34 integrated-interpretation section, in markdown. A re-read ACROSS the sections:
+    an Executive Portrait, the dominant-theme spine, and per-theme evidence chains with their
+    convergence and contradictions. Every claim traces to an authoritative verdict the report
+    already made; this section judges nothing anew (theme_synthesis is read-only)."""
+    L: list[str] = ["## The integrated reading", ""]
+    ts = getattr(r, "themes", None)
+    if ts is None or not getattr(ts, "themes", None):
+        L.append("_The integrated reading is not available for this chart in the current "
+                 "engine (a sparse or stated-position chart carries too few decided sections "
+                 "to synthesize)._")
+        L.append("")
+        return L
+    L.append("_One reading across every section above — not a new judgment. Each theme below "
+             "gathers the independent findings the report already made (house verdict, "
+             "strength, planetary state, divisional confirmation, yoga, timing) into one "
+             "mechanism, states how strongly they converge, and names any tension with the "
+             "precedence rule that resolves it. The direction of every theme is the engine's "
+             "own house verdict, carried through unchanged._")
+    L.append("")
+
+    p = ts.portrait
+    L.append("### Executive portrait")
+    L.append("")
+    if p.frame:
+        L.append(f"- **Reading frame** — judged chiefly from the {p.frame} "
+                 f"(the stronger of the two lagnas here).")
+    if p.temperament and p.temperament != f"read chiefly from the {p.frame}":
+        L.append(f"- **Temperament** — {p.temperament}.")
+    if p.dominant_actors:
+        actors = "; ".join(f"**{name}** ({why})" for name, why in p.dominant_actors)
+        L.append(f"- **Dominant actors** — {actors}.")
+    if p.strongest_domains:
+        L.append(f"- **Strongest domains** — {', '.join(p.strongest_domains)}.")
+    if p.weakest_domains:
+        L.append(f"- **Areas under strain** — {', '.join(p.weakest_domains)}.")
+    if p.protective_factors:
+        L.append(f"- **Protective factors** — {'; '.join(p.protective_factors)}.")
+    if p.principal_tension:
+        L.append(f"- **Principal tension** — {p.principal_tension}")
+    if p.current_chapter:
+        nxt = f"; {p.next_chapter}" if p.next_chapter else ""
+        L.append(f"- **Current chapter** — {p.current_chapter}{nxt}.")
+    if p.honesty_note:
+        L.append(f"- _{p.honesty_note}_")
+    L.append("")
+
+    # the spine
+    by_id = {t.theme_id: t for t in ts.themes}
+    spine = [by_id[i] for i in ts.spine if i in by_id]
+    if spine:
+        L.append("### The interpretive spine")
+        L.append("")
+        L.append("_The few themes that explain a disproportionate amount of this chart, "
+                 "strongest evidence first:_")
+        L.append("")
+        for t in spine:
+            L.append(f"- **{t.name}** — {t.headline_verdict} "
+                     f"({t.convergence.replace('_', ' ').lower()} convergence)")
+        L.append("")
+
+    # every theme, ranked
+    L.append("### Major life-themes")
+    L.append("")
+    for t in ts.themes:
+        houses = ", ".join(f"H{h}" for h in t.houses)
+        L.append(f"#### {t.name} — **{t.headline_verdict}** "
+                 f"({t.convergence.replace('_', ' ').lower()} convergence)")
+        L.append("")
+        dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
+        L.append(f"_{t.final_interpretation}_")
+        L.append("")
+        L.append(f"- **Network** — {houses}"
+                 + (f"; karakas {', '.join(t.karakas)}" if t.karakas else "")
+                 + f"; driven by {dom}.")
+        L.append(f"- **Convergence** — {t.convergence.replace('_', ' ').lower()}: "
+                 f"{t.convergence_why}")
+        L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
+        if t.activation_span:
+            L.append(f"- **Timing** — {t.activation_span}")
+        # the evidence chain (traceable), grouped by axis
+        L.append("")
+        L.append("| axis | finding | source |")
+        L.append("|---|---|---|")
+        for lk in t.links:
+            L.append(f"| {_AXIS_LABEL.get(lk.axis, lk.axis)} | {lk.label}: {lk.value} | "
+                     f"`{lk.accessor.split('@')[-1].strip()}` |")
+        L.append("")
+        if t.contradictions:
+            for c in t.contradictions:
+                L.append(f"- **Tension ({c.kind})** — {c.poles[0]} vs {c.poles[1]}. "
+                         f"Resolved by **{c.governing}**: {c.resolution}")
+            L.append("")
+    return L
 
 
 def to_markdown(r: DetailedReport) -> str:
@@ -4201,6 +4320,9 @@ def to_markdown(r: DetailedReport) -> str:
         L.append(f"| {ax['axis']} | {ax['means']}{qual} | {', '.join(ax['sections'])} | "
                  f"{ax['citation']} |")
     L.append("")
+
+    # ── the integrated reading (v34) — the theme synthesis, above the technical sections ──
+    L.extend(_integrated_reading_lines(r))
 
     # ── what actually distinguishes this chart ────────────────────────────────
     if r.distinctive:

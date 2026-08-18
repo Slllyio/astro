@@ -746,6 +746,90 @@ def _info_box(r: DetailedReport) -> str:
         f'{inv_line}</div>')
 
 
+_AXIS_LABEL_HTML = {"verdict": "verdict", "magnitude": "strength", "state": "state",
+                    "dasha": "timing", "varga": "divisional", "transit": "transit",
+                    "yoga": "yoga", "citation": "cross-feature"}
+
+
+def _themes_section(r: DetailedReport) -> str:
+    """The v34 integrated-interpretation section (theme synthesis) — a re-read ACROSS the
+    sections, above the technical ones. Judges nothing anew; every claim traces to an
+    authoritative verdict via its accessor."""
+    ts = getattr(r, "themes", None)
+    head = '<h2 class="section" id="integrated-reading">The integrated reading</h2>'
+    if ts is None or not getattr(ts, "themes", None):
+        return (head + '<p class="muted">Not available for this chart in the current engine '
+                '(too few decided sections to synthesize).</p>')
+    out = [head,
+           '<p class="section-sub">One reading across every section above &mdash; not a new '
+           'judgment. Each theme gathers the findings the report already made (house verdict, '
+           'strength, planetary state, divisional confirmation, yoga, timing) into one '
+           'mechanism, states how strongly they converge, and names any tension with the '
+           'precedence rule that resolves it. The direction of every theme is the engine&rsquo;s '
+           'own house verdict, unchanged.</p>']
+    p = ts.portrait
+    out.append('<h3>Executive portrait</h3><ul class="portrait">')
+    if p.frame:
+        out.append(f'<li><b>Reading frame</b> &mdash; judged chiefly from the {_esc(p.frame)} '
+                   'frame (the stronger of the two lagnas here).</li>')
+    if p.dominant_actors:
+        acts = "; ".join(f"<b>{_esc(n)}</b> ({_esc(w)})" for n, w in p.dominant_actors)
+        out.append(f'<li><b>Dominant actors</b> &mdash; {acts}.</li>')
+    if p.strongest_domains:
+        out.append(f'<li><b>Strongest domains</b> &mdash; {_esc(", ".join(p.strongest_domains))}.</li>')
+    if p.weakest_domains:
+        out.append(f'<li><b>Areas under strain</b> &mdash; {_esc(", ".join(p.weakest_domains))}.</li>')
+    if p.protective_factors:
+        out.append(f'<li><b>Protective factors</b> &mdash; {_esc("; ".join(p.protective_factors))}.</li>')
+    if p.principal_tension:
+        out.append(f'<li><b>Principal tension</b> &mdash; {_esc(p.principal_tension)}</li>')
+    if p.current_chapter:
+        nxt = f"; {_esc(p.next_chapter)}" if p.next_chapter else ""
+        out.append(f'<li><b>Current chapter</b> &mdash; {_esc(p.current_chapter)}{nxt}.</li>')
+    if p.honesty_note:
+        out.append(f'<li class="muted"><i>{_esc(p.honesty_note)}</i></li>')
+    out.append("</ul>")
+
+    by_id = {t.theme_id: t for t in ts.themes}
+    spine = [by_id[i] for i in ts.spine if i in by_id]
+    if spine:
+        out.append('<h3>The interpretive spine</h3><ul>')
+        for t in spine:
+            out.append(f'<li><b>{_esc(t.name)}</b> &mdash; {_esc(t.headline_verdict)} '
+                       f'({t.convergence.replace("_", " ").lower()} convergence)</li>')
+        out.append("</ul>")
+
+    out.append("<h3>Major life-themes</h3>")
+    for t in ts.themes:
+        houses = ", ".join(f"H{h}" for h in t.houses)
+        dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
+        out.append(f'<div class="theme"><h4>{_esc(t.name)} &mdash; <b>{_esc(t.headline_verdict)}</b> '
+                   f'({t.convergence.replace("_", " ").lower()} convergence)</h4>')
+        out.append(f'<p><i>{_esc(t.final_interpretation)}</i></p><ul>')
+        out.append(f'<li><b>Network</b> &mdash; {houses}'
+                   + (f'; karakas {_esc(", ".join(t.karakas))}' if t.karakas else '')
+                   + f'; driven by {_esc(dom)}.</li>')
+        out.append(f'<li><b>Convergence</b> &mdash; {_esc(t.convergence_why)}</li>')
+        out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
+        if t.activation_span:
+            out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
+        out.append("</ul>")
+        out.append('<table class="evidence"><thead><tr><th>axis</th><th>finding</th>'
+                   '<th>source</th></tr></thead><tbody>')
+        for lk in t.links:
+            src = lk.accessor.split("@")[-1].strip()
+            out.append(f'<tr><td>{_esc(_AXIS_LABEL_HTML.get(lk.axis, lk.axis))}</td>'
+                       f'<td>{_esc(lk.label)}: {_esc(lk.value)}</td>'
+                       f'<td><code>{_esc(src)}</code></td></tr>')
+        out.append("</tbody></table>")
+        for c in t.contradictions:
+            out.append(f'<p class="tension"><b>Tension ({_esc(c.kind)})</b> &mdash; '
+                       f'{_esc(c.poles[0])} vs {_esc(c.poles[1])}. Resolved by '
+                       f'<b>{_esc(c.governing)}</b>: {_esc(c.resolution)}</p>')
+        out.append("</div>")
+    return "".join(out)
+
+
 def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 — chart-independent
     """v18 — how to read this report: the collected precedence rules, reading order,
     parallel lenses and axes. Pure doctrine metadata (interpretation_guide module)."""
@@ -3327,6 +3411,8 @@ def to_html(r: DetailedReport) -> str:
   {_info_box(r)}
 
   {_interpretation_guide_section(r)}
+
+  {_themes_section(r)}
 
   {_distinctive(r)}
 

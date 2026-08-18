@@ -857,10 +857,16 @@ def _themes_section(r: DetailedReport) -> str:
                    '<th>lean</th><th>newly emphasized</th><th>continuing</th></tr></thead><tbody>')
         for ch in ts.dasha_evolution:
             now = " (now)" if ch.is_current else ""
-            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}</td><td>{_esc(ch.span)}</td>'
+            via = getattr(ch, "acts_through", ()) or ()
+            through = f' (acting through {_esc(", ".join(via))})' if via else ""
+            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}</td><td>{_esc(ch.span)}</td>'
                        f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
                        f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')
         out.append("</tbody></table>")
+        if any(getattr(ch, "acts_through", ()) for ch in ts.dasha_evolution):
+            out.append('<p class="muted">Rahu and Ketu own no sign, so a nodal chapter is read '
+                       'through the lord of the sign the node occupies and any planet joined '
+                       'with it &mdash; the routing is named above rather than assumed.</p>')
 
     out.append('<h3>Varga confirmation matrix</h3><p class="section-sub">Does the relevant '
                'division confirm, qualify or stay neutral on each theme&rsquo;s natal '

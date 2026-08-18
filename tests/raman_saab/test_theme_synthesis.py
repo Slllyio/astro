@@ -276,19 +276,83 @@ class TestThemeSynthesisContract:
                     assert "convergence" not in t.convergence_label   # not the misleading 'weak convergence'
 
     def test_dasha_evolution_is_differential_not_flooding(self, mainpuri):
-        """K/item-10 — a chapter foregrounds ONLY the themes its Mahadasha lord actually drives
-        (the lord is among each activated theme's driving planets), so a single period never
-        lights every theme at once. At least one chapter must foreground a proper subset."""
+        """K/item-10 — a chapter foregrounds ONLY the themes its Mahadasha lord drives (or, for a
+        node, the themes its disclosed agents drive), so a single period never lights every theme
+        at once. At least one chapter must foreground a proper subset."""
         r, ts = mainpuri
         by = {t.name: t for t in ts.themes}
         saw_subset = False
         for ch in ts.dasha_evolution:
+            keys = {ch.maha} | set(ch.acts_through)
             for name in ch.activates:
-                assert ch.maha in by[name].dominant_planets, (
-                    f"{ch.maha} MD foregrounds {name!r} but does not drive it")
+                assert keys & set(by[name].dominant_planets), (
+                    f"{ch.maha} MD foregrounds {name!r} but neither it nor its agents drive it")
             if ch.activates and len(ch.activates) < len(ts.themes):
                 saw_subset = True
         assert saw_subset, "no chapter foregrounded a proper subset — flooding is back"
+
+    def test_every_theme_gets_a_forward_timing_window(self, mainpuri, canonical):
+        """The WHEN axis must not be silent: each theme names the bhukti ahead that best supports
+        its bhava, graded on Raman's four-tier fructification scheme (HTJAH-I:1592-1596)."""
+        from app.raman_saab.theme_synthesis import _TIER_ORDER
+        for r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                assert t.activation_span, f"{t.theme_id} carries no timing window"
+                assert "bhukti" in t.activation_span
+                assert any(tier in t.activation_span for tier in _TIER_ORDER), (
+                    f"{t.theme_id} timing names no fructification grade")
+
+    def test_timing_windows_are_forward_looking_and_differential(self, mainpuri):
+        """The window is drawn from bhuktis AHEAD of the reference moment (not a historical
+        high-water mark), and the themes do not all collapse onto one identical window."""
+        import re
+        r, ts = mainpuri
+        ref_year = int(__import__("swisseph").revjul(r.ref_jd, __import__("swisseph").GREG_CAL)[0])
+        windows = set()
+        for t in ts.themes:
+            m = re.search(r"\((\d{4})-(\d{4})\)", t.activation_span)
+            assert m, f"{t.theme_id}: no year span in {t.activation_span!r}"
+            assert int(m.group(2)) >= ref_year, "a timing window closed before the present"
+            windows.add(m.group(0))
+        assert len(windows) >= 2, "every theme collapsed onto one window — not differential"
+
+    def test_timing_discloses_a_theme_never_reaching_the_top_tier(self, mainpuri):
+        """A bhava the coming years support only weakly says so — that is a finding, not an
+        absence to hide. On Mainpuri, H7 (marriage) never reaches par excellence ahead."""
+        r, ts = mainpuri
+        marriage = next((t for t in ts.themes if t.theme_id == "marriage"), None)
+        assert marriage is not None
+        assert "not carried to the top tier" in marriage.activation_span
+
+    def test_a_nodal_chapter_routes_through_its_agents(self, mainpuri):
+        """Rahu/Ketu own no sign and can never be a theme's driver, so without routing every
+        nodal Mahadasha would foreground nothing (a quarter of the 120-year cycle). A node
+        chapter must name the planets it acts for, and they must be real chart agents."""
+        from app.raman_saab.theme_synthesis import _node_agents
+        r, ts = mainpuri
+        agents = _node_agents(r)
+        assert agents, "no node agency computed"
+        nodal = [c for c in ts.dasha_evolution if c.maha in ("Rahu", "Ketu")]
+        for c in nodal:
+            assert c.acts_through, f"{c.maha} chapter discloses no routing"
+            assert set(c.acts_through) == set(agents[c.maha])
+            # anything it foregrounds is driven by one of those agents, never by the node itself
+            by = {t.name: t for t in ts.themes}
+            for name in c.activates:
+                assert set(c.acts_through) & set(by[name].dominant_planets)
+
+    def test_node_agents_are_dispositor_and_co_tenants(self, mainpuri):
+        """The routing is the classical one: the lord of the sign the node occupies, plus any
+        planet joined with it (conjunction = sign membership, the project's locked convention)."""
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.theme_synthesis import _node_agents
+        r, _ts = mainpuri
+        for node, agents in _node_agents(r).items():
+            p = r.chart.planets[node]
+            assert SIGN_LORDS[p.sign] in agents, f"{node}'s dispositor is missing"
+            for other, op in r.chart.planets.items():
+                if other not in ("Rahu", "Ketu") and op.sign == p.sign:
+                    assert other in agents, f"{other} shares {node}'s sign but is not an agent"
 
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import

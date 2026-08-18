@@ -145,6 +145,7 @@ class DashaChapter:
     activates: tuple[str, ...]      # themes the MD lord actually drives (differential, not flooding)
     emerging: tuple[str, ...]       # newly emphasized vs the previous chapter
     continuing: tuple[str, ...]     # carried over from the previous chapter
+    acts_through: tuple[str, ...] = ()   # for a NODE chapter: the planets it gives results for
 
 
 @dataclass(frozen=True)
@@ -626,24 +627,59 @@ def _varga_relation(r, prim_house, domain) -> str:
     return "neutral (D9 neither confirms nor weakens)"
 
 
+#: Raman's four fructification grades, strongest first (HTJAH-I:1592-1596, 1635-1640).
+_TIER_ORDER = ("par excellence", "ordinary", "limited", "feeble")
+
+
 def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
-    """A DIFFERENTIAL timing note — the Mahadasha whose lord actually drives this theme (its
-    lead planet), when that lord has a run in the shown window; otherwise silent. Never the
-    identical 'ripens in Saturn/Mercury/Ketu' line on every theme (that was the only-MDs-in-
-    the-window artefact). Timed indication idiom, never a decree."""
+    """A DIFFERENTIAL, FORWARD-LOOKING timing note, graded by Raman's own fructification scheme.
+
+    Scans the bhuktis ahead of ``ref_jd`` through the engine's shared ``graded_buckets`` (the ONE
+    implementation of HTJAH-I:1592-1596 — par excellence / ordinary / limited / feeble) and names
+    the window in which this theme's primary bhava is best supported. Three deliberate choices:
+
+    - **Forward only.** A reader asks "when next", not "when was the high-water mark since birth";
+      scanning the whole life also makes almost every house peak in the same early bhukti.
+    - **Same-lord bhuktis are skipped.** When MD lord == AD lord the association test is trivially
+      true, so that bhukti grades par excellence for nearly every house — a degenerate window that
+      would drown the differential signal (measured: 11 of 12 houses on one chart).
+    - **A theme that never reaches the top tier says so.** That is a real finding (a bhava the
+      coming years support only weakly), not an absence to hide.
+
+    Timed-indication idiom throughout — a window that supports an indication, never a decree that
+    an event occurs. Silent (empty) when the timeline carries no forward bhukti for the house."""
     from app.raman_saab import detailed_report as dr
-    lead = dom_planets[0] if dom_planets else None
-    if not lead:
+    ref = getattr(r, "ref_jd", 0.0)
+    periods = getattr(getattr(r, "timeline", None), "periods", ()) or ()
+    best: Optional[tuple[int, str, str, str, int, int]] = None
+    for tp in periods:
+        per = tp.period
+        if getattr(per, "end_jd", 0.0) <= ref:          # already past
+            continue
+        if per.antar and per.maha == per.antar:         # degenerate same-lord bhukti
+            continue
+        _assoc, buckets = _safe(lambda: dr.graded_buckets(tp, r.chart), (False, {}))
+        for tier, items in (buckets or {}).items():
+            if not any(getattr(a, "house", None) == prim_house for a in items):
+                continue
+            rank = _TIER_ORDER.index(tier) if tier in _TIER_ORDER else len(_TIER_ORDER)
+            if best is None or rank < best[0]:
+                best = (rank, tier, per.maha, per.antar or "",
+                        _year(per.start_jd), _year(per.end_jd))
+    if best is None:
         return ""
-    # does the theme's own lead planet run as an MD in the shown life-chapters?
-    for ch in getattr(getattr(r, "life_chapters", None), "chapters", ()) or ():
-        if getattr(ch, "maha", None) == lead:
-            yr0 = int(swe.revjul(ch.start_jd, swe.GREG_CAL)[0])
-            yr1 = int(swe.revjul(ch.end_jd, swe.GREG_CAL)[0])
-            when = "now" if getattr(ch, "is_current", False) else f"{yr0}-{yr1}"
-            return (f"most fully its own — the {lead} chapter ({when}) is when {name.lower()} "
-                    f"comes into its own emphasis.")
-    return ""
+    _rank, tier, maha, antar, y0, y1 = best
+    bhukti = f"{maha}/{antar}" if antar else maha
+    span = f"{y0}-{y1}" if y1 != y0 else str(y0)
+    # both variants open on the same noun phrase so the clause reads correctly standalone AND
+    # after the "In time, …" connector the final interpretation puts in front of it
+    if tier == _TIER_ORDER[0]:
+        return (f"the {bhukti} bhukti ({span}) is the window ahead that best supports it — "
+                f"H{prim_house} grades {tier} there on Raman's fructification scheme "
+                f"(HTJAH-I:1592-1596).")
+    return (f"the {bhukti} bhukti ({span}) offers the strongest support ahead, and only at the "
+            f"{tier} grade — H{prim_house} is not carried to the top tier in the years shown "
+            f"(HTJAH-I:1592-1596).")
 
 
 def _final_interpretation(name, headline, convergence, contradictions, activation, dom_planets,
@@ -664,7 +700,9 @@ def _final_interpretation(name, headline, convergence, contradictions, activatio
     else:
         body += f" ({convergence.replace('_', ' ').lower()} convergence)"
     if activation:
-        body += f". In time, {activation}"
+        # the narrative sentence carries the clause without its citation — the Timing line
+        # renders the same note in full, so traceability is not lost by shortening here
+        body += ". In time, " + activation.split(" (HTJAH-")[0].rstrip(" .—-")
     return body.rstrip(".") + "."
 
 
@@ -719,6 +757,35 @@ def _year(jd: float) -> int:
     return int(swe.revjul(jd, swe.GREG_CAL)[0])
 
 
+def _node_agents(r) -> dict[str, tuple[str, ...]]:
+    """{node: the planets it acts for} — Rahu and Ketu carry no rulership of their own, so they
+    give the results of the lord of the sign they occupy (their dispositor) and of any planet
+    joined with them. Without this a node can NEVER appear among a theme's driving planets (it is
+    never a sign-lord and never a domain karaka), so every Rahu/Ketu Mahadasha — a quarter of the
+    120-year Vimshottari cycle — would foreground nothing at all.
+
+    Conjunction is sign membership, per the project's locked drishti convention. Pure re-read of
+    the cast chart; empty when a node is absent."""
+    from app.raman_saab.chart.constants import SIGN_LORDS
+    out: dict[str, tuple[str, ...]] = {}
+    planets = getattr(getattr(r, "chart", None), "planets", {}) or {}
+    for node in ("Rahu", "Ketu"):
+        p = planets.get(node)
+        if p is None:
+            continue
+        agents: list[str] = []
+        disp = _safe(lambda: SIGN_LORDS[p.sign], None)
+        if disp and disp not in agents:
+            agents.append(disp)
+        for other, op in planets.items():
+            if other in ("Rahu", "Ketu") or other in agents:
+                continue
+            if getattr(op, "sign", None) == p.sign:      # joined with the node (same sign)
+                agents.append(other)
+        out[node] = tuple(agents)
+    return out
+
+
 def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
     """Which life-themes each Mahadasha FOREGROUNDS, chapter by chapter — the horoscope's
     evolution through time. Differential, not flooding: a theme is foregrounded by a chapter only
@@ -732,11 +799,16 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
     if not chapters:
         return ()
     theme_drivers = [(t.name, set(t.dominant_planets)) for t in themes]
+    agents = _node_agents(r)
     out: list[DashaChapter] = []
     prev: set[str] = set()
     for ch in chapters:
         lord = getattr(ch, "maha", "") or ""
-        active = tuple(name for name, drv in theme_drivers if lord in drv)
+        # a node rules nothing of its own — it foregrounds what its dispositor and its
+        # co-tenants drive, and the routing is disclosed rather than silently assumed
+        acts_through = agents.get(lord, ()) if lord in agents else ()
+        keys = {lord} | set(acts_through)
+        active = tuple(name for name, drv in theme_drivers if keys & drv)
         aset = set(active)
         emerging = tuple(n for n in active if n not in prev)
         continuing = tuple(n for n in active if n in prev)
@@ -745,7 +817,8 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
             span=f"{_year(ch.start_jd)}-{_year(ch.end_jd)}",
             is_current=bool(getattr(ch, "is_current", False)),
             lean=getattr(ch, "lean", None) or "neutral",
-            activates=active, emerging=emerging, continuing=continuing))
+            activates=active, emerging=emerging, continuing=continuing,
+            acts_through=acts_through))
         prev = aset
     return tuple(out)
 

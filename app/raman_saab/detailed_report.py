@@ -4216,9 +4216,16 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append("|---|---|---|---|---|")
         for ch in ts.dasha_evolution:
             now = " (now)" if ch.is_current else ""
-            L.append(f"| {ch.maha} MD{now} | {ch.span} | {ch.lean} | "
+            via = getattr(ch, "acts_through", ()) or ()
+            through = f" (acting through {', '.join(via)})" if via else ""
+            L.append(f"| {ch.maha} MD{now}{through} | {ch.span} | {ch.lean} | "
                      f"{', '.join(ch.emerging) or '-'} | {', '.join(ch.continuing) or '-'} |")
         L.append("")
+        if any(getattr(ch, "acts_through", ()) for ch in ts.dasha_evolution):
+            L.append("_Rahu and Ketu own no sign, so a nodal chapter is read through the lord of "
+                     "the sign the node occupies and any planet joined with it — the routing is "
+                     "named above rather than assumed._")
+            L.append("")
 
     # varga confirmation matrix — each theme's divisional relation to its natal indication
     L.append("### Varga confirmation matrix")

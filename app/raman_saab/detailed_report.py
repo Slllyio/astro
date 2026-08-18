@@ -4178,6 +4178,46 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                 L.append(f"- **Tension ({c.kind})** — {c.poles[0]} vs {c.poles[1]}. "
                          f"Resolved by **{c.governing}**: {c.resolution}")
             L.append("")
+
+    # how the themes connect (the cross-theme fabric — one mechanism behind several areas)
+    if getattr(ts, "connections", None):
+        L.append("### How the themes connect")
+        L.append("")
+        L.append("_Where one computed factor drives more than one life-area, so the chart "
+                 "reads as a single fabric rather than separate modules:_")
+        L.append("")
+        for c in ts.connections:
+            L.append(f"- {c.note}")
+        L.append("")
+
+    # dasha evolution — the horoscope through time (which themes each chapter emphasizes)
+    if getattr(ts, "dasha_evolution", None):
+        L.append("### Dasha evolution — the horoscope through time")
+        L.append("")
+        L.append("_Each Mahadasha chapter and the themes it brings to the top tier "
+                 "(par excellence), split into what newly emerges and what continues from the "
+                 "chapter before — a re-read of the life-narrative, no new timing math:_")
+        L.append("")
+        L.append("| chapter | span | lean | newly emphasized | continuing |")
+        L.append("|---|---|---|---|---|")
+        for ch in ts.dasha_evolution:
+            now = " (now)" if ch.is_current else ""
+            L.append(f"| {ch.maha} MD{now} | {ch.span} | {ch.lean} | "
+                     f"{', '.join(ch.emerging) or '-'} | {', '.join(ch.continuing) or '-'} |")
+        L.append("")
+
+    # varga confirmation matrix — each theme's divisional relation to its natal indication
+    L.append("### Varga confirmation matrix")
+    L.append("")
+    L.append("_Does the relevant division confirm, qualify or stay neutral on each theme's "
+             "natal indication? (D9 is the only division that modulates a D1 verdict in this "
+             "engine; the rest are read for their own domain in the divisional deep-reads.)_")
+    L.append("")
+    L.append("| theme | natal verdict | D9 relation |")
+    L.append("|---|---|---|")
+    for t in ts.themes:
+        L.append(f"| {t.name} | {t.headline_verdict} | {t.varga_relation} |")
+    L.append("")
     return L
 
 

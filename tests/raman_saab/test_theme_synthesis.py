@@ -169,6 +169,72 @@ class TestThemeSynthesisContract:
         if r.planet_bios:
             assert p.dominant_actors[0][0] == r.planet_bios[0].planet
 
+    def test_connections_dasha_evolution_and_varga_matrix(self, mainpuri):
+        """Stage-3 consolidated views: the cross-theme fabric, the time-axis evolution, and the
+        varga matrix — all re-reads, all present on a rich chart."""
+        r, ts = mainpuri
+        # connections: at least one pair shares a mechanism, and the shared factor is real
+        assert ts.connections, "no cross-theme connection discovered on Mainpuri"
+        names = {t.name for t in ts.themes}
+        for c in ts.connections:
+            assert c.theme_a in names and c.theme_b in names and c.shared and c.note
+        # dasha evolution: chapters with year spans, emerging/continuing split, one 'now'
+        assert ts.dasha_evolution
+        assert sum(1 for ch in ts.dasha_evolution if ch.is_current) <= 1
+        for ch in ts.dasha_evolution:
+            assert "-" in ch.span                       # 'YYYY-YYYY'
+            # emerging + continuing are subsets of the chapter's activated themes
+            assert set(ch.emerging) | set(ch.continuing) <= set(ch.activates)
+            assert not (set(ch.emerging) & set(ch.continuing))   # disjoint
+
+    def test_dasha_spans_match_the_life_chapter_engine(self, mainpuri):
+        """K7/K9 — the evolution spans are the life-chapters' own JD bounds, not new math."""
+        import swisseph as swe
+        r, ts = mainpuri
+        chapters = {ch.maha: ch for ch in r.life_chapters.chapters}
+        for de in ts.dasha_evolution:
+            src = chapters.get(de.maha)
+            if src is not None:
+                lo = int(swe.revjul(src.start_jd, swe.GREG_CAL)[0])
+                hi = int(swe.revjul(src.end_jd, swe.GREG_CAL)[0])
+                assert de.span == f"{lo}-{hi}"
+
+    def test_mainpuri_integration_proof(self, mainpuri):
+        """Item-23 — the layer must DISCOVER (not be told) the chart's recurring structures.
+        On Mainpuri: Jupiter/Saturn among the dominant actors, a wealth network on H2+H11, a
+        career theme on H10, and the current chapter naming the running Mahadasha. These are
+        asserted from the structured object, never hardcoded into the engine."""
+        r, ts = mainpuri
+        actors = {a[0] for a in ts.portrait.dominant_actors}
+        assert {"Jupiter", "Saturn"} <= actors, f"expected Jupiter+Saturn dominant, got {actors}"
+        by = {t.theme_id: t for t in ts.themes}
+        wealth = by.get("wealth")
+        assert wealth and 2 in wealth.houses and 11 in wealth.houses, \
+            "the wealth theme did not discover the H2/H11 network"
+        career = by.get("career")
+        assert career and 10 in career.houses
+        # the current chapter names the running MD (from the report's own running_md)
+        assert r.synthesis.running_md and r.synthesis.running_md in ts.portrait.current_chapter
+
+    def test_generic_across_charts(self, mainpuri, canonical):
+        """The architecture is generic, not tuned to one chart: both charts yield themes, a
+        spine, a portrait with actors, and at least one contradiction somewhere."""
+        for r, ts in (mainpuri, canonical):
+            assert ts.themes and ts.spine and ts.portrait.dominant_actors
+            assert any(t.contradictions for t in ts.themes) or ts.portrait.principal_tension
+
+    def test_section_facts_are_grounded_and_guard_clean(self, mainpuri):
+        """Stage-5 prose pipeline — the themes section decomposes one-claim-per-Fact and every
+        Fact passes the decree guard (so /report/explain can narrate it grounded)."""
+        from app.raman_saab.report_json import to_report_dict
+        from app.llm.report_explainer import _section_facts, _FORBIDDEN_RE
+        r, _ = mainpuri
+        R = to_report_dict(r)
+        facts = _section_facts(R, "themes")
+        assert len(facts) >= 4, "the themes section produced too few grounded facts"
+        for f in facts:
+            assert _FORBIDDEN_RE.search(f.text) is None, f"decree-guard hit in a themes fact: {f.text!r}"
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

@@ -31,6 +31,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Optional
 
+import swisseph as swe
+
 from app.raman_saab.doctrine import varga_domains as vd
 
 if TYPE_CHECKING:                                   # avoid the build_detailed_report import cycle
@@ -116,13 +118,41 @@ class ExecutivePortrait:
 
 
 @dataclass(frozen=True)
+class ThemeConnection:
+    """Two themes discovered to share a mechanism — the same driving planet or a common house —
+    so the reader sees the horoscope as one fabric, not independent modules."""
+    theme_a: str
+    theme_b: str
+    shared: str                     # the planet(s)/house(s) they share
+    note: str
+
+
+@dataclass(frozen=True)
+class DashaChapter:
+    """One Mahadasha run and how the life-themes evolve across it — the horoscope's movement
+    through time. A re-read of r.life_chapters (never new dasha math). Themes are those lit at
+    the top (par-excellence) tier, split into those NEWLY emphasized in this chapter versus
+    those CONTINUING from the previous one (Raman's item-9 evolution question)."""
+    maha: str
+    span: str                       # 'YYYY-YYYY' (JD arithmetic, GREG_CAL)
+    is_current: bool
+    lean: str                       # the MD Ishta/Kashta lean, re-read
+    activates: tuple[str, ...]      # theme names lit at par-excellence in this chapter
+    emerging: tuple[str, ...]       # newly emphasized vs the previous chapter
+    continuing: tuple[str, ...]     # carried over from the previous chapter
+
+
+@dataclass(frozen=True)
 class ThemeSynthesis:
-    """The whole integrated interpretation: ranked themes, the dominant-theme spine, and the
-    executive portrait. Built last, re-read only."""
+    """The whole integrated interpretation: ranked themes, the dominant-theme spine, the
+    executive portrait, the cross-theme fabric, and the dasha evolution. Built last, re-read
+    only."""
     themes: tuple[ThemeReading, ...]
     spine: tuple[str, ...]          # theme_ids of the 3-7 dominant themes
     frame: str
     portrait: ExecutivePortrait
+    connections: tuple[ThemeConnection, ...] = ()
+    dasha_evolution: tuple[DashaChapter, ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -244,12 +274,15 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             convergence_why=why, contradictions=contradictions, activation_span=activation,
             varga_relation=varga_rel, final_interpretation=final, evidence_weight=weight))
 
-    # pass 6: rank + spine + portrait
+    # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
     spine = tuple(t.theme_id for t in themes[:_spine_size(themes)])
     frame = getattr(r.overview, "stronger_frame", "") or ""
     portrait = _portrait(r, themes, spine, frame)
-    return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait)
+    connections = _connections(themes, spine)
+    evolution = _dasha_evolution(r, themes)
+    return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
+                          connections=connections, dasha_evolution=evolution)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -571,6 +604,69 @@ def _weight(convergence, links, r, houses) -> float:
         if set(getattr(it, "houses", ()) or ()) & hset:
             prio = max(prio, 1.0 - i * 0.1)
     return base + axes * 0.3 + prio
+
+
+def _connections(themes, spine) -> tuple[ThemeConnection, ...]:
+    """Discover where two (spine) themes share a mechanism — the same driving planet, or a
+    house in both networks. This is the 'career and wealth are connected through Jupiter'
+    weave: the same computed factor drives two life-areas, so the chart reads as one fabric.
+    Discovered from the already-built theme evidence, never asserted."""
+    by_id = {t.theme_id: t for t in themes}
+    picks = [by_id[i] for i in spine if i in by_id] or list(themes)[:5]
+    out: list[ThemeConnection] = []
+    seen: set[frozenset] = set()
+    for i, a in enumerate(picks):
+        for b in picks[i + 1:]:
+            key = frozenset((a.theme_id, b.theme_id))
+            if key in seen:
+                continue
+            shared_p = [p for p in a.dominant_planets if p in b.dominant_planets][:2]
+            shared_h = sorted(set(a.houses) & set(b.houses))
+            if not shared_p and not shared_h:
+                continue
+            seen.add(key)
+            bits = []
+            if shared_p:
+                bits.append(", ".join(shared_p))
+            if shared_h:
+                bits.append(", ".join(f"H{h}" for h in shared_h))
+            shared = " and ".join(bits)
+            note = (f"{a.name} and {b.name} run through the same {shared} — one mechanism "
+                    f"behind both, so they tend to move together.")
+            out.append(ThemeConnection(a.name, b.name, shared, note))
+    return tuple(out[:6])
+
+
+def _year(jd: float) -> int:
+    return int(swe.revjul(jd, swe.GREG_CAL)[0])
+
+
+def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
+    """Which life-themes each Mahadasha lights, chapter by chapter — the horoscope's evolution
+    through time. A pure re-read of r.life_chapters.houses_lit mapped back to themes; no new
+    dasha math (the spans are the chapters' own JD bounds)."""
+    lc = getattr(r, "life_chapters", None)
+    chapters = getattr(lc, "chapters", ()) if lc else ()
+    if not chapters:
+        return ()
+    theme_houses = [(t.name, set(t.houses)) for t in themes]
+    out: list[DashaChapter] = []
+    prev: set[str] = set()
+    for ch in chapters:
+        lit = {h for h, tier, _v in (getattr(ch, "houses_lit", ()) or ())
+               if tier == "par excellence"}      # top tier only — the differential signal
+        active = tuple(name for name, hs in theme_houses if hs & lit)
+        aset = set(active)
+        emerging = tuple(n for n in active if n not in prev)
+        continuing = tuple(n for n in active if n in prev)
+        out.append(DashaChapter(
+            maha=getattr(ch, "maha", ""),
+            span=f"{_year(ch.start_jd)}-{_year(ch.end_jd)}",
+            is_current=bool(getattr(ch, "is_current", False)),
+            lean=getattr(ch, "lean", None) or "neutral",
+            activates=active, emerging=emerging, continuing=continuing))
+        prev = aset
+    return tuple(out)
 
 
 def _spine_size(themes) -> int:

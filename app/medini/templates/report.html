@@ -655,6 +655,10 @@ const I18N_HI = {
   'Tension':'तनाव',
   'Resolved by':'का समाधान',
   'Evidence chain (every finding, its source)':'प्रमाण-श्रृंखला (प्रत्येक निष्कर्ष, उसका स्रोत)',
+  'How the themes connect':'विषय आपस में कैसे जुड़ते हैं',
+  'Dasha evolution — the horoscope through time':'दशा-विकास — काल के साथ कुंडली',
+  'Each Mahadasha and the themes it brings to the top tier':'प्रत्येक महादशा और उसके शीर्ष-स्तर पर आने वाले विषय',
+  'Varga confirmation matrix':'वर्ग-पुष्टि सारणी',
   'Judgment graph':'निर्णय-जाल',
   'Planet biographies (dominant grahas)':'ग्रह-जीवनियाँ (प्रमुख ग्रह)',
   'Psychological profile':'मनोवैज्ञानिक चित्र',
@@ -2441,6 +2445,20 @@ function render(R, S, FQ){
       for(const c of (th.contradictions||[])) b.append(para(t('Tension')+' ('+c.kind+') — '+c.poles[0]+' vs '+c.poles[1]+'. '+t('Resolved by')+' '+c.governing+': '+c.resolution,'muted'));
       card.append(b); add(card);
     }
+    if((ts.connections||[]).length){
+      add(para(t('How the themes connect'),'muted'));
+      const cu=el('ul'); for(const c of ts.connections){ const x=el('li'); x.append(c.note); cu.append(x); }
+      add(cu);
+    }
+    if((ts.dasha_evolution||[]).length){
+      add(para(t('Dasha evolution — the horoscope through time'),'muted'));
+      const rows=ts.dasha_evolution.map(ch=>({chapter:ch.maha+' MD'+(ch.is_current?' (now)':''),
+        span:ch.span, lean:ch.lean, 'newly emphasized':(ch.emerging||[]).join(', ')||'-',
+        continuing:(ch.continuing||[]).join(', ')||'-'}));
+      const de=sectionTable(t('Each Mahadasha and the themes it brings to the top tier'), rows); if(de) add(de);
+    }
+    const vm=ts.themes.map(th=>({theme:th.name, 'natal verdict':th.headline_verdict, 'D9 relation':th.varga_relation}));
+    const vt=sectionTable(t('Varga confirmation matrix'), vm); if(vt) add(vt);
   })();
 
   chapter(7);   // step 4 — WHY: the machinery

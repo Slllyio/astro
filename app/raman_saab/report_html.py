@@ -827,6 +827,37 @@ def _themes_section(r: DetailedReport) -> str:
                        f'{_esc(c.poles[0])} vs {_esc(c.poles[1])}. Resolved by '
                        f'<b>{_esc(c.governing)}</b>: {_esc(c.resolution)}</p>')
         out.append("</div>")
+
+    if getattr(ts, "connections", None):
+        out.append('<h3>How the themes connect</h3><p class="section-sub">Where one computed '
+                   'factor drives more than one life-area, so the chart reads as a single '
+                   'fabric.</p><ul>')
+        for c in ts.connections:
+            out.append(f'<li>{_esc(c.note)}</li>')
+        out.append("</ul>")
+
+    if getattr(ts, "dasha_evolution", None):
+        out.append('<h3>Dasha evolution &mdash; the horoscope through time</h3>'
+                   '<p class="section-sub">Each Mahadasha chapter and the themes it brings to '
+                   'the top tier, split into what newly emerges and what continues.</p>'
+                   '<table class="evidence"><thead><tr><th>chapter</th><th>span</th>'
+                   '<th>lean</th><th>newly emphasized</th><th>continuing</th></tr></thead><tbody>')
+        for ch in ts.dasha_evolution:
+            now = " (now)" if ch.is_current else ""
+            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}</td><td>{_esc(ch.span)}</td>'
+                       f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
+                       f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')
+        out.append("</tbody></table>")
+
+    out.append('<h3>Varga confirmation matrix</h3><p class="section-sub">Does the relevant '
+               'division confirm, qualify or stay neutral on each theme&rsquo;s natal '
+               'indication? (D9 is the only division that modulates a D1 verdict here.)</p>'
+               '<table class="evidence"><thead><tr><th>theme</th><th>natal verdict</th>'
+               '<th>D9 relation</th></tr></thead><tbody>')
+    for t in ts.themes:
+        out.append(f'<tr><td>{_esc(t.name)}</td><td>{_esc(t.headline_verdict)}</td>'
+                   f'<td>{_esc(t.varga_relation)}</td></tr>')
+    out.append("</tbody></table>")
     return "".join(out)
 
 

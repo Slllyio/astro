@@ -438,6 +438,27 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
         _append_linked_insights(R, key, facts)
         return facts
+    if key == "themes":
+        # The integrated reading, decomposed ONE-CLAIM-PER-FACT (never a bundled blob — the
+        # same discipline nichod/summary use, so the model cites the right theme while
+        # narrating the right numbers). Direction is always the engine's own house verdict.
+        ts = R.get("themes") or {}
+        _f(facts, "The integrated reading synthesizes the report's own section verdicts into "
+                  "coherent life-themes; it is a re-read, never a new judgment, and each "
+                  "theme's direction is the engine's own house verdict, carried through "
+                  "unchanged.")
+        for th in ts.get("themes", []):
+            cv = str(th.get("convergence", "")).replace("_", " ").lower()
+            dom = ", ".join(th.get("dominant_planets", [])) or "the chart"
+            _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv} convergence), driven "
+                      f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
+            for c in th.get("contradictions", []):
+                _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
+                          f"{c['governing']}: {c['resolution']}")
+        for cn in ts.get("connections", []):
+            if cn.get("note"):
+                _f(facts, cn["note"])
+        return facts
     if isinstance(val, dict):          # a slotted prose section (nichod / plain_reading)
         for k, v in val.items():
             if isinstance(v, str) and v:

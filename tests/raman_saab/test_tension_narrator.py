@@ -133,3 +133,30 @@ class TestTurningPoints:
         assert "Turning points" in md
         joined = "; ".join(f"{w}: {x}" for w, x in n.turning_points)
         assert _FORBIDDEN_RE.search(joined) is None
+
+
+class TestMatterHouseMapsCannotDrift:
+    """Two `_MATTER_HOUSE` maps exist on purpose and must never disagree.
+
+    `detailed_report._MATTER_HOUSE` is the DASHBOARD-matter map: it is *iterated*
+    (theme houses, per-house matter lists), so it must contain dashboard matters only.
+    `tension_narrator._MATTER_HOUSE` is a *lookup* superset that also carries the legacy
+    per-house keys (courage, happiness, fortune...). The adversarial review of the audit
+    waves (2026-08-18) flagged the pair as a drift hazard: `house_dashboard_conflicts`
+    lives in detailed_report but imports tension_narrator's map. These tests pin the
+    invariant instead of merging maps with different jobs."""
+
+    def test_shared_keys_agree_on_the_house(self):
+        """A matter judged by house N in one map is judged by house N in the other."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as dashboard_map
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE as lookup_map
+        for matter in set(dashboard_map) & set(lookup_map):
+            assert dashboard_map[matter] == lookup_map[matter], (
+                f"{matter}: detailed_report says {dashboard_map[matter]}, "
+                f"tension_narrator says {lookup_map[matter]}")
+
+    def test_lookup_map_covers_every_dashboard_matter(self):
+        """The lookup map is a superset — no dashboard matter can miss its support cell."""
+        from app.raman_saab.detailed_report import _MATTER_HOUSE as dashboard_map
+        from app.raman_saab.tension_narrator import _MATTER_HOUSE as lookup_map
+        assert not set(dashboard_map) - set(lookup_map)

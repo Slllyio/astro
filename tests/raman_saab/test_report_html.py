@@ -466,3 +466,25 @@ class TestWave1CompletenessHtml:
         assert i >= 0
         assert body.find('id="gochara"') < i < body.find('id="vargas"')
         assert "computed live at\n    view time" in body
+
+    def test_stands_out_table_carries_degree_rarity_and_gloss(self, report, body):
+        """REPORT COMPLETENESS parity: the standalone HTML "What stands out" table shows the
+        same six columns the markdown/JSON/interactive surfaces do — verdict WITH its degree
+        word, the share WITH its rarity band, and the plain-language midpoint-side gloss."""
+        from app.raman_saab.detailed_report import distinctive_gloss
+        if not report.distinctive:
+            pytest.skip("no distinctive readings on this chart")
+        s = body.find('id="stands-out"')
+        assert s >= 0
+        sec = body[s:body.find('id="digest"')]
+        assert "<th>in plain terms</th>" in sec
+        for _h, e in report.distinctive:
+            assert f"{e.band_share:.0%} ({e.rarity})" in sec
+            assert _esc_html(distinctive_gloss(e)) in sec
+            assert f"{e.verdict}</span> {e.degree}" in sec
+
+
+def _esc_html(s: str) -> str:
+    """Mirror report_html._esc for assertion text."""
+    from app.raman_saab.report_html import _esc
+    return _esc(s)

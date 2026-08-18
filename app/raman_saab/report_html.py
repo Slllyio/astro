@@ -35,6 +35,7 @@ from app.raman_saab.detailed_report import (
     influence_basis,
     influence_basis_table,
     longevity_band_label,
+    distinctive_gloss,
     driver_entry,
     nakshatra_lord,
     plain_bhukti_summary,
@@ -600,12 +601,9 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     note = tenor_note(split, mr.verdict)
     split_badge = split_note_html = inverted_note_html = ""
     if note:
-        if split.favourable == split.afflicted and split.mixed == 0:
-            badge_label = f"{split.favourable}-{split.afflicted} split"
-        else:
-            n = {"favourable": split.favourable, "afflicted": split.afflicted,
-                 "mixed": split.mixed}[split.majority]
-            badge_label = f"{n}/{split.total} {split.majority}"
+        # one composer for both surfaces (the markdown strip calls the same function)
+        from app.raman_saab.detailed_report import house_strip_badge
+        badge_label = house_strip_badge(split, note)
         split_badge = (f'<span class="chip chip--{_vclass(split.majority)} split-badge" '
                        f'title="{_esc(note)}">{_esc(badge_label)}</span>')
         from app.raman_saab.detailed_report import SPLIT_POINTER
@@ -790,17 +788,26 @@ def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 —
 def _distinctive(r: DetailedReport) -> str:
     if not r.distinctive:
         return ""
+    # Wave-2 parity repair (2026-08-18): the markdown, the JSON (`gloss`) and the
+    # interactive page all carry the degree word, the rarity band and the plain-language
+    # midpoint-side sentence; this renderer had kept the pre-Wave-1 five columns. Same
+    # composers (`distinctive_gloss`), no new judgment — REPORT COMPLETENESS: a field the
+    # report computes appears on EVERY surface.
     rows = "".join(
         f'<tr><td>H{h} {_esc(_MD_HOUSE_NAME[h])}</td><td>{_esc(e.signification)}</td>'
-        f'<td><span class="chip chip--{_vclass(e.verdict)}">{_esc(e.verdict)}</span></td>'
+        f'<td><span class="chip chip--{_vclass(e.verdict)}">{_esc(e.verdict)}</span>'
+        f' {_esc(str(e.degree))}</td>'
         f'<td class="num">{e.favourability_percentile:.0%}</td>'
-        f'<td class="num">{e.band_share:.0%}</td></tr>' for h, e in r.distinctive)
+        f'<td class="num">{e.band_share:.0%} ({_esc(str(e.rarity))})</td>'
+        f'<td>{_esc(distinctive_gloss(e))}</td></tr>' for h, e in r.distinctive)
     return (
         '<h2 class="section" id="stands-out">What stands out</h2>'
         '<p class="section-sub">The readings furthest from the population midpoint &mdash; where '
-        'this chart is least like everyone else&rsquo;s.</p>'
+        'this chart is least like everyone else&rsquo;s. Rare readings first, then notable, '
+        'then common; within each band, furthest from the midpoint first.</p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>matter</th>'
-        '<th>verdict</th><th class="num">percentile</th><th class="num">share</th></tr></thead>'
+        '<th>verdict</th><th class="num">percentile</th><th class="num">share</th>'
+        '<th>in plain terms</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>')
 
 

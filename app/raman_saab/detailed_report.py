@@ -1190,9 +1190,10 @@ def house_dashboard_conflicts(r: "DetailedReport", house: int) -> tuple[str, ...
     map, one comparison) — re-read per house so the pointer appears only where the
     disagreement is real. Empty for every house whose matters agree."""
     from app.raman_saab.tension_narrator import _MATTER_HOUSE
-    if len(r.proformas) < house:
+    prof = next((p for p in r.proformas if p.house == house), None)
+    if prof is None:
         return ()
-    rollup = str(r.proformas[house - 1].rollup)
+    rollup = str(prof.rollup)
     out: list[str] = []
     for en in r.dashboard.entries:
         if _MATTER_HOUSE.get(en.matter) != house:

@@ -54,6 +54,7 @@ from app.raman_saab.primitives import vimshottari as vd
 from app.raman_saab.primitives.functional_nature import is_yogakaraka
 from app.raman_saab.primitives.shadbala import total as _sb_total
 from app.raman_saab.primitives.transits import TransitRow
+from app.raman_saab.ordinals import ordinal
 
 Band = Literal["raman", "classical", "av"]
 Kind = Literal["evaluable", "descriptive"]
@@ -285,6 +286,33 @@ def yoga_house_bearings(chart: RamanChart, y: FiredYoga) -> Optional[frozenset[i
                     or drishti.aspects_house(p, h, chart)):
                 houses.add(h)
     return frozenset(houses) or None
+
+
+def yoga_house_bearings_detail(chart: RamanChart, y: FiredYoga
+                               ) -> Optional[dict[int, str]]:
+    """APPEND-ONLY companion to :func:`yoga_house_bearings` (2026-08-18, Wave-2
+    preponderance disclosure): the SAME house set, each house tagged by the strongest
+    factor that matched — ``"direct"`` when a constituent OWNS or OCCUPIES the house
+    (the factors Raman's worked charts demonstrate) or ``"aspect"`` when only the
+    whole-sign aspect reaches it (the admitted extension from HTJAH-I:2955-2956).
+    No new influence rule and no new house: `yoga_house_bearings` stays authoritative
+    and this mapping's key-set must always equal it (paired test pins that)."""
+    from app.raman_saab.doctrine import drishti   # function-level, matching _sambandha
+    pls = _yoga_planets(chart, y)
+    if not pls:
+        return None
+    tags: dict[int, str] = {}
+    for p in pls:
+        pos = chart.planets.get(p)
+        if pos is None:
+            continue
+        for h in range(1, 13):
+            sign = ((chart.asc_sign - 1) + (h - 1)) % 12 + 1
+            if SIGN_LORDS[sign] == p or pos.rasi_house == h:
+                tags[h] = "direct"                       # own/occupy always wins
+            elif drishti.aspects_house(p, h, chart):
+                tags.setdefault(h, "aspect")             # aspect only if nothing direct
+    return tags or None
 
 
 def _yoga_planets_impl(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
@@ -692,7 +720,7 @@ def _chk_r14(ctx: SynthesisContext) -> Optional[str]:
     win = _md_window(ctx, "Saturn")
     when = (f" — his MD runs {_jd_date(win[0])}..{_jd_date(win[1])}" if win
             else " — no Saturn MD falls inside the displayed window")
-    return (f"Libra Lagna with Jupiter in the {jup.bhava}th and the Moon in Lagna: Bhavartha "
+    return (f"Libra Lagna with Jupiter in the {ordinal(jup.bhava)} and the Moon in Lagna: Bhavartha "
             f"Ratnakara's combination for fortune during Saturn's Dasa is present{when}")
 
 

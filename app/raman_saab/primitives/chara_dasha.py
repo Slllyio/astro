@@ -50,6 +50,33 @@ def chara_dasha(chart: RamanChart) -> list[tuple[int, int]]:
     return seq
 
 
+def chara_dasha_dated(chart: RamanChart, *, through_jd: Optional[float] = None,
+                      max_cycles: int = 3) -> list[tuple[int, int, float, float]]:
+    """Dated Chara Dasha spans ``[(sign, years, start_jd, end_jd), ...]`` from birth — a THIN
+    dating accessor over :func:`chara_dasha` (no new computation, no doctrine). Dates are plain
+    JD arithmetic per the project convention (``start = birth_jd + elapsed * DAYS_PER_VEDIC_YEAR``,
+    never ``datetime.timedelta``). The 12-sign cycle REPEATS (KN Rao, the same convention
+    ``chara_dasha_on`` applies) until ``through_jd`` is covered — default one cycle — capped at
+    ``max_cycles``. Empty on a Track-B chart (no ``jd_ut``)."""
+    from app.core.ephemeris_engine import DAYS_PER_VEDIC_YEAR
+    birth_jd = getattr(chart, "jd_ut", None)
+    if birth_jd is None:
+        return []
+    seq = chara_dasha(chart)
+    if sum(y for _, y in seq) <= 0:
+        return []
+    out: list[tuple[int, int, float, float]] = []
+    cursor = birth_jd
+    for _cycle in range(max_cycles):
+        for sign, years in seq:
+            end = cursor + years * DAYS_PER_VEDIC_YEAR
+            out.append((sign, years, cursor, end))
+            cursor = end
+        if through_jd is None or cursor > through_jd:
+            break
+    return out
+
+
 def chara_dasha_on(chart: RamanChart, age_years: float) -> Optional[tuple[int, int]]:
     """The (sign, years) Chara Dasha running at `age_years` after birth. The 12-sign sequence
     REPEATS for subsequent cycles (KN Rao) to fill a whole life; None only for a negative age or an

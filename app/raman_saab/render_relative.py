@@ -11,6 +11,7 @@ from __future__ import annotations
 from app.raman_saab.judges.relative_reading import (
     DerivedMatter, FamilyDerivativeReading, RelativeReading)
 from app.raman_saab.judges.saptamsa_reading import Tagged
+from app.raman_saab.ordinals import ordinal
 
 _SIGN = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
          "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -26,7 +27,7 @@ def _tag(t: Tagged) -> str:
 
 
 def _matter_line(m: DerivedMatter) -> str:
-    who = f"{m.matter} (the {m.offset}th from their lagna = your {m.native_house}th, "
+    who = f"{m.matter} (the {ordinal(m.offset)} from their lagna = your {ordinal(m.native_house)}, "
     who += f"{_sign(m.sign)}, lord {m.lord})"
     tail = f" — occupied by {', '.join(m.occupants)}" if m.occupants else ""
     if m.aspecting:
@@ -35,7 +36,7 @@ def _matter_line(m: DerivedMatter) -> str:
 
 
 def _relative_block(r: RelativeReading) -> list[str]:
-    out = [f"  [{r.role}]  read from the {r.base_house}th ({_sign(r.base_sign)}) — kāraka {r.karaka}"]
+    out = [f"  [{r.role}]  read from the {ordinal(r.base_house)} ({_sign(r.base_sign)}) — kāraka {r.karaka}"]
     for n in r.notes:
         out.append(f"      * {_tag(n)}")
     for m in r.matters:

@@ -47,8 +47,11 @@ def to_text(r: NavamsaMarriageReading) -> str:
         L.append("     NOTE: this project tested Kuja dosha directly on 2,322 real charts and it")
         L.append("     did NOT distinguish divorced from long-married (odds ratio 1.09, null).")
         L.append("     Reported for doctrinal completeness; it carries no demonstrated predictive")
-        L.append("     weight. Raman also reckons it from the Moon and Venus, and gives per-sign")
-        L.append("     exceptions and cancellations (HTJAH-II:2579-2622) not yet encoded here.")
+        L.append("     weight. The line above is the narrow Lagna-frame screen only. The full")
+        L.append("     multi-frame check - Mars reckoned from all three reference points (Lagna,")
+        L.append("     Moon and Venus), the per-sign exemptions, and the Mars+Jupiter / Mars+Moon")
+        L.append("     neutralisations (HTJAH-II:2579-2632) - is encoded in the House-7 kalatra")
+        L.append("     rule set and already feeds the marital-happiness verdict above.")
     L.append(f"  >>> SPOUSE: {c.spouse_verdict.upper()}   MARITAL HAPPINESS: "
              f"{c.marital_verdict.upper()} <<<")
     L.append("")

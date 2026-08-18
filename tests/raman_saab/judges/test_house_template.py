@@ -491,3 +491,50 @@ def test_as_house_verdict_lord_strong_matches_lagna_lord():
         hv = pf.as_house_verdict()
         # the reported lord_strength is exactly the lagna lord's own strength
         assert hv.lord_strong == legacy_strong(hv.lord, chart)
+
+
+# ---------------------------------------------------------------------------
+# 9. Dasha event-timing DISPLAY: the maraka cap (REPORT_CRITIQUE_2026-08-17 P0).
+# ---------------------------------------------------------------------------
+
+class TestTimingMarakaDisplayCap:
+    """The `active_periods` activation line must never be ALL death-labels: at most
+    `_TIMING_MARAKA_DISPLAY_CAP` maraka-tagged windows are displayed, and the ordinary
+    fructification windows (lord/karaka/afflictor/timer) fill the remaining slots up to
+    `_TIMING_DISPLAY_CAP`. Display-selection only — the verdict path is untouched (the
+    golden ratchet is the gate for that)."""
+
+    def test_relative_death_matters_show_ordinary_windows(self):
+        """Canonical chart (Lahiri): the relative-death matters (H4 mother, H7
+        spouse/coverture, H9 father) carry maraka Mahadasha windows, yet each activation
+        line shows at least one ordinary (non-maraka) window and at most 2 '(maraka)'
+        entries — '(maraka)' is never the entire line."""
+        chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59),
+                           ayanamsa="lahiri")
+        seen_maraka = False
+        for h, keys in ((4, {"mother"}), (7, {"spouse", "coverture"}), (9, {"father"})):
+            pf = ht.judge_house(chart, h)
+            for sv in pf.significations:
+                if sv.signification not in keys:
+                    continue
+                ap = dict(sv.metadata).get("active_periods")
+                assert ap, f"H{h} {sv.signification} lost its active_periods line"
+                wins = [w.strip() for w in ap.split(";")]
+                n_maraka = sum("(maraka)" in w for w in wins)
+                seen_maraka = seen_maraka or n_maraka > 0
+                assert len(wins) <= ht._TIMING_DISPLAY_CAP
+                assert n_maraka <= ht._TIMING_MARAKA_DISPLAY_CAP, ap
+                assert any("(maraka)" not in w for w in wins), (
+                    f"H{h} {sv.signification}: '(maraka)' is the entire line: {ap}")
+        assert seen_maraka, "precondition lost: no maraka windows on the tested matters"
+
+    def test_non_maraka_matters_are_unchanged_in_shape(self):
+        """A matter outside `_TIMING_MARAKA_KEYS` (H9 fortune) never carries a maraka role,
+        and its display stays within the same 5-slot cap."""
+        chart = cast_chart(BirthData("X", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59),
+                           ayanamsa="lahiri")
+        pf = ht.judge_house(chart, 9)
+        sv = next(s for s in pf.significations if s.signification == "fortune")
+        ap = dict(sv.metadata).get("active_periods")
+        assert ap and "(maraka)" not in ap
+        assert len(ap.split(";")) <= ht._TIMING_DISPLAY_CAP

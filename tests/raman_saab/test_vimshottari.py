@@ -174,3 +174,63 @@ def test_date_to_jd_and_dasha_on_outside_timeline():
     ch = _canonical_chart()
     assert vd.date_to_jd(2000, 1, 1) > vd.date_to_jd(1990, 1, 1)
     assert vd.dasha_on(ch, ch.jd_ut - 100 * 365.2425) is None   # before the timeline start
+
+
+class TestTimerRoles:
+    """Wave-2 (2026-08-18): the role-preserving `timer_roles` variant — the SAME six-factor
+    logic as `timer_set` (HTJAH-I:1586-1596), decomposed so renderers can DERIVE the tier
+    ("H2 par excellence [MD owns; AD aspects lord]") instead of asserting it."""
+
+    def test_timer_roles_flattens_to_timer_set_for_every_house(self):
+        """THE critical pin: for all 12 houses of the canonical chart, the planets carrying
+        any role are EXACTLY timer_set — the two implementations can never drift (timer_set
+        feeds the live verdict machinery and stays untouched)."""
+        ch = _canonical_chart()
+        for house in range(1, 13):
+            roles = vd.timer_roles(ch, house)
+            assert frozenset(roles) == vd.timer_set(ch, house), house
+            assert all(tags for tags in roles.values()), house   # no planet without a role
+
+    def test_timer_roles_flattens_to_timer_set_on_golden_charts(self):
+        """The same equivalence on dated golden nativities (Lincoln, Hitler) — the pin is
+        not an artifact of one chart's geometry."""
+        for cid in ("HTJAH-II.chart_73", "HTJAH-II.chart_78"):
+            chart, _dd = _golden_chart(cid)
+            for house in range(1, 13):
+                assert (frozenset(vd.timer_roles(chart, house))
+                        == vd.timer_set(chart, house)), (cid, house)
+
+    def test_role_tags_are_from_the_documented_vocabulary(self):
+        """Every emitted tag is one of TIMER_ROLE_TAGS — the vocabulary Raman's factor list
+        licenses (HTJAH-I:1586-1596 + the nodal dispositor rule, HTJAH-I:2764/8566)."""
+        ch = _canonical_chart()
+        for house in range(1, 13):
+            for planet, tags in vd.timer_roles(ch, house).items():
+                assert set(tags) <= set(vd.TIMER_ROLE_TAGS), (house, planet, tags)
+
+    def test_structural_roles_are_assigned_correctly(self):
+        """The house lord carries 'owns', the bhava karaka 'karaka', an occupant 'occupies'
+        — spot-checked structurally on the canonical chart (Virgo Lagna pin)."""
+        from app.raman_saab.chart.constants import SIGN_LORDS
+        from app.raman_saab.doctrine.karakas import BHAVA_KARAKA
+        ch = _canonical_chart()
+        for house in (1, 2, 7, 10):
+            roles = vd.timer_roles(ch, house)
+            lord = SIGN_LORDS[((ch.asc_sign - 1) + (house - 1)) % 12 + 1]
+            assert "owns" in roles[lord], house
+            assert "karaka" in roles[BHAVA_KARAKA.get(house, "Sun")], house
+            for name, p in ch.planets.items():
+                if p.rasi_house == house:
+                    assert "occupies" in roles[name], (house, name)
+
+    def test_node_role_names_the_dispositor_rule(self):
+        """A node in the set carries the 'node of a timer's sign' tag unless it earned a
+        direct factor (occupies/aspects/karaka) — the HTJAH-I:2764/8566 rule made visible."""
+        ch = _canonical_chart()
+        seen = False
+        for house in range(1, 13):
+            roles = vd.timer_roles(ch, house)
+            for node in ("Rahu", "Ketu"):
+                if node in roles and "node of a timer's sign" in roles[node]:
+                    seen = True
+        assert seen        # the canonical chart has nodal timers via dispositor

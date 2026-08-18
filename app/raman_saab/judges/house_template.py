@@ -405,7 +405,17 @@ def _decide(L: FrameLedger) -> tuple[Verdict, bool]:
     # afflicted the remaining clauses would produce. The `death` MANNER sig is NOT guarded —
     # it judges the 8th-house affliction directly (see clause 1.5 AFFLICTION_MATTER).
     guarded = "LONGEVITY_GUARD" in L.flags
-    maraka_drives = L.maraka_active and not guarded
+    # B3 — non-death-marital maraka guard (HTJAH-II:2579): maraka pressure speaks to the
+    # DEATH of the spouse ("the death of the husband or wife will occur"), not to marital
+    # HAPPINESS. The 7th being a maraka house lands Venus-the-karaka in the maraka set, so
+    # without this guard a barely-weak Venus over-afflicts the happiness sub-matter on
+    # maraka pressure alone. Same shape as LONGEVITY_GUARD but strictly narrower: only
+    # maraka's verdict-driving effect is suppressed — the karaka veto, fired malefics and
+    # every other clause keep their full force, and the ledger still records maraka_active
+    # honestly for reporting. (The Kuja-dosha CANCELLATIONS are separately encoded in
+    # _KujaDosha, HTJAH-II:2593-2601 — this is not a missing-cancellation patch.)
+    maraka_drives = (L.maraka_active and not guarded
+                     and "MARAKA_NON_DEATH_GUARD" not in L.flags)
     # 1. karaka veto — a broken karaka afflicts the matter regardless of evidence.
     if not L.karaka_intact:
         if guarded:
@@ -561,6 +571,26 @@ def _planet_avastha_score(avasthas: Optional[dict[str, object]], planet: str) ->
     info = avasthas[planet]
     score = _BALADI_SCORE.get(info["baladi"], 0) + _JAGRADADI_SCORE.get(info["jagradadi"], 0)
     return max(-1, min(1, score))
+
+
+def baladi_jagradadi_states(chart: RamanChart) -> dict[str, dict[str, str]]:
+    """READ-ONLY accessor (2026-08-17, report-completeness): the per-planet Baladi (ageing)
+    and Jagradadi (consciousness) avastha states this judge already computes via
+    ``_safe_avasthas`` and uses ONLY to scale verdict intensity (``_avastha_combined`` ->
+    ``_compute_degree``). Exposed so the report surfaces can SHOW what the judge consumed —
+    it re-reads the same pure computation and touches no verdict logic.
+
+    Provenance (same as the scoring tables above): CLASSICAL_NONCITABLE — Phaladeepika
+    Ch.3 Sl.3/Sl.10/Sl.20 + BPHS Ch.1 Sl.14-16 — outside Raman's own canon.
+
+    Returns {graha: {"baladi": state, "jagradadi": state}}; {} on Track-B stated-position
+    charts where a graha is missing (the same graceful degradation the judge itself uses).
+    """
+    avasthas = _safe_avasthas(chart)
+    if not avasthas:
+        return {}
+    return {planet: {"baladi": str(info["baladi"]), "jagradadi": str(info["jagradadi"])}
+            for planet, info in avasthas.items()}
 
 
 def _avastha_combined(avasthas: Optional[dict[str, object]], lord: str, karaka: str) -> int:
@@ -1030,6 +1060,11 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # VALIDATED (HIGH).
     if sig.key == "longevity":
         flags.append("LONGEVITY_GUARD")
+    # B3 (HTJAH-II:2579): marital HAPPINESS is a non-death matter — maraka pressure must
+    # not drive its verdict (see the guard in _decide). The spouse/death matters are NOT
+    # flagged: multiplicity/loss indications keep their maraka sensitivity.
+    if sig.key == "marital_happiness":
+        flags.append("MARAKA_NON_DEATH_GUARD")
     # AFFLICTION_MATTER (Stage-3 "B"): an inherently-malefic dusthana signification (6th
     # afflictions, 12th incarceration/left_eye). _decide clause-1.5 reads this to confirm the
     # affliction on lone-malefic evidence (a strong dusthana lord strengthens, never rescues).
@@ -1350,6 +1385,17 @@ _MARITAL_BOND_KEYS: frozenset[str] = frozenset({"spouse", "marital_happiness"})
 _TIMING_MARAKA_KEYS: frozenset[str] = frozenset(
     {"longevity", "death", "coverture", "father", "mother", "spouse"})
 
+# Display caps for the ``active_periods`` line (REPORT_CRITIQUE_2026-08-17 P0). The maraka
+# set can absorb every significator's window (one window per graha, strongest role wins), so
+# an uncapped maraka-first sort made the ENTIRE activation line read "(maraka)" for the
+# relative-death matters (mother/spouse/coverture/father) — five death-labels and zero
+# ordinary fructification windows. At most `_TIMING_MARAKA_DISPLAY_CAP` maraka-tagged windows
+# are shown; ordinary windows (afflictor/lord/karaka/timer) fill the remaining slots up to
+# `_TIMING_DISPLAY_CAP`. DISPLAY-SELECTION ONLY: the computed window set is unchanged, and
+# the verdict is untouched (this composer is metadata-only by contract).
+_TIMING_DISPLAY_CAP: Final[int] = 5
+_TIMING_MARAKA_DISPLAY_CAP: Final[int] = 2
+
 
 def _event_timing(
     chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger, ctx: EvalContext,
@@ -1393,7 +1439,19 @@ def _event_timing(
         # Most event-salient roles first (maraka/afflictor/lord/karaka), then generic timers.
         ordered = sorted(windows, key=lambda w: (
             {"maraka": 0, "afflictor": 1, "lord": 2, "karaka": 3}.get(w.role, 4), w.start_jd))
-        md.append(("active_periods", "; ".join(w.label() for w in ordered[:5])))
+        # Cap the maraka-tagged windows so ordinary fructification windows stay visible
+        # (see _TIMING_MARAKA_DISPLAY_CAP above — selection of what is DISPLAYED only).
+        shown: list[vimshottari.EventWindow] = []
+        n_maraka = 0
+        for w in ordered:
+            if w.role == "maraka":
+                if n_maraka >= _TIMING_MARAKA_DISPLAY_CAP:
+                    continue
+                n_maraka += 1
+            shown.append(w)
+            if len(shown) >= _TIMING_DISPLAY_CAP:
+                break
+        md.append(("active_periods", "; ".join(w.label() for w in shown)))
     return verdict, tuple(md)
 # The CRUEL malefics Raman names in the marital-bond afflictions (Mars/Saturn/Rahu/Ketu) — the
 # Sun is deliberately EXCLUDED: it is never the load-bearing 8th-from-Moon marital affliction in
@@ -1465,6 +1523,7 @@ _MARGINAL_BAND: Final[float] = 0.2  # GBB-1:38-60 borderline band (rupas) below 
 
 def _marginal_karaka_gate(
     chart: RamanChart, sig: Signification, verdict: Verdict, lead: FrameLedger,
+    *, bond_demoted: bool = False,
 ) -> tuple[Verdict, Metadata]:
     """GBB B2 marginal-strength band. The MIN_REQUIRED Rupa bars (GBB-8:303-312) are Raman's
     full-strength REFERENCE values, not pass/fail gates — strength is a continuum (GBB-1:38-60,
@@ -1484,7 +1543,21 @@ def _marginal_karaka_gate(
     SOUND-WITH-CAVEAT (KEEP/FLAG) — calibration rests on n=1 confirmed golden + a hand-tuned 0.2
     band + a 2-level lift (vs KARAKA-SALVAGE's conservative 1-level); re-examine if a second
     marriage golden ever enters the band."""
-    if verdict != "afflicted" or sig.key not in _MARITAL_BOND_KEYS:
+    # B3 companion (2026-08-17): with the non-death-marital maraka guard in _decide,
+    # the maraka/cliff artefact this gate was built to lift no longer FORMS as
+    # 'afflicted' — the same chart (e.g. chart_08: strong lord, marginal Venus, no
+    # malefic) now falls through to 'mixed' (on an evidence-empty ledger the artefact
+    # instead surfaces as insufficient-evidence, which this gate deliberately does not
+    # touch). The GBB-1:38-60 continuum principle is unchanged, so the gate's trigger
+    # widens from {afflicted} to {afflicted, mixed} under the SAME strict conditions;
+    # the re-decide semantics are untouched.
+    # ANTI-DOUBLE-MOVE (doctrine-review HIGH, 2026-08-17): a 'mixed' produced by the
+    # _marital_bond_gate DEMOTE (>=2 cruel malefics 8th-from-Moon, HTJAH-II:2664/2877)
+    # is Raman's own troubled-marriage reading, not the marginal-karaka cliff — the
+    # widened trigger must never re-lift it (mirror of the floor's blem_lifted guard).
+    if verdict not in ("afflicted", "mixed") or sig.key not in _MARITAL_BOND_KEYS:
+        return verdict, ()
+    if verdict == "mixed" and bond_demoted:
         return verdict, ()
     if lead.lord_strong is not True or lead.fired_malefic or lead.karaka_strong is not False:
         return verdict, ()
@@ -1875,7 +1948,8 @@ def judge_signification(chart: RamanChart, house: int, sig: Signification,
     verdict, longev_md = _longevity_span(chart, sig, verdict, ctx)
     verdict, bond_md = _marital_bond_gate(chart, sig, verdict, blem_lifted=blem_shifted)
     verdict, occ_md = _malefic_occupancy_gate(chart, sig, verdict, lead)
-    verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead)
+    verdict, marg_md = _marginal_karaka_gate(chart, sig, verdict, lead,
+                                             bond_demoted=bool(bond_md))
     verdict, yk_md = _yogakaraka_lagna_gate(chart, sig, verdict)
     verdict, dhana_kendra_md = _powerful_dhana_kendra_floor(chart, sig, verdict, lead)
     verdict, timing_md = _event_timing(chart, sig, verdict, lead, ctx)

@@ -573,7 +573,64 @@ const el = (t, a={}, ...kids) => { const n=document.createElement(t);
 // app/llm/report_explainer.py:translate_to_hindi). The deep per-house engine prose (verdict
 // words, matter names coming straight from the API) stays English for now — that is a
 // separate, larger undertaking; see docs/raman_saab/PROCESS_AND_METHODOLOGY.md.
+// ---- Wave-0/1 parity captions (2026-08-18): the honesty/method notes for the JSON fields
+// this pass newly renders (BAV matrix, HPA-26 reductions, Sodya Pinda, Pratyantar, Sade-Sati,
+// adverse transit windows, Chara dasha, maraka scheme, Baladi/Jagradadi, delivery tags) —
+// SAME wording as the markdown renderer (detailed_report.to_markdown), defined once so the
+// I18N_HI entries below can key off the exact strings. ----
+const PARITY_NOTES={
+  bav_matrix:"The per-planet tables the SAV row above sums (canonical Parashari benefic-places tables; each planet's total is a fixed checksum and the seven rows always sum to 337). The Gochara table's 'AV bindus' and Kakshya columns, and the AV dasha-seat outlook, all read from these rows. A planet's bold cell is its own natal sign - its seat, shown again in the last column.",
+  bav_reduced:"HPA-26 reductions - used classically for special calculations; shown for completeness; ASP transit application deferred pending corpus. Raman: the bindu tables \"must be subjected to two reductions, viz., Thrikona reduction and Ekadhipathya reduction\" (HPA-26:390-393), in that order - \"After the Thrikona reduction, the Ekadhipathya reduction must be applied\" (HPA-26:466-467). Trikona follows Raman's own stated SUBTRACT reading (HPA-26:423-431), regression-pinned to his worked Sun table (HPA-26:432-462).",
+  sodya_pinda:"Computed from the reduced tables above: each sign's reduced bindus x its fixed zodiacal factor (Rasi Gunakara, HPA-26:1149-1153), plus the reduced bindus in each graha's occupied sign x its fixed planetary factor (Graha Gunakara, HPA-26:1311-1315). The sum is Raman's Sodya Pinda by his own naming (ASP-14:196-198); HPA-26 applies it to LONGEVITY (the x7/27 Ayurdaya use, HPA-26:1400-1404 / ASP-14:199-201). Honesty note, recorded not fudged: on ASP-14's worked Standard Horoscope Raman prints Sun 96/86/182 where this pipeline gives 103/88/191 on his own stated longitudes - the divergence is in HIS printed reduced tables (the 1962 book carries known misprints), so the engine pins the RULES, anchored on HPA-26's own worked reduction, and records this delta.",
+  pratyantar:"The third level of the Vimshottari hierarchy, for the bhukti running now only - the same proportional lord-years/120 split, one level down, in JD space. Raman names all three levels as carriers of a house's results: \"as lords of the Dasas (main-periods), as lords of Bhuktis (Sub-periods) or as lords of the Antaras\" (HTJAH-II:668-702). The running pratyantar is marked; each span reads in the same indication idiom as the bhukti rows above.",
+  sade_sati:"Sade-Sati is Saturn's roughly 7.5-year passage across the 12th, 1st and 2nd signs from the natal Moon (see glossary). These are the dated phase spans of the episode nearest the reference date, with the current position marked. Method note (dates only): no Sade-Sati x Moon result doctrine is on record in the encoded corpus, so no intensity or result reading is offered - the dates are plain gochara arithmetic (transiting Saturn's sign against the natal Moon sign), at the outlook's ~week sampling resolution; a retrograde re-entry shows as its own dated row.",
+  adverse:"The mirror of the favourable transit lanes above - the stretches when Jupiter, Saturn, Rahu or Ketu sits in a house from your Moon that the classical Gochara scheme does NOT count as supportive for that planet. The same computation always produced these windows; only the favourable half was shown before. Honest labels: 'what it concerns' is the same life-area that planet governs, here classically unsupported rather than supported; 'mitigation' applies Raman's own proportion law - the planet's bindus in the transited sign neutralise the evil to that extent (\"neutralises the evil to the extent of 75%\" at 6 of 8 bindus, ASP-13:416); Vedha (interference) is defined for favourable transits only, so that column reads '-' here - not computed, not zero. Per Raman a transit stays secondary to the Dasha (HTJAH-II:4679): read an adverse window as reduced transit support during whatever the running period already indicates, never a stand-alone prediction.",
+  dasha_transit_adverse:"The mirror of the confluence table above - the stretches where the running period's own lord is ALSO transiting adversely from your Moon. The favourable builder was one-sided by construction; Raman's blending doctrine reads obstruction too (HPA-34:369-381). Method-only, and coarsely sampled like its favourable twin: the engine is not a validated predictor.",
+  chara:"The parallel sign-based dasha the Chart signature chip names (see glossary). Dates are plain JD arithmetic from birth (period years x 365.2425 days) over the KN Rao sequence already encoded in the engine; the 12-sign cycle repeats. The running sign is marked. No result judgment attaches here - matters are read from Vimshottari.",
+  maraka:"Raman's second step after the longevity band (HTJAH-I:761-814; HTJAH-II:4485-4546): the 2nd and 7th are the houses of death; their lords, occupants and associates carry maraka power in their periods - each graha names why it qualified. A DISCLOSURE OF THE METHOD, not a prediction - the validation program measured no chart-specific death-timing signal (REAL_OUTCOME_GENERALIZATION.md).",
+  baladi:"Baladi (ageing, by degree-in-sign) and Jagradadi (consciousness, by incoming drishti) states - the judge's intensity dial: a house whose deliverers sit in Mrita/Sushupti has its verdict DEGREE demoted one step (never the verdict itself). Provenance: CLASSICAL_NONCITABLE (Phaladeepika Ch.3 Sl.3/Sl.10/Sl.20; BPHS Ch.1 Sl.14-16) - outside Raman's own canon, shown because the judge consumes it.",
+  delivery:"Delivery tags (per lit house): how well each activating period-lord delivers what it lights - the same strength/dignity read the snapshot voice uses (HTJAH-II:10004-10008): well / mixed / poorly / unknown. A limited row carries only its AD tag, a feeble row only its MD tag."
+};
+
 const I18N_HI = {
+  // ---- Wave-0/1 parity additions (2026-08-18): titles, headers and captions for the
+  // newly rendered fields. Long captions key off PARITY_NOTES so EN/HI can never drift. ----
+  "Bhinnashtakavarga (BAV) — each planet's own bindu row":"भिन्नाष्टकवर्ग (BAV) — प्रत्येक ग्रह की अपनी बिंदु-पंक्ति",
+  "HPA-26 reductions (Trikona + Ekadhipathya Sodhana)":"HPA-26 शोधन (त्रिकोण + एकाधिपत्य शोधन)",
+  "After Trikona Sodhana (HPA-26:403-421):":"त्रिकोण शोधन के बाद (HPA-26:403-421):",
+  "After both reductions (Ekadhipathya applied, HPA-26:464-497):":"दोनों शोधनों के बाद (एकाधिपत्य शोधन सहित, HPA-26:464-497):",
+  "Sodya Pinda (Rasi + Graha Gunakara)":"शोध्य पिण्ड (राशि + ग्रह गुणकार)",
+  "Rasi Gunakara":"राशि गुणकार","Graha Gunakara":"ग्रह गुणकार","Sodya Pinda":"शोध्य पिण्ड",
+  "natal seat":"जन्म-स्थान (राशि)","its own natal sign (seat)":"इसकी अपनी जन्म-राशि (स्थान)",
+  "Pratyantardasha drill-down (current bhukti)":"प्रत्यंतर्दशा विवरण (वर्तमान भुक्ति)",
+  "Sade-Sati phase windows (Saturn from the natal Moon)":"साढ़ेसाती चरण-अवधियाँ (जन्म चंद्र से शनि)",
+  "Sade-Sati phases — dated spans":"साढ़ेसाती चरण — तिथि-सहित अवधियाँ",
+  "Adverse transit windows":"प्रतिकूल गोचर अवधियाँ",
+  "Chara dasha (Jaimini) — dated sequence":"चर दशा (जैमिनी) — तिथि-सहित क्रम",
+  "The maraka scheme (death-dealing determinants)":"मारक योजना (मृत्यु-कारक निर्धारक)",
+  "Baladi & Jagradadi avastha states (the judge's intensity dial)":"बालादि व जाग्रदादि अवस्थाएँ (निर्णायक की तीव्रता-मापी)",
+  "22nd drekkana lord":"22वें द्रेष्काण का स्वामी","64th navamsa lord":"64वें नवांश का स्वामी",
+  "Running period":"चालू दशा-काल","carries a maraka-tier lord":"में मारक-स्तर का स्वामी है",
+  "carries no maraka-tier lord":"में कोई मारक-स्तर का स्वामी नहीं",
+  "(broad, low-discrimination flag by design)":"(जान-बूझकर व्यापक, कम-विभेदक संकेत)",
+  "of the evil neutralised":"अंश तक अशुभ निष्फल (ASP-13:416)",
+  "— (node: no classical Ashtakavarga)":"— (छाया ग्रह: शास्त्रीय अष्टकवर्ग नहीं)",
+  "longitude":"भोगांश","nak lord":"नक्षत्र स्वामी","Ascendant":"लग्न",
+  "in plain words":"सरल शब्दों में","Delivery":"फल-वहन",
+  "tier addends":"स्तर-योग के घटक","why (qualifying clauses)":"क्यों (अर्हक कारण)",
+  "Bhava Bala (rupas)":"भाव बल (रूपा)","pratyantar (PD) lord":"प्रत्यंतर्दशा स्वामी",
+  [PARITY_NOTES.bav_matrix]:"ऊपर की सर्वाष्टकवर्ग (SAV) पंक्ति इन्हीं प्रति-ग्रह तालिकाओं का योग है (प्रामाणिक पाराशरी शुभ-स्थान तालिकाएँ; प्रत्येक ग्रह का योग एक निश्चित जाँच-अंक है और सातों पंक्तियाँ सदा 337 पर जुड़ती हैं)। गोचर तालिका के 'AV बिंदु' और कक्ष्या स्तंभ, तथा अष्टकवर्ग दशा-स्थान अवलोकन, इन्हीं पंक्तियों से पढ़े जाते हैं। ग्रह का मोटा कोष्ठ उसकी अपनी जन्म-राशि है - उसका स्थान, जो अंतिम स्तंभ में फिर दिखाया गया है।",
+  [PARITY_NOTES.bav_reduced]:"HPA-26 शोधन - शास्त्रीय रूप से विशेष गणनाओं के लिए प्रयुक्त; पूर्णता के लिए दिखाए गए हैं; ASP गोचर-प्रयोग कॉर्पस की प्रतीक्षा में स्थगित। रामन: बिंदु-तालिकाओं पर \"दो शोधन करने होते हैं, अर्थात् त्रिकोण शोधन और एकाधिपत्य शोधन\" (HPA-26:390-393), उसी क्रम में - \"त्रिकोण शोधन के बाद एकाधिपत्य शोधन लागू करना चाहिए\" (HPA-26:466-467)। त्रिकोण शोधन रामन के अपने कहे घटाव (SUBTRACT) पाठ का पालन करता है (HPA-26:423-431), जो उनकी अपनी सूर्य-तालिका पर पिन किया गया है (HPA-26:432-462)।",
+  [PARITY_NOTES.sodya_pinda]:"ऊपर की शोधित तालिकाओं से गणना: प्रत्येक राशि के शोधित बिंदु x उसका निश्चित राशि गुणकार (HPA-26:1149-1153), तथा प्रत्येक ग्रह की अधिष्ठित राशि के शोधित बिंदु x उसका निश्चित ग्रह गुणकार (HPA-26:1311-1315)। यह योग रामन का अपना शोध्य पिण्ड है (ASP-14:196-198); HPA-26 इसे आयु-गणना (x7/27 आयुर्दाय प्रयोग, HPA-26:1400-1404 / ASP-14:199-201) में लगाता है। ईमानदारी-टिप्पणी, दर्ज की गई है छुपाई नहीं: ASP-14 की मानक कुंडली में रामन सूर्य के लिए 96/86/182 छापते हैं जहाँ यह पाइपलाइन उन्हीं के बताए भोगांशों पर 103/88/191 देती है - अंतर उनकी छपी शोधित तालिकाओं में है (1962 की पुस्तक में ज्ञात मुद्रण-दोष हैं), इसलिए इंजन नियमों को पिन करता है, HPA-26 के अपने सधे शोधन पर टिकाकर, और यह अंतर दर्ज करता है।",
+  [PARITY_NOTES.pratyantar]:"विंशोत्तरी पदानुक्रम का तीसरा स्तर, केवल अभी चल रही भुक्ति के लिए - वही आनुपातिक स्वामी-वर्ष/120 विभाजन, एक स्तर नीचे, JD गणना में। रामन तीनों स्तरों को भाव-फल के वाहक बताते हैं: \"दशाओं के स्वामी रूप में, भुक्तियों के स्वामी रूप में, या अंतरों के स्वामी रूप में\" (HTJAH-II:668-702)। चालू प्रत्यंतर चिह्नित है; हर अवधि ऊपर की भुक्ति-पंक्तियों वाले संकेत-शैली में ही पढ़ी जाती है।",
+  [PARITY_NOTES.dasha_transit_adverse]:"ऊपर की संगम-तालिका का दर्पण - वे कालखंड जब चल रही दशा/अंतर्दशा का स्वामी स्वयं भी आपके चंद्र से प्रतिकूल गोचर में हो। अनुकूल तालिका रचना से ही एकपक्षीय थी; रामन का मिश्रण-सिद्धांत बाधा को भी पढ़ता है (HPA-34:369-381)। केवल पद्धति, और अपनी अनुकूल जोड़ी की तरह मोटे अंतराल पर - इंजन कोई प्रमाणित भविष्यवक्ता नहीं है।",
+  [PARITY_NOTES.sade_sati]:"साढ़ेसाती जन्म चंद्र से 12वीं, 1ली और 2री राशियों में शनि का लगभग साढ़े सात वर्ष का गोचर है (शब्दावली देखें)। ये संदर्भ-तिथि के निकटतम प्रकरण की तिथि-सहित चरण-अवधियाँ हैं, वर्तमान स्थिति चिह्नित। पद्धति-टिप्पणी (केवल तिथियाँ): संहिताबद्ध कॉर्पस में साढ़ेसाती x चंद्र का कोई फल-सिद्धांत दर्ज नहीं है, इसलिए कोई तीव्रता या फल-पाठ नहीं दिया जाता - तिथियाँ सादी गोचर-गणना हैं (गोचरस्थ शनि की राशि बनाम जन्म चंद्र-राशि), लगभग साप्ताहिक नमूना-सटीकता पर; वक्री पुनःप्रवेश अपनी अलग तिथि-पंक्ति के रूप में दिखता है।",
+  [PARITY_NOTES.adverse]:"ऊपर की अनुकूल गोचर-पट्टियों का प्रतिबिम्ब - वे अवधियाँ जब बृहस्पति, शनि, राहु या केतु आपके चंद्र से ऐसे भाव में बैठता है जिसे शास्त्रीय गोचर-योजना उस ग्रह के लिए सहायक नहीं गिनती। यही गणना ये अवधियाँ सदा से बनाती थी; पहले केवल अनुकूल आधा दिखाया जाता था। ईमानदार स्तंभ-नाम: 'किससे संबंधित' वही जीवन-क्षेत्र है जिस पर वह ग्रह शासन करता है, यहाँ शास्त्रीय समर्थन के बिना; 'शमन' रामन का अपना अनुपात-नियम लगाता है - गोचरस्थ राशि में ग्रह के बिंदु उसी अंश तक अशुभ को निष्फल करते हैं (8 में से 6 बिंदुओं पर \"75% तक अशुभ का शमन\", ASP-13:416); वेध केवल अनुकूल गोचरों के लिए परिभाषित है, इसलिए वह स्तंभ यहाँ '-' पढ़ता है - गणना नहीं हुई, शून्य नहीं। रामन के अनुसार गोचर दशा के अधीन रहता है (HTJAH-II:4679): प्रतिकूल अवधि को चालू दशा जो भी संकेत दे रही है उसमें घटे हुए गोचर-समर्थन की तरह पढ़ें, कभी स्वतंत्र भविष्यवाणी की तरह नहीं।",
+  [PARITY_NOTES.chara]:"कुंडली-स्वरूप चिप जिस समानांतर राशि-आधारित दशा का नाम लेती है (शब्दावली देखें)। तिथियाँ जन्म से सादी JD गणना हैं (दशा-वर्ष x 365.2425 दिन), इंजन में पहले से संहिताबद्ध केएन राव क्रम पर; 12-राशि चक्र दोहराता है। चालू राशि चिह्नित है। यहाँ कोई फल-निर्णय नहीं जुड़ता - विषय विंशोत्तरी से पढ़े जाते हैं।",
+  [PARITY_NOTES.maraka]:"आयु-वर्ग के बाद रामन का दूसरा चरण (HTJAH-I:761-814; HTJAH-II:4485-4546): 2रा और 7वाँ मृत्यु के भाव हैं; उनके स्वामी, स्थित ग्रह और संबंधी अपनी दशाओं में मारक-शक्ति रखते हैं - प्रत्येक ग्रह बताता है कि वह क्यों अर्ह हुआ। यह पद्धति का प्रकटीकरण है, भविष्यवाणी नहीं - सत्यापन कार्यक्रम ने कुंडली-विशिष्ट मृत्यु-समय का कोई संकेत नहीं मापा (REAL_OUTCOME_GENERALIZATION.md)।",
+  [PARITY_NOTES.baladi]:"बालादि (आयु-अवस्था, राशि में अंश से) और जाग्रदादि (चेतना-अवस्था, आती दृष्टि से) अवस्थाएँ - निर्णायक की तीव्रता-मापी: जिस भाव के फल-वाहक मृत/सुषुप्ति में बैठे हों उसके फल की मात्रा एक सीढ़ी घटा दी जाती है (फल स्वयं कभी नहीं)। स्रोत-श्रेणी: CLASSICAL_NONCITABLE (फलदीपिका अ.3 श्लो.3/10/20; बृ.पा.हो.शा. अ.1 श्लो.14-16) - रामन के अपने ग्रंथों से बाहर, दिखाई इसलिए गई क्योंकि निर्णायक इसका उपयोग करता है।",
+  [PARITY_NOTES.delivery]:"फल-वहन चिह्न (प्रत्येक प्रदीप्त भाव पर): हर सक्रिय दशा-स्वामी जो जलाता है उसे कितनी अच्छी तरह देता है - वही बल/गरिमा पाठ जो तात्कालिक स्वर उपयोग करता है (HTJAH-II:10004-10008): well / mixed / poorly / unknown। limited पंक्ति केवल अपना AD चिह्न रखती है, feeble पंक्ति केवल अपना MD चिह्न।",
+
   // section headings added by the 2026-08-17 reframe (plain-language layer)
   'How to read this report':'यह रिपोर्ट कैसे पढ़ें',
   'Judgment graph':'निर्णय-जाल',
@@ -589,6 +646,34 @@ const I18N_HI = {
   'Aptitude, intelligence & work style':'योग्यता, बुद्धि और कार्यशैली',
   'Decade indication timeline':'दशक-संकेत समयरेखा',
   'Today for you (Muhurtha)':'आज आपके लिए (मुहूर्त)',
+
+  // scan-the-day (2026-08-18): "WHEN today is clean" — the same essentials judgment, sampled
+  // across the sunrise-to-sunrise day. Additive to the single-moment Muhurtha read.
+  'When today is clean':'आज कब शुद्ध है',
+  'When today is clean (sunrise → next sunrise)':'आज कब शुद्ध है (सूर्योदय → अगला सूर्योदय)',
+  'Scanning the day…':'दिन का अवलोकन हो रहा है…',
+  'Day scan failed: ':'दिन-अवलोकन विफल: ',
+  ' clean spans':' शुद्ध अवधियाँ',
+  ' samples pass':' नमूने उत्तीर्ण',
+  'sampled every ':'प्रत्येक ',
+  ' min from sunrise to next sunrise: ':' मिनट पर नमूना, सूर्योदय से अगले सूर्योदय तक: ',
+  'Cleanest span: ':'सर्वाधिक शुद्ध अवधि: ',
+  ' of 8 essentials':' / 8 आवश्यक अंग',
+  'passing: ':'उत्तीर्ण: ',
+  'failing: ':'विफल: ',
+  'No clean span at this resolution — every sample of the day carries a hard failure.':
+    'इस विभेदन पर कोई शुद्ध अवधि नहीं — दिन के प्रत्येक नमूने पर एक कठोर दोष खड़ा है।',
+  'clean span':'शुद्ध अवधि',
+  'hard-blocked':'कठोर-अवरुद्ध',
+  'Clean spans ranked by essentials score':'शुद्ध अवधियाँ — आवश्यक-अंग अंक के क्रम में',
+  'Hard-blocked windows of the scanned day':'अवलोकित दिन की कठोर-अवरुद्ध अवधियाँ',
+  'Every sample judged':'प्रत्येक निर्णीत नमूना',
+  'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. The number above a span is its guaranteed essentials score.':
+    'हरा = वह अवधि जिसके प्रत्येक नमूने ने रमन के आवश्यक-अंग क्रम (MUHURTHA-10:226-228) को उत्तीर्ण किया; लाल = कठोर-अवरुद्ध अवधि (राहु काल · दुर्मुहूर्त), जो किसी शुद्ध अवधि के भीतर कभी नहीं आ सकती। अवधि के ऊपर का अंक उसका सुनिश्चित आवश्यक-अंग स्कोर है।',
+  'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: `passing` are the factors favourable at every sample, `failing` the ones unfavourable at some sample (none of them a hard failure — a hard failure would have ended the span).':
+    'प्रत्येक पंक्ति लगातार नमूनों की वह शृंखला है जिनमें से हर एक ने वही एकल-क्षण निर्णय उत्तीर्ण किया: `passing` वे कारक हैं जो हर नमूने पर अनुकूल रहे, `failing` वे जो किसी नमूने पर प्रतिकूल रहे (इनमें कोई कठोर दोष नहीं — कठोर दोष अवधि को वहीं समाप्त कर देता)।',
+  'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials score and the hard failures standing against it.':
+    'सम्पूर्ण अवलोकन, कुछ भी छिपा नहीं: प्रत्येक नमूना-क्षण, वह उत्तीर्ण हुआ या नहीं, उसका आवश्यक-अंग स्कोर और उसके विरुद्ध खड़े कठोर दोष।',
   'Karmic evolution (Jaimini)':'कार्मिक विकास (जैमिनी)',
   'Full life synthesis':'सम्पूर्ण जीवन संश्लेषण',
   'Plain terms — every technical word, with why it matters':'सरल शब्दावली — हर पारिभाषिक शब्द, उसके महत्व सहित',
@@ -938,7 +1023,10 @@ const COL_EN={sav_band:'sign score (SAV) band',bhava_bala_rank:'house strength (
   kashta:'malefic score (kashta)',shadbala_rupas:'strength (rupas)',
   shadbala_required:'required minimum',navamsa_sign:'navamsa sign',rasi_house:'house (rasi)',
   combust_fraction:'combustion fraction',in_kakshya_of:'sub-division (kakshya) lord',
-  bindus:'benefic points (bindus)',quality:'window quality'};
+  bindus:'benefic points (bindus)',quality:'window quality',
+  // Wave-0/1 parity (2026-08-18): pretty names for newly rendered columns
+  score_parts:'tier addends',reasons:'why (qualifying clauses)',
+  bhava_bala_rupas:'Bhava Bala (rupas)',pratyantar:'pratyantar (PD) lord'};
 function rows(arr, drop){ drop=drop||[];
   if(!arr||!arr.length) return el('p',{class:'muted'},'—');
   const keys=[]; for(const r of arr) for(const k in r) if(!keys.includes(k)&&!drop.includes(k)) keys.push(k);
@@ -1793,15 +1881,83 @@ function muhurthaView(d){
   if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
   return out.filter(Boolean);
 }
+// ---- scan-the-day (GET /electional/scan): "WHEN today is clean", not "how is noon" ----
+// Pure iteration over the same scorer: every span below is a run of samples that each passed
+// the single-moment judgment. Additive — the single-moment read above is untouched.
+const hhmm=s=>String(s||'').slice(11,16);
+// A day strip: the scanned sunrise->sunrise span, its hard-blocked windows, its clean spans.
+// Positions come from Date.parse on the route's own local ISO stamps (no second time axis).
+function muhurthaScanStrip(d){
+  const w0=d.scan_window||{}, t0=Date.parse(w0.start), t1=Date.parse(w0.end);
+  if(!isFinite(t0)||!isFinite(t1)||!(t1>t0)) return null;
+  const W=760,H=92,L=10,R=10,BW=W-L-R,Y=30,BH=24;
+  const x=ms=>L+BW*Math.min(1,Math.max(0,(ms-t0)/(t1-t0)));
+  const g=svgBox(W,H);
+  g.append(sv('rect',{x:L,y:Y,width:BW,height:BH,fill:'var(--neu)',opacity:'.25',rx:'3'}));
+  for(const bw of (d.blocked_windows||[])){
+    const a=x(Date.parse(bw.start)), b=x(Date.parse(bw.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1,b-a),height:BH,fill:'var(--aff)',opacity:'.55'}),
+      bw.label+' · '+hhmm(bw.start)+'–'+hhmm(bw.end)));
+  }
+  for(const sp of (d.clean_spans||[])){
+    const a=x(Date.parse(sp.start)), b=x(Date.parse(sp.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1.5,b-a),height:BH,fill:'var(--fav)',opacity:'.9',rx:'2'}),
+      '#'+sp.rank+' '+hhmm(sp.start)+'–'+hhmm(sp.end)+' · '+sp.score+'/8 · '+
+      t('passing: ')+(sp.passing||[]).join(', ')+(((sp.failing||[]).length)?' · '+t('failing: ')+sp.failing.join(', '):'')));
+    if(b-a>=16){ const lab=sv('text',{x:(a+b)/2,y:Y-6,'text-anchor':'middle','font-size':'10',fill:'var(--ink)'});
+      lab.append(String(sp.score)); g.append(lab); }
+  }
+  // hour ticks off the sample stamps themselves (every 3rd whole hour of the scan)
+  for(const s of (d.samples||[])){
+    if(hhmm(s.local_iso).slice(3)!=='00') continue;
+    const hr=parseInt(hhmm(s.local_iso).slice(0,2),10); if(hr%3) continue;
+    const px=x(Date.parse(s.local_iso));
+    g.append(sv('line',{x1:px,y1:Y+BH,x2:px,y2:Y+BH+5,stroke:'var(--ink-2)',strokeWidth:'1'}));
+    const lb=sv('text',{x:px,y:Y+BH+17,'text-anchor':'middle','font-size':'9',fill:'var(--ink-2)'});
+    lb.append(hhmm(s.local_iso)); g.append(lb);
+  }
+  const box=el('div',{}); box.append(g,legend([['var(--fav)','clean span'],['var(--aff)','hard-blocked']]));
+  return box;
+}
+function muhurthaScanView(d){
+  const out=[], w0=d.scan_window||{}, spans=d.clean_spans||[], best=d.best;
+  out.push(para((spans.length?'✓ ':'✗ ')+spans.length+t(' clean spans')+' · '+
+    d.clean_sample_count+'/'+d.sample_count+t(' samples pass')+' — '+d.date+' · '+
+    (d.act||t('general'))+' · '+t('sampled every ')+d.interval_minutes+
+    t(' min from sunrise to next sunrise: ')+hhmm(w0.start)+'–'+hhmm(w0.end),'lede'));
+  if(best) out.push(para(t('Cleanest span: ')+hhmm(best.start)+'–'+hhmm(best.end)+' · '+
+    best.score+t(' of 8 essentials')+((best.failing||[]).length?' · '+t('failing: ')+best.failing.join(', '):''),'lede'));
+  else out.push(para(t('No clean span at this resolution — every sample of the day carries a hard failure.'),'mu-fail'));
+  const strip=muhurthaScanStrip(d);
+  if(strip) out.push(vizCard('When today is clean (sunrise → next sunrise)', strip,
+    'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); '+
+    'red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. '+
+    'The number above a span is its guaranteed essentials score.'));
+  out.push(sectionTable('Clean spans ranked by essentials score', spans, [],
+    'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: '+
+    '`passing` are the factors favourable at every sample, `failing` the ones unfavourable at some '+
+    'sample (none of them a hard failure — a hard failure would have ended the span).'));
+  out.push(sectionTable('Hard-blocked windows of the scanned day', d.blocked_windows));
+  out.push(sectionTable('Every sample judged', d.samples, [],
+    'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials '+
+    'score and the hard failures standing against it.'));
+  if(d.scan_note) out.push(para(d.scan_note,'muted'));
+  if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
+  return out.filter(Boolean);
+}
 function muhurthaPanel(){
   const wrap=el('div',{});
   const ctl=el('div',{class:'mu-controls'});
   const sel=el('select',{class:'leaf-input mu-act'});
   for(const a of ELECT_ACTS) sel.append(el('option',{value:a},t(a)));
   const btn=el('button',{class:'digest-read',type:'button'},t('Read today'));
-  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn);
+  const scanBtn=el('button',{class:'digest-read',type:'button'},t('When today is clean'));
+  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn,scanBtn);
   const out=el('div',{});
-  wrap.append(ctl,out);
+  const scanOut=el('div',{});
+  wrap.append(ctl,out,scanOut);
   btn.onclick=async()=>{
     btn.disabled=true; out.replaceChildren(el('div',{class:'folio-loading'},t('Reading the day…')));
     try{
@@ -1812,6 +1968,19 @@ function muhurthaPanel(){
     }catch(e){ console.error('muhurtha read failed:',e);
       out.replaceChildren(el('div',{class:'err'},t('Muhurtha reading failed: ')+e.message)); }
     finally{ btn.disabled=false; btn.replaceChildren(t('Read today')); }
+  };
+  scanBtn.onclick=async()=>{
+    scanBtn.disabled=true;
+    scanOut.replaceChildren(el('div',{class:'folio-loading'},t('Scanning the day…')));
+    try{
+      const p=electionalParams(sel.value); p.set('interval_minutes','30');
+      const r=await fetch('/electional/scan?'+p.toString());
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.detail||r.statusText);
+      scanOut.replaceChildren(...muhurthaScanView(d));
+    }catch(e){ console.error('muhurtha day scan failed:',e);
+      scanOut.replaceChildren(el('div',{class:'err'},t('Day scan failed: ')+e.message)); }
+    finally{ scanBtn.disabled=false; scanBtn.replaceChildren(t('When today is clean')); }
   };
   return wrap;
 }
@@ -1990,6 +2159,9 @@ function renderTimeline(R, add){
   add(para('A planet influences a house by owning, occupying or aspecting the house or its lord '+
     '(HTJAH-I:1586-1640). Grades (uniform for every house) — '+
     TIER_ORDER.map(t=>t+': '+TIER_MEAN[t]).join('; ')+'. Verdicts are the unchanged natal readings.','muted'));
+  // 2026-08-18 parity: the per-row delivery tags (md_quality / antar_quality) the rows always
+  // carried — how well each activating lord delivers, HTJAH-II:10004-10008.
+  add(para(t(PARITY_NOTES.delivery),'muted'));
   const refJd=(R.window&&R.window.ref_jd)||null;
   const groups=[];
   for(const t of (R.timeline||[])){ let g=groups[groups.length-1];
@@ -2026,11 +2198,103 @@ function renderTimeline(R, add){
         blk.append(row);
       }
       if(!any) blk.append(el('span',{class:'muted'},t('— no houses lit this bhukti')));
+      // delivery tags per lit house — EVERY field of the LordQuality objects rendered
+      // (lord, tag, dignity, strong, combust, vargottama), never dropped to a bare tag.
+      const _dl=(bk.activated||[]).filter(a=>a.md_quality||a.antar_quality);
+      if(_dl.length){
+        const _q=(q)=>q.lord+' '+q.tag+' ('+(q.dignity||'—')+
+          (q.strong===true?', strong':q.strong===false?', weak':'')+
+          (q.combust?', combust':'')+(q.vargottama?', vargottama':'')+')';
+        const _parts=_dl.map(a=>{ const bits=[], tr2=a.tier||a.grade;
+          // markdown parity: a limited row carries only its AD tag, a feeble row only its MD tag
+          if(a.md_quality&&tr2!=='limited') bits.push('MD '+_q(a.md_quality));
+          if(a.antar_quality&&tr2!=='feeble') bits.push('AD '+_q(a.antar_quality));
+          return bits.length?('H'+a.house+': '+bits.join('; ')):null; }).filter(Boolean);
+        if(_parts.length)
+          blk.append(para(t('Delivery')+' (HTJAH-II:10004-10008) — '+_parts.join(' · '),'vz-note'));
+      }
       b.append(blk);
     }
     d.append(b); add(d);
   }
 }
+
+// ===== Wave-0/1 parity builders (2026-08-18) — REPORT COMPLETENESS: render the append-only
+// JSON fields the two shipped waves added. Safe DOM only (el/sv/textContent). =====
+
+// mirrors _PLANET_THEME in detailed_report.py (doctrine-fixed display strings, same as HNAME).
+const PLANET_THEME={Sun:'confidence, authority and recognition',Moon:'emotional life, home and the public',
+  Mars:'action, courage and drive',Mercury:'communication, learning and business',
+  Jupiter:'growth, wisdom and expanding opportunity',Venus:'relationships, comfort and creativity',
+  Saturn:'discipline, patience and long-term effort',Rahu:'ambition and unconventional drive',
+  Ketu:'detachment and inner reflection'};
+
+// one 13-column header row: graha + the 12 sign abbreviations (+ any extra headers)
+function av12Header(extra){ const hd=el('tr',{},el('th',{},t('graha')));
+  for(let sg=1;sg<=12;sg++) hd.append(el('th',{},SIGN[sg].slice(0,3)));
+  for(const x of (extra||[])) hd.append(el('th',{},t(x)));
+  return hd; }
+
+// the 7x12 Bhinnashtakavarga matrix — the natal-seat cell is bolded + tinted (markdown's bold)
+function bavMatrixTable(R){ const bm=R.bav_matrix||[]; if(!bm.length) return null;
+  const tbl=el('table'); tbl.append(av12Header(['total','natal seat']));
+  for(const r of bm){ const tr=el('tr',{},el('td',{},r.planet));
+    (r.bindus||[]).forEach((v,i)=>{ const td=el('td',{},String(v));
+      if(r.seat_sign===i+1){ td.style.fontWeight='700'; td.style.background='var(--chip)';
+        td.title=r.planet+' — '+t('its own natal sign (seat)'); }
+      tr.append(td); });
+    tr.append(el('td',{},String(r.total)),
+      el('td',{},r.seat_sign!=null?(SIGN[r.seat_sign].slice(0,3)+' ('+r.seat_bindus+')'):'—'));
+    tbl.append(tr); }
+  return tbl; }
+
+// one reduced-bindu table (key = 'trikona' | 'reduced') from R.bav_reduced
+function bavReducedTable(R,key){ const br=R.bav_reduced||[]; if(!br.length) return null;
+  const tbl=el('table'); tbl.append(av12Header());
+  for(const r of br){ const tr=el('tr',{},el('td',{},r.planet));
+    for(const v of (r[key]||[])) tr.append(el('td',{},String(v)));
+    tbl.append(tr); }
+  return tbl; }
+
+// dated Sade-Sati phase strip (supplements the table below it, never replaces it)
+function sadeSatiStrip(R){ const ph=R.sade_sati_phases||[]; if(!ph.length) return null;
+  const lo=Math.min(...ph.map(p2=>p2.start_jd)), hi=Math.max(...ph.map(p2=>p2.end_jd));
+  if(!(hi>lo)) return null;
+  const ref=(R.window&&R.window.ref_jd);
+  const W=560,H=64,x0=8,x1=W-8,y=18,bh=20; const jx=jd=>lin(jd,lo,hi,x0,x1);
+  const s=svgBox(W,H);
+  const PHCOL={12:'var(--mix)',1:'var(--aff)',2:'var(--mix)'};
+  for(const p2 of ph){ const xa=jx(p2.start_jd), xb=jx(p2.end_jd);
+    s.append(tip(sv('rect',{x:xa,y:y,width:Math.max(1,xb-xa),height:bh,rx:3,
+      fill:PHCOL[p2.house_from_moon]||'var(--neu)',opacity:p2.house_from_moon===1?.85:.55,
+      stroke:'var(--surface)',strokeWidth:1}),
+      p2.phase+' — Saturn in '+SIGN[p2.sign]+' ('+jdYM(p2.start_jd)+' – '+jdYM(p2.end_jd)+')'+(p2.current?' — '+t('now'):'')));
+    if(xb-xa>44) s.append(sv('text',{x:(xa+xb)/2,y:y+bh-6,'font-size':9,'text-anchor':'middle',
+      fill:'var(--surface)'},p2.phase.split(' ')[0]+' · '+SIGN[p2.sign].slice(0,3)));
+    s.append(sv('text',{x:xa,y:y+bh+12,'font-size':8,fill:'var(--ink-2)'},jdYM(p2.start_jd))); }
+  s.append(sv('text',{x:x1,y:y+bh+12,'font-size':8,'text-anchor':'end',fill:'var(--ink-2)'},jdYM(hi)));
+  if(ref!=null&&ref>=lo&&ref<=hi){ const nx=jx(ref);
+    s.append(sv('line',{x1:nx,y1:6,x2:nx,y2:y+bh+4,stroke:'var(--accent)',strokeWidth:1.5,strokeDasharray:'3 2'}));
+    s.append(sv('text',{x:nx+3,y:12,'font-size':9,fill:'var(--accent)','font-weight':600},t('now'))); }
+  return s; }
+
+// the adverse Gochara windows — the exact client-side mirror of detailed_report.
+// adverse_transit_windows: same >=25-day noise floor, chronological. Segments carry
+// bav_bindus=None when adverse BY CONSTRUCTION (transits.gochara_timeline computes it for
+// favourable spans only), so — like the Python mirror — mitigation reads the planet's OWN
+// Bhinnashtakavarga row (R.bav_matrix) at the transited sign; nodes have no classical AV.
+function adverseTransitRows(R){ const out=[];
+  const bavOf={}; for(const bm of (R.bav_matrix||[])) bavOf[bm.planet]=bm.bindus||[];
+  for(const pl in (R.gochara_outlook||{})) for(const seg of (R.gochara_outlook[pl]||[])){
+    if(seg.gochara_good||(seg.end_jd-seg.start_jd)<25) continue;
+    const bav=(bavOf[seg.planet]&&bavOf[seg.planet][seg.sign-1]!=null)?bavOf[seg.planet][seg.sign-1]:null;
+    out.push({planet:seg.planet,start_jd:seg.start_jd,end_jd:seg.end_jd,sign:seg.sign,
+      house_from_moon:seg.house_from_moon,
+      what_it_concerns:PLANET_THEME[seg.planet]||'—',
+      mitigation:(bav!=null)?(bav+'/8 '+t('of the evil neutralised'))
+        :(seg.planet==='Rahu'||seg.planet==='Ketu')?t('— (node: no classical Ashtakavarga)'):'—',
+      interference:'—'}); }
+  out.sort((a,b2)=>a.start_jd-b2.start_jd); return out; }
 
 function render(R, S, FQ){
   RPT=R;  // expose to H2's plain-language layer
@@ -2213,6 +2477,13 @@ function render(R, S, FQ){
   if(ov.functional_natures&&ov.functional_natures.length)
     add(para('Functional nature for this Lagna — '+ov.functional_natures.map(x=>x[0]+' '+x[1]).join('; '),'muted'));
   if(s.deeptadi&&s.deeptadi.length) add(para('Avasthas (Deeptadi): '+s.deeptadi.join('; '),'muted'));
+  // 2026-08-18 parity: per-planet Baladi + Jagradadi states — computed and USED by the judge
+  // (intensity dial) since always, shown here with their CLASSICAL_NONCITABLE provenance.
+  const _bj=R.baladi_jagradadi;
+  if(_bj&&Object.keys(_bj).length)
+    add(sectionTable("Baladi & Jagradadi avastha states (the judge's intensity dial)",
+      Object.entries(_bj).map(([g2,st])=>({graha:g2,baladi:st.baladi,jagradadi:st.jagradadi})),[],
+      PARITY_NOTES.baladi));
 
   // ===== Ruler of the nativity =====
   const ru=R.ruler||{};
@@ -2249,11 +2520,23 @@ function render(R, S, FQ){
 
   // ===== Planetary positions =====
   add(H2('Planetary positions'));
-  const pt=el('table'); pt.append(el('tr',{},...['graha','sign','house','nakshatra','pada','navamsa','Shadbala','notes'].map(x=>el('th',{},x))));
+  // 2026-08-18 parity: + exact sidereal longitude (checkable sign-degree form, raw degrees in
+  // the cell title) and the nakshatra's Vimshottari lord (the Moon's row explains the birth
+  // Mahadasha), + the Ascendant as a checkable row of its own (R.chart.ascendant / asc_lon).
+  const pt=el('table'); pt.append(el('tr',{},...['graha','sign','longitude','house','nakshatra','pada','nak lord','navamsa','Shadbala','notes'].map(x=>el('th',{},t(x)))));
+  const _asc=(R.chart||{}).ascendant;
+  if(_asc){ pt.append(el('tr',{},el('td',{},t('Ascendant')),el('td',{},SIGN[_asc.sign]||_asc.sign),
+    el('td',{title:_asc.lon!=null?(_asc.lon+'°'):''},(_asc.longitude||'—')+(_asc.lon!=null?(' · '+_asc.lon+'°'):'')),
+    el('td',{},'1'),el('td',{},nakName(_asc.nakshatra)),el('td',{},String(_asc.pada)),
+    el('td',{},_asc.nakshatra_lord||'—'),el('td',{},SIGN[_asc.navamsa_sign]||_asc.navamsa_sign),
+    el('td',{},'—'),el('td',{class:'muted'},t('lagna')))); }
   for(const [nm,p] of Object.entries(R.chart?.planets||{})){
     const notes=[p.vargottama?'vargottama':'',p.retrograde?'retrograde':'',(p.combust_fraction>=0.5)?'combust':''].filter(Boolean).join(', ');
-    pt.append(el('tr',{},el('td',{},nm),el('td',{},SIGN[p.sign]||p.sign),el('td',{},String(p.rasi_house)),
-      el('td',{},nakName(p.nakshatra)),el('td',{},String(p.pada)),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
+    pt.append(el('tr',{},el('td',{},nm),el('td',{},SIGN[p.sign]||p.sign),
+      el('td',{title:p.lon!=null?(p.lon+'°'):''},(p.longitude||'—')+(p.lon!=null?(' · '+p.lon+'°'):'')),
+      el('td',{},String(p.rasi_house)),
+      el('td',{},nakName(p.nakshatra)),el('td',{},String(p.pada)),
+      el('td',{},p.nakshatra_lord||'—'),el('td',{},SIGN[p.navamsa_sign]||p.navamsa_sign),
       el('td',{},p.shadbala_rupas==null?'—':p.shadbala_rupas+' rupas'),el('td',{class:'muted'},notes||'—')));
   }
   add(pt);
@@ -2296,6 +2579,29 @@ function render(R, S, FQ){
     const t=el('table'); t.append(el('tr',{},...Object.keys(R.sav).map(k=>el('th',{},SIGN[+k]||k))));
     t.append(el('tr',{},...Object.values(R.sav).map(v=>el('td',{},String(v))))); add(t);
     add(para('Average 28 per sign, 337 total. Raman rates Ashtakavarga corroborative, not decisive (HTJAH-II:4453-4456).','muted')); }
+
+  // ===== 2026-08-18 parity (AV completeness): the 7x12 BAV matrix, the HPA-26 reduced
+  // tables and the Sodya Pinda — the SAV visual above stays; these are the tables it sums. =====
+  const _bavM=bavMatrixTable(R);
+  if(_bavM){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+    const sm2=el('summary'); sm2.append(t("Bhinnashtakavarga (BAV) — each planet's own bindu row")+' ('+(R.bav_matrix||[]).length+')');
+    d.append(sm2); const b2=el('div',{class:'body'});
+    b2.append(para(t(PARITY_NOTES.bav_matrix),'vz-note'));
+    const sc2=el('div',{class:'tscroll'}); sc2.append(_bavM); b2.append(sc2); d.append(b2); add(d); }
+  const _bavT=bavReducedTable(R,'trikona');
+  if(_bavT){ const d=el('details',{class:'card'}); d.setAttribute('open','');
+    const sm2=el('summary'); sm2.append(t('HPA-26 reductions (Trikona + Ekadhipathya Sodhana)'));
+    d.append(sm2); const b2=el('div',{class:'body'});
+    b2.append(para(t(PARITY_NOTES.bav_reduced),'vz-note'));
+    b2.append(para(t('After Trikona Sodhana (HPA-26:403-421):'),'muted'));
+    const sc2=el('div',{class:'tscroll'}); sc2.append(_bavT); b2.append(sc2);
+    b2.append(para(t('After both reductions (Ekadhipathya applied, HPA-26:464-497):'),'muted'));
+    const sc3=el('div',{class:'tscroll'}); sc3.append(bavReducedTable(R,'reduced')); b2.append(sc3);
+    d.append(b2); add(d); }
+  if((R.sodya_pinda||[]).length)
+    add(sectionTable('Sodya Pinda (Rasi + Graha Gunakara)',
+      R.sodya_pinda.map(sp=>({graha:sp.planet,'Rasi Gunakara':sp.rasi,'Graha Gunakara':sp.graha,'Sodya Pinda':sp.total})),[],
+      PARITY_NOTES.sodya_pinda));
 
   chapter(9);   // step 4 — WHY: the houses
   // ===== House-by-house (proforma + strength + witnesses) =====
@@ -2345,7 +2651,10 @@ function render(R, S, FQ){
   const _bb=bhavaBalaBars(R);
   if(_bb) add(vizCard('Bhava-Bala per house — bar = strength, colour = verdict', _bb,
     'House order H1→H12. A long RED bar = an afflicted verdict standing on strong ground; a short GREEN bar = favourable but weakly supported. ★ = the strongest house (rank 1/12). The full table is below.'));
-  add(rows(R.house_strength));
+  // 2026-08-18 parity: + the Bhava Bala value in RUPAS (markdown parity: bhava_bala/60),
+  // beside the raw virupa figure — nothing removed, one derived column added.
+  add(rows((R.house_strength||[]).map(r2=>({...r2,
+    bhava_bala_rupas:r2.bhava_bala!=null?+(r2.bhava_bala/60).toFixed(2):null}))));
 
   // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
@@ -2385,8 +2694,17 @@ function render(R, S, FQ){
   const _lgg=longevityGauge(R);
   if(_lgg) add(vizCard('Ayurdaya span (numeric cross-check)', _lgg,
     'The numeric Ayurdaya span on a 0–100-year scale, band marked. Raman treats this as a band, never a date — the maraka scheme fixes timing. Detail below.'));
+  // 2026-08-18 parity: the full tiered maraka scheme with each graha's qualifying clause(s)
+  // (`reasons`, e.g. "Venus — lord of the 2nd") + the 22nd-drekkana / 64th-navamsa lords.
+  if(R.maraka){
+    add(sectionTable('The maraka scheme (death-dealing determinants)', R.maraka.units, [],
+      PARITY_NOTES.maraka));
+    add(para(t('22nd drekkana lord')+': '+(R.maraka.drekkana22_lord||'—')+' · '+
+      t('64th navamsa lord')+': '+(R.maraka.navamsa64_lord||'—')+' · '+
+      t('Running period')+' '+(R.maraka_period_now?t('carries a maraka-tier lord'):t('carries no maraka-tier lord'))+
+      ' '+t('(broad, low-discrimination flag by design)'),'muted')); }
   add(sectionTable('Maraka × Saturn-transit confluence (method, not a prediction)', R.maraka_saturn, [],
-    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast.'));
+    'Where the classically designated periods overlap Saturn\'s transit — shown because Raman teaches the method, never as a forecast. The "tier addends" column spells the score out per lord (primary=3 / secondary=2 / tertiary=1), so the number is checkable.'));
   // v17 — Health & vulnerability read-out: pure re-read, caveat always shown.
   if(R.health_readout && (R.health_readout.rows||[]).length){ const hr=R.health_readout;
     add(H2('Health & vulnerability read-out'));
@@ -2418,7 +2736,8 @@ function render(R, S, FQ){
     if(mg.seventh_covers) add(para('What the 7th covers (Raman verbatim) — "'+mg.seventh_covers+'" (HTJAH-II:198)','quote'));
     if(mg.lord_period_text) add(para('The 7th lord\'s placement, in his periods (verbatim) — "'+mg.lord_period_text+'" (HTJAH-II:710)','quote'));
     if(mg.spouse_sign_text) add(para('The 7th lord in its sign (verbatim) — "'+mg.spouse_sign_text[0]+'" ('+mg.spouse_sign_text[1]+')','quote'));
-    for(const f of (mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const f of (mg.fired_kalatra_client||mg.fired_kalatra||[])) add(ruleLine(f[0],f[1],f[2]));
+    for(const n of (mg.fired_kalatra_notes||[])) add(para(n[0]+' — '+n[1],'muted fineprint'));
     if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
     for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
@@ -2475,6 +2794,14 @@ function render(R, S, FQ){
     'Top band: Mahadasha runs (deeper = MD lord strong). Second band: Antardasha, tinted by its Ishta/Kashta lean, with an accent border where the AD lord is associated with the MD lord (par excellence). Third band: the Ishta/Kashta goodness climate (MD lean over AD lean). Grid: the 12 houses across time — each cell coloured by that house’s natal verdict and shaded by its fructification tier (par excellence darkest → feeble faintest). Overlaid: ▼ marks now; upward ticks are a yoga ripening (green raja/dhana, larger = its lord strong); faint green bands are dasha×favourable-transit confluences; faint red bands are maraka×Saturn windows (method, not a prediction). The full graded per-bhukti detail is in the cards below.'));
     add(legend([['var(--fav)','favourable / ishta'],['var(--aff)','afflicted / kashta'],['var(--mix)','mixed'],['var(--accent-2)','Mahadasha'],['var(--accent)','par-excellence · now']])); }
   renderTimeline(R, add);            // houses lit per bhukti, graded (restored — was a bare count)
+  // 2026-08-18 parity: the current bhukti's 9 Pratyantardashas, dated, running span marked.
+  if((R.pratyantar_now||[]).length){
+    const _ref=(R.window&&R.window.ref_jd);
+    add(sectionTable('Pratyantardasha drill-down (current bhukti)',
+      R.pratyantar_now.map(p2=>({maha:p2.maha,antar:p2.antar,pratyantar:p2.pratyantar,
+        start_jd:p2.start_jd,end_jd:p2.end_jd,
+        now:(_ref!=null&&p2.start_jd<=_ref&&_ref<p2.end_jd)?('◀ '+t('now')):'—'})),[],
+      PARITY_NOTES.pratyantar)); }
   add(sectionTable('Ishta/Kashta outlook', R.ishta_kashta, [],
     'Each period-lord\'s computed benefic (ishta) vs malefic (kashta) balance — a lean for its period, not a verdict.'));
   add(sectionTable('MD-lord condition outlook', R.md_condition, [],
@@ -2520,13 +2847,34 @@ function render(R, S, FQ){
     'Where each planet is today from your Moon-sign, whether that station is classically favourable, and whether another planet obstructs (vedha) it.'));
   add(sectionTable('Dasha × Transit confluence', R.dasha_transit, [],
     'Rows where the running period and today\'s transits point the same way — agreement between the two timing systems.'));
+  // 2026-08-18 parity: the ADVERSE confluence rows (period lord ALSO transiting adversely).
+  if((R.dasha_transit_adverse||[]).length)
+    add(sectionTable('Adverse dasha × transit confluence', R.dasha_transit_adverse, [],
+      PARITY_NOTES.dasha_transit_adverse));
+  // 2026-08-18 parity: the ADVERSE half of the gochara outlook — the same segments the lanes
+  // above already carry (gochara_good=false), mirrored as a table exactly like the markdown's
+  // "Adverse transit windows" (>=25-day floor; mitigation = own BAV bindus in the sign).
+  const _adv=adverseTransitRows(R);
+  if(_adv.length) add(sectionTable('Adverse transit windows', _adv, [], PARITY_NOTES.adverse));
+  // 2026-08-18 parity: dated Sade-Sati phase spans (rising / peak / setting), method-only.
+  if((R.sade_sati_phases||[]).length){
+    const _ssv=sadeSatiStrip(R);
+    if(_ssv) add(vizCard('Sade-Sati phase windows (Saturn from the natal Moon)', _ssv,
+      PARITY_NOTES.sade_sati));
+    add(sectionTable('Sade-Sati phases — dated spans',
+      R.sade_sati_phases.map(p2=>({phase:p2.phase,house_from_moon:p2.house_from_moon,
+        sign:p2.sign,start_jd:p2.start_jd,end_jd:p2.end_jd,
+        now:p2.current?('◀ '+t('now')):'—'})),[],
+      (_ssv?null:PARITY_NOTES.sade_sati))); }
 
   // ===== Today for you (Muhurtha) — the day judged against THIS native's janma star/rasi =====
   add(H2('Today for you (Muhurtha)'));
   add(para('Raman’s Muhurtha read for today at this native’s own janma nakshatra and rasi — '+
     'Tarabala and Chandrabala, the five panchanga limbs, Panchaka, the transit-band elections read '+
     'against this chart’s Bhinnashtakavarga, and the day’s negative windows. It is fetched on '+
-    'request, not with the cast, and is a statement of the electional method, never a prediction.','muted'));
+    'request, not with the cast, and is a statement of the electional method, never a prediction. '+
+    '“When today is clean” re-applies the SAME judgment every half hour from sunrise to the next '+
+    'sunrise and returns the spans in which every sample passed — pure iteration, no new doctrine.','muted'));
   add(muhurthaPanel());
 
   chapter(10);
@@ -2542,14 +2890,22 @@ function render(R, S, FQ){
     const lines=(R.soul.jaimini_overlay&&R.soul.jaimini_overlay.lines)||[];
     if(lines.length){ const d=el('details',{class:'card'}); d.setAttribute('open',''); const sm=el('summary'); sm.append('Jaimini overlay ('+lines.length+' lines)');
       d.append(sm); const b=el('div',{class:'body'}); for(const ln of lines){ b.append(para('['+(ln.provenance||'')+(ln.cite?' '+ln.cite:'')+'] '+ln.text,'muted')); } d.append(b); add(d); } }
+  // 2026-08-18 parity: the dated Chara dasha sequence (the Chart-signature chip named it
+  // undated) — running sign marked; no result judgment attaches (matters read from Vimshottari).
+  if((R.chara_sequence||[]).length)
+    add(sectionTable('Chara dasha (Jaimini) — dated sequence',
+      R.chara_sequence.map(c2=>({sign:c2.sign,years:c2.years,
+        start_jd:c2.start_jd,end_jd:c2.end_jd,
+        now:c2.current?('◀ '+t('now')):'—'})),[],
+      PARITY_NOTES.chara));
   // ===== Karmic evolution (v30, Jaimini — walled) — completeness repair 2026-08-14 =====
   if(R.karmic){ const km=R.karmic;
     add(H2('Karmic evolution (Jaimini)'));
     if(km.frame) add(para(km.frame,'muted'));
     add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
     if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','quote'));
-    if(km.d20_core) add(para('Vimsamsa (D-20) core — '+km.d20_core,'muted'));
-    if(km.d60_core) add(para('Shashtiamsa (D-60) core — '+km.d60_core,'muted')); }
+    if(km.d20_core) add(para('Vimsamsa (D-20) domain re-read — '+km.d20_core,'muted'));
+    if(km.d60_core) add(para('Shashtiamsa (D-60) domain re-read — '+km.d60_core,'muted')); }
 
   if(R.pitru){ add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));
@@ -2575,6 +2931,9 @@ function render(R, S, FQ){
     add(rows(R.distinctive.map(([h,e])=>({house:'H'+h, signification:e.signification, verdict:e.verdict,
       degree:e.degree, 'more favourable than':Math.round((e.favourability_percentile||0)*100)+'% of charts',
       'this reading in':Math.round((e.band_share||0)*100)+'% ('+e.rarity+')',
+      // 2026-08-18 parity: the plain-language midpoint-side sentence (`gloss`) — the list
+      // itself is uncapped upstream and this table has never sliced it, so all rows show.
+      'in plain words':e.gloss||'—',
       inverted:e.inverted_warning?'⚠ inverted channel':'—'})))); }
   // ===== Information content (every field of the honesty headline) =====
   if(R.info){ add(H2('Information content of this reading')); const I=R.info;

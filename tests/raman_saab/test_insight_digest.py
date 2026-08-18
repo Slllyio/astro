@@ -51,7 +51,8 @@ class TestDigestShape:
         assert 1 <= len(digest.items) <= 14
 
     def test_every_kind_is_known(self, digest):
-        known = {"dominant_theme", "convergence", "tension", "distinctive", "timing"}
+        known = {"governing_factor", "foundation", "dominant_theme", "convergence",
+                 "tension", "distinctive", "timing"}
         assert {it.kind for it in digest.items} <= known
 
     def test_every_lean_is_known(self, digest):
@@ -142,6 +143,81 @@ class TestCitations:
             pytest.skip("doctrine corpus not vendored")
         for c in all_cites:
             assert passage(c) is not None, f"cite {c!r} did not resolve to a source passage"
+
+
+class TestRamanOpeningOrder:
+    """Wave-2 (2026-08-17): the digest opens the way Raman opens — governing factor first
+    (HTJAH-I:16001-16002), longevity foundation second (HTJAH-I:11703 when the lift fired),
+    then the bhava items; each convergence/tension item weighs its house by Bhava-Bala rank
+    (GBB-9:332), and the timing item names its own four-tier grade (HTJAH-I:1592-1596)."""
+
+    def test_governing_factor_is_the_rank_zero_item(self, report, digest):
+        """Item #1 is the ruler-of-the-nativity re-read — literally Raman's opening move."""
+        it0 = digest.items[0]
+        assert it0.kind == "governing_factor" and it0.priority == 0
+        assert report.ruler.lagna_lord in it0.title
+        assert "HTJAH-I:16001-16002" in it0.cites
+        assert "Ruler of the nativity" in it0.sections
+        if report.ruler.strongest is not None and not report.ruler.coincide:
+            assert report.ruler.strongest in it0.detail   # both factors named when distinct
+
+    def test_foundation_item_is_second_and_band_worded(self, report, digest):
+        """Item #2 grounds on the longevity band + Balarishta status — a band, never a date."""
+        it1 = digest.items[1]
+        assert it1.kind == "foundation" and it1.priority == 1
+        assert report.longevity_class in it1.title
+        assert "Balarishta" in it1.detail
+        assert "never a date" in it1.detail
+        assert "Longevity" in it1.sections
+
+    def test_foundation_reuses_the_strength_lift_citation_when_fired(self, report, digest):
+        """When SYN_R10 fired, the foundation item re-reads it and carries ITS citation
+        (HTJAH-I:11703) — reuse, never a new citation."""
+        lift = next((i for i in report.insights
+                     if i.rule.id == "SYN_R10_STRENGTH_OVERRIDES_ARISHTA"), None)
+        it1 = digest.items[1]
+        if lift is None:
+            assert it1.cites == ()
+        else:
+            assert "HTJAH-I:11703" in it1.cites
+            assert "Strength lifts the band" in it1.detail
+
+    def test_convergence_and_tension_carry_the_bhava_bala_rank(self, report, digest):
+        """The house items weigh 'by how much relative to the rest' — the Bhava-Bala rank
+        clause (magnitude, not direction) with the GBB-9:332 citation the report already
+        carries."""
+        seen = 0
+        for it in digest.items:
+            if it.kind not in ("convergence", "tension"):
+                continue
+            hs = next((row for row in report.house_strength
+                       if row.house == it.houses[0]), None)
+            if hs is None or hs.bhava_bala_rank is None:
+                continue
+            seen += 1
+            assert f"ranks {hs.bhava_bala_rank} of 12" in it.detail
+            assert "magnitude, not direction" in it.detail
+            assert "GBB-9:332" in it.cites
+        assert seen >= 1                                  # canonical chart has ranked houses
+
+    def test_timing_item_names_its_own_four_tier_grade(self, report, digest):
+        """Coherence fix: the timing item's Ishta/Kashta lean sits beside the bhukti-tier
+        grade of the SAME running sub-period, so the two axes cannot read as contradiction."""
+        ti = next((it for it in digest.items if it.kind == "timing"), None)
+        if ti is None:
+            pytest.skip("no running chapter resolved on this chart")
+        assert "by Raman's four-tier scheme" in ti.detail
+        assert ("par excellence" in ti.detail) or ("ordinary" in ti.detail)
+        assert "different axes" in ti.detail
+        assert "HTJAH-I:1592-1596" in ti.cites
+
+    def test_digest_prose_passes_the_decree_guard(self, digest):
+        """Every item's title+detail stays in the indication idiom — the decree tripwire
+        never fires (the 2026-08-17 guard line)."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for it in digest.items:
+            m = _FORBIDDEN_RE.search(f"{it.title} {it.detail}")
+            assert m is None, f"{it.kind}: {m.group(0)!r}"
 
 
 class TestJson:

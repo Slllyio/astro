@@ -13,9 +13,12 @@ order, both in Python here:
     `PreponderanceReading.most_corroborated_favourable / _afflicted / most_contested` picks, the
     band-precedence order of `insights` (raman > classical > av), and the rarity-sorted
     `distinctive` entries (furthest from the population midpoint);
-  - the CROSS-category sequence (convergence -> current period -> insights -> tension ->
-    distinctive) is a fixed editorial template in `build_insight_digest` below — a deterministic
-    choice, not a number the engine emitted, and not the model's.
+  - the CROSS-category sequence (governing factor -> foundation -> convergence -> current
+    period -> insights -> tension -> distinctive) is a fixed editorial template in
+    `build_insight_digest` below — a deterministic choice, not a number the engine emitted,
+    and not the model's. The head of the sequence is Raman's own opening order (Wave-2,
+    2026-08-17): name the ruler of the nativity first (HTJAH-I:16001-16002), ground on the
+    longevity foundation next, then weigh the bhavas.
 The grounded LLM layer (`report_explainer`) then only NARRATES this pre-ranked digest into plain
 language; it never re-orders or re-weighs it.
 
@@ -53,6 +56,9 @@ _SEC_STANDS_OUT = "What stands out"
 _SEC_INFO = "Information content of this reading"
 _SEC_TIMELINE = "Life-narrative (Vimshottari)"
 _SEC_CHAPTERS = "Life-chapters"
+_SEC_RULER = "Ruler of the nativity"
+_SEC_LONGEVITY = "Longevity"
+_SEC_ARISHTA = "Arishta & Bhanga"
 
 #: Plain-language label for each bhava, for readable item titles (standard significations, matching
 #: the report's own usage — not a re-judgment).
@@ -68,7 +74,8 @@ _HOUSE_LABEL: dict[int, str] = {
 class DigestItem:
     """One ranked finding in the digest. Every field is a restatement of already-computed engine
     output — `lean` is the direction the underlying finding already carries, never a new verdict."""
-    kind: str                      # dominant_theme | convergence | tension | distinctive | timing
+    kind: str                      # governing_factor | foundation | dominant_theme | convergence
+                                   #   | tension | distinctive | timing
     title: str
     detail: str
     lean: str                      # "favourable" | "adverse" | "mixed" | "neutral"
@@ -130,6 +137,87 @@ def _yoga_cite(y) -> str:
     return f"{y.source.work}:{y.source.line}"
 
 
+def _bhava_bala_clause(report: "DetailedReport", house: int) -> str:
+    """The house's Bhava-Bala rank as one clause — Raman states HOW strong relative to the
+    rest (ranking only, no cutoff: GBB-9:332, the same re-read the House strength
+    cross-check renders). Magnitude, never direction; "" when the rank is unavailable."""
+    hs = next((row for row in report.house_strength if row.house == house), None)
+    if hs is None or hs.bhava_bala_rank is None:
+        return ""
+    return (f" By Bhava Bala this house ranks {hs.bhava_bala_rank} of 12 — magnitude, "
+            f"not direction (GBB-9:332).")
+
+
+def _governing_item(report: "DetailedReport", priority: int) -> DigestItem | None:
+    """Rank-0 (Wave-2, 2026-08-17): the governing factor — Raman's own opening move, "in
+    order to obtain a first impression we must first of all consider the ruler of the
+    nativity" (HTJAH-I:16001-16002, the citation the Ruler card already carries). A pure
+    re-read of the already-built `report.ruler`."""
+    ru = report.ruler
+    if not ru.lagna_lord:
+        return None
+    if ru.strongest is None:
+        detail = (f"{ru.lagna_lord} rules the nativity as Lagna lord; no Shadbala is "
+                  f"available on this chart, so the strongest planet is not determined — "
+                  f"nothing is guessed in its place.")
+        lean = "neutral"
+    elif ru.coincide:
+        detail = (f"{ru.lagna_lord} rules the nativity AND is the strongest planet by "
+                  f"Shadbala ({ru.strongest_rupas:.1f} rupas) — the two governing factors "
+                  f"coincide: \"the foundation is quite sound\" (HTJAH-I:3880-3882).")
+        lean = "favourable"
+    else:
+        detail = (f"{ru.lagna_lord} rules the nativity as Lagna lord, while the strongest "
+                  f"planet by Shadbala is {ru.strongest} ({ru.strongest_rupas:.1f} rupas) "
+                  f"— two distinct first-impression factors, read together in the Ruler "
+                  f"card; they do not coincide here.")
+        lean = "neutral"
+    return DigestItem(
+        kind="governing_factor",
+        title=f"The governing factor: {ru.lagna_lord} rules the nativity",
+        detail=detail, lean=lean, houses=(1,),
+        sections=(_SEC_RULER,),
+        cites=("HTJAH-I:16001-16002",) + (("HTJAH-I:3880-3882",) if ru.coincide else ()),
+        priority=priority,
+    )
+
+
+def _foundation_item(report: "DetailedReport", priority: int) -> DigestItem | None:
+    """Rank-1 (Wave-2, 2026-08-17): the foundation — the longevity band and the
+    Balarishta/bhanga status, the classical precondition to everything else the digest
+    ranks. Pure re-read of `longevity_class` + `balarishta` + the already-fired
+    "Strength lifts the longevity band" insight (HTJAH-I:11703)."""
+    band = report.longevity_class
+    if not band:
+        return None
+    bal = report.balarishta
+    if bal is None:
+        bal_bit = "no Balarishta screen is available on this chart"
+    elif bal.applies and not bal.cancelled:
+        bal_bit = "the Balarishta screen applies and is not cancelled"
+    elif bal.cancelled:
+        bal_bit = "the Balarishta screen is cancelled by the classical antidotes"
+    else:
+        bal_bit = "no Balarishta combination applies"
+    lift = next((ins for ins in report.insights
+                 if ins.rule.id == "SYN_R10_STRENGTH_OVERRIDES_ARISHTA"), None)
+    lift_bit = (f" Strength lifts the band on this chart: {lift.detail.rstrip('.')}."
+                if lift is not None else "")
+    lean = {"purna": "favourable", "alpa": "adverse"}.get(band, "neutral")
+    cites = (((f"{lift.rule.source.work}:{lift.rule.source.line}",)
+              if lift is not None and lift.rule.source is not None else ()))
+    return DigestItem(
+        kind="foundation",
+        title=f"The foundation: longevity reads at the {band} band",
+        detail=(f"The classical order ascertains the span before judging the bhavas; "
+                f"this chart's Ayurdaya band is {band}, and {bal_bit}.{lift_bit} A band "
+                f"of the method, never a date."),
+        lean=lean, houses=(8,),
+        sections=(_SEC_LONGEVITY, _SEC_ARISHTA),
+        cites=cites, priority=priority,
+    )
+
+
 def _convergence_item(report: "DetailedReport", house: int, favourable: bool,
                       priority: int) -> DigestItem | None:
     """The most-corroborated house (its own witnesses most agree with its headline) + the yogas
@@ -139,7 +227,9 @@ def _convergence_item(report: "DetailedReport", house: int, favourable: bool,
         return None
     agree = ht.favourable if favourable else ht.adverse
     yogas = _yogas_on_house(report, house)
-    cites = [_LEDGER_CITE] + [_yoga_cite(y) for y in yogas]
+    bb_clause = _bhava_bala_clause(report, house)
+    cites = [_LEDGER_CITE] + [_yoga_cite(y) for y in yogas] + (
+        ["GBB-9:332"] if bb_clause else [])
     sections = [_SEC_PREPONDERANCE, _SEC_HOUSES] + ([_SEC_YOGAS] if yogas else [])
     side = "favourable" if favourable else "afflicted"
     yoga_clause = ""
@@ -151,7 +241,7 @@ def _convergence_item(report: "DetailedReport", house: int, favourable: bool,
         title=f"House {house} ({_house_label(house)}) is the most strongly corroborated "
               f"{side} area",
         detail=f"Its headline reads {ht.verdict}; {agree} of its independent witnesses lean the "
-               f"same way ({ht.status}, {ht.preponderance}).{yoga_clause}",
+               f"same way ({ht.status}, {ht.preponderance}).{yoga_clause}{bb_clause}",
         lean="favourable" if favourable else "adverse",
         houses=(house,),
         sections=tuple(sections),
@@ -165,16 +255,18 @@ def _tension_item(report: "DetailedReport", house: int, priority: int) -> Digest
     ht = _testimonies_for(report, house)
     if ht is None:
         return None
+    bb_clause = _bhava_bala_clause(report, house)
     return DigestItem(
         kind="tension",
         title=f"House {house} ({_house_label(house)}) is the most contested area",
         detail=f"Its headline reads {ht.verdict}, yet its own witnesses are divided "
                f"({ht.favourable} favourable, {ht.adverse} adverse, {ht.neutral} neutral — "
-               f"{ht.status}). The engine records the tension rather than resolving it.",
+               f"{ht.status}). The engine records the tension rather than resolving it."
+               f"{bb_clause}",
         lean="mixed",
         houses=(house,),
         sections=(_SEC_PREPONDERANCE, _SEC_HOUSES),
-        cites=(_LEDGER_CITE,),
+        cites=(_LEDGER_CITE,) + (("GBB-9:332",) if bb_clause else ()),
         priority=priority,
     )
 
@@ -228,14 +320,33 @@ def _timing_item(report: "DetailedReport", priority: int) -> DigestItem | None:
     first = cur.narrative.split(". ", 1)[0].strip()
     if first and not first.endswith("."):
         first += "."
+    # Wave-2 (2026-08-17, coherence fix): the running SUB-period's four-tier grade sits
+    # beside the Ishta/Kashta lean so the two axes cannot read as a self-contradiction —
+    # the same graded_buckets re-read the Nichod's "Running now" line already makes
+    # (HTJAH-I:1592-1596, the locked uniform four-tier scheme).
+    tier_clause = ""
+    tier_cites: tuple[str, ...] = ()
+    cur_tp = next((tp for tp in report.timeline.periods
+                   if tp.period.start_jd <= report.ref_jd < tp.period.end_jd), None)
+    if cur_tp is not None:
+        from app.raman_saab.detailed_report import graded_buckets
+        associated, _buckets = graded_buckets(cur_tp, report.chart)
+        tier = "par excellence" if associated else "ordinary"
+        assoc_word = "associated" if associated else "not associated"
+        ad = cur_tp.period.antar or cur_tp.period.maha
+        tier_clause = (f" The running {cur.maha}/{ad} sub-period grades {tier} by Raman's "
+                       f"four-tier scheme (lords {assoc_word}); that grade and the lean "
+                       f"above are different axes, not a contradiction.")
+        tier_cites = ("HTJAH-I:1592-1596",)
     return DigestItem(
         kind="timing",
         title=f"You are currently in the {cur.maha} Mahadasha",
-        detail=first or f"The running {cur.maha} Mahadasha shapes the present chapter.",
+        detail=(first or f"The running {cur.maha} Mahadasha shapes the present chapter.")
+               + tier_clause,
         lean=lean_word,
         houses=tuple(h for h, _t, _v in cur.houses_lit),
         sections=(_SEC_TIMELINE, _SEC_CHAPTERS),
-        cites=(),
+        cites=tier_cites,
         priority=priority,
     )
 
@@ -248,6 +359,18 @@ def build_insight_digest(report: "DetailedReport",
     no verdict is recomputed. Items are returned most-important-first, with `priority` = position."""
     items: list[DigestItem] = []
     pp = report.preponderance
+
+    # 0. the governing factor — Raman opens by naming the ruler of the nativity
+    # (HTJAH-I:16001-16002); Wave-2 2026-08-17, inserted BEFORE every other item.
+    gov = _governing_item(report, priority=len(items))
+    if gov is not None:
+        items.append(gov)
+
+    # 0b. the foundation — longevity band + Balarishta status, the classical
+    # precondition to everything ranked below (HTJAH-I:11703 when the lift fired).
+    fnd = _foundation_item(report, priority=len(items))
+    if fnd is not None:
+        items.append(fnd)
 
     # 1-2. the strongest agreements (favourable then afflicted convergence)
     if pp.most_corroborated_favourable is not None:

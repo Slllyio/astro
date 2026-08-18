@@ -34,6 +34,11 @@ class SpecialPoint:
 @dataclass(frozen=True)
 class MarakaUnit:
     graha: str; tier: Literal["primary","secondary","tertiary"]; strength_rank: int
+    # append-only 2026-08-17 (report critique item: per-planet maraka reasons): the qualifying
+    # clause(s) that placed this graha at its kept tier, e.g. ("lord of the 2nd",
+    # "malefic conjunct the 7th lord Jupiter"). Recorded by primitives/maraka.py at add();
+    # empty on units built before the field existed (default keeps old constructors valid).
+    reasons: tuple[str, ...] = ()
 
 @dataclass(frozen=True)
 class MarakaPoints:

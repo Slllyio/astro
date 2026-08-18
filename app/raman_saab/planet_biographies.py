@@ -80,6 +80,19 @@ class PlanetBiography:
     md_result_now: Optional[tuple[str, str]] = None   # HPA-24 per-sign text (if MD lord now)
     ad_result_now: Optional[tuple[str, str]] = None   # HPA-24 bhukti text (if in the pair)
     transit_text: Optional[tuple[str, str]] = None    # HPA-34 Gocharaphala section
+    # ── portrait fields (2026-08-18 report-critique, append-only): the census stays a
+    # trailing receipt; each biography opens on the planet's computed ROLES and carries
+    # its full condition — functional nature for this Lagna, Shadbala vs minimum,
+    # itemized drishti give-and-receive, the avastha's consequence phrase and named
+    # karakatvas. All pure re-reads of primitives other sections already render. ──────
+    functional_nature: str = ""             # for THIS Lagna (HTJAH-I:523-604 overlay)
+    rupas: Optional[float] = None           # total Shadbala (rupas); None for the nodes
+    powerful: Optional[bool] = None         # vs Raman's minimum (GBB-8:303)
+    avastha_result: str = ""                # deeptadi.RESULTS consequence phrase (HPA Ch.7)
+    casts_drishti: tuple[str, ...] = ()     # whole-sign drishti it casts, itemized
+    receives_drishti: tuple[str, ...] = ()  # planets aspecting it, itemized
+    family_role_named: str = ""             # karaka houses WITH their topic labels
+    role_line: str = ""                     # role-based one-liner (chapter opener)
 
 
 def planet_census(graph: JudgmentGraph) -> dict[str, dict[str, int]]:
@@ -128,8 +141,12 @@ def _compose_prose(b: "PlanetBiography") -> str:
         bits.append(f"{b.planet} {', '.join(roles)}, in {b.dignity} dignity"
                     + (f" and {b.avastha} avastha" if b.avastha else "") + ".")
     if b.helps:
+        # nodes rule nothing (locked doctrine: chayagrahas hold no lordship) — their
+        # reach is tenancy + aspect, and the wording must never claim otherwise
+        reach = ("its tenancy and aspects reach" if b.planet in ("Rahu", "Ketu")
+                 else "its lordship and aspects reach")
         bits.append(because(
-            "its lordship and aspects reach " + ", ".join(f"house {h}" for h in b.helps),
+            reach + " " + ", ".join(f"house {h}" for h in b.helps),
             "the favourable readings there carry its signature"))
     if b.obstructs:
         bits.append(because(
@@ -157,11 +174,31 @@ def build_planet_biographies(r: "DetailedReport", graph: JudgmentGraph,
     their HPA-21 house paragraphs and HPA-24 dasha paragraphs exist; where a table
     excludes them (HPA-22 signs, the HTJAH-II vocation rows) the field is an honest
     absence, never a guess."""
+    from app.raman_saab.chart.constants import SIGN_LORDS
+    from app.raman_saab.detailed_report import _HOUSE_NAME, _ordinal
+    from app.raman_saab.doctrine.drishti import ASPECT_HOUSES, aspects_planet
     from app.raman_saab.doctrine.lookups import graha_chapters as gc
     from app.raman_saab.doctrine.lookups.disease_map import (PLANET_ORGANS,
                                                              PLANET_TRIDOSHAS)
+    from app.raman_saab.doctrine.synthesis_rules import _yoga_planets
+    from app.raman_saab.primitives.deeptadi import RESULTS as _AVASTHA_RESULTS
     from app.raman_saab.primitives.deeptadi import state as _avastha_state
     from app.raman_saab.primitives.dignity import dignity as _dignity
+    from app.raman_saab.primitives.shadbala.total import is_powerful as _is_powerful
+
+    # chart-level role inputs, each a pure re-read of an already-built report field
+    _lagna_lord = SIGN_LORDS[r.chart.asc_sign]
+    _fn_map = dict(r.overview.functional_natures)
+    _maraka_of = dict(getattr(r.health_readout, "maraka_tiers", ()) or ())
+    _yogas_of: dict[str, list[str]] = {}
+    for _y in r.yogas:
+        try:
+            _pls = _yoga_planets(r.chart, _y)
+        except Exception:  # noqa: BLE001 — sparse chart
+            _pls = None
+        for _pl_name in _pls or ():
+            if _y.name not in _yogas_of.setdefault(_pl_name, []):
+                _yogas_of[_pl_name].append(_y.name)
 
     census = planet_census(graph)
     all_grahas = (*_VISIBLE, "Rahu", "Ketu")
@@ -207,6 +244,41 @@ def build_planet_biographies(r: "DetailedReport", graph: JudgmentGraph,
                   if running_md == p and sign else None)
         ad_now = (gc.ad_result(running_md, p)
                   if running_ad == p and running_md else None)
+        # ── portrait fields (2026-08-18): condition + itemized drishti + roles ──
+        rupas = (pl.shadbala_rupas.total / 60.0
+                 if pl is not None and pl.shadbala_rupas is not None else None)
+        powerful = _is_powerful(p, rupas) if rupas is not None else None
+        casts: list[str] = []
+        if pl is not None and p in ASPECT_HOUSES:
+            for dist in sorted(ASPECT_HOUSES[p]):
+                th = ((pl.rasi_house - 1 + dist - 1) % 12) + 1
+                occupants = [q for q, qp in r.chart.planets.items()
+                             if q != p and qp.rasi_house == th]
+                casts.append(f"H{th} ({_ordinal(dist)} aspect"
+                             + (f"; on {', '.join(occupants)}" if occupants else "")
+                             + ")")
+        recv: list[str] = []
+        if pl is not None:
+            for q, qp in r.chart.planets.items():
+                if q != p and aspects_planet(q, p, r.chart):
+                    dist = ((pl.rasi_house - qp.rasi_house) % 12) + 1
+                    recv.append(f"{q} ({_ordinal(dist)} aspect)")
+        family_named = ("karaka for "
+                        + ", ".join(f"house {h} ({_HOUSE_NAME[h]})" for h in karaka_of
+                                    if h in _HOUSE_NAME)
+                        if karaka_of else "")
+        roles2: list[str] = []
+        if p == _lagna_lord:
+            strain = (powerful is False
+                      or (av in _AVASTHA_RESULTS and _AVASTHA_RESULTS[av][0] < 0))
+            roles2.append("the Lagna lord" + (" under strain" if strain else ""))
+        if p == r.ruler.strongest:
+            roles2.append("the chart's strongest planet by Shadbala")
+        if _yogas_of.get(p):
+            roles2.append("yoga-giver (" + ", ".join(_yogas_of[p]) + ")")
+        if p in _maraka_of:
+            roles2.append(f"maraka-bearer ({_maraka_of[p]})")
+        role_line = "; ".join(roles2) or "a supporting graha in this chart"
         bio = PlanetBiography(
             planet=p, census_count=sum(by_rel.values()),
             census_by_relation=tuple(sorted(by_rel.items())),
@@ -220,6 +292,12 @@ def build_planet_biographies(r: "DetailedReport", graph: JudgmentGraph,
             sign_text=gc.sign_result(p, sign) if sign else None,
             disease_text=disease, family_role=family,
             md_result_now=md_now, ad_result_now=ad_now,
-            transit_text=gc.transit_result(p))
+            transit_text=gc.transit_result(p),
+            functional_nature=_fn_map.get(p, ""),
+            rupas=rupas, powerful=powerful,
+            avastha_result=(_AVASTHA_RESULTS[av][1]
+                            if av in _AVASTHA_RESULTS else ""),
+            casts_drishti=tuple(casts), receives_drishti=tuple(recv),
+            family_role_named=family_named, role_line=role_line)
         out.append(PlanetBiography(**{**bio.__dict__, "prose": _compose_prose(bio)}))
     return tuple(out)

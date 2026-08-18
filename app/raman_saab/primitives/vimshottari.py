@@ -238,6 +238,62 @@ def timer_set(chart: RamanChart, house: int) -> frozenset[str]:
     return frozenset(ts)
 
 
+#: The role tags `timer_roles` can emit, in the order Raman lists the factors
+#: (HTJAH-I:1586-1596): the house's own lord, its karaka, occupants, aspecters,
+#: planets conjoining/aspecting the lord, the lord-from-the-Moon, and a node whose
+#: sign-dispositor is itself a timer (HTJAH-I:2764/8566).
+TIMER_ROLE_TAGS: Final[tuple[str, ...]] = (
+    "owns", "karaka", "occupies", "aspects house", "conjoins lord", "aspects lord",
+    "lord from Moon", "node of a timer's sign")
+
+
+def timer_roles(chart: RamanChart, house: int) -> dict[str, tuple[str, ...]]:
+    """Role-preserving decomposition of ``timer_set`` — the SAME factor logic, factor by
+    factor, so a renderer can say BY WHICH of Raman's enumerated factors (HTJAH-I:1586-1596)
+    a period lord influences a house ("owns", "aspects lord", ...) instead of asserting the
+    fructification tier bare. Raman himself always names the factor ("Saturn, as lord of
+    the 2nd, aspecting its lord ..."); this restores that derivation to the narration.
+
+    ``timer_set`` itself is deliberately UNTOUCHED — it feeds the live verdict machinery
+    (active_houses -> the golden ratchet's activation surfaces), so this is a NEW function;
+    the paired test pins ``frozenset(timer_roles(chart, h)) == timer_set(chart, h)`` for
+    every house, so the two implementations can never silently drift.
+
+    Returns {planet: (role tag, ...)} with tags in TIMER_ROLE_TAGS order, first-hit order
+    preserved per planet."""
+    roles: dict[str, list[str]] = {}
+
+    def _add(name: str, tag: str) -> None:
+        tags = roles.setdefault(name, [])
+        if tag not in tags:
+            tags.append(tag)
+
+    lord = _lord_of_house(chart, house)
+    _add(lord, "owns")                                            # the H-lord
+    _add(BHAVA_KARAKA.get(house, "Sun"), "karaka")                # the H-karaka
+    for name, p in chart.planets.items():                         # occupants / aspecters
+        if p.rasi_house == house:
+            _add(name, "occupies")
+        if drishti.aspects_house(name, house, chart):
+            _add(name, "aspects house")
+    lp = chart.planets.get(lord)
+    if lp is not None:                                            # conjoin/aspect the H-LORD
+        for name, p in chart.planets.items():
+            if name != lord:
+                if p.rasi_house == lp.rasi_house:
+                    _add(name, "conjoins lord")
+                if drishti.aspects_planet(name, lord, chart):
+                    _add(name, "aspects lord")
+    moon = chart.planets.get("Moon")
+    if moon is not None:                                          # H-lord from the Moon
+        _add(SIGN_LORDS[(moon.sign - 1 + (house - 1)) % 12 + 1], "lord from Moon")
+    for node in ("Rahu", "Ketu"):                                 # node via its dispositor
+        np_ = chart.planets.get(node)
+        if np_ is not None and SIGN_LORDS[np_.sign] in roles:
+            _add(node, "node of a timer's sign")
+    return {name: tuple(tags) for name, tags in roles.items()}
+
+
 # Secondary event houses unioned into the timer-set for a few matters (Raman reads gains from
 # the 2nd AND 11th; foreign travel from the 9th AND 12th).
 _EVENT_AUX_HOUSES: Final[dict[int, tuple[int, ...]]] = {2: (11,), 11: (2,), 9: (12,), 12: (9,)}

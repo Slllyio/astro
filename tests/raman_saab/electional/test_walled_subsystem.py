@@ -18,10 +18,10 @@ class TestWalledSubsystem:
     def test_electional_never_imports_the_judges(self):
         """The wall holds in the other doctrinally-relevant direction too: election verdicts
         come from MUHURTHA/ASP-15 rules, never from the natal judges' house verdicts."""
-        from app.raman_saab.electional import (asp_transit_elections, negative_windows,
-                                               panchanga_suitability, tarabala,
-                                               window_scorer)
+        from app.raman_saab.electional import (asp_transit_elections, day_scanner,
+                                               negative_windows, panchanga_suitability,
+                                               tarabala, window_scorer)
         for mod in (tarabala, negative_windows, panchanga_suitability,
-                    asp_transit_elections, window_scorer):
+                    asp_transit_elections, window_scorer, day_scanner):
             src = inspect.getsource(mod)
             assert "judges" not in src and "synthesis_rules" not in src, mod.__name__

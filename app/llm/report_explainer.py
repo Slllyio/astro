@@ -565,30 +565,26 @@ _WORKLINE_RE = re.compile(r"\b\d?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*:\d+(?:-\
 #: deterministic fallback) on any hit, and also on low grounding / bad anchors / self-authored
 #: citations, so a paraphrase that slips the regex is still contained by the other guards.
 _FORBIDDEN_RE = re.compile(
-    # DECREE/FORECAST language only. Descriptive-indication verbs ("points to", "tends to",
-    # "indicates") are deliberately NOT here — they describe the chart's tendency in classic
-    # astrological idiom and were narrowed out 2026-07-28 ("descriptive interpretation i
-    # want"); the line the guard holds is asserting a future LIFE EVENT as fact/probability.
-    # Hardened same day per the bphs-doctrine-reviewer PASS-WITH-NOTES: generic third-person
-    # futures, age/date-attached indications (incl. the newly-allowed verbs + a date), and
-    # active decree verbs — a grounded prediction is caught by NO other hard guard, so this
-    # denylist must carry that failure mode alone.
+    # DECREE language only (re-scoped 2026-08-17, user decision — "unblock prediction part"):
+    # TIMED INDICATIONS in classical idiom are now ALLOWED on every surface — "marriage is
+    # indicated during the Venus bhukti, 2027-2028", "wealth points to gains around 2031",
+    # "at age 30" — the dated-indication arms of the 2026-07-28 guard were removed. What the
+    # guard still holds is the DECREE voice: second/third-person future assertions ("you will
+    # marry"), certainty claims (promised/destined/certain/guaranteed), and first-person
+    # prophecy. Death/lifespan was ALSO lifted to timed-indication status by the same user
+    # decision (over the assistant's recorded recommendation to keep it walled — see
+    # DOCTRINE_BACKLOG "prediction unblock"): maraka periods and the span band may be stated
+    # as classically-timed indications; blunt death-timing assertions ("death around 2031",
+    # "will die") remain refused as decree, not indication. The Measured-Truth disclosure
+    # layer is unchanged and still attaches to every reading surface.
     r"\b(you'?ll|you will|s?he'?ll|they'?ll|"
     r"(?:he|she|they|it|one|the native|the person) (?:will|shall) \w+|"
     r"will (?:not |never )?(?:marry|die|divorce|earn|"
     r"lose|suffer|gain|inherit|become|happen|occur|come|bring)|is going to|are going to|"
     r"(?:is|are|will be) (?:promised|foretold|destined|certain|guaranteed)|"
-    # a DATED indication is a forecast, not a description: "marriage is indicated in 2027",
-    # "the chart points to marriage around 2028", "wealth is indicated at age 30"
-    r"(?:is|are) (?:likely|indicated|expected|promised|foretold) (?:in|by|around|before|"
-    r"after|near) (?:19|20)\d\d|"
-    r"(?:points? to|tends to|indicates?|signifies)[^.!?\n]{0,40}(?:in|by|around|near|"
-    r"before|after) (?:19|20)\d\d|"
-    r"at age \d{1,3}|in (?:his|her|their) \d{1,3}(?:st|nd|rd|th) year|"
-    r"promises \w+|brings \w+|foretells?|portends?|bound to \w+|sure to \w+|"
-    r"likely to|destined to|guaranteed to|"
+    r"bound to \w+|sure to \w+|destined to|guaranteed to|"
     r"i (?:predict|foresee|foretell)|it is certain|will definitely|shall (?:marry|die|inherit)|"
-    r"end of life|death (?:around|at|by|near)|die (?:around|at|by|before|after))\b",
+    r"death (?:around|at|by|near)|die (?:around|at|by|before|after))\b",
     re.IGNORECASE)
 
 

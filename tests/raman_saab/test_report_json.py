@@ -70,8 +70,10 @@ class TestSerializer:
             assert row["house"] == pf.house
 
     def test_chart_and_timeline_are_trimmed_not_raw(self, rjson):
-        """chart/timeline are display-trimmed (planet table / bhukti rows), not full-model dumps."""
-        assert set(rjson["chart"]) == {"asc_sign", "planets"}
+        """chart/timeline are display-trimmed (planet table / bhukti rows), not full-model dumps.
+        (Conscious append-only amendment 2026-08-17, Wave-1: asc_lon + ascendant joined the
+        trimmed chart so the cast is externally checkable — still a whitelist, not a raw dump.)"""
+        assert set(rjson["chart"]) == {"asc_sign", "planets", "asc_lon", "ascendant"}
         sun = rjson["chart"]["planets"]["Sun"]
         assert {"sign", "rasi_house", "shadbala_rupas"} <= set(sun)
         assert isinstance(rjson["timeline"], list) and rjson["timeline"]
@@ -89,3 +91,94 @@ class TestSerializer:
         assert "associated" in row
         a = row["activated"][0]
         assert {"house", "tier", "natal_verdict"} <= set(a)
+
+
+class TestAshtakavargaCompletenessJson:
+    """AV completeness (2026-08-17): the serializer ships the BAV matrix, the HPA-26 reduced
+    tables and the Sodya Pinda as append-only keys, matching the report's own rows."""
+
+    def test_new_av_keys_present_and_structured(self, report, rjson):
+        """bav_matrix / bav_reduced / sodya_pinda carry 7 typed rows each, values intact."""
+        assert len(rjson["bav_matrix"]) == len(rjson["bav_reduced"]) == 7
+        assert len(rjson["sodya_pinda"]) == 7
+        row = rjson["bav_matrix"][0]
+        assert {"planet", "bindus", "total", "seat_sign", "seat_bindus"} <= set(row)
+        assert len(row["bindus"]) == 12 and sum(row["bindus"]) == row["total"]
+        assert sum(r["total"] for r in rjson["bav_matrix"]) == 337
+        red = rjson["bav_reduced"][0]
+        assert {"planet", "trikona", "reduced"} <= set(red)
+        assert len(red["trikona"]) == len(red["reduced"]) == 12
+        sp = rjson["sodya_pinda"][0]
+        assert sp["total"] == sp["rasi"] + sp["graha"]
+        assert [r["planet"] for r in rjson["sodya_pinda"]] == [
+            x.planet for x in report.sodya_pinda]
+
+
+class TestWave1CompletenessJson:
+    """Wave-1 (2026-08-17) append-only keys: exact longitudes + Ascendant + nakshatra lords
+    on the chart, the maraka scheme with per-unit reasons, Baladi/Jagradadi states, and the
+    confluence score addends."""
+
+    def test_chart_carries_longitudes_ascendant_and_nak_lords(self, report, rjson):
+        """Planets gain lon/longitude/nakshatra_lord; the Ascendant ships as its own row
+        (canonical pins: asc ~173.99 -> 23 Vi 59'.., Moon Revati -> Mercury)."""
+        moon = rjson["chart"]["planets"]["Moon"]
+        assert {"lon", "longitude", "nakshatra_lord"} <= set(moon)
+        assert moon["nakshatra_lord"] == "Mercury"
+        assert abs(moon["lon"] - report.chart.planets["Moon"].lon) < 1e-5
+        asc = rjson["chart"]["ascendant"]
+        assert asc["sign"] == 6 and asc["longitude"].startswith("23 Vi 59'")
+        assert abs(rjson["chart"]["asc_lon"] - report.chart.asc_lon) < 1e-5
+
+    def test_maraka_scheme_and_reasons_serialized(self, rjson):
+        """The 'maraka' key carries the tiered units WITH their qualifying clauses."""
+        mk = rjson["maraka"]
+        assert mk is not None and mk["units"]
+        assert all(u["reasons"] for u in mk["units"])
+        assert {"drekkana22_lord", "navamsa64_lord"} <= set(mk)
+        venus = next(u for u in mk["units"] if u["graha"] == "Venus")
+        assert "lord of the 2nd" in venus["reasons"]
+
+    def test_baladi_jagradadi_states_serialized(self, rjson):
+        """Per-planet Baladi/Jagradadi via the judge's read-only accessor — canonical pin
+        Saturn = Mrita/Swapna."""
+        bj = rjson["baladi_jagradadi"]
+        assert bj["Saturn"] == {"baladi": "Mrita", "jagradadi": "Swapna"}
+        assert len(bj) == 9
+
+    def test_maraka_saturn_rows_carry_score_parts(self, rjson):
+        """Each confluence row's tier addends are present and reproduce the score."""
+        assert rjson["maraka_saturn"]
+        for row in rjson["maraka_saturn"]:
+            assert row["score_parts"]
+            terms = row["score_parts"].split(" + ")
+            assert sum(int(t.rsplit(" ", 1)[1]) for t in terms) == row["score"]
+
+
+class TestWave1TimingKeys:
+    """Wave-1 (2026-08-17): the appended timing keys and the per-row delivery quality."""
+
+    def test_new_timing_keys_appended_and_serializable(self, rjson):
+        """pratyantar_now / sade_sati_phases / chara_sequence are present, structured and
+        JSON-safe — the same objects the markdown renders."""
+        assert len(rjson["pratyantar_now"]) == 9
+        assert {"maha", "antar", "pratyantar", "start_jd",
+                "end_jd"} <= set(rjson["pratyantar_now"][0])
+        assert rjson["sade_sati_phases"]
+        assert {"phase", "house_from_moon", "sign", "start_jd", "end_jd",
+                "current"} <= set(rjson["sade_sati_phases"][0])
+        assert rjson["chara_sequence"]
+        assert sum(1 for c in rjson["chara_sequence"] if c["current"]) == 1
+        json.dumps({k: rjson[k] for k in ("pratyantar_now", "sade_sati_phases",
+                                          "chara_sequence")})
+
+    def test_timeline_activated_rows_carry_delivery_quality(self, rjson):
+        """Every activated house row ships its md_quality/antar_quality LordQuality objects
+        (HTJAH-II:10004-10008) — previously computed but absent from the JSON contract."""
+        row = rjson["timeline"][0]["activated"][0]
+        assert row["md_quality"]["tag"] in ("well", "poorly", "mixed", "unknown")
+        assert row["md_quality"]["lord"] == rjson["timeline"][0]["maha"]
+        assert "antar_quality" in row
+        for tp in rjson["timeline"]:
+            for a in tp["activated"]:
+                assert {"md_quality", "antar_quality"} <= set(a)

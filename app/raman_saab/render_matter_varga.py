@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from app.raman_saab.judges.matter_varga_reading import MatterVargaReading
 from app.raman_saab.judges.saptamsa_reading import Tagged
+from app.raman_saab.ordinals import ordinal
 
 _SIGN = ("", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
          "Sagittarius", "Capricorn", "Aquarius", "Pisces")
@@ -31,7 +32,7 @@ def to_text(r: MatterVargaReading) -> str:
         L.append(f"* {_tag(n)}")
     L.append("")
     L.append("-- RAMAN CORE (authoritative - his real house-method decides) --")
-    L.append(f"  {c.house}th house : {_sign(c.house_sign)} (lord {c.house_lord} in house "
+    L.append(f"  {ordinal(c.house)} house : {_sign(c.house_sign)} (lord {c.house_lord} in house "
              f"{c.house_lord_house}, {c.house_lord_dignity})")
     if c.house_occupants:
         L.append(f"  occupants : {', '.join(c.house_occupants)}")
@@ -46,7 +47,7 @@ def to_text(r: MatterVargaReading) -> str:
     L.append(f"-- D-{ov.varga} OVERLAY (report-only corroboration) --")
     L.append(f"  lagna : {_sign(ov.lagna_sign)} (lord {ov.lagna_lord})"
              + (f", occupied by {', '.join(ov.lagna_occupants)}" if ov.lagna_occupants else ""))
-    L.append(f"  the {c.house}th in D-{ov.varga}: {_sign(ov.house_sign_in_varga)}"
+    L.append(f"  the {ordinal(c.house)} in D-{ov.varga}: {_sign(ov.house_sign_in_varga)}"
              + (f", occupied by {', '.join(ov.house_occupants_in_varga)}"
                 if ov.house_occupants_in_varga else ""))
     L.append("=" * 72)

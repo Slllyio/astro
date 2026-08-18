@@ -60,6 +60,38 @@ def state(planet: str, chart: RamanChart) -> str:
     return "Santha"
 
 
+def states_all(planet: str, chart: RamanChart) -> tuple[str, ...]:
+    """EVERY Deeptadi state the planet matches, in `state()`'s own priority order (dignity
+    first, then combustion, retrogression, position) — so the head of the tuple is always
+    exactly `state()`'s answer and the tail is the secondary states that answer hides.
+    Additive DISCLOSURE accessor (2026-08-18 report-critique): a retrograde planet in an
+    enemy sign is Deena AND Sakta; showing only Deena beside a positions table that shows
+    'retrograde' reads as a contradiction. Nothing judges from the tail; `state()` itself
+    is unchanged."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return ("Santha",)
+    d = dignity(planet, chart)
+    matches: list[str] = []
+    if d == "exalt":
+        matches.append("Deeptha")
+    if d in ("own", "moolatrikona"):
+        matches.append("Swastha")
+    if d == "debil":
+        matches.append("Khala")
+    if planet not in ("Sun", "Rahu", "Ketu") and getattr(p, "combust_fraction", 0.0) >= 0.5:
+        matches.append("Vikala")
+    if d == "enemy":
+        matches.append("Deena")
+    if getattr(p, "retrograde", False):
+        matches.append("Sakta")
+    if d == "friend":
+        matches.append("Muditha")
+    if (p.lon % 30.0) >= 22.5:                      # last quarter (4th pada) of the sign
+        matches.append("Peedya")
+    return tuple(matches) if matches else ("Santha",)
+
+
 def polarity(planet: str, chart: RamanChart) -> int:
     """+1 (Deeptha/Swastha/Muditha/Santha/Sakta) or -1 (the afflicted states)."""
     return RESULTS[state(planet, chart)][0]

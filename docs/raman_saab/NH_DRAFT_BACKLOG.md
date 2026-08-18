@@ -44,6 +44,19 @@ tuner-gated verdict-path track, not clause work.
 
 ## Second cluster: H4 mother / education (7 misses)
 
+### UPDATE (2026-08-17): priority re-ranked by the Stage-9 scorecard — WAIT on DRAFT confirmation
+
+The first full Stage-9 measurement (`docs/raman_saab/STAGE9_SCORECARD.md`) shows confirmed
+H4 accuracy is already **16/16** — this cluster's misses live entirely in NH DRAFT rows
+(chart_18/23/31/49 H4 et al.), which the ratchet cannot see until user-confirmed. Two
+blockers therefore precede the Moon-frame encoding: (1) **user confirmation of the H4 NH
+DRAFTs** (otherwise the frame moves nothing measurable and cannot be regression-guarded);
+(2) **corpus access** for the frame rules' citations (no clean placement discriminator
+exists per the 2026-07-24 diagnostic — the frame needs fresh cited doctrine, and G7
+forbids encoding uncited rules). Sequenced: confirm DRAFTs → corpus-machine citation
+mining → frame encoding under the full protocol.
+
+
 `children` (5), `education` (4), `mother` (3) dominate after career. Several read
 insufficient-evidence (chart_18/23/31/49 H4). This corroborates the roadmap's **UNIMPLEMENTED H4
 mother-from-Moon frame** (`significations.py:218` declares `alternate_frame_core="Moon"` but

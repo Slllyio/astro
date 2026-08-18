@@ -21,7 +21,17 @@ _FLAG = {True: "strong", False: "weak", None: "n/a"}
 # ASCII so the worksheet prints on any console (incl. Windows CP1252).
 _REPL = {"→": "->", "←": "<-", "—": "-", "–": "-", "‘": "'",
          "’": "'", "“": '"', "”": '"', "…": "...", "°": " deg",
-         "×": "x", "½": "1/2", "¾": "3/4", "¼": "1/4"}
+         "×": "x", "½": "1/2", "¾": "3/4", "¼": "1/4",
+         "·": "-", "±": "+-"}
+
+# Decorative emoji (the plain-terms avastha analogies) fold to nothing rather than "?"
+# mojibake; the emoji+space form first so no stray double space is left behind, and the
+# bare VS-16 selector last so any emoji already stripped leaves no invisible residue.
+for _e in ("⚠️", "⚠", "❌", "🌤", "🌫", "💪", "🔥", "😌", "🙂"):
+    _REPL[_e + " "] = ""
+    _REPL[_e] = ""
+_REPL["️"] = ""
+del _e
 
 
 def _ascii(s: str) -> str:

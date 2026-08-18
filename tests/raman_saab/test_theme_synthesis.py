@@ -18,18 +18,24 @@ from app.raman_saab.theme_synthesis import build_theme_synthesis
 
 _MAINPURI = BirthData("Mainpuri", 1989, 10, 12, 10, 2, 5.5, 27.23, 79.03)
 _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
-_BANGALORE_EVENING = BirthData("BLR-eve", 1988, 3, 21, 18, 30, 5.5, 12.97, 77.59)
+
+#: A FIXED reference date. ``build_detailed_report`` defaults ``on=None``, which makes ``ref_jd``
+#: today — and the timing assertions below are all measured FORWARD from ``ref_jd``: that every
+#: theme has a forward window, that at least two distinct windows exist, that H7 never reaches the
+#: top tier ahead, and that a nodal chapter falls inside the shown span. Left on a moving "today"
+#: each of those can flip on a date unrelated to any code change, so the suite would rot silently.
+_ON = (2026, 8, 18)
 
 
 @pytest.fixture(scope="module")
 def mainpuri():
-    r = build_detailed_report(_MAINPURI)
+    r = build_detailed_report(_MAINPURI, on=_ON)
     return r, build_theme_synthesis(r)
 
 
 @pytest.fixture(scope="module")
 def canonical():
-    r = build_detailed_report(_CANONICAL)
+    r = build_detailed_report(_CANONICAL, on=_ON)
     return r, build_theme_synthesis(r)
 
 
@@ -38,7 +44,7 @@ class TestThemeSynthesisContract:
 
     def test_produces_ranked_themes_and_a_spine(self, mainpuri):
         """The layer discovers several life-themes and names a 3-7 dominant spine."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         assert len(ts.themes) >= 4
         assert 3 <= len(ts.spine) <= 5
         # spine ids are real theme ids, ranked (weight non-increasing)
@@ -49,7 +55,6 @@ class TestThemeSynthesisContract:
 
     def test_headline_verdict_is_a_passthrough(self, mainpuri, canonical):
         """K2 — every theme's headline byte-equals its primary house rollup; NO re-judgment."""
-        from app.raman_saab.detailed_report import _MATTER_HOUSE
         for r, ts in (mainpuri, canonical):
             proformas = {pf.house: pf for pf in r.proformas}
             for t in ts.themes:
@@ -84,7 +89,7 @@ class TestThemeSynthesisContract:
 
     def test_no_statistical_link_in_a_doctrine_claim(self, mainpuri, canonical):
         """K4 — population/statistical material is never stamped as a Raman/verdict link."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 for lk in t.links:
                     if lk.provenance == thm.STATISTICAL:
@@ -94,7 +99,7 @@ class TestThemeSynthesisContract:
     def test_the_layer_authors_no_citation(self, mainpuri, canonical):
         """K11 — the layer never mints a WORK:line; a cite is only ever an object it inherited
         from the source finding (never a string it composed)."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 for lk in t.links:
                     if lk.cite is not None:
@@ -105,7 +110,7 @@ class TestThemeSynthesisContract:
     def test_contradictions_cite_a_governing_rule(self, mainpuri, canonical):
         """K6 — every contradiction is classified and resolved by an existing precedence id."""
         seen = 0
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 for c in t.contradictions:
                     seen += 1
@@ -117,7 +122,7 @@ class TestThemeSynthesisContract:
     def test_convergence_reports_both_poles(self, mainpuri, canonical):
         """K — convergence is evidentiary and always states agreement AND opposition (never a
         cherry-picked single pole; the median chart carries both at all times)."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 assert t.convergence in ("VERY_HIGH", "HIGH", "MODERATE", "MIXED", "WEAK")
                 assert "agree" in t.convergence_why and "oppose" in t.convergence_why
@@ -126,7 +131,7 @@ class TestThemeSynthesisContract:
     def test_three_axes_stay_separate(self, mainpuri):
         """K/item-7 — direction, magnitude and state are distinct axes, not one collapsed score.
         A well-evidenced theme carries at least a verdict axis plus a magnitude or state axis."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         rich = [t for t in ts.themes if len(t.links) >= 6]
         assert rich, "expected at least one richly-evidenced theme on Mainpuri"
         for t in rich:
@@ -137,7 +142,7 @@ class TestThemeSynthesisContract:
     def test_dasha_and_transit_are_engine_sourced(self, mainpuri):
         """K7/K9/K10 — dasha links come from the tier grader, transit links only from the
         subordinated dasha-x-transit confluence (never an independent transit prediction)."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         for t in ts.themes:
             for lk in t.links:
                 if lk.axis == "dasha":
@@ -172,7 +177,7 @@ class TestThemeSynthesisContract:
     def test_connections_dasha_evolution_and_varga_matrix(self, mainpuri):
         """Stage-3 consolidated views: the cross-theme fabric, the time-axis evolution, and the
         varga matrix — all re-reads, all present on a rich chart."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         # connections: at least one pair shares a mechanism, and the shared factor is real
         assert ts.connections, "no cross-theme connection discovered on Mainpuri"
         names = {t.name for t in ts.themes}
@@ -219,7 +224,7 @@ class TestThemeSynthesisContract:
     def test_generic_across_charts(self, mainpuri, canonical):
         """The architecture is generic, not tuned to one chart: both charts yield themes, a
         spine, a portrait with actors, and at least one contradiction somewhere."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             assert ts.themes and ts.spine and ts.portrait.dominant_actors
             assert any(t.contradictions for t in ts.themes) or ts.portrait.principal_tension
 
@@ -248,7 +253,7 @@ class TestThemeSynthesisContract:
     def test_principal_tension_names_a_real_structural_pull(self, mainpuri):
         """The principal tension is the chart's own favourable-vs-strained pull (or the single
         most load-bearing contradiction), never a bare method note about the layer itself."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         pt = ts.portrait.principal_tension
         assert pt and "contradiction is flagged" not in pt   # the old placeholder is gone
 
@@ -256,7 +261,7 @@ class TestThemeSynthesisContract:
         """A house theme exposes its facets (the dashboard matters that live in it), each with
         its own dedicated-reader verdict — this is where a house-vs-matter grain split is told
         ONCE, inside the theme (e.g. H4 mother favourable while property afflicted)."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         by = {t.theme_id: t for t in ts.themes}
         foundations = by.get("foundations")
         assert foundations is not None, "the house-based foundations theme did not build"
@@ -269,7 +274,7 @@ class TestThemeSynthesisContract:
     def test_convergence_label_is_reader_facing(self, mainpuri, canonical):
         """Every theme carries a reader-facing convergence phrase distinct from the raw tier
         (e.g. 'aligned, but lightly evidenced' for a WEAK-but-unopposed theme)."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 assert t.convergence_label
                 if t.convergence == "WEAK":
@@ -295,7 +300,7 @@ class TestThemeSynthesisContract:
         """The WHEN axis must not be silent: each theme names the bhukti ahead that best supports
         its bhava, graded on Raman's four-tier fructification scheme (HTJAH-I:1592-1596)."""
         from app.raman_saab.theme_synthesis import _TIER_ORDER
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 assert t.activation_span, f"{t.theme_id} carries no timing window"
                 assert "bhukti" in t.activation_span
@@ -319,7 +324,7 @@ class TestThemeSynthesisContract:
     def test_timing_discloses_a_theme_never_reaching_the_top_tier(self, mainpuri):
         """A bhava the coming years support only weakly says so — that is a finding, not an
         absence to hide. On Mainpuri, H7 (marriage) never reaches par excellence ahead."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         marriage = next((t for t in ts.themes if t.theme_id == "marriage"), None)
         assert marriage is not None
         assert "not carried to the top tier" in marriage.activation_span
@@ -358,7 +363,7 @@ class TestThemeSynthesisContract:
         """REPORT COMPLETENESS — all twelve bhavas carry a theme. H1 (the self), H8 (longevity
         and crisis) and H12 (loss and withdrawal) used to appear only as SUPPORT houses inside
         other themes, so the reading never stated what the chart says about them directly."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             primaries = {t.houses[0] for t in ts.themes}
             assert primaries == set(range(1, 13)), (
                 f"bhavas with no theme of their own: {sorted(set(range(1, 13)) - primaries)}")
@@ -367,7 +372,7 @@ class TestThemeSynthesisContract:
         """No silent approximation — H8 and H12 have no varga assigned to them in the domain
         table, so their themes must carry NO karakas and NO citation borrowed from some other
         division, and must disclose that they are read from the rasi."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         for tid in ("gains", "longevity", "liberation"):
             t = next(x for x in ts.themes if x.theme_id == tid)
             assert not t.karakas, f"{tid} borrowed karakas from a division it was not assigned"
@@ -379,13 +384,13 @@ class TestThemeSynthesisContract:
     def test_the_self_theme_uses_the_rasi_domain(self, mainpuri):
         """H1 DOES have an explicit division — D1 Rasi, 'the body and the whole horoscope' —
         so the self theme carries that domain and its karaka rather than a plain description."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         self_t = next(x for x in ts.themes if x.theme_id == "self")
         assert "body" in self_t.domain and self_t.karakas
 
     def test_narrative_and_heading_agree_on_convergence(self, mainpuri, canonical):
         """The sentence and the heading must never disagree — both use convergence_label."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 if t.convergence not in ("VERY_HIGH", "HIGH") and not t.contradictions:
                     assert t.convergence_label in t.final_interpretation, (
@@ -395,7 +400,7 @@ class TestThemeSynthesisContract:
         """A spine that names most of the roster names nothing. It must stay a clear minority of
         the themes, and the cut must land on an actual drop in the ranking — not on a constant
         ceiling (the old rule returned its maximum of 7 on every chart measured)."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             assert len(ts.spine) < len(ts.themes) / 2, "the spine is not a minority"
             ranked = list(ts.themes)
             cut = len(ts.spine)
@@ -409,7 +414,7 @@ class TestThemeSynthesisContract:
     def test_evidence_weight_terms_all_discriminate(self, mainpuri):
         """Ranking inputs must carry information. The weight must actually separate the themes
         (a near-constant term dressed up as a signal is what made the old spine degenerate)."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         weights = [t.evidence_weight for t in ts.themes]
         assert len(set(round(w, 2) for w in weights)) >= len(weights) // 2, (
             "evidence weights are too clustered to rank on")
@@ -432,6 +437,55 @@ class TestThemeSynthesisContract:
                 assert not spec.name.startswith(lab) and not lab.startswith(spec.name), (
                     f"theme {spec.theme_id!r} named {spec.name!r} collides with the pinned "
                     f"section marker '## {lab}' — rename the theme")
+
+    def test_the_transit_axis_actually_fires(self, mainpuri):
+        """Regression: ``ConfluenceWindow`` carries ``planet``/``role``/JD bounds and has NO
+        ``houses`` or ``label`` field, so probing for those matched nothing and the transit axis
+        emitted ZERO links on every chart while looking implemented. Confluences are matched by
+        planet, and each planet+role appears at most once (r.dasha_transit holds a row per
+        bhukti-and-segment overlap, so one period lord otherwise repeats identically)."""
+        r, ts = mainpuri
+        assert r.dasha_transit, "fixture carries no confluence rows to match against"
+        links = [lk for t in ts.themes for lk in t.links if lk.axis == "transit"]
+        assert links, "the transit axis emitted nothing despite available confluence rows"
+        for t in ts.themes:
+            vals = [lk.value for lk in t.links if lk.axis == "transit"]
+            assert len(vals) == len(set(vals)), f"{t.theme_id} repeats an identical transit row"
+        planets = {getattr(c, "planet", None) for c in r.dasha_transit}
+        for lk in links:
+            assert any(p and lk.value.startswith(p) for p in planets), (
+                f"transit link {lk.value!r} names no planet from r.dasha_transit")
+
+    def test_a_mixed_headline_is_reported_as_undecided(self, mainpuri):
+        """Regression: a non-directional ('mixed') rollup gives the counting loop nothing to
+        compare, so it fell through to WEAK and printed 'aligned, but lightly evidenced' beside
+        '0 of 0 independent axes agree' — claiming an alignment that was never tested."""
+        r, ts = mainpuri
+        mixed = [t for t in ts.themes if t.headline_verdict == "mixed"]
+        assert mixed, "no mixed-headline theme on this fixture to exercise the branch"
+        for t in mixed:
+            assert t.convergence == "MIXED"
+            assert "aligned" not in t.convergence_label
+            assert "undecided" in t.convergence_label
+            assert "agree" in t.convergence_why and "oppose" in t.convergence_why
+
+    def test_markdown_table_cells_escape_pipes(self):
+        """A literal '|' in an interpolated cell splits the row and shifts every later cell, and
+        these cells carry free prose (an insight's detail, a yoga name)."""
+        from app.raman_saab.detailed_report import _md_cell
+        assert _md_cell("a|b") == "a\\|b"
+        assert _md_cell("plain") == "plain"
+
+    def test_contradiction_parties_are_data_not_parsed_prose(self, mainpuri, canonical):
+        """The narrative names the differing facets from ``Contradiction.parties``; recovering
+        them by slicing the pole prose breaks silently when the wording changes."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                for c in t.contradictions:
+                    if c.governing == "PREC-1":
+                        assert c.parties, "a PREC-1 grain tension carries no structured parties"
+                        for name in c.parties:
+                            assert name in c.poles[1], "parties disagree with the prose pole"
 
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import

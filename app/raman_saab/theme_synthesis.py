@@ -78,6 +78,9 @@ class Contradiction:
     poles: tuple[str, str]          # the two findings, each carrying its own accessor
     governing: str                  # the PREC-id (or doctrine tag) that resolves it
     resolution: str
+    parties: tuple[str, ...] = ()   # the named participants (e.g. the facets that differ), as DATA
+    #: `poles` is prose for the reader; `parties` carries the same names structurally so a
+    #: renderer never has to parse the sentence back apart to recover them.
 
 
 @dataclass(frozen=True)
@@ -154,7 +157,7 @@ class ThemeSynthesis:
     executive portrait, the cross-theme fabric, and the dasha evolution. Built last, re-read
     only."""
     themes: tuple[ThemeReading, ...]
-    spine: tuple[str, ...]          # theme_ids of the 3-7 dominant themes
+    spine: tuple[str, ...]          # theme_ids of the 3-5 dominant themes (see _spine_size)
     frame: str
     portrait: ExecutivePortrait
     connections: tuple[ThemeConnection, ...] = ()
@@ -309,7 +312,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         links.extend(_yoga_links(r, houses, yoga_house_bearings))
         links.extend(_strength_state_links(r, prim_house, pf, dom_planets))
         links.extend(_dasha_links(r, houses))
-        links.extend(_transit_links(r, houses))
+        links.extend(_transit_links(r, houses, dom_planets, planet_houses))
         links.extend(_insight_links(r, houses))
 
         # pass 4: convergence (evidentiary count, both poles)
@@ -336,7 +339,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     spine = tuple(t.theme_id for t in themes[:_spine_size(themes)])
     frame = getattr(r.overview, "stronger_frame", "") or ""
     portrait = _portrait(r, themes, spine, frame)
-    connections = _connections(themes, spine)
+    connections = _connections(themes)
     evolution = _dasha_evolution(r, themes)
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
                           connections=connections, dasha_evolution=evolution)
@@ -518,18 +521,35 @@ def _dasha_links(r, houses) -> list[ThemeEvidenceLink]:
     return out
 
 
-def _transit_links(r, houses) -> list[ThemeEvidenceLink]:
-    """Transit as the SUBORDINATE modifier only — a dasha-x-transit confluence row whose
-    period lord activates one of the theme's houses. Never an independent prediction."""
+def _transit_links(r, houses, dom_planets, planet_houses) -> list[ThemeEvidenceLink]:
+    """Transit as the SUBORDINATE modifier only — a dasha-x-transit confluence whose period lord
+    bears on this theme. Never an independent prediction (HTJAH-II:4679-4687: transits are
+    catalytic, all conclusions drawn primarily on Dasa-vichara).
+
+    ``ConfluenceWindow`` carries ``planet``/``role``/JD bounds — it has NO ``houses`` or ``label``
+    field, so the earlier attribute probe silently matched nothing and this axis emitted zero
+    links on every chart. The confluence is matched by its PLANET instead: it bears on the theme
+    when that planet drives the theme or influences one of the theme's houses. One link per
+    planet+role — ``r.dasha_transit`` holds a row per bhukti-and-segment overlap, so a single
+    period lord otherwise repeats the identical row many times over."""
     hset = set(houses)
+    drivers = set(dom_planets)
     out: list[ThemeEvidenceLink] = []
+    seen: set[tuple[str, str]] = set()
     for c in getattr(r, "dasha_transit", ()) or ():
-        chouses = set(getattr(c, "houses", ()) or ())
-        if chouses and (chouses & hset):
-            lbl = getattr(c, "label", None) or getattr(c, "planet", "period lord")
-            out.append(ThemeEvidenceLink(
-                "transit", "Dasha x transit confluence", str(lbl), "neutral",
-                "r.dasha_transit @ detailed_report.py:1506", RAMAN_GENERAL))
+        planet = getattr(c, "planet", None)
+        if not planet:
+            continue
+        if planet not in drivers and not (planet_houses.get(planet, set()) & hset):
+            continue
+        role = str(getattr(c, "role", "") or "")
+        if (planet, role) in seen:
+            continue
+        seen.add((planet, role))
+        out.append(ThemeEvidenceLink(
+            "transit", "Dasha x transit confluence",
+            f"{planet}{f' ({role})' if role else ''} well-placed by transit in its own period",
+            "neutral", "r.dasha_transit[*].planet @ detailed_report.py:1526", RAMAN_GENERAL))
     return out
 
 
@@ -576,8 +596,13 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
     d9 = any(lk.axis == "varga" and _dir(lk.lean) == head and head != 0 for lk in links)
     active = any(lk.axis == "dasha" for lk in links)
     present = agree + oppose
-    if present >= 5 and oppose == 0 and d9 and active:
-        conv: Convergence = "VERY_HIGH"
+    # a NON-DIRECTIONAL headline (a 'mixed' rollup) has nothing for an axis to agree or disagree
+    # with, so the counting loop above skips every link. Reporting that as WEAK/'aligned' would
+    # claim an alignment that was never tested — say plainly that the headline is undecided.
+    if head == 0:
+        conv: Convergence = "MIXED"
+    elif present >= 5 and oppose == 0 and d9 and active:
+        conv = "VERY_HIGH"
     elif agree >= 4 and oppose <= 1:
         conv = "HIGH"
     elif present >= 3 and agree > oppose:
@@ -587,13 +612,19 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
     else:
         conv = "MIXED"
     # reader label — 'weak' when few axes AGREE is misleading; call that 'lightly evidenced'
-    if conv == "WEAK":
+    if head == 0:
+        label = "the headline itself is undecided"
+    elif conv == "WEAK":
         label = "aligned, but lightly evidenced" if oppose == 0 else "little agreement"
     elif conv == "MIXED":
         label = "the evidence splits both ways"
     else:
         label = conv.replace("_", " ").lower() + " convergence"
-    why = (f"{agree} of {present} independent axes agree with the headline and {oppose} oppose it "
+    counted = ("the headline is undecided, so no axis can agree or oppose it (0 agree, 0 oppose)"
+               if head == 0 else
+               f"{agree} of {present} independent axes agree with the headline and "
+               f"{oppose} oppose it")
+    why = (f"{counted} "
            f"({'the navamsa confirms' if d9 else 'the navamsa is neutral/absent'}; "
            f"{'the running period lights it' if active else 'not currently lit'}); "
            f"an evidentiary count, not a probability.")
@@ -623,7 +654,8 @@ def _contradictions(r, prim_house, pf, headline, facets, theme_name) -> tuple[Co
             f"The bhava is graded by its single weakest matter, so H{prim_house} reads "
             f"{headline}; each matter above is judged by its own dedicated reader. Both are "
             f"true at different grain — ask the matter for {', '.join(differ)}, the house for "
-            f"the bhava as a whole."))
+            f"the bhava as a whole.",
+            parties=tuple(differ)))
 
     # D. split-status within the house -> PREC-3
     split = _safe(lambda: dr.signification_tenor_split(r.calibration.get(prim_house)), None)
@@ -739,11 +771,12 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     lead = dom_planets[0] if dom_planets else "the chart"
     body = f"{name} reads {headline}, carried chiefly by {lead}"
     grain = next((c for c in contradictions if c.governing == "PREC-1"), None)
-    if grain:
-        # the house-vs-matters split IS the interpretation here
-        differ = grain.poles[1]
+    if grain and grain.parties:
+        # the house-vs-matters split IS the interpretation here. The differing facets come from
+        # `parties` as data — recovering them by slicing the pole PROSE (as this once did) breaks
+        # silently the moment the contradiction's wording changes.
         body += (f"; the bhava as a whole takes its tone from its weakest matter, though "
-                 f"{differ.split('but ', 1)[-1].split(' each read')[0]} read the other way")
+                 f"{', '.join(grain.parties)} read the other way")
     elif convergence in ("VERY_HIGH", "HIGH"):
         body += ", and the independent readings converge strongly"
     else:
@@ -783,7 +816,7 @@ def _weight(convergence, links, r, houses, dom_planets) -> float:
     return base + centrality + breadth + prio
 
 
-def _connections(themes, spine) -> tuple[ThemeConnection, ...]:
+def _connections(themes) -> tuple[ThemeConnection, ...]:
     """Discover a GENUINE shared mechanism between two themes — a strong tie, not a coincidence.
     A connection needs EITHER the same CHIEF driving planet (dom_planets[0] equal — the same graha
     leads both), OR one theme's PRIMARY house sitting inside the other's network (a real
@@ -961,7 +994,7 @@ def _portrait(r, themes, spine, frame) -> ExecutivePortrait:
     for i, bio in enumerate((getattr(r, "planet_bios", ()) or ())[:3]):
         breakdown = sorted((getattr(bio, 'census_by_relation', ()) or ()),
                            key=lambda kv: kv[1], reverse=True)
-        roles = ", ".join(f"{v}× {_REL_WORD.get(k, k.replace('_', ' '))}" for k, v in breakdown[:4])
+        roles = ", ".join(f"{v}x {_REL_WORD.get(k, k.replace('_', ' '))}" for k, v in breakdown[:4])
         lead = "the chart's busiest graha" if i == 0 else "also prominent"
         why = f"{lead} — {bio.census_count} structural roles" + (f" ({roles})" if roles else "")
         actors.append((bio.planet, why))

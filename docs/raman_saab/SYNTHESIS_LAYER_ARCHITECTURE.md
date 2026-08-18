@@ -56,10 +56,15 @@ the report and explains them; it removes nothing.
 
 ## C. Proposed data model
 
+> **As-built note.** The roster shipped as a fixed twelve-bhava `_THEME_ROSTER` (one theme per
+> bhava), not as a projection of the sixteen `varga_domains.DOMAINS`. A varga domain supplies a
+> theme's `karakas`/`domain`/`source` where one is assigned; H8, H11 and H12 have no classical
+> division and carry a plain description with no karakas and no citation.
+
 Three frozen dataclasses, every field a passthrough or a re-read with an accessor string
 for traceability:
 
-```
+```text
 ThemeEvidenceLink (frozen)
   axis:        Literal['verdict','magnitude','state','dasha','varga','transit','yoga','citation']
   label:       str            # human label ("H10 rollup", "D9 navamsa", "Saturn MD lights H2/H11")
@@ -71,9 +76,11 @@ ThemeEvidenceLink (frozen)
 
 ThemeReading (frozen)
   theme_id:          str
-  name:              str            # from varga_domains.DOMAINS
+  name:              str            # from _THEME_ROSTER (the varga domain supplies only
+                                    # karakas/domain/source, and may be absent entirely)
   domain:            str
-  houses:            tuple[int,...] # domain.related_houses
+  houses:            tuple[int,...] # roster primary_house + the support houses that
+                                    # survive _discover_support (evidence-gated)
   karakas:           tuple[str,...] # domain.karakas
   headline_verdict:  str            # PASSTHROUGH of pf.rollup / dashboard — never recomputed
   driver:            str            # rollup_driver(...)
@@ -94,7 +101,7 @@ Contradiction (frozen)
 
 ThemeSynthesis (frozen)
   themes:      tuple[ThemeReading,...]   # ranked by evidence strength
-  spine:       tuple[str,...]            # theme_ids of the 3–7 dominant themes
+  spine:       tuple[str,...]            # theme_ids of the 3–5 dominant themes
   frame:       str                       # stronger frame (lagna/moon), from chart_overview
   portrait:    ExecutivePortrait         # the two-page opening
 ```
@@ -125,9 +132,11 @@ predictions.
    houses gives `dominant_planets` — the *why* is the census breakdown itself, no invented
    score.
 4. **Convergence** (§E) and **contradiction** (§F) classification per theme.
-5. **Ranking** — themes ordered by evidence weight (convergence tier × axis count ×
-   `digest` priority of any digest item whose houses overlap); the top 3–7 form the
-   `spine`.
+5. **Ranking** — themes ordered by evidence weight (convergence tier + centrality among the
+   chart's top census grahas + network breadth + `digest` priority of any digest item whose
+   houses overlap); the spine is cut at the largest drop in the ranking, 3–5 themes.
+   *(As-built: the original design multiplied by axis count. Measured, every theme carries
+   the same 5–6 axes, so that term was a constant and was replaced.)*
 6. **Portrait + spine assembly**, then prose (§ built via the Evidence pipeline, not here).
 
 ## E. Scoring / convergence methodology (evidentiary, never probability)
@@ -214,7 +223,7 @@ re-read table, not new essays.
 
 Add a high-level interpretive layer **above** the technical sections; remove nothing:
 
-```
+```text
 1. Executive Portrait            (new — ThemeSynthesis.portrait)
 2. What Dominates This Horoscope (new — spine names + dominant actors)
 3. Interpretive Spine            (new — the 3–7 spine themes, each a mechanism chain)
@@ -252,7 +261,7 @@ checks as assertions on the Mainpuri + canonical + several golden charts:
 10. `_FORBIDDEN_RE` decree-guard sweep over all theme prose (timed idiom allowed, decree refused).
 11. The layer authors no `WORK:line` (`provenance_check` would treat it as fabricated).
 12. **Golden ratchet byte-identical** — 259/293, the hard gate, proving zero verdict drift.
-13. Contract + completeness: the new section renders on all four surfaces, no new `## ` in a
+13. Contract + completeness: the new section renders on all four surfaces, no new `##` heading in a
     frozen prefix.
 
 ## L. Risks of false synthesis (codebase-specific, with guardrails)

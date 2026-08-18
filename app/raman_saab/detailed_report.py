@@ -4013,8 +4013,10 @@ def build_detailed_report(
     try:
         from app.raman_saab.theme_synthesis import build_theme_synthesis
         final = _dc_replace(final, themes=build_theme_synthesis(final))
-    except Exception:  # noqa: BLE001 — sparse/Track-B chart
-        pass
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart; must never block the report
+        # log the cause: without this a synthesis regression silently degrades every chart to
+        # the "not available" fallback with no trace of why
+        logger.debug("integrated reading (theme synthesis) skipped", exc_info=True)
     return final
 
 
@@ -4083,6 +4085,13 @@ def _quote_or_absent(text: str | None, cite: str) -> str:
 _AXIS_LABEL = {"verdict": "verdict", "magnitude": "strength", "state": "state",
                "dasha": "timing", "varga": "divisional", "transit": "transit",
                "yoga": "yoga", "citation": "cross-feature"}
+
+
+def _md_cell(s: object) -> str:
+    """A markdown table cell. A literal `|` inside an interpolated value would split the row and
+    shift every later cell, and these cells carry free prose (a fired insight's detail, a yoga
+    name), so escape it."""
+    return str(s).replace("|", "\\|")
 
 
 def _theme_conv_label(t: object) -> str:
@@ -4183,8 +4192,9 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append("| axis | finding | source |")
         L.append("|---|---|---|")
         for lk in t.links:
-            L.append(f"| {_AXIS_LABEL.get(lk.axis, lk.axis)} | {lk.label}: {lk.value} | "
-                     f"`{lk.accessor.split('@')[-1].strip()}` |")
+            L.append(f"| {_AXIS_LABEL.get(lk.axis, lk.axis)} | "
+                     f"{_md_cell(lk.label)}: {_md_cell(lk.value)} | "
+                     f"`{_md_cell(lk.accessor.split('@')[-1].strip())}` |")
         L.append("")
         if t.contradictions:
             for c in t.contradictions:
@@ -4218,8 +4228,9 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             now = " (now)" if ch.is_current else ""
             via = getattr(ch, "acts_through", ()) or ()
             through = f" (acting through {', '.join(via)})" if via else ""
-            L.append(f"| {ch.maha} MD{now}{through} | {ch.span} | {ch.lean} | "
-                     f"{', '.join(ch.emerging) or '-'} | {', '.join(ch.continuing) or '-'} |")
+            L.append(f"| {_md_cell(ch.maha)} MD{now}{through} | {_md_cell(ch.span)} | "
+                     f"{_md_cell(ch.lean)} | {_md_cell(', '.join(ch.emerging) or '-')} | "
+                     f"{_md_cell(', '.join(ch.continuing) or '-')} |")
         L.append("")
         if any(getattr(ch, "acts_through", ()) for ch in ts.dasha_evolution):
             L.append("_Rahu and Ketu own no sign, so a nodal chapter is read through the lord of "
@@ -4237,7 +4248,8 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     L.append("| theme | natal verdict | D9 relation |")
     L.append("|---|---|---|")
     for t in ts.themes:
-        L.append(f"| {t.name} | {t.headline_verdict} | {t.varga_relation} |")
+        L.append(f"| {_md_cell(t.name)} | {_md_cell(t.headline_verdict)} | "
+                 f"{_md_cell(t.varga_relation)} |")
     L.append("")
     return L
 

@@ -638,6 +638,23 @@ const I18N_HI = {
   'Executive portrait':'सारांश चित्र',
   'The interpretive spine':'व्याख्या की रीढ़',
   'Major life-themes':'प्रमुख जीवन-विषय',
+  'One reading across every section above — not a new judgment. Each theme gathers the findings the report already made (house verdict, strength, planetary state, divisional confirmation, yoga, timing) into one mechanism, states how strongly they converge, and names any tension with the precedence rule that resolves it. The direction of every theme is the engine\'s own house verdict, unchanged.':'ऊपर के प्रत्येक अनुभाग का एक साथ वाचन — कोई नया निर्णय नहीं। प्रत्येक विषय उन निष्कर्षों को एकत्र करता है जो रिपोर्ट पहले ही निकाल चुकी है (भाव-निर्णय, बल, ग्रह-अवस्था, वर्ग-पुष्टि, योग, काल) और उन्हें एक तंत्र में जोड़ता है, बताता है कि वे कितनी दृढ़ता से मिलते हैं, तथा किसी भी तनाव को उस वरीयता-नियम सहित नामित करता है जो उसका समाधान करता है। प्रत्येक विषय की दिशा इंजन का अपना भाव-निर्णय है, अपरिवर्तित।',
+  // evidence / dasha / varga table column headers
+  'axis':'अक्ष',
+  'finding':'निष्कर्ष',
+  'source':'स्रोत',
+  'provenance':'प्रामाणिकता',
+  'chapter':'अध्याय',
+  'span':'अवधि',
+  'lean':'झुकाव',
+  'newly emphasized':'नव-प्रमुख',
+  'continuing':'निरंतर',
+  'theme':'विषय',
+  'natal verdict':'जन्मकुंडली-निर्णय',
+  'D9 relation':'D9 संबंध',
+  'now':'अभी',
+  'karakas':'कारक',
+  'the chart':'कुंडली',
   'Who the chart is':'कुंडली कौन है',
   'Within this house':'इस भाव के भीतर',
   'reads':'का वाचन है',
@@ -2442,13 +2459,13 @@ function render(R, S, FQ){
       const sm=el('summary'); sm.append(th.name+' — '+th.headline_verdict+' ('+cl(th)+')');
       card.append(sm); const b=el('div',{class:'body'});
       b.append(para(th.final_interpretation,'di-title'));
-      b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; karakas '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||'the chart')+'.','muted'));
+      b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; '+t('karakas')+' '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||t('the chart'))+'.','muted'));
       if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
       b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
       b.append(para(t('Divisional (D9)')+' — '+th.varga_relation+'.','muted'));
       if(th.activation_span) b.append(para(t('Timing')+' — '+th.activation_span,'muted'));
-      const rows=(th.links||[]).map(l=>({axis:AX[l.axis]||l.axis, finding:l.label+': '+l.value,
-        source:(String(l.accessor||'').split('@').pop()||'').trim(), provenance:l.provenance}));
+      const rows=(th.links||[]).map(l=>({[t('axis')]:AX[l.axis]||l.axis, [t('finding')]:l.label+': '+l.value,
+        [t('source')]:(String(l.accessor||'').split('@').pop()||'').trim(), [t('provenance')]:l.provenance}));
       const tbl=sectionTable(t('Evidence chain (every finding, its source)'), rows); if(tbl) b.append(tbl);
       for(const c of (th.contradictions||[])) b.append(para(t('Tension')+' ('+c.kind+') — '+c.poles[0]+' vs '+c.poles[1]+'. '+t('Resolved by')+' '+c.governing+': '+c.resolution,'muted'));
       card.append(b); add(card);
@@ -2460,15 +2477,15 @@ function render(R, S, FQ){
     }
     if((ts.dasha_evolution||[]).length){
       add(para(t('Dasha evolution — the horoscope through time'),'muted'));
-      const rows=ts.dasha_evolution.map(ch=>({chapter:ch.maha+' MD'+(ch.is_current?' (now)':'')
+      const rows=ts.dasha_evolution.map(ch=>({[t('chapter')]:ch.maha+' MD'+(ch.is_current?(' ('+t('now')+')'):'')
           +((ch.acts_through||[]).length?(' ('+t('acting through')+' '+ch.acts_through.join(', ')+')'):''),
-        span:ch.span, lean:ch.lean, 'newly emphasized':(ch.emerging||[]).join(', ')||'-',
-        continuing:(ch.continuing||[]).join(', ')||'-'}));
+        [t('span')]:ch.span, [t('lean')]:ch.lean, [t('newly emphasized')]:(ch.emerging||[]).join(', ')||'-',
+        [t('continuing')]:(ch.continuing||[]).join(', ')||'-'}));
       const de=sectionTable(t('Each Mahadasha foregrounds the themes its lord drives'), rows); if(de) add(de);
       if(ts.dasha_evolution.some(ch=>(ch.acts_through||[]).length))
         add(para(t('Rahu and Ketu own no sign, so a nodal chapter is read through the lord of the sign the node occupies and any planet joined with it — the routing is named above rather than assumed.'),'muted'));
     }
-    const vm=ts.themes.map(th=>({theme:th.name, 'natal verdict':th.headline_verdict, 'D9 relation':th.varga_relation}));
+    const vm=ts.themes.map(th=>({[t('theme')]:th.name, [t('natal verdict')]:th.headline_verdict, [t('D9 relation')]:th.varga_relation}));
     const vt=sectionTable(t('Varga confirmation matrix'), vm); if(vt) add(vt);
   })();
 

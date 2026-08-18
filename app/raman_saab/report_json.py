@@ -26,7 +26,8 @@ from dataclasses import asdict, is_dataclass
 from typing import Any
 
 from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
-                                            graded_buckets)
+                                            gochara_synthesis_sentence, graded_buckets,
+                                            influence_basis, influence_basis_table)
 from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
 from app.raman_saab.detailed_report import deeptadi_table as _deeptadi_table
 from app.raman_saab.detailed_report import signature_first_glance as _signature_first_glance
@@ -34,6 +35,8 @@ from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
 from app.raman_saab.plain_terms import SECTION_METHOD as _SECTION_METHOD
 from app.raman_saab.plain_terms import gloss_dict as _gloss
 from app.raman_saab.section_meta import section_meta_json as _section_meta
+from app.raman_saab.detailed_report import longevity_band_label as _band_label
+from app.raman_saab.primitives.balarishta import screened_conditions as _bala_screened
 from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED as _MIN_REQ
 
 
@@ -97,6 +100,11 @@ def _timeline_dict(timeline, chart) -> list:
     the standalone report, not a coarser view. `associated` is whether the AD lord is associated
     with the MD lord (the distinction between par-excellence and ordinary)."""
     out = []
+    # append-only 2026-08-18 (Wave-2): the influence-basis table, computed ONCE per report
+    # via the role-preserving `timer_roles` (pinned equal to timer_set by test) — so every
+    # activated-house row can say BY WHICH factor each period-lord influences the house
+    # (HTJAH-I:1586-1596), instead of asserting the tier bare.
+    basis = influence_basis_table(chart)
     for tp in timeline.periods:
         pr = tp.period
         associated, buckets = graded_buckets(tp, chart)
@@ -113,7 +121,14 @@ def _timeline_dict(timeline, chart) -> list:
                  # so a consumer can show 'MD delivers well, AD mixed' per row.
                  "md_quality": _ad(a.md_quality),
                  "antar_quality": (_ad(a.antar_quality)
-                                   if a.antar_quality is not None else None)}
+                                   if a.antar_quality is not None else None),
+                 # append-only 2026-08-18 (Wave-2): the influence-basis tag strings
+                 # ("owns+karaka", "aspects lord", "via H11 owns") per period-lord.
+                 "md_basis": (influence_basis(basis, a.house, a.md_lord)
+                              if a.md_activates else None),
+                 "antar_basis": (influence_basis(basis, a.house, a.antar_lord)
+                                 if a.antar_activates and a.antar_lord is not None
+                                 else None)}
                 for a in tp.activated
             ],
         })
@@ -138,6 +153,34 @@ def _proforma_dict(pf) -> dict:
              "karaka": sv.karaka, "degree": sv.degree}
             for sv in pf.significations
         ],
+    }
+
+
+def _yoga_coverage(r: DetailedReport) -> dict:
+    """Append-only 2026-08-18 (Wave-2): the yoga coverage-honesty block — pure re-reads
+    of `doctrine.yogas` metadata and the bhanga primitives; no verdict logic."""
+    from app.raman_saab.doctrine.yogas import (MAHAPURUSHA_IDS, YOGAS,
+                                               family_breakdown, yoga_family)
+    from app.raman_saab.primitives.bhangas import kemadruma
+    from app.raman_saab.yoga_deep_read import kemadruma_cancellation_branch
+    kem_state = "no geometry"
+    kem_branch = None
+    if kemadruma(r.chart):
+        kem_branch = kemadruma_cancellation_branch(r.chart)
+        kem_state = "cancelled" if kem_branch is not None else "fires"
+    absences = []
+    if not any(y.id in MAHAPURUSHA_IDS for y in r.yogas):
+        absences.append("no Pancha Mahapurusha yoga fires")
+    if not any(y.kind == "arishta" for y in r.yogas):
+        absences.append("no encoded arishta yoga fires")
+    return {
+        "encoded": len(YOGAS),
+        "of_about": 300,
+        "families": [{"family": fam, "count": n} for fam, n in family_breakdown()],
+        "fired_families": {y.id: yoga_family(y.id) for y in r.yogas},
+        "notable_absences": absences,
+        "kemadruma": {"state": kem_state, "cancelled_by": kem_branch},
+        "note": "a yoga absent from this list is unchecked, not absent",
     }
 
 
@@ -189,6 +232,11 @@ def to_report_dict(r: DetailedReport) -> dict:
 
         # yogas (each carries its own Citation object) + the synthesis insights
         "yogas": _each(r.yogas),
+        # append-only 2026-08-18 (Wave-2, coverage honesty): what the yoga list actually
+        # checks — encoded-record count + Raman-taxonomy family breakdown, each fired
+        # yoga's family, the notable absences, and the cancelled-Kemadruma three-state —
+        # the same disclosures the markdown/HTML "Yogas present" section now renders.
+        "yoga_coverage": _yoga_coverage(r),
         "yoga_timing": _each(r.yoga_timing),
         "insights": [
             {"rule_id": ins.rule.id, "name": ins.rule.name, "band": ins.rule.band,
@@ -199,9 +247,15 @@ def to_report_dict(r: DetailedReport) -> dict:
         ],
 
         # longevity + the maraka scheme
+        # append-only 2026-08-18 (Wave-2 items 5a/5b): `class_label` — the harmonised
+        # band label the markdown/HTML now show ("Purnayu (purna band)"); and
+        # `balarishta_screened` — the primitive's own checked conditions (label, cite),
+        # the clear-case screen disclosure. Existing keys untouched.
         "longevity": {"years": r.longevity_years, "ymd": list(r.longevity_ymd),
                       "class": r.longevity_class,
-                      "balarishta": (_ad(r.balarishta) if r.balarishta is not None else None)},
+                      "class_label": _band_label(r.longevity_class),
+                      "balarishta": (_ad(r.balarishta) if r.balarishta is not None else None),
+                      "balarishta_screened": [list(x) for x in _bala_screened()]},
         "maraka_saturn": _each(r.maraka_saturn),
         "maraka_period_now": r.maraka_period_now,
         # append-only 2026-08-17 (report-critique: per-planet maraka reasons): the full
@@ -248,12 +302,17 @@ def to_report_dict(r: DetailedReport) -> dict:
         # renders from; vocabulary only, never new astrology.
         "plain_terms": _gloss(),
         # item 15 — testimony support per house (a re-read of preponderance)
+        # append-only 2026-08-18 (Wave-2 E): core_favourable / core_adverse — the same
+        # second count pair the table renders (core = lord/karaka/navamsa,
+        # HTJAH-I:983-991); existing keys untouched.
         "testimony_support": {
             str(ht.house): {"label": ("High" if "corrobor" in ht.status
                                       else "Low" if "contest" in ht.status
                                       else "Medium"),
                             "favourable": ht.favourable, "adverse": ht.adverse,
-                            "neutral": ht.neutral, "status": ht.status}
+                            "neutral": ht.neutral, "status": ht.status,
+                            "core_favourable": ht.core_favourable,
+                            "core_adverse": ht.core_adverse}
             for ht in r.preponderance.houses},
 
         # the life-narrative and its companions + the woven chapters
@@ -265,9 +324,17 @@ def to_report_dict(r: DetailedReport) -> dict:
         "life_chapters": _each(r.life_chapters.chapters),
 
         # transits
-        "gochara": _each(r.gochara),
+        # append-only 2026-08-18 (Wave-2): each snapshot row gains `synthesis` — the one
+        # deterministic sentence joining the row's own columns (station + support + vedha
+        # + net) the way Raman narrates a transit; existing fields untouched.
+        "gochara": [{**_ad(g), "synthesis": gochara_synthesis_sentence(g)}
+                    for g in r.gochara],
         "gochara_outlook": {p: _each(segs) for p, segs in r.gochara_outlook.items()},
         "dasha_transit": _each(r.dasha_transit),
+        # append-only 2026-08-18 (Wave-2): the ADVERSE mirror of dasha_transit — the same
+        # cross-check with the `gochara_good` filter inverted (HPA-34:369-381 blending
+        # frame); the favourable rows above are byte-identical to before.
+        "dasha_transit_adverse": _each(r.dasha_transit_adverse),
 
         # ashtakavarga + the divisional deep-reads (prose bodies) + soul/pitru surfaces
         "sav": {str(s): b_ for s, b_ in r.sav.items()},

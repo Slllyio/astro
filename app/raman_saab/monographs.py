@@ -124,6 +124,83 @@ def _lord_dasa_extract(house: int) -> Optional[str]:
 
 # ── v25 Marriage ────────────────────────────────────────────────────────────────
 
+#: Sign names for narration (ASCII; index = rashi 1..12).
+_SIGN_NAMES: Final[tuple[str, ...]] = (
+    "", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra",
+    "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+
+#: Maintainer/encoding-scope markers that belong in fine print, not client bullets
+#: (2026-08-18 report-critique: "v1-OOS" / "owned by H7.C.60" leaked into readings).
+_MAINTAINER_MARKERS: Final[tuple[str, ...]] = (
+    "v1-OOS", "owned by H7", "kept in text", "TODO(predicate")
+
+
+def split_maintainer_notes(text: str) -> tuple[str, str]:
+    """Split a fired-rule text into (client_text, maintainer_notes).
+
+    ADD-ONLY routing, not removal: the notes are still rendered, in a trailing
+    fine-print line, and the raw rule text is unchanged in the data. A note is a
+    parenthetical or a whole sentence carrying one of `_MAINTAINER_MARKERS`."""
+    notes: list[str] = []
+    out = text
+    for m in re.finditer(r"\([^()]*\)", out):
+        if any(mk in m.group(0) for mk in _MAINTAINER_MARKERS):
+            notes.append(m.group(0)[1:-1])
+    for n in notes:
+        out = out.replace(f"({n})", "")
+    kept: list[str] = []
+    for sent in re.split(r"(?<=\.)\s+", out):
+        if any(mk in sent for mk in _MAINTAINER_MARKERS):
+            notes.append(sent.strip())
+        else:
+            kept.append(sent)
+    out = re.sub(r"\s{2,}", " ", " ".join(kept)).strip().rstrip(";").strip()
+    return out, "; ".join(notes)
+
+
+def _ordinal(n: int) -> str:
+    from app.raman_saab.ordinals import ordinal
+    return ordinal(n)
+
+
+def _kuja_narration(chart) -> tuple[str, ...]:
+    """Narrate _KujaDosha's own per-frame evaluation (HTJAH-II:2579-2622) — which
+    reference point(s) place Mars in a dosha house, each exemption checked and its
+    result. A pure re-read of the rule's evaluation path via its append-only
+    accessor; composes no new judgment and never re-decides the firing."""
+    from app.raman_saab.doctrine.rule_sets.house_07_kalatra.combinations import (
+        evaluate_kuja_dosha)
+    kd = evaluate_kuja_dosha(chart)
+    if not kd.mars_present:
+        return ()
+    lines: list[str] = []
+    sign = _SIGN_NAMES[kd.mars_sign]
+    for fr in kd.frames:
+        if fr.house == 0:
+            lines.append(f"from {fr.origin}, Mars falls in none of the dosha "
+                         f"houses (2/4/7/8/12)")
+        elif fr.sign_exempt:
+            lines.append(f"from {fr.origin}, Mars falls in the "
+                         f"{_ordinal(fr.house)}, but {sign} is an exempt sign "
+                         f"for the {_ordinal(fr.house)} - the frame is spared")
+        else:
+            lines.append(f"from {fr.origin}, Mars falls in the "
+                         f"{_ordinal(fr.house)}; {sign} is not an exempt sign "
+                         f"for the {_ordinal(fr.house)} - the frame stands")
+    if kd.universal_exempt:
+        lines.append(f"Mars stands in {sign} - wholly exempt "
+                     f"(the Leo/Aquarius exemption)")
+    else:
+        lines.append(f"Mars in {sign} is not in the wholly-exempt Leo/Aquarius")
+    if kd.conjunct_jupiter or kd.conjunct_moon:
+        with_whom = " and ".join(p for p, c in (("Jupiter", kd.conjunct_jupiter),
+                                                ("the Moon", kd.conjunct_moon)) if c)
+        lines.append(f"Mars conjoins {with_whom} - the dosha is neutralised")
+    else:
+        lines.append("Mars conjoins neither Jupiter nor the Moon")
+    lines.append("the dosha stands" if kd.fires else "the dosha does not arise")
+    return tuple(lines)
+
 
 @dataclass(frozen=True)
 class MarriageMonograph:
@@ -138,6 +215,16 @@ class MarriageMonograph:
     children_after: Optional[str]           # H5 verdict
     separation_quote: str                   # Raman verbatim, labeled
     verdict: str                            # the UNCHANGED H7 rollup
+    # ── Wave-2 completions (2026-08-18 report-critique, append-only): the shipped
+    # B3 happiness-vs-coverture split surfaced where the client looks, the
+    # _KujaDosha per-frame narration (via the rule's own append-only accessor,
+    # HTJAH-II:2579-2622), and the already-computed favourable Jupiter transit
+    # windows touching the 7th from the Moon. Defaults keep every existing
+    # construction unchanged. ────────────────────────────────────────────────────
+    marital_happiness: Optional[str] = None      # H7 'marital_happiness' verdict (degree)
+    coverture: Optional[str] = None              # H7 'coverture' verdict (degree)
+    kuja_narration: tuple[str, ...] = ()         # per-frame dosha narration lines
+    jupiter_h7_windows: tuple[str, ...] = ()     # favourable Jupiter windows, 7th from Moon
 
 
 def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]:
@@ -166,6 +253,23 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         for h, tier, _v in ch.houses_lit if h == 7)
     h5 = next((s for s in r.proformas[4].significations
                if s.signification == "children"), None) if len(r.proformas) >= 5 else None
+    # Wave-2 (2026-08-18): the B3 happiness/coverture split — pure re-read of the
+    # same H7 significations the proforma already judged.
+    def _sig7(key: str) -> Optional[str]:
+        sv = next((s for s in pf7.significations if s.signification == key), None)
+        return f"{sv.verdict} ({sv.degree})" if sv is not None else None
+    # the _KujaDosha per-frame narration (append-only accessor; HTJAH-II:2579-2622)
+    try:
+        kuja = _kuja_narration(r.chart)
+    except Exception:  # noqa: BLE001 — Track-B sparse
+        kuja = ()
+    # the method's own favourable Jupiter windows touching the 7th (from the Moon) —
+    # a FILTER of the already-computed Gochara outlook rows, no new doctrine claim.
+    jup7 = tuple(
+        f"{_jd_to_date(seg.start_jd)} to {_jd_to_date(seg.end_jd)}"
+        for seg in r.gochara_outlook.get("Jupiter", ())
+        if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25
+        and seg.house_from_moon == 7)
     return MarriageMonograph(
         seventh_covers=_pull(_H2, MARRIAGE_INTRO) or "",
         lord_placement_house=lord_house,
@@ -177,7 +281,11 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         timing_windows=windows,
         children_after=f"{h5.verdict} ({h5.degree})" if h5 is not None else None,
         separation_quote=_pull(_H2, MARRIAGE_SEPARATION) or "",
-        verdict=pf7.rollup)
+        verdict=pf7.rollup,
+        marital_happiness=_sig7("marital_happiness"),
+        coverture=_sig7("coverture"),
+        kuja_narration=kuja,
+        jupiter_h7_windows=jup7)
 
 
 # ── v26 Children ────────────────────────────────────────────────────────────────
@@ -190,6 +298,15 @@ class ChildrenChapter:
     fired_rules: tuple[tuple[str, str, str], ...]
     timing_windows: tuple[str, ...]
     verdict: str
+    # ── Wave-2 completions (2026-08-18 report-critique, append-only): the D-7
+    # corroboration the preamble already promises (a re-read of the Saptamsa
+    # section's own computed structures), the Jupiter (putrakaraka) condition,
+    # and the doctrine-reviewed classical-shorthand reframe note copied VERBATIM
+    # from the D-7 section's notes so it renders BEFORE the fired rules here.
+    # Defaults keep every existing construction unchanged. ──────────────────────
+    d7_corroboration: str = ""              # beeja/kshetra + D-7 seat + gender lean
+    putrakaraka_line: str = ""              # Jupiter's computed condition
+    reframe_note: str = ""                  # the D-7 section's shorthand reframe, verbatim
 
 
 def build_children_chapter(r: "DetailedReport") -> Optional[ChildrenChapter]:
@@ -210,11 +327,39 @@ def build_children_chapter(r: "DetailedReport") -> Optional[ChildrenChapter]:
         f"H5 {tier}"
         for ch in r.life_chapters.chapters
         for h, tier, _v in ch.houses_lit if h == 5)
+    # Wave-2 (2026-08-18): the D-7 corroboration row + Jupiter condition + reframe
+    # note — pure re-reads of the Saptamsa reading's own computed structures.
+    d7_row, jup_line, reframe = "", "", ""
+    try:
+        from app.raman_saab.judges.saptamsa_reading import (
+            build_saptamsa_children_reading)
+        sr = build_saptamsa_children_reading(r.chart)
+        core, ov = sr.raman_core, sr.d7_overlay
+        yn = {True: "yes", False: "no", None: "not computed"}
+        lean = ("; ".join(g.text for g in ov.gender_indicators)
+                if ov.gender_indicators else "no gender rule fires")
+        d7_row = (
+            f"Beeja (male fertility point) strong: {yn[core.beeja_strong]}; "
+            f"Kshetra (female): {yn[core.kshetra_strong]}; the D-7 seat: lagna "
+            f"{_SIGN_NAMES[ov.lagna_sign]} under {ov.lagna_lord}, Jupiter in the "
+            f"D-7 {_ordinal(ov.jupiter_house) if ov.jupiter_house else 'chart'} "
+            f"in {_SIGN_NAMES[ov.jupiter_sign]} ({ov.jupiter_dignity}); gender "
+            f"lean: {lean} (re-read from the D-7 Children section, which decides "
+            f"by Raman's Rasi method; the D-7 corroborates)")
+        jup_line = (
+            f"Jupiter (putrakaraka) - {_condition('Jupiter', r) or 'not placed'}; "
+            f"navamsa dignity {core.putrakaraka_navamsa_dignity} (the "
+            f"redemptive/annihilation signal the D-7 section reads)")
+        reframe = next((n.text for n in sr.notes
+                        if "classical shorthand" in n.text), "")
+    except Exception:  # noqa: BLE001 — Track-B sparse
+        pass
     return ChildrenChapter(
         combos_quote=_pull(_H1, CHILDREN_COMBOS) or "",
         significations=tuple((sv.signification, f"{sv.verdict} ({sv.degree})")
                              for sv in pf5.significations),
-        fired_rules=tuple(fired), timing_windows=windows, verdict=pf5.rollup)
+        fired_rules=tuple(fired), timing_windows=windows, verdict=pf5.rollup,
+        d7_corroboration=d7_row, putrakaraka_line=jup_line, reframe_note=reframe)
 
 
 # ── v27 Psychological profile ───────────────────────────────────────────────────

@@ -806,3 +806,66 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 1474)),
 )
+
+
+# ── append-only accessor (2026-08-18, REPORT_CRITIQUE Wave-2 item 1b) ─────────
+# Read-only DISCLOSURE of _KujaDosha's own evaluation path, so report surfaces
+# can narrate WHICH reference point(s) place Mars in a dosha house and each
+# exemption checked with its result (HTJAH-II:2579-2622). The rule's logic and
+# firing are untouched: `fires` is _KujaDosha().evaluate itself, and every frame
+# check below re-runs the SAME predicates the rule composes (InHouseFrom /
+# Conjunct / the exemption sets), never a re-implementation with different math.
+
+from dataclasses import dataclass  # noqa: E402 — appended accessor block
+
+
+@dataclass(frozen=True)
+class KujaFrameCheck:
+    """One reference frame (Lagna / Moon / Venus) of the Kuja-dosha screen."""
+    origin: str          # "the Lagna" | "the Moon" | "Venus"
+    house: int           # the dosha house (2/4/7/8/12) Mars occupies from it; 0 = none
+    sign_exempt: bool    # the per-house sign exemption (HTJAH-II:2593-2599) spares it
+    stands: bool         # this frame contributes dosha (in a dosha house, not sign-exempt)
+
+
+@dataclass(frozen=True)
+class KujaDoshaEvaluation:
+    """The full per-frame evaluation _KujaDosha performs, exposed for narration."""
+    mars_present: bool
+    mars_sign: int                      # rashi 1..12 (0 when Mars is absent)
+    universal_exempt: bool              # Mars in Leo/Aquarius (HTJAH-II:2599-2600)
+    conjunct_jupiter: bool              # Mars+Jupiter neutralisation
+    conjunct_moon: bool                 # Mars+Moon neutralisation
+    frames: tuple[KujaFrameCheck, ...]  # Lagna, Moon, Venus — in the rule's own order
+    fires: bool                         # _KujaDosha().evaluate — the rule's own verdict
+
+
+def evaluate_kuja_dosha(chart: RamanChart) -> KujaDoshaEvaluation:
+    """Disclose the H7.KD.1 (_KujaDosha) evaluation per reference frame — a pure
+    re-read for report narration; does not and must not alter the rule's firing."""
+    ctx = C.EvalContext(chart)
+    mars = chart.planets.get("Mars")
+    if mars is None:
+        return KujaDoshaEvaluation(
+            mars_present=False, mars_sign=0, universal_exempt=False,
+            conjunct_jupiter=False, conjunct_moon=False, frames=(), fires=False)
+    frames: list[KujaFrameCheck] = []
+    for origin, label in (("LAGNA", "the Lagna"), ("MOON", "the Moon"),
+                          ("Venus", "Venus")):
+        hit = 0
+        for h in _KUJA_HOUSES:
+            if C.InHouseFrom("Mars", origin, h).evaluate(ctx):
+                hit = h
+                break                      # houses are disjoint: at most one can hold Mars
+        exempt = bool(hit) and mars.sign in _KUJA_SIGN_EXEMPT[hit]
+        frames.append(KujaFrameCheck(
+            origin=label, house=hit, sign_exempt=exempt,
+            stands=bool(hit) and not exempt))
+    return KujaDoshaEvaluation(
+        mars_present=True,
+        mars_sign=mars.sign,
+        universal_exempt=mars.sign in _KUJA_UNIVERSAL_EXEMPT_SIGNS,
+        conjunct_jupiter=C.Conjunct("Mars", "Jupiter").evaluate(ctx),
+        conjunct_moon=C.Conjunct("Mars", "Moon").evaluate(ctx),
+        frames=tuple(frames),
+        fires=_KujaDosha().evaluate(ctx))

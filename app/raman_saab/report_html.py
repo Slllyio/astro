@@ -30,7 +30,11 @@ from app.raman_saab.detailed_report import (
     ascendant_position,
     format_longitude,
     format_maraka_reasons,
+    gochara_synthesis_sentence,
     graded_buckets,
+    influence_basis,
+    influence_basis_table,
+    longevity_band_label,
     driver_entry,
     nakshatra_lord,
     plain_bhukti_summary,
@@ -525,10 +529,15 @@ def _raman_quote_html(mr, pf) -> str:
 
 
 def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = frozenset(),
-                   conclusion: str = "", ht=None) -> str:
+                   conclusion: str = "", ht=None, frame_line: str = "",
+                   tier_line: str = "", chief: tuple = ()) -> str:
     """One bhava: Raman's pillars + verdict (with the rollup driver named), then the overlay.
     `conclusion` is the pre-composed `detailed_report.house_conclusion` line (Raman's own
-    closing device) — passed in, not computed here, so both renderers share one composer."""
+    closing device) — passed in, not computed here, so both renderers share one composer.
+    Wave-2 (2026-08-18, add-only): `frame_line` / `tier_line` (the pre-composed
+    `house_frame_line` / `house_current_tier_line` disclosures) and `chief` (the
+    `house_chief_combinations` rows — signification, rule id, Raman's effect prose,
+    citation) are likewise passed in from the shared composers."""
     is_active = "ACTIVE in the running" in mr.reading
     active = '<span class="active-badge">active now</span>' if is_active else ""
     flags = [_vclass(mr.verdict)]
@@ -602,11 +611,29 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
     testimony_n = len(ht.testimonies) if ht is not None else len(cal.entries)
     support_word = (("High" if "corrobor" in ht.status else "Low" if "contest" in ht.status
                      else "Medium") if ht is not None else "")
+    # Wave-2 D2/D4 (2026-08-18): the deciding-frame and current-period-tier disclosure
+    # lines, rendered inside the always-open Why pane where the reading they reconcile
+    # sits; D1: the chief fired combinations as their own open disclosure level.
+    frame_html = (f'<div class="split-note"><b>Frame</b> &mdash; {_esc(frame_line)}</div>'
+                  if frame_line else "")
+    tier_html = (f'<div class="split-note"><b>Current period</b> &mdash; '
+                 f'{_esc(tier_line)}</div>' if tier_line else "")
     level_why = (
         '<details class="disclosure" open><summary>Why</summary>'
         f'<p class="doctrine">{_bold(mr.reading)}</p>'
+        f'{frame_html}{tier_html}'
         + (f'<div class="split-note"><b>Conclusion</b> &mdash; {_esc(conclusion)}</div>'
            if conclusion else "") + '</details>')
+    level_chief = ""
+    if chief:
+        chief_items = "".join(
+            f'<li><i>{_esc(csig)}</i>: <code>{_esc(cid)}</code> &mdash; '
+            f'&ldquo;{_esc(ctext)}&rdquo; ({_esc(ccite)})</li>'
+            for csig, cid, ctext, ccite in chief)
+        level_chief = (
+            f'<details class="disclosure" open><summary>Chief combinations &mdash; '
+            f'the fired rules that decided, in Raman&rsquo;s own words</summary>'
+            f'<ul>{chief_items}</ul></details>')
     level_evidence = (
         f'<details class="disclosure"><summary>Evidence &mdash; {testimony_n} testimonies'
         f'{f", {support_word} support" if support_word else ""}</summary>'
@@ -623,14 +650,18 @@ def _house_section(mr, cal, pf, chart, distinctive_houses: frozenset[int] = froz
         f'<span class="chip chip--{_vclass(mr.verdict)}">{_esc(mr.verdict)}</span>'
         f'{split_badge}{drv}{active}</div>'
         f'{split_note_html}{inverted_note_html}'
-        f'{level_why}{level_evidence}{level_calc}{level_classical}</section>')
+        f'{level_why}{level_chief}{level_evidence}{level_calc}{level_classical}</section>')
 
 
-def _house_chip(a, *, ring: bool = False) -> str:
-    """A house chip carrying its natal verdict (title = full verdict); ring = par-excellence."""
+def _house_chip(a, *, ring: bool = False, basis: str = "") -> str:
+    """A house chip carrying its natal verdict (title = full verdict); ring = par-excellence.
+    Wave-2 (2026-08-18): `basis` (optional) appends the influence-basis derivation — BY WHICH
+    of Raman's factors the period lords influence this house (HTJAH-I:1586-1596) — into the
+    native tooltip; callers that pass nothing render exactly as before."""
+    tail = f" &mdash; {_esc(basis)}" if basis else ""
     return (f'<span class="chip chip--{_vclass(a.natal_verdict)}{" focus" if ring else ""}" '
             f'title="{_esc(_HOUSE_NAME[a.house])}: {_esc(a.natal_verdict)} '
-            f'({_esc(a.natal_degree)})">H{a.house}</span>')
+            f'({_esc(a.natal_degree)}){tail}">H{a.house}</span>')
 
 
 def _info_box(r: DetailedReport) -> str:
@@ -721,12 +752,19 @@ def _yoga_deep_section(r: DetailedReport) -> str:
         return ""
     blocks = []
     for y in r.yoga_deep:
+        # Wave-2 B (2026-08-18): placement class + functional nature per participant,
+        # and the per-yoga SYN_R1 stronger-participant line (3HC:1359) — same content
+        # as the markdown surface.
         parts = "; ".join(
-            f"{_esc(f.planet)}: house {f.house}, {_esc(_SIGN_NAME[f.sign])}, "
+            f"{_esc(f.planet)}: house {f.house}"
+            + (f" ({_esc(f.placement)})" if getattr(f, "placement", "") else "")
+            + f", {_esc(_SIGN_NAME[f.sign])}, "
             f"{_esc(f.dignity)}"
             + (f" (effective: {_esc(f.effective_dignity)})"
                if f.effective_dignity != f.dignity else "")
             + (f", {f.rupas} rupas" if f.rupas is not None else "")
+            + (f", functional {_esc(f.functional)} for this Lagna"
+               if getattr(f, "functional", "") else "")
             for f in y.participants)
         rows = [
             ("Definition (verbatim)", f"&ldquo;{_esc(y.definition_quote)}&rdquo; "
@@ -734,8 +772,10 @@ def _yoga_deep_section(r: DetailedReport) -> str:
             ("Computation", f"<code>{_esc(y.computation)}</code>"),
             ("Why it qualifies", parts or "&ndash;"),
             ("Strength (measured)", _esc(y.strength_note)),
-            ("Cancellation", _esc(y.cancellation_note)),
         ]
+        if getattr(y, "syn_r1_line", ""):
+            rows.append(("Stronger-participant delivery", _esc(y.syn_r1_line)))
+        rows.append(("Cancellation", _esc(y.cancellation_note)))
         if y.modifiers:
             rows.append(("Modifying planets", _esc(", ".join(y.modifiers))))
         if y.periods:
@@ -906,17 +946,60 @@ def _positions(r: DetailedReport) -> str:
 
 
 def _yogas(r: DetailedReport) -> str:
+    # Wave-2 A (2026-08-18, add-only): coverage disclosure + cancelled-Kemadruma +
+    # notable absences + family names + deep-read-rank ordering — same content as the
+    # markdown surface (template contract: every renderer shows every addition).
+    from app.raman_saab.doctrine.yogas import YOGAS as _RECORDS
+    from app.raman_saab.doctrine.yogas import (MAHAPURUSHA_IDS, family_breakdown,
+                                               yoga_family)
+    from app.raman_saab.primitives.bhangas import kemadruma as _kem_geometry
+    from app.raman_saab.yoga_deep_read import kemadruma_cancellation_branch
+
+    kem_html = ""
+    if _kem_geometry(r.chart):
+        _kb = kemadruma_cancellation_branch(r.chart)
+        if _kb is not None:
+            kem_html = (f'<p class="section-sub"><i>Kemadruma geometry is present but '
+                        f'cancelled by {_esc(_kb)} &mdash; the yoga does not fire '
+                        f'(bhanga per 3HC:2182-2185; the Arishta chapter reports the '
+                        f'same three-state read).</i></p>')
+    absent_bits = []
+    if not any(y.id in MAHAPURUSHA_IDS for y in r.yogas):
+        absent_bits.append("no Pancha Mahapurusha yoga fires")
+    if not any(y.kind == "arishta" for y in r.yogas):
+        absent_bits.append("no encoded arishta yoga fires")
+    absent_html = (f'<p class="section-sub"><i>Notable absences (computed from the same '
+                   f'detection pass): {_esc("; ".join(absent_bits))}.</i></p>'
+                   if absent_bits else "")
+    fams = "; ".join(f"{fam} {n}" for fam, n in family_breakdown())
+    coverage_html = (
+        f'<p class="section-sub"><i>Coverage disclosure: {len(_RECORDS)} named '
+        f'combinations are encoded and checked against every chart, of the ~300 in '
+        f'Raman&rsquo;s <b>Three Hundred Important Combinations</b> and allied chapters '
+        f'&mdash; by family: {_esc(fams)}. A yoga absent from this list is '
+        f'<b>unchecked, not absent</b>.</i></p>')
     if not r.yogas:
         return ('<h2 class="section" id="yogas">Yogas</h2>'
-                '<p class="section-sub">No encoded yoga fires on this chart.</p>')
+                '<p class="section-sub">No encoded yoga fires on this chart.</p>'
+                + kem_html + absent_html + coverage_html)
+    rank_of = {yd.id: yd.comparison_rank for yd in r.yoga_deep}
+    ordered = sorted(enumerate(r.yogas),
+                     key=lambda iy: (rank_of.get(iy[1].id, 10_000), iy[0]))
     items = "".join(
-        f'<li><b>{_esc(y.name)}</b> <span class="ykind">{_esc(y.kind)}</span><br>'
+        f'<li><b>{_esc(y.name)}</b> <span class="ykind">'
+        f'{_esc(yoga_family(y.id) if (y.kind == "other" and yoga_family(y.id)) else y.kind)}'
+        f'</span><br>'
         f'<span class="yeffect">{_esc(y.effect)}</span> '
-        f'<code>{_esc(y.source.work)}:{y.source.line}</code></li>' for y in r.yogas)
+        f'<code>{_esc(y.source.work)}:{y.source.line}</code></li>'
+        for _i, y in ordered)
+    order_html = ('<p class="section-sub"><i>Ordered by the deep-read&rsquo;s measured '
+                  'comparison rank (strongest participants first).</i></p>'
+                  if r.yoga_deep else "")
     return ('<h2 class="section" id="yogas">Yogas present in this chart</h2>'
             '<p class="section-sub">Each with its citation. A yoga&rsquo;s effect depends on the '
             'strength of the planets causing it (HTJAH-I:611).</p>'
-            f'<ul class="yogalist">{items}</ul>')
+            f'<ul class="yogalist">{items}</ul>'
+            f'{order_html}{kem_html}{absent_html}{coverage_html}')
 
 
 def _house_strength_section(r: DetailedReport) -> str:
@@ -969,16 +1052,19 @@ def _preponderance_section(r: DetailedReport) -> str:
     column is the House-by-house rollup, displayed but never counted in its own tally."""
     if not r.preponderance.houses:
         return ""
+    # Wave-2 E (2026-08-18, add-only): the core/overlay witness-class column and tags —
+    # same content as the markdown surface; flat counts and status words untouched.
     rows = "".join(
         f'<tr><td>H{ht_.house} {_esc(_HOUSE_NAME[ht_.house])}</td>'
         f'<td><span class="chip chip--{_vclass(ht_.verdict)}">{_esc(ht_.verdict)}</span></td>'
         f'<td class="num">{ht_.favourable}</td><td class="num">{ht_.adverse}</td>'
         f'<td class="num">{ht_.neutral}</td><td class="num">{ht_.absent}</td>'
+        f'<td>core: {ht_.core_favourable} for / {ht_.core_adverse} against</td>'
         f'<td>{_esc(ht_.preponderance)}</td><td>{_esc(ht_.status)}</td></tr>'
         for ht_ in r.preponderance.houses)
     details = "".join(
         f'<div class="now-row"><span class="theme-label">H{ht_.house}</span>'
-        + _esc("; ".join(f"{t.name} {t.value}" for t in ht_.testimonies
+        + _esc("; ".join(f"{t.name} [{t.klass}] {t.value}" for t in ht_.testimonies
                          if t.lean != "absent") or "no decided testimony") + '</div>'
         for ht_ in r.preponderance.houses)
     pr = r.preponderance
@@ -1031,9 +1117,19 @@ def _preponderance_section(r: DetailedReport) -> str:
         'the remaining other-kind yogas stay neutral (a conditionally-benefic lunar yoga can '
         'be nullified in dusthana formation). Bhava-Bala rank is shown as a magnitude and '
         'carries no direction.</p>'
+        '<p class="section-sub"><i>(4) A witness-class tag separates core testimony '
+        '&mdash; the house&rsquo;s own lord, karaka and navamsa, the axes Raman&rsquo;s '
+        'summing-up itself names (HTJAH-I:983-991) &mdash; from overlay cross-checks '
+        '(SAV band, Bhava-Bala rank, matter-vargas, majority tenor, yoga bearings). The '
+        'Core column restates the same rows as a second count pair; it is Raman&rsquo;s '
+        'unequal weighing made visible, not a new weighting, and it alters nothing. '
+        'Yoga-bearing rows additionally disclose their link: [direct - own/occupy], the '
+        'factor his worked charts demonstrate, vs [aspect-derived - admitted '
+        'extension].</i></p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
         '<th class="num">for</th><th class="num">against</th><th class="num">neutral</th>'
-        '<th class="num">absent</th><th>preponderance</th><th>status</th></tr></thead>'
+        '<th class="num">absent</th><th>core (for/against)</th>'
+        '<th>preponderance</th><th>status</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>'
         f'<div class="instrument">{details}</div>'
         f'{picks_html}')
@@ -1044,11 +1140,26 @@ def _yoga_timing_section(r: DetailedReport) -> str:
     with WHEN, reusing the same lord_quality strength read Life-narrative already computes."""
     if not r.yoga_timing:
         return ""
+    # Wave-2 C (2026-08-18, add-only): MD-context on AD rows, a NOW marker on the
+    # row(s) containing the reference date, and the shared per-yoga next-ripening
+    # summary above the retained full table.
+    from app.raman_saab.detailed_report import yoga_next_ripening
+    ripening = yoga_next_ripening(r)
+    ripening_html = ""
+    if ripening:
+        ripening_html = (
+            '<p class="section-sub"><i>Next ripening, per yoga (the full table below '
+            'is retained):</i></p><ul>'
+            + "".join(f'<li><b>{_esc(n)}</b> &mdash; {_esc(s)}</li>'
+                      for n, s in ripening)
+            + '</ul>')
     rows = "".join(
-        f'<tr><td><b>{_esc(t.yoga_name)}</b></td><td>{_esc(t.role)}</td>'
+        f'<tr><td><b>{_esc(t.yoga_name)}</b></td>'
+        f'<td>{_esc(f"AD (under {t.maha} MD)" if t.role == "AD" and t.maha else t.role)}</td>'
         f'<td>{_esc(t.planet)}</td>'
         f'<td>{_outlook_window_label(t.period_start_jd, t.period_end_jd)}</td>'
-        f'<td>{_esc(t.quality.tag)}</td></tr>'
+        f'<td>{_esc(t.quality.tag)}</td>'
+        f'<td>{"NOW" if t.period_start_jd <= r.ref_jd < t.period_end_jd else ""}</td></tr>'
         for t in r.yoga_timing)
     return (
         '<h2 class="section" id="yoga-timing">Yoga &times; Dasha timing</h2>'
@@ -1063,8 +1174,9 @@ def _yoga_timing_section(r: DetailedReport) -> str:
         'them specifically) have no single "lord" in Raman&rsquo;s own definition and simply '
         'have no row here &mdash; a genuine coverage gap in what this cross-check computes, not '
         'a judgment that they lack timing.</p>'
+        f'{ripening_html}'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>yoga</th><th>period</th>'
-        '<th>planet</th><th>window</th><th>delivery</th></tr></thead>'
+        '<th>planet</th><th>window</th><th>delivery</th><th>now</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>')
 
 
@@ -1988,15 +2100,30 @@ def _arishta_section(r: DetailedReport) -> str:
            else "CANCELLED" if a.balarishta_cancelled else "does not apply")
     rows = [("Balarishta (HPA-14)",
              bal + (" — " + "; ".join(a.balarishta_reasons)
-                    if a.balarishta_reasons else "")),
-            ("Raman's antidotes (verbatim)",
-             f"&ldquo;{_esc(a.antidote_quote)}&rdquo; ({_esc(a.antidote_cite)})")]
+                    if a.balarishta_reasons else ""))]
+    # Wave-2 (2026-08-18, item 5a): the clear case discloses WHAT was screened.
+    if not a.balarishta_applies:
+        from app.raman_saab.primitives.balarishta import screened_conditions
+        rows.append(("Balarishta screen",
+                     "screened: " + "; ".join(
+                         f"{_esc(label)} ({_esc(cite)})"
+                         for label, cite in screened_conditions())
+                     + " — none present"))
+    rows.append(("Raman's antidotes (verbatim)",
+                 f"&ldquo;{_esc(a.antidote_quote)}&rdquo; ({_esc(a.antidote_cite)})"))
     if a.bhangas:
         for p, dig, eff in a.bhangas:
             rows.append(("Bhanga", f"{_esc(p)}: {_esc(dig)} cancelled to effective "
                                    f"{_esc(eff)} (neecha bhanga)"))
-    else:
-        rows.append(("Bhanga", "no debilitation-cancellation operates in this chart"))
+    # Wave-2 (item 5d): distinguish the two no-bhanga cases — a debility standing
+    # UNCANCELLED vs no debilitated planet at all.
+    _uncx = getattr(a, "uncancelled_debilities", ())
+    for p in _uncx:
+        rows.append(("Bhanga", f"{_esc(p)} is debilitated and NO cancellation "
+                               f"operates: the debility stands (no neecha bhanga)"))
+    if not a.bhangas and not _uncx:
+        rows.append(("Bhanga", "no planet is debilitated in this chart, so no "
+                               "cancellation question arises"))
     rows.append(("Kemadruma", _esc(a.kemadruma_note)))
     for pr_line in a.protections:
         rows.append(("Longevity protection", _esc(pr_line)))
@@ -2031,6 +2158,9 @@ def _gochara_table(r: DetailedReport) -> str:
                  f'<td>{vedha}</td>'
                  f'<td><span class="chip chip--{"favourable" if g.net_good else "afflicted"}">'
                  f'{net}</span></td></tr>')
+    # Wave-2 (2026-08-18): the synthesis sentences — one deterministic join of each row's
+    # own columns, the way Raman narrates a transit; the table above stays in full.
+    sentences = "".join(f'<li>{_esc(gochara_synthesis_sentence(g))}</li>' for g in r.gochara)
     return ('<h2 class="section" id="gochara">Current transits (Gochara) with Vedha</h2>'
             '<p class="section-sub">From the natal Moon at the reference date. Raman: transits are '
             'secondary, catalytic &mdash; conclusions rest on Dasa-vichara (HTJAH-II:4679-4687). '
@@ -2040,6 +2170,10 @@ def _gochara_table(r: DetailedReport) -> str:
             '<th class="num">proportion</th><th>Kakshya</th>'
             '<th>Vedha by</th><th>net</th></tr></thead>'
             f'<tbody>{rows}</tbody></table></div>'
+            '<p class="section-sub"><b>Read as sentences</b> &mdash; the same rows joined the '
+            'way Raman narrates a transit (station + support + vedha in one breath); every '
+            'clause restates a column above, no new judgment:</p>'
+            f'<ul class="tightlist">{sentences}</ul>'
             f'{_gochara_outlook_svg(r)}')
 
 
@@ -2196,7 +2330,44 @@ def _dasha_transit_section(r: DetailedReport) -> str:
         'period lacks support.</p>'
         '<div class="tablewrap"><table class="grid"><thead><tr><th>period</th><th>planet</th>'
         '<th>overlap</th><th>what it supports</th><th>strength</th><th>interference</th></tr>'
-        f'</thead><tbody>{rows}</tbody></table></div>')
+        f'</thead><tbody>{rows}</tbody></table></div>'
+        f'{_dasha_transit_adverse_section(r)}')
+
+
+def _dasha_transit_adverse_section(r: DetailedReport) -> str:
+    """Wave-2 (2026-08-18): the ADVERSE mirror of the confluence table — the favourable
+    builder was one-sided by construction (`if not seg.gochara_good: continue`); Raman's
+    blending doctrine reads obstruction too (HPA-34:369-381). The favourable table above is
+    untouched; this renders below it, method-only, same coarse-sampling honesty."""
+    if not r.dasha_transit_adverse:
+        return ""
+    rows = ""
+    for c in r.dasha_transit_adverse:
+        mit = (f"{c.bav_bindus}/8 of the evil neutralised" if c.bav_bindus is not None
+               else "&ndash; (node: no classical Ashtakavarga)"
+               if c.planet in ("Rahu", "Ketu") else "&ndash; (not computed)")
+        rows += (f'<tr><td><b>{_esc(c.role)}</b></td><td>{_esc(c.planet)}</td>'
+                 f'<td>{_outlook_window_label(c.overlap_start_jd, c.overlap_end_jd)}</td>'
+                 f'<td>{_esc(_PLANET_THEME[c.planet])}</td><td>{mit}</td>'
+                 f'<td>&ndash;</td></tr>')
+    return (
+        '<h3>Adverse dasha &times; transit confluence</h3>'
+        '<p class="section-sub"><b>In simple terms:</b> the mirror of the table above &mdash; '
+        'the stretches where a running MD or AD lord is, at the same time, transiting a '
+        'station from your Moon that the classical Gochara scheme counts AGAINST that planet. '
+        'Raman&rsquo;s blending doctrine weighs obstruction as well as reinforcement '
+        '(&ldquo;blended with those of Gochara and Ashtakavarga, together with Vedha or '
+        'obstructing forces&rdquo;, HPA-34:369-381) &mdash; the two tables are the two halves '
+        'of one method statement: reduced transit support during what the period already '
+        'indicates, never a stand-alone prediction. Mitigation applies Raman&rsquo;s own '
+        'proportion law (bindus neutralise the evil to that extent, ASP-13:416); Vedha is '
+        'defined for favourable transits only, so that column reads &ndash; here (not '
+        'computed, not zero). Same coverage and sampling honesty as above: only the four '
+        'long-range movers contribute rows, at the outlook&rsquo;s coarse ~week sampling '
+        '&mdash; method windows, not exact dates.</p>'
+        '<div class="tablewrap"><table class="grid"><thead><tr><th>period</th><th>planet</th>'
+        '<th>overlap</th><th>what it concerns</th><th>mitigation (own AV bindus)</th>'
+        f'<th>interference</th></tr></thead><tbody>{rows}</tbody></table></div>')
 
 
 def _soul_section(r: DetailedReport) -> str:
@@ -2355,6 +2526,19 @@ def _timeline(r: DetailedReport) -> str:
     lord influences is limited. Current AD marked."""
     running_md = next((tp.period.maha for tp in r.timeline.periods
                        if tp.period.start_jd <= r.ref_jd < tp.period.end_jd), None)
+    # Wave-2 (2026-08-18): the influence-basis table (role-preserving timer_roles, pinned
+    # equal to timer_set) — each chip's tooltip now DERIVES the tier instead of asserting
+    # it: "MD owns+karaka; AD aspects lord" (HTJAH-I:1586-1596).
+    _basis_table = influence_basis_table(r.chart)
+
+    def _chip_basis(a) -> str:
+        bits: list[str] = []
+        if a.md_activates:
+            bits.append(f"MD {influence_basis(_basis_table, a.house, a.md_lord)}".rstrip())
+        if a.antar_activates and a.antar_lord is not None:
+            bits.append(
+                f"AD {influence_basis(_basis_table, a.house, a.antar_lord)}".rstrip())
+        return "; ".join(bits)
     # count the bhuktis per MD so the accordion summary is informative while collapsed
     spans: dict[str, list[float]] = {}
     for tp in r.timeline.periods:
@@ -2395,7 +2579,8 @@ def _timeline(r: DetailedReport) -> str:
             if not items:
                 continue
             dim = " lim" if tier in ("limited", "feeble") else ""
-            chips = "".join(_house_chip(a, ring=(tier == "par excellence")) for a in items)
+            chips = "".join(_house_chip(a, ring=(tier == "par excellence"),
+                                        basis=_chip_basis(a)) for a in items)
             blocks += (f'<div class="lit-chips{dim}"><span class="theme-label" '
                        f'title="{_TITLE[tier]}">{tier}</span>{chips}</div>')
         plain = plain_bhukti_summary(rows, associated)
@@ -2684,14 +2869,20 @@ def to_html(r: DetailedReport) -> str:
 
     sig_html = "".join(_chip(k, str(v)) for k, v in sig)
 
-    from app.raman_saab.detailed_report import house_conclusion
+    from app.raman_saab.detailed_report import (house_chief_combinations,
+                                                house_conclusion,
+                                                house_current_tier_line,
+                                                house_frame_line)
     dist_houses = frozenset(h for h, _e in r.distinctive)
     ht_by_house = {h.house: h for h in r.preponderance.houses}
     houses = "".join(
         _house_section(mr, r.calibration[mr.house],
                        r.proformas[mr.house - 1] if len(r.proformas) >= mr.house else None,
                        r.chart, dist_houses, conclusion=house_conclusion(r, mr.house),
-                       ht=ht_by_house.get(mr.house))
+                       ht=ht_by_house.get(mr.house),
+                       frame_line=house_frame_line(r, mr.house),
+                       tier_line=house_current_tier_line(r, mr.house),
+                       chief=house_chief_combinations(r, mr.house))
         for mr in s.matters)
     filters = ('<div class="filters" role="group" aria-label="filter houses">'
                + "".join(f'<button type="button" data-filter="{f}"'
@@ -2706,8 +2897,18 @@ def to_html(r: DetailedReport) -> str:
     if r.balarishta is not None:
         bal = ("applies" if r.balarishta.applies and not r.balarishta.cancelled
                else "cancelled" if r.balarishta.cancelled else "does not apply")
+        # Wave-2 (2026-08-18, item 5a): the clear case discloses what was screened —
+        # the primitive's own checked conditions, so "does not apply" is checkable.
+        screen_html = ""
+        if not r.balarishta.applies:
+            from app.raman_saab.primitives.balarishta import screened_conditions
+            screen_html = ('<p class="long-step">screened: '
+                           + "; ".join(f'{_esc(label)} ({_esc(cite)})'
+                                       for label, cite in screened_conditions())
+                           + ' &mdash; none present</p>')
         combos_html = (f'<p class="long-step"><b>1. Balarishta</b> (early-childhood danger): '
-                       f'{bal}</p><p class="long-step"><b>2. Band by combination</b></p>'
+                       f'{bal}</p>{screen_html}'
+                       f'<p class="long-step"><b>2. Band by combination</b></p>'
                        + combos_html)
 
     vargas = "".join(_varga_card(label, body) for label, body in r.divisional)
@@ -2724,10 +2925,25 @@ def to_html(r: DetailedReport) -> str:
             f'<td>{_esc(src.trades)}'
             + (f' <i>({_esc(src.note)})</i>' if src.note else "")
             + f'</td><td>{_esc(src.cite)}</td></tr>' for src in pf.sources)
+        # Wave-2 (item 3a): the D-10 row the preamble promises — corroboration,
+        # deliberately not a convergence vote.
+        _d10 = getattr(pf, "dasamsa_row", ())
+        if _d10:
+            prow += (f'<tr><td>{_esc(_d10[0])}</td><td>{_esc(_d10[1])}</td>'
+                     f'<td>{_esc(_d10[2])}</td><td>{_esc(_d10[3])}</td></tr>')
         conv = ("" if not pf.convergent else
                 '<p class="section-sub"><b>Convergent trades</b> (named by 2+ '
                 'derivations) &mdash; '
                 + _esc(", ".join(f"{w} ({n})" for w, n in pf.convergent)) + '</p>')
+        # Wave-2 (item 3c): same-graha disclosure on the convergence count.
+        if getattr(pf, "convergence_note", ""):
+            conv += ('<p class="section-sub"><b>One planet, several hats</b> &mdash; '
+                     + _esc(pf.convergence_note) + '</p>')
+        # Wave-2 (item 3b): H10 activations — the marriage monograph's H7 lens, for work.
+        if getattr(pf, "h10_windows", ()):
+            conv += ('<p class="section-sub"><b>H10 activations in the window</b> '
+                     '(a timing lens, never a promise) &mdash; '
+                     + _esc("; ".join(pf.h10_windows)) + '</p>')
         modes = ("" if not pf.mode_split else
                  '<p class="section-sub"><b>H10 mode split</b> &mdash; '
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
@@ -2742,12 +2958,28 @@ def to_html(r: DetailedReport) -> str:
             f'<tbody>{prow}</tbody></table></div>{modes}{conv}')
     if r.wealth is not None:
         wch = r.wealth
+        # Wave-2 (item 4d): the population-context column the signification rows
+        # already carry in the House-by-house section, re-read per row.
         wrow = "".join(f'<tr><td>{_esc(x.channel)}</td><td>{_esc(x.reading)}</td>'
-                       f'<td>{_esc(x.cite)}</td></tr>' for x in wch.rows)
+                       f'<td>{_esc(x.cite)}</td>'
+                       f'<td>{_esc(getattr(x, "context", "") or "-")}</td></tr>'
+                       for x in wch.rows)
         exp = ("" if not wch.expansion_periods else
                '<p class="section-sub"><b>Periods of expansion</b> (H2/H11 activated at '
                'ordinary tier or better &mdash; a timing lens, never a promise): '
                + _esc("; ".join(wch.expansion_periods)) + '</p>')
+        # Wave-2 (item 4c): the non-differential-lens self-disclosure.
+        if getattr(wch, "expansion_note", ""):
+            exp += ('<p class="section-sub caveat"><i>Self-disclosure: '
+                    + _esc(wch.expansion_note) + '.</i></p>')
+        # Wave-2 (items 4a/4b): dhana/daridra fired-or-absent + the wealth lords'
+        # computed conditions.
+        dhana = ("" if not getattr(wch, "dhana_row", "") else
+                 '<p class="section-sub"><b>Dhana / Daridra yogas</b> &mdash; '
+                 + _esc(wch.dhana_row) + '</p>')
+        lords = "".join('<p class="section-sub"><b>Lord condition</b> &mdash; '
+                        + _esc(lc) + '</p>'
+                        for lc in getattr(wch, "lord_conditions", ()))
         extras += (
             '<h2 class="section" id="wealth">Wealth chapter</h2>'
             f'{_method_preamble_html("wealth")}'
@@ -2755,12 +2987,61 @@ def to_html(r: DetailedReport) -> str:
             'verdict &mdash; every row re-reads a judged signification or a cited '
             'source-of-gains table.</p>'
             '<div class="tablewrap"><table class="grid"><thead><tr><th>channel</th>'
-            '<th>reading</th><th>cite</th></tr></thead>'
-            f'<tbody>{wrow}</tbody></table></div>{exp}')
+            '<th>reading</th><th>cite</th><th>population context</th></tr></thead>'
+            f'<tbody>{wrow}</tbody></table></div>{dhana}{lords}{exp}')
     if r.marriage is not None:
         m = r.marriage
-        kal = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(c)})</i></li>'
-                      for b, t, c in m.fired_kalatra)
+        # Wave-2 (items 1d/1e): fortified-first grouping with a tally; maintainer
+        # notes routed to trailing fine print (still rendered — ADD-ONLY routing).
+        from app.raman_saab.monographs import split_maintainer_notes as _smn
+        _fort = [x for x in m.fired_kalatra if x[0] == "fortified"]
+        _affl = [x for x in m.fired_kalatra if x[0] == "afflicted"]
+        _rest = [x for x in m.fired_kalatra if x[0] not in ("fortified", "afflicted")]
+        _fine: list[str] = []
+        _lis: list[str] = []
+        # NB: fresh loop names — `b` is r.birth in this scope (shadowing it was the
+        # critique's bug-1 class; do not reuse outer names in to_html loops).
+        for _kbr, _ktx, _kci in (*_fort, *_affl, *_rest):
+            _clean, _mnote = _smn(_ktx)
+            _lis.append(f'<li>({_esc(_kbr)}) {_esc(_clean)} <i>({_esc(_kci)})</i></li>')
+            if _mnote:
+                _fine.append(f"{_kci}: {_mnote}")
+        kal = "".join(_lis)
+        tally = (f'{len(_fort)} fortified, {len(_affl)} afflicted'
+                 + (f', {len(_rest)} other' if _rest else ''))
+        fine_html = ("" if not _fine else
+                     '<p class="section-sub caveat"><i>Encoding-scope notes '
+                     '(maintainer fine print, not readings): '
+                     + _esc(" | ".join(_fine)) + '</i></p>')
+        # Wave-2 (item 1a): the happiness-vs-coverture split, judged separately.
+        split_html = ""
+        if getattr(m, "marital_happiness", None) or getattr(m, "coverture", None):
+            split_html = (
+                '<p class="section-sub"><b>Marital happiness: '
+                + _esc(m.marital_happiness or "not judged")
+                + '; the partner&rsquo;s own longevity (coverture): '
+                + _esc(m.coverture or "not judged")
+                + '</b> &mdash; two separate 7th-house significations, judged '
+                  'separately (re-read from House 7)</p>')
+        # Wave-2 (item 1b): the Kuja-dosha per-frame narration.
+        kuja_html = ""
+        if getattr(m, "kuja_narration", ()):
+            kuja_html = (
+                '<p class="section-sub"><b>Kuja (Mangal) dosha, checked frame by '
+                'frame (HTJAH-II:2579-2622)</b> &mdash; the rule&rsquo;s own '
+                'evaluation, disclosed:</p><ul class="doclist">'
+                + "".join(f'<li>{_esc(kn)}</li>' for kn in m.kuja_narration)
+                + '</ul>')
+        # Wave-2 (item 1c): the method's own favourable Jupiter windows on the 7th
+        # from the Moon — a filter of the Gochara outlook, no new doctrine claim.
+        jup_html = ""
+        if getattr(m, "jupiter_h7_windows", ()):
+            jup_html = (
+                '<p class="section-sub"><b>Jupiter transits touching the 7th (from '
+                'the Moon)</b> &mdash; the method&rsquo;s own favourable-transit '
+                'windows (the Gochara outlook above) in which Jupiter occupies the '
+                '7th from the Moon: '
+                + _esc("; ".join(m.jupiter_h7_windows)) + '</p>')
         extras += (
             '<h2 class="section" id="marriage">Marriage monograph</h2>'
             f'{_method_preamble_html("marriage")}'
@@ -2771,6 +3052,7 @@ def to_html(r: DetailedReport) -> str:
             + (f' &middot; <b>Upapada</b> {_esc(m.upapada)}' if m.upapada else "")
             + (f' &middot; <b>Children (H5)</b> {_esc(m.children_after)}'
                if m.children_after else "") + '</p>'
+            + split_html
             + (f'<p class="section-sub"><b>The 7th lord in house '
                f'{m.lord_placement_house} (verbatim, his periods)</b> &mdash; '
                f'&ldquo;{_esc(m.lord_period_text)}&rdquo; (HTJAH-II:710)</p>'
@@ -2779,11 +3061,15 @@ def to_html(r: DetailedReport) -> str:
                f'sign</b> &mdash; &ldquo;{_esc(m.spouse_sign_text[0])}&rdquo; '
                f'<i>({_esc(m.spouse_sign_text[1])})</i></p>' if m.spouse_sign_text
                else "")
-            + (f'<ul class="doclist">{kal}</ul>' if kal else "")
+            + kuja_html
+            + (f'<p class="section-sub"><b>Kalatra rules firing in this chart</b> '
+               f'({_esc(tally)}):</p><ul class="doclist">{kal}</ul>{fine_html}'
+               if kal else "")
             + f'<p class="section-sub"><b>Timing doctrine (verbatim)</b> &mdash; '
               f'&ldquo;{_esc(m.timing_navamsa)}&rdquo; (HTJAH-II:853)</p>'
             + (f'<p class="section-sub"><b>H7 activations</b> &mdash; '
                f'{_esc("; ".join(m.timing_windows))}</p>' if m.timing_windows else "")
+            + jup_html
             + f'<p class="section-sub caveat"><i>On separation and loss of the partner, '
               f'the method&rsquo;s own statements &mdash; quoted, not composed; a '
               f'statement of the method, not a prediction:</i> '
@@ -2793,11 +3079,24 @@ def to_html(r: DetailedReport) -> str:
         pr_ = "".join(f'<li>({_esc(b)}) {_esc(t)} <i>({_esc(ci)})</i></li>'
                       for b, t, ci in c.fired_rules)
         sig = "; ".join(f"{k}: {v}" for k, v in c.significations)
+        # Wave-2 (items 2a/2b): the Jupiter (putrakaraka) condition and the D-7
+        # corroboration row the preamble promises.
+        jup_html = ("" if not getattr(c, "putrakaraka_line", "") else
+                    '<p class="section-sub"><b>' + _esc(c.putrakaraka_line) + '</b></p>')
+        d7_html = ("" if not getattr(c, "d7_corroboration", "") else
+                   '<p class="section-sub"><b>Saptamsa (D-7) corroboration</b> '
+                   '&mdash; ' + _esc(c.d7_corroboration) + '</p>')
+        # Wave-2 (item 2c): the doctrine-reviewed reframe note, VERBATIM from the
+        # D-7 section, placed BEFORE the fired rules.
+        reframe_html = ("" if not getattr(c, "reframe_note", "") else
+                        '<p class="section-sub caveat"><i>'
+                        + _esc(c.reframe_note) + '</i></p>')
         extras += (
             '<h2 class="section" id="children">Children chapter</h2>'
             f'{_method_preamble_html("children")}'
             f'<p class="section-sub"><b>Headline (unchanged H5 verdict)</b> &mdash; '
             f'{_esc(c.verdict)} &middot; {_esc(sig)}</p>'
+            + jup_html + d7_html + reframe_html
             + (f'<ul class="doclist">{pr_}</ul>' if pr_ else "")
             + (f'<p class="section-sub"><b>H5 activations</b> &mdash; '
                f'{_esc("; ".join(c.timing_windows))}</p>' if c.timing_windows else "")
@@ -2850,9 +3149,21 @@ def to_html(r: DetailedReport) -> str:
                 f'<tbody>{bj_rows}</tbody></table></div>')
     if s.karakamsa_reading:
         km = "".join(f"<li>{_esc(x)}</li>" for x in s.karakamsa_reading)
+        # Wave-2 (2026-08-18): header context before the sutra fragments (computed AK +
+        # Karakamsa sign, re-read from the chart signature) + a purely navigational
+        # cross-reference — the classical passage pairing the karakamsa reading with the
+        # running chara period is corpus-gated and NOT composed here.
         extras += (f'<h2 class="section" id="karakamsa">Jaimini Karakamsa</h2>'
-                   f'<p class="section-sub">the soul\'s inclination</p>'
-                   f'<ul class="doclist">{km}</ul>')
+                   f'<p class="section-sub">the soul\'s inclination &mdash; context: the '
+                   f'Atmakaraka (soul-planet) of this chart is <b>{_esc(s.atmakaraka)}</b>; '
+                   f'its navamsa seat, the Karakamsa, is <b>{_esc(s.karakamsa)}</b> '
+                   f'(JS 1.2 Su.14-22)</p>'
+                   f'<ul class="doclist">{km}</ul>'
+                   f'<p class="section-sub">See also: the dated Chara dasha (Jaimini) '
+                   f'sequence in the timeline section above, and the full Karakamsa reading '
+                   f'in Soul &amp; destiny below &mdash; cross-references only; the '
+                   f'classical passage pairing the two is corpus-gated and not composed '
+                   f'here.</p>')
     extras += _soul_section(r)
     if r.karmic is not None:
         kv = r.karmic
@@ -2864,10 +3175,15 @@ def to_html(r: DetailedReport) -> str:
         krows.append(("Raman's Jaimini doctrine (verbatim)",
                       f"&ldquo;{_esc(kv.doctrine_quote)}&rdquo; "
                       f"<i>({_esc(kv.doctrine_cite)})</i>"))
+        # Wave-2 (2026-08-18): one-sentence domain re-reads, not embedded full blocks —
+        # REPORT COMPLETENESS holds: the full D-20/D-60 blocks still render, untrimmed,
+        # at their home in the Divisional deep-reads section.
         if kv.d20_core:
-            krows.append(("D-20 Vimsamsa (spiritual) core", _esc(kv.d20_core)))
+            krows.append(("D-20 Vimsamsa (spiritual) &mdash; domain re-read",
+                          _esc(kv.d20_core)))
         if kv.d60_core:
-            krows.append(("D-60 Shashtiamsa (totality) core", _esc(kv.d60_core)))
+            krows.append(("D-60 Shashtiamsa (totality) &mdash; domain re-read",
+                          _esc(kv.d60_core)))
         kbody = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                         f'<span class="vv">{v}</span></div>' for k, v in krows)
         extras += ('<h2 class="section" id="karmic">Karmic evolution (Jaimini)</h2>'
@@ -2961,8 +3277,8 @@ def to_html(r: DetailedReport) -> str:
   {combos_html}
   <p class="long"><b>3. Numeric cross-check (Ayurdaya)</b>: about
     <b>{round(r.longevity_years)} years</b> ({y}y {mo}m {d}d) &mdash;
-    class <b>{_esc(r.longevity_class)}</b>. Treat as a band; the engine's own health layer defers
-    lifespan.</p>
+    class <b>{_esc(longevity_band_label(r.longevity_class))}</b>. Treat as a band, not a date:
+    this report never converts the band into a date.</p>
 
   {_maraka(r)}
 

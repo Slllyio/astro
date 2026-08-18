@@ -2139,3 +2139,239 @@ class TestFoundationWave2:
         for t in texts:
             m = _FORBIDDEN_RE.search(t)
             assert m is None, f"{m.group(0) if m else ''!r} in {t!r}"
+
+
+class TestWave2TimingDivisionalSoul:
+    """Wave-2 (2026-08-18, REPORT_CRITIQUE timing appendix — timing/divisional/soul group):
+    influence-basis tags derived from the role-preserving timer_roles, the adverse dasha x
+    transit confluence mirror, per-row gochara synthesis sentences, divisional verdict-first
+    labels + D-27/40/45/60 domain sentences, karmic one-line re-reads (full blocks retained
+    at their home sections), and the Jaimini AK/Karakamsa header + navigational cross-ref."""
+
+    # ── item 1: derive the tier, don't assert it ─────────────────────────────
+
+    def test_influence_basis_tags_render_on_activation_rows(self, report, markdown):
+        """Every lit house carries the bracketed influence-basis derivation ('[MD owns; AD
+        aspects lord]') built from timer_roles — the factor list HTJAH-I:1586-1596 names."""
+        import re
+        assert "**Influence basis**" in markdown
+        assert "HTJAH-I:1586-1596" in markdown
+        # a both-lords row carries both MD and AD bases; single-lord rows carry one
+        assert re.search(r"H\d+ \w+ \(MD [a-z]+, AD [a-z]+\) \[MD [a-z][^\]]*; AD [^\]]+\]",
+                         markdown)
+        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD [a-z]+\) \[AD ",
+                         markdown)
+        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD [a-z]+\) \[MD ", markdown)
+
+    def test_influence_basis_agrees_with_timer_roles(self, report):
+        """The rendered basis is the timer_roles decomposition, never an independent grading:
+        for every activated house, each period-lord's basis resolves via the house's roles or
+        (tagged 'via H<n>') an allied event house's roles."""
+        from app.raman_saab.detailed_report import influence_basis, influence_basis_table
+        from app.raman_saab.primitives.vimshottari import _EVENT_AUX_HOUSES, timer_roles
+        table = influence_basis_table(report.chart)
+        for h in range(1, 13):
+            assert table[h] == timer_roles(report.chart, h)
+        for tp in report.timeline.periods:
+            for a in tp.activated:
+                if a.md_activates:
+                    basis = influence_basis(table, a.house, a.md_lord)
+                    assert basis, (a.house, a.md_lord)
+                    if basis.startswith("via H"):
+                        aux = int(basis.split()[1][1:].rstrip(":"))
+                        assert aux in _EVENT_AUX_HOUSES.get(a.house, ()), basis
+                        assert a.md_lord in table[aux]
+                    else:
+                        assert a.md_lord in table[a.house]
+
+    def test_influence_basis_in_json_timeline_rows(self, report):
+        """The JSON timeline rows carry md_basis/antar_basis (append-only), so the
+        interactive page can show the same derivation."""
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        rows = [a for row in d["timeline"] for a in row["activated"]]
+        assert rows
+        for a in rows:
+            assert "md_basis" in a and "antar_basis" in a
+            if a["md_basis"] is not None:
+                assert a["md_basis"]                     # never an empty basis on an MD hit
+
+    # ── item 2: the adverse dasha x transit mirror ───────────────────────────
+
+    def test_adverse_confluence_rows_present_with_honesty_note(self, report, markdown):
+        """The adverse mirror renders below the (untouched) favourable table with the same
+        coarse-sampling honesty note and the recorded blending frame HPA-34:369-381."""
+        f = markdown.find("## Dasha x Transit confluence")
+        a = markdown.find("### Adverse dasha x transit confluence")
+        assert f >= 0 and a > f                       # favourable section first, mirror after
+        assert report.dasha_transit_adverse           # rows exist on the canonical chart
+        section = markdown[a:markdown.find("\n## ", a)]
+        assert "HPA-34:369-381" in section            # the recorded blending doctrine
+        assert "ASP-13:416" in section                # Raman's own mitigation proportion
+        assert "not computed, not zero" in section    # honest Vedha disclosure
+        assert "method windows, not exact dates" in section   # coarse-sampling honesty
+        assert section.count("| MD |") + section.count("| AD |") == \
+            len(report.dasha_transit_adverse)
+
+    def test_adverse_builder_mirrors_the_favourable_one(self, report):
+        """Every adverse row is a genuine (period x adverse-segment) intersection; the
+        favourable rows are untouched by construction (separate builder)."""
+        for c in report.dasha_transit_adverse:
+            assert c.overlap_start_jd < c.overlap_end_jd
+            assert c.period_start_jd <= c.overlap_start_jd
+            assert c.overlap_end_jd <= c.period_end_jd
+            segs = report.gochara_outlook[c.planet]
+            assert any((not s.gochara_good) and s.start_jd <= c.overlap_start_jd
+                       and c.overlap_end_jd <= s.end_jd for s in segs), c
+        for c in report.dasha_transit:                # the favourable half: still all-good
+            segs = report.gochara_outlook[c.planet]
+            assert any(s.gochara_good and s.start_jd <= c.overlap_start_jd
+                       and c.overlap_end_jd <= s.end_jd for s in segs), c
+
+    def test_adverse_confluence_in_json(self, report):
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        assert len(d["dasha_transit_adverse"]) == len(report.dasha_transit_adverse)
+
+    # ── item 3: gochara synthesis sentences ──────────────────────────────────
+
+    def test_one_gochara_synthesis_sentence_per_snapshot_row(self, report, markdown):
+        """One deterministic sentence per snapshot row, composed strictly from the row's own
+        columns (station + support + kakshya + vedha + net)."""
+        from app.raman_saab.detailed_report import gochara_synthesis_sentence
+        s = markdown.find("**Read as sentences**")
+        assert s >= 0
+        section = markdown[s:markdown.find("###", s)]
+        for g in report.gochara:
+            sent = gochara_synthesis_sentence(g)
+            assert f"- {sent}" in section             # each row's sentence rendered
+            assert g.planet in sent
+            assert ("favourable station" if g.gochara_good else "adverse station") in sent
+            if g.bav_bindus is not None:
+                assert f"{g.bav_bindus} bindus" in sent
+            else:
+                assert "no Ashtakavarga measure (node)" in sent
+            if g.gochara_good and g.vedha_by:
+                assert "the good is withheld" in sent
+                for v in g.vedha_by:
+                    assert v in sent
+            elif g.gochara_good:
+                assert "the indication stands" in sent
+
+    # ── item 4: divisional verdict-first ─────────────────────────────────────
+
+    def test_matter_varga_labels_lead_with_the_verdict(self, report, markdown):
+        """Each matter-varga label (heading / JSON label / HTML summary source) appends the
+        verdict banner its body already prints; general vargas keep their plain label."""
+        labels = {lbl.split(" - ")[0].split(" (")[0]: lbl for lbl, _ in report.divisional}
+        by_prefix = {lbl.split(" ", 1)[0]: lbl for lbl, _ in report.divisional}
+        for dtag in ("D-9", "D-10", "D-7", "D-12", "D-2", "D-3", "D-4", "D-30", "D-16",
+                     "D-20", "D-24"):
+            assert " - " in by_prefix[dtag], by_prefix[dtag]     # verdict appended
+            assert f"### {by_prefix[dtag]}" in markdown
+        assert " - CAREER: " in by_prefix["D-10"]
+        assert " - SPOUSE: " in by_prefix["D-9"]
+        assert " - HEALTH (H1): " in by_prefix["D-30"]
+        # verdict comes FROM the body (a re-read, not a re-judgment)
+        for lbl, body in report.divisional:
+            if " - " in lbl and ">>>" in body:
+                head_verdict = lbl.split(" - ", 1)[1].split(";")[0].split(",")[0]
+                assert head_verdict.split(":")[0].strip() in body
+
+    def test_general_varga_domain_sentences_present(self, report, markdown):
+        """D-27/40/45/60 each carry one domain-verdict sentence tying the varga lagna-lord's
+        condition to the domain word, citing the module's recorded HPA-11 lines."""
+        bodies = {lbl.split(" ", 1)[0]: body for lbl, body in report.divisional}
+        for dtag, cite, word in (("D-27", "HPA-11:100", "general strength"),
+                                 ("D-40", "HPA-11:110", "auspiciousness"),
+                                 ("D-45", "HPA-11:113", "character and conduct"),
+                                 ("D-60", "HPA-11:116", "totality")):
+            body = bodies[dtag]
+            assert "domain reading :" in body, dtag
+            line = next(ln for ln in body.splitlines() if "domain reading :" in ln)
+            assert cite in line and word in line, dtag
+            assert "no D1 verdict is touched" in line
+            assert line.count("varga lagna lord") == 1
+        assert markdown.count("domain reading :") >= 4      # rendered in the report too
+
+    def test_karmic_rereads_are_one_line_and_home_blocks_stay_full(self, report, markdown):
+        """The karmic chapter carries one-sentence D-20/D-60 re-reads (no embedded ASCII
+        blocks) while the home divisional sections still render the full blocks — both
+        halves of the REPORT COMPLETENESS argument pinned."""
+        kv = report.karmic
+        assert kv is not None
+        for core in (kv.d20_core, kv.d60_core):
+            assert core is not None
+            assert "\n" not in core                    # one sentence, not a block
+            assert ">>>" not in core and "RAMAN CORE" not in core
+            assert "renders, untrimmed, in the Divisional deep-reads section" in core
+        assert "- **D-20 Vimsamsa (spiritual) - domain re-read** " in markdown
+        assert "- **D-60 Shashtiamsa (totality) - domain re-read** " in markdown
+        # the home sections still carry the FULL blocks
+        bodies = {lbl.split(" ", 1)[0]: body for lbl, body in report.divisional}
+        assert ">>> SPIRITUAL:" in bodies["D-20"]      # full D-20 core banner at home
+        assert "RAMAN CORE" in bodies["D-20"]
+        assert "lagna :" in bodies["D-60"]             # full D-60 picture at home
+        assert "strong here (exalt/own):" in bodies["D-60"]
+        for dtag in ("D-20", "D-60"):
+            s = markdown.find(f"### {dtag}")
+            assert s >= 0
+            section = markdown[s:markdown.find("\n### ", s + 5)]
+            assert "```" in section                    # the full block, still rendered
+
+    # ── item 5: Jaimini AK header + navigational cross-reference ─────────────
+
+    def test_jaimini_chapter_opens_with_ak_and_karakamsa_context(self, report, markdown):
+        """The short Jaimini chapter now leads with the computed AK + Karakamsa sign before
+        the sutra fragments, and closes with the purely-navigational cross-reference (the
+        Studies-in-Jaimini pairing passage is corpus-gated, not composed)."""
+        s = markdown.find("## Jaimini Karakamsa (the soul's inclination)")
+        assert s >= 0
+        section = markdown[s:markdown.find("\n## ", s + 5)]
+        syn = report.synthesis
+        ctx = section.find(f"the Atmakaraka (soul-planet) of this chart is **{syn.atmakaraka}**")
+        assert ctx >= 0
+        assert f"the Karakamsa - is **{syn.karakamsa}**" in section
+        first_bullet = section.find("\n- ")
+        assert first_bullet == -1 or ctx < first_bullet     # context BEFORE the fragments
+        assert "corpus-gated and not composed here" in section   # the recorded skip
+        assert "dated Chara dasha (Jaimini) sequence" in section  # navigational pointer
+
+    # ── the decree guard on every new prose surface ──────────────────────────
+
+    def test_wave2_surfaces_pass_the_decree_guard(self, report, markdown):
+        """All Wave-2 prose stays in the indication idiom — the decree tripwire never fires
+        on the new sections, sentences, labels or re-reads."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        from app.raman_saab.detailed_report import gochara_synthesis_sentence
+        for marker in ("**Influence basis**", "### Adverse dasha x transit confluence",
+                       "**Read as sentences**",
+                       "## Jaimini Karakamsa (the soul's inclination)"):
+            s = markdown.find(marker)
+            assert s >= 0, marker
+            e = markdown.find("\n## ", s)
+            section = markdown[s:e if e > 0 else s + 4000]
+            m = _FORBIDDEN_RE.search(section)
+            assert m is None, f"{marker}: {m.group(0)!r}"
+        for g in report.gochara:
+            assert _FORBIDDEN_RE.search(gochara_synthesis_sentence(g)) is None
+        kv = report.karmic
+        for text in (kv.d20_core or "", kv.d60_core or ""):
+            assert _FORBIDDEN_RE.search(text) is None
+        for lbl, body in report.divisional:
+            assert _FORBIDDEN_RE.search(lbl) is None
+            if "domain reading :" in body:
+                line = next(ln for ln in body.splitlines() if "domain reading :" in ln)
+                assert _FORBIDDEN_RE.search(line) is None
+
+    def test_html_surfaces_carry_the_wave2_additions(self, report):
+        """The standalone HTML renders the adverse mirror, the synthesis sentences, the
+        verdict-first varga summaries, the AK context and the basis tooltips."""
+        from app.raman_saab.report_html import to_html
+        html = to_html(report)
+        assert "Adverse dasha &times; transit confluence" in html
+        assert "Read as sentences" in html
+        assert "domain re-read" in html
+        assert "the Karakamsa, is <b>" in html
+        assert "CAREER: FAVOURABLE" in html or "CAREER: " in html   # verdict-first summary
+        assert "&mdash; MD " in html                  # basis tooltip on a timeline chip

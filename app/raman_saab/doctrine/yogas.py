@@ -939,6 +939,96 @@ YOGAS: tuple[YogaRecord, ...] = (
 #     choosing doctrine for him. Deferred on parse ambiguity, not on strength.
 
 
+# ── family taxonomy (ADDITIVE metadata, 2026-08-18 — Wave-2 coverage honesty) ─
+# Rendering metadata ONLY: which of Raman's own family groupings each encoded record
+# belongs to (Pancha Mahapurusha, the solar/lunar flank sets, the four Nabhasa classes,
+# raja/dhana/arishta, and the named sets mined from 3HC / HPA Ch.20). Conditions, kinds
+# and detection above are untouched — this exists so report surfaces can (a) disclose
+# encoded coverage with a family breakdown and (b) show a family name where the bare
+# `kind="other"` tag says nothing to a reader. Family names are Raman's own taxonomy
+# vocabulary, not new doctrine.
+
+#: Canonical display order for the family breakdown (report surfaces iterate this).
+YOGA_FAMILY_ORDER: Final[tuple[str, ...]] = (
+    "Pancha Mahapurusha", "solar (Ravi-flank)", "lunar (Chandra)",
+    "Nabhasa-Asraya", "Nabhasa-Dala", "Nabhasa-Sankhya", "Nabhasa-Akriti",
+    "raja", "dhana", "arishta", "named (3HC)", "named (HPA-20)")
+
+#: Record id -> family. Every id in `YOGAS` appears exactly once (paired test).
+YOGA_FAMILIES: Final[dict[str, str]] = {
+    # Pancha Mahapurusha (3HC:3434-3435 form)
+    "Y.RUCHAKA": "Pancha Mahapurusha", "Y.BHADRA": "Pancha Mahapurusha",
+    "Y.HAMSA": "Pancha Mahapurusha", "Y.MALAVYA": "Pancha Mahapurusha",
+    "Y.SASA": "Pancha Mahapurusha",
+    # solar flank (planets about the Sun)
+    "Y.VESI": "solar (Ravi-flank)", "Y.VASI": "solar (Ravi-flank)",
+    "Y.UBHAYACHARI": "solar (Ravi-flank)",
+    # lunar (formed on/about the Moon)
+    "Y.GAJAKESARI": "lunar (Chandra)", "Y.SUNAPHA": "lunar (Chandra)",
+    "Y.ANAPHA": "lunar (Chandra)", "Y.DURUDHARA": "lunar (Chandra)",
+    "Y.CHANDRAMANGALA": "lunar (Chandra)", "Y.ADHI": "lunar (Chandra)",
+    "Y.AMALA": "lunar (Chandra)",
+    # Nabhasa — Asraya (modality shapes)
+    "Y.RAJJU": "Nabhasa-Asraya", "Y.MUSALA": "Nabhasa-Asraya",
+    "Y.NALA": "Nabhasa-Asraya",
+    # Nabhasa — Dala (benefic/malefic kendra garlands)
+    "Y.MALA": "Nabhasa-Dala", "Y.SARPA": "Nabhasa-Dala",
+    # Nabhasa — Sankhya (sign-count shapes)
+    "Y.VEENA": "Nabhasa-Sankhya", "Y.DAMINI": "Nabhasa-Sankhya",
+    "Y.PASA": "Nabhasa-Sankhya", "Y.KEDARA": "Nabhasa-Sankhya",
+    "Y.SULA": "Nabhasa-Sankhya", "Y.YUGA": "Nabhasa-Sankhya",
+    "Y.GOLA": "Nabhasa-Sankhya",
+    # Nabhasa — Akriti (figure shapes)
+    "Y.YUPA": "Nabhasa-Akriti", "Y.ISHU": "Nabhasa-Akriti",
+    "Y.SAKTI": "Nabhasa-Akriti", "Y.DANDA": "Nabhasa-Akriti",
+    "Y.NAVA": "Nabhasa-Akriti", "Y.KUTA": "Nabhasa-Akriti",
+    "Y.CHATRA": "Nabhasa-Akriti", "Y.CHAPA": "Nabhasa-Akriti",
+    "Y.ARDHACHANDRA": "Nabhasa-Akriti", "Y.CHAKRA": "Nabhasa-Akriti",
+    "Y.SAMUDRA": "Nabhasa-Akriti", "Y.GADA": "Nabhasa-Akriti",
+    "Y.SAKATA_AKRITI": "Nabhasa-Akriti", "Y.VIHAGA": "Nabhasa-Akriti",
+    "Y.VAJRA": "Nabhasa-Akriti", "Y.YAVA": "Nabhasa-Akriti",
+    "Y.SRINGHATAKA": "Nabhasa-Akriti", "Y.HALA": "Nabhasa-Akriti",
+    "Y.KAMALA": "Nabhasa-Akriti", "Y.VAPEE": "Nabhasa-Akriti",
+    # raja (lordship combinations, HTJAH-I)
+    "Y.RAJA.KT": "raja", "Y.RAJA.910X": "raja", "Y.RAJA.910A": "raja",
+    "Y.VIPAREETA": "raja",
+    # dhana (wealth lordship combinations)
+    "Y.DHANA.EXCH": "dhana", "Y.DHANA.59": "dhana", "Y.DHANA.CHAIN": "dhana",
+    "Y.DHANA.BAHU": "dhana", "Y.DHANA.122": "dhana", "Y.DHANA.125": "dhana",
+    # arishta (affliction yogas)
+    "Y.KEMADRUMA": "arishta", "Y.SAKATA": "arishta",
+    # named 3HC set (reported kind='other'; each with its own printed effect)
+    "Y.BUDHA_ADITYA": "named (3HC)", "Y.CHATUSSAGARA": "named (3HC)",
+    "Y.VASUMATHI": "named (3HC)", "Y.PARVATA": "named (3HC)",
+    "Y.JAYA": "named (3HC)", "Y.DARIDRA": "named (3HC)",
+    # named HPA Ch.20 set (incl. its bad yogas)
+    "Y.CHAMARA": "named (HPA-20)", "Y.SREENATHA": "named (HPA-20)",
+    "Y.KHADGA": "named (HPA-20)", "Y.SARADA": "named (HPA-20)",
+    "Y.KUSUMA": "named (HPA-20)", "Y.BRIHADBIJA": "named (HPA-20)",
+    "Y.ASATYAVADI": "named (HPA-20)",
+}
+
+#: The five Pancha Mahapurusha record ids (notable-absence checks read this).
+MAHAPURUSHA_IDS: Final[frozenset[str]] = frozenset(
+    yid for yid, fam in YOGA_FAMILIES.items() if fam == "Pancha Mahapurusha")
+
+
+def yoga_family(yoga_id: str) -> str | None:
+    """The Raman-taxonomy family of an encoded record id, or None if unmapped."""
+    return YOGA_FAMILIES.get(yoga_id)
+
+
+def family_breakdown() -> tuple[tuple[str, int], ...]:
+    """(family, encoded-record count) in canonical order — the coverage-disclosure
+    breakdown; counts only families that actually have encoded records."""
+    counts = {fam: 0 for fam in YOGA_FAMILY_ORDER}
+    for rec in YOGAS:
+        fam = YOGA_FAMILIES.get(rec.id)
+        if fam is not None:
+            counts[fam] = counts.get(fam, 0) + 1
+    return tuple((fam, n) for fam, n in counts.items() if n)
+
+
 # ── detection API ────────────────────────────────────────────────────────────
 def detect_yogas(chart: RamanChart) -> tuple[FiredYoga, ...]:
     """All encoded yogas active in `chart`, each carrying its corpus citation.

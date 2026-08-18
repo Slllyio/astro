@@ -288,6 +288,33 @@ def yoga_house_bearings(chart: RamanChart, y: FiredYoga) -> Optional[frozenset[i
     return frozenset(houses) or None
 
 
+def yoga_house_bearings_detail(chart: RamanChart, y: FiredYoga
+                               ) -> Optional[dict[int, str]]:
+    """APPEND-ONLY companion to :func:`yoga_house_bearings` (2026-08-18, Wave-2
+    preponderance disclosure): the SAME house set, each house tagged by the strongest
+    factor that matched — ``"direct"`` when a constituent OWNS or OCCUPIES the house
+    (the factors Raman's worked charts demonstrate) or ``"aspect"`` when only the
+    whole-sign aspect reaches it (the admitted extension from HTJAH-I:2955-2956).
+    No new influence rule and no new house: `yoga_house_bearings` stays authoritative
+    and this mapping's key-set must always equal it (paired test pins that)."""
+    from app.raman_saab.doctrine import drishti   # function-level, matching _sambandha
+    pls = _yoga_planets(chart, y)
+    if not pls:
+        return None
+    tags: dict[int, str] = {}
+    for p in pls:
+        pos = chart.planets.get(p)
+        if pos is None:
+            continue
+        for h in range(1, 13):
+            sign = ((chart.asc_sign - 1) + (h - 1)) % 12 + 1
+            if SIGN_LORDS[sign] == p or pos.rasi_house == h:
+                tags[h] = "direct"                       # own/occupy always wins
+            elif drishti.aspects_house(p, h, chart):
+                tags.setdefault(h, "aspect")             # aspect only if nothing direct
+    return tags or None
+
+
 def _yoga_planets_impl(chart: RamanChart, y: FiredYoga) -> Optional[tuple[str, ...]]:
     n = y.name.lower()
 

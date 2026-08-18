@@ -2786,8 +2786,8 @@ function render(R, S, FQ){
     if(km.frame) add(para(km.frame,'muted'));
     add(para('Atmakaraka: '+(km.atmakaraka||'—')+' · Karakamsa: '+(km.karakamsa||'—')+' · Upapada: '+(km.upapada||'—'),'lede'));
     if(km.doctrine_quote) add(para('Doctrine (verbatim) — "'+km.doctrine_quote+'" ('+(km.doctrine_cite||'')+')','quote'));
-    if(km.d20_core) add(para('Vimsamsa (D-20) core — '+km.d20_core,'muted'));
-    if(km.d60_core) add(para('Shashtiamsa (D-60) core — '+km.d60_core,'muted')); }
+    if(km.d20_core) add(para('Vimsamsa (D-20) domain re-read — '+km.d20_core,'muted'));
+    if(km.d60_core) add(para('Shashtiamsa (D-60) domain re-read — '+km.d60_core,'muted')); }
 
   if(R.pitru){ add(H2('Pitru dosha screen (classical, non-Raman)'));
     add(para('Raman’s own children verdict (authoritative): '+(R.pitru.raman_children_verdict||'—').toUpperCase(),'muted'));

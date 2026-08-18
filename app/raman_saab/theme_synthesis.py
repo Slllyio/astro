@@ -216,7 +216,12 @@ _THEME_ROSTER: tuple[_ThemeSpec, ...] = (
     _ThemeSpec("gains",       "Gains, friends & fulfilment", 11, (),        None,  (2, 10),
                "income, gains, friendships and the fulfilment of desires — read from the rasi "
                "(no classical division is assigned to this bhava)"),
-    _ThemeSpec("longevity",   "Longevity, crisis & the hidden", 8, (),      None,  (1, 12),
+    # NB: a theme name must not START with a pinned "## <label>" section marker — a theme renders
+    # as "#### <name>", which contains "## <name>", so such a name silently hijacks every
+    # find("## <label>") / _section(md, "## <label>") lookup in the report tests. "Longevity, …"
+    # did exactly that to the real "## Longevity" section. Guarded by
+    # test_theme_names_cannot_hijack_a_pinned_section_marker.
+    _ThemeSpec("longevity",   "Crisis, longevity & the hidden", 8, (),      None,  (1, 12),
                "longevity, upheaval and what is hidden — read from the rasi (no classical "
                "division is assigned to this bhava)"),
     _ThemeSpec("liberation",  "Loss, seclusion & liberation", 12, (),       None,  (4, 8),
@@ -316,7 +321,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         varga_rel = _varga_relation(r, prim_house, domain)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
                                       activation, dom_planets, facets)
-        weight = _weight(convergence, links, r, houses)
+        weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
             theme_id=theme_id, name=name, domain=domain.domain, houses=houses,
@@ -751,16 +756,31 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     return body.rstrip(".") + "."
 
 
-def _weight(convergence, links, r, houses) -> float:
+def _weight(convergence, links, r, houses, dom_planets) -> float:
+    """Ranking score for the spine — how load-bearing a theme is, NOT a probability or a verdict.
+
+    Four terms, each of which actually varies across themes:
+
+    - **convergence** — how well the independent readings agree (the dominant term).
+    - **centrality** — whether the chart's own busiest grahas drive it (census-ranked biographies).
+    - **network breadth** — how many support bhavas survived the evidence gate, i.e. how widely
+      the theme is wired into the rest of the chart.
+    - **digest salience** — the engine's own ranked digest already says what stands out.
+
+    The previous version added ``len({axes}) * 0.3``, which measured nothing: every theme carries
+    the same 5-6 axes, so it was a constant offset masquerading as a signal."""
     base = {"VERY_HIGH": 5.0, "HIGH": 4.0, "MODERATE": 3.0, "MIXED": 2.0, "WEAK": 1.0}[convergence]
-    axes = len({lk.axis for lk in links})
-    # bump by digest priority if a digest item concerns any of the theme's houses
+    # centrality — the chart's top-3 census grahas that actually drive this theme
+    top = [b.planet for b in (getattr(r, "planet_bios", ()) or ())[:3]]
+    centrality = min(0.8, 0.4 * sum(1 for p in dom_planets if p in top))
+    breadth = 0.25 * max(0, len(set(houses)) - 1)
+    # digest salience — highest-ranked digest item touching any of the theme's houses
     prio = 0.0
     hset = set(houses)
     for i, it in enumerate(getattr(getattr(r, "digest", None), "items", ()) or ()):
         if set(getattr(it, "houses", ()) or ()) & hset:
             prio = max(prio, 1.0 - i * 0.1)
-    return base + axes * 0.3 + prio
+    return base + centrality + breadth + prio
 
 
 def _connections(themes, spine) -> tuple[ThemeConnection, ...]:
@@ -869,15 +889,25 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
 
 
 def _spine_size(themes) -> int:
-    """3-7 dominant themes; fewer if the evidence does not support more (a big weight gap)."""
-    if len(themes) <= 3:
-        return len(themes)
-    # take up to 7, but stop early where the weight drops off a cliff
-    cap = min(7, len(themes))
-    for i in range(3, cap):
-        if themes[i - 1].evidence_weight - themes[i].evidence_weight > 1.0:
-            return i
-    return cap
+    """How many themes form the spine: 3-5, cut where the ranked weights actually fall away.
+
+    A spine that names most of the roster names nothing. The old rule took up to SEVEN and only
+    stopped on a drop greater than 1.0 — a threshold the distribution almost never crosses, so
+    every chart returned the maximum (measured: 7 of 12 on all three test charts). Instead, choose
+    among the allowed sizes the one that sits at the LARGEST drop in the ranking, so the cut lands
+    on this chart's own break rather than on an absolute constant."""
+    n = len(themes)
+    if n <= 3:
+        return n
+    lo, hi = 3, min(5, n)
+    best_size, best_gap = lo, -1.0
+    for size in range(lo, hi + 1):
+        if size >= n:
+            break
+        gap = themes[size - 1].evidence_weight - themes[size].evidence_weight
+        if gap > best_gap:
+            best_gap, best_size = gap, size
+    return best_size
 
 
 # plain-language names for the census relation keys (planet_biographies census_by_relation)

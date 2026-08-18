@@ -40,7 +40,7 @@ class TestThemeSynthesisContract:
         """The layer discovers several life-themes and names a 3-7 dominant spine."""
         r, ts = mainpuri
         assert len(ts.themes) >= 4
-        assert 3 <= len(ts.spine) <= 7
+        assert 3 <= len(ts.spine) <= 5
         # spine ids are real theme ids, ranked (weight non-increasing)
         ids = {t.theme_id for t in ts.themes}
         assert set(ts.spine) <= ids
@@ -390,6 +390,48 @@ class TestThemeSynthesisContract:
                 if t.convergence not in ("VERY_HIGH", "HIGH") and not t.contradictions:
                     assert t.convergence_label in t.final_interpretation, (
                         f"{t.theme_id}: narrative disagrees with the heading label")
+
+    def test_the_spine_is_a_genuine_minority_cut_at_a_real_break(self, mainpuri, canonical):
+        """A spine that names most of the roster names nothing. It must stay a clear minority of
+        the themes, and the cut must land on an actual drop in the ranking — not on a constant
+        ceiling (the old rule returned its maximum of 7 on every chart measured)."""
+        for r, ts in (mainpuri, canonical):
+            assert len(ts.spine) < len(ts.themes) / 2, "the spine is not a minority"
+            ranked = list(ts.themes)
+            cut = len(ts.spine)
+            if cut < len(ranked):
+                drop = ranked[cut - 1].evidence_weight - ranked[cut].evidence_weight
+                inside = [ranked[i - 1].evidence_weight - ranked[i].evidence_weight
+                          for i in range(3, cut)]
+                assert all(drop >= g for g in inside), (
+                    "the spine was cut somewhere other than the largest available break")
+
+    def test_evidence_weight_terms_all_discriminate(self, mainpuri):
+        """Ranking inputs must carry information. The weight must actually separate the themes
+        (a near-constant term dressed up as a signal is what made the old spine degenerate)."""
+        r, ts = mainpuri
+        weights = [t.evidence_weight for t in ts.themes]
+        assert len(set(round(w, 2) for w in weights)) >= len(weights) // 2, (
+            "evidence weights are too clustered to rank on")
+        assert max(weights) - min(weights) >= 1.0, "weights carry almost no spread"
+
+    def test_theme_names_cannot_hijack_a_pinned_section_marker(self):
+        """A theme renders as ``#### <name>``, whose text CONTAINS ``## <name>``. So a theme
+        named for a pinned section label silently hijacks every ``find("## <label>")`` and
+        ``_section(md, "## <label>")`` lookup in the report suite — the theme heading appears
+        earlier in the document than the real section and wins the search. "Longevity, crisis &
+        the hidden" did exactly this to the real "## Longevity" section, breaking four tests in
+        two files. Names must not collide in either direction."""
+        from app.raman_saab.detailed_report import SECTION_CONTRACT
+        from app.raman_saab.theme_synthesis import _THEME_ROSTER
+        labels = [s.md_marker[3:] for s in SECTION_CONTRACT
+                  if (s.md_marker or "").startswith("## ")]
+        assert labels, "no pinned markers found — the guard would be vacuous"
+        for spec in _THEME_ROSTER:
+            for lab in labels:
+                assert not spec.name.startswith(lab) and not lab.startswith(spec.name), (
+                    f"theme {spec.theme_id!r} named {spec.name!r} collides with the pinned "
+                    f"section marker '## {lab}' — rename the theme")
 
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import

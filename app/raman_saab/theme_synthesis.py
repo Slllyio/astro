@@ -172,16 +172,56 @@ class ThemeSynthesis:
 # houses (kept only when a driving planet actually touches them — pass 3). The headline is the
 # primary house rollup; the facets carry each matter's own dashboard verdict, so a house that reads
 # afflicted while its matters read favourable tells that story ONCE, inside the theme.
-_THEME_ROSTER: tuple[tuple[str, str, int, tuple[str, ...], int, tuple[int, ...]], ...] = (
-    # theme_id,      display name,                     primary_house, matters,                                       varga, support
-    ("wealth",       "Wealth & resources",             2,  ("wealth",),                                     2,  (11, 8)),
-    ("career",       "Career & public standing",       10, ("career",),                                     10, (2, 6, 11)),
-    ("marriage",     "Marriage & partnership",         7,  ("marriage",),                                   9,  ()),
-    ("children",     "Children & creativity",          5,  ("children",),                                   7,  (9,)),
-    ("foundations",  "Home, mother & foundations",     4,  ("mother", "property", "comforts", "education"), 4,  (2,)),
-    ("fortune",      "Fortune, father & dharma",       9,  ("father", "spiritual"),                         20, (5, 10)),
-    ("health",       "Health & vitality",              6,  ("health",),                                     30, (1, 8)),
-    ("siblings",     "Siblings & courage",             3,  ("siblings",),                                   3,  ()),
+@dataclass(frozen=True)
+class _PlainDomain:
+    """The domain stand-in for a bhava with NO classical divisional chart of its own (H8, H12).
+    Carries a plain description, no karakas and no citation — the engine must not imply Raman
+    (or the Parashari scheme) assigned a varga where none is assigned. Such a theme is still read
+    from the rasi, with the navamsa applying as the general strength check as it does everywhere."""
+    domain: str
+    karakas: tuple[str, ...] = ()
+    source: Optional[object] = None
+
+
+@dataclass(frozen=True)
+class _ThemeSpec:
+    """One roster entry. ``varga`` names the division whose domain (varga_domains.DOMAINS)
+    supplies this theme's karakas and citation; ``None`` means no classical division covers this
+    bhava, and ``domain_note`` describes it instead."""
+    theme_id: str
+    name: str
+    primary_house: int
+    matters: tuple[str, ...]        # dashboard matters that live in this house (its facets)
+    varga: Optional[int]
+    support: tuple[int, ...]        # CANDIDATE network houses, kept only when a driver touches one
+    domain_note: str = ""           # used only when varga is None
+
+
+_THEME_ROSTER: tuple[_ThemeSpec, ...] = (
+    _ThemeSpec("wealth",      "Wealth & resources",         2,  ("wealth",),   2,  (11, 8)),
+    _ThemeSpec("career",      "Career & public standing",   10, ("career",),   10, (2, 6, 11)),
+    _ThemeSpec("marriage",    "Marriage & partnership",     7,  ("marriage",), 9,  ()),
+    _ThemeSpec("children",    "Children & creativity",      5,  ("children",), 7,  (9,)),
+    _ThemeSpec("foundations", "Home, mother & foundations", 4,
+               ("mother", "property", "comforts", "education"), 4, (2,)),
+    _ThemeSpec("fortune",     "Fortune, father & dharma",   9,  ("father", "spiritual"), 20, (5, 10)),
+    _ThemeSpec("health",      "Health & vitality",          6,  ("health",),   30, (1, 8)),
+    _ThemeSpec("siblings",    "Siblings & courage",         3,  ("siblings",), 3,  ()),
+    # The four bhavas that carry no dashboard matter of their own. They were previously visible
+    # only as SUPPORT houses inside other themes, so the reading never stated what the chart says
+    # about the self, about gains, about crisis and longevity, or about loss and withdrawal — a
+    # completeness gap. D1 covers the body explicitly; H8, H11 and H12 are assigned no division in
+    # the domain table, so they carry a plain description and say so rather than borrowing one.
+    _ThemeSpec("self",        "Self, body & constitution",  1,  (),            1,  (6, 8)),
+    _ThemeSpec("gains",       "Gains, friends & fulfilment", 11, (),        None,  (2, 10),
+               "income, gains, friendships and the fulfilment of desires — read from the rasi "
+               "(no classical division is assigned to this bhava)"),
+    _ThemeSpec("longevity",   "Longevity, crisis & the hidden", 8, (),      None,  (1, 12),
+               "longevity, upheaval and what is hidden — read from the rasi (no classical "
+               "division is assigned to this bhava)"),
+    _ThemeSpec("liberation",  "Loss, seclusion & liberation", 12, (),       None,  (4, 8),
+               "expenditure, withdrawal and moksha — read from the rasi (no classical division "
+               "is assigned to this bhava)"),
 )
 
 
@@ -233,14 +273,18 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     planet_houses = _planet_house_map(r)
 
     themes: list[ThemeReading] = []
-    matters_map = {m: h for _i, _n, h, mm, _v, _s in _THEME_ROSTER for m in mm}
-    for theme_id, name, prim_house, matters, varga_n, support in _THEME_ROSTER:
+    for spec in _THEME_ROSTER:
+        theme_id, name, prim_house = spec.theme_id, spec.name, spec.primary_house
+        matters, support = spec.matters, spec.support
         if prim_house not in proformas:
             continue
-        try:
-            domain = vd.domain_for(varga_n)
-        except ValueError:
-            continue
+        if spec.varga is None:                      # a bhava with no classical division
+            domain = _PlainDomain(spec.domain_note or f"house {prim_house}")
+        else:
+            try:
+                domain = vd.domain_for(spec.varga)
+            except ValueError:
+                continue
 
         pf = proformas[prim_house]
         headline = pf.rollup                        # PASSTHROUGH — never recomputed
@@ -270,7 +314,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
 
         activation = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
-        final = _final_interpretation(name, headline, convergence, contradictions,
+        final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
                                       activation, dom_planets, facets)
         weight = _weight(convergence, links, r, houses)
 
@@ -682,8 +726,8 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
             f"(HTJAH-I:1592-1596).")
 
 
-def _final_interpretation(name, headline, convergence, contradictions, activation, dom_planets,
-                          facets) -> str:
+def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
+                          dom_planets, facets) -> str:
     """A single astrologer's sentence, not a template. Names the driving planet, the verdict, the
     convergence in words, and — where a house's matters read against its headline — that split as
     the theme's own story (not a bolted-on 'a tension is disclosed')."""
@@ -698,7 +742,8 @@ def _final_interpretation(name, headline, convergence, contradictions, activatio
     elif convergence in ("VERY_HIGH", "HIGH"):
         body += ", and the independent readings converge strongly"
     else:
-        body += f" ({convergence.replace('_', ' ').lower()} convergence)"
+        # the reader-facing label, so the sentence and the heading never disagree
+        body += f" ({conv_label})"
     if activation:
         # the narrative sentence carries the clause without its citation — the Timing line
         # renders the same note in full, so traceability is not lost by shortening here

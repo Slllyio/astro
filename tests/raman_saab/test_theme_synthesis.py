@@ -354,6 +354,43 @@ class TestThemeSynthesisContract:
                 if other not in ("Rahu", "Ketu") and op.sign == p.sign:
                     assert other in agents, f"{other} shares {node}'s sign but is not an agent"
 
+    def test_every_bhava_is_a_theme_in_its_own_right(self, mainpuri, canonical):
+        """REPORT COMPLETENESS — all twelve bhavas carry a theme. H1 (the self), H8 (longevity
+        and crisis) and H12 (loss and withdrawal) used to appear only as SUPPORT houses inside
+        other themes, so the reading never stated what the chart says about them directly."""
+        for r, ts in (mainpuri, canonical):
+            primaries = {t.houses[0] for t in ts.themes}
+            assert primaries == set(range(1, 13)), (
+                f"bhavas with no theme of their own: {sorted(set(range(1, 13)) - primaries)}")
+
+    def test_a_bhava_without_a_classical_division_says_so(self, mainpuri):
+        """No silent approximation — H8 and H12 have no varga assigned to them in the domain
+        table, so their themes must carry NO karakas and NO citation borrowed from some other
+        division, and must disclose that they are read from the rasi."""
+        r, ts = mainpuri
+        for tid in ("gains", "longevity", "liberation"):
+            t = next(x for x in ts.themes if x.theme_id == tid)
+            assert not t.karakas, f"{tid} borrowed karakas from a division it was not assigned"
+            assert "no classical division" in t.domain
+            for lk in t.links:
+                assert lk.cite is None or lk.axis != "varga", (
+                    f"{tid} carries a divisional citation for a bhava with no division")
+
+    def test_the_self_theme_uses_the_rasi_domain(self, mainpuri):
+        """H1 DOES have an explicit division — D1 Rasi, 'the body and the whole horoscope' —
+        so the self theme carries that domain and its karaka rather than a plain description."""
+        r, ts = mainpuri
+        self_t = next(x for x in ts.themes if x.theme_id == "self")
+        assert "body" in self_t.domain and self_t.karakas
+
+    def test_narrative_and_heading_agree_on_convergence(self, mainpuri, canonical):
+        """The sentence and the heading must never disagree — both use convergence_label."""
+        for r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                if t.convergence not in ("VERY_HIGH", "HIGH") and not t.contradictions:
+                    assert t.convergence_label in t.final_interpretation, (
+                        f"{t.theme_id}: narrative disagrees with the heading label")
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

@@ -746,6 +746,183 @@ def _info_box(r: DetailedReport) -> str:
         f'{inv_line}</div>')
 
 
+_AXIS_LABEL_HTML = {"verdict": "verdict", "magnitude": "strength", "state": "state",
+                    "dasha": "timing", "varga": "divisional", "transit": "transit",
+                    "yoga": "yoga", "citation": "cross-feature"}
+
+
+def _conv_label(t: object) -> str:
+    """Reader-facing convergence phrase — the layer's own label when present, else tier + word."""
+    lbl = getattr(t, "convergence_label", "") or ""
+    return lbl or (getattr(t, "convergence", "").replace("_", " ").lower() + " convergence")
+
+
+def _themes_section(r: DetailedReport) -> str:
+    """The v34 integrated-interpretation section (theme synthesis) — a re-read ACROSS the
+    sections, above the technical ones. Judges nothing anew; every claim traces to an
+    authoritative verdict via its accessor."""
+    ts = getattr(r, "themes", None)
+    head = '<h2 class="section" id="integrated-reading">The integrated reading</h2>'
+    if ts is None or not getattr(ts, "themes", None):
+        return (head + '<p class="muted">Not available for this chart in the current engine '
+                '(too few decided sections to synthesize).</p>')
+    out = [head,
+           '<p class="section-sub">One reading across every section above &mdash; not a new '
+           'judgment. Each theme gathers the findings the report already made (house verdict, '
+           'strength, planetary state, divisional confirmation, yoga, timing) into one '
+           'mechanism, states how strongly they converge, and names any tension with the '
+           'precedence rule that resolves it. The direction of every theme is the engine&rsquo;s '
+           'own house verdict, unchanged.</p>']
+    p = ts.portrait
+    out.append('<h3>Executive portrait</h3><ul class="portrait">')
+    if getattr(p, "identity", ""):
+        out.append(f'<li><b>Who the chart is</b> &mdash; {_esc(p.identity)}</li>')
+    if p.frame:
+        out.append(f'<li><b>Reading frame</b> &mdash; judged chiefly from the {_esc(p.frame)} '
+                   'frame (the stronger of the two lagnas here).</li>')
+    if p.dominant_actors:
+        acts = "; ".join(f"<b>{_esc(n)}</b> ({_esc(w)})" for n, w in p.dominant_actors)
+        out.append(f'<li><b>Dominant actors</b> &mdash; {acts}.</li>')
+    if p.strongest_domains:
+        out.append(f'<li><b>Strongest domains</b> &mdash; {_esc(", ".join(p.strongest_domains))}.</li>')
+    if p.weakest_domains:
+        out.append(f'<li><b>Areas under strain</b> &mdash; {_esc(", ".join(p.weakest_domains))}.</li>')
+    if p.protective_factors:
+        out.append(f'<li><b>Protective factors</b> &mdash; {_esc("; ".join(p.protective_factors))}.</li>')
+    if p.principal_tension:
+        out.append(f'<li><b>Principal tension</b> &mdash; {_esc(p.principal_tension)}</li>')
+    if getattr(p, "concordance_note", ""):
+        out.append(f'<li><b>How far the techniques agree</b> &mdash; '
+                   f'{_esc(p.concordance_note)}</li>')
+    if p.current_chapter:
+        nxt = f"; {_esc(p.next_chapter)}" if p.next_chapter else ""
+        out.append(f'<li><b>Current chapter</b> &mdash; {_esc(p.current_chapter)}{nxt}.</li>')
+    if p.honesty_note:
+        out.append(f'<li class="muted"><i>{_esc(p.honesty_note)}</i></li>')
+    out.append("</ul>")
+
+    by_id = {t.theme_id: t for t in ts.themes}
+    spine = [by_id[i] for i in ts.spine if i in by_id]
+    if spine:
+        out.append('<h3>The interpretive spine</h3><ul>')
+        for t in spine:
+            out.append(f'<li><b>{_esc(t.name)}</b> &mdash; {_esc(t.headline_verdict)} '
+                       f'({_esc(_conv_label(t))})</li>')
+        out.append("</ul>")
+
+    out.append("<h3>Major life-themes</h3>")
+    for t in ts.themes:
+        houses = ", ".join(f"H{h}" for h in t.houses)
+        dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
+        out.append(f'<div class="theme"><h4>{_esc(t.name)} &mdash; <b>{_esc(t.headline_verdict)}</b> '
+                   f'({_esc(_conv_label(t))})</h4>')
+        out.append(f'<p><i>{_esc(t.final_interpretation)}</i></p><ul>')
+        out.append(f'<li><b>Network</b> &mdash; {houses}'
+                   + (f'; karakas {_esc(", ".join(t.karakas))}' if t.karakas else '')
+                   + f'; driven by {_esc(dom)}.</li>')
+        if getattr(t, "sub_matters", None):
+            facets = "; ".join(f"{_esc(m)} reads {_esc(v)}" for m, v in t.sub_matters)
+            out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
+        out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
+                   f'{_esc(t.convergence_why)}</li>')
+        c = getattr(t, "concordance", None)
+        if c is not None:
+            out.append(f'<li><b>Do the techniques agree?</b> &mdash; {_esc(c.reading)}')
+            if c.core_for or c.core_against:
+                out.append(f'<br><span class="muted">core (lord / karaka / navamsa): '
+                           f'{_esc(", ".join(c.core_for) or "none")} for; '
+                           f'{_esc(", ".join(c.core_against) or "none")} against</span>')
+            if c.overlay_for or c.overlay_against:
+                out.append(f'<br><span class="muted">overlay: '
+                           f'{_esc(", ".join(c.overlay_for) or "none")} for; '
+                           f'{_esc(", ".join(c.overlay_against) or "none")} against</span>')
+            out.append('</li>')
+        for g in getattr(t, "driver_concordance", ()) or ():
+            out.append(f'<li><b>{_esc(g.planet)} (force vs intent)</b> &mdash; '
+                       f'{_esc(g.reading)}</li>')
+        out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
+        if t.activation_span:
+            out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
+        out.append("</ul>")
+        out.append('<table class="evidence"><thead><tr><th>axis</th><th>finding</th>'
+                   '<th>source</th></tr></thead><tbody>')
+        for lk in t.links:
+            src = lk.accessor.split("@")[-1].strip()
+            out.append(f'<tr><td>{_esc(_AXIS_LABEL_HTML.get(lk.axis, lk.axis))}</td>'
+                       f'<td>{_esc(lk.label)}: {_esc(lk.value)}</td>'
+                       f'<td><code>{_esc(src)}</code></td></tr>')
+        out.append("</tbody></table>")
+        for c in t.contradictions:
+            out.append(f'<p class="tension"><b>Tension ({_esc(c.kind)})</b> &mdash; '
+                       f'{_esc(c.poles[0])} vs {_esc(c.poles[1])}. Resolved by '
+                       f'<b>{_esc(c.governing)}</b>: {_esc(c.resolution)}</p>')
+        out.append("</div>")
+
+    if getattr(ts, "graha_concordance", None):
+        out.append('<h3>Do the techniques agree? &mdash; force against intent</h3>'
+                   '<p class="section-sub">Shadbala asks how much force a graha commands; Ishta '
+                   'and Kashta ask to what end. A graha can be strong AND harmful &mdash; '
+                   'strength is magnitude, never direction (PREC-2, GBB-9).</p>'
+                   '<table class="evidence"><thead><tr><th>graha</th><th>Shadbala</th>'
+                   '<th>Ishta</th><th>Kashta</th><th>state</th><th>measures</th><th>reading</th>'
+                   '</tr></thead><tbody>')
+        for g in ts.graha_concordance:
+            ru = f"{g.rupas:.2f}" if g.rupas is not None else "-"
+            ish = f"{g.ishta:.0f}" if g.ishta is not None else "-"
+            kas = f"{g.kashta:.0f}" if g.kashta is not None else "-"
+            out.append(f'<tr><td>{_esc(g.planet)}</td><td>{ru}</td><td>{ish}</td><td>{kas}</td>'
+                       f'<td>{_esc(g.avastha)}</td><td>{_esc(g.agreement)}</td>'
+                       f'<td>{_esc(g.pattern)}</td></tr>')
+        out.append('</tbody></table>')
+    if getattr(ts, "contested_bhavas", None):
+        out.append('<p class="section-sub"><b>Contested bhavas</b> &mdash; houses whose verdict '
+                   'runs against the weight of their own testimony. The verdict stands (a bhava '
+                   'is graded by its weakest decided matter, not by a majority vote); the spread '
+                   'is disclosed.</p><ul>')
+        for c in ts.contested_bhavas:
+            out.append(f'<li><b>H{c.house}</b> &mdash; {_esc(c.reading)}</li>')
+        out.append('</ul>')
+
+    if getattr(ts, "connections", None):
+        out.append('<h3>How the themes connect</h3><p class="section-sub">Where one computed '
+                   'factor drives more than one life-area, so the chart reads as a single '
+                   'fabric.</p><ul>')
+        for c in ts.connections:
+            out.append(f'<li>{_esc(c.note)}</li>')
+        out.append("</ul>")
+
+    if getattr(ts, "dasha_evolution", None):
+        out.append('<h3>Dasha evolution &mdash; the horoscope through time</h3>'
+                   '<p class="section-sub">Each Mahadasha chapter foregrounds the themes its '
+                   'lord actually drives &mdash; not every house it touches &mdash; split into '
+                   'what newly emerges and what continues.</p>'
+                   '<table class="evidence"><thead><tr><th>chapter</th><th>span</th>'
+                   '<th>lean</th><th>newly emphasized</th><th>continuing</th></tr></thead><tbody>')
+        for ch in ts.dasha_evolution:
+            now = " (now)" if ch.is_current else ""
+            via = getattr(ch, "acts_through", ()) or ()
+            through = f' (acting through {_esc(", ".join(via))})' if via else ""
+            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}</td><td>{_esc(ch.span)}</td>'
+                       f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
+                       f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')
+        out.append("</tbody></table>")
+        if any(getattr(ch, "acts_through", ()) for ch in ts.dasha_evolution):
+            out.append('<p class="muted">Rahu and Ketu own no sign, so a nodal chapter is read '
+                       'through the lord of the sign the node occupies and any planet joined '
+                       'with it &mdash; the routing is named above rather than assumed.</p>')
+
+    out.append('<h3>Varga confirmation matrix</h3><p class="section-sub">Does the relevant '
+               'division confirm, qualify or stay neutral on each theme&rsquo;s natal '
+               'indication? (D9 is the only division that modulates a D1 verdict here.)</p>'
+               '<table class="evidence"><thead><tr><th>theme</th><th>natal verdict</th>'
+               '<th>D9 relation</th></tr></thead><tbody>')
+    for t in ts.themes:
+        out.append(f'<tr><td>{_esc(t.name)}</td><td>{_esc(t.headline_verdict)}</td>'
+                   f'<td>{_esc(t.varga_relation)}</td></tr>')
+    out.append("</tbody></table>")
+    return "".join(out)
+
+
 def _interpretation_guide_section(r: DetailedReport) -> str:  # noqa: ARG001 — chart-independent
     """v18 — how to read this report: the collected precedence rules, reading order,
     parallel lenses and axes. Pure doctrine metadata (interpretation_guide module)."""
@@ -3327,6 +3504,8 @@ def to_html(r: DetailedReport) -> str:
   {_info_box(r)}
 
   {_interpretation_guide_section(r)}
+
+  {_themes_section(r)}
 
   {_distinctive(r)}
 

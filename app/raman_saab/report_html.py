@@ -791,6 +791,9 @@ def _themes_section(r: DetailedReport) -> str:
         out.append(f'<li><b>Protective factors</b> &mdash; {_esc("; ".join(p.protective_factors))}.</li>')
     if p.principal_tension:
         out.append(f'<li><b>Principal tension</b> &mdash; {_esc(p.principal_tension)}</li>')
+    if getattr(p, "concordance_note", ""):
+        out.append(f'<li><b>How far the techniques agree</b> &mdash; '
+                   f'{_esc(p.concordance_note)}</li>')
     if p.current_chapter:
         nxt = f"; {_esc(p.next_chapter)}" if p.next_chapter else ""
         out.append(f'<li><b>Current chapter</b> &mdash; {_esc(p.current_chapter)}{nxt}.</li>')
@@ -822,6 +825,21 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
                    f'{_esc(t.convergence_why)}</li>')
+        c = getattr(t, "concordance", None)
+        if c is not None:
+            out.append(f'<li><b>Do the techniques agree?</b> &mdash; {_esc(c.reading)}')
+            if c.core_for or c.core_against:
+                out.append(f'<br><span class="muted">core (lord / karaka / navamsa): '
+                           f'{_esc(", ".join(c.core_for) or "none")} for; '
+                           f'{_esc(", ".join(c.core_against) or "none")} against</span>')
+            if c.overlay_for or c.overlay_against:
+                out.append(f'<br><span class="muted">overlay: '
+                           f'{_esc(", ".join(c.overlay_for) or "none")} for; '
+                           f'{_esc(", ".join(c.overlay_against) or "none")} against</span>')
+            out.append('</li>')
+        for g in getattr(t, "driver_concordance", ()) or ():
+            out.append(f'<li><b>{_esc(g.planet)} (force vs intent)</b> &mdash; '
+                       f'{_esc(g.reading)}</li>')
         out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
         if t.activation_span:
             out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
@@ -839,6 +857,31 @@ def _themes_section(r: DetailedReport) -> str:
                        f'{_esc(c.poles[0])} vs {_esc(c.poles[1])}. Resolved by '
                        f'<b>{_esc(c.governing)}</b>: {_esc(c.resolution)}</p>')
         out.append("</div>")
+
+    if getattr(ts, "graha_concordance", None):
+        out.append('<h3>Do the techniques agree? &mdash; force against intent</h3>'
+                   '<p class="section-sub">Shadbala asks how much force a graha commands; Ishta '
+                   'and Kashta ask to what end. A graha can be strong AND harmful &mdash; '
+                   'strength is magnitude, never direction (PREC-2, GBB-9).</p>'
+                   '<table class="evidence"><thead><tr><th>graha</th><th>Shadbala</th>'
+                   '<th>Ishta</th><th>Kashta</th><th>state</th><th>measures</th><th>reading</th>'
+                   '</tr></thead><tbody>')
+        for g in ts.graha_concordance:
+            ru = f"{g.rupas:.2f}" if g.rupas is not None else "-"
+            ish = f"{g.ishta:.0f}" if g.ishta is not None else "-"
+            kas = f"{g.kashta:.0f}" if g.kashta is not None else "-"
+            out.append(f'<tr><td>{_esc(g.planet)}</td><td>{ru}</td><td>{ish}</td><td>{kas}</td>'
+                       f'<td>{_esc(g.avastha)}</td><td>{_esc(g.agreement)}</td>'
+                       f'<td>{_esc(g.pattern)}</td></tr>')
+        out.append('</tbody></table>')
+    if getattr(ts, "contested_bhavas", None):
+        out.append('<p class="section-sub"><b>Contested bhavas</b> &mdash; houses whose verdict '
+                   'runs against the weight of their own testimony. The verdict stands (a bhava '
+                   'is graded by its weakest decided matter, not by a majority vote); the spread '
+                   'is disclosed.</p><ul>')
+        for c in ts.contested_bhavas:
+            out.append(f'<li><b>H{c.house}</b> &mdash; {_esc(c.reading)}</li>')
+        out.append('</ul>')
 
     if getattr(ts, "connections", None):
         out.append('<h3>How the themes connect</h3><p class="section-sub">Where one computed '

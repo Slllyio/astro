@@ -105,6 +105,54 @@ class ThemeReading:
     varga_relation: str             # confirms / strengthens / qualifies / modifies / contradicts / D9-only
     final_interpretation: str
     evidence_weight: float = 0.0    # for ranking only; NOT a probability or a verdict
+    #: does the engine's OWN testimony ledger agree with this theme's verdict? (r.preponderance)
+    concordance: Optional[BhavaConcordance] = None
+    #: the concordance of the grahas that drive this theme (force vs intent, cross-checked)
+    driver_concordance: tuple[GrahaConcordance, ...] = ()
+
+
+@dataclass(frozen=True)
+class BhavaConcordance:
+    """Do the independent techniques AGREE about this bhava? — a re-read of the engine's OWN
+    testimony ledger (``r.preponderance``), which is Raman's three-fold method made explicit:
+    a matter is judged from the BHAVA, its LORD and its KARAKA (the ``core`` testimonies), with
+    Bhava Bala, SAV, the matter-varga, the majority tenor and the fired yogas as ``overlay``.
+
+    The layer computes none of this — it consumes it. The interesting output is ``divergence``:
+    a house whose verdict runs against the weight of its own testimony (H4/H5/H8 on Mainpuri all
+    read afflicted while every core testimony leans favourable) is a genuinely different reading
+    from one where verdict and testimony concur, and the report never said so."""
+    house: int
+    verdict: str                    # PASSTHROUGH of the house rollup
+    preponderance: str              # 'benefic' | 'adverse' | 'evenly balanced' (engine's own)
+    status: str                     # 'well-corroborated' | 'contested' | '(mixed headline)'
+    core_for: tuple[str, ...]       # the core testimonies (lord/karaka/navamsa) leaning favourable
+    core_against: tuple[str, ...]   # ... and those leaning adverse
+    overlay_for: tuple[str, ...]
+    overlay_against: tuple[str, ...]
+    divergence: str                 # '' when verdict and preponderance agree
+    reading: str
+
+
+@dataclass(frozen=True)
+class GrahaConcordance:
+    """Do the independent techniques AGREE about this graha? The engine computes several readings
+    of the same planet and never cross-checks them: Shadbala (capacity/magnitude), Ishta vs Kashta
+    (benefic vs malefic POTENCY — a different axis entirely), the Deeptadi avastha (the condition
+    it acts from), and the plain flags (vargottama / retrograde / combust).
+
+    The classical pattern that falls out is exactly Raman's strength-is-not-direction distinction
+    (PREC-2, GBB-9): a graha can be strong AND harmful. Naming that is integration; listing the
+    numbers separately, as the report did, is not."""
+    planet: str
+    rupas: Optional[float]          # Shadbala total in rupas — magnitude
+    ishta: Optional[float]          # benefic potency
+    kashta: Optional[float]         # malefic potency
+    avastha: str                    # Deeptadi state
+    flags: tuple[str, ...]          # vargottama / retrograde / combust
+    agreement: str                  # 'unanimous' | 'mostly agrees' | 'split'
+    pattern: str                    # the named diagnostic
+    reading: str
 
 
 @dataclass(frozen=True)
@@ -117,6 +165,9 @@ class ExecutivePortrait:
     strongest_domains: tuple[str, ...]
     weakest_domains: tuple[str, ...]
     principal_tension: str
+    #: how far the chart's independent techniques agree with each other overall — the honest
+    #: confidence statement the reading owes the reader, computed from the engine's own ledgers
+    concordance_note: str
     protective_factors: tuple[str, ...]
     current_chapter: str
     next_chapter: str
@@ -162,6 +213,10 @@ class ThemeSynthesis:
     portrait: ExecutivePortrait
     connections: tuple[ThemeConnection, ...] = ()
     dasha_evolution: tuple[DashaChapter, ...] = ()
+    #: every graha's force-vs-intent cross-check, busiest first — the chart-level concordance
+    graha_concordance: tuple[GrahaConcordance, ...] = ()
+    #: bhavas whose verdict runs against the weight of their own testimony (the contested ones)
+    contested_bhavas: tuple[BhavaConcordance, ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -280,6 +335,9 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     # planet -> the houses it touches (lord/karaka/occupy/aspect), from the census breakdown
     planet_houses = _planet_house_map(r)
 
+    # the chart-level graha cross-check, computed once and shared by every theme
+    graha_conc = _graha_concordance(r)
+
     themes: list[ThemeReading] = []
     for spec in _THEME_ROSTER:
         theme_id, name, prim_house = spec.theme_id, spec.name, spec.primary_house
@@ -322,8 +380,10 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
 
         activation = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
+        conc = _bhava_concordance(r, prim_house)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
-                                      activation, dom_planets, facets)
+                                      activation, dom_planets, facets, conc,
+                                      tuple(g for g in graha_conc if g.planet in dom_planets))
         weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
@@ -332,17 +392,22 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             dominant_planets=dom_planets, links=tuple(links), convergence=convergence,
             convergence_label=conv_label, convergence_why=why, contradictions=contradictions,
             activation_span=activation, varga_relation=varga_rel, final_interpretation=final,
-            evidence_weight=weight))
+            evidence_weight=weight,
+            concordance=_bhava_concordance(r, prim_house),
+            driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets)))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
     spine = tuple(t.theme_id for t in themes[:_spine_size(themes)])
     frame = getattr(r.overview, "stronger_frame", "") or ""
-    portrait = _portrait(r, themes, spine, frame)
+    portrait = _portrait(r, themes, spine, frame, graha_conc)
     connections = _connections(themes)
     evolution = _dasha_evolution(r, themes)
+    contested = tuple(t.concordance for t in themes
+                      if t.concordance is not None and t.concordance.divergence)
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
-                          connections=connections, dasha_evolution=evolution)
+                          connections=connections, dasha_evolution=evolution,
+                          graha_concordance=graha_conc, contested_bhavas=contested)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -764,12 +829,36 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
 
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
-                          dom_planets, facets) -> str:
-    """A single astrologer's sentence, not a template. Names the driving planet, the verdict, the
-    convergence in words, and — where a house's matters read against its headline — that split as
-    the theme's own story (not a bolted-on 'a tension is disclosed')."""
+                          dom_planets, facets, concordance=None, driver_conc=()) -> str:
+    """A single astrologer's sentence, not a template. Names the driving planet AND what the
+    independent measures say about it (force vs intent), the verdict, and — where the bhava's own
+    testimony ledger runs against the verdict, or its matters read against its headline — that
+    split as the theme's own story rather than a bolted-on 'a tension is disclosed'."""
     lead = dom_planets[0] if dom_planets else "the chart"
     body = f"{name} reads {headline}, carried chiefly by {lead}"
+    # The lead graha's own condition cross-checked against the theme's verdict. Two questions:
+    # do its measures agree with EACH OTHER (force vs intent), and does its quality agree with the
+    # verdict it is said to carry? A favourable matter carried by a Kashta-dominant graha, or an
+    # afflicted one carried by a benefic graha, is exactly the sort of cross-technique tension the
+    # report computed on both sides and never put together.
+    from app.raman_saab.insight_digest import _lean_of
+    lead_c = next((g for g in driver_conc if g.planet == lead), None)
+    if lead_c is not None and lead_c.ishta is not None and lead_c.kashta is not None:
+        harmful = lead_c.kashta > lead_c.ishta
+        hlean = _lean_of(headline)
+        # the cross-check against the VERDICT is the more informative of the two clauses, so it
+        # supersedes the bare force-vs-intent note rather than being appended to it (saying both
+        # restates the same fact twice in one sentence)
+        if hlean == "favourable" and harmful:
+            body += (" — whose own potency is Kashta-dominant, so the good this brings tends to "
+                     "arrive costly")
+        elif hlean == "adverse" and not harmful:
+            body += (", though that graha is benefic in potency — the difficulty here is "
+                     "structural rather than ill-intentioned")
+        elif "strong but harmful" in lead_c.pattern:
+            body += " — which acts with force but toward a difficult end"
+        elif "benefic but weak" in lead_c.pattern:
+            body += " — benefic in intent but short of the force to carry it"
     grain = next((c for c in contradictions if c.governing == "PREC-1"), None)
     if grain and grain.parties:
         # the house-vs-matters split IS the interpretation here. The differing facets come from
@@ -782,6 +871,10 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     else:
         # the reader-facing label, so the sentence and the heading never disagree
         body += f" ({conv_label})"
+    # the bhava's own testimony ledger disagreeing with its verdict IS the integrated finding
+    if concordance is not None and concordance.divergence:
+        body += (f". Its own testimonies do not sit where the verdict does: the weight of them is "
+                 f"{concordance.preponderance} and the reading is {concordance.status}")
     if activation:
         # the narrative sentence carries the clause without its citation — the Timing line
         # renders the same note in full, so traceability is not lost by shortening here
@@ -849,6 +942,125 @@ def _connections(themes) -> tuple[ThemeConnection, ...]:
                         f"both, tying the two areas together.")
             out.append(ThemeConnection(a.name, b.name, shared, note))
     return tuple(out[:6])
+
+
+def _bhava_concordance(r, house: int) -> Optional[BhavaConcordance]:
+    """Re-read the engine's own testimony ledger for one bhava (``r.preponderance``) into the
+    concordance question: does the verdict agree with the weight of the testimony behind it?
+
+    Nothing is recomputed — the ledger already separates Raman's three-fold CORE (lord, karaka,
+    navamsa) from the OVERLAY (Bhava Bala, SAV, matter-varga, majority tenor, yogas) and grades
+    the house 'well-corroborated' or 'contested'. What was missing is the sentence."""
+    pr = getattr(r, "preponderance", None)
+    row = next((h for h in getattr(pr, "houses", ()) or () if h.house == house), None)
+    if row is None:
+        return None
+    def _split(klass: str, want: str) -> tuple[str, ...]:
+        return tuple(f"{t.name} ({t.value})" for t in row.testimonies
+                     if t.klass == klass and want in (t.lean or ""))
+    core_for, core_against = _split("core", "favourable"), _split("core", "adverse")
+    ov_for, ov_against = _split("overlay", "favourable"), _split("overlay", "adverse")
+
+    # the divergence: the house's verdict pulling against its own preponderance
+    verdict, prep = row.verdict, row.preponderance
+    divergence = ""
+    if verdict == "afflicted" and prep == "benefic":
+        divergence = (f"H{house} reads {verdict}, yet the weight of its testimony is {prep} "
+                      f"({row.favourable} favourable to {row.adverse} adverse). The bhava takes "
+                      f"its grade from its weakest decided matter, not from a majority vote — so "
+                      f"the affliction is real but narrow, and the support around it is real too.")
+    elif verdict == "favourable" and prep == "adverse":
+        divergence = (f"H{house} reads {verdict} while the weight of its testimony is {prep} "
+                      f"({row.adverse} adverse to {row.favourable} favourable) — the favourable "
+                      f"grade rests on fewer supports than the house's overall tenor suggests.")
+
+    if divergence:
+        reading = divergence
+    elif row.status == "well-corroborated":
+        reading = (f"H{house} is {verdict} and its independent testimonies concur "
+                   f"({row.favourable} favourable, {row.adverse} adverse; core "
+                   f"{len(core_for)}-{len(core_against)}) — a well-corroborated reading.")
+    else:
+        reading = (f"H{house} is {verdict}; its testimonies are {row.status} "
+                   f"({row.favourable} favourable, {row.adverse} adverse) — read it with the "
+                   f"spread in mind rather than as a settled verdict.")
+    return BhavaConcordance(
+        house=house, verdict=verdict, preponderance=prep, status=row.status,
+        core_for=core_for, core_against=core_against,
+        overlay_for=ov_for, overlay_against=ov_against,
+        divergence=divergence, reading=reading)
+
+
+def _graha_concordance(r) -> tuple[GrahaConcordance, ...]:
+    """Cross-check the independent readings of each graha the engine already computed.
+
+    Shadbala answers "how much force?"; Ishta/Kashta answers "to what end?" — they are DIFFERENT
+    axes, and the engine has always computed both without ever setting them side by side. The
+    named patterns below are Raman's own strength-is-not-direction distinction (PREC-2 / GBB-9)
+    made legible: a strong graha with Kashta dominant delivers its difficulty with force."""
+    from app.raman_saab.primitives import deeptadi as _deeptadi
+    from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED, is_powerful
+    states = _safe(lambda: _deeptadi.chart_states(r.chart), {}) or {}
+    planets = getattr(getattr(r, "chart", None), "planets", {}) or {}
+    out: list[GrahaConcordance] = []
+    for name, p in planets.items():
+        ru = (p.shadbala_rupas.total / 60.0) if getattr(p, "shadbala_rupas", None) else None
+        ish, kas = getattr(p, "ishta", None), getattr(p, "kashta", None)
+        st = states.get(name)
+        avastha = st[0] if st else ""
+        flags = tuple(f for f, on in (("vargottama", getattr(p, "vargottama", False)),
+                                      ("retrograde", getattr(p, "retrograde", False)),
+                                      ("combust", (getattr(p, "combust_fraction", 0) or 0) >= 0.5))
+                      if on)
+        # "strong" is Raman's OWN per-planet minimum (GBB-8:303), not a cross-chart median: each
+        # graha has its own required rupas, so comparing them to each other would misgrade both
+        # the naturally strong and the naturally weak.
+        required = MIN_REQUIRED.get(name)
+        strong = bool(ru is not None and _safe(lambda: is_powerful(name, ru), None))
+        benefic = (ish is not None and kas is not None and ish > kas)
+        # the four classical quadrants of force x intent, plus the chayagraha case
+        if ish is None or kas is None:
+            pattern = "no Ishta/Kashta (chayagraha — the nodes carry no Shadbala)"
+            agreement = "not applicable"
+            reading = (f"{name} is a shadowy planet: the strength systems do not measure it, so "
+                       f"it is read through its dispositor and co-tenants.")
+        elif strong and benefic:
+            pattern = "strong and benefic"
+            agreement = "unanimous"
+            reading = (f"{name} carries force ({ru:.2f} rupas, over its {required} required) and its "
+                       f"potency is benefic (Ishta {ish:.0f} over Kashta {kas:.0f}) — capacity "
+                       f"and intent agree.")
+        elif (not strong) and (not benefic):
+            pattern = "weak and harmful"
+            agreement = "unanimous"
+            reading = (f"{name} is short of force ({ru:.2f} rupas against its {required} required) "
+                       f"and Kashta-dominant (Kashta {kas:.0f} over Ishta {ish:.0f}) — every "
+                       f"measure concurs.")
+        elif strong and not benefic:
+            pattern = "strong but harmful (strength is magnitude, not direction)"
+            agreement = "split"
+            reading = (f"{name} is well-supplied with force ({ru:.2f} rupas, over its {required} "
+                       f"required) but Kashta-dominant "
+                       f"(Kashta {kas:.0f} over Ishta {ish:.0f}) — it acts with power toward a "
+                       f"difficult end. Strength is magnitude, never direction (PREC-2, GBB-9).")
+        else:
+            pattern = "benefic but weak"
+            agreement = "split"
+            reading = (f"{name} is benefic in potency (Ishta {ish:.0f} over Kashta {kas:.0f}) but "
+                       f"short of force ({ru:.2f} against its {required} required) — well-meaning "
+                       f"and limited in what it "
+                       f"can carry through.")
+        if avastha:
+            reading += f" It acts from the {avastha} state."
+        if flags:
+            reading += f" ({', '.join(flags)})"
+        out.append(GrahaConcordance(
+            planet=name, rupas=ru, ishta=ish, kashta=kas, avastha=avastha, flags=flags,
+            agreement=agreement, pattern=pattern, reading=reading))
+    # busiest grahas first, so the reader meets the chart's main actors at the top
+    order = {b.planet: i for i, b in enumerate(getattr(r, "planet_bios", ()) or ())}
+    out.sort(key=lambda g: order.get(g.planet, 99))
+    return tuple(out)
 
 
 def _year(jd: float) -> int:
@@ -978,7 +1190,31 @@ def _identity_line(r) -> str:
     return "; ".join(parts) + "." if parts else ""
 
 
-def _portrait(r, themes, spine, frame) -> ExecutivePortrait:
+def _concordance_note(r, themes, graha_conc) -> str:
+    """How far do the chart's independent techniques agree with each other? A single honest line,
+    counted from the engine's own ledgers — the bhavas whose verdict runs against the weight of
+    their testimony, and the grahas whose force and intent point different ways."""
+    contested = [t.concordance for t in themes
+                 if t.concordance is not None and t.concordance.divergence]
+    corroborated = [t.concordance for t in themes
+                    if t.concordance is not None and t.concordance.status == "well-corroborated"]
+    split = [g for g in graha_conc if g.agreement == "split"]
+    bits: list[str] = []
+    if corroborated:
+        bits.append(f"{len(corroborated)} of the twelve bhavas read the same way from every "
+                    f"independent testimony")
+    if contested:
+        houses = ", ".join(f"H{c.house}" for c in contested)
+        bits.append(f"{len(contested)} ({houses}) carry a verdict that runs against the weight of "
+                    f"their own testimony — read those with the spread in mind")
+    if split:
+        names = ", ".join(g.planet for g in split)
+        bits.append(f"{len(split)} graha ({names}) measure strong in force but not in benefic "
+                    f"potency, or the reverse — strength is magnitude, never direction")
+    return "; ".join(bits) + "." if bits else ""
+
+
+def _portrait(r, themes, spine, frame, graha_conc=()) -> ExecutivePortrait:
     from app.raman_saab.insight_digest import _lean_of
     by_id = {t.theme_id: t for t in themes}
     spine_themes = [by_id[i] for i in spine if i in by_id]
@@ -1033,7 +1269,8 @@ def _portrait(r, themes, spine, frame) -> ExecutivePortrait:
         identity=identity, temperament=temperament, frame=frame, dominant_actors=tuple(actors),
         strongest_domains=tuple(t.name for t in fav[:4]),
         weakest_domains=tuple(t.name for t in adv[:4]),
-        principal_tension=principal, protective_factors=protective,
+        principal_tension=principal, concordance_note=_concordance_note(r, themes, graha_conc),
+        protective_factors=protective,
         current_chapter=cur, next_chapter=nxt, honesty_note=honesty)
 
 

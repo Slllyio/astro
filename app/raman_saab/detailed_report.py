@@ -4145,6 +4145,8 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append(f"- **Protective factors** — {'; '.join(p.protective_factors)}.")
     if p.principal_tension:
         L.append(f"- **Principal tension** — {p.principal_tension}")
+    if getattr(p, "concordance_note", ""):
+        L.append(f"- **How far the techniques agree** — {p.concordance_note}")
     if p.current_chapter:
         nxt = f"; {p.next_chapter}" if p.next_chapter else ""
         L.append(f"- **Current chapter** — {p.current_chapter}{nxt}.")
@@ -4184,6 +4186,20 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
             L.append(f"- **Within this house** — {facets}.")
         L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
+        # the engine's OWN testimony ledger for this bhava (Raman's three-fold: lord/karaka/navamsa
+        # as core, everything else as overlay) — the authoritative agreement check
+        c = getattr(t, "concordance", None)
+        if c is not None:
+            L.append(f"- **Do the techniques agree?** — {c.reading}")
+            if c.core_for or c.core_against:
+                L.append(f"    - core testimony (lord / karaka / navamsa): "
+                         f"{', '.join(c.core_for) or 'none'} for; "
+                         f"{', '.join(c.core_against) or 'none'} against")
+            if c.overlay_for or c.overlay_against:
+                L.append(f"    - overlay: {', '.join(c.overlay_for) or 'none'} for; "
+                         f"{', '.join(c.overlay_against) or 'none'} against")
+        for g in getattr(t, "driver_concordance", ()) or ():
+            L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
         L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
         if t.activation_span:
             L.append(f"- **Timing** — {t.activation_span}")
@@ -4201,6 +4217,38 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                 L.append(f"- **Tension ({c.kind})** — {c.poles[0]} vs {c.poles[1]}. "
                          f"Resolved by **{c.governing}**: {c.resolution}")
             L.append("")
+
+    # do the independent techniques agree? — the cross-technique concordance, chart-wide
+    if getattr(ts, "graha_concordance", None):
+        L.append("### Do the techniques agree? — force against intent")
+        L.append("")
+        L.append("_Shadbala asks how much force a graha commands; Ishta and Kashta ask to what "
+                 "end. They are different axes, and a graha can be strong AND harmful — strength "
+                 "is magnitude, never direction (PREC-2, GBB-9). Each row sets the engine's own "
+                 "independent measures of one graha side by side and says whether they concur:_")
+        L.append("")
+        L.append("| graha | Shadbala | Ishta | Kashta | state | measures | reading |")
+        L.append("|---|---|---|---|---|---|---|")
+        for g in ts.graha_concordance:
+            ru = f"{g.rupas:.2f}" if g.rupas is not None else "-"
+            ish = f"{g.ishta:.0f}" if g.ishta is not None else "-"
+            kas = f"{g.kashta:.0f}" if g.kashta is not None else "-"
+            # the graha cell is EMPHASISED so the row does not begin "| Moon |" — the positions
+            # table further down uses exactly that prefix, and a test that takes the first such
+            # line would otherwise pick up this table instead (the same shadowing trap the theme
+            # headings hit with "## Longevity").
+            L.append(f"| **{_md_cell(g.planet)}** | {ru} | {ish} | {kas} | "
+                     f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
+        L.append("")
+    if getattr(ts, "contested_bhavas", None):
+        L.append("_**Contested bhavas** — houses whose verdict runs against the weight of their "
+                 "own testimony. The verdict stands (a bhava is graded by its weakest decided "
+                 "matter, not by a majority vote); the spread is disclosed so the reader knows "
+                 "how settled the reading is:_")
+        L.append("")
+        for c in ts.contested_bhavas:
+            L.append(f"- **H{c.house}** — {c.reading}")
+        L.append("")
 
     # how the themes connect (the cross-theme fabric — one mechanism behind several areas)
     if getattr(ts, "connections", None):

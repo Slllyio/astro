@@ -487,6 +487,80 @@ class TestThemeSynthesisContract:
                         for name in c.parties:
                             assert name in c.poles[1], "parties disagree with the prose pole"
 
+    def test_bhava_concordance_consumes_the_engines_own_ledger(self, mainpuri, canonical):
+        """INTEGRATION, not reimplementation. ``r.preponderance`` already encodes Raman's
+        three-fold method — a matter judged from the BHAVA, its LORD and its KARAKA (core), with
+        Bhava Bala / SAV / matter-varga / yogas as overlay — and grades each house corroborated or
+        contested. The layer must re-read that ledger verbatim, never recompute a rival one."""
+        for r, ts in (mainpuri, canonical):
+            rows = {h.house: h for h in r.preponderance.houses}
+            for t in ts.themes:
+                c = t.concordance
+                assert c is not None, f"{t.theme_id} carries no bhava concordance"
+                src = rows[t.houses[0]]
+                assert c.verdict == src.verdict == t.headline_verdict
+                assert c.preponderance == src.preponderance
+                assert c.status == src.status
+                names = {x.name for x in src.testimonies}
+                for entry in c.core_for + c.core_against + c.overlay_for + c.overlay_against:
+                    assert any(entry.startswith(n) for n in names), (
+                        f"{entry!r} is not a testimony the engine actually recorded")
+
+    def test_contested_bhavas_are_the_verdict_vs_weight_divergences(self, mainpuri):
+        """The interesting output: a house whose verdict runs against the weight of its own
+        testimony. On Mainpuri H4/H5/H8 all read afflicted while their testimony is benefic —
+        a genuinely different reading from a house where the two concur, and one the report
+        never stated before. The verdict itself must be untouched."""
+        r, ts = mainpuri
+        contested = {c.house for c in ts.contested_bhavas}
+        assert contested, "no divergence found on a chart that has three"
+        rows = {h.house: h for h in r.preponderance.houses}
+        for c in ts.contested_bhavas:
+            src = rows[c.house]
+            assert c.divergence, "a contested bhava carries no divergence sentence"
+            assert (src.verdict, src.preponderance) in (
+                ("afflicted", "benefic"), ("favourable", "adverse"))
+            # the passthrough is intact — concordance discloses, it never re-judges
+            assert c.verdict == src.verdict
+
+    def test_graha_concordance_separates_force_from_intent(self, mainpuri, canonical):
+        """Shadbala (magnitude) and Ishta/Kashta (benefic vs malefic potency) are DIFFERENT axes.
+        A graha may be strong and harmful — Raman's strength-is-not-direction rule (PREC-2,
+        GBB-9). Strength is graded against each planet's OWN required minimum (GBB-8:303), never
+        against a cross-chart median, which would misgrade the naturally strong and weak alike."""
+        from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED, is_powerful
+        for r, ts in (mainpuri, canonical):
+            assert ts.graha_concordance, "no graha concordance computed"
+            for g in ts.graha_concordance:
+                p = r.chart.planets[g.planet]
+                # every number is a passthrough of the chart's own measures
+                if p.shadbala_rupas is not None:
+                    assert abs(g.rupas - p.shadbala_rupas.total / 60.0) < 1e-9
+                assert g.ishta == p.ishta and g.kashta == p.kashta
+                if g.ishta is None or g.kashta is None:      # the nodes carry neither
+                    assert g.agreement == "not applicable"
+                    continue
+                strong = is_powerful(g.planet, g.rupas)
+                benefic = g.ishta > g.kashta
+                assert ("strong" in g.pattern) == strong or "harmful" in g.pattern
+                if strong != benefic:
+                    assert g.agreement == "split", (
+                        f"{g.planet}: force and intent disagree but agreement is {g.agreement!r}")
+                else:
+                    assert g.agreement == "unanimous"
+                assert MIN_REQUIRED.get(g.planet) is not None
+
+    def test_concordance_note_reports_agreement_honestly(self, mainpuri):
+        """The portrait owes the reader a confidence statement counted from the ledgers, not an
+        impression: how many bhavas agree with themselves, which are contested, which grahas
+        split force from intent."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        r, ts = mainpuri
+        note = ts.portrait.concordance_note
+        assert note and _FORBIDDEN_RE.search(note) is None
+        for c in ts.contested_bhavas:
+            assert f"H{c.house}" in note, "a contested bhava is missing from the portrait note"
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

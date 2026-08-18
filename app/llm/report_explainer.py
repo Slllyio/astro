@@ -452,6 +452,12 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"The chart's identity: {_por['identity']}")
         if _por.get("principal_tension"):
             _f(facts, f"The chart's principal tension: {_por['principal_tension']}")
+        if _por.get("concordance_note"):
+            _f(facts, f"How far the independent techniques agree: {_por['concordance_note']}")
+        for g in ts.get("graha_concordance", []):
+            _f(facts, f"{g['planet']} — {g['reading']}")
+        for c in ts.get("contested_bhavas", []):
+            _f(facts, f"House {c['house']} is contested: {c['reading']}")
         for th in ts.get("themes", []):
             cv = th.get("convergence_label") or (
                 str(th.get("convergence", "")).replace("_", " ").lower() + " convergence")
@@ -460,6 +466,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                       f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
             for m, v in th.get("sub_matters", []):
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
+            if th.get("activation_span"):
+                _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
+            _c = th.get("concordance")
+            if _c and _c.get("reading"):
+                _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
             for c in th.get("contradictions", []):
                 _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
                           f"{c['governing']}: {c['resolution']}")

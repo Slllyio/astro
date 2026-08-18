@@ -1,6 +1,6 @@
 """HTTP surface over the WALLED electional (Muhurtha) subsystem — `app.raman_saab.electional`.
 
-One endpoint answers "what does Raman's *Muhurtha* say about this day for this native": the
+Two endpoints answer "what does Raman's *Muhurtha* say about this day for this native": the
 day's Tarabala and Chandrabala measured from the native's own janma star/rasi, the five
 panchanga limbs, Panchaka, the ASP ch.XV transit-band elections read against the native's
 Bhinnashtakavarga, and the day's negative windows (Rahu Kalam + Durmuhurtha) as local ISO
@@ -12,17 +12,23 @@ never a validated prediction. See the package docstring and CLAUDE.md "Measured 
 
 Endpoints:
     GET /electional/today   native birth params (+ optional date/hour/act) -> the day's
-                            electional reading.
+                            electional reading at ONE moment.
+    GET /electional/scan    the same native/day -> WHEN the day is clean: the same judgment
+                            re-applied at interval samples from sunrise to next sunrise, and
+                            the contiguous clean spans that come out of it (day_scanner).
 
 Usage:
     curl "http://127.0.0.1:8000/electional/today?year=1990&month=7&day=15&hour=12\
 &latitude=12.97&longitude=77.59&tz_offset=5.5&date=2026-08-03&act=marriage"
+    curl "http://127.0.0.1:8000/electional/scan?year=1990&month=7&day=15&hour=12\
+&latitude=12.97&longitude=77.59&tz_offset=5.5&date=2026-08-03&act=marriage&interval_minutes=30"
 """
 from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import date as date_cls, datetime, timedelta, timezone
+import math
+from datetime import date as date_cls, datetime, timedelta
 from typing import Annotated, Literal, Optional
 
 import swisseph as swe
@@ -34,6 +40,14 @@ from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.electional.asp_transit_elections import transit_election
+from app.raman_saab.electional.day_scanner import (
+    DEFAULT_SAMPLE_MINUTES,
+    CleanSpan,
+    MomentInputs,
+    jd_to_local_iso as _jd_to_local_iso,
+    rank_spans,
+    scan_day,
+)
 from app.raman_saab.electional.negative_windows import (
     Window,
     durmuhurtha_windows,
@@ -51,6 +65,11 @@ _TRANSIT_GRAHAS: tuple[str, ...] = (
 
 _DISCLAIMER = ("What B. V. Raman's *Muhurtha* says of this day for this native — a statement "
                "of the electional method, never a validated prediction.")
+
+_SCAN_NOTE = ("Each span is judged by the SAME essentials ordering as the single-moment "
+              "reading (MUHURTHA-10:226-228), sample by sample: it is verified at its sample "
+              "points and only as fine as the sample interval. Ranking by essentials score "
+              "orders Raman's own method, and promises nothing about outcomes.")
 
 
 class ElectionalQuery(BaseModel):
@@ -76,6 +95,17 @@ class ElectionalQuery(BaseModel):
     # Raman's per-activity Panchaka exception (MUHURTHA-3:157-168) and the Janma-star
     # activity split; unknown/absent acts simply skip the exception.
     act: Optional[str] = Field(None, max_length=40)
+
+
+class ElectionalScanQuery(ElectionalQuery):
+    """`/electional/scan` — the same native and day, plus the sampling resolution.
+
+    `election_hour` / `election_minute` are inherited but unused here: the scan judges the
+    WHOLE day (sunrise to the following sunrise, the span Raman's durmuhurthas partition),
+    not one chosen moment.
+    """
+
+    interval_minutes: int = Field(DEFAULT_SAMPLE_MINUTES, ge=5, le=120)
 
 
 def sun_events(birth: BirthData) -> tuple[float, float, float]:
@@ -107,14 +137,6 @@ def sun_events(birth: BirthData) -> tuple[float, float, float]:
             f"are partitions of a real day/night span, so polar day/night is out of scope "
             f"({exc})") from exc
     return sunrise, sunset, next_sunrise
-
-
-def _jd_to_local_iso(jd: float, tz_offset: float) -> str:
-    """A UT Julian Day as a local ISO-8601 timestamp at `tz_offset` hours."""
-    year, month, day, hour = swe.revjul(jd + tz_offset / 24.0, swe.GREG_CAL)
-    tz = timezone(timedelta(hours=tz_offset))
-    stamp = datetime(int(year), int(month), int(day), tzinfo=tz) + timedelta(hours=float(hour))
-    return stamp.isoformat(timespec="seconds")
 
 
 def _cite(c: Citation) -> str:
@@ -230,3 +252,116 @@ async def electional_today(q: Annotated[ElectionalQuery, Query()]) -> dict:
         logger.exception("electional reading failed")
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"electional reading failed: {exc}") from exc
+
+
+def _birth_at(jd: float, q: ElectionalScanQuery) -> BirthData:
+    """The sample instant as `BirthData` (local wall clock, to the nearest minute).
+
+    `cast_chart` takes a birth record, not a Julian Day, so the sample's JD is converted back
+    through the same `jd_to_local_iso` the output uses — which normalises the 23:59:60 /
+    midnight rollover — and rounded to the minute the sample grid is aligned to anyway.
+    """
+    stamp = datetime.fromisoformat(_jd_to_local_iso(jd, q.tz_offset)) + timedelta(seconds=30)
+    return BirthData(name="scan", year=stamp.year, month=stamp.month, day=stamp.day,
+                     hour=stamp.hour, minute=stamp.minute, tz_offset=q.tz_offset,
+                     latitude=q.latitude, longitude=q.longitude)
+
+
+def _span_json(span: CleanSpan, rank: int) -> dict:
+    """One clean span, reader-facing. `passing`/`failing` are the factors that DEFINE it."""
+    return {"rank": rank, "start": span.start_local, "end": span.end_local,
+            "start_jd": span.start_jd, "end_jd": span.end_jd,
+            "duration_minutes": span.duration_minutes, "samples": span.samples,
+            "score": span.score, "score_max": span.score_max,
+            "passing": list(span.passing), "failing": list(span.failing)}
+
+
+@electional_router.get("/scan")
+async def electional_scan(q: Annotated[ElectionalScanQuery, Query()]) -> dict:
+    """WHEN this day is clean for this native — the same judgment, sampled across the day.
+
+    Iterates `window_scorer.evaluate_moment` (via `day_scanner.scan_day`) every
+    `interval_minutes` from the first aligned local time at or after sunrise to the following
+    sunrise — the span Raman's durmuhurthas partition — and returns the contiguous spans in
+    which every sample passed, ranked by essentials score. No new doctrine: a span is exactly
+    "the single-moment reading passed here, and here, and here".
+    """
+
+    def _build() -> dict:
+        natal = cast_chart(
+            BirthData(name=q.name, year=q.year, month=q.month, day=q.day, hour=q.hour,
+                      minute=q.minute, tz_offset=q.tz_offset, latitude=q.latitude,
+                      longitude=q.longitude),
+            ayanamsa=q.ayanamsa)
+        janma_nakshatra = natal.planets["Moon"].nakshatra
+        janma_rasi = natal.planets["Moon"].sign
+
+        elect_on = q.date or date_cls.today()
+        day_birth = BirthData(name="scan", year=elect_on.year, month=elect_on.month,
+                              day=elect_on.day, hour=12, minute=0, tz_offset=q.tz_offset,
+                              latitude=q.latitude, longitude=q.longitude)
+        sunrise, sunset, next_sunrise = sun_events(day_birth)
+        weekday_of_day = compute_panchanga(sunrise)["vara"]["index"]
+        windows = (rahu_kalam(weekday_of_day, sunrise, sunset),
+                   *durmuhurtha_windows(weekday_of_day, sunrise, sunset, next_sunrise))
+
+        # Sample grid aligned to the LOCAL clock (…07:00, 07:30…), starting at the first
+        # aligned instant at or after sunrise: Raman's day begins at sunrise, and the
+        # durmuhurtha partition below only covers sunrise -> next sunrise.
+        step = q.interval_minutes / 1440.0
+        midnight_jd = swe.julday(elect_on.year, elect_on.month, elect_on.day,
+                                 0.0 - q.tz_offset, swe.GREG_CAL)
+        start_jd = midnight_jd + math.ceil((sunrise - midnight_jd) / step) * step
+
+        def sampler(jd: float) -> MomentInputs:
+            chart = cast_chart(_birth_at(jd, q), ayanamsa=q.ayanamsa)
+            p = compute_panchanga(jd)
+            return MomentInputs(
+                tithi_in_paksha=p["tithi"]["index"] % 15 + 1,
+                weekday=p["vara"]["index"],
+                day_nakshatra=int(p["nakshatra"]["index"]) + 1,
+                yoga=p["yoga"]["index"] + 1,
+                karana=_karana_number(p["karana"]["index"]),
+                election_moon_rasi=chart.planets["Moon"].sign,
+                lagna_sign=chart.asc_sign)
+
+        scan = scan_day(day_start_jd=start_jd, day_end_jd=next_sunrise,
+                        janma_nakshatra=janma_nakshatra, janma_rasi=janma_rasi,
+                        sampler=sampler, sample_minutes=q.interval_minutes, act=q.act,
+                        negative_windows=windows, tz_offset=q.tz_offset)
+
+        ranked = rank_spans(scan.clean_spans)
+        rank_of = {id(s): i + 1 for i, s in enumerate(ranked)}
+        return {
+            "date": elect_on.isoformat(),
+            "act": q.act,
+            "ayanamsa": q.ayanamsa,
+            "interval_minutes": scan.sample_minutes,
+            "scan_window": {"start": _jd_to_local_iso(scan.start_jd, q.tz_offset),
+                            "end": _jd_to_local_iso(scan.end_jd, q.tz_offset),
+                            "start_jd": scan.start_jd, "end_jd": scan.end_jd,
+                            "sunrise": _jd_to_local_iso(sunrise, q.tz_offset),
+                            "sunset": _jd_to_local_iso(sunset, q.tz_offset),
+                            "next_sunrise": _jd_to_local_iso(next_sunrise, q.tz_offset)},
+            "native": {"janma_nakshatra": janma_nakshatra, "janma_rasi": janma_rasi},
+            "sample_count": len(scan.samples),
+            "clean_sample_count": scan.clean_sample_count,
+            # chronological (each row carries its own rank); `best` is the top-ranked span.
+            "clean_spans": [_span_json(s, rank_of[id(s)]) for s in scan.clean_spans],
+            "best": _span_json(ranked[0], 1) if ranked else None,
+            "blocked_windows": [_window_json(w, q.tz_offset) for w in scan.blocked_windows],
+            "samples": [{"local_iso": s.local_iso, "jd": s.jd, "ok": s.ok,
+                         "score": s.score, "hard_failures": list(s.evaluation.hard_failures)}
+                        for s in scan.samples],
+            "disclaimer": _DISCLAIMER,
+            "scan_note": _SCAN_NOTE,
+        }
+
+    try:
+        return await asyncio.to_thread(_build)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("electional day scan failed")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"electional day scan failed: {exc}") from exc

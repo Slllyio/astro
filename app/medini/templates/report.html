@@ -644,6 +644,34 @@ const I18N_HI = {
   'Aptitude, intelligence & work style':'योग्यता, बुद्धि और कार्यशैली',
   'Decade indication timeline':'दशक-संकेत समयरेखा',
   'Today for you (Muhurtha)':'आज आपके लिए (मुहूर्त)',
+
+  // scan-the-day (2026-08-18): "WHEN today is clean" — the same essentials judgment, sampled
+  // across the sunrise-to-sunrise day. Additive to the single-moment Muhurtha read.
+  'When today is clean':'आज कब शुद्ध है',
+  'When today is clean (sunrise → next sunrise)':'आज कब शुद्ध है (सूर्योदय → अगला सूर्योदय)',
+  'Scanning the day…':'दिन का अवलोकन हो रहा है…',
+  'Day scan failed: ':'दिन-अवलोकन विफल: ',
+  ' clean spans':' शुद्ध अवधियाँ',
+  ' samples pass':' नमूने उत्तीर्ण',
+  'sampled every ':'प्रत्येक ',
+  ' min from sunrise to next sunrise: ':' मिनट पर नमूना, सूर्योदय से अगले सूर्योदय तक: ',
+  'Cleanest span: ':'सर्वाधिक शुद्ध अवधि: ',
+  ' of 8 essentials':' / 8 आवश्यक अंग',
+  'passing: ':'उत्तीर्ण: ',
+  'failing: ':'विफल: ',
+  'No clean span at this resolution — every sample of the day carries a hard failure.':
+    'इस विभेदन पर कोई शुद्ध अवधि नहीं — दिन के प्रत्येक नमूने पर एक कठोर दोष खड़ा है।',
+  'clean span':'शुद्ध अवधि',
+  'hard-blocked':'कठोर-अवरुद्ध',
+  'Clean spans ranked by essentials score':'शुद्ध अवधियाँ — आवश्यक-अंग अंक के क्रम में',
+  'Hard-blocked windows of the scanned day':'अवलोकित दिन की कठोर-अवरुद्ध अवधियाँ',
+  'Every sample judged':'प्रत्येक निर्णीत नमूना',
+  'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. The number above a span is its guaranteed essentials score.':
+    'हरा = वह अवधि जिसके प्रत्येक नमूने ने रमन के आवश्यक-अंग क्रम (MUHURTHA-10:226-228) को उत्तीर्ण किया; लाल = कठोर-अवरुद्ध अवधि (राहु काल · दुर्मुहूर्त), जो किसी शुद्ध अवधि के भीतर कभी नहीं आ सकती। अवधि के ऊपर का अंक उसका सुनिश्चित आवश्यक-अंग स्कोर है।',
+  'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: `passing` are the factors favourable at every sample, `failing` the ones unfavourable at some sample (none of them a hard failure — a hard failure would have ended the span).':
+    'प्रत्येक पंक्ति लगातार नमूनों की वह शृंखला है जिनमें से हर एक ने वही एकल-क्षण निर्णय उत्तीर्ण किया: `passing` वे कारक हैं जो हर नमूने पर अनुकूल रहे, `failing` वे जो किसी नमूने पर प्रतिकूल रहे (इनमें कोई कठोर दोष नहीं — कठोर दोष अवधि को वहीं समाप्त कर देता)।',
+  'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials score and the hard failures standing against it.':
+    'सम्पूर्ण अवलोकन, कुछ भी छिपा नहीं: प्रत्येक नमूना-क्षण, वह उत्तीर्ण हुआ या नहीं, उसका आवश्यक-अंग स्कोर और उसके विरुद्ध खड़े कठोर दोष।',
   'Karmic evolution (Jaimini)':'कार्मिक विकास (जैमिनी)',
   'Full life synthesis':'सम्पूर्ण जीवन संश्लेषण',
   'Plain terms — every technical word, with why it matters':'सरल शब्दावली — हर पारिभाषिक शब्द, उसके महत्व सहित',
@@ -1851,15 +1879,83 @@ function muhurthaView(d){
   if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
   return out.filter(Boolean);
 }
+// ---- scan-the-day (GET /electional/scan): "WHEN today is clean", not "how is noon" ----
+// Pure iteration over the same scorer: every span below is a run of samples that each passed
+// the single-moment judgment. Additive — the single-moment read above is untouched.
+const hhmm=s=>String(s||'').slice(11,16);
+// A day strip: the scanned sunrise->sunrise span, its hard-blocked windows, its clean spans.
+// Positions come from Date.parse on the route's own local ISO stamps (no second time axis).
+function muhurthaScanStrip(d){
+  const w0=d.scan_window||{}, t0=Date.parse(w0.start), t1=Date.parse(w0.end);
+  if(!isFinite(t0)||!isFinite(t1)||!(t1>t0)) return null;
+  const W=760,H=92,L=10,R=10,BW=W-L-R,Y=30,BH=24;
+  const x=ms=>L+BW*Math.min(1,Math.max(0,(ms-t0)/(t1-t0)));
+  const g=svgBox(W,H);
+  g.append(sv('rect',{x:L,y:Y,width:BW,height:BH,fill:'var(--neu)',opacity:'.25',rx:'3'}));
+  for(const bw of (d.blocked_windows||[])){
+    const a=x(Date.parse(bw.start)), b=x(Date.parse(bw.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1,b-a),height:BH,fill:'var(--aff)',opacity:'.55'}),
+      bw.label+' · '+hhmm(bw.start)+'–'+hhmm(bw.end)));
+  }
+  for(const sp of (d.clean_spans||[])){
+    const a=x(Date.parse(sp.start)), b=x(Date.parse(sp.end));
+    if(!(b>a)) continue;
+    g.append(tip(sv('rect',{x:a,y:Y,width:Math.max(1.5,b-a),height:BH,fill:'var(--fav)',opacity:'.9',rx:'2'}),
+      '#'+sp.rank+' '+hhmm(sp.start)+'–'+hhmm(sp.end)+' · '+sp.score+'/8 · '+
+      t('passing: ')+(sp.passing||[]).join(', ')+(((sp.failing||[]).length)?' · '+t('failing: ')+sp.failing.join(', '):'')));
+    if(b-a>=16){ const lab=sv('text',{x:(a+b)/2,y:Y-6,'text-anchor':'middle','font-size':'10',fill:'var(--ink)'});
+      lab.append(String(sp.score)); g.append(lab); }
+  }
+  // hour ticks off the sample stamps themselves (every 3rd whole hour of the scan)
+  for(const s of (d.samples||[])){
+    if(hhmm(s.local_iso).slice(3)!=='00') continue;
+    const hr=parseInt(hhmm(s.local_iso).slice(0,2),10); if(hr%3) continue;
+    const px=x(Date.parse(s.local_iso));
+    g.append(sv('line',{x1:px,y1:Y+BH,x2:px,y2:Y+BH+5,stroke:'var(--ink-2)',strokeWidth:'1'}));
+    const lb=sv('text',{x:px,y:Y+BH+17,'text-anchor':'middle','font-size':'9',fill:'var(--ink-2)'});
+    lb.append(hhmm(s.local_iso)); g.append(lb);
+  }
+  const box=el('div',{}); box.append(g,legend([['var(--fav)','clean span'],['var(--aff)','hard-blocked']]));
+  return box;
+}
+function muhurthaScanView(d){
+  const out=[], w0=d.scan_window||{}, spans=d.clean_spans||[], best=d.best;
+  out.push(para((spans.length?'✓ ':'✗ ')+spans.length+t(' clean spans')+' · '+
+    d.clean_sample_count+'/'+d.sample_count+t(' samples pass')+' — '+d.date+' · '+
+    (d.act||t('general'))+' · '+t('sampled every ')+d.interval_minutes+
+    t(' min from sunrise to next sunrise: ')+hhmm(w0.start)+'–'+hhmm(w0.end),'lede'));
+  if(best) out.push(para(t('Cleanest span: ')+hhmm(best.start)+'–'+hhmm(best.end)+' · '+
+    best.score+t(' of 8 essentials')+((best.failing||[]).length?' · '+t('failing: ')+best.failing.join(', '):''),'lede'));
+  else out.push(para(t('No clean span at this resolution — every sample of the day carries a hard failure.'),'mu-fail'));
+  const strip=muhurthaScanStrip(d);
+  if(strip) out.push(vizCard('When today is clean (sunrise → next sunrise)', strip,
+    'Green = a span in which every sample passed Raman’s essentials ordering (MUHURTHA-10:226-228); '+
+    'red = a hard-blocked window (Rahu Kalam · Durmuhurtha), which can never fall inside a clean span. '+
+    'The number above a span is its guaranteed essentials score.'));
+  out.push(sectionTable('Clean spans ranked by essentials score', spans, [],
+    'Each row is a run of consecutive samples that ALL passed the same single-moment judgment: '+
+    '`passing` are the factors favourable at every sample, `failing` the ones unfavourable at some '+
+    'sample (none of them a hard failure — a hard failure would have ended the span).'));
+  out.push(sectionTable('Hard-blocked windows of the scanned day', d.blocked_windows));
+  out.push(sectionTable('Every sample judged', d.samples, [],
+    'The whole scan, nothing hidden: each sampled instant, whether it passed, its essentials '+
+    'score and the hard failures standing against it.'));
+  if(d.scan_note) out.push(para(d.scan_note,'muted'));
+  if(d.disclaimer) out.push(para(d.disclaimer,'muted'));
+  return out.filter(Boolean);
+}
 function muhurthaPanel(){
   const wrap=el('div',{});
   const ctl=el('div',{class:'mu-controls'});
   const sel=el('select',{class:'leaf-input mu-act'});
   for(const a of ELECT_ACTS) sel.append(el('option',{value:a},t(a)));
   const btn=el('button',{class:'digest-read',type:'button'},t('Read today'));
-  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn);
+  const scanBtn=el('button',{class:'digest-read',type:'button'},t('When today is clean'));
+  ctl.append(el('span',{class:'muted'},t('for: ')),sel,btn,scanBtn);
   const out=el('div',{});
-  wrap.append(ctl,out);
+  const scanOut=el('div',{});
+  wrap.append(ctl,out,scanOut);
   btn.onclick=async()=>{
     btn.disabled=true; out.replaceChildren(el('div',{class:'folio-loading'},t('Reading the day…')));
     try{
@@ -1870,6 +1966,19 @@ function muhurthaPanel(){
     }catch(e){ console.error('muhurtha read failed:',e);
       out.replaceChildren(el('div',{class:'err'},t('Muhurtha reading failed: ')+e.message)); }
     finally{ btn.disabled=false; btn.replaceChildren(t('Read today')); }
+  };
+  scanBtn.onclick=async()=>{
+    scanBtn.disabled=true;
+    scanOut.replaceChildren(el('div',{class:'folio-loading'},t('Scanning the day…')));
+    try{
+      const p=electionalParams(sel.value); p.set('interval_minutes','30');
+      const r=await fetch('/electional/scan?'+p.toString());
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.detail||r.statusText);
+      scanOut.replaceChildren(...muhurthaScanView(d));
+    }catch(e){ console.error('muhurtha day scan failed:',e);
+      scanOut.replaceChildren(el('div',{class:'err'},t('Day scan failed: ')+e.message)); }
+    finally{ scanBtn.disabled=false; scanBtn.replaceChildren(t('When today is clean')); }
   };
   return wrap;
 }
@@ -2756,7 +2865,9 @@ function render(R, S, FQ){
   add(para('Raman’s Muhurtha read for today at this native’s own janma nakshatra and rasi — '+
     'Tarabala and Chandrabala, the five panchanga limbs, Panchaka, the transit-band elections read '+
     'against this chart’s Bhinnashtakavarga, and the day’s negative windows. It is fetched on '+
-    'request, not with the cast, and is a statement of the electional method, never a prediction.','muted'));
+    'request, not with the cast, and is a statement of the electional method, never a prediction. '+
+    '“When today is clean” re-applies the SAME judgment every half hour from sunrise to the next '+
+    'sunrise and returns the spans in which every sample passed — pure iteration, no new doctrine.','muted'));
   add(muhurthaPanel());
 
   chapter(10);

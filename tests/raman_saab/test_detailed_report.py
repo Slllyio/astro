@@ -1854,3 +1854,288 @@ class TestWave1TimingSurfaces:
             section = markdown[s:e if e > 0 else s + 4000]
             m = _FORBIDDEN_RE.search(section)
             assert m is None, f"{marker}: {m.group(0)!r}"
+
+
+class TestWave2SynthesisLayer:
+    """Wave-2 (2026-08-17, synthesis layer): period-pairing across the plain layers
+    (HTJAH-I:1586-1596, the locked timer doctrine), the stronger-frame + vitality lines,
+    glossed reconciliations, the info-content breakdown + measured population framing,
+    and the Nichod's spotlight weave + forward horizon. All pure re-reads."""
+
+    def test_every_theme_paragraph_closes_with_its_period_pairing(self, report):
+        """Raman never states an indication without its fructification window — each of the
+        five life-theme paragraphs closes by naming the MD lords whose chapters most light
+        its houses, with the year span, in the guard-safe indication idiom."""
+        import re
+
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        assert len(report.plain_reading.life_paragraphs) == 5
+        for theme, para in report.plain_reading.life_paragraphs:
+            assert "ripen most fully in the" in para, theme
+            assert re.search(r"chapters? of life \(\d{4}-\d{4}\)\.$", para), theme
+            m = _FORBIDDEN_RE.search(para)
+            assert m is None, f"{theme}: {m.group(0)!r}"
+
+    def test_period_pairing_re_reads_the_graded_life_chapters(self, report):
+        """The lords the clause names are exactly lords of chapters whose houses_lit rows
+        light the requested houses — a re-read of the four-tier grading, never invented."""
+        import re
+
+        from app.raman_saab.detailed_report import period_pairing
+        lords, span = period_pairing(report, (10,))
+        lit10 = {ch.maha for ch in report.life_chapters.chapters
+                 if any(h == 10 for h, _t, _v in ch.houses_lit)}
+        assert lords and set(lords) <= lit10
+        assert re.fullmatch(r"\d{4}-\d{4}", span)
+        # nothing lights a house no chapter lights
+        assert period_pairing(report, ()) == ((), "")
+
+    def test_opening_states_the_stronger_frame_and_the_vitality_band(self, report):
+        """The stronger-frame sentence (HTJAH-I:645-646 re-read) and the guarded vitality
+        line (band word only — the number stays in the Longevity section)."""
+        pr = report.plain_reading
+        if report.overview.stronger_frame == "moon":
+            assert "read chiefly from the Moon's position" in pr.opening
+        band_word = {"purna": "full", "madhya": "middle",
+                     "alpa": "short"}[report.longevity_class]
+        assert f"vitality reads at the {band_word} band" in pr.opening
+        assert "not a forecast" in pr.opening
+        assert str(round(report.longevity_years)) not in pr.opening
+
+    def test_reconciliations_gloss_the_method_jargon(self, report):
+        """The S3 bullets keep both poles but speak plainly — the PREC id survives as the
+        parenthetical pointer, the raw method tokens do not."""
+        recs = report.plain_reading.reconciliations
+        if not recs:
+            pytest.skip("no reconciliations on this chart")
+        joined = " ".join(recs)
+        assert "never re-voted" not in joined
+        assert "its dedicated reader" not in joined
+        assert "rule PREC-" in joined and "How to read this report" in joined
+
+    def test_info_breakdown_table_matches_the_census_fields(self, report, markdown):
+        """The breakdown rows under the info sentence restate the SAME InfoContent fields
+        the sentence uses — checkable arithmetic, no new counting."""
+        s = markdown.find("## Information content of this reading")
+        e = markdown.find("\n## ", s + 1)
+        section = markdown[s:e]
+        i = report.info
+        assert f"| total readings | {i.total} |" in section
+        assert (f"| most common verdict ({i.modal_verdict}) | {i.modal_count} |"
+                in section)
+        assert (f"| near-universal (held by half the population or more) | "
+                f"{i.near_universal} |" in section)
+        assert f"| proven inverted channels | {i.inverted} |" in section
+        assert f"| genuinely distinctive | {i.distinctive} |" in section
+        # classes overlap by construction; each is bounded by the total it breaks down
+        for count in (i.modal_count, i.near_universal, i.inverted, i.distinctive):
+            assert 0 <= count <= i.total
+
+    def test_population_note_is_calibration_framed_and_rendered(self, markdown):
+        """The measured mechanism constants (CLAUDE.md Measured Truth) frame the info
+        sentence as calibration — never validation — on the markdown surface."""
+        from app.raman_saab.detailed_report import POPULATION_NOTE
+        assert "19 afflicted and 31 favourable" in POPULATION_NOTE
+        assert "97.1%" in POPULATION_NOTE
+        assert "never validation" in POPULATION_NOTE
+        assert POPULATION_NOTE in markdown
+
+    def test_nichod_weaves_spotlight_frame_and_forward_horizon(self, report, markdown):
+        """The essence now carries the spotlight, opens frame-then-ruler, and closes its
+        timing view with the next MD boundary's lean — all before the fixed disclaimer."""
+        n = report.nichod
+        if n.spotlight:
+            assert "cross-feature spotlight" in n.essence
+        assert "the stronger frame here (HTJAH-I:645-646)" in n.essence
+        if n.forward_horizon:
+            assert "a period indication, not an event" in n.forward_horizon
+            assert n.forward_horizon in n.essence
+            assert "Forward horizon" in markdown
+            # mirror the builder's own row filter (MD-level rows, else every bhukti row)
+            rows = ([ik for ik in report.ishta_kashta if ik.antar is None]
+                    or list(report.ishta_kashta))
+            nxt = next(ik for ik in rows
+                       if ik.start_jd > report.ref_jd
+                       and ik.maha != report.synthesis.running_md)
+            assert nxt.maha in n.forward_horizon
+            assert str(nxt.maha_lean) in n.forward_horizon
+
+    def test_digest_table_renders_1_based_for_humans(self, markdown):
+        """The rendered rank column starts at 1 (priority stays 0-based in JSON)."""
+        s = markdown.find("## What matters most (ranked digest)")
+        e = markdown.find("\n## ", s + 1)
+        section = markdown[s:e]
+        assert "\n| 1 | governing_factor |" in section
+        assert "\n| 2 | foundation |" in section
+        assert "\n| 0 | " not in section
+
+    def test_wave2_prose_passes_the_decree_guard(self, report, markdown):
+        """Every composed Wave-2 surface stays in the indication idiom — the decree
+        tripwire never fires on the plain reading, the digest, the Nichod, the info
+        section or the life synthesis."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for marker in ("## Your Reading", "## Information content of this reading",
+                       "## What matters most (ranked digest)", "## Nichod",
+                       "## Full life synthesis"):
+            s = markdown.find(marker)
+            assert s >= 0, marker
+            e = markdown.find("\n## ", s + 1)
+            section = markdown[s:e if e > 0 else len(markdown)]
+            m = _FORBIDDEN_RE.search(section)
+            assert m is None, f"{marker}: {m.group(0)!r}"
+        pieces = [report.plain_reading.opening, report.nichod.essence,
+                  report.nichod.forward_horizon or ""]
+        pieces += [p for _t, p in report.plain_reading.life_paragraphs]
+        if report.life_synthesis is not None:
+            pieces += [p for _t, p in report.life_synthesis.paragraphs]
+        for piece in pieces:
+            m = _FORBIDDEN_RE.search(piece)
+            assert m is None, (m.group(0) if m else "", piece)
+
+
+class TestFoundationWave2:
+    """Wave-2 foundation re-reads (REPORT_CRITIQUE_2026-08-17): the ruler's own
+    condition block + takeaway + foundation verdict, the signature's first-glance
+    rows, the Deeptadi testimony table with secondary-state disclosure, and the
+    Shadbala ratio/scale notes. All pure re-reads; the ratchet is untouched."""
+
+    def test_ruler_takeaway_leads_the_chapter(self, report, markdown):
+        """Canonical pin: Mercury rules from H11 under strain; the Sun carries."""
+        ru = report.ruler
+        assert ru.takeaway.startswith("Mercury rules this nativity from house 11")
+        assert "under its Shadbala minimum" in ru.takeaway
+        assert "Sun, the strongest planet by Shadbala, carries the chart" in ru.takeaway
+        sec = markdown[markdown.find("## Ruler of the nativity"):
+                       markdown.find("## Planet biographies")]
+        assert "**Mercury rules this nativity from house 11" in sec
+
+    def test_ruler_condition_block_computed_and_rendered(self, report, markdown):
+        """The Lagna lord's sign/dignity/avastha/Shadbala-vs-minimum/aspects/dispositor
+        — the chapter's namesake finally gets the full read (canonical pins)."""
+        ru = report.ruler
+        assert (ru.ll_dignity, ru.ll_avastha) == ("enemy", "Deena")
+        assert ru.ll_rupas == pytest.approx(6.15, abs=0.01)
+        assert ru.ll_required == 7.0
+        assert ru.ll_powerful is False and ru.ll_only_failing is True
+        assert ru.ll_aspects_received == ("Mars", "Rahu")
+        assert (ru.ll_dispositor, ru.ll_dispositor_house) == ("Moon", 7)
+        sec = markdown[markdown.find("## Ruler of the nativity"):
+                       markdown.find("## Planet biographies")]
+        assert "**The ruler's own condition** - in Cancer (enemy sign)" in sec
+        assert "6.15 rupas against its required 7.0 (GBB-8:303)" in sec
+        assert "the only planet in this chart below its own" in sec
+        assert "dispositor Moon in house 7" in sec
+
+    def test_foundation_verdict_fires_on_the_non_coincide_branch(self, report, markdown):
+        """HTJAH-I:3880-3882 (already cited on the coincide branch) now surfaces when
+        ruler != strongest too — sound/unsound idiom, descriptive only."""
+        ru = report.ruler
+        assert "HTJAH-I:3880-3882" in ru.foundation_line
+        assert "falls below its required minimum" in ru.foundation_line
+        assert '"foundation is quite sound"' in ru.foundation_line
+        sec = markdown[markdown.find("## Ruler of the nativity"):
+                       markdown.find("## Planet biographies")]
+        assert "**Foundation** - Mercury, the Lagnadhipati" in sec
+
+    def test_chandra_lagna_candidate_disclosed_when_moon_frame(self, report, markdown):
+        """Stronger frame is MOON here, so the Chandra-lagna lord (Jupiter, Pisces
+        Moon) is disclosed as the third classical candidate (HTJAH-I:645-646)."""
+        ru = report.ruler
+        assert report.overview.stronger_frame == "moon"
+        assert ru.chandra_lagna_lord == "Jupiter"
+        assert "functional malefic for this Lagna" in ru.chandra_ll_condition
+        sec = markdown[markdown.find("## Ruler of the nativity"):
+                       markdown.find("## Planet biographies")]
+        assert "Third classical candidate (Chandra Lagna)" in sec
+
+    def test_signature_first_glance_rows(self, report, markdown):
+        """Balance of dasha at birth, exact degrees, paksha-vs-Shadbala, luminary
+        flags, Lagna-lord disposition and the day-lord observation — all computed."""
+        from app.raman_saab.detailed_report import signature_first_glance
+        rows = dict(signature_first_glance(report))
+        assert rows["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        assert rows["Lagna degree"] == "23 Vi 59'17\""
+        assert rows["Moon degree"] == "26 Pi 19'03\""
+        assert rows["Moon at a glance"].startswith(
+            "waning (Krishna paksha) yet Shadbala-strong")
+        assert "Sun strong" in rows["Luminaries"] and "GBB-8:303" in rows["Luminaries"]
+        assert rows["Lagna lord at a glance"] == "Mercury in H11, enemy sign, Deena avastha"
+        assert rows["Day lord"].startswith("born on Sunday, the Sun's day")
+        sig = markdown[markdown.find("## Chart signature"):
+                       markdown.find("## Ruler of the nativity")]
+        assert "**Balance of dasha at birth** - Mercury 4y 8m 10d" in sig
+        assert "**Lagna degree** - 23 Vi 59'17\"" in sig
+        assert "**Moon degree** - 26 Pi 19'03\"" in sig
+
+    def test_stronger_frame_names_its_operationalization(self, markdown):
+        """No-silent-approximation: the frame test names its measure in-render."""
+        assert ("measured here by the two sign-lords' total Shadbala" in markdown)
+
+    def test_deeptadi_table_reads_as_testimony(self, report, markdown):
+        """Per-planet rows: Raman's HPA Ch.7:46-83 result, rules/occupies with the
+        Lagna-lord call-out, Saturn's secondary state disclosed, node note present."""
+        from app.raman_saab.detailed_report import deeptadi_table
+        rows = {r_[0]: r_ for r_ in deeptadi_table(report)}
+        assert rows["Saturn"][1].startswith("Deena (also retrograde -> Sakta")
+        assert rows["Mercury"][3].endswith("the Lagna lord dejected")
+        assert rows["Mercury"][2] == "enemy's sign -> jealousy, worry, sickness, degradation"
+        assert rows["Rahu"][1].startswith("Sakta (definitional")
+        assert "the nodes are always retrograde" in rows["Rahu"][1]
+        assert rows["Rahu"][3].startswith("rules nothing (chayagraha)")
+        sec = markdown[markdown.find("## Deeptadi avasthas (each"):
+                       markdown.find("## Jaimini Karakamsa")]
+        assert ("| graha | state | Raman's stated result (HPA Ch.7:46-83) | "
+                "rules / occupies |") in sec
+        assert "| Saturn | Deena (also retrograde -> Sakta" in sec
+        assert "perpetually Sakta - definitional, not a strength claim" in sec
+        # Wave-1's Baladi/Jagradadi table is untouched alongside
+        assert "| graha | Baladi (ageing) | Jagradadi (consciousness) |" in sec
+
+    def test_states_all_head_always_matches_state(self, report):
+        """The additive accessor's dominant state is exactly state()'s answer for
+        every graha — state() itself is unchanged."""
+        from app.raman_saab.primitives.deeptadi import state, states_all
+        for name in report.chart.planets:
+            assert states_all(name, report.chart)[0] == state(name, report.chart)
+
+    def test_shadbala_ratio_column_and_scale_notes(self, markdown):
+        """Ratio (total/required, 2dp), the Sun/Moon cheshta-0 definitional note
+        (GBB-6:23-28), the Ishta/Kashta 0-60 scale note with the good/hard leans,
+        and the weakest-component pointer for the one failing planet (Mercury)."""
+        sec = markdown[markdown.find("## Shadbala (six-fold"):
+                       markdown.find("## Yogas present")]
+        assert "| **total** | ratio | powerful? |" in " ".join(sec.splitlines())
+        assert "| **6.15** | 0.88 | no |" in sec
+        assert "cheshta 0.00 by definition" in sec and "GBB-6:23-28" in sec
+        assert "0-60 scale (GBB-10:134)" in sec
+        assert "Mercury hard" in sec and "Sun good" in sec
+        assert ("Mercury falls below its minimum; of the six components shown, "
+                "its smallest is drik") in sec
+        assert "not a per-component judgment" in sec
+
+    def test_json_carries_the_new_foundation_keys(self, report):
+        """report_json append-only keys + the new dataclass fields flow through."""
+        from app.raman_saab.report_json import to_report_dict
+        d = to_report_dict(report)
+        fg = dict(map(tuple, d["signature_first_glance"]))
+        assert fg["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        assert any(row[0] == "Saturn" and "Sakta" in row[1]
+                   for row in d["deeptadi_table"])
+        assert d["ruler"]["ll_dispositor"] == "Moon"
+        assert d["ruler"]["takeaway"].startswith("Mercury rules this nativity")
+        assert d["psych"]["mercury_line"]
+
+    def test_new_foundation_prose_passes_the_guard(self, report):
+        """Descriptive idiom only: the decree-voice tripwire stays silent on every
+        new builder string (ruler block, first-glance rows, deeptadi table)."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        from app.raman_saab.detailed_report import (deeptadi_table,
+                                                    signature_first_glance)
+        ru = report.ruler
+        texts = [ru.takeaway, ru.foundation_line, ru.chandra_ll_condition or ""]
+        texts += [v for _k, v in signature_first_glance(report)]
+        for row in deeptadi_table(report):
+            texts += list(row[1:])
+        for t in texts:
+            m = _FORBIDDEN_RE.search(t)
+            assert m is None, f"{m.group(0) if m else ''!r} in {t!r}"

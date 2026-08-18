@@ -228,6 +228,14 @@ class PsychProfile:
     nature_stamp: Optional[str]             # who stamps nature/appearance
     atmakaraka: Optional[str]
     woven: str                              # the composed profile (guard-safe)
+    # ── mind-stack completions (2026-08-18 report-critique, append-only): the Moon's
+    # per-sign mental disposition (the SAME fired H1.M.* rule the Aptitude chapter
+    # re-reads, HTJAH-I:1452), a Mercury (buddhi) condition line composed from its
+    # computed state, and the cross-reference to Deeptadi's Moon row. Defaults keep
+    # every existing construction unchanged. ─────────────────────────────────────────
+    moon_mind: tuple[tuple[str, str, str], ...] = ()   # fired H1.M.* (id, text, cite)
+    mercury_line: str = ""                             # buddhi condition (computed)
+    deeptadi_moon: str = ""                            # Moon's avastha cross-reference
 
 
 def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
@@ -258,6 +266,33 @@ def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
         ak = chara_karakas(r.chart).get("AK")
     except Exception:  # noqa: BLE001
         ak = None
+    # the Moon's per-sign mental disposition — a RE-READ of the same fired H1.M.* rule
+    # (HTJAH-I:1452) the Aptitude chapter shows; the psych chapter is its natural home
+    try:
+        moon_mind = _fired_moon_mind(r.proformas[0]) if r.proformas else ()
+    except Exception:  # noqa: BLE001
+        moon_mind = ()
+    # Mercury (buddhi) — Raman's mind is Moon (manas) AND Mercury (buddhi); composed
+    # from Mercury's computed condition + the drishti it receives, no new judgment
+    mercury_line = ""
+    merc_cond = _condition("Mercury", r)
+    if merc_cond is not None:
+        from app.raman_saab.doctrine.drishti import aspecting_planets
+        asp = aspecting_planets("Mercury", r.chart)
+        mercury_line = (f"the Moon carries the manas (mind) and Mercury the buddhi "
+                        f"(intellect): Mercury stands {merc_cond}, "
+                        + (f"aspected by {', '.join(asp)}" if asp
+                           else "aspected by no planet"))
+    # cross-reference to the Deeptadi section's Moon row (state + Raman's result phrase)
+    deeptadi_moon = ""
+    try:
+        from app.raman_saab.primitives.deeptadi import RESULTS as _DR
+        from app.raman_saab.primitives.deeptadi import state as _dstate
+        _ms = _dstate("Moon", r.chart)
+        deeptadi_moon = (f"Moon {_ms} — {_DR[_ms][1]} (HPA Ch.7:46-83; full per-planet "
+                         f"table in the Deeptadi avasthas section)")
+    except Exception:  # noqa: BLE001
+        pass
     woven = weighed(
         "the rising sign's own portrait, the Moon's state, the strongest planet's "
         "temperament and the Atmakaraka together",
@@ -272,7 +307,10 @@ def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
         temperament=r.ruler.temperament,
         nature_stamp=r.ruler.stamps_nature,
         atmakaraka=ak,
-        woven=woven)
+        woven=woven,
+        moon_mind=moon_mind,
+        mercury_line=mercury_line,
+        deeptadi_moon=deeptadi_moon)
 
 
 # ── v33 Aptitude, intelligence & work style ─────────────────────────────────────

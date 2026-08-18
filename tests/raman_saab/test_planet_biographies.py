@@ -108,3 +108,85 @@ class TestPlanetBiographies:
         assert "## Planet biographies (dominant grahas)" in to_markdown(report)
         assert 'id="planet-bios"' in to_html(report)
         assert to_report_dict(report)["planet_bios"]
+
+
+class TestPortraitFields:
+    """Wave-2 foundation additions (REPORT_CRITIQUE_2026-08-17): role-first openers,
+    the condition header (Shadbala + functional nature), itemized drishti, avastha
+    consequences, named karakatvas, node-safe wording and the census demoted to a
+    trailing receipts line — all pure re-reads of already-computed primitives."""
+
+    def test_jupiter_carries_its_functional_nature_and_condition(self, bios):
+        """Canonical pin: Jupiter is a functional malefic for Virgo and meets its
+        Shadbala minimum — the bio must carry both so it cannot clash in tone with
+        the Chart signature's functional-nature row."""
+        jup = next(b for b in bios if b.planet == "Jupiter")
+        assert jup.functional_nature == "malefic"
+        assert jup.rupas == pytest.approx(8.72, abs=0.01)
+        assert jup.powerful is True
+        assert jup.avastha_result.startswith("combust ->")
+
+    def test_jupiter_markdown_names_functional_malefic_for_virgo(self, report):
+        """The rendered bio states the functional nature for THIS Lagna with the
+        citation the overview already records (HTJAH-I:523-604)."""
+        from app.raman_saab.detailed_report import to_markdown
+        md = to_markdown(report)
+        i = md.find("### Jupiter")
+        sec = md[i:md.find("### ", i + 4)]
+        assert "functional malefic for Virgo (HTJAH-I:523-604)" in sec
+
+    def test_drishti_is_itemized_both_ways(self, bios):
+        """Casts/receives lists re-read the whole-sign drishti engine: Jupiter casts
+        its 5/7/9 and receives Saturn's 7th on the canonical chart."""
+        jup = next(b for b in bios if b.planet == "Jupiter")
+        assert any(x.startswith("H4 (7th aspect") for x in jup.casts_drishti)
+        assert "Saturn (7th aspect)" in jup.receives_drishti
+        mer = next(b for b in bios if b.planet == "Mercury")
+        assert {x.split(" ", 1)[0] for x in mer.receives_drishti} == {"Mars", "Rahu"}
+
+    def test_named_karakatvas_reuse_the_house_label_map(self, bios):
+        """Karaka duties carry the topic labels, never bare house numbers alone."""
+        jup = next(b for b in bios if b.planet == "Jupiter")
+        assert "house 2 (Wealth/Family)" in jup.family_role_named
+        assert "house 4 (Mother/Home)" in jup.family_role_named
+
+    def test_node_bios_never_claim_lordship(self, bios):
+        """LOCKED doctrine: the nodes rule nothing — their prose must read tenancy,
+        never lordship, and their lord_of stays empty."""
+        for b in bios:
+            if b.planet in ("Rahu", "Ketu"):
+                assert b.lord_of == ()
+                assert "its lordship" not in b.prose
+                if b.helps:
+                    assert "its tenancy and aspects reach" in b.prose
+
+    def test_role_lines_come_from_computed_roles(self, report, bios):
+        """Mercury opens as the Lagna lord under strain (below-minimum + Deena); the
+        strongest planet names itself; a yoga participant lists its yogas."""
+        by = {b.planet: b for b in bios}
+        assert by["Mercury"].role_line.startswith("the Lagna lord under strain")
+        assert "strongest planet" in by[report.ruler.strongest].role_line
+        assert "yoga-giver" in by["Jupiter"].role_line
+
+    def test_census_is_demoted_to_a_receipts_line(self, report):
+        """The chapter header opens on the role; the census survives IN FULL as a
+        trailing receipts bullet (add-only: same data, new position)."""
+        from app.raman_saab.detailed_report import to_markdown
+        md = to_markdown(report)
+        i = md.find("## Planet biographies")
+        sec = md[i:md.find("## Psychological profile")]
+        for ln in sec.splitlines():
+            if ln.startswith("### "):
+                assert "graph appearances" not in ln
+        assert sec.count("- **Receipts** - ") == len(report.planet_bios)
+        assert "graph appearances" in sec        # the data itself is still shown
+
+    def test_new_portrait_prose_passes_the_guard(self, bios):
+        """Descriptive idiom only — the decree-voice tripwire must stay silent on
+        every new portrait field."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for b in bios:
+            for text in (b.role_line, b.functional_nature, b.avastha_result,
+                         b.family_role_named, *b.casts_drishti, *b.receives_drishti):
+                m = _FORBIDDEN_RE.search(text)
+                assert m is None, f"{b.planet}: {m.group(0)!r}"

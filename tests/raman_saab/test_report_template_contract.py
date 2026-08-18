@@ -469,16 +469,55 @@ class TestWaveB:
         ls = report.life_synthesis
         themes = dict(ls.paragraphs)
         if "Destiny" in themes:
-            assert report.nichod.essence in themes["Destiny"]
+            # Wave-2 rebuild (2026-08-17): Destiny carries its own distinct clause —
+            # identity + longevity band + governing factor — never the Nichod essence
+            # pasted whole (the essence stays complete in the Nichod itself).
+            assert report.nichod.essence not in themes["Destiny"]
+            assert report.nichod.identity in themes["Destiny"]
+            assert report.longevity_class in themes["Destiny"]
+            assert report.ruler.lagna_lord in themes["Destiny"]
         if "Marriage" in themes:
             assert report.marriage.verdict in themes["Marriage"]
+            # content re-read, not a pointer at the monograph's existence
+            assert "monograph carries Raman's own words" not in themes["Marriage"]
         if "Children" in themes:
             assert report.children.verdict in themes["Children"]
+            assert "quotes the classical combination block" not in themes["Children"]
         if "Dominant themes" in themes:
             assert report.planet_bios[0].planet in themes["Dominant themes"]
         from app.llm.report_explainer import _FORBIDDEN_RE
         for _t, para in ls.paragraphs:
             assert _FORBIDDEN_RE.search(para) is None, para
+
+    def test_life_synthesis_has_the_present_chapter_theme(self, report):
+        """Wave-2: the biography-shaped closing pass names the running MD/AD with its tier
+        and lit houses — a re-read of the Nichod's current_period line."""
+        cur = report.nichod.current_period
+        if not cur or cur.startswith("no running period"):
+            pytest.skip("no running period resolved on this chart")
+        themes = dict(report.life_synthesis.paragraphs)
+        assert "Present chapter" in themes
+        assert cur in themes["Present chapter"]
+        assert "a timing lens, never an event" in themes["Present chapter"]
+
+    def test_life_synthesis_pairs_indication_with_period(self, report):
+        """Wave-2: each houses-anchored theme closes by naming the MD lords whose chapters
+        most light its houses (HTJAH-I:1586-1596, the locked timer doctrine) — a re-read
+        of the graded life-chapters."""
+        from app.raman_saab.detailed_report import period_pairing
+        themes = dict(report.life_synthesis.paragraphs)
+        for theme, houses in (("Career", (10,)), ("Wealth", (2, 11)), ("Marriage", (7,)),
+                              ("Children", (5,)), ("Reputation", (10,)),
+                              ("Health", (6, 8))):
+            if theme not in themes:
+                continue
+            lords, _span = period_pairing(report, houses)
+            if not lords:
+                continue
+            assert "ripen most fully under" in themes[theme], theme
+            assert "HTJAH-I:1586-1596" in themes[theme], theme
+            for lord in lords:
+                assert lord in themes[theme], (theme, lord)
 
     def test_dashboard_carries_the_support_column(self, markdown, report):
         assert "| classical support (testimonies) |" in markdown

@@ -140,6 +140,7 @@ class LifeSynthesis:
 
 
 def build_life_synthesis(r: "DetailedReport") -> Optional[LifeSynthesis]:
+    from app.raman_saab.detailed_report import _joined_names, period_pairing
     from app.raman_saab.raman_style import conclusion
 
     paras: list[tuple[str, str]] = []
@@ -148,36 +149,71 @@ def build_life_synthesis(r: "DetailedReport") -> Optional[LifeSynthesis]:
         if text.strip():
             paras.append((theme, text.strip()))
 
+    def _ripens(houses: tuple[int, ...]) -> str:
+        """Raman's pair-indication-with-period discipline (HTJAH-I:1586-1596, the locked
+        timer doctrine): the MD lords whose chapters most light the theme's houses — a
+        pure re-read of the graded life-chapters; '' when nothing in the window lights
+        them. Timed-indication idiom only."""
+        lords, span = period_pairing(r, houses)
+        if not lords:
+            return ""
+        word = "chapter" if len(lords) == 1 else "chapters"
+        return (f" These matters ripen most fully under the {_joined_names(lords)} "
+                f"{word} ({span}; HTJAH-I:1586-1596).")
+
     ps = r.psych
     if ps is not None:
+        # Wave-2: the dual-frame clause — when the Moon's frame is the stronger, the
+        # psychological read says so (HTJAH-I:645-646, the Chart-signature re-read).
+        frame_bit = ("; the psychological read is weighed from the Moon's sign, the "
+                     "stronger frame in this chart (HTJAH-I:645-646)"
+                     if r.overview.stronger_frame == "moon" else "")
         _add("Temperament",
              f"The rising sign's portrait opens the story (quoted in full in the "
              f"Psychological profile), with {ps.moon_state or 'the Moon as manas'}"
              + (f"; the strongest planet's temperament reads: {ps.temperament}"
-                if ps.temperament else "") + ".")
-    if r.nichod.essence:
-        _add("Destiny", f"The Nichod's own distillation stands as the destiny line: "
-                        f"{r.nichod.essence}")
+                if ps.temperament else "") + frame_bit + ".")
+    # Wave-2 rebuild: Destiny carries its own distinct clause — identity + longevity band
+    # + governing factor — instead of pasting the whole Nichod essence (which stays
+    # complete in the Nichod itself, so nothing computed is hidden).
+    if r.nichod.identity:
+        gov = f"the ruler of the nativity is {r.ruler.lagna_lord}"
+        if r.ruler.strongest is not None:
+            gov += (" - itself the strongest planet" if r.ruler.coincide
+                    else f"; the strongest planet by Shadbala is {r.ruler.strongest}")
+        _add("Destiny",
+             f"{r.nichod.identity}. Longevity reads at the {r.longevity_class} band, and "
+             f"{gov} (HTJAH-I:16001-16002). The full distillation stands complete in the "
+             f"Nichod below.")
     pf = r.profession
     if pf is not None and pf.convergent:
         conv = ", ".join(w for w, _n in pf.convergent[:4])
         _add("Career", f"Across every derivation the profession synthesis runs, the "
                        f"convergent trades are {conv} — the method's occupational "
-                       f"emphasis, counted, not judged anew.")
+                       f"emphasis, counted, not judged anew.{_ripens((10,))}")
     w = r.wealth
     if w is not None and w.rows:
         first = w.rows[0]
         _add("Wealth", f"The wealth chapter reads the channels rather than one verdict; "
-                       f"its leading channel: {first.channel} — {first.reading}.")
+                       f"its leading channel: {first.channel} — {first.reading}."
+                       f"{_ripens((2, 11))}")
     m = r.marriage
     if m is not None:
-        _add("Marriage", f"The seventh house's headline stands {m.verdict}, with "
-                         f"{len(m.fired_kalatra)} kalatra rule(s) firing; the monograph "
-                         f"carries Raman's own words for the placement.")
+        # Wave-2 rebuild: re-read the CONTENT (lord placement + fired kalatra count),
+        # not the fact that a monograph exists.
+        lord_bit = (f"; the seventh lord sits in house {m.lord_placement_house}"
+                    if m.lord_placement_house else "")
+        _add("Marriage", f"The seventh house's headline stands {m.verdict}{lord_bit}, "
+                         f"with {len(m.fired_kalatra)} kalatra rule(s) firing on the "
+                         f"placement.{_ripens((7,))}")
     c = r.children
     if c is not None:
-        _add("Children", f"The fifth house reads {c.verdict}; the chapter quotes the "
-                         f"classical combination block whole.")
+        # Wave-2 rebuild: name the fifth house's own decided matters instead of pointing
+        # at the chapter's quotation block.
+        sig_bits = "; ".join(f"{k} {v}" for k, v in c.significations[:3])
+        _add("Children", f"The fifth house reads {c.verdict}"
+                         + (f" — its decided matters: {sig_bits}" if sig_bits else "")
+                         + f".{_ripens((5,))}")
     a = r.arishta
     if a is not None:
         _add("Protections", f"On the arishta side: {a.kemadruma_note}; the band is "
@@ -187,15 +223,28 @@ def build_life_synthesis(r: "DetailedReport") -> Optional[LifeSynthesis]:
                    if sv.signification == "status_honour"), None)
         if sh is not None:
             _add("Reputation", f"Status and honour (H10) read {sh.verdict} "
-                               f"({sh.degree}).")
+                               f"({sh.degree}).{_ripens((10,))}")
     h = r.health_readout
     if h is not None and h.rows:
         _add("Health", f"The health read-out's headline rows: "
-             + "; ".join(f"{row.area} {row.verdict}" for row in h.rows[:3]) + ".")
+             + "; ".join(f"{row.area} {row.verdict}" for row in h.rows[:3]) + "."
+             + _ripens((6, 8)))
     if r.nichod.turning_points:
         _add("Turning points", "Where the period lean changes: "
              + "; ".join(f"{when} — {what}" for when, what in r.nichod.turning_points)
              + ".")
+    # Wave-2: the Present chapter — the running MD/AD, its tier and the houses it lights
+    # (a re-read of the Nichod's current_period line), the one thing a biography-shaped
+    # closing pass must never omit.
+    cur_period = r.nichod.current_period
+    if cur_period and not cur_period.startswith("no running period"):
+        cur = next((ch for ch in r.life_chapters.chapters if ch.is_current), None)
+        lean_bit = (f", on a {cur.lean} Ishta/Kashta lean" if cur is not None and cur.lean
+                    else "")
+        _add("Present chapter",
+             f"The chapter running now: {cur_period}{lean_bit} — re-read from the "
+             f"Life-narrative's own four-tier grading (HTJAH-I:1592-1596), a timing "
+             f"lens, never an event.")
     if r.planet_bios:
         dom = r.planet_bios[0]
         _add("Dominant themes", f"{dom.planet} drives more of this chart's computed "

@@ -27,6 +27,9 @@ from typing import Any
 
 from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
                                             graded_buckets)
+from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
+from app.raman_saab.detailed_report import deeptadi_table as _deeptadi_table
+from app.raman_saab.detailed_report import signature_first_glance as _signature_first_glance
 from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE
 from app.raman_saab.plain_terms import SECTION_METHOD as _SECTION_METHOD
 from app.raman_saab.plain_terms import gloss_dict as _gloss
@@ -160,6 +163,13 @@ def to_report_dict(r: DetailedReport) -> dict:
         "synthesis": _ad(r.synthesis),
         "overview": _ad(r.overview),
         "ruler": _ad(r.ruler),
+        # append-only 2026-08-18 (report-critique, foundation): Raman's first-glance rows
+        # (balance of dasha at birth, Lagna/Moon degrees, paksha-vs-Shadbala, luminary
+        # strength flags, Lagna-lord disposition, day-lord observation) and the Deeptadi
+        # per-planet testimony table (state + secondary states + Raman's HPA Ch.7 result
+        # + rules/occupies) — the same computed rows the markdown/HTML surfaces render.
+        "signature_first_glance": [list(row) for row in _signature_first_glance(r)],
+        "deeptadi_table": [list(row) for row in _deeptadi_table(r)],
 
         # houses + the honesty overlay + the strength / preponderance cross-checks
         "proformas": [_proforma_dict(pf) for pf in r.proformas],
@@ -171,7 +181,11 @@ def to_report_dict(r: DetailedReport) -> dict:
         # markdown "What stands out" table shows; existing fields untouched.
         "distinctive": [[h, {**_ad(e), "gloss": distinctive_gloss(e)}]
                         for h, e in r.distinctive],
-        "info": _ad(r.info),
+        # append-only 2026-08-17 (Wave-2): `sentence` (the property asdict drops) and the
+        # canonical measured `population_note` the info section now renders — calibration
+        # framing, never validation. Existing keys untouched.
+        "info": {**_ad(r.info), "sentence": r.info.sentence,
+                 "population_note": _POPULATION_NOTE},
 
         # yogas (each carries its own Citation object) + the synthesis insights
         "yogas": _each(r.yogas),

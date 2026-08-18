@@ -635,6 +635,7 @@ def _house_chip(a, *, ring: bool = False) -> str:
 
 def _info_box(r: DetailedReport) -> str:
     """The honesty headline: how much of this document actually distinguishes this chart."""
+    from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
     i = r.info
     inv_line = ""
     if i.inverted_locations:
@@ -654,6 +655,7 @@ def _info_box(r: DetailedReport) -> str:
         f'</div><p class="infonote">Most of this document is generic: {i.modal_count} of '
         f'{i.total} readings return the single most common verdict ({_esc(i.modal_verdict)}). '
         f'This is a disclosure about the method&rsquo;s output, not a statement about a life.</p>'
+        f'<p class="infonote">{_esc(_POPULATION_NOTE)}</p>'
         f'{inv_line}</div>')
 
 
@@ -780,24 +782,57 @@ def _planet_bios_section(r: DetailedReport) -> str:
         vocation = ("" if not b.themes_raman else
                     f'<p class="section-sub"><b>Raman&rsquo;s vocation words</b> '
                     f'(HTJAH-II:10249-10274) &mdash; {_esc(b.themes_raman)}</p>')
-        family = ("" if not b.family_role else
-                  f'<p class="section-sub"><b>Family/karaka duties</b> &mdash; '
-                  f'{_esc(b.family_role)}</p>')
         disease = ("" if not b.disease_text else
                    f'<p class="section-sub"><b>Disease indications</b> &mdash; '
                    f'{_esc(b.disease_text[0])} <i>({_esc(b.disease_text[1])})</i></p>')
+        # portrait additions (2026-08-18 report-critique): role-first header, condition
+        # header line, itemized drishti, avastha consequence, named karakatvas; the
+        # census is demoted to a trailing receipts line (same data, kept in full).
+        hdr_bits: list[str] = []
+        if b.rupas is not None:
+            hdr_bits.append(f"{b.rupas:.2f} rupas &mdash; "
+                            + ("meets" if b.powerful else "below")
+                            + " Raman&rsquo;s minimum (GBB-8:303)")
+        elif b.planet in ("Rahu", "Ketu"):
+            hdr_bits.append("no Shadbala (chayagraha &mdash; the measure is defined "
+                            "for the seven visible planets)")
+        if b.functional_nature:
+            from app.raman_saab.detailed_report import _SIGN_NAME as _SN
+            hdr_bits.append(f"functional {_esc(b.functional_nature)} for "
+                            f"{_esc(_SN[r.chart.asc_sign])} (HTJAH-I:523-604)")
+        hdr = (f'<p class="section-sub"><i>{"; ".join(hdr_bits)}</i></p>'
+               if hdr_bits else "")
+        casts = ("" if not b.casts_drishti else
+                 f'<p class="section-sub"><b>Casts drishti on</b> &mdash; '
+                 f'{_esc(", ".join(b.casts_drishti))} (whole-sign)</p>')
+        recv = (f'<p class="section-sub"><b>Receives drishti from</b> &mdash; '
+                f'{_esc(", ".join(b.receives_drishti))}</p>'
+                if b.receives_drishti else
+                ('<p class="section-sub"><b>Receives drishti from</b> &mdash; '
+                 'no planet aspects it</p>'
+                 if (b.rupas is not None or b.planet in ("Rahu", "Ketu")) else ""))
+        av_line = ("" if not (b.avastha and b.avastha_result) else
+                   f'<p class="section-sub"><b>Avastha consequence (HPA Ch.7)</b> '
+                   f'&mdash; {_esc(b.avastha)}: {_esc(b.avastha_result)}</p>')
+        family = ("" if not (b.family_role_named or b.family_role) else
+                  f'<p class="section-sub"><b>Family/karaka duties</b> &mdash; '
+                  f'{_esc(b.family_role_named or b.family_role)}</p>')
+        receipts = (f'<p class="section-sub"><b>Receipts</b> &mdash; {b.census_count} '
+                    f'graph appearances ({_esc(census)})</p>')
         blocks.append(
-            f'<h3>{_esc(b.planet)} &mdash; {b.census_count} graph appearances '
-            f'({_esc(census)})</h3>'
-            f'<p>{_esc(b.prose)}</p>'
+            f'<h3>{_esc(b.planet)}'
+            + (f' &mdash; {_esc(b.role_line)}' if b.role_line else '') + '</h3>'
+            + hdr
+            + f'<p>{_esc(b.prose)}</p>'
             + _quote("In its sign (HPA-22)", b.sign_text) + node_sign_note
             + _quote("In its house (HPA-21)", b.house_text)
+            + casts + recv + av_line
             + family + disease
             + _quote("Its Mahadasha runs NOW (HPA-24)", b.md_result_now)
             + _quote("Its Bhukti runs NOW (HPA-24)", b.ad_result_now)
             + _quote("Transit results (HPA-34, house-by-house from the Moon)",
                      b.transit_text)
-            + vocation + modern)
+            + vocation + modern + receipts)
     return (
         '<h2 class="section" id="planet-bios">Planet biographies (dominant grahas)</h2>'
         '<p class="section-sub"><b>In simple terms:</b> the grahas that drive the most of '
@@ -812,7 +847,8 @@ def _digest_section(r: DetailedReport) -> str:
     if not r.digest.items:
         return ""
     rows = "".join(
-        f'<tr><td class="num">{it.priority}</td><td>{_esc(it.kind)}</td>'
+        # 1-based rank for humans (Wave-2, 2026-08-17); `priority` stays 0-based in JSON.
+        f'<tr><td class="num">{it.priority + 1}</td><td>{_esc(it.kind)}</td>'
         f'<td><b>{_esc(it.title)}</b> &mdash; {_esc(it.detail)}</td><td>{_esc(it.lean)}</td>'
         f'<td>{_esc(", ".join(it.sections)) if it.sections else "&ndash;"}</td>'
         f'<td>{_esc(", ".join(it.cites)) if it.cites else "&ndash;"}</td></tr>'
@@ -1443,6 +1479,44 @@ def _ruler_section(r: DetailedReport) -> str:
         ll_bit += f", in house {ru.lagna_lord_house}"
     rows.append(f'<div class="now-row"><span class="theme-label">Ruler (Lagna lord)</span>'
                 f'{ll_bit}</div>')
+    # the ruler's OWN condition block (2026-08-18 report-critique — the chapter's
+    # namesake gets the same full read the strongest planet already had)
+    ll_cond: list[str] = []
+    if ru.lagna_lord_sign is not None:
+        ll_cond.append(f"in {_esc(_SIGN_NAME[ru.lagna_lord_sign])}"
+                       + (f" ({_esc(ru.ll_dignity)} sign)" if ru.ll_dignity else ""))
+    if ru.ll_avastha is not None:
+        ll_cond.append(f"{_esc(ru.ll_avastha)} avastha (HPA Ch.7)")
+    if ru.ll_rupas is not None and ru.ll_required is not None:
+        ll_cond.append(
+            f"{ru.ll_rupas:.2f} rupas against its required {ru.ll_required:.1f} "
+            f"(GBB-8:303) &mdash; {'meets' if ru.ll_powerful else 'below'} the minimum"
+            + (", the only planet in this chart below its own"
+               if ru.ll_only_failing else ""))
+    if ru.ll_functional_nature is not None:
+        ll_cond.append(f"functional {_esc(ru.ll_functional_nature)} for this Lagna")
+    if ru.lagna_lord_house is not None:
+        ll_cond.append("aspected by "
+                       + (", ".join(_esc(a) for a in ru.ll_aspects_received)
+                          if ru.ll_aspects_received else "no planet"))
+    if ru.ll_dispositor is not None:
+        ll_cond.append(f"dispositor {_esc(ru.ll_dispositor)}"
+                       + (f" in house {ru.ll_dispositor_house}"
+                          if ru.ll_dispositor_house is not None else ""))
+    if ll_cond:
+        rows.append(f'<div class="now-row"><span class="theme-label">Ruler&rsquo;s own '
+                    f'condition</span>{"; ".join(ll_cond)}</div>')
+    if ru.foundation_line:
+        rows.append(f'<div class="now-row"><span class="theme-label">Foundation</span>'
+                    f'{_esc(ru.foundation_line)}</div>')
+    if ru.chandra_lagna_lord is not None:
+        ch_bit = (f'the signature reads the MOON as the stronger frame (HTJAH-I:645-646), '
+                  f'so the Chandra-lagna lord ({_esc(ru.chandra_lagna_lord)}) is the third '
+                  f'classical candidate')
+        if ru.chandra_ll_condition:
+            ch_bit += f' &mdash; it stands {_esc(ru.chandra_ll_condition)}'
+        rows.append(f'<div class="now-row"><span class="theme-label">Third candidate '
+                    f'(Chandra Lagna)</span>{ch_bit}</div>')
     if ru.strongest is not None and ru.strongest_rupas is not None:
         s_bit = f"{_esc(ru.strongest)} ({ru.strongest_rupas:.1f} rupas)"
         if ru.coincide:
@@ -1509,7 +1583,8 @@ def _ruler_section(r: DetailedReport) -> str:
         'peculiarities of the person&rdquo; (HTJAH-I:6248-6250). The classical temperament '
         'lines are shorthand for tendencies, never medical statements &mdash; how the method '
         'reads this chart, not a prediction.</p>'
-        f'<div class="instrument">{"".join(rows)}</div>'
+        + (f'<p class="plain"><b>{_esc(ru.takeaway)}</b></p>' if ru.takeaway else '')
+        + f'<div class="instrument">{"".join(rows)}</div>'
         f'<p class="plain">{_esc(ru.signature)}</p>')
 
 
@@ -1549,6 +1624,7 @@ def _dashboard(r: DetailedReport) -> str:
 
 
 def _shadbala(r: DetailedReport) -> str:
+    from app.raman_saab.detailed_report import _ishta_kashta_lean as _ik_lean
     from app.raman_saab.primitives.shadbala.total import is_powerful
     sb_rows = [(n, p) for n, p in planet_rows(r.chart) if p.shadbala_rupas is not None]
     if not sb_rows:
@@ -1558,6 +1634,8 @@ def _shadbala(r: DetailedReport) -> str:
     from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
     rows = ""
     bars = ""
+    notes: list[str] = []
+    _comp_names = ("sthana", "dig", "kala", "cheshta", "naisargika", "drik")
     max_r = max(p.shadbala_rupas.total / 60.0 for _n, p in sb_rows) or 1.0
     for i, (name, p) in enumerate(sb_rows):
         sb = p.shadbala_rupas
@@ -1566,12 +1644,24 @@ def _shadbala(r: DetailedReport) -> str:
         band = band_rupas(name, tot)
         ik = (f"{p.ishta:.1f}/{p.kashta:.1f}"
               if p.ishta is not None and p.kashta is not None else "&ndash;")
-        cells = "".join(f'<td class="num">{v / 60.0:.2f}</td>' for v in
-                        (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik))
+        comps = (sb.sthana, sb.dig, sb.kala, sb.cheshta, sb.naisargika, sb.drik)
+        cells = "".join(f'<td class="num">{v / 60.0:.2f}</td>' for v in comps)
+        _req = MIN_REQUIRED.get(name)
+        ratio = f"{tot / _req:.2f}" if _req else "&ndash;"
         rows += (f'<tr><td><b>{_esc(name)}</b></td>{cells}'
                  f'<td class="num"><b>{tot:.2f}</b></td>'
+                 f'<td class="num">{ratio}</td>'
                  f'<td>{"yes" if strong else "no"}</td><td class="num">{ik}</td>'
                  f'<td>{_esc(band)}</td></tr>')
+        if not strong:
+            # weakest-component pointer: arithmetic on the six shown values only —
+            # NO per-component minimum is asserted (none are encoded)
+            _wk_name, _wk_val = min(zip(_comp_names, comps), key=lambda kv: kv[1])
+            notes.append(
+                f'{_esc(name)} falls below its minimum; of the six components shown, '
+                f'its smallest is {_wk_name} ({_wk_val / 60.0:.2f} rupas) &mdash; an '
+                f'arithmetic pointer to where the deficit sits, not a per-component '
+                f'judgment (no per-component minima are encoded)')
         # the horsepower bar (inline SVG row): bar to max, tick at Raman's requirement
         y = 10 + i * 26
         w = 340.0 * tot / (max_r * 1.15)
@@ -1603,9 +1693,20 @@ def _shadbala(r: DetailedReport) -> str:
             '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
             '<th class="num">sthana</th><th class="num">dig</th><th class="num">kala</th>'
             '<th class="num">cheshta</th><th class="num">naisargika</th><th class="num">drik</th>'
-            '<th class="num">total</th><th>powerful?</th><th class="num">ishta/kashta</th>'
+            '<th class="num">total</th><th class="num">ratio</th>'
+            '<th>powerful?</th><th class="num">ishta/kashta</th>'
             '<th>in plain terms</th>'
-            f'</tr></thead><tbody>{rows}</tbody></table></div>')
+            f'</tr></thead><tbody>{rows}</tbody></table></div>'
+            # scale + definitional notes (2026-08-18 report-critique, append-only)
+            '<p class="section-sub">Scale notes: <b>ratio</b> = total / Raman&rsquo;s '
+            'required minimum (GBB-8:303) &mdash; 1.00 is exactly the bar. The Sun and '
+            'Moon show <b>cheshta 0.00 by definition</b> &mdash; they receive no Cheshta '
+            'Bala in the Shadbala total (GBB-6:23-28); that cell is not missing data. '
+            '<b>Ishta/Kashta</b> are each on a 0-60 scale (GBB-10:134); this chart&rsquo;s '
+            'leans, in the same good/hard vocabulary the period readings use: '
+            + _esc("; ".join(f"{n} {_ik_lean(r.chart, n)}" for n, _p in sb_rows
+                             if _ik_lean(r.chart, n) is not None)) + '.</p>'
+            + "".join(f'<p class="section-sub">{n}.</p>' for n in notes))
 
 
 def _maraka(r: DetailedReport) -> str:
@@ -1793,6 +1894,13 @@ def _psych_section(r: DetailedReport) -> str:
              f"&ldquo;{_esc(ps.lagna_quote[0])}&rdquo; <i>({_esc(ps.lagna_quote[1])})</i>")]
     if ps.moon_state:
         rows.append(("The mind's significator", _esc(ps.moon_state)))
+    for _mm_id, _mm_text, _mm_cite in ps.moon_mind:
+        rows.append((f"The Moon's sign (mental disposition) [{_esc(_mm_id)}]",
+                     f"{_esc(_mm_text)} <i>({_esc(_mm_cite)})</i>"))
+    if ps.mercury_line:
+        rows.append(("Mercury (buddhi)", _esc(ps.mercury_line)))
+    if ps.deeptadi_moon:
+        rows.append(("The Moon's avastha (cross-reference)", _esc(ps.deeptadi_moon)))
     if ps.temperament:
         rows.append(("Temperament of the strongest planet",
                      _esc(ps.temperament) + " (HTJAH-I:6248-6268)"))
@@ -2222,6 +2330,9 @@ def _nichod_section(r: DetailedReport) -> str:
     if n.turning_points:
         rows.append(("Turning points (a timing lens, not an event)",
                      "; ".join(f"{when}: {what}" for when, what in n.turning_points)))
+    if n.forward_horizon:
+        rows.append(("Forward horizon (a period indication, not an event)",
+                     n.forward_horizon))
     ingredients = "".join(
         f'<div class="vrow"><span class="vk">{_esc(k)}</span><span class="vv">{_esc(v)}</span>'
         f'</div>' for k, v in rows)
@@ -2557,6 +2668,12 @@ def to_html(r: DetailedReport) -> str:
         sig.append(("Sade-Sati", s.sade_sati.replace("Sade-Sati:", "").strip()))
     if s.panchanga:
         sig.append(("Panchanga", s.panchanga))
+    # Raman's first glance (2026-08-18 report-critique, append-only): balance of dasha
+    # at birth, exact Lagna/Moon degrees, paksha-vs-Shadbala, luminary strength flags,
+    # the Lagna lord's disposition, day-lord observation — same computed rows as the
+    # markdown signature (detailed_report.signature_first_glance).
+    from app.raman_saab.detailed_report import signature_first_glance as _sig_fg
+    sig.extend(_sig_fg(r))
     # header chips carry a plain-language tooltip pulled from the one glossary
     def _chip(k: str, v: str) -> str:
         gloss = next((g for term, g in GLOSSARY.items() if term.lower() in k.lower()), None)
@@ -2691,6 +2808,26 @@ def to_html(r: DetailedReport) -> str:
         extras += ('<h2 class="section" id="deeptadi">Deeptadi avasthas</h2>'
                    '<p class="section-sub">each graha&rsquo;s result-state (HPA Ch.7)</p>'
                    f'<p class="doctrine">{_esc(", ".join(s.deeptadi))}</p>')
+        # per-planet testimony table (2026-08-18 report-critique: from trivia to
+        # testimony) — same rows the markdown renders via deeptadi_table.
+        from app.raman_saab.detailed_report import deeptadi_table as _dt
+        _dt_rows = _dt(r)
+        if _dt_rows:
+            dt_html = "".join(
+                f'<tr><td><b>{_esc(n_)}</b></td><td>{_esc(st_)}</td>'
+                f'<td>{_esc(res_)}</td><td>{_esc(role_)}</td></tr>'
+                for n_, st_, res_, role_ in _dt_rows)
+            extras += (
+                '<p class="section-sub">Each state read as testimony &mdash; '
+                'Raman&rsquo;s stated result beside the houses the planet answers for. '
+                'Secondary states are disclosed in parentheses (the dignity-first '
+                'priority order names the dominant one). Rahu/Ketu are always '
+                'retrograde, hence perpetually Sakta &mdash; definitional, not a '
+                'strength claim.</p>'
+                '<div class="tablewrap"><table class="grid"><thead><tr><th>graha</th>'
+                '<th>state</th><th>Raman&rsquo;s stated result (HPA Ch.7:46-83)</th>'
+                '<th>rules / occupies</th></tr></thead>'
+                f'<tbody>{dt_html}</tbody></table></div>')
         # Baladi/Jagradadi (2026-08-17 report-critique fix): computed and consumed by the
         # house judge (intensity demotion), previously never shown on any static surface.
         from app.raman_saab.judges.house_template import baladi_jagradadi_states

@@ -135,3 +135,54 @@ class TestPsychProfileWithoutCorpus:
         ps = build_psych_profile(report)
         assert ps.lagna_quote[0] == "The native is of noble bearing."
         assert "corpus not mounted" not in ps.lagna_quote[0]
+
+
+class TestPsychMindStack:
+    """Wave-2 foundation additions (REPORT_CRITIQUE_2026-08-17): the Moon-in-sign
+    mental disposition (re-read of the fired H1.M.* rule, HTJAH-I:1452), the Mercury
+    (buddhi) condition line, and the cross-reference to Deeptadi's Moon row."""
+
+    def test_moon_mind_rereads_the_fired_h1m_rule(self, report):
+        """Canonical pin: Moon in Pisces fires H1.M.S12 (HTJAH-I:1452) — the SAME
+        fired row the Aptitude chapter shows, re-read here, never re-judged."""
+        ps = report.psych
+        assert ps is not None and ps.moon_mind
+        rid, text, cite = ps.moon_mind[0]
+        assert rid == "H1.M.S12"
+        assert cite == "HTJAH-I:1452"
+        assert ps.moon_mind == report.aptitude.moon_mind_fired
+
+    def test_mercury_buddhi_line_is_composed_from_computed_condition(self, report):
+        """Manas-and-buddhi framing over Mercury's computed house/dignity/avastha and
+        the drishti it receives (canonical: H11, enemy, Deena; Mars + Rahu aspect)."""
+        ps = report.psych
+        assert "manas" in ps.mercury_line and "buddhi" in ps.mercury_line
+        assert "in house 11, dignity enemy, avastha Deena" in ps.mercury_line
+        assert "aspected by Mars, Rahu" in ps.mercury_line
+
+    def test_deeptadi_moon_cross_reference(self, report):
+        """The psych chapter points at the Deeptadi section's Moon row with Raman's
+        own result phrase (HPA Ch.7:46-83) — canonical: Moon Muditha."""
+        ps = report.psych
+        assert ps.deeptadi_moon.startswith("Moon Muditha")
+        assert "HPA Ch.7:46-83" in ps.deeptadi_moon
+        assert "Deeptadi avasthas section" in ps.deeptadi_moon
+
+    def test_mind_stack_renders_in_markdown(self, report):
+        """The three new rows appear inside the Psychological profile section."""
+        from app.raman_saab.detailed_report import to_markdown
+        md = to_markdown(report)
+        i = md.find("## Psychological profile")
+        sec = md[i:md.find("## Planetary positions")]
+        assert "**The Moon's sign (mental disposition)** [H1.M.S12]" in sec
+        assert "**Mercury (buddhi)**" in sec
+        assert "**The Moon's avastha (cross-reference)**" in sec
+
+    def test_mind_stack_prose_passes_the_guard(self, report):
+        """Descriptive idiom only on every new psych field."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        ps = report.psych
+        for text in (ps.mercury_line, ps.deeptadi_moon,
+                     *(t for _rid, t, _c in ps.moon_mind)):
+            m = _FORBIDDEN_RE.search(text)
+            assert m is None, m and m.group(0)

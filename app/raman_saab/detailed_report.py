@@ -4200,6 +4200,13 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                          f"{', '.join(c.overlay_against) or 'none'} against")
         for g in getattr(t, "driver_concordance", ()) or ():
             L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
+        for d in getattr(t, "divisional_checks", ()) or ():
+            L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        dist = getattr(t, "distinctive", ()) or ()
+        if dist:
+            L.append("- **How unusual is this?** — "
+                     + "; ".join(f"{x.signification} ({x.rarity}): {x.population_note}"
+                                 for x in dist[:4]))
         L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
         if t.activation_span:
             L.append(f"- **Timing** — {t.activation_span}")
@@ -4239,6 +4246,15 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             # headings hit with "## Longevity").
             L.append(f"| **{_md_cell(g.planet)}** | {ru} | {ish} | {kas} | "
                      f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
+        L.append("")
+    if getattr(ts, "divisional_divergences", None):
+        L.append("_**Divisions that read against the rasi** — a varga is the classical "
+                 "confirmation device, so its dissent is worth naming. It modulates confidence in "
+                 "the natal indication; it never overturns it (PREC-5):_")
+        L.append("")
+        for nm, d in ts.divisional_divergences:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "
+                     f"{_md_cell(d.verdict)}, against the rasi verdict.")
         L.append("")
     if getattr(ts, "contested_bhavas", None):
         L.append("_**Contested bhavas** — houses whose verdict runs against the weight of their "

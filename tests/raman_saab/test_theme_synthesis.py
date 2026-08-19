@@ -561,6 +561,60 @@ class TestThemeSynthesisContract:
         for c in ts.contested_bhavas:
             assert f"H{c.house}" in note, "a contested bhava is missing from the portrait note"
 
+    def test_each_theme_reads_its_own_division(self, mainpuri, canonical):
+        """The engine casts and reads FIFTEEN vargas, each with its own verdict and citations, and
+        the roster names the division that belongs to each bhava — yet the layer consulted only the
+        D9 relation. A theme whose roster varga has a deep-read must now carry it, matched from the
+        engine's own headline text and never recomputed."""
+        for r, ts in (mainpuri, canonical):
+            heads = [h for h, _b in r.divisional]
+            by = {t.theme_id: t for t in ts.themes}
+            for tid, varga in (("wealth", 2), ("career", 10), ("children", 7), ("siblings", 3)):
+                t = by[tid]
+                own = [d for d in t.divisional_checks if d.varga.startswith(f"D-{varga} ")]
+                assert own, f"{tid}: its own D-{varga} deep-read was not consulted"
+                assert any(own[0].varga in h for h in heads), "the label is not the engine's own"
+                assert own[0].relation in ("concurs", "diverges", "reads its own matter")
+
+    def test_a_division_reading_against_the_rasi_is_disclosed(self, mainpuri):
+        """A varga is the classical confirmation device, so its dissent is the finding. On Mainpuri
+        the D-30 Trimsamsa reads health FAVOURABLE while H6 reads afflicted. The rasi verdict must
+        be untouched — a division modulates confidence, it never overturns (PREC-5)."""
+        r, ts = mainpuri
+        assert ts.divisional_divergences, "the D-30/H6 divergence was not caught"
+        for nm, d in ts.divisional_divergences:
+            assert d.relation == "diverges"
+            assert "PREC-5" in d.note or "overturn" in d.note
+            theme = next(t for t in ts.themes if t.name == nm)
+            # the passthrough is intact: disclosure only
+            pf = {p.house: p for p in r.proformas}[theme.houses[0]]
+            assert theme.headline_verdict == pf.rollup
+
+    def test_divisional_checks_never_invent_a_reading(self, mainpuri, canonical):
+        """Every check quotes a verdict the engine actually printed for that division."""
+        for r, ts in (mainpuri, canonical):
+            printed = {h for h, _b in r.divisional}
+            for t in ts.themes:
+                for d in t.divisional_checks:
+                    assert any(h.startswith(d.varga) and d.verdict in h for h in printed), (
+                        f"{d.varga}: {d.verdict!r} is not a verdict the engine printed")
+
+    def test_distinctiveness_keeps_the_concordance_honest(self, mainpuri):
+        """Techniques agreeing means little when the thing agreed on is what most charts show. The
+        calibration layer already measures rarity per signification; each theme now reports it for
+        its own houses, re-read verbatim (CLAUDE.md Measured Truth)."""
+        r, ts = mainpuri
+        src = {(h, e.signification): e for h, e in r.distinctive}
+        seen = 0
+        for t in ts.themes:
+            for x in t.distinctive:
+                seen += 1
+                assert x.house in t.houses
+                e = src[(x.house, x.signification)]
+                assert x.rarity == e.rarity and x.population_note == e.note
+                assert x.verdict == e.verdict
+        assert seen, "no distinctiveness surfaced on a chart that has 22 entries"
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

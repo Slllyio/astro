@@ -655,6 +655,17 @@ const I18N_HI = {
   'now':'अभी',
   'karakas':'कारक',
   'the chart':'कुंडली',
+  'How unusual is this?':'यह कितना असामान्य है?',
+  'Divisions that read against the rasi':'वर्ग जो राशि के विरुद्ध पढ़ते हैं',
+  'A varga is the classical confirmation device, so its dissent is worth naming. It modulates confidence in the natal indication; it never overturns it (PREC-5).':'वर्ग शास्त्रीय पुष्टि-साधन है, अतः उसकी असहमति नामित करने योग्य है। वह जन्मकुंडली-संकेत के प्रति विश्वास को संशोधित करता है; उसे कभी उलटता नहीं (PREC-5)।',
+  'against the rasi verdict':'राशि-निर्णय के विरुद्ध',
+  'concurs':'सहमत',
+  'diverges':'असहमत',
+  'reads a facet':'एक पहलू पढ़ता है',
+  'reads its own matter':'अपना ही विषय पढ़ता है',
+  'rare':'दुर्लभ',
+  'notable':'उल्लेखनीय',
+  'common':'सामान्य',
   'How far the techniques agree':'तकनीकें कितनी सहमत हैं',
   'Do the techniques agree?':'क्या तकनीकें सहमत हैं?',
   'Do the techniques agree? — force against intent':'क्या तकनीकें सहमत हैं? — बल बनाम आशय',
@@ -2490,6 +2501,10 @@ function render(R, S, FQ){
           b.append(para(t('overlay')+': '+((c.overlay_for||[]).join(', ')||t('none'))+' '+t('for')+'; '+((c.overlay_against||[]).join(', ')||t('none'))+' '+t('against'),'muted')); }
       for(const g of (th.driver_concordance||[]))
         b.append(para(g.planet+' ('+t('force vs intent')+') — '+g.reading,'muted'));
+      for(const d of (th.divisional_checks||[]))
+        b.append(para(d.varga+' ('+t(d.relation)+') — '+d.verdict+'. '+d.note,'muted'));
+      if((th.distinctive||[]).length)
+        b.append(para(t('How unusual is this?')+' — '+th.distinctive.slice(0,4).map(x=>x.signification+' ('+t(x.rarity)+'): '+x.population_note).join('; '),'muted'));
       b.append(para(t('Divisional (D9)')+' — '+th.varga_relation+'.','muted'));
       if(th.activation_span) b.append(para(t('Timing')+' — '+th.activation_span,'muted'));
       const rows=(th.links||[]).map(l=>({[t('axis')]:AX[l.axis]||l.axis, [t('finding')]:l.label+': '+l.value,
@@ -2507,6 +2522,13 @@ function render(R, S, FQ){
         [t('Kashta')]:(g.kashta==null?'-':g.kashta.toFixed(0)),
         [t('state')]:g.avastha, [t('measures')]:g.agreement, [t('reading')]:g.pattern}));
       const gt=sectionTable(t('Each graha, its independent measures set side by side'), gc); if(gt) add(gt);
+    }
+    if((ts.divisional_divergences||[]).length){
+      add(para(t('Divisions that read against the rasi'),'muted'));
+      add(para(t('A varga is the classical confirmation device, so its dissent is worth naming. It modulates confidence in the natal indication; it never overturns it (PREC-5).'),'muted'));
+      const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
+        x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
+      add(du);
     }
     if((ts.contested_bhavas||[]).length){
       add(para(t('Contested bhavas — the verdict runs against the weight of the testimony'),'muted'));

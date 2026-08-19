@@ -471,6 +471,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _c = th.get("concordance")
             if _c and _c.get("reading"):
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
+            for d in th.get("divisional_checks", []):
+                _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            for x in th.get("distinctive", [])[:3]:
+                _f(facts, f"On {th['name']}, {x['signification']} is {x['rarity']} — "
+                          f"{x['population_note']}")
             for c in th.get("contradictions", []):
                 _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
                           f"{c['governing']}: {c['resolution']}")

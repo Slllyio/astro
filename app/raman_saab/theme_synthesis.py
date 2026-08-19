@@ -109,6 +109,10 @@ class ThemeReading:
     concordance: Optional[BhavaConcordance] = None
     #: the concordance of the grahas that drive this theme (force vs intent, cross-checked)
     driver_concordance: tuple[GrahaConcordance, ...] = ()
+    #: this theme's OWN divisional deep-reads set against its natal verdict (r.divisional)
+    divisional_checks: tuple[DivisionalCheck, ...] = ()
+    #: how unusual this theme's readings are in the population (r.distinctive)
+    distinctive: tuple[Distinctiveness, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -153,6 +157,39 @@ class GrahaConcordance:
     agreement: str                  # 'unanimous' | 'mostly agrees' | 'split'
     pattern: str                    # the named diagnostic
     reading: str
+
+
+@dataclass(frozen=True)
+class DivisionalCheck:
+    """One divisional deep-read set against the natal verdict it bears on.
+
+    The engine casts and reads FIFTEEN vargas (``r.divisional``) — D-2 for wealth, D-7 for
+    children, D-10 for career, D-30 for health, and so on — each with its own verdict and its own
+    citations. The theme roster names the varga that belongs to each bhava and then, until now,
+    read only the D9 relation: fourteen finished divisional judgments went unconsulted.
+
+    A varga IS the classical confirmation device; asking whether it concurs with the rasi is what
+    it is for. ``relation`` is that answer, and nothing here re-judges either side."""
+    varga: str                      # 'D-7 Children (Saptamsa)'
+    verdict: str                    # the division's own verdict line, verbatim
+    relation: str                   # 'concurs' | 'diverges' | 'reads a facet'
+    note: str
+
+
+@dataclass(frozen=True)
+class Distinctiveness:
+    """How UNUSUAL a reading is in the population — the companion the concordance needs.
+
+    Techniques agreeing is only informative if the thing they agree on is differential. The
+    calibration layer already measures this per signification (``r.distinctive``: rarity band,
+    favourability percentile, the share of charts holding the same reading), and the integrated
+    reading never said it. A house that every technique confirms AND that 92% of charts share is
+    a weaker finding than one only 1% share — the project's Measured-Truth directive in miniature."""
+    house: int
+    signification: str
+    verdict: str
+    rarity: str                     # 'rare' | 'notable' | ...
+    population_note: str            # the calibration layer's own sentence
 
 
 @dataclass(frozen=True)
@@ -217,6 +254,8 @@ class ThemeSynthesis:
     graha_concordance: tuple[GrahaConcordance, ...] = ()
     #: bhavas whose verdict runs against the weight of their own testimony (the contested ones)
     contested_bhavas: tuple[BhavaConcordance, ...] = ()
+    #: divisions that read against the rasi verdict they confirm — disclosed, never applied
+    divisional_divergences: tuple[tuple[str, DivisionalCheck], ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -381,9 +420,11 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         activation = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
         conc = _bhava_concordance(r, prim_house)
+        div_checks = _divisional_checks(r, spec, facets, headline)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
                                       activation, dom_planets, facets, conc,
-                                      tuple(g for g in graha_conc if g.planet in dom_planets))
+                                      tuple(g for g in graha_conc if g.planet in dom_planets),
+                                      div_checks)
         weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
@@ -393,8 +434,10 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             convergence_label=conv_label, convergence_why=why, contradictions=contradictions,
             activation_span=activation, varga_relation=varga_rel, final_interpretation=final,
             evidence_weight=weight,
-            concordance=_bhava_concordance(r, prim_house),
-            driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets)))
+            concordance=conc,
+            driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets),
+            divisional_checks=div_checks,
+            distinctive=_distinctiveness(r, houses)))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -405,9 +448,12 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     evolution = _dasha_evolution(r, themes)
     contested = tuple(t.concordance for t in themes
                       if t.concordance is not None and t.concordance.divergence)
+    divergent = tuple((t.name, d) for t in themes for d in t.divisional_checks
+                      if d.relation == "diverges")
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
                           connections=connections, dasha_evolution=evolution,
-                          graha_concordance=graha_conc, contested_bhavas=contested)
+                          graha_concordance=graha_conc, contested_bhavas=contested,
+                          divisional_divergences=divergent)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -829,7 +875,8 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
 
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
-                          dom_planets, facets, concordance=None, driver_conc=()) -> str:
+                          dom_planets, facets, concordance=None, driver_conc=(),
+                          div_checks=()) -> str:
     """A single astrologer's sentence, not a template. Names the driving planet AND what the
     independent measures say about it (force vs intent), the verdict, and — where the bhava's own
     testimony ledger runs against the verdict, or its matters read against its headline — that
@@ -875,6 +922,12 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     if concordance is not None and concordance.divergence:
         body += (f". Its own testimonies do not sit where the verdict does: the weight of them is "
                  f"{concordance.preponderance} and the reading is {concordance.status}")
+    # a division reading AGAINST the bhava it confirms is a genuine cross-technique finding —
+    # the varga is the classical confirmation device, so its dissent belongs in the sentence
+    _div = next((d for d in div_checks if d.relation == "diverges"), None)
+    if _div is not None:
+        body += (f". Its own division disagrees: {_div.varga} reads \"{_div.verdict}\" — which "
+                 f"qualifies confidence in the natal indication without overturning it")
     if activation:
         # the narrative sentence carries the clause without its citation — the Timing line
         # renders the same note in full, so traceability is not lost by shortening here
@@ -1060,6 +1113,76 @@ def _graha_concordance(r) -> tuple[GrahaConcordance, ...]:
     # busiest grahas first, so the reader meets the chart's main actors at the top
     order = {b.planet: i for i, b in enumerate(getattr(r, "planet_bios", ()) or ())}
     out.sort(key=lambda g: order.get(g.planet, 99))
+    return tuple(out)
+
+
+def _divisional_checks(r, spec, facets, headline) -> tuple[DivisionalCheck, ...]:
+    """Set this theme's OWN divisional deep-reads against its natal verdict.
+
+    Two ways a division bears on a theme: it is the varga the roster assigns to the bhava (D-2 for
+    wealth, D-7 for children, D-30 for health...), or its reading names one of the theme's facet
+    matters (D-12 names MOTHER and FATHER, D-16 COMFORTS, D-24 EDUCATION — all facets of other
+    bhavas). Both are matched from the engine's own headline text; nothing is recomputed and no
+    verdict is altered — a varga modulates confidence, it never overturns the rasi (PREC-5)."""
+    from app.raman_saab.insight_digest import _lean_of
+    rows = getattr(r, "divisional", ()) or ()
+    hlean = _lean_of(headline)
+    out: list[DivisionalCheck] = []
+    seen: set[str] = set()
+    for head, _body in rows:
+        label, _, verdict = str(head).partition(" - ")
+        if not verdict:                      # a division with no verdict of its own (D-27/40/45/60)
+            continue
+        n = None
+        if label.startswith("D-"):
+            digits = label[2:].split()[0]
+            n = int(digits) if digits.isdigit() else None
+        facet_hit = next((m for m, _v in facets if m.upper() in verdict.upper()), None)
+        is_own = (spec.varga is not None and n == spec.varga)
+        if not is_own and facet_hit is None:
+            continue
+        if label in seen:
+            continue
+        seen.add(label)
+        vlean = _lean_of(verdict.lower())
+        if is_own:
+            if vlean == "neutral" or hlean == "neutral":
+                relation, note = "reads its own matter", (
+                    f"{label} reads this bhava's own division; neither side carries a clean "
+                    f"direction to compare.")
+            elif vlean == hlean:
+                relation, note = "concurs", (
+                    f"{label} — the division assigned to this bhava — reads the same way as the "
+                    f"rasi, so the natal indication is confirmed in its own varga.")
+            else:
+                relation, note = "diverges", (
+                    f"{label} reads against the rasi here. A division modulates confidence in the "
+                    f"natal indication; it does not overturn it (PREC-5), so the verdict stands "
+                    f"and the disagreement is disclosed.")
+        else:
+            relation, note = "reads a facet", (
+                f"{label} bears on this theme through its {facet_hit} facet.")
+        out.append(DivisionalCheck(varga=label, verdict=verdict.strip(), relation=relation,
+                                   note=note))
+    return tuple(out)
+
+
+def _distinctiveness(r, houses) -> tuple[Distinctiveness, ...]:
+    """What in this theme is statistically UNUSUAL — a re-read of the calibration layer's own
+    per-signification rarity (``r.distinctive``). Agreement across techniques means little when the
+    thing agreed on is what nearly every chart shows; this is the disclosure that keeps the
+    concordance honest (CLAUDE.md ★★ Measured Truth)."""
+    hset = set(houses)
+    out: list[Distinctiveness] = []
+    for house, entry in getattr(r, "distinctive", ()) or ():
+        if house not in hset:
+            continue
+        out.append(Distinctiveness(
+            house=house,
+            signification=str(getattr(entry, "signification", "")),
+            verdict=str(getattr(entry, "verdict", "")),
+            rarity=str(getattr(entry, "rarity", "")),
+            population_note=str(getattr(entry, "note", ""))))
     return tuple(out)
 
 

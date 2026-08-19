@@ -840,6 +840,13 @@ def _themes_section(r: DetailedReport) -> str:
         for g in getattr(t, "driver_concordance", ()) or ():
             out.append(f'<li><b>{_esc(g.planet)} (force vs intent)</b> &mdash; '
                        f'{_esc(g.reading)}</li>')
+        for d in getattr(t, "divisional_checks", ()) or ():
+            out.append(f'<li><b>{_esc(d.varga)}</b> ({_esc(d.relation)}) &mdash; '
+                       f'{_esc(d.verdict)}. {_esc(d.note)}</li>')
+        dist = getattr(t, "distinctive", ()) or ()
+        if dist:
+            out.append('<li><b>How unusual is this?</b> &mdash; ' + _esc("; ".join(
+                f"{x.signification} ({x.rarity}): {x.population_note}" for x in dist[:4])) + '</li>')
         out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
         if t.activation_span:
             out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
@@ -874,6 +881,15 @@ def _themes_section(r: DetailedReport) -> str:
                        f'<td>{_esc(g.avastha)}</td><td>{_esc(g.agreement)}</td>'
                        f'<td>{_esc(g.pattern)}</td></tr>')
         out.append('</tbody></table>')
+    if getattr(ts, "divisional_divergences", None):
+        out.append('<p class="section-sub"><b>Divisions that read against the rasi</b> &mdash; a '
+                   'varga is the classical confirmation device, so its dissent is worth naming. '
+                   'It modulates confidence in the natal indication; it never overturns it '
+                   '(PREC-5).</p><ul>')
+        for nm, d in ts.divisional_divergences:
+            out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.varga)} reads '
+                       f'{_esc(d.verdict)}, against the rasi verdict.</li>')
+        out.append('</ul>')
     if getattr(ts, "contested_bhavas", None):
         out.append('<p class="section-sub"><b>Contested bhavas</b> &mdash; houses whose verdict '
                    'runs against the weight of their own testimony. The verdict stands (a bhava '

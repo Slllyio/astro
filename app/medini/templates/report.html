@@ -670,6 +670,12 @@ const I18N_HI = {
   'cancellation':'भंग',
   'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
   'lord':'स्वामी',
+  'How settled is this?':'यह कितना निश्चित है?',
+  'reading with the verdict':'निर्णय के पक्ष में',
+  'settled':'निश्चित',
+  'qualified':'सशर्त',
+  'seriously contested':'गंभीर रूप से विवादित',
+  'Seriously contested themes — two or more cross-checks read against the verdict':'गंभीर रूप से विवादित विषय — दो या अधिक जाँचें निर्णय के विरुद्ध',
   'How firm is the cast moment?':'जन्म-क्षण कितना दृढ़ है?',
   'Jaimini chara dasha (walled)':'जैमिनी चर दशा (पृथक्)',
   'Karmic lens':'कार्मिक दृष्टि',
@@ -2517,6 +2523,10 @@ function render(R, S, FQ){
       b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; '+t('karakas')+' '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||t('the chart'))+'.','muted'));
       if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
       b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
+      if(th.dissent){ const ds=th.dissent;
+        b.append(para(t('How settled is this?')+' ('+t(ds.confidence)+') — '+ds.reading,'muted'));
+        if((ds.agreeing||[]).length) b.append(para(t('reading with the verdict')+': '+ds.agreeing.join(', '),'muted'));
+        if(ds.walled_note) b.append(para(ds.walled_note,'muted')); }
       if(th.concordance){ const c=th.concordance;
         b.append(para(t('Do the techniques agree?')+' — '+c.reading,'muted'));
         if((c.core_for||[]).length||(c.core_against||[]).length)
@@ -2559,6 +2569,11 @@ function render(R, S, FQ){
         [t('Kashta')]:(g.kashta==null?'-':g.kashta.toFixed(0)),
         [t('state')]:g.avastha, [t('measures')]:g.agreement, [t('reading')]:g.pattern}));
       const gt=sectionTable(t('Each graha, its independent measures set side by side'), gc); if(gt) add(gt);
+    }
+    if((ts.contested_themes||[]).length){
+      add(para(t('Seriously contested themes — two or more cross-checks read against the verdict'),'muted'));
+      const cu2=el('ul'); for(const pair of ts.contested_themes){ const x=el('li'); x.append(pair[0]+' — '+pair[1].reading); cu2.append(x); }
+      add(cu2);
     }
     if((ts.divisional_divergences||[]).length){
       add(para(t('Divisions that read against the rasi'),'muted'));

@@ -830,6 +830,16 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
                    f'{_esc(t.convergence_why)}</li>')
+        ds = getattr(t, "dissent", None)
+        if ds is not None:
+            out.append(f'<li><b>How settled is this? ({_esc(ds.confidence)})</b> &mdash; '
+                       f'{_esc(ds.reading)}')
+            if ds.agreeing:
+                out.append(f'<br><span class="muted">reading with the verdict: '
+                           f'{_esc(", ".join(ds.agreeing))}</span>')
+            if ds.walled_note:
+                out.append(f'<br><span class="muted">{_esc(ds.walled_note)}</span>')
+            out.append('</li>')
         c = getattr(t, "concordance", None)
         if c is not None:
             out.append(f'<li><b>Do the techniques agree?</b> &mdash; {_esc(c.reading)}')
@@ -915,6 +925,14 @@ def _themes_section(r: DetailedReport) -> str:
                        f'<td>{_esc(g.avastha)}</td><td>{_esc(g.agreement)}</td>'
                        f'<td>{_esc(g.pattern)}</td></tr>')
         out.append('</tbody></table>')
+    if getattr(ts, "contested_themes", None):
+        out.append('<p class="section-sub"><b>Seriously contested themes</b> &mdash; where two or '
+                   'more independent cross-checks read against the verdict. The verdicts stand '
+                   '(none of these may overturn a bhava judgment) but these are the readings to '
+                   'lean on most lightly.</p><ul>')
+        for nm, d in ts.contested_themes:
+            out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.reading)}</li>')
+        out.append('</ul>')
     if getattr(ts, "divisional_divergences", None):
         out.append('<p class="section-sub"><b>Divisions that read against the rasi</b> &mdash; a '
                    'varga is the classical confirmation device, so its dissent is worth naming. '

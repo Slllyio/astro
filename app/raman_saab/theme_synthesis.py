@@ -121,6 +121,8 @@ class ThemeReading:
     av_support: tuple[AshtakavargaSupport, ...] = ()
     #: slow-mover transits bearing here — subordinate, never a direction
     transits: tuple[TransitNote, ...] = ()
+    #: how many independent systems dissent from this verdict — the integration of the integrations
+    dissent: Optional[DissentSummary] = None
 
 
 @dataclass(frozen=True)
@@ -282,6 +284,28 @@ class TransitNote:
 
 
 @dataclass(frozen=True)
+class DissentSummary:
+    """How many INDEPENDENT systems dissent from this theme's verdict — the integration of the
+    integrations.
+
+    Each cross-check below was already computed and already reported: the bhava's own testimony
+    ledger, its assigned division, Ashtakavarga in the sign it occupies, and the walled karmic
+    lens. But each was reported ALONE, so a bhava where three systems disagree read the same as
+    one where a single system did. Counting them is what turns a list of checks into a judgment
+    about how settled the reading is.
+
+    The walled karmic lens is counted SEPARATELY and never folded into the total: it may not
+    corroborate or undercut a Parashari verdict (r.karmic.frame), so letting it swell a dissent
+    count would breach the same wall by arithmetic."""
+    systems_checked: int
+    dissenting: tuple[str, ...]     # the independent systems that read against the verdict
+    agreeing: tuple[str, ...]
+    walled_note: str                # the karmic lens, recorded apart from the count
+    confidence: str                 # 'settled' | 'qualified' | 'seriously contested'
+    reading: str
+
+
+@dataclass(frozen=True)
 class ExecutivePortrait:
     """The two-page opening: if you read only this, what is this horoscope?"""
     identity: str                   # Lagna / lagna-lord / Atmakaraka / Karakamsa / Moon — who the chart is
@@ -359,6 +383,8 @@ class ThemeSynthesis:
     contested_bhavas: tuple[BhavaConcordance, ...] = ()
     #: divisions that read against the rasi verdict they confirm — disclosed, never applied
     divisional_divergences: tuple[tuple[str, DivisionalCheck], ...] = ()
+    #: themes where 2+ independent cross-checks read against the verdict — read these lightly
+    contested_themes: tuple[tuple[str, DissentSummary], ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -525,10 +551,12 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         conc = _bhava_concordance(r, prim_house)
         div_checks = _divisional_checks(r, spec, facets, headline)
         av_sup = _av_support(r, prim_house, dom_planets)
+        klens = _karmic_lens(r, prim_house, headline)
+        dissent = _dissent_summary(conc, div_checks, av_sup, klens, headline)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
                                       activation, dom_planets, facets, conc,
                                       tuple(g for g in graha_conc if g.planet in dom_planets),
-                                      div_checks, av_sup)
+                                      div_checks, av_sup, dissent)
         weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
@@ -542,10 +570,11 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets),
             divisional_checks=div_checks,
             distinctive=_distinctiveness(r, houses),
-            karmic_lens=_karmic_lens(r, prim_house, headline),
+            karmic_lens=klens,
             yogas=_theme_yogas(r, houses, yoga_house_bearings),
             av_support=av_sup,
-            transits=_transit_notes(r, houses, dom_planets)))
+            transits=_transit_notes(r, houses, dom_planets),
+            dissent=dissent))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -558,10 +587,12 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
                       if t.concordance is not None and t.concordance.divergence)
     divergent = tuple((t.name, d) for t in themes for d in t.divisional_checks
                       if d.relation == "diverges")
+    contested_th = tuple((t.name, t.dissent) for t in themes
+                         if t.dissent is not None and len(t.dissent.dissenting) >= 2)
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
                           connections=connections, dasha_evolution=evolution,
                           graha_concordance=graha_conc, contested_bhavas=contested,
-                          divisional_divergences=divergent)
+                          divisional_divergences=divergent, contested_themes=contested_th)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -984,7 +1015,7 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
                           dom_planets, facets, concordance=None, driver_conc=(),
-                          div_checks=(), av_support=()) -> str:
+                          div_checks=(), av_support=(), dissent=None) -> str:
     """A single astrologer's sentence, not a template. Names the driving planet AND what the
     independent measures say about it (force vs intent), the verdict, and — where the bhava's own
     testimony ledger runs against the verdict, or its matters read against its headline — that
@@ -1026,26 +1057,20 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     else:
         # the reader-facing label, so the sentence and the heading never disagree
         body += f" ({conv_label})"
-    # the bhava's own testimony ledger disagreeing with its verdict IS the integrated finding
-    if concordance is not None and concordance.divergence:
-        body += (f". Its own testimonies do not sit where the verdict does: the weight of them is "
-                 f"{concordance.preponderance} and the reading is {concordance.status}")
+    # NB: the testimony-ledger divergence used to get its own clause here. DissentSummary now
+    # counts that ledger among the cross-checks, so stating it twice said the same thing twice —
+    # the full ledger still renders in its own "Do the techniques agree?" line on every surface.
     # Ashtakavarga is a wholly independent measurement of the same grahas: when every driver is
     # poorly supported in the very sign the bhava occupies, a favourable verdict is resting on
     # something AV does not corroborate, and that is worth one clause
-    if av_support and not any(a.verdict == "well supported" for a in av_support):
-        from app.raman_saab.insight_digest import _lean_of as _l2
-        if _l2(headline) == "favourable":
-            worst = ", ".join(f"{a.planet} {a.bindus}" for a in av_support)
-            body += (f". Ashtakavarga does not back it in the same place: no graha carrying this "
-                     f"theme is well supplied with bindus in the sign the bhava occupies "
-                     f"({worst})")
-    # a division reading AGAINST the bhava it confirms is a genuine cross-technique finding —
-    # the varga is the classical confirmation device, so its dissent belongs in the sentence
-    _div = next((d for d in div_checks if d.relation == "diverges"), None)
-    if _div is not None:
-        body += (f". Its own division disagrees: {_div.varga} reads \"{_div.verdict}\" — which "
-                 f"qualifies confidence in the natal indication without overturning it")
+    # NB: the per-system dissent clauses that used to be chained here (Ashtakavarga withholding
+    # support, the assigned division disagreeing) are gone. DissentSummary now states them
+    # TOGETHER and counted, which is both more informative and shorter than three separate
+    # clauses; repeating them inline made the sentence a 560-character paragraph.
+    if dissent is not None and dissent.dissenting:
+        body += (f". {len(dissent.dissenting)} of {dissent.systems_checked} independent "
+                 f"cross-checks read against it ({', '.join(dissent.dissenting)}), so the "
+                 f"reading is {dissent.confidence}")
     if activation:
         # the narrative sentence carries the clause without its citation — the Timing line
         # renders the same note in full, so traceability is not lost by shortening here
@@ -1438,6 +1463,73 @@ def _transit_notes(r, houses, dom_planets) -> tuple[TransitNote, ...]:
             gochara_good=good, bav_bindus=getattr(row, "bav_bindus", None),
             vedha_by=vedha, net_good=net, note=note))
     return tuple(out)
+
+
+def _dissent_summary(concordance, div_checks, av_support, karmic, headline) -> DissentSummary:
+    """Count the independent systems that read against this bhava's verdict.
+
+    Four Parashari cross-checks are eligible: the testimony ledger (r.preponderance), the theme's
+    own division (r.divisional), Ashtakavarga in the sign the bhava occupies, and — only where it
+    can carry a direction — nothing else. The karmic lens is deliberately EXCLUDED from the count
+    and recorded beside it, because a walled layer must not move a Parashari reading even
+    indirectly, and inflating a dissent tally is exactly that.
+
+    A system is only counted when it actually produced a comparable reading, so `systems_checked`
+    is the honest denominator rather than a fixed four."""
+    from app.raman_saab.insight_digest import _lean_of
+    dissent: list[str] = []
+    agree: list[str] = []
+    checked = 0
+
+    if concordance is not None:
+        checked += 1
+        (dissent if concordance.divergence else agree).append("its own testimony ledger")
+
+    own_div = [d for d in div_checks if d.relation in ("concurs", "diverges")]
+    if own_div:
+        checked += 1
+        (dissent if any(d.relation == "diverges" for d in own_div)
+         else agree).append("its assigned division")
+
+    if av_support:
+        checked += 1
+        # AV can only dissent from a FAVOURABLE verdict by withholding support; against an
+        # afflicted verdict, weak bindus agree rather than dissent
+        weak = not any(a.verdict == "well supported" for a in av_support)
+        hlean = _lean_of(headline)
+        if hlean == "favourable" and weak:
+            dissent.append("Ashtakavarga")
+        elif hlean == "adverse" and weak:
+            agree.append("Ashtakavarga")
+        elif hlean == "favourable":
+            agree.append("Ashtakavarga")
+        else:
+            dissent.append("Ashtakavarga")
+
+    walled = ""
+    if karmic is not None:
+        walled = (f"the karmic lens reads {karmic.aspect} as {karmic.karmic_verdict} and "
+                  f"{karmic.relation} — recorded apart, and deliberately not counted: a walled "
+                  f"layer may not move a Parashari reading, including by arithmetic")
+
+    n = len(dissent)
+    if n == 0:
+        confidence = "settled"
+        reading = (f"All {checked} independent cross-checks read with the verdict — as settled as "
+                   f"this engine's evidence gets.")
+    elif n == 1:
+        confidence = "qualified"
+        reading = (f"{dissent[0].capitalize()} reads against the verdict while "
+                   f"{len(agree)} of {checked} cross-checks read with it — a qualified reading, "
+                   f"not an unsettled one.")
+    else:
+        confidence = "seriously contested"
+        reading = (f"{n} of {checked} independent cross-checks read against the verdict "
+                   f"({', '.join(dissent)}). The verdict stands — none of these may overturn a "
+                   f"bhava judgment — but a reading this contested should be leaned on lightly.")
+    return DissentSummary(systems_checked=checked, dissenting=tuple(dissent),
+                          agreeing=tuple(agree), walled_note=walled,
+                          confidence=confidence, reading=reading)
 
 
 def _year(jd: float) -> int:

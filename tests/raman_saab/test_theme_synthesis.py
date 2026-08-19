@@ -818,6 +818,67 @@ class TestThemeSynthesisContract:
         if ts.portrait.chara_now:
             assert "walled" in ts.portrait.chara_now
 
+    def test_dissent_is_counted_not_merely_listed(self, mainpuri, canonical):
+        """The integration OF the integrations. Each cross-check was already computed and already
+        reported — but alone, so a bhava where three systems disagree read like one where a single
+        system did. The count is what turns a list of checks into a judgment about how settled the
+        reading is. Every counted system must match the check it summarises."""
+        for r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                d = t.dissent
+                assert d is not None, f"{t.theme_id} carries no dissent summary"
+                assert d.systems_checked == len(d.dissenting) + len(d.agreeing)
+                assert d.confidence == ("settled" if not d.dissenting else
+                                        "qualified" if len(d.dissenting) == 1 else
+                                        "seriously contested")
+                # each counted dissent traces to a real, disagreeing cross-check
+                if "its own testimony ledger" in d.dissenting:
+                    assert t.concordance is not None and t.concordance.divergence
+                if "its assigned division" in d.dissenting:
+                    assert any(x.relation == "diverges" for x in t.divisional_checks)
+                if "Ashtakavarga" in d.dissenting:
+                    assert t.av_support
+
+    def test_the_walled_lens_never_swells_the_dissent_count(self, mainpuri, canonical):
+        """A walled layer must not move a Parashari reading — including by arithmetic. The karmic
+        lens is recorded beside the count and never inside it, even when it differs."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                d = t.dissent
+                for name in d.dissenting + d.agreeing:
+                    assert "karmic" not in name.lower()
+                if t.karmic_lens is not None:
+                    assert d.walled_note and "not counted" in d.walled_note
+                # a differing walled lens must not have pushed the confidence downward
+                if t.karmic_lens is not None and t.karmic_lens.relation == "differs":
+                    assert d.confidence == ("settled" if not d.dissenting else
+                                            "qualified" if len(d.dissenting) == 1 else
+                                            "seriously contested")
+
+    def test_contested_themes_are_the_multi_system_dissents(self, mainpuri):
+        """Chart level: the themes worth leaning on most lightly are those 2+ systems dispute."""
+        _r, ts = mainpuri
+        named = {n for n, _d in ts.contested_themes}
+        for t in ts.themes:
+            if len(t.dissent.dissenting) >= 2:
+                assert t.name in named
+            else:
+                assert t.name not in named
+        for _n, d in ts.contested_themes:
+            assert d.confidence == "seriously contested"
+            assert "verdict stands" in d.reading   # the passthrough is never in question
+
+    def test_the_narrative_does_not_repeat_the_dissent_it_summarises(self, mainpuri, canonical):
+        """The sentence used to chain a clause per dissenting system AND then summarise them,
+        saying the same thing twice and reaching 667 characters. It states the count once."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                body = t.final_interpretation
+                assert body.count("cross-checks read against") <= 1
+                # the superseded per-system clauses are gone
+                assert "Ashtakavarga does not back it in the same place" not in body
+                assert "Its own testimonies do not sit where the verdict does" not in body
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

@@ -473,6 +473,9 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             if th.get("activation_span"):
                 _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
+            _d = th.get("dissent")
+            if _d:
+                _f(facts, f"How settled {th['name']} is ({_d['confidence']}): {_d['reading']}")
             _c = th.get("concordance")
             if _c and _c.get("reading"):
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")

@@ -4199,6 +4199,13 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
         # the engine's OWN testimony ledger for this bhava (Raman's three-fold: lord/karaka/navamsa
         # as core, everything else as overlay) — the authoritative agreement check
+        ds = getattr(t, "dissent", None)
+        if ds is not None:
+            L.append(f"- **How settled is this? ({ds.confidence})** — {ds.reading}")
+            if ds.agreeing:
+                L.append(f"    - reading with the verdict: {', '.join(ds.agreeing)}")
+            if ds.walled_note:
+                L.append(f"    - {ds.walled_note}")
         c = getattr(t, "concordance", None)
         if c is not None:
             L.append(f"- **Do the techniques agree?** — {c.reading}")
@@ -4279,6 +4286,14 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             # headings hit with "## Longevity").
             L.append(f"| **{_md_cell(g.planet)}** | {ru} | {ish} | {kas} | "
                      f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
+        L.append("")
+    if getattr(ts, "contested_themes", None):
+        L.append("_**Seriously contested themes** — where two or more independent cross-checks "
+                 "read against the verdict. The verdicts stand (none of these may overturn a "
+                 "bhava judgment) but these are the readings to lean on most lightly:_")
+        L.append("")
+        for nm, d in ts.contested_themes:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.reading)}")
         L.append("")
     if getattr(ts, "divisional_divergences", None):
         L.append("_**Divisions that read against the rasi** — a varga is the classical "

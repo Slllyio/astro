@@ -949,6 +949,392 @@
      "run_id": "2026-07-14-astrocrm-vocation-n60540"
     }
    ]
+  },
+  {
+   "run_id": "2026-08-19-personality-native-profile",
+   "corpus": "data/vedastro/marriage_corpus.parquet (N=14278 AA) + data/holos/vocation_corpus.parquet (N=59983)",
+   "prereg": "docs/raman_saab/PERSONALITY_PREREG.md",
+   "verdict_doc": "docs/ml_runs/raman_saab_personality_VERDICT.md",
+   "validity": {
+    "null_calibration": {
+     "reps": 300,
+     "z_mean": 0.053,
+     "z_sd": 1.028
+    },
+    "planted_rr120": {
+     "target_rr": 1.2,
+     "base_rate": 0.4793,
+     "n_label": 3419,
+     "rr": 1.1985,
+     "z": 12.812,
+     "p_one_sided": 7.043896494802074e-38
+    }
+   },
+   "entries": [
+    {
+     "rule_id": "personality.relationship.venus_wellplaced",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "marriage_intact",
+      "null": "stratified_permutation",
+      "n": 14278,
+      "n_label": 10859,
+      "rr": 0.9971,
+      "z": -0.607,
+      "p_one_sided": 0.7280360751316031
+     },
+     "continuous": {
+      "n_intact": 10859,
+      "n_dissolved": 3419,
+      "mean_intact": 55.733,
+      "mean_dissolved": 55.588,
+      "mean_diff": 0.145,
+      "welch_t": 0.615,
+      "welch_p": 0.5387059117170796,
+      "mannwhitney_p": 0.39131961761096135,
+      "perm_null_p_two_sided": 0.505,
+      "cohens_d": 0.0121
+     },
+     "n": 14278,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile.py relationship style (Venus well_placed); Raman, How to Judge a Horoscope",
+     "reason": "failed G1 at power (N=14278 AA); Venus-well->intact RR=0.9971 (need >=1.20); continuous d=0.0121",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_sports",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_sports",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 8702,
+      "rr": 1.0087,
+      "z": 0.824,
+      "p_one_sided": 0.20505758023516668
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_sports",
+     "reason": "failed G1 at power; RR=1.0087 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_military",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_military",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 3770,
+      "rr": 0.9834,
+      "z": -0.979,
+      "p_one_sided": 0.836197321152421
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_military",
+     "reason": "failed G1 at power; RR=0.9834 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_medical",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_medical",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2090,
+      "rr": 1.0081,
+      "z": 0.351,
+      "p_one_sided": 0.36264761842560256
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_medical",
+     "reason": "failed G1 at power; RR=1.0081 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_writers",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_writers",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 13189,
+      "rr": 0.9967,
+      "z": -0.248,
+      "p_one_sided": 0.5979737600162623
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_writers",
+     "reason": "failed G1 at power; RR=0.9967 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_science",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_science",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2899,
+      "rr": 0.9497,
+      "z": -1.624,
+      "p_one_sided": 0.9477695192444755
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_science",
+     "reason": "failed G1 at power; RR=0.9497 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_business",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_business",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 4605,
+      "rr": 1.0117,
+      "z": 0.468,
+      "p_one_sided": 0.319993133345752
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_business",
+     "reason": "failed G1 at power; RR=1.0117 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_education",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_education",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 5209,
+      "rr": 0.997,
+      "z": -0.215,
+      "p_one_sided": 0.5849590301519768
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_education",
+     "reason": "failed G1 at power; RR=0.9970 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_law",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_law",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2098,
+      "rr": 0.9728,
+      "z": -1.183,
+      "p_one_sided": 0.8815617628496973
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_law",
+     "reason": "failed G1 at power; RR=0.9728 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_religion",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_religion",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 1337,
+      "rr": 1.0036,
+      "z": 0.126,
+      "p_one_sided": 0.4498382910073434
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_religion",
+     "reason": "failed G1 at power; RR=1.0036 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.venus_voc_entertainment",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_entertainment",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 18766,
+      "rr": 0.9916,
+      "z": -1.349,
+      "p_one_sided": 0.9113524316060841
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Venus well_placed) -> voc_entertainment",
+     "reason": "failed G1 at power; RR=0.9916 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.venus_voc_art",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_art",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 3668,
+      "rr": 1.0039,
+      "z": 0.231,
+      "p_one_sided": 0.4085634800311268
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Venus well_placed) -> voc_art",
+     "reason": "failed G1 at power; RR=1.0039 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.sun_voc_politics",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_politics",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 7798,
+      "rr": 0.9951,
+      "z": -0.398,
+      "p_one_sided": 0.6545233933067781
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Sun well_placed) -> voc_politics",
+     "reason": "failed G1 at power; RR=0.9951 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    }
+   ]
   }
  ],
  "run4": [

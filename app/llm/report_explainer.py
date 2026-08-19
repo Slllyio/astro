@@ -472,8 +472,14 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                           f"disclosure of the method and never a forecast.",
                    cite="HTJAH-II:4846-4849")
         for _bv in ts.get("background_vargas", []):
+            _kind = _bv.get("status_kind") or ""
             _f(facts, f"Deep-background division D-{_bv['varga']} {_bv['name']} "
-                      f"({_bv['domain']}) — the engine reads it {_bv['status']}. "
+                      f"({_bv['domain']}) — the engine reads it {_bv['status']}"
+                      + (f" ({_kind}: "
+                         + ("both poles of testimony fired and cancelled"
+                            if _kind == "contested" else
+                            "neither pole of testimony fired at all") + ")"
+                         if _kind else "") + ". "
                       f"{_bv['reading']} A background modifier only: it takes no direction and "
                       f"can never move a bhava verdict. {_bv['provenance']}.",
                cite=_bv.get("citation") or None)

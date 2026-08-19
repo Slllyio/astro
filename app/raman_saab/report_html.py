@@ -1013,8 +1013,13 @@ def _themes_section(r: DetailedReport) -> str:
                    '<th>Engine&rsquo;s own reading</th><th>What it rests on</th>'
                    '</tr></thead><tbody>')
         for b in bgv:
+            # neutral is reported WITH its kind — "contested" (both poles fired and
+            # cancelled) vs "silent" (neither fired) are opposite findings.
+            _k = getattr(b, "status_kind", "")
+            _kh = f' <span class="muted">({_esc(_k)})</span>' if _k else ""
             out.append(f'<tr><td>D-{b.varga} {_esc(b.name)}</td><td>{_esc(b.domain)}</td>'
-                       f'<td><b>{_esc(b.status)}</b></td><td>{_esc(b.reading)}</td></tr>')
+                       f'<td><b>{_esc(b.status)}</b>{_kh}</td>'
+                       f'<td>{_esc(b.reading)}</td></tr>')
         out.append('</tbody></table>')
         out.append(f'<p class="muted"><i>Provenance: {_esc(bgv[0].provenance)}; citation '
                    f'{_esc(bgv[0].citation)}.</i></p>')

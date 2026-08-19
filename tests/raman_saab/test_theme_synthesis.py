@@ -1305,11 +1305,53 @@ class TestThemeSynthesisContract:
 
     def test_a_division_with_no_signal_says_so_instead_of_narrating(self, mainpuri):
         """D-40 on this chart has nothing exalted, nothing own and nothing debilitated. An
-        engine that produced a lineage narrative from that would be inventing; it must decline."""
+        engine that produced a lineage narrative from that would be inventing; it must decline.
+        The decline must also say WHICH bodies were examined: `_varga_dignity` returns 'neutral'
+        for Rahu and Ketu unconditionally, so a flat "nothing is exalted" would claim the nodes
+        had been checked and found silent when they were never assessed at all."""
         _r, ts = mainpuri
         d40 = next(b for b in ts.background_vargas if b.varga == 40)
         assert not d40.strong and not d40.weak
-        assert "No signal" in d40.reading and "nothing further here to report" in d40.reading
+        assert "No signal" in d40.reading and "nothing further to report" in d40.reading
+        assert "among the seven grahas" in d40.reading
+        assert "nodes carry no sign-dignity" in d40.reading
+
+    def test_a_neutral_background_varga_says_which_kind_of_neutral_it_is(self, mainpuri,
+                                                                        canonical):
+        """`varga_judge._status` returns "neutral" for two opposite situations: BOTH poles of
+        testimony fired and cancelled ("contested"), or NEITHER fired ("silent"). Printing the
+        bare word told a reader the division had been consulted and had nothing to say, when
+        half the time it had two things to say that disagreed — a real finding, reported as an
+        absence of one. `status_kind` now carries the distinction, and it is "" whenever the
+        status is not neutral so the field never means anything it should not."""
+        from app.raman_saab.judges.varga_judge import _neutral_kind, _poles
+        for _r, ts in (mainpuri, canonical):
+            assert ts.background_vargas
+            for b in ts.background_vargas:
+                if b.status == "neutral":
+                    assert b.status_kind in ("contested", "silent")
+                    assert b.status_kind in b.reading.lower()
+                else:
+                    assert b.status_kind == ""
+                    assert "CONTESTED neutral" not in b.reading
+                    assert "SILENT neutral" not in b.reading
+
+    def test_the_neutral_kind_is_derived_from_the_same_two_poles_as_the_status(self, canonical):
+        """The kind is a re-read of `_status`'s own two predicates, not a second judgment —
+        so it can never disagree with the status it qualifies."""
+        from app.raman_saab.judges.varga_judge import (
+            _neutral_kind, _poles, _status, build_shodasavarga_report)
+        r, _ts = canonical
+        rep = build_shodasavarga_report(r.chart)
+        for vr in rep.readings:
+            pillars = (vr.lagna_lord, *vr.karakas)
+            has_frame = vr.chart.positions and next(
+                iter(vr.chart.positions.values())).house is not None
+            confirms, weakens = _poles(pillars, bool(has_frame))
+            if vr.status == "neutral":
+                assert vr.neutral_kind == ("contested" if (confirms and weakens) else "silent")
+            else:
+                assert vr.neutral_kind == ""
 
     def test_the_d60_reread_uses_structured_data_not_its_own_prose(self, mainpuri, canonical):
         """`karmic_evolution._d60_reread` used to regex the rendered D-60 block back out of the

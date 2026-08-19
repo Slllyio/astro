@@ -221,13 +221,23 @@ def build_profession_synthesis(r: "DetailedReport") -> Optional[ProfessionSynthe
         from app.raman_saab.judges.dasamsa_career_reading import (
             build_dasamsa_career_reading)
         dr = build_dasamsa_career_reading(r.chart)
+        # Provenance corrected 2026-08-19. Two things were misattributed here:
+        #   (1) `dr.core.career_verdict` is `judge_house(chart, 10)` on the RASI — Raman's own
+        #       core method. Printing it bare under a "Dasamsa D-10" derivation label read as
+        #       though the D-10 had cast it; the D-10 overlay casts no verdict at all.
+        #   (2) HTJAH-II:9729 is Raman's NAVAMSA-of-the-10th-lord passage, not a dasamsa
+        #       passage — he teaches no dasamsa chart. The D-10 reaches this engine only
+        #       through his Parashara pointer (HPA-11:195; see doctrine/varga_domains.py).
+        # Each clause now sits under the anchor that actually licenses it.
         d10_row = (
             "The Dasamsa D-10 (re-read; corroboration, not a convergence vote)",
-            f"career {dr.core.career_verdict}",
+            f"career {dr.core.career_verdict} (Raman's own rasi method decides this; "
+            f"the D-10 overlay casts no verdict of its own)",
             f"the 10th lord {dr.core.tenth_lord} sits in the D-10 in "
             f"{dr.overlay.tenth_lord_d10_dignity} dignity; his rasi navamsa "
             f"dignity reads {dr.core.tenth_lord_navamsa_dignity}",
-            "D-10 Career section (HTJAH-II:9729)")
+            "D-10 Career section: domain via HPA-11:195, the navamsa technique "
+            "at HTJAH-II:9729")
     except Exception:  # noqa: BLE001 — Track-B sparse
         d10_row = ()
     # (b) H10 activation windows — same timeline re-read the marriage monograph

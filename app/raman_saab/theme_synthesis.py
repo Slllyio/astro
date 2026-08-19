@@ -381,9 +381,20 @@ class BackgroundVarga:
     These resolve no house and carry no matter verdict, so ``_divisional_checks`` skips them and
     they were the last computed astrology the integrated reading never touched. But the engine
     does judge them: ``build_shodasavarga_report`` returns a ``confirms / weakens / neutral``
-    status for all sixteen divisions, built from four general-strength principles (varga-lagna
-    lord dignity, benefic/malefic occupancy of the varga lagna and its kendras). That status was
-    computed on every chart and read by nothing.
+    status for all sixteen divisions. That status was computed on every chart and read by nothing.
+
+    WHAT THE STATUS ACTUALLY RESTS ON (corrected 2026-08-19 — the first draft of this docstring
+    claimed more than the code does): ``varga_judge._status`` reads ONLY the pillars — the
+    varga-lagna lord and the domain karakas — and asks two questions of them. Confirming: any
+    pillar vargottama, exalted, or in own sign. Weakening: any pillar debilitated, or in a
+    dusthana of the varga. Both poles, or neither, give ``neutral``. The benefic/malefic
+    occupancy of the varga lagna and its kendras IS computed and IS printed, but no status branch
+    consults it — so this docstring must not name it as an input. Two consequences a reader
+    should have: ``neutral`` means either "both poles fired" or "nothing fired at all", and a
+    single vargottama pillar (a D1==D9 fact) can carry a division to ``confirms``. The first of
+    those two is now told apart from the second — ``status_kind`` carries ``varga_judge.
+    _neutral_kind``: "contested" when both poles fired and cancelled, "silent" when neither
+    fired. They are opposite findings and the bare word ``neutral`` reported them as one.
 
     PROVENANCE — stated because it is thin, and the PRIME DIRECTIVE requires it stated:
 
@@ -402,6 +413,8 @@ class BackgroundVarga:
     name: str
     domain: str                     # the classical domain label (CLASSICAL_NONCITABLE)
     status: str                     # 'confirms' | 'weakens' | 'neutral' | 'unknown' — the ENGINE's
+    #: 'contested' (both poles fired) | 'silent' (neither did) when status == 'neutral', else ''
+    status_kind: str
     lagna_sign: int
     lagna_lord: str
     lagna_lord_dignity: str
@@ -2230,12 +2243,34 @@ def _background_vargas(r) -> tuple[BackgroundVarga, ...]:
         lord = getattr(vr.lagna_lord, "planet", "")
         dig = getattr(vr.lagna_lord, "dignity", "")
         domain = _BACKGROUND_VARGAS[vr.n]
+        # WHICH neutral this is (varga_judge._neutral_kind). "contested" = the pillars gave
+        # both a confirming and a weakening testimony and they cancelled; "silent" = neither
+        # pole fired at all. Opposite findings; the bare word "neutral" printed them alike.
+        # Note this is a PILLAR-level fact (varga-lagna lord + domain karakas) and is not the
+        # same question as `strong`/`weak` above, which scan every graha in the division and
+        # never look at dusthana placement — so the two can legitimately disagree.
+        kind = str(getattr(vr, "neutral_kind", "") or "")
+        kind_clause = ""
+        if kind == "contested":
+            kind_clause = (" — and that is a CONTESTED neutral, not a quiet one: among the "
+                           "varga lagna lord and the domain karakas one testifies well and "
+                           "another testifies badly, and they cancel")
+        elif kind == "silent":
+            kind_clause = (" — a SILENT neutral: neither the varga lagna lord nor the domain "
+                           "karakas testified either way, so the division abstains rather "
+                           "than balances")
         # the reading states the ENGINE's own status and nothing beyond it. A division with no
         # exalted, own or debilitated graha has no signal, and saying more would be invention.
         if not strong and not weak:
-            body = (f"No signal: nothing is exalted, in own sign or debilitated in this "
-                    f"division, and its lagna lord {lord} is {dig}. The engine reads it "
-                    f"{vr.status}; there is nothing further here to report.")
+            # "among the seven grahas" is load-bearing: `_varga_dignity` returns 'neutral' for
+            # Rahu and Ketu unconditionally (they own no sign; Raman judges them by association),
+            # so the nodes can never enter `strong`/`weak`. Saying "nothing is exalted" flat
+            # would claim the nodes had been checked and found silent, which is not what happened.
+            body = (f"No signal: among the seven grahas nothing is exalted, in own sign or "
+                    f"debilitated in this division, and its lagna lord {lord} is {dig}. The "
+                    f"nodes carry no sign-dignity in any division and are not assessed here. "
+                    f"The engine reads it {vr.status}{kind_clause}; there is nothing "
+                    f"further to report.")
         else:
             bits = []
             if strong:
@@ -2243,10 +2278,11 @@ def _background_vargas(r) -> tuple[BackgroundVarga, ...]:
             if weak:
                 bits.append(f"debilitated: {', '.join(sorted(weak))}")
             body = (f"Its lagna sits in {lagna_name} under {lord} ({dig} in this "
-                    f"division); {'; '.join(bits)}. The engine reads it {vr.status}.")
+                    f"division); {'; '.join(bits)}. The engine reads it "
+                    f"{vr.status}{kind_clause}.")
         out.append(BackgroundVarga(
             varga=vr.n, name=vr.name, domain=domain, status=str(vr.status),
-            lagna_sign=lagna_sign, lagna_lord=lord, lagna_lord_dignity=str(dig),
+            status_kind=kind, lagna_sign=lagna_sign, lagna_lord=lord, lagna_lord_dignity=str(dig),
             strong=tuple(sorted(strong)), weak=tuple(sorted(weak)),
             benefics_on_lagna=tuple(getattr(vr, "benefics_on_lagna", ()) or ()),
             malefics_on_lagna=tuple(getattr(vr, "malefics_on_lagna", ()) or ()),

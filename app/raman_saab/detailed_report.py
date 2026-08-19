@@ -1466,21 +1466,40 @@ def _clean_box(text: str) -> str:
                      if not (ln.strip() and set(ln.strip()) <= {"="}))
 
 
+#: The verdict rows the Trimsamsa (D-30) core block prints, in the order it prints them
+#: (`render_trimsamsa.to_text`). D-30 is the one deep-read that emits no ``>>> <<<`` banner,
+#: so its label is assembled from these plain rows instead.
+#:
+#: Framing fix 2026-08-19: the summary used to match ``Health (H1)`` ONLY, so the label of a
+#: section whose whole subject is health-and-disease silently dropped the disease verdict —
+#: a D-30 reading disease=afflicted with health=mixed scanned as merely "mixed". All three
+#: rows now carry, and the longevity row carries the body's own qualifier with it: the engine
+#: DEFERS lifespan (PREC-8 / HTJAH-II:4465-4472 — band, then marakas, never a number), so
+#: promoting its lean into a scannable heading unqualified would misrepresent it as a verdict.
+_D30_VERDICT_ROWS: tuple[tuple[str, str, str], ...] = (
+    (r"Health \(H1\)\s*:\s*([A-Za-z-]+)", "HEALTH (H1)", ""),
+    (r"Disease \(H6\)\s*:\s*([A-Za-z-]+)", "DISEASE (H6)", ""),
+    (r"Longevity\(H8\)\s*:\s*([A-Za-z-]+)", "LONGEVITY (H8)", " (lean, not a verdict)"),
+)
+
+
 def _divisional_verdict_summary(body: str) -> str:
     """The verdict fragment a matter-varga deep-read body itself prints (its ``>>> ... <<<``
-    banner line(s), or the D-30 ``Health (H1) :`` row) — re-read for the section LABEL, so
-    every collapsed summary / heading / JSON label leads with the verdict instead of the
-    citation preamble (Wave-2, 2026-08-18: divisional verdict-first). Pure string re-read of
-    a verdict the body already renders in full below; "" for the general vargas (D-27/40/45/
-    60), which carry no matter verdict by design."""
+    banner line(s), or the D-30 verdict rows) — re-read for the section LABEL, so every
+    collapsed summary / heading / JSON label leads with the verdict instead of the citation
+    preamble (Wave-2, 2026-08-18: divisional verdict-first). Pure string re-read of verdicts
+    the body already renders in full below; "" for the general vargas (D-27/40/45/60), which
+    carry no matter verdict by design."""
     import re as _re
     frags = _re.findall(r">>>\s*(.*?)\s*<<<", body)
     if frags:
         return "; ".join(_re.sub(r"\s{2,}", ", ", f).strip() for f in frags)
-    m = _re.search(r"Health \(H1\)\s*:\s*([A-Za-z-]+)", body)
-    if m:
-        return f"HEALTH (H1): {m.group(1)}"
-    return ""
+    rows = []
+    for pattern, label, qualifier in _D30_VERDICT_ROWS:
+        m = _re.search(pattern, body)
+        if m:
+            rows.append(f"{label}: {m.group(1)}{qualifier}")
+    return "; ".join(rows)
 
 
 def _divisional_sections(chart: RamanChart) -> tuple[tuple[str, str], ...]:
@@ -4381,8 +4400,14 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append("| Division | Domain (non-Raman label) | Engine's own reading | What it rests on |")
         L.append("|---|---|---|---|")
         for b in bgv:
+            # a neutral is reported WITH its kind: "contested" (both poles fired and
+            # cancelled) and "silent" (neither fired) are opposite findings that the bare
+            # word `neutral` printed identically.
+            _k = getattr(b, "status_kind", "")
             L.append(f"| D-{b.varga} {_md_cell(b.name)} | {_md_cell(b.domain)} | "
-                     f"**{_md_cell(b.status)}** | {_md_cell(b.reading)} |")
+                     f"**{_md_cell(b.status)}**"
+                     + (f" ({_md_cell(_k)})" if _k else "")
+                     + f" | {_md_cell(b.reading)} |")
         L.append("")
         L.append(f"- _Provenance: {_md_cell(bgv[0].provenance)}; citation "
                  f"{_md_cell(bgv[0].citation)}._")

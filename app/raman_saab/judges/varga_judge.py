@@ -61,6 +61,9 @@ from app.raman_saab.primitives.functional_nature import (
 from app.raman_saab.primitives.vargavisesha import VargaVisesha, vargavisesha
 
 VargaStatus = Literal["confirms", "weakens", "neutral", "unknown"]
+#: Which KIND of neutral a `neutral` status is (added 2026-08-19 — see `_neutral_kind`).
+#: "" for every non-neutral status, so the field is inert unless it means something.
+NeutralKind = Literal["contested", "silent", ""]
 Dignity = Literal["exalt", "debil", "own", "friend", "neutral", "enemy"]
 
 _PLANET_ORDER: Final[tuple[str, ...]] = (
@@ -113,6 +116,9 @@ class VargaReading:
     status: VargaStatus
     notes: tuple[tuple[str, str], ...]
     source: Citation
+    #: "contested" | "silent" when `status == "neutral"`, else "". Additive; see
+    #: `_neutral_kind`. Defaulted so no existing construction changes.
+    neutral_kind: NeutralKind = ""
 
 
 @dataclass(frozen=True)
@@ -142,6 +148,17 @@ def _occupants(vc: VargaChart, houses: frozenset[int],
                  and name in group)
 
 
+def _poles(pillars: tuple[PillarReading, ...],
+           has_house_frame: bool) -> tuple[bool, bool]:
+    """(confirms-pole fired, weakens-pole fired) over this division's pillars."""
+    confirms = any(p.vargottama or p.dignity in ("exalt", "own") for p in pillars)
+    weakens = any(
+        p.dignity == "debil"
+        or (has_house_frame and p.varga_house is not None and p.varga_house in _DUSTHANA)
+        for p in pillars)
+    return confirms, weakens
+
+
 def _status(pillars: tuple[PillarReading, ...], has_house_frame: bool) -> VargaStatus:
     """The D9 confirms/weakens model generalized (house_template._navamsa_status):
     confirms — any pillar vargottama, exalted or own in this varga;
@@ -149,16 +166,41 @@ def _status(pillars: tuple[PillarReading, ...], has_house_frame: bool) -> VargaS
     varga lagna; both or neither -> neutral; no pillar resolvable -> unknown."""
     if not pillars:
         return "unknown"
-    confirms = any(p.vargottama or p.dignity in ("exalt", "own") for p in pillars)
-    weakens = any(
-        p.dignity == "debil"
-        or (has_house_frame and p.varga_house is not None and p.varga_house in _DUSTHANA)
-        for p in pillars)
+    confirms, weakens = _poles(pillars, has_house_frame)
     if confirms and not weakens:
         return "confirms"
     if weakens and not confirms:
         return "weakens"
     return "neutral"
+
+
+def _neutral_kind(pillars: tuple[PillarReading, ...],
+                  has_house_frame: bool) -> NeutralKind:
+    """WHICH neutral a `neutral` status is — added 2026-08-19 (framing fix).
+
+    `neutral` collapsed two astrologically opposite situations into one word:
+
+      "contested" — BOTH poles fire. One pillar is exalted/own/vargottama here while
+      another is debilitated or in a dusthana from the varga lagna. The division has
+      testimony, and that testimony disagrees with itself.
+      "silent"    — NEITHER pole fires. Every pillar sits in a plain friend/neutral/
+      enemy sign with no dusthana placement. The division has no testimony to give.
+
+    Reporting both as a bare "neutral" told a reader that the division had been
+    consulted and had nothing to say, when half the time it had two things to say and
+    they cancelled. Cancellation is a finding; silence is an absence of one, and the
+    Prime Directive's no-silent-approximation rule makes the difference reportable.
+
+    "" for every non-neutral status. DERIVED and additive: `status` itself is byte-for-
+    byte unchanged, and this module is imported by nothing in the D1 verdict path."""
+    if not pillars:
+        return ""                                  # status is "unknown", not neutral
+    confirms, weakens = _poles(pillars, has_house_frame)
+    if confirms and weakens:
+        return "contested"
+    if not confirms and not weakens:
+        return "silent"
+    return ""
 
 
 def assess_varga(chart: RamanChart, vc: VargaChart, dom: VargaDomain) -> VargaReading:
@@ -202,7 +244,8 @@ def assess_varga(chart: RamanChart, vc: VargaChart, dom: VargaDomain) -> VargaRe
         benefics_on_lagna=ben_lagna, malefics_on_lagna=mal_lagna,
         benefics_in_kendra=ben_kendra, malefics_in_kendra=mal_kendra,
         status=_status(pillars, bool(has_frame)), notes=tuple(notes),
-        source=dom.source)
+        source=dom.source,
+        neutral_kind=_neutral_kind(pillars, bool(has_frame)))
 
 
 def build_shodasavarga_report(chart: RamanChart) -> ShodasavargaReport:

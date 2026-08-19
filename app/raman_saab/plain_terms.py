@@ -162,11 +162,22 @@ SECTION_METHOD: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
         ("the 5th house and its lord", "Jupiter, the natural significator",
          "the Saptamsa D-7 (the children division)",
          "the classical combination lists", "the periods that activate the 5th")),
+    # Provenance corrected 2026-08-19: the preamble said "Raman's own method" over a list
+    # whose fourth item is the Dasamsa. Raman's profession method is the navamsa of the 10th
+    # lord plus shadvarga strength (HTJAH-II:9729-9811) — he teaches NO dasamsa chart; the
+    # D-10 domain reaches this engine only through his pointer to Parashara's shodasavarga
+    # (HPA-11:195-201), which is corroboration, not his technique
+    # (`doctrine/varga_domains.py` D-10 note states exactly this). The attribution now stops
+    # where his method stops, and the D-10 step names its own weaker footing.
     "profession": (
-        "For profession, Raman's own method inspects, in order",
+        "For profession, the inspection order — the first three steps and the periods are "
+        "Raman's own method",
         ("the 10th house, its sign and lord",
          "the navamsa-dispositor of the 10th lord (his primary technique)",
-         "the strongest planet", "the Dasamsa D-10", "the running period's colour")),
+         "the strongest planet",
+         "the Dasamsa D-10 (classical corroboration via Raman's pointer to Parashara's "
+         "sixteen divisions, not a technique he himself teaches)",
+         "the running period's colour")),
     "wealth": (
         "For wealth, the classical channels are read separately, in order",
         ("the 2nd house (accumulation) and its lord's placement",

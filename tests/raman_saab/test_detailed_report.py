@@ -2292,6 +2292,22 @@ class TestWave2TimingDivisionalSoul:
                 head_verdict = lbl.split(" - ", 1)[1].split(";")[0].split(",")[0]
                 assert head_verdict.split(":")[0].strip() in body
 
+    def test_the_d30_label_carries_disease_and_qualifies_the_longevity_lean(self, report):
+        """D-30 is the one deep-read with no ``>>> <<<`` banner, so its label is built from the
+        core block's plain verdict rows. It used to match ``Health (H1)`` alone — so a section
+        whose whole subject is health-AND-disease dropped the disease verdict from every
+        heading, collapsed summary and JSON label, and a chart reading health=favourable with
+        disease=afflicted scanned as unqualified good news (this canonical chart is exactly
+        that case). All three rows now carry; the longevity row keeps the body's own qualifier
+        because the engine defers lifespan (PREC-8) and a bare heading would read as a verdict."""
+        lbl = next(l for l, _ in report.divisional if l.startswith("D-30"))
+        assert "HEALTH (H1): " in lbl
+        assert "DISEASE (H6): " in lbl
+        assert "LONGEVITY (H8): " in lbl and "lean, not a verdict" in lbl
+        body = next(b for l, b in report.divisional if l.startswith("D-30"))
+        for row in ("Health (H1)", "Disease (H6)", "Longevity(H8)"):
+            assert row in body                      # the label is a re-read, never a new judgment
+
     def test_general_varga_domain_sentences_present(self, report, markdown):
         """D-27/40/45/60 each carry one domain-verdict sentence tying the varga lagna-lord's
         condition to the domain word, citing Raman's shodasavarga POINTER.

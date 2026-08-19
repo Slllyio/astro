@@ -1844,8 +1844,21 @@ def _lookup_metadata(chart: RamanChart, sig: Signification,
 
 
 # ---------------------------------------------------------------------------
-# Matter-specific divisional charts (Shodashavarga) — Raman cross-checks each
-# matter in its OWN varga: children -> D7, career -> D10, parents -> D12, siblings -> D3.
+# Matter-specific divisional charts (Shodasavarga): children -> D7, career -> D10,
+# parents -> D12, siblings -> D3, disease -> D30.
+#
+# Provenance corrected 2026-08-19. This block used to assert, uncited, that "Raman
+# cross-checks each matter in its OWN varga". He does not, as a rule. What he does:
+# names the shodasavarga scheme and DEFERS the per-matter assignment to Parashara
+# ("Dwadasamsa for parents, Saptamsa for children, etc.", HPA-11:195-201) — two of
+# these five by name, the rest by pointer. His own working division throughout HTJAH
+# is the NAVAMSA (marriage HTJAH-II:402-413, children via the navamsa lagna
+# HTJAH-II:774-776, profession via the navamsa of the 10th lord HTJAH-II:9729-9811).
+# The full policy, per division, is `doctrine/varga_domains.py`.
+#
+# That thinner footing is exactly why this overlay is verdict-INVARIANT: it surfaces
+# the matter-varga testimony as metadata and lets Raman's own D1 method decide
+# (PREC-11 — the D1 core decides, the divisional corroborates).
 # ---------------------------------------------------------------------------
 
 _MATTER_VARGA: Final[dict[int, tuple[int, str]]] = {

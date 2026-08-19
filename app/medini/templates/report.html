@@ -694,6 +694,9 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* the two kinds of a 'neutral' status — cancelled testimony vs no testimony at all */
+  'contested':'परस्पर विरोधी',
+  'silent':'मौन',
   'what it rests on':'यह किस पर आधारित है',
   'Deep-background divisions — modifiers, never votes':'गहन पृष्ठभूमि के वर्ग — संशोधक, मत नहीं',
   'Provenance':'स्रोत-परंपरा',
@@ -2671,8 +2674,11 @@ function render(R, S, FQ){
     if(BGV.length){
       add(para(t('The deep-background divisions'),'muted'));
       add(para(t('D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so nothing in the reading consulted them — yet the engine judged all four on every chart. They are background modifiers: no direction, no convergence vote, and they can never move a bhava verdict. Raman names the shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201); the domain labels are Rath\u2019s, not Raman\u2019s.'),'lede'));
+      /* a neutral status carries its KIND: 'contested' (both poles fired and cancelled)
+         and 'silent' (neither fired) are opposite findings that the bare word hid. */
       const bg=BGV.map(b=>({[t('division')]:'D-'+b.varga+' '+b.name, [t('domain (non-Raman label)')]:b.domain,
-        [t('engine\u2019s own reading')]:b.status, [t('what it rests on')]:b.reading}));
+        [t('engine\u2019s own reading')]:b.status+(b.status_kind?(' ('+t(b.status_kind)+')'):''),
+        [t('what it rests on')]:b.reading}));
       const bt=sectionTable(t('Deep-background divisions — modifiers, never votes'), bg, null,
         t('Read as background only. The strength method is a general principle applied to a division Raman names; the domain labels are classical/non-citable.'));
       if(bt) add(bt);

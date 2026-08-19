@@ -616,6 +616,14 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # H1.M.* Moon-mind rule, H3 courage, the HTJAH-II vocational tables, H10 modes).
     # Appended at the END per the append-only default; _FROZEN grown in the same commit.
     SectionSpec("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"', "v33"),
+    # v35 (2026-08-19): the medical read — HPA-29's sign->anatomy and planet->disease
+    # tables applied through Raman's own 6th-house procedure (HPA-29:433-440). Encoded
+    # once the doctrine corpus was mounted and the chapter's line anchors verified; it
+    # closes the audit's largest content gap, where the health section asked "which body
+    # areas does the chart mark" and answered with house numbers. Appended at the END per
+    # the append-only default; _FROZEN grown in the same commit.
+    SectionSpec("medical", "## Medical read (classical correspondence)", 'id="medical"',
+                "v35"),
 )
 
 #: The HTML renderer's document order (the signature chips live in the page header, and the
@@ -639,6 +647,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "karakamsa", "soul", "karmic", "pitru", "synthesis", "life_synthesis", "glossary",
     "nichod",
     "aptitude",   # v33 (2026-08-14): appended at the end, same order as SECTION_CONTRACT
+    "medical",    # v35 (2026-08-19): the HPA-29 medical read, appended likewise
 )
 
 
@@ -1483,6 +1492,17 @@ _D30_VERDICT_ROWS: tuple[tuple[str, str, str], ...] = (
 )
 
 
+#: Raman's own 6th-house procedure (HPA-29:433-440) — quoted, not paraphrased, at the
+#: head of the medical section so the reader sees the rule the rows below follow.
+from app.raman_saab.doctrine.medical_astrology import APPLICATION  # noqa: E402
+
+#: sign names for the medical read's navamsa line (v35). Local so the markdown renderer
+#: does not import the judge module just to spell a sign.
+_MED_SIGNS: Final[tuple[str, ...]] = (
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
+    "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+
+
 def _divisional_verdict_summary(body: str) -> str:
     """The verdict fragment a matter-varga deep-read body itself prints (its ``>>> ... <<<``
     banner line(s), or the D-30 verdict rows) — re-read for the section LABEL, so every
@@ -2313,6 +2333,7 @@ class DetailedReport:
     rect_confidence: object = None                   # birth-time sensitivity (v31)
     aptitude: object = None                          # aptitude/intelligence/work-style (v33)
     themes: object = None                            # integrated interpretation / theme synthesis (v34)
+    medical: object = None                           # HPA-29 6th-house medical read (v35)
     # AV completeness (2026-08-17, REPORT_CRITIQUE yoga_strength appendix 4) — the whole
     # Ashtakavarga layer the engine always computed, now shown. Append-only.
     bav_matrix: tuple = ()                           # BavMatrixRow per graha (7x12 BAV + seats)
@@ -3995,6 +4016,13 @@ def build_detailed_report(
             enriched = _dc_replace(enriched, **{_field: _builder(enriched)})
         except Exception:  # noqa: BLE001 — sparse/Track-B chart
             pass
+    # v35: the HPA-29 medical read. Its own try, like every chapter above — and it is
+    # report-only: `medical_reading` is imported by nothing in the verdict path.
+    try:
+        from app.raman_saab.judges.medical_reading import build_medical_reading
+        enriched = _dc_replace(enriched, medical=build_medical_reading(enriched.chart))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        pass
     from app.raman_saab.life_arc import build_decade_timeline
     try:
         enriched = _dc_replace(enriched, decades=build_decade_timeline(enriched))
@@ -6815,6 +6843,50 @@ def to_markdown(r: DetailedReport) -> str:
             from app.raman_saab.planet_biographies import MODERN_BANNER
             L.append(f"- **Modern keywords** [{MODERN_BANNER}] — "
                      f"{'; '.join(ap.style_modern)}")
+
+    # ── the medical read (v35 — HPA-29 tables through Raman's own 6th-house rule) ──
+    med = getattr(r, "medical", None)
+    if med is not None:
+        L.append("")
+        L.append("## Medical read (classical correspondence)")
+        L.append("")
+        L.append(f"_{_md_cell(med.caveat)}_")
+        L.append("")
+        L.append(f"Raman's own procedure, quoted: \"{_md_cell(APPLICATION)}\" "
+                 f"(HPA-29:433-440). The SIGN supplies the body part; the PLANET supplies "
+                 f"the complaint.")
+        L.append("")
+        L.append(f"- **The 6th from lagna** — {_md_cell(med.sixth_sign_name)}, "
+                 f"lord {_md_cell(med.sixth_lord)}"
+                 + (f" in house {med.sixth_lord_house}" if med.sixth_lord_house else "")
+                 + (f", navamsa {_md_cell(_MED_SIGNS[med.sixth_lord_navamsa_sign - 1])}"
+                    if 1 <= med.sixth_lord_navamsa_sign <= 12 else ""))
+        if med.occupants:
+            L.append(f"- **In the 6th** — {_md_cell(', '.join(med.occupants))}")
+        if med.aspecting:
+            L.append(f"- **Aspecting the 6th** — {_md_cell(', '.join(med.aspecting))}")
+        if med.unlisted_bodies:
+            L.append(f"- **Present but not tabled** — "
+                     f"{_md_cell(', '.join(med.unlisted_bodies))}: Raman's tables cover "
+                     f"the seven visible grahas, so the nodes contribute nothing here. "
+                     f"Shown rather than skipped, so the silence is visible.")
+        L.append("")
+        L.append("| Testimony | Speaks through | Body regions | Complaints indicated | Cite |")
+        L.append("|---|---|---|---|---|")
+        for t in med.testimonies:
+            L.append(f"| {_md_cell(t.clause)} | {_md_cell(t.actor)} "
+                     f"| {_md_cell(', '.join(t.regions)) or '-'} "
+                     f"| {_md_cell(', '.join(t.complaints)) or '-'} "
+                     f"| {_md_cell(t.citation)} |")
+        L.append("")
+        if med.regions_marked:
+            L.append(f"- **Body regions this chart marks** (union of the testimonies "
+                     f"above, de-duplicated) — {_md_cell(', '.join(med.regions_marked))}")
+        if med.complaints_indicated:
+            L.append(f"- **Complaints the tables associate** — "
+                     f"{_md_cell(', '.join(med.complaints_indicated))}")
+        L.append("")
+        L.append(f"_{_md_cell(med.provenance)}_")
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

@@ -418,15 +418,24 @@ class TestDetailedReport:
         for field in (report.plain_reading.opening, report.plain_reading.notable):
             assert not re.search(r"\bH\d\b", field), field
 
-    def test_nichod_section_is_v4_and_appended_last(self):
-        """The Nichod is registered as v4 and closed the contract until v33 — the append-only
-        default (2026-08-14 amendment, same commit as the module) placed the aptitude chapter
-        after it, so Nichod is now the last row of the pre-v33 contract."""
+    def test_nichod_closes_the_original_contract_and_later_chapters_append_after_it(self):
+        """The Nichod is registered as v4 and closed the contract as it then stood. Every
+        chapter added since appends AFTER it, in the order it was added — the append-only
+        default the template contract is built on.
+
+        Asserted by lookup rather than by negative index: pinning `SECTION_CONTRACT[-1]`
+        made this test fail on every future append (it broke on v35, the medical read),
+        which taught nothing — the invariant worth guarding is that nothing is inserted
+        BEFORE nichod and that the tail stays in ascending version order."""
         from app.raman_saab.detailed_report import SECTION_CONTRACT
-        assert SECTION_CONTRACT[-2].section_id == "nichod"
-        assert SECTION_CONTRACT[-2].since == "v4"
-        assert SECTION_CONTRACT[-1].section_id == "aptitude"
-        assert SECTION_CONTRACT[-1].since == "v33"
+        ids = [s.section_id for s in SECTION_CONTRACT]
+        by_id = {s.section_id: s for s in SECTION_CONTRACT}
+        assert by_id["nichod"].since == "v4"
+        tail = SECTION_CONTRACT[ids.index("nichod") + 1:]
+        assert [s.section_id for s in tail] == ["aptitude", "medical"]
+        versions = [int(s.since.lstrip("v")) for s in tail]
+        assert versions == sorted(versions), "appended chapters must stay in added order"
+        assert all(v > 4 for v in versions), "nothing older than nichod may follow it"
 
     def test_gochara_outlook_covers_the_four_slow_movers(self, report):
         """The multi-year outlook is attached for exactly Jupiter/Saturn/Rahu/Ketu, spanning the

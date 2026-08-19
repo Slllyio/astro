@@ -438,6 +438,38 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
         _append_linked_insights(R, key, facts)
         return facts
+    if key == "medical":
+        # v35 — the HPA-29 medical read. One fact per clause of Raman's own procedure, so
+        # the model cites the testimony it is narrating; the caveat is a fact of its own so
+        # it cannot be dropped as decoration.
+        med = R.get("medical") or {}
+        if not med:
+            return facts
+        _f(facts, "This section is a CLASSICAL CORRESPONDENCE TABLE indexed by the chart's "
+                  "6th house. It is not a diagnosis, not a prediction of illness, and not a "
+                  "verdict. " + str(med.get("caveat", "")), cite="HPA-29:433")
+        _f(facts, f"Raman's own procedure: \"{med.get('application', '')}\" The sign supplies "
+                  f"the body part; the planet supplies the complaint.", cite="HPA-29:433")
+        _f(facts, f"The 6th from lagna is {med.get('sixth_sign_name')}, its lord is "
+                  f"{med.get('sixth_lord')}"
+                  + (f" standing in house {med['sixth_lord_house']}"
+                     if med.get("sixth_lord_house") else "") + ".")
+        for _t in med.get("testimonies") or []:
+            _f(facts, f"Testimony — {_t['clause']}, speaking through {_t['actor']}: "
+                      f"regions {', '.join(_t.get('regions') or []) or 'none'}; "
+                      f"complaints {', '.join(_t.get('complaints') or []) or 'none'}. "
+                      f"Why it applies here: {_t.get('why', '')}",
+               cite=_t.get("citation") or "HPA-29:394")
+        if med.get("unlisted_bodies"):
+            _f(facts, f"{', '.join(med['unlisted_bodies'])} take part in this chart's 6th-house "
+                      f"testimony but Raman's tables cover only the seven visible grahas, so "
+                      f"they contribute nothing. Reported rather than skipped.")
+        _f(facts, f"Body regions marked overall: "
+                  f"{', '.join(med.get('regions_marked') or []) or 'none tabled'}.")
+        _f(facts, f"Complaints the tables associate overall: "
+                  f"{', '.join(med.get('complaints_indicated') or []) or 'none tabled'}.")
+        _f(facts, str(med.get("provenance", "")), cite="HPA-29:353")
+        return facts
     if key == "themes":
         # The integrated reading, decomposed ONE-CLAIM-PER-FACT (never a bundled blob — the
         # same discipline nichod/summary use, so the model cites the right theme while

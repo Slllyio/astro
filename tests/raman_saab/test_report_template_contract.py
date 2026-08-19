@@ -152,6 +152,9 @@ _FROZEN = (
     # v33 amendment (2026-08-14, conscious, same-commit as the module, user-requested):
     # aptitude, intelligence & work style — appended at the END per the append-only default.
     ("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"'),
+    # v35 (2026-08-19): the medical read — HPA-29's own tables through Raman's own
+    # 6th-house procedure. Appended likewise; _FROZEN grown in the same commit.
+    ("medical", "## Medical read (classical correspondence)", 'id="medical"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -235,7 +238,8 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34",
+            "v35"}
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -270,6 +274,10 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v33") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v34") == 1
+        # v35: the medical read (HPA-29 sign->anatomy / planet->disease, applied through
+        # Raman's own 6th-house rule) — the audit's largest content gap, closed once the
+        # doctrine corpus was mounted and the chapter's anchors verified line-for-line.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v35") == 1
 
 
 class TestRectConfidence:

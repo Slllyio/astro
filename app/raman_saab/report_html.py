@@ -2510,6 +2510,55 @@ def _aptitude_section(r: DetailedReport) -> str:
             f'<div class="vsec">{body}</div>')
 
 
+def _medical_section(r: DetailedReport) -> str:
+    """v35 — the HPA-29 medical read: Raman's own 6th-house procedure over his own tables.
+
+    Every field of every testimony renders (REPORT COMPLETENESS): the four clauses, their
+    regions and complaints, the citation per row, the union lists, the nodes that carry no
+    table, the caveat and the provenance note."""
+    med = getattr(r, "medical", None)
+    if med is None:
+        return ""
+    from app.raman_saab.doctrine.medical_astrology import APPLICATION
+    head = [f'<b>The 6th from lagna</b> &mdash; {_esc(med.sixth_sign_name)}, '
+            f'lord {_esc(med.sixth_lord)}'
+            + (f' in house {med.sixth_lord_house}' if med.sixth_lord_house else '')]
+    if med.occupants:
+        head.append(f'<b>In the 6th</b> &mdash; {_esc(", ".join(med.occupants))}')
+    if med.aspecting:
+        head.append(f'<b>Aspecting the 6th</b> &mdash; {_esc(", ".join(med.aspecting))}')
+    if med.unlisted_bodies:
+        head.append(
+            f'<b>Present but not tabled</b> &mdash; {_esc(", ".join(med.unlisted_bodies))}: '
+            f'Raman&rsquo;s tables cover the seven visible grahas, so the nodes contribute '
+            f'nothing here. Shown rather than skipped, so the silence is visible.')
+    rows = "".join(
+        f'<tr><td>{_esc(t.clause)}</td><td>{_esc(t.actor)}</td>'
+        f'<td>{_esc(", ".join(t.regions)) or "&mdash;"}</td>'
+        f'<td>{_esc(", ".join(t.complaints)) or "&mdash;"}</td>'
+        f'<td class="cite">{_esc(t.citation)}</td></tr>' for t in med.testimonies)
+    tail = []
+    if med.regions_marked:
+        tail.append(f'<b>Body regions this chart marks</b> (union of the testimonies, '
+                    f'de-duplicated) &mdash; {_esc(", ".join(med.regions_marked))}')
+    if med.complaints_indicated:
+        tail.append(f'<b>Complaints the tables associate</b> &mdash; '
+                    f'{_esc(", ".join(med.complaints_indicated))}')
+    return (
+        '<h2 class="section" id="medical">Medical read (classical correspondence)</h2>'
+        f'<p class="section-sub"><i>{_esc(med.caveat)}</i></p>'
+        f'<blockquote class="quote">{_esc(APPLICATION)}'
+        f'<footer>HPA-29:433-440</footer></blockquote>'
+        '<p class="section-sub">The SIGN supplies the body part; the PLANET supplies the '
+        'complaint &mdash; that division of labour is Raman&rsquo;s own last clause.</p>'
+        + "".join(f'<p>{h}</p>' for h in head)
+        + '<table><thead><tr><th>Testimony</th><th>Speaks through</th>'
+          '<th>Body regions</th><th>Complaints indicated</th><th>Cite</th></tr></thead>'
+          f'<tbody>{rows}</tbody></table>'
+        + "".join(f'<p>{t}</p>' for t in tail)
+        + f'<p class="muted"><i>{_esc(med.provenance)}</i></p>')
+
+
 def _arishta_section(r: DetailedReport) -> str:
     """v22 — Arishta & Bhanga: afflictions AND their doctrinal cancellations."""
     a = r.arishta
@@ -3787,6 +3836,8 @@ def to_html(r: DetailedReport) -> str:
   {_nichod_section(r)}
 
   {_aptitude_section(r)}
+
+  {_medical_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

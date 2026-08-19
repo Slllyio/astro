@@ -694,6 +694,23 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v35 — the HPA-29 medical read */
+  'Raman\u2019s own procedure':'रमण की अपनी विधि',
+  'The 6th from lagna':'लग्न से षष्ठ भाव',
+  'In the 6th':'षष्ठ में स्थित',
+  'Aspecting the 6th':'षष्ठ पर दृष्टि',
+  'Present but not tabled':'उपस्थित, किन्तु तालिका में नहीं',
+  'testimony':'साक्ष्य',
+  'speaks through':'किसके द्वारा',
+  'body regions':'शरीर के अंग',
+  'complaints indicated':'सूचित रोग',
+  'cite':'सन्दर्भ',
+  'The four testimonies Raman names':'रमण द्वारा नामित चार साक्ष्य',
+  'Body regions this chart marks':'यह कुण्डली जिन अंगों को चिह्नित करती है',
+  'Complaints the tables associate':'तालिकाओं से सम्बद्ध रोग',
+  'union of the testimonies, de-duplicated':'साक्ष्यों का योग, पुनरुक्ति रहित',
+  'in house':'भाव में',
+  'lord':'स्वामी',
   /* the two kinds of a 'neutral' status — cancelled testimony vs no testimony at all */
   'contested':'परस्पर विरोधी',
   'silent':'मौन',
@@ -3132,6 +3149,31 @@ function render(R, S, FQ){
     if(ap.saturn_state) add(para('Saturn\'s condition — '+ap.saturn_state,'muted'));
     if(ap.mars_state) add(para('Mars\'s condition — '+ap.mars_state,'muted'));
     if((ap.style_modern||[]).length) add(para('Modern keywords [MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight] — '+ap.style_modern.join('; '),'muted')); }
+
+  // ===== Medical read (v35 — HPA-29 tables through Raman's own 6th-house rule) =====
+  /* Completeness: every field of every testimony renders — the four clauses, their
+     regions and complaints, the per-row citation, the union lists, the nodes that carry
+     no table, the caveat and the provenance note. */
+  if(R.medical){ const md=R.medical;
+    add(H2('Medical read (classical correspondence)','medical'));
+    add(para(md.caveat,'lede'));
+    add(para(t('Raman\u2019s own procedure')+': \u201c'+md.application+'\u201d (HPA-29:433-440)','quote'));
+    add(para(t('The SIGN supplies the body part; the PLANET supplies the complaint \u2014 that division of labour is Raman\u2019s own last clause.'),'muted'));
+    add(para(t('The 6th from lagna')+' \u2014 '+md.sixth_sign_name+', '+t('lord')+' '+md.sixth_lord
+             +(md.sixth_lord_house?(' '+t('in house')+' '+md.sixth_lord_house):'')));
+    if((md.occupants||[]).length) add(para(t('In the 6th')+' \u2014 '+md.occupants.join(', ')));
+    if((md.aspecting||[]).length) add(para(t('Aspecting the 6th')+' \u2014 '+md.aspecting.join(', ')));
+    if((md.unlisted_bodies||[]).length) add(para(t('Present but not tabled')+' \u2014 '+md.unlisted_bodies.join(', ')
+             +': '+t('Raman\u2019s tables cover the seven visible grahas, so the nodes contribute nothing here. Shown rather than skipped, so the silence is visible.'),'muted'));
+    const mt=(md.testimonies||[]).map(x=>({[t('testimony')]:x.clause, [t('speaks through')]:x.actor,
+      [t('body regions')]:(x.regions||[]).join(', '), [t('complaints indicated')]:(x.complaints||[]).join(', '),
+      [t('cite')]:x.citation}));
+    const mtab=sectionTable(t('The four testimonies Raman names'), mt, null,
+      t('One row per clause of HPA-29 \u00a710. An aspecting planet lends its complaints but claims no body region \u2014 Raman ties the region to the sign and the planet standing in it.'));
+    if(mtab) add(mtab);
+    if((md.regions_marked||[]).length) add(para(t('Body regions this chart marks')+' ('+t('union of the testimonies, de-duplicated')+') \u2014 '+md.regions_marked.join(', ')));
+    if((md.complaints_indicated||[]).length) add(para(t('Complaints the tables associate')+' \u2014 '+md.complaints_indicated.join(', ')));
+    add(para(md.provenance,'muted')); }
 
   chapter(11);  // step 5 — WHEN
   // ===== Life-narrative timeline + companions =====

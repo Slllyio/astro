@@ -4202,6 +4202,9 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
         for d in getattr(t, "divisional_checks", ()) or ():
             L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        k = getattr(t, "karmic_lens", None)
+        if k is not None:
+            L.append(f"- **Karmic lens ({k.aspect}, walled)** — {k.note}")
         dist = getattr(t, "distinctive", ()) or ()
         if dist:
             L.append("- **How unusual is this?** — "

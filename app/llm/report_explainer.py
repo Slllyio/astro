@@ -473,6 +473,10 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
             for d in th.get("divisional_checks", []):
                 _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            _k = th.get("karmic_lens")
+            if _k:
+                _f(facts, f"Karmic lens on {th['name']} ({_k['aspect']}, a walled layer that "
+                          f"never feeds the natal verdict): {_k['note']}")
             for x in th.get("distinctive", [])[:3]:
                 _f(facts, f"On {th['name']}, {x['signification']} is {x['rarity']} — "
                           f"{x['population_note']}")

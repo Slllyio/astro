@@ -843,6 +843,10 @@ def _themes_section(r: DetailedReport) -> str:
         for d in getattr(t, "divisional_checks", ()) or ():
             out.append(f'<li><b>{_esc(d.varga)}</b> ({_esc(d.relation)}) &mdash; '
                        f'{_esc(d.verdict)}. {_esc(d.note)}</li>')
+        k = getattr(t, "karmic_lens", None)
+        if k is not None:
+            out.append(f'<li><b>Karmic lens ({_esc(k.aspect)}, walled)</b> &mdash; '
+                       f'{_esc(k.note)}</li>')
         dist = getattr(t, "distinctive", ()) or ()
         if dist:
             out.append('<li><b>How unusual is this?</b> &mdash; ' + _esc("; ".join(

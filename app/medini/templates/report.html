@@ -655,6 +655,11 @@ const I18N_HI = {
   'now':'अभी',
   'karakas':'कारक',
   'the chart':'कुंडली',
+  'Karmic lens':'कार्मिक दृष्टि',
+  'walled':'पृथक्',
+  'poorvapunya':'पूर्वपुण्य',
+  'dharma':'धर्म',
+  'moksha':'मोक्ष',
   'How unusual is this?':'यह कितना असामान्य है?',
   'Divisions that read against the rasi':'वर्ग जो राशि के विरुद्ध पढ़ते हैं',
   'A varga is the classical confirmation device, so its dissent is worth naming. It modulates confidence in the natal indication; it never overturns it (PREC-5).':'वर्ग शास्त्रीय पुष्टि-साधन है, अतः उसकी असहमति नामित करने योग्य है। वह जन्मकुंडली-संकेत के प्रति विश्वास को संशोधित करता है; उसे कभी उलटता नहीं (PREC-5)।',
@@ -2503,6 +2508,8 @@ function render(R, S, FQ){
         b.append(para(g.planet+' ('+t('force vs intent')+') — '+g.reading,'muted'));
       for(const d of (th.divisional_checks||[]))
         b.append(para(d.varga+' ('+t(d.relation)+') — '+d.verdict+'. '+d.note,'muted'));
+      if(th.karmic_lens)
+        b.append(para(t('Karmic lens')+' ('+t(th.karmic_lens.aspect)+', '+t('walled')+') — '+th.karmic_lens.note,'muted'));
       if((th.distinctive||[]).length)
         b.append(para(t('How unusual is this?')+' — '+th.distinctive.slice(0,4).map(x=>x.signification+' ('+t(x.rarity)+'): '+x.population_note).join('; '),'muted'));
       b.append(para(t('Divisional (D9)')+' — '+th.varga_relation+'.','muted'));

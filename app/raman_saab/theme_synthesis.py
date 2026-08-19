@@ -113,6 +113,8 @@ class ThemeReading:
     divisional_checks: tuple[DivisionalCheck, ...] = ()
     #: how unusual this theme's readings are in the population (r.distinctive)
     distinctive: tuple[Distinctiveness, ...] = ()
+    #: the WALLED karmic/Jaimini lens on this bhava, where one exists (never corroboration)
+    karmic_lens: Optional[KarmicLens] = None
 
 
 @dataclass(frozen=True)
@@ -190,6 +192,26 @@ class Distinctiveness:
     verdict: str
     rarity: str                     # 'rare' | 'notable' | ...
     population_note: str            # the calibration layer's own sentence
+
+
+@dataclass(frozen=True)
+class KarmicLens:
+    """The karmic/Jaimini layer's own reading of a bhava, set beside the natal verdict.
+
+    ``r.soul`` carries independent verdicts on three bhavas this layer already themes —
+    poorvapunya (the 5th, merit carried from past births), dharma (the 9th) and moksha (the 12th).
+    They were computed and never set against the Parashari reading of the same houses.
+
+    **This lens is WALLED.** ``r.karmic.frame`` states it plainly: nothing in the Jaimini layer
+    feeds or alters the Parashari natal verdicts. So this records agreement or difference for the
+    reader and carries an explicit wall note — it is a second lens on the same bhava, never
+    corroboration that could move a verdict, and it is excluded from every convergence count."""
+    house: int
+    aspect: str                     # 'poorvapunya' | 'dharma' | 'moksha'
+    karmic_verdict: str
+    natal_verdict: str
+    relation: str                   # 'concurs' | 'differs'
+    note: str
 
 
 @dataclass(frozen=True)
@@ -437,7 +459,8 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             concordance=conc,
             driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets),
             divisional_checks=div_checks,
-            distinctive=_distinctiveness(r, houses)))
+            distinctive=_distinctiveness(r, houses),
+            karmic_lens=_karmic_lens(r, prim_house, headline)))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -1184,6 +1207,38 @@ def _distinctiveness(r, houses) -> tuple[Distinctiveness, ...]:
             rarity=str(getattr(entry, "rarity", "")),
             population_note=str(getattr(entry, "note", ""))))
     return tuple(out)
+
+
+#: the three bhavas the soul layer reads independently (SoulCore verdict field -> house)
+_KARMIC_ASPECTS = (("poorvapunya", 5), ("dharma", 9), ("moksha", 12))
+
+
+def _karmic_lens(r, house: int, natal_verdict: str) -> Optional[KarmicLens]:
+    """The karmic layer's own verdict on this bhava, beside the natal one. Walled: recorded for
+    the reader, never counted as corroboration and never able to move a verdict."""
+    core = getattr(getattr(r, "soul", None), "core", None)
+    if core is None:
+        return None
+    for aspect, h in _KARMIC_ASPECTS:
+        if h != house:
+            continue
+        kv = getattr(core, f"{aspect}_verdict", None)
+        if not kv:
+            return None
+        relation = "concurs" if str(kv) == str(natal_verdict) else "differs"
+        if relation == "concurs":
+            note = (f"The karmic layer reads {aspect} as {kv}, the same way the rasi reads this "
+                    f"bhava. A separate lens reaching the same place — but a WALLED one: the "
+                    f"Jaimini layer never feeds the Parashari verdict, so this corroborates "
+                    f"nothing and is excluded from the convergence count.")
+        else:
+            note = (f"The karmic layer reads {aspect} as {kv} where the rasi reads this bhava "
+                    f"{natal_verdict}. The two are answering different questions and the layer is "
+                    f"WALLED — the Jaimini reading never feeds the Parashari verdict, so this is "
+                    f"recorded as a second lens, not as a contradiction to resolve.")
+        return KarmicLens(house=house, aspect=aspect, karmic_verdict=str(kv),
+                          natal_verdict=str(natal_verdict), relation=relation, note=note)
+    return None
 
 
 def _year(jd: float) -> int:

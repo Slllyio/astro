@@ -615,6 +615,45 @@ class TestThemeSynthesisContract:
                 assert x.verdict == e.verdict
         assert seen, "no distinctiveness surfaced on a chart that has 22 entries"
 
+    def test_karmic_lens_is_walled_and_never_corroborates(self, mainpuri, canonical):
+        """r.soul reads poorvapunya (5th), dharma (9th) and moksha (12th) independently of the
+        Parashari verdict on the same bhavas. r.karmic.frame states the wall explicitly: nothing
+        in the Jaimini layer feeds or alters the natal verdicts. So the lens is recorded for the
+        reader, carries the wall in its own note, and must NOT enter the evidence links or the
+        convergence count — otherwise a walled layer would be quietly corroborating a verdict."""
+        for r, ts in (mainpuri, canonical):
+            core = r.soul.core
+            seen = 0
+            for t in ts.themes:
+                k = t.karmic_lens
+                if k is None:
+                    continue
+                seen += 1
+                assert k.house == t.houses[0]
+                # verbatim passthrough of the soul layer's own verdict
+                assert k.karmic_verdict == str(getattr(core, f"{k.aspect}_verdict"))
+                assert k.natal_verdict == t.headline_verdict
+                assert k.relation == ("concurs" if k.karmic_verdict == k.natal_verdict
+                                      else "differs")
+                assert "WALLED" in k.note or "walled" in k.note
+                # the wall in force: no evidence link carries the karmic reading
+                for lk in t.links:
+                    assert k.aspect not in lk.label.lower()
+            assert seen >= 2, "the karmic lens attached to fewer bhavas than the soul layer reads"
+
+    def test_karmic_difference_is_not_treated_as_a_contradiction(self, mainpuri):
+        """A walled lens differing from the rasi is NOT a contradiction to resolve — the two
+        answer different questions. It must never appear in `contradictions`, which is reserved
+        for genuine precedence conflicts inside the Parashari reading."""
+        _r, ts = mainpuri
+        for t in ts.themes:
+            k = t.karmic_lens
+            if k is None or k.relation != "differs":
+                continue
+            for c in t.contradictions:
+                assert k.aspect not in c.kind.lower()
+                assert k.aspect not in c.resolution.lower()
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

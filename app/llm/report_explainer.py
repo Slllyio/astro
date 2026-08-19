@@ -454,6 +454,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"The chart's principal tension: {_por['principal_tension']}")
         if _por.get("concordance_note"):
             _f(facts, f"How far the independent techniques agree: {_por['concordance_note']}")
+        if _por.get("reading_stability"):
+            _f(facts, f"How firm the cast moment is: {_por['reading_stability']}")
+        if _por.get("chara_now"):
+            _f(facts, f"Jaimini chara dasha (a walled layer, not a second timing authority): "
+                      f"{_por['chara_now']}")
         for g in ts.get("graha_concordance", []):
             _f(facts, f"{g['planet']} — {g['reading']}")
         for c in ts.get("contested_bhavas", []):
@@ -473,6 +478,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
             for d in th.get("divisional_checks", []):
                 _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            for a in th.get("av_support", []):
+                _f(facts, f"Ashtakavarga on {th['name']}: {a['planet']} holds {a['bindus']} "
+                          f"bindus in the sign this bhava occupies — {a['verdict']}.")
+            for tr in th.get("transits", []):
+                _f(facts, f"Transit bearing on {th['name']}: {tr['note']}")
             for y in th.get("yogas", []):
                 _f(facts, f"{y['name']} ({y['kind']}) bears on {th['name']}: {y['effect']}"
                           + (f" It operates in {'; '.join(y['windows'])}." if y.get("windows") else ""))

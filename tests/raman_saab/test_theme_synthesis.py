@@ -717,6 +717,107 @@ class TestThemeSynthesisContract:
                 assert ("vargottama" in ch.lord_condition) == bool(mc.vargottama)
             assert graded, "no chapter matched an md_condition row"
 
+    def test_ashtakavarga_backs_the_driver_in_the_right_sign(self, mainpuri, canonical):
+        """Ashtakavarga is an independent measurement system, and the synthesis read none of it.
+        The question is narrow: how many bindus does THIS theme's driving graha hold in the sign
+        THIS theme's bhava occupies. BavMatrixRow.bindus is indexed by sign — verified here
+        against the row's own seat_sign/seat_bindus so the indexing can never drift."""
+        for r, ts in (mainpuri, canonical):
+            bav = {row.planet: row for row in r.bav_matrix}
+            for row in r.bav_matrix:            # the indexing contract itself
+                assert row.bindus[row.seat_sign - 1] == row.seat_bindus
+            seen = 0
+            for t in ts.themes:
+                sign = ((r.chart.asc_sign - 1 + t.houses[0] - 1) % 12) + 1
+                for a in t.av_support:
+                    seen += 1
+                    assert a.sign == sign and a.house == t.houses[0]
+                    assert a.bindus == bav[a.planet].bindus[sign - 1]
+                    assert a.planet in t.dominant_planets
+                    assert a.verdict in ("well supported", "about average", "poorly supported")
+            assert seen, "no Ashtakavarga backing reached any theme"
+
+    def test_a_nodal_chapter_has_no_bindu_reading(self, mainpuri):
+        """Rahu and Ketu contribute no Ashtakavarga, so a nodal Mahadasha has no seat reading —
+        an honest absence, never a neutral verdict dressed as data."""
+        r, ts = mainpuri
+        seats = {sc.maha: sc for sc in r.av_dasha_seats}
+        for ch in ts.dasha_evolution:
+            sc = seats.get(ch.maha)
+            if sc is not None and getattr(sc, "bindus", None) is None:
+                assert "no bindu reading" in ch.av_seat
+                assert "adverse" not in ch.av_seat and "auspicious" not in ch.av_seat
+
+    def test_chapter_carries_three_independent_readings(self, mainpuri):
+        """A chapter now states its Ishta/Kashta lean, its lord's own condition, AND Ashtakavarga's
+        seat verdict — three systems that can disagree. On Mainpuri the Saturn Mahadasha reads
+        `good` by lean with a strong lord while Ashtakavarga reads the seat adverse; the point of
+        the integration is that the reader sees all three, not a blended score."""
+        r, ts = mainpuri
+        cur = next(c for c in ts.dasha_evolution if c.is_current)
+        assert cur.lean and cur.lord_condition and cur.av_seat
+        seats = {sc.maha: sc for sc in r.av_dasha_seats}
+        assert seats[cur.maha].read in cur.av_seat      # verbatim, not re-derived
+
+    def test_transits_stay_subordinate(self, mainpuri, canonical):
+        """Raman: transits are catalytic, all conclusions rest primarily on Dasa-vichara
+        (HTJAH-II:4679-4687). A transit note reports the engine's own net_good (which already
+        applies vedha) and must never become a direction the theme carries."""
+        for r, ts in (mainpuri, canonical):
+            rows = {(g.planet, g.house_from_moon) for g in r.gochara}
+            for t in ts.themes:
+                for tr in t.transits:
+                    assert (tr.planet, tr.house_from_moon) in rows
+                    assert "catalytic" in tr.note        # the subordination is stated every time
+                    # and it never enters the direction-bearing evidence links
+                    for lk in t.links:
+                        if lk.axis == "transit":
+                            assert lk.lean in ("neutral", "mixed")
+
+    def test_report_survives_a_synthesis_failure(self, monkeypatch):
+        """REGRESSION. build_detailed_report wraps the synthesis in try/except precisely so a
+        sparse or Track-B chart degrades to the 'not available' fallback instead of taking the
+        whole report down. A debug-log line added to that handler referenced a `logger` the module
+        never defined — so the handler ITSELF raised NameError, converting graceful degradation
+        into a crash. It only fires when synthesis raises, which no fixture chart does, so the
+        suite stayed green and it shipped. This test exercises the failure path directly."""
+        from app.raman_saab import detailed_report as dr
+        import app.raman_saab.theme_synthesis as ths
+
+        def _boom(_r):
+            raise RuntimeError("synthesis blew up")
+
+        monkeypatch.setattr(ths, "build_theme_synthesis", _boom)
+        rep = dr.build_detailed_report(_CANONICAL, on=_ON)     # must NOT raise
+        assert rep is not None
+        assert rep.themes is None                              # degraded, as designed
+        assert "not available" in dr.to_markdown(rep)          # and the fallback prose renders
+
+    def test_the_reading_states_how_firm_the_cast_moment_is(self, mainpuri):
+        """Every verdict rests on the cast moment, so its stability qualifies all of them. The
+        engine measures it (r.rect_confidence) and the synthesis never said it."""
+        r, ts = mainpuri
+        st = ts.portrait.reading_stability
+        assert st and r.rect_confidence.label in st
+        assert str(r.rect_confidence.stable_count) in st
+
+    def test_protections_carry_their_counterweight(self, mainpuri, canonical):
+        """The Arishta chapter's cited protections are surfaced — and so is any UNCANCELLED
+        debility, because a protection list without its counterweight is selective."""
+        for r, ts in (mainpuri, canonical):
+            pf = ts.portrait.protective_factors
+            for prot in r.arishta.protections:
+                assert any(str(prot) in x for x in pf), "a cited protection went unreported"
+            for deb in r.arishta.uncancelled_debilities:
+                assert any(str(deb) in x for x in pf), "an uncancelled debility was hidden"
+
+    def test_chara_dasha_is_walled_like_the_karmic_lens(self, mainpuri):
+        """The Jaimini chara dasha runs beside the Vimshottari chapter but is never a second
+        timing authority — the wall must be stated wherever it appears."""
+        _r, ts = mainpuri
+        if ts.portrait.chara_now:
+            assert "walled" in ts.portrait.chara_now
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

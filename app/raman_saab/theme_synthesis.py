@@ -117,6 +117,10 @@ class ThemeReading:
     karmic_lens: Optional[KarmicLens] = None
     #: the yogas bearing here, read whole: promise + strength + cancellation + operating windows
     yogas: tuple[YogaReading, ...] = ()
+    #: Ashtakavarga backing for the driving grahas, in the sign this bhava occupies
+    av_support: tuple[AshtakavargaSupport, ...] = ()
+    #: slow-mover transits bearing here — subordinate, never a direction
+    transits: tuple[TransitNote, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -242,6 +246,42 @@ class YogaReading:
 
 
 @dataclass(frozen=True)
+class AshtakavargaSupport:
+    """Does Ashtakavarga back the graha that carries this theme, IN THE PLACE it must act?
+
+    An entirely independent measurement system from Shadbala and from the house judges. The
+    engine computes the full per-planet matrix (``r.bav_matrix``), the trikona/ekadhipatya
+    reductions (``r.bav_reduced``) and the Sodya Pinda weights (``r.sodya_pinda``) — and the
+    synthesis read none of it. SAV reached the reading only indirectly, inside a preponderance
+    testimony. The question this answers is narrower and sharper than a chart-wide total: how many
+    bindus does THIS theme's driving graha hold in the sign THIS theme's bhava occupies."""
+    planet: str
+    house: int
+    sign: int
+    bindus: int                     # that planet's BAV in the theme's house-sign
+    reduced: int                    # after the trikona/ekadhipatya reductions
+    sodya_pinda: int                # the planet's overall AV weight
+    verdict: str                    # 'well supported' | 'about average' | 'poorly supported'
+
+
+@dataclass(frozen=True)
+class TransitNote:
+    """A slow-mover's CURRENT transit bearing on this theme — strictly subordinate.
+
+    Raman is explicit (HTJAH-II:4679-4687): transits are catalytic, and all conclusions are drawn
+    primarily on Dasa-vichara. So this carries no direction of its own; it records what the engine
+    already computed for the transit — the house from the Moon, whether the Gochara is good, the
+    BAV bindus under it, and any vedha (obstruction) cancelling it — and nothing more."""
+    planet: str
+    house_from_moon: int
+    gochara_good: bool
+    bav_bindus: Optional[int]
+    vedha_by: tuple[str, ...]       # obstructing planets, if any
+    net_good: bool                  # the engine's own net verdict AFTER vedha
+    note: str
+
+
+@dataclass(frozen=True)
 class ExecutivePortrait:
     """The two-page opening: if you read only this, what is this horoscope?"""
     identity: str                   # Lagna / lagna-lord / Atmakaraka / Karakamsa / Moon — who the chart is
@@ -258,6 +298,12 @@ class ExecutivePortrait:
     current_chapter: str
     next_chapter: str
     honesty_note: str               # r.info.sentence — calibration, not validation
+    #: how much of this reading survives an error in the birth time (r.rect_confidence). Every
+    #: verdict above rests on the cast moment, so its stability qualifies ALL of them — the
+    #: engine measured it and the synthesis never said it.
+    reading_stability: str = ""
+    #: the WALLED Jaimini chara dasha running now, beside the Vimshottari chapter (r.chara_sequence)
+    chara_now: str = ""
 
 
 @dataclass(frozen=True)
@@ -290,6 +336,9 @@ class DashaChapter:
     #: vargottama lord is not the same chapter as one run by a weak one, and the report computed
     #: that grading without ever attaching it to the narrative of the period
     lord_condition: str = ""
+    #: Ashtakavarga's own verdict on the chapter (r.av_dasha_seats): the sign the Mahadasha
+    #: seats in and its bindus. An independent system agreeing or disagreeing with the lean.
+    av_seat: str = ""
 
 
 
@@ -475,10 +524,11 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         varga_rel = _varga_relation(r, prim_house, domain)
         conc = _bhava_concordance(r, prim_house)
         div_checks = _divisional_checks(r, spec, facets, headline)
+        av_sup = _av_support(r, prim_house, dom_planets)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
                                       activation, dom_planets, facets, conc,
                                       tuple(g for g in graha_conc if g.planet in dom_planets),
-                                      div_checks)
+                                      div_checks, av_sup)
         weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
@@ -493,7 +543,9 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             divisional_checks=div_checks,
             distinctive=_distinctiveness(r, houses),
             karmic_lens=_karmic_lens(r, prim_house, headline),
-            yogas=_theme_yogas(r, houses, yoga_house_bearings)))
+            yogas=_theme_yogas(r, houses, yoga_house_bearings),
+            av_support=av_sup,
+            transits=_transit_notes(r, houses, dom_planets)))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -932,7 +984,7 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
                           dom_planets, facets, concordance=None, driver_conc=(),
-                          div_checks=()) -> str:
+                          div_checks=(), av_support=()) -> str:
     """A single astrologer's sentence, not a template. Names the driving planet AND what the
     independent measures say about it (force vs intent), the verdict, and — where the bhava's own
     testimony ledger runs against the verdict, or its matters read against its headline — that
@@ -978,6 +1030,16 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     if concordance is not None and concordance.divergence:
         body += (f". Its own testimonies do not sit where the verdict does: the weight of them is "
                  f"{concordance.preponderance} and the reading is {concordance.status}")
+    # Ashtakavarga is a wholly independent measurement of the same grahas: when every driver is
+    # poorly supported in the very sign the bhava occupies, a favourable verdict is resting on
+    # something AV does not corroborate, and that is worth one clause
+    if av_support and not any(a.verdict == "well supported" for a in av_support):
+        from app.raman_saab.insight_digest import _lean_of as _l2
+        if _l2(headline) == "favourable":
+            worst = ", ".join(f"{a.planet} {a.bindus}" for a in av_support)
+            body += (f". Ashtakavarga does not back it in the same place: no graha carrying this "
+                     f"theme is well supplied with bindus in the sign the bhava occupies "
+                     f"({worst})")
     # a division reading AGAINST the bhava it confirms is a genuine cross-technique finding —
     # the varga is the classical confirmation device, so its dissent belongs in the sentence
     _div = next((d for d in div_checks if d.relation == "diverges"), None)
@@ -1315,6 +1377,69 @@ def _theme_yogas(r, houses, yoga_house_bearings) -> tuple[YogaReading, ...]:
     return tuple(out)
 
 
+def _house_sign(chart, house: int) -> int:
+    """The sign occupying a whole-sign house (the project's locked whole-sign convention)."""
+    return ((getattr(chart, "asc_sign", 1) - 1 + house - 1) % 12) + 1
+
+
+def _av_support(r, prim_house, dom_planets) -> tuple[AshtakavargaSupport, ...]:
+    """The theme's driving grahas measured by Ashtakavarga in the sign its bhava occupies.
+
+    ``BavMatrixRow.bindus`` is a 12-tuple indexed by sign (verified against the row's own
+    ``seat_sign``/``seat_bindus``). Four bindus is the per-sign average of a 337-point SAV over
+    twelve signs and eight contributors, so it is the natural break — above it the graha is
+    supported where it must act, below it it is not."""
+    chart = getattr(r, "chart", None)
+    if chart is None:
+        return ()
+    sign = _house_sign(chart, prim_house)
+    bav = {row.planet: row for row in getattr(r, "bav_matrix", ()) or ()}
+    red = {row.planet: row for row in getattr(r, "bav_reduced", ()) or ()}
+    pinda = {row.planet: row for row in getattr(r, "sodya_pinda", ()) or ()}
+    out: list[AshtakavargaSupport] = []
+    for p in dom_planets:
+        row = bav.get(p)
+        if row is None:                      # the nodes carry no Ashtakavarga of their own
+            continue
+        b = row.bindus[sign - 1]
+        rr = red.get(p)
+        reduced = rr.reduced[sign - 1] if rr is not None else b
+        verdict = ("well supported" if b >= 5 else
+                   "about average" if b == 4 else "poorly supported")
+        out.append(AshtakavargaSupport(
+            planet=p, house=prim_house, sign=sign, bindus=b, reduced=reduced,
+            sodya_pinda=getattr(pinda.get(p), "total", 0) or 0, verdict=verdict))
+    return tuple(out)
+
+
+def _transit_notes(r, houses, dom_planets) -> tuple[TransitNote, ...]:
+    """The slow-movers currently transiting this theme's houses, or transiting for one of its
+    driving grahas. Subordinate by construction: the engine's own ``net_good`` (which already
+    applies vedha) is reported, and no direction is derived from it here."""
+    hset = set(houses)
+    drivers = set(dom_planets)
+    out: list[TransitNote] = []
+    for row in getattr(r, "gochara", ()) or ():
+        hl = getattr(row, "house_from_lagna", None)
+        if hl not in hset and getattr(row, "planet", None) not in drivers:
+            continue
+        vedha = tuple(getattr(row, "vedha_by", ()) or ())
+        good = bool(getattr(row, "gochara_good", False))
+        net = bool(getattr(row, "net_good", False))
+        note = (f"{row.planet} transits the {row.house_from_moon}th from the Moon — "
+                + ("a favourable Gochara" if good else "not a favourable Gochara"))
+        if vedha:
+            note += f", obstructed (vedha) by {', '.join(vedha)}"
+        note += (f"; the engine's net reading is "
+                 f"{'favourable' if net else 'not favourable'}. Transits are catalytic only — "
+                 f"all conclusions rest primarily on the dasha (HTJAH-II:4679-4687).")
+        out.append(TransitNote(
+            planet=getattr(row, "planet", ""), house_from_moon=getattr(row, "house_from_moon", 0),
+            gochara_good=good, bav_bindus=getattr(row, "bav_bindus", None),
+            vedha_by=vedha, net_good=net, note=note))
+    return tuple(out)
+
+
 def _year(jd: float) -> int:
     return int(swe.revjul(jd, swe.GREG_CAL)[0])
 
@@ -1365,6 +1490,9 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
     # the engine grades each Mahadasha lord's own condition; attach it so a chapter says what
     # kind of lord is running it, not merely which one
     cond = {c.maha: c for c in getattr(r, "md_condition", ()) or ()}
+    # Ashtakavarga's own verdict on each Mahadasha — an independent system that can agree or
+    # disagree with the chapter's Ishta/Kashta lean, and never had the chance to before
+    seats = {sc.maha: sc for sc in getattr(r, "av_dasha_seats", ()) or ()}
     out: list[DashaChapter] = []
     prev: set[str] = set()
     for ch in chapters:
@@ -1387,13 +1515,23 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
             if getattr(mc, "at_maximum", False):
                 bits.append("at maximum")
             lord_condition = ", ".join(bits)
+        sc = seats.get(lord)
+        if sc is None or getattr(sc, "bindus", None) is None:
+            # Rahu/Ketu contribute no Ashtakavarga of their own, so a nodal chapter has no seat
+            # reading — an honest absence, not a neutral verdict
+            av_seat = ("" if sc is None else
+                       f"seats in sign {sc.sign}; the nodes contribute no Ashtakavarga, so this "
+                       f"chapter carries no bindu reading")
+        else:
+            av_seat = (f"seats in sign {sc.sign} with {sc.bindus} bindus — Ashtakavarga reads "
+                       f"this chapter {sc.read}")
         out.append(DashaChapter(
             maha=lord,
             span=f"{_year(ch.start_jd)}-{_year(ch.end_jd)}",
             is_current=bool(getattr(ch, "is_current", False)),
             lean=getattr(ch, "lean", None) or "neutral",
             activates=active, emerging=emerging, continuing=continuing,
-            acts_through=acts_through, lord_condition=lord_condition))
+            acts_through=acts_through, lord_condition=lord_condition, av_seat=av_seat))
         prev = aset
     return tuple(out)
 
@@ -1527,6 +1665,26 @@ def _portrait(r, themes, spine, frame, graha_conc=()) -> ExecutivePortrait:
 
     protective = _protective_factors(r)
     cur = _safe(lambda: f"{r.synthesis.running_md} MD / {r.synthesis.running_ad} AD", "")
+    # the running pratyantardasha — the engine computes the third level and the portrait stopped
+    # at the second, so "the current chapter" was coarser than the report's own resolution
+    pn = (getattr(r, "pratyantar_now", ()) or ())
+    if pn and cur:
+        cur += f" / {pn[0].pratyantar} PD"
+    stability = _safe(lambda: getattr(r.rect_confidence, "label", "") or "", "") or ""
+    if stability:
+        stability = (f"{stability} ({r.rect_confidence.stable_count} of "
+                     f"{r.rect_confidence.total_count} pillars stable across the scan window). "
+                     f"Every verdict in this reading rests on the cast moment, so this qualifies "
+                     f"all of them.")
+    # the Jaimini chara dasha running now — a WALLED parallel to the Vimshottari chapter, never
+    # a second timing authority (the Jaimini layer never feeds the Parashari reading)
+    chara = ""
+    span = next((c for c in getattr(r, "chara_sequence", ()) or () if getattr(c, "current", False)),
+                None)
+    if span is not None:
+        chara = (f"the Jaimini chara dasha of sign {span.sign} ({span.years} years, "
+                 f"{_year(span.start_jd)}-{_year(span.end_jd)}) runs alongside — a walled "
+                 f"parallel, never a second timing authority over the Vimshottari reading")
     nxt = _next_chapter(r)
     honesty = _safe(lambda: r.info.sentence, "") or ""
 
@@ -1535,21 +1693,34 @@ def _portrait(r, themes, spine, frame, graha_conc=()) -> ExecutivePortrait:
         strongest_domains=tuple(t.name for t in fav[:4]),
         weakest_domains=tuple(t.name for t in adv[:4]),
         principal_tension=principal, concordance_note=_concordance_note(r, themes, graha_conc),
+        reading_stability=stability, chara_now=chara,
         protective_factors=protective,
         current_chapter=cur, next_chapter=nxt, honesty_note=honesty)
 
 
 def _protective_factors(r) -> tuple[str, ...]:
-    """Bhanga / neecha-bhanga / benefic-relief already flagged on the report — never invented."""
+    """Bhanga / neecha-bhanga / benefic-relief already flagged on the report — never invented.
+
+    The Arishta chapter carries the engine's OWN cited protections (the combinations that placed
+    the chart in its longevity band) plus any bhangas and any UNCANCELLED debility. Listing the
+    protections without their counterweight would be selective, so the debilities come too."""
     out: list[str] = []
     bal = getattr(r, "balarishta", None)
     if bal is not None and getattr(bal, "cancelled", False):
         out.append("Balarishta present but cancelled (bhanga)")
+    ar = getattr(r, "arishta", None)
+    for prot in (getattr(ar, "protections", ()) or ()) if ar else ():
+        out.append(str(prot))
+    for bh in (getattr(ar, "bhangas", ()) or ()) if ar else ():
+        out.append(f"bhanga: {bh}")
     # longevity band as a protective foundation (band word only, never a date)
     lc = getattr(r, "longevity_class", "") or ""
     if lc:
         out.append(f"longevity reads at the {lc} band")
-    return tuple(out[:4])
+    # the honest counterweight — a protection list without it would be selective
+    for deb in (getattr(ar, "uncancelled_debilities", ()) or ()) if ar else ():
+        out.append(f"uncancelled debility (not a protection): {deb}")
+    return tuple(out)
 
 
 def _next_chapter(r) -> str:

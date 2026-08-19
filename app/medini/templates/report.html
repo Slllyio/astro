@@ -655,6 +655,14 @@ const I18N_HI = {
   'now':'अभी',
   'karakas':'कारक',
   'the chart':'कुंडली',
+  "Ashtakavarga backing (in this bhava's own sign)":'अष्टकवर्ग समर्थन (इस भाव की अपनी राशि में)',
+  'bindus':'बिंदु',
+  'reduced':'शोधित',
+  'Sodya Pinda':'शोध्य पिंड',
+  'well supported':'भली भाँति समर्थित',
+  'about average':'लगभग औसत',
+  'poorly supported':'अल्प समर्थित',
+  'Transit':'गोचर',
   'Yoga':'योग',
   'participants':'सहभागी ग्रह',
   'strength':'बल',
@@ -662,6 +670,8 @@ const I18N_HI = {
   'cancellation':'भंग',
   'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
   'lord':'स्वामी',
+  'How firm is the cast moment?':'जन्म-क्षण कितना दृढ़ है?',
+  'Jaimini chara dasha (walled)':'जैमिनी चर दशा (पृथक्)',
   'Karmic lens':'कार्मिक दृष्टि',
   'walled':'पृथक्',
   'poorvapunya':'पूर्वपुण्य',
@@ -2486,6 +2496,8 @@ function render(R, S, FQ){
     if((p.protective_factors||[]).length) li(t('Protective factors')+' — '+p.protective_factors.join('; ')+'.');
     if(p.principal_tension) li(t('Principal tension')+' — '+p.principal_tension);
     if(p.concordance_note) li(t('How far the techniques agree')+' — '+p.concordance_note);
+    if(p.reading_stability) li(t('How firm is the cast moment?')+' — '+p.reading_stability);
+    if(p.chara_now) li(t('Jaimini chara dasha (walled)')+' — '+p.chara_now);
     if(p.current_chapter) li(t('Current chapter')+' — '+p.current_chapter+(p.next_chapter?('; '+p.next_chapter):'')+'.');
     add(ul);
     if(p.honesty_note) add(para(p.honesty_note,'muted'));
@@ -2515,6 +2527,10 @@ function render(R, S, FQ){
         b.append(para(g.planet+' ('+t('force vs intent')+') — '+g.reading,'muted'));
       for(const d of (th.divisional_checks||[]))
         b.append(para(d.varga+' ('+t(d.relation)+') — '+d.verdict+'. '+d.note,'muted'));
+      if((th.av_support||[]).length)
+        b.append(para(t('Ashtakavarga backing (in this bhava\'s own sign)')+' — '+th.av_support.map(a=>a.planet+': '+a.bindus+' '+t('bindus')+' ('+t('reduced')+' '+a.reduced+', '+t('Sodya Pinda')+' '+a.sodya_pinda+') — '+t(a.verdict)).join('; '),'muted'));
+      for(const tr of (th.transits||[]))
+        b.append(para(t('Transit')+': '+tr.planet+' — '+tr.note,'muted'));
       for(const y of (th.yogas||[])){
         b.append(para(t('Yoga')+' '+(y.rank!=null?('#'+y.rank+' '):'')+y.name+' ('+y.kind+') — '+y.effect,'muted'));
         if((y.participants||[]).length) b.append(para(t('participants')+': '+y.participants.join(', '),'muted'));
@@ -2565,7 +2581,8 @@ function render(R, S, FQ){
       add(para(t('Dasha evolution — the horoscope through time'),'muted'));
       const rows=ts.dasha_evolution.map(ch=>({[t('chapter')]:ch.maha+' MD'+(ch.is_current?(' ('+t('now')+')'):'')
           +((ch.acts_through||[]).length?(' ('+t('acting through')+' '+ch.acts_through.join(', ')+')'):'')
-          +(ch.lord_condition?(' — '+t('lord')+' '+ch.lord_condition):''),
+          +(ch.lord_condition?(' — '+t('lord')+' '+ch.lord_condition):'')
+          +(ch.av_seat?('; '+ch.av_seat):''),
         [t('span')]:ch.span, [t('lean')]:ch.lean, [t('newly emphasized')]:(ch.emerging||[]).join(', ')||'-',
         [t('continuing')]:(ch.continuing||[]).join(', ')||'-'}));
       const de=sectionTable(t('Each Mahadasha foregrounds the themes its lord drives'), rows); if(de) add(de);

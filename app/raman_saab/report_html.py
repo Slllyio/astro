@@ -794,6 +794,11 @@ def _themes_section(r: DetailedReport) -> str:
     if getattr(p, "concordance_note", ""):
         out.append(f'<li><b>How far the techniques agree</b> &mdash; '
                    f'{_esc(p.concordance_note)}</li>')
+    if getattr(p, "reading_stability", ""):
+        out.append(f'<li><b>How firm is the cast moment?</b> &mdash; '
+                   f'{_esc(p.reading_stability)}</li>')
+    if getattr(p, "chara_now", ""):
+        out.append(f'<li><b>Jaimini chara dasha (walled)</b> &mdash; {_esc(p.chara_now)}</li>')
     if p.current_chapter:
         nxt = f"; {_esc(p.next_chapter)}" if p.next_chapter else ""
         out.append(f'<li><b>Current chapter</b> &mdash; {_esc(p.current_chapter)}{nxt}.</li>')
@@ -843,6 +848,14 @@ def _themes_section(r: DetailedReport) -> str:
         for d in getattr(t, "divisional_checks", ()) or ():
             out.append(f'<li><b>{_esc(d.varga)}</b> ({_esc(d.relation)}) &mdash; '
                        f'{_esc(d.verdict)}. {_esc(d.note)}</li>')
+        av = getattr(t, "av_support", ()) or ()
+        if av:
+            out.append('<li><b>Ashtakavarga backing (in this bhava&rsquo;s own sign)</b> &mdash; '
+                       + _esc("; ".join(
+                           f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, Sodya Pinda "
+                           f"{a.sodya_pinda}) — {a.verdict}" for a in av)) + '</li>')
+        for tr in getattr(t, "transits", ()) or ():
+            out.append(f'<li><b>Transit: {_esc(tr.planet)}</b> &mdash; {_esc(tr.note)}</li>')
         for y in getattr(t, "yogas", ()) or ():
             rank = f"#{y.rank} " if y.rank is not None else ""
             bits = [f'<li><b>Yoga {rank}{_esc(y.name)}</b> ({_esc(y.kind)}) &mdash; '
@@ -940,6 +953,7 @@ def _themes_section(r: DetailedReport) -> str:
             via = getattr(ch, "acts_through", ()) or ()
             through = f' (acting through {_esc(", ".join(via))})' if via else ""
             cond = f' &mdash; lord {_esc(ch.lord_condition)}' if getattr(ch, "lord_condition", "") else ''
+            cond += f'; {_esc(ch.av_seat)}' if getattr(ch, "av_seat", "") else ''
             out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}{cond}</td><td>{_esc(ch.span)}</td>'
                        f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
                        f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')

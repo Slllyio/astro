@@ -20,6 +20,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, replace as _dc_replace
 from typing import Final, Optional
 
@@ -30,6 +31,12 @@ from app.raman_saab import (
 )
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.constants import SIGN_LORDS
+
+#: module logger. NB: this module had NO logger while a debug call referenced one — the
+#: call sits in the theme-synthesis except handler, which only runs when synthesis
+#: raises, so healthy charts never reached it and CI stayed green while a sparse chart
+#: would have died of NameError inside the very handler meant to keep it alive.
+logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
@@ -4147,6 +4154,10 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append(f"- **Principal tension** — {p.principal_tension}")
     if getattr(p, "concordance_note", ""):
         L.append(f"- **How far the techniques agree** — {p.concordance_note}")
+    if getattr(p, "reading_stability", ""):
+        L.append(f"- **How firm is the cast moment?** — {p.reading_stability}")
+    if getattr(p, "chara_now", ""):
+        L.append(f"- **Jaimini chara dasha (walled)** — {p.chara_now}")
     if p.current_chapter:
         nxt = f"; {p.next_chapter}" if p.next_chapter else ""
         L.append(f"- **Current chapter** — {p.current_chapter}{nxt}.")
@@ -4202,6 +4213,13 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
         for d in getattr(t, "divisional_checks", ()) or ():
             L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        av = getattr(t, "av_support", ()) or ()
+        if av:
+            L.append("- **Ashtakavarga backing (in this bhava's own sign)** — "
+                     + "; ".join(f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, "
+                                 f"Sodya Pinda {a.sodya_pinda}) — {a.verdict}" for a in av))
+        for tr in getattr(t, "transits", ()) or ():
+            L.append(f"- **Transit: {tr.planet}** — {tr.note}")
         for y in getattr(t, "yogas", ()) or ():
             rank = f"#{y.rank} " if y.rank is not None else ""
             L.append(f"- **Yoga {rank}{y.name}** ({y.kind}) — {y.effect}")
@@ -4308,6 +4326,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             via = getattr(ch, "acts_through", ()) or ()
             through = f" (acting through {', '.join(via)})" if via else ""
             cond = f" — lord {_md_cell(ch.lord_condition)}" if getattr(ch, "lord_condition", "") else ""
+            cond += f"; {_md_cell(ch.av_seat)}" if getattr(ch, "av_seat", "") else ""
             L.append(f"| {_md_cell(ch.maha)} MD{now}{through}{cond} | {_md_cell(ch.span)} | "
                      f"{_md_cell(ch.lean)} | {_md_cell(', '.join(ch.emerging) or '-')} | "
                      f"{_md_cell(', '.join(ch.continuing) or '-')} |")

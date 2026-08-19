@@ -4149,7 +4149,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                      f"this reading names is {lf.reading_reaches or 'none'} — "
                      + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
                         "where it appears."))
-        L.append(f"- **Running period** — "
+        L.append("- **Running period** — "
                  + ("carries a maraka-tier lord." if lf.maraka_now
                     else "carries no maraka-tier lord."))
         if lf.maraka_windows:
@@ -4277,8 +4277,9 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append("- **Ashtakavarga backing (in this bhava's own sign)** — "
                      + "; ".join(f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, "
                                  f"Sodya Pinda {a.sodya_pinda}) — {a.verdict}" for a in av))
-        for tr in getattr(t, "transits", ()) or ():
-            L.append(f"- **Transit: {tr.planet}** — {tr.note}")
+        # NB: not `tr` — that shadows the module-level `transits as tr` import (line 77)
+        for tnote in getattr(t, "transits", ()) or ():
+            L.append(f"- **Transit: {tnote.planet}** — {tnote.note}")
         for y in getattr(t, "yogas", ()) or ():
             rank = f"#{y.rank} " if y.rank is not None else ""
             L.append(f"- **Yoga {rank}{y.name}** ({y.kind}) — {y.effect}")

@@ -579,12 +579,14 @@ class TestThemeSynthesisContract:
     def test_a_division_reading_against_the_rasi_is_disclosed(self, mainpuri):
         """A varga is the classical confirmation device, so its dissent is the finding. On Mainpuri
         the D-30 Trimsamsa reads health FAVOURABLE while H6 reads afflicted. The rasi verdict must
-        be untouched — a division modulates confidence, it never overturns (PREC-5)."""
+        be untouched — a division modulates confidence, it never overturns (PREC-11: the D1
+        Raman core decides and the varga corroborates. PREC-5 governs Laghu Parashari timing
+        bands, not divisionals, and this test accepted the mis-citation as a fallback)."""
         r, ts = mainpuri
         assert ts.divisional_divergences, "the D-30/H6 divergence was not caught"
         for nm, d in ts.divisional_divergences:
             assert d.relation == "diverges"
-            assert "PREC-5" in d.note or "overturn" in d.note
+            assert "PREC-11" in d.note
             theme = next(t for t in ts.themes if t.name == nm)
             # the passthrough is intact: disclosure only
             pf = {p.house: p for p in r.proformas}[theme.houses[0]]
@@ -712,8 +714,13 @@ class TestThemeSynthesisContract:
                     continue
                 graded += 1
                 assert ch.lord_condition, f"{ch.maha} chapter does not grade its own lord"
-                assert ("strong" in ch.lord_condition) == bool(mc.strong) or \
-                    "not strong" in ch.lord_condition
+                # `==` binds tighter than `or`, so the old one-liner passed whenever the text
+                # contained "not strong", whatever mc.strong said. Compare the arms explicitly.
+                if mc.strong:
+                    assert "strong" in ch.lord_condition
+                    assert "not strong" not in ch.lord_condition
+                else:
+                    assert "not strong" in ch.lord_condition
                 assert ("vargottama" in ch.lord_condition) == bool(mc.vargottama)
             assert graded, "no chapter matched an md_condition row"
 
@@ -928,8 +935,9 @@ class TestThemeSynthesisContract:
             assert lf.years == r.longevity_years and tuple(lf.ymd) == tuple(r.longevity_ymd)
             assert lf.maraka_now is bool(r.maraka_period_now)
             # Raman's ORDER is the load-bearing claim, so it must be stated, in his words
-            assert "span" in lf.frame.lower() and "maraka" in lf.frame.lower()
-            assert lf.frame.index("span") < lf.frame.lower().index("maraka periods second")
+            frame = lf.frame.lower()
+            assert "span" in frame and "maraka" in frame
+            assert frame.index("span") < frame.index("maraka periods second")
             assert "HTJAH-II:4465-4472" in lf.citation and "PREC-8" in lf.citation
             # the numeric is a cross-check, and the reading says so every time
             assert "cross-check" in lf.honesty and "never a forecast" in lf.honesty
@@ -961,7 +969,7 @@ class TestThemeSynthesisContract:
         """Raman's step TWO. Each maraka-tier bhukti carrying the classical Saturn signal
         (HTJAH-II:4846-4849) is named, deduplicated per bhukti, and placed against the band —
         including when the two methods disagree, which is disclosed rather than reconciled."""
-        r, ts = mainpuri
+        _r, ts = mainpuri
         lf = ts.longevity
         assert lf.maraka_windows, "the engine computed maraka x Saturn confluences; name them"
         bhuktis = [w[0] for w in lf.maraka_windows]
@@ -1055,7 +1063,7 @@ class TestThemeSynthesisContract:
         like catalytic agents" (PREC-6, HTJAH-II:4679), and the eightfold Dasha Kakshya split is
         "a timing lens, never a verdict" (PREC-7, ASP-12:174). So the calendar may qualify a
         window and may never grade a bhava — and every window carries the rule that says so."""
-        for r, ts in (mainpuri, canonical):
+        for _r, ts in (mainpuri, canonical):
             cal = ts.calendar
             if cal is None:
                 continue
@@ -1110,8 +1118,6 @@ class TestThemeSynthesisContract:
         for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 if not t.pitru_screen:
-                    # only the 5th and the 9th carry the screen at all
-                    assert t.houses[0] not in (5, 9) or True
                     continue
                 assert t.houses[0] in (5, 9)
                 assert "NOT Raman" in t.pitru_screen and "PREC-12" in t.pitru_screen
@@ -1140,3 +1146,26 @@ class TestThemeSynthesisContract:
             for txt in texts:
                 hit = _FORBIDDEN_RE.search(txt or "")
                 assert hit is None, f"decree language: {hit.group(0)!r}"
+
+    def test_the_portrait_names_the_RUNNING_pratyantardasha(self, mainpuri, canonical):
+        """The label reads "Current chapter", so the pratyantar in it must be the one running.
+
+        Astronomical fact under test: ``pratyantar_now`` holds all NINE pratyantardashas of the
+        current bhukti, each with its own start/end. Taking ``pn[0]`` named the FIRST of the nine,
+        which is the running one for roughly one ninth of any bhukti — on both fixtures it named a
+        PD that was not running (Mainpuri said Jupiter PD while Ketu PD ran). The row containing
+        ``ref_jd`` is the only correct one, as ``report_html._pratyantar_block`` already knew."""
+        for r, ts in (mainpuri, canonical):
+            pn = getattr(r, "pratyantar_now", ()) or ()
+            cur = ts.portrait.current_chapter
+            if not pn or not cur:
+                continue
+            run = next((x for x in pn
+                        if x.start_jd <= r.ref_jd < x.end_jd), None)
+            assert run is not None, "the anchor date falls in no pratyantar of the current bhukti"
+            assert f"{run.pratyantar} PD" in cur, (
+                f"portrait names a pratyantar that is not running: {cur!r} "
+                f"(running is {run.pratyantar})")
+            # and it must not merely be pn[0] coinciding — assert the bug's own signature is gone
+            if pn[0].pratyantar != run.pratyantar:
+                assert f"{pn[0].pratyantar} PD" not in cur

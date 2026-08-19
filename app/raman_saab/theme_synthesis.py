@@ -28,6 +28,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Optional
@@ -35,6 +36,8 @@ from typing import TYPE_CHECKING, Literal, Optional
 import swisseph as swe
 
 from app.raman_saab.doctrine import varga_domains as vd
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:                                   # avoid the build_detailed_report import cycle
     from app.raman_saab.detailed_report import DetailedReport
@@ -672,9 +675,9 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         klens = _karmic_lens(r, prim_house, headline)
         dissent = _dissent_summary(conc, div_checks, av_sup, klens, headline)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
-                                      activation, dom_planets, facets, conc,
+                                      activation, dom_planets, facets,
                                       tuple(g for g in graha_conc if g.planet in dom_planets),
-                                      div_checks, av_sup, dissent)
+                                      dissent)
         weight = _weight(convergence, links, r, houses, dom_planets)
 
         themes.append(ThemeReading(
@@ -724,9 +727,14 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
 # pass helpers
 # ─────────────────────────────────────────────────────────────────────────────
 def _safe(fn, default):
+    """Run ``fn``, and on ANY failure return ``default`` instead of aborting the synthesis.
+
+    The overlay must degrade, never crash a reading — but a silent swallow also hides a real
+    defect behind a section that merely goes missing, so the exception is logged at debug."""
     try:
         return fn()
     except Exception:
+        logger.debug("theme_synthesis: a section degraded to its default", exc_info=True)
         return default
 
 
@@ -1144,8 +1152,7 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> tuple[str, Option
 
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
-                          dom_planets, facets, concordance=None, driver_conc=(),
-                          div_checks=(), av_support=(), dissent=None) -> str:
+                          dom_planets, facets, driver_conc=(), dissent=None) -> str:
     """A single astrologer's sentence, not a template. Names the driving planet AND what the
     independent measures say about it (force vs intent), the verdict, and — where the bhava's own
     testimony ledger runs against the verdict, or its matters read against its headline — that
@@ -1507,7 +1514,9 @@ def _divisional_checks(r, spec, facets, headline) -> tuple[DivisionalCheck, ...]
             continue
         n = None
         if label.startswith("D-"):
-            digits = label[2:].split()[0]
+            # a bare "D-" splits to [] and [0] would raise; the varga number is optional here
+            parts = label[2:].split()
+            digits = parts[0] if parts else ""
             n = int(digits) if digits.isdigit() else None
         facet_hit = next((m for m, _v in facets if m.upper() in verdict.upper()), None)
         is_own = (spec.varga is not None and n == spec.varga)
@@ -1719,7 +1728,7 @@ def _span_end_year(r) -> int:
     return _year(jd0 + yrs * _DPY)
 
 
-def _maraka_window_rows(r) -> tuple[tuple[str, str, int], ...]:
+def _maraka_window_rows(r) -> tuple[tuple[str, str, int, str], ...]:
     """The maraka-tier bhuktis carrying Raman's classical Saturn signal, FORWARD of ``ref_jd``.
 
     Raman's step two, and only after the band: a maraka period is fixed by the 2nd/7th-lord
@@ -1807,94 +1816,114 @@ def _ordinal(n: int) -> str:
 
 
 def _weather_windows(r) -> tuple[WeatherWindow, ...]:
-    """Every forward stretch of timing weather, from the three schemes the engine already ran.
+    """Every forward stretch of timing weather, from the four schemes the engine already ran.
 
     Forward-only against ``ref_jd`` (plus whatever is running AT it): a reader asks what is
     coming, and the past stretches are already narrated by the life-chapters. Contiguous runs of
     the same adverse confluence are merged — ``r.dasha_transit_adverse`` carries one row per
-    Saturn pass, and three passes inside one Mahadasha are one rough stretch, not three."""
+    Saturn pass, and three passes inside one Mahadasha are one rough stretch, not three.
+
+    Each scheme is collected under its OWN guard. A single `_safe` around the whole function
+    meant one malformed record anywhere took the entire calendar — and every theme's
+    ``weather_on_window`` with it — down to ``()``, rendering nothing and logging nothing.
+    Partial weather is a real reading; no weather is a silently missing section."""
     ref = getattr(r, "ref_jd", 0.0)
-    out: list[WeatherWindow] = []
 
-    for ph in getattr(r, "sade_sati_phases", ()) or ():
-        if getattr(ph, "end_jd", 0.0) <= ref and not getattr(ph, "current", False):
-            continue
-        y0, y1 = _year(ph.start_jd), _year(ph.end_jd)
-        out.append(WeatherWindow(
-            kind="Sade Sati", label=ph.phase, span=_span(y0, y1), start_year=y0, end_year=y1,
-            current=bool(getattr(ph, "current", False)),
-            detail=(f"Saturn transits the {_ord_house(ph.house_from_moon)} from the natal Moon "
-                    f"(sign {ph.sign})."),
-            governing="PREC-6",
-            citation="HTJAH-II:4679"))
-
-    # merge the adverse dasha x transit rows per (planet, role, Mahadasha run)
-    merged: dict[tuple, list] = {}
-    for w in getattr(r, "dasha_transit_adverse", ()) or ():
-        if getattr(w, "overlap_end_jd", 0.0) <= ref:
-            continue
-        key = (w.planet, w.role, round(w.period_start_jd, 3))
-        merged.setdefault(key, []).append(w)
-    for (planet, role, _ps), rows in merged.items():
-        y0 = min(_year(x.overlap_start_jd) for x in rows)
-        y1 = max(_year(x.overlap_end_jd) for x in rows)
-        bindus = [x.bav_bindus for x in rows if x.bav_bindus is not None]
-        det = (f"{planet} runs as {role} while transiting a sign its own gochara reads adverse"
-               + (f"; {min(bindus)}-{max(bindus)} bindus in its own Bhinnashtakavarga there"
-                  if bindus else "")
-               + (f" ({len(rows)} separate passes)" if len(rows) > 1 else "") + ".")
-        out.append(WeatherWindow(
-            kind="Dasha x adverse transit", label=f"{planet} ({role})", span=_span(y0, y1),
-            start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1), detail=det,
-            governing="PREC-6", citation="HTJAH-II:4679"))
-
-    # the slow-mover long-horizon gochara (r.gochara_outlook): Jupiter/Saturn/Rahu/Ketu segment
-    # by segment. Raw it is 61 forward adverse segments on one chart — because a retrograde pass
-    # back into the same sign is several rows for ONE stretch — so runs with the same
-    # house-from-Moon are merged, and the horizon is the reading's own forward window rather
-    # than the whole ephemeris.
-    horizon = _year(ref) + int(getattr(r, "window_forward", 0) or 0)
-    for planet, segs in (getattr(r, "gochara_outlook", {}) or {}).items():
-        runs: list[list] = []
-        for seg in sorted(segs, key=lambda x: x.start_jd):
-            if getattr(seg, "gochara_good", True) or seg.end_jd <= ref:
+    def _sade_sati() -> list[WeatherWindow]:
+        acc: list[WeatherWindow] = []
+        for ph in getattr(r, "sade_sati_phases", ()) or ():
+            if getattr(ph, "end_jd", 0.0) <= ref and not getattr(ph, "current", False):
                 continue
-            if _year(seg.start_jd) > horizon:
-                continue
-            if runs and runs[-1][-1].house_from_moon == seg.house_from_moon:
-                runs[-1].append(seg)
-            else:
-                runs.append([seg])
-        for run in runs:
-            y0, y1 = _year(run[0].start_jd), _year(run[-1].end_jd)
-            hfm = run[0].house_from_moon
-            out.append(WeatherWindow(
-                kind="Slow-mover gochara", label=f"{planet} in the {_ord_house(hfm)} from Moon",
-                span=_span(y0, y1), start_year=y0, end_year=y1,
-                current=(y0 <= _year(ref) <= y1),
-                detail=(f"{planet} transits the {_ord_house(hfm)} from the natal Moon, which "
-                        f"the gochara scheme reads adverse"
-                        + (f" ({len(run)} passes, retrograde included)" if len(run) > 1 else "")
-                        + "."),
+            y0, y1 = _year(ph.start_jd), _year(ph.end_jd)
+            acc.append(WeatherWindow(
+                kind="Sade Sati", label=ph.phase, span=_span(y0, y1), start_year=y0, end_year=y1,
+                current=bool(getattr(ph, "current", False)),
+                detail=(f"Saturn transits the {_ord_house(ph.house_from_moon)} from the natal "
+                        f"Moon (sign {ph.sign})."),
                 governing="PREC-6", citation="HTJAH-II:4679"))
+        return acc
 
-    for k in getattr(r, "dasa_kakshya", ()) or ():
-        if getattr(k, "end_jd", 0.0) <= ref:
-            continue
-        y0, y1 = _year(k.start_jd), _year(k.end_jd)
-        # the scheme's own `reading` may already name the mechanic ("adverse-neutralised"), so
-        # only append a tag the reading has not stated — otherwise it reads twice in one clause
-        reading = str(getattr(k, "reading", "") or "")
-        tags = [tag for tag, on in (("donated", getattr(k, "donated", False)),
-                                    ("neutralised", getattr(k, "neutralised", False)))
-                if on and tag not in reading]
-        out.append(WeatherWindow(
-            kind="Dasha Kakshya", label=f"{k.maha} MD, {k.ruler} kakshya", span=_span(y0, y1),
-            start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1),
-            detail=(f"The eightfold Kakshya split reads this stretch {reading}"
-                    + (f" ({', '.join(tags)})" if tags else "") + "."),
-            governing="PREC-7", citation="ASP-12:174"))
+    def _adverse_confluence() -> list[WeatherWindow]:
+        # merge the adverse dasha x transit rows per (planet, role, Mahadasha run)
+        acc: list[WeatherWindow] = []
+        merged: dict[tuple, list] = {}
+        for w in getattr(r, "dasha_transit_adverse", ()) or ():
+            if getattr(w, "overlap_end_jd", 0.0) <= ref:
+                continue
+            merged.setdefault((w.planet, w.role, round(w.period_start_jd, 3)), []).append(w)
+        for (planet, role, _ps), rows in merged.items():
+            y0 = min(_year(x.overlap_start_jd) for x in rows)
+            y1 = max(_year(x.overlap_end_jd) for x in rows)
+            bindus = [x.bav_bindus for x in rows if x.bav_bindus is not None]
+            det = (f"{planet} runs as {role} while transiting a sign its own gochara reads "
+                   f"adverse"
+                   + (f"; {min(bindus)}-{max(bindus)} bindus in its own Bhinnashtakavarga there"
+                      if bindus else "")
+                   + (f" ({len(rows)} separate passes)" if len(rows) > 1 else "") + ".")
+            acc.append(WeatherWindow(
+                kind="Dasha x adverse transit", label=f"{planet} ({role})", span=_span(y0, y1),
+                start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1), detail=det,
+                governing="PREC-6", citation="HTJAH-II:4679"))
+        return acc
 
+    def _slow_movers() -> list[WeatherWindow]:
+        # the slow-mover long-horizon gochara (r.gochara_outlook): Jupiter/Saturn/Rahu/Ketu
+        # segment by segment. Raw it is 61 forward adverse segments on one chart — because a
+        # retrograde pass back into the same sign is several rows for ONE stretch — so runs with
+        # the same house-from-Moon are merged, and the horizon is the reading's own forward
+        # window rather than the whole ephemeris.
+        acc: list[WeatherWindow] = []
+        horizon = _year(ref) + int(getattr(r, "window_forward", 0) or 0)
+        for planet, segs in (getattr(r, "gochara_outlook", {}) or {}).items():
+            runs: list[list] = []
+            for seg in sorted(segs, key=lambda x: x.start_jd):
+                if getattr(seg, "gochara_good", True) or seg.end_jd <= ref:
+                    continue
+                if _year(seg.start_jd) > horizon:
+                    continue
+                if runs and runs[-1][-1].house_from_moon == seg.house_from_moon:
+                    runs[-1].append(seg)
+                else:
+                    runs.append([seg])
+            for run in runs:
+                y0, y1 = _year(run[0].start_jd), _year(run[-1].end_jd)
+                hfm = run[0].house_from_moon
+                acc.append(WeatherWindow(
+                    kind="Slow-mover gochara",
+                    label=f"{planet} in the {_ord_house(hfm)} from Moon",
+                    span=_span(y0, y1), start_year=y0, end_year=y1,
+                    current=(y0 <= _year(ref) <= y1),
+                    detail=(f"{planet} transits the {_ord_house(hfm)} from the natal Moon, which "
+                            f"the gochara scheme reads adverse"
+                            + (f" ({len(run)} passes, retrograde included)"
+                               if len(run) > 1 else "")
+                            + "."),
+                    governing="PREC-6", citation="HTJAH-II:4679"))
+        return acc
+
+    def _kakshya() -> list[WeatherWindow]:
+        acc: list[WeatherWindow] = []
+        for k in getattr(r, "dasa_kakshya", ()) or ():
+            if getattr(k, "end_jd", 0.0) <= ref:
+                continue
+            y0, y1 = _year(k.start_jd), _year(k.end_jd)
+            # the scheme's own `reading` may already name the mechanic ("adverse-neutralised"),
+            # so only append a tag the reading has not stated — else it reads twice in one clause
+            reading = str(getattr(k, "reading", "") or "")
+            tags = [tag for tag, on in (("donated", getattr(k, "donated", False)),
+                                        ("neutralised", getattr(k, "neutralised", False)))
+                    if on and tag not in reading]
+            acc.append(WeatherWindow(
+                kind="Dasha Kakshya", label=f"{k.maha} MD, {k.ruler} kakshya", span=_span(y0, y1),
+                start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1),
+                detail=(f"The eightfold Kakshya split reads this stretch {reading}"
+                        + (f" ({', '.join(tags)})" if tags else "") + "."),
+                governing="PREC-7", citation="ASP-12:174"))
+        return acc
+
+    out: list[WeatherWindow] = []
+    for collect in (_sade_sati, _adverse_confluence, _slow_movers, _kakshya):
+        out.extend(_safe(collect, []))
     out.sort(key=lambda w: (w.start_year, w.kind))
     return tuple(out)
 
@@ -2379,9 +2408,17 @@ def _portrait(r, themes, spine, frame, graha_conc=()) -> ExecutivePortrait:
     cur = _safe(lambda: f"{r.synthesis.running_md} MD / {r.synthesis.running_ad} AD", "")
     # the running pratyantardasha — the engine computes the third level and the portrait stopped
     # at the second, so "the current chapter" was coarser than the report's own resolution
+    # ...and it must be the one RUNNING at ref_jd, not pn[0]. `pratyantar_now` holds all nine
+    # pratyantars of the current bhukti, so taking the first named a PD that is not running for
+    # roughly eight ninths of every bhukti (measured: Mainpuri said "Jupiter PD" while Ketu PD
+    # was running). Same selection `_pratyantar_block` in report_html.py already uses.
     pn = (getattr(r, "pratyantar_now", ()) or ())
     if pn and cur:
-        cur += f" / {pn[0].pratyantar} PD"
+        ref = getattr(r, "ref_jd", 0.0)
+        run = next((x for x in pn
+                    if getattr(x, "start_jd", 0.0) <= ref < getattr(x, "end_jd", 0.0)), None)
+        if run is not None:
+            cur += f" / {run.pratyantar} PD"
     stability = _safe(lambda: getattr(r.rect_confidence, "label", "") or "", "") or ""
     if stability:
         stability = (f"{stability} ({r.rect_confidence.stable_count} of "

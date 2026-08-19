@@ -964,3 +964,30 @@ So the pairing is either in a chapter that did not import or is not stated. The
 navigational cross-reference that shipped instead remains the correct surface. A session
 with a complete Studies-in-Jaimini scan should look for an article pairing the two before
 re-opening this.
+
+
+## Thin significations (2026-08-19) — CLOSED, measured, and closed AGAINST adding them
+
+The audit's six thin significations were checked twice with the corpus mounted. Detail and
+anchors live in the `doctrine/significations.py` module docstring; the summary:
+
+* **Four of six ARE Raman's** (H1 character/environment, H2 food/literary gift,
+  H3 writings/neighbours, H5 fame-and-position/discriminating-power) — HPA-19:64-67,
+  :114-117, :190-193, :300-303.
+* **Three are not his, in the bhava requested**: H5 speculation (absent), H5 upasana
+  (worship is his 12th-house matter, HPA-19:785), H6 servants (absent), H12 bed-comforts
+  (absent). BPHS/classical attributions, barred by the divergence firewall.
+* **The four he does state were added and MEASURED, then reverted**: cross-layer agreement
+  fell **0.475 → 0.439** and 62 tier-3 evidence snapshots churned. The scored golden
+  ratchet did NOT move (259/293) because a new signification carries no golden expectation
+  and is never scored — which is precisely why the ratchet alone was not a sufficient gate
+  here, and the convergence test was.
+
+**The doctrinal reason**: naming a matter is not giving rules to judge it. Raman lists
+these in a definitional sentence and gives no combinations for them, so a signification
+added here routes to no rule bucket and is decided by the polarity fallback — a verdict
+manufactured from no evidence.
+
+**To re-open**: the prerequisite is the RULE BUCKET, not the row. Find Raman's combinations
+for the matter, encode those, and the signification follows. The audit's own phrasing ("an
+add-only row + a rule bucket") had it right; only the row is cheap.

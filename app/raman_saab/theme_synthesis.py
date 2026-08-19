@@ -131,6 +131,9 @@ class ThemeReading:
     #: the reading). Names the age the window falls at and, where one exists, the maraka-tier
     #: confluence it coincides with — disclosure of the method, never a forecast.
     activation_in_span: str = ""
+    #: every axis the convergence count admitted, each tagged with its remove from the headline
+    #: — the disclosure that keeps the count from claiming an independence it does not have
+    convergence_axes: tuple[ConvergenceAxis, ...] = ()
     #: what transit weather runs ACROSS this theme's own window (PREC-6/PREC-7 — subordinate)
     weather_on_window: str = ""
     #: the non-Raman ancestral screen where it bears on this bhava — a DIFFERENT layer, never a
@@ -294,6 +297,36 @@ class TransitNote:
     vedha_by: tuple[str, ...]       # obstructing planets, if any
     net_good: bool                  # the engine's own net verdict AFTER vedha
     note: str
+
+
+@dataclass(frozen=True)
+class ConvergenceAxis:
+    """One axis counted toward convergence, tagged with its REMOVE from the headline.
+
+    The counter used to print "N of M **independent** axes agree with the headline". An audit of
+    the actual data flow showed that claim did not hold for three of the four families it counted:
+
+    * a facet's "dedicated reader" verdict is literally ``judge_house(chart, h).significations[sig]``
+      (`dasamsa_career_reading.py:74-77` and five copies of the same helper) — and the headline is
+      ``_rollup()`` min-ing over those very significations (`house_template.py:1992-2005`). The
+      counter excluded the primary rollup as "its own witness" and then admitted its summands;
+    * the D9 link is ``significations[0].ledger.navamsa_status``, which is an INPUT to ``_decide``
+      (`house_template.py:387-395`, `:478`, `:650`) — a verdict ingredient re-read as a vote, and
+      used a second time as the gate on the top tier;
+    * a network house is admitted by ``_discover_support`` only when a dominant planet of the
+      primary house touches it — the selection rule IS a shared-cause rule;
+    * yogas modulate the verdict upstream (`house_template.py:1127-1178`) AND scored nothing at
+      all, because ``_dir`` returns 0 for "favourable-leaning" — 37 links across 24 themes, zero
+      votes. The axis was dead code claiming to count.
+
+    So each axis now carries ``remove``, and the reading states it. Nothing is hidden: the full
+    inventory still renders; what changed is that it no longer claims an independence it lacks."""
+    label: str
+    lean: str
+    direction: int                  # +1 agrees, -1 opposes, 0 bears but carries no direction
+    remove: str                     # 'restates the verdict's own inputs' | 'shares its drivers'
+                                    # | 'separate testimony'
+    why_remove: str
 
 
 @dataclass(frozen=True)
@@ -662,16 +695,20 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         links.extend(_transit_links(r, houses, dom_planets, planet_houses))
         links.extend(_insight_links(r, houses))
 
-        # pass 4: convergence (evidentiary count, both poles)
-        convergence, conv_label, why = _convergence(headline, facets, links, r)
+        # the two genuinely SEPARATE checks — computed before convergence so it can count them.
+        # They used to be built after it, which is part of why the count had no independent basis.
+        div_checks = _safe(lambda: _divisional_checks(r, spec, facets, headline), ()) or ()
+        av_sup = _av_support(r, prim_house, dom_planets)
+
+        # pass 4: convergence (evidentiary count, both poles, each axis at its own remove)
+        convergence, conv_label, why, conv_axes = _convergence(
+            headline, facets, links, r, div_checks, av_sup)
         # pass 5: contradictions — ONE consolidated statement per axis, not one per matter
         contradictions = _contradictions(r, prim_house, pf, headline, facets, name)
 
         activation, act_years = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
         conc = _bhava_concordance(r, prim_house)
-        div_checks = _divisional_checks(r, spec, facets, headline)
-        av_sup = _av_support(r, prim_house, dom_planets)
         klens = _karmic_lens(r, prim_house, headline)
         dissent = _dissent_summary(conc, div_checks, av_sup, klens, headline)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
@@ -685,6 +722,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             karakas=domain.karakas, headline_verdict=headline, driver=driver, sub_matters=facets,
             dominant_planets=dom_planets, links=tuple(links), convergence=convergence,
             convergence_label=conv_label, convergence_why=why, contradictions=contradictions,
+            convergence_axes=conv_axes,
             activation_span=activation, varga_relation=varga_rel, final_interpretation=final,
             evidence_weight=weight,
             concordance=conc,
@@ -957,31 +995,97 @@ def _insight_links(r, houses) -> list[ThemeEvidenceLink]:
     return out
 
 
-def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
-    """Count agreeing vs opposing INDEPENDENT direction-bearing axes (the support-house verdicts,
-    the facet dashboard verdicts, D9, and yoga leans — NOT the headline itself, which would
-    trivially agree). Returns (tier, reader_label, why). Always reports both poles; convergence
-    is evidentiary agreement, never a probability."""
+#: how far a counted axis stands from the headline it is said to corroborate.
+_RESTATES = "restates the verdict's own inputs"
+_SHARES = "shares the verdict's drivers"
+_SEPARATE = "separate testimony"
+
+
+def _classify_axis(lk) -> tuple[str, str]:
+    """Place one counted link at its remove from the headline. See ``ConvergenceAxis``."""
+    if lk.axis == "varga":
+        return _RESTATES, ("the navamsa status is an input to the house verdict itself "
+                           "(house_template.py:387-395) — the rollup was computed WITH it")
+    if lk.axis == "yoga":
+        return _SHARES, ("a fired yoga already modulated this house's verdict upstream "
+                         "(house_template.py:1127-1178), so it is not a second opinion")
+    if lk.label.startswith("House ") and "(network)" in lk.label:
+        return _SHARES, ("a network house is admitted only because a driving graha of the "
+                         "primary house touches it — the selection rule is a shared-cause rule")
+    if "dedicated reader" in lk.label:
+        return _RESTATES, ("the dedicated reader returns a signification of this same bhava, and "
+                           "the headline is the rollup OVER those significations "
+                           "(house_template.py:1992-2005)")
+    return _SEPARATE, "measured independently of the house verdict"
+
+
+def _convergence(headline, facets, links, r, div_checks=(), av_support=()
+                 ) -> tuple[Convergence, str, str, tuple[ConvergenceAxis, ...]]:
+    """How much of the report's own machinery lines up behind the headline — AND AT WHAT REMOVE.
+
+    This is an inventory with its dependencies disclosed, not a tally of independent votes. Every
+    admitted axis is tagged (``ConvergenceAxis.remove``) and the reading states the breakdown, so
+    a reader can tell corroboration from the verdict restating itself.
+
+    Two corrections to what was counted:
+
+    * the ASSIGNED DIVISION (the theme's own varga, e.g. D-10 for career) and ASHTAKAVARGA are
+      genuinely separate testimony — measured outside the house verdict entirely — and neither was
+      ever counted. They are now, which is what finally gives the tier a real independent basis;
+    * the yoga axis scored nothing on any chart because ``_dir`` returns 0 for the
+      "favourable-leaning"/"adverse-leaning" strings ``_yoga_record_lean`` emits. It now scores,
+      tagged as sharing the verdict's drivers rather than standing apart from them.
+
+    Returns (tier, reader_label, why, axes). Both poles are always reported; convergence is
+    evidentiary agreement, never a probability."""
     from app.raman_saab.insight_digest import _lean_of
     head = _dir(_lean_of(headline))
-    agree = oppose = 0
+    axes: list[ConvergenceAxis] = []
+
     for lk in links:
         if lk.axis not in ("verdict", "varga", "yoga"):
             continue
-        # the primary-house rollup IS the headline — don't count it as its own witness
+        # the primary-house rollup IS the headline — never its own witness (PREC-3)
         if lk.label.startswith("House ") and "rollup" in lk.label and "(network)" not in lk.label:
             continue
-        d = _dir(lk.lean)
-        if d == 0 or head == 0:
+        remove, why_rm = _classify_axis(lk)
+        axes.append(ConvergenceAxis(label=lk.label, lean=lk.lean, direction=_dir(lk.lean),
+                                    remove=remove, why_remove=why_rm))
+
+    # the two genuinely separate checks the counter never admitted
+    for d in div_checks:
+        if d.relation not in ("concurs", "diverges"):
             continue
-        agree += (d == head)
-        oppose += (d != head)
+        axes.append(ConvergenceAxis(
+            label=f"{d.varga} (assigned division)", lean=d.relation,
+            direction=(head if d.relation == "concurs" else -head), remove=_SEPARATE,
+            why_remove=("the varga is cast and judged on its own; it corroborates the D1 core "
+                        "and never decides it (PREC-11)")))
+    if av_support:
+        backed = sum(1 for a in av_support if a.verdict == "well supported")
+        thin = sum(1 for a in av_support if a.verdict == "poorly supported")
+        if backed or thin:
+            d = 1 if backed > thin else -1 if thin > backed else 0
+            axes.append(ConvergenceAxis(
+                label="Ashtakavarga on the driving grahas", lean=
+                ("well supported" if d > 0 else "poorly supported" if d < 0 else "even"),
+                direction=d if head > 0 else -d if head < 0 else 0, remove=_SEPARATE,
+                why_remove=("bindus are an independent measurement, at the lower-reliability "
+                            "tier Raman's own caveat assigns them (PREC-4, HTJAH-II:4453)")))
+
+    agree = sum(1 for a in axes if head != 0 and a.direction == head)
+    oppose = sum(1 for a in axes if head != 0 and a.direction != 0 and a.direction != head)
+    present = agree + oppose
+    sep = [a for a in axes if a.remove == _SEPARATE and a.direction != 0]
+    sep_agree = sum(1 for a in sep if a.direction == head) if head else 0
+    restating = sum(1 for a in axes if a.remove == _RESTATES and a.direction != 0)
+    sharing = sum(1 for a in axes if a.remove == _SHARES and a.direction != 0)
+
     d9 = any(lk.axis == "varga" and _dir(lk.lean) == head and head != 0 for lk in links)
     active = any(lk.axis == "dasha" for lk in links)
-    present = agree + oppose
+
     # a NON-DIRECTIONAL headline (a 'mixed' rollup) has nothing for an axis to agree or disagree
-    # with, so the counting loop above skips every link. Reporting that as WEAK/'aligned' would
-    # claim an alignment that was never tested — say plainly that the headline is undecided.
+    # with. Reporting that as WEAK/'aligned' would claim an alignment that was never tested.
     if head == 0:
         conv: Convergence = "MIXED"
     elif present >= 5 and oppose == 0 and d9 and active:
@@ -994,7 +1098,7 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
         conv = "WEAK"
     else:
         conv = "MIXED"
-    # reader label — 'weak' when few axes AGREE is misleading; call that 'lightly evidenced'
+
     if head == 0:
         label = "the headline itself is undecided"
     elif conv == "WEAK":
@@ -1003,15 +1107,37 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
         label = "the evidence splits both ways"
     else:
         label = conv.replace("_", " ").lower() + " convergence"
-    counted = ("the headline is undecided, so no axis can agree or oppose it (0 agree, 0 oppose)"
-               if head == 0 else
-               f"{agree} of {present} independent axes agree with the headline and "
-               f"{oppose} oppose it")
-    why = (f"{counted} "
+
+    if head == 0:
+        counted = "the headline is undecided, so no axis can agree or oppose it (0 agree, 0 oppose)"
+    else:
+        counted = (f"{agree} of {present} axes bearing on this agree with the headline and "
+                   f"{oppose} oppose it")
+    # the disclosure the old sentence lacked: the count is NOT a tally of independent witnesses
+    breakdown = ""
+    if head != 0 and present:
+        parts = []
+        if restating:
+            parts.append(f"{restating} restate{'s' if restating == 1 else ''} "
+                         f"the verdict's own inputs")
+        if sharing:
+            parts.append(f"{sharing} share{'s' if sharing == 1 else ''} its drivers")
+        parts.append(f"{len(sep)} stand{'s' if len(sep) == 1 else ''} apart from it"
+                     + (f", {sep_agree} of them agreeing" if sep else ""))
+        breakdown = " — of those {n}, ".format(n=present) + "; ".join(parts)
+    # axes that BEAR on the theme without asserting a direction are disclosed, never dropped:
+    # a fired yoga's lean is "favourable-leaning", deliberately hedged, and forcing it to +1/-1
+    # would assert a direction the engine declined to state.
+    silent = [a for a in axes if a.direction == 0]
+    if silent:
+        breakdown += (f". A further {len(silent)} bear on it without asserting a direction "
+                      f"(chiefly the fired yogas, whose lean the engine states as "
+                      f"'-leaning' rather than as a verdict)")
+    why = (f"{counted}{breakdown} "
            f"({'the navamsa confirms' if d9 else 'the navamsa is neutral/absent'}; "
            f"{'the running period lights it' if active else 'not currently lit'}); "
-           f"an evidentiary count, not a probability.")
-    return conv, label, why
+           f"an evidentiary count with its dependencies disclosed, not a probability.")
+    return conv, label, why, tuple(axes)
 
 
 def _contradictions(r, prim_house, pf, headline, facets, theme_name) -> tuple[Contradiction, ...]:

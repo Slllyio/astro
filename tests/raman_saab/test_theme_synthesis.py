@@ -1169,3 +1169,92 @@ class TestThemeSynthesisContract:
             # and it must not merely be pn[0] coinciding — assert the bug's own signature is gone
             if pn[0].pratyantar != run.pratyantar:
                 assert f"{pn[0].pratyantar} PD" not in cur
+
+    def test_convergence_never_claims_independence_it_lacks(self, mainpuri, canonical):
+        """The counter used to print "N of M INDEPENDENT axes agree with the headline". An audit
+        of the data flow showed the claim was false for three of the four families it counted, so
+        the word is now forbidden and every axis carries its own remove from the headline."""
+        from app.raman_saab.theme_synthesis import _RESTATES, _SHARES, _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                assert "independent axes" not in t.convergence_why
+                for ax in t.convergence_axes:
+                    assert ax.remove in (_RESTATES, _SHARES, _SEPARATE)
+                    assert ax.why_remove and ax.direction in (-1, 0, 1)
+
+    def test_each_axis_sits_at_its_measured_remove(self, mainpuri, canonical):
+        """The classification is not decorative — each family is placed by what the code does.
+
+        A facet's "dedicated reader" verdict IS `judge_house(h).significations[sig]` and the
+        headline is `_rollup()` over those same significations (house_template.py:1992-2005); the
+        D9 link is `navamsa_status`, an input to `_decide` (house_template.py:387-395); a network
+        house is admitted only when a driving graha of the primary house touches it. None of the
+        three is a second opinion, and only the assigned division and Ashtakavarga stand apart."""
+        from app.raman_saab.theme_synthesis import _RESTATES, _SHARES, _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                for ax in t.convergence_axes:
+                    if "dedicated reader" in ax.label or ax.label.startswith("D9 "):
+                        assert ax.remove == _RESTATES
+                    elif "(network)" in ax.label or "Yoga" in ax.label:
+                        assert ax.remove == _SHARES
+                    else:
+                        assert ax.remove == _SEPARATE
+                # the primary rollup is never its own witness (PREC-3) — it must not appear
+                prim = f"House {t.houses[0]} rollup"
+                assert not any(a.label == prim for a in t.convergence_axes)
+
+    def test_the_separate_testimony_is_actually_counted(self, mainpuri, canonical):
+        """The assigned division and Ashtakavarga are the only genuinely separate checks in this
+        set — measured outside the house verdict entirely — and neither was ever admitted to the
+        count. Without them the tier had no independent basis at all."""
+        from app.raman_saab.theme_synthesis import _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                sep = [a for a in t.convergence_axes if a.remove == _SEPARATE]
+                own_div = [d for d in t.divisional_checks
+                           if d.relation in ("concurs", "diverges")]
+                for d in own_div:
+                    assert any(d.varga in a.label for a in sep)
+                # ...but only when AV has something to assert. Every driver reading "about
+                # average" is a genuine abstention, not a missing axis (Canonical fortune).
+                decisive = [a for a in t.av_support
+                            if a.verdict in ("well supported", "poorly supported")]
+                assert bool(decisive) == any("Ashtakavarga" in a.label for a in sep)
+
+    def test_a_diverging_division_opposes_whatever_the_headline_says(self, mainpuri, canonical):
+        """Sign check. 'concurs' means the varga agrees with the HEADLINE, in whichever direction
+        the headline points — writing a flat +1 made a diverging varga *agree* with an afflicted
+        rollup, an inversion on exactly the themes where the disagreement matters most."""
+        from app.raman_saab.insight_digest import _lean_of
+        from app.raman_saab.theme_synthesis import _dir
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                head = _dir(_lean_of(t.headline_verdict))
+                if head == 0:
+                    continue
+                for d in t.divisional_checks:
+                    if d.relation not in ("concurs", "diverges"):
+                        continue
+                    ax = next(a for a in t.convergence_axes if d.varga in a.label)
+                    if d.relation == "concurs":
+                        assert ax.direction == head
+                    else:
+                        assert ax.direction == -head
+
+    def test_the_stated_breakdown_reconciles_with_the_count(self, mainpuri, canonical):
+        """'N of M agree… of those M, a restate / b share / c stand apart' must add up — an
+        earlier draft counted M over directional axes and the breakdown over ALL of them, so the
+        sentence contradicted itself in print."""
+        import re as _re
+        from app.raman_saab.theme_synthesis import _SEPARATE, _RESTATES, _SHARES
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                m = _re.search(r"of those (\d+), ", t.convergence_why)
+                if not m:
+                    continue
+                total = int(m.group(1))
+                directional = [a for a in t.convergence_axes if a.direction != 0]
+                assert total == len(directional)
+                assert total == sum(1 for a in directional
+                                    for _ in [0] if a.remove in (_RESTATES, _SHARES, _SEPARATE))

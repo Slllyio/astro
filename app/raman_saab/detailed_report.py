@@ -4239,6 +4239,13 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
             L.append(f"- **Within this house** — {facets}.")
         L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
+        # every counted axis at its REMOVE from the headline — the disclosure that stops the
+        # count claiming an independence it does not have
+        for ax in getattr(t, "convergence_axes", ()) or ():
+            arrow = ("agrees" if ax.direction > 0 else "opposes" if ax.direction < 0
+                     else "no direction")
+            L.append(f"    - {_md_cell(ax.label)} ({_md_cell(ax.lean)}) — {arrow}; "
+                     f"{_md_cell(ax.remove)} — {_md_cell(ax.why_remove)}")
         if getattr(t, "activation_in_span", ""):
             L.append(f"- **That window inside the span** — {t.activation_in_span}")
         if getattr(t, "weather_on_window", ""):

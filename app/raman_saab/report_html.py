@@ -866,7 +866,14 @@ def _themes_section(r: DetailedReport) -> str:
             facets = "; ".join(f"{_esc(m)} reads {_esc(v)}" for m, v in t.sub_matters)
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
-                   f'{_esc(t.convergence_why)}</li>')
+                   f'{_esc(t.convergence_why)}')
+        for ax in getattr(t, "convergence_axes", ()) or ():
+            arrow = ("agrees" if ax.direction > 0 else "opposes" if ax.direction < 0
+                     else "no direction")
+            out.append(f'<br><span class="muted">{_esc(ax.label)} ({_esc(ax.lean)}) '
+                       f'&mdash; {arrow}; {_esc(ax.remove)} &mdash; '
+                       f'{_esc(ax.why_remove)}</span>')
+        out.append('</li>')
         if getattr(t, "activation_in_span", ""):
             out.append(f'<li><b>That window inside the span</b> &mdash; '
                        f'{_esc(t.activation_in_span)}</li>')

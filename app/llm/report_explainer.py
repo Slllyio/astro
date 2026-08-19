@@ -492,6 +492,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             dom = ", ".join(th.get("dominant_planets", [])) or "the chart"
             _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv}), driven "
                       f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
+            for _ax in th.get("convergence_axes", []):
+                _dirw = ("agrees with" if _ax["direction"] > 0
+                         else "opposes" if _ax["direction"] < 0 else "carries no direction on")
+                _f(facts, f"Convergence axis for {th['name']}: {_ax['label']} ({_ax['lean']}) "
+                          f"{_dirw} the headline; it {_ax['remove']} — {_ax['why_remove']}.")
             for m, v in th.get("sub_matters", []):
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             if th.get("activation_span"):

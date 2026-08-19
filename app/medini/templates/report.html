@@ -694,6 +694,25 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v36 — the three career centres */
+  'The 10th reckoned from all three centres':'तीनों केन्द्रों से गणित दशम भाव',
+  'The 10th from Lagna, the Moon and the Sun':'लग्न, चन्द्र और सूर्य से दशम',
+  'centre':'केन्द्र',
+  'strongest':'सर्वाधिक बलवान',
+  'its 10th':'उसका दशम',
+  '10th lord':'दशमेश',
+  'navamsa dispositor':'नवांश स्वामी',
+  'Raman\u2019s vocation words':'रमण के व्यवसाय-शब्द',
+  'strength':'बल',
+  'rupas':'रूप',
+  'measure':'माप',
+  'Strongest centre':'सर्वाधिक बलवान केन्द्र',
+  'Reckoning from it':'उससे गणना',
+  'Blended':'मिश्रित',
+  'Convergent across centres':'केन्द्रों में समान',
+  'On convergence':'समानता पर',
+  'One planet, several hats':'एक ग्रह, कई भूमिकाएँ',
+  'H10 activation in the window (a timing lens, never a promise)':'इस अवधि में दशम भाव की सक्रियता (काल-दृष्टि, वचन नहीं)',
   /* v35 — the HPA-29 medical read */
   'Raman\u2019s own procedure':'रमण की अपनी विधि',
   'The 6th from lagna':'लग्न से षष्ठ भाव',
@@ -3121,7 +3140,37 @@ function render(R, S, FQ){
     add(H2('Profession synthesis'));
     if((pf.convergent||[]).length) add(para('Convergent trades (named by ≥2 angles): '+pf.convergent.map(c=>c[0]+' ('+c[1]+')').join(', '),'lede'));
     for(const s2 of (pf.sources||[])) add(para(s2.source+' → '+s2.key+': '+s2.trades+' ('+s2.cite+')'+(s2.note?(' — '+s2.note):''),'muted'));
-    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted')); }
+    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted'));
+    /* completeness repair 2026-08-19: the D-10 row, the H10 activation windows and the
+       same-graha disclosure ship in the JSON and rendered on markdown + standalone but
+       never here, so the page had been showing a strictly smaller profession chapter. */
+    if((pf.dasamsa_row||[]).length>=4) add(para(pf.dasamsa_row[0]+' → '+pf.dasamsa_row[1]+': '+pf.dasamsa_row[2]+' ('+pf.dasamsa_row[3]+')','muted'));
+    if(pf.convergence_note) add(para(t('One planet, several hats')+' — '+pf.convergence_note,'muted'));
+    for(const w of (pf.h10_windows||[])) add(para(t('H10 activation in the window (a timing lens, never a promise)')+' — '+w,'muted'));
+    /* v36 — the 10th reckoned from all THREE of Raman's centres (HTJAH-I:13960-13962).
+       Every derivation above reckons from the Lagna alone, one frame of the three. */
+    const cfr=pf.career_frames;
+    if(cfr){
+      add(para(t('The 10th reckoned from all three centres'),'muted'));
+      add(para('\u201c'+cfr.rule+'\u201d ('+cfr.citation+')','quote'));
+      const cft=(cfr.frames||[]).map(f=>({
+        [t('centre')]:f.centre+(f.is_strongest?(' ('+t('strongest')+')'):''),
+        [t('its 10th')]:f.tenth_sign_name,
+        [t('10th lord')]:f.tenth_lord+(f.tenth_lord_house?(' (h'+f.tenth_lord_house+')'):''),
+        [t('navamsa dispositor')]:f.navamsa_dispositor||'—',
+        [t('Raman\u2019s vocation words')]:f.trade||f.note||'—',
+        [t('strength')]:f.strength_rupas+' '+t('rupas'),
+        [t('measure')]:f.strength_basis}));
+      const cftab=sectionTable(t('The 10th from Lagna, the Moon and the Sun'), cft, null,
+        t('Raman reckons the 10th from all three centres and reads from the strongest. The Lagna carries a bhava bala and the luminaries a shadbala \u2014 the mixed comparison is his own (HTJAH-I:13986), and each centre\u2019s measure is named beside it.'));
+      if(cftab) add(cftab);
+      add(para(t('Strongest centre')+' — '+cfr.strongest_why,'muted'));
+      add(para(t('Reckoning from it')+' — '+cfr.leading_indication));
+      if(cfr.blended) add(para(t('Blended')+' — '+cfr.blended_note,'muted'));
+      if((cfr.convergent||[]).length) add(para(t('Convergent across centres')+' — '+cfr.convergent.map(c=>c[0]+' ('+c[1]+')').join(', ')));
+      add(para(t('On convergence')+' — '+cfr.convergence_note,'muted'));
+      add(para(cfr.caution,'muted'));
+    } }
 
   // ===== Wealth chapter (v24) — completeness repair 2026-08-14 =====
   if(R.wealth){ const wc=R.wealth;

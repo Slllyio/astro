@@ -3431,6 +3431,39 @@ def to_html(r: DetailedReport) -> str:
             conv += ('<p class="section-sub"><b>H10 activations in the window</b> '
                      '(a timing lens, never a promise) &mdash; '
                      + _esc("; ".join(pf.h10_windows)) + '</p>')
+        # v36 (2026-08-19): the 10th from all THREE of Raman's centres (HTJAH-I:13960-13962).
+        _cf = getattr(pf, "career_frames", None)
+        if _cf is not None:
+            _rows = "".join(
+                f'<tr><td>{_esc(f.centre)}'
+                + (' <b>(strongest)</b>' if f.is_strongest else '')
+                + f'</td><td>{_esc(f.tenth_sign_name)}</td>'
+                  f'<td>{_esc(f.tenth_lord)}'
+                + (f' (h{f.tenth_lord_house})' if f.tenth_lord_house else '')
+                + f'</td><td>{_esc(f.navamsa_dispositor) or "&mdash;"}</td>'
+                  f'<td>{_esc(f.trade) or _esc(f.note) or "&mdash;"}</td>'
+                  f'<td>{f.strength_rupas} rupas</td>'
+                  f'<td>{_esc(f.strength_basis)}</td></tr>' for f in _cf.frames)
+            conv += (
+                '<h3>The 10th reckoned from all three centres</h3>'
+                f'<blockquote class="quote">{_esc(_cf.rule)}'
+                f'<footer>{_esc(_cf.citation)}</footer></blockquote>'
+                '<table><thead><tr><th>Centre</th><th>Its 10th</th><th>10th lord</th>'
+                '<th>Navamsa dispositor</th><th>Raman&rsquo;s vocation words</th>'
+                '<th>Strength</th><th>Measure</th></tr></thead>'
+                f'<tbody>{_rows}</tbody></table>'
+                f'<p class="section-sub"><b>Strongest centre</b> &mdash; '
+                f'{_esc(_cf.strongest_why)}</p>'
+                f'<p class="section-sub"><b>Reckoning from it</b> &mdash; '
+                f'{_esc(_cf.leading_indication)}</p>'
+                + (f'<p class="section-sub"><b>Blended</b> &mdash; '
+                   f'{_esc(_cf.blended_note)}</p>' if _cf.blended else '')
+                + (f'<p class="section-sub"><b>Convergent across centres</b> &mdash; '
+                   + _esc(", ".join(f"{w} ({n})" for w, n in _cf.convergent))
+                   + '</p>' if _cf.convergent else '')
+                + f'<p class="section-sub"><b>On convergence</b> &mdash; '
+                  f'{_esc(_cf.convergence_note)}</p>'
+                + f'<p class="muted"><i>{_esc(_cf.caution)}</i></p>')
         modes = ("" if not pf.mode_split else
                  '<p class="section-sub"><b>H10 mode split</b> &mdash; '
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')

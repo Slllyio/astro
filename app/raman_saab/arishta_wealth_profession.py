@@ -148,6 +148,11 @@ class ProfessionSynthesis:
     dasamsa_row: tuple[str, ...] = ()          # (derivation, resolves to, reading, cite)
     h10_windows: tuple[str, ...] = ()          # H10 activations from the timeline
     convergence_note: str = ""                 # same-graha multiple-hats disclosure
+    # v36 (2026-08-19, corpus-unblocked): the 10th reckoned from all THREE of Raman's
+    # centres — Lagna, the Moon and the Sun (HTJAH-I:13960-13962). Every row above this
+    # one reckons from the Lagna alone, which is one frame of the three he names. None,
+    # not (), when the chart cannot support the reckoning.
+    career_frames: object = None
 
 
 def build_profession_synthesis(r: "DetailedReport") -> Optional[ProfessionSynthesis]:
@@ -269,10 +274,18 @@ def build_profession_synthesis(r: "DetailedReport") -> Optional[ProfessionSynthe
         f"{len(hats)} times in the convergence tally, not {len(hats)} "
         f"independent confirmations"
         for planet, hats in by_planet.items() if len(hats) >= 2)
+    # v36: the three-centre reckoning. Its own try, like every other block here — and
+    # report-only: `career_frames` is imported by nothing in the verdict path.
+    try:
+        from app.raman_saab.judges.career_frames import build_career_frames
+        _frames = build_career_frames(r)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        _frames = None
     return ProfessionSynthesis(sources=tuple(srcs), mode_split=tuple(modes),
                                convergent=convergent,
                                dasamsa_row=d10_row, h10_windows=h10,
-                               convergence_note=conv_note)
+                               convergence_note=conv_note,
+                               career_frames=_frames)
 
 
 # ── v24 Wealth chapter ──────────────────────────────────────────────────────────

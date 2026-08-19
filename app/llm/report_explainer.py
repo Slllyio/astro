@@ -438,6 +438,53 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
         _append_linked_insights(R, key, facts)
         return facts
+    if key == "profession":
+        # v36 — the profession chapter, decomposed one-claim-per-fact. The generic
+        # `section:<key>` fallback surfaced a single field here, so a model explaining the
+        # work chapter had almost nothing grounded to cite; the three-centre reckoning in
+        # particular was invisible to it.
+        pf = R.get("profession") or {}
+        if not pf:
+            return facts
+        for _s in pf.get("sources") or []:
+            _f(facts, f"Vocation derivation — {_s.get('source')} resolves to "
+                      f"{_s.get('key')}: {_s.get('trades')}"
+                      + (f" ({_s['note']})" if _s.get("note") else ""),
+               cite=_s.get("cite") or None)
+        if pf.get("convergent"):
+            _f(facts, "Trade words named by two or more derivations: "
+                      + ", ".join(f"{w} ({n})" for w, n in pf["convergent"])
+                      + ". Convergence across independent derivations is the signal; a "
+                        "single derivation naming a trade is not.")
+        if pf.get("convergence_note"):
+            _f(facts, f"One planet wearing several hats: {pf['convergence_note']} — these "
+                      f"are not independent confirmations.")
+        _d10 = pf.get("dasamsa_row") or []
+        if len(_d10) >= 4:
+            _f(facts, f"{_d10[0]} resolves to {_d10[1]}; {_d10[2]}", cite=_d10[3])
+        for _w in pf.get("h10_windows") or []:
+            _f(facts, f"H10 activation in the window (a timing lens, never a promise): {_w}")
+        _cf = pf.get("career_frames")
+        if _cf:
+            _f(facts, f"Raman reckons the 10th from THREE centres, not one: \"{_cf['rule']}\"",
+               cite=_cf.get("citation") or "HTJAH-I:13960")
+            for _fr in _cf.get("frames") or []:
+                _f(facts, f"From the {_fr['centre']} ({_fr['centre_sign_name']}): the 10th is "
+                          f"{_fr['tenth_sign_name']}, its lord {_fr['tenth_lord']}, whose "
+                          f"navamsa dispositor is {_fr['navamsa_dispositor'] or 'not resolvable'}"
+                          + (f" — {_fr['trade']}" if _fr.get("trade") else "")
+                          + (f". {_fr['note']}" if _fr.get("note") else "")
+                          + f" This centre carries {_fr['strength_rupas']} rupas "
+                            f"({_fr['strength_basis']}).",
+                   cite="HTJAH-I:13960")
+            _f(facts, f"The strongest of the three centres is the {_cf['strongest']}. "
+                      f"{_cf['strongest_why']} Reckoning from it: {_cf['leading_indication']}.",
+               cite="HTJAH-I:13961")
+            if _cf.get("blended"):
+                _f(facts, f"Blending case: {_cf['blended_note']}", cite="HTJAH-I:13957")
+            _f(facts, str(_cf.get("convergence_note", "")), cite="HTJAH-I:13974")
+            _f(facts, str(_cf.get("caution", "")), cite="HTJAH-I:13959")
+        return facts
     if key == "medical":
         # v35 — the HPA-29 medical read. One fact per clause of Raman's own procedure, so
         # the model cites the testimony it is narrating; the caveat is a fact of its own so

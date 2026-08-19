@@ -6382,6 +6382,38 @@ def to_markdown(r: DetailedReport) -> str:
         if getattr(pf, "h10_windows", ()):
             L.append("- **H10 activations in the window** (a timing lens, never a "
                      "promise) — " + "; ".join(pf.h10_windows))
+        # v36 (2026-08-19): the 10th from all THREE of Raman's centres. Every derivation
+        # above reckons from the Lagna alone — one frame of the three he names.
+        _cf = getattr(pf, "career_frames", None)
+        if _cf is not None:
+            L.append("")
+            L.append("### The 10th reckoned from all three centres")
+            L.append("")
+            L.append(f"_\"{_md_cell(_cf.rule)}\" ({_md_cell(_cf.citation)})_")
+            L.append("")
+            L.append("| Centre | Its 10th | 10th lord | Navamsa dispositor | "
+                     "Raman's vocation words | Strength | Measure |")
+            L.append("|---|---|---|---|---|---|---|")
+            for _f in _cf.frames:
+                _star = " **(strongest)**" if _f.is_strongest else ""
+                L.append(f"| {_md_cell(_f.centre)}{_star} "
+                         f"| {_md_cell(_f.tenth_sign_name)} "
+                         f"| {_md_cell(_f.tenth_lord)}"
+                         + (f" (h{_f.tenth_lord_house})" if _f.tenth_lord_house else "")
+                         + f" | {_md_cell(_f.navamsa_dispositor) or '-'} "
+                         f"| {_md_cell(_f.trade) or _md_cell(_f.note) or '-'} "
+                         f"| {_f.strength_rupas} rupas "
+                         f"| {_md_cell(_f.strength_basis)} |")
+            L.append("")
+            L.append(f"- **Strongest centre** — {_md_cell(_cf.strongest_why)}")
+            L.append(f"- **Reckoning from it** — {_md_cell(_cf.leading_indication)}")
+            if _cf.blended:
+                L.append(f"- **Blended** — {_md_cell(_cf.blended_note)}")
+            if _cf.convergent:
+                L.append("- **Convergent across centres** — "
+                         + ", ".join(f"{w} ({n})" for w, n in _cf.convergent))
+            L.append(f"- **On convergence** — {_md_cell(_cf.convergence_note)}")
+            L.append(f"- _{_md_cell(_cf.caution)}_")
         L.append("")
 
     # ── wealth chapter (v24 — the channels, not a single verdict) ─────────────

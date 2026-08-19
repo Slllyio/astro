@@ -1169,3 +1169,202 @@ class TestThemeSynthesisContract:
             # and it must not merely be pn[0] coinciding — assert the bug's own signature is gone
             if pn[0].pratyantar != run.pratyantar:
                 assert f"{pn[0].pratyantar} PD" not in cur
+
+    def test_convergence_never_claims_independence_it_lacks(self, mainpuri, canonical):
+        """The counter used to print "N of M INDEPENDENT axes agree with the headline". An audit
+        of the data flow showed the claim was false for three of the four families it counted, so
+        the word is now forbidden and every axis carries its own remove from the headline."""
+        from app.raman_saab.theme_synthesis import _RESTATES, _SHARES, _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                assert "independent axes" not in t.convergence_why
+                for ax in t.convergence_axes:
+                    assert ax.remove in (_RESTATES, _SHARES, _SEPARATE)
+                    assert ax.why_remove and ax.direction in (-1, 0, 1)
+
+    def test_each_axis_sits_at_its_measured_remove(self, mainpuri, canonical):
+        """The classification is not decorative — each family is placed by what the code does.
+
+        A facet's "dedicated reader" verdict IS `judge_house(h).significations[sig]` and the
+        headline is `_rollup()` over those same significations (house_template.py:1992-2005); the
+        D9 link is `navamsa_status`, an input to `_decide` (house_template.py:387-395); a network
+        house is admitted only when a driving graha of the primary house touches it. None of the
+        three is a second opinion, and only the assigned division and Ashtakavarga stand apart."""
+        from app.raman_saab.theme_synthesis import _RESTATES, _SHARES, _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                for ax in t.convergence_axes:
+                    if "dedicated reader" in ax.label or ax.label.startswith("D9 "):
+                        assert ax.remove == _RESTATES
+                    elif "(network)" in ax.label or "Yoga" in ax.label:
+                        assert ax.remove == _SHARES
+                    else:
+                        assert ax.remove == _SEPARATE
+                # the primary rollup is never its own witness (PREC-3) — it must not appear
+                prim = f"House {t.houses[0]} rollup"
+                assert not any(a.label == prim for a in t.convergence_axes)
+
+    def test_the_separate_testimony_is_actually_counted(self, mainpuri, canonical):
+        """The assigned division and Ashtakavarga are the only genuinely separate checks in this
+        set — measured outside the house verdict entirely — and neither was ever admitted to the
+        count. Without them the tier had no independent basis at all."""
+        from app.raman_saab.theme_synthesis import _SEPARATE
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                sep = [a for a in t.convergence_axes if a.remove == _SEPARATE]
+                own_div = [d for d in t.divisional_checks
+                           if d.relation in ("concurs", "diverges")]
+                for d in own_div:
+                    assert any(d.varga in a.label for a in sep)
+                # ...but only when AV has something to assert. Every driver reading "about
+                # average" is a genuine abstention, not a missing axis (Canonical fortune).
+                decisive = [a for a in t.av_support
+                            if a.verdict in ("well supported", "poorly supported")]
+                assert bool(decisive) == any("Ashtakavarga" in a.label for a in sep)
+
+    def test_a_diverging_division_opposes_whatever_the_headline_says(self, mainpuri, canonical):
+        """Sign check. 'concurs' means the varga agrees with the HEADLINE, in whichever direction
+        the headline points — writing a flat +1 made a diverging varga *agree* with an afflicted
+        rollup, an inversion on exactly the themes where the disagreement matters most."""
+        from app.raman_saab.insight_digest import _lean_of
+        from app.raman_saab.theme_synthesis import _dir
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                head = _dir(_lean_of(t.headline_verdict))
+                if head == 0:
+                    continue
+                for d in t.divisional_checks:
+                    if d.relation not in ("concurs", "diverges"):
+                        continue
+                    ax = next(a for a in t.convergence_axes if d.varga in a.label)
+                    if d.relation == "concurs":
+                        assert ax.direction == head
+                    else:
+                        assert ax.direction == -head
+
+    def test_the_stated_breakdown_reconciles_with_the_count(self, mainpuri, canonical):
+        """'N of M agree… of those M, a restate / b share / c stand apart' must add up — an
+        earlier draft counted M over directional axes and the breakdown over ALL of them, so the
+        sentence contradicted itself in print."""
+        import re as _re
+        from app.raman_saab.theme_synthesis import _SEPARATE, _RESTATES, _SHARES
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                m = _re.search(r"of those (\d+), ", t.convergence_why)
+                if not m:
+                    continue
+                total = int(m.group(1))
+                directional = [a for a in t.convergence_axes if a.direction != 0]
+                assert total == len(directional)
+                assert total == sum(1 for a in directional
+                                    for _ in [0] if a.remove in (_RESTATES, _SHARES, _SEPARATE))
+
+    def test_the_background_divisions_are_read_from_the_engine_not_invented(
+            self, mainpuri, canonical):
+        """D-27/40/45/60 resolve no house and carry no matter verdict, so `_divisional_checks`
+        skips them — but `build_shodasavarga_report` judged all four on every chart and nothing
+        read it. Every field here must come from that judgment, never from a hand-written gloss."""
+        from app.raman_saab.judges.varga_judge import build_shodasavarga_report
+        for r, ts in (mainpuri, canonical):
+            bgv = ts.background_vargas
+            assert {b.varga for b in bgv} == {27, 40, 45, 60}
+            by_n = {vr.n: vr for vr in build_shodasavarga_report(r.chart).readings}
+            for b in bgv:
+                src = by_n[b.varga]
+                # status is the ENGINE's own, passed through
+                assert b.status == str(src.status)
+                assert b.status in ("confirms", "weakens", "neutral", "unknown")
+                assert b.lagna_sign == src.chart.lagna_sign
+                assert b.lagna_lord == src.lagna_lord.planet
+                assert b.status in b.reading      # the reading always states it
+
+    def test_the_background_divisions_can_never_move_a_verdict(self, mainpuri, canonical):
+        """They are modifiers. They must not reach the convergence count, the dissent ladder,
+        the evidence links or the contradictions — the same wall the karmic lens carries."""
+        for _r, ts in (mainpuri, canonical):
+            names = {f"D-{b.varga}" for b in ts.background_vargas}
+            for t in ts.themes:
+                for ax in t.convergence_axes:
+                    assert not any(n in ax.label for n in names)
+                for d in t.divisional_checks:
+                    assert not any(n in d.varga for n in names)
+                if t.dissent is not None:
+                    for c in t.dissent.checks:
+                        assert not any(n in c.system for n in names)
+
+    def test_the_background_provenance_is_stated_and_honest(self, mainpuri):
+        """The PRIME DIRECTIVE requires provenance stated where it is thin. Raman NAMES the
+        shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201) — he gives these
+        four no domain, no reading rule and no worked usage. The domain labels are Rath's."""
+        _r, ts = mainpuri
+        for b in ts.background_vargas:
+            assert "RAMAN_GENERAL_PRINCIPLE" in b.provenance
+            assert "CLASSICAL_NONCITABLE" in b.provenance and "not Raman" in b.provenance
+            # the citation is the POINTER, which is the anchor varga_domains.py itself uses
+            assert b.citation.startswith("HPA-11:")
+
+    def test_a_division_with_no_signal_says_so_instead_of_narrating(self, mainpuri):
+        """D-40 on this chart has nothing exalted, nothing own and nothing debilitated. An
+        engine that produced a lineage narrative from that would be inventing; it must decline.
+        The decline must also say WHICH bodies were examined: `_varga_dignity` returns 'neutral'
+        for Rahu and Ketu unconditionally, so a flat "nothing is exalted" would claim the nodes
+        had been checked and found silent when they were never assessed at all."""
+        _r, ts = mainpuri
+        d40 = next(b for b in ts.background_vargas if b.varga == 40)
+        assert not d40.strong and not d40.weak
+        assert "No signal" in d40.reading and "nothing further to report" in d40.reading
+        assert "among the seven grahas" in d40.reading
+        assert "nodes carry no sign-dignity" in d40.reading
+
+    def test_a_neutral_background_varga_says_which_kind_of_neutral_it_is(self, mainpuri,
+                                                                        canonical):
+        """`varga_judge._status` returns "neutral" for two opposite situations: BOTH poles of
+        testimony fired and cancelled ("contested"), or NEITHER fired ("silent"). Printing the
+        bare word told a reader the division had been consulted and had nothing to say, when
+        half the time it had two things to say that disagreed — a real finding, reported as an
+        absence of one. `status_kind` now carries the distinction, and it is "" whenever the
+        status is not neutral so the field never means anything it should not."""
+        from app.raman_saab.judges.varga_judge import _neutral_kind, _poles
+        for _r, ts in (mainpuri, canonical):
+            assert ts.background_vargas
+            for b in ts.background_vargas:
+                if b.status == "neutral":
+                    assert b.status_kind in ("contested", "silent")
+                    assert b.status_kind in b.reading.lower()
+                else:
+                    assert b.status_kind == ""
+                    assert "CONTESTED neutral" not in b.reading
+                    assert "SILENT neutral" not in b.reading
+
+    def test_the_neutral_kind_is_derived_from_the_same_two_poles_as_the_status(self, canonical):
+        """The kind is a re-read of `_status`'s own two predicates, not a second judgment —
+        so it can never disagree with the status it qualifies."""
+        from app.raman_saab.judges.varga_judge import (
+            _neutral_kind, _poles, _status, build_shodasavarga_report)
+        r, _ts = canonical
+        rep = build_shodasavarga_report(r.chart)
+        for vr in rep.readings:
+            pillars = (vr.lagna_lord, *vr.karakas)
+            has_frame = vr.chart.positions and next(
+                iter(vr.chart.positions.values())).house is not None
+            confirms, weakens = _poles(pillars, bool(has_frame))
+            if vr.status == "neutral":
+                assert vr.neutral_kind == ("contested" if (confirms and weakens) else "silent")
+            else:
+                assert vr.neutral_kind == ""
+
+    def test_the_d60_reread_uses_structured_data_not_its_own_prose(self, mainpuri, canonical):
+        """`karmic_evolution._d60_reread` used to regex the rendered D-60 block back out of the
+        report's own printed output, so a wording change in the renderer silently degraded it to
+        a fallback sentence. It now reads the cast VargaChart."""
+        import inspect
+        from app.raman_saab import karmic_evolution as ke
+        src = inspect.getsource(ke._d60_reread)
+        assert "cast_varga_chart" in src
+        assert "re.search" not in src and "re.match" not in src
+        for r, _ts in (mainpuri, canonical):
+            core = r.karmic.d60_core
+            assert core and "D-60" in core
+            # and it agrees with the structured background reading for the same division
+            d60 = next(b for b in _ts.background_vargas if b.varga == 60)
+            assert d60.lagna_lord in core

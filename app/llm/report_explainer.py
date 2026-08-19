@@ -471,6 +471,18 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                           f"{_bh} ({_sp}), tier-score {_sc}, {_st} — classically sensitive, a "
                           f"disclosure of the method and never a forecast.",
                    cite="HTJAH-II:4846-4849")
+        for _bv in ts.get("background_vargas", []):
+            _kind = _bv.get("status_kind") or ""
+            _f(facts, f"Deep-background division D-{_bv['varga']} {_bv['name']} "
+                      f"({_bv['domain']}) — the engine reads it {_bv['status']}"
+                      + (f" ({_kind}: "
+                         + ("both poles of testimony fired and cancelled"
+                            if _kind == "contested" else
+                            "neither pole of testimony fired at all") + ")"
+                         if _kind else "") + ". "
+                      f"{_bv['reading']} A background modifier only: it takes no direction and "
+                      f"can never move a bhava verdict. {_bv['provenance']}.",
+               cite=_bv.get("citation") or None)
         _cal = ts.get("calendar")
         if _cal:
             # subordinate by citation (PREC-6 / PREC-7) — the frame carries that on its face
@@ -492,6 +504,11 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             dom = ", ".join(th.get("dominant_planets", [])) or "the chart"
             _f(facts, f"{th['name']} reads {th['headline_verdict']} ({cv}), driven "
                       f"by {dom}; the navamsa (D9) {th.get('varga_relation', 'is neutral')}.")
+            for _ax in th.get("convergence_axes", []):
+                _dirw = ("agrees with" if _ax["direction"] > 0
+                         else "opposes" if _ax["direction"] < 0 else "carries no direction on")
+                _f(facts, f"Convergence axis for {th['name']}: {_ax['label']} ({_ax['lean']}) "
+                          f"{_dirw} the headline; it {_ax['remove']} — {_ax['why_remove']}.")
             for m, v in th.get("sub_matters", []):
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             if th.get("activation_span"):

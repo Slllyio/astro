@@ -11,7 +11,10 @@ BPHS / Praśna Mārga, NOT in Raman's live corpus (the firewall stays intact; th
 like the KP/Rath successive-child scheme in ``saptamsa_reading.py``). The one AUTHORITATIVE line is
 Raman's OWN children verdict (``judge_house(chart, 5)``), which DECIDES; the ancestral-curse yogas
 are a *corroborating lens*, never the verdict. The lineage vargas (D-40 mother-line, D-45
-father-line, D-60 past-births; Rath/BPHS) are noted but beyond the engine's 16-varga range.
+father-line, D-60 past-births; Rath/BPHS) ARE cast and judged — they are in ``SUPPORTED_VARGAS``
+and `build_shodasavarga_report` grades all sixteen — and the integrated reading surfaces their
+status as background modifiers (``theme_synthesis.BackgroundVarga``). Their DOMAIN labels remain
+Rath's, not Raman's, so no lineage claim is made from them here.
 
 VERDICT-AUTHORITY INVARIANT: imported by nothing in the D1 verdict path — the golden ratchet is
 untouched by construction.
@@ -497,7 +500,9 @@ def build_pitru_dosha_reading(chart: RamanChart) -> PitruDoshaReading:
                "the firewall is intact, these are flagged classical, not live citations.",
                "CLASSICAL_NONCITABLE"),
         Tagged("The lineage vargas (D-45 father-line, D-40 mother-line, D-60 past-births; Rath/BPHS) "
-               "deepen this thesis but lie beyond the engine's 16-varga range — noted, not computed.",
+               "are cast and graded on every chart, and their status is surfaced as a background "
+               "modifier in the integrated reading. The LINEAGE domain labels are Rath's, not "
+               "Raman's, so nothing here reads a lineage claim out of them.",
                "CLASSICAL_NONCITABLE"),
         Tagged("Classical remedy: śrāddha (ancestral rites), which the texts say 'prolongs the "
                "family lineage' (BPHS-83:107). An ancestral-karma reading is a contemplative lens "

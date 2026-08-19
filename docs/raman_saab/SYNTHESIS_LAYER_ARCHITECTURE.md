@@ -178,6 +178,37 @@ Every contradiction stores both poles *with their accessors*, the governing PREC
 resolving sentence. Unresolvable ones are marked, not hidden. The archetypal case
 ("H4 afflicted" ≠ "mother afflicted") is exactly class B → PREC-1.
 
+### F.0 Convergence discloses its dependencies (corrected 2026-08-19)
+
+`_convergence` printed *"N of M **independent** axes agree with the headline"*. An audit of the
+actual data flow found the claim false for three of the four families it counted:
+
+| family | why it is NOT independent of the headline | remove |
+|---|---|---|
+| facet "dedicated reader" verdicts | the reader returns `judge_house(h).significations[sig]`, and the headline is `_rollup()` min-ing over those same significations (`house_template.py:1992-2005`). The counter excluded the primary rollup as "its own witness" and then admitted its summands. | restates the verdict's own inputs |
+| the D9 link | it is `significations[0].ledger.navamsa_status`, an **input** to `_decide` (`house_template.py:387-395`, `:478`, `:650`) — and it was used a second time as the gate on the top tier | restates the verdict's own inputs |
+| network-house rollups | `_discover_support` keeps a support house only when a driving graha of the primary house touches it — the selection rule *is* a shared-cause rule | shares the verdict's drivers |
+| fired yogas | they modulate the verdict upstream (`house_template.py:1127-1178`) — and scored nothing on any chart, because `_dir` returns 0 for the `"favourable-leaning"` string `_yoga_record_lean` emits (37 links across 24 themes, zero votes) | shares the verdict's drivers |
+
+Two corrections followed:
+
+1. **Every counted axis now carries its `remove`** (`ConvergenceAxis`), and the reading states the
+   breakdown, so a reader can tell corroboration from the verdict restating itself. The word
+   "independent" is gone from the sentence and a test forbids its return.
+2. **The genuinely separate testimony is finally counted.** The theme's own assigned division
+   (D-10 for career, D-2 for wealth …) and Ashtakavarga are measured outside the house verdict
+   entirely, and neither was ever admitted. They are what gives the tier a real independent basis.
+   A `concurs`/`diverges` division takes the sign of the **headline**, not a flat +1 — the flat
+   form made a diverging varga *agree* with an afflicted rollup.
+
+Yoga axes are reported as bearing **without a direction** rather than forced to ±1: the engine
+states their lean as `"favourable-leaning"`, deliberately hedged, and asserting a direction it
+declined to state would be an invention. Nothing is dropped — the full inventory renders on all
+four surfaces.
+
+This is a disclosure fix, not a re-grading: the tier thresholds are unchanged, and the spine
+reorders only because the separate testimony now counts. Golden ratchet byte-identical.
+
 ### F.1 Cross-checks are laid on a cited ladder — and deliberately not graded
 
 Each theme also carries a `DissentSummary`: the *inventory* of every independent cross-check on
@@ -253,6 +284,35 @@ the named pattern), and every note sets the two verdicts against each other — 
 (favourable one end, afflicted the other) reads as strength-and-strain, a difference of degree
 does not. Ties rank graha-before-house and no theme may hold more than `_CONN_PER_THEME` of them:
 the busiest theme has the widest network by construction, and uncapped it took four of six slots.
+
+### G.2b The deep-background divisions (D-27/40/45/60)
+
+The last computed astrology the reading never touched. These four resolve no house and carry no
+matter verdict, so `_divisional_checks` skips them — but `build_shodasavarga_report` returns a
+`confirms / weakens / neutral` status for **all sixteen** divisions, and four of them were judged
+on every chart and read by nothing. `BackgroundVarga` surfaces that judgment from the structured
+`VargaReading`; nothing is computed anew.
+
+Read as MODIFIERS, by construction: no direction, no convergence axis, no dissent check, no
+evidence link — tested in all four directions.
+
+**Provenance is thin and is stated on the surface.** Raman NAMES the shodasavarga scheme and
+defers the rest to Parashara (**HPA-11:195-201**); he teaches six divisions in full plus the
+Saptamsa and gives these four no domain, no reading rule and no worked usage. So the *strength*
+read is a `RAMAN_GENERAL_PRINCIPLE` applied to a division he names, while the *domain labels*
+(maternal line, paternal line, accumulated karma) are Sanjay Rath's — `CLASSICAL_NONCITABLE`, and
+unable to resolve to a quotable passage because the divergence firewall admits only Raman works.
+
+Where a division carries no signal at all it says so. D-40 on the Mainpuri chart has nothing
+exalted, nothing in own sign and nothing debilitated; the engine declines to narrate a lineage
+story from an empty division, and a test pins that refusal.
+
+`karmic_evolution._d60_reread` previously regex-parsed the rendered D-60 block back out of the
+report's own printed output, so a wording change in `render_general_varga` would silently degrade
+it to a fallback sentence. It now reads the cast `VargaChart` directly and produces identical
+text. **Not wired, deliberately:** `app/core/vimsopaka_bala.py` carries shodashavargaja weights
+(D-60 = 4.0, the rest 0.5), but it is a legacy BPHS/Phaladeepika subsystem that nothing in
+`raman_saab` imports; using it would breach the firewall for a numeric weighting Raman never gave.
 
 ### G.3 The weather calendar — subordinate by citation
 

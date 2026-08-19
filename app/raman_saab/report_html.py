@@ -866,7 +866,14 @@ def _themes_section(r: DetailedReport) -> str:
             facets = "; ".join(f"{_esc(m)} reads {_esc(v)}" for m, v in t.sub_matters)
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
-                   f'{_esc(t.convergence_why)}</li>')
+                   f'{_esc(t.convergence_why)}')
+        for ax in getattr(t, "convergence_axes", ()) or ():
+            arrow = ("agrees" if ax.direction > 0 else "opposes" if ax.direction < 0
+                     else "no direction")
+            out.append(f'<br><span class="muted">{_esc(ax.label)} ({_esc(ax.lean)}) '
+                       f'&mdash; {arrow}; {_esc(ax.remove)} &mdash; '
+                       f'{_esc(ax.why_remove)}</span>')
+        out.append('</li>')
         if getattr(t, "activation_in_span", ""):
             out.append(f'<li><b>That window inside the span</b> &mdash; '
                        f'{_esc(t.activation_in_span)}</li>')
@@ -992,6 +999,31 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.varga)} reads '
                        f'{_esc(d.verdict)}, against the rasi verdict.</li>')
         out.append('</ul>')
+    bgv = getattr(ts, "background_vargas", None)
+    if bgv:
+        out.append('<h3>The deep-background divisions</h3>')
+        out.append('<p class="section-sub">D-27, D-40, D-45 and D-60 resolve no house and carry '
+                   'no matter verdict, so nothing in the reading consulted them &mdash; yet the '
+                   'engine judged all four on every chart. They are read here as BACKGROUND '
+                   'MODIFIERS: no direction, no convergence vote, and they can never move a '
+                   'bhava verdict. Raman NAMES the shodasavarga scheme and defers the rest to '
+                   'Parashara (HPA-11:195-201); the domain labels are Rath&rsquo;s, not '
+                   'Raman&rsquo;s.</p>')
+        out.append('<table><thead><tr><th>Division</th><th>Domain (non-Raman label)</th>'
+                   '<th>Engine&rsquo;s own reading</th><th>What it rests on</th>'
+                   '</tr></thead><tbody>')
+        for b in bgv:
+            # neutral is reported WITH its kind — "contested" (both poles fired and
+            # cancelled) vs "silent" (neither fired) are opposite findings.
+            _k = getattr(b, "status_kind", "")
+            _kh = f' <span class="muted">({_esc(_k)})</span>' if _k else ""
+            out.append(f'<tr><td>D-{b.varga} {_esc(b.name)}</td><td>{_esc(b.domain)}</td>'
+                       f'<td><b>{_esc(b.status)}</b>{_kh}</td>'
+                       f'<td>{_esc(b.reading)}</td></tr>')
+        out.append('</tbody></table>')
+        out.append(f'<p class="muted"><i>Provenance: {_esc(bgv[0].provenance)}; citation '
+                   f'{_esc(bgv[0].citation)}.</i></p>')
+
     cal = getattr(ts, "calendar", None)
     if cal is not None and cal.windows:
         out.append('<h3>The weather over these years</h3>')

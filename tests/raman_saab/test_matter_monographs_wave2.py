@@ -202,14 +202,23 @@ class TestProfessionWave2:
     """Item 3: the D-10 row, H10 timing, same-graha convergence disclosure."""
 
     def test_dasamsa_row_rereads_the_computed_d10_reading(self, report):
-        """The row restates the Dasamsa career verdict and D-10 lord dignity."""
+        """The row restates the career verdict and the D-10 lord dignity — and says which
+        chart cast which. `dr.core.career_verdict` is `judge_house(chart, 10)` on the RASI
+        (Raman's own method, HTJAH-II:9729-9811); the D-10 overlay casts no verdict. The row
+        used to print it bare under a "Dasamsa D-10" label, so a rasi verdict read as the
+        division's own finding, and cited the navamsa passage as if it were a dasamsa one."""
         from app.raman_saab.judges.dasamsa_career_reading import (
             build_dasamsa_career_reading)
         dr = build_dasamsa_career_reading(report.chart)
         row = report.profession.dasamsa_row
-        assert row[1] == f"career {dr.core.career_verdict}"
+        assert row[1].startswith(f"career {dr.core.career_verdict}")
+        assert "rasi method decides this" in row[1]
+        assert "casts no verdict of its own" in row[1]
         assert dr.core.tenth_lord in row[2]
         assert str(dr.overlay.tenth_lord_d10_dignity) in row[2]
+        # the D-10 domain's own anchor is Raman's Parashara pointer, not his navamsa passage
+        assert "HPA-11:195" in row[3] and "HTJAH-II:9729" in row[3]
+        assert "navamsa technique" in row[3]
 
     def test_dasamsa_row_renders_and_is_not_a_convergence_vote(self, report, markdown):
         """The table shows the D-10 row; the convergence tally is computed from

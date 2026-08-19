@@ -60,10 +60,17 @@ def _dhana_chart() -> RamanChart:
 
     Venus in Leo (H4, a kendra from Lagna) grants NeechaBhanga to Mercury in
     Pisces (Venus is the planet exalted in Pisces → condition 2 of cancellation
-    of debilitation), preventing H2.C.24 (debilitated 2nd lord) from firing."""
+    of debilitation), preventing H2.C.24 (debilitated 2nd lord) from firing.
+
+    The ascendant is 39.5 (Taurus 9.5), not the round 40.0 it used to be: Taurus 10 is an
+    exact navamsa cusp, and the engine used to place that arc one navamsa short (a `30/9`
+    float that rounds UP). Correcting the cusp moved this chart's D9 lagna and with it the
+    navamsa modulation, so the H2 verdict was no longer the borderline `mixed` the lift is
+    meant to act on. 39.5 keeps every rasi placement and every documented premise above
+    intact and simply steps off the cusp."""
     chart = _track_b({"Mercury": 330.5, "Jupiter": 63.83, "Moon": 310.0,
                       "Venus": 130.0},
-                     asc_lon=40.0)
+                     asc_lon=39.5)
     return _with_shadbala(chart, {"Mercury": 480.0, "Jupiter": 200.0, "Moon": 250.0})
 
 
@@ -84,7 +91,13 @@ def _h5_chart(*, weak: bool) -> RamanChart:
       weak   -> beeja_strong=False AND kshetra_strong=False (gate engages);
       strong -> beeja_strong=True  AND kshetra_strong=True  (metadata only)."""
     if weak:
-        lons = {"Sun": 245.0, "Venus": 200.0, "Mars": 280.0, "Moon": 305.0,
+        # the Moon is 304.5, not the round 305.0 it used to be: 305 puts the kshetra
+        # sphuta (Moon + Mars + Jupiter) at exactly Pisces 20, an exact navamsa cusp that
+        # the engine used to place one navamsa short (a `30/9` float that rounds UP).
+        # Corrected, that sphuta reads odd-navamsa and kshetra_strong flips to True, which
+        # destroys the both-weak premise the gate tests are built on. 304.5 keeps the Moon
+        # in Aquarius and every rasi placement unchanged and simply steps off the cusp.
+        lons = {"Sun": 245.0, "Venus": 200.0, "Mars": 280.0, "Moon": 304.5,
                 "Jupiter": 125.0}
     else:
         lons = {"Sun": 240.0, "Venus": 183.0, "Mars": 270.0, "Moon": 303.0,

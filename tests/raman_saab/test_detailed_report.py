@@ -2292,14 +2292,37 @@ class TestWave2TimingDivisionalSoul:
                 head_verdict = lbl.split(" - ", 1)[1].split(";")[0].split(",")[0]
                 assert head_verdict.split(":")[0].strip() in body
 
+    def test_the_d30_label_carries_disease_and_qualifies_the_longevity_lean(self, report):
+        """D-30 is the one deep-read with no ``>>> <<<`` banner, so its label is built from the
+        core block's plain verdict rows. It used to match ``Health (H1)`` alone — so a section
+        whose whole subject is health-AND-disease dropped the disease verdict from every
+        heading, collapsed summary and JSON label, and a chart reading health=favourable with
+        disease=afflicted scanned as unqualified good news (this canonical chart is exactly
+        that case). All three rows now carry; the longevity row keeps the body's own qualifier
+        because the engine defers lifespan (PREC-8) and a bare heading would read as a verdict."""
+        lbl = next(l for l, _ in report.divisional if l.startswith("D-30"))
+        assert "HEALTH (H1): " in lbl
+        assert "DISEASE (H6): " in lbl
+        assert "LONGEVITY (H8): " in lbl and "lean, not a verdict" in lbl
+        body = next(b for l, b in report.divisional if l.startswith("D-30"))
+        for row in ("Health (H1)", "Disease (H6)", "Longevity(H8)"):
+            assert row in body                      # the label is a re-read, never a new judgment
+
     def test_general_varga_domain_sentences_present(self, report, markdown):
         """D-27/40/45/60 each carry one domain-verdict sentence tying the varga lagna-lord's
-        condition to the domain word, citing the module's recorded HPA-11 lines."""
+        condition to the domain word, citing Raman's shodasavarga POINTER.
+
+        The anchor is HPA-11:195 for all four (corrected 2026-08-19). It was previously a
+        per-varga line (:100/:110/:113/:116) that contradicted `varga_domains.py` — which cites
+        the pointer for these same four and states the policy in its module docstring: the
+        divisions Raman teaches in full cite their own definition lines, "the remaining divisions
+        cite RAMAN'S OWN POINTER at HPA-11:195-201". This test previously asserted only that
+        *some* string was printed, which is why the discrepancy survived."""
         bodies = {lbl.split(" ", 1)[0]: body for lbl, body in report.divisional}
-        for dtag, cite, word in (("D-27", "HPA-11:100", "general strength"),
-                                 ("D-40", "HPA-11:110", "auspiciousness"),
-                                 ("D-45", "HPA-11:113", "character and conduct"),
-                                 ("D-60", "HPA-11:116", "totality")):
+        for dtag, cite, word in (("D-27", "HPA-11:195", "general strength"),
+                                 ("D-40", "HPA-11:195", "auspiciousness"),
+                                 ("D-45", "HPA-11:195", "character and conduct"),
+                                 ("D-60", "HPA-11:195", "totality")):
             body = bodies[dtag]
             assert "domain reading :" in body, dtag
             line = next(ln for ln in body.splitlines() if "domain reading :" in ln)
@@ -2307,6 +2330,22 @@ class TestWave2TimingDivisionalSoul:
             assert "no D1 verdict is touched" in line
             assert line.count("varga lagna lord") == 1
         assert markdown.count("domain reading :") >= 4      # rendered in the report too
+
+    def test_the_general_varga_anchors_agree_with_the_domain_table(self):
+        """The judge module and the doctrine table must cite the SAME line for the same varga.
+
+        Judge-module cite strings are free text — `source_lock` enumerates rules, yogas,
+        significations and lookups, so nothing checked them, and the two sources drifted apart
+        unnoticed. This pins them together so the next drift fails loudly instead of shipping two
+        different provenance claims for one division."""
+        from app.raman_saab.doctrine.varga_domains import DOMAINS
+        from app.raman_saab.judges.general_varga_reading import _SPECS
+        by_n = {d.n: d for d in DOMAINS}      # DOMAINS is a 16-tuple, not keyed by varga
+        for n, spec in _SPECS.items():
+            dom = by_n[n]
+            expected = f"{dom.source.work}:{dom.source.line}"
+            assert spec.citation == expected, (
+                f"D-{n}: judge cites {spec.citation}, varga_domains cites {expected}")
 
     def test_karmic_rereads_are_one_line_and_home_blocks_stay_full(self, report, markdown):
         """The karmic chapter carries one-sentence D-20/D-60 re-reads (no embedded ASCII

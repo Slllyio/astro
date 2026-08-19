@@ -690,6 +690,23 @@ const I18N_HI = {
   'against the band':'आयु-खंड के सापेक्ष',
   'inside the band':'खंड के भीतर',
   'beyond the band':'खंड से परे',
+  'The deep-background divisions':'गहन पृष्ठभूमि के वर्ग',
+  'division':'वर्ग',
+  'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
+  'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* the two kinds of a 'neutral' status — cancelled testimony vs no testimony at all */
+  'contested':'परस्पर विरोधी',
+  'silent':'मौन',
+  'what it rests on':'यह किस पर आधारित है',
+  'Deep-background divisions — modifiers, never votes':'गहन पृष्ठभूमि के वर्ग — संशोधक, मत नहीं',
+  'Provenance':'स्रोत-परंपरा',
+  'citation':'सन्दर्भ',
+  'agrees':'सहमत',
+  'opposes':'विरुद्ध',
+  'no direction':'कोई दिशा नहीं',
+  "restates the verdict's own inputs":'निर्णय के अपने ही आधारों को दोहराता है',
+  'shares the verdict\'s drivers':'निर्णय के संचालक ग्रह साझा करता है',
+  'separate testimony':'पृथक् साक्ष्य',
   'That window inside the span':'वह अवधि आयु-सीमा के भीतर',
   'Weather across that window':'उस अवधि पर चलने वाला काल-प्रभाव',
   'Ancestral screen (separate layer)':'पितृ जाँच (पृथक् स्तर)',
@@ -2584,6 +2601,9 @@ function render(R, S, FQ){
       b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; '+t('karakas')+' '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||t('the chart'))+'.','muted'));
       if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
       b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
+      for(const ax of (th.convergence_axes||[])){
+        const arrow = ax.direction>0?t('agrees'):(ax.direction<0?t('opposes'):t('no direction'));
+        b.append(para(ax.label+' ('+ax.lean+') — '+arrow+'; '+t(ax.remove)+' — '+ax.why_remove,'muted')); }
       if(th.activation_in_span) b.append(para(t('That window inside the span')+' — '+th.activation_in_span,'muted'));
       if(th.weather_on_window) b.append(para(t('Weather across that window')+' — '+th.weather_on_window,'muted'));
       if(th.pitru_screen) b.append(para(t('Ancestral screen (separate layer)')+' — '+th.pitru_screen,'muted'));
@@ -2649,6 +2669,20 @@ function render(R, S, FQ){
       const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
         x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
       add(du);
+    }
+    const BGV=ts.background_vargas||[];
+    if(BGV.length){
+      add(para(t('The deep-background divisions'),'muted'));
+      add(para(t('D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so nothing in the reading consulted them — yet the engine judged all four on every chart. They are background modifiers: no direction, no convergence vote, and they can never move a bhava verdict. Raman names the shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201); the domain labels are Rath\u2019s, not Raman\u2019s.'),'lede'));
+      /* a neutral status carries its KIND: 'contested' (both poles fired and cancelled)
+         and 'silent' (neither fired) are opposite findings that the bare word hid. */
+      const bg=BGV.map(b=>({[t('division')]:'D-'+b.varga+' '+b.name, [t('domain (non-Raman label)')]:b.domain,
+        [t('engine\u2019s own reading')]:b.status+(b.status_kind?(' ('+t(b.status_kind)+')'):''),
+        [t('what it rests on')]:b.reading}));
+      const bt=sectionTable(t('Deep-background divisions — modifiers, never votes'), bg, null,
+        t('Read as background only. The strength method is a general principle applied to a division Raman names; the domain labels are classical/non-citable.'));
+      if(bt) add(bt);
+      add(para(t('Provenance')+': '+BGV[0].provenance+'; '+t('citation')+' '+BGV[0].citation,'muted'));
     }
     const CAL=ts.calendar;
     if(CAL&&(CAL.windows||[]).length){

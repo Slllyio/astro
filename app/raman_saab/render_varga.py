@@ -39,7 +39,12 @@ def _reading_lines(r: VargaReading) -> list[str]:
                    f"  malefics [{','.join(r.malefics_in_kendra) or '-'}]")
     for key, value in r.notes:
         out.append(f"    {key}: {value}")
-    out.append(f"    status: {r.status.upper()}")
+    # A `neutral` status is two different findings wearing one word (varga_judge.
+    # _neutral_kind): "contested" = both poles fired and cancelled, "silent" = neither
+    # fired. Printing the bare word told the reader the division had nothing to say even
+    # when it had two things to say that disagreed.
+    kind = f"  ({getattr(r, 'neutral_kind', '')})" if getattr(r, "neutral_kind", "") else ""
+    out.append(f"    status: {r.status.upper()}{kind}")
     return out
 
 
@@ -81,6 +86,7 @@ def _reading_dict(r: VargaReading) -> dict:
         "benefics_in_kendra": list(r.benefics_in_kendra),
         "malefics_in_kendra": list(r.malefics_in_kendra),
         "status": r.status,
+        "neutral_kind": getattr(r, "neutral_kind", ""),
         "notes": {k: v for k, v in r.notes},
     }
 
@@ -108,7 +114,9 @@ def to_markdown(report: ShodasavargaReport) -> str:
     for r in report.readings:
         lord = _pillar_line(r.lagna_lord)
         out.append(f"| D{r.n} | {r.name} | {r.domain} | {_SIGNS[r.chart.lagna_sign - 1]} "
-                   f"| {lord} | {r.status} |")
+                   f"| {lord} | {r.status}"
+                   + (f" ({r.neutral_kind})" if getattr(r, "neutral_kind", "") else "")
+                   + " |")
     out.append("")
     out.append("## Per-division detail")
     for r in report.readings:

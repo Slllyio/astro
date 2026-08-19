@@ -17,6 +17,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Final, Optional
@@ -44,6 +45,8 @@ class KarmicEvolution:
     frame: str
 
 
+logger = logging.getLogger(__name__)
+
 _FRAME: Final[str] = (
     "The Jaimini frame, quoted from Raman's own Studies in Jaimini Astrology — a walled "
     "layer: nothing here feeds or alters the Parashari natal verdicts, and as everywhere "
@@ -69,26 +72,41 @@ def _d20_reread(body: Optional[str]) -> Optional[str]:
             f"Divisional deep-reads section")
 
 
-def _d60_reread(body: Optional[str]) -> Optional[str]:
-    """One-sentence domain re-read of the D-60 (Shashtiamsa, accumulated karma) deep-read —
-    its varga-lagna seat and strong/weak lists, restated. Same REPORT COMPLETENESS note as
-    `_d20_reread`: the full D-60 block still renders at its home section; nothing hidden."""
-    if body is None:
-        return None
-    lagna = re.search(r"lagna\s*:\s*(\w+)\s*\(lord\s+(\w+),\s*([\w-]+) in\s*\n?\s*this varga\)",
-                      body)
-    strong = re.search(r"strong here \(exalt/own\):\s*([^\n]+)", body)
-    weak = re.search(r"weak here \(debilitated\):\s*([^\n]+)", body)
-    if lagna is None:
-        return ("the accumulated-karma lens reads in the D-60 Shashtiamsa block, rendered "
+def _d60_reread(r: "DetailedReport") -> Optional[str]:
+    """One-sentence domain re-read of the D-60 (Shashtiamsa, accumulated karma) deep-read.
+
+    Reads the STRUCTURED ``VargaChart`` rather than regex-parsing the rendered D-60 prose back
+    out of the report's own printed output — the previous form matched a "lagna : ... (lord ...,
+    <dignity> in this varga)" pattern against text this module had just emitted, so a wording
+    change anywhere in `render_general_varga` silently degraded it to the fallback sentence. Same REPORT COMPLETENESS note as `_d20_reread`: the full D-60 block still
+    renders at its home section; nothing is hidden."""
+    from app.raman_saab.chart.varga_chart import cast_varga_chart
+    from app.raman_saab.judges.varga_judge import _varga_dignity
+    from app.raman_saab.render_varga import _SIGNS
+    fallback = ("the accumulated-karma lens reads in the D-60 Shashtiamsa block, rendered "
                 "in full in the Divisional deep-reads section")
-    s = (f"the accumulated-karma lens (D-60) seats its lagna in {lagna.group(1)} under "
-         f"{lagna.group(2)} ({lagna.group(3)} in this varga)")
+    try:
+        vc = cast_varga_chart(r.chart, 60)
+    except Exception:
+        logger.debug("karmic_evolution: D-60 cast failed", exc_info=True)
+        return fallback
+    if vc is None or not getattr(vc, "lagna_sign", 0):
+        return fallback
+    lord = vc.lagna_lord
+    lord_pos = (vc.positions or {}).get(lord)
+    lord_dig = _varga_dignity(lord, lord_pos.sign) if lord_pos is not None else "unknown"
+    strong = sorted(p for p, pos in (vc.positions or {}).items()
+                    if _varga_dignity(p, pos.sign) in ("exalt", "own"))
+    weak = sorted(p for p, pos in (vc.positions or {}).items()
+                  if _varga_dignity(p, pos.sign) == "debil")
+    sign = _SIGNS[vc.lagna_sign - 1] if 1 <= vc.lagna_sign <= 12 else str(vc.lagna_sign)
+    out = (f"the accumulated-karma lens (D-60) seats its lagna in {sign} under "
+           f"{lord} ({lord_dig} in this varga)")
     if strong:
-        s += f"; standing strong here: {strong.group(1).strip()}"
+        out += f"; standing strong here: {', '.join(strong)}"
     if weak:
-        s += f"; debilitated: {weak.group(1).strip()}"
-    return s + " - the full Shashtiamsa block renders, untrimmed, in the Divisional deep-reads section"
+        out += f"; debilitated: {', '.join(weak)}"
+    return out + " - the full Shashtiamsa block renders, untrimmed, in the Divisional deep-reads section"
 
 
 def build_karmic_evolution(r: "DetailedReport") -> Optional[KarmicEvolution]:
@@ -112,11 +130,10 @@ def build_karmic_evolution(r: "DetailedReport") -> Optional[KarmicEvolution]:
         quote = (f"Raman's Jaimini doctrine at JAIMINI-9:{KARAKAMSA_DOCTRINE[0]}-"
                  f"{KARAKAMSA_DOCTRINE[1]} - corpus not mounted on this machine")
     d20 = next((body for label, body in r.divisional if label.startswith("D-20")), None)
-    d60 = next((body for label, body in r.divisional if label.startswith("D-60")), None)
     return KarmicEvolution(
         atmakaraka=ak,
         karakamsa=getattr(r.synthesis, "karakamsa", "") or "",
         upapada=getattr(r.synthesis, "upapada", "") or "",
         doctrine_quote=quote,
         doctrine_cite=f"JAIMINI-9:{KARAKAMSA_DOCTRINE[0]}",
-        d20_core=_d20_reread(d20), d60_core=_d60_reread(d60), frame=_FRAME)
+        d20_core=_d20_reread(d20), d60_core=_d60_reread(r), frame=_FRAME)

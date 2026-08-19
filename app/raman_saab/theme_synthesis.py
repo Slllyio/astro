@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Final, Literal, Optional
 
 import swisseph as swe
 
@@ -131,6 +131,9 @@ class ThemeReading:
     #: the reading). Names the age the window falls at and, where one exists, the maraka-tier
     #: confluence it coincides with — disclosure of the method, never a forecast.
     activation_in_span: str = ""
+    #: every axis the convergence count admitted, each tagged with its remove from the headline
+    #: — the disclosure that keeps the count from claiming an independence it does not have
+    convergence_axes: tuple[ConvergenceAxis, ...] = ()
     #: what transit weather runs ACROSS this theme's own window (PREC-6/PREC-7 — subordinate)
     weather_on_window: str = ""
     #: the non-Raman ancestral screen where it bears on this bhava — a DIFFERENT layer, never a
@@ -297,6 +300,36 @@ class TransitNote:
 
 
 @dataclass(frozen=True)
+class ConvergenceAxis:
+    """One axis counted toward convergence, tagged with its REMOVE from the headline.
+
+    The counter used to print "N of M **independent** axes agree with the headline". An audit of
+    the actual data flow showed that claim did not hold for three of the four families it counted:
+
+    * a facet's "dedicated reader" verdict is literally ``judge_house(chart, h).significations[sig]``
+      (`dasamsa_career_reading.py:74-77` and five copies of the same helper) — and the headline is
+      ``_rollup()`` min-ing over those very significations (`house_template.py:1992-2005`). The
+      counter excluded the primary rollup as "its own witness" and then admitted its summands;
+    * the D9 link is ``significations[0].ledger.navamsa_status``, which is an INPUT to ``_decide``
+      (`house_template.py:387-395`, `:478`, `:650`) — a verdict ingredient re-read as a vote, and
+      used a second time as the gate on the top tier;
+    * a network house is admitted by ``_discover_support`` only when a dominant planet of the
+      primary house touches it — the selection rule IS a shared-cause rule;
+    * yogas modulate the verdict upstream (`house_template.py:1127-1178`) AND scored nothing at
+      all, because ``_dir`` returns 0 for "favourable-leaning" — 37 links across 24 themes, zero
+      votes. The axis was dead code claiming to count.
+
+    So each axis now carries ``remove``, and the reading states it. Nothing is hidden: the full
+    inventory still renders; what changed is that it no longer claims an independence it lacks."""
+    label: str
+    lean: str
+    direction: int                  # +1 agrees, -1 opposes, 0 bears but carries no direction
+    remove: str                     # 'restates the verdict's own inputs' | 'shares its drivers'
+                                    # | 'separate testimony'
+    why_remove: str
+
+
+@dataclass(frozen=True)
 class CrossCheck:
     """One independent cross-check, placed on the CITED reliability ladder rather than counted.
 
@@ -339,6 +372,59 @@ class DissentSummary:
     walled_note: str                # the karmic lens, recorded outside the cross-checks entirely
     reading: str
     method_note: str                # why no grade is given, with the citation
+
+
+@dataclass(frozen=True)
+class BackgroundVarga:
+    """One of the four DEEP-BACKGROUND divisions — D-27, D-40, D-45, D-60 — read as a modifier.
+
+    These resolve no house and carry no matter verdict, so ``_divisional_checks`` skips them and
+    they were the last computed astrology the integrated reading never touched. But the engine
+    does judge them: ``build_shodasavarga_report`` returns a ``confirms / weakens / neutral``
+    status for all sixteen divisions. That status was computed on every chart and read by nothing.
+
+    WHAT THE STATUS ACTUALLY RESTS ON (corrected 2026-08-19 — the first draft of this docstring
+    claimed more than the code does): ``varga_judge._status`` reads ONLY the pillars — the
+    varga-lagna lord and the domain karakas — and asks two questions of them. Confirming: any
+    pillar vargottama, exalted, or in own sign. Weakening: any pillar debilitated, or in a
+    dusthana of the varga. Both poles, or neither, give ``neutral``. The benefic/malefic
+    occupancy of the varga lagna and its kendras IS computed and IS printed, but no status branch
+    consults it — so this docstring must not name it as an input. Two consequences a reader
+    should have: ``neutral`` means either "both poles fired" or "nothing fired at all", and a
+    single vargottama pillar (a D1==D9 fact) can carry a division to ``confirms``. The first of
+    those two is now told apart from the second — ``status_kind`` carries ``varga_judge.
+    _neutral_kind``: "contested" when both poles fired and cancelled, "silent" when neither
+    fired. They are opposite findings and the bare word ``neutral`` reported them as one.
+
+    PROVENANCE — stated because it is thin, and the PRIME DIRECTIVE requires it stated:
+
+    * Raman NAMES the shodasavarga scheme and defers the rest to Parashara (**HPA-11:195-201**);
+      he teaches six divisions in full plus the Saptamsa, and gives no domain, no reading rule and
+      no worked usage for these four. So the *strength* read is a RAMAN_GENERAL_PRINCIPLE applied
+      to a division he names — the same standing D-27 already carries.
+    * The DOMAIN labels (maternal line, paternal line, accumulated karma) are Sanjay Rath, not
+      Raman: **CLASSICAL_NONCITABLE**, and they can never resolve to a quotable passage because
+      the divergence firewall admits only Raman works.
+
+    Consequently this is a background modifier and nothing more: it takes no direction, enters no
+    convergence count, and can never move a bhava verdict. Where a division has no signal at all
+    (nothing exalted, nothing own, nothing debilitated) it says so rather than narrating."""
+    varga: int
+    name: str
+    domain: str                     # the classical domain label (CLASSICAL_NONCITABLE)
+    status: str                     # 'confirms' | 'weakens' | 'neutral' | 'unknown' — the ENGINE's
+    #: 'contested' (both poles fired) | 'silent' (neither did) when status == 'neutral', else ''
+    status_kind: str
+    lagna_sign: int
+    lagna_lord: str
+    lagna_lord_dignity: str
+    strong: tuple[str, ...]         # exalted or in own sign in this division
+    weak: tuple[str, ...]           # debilitated in this division
+    benefics_on_lagna: tuple[str, ...]
+    malefics_on_lagna: tuple[str, ...]
+    provenance: str
+    citation: str
+    reading: str
 
 
 @dataclass(frozen=True)
@@ -502,6 +588,8 @@ class ThemeSynthesis:
     #: the transit weather over the years this reading names — subordinate by citation (PREC-6,
     #: PREC-7), never a verdict, and never previously joined to the timing it qualifies
     calendar: Optional[AfflictionCalendar] = None
+    #: the four deep-background divisions (D-27/40/45/60), read as modifiers and never as votes
+    background_vargas: tuple[BackgroundVarga, ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -662,16 +750,20 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         links.extend(_transit_links(r, houses, dom_planets, planet_houses))
         links.extend(_insight_links(r, houses))
 
-        # pass 4: convergence (evidentiary count, both poles)
-        convergence, conv_label, why = _convergence(headline, facets, links, r)
+        # the two genuinely SEPARATE checks — computed before convergence so it can count them.
+        # They used to be built after it, which is part of why the count had no independent basis.
+        div_checks = _safe(lambda: _divisional_checks(r, spec, facets, headline), ()) or ()
+        av_sup = _av_support(r, prim_house, dom_planets)
+
+        # pass 4: convergence (evidentiary count, both poles, each axis at its own remove)
+        convergence, conv_label, why, conv_axes = _convergence(
+            headline, facets, links, r, div_checks, av_sup)
         # pass 5: contradictions — ONE consolidated statement per axis, not one per matter
         contradictions = _contradictions(r, prim_house, pf, headline, facets, name)
 
         activation, act_years = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
         conc = _bhava_concordance(r, prim_house)
-        div_checks = _divisional_checks(r, spec, facets, headline)
-        av_sup = _av_support(r, prim_house, dom_planets)
         klens = _karmic_lens(r, prim_house, headline)
         dissent = _dissent_summary(conc, div_checks, av_sup, klens, headline)
         final = _final_interpretation(name, headline, convergence, conv_label, contradictions,
@@ -685,6 +777,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             karakas=domain.karakas, headline_verdict=headline, driver=driver, sub_matters=facets,
             dominant_planets=dom_planets, links=tuple(links), convergence=convergence,
             convergence_label=conv_label, convergence_why=why, contradictions=contradictions,
+            convergence_axes=conv_axes,
             activation_span=activation, varga_relation=varga_rel, final_interpretation=final,
             evidence_weight=weight,
             concordance=conc,
@@ -720,7 +813,8 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
                           graha_concordance=graha_conc, contested_bhavas=contested,
                           divisional_divergences=divergent, contested_themes=contested_th,
                           longevity=_safe(lambda: _longevity_frame(r, themes), None),
-                          calendar=_safe(lambda: _affliction_calendar(r, weather), None))
+                          calendar=_safe(lambda: _affliction_calendar(r, weather), None),
+                          background_vargas=_safe(lambda: _background_vargas(r), ()) or ())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -957,31 +1051,97 @@ def _insight_links(r, houses) -> list[ThemeEvidenceLink]:
     return out
 
 
-def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
-    """Count agreeing vs opposing INDEPENDENT direction-bearing axes (the support-house verdicts,
-    the facet dashboard verdicts, D9, and yoga leans — NOT the headline itself, which would
-    trivially agree). Returns (tier, reader_label, why). Always reports both poles; convergence
-    is evidentiary agreement, never a probability."""
+#: how far a counted axis stands from the headline it is said to corroborate.
+_RESTATES = "restates the verdict's own inputs"
+_SHARES = "shares the verdict's drivers"
+_SEPARATE = "separate testimony"
+
+
+def _classify_axis(lk) -> tuple[str, str]:
+    """Place one counted link at its remove from the headline. See ``ConvergenceAxis``."""
+    if lk.axis == "varga":
+        return _RESTATES, ("the navamsa status is an input to the house verdict itself "
+                           "(house_template.py:387-395) — the rollup was computed WITH it")
+    if lk.axis == "yoga":
+        return _SHARES, ("a fired yoga already modulated this house's verdict upstream "
+                         "(house_template.py:1127-1178), so it is not a second opinion")
+    if lk.label.startswith("House ") and "(network)" in lk.label:
+        return _SHARES, ("a network house is admitted only because a driving graha of the "
+                         "primary house touches it — the selection rule is a shared-cause rule")
+    if "dedicated reader" in lk.label:
+        return _RESTATES, ("the dedicated reader returns a signification of this same bhava, and "
+                           "the headline is the rollup OVER those significations "
+                           "(house_template.py:1992-2005)")
+    return _SEPARATE, "measured independently of the house verdict"
+
+
+def _convergence(headline, facets, links, r, div_checks=(), av_support=()
+                 ) -> tuple[Convergence, str, str, tuple[ConvergenceAxis, ...]]:
+    """How much of the report's own machinery lines up behind the headline — AND AT WHAT REMOVE.
+
+    This is an inventory with its dependencies disclosed, not a tally of independent votes. Every
+    admitted axis is tagged (``ConvergenceAxis.remove``) and the reading states the breakdown, so
+    a reader can tell corroboration from the verdict restating itself.
+
+    Two corrections to what was counted:
+
+    * the ASSIGNED DIVISION (the theme's own varga, e.g. D-10 for career) and ASHTAKAVARGA are
+      genuinely separate testimony — measured outside the house verdict entirely — and neither was
+      ever counted. They are now, which is what finally gives the tier a real independent basis;
+    * the yoga axis scored nothing on any chart because ``_dir`` returns 0 for the
+      "favourable-leaning"/"adverse-leaning" strings ``_yoga_record_lean`` emits. It now scores,
+      tagged as sharing the verdict's drivers rather than standing apart from them.
+
+    Returns (tier, reader_label, why, axes). Both poles are always reported; convergence is
+    evidentiary agreement, never a probability."""
     from app.raman_saab.insight_digest import _lean_of
     head = _dir(_lean_of(headline))
-    agree = oppose = 0
+    axes: list[ConvergenceAxis] = []
+
     for lk in links:
         if lk.axis not in ("verdict", "varga", "yoga"):
             continue
-        # the primary-house rollup IS the headline — don't count it as its own witness
+        # the primary-house rollup IS the headline — never its own witness (PREC-3)
         if lk.label.startswith("House ") and "rollup" in lk.label and "(network)" not in lk.label:
             continue
-        d = _dir(lk.lean)
-        if d == 0 or head == 0:
+        remove, why_rm = _classify_axis(lk)
+        axes.append(ConvergenceAxis(label=lk.label, lean=lk.lean, direction=_dir(lk.lean),
+                                    remove=remove, why_remove=why_rm))
+
+    # the two genuinely separate checks the counter never admitted
+    for d in div_checks:
+        if d.relation not in ("concurs", "diverges"):
             continue
-        agree += (d == head)
-        oppose += (d != head)
+        axes.append(ConvergenceAxis(
+            label=f"{d.varga} (assigned division)", lean=d.relation,
+            direction=(head if d.relation == "concurs" else -head), remove=_SEPARATE,
+            why_remove=("the varga is cast and judged on its own; it corroborates the D1 core "
+                        "and never decides it (PREC-11)")))
+    if av_support:
+        backed = sum(1 for a in av_support if a.verdict == "well supported")
+        thin = sum(1 for a in av_support if a.verdict == "poorly supported")
+        if backed or thin:
+            d = 1 if backed > thin else -1 if thin > backed else 0
+            axes.append(ConvergenceAxis(
+                label="Ashtakavarga on the driving grahas", lean=
+                ("well supported" if d > 0 else "poorly supported" if d < 0 else "even"),
+                direction=d if head > 0 else -d if head < 0 else 0, remove=_SEPARATE,
+                why_remove=("bindus are an independent measurement, at the lower-reliability "
+                            "tier Raman's own caveat assigns them (PREC-4, HTJAH-II:4453)")))
+
+    agree = sum(1 for a in axes if head != 0 and a.direction == head)
+    oppose = sum(1 for a in axes if head != 0 and a.direction != 0 and a.direction != head)
+    present = agree + oppose
+    sep = [a for a in axes if a.remove == _SEPARATE and a.direction != 0]
+    sep_agree = sum(1 for a in sep if a.direction == head) if head else 0
+    restating = sum(1 for a in axes if a.remove == _RESTATES and a.direction != 0)
+    sharing = sum(1 for a in axes if a.remove == _SHARES and a.direction != 0)
+
     d9 = any(lk.axis == "varga" and _dir(lk.lean) == head and head != 0 for lk in links)
     active = any(lk.axis == "dasha" for lk in links)
-    present = agree + oppose
+
     # a NON-DIRECTIONAL headline (a 'mixed' rollup) has nothing for an axis to agree or disagree
-    # with, so the counting loop above skips every link. Reporting that as WEAK/'aligned' would
-    # claim an alignment that was never tested — say plainly that the headline is undecided.
+    # with. Reporting that as WEAK/'aligned' would claim an alignment that was never tested.
     if head == 0:
         conv: Convergence = "MIXED"
     elif present >= 5 and oppose == 0 and d9 and active:
@@ -994,7 +1154,7 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
         conv = "WEAK"
     else:
         conv = "MIXED"
-    # reader label — 'weak' when few axes AGREE is misleading; call that 'lightly evidenced'
+
     if head == 0:
         label = "the headline itself is undecided"
     elif conv == "WEAK":
@@ -1003,15 +1163,37 @@ def _convergence(headline, facets, links, r) -> tuple[Convergence, str, str]:
         label = "the evidence splits both ways"
     else:
         label = conv.replace("_", " ").lower() + " convergence"
-    counted = ("the headline is undecided, so no axis can agree or oppose it (0 agree, 0 oppose)"
-               if head == 0 else
-               f"{agree} of {present} independent axes agree with the headline and "
-               f"{oppose} oppose it")
-    why = (f"{counted} "
+
+    if head == 0:
+        counted = "the headline is undecided, so no axis can agree or oppose it (0 agree, 0 oppose)"
+    else:
+        counted = (f"{agree} of {present} axes bearing on this agree with the headline and "
+                   f"{oppose} oppose it")
+    # the disclosure the old sentence lacked: the count is NOT a tally of independent witnesses
+    breakdown = ""
+    if head != 0 and present:
+        parts = []
+        if restating:
+            parts.append(f"{restating} restate{'s' if restating == 1 else ''} "
+                         f"the verdict's own inputs")
+        if sharing:
+            parts.append(f"{sharing} share{'s' if sharing == 1 else ''} its drivers")
+        parts.append(f"{len(sep)} stand{'s' if len(sep) == 1 else ''} apart from it"
+                     + (f", {sep_agree} of them agreeing" if sep else ""))
+        breakdown = " — of those {n}, ".format(n=present) + "; ".join(parts)
+    # axes that BEAR on the theme without asserting a direction are disclosed, never dropped:
+    # a fired yoga's lean is "favourable-leaning", deliberately hedged, and forcing it to +1/-1
+    # would assert a direction the engine declined to state.
+    silent = [a for a in axes if a.direction == 0]
+    if silent:
+        breakdown += (f". A further {len(silent)} bear on it without asserting a direction "
+                      f"(chiefly the fired yogas, whose lean the engine states as "
+                      f"'-leaning' rather than as a verdict)")
+    why = (f"{counted}{breakdown} "
            f"({'the navamsa confirms' if d9 else 'the navamsa is neutral/absent'}; "
            f"{'the running period lights it' if active else 'not currently lit'}); "
-           f"an evidentiary count, not a probability.")
-    return conv, label, why
+           f"an evidentiary count with its dependencies disclosed, not a probability.")
+    return conv, label, why, tuple(axes)
 
 
 def _contradictions(r, prim_house, pf, headline, facets, theme_name) -> tuple[Contradiction, ...]:
@@ -2018,6 +2200,99 @@ def _pitru_screen(r, house: int) -> str:
     return ("Pitru dosha screen (NOT Raman — classical/BPHS provenance, reported as a separate "
             "layer and never a contradiction of the verdict above, PREC-12): "
             + "; ".join(bits) + ".")
+
+
+#: the four divisions that resolve no house. `theme_synthesis` skipped them entirely; the engine
+#: judged them all along. Domain labels are Rath's, not Raman's — see `BackgroundVarga`.
+_BACKGROUND_VARGAS: Final[dict[int, str]] = {
+    27: "general strength and weakness (bala/abala)",
+    40: "auspiciousness carried down the maternal line",
+    45: "character and conduct, the paternal line",
+    60: "the totality — accumulated karma of past births",
+}
+
+
+def _background_vargas(r) -> tuple[BackgroundVarga, ...]:
+    """Read the four deep-background divisions from the engine's OWN shodasavarga judgment.
+
+    ``build_shodasavarga_report`` already returns a confirms/weakens/neutral status for all
+    sixteen divisions and the integrated reading never consulted four of them. Nothing here is
+    computed anew and nothing is scraped from rendered prose — the structured
+    ``VargaReading`` is read directly, which is also what lets `karmic_evolution` stop
+    regex-parsing the D-60 block out of its own printed output."""
+    from app.raman_saab.judges.varga_judge import _varga_dignity, build_shodasavarga_report
+    from app.raman_saab.primitives.functional_nature import NATURAL_BENEFICS
+    rep = _safe(lambda: build_shodasavarga_report(r.chart), None)
+    if rep is None:
+        return ()
+    out: list[BackgroundVarga] = []
+    for vr in getattr(rep, "readings", ()) or ():
+        if vr.n not in _BACKGROUND_VARGAS:
+            continue
+        strong, weak = [], []
+        for planet, pos in (getattr(vr.chart, "positions", {}) or {}).items():
+            dig = _safe(lambda p=planet, sg=pos.sign: _varga_dignity(p, sg), "neutral")
+            if dig in ("exalt", "own"):
+                strong.append(planet)
+            elif dig == "debil":
+                weak.append(planet)
+        from app.raman_saab.render_varga import _SIGNS
+        vchart = getattr(vr, "chart", None)
+        lagna_sign = int(getattr(vchart, "lagna_sign", 0) or 0)
+        lagna_name = _SIGNS[lagna_sign - 1] if 1 <= lagna_sign <= 12 else f"sign {lagna_sign}"
+        lord = getattr(vr.lagna_lord, "planet", "")
+        dig = getattr(vr.lagna_lord, "dignity", "")
+        domain = _BACKGROUND_VARGAS[vr.n]
+        # WHICH neutral this is (varga_judge._neutral_kind). "contested" = the pillars gave
+        # both a confirming and a weakening testimony and they cancelled; "silent" = neither
+        # pole fired at all. Opposite findings; the bare word "neutral" printed them alike.
+        # Note this is a PILLAR-level fact (varga-lagna lord + domain karakas) and is not the
+        # same question as `strong`/`weak` above, which scan every graha in the division and
+        # never look at dusthana placement — so the two can legitimately disagree.
+        kind = str(getattr(vr, "neutral_kind", "") or "")
+        kind_clause = ""
+        if kind == "contested":
+            kind_clause = (" — and that is a CONTESTED neutral, not a quiet one: among the "
+                           "varga lagna lord and the domain karakas one testifies well and "
+                           "another testifies badly, and they cancel")
+        elif kind == "silent":
+            kind_clause = (" — a SILENT neutral: neither the varga lagna lord nor the domain "
+                           "karakas testified either way, so the division abstains rather "
+                           "than balances")
+        # the reading states the ENGINE's own status and nothing beyond it. A division with no
+        # exalted, own or debilitated graha has no signal, and saying more would be invention.
+        if not strong and not weak:
+            # "among the seven grahas" is load-bearing: `_varga_dignity` returns 'neutral' for
+            # Rahu and Ketu unconditionally (they own no sign; Raman judges them by association),
+            # so the nodes can never enter `strong`/`weak`. Saying "nothing is exalted" flat
+            # would claim the nodes had been checked and found silent, which is not what happened.
+            body = (f"No signal: among the seven grahas nothing is exalted, in own sign or "
+                    f"debilitated in this division, and its lagna lord {lord} is {dig}. The "
+                    f"nodes carry no sign-dignity in any division and are not assessed here. "
+                    f"The engine reads it {vr.status}{kind_clause}; there is nothing "
+                    f"further to report.")
+        else:
+            bits = []
+            if strong:
+                bits.append(f"standing strong (exalted or own): {', '.join(sorted(strong))}")
+            if weak:
+                bits.append(f"debilitated: {', '.join(sorted(weak))}")
+            body = (f"Its lagna sits in {lagna_name} under {lord} ({dig} in this "
+                    f"division); {'; '.join(bits)}. The engine reads it "
+                    f"{vr.status}{kind_clause}.")
+        out.append(BackgroundVarga(
+            varga=vr.n, name=vr.name, domain=domain, status=str(vr.status),
+            status_kind=kind, lagna_sign=lagna_sign, lagna_lord=lord, lagna_lord_dignity=str(dig),
+            strong=tuple(sorted(strong)), weak=tuple(sorted(weak)),
+            benefics_on_lagna=tuple(getattr(vr, "benefics_on_lagna", ()) or ()),
+            malefics_on_lagna=tuple(getattr(vr, "malefics_on_lagna", ()) or ()),
+            provenance=("strength read: RAMAN_GENERAL_PRINCIPLE on Raman's own shodasavarga "
+                        "pointer; domain label: CLASSICAL_NONCITABLE (Rath, not Raman)"),
+            citation=f"{getattr(vr.source, 'work', 'HPA-11')}:"
+                     f"{getattr(vr.source, 'line', 195)}",
+            reading=body))
+    out.sort(key=lambda b: b.varga)
+    return tuple(out)
 
 
 def _longevity_frame(r, themes) -> Optional[LongevityFrame]:

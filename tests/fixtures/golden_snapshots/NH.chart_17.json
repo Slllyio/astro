@@ -118,7 +118,7 @@
       "dharma": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       },
       "father": {
         "degree": "mild",
@@ -128,17 +128,17 @@
       "fortune": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       },
       "higher_learning": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       },
       "long_journeys": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       }
     }
   }

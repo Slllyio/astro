@@ -23,7 +23,15 @@ def _chart(lons: dict[str, float], asc_lon: float) -> RamanChart:
 # 9th. 8th house = Virgo (~150-180). A minimal chart (no dispositor present) leaves the
 # debilitation un-cancelled (neecha_bhanga False).
 _ASC_AQ = 305.0
-_SUN_DEBIL = 200.0   # Libra = Sun's debilitation sign
+# Libra = Sun's debilitation sign. 195.0 (Libra 15) is deliberately NOT 200.0 (Libra 20):
+# Libra 20 is an exact navamsa cusp, and Libra being movable the navamsa there is ARIES —
+# the Sun's exaltation — so a Sun at Libra 20-23.20 is debilitated in the rasi and exalted
+# in the navamsa, which cancels the debilitation. The engine used to mis-assign that arc to
+# Pisces (a `30/9` float that rounds UP, so `20.0 // (30/9)` fell one part short), which is
+# the only reason 200.0 ever read as un-cancelled here. See `test_h7c85_silent_when_the_
+# debilitation_is_cancelled_in_the_navamsa` below, which pins the corrected behaviour.
+_SUN_DEBIL = 195.0
+_SUN_DEBIL_NAVAMSA_EXALTED = 200.0   # Libra 20 -> navamsa Aries -> neecha bhanga
 _MARS_8TH = 165.0    # Virgo = the 8th house from Aquarius
 
 
@@ -32,6 +40,15 @@ def test_h7c85_fires_mars8_with_debil_lord():
     fires (the Chart 22/h7_10 vaidhavya signature)."""
     chart = _chart({"Mars": _MARS_8TH, "Sun": _SUN_DEBIL}, _ASC_AQ)
     assert _RULE.fires(chart) is True
+
+
+def test_h7c85_silent_when_the_debilitation_is_cancelled_in_the_navamsa():
+    """Mars in the 8th + the 7th lord Sun in Libra 20 -> the navamsa there is Aries (Libra
+    is movable, so its navamsas run from Libra), the Sun's own exaltation sign. A rasi
+    debilitation that becomes a navamsa exaltation is cancelled, so the powerless-mangalya
+    leg fails and the rule stays silent even though the rasi placement looks identical."""
+    chart = _chart({"Mars": _MARS_8TH, "Sun": _SUN_DEBIL_NAVAMSA_EXALTED}, _ASC_AQ)
+    assert _RULE.fires(chart) is False
 
 
 def test_h7c85_silent_when_lord_not_debilitated():

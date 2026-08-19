@@ -100,7 +100,15 @@ def _house_of_sign(from_sign: int, offset: int) -> int:
     return ((from_sign - 1) + (offset - 1)) % 12 + 1
 
 
+#: The 6th house is always rasi-house 6 whatever sign falls on it. `sixth` below is a SIGN
+#: number (it indexes HPA-29's anatomy tables); occupancy and drishti are HOUSE questions and
+#: must never be asked with it. The two frames coincide only for an Aries lagna, which is why
+#: this read looked right on the one chart where it could not be wrong.
+_SIXTH_HOUSE = 6
+
+
 def _occupants(chart: RamanChart, house: int) -> tuple[str, ...]:
+    """Planets standing in rasi-house `house` — a HOUSE number, never a sign number."""
     return tuple(n for n in _PLANET_ORDER
                  if n in chart.planets and chart.planets[n].rasi_house == house)
 
@@ -142,7 +150,7 @@ def build_medical_reading(chart: RamanChart) -> Optional[MedicalReading]:
                  f"{CITE_SIGN_DISEASES.work}:{CITE_SIGN_DISEASES.line} (complaints)"))
 
     # ── 2. planets IN the 6th — "the diseases will be those indicated by its rulers" ──
-    occ = _occupants(chart, sixth)
+    occ = _occupants(chart, _SIXTH_HOUSE)
     for p in occ:
         if p in _NODES:
             unlisted.append(p)
@@ -181,7 +189,7 @@ def build_medical_reading(chart: RamanChart) -> Optional[MedicalReading]:
 
     # ── 4. planets ASPECTING the 6th ─────────────────────────────────────────
     try:
-        aspecting = tuple(drishti.aspecting_house(sixth, chart))
+        aspecting = tuple(drishti.aspecting_house(_SIXTH_HOUSE, chart))
     except Exception:  # noqa: BLE001 — sparse Track-B chart
         aspecting = ()
     for p in aspecting:

@@ -22,10 +22,23 @@ except Exception:  # noqa: BLE001
     _HAS_CORPUS = False
 
 
+#: Gemini rising, so the 6th SIGN (Scorpio, 8) and the 6th HOUSE (6) are different numbers —
+#: and both are occupied by different grahas. Saturn and Ketu stand in the 6th house; Jupiter
+#: stands in house 8. Any code that asks an occupancy question with the sign number answers
+#: "Jupiter" here, which is how the frame confusion below is caught rather than argued about.
+_OCCUPIED_SIXTH = BirthData("Occupied 6th", 1985, 1, 10, 18, 0, 5.5, 12.97, 77.59)
+
+
 @pytest.fixture(scope="module")
 def chart():
     from app.raman_saab.detailed_report import build_detailed_report
     return build_detailed_report(_CANONICAL).chart
+
+
+@pytest.fixture(scope="module")
+def occupied_chart():
+    from app.raman_saab.chart.adapter import cast_chart
+    return cast_chart(_OCCUPIED_SIXTH, ayanamsa="lahiri")
 
 
 class TestTables:
@@ -113,18 +126,47 @@ class TestCitationsResolve:
 
 
 class TestReader:
-    def test_all_four_of_ramans_testimonies_are_read(self, chart):
+    def test_all_four_of_ramans_testimonies_are_read(self, occupied_chart):
         """HPA-29 §10 names four things to consider: the planets in the 6th, the lord of
         the 6th, the aspects on the 6th, and the navamsa the 6th lord occupies. The reader
         follows the sentence literally, and each clause is surfaced separately so a reader
-        can see which one produced which line."""
-        m = build_medical_reading(chart)
+        can see which one produced which line. Read on a chart whose 6th house is occupied,
+        because the occupant clause cannot fire on an empty one."""
+        m = build_medical_reading(occupied_chart)
         assert m is not None
         clauses = {t.clause for t in m.testimonies}
         assert "the sign on the 6th — the body regions marked" in clauses
         assert "the lord of the 6th" in clauses
         assert "the navamsa the 6th lord occupies" in clauses
         assert any(c.startswith("a planet in the 6th") for c in clauses)
+
+    def test_the_three_unconditional_clauses_read_on_an_empty_sixth(self, chart):
+        """The canonical chart's 6th house is EMPTY — Virgo rising puts Aquarius on it and
+        no graha stands there. The occupant clause is then correctly silent, and the three
+        clauses that do not depend on occupancy still read. A reader must be able to tell an
+        empty 6th from an unread one."""
+        m = build_medical_reading(chart)
+        assert m.occupants == ()
+        clauses = {t.clause for t in m.testimonies}
+        assert "the sign on the 6th — the body regions marked" in clauses
+        assert "the lord of the 6th" in clauses
+        assert "the navamsa the 6th lord occupies" in clauses
+        assert not any(c.startswith("a planet in the 6th") for c in clauses)
+
+    def test_occupancy_and_drishti_are_asked_of_the_house_not_the_sign(self, occupied_chart):
+        """Regression. `sixth` is a SIGN number — it indexes HPA-29's anatomy tables — while
+        occupancy and drishti are HOUSE questions. Asking them with the sign number reads a
+        different house entirely, and the two frames coincide only for an Aries lagna, so the
+        error is invisible on exactly one chart in twelve. Here Gemini rises: the 6th house
+        holds Saturn and Ketu, while sign 8 read as a house holds Jupiter."""
+        m = build_medical_reading(occupied_chart)
+        assert m.sixth_sign == 8                    # Scorpio — the anatomy-table frame
+        assert "Saturn" in m.occupants              # the real 6th HOUSE
+        assert "Jupiter" not in m.occupants         # what the sign-as-house frame returned
+        assert "Jupiter" not in m.aspecting
+        houses = {n: p.rasi_house for n, p in occupied_chart.planets.items()}
+        assert set(m.occupants) | set(m.unlisted_bodies) >= {
+            n for n, h in houses.items() if h == 6}
 
     def test_the_sixth_is_taken_from_the_ascendant(self, chart):
         """'The house of diseases is the sixth FROM THE ASCENDANT' — Virgo rising on the
@@ -133,11 +175,11 @@ class TestReader:
         assert m.sixth_sign_name == "Aquarius"
         assert m.sixth_lord == "Saturn"
 
-    def test_a_node_in_the_testimony_is_disclosed_not_dropped(self, chart):
-        """Ketu occupies the 6th on this chart and Rahu aspects it. Raman's tables have no
-        node row, so they contribute nothing — but a silent skip would let a reader believe
+    def test_a_node_in_the_testimony_is_disclosed_not_dropped(self, occupied_chart):
+        """Ketu occupies the 6th house on this chart and Rahu aspects it. Raman's tables have
+        no node row, so they contribute nothing — but a silent skip would let a reader believe
         the 6th was empty of them. They are reported as present-but-unlisted."""
-        m = build_medical_reading(chart)
+        m = build_medical_reading(occupied_chart)
         assert "Ketu" in m.occupants
         assert set(m.unlisted_bodies) == {"Ketu", "Rahu"}
         assert not any(t.actor in ("Rahu", "Ketu") for t in m.testimonies)

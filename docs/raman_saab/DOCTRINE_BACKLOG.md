@@ -911,3 +911,56 @@ no longer implies Raman grants relief unconditionally and now names his counter-
 **If actioned**, expect movement on charts where a debilitated lord/karaka sits in an
 exchange with an afflicted partner; measure exact/within-1/real-errors before and after and
 report both axes side by side per MEASURED TRUTH.
+
+
+## Kemadruma bhanga attribution (2026-08-19) — OPEN, needs doctrine review + user sign-off
+
+`bhangas.kemadruma_bhanga` cites 3HC:2182-2185 for its three cancellation branches. The
+quoted Remark does not end there. The full passage runs to 3HC:2188:
+
+> "Some authors say that if planets are m a kendra from birth or from the Moon or if the
+> Moon is in conjunction with a planet there is no Kemadruma. Theie are yet other authors
+> who say that these yogas arise from kendras and navamsas **but these observations are not
+> generally acceptable.**"
+
+Two problems:
+
+1. Raman **attributes** the cancellation to "some authors" — he never asserts in his own
+   voice that there is no Kemadruma in these cases. The engine cites the line as though he
+   did.
+2. His dismissal at :2188 is grammatically ambiguous. "these observations" attaches most
+   immediately to the SECOND group ("kendras and navamsas"), but can be read as covering
+   both reported opinions, since he is reporting throughout rather than endorsing.
+
+**Not actioned:** `kemadruma_bhanga` feeds the yoga layer and therefore the verdict path, so
+narrowing or dropping the branches moves the golden ratchet and needs the doctrine-review +
+sign-off path. The DOCSTRING was corrected in the same commit — the anchor is now quoted in
+full including the dismissal, and the attribution is stated.
+
+**If actioned**, the question to settle first is scope: does :2188 dismiss the kendra/
+conjunction cancellations too, or only the kendra-and-navamsa claim? A reviewer with the
+printed page (the OCR is poor here — "Theie", "m" for "in") should decide before any code
+moves. Expect movement on charts carrying an otherwise-formed Kemadruma.
+
+**Settled in the same pass:** the extended benefic-drishti branch is NOT Raman's. The
+backlog asked "if Raman states it elsewhere, pin it and relabel" — searching the mounted
+3HC finds Kemadruma only at :2170-2266 and no such statement. The NOT-3HC label is correct
+and stays.
+
+## Chara dasa x Karakamsa pairing (2026-08-19) — NOT ENCODABLE from the mounted text
+
+The audit wanted the sentence that reads the karakamsa indications THROUGH the running
+chara period. It cannot be composed from what is mounted, and the reason is the import, not
+the doctrine:
+
+* the JAIMINI import is PARTIAL — 6 chapters (4, 5, 6, 9, 11, 49), and chapter 5 is 48
+  lines of OCR junk;
+* "karakamsa" appears **only** in chapter 9 (the Summary), at :797-838, where Raman lists
+  what the karakamsa reveals (appearance via its lord, character and mind, pre-disposition
+  to troubles, education, profession) — a topic index, not a timing rule;
+* chapter 4 is the Chara Dasa chapter and mentions karakamsa **zero times**.
+
+So the pairing is either in a chapter that did not import or is not stated. The
+navigational cross-reference that shipped instead remains the correct surface. A session
+with a complete Studies-in-Jaimini scan should look for an article pairing the two before
+re-opening this.

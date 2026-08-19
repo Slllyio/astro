@@ -694,6 +694,10 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v36 — psych mind stack */
+  'The Moon\u2019s mental disposition':'चन्द्र की मानसिक प्रवृत्ति',
+  'Mercury (buddhi) condition':'बुध (बुद्धि) की स्थिति',
+  'The Moon\u2019s avastha (cross-reference)':'चन्द्र की अवस्था (सन्दर्भ)',
   /* v36 — marriage timing */
   'Marriage timing — the giving lords and the delay screens':'विवाह-काल — दाता ग्रह और विलम्ब-परीक्षा',
   'Planets Raman names as able to give marriage in their periods':'रमण द्वारा नामित विवाह-दाता ग्रह',
@@ -2908,7 +2912,16 @@ function render(R, S, FQ){
     if(ps.moon_state) add(para('The mind\'s significator — '+ps.moon_state,'muted'));
     if(ps.temperament) add(para('Temperament of the strongest planet — '+ps.temperament+' (HTJAH-I:6248-6268)','muted'));
     if(ps.nature_stamp) add(para('Nature & appearance stamped by — '+ps.nature_stamp+' (HTJAH-I:3892-3897)','muted'));
-    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted')); }
+    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted'));
+    /* completeness repair 2026-08-19: the mind-stack completions (the fired H1.M.* Moon
+       disposition rules, the Mercury buddhi line and the Deeptadi cross-reference) ship in
+       the JSON and render on markdown + standalone but never here. */
+    for(const f of (ps.moon_mind||[])) add(ruleLine(f[0],t('The Moon\u2019s mental disposition')+' — '+f[1],f[2]));
+    if(ps.mercury_line) add(para(t('Mercury (buddhi) condition')+' — '+ps.mercury_line,'muted'));
+    if(ps.deeptadi_moon) add(para(t('The Moon\u2019s avastha (cross-reference)')+' — '+ps.deeptadi_moon,'muted'));
+    /* v36 — Raman's affliction-to-the-mind screen: present-or-absent, never a diagnosis. */
+    for(const m of (ps.mind_screen||[])) add(para(m[0]+' — '+m[1]+' ('+m[2]+')','muted'));
+    if(ps.mind_caution) add(para(ps.mind_caution,'muted fineprint')); }
 
   chapter(7);   // step 4 — WHY: the raw chart data
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====

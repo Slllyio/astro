@@ -176,6 +176,37 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
     casting drishti on the Moon also cancels. This branch comes from the
     Phase-2 aspect backfill (standard doctrine) and is kept distinct so the
     corpus citation is not over-claimed.
+
+    THE QUOTED REMARK DOES NOT END WHERE THIS DOCSTRING USED TO STOP (found
+    2026-08-19, corpus mounted). The full Remarks run to 3HC:2188:
+
+        "Some authors say that if planets are m a kendra from birth or from the
+        Moon or if the Moon is in conjunction with a planet there is no
+        Kemadruma. Theie are yet other authors who say that these yogas arise
+        from kendras and navamsas BUT THESE OBSERVATIONS ARE NOT GENERALLY
+        ACCEPTABLE."
+
+    Two things follow, and both matter:
+
+      * Raman ATTRIBUTES the cancellation to "some authors". He never states in
+        his own voice that there is no Kemadruma in these cases. Citing
+        3HC:2182-2185 as if it were his assertion over-claims the anchor, which
+        is what this docstring did.
+      * His dismissal at :2188 is grammatically ambiguous. "these observations"
+        attaches most immediately to the SECOND group ("yet other authors ...
+        kendras and navamsas"), but it can be read as covering both reported
+        opinions, since he is reporting rather than endorsing throughout.
+
+    The BEHAVIOUR here is deliberately unchanged: `kemadruma_bhanga` feeds the
+    yoga layer and therefore the verdict path, so narrowing it would move the
+    golden ratchet and needs the doctrine-review + user-sign-off path. Logged in
+    DOCTRINE_BACKLOG "Kemadruma bhanga attribution". What IS fixed here is the
+    claim: the anchor is now quoted in full, including the dismissal.
+
+    This also answers the backlog's standing question about the extended
+    benefic-drishti branch — "if Raman states it elsewhere, pin it and relabel".
+    He does not state it. Searching the mounted 3HC finds Kemadruma only at
+    :2170-2266, and the branch stays labelled NOT-3HC.
     """
     if "Moon" not in chart.planets:
         return False

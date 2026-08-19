@@ -2432,6 +2432,12 @@ def _psych_section(r: DetailedReport) -> str:
         rows.append(("Mercury (buddhi)", _esc(ps.mercury_line)))
     if ps.deeptadi_moon:
         rows.append(("The Moon's avastha (cross-reference)", _esc(ps.deeptadi_moon)))
+    # v36: the affliction-to-the-mind screen — present-or-absent, never a diagnosis
+    for _mn, _mf, _mc in getattr(ps, "mind_screen", ()):
+        rows.append((_esc(_mn), f'{_esc(_mf)} <span class="cite">{_esc(_mc)}</span>'))
+    if getattr(ps, "mind_caution", ""):
+        rows.append(("On reading affliction to the mind",
+                     f'<i>{_esc(ps.mind_caution)}</i>'))
     if ps.temperament:
         rows.append(("Temperament of the strongest planet",
                      _esc(ps.temperament) + " (HTJAH-I:6248-6268)"))

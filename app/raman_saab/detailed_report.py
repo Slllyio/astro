@@ -5032,6 +5032,11 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(f"- **Mercury (buddhi)** — {ps.mercury_line}")
         if ps.deeptadi_moon:
             L.append(f"- **The Moon's avastha (cross-reference)** — {ps.deeptadi_moon}")
+        # v36: Raman's affliction-to-the-mind screen — present-or-absent, never a diagnosis
+        for _mn, _mf, _mc in getattr(ps, "mind_screen", ()):
+            L.append(f"- **{_md_cell(_mn)}** — {_md_cell(_mf)} ({_md_cell(_mc)})")
+        if getattr(ps, "mind_caution", ""):
+            L.append(f"- _{_md_cell(ps.mind_caution)}_")
         if ps.temperament:
             L.append(f"- **Temperament of the strongest planet** — {ps.temperament} "
                      f"(HTJAH-I:6248-6268)")

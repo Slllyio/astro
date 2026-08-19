@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Final, Literal, Optional
 
 import swisseph as swe
 
@@ -375,6 +375,46 @@ class DissentSummary:
 
 
 @dataclass(frozen=True)
+class BackgroundVarga:
+    """One of the four DEEP-BACKGROUND divisions — D-27, D-40, D-45, D-60 — read as a modifier.
+
+    These resolve no house and carry no matter verdict, so ``_divisional_checks`` skips them and
+    they were the last computed astrology the integrated reading never touched. But the engine
+    does judge them: ``build_shodasavarga_report`` returns a ``confirms / weakens / neutral``
+    status for all sixteen divisions, built from four general-strength principles (varga-lagna
+    lord dignity, benefic/malefic occupancy of the varga lagna and its kendras). That status was
+    computed on every chart and read by nothing.
+
+    PROVENANCE — stated because it is thin, and the PRIME DIRECTIVE requires it stated:
+
+    * Raman NAMES the shodasavarga scheme and defers the rest to Parashara (**HPA-11:195-201**);
+      he teaches six divisions in full plus the Saptamsa, and gives no domain, no reading rule and
+      no worked usage for these four. So the *strength* read is a RAMAN_GENERAL_PRINCIPLE applied
+      to a division he names — the same standing D-27 already carries.
+    * The DOMAIN labels (maternal line, paternal line, accumulated karma) are Sanjay Rath, not
+      Raman: **CLASSICAL_NONCITABLE**, and they can never resolve to a quotable passage because
+      the divergence firewall admits only Raman works.
+
+    Consequently this is a background modifier and nothing more: it takes no direction, enters no
+    convergence count, and can never move a bhava verdict. Where a division has no signal at all
+    (nothing exalted, nothing own, nothing debilitated) it says so rather than narrating."""
+    varga: int
+    name: str
+    domain: str                     # the classical domain label (CLASSICAL_NONCITABLE)
+    status: str                     # 'confirms' | 'weakens' | 'neutral' | 'unknown' — the ENGINE's
+    lagna_sign: int
+    lagna_lord: str
+    lagna_lord_dignity: str
+    strong: tuple[str, ...]         # exalted or in own sign in this division
+    weak: tuple[str, ...]           # debilitated in this division
+    benefics_on_lagna: tuple[str, ...]
+    malefics_on_lagna: tuple[str, ...]
+    provenance: str
+    citation: str
+    reading: str
+
+
+@dataclass(frozen=True)
 class WeatherWindow:
     """One forward stretch of TIMING WEATHER — never a verdict, always a modifier of one.
 
@@ -535,6 +575,8 @@ class ThemeSynthesis:
     #: the transit weather over the years this reading names — subordinate by citation (PREC-6,
     #: PREC-7), never a verdict, and never previously joined to the timing it qualifies
     calendar: Optional[AfflictionCalendar] = None
+    #: the four deep-background divisions (D-27/40/45/60), read as modifiers and never as votes
+    background_vargas: tuple[BackgroundVarga, ...] = ()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -758,7 +800,8 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
                           graha_concordance=graha_conc, contested_bhavas=contested,
                           divisional_divergences=divergent, contested_themes=contested_th,
                           longevity=_safe(lambda: _longevity_frame(r, themes), None),
-                          calendar=_safe(lambda: _affliction_calendar(r, weather), None))
+                          calendar=_safe(lambda: _affliction_calendar(r, weather), None),
+                          background_vargas=_safe(lambda: _background_vargas(r), ()) or ())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -2144,6 +2187,76 @@ def _pitru_screen(r, house: int) -> str:
     return ("Pitru dosha screen (NOT Raman — classical/BPHS provenance, reported as a separate "
             "layer and never a contradiction of the verdict above, PREC-12): "
             + "; ".join(bits) + ".")
+
+
+#: the four divisions that resolve no house. `theme_synthesis` skipped them entirely; the engine
+#: judged them all along. Domain labels are Rath's, not Raman's — see `BackgroundVarga`.
+_BACKGROUND_VARGAS: Final[dict[int, str]] = {
+    27: "general strength and weakness (bala/abala)",
+    40: "auspiciousness carried down the maternal line",
+    45: "character and conduct, the paternal line",
+    60: "the totality — accumulated karma of past births",
+}
+
+
+def _background_vargas(r) -> tuple[BackgroundVarga, ...]:
+    """Read the four deep-background divisions from the engine's OWN shodasavarga judgment.
+
+    ``build_shodasavarga_report`` already returns a confirms/weakens/neutral status for all
+    sixteen divisions and the integrated reading never consulted four of them. Nothing here is
+    computed anew and nothing is scraped from rendered prose — the structured
+    ``VargaReading`` is read directly, which is also what lets `karmic_evolution` stop
+    regex-parsing the D-60 block out of its own printed output."""
+    from app.raman_saab.judges.varga_judge import _varga_dignity, build_shodasavarga_report
+    from app.raman_saab.primitives.functional_nature import NATURAL_BENEFICS
+    rep = _safe(lambda: build_shodasavarga_report(r.chart), None)
+    if rep is None:
+        return ()
+    out: list[BackgroundVarga] = []
+    for vr in getattr(rep, "readings", ()) or ():
+        if vr.n not in _BACKGROUND_VARGAS:
+            continue
+        strong, weak = [], []
+        for planet, pos in (getattr(vr.chart, "positions", {}) or {}).items():
+            dig = _safe(lambda p=planet, sg=pos.sign: _varga_dignity(p, sg), "neutral")
+            if dig in ("exalt", "own"):
+                strong.append(planet)
+            elif dig == "debil":
+                weak.append(planet)
+        from app.raman_saab.render_varga import _SIGNS
+        vchart = getattr(vr, "chart", None)
+        lagna_sign = int(getattr(vchart, "lagna_sign", 0) or 0)
+        lagna_name = _SIGNS[lagna_sign - 1] if 1 <= lagna_sign <= 12 else f"sign {lagna_sign}"
+        lord = getattr(vr.lagna_lord, "planet", "")
+        dig = getattr(vr.lagna_lord, "dignity", "")
+        domain = _BACKGROUND_VARGAS[vr.n]
+        # the reading states the ENGINE's own status and nothing beyond it. A division with no
+        # exalted, own or debilitated graha has no signal, and saying more would be invention.
+        if not strong and not weak:
+            body = (f"No signal: nothing is exalted, in own sign or debilitated in this "
+                    f"division, and its lagna lord {lord} is {dig}. The engine reads it "
+                    f"{vr.status}; there is nothing further here to report.")
+        else:
+            bits = []
+            if strong:
+                bits.append(f"standing strong (exalted or own): {', '.join(sorted(strong))}")
+            if weak:
+                bits.append(f"debilitated: {', '.join(sorted(weak))}")
+            body = (f"Its lagna sits in {lagna_name} under {lord} ({dig} in this "
+                    f"division); {'; '.join(bits)}. The engine reads it {vr.status}.")
+        out.append(BackgroundVarga(
+            varga=vr.n, name=vr.name, domain=domain, status=str(vr.status),
+            lagna_sign=lagna_sign, lagna_lord=lord, lagna_lord_dignity=str(dig),
+            strong=tuple(sorted(strong)), weak=tuple(sorted(weak)),
+            benefics_on_lagna=tuple(getattr(vr, "benefics_on_lagna", ()) or ()),
+            malefics_on_lagna=tuple(getattr(vr, "malefics_on_lagna", ()) or ()),
+            provenance=("strength read: RAMAN_GENERAL_PRINCIPLE on Raman's own shodasavarga "
+                        "pointer; domain label: CLASSICAL_NONCITABLE (Rath, not Raman)"),
+            citation=f"{getattr(vr.source, 'work', 'HPA-11')}:"
+                     f"{getattr(vr.source, 'line', 195)}",
+            reading=body))
+    out.sort(key=lambda b: b.varga)
+    return tuple(out)
 
 
 def _longevity_frame(r, themes) -> Optional[LongevityFrame]:

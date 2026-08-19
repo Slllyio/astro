@@ -471,6 +471,12 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                           f"{_bh} ({_sp}), tier-score {_sc}, {_st} — classically sensitive, a "
                           f"disclosure of the method and never a forecast.",
                    cite="HTJAH-II:4846-4849")
+        for _bv in ts.get("background_vargas", []):
+            _f(facts, f"Deep-background division D-{_bv['varga']} {_bv['name']} "
+                      f"({_bv['domain']}) — the engine reads it {_bv['status']}. "
+                      f"{_bv['reading']} A background modifier only: it takes no direction and "
+                      f"can never move a bhava verdict. {_bv['provenance']}.",
+               cite=_bv.get("citation") or None)
         _cal = ts.get("calendar")
         if _cal:
             # subordinate by citation (PREC-6 / PREC-7) — the frame carries that on its face

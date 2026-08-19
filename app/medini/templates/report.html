@@ -690,6 +690,14 @@ const I18N_HI = {
   'against the band':'आयु-खंड के सापेक्ष',
   'inside the band':'खंड के भीतर',
   'beyond the band':'खंड से परे',
+  'The deep-background divisions':'गहन पृष्ठभूमि के वर्ग',
+  'division':'वर्ग',
+  'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
+  'engine\u2019s own reading':'इंजन का अपना पाठ',
+  'what it rests on':'यह किस पर आधारित है',
+  'Deep-background divisions — modifiers, never votes':'गहन पृष्ठभूमि के वर्ग — संशोधक, मत नहीं',
+  'Provenance':'स्रोत-परंपरा',
+  'citation':'सन्दर्भ',
   'agrees':'सहमत',
   'opposes':'विरुद्ध',
   'no direction':'कोई दिशा नहीं',
@@ -2658,6 +2666,17 @@ function render(R, S, FQ){
       const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
         x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
       add(du);
+    }
+    const BGV=ts.background_vargas||[];
+    if(BGV.length){
+      add(para(t('The deep-background divisions'),'muted'));
+      add(para(t('D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so nothing in the reading consulted them — yet the engine judged all four on every chart. They are background modifiers: no direction, no convergence vote, and they can never move a bhava verdict. Raman names the shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201); the domain labels are Rath\u2019s, not Raman\u2019s.'),'lede'));
+      const bg=BGV.map(b=>({[t('division')]:'D-'+b.varga+' '+b.name, [t('domain (non-Raman label)')]:b.domain,
+        [t('engine\u2019s own reading')]:b.status, [t('what it rests on')]:b.reading}));
+      const bt=sectionTable(t('Deep-background divisions — modifiers, never votes'), bg, null,
+        t('Read as background only. The strength method is a general principle applied to a division Raman names; the domain labels are classical/non-citable.'));
+      if(bt) add(bt);
+      add(para(t('Provenance')+': '+BGV[0].provenance+'; '+t('citation')+' '+BGV[0].citation,'muted'));
     }
     const CAL=ts.calendar;
     if(CAL&&(CAL.windows||[]).length){

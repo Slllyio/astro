@@ -1258,3 +1258,71 @@ class TestThemeSynthesisContract:
                 assert total == len(directional)
                 assert total == sum(1 for a in directional
                                     for _ in [0] if a.remove in (_RESTATES, _SHARES, _SEPARATE))
+
+    def test_the_background_divisions_are_read_from_the_engine_not_invented(
+            self, mainpuri, canonical):
+        """D-27/40/45/60 resolve no house and carry no matter verdict, so `_divisional_checks`
+        skips them — but `build_shodasavarga_report` judged all four on every chart and nothing
+        read it. Every field here must come from that judgment, never from a hand-written gloss."""
+        from app.raman_saab.judges.varga_judge import build_shodasavarga_report
+        for r, ts in (mainpuri, canonical):
+            bgv = ts.background_vargas
+            assert {b.varga for b in bgv} == {27, 40, 45, 60}
+            by_n = {vr.n: vr for vr in build_shodasavarga_report(r.chart).readings}
+            for b in bgv:
+                src = by_n[b.varga]
+                # status is the ENGINE's own, passed through
+                assert b.status == str(src.status)
+                assert b.status in ("confirms", "weakens", "neutral", "unknown")
+                assert b.lagna_sign == src.chart.lagna_sign
+                assert b.lagna_lord == src.lagna_lord.planet
+                assert b.status in b.reading      # the reading always states it
+
+    def test_the_background_divisions_can_never_move_a_verdict(self, mainpuri, canonical):
+        """They are modifiers. They must not reach the convergence count, the dissent ladder,
+        the evidence links or the contradictions — the same wall the karmic lens carries."""
+        for _r, ts in (mainpuri, canonical):
+            names = {f"D-{b.varga}" for b in ts.background_vargas}
+            for t in ts.themes:
+                for ax in t.convergence_axes:
+                    assert not any(n in ax.label for n in names)
+                for d in t.divisional_checks:
+                    assert not any(n in d.varga for n in names)
+                if t.dissent is not None:
+                    for c in t.dissent.checks:
+                        assert not any(n in c.system for n in names)
+
+    def test_the_background_provenance_is_stated_and_honest(self, mainpuri):
+        """The PRIME DIRECTIVE requires provenance stated where it is thin. Raman NAMES the
+        shodasavarga scheme and defers the rest to Parashara (HPA-11:195-201) — he gives these
+        four no domain, no reading rule and no worked usage. The domain labels are Rath's."""
+        _r, ts = mainpuri
+        for b in ts.background_vargas:
+            assert "RAMAN_GENERAL_PRINCIPLE" in b.provenance
+            assert "CLASSICAL_NONCITABLE" in b.provenance and "not Raman" in b.provenance
+            # the citation is the POINTER, which is the anchor varga_domains.py itself uses
+            assert b.citation.startswith("HPA-11:")
+
+    def test_a_division_with_no_signal_says_so_instead_of_narrating(self, mainpuri):
+        """D-40 on this chart has nothing exalted, nothing own and nothing debilitated. An
+        engine that produced a lineage narrative from that would be inventing; it must decline."""
+        _r, ts = mainpuri
+        d40 = next(b for b in ts.background_vargas if b.varga == 40)
+        assert not d40.strong and not d40.weak
+        assert "No signal" in d40.reading and "nothing further here to report" in d40.reading
+
+    def test_the_d60_reread_uses_structured_data_not_its_own_prose(self, mainpuri, canonical):
+        """`karmic_evolution._d60_reread` used to regex the rendered D-60 block back out of the
+        report's own printed output, so a wording change in the renderer silently degraded it to
+        a fallback sentence. It now reads the cast VargaChart."""
+        import inspect
+        from app.raman_saab import karmic_evolution as ke
+        src = inspect.getsource(ke._d60_reread)
+        assert "cast_varga_chart" in src
+        assert "re.search" not in src and "re.match" not in src
+        for r, _ts in (mainpuri, canonical):
+            core = r.karmic.d60_core
+            assert core and "D-60" in core
+            # and it agrees with the structured background reading for the same division
+            d60 = next(b for b in _ts.background_vargas if b.varga == 60)
+            assert d60.lagna_lord in core

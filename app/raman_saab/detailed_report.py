@@ -4365,6 +4365,29 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "
                      f"{_md_cell(d.verdict)}, against the rasi verdict.")
         L.append("")
+    bgv = getattr(ts, "background_vargas", None)
+    if bgv:
+        L.append("### The deep-background divisions")
+        L.append("")
+        L.append("_D-27, D-40, D-45 and D-60 resolve no house and carry no matter verdict, so "
+                 "nothing in the reading consulted them — yet the engine judged all four on "
+                 "every chart. They are read here as BACKGROUND MODIFIERS: they take no "
+                 "direction, enter no convergence count, and can never move a bhava verdict. "
+                 "Provenance is thin and stated: Raman NAMES the shodasavarga scheme and defers "
+                 "the rest to Parashara (HPA-11:195-201), so the strength read is a general "
+                 "principle applied to a division he names; the domain labels (maternal line, "
+                 "paternal line, accumulated karma) are Rath's, not Raman's._")
+        L.append("")
+        L.append("| Division | Domain (non-Raman label) | Engine's own reading | What it rests on |")
+        L.append("|---|---|---|---|")
+        for b in bgv:
+            L.append(f"| D-{b.varga} {_md_cell(b.name)} | {_md_cell(b.domain)} | "
+                     f"**{_md_cell(b.status)}** | {_md_cell(b.reading)} |")
+        L.append("")
+        L.append(f"- _Provenance: {_md_cell(bgv[0].provenance)}; citation "
+                 f"{_md_cell(bgv[0].citation)}._")
+        L.append("")
+
     cal = getattr(ts, "calendar", None)
     if cal is not None and cal.windows:
         L.append("### The weather over these years")

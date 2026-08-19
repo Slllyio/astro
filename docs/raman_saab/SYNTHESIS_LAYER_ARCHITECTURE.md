@@ -285,6 +285,35 @@ the named pattern), and every note sets the two verdicts against each other — 
 does not. Ties rank graha-before-house and no theme may hold more than `_CONN_PER_THEME` of them:
 the busiest theme has the widest network by construction, and uncapped it took four of six slots.
 
+### G.2b The deep-background divisions (D-27/40/45/60)
+
+The last computed astrology the reading never touched. These four resolve no house and carry no
+matter verdict, so `_divisional_checks` skips them — but `build_shodasavarga_report` returns a
+`confirms / weakens / neutral` status for **all sixteen** divisions, and four of them were judged
+on every chart and read by nothing. `BackgroundVarga` surfaces that judgment from the structured
+`VargaReading`; nothing is computed anew.
+
+Read as MODIFIERS, by construction: no direction, no convergence axis, no dissent check, no
+evidence link — tested in all four directions.
+
+**Provenance is thin and is stated on the surface.** Raman NAMES the shodasavarga scheme and
+defers the rest to Parashara (**HPA-11:195-201**); he teaches six divisions in full plus the
+Saptamsa and gives these four no domain, no reading rule and no worked usage. So the *strength*
+read is a `RAMAN_GENERAL_PRINCIPLE` applied to a division he names, while the *domain labels*
+(maternal line, paternal line, accumulated karma) are Sanjay Rath's — `CLASSICAL_NONCITABLE`, and
+unable to resolve to a quotable passage because the divergence firewall admits only Raman works.
+
+Where a division carries no signal at all it says so. D-40 on the Mainpuri chart has nothing
+exalted, nothing in own sign and nothing debilitated; the engine declines to narrate a lineage
+story from an empty division, and a test pins that refusal.
+
+`karmic_evolution._d60_reread` previously regex-parsed the rendered D-60 block back out of the
+report's own printed output, so a wording change in `render_general_varga` would silently degrade
+it to a fallback sentence. It now reads the cast `VargaChart` directly and produces identical
+text. **Not wired, deliberately:** `app/core/vimsopaka_bala.py` carries shodashavargaja weights
+(D-60 = 4.0, the rest 0.5), but it is a legacy BPHS/Phaladeepika subsystem that nothing in
+`raman_saab` imports; using it would breach the firewall for a numeric weighting Raman never gave.
+
 ### G.3 The weather calendar — subordinate by citation
 
 `AfflictionCalendar` joins three schemes the engine ran in full and the synthesis never consulted:

@@ -875,3 +875,39 @@ proven 88.4% ceiling.
 longevity foundation) shift the positions of later digest items, so `chart_feedback` rows
 stored under older qids no longer align with the current digest. Harmless for new feedback;
 historical rows should be treated as position-stale if they are ever re-analysed.
+
+
+## Directional parivartana (2026-08-19) — OPEN, needs doctrine review + user sign-off
+
+Found while citing the moderating-factor clause with the corpus mounted. NOT actioned:
+this sits in the verdict path and would move the golden ratchet, so it is recorded rather
+than changed.
+
+`house_template._decide` credits `parivartana_resilient` as flat relief — a lord or karaka
+in an exchange has a debilitation penalty bypassed (`house_template.py:1009-1020`,
+"treat a debil-but-exchanged pillar as not-weak"), **regardless of the condition of the
+exchange partner**.
+
+Raman's own worked charts run BOTH ways:
+
+- benign: "Jupiter and Venus have exchanged signs (parivartana), mutually benefiting each
+  other" (HTJAH-I:8837)
+- transmitting affliction: "the 8th and 10th lords have exchanged signs so that Saturn who
+  is the 7th lord **also is afflicted by this parivartana**" (HTJAH-I:9119)
+- explicitly undesirable: "Although the 7th lord Jupiter is strongly placed, his exchange
+  of signs with 5th lord Saturn **is not desirable as it can deny marriage or progeny**"
+  (HTJAH-I:9143)
+
+On that showing an exchange TRANSMITS the partner's condition; it does not shield by
+itself. A direction-aware rule would credit resilience only where the partner is itself
+unafflicted, and would let an exchange with an afflicted or dusthana lord carry affliction
+across instead.
+
+**Why it was not changed here:** `parivartana_resilient` feeds `_decide`, so any change
+moves the ratchet and needs the doctrine-review + user-sign-off path that B1-B4 went
+through. The reporting side WAS corrected in the same commit — the moderating-factor clause
+no longer implies Raman grants relief unconditionally and now names his counter-examples.
+
+**If actioned**, expect movement on charts where a debilitated lord/karaka sits in an
+exchange with an afflicted partner; measure exact/within-1/real-errors before and after and
+report both axes side by side per MEASURED TRUTH.

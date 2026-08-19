@@ -2076,7 +2076,10 @@ class TestFoundationWave2:
         flags, Lagna-lord disposition and the day-lord observation — all computed."""
         from app.raman_saab.detailed_report import signature_first_glance
         rows = dict(signature_first_glance(report))
-        assert rows["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        # the label carries the citation found 2026-08-19 (HPA-13:130-160, Raman's own
+        # proportional deduction of the expired nakshatra portion); the VALUE stays clean
+        # so consumers parsing it are unaffected.
+        assert rows["Balance of dasha at birth (HPA-13:130-160)"] == "Mercury 4y 8m 10d"
         assert rows["Lagna degree"] == "23 Vi 59'17\""
         assert rows["Moon degree"] == "26 Pi 19'03\""
         assert rows["Moon at a glance"].startswith(
@@ -2086,7 +2089,8 @@ class TestFoundationWave2:
         assert rows["Day lord"].startswith("born on Sunday, the Sun's day")
         sig = markdown[markdown.find("## Chart signature"):
                        markdown.find("## Ruler of the nativity")]
-        assert "**Balance of dasha at birth** - Mercury 4y 8m 10d" in sig
+        assert ("**Balance of dasha at birth (HPA-13:130-160)** - Mercury 4y 8m 10d"
+                in sig)
         assert "**Lagna degree** - 23 Vi 59'17\"" in sig
         assert "**Moon degree** - 26 Pi 19'03\"" in sig
 
@@ -2141,7 +2145,7 @@ class TestFoundationWave2:
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
         fg = dict(map(tuple, d["signature_first_glance"]))
-        assert fg["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        assert fg["Balance of dasha at birth (HPA-13:130-160)"] == "Mercury 4y 8m 10d"
         assert any(row[0] == "Saturn" and "Sakta" in row[1]
                    for row in d["deeptadi_table"])
         assert d["ruler"]["ll_dispositor"] == "Moon"

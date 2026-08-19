@@ -36,7 +36,22 @@ RESULTS: Final[dict[str, tuple[int, str]]] = {
 def state(planet: str, chart: RamanChart) -> str:
     """The planet's dominant Deeptadi avastha (priority-ordered: dignity, then position). 'Bhita'
     (acceleration / planetary-war defeat) needs speed data the engine does not carry and is omitted
-    from the live classification; the other nine are computed."""
+    from the live classification; the other nine are computed.
+
+    PRECEDENCE — SETTLED 2026-08-19 against the mounted corpus, so no future session
+    re-hunts. Raman states NO precedence among the avasthas. What he does state is the
+    opposite instruction: "Planets on account of their incessant movements get into certain
+    states of existence called Avasthas which are ten in number. Each Avastha produces its
+    own results. In the judgment of a horoscope ALL THESE DETAILS HAVE TO BE FULLY
+    CONSIDERED." (HPA-7:39-44). A planet can satisfy several avasthas at once and he wants
+    every one of them weighed.
+
+    So the dignity-first ordering here is the ENGINE'S OWN CONVENTION and nothing more —
+    it exists because this function has to return ONE string. It is not a claim about which
+    state Raman thinks dominates, and it must not be described as one. The report already
+    does the doctrinally right thing beside it: `states_all` discloses every state a planet
+    matches, which is what HPA-7:42-44 actually asks for. If the single-state return is ever
+    load-bearing for a verdict, that is the place to look first."""
     p = chart.planets.get(planet)
     if p is None:
         return "Santha"

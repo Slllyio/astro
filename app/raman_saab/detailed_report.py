@@ -1106,8 +1106,23 @@ def house_moderating_clause(r: "DetailedReport", house: int) -> str:
     led = sv.ledger
     mods: list[str] = []
     if verdict in ("afflicted", "mixed") and led.parivartana_resilient:
-        mods.append("the lord or karaka stands in a parivartana (exchange) - the "
-                    "resilience the judge already credited in its ledger")
+        # Provenance corrected 2026-08-19. This arm used to read as though an exchange were
+        # relief as such. Raman's own worked charts run BOTH ways: "Jupiter and Venus have
+        # exchanged signs (parivartana), mutually benefiting each other" (HTJAH-I:8837),
+        # but also "the 8th and 10th lords have exchanged signs so that Saturn who is the
+        # 7th lord also is afflicted by this parivartana" (HTJAH-I:9119) and "his exchange
+        # of signs with 5th lord Saturn is not desirable as it can deny marriage or
+        # progeny" (HTJAH-I:9143). An exchange transmits the partner's condition; it does
+        # not shield by itself. The clause therefore reports what the JUDGE credited and
+        # names that its own credit is direction-blind, rather than implying Raman grants
+        # relief unconditionally. The judge's behaviour is NOT changed here - that sits in
+        # the verdict path and is logged for doctrine review (DOCTRINE_BACKLOG "directional
+        # parivartana").
+        mods.append("the lord or karaka stands in a parivartana (exchange), and the judge "
+                    "credited that as resilience in its ledger - note that Raman's own "
+                    "exchanges run both ways (mutually benefiting at HTJAH-I:8837, but "
+                    "transmitting affliction at HTJAH-I:9119 and HTJAH-I:9143), and this "
+                    "engine's credit does not look at the partner's condition")
     if (verdict == "afflicted" and led.karaka_strong is True and led.karaka_intact
             and not led.lord_karaka_identical):
         mods.append(f"the karaka {led.karaka} itself stands strong and intact - the "
@@ -1119,7 +1134,17 @@ def house_moderating_clause(r: "DetailedReport", house: int) -> str:
                     f"afflicted configurations carry)")
     if not mods:
         return ""
-    return "the affliction is qualified - " + "; ".join(mods)
+    # The clause carries no Raman citation of its own and that is deliberate, not an
+    # omission: it is not one of his rules. It is the JUDGE disclosing state it already
+    # recorded while deciding, and each arm points at the mechanism it re-reads. Searching
+    # the mounted corpus for a general "the affliction is considerably reduced by..."
+    # device (2026-08-19) returns only specific rules - the 8th lord in a navamsa dusthana
+    # (HTJAH-I:9658-9659), navamsa 6/8/12 placement (HTJAH-I:12825, :12866) - never a
+    # general one. Recorded here so no future session re-hunts for a passage that is not
+    # there.
+    return ("the affliction is qualified - " + "; ".join(mods)
+            + " [the judge's own disclosure of what it already credited, not a separate "
+              "rule of Raman's - no general moderating-factor clause exists in the corpus]")
 
 
 # ── Wave-3 (2026-08-18) traversal composers ─────────────────────────────────
@@ -2865,7 +2890,17 @@ def signature_first_glance(r: DetailedReport) -> tuple[tuple[str, str], ...]:
     try:
         _first = _vd.mahadasha_timeline(chart)[0]
         _y, _m, _d = _ymd_from_days(_first.end_jd - chart.jd_ut)
-        rows.append(("Balance of dasha at birth",
+        # Citation found 2026-08-19 (corpus mounted): the row shipped as disclosed JD
+        # arithmetic with NO citation because Raman's casting passage was unpinned. It is
+        # HPA-13:130-160 — he deducts the expired portion of the birth nakshatra from the
+        # lord's full dasa by simple proportion ("if 57/16 ghaties give 7 years what will
+        # 8 ghaties give"), and prints the worked remainder as "Balance of the dasa of
+        # Mars at birth". The engine reaches the same quantity from the timeline's own
+        # bounds rather than from ghaties, which is the identical proportion in different
+        # units.
+        # the citation rides the LABEL, never the value: the value is data other code and
+        # tests read, and a cite spliced into it would leak into every consumer.
+        rows.append(("Balance of dasha at birth (HPA-13:130-160)",
                      f"{_first.maha} {_y}y {_m}m {_d}d"))
     except Exception:  # noqa: BLE001 — Track-B sparse chart (no jd_ut)
         pass
@@ -6625,8 +6660,13 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append("_Each state read as testimony — Raman's stated result beside the "
                      "houses the planet answers for. Where a planet matches more than "
-                     "one state, the secondary state is disclosed in parentheses; the "
-                     "dignity-first priority order names the dominant one. Rahu/Ketu "
+                     "one state, EVERY state it matches is disclosed: Raman asks for "
+                     "exactly that - the avasthas are 'ten in number. Each Avastha "
+                     "produces its own results. In the judgment of a horoscope all these "
+                     "details have to be fully considered' (HPA-7:39-44). He states no "
+                     "precedence among them, so the dignity-first order that names one as "
+                     "'dominant' is this engine's own convention for picking a single "
+                     "label, not a ranking of his. Rahu/Ketu "
                      "are always retrograde, hence perpetually Sakta — definitional, "
                      "not a strength claim._")
             L.append("")

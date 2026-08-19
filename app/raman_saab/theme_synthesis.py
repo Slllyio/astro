@@ -115,6 +115,8 @@ class ThemeReading:
     distinctive: tuple[Distinctiveness, ...] = ()
     #: the WALLED karmic/Jaimini lens on this bhava, where one exists (never corroboration)
     karmic_lens: Optional[KarmicLens] = None
+    #: the yogas bearing here, read whole: promise + strength + cancellation + operating windows
+    yogas: tuple[YogaReading, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -215,6 +217,31 @@ class KarmicLens:
 
 
 @dataclass(frozen=True)
+class YogaReading:
+    """One fired yoga, read whole — what it promises, how strong its participants measure,
+    whether a cancellation applies, and WHEN it operates.
+
+    A yoga IS a combination: the classical integrative unit, the one place the tradition itself
+    already does the synthesising. The engine computes it across three fields — ``r.yogas`` (that
+    it fired), ``r.yoga_deep`` (participants, measured strength, cancellations, rank) and
+    ``r.yoga_timing`` (the periods when its participants actually run, each with that lord's own
+    quality) — and the layer had been using a fragment of the first: a bare "bears on [2, 6, 10]".
+
+    Setting the promise beside its operating windows is Raman's own framing: a yoga promises, and
+    the dasha of its participants is when it delivers. ``cancellation`` is carried verbatim
+    because a cancelled yoga must never be presented as an active one."""
+    name: str
+    kind: str
+    effect: str                     # what the yoga promises, verbatim from the engine
+    rank: Optional[int]             # comparison_rank — which yoga is strongest in THIS chart
+    strength_note: str              # participants' measured Shadbala; no invented percentage
+    cancellation: str               # the bhanga note, verbatim — never summarised away
+    participants: tuple[str, ...]   # 'Venus (H1, friend, 7.61 rupas)'
+    windows: tuple[str, ...]        # 'Venus AD 2015-2018 (well)' — when it actually operates
+    ahead: bool                     # does any operating window lie ahead of the reference moment?
+
+
+@dataclass(frozen=True)
 class ExecutivePortrait:
     """The two-page opening: if you read only this, what is this horoscope?"""
     identity: str                   # Lagna / lagna-lord / Atmakaraka / Karakamsa / Moon — who the chart is
@@ -259,6 +286,11 @@ class DashaChapter:
     emerging: tuple[str, ...]       # newly emphasized vs the previous chapter
     continuing: tuple[str, ...]     # carried over from the previous chapter
     acts_through: tuple[str, ...] = ()   # for a NODE chapter: the planets it gives results for
+    #: the chapter's OWN lord graded by the engine (r.md_condition) — a period run by a strong,
+    #: vargottama lord is not the same chapter as one run by a weak one, and the report computed
+    #: that grading without ever attaching it to the narrative of the period
+    lord_condition: str = ""
+
 
 
 @dataclass(frozen=True)
@@ -460,7 +492,8 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             driver_concordance=tuple(g for g in graha_conc if g.planet in dom_planets),
             divisional_checks=div_checks,
             distinctive=_distinctiveness(r, houses),
-            karmic_lens=_karmic_lens(r, prim_house, headline)))
+            karmic_lens=_karmic_lens(r, prim_house, headline),
+            yogas=_theme_yogas(r, houses, yoga_house_bearings)))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -1241,6 +1274,47 @@ def _karmic_lens(r, house: int, natal_verdict: str) -> Optional[KarmicLens]:
     return None
 
 
+def _theme_yogas(r, houses, yoga_house_bearings) -> tuple[YogaReading, ...]:
+    """The yogas bearing on this theme, read whole: promise + measured strength + cancellation +
+    the periods when their participants actually run. Pure re-read across r.yogas / r.yoga_deep /
+    r.yoga_timing — the layer computes no yoga and grades none."""
+    hset = set(houses)
+    deep = {d.name: d for d in getattr(r, "yoga_deep", ()) or ()}
+    ref = getattr(r, "ref_jd", 0.0)
+    timing: dict[str, list] = {}
+    for t in getattr(r, "yoga_timing", ()) or ():
+        timing.setdefault(t.yoga_name, []).append(t)
+    out: list[YogaReading] = []
+    for y in getattr(r, "yogas", ()) or ():
+        bearing = _safe(lambda: yoga_house_bearings(r.chart, y), None)
+        if not bearing or not (bearing & hset):
+            continue
+        name = getattr(y, "name", "")
+        d = deep.get(name)
+        parts: list[str] = []
+        for pf in (getattr(d, "participants", ()) or ()) if d else ():
+            ru = getattr(pf, "rupas", None)
+            parts.append(f"{pf.planet} (H{pf.house}, {pf.dignity}"
+                         + (f", {ru:.2f} rupas" if ru is not None else "") + ")")
+        wins: list[str] = []
+        ahead = False
+        for t in sorted(timing.get(name, ()), key=lambda x: x.period_start_jd):
+            y0, y1 = _year(t.period_start_jd), _year(t.period_end_jd)
+            tag = getattr(getattr(t, "quality", None), "tag", "") or ""
+            wins.append(f"{t.planet} {t.role} {y0}-{y1}" + (f" ({tag})" if tag else ""))
+            if t.period_end_jd > ref:
+                ahead = True
+        out.append(YogaReading(
+            name=name, kind=getattr(y, "kind", "") or "",
+            effect=getattr(y, "effect", "") or "",
+            rank=getattr(d, "comparison_rank", None) if d else None,
+            strength_note=(getattr(d, "strength_note", "") or "") if d else "",
+            cancellation=(getattr(d, "cancellation_note", "") or "") if d else "",
+            participants=tuple(parts), windows=tuple(wins), ahead=ahead))
+    out.sort(key=lambda z: (z.rank if z.rank is not None else 99))
+    return tuple(out)
+
+
 def _year(jd: float) -> int:
     return int(swe.revjul(jd, swe.GREG_CAL)[0])
 
@@ -1288,6 +1362,9 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
         return ()
     theme_drivers = [(t.name, set(t.dominant_planets)) for t in themes]
     agents = _node_agents(r)
+    # the engine grades each Mahadasha lord's own condition; attach it so a chapter says what
+    # kind of lord is running it, not merely which one
+    cond = {c.maha: c for c in getattr(r, "md_condition", ()) or ()}
     out: list[DashaChapter] = []
     prev: set[str] = set()
     for ch in chapters:
@@ -1300,13 +1377,23 @@ def _dasha_evolution(r, themes) -> tuple[DashaChapter, ...]:
         aset = set(active)
         emerging = tuple(n for n in active if n not in prev)
         continuing = tuple(n for n in active if n in prev)
+        mc = cond.get(lord)
+        if mc is None:
+            lord_condition = ""
+        else:
+            bits = ["strong" if getattr(mc, "strong", False) else "not strong by Shadbala"]
+            if getattr(mc, "vargottama", False):
+                bits.append("vargottama")
+            if getattr(mc, "at_maximum", False):
+                bits.append("at maximum")
+            lord_condition = ", ".join(bits)
         out.append(DashaChapter(
             maha=lord,
             span=f"{_year(ch.start_jd)}-{_year(ch.end_jd)}",
             is_current=bool(getattr(ch, "is_current", False)),
             lean=getattr(ch, "lean", None) or "neutral",
             activates=active, emerging=emerging, continuing=continuing,
-            acts_through=acts_through))
+            acts_through=acts_through, lord_condition=lord_condition))
         prev = aset
     return tuple(out)
 

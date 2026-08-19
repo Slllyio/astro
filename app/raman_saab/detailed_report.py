@@ -4202,6 +4202,18 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
         for d in getattr(t, "divisional_checks", ()) or ():
             L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        for y in getattr(t, "yogas", ()) or ():
+            rank = f"#{y.rank} " if y.rank is not None else ""
+            L.append(f"- **Yoga {rank}{y.name}** ({y.kind}) — {y.effect}")
+            if y.participants:
+                L.append(f"    - participants: {', '.join(y.participants)}")
+            if y.strength_note:
+                L.append(f"    - strength: {y.strength_note}")
+            if y.windows:
+                L.append(f"    - operates in: {'; '.join(y.windows)}"
+                         + ("" if y.ahead else " — all of them behind the reference moment"))
+            if y.cancellation:
+                L.append(f"    - cancellation: {y.cancellation}")
         k = getattr(t, "karmic_lens", None)
         if k is not None:
             L.append(f"- **Karmic lens ({k.aspect}, walled)** — {k.note}")
@@ -4295,7 +4307,8 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             now = " (now)" if ch.is_current else ""
             via = getattr(ch, "acts_through", ()) or ()
             through = f" (acting through {', '.join(via)})" if via else ""
-            L.append(f"| {_md_cell(ch.maha)} MD{now}{through} | {_md_cell(ch.span)} | "
+            cond = f" — lord {_md_cell(ch.lord_condition)}" if getattr(ch, "lord_condition", "") else ""
+            L.append(f"| {_md_cell(ch.maha)} MD{now}{through}{cond} | {_md_cell(ch.span)} | "
                      f"{_md_cell(ch.lean)} | {_md_cell(', '.join(ch.emerging) or '-')} | "
                      f"{_md_cell(', '.join(ch.continuing) or '-')} |")
         L.append("")

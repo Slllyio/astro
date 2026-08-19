@@ -473,6 +473,9 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
             for d in th.get("divisional_checks", []):
                 _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            for y in th.get("yogas", []):
+                _f(facts, f"{y['name']} ({y['kind']}) bears on {th['name']}: {y['effect']}"
+                          + (f" It operates in {'; '.join(y['windows'])}." if y.get("windows") else ""))
             _k = th.get("karmic_lens")
             if _k:
                 _f(facts, f"Karmic lens on {th['name']} ({_k['aspect']}, a walled layer that "

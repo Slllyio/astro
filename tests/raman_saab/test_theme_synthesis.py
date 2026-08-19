@@ -654,6 +654,69 @@ class TestThemeSynthesisContract:
                 assert k.aspect not in c.kind.lower()
                 assert k.aspect not in c.resolution.lower()
 
+    def test_yogas_are_read_whole_not_as_a_bare_name(self, mainpuri, canonical):
+        """A yoga IS a combination — the classical integrative unit. The engine computes it across
+        three fields (r.yogas fired it, r.yoga_deep carries participants/strength/cancellation/rank,
+        r.yoga_timing carries the periods its participants run) and the layer had been using a
+        fragment of the first. Each bearing yoga must now arrive whole, every part a passthrough."""
+        for r, ts in (mainpuri, canonical):
+            deep = {d.name: d for d in r.yoga_deep}
+            fired = {y.name: y for y in r.yogas}
+            seen = 0
+            for t in ts.themes:
+                for y in t.yogas:
+                    seen += 1
+                    assert y.name in fired, "a yoga was reported that never fired"
+                    assert y.effect == fired[y.name].effect     # the promise, verbatim
+                    d = deep.get(y.name)
+                    if d is not None:
+                        assert y.rank == d.comparison_rank
+                        assert y.strength_note == (d.strength_note or "")
+                        assert y.cancellation == (d.cancellation_note or "")
+            assert seen, "no yoga reached any theme"
+
+    def test_yoga_operating_windows_come_from_the_timing_engine(self, mainpuri):
+        """A yoga promises; the dasha of its participants is when it delivers. Every window must
+        be one r.yoga_timing actually produced for that yoga, naming that period lord."""
+        r, ts = mainpuri
+        by_name: dict[str, set[str]] = {}
+        for tm in r.yoga_timing:
+            by_name.setdefault(tm.yoga_name, set()).add(tm.planet)
+        for t in ts.themes:
+            for y in t.yogas:
+                for w in y.windows:
+                    lord = w.split()[0]
+                    assert lord in by_name.get(y.name, set()), (
+                        f"{y.name}: window {w!r} names a lord the timing engine never gave it")
+
+    def test_a_cancelled_yoga_is_never_presented_as_active(self, mainpuri, canonical):
+        """The bhanga note is carried VERBATIM rather than summarised away — a cancelled yoga
+        presented as an active promise would be the worst kind of silent overstatement."""
+        for r, ts in (mainpuri, canonical):
+            deep = {d.name: d for d in r.yoga_deep}
+            for t in ts.themes:
+                for y in t.yogas:
+                    d = deep.get(y.name)
+                    if d is not None and d.cancellation_note:
+                        assert y.cancellation == d.cancellation_note
+
+    def test_each_chapter_grades_its_own_lord(self, mainpuri, canonical):
+        """A period run by a strong, vargottama lord is not the same chapter as one run by a weak
+        one. r.md_condition grades exactly that and was never attached to the period's narrative."""
+        for r, ts in (mainpuri, canonical):
+            cond = {c.maha: c for c in r.md_condition}
+            graded = 0
+            for ch in ts.dasha_evolution:
+                mc = cond.get(ch.maha)
+                if mc is None:
+                    continue
+                graded += 1
+                assert ch.lord_condition, f"{ch.maha} chapter does not grade its own lord"
+                assert ("strong" in ch.lord_condition) == bool(mc.strong) or \
+                    "not strong" in ch.lord_condition
+                assert ("vargottama" in ch.lord_condition) == bool(mc.vargottama)
+            assert graded, "no chapter matched an md_condition row"
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""

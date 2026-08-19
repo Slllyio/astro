@@ -655,6 +655,13 @@ const I18N_HI = {
   'now':'अभी',
   'karakas':'कारक',
   'the chart':'कुंडली',
+  'Yoga':'योग',
+  'participants':'सहभागी ग्रह',
+  'strength':'बल',
+  'operates in':'इन कालों में सक्रिय',
+  'cancellation':'भंग',
+  'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
+  'lord':'स्वामी',
   'Karmic lens':'कार्मिक दृष्टि',
   'walled':'पृथक्',
   'poorvapunya':'पूर्वपुण्य',
@@ -2508,6 +2515,13 @@ function render(R, S, FQ){
         b.append(para(g.planet+' ('+t('force vs intent')+') — '+g.reading,'muted'));
       for(const d of (th.divisional_checks||[]))
         b.append(para(d.varga+' ('+t(d.relation)+') — '+d.verdict+'. '+d.note,'muted'));
+      for(const y of (th.yogas||[])){
+        b.append(para(t('Yoga')+' '+(y.rank!=null?('#'+y.rank+' '):'')+y.name+' ('+y.kind+') — '+y.effect,'muted'));
+        if((y.participants||[]).length) b.append(para(t('participants')+': '+y.participants.join(', '),'muted'));
+        if(y.strength_note) b.append(para(t('strength')+': '+y.strength_note,'muted'));
+        if((y.windows||[]).length) b.append(para(t('operates in')+': '+y.windows.join('; ')+(y.ahead?'':(' — '+t('all of them behind the reference moment'))),'muted'));
+        if(y.cancellation) b.append(para(t('cancellation')+': '+y.cancellation,'muted'));
+      }
       if(th.karmic_lens)
         b.append(para(t('Karmic lens')+' ('+t(th.karmic_lens.aspect)+', '+t('walled')+') — '+th.karmic_lens.note,'muted'));
       if((th.distinctive||[]).length)
@@ -2550,7 +2564,8 @@ function render(R, S, FQ){
     if((ts.dasha_evolution||[]).length){
       add(para(t('Dasha evolution — the horoscope through time'),'muted'));
       const rows=ts.dasha_evolution.map(ch=>({[t('chapter')]:ch.maha+' MD'+(ch.is_current?(' ('+t('now')+')'):'')
-          +((ch.acts_through||[]).length?(' ('+t('acting through')+' '+ch.acts_through.join(', ')+')'):''),
+          +((ch.acts_through||[]).length?(' ('+t('acting through')+' '+ch.acts_through.join(', ')+')'):'')
+          +(ch.lord_condition?(' — '+t('lord')+' '+ch.lord_condition):''),
         [t('span')]:ch.span, [t('lean')]:ch.lean, [t('newly emphasized')]:(ch.emerging||[]).join(', ')||'-',
         [t('continuing')]:(ch.continuing||[]).join(', ')||'-'}));
       const de=sectionTable(t('Each Mahadasha foregrounds the themes its lord drives'), rows); if(de) add(de);

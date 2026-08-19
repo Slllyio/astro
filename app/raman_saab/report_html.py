@@ -843,6 +843,23 @@ def _themes_section(r: DetailedReport) -> str:
         for d in getattr(t, "divisional_checks", ()) or ():
             out.append(f'<li><b>{_esc(d.varga)}</b> ({_esc(d.relation)}) &mdash; '
                        f'{_esc(d.verdict)}. {_esc(d.note)}</li>')
+        for y in getattr(t, "yogas", ()) or ():
+            rank = f"#{y.rank} " if y.rank is not None else ""
+            bits = [f'<li><b>Yoga {rank}{_esc(y.name)}</b> ({_esc(y.kind)}) &mdash; '
+                    f'{_esc(y.effect)}']
+            if y.participants:
+                bits.append(f'<br><span class="muted">participants: '
+                            f'{_esc(", ".join(y.participants))}</span>')
+            if y.strength_note:
+                bits.append(f'<br><span class="muted">strength: {_esc(y.strength_note)}</span>')
+            if y.windows:
+                tail = "" if y.ahead else " &mdash; all of them behind the reference moment"
+                bits.append(f'<br><span class="muted">operates in: '
+                            f'{_esc("; ".join(y.windows))}{tail}</span>')
+            if y.cancellation:
+                bits.append(f'<br><span class="muted">cancellation: '
+                            f'{_esc(y.cancellation)}</span>')
+            out.append("".join(bits) + "</li>")
         k = getattr(t, "karmic_lens", None)
         if k is not None:
             out.append(f'<li><b>Karmic lens ({_esc(k.aspect)}, walled)</b> &mdash; '
@@ -922,7 +939,8 @@ def _themes_section(r: DetailedReport) -> str:
             now = " (now)" if ch.is_current else ""
             via = getattr(ch, "acts_through", ()) or ()
             through = f' (acting through {_esc(", ".join(via))})' if via else ""
-            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}</td><td>{_esc(ch.span)}</td>'
+            cond = f' &mdash; lord {_esc(ch.lord_condition)}' if getattr(ch, "lord_condition", "") else ''
+            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}{cond}</td><td>{_esc(ch.span)}</td>'
                        f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
                        f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')
         out.append("</tbody></table>")

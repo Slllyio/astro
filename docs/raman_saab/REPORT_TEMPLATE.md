@@ -762,9 +762,13 @@ cutoff (the v14 review had already removed exactly such a threshold); only the s
 pair (rank 1 / rank 12, his own "most powerful... least powerful" vocabulary) triggers a
 tendency clause, and those clauses are verbatim reuses of the already-reviewed v8 note; (3)
 witness-majority as mitigation ("6-1 benefic ⇒ affliction is superficial") — a verdict
-override of Raman's own weakest-link rule, contradicting v14's printed honesty rule and
+override of the weakest-link rollup rule, contradicting v14's printed honesty rule and
 double-counting non-independent witnesses; on contested houses the Conclusion says instead
-"disclosure, not re-weighing: the headline follows the weakest-link rule and stands"; (4)
+"disclosure, not re-weighing: the headline follows the weakest-link rule and stands"
+(*corrected here: the weakest-link rollup is the ENGINE's own aggregation policy, not a rule
+Raman stated — `report_explainer.py:336-344` records this and gives it no citation. The
+original wording of this note called it "Raman's own weakest-link rule", which stamps a
+Raman line on an engine choice; the rest of the finding is unchanged.*); (4)
 real-world severity claims ("rarely causes acute damage") — the null real-outcome finding
 forbids them; a regression test bans the mitigation vocabulary outright. One genuinely new
 hedged clause (rank-12 + afflicted: low strength reads as indications less fully manifest, a

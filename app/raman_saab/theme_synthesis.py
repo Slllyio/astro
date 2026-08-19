@@ -284,25 +284,48 @@ class TransitNote:
 
 
 @dataclass(frozen=True)
+class CrossCheck:
+    """One independent cross-check, placed on the CITED reliability ladder rather than counted.
+
+    An earlier version of this graded a bhava settled / qualified / seriously contested by
+    counting how many cross-checks dissented. Three findings killed that:
+
+    1. ``docs/raman_saab/COMPARATIVE_WEIGHING.md:52-56`` — the project already tested
+       head-counting against Raman's own reasoning on all 7 Type-A cases: *"The
+       benefic/malefic-preponderance hypothesis held 0 of 7. Raman does NOT head-count
+       influences."* Counting cross-checks re-runs a hypothesis this repo falsified.
+    2. ``detailed_report.py`` (HouseTestimonies) already records, with citation, that *"Raman
+       states no numeric N-testimonies rule (HTJAH-I:495 says only 'all these must be properly
+       weighed')"* — so any 0/1/2 cutoff is an invented threshold, the exact class of thing a
+       bphs-doctrine-reviewer pass already struck out of the Bhava-Bala lean.
+    3. ``report_html.py`` states the witnesses *"are NOT independent votes: lord, karaka and
+       navamsa are the verdict's own inputs restated by name"* — so the testimony ledger cannot
+       be tallied as an independent dissenter at all without double-counting the verdict.
+
+    What IS citable is the reliability LADDER, so each cross-check is reported at its own tier
+    with the rule that governs it. No score, no tier count, no aggregate grade."""
+    system: str                     # the cross-check's name
+    tier: str                       # where it sits on the cited ladder
+    independent: bool               # False when it restates the verdict's own inputs
+    relation: str                   # 'reads with' | 'reads against' | 'restates the verdict'
+    governing: str                  # the PREC-id that governs this pair
+    citation: str                   # the corpus token behind that rule, or '' when uncited
+    note: str
+
+
+@dataclass(frozen=True)
 class DissentSummary:
-    """How many INDEPENDENT systems dissent from this theme's verdict — the integration of the
-    integrations.
+    """The cross-checks on a bhava, laid out by reliability tier — deliberately NOT scored.
 
-    Each cross-check below was already computed and already reported: the bhava's own testimony
-    ledger, its assigned division, Ashtakavarga in the sign it occupies, and the walled karmic
-    lens. But each was reported ALONE, so a bhava where three systems disagree read the same as
-    one where a single system did. Counting them is what turns a list of checks into a judgment
-    about how settled the reading is.
-
-    The walled karmic lens is counted SEPARATELY and never folded into the total: it may not
-    corroborate or undercut a Parashari verdict (r.karmic.frame), so letting it swell a dissent
-    count would breach the same wall by arithmetic."""
-    systems_checked: int
-    dissenting: tuple[str, ...]     # the independent systems that read against the verdict
-    agreeing: tuple[str, ...]
-    walled_note: str                # the karmic lens, recorded apart from the count
-    confidence: str                 # 'settled' | 'qualified' | 'seriously contested'
+    ``dissenting`` names the checks reading against the verdict so a reader can see them at a
+    glance; it is an INVENTORY in Raman's own vocabulary (HTJAH-I:8870 "preponderance"), never a
+    tally that grades the reading. The engine's own preponderance ledger draws exactly this line
+    and says so; this follows it rather than inventing a rival scheme."""
+    checks: tuple[CrossCheck, ...]
+    dissenting: tuple[str, ...]     # names only — an inventory, never a count that grades
+    walled_note: str                # the karmic lens, recorded outside the cross-checks entirely
     reading: str
+    method_note: str                # why no grade is given, with the citation
 
 
 @dataclass(frozen=True)
@@ -587,8 +610,10 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
                       if t.concordance is not None and t.concordance.divergence)
     divergent = tuple((t.name, d) for t in themes for d in t.divisional_checks
                       if d.relation == "diverges")
+    # themes carrying ANY cross-check that reads against the verdict. Deliberately not filtered
+    # by a count threshold (>=2 was an invented cutoff) — the inventory is the disclosure.
     contested_th = tuple((t.name, t.dissent) for t in themes
-                         if t.dissent is not None and len(t.dissent.dissenting) >= 2)
+                         if t.dissent is not None and t.dissent.dissenting)
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
                           connections=connections, dasha_evolution=evolution,
                           graha_concordance=graha_conc, contested_bhavas=contested,
@@ -932,14 +957,16 @@ def _contradictions(r, prim_house, pf, headline, facets, theme_name) -> tuple[Co
             "A strong-but-afflicted house delivers its difficulty with unusual force; strength "
             "is magnitude, not direction (PREC-2)."))
 
-    # F. general vs divisional (D9) -> PREC-5
+    # F. general vs divisional (D9) -> PREC-11 (the D1 core decides, the divisional
+    # corroborates). NB: this was mis-cited as PREC-5 in six places; PREC-5 governs the
+    # Laghu Parashari TIMING bands yielding to Raman, nothing to do with divisionals.
     m = _matter_reading(r, prim_house)
     if m is not None and _nav_lean(m.navamsa) != "neutral" and \
             _dir(_nav_lean(m.navamsa)) != _dir(_lean_of(headline)) and _dir(_lean_of(headline)) != 0:
         out.append(Contradiction(
             "natal vs divisional confirmation",
             (f"D1 rollup {headline}", f"D9 navamsa: {m.navamsa} @ synthesis.py:39"),
-            "PREC-5",
+            "PREC-11",
             "The navamsa modulates confidence in the natal indication; it does not overturn "
             "the D1 verdict."))
 
@@ -1065,12 +1092,14 @@ def _final_interpretation(name, headline, convergence, conv_label, contradiction
     # something AV does not corroborate, and that is worth one clause
     # NB: the per-system dissent clauses that used to be chained here (Ashtakavarga withholding
     # support, the assigned division disagreeing) are gone. DissentSummary now states them
-    # TOGETHER and counted, which is both more informative and shorter than three separate
-    # clauses; repeating them inline made the sentence a 560-character paragraph.
+    # together, which is both more informative and shorter than three separate clauses;
+    # repeating them inline made the sentence a 560-character paragraph.
     if dissent is not None and dissent.dissenting:
-        body += (f". {len(dissent.dissenting)} of {dissent.systems_checked} independent "
-                 f"cross-checks read against it ({', '.join(dissent.dissenting)}), so the "
-                 f"reading is {dissent.confidence}")
+        # named, never counted into a grade: Raman states no numeric N-testimonies rule
+        # (HTJAH-I:495) and head-counting influences was measured against his own reasoning
+        # at 0 of 7 (COMPARATIVE_WEIGHING.md)
+        body += (f". Reading against it: {', '.join(dissent.dissenting)} — each at its own tier, "
+                 f"none able to overturn the verdict")
     if activation:
         # the narrative sentence carries the clause without its citation — the Timing line
         # renders the same note in full, so traceability is not lost by shortening here
@@ -1266,7 +1295,7 @@ def _divisional_checks(r, spec, facets, headline) -> tuple[DivisionalCheck, ...]
     wealth, D-7 for children, D-30 for health...), or its reading names one of the theme's facet
     matters (D-12 names MOTHER and FATHER, D-16 COMFORTS, D-24 EDUCATION — all facets of other
     bhavas). Both are matched from the engine's own headline text; nothing is recomputed and no
-    verdict is altered — a varga modulates confidence, it never overturns the rasi (PREC-5)."""
+    verdict is altered — a varga corroborates the D1 core, which decides (PREC-11)."""
     from app.raman_saab.insight_digest import _lean_of
     rows = getattr(r, "divisional", ()) or ()
     hlean = _lean_of(headline)
@@ -1300,7 +1329,7 @@ def _divisional_checks(r, spec, facets, headline) -> tuple[DivisionalCheck, ...]
             else:
                 relation, note = "diverges", (
                     f"{label} reads against the rasi here. A division modulates confidence in the "
-                    f"natal indication; it does not overturn it (PREC-5), so the verdict stands "
+                    f"natal indication; it does not overturn it (PREC-11), so the verdict stands "
                     f"and the disagreement is disclosed.")
         else:
             relation, note = "reads a facet", (
@@ -1466,70 +1495,90 @@ def _transit_notes(r, houses, dom_planets) -> tuple[TransitNote, ...]:
 
 
 def _dissent_summary(concordance, div_checks, av_support, karmic, headline) -> DissentSummary:
-    """Count the independent systems that read against this bhava's verdict.
+    """Lay out the cross-checks on this bhava by their CITED reliability tier — and give no grade.
 
-    Four Parashari cross-checks are eligible: the testimony ledger (r.preponderance), the theme's
-    own division (r.divisional), Ashtakavarga in the sign the bhava occupies, and — only where it
-    can carry a direction — nothing else. The karmic lens is deliberately EXCLUDED from the count
-    and recorded beside it, because a walled layer must not move a Parashari reading even
-    indirectly, and inflating a dissent tally is exactly that.
+    The ladder is derivable entirely from cited material:
 
-    A system is only counted when it actually produced a comparable reading, so `systems_checked`
-    is the honest denominator rather than a fixed four."""
+    * the D1 core (the house's lord and karaka) is what Raman's summing-up itself names,
+      HTJAH-I:983-991 — but it is NOT independent of the verdict, because those are the verdict's
+      own inputs restated by name (the report's own honesty rule 3);
+    * a divisional CORROBORATES the D1 core and does not decide it (PREC-11);
+    * Ashtakavarga sits a tier lower still on Raman's own caveat — "Ashtakavarga method is equally
+      important. But, it does not seem to be quite reliable" (HTJAH-II:4453-4456, PREC-4) — so it
+      may be reported but must never weigh equally against a Raman-band reading;
+    * the karmic/Jaimini lens is walled out of the cross-checks altogether.
+
+    No tier is converted into a number and no aggregate grade is produced, because Raman states no
+    numeric N-testimonies rule (HTJAH-I:495) and this project already measured that head-counting
+    influences does not reproduce his reasoning (COMPARATIVE_WEIGHING.md, 0 of 7)."""
     from app.raman_saab.insight_digest import _lean_of
-    dissent: list[str] = []
-    agree: list[str] = []
-    checked = 0
+    checks: list[CrossCheck] = []
 
     if concordance is not None:
-        checked += 1
-        (dissent if concordance.divergence else agree).append("its own testimony ledger")
+        against = bool(concordance.divergence)
+        checks.append(CrossCheck(
+            system="the bhava's own testimony ledger",
+            tier="D1 core (lord / karaka / navamsa)",
+            independent=False,
+            relation="reads against" if against else "reads with",
+            governing="PREC-3", citation="HTJAH-I:983, HTJAH-I:495",
+            note=("These are the verdict's OWN inputs restated by name, so they are not an "
+                  "independent vote and are never tallied as one — a divided ledger means the "
+                  "witnesses split, not that the verdict is wrong (PREC-3).")))
 
     own_div = [d for d in div_checks if d.relation in ("concurs", "diverges")]
     if own_div:
-        checked += 1
-        (dissent if any(d.relation == "diverges" for d in own_div)
-         else agree).append("its assigned division")
+        against = any(d.relation == "diverges" for d in own_div)
+        checks.append(CrossCheck(
+            system="the assigned division",
+            tier="corroborating (the D1 core decides)",
+            independent=True,
+            relation="reads against" if against else "reads with",
+            governing="PREC-11", citation="",
+            note=("The Raman D1 core is authoritative and the divisional corroborates "
+                  "(PREC-11); a division reading the other way qualifies confidence and settles "
+                  "nothing on its own.")))
 
     if av_support:
-        checked += 1
-        # AV can only dissent from a FAVOURABLE verdict by withholding support; against an
-        # afflicted verdict, weak bindus agree rather than dissent
-        weak = not any(a.verdict == "well supported" for a in av_support)
         hlean = _lean_of(headline)
-        if hlean == "favourable" and weak:
-            dissent.append("Ashtakavarga")
-        elif hlean == "adverse" and weak:
-            agree.append("Ashtakavarga")
-        elif hlean == "favourable":
-            agree.append("Ashtakavarga")
-        else:
-            dissent.append("Ashtakavarga")
+        weak = not any(a.verdict == "well supported" for a in av_support)
+        # AV withholding support only speaks against a FAVOURABLE reading; against an afflicted
+        # one, thin bindus point the same way as the verdict
+        against = bool(weak and hlean == "favourable")
+        checks.append(CrossCheck(
+            system="Ashtakavarga",
+            tier="lower-reliability tier (Raman's own caveat)",
+            independent=True,
+            relation="reads against" if against else "reads with",
+            governing="PREC-4", citation="HTJAH-II:4453",
+            note=('Raman on this method: "Ashtakavarga method is equally important. But, it does '
+                  'not seem to be quite reliable" (HTJAH-II:4453-4456). It never outranks a '
+                  "Raman-band reading, so it is shown at its own tier and not weighed level with "
+                  "the core.")))
 
     walled = ""
     if karmic is not None:
-        walled = (f"the karmic lens reads {karmic.aspect} as {karmic.karmic_verdict} and "
-                  f"{karmic.relation} — recorded apart, and deliberately not counted: a walled "
-                  f"layer may not move a Parashari reading, including by arithmetic")
+        walled = (f"Outside the cross-checks entirely: the karmic lens reads {karmic.aspect} as "
+                  f"{karmic.karmic_verdict} and {karmic.relation}. The Jaimini layer never feeds "
+                  f"the Parashari verdict, so it is neither a cross-check nor a dissent.")
 
-    n = len(dissent)
-    if n == 0:
-        confidence = "settled"
-        reading = (f"All {checked} independent cross-checks read with the verdict — as settled as "
-                   f"this engine's evidence gets.")
-    elif n == 1:
-        confidence = "qualified"
-        reading = (f"{dissent[0].capitalize()} reads against the verdict while "
-                   f"{len(agree)} of {checked} cross-checks read with it — a qualified reading, "
-                   f"not an unsettled one.")
+    dissenting = tuple(c.system for c in checks if c.relation == "reads against")
+    if not dissenting:
+        reading = ("Every cross-check reads with the verdict, each at its own tier "
+                   "(D1 core, then the corroborating division, then Ashtakavarga).")
     else:
-        confidence = "seriously contested"
-        reading = (f"{n} of {checked} independent cross-checks read against the verdict "
-                   f"({', '.join(dissent)}). The verdict stands — none of these may overturn a "
-                   f"bhava judgment — but a reading this contested should be leaned on lightly.")
-    return DissentSummary(systems_checked=checked, dissenting=tuple(dissent),
-                          agreeing=tuple(agree), walled_note=walled,
-                          confidence=confidence, reading=reading)
+        reading = ("Reading against the verdict: "
+                   + "; ".join(f"{c.system} ({c.tier})" for c in checks
+                               if c.relation == "reads against")
+                   + ". None of these may overturn a bhava judgment; each is weighed where "
+                     "Raman places it, not counted.")
+    method_note = ("No overall confidence grade is given. Raman states no numeric "
+                   "N-testimonies rule — HTJAH-I:495 says only that all must be properly weighed "
+                   "— and this project measured that head-counting influences does not reproduce "
+                   "his reasoning (0 of 7 worked cases). The tiers are his; the arithmetic would "
+                   "have been ours.")
+    return DissentSummary(checks=tuple(checks), dissenting=dissenting, walled_note=walled,
+                          reading=reading, method_note=method_note)
 
 
 def _year(jd: float) -> int:

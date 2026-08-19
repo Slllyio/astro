@@ -818,55 +818,71 @@ class TestThemeSynthesisContract:
         if ts.portrait.chara_now:
             assert "walled" in ts.portrait.chara_now
 
-    def test_dissent_is_counted_not_merely_listed(self, mainpuri, canonical):
-        """The integration OF the integrations. Each cross-check was already computed and already
-        reported — but alone, so a bhava where three systems disagree read like one where a single
-        system did. The count is what turns a list of checks into a judgment about how settled the
-        reading is. Every counted system must match the check it summarises."""
-        for r, ts in (mainpuri, canonical):
-            for t in ts.themes:
-                d = t.dissent
-                assert d is not None, f"{t.theme_id} carries no dissent summary"
-                assert d.systems_checked == len(d.dissenting) + len(d.agreeing)
-                assert d.confidence == ("settled" if not d.dissenting else
-                                        "qualified" if len(d.dissenting) == 1 else
-                                        "seriously contested")
-                # each counted dissent traces to a real, disagreeing cross-check
-                if "its own testimony ledger" in d.dissenting:
-                    assert t.concordance is not None and t.concordance.divergence
-                if "its assigned division" in d.dissenting:
-                    assert any(x.relation == "diverges" for x in t.divisional_checks)
-                if "Ashtakavarga" in d.dissenting:
-                    assert t.av_support
+    def test_cross_checks_sit_on_the_cited_ladder_not_on_a_tally(self, mainpuri, canonical):
+        """Every cross-check is placed at its own CITED reliability tier and none is scored.
 
-    def test_the_walled_lens_never_swells_the_dissent_count(self, mainpuri, canonical):
-        """A walled layer must not move a Parashari reading — including by arithmetic. The karmic
-        lens is recorded beside the count and never inside it, even when it differs."""
+        Astronomical/doctrinal fact under test: Raman states no numeric N-testimonies rule —
+        HTJAH-I:495 says only that "all these must be properly weighed" — and this project already
+        measured head-counting influences against his own reasoning on all seven Type-A cases and
+        found it held 0 of 7 (COMPARATIVE_WEIGHING.md). So the summary may inventory dissent but
+        must never grade it."""
         for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 d = t.dissent
-                for name in d.dissenting + d.agreeing:
-                    assert "karmic" not in name.lower()
-                if t.karmic_lens is not None:
-                    assert d.walled_note and "not counted" in d.walled_note
-                # a differing walled lens must not have pushed the confidence downward
-                if t.karmic_lens is not None and t.karmic_lens.relation == "differs":
-                    assert d.confidence == ("settled" if not d.dissenting else
-                                            "qualified" if len(d.dissenting) == 1 else
-                                            "seriously contested")
+                assert d is not None, f"{t.theme_id} carries no dissent summary"
+                # the invented arithmetic is GONE — no grade, no tally, no agree/disagree score
+                for banned in ("confidence", "systems_checked", "agreeing", "score"):
+                    assert not hasattr(d, banned), f"{banned} is invented arithmetic, not doctrine"
+                assert "HTJAH-I:495" in d.method_note
+                for ck in d.checks:
+                    assert ck.tier and ck.governing.startswith("PREC-")
+                    assert ck.relation in ("reads with", "reads against", "restates the verdict")
+                    if ck.system == "the bhava's own testimony ledger":
+                        # the lord, karaka and navamsa ARE the verdict's own inputs restated by
+                        # name, so this check can never be an independent vote (PREC-3)
+                        assert ck.independent is False and ck.governing == "PREC-3"
+                        assert ck.relation == ("reads against" if t.concordance.divergence
+                                               else "reads with")
+                    if ck.system == "the assigned division":
+                        # PREC-11: the D1 Raman core decides, the varga corroborates
+                        assert ck.independent and ck.governing == "PREC-11"
+                        assert ck.relation == ("reads against"
+                                               if any(x.relation == "diverges"
+                                                      for x in t.divisional_checks)
+                                               else "reads with")
+                    if ck.system == "Ashtakavarga":
+                        # Raman's own caveat puts AV a tier below a Raman-band reading
+                        assert ck.governing == "PREC-4" and "HTJAH-II:4453" in ck.citation
+                        assert t.av_support
+                assert d.dissenting == tuple(c.system for c in d.checks
+                                             if c.relation == "reads against")
 
-    def test_contested_themes_are_the_multi_system_dissents(self, mainpuri):
-        """Chart level: the themes worth leaning on most lightly are those 2+ systems dispute."""
+    def test_the_walled_lens_is_never_a_cross_check(self, mainpuri, canonical):
+        """A walled layer must not move a Parashari reading — including by arithmetic. The Jaimini
+        karmic lens is recorded OUTSIDE the cross-checks entirely, never as one of them."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                d = t.dissent
+                for name in [c.system for c in d.checks] + list(d.dissenting):
+                    assert "karmic" not in name.lower() and "jaimini" not in name.lower()
+                if t.karmic_lens is not None:
+                    assert d.walled_note
+                    assert "never" in d.walled_note and "neither a cross-check" in d.walled_note
+
+    def test_contested_themes_are_the_inventory_not_a_threshold(self, mainpuri):
+        """Chart level: a theme is listed iff ANY cross-check reads against it. The old ">= 2
+        systems" cutoff was an invented threshold of exactly the kind HTJAH-I:495 forbids."""
         _r, ts = mainpuri
         named = {n for n, _d in ts.contested_themes}
         for t in ts.themes:
-            if len(t.dissent.dissenting) >= 2:
+            if t.dissent.dissenting:
                 assert t.name in named
             else:
                 assert t.name not in named
         for _n, d in ts.contested_themes:
-            assert d.confidence == "seriously contested"
-            assert "verdict stands" in d.reading   # the passthrough is never in question
+            assert d.dissenting
+            # the passthrough is never in question: dissent discloses, it never overturns
+            assert "may overturn a bhava judgment" in d.reading
 
     def test_the_narrative_does_not_repeat_the_dissent_it_summarises(self, mainpuri, canonical):
         """The sentence used to chain a clause per dissenting system AND then summarise them,
@@ -874,10 +890,13 @@ class TestThemeSynthesisContract:
         for _r, ts in (mainpuri, canonical):
             for t in ts.themes:
                 body = t.final_interpretation
-                assert body.count("cross-checks read against") <= 1
+                assert body.count("Reading against it") <= 1
                 # the superseded per-system clauses are gone
                 assert "Ashtakavarga does not back it in the same place" not in body
                 assert "Its own testimonies do not sit where the verdict does" not in body
+                # and the superseded arithmetic grade never reaches the prose
+                for graded in ("seriously contested", "cross-checks read against"):
+                    assert graded not in body
 
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import

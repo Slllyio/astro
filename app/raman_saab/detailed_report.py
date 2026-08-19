@@ -4182,6 +4182,14 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     # every theme, ranked
     L.append("### Major life-themes")
     L.append("")
+    # the method note governing every "How settled is this?" line below. It is one constant
+    # string on every theme's DissentSummary, so it is stated once here rather than repeated
+    # twelve times — the field is rendered, not hidden.
+    _mn = next((t.dissent.method_note for t in ts.themes
+                if getattr(t, "dissent", None) is not None and t.dissent.method_note), "")
+    if _mn:
+        L.append(f"_On the cross-checks below: {_mn}_")
+        L.append("")
     for t in ts.themes:
         houses = ", ".join(f"H{h}" for h in t.houses)
         L.append(f"#### {t.name} — **{t.headline_verdict}** ({_theme_conv_label(t)})")
@@ -4201,9 +4209,13 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         # as core, everything else as overlay) — the authoritative agreement check
         ds = getattr(t, "dissent", None)
         if ds is not None:
-            L.append(f"- **How settled is this? ({ds.confidence})** — {ds.reading}")
-            if ds.agreeing:
-                L.append(f"    - reading with the verdict: {', '.join(ds.agreeing)}")
+            L.append(f"- **How settled is this?** — {ds.reading}")
+            for ck in ds.checks:
+                cite = f", {ck.citation}" if ck.citation else ""
+                indep = "independent" if ck.independent else "not independent of the verdict"
+                L.append(f"    - {_md_cell(ck.system)} — {_md_cell(ck.tier)}; "
+                         f"{_md_cell(ck.relation)}; {indep} ({ck.governing}{cite}). "
+                         f"{_md_cell(ck.note)}")
             if ds.walled_note:
                 L.append(f"    - {ds.walled_note}")
         c = getattr(t, "concordance", None)
@@ -4288,9 +4300,10 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                      f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
         L.append("")
     if getattr(ts, "contested_themes", None):
-        L.append("_**Seriously contested themes** — where two or more independent cross-checks "
-                 "read against the verdict. The verdicts stand (none of these may overturn a "
-                 "bhava judgment) but these are the readings to lean on most lightly:_")
+        L.append("_**Themes with a cross-check reading against the verdict** — an inventory, not "
+                 "a grade. The verdicts stand (none of these may overturn a bhava judgment); each "
+                 "dissent is named at its own tier so the reader can weigh it as Raman asks — "
+                 "\"all these must be properly weighed\" (HTJAH-I:495) — rather than count it:_")
         L.append("")
         for nm, d in ts.contested_themes:
             L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.reading)}")
@@ -4298,7 +4311,7 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     if getattr(ts, "divisional_divergences", None):
         L.append("_**Divisions that read against the rasi** — a varga is the classical "
                  "confirmation device, so its dissent is worth naming. It modulates confidence in "
-                 "the natal indication; it never overturns it (PREC-5):_")
+                 "the natal indication; the D1 core decides and the division corroborates (PREC-11):_")
         L.append("")
         for nm, d in ts.divisional_divergences:
             L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "

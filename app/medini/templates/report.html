@@ -671,11 +671,13 @@ const I18N_HI = {
   'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
   'lord':'स्वामी',
   'How settled is this?':'यह कितना निश्चित है?',
-  'reading with the verdict':'निर्णय के पक्ष में',
-  'settled':'निश्चित',
-  'qualified':'सशर्त',
-  'seriously contested':'गंभीर रूप से विवादित',
-  'Seriously contested themes — two or more cross-checks read against the verdict':'गंभीर रूप से विवादित विषय — दो या अधिक जाँचें निर्णय के विरुद्ध',
+  'On the cross-checks below':'नीचे दी गई प्रति-जाँचों पर',
+  'reads with':'निर्णय के पक्ष में',
+  'reads against':'निर्णय के विरुद्ध',
+  'restates the verdict':'निर्णय को ही दोहराता है',
+  'independent':'स्वतंत्र',
+  'not independent of the verdict':'निर्णय से स्वतंत्र नहीं',
+  'Themes with a cross-check reading against the verdict — an inventory, not a grade. The verdicts stand; each dissent is named at its own tier so it can be weighed, not counted (HTJAH-I:495).':'ऐसे विषय जिनमें कोई प्रति-जाँच निर्णय के विरुद्ध पढ़ती है — यह सूची है, श्रेणी नहीं। निर्णय यथावत् रहते हैं; प्रत्येक असहमति अपने ही स्तर पर नामित है ताकि उसे तौला जाए, गिना नहीं (HTJAH-I:495)।',
   'How firm is the cast moment?':'जन्म-क्षण कितना दृढ़ है?',
   'Jaimini chara dasha (walled)':'जैमिनी चर दशा (पृथक्)',
   'Karmic lens':'कार्मिक दृष्टि',
@@ -685,7 +687,7 @@ const I18N_HI = {
   'moksha':'मोक्ष',
   'How unusual is this?':'यह कितना असामान्य है?',
   'Divisions that read against the rasi':'वर्ग जो राशि के विरुद्ध पढ़ते हैं',
-  'A varga is the classical confirmation device, so its dissent is worth naming. It modulates confidence in the natal indication; it never overturns it (PREC-5).':'वर्ग शास्त्रीय पुष्टि-साधन है, अतः उसकी असहमति नामित करने योग्य है। वह जन्मकुंडली-संकेत के प्रति विश्वास को संशोधित करता है; उसे कभी उलटता नहीं (PREC-5)।',
+  'A varga is the classical confirmation device, so its dissent is worth naming. The D1 Raman core decides and the division corroborates (PREC-11).':'वर्ग शास्त्रीय पुष्टि-साधन है, अतः उसकी असहमति नामित करने योग्य है। D1 रामन् मूल निर्णायक है और वर्ग पुष्टिकारक (PREC-11)।',
   'against the rasi verdict':'राशि-निर्णय के विरुद्ध',
   'concurs':'सहमत',
   'diverges':'असहमत',
@@ -2515,6 +2517,9 @@ function render(R, S, FQ){
         x.append(th.name+' — '+th.headline_verdict+' ('+cl(th)+')'); su.append(x); }
       add(su); }
     add(para(t('Major life-themes'),'muted'));
+    // one constant string across every theme's dissent summary — shown once, not twelve times
+    const _mn=(ts.themes.find(x=>x.dissent&&x.dissent.method_note)||{dissent:{}}).dissent.method_note||'';
+    if(_mn) add(para(t('On the cross-checks below')+': '+_mn,'muted'));
     for(const th of ts.themes){
       const card=el('details',{class:'card'}); card.setAttribute('open','');
       const sm=el('summary'); sm.append(th.name+' — '+th.headline_verdict+' ('+cl(th)+')');
@@ -2524,8 +2529,11 @@ function render(R, S, FQ){
       if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
       b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
       if(th.dissent){ const ds=th.dissent;
-        b.append(para(t('How settled is this?')+' ('+t(ds.confidence)+') — '+ds.reading,'muted'));
-        if((ds.agreeing||[]).length) b.append(para(t('reading with the verdict')+': '+ds.agreeing.join(', '),'muted'));
+        b.append(para(t('How settled is this?')+' — '+ds.reading,'muted'));
+        for(const ck of (ds.checks||[])){
+          const cite=ck.citation?(', '+ck.citation):'';
+          const indep=ck.independent?t('independent'):t('not independent of the verdict');
+          b.append(para(ck.system+' — '+ck.tier+'; '+t(ck.relation)+'; '+indep+' ('+ck.governing+cite+'). '+ck.note,'muted')); }
         if(ds.walled_note) b.append(para(ds.walled_note,'muted')); }
       if(th.concordance){ const c=th.concordance;
         b.append(para(t('Do the techniques agree?')+' — '+c.reading,'muted'));
@@ -2571,13 +2579,14 @@ function render(R, S, FQ){
       const gt=sectionTable(t('Each graha, its independent measures set side by side'), gc); if(gt) add(gt);
     }
     if((ts.contested_themes||[]).length){
-      add(para(t('Seriously contested themes — two or more cross-checks read against the verdict'),'muted'));
-      const cu2=el('ul'); for(const pair of ts.contested_themes){ const x=el('li'); x.append(pair[0]+' — '+pair[1].reading); cu2.append(x); }
+      add(para(t('Themes with a cross-check reading against the verdict — an inventory, not a grade. The verdicts stand; each dissent is named at its own tier so it can be weighed, not counted (HTJAH-I:495).'),'muted'));
+      const cu2=el('ul'); for(const pair of ts.contested_themes){ const x=el('li');
+        x.append(pair[0]+' — '+pair[1].reading); cu2.append(x); }
       add(cu2);
     }
     if((ts.divisional_divergences||[]).length){
       add(para(t('Divisions that read against the rasi'),'muted'));
-      add(para(t('A varga is the classical confirmation device, so its dissent is worth naming. It modulates confidence in the natal indication; it never overturns it (PREC-5).'),'muted'));
+      add(para(t('A varga is the classical confirmation device, so its dissent is worth naming. The D1 Raman core decides and the division corroborates (PREC-11).'),'muted'));
       const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
         x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
       add(du);

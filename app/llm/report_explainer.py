@@ -475,7 +475,17 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
             _d = th.get("dissent")
             if _d:
-                _f(facts, f"How settled {th['name']} is ({_d['confidence']}): {_d['reading']}")
+                _f(facts, f"How settled {th['name']} is: {_d['reading']}")
+                for _ck in _d.get("checks", []):
+                    _ind = ("independent" if _ck.get("independent")
+                            else "not independent of the verdict")
+                    _f(facts, f"Cross-check on {th['name']} — {_ck['system']} sits at the "
+                              f"{_ck['tier']} tier and {_ck['relation']}; {_ind} "
+                              f"({_ck['governing']}). {_ck['note']}")
+                if _d.get("walled_note"):
+                    _f(facts, _d["walled_note"])
+                if _d.get("method_note"):
+                    _f(facts, f"Why no confidence grade is given: {_d['method_note']}")
             _c = th.get("concordance")
             if _c and _c.get("reading"):
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")

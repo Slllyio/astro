@@ -816,6 +816,11 @@ def _themes_section(r: DetailedReport) -> str:
         out.append("</ul>")
 
     out.append("<h3>Major life-themes</h3>")
+    # one constant string across every theme's DissentSummary — stated once, not twelve times
+    _mn = next((t.dissent.method_note for t in ts.themes
+                if getattr(t, "dissent", None) is not None and t.dissent.method_note), "")
+    if _mn:
+        out.append(f'<p class="section-sub"><i>On the cross-checks below: {_esc(_mn)}</i></p>')
     for t in ts.themes:
         houses = ", ".join(f"H{h}" for h in t.houses)
         dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
@@ -832,11 +837,14 @@ def _themes_section(r: DetailedReport) -> str:
                    f'{_esc(t.convergence_why)}</li>')
         ds = getattr(t, "dissent", None)
         if ds is not None:
-            out.append(f'<li><b>How settled is this? ({_esc(ds.confidence)})</b> &mdash; '
-                       f'{_esc(ds.reading)}')
-            if ds.agreeing:
-                out.append(f'<br><span class="muted">reading with the verdict: '
-                           f'{_esc(", ".join(ds.agreeing))}</span>')
+            out.append(f'<li><b>How settled is this?</b> &mdash; {_esc(ds.reading)}')
+            for ck in ds.checks:
+                cite = f", {_esc(ck.citation)}" if ck.citation else ""
+                indep = ("independent" if ck.independent
+                         else "not independent of the verdict")
+                out.append(f'<br><span class="muted">{_esc(ck.system)} &mdash; '
+                           f'{_esc(ck.tier)}; {_esc(ck.relation)}; {indep} '
+                           f'({_esc(ck.governing)}{cite}). {_esc(ck.note)}</span>')
             if ds.walled_note:
                 out.append(f'<br><span class="muted">{_esc(ds.walled_note)}</span>')
             out.append('</li>')
@@ -926,18 +934,19 @@ def _themes_section(r: DetailedReport) -> str:
                        f'<td>{_esc(g.pattern)}</td></tr>')
         out.append('</tbody></table>')
     if getattr(ts, "contested_themes", None):
-        out.append('<p class="section-sub"><b>Seriously contested themes</b> &mdash; where two or '
-                   'more independent cross-checks read against the verdict. The verdicts stand '
-                   '(none of these may overturn a bhava judgment) but these are the readings to '
-                   'lean on most lightly.</p><ul>')
+        out.append('<p class="section-sub"><b>Themes with a cross-check reading against the '
+                   'verdict</b> &mdash; an inventory, not a grade. The verdicts stand (none of '
+                   'these may overturn a bhava judgment); each dissent is named at its own tier '
+                   'so the reader can weigh it as Raman asks &mdash; &ldquo;all these must be '
+                   'properly weighed&rdquo; (HTJAH-I:495) &mdash; rather than count it.</p><ul>')
         for nm, d in ts.contested_themes:
             out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.reading)}</li>')
         out.append('</ul>')
     if getattr(ts, "divisional_divergences", None):
         out.append('<p class="section-sub"><b>Divisions that read against the rasi</b> &mdash; a '
                    'varga is the classical confirmation device, so its dissent is worth naming. '
-                   'It modulates confidence in the natal indication; it never overturns it '
-                   '(PREC-5).</p><ul>')
+                   'The D1 Raman core decides and the division corroborates '
+                   '(PREC-11).</p><ul>')
         for nm, d in ts.divisional_divergences:
             out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.varga)} reads '
                        f'{_esc(d.verdict)}, against the rasi verdict.</li>')

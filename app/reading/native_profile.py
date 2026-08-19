@@ -185,6 +185,16 @@ def build_native_profile(reading: Mapping[str, Any],
                 "own signals (a doctrine assessment), not a probability of "
                 "events."
             ),
+            "validation_note": (
+                "Honesty note: this profile faithfully applies Raman's method, "
+                "but it is NOT validated against real personalities. When the "
+                "same personality signal was tested at population scale against "
+                "real biography — a well-placed Venus (relationship style) vs "
+                "actual marriage outcomes on 14,278 birth-certificate charts, "
+                "and the profile vs vocation on ~60,000 — it showed no "
+                "predictive effect (RR≈1.0 vs a 1.20 bar; powered null). Read it "
+                "as a classical character portrait, not a forecast."
+            ),
         }
     except Exception:  # noqa: BLE001 — never block a reading
         return {}

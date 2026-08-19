@@ -438,6 +438,40 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"{y['name']} ({y['kind']}): {y.get('effect', '')}", cite)
         _append_linked_insights(R, key, facts)
         return facts
+    if key == "marriage":
+        # v36 — the marriage chapter's COMPUTED timing layer. The generic fallback carried
+        # none of it, so a model asked when marriage is classically indicated had only the
+        # verbatim paragraph and no statement of what this chart actually carries.
+        mg = R.get("marriage") or {}
+        mt = mg.get("timing") if mg else None
+        if not mt:
+            return facts
+        _f(facts, "The marriage-timing layer is a TIMING LENS in the classical voice, not a "
+                  "forecast. " + str(mt.get("caveat", "")), cite="HTJAH-II:852")
+        for g in mt.get("givers") or []:
+            _f(facts, f"{g['planet']} is nominated as able to give marriage in its period by: "
+                      f"{'; '.join(g.get('clauses') or [])}. It carries "
+                      f"{g.get('strength_rupas')} rupas"
+                      + ("" if g.get("ranked") else
+                         f", and is kept OUT of the strongest-of ranking: {g.get('condition','')}")
+                      + ".",
+               cite=(g.get("citations") or ["HTJAH-II:852"])[0])
+        _f(facts, f"\"{mt.get('strongest_rule', '')}\" On this chart the strongest is "
+                  f"{mt.get('strongest') or 'not resolvable'}.", cite="HTJAH-II:856")
+        for d in mt.get("delays") or []:
+            _f(facts, f"Delay screen — {d['name']}: {'FIRES' if d.get('fired') else 'silent'}. "
+                      f"Raman's rule: \"{d.get('rule','')}\""
+                      + ("" if not d.get("because") else
+                         " Found here: " + "; ".join(d["because"]) + ".")
+                      + f" {d.get('condition','')}",
+               cite=d.get("citation") or "HTJAH-II:875")
+        _f(facts, f"The overall lean: {mt.get('lean','')}", cite="HTJAH-II:875")
+        for sp in mt.get("jupiter_sphutas") or []:
+            _f(facts, f"Jupiter-transit resultant ({sp[0]}): {sp[1]}, trines {sp[2]}. Jupiter "
+                      f"transiting that rasi or its trines is classically favourable for "
+                      f"marriage.", cite="HTJAH-II:869")
+        _f(facts, str(mt.get("subordination", "")), cite="HTJAH-II:881")
+        return facts
     if key == "profession":
         # v36 — the profession chapter, decomposed one-claim-per-fact. The generic
         # `section:<key>` fallback surfaced a single field here, so a model explaining the

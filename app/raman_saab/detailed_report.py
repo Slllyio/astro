@@ -6523,6 +6523,41 @@ def to_markdown(r: DetailedReport) -> str:
                      + "; ".join(m.jupiter_h7_windows))
         if m.children_after:
             L.append(f"- **Children (H5)** — {m.children_after}")
+        # v36: the COMPUTED timing layer — `timing_navamsa` above prints Raman's timing
+        # paragraph verbatim and computes none of it.
+        _mt = getattr(m, "timing", None)
+        if _mt is not None:
+            L.append("")
+            L.append("### Marriage timing — the giving lords and the delay screens")
+            L.append("")
+            L.append(f"_{_md_cell(_mt.caveat)}_")
+            L.append("")
+            L.append("| Planet | Nominated by | Strength | In the ranking? |")
+            L.append("|---|---|---|---|")
+            for _g in _mt.givers:
+                _rk = "yes" if _g.ranked else "no — " + _md_cell(_g.condition)
+                L.append(f"| {_md_cell(_g.planet)}"
+                         + (" **(strongest)**" if _g.planet == _mt.strongest else "")
+                         + f" | {_md_cell('; '.join(_g.clauses))} "
+                         f"| {_g.strength_rupas} rupas | {_rk} |")
+            L.append("")
+            L.append(f"- **{_md_cell(_mt.strongest_rule)}** Here that is "
+                     f"{_md_cell(_mt.strongest) or 'not resolvable'} "
+                     f"({_md_cell(_mt.citation)}).")
+            for _d in _mt.delays:
+                _state = "FIRES" if _d.fired else "silent"
+                L.append(f"- **{_md_cell(_d.name)}** — {_state}. \"{_md_cell(_d.rule)}\" "
+                         f"({_md_cell(_d.citation)})"
+                         + ("" if not _d.because else
+                            " Found here: " + _md_cell("; ".join(_d.because)) + ".")
+                         + f" {_md_cell(_d.condition)}")
+            L.append(f"- **The lean** — {_md_cell(_mt.lean)}")
+            for _lbl, _sgn, _tri in _mt.jupiter_sphutas:
+                L.append(f"- **Jupiter-transit resultant ({_md_cell(_lbl)})** — "
+                         f"{_md_cell(_sgn)}; trines {_md_cell(_tri)}. Jupiter transiting "
+                         f"the resultant rasi or its trines is classically favourable for "
+                         f"marriage (HTJAH-II:869-873).")
+            L.append(f"- _{_md_cell(_mt.subordination)} (HTJAH-II:881-883)_")
         L.append("")
         L.append("_On separation and loss of the partner, the method's own statements — "
                  "quoted, not composed; A STATEMENT OF THE METHOD, NOT A PREDICTION "

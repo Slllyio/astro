@@ -225,6 +225,11 @@ class MarriageMonograph:
     coverture: Optional[str] = None              # H7 'coverture' verdict (degree)
     kuja_narration: tuple[str, ...] = ()         # per-frame dosha narration lines
     jupiter_h7_windows: tuple[str, ...] = ()     # favourable Jupiter windows, 7th from Moon
+    # v36 (2026-08-19, corpus-unblocked): the COMPUTED timing layer. `timing_navamsa`
+    # above prints Raman's timing paragraph verbatim and computes none of it; this is the
+    # marriage-giving roster (HTJAH-II:852-867), his two delay screens (HTJAH-II:875-881)
+    # and the Jupiter-transit sphutas (HTJAH-II:869-873), applied to this chart.
+    timing: object = None
 
 
 def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]:
@@ -270,6 +275,13 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         for seg in r.gochara_outlook.get("Jupiter", ())
         if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25
         and seg.house_from_moon == 7)
+    # v36: the computed timing layer. Its own try — a failure here must never silence the
+    # rest of the monograph — and report-only: imported by nothing in the verdict path.
+    try:
+        from app.raman_saab.judges.marriage_timing import build_marriage_timing
+        _marriage_timing = build_marriage_timing(r)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        _marriage_timing = None
     return MarriageMonograph(
         seventh_covers=_pull(_H2, MARRIAGE_INTRO) or "",
         lord_placement_house=lord_house,
@@ -285,7 +297,8 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         marital_happiness=_sig7("marital_happiness"),
         coverture=_sig7("coverture"),
         kuja_narration=kuja,
-        jupiter_h7_windows=jup7)
+        jupiter_h7_windows=jup7,
+        timing=_marriage_timing)
 
 
 # ── v26 Children ────────────────────────────────────────────────────────────────

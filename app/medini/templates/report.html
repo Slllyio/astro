@@ -694,6 +694,25 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v36 — marriage timing */
+  'Marriage timing — the giving lords and the delay screens':'विवाह-काल — दाता ग्रह और विलम्ब-परीक्षा',
+  'Planets Raman names as able to give marriage in their periods':'रमण द्वारा नामित विवाह-दाता ग्रह',
+  'planet':'ग्रह',
+  'nominated by':'किस नियम से',
+  'in the ranking?':'क्रम में?',
+  'yes':'हाँ',
+  'no':'नहीं',
+  'Here that is':'यहाँ वह है',
+  'not resolvable':'अनिर्णीत',
+  'FIRES':'सक्रिय',
+  'silent':'मौन',
+  'Found here':'यहाँ प्राप्त',
+  'The lean':'झुकाव',
+  'Jupiter-transit resultant':'गुरु-गोचर फलित राशि',
+  'trines':'त्रिकोण',
+  'Marital happiness (H7)':'वैवाहिक सुख (स7)',
+  'Coverture (H7)':'दाम्पत्य (स7)',
+  'Jupiter transiting the 7th from the Moon':'चन्द्र से सप्तम में गुरु का गोचर',
   /* v36 — the three career centres */
   'The 10th reckoned from all three centres':'तीनों केन्द्रों से गणित दशम भाव',
   'The 10th from Lagna, the Moon and the Sun':'लग्न, चन्द्र और सूर्य से दशम',
@@ -3124,7 +3143,38 @@ function render(R, S, FQ){
     if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
     for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
-    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote')); }
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote'));
+    /* completeness repair 2026-08-19: the B3 happiness/coverture split, the Kuja-dosha
+       per-frame narration and the Jupiter H7 transit windows all ship in the JSON and
+       render on markdown + standalone but never here. */
+    if(mg.marital_happiness) add(para(t('Marital happiness (H7)')+' — '+mg.marital_happiness,'muted'));
+    if(mg.coverture) add(para(t('Coverture (H7)')+' — '+mg.coverture,'muted'));
+    for(const k of (mg.kuja_narration||[])) add(para(k,'muted'));
+    for(const w of (mg.jupiter_h7_windows||[])) add(para(t('Jupiter transiting the 7th from the Moon')+': '+w,'timing'));
+    /* v36 — the COMPUTED timing layer: `timing_navamsa` above prints Raman's timing
+       paragraph verbatim and computes none of it (HTJAH-II:852-883). */
+    const mt=mg.timing;
+    if(mt){
+      add(para(t('Marriage timing — the giving lords and the delay screens'),'muted'));
+      add(para(mt.caveat,'lede'));
+      const gv=(mt.givers||[]).map(g=>({
+        [t('planet')]:g.planet+(g.planet===mt.strongest?(' ('+t('strongest')+')'):''),
+        [t('nominated by')]:(g.clauses||[]).join('; '),
+        [t('strength')]:g.strength_rupas+' '+t('rupas'),
+        [t('in the ranking?')]:g.ranked?t('yes'):(t('no')+' — '+g.condition)}));
+      const gtab=sectionTable(t('Planets Raman names as able to give marriage in their periods'), gv, null,
+        t('Ranked by strength because Raman says the strongest of these lords gives marriage in his Dasa. A graha nominated by several clauses keeps them all \u2014 that is support, though it does not change the ranking.'));
+      if(gtab) add(gtab);
+      add(para('\u201c'+mt.strongest_rule+'\u201d '+t('Here that is')+' '+(mt.strongest||t('not resolvable'))+' ('+mt.citation+')'));
+      for(const d of (mt.delays||[])){
+        add(para('['+(d.fired?t('FIRES'):t('silent'))+'] '+d.name+' — \u201c'+d.rule+'\u201d ('+d.citation+')'
+                 +((d.because||[]).length?(' '+t('Found here')+': '+d.because.join('; ')+'.'):'')
+                 +' '+d.condition, d.fired?'':'muted'));
+      }
+      add(para(t('The lean')+' — '+mt.lean));
+      for(const sp of (mt.jupiter_sphutas||[])) add(para(t('Jupiter-transit resultant')+' ('+sp[0]+') — '+sp[1]+'; '+t('trines')+' '+sp[2],'timing'));
+      add(para(mt.subordination+' (HTJAH-II:881-883)','muted'));
+    } }
 
   // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
   if(R.children){ const cc=R.children;

@@ -3555,6 +3555,40 @@ def to_html(r: DetailedReport) -> str:
         # Wave-2 (item 1c): the method's own favourable Jupiter windows on the 7th
         # from the Moon — a filter of the Gochara outlook, no new doctrine claim.
         jup_html = ""
+        # v36: the COMPUTED timing layer (giving lords, delay screens, Jupiter sphutas).
+        _mt = getattr(m, "timing", None)
+        if _mt is not None:
+            _grows = "".join(
+                f'<tr><td>{_esc(g.planet)}'
+                + (' <b>(strongest)</b>' if g.planet == _mt.strongest else '')
+                + f'</td><td>{_esc("; ".join(g.clauses))}</td>'
+                  f'<td>{g.strength_rupas} rupas</td>'
+                  f'<td>{"yes" if g.ranked else "no &mdash; " + _esc(g.condition)}</td></tr>'
+                for g in _mt.givers)
+            _drows = "".join(
+                f'<li><b>{_esc(d.name)}</b> &mdash; '
+                f'{"<b>FIRES</b>" if d.fired else "silent"}. &ldquo;{_esc(d.rule)}&rdquo; '
+                f'({_esc(d.citation)})'
+                + ('' if not d.because else
+                   ' Found here: ' + _esc("; ".join(d.because)) + '.')
+                + f' {_esc(d.condition)}</li>' for d in _mt.delays)
+            _sph = "".join(
+                f'<li><b>Jupiter-transit resultant ({_esc(lbl)})</b> &mdash; {_esc(sgn)}; '
+                f'trines {_esc(tri)}. Jupiter transiting the resultant rasi or its trines '
+                f'is classically favourable for marriage (HTJAH-II:869-873).</li>'
+                for lbl, sgn, tri in _mt.jupiter_sphutas)
+            extras += (
+                '<h3>Marriage timing &mdash; the giving lords and the delay screens</h3>'
+                f'<p class="section-sub"><i>{_esc(_mt.caveat)}</i></p>'
+                '<table><thead><tr><th>Planet</th><th>Nominated by</th><th>Strength</th>'
+                '<th>In the ranking?</th></tr></thead>'
+                f'<tbody>{_grows}</tbody></table>'
+                f'<p class="section-sub"><b>{_esc(_mt.strongest_rule)}</b> Here that is '
+                f'{_esc(_mt.strongest) or "not resolvable"} ({_esc(_mt.citation)}).</p>'
+                f'<ul>{_drows}{_sph}</ul>'
+                f'<p class="section-sub"><b>The lean</b> &mdash; {_esc(_mt.lean)}</p>'
+                f'<p class="muted"><i>{_esc(_mt.subordination)} '
+                f'(HTJAH-II:881-883)</i></p>')
         if getattr(m, "jupiter_h7_windows", ()):
             jup_html = (
                 '<p class="section-sub"><b>Jupiter transits touching the 7th (from '

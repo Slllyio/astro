@@ -6,16 +6,37 @@ _PADA_SPAN = _NAK_SPAN / 4.0
 
 
 def _sign_deg(lon: float) -> tuple[int, float]:
-    """(sign 1..12, degrees-within-sign 0..30)."""
+    """(sign 1..12, degrees-within-sign 0..30).
+
+    The ``>= 360.0`` clamp is not redundant: for a longitude negative by less than one ULP,
+    ``(-1e-18) % 360.0`` returns exactly ``360.0`` (the true result is unrepresentable), which
+    yields sign 13 and a ``KeyError`` from ``SIGN_LORDS`` in the D-1 path. Every other division
+    self-heals — 13 shares sign 1's parity, ``%3`` and ``%4`` residues — so only D-1 crashed,
+    and only for an upstream ayanamsa subtraction that undershoots 0 degrees."""
     lon %= 360.0
+    if lon >= 360.0:
+        lon = 0.0
     return int(lon // 30) + 1, lon % 30.0
 
 
 def navamsa_sign(lon: float) -> int:
-    """D9 sign (1..12). Element-based start: Fire->Aries, Earth->Cap, Air->Libra, Water->Cancer."""
+    """D9 sign (1..12). Element-based start: Fire->Aries, Earth->Cap, Air->Libra, Water->Cancer.
+
+    The part index is computed MULTIPLY-FIRST, as every other division in this module does.
+    The former ``deg_in_sign // (30 / 9)`` was off by one at exactly 10d00' and 20d00' of EVERY
+    sign (24 of 24 cases): ``30/9`` is the double 3.3333333333333335, rounded UP, so
+    ``10.0 // 3.3333333333333335 == 2.0`` while the 4th navamsa begins exactly at 10 degrees and
+    the index must be 3. ``10.0 * 9 / 30`` is exactly 3.0.
+
+    This mattered beyond float pedantry: Raman prints positions to the degree, so his own
+    stated-position charts land on these cusps — 3 of 35 Track-B goldens do, including
+    NH.chart_17 (Aurangzeb: Jupiter, Rahu and Ketu all at exactly 10d00'). The navamsa is also
+    the one division that feeds the D1 verdict path (``navamsa_status`` -> ``_decide``).
+    Correcting it left the golden ratchet unmoved (259/293 exact, 283/293 within-one,
+    10 real errors) and re-blessed two evidence snapshots."""
     sign_idx = int(lon // 30)
     deg_in_sign = lon % 30
-    part = int(deg_in_sign // (30 / 9))               # 0..8
+    part = int(deg_in_sign * 9 / 30)                  # 0..8
     start = NAVAMSA_START[sign_idx % 4]               # 1-indexed start sign
     return ((start - 1 + part) % 12) + 1
 

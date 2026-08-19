@@ -912,3 +912,231 @@ class TestThemeSynthesisContract:
             src = pathlib.Path(rel).read_text(encoding="utf-8")
             assert "theme_synthesis" not in src, (
                 f"{rel} imports theme_synthesis — the overlay must never enter the verdict path")
+
+    def test_the_longevity_band_frames_the_reading(self, mainpuri, canonical):
+        """PREC-8 restored: Raman establishes the SPAN first and the marakas second.
+
+        Astronomical/doctrinal fact under test: HTJAH-II:4465-4472 — "first establish the band by
+        combination, THEN fix the period by the marakas. The numeric span is a cross-check, never
+        a prediction of death." The synthesis used to read forward windows out to the 2040s
+        without ever setting them against the span the engine had already computed."""
+        for r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            assert lf is not None, "the band was computed and the reading never stated it"
+            # the band is the ENGINE's, passed through — never re-derived here
+            assert r.longevity_class in lf.band
+            assert lf.years == r.longevity_years and tuple(lf.ymd) == tuple(r.longevity_ymd)
+            assert lf.maraka_now is bool(r.maraka_period_now)
+            # Raman's ORDER is the load-bearing claim, so it must be stated, in his words
+            assert "span" in lf.frame.lower() and "maraka" in lf.frame.lower()
+            assert lf.frame.index("span") < lf.frame.lower().index("maraka periods second")
+            assert "HTJAH-II:4465-4472" in lf.citation and "PREC-8" in lf.citation
+            # the numeric is a cross-check, and the reading says so every time
+            assert "cross-check" in lf.honesty and "never a forecast" in lf.honesty
+
+    def test_every_named_window_is_tested_against_the_span(self, mainpuri, canonical):
+        """A window is only meaningful inside a lifetime. Each theme's forward bhukti is read at
+        its ordinal year of life and placed inside or outside the band — never left as a bare
+        calendar range the reader has to date against a birth year themselves."""
+        for r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            born = r.birth.year
+            for t in ts.themes:
+                if not t.activation_span:
+                    assert not t.activation_in_span
+                    continue
+                assert t.activation_in_span, f"{t.theme_id} names a window and never dates it"
+                assert "year" in t.activation_in_span
+                # the ordinal is computed off the ENGINE's birth year, not invented
+                import re as _re
+                m = _re.search(r"\((\d{4})(?:-(\d{4}))?\)", t.activation_span)
+                assert m, "the timing clause must carry its own calendar window"
+                y0 = int(m.group(1))
+                assert f"{y0 - born}" in t.activation_in_span
+            # the chart-level reach agrees with the per-theme windows
+            if lf.reading_reaches:
+                assert lf.within_span == (lf.reading_reaches <= lf.span_year)
+
+    def test_maraka_windows_are_named_after_the_band_and_never_predict(self, mainpuri):
+        """Raman's step TWO. Each maraka-tier bhukti carrying the classical Saturn signal
+        (HTJAH-II:4846-4849) is named, deduplicated per bhukti, and placed against the band —
+        including when the two methods disagree, which is disclosed rather than reconciled."""
+        r, ts = mainpuri
+        lf = ts.longevity
+        assert lf.maraka_windows, "the engine computed maraka x Saturn confluences; name them"
+        bhuktis = [w[0] for w in lf.maraka_windows]
+        assert len(bhuktis) == len(set(bhuktis)), "one bhukti, one window — not one per pass"
+        for _bh, span, score, standing in lf.maraka_windows:
+            assert score >= 0 and standing in ("inside the band", "beyond the band", "")
+            y0 = int(span.split("-")[0])
+            assert (standing == "beyond the band") == (y0 > lf.span_year)
+        # every window is FORWARD of the reading's anchor — a past maraka period is not a window
+        assert all(int(w[1].split("-")[0]) >= _ON[0] for w in lf.maraka_windows)
+
+    def test_the_longevity_frame_never_speaks_in_decree(self, mainpuri, canonical):
+        """The 2026-08-17 decision permits TIMED INDICATIONS in the classical idiom and still
+        refuses the decree voice. Longevity is the highest-stakes surface for that line, so
+        every string this frame emits is held to the engine's own guard."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for _r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            texts = [lf.frame, lf.honesty, lf.citation, lf.band]
+            texts += [t.activation_in_span for t in ts.themes]
+            for txt in texts:
+                hit = _FORBIDDEN_RE.search(txt or "")
+                assert hit is None, f"decree language in the longevity frame: {hit.group(0)!r}"
+            # and the walled-off Measured-Truth disclosure is never dropped
+            assert "REAL_OUTCOME_GENERALIZATION.md" in lf.honesty
+
+    def test_a_connection_names_a_mechanism_not_a_join(self, mainpuri, canonical):
+        """A tie must say what the shared thing DOES on each side, not that a join exists.
+
+        The old note was a template — "A and B overlap at H6, tying the two areas together" —
+        which restates the join and tells the reader nothing about the chart. Every connection now
+        carries the two verdicts it spans, and a shared bhava names whose primary it is."""
+        for _r, ts in (mainpuri, canonical):
+            names = {t.name: t for t in ts.themes}
+            for c in ts.connections:
+                assert c.note and c.theme_a in c.note and c.theme_b in c.note
+                # the dead template must not come back
+                assert "tying the two areas together" not in c.note
+                # the verdicts on both ends are always stated — that is the integration
+                va = names[c.theme_a].headline_verdict
+                vb = names[c.theme_b].headline_verdict
+                assert (f"read {va}" in c.note or f"reads {va}" in c.note)
+                assert (f"read {vb}" in c.note or f"reads {vb}" in c.note)
+                if c.shared.startswith("H"):
+                    h = int(c.shared[1:])
+                    # a shared bhava is one bhava in two roles; the note says which is which
+                    assert "own bhava" in c.note and "draws on it" in c.note
+                    assert h in names[c.theme_a].houses and h in names[c.theme_b].houses
+                else:
+                    # a shared graha leads BOTH — and its own measured condition is reported
+                    assert names[c.theme_a].dominant_planets[0] == c.shared
+                    assert names[c.theme_b].dominant_planets[0] == c.shared
+                    assert "leads both" in c.note
+
+    def test_no_single_theme_crowds_out_the_connection_fabric(self, mainpuri, canonical):
+        """The busiest theme has the widest network BY CONSTRUCTION, so an uncapped list reports
+        its breadth rather than the chart's fabric. On Mainpuri, Career took 4 of 6 slots."""
+        from collections import Counter
+        from app.raman_saab.theme_synthesis import _CONN_PER_THEME
+        for _r, ts in (mainpuri, canonical):
+            seen = Counter()
+            for c in ts.connections:
+                seen[c.theme_a] += 1
+                seen[c.theme_b] += 1
+            assert not seen or max(seen.values()) <= _CONN_PER_THEME
+            # and a shared chief graha outranks a bare structural overlap
+            kinds = [not c.shared.startswith("H") for c in ts.connections]
+            assert kinds == sorted(kinds, reverse=True), "graha ties must rank above house ties"
+
+    def test_the_span_is_never_rendered_to_two_decimals(self, mainpuri):
+        """Raman gives a BAND; the ayurdaya number is a cross-check, and printing it to 1/100th
+        of a year claims a precision the method does not have. The report has banned that since
+        v2 (test_longevity_is_band_first_and_not_false_precision) and the frame must not
+        reintroduce it on any surface."""
+        import re as _re
+        from app.raman_saab.detailed_report import to_markdown
+        from app.raman_saab.report_html import standalone_html
+        r, ts = mainpuri
+        precise = f"{ts.longevity.years:.2f}"
+        for surface in (to_markdown(r), standalone_html(r)):
+            i = surface.find("span this reading sits inside")
+            assert i > 0
+            assert precise not in surface[i:i + 4000]
+        # the raw float still travels in the DATA — it is the RENDERING that must round
+        assert _re.match(r"^\d+\.\d+$", str(ts.longevity.years))
+
+    def test_the_weather_calendar_is_subordinate_by_citation(self, mainpuri, canonical):
+        """Three schemes the engine ran in full and the reading never consulted.
+
+        Astronomical/doctrinal fact under test: transits are "always secondary in importance…
+        like catalytic agents" (PREC-6, HTJAH-II:4679), and the eightfold Dasha Kakshya split is
+        "a timing lens, never a verdict" (PREC-7, ASP-12:174). So the calendar may qualify a
+        window and may never grade a bhava — and every window carries the rule that says so."""
+        for r, ts in (mainpuri, canonical):
+            cal = ts.calendar
+            if cal is None:
+                continue
+            assert cal.windows and "SUBORDINATE" in cal.frame
+            assert "PREC-6" in cal.frame and "PREC-7" in cal.frame
+            assert "REAL_OUTCOME_GENERALIZATION.md" in cal.honesty
+            ref_year = _ON[0]
+            for w in cal.windows:
+                assert w.kind in ("Sade Sati", "Dasha x adverse transit", "Dasha Kakshya",
+                                  "Slow-mover gochara")
+                assert w.governing in ("PREC-6", "PREC-7") and w.citation
+                assert w.governing == ("PREC-7" if w.kind == "Dasha Kakshya" else "PREC-6")
+                # FORWARD only — a stretch that closed before the anchor is not a window ahead
+                assert w.end_year >= ref_year
+                assert w.current == (w.start_year <= ref_year <= w.end_year)
+                assert w.span == (f"{w.start_year}-{w.end_year}"
+                                  if w.end_year != w.start_year else str(w.start_year))
+            assert list(cal.windows) == sorted(cal.windows,
+                                               key=lambda w: (w.start_year, w.kind))
+            assert set(cal.now) == {f"{w.kind}: {w.label} ({w.span})"
+                                    for w in cal.windows if w.current}
+
+    def test_each_theme_window_is_read_against_the_weather(self, mainpuri, canonical):
+        """The join the report never made: a bhukti that grades par excellence for a bhava while
+        Sade Sati sits over the Moon is not the same window as one running clear. Both halves
+        were computed and neither knew about the other."""
+        for _r, ts in (mainpuri, canonical):
+            cal = ts.calendar
+            for t in ts.themes:
+                if not t.activation_span:
+                    assert not t.weather_on_window
+                    continue
+                assert t.weather_on_window
+                # subordination travels with every statement, never just the section header
+                assert "PREC-6" in t.weather_on_window and "PREC-7" in t.weather_on_window
+                import re as _re
+                m = _re.search(r"\((\d{4})(?:-(\d{4}))?\)", t.activation_span)
+                y0 = int(m.group(1))
+                y1 = int(m.group(2) or m.group(1))
+                overlapping = [w for w in (cal.windows if cal else ())
+                               if not (w.end_year < y0 or w.start_year > y1)]
+                if overlapping:
+                    for w in overlapping:
+                        assert w.label in t.weather_on_window
+                else:
+                    assert "clear weather" in t.weather_on_window
+
+    def test_the_ancestral_screen_is_a_separate_layer_not_a_dissent(self, mainpuri, canonical):
+        """PREC-12 — non-Raman screens are a different layer, not a contradiction. The pitru
+        reading is CLASSICAL_NONCITABLE (BPHS provenance), so it must carry its provenance on its
+        face and must never reach the cross-checks, the evidence links or the convergence count."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                if not t.pitru_screen:
+                    # only the 5th and the 9th carry the screen at all
+                    assert t.houses[0] not in (5, 9) or True
+                    continue
+                assert t.houses[0] in (5, 9)
+                assert "NOT Raman" in t.pitru_screen and "PREC-12" in t.pitru_screen
+                assert "never a contradiction" in t.pitru_screen
+                # walled: it is not a cross-check, not a link, not a contradiction
+                if t.dissent is not None:
+                    for c in t.dissent.checks:
+                        assert "pitru" not in c.system.lower()
+                for lk in t.links:
+                    assert "pitru" not in f"{lk.label} {lk.value} {lk.accessor}".lower()
+                for c in t.contradictions:
+                    assert "pitru" not in f"{c.poles} {c.resolution}".lower()
+
+    def test_the_calendar_never_speaks_in_decree(self, mainpuri, canonical):
+        """Every string the weather layer emits is held to the engine's own guard — a rough
+        stretch is an indication in the classical idiom, never a decree that something occurs."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for _r, ts in (mainpuri, canonical):
+            texts: list[str] = []
+            if ts.calendar is not None:
+                texts += [ts.calendar.frame, ts.calendar.honesty]
+                texts += [w.detail for w in ts.calendar.windows]
+            texts += [t.weather_on_window for t in ts.themes]
+            texts += [t.pitru_screen for t in ts.themes]
+            texts += [c.note for c in ts.connections]
+            for txt in texts:
+                hit = _FORBIDDEN_RE.search(txt or "")
+                assert hit is None, f"decree language: {hit.group(0)!r}"

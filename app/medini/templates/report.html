@@ -670,6 +670,40 @@ const I18N_HI = {
   'cancellation':'भंग',
   'all of them behind the reference moment':'सभी संदर्भ-क्षण से पूर्व',
   'lord':'स्वामी',
+  'The span this reading sits inside':'वह आयु-सीमा जिसके भीतर यह फलादेश पढ़ा जाता है',
+  'Band':'आयु-खंड',
+  'Ayurdaya cross-check':'आयुर्दाय जाँच',
+  'about':'लगभग',
+  'years':'वर्ष',
+  'Reach':'विस्तार',
+  'the band runs to about':'यह खंड लगभग यहाँ तक चलता है',
+  'the furthest window this reading names is':'इस फलादेश में नामित सबसे दूर की अवधि है',
+  'inside the span.':'सीमा के भीतर।',
+  'OUTSIDE the span, disclosed where it appears.':'सीमा के बाहर — जहाँ आता है वहीं स्पष्ट किया गया है।',
+  'Running period':'चालू दशा',
+  'carries a maraka-tier lord.':'मारक-श्रेणी का स्वामी वहन करती है।',
+  'carries no maraka-tier lord.':'कोई मारक-श्रेणी का स्वामी नहीं वहन करती।',
+  'Maraka-tier bhuktis ahead carrying the classical Saturn signal':'आगे आने वाली मारक-श्रेणी की भुक्तियाँ जिनमें शास्त्रीय शनि-संकेत है',
+  'bhukti':'भुक्ति',
+  'window':'अवधि',
+  'tier-score':'श्रेणी-अंक',
+  'against the band':'आयु-खंड के सापेक्ष',
+  'inside the band':'खंड के भीतर',
+  'beyond the band':'खंड से परे',
+  'That window inside the span':'वह अवधि आयु-सीमा के भीतर',
+  'Weather across that window':'उस अवधि पर चलने वाला काल-प्रभाव',
+  'Ancestral screen (separate layer)':'पितृ जाँच (पृथक् स्तर)',
+  'The weather over these years':'इन वर्षों का काल-प्रभाव',
+  'Timing weather across the years this reading names':'इस फलादेश में नामित वर्षों पर काल-प्रभाव',
+  'Subordinate by citation: transits are catalytic, never causal (PREC-6), and the Kakshya split is a timing lens, never a verdict (PREC-7). None of this moved a verdict above.':'सन्दर्भ द्वारा गौण: गोचर उत्प्रेरक हैं, कारण नहीं (PREC-6), और कक्ष्या-विभाजन समय का लेंस है, निर्णय नहीं (PREC-7)। इनमें से किसी ने ऊपर का कोई निर्णय नहीं बदला।',
+  'from':'से',
+  'to':'तक',
+  'scheme':'पद्धति',
+  'stretch':'खण्ड',
+  'what it measures':'यह क्या मापता है',
+  'governing':'शासक नियम',
+  'running now':'अभी चल रहा है',
+  'Citation':'सन्दर्भ',
   'How settled is this?':'यह कितना निश्चित है?',
   'On the cross-checks below':'नीचे दी गई प्रति-जाँचों पर',
   'reads with':'निर्णय के पक्ष में',
@@ -2493,6 +2527,28 @@ function render(R, S, FQ){
     add(para(t('One reading across every section above — not a new judgment. Each theme gathers the findings the report already made (house verdict, strength, planetary state, divisional confirmation, yoga, timing) into one mechanism, states how strongly they converge, and names any tension with the precedence rule that resolves it. The direction of every theme is the engine\'s own house verdict, unchanged.'),'lede'));
     const p=ts.portrait||{};
     const cl=(th)=>th.convergence_label||(String(th.convergence||'').replace(/_/g,' ').toLowerCase()+' convergence');
+    // PREC-8 order: the span is established BEFORE anything is read inside it, so the band
+    // opens the integrated reading rather than sitting in a chapter beside it.
+    const LF=ts.longevity;
+    if(LF){
+      add(para(t('The span this reading sits inside'),'muted'));
+      add(para(LF.frame,'lede'));
+      const lu=el('ul');
+      const lli=(txt)=>{ const x=el('li'); x.append(citeText(String(txt||''))); lu.append(x); };
+      // whole years only — a two-decimal lifespan is false precision the report bans
+      lli(t('Band')+' — '+LF.band+'; '+t('Ayurdaya cross-check')+' '+t('about')+' '+Math.round(LF.years)+' '+t('years')+' ('+LF.ymd[0]+'y '+LF.ymd[1]+'m '+LF.ymd[2]+'d)'+(LF.balarishta?('; Balarishta '+LF.balarishta):'')+'.');
+      if(LF.span_year) lli(t('Reach')+' — '+t('the band runs to about')+' '+LF.span_year+'; '+t('the furthest window this reading names is')+' '+(LF.reading_reaches||t('none'))+' — '+(LF.within_span?t('inside the span.'):t('OUTSIDE the span, disclosed where it appears.')));
+      lli(t('Running period')+' — '+(LF.maraka_now?t('carries a maraka-tier lord.'):t('carries no maraka-tier lord.')));
+      add(lu);
+      if((LF.maraka_windows||[]).length){
+        const mw=LF.maraka_windows.map(w=>({[t('bhukti')]:w[0], [t('window')]:w[1], [t('tier-score')]:w[2], [t('against the band')]:t(w[3]||'—')}));
+        const mt=sectionTable(t('Maraka-tier bhuktis ahead carrying the classical Saturn signal'), mw, null,
+          t('Raman\u2019s step two, after the band: a maraka period is fixed by the 2nd/7th-lord scheme, and Ayushkaraka Saturn transiting the 8th from birth or its trines during it is the classical last signal (HTJAH-II:4846-4849). Method, never a prediction.'));
+        if(mt) add(mt);
+      }
+      add(para(LF.honesty,'muted'));
+      add(para(t('Citation')+': '+LF.citation,'muted'));
+    }
     add(para(t('Executive portrait'),'muted'));
     const ul=el('ul',{class:'portrait'});
     const li=(html)=>{ const x=el('li'); x.append(citeText(String(html||''))); ul.append(x); };
@@ -2528,6 +2584,9 @@ function render(R, S, FQ){
       b.append(para(t('Network')+' — '+(th.houses||[]).map(h=>'H'+h).join(', ')+((th.karakas||[]).length?('; '+t('karakas')+' '+th.karakas.join(', ')):'')+'; '+t('driven by')+' '+((th.dominant_planets||[]).join(', ')||t('the chart'))+'.','muted'));
       if((th.sub_matters||[]).length) b.append(para(t('Within this house')+' — '+th.sub_matters.map(f=>f[0]+' '+t('reads')+' '+f[1]).join('; ')+'.','muted'));
       b.append(para(t('Convergence')+' — '+cl(th)+': '+th.convergence_why,'muted'));
+      if(th.activation_in_span) b.append(para(t('That window inside the span')+' — '+th.activation_in_span,'muted'));
+      if(th.weather_on_window) b.append(para(t('Weather across that window')+' — '+th.weather_on_window,'muted'));
+      if(th.pitru_screen) b.append(para(t('Ancestral screen (separate layer)')+' — '+th.pitru_screen,'muted'));
       if(th.dissent){ const ds=th.dissent;
         b.append(para(t('How settled is this?')+' — '+ds.reading,'muted'));
         for(const ck of (ds.checks||[])){
@@ -2590,6 +2649,18 @@ function render(R, S, FQ){
       const du=el('ul'); for(const pair of ts.divisional_divergences){ const x=el('li');
         x.append(pair[0]+' — '+pair[1].varga+' '+t('reads')+' '+pair[1].verdict+', '+t('against the rasi verdict')+'.'); du.append(x); }
       add(du);
+    }
+    const CAL=ts.calendar;
+    if(CAL&&(CAL.windows||[]).length){
+      add(para(t('The weather over these years'),'muted'));
+      add(para(CAL.frame,'lede'));
+      const cw=CAL.windows.map(w=>({[t('from')]:w.start_year, [t('to')]:w.end_year,
+        [t('scheme')]:w.kind, [t('stretch')]:w.label+(w.current?(' ('+t('running now')+')'):''),
+        [t('what it measures')]:w.detail, [t('governing')]:w.governing+' ('+w.citation+')'}));
+      const ct=sectionTable(t('Timing weather across the years this reading names'), cw, null,
+        t('Subordinate by citation: transits are catalytic, never causal (PREC-6), and the Kakshya split is a timing lens, never a verdict (PREC-7). None of this moved a verdict above.'));
+      if(ct) add(ct);
+      add(para(CAL.honesty,'muted'));
     }
     if((ts.contested_bhavas||[]).length){
       add(para(t('Contested bhavas — the verdict runs against the weight of the testimony'),'muted'));

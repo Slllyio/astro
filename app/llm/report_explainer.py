@@ -459,6 +459,29 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
         if _por.get("chara_now"):
             _f(facts, f"Jaimini chara dasha (a walled layer, not a second timing authority): "
                       f"{_por['chara_now']}")
+        _lf = ts.get("longevity")
+        if _lf:
+            # PREC-8: the band frames the whole reading, so it is stated before anything read
+            # inside it. Timed-indication idiom only; the Measured-Truth line rides with it.
+            _f(facts, f"The span this reading sits inside: {_lf['frame']}",
+               cite="HTJAH-II:4465-4472")
+            _f(facts, _lf["honesty"])
+            for _bh, _sp, _sc, _st in _lf.get("maraka_windows", []):
+                _f(facts, f"A maraka-tier bhukti ahead carrying the classical Saturn signal: "
+                          f"{_bh} ({_sp}), tier-score {_sc}, {_st} — classically sensitive, a "
+                          f"disclosure of the method and never a forecast.",
+                   cite="HTJAH-II:4846-4849")
+        _cal = ts.get("calendar")
+        if _cal:
+            # subordinate by citation (PREC-6 / PREC-7) — the frame carries that on its face
+            _f(facts, f"The timing weather over these years: {_cal['frame']}",
+               cite="HTJAH-II:4679")
+            _f(facts, _cal["honesty"])
+            for _w in _cal.get("windows", []):
+                _f(facts, f"{_w['kind']} — {_w['label']} ({_w['span']})"
+                          + (" running now" if _w.get("current") else "")
+                          + f": {_w['detail']} Subordinate under {_w['governing']}.",
+                   cite=_w.get("citation") or None)
         for g in ts.get("graha_concordance", []):
             _f(facts, f"{g['planet']} — {g['reading']}")
         for c in ts.get("contested_bhavas", []):
@@ -473,6 +496,14 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             if th.get("activation_span"):
                 _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
+            if th.get("activation_in_span"):
+                _f(facts, f"That window read inside the longevity band, for {th['name']}: "
+                          f"{th['activation_in_span']}", cite="HTJAH-II:4465-4472")
+            if th.get("weather_on_window"):
+                _f(facts, f"Timing weather across {th['name']}'s window: "
+                          f"{th['weather_on_window']}", cite="HTJAH-II:4679")
+            if th.get("pitru_screen"):
+                _f(facts, th["pitru_screen"])
             _d = th.get("dissent")
             if _d:
                 _f(facts, f"How settled {th['name']} is: {_d['reading']}")

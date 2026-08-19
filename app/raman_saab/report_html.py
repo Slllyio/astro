@@ -773,6 +773,38 @@ def _themes_section(r: DetailedReport) -> str:
            'mechanism, states how strongly they converge, and names any tension with the '
            'precedence rule that resolves it. The direction of every theme is the engine&rsquo;s '
            'own house verdict, unchanged.</p>']
+    # PREC-8 order: establish the span BEFORE reading anything inside it
+    lf = getattr(ts, "longevity", None)
+    if lf is not None:
+        out.append('<h3>The span this reading sits inside</h3>')
+        out.append(f'<p class="section-sub"><i>{_esc(lf.frame)}</i></p><ul>')
+        # whole years only — a two-decimal lifespan is false precision the report bans
+        out.append(f'<li><b>Band</b> &mdash; {_esc(lf.band)}; Ayurdaya cross-check about '
+                   f'{round(lf.years)} years ({lf.ymd[0]}y {lf.ymd[1]}m {lf.ymd[2]}d)'
+                   + (f'; Balarishta {_esc(lf.balarishta)}' if lf.balarishta else '') + '.</li>')
+        if lf.span_year:
+            out.append(f'<li><b>Reach</b> &mdash; the band runs to about {lf.span_year}; the '
+                       f'furthest window this reading names is '
+                       f'{lf.reading_reaches or "none"} &mdash; '
+                       + ('inside the span.' if lf.within_span
+                          else 'OUTSIDE the span, disclosed where it appears.') + '</li>')
+        out.append('<li><b>Running period</b> &mdash; '
+                   + ('carries a maraka-tier lord.' if lf.maraka_now
+                      else 'carries no maraka-tier lord.') + '</li>')
+        out.append('</ul>')
+        if lf.maraka_windows:
+            out.append('<p class="section-sub"><b>Maraka-tier bhuktis ahead carrying the '
+                       'classical Saturn signal</b> &mdash; Raman&rsquo;s step two, after the '
+                       'band.</p>')
+            out.append('<table><thead><tr><th>Bhukti</th><th>Window</th>'
+                       '<th>Tier-score</th><th>Against the band</th></tr></thead><tbody>')
+            for bh, sp, sc, st in lf.maraka_windows:
+                out.append(f'<tr><td>{_esc(bh)}</td><td>{_esc(sp)}</td><td>{sc}</td>'
+                           f'<td>{_esc(st or "-")}</td></tr>')
+            out.append('</tbody></table>')
+        out.append(f'<p class="muted"><i>{_esc(lf.honesty)}</i></p>')
+        out.append(f'<p class="muted"><i>Citation: {_esc(lf.citation)}</i></p>')
+
     p = ts.portrait
     out.append('<h3>Executive portrait</h3><ul class="portrait">')
     if getattr(p, "identity", ""):
@@ -835,6 +867,15 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
                    f'{_esc(t.convergence_why)}</li>')
+        if getattr(t, "activation_in_span", ""):
+            out.append(f'<li><b>That window inside the span</b> &mdash; '
+                       f'{_esc(t.activation_in_span)}</li>')
+        if getattr(t, "weather_on_window", ""):
+            out.append(f'<li><b>Weather across that window</b> &mdash; '
+                       f'{_esc(t.weather_on_window)}</li>')
+        if getattr(t, "pitru_screen", ""):
+            out.append(f'<li><b>Ancestral screen (separate layer)</b> &mdash; '
+                       f'{_esc(t.pitru_screen)}</li>')
         ds = getattr(t, "dissent", None)
         if ds is not None:
             out.append(f'<li><b>How settled is this?</b> &mdash; {_esc(ds.reading)}')
@@ -951,6 +992,21 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.varga)} reads '
                        f'{_esc(d.verdict)}, against the rasi verdict.</li>')
         out.append('</ul>')
+    cal = getattr(ts, "calendar", None)
+    if cal is not None and cal.windows:
+        out.append('<h3>The weather over these years</h3>')
+        out.append(f'<p class="section-sub"><i>{_esc(cal.frame)}</i></p>')
+        out.append('<table><thead><tr><th>From</th><th>To</th><th>Scheme</th><th>Stretch</th>'
+                   '<th>What it measures</th><th>Governing</th></tr></thead><tbody>')
+        for w in cal.windows:
+            now = ' <b>(running now)</b>' if w.current else ''
+            out.append(f'<tr><td>{w.start_year}</td><td>{w.end_year}</td>'
+                       f'<td>{_esc(w.kind)}</td><td>{_esc(w.label)}{now}</td>'
+                       f'<td>{_esc(w.detail)}</td>'
+                       f'<td>{_esc(w.governing)} ({_esc(w.citation)})</td></tr>')
+        out.append('</tbody></table>')
+        out.append(f'<p class="muted"><i>{_esc(cal.honesty)}</i></p>')
+
     if getattr(ts, "contested_bhavas", None):
         out.append('<p class="section-sub"><b>Contested bhavas</b> &mdash; houses whose verdict '
                    'runs against the weight of their own testimony. The verdict stands (a bhava '

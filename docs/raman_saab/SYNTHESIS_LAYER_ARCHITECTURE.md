@@ -220,6 +220,60 @@ a wealth theme (H2/H11) and a career theme (H10/H2/H11) share H2 and possibly a 
 planet. Nabhasa/Akriti whole-chart yogas (which resolve no house — `_yoga_planets`→None) are
 rendered as **disclosed coverage-gap nodes**, never dropped or force-attached.
 
+### G.1 The span frames the reading (PREC-8)
+
+`LongevityFrame` is built FIRST and rendered first, because that is Raman's own order:
+*"first establish the band by combination, THEN fix the period by the marakas. The numeric span
+is a cross-check, never a prediction of death"* (HTJAH-II:4465-4472, PREC-8). Before this the
+synthesis named forward windows out to the 2040s without once asking whether they sat inside the
+span the engine had already computed — the band was a chapter beside the reading rather than the
+frame around it.
+
+What it does: states the band (`r.longevity_class`, harmonised label) with the ayurdaya number as
+a **cross-check**, tests every window the reading names against the span, dates each theme's own
+window at its ordinal year of life (`activation_in_span`), and names Raman's step two — the
+maraka-tier bhuktis carrying the classical Saturn signal (`r.maraka_saturn`, HTJAH-II:4846-4849)
+— **after** the band, deduplicated per bhukti and each marked inside or beyond the span. Where
+the two methods disagree (the maraka scheme runs the whole Vimshottari timeline while the
+ayurdaya stops), the disagreement is disclosed and Raman's order settles which leads.
+
+Guard: every string is held to `_FORBIDDEN_RE` by test. The 2026-08-17 decision permits timed
+indications in the classical idiom and still refuses the decree voice; longevity is the
+highest-stakes surface for that line. Rendering rounds to whole years — a two-decimal lifespan is
+false precision the report has banned since v2.
+
+### G.2 Connections name a mechanism, not a join
+
+A tie needs the same CHIEF driving graha or one theme's primary house inside the other's network.
+What changed is the note. It used to be a template ("A and B overlap at H6, tying the two areas
+together"), which restates the join and says nothing about the chart. Now a shared bhava is
+reported as one bhava in two roles (whose primary, what the other draws through), a shared graha
+carries that graha's own measured condition from `driver_concordance` (Ishta/Kashta, avastha,
+the named pattern), and every note sets the two verdicts against each other — an inversion
+(favourable one end, afflicted the other) reads as strength-and-strain, a difference of degree
+does not. Ties rank graha-before-house and no theme may hold more than `_CONN_PER_THEME` of them:
+the busiest theme has the widest network by construction, and uncapped it took four of six slots.
+
+### G.3 The weather calendar — subordinate by citation
+
+`AfflictionCalendar` joins three schemes the engine ran in full and the synthesis never consulted:
+Sade Sati phases, the MD/AD lord meeting its own **adverse** transit (`r.dasha_transit_adverse`,
+the mirror of the favourable confluence already read), and the eightfold Dasha Kakshya split.
+Forward-only; contiguous passes inside one Mahadasha merge into one stretch. Each theme's own
+window is then read against it (`weather_on_window`) — the join that was missing, since a bhukti
+grading *par excellence* while Sade Sati sits over the Moon is not the same window as one running
+clear.
+
+Subordination travels with the data, not just the section header: every window carries its
+governing rule — PREC-6 (*"transits are always secondary in importance… like catalytic agents"*,
+HTJAH-II:4679) or PREC-7 (Dasha Kakshya is *"a timing lens, never a verdict"*, ASP-12:174). A
+window can say a stretch runs rough; it can never say a bhava is afflicted.
+
+The **pitru** screen rides beside this as `pitru_screen` on the 5th and the 9th only, governed by
+PREC-12 (*non-Raman screens are a different layer, not a contradiction*). It is CLASSICAL_NONCITABLE
+(BPHS provenance), so it wears that on its face and is walled out of the cross-checks, the
+evidence links and the contradictions — tested in all three directions.
+
 ## H. Dasha synthesis methodology (the time axis)
 
 Reuse `r.life_chapters` (per-MD chapters, already a time-axis synthesis) and overlay

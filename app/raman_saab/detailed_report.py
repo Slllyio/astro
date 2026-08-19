@@ -4131,6 +4131,40 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
              "own house verdict, carried through unchanged._")
     L.append("")
 
+    # PREC-8 order: the span is established BEFORE anything is read inside it. So the band
+    # opens the integrated reading rather than sitting in a chapter beside it.
+    lf = getattr(ts, "longevity", None)
+    if lf is not None:
+        L.append("### The span this reading sits inside")
+        L.append("")
+        L.append(f"_{lf.frame}_")
+        L.append("")
+        # whole years only — a two-decimal lifespan is false precision the report bans
+        # (test_longevity_is_band_first_and_not_false_precision); the ymd carries the detail
+        L.append(f"- **Band** — {_md_cell(lf.band)}; Ayurdaya cross-check about "
+                 f"{round(lf.years)} years ({lf.ymd[0]}y {lf.ymd[1]}m {lf.ymd[2]}d)"
+                 + (f"; Balarishta {lf.balarishta}" if lf.balarishta else "") + ".")
+        if lf.span_year:
+            L.append(f"- **Reach** — the band runs to about {lf.span_year}; the furthest window "
+                     f"this reading names is {lf.reading_reaches or 'none'} — "
+                     + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
+                        "where it appears."))
+        L.append(f"- **Running period** — "
+                 + ("carries a maraka-tier lord." if lf.maraka_now
+                    else "carries no maraka-tier lord."))
+        if lf.maraka_windows:
+            L.append("- **Maraka-tier bhuktis ahead carrying the classical Saturn signal** "
+                     "(Raman's step two, after the band):")
+            L.append("")
+            L.append("| Bhukti | Window | Tier-score | Against the band |")
+            L.append("|---|---|---|---|")
+            for bh, sp, sc, st in lf.maraka_windows:
+                L.append(f"| {_md_cell(bh)} | {_md_cell(sp)} | {sc} | {_md_cell(st or '-')} |")
+            L.append("")
+        L.append(f"- _{lf.honesty}_")
+        L.append(f"- _Citation: {lf.citation}_")
+        L.append("")
+
     p = ts.portrait
     L.append("### Executive portrait")
     L.append("")
@@ -4205,6 +4239,12 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
             L.append(f"- **Within this house** — {facets}.")
         L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
+        if getattr(t, "activation_in_span", ""):
+            L.append(f"- **That window inside the span** — {t.activation_in_span}")
+        if getattr(t, "weather_on_window", ""):
+            L.append(f"- **Weather across that window** — {t.weather_on_window}")
+        if getattr(t, "pitru_screen", ""):
+            L.append(f"- **Ancestral screen (separate layer)** — {t.pitru_screen}")
         # the engine's OWN testimony ledger for this bhava (Raman's three-fold: lord/karaka/navamsa
         # as core, everything else as overlay) — the authoritative agreement check
         ds = getattr(t, "dissent", None)
@@ -4317,6 +4357,23 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "
                      f"{_md_cell(d.verdict)}, against the rasi verdict.")
         L.append("")
+    cal = getattr(ts, "calendar", None)
+    if cal is not None and cal.windows:
+        L.append("### The weather over these years")
+        L.append("")
+        L.append(f"_{cal.frame}_")
+        L.append("")
+        L.append("| From | To | Scheme | Stretch | What it measures | Governing |")
+        L.append("|---|---|---|---|---|---|")
+        for w in cal.windows:
+            now = " (running now)" if w.current else ""
+            L.append(f"| {w.start_year} | {w.end_year} | {_md_cell(w.kind)} | "
+                     f"{_md_cell(w.label)}{now} | {_md_cell(w.detail)} | "
+                     f"{w.governing} ({_md_cell(w.citation)}) |")
+        L.append("")
+        L.append(f"- _{cal.honesty}_")
+        L.append("")
+
     if getattr(ts, "contested_bhavas", None):
         L.append("_**Contested bhavas** — houses whose verdict runs against the weight of their "
                  "own testimony. The verdict stands (a bhava is graded by its weakest decided "

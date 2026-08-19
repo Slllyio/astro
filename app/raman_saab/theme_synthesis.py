@@ -28,6 +28,7 @@ Usage:
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Optional
 
@@ -123,6 +124,15 @@ class ThemeReading:
     transits: tuple[TransitNote, ...] = ()
     #: how many independent systems dissent from this verdict — the integration of the integrations
     dissent: Optional[DissentSummary] = None
+    #: this theme's own forward window read INSIDE the longevity band (PREC-8: the span frames
+    #: the reading). Names the age the window falls at and, where one exists, the maraka-tier
+    #: confluence it coincides with — disclosure of the method, never a forecast.
+    activation_in_span: str = ""
+    #: what transit weather runs ACROSS this theme's own window (PREC-6/PREC-7 — subordinate)
+    weather_on_window: str = ""
+    #: the non-Raman ancestral screen where it bears on this bhava — a DIFFERENT layer, never a
+    #: contradiction of the Raman verdict (PREC-12), and never admitted to the cross-checks
+    pitru_screen: str = ""
 
 
 @dataclass(frozen=True)
@@ -329,6 +339,81 @@ class DissentSummary:
 
 
 @dataclass(frozen=True)
+class WeatherWindow:
+    """One forward stretch of TIMING WEATHER — never a verdict, always a modifier of one.
+
+    Three independent schemes the engine computes in full and the integrated reading never
+    consulted: Sade Sati's phases (`r.sade_sati_phases`), the MD/AD lord meeting its own ADVERSE
+    transit (`r.dasha_transit_adverse` — the mirror of the favourable confluence already read),
+    and the eightfold Dasha Kakshya split of each Mahadasha (`r.dasa_kakshya`).
+
+    Each is subordinate BY CITATION, and the ``governing`` field carries which rule subordinates
+    it: transits are "always secondary in importance… like catalytic agents" (PREC-6,
+    HTJAH-II:4679), and Dasha Kakshya is "a timing lens, never a verdict" (PREC-7, ASP-12:174).
+    So a window here can say a stretch is rough going; it can never say a bhava is afflicted."""
+    kind: str                       # 'Sade Sati' | 'Dasha x adverse transit' | 'Dasha Kakshya'
+    label: str                      # the scheme's own name for this stretch
+    span: str                       # 'YYYY-YYYY'
+    start_year: int
+    end_year: int
+    current: bool                   # does it cover the reading's anchor date
+    detail: str                     # the scheme's own measured particulars
+    governing: str                  # the PREC-id that subordinates it
+    citation: str
+
+
+@dataclass(frozen=True)
+class AfflictionCalendar:
+    """The transit weather across the years this reading names — subordinate, and said so.
+
+    The engine measured all of it and the synthesis timed every theme without once asking what
+    else was running. A bhukti that grades *par excellence* for a bhava while Sade Sati sits over
+    the Moon and the Mahadasha lord meets its own adverse transit is not the same window as one
+    running clear, and the report held both halves and never joined them.
+
+    Strictly a modifier: nothing here moves a bhava verdict or a fructification grade. PREC-6 and
+    PREC-7 are quoted on every window so the subordination travels with the data."""
+    windows: tuple[WeatherWindow, ...]
+    now: tuple[str, ...]            # what is running at the anchor date
+    frame: str
+    honesty: str
+
+
+@dataclass(frozen=True)
+class LongevityFrame:
+    """The span the whole reading is read INSIDE — Raman's own first step, restored.
+
+    ``PREC-8`` states his order verbatim: *"first establish the band by combination, THEN fix the
+    period by the marakas. The numeric span is a cross-check, never a prediction of death"*
+    (HTJAH-II:4465-4472). The engine performed step one on every chart and the integrated reading
+    never said it: themes named forward windows out to the 2040s without once asking whether those
+    windows sit inside the span the ayurdaya gives. That is the wrong way round — the band frames
+    the reading, it is not a chapter beside it.
+
+    Deliberately NOT a death forecast. The band and the maraka periods are stated in the classical
+    timed-indication idiom the 2026-08-17 guard decision permits; the Measured-Truth disclosure
+    (`honesty`) rides on every surface, because the validation program measured no chart-specific
+    death-timing signal at all."""
+    band: str                       # harmonised class label, e.g. 'Purnayu (purna band)'
+    years: float                    # the ayurdaya numeric — a CROSS-CHECK on the band, never a date
+    ymd: tuple[int, int, int]
+    balarishta: str                 # 'applies' / 'cancelled' / '' when neither
+    span_year: int                  # calendar year the band reaches, for the within-span test
+    reading_reaches: int            # furthest calendar year any theme window names (0 if none)
+    within_span: bool               # every window this reading names falls inside the band
+    maraka_now: bool                # does the RUNNING period carry a maraka-tier lord
+    #: (bhukti, span, tier-score, standing-vs-band), ahead only. The fourth element is the
+    #: cross-check the two methods force on each other: the maraka scheme runs the whole
+    #: Vimshottari timeline while the ayurdaya band ends where it ends, so some maraka-tier
+    #: bhuktis fall BEYOND the span. Raman's order settles it — band first (PREC-8) — and
+    #: the disagreement is disclosed rather than quietly reconciled.
+    maraka_windows: tuple[tuple[str, str, int, str], ...]
+    frame: str                      # the framing sentence — band first, marakas second
+    honesty: str                    # the Measured-Truth disclosure that rides with it
+    citation: str
+
+
+@dataclass(frozen=True)
 class ExecutivePortrait:
     """The two-page opening: if you read only this, what is this horoscope?"""
     identity: str                   # Lagna / lagna-lord / Atmakaraka / Karakamsa / Moon — who the chart is
@@ -408,6 +493,12 @@ class ThemeSynthesis:
     divisional_divergences: tuple[tuple[str, DivisionalCheck], ...] = ()
     #: themes where 2+ independent cross-checks read against the verdict — read these lightly
     contested_themes: tuple[tuple[str, DissentSummary], ...] = ()
+    #: the span the whole reading is read inside — Raman's first step (PREC-8), restored to the
+    #: front of the synthesis instead of sitting in a chapter of its own
+    longevity: Optional[LongevityFrame] = None
+    #: the transit weather over the years this reading names — subordinate by citation (PREC-6,
+    #: PREC-7), never a verdict, and never previously joined to the timing it qualifies
+    calendar: Optional[AfflictionCalendar] = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -529,6 +620,10 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     # the chart-level graha cross-check, computed once and shared by every theme
     graha_conc = _graha_concordance(r)
 
+    # the transit weather over the forward years, computed once: every theme's own window is
+    # then read against it, which is the join the report never made (PREC-6 / PREC-7)
+    weather = _safe(lambda: _weather_windows(r), ()) or ()
+
     themes: list[ThemeReading] = []
     for spec in _THEME_ROSTER:
         theme_id, name, prim_house = spec.theme_id, spec.name, spec.primary_house
@@ -569,7 +664,7 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
         # pass 5: contradictions — ONE consolidated statement per axis, not one per matter
         contradictions = _contradictions(r, prim_house, pf, headline, facets, name)
 
-        activation = _theme_timing(r, name, prim_house, houses, dom_planets)
+        activation, act_years = _theme_timing(r, name, prim_house, houses, dom_planets)
         varga_rel = _varga_relation(r, prim_house, domain)
         conc = _bhava_concordance(r, prim_house)
         div_checks = _divisional_checks(r, spec, facets, headline)
@@ -597,7 +692,10 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
             yogas=_theme_yogas(r, houses, yoga_house_bearings),
             av_support=av_sup,
             transits=_transit_notes(r, houses, dom_planets),
-            dissent=dissent))
+            dissent=dissent,
+            activation_in_span=_activation_in_span(r, act_years),
+            weather_on_window=_weather_on_window(weather, act_years),
+            pitru_screen=_safe(lambda: _pitru_screen(r, prim_house), "") or ""))
 
     # pass 6: rank + spine + portrait + the cross-theme fabric + dasha evolution
     themes.sort(key=lambda t: t.evidence_weight, reverse=True)
@@ -617,7 +715,9 @@ def build_theme_synthesis(r: "DetailedReport") -> ThemeSynthesis:
     return ThemeSynthesis(themes=tuple(themes), spine=spine, frame=frame, portrait=portrait,
                           connections=connections, dasha_evolution=evolution,
                           graha_concordance=graha_conc, contested_bhavas=contested,
-                          divisional_divergences=divergent, contested_themes=contested_th)
+                          divisional_divergences=divergent, contested_themes=contested_th,
+                          longevity=_safe(lambda: _longevity_frame(r, themes), None),
+                          calendar=_safe(lambda: _affliction_calendar(r, weather), None))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -989,7 +1089,7 @@ def _varga_relation(r, prim_house, domain) -> str:
 _TIER_ORDER = ("par excellence", "ordinary", "limited", "feeble")
 
 
-def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
+def _theme_timing(r, name, prim_house, houses, dom_planets) -> tuple[str, Optional[tuple[int, int]]]:
     """A DIFFERENTIAL, FORWARD-LOOKING timing note, graded by Raman's own fructification scheme.
 
     Scans the bhuktis ahead of ``ref_jd`` through the engine's shared ``graded_buckets`` (the ONE
@@ -1005,7 +1105,10 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
       coming years support only weakly), not an absence to hide.
 
     Timed-indication idiom throughout — a window that supports an indication, never a decree that
-    an event occurs. Silent (empty) when the timeline carries no forward bhukti for the house."""
+    an event occurs. Silent (empty) when the timeline carries no forward bhukti for the house.
+
+    Returns the clause AND the window's ``(start_year, end_year)``, so the longevity frame can
+    read the same window inside the band without re-scanning the timeline (PREC-8)."""
     from app.raman_saab import detailed_report as dr
     ref = getattr(r, "ref_jd", 0.0)
     periods = getattr(getattr(r, "timeline", None), "periods", ()) or ()
@@ -1025,7 +1128,7 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
                 best = (rank, tier, per.maha, per.antar or "",
                         _year(per.start_jd), _year(per.end_jd))
     if best is None:
-        return ""
+        return "", None
     _rank, tier, maha, antar, y0, y1 = best
     bhukti = f"{maha}/{antar}" if antar else maha
     span = f"{y0}-{y1}" if y1 != y0 else str(y0)
@@ -1034,10 +1137,10 @@ def _theme_timing(r, name, prim_house, houses, dom_planets) -> str:
     if tier == _TIER_ORDER[0]:
         return (f"the {bhukti} bhukti ({span}) is the window ahead that best supports it — "
                 f"H{prim_house} grades {tier} there on Raman's fructification scheme "
-                f"(HTJAH-I:1592-1596).")
+                f"(HTJAH-I:1592-1596).", (y0, y1))
     return (f"the {bhukti} bhukti ({span}) offers the strongest support ahead, and only at the "
             f"{tier} grade — H{prim_house} is not carried to the top tier in the years shown "
-            f"(HTJAH-I:1592-1596).")
+            f"(HTJAH-I:1592-1596).", (y0, y1))
 
 
 def _final_interpretation(name, headline, convergence, conv_label, contradictions, activation,
@@ -1135,13 +1238,31 @@ def _weight(convergence, links, r, houses, dom_planets) -> float:
 
 
 def _connections(themes) -> tuple[ThemeConnection, ...]:
-    """Discover a GENUINE shared mechanism between two themes — a strong tie, not a coincidence.
-    A connection needs EITHER the same CHIEF driving planet (dom_planets[0] equal — the same graha
-    leads both), OR one theme's PRIMARY house sitting inside the other's network (a real
-    structural overlap). Merely sharing a broad karaka (Jupiter signifies half the chart) does
-    NOT qualify — that produced the old 'everything connects to wealth' noise."""
+    """Discover a shared MECHANISM between two themes and say what it does on each side.
+
+    A connection needs EITHER the same CHIEF driving graha (``dominant_planets[0]`` equal), OR one
+    theme's PRIMARY house sitting inside the other's network. A shared broad karaka does not
+    qualify — Jupiter signifies half the chart, and that produced the old "everything connects to
+    wealth" noise.
+
+    What changed here is the NOTE. It used to be a template — *"A and B overlap at H6, tying the
+    two areas together"* — which restates the join without saying anything about the chart: the
+    reader learns that two themes share a house, not what that house is doing in each. A shared
+    bhava is the SAME bhava wearing two roles, so the note now names the role on each side (whose
+    primary it is, what it contributes to the other), sets the two verdicts against each other
+    (one bhava that is the strength of one theme and the strain of the other is a real finding),
+    and for a shared graha reports that graha's own measured condition — the concordance the layer
+    already computed — because a tie carried by a Kashta-dominant, weak-by-Shadbala graha means
+    something different from one carried by a strong benefic.
+
+    Ranking and fairness: ties are ordered by strength (a shared chief graha outranks a structural
+    overlap) and then by the combined evidence weight of both ends, and NO theme may appear in
+    more than ``_CONN_PER_THEME`` connections. Without that cap the chart's busiest theme took
+    four of six slots and crowded out every other pairing — an artefact of it having the widest
+    network, not a finding about the nativity."""
+    from app.raman_saab.insight_digest import _HOUSE_LABEL
     picks = list(themes)
-    out: list[ThemeConnection] = []
+    scored: list[tuple[float, ThemeConnection, str, str]] = []
     seen: set[frozenset] = set()
     for i, a in enumerate(picks):
         for b in picks[i + 1:]:
@@ -1150,23 +1271,102 @@ def _connections(themes) -> tuple[ThemeConnection, ...]:
                 continue
             lead_a = a.dominant_planets[0] if a.dominant_planets else None
             lead_b = b.dominant_planets[0] if b.dominant_planets else None
-            same_lead = lead_a and lead_a == lead_b
+            same_lead = bool(lead_a) and lead_a == lead_b
             prim_overlap = (a.houses and a.houses[0] in b.houses) or \
                            (b.houses and b.houses[0] in a.houses)
             if not same_lead and not prim_overlap:
                 continue
             seen.add(key)
             if same_lead:
-                shared = lead_a
-                note = (f"{a.name} and {b.name} are both led by {lead_a} — one graha carries "
-                        f"both, so they tend to ripen and strain together.")
+                shared, note = lead_a, _graha_tie_note(a, b, lead_a)
+                tier = 2.0
             else:
                 h = a.houses[0] if a.houses and a.houses[0] in b.houses else b.houses[0]
-                shared = f"H{h}"
-                note = (f"{a.name} and {b.name} overlap at H{h} — the same bhava participates in "
-                        f"both, tying the two areas together.")
-            out.append(ThemeConnection(a.name, b.name, shared, note))
-    return tuple(out[:6])
+                shared, note = f"H{h}", _house_tie_note(a, b, h, _HOUSE_LABEL)
+                tier = 1.0
+            scored.append((tier + (a.evidence_weight + b.evidence_weight) / 1000.0,
+                           ThemeConnection(a.name, b.name, shared, note), a.name, b.name))
+
+    scored.sort(key=lambda row: -row[0])
+    out: list[ThemeConnection] = []
+    used: dict[str, int] = {}
+    for _w, conn, na, nb in scored:
+        if used.get(na, 0) >= _CONN_PER_THEME or used.get(nb, 0) >= _CONN_PER_THEME:
+            continue
+        used[na] = used.get(na, 0) + 1
+        used[nb] = used.get(nb, 0) + 1
+        out.append(conn)
+        if len(out) >= 6:
+            break
+    return tuple(out)
+
+
+#: no theme may carry more than this many connections. The busiest theme has the widest network
+#: by construction, so an uncapped list reports its breadth, not the chart's fabric.
+_CONN_PER_THEME = 2
+
+
+def _tie_verdict_clause(a, b) -> str:
+    """What the shared mechanism MEANS given the two verdicts it joins — the part a template
+    cannot supply. Same verdict on both ends is one story; opposite verdicts on one shared
+    mechanism is the more interesting one, and it is exactly what the reader wants named."""
+    va, vb = a.headline_verdict, b.headline_verdict
+    if va == vb:
+        return f"Both ends read {va}, so the tie runs the same way on each side."
+    # only a true inversion (favourable one end, afflicted the other) earns the strength/strain
+    # reading. A favourable-vs-mixed pair is a difference of degree, and saying "strain" of a
+    # mixed verdict overstates what the engine decided.
+    poles = {va, vb}
+    if poles == {"favourable", "afflicted"}:
+        return (f"{a.name} reads {va} while {b.name} reads {vb} — the same mechanism is the "
+                f"strength of one and the strain of the other, which is why they move together "
+                f"without moving in the same direction.")
+    return (f"{a.name} reads {va} while {b.name} reads {vb} — one mechanism, but it does not "
+            f"deliver the same grade at both ends.")
+
+
+def _graha_tie_note(a, b, lead: str) -> str:
+    """Two themes led by one graha — reported WITH that graha's own measured condition.
+
+    The layer already cross-checks every driver's force (Shadbala) against its intent
+    (Ishta/Kashta) in ``driver_concordance``. A tie carried by a Kashta-dominant, weak graha is a
+    different fact from one carried by a strong benefic, and naming the graha without naming its
+    condition throws that away."""
+    cond = ""
+    gc = next((g for g in getattr(a, "driver_concordance", ()) if g.planet == lead), None)
+    if gc is None:
+        gc = next((g for g in getattr(b, "driver_concordance", ()) if g.planet == lead), None)
+    if gc is not None:
+        bits = []
+        if getattr(gc, "ishta", None) is not None and getattr(gc, "kashta", None) is not None:
+            bits.append("Kashta-dominant" if gc.kashta > gc.ishta else "Ishta-dominant")
+        if getattr(gc, "avastha", ""):
+            bits.append(f"avastha {gc.avastha}")
+        if getattr(gc, "pattern", ""):
+            bits.append(gc.pattern)
+        if bits:
+            cond = f" {lead} itself reads {', '.join(bits)}, so that is the quality it carries " \
+                   f"into both."
+    return (f"{lead} leads both {a.name} and {b.name} — one graha carries the two, so they ripen "
+            f"and strain on the same clock.{cond} {_tie_verdict_clause(a, b)}")
+
+
+def _house_tie_note(a, b, h: int, labels) -> str:
+    """Two themes joined at one bhava — reported as the SAME bhava in two roles.
+
+    Which theme owns it as its primary and which merely draws on it is the whole content of the
+    tie, and the old template stated neither. Where the shared bhava also hosts a named facet of
+    the borrowing theme, that facet is the concrete channel and is named too."""
+    area = labels.get(h, f"house {h}")
+    owner, borrower = (a, b) if (a.houses and a.houses[0] == h) else (b, a)
+    role = (f"H{h} ({area}) is the own bhava of {owner.name}; {borrower.name} draws on it as "
+            f"part of its network")
+    # the concrete channel, when the borrowing theme names a facet that lives in the shared bhava
+    facet = next((m for m, _v in getattr(borrower, "sub_matters", ()) or ()
+                  if m.lower() in area.lower()), "")
+    if facet:
+        role += f", through {facet}"
+    return f"{role}. {_tie_verdict_clause(a, b)}"
 
 
 def _bhava_concordance(r, house: int) -> Optional[BhavaConcordance]:
@@ -1492,6 +1692,377 @@ def _transit_notes(r, houses, dom_planets) -> tuple[TransitNote, ...]:
             gochara_good=good, bav_bindus=getattr(row, "bav_bindus", None),
             vedha_by=vedha, net_good=net, note=note))
     return tuple(out)
+
+
+_MEASURED_TRUTH_SPAN = (
+    "The numeric span is a cross-check on the band, never a forecast: the validation program "
+    "measured no chart-specific death-timing signal on 22,177 verified charts "
+    "(REAL_OUTCOME_GENERALIZATION.md). This is a disclosure of Raman's method, not a prediction.")
+
+
+def _birth_year(r) -> int:
+    """The nativity's calendar year, from the engine's own BirthData."""
+    return int(getattr(getattr(r, "birth", None), "year", 0) or 0)
+
+
+def _span_end_year(r) -> int:
+    """The calendar year the ayurdaya band reaches.
+
+    JD arithmetic on the project's Vedic-year constant, never ``timedelta`` (CLAUDE.md): the
+    span is a count of years from the birth moment, so it is added to ``chart.jd_ut`` and read
+    back through ``swe.revjul`` rather than approximated on the calendar."""
+    jd0 = getattr(getattr(r, "chart", None), "jd_ut", 0.0) or 0.0
+    yrs = float(getattr(r, "longevity_years", 0.0) or 0.0)
+    if not jd0 or not yrs:
+        return 0
+    from app.core.ephemeris_engine import DAYS_PER_VEDIC_YEAR as _DPY
+    return _year(jd0 + yrs * _DPY)
+
+
+def _maraka_window_rows(r) -> tuple[tuple[str, str, int], ...]:
+    """The maraka-tier bhuktis carrying Raman's classical Saturn signal, FORWARD of ``ref_jd``.
+
+    Raman's step two, and only after the band: a maraka period is fixed by the 2nd/7th-lord
+    scheme, and its "last signal" is Ayushkaraka Saturn transiting the 8th from birth or its
+    trines during that period (HTJAH-II:4846-4849). The engine computed these confluences and
+    the integrated reading never named one. Deduplicated per bhukti — the same Venus/Saturn
+    period can carry several separate Saturn passes and that is one window, not three."""
+    ref = getattr(r, "ref_jd", 0.0)
+    span_to = _span_end_year(r)
+    seen: dict[str, tuple[str, str, int, str]] = {}
+    for c in getattr(r, "maraka_saturn", ()) or ():
+        if getattr(c, "window_end_jd", 0.0) <= ref:
+            continue
+        bhukti = f"{c.maha}/{c.antar}" if getattr(c, "antar", "") else c.maha
+        y0, y1 = _year(c.window_start_jd), _year(c.window_end_jd)
+        span = f"{y0}-{y1}" if y1 != y0 else str(y0)
+        standing = ("beyond the band" if span_to and y0 > span_to
+                    else "inside the band" if span_to else "")
+        prev = seen.get(bhukti)
+        if prev is None or c.score > prev[2]:
+            seen[bhukti] = (bhukti, span, int(c.score), standing)
+    return tuple(sorted(seen.values(), key=lambda row: int(row[1].split("-")[0])))
+
+
+def _activation_in_span(r, years: Optional[tuple[int, int]]) -> str:
+    """Read ONE theme's forward window inside the longevity band (PREC-8).
+
+    Two things the reader could not get before: the window's AGE (a bhukti labelled 2034-2035
+    means nothing until it is "the 45th year"), and whether it coincides with a maraka-tier
+    bhukti carrying the classical Saturn signal. Both are stated in the timed-indication idiom
+    — the window is where an indication is supported, never a decree that an event occurs."""
+    if years is None:
+        return ""
+    y0, y1 = years
+    born = _birth_year(r)
+    span_to = _span_end_year(r)
+    if not born:
+        return ""
+    # Raman's own idiom is the ordinal year of life ("the 83rd year"), which tracks completed
+    # age — his 83.54-year span reads as "about the 84th year". A window in calendar year Y is
+    # therefore the (Y - birth_year)th year, NOT (Y - birth_year + 1): off by one the other way
+    # would put a 2034 window on a 1989 nativity in the 46th year when they turn 45 in it.
+    a0, a1 = y0 - born, y1 - born
+    age = f"the {_ordinal(a0)} year" if a0 == a1 else f"the {_ordinal(a0)}-{_ordinal(a1)} years"
+    out = f"That window falls at {age} of life"
+    if span_to:
+        inside = y1 <= span_to
+        out += (f", inside the band the ayurdaya cross-check gives (to about "
+                f"the {_ordinal(int(round(float(getattr(r, 'longevity_years', 0.0)))))} year)."
+                if inside else
+                f", BEYOND the band the ayurdaya cross-check gives (about the "
+                f"{_ordinal(int(round(float(getattr(r, 'longevity_years', 0.0)))))} year) — the "
+                f"window is shown because the timeline reaches it, and disclosed as outside "
+                f"the span rather than quietly dropped.")
+    else:
+        out += "."
+    hits = [row for row in _maraka_window_rows(r)
+            if _overlaps_years(row[1], y0, y1)]
+    if hits:
+        names = "; ".join(f"{b} ({sp}, tier-score {sc})" for b, sp, sc, _st in hits)
+        out += (f" It coincides with a maraka-tier bhukti carrying the classical Saturn signal "
+                f"— {names} — which Raman treats as classically sensitive (HTJAH-II:4846-4849). "
+                f"{_MEASURED_TRUTH_SPAN}")
+    return out
+
+
+def _overlaps_years(span: str, y0: int, y1: int) -> bool:
+    """True when a 'YYYY-YYYY' (or bare 'YYYY') span overlaps the closed interval [y0, y1]."""
+    parts = span.split("-")
+    try:
+        s0 = int(parts[0])
+        s1 = int(parts[1]) if len(parts) > 1 else s0
+    except ValueError:
+        return False
+    return not (s1 < y0 or s0 > y1)
+
+
+def _ordinal(n: int) -> str:
+    """1 -> '1st', 83 -> '83rd' — Raman's own way of naming a year of life."""
+    if 10 <= n % 100 <= 20:
+        suf = "th"
+    else:
+        suf = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suf}"
+
+
+def _weather_windows(r) -> tuple[WeatherWindow, ...]:
+    """Every forward stretch of timing weather, from the three schemes the engine already ran.
+
+    Forward-only against ``ref_jd`` (plus whatever is running AT it): a reader asks what is
+    coming, and the past stretches are already narrated by the life-chapters. Contiguous runs of
+    the same adverse confluence are merged — ``r.dasha_transit_adverse`` carries one row per
+    Saturn pass, and three passes inside one Mahadasha are one rough stretch, not three."""
+    ref = getattr(r, "ref_jd", 0.0)
+    out: list[WeatherWindow] = []
+
+    for ph in getattr(r, "sade_sati_phases", ()) or ():
+        if getattr(ph, "end_jd", 0.0) <= ref and not getattr(ph, "current", False):
+            continue
+        y0, y1 = _year(ph.start_jd), _year(ph.end_jd)
+        out.append(WeatherWindow(
+            kind="Sade Sati", label=ph.phase, span=_span(y0, y1), start_year=y0, end_year=y1,
+            current=bool(getattr(ph, "current", False)),
+            detail=(f"Saturn transits the {_ord_house(ph.house_from_moon)} from the natal Moon "
+                    f"(sign {ph.sign})."),
+            governing="PREC-6",
+            citation="HTJAH-II:4679"))
+
+    # merge the adverse dasha x transit rows per (planet, role, Mahadasha run)
+    merged: dict[tuple, list] = {}
+    for w in getattr(r, "dasha_transit_adverse", ()) or ():
+        if getattr(w, "overlap_end_jd", 0.0) <= ref:
+            continue
+        key = (w.planet, w.role, round(w.period_start_jd, 3))
+        merged.setdefault(key, []).append(w)
+    for (planet, role, _ps), rows in merged.items():
+        y0 = min(_year(x.overlap_start_jd) for x in rows)
+        y1 = max(_year(x.overlap_end_jd) for x in rows)
+        bindus = [x.bav_bindus for x in rows if x.bav_bindus is not None]
+        det = (f"{planet} runs as {role} while transiting a sign its own gochara reads adverse"
+               + (f"; {min(bindus)}-{max(bindus)} bindus in its own Bhinnashtakavarga there"
+                  if bindus else "")
+               + (f" ({len(rows)} separate passes)" if len(rows) > 1 else "") + ".")
+        out.append(WeatherWindow(
+            kind="Dasha x adverse transit", label=f"{planet} ({role})", span=_span(y0, y1),
+            start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1), detail=det,
+            governing="PREC-6", citation="HTJAH-II:4679"))
+
+    # the slow-mover long-horizon gochara (r.gochara_outlook): Jupiter/Saturn/Rahu/Ketu segment
+    # by segment. Raw it is 61 forward adverse segments on one chart — because a retrograde pass
+    # back into the same sign is several rows for ONE stretch — so runs with the same
+    # house-from-Moon are merged, and the horizon is the reading's own forward window rather
+    # than the whole ephemeris.
+    horizon = _year(ref) + int(getattr(r, "window_forward", 0) or 0)
+    for planet, segs in (getattr(r, "gochara_outlook", {}) or {}).items():
+        runs: list[list] = []
+        for seg in sorted(segs, key=lambda x: x.start_jd):
+            if getattr(seg, "gochara_good", True) or seg.end_jd <= ref:
+                continue
+            if _year(seg.start_jd) > horizon:
+                continue
+            if runs and runs[-1][-1].house_from_moon == seg.house_from_moon:
+                runs[-1].append(seg)
+            else:
+                runs.append([seg])
+        for run in runs:
+            y0, y1 = _year(run[0].start_jd), _year(run[-1].end_jd)
+            hfm = run[0].house_from_moon
+            out.append(WeatherWindow(
+                kind="Slow-mover gochara", label=f"{planet} in the {_ord_house(hfm)} from Moon",
+                span=_span(y0, y1), start_year=y0, end_year=y1,
+                current=(y0 <= _year(ref) <= y1),
+                detail=(f"{planet} transits the {_ord_house(hfm)} from the natal Moon, which "
+                        f"the gochara scheme reads adverse"
+                        + (f" ({len(run)} passes, retrograde included)" if len(run) > 1 else "")
+                        + "."),
+                governing="PREC-6", citation="HTJAH-II:4679"))
+
+    for k in getattr(r, "dasa_kakshya", ()) or ():
+        if getattr(k, "end_jd", 0.0) <= ref:
+            continue
+        y0, y1 = _year(k.start_jd), _year(k.end_jd)
+        # the scheme's own `reading` may already name the mechanic ("adverse-neutralised"), so
+        # only append a tag the reading has not stated — otherwise it reads twice in one clause
+        reading = str(getattr(k, "reading", "") or "")
+        tags = [tag for tag, on in (("donated", getattr(k, "donated", False)),
+                                    ("neutralised", getattr(k, "neutralised", False)))
+                if on and tag not in reading]
+        out.append(WeatherWindow(
+            kind="Dasha Kakshya", label=f"{k.maha} MD, {k.ruler} kakshya", span=_span(y0, y1),
+            start_year=y0, end_year=y1, current=(y0 <= _year(ref) <= y1),
+            detail=(f"The eightfold Kakshya split reads this stretch {reading}"
+                    + (f" ({', '.join(tags)})" if tags else "") + "."),
+            governing="PREC-7", citation="ASP-12:174"))
+
+    out.sort(key=lambda w: (w.start_year, w.kind))
+    return tuple(out)
+
+
+def _span(y0: int, y1: int) -> str:
+    """'2025-2027', or a bare year when the stretch opens and closes in one."""
+    return f"{y0}-{y1}" if y1 != y0 else str(y0)
+
+
+def _ord_house(h: int) -> str:
+    """'12th', '1st' — the house-from-Moon in the idiom the gochara section already uses."""
+    return _ordinal(int(h))
+
+
+def _affliction_calendar(r, windows) -> Optional[AfflictionCalendar]:
+    """The transit weather over the reading's own years — subordinate, and saying so.
+
+    Two citations carry the whole frame. Raman on transits: *"Transits are always secondary in
+    importance. They are like catalytic agents"* (PREC-6, HTJAH-II:4679). And on the eightfold
+    scheme: Dasha Kakshya is *"a timing lens, never a verdict"* (PREC-7, ASP-12:174). Both are
+    quoted, so nothing here can be mistaken for a judgment on a bhava."""
+    if not windows:
+        return None
+    now = tuple(f"{w.kind}: {w.label} ({w.span})" for w in windows if w.current)
+    kinds = sorted({w.kind for w in windows})
+    frame = (f"The weather over the years below, from {len(kinds)} independent scheme"
+             f"{'s' if len(kinds) != 1 else ''} the engine already ran "
+             f"({', '.join(kinds)}). All of it is SUBORDINATE: Raman holds that "
+             f"\"transits are always secondary in importance — they are like catalytic agents\" "
+             f"(PREC-6, HTJAH-II:4679), and the eightfold Kakshya split is \"a timing lens, never "
+             f"a verdict\" (PREC-7, ASP-12:174). A window here can say a stretch runs rough; it "
+             f"can never say a bhava is afflicted, and none of it has moved a verdict above.")
+    if now:
+        frame += f" Running at the reading's anchor date: {'; '.join(now)}."
+    else:
+        frame += " Nothing from these schemes is running at the reading's anchor date."
+    honesty = ("Weather is not outcome. The validation program measured no chart-specific "
+               "real-outcome signal from transit or dasha timing on 22,177 verified charts "
+               "(REAL_OUTCOME_GENERALIZATION.md); these windows disclose what the classical "
+               "method flags, not what happens.")
+    return AfflictionCalendar(windows=tuple(windows), now=now, frame=frame, honesty=honesty)
+
+
+def _weather_on_window(windows, years: Optional[tuple[int, int]]) -> str:
+    """What weather runs ACROSS one theme's own forward window.
+
+    This is the join the report never made: a bhukti that grades *par excellence* for a bhava
+    while Sade Sati sits over the Moon is not the same window as one running clear. Both halves
+    were computed; neither knew about the other."""
+    if years is None or not windows:
+        return ""
+    y0, y1 = years
+    hits = [w for w in windows if not (w.end_year < y0 or w.start_year > y1)]
+    if not hits:
+        return ("Nothing from the Sade Sati, adverse-transit or Dasha Kakshya schemes runs "
+                "across that window — it is clear weather on all three.")
+    # grouped BY SCHEME, not one flat chain: a window can catch four slow-mover segments and a
+    # kakshya at once, and a flat list of nine "Kind — label (span)" clauses is 800 characters of
+    # one sentence. Nothing is dropped — the full calendar table below carries every row.
+    by_kind: dict[str, list[str]] = {}
+    for w in hits:
+        by_kind.setdefault(w.kind, []).append(f"{w.label} ({w.span})")
+    parts = ". ".join(f"{kind} — {'; '.join(items)}" for kind, items in by_kind.items())
+    return (f"Running across that window — {parts}. Subordinate throughout: transits are "
+            f"catalytic, never causal (PREC-6, HTJAH-II:4679), and the Kakshya split is a timing "
+            f"lens, never a verdict (PREC-7, ASP-12:174); none of it has changed the grade above.")
+
+
+def _pitru_screen(r, house: int) -> str:
+    """The non-Raman ancestral screen, where it bears on this bhava — a DIFFERENT layer.
+
+    PREC-12 governs exactly this: *non-Raman screens are a different layer, not a contradiction.*
+    ``r.pitru`` is tagged CLASSICAL_NONCITABLE (BPHS provenance), so it is reported with its
+    provenance on its face, walled out of the cross-checks and the evidence links, and never
+    allowed to qualify the Raman verdict on the 5th or the 9th."""
+    pit = getattr(r, "pitru", None)
+    if pit is None or house not in (5, 9):
+        return ""
+    bits: list[str] = []
+    if house == 5 and getattr(pit, "raman_children_verdict", ""):
+        bits.append(f"the screen was run against Raman's own H5 verdict "
+                    f"({pit.raman_children_verdict})")
+    curses = getattr(pit, "curse_yogas", ()) or ()
+    bits.append(f"{len(curses)} curse-yoga gate{'s' if len(curses) != 1 else ''} fire"
+                f"{'' if len(curses) != 1 else 's'}"
+                + (": " + "; ".join(getattr(c, "name", str(c)) for c in curses) if curses else ""))
+    if house == 9:
+        seats = getattr(pit, "pitru_bhava", ()) or ()
+        if seats:
+            bits.append(f"{len(seats)} classical note{'s' if len(seats) != 1 else ''} on the "
+                        f"pitr-sthana itself")
+    return ("Pitru dosha screen (NOT Raman — classical/BPHS provenance, reported as a separate "
+            "layer and never a contradiction of the verdict above, PREC-12): "
+            + "; ".join(bits) + ".")
+
+
+def _longevity_frame(r, themes) -> Optional[LongevityFrame]:
+    """Raman's FIRST step, restored to the front of the integrated reading (PREC-8).
+
+    *"First establish the band by combination, THEN fix the period by the marakas. The numeric
+    span is a cross-check, never a prediction of death"* (HTJAH-II:4465-4472). The engine ran
+    step one on every chart; the synthesis read forward windows out to the 2040s without ever
+    setting them against the span. This states the band, states the marakas AFTER it, and tests
+    every window the reading names against the span — the integration the order itself asks for."""
+    from app.raman_saab.detailed_report import longevity_band_label
+    band_raw = getattr(r, "longevity_class", "") or ""
+    if not band_raw:
+        return None
+    band = _safe(lambda: longevity_band_label(band_raw), band_raw) or band_raw
+    yrs = float(getattr(r, "longevity_years", 0.0) or 0.0)
+    ymd = tuple(getattr(r, "longevity_ymd", (0, 0, 0)) or (0, 0, 0))
+    bal = ""
+    b = getattr(r, "balarishta", None)
+    if b is not None:
+        if getattr(b, "cancelled", False):
+            bal = "cancelled"
+        elif getattr(b, "applies", False):
+            bal = "applies"
+    span_year = _span_end_year(r)
+    # the furthest calendar year ANY theme window names — the reading's own reach
+    reaches = 0
+    for t in themes:
+        m = re.search(r"\((\d{4})(?:-(\d{4}))?\)", t.activation_span or "")
+        if m:
+            reaches = max(reaches, int(m.group(2) or m.group(1)))
+    within = bool(span_year and reaches and reaches <= span_year)
+    maraka_now = bool(getattr(r, "maraka_period_now", False))
+    windows = _maraka_window_rows(r)
+
+    frame = (f"Raman judges the span FIRST and the maraka periods second (PREC-8; "
+             f"HTJAH-II:4465-4472). This chart reads at the {band}; the Ayurdaya cross-check "
+             f"gives about the {_ordinal(int(round(yrs)))} year")
+    if ymd and any(ymd):
+        frame += f" ({ymd[0]}y {ymd[1]}m {ymd[2]}d)"
+    if bal == "applies":
+        frame += ", with Balarishta applying"
+    elif bal == "cancelled":
+        frame += ", Balarishta cancelled"
+    frame += ". "
+    if reaches and span_year:
+        frame += (f"Every window this reading names falls inside that span (the furthest reaches "
+                  f"{reaches}). " if within else
+                  f"One or more windows this reading names ({reaches}) fall outside that span; "
+                  f"each is disclosed as such where it appears. ")
+    frame += ("The running period carries a maraka-tier lord."
+              if maraka_now else "The running period carries no maraka-tier lord.")
+    if windows:
+        first = windows[0]
+        frame += (f" Ahead, {len(windows)} maraka-tier bhukti"
+                  f"{'s' if len(windows) != 1 else ''} carry the classical Saturn signal, the "
+                  f"first at {first[0]} ({first[1]}) — classically sensitive periods "
+                  f"(HTJAH-II:4846-4849), named in Raman's order and never used to move a "
+                  f"bhava verdict.")
+        # the two methods are independent and they do NOT agree here: the maraka scheme runs the
+        # whole Vimshottari timeline, the ayurdaya band stops. Disclosed, not reconciled.
+        beyond = [w for w in windows if w[3] == "beyond the band"]
+        if beyond and span_year:
+            frame += (f" {len(beyond)} of them fall BEYOND the band itself (after {span_year}) — "
+                      f"the maraka scheme runs the whole Vimshottari timeline while the ayurdaya "
+                      f"stops where it stops, so the two do not agree here. Raman's order settles "
+                      f"which leads: the band is established first, and the marakas are read "
+                      f"inside it (PREC-8).")
+    return LongevityFrame(
+        band=band, years=yrs, ymd=(int(ymd[0]), int(ymd[1]), int(ymd[2])), balarishta=bal,
+        span_year=span_year, reading_reaches=reaches, within_span=within,
+        maraka_now=maraka_now,
+        maraka_windows=windows, frame=frame, honesty=_MEASURED_TRUTH_SPAN,
+        citation="HTJAH-II:4465-4472; HTJAH-II:4846-4849 (PREC-8)")
 
 
 def _dissent_summary(concordance, div_checks, av_support, karmic, headline) -> DissentSummary:

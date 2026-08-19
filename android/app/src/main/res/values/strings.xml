@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kundli — Jyotish Reading</string>
+    <string name="server_title">Server address</string>
+    <string name="server_message">Enter the HTTPS address where the reading engine is hosted (for example https://kundli.onrender.com).</string>
+    <string name="new_reading">New reading</string>
+</resources>

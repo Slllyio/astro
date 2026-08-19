@@ -1,0 +1,112 @@
+{
+ "source": "Notable Horoscopes (BVR) — clean full text; per-case strength verdicts hand-verified against Raman's prose (3-agent audit + raw-text attribution + pre-registered verdict-map grading). Degree-accurate (registry printed positions).",
+ "note": "Growth of nh_strength.json. Every row: verbatim Lagna-frame verdict, graded by docs/raman_doctrine/validation/verdict_grade_map.json.",
+ "rows": [
+  {
+   "key": "sivananda",
+   "name": "Swami Sivananda",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "The 7th house is considerably afflicted as lord of the 7th Saturn is with two malefics while the house itself is subjected to the combined influences of Mars and Rahu."
+  },
+  {
+   "key": "lincoln",
+   "name": "Abraham Lincoln",
+   "house": 4,
+   "factor": "karaka",
+   "phrase": "The Moon as Matrukaraka is considerably afflicted"
+  },
+  {
+   "key": "nehru",
+   "name": "Jawaharlal Nehru",
+   "house": 5,
+   "factor": "karaka",
+   "phrase": "Putrakaraka Jupiter is afflicted."
+  },
+  {
+   "key": "einstein",
+   "name": "Albert Einstein",
+   "house": 2,
+   "factor": "lord",
+   "phrase": "Dhanadhipati (2nd lord) is neecha but otherwise unafflicted."
+  },
+  {
+   "key": "tippu",
+   "name": "Tippu Sultan",
+   "house": 8,
+   "factor": "karaka",
+   "phrase": "Lagna lord weak, Ayushkaraka afflicted and the 8th lord in a malefic sign conferred Madhyayu."
+  },
+  {
+   "key": "ramana",
+   "name": "Sri Ramana Maharshi",
+   "house": 1,
+   "factor": "karaka",
+   "phrase": "The Moon is the Atmakaraka and is very strongly placed in Vargottama aspected powerfully by Jupiter the divine planet."
+  },
+  {
+   "key": "chaitanya",
+   "name": "Sri Chaitanya",
+   "house": 9,
+   "factor": "karaka",
+   "phrase": "Pitrukaraka, the Sun, is afflicted"
+  },
+  {
+   "key": "nero",
+   "name": "Emperor Nero",
+   "house": 7,
+   "factor": "karaka",
+   "phrase": "Kalatrakaraka Venus is slightly afflicted in the sign of Saturn by association with Mars and Rahu"
+  },
+  {
+   "key": "marie_antoinette",
+   "name": "Marie Antoinette",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "Mars and Saturn are prominent in regard to the 7th house, while Venus being afflicted has no relief"
+  },
+  {
+   "key": "ashutosh",
+   "name": "Sir Ashutosh Mukerjee",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "The house of children is unfortunately afflicted as Saturn occupies the 5th and as Putrakaraka is in conjunction with Rahu."
+  },
+  {
+   "key": "crdas",
+   "name": "Chittaranjan Das",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "In Rasi the Lagna is very strong, as the lord Mars is in the 10th aspecting the Lagna."
+  },
+  {
+   "key": "nizam",
+   "name": "The Nizam of Hyderabad",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Lagna lord weak and subjected to the aspects of Rahu, Ketu and Mars"
+  },
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "The Lagna is strong and unafflicted."
+  },
+  {
+   "key": "marx",
+   "name": "Karl Marx",
+   "house": 10,
+   "factor": "lord",
+   "phrase": "evidently weak disposition of the 10th lord"
+  },
+  {
+   "key": "kasturi",
+   "name": "Kasturi Srinivasan",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "We have already seen how the Lagna and the lord are very powerful."
+  }
+ ],
+ "curation_2026_07_12": "Attribution audit (increment 26): every row's phrase was located in the full text and checked for chapter attribution and Rasi/Lagna frame. Removed rows are recorded in nh_strength_removed.json. Light paraphrases with verified subject+grade+frame retained."
+}

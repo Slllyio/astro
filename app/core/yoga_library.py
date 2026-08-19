@@ -30,10 +30,11 @@ from typing import Callable, Final
 
 from app.core.chart_model import Chart
 from app.core.dignity import (
-    is_debilitated, is_exalted, is_moolatrikona, is_own_sign,
+    SIGN_RULERS, is_debilitated, is_exalted, is_moolatrikona, is_own_sign,
 )
 from app.core.drishti_argala import aspects_from_planet
 from app.core.functional_roles import functional_roles, houses_ruled_by
+from app.core.shodashavarga import compute_divisional_longitude
 
 
 def _is_well_placed(planet: str, sign: int) -> bool:
@@ -940,6 +941,919 @@ def detect_adhi(chart: Chart) -> Yoga:
     )
 
 
+# ─── Raman "Three Hundred Important Combinations" additions (increment 35) ───
+# Occupancy-only yogas the library lacked, surfaced by the yoga_coverage audit
+# against Raman's book. Each is faithful to Raman's stated Definition (cited) and
+# computable from sign/house occupancy alone (no daśā, no lord-strength).
+
+_SEVEN: Final[tuple[str, ...]] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+_UPACHAYAS: Final[frozenset[int]] = frozenset({3, 6, 10, 11})
+
+
+def detect_dhurdhura(chart: Chart) -> Yoga:
+    """Planets (not Sun/nodes) on BOTH sides of the Moon — 2nd AND 12th from it.
+    Raman, 300 Combinations No. 4 (Sunapha + Anapha together)."""
+    excl = frozenset({"Sun", "Moon", "Rahu", "Ketu"})
+    a, wa = _luminary_adjacency(chart, "Moon", 2, excl)
+    b, wb = _luminary_adjacency(chart, "Moon", 12, excl)
+    active = a and b
+    return Yoga(
+        name="Dhurdhura", sanskrit="धुरुधुरा", active=active,
+        intensity=0.7 if active else 0.0, participants=("Moon",) + wa + wb,
+        reference="Raman, 300 Combinations No.4",
+        description="Planets on both sides of the Moon (2nd and 12th from it).",
+    )
+
+
+def detect_chatussagara(chart: Chart) -> Yoga:
+    """All four kendras (1,4,7,10) occupied by planets.
+    Raman, 300 Combinations No. 8."""
+    occupied = {chart.house_of(p) for p in chart.planet_signs}
+    active = _KENDRAS.issubset(occupied)
+    who = tuple(sorted(p for p in chart.planet_signs if chart.house_of(p) in _KENDRAS))
+    return Yoga(
+        name="Chatussagara", sanskrit="चतुस्सागर", active=active,
+        intensity=0.8 if active else 0.0, participants=who,
+        reference="Raman, 300 Combinations No.8",
+        description="All four kendras (1st, 4th, 7th, 10th) occupied by planets.",
+    )
+
+
+def detect_vasumathi(chart: Chart) -> Yoga:
+    """Natural benefics in the upachayas (3,6,10,11) from the ascendant OR the Moon.
+    Raman, 300 Combinations No. 9."""
+    moon_sign = chart.sign_of("Moon")
+    who: list[str] = []
+    for b in ("Jupiter", "Venus", "Mercury"):
+        h, s = chart.house_of(b), chart.sign_of(b)
+        from_lagna = h in _UPACHAYAS
+        from_moon = (
+            moon_sign is not None and s is not None
+            and (((s - moon_sign) % 12) + 1) in _UPACHAYAS
+        )
+        if from_lagna or from_moon:
+            who.append(b)
+    active = bool(who)
+    return Yoga(
+        name="Vasumathi", sanskrit="वसुमती", active=active,
+        intensity=min(1.0, 0.4 * len(who)) if active else 0.0, participants=tuple(who),
+        reference="Raman, 300 Combinations No.9",
+        description="Benefics in the upachayas (3,6,10,11) from the ascendant or Moon.",
+    )
+
+
+def detect_sakata(chart: Chart) -> Yoga:
+    """The Moon in the 6th, 8th or 12th sign from Jupiter.
+    Raman, 300 Combinations No. 12."""
+    ms, js = chart.sign_of("Moon"), chart.sign_of("Jupiter")
+    active = (
+        ms is not None and js is not None
+        and (((ms - js) % 12) + 1) in {6, 8, 12}
+    )
+    return Yoga(
+        name="Sakata", sanskrit="शकट", active=active,
+        intensity=0.5 if active else 0.0, participants=("Moon", "Jupiter"),
+        reference="Raman, 300 Combinations No.12",
+        description="Moon in the 6th, 8th or 12th from Jupiter (a fluctuating-fortune yoga).",
+    )
+
+
+def detect_chakra(chart: Chart) -> Yoga:
+    """All seven planets occupy odd houses (1,3,5,7,9,11).
+    Raman, 300 Combinations No. 84 (an Ākṛti/dala yoga)."""
+    houses = {chart.house_of(p) for p in _SEVEN}
+    active = None not in houses and houses.issubset({1, 3, 5, 7, 9, 11})
+    return Yoga(
+        name="Chakra", sanskrit="चक्र", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.84",
+        description="All seven planets in odd houses (1,3,5,7,9,11).",
+    )
+
+
+def _nabhasa_sign_count(chart: Chart) -> int:
+    """Distinct signs occupied by the seven (non-nodal) planets."""
+    return len({chart.sign_of(p) for p in _SEVEN if chart.sign_of(p) is not None})
+
+
+def detect_gola(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: all seven planets in a single sign.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 1
+    return Yoga(
+        name="Gola", sanskrit="गोल", active=active,
+        intensity=1.0 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="All seven planets occupy a single sign (Nābhasa Saṅkhyā).",
+    )
+
+
+def detect_yuga(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: the seven planets confined to two signs.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 2
+    return Yoga(
+        name="Yuga", sanskrit="युग", active=active,
+        intensity=0.8 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="The seven planets confined to two signs (Nābhasa Saṅkhyā).",
+    )
+
+
+def detect_sula(chart: Chart) -> Yoga:
+    """Nābhasa Saṅkhyā: the seven planets confined to three signs.
+    Raman, 300 Combinations No. 101."""
+    active = _nabhasa_sign_count(chart) == 3
+    return Yoga(
+        name="Sula", sanskrit="शूल", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.101",
+        description="The seven planets confined to three signs (Nābhasa Saṅkhyā).",
+    )
+
+
+# ─── Raman "300 Combinations" lord-based additions (increment 36) ──────
+# Definitions taken from a cleaner OCR edition of Raman's book (the increment-34
+# djvu was noisy; verified against the clean text). Computable from lord placement
+# + dignity alone (no navamsa, no daśā).
+
+
+def _lord_of(chart: Chart, house: int) -> str:
+    """Ruler of the sign in the given whole-sign house from the ascendant."""
+    sign = ((chart.asc_sign - 1 + house - 1) % 12) + 1
+    return SIGN_RULERS[sign]
+
+
+def _mutual_kendra(chart: Chart, a: str, b: str) -> bool:
+    ha, hb = chart.house_of(a), chart.house_of(b)
+    if ha is None or hb is None:
+        return False
+    return (((hb - ha) % 12) + 1) in _KENDRAS
+
+
+def _is_strong(chart: Chart, planet: str) -> bool:
+    """Dignity-based 'powerful/strongly disposed' proxy: exalted, own, or Mooltrikona."""
+    sign, lon = chart.sign_of(planet), chart.planet_lons.get(planet)
+    if sign is None:
+        return False
+    return (is_exalted(planet, sign) or is_own_sign(planet, sign)
+            or (lon is not None and is_moolatrikona(planet, lon)))
+
+
+def _exchanged(chart: Chart, p: str, q: str) -> bool:
+    """p and q have interchanged signs (parivartana): each sits in a sign the other rules."""
+    sp, sq = chart.sign_of(p), chart.sign_of(q)
+    if sp is None or sq is None:
+        return False
+    return SIGN_RULERS[sp] == q and SIGN_RULERS[sq] == p
+
+
+def detect_parvata(chart: Chart) -> Yoga:
+    """Benefics in kendras; the 6th and 8th unoccupied or occupied only by benefics.
+    Raman, 300 Combinations No. 14."""
+    benefics_in_kendra = [b for b in ("Jupiter", "Venus", "Mercury", "Moon")
+                          if chart.house_of(b) in _KENDRAS]
+    def clean(h: int) -> bool:
+        occ = chart.planets_in_house(h)
+        return all(p in _BENEFICS_NATURAL for p in occ)
+    active = bool(benefics_in_kendra) and clean(6) and clean(8)
+    return Yoga(
+        name="Parvata", sanskrit="पर्वत", active=active,
+        intensity=0.7 if active else 0.0, participants=tuple(benefics_in_kendra),
+        reference="Raman, 300 Combinations No.14",
+        description="Benefics in kendras; 6th & 8th empty or benefic-occupied.",
+    )
+
+
+def detect_kahala(chart: Chart) -> Yoga:
+    """4th and 9th lords in kendras from each other, Lagna lord strong.
+    Raman, 300 Combinations No. 15."""
+    l4, l9, ll = _lord_of(chart, 4), _lord_of(chart, 9), _lord_of(chart, 1)
+    active = _mutual_kendra(chart, l4, l9) and _is_strong(chart, ll)
+    return Yoga(
+        name="Kahala", sanskrit="कहल", active=active,
+        intensity=0.6 if active else 0.0, participants=(l4, l9, ll),
+        reference="Raman, 300 Combinations No.15",
+        description="4th & 9th lords in mutual kendras with a strong Lagna lord.",
+    )
+
+
+def detect_chapa(chart: Chart) -> Yoga:
+    """Ascendant lord exalted and the 4th & 10th lords interchanged houses.
+    Raman, 300 Combinations No. 31."""
+    ll = _lord_of(chart, 1)
+    ls = chart.sign_of(ll)
+    active = (ls is not None and is_exalted(ll, ls)
+              and _exchanged(chart, _lord_of(chart, 4), _lord_of(chart, 10)))
+    return Yoga(
+        name="Chapa", sanskrit="चाप", active=active,
+        intensity=0.7 if active else 0.0, participants=(ll,),
+        reference="Raman, 300 Combinations No.31",
+        description="Exalted Lagna lord with a 4th–10th lord exchange.",
+    )
+
+
+def detect_sreenatha(chart: Chart) -> Yoga:
+    """Exalted 7th lord in the 10th, and the 10th lord in the 9th.
+    Raman, 300 Combinations No. 32."""
+    l7, l10 = _lord_of(chart, 7), _lord_of(chart, 10)
+    s7 = chart.sign_of(l7)
+    active = (s7 is not None and is_exalted(l7, s7)
+              and chart.house_of(l7) == 10 and chart.house_of(l10) == 9)
+    return Yoga(
+        name="Sreenatha", sanskrit="श्रीनाथ", active=active,
+        intensity=0.8 if active else 0.0, participants=(l7, l10),
+        reference="Raman, 300 Combinations No.32",
+        description="Exalted 7th lord in the 10th with the 10th lord in the 9th.",
+    )
+
+
+def detect_sankha(chart: Chart) -> Yoga:
+    """5th and 6th lords in mutual kendras, Lagna lord powerful.
+    Raman, 300 Combinations No. 45."""
+    l5, l6, ll = _lord_of(chart, 5), _lord_of(chart, 6), _lord_of(chart, 1)
+    active = _mutual_kendra(chart, l5, l6) and _is_strong(chart, ll)
+    return Yoga(
+        name="Sankha", sanskrit="शङ्ख", active=active,
+        intensity=0.7 if active else 0.0, participants=(l5, l6, ll),
+        reference="Raman, 300 Combinations No.45",
+        description="5th & 6th lords in mutual kendras with a strong Lagna lord.",
+    )
+
+
+def detect_bheri(chart: Chart) -> Yoga:
+    """Venus, the Lagna lord and Jupiter in mutual kendras, 9th lord powerful.
+    Raman, 300 Combinations No. 46."""
+    ll, l9 = _lord_of(chart, 1), _lord_of(chart, 9)
+    trio = {"Venus", ll, "Jupiter"}
+    pairwise = all(_mutual_kendra(chart, a, b)
+                   for a in trio for b in trio if a < b)
+    active = len(trio) >= 2 and pairwise and _is_strong(chart, l9)
+    return Yoga(
+        name="Bheri", sanskrit="भेरी", active=active,
+        intensity=0.7 if active else 0.0, participants=tuple(sorted(trio)) + (l9,),
+        reference="Raman, 300 Combinations No.46",
+        description="Venus, Lagna lord and Jupiter in mutual kendras; strong 9th lord.",
+    )
+
+
+def detect_samudra(chart: Chart) -> Yoga:
+    """All seven planets in even houses (2,4,6,8,10,12).
+    Raman, 300 Combinations No. 72."""
+    houses = {chart.house_of(p) for p in _SEVEN}
+    active = None not in houses and houses.issubset({2, 4, 6, 8, 10, 12})
+    return Yoga(
+        name="Samudra", sanskrit="समुद्र", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.72",
+        description="All seven planets in even houses (2,4,6,8,10,12).",
+    )
+
+
+# ─── Raman "300 Combinations" — increment 37 (Nabhāsa Ākṛti + navāṁśa) ─
+# The Nabhāsa family (Ākṛti/Saṅkhyā/Dala, Nos. 75–106) is defined purely
+# by *which house/sign-groups the seven planets occupy*, so every member
+# is computable from D1 occupancy. The three navāṁśa-dependent yogas
+# (Gauri/Bharathi/Mridanga) reach the D9 chart via the established idiom
+# ``compute_divisional_longitude(lon, 9)``. Rahu/Ketu are excluded from
+# the seven-planet Nabhāsa checks per classical convention. Where a
+# clause needs "friendly sign" (Mridanga), the computable subset
+# own-or-exalted is used — the detector under-fires rather than guesses.
+
+_BENEFIC7: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
+_MALEFIC7: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Saturn"})
+_MOVABLE_SIGNS: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
+_FIXED_SIGNS: Final[frozenset[int]] = frozenset({2, 5, 8, 11})
+_DUAL_SIGNS: Final[frozenset[int]] = frozenset({3, 6, 9, 12})
+_KENDRA_TRIKONA: Final[frozenset[int]] = _KENDRAS | _TRIKONAS
+
+
+def _navamsa_sign(chart: Chart, planet: str) -> int | None:
+    """Navāṁśa (D9) sign (1..12) of a planet, from its D1 sidereal longitude."""
+    lon = chart.planet_lons.get(planet)
+    if lon is None:
+        return None
+    return int(compute_divisional_longitude(lon, 9) % 360.0 // 30) + 1
+
+
+def _occupied_arc(houses: set[int]) -> tuple[int, int] | None:
+    """Minimal contiguous house-arc enclosing all occupied houses as
+    ``(start_house, span)`` — the complement of the widest empty run on
+    the 12-house circle. Returns None only for an empty set."""
+    hs = sorted(houses)
+    if not hs:
+        return None
+    ext = hs + [hs[0] + 12]
+    gaps = [ext[i + 1] - ext[i] for i in range(len(hs))]
+    widest = max(gaps)
+    start = hs[(gaps.index(widest) + 1) % len(hs)]
+    return start, 13 - widest
+
+
+def _seven_arc(chart: Chart) -> tuple[int, int] | None:
+    return _occupied_arc({chart.house_of(p) for p in _SEVEN})
+
+
+def _seven_signs(chart: Chart) -> set[int]:
+    return {s for s in (chart.sign_of(p) for p in _SEVEN) if s is not None}
+
+
+def _seven_houses(chart: Chart) -> set[int]:
+    return {h for h in (chart.house_of(p) for p in _SEVEN) if h is not None}
+
+
+def _conjunct(chart: Chart, a: str, b: str) -> bool:
+    """a and b share a sign (whole-sign conjunction)."""
+    sa, sb = chart.sign_of(a), chart.sign_of(b)
+    return sa is not None and sa == sb
+
+
+def _house_has(chart: Chart, house: int, group: frozenset[str]) -> bool:
+    return any(p in group for p in chart.planets_in_house(house))
+
+
+def _arc_yoga(chart: Chart, name: str, sanskrit: str, start: int, span: int,
+              ref: str, desc: str, intensity: float = 0.7) -> Yoga:
+    arc = _seven_arc(chart)
+    active = arc is not None and arc == (start, span)
+    return Yoga(name=name, sanskrit=sanskrit, active=active,
+                intensity=intensity if active else 0.0, participants=_SEVEN,
+                reference=ref, description=desc)
+
+
+def _sankhya_yoga(chart: Chart, name: str, sanskrit: str, n_signs: int,
+                  ref: str, desc: str, intensity: float = 0.6) -> Yoga:
+    active = len(_seven_signs(chart)) == n_signs
+    return Yoga(name=name, sanskrit=sanskrit, active=active,
+                intensity=intensity if active else 0.0, participants=_SEVEN,
+                reference=ref, description=desc)
+
+
+def _signgroup_yoga(chart: Chart, name: str, sanskrit: str, group: frozenset[int],
+                    ref: str, desc: str, intensity: float = 0.7) -> Yoga:
+    active = all(chart.sign_of(p) in group for p in _SEVEN)
+    return Yoga(name=name, sanskrit=sanskrit, active=active,
+                intensity=intensity if active else 0.0, participants=_SEVEN,
+                reference=ref, description=desc)
+
+
+# --- Ākṛti: contiguous-house arcs (Nos. 75–83) -------------------------
+
+def detect_yupa(chart: Chart) -> Yoga:
+    """Seven planets in the four contiguous houses from the Lagna (1–4).
+    Raman, 300 Combinations No. 75."""
+    return _arc_yoga(chart, "Yupa", "यूप", 1, 4, "Raman, 300 Combinations No.75",
+                     "Seven planets confined to houses 1–4 (contiguous from Lagna).")
+
+
+def detect_ishu(chart: Chart) -> Yoga:
+    """Seven planets in the four contiguous houses from the 4th (4–7).
+    Raman, 300 Combinations No. 76 (Ishu/Sara)."""
+    return _arc_yoga(chart, "Ishu", "इषु", 4, 4, "Raman, 300 Combinations No.76",
+                     "Seven planets confined to houses 4–7 (contiguous from the 4th).")
+
+
+def detect_sakti(chart: Chart) -> Yoga:
+    """Seven planets in the four contiguous houses from the 7th (7–10).
+    Raman, 300 Combinations No. 77."""
+    return _arc_yoga(chart, "Sakti", "शक्ति", 7, 4, "Raman, 300 Combinations No.77",
+                     "Seven planets confined to houses 7–10 (contiguous from the 7th).")
+
+
+def detect_danda(chart: Chart) -> Yoga:
+    """Seven planets in the four contiguous houses from the 10th (10–1).
+    Raman, 300 Combinations No. 78."""
+    return _arc_yoga(chart, "Danda", "दण्ड", 10, 4, "Raman, 300 Combinations No.78",
+                     "Seven planets confined to houses 10,11,12,1 (contiguous from the 10th).")
+
+
+def detect_nauka(chart: Chart) -> Yoga:
+    """Seven planets in the seven contiguous houses from the Lagna (1–7).
+    Raman, 300 Combinations No. 79 (Nav/Nauka)."""
+    return _arc_yoga(chart, "Nauka", "नौका", 1, 7, "Raman, 300 Combinations No.79",
+                     "Seven planets in the seven contiguous houses 1–7.", intensity=0.6)
+
+
+def detect_kuta(chart: Chart) -> Yoga:
+    """Seven planets in the seven contiguous houses from the 4th (4–10).
+    Raman, 300 Combinations No. 80."""
+    return _arc_yoga(chart, "Kuta", "कूट", 4, 7, "Raman, 300 Combinations No.80",
+                     "Seven planets in the seven contiguous houses 4–10.", intensity=0.6)
+
+
+def detect_chatra(chart: Chart) -> Yoga:
+    """Seven planets in the seven contiguous houses from the 7th (7–1).
+    Raman, 300 Combinations No. 81."""
+    return _arc_yoga(chart, "Chatra", "छत्र", 7, 7, "Raman, 300 Combinations No.81",
+                     "Seven planets in the seven contiguous houses 7–1.", intensity=0.6)
+
+
+def detect_ardha_chandra(chart: Chart) -> Yoga:
+    """Seven planets in seven contiguous houses beginning from a panapara or
+    apoklima (a non-kendra start). Raman, 300 Combinations No. 83."""
+    arc = _seven_arc(chart)
+    active = arc is not None and arc[1] == 7 and arc[0] not in _KENDRAS
+    return Yoga(
+        name="Ardha Chandra", sanskrit="अर्धचन्द्र", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.83",
+        description="Seven planets in a seven-house arc starting from a non-kendra (half-moon).",
+    )
+
+
+# --- Ākṛti: kendra / trine / house-group shapes (Nos. 87–93) -----------
+
+def detect_vihaga(chart: Chart) -> Yoga:
+    """All seven planets in the 4th and 10th houses. Raman No. 87 (Vihaga)."""
+    active = _seven_houses(chart) == {4, 10}
+    return Yoga(
+        name="Vihaga", sanskrit="विहग", active=active,
+        intensity=0.6 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.87",
+        description="All seven planets in the 4th and 10th houses.",
+    )
+
+
+def detect_vajra(chart: Chart) -> Yoga:
+    """Benefics in the 1st & 7th, malefics in the 4th & 10th. Raman No. 88."""
+    active = (_house_has(chart, 1, _BENEFIC7) and _house_has(chart, 7, _BENEFIC7)
+              and _house_has(chart, 4, _MALEFIC7) and _house_has(chart, 10, _MALEFIC7))
+    return Yoga(
+        name="Vajra", sanskrit="वज्र", active=active,
+        intensity=0.6 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.88",
+        description="Benefics in the 1st & 7th, malefics in the 4th & 10th.",
+    )
+
+
+def detect_yava(chart: Chart) -> Yoga:
+    """Malefics in the 1st & 7th, benefics in the 4th & 10th (reverse of Vajra).
+    Raman, 300 Combinations No. 89."""
+    active = (_house_has(chart, 1, _MALEFIC7) and _house_has(chart, 7, _MALEFIC7)
+              and _house_has(chart, 4, _BENEFIC7) and _house_has(chart, 10, _BENEFIC7))
+    return Yoga(
+        name="Yava", sanskrit="यव", active=active,
+        intensity=0.6 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.89",
+        description="Malefics in the 1st & 7th, benefics in the 4th & 10th.",
+    )
+
+
+def detect_sringhataka(chart: Chart) -> Yoga:
+    """All seven planets in the Lagna trines (1,5,9). Raman No. 90 (Sringhataka)."""
+    hs = _seven_houses(chart)
+    active = len(hs) >= 2 and hs <= {1, 5, 9}
+    return Yoga(
+        name="Sringhataka", sanskrit="शृङ्गाटक", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.90",
+        description="All seven planets confined to the Lagna trines (1,5,9).",
+    )
+
+
+def detect_hala(chart: Chart) -> Yoga:
+    """All seven planets confined to one non-Lagna trine set — (2,6,10),
+    (3,7,11) or (4,8,12). Raman, 300 Combinations No. 91."""
+    hs = _seven_houses(chart)
+    active = len(hs) >= 2 and any(hs <= grp for grp in
+                                  (frozenset({2, 6, 10}), frozenset({3, 7, 11}),
+                                   frozenset({4, 8, 12})))
+    return Yoga(
+        name="Hala", sanskrit="हल", active=active,
+        intensity=0.6 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.91",
+        description="Seven planets confined to a non-Lagna trine set (2/6/10, 3/7/11 or 4/8/12).",
+    )
+
+
+def detect_kamala(chart: Chart) -> Yoga:
+    """All seven planets confined to the four kendras (1,4,7,10). Raman No. 92."""
+    hs = _seven_houses(chart)
+    active = len(hs) >= 2 and hs <= _KENDRAS
+    return Yoga(
+        name="Kamala", sanskrit="कमल", active=active,
+        intensity=0.8 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.92",
+        description="All seven planets confined to the four kendras.",
+    )
+
+
+def detect_vapi(chart: Chart) -> Yoga:
+    """All seven planets confined exclusively to the panaparas (2,5,8,11) OR
+    the apoklimas (3,6,9,12). Raman, 300 Combinations No. 93 (Vapee)."""
+    hs = _seven_houses(chart)
+    active = len(hs) >= 2 and (hs <= frozenset({2, 5, 8, 11}) or hs <= frozenset({3, 6, 9, 12}))
+    return Yoga(
+        name="Vapi", sanskrit="वापी", active=active,
+        intensity=0.6 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.93",
+        description="Seven planets confined to all panaparas (2,5,8,11) or all apoklimas (3,6,9,12).",
+    )
+
+
+# --- Ākṛti: sign-modality triad (Nos. 102–104) -------------------------
+
+def detect_rajju(chart: Chart) -> Yoga:
+    """All seven planets in movable signs. Raman No. 102 (Rajju)."""
+    return _signgroup_yoga(chart, "Rajju", "रज्जु", _MOVABLE_SIGNS,
+                           "Raman, 300 Combinations No.102",
+                           "All seven planets in movable signs (Ar, Cn, Li, Cp).")
+
+
+def detect_musala(chart: Chart) -> Yoga:
+    """All seven planets in fixed signs. Raman No. 103 (Musala)."""
+    return _signgroup_yoga(chart, "Musala", "मुसल", _FIXED_SIGNS,
+                           "Raman, 300 Combinations No.103",
+                           "All seven planets in fixed signs (Ta, Le, Sc, Aq).")
+
+
+def detect_nala(chart: Chart) -> Yoga:
+    """All seven planets in common/dual signs. Raman No. 104 (Nala)."""
+    return _signgroup_yoga(chart, "Nala", "नल", _DUAL_SIGNS,
+                           "Raman, 300 Combinations No.104",
+                           "All seven planets in dual signs (Ge, Vi, Sg, Pi).")
+
+
+# --- Saṅkhyā: numerical (occupied-sign count, Nos. 95–98) --------------
+
+def detect_vallaki(chart: Chart) -> Yoga:
+    """Seven planets spread across any seven signs. Raman No. 95 (Vallaki/Veena)."""
+    return _sankhya_yoga(chart, "Vallaki", "वल्लकी", 7, "Raman, 300 Combinations No.95",
+                         "Seven planets occupying seven distinct signs.")
+
+
+def detect_damini(chart: Chart) -> Yoga:
+    """Seven planets across any six signs. Raman No. 96 (Damini)."""
+    return _sankhya_yoga(chart, "Damini", "दामिनी", 6, "Raman, 300 Combinations No.96",
+                         "Seven planets occupying six distinct signs.")
+
+
+def detect_pasa(chart: Chart) -> Yoga:
+    """Seven planets across any five signs. Raman No. 97 (Pasa)."""
+    return _sankhya_yoga(chart, "Pasa", "पाश", 5, "Raman, 300 Combinations No.97",
+                         "Seven planets occupying five distinct signs.")
+
+
+def detect_kedara(chart: Chart) -> Yoga:
+    """Seven planets across any four signs. Raman No. 98 (Kedara)."""
+    return _sankhya_yoga(chart, "Kedara", "केदार", 4, "Raman, 300 Combinations No.98",
+                         "Seven planets occupying four distinct signs.")
+
+
+# --- Dala: benefic/malefic kendras (Nos. 105–106) ----------------------
+
+def detect_srik(chart: Chart) -> Yoga:
+    """The kendras occupied exclusively by benefics. Raman No. 105 (Srik)."""
+    kendra_planets = [p for p in _SEVEN if chart.house_of(p) in _KENDRAS]
+    active = (bool(kendra_planets) and all(p in _BENEFIC7 for p in kendra_planets)
+              and all(chart.house_of(b) in _KENDRAS for b in _BENEFIC7))
+    return Yoga(
+        name="Srik", sanskrit="श्रीक्", active=active,
+        intensity=0.7 if active else 0.0, participants=tuple(sorted(kendra_planets)),
+        reference="Raman, 300 Combinations No.105",
+        description="All benefics in kendras and no malefic in a kendra.",
+    )
+
+
+def detect_sarpa(chart: Chart) -> Yoga:
+    """The kendras occupied exclusively by malefics. Raman No. 106 (Sarpa)."""
+    kendra_planets = [p for p in _SEVEN if chart.house_of(p) in _KENDRAS]
+    active = (bool(kendra_planets) and all(p in _MALEFIC7 for p in kendra_planets)
+              and all(chart.house_of(m) in _KENDRAS for m in _MALEFIC7))
+    return Yoga(
+        name="Sarpa", sanskrit="सर्प", active=active,
+        intensity=0.6 if active else 0.0, participants=tuple(sorted(kendra_planets)),
+        reference="Raman, 300 Combinations No.106",
+        description="All malefics in kendras and no benefic in a kendra.",
+    )
+
+
+# --- Special occupancy + solar yogas -----------------------------------
+
+def detect_matsya(chart: Chart) -> Yoga:
+    """Malefics in the 1st, 4th, 8th & 9th; the 5th holding both a benefic
+    and a malefic (mixed). Raman, 300 Combinations No. 47."""
+    active = (all(_house_has(chart, h, _MALEFICS_NATURAL) for h in (1, 4, 8, 9))
+              and _house_has(chart, 5, _MALEFICS_NATURAL)
+              and _house_has(chart, 5, _BENEFIC7))
+    return Yoga(
+        name="Matsya", sanskrit="मत्स्य", active=active,
+        intensity=0.7 if active else 0.0, participants=_SEVEN,
+        reference="Raman, 300 Combinations No.47",
+        description="Malefics in the 1st, 4th, 8th & 9th; a mixed 5th house.",
+    )
+
+
+def detect_ubhayachari(chart: Chart) -> Yoga:
+    """Planets (not the Moon or nodes) on both sides of the Sun — 2nd AND
+    12th from it. Raman, 300 Combinations No. 18 (Ubhayachari)."""
+    excl = frozenset({"Sun", "Moon", "Rahu", "Ketu"})
+    a, wa = _luminary_adjacency(chart, "Sun", 2, excl)
+    b, wb = _luminary_adjacency(chart, "Sun", 12, excl)
+    active = a and b
+    return Yoga(
+        name="Ubhayachari", sanskrit="उभयचरी", active=active,
+        intensity=0.6 if active else 0.0, participants=("Sun",) + wa + wb,
+        reference="Raman, 300 Combinations No.18",
+        description="Planets flanking the Sun on both sides (2nd and 12th from it).",
+    )
+
+
+def detect_ravi(chart: Chart) -> Yoga:
+    """The Sun in the 10th, with the 10th lord in the 3rd conjunct Saturn.
+    Raman, 300 Combinations (Ravi Yoga)."""
+    l10 = _lord_of(chart, 10)
+    active = (chart.house_of("Sun") == 10 and chart.house_of(l10) == 3
+              and _conjunct(chart, l10, "Saturn"))
+    return Yoga(
+        name="Ravi", sanskrit="रवि", active=active,
+        intensity=0.7 if active else 0.0, participants=("Sun", l10, "Saturn"),
+        reference="Raman, 300 Combinations (Ravi Yoga)",
+        description="Sun in the 10th; the 10th lord in the 3rd with Saturn.",
+    )
+
+
+def detect_indra(chart: Chart) -> Yoga:
+    """The 5th and 11th lords interchange houses, with the Moon in the 5th.
+    Raman, 300 Combinations No. 66 (Indra)."""
+    l5, l11 = _lord_of(chart, 5), _lord_of(chart, 11)
+    active = _exchanged(chart, l5, l11) and chart.house_of("Moon") == 5
+    return Yoga(
+        name="Indra", sanskrit="इन्द्र", active=active,
+        intensity=0.7 if active else 0.0, participants=(l5, l11, "Moon"),
+        reference="Raman, 300 Combinations No.66",
+        description="5th–11th lord exchange with the Moon in the 5th.",
+    )
+
+
+def detect_trilochana(chart: Chart) -> Yoga:
+    """The Sun, Moon and Mars in mutual trines (1/5/9 from each other).
+    Raman, 300 Combinations No. 71 (Trilochana)."""
+    trio = ("Sun", "Moon", "Mars")
+    hs = {p: chart.house_of(p) for p in trio}
+    if any(h is None for h in hs.values()):
+        active = False
+    else:
+        active = all((((hs[b] - hs[a]) % 12) + 1) in _TRIKONAS
+                     for i, a in enumerate(trio) for b in trio[i + 1:])
+    return Yoga(
+        name="Trilochana", sanskrit="त्रिलोचन", active=active,
+        intensity=0.7 if active else 0.0, participants=trio,
+        reference="Raman, 300 Combinations No.71",
+        description="Sun, Moon and Mars in mutual trines (1/5/9).",
+    )
+
+
+# --- Navāṁśa-dependent yogas (D9) --------------------------------------
+
+def detect_gauri(chart: Chart) -> Yoga:
+    """The lord of the navāṁśa occupied by the 10th lord joins the 10th house
+    in exaltation, conjunct the Lagna lord. Raman No. 28 (Gauri)."""
+    l10 = _lord_of(chart, 10)
+    ns = _navamsa_sign(chart, l10)
+    nl = SIGN_RULERS[ns] if ns else None
+    s_nl = chart.sign_of(nl) if nl else None
+    active = (nl is not None and chart.house_of(nl) == 10 and s_nl is not None
+              and is_exalted(nl, s_nl) and _conjunct(chart, nl, _lord_of(chart, 1)))
+    return Yoga(
+        name="Gauri", sanskrit="गौरी", active=active,
+        intensity=0.8 if active else 0.0, participants=(l10, nl) if nl else (l10,),
+        reference="Raman, 300 Combinations No.28",
+        description="Navāṁśa lord of the 10th lord: exalted in the 10th, with the Lagna lord.",
+    )
+
+
+def detect_bharathi(chart: Chart) -> Yoga:
+    """The navāṁśa lord of (any of) the 2nd/5th/11th lords is exalted and
+    conjunct the 9th lord. Raman No. 29 (Bharathi — three sub-yogas)."""
+    l9 = _lord_of(chart, 9)
+
+    def _ok(house: int) -> bool:
+        lx = _lord_of(chart, house)
+        ns = _navamsa_sign(chart, lx)
+        nl = SIGN_RULERS[ns] if ns else None
+        s = chart.sign_of(nl) if nl else None
+        return nl is not None and s is not None and is_exalted(nl, s) and _conjunct(chart, nl, l9)
+
+    active = any(_ok(h) for h in (2, 5, 11))
+    return Yoga(
+        name="Bharathi", sanskrit="भारती", active=active,
+        intensity=0.8 if active else 0.0, participants=(l9,),
+        reference="Raman, 300 Combinations No.29",
+        description="Navāṁśa lord of a 2nd/5th/11th lord: exalted and with the 9th lord.",
+    )
+
+
+def detect_mridanga(chart: Chart) -> Yoga:
+    """The lord of the navāṁśa occupied by an exalted planet is posited in a
+    kendra/trikona in own or exalted sign, with a strong Lagna lord.
+    Raman, 300 Combinations No. 48 (Mridanga)."""
+    ll = _lord_of(chart, 1)
+
+    def _ok(p: str) -> bool:
+        ns = _navamsa_sign(chart, p)
+        nl = SIGN_RULERS[ns] if ns else None
+        s = chart.sign_of(nl) if nl else None
+        return (nl is not None and chart.house_of(nl) in _KENDRA_TRIKONA
+                and s is not None and (is_exalted(nl, s) or is_own_sign(nl, s)))
+
+    exalted = [p for p in _SEVEN
+               if chart.sign_of(p) is not None and is_exalted(p, chart.sign_of(p))]
+    active = _is_strong(chart, ll) and any(_ok(p) for p in exalted)
+    return Yoga(
+        name="Mridanga", sanskrit="मृदङ्ग", active=active,
+        intensity=0.8 if active else 0.0, participants=(ll,) + tuple(exalted),
+        reference="Raman, 300 Combinations No.48",
+        description="Navāṁśa lord of an exalted planet, well-placed, with a strong Lagna lord.",
+    )
+
+
+# ─── Raman "300 Combinations" — increment 38 (definable dhana/lord tail) ─
+# The remaining cleanly lord-definable yogas. Where Raman's clause names
+# "Vaiśeṣikāṁśa" (a shadvarga navāṁśa dignity the Chart cannot express), the
+# computable `_is_strong` proxy is used — the detector under-fires rather
+# than guessing. All taken verbatim from the clean archive.org edition.
+
+
+def _aspects(chart: Chart, aspecting: str, target_house: int) -> bool:
+    """Does `aspecting` cast a whole-sign graha aspect onto `target_house`?"""
+    h = chart.house_of(aspecting)
+    return h is not None and target_house in aspects_from_planet(aspecting, h)
+
+
+def detect_bahudravyarjana(chart: Chart) -> Yoga:
+    """Lagna lord in the 2nd, 2nd lord in the 11th, 11th lord in the Lagna.
+    Raman, 300 Combinations No. 133."""
+    l1, l2, l11 = _lord_of(chart, 1), _lord_of(chart, 2), _lord_of(chart, 11)
+    active = (chart.house_of(l1) == 2 and chart.house_of(l2) == 11
+              and chart.house_of(l11) == 1)
+    return Yoga(
+        name="Bahudravyarjana", sanskrit="बहुद्रव्यार्जन", active=active,
+        intensity=0.7 if active else 0.0, participants=(l1, l2, l11),
+        reference="Raman, 300 Combinations No.133",
+        description="Lagna lord in 2nd, 2nd lord in 11th, 11th lord in Lagna.",
+    )
+
+
+def detect_matrumooladdhana(chart: Chart) -> Yoga:
+    """The 2nd lord joins or is aspected by the 4th lord.
+    Raman, 300 Combinations No. 142."""
+    l2, l4 = _lord_of(chart, 2), _lord_of(chart, 4)
+    active = _conjunct(chart, l2, l4) or _aspects(chart, l4, chart.house_of(l2) or 0)
+    return Yoga(
+        name="Matrumooladdhana", sanskrit="मातृमूलद्धन", active=active,
+        intensity=0.6 if active else 0.0, participants=(l2, l4),
+        reference="Raman, 300 Combinations No.142",
+        description="2nd lord conjunct or aspected by the 4th lord (wealth via mother).",
+    )
+
+
+def detect_putramuladdhana(chart: Chart) -> Yoga:
+    """A strong 2nd lord conjunct the 5th lord or Jupiter, with a strong Lagna
+    lord (Vaiśeṣikāṁśa proxy). Raman, 300 Combinations No. 143."""
+    l1, l2, l5 = _lord_of(chart, 1), _lord_of(chart, 2), _lord_of(chart, 5)
+    active = (_is_strong(chart, l2) and _is_strong(chart, l1)
+              and (_conjunct(chart, l2, l5) or _conjunct(chart, l2, "Jupiter")))
+    return Yoga(
+        name="Putramuladdhana", sanskrit="पुत्रमूलद्धन", active=active,
+        intensity=0.6 if active else 0.0, participants=(l1, l2, l5),
+        reference="Raman, 300 Combinations No.143",
+        description="Strong 2nd lord with the 5th lord or Jupiter; strong Lagna lord (wealth via sons).",
+    )
+
+
+def detect_satrumuladdhana(chart: Chart) -> Yoga:
+    """A strong 2nd lord conjunct the 6th lord or Mars, with a strong Lagna
+    lord (Vaiśeṣikāṁśa proxy). Raman, 300 Combinations No. 144."""
+    l1, l2, l6 = _lord_of(chart, 1), _lord_of(chart, 2), _lord_of(chart, 6)
+    active = (_is_strong(chart, l2) and _is_strong(chart, l1)
+              and (_conjunct(chart, l2, l6) or _conjunct(chart, l2, "Mars")))
+    return Yoga(
+        name="Satrumuladdhana", sanskrit="शत्रुमूलद्धन", active=active,
+        intensity=0.6 if active else 0.0, participants=(l1, l2, l6),
+        reference="Raman, 300 Combinations No.144",
+        description="Strong 2nd lord with the 6th lord or Mars; strong Lagna lord (wealth via enemies).",
+    )
+
+
+def detect_balya_dhana(chart: Chart) -> Yoga:
+    """The 2nd & 10th lords conjunct in a kendra, aspected by the lord of the
+    navāṁśa occupied by the Lagna lord. Raman, 300 Combinations No. 139."""
+    l2, l10, l1 = _lord_of(chart, 2), _lord_of(chart, 10), _lord_of(chart, 1)
+    ns = _navamsa_sign(chart, l1)
+    nav_lord = SIGN_RULERS[ns] if ns else None
+    h2 = chart.house_of(l2)
+    active = (_conjunct(chart, l2, l10) and h2 in _KENDRAS
+              and nav_lord is not None and _aspects(chart, nav_lord, h2))
+    return Yoga(
+        name="Balya Dhana", sanskrit="बाल्यधन", active=active,
+        intensity=0.7 if active else 0.0,
+        participants=(l2, l10, nav_lord) if nav_lord else (l2, l10),
+        reference="Raman, 300 Combinations No.139",
+        description="2nd & 10th lords conjunct in a kendra, aspected by the Lagna-lord's navāṁśa lord.",
+    )
+
+
+def detect_vimala(chart: Chart) -> Yoga:
+    """The 12th lord in the 12th house (Viparīta-family). Raman No. 111 (Vimala)."""
+    l12 = _lord_of(chart, 12)
+    active = chart.house_of(l12) == 12
+    return Yoga(
+        name="Vimala", sanskrit="विमल", active=active,
+        intensity=0.7 if active else 0.0, participants=(l12,),
+        reference="Raman, 300 Combinations No.111",
+        description="12th lord posited in the 12th house.",
+    )
+
+
+def detect_harsha(chart: Chart) -> Yoga:
+    """The 6th lord in the 6th house (Viparīta-family). Raman No. 111 (Harsha)."""
+    l6 = _lord_of(chart, 6)
+    active = chart.house_of(l6) == 6
+    return Yoga(
+        name="Harsha", sanskrit="हर्ष", active=active,
+        intensity=0.7 if active else 0.0, participants=(l6,),
+        reference="Raman, 300 Combinations No.111",
+        description="6th lord posited in the 6th house.",
+    )
+
+
+def detect_sarala(chart: Chart) -> Yoga:
+    """The 8th lord in the 8th house (Viparīta-family). Raman No. 111 (Sarala)."""
+    l8 = _lord_of(chart, 8)
+    active = chart.house_of(l8) == 8
+    return Yoga(
+        name="Sarala", sanskrit="सरल", active=active,
+        intensity=0.7 if active else 0.0, participants=(l8,),
+        reference="Raman, 300 Combinations No.111",
+        description="8th lord posited in the 8th house.",
+    )
+
+
+def detect_sareera_soukhya(chart: Chart) -> Yoga:
+    """The Lagna lord, Jupiter or Venus occupying a kendra. Raman No. 112."""
+    l1 = _lord_of(chart, 1)
+    active = any(chart.house_of(p) in _KENDRAS for p in (l1, "Jupiter", "Venus"))
+    return Yoga(
+        name="Sareera Soukhya", sanskrit="शरीरसौख्य", active=active,
+        intensity=0.5 if active else 0.0, participants=(l1, "Jupiter", "Venus"),
+        reference="Raman, 300 Combinations No.112",
+        description="Lagna lord, Jupiter or Venus in a kendra.",
+    )
+
+
+def detect_sada_sanchara(chart: Chart) -> Yoga:
+    """The Lagna lord, or the lord of the sign it occupies, in a movable sign.
+    Raman, 300 Combinations No. 121."""
+    l1 = _lord_of(chart, 1)
+    s1 = chart.sign_of(l1)
+    disp = SIGN_RULERS[s1] if s1 else None
+    active = (s1 in _MOVABLE_SIGNS
+              or (disp is not None and chart.sign_of(disp) in _MOVABLE_SIGNS))
+    return Yoga(
+        name="Sada Sanchara", sanskrit="सदासञ्चार", active=active,
+        intensity=0.4 if active else 0.0,
+        participants=(l1, disp) if disp else (l1,),
+        reference="Raman, 300 Combinations No.121",
+        description="Lagna lord or its dispositor in a movable sign (a wanderer).",
+    )
+
+
+def detect_jaya(chart: Chart) -> Yoga:
+    """The 6th lord debilitated and the 10th lord exalted. Raman No. 73 (Jaya)."""
+    l6, l10 = _lord_of(chart, 6), _lord_of(chart, 10)
+    s6, s10 = chart.sign_of(l6), chart.sign_of(l10)
+    active = (s6 is not None and is_debilitated(l6, s6)
+              and s10 is not None and is_exalted(l10, s10))
+    return Yoga(
+        name="Jaya", sanskrit="जय", active=active,
+        intensity=0.8 if active else 0.0, participants=(l6, l10),
+        reference="Raman, 300 Combinations No.73",
+        description="6th lord debilitated with the 10th lord exalted.",
+    )
+
+
+def detect_pushkala(chart: Chart) -> Yoga:
+    """The lord of the Moon's sign — conjunct the Lagna lord — in a kendra, with
+    the Lagna occupied by a strong planet. Raman No. 26 (Pushkala; the classical
+    'friend's house' / 'aspecting Lagna' alternatives are omitted as the Chart
+    cannot express them)."""
+    l1 = _lord_of(chart, 1)
+    moon_sign = chart.sign_of("Moon")
+    ml = SIGN_RULERS[moon_sign] if moon_sign else None
+    active = (ml is not None and _conjunct(chart, ml, l1)
+              and chart.house_of(ml) in _KENDRAS
+              and any(_is_strong(chart, p) for p in chart.planets_in_house(1)))
+    return Yoga(
+        name="Pushkala", sanskrit="पुष्कल", active=active,
+        intensity=0.6 if active else 0.0,
+        participants=(ml, l1) if ml else (l1,),
+        reference="Raman, 300 Combinations No.26",
+        description="Lord of the Moon's sign with the Lagna lord in a kendra; a strong planet in Lagna.",
+    )
+
+
 # ─── Registry ────────────────────────────────────────────────────────
 
 
@@ -961,6 +1875,27 @@ YOGA_DETECTORS: Final[tuple[Callable[[Chart], Yoga], ...]] = (
     # Phase B additions (5)
     detect_akhanda_samrajya, detect_sarpa_dosha,
     detect_pitra_dosha, detect_matr_dosha, detect_parijata,
+    # Raman "300 Combinations" additions — increment 35 (8)
+    detect_dhurdhura, detect_chatussagara, detect_vasumathi, detect_sakata,
+    detect_chakra, detect_gola, detect_yuga, detect_sula,
+    # Raman "300 Combinations" lord-based additions — increment 36 (7)
+    detect_parvata, detect_kahala, detect_chapa, detect_sreenatha,
+    detect_sankha, detect_bheri, detect_samudra,
+    # Raman "300 Combinations" Nabhāsa + navāṁśa additions — increment 37 (32)
+    detect_yupa, detect_ishu, detect_sakti, detect_danda,
+    detect_nauka, detect_kuta, detect_chatra, detect_ardha_chandra,
+    detect_vihaga, detect_vajra, detect_yava, detect_sringhataka,
+    detect_hala, detect_kamala, detect_vapi,
+    detect_rajju, detect_musala, detect_nala,
+    detect_vallaki, detect_damini, detect_pasa, detect_kedara,
+    detect_srik, detect_sarpa, detect_matsya,
+    detect_ubhayachari, detect_ravi, detect_indra, detect_trilochana,
+    detect_gauri, detect_bharathi, detect_mridanga,
+    # Raman "300 Combinations" definable dhana/lord tail — increment 38 (12)
+    detect_bahudravyarjana, detect_matrumooladdhana, detect_putramuladdhana,
+    detect_satrumuladdhana, detect_balya_dhana, detect_vimala, detect_harsha,
+    detect_sarala, detect_sareera_soukhya, detect_sada_sanchara, detect_jaya,
+    detect_pushkala,
 )
 
 

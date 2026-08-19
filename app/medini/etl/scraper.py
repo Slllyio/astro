@@ -122,8 +122,19 @@ def parse_coordinate(text: str) -> float | None:
     if m:
         deg = int(m.group(1))
         hem = m.group(2).upper()
-        minutes = int(m.group(3)) if m.group(3) else 0
+        min_str = m.group(3) or ""
         seconds = int(m.group(4)) if m.group(4) else 0
+        # ADB also emits seconds-precision coords with NO separator:
+        # "36n4619" = 36°46'19" (MMSS run together). Reading "4619" as
+        # minutes gives 112.98° — the first two digits are minutes, the
+        # rest are seconds. Only applies when no explicit seconds group.
+        if len(min_str) > 2 and not seconds:
+            minutes = int(min_str[:2])
+            seconds = int(min_str[2:])
+        else:
+            minutes = int(min_str) if min_str else 0
+        if minutes >= 60 or seconds >= 60:
+            return None  # malformed DMS — reject rather than mis-read
         decimal = deg + minutes / 60.0 + seconds / 3600.0
         if hem in ("S", "W"):
             decimal = -decimal

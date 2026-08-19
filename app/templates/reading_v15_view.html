@@ -110,6 +110,82 @@
     .verdict-direction.negative { background: #f0d4d4; color: #6a1a1a; }
     .verdict-direction.mixed    { background: #f4e0c0; color: #6a4a0a; }
     .verdict-direction.neutral  { background: #d8dde0; color: #2a3a4a; }
+    .dasha-timeline { list-style: none; margin: 0; padding: 0; }
+    .dasha-row {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.4rem 0.6rem; border-left: 3px solid transparent; border-radius: 4px;
+    }
+    .dasha-row + .dasha-row { margin-top: 0.2rem; }
+    .dasha-row.past { opacity: 0.55; }
+    .dasha-row.current { background: #f3ecfa; border-left-color: #7a5a9a; }
+    .dasha-row .dasha-lord { font-weight: 600; min-width: 5.5rem; }
+    .dasha-row .dasha-window { color: #555; font-size: 0.85rem; }
+    .dasha-badge {
+      margin-left: auto; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      background: #7a5a9a; color: #fff; padding: 0.1rem 0.45rem; border-radius: 999px;
+    }
+    .activation { margin-top: 0.8rem; }
+    .activation-title {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      color: #7a5a9a; margin-bottom: 0.35rem;
+    }
+    .activation-list { list-style: none; margin: 0; padding: 0; }
+    .activation-list li {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      padding: 0.25rem 0; font-size: 0.9rem; border-bottom: 1px solid #f0ecf4;
+    }
+    .activation-list li:last-child { border-bottom: none; }
+    .charts-row { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .chart-cell { flex: 0 0 auto; }
+    .chart-caption { font-weight: 600; margin-bottom: 0.4rem; color: #444; }
+    .south-grid {
+      position: relative; display: grid;
+      grid-template-columns: repeat(4, 3.7rem); grid-auto-rows: 3.7rem;
+      border: 2px solid #7a5a9a; background: #fff;
+    }
+    .south-cell { border: 1px solid #e2d8ef; position: relative; padding: 2px 3px; }
+    .south-center { border: none; }
+    .south-lagna { background: #f3ecfa; }
+    .south-signno { position: absolute; top: 1px; right: 3px; color: #b8a8d0; font-size: 0.58rem; }
+    .south-bodies { display: block; margin-top: 0.75rem; line-height: 1.2; font-size: 0.72rem; color: #333; }
+    .south-bodies sub { color: #b14a4a; }
+    .south-label {
+      position: absolute; inset: 25%; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #7a5a9a; pointer-events: none; text-align: center;
+    }
+    .sav-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .sav-cell {
+      flex: 1 1 3rem; min-width: 3rem; text-align: center; border-radius: 5px;
+      padding: 0.3rem 0.2rem; border: 1px solid #ddd;
+    }
+    .sav-cell .sav-house { font-size: 0.62rem; color: #888; }
+    .sav-cell .sav-bindu { font-weight: 700; font-size: 1rem; }
+    .sav-cell.strong { background: #d4e8d4; border-color: #a8ceac; }
+    .sav-cell.weak   { background: #f0d4d4; border-color: #d8b0b0; }
+    .sav-cell.mid    { background: #f4efe2; border-color: #ddd2b8; }
+    .avastha-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .avastha-table th, .avastha-table td { text-align: left; padding: 0.3rem 0.5rem; border-bottom: 1px solid #eee; }
+    .avastha-table th { color: #7a5a9a; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .explorer-hint { color: #555; font-size: 0.88rem; margin: 0.2rem 0 0.8rem; }
+    .explorer-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .explorer-controls label { font-weight: 600; font-size: 0.85rem; }
+    .explorer-controls select { margin-left: 0.3rem; padding: 0.2rem 0.4rem; font-size: 0.9rem; }
+    .tier-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .tier-legend .lg { padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.12); }
+    .tier-legend .lg small { font-weight: 400; color: #555; margin-left: 0.3rem; }
+    #dasha-explorer-grid { grid-template-columns: repeat(4, 6.4rem); grid-auto-rows: 6.4rem; }
+    #dasha-explorer-grid .act-cell { transition: background 0.15s; overflow: hidden; }
+    .tier-par { background: #a8d5a8; }
+    .tier-pre { background: #d3ecd3; }
+    .tier-lim { background: #f6e6c2; }
+    .tier-dor { background: #fff; }
+    .act-house { position: absolute; top: 1px; left: 3px; font-size: 0.56rem; color: #999; }
+    .act-bodies { display: block; margin-top: 0.85rem; font-size: 0.72rem; color: #222; line-height: 1.15; }
+    .act-marks { display: flex; flex-direction: column; gap: 0.12rem; margin-top: 0.15rem; }
+    .act-mark { font-size: 0.5rem; font-weight: 600; padding: 0.02rem 0.2rem; border-radius: 3px; line-height: 1.25; }
+    .act-mark.lvl2 { background: #2a7e4e; color: #fff; }
+    .act-mark.lvl1 { background: #c8902a; color: #fff; }
+    .explorer-note { font-size: 0.8rem; color: #555; margin: 0.2rem 0 0.7rem; min-height: 1em; }
     .domain-card {
       border: 1px solid #e0d8c8;
       border-radius: 8px;
@@ -197,6 +273,344 @@
       color: #5a2a7e;
       background: transparent;
     }
+    /* ---- Executive summary + present-tense + house-doctrine (Phase 0/1) ---- */
+    .exec-card {
+      background: linear-gradient(135deg, #fbf7ff 0%, #f4f0e6 100%);
+      border: 1px solid #e2d4ef; border-radius: 10px;
+      padding: 18px 20px; margin-bottom: 18px;
+    }
+    /* ---- Master summary — the report's governing judgement ---- */
+    .master-card {
+      background: linear-gradient(135deg, #2a1a4e 0%, #3d2a63 100%);
+      color: #f4eefb; border-radius: 12px; padding: 22px 24px; margin-bottom: 20px;
+      box-shadow: 0 4px 18px rgba(42,26,78,0.18);
+    }
+    .master-card h2 { margin: 0 0 4px; color: #fff; }
+    .master-sub { font-weight: normal; color: #c8b3e6; font-size: 0.82rem; display: block; margin-top: 2px; }
+    .master-theme { font-size: 1.05rem; line-height: 1.55; color: #f0e7fb; margin: 10px 0 16px; font-style: italic; }
+    .master-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .master-tile { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 12px 14px; }
+    .master-tile-h { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #b79fe0; margin-bottom: 4px; }
+    .master-tile-v { font-size: 1.05rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .master-tile-d { font-size: 0.85rem; line-height: 1.45; color: #dccff0; }
+    .master-cite { color: #a98fd0; font-size: 0.8rem; }
+    .master-caps { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 14px; }
+    .master-cap-h { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #b79fe0; margin-right: 8px; }
+    .master-chip { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; margin: 2px 4px 2px 0; }
+    .master-chip.pos { background: rgba(120,220,150,0.18); color: #b6f0c6; border: 1px solid rgba(120,220,150,0.3); }
+    .master-chip.neg { background: rgba(240,150,150,0.16); color: #f2c2c2; border: 1px solid rgba(240,150,150,0.28); }
+    .master-decisive { background: rgba(255,255,255,0.05); border-radius: 9px; padding: 6px 14px; margin-top: 6px; }
+    .master-decisive > summary { cursor: pointer; font-weight: 600; color: #f0e7fb; padding: 6px 0; }
+    .master-cnt { font-weight: normal; color: #b79fe0; font-size: 0.85rem; }
+    .master-factor-list { list-style: none; padding: 0; margin: 8px 0; }
+    .master-factor-list li { font-size: 0.88rem; line-height: 1.5; color: #e6dbf5; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .master-factor-list li:last-child { border-bottom: none; }
+    .master-pol { display: inline-block; width: 18px; font-weight: 700; text-align: center; }
+    .master-pol.positive { color: #7fe0a0; }
+    .master-pol.negative { color: #f09a9a; }
+    .master-factor-dom { color: #a98fd0; font-size: 0.76rem; margin-left: 6px; }
+    .master-foot { font-size: 0.8rem; color: #b79fe0; margin: 8px 0 4px; line-height: 1.45; }
+    /* ---- Who you are — the native profile ---- */
+    .native-card { }
+    .native-clarity { background: #f4f0e6; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; color: #3a2a56; margin-bottom: 14px; }
+    :root[data-theme="dark"] .native-clarity { background: #241f36; color: #d8ccf0; }
+    .native-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .native-tile { border: 1px solid #e2d4ef; border-left-width: 4px; border-radius: 8px; padding: 11px 14px; background: #fdfbff; }
+    :root[data-theme="dark"] .native-tile { background: #201c30; border-color: #3a3350; }
+    .native-tile.cond-true { border-left-color: #4caf7d; }
+    .native-tile.cond-false { border-left-color: #d98a8a; }
+    .native-tile.cond-none { border-left-color: #c9a94e; }
+    .native-h { font-weight: 600; color: #2a1a4e; font-size: 0.95rem; margin-bottom: 5px; }
+    :root[data-theme="dark"] .native-h { color: #e8ddf7; }
+    .native-gov { font-weight: normal; color: #8a72b0; font-size: 0.76rem; }
+    .native-t { font-size: 0.88rem; line-height: 1.5; color: #3a2a56; }
+    :root[data-theme="dark"] .native-t { color: #cabbe4; }
+    /* ---- Planet stories + interaction matrix ---- */
+    .pstory-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .pstory { border: 1px solid #e6e0ee; border-radius: 8px; padding: 11px 14px; background: #fdfcff; }
+    :root[data-theme="dark"] .pstory { background: #1e1a2c; border-color: #362f4a; }
+    .pstory-dom { border: 1px solid #b79fe0; box-shadow: 0 1px 8px rgba(122,90,154,0.14); }
+    .pstory-h { font-weight: 600; color: #2a1a4e; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+    :root[data-theme="dark"] .pstory-h { color: #e8ddf7; }
+    .pstory-badge { font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; background: #7a5a9a; border-radius: 10px; padding: 2px 8px; }
+    .pstory-cond { font-size: 0.7rem; margin-left: auto; padding: 1px 8px; border-radius: 10px; }
+    .pstory-cond.cond-well-placed { background: #e2f5ea; color: #2c7d54; }
+    .pstory-cond.cond-under-strain { background: #f8e6e6; color: #9a4444; }
+    .pstory-cond.cond-mixed { background: #f6efdd; color: #8a6d2a; }
+    .pstory-t { font-size: 0.86rem; line-height: 1.5; color: #3a2a56; }
+    :root[data-theme="dark"] .pstory-t { color: #c7b9e2; }
+    .pstory-inter-h { margin-top: 18px; color: #4a3570; font-size: 1rem; }
+    .pstory-inter { list-style: none; padding: 0; margin: 8px 0 0; }
+    .pstory-inter li { font-size: 0.88rem; line-height: 1.5; color: #33244e; padding: 6px 0; border-bottom: 1px solid #efe9f5; }
+    :root[data-theme="dark"] .pstory-inter li { color: #cabbe4; border-color: #2c2740; }
+    .pstory-inter li:last-child { border-bottom: none; }
+    .pstory-rel { display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; padding: 1px 8px; border-radius: 10px; margin-right: 6px; }
+    .pstory-rel.rel-war { background: #f6dede; color: #a03030; }
+    .pstory-rel.rel-exchange { background: #e0ecf8; color: #2a5a8a; }
+    .pstory-rel.rel-conjunct { background: #ece3f5; color: #6a4a8a; }
+    .pstory-rel.rel-mutual, .pstory-rel.rel-aspect { background: #eef0f2; color: #556; }
+    /* ---- Life timeline (era strip) ---- */
+    .life-eras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+    .life-era { border: 1px solid #e6e0ee; border-top-width: 4px; border-radius: 6px; padding: 9px 11px; background: #fdfcff; }
+    :root[data-theme="dark"] .life-era { background: #1e1a2c; border-color: #362f4a; }
+    .life-era.tone-favourable { border-top-color: #4caf7d; }
+    .life-era.tone-challenging { border-top-color: #d98a8a; }
+    .life-era.tone-mixed { border-top-color: #c9a94e; }
+    .life-era.era-current { box-shadow: 0 2px 10px rgba(122,90,154,0.2); border-color: #b79fe0; }
+    .life-era.era-past { opacity: 0.62; }
+    .life-era-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .life-lord { font-weight: 600; color: #2a1a4e; }
+    :root[data-theme="dark"] .life-lord { color: #e8ddf7; }
+    .life-cycle { font-size: 0.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; background: #7a5a9a; border-radius: 9px; padding: 1px 7px; }
+    .life-era-span { font-size: 0.8rem; color: #4a3570; margin: 3px 0; }
+    :root[data-theme="dark"] .life-era-span { color: #b8a6d8; }
+    .life-age { color: #9a8bb8; font-size: 0.72rem; margin-left: 4px; }
+    .life-areas { font-size: 0.76rem; color: #667; line-height: 1.35; }
+    :root[data-theme="dark"] .life-areas { color: #a99cc4; }
+    .exec-card h2 { margin-top: 0; }
+    .exec-lines { list-style: none; padding: 0; margin: 0 0 12px; }
+    .exec-lines li {
+      padding: 8px 0 8px 26px; position: relative; font-size: 0.95rem;
+      color: #2a1a4e; line-height: 1.4; border-bottom: 1px solid #ece3f2;
+    }
+    .exec-lines li:last-child { border-bottom: none; }
+    .exec-lines li::before {
+      content: "✦"; position: absolute; left: 4px; top: 8px; color: #8a6ab0;
+    }
+    .fidelity-note {
+      font-size: 0.76rem; color: #6a5a7a; font-style: italic;
+      margin-top: 6px; line-height: 1.35;
+    }
+    /* 12-house health meter */
+    .health-strip { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 10px; }
+    .health-cell {
+      flex: 1 1 4.6rem; min-width: 4.6rem; border-radius: 6px; padding: 6px 4px 5px;
+      text-align: center; border: 1px solid rgba(0,0,0,0.08); color: #23324a;
+    }
+    .health-cell .hc-house { font-size: 0.58rem; color: #566; letter-spacing: .02em; }
+    .health-cell .hc-area  { font-size: 0.58rem; color: #667; line-height: 1.05; display: block; margin: 1px 0 3px; min-height: 2.1em; }
+    .health-cell .hc-grade { font-size: 0.66rem; font-weight: 700; }
+    .health-bar { height: 5px; border-radius: 3px; margin-top: 4px; background: rgba(0,0,0,0.08); overflow: hidden; }
+    .health-bar > span { display: block; height: 100%; border-radius: 3px; }
+    /* 9-grade colour ramp: afflicted(0)→weak→moderate→…→very powerful(8) */
+    .g0 { background: #e9c4c4; } .g0 .health-bar>span { background:#c0504d; }
+    .g1 { background: #efd0c0; } .g1 .health-bar>span { background:#d07d3a; }
+    .g2 { background: #f2e2c2; } .g2 .health-bar>span { background:#c8a02a; }
+    .g3 { background: #eef0c6; } .g3 .health-bar>span { background:#b0b83a; }
+    .g4 { background: #e2eec6; } .g4 .health-bar>span { background:#8fb84a; }
+    .g5 { background: #d3ecd0; } .g5 .health-bar>span { background:#5aa85a; }
+    .g6 { background: #c6e8cc; } .g6 .health-bar>span { background:#3f9e5e; }
+    .g7 { background: #b8e3cf; } .g7 .health-bar>span { background:#2a8e6e; }
+    .g8 { background: #a8d5c9; } .g8 .health-bar>span { background:#1f7e78; }
+    .gNA { background: #f0f0f0; } .gNA .health-bar>span { background:#bbb; }
+    /* "Where you are now" strip */
+    .now-strip { display: flex; flex-wrap: wrap; gap: 12px; }
+    .now-tile {
+      flex: 1 1 12rem; border: 1px solid #e0d8c8; border-radius: 8px;
+      background: #fffcf6; padding: 12px 14px;
+    }
+    .now-tile .nt-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: .04em; color: #7a5a9a; }
+    .now-tile .nt-value { font-size: 1.05rem; font-weight: 700; color: #2a1a4e; margin: 2px 0; }
+    .now-tile .nt-sub { font-size: 0.8rem; color: #555; }
+    .now-progress { height: 6px; border-radius: 3px; background: #ece3d0; overflow: hidden; margin-top: 6px; }
+    .now-progress > span { display: block; height: 100%; background: #8a6ab0; }
+    .birth-daza-note { font-size: 0.8rem; color: #6a4a1a; background: #fff8f0; border: 1px solid #f0d8b0; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; }
+    /* house-doctrine detailed cards */
+    .doctrine-card { border: 1px solid #e0d8c8; border-radius: 8px; margin-bottom: 12px; background: #fffcf6; }
+    .doctrine-card summary {
+      cursor: pointer; padding: 12px 16px; list-style: none; display: flex;
+      align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .doctrine-card summary::-webkit-details-marker { display: none; }
+    .doctrine-card summary::after { content: "+"; margin-left: auto; color: #8a7a6a; font-size: 1.3rem; }
+    .doctrine-card[open] summary::after { content: "−"; }
+    .dc-house { font-weight: 700; color: #2a1a4e; }
+    .dc-area { color: #667; font-size: 0.82rem; }
+    .grade-pill { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); }
+    .doctrine-body { padding: 4px 16px 16px; }
+    .conf-checklist { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+    .conf-check { font-size: 0.78rem; padding: 3px 9px; border-radius: 12px; border: 1px solid #ddd; }
+    .conf-check.positive { background: #d8efd8; border-color: #a8ceac; color: #24632a; }
+    .conf-check.guarded  { background: #f3e2c8; border-color: #ddc79a; color: #7a531a; }
+    .conf-check.na       { background: #eee; color: #888; }
+    .conf-band { font-size: 0.78rem; color: #555; }
+    .d1d9-badge { font-size: 0.72rem; padding: 2px 7px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); }
+    .d1d9-badge.concur { background:#d8efd8; color:#24632a; }
+    .d1d9-badge.diverge { background:#f3d4d4; color:#7a1a1a; }
+    .d1d9-badge.neutral { background:#eee; color:#777; }
+    .why-list { list-style: none; padding: 0; margin: 6px 0 0; }
+    .why-list li { font-size: 0.82rem; padding: 5px 0; border-bottom: 1px dotted #ece3d0; color: #3a2a5a; display:flex; gap:8px; }
+    .why-list li:last-child { border-bottom: none; }
+    .why-sign { font-weight: 700; width: 1.2em; text-align: center; }
+    .why-sign.pos { color: #2a8e5e; } .why-sign.neg { color: #b0504d; } .why-sign.zero { color:#aaa; }
+    .why-frame { font-size: 0.68rem; color: #8a7a9a; margin-left: auto; white-space: nowrap; }
+    .why-col { font-size: 0.74rem; text-transform: uppercase; letter-spacing:.03em; color:#7a5a9a; margin: 8px 0 2px; }
+    /* planet-strength table (#4) */
+    .strength-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .strength-table th, .strength-table td { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .strength-table th { color: #7a5a9a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .03em; }
+    .strength-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .str-bar { position: relative; height: 8px; border-radius: 4px; background: #ece3d0; min-width: 70px; overflow: hidden; }
+    .str-bar > span { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg,#c8902a,#5aa85a); }
+    .dig-tag { font-size: 0.7rem; padding: 1px 6px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.08); }
+    .dig-exalted, .dig-moolatrikona, .dig-own { background:#d8efd8; color:#24632a; }
+    .dig-friendly { background:#e6f0e0; color:#3a5a2a; }
+    .dig-neutral { background:#f0efe6; color:#666; }
+    .dig-inimical, .dig-enemy { background:#f3e2c8; color:#7a531a; }
+    .dig-debilitated { background:#f3d4d4; color:#7a1a1a; }
+    .combust-flag { color:#b0504d; font-weight:700; font-size:0.72rem; }
+    .stars { color: #d8a13a; letter-spacing: 1px; font-size: 0.82rem; white-space: nowrap; }
+    .stars .star-off { color: #e3ddd0; }
+    .yoga-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .yoga-strength { font-size: 0.72rem; color: #7a5a9a; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .yoga-bar { width: 64px; height: 6px; border-radius: 3px; background: #ece3d0; overflow: hidden; display: inline-block; }
+    .yoga-bar > span { display: block; height: 100%; background: linear-gradient(90deg,#c8902a,#5aa85a); border-radius: 3px; }
+    .yoga-parts { font-size: 0.74rem; color: #667; margin-top: 3px; }
+    .yoga-desc { font-size: 0.85rem; color: #3a2a5a; margin-top: 3px; line-height: 1.4; }
+    .cf-chip { display: inline-block; font-size: 0.68rem; padding: 1px 7px; margin: 1px 3px 1px 0; border-radius: 8px; background: #efe8f6; color: #5a3a8a; border: 1px solid #ddd0ee; }
+    .cf-callouts { margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+    .cf-note { font-size: 0.84rem; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0d8c8; background: #fdfbf6; color: #3a2a5a; line-height: 1.4; }
+    .cf-note.ok { background: #eef6ee; border-color: #cfe6cf; color: #234f2a; }
+    .cf-note.warn { background: #fbf1ea; border-color: #eed6c4; color: #6a3a1a; }
+    :root[data-theme="dark"] .cf-note { background:#241f36; border-color:#342e4a; color:#c9c2dc; }
+    :root[data-theme="dark"] .cf-chip { background:#2c2540; color:#c8b8f0; border-color:#3a3352; }
+    .raman-list { list-style: none; padding: 0; margin: 0; }
+    .raman-list li { padding: 9px 0; border-bottom: 1px dotted #ece3d0; }
+    .raman-list li:last-child { border-bottom: none; }
+    .raman-text { color: #33244e; font-size: 0.9rem; line-height: 1.45; }
+    .raman-cite { display: block; font-size: 0.75rem; color: #8a6a5a; margin-top: 2px; }
+    .raman-books { margin-top: 12px; font-size: 0.8rem; color: #5a4a6a; line-height: 1.5; padding-top: 10px; border-top: 1px solid #ede4d3; }
+    .raw-n { font-size: 0.68rem; color: #8a7a6a; font-variant-numeric: tabular-nums; margin-left: 3px; }
+    :root[data-theme="dark"] .raw-n { color: #9a8fb0; }
+    .method-steps { list-style: none; counter-reset: ms; padding: 0; margin: 0 0 14px; }
+    .method-steps li { counter-increment: ms; position: relative; padding: 8px 0 8px 34px; font-size: 0.88rem; color: #3a2a5a; line-height: 1.45; border-bottom: 1px solid #ede4d3; }
+    .method-steps li:last-child { border-bottom: none; }
+    .method-steps li::before { content: counter(ms); position: absolute; left: 0; top: 7px; width: 22px; height: 22px; border-radius: 50%; background: #5a2a7e; color: #f4e8c8; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .valid-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .valid-table td, .valid-table th { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .valid-table th { color: #7a5a9a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .03em; }
+    .valid-table td.num { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; color: #2a7e4e; }
+    :root[data-theme="dark"] .method-steps li { color: #cec8de; border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .valid-table td { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .valid-table td.num { color: #6ec49a; }
+    /* classical judicial narrative — the "book" reading */
+    .classical-narrative { background: #fdfbf5; }
+    .cn-intro { font-size: 0.85rem; color: #6a5a4a; font-style: italic; margin: 0 0 16px; line-height: 1.5; }
+    .cn-chapter { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; color: #4a2a6e; margin: 20px 0 8px; font-weight: 600; }
+    .cn-chapter:first-of-type { margin-top: 6px; }
+    .cn-para { font-family: Georgia, "Times New Roman", serif; font-size: 0.98rem; line-height: 1.72; color: #2c2438; margin: 0 0 12px; text-align: justify; }
+    :root[data-theme="dark"] .classical-narrative { background: #201c30; }
+    :root[data-theme="dark"] .cn-chapter { color: #c9b8f0; }
+    :root[data-theme="dark"] .cn-para { color: #d3cde2; }
+    :root[data-theme="dark"] .cn-intro { color: #a99ab0; }
+    :root[data-theme="dark"] .raman-text { color: #d7d2e2; }
+    :root[data-theme="dark"] .raman-cite { color: #b09a8a; }
+    :root[data-theme="dark"] .raman-list li { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .raman-books { color: #b6afc9; border-top-color: #342e4a; }
+    /* tensions (#10) */
+    .tension-list { list-style: none; padding: 0; margin: 0; }
+    .tension-list li { padding: 9px 12px; margin-bottom: 8px; background: #fdf6f0; border: 1px solid #f0dcc8; border-left: 3px solid #d08a4a; border-radius: 4px; font-size: 0.86rem; color: #5a3a1a; }
+    /* glossary (#15) */
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 18px; }
+    .glossary-grid dt { font-weight: 700; color: #2a1a4e; font-size: 0.86rem; margin-top: 4px; }
+    .glossary-grid dd { margin: 0 0 4px; font-size: 0.82rem; color: #4a3a5a; line-height: 1.35; }
+    /* domain decision dashboard (#1,2,3,6,8) */
+    .dom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+    .dom-card { border: 1px solid #e0d8c8; border-radius: 10px; background: #fffcf6; padding: 14px 16px; display: flex; flex-direction: column; }
+    .dom-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .dom-name { font-weight: 700; color: #2a1a4e; font-size: 1rem; }
+    .dom-score { font-size: 1.5rem; font-weight: 800; line-height: 1; padding: 4px 10px; border-radius: 8px; color: #23324a; }
+    .dom-modern { font-size: 0.74rem; color: #778; margin: 3px 0 8px; line-height: 1.25; }
+    .dom-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .dom-badges .badge { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); }
+    .badge.tim-active { background:#d3ecd0; color:#2a7e4e; }
+    .badge.tim-warm   { background:#f6e6c2; color:#8a6a1a; }
+    .badge.tim-quiet  { background:#eee; color:#777; }
+    .badge.cf-very-high { background:#b8e3cf; color:#1f7e78; }
+    .badge.cf-high { background:#d3ecd0; color:#2a7e4e; }
+    .badge.cf-medium { background:#f2e2c2; color:#8a6a1a; }
+    .badge.cf-conflicting { background:#f3d4d4; color:#8a2a2a; }
+    .dom-verdict { font-size: 0.86rem; color: #3a2a5a; line-height: 1.4; margin-bottom: 6px; }
+    .dom-why { margin-top: auto; }
+    .dom-why summary { cursor: pointer; font-size: 0.78rem; color: #7a5a9a; font-weight: 600; }
+    .dom-why ul { list-style: none; padding: 0; margin: 6px 0 0; }
+    .dom-why li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 6px; color: #3a2a5a; }
+    .dom-why li .s { font-weight: 700; }
+    .dom-why li .s.p { color:#2a8e5e; } .dom-why li .s.n { color:#b0504d; }
+    .ev-list { list-style: none; padding: 0; margin: 6px 0 0; }
+    .ev-list li { font-size: 0.78rem; padding: 3px 0; display: flex; gap: 8px; color: #3a2a5a; align-items: baseline; }
+    .ev-w { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 2.4em; text-align: right; }
+    .ev-w.p { color:#2a8e5e; } .ev-w.n { color:#b0504d; }
+    .ev-foot { font-size: 0.7rem; color: #8a7a9a; margin-top: 6px; font-style: italic; }
+    :root[data-theme="dark"] .ev-list li { color:#cec8de; }
+    :root[data-theme="dark"] .ev-foot { color:#9a8fb0; }
+    /* consultation narrative (#17) */
+    .narrative-card { background: #f7f4fb; border: 1px solid #e2d4ef; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+    .narrative-card p { margin: 0 0 8px; font-size: 0.95rem; line-height: 1.55; color: #33244e; }
+    .narrative-card p:last-child { margin-bottom: 0; }
+    /* opportunities / risks (#9,#10) */
+    .opprisk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .opprisk-row { grid-template-columns: 1fr; } }
+    .opprisk-col h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 8px; }
+    .opprisk-col.opps h3 { color: #2a7e4e; }
+    .opprisk-col.risks h3 { color: #a05028; }
+    .opprisk-col ul { list-style: none; padding: 0; margin: 0; }
+    .opprisk-col li { font-size: 0.86rem; padding: 8px 10px 8px 26px; position: relative; margin-bottom: 7px; border-radius: 5px; line-height: 1.4; }
+    .opprisk-col.opps li { background: #eef6ee; border: 1px solid #cfe6cf; color: #234f2a; }
+    .opprisk-col.opps li::before { content: "▲"; position: absolute; left: 9px; top: 9px; color: #3f9e5e; font-size: 0.7rem; }
+    .opprisk-col.risks li { background: #fbf1ea; border: 1px solid #eed6c4; color: #6a3a1a; }
+    .opprisk-col.risks li::before { content: "!"; position: absolute; left: 10px; top: 8px; color: #c0703a; font-weight: 800; }
+    /* ---- sticky topic nav + controls (UI polish) ---- */
+    .topic-nav {
+      position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(6px); border-bottom: 1px solid #e0d8c8;
+      padding: 8px 0; margin-bottom: 18px; overflow-x: auto;
+    }
+    .topic-nav .inner { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+    .topic-nav a { font-size: 0.8rem; color: #5a3a7e; text-decoration: none; padding: 4px 10px; border-radius: 14px; border: 1px solid transparent; }
+    .topic-nav a:hover { background: #f0e8f8; border-color: #d8c8f0; }
+    .nav-tools { margin-left: auto; display: flex; gap: 6px; padding-left: 10px; }
+    .nav-btn { font-size: 0.76rem; cursor: pointer; padding: 4px 10px; border-radius: 14px; border: 1px solid #d8c8f0; background: #fff; color: #5a3a7e; }
+    .nav-btn:hover { background: #f0e8f8; }
+    h2[id], .exec-card[id], .section[id], .master-card[id] { scroll-margin-top: 56px; }
+    /* ---- dark mode (toggled via data-theme on <html>) ---- */
+    :root[data-theme="dark"] body { background: linear-gradient(135deg,#15131f 0%,#1c1830 100%); color: #d7d2e2; }
+    :root[data-theme="dark"] .section,
+    :root[data-theme="dark"] .exec-card,
+    :root[data-theme="dark"] .narrative-card,
+    :root[data-theme="dark"] .dom-card,
+    :root[data-theme="dark"] .now-tile,
+    :root[data-theme="dark"] .domain-card,
+    :root[data-theme="dark"] .doctrine-card {
+      background: #211d31; border-color: #342e4a; color: #d7d2e2; box-shadow: none;
+    }
+    :root[data-theme="dark"] .section h2,
+    :root[data-theme="dark"] .dom-name, :root[data-theme="dark"] .dc-house,
+    :root[data-theme="dark"] .exec-card h2, :root[data-theme="dark"] .narrative-card p,
+    :root[data-theme="dark"] .glossary-grid dt { color: #ece6fa; border-color: #342e4a; }
+    :root[data-theme="dark"] .section h2 { border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .exec-lines li { color: #d7d2e2; border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .dom-modern, :root[data-theme="dark"] .glossary-grid dd,
+    :root[data-theme="dark"] .explorer-hint, :root[data-theme="dark"] .dom-verdict,
+    :root[data-theme="dark"] .why-list li, :root[data-theme="dark"] .fidelity-note { color: #b6afc9; }
+    :root[data-theme="dark"] .strength-table th { color: #b9a9e0; }
+    :root[data-theme="dark"] .strength-table td, :root[data-theme="dark"] .avastha-table td { border-bottom-color: #2e2942; }
+    :root[data-theme="dark"] .health-cell, :root[data-theme="dark"] .grade-pill { color: #1b1826; }
+    :root[data-theme="dark"] .topic-nav { background: rgba(28,24,48,0.94); border-bottom-color: #342e4a; }
+    :root[data-theme="dark"] .topic-nav a, :root[data-theme="dark"] .nav-btn { color: #c8b8f0; }
+    :root[data-theme="dark"] .nav-btn { background: #262035; border-color: #342e4a; }
+    :root[data-theme="dark"] .narrative-card { background: #241f36; border-color: #383152; }
+    :root[data-theme="dark"] code { color: #c9a8f0; }
+    /* ---- print / PDF ---- */
+    @media print {
+      .topic-nav, .action-bar, .nav-tools { display: none !important; }
+      body { background: #fff !important; }
+      .section, .exec-card, .dom-card, .doctrine-card, .narrative-card { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+      details > summary { display: none; }
+      details > *:not(summary) { display: revert !important; }
+      .section h2 { break-after: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
   </style>
 </head>
 <body>
@@ -206,15 +620,75 @@
   {% set current_md_info = extras.current_mahadasha or {} %}
   {% set sequences = reading.sequences or {} %}
   {% set md_judgments = sequences.md_judgments or [] %}
-  {% set current_md = none %}
+  {% set mdns = namespace(current=none) %}
   {% for m in md_judgments %}
-    {% if m.is_current %}{% set current_md = m %}{% endif %}
+    {% if m.is_current %}{% set mdns.current = m %}{% endif %}
   {% endfor %}
+  {% set current_md = mdns.current %}
   {% set domains = reading.domains or {} %}
   {% set practitioner = reading.practitioner or {} %}
   {% set prac_by_module = practitioner.by_module or {} %}
   {% set yogas_all = prac_by_module.yogas_extended or [] %}
   {% set yogas_top = yogas_all[:5] %}
+  {% set panchanga = extras.panchanga or {} %}
+  {% set sav = (extras.ashtakavarga or {}).sav or [] %}
+  {% set avasthas = extras.avasthas or {} %}
+  {% set chara = (sequences.chara_dasha or {}).timeline or [] %}
+  {% set yogini = (sequences.yogini_dasha or {}).timeline or [] %}
+  {% set dasha_act = extras.dasha_activation or {} %}
+  {# ----- Phase 0/1: present-tense + real Raman per-house doctrine ----- #}
+  {% set dasha_now = extras.dasha_now or {} %}
+  {% set dn_md = dasha_now.md or {} %}
+  {% set dn_ad = dasha_now.ad or {} %}
+  {% set dn_birth = dasha_now.birth_balance or {} %}
+  {% set transits_now = extras.transits_now or {} %}
+  {% set house_doctrine = extras.house_doctrine or {} %}
+  {% set hd_houses = house_doctrine.houses or {} %}
+  {% set exec_summary = extras.executive_summary or [] %}
+  {% set master = extras.master or {} %}
+  {% set GRAHAS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'] %}
+  {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
+  {% set ad_judgments = sequences.ad_judgments or [] %}
+  {% set adns = namespace(current=none) %}
+  {% for a in ad_judgments %}{% if a.is_current %}{% set adns.current = a %}{% endif %}{% endfor %}
+  {# houses a dasha lord activates: what it occupies, deposits into, and aspects #}
+  {% macro house_activation(checks) %}
+    {% if checks %}
+    <div class="activation">
+      <div class="activation-title">Houses activated this period</div>
+      <ul class="activation-list">
+        {% for kk in ['bhaav_from_lagna', 'rashi_depositor', 'bhaavs_aspected_fully', 'commonality_significations',
+                      'house_placement_of_ad_lord', 'rulership_of_ad_lord', 'mutual_position_md_ad'] %}
+          {% set c = checks[kk] %}
+          {% if c and c.verdict %}
+          <li>
+            <span class="verdict-direction {{ c.direction }}">{{ c.direction }}</span>
+            {{ c.verdict }}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  {% endmacro %}
+  {# South-Indian chart: signs fixed in the 12 perimeter cells; planets placed by sign #}
+  {% macro south_chart(planets, lagna_sign, label) %}
+    {% set ABBR = {'Sun':'Su','Moon':'Mo','Mars':'Ma','Mercury':'Me','Jupiter':'Ju','Venus':'Ve','Saturn':'Sa','Rahu':'Ra','Ketu':'Ke'} %}
+    {% set LAYOUT = [12,1,2,3, 11,0,0,4, 10,0,0,5, 9,8,7,6] %}
+    <div class="south-grid">
+      {% for sgn in LAYOUT %}
+        {% if sgn == 0 %}
+          <div class="south-cell south-center"></div>
+        {% else %}
+          <div class="south-cell{% if sgn == lagna_sign %} south-lagna{% endif %}">
+            <span class="south-signno">{{ sgn }}</span>
+            <span class="south-bodies">{% if sgn == lagna_sign %}<b>La</b> {% endif %}{% for p, info in planets.items() %}{% if info.sign == sgn and p in ABBR %}{{ ABBR[p] }}{% if info.is_retrograde %}<sub>r</sub>{% endif %} {% endif %}{% endfor %}</span>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="south-label">{{ label }}</div>
+    </div>
+  {% endmacro %}
   {% set contradictions = reading.contradictions or [] %}
   {% set warnings = reading.warnings or [] %}
 
@@ -230,6 +704,34 @@
     </div>
   </div>
 
+  {# ---- sticky topic navigation + theme/collapse controls (UI polish) ---- #}
+  <nav class="topic-nav">
+    <div class="container" style="max-width: 920px;">
+      <div class="inner">
+        {% if extras.master %}<a href="#s-master">Master</a>{% endif %}
+        {% if extras.native_profile %}<a href="#s-native">Who you are</a>{% endif %}
+        {% if extras.classical_narrative %}<a href="#s-classical-read">Reading</a>{% endif %}
+        <a href="#s-summary">Summary</a>
+        {% if extras.domain_decisions %}<a href="#s-domains">Domains</a>{% endif %}
+        {% if extras.dasha_now %}<a href="#s-now">Now</a>{% endif %}
+        <a href="#s-charts">Charts</a>
+        {% if extras.planet_strength %}<a href="#s-strength">Strength</a>{% endif %}
+        {% if extras.planet_stories %}<a href="#s-planets">Planets</a>{% endif %}
+        {% if extras.classical_factors %}<a href="#s-classical">Classical</a>{% endif %}
+        {% if extras.house_doctrine %}<a href="#s-houses">Houses</a>{% endif %}
+        <a href="#s-timeline">Timeline</a>
+        {% if extras.life_timeline %}<a href="#s-life">Life arc</a>{% endif %}
+        {% if extras.raman_doctrine %}<a href="#s-raman">Raman</a>{% endif %}
+        <a href="#s-yogas">Yogas</a>
+        <a href="#s-method">Method</a>
+        <div class="nav-tools">
+          <button type="button" class="nav-btn" id="toggle-details" title="Expand or collapse all sections">Expand all</button>
+          <button type="button" class="nav-btn" id="toggle-theme" title="Switch light / dark">🌙 Dark</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
   <div class="container" style="max-width: 920px;">
     <div class="action-bar">
       <a href="/reading/v15/" class="btn btn-outline-secondary btn-sm">← New reading</a>
@@ -242,6 +744,270 @@
         Reading id: <code>{{ reading_id }}</code>
       </span>
     </div>
+
+    {# ============== Master summary — the ONE governing judgement (leads the report) ============== #}
+    {% if master %}
+    <div class="master-card" id="s-master">
+      <h2>Master summary
+        <span class="master-sub">the single judgement the whole reading derives from</span></h2>
+      {% if master.life_theme %}<p class="master-theme">{{ master.life_theme }}</p>{% endif %}
+      <div class="master-grid">
+        {% if master.dominant_planet %}
+        <div class="master-tile">
+          <div class="master-tile-h">Chart ruler</div>
+          <div class="master-tile-v">{{ master.dominant_planet.planet }}</div>
+          <div class="master-tile-d">{{ master.dominant_planet.reason }}</div>
+        </div>
+        {% endif %}
+        {% if master.dominant_yoga %}
+        <div class="master-tile">
+          <div class="master-tile-h">Defining combination</div>
+          <div class="master-tile-v">{{ master.dominant_yoga.name }}{% if master.dominant_yoga.sanskrit %} <em>({{ master.dominant_yoga.sanskrit }})</em>{% endif %}</div>
+          <div class="master-tile-d">{{ master.dominant_yoga.effect }}{% if master.dominant_yoga.reference %} <span class="master-cite">— {{ master.dominant_yoga.reference }}</span>{% endif %}</div>
+        </div>
+        {% endif %}
+        {% if master.dominant_challenge %}
+        <div class="master-tile">
+          <div class="master-tile-h">Recurring challenge</div>
+          <div class="master-tile-v">{{ master.dominant_challenge.label }}</div>
+          <div class="master-tile-d">{{ master.dominant_challenge.reason }}</div>
+        </div>
+        {% endif %}
+        {% if master.current_phase %}
+        <div class="master-tile">
+          <div class="master-tile-h">Phase now running</div>
+          <div class="master-tile-v">{{ master.current_phase.md_lord }} daśā{% if master.current_phase.span %} · {{ master.current_phase.span }}{% endif %}</div>
+          <div class="master-tile-d">{{ master.current_phase.summary }}</div>
+        </div>
+        {% endif %}
+      </div>
+      {% if master.core_strengths or master.core_weaknesses %}
+      <div class="master-caps">
+        {% if master.core_strengths %}
+        <div class="master-cap"><span class="master-cap-h">Core strengths</span>
+          {% for s in master.core_strengths %}<span class="master-chip pos">{{ s.label }}{% if s.potential %} · {{ s.potential }}{% endif %}</span>{% endfor %}
+        </div>
+        {% endif %}
+        {% if master.core_weaknesses %}
+        <div class="master-cap"><span class="master-cap-h">Asks for care</span>
+          {% for s in master.core_weaknesses %}<span class="master-chip neg">{{ s.label }}{% if s.potential %} · {{ s.potential }}{% endif %}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if master.decisive_factors %}
+      <details class="master-decisive" open>
+        <summary>What actually decides this reading <span class="master-cnt">({{ master.decisive_factors|length }} decisive factors)</span></summary>
+        <ul class="master-factor-list">
+          {% for f in master.decisive_factors %}
+          <li>
+            <span class="master-pol {{ f.polarity }}">{{ '+' if f.polarity == 'positive' else '−' }}</span>
+            {{ f.text }}
+            <span class="master-factor-dom">{{ f.domain }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <p class="master-foot">These are the pieces of evidence carrying the most weight across every domain — the reading leads with these; the full evidence sits in each section below.</p>
+      </details>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Who you are — the native profile (before the predictions) ============== #}
+    {% set native = extras.native_profile or {} %}
+    {% if native.styles %}
+    <div class="section native-card" id="s-native">
+      <h2>Who you are
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">your make-up, read from the governing grahas — before the life predictions</span></h2>
+      <div class="native-clarity">
+        <strong>{{ native.clarity_pct }}%</strong> of your governing grahas express their higher nature
+        ({{ native.clear }} clear, {{ native.strained }} under strain of {{ native.total }}) —
+        an internal reading of the chart's own signals, not a probability of events.
+      </div>
+      <div class="native-grid">
+        {% for s in native.styles %}
+        <div class="native-tile cond-{{ s.well_placed|string|lower }}">
+          <div class="native-h">{{ s.label }}
+            <span class="native-gov">{{ s.governor }}{% if s.planet_house_ord %} · {{ s.planet_house_ord }} house{% endif %}</span></div>
+          <div class="native-t">{{ s.text }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if native.validation_note %}<div class="fidelity-note" style="margin-top: 12px;">{{ native.validation_note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== A classical reading — in the manner of B. V. Raman (comes FIRST) ============== #}
+    {% set narrative = extras.classical_narrative or [] %}
+    {% if narrative %}
+    <div class="section classical-narrative" id="s-classical-read">
+      <h2>A classical reading — in the manner of B. V. Raman
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the judicial assessment, in his own sequence of reasoning</span></h2>
+      <p class="cn-intro">
+        Read from the horoscope itself — the ascendant, its lord, the Moon, the planets, the house
+        lords and the yogas judged in order, and only then the timing — in measured terms, as in
+        <em>How to Judge a Horoscope</em>. The numerical dashboard below expresses the same
+        judgments quantitatively.
+      </p>
+      {% for c in narrative %}
+        <h3 class="cn-chapter">{{ c.n }}. {{ c.title }}</h3>
+        {% for p in c.paras %}{% if p %}<p class="cn-para">{{ p }}</p>{% endif %}{% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# ============== Executive summary + house-health meter (Phase 1b/1e) ============== #}
+    {% if exec_summary or hd_houses %}
+    <div class="exec-card" id="s-summary">
+      <h2>Your reading at a glance</h2>
+      {% set narrative = extras.narrative or [] %}
+      {% if narrative %}
+      <div class="narrative-card">
+        {% for para in narrative %}<p>{{ para }}</p>{% endfor %}
+      </div>
+      {% endif %}
+      {% if exec_summary %}
+      <ul class="exec-lines">
+        {% for line in exec_summary %}<li>{{ line }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if hd_houses %}
+      <div class="why-col">House health — B. V. Raman's method (doctrine grade, not a probability)</div>
+      <div class="health-strip">
+        {% for h in range(1, 13) %}
+          {% set hv = hd_houses[h|string] or {} %}
+          {% set gi = hv.verdict_index %}
+          {% set gc = 'g' ~ gi if gi is not none else 'gNA' %}
+          <div class="health-cell {{ gc }}" title="{{ hv.verdict_label or 'not graded' }}">
+            <div class="hc-house">{{ h }}{{ {1:'st',2:'nd',3:'rd'}.get(h, 'th') if h not in [11,12,13] else 'th' }} house</div>
+            <span class="hc-area">{{ hv.life_area or '' }}</span>
+            <div class="hc-grade">{{ hv.verdict_label or '—' }}</div>
+            <div class="health-bar"><span style="width: {{ ((gi + 1) * 100 / 9)|round(0, 'floor')|int if gi is not none else 0 }}%;"></span></div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if house_doctrine.fidelity_note %}
+      <div class="fidelity-note">{{ house_doctrine.fidelity_note }}</div>
+      {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Life domains — decision view (#1,2,3,6,8,11,14) ============== #}
+    {% set decisions = extras.domain_decisions or [] %}
+    {% if decisions %}
+    <div class="section">
+      <h2 id="s-domains">Life domains — decision view
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">potential · timing · confidence, aggregated from the whole chart</span></h2>
+      <p class="explorer-hint">
+        Each score is a transparent roll-up of the real evidence — house grades, planet strength and the
+        daśā running now. It is a <strong>doctrine potential</strong> (0–100), not a probability that an
+        event will happen. <em>Potential</em> is the natal promise; <em>timing</em> is how strongly today's
+        period activates it; the two are resolved into one verdict rather than left contradictory.
+      </p>
+      {% set judgements = extras.judgements or {} %}
+      <div class="dom-grid">
+        {% for d in decisions %}
+        {% set gi = (d.potential_index|round|int) %}
+        {% set gi = 0 if gi < 0 else (8 if gi > 8 else gi) %}
+        {% set cf = (d.confidence|lower|replace(' ', '-')) %}
+        {% set tm = 'active' if d.timing == 'Active now' else 'warm' if d.timing == 'Warming up' else 'quiet' %}
+        {% set jg = judgements[d.key] or {} %}
+        <div class="dom-card">
+          <div class="dom-head">
+            <span class="dom-name">{{ d.label }}</span>
+            <span class="dom-score g{{ gi }}" title="doctrine potential 0–100">{{ d.score }}</span>
+          </div>
+          <div class="dom-modern">{{ d.modern }}</div>
+          <div class="dom-badges">
+            <span class="badge g{{ gi }}">Potential: {{ d.potential }}</span>
+            <span class="badge tim-{{ tm }}">{{ d.timing }}{% if d.current_tier %} · {{ d.current_tier }}{% endif %}</span>
+            <span class="badge cf-{{ cf }}" title="{{ d.confidence_reason }}">{{ d.confidence }}{% if d.confidence_pct is not none %} · {{ d.confidence_pct }}%{% endif %}</span>
+          </div>
+          {# the single reconciled verdict (conflict-resolution engine) #}
+          <div class="dom-verdict">{{ jg.verdict or d.verdict }}</div>
+          {% if jg.positive or jg.negative %}
+          <details class="dom-why">
+            <summary>How the evidence was weighed (+{{ jg.weighted_positive }} vs −{{ jg.weighted_negative }})</summary>
+            <ul class="ev-list">
+              {% for c in jg.positive %}<li><span class="ev-w p">+{{ c.contrib }}</span><span>{{ c.text }}</span></li>{% endfor %}
+              {% for c in jg.negative %}<li><span class="ev-w n">{{ c.contrib }}</span><span>{{ c.text }}</span></li>{% endfor %}
+            </ul>
+            <div class="ev-foot">Weighted by Raman's hierarchy (lagna · lord · Moon · 9th/10th lords rank highest); the dominant side decides the verdict.</div>
+          </details>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if house_doctrine.fidelity_note %}<div class="fidelity-note" style="margin-top:10px;">{{ house_doctrine.fidelity_note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Opportunities & risks (#9,#10) ============== #}
+    {% set opportunities = extras.opportunities or [] %}
+    {% set risks = extras.risks or [] %}
+    {% if opportunities or risks %}
+    <div class="section">
+      <h2>Opportunities &amp; risks <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">where to lean in, and where to take care</span></h2>
+      <div class="opprisk-row">
+        <div class="opprisk-col opps">
+          <h3>Lean into</h3>
+          {% if opportunities %}
+          <ul>{% for o in opportunities %}<li>{{ o }}</li>{% endfor %}</ul>
+          {% else %}<p class="empty">No standout strengths clear the bar on this chart — progress comes from steady effort.</p>{% endif %}
+        </div>
+        <div class="opprisk-col risks">
+          <h3>Take care of</h3>
+          {% if risks %}
+          <ul>{% for r in risks %}<li>{{ r }}</li>{% endfor %}</ul>
+          {% else %}<p class="empty">No pronounced risk areas surfaced.</p>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {# ============== Where you are now — present-tense daśā + transits (Phase 0) ============== #}
+    {% if dn_md or transits_now %}
+    <div class="section">
+      <h2 id="s-now">Where you are now <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the period &amp; transits running today</span></h2>
+      <div class="now-strip">
+        {% if dn_md.md_lord %}
+        <div class="now-tile">
+          <div class="nt-label">Mahādaśā running now</div>
+          <div class="nt-value">{{ dn_md.md_lord }}</div>
+          <div class="nt-sub">{{ dn_md.start_date }} → {{ dn_md.end_date }}
+            {% if dn_md.age_now_years is not none %}· age {{ "%.0f"|format(dn_md.age_now_years) }}{% endif %}</div>
+          {% if dn_ad.md_progress_fraction is not none %}
+          <div class="now-progress"><span style="width: {{ (dn_ad.md_progress_fraction * 100)|round|int }}%;"></span></div>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if dn_ad.ad_lord %}
+        <div class="now-tile">
+          <div class="nt-label">Antardaśā running now</div>
+          <div class="nt-value">{{ dn_ad.ad_lord }}</div>
+          <div class="nt-sub">{{ dn_ad.start_date }} → {{ dn_ad.end_date }}</div>
+        </div>
+        {% endif %}
+        {% if transits_now %}
+        <div class="now-tile">
+          <div class="nt-label">Saturn transit</div>
+          <div class="nt-value">{{ "Sade-Sati" if transits_now.sade_sati_active else "House " ~ transits_now.saturn_from_moon }}</div>
+          <div class="nt-sub">
+            {% if transits_now.sade_sati_active %}7½-yr Saturn phase active{% else %}Saturn {{ transits_now.saturn_from_moon }}th from the Moon{% endif %}
+            {% if transits_now.active_double_transit_bhavas %} · double transit on {{ transits_now.active_double_transit_bhavas|join(', ') }}{% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% if dn_birth.md_lord %}
+      <div class="birth-daza-note" style="margin-top: 12px;">
+        <strong>At birth</strong> you were in the balance of <strong>{{ dn_birth.md_lord }}</strong> mahādaśā
+        ({{ dn_birth.start_date }} → {{ dn_birth.end_date }}) — that is the daśā <em>at your birth</em>, not today's.
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
 
     {# ============== Chart overview ============== #}
     <div class="section">
@@ -290,10 +1056,287 @@
       </div>
     </div>
 
-    {# ============== Current Mahadasha summary ============== #}
+    {# ============== Chart diagrams (Rāśi + Navāṁśa) ============== #}
+    {% set dlag = extras.divisional_lagnas or {} %}
+    {% set d9chart = (extras.divisional_charts or {}).D9_Navamsa or {} %}
+    {% if chart.planets %}
+    <div class="section">
+      <h2 id="s-charts">Chart diagrams <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">South-Indian · abbrev. Su Mo Ma Me Ju Ve Sa Ra Ke, La = lagna</span></h2>
+      <div class="charts-row">
+        <div class="chart-cell">
+          <div class="chart-caption">Rāśi (D1)</div>
+          {{ south_chart(chart.planets, dlag.D1, 'Rāśi') }}
+        </div>
+        {% if d9chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Navāṁśa (D9)</div>
+          {{ south_chart(d9chart, dlag.D9, 'Navāṁśa') }}
+        </div>
+        {% endif %}
+      </div>
+      {# ---- extra vargas: D10 career, D7 children, D12 parents (#11) ---- #}
+      {% set d10chart = (extras.divisional_charts or {}).D10_Dasamsa or {} %}
+      {% set d7chart = (extras.divisional_charts or {}).D7_Saptamsa or {} %}
+      {% set d12chart = (extras.divisional_charts or {}).D12_Dwadasamsa or {} %}
+      {% if d10chart or d7chart or d12chart %}
+      <div class="charts-row" style="margin-top: 14px;">
+        {% if d10chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Daśāṁśa (D10) — career</div>
+          {{ south_chart(d10chart, dlag.D10, 'D10') }}
+        </div>
+        {% endif %}
+        {% if d7chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Saptāṁśa (D7) — children</div>
+          {{ south_chart(d7chart, dlag.D7, 'D7') }}
+        </div>
+        {% endif %}
+        {% if d12chart %}
+        <div class="chart-cell">
+          <div class="chart-caption">Dvādaśāṁśa (D12) — parents</div>
+          {{ south_chart(d12chart, dlag.D12, 'D12') }}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Planet strength — composite + 5 components (#4,#13) ============== #}
+    {% set pstr = extras.planet_strength or {} %}
+    {% macro stars(n) %}{% if n is none %}<span style="color:#bbb;">—</span>{% else %}<span class="stars">{% for i in range(5) %}{% if i < n %}★{% else %}<span class="star-off">★</span>{% endif %}{% endfor %}</span>{% endif %}{% endmacro %}
+    {% if pstr.planets %}
+    <div class="section">
+      <h2 id="s-strength">Planet strength <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">composite 0–100 from five classical measures</span></h2>
+      <table class="strength-table">
+        <thead>
+          <tr>
+            <th>Planet</th><th class="num">Composite</th>
+            <th>Dignity</th><th>Ṣaḍbala</th><th>Digbala</th>
+            <th>Vimsopaka</th><th>Avasthā</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in pstr.planets %}
+          {% set ci = ((r.composite or 0) / 100 * 8)|round|int %}
+          <tr>
+            <td><strong>{{ r.planet }}</strong> <span style="color:#889;font-size:0.72rem;">H{{ r.house or '—' }}</span>{% if r.combust %} <span class="combust-flag" title="combust — too close to the Sun">☉</span>{% endif %}</td>
+            <td class="num"><span class="grade-pill g{{ ci if ci <= 8 else 8 }}" style="font-size:0.9rem;">{{ r.composite if r.composite is not none else '—' }}</span></td>
+            <td>{{ stars(r.stars.dignity) }} <span class="dig-tag dig-{{ r.dignity }}" style="font-size:0.62rem;">{{ r.dignity or '' }}</span></td>
+            <td>{{ stars(r.stars.shadbala) }} <span class="raw-n" title="Ṣaḍbala total ÷ requirement">{% if r.shadbala_ratio is not none %}{{ "%.2f"|format(r.shadbala_ratio) }}×{% else %}—{% endif %}</span></td>
+            <td>{{ stars(r.stars.digbala) }}</td>
+            <td>{{ stars(r.stars.vimsopaka) }} <span class="raw-n" title="Vimsopaka rupas out of 20">{{ r.vimsopaka if r.vimsopaka is not none else '—' }}/20</span></td>
+            <td>{{ stars(r.stars.avastha) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if pstr.note %}<div class="fidelity-note">{{ pstr.note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Planet stories + interaction matrix (Phase C) ============== #}
+    {% set stories = extras.planet_stories or [] %}
+    {% set interactions = extras.interactions or [] %}
+    {% if stories %}
+    <div class="section" id="s-planets">
+      <h2>The planets in your chart
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">each graha's role, condition and arc — the dominant one is your central thread</span></h2>
+      <div class="pstory-list">
+        {% for s in stories %}
+        <div class="pstory{% if s.is_dominant %} pstory-dom{% endif %}">
+          <div class="pstory-h">{{ s.planet }}{% if s.is_dominant %} <span class="pstory-badge">central thread</span>{% endif %}
+            <span class="pstory-cond cond-{{ s.condition|replace(' ', '-') }}">{{ s.condition }}</span></div>
+          <div class="pstory-t">{{ s.text }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if interactions %}
+      <h3 class="pstory-inter-h">How your planets interact</h3>
+      <ul class="pstory-inter">
+        {% for r in interactions %}
+        <li><span class="pstory-rel rel-{{ r.relation }}">{{ r.relation }}</span> {{ r.effect }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Advanced classical factors (#12) ============== #}
+    {% set cf = extras.classical_factors or {} %}
+    {% if cf.functional %}
+    <div class="section" id="s-classical">
+      <h2>Advanced classical factors
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">functional nature · maraka/badhaka · retrogression · yogas of reversal</span></h2>
+      <table class="strength-table">
+        <thead><tr><th>Planet</th><th>Functional nature</th><th>Rules houses</th><th>Roles</th></tr></thead>
+        <tbody>
+          {% for f in cf.functional %}
+          <tr>
+            <td><strong>{{ f.planet }}</strong></td>
+            <td><span class="dig-tag {{ 'dig-own' if f.nature=='benefic' else 'dig-debilitated' if f.nature=='malefic' else 'dig-neutral' }}">{{ f.nature }}</span></td>
+            <td>{{ f.houses_ruled|join(', ') if f.houses_ruled else '—' }}</td>
+            <td>{% for t in f.tags %}<span class="cf-chip">{{ t }}</span>{% endfor %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="cf-callouts">
+        {% set yks = cf.functional|selectattr('is_yogakaraka')|map(attribute='planet')|list %}
+        {% if yks %}<div class="cf-note ok"><strong>Yogakāraka:</strong> {{ yks|join(', ') }} — a single planet giving both power and fortune.</div>{% endif %}
+        {% if cf.marakas %}<div class="cf-note"><strong>Maraka (life-limiting) lords:</strong> {{ cf.marakas|join(', ') }} — significant in end-of-life daśās, not day-to-day.</div>{% endif %}
+        {% if cf.badhaka and cf.badhaka.planet %}<div class="cf-note"><strong>Badhaka:</strong> the {{ cf.badhaka.house }}th lord {{ cf.badhaka.planet }} — the classical “obstructor” for your Lagna.</div>{% endif %}
+        {% if cf.retrograde %}<div class="cf-note"><strong>Retrograde:</strong> {{ cf.retrograde|join(', ') }} — inward, revisiting themes; results often mature later.</div>{% endif %}
+        {% for g in cf.graha_yuddha %}<div class="cf-note warn"><strong>Graha-Yuddha:</strong> {{ g.a }} and {{ g.b }} are at war in sign {{ g.sign }} (orb {{ g.orb }}°) — {{ g.winner }} prevails.</div>{% endfor %}
+        {% for v in cf.vipareeta %}<div class="cf-note ok"><strong>Vipareeta Rāja-yoga:</strong> {{ v.planet }} rules the {{ v.rules|join('/') }} and sits in the {{ v.name }} house — adversity turned to gain.</div>{% endfor %}
+        {% for n in cf.neecha_bhanga %}<div class="cf-note ok"><strong>Neecha-Bhaṅga:</strong> {{ n.planet }}'s debilitation is cancelled ({{ n.reasons|join('; ') }}) — weakness redeemed.</div>{% endfor %}
+      </div>
+      {% if cf.note %}<div class="fidelity-note">{{ cf.note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Daśā activation explorer (interactive) ============== #}
+    {% if dasha_act.planets and chart.planets %}
+    {% set lag = dasha_act.lagna_sign %}
+    {% set cur_md_lord = (extras.current_mahadasha or {}).mahadasha_lord %}
+    {% set cur_ad_lord = adns.current.ad_lord if adns.current else none %}
+    <div class="section">
+      <h2>Daśā activation explorer</h2>
+      <p class="explorer-hint">Pick a Mahādaśā and Antardaśā lord — each bhāva is coloured by Raman's fructification tier (HTJAH ch. IV). A lord <b>activates</b> a house by any of six factors: <i>owns · occupies · aspects the house · aspects its lord · conjoins its lord · is its lord from the Moon</i>. The MD × AD tier ladder is: <b>par excellence</b> → <b>predominant</b> → <b>limited</b> → <b>dormant</b>.</p>
+      <div class="explorer-controls">
+        <label>MD lord
+          <select id="md-lord-sel">
+            {% for g in GRAHAS %}{% if g in dasha_act.planets %}<option value="{{ g }}"{% if g == cur_md_lord %} selected{% endif %}>{{ g }}</option>{% endif %}{% endfor %}
+          </select>
+        </label>
+        <label>AD lord
+          <select id="ad-lord-sel">
+            {% for g in GRAHAS %}{% if g in dasha_act.planets %}<option value="{{ g }}"{% if g == cur_ad_lord %} selected{% endif %}>{{ g }}</option>{% endif %}{% endfor %}
+          </select>
+        </label>
+      </div>
+      <div class="tier-legend">
+        <span class="lg tier-par" title="both lords influence the house AND are mutually associated">par excellence <small>both lords + associated</small></span>
+        <span class="lg tier-pre" title="both the major and sub lords influence the house">predominant <small>both lords</small></span>
+        <span class="lg tier-lim" title="only one of the two lords influences the house">limited <small>one lord</small></span>
+        <span class="lg tier-dor" title="neither lord influences the house — no results of this house">dormant <small>neither — no results</small></span>
+      </div>
+      <p id="dasha-explorer-note" class="explorer-note"></p>
+      <div class="south-grid" id="dasha-explorer-grid">
+        {% set LAYOUT = [12,1,2,3, 11,0,0,4, 10,0,0,5, 9,8,7,6] %}
+        {% for sgn in LAYOUT %}
+          {% if sgn == 0 %}
+            <div class="south-cell south-center"></div>
+          {% else %}
+            {% set hse = ((sgn - lag) % 12) + 1 %}
+            <div class="south-cell act-cell tier-dor" data-sign="{{ sgn }}" data-house="{{ hse }}">
+              <span class="south-signno">{{ sgn }}</span>
+              <span class="act-house">H{{ hse }}{% if sgn == lag %} · La{% endif %}</span>
+              <span class="act-bodies">{% for p, info in chart.planets.items() %}{% if info.sign == sgn and p in ABBR %}{{ ABBR[p] }} {% endif %}{% endfor %}</span>
+              <span class="act-marks"></span>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="south-label">Rāśi</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        // Mirrors app/medini/doctrine/domains/house_judgment.py _pair_tier/_associated.
+        var ACT = {{ dasha_act | tojson }};
+        if (!ACT || !ACT.planets) return;
+        var mdSel = document.getElementById('md-lord-sel');
+        var adSel = document.getElementById('ad-lord-sel');
+        var noteEl = document.getElementById('dasha-explorer-note');
+        var cells = document.querySelectorAll('#dasha-explorer-grid .act-cell');
+        var FAB = {'owns': 'own', 'occupies': 'occ', 'aspects house': 'asp-H',
+                   'aspects lord': 'asp-L', 'conjoins lord': 'con-L', 'lord from Moon': 'MoonL'};
+        function ab(fs) { return fs.map(function (x) { return FAB[x] || x; }).join(', '); }
+        function factors(lord, h) {
+          var p = ACT.planets[lord];
+          return (p && p.influences[h]) ? p.influences[h] : null;   // array or null
+        }
+        function associated(a, b) {
+          if (a === b) return false;
+          var pa = ACT.planets[a], pb = ACT.planets[b];
+          if (!pa || !pb) return false;
+          if (pa.occ === pb.occ) return true;                        // conjoined
+          return pa.aspects.indexOf(pb.occ) >= 0 || pb.aspects.indexOf(pa.occ) >= 0;
+        }
+        var TIER_CLASS = {'par excellence': 'tier-par', 'predominant': 'tier-pre',
+                          'limited': 'tier-lim', 'dormant': 'tier-dor'};
+        function paint() {
+          var md = mdSel.value, ad = adSel.value, assoc = associated(md, ad);
+          cells.forEach(function (cell) {
+            var h = cell.getAttribute('data-house');
+            var mF = factors(md, h), aF = factors(ad, h), tier;
+            if (mF && aF) tier = assoc ? 'par excellence' : 'predominant';
+            else if (mF || aF) tier = 'limited';
+            else tier = 'dormant';
+            cell.classList.remove('tier-par', 'tier-pre', 'tier-lim', 'tier-dor');
+            cell.classList.add(TIER_CLASS[tier]);
+            var marks = '';
+            if (mF) marks += '<span class="act-mark lvl2">MD ' + ab(mF) + '</span>';
+            if (aF) marks += '<span class="act-mark lvl1">AD ' + ab(aF) + '</span>';
+            cell.querySelector('.act-marks').innerHTML = marks;
+            cell.setAttribute('title', 'House ' + h + ' — ' + tier
+              + (mF ? '\nMD ' + md + ': ' + mF.join(', ') : '')
+              + (aF ? '\nAD ' + ad + ': ' + aF.join(', ') : ''));
+          });
+          if (noteEl) {
+            noteEl.textContent = 'MD ' + md + ' & AD ' + ad + (md === ad
+              ? ' (same lord)'
+              : assoc
+                ? ' are associated — shared houses fructify “par excellence”.'
+                : ' are not associated — shared houses are “predominant”.');
+          }
+        }
+        mdSel.addEventListener('change', paint);
+        adSel.addEventListener('change', paint);
+        paint();
+      })();
+    </script>
+    {% endif %}
+
+    {# ============== Panchānga (five limbs of the birth day) ============== #}
+    {% if panchanga %}
+    <div class="section">
+      <h2>Panchānga — the five limbs of the birth day</h2>
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="k">Vāra (weekday)</div>
+          <div class="v">{{ panchanga.vara.name if panchanga.vara else "—" }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Tithi</div>
+          <div class="v">
+            {% if panchanga.tithi %}{{ panchanga.tithi.name }}{% if panchanga.tithi.paksha %} ({{ panchanga.tithi.paksha }}){% endif %}{% else %}—{% endif %}
+          </div>
+        </div>
+        <div class="kv">
+          <div class="k">Nakshatra</div>
+          <div class="v">
+            {% if panchanga.nakshatra %}{{ panchanga.nakshatra.name }}{% if panchanga.nakshatra.pada %} · pāda {{ panchanga.nakshatra.pada }}{% endif %}{% if panchanga.nakshatra.lord %} · lord {{ panchanga.nakshatra.lord }}{% endif %}{% else %}—{% endif %}
+          </div>
+        </div>
+        <div class="kv">
+          <div class="k">Yoga</div>
+          <div class="v">{{ panchanga.yoga.name if panchanga.yoga else "—" }}</div>
+        </div>
+        <div class="kv">
+          <div class="k">Karana</div>
+          <div class="v">{{ panchanga.karana.name if panchanga.karana else "—" }}</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {# ============== Mahādaśā at birth (balance) — this is birth-relative, NOT today ============== #}
     {% if current_md %}
     <div class="section">
-      <h2>Current Mahadasha — {{ current_md.md_lord }}</h2>
+      <h2>Mahādaśā at birth — {{ current_md.md_lord }}
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the daśā running when you were born · today's period is under “Where you are now”</span></h2>
       {% set ov = current_md.overall_verdict %}
       {% if ov %}
       <div class="verdict {{ ov.direction }}">
@@ -320,6 +1363,159 @@
           </div>
         </div>
       </div>
+      {{ house_activation(current_md.checks) }}
+    </div>
+    {% endif %}
+
+    {# ============== Current Antardasha (bhukti within the MD) ============== #}
+    {% if adns.current %}
+    <div class="section">
+      <h2>Current Antardasha — {{ adns.current.ad_lord }}
+        <span style="font-weight: normal; color: #7a5a9a;">in {{ adns.current.md_lord }} Mahādaśā</span></h2>
+      {% set aov = adns.current.overall_verdict %}
+      {% if aov %}
+      <div class="verdict {{ aov.direction }}">
+        <span class="verdict-direction {{ aov.direction }}">{{ aov.direction }}</span>
+        {{ aov.verdict }}
+      </div>
+      {% endif %}
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="k">Window</div>
+          <div class="v">{{ adns.current.start_date }} → {{ adns.current.end_date }}</div>
+        </div>
+      </div>
+      {{ house_activation(adns.current.checks) }}
+    </div>
+    {% endif %}
+
+    {# ============== Life timeline — full-life mahādaśā eras (Phase D) ============== #}
+    {% set life_timeline = extras.life_timeline or {} %}
+    {% if life_timeline.eras %}
+    <div class="section" id="s-life">
+      <h2>Your life in periods
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">the whole mahādaśā sequence — past, present and future — with each period's areas</span></h2>
+      <div class="life-eras">
+        {% for e in life_timeline.eras %}
+        <div class="life-era era-{{ e.status }} tone-{{ e.tone }}">
+          <div class="life-era-top">
+            <span class="life-lord">{{ e.lord }}</span>
+            {% if e.status == 'current' %}<span class="life-cycle">{{ e.cycle }} · {{ e.progress_pct }}%</span>{% endif %}
+          </div>
+          <div class="life-era-span">{% if e.year_start %}{{ e.year_start }}–{{ e.year_end }}{% endif %}
+            <span class="life-age">age {{ e.age_start }}–{{ e.age_end }}</span></div>
+          {% if e.areas %}<div class="life-areas">{{ e.areas|join(' · ') }}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if life_timeline.note %}<div class="fidelity-note">{{ life_timeline.note }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Mahadasha timeline ============== #}
+    {% if md_judgments %}
+    <div class="section">
+      <h2 id="s-timeline">Mahādaśā timeline</h2>
+      <ul class="dasha-timeline">
+        {% for m in md_judgments %}
+        {% set is_now = dn_md.md_lord and m.md_lord == dn_md.md_lord and m.start_date == dn_md.start_date %}
+        <li class="dasha-row {% if is_now %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+          {% set mov = m.overall_verdict %}
+          <span class="verdict-direction {{ mov.direction if mov else 'neutral' }}">{{ mov.direction if mov else 'n/a' }}</span>
+          <span class="dasha-lord">{{ m.md_lord }}</span>
+          <span class="dasha-window">{{ m.start_date }} → {{ m.end_date }}</span>
+          {% if is_now %}<span class="dasha-badge">running now</span>{% endif %}
+          {% if m.is_current %}<span class="dasha-badge" style="background:#e6dcc4; color:#6a4a1a;">at birth</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {# ============== House-by-house — B. V. Raman's method (Phase 1c/1d) ============== #}
+    {% if hd_houses %}
+    <div class="section">
+      <h2 id="s-houses">House-by-house — Raman's method
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">how each verdict is reached · why · the evidence</span></h2>
+      <p class="explorer-hint">
+        Each house is graded on its lord, occupants, aspects and kāraka — in both the Rāśi (D1, promise)
+        and the Navāṁśa (D9, fruition). The three checks below are independent; when they agree, confidence is high.
+      </p>
+      {% for h in range(1, 13) %}
+        {% set hv = hd_houses[h|string] or {} %}
+        {% if hv %}
+        {% set gi = hv.verdict_index %}
+        {% set conf = hv.confidence or {} %}
+        <details class="doctrine-card">
+          <summary>
+            <span class="dc-house">{{ h }}{{ {1:'st',2:'nd',3:'rd'}.get(h,'th') if h not in [11,12,13] else 'th' }} house</span>
+            <span class="dc-area">{{ hv.life_area }}</span>
+            <span class="grade-pill {{ 'g' ~ gi if gi is not none else 'gNA' }}">{{ hv.verdict_label or '—' }}</span>
+            {% if hv.timing and hv.timing.current_tier %}
+            <span class="grade-pill" style="background:#efe6ff;border-color:#d8c8f0;color:#5a3a8a;" title="how strongly the daśā running today activates this house">daśā now: {{ hv.timing.current_tier }}</span>
+            {% endif %}
+          </summary>
+          <div class="doctrine-body">
+            {% if hv.synthesis %}<p style="font-size:0.9rem;color:#3a2a5a;margin:6px 0 10px;">{{ hv.synthesis }}</p>{% endif %}
+
+            {# ---- 1c: evidence-based confidence checklist ---- #}
+            <div class="conf-checklist">
+              {% for chk in ['house','lord','karaka'] %}
+                {% set vote = (conf.votes or {})[chk] %}
+                <span class="conf-check {{ vote if vote else 'na' }}">
+                  {% if vote == 'positive' %}✓{% elif vote == 'guarded' %}~{% else %}·{% endif %}
+                  {{ chk }} check{% if not vote %} (n/a){% endif %}
+                </span>
+              {% endfor %}
+              <span class="conf-band">— {{ conf.agreement or 0 }} of {{ conf.graded or 0 }} checks concur ({{ conf.band or 'partial' }})</span>
+            </div>
+
+            {# ---- 1c: D1/D9 agreement per factor ---- #}
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+              {% for chk in ['house','lord','karaka'] %}
+                {% set ag = (hv.d1d9 or {})[chk] or 'neutral' %}
+                <span class="d1d9-badge {{ ag }}" title="Rāśi (promise) vs Navāṁśa (fruition)">{{ chk }}: D1/D9 {{ ag }}</span>
+              {% endfor %}
+            </div>
+
+            {# ---- 1d: the "why" — real engine findings per factor ---- #}
+            {% for factor in ['lagna','lord','karaka'] %}
+              {% set fv = hv[factor] or {} %}
+              {% if fv.findings %}
+              <div class="why-col">{{ fv.role or factor }} — {{ fv.subject }} · {{ fv.label }}</div>
+              <ul class="why-list">
+                {% for f in fv.findings %}
+                <li>
+                  <span class="why-sign {{ 'pos' if f.delta > 0 else 'neg' if f.delta < 0 else 'zero' }}">{{ '+' if f.delta > 0 else '−' if f.delta < 0 else '·' }}</span>
+                  <span>{{ f.text }}</span>
+                  <span class="why-frame">{{ f.frame }}{% if f.criterion %} · {{ f.criterion }}{% endif %}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </details>
+        {% endif %}
+      {% endfor %}
+      {% if house_doctrine.fidelity_note %}
+      <div class="fidelity-note">{{ house_doctrine.fidelity_note }} · {{ house_doctrine.method }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Chart tensions / contradictions (#10) ============== #}
+    {% set tensions = extras.tensions or [] %}
+    {% if tensions %}
+    <div class="section">
+      <h2>Chart tensions <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">where the testimony is divided — read these with nuance</span></h2>
+      <p class="explorer-hint">
+        Real splits the engine found: the Rāśi (promise) and Navāṁśa (fruition) disagree, or a house's
+        lord and kāraka pull opposite ways. They temper a headline verdict rather than overturn it.
+      </p>
+      <ul class="tension-list">
+        {% for t in tensions %}<li>{{ t.text }}</li>{% endfor %}
+      </ul>
     </div>
     {% endif %}
 
@@ -399,6 +1595,194 @@
       {% endif %}
     </div>
 
+    {# ============== In B. V. Raman's words — cited favourable combinations ============== #}
+    {% set rd = extras.raman_doctrine or {} %}
+    {% if rd.favorable %}
+    <div class="section" id="s-raman">
+      <h2>In B. V. Raman's words
+        <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">favourable combinations his texts state for your chart — verbatim &amp; cited</span></h2>
+      <p class="explorer-hint">
+        The engine is B. V. Raman's own doctrine encoded rule-by-rule; <strong>{{ rd.total_applicable }}</strong>
+        of his rules apply to your chart. Below are the favourable ones his books state — cautions are
+        covered by the measured Chart-tensions and Risks sections above, not by blunt classical
+        prognostications (which the population validation did not bear out).
+      </p>
+      <ul class="raman-list">
+        {% for f in rd.favorable %}
+        <li>
+          <span class="raman-text">{{ f.text }}</span>
+          <span class="raman-cite">— B. V. Raman, <em>{{ f.book_label }}</em>{% if f.house %} · {{ f.house }}{{ {1:'st',2:'nd',3:'rd'}.get(f.house,'th') if f.house not in [11,12,13] else 'th' }} house{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if rd.books %}
+      <div class="raman-books"><strong>Grounded in B. V. Raman's works:</strong>
+        {% for b in rd.books %}{{ b.label }} <span style="color:#8a7a9a;">({{ b.fired }})</span>{% if not loop.last %} · {% endif %}{% endfor %}
+      </div>
+      {% endif %}
+      {% if rd.note %}<div class="fidelity-note">{{ rd.note }}</div>{% endif %}
+      {% if rd.source_scope %}<div class="fidelity-note" style="font-style: italic;">{{ rd.source_scope }}</div>{% endif %}
+    </div>
+    {% endif %}
+
+    {# ============== Classical yogas (full named catalog, cited) ============== #}
+    {% set classical_yogas = reading.classical_yogas or [] %}
+    <div class="section">
+      <h2 id="s-yogas">Classical yogas {% if classical_yogas %}({{ classical_yogas|length }} present){% endif %}</h2>
+      {% if classical_yogas %}
+        <ul class="yogas-list">
+          {% for y in classical_yogas|sort(attribute='intensity', reverse=true) %}
+            {% set pct = (y.intensity * 100)|round|int %}
+            <li>
+              <div class="yoga-head">
+                <span><strong>{{ y.name }}</strong>{% if y.sanskrit %} <span style="color:#7a5a9a;">{{ y.sanskrit }}</span>{% endif %}</span>
+                <span class="yoga-strength" title="how fully the yoga is formed">
+                  <span class="yoga-bar"><span style="width: {{ pct }}%;"></span></span>
+                  {{ pct }}%{% if y.intensity >= 1.0 %} · full{% elif y.intensity >= 0.5 %} · partial{% endif %}
+                </span>
+              </div>
+              {% if y.participants %}<div class="yoga-parts">formed by {{ y.participants|join(', ') }}</div>{% endif %}
+              {% if y.description %}<div class="yoga-desc">{{ y.description }}</div>{% endif %}
+              {% if y.reference %}<div class="rule" style="font-family: ui-monospace, monospace; font-size: 0.75rem; color: #7a5a9a;">{{ y.reference }}</div>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No classical yogas present in this chart.</p>
+      {% endif %}
+    </div>
+
+    {# ============== Sarvāṣṭakavarga (bhāva strength) ============== #}
+    {% if sav and sav|length == 12 %}
+    <div class="section">
+      <h2>Sarvāṣṭakavarga <span style="font-weight: normal; color: #7a5a9a; font-size: 0.85rem;">bindus per bhāva (≥28 strong · ≤25 weak)</span></h2>
+      <div class="sav-row">
+        {% for b in sav %}
+        <div class="sav-cell {% if b >= 28 %}strong{% elif b <= 25 %}weak{% else %}mid{% endif %}">
+          <div class="sav-house">H{{ loop.index }}</div>
+          <div class="sav-bindu">{{ b }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# ============== Alternative daśās (collapsed) ============== #}
+    {% if chara or yogini %}
+    <details class="domain-card">
+      <summary><span>Alternative daśās — Chara &amp; Yogini</span></summary>
+      <div class="domain-body">
+        {% if chara %}
+        <div class="chart-caption">Chara daśā (Jaimini, sign-based)</div>
+        <ul class="dasha-timeline">
+          {% for m in chara %}
+          <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+            <span class="dasha-lord">{{ m.md_sign_name }}</span>
+            <span class="dasha-window">{{ m.start_date }} → {{ m.end_date }}</span>
+            {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if yogini %}
+        <div class="chart-caption" style="margin-top: 0.8rem;">Yogini daśā</div>
+        <ul class="dasha-timeline">
+          {% for m in yogini %}
+          <li class="dasha-row {% if m.is_current %}current{% elif m.is_past %}past{% else %}future{% endif %}">
+            <span class="dasha-lord">{{ m.yogini }}</span>
+            <span class="dasha-window">{{ m.ruling_planet }} · {{ m.start_date }} → {{ m.end_date }}</span>
+            {% if m.is_current %}<span class="dasha-badge">current</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </details>
+    {% endif %}
+
+    {# ============== Planetary avasthās (collapsed) ============== #}
+    {% if avasthas %}
+    <details class="domain-card">
+      <summary><span>Planetary avasthās (states)</span></summary>
+      <div class="domain-body">
+        <table class="avastha-table">
+          <thead><tr><th>Planet</th><th>Bālādi</th><th>Jāgradādi</th><th>Benefic asp.</th><th>Malefic asp.</th></tr></thead>
+          <tbody>
+            {% for p, a in avasthas.items() %}
+            <tr>
+              <td>{{ p }}</td>
+              <td>{{ a.baladi or "—" }}</td>
+              <td>{{ a.jagradadi or "—" }}</td>
+              <td>{{ a.benefic_aspects if a.benefic_aspects is not none else "—" }}</td>
+              <td>{{ a.malefic_aspects if a.malefic_aspects is not none else "—" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
+    {% endif %}
+
+    {# ============== How these conclusions are reached — method + validation ============== #}
+    <details class="section" id="s-method" open>
+      <summary style="cursor:pointer;"><h2 style="display:inline;">How these conclusions are reached — method &amp; validation</h2></summary>
+      <div style="margin-top: 12px;">
+        <p class="explorer-hint">
+          Every verdict here is produced by <strong>B. V. Raman's own doctrine, encoded rule-by-rule</strong>
+          — not opinion. This is the derivation chain, and how faithfully it reproduces Raman's own
+          printed verdicts when tested on charts it was never tuned on.
+        </p>
+        <div class="why-col">The derivation chain</div>
+        <ol class="method-steps">
+          <li>The chart is cast in the Lahiri sidereal frame with whole-sign houses (the Vedic frame Raman uses).</li>
+          <li>Each house is graded on its <strong>lord, occupants, aspects and kāraka</strong>, judged in both the Rāśi (D1, promise) and the Navāṁśa (D9, fruition) — per <em>How to Judge a Horoscope</em>.</li>
+          <li>Those combine into a <strong>9-grade verdict</strong> (afflicted → very powerful); whether the three independent checks (house · lord · kāraka) agree gives the confidence band.</li>
+          <li>A planet <strong>activates</strong> a house by Raman's six HTJAH influence factors (owns / occupies / aspects the house / aspects its lord / conjoins its lord / lord-from-the-Moon); the mahādaśā × antardaśā running now sets the fructification tier (par excellence → predominant → limited → dormant).</li>
+          <li>Domain scores roll up the relevant houses, keeping <strong>potential</strong> (natal promise) separate from <strong>timing</strong> (what the current daśā activates) — never blended into one misleading number.</li>
+        </ol>
+        <div class="why-col">How faithfully it reproduces Raman's own verdicts (held-out — never tuned on these)</div>
+        <table class="valid-table">
+          <thead><tr><th>Axis</th><th>What is measured</th><th class="num">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Timing</td><td>Mahādaśā lord vs Raman's printed daśā (50 real births)</td><td class="num">94%</td></tr>
+            <tr><td>Daśā balance</td><td>Starting-lord vs Raman's printed balance (30 charts)</td><td class="num">93%</td></tr>
+            <tr><td>Strength</td><td>Within one grade of Raman's printed verdict — held-out (N=58)</td><td class="num">58.6%</td></tr>
+            <tr><td>Strength</td><td>Within one grade on fresh, fully-unseen charts (N=14)</td><td class="num">78.6%</td></tr>
+            <tr><td>Longevity</td><td>8th-bhāva strength vs Raman's longevity ordering (Spearman ρ)</td><td class="num">+0.50</td></tr>
+          </tbody>
+        </table>
+        <div class="fidelity-note" style="margin-top:10px;">
+          Honest scope: the timing and daśā arithmetic are strong (≈94%); the 9-grade
+          <em>strength</em> read sits near a ~53–58% within-one ceiling — the engine is a faithful
+          <em>encoder</em> of Raman's method, bounded by roughly one grade of his own self-consistency.
+          Separately, a population reality-check (Track B) found the doctrine's <em>predictive</em>
+          claims (vocation, death-timing) do not hold at population scale — so this reading reports
+          Raman's doctrine faithfully and deliberately does not over-claim outcome prediction. Both
+          facts are shown, neither buried.
+        </div>
+      </div>
+    </details>
+
+    {# ============== Glossary of terms (#15) ============== #}
+    <details class="section" style="margin-top: 4px;">
+      <summary style="cursor:pointer;"><h2 style="display:inline;">Glossary — the terms in this reading</h2></summary>
+      <dl class="glossary-grid" style="margin-top: 12px;">
+        <dt>Rāśi (D1)</dt><dd>The main birth chart — the "promise" of the horoscope.</dd>
+        <dt>Navāṁśa (D9)</dt><dd>The ninth-division chart — the "fruition", how the promise actually plays out.</dd>
+        <dt>Mahādaśā</dt><dd>A major planetary period (years to decades) in the Vimśottarī system that colours a whole life-phase.</dd>
+        <dt>Antardaśā (bhukti)</dt><dd>A sub-period within a mahādaśā — the more immediate texture of the time.</dd>
+        <dt>Lord</dt><dd>The planet that rules a house's sign; its condition is the house's chief testimony.</dd>
+        <dt>Kāraka</dt><dd>The natural significator of a matter (e.g. Venus for marriage), judged alongside the house.</dd>
+        <dt>Vimsopaka</dt><dd>A 0–20 composite of a planet's strength across sixteen divisional charts.</dd>
+        <dt>Ṣaḍbala</dt><dd>The classical "six-fold strength"; shown as a fraction of the required minimum (≥1.0 meets it).</dd>
+        <dt>Sarvāṣṭakavarga</dt><dd>A points (bindu) system rating each house's overall support (≥28 strong, ≤25 weak).</dd>
+        <dt>Combustion</dt><dd>A planet too close to the Sun, which weakens its ability to give results.</dd>
+        <dt>Sade-Sati</dt><dd>The ~7½-year phase while Saturn transits the signs around the natal Moon.</dd>
+        <dt>Papakartari</dt><dd>"Scissors" affliction — a planet or house hemmed between two malefics.</dd>
+        <dt>Doctrine grade</dt><dd>A verdict on B. V. Raman's 9-step strength scale — a faithful reading of the method, not a probability.</dd>
+      </dl>
+    </details>
+
     {# ============== Contradictions (only if any) ============== #}
     {% if contradictions %}
     <div class="section">
@@ -439,5 +1823,38 @@
       Enrichment: {{ "on" if reading.meta.enrichment_enabled else "off" }}
     </div>
   </div>
+
+  <script>
+    // Theme: honour saved choice, else the OS preference. Toggle persists.
+    (function () {
+      var root = document.documentElement;
+      var saved = null;
+      try { saved = localStorage.getItem('reading-theme'); } catch (e) {}
+      var initial = saved || (window.matchMedia
+        && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      root.setAttribute('data-theme', initial);
+      var themeBtn = document.getElementById('toggle-theme');
+      function paintThemeBtn() {
+        if (!themeBtn) return;
+        themeBtn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️ Light' : '🌙 Dark';
+      }
+      paintThemeBtn();
+      if (themeBtn) themeBtn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('reading-theme', next); } catch (e) {}
+        paintThemeBtn();
+      });
+
+      // Expand / collapse all <details> sections.
+      var detBtn = document.getElementById('toggle-details');
+      if (detBtn) detBtn.addEventListener('click', function () {
+        var dets = document.querySelectorAll('details');
+        var anyClosed = Array.prototype.some.call(dets, function (d) { return !d.open; });
+        Array.prototype.forEach.call(dets, function (d) { d.open = anyClosed; });
+        detBtn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+      });
+    })();
+  </script>
 </body>
 </html>

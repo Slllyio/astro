@@ -1,0 +1,703 @@
+{
+ "source": "HTJAH Vol 2 Ch XVI (12th house) -- held-out (non-tuned); vision-agent extract, gate-verified",
+ "house": 12,
+ "charts": [
+  {
+   "chart_no": 233,
+   "birth_line": "Born 12-2-1856 at 12-21 p.m. (L.M.T.) at 18 N, 84 E.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Libra",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Virgo",
+    "Mars": "Libra",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Libra",
+    "Saturn": "Libra",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of the Venus Dasa at birth : 12 years, 5 months and 21 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Rasi Aquarius cell is PRINTED 'Sun Mercury Ketu', but Rahu is in Aries (with Moon) and Ketu is in Libra (with Mars), which are exactly opposite and match the prose; the third body in Aquarius must be Jupiter (only missing graha), so the printed 'Ketu' there is a book/scan error corrected to Jupiter. Rasi lagna Taurus derived from prose 'the Moon, karaka for the 4th house, occupies the 12th from the Ascendant' (Moon in Aries = 12th from Taurus); Mars in Libra 7th-aspects Moon+Rahu in Aries. This chart illustrates the Bhavartha Ratnakara dictum (4th-house karaka Moon in the 12th) rather than grading the strength of the 12th house/lord/karaka, so no 12th-factor strength verdicts are given.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 234,
+   "birth_line": "Born 29-2-1896 at 1-00 p.m. (L.M.T.) at 20 N 36, 72 E 59",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Leo",
+    "Mars": "Capricorn",
+    "Mercury": "Capricorn",
+    "Jupiter": "Cancer",
+    "Venus": "Capricorn",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Scorpio",
+    "Mars": "Aquarius",
+    "Mercury": "Cancer",
+    "Jupiter": "Virgo",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 0 years, 4 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Venus is in the 8th with exalted Mars lord of the 6th and the 11th."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Venus",
+     "phrase": "The presence of Lagna lord in a dusthana, and of karaka Venus who is also the 12th lord afflicted by Mars is responsible for it."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Rahu Aquarius / Ketu Leo opposite (both charts). Prose confirms Lagna Gemini (Ascendant lord Mercury in 8th = Capricorn), 12th lord Venus in 8th with exalted Mars. Saturn read as exalted in Libra (bottom-row cell, right of centre).",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 236,
+   "birth_line": "Born 20/21-2-1879 at 5 a.m. (L.M.T.) at 13 N 5, 80 E 2.",
+   "lagna_rasi": "Capricorn",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Sagittarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Aquarius",
+    "Saturn": "Pisces",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Sagittarius",
+    "Mars": "Libra",
+    "Mercury": "Libra",
+    "Jupiter": "Libra",
+    "Venus": "Gemini",
+    "Saturn": "Libra",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Rahu's Dasa at birth : 11 years, 8 months and 28 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 12th house in Chart No. 236 is occupied by Mars and Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Jupiter, though in the 2nd, is in Aquarius, a spiritual sign and the centre of a powerful pravrajyaka yoga (yoga for renunciation). The 12th lord is hemmed inbetween malefics which denied the native both the pleasures and comforts of a bed."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Capricorn (Rahu there); Rahu Capricorn / Ketu Cancer opposite. Jupiter (12th lord) in 2nd = Aquarius stellium (Ven, Sun, Moon, Mercury, Jupiter). The drawn chart clearly shows Saturn in Pisces (3rd house), which is what creates the papakartari 'hemmed between malefics' on Jupiter in Aquarius (flanked by Rahu in Capricorn and Saturn in Pisces). NOTE this conflicts with the bhava verdict prose 'The 12th house ... is occupied by Mars and Saturn' — only Mars is in the 12th (Sagittarius) in the diagram; Saturn (Pisces) merely 10th-aspects the 12th. Verdict recorded verbatim as printed.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 237,
+   "birth_line": "Born 8-4-1919 at 7-00 p.m. (G.M.T.) at 19 S 40. 30 E 00.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Cancer",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Gemini",
+    "Venus": "Aries",
+    "Saturn": "Leo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Libra",
+    "Mars": "Taurus",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Saturn's Dasa at birth : 6 years, 6 months and 20 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "In Chart No. 237, the 12th lord aspects the 12th along with the Lagna lord Mars."
+    },
+    {
+     "factor": "bhava",
+     "phrase": "Jupiter and Saturn also aspect it."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn aspecting the 12th from the 10th is responsible for this voluntary missionary work."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Scorpio; 12th = Libra (empty). Rahu Scorpio / Ketu Taurus opposite in both charts. All prose aspects verified: 12th lord Venus + lagna lord Mars in Aries 7th-aspect Libra; Jupiter in Gemini (5th aspect) and Saturn in Leo/10th (3rd aspect) both aspect Libra.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 238,
+   "birth_line": "Born 10-10-1917 at 10-21 p.m. (L.M.T) at 27 N 30, 77 E 43.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Cancer",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Taurus",
+    "Venus": "Scorpio",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Aquarius",
+    "Mars": "Aquarius",
+    "Mercury": "Aries",
+    "Jupiter": "Cancer",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 4 years, 9 months and 19 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 12th house is occupied by the spiritual planet Jupiter who is also the 10th lord."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Venus aspects the 12th house from the 6th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Gemini; Rahu Sagittarius / Ketu Gemini opposite; Jupiter in 12th (Taurus, exalted 10th lord) and 12th lord Venus in 6th (Scorpio) 7th-aspecting the 12th, both prose-confirmed. Sat+Mars+Moon in Cancer; Merc+Sun in Virgo. Navamsa Rahu Leo / Ketu Aquarius opposite.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 239,
+   "birth_line": "Born 7-4-1893 at 9-31 a.m. (L.M.T.) at 20 N 56, 75 E 55.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Sagittarius",
+    "Mars": "Taurus",
+    "Mercury": "Pisces",
+    "Jupiter": "Aries",
+    "Venus": "Pisces",
+    "Saturn": "Virgo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Taurus",
+    "Mercury": "Scorpio",
+    "Jupiter": "Cancer",
+    "Venus": "Capricorn",
+    "Saturn": "Gemini",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Ketu's Dasa at birth : 6 years, 4 months and 4 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Venus in Chart No. 239 is exalted and is with the Lagna lord and the Sun aspected by the 9th lord Saturn."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Gemini; Rahu Aries / Ketu Libra opposite (rasi), Rahu Gemini / Ketu Sagittarius opposite (navamsa). 12th lord Venus exalted in Pisces (=10th) with lagna lord Mercury and Sun, Saturn (9th lord, in Virgo) 7th-aspects them; Jupiter in Aries hemmed between Sun (Pisces) and Mars (Taurus) = bandhana/papakartari. All prose-confirmed. Second lord phrase in prose: 'the 12th lord Venus is exalted powerfully with the result the native enjoyed comforts of the bed.'",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 245,
+   "birth_line": "Born 4-7-1738 at 7-46 a.m. (L.M.T.) at 51 N 30, 0 W 05.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Sagittarius",
+    "Mars": "Pisces",
+    "Mercury": "Gemini",
+    "Jupiter": "Aries",
+    "Venus": "Gemini",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Leo",
+    "Moon": "Libra",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Capricorn",
+    "Saturn": "Sagittarius",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 6 years, 8 months and 12 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 12th house, in Chart No. 245, is occupied by Venus, Saturn and its own lord Mercury. It is aspected by Mars and Lagna lord the Moon."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The affliction by malefics to the 12th house and its lord led the native to squander money in the pursuit of pleasures. But the 12th lord in the 12th with Venus also gave him the benefit of his pursuits."
+    }
+   ],
+   "confidence": "high",
+   "notes": "12th house=Gemini (Venus, Saturn, Mercury), Lagna Cancer, all prose-confirmed. Navamsa Sun/Venus placements medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 246,
+   "birth_line": "Born 7-8-1887 at 1-21 p.m. (L.M.T.) at 11 N, 77 E 1.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Gemini",
+    "Mercury": "Cancer",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Cancer",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Cancer",
+    "Mars": "Gemini",
+    "Mercury": "Libra",
+    "Jupiter": "Scorpio",
+    "Venus": "Aquarius",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Jupiter's Dasa at birth : 0 year, 8 months and 5 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Venus, lord of the 12th house, in Chart No. 246, occupies the 11th house in debility aspected by Saturn, Mars and the Moon. This weakens the 12th house and gives wasteful expenditure."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Venus (12th lord) debilitated in Virgo=11th confirmed by prose; Saturn(Cancer 3rd-aspect), Mars(Gemini 4th-aspect), Moon(Pisces opposition) all aspect Virgo as prose states. Navamsa medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 247,
+   "birth_line": "Born 2-10-1869 at 7-45 a.m. (LM.T.) at 21 N 37, 69 E 49.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Libra",
+    "Jupiter": "Taurus",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Aries",
+    "Mars": "Gemini",
+    "Mercury": "Capricorn",
+    "Jupiter": "Capricorn",
+    "Venus": "Taurus",
+    "Saturn": "Sagittarius",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Ketu's Dasa at birth : 6 years, 10 months and 28 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Chart No. 247 has the Sun in the 12th powerfully aspected by Jupiter, a natural benefic, which made the native spiritual."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The presence of the 8th lord and the 12th lord in a kendra has resulted in a Bandhana Yoga."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Libra confirmed: 12th=Virgo(Sun), 12th lord Mercury with Venus in Libra Lagna, Saturn in Scorpio (papakartari on Venus with Sun in Virgo). Jupiter in 8th=Taurus. Navamsa medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 248,
+   "birth_line": "Born 28-5-1883 at 9-25 p.m. (LMT) at 18 N 23, 73 E 53.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Aquarius",
+    "Mars": "Aries",
+    "Mercury": "Gemini",
+    "Jupiter": "Gemini",
+    "Venus": "Aries",
+    "Saturn": "Taurus",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Scorpio",
+    "Mars": "Gemini",
+    "Mercury": "Libra",
+    "Jupiter": "Aquarius",
+    "Venus": "Leo",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 1 year, 1 month and 26 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The affliction to the 12th house from the Sun and Saturn—two bitter enemies in the same sign—made the native a revolutionary who was interned for political reasons."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The conjunction of the 6th and the 12th lords Venus and Mars respectively are also responsible for the native's incarcerations."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Sagittarius; 12th=Scorpio, 12th lord Mars in Aries with 6th lord Venus (conjunction). Navamsa Ketu in Virgo=10th from Lagna aspected by Mars/Saturn/Rahu all prose-confirmed.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 249,
+   "birth_line": "Born 14-11-1889 at 11-03 p.m. (LMT) at 25 N 25, 82 E.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Cancer",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Sagittarius",
+    "Venus": "Libra",
+    "Saturn": "Leo",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Pisces",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 13 years, 7 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Malefics in the 2nd, 5th, 9th and 12th houses cause captivity. Saturn is in the 2nd, the Sun is in the 5th, Mars aspects the 9th house and Rahu occupies the 12th almost fulfilling all the requirements of Bandhana Yoga."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mercury and Venus are also between malefics Mars and the Sun and are aspected by 6th lord Saturn."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Ascendant Cancer; Rahu in 12th=Gemini, Saturn 2nd=Leo, Sun 5th=Scorpio, Mars 12th-lord in Virgo aspecting 9th=Pisces, Merc+Venus in Libra papakartari; all prose-confirmed. Navamsa medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 250,
+   "birth_line": "Born 19-5-1910 at 8-29 a.m. (I.S.T.) at 18 N 31, 73 E 52.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Sagittarius",
+    "Mars": "Gemini",
+    "Mercury": "Taurus",
+    "Jupiter": "Sagittarius",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Pisces",
+    "Mercury": "Taurus",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Gemini",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of the Moon's Dasa at birth : 9 years, 5 months and 16 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 12th house in Chart No. 250 is occupied by Mercury the Lagna lord, the Sun and Rahu. It is further afflicted by a papakartari yoga caused by debilitated 8th lord Saturn and the malefic 6th lord Mars."
+    }
+   ],
+   "confidence": "low",
+   "notes": "Lagna Gemini confirmed: 12th=Taurus with Mercury(Lagna lord)+Sun+Rahu; papakartari by Saturn(Aries, debil 8th lord) and Mars(Gemini, 6th lord). Rahu firmly Taurus(12th) per prose, so Ketu forced to Scorpio (opposition); scan appears to show a Ketu glyph near bottom-left corner (Sagittarius) which would violate the mandatory Rahu-Ketu opposition, so Ketu recorded as Scorpio. Moon+Jupiter bottom-left placement (Sagittarius) is uncertain; low confidence on these node/bottom-row cells.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 251,
+   "birth_line": "Born 24-3-1883 at 6 p.m. (L.M.T.) at 13 N, 77 E 35.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Virgo",
+    "Mars": "Aquarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Gemini",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Leo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of the Moon's Dasa at birth : 6 years.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 251 the 2nd and 12th houses are heavily afflicted."
+    },
+    {
+     "factor": "bhava",
+     "phrase": "Mars and Mercury are in the 12th house aspected by Saturn while Rahu-Ketu conjointly act on the 2nd house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Pisces; 12th=Aquarius with Mars(2nd lord)+Mercury aspected by Saturn(Taurus); Sun in Pisces papakartari between Ketu(Aries) and Mars(Aquarius); Rahu Libra opposite Ketu Aries. All prose-confirmed. Karaka of eyes named as Sun (natural significator of eye) but not the 12th-house significator, so omitted.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 253,
+   "birth_line": "Born 1-8-1947 at 10-10 p.m. (IST) at 14 N 49, 74 E 15.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Capricorn",
+    "Mars": "Taurus",
+    "Mercury": "Gemini",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Cancer",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Aries",
+    "Mars": "Virgo",
+    "Mercury": "Gemini",
+    "Jupiter": "Taurus",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of the Moon's Dasa at birth : 7 years, 10 months and 24 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Saturn is in Cancer in close conjunction with his bitter enemy and 6th lord the Sun."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Venus",
+     "phrase": "Venus, the karaka for eyes, is also with Saturn."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Pisces; 12th lord Saturn in Cancer with 6th lord Sun and karaka Venus (all prose-confirmed); 2nd lord Mars afflicted by Rahu in Taurus, so Ketu forced to Scorpio (opposition). Scan appears to place a Ketu glyph and Jupiter near bottom-left; Jupiter recorded in Sagittarius and Ketu in Scorpio to satisfy the mandatory node opposition—medium confidence on these two cells.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 254,
+   "birth_line": "Born 2-8-1951 at 1-35 p.m. (I.S.T.) at 13 N, 77 E 30.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Cancer",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Pisces",
+    "Venus": "Leo",
+    "Saturn": "Virgo",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Libra",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Saturn's Dasa at birth : 8 years, 5 months and 14 days.",
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Venus occupies an inimical sign with Ketu and is subject to a papakartari yoga caused by the Sun and Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Venus",
+     "phrase": "Venus, the karaka, is afflicted by a blemished Mercury so that the root of the trouble is traceable to the nervous system."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Scorpio derived from prose: 12th lord Venus (Libra=12th) with Ketu in inimical Leo (Sun's sign) papakartari between Sun(Cancer,12th-from-Leo) and Saturn(Virgo,2nd-from-Leo); 2nd lord Jupiter in own sign Pisces; Rahu Aquarius opposite Ketu Leo. Navamsa Jupiter cell (Capricorn) medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 255,
+   "birth_line": "Born 23/24-7-1933 at 1-40 a.m. (I.S.T.) at 21 N 9, 79 E 9.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Cancer",
+    "Mars": "Libra",
+    "Mercury": "Cancer",
+    "Jupiter": "Leo",
+    "Venus": "Leo",
+    "Saturn": "Capricorn",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Gemini",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Taurus",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Mercury's Dasa at birth : 9 years, 11 months and 10 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 12th house in Chart No. 255 is aspected by the 12th lord Mars and the divine planet Jupiter."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Taurus confirmed: Lagna lord Venus in 4th=Leo with Ketu+Jupiter; 9th lord Saturn in 9th=Capricorn aspecting Sun/Moon/Mercury in Cancer; Rahu Aquarius opposite Ketu Leo. Mars is at the RASI bottom and must aspect 12th=Aries per prose; recorded in Libra (7th aspect to Aries) but exact bottom cell (Libra vs Scorpio) uncertain—medium confidence on Mars. Navamsa medium confidence.",
+   "house_judged": 12
+  },
+  {
+   "chart_no": 256,
+   "birth_line": "Born 19-9-1936 at 10-50 a.m. (I.S.T.) at 10 N 30, 78 E 45.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Libra",
+    "Mars": "Leo",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Virgo",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Capricorn",
+    "Mars": "Taurus",
+    "Mercury": "Cancer",
+    "Jupiter": "Pisces",
+    "Venus": "Virgo",
+    "Saturn": "Gemini",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Rahu's Dasa at birth : 9 years and 3 months.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 9th lord Moon occupies the 12th house or mokshasthana and hemmed in between benefics, Jupiter on one side and Venus and Mercury on the other."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 12th lord Venus also receives no malefic aspects. He is in Virgo, vargottama and debilitated, with the Sun and Mercury."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Scorpio: 9th lord Moon in 12th=Libra hemmed between Jupiter(Scorpio) and Venus+Mercury(Virgo); 12th lord Venus vargottama+debilitated in Virgo (Virgo in both D1 and D9, confirmed) with Sun+Mercury; Rahu Sagittarius opposite Ketu Gemini. Mars recorded in Leo (RASI right column, no prose constraint)—medium confidence. Navamsa medium confidence.",
+   "house_judged": 12
+  }
+ ]
+}

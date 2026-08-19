@@ -1,0 +1,12 @@
+# One-click deploy of the reading backend on Render (https://render.com).
+# New > Blueprint > point at this repo. The free plan sleeps when idle and
+# wakes on the next request (first load is slow); upgrade for always-on.
+services:
+  - type: web
+    name: kundli-reading
+    runtime: docker
+    plan: free
+    healthCheckPath: /reading/v15/
+    envVars:
+      - key: PORT
+        value: "8000"

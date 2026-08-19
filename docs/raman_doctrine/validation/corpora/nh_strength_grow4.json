@@ -1,0 +1,125 @@
+{
+ "source": "Notable Horoscopes (BVR) — fourth growth batch (grow4): the 46 candidates culled by map v1 as unmappable, recovered under the extended pre-registered verdict map v2 (increment 27; map extended BLIND before this re-triage). 46 -> 18 mechanically re-triaged (mappable under v2, deduped, gandhi's dropped as chapter-misattributed) -> 17 after the 3-agent adversarial audit (1 refuted 3/3: nero's Sun graded qua dasa lord).",
+ "note": "Every row: verbatim Lagna-frame verdict, graded by verdict_grade_map.json v2.",
+ "rows": [
+  {
+   "key": "jesus",
+   "name": "Jesus Christ",
+   "house": 9,
+   "factor": "bhava",
+   "phrase": "an exceptionally powerful disposition of Jupiter and the 9th house"
+  },
+  {
+   "key": "narasimha_bharathi",
+   "name": "Sri Narasimha Bharathi",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "exalted and free from any affliction"
+  },
+  {
+   "key": "rajendra_prasad",
+   "name": "Rajendra Prasad",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "Kalatrabhava is well fortified"
+  },
+  {
+   "key": "sc_bose",
+   "name": "Subhas Chandra Bose",
+   "house": 11,
+   "factor": "bhava",
+   "phrase": "well fortified"
+  },
+  {
+   "key": "sc_bose",
+   "name": "Subhas Chandra Bose",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "free from affliction"
+  },
+  {
+   "key": "tilak",
+   "name": "Bala Gangadhara Tilak",
+   "house": 1,
+   "factor": "bhava",
+   "phrase": "Lagna and Lagna lord fully fortified"
+  },
+  {
+   "key": "tilak",
+   "name": "Bala Gangadhara Tilak",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Lagna and Lagna lord fully fortified"
+  },
+  {
+   "key": "vivekananda",
+   "name": "Swami Vivekananda",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "free from affliction"
+  },
+  {
+   "key": "buddha",
+   "name": "Sri Gautama Buddha",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Hence Lagna lord is immensely fortified."
+  },
+  {
+   "key": "buddha",
+   "name": "Sri Gautama Buddha",
+   "house": 1,
+   "factor": "karaka",
+   "phrase": "The Sun in this horoscope is strong par excellence, not only as natural Atmakaraka, but also by longitudinal position"
+  },
+  {
+   "key": "einstein",
+   "name": "Albert Einstein",
+   "house": 2,
+   "factor": "karaka",
+   "phrase": "Dhanakaraka is well placed"
+  },
+  {
+   "key": "marx",
+   "name": "Karl Marx",
+   "house": 10,
+   "factor": "bhava",
+   "phrase": "The 10th house is rendered null and void"
+  },
+  {
+   "key": "marx",
+   "name": "Karl Marx",
+   "house": 2,
+   "factor": "bhava",
+   "phrase": "the house of wealth is doubtless well fortified"
+  },
+  {
+   "key": "nero",
+   "name": "Emperor Nero",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "The 7th house is ill-disposed"
+  },
+  {
+   "key": "sankara",
+   "name": "Sri Adi Sankaracharya",
+   "house": 1,
+   "factor": "lord",
+   "phrase": "Lagna lord Moon though occupying the 12th is rendered highly fortified, by the combined aspects of Saturn (lord of 7), Jupiter(lord of 9), and Mars (yogakaraka)"
+  },
+  {
+   "key": "sankara",
+   "name": "Sri Adi Sankaracharya",
+   "house": 4,
+   "factor": "lord",
+   "phrase": "the 4th lord well placed"
+  },
+  {
+   "key": "shivaji",
+   "name": "Shivaji the Great",
+   "house": 5,
+   "factor": "lord",
+   "phrase": "The 5th lord Jupiter is doubtless well placed"
+  }
+ ]
+}

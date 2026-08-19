@@ -1,0 +1,460 @@
+{
+  "corpus": "data/raman_saab/death_corpus_run3.parquet",
+  "n_persons": 2091,
+  "build_stats": {
+    "cast": 2091,
+    "dropped": 0
+  },
+  "perm_samples": 1000,
+  "seed": 20260703,
+  "n_primary_tests": 4,
+  "bonferroni_alpha": 0.0025,
+  "preflight_shuffled_pairing": {
+    "primary": {
+      "leg1_maraka": {
+        "rr": 0.9932,
+        "z": -0.269,
+        "p": 0.6059273404805285
+      },
+      "leg2_gochara": {
+        "rr": 0.9535,
+        "z": -1.681,
+        "p": 0.9535867400373693
+      },
+      "leg3_ayurdaya": {
+        "rr": 1.0195,
+        "z": 0.716,
+        "p": 0.23693889476222896
+      },
+      "triple_lock": {
+        "rr": 1.0207,
+        "z": 0.223,
+        "p": 0.4117760919119585
+      }
+    },
+    "pass": true
+  },
+  "results": [
+    {
+      "test": "leg1_maraka",
+      "tier": "primary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 826,
+      "expected": 844.71,
+      "var": 451.2,
+      "rr": 0.9779,
+      "z": -0.881,
+      "p_one_sided": 0.8107681571525058
+    },
+    {
+      "test": "leg2_gochara",
+      "tier": "primary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 800,
+      "expected": 784.45,
+      "var": 470.44,
+      "rr": 1.0198,
+      "z": 0.717,
+      "p_one_sided": 0.2367495434005052
+    },
+    {
+      "test": "leg3_ayurdaya",
+      "tier": "primary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 706,
+      "expected": 683.7,
+      "var": 344.97,
+      "rr": 1.0326,
+      "z": 1.201,
+      "p_one_sided": 0.11492471861891312
+    },
+    {
+      "test": "triple_lock",
+      "tier": "primary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 102,
+      "expected": 102.87,
+      "var": 91.16,
+      "rr": 0.9915,
+      "z": -0.091,
+      "p_one_sided": 0.5363424063079791
+    },
+    {
+      "test": "leg1_md",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 483,
+      "expected": 492.4,
+      "var": 316.07,
+      "rr": 0.9809,
+      "z": -0.529,
+      "p_one_sided": 0.7015835006249546
+    },
+    {
+      "test": "leg1_ad",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 481,
+      "expected": 479.08,
+      "var": 356.08,
+      "rr": 1.004,
+      "z": 0.102,
+      "p_one_sided": 0.459478315576974
+    },
+    {
+      "test": "t1_sade_sati",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 524,
+      "expected": 525.33,
+      "var": 378.51,
+      "rr": 0.9975,
+      "z": -0.068,
+      "p_one_sided": 0.5272717875620331
+    },
+    {
+      "test": "t2_saturn_8h",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 177,
+      "expected": 170.93,
+      "var": 153.07,
+      "rr": 1.0355,
+      "z": 0.491,
+      "p_one_sided": 0.3118793005834314
+    },
+    {
+      "test": "t3_double_transit_8h",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 246,
+      "expected": 238.97,
+      "var": 202.97,
+      "rr": 1.0294,
+      "z": 0.494,
+      "p_one_sided": 0.310826117512106
+    },
+    {
+      "test": "triple_plus_t4",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 60,
+      "expected": 68.64,
+      "var": 63.01,
+      "rr": 0.8742,
+      "z": -1.088,
+      "p_one_sided": 0.8616923459500103
+    },
+    {
+      "test": "leg1_and_leg2",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 302,
+      "expected": 318.75,
+      "var": 256.18,
+      "rr": 0.9474,
+      "z": -1.047,
+      "p_one_sided": 0.852410381591248
+    },
+    {
+      "test": "leg1_and_leg3",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 272,
+      "expected": 276.18,
+      "var": 206.09,
+      "rr": 0.9849,
+      "z": -0.291,
+      "p_one_sided": 0.6144318347037112
+    },
+    {
+      "test": "leg2_and_leg3",
+      "tier": "secondary",
+      "null": "permutation",
+      "n": 2091,
+      "observed": 280,
+      "expected": 254.85,
+      "var": 202.27,
+      "rr": 1.0987,
+      "z": 1.768,
+      "p_one_sided": 0.03849464864607411
+    }
+  ],
+  "ayurdaya_confusion": {
+    "matrix_pred_x_obs": [
+      [
+        38,
+        246,
+        453
+      ],
+      [
+        22,
+        225,
+        416
+      ],
+      [
+        31,
+        217,
+        443
+      ]
+    ],
+    "bands": [
+      "ALPAYU",
+      "MADHYAYU",
+      "PURNAYU"
+    ],
+    "accuracy": 0.3376,
+    "chance_pe": 0.327,
+    "cohens_kappa": 0.0158
+  },
+  "robustness": {
+    "jitter15_seed1": {
+      "n": 2091,
+      "flip_fraction": 0.1425,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9924,
+          "z": -0.303,
+          "p": 0.6191077721584033
+        },
+        "leg2_gochara": {
+          "rr": 1.0142,
+          "z": 0.514,
+          "p": 0.30352404727452953
+        },
+        "leg3_ayurdaya": {
+          "rr": 1.0115,
+          "z": 0.428,
+          "p": 0.3343291391992611
+        },
+        "triple_lock": {
+          "rr": 0.9519,
+          "z": -0.522,
+          "p": 0.6990531471465772
+        }
+      }
+    },
+    "jitter15_seed2": {
+      "n": 2091,
+      "flip_fraction": 0.1334,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9633,
+          "z": -1.462,
+          "p": 0.9280761147564872
+        },
+        "leg2_gochara": {
+          "rr": 1.0224,
+          "z": 0.812,
+          "p": 0.20829976016826462
+        },
+        "leg3_ayurdaya": {
+          "rr": 1.0275,
+          "z": 1.017,
+          "p": 0.15457431255281623
+        },
+        "triple_lock": {
+          "rr": 0.964,
+          "z": -0.392,
+          "p": 0.6524336490385462
+        }
+      }
+    },
+    "fixed_hour_00": {
+      "n": 2091,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9959,
+          "z": -0.163,
+          "p": 0.564688393948385
+        },
+        "leg2_gochara": {
+          "rr": 1.0033,
+          "z": 0.121,
+          "p": 0.4519567545255624
+        },
+        "leg3_ayurdaya": {
+          "rr": 0.9857,
+          "z": -0.524,
+          "p": 0.6998572318325461
+        },
+        "triple_lock": {
+          "rr": 0.9299,
+          "z": -0.755,
+          "p": 0.7748995160014619
+        }
+      }
+    },
+    "fixed_hour_06": {
+      "n": 2091,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 1.0159,
+          "z": 0.622,
+          "p": 0.2669718820902101
+        },
+        "leg2_gochara": {
+          "rr": 1.0185,
+          "z": 0.671,
+          "p": 0.25118932985227715
+        },
+        "leg3_ayurdaya": {
+          "rr": 0.9937,
+          "z": -0.233,
+          "p": 0.5921222019109035
+        },
+        "triple_lock": {
+          "rr": 0.9349,
+          "z": -0.724,
+          "p": 0.7654588737847261
+        }
+      }
+    },
+    "fixed_hour_12": {
+      "n": 2091,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9892,
+          "z": -0.427,
+          "p": 0.6652566109009626
+        },
+        "leg2_gochara": {
+          "rr": 1.0185,
+          "z": 0.673,
+          "p": 0.250509082381577
+        },
+        "leg3_ayurdaya": {
+          "rr": 0.9572,
+          "z": -1.632,
+          "p": 0.9487082268007955
+        },
+        "triple_lock": {
+          "rr": 1.0077,
+          "z": 0.087,
+          "p": 0.4654169113686572
+        }
+      }
+    },
+    "fixed_hour_18": {
+      "n": 2091,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9945,
+          "z": -0.221,
+          "p": 0.5873976454821179
+        },
+        "leg2_gochara": {
+          "rr": 1.0181,
+          "z": 0.658,
+          "p": 0.2551478598933233
+        },
+        "leg3_ayurdaya": {
+          "rr": 0.9929,
+          "z": -0.257,
+          "p": 0.6014069551470139
+        },
+        "triple_lock": {
+          "rr": 1.05,
+          "z": 0.536,
+          "p": 0.29586904019445226
+        }
+      }
+    },
+    "stratum_rodden_AA": {
+      "n": 1836,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9903,
+          "z": -0.363,
+          "p": 0.6416215486619968
+        },
+        "leg2_gochara": {
+          "rr": 1.0245,
+          "z": 0.828,
+          "p": 0.2038097582706655
+        },
+        "leg3_ayurdaya": {
+          "rr": 1.0414,
+          "z": 1.423,
+          "p": 0.07734811652435128
+        },
+        "triple_lock": {
+          "rr": 0.9956,
+          "z": -0.044,
+          "p": 0.517712654973113
+        }
+      }
+    },
+    "stratum_rodden_A": {
+      "n": 255,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.8889,
+          "z": -1.536,
+          "p": 0.9377098399383421
+        },
+        "leg2_gochara": {
+          "rr": 0.9858,
+          "z": -0.185,
+          "p": 0.5735187775244338
+        },
+        "leg3_ayurdaya": {
+          "rr": 0.9711,
+          "z": -0.381,
+          "p": 0.6484754126742497
+        },
+        "triple_lock": {
+          "rr": 0.9647,
+          "z": -0.139,
+          "p": 0.5553022680797639
+        }
+      }
+    },
+    "stratum_north_hemisphere": {
+      "n": 2039,
+      "primary": {
+        "leg1_maraka": {
+          "rr": 0.9813,
+          "z": -0.733,
+          "p": 0.7683349056480382
+        },
+        "leg2_gochara": {
+          "rr": 1.0197,
+          "z": 0.704,
+          "p": 0.24076222543149917
+        },
+        "leg3_ayurdaya": {
+          "rr": 1.0264,
+          "z": 0.961,
+          "p": 0.1681986858954556
+        },
+        "triple_lock": {
+          "rr": 0.9676,
+          "z": -0.344,
+          "p": 0.6346033550324081
+        }
+      }
+    },
+    "stratum_south_hemisphere": {
+      "n": 52,
+      "note": "under 100; skipped"
+    }
+  },
+  "notes": [
+    "PRIMARY null = permutation (shuffled age-at-death), shared sample across persons and legs; joint p_i from the same draws.",
+    "Thresholds per run3_gate.toml: legs RR>=1.20, joint RR>=1.50.",
+    "Single corpus -> ratchet ceiling 'provisional'."
+  ]
+}

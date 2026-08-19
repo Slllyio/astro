@@ -1,0 +1,90 @@
+{
+ "source": "Notable Horoscopes (B.V. Raman) -- FRESH, DEGREE-ACCURATE strength held-out. Charts reconstructed from Raman's PRINTED degree positions (nh_golden_cases_v2.json, via from_printed_positions -- no vision, no sign-diagram). Each verdict is Raman's verbatim 'the Nth house/lord is [grade]' statement, HAND-VERIFIED against the full text and hand-curated to drop mis-attributions (an 'afflicted' describing an adjacent planet, or a 'from the Moon' frame). The doctrine strength engine was never tuned on NH. Measurement only. Skewed to 'afflicted' (NH discusses afflictions at hardship/death).",
+ "rows": [
+  {
+   "key": "buddha",
+   "name": "Sri Gautama Buddha",
+   "house": 7,
+   "factor": "lord",
+   "phrase": "the 7th lord Saturn is considerably afflicted"
+  },
+  {
+   "key": "alexander",
+   "name": "Alexander the Great",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the fifth house is considerably afflicted"
+  },
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "house": 7,
+   "factor": "lord",
+   "phrase": "the 7th lord Mars is afflicted"
+  },
+  {
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "house": 5,
+   "factor": "lord",
+   "phrase": "the 5th lord Saturn is equally well afflicted"
+  },
+  {
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "house": 9,
+   "factor": "bhava",
+   "phrase": "the ninth house being afflicted"
+  },
+  {
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "house": 4,
+   "factor": "bhava",
+   "phrase": "the fourth house is well disposed"
+  },
+  {
+   "key": "milton",
+   "name": "John Milton",
+   "house": 7,
+   "factor": "bhava",
+   "phrase": "the seventh house is equally afflicted"
+  },
+  {
+   "key": "milton",
+   "name": "John Milton",
+   "house": 12,
+   "factor": "lord",
+   "phrase": "the 12th lord Venus is highly afflicted"
+  },
+  {
+   "key": "shivaji",
+   "name": "Shivaji the Great",
+   "house": 4,
+   "factor": "lord",
+   "phrase": "the 4th lord is fairly well disposed"
+  },
+  {
+   "key": "marie_antoinette",
+   "name": "Marie Antoinette",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the fifth house is afflicted"
+  },
+  {
+   "key": "sayaji_rao",
+   "name": "Sayaji Rao III",
+   "house": 5,
+   "factor": "lord",
+   "phrase": "the 5th lord is afflicted"
+  },
+  {
+   "key": "sivananda",
+   "name": "Swami Sivananda",
+   "house": 5,
+   "factor": "bhava",
+   "phrase": "the fifth house is equally afflicted"
+  }
+ ],
+ "curation_2026_07_12": "Attribution audit (increment 26): every row's phrase was located in the full text and checked for chapter attribution and Rasi/Lagna frame. Removed rows are recorded in nh_strength_removed.json. Light paraphrases with verified subject+grade+frame retained."
+}

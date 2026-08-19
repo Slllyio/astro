@@ -29,6 +29,7 @@ Phase 7 wiring discipline:
 from __future__ import annotations
 
 import logging
+import re as _re
 import sys
 from datetime import UTC, datetime
 from typing import Any, Callable
@@ -36,6 +37,7 @@ from typing import Any, Callable
 from app.reading.schema import (
     ChartBlock,
     ChartInput,
+    ClassicalYoga,
     Contradiction,
     DoctrineConfig,
     DomainsBlock,
@@ -83,6 +85,1397 @@ def _python_version() -> str:
 def _generated_at_iso() -> str:
     """Current UTC instant as ISO-8601 (timezone-aware)."""
     return datetime.now(UTC).isoformat()
+
+
+_GRAHAS_9: tuple[str, ...] = (
+    "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu",
+)
+
+
+def _classical_yogas(
+    d1_chart: dict[str, Any], asc_sign: int, lagna_longitude: float,
+) -> list[ClassicalYoga]:
+    """Run the core 88-detector yoga library over the D1 chart and return the
+    active yogas with their classical citations, for the reading's
+    classical-yogas section. Fail-soft: any error yields ``[]`` so a missing
+    or partial chart never blocks a reading."""
+    try:
+        from app.core.chart_model import Chart
+        from app.core.yoga_library import active_yogas
+
+        signs: dict[str, int] = {}
+        lons: dict[str, float] = {}
+        for g in _GRAHAS_9:
+            entry = d1_chart.get(g) or {}
+            if entry.get("sign") is not None and entry.get("longitude") is not None:
+                signs[g] = int(entry["sign"])
+                lons[g] = float(entry["longitude"])
+        if len(signs) < len(_GRAHAS_9):
+            return []
+        houses = {g: ((signs[g] - asc_sign) % 12) + 1 for g in signs}
+        chart = Chart(
+            planet_signs=signs, planet_houses=houses, planet_lons=lons,
+            asc_sign=asc_sign, asc_lon=lagna_longitude,
+        )
+        return [
+            ClassicalYoga(
+                name=y.name, sanskrit=y.sanskrit, reference=y.reference,
+                description=y.description, intensity=round(float(y.intensity), 3),
+                participants=tuple(y.participants),
+            )
+            for y in active_yogas(chart)
+        ]
+    except Exception:  # noqa: BLE001 — cosmetic section; never block a reading
+        return []
+
+
+def _dasha_activation(d1_chart: dict[str, Any], lagna_longitude: float) -> dict[str, Any]:
+    """Per-graha bhāva activation following Raman's ENCODED HTJAH influence
+    doctrine — faithfully mirrors ``_influence_factors`` / ``_pair_tier`` in
+    ``app/medini/doctrine/domains/house_judgment.py`` (HTJAH Vol.I ch.IV,
+    pp.44-48). A planet **activates house H** by any of Raman's six factors:
+
+      (a) owns H · (b) occupies H · (c) aspects H (graha dṛṣṭi) ·
+      (d) aspects H's lord · (e) conjoins H's lord · (f) is lord of H from the Moon.
+
+    The period's fructification tier (computed client-side from the two lords'
+    influence maps) is par-excellence/predominant when BOTH the MD and AD lords
+    influence H, limited when one does, dormant when neither — the doctrine's
+    fully / partial / none. (The engine's ``_influence_factors`` needs a heavy
+    ``RamanChart``/``ChartBundle``; this reuses the identical rule on the
+    reading's D1 primitives.) Fail-soft."""
+    try:
+        from app.core.dignity import SIGN_RULERS
+        from app.core.drishti_argala import aspects_from_planet
+
+        lagna_sign = int(lagna_longitude % 360.0 // 30) + 1
+        ph: dict[str, int] = {}      # planet -> whole-sign house from Lagna
+        moon_sign: int | None = None
+        for g in _GRAHAS_9:
+            s = (d1_chart.get(g) or {}).get("sign")
+            if s is None:
+                continue
+            ph[g] = ((int(s) - lagna_sign) % 12) + 1
+            if g == "Moon":
+                moon_sign = int(s)
+        if moon_sign is None or len(ph) < len(_GRAHAS_9):
+            return {}
+
+        def lord_of(house: int) -> str:                      # sign-lord of Hth bhava
+            return SIGN_RULERS[((lagna_sign - 1 + house - 1) % 12) + 1]
+
+        def lord_from_moon(house: int) -> str:               # factor (f)
+            return SIGN_RULERS[((moon_sign + house - 2) % 12) + 1]
+
+        def factors(planet: str, house: int) -> list[str]:
+            lord = lord_of(house)
+            asp = aspects_from_planet(planet, ph[planet])
+            facs: list[str] = []
+            if planet == lord:
+                facs.append("owns")
+            if ph[planet] == house:
+                facs.append("occupies")
+            if house in asp:
+                facs.append("aspects house")
+            if planet != lord:
+                if ph[lord] in asp:
+                    facs.append("aspects lord")
+                if ph[planet] == ph[lord]:
+                    facs.append("conjoins lord")
+            if planet == lord_from_moon(house) and "owns" not in facs:
+                facs.append("lord from Moon")
+            return facs
+
+        planets: dict[str, dict[str, Any]] = {}
+        for g in ph:
+            infl = {str(h): f for h in range(1, 13) if (f := factors(g, h))}
+            planets[g] = {"occ": ph[g],
+                          "aspects": list(aspects_from_planet(g, ph[g])),
+                          "influences": infl}
+        return {"lagna_sign": lagna_sign, "planets": planets}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _divisional_lagnas(lagna_longitude: float) -> dict[str, int]:
+    """Ascendant sign (1..12) in D1/D9/D10 — lets the view mark the lagna cell in
+    the divisional chart grids. Fail-soft."""
+    try:
+        from app.core.shodashavarga import compute_divisional_longitude
+
+        out = {"D1": int(lagna_longitude % 360 // 30) + 1}
+        for name, div in (("D9", 9), ("D10", 10), ("D7", 7), ("D12", 12)):
+            out[name] = int(compute_divisional_longitude(lagna_longitude, div) % 360.0 // 30) + 1
+        return out
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+# ---------------------------------------------------------------------------
+# "Present tense" + real-doctrine enrichments (Phase 0 + Phase 1).
+#
+# These turn a birth-frozen developer report into a consultation:
+#   - dasha_now:      the mahādaśā/antardaśā running TODAY (not at birth) —
+#                     fixes the "Current Mahadasha: Venus 1957-1977" for a
+#                     1970 native. Reuses app/integration/dasha_now.
+#   - transits_now:   live gochara (Sade-Sati, Saturn-from-Moon, double
+#                     transits). Reuses app/integration/transit_engine.
+#   - house_doctrine: the real encoded Raman per-house verdicts from
+#                     judge_all_houses_doctrine — the SAME engine validated
+#                     all session — giving honest grades + the "why" factors
+#                     + Rāśi/Navāṁśa agreement + the running-daśā activation
+#                     tier per house.
+#   - executive_summary: a deterministic lay-language restatement of the
+#                     above (no invented numbers).
+#
+# Every block is fail-soft: any error yields an empty section, never a
+# broken reading. All output lands under chart.extras.* (a free-form dict),
+# so nothing here can break the ReadingOutput schema.
+# ---------------------------------------------------------------------------
+
+# Plain-language life area per whole-sign house (for the lay summary).
+_HOUSE_LIFE_AREA: dict[int, str] = {
+    1: "self, body & vitality",
+    2: "wealth, speech & family",
+    3: "courage, siblings & effort",
+    4: "home, mother & inner peace",
+    5: "children, creativity & intellect",
+    6: "health, service & adversaries",
+    7: "marriage & partnerships",
+    8: "longevity, upheaval & the hidden",
+    9: "fortune, dharma & the father",
+    10: "career & public standing",
+    11: "gains, income & aspirations",
+    12: "loss, expenditure & liberation",
+}
+
+
+def _verdict_index(label: str) -> int | None:
+    """Position of a Raman verdict on the 9-grade VERDICT_SCALE (0..8), or None.
+
+    afflicted(0) … moderate(2) … fairly good(4) … very powerful(8).
+    """
+    scale = (
+        "afflicted", "weak", "moderate", "moderately good", "fairly good",
+        "fairly strong", "fairly powerful", "very strong", "very powerful",
+    )
+    try:
+        return scale.index(str(label).strip().lower())
+    except ValueError:
+        return None
+
+
+def _factor_to_dict(fv: Any) -> dict[str, Any]:
+    """Serialise a FactorVerdict into a JSON-friendly dict for the view.
+
+    Keeps the real findings (the "why"), the grade + its 0..8 index, and the
+    Rāśi vs Navāṁśa sub-scores (the D1/D9 agreement)."""
+    idx = _verdict_index(getattr(fv, "label", ""))
+    return {
+        "role": getattr(fv, "role", ""),
+        "subject": getattr(fv, "subject", ""),
+        "label": getattr(fv, "label", ""),
+        "grade_index": idx,                       # 0..8 on VERDICT_SCALE
+        "score": round(float(getattr(fv, "score", 0.0)), 3),
+        "rasi_score": round(float(getattr(fv, "rasi_score", 0.0)), 3),
+        "navamsa_score": round(float(getattr(fv, "navamsa_score", 0.0)), 3),
+        "findings": [
+            {
+                "text": getattr(f, "text", ""),
+                "delta": round(float(getattr(f, "delta", 0.0)), 3),
+                "frame": getattr(f, "frame", ""),
+                "criterion": getattr(f, "criterion", ""),
+            }
+            for f in getattr(fv, "findings", ()) or ()
+        ],
+    }
+
+
+def _confidence_from_factors(lagna: Any, lord: Any, karaka: Any) -> dict[str, Any]:
+    """Honest ConfidenceScore-style vote: do the 3 independent checks (house,
+    lord, kāraka) concur in direction? Returns real counts, never a fabricated
+    probability. A factor "votes positive" if its grade sits at or above
+    "moderately good" (index 3). Agreement = size of the majority bloc."""
+    votes: dict[str, str | None] = {}
+    positives = 0
+    graded = 0
+    for name, fv in (("house", lagna), ("lord", lord), ("karaka", karaka)):
+        idx = _verdict_index(getattr(fv, "label", ""))
+        if idx is None:
+            votes[name] = None
+            continue
+        graded += 1
+        direction = "positive" if idx >= 3 else "guarded"
+        votes[name] = direction
+        if direction == "positive":
+            positives += 1
+    guarded = graded - positives
+    majority = max(positives, guarded)
+    return {
+        "votes": votes,                     # {house/lord/karaka -> positive|guarded|None}
+        "graded": graded,                   # how many of the 3 checks were computable
+        "positive": positives,
+        "guarded": guarded,
+        "agreement": majority,              # N of `graded` checks that concur
+        "band": (
+            "strong" if graded and majority == graded and graded == 3
+            else "mixed" if graded and majority < graded
+            else "partial"
+        ),
+    }
+
+
+def _d1d9_agreement(fv: Any) -> str:
+    """Do Rāśi (promise) and Navāṁśa (fruition) point the same way?
+
+    concur  — both sub-scores share sign (or one is ~0)
+    diverge — opposite signs (a chart-level contradiction the reader should see)
+    """
+    r = float(getattr(fv, "rasi_score", 0.0))
+    n = float(getattr(fv, "navamsa_score", 0.0))
+    if abs(r) < 0.15 or abs(n) < 0.15:
+        return "neutral"
+    return "concur" if (r > 0) == (n > 0) else "diverge"
+
+
+def _build_raman_chart(chart_input: ChartInput) -> Any | None:
+    """Cast a RamanChart from birth data in the repo-default Lahiri frame so the
+    doctrine grades explain the SAME chart the reading displays (houses/signs
+    match the rendered kundali). Returns None on any failure. Built once and
+    shared by the house-doctrine + planet-strength enrichments."""
+    try:
+        from app.medini.doctrine import raman_chart
+        from app.medini.ml.raman_saab.chart_bundle import build_bundle
+
+        year, month, day, hour, minute, tz_offset = _parse_chart_input(chart_input)
+        bundle = build_bundle(
+            year, month, day, hour, minute, tz_offset,
+            chart_input.lat, chart_input.lon,
+        )
+        if bundle is None:
+            return None
+        return raman_chart._build(bundle, "lahiri")
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _house_doctrine(judged: Mapping[int, Any] | None) -> dict[str, Any]:
+    """Serialise the 12 REAL encoded-Raman house verdicts for the reading.
+
+    This is the honest backbone for the executive summary, confidence
+    checklist, "why" breakdowns, and house-health meter — it consumes the
+    exact engine (`judge_house_doctrine`, validated across the doctrine suite)
+    output, not a reinvented rollup. ``judged`` is the pre-computed
+    ``{house -> HouseJudgment}`` map (from a single ``judge_chart_doctrine``
+    pass so the doctrine engine runs once per reading). Fail-soft → {}."""
+    if not judged:
+        return {}
+    try:
+        from app.medini.doctrine.domains.house_judgment import VERDICT_SCALE
+
+        houses: dict[str, Any] = {}
+        for h, j in judged.items():
+            timing = getattr(j, "timing", None)
+            conclusion = getattr(j, "conclusion", None)
+            influencers = []
+            for inf in getattr(conclusion, "influencers", ()) or ():
+                influencers.append({
+                    "planet": getattr(inf, "planet", ""),
+                    "factors": list(getattr(inf, "factors", ()) or ()),
+                    "tier": getattr(inf, "tier", ""),
+                    "is_benefic": bool(getattr(inf, "is_benefic", False)),
+                    "nature": getattr(inf, "nature", ""),
+                })
+            houses[str(h)] = {
+                "house": h,
+                "life_area": _HOUSE_LIFE_AREA.get(h, ""),
+                "verdict_label": getattr(conclusion, "label", getattr(j, "blend_label", "")),
+                "verdict_index": _verdict_index(
+                    getattr(conclusion, "label", "") or getattr(j, "blend_label", "")
+                ),
+                "blend_label": getattr(j, "blend_label", ""),
+                "synthesis": getattr(conclusion, "synthesis", ""),
+                "lagna": _factor_to_dict(j.lagna_verdict),
+                "lord": _factor_to_dict(j.lord_verdict),
+                "karaka": _factor_to_dict(j.karaka_verdict),
+                "confidence": _confidence_from_factors(
+                    j.lagna_verdict, j.lord_verdict, j.karaka_verdict,
+                ),
+                "d1d9": {
+                    "house": _d1d9_agreement(j.lagna_verdict),
+                    "lord": _d1d9_agreement(j.lord_verdict),
+                    "karaka": _d1d9_agreement(j.karaka_verdict),
+                },
+                "timing": {
+                    "current_md": getattr(timing, "current_md", None),
+                    "current_ad": getattr(timing, "current_ad", None),
+                    "current_tier": getattr(timing, "current_tier", None),
+                    "current_is_activator": bool(
+                        getattr(timing, "current_is_activator", False)
+                    ),
+                    "influencers": list(getattr(timing, "influencers", ()) or ()),
+                } if timing is not None else {},
+                "influencers": influencers,
+            }
+        return {
+            "scale": list(VERDICT_SCALE),
+            "ayanamsa": "lahiri",
+            "houses": houses,
+            "method": (
+                "B. V. Raman, How to Judge a Horoscope — each house graded on its "
+                "lord, occupants, aspects and kāraka (Rāśi and Navāṁśa)."
+            ),
+            "fidelity_note": (
+                "Grades are the engine's faithful encoding of Raman's method "
+                "(measured ~53–58% within one grade of Raman's own printed "
+                "verdicts) — a doctrine grade, not a probability."
+            ),
+        }
+    except Exception:  # noqa: BLE001 — never block a reading
+        return {}
+
+
+_KENDRAS_SET = {1, 4, 7, 10}
+_DUSTHANAS_SET = {6, 8, 12}
+_DUSTHANA_NAME = {6: "6th (Harsha)", 8: "8th (Sarala)", 12: "12th (Vimala)"}
+
+
+def _classical_factors(chart: Any) -> dict[str, Any]:
+    """Surface the advanced classical layers the engine can compute but the
+    reading did not yet show (#12): functional benefic/malefic + yogakāraka,
+    Maraka & Badhaka, retrogression, Graha-Yuddha (planetary war), Vipareeta
+    Rāja-yoga, and Neecha-Bhaṅga. All from real chart data, fail-soft → {}."""
+    if chart is None:
+        return {}
+    try:
+        from app.core.dignity import (
+            DEBILITATION, EXALTATION, SIGN_RULERS, dignity_state,
+        )
+        from app.core.functional_roles import (
+            badhakesh_house, badhakesh_planet, functional_roles,
+        )
+
+        bundle = chart.bundle
+        lagna = int(bundle.kundali.lagna_sign)
+        signs = bundle.chart.planet_signs
+        houses = bundle.kundali.planet_house
+        lons = bundle.chart.planet_lons
+        retro = getattr(bundle.chart, "planet_retrograde", {}) or {}
+        moon_sign = int(signs.get("Moon", lagna))
+        roles = functional_roles(lagna)
+
+        # --- functional nature summary (per visible planet).
+        functional: list[dict[str, Any]] = []
+        for p, r in roles.items():
+            tags = []
+            if r.is_yogakaraka:
+                tags.append("yogakāraka")
+            if r.is_functional_benefic:
+                tags.append("benefic")
+            if r.is_functional_malefic:
+                tags.append("malefic")
+            if r.is_maraka:
+                tags.append("maraka")
+            if r.is_badhakesh:
+                tags.append("badhaka lord")
+            nature = ("benefic" if r.is_functional_benefic
+                      else "malefic" if r.is_functional_malefic else "neutral")
+            functional.append({
+                "planet": p, "houses_ruled": list(r.houses_ruled),
+                "nature": nature, "tags": tags,
+                "is_yogakaraka": r.is_yogakaraka,
+            })
+
+        # --- Maraka & Badhaka.
+        marakas = [p for p, r in roles.items() if r.is_maraka]
+        bh = badhakesh_house(lagna)
+        try:
+            badhaka_planet = badhakesh_planet(lagna)
+        except Exception:  # noqa: BLE001
+            badhaka_planet = None
+
+        # --- Retrogression (visible non-luminaries).
+        retrograde = [p for p in _GRAHAS_9
+                      if retro.get(p) and p not in ("Sun", "Moon", "Rahu", "Ketu")]
+
+        # --- Graha-Yuddha: two tārā-grahas in the same sign within 1°.
+        war_planets = ("Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+        graha_yuddha: list[dict[str, Any]] = []
+        for i, a in enumerate(war_planets):
+            for b in war_planets[i + 1:]:
+                if a in signs and b in signs and signs[a] == signs[b]:
+                    la, lb = lons.get(a), lons.get(b)
+                    if la is None or lb is None:
+                        continue
+                    orb = abs((la % 30.0) - (lb % 30.0))
+                    if orb <= 1.0:
+                        # Winner = the one with the higher longitude (further north
+                        # proxy via degree-in-sign is unreliable; use lower degree =
+                        # "ahead"). Report both; mark the closer-to-earlier as winner.
+                        winner = a if (la % 30.0) < (lb % 30.0) else b
+                        graha_yuddha.append({
+                            "a": a, "b": b, "sign": int(signs[a]),
+                            "orb": round(orb, 2), "winner": winner,
+                        })
+
+        # --- Vipareeta Rāja-yoga: a dusthāna lord placed in a dusthāna.
+        vipareeta: list[dict[str, Any]] = []
+        for p, r in roles.items():
+            ruled_dusthanas = [h for h in r.houses_ruled if h in _DUSTHANAS_SET]
+            ph = houses.get(p)
+            if ruled_dusthanas and ph in _DUSTHANAS_SET:
+                vipareeta.append({
+                    "planet": p, "rules": ruled_dusthanas, "placed": int(ph),
+                    "name": _DUSTHANA_NAME.get(int(ph), f"{ph}th"),
+                })
+
+        # --- Neecha-Bhaṅga: a debilitated planet whose fall is cancelled.
+        neecha_bhanga: list[dict[str, Any]] = []
+        for p in _GRAHAS_9:
+            if p not in signs or p not in DEBILITATION:
+                continue
+            if DEBILITATION[p] != int(signs[p]):
+                continue
+            deb_sign = int(signs[p])
+            dispositor = SIGN_RULERS[deb_sign]
+            exalt_lord = next((g for g, s in EXALTATION.items() if s == deb_sign), None)
+            reasons: list[str] = []
+            for label, other in (("its dispositor", dispositor),
+                                  ("the sign's exaltation-lord", exalt_lord)):
+                if not other or other not in houses:
+                    continue
+                oh_l = houses.get(other)
+                oh_m = ((int(signs.get(other, moon_sign)) - moon_sign) % 12) + 1
+                if oh_l in _KENDRAS_SET or oh_m in _KENDRAS_SET:
+                    reasons.append(f"{label} {other} sits in a kendra")
+            if reasons:
+                neecha_bhanga.append({"planet": p, "reasons": reasons})
+
+        return {
+            "functional": functional,
+            "marakas": marakas,
+            "badhaka": {"house": bh, "planet": badhaka_planet},
+            "retrograde": retrograde,
+            "graha_yuddha": graha_yuddha,
+            "vipareeta": vipareeta,
+            "neecha_bhanga": neecha_bhanga,
+            "note": (
+                "Functional nature is per your Lagna (the same planet is benefic "
+                "for one ascendant, malefic for another). Vipareeta Rāja-yoga and "
+                "Neecha-Bhaṅga can turn apparent weakness into strength."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+_RAMAN_BOOKS: dict[str, str] = {
+    "htjah_vol1": "How to Judge a Horoscope, Vol. I",
+    "htjah_vol2": "How to Judge a Horoscope, Vol. II",
+    "hpa": "Hindu Predictive Astrology",
+    "three_hundred": "Three Hundred Important Combinations",
+    "jaimini_studies": "Studies in Jaimini Astrology",
+    "manual_hindu_astrology": "A Manual of Hindu Astrology",
+    "graha_bhava_balas": "Graha and Bhava Balas",
+    "muhurtha": "Muhurtha (Electional Astrology)",
+    "prasna_marga_1": "Prasna Marga",
+    "prasna_marga_2": "Prasna Marga",
+}
+# Weight of evidence WITHIN Raman's own encoded corpus (#13). We do NOT have
+# Parashara / Saravali / Phaladeepika encoded, so a literal cross-authority
+# table cannot be built; instead, when Raman's own sources bear on the same
+# point, his systematic judicial texts (HTJAH) outrank the predictive manual
+# (HPA), which outranks the combination catalogue (Three Hundred) and the
+# minor/aphoristic works. Stated as scope, never presented as more than it is.
+_RAMAN_SOURCE_TIER: dict[str, int] = {
+    "htjah_vol1": 5, "htjah_vol2": 5,          # the systematic judicial method
+    "hpa": 4,                                   # the predictive manual
+    "graha_bhava_balas": 4,
+    "three_hundred": 3,                         # the combination catalogue
+    "jaimini_studies": 2, "manual_hindu_astrology": 2,
+    "muhurtha": 1, "prasna_marga_1": 1, "prasna_marga_2": 1,
+}
+# Hard safety filter: the doctrine's death/longevity claims were REFUTED at
+# population scale (Track B), and blunt fatalistic/harsh text must never be
+# shown as a personal statement. Only favourable, benign combinations surface.
+_RAMAN_UNSAFE = _re.compile(
+    r"death|die|dead|mortal|maraka|balarish|arisht|mrityu|life|fatal|kill|widow|"
+    r"abort|miscarr|brahminicide|suicide|assassin|blind|leper|lepro|insan|lunat|"
+    r"imprison|disease|poison|drown|accident|idiot|ignor|poor|cruel|wicked|sinful|"
+    r"immoral|adulter|prostitut|servil|vile|stupid|foolish|miser|debauch|quarrel|"
+    r"sickly|broken|dumb|deaf|bastard|thief|beggar",
+    _re.IGNORECASE,
+)
+
+
+def _clean_ocr(text: str) -> str:
+    """Tidy OCR artefacts (soft hyphens, mid-word line breaks) for display."""
+    t = text.replace("­", "").replace("¬\n", "").replace("¬", "")
+    t = t.replace("-\n", "").replace("\n", " ")
+    return _re.sub(r"\s+", " ", t).strip()
+
+
+def _raman_doctrine(cd: Any) -> dict[str, Any]:
+    """Surface the B. V. Raman knowledge base applied to THIS chart: the count of
+    doctrine rules from his corpus that fire, the source books, and the
+    **favourable** cited combinations his texts state for the chart's
+    configurations (verbatim + citation). Consumes the pre-computed
+    ``ChartDoctrine`` (single doctrine pass). Cautionary factors are
+    deliberately left to the measured tensions/risks layers — blunt fatalistic/
+    longevity text (refuted by Track B) is never surfaced. Fail-soft → {}."""
+    if cd is None:
+        return {}
+    try:
+        from app.medini.doctrine.domains.house_judgment import load_compendium
+        books = load_compendium()
+        id2rule = {r["id"]: r for rules in books.values() for r in rules}
+
+        fired: set[str] = set()
+        house_of: dict[str, int] = {}
+        for h, j in cd.houses.items():
+            for rid in j.fired_rule_ids:
+                fired.add(rid)
+                house_of.setdefault(rid, h)
+        for g in cd.chart_global:
+            fired.add(g.rule_id)
+
+        safe_types = {"graha_effect", "yoga", "bhava_judgment"}
+        favorable: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        book_counts: dict[str, int] = {}
+        for rid in fired:
+            r = id2rule.get(rid)
+            if not r:
+                continue
+            book_counts[r["book"]] = book_counts.get(r["book"], 0) + 1
+            c = r.get("consequent") or {}
+            if (r["rule_type"] not in safe_types
+                    or c.get("polarity") != "favorable"):
+                continue
+            text = _clean_ocr(str(c.get("text", "")))
+            if not text or _RAMAN_UNSAFE.search(text):
+                continue
+            key = text.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            favorable.append({
+                "text": text,
+                "book": r["book"],
+                "book_label": _RAMAN_BOOKS.get(r["book"], r["book"]),
+                "authority": _RAMAN_SOURCE_TIER.get(r["book"], 2),
+                "house": house_of.get(rid),
+            })
+        # order by house, then by source authority (HTJAH > HPA > Three Hundred)
+        # so the most authoritative combination leads within each house (#13).
+        favorable.sort(key=lambda n: (n["house"] is None, n["house"] or 0,
+                                      -n["authority"]))
+        favorable = favorable[:14]
+
+        used_books = [
+            {"id": b, "label": _RAMAN_BOOKS.get(b, b), "fired": book_counts[b],
+             "authority": _RAMAN_SOURCE_TIER.get(b, 2)}
+            for b in sorted(book_counts,
+                            key=lambda b: (_RAMAN_SOURCE_TIER.get(b, 2),
+                                           book_counts[b]), reverse=True)
+            if b in _RAMAN_BOOKS
+        ]
+        if not fired:
+            return {}
+        return {
+            "total_applicable": len(fired),
+            "books": used_books,
+            "favorable": favorable,
+            "note": (
+                "The engine is B. V. Raman's own doctrine encoded rule-by-rule. "
+                "Above are favourable combinations his texts state for your chart, "
+                "each cited to its source. Cautionary factors are covered by the "
+                "measured Chart-tensions and Risks sections rather than by blunt "
+                "classical prognostications (which the population validation did "
+                "not bear out)."
+            ),
+            "source_scope": (
+                "The encoded corpus is B. V. Raman's own works. Where his sources "
+                "bear on the same point, the systematic method (How to Judge a "
+                "Horoscope) is weighted above the predictive manual (Hindu "
+                "Predictive Astrology), then the combination catalogue (Three "
+                "Hundred). The classical predecessors he drew on — Parāśara, "
+                "Sārāvalī, Phaladīpikā — are NOT encoded here, so no cross-"
+                "authority weighting beyond Raman's own corpus is claimed."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _executive_summary(reading: Mapping[str, Any]) -> list[str]:
+    """Deterministic lay-language summary built ONLY from real engine output:
+    strongest/weakest houses (house_doctrine), the daśā running now
+    (dasha_now) and which houses it lights up (dasha_activation), and the
+    standout classical yogas. No invented numbers. Fail-soft → []."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        lines: list[str] = []
+
+        # 1) Strongest / weakest houses by the real conclusion grade.
+        graded = [
+            (int(v["house"]), v.get("verdict_index"), v.get("verdict_label", ""),
+             v.get("life_area", ""))
+            for v in hd.values()
+            if isinstance(v, dict) and v.get("verdict_index") is not None
+        ]
+        if graded:
+            graded.sort(key=lambda t: (t[1] if t[1] is not None else -1), reverse=True)
+            strong = [g for g in graded if (g[1] or 0) >= 5][:3]      # ≥ fairly strong
+            weak = [g for g in reversed(graded) if (g[1] or 0) <= 1][:3]  # ≤ weak
+            if strong:
+                areas = "; ".join(f"the {_ordinal(h)} house ({area}, {lbl})"
+                                  for h, _, lbl, area in strong)
+                lines.append(f"Strongest in your chart: {areas}.")
+            if weak:
+                areas = "; ".join(f"the {_ordinal(h)} house ({area}, {lbl})"
+                                  for h, _, lbl, area in weak)
+                lines.append(f"Needing care: {areas}.")
+
+        # 2) The daśā running NOW and which houses its lord activates.
+        dn = extras.get("dasha_now") or {}
+        md = dn.get("md") or {}
+        ad = dn.get("ad") or {}
+        if md.get("md_lord"):
+            span = ""
+            if md.get("start_date") and md.get("end_date"):
+                span = f" ({md['start_date'][:4]}–{md['end_date'][:4]})"
+            theme = ""
+            act = extras.get("dasha_activation") or {}
+            planets = act.get("planets") or {}
+            lit = sorted({
+                int(hh)
+                for hh in (planets.get(md["md_lord"], {}).get("influences") or {})
+            })
+            if lit:
+                area_bits = ", ".join(_HOUSE_LIFE_AREA.get(h, "").split(",")[0]
+                                      for h in lit[:4] if _HOUSE_LIFE_AREA.get(h))
+                if area_bits:
+                    theme = f" — activating {area_bits}"
+            ad_bit = f", {ad['ad_lord']} antardaśā" if ad.get("ad_lord") else ""
+            lines.append(
+                f"You are currently in {md['md_lord']} mahādaśā{span}{ad_bit}{theme}."
+            )
+
+        # 3) Standout classical yogas.
+        yogas = reading.get("classical_yogas") or []
+        if yogas:
+            top = sorted(
+                (y for y in yogas if isinstance(y, dict)),
+                key=lambda y: float(y.get("intensity", 0.0)), reverse=True,
+            )[:3]
+            names = ", ".join(y.get("name", "") for y in top if y.get("name"))
+            if names:
+                lines.append(f"Notable combinations present: {names}.")
+
+        return lines
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def _ordinal(n: int) -> str:
+    """1 -> '1st', 2 -> '2nd', … for lay-language house references."""
+    if 10 <= (n % 100) <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
+
+
+_DIGNITY_SCORE: dict[str, float] = {
+    "exalted": 1.0, "moolatrikona": 0.95, "own": 0.85, "friendly": 0.68,
+    "neutral": 0.5, "inimical": 0.32, "debilitated": 0.1, "enemy": 0.32,
+}
+_BALADI_SCORE: dict[str, float] = {
+    "bala": 0.5, "kumara": 0.75, "yuva": 1.0, "vriddha": 0.35, "mrita": 0.1,
+}
+_JAGRAD_SCORE: dict[str, float] = {
+    "jagrad": 1.0, "jagrat": 1.0, "swapna": 0.6, "sushupta": 0.3,
+}
+
+
+def _stars(frac: float) -> int:
+    """0..1 → a 0–5 star rating."""
+    return max(0, min(5, round(float(frac) * 5)))
+
+
+def _planet_strength(chart: Any, avasthas: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Real per-planet strength from the cast bundle, with an honest composite
+    (#13). Five real components — Dignity, Ṣaḍbala, Digbala, Vimsopaka, Avasthā
+    — each rated 0–5 and averaged into a 0–100 composite. Every input is a
+    measure the engine already computes; nothing is fabricated. Fail-soft."""
+    if chart is None:
+        return {}
+    try:
+        from app.core.dignity import dignity_state
+        from app.core.shadbala import dig_bala
+
+        bundle = chart.bundle
+        signs = bundle.chart.planet_signs
+        houses = bundle.kundali.planet_house
+        av = avasthas or {}
+        rows: list[dict[str, Any]] = []
+        for g in _GRAHAS_9:
+            if g not in signs:
+                continue
+            vim = bundle.strength.get(g)              # 0..1 (composite/20)
+            shad = bundle.shadbala_ratio.get(g)       # total/threshold; nodes: none
+            house = houses.get(g)
+            try:
+                dig = dignity_state(g, int(signs[g]))
+            except Exception:  # noqa: BLE001
+                dig = None
+            # --- component fractions (0..1), each from a real measure.
+            comp: dict[str, float | None] = {}
+            comp["dignity"] = _DIGNITY_SCORE.get(str(dig or "").lower()) if dig else None
+            comp["shadbala"] = (min(1.0, float(shad) / 1.2) if shad is not None else None)
+            comp["vimsopaka"] = float(vim) if vim is not None else None
+            try:
+                comp["digbala"] = (min(1.0, dig_bala(g, int(house)) / 60.0)
+                                   if house else None)
+            except Exception:  # noqa: BLE001
+                comp["digbala"] = None
+            entry = av.get(g) or {}
+            bal = _BALADI_SCORE.get(str(entry.get("baladi", "")).lower())
+            jag = _JAGRAD_SCORE.get(str(entry.get("jagradadi", "")).lower())
+            if bal is not None and jag is not None:
+                comp["avastha"] = (bal + jag) / 2.0
+            elif bal is not None:
+                comp["avastha"] = bal
+            else:
+                comp["avastha"] = None
+            present = [v for v in comp.values() if v is not None]
+            composite = round(sum(present) / len(present) * 100) if present else None
+            rows.append({
+                "planet": g,
+                "house": house,
+                "sign": int(signs[g]),
+                "navamsa_sign": bundle.navamsa_sign.get(g),
+                "vimsopaka": round(vim * 20.0, 1) if vim is not None else None,
+                "vimsopaka_frac": round(float(vim), 3) if vim is not None else None,
+                "shadbala_ratio": round(float(shad), 2) if shad is not None else None,
+                "dignity": dig,
+                "combust": bool(bundle.combust.get(g, False)),
+                "composite": composite,
+                "stars": {k: (_stars(v) if v is not None else None)
+                          for k, v in comp.items()},
+            })
+        if not rows:
+            return {}
+        return {
+            "planets": rows,
+            "components": ["dignity", "shadbala", "digbala", "vimsopaka", "avastha"],
+            "note": (
+                "Composite (0–100) averages five real measures — Dignity, Ṣaḍbala "
+                "(vs the classical requirement), Digbala (directional), Vimsopaka "
+                "(16-varga) and Avasthā (baladi + jāgradādi). Nodes take their "
+                "dispositor's Vimsopaka."
+            ),
+        }
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _chart_tensions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Honest contradiction detector built from the REAL per-house doctrine:
+    surface houses where the Rāśi (promise) and Navāṁśa (fruition) disagree, or
+    where the lord and kāraka verdicts point in opposite directions. These are
+    genuine chart tensions the engine already computes — not invented. → []."""
+    try:
+        hd = ((reading.get("chart") or {}).get("extras") or {}) \
+            .get("house_doctrine") or {}
+        houses = hd.get("houses") or {}
+        out: list[dict[str, Any]] = []
+        for h in range(1, 13):
+            hv = houses.get(str(h))
+            if not isinstance(hv, dict):
+                continue
+            area = hv.get("life_area", "")
+            # D1/D9 divergence — surfaced only when BOTH frames are substantial
+            # (|score| ≥ 0.5) and opposite in sign, so marginal splits stay quiet.
+            best: tuple[float, str] | None = None
+            for factor, key in (("house", "lagna"), ("lord", "lord"), ("karaka", "karaka")):
+                fv = hv.get(key) or {}
+                r = float(fv.get("rasi_score", 0.0))
+                n = float(fv.get("navamsa_score", 0.0))
+                if abs(r) >= 0.5 and abs(n) >= 0.5 and (r > 0) != (n > 0):
+                    mag = abs(r) + abs(n)
+                    if best is None or mag > best[0]:
+                        rich = ("a strong Rāśi promise but a weak Navāṁśa fruition"
+                                if r > 0 else
+                                "a weak Rāśi promise but a strong Navāṁśa recovery")
+                        best = (mag, f"its {factor} carries {rich}")
+            if best is not None:
+                out.append({
+                    "house": h, "life_area": area, "kind": "d1d9", "weight": best[0],
+                    "text": (
+                        f"The {_ordinal(h)} house ({area}): {best[1]} — results may "
+                        f"come, but with friction or delay."
+                    ),
+                })
+            # Lord vs kāraka opposition — the two independent testimonies clash.
+            li = (hv.get("lord") or {}).get("grade_index")
+            ki = (hv.get("karaka") or {}).get("grade_index")
+            if li is not None and ki is not None and abs(li - ki) >= 4:
+                strong, weak = ("lord", "kāraka") if li > ki else ("kāraka", "lord")
+                out.append({
+                    "house": h, "life_area": area, "kind": "factor_clash",
+                    "weight": float(abs(li - ki)),
+                    "text": (
+                        f"The {_ordinal(h)} house ({area}): the {strong} is strong "
+                        f"while the {weak} is weak — a divided testimony to weigh."
+                    ),
+                })
+        # Rank by severity and keep the most salient handful.
+        out.sort(key=lambda t: t.get("weight", 0.0), reverse=True)
+        return out[:6]
+    except Exception:  # noqa: BLE001
+        return []
+
+
+# Life domains → the houses/kāraka/varga that testify to them, with a
+# modern-language gloss (#11). Primary house first (double-weighted).
+# References: Raman, HTJAH — house significations; classical kārakas.
+_DOMAINS_SPEC: tuple[dict[str, Any], ...] = (
+    {"key": "career", "label": "Career", "houses": [10, 6, 11],
+     "karakas": ["Sun", "Saturn", "Mercury"], "varga": "D10_Dasamsa",
+     "modern": "profession, leadership, public standing, promotion"},
+    {"key": "wealth", "label": "Wealth & money", "houses": [2, 11],
+     "karakas": ["Jupiter", "Venus"], "varga": "D2_Hora",
+     "modern": "income, savings, assets, financial stability"},
+    {"key": "marriage", "label": "Marriage & partnership", "houses": [7],
+     "karakas": ["Venus", "Jupiter"], "varga": "D9_Navamsa",
+     "modern": "spouse, committed relationships, business partners"},
+    {"key": "health", "label": "Health & vitality", "houses": [1, 6],
+     "karakas": ["Sun", "Saturn"], "varga": "D1",
+     "modern": "energy, resilience, chronic-risk areas"},
+    {"key": "education", "label": "Education & learning", "houses": [5, 4],
+     "karakas": ["Mercury", "Jupiter"], "varga": "D24_Chaturvimsamsa",
+     "modern": "study, degrees, skills, intellect"},
+    {"key": "children", "label": "Children & creativity", "houses": [5],
+     "karakas": ["Jupiter"], "varga": "D7_Saptamsa",
+     "modern": "children, creative output, mentoring"},
+    {"key": "foreign", "label": "Foreign & travel", "houses": [12, 9, 3],
+     "karakas": ["Rahu", "Jupiter"], "varga": "D1",
+     "modern": "relocation, travel, overseas work, immigration"},
+    {"key": "spirituality", "label": "Fortune & spirituality", "houses": [9, 12],
+     "karakas": ["Jupiter", "Ketu"], "varga": "D20_Vimsamsa",
+     "modern": "luck, dharma, inner growth, guidance"},
+)
+
+
+def _potential_label(idx: float) -> str:
+    """Map a mean 0–8 doctrine grade to a domain potential band."""
+    if idx >= 6.0:
+        return "Excellent"
+    if idx >= 4.5:
+        return "Strong"
+    if idx >= 3.0:
+        return "Good"
+    if idx >= 1.5:
+        return "Moderate"
+    return "Challenging"
+
+
+def _domain_decisions(reading: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """The question-centric inference layer: for each life domain, aggregate the
+    REAL evidence the engine already produced into a decision view —
+    **potential** (natal doctrine), **timing** (the daśā running now), the
+    **positive/negative contributors**, a **confidence** from how the
+    independent signals agree, and a conflict-resolved one-line verdict.
+
+    Every number is a transparent roll-up of engine output (house grades,
+    findings, planet strength, yogas, daśā activation) — a *doctrine potential*,
+    never a probability that an event will occur. Fail-soft → []."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        if not hd:
+            return []
+        # planet strength lookup (for kāraka-strength confidence signal).
+        pstr = {r["planet"]: r for r in
+                ((extras.get("planet_strength") or {}).get("planets") or [])}
+
+        out: list[dict[str, Any]] = []
+        for spec in _DOMAINS_SPEC:
+            houses = spec["houses"]
+            # --- potential: weighted mean of the domain houses' doctrine grades.
+            idxs: list[tuple[int, float]] = []
+            for w, h in [(2.0 if i == 0 else 1.0, hh) for i, hh in enumerate(houses)]:
+                gi = (hd.get(str(h)) or {}).get("verdict_index")
+                if gi is not None:
+                    idxs.append((w, float(gi)))
+            if not idxs:
+                continue
+            mean_idx = sum(w * v for w, v in idxs) / sum(w for w, _ in idxs)
+            score100 = round(mean_idx / 8.0 * 100)
+
+            primary = hd.get(str(houses[0])) or {}
+
+            # --- contributors: real findings on the primary house's factors.
+            pos: list[str] = []
+            neg: list[str] = []
+            for factor in ("lagna", "lord", "karaka"):
+                for f in (primary.get(factor) or {}).get("findings", []) or []:
+                    d = float(f.get("delta", 0.0))
+                    txt = f.get("text", "")
+                    if not txt or d == 0:
+                        continue
+                    entry = f"{txt} ({'+' if d > 0 else ''}{round(d, 1)})"
+                    (pos if d > 0 else neg).append(entry)
+            pos = _dedup_keep(pos)[:6]
+            neg = _dedup_keep(neg)[:5]
+
+            # --- timing: the REAL MD×AD fructification tier the engine computed
+            # for the running daśā, taken as the best tier across the domain's
+            # houses (par excellence > predominant > limited > dormant).
+            _TIER_RANK = {"par excellence": 3, "predominant": 2, "limited": 1,
+                          "dormant": 0}
+            best_tier, best_rank = None, -1
+            for h in houses:
+                t = (((hd.get(str(h)) or {}).get("timing")) or {}).get("current_tier")
+                r = _TIER_RANK.get(str(t or "").lower(), -1)
+                if r > best_rank:
+                    best_rank, best_tier = r, t
+            tier = best_tier
+            is_active = best_rank >= 2                       # predominant or better
+            is_mild = best_rank == 1
+            activated_houses = sorted({
+                str(h) for h in houses
+                if _TIER_RANK.get(str(
+                    (((hd.get(str(h)) or {}).get("timing")) or {}).get("current_tier")
+                    or "").lower(), -1) >= 1
+            })
+
+            # --- confidence: how the independent signals agree.
+            signals: list[bool] = []
+            signals.append(mean_idx >= 4.0)                      # natal grade
+            d1d9 = (primary.get("d1d9") or {}).get("house")
+            if d1d9 in ("concur", "diverge"):
+                signals.append(d1d9 == "concur")                 # D1/D9 support
+            # kāraka strength
+            for k in spec["karakas"][:1]:
+                kr = pstr.get(k) or {}
+                vim = kr.get("vimsopaka")
+                if vim is not None:
+                    signals.append(vim >= 10.0)                  # kāraka strong
+            total = len(signals)
+            natal_ok = mean_idx >= 4.0
+            # Confidence = how CONSISTENTLY the independent signals point the same
+            # way as the headline potential (agreement), not how good it is.
+            direction = natal_ok
+            agree = sum(1 for s in signals if s == direction)
+            frac = agree / total if total else 0.0
+            # Genuine conflict: strong natal promise but the daśā is dormant, or a
+            # top-tier activation landing on weak natal support.
+            timing_conflict = ((natal_ok and best_rank <= 0)
+                               or (not natal_ok and best_rank >= 3))
+            if timing_conflict:
+                band = "Conflicting indications"
+            elif total == 0:
+                band = "Medium"
+            elif frac >= 0.999:
+                band = "Very high"
+            elif frac >= 0.5:
+                band = "High"
+            else:
+                band = "Medium"
+
+            # --- conflict-resolved verdict line (potential vs timing).
+            pot = _potential_label(mean_idx)
+            timing_label = ("Active now" if is_active
+                            else "Warming up" if is_mild else "Quiet")
+            if natal_ok and is_active:
+                line = f"{pot} potential and currently active — a favourable window."
+            elif natal_ok and is_mild:
+                line = (f"{pot} potential; the current daśā touches it mildly — "
+                        f"steady rather than dramatic progress.")
+            elif natal_ok and not is_active:
+                line = (f"{pot} potential, but the current daśā is quiet here — "
+                        f"results favour later periods than sudden breakthroughs.")
+            elif not natal_ok and is_active:
+                line = ("The period activates this area, yet natal support is "
+                        "limited — effort meets friction; progress with obstacles.")
+            else:
+                line = f"{pot} natal support and quiet timing — a background area for now."
+
+            # confidence as an honest percentage: the share of independent
+            # signals that agree with the headline direction (internal
+            # agreement, NEVER an event probability). A genuine conflict caps it.
+            conf_pct = 0 if timing_conflict else (round(frac * 100) if total else 50)
+            conf_reason = (
+                f"{agree} of {total} independent signals agree"
+                if total and not timing_conflict
+                else "strong natal promise but the daśā is quiet here"
+                if timing_conflict and natal_ok
+                else "the period activates an area of limited natal support"
+                if timing_conflict
+                else "too few independent signals to judge"
+            )
+            out.append({
+                "key": spec["key"], "label": spec["label"],
+                "modern": spec["modern"], "houses": houses,
+                "score": score100,
+                "potential": pot,
+                "potential_index": round(mean_idx, 2),
+                "timing": timing_label,
+                "current_tier": tier,
+                "activated_houses": activated_houses,
+                "confidence": band,
+                "confidence_pct": conf_pct,
+                "confidence_reason": conf_reason,
+                "contributors_pos": pos,
+                "contributors_neg": neg,
+                "verdict": line,
+            })
+        # Present strongest-first for the dashboard.
+        out.sort(key=lambda d: d["score"], reverse=True)
+        return out
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def _dedup_keep(items: list[str]) -> list[str]:
+    """Order-preserving de-duplication for contributor lists."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for it in items:
+        if it not in seen:
+            seen.add(it)
+            out.append(it)
+    return out
+
+
+# House-specific cautions when a classic risk house is weakly graded (#9).
+_RISK_HOUSE_PHRASE: dict[int, str] = {
+    2: "cash-flow swings and family or speech friction — keep a buffer",
+    4: "domestic or property unrest and inner restlessness — protect your base",
+    6: "debts, disputes or recurring health niggles — address them early",
+    7: "relationship strain — patience and clear agreements with partners",
+    8: "sudden disruptions, unexpected expenses or health scares — avoid speculation",
+    12: "unplanned expenditure, losses and energy drain — watch the outflows",
+}
+# Opportunity phrasing when a domain is strongly graded (#10).
+_OPP_DOMAIN_PHRASE: dict[str, str] = {
+    "career": "leadership roles, promotion and public recognition",
+    "wealth": "building assets and steady income growth",
+    "marriage": "partnership, commitment and mutual support",
+    "health": "vitality and stamina to draw on",
+    "education": "study, credentials and skill-building",
+    "children": "children, mentoring and creative output",
+    "foreign": "travel, relocation or overseas openings",
+    "spirituality": "guidance, fortune and inner growth",
+}
+
+
+def _risks_opportunities_narrative(
+    reading: Mapping[str, Any],
+) -> tuple[list[str], list[str], list[str]]:
+    """Derive (risks, opportunities, narrative) from the real decision layer —
+    honest, lay-language, no invented events. Returns three lists; any may be
+    empty. Fail-soft → ([], [], [])."""
+    try:
+        extras = (reading.get("chart") or {}).get("extras") or {}
+        decisions = extras.get("domain_decisions") or []
+        hd = (extras.get("house_doctrine") or {}).get("houses") or {}
+        if not decisions:
+            return [], [], []
+        by_key = {d["key"]: d for d in decisions}
+
+        # --- Opportunities (#10): strongly-graded domains, active ones first.
+        opps: list[str] = []
+        for d in decisions:
+            if d["potential_index"] >= 4.0:  # ≥ fairly good
+                phrase = _OPP_DOMAIN_PHRASE.get(d["key"], d["modern"].split(",")[0])
+                when = (" — supported now" if d["timing"] == "Active now"
+                        else " — building" if d["timing"] == "Warming up" else "")
+                opps.append(f"{phrase.capitalize()}{when}.")
+        opps = opps[:5]
+
+        # --- Risks (#9): concrete house cautions first, then a few weak domains.
+        house_risks: list[str] = []
+        for h, phrase in _RISK_HOUSE_PHRASE.items():
+            gi = (hd.get(str(h)) or {}).get("verdict_index")
+            if gi is not None and gi <= 1:  # afflicted/weak
+                house_risks.append(f"Watch the {_ordinal(h)} house: {phrase}.")
+        domain_risks = [
+            f"{d['label']} needs patience — {d['modern'].split(',')[0]} may "
+            f"progress slowly; set realistic expectations."
+            for d in decisions if d["potential_index"] <= 2.0
+        ][:3]
+        risks = _dedup_keep(house_risks + domain_risks)[:6]
+
+        # --- Cohesive narrative (#17): potential + timing, no fabricated events.
+        narrative: list[str] = []
+        strongest = decisions[0] if decisions else None
+        weakest = decisions[-1] if decisions else None
+        dn = extras.get("dasha_now") or {}
+        md = (dn.get("md") or {}).get("md_lord")
+        ad = (dn.get("ad") or {}).get("ad_lord")
+        active = [d for d in decisions if d["timing"] == "Active now"]
+        if strongest:
+            narrative.append(
+                f"Your chart's clearest strength is {strongest['label'].lower()} "
+                f"({strongest['potential'].lower()} potential), with "
+                f"{decisions[1]['label'].lower()} also well supported."
+                if len(decisions) > 1 else
+                f"Your chart's clearest strength is {strongest['label'].lower()} "
+                f"({strongest['potential'].lower()} potential).")
+        if md:
+            theme = (f", and it currently activates "
+                     + ", ".join(a["label"].lower() for a in active[:2])
+                     if active else "")
+            narrative.append(
+                f"You are running the {md} mahādaśā"
+                f"{(' with ' + ad + ' antardaśā') if ad else ''}{theme}.")
+        # Reconcile the headline potential vs the present timing (the anti-
+        # contradiction sentence).
+        if strongest:
+            if strongest["timing"] == "Active now":
+                narrative.append(
+                    f"This is a constructive window for {strongest['label'].lower()} — "
+                    f"the natal promise and the present period align.")
+            else:
+                narrative.append(
+                    f"The pattern favours sustained progress over sudden breakthroughs: "
+                    f"{strongest['label'].lower()}'s promise ripens more fully in a later "
+                    f"period than the one running now.")
+        if weakest and weakest["potential_index"] <= 2.0:
+            narrative.append(
+                f"Give extra patience to {weakest['label'].lower()}, the least "
+                f"supported area, and avoid overcommitting there.")
+        return risks, opps, narrative
+    except Exception:  # noqa: BLE001
+        return [], [], []
+
+
+def _augment_present_and_doctrine(
+    reading: dict[str, Any], chart_input: ChartInput,
+) -> None:
+    """Attach the present-tense + real-doctrine enrichments to a fully
+    assembled reading dict, in place. Each block is independently fail-soft;
+    all output lands under ``chart.extras.*``. Called at the very end of
+    ``compute()`` so the full timeline (sequences.md_judgments) is available
+    and nothing downstream can drop the new fields.
+
+    Derivation order (the multi-pass reasoning, #3) — each pass reads the
+    output of the passes before it, so the derivation is explicit and no later
+    pass ever precedes an input it needs:
+
+      1. present tense .... dasha_now, transits_now
+      2. planets/houses ... house_doctrine (single judge_chart_doctrine pass),
+                            planet_strength, classical_factors, raman_doctrine
+      3. domains ......... domain_decisions
+      4. contradictions .. tensions, judgements (weighted conflict-resolution)
+      5. lay layer ....... risks/opportunities/narrative, executive_summary,
+                            classical_narrative, native_profile
+      6. MASTER .......... the governing judgement over ALL the evidence above
+                            (dominant planet/yoga/challenge, life theme, decisive
+                            factors), then threaded back into the executive
+                            summary (#16) so every section derives from it.
+      7. derive-from-master  planet_stories (dominant flagged as the central
+                            thread) + interactions.
+      8. timing .......... life_timeline (full-life daśā arc + cycle meter).
+    """
+    chart_block = reading.get("chart")
+    if not isinstance(chart_block, dict):
+        return
+    extras = chart_block.setdefault("extras", {})
+    if not isinstance(extras, dict):
+        return
+
+    # --- Phase 0a: the daśā running NOW (and the correctly-labelled birth balance).
+    dasha_lords: dict[str, str] | None = None
+    try:
+        from app.integration import dasha_now as _dn
+
+        block: dict[str, Any] = {}
+        try:
+            block["md"] = _dn.md_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["ad"] = _dn.ad_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["pd"] = _dn.pd_at_now(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            block["birth_balance"] = _dn.md_at_birth(reading).model_dump(mode="json")
+        except Exception:  # noqa: BLE001
+            pass
+        if block:
+            extras["dasha_now"] = block
+            md_lord = (block.get("md") or {}).get("md_lord")
+            ad_lord = (block.get("ad") or {}).get("ad_lord")
+            if md_lord:
+                dasha_lords = {"md": md_lord}
+                if ad_lord:
+                    dasha_lords["ad"] = ad_lord
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Phase 0b: live transits (gochara now).
+    try:
+        from app.integration import transit_engine as _te
+
+        extras["transits_now"] = _te.transit_at_now(reading).model_dump(mode="json")
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Cast the RamanChart once; shared by house-doctrine + planet-strength.
+    raman_chart_obj = _build_raman_chart(chart_input)
+
+    # --- Run the encoded-Raman doctrine engine ONCE; both the per-house verdicts
+    # and the fired-rule knowledge base derive from this single pass.
+    chart_doctrine = None
+    if raman_chart_obj is not None:
+        try:
+            from app.medini.doctrine.domains.house_judgment import (
+                judge_chart_doctrine,
+            )
+            _dasha = dict(dasha_lords) if dasha_lords else None
+            chart_doctrine = judge_chart_doctrine(raman_chart_obj, dasha=_dasha)
+        except Exception:  # noqa: BLE001
+            chart_doctrine = None
+
+    # --- Phase 1a: the real encoded Raman per-house verdicts.
+    hd = _house_doctrine(chart_doctrine.houses if chart_doctrine else None)
+    if hd:
+        extras["house_doctrine"] = hd
+
+    # --- Phase 2 (#4,#13): real per-planet strength + composite (5 components).
+    ps = _planet_strength(raman_chart_obj, extras.get("avasthas"))
+    if ps:
+        extras["planet_strength"] = ps
+
+    # --- Phase 2 (#10): chart tensions derived from the D1/D9 + factor clashes.
+    tensions = _chart_tensions(reading)
+    if tensions:
+        extras["tensions"] = tensions
+
+    # --- Phase 3 (#12): advanced classical factors (functional nature, maraka/
+    # badhaka, retrogression, graha-yuddha, vipareeta, neecha-bhanga).
+    cf = _classical_factors(raman_chart_obj)
+    if cf:
+        extras["classical_factors"] = cf
+
+    # --- B. V. Raman knowledge base: cited favourable combinations + provenance.
+    rd = _raman_doctrine(chart_doctrine)
+    if rd:
+        extras["raman_doctrine"] = rd
+
+    # --- Phase 3 (#1,2,3,6,8,11,14): the question-centric domain decision layer.
+    decisions = _domain_decisions(reading)
+    if decisions:
+        extras["domain_decisions"] = decisions
+
+    # --- Conflict-resolution / weighted-synthesis engine: one reconciled
+    # verdict per domain from weighted positive-vs-negative evidence.
+    try:
+        from app.reading.judgement import build_judgements
+        judgements = build_judgements(extras)
+        if judgements:
+            extras["judgements"] = judgements
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Phase 3 (#9,#10,#17): risks, opportunities, cohesive narrative.
+    risks, opps, narrative = _risks_opportunities_narrative(reading)
+    if risks:
+        extras["risks"] = risks
+    if opps:
+        extras["opportunities"] = opps
+    if narrative:
+        extras["narrative"] = narrative
+
+    # --- Phase 1b: the deterministic executive summary (reads the blocks above).
+    summary = _executive_summary(reading)
+    if summary:
+        extras["executive_summary"] = summary
+
+    # --- Classical judicial narrative in the manner of B. V. Raman — a
+    # continuous, measured reading following his hierarchy (Ascendant → lord →
+    # Moon → Sun → planets → house lords → yogas → synthesis → timing). Reasons
+    # from the SAME real engine output the dashboard shows. Fail-soft.
+    if raman_chart_obj is not None:
+        try:
+            from app.reading.classical_narrative import build_classical_narrative
+            narrative_chapters = build_classical_narrative(
+                reading, raman_chart_obj.bundle,
+            )
+            if narrative_chapters:
+                extras["classical_narrative"] = narrative_chapters
+        except Exception:  # noqa: BLE001
+            pass
+
+    # --- Native profile ("Who you are"): eight behavioural styles reasoned from
+    # the real planet-strength table + an honest internal-clarity figure.
+    try:
+        from app.reading.native_profile import build_native_profile
+        native = build_native_profile(reading, extras)
+        if native:
+            extras["native_profile"] = native
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Master Synthesis Layer (the spine): reduce ALL the blocks above into
+    # ONE governing judgement — dominant planet / yoga / challenge, core
+    # strengths & weaknesses, life theme, current phase, and the ≤10 decisive
+    # factors the report leads with (anti-rule-dumping). Runs LAST so every
+    # input exists; every field is real engine output, never a probability.
+    try:
+        from app.reading.master_synthesis import build_master
+        master = build_master(reading, extras)
+        if master:
+            extras["master"] = master
+            # Thread the master through the report: open the executive summary
+            # with the one governing life-theme so the summary and every
+            # downstream section derive from the same coherent judgement (#16).
+            theme = master.get("life_theme")
+            if theme:
+                summ = extras.get("executive_summary")
+                if isinstance(summ, list) and theme not in summ:
+                    extras["executive_summary"] = [theme] + summ
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Planet stories + interaction matrix: one narrative per graha (dominant
+    # flagged as the central thread) and the pairwise relationships between them
+    # (conjunction / aspect / exchange / war) reduced to a combined effect.
+    # Runs AFTER master so each story can flag the chart's dominant planet.
+    try:
+        from app.reading.planet_story import (
+            build_interactions, build_planet_stories,
+        )
+        stories = build_planet_stories(reading, extras)
+        if stories:
+            extras["planet_stories"] = stories
+        interactions = build_interactions(reading, extras)
+        if interactions:
+            extras["interactions"] = interactions
+    except Exception:  # noqa: BLE001
+        pass
+
+    # --- Life timeline (#12,#8,#9): the full-life mahādaśā sequence
+    # reconstructed from the birth balance (past + present + future eras), each
+    # with its life areas + tone, and the current period's cycle label (the
+    # timing strength meter). Deterministic Vimśottarī; needs dasha_now.
+    try:
+        from app.reading.life_timeline import build_life_timeline
+        life_timeline = build_life_timeline(reading, extras)
+        if life_timeline:
+            extras["life_timeline"] = life_timeline
+    except Exception:  # noqa: BLE001
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -260,6 +1653,8 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             "weekday": weekday,
             "current_mahadasha": chart.get("current_mahadasha"),
             "divisional_charts": divisional_charts,
+            "divisional_lagnas": _divisional_lagnas(lagna_longitude),
+            "dasha_activation": _dasha_activation(d1_chart, lagna_longitude),
             "panchanga": chart.get("panchanga"),
             "ashtakavarga": chart.get("ashtakavarga"),
             "avasthas": chart.get("avasthas"),
@@ -842,6 +2237,13 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
         warnings.append(f"rookie_guards.import failed: {type(exc).__name__}: {exc}")
 
     # -----------------------------------------------------------------------
+    # Classical yogas — the core 88-detector library, surfaced with citations.
+    # (The practitioner `yogas_extended` module is a 9-detector graded subset;
+    # this is the wider named-yoga catalog. Cosmetic, fail-soft.)
+    # -----------------------------------------------------------------------
+    classical_yogas_payload = _classical_yogas(d1_chart, asc_sign, lagna_longitude)
+
+    # -----------------------------------------------------------------------
     # Stage 7: Assembly
     # -----------------------------------------------------------------------
     meta = Meta(
@@ -874,6 +2276,7 @@ def _run_core_pipeline(chart_input: ChartInput) -> dict[str, Any]:
             domains=DomainsBlock(**dom_block_payload),
             contradictions=[],
             warnings=warnings,
+            classical_yogas=classical_yogas_payload,
         )
     except Exception as exc:  # noqa: BLE001
         # Last-resort fallback: emit an empty-blocks reading with the
@@ -1091,6 +2494,9 @@ def compute(chart_input: ChartInput, enrich: bool = True) -> dict[str, Any]:
         A dict matching the `ReadingOutput` Pydantic schema.
     """
     base = _run_core_pipeline(chart_input)
-    if not enrich:
-        return base
-    return _apply_tier3_enrichments(base, chart_input)
+    result = base if not enrich else _apply_tier3_enrichments(base, chart_input)
+    # Present-tense + real-doctrine enrichments (daśā-now, live transits, the
+    # encoded Raman per-house verdicts, executive summary). Fail-soft, additive,
+    # under chart.extras — runs last so the full timeline is available.
+    _augment_present_and_doctrine(result, chart_input)
+    return result

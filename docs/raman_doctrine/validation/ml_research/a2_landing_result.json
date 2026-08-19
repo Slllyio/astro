@@ -1,0 +1,22 @@
+{
+ "note": "A2 learned-combine LANDING test (learned_combine_landing.py). The anchor is scored in LIVE ENGINE REPRESENTATION (grid-backed ch. IV casts via anchor_live_validate + judge_house_doctrine), the re-derivation the landing path named; and the model is trained under three regimes, one injecting the strong-heavy NH degree pool (the house-1/kendra-strong training-rows prerequisite). RESULT: 0/8 within-one on the live anchor in ALL regimes (ordinal + tree). Adding strong training signal does NOT cure the OOD collapse. The learned combine is NOT landable; its transferable gain (Gate B = the tree's sum_neg<=-1.22 split) is already live in synthesis_v2, which holds anchor parity via the engine-base floor the model lacks. The pre-registered anchor gate is vindicated at the model level. Verdict: the ceiling residual is learnable IN-DISTRIBUTION but NOT landable.",
+ "n_heldout": 57,
+ "n_nh": 73,
+ "nh_strong": 15,
+ "n_anchor": 8,
+ "regimes": {
+  "heldout_only": {"n_train": 57, "ordinal_within1": 0, "tree_within1": 0, "n": 8},
+  "heldout_plus_nh": {"n_train": 130, "ordinal_within1": 0, "tree_within1": 0, "n": 8},
+  "nh_only": {"n_train": 73, "ordinal_within1": 0, "tree_within1": 0, "n": 8}
+ },
+ "per_row_heldout_plus_nh_tree": [
+  {"tag": "ch12-bhava", "raman": "moderate", "pred": "afflicted"},
+  {"tag": "ch12-lord", "raman": "fairly good", "pred": "afflicted"},
+  {"tag": "ch12-karaka", "raman": "moderately good", "pred": "afflicted"},
+  {"tag": "ch13-bhava", "raman": "fairly strong", "pred": "afflicted"},
+  {"tag": "ch13-lord", "raman": "fairly powerful", "pred": "afflicted"},
+  {"tag": "ch13-karaka", "raman": "fairly powerful", "pred": "afflicted"},
+  {"tag": "ch14-lord", "raman": "very strong", "pred": "afflicted"},
+  {"tag": "ch14-karaka", "raman": "moderate", "pred": "afflicted"}
+ ]
+}

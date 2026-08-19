@@ -66,7 +66,7 @@ DEFAULT_USER_AGENT = (
     "github.com/Slllyio/astro; archive.org via wayback CDX)"
 )
 
-CDX_ENDPOINT = "http://web.archive.org/cdx/search/cdx"
+CDX_ENDPOINT = "https://web.archive.org/cdx/search/cdx"
 WAYBACK_REPLAY_TEMPLATE = "https://web.archive.org/web/{timestamp}id_/{original}"
 
 # Path-prefix substrings that mean "not a biographical entry" and so should

@@ -1,0 +1,4503 @@
+{
+ "version": 2,
+ "source": "Notable Horoscopes (archive.org NotableHoroscopesBVR)",
+ "split_seed": 20260704,
+ "cases": [
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "krishna",
+   "name": "Sri Krishna",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -3227,
+     7,
+     19
+    ]
+   ],
+   "hour_local": 0.0,
+   "lat": 27.0,
+   "lon_east": 78.0,
+   "death": {
+    "age_years": 125
+   },
+   "death_precision": "age",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Mars",
+   "raman_ad": null,
+   "named_killers": [
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_7",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#krishna",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "mythological_reconstruction_partial_positions",
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "buddha",
+   "name": "Sri Gautama Buddha",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -622,
+     4,
+     14
+    ]
+   ],
+   "hour_local": 12.0,
+   "lat": 27.133,
+   "lon_east": 83.083,
+   "death": {
+    "age_years": 80
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     29,
+     3
+    ],
+    "Moon": [
+     200,
+     45
+    ],
+    "Mars": [
+     26,
+     54
+    ],
+    "Mercury": [
+     53,
+     6
+    ],
+    "Jupiter": [
+     11,
+     0
+    ],
+    "Venus": [
+     6,
+     12
+    ],
+    "Saturn": [
+     24,
+     36
+    ],
+    "Rahu": [
+     86,
+     54
+    ]
+   },
+   "lagna_dms": [
+    116,
+    45
+   ],
+   "raman_md": "Sun",
+   "raman_ad": "Mars",
+   "named_killers": [
+    "Sun",
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_2",
+    "conjunct_maraka",
+    "chandra_frame",
+    "drekkana_22"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#buddha",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "alexander",
+   "name": "Alexander the Great",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -355,
+     7,
+     22
+    ]
+   ],
+   "hour_local": 23.0,
+   "lat": 40.717,
+   "lon_east": 22.583,
+   "death": {
+    "age_years": 32
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     123,
+     35
+    ],
+    "Moon": [
+     208,
+     31
+    ],
+    "Mars": [
+     86,
+     18
+    ],
+    "Mercury": [
+     105,
+     3
+    ],
+    "Jupiter": [
+     185,
+     54
+    ],
+    "Venus": [
+     126,
+     20
+    ],
+    "Saturn": [
+     59,
+     54
+    ],
+    "Rahu": [
+     314,
+     2
+    ],
+    "Ketu": [
+     134,
+     2
+    ]
+   },
+   "lagna_dms": [
+    19,
+    31
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Moon",
+   "named_killers": [
+    "Mercury",
+    "Moon"
+   ],
+   "stated_band": "ALPAYU",
+   "mechanisms": [
+    "navamsa_maraka",
+    "nakshatra_transfer",
+    "marakasthana_occupancy"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#alexander",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "augustus",
+   "name": "Augustus Caesar",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -62,
+     9,
+     23
+    ]
+   ],
+   "hour_local": 5.8,
+   "lat": 41.883,
+   "lon_east": 12.467,
+   "death": [
+    14,
+    8,
+    19
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     183,
+     25
+    ],
+    "Moon": [
+     303,
+     55
+    ],
+    "Mars": [
+     39,
+     25
+    ],
+    "Mercury": [
+     173,
+     25
+    ],
+    "Jupiter": [
+     111,
+     25
+    ],
+    "Venus": [
+     230,
+     25
+    ],
+    "Saturn": [
+     36,
+     55
+    ],
+    "Rahu": [
+     39,
+     25
+    ]
+   },
+   "lagna_dms": [
+    180,
+    30
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": "Mercury",
+   "named_killers": [
+    "Mars",
+    "Ketu"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "conjunct_maraka",
+    "house8_occupancy",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#augustus",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "sankara",
+   "name": "Sri Adi Sankaracharya",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -43,
+     3,
+     25
+    ]
+   ],
+   "hour_local": 12.0,
+   "lat": 8.483,
+   "lon_east": 76.983,
+   "death": {
+    "age_years": 32
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     8,
+     12
+    ],
+    "Moon": [
+     69,
+     12
+    ],
+    "Mars": [
+     332,
+     36
+    ],
+    "Mercury": [
+     24,
+     6
+    ],
+    "Jupiter": [
+     303,
+     36
+    ],
+    "Venus": [
+     3,
+     0
+    ],
+    "Saturn": [
+     265,
+     30
+    ],
+    "Rahu": [
+     41,
+     18
+    ]
+   },
+   "lagna_dms": [
+    99,
+    22
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Saturn"
+   ],
+   "stated_band": "ALPAYU",
+   "mechanisms": [
+    "maraka_lord_7",
+    "chandra_frame",
+    "nakshatra_transfer"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#sankara",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "jesus",
+   "name": "Jesus Christ",
+   "tier": "A",
+   "birth_dates": [
+    [
+     -6,
+     12,
+     25
+    ]
+   ],
+   "hour_local": 22.3,
+   "lat": 31.717,
+   "lon_east": 35.217,
+   "death": [
+    30,
+    4,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     247,
+     59
+    ],
+    "Moon": [
+     336,
+     41
+    ],
+    "Mars": [
+     314,
+     29
+    ],
+    "Mercury": [
+     255,
+     58
+    ],
+    "Jupiter": [
+     353,
+     17
+    ],
+    "Venus": [
+     233,
+     1
+    ],
+    "Saturn": [
+     351,
+     47
+    ],
+    "Rahu": [
+     210,
+     35
+    ]
+   },
+   "lagna_dms": [
+    165,
+    29
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": null,
+   "named_killers": [
+    "Ketu",
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "node_sign_dispositor",
+    "maraka_lord_2",
+    "chandra_frame"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#jesus",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "nero",
+   "name": "Emperor Nero",
+   "tier": "A",
+   "birth_dates": [
+    [
+     37,
+     12,
+     15
+    ]
+   ],
+   "hour_local": 7.467,
+   "lat": 41.483,
+   "lon_east": 12.767,
+   "death": [
+    68,
+    6,
+    9
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     267,
+     30
+    ],
+    "Moon": [
+     139,
+     2
+    ],
+    "Mars": [
+     271,
+     2
+    ],
+    "Mercury": [
+     245,
+     2
+    ],
+    "Jupiter": [
+     229,
+     32
+    ],
+    "Venus": [
+     298,
+     2
+    ],
+    "Saturn": [
+     182,
+     2
+    ],
+    "Rahu": [
+     278,
+     50
+    ],
+    "Ketu": [
+     98,
+     50
+    ]
+   },
+   "lagna_dms": [
+    267,
+    32
+   ],
+   "raman_md": "Mars",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Saturn",
+    "Mars"
+   ],
+   "stated_band": "ALPAYU",
+   "mechanisms": [
+    "maraka_lord_2",
+    "chandra_frame",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#nero",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "ramanuja",
+   "name": "Sri Ramanujacharya",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1017,
+     4,
+     4
+    ]
+   ],
+   "hour_local": 12.0,
+   "lat": 11.233,
+   "lon_east": 78.933,
+   "death": {
+    "age_years": 120
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     11,
+     32
+    ],
+    "Moon": [
+     73,
+     50
+    ],
+    "Mars": [
+     121,
+     24
+    ],
+    "Mercury": [
+     24,
+     42
+    ],
+    "Jupiter": [
+     63,
+     0
+    ],
+    "Venus": [
+     16,
+     36
+    ],
+    "Saturn": [
+     260,
+     18
+    ],
+    "Rahu": [
+     43,
+     42
+    ]
+   },
+   "lagna_dms": [
+    102,
+    2
+   ],
+   "raman_md": "Rahu",
+   "raman_ad": "Mercury",
+   "named_killers": [
+    "Sun",
+    "Mercury"
+   ],
+   "stated_band": "PURNAYU",
+   "mechanisms": [
+    "node_sign_dispositor",
+    "conjunct_maraka",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#ramanuja",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "omar",
+   "name": "Omar Khayyam",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1048,
+     5,
+     18
+    ]
+   ],
+   "hour_local": 4.8,
+   "lat": 36.217,
+   "lon_east": 58.75,
+   "death": [
+    1123,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     53,
+     12
+    ],
+    "Moon": [
+     79,
+     54
+    ],
+    "Mars": [
+     28,
+     36
+    ],
+    "Mercury": [
+     57,
+     36
+    ],
+    "Jupiter": [
+     297,
+     0
+    ],
+    "Venus": [
+     67,
+     0
+    ],
+    "Saturn": [
+     278,
+     48
+    ],
+    "Rahu": [
+     161,
+     6
+    ]
+   },
+   "lagna_dms": [
+    49,
+    1
+   ],
+   "raman_md": "Venus",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Venus",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "marakasthana_occupancy",
+    "navamsa_maraka",
+    "conjunct_maraka",
+    "chandra_frame"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#omar",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "chengiz",
+   "name": "Chengiz Khan",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1186,
+     9,
+     16
+    ],
+    [
+     1186,
+     9,
+     15
+    ]
+   ],
+   "hour_local": 1.5,
+   "lat": 37.0,
+   "lon_east": 65.0,
+   "death": [
+    1227,
+    8,
+    18
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     169,
+     23
+    ],
+    "Moon": [
+     198,
+     12
+    ],
+    "Mars": [
+     179,
+     38
+    ],
+    "Mercury": [
+     155,
+     33
+    ],
+    "Jupiter": [
+     170,
+     0
+    ],
+    "Venus": [
+     155,
+     24
+    ],
+    "Saturn": [
+     174,
+     18
+    ],
+    "Rahu": [
+     3,
+     10
+    ]
+   },
+   "lagna_dms": [
+    100,
+    40
+   ],
+   "raman_md": "Venus",
+   "raman_ad": "Sun",
+   "named_killers": [
+    "Sun",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#chengiz",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "vidyaranya",
+   "name": "Swami Vidyaranya",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1296,
+     4,
+     11
+    ]
+   ],
+   "hour_local": 22.967,
+   "lat": 15.0,
+   "lon_east": 77.0,
+   "death": [
+    1387,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Rahu",
+   "raman_ad": "Venus",
+   "named_killers": [
+    "Saturn",
+    "Mercury"
+   ],
+   "stated_band": "PURNAYU",
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#vidyaranya",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "positions_incomplete_ocr",
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "nanak",
+   "name": "Guru Nanak",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1470,
+     11,
+     8
+    ]
+   ],
+   "hour_local": 0.0,
+   "lat": 31.65,
+   "lon_east": 74.783,
+   "death": [
+    1539,
+    9,
+    22
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     220,
+     30
+    ],
+    "Moon": [
+     38,
+     18
+    ],
+    "Mars": [
+     211,
+     24
+    ],
+    "Mercury": [
+     232,
+     24
+    ],
+    "Jupiter": [
+     164,
+     30
+    ],
+    "Venus": [
+     186,
+     0
+    ],
+    "Saturn": [
+     39,
+     6
+    ],
+    "Rahu": [
+     263,
+     48
+    ]
+   },
+   "lagna_dms": [
+    136,
+    28
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Saturn",
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_7",
+    "maraka_lord_2",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#nanak",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "chaitanya",
+   "name": "Sri Chaitanya",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1486,
+     2,
+     18
+    ]
+   ],
+   "hour_local": 20.933,
+   "lat": 23.383,
+   "lon_east": 88.417,
+   "death": {
+    "age_years": 47
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     323,
+     52
+    ],
+    "Moon": [
+     142,
+     52
+    ],
+    "Mars": [
+     282,
+     56
+    ],
+    "Mercury": [
+     342,
+     0
+    ],
+    "Jupiter": [
+     261,
+     40
+    ],
+    "Venus": [
+     6,
+     7
+    ],
+    "Saturn": [
+     236,
+     2
+    ],
+    "Rahu": [
+     328,
+     10
+    ]
+   },
+   "lagna_dms": [
+    184,
+    24
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": null,
+   "named_killers": [
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "navamsa_maraka",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#chaitanya",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "akbar",
+   "name": "Akbar the Great",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1542,
+     11,
+     24
+    ],
+    [
+     1542,
+     11,
+     23
+    ]
+   ],
+   "hour_local": 4.15,
+   "lat": 25.317,
+   "lon_east": 69.783,
+   "death": [
+    1605,
+    10,
+    13
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     235,
+     12
+    ],
+    "Moon": [
+     70,
+     0
+    ],
+    "Mars": [
+     294,
+     42
+    ],
+    "Mercury": [
+     251,
+     30
+    ],
+    "Jupiter": [
+     187,
+     18
+    ],
+    "Venus": [
+     200,
+     2
+    ],
+    "Saturn": [
+     209,
+     12
+    ],
+    "Rahu": [
+     309,
+     36
+    ]
+   },
+   "lagna_dms": [
+    203,
+    22
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "ayushkaraka_saturn",
+    "navamsa_maraka",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#akbar",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "milton",
+   "name": "John Milton",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1608,
+     12,
+     9
+    ]
+   ],
+   "hour_local": 6.5,
+   "lat": 51.517,
+   "lon_east": -0.083,
+   "death": [
+    1674,
+    11,
+    8
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     251,
+     48
+    ],
+    "Moon": [
+     42,
+     18
+    ],
+    "Mars": [
+     336,
+     48
+    ],
+    "Mercury": [
+     267,
+     48
+    ],
+    "Jupiter": [
+     19,
+     18
+    ],
+    "Venus": [
+     271,
+     40
+    ],
+    "Saturn": [
+     281,
+     48
+    ],
+    "Rahu": [
+     111,
+     24
+    ],
+    "Ketu": [
+     291,
+     24
+    ]
+   },
+   "lagna_dms": [
+    226,
+    18
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Rahu",
+   "named_killers": [
+    "Saturn",
+    "Rahu"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "marakasthana_occupancy",
+    "chandra_frame",
+    "node_sign_dispositor"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#milton",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "aurangzeb",
+   "name": "Aurangzeb",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1618,
+     11,
+     3
+    ]
+   ],
+   "hour_local": 13.717,
+   "lat": 28.65,
+   "lon_east": 77.217,
+   "death": [
+    1707,
+    3,
+    3
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     203,
+     50
+    ],
+    "Moon": [
+     35,
+     14
+    ],
+    "Mars": [
+     144,
+     0
+    ],
+    "Mercury": [
+     199,
+     0
+    ],
+    "Jupiter": [
+     310,
+     0
+    ],
+    "Venus": [
+     259,
+     0
+    ],
+    "Saturn": [
+     48,
+     0
+    ],
+    "Rahu": [
+     280,
+     0
+    ]
+   },
+   "lagna_dms": [
+    313,
+    45
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_8",
+    "chandra_frame",
+    "conjunct_maraka",
+    "md_ad_shashtashtaka",
+    "sadesathi_3rd"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#aurangzeb",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "julian",
+   "time_basis": "LMT",
+   "key": "shivaji",
+   "name": "Shivaji the Great",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1630,
+     2,
+     19
+    ]
+   ],
+   "hour_local": 18.433,
+   "lat": 18.533,
+   "lon_east": 73.883,
+   "death": [
+    1680,
+    4,
+    3
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     323,
+     56
+    ],
+    "Moon": [
+     178,
+     48
+    ],
+    "Mars": [
+     76,
+     37
+    ],
+    "Mercury": [
+     338,
+     10
+    ],
+    "Jupiter": [
+     307,
+     19
+    ],
+    "Venus": [
+     10,
+     1
+    ],
+    "Saturn": [
+     197,
+     37
+    ],
+    "Rahu": [
+     60,
+     49
+    ],
+    "Ketu": [
+     240,
+     49
+    ]
+   },
+   "lagna_dms": [
+    149,
+    9
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Mars",
+   "named_killers": [
+    "Saturn",
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_ownership",
+    "chandra_frame",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#shivaji",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "hyderali",
+   "name": "Hyderali",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1722,
+     12,
+     8
+    ]
+   ],
+   "hour_local": 2.25,
+   "lat": 13.0,
+   "lon_east": 77.583,
+   "death": [
+    1782,
+    12,
+    7
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     237,
+     24
+    ],
+    "Moon": [
+     227,
+     42
+    ],
+    "Mars": [
+     222,
+     5
+    ],
+    "Mercury": [
+     216,
+     42
+    ],
+    "Jupiter": [
+     238,
+     12
+    ],
+    "Venus": [
+     281,
+     41
+    ],
+    "Saturn": [
+     239,
+     58
+    ],
+    "Rahu": [
+     65,
+     12
+    ]
+   },
+   "lagna_dms": [
+    182,
+    28
+   ],
+   "raman_md": "Mars",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Mars",
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_ownership",
+    "marakasthana_occupancy",
+    "ayushkaraka_saturn",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#hyderali",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "goethe",
+   "name": "J. W. von Goethe",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1749,
+     8,
+     29
+    ]
+   ],
+   "hour_local": 12.283,
+   "lat": 50.117,
+   "lon_east": 8.683,
+   "death": [
+    1832,
+    3,
+    22
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     136,
+     0
+    ],
+    "Moon": [
+     323,
+     0
+    ],
+    "Mars": [
+     254,
+     30
+    ],
+    "Mercury": [
+     130,
+     0
+    ],
+    "Jupiter": [
+     337,
+     0
+    ],
+    "Venus": [
+     157,
+     30
+    ],
+    "Saturn": [
+     206,
+     0
+    ],
+    "Rahu": [
+     267,
+     0
+    ],
+    "Ketu": [
+     87,
+     0
+    ]
+   },
+   "lagna_dms": [
+    208,
+    0
+   ],
+   "raman_md": "Moon",
+   "raman_ad": "Mars",
+   "named_killers": [
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_7",
+    "marakasthana_occupancy",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#goethe",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "tippu",
+   "name": "Tippu Sultan",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1751,
+     12,
+     1
+    ]
+   ],
+   "hour_local": 8.0,
+   "lat": 13.0,
+   "lon_east": 77.583,
+   "death": [
+    1799,
+    5,
+    4
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     229,
+     54
+    ],
+    "Moon": [
+     24,
+     24
+    ],
+    "Mars": [
+     318,
+     0
+    ],
+    "Mercury": [
+     227,
+     42
+    ],
+    "Jupiter": [
+     47,
+     30
+    ],
+    "Venus": [
+     194,
+     6
+    ],
+    "Saturn": [
+     236,
+     24
+    ],
+    "Rahu": [
+     225,
+     0
+    ],
+    "Ketu": [
+     45,
+     0
+    ]
+   },
+   "lagna_dms": [
+    258,
+    0
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Saturn",
+    "Mercury"
+   ],
+   "stated_band": "MADHYAYU",
+   "mechanisms": [
+    "aspected_by_maraka",
+    "chandra_frame"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#tippu",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "marie_antoinette",
+   "name": "Marie Antoinette",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1755,
+     11,
+     2
+    ]
+   ],
+   "hour_local": 20.0,
+   "lat": 46.5,
+   "lon_east": 30.0,
+   "death": [
+    1793,
+    10,
+    16
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     201,
+     0
+    ],
+    "Moon": [
+     182,
+     0
+    ],
+    "Mars": [
+     87,
+     0
+    ],
+    "Mercury": [
+     224,
+     0
+    ],
+    "Jupiter": [
+     169,
+     0
+    ],
+    "Venus": [
+     202,
+     0
+    ],
+    "Saturn": [
+     274,
+     0
+    ],
+    "Rahu": [
+     156,
+     0
+    ],
+    "Ketu": [
+     336,
+     0
+    ]
+   },
+   "lagna_dms": [
+    74,
+    1
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Saturn",
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_8",
+    "house8_occupancy",
+    "drekkana_22"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#marie_antoinette",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": "antara-level verdict (Venus antara) \u2014 MD/AD Saturn/Saturn used"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "thyagaraja",
+   "name": "Sri Thyagaraja",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1767,
+     5,
+     4
+    ]
+   ],
+   "hour_local": 12.0,
+   "lat": 10.783,
+   "lon_east": 79.167,
+   "death": {
+    "age_years": 85
+   },
+   "death_precision": "age",
+   "positions_dms": {
+    "Sun": [
+     23,
+     9
+    ],
+    "Moon": [
+     96,
+     41
+    ],
+    "Mars": [
+     64,
+     9
+    ],
+    "Mercury": [
+     0,
+     21
+    ],
+    "Jupiter": [
+     143,
+     14
+    ],
+    "Venus": [
+     50,
+     57
+    ],
+    "Saturn": [
+     59,
+     3
+    ],
+    "Rahu": [
+     284,
+     17
+    ],
+    "Ketu": [
+     104,
+     17
+    ]
+   },
+   "lagna_dms": [
+    115,
+    0
+   ],
+   "raman_md": "Rahu",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Rahu",
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "marakasthana_occupancy",
+    "chandra_frame",
+    "node_sign_dispositor",
+    "md_ad_shashtashtaka",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#thyagaraja",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "lincoln",
+   "name": "Abraham Lincoln",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1809,
+     2,
+     12
+    ]
+   ],
+   "hour_local": 7.533,
+   "lat": 35.0,
+   "lon_east": -89.0,
+   "death": [
+    1865,
+    4,
+    15
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     304,
+     6
+    ],
+    "Moon": [
+     275,
+     20
+    ],
+    "Mars": [
+     185,
+     46
+    ],
+    "Mercury": [
+     312,
+     44
+    ],
+    "Jupiter": [
+     332,
+     16
+    ],
+    "Venus": [
+     347,
+     46
+    ],
+    "Saturn": [
+     223,
+     16
+    ],
+    "Rahu": [
+     197,
+     44
+    ],
+    "Ketu": [
+     17,
+     44
+    ]
+   },
+   "lagna_dms": [
+    316,
+    39
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Mercury",
+   "named_killers": [
+    "Saturn",
+    "Mercury"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "aspected_by_maraka",
+    "maraka_lord_8",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#lincoln",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "tennyson",
+   "name": "Lord Tennyson",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1809,
+     8,
+     6
+    ]
+   ],
+   "hour_local": 23.75,
+   "lat": 53.533,
+   "lon_east": -0.4,
+   "death": [
+    1892,
+    10,
+    6
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     113,
+     45
+    ],
+    "Moon": [
+     53,
+     45
+    ],
+    "Mars": [
+     196,
+     45
+    ],
+    "Mercury": [
+     95,
+     45
+    ],
+    "Jupiter": [
+     4,
+     45
+    ],
+    "Venus": [
+     67,
+     45
+    ],
+    "Saturn": [
+     217,
+     45
+    ],
+    "Rahu": [
+     187,
+     36
+    ],
+    "Ketu": [
+     7,
+     36
+    ]
+   },
+   "lagna_dms": [
+    55,
+    0
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": null,
+   "named_killers": [
+    "Ketu",
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "node_sign_dispositor",
+    "navamsa_maraka",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#tennyson",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "marx",
+   "name": "Karl Marx",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1818,
+     5,
+     15
+    ]
+   ],
+   "hour_local": 2.0,
+   "lat": 49.733,
+   "lon_east": 6.633,
+   "death": [
+    1883,
+    3,
+    14
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     24,
+     18
+    ],
+    "Moon": [
+     24,
+     8
+    ],
+    "Mars": [
+     90,
+     58
+    ],
+    "Mercury": [
+     40,
+     12
+    ],
+    "Jupiter": [
+     263,
+     5
+    ],
+    "Venus": [
+     39,
+     12
+    ],
+    "Saturn": [
+     325,
+     59
+    ],
+    "Rahu": [
+     18,
+     39
+    ],
+    "Ketu": [
+     198,
+     39
+    ]
+   },
+   "lagna_dms": [
+    302,
+    56
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Mercury",
+   "named_killers": [
+    "Saturn",
+    "Mercury"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "tara_death",
+    "ayushkaraka_saturn",
+    "nakshatra_transfer",
+    "navamsa_maraka",
+    "sadesathi_3rd"
+   ],
+   "retro": [
+    "Jupiter"
+   ],
+   "quote_ref": "NH_EXCERPTS.md#marx",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "victoria",
+   "name": "Queen Victoria",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1819,
+     5,
+     24
+    ],
+    [
+     1819,
+     5,
+     23
+    ]
+   ],
+   "hour_local": 4.067,
+   "lat": 51.5,
+   "lon_east": -0.083,
+   "death": [
+    1901,
+    1,
+    22
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     42,
+     13
+    ],
+    "Moon": [
+     43,
+     40
+    ],
+    "Mars": [
+     357,
+     42
+    ],
+    "Mercury": [
+     19,
+     2
+    ],
+    "Jupiter": [
+     297,
+     4
+    ],
+    "Venus": [
+     6,
+     45
+    ],
+    "Saturn": [
+     338,
+     53
+    ],
+    "Rahu": [
+     358,
+     17
+    ],
+    "Ketu": [
+     168,
+     17
+    ]
+   },
+   "lagna_dms": [
+    41,
+    19
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_2",
+    "ayushkaraka_saturn",
+    "nakshatra_transfer"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#victoria",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "suryanarain_rao",
+   "name": "B. Suryanarain Rao",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1856,
+     2,
+     12
+    ]
+   ],
+   "hour_local": 12.35,
+   "lat": 18.0,
+   "lon_east": 84.0,
+   "death": [
+    1937,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     301,
+     12
+    ],
+    "Moon": [
+     18,
+     29
+    ],
+    "Mars": [
+     180,
+     53
+    ],
+    "Mercury": [
+     308,
+     27
+    ],
+    "Jupiter": [
+     321,
+     38
+    ],
+    "Venus": [
+     260,
+     33
+    ],
+    "Saturn": [
+     63,
+     20
+    ],
+    "Rahu": [
+     6,
+     9
+    ],
+    "Ketu": [
+     186,
+     9
+    ]
+   },
+   "lagna_dms": [
+    43,
+    9
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Moon",
+   "named_killers": [
+    "Saturn",
+    "Moon"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "marakasthana_occupancy",
+    "chandra_frame",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#suryanarain_rao",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "tilak",
+   "name": "Bala Gangadhara Tilak",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1856,
+     7,
+     23
+    ]
+   ],
+   "hour_local": 6.4,
+   "lat": 18.533,
+   "lon_east": 73.883,
+   "death": [
+    1920,
+    8,
+    1
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     99,
+     55
+    ],
+    "Moon": [
+     349,
+     15
+    ],
+    "Mars": [
+     185,
+     10
+    ],
+    "Mercury": [
+     82,
+     32
+    ],
+    "Jupiter": [
+     348,
+     44
+    ],
+    "Venus": [
+     100,
+     24
+    ],
+    "Saturn": [
+     76,
+     53
+    ],
+    "Rahu": [
+     358,
+     57
+    ],
+    "Ketu": [
+     178,
+     57
+    ]
+   },
+   "lagna_dms": [
+    110,
+    23
+   ],
+   "raman_md": "Rahu",
+   "raman_ad": null,
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "nakshatra_transfer",
+    "ayushkaraka_saturn",
+    "chandra_frame",
+    "aspect_maraka_house",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#tilak",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "shaw",
+   "name": "George Bernard Shaw",
+   "tier": "B",
+   "birth_dates": [
+    [
+     1856,
+     7,
+     26
+    ]
+   ],
+   "hour_local": 1.0,
+   "lat": 53.333,
+   "lon_east": -6.25,
+   "death": [
+    1950,
+    11,
+    2
+   ],
+   "death_precision": "day",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Venus",
+   "raman_ad": "Venus",
+   "named_killers": [],
+   "stated_band": "PURNAYU",
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#shaw",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "positions_lost_to_ocr",
+   "note": "explicit longevity verdict usable if positions ever recovered"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "narasimha_bharathi",
+   "name": "Sri Narasimha Bharathi",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1858,
+     3,
+     11
+    ]
+   ],
+   "hour_local": 21.0,
+   "lat": 13.0,
+   "lon_east": 77.583,
+   "death": [
+    1912,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     330,
+     23
+    ],
+    "Moon": [
+     283,
+     45
+    ],
+    "Mars": [
+     216,
+     55
+    ],
+    "Mercury": [
+     317,
+     53
+    ],
+    "Jupiter": [
+     22,
+     58
+    ],
+    "Venus": [
+     333,
+     1
+    ],
+    "Saturn": [
+     91,
+     6
+    ],
+    "Rahu": [
+     327,
+     21
+    ],
+    "Ketu": [
+     147,
+     21
+    ]
+   },
+   "lagna_dms": [
+    92,
+    50
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Ketu",
+   "named_killers": [
+    "Saturn",
+    "Ketu"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "navamsa_maraka",
+    "md_ad_dwirdwadasa"
+   ],
+   "retro": [
+    "Saturn"
+   ],
+   "quote_ref": "NH_EXCERPTS.md#narasimha_bharathi",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "jc_bose",
+   "name": "Jagadish Chandra Bose",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1858,
+     11,
+     30
+    ]
+   ],
+   "hour_local": 16.417,
+   "lat": 23.55,
+   "lon_east": 90.033,
+   "death": [
+    1937,
+    11,
+    23
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     227,
+     1
+    ],
+    "Moon": [
+     170,
+     0
+    ],
+    "Mars": [
+     291,
+     52
+    ],
+    "Mercury": [
+     243,
+     48
+    ],
+    "Jupiter": [
+     56,
+     39
+    ],
+    "Venus": [
+     247,
+     38
+    ],
+    "Saturn": [
+     111,
+     17
+    ],
+    "Rahu": [
+     312,
+     49
+    ],
+    "Ketu": [
+     132,
+     49
+    ]
+   },
+   "lagna_dms": [
+    32,
+    0
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": null,
+   "named_killers": [
+    "Ketu",
+    "Sun"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "node_sign_dispositor",
+    "chandra_frame"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#jc_bose",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "havelock_ellis",
+   "name": "Havelock Ellis",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1859,
+     2,
+     2
+    ]
+   ],
+   "hour_local": 8.5,
+   "lat": 51.367,
+   "lon_east": -0.1,
+   "death": [
+    1939,
+    7,
+    8
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     292,
+     34
+    ],
+    "Moon": [
+     285,
+     4
+    ],
+    "Mars": [
+     340,
+     34
+    ],
+    "Mercury": [
+     270,
+     34
+    ],
+    "Jupiter": [
+     51,
+     4
+    ],
+    "Venus": [
+     247,
+     34
+    ],
+    "Saturn": [
+     108,
+     4
+    ],
+    "Rahu": [
+     310,
+     4
+    ],
+    "Ketu": [
+     130,
+     4
+    ]
+   },
+   "lagna_dms": [
+    307,
+    4
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_8",
+    "conjunct_maraka",
+    "aspected_by_maraka",
+    "marakasthana_occupancy"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#havelock_ellis",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "tagore",
+   "name": "Rabindranath Tagore",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1861,
+     5,
+     7
+    ]
+   ],
+   "hour_local": 2.85,
+   "lat": 22.667,
+   "lon_east": 88.5,
+   "death": [
+    1941,
+    8,
+    7
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     25,
+     48
+    ],
+    "Moon": [
+     351,
+     59
+    ],
+    "Mars": [
+     61,
+     36
+    ],
+    "Mercury": [
+     9,
+     18
+    ],
+    "Jupiter": [
+     117,
+     24
+    ],
+    "Venus": [
+     24,
+     32
+    ],
+    "Saturn": [
+     132,
+     37
+    ],
+    "Rahu": [
+     266,
+     17
+    ],
+    "Ketu": [
+     86,
+     17
+    ]
+   },
+   "lagna_dms": [
+    336,
+    9
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Jupiter",
+    "Mercury"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "nakshatra_transfer"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#tagore",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "vivekananda",
+   "name": "Swami Vivekananda",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1863,
+     1,
+     12
+    ]
+   ],
+   "hour_local": 18.55,
+   "lat": 22.667,
+   "lon_east": 88.5,
+   "death": [
+    1902,
+    7,
+    4
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     270,
+     52
+    ],
+    "Moon": [
+     168,
+     54
+    ],
+    "Mars": [
+     7,
+     46
+    ],
+    "Mercury": [
+     283,
+     13
+    ],
+    "Jupiter": [
+     185,
+     28
+    ],
+    "Venus": [
+     278,
+     32
+    ],
+    "Saturn": [
+     165,
+     2
+    ],
+    "Rahu": [
+     233,
+     41
+    ],
+    "Ketu": [
+     53,
+     41
+    ]
+   },
+   "lagna_dms": [
+    267,
+    31
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Sun",
+   "named_killers": [
+    "Jupiter",
+    "Sun"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "marakasthana_occupancy",
+    "navamsa_maraka",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#vivekananda",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "sayaji_rao",
+   "name": "Sayaji Rao III",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1863,
+     3,
+     12
+    ],
+    [
+     1863,
+     3,
+     11
+    ]
+   ],
+   "hour_local": 2.05,
+   "lat": 22.333,
+   "lon_east": 73.25,
+   "death": [
+    1939,
+    2,
+    6
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     329,
+     30
+    ],
+    "Moon": [
+     220,
+     31
+    ],
+    "Mars": [
+     40,
+     56
+    ],
+    "Mercury": [
+     302,
+     40
+    ],
+    "Jupiter": [
+     186,
+     42
+    ],
+    "Venus": [
+     351,
+     17
+    ],
+    "Saturn": [
+     162,
+     31
+    ],
+    "Rahu": [
+     230,
+     38
+    ],
+    "Ketu": [
+     50,
+     38
+    ]
+   },
+   "lagna_dms": [
+    258,
+    40
+   ],
+   "raman_md": "Rahu",
+   "raman_ad": "Venus",
+   "named_killers": [
+    "Rahu",
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "node_sign_dispositor",
+    "chandra_frame",
+    "ayushkaraka_saturn",
+    "navamsa_maraka",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#sayaji_rao",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "ashutosh",
+   "name": "Sir Ashutosh Mukerjee",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1864,
+     6,
+     29
+    ]
+   ],
+   "hour_local": 3.917,
+   "lat": 22.583,
+   "lon_east": 88.0,
+   "death": [
+    1925,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     76,
+     50
+    ],
+    "Moon": [
+     16,
+     19
+    ],
+    "Mars": [
+     2,
+     39
+    ],
+    "Mercury": [
+     57,
+     50
+    ],
+    "Jupiter": [
+     207,
+     36
+    ],
+    "Venus": [
+     71,
+     26
+    ],
+    "Saturn": [
+     170,
+     59
+    ],
+    "Rahu": [
+     205,
+     24
+    ],
+    "Ketu": [
+     25,
+     24
+    ]
+   },
+   "lagna_dms": [
+    56,
+    43
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_8",
+    "chandra_frame",
+    "navamsa_maraka",
+    "dasha_sandhi"
+   ],
+   "retro": [
+    "Jupiter"
+   ],
+   "quote_ref": "NH_EXCERPTS.md#ashutosh",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": "Raman states 1925; historically 1924 \u2014 his year used per precedence"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "crdas",
+   "name": "Chittaranjan Das",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1870,
+     11,
+     5
+    ]
+   ],
+   "hour_local": 6.817,
+   "lat": 22.667,
+   "lon_east": 88.5,
+   "death": [
+    1925,
+    6,
+    16
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     201,
+     48
+    ],
+    "Moon": [
+     345,
+     47
+    ],
+    "Mars": [
+     133,
+     14
+    ],
+    "Mercury": [
+     191,
+     8
+    ],
+    "Jupiter": [
+     65,
+     36
+    ],
+    "Venus": [
+     193,
+     36
+    ],
+    "Saturn": [
+     245,
+     1
+    ],
+    "Rahu": [
+     82,
+     35
+    ],
+    "Ketu": [
+     262,
+     35
+    ]
+   },
+   "lagna_dms": [
+    210,
+    13
+   ],
+   "raman_md": "Moon",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Saturn",
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "nakshatra_transfer",
+    "conjunct_maraka",
+    "aspect_maraka_house"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#crdas",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "aurobindo",
+   "name": "Aurobindo Ghose",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1872,
+     8,
+     15
+    ]
+   ],
+   "hour_local": 5.283,
+   "lat": 22.5,
+   "lon_east": 88.333,
+   "death": [
+    1950,
+    12,
+    5
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     121,
+     47
+    ],
+    "Moon": [
+     247,
+     17
+    ],
+    "Mars": [
+     96,
+     50
+    ],
+    "Mercury": [
+     144,
+     57
+    ],
+    "Jupiter": [
+     113,
+     2
+    ],
+    "Venus": [
+     129,
+     59
+    ],
+    "Saturn": [
+     265,
+     2
+    ],
+    "Rahu": [
+     48,
+     4
+    ],
+    "Ketu": [
+     228,
+     4
+    ]
+   },
+   "lagna_dms": [
+    116,
+    42
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Rahu",
+   "named_killers": [
+    "Mercury",
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "nakshatra_transfer",
+    "chandra_frame",
+    "node_sign_dispositor",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#aurobindo",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "fdr",
+   "name": "Franklin D. Roosevelt",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1882,
+     1,
+     30
+    ]
+   ],
+   "hour_local": 20.0,
+   "lat": 40.717,
+   "lon_east": -73.983,
+   "death": [
+    1945,
+    4,
+    12
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     290,
+     20
+    ],
+    "Moon": [
+     75,
+     5
+    ],
+    "Mars": [
+     66,
+     15
+    ],
+    "Mercury": [
+     306,
+     23
+    ],
+    "Jupiter": [
+     26,
+     10
+    ],
+    "Venus": [
+     285,
+     16
+    ],
+    "Saturn": [
+     15,
+     20
+    ],
+    "Rahu": [
+     224,
+     55
+    ],
+    "Ketu": [
+     44,
+     55
+    ]
+   },
+   "lagna_dms": [
+    143,
+    32
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Ketu",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "tara_death",
+    "conjunct_maraka",
+    "maraka_lord_8",
+    "navamsa_maraka",
+    "sadesathi_3rd",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#fdr",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "mussolini",
+   "name": "Benito Mussolini",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1883,
+     7,
+     29
+    ]
+   ],
+   "hour_local": 14.0,
+   "lat": 41.0,
+   "lon_east": 16.0,
+   "death": [
+    1945,
+    4,
+    28
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     105,
+     13
+    ],
+    "Moon": [
+     48,
+     27
+    ],
+    "Mars": [
+     52,
+     13
+    ],
+    "Mercury": [
+     104,
+     43
+    ],
+    "Jupiter": [
+     87,
+     43
+    ],
+    "Venus": [
+     90,
+     43
+    ],
+    "Saturn": [
+     46,
+     43
+    ],
+    "Rahu": [
+     196,
+     4
+    ],
+    "Ketu": [
+     16,
+     4
+    ]
+   },
+   "lagna_dms": [
+    217,
+    43
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Jupiter",
+   "named_killers": [
+    "Saturn",
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "marakasthana_occupancy",
+    "navamsa_maraka",
+    "maraka_lord_2",
+    "house8_occupancy",
+    "md_ad_dwirdwadasa"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#mussolini",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "wadiyar",
+   "name": "Krishnaraja Wadiyar IV",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1884,
+     6,
+     4
+    ]
+   ],
+   "hour_local": 10.3,
+   "lat": 12.0,
+   "lon_east": 76.633,
+   "death": [
+    1940,
+    8,
+    3
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     53,
+     9
+    ],
+    "Moon": [
+     182,
+     56
+    ],
+    "Mars": [
+     128,
+     54
+    ],
+    "Mercury": [
+     32,
+     44
+    ],
+    "Jupiter": [
+     101,
+     28
+    ],
+    "Venus": [
+     92,
+     54
+    ],
+    "Saturn": [
+     52,
+     52
+    ],
+    "Rahu": [
+     179,
+     37
+    ],
+    "Ketu": [
+     359,
+     37
+    ]
+   },
+   "lagna_dms": [
+    117,
+    40
+   ],
+   "raman_md": "Mercury",
+   "raman_ad": "Mercury",
+   "named_killers": [
+    "Mercury",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "conjunct_maraka",
+    "chandra_frame",
+    "navamsa_maraka",
+    "aspected_by_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#wadiyar",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "rajendra_prasad",
+   "name": "Rajendra Prasad",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1884,
+     12,
+     3
+    ]
+   ],
+   "hour_local": 8.75,
+   "lat": 25.6,
+   "lon_east": 85.167,
+   "death": [
+    1963,
+    2,
+    28
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     230,
+     47
+    ],
+    "Moon": [
+     55,
+     28
+    ],
+    "Mars": [
+     247,
+     30
+    ],
+    "Mercury": [
+     246,
+     7
+    ],
+    "Jupiter": [
+     134,
+     33
+    ],
+    "Venus": [
+     194,
+     35
+    ],
+    "Saturn": [
+     60,
+     42
+    ],
+    "Rahu": [
+     169,
+     59
+    ],
+    "Ketu": [
+     349,
+     59
+    ]
+   },
+   "lagna_dms": [
+    260,
+    10
+   ],
+   "raman_md": "Ketu",
+   "raman_ad": null,
+   "named_killers": [
+    "Mercury",
+    "Ketu"
+   ],
+   "stated_band": "PURNAYU",
+   "mechanisms": [
+    "nakshatra_transfer"
+   ],
+   "retro": [
+    "Saturn"
+   ],
+   "quote_ref": "NH_EXCERPTS.md#rajendra_prasad",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "nizam",
+   "name": "The Nizam of Hyderabad",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1886,
+     4,
+     6
+    ]
+   ],
+   "hour_local": 18.6,
+   "lat": 17.5,
+   "lon_east": 78.5,
+   "death": [
+    1967,
+    2,
+    24
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     355,
+     50
+    ],
+    "Moon": [
+     19,
+     10
+    ],
+    "Mars": [
+     135,
+     45
+    ],
+    "Mercury": [
+     0,
+     20
+    ],
+    "Jupiter": [
+     158,
+     18
+    ],
+    "Venus": [
+     312,
+     8
+    ],
+    "Saturn": [
+     71,
+     42
+    ],
+    "Rahu": [
+     144,
+     2
+    ],
+    "Ketu": [
+     324,
+     2
+    ]
+   },
+   "lagna_dms": [
+    181,
+    50
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": "Rahu",
+   "named_killers": [
+    "Saturn",
+    "Rahu"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "tara_death",
+    "ayushkaraka_saturn",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#nizam",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "kasturi",
+   "name": "Kasturi Srinivasan",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1887,
+     8,
+     7
+    ]
+   ],
+   "hour_local": 13.35,
+   "lat": 11.0,
+   "lon_east": 77.017,
+   "death": [
+    1959,
+    7,
+    1
+   ],
+   "death_precision": "year",
+   "positions_dms": {
+    "Sun": [
+     113,
+     38
+    ],
+    "Moon": [
+     332,
+     46
+    ],
+    "Mars": [
+     86,
+     21
+    ],
+    "Mercury": [
+     100,
+     16
+    ],
+    "Jupiter": [
+     188,
+     0
+    ],
+    "Venus": [
+     156,
+     0
+    ],
+    "Saturn": [
+     97,
+     44
+    ],
+    "Rahu": [
+     118,
+     12
+    ],
+    "Ketu": [
+     298,
+     12
+    ]
+   },
+   "lagna_dms": [
+    222,
+    42
+   ],
+   "raman_md": "Moon",
+   "raman_ad": "Rahu",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [
+    "Mercury"
+   ],
+   "quote_ref": "NH_EXCERPTS.md#kasturi",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "sivananda",
+   "name": "Swami Sivananda",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1887,
+     9,
+     8
+    ],
+    [
+     1887,
+     9,
+     7
+    ]
+   ],
+   "hour_local": 4.267,
+   "lat": 8.8,
+   "lon_east": 77.667,
+   "death": [
+    1963,
+    7,
+    14
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     144,
+     8
+    ],
+    "Moon": [
+     24,
+     13
+    ],
+    "Mars": [
+     106,
+     41
+    ],
+    "Mercury": [
+     141,
+     32
+    ],
+    "Jupiter": [
+     192,
+     46
+    ],
+    "Venus": [
+     164,
+     18
+    ],
+    "Saturn": [
+     101,
+     28
+    ],
+    "Rahu": [
+     116,
+     30
+    ],
+    "Ketu": [
+     296,
+     30
+    ]
+   },
+   "lagna_dms": [
+    119,
+    0
+   ],
+   "raman_md": "Saturn",
+   "raman_ad": null,
+   "named_killers": [
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_7"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#sivananda",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "nehru",
+   "name": "Jawaharlal Nehru",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1889,
+     11,
+     14
+    ]
+   ],
+   "hour_local": 23.05,
+   "lat": 25.417,
+   "lon_east": 82.0,
+   "death": [
+    1964,
+    5,
+    27
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     211,
+     43
+    ],
+    "Moon": [
+     109,
+     20
+    ],
+    "Mars": [
+     161,
+     25
+    ],
+    "Mercury": [
+     198,
+     35
+    ],
+    "Jupiter": [
+     256,
+     38
+    ],
+    "Venus": [
+     188,
+     48
+    ],
+    "Saturn": [
+     132,
+     15
+    ],
+    "Rahu": [
+     74,
+     10
+    ],
+    "Ketu": [
+     254,
+     10
+    ]
+   },
+   "lagna_dms": [
+    114,
+    25
+   ],
+   "raman_md": "Rahu",
+   "raman_ad": "Ketu",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#nehru",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": "edition postdates 1964; timing verdict only, no mechanism given"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "george_vi",
+   "name": "King George VI",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1895,
+     12,
+     14
+    ]
+   ],
+   "hour_local": 3.083,
+   "lat": 52.85,
+   "lon_east": 0.5,
+   "death": [
+    1952,
+    2,
+    6
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     239,
+     56
+    ],
+    "Moon": [
+     213,
+     56
+    ],
+    "Mars": [
+     220,
+     25
+    ],
+    "Mercury": [
+     237,
+     18
+    ],
+    "Jupiter": [
+     107,
+     38
+    ],
+    "Venus": [
+     194,
+     58
+    ],
+    "Saturn": [
+     203,
+     49
+    ],
+    "Rahu": [
+     316,
+     28
+    ],
+    "Ketu": [
+     136,
+     28
+    ]
+   },
+   "lagna_dms": [
+    187,
+    3
+   ],
+   "raman_md": "Venus",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Saturn",
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "ayushkaraka_saturn",
+    "aspect_maraka_house",
+    "chandra_frame",
+    "conjunct_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#george_vi",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "sc_bose",
+   "name": "Subhas Chandra Bose",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1897,
+     1,
+     23
+    ]
+   ],
+   "hour_local": 12.0,
+   "lat": 20.633,
+   "lon_east": 85.733,
+   "death": [
+    1945,
+    8,
+    22
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     282,
+     23
+    ],
+    "Moon": [
+     159,
+     16
+    ],
+    "Mars": [
+     50,
+     55
+    ],
+    "Mercury": [
+     279,
+     56
+    ],
+    "Jupiter": [
+     137,
+     55
+    ],
+    "Venus": [
+     327,
+     59
+    ],
+    "Saturn": [
+     218,
+     5
+    ],
+    "Rahu": [
+     295,
+     0
+    ],
+    "Ketu": [
+     115,
+     0
+    ]
+   },
+   "lagna_dms": [
+    8,
+    24
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Mars",
+   "named_killers": [
+    "Mars"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "tara_death",
+    "marakasthana_occupancy",
+    "navamsa_maraka"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#sc_bose",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": "NH prints Long 5h44m E = 86deg; lon set 85.73 (Cuttack)"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "golwalkar",
+   "name": "M. S. Golwalkar",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1906,
+     2,
+     19
+    ],
+    [
+     1906,
+     2,
+     18
+    ]
+   ],
+   "hour_local": 4.567,
+   "lat": 21.133,
+   "lon_east": 79.083,
+   "death": [
+    1973,
+    6,
+    5
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     308,
+     15
+    ],
+    "Moon": [
+     254,
+     30
+    ],
+    "Mars": [
+     349,
+     21
+    ],
+    "Mercury": [
+     306,
+     37
+    ],
+    "Jupiter": [
+     36,
+     42
+    ],
+    "Venus": [
+     309,
+     22
+    ],
+    "Saturn": [
+     313,
+     37
+    ],
+    "Rahu": [
+     119,
+     27
+    ],
+    "Ketu": [
+     299,
+     27
+    ]
+   },
+   "lagna_dms": [
+    274,
+    57
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Venus",
+   "named_killers": [
+    "Venus"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "nakshatra_transfer",
+    "marakasthana_occupancy",
+    "node_sign_dispositor"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#golwalkar",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "IST",
+   "key": "godse",
+   "name": "Nathuram Godse",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1910,
+     5,
+     19
+    ]
+   ],
+   "hour_local": 8.483,
+   "lat": 18.517,
+   "lon_east": 73.867,
+   "death": [
+    1949,
+    11,
+    15
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     36,
+     41
+    ],
+    "Moon": [
+     160,
+     43
+    ],
+    "Mars": [
+     79,
+     16
+    ],
+    "Mercury": [
+     45,
+     39
+    ],
+    "Jupiter": [
+     163,
+     44
+    ],
+    "Venus": [
+     351,
+     42
+    ],
+    "Saturn": [
+     9,
+     4
+    ],
+    "Rahu": [
+     37,
+     17
+    ],
+    "Ketu": [
+     217,
+     17
+    ]
+   },
+   "lagna_dms": [
+    79,
+    16
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Jupiter",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "house8_occupancy",
+    "md_ad_dwirdwadasa",
+    "drekkana_22"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#godse",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": "time basis IST in print"
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "gandhi",
+   "name": "Mahatma Gandhi",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1869,
+     10,
+     2
+    ]
+   ],
+   "hour_local": 7.75,
+   "lat": 21.617,
+   "lon_east": 69.817,
+   "death": [
+    1948,
+    1,
+    30
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     168,
+     22
+    ],
+    "Moon": [
+     120,
+     10
+    ],
+    "Mars": [
+     207,
+     39
+    ],
+    "Mercury": [
+     193,
+     9
+    ],
+    "Jupiter": [
+     30,
+     25
+    ],
+    "Venus": [
+     205,
+     53
+    ],
+    "Saturn": [
+     229,
+     57
+    ],
+    "Rahu": [
+     103,
+     36
+    ],
+    "Ketu": [
+     283,
+     36
+    ]
+   },
+   "lagna_dms": [
+    193,
+    14
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": "Sun",
+   "named_killers": [
+    "Jupiter",
+    "Sun"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "house8_aspected_by_maraka",
+    "chandra_frame",
+    "malefic_in_12th"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#gandhi",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "ramana",
+   "name": "Sri Ramana Maharshi",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1879,
+     12,
+     30
+    ]
+   ],
+   "hour_local": 1.0,
+   "lat": 9.833,
+   "lon_east": 78.25,
+   "death": [
+    1950,
+    4,
+    14
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     257,
+     4
+    ],
+    "Moon": [
+     89,
+     58
+    ],
+    "Mars": [
+     23,
+     26
+    ],
+    "Mercury": [
+     234,
+     36
+    ],
+    "Jupiter": [
+     317,
+     57
+    ],
+    "Venus": [
+     211,
+     57
+    ],
+    "Saturn": [
+     348,
+     32
+    ],
+    "Rahu": [
+     265,
+     23
+    ],
+    "Ketu": [
+     85,
+     23
+    ]
+   },
+   "lagna_dms": [
+    182,
+    18
+   ],
+   "raman_md": "Sun",
+   "raman_ad": "Saturn",
+   "named_killers": [
+    "Sun",
+    "Saturn"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "chandra_frame",
+    "ayushkaraka_saturn",
+    "navamsa_moon_frame"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#ramana",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "einstein",
+   "name": "Albert Einstein",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1879,
+     3,
+     14
+    ]
+   ],
+   "hour_local": 11.5,
+   "lat": 48.4,
+   "lon_east": 10.0,
+   "death": [
+    1955,
+    4,
+    18
+   ],
+   "death_precision": "day",
+   "positions_dms": {
+    "Sun": [
+     332,
+     46
+    ],
+    "Moon": [
+     233,
+     48
+    ],
+    "Mars": [
+     276,
+     12
+    ],
+    "Mercury": [
+     342,
+     25
+    ],
+    "Jupiter": [
+     306,
+     44
+    ],
+    "Venus": [
+     356,
+     16
+    ],
+    "Saturn": [
+     333,
+     28
+    ],
+    "Rahu": [
+     280,
+     46
+    ],
+    "Ketu": [
+     100,
+     46
+    ]
+   },
+   "lagna_dms": [
+    81,
+    47
+   ],
+   "raman_md": "Jupiter",
+   "raman_ad": null,
+   "named_killers": [
+    "Jupiter"
+   ],
+   "stated_band": null,
+   "mechanisms": [
+    "maraka_lord_7",
+    "nakshatra_transfer",
+    "dasha_sandhi"
+   ],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#einstein",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": false,
+   "exclude_reason": null,
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "hitler",
+   "name": "Adolf Hitler",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1889,
+     4,
+     20
+    ]
+   ],
+   "hour_local": 18.5,
+   "lat": 48.0,
+   "lon_east": 13.0,
+   "death": [
+    1945,
+    4,
+    30
+   ],
+   "death_precision": "day",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Rahu",
+   "raman_ad": "Moon",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#hitler",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "predictive_forecast_not_verdict",
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "franco",
+   "name": "General Franco",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1892,
+     12,
+     4
+    ]
+   ],
+   "hour_local": 4.15,
+   "lat": 43.483,
+   "lon_east": -8.233,
+   "death": [
+    1975,
+    11,
+    20
+   ],
+   "death_precision": "day",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Ketu",
+   "raman_ad": "Saturn",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#franco",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "predictive_forecast_not_verdict",
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "dalmia",
+   "name": "Ramakrishna Dalmia",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1893,
+     4,
+     7
+    ]
+   ],
+   "hour_local": 9.517,
+   "lat": 27.7,
+   "lon_east": 73.3,
+   "death": [
+    1978,
+    9,
+    26
+   ],
+   "death_precision": "day",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Saturn",
+   "raman_ad": "Saturn",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#dalmia",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "predictive_forecast_not_verdict",
+   "note": null
+  },
+  {
+   "calendar": "gregorian",
+   "time_basis": "LMT",
+   "key": "farouk",
+   "name": "Ex King Farouk",
+   "tier": "A",
+   "birth_dates": [
+    [
+     1920,
+     2,
+     11
+    ]
+   ],
+   "hour_local": 22.3,
+   "lat": 30.033,
+   "lon_east": 31.25,
+   "death": [
+    1965,
+    3,
+    18
+   ],
+   "death_precision": "day",
+   "positions_dms": {},
+   "lagna_dms": null,
+   "raman_md": "Venus",
+   "raman_ad": "Moon",
+   "named_killers": [],
+   "stated_band": null,
+   "mechanisms": [],
+   "retro": [],
+   "quote_ref": "NH_EXCERPTS.md#farouk",
+   "source": {
+    "item": "NotableHoroscopesBVR"
+   },
+   "exclude": true,
+   "exclude_reason": "predictive_no_mechanism",
+   "note": null
+  }
+ ]
+}

@@ -1,0 +1,257 @@
+"""Unit pins for the synthesis_v2 gated-override scorer (parallel to the live engine).
+
+Each pin builds a FactorVerdict directly (no chart needed) so the gate/guard behaviour is isolated.
+The three-axis held-out numbers are pinned separately by test_synthesis_v2_result.
+"""
+from __future__ import annotations
+
+from app.medini.doctrine.domains import synthesis_v2 as S2
+from app.medini.doctrine.domains.house_judgment import (
+    Finding, FactorVerdict, _cap_positive, _verdict_label,
+)
+
+_IDX = {lab: i for i, lab in enumerate(S2.VERDICT_SCALE)}
+
+
+def _fv(findings, *, nav_score=0.0):
+    """A FactorVerdict whose scores match the engine's own arithmetic over `findings`
+    (Rāśi frame; optional pre-computed Navāṁśa score)."""
+    rasi = [f for f in findings if f.frame in ("Rasi", "both")]
+    pos = sum(f.delta for f in rasi if f.delta > 0)
+    neg = sum(f.delta for f in rasi if f.delta < 0)
+    rasi_score = round(_cap_positive(pos) + neg, 3)
+    score = round((rasi_score + 0.3 * nav_score) if nav_score else rasi_score, 3)
+    return FactorVerdict("Lord", "test", _verdict_label(score), score,
+                         tuple(findings), rasi_score=rasi_score, navamsa_score=nav_score)
+
+
+def _grade(fv):
+    return S2.label(S2.grade_factor(fv)[0])
+
+
+def test_config_is_the_landing_ablation():
+    # A + B break the ceiling; D (dignity/decompression, incr. 31) closes the tractable strong-side
+    # sub-slice; P/C/F are off (documented negatives).
+    assert S2.GATE_A and S2.GATE_B and S2.GATE_D
+    assert not S2.GATE_P and not S2.GATE_C and not S2.GATE_F
+
+
+def test_gate_D_floors_shallow_neg_dignity_but_not_deep_affliction():
+    # Gate D: a factor with decisive dignity + strong positive testimony (sum_pos >= 2.0) and only
+    # SHALLOW negatives is floored UP (the `_cap_positive` crush the diagnostic isolated)…
+    lift = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                Finding("aspected by Mars (malefic)", -0.7, "Rasi", "aspect")])   # sum_neg −0.7 (shallow)
+    assert _IDX[_grade(lift)] >= S2.FAIRLY_STRONG, _grade(lift)
+    # …but the SAME dignity under DEEP affliction stays broken — Gate B wins, Gate D is neg-gated off
+    # (this is exactly the condition the old Gate C lacked).
+    deep = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                Finding("conjunct Saturn (malefic)", -0.9, "Rasi", "conjunction"),
+                Finding("aspected by Mars (malefic)", -0.9, "Rasi", "aspect"),
+                Finding("aspected by Rahu (malefic)", -0.9, "Rasi", "aspect")])   # sum_neg −2.7 (deep)
+    assert _grade(deep) == "afflicted", _grade(deep)
+    assert not S2.GATE_F   # increment 29: fortification floor regresses held-out+NH (see REPORT)
+
+
+def test_gate_F_when_enabled_floors_a_fortified_factor():
+    """Increment 29 mechanism pin: Gate F is a real, working switch (default OFF). When enabled, a
+    non-besieged factor whose fortification tally clears F1 is floored UP; besiegement still vetoes.
+    The gate is OFF by default because the ablation (REPORT § increment 29) shows the floor over-
+    fires on Raman's afflicted-graded factors (which carry the same fortifier tags)."""
+    # a deeply-pressed lord that is nonetheless exalted + kendra-placed + benefic-aspected:
+    # base is driven to weak/afflicted by the negatives, fortification tally clears F1.
+    fv = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+              Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+              Finding("aspected by Jupiter (benefic)", 0.7, "Rasi", "aspect"),
+              Finding("conjunct Saturn (malefic)", -1.6, "Rasi", "conjunction"),
+              Finding("aspected by Mars (malefic)", -1.0, "Rasi", "aspect")])
+    assert _IDX[_grade(fv)] <= S2.WEAK          # OFF: Gate B floors it down, no F rescue
+    S2.GATE_F = True
+    try:
+        assert _IDX[_grade(fv)] >= S2.FAIRLY_STRONG   # ON: Gate F floors it up
+        # besiegement (Gate A) still vetoes a fortified-but-hemmed factor
+        besieged = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+                        Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+                        Finding("hemmed between malefics (papakartari)", -1.0, "Rasi", "kartari")])
+        assert _IDX[_grade(besieged)] <= S2.WEAK
+    finally:
+        S2.GATE_F = False
+
+
+def test_base_reproduces_engine_when_no_gate_fires():
+    # a benign factor (mild net-positive, no besiegement, shallow negatives) → v2 == engine label
+    fv = _fv([Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+              Finding("aspected by Mercury (benefic)", 0.7, "Rasi", "aspect"),
+              Finding("conjunct Saturn (malefic)", -0.7, "Rasi", "conjunction")])
+    assert _grade(fv) == _verdict_label(fv.score)
+
+
+def test_gate_A_besiegement_caps_at_weak():
+    # papakartari destroys the factor regardless of a strong positional/dignity base
+    fv = _fv([Finding("occupant in own sign", 1.2, "Rasi", "dignity"),
+              Finding("placed in the 4th (kendra/trikona)", 1.2, "Rasi", "placement"),
+              Finding("hemmed between malefics (Papakartari)", -1.0, "Rasi", "kartari")])
+    assert _IDX[_verdict_label(fv.score)] > S2.WEAK          # base is above "weak"
+    assert _grade(fv) == "weak"                              # …but Gate A caps it
+
+
+def test_gate_B_deep_affliction_to_afflicted():
+    # sum of Rāśi negatives ≤ −2.45 → afflicted, whatever the positive credit
+    fv = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+              Finding("conjunct Sun (malefic)", -0.85, "Rasi", "conjunction"),
+              Finding("aspected by Saturn (malefic)", -0.85, "Rasi", "aspect"),
+              Finding("aspected by Mars (malefic)", -0.85, "Rasi", "aspect")])
+    assert _grade(fv) == "afflicted"
+
+
+def test_gate_B_moderate_affliction_to_weak():
+    # −2.45 < sum_neg ≤ −1.22 → weak (the A2 tree's load-bearing split)
+    fv = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+              Finding("conjunct Saturn (malefic)", -0.7, "Rasi", "conjunction"),
+              Finding("aspected by Rahu (malefic)", -0.6, "Rasi", "aspect")])
+    assert _IDX[_verdict_label(fv.score)] > S2.WEAK          # base above weak (exaltation credit)
+    assert _grade(fv) == "weak"
+
+
+def test_collinearity_guard_dedups_combustion_and_sun_conjunction():
+    # combustion is the tight-orb case of Sun-proximity: counted once, not stacked. Double-counted
+    # (−0.9 + −0.9 = −1.8) the negatives trip Gate B → "weak"; de-duped (−0.9) they don't, and the
+    # exaltation credit survives → "fairly good". The guarded pair must equal the single-count case.
+    exalted = Finding("exalted", 1.6, "Rasi", "dignity")
+    combust = Finding("Mars combust (astangata, degree-orb)", -0.9, "Rasi", "combustion")
+    sun_conj = Finding("conjunct Sun (malefic)", -0.9, "Rasi", "conjunction")
+    both = _fv([exalted, combust, sun_conj])
+    only = _fv([exalted, combust])
+    assert _grade(both) == _grade(only) == "fairly good"
+
+
+def test_dignity_floor_is_off_by_default():
+    # With C off, an exalted-but-deeply-afflicted factor is NOT rescued by a dignity floor — it stays
+    # afflicted. (This is the documented negative: the floor lifts the anchor 1→2 but costs held-out.)
+    fv = _fv([Finding("exalted", 1.6, "Rasi", "dignity"),
+              Finding("conjunct Sun (malefic)", -0.85, "Rasi", "conjunction"),
+              Finding("aspected by Saturn (malefic)", -0.85, "Rasi", "aspect"),
+              Finding("aspected by Mars (malefic)", -0.85, "Rasi", "aspect")])
+    assert _grade(fv) == "afflicted"                       # C off → no floor rescue
+    S2.GATE_C = True
+    try:
+        assert S2.label(S2.grade_factor(fv)[0]) == "moderately good"   # C on would floor to index 3
+    finally:
+        S2.GATE_C = False
+
+
+def test_synthesis_v2_result_beats_live_engine():
+    """Ratchet: synthesis_v2 (A+B) must keep beating the live engine on both big held-out axes and
+    hold the anchor at parity. Pinned floors below the measured 64.2% / 62.5% / 1-of-8."""
+    from app.medini.doctrine.validation import synthesis_v2_validate as V
+    held = V.run_heldout()
+    nh = V.run_nh()
+    anchor = V.run_anchor()
+    # Held-out re-pinned at increment 27 (map v2 grew the pool 53 -> 58 with strong-graded
+    # rows both scorers under-credit): measured 56.9 (additive baseline 50.0). Lead intact.
+    assert held["within1_pct"] >= 55.0, held["within1_pct"]
+    # NH default pool re-pinned at increment 26 (N=27 after the attribution audit):
+    # measured 63.0 (live 51.9).
+    assert nh["within1_pct"] >= 60.0, nh["within1_pct"]
+    assert anchor["within1"] >= 1, anchor["within1"]             # parity with live 1/8 (no regression)
+
+
+def test_grow2_corpus_integrity():
+    """nh_strength_grow2 pins: 18 rows, every key degree-usable in the registry, every phrase
+    mappable by the unchanged pre-registered verdict map, every karaka row on the default karaka."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp = json.loads((Path(__file__).resolve().parents[2] /
+                       "docs/raman_doctrine/validation/corpora/nh_strength_grow2.json").read_text())
+    rows = corp["rows"]
+    assert len(rows) == 18
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert r["factor"] in ("bhava", "lord", "karaka"), r
+        assert 1 <= int(r["house"]) <= 12, r
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]
+
+
+def test_synthesis_v2_enlarged_degree_pool():
+    """Ratchet on the FULL degree pool (N=73: corrected base+grow 27 + grow2 18 + grow3 11 +
+    grow4 17). Increment 27: the map-v2 recovery added 17 mostly STRONG-graded rows that both
+    scorers under-credit (the anchor failure mode, now visible in held-out gold), so the
+    absolute level drops — but v2 must keep a real lead over the additive baseline on the same
+    rows (measured 46.6 vs 39.7)."""
+    from app.medini.doctrine.validation import synthesis_v2_validate as V
+    s = V.run_nh(V._NH_ALL)
+    assert s["n"] == 73, s["n"]
+    assert s["within1_pct"] >= 44.0, s["within1_pct"]
+    assert s["within1_pct"] - s["live_within1_pct"] >= 4.0, (
+        s["within1_pct"], s["live_within1_pct"])
+
+
+def test_grow3_corpus_integrity():
+    """nh_strength_grow3 pins: 11 rows, every key degree-usable, every phrase mappable by the
+    unchanged pre-registered verdict map, and NO (key, house, factor) duplicate across the four
+    NH corpora (the grow3 dedup guarantee)."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp_dir = Path(__file__).resolve().parents[2] / "docs/raman_doctrine/validation/corpora"
+    rows3 = json.loads((corp_dir / "nh_strength_grow3.json").read_text())["rows"]
+    assert len(rows3) == 11
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows3:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]
+    triples = []
+    for f in ("nh_strength.json", "nh_strength_grow.json", "nh_strength_grow2.json",
+              "nh_strength_grow3.json", "nh_strength_grow4.json"):
+        for r in json.loads((corp_dir / f).read_text())["rows"]:
+            triples.append((r["key"], int(r["house"]), r["factor"]))
+    assert len(triples) == len(set(triples)) == 73, len(triples)
+
+
+def test_verdict_map_gold_pins():
+    """Increment 27 (map v2): every shipped NH row's gold grade is pinned. A future map edit that
+    re-grades a shipped row must update the fixture explicitly — silent gold drift fails here.
+    The two increment-27 corrections (omar H7, hyderali H5: 'not well disposed' negation bug,
+    fairly good -> weak) are already reflected in the fixture."""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    corp = Path(__file__).resolve().parents[2] / "docs/raman_doctrine/validation/corpora"
+    pins = json.loads((corp / "nh_gold_grade_pins.json").read_text())["pins"]
+    patterns = W.load_verdict_map()
+    seen = 0
+    for f in ("nh_strength.json", "nh_strength_grow.json", "nh_strength_grow2.json",
+              "nh_strength_grow3.json", "nh_strength_grow4.json"):
+        for r in json.loads((corp / f).read_text())["rows"]:
+            key = f"{r['key']}|{r['house']}|{r['factor']}"
+            assert key in pins, f"unpinned row {key}"
+            got = W.map_verdict(r["phrase"], patterns)
+            assert got == pins[key], (key, got, pins[key])
+            seen += 1
+    assert seen == len(pins), (seen, len(pins))
+
+
+def test_grow4_corpus_integrity():
+    """nh_strength_grow4 pins: 17 rows recovered under map v2, every key degree-usable, every
+    phrase mappable. (Cross-corpus dedup is covered by test_grow3_corpus_integrity's 73-triple
+    check; gold grades by test_verdict_map_gold_pins.)"""
+    import json
+    from pathlib import Path
+    from app.medini.doctrine.validation import worked_chart_validate as W
+    from app.medini.ml.raman_saab.golden_registry import load_registry
+    corp = json.loads((Path(__file__).resolve().parents[2] /
+                       "docs/raman_doctrine/validation/corpora/nh_strength_grow4.json").read_text())
+    rows = corp["rows"]
+    assert len(rows) == 17
+    cases = {c.key: c for c in load_registry()}
+    patterns = W.load_verdict_map()
+    for r in rows:
+        assert r["key"] in cases and cases[r["key"]].positions, r["key"]
+        assert W.map_verdict(r["phrase"], patterns) is not None, r["phrase"]

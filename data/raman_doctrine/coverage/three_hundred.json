@@ -1,0 +1,69 @@
+{
+ "book": "three_hundred",
+ "chapters": [
+  {
+   "label": "y001-y020",
+   "title": "Gajakesari .. Malavya",
+   "status": "swept",
+   "rule_count": 20,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y021-y044",
+   "title": "Sasa .. Malika family",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y001-y020",
+   "title": "Gajakesari .. Malavya",
+   "status": "swept",
+   "rule_count": 20,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y021-y044",
+   "title": "Sasa .. Malika family",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y045-y071",
+   "title": "Sankha .. Thrilochana",
+   "status": "partial",
+   "rule_count": 12,
+   "sweep_id": "p4_t1",
+   "notes": "source scan missing printed pp.68-87 and 94-95: yogas 50-63 and 68 have no Definition text in any archive.org scan"
+  },
+  {
+   "label": "y133-y162",
+   "title": "Bahudravyarjana .. Jada (end of scan)",
+   "status": "swept",
+   "rule_count": 30,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y072-y106",
+   "title": "Amsavatara .. Sarpa (Nabhasa families)",
+   "status": "swept",
+   "rule_count": 35,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "y107-y132",
+   "title": "Duryoga .. Dhana family",
+   "status": "swept",
+   "rule_count": 26,
+   "sweep_id": "p4_t1",
+   "notes": null
+  }
+ ]
+}

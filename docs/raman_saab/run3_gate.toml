@@ -1,0 +1,29 @@
+# Run-3 Triple-Lock gate — PRE-REGISTERED before the confirmatory evaluation.
+# See docs/raman_saab/RUN3_PREREG.md §4. Do not edit after the run.
+#
+# refutable-power rule: a FAILED test may be marked 'refuted' (not
+# 'underpowered') only if the power to detect its threshold RR at this
+# corpus's null E/var exceeds `min_power`:
+#     power = Phi( (rr_threshold - 1) * E / sqrt(var) - z_alpha )
+# This replaces run 1/2's blanket _MIN_POWER_N=5000 with a per-test
+# calculation, printed into the prereg before observed evaluation.
+
+alpha_budget = 0.01          # split over the primary tests (Bonferroni)
+min_power = 0.90
+ceiling = "provisional"      # single corpus: G2 replication unmet
+
+[tests.leg1_maraka]
+rr_threshold = 1.20
+direction = "enrich"
+
+[tests.leg2_gochara]
+rr_threshold = 1.20
+direction = "enrich"
+
+[tests.leg3_ayurdaya]
+rr_threshold = 1.20
+direction = "enrich"
+
+[tests.triple_lock]
+rr_threshold = 1.50
+direction = "enrich"

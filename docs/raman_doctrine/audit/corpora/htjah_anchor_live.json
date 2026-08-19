@@ -1,0 +1,414 @@
+{
+ "house": 1,
+ "note": "LIVE ch. IV anchor: Charts 12-14 cast from printed birth data in Raman's ayanamsa, faithfulness-gated against his walkthrough prose. The authoritative anchor for the live engine (the frozen htjah_anchor_calibration.json gates only the old audit harness).",
+ "charts": [
+  {
+   "chart": 12,
+   "birth": {
+    "y": 1918,
+    "m": 10,
+    "d": 16,
+    "hh": 14,
+    "mm": 20,
+    "tz": 5.5,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "birth_note": "Born on 16-10-1918 at 2-20 p.m. (I.S.T.) Lat. 13 N., Long. 5h.10m.20s. E.",
+   "birth_jd": 2421882.868056,
+   "ayanamsa": "raman",
+   "degree_resolved": true,
+   "planet_lons": {
+    "Sun": 180.9037,
+    "Moon": 311.2141,
+    "Mars": 229.4515,
+    "Mercury": 181.5001,
+    "Jupiter": 84.0042,
+    "Venus": 171.1426,
+    "Saturn": 124.3724,
+    "Rahu": 233.1892,
+    "Ketu": 53.1892
+   },
+   "lagna_lon": 296.7712,
+   "expected_rasi_signs": {
+    "Sun": 7,
+    "Moon": 11,
+    "Mars": 8,
+    "Mercury": 7,
+    "Jupiter": 3,
+    "Venus": 6,
+    "Saturn": 5,
+    "Rahu": 8,
+    "Ketu": 2
+   },
+   "expected_navamsa_signs": {
+    "Sun": 7,
+    "Moon": 10,
+    "Mars": 9,
+    "Mercury": 7,
+    "Jupiter": 2,
+    "Venus": 4,
+    "Saturn": 2,
+    "Rahu": 10,
+    "Ketu": 4
+   },
+   "facts_gated": [
+    {
+     "kind": "lagna_sign",
+     "args": [],
+     "want": "Capricorn",
+     "prose": "Lagna is Makara or Capricorn"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Saturn"
+     ],
+     "want": "Leo",
+     "prose": "Lord of the Lagna Saturn is in the 8th in the sign of a bitter enemy"
+    },
+    {
+     "kind": "house",
+     "args": [
+      "Saturn"
+     ],
+     "want": 8,
+     "prose": "Saturn is in the 8th"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Saturn"
+     ],
+     "want": "Taurus",
+     "prose": "In the Navamsha ... Saturn is with Jupiter in the sign of Venus"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Jupiter"
+     ],
+     "want": "Taurus",
+     "prose": "Saturn is with Jupiter in the sign of Venus"
+    },
+    {
+     "kind": "vargottama",
+     "args": [
+      "Sun"
+     ],
+     "want": true,
+     "prose": "He [the Sun] occupies a vargottama position"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Sun"
+     ],
+     "want": "Libra",
+     "prose": "in a sign owned by an enemy"
+    }
+   ],
+   "notes": [],
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "raman": "moderate",
+     "quote": "Thus the ascendant is moderate in strength."
+    },
+    {
+     "factor": "lord",
+     "raman": "fairly good",
+     "quote": "Hence the strength of the ascendant lord is also fairly good."
+    },
+    {
+     "factor": "karaka",
+     "raman": "moderately good",
+     "quote": "The Karaka is therefore inclining towards good."
+    }
+   ]
+  },
+  {
+   "chart": 13,
+   "birth": {
+    "y": 1935,
+    "m": 11,
+    "d": 2,
+    "hh": 5,
+    "mm": 20,
+    "tz": 5.172219999999999,
+    "lat": 13.0,
+    "lon": 77.5833
+   },
+   "birth_note": "Born on 2-11-1935 at 5-20 a.m (L.M.T.) Lat. 13 N., Long. 5h.10m.20s. E.",
+   "birth_jd": 2428108.506713,
+   "ayanamsa": "raman",
+   "degree_resolved": true,
+   "planet_lons": {
+    "Sun": 197.1263,
+    "Moon": 262.5372,
+    "Mars": 251.638,
+    "Mercury": 178.551,
+    "Jupiter": 216.9334,
+    "Venus": 151.6606,
+    "Saturn": 312.0189,
+    "Rahu": 263.4534,
+    "Ketu": 83.4534
+   },
+   "lagna_lon": 188.2421,
+   "expected_rasi_signs": {
+    "Sun": 7,
+    "Moon": 9,
+    "Mars": 9,
+    "Mercury": 6,
+    "Jupiter": 8,
+    "Venus": 6,
+    "Saturn": 11,
+    "Rahu": 9,
+    "Ketu": 3
+   },
+   "expected_navamsa_signs": {
+    "Sun": 12,
+    "Moon": 7,
+    "Mars": 4,
+    "Mercury": 6,
+    "Jupiter": 6,
+    "Venus": 10,
+    "Saturn": 10,
+    "Rahu": 8,
+    "Ketu": 2
+   },
+   "facts_gated": [
+    {
+     "kind": "lagna_sign",
+     "args": [],
+     "want": "Libra",
+     "prose": "Lagna is Thula"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Sun"
+     ],
+     "want": "Libra",
+     "prose": "The Sun, lord of 11, is in Lagna in neecha"
+    },
+    {
+     "kind": "house",
+     "args": [
+      "Sun"
+     ],
+     "want": 1,
+     "prose": "is in Lagna"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Venus"
+     ],
+     "want": "Virgo",
+     "prose": "Lord of Lagna Venus is in the 12th in debilitation"
+    },
+    {
+     "kind": "house",
+     "args": [
+      "Venus"
+     ],
+     "want": 12,
+     "prose": "Venus is in the 12th"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Mercury"
+     ],
+     "want": "Virgo",
+     "prose": "Venus is with exalted Mercury"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Venus"
+     ],
+     "want": "Capricorn",
+     "prose": "In the Navamsha, Venus is in a friendly sign, with Saturn"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Saturn"
+     ],
+     "want": "Capricorn",
+     "prose": "with Saturn a malefic"
+    },
+    {
+     "kind": "nav_lagna_sign",
+     "args": [],
+     "want": "Sagittarius",
+     "prose": "in the Navamsha ... Lagna is hemmed in between Saturn and Rahu"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Rahu"
+     ],
+     "want": "Scorpio",
+     "prose": "hemmed in between Saturn and Rahu"
+    }
+   ],
+   "notes": [],
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "raman": "fairly strong",
+     "quote": "The Lagna therefore is fairly strong on the whole."
+    },
+    {
+     "factor": "lord",
+     "raman": "fairly powerful",
+     "quote": "Therefore the ascendant lord is also fairly powerful."
+    },
+    {
+     "factor": "karaka",
+     "raman": "fairly powerful",
+     "quote": "The Sun is therefore fairly powerful."
+    }
+   ]
+  },
+  {
+   "chart": 14,
+   "birth": {
+    "y": 1887,
+    "m": 8,
+    "d": 7,
+    "hh": 13,
+    "mm": 30,
+    "tz": 5.135553333333333,
+    "lat": 11.0,
+    "lon": 77.0333
+   },
+   "birth_note": "Printed: Born on 7-8-1878 at 1-30 p.m. (L.T.) Lat. 11 N., Long. 5h.8m.8s. E. \u2014 repaired to 7-8-1887 (OCR transposition; see docstring)",
+   "birth_jd": 2410490.848519,
+   "ayanamsa": "raman",
+   "degree_resolved": true,
+   "planet_lons": {
+    "Sun": 113.6309,
+    "Moon": 332.8319,
+    "Mars": 86.3506,
+    "Mercury": 100.23,
+    "Jupiter": 188.0039,
+    "Venus": 156.1875,
+    "Saturn": 97.7425,
+    "Rahu": 118.1267,
+    "Ketu": 298.1267
+   },
+   "lagna_lon": 224.7782,
+   "expected_rasi_signs": {
+    "Sun": 4,
+    "Moon": 12,
+    "Mars": 3,
+    "Mercury": 4,
+    "Jupiter": 7,
+    "Venus": 6,
+    "Saturn": 4,
+    "Rahu": 4,
+    "Ketu": 10
+   },
+   "expected_navamsa_signs": {
+    "Sun": 11,
+    "Moon": 4,
+    "Mars": 2,
+    "Mercury": 7,
+    "Jupiter": 9,
+    "Venus": 11,
+    "Saturn": 6,
+    "Rahu": 12,
+    "Ketu": 6
+   },
+   "facts_gated": [
+    {
+     "kind": "lagna_sign",
+     "args": [],
+     "want": "Scorpio",
+     "prose": "Lagna is the same both in Rashi and Navamsha (Vargottamamsa)"
+    },
+    {
+     "kind": "nav_lagna_sign",
+     "args": [],
+     "want": "Scorpio",
+     "prose": "it goes under the name of Vargottamamsa"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Mars"
+     ],
+     "want": "Gemini",
+     "prose": "Mars is lord of Lagna and he is in the 9th house (8th Rashi)"
+    },
+    {
+     "kind": "nav_sign",
+     "args": [
+      "Mars"
+     ],
+     "want": "Taurus",
+     "prose": "In the Navamsha, Mars is in Taurus"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Sun"
+     ],
+     "want": "Cancer",
+     "prose": "The Sun is in the 9th with Mercury, Saturn and Rahu"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Mercury"
+     ],
+     "want": "Cancer",
+     "prose": "with Mercury, Saturn and Rahu"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Saturn"
+     ],
+     "want": "Cancer",
+     "prose": "with Mercury, Saturn and Rahu"
+    },
+    {
+     "kind": "rasi_sign",
+     "args": [
+      "Rahu"
+     ],
+     "want": "Cancer",
+     "prose": "with Mercury, Saturn and Rahu"
+    }
+   ],
+   "notes": [
+    "Raman counts Mars 'in the 9th house (8th Rashi)' -- bhava counting; the engine's whole-sign map reads Gemini as the 8th from Scorpio. Recorded confound.",
+    "Sun-Saturn separation casts to 15.9 deg vs prose 'about 18 degrees' (tolerant).",
+    "Two navamsa-ASPECT prose remarks (Mars aspected by Saturn; Sun aspected by the Moon in amsa) do not match whole-sign from-navamsa aspects; interpretive, not placement facts -- not gated."
+   ],
+   "verdicts": [
+    {
+     "factor": "lord",
+     "raman": "very strong",
+     "quote": "Excepting for this feeble evil, Lagnadhipati is indeed very strong."
+    },
+    {
+     "factor": "karaka",
+     "raman": "moderate",
+     "quote": "The Sun therefore is moderate in strength."
+    },
+    {
+     "factor": "bhava",
+     "raman": "very powerful",
+     "structural": true,
+     "quote": "Hence the Lagna is very powerful."
+    }
+   ]
+  }
+ ]
+}

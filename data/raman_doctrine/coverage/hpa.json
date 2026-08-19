@@ -1,0 +1,285 @@
+{
+ "book": "hpa",
+ "chapters": [
+  {
+   "label": "I",
+   "title": "Necessity for the Study of Astrology",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "II",
+   "title": "The Zodiac and the Solar System",
+   "status": "swept",
+   "rule_count": 28,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "IV",
+   "title": "Planets, Signs and Constellations",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "V",
+   "title": "Peculiarities of the Zodiacal Signs",
+   "status": "swept",
+   "rule_count": 27,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "VI",
+   "title": "Astrological Terminology",
+   "status": "swept",
+   "rule_count": 44,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "VII",
+   "title": "Planetary Strengths and Avasthas",
+   "status": "swept",
+   "rule_count": 33,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "VIII",
+   "title": "On Aspects",
+   "status": "swept",
+   "rule_count": 5,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "IX",
+   "title": "Hindu Method of Casting the Horoscope",
+   "status": "swept",
+   "rule_count": 24,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "X",
+   "title": "Western Method of Horoscope Casting",
+   "status": "swept",
+   "rule_count": 21,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XI",
+   "title": "The Shadvargas",
+   "status": "swept",
+   "rule_count": 4,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XII",
+   "title": "On Birth Verification and Rectification",
+   "status": "swept",
+   "rule_count": 8,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XIII",
+   "title": "Dasas and Bhukthies",
+   "status": "swept",
+   "rule_count": 10,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XIV",
+   "title": "Ayurdaya or Longevity",
+   "status": "swept",
+   "rule_count": 86,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "XV",
+   "title": "Marakas or Death-Inflicting Planets",
+   "status": "swept",
+   "rule_count": 17,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "XVI",
+   "title": "Judgment of a Horoscope",
+   "status": "swept",
+   "rule_count": 46,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XVII",
+   "title": "Key-Planets for Each Sign",
+   "status": "partial",
+   "rule_count": 12,
+   "sweep_id": "p1_seed",
+   "notes": "one key-planet rule per sign (12/12 signs); the chapter's per-sign doctrine is complete, prose remarks not separately encoded"
+  },
+  {
+   "label": "XVIII",
+   "title": "Results of Ascending Signs",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "XIX",
+   "title": "• Judgment of Bhavas (Houses)",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "XX",
+   "title": "Special Yogas",
+   "status": "swept",
+   "rule_count": 7,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXI",
+   "title": "Planets in Different Bhavas or Houses",
+   "status": "swept",
+   "rule_count": 108,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXII",
+   "title": "Planets in Different Rasis or Signs",
+   "status": "swept",
+   "rule_count": 84,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXIV",
+   "title": "Results of Dasas and Bhukthies",
+   "status": "swept",
+   "rule_count": 114,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXV",
+   "title": "Source and Nature of Death",
+   "status": "swept",
+   "rule_count": 71,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "XXVI",
+   "title": "The Ashtakavarga System",
+   "status": "swept",
+   "rule_count": 16,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "XXVII",
+   "title": "Prasna Sastra or Horary Astrology",
+   "status": "swept",
+   "rule_count": 34,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXVIII",
+   "title": "Unknown Birth Times",
+   "status": "swept",
+   "rule_count": 19,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXIX",
+   "title": "Medical Astrology",
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXX",
+   "title": "Female Horoscopy*",
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXXI",
+   "title": "Mundane Astrology",
+   "status": "swept",
+   "rule_count": 42,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXXIII",
+   "title": "Annual Horoscopes",
+   "status": "swept",
+   "rule_count": 26,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXXIV",
+   "title": "Gocharaphala or Results of Transits",
+   "status": "swept",
+   "rule_count": 27,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "XXXV",
+   "title": "Practical Horoscopes",
+   "status": "swept",
+   "rule_count": 10,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXXVI",
+   "title": "Drekkana (Decanates) and Stellar Influences",
+   "status": "swept",
+   "rule_count": 68,
+   "sweep_id": "p11_completion",
+   "notes": null
+  },
+  {
+   "label": "XXIII",
+   "title": "Characteristics of the Signs and Planets",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "XXXII",
+   "title": "Muhurtha or Election",
+   "status": "swept",
+   "rule_count": 90,
+   "sweep_id": "p11_completion",
+   "notes": null
+  }
+ ]
+}

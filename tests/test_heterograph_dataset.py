@@ -14,7 +14,12 @@ import pandas as pd
 import pytest
 import torch
 
-from app.medini.ml.heterograph_dataset import (
+# torch_geometric is an optional heavy GNN dependency (not in requirements.txt);
+# skip this module cleanly when it isn't installed rather than erroring at
+# collection. heterograph_dataset imports torch_geometric at module load time.
+pytest.importorskip("torch_geometric")
+
+from app.medini.ml.heterograph_dataset import (  # noqa: E402
     NUM_BHAVA, NUM_GRAHA, NUM_NAKSHATRA, NUM_RASI,
     ChartHeteroDataset, build_chart_hetero_data,
 )

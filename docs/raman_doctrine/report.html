@@ -1,0 +1,592 @@
+<title>The Medini Doctrine Engine — How We Tested Astrology Against Its Own Master</title>
+<style>
+  :root{
+    --bg:#f0eee6; --surface:#fbfaf5; --surface-2:#f5f3ea;
+    --ink:#1b1d26; --muted:#5a5d6b; --faint:#8a8c98;
+    --line:#dcd7c9; --line-soft:#e7e3d6;
+    --accent:#9a6f22; --accent-bright:#b6842f; --indigo:#3d4770;
+    --good:#2f7355; --good-bg:#e3efe7;
+    --warn:#a85d34; --warn-bg:#f3e7dd;
+    --crit:#9e3b3b;
+    --diag-node:#ffffff; --diag-node-line:#cfc9b8; --diag-text:#26283a;
+    --diag-accent:#f4ead4; --diag-accent-line:#c7a45a; --diag-arrow:#7c7f8c;
+    --diag-good:#e0efe6; --diag-good-line:#7fae95; --diag-warn:#f2e2d6; --diag-warn-line:#c79067;
+    --shadow:0 1px 2px rgba(30,28,20,.04),0 8px 24px rgba(30,28,20,.06);
+    --maxw:1200px; --prose:70ch;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+    --sans:ui-sans-serif,"Inter","Segoe UI",Roboto,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular","SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#101219; --surface:#181b25; --surface-2:#1e2130;
+      --ink:#ece8dc; --muted:#a1a4b6; --faint:#767a8c;
+      --line:#2a2e3d; --line-soft:#242838;
+      --accent:#d6a244; --accent-bright:#e6b459; --indigo:#8f9bcf;
+      --good:#63ad88; --good-bg:#15271f;
+      --warn:#d18a5b; --warn-bg:#2a1c14;
+      --crit:#d76c6c;
+      --diag-node:#1e2130; --diag-node-line:#363b4d; --diag-text:#dcd9cd;
+      --diag-accent:#2b2617; --diag-accent-line:#8a6d2f; --diag-arrow:#7d8194;
+      --diag-good:#16281f; --diag-good-line:#3f6a52; --diag-warn:#2b1d13; --diag-warn-line:#7c5a3a;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f0eee6; --surface:#fbfaf5; --surface-2:#f5f3ea; --ink:#1b1d26; --muted:#5a5d6b; --faint:#8a8c98;
+    --line:#dcd7c9; --line-soft:#e7e3d6; --accent:#9a6f22; --accent-bright:#b6842f; --indigo:#3d4770;
+    --good:#2f7355; --good-bg:#e3efe7; --warn:#a85d34; --warn-bg:#f3e7dd; --crit:#9e3b3b;
+    --diag-node:#ffffff; --diag-node-line:#cfc9b8; --diag-text:#26283a; --diag-accent:#f4ead4;
+    --diag-accent-line:#c7a45a; --diag-arrow:#7c7f8c; --diag-good:#e0efe6; --diag-good-line:#7fae95;
+    --diag-warn:#f2e2d6; --diag-warn-line:#c79067; --shadow:0 1px 2px rgba(30,28,20,.04),0 8px 24px rgba(30,28,20,.06);
+  }
+  :root[data-theme="dark"]{
+    --bg:#101219; --surface:#181b25; --surface-2:#1e2130; --ink:#ece8dc; --muted:#a1a4b6; --faint:#767a8c;
+    --line:#2a2e3d; --line-soft:#242838; --accent:#d6a244; --accent-bright:#e6b459; --indigo:#8f9bcf;
+    --good:#63ad88; --good-bg:#15271f; --warn:#d18a5b; --warn-bg:#2a1c14; --crit:#d76c6c;
+    --diag-node:#1e2130; --diag-node-line:#363b4d; --diag-text:#dcd9cd; --diag-accent:#2b2617;
+    --diag-accent-line:#8a6d2f; --diag-arrow:#7d8194; --diag-good:#16281f; --diag-good-line:#3f6a52;
+    --diag-warn:#2b1d13; --diag-warn-line:#7c5a3a; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1200px 600px at 78% -8%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 60%);}
+  ::selection{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+  a{color:var(--indigo);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--indigo) 35%,transparent)}
+  a:hover{color:var(--accent-bright)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+  h1,h2,h3{font-family:var(--serif);text-wrap:balance;line-height:1.14;letter-spacing:-.01em}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+  .num{font-variant-numeric:tabular-nums}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---- hero ---- */
+  header.hero{position:relative;padding:76px 0 44px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 20px}
+  .hero h1{font-size:clamp(2.4rem,6vw,4.3rem);font-weight:600;margin:0 0 18px;max-width:16ch}
+  .hero .lede{font-size:clamp(1.05rem,2.2vw,1.32rem);color:var(--muted);max-width:60ch;margin:0 0 8px;line-height:1.5}
+  .hero .sub{color:var(--faint);font-size:.95rem;max-width:62ch;margin:14px 0 0}
+
+  /* ---- stat strip ---- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+    margin-top:40px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:14px;overflow:hidden}
+  .stat{background:var(--surface);padding:20px 18px}
+  .stat .k{font-family:var(--serif);font-size:2.1rem;font-weight:600;color:var(--ink);line-height:1}
+  .stat .k .unit{font-size:1.1rem;color:var(--accent);margin-left:2px}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.35}
+  .stat .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:3px}
+
+  /* ---- layout with TOC ---- */
+  .shell{display:grid;grid-template-columns:1fr;gap:0}
+  @media (min-width:1080px){
+    .shell{grid-template-columns:230px minmax(0,1fr);gap:56px;align-items:start}
+    nav.toc{position:sticky;top:0;max-height:100vh;overflow:auto;padding:56px 0 40px}
+  }
+  nav.toc{font-size:14px}
+  nav.toc .tt{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  nav.toc a{display:block;padding:6px 12px;color:var(--muted);border:0;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+  nav.toc a:hover{background:var(--surface-2);color:var(--ink)}
+  nav.toc a.active{color:var(--accent-bright);border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);font-weight:600}
+  nav.toc a .i{font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+  nav.toc a.active .i{color:var(--accent)}
+  @media (max-width:1079px){nav.toc{display:none}}
+
+  main{padding:24px 0 60px;min-width:0}
+  section{padding:44px 0;border-top:1px solid var(--line-soft)}
+  section:first-child{border-top:0}
+  .sec-no{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase}
+  section h2{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:600;margin:10px 0 6px;max-width:20ch}
+  section .dek{color:var(--muted);font-size:1.05rem;max-width:var(--prose);margin:0 0 26px}
+  .prose{max-width:var(--prose)}
+  .prose p{margin:0 0 16px}
+  .prose h3{font-size:1.2rem;margin:30px 0 10px;color:var(--ink)}
+  .prose ul{margin:0 0 16px;padding-left:1.1em}
+  .prose li{margin:0 0 8px}
+  .prose strong{color:var(--ink);font-weight:650}
+  .term{border-bottom:1px dotted var(--accent);cursor:help}
+
+  /* ---- callout ---- */
+  .callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:12px;padding:18px 20px;margin:22px 0;box-shadow:var(--shadow);max-width:var(--prose)}
+  .callout .cl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 7px}
+  .callout p{margin:0;color:var(--ink)}
+
+  /* ---- figure / diagram ---- */
+  figure{margin:28px 0;padding:0}
+  .diagbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 20px 14px;box-shadow:var(--shadow);overflow-x:auto}
+  .diagbox svg{display:block;margin:0 auto;max-width:100%;height:auto;font-family:var(--sans)}
+  figcaption{font-size:14px;color:var(--muted);margin-top:12px;max-width:var(--prose);line-height:1.5}
+  figcaption b{color:var(--ink)}
+  .n-txt{fill:var(--diag-text);font-size:13px}
+  .n-sub{fill:var(--muted);font-size:11px;font-family:var(--mono)}
+  .n-h{fill:var(--diag-text);font-size:13.5px;font-weight:700}
+  .e-lbl{fill:var(--muted);font-size:11px;font-family:var(--mono)}
+
+  /* ---- cards ---- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px;box-shadow:var(--shadow)}
+  .card h4{margin:0 0 6px;font-family:var(--serif);font-size:1.12rem;font-weight:600;display:flex;align-items:baseline;gap:8px}
+  .card h4 .tag{font-family:var(--mono);font-size:10.5px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:5px;padding:1px 5px;letter-spacing:.04em}
+  .card p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.5}
+
+  /* ---- results dashboard ---- */
+  .dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin:24px 0}
+  .metric{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .metric .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .metric .name{font-size:14px;color:var(--muted);font-weight:600}
+  .metric .pill{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+  .pill.strong{background:var(--good-bg);color:var(--good)}
+  .pill.mid{background:var(--warn-bg);color:var(--warn)}
+  .metric .val{font-family:var(--serif);font-size:2.15rem;font-weight:600;margin:6px 0 2px;line-height:1}
+  .metric .val .u{font-size:1rem;color:var(--accent);margin-left:1px}
+  .metric .meta{font-size:12px;color:var(--faint);font-family:var(--mono)}
+  .bar{height:7px;border-radius:6px;background:var(--surface-2);margin-top:13px;overflow:hidden}
+  .bar span{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-bright))}
+  .bar.g span{background:linear-gradient(90deg,var(--good),color-mix(in srgb,var(--good) 60%,var(--accent)))}
+
+  /* ---- ledger (achieved / lagged) ---- */
+  .ledger{margin:22px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .ledger .row{display:grid;grid-template-columns:26px 1fr;gap:14px;padding:15px 18px;border-top:1px solid var(--line-soft);align-items:start}
+  .ledger .row:first-child{border-top:0}
+  .ledger .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:2px}
+  .ic.yes{background:var(--good-bg);color:var(--good)}
+  .ic.no{background:var(--warn-bg);color:var(--warn)}
+  .ledger .row .t{font-weight:650;color:var(--ink);font-size:15px}
+  .ledger .row .d{color:var(--muted);font-size:14px;margin-top:2px}
+
+  /* ---- wall figure (ceiling) ---- */
+  .wall{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0}
+  .brick{flex:1 1 190px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px 16px;box-shadow:var(--shadow)}
+  .brick .h{font-weight:650;font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .brick .h .x{color:var(--warn);font-family:var(--mono);font-size:12px}
+  .brick .p{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.45}
+
+  /* ---- code / reproduce ---- */
+  pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink);box-shadow:var(--shadow)}
+  pre .c{color:var(--faint)}
+  pre .a{color:var(--accent-bright)}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--line);padding:38px 0 60px;color:var(--muted);font-size:14px}
+  footer .fnote{max-width:var(--prose)}
+  .kbd{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+
+  hr.rule{border:0;border-top:1px solid var(--line-soft);margin:30px 0}
+  .lead-in{font-family:var(--serif);font-size:1.28rem;line-height:1.5;color:var(--ink);max-width:var(--prose);margin:0 0 22px;font-weight:500}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Jyotiṣa · encoded as software · tested empirically</p>
+    <h1>Can a machine judge a horoscope the way a master did?</h1>
+    <p class="lede">We built an engine that encodes B. V. Raman's classic <em>How to Judge a Horoscope</em>,
+      then checked it — honestly — against the great astrologer's own written verdicts on charts it had never seen before.</p>
+    <p class="sub">This is the whole story in plain language: how it started, the logic, the tools, what worked,
+      exactly where it hit a wall, and what a next step would take. Every number below is produced live by a test, not typed by hand.</p>
+
+    <div class="stats" role="list" aria-label="Headline results">
+      <div class="stat" role="listitem"><div class="k num">94<span class="unit">%</span></div><div class="l">Predicted Raman's planetary period (daśā) exactly</div><div class="n num">47 / 50 real births</div></div>
+      <div class="stat" role="listitem"><div class="k num">93<span class="unit">%</span></div><div class="l">Matched his printed "balance of daśā" start line</div><div class="n num">28 / 30</div></div>
+      <div class="stat" role="listitem"><div class="k num">+0.50</div><div class="l">Correlation with his ranking of who lived longest</div><div class="n num">Spearman ρ</div></div>
+      <div class="stat" role="listitem"><div class="k num">57<span class="unit">%</span></div><div class="l">Strength verdict within one grade (unseen charts)</div><div class="n num">held-out · was ~53%</div></div>
+      <div class="stat" role="listitem"><div class="k num">1,913</div><div class="l">Classical rules encoded, across 10 source books</div><div class="n num">now feed the grades</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="shell">
+  <nav class="toc" aria-label="Contents">
+    <p class="tt">Contents</p>
+    <ol>
+      <li><a href="#start"><span class="i">01</span>How it started</a></li>
+      <li><a href="#logic"><span class="i">02</span>The core logic</a></li>
+      <li><a href="#tools"><span class="i">03</span>What we built</a></li>
+      <li><a href="#engine"><span class="i">04</span>The engine, house by house</a></li>
+      <li><a href="#scoring"><span class="i">05</span>How it scores strength</a></li>
+      <li><a href="#achieved"><span class="i">06</span>What we achieved</a></li>
+      <li><a href="#lagged"><span class="i">07</span>Where we lagged</a></li>
+      <li><a href="#ml"><span class="i">08</span>The machine-learning detour</a></li>
+      <li><a href="#future"><span class="i">09</span>The road ahead</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- 01 -->
+  <section id="start">
+    <p class="sec-no">01 — Origin</p>
+    <h2>How it started: the honesty problem</h2>
+    <p class="dek">A model that is graded on the same examples it learned from will always look good. The only fair test is one it has never seen.</p>
+    <div class="prose">
+      <p class="lead-in">The engine had an early score of ~78% "accuracy." The trouble: it was measured on the very charts used to build it. That number was flattering itself.</p>
+      <p>So the whole project pivoted to one rule: <strong>test the engine only on worked example charts it was never tuned on, and compare its answer to what Raman himself printed.</strong> No self-grading. That single decision shaped everything that followed.</p>
+      <p>Two lucky facts about Raman's book made this possible at scale:</p>
+      <ul>
+        <li>He prints two <em>sign diagrams</em> for each chart — the <span class="term" title="Rāśi: the main birth chart">Rāśi</span> (main chart) and the <span class="term" title="Navāṁśa: the 1/9th division chart, used to confirm strength">Navāṁśa</span> (a finer division) — plus a birth line and a plain-English verdict. He never prints exact planetary degrees.</li>
+        <li>A planet's <strong>strength</strong> can be judged from those signs alone. Degrees and timing are a separate question. So we could rebuild a faithful chart from his two little diagrams — no telescope, no timezone math needed.</li>
+      </ul>
+      <div class="callout">
+        <p class="cl">The key insight</p>
+        <p>Each planet sits in a printed Rāśi sign. From that, there's exactly one small "slice" of the sign that lands it in the Navāṁśa sign Raman also printed. We solve for that slice. The reconstructed chart then matches <em>both</em> of his diagrams exactly — Raman's own chart, rebuilt from ink.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="logic">
+    <p class="sec-no">02 — The core loop</p>
+    <h2>The core logic, end to end</h2>
+    <p class="dek">Every test follows the same shape. Read the chart two ways, and check whether the engine's grade lands near Raman's grade.</p>
+    <figure>
+      <div class="diagbox">
+        <svg viewBox="0 0 920 300" role="img" aria-label="Pipeline: the book splits into a rebuilt chart scored by the engine and a verdict phrase mapped to a grade; the two grades are compared.">
+          <defs>
+            <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--diag-arrow)"/></marker>
+          </defs>
+          <!-- book -->
+          <rect x="18" y="112" width="150" height="76" rx="12" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="93" y="140" text-anchor="middle" class="n-h">Raman's book</text>
+          <text x="93" y="160" text-anchor="middle" class="n-sub">chart + verdict</text>
+          <!-- split arrows -->
+          <path d="M168 138 C205 120 210 78 250 78" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <path d="M168 162 C205 180 210 222 250 222" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <!-- top path: reconstruct -->
+          <rect x="252" y="46" width="176" height="66" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="340" y="72" text-anchor="middle" class="n-txt">Rebuild the chart</text>
+          <text x="340" y="92" text-anchor="middle" class="n-sub">from the 2 sign diagrams</text>
+          <path d="M428 79 L468 79" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <rect x="470" y="46" width="176" height="66" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="558" y="72" text-anchor="middle" class="n-txt">Engine judges it</text>
+          <text x="558" y="92" text-anchor="middle" class="n-sub">→ engine grade</text>
+          <!-- bottom path: map -->
+          <rect x="252" y="190" width="176" height="66" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="340" y="216" text-anchor="middle" class="n-txt">Read his verdict word</text>
+          <text x="340" y="236" text-anchor="middle" class="n-sub">"fairly strong", "afflicted"…</text>
+          <path d="M428 223 L468 223" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <rect x="470" y="190" width="176" height="66" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="558" y="216" text-anchor="middle" class="n-txt">Fixed word→grade map</text>
+          <text x="558" y="236" text-anchor="middle" class="n-sub">→ Raman grade</text>
+          <!-- join to compare -->
+          <path d="M646 79 C700 79 705 138 742 143" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <path d="M646 223 C700 223 705 164 742 159" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar)"/>
+          <rect x="744" y="118" width="158" height="66" rx="12" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="823" y="145" text-anchor="middle" class="n-h">Compare</text>
+          <text x="823" y="165" text-anchor="middle" class="n-sub">within one grade?</text>
+        </svg>
+      </div>
+      <figcaption><b>The whole test in one picture.</b> The chart (top path) and Raman's words (bottom path) are read completely separately — the engine never sees his verdict, and the word→grade map is fixed and published <em>before</em> any scoring. That separation is what keeps the test honest. "Within one grade" is the pass mark: the 9-grade scale runs from <em>afflicted</em> to <em>very powerful</em>, and landing one step away counts as agreement.</figcaption>
+    </figure>
+    <div class="prose">
+      <p>Three quiet safeguards do a lot of work here. A <strong>reachability gate</strong> throws out any chart whose two diagrams are geometrically impossible together (a mis-read). The <strong>word→grade map is pre-registered</strong> — locked before scoring, so the engine can't be graded against a moving target. And every corpus we grew went through a <strong>3-agent adversarial audit</strong>, where independent checkers each try to <em>disprove</em> a candidate verdict before it's allowed in.</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="tools">
+    <p class="sec-no">03 — The toolkit</p>
+    <h2>What we built to make it testable</h2>
+    <p class="dek">A handful of reusable parts, each designed so the measurement stays independent of the thing being measured.</p>
+    <div class="cards">
+      <div class="card"><h4>Chart rebuilder <span class="tag">reconstruct</span></h4><p>Turns Raman's two sign diagrams back into a real chart, and drops any pair of diagrams that can't physically coexist.</p></div>
+      <div class="card"><h4>Word → grade map <span class="tag">pre-registered</span></h4><p>Raman's phrases ("well fortified", "considerably afflicted") mapped to the 9-grade scale, committed before scoring. Fuzzy phrases are logged and skipped, never guessed.</p></div>
+      <div class="card"><h4>Extractor <span class="tag">agent</span></h4><p>Pulls raw positions and Raman's exact words from noisy scans — never "features the engine would like." That's what keeps the two sides apart.</p></div>
+      <div class="card"><h4>Five validators <span class="tag">run()</span></h4><p>One each for strength, timing, balance, longevity, and the calibration anchor. Every headline number is one of these, re-run live.</p></div>
+      <div class="card"><h4>Blind growth pipeline <span class="tag">3 auditors</span></h4><p>Extract → mechanical triage → three independent refuters → the frozen map → ship. It caught 5 bad "gold" rows that were in the data before us.</p></div>
+      <div class="card"><h4>Drift guard <span class="tag">tests</span></h4><p>A test re-runs every validator and asserts the published numbers still hold — so the report and the engine can never quietly disagree.</p></div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="engine">
+    <p class="sec-no">04 — Construction</p>
+    <h2>The engine, built one house at a time</h2>
+    <p class="dek">This is the part that took patience. Raman never judges a house with a single number — so neither does the engine. It reproduces his actual procedure, house by house.</p>
+    <div class="prose">
+      <p class="lead-in">The engine is three layers: rebuild the chart, judge it the way Raman describes, then check that judgment against his book. Almost all the craft lives in the middle layer — and that layer has two halves that were built separately and later joined.</p>
+    </div>
+
+    <figure>
+      <div class="diagbox">
+        <svg viewBox="0 0 900 262" role="img" aria-label="Judging one house: functional roles are set first; then bhava, lord, and karaka are each graded and synthesised into the house verdict; six influence factors and the Moon-view feed in.">
+          <defs><marker id="ar4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--diag-arrow)"/></marker></defs>
+          <!-- pre-gate -->
+          <rect x="16" y="98" width="150" height="66" rx="12" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="91" y="122" text-anchor="middle" class="n-h">Friend or foe?</text>
+          <text x="91" y="141" text-anchor="middle" class="n-sub">functional roles</text>
+          <text x="91" y="156" text-anchor="middle" class="n-sub">per ascendant</text>
+          <path d="M166 131 L206 131" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar4)"/>
+          <!-- three factors -->
+          <rect x="208" y="30" width="196" height="50" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="228" y="52" class="n-txt">Bhāva — the house itself</text>
+          <text x="228" y="69" class="n-sub">who sits in it / aspects it</text>
+          <rect x="208" y="106" width="196" height="50" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="228" y="128" class="n-txt">Lord — its ruling planet</text>
+          <text x="228" y="145" class="n-sub">dignity, placement, aspects</text>
+          <rect x="208" y="182" width="196" height="50" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="228" y="204" class="n-txt">Kāraka — natural indicator</text>
+          <text x="228" y="221" class="n-sub">Moon for home, Venus for spouse…</text>
+          <path d="M404 55 C446 55 452 118 490 122" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar4)"/>
+          <path d="M404 131 L490 131" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar4)"/>
+          <path d="M404 207 C446 207 452 144 490 140" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar4)"/>
+          <!-- synthesise -->
+          <rect x="492" y="104" width="150" height="54" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="567" y="128" text-anchor="middle" class="n-txt">Synthesise</text>
+          <text x="567" y="145" text-anchor="middle" class="n-sub">weigh together</text>
+          <path d="M642 131 L682 131" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar4)"/>
+          <rect x="684" y="102" width="150" height="58" rx="11" fill="var(--diag-good)" stroke="var(--diag-good-line)"/>
+          <text x="759" y="126" text-anchor="middle" class="n-h">House verdict</text>
+          <text x="759" y="145" text-anchor="middle" class="n-sub">on a 9-grade scale</text>
+          <!-- influence note -->
+          <rect x="492" y="186" width="342" height="46" rx="10" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="507" y="206" class="n-sub">+ Raman's 6 influence factors: owns · aspects house · occupies</text>
+          <text x="507" y="222" class="n-sub">· aspects lord · joins lord · lord-from-the-Moon</text>
+        </svg>
+      </div>
+      <figcaption><b>How one house is judged.</b> Before anything, the engine decides whether each planet is a friend or enemy <em>for this specific ascendant</em> — the same planet can be the best planet in one chart and the worst in another. Then it grades the house three ways (as a place, through its ruler, and through its natural indicator) and weighs them together, with Raman's six "influence" factors feeding the reading. The 9-grade scale runs <em>afflicted → weak → moderate → … → very powerful</em>.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h3>The other half: 1,913 classical rules, encoded by hand</h3>
+      <p>Alongside the scorer sits a database of Raman's individual statements — and those of allied classics — turned into machine-checkable data. Each rule is stored as a <strong>verbatim, hash-verified quote</strong> plus a small logical condition the engine can test against a real chart, plus the signed effect it predicts. Nothing is paraphrased; a hash re-check means a rule can never quietly drift from his actual words.</p>
+    </div>
+
+    <figure>
+      <div class="diagbox">
+        <svg viewBox="0 0 900 168" role="img" aria-label="Anatomy of one encoded rule: a verbatim hash-verified quote, a machine-checkable condition, and a signed effect.">
+          <rect x="14" y="30" width="278" height="110" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="30" y="54" class="n-h">1 · The quote</text>
+          <text x="30" y="76" class="n-sub">"…the fifth house is afflicted</text>
+          <text x="30" y="92" class="n-sub">by unfavourable conjunctions…"</text>
+          <text x="30" y="118" class="n-sub" style="fill:var(--good)">✓ sha-256 verified · verbatim</text>
+          <rect x="312" y="30" width="278" height="110" rx="12" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="328" y="54" class="n-h">2 · The condition</text>
+          <text x="328" y="76" class="n-sub">malefic IN the 5th house</text>
+          <text x="328" y="92" class="n-sub">OR malefic ASPECTS the 5th</text>
+          <text x="328" y="118" class="n-sub">→ testable on any chart</text>
+          <rect x="610" y="30" width="276" height="110" rx="12" fill="var(--diag-warn)" stroke="var(--diag-warn-line)"/>
+          <text x="626" y="54" class="n-h">3 · The effect</text>
+          <text x="626" y="76" class="n-sub">polarity: unfavourable</text>
+          <text x="626" y="92" class="n-sub">magnitude: strong</text>
+          <text x="626" y="118" class="n-sub">"no children, or they suffer"</text>
+        </svg>
+      </div>
+      <figcaption><b>Anatomy of an encoded rule.</b> All 1,913 rules — drawn from ten source books (Raman's <em>Hindu Predictive Astrology</em>, both volumes of <em>How to Judge a Horoscope</em>, <em>300 Combinations</em>, and others) — follow this shape. They were <em>swept</em> from the books chapter by chapter through a gate that verifies each quote against the pinned source and compiles its condition; a rule that fails any check is rejected, not patched.</figcaption>
+    </figure>
+
+    <div class="callout">
+      <p class="cl">Why it took patience</p>
+      <p>The engine wasn't written in one go. Each house was deepened <strong>one at a time</strong>, calibrated against Raman's own worked charts, and locked behind a test so a later refinement can't quietly undo an earlier one. One example: reading that a natural benefic isn't a blemish even when it's technically unfriendly — taken straight from four of his charts — lifted the 4th-house score from 39% to 56% with <em>zero</em> cost to the houses already settled. And for a long time the 1,913 rules didn't even feed the grades; wiring them in was the single biggest gain of the whole project.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section id="scoring">
+    <p class="sec-no">05 — Inside the engine</p>
+    <h2>How the engine actually scores strength</h2>
+    <p class="dek">First the old way — add up points. Then the new way that broke a long-standing ceiling — apply Raman's overrides.</p>
+    <div class="prose">
+      <p>For each factor of a house — the house itself (<span class="term" title="bhāva = house">bhāva</span>), its ruling planet (lord), and its natural indicator (<span class="term" title="kāraka = significator planet">kāraka</span>) — the engine collects <strong>findings</strong>: is the planet exalted or debilitated? in a good or bad house? aspected by benefics or malefics? hemmed in? and so on.</p>
+      <p>The original scorer simply added those up. It worked to a point — and then stalled at about <strong>53% within-one</strong> for fourteen straight attempts to improve it. The problem wasn't the weights. It was the <em>shape</em> of the math.</p>
+    </div>
+
+    <figure>
+      <div class="diagbox">
+        <svg viewBox="0 0 900 250" role="img" aria-label="Findings feed two scorers: the old additive sum reaching about 53 percent, and the new gated scorer reaching about 57 to 63 percent.">
+          <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--diag-arrow)"/></marker></defs>
+          <rect x="20" y="94" width="168" height="62" rx="12" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="104" y="120" text-anchor="middle" class="n-h">Findings</text>
+          <text x="104" y="140" text-anchor="middle" class="n-sub">dignity, house, aspects…</text>
+          <path d="M188 112 C230 96 236 66 276 66" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <path d="M188 138 C230 154 236 184 276 184" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <!-- old -->
+          <rect x="278" y="34" width="330" height="64" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="298" y="60" class="n-txt">Old: add up all the points</text>
+          <text x="298" y="80" class="n-sub">Σ weights → threshold → grade</text>
+          <path d="M608 66 L648 66" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <rect x="650" y="40" width="120" height="52" rx="10" fill="var(--diag-warn)" stroke="var(--diag-warn-line)"/>
+          <text x="710" y="63" text-anchor="middle" class="n-h">~53%</text>
+          <text x="710" y="80" text-anchor="middle" class="n-sub">stuck</text>
+          <!-- new -->
+          <rect x="278" y="152" width="330" height="64" rx="12" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="298" y="178" class="n-txt">New: start there, then apply overrides</text>
+          <text x="298" y="198" class="n-sub">Raman's structural "gates"</text>
+          <path d="M608 184 L648 184" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar2)"/>
+          <rect x="650" y="158" width="120" height="52" rx="10" fill="var(--diag-good)" stroke="var(--diag-good-line)"/>
+          <text x="710" y="181" text-anchor="middle" class="n-h">57–63%</text>
+          <text x="710" y="198" text-anchor="middle" class="n-sub">live</text>
+        </svg>
+      </div>
+      <figcaption><b>Two scorers, same findings.</b> Raman never added points. He judged <em>conditionally</em>: a besieged planet is broken no matter what else it has going for it; deeply afflicted testimony overrules a nice placement. The new scorer (called <span class="mono">synthesis&#95;v2</span>) keeps the old sum as a starting grade, then applies those overrides — and it's now the engine's live answer.</figcaption>
+    </figure>
+
+    <div class="prose"><h3>The overrides, step by step</h3>
+      <p>The new scorer walks a short ladder. It only ever <em>lowers</em> a grade — a strong start stays strong unless a hard condition fires.</p>
+    </div>
+    <figure>
+      <div class="diagbox">
+        <svg viewBox="0 0 760 320" role="img" aria-label="Decision ladder: start at the engine grade; if besieged cap at weak; if deeply afflicted set afflicted or weak; otherwise keep the grade.">
+          <defs><marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--diag-arrow)"/></marker></defs>
+          <rect x="270" y="16" width="220" height="52" rx="11" fill="var(--diag-accent)" stroke="var(--diag-accent-line)"/>
+          <text x="380" y="40" text-anchor="middle" class="n-h">Start = the old point-total grade</text>
+          <text x="380" y="57" text-anchor="middle" class="n-sub">the "base"</text>
+          <path d="M380 68 L380 92" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar3)"/>
+          <!-- gate A -->
+          <rect x="250" y="94" width="260" height="52" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="380" y="118" text-anchor="middle" class="n-txt">Gate A — hemmed between malefics?</text>
+          <text x="380" y="135" text-anchor="middle" class="n-sub">papakartari</text>
+          <path d="M510 120 L610 120" fill="none" stroke="var(--diag-warn-line)" stroke-width="1.6" marker-end="url(#ar3)"/>
+          <text x="560" y="112" text-anchor="middle" class="e-lbl">yes</text>
+          <rect x="612" y="98" width="132" height="44" rx="9" fill="var(--diag-warn)" stroke="var(--diag-warn-line)"/>
+          <text x="678" y="125" text-anchor="middle" class="n-txt">cap at "weak"</text>
+          <path d="M380 146 L380 170" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar3)"/>
+          <text x="393" y="162" class="e-lbl">no</text>
+          <!-- gate B -->
+          <rect x="250" y="172" width="260" height="52" rx="11" fill="var(--diag-node)" stroke="var(--diag-node-line)"/>
+          <text x="380" y="196" text-anchor="middle" class="n-txt">Gate B — piled-up affliction?</text>
+          <text x="380" y="213" text-anchor="middle" class="n-sub">deep negatives</text>
+          <path d="M510 198 L610 198" fill="none" stroke="var(--diag-warn-line)" stroke-width="1.6" marker-end="url(#ar3)"/>
+          <text x="560" y="190" text-anchor="middle" class="e-lbl">yes</text>
+          <rect x="612" y="176" width="132" height="44" rx="9" fill="var(--diag-warn)" stroke="var(--diag-warn-line)"/>
+          <text x="678" y="203" text-anchor="middle" class="n-txt">"afflicted"/"weak"</text>
+          <path d="M380 224 L380 248" fill="none" stroke="var(--diag-arrow)" stroke-width="1.6" marker-end="url(#ar3)"/>
+          <text x="393" y="240" class="e-lbl">no</text>
+          <rect x="270" y="250" width="220" height="52" rx="11" fill="var(--diag-good)" stroke="var(--diag-good-line)"/>
+          <text x="380" y="274" text-anchor="middle" class="n-h">Keep the grade</text>
+          <text x="380" y="291" text-anchor="middle" class="n-sub">final answer</text>
+        </svg>
+      </div>
+      <figcaption><b>The gate ladder.</b> Two overrides fire, both taken straight from Raman's doctrine (and confirmed by an independent learned model). Nothing here was fitted to the answers — the two threshold numbers are the only values read from data, and they're declared as such. Because the grade only ever drops from a real starting point, the scorer improves the hard cases without wrecking the easy ones.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 05 -->
+  <section id="achieved">
+    <p class="sec-no">06 — Results</p>
+    <h2>What we achieved</h2>
+    <p class="dek">Four independent things were checked against Raman. Three are strong; the fourth is honest.</p>
+    <div class="dash">
+      <div class="metric"><div class="top"><span class="name">Timing — planetary period</span><span class="pill strong">strong</span></div><div class="val num">94<span class="u">%</span></div><div class="meta num">47 / 50 real births · exact lord</div><div class="bar g"><span style="width:94%"></span></div></div>
+      <div class="metric"><div class="top"><span class="name">Daśā balance at birth</span><span class="pill strong">strong</span></div><div class="val num">93<span class="u">%</span></div><div class="meta num">28 / 30 · lord + duration</div><div class="bar g"><span style="width:93%"></span></div></div>
+      <div class="metric"><div class="top"><span class="name">Longevity ordering</span><span class="pill strong">discriminating</span></div><div class="val num">+0.50</div><div class="meta num">ρ · 8th-house strength predicts; general strength doesn't</div><div class="bar g"><span style="width:75%"></span></div></div>
+      <div class="metric"><div class="top"><span class="name">Strength — unseen charts</span><span class="pill mid">improved</span></div><div class="val num">56.9<span class="u">%</span></div><div class="meta num">N=58 · was 50.0% (add-up)</div><div class="bar"><span style="width:57%"></span></div></div>
+      <div class="metric"><div class="top"><span class="name">Strength — real-birth (degree) pool</span><span class="pill mid">improved</span></div><div class="val num">63.0<span class="u">%</span></div><div class="meta num">N=27 · was 51.9%</div><div class="bar"><span style="width:63%"></span></div></div>
+      <div class="metric"><div class="top"><span class="name">Strength — freshest blind set</span><span class="pill mid">improved</span></div><div class="val num">71.4<span class="u">%</span></div><div class="meta num">N=14 · never-seen charts</div><div class="bar"><span style="width:71%"></span></div></div>
+    </div>
+    <div class="prose">
+      <p>The longevity result is the most quietly satisfying. The engine's reading of the <strong>8th house</strong> (the house of lifespan) predicts Raman's ordering of who lived longest — while a generic "this is a strong chart" score actually points the <em>wrong</em> way. Getting the sign of that contrast right means the engine is reading the specific thing that matters, not a vague halo.</p>
+      <p>On <strong>strength</strong>, two changes finally moved a number that had been frozen for a year:</p>
+      <ul>
+        <li><strong>We plugged the doctrine in.</strong> Astonishingly, the 1,913 classical rules we'd carefully encoded were never actually used to grade strength — they fed only the written reading. Routing them into the score was the single biggest gain.</li>
+        <li><strong>We changed the math from adding to gating</strong> (the ladder above), lifting unseen charts to 56.9% and the real-birth pool to 63.0%, and putting those grades on the live path.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section id="lagged">
+    <p class="sec-no">07 — The wall</p>
+    <h2>Where we lagged — and why it's a real wall</h2>
+    <p class="dek">One kind of chart the engine keeps under-rating: strong houses that Raman credits <em>despite</em> a bad placement. We tried four different ways to fix it. All four failed — the same way.</p>
+    <div class="prose">
+      <p class="lead-in">Raman will call a planet strong because it's "highly fortified by the combined aspects" of good planets — even while it sits in a bad house. The engine sees the bad house and marks it down. That's the gap.</p>
+      <p>The natural fixes all share one fatal flaw: <strong>the very signals that mark Raman's strong-but-afflicted planets are equally present on the planets he calls weak.</strong> So any rule that lifts the first group also wrongly lifts the second. We proved this four times over, each result reproducible:</p>
+    </div>
+    <div class="wall">
+      <div class="brick"><div class="h"><span class="x">✗</span> Fortification floor</div><div class="p">Reward heavy good-planet support. Every setting also over-credited the weak charts — net loss on unseen data.</div></div>
+      <div class="brick"><div class="h"><span class="x">✗</span> Dignity floor</div><div class="p">"An exalted planet can't collapse." Fired on afflicted charts too — cost ~17 points.</div></div>
+      <div class="brick"><div class="h"><span class="x">✗</span> New structural features</div><div class="p">Yogas, dispositor strength, benefic clusters — all appear <em>more</em> often on the weak charts. They point the wrong way.</div></div>
+      <div class="brick"><div class="h"><span class="x">✗</span> A trained ML model</div><div class="p">Scored 0 of 8 on the hardest reference chart — even after we fed it strong examples. It learned the wrong base rate.</div></div>
+    </div>
+    <div class="callout">
+      <p class="cl">The honest conclusion</p>
+      <p>Raman's judgment here is <strong>holistic</strong> — he weighs this specific planet, in this specific house, against this specific company, all at once. That call simply isn't recoverable from any single feature of the chart, no matter how it's sliced. The wall is real, and now it's precisely mapped.</p>
+    </div>
+    <div class="prose">
+      <p style="color:var(--muted);font-size:14.5px">Two side questions closed the same way, cheaply: the engine's <em>overall</em> house verdict and its "from-the-Moon" reading can't be graded directly, because Raman states those in prose too soft for the 9-grade scale (they map on only 3 and 1 of 168 charts). And a <em>transit</em> (planetary-movement) track was scoped but set aside — his transit-at-event notes are too sparse in the available text to test against.</p>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section id="ml">
+    <p class="sec-no">08 — The ML detour</p>
+    <h2>The machine-learning detour</h2>
+    <p class="dek">If the rule can't be hand-written, can a model learn it? We ran the experiment properly — and got a clear, useful "no, not this way."</p>
+    <div class="prose">
+      <p>Two experiments, both blinded and pre-registered:</p>
+      <ul>
+        <li><strong>An AI reading the charts cold.</strong> A frontier model graded anonymized charts (no names, no dates) against the fixed map, each paired with a scrambled "twin" to catch cheating from memory. Result: <strong>47% — no better than the engine, and no memorization.</strong> The holistic read didn't beat the structural one.</li>
+        <li><strong>A small transparent model over the engine's own findings.</strong> This one <em>did</em> score higher on familiar charts (63.5% vs 51.9%) — by discovering exactly the "piled-up affliction breaks it" gate we later hand-wrote. But on the strong-house reference chart it <strong>collapsed to zero</strong>: it had only ever trained on affliction-heavy examples, so it called everything afflicted.</li>
+      </ul>
+      <div class="callout">
+        <p class="cl">The last lever, tested to the end</p>
+        <p>We gave that model everything it supposedly needed to generalize — the reference chart rebuilt in its own language, plus a fresh batch of <em>strong</em> training examples. It still scored <strong>0 of 8</strong> on the strong chart, in every configuration. Adding strong data didn't help, because the strong and weak charts look identical in its features. The model's one good idea was already in the live engine; the rest was memorized base rates. A pre-registered guard rail correctly refused to ship it.</p>
+      </div>
+      <p>This is a genuinely valuable outcome: the ceiling is <strong>learnable on familiar charts but not generalizable</strong> — the same wall, seen from the machine-learning side.</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="future">
+    <p class="sec-no">09 — Ahead</p>
+    <h2>The road ahead</h2>
+    <p class="dek">The cheap and medium levers are spent. What's left is a bigger idea — and it's clearly signposted.</p>
+    <div class="ledger">
+      <div class="row"><div class="ic yes">✓</div><div><div class="t">Landed and live</div><div class="d">The doctrine wired into the grades · the gated scorer (56.9% / 63.0%) · combustion by degree · timing, balance, and longevity, all in the reading output.</div></div></div>
+      <div class="row"><div class="ic no">–</div><div><div class="t">Documented dead ends (kept, not buried)</div><div class="d">Re-weighting, sub-degree features, four strong-side fixes, and the trained model — each reproduced and pinned, so no one re-walks them by accident.</div></div></div>
+      <div class="row"><div class="ic yes">→</div><div><div class="t">The one real lever left</div><div class="d">A <strong>richer representation</strong> — a model that sees the whole configuration at once (this planet, this house, this company together), rather than a bag of separate features. That is the only thing that could close the holistic gap.</div></div></div>
+      <div class="row"><div class="ic yes">→</div><div><div class="t">Deferred, scoped</div><div class="d">The transit dimension — buildable if the death-chapter transit prose is first extracted into a testable corpus.</div></div></div>
+    </div>
+    <div class="prose">
+      <p class="lead-in">The through-line of the whole effort: every route to beating the strength ceiling — hand-written rules, engineered features, and a fitted model — runs into the identical wall. That convergence <em>is</em> the finding.</p>
+      <p>The engine is faithful wherever Raman gave a crisp verdict, and the single place it plateaus is understood down to its mechanism — not hidden behind a friendly average.</p>
+    </div>
+    <hr class="rule"/>
+    <h3 style="font-family:var(--serif);font-size:1.15rem;margin:0 0 12px">Reproduce any number yourself</h3>
+    <pre><span class="c"># the strength scorer, all three axes</span>
+python -m app.medini.doctrine.validation.<span class="a">synthesis_v2_validate</span>
+<span class="c"># timing, balance, longevity</span>
+python -m app.medini.doctrine.validation.<span class="a">timing_validate</span>
+python -m app.medini.doctrine.validation.<span class="a">balance_validate</span>
+<span class="c"># the dead ends, still reproducible</span>
+python -m app.medini.doctrine.validation.<span class="a">structural_separability</span>
+python -m app.medini.doctrine.validation.<span class="a">learned_combine_landing</span></pre>
+  </section>
+
+  <footer>
+    <div class="fnote">
+      <p><strong>A note on what this is and isn't.</strong> This is a study of whether software can reproduce one expert's written judgments — B. V. Raman's, in <em>How to Judge a Horoscope</em>. It measures fidelity to his book, not any claim about astrology and reality. Every figure here is produced live by a validator and held in place by a test; every failed idea is kept, reproducible, so the map of what works stays honest. Full doctrine test suite: <span class="kbd">322 passing</span>.</p>
+    </div>
+  </footer>
+
+  </main>
+</div>
+</div>
+
+<script>
+  (function(){
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var map = {};
+    links.forEach(function(a){ var id=a.getAttribute('href').slice(1); map[id]=a; });
+    var secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+    if(!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(l){l.classList.remove('active');});
+          var a = map[e.target.id]; if(a) a.classList.add('active');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    secs.forEach(function(s){ io.observe(s); });
+  })();
+</script>

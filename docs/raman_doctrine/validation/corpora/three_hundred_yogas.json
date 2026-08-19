@@ -1,0 +1,743 @@
+{
+ "source": "Three Hundred Important Combinations, B. V. Raman (archive.org in.ernet.dli.2015.83552, DjVuTXT). Extracted verbatim; book text not committed (SOURCES policy).",
+ "note": "Yoga combinations with Raman's Definition (antecedent) + Results (stated outcome) + a coarse multi-label outcome taxonomy + example-chart birth lines. Outcome is DOCTRINE (Raman's stated effect), not observed ground truth \u2014 see REPORT_yoga_coverage.md.",
+ "n_yogas": 64,
+ "n_example_charts": 39,
+ "rows": [
+  {
+   "num": 1,
+   "name": "Gajakesari Yoga",
+   "definition": "\u2014 If Jupiter is in a kendrafrom the Moon the combination goes under the name of",
+   "results": "\u2014 Many relations, polite and generous\u00bb builder of villages and towns or magistrate over them ; will have a lasting reputation even long after death.",
+   "outcome_classes": [
+    "authority",
+    "fame",
+    "character"
+   ],
+   "example_births": [
+    "13-8-1894",
+    "1-8-1911"
+   ]
+  },
+  {
+   "num": 2,
+   "name": "Sunapha Yoga",
+   "definition": "",
+   "results": "Self-eArned property, King, luleroi his equal, intelligent, we ilthy and good lepiitation",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "learning"
+   ],
+   "example_births": [
+    "28-5-1903"
+   ]
+  },
+  {
+   "num": 3,
+   "name": "Anapha Yoga",
+   "definition": "\u2014 If there are plawts in the 12tb from the Mo('n, Anapha yi'ga is .or.iied. ANAPHA YOGA 19",
+   "results": "\u2014 Well formed orj^ans, majestic appearance, good reputation, polite, generous self-respect, fond of dress and sense pleasures. In later life renunciation and austerity.",
+   "outcome_classes": [
+    "fame",
+    "character"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 4,
+   "name": "Dhurdhura Yoga",
+   "definition": "\u2014 If there are planets on either side of the Moon, the combination goes under the name of Dhurdhura.",
+   "results": "\u2014 The native is bountiful. He will be blessed with much wealth and conveyances.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 5,
+   "name": "Kemadruma Yoga",
+   "definition": "\u2014 When there arc no planets on both sides of the Moon, Kemadruma Yoga is formed.",
+   "results": "\u2014 The person will be dirty, sorrowful, doing unrighteous deeds, poor, dependent, a rogue and a swindler. 22 THREE HUNDRED IMPORTANT COMBINATIONS",
+   "outcome_classes": [
+    "character",
+    "misfortune"
+   ],
+   "example_births": [
+    "28-7-1896",
+    "26-2-1908",
+    "24-9-1890"
+   ]
+  },
+  {
+   "num": 7,
+   "name": "Adhl Yoga",
+   "definition": "\\\\ benefu's are situ lU'd 6lh, 7th and 8th from the Moon, dm combmalion goes under the name of Adhi Yoga. o",
+   "results": "The person will l)c polite and trust- worthy, will have an enjoyable and happy j C surrounded by luxuries and ailluencc, defeats on his enemies, will bo healthy and wm live long.",
+   "outcome_classes": [
+    "longevity"
+   ],
+   "example_births": [
+    "24-9-1871"
+   ]
+  },
+  {
+   "num": 8,
+   "name": "Chatussagara Yoga",
+   "definition": "\u2014 Chatussagara is caused when all the kendras are occupied by the planets.",
+   "results": "\u2014 The person will earn good reputa- tion, will be an equal to a ruler, wilh have a long and prosperous life, blessed with good children and health and his name tra\\els to the confines of the four oceans.",
+   "outcome_classes": [
+    "authority",
+    "wealth"
+   ],
+   "example_births": [
+    "19-7-1816"
+   ]
+  },
+  {
+   "num": 9,
+   "name": "Vasumathi Yoga",
+   "definition": "\u2014 If benefics occupy the upachayas (3, 6, 10, 11) either from the ascendant or from the Moon, the combination goes under the name ot Vasumathi Yoga.",
+   "results": "\u2014 The person will not be a dependent but will always command plenty of wealth.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "misfortune"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 10,
+   "name": "Rajalakshana Yoga",
+   "definition": "\u2014 Jupiter, Venus, Mercury and the Moon should be in Lagna or they should be placed in kendra. VANCHANACHORABHEETHI YOGA 31",
+   "results": "\u2014 The native will possess an attractive appearance and he will be endowed with all the good qualities of high personages.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 11,
+   "name": "Vanchanachorabheethi Yoga",
+   "definition": "\u2014 The Lagna is occupied by a malefic with Gulika in a trine ; or Gulika is associated with the lords of Kendras and Thrikonas ; or the lord of lagna is combined with Rahu, Sani or Kethu.",
+   "results": "\u2014 The native will always entertain feelings of suspicion towards others around him. He is afraid of being cheated, swindled and robbed. 32 THREE HUNDRED IMPORTANT COMBINATIONS",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 12,
+   "name": "Sakata Yoga",
+   "definition": "\u2014 The Moon in the 12'h, 6lh or 8th from Jupiter gives rise to Sakata Yoga.",
+   "results": "\u2014 The native loses fortune and may regain it. He will be ordinary and insignificant. He will sufier from proverty, privation and misery. He will be stubborn and hated by relatives. *^4 THREE HUNDRED IMPORTANT COMBINATIONS",
+   "outcome_classes": [
+    "wealth",
+    "misfortune"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 13,
+   "name": "Amala Yoga",
+   "definition": "\u2014 The 10th from the Moon or Lagna should be occupied by a benefic planet.",
+   "results": "\u2014 The person will achieve lasting fame and reputation. His character will be spotless and he will lead a prosperous life.",
+   "outcome_classes": [
+    "wealth",
+    "fame"
+   ],
+   "example_births": [
+    "12-2-1856",
+    "7-9-1904"
+   ]
+  },
+  {
+   "num": 14,
+   "name": "Parvata Yoga",
+   "definition": "\u2014 Benefics being disposed in Kendras, the 6th and 8th houses should either be unoccupied or occupied by benefic planets. This combination goes under the name of Parvata",
+   "results": "\u2014 The native will be stubborn, not well informed, daring, head of n small army and a few villages.",
+   "outcome_classes": [],
+   "example_births": [
+    "8-8-1912"
+   ]
+  },
+  {
+   "num": 17,
+   "name": "Vasi Yoga",
+   "definition": "\u2014 Planets other than the Moon occupying the 12th from the Sun give rise to Vasi Yoga. RestcUs. \u2014 The subject will be happy, pros- perous, liberal, favourite of his ruling classes.",
+   "results": "",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 18,
+   "name": "Obhayachari Yoga",
+   "definition": "\u2014 If planets other than the Moon are present on either side of the Sun, Obhayachari is caused.",
+   "results": "\u2014 The person will be an eloquent speaker. He will have well proportioned limbs, will take delight in everything, will be liked by all, wealthy and famous.",
+   "outcome_classes": [
+    "wealth",
+    "fame"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 19,
+   "name": "Hamsa Yoga",
+   "definition": "",
+   "results": "\u2014 His legs will have the markings of a couch, lotus, fish and ankusa. He will possess a handsome body ; he will be liked by others he will be righteous in disposition and pure in mind.",
+   "outcome_classes": [
+    "authority",
+    "character"
+   ],
+   "example_births": [
+    "14-12-1895"
+   ]
+  },
+  {
+   "num": 20,
+   "name": "Malavya Yoga",
+   "definition": "\u2014 Venus should occupy a quadrant which should be his own or exaltation sign.",
+   "results": "\u2014 The person will have a well-deve- loped physique, will be strong-minded, wealthy, happy with children and wife, will command vehicles, endowed with clean sense organs and renoAvned and learned.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "learning"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 21,
+   "name": "Sasa Yoga",
+   "definition": "\u2014 Sasa Yoga is given rise to if Saturn occupies a Kendra which should be his own or exaltation sign.",
+   "results": "\u2014 One born in this Yoga will com- mand good servants. His character will be questionable. He will be head of a village or a town or even a King, will covet other\u2019s riches and will be wicked in disposition.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "misfortune"
+   ],
+   "example_births": [
+    "31-1-1896"
+   ]
+  },
+  {
+   "num": 22,
+   "name": "Ruchaka Yoga",
+   "definition": "\u2014 Mars should be exalted in a Kendra or occupy a Kendra which should be his own sign.",
+   "results": "\u2014 The person born in Ruchaka will have a strong physique, famous, well-versed in ancient lore. King or an equal to a King, con- forming to traditions and customs. He will have a ruddy complexion, attractive body, charitable disposition, wealthy, long-lived and leader of an army.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame",
+    "character",
+    "longevity"
+   ],
+   "example_births": [
+    "20-4-1889"
+   ]
+  },
+  {
+   "num": 23,
+   "name": "Bhadra Yoga",
+   "definition": "\u2014 Bhadra Yoga is caused by the disposition of Mercury in a Kendra which should be identical with his own or exaltation sign.",
+   "results": "\u2014 The person born in Bhadra Yoga will be strong, will have a lion-like face, well- developed chest ; well-proportioned limbs; he will be taciturn, will help relatives and will live upto a good old age.",
+   "outcome_classes": [],
+   "example_births": [
+    "23-10-1883"
+   ]
+  },
+  {
+   "num": 24,
+   "name": "Budha-Aditya Yoga",
+   "definition": "",
+   "results": "\u2014 Highly intelligent, skilful in all work, good reputation, personal respect and sur- rounded by all comforts and happiness.",
+   "outcome_classes": [
+    "fame",
+    "learning"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 25,
+   "name": "Mahabhagya Yoga",
+   "definition": "\u2014 In the case of a man, the Sun, the Moon and the Lagna should be in odd signs. In case of women, when the birth is during night, MAHABHAGYA YOGA 53 the Sun, the Moon and Lagna must be in even signs.",
+   "results": "\u2014 A male born under this Yoga will have good character, will be a source of pleasure to others, will be liberal, generous, famous, a ruler or an equal to him and lives to a good old age. A female born in this combination will be blessed with long-lived children and wealth; she will be of good behaviour.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame",
+    "character",
+    "longevity"
+   ],
+   "example_births": [
+    "1-9-1897"
+   ]
+  },
+  {
+   "num": 26,
+   "name": "Pushkala Yoga",
+   "definition": "\u2014 The lord of the sign occupied by the Moon (who should be associated with lord of Lagna) should be in a Kendra or in the house of an ml. mate friend aspecting Lagna and at the same time, Lagna should be occupied by a power- ful planet.",
+   "results": "\u2014 Wealthy, sweet speech, famous, honoured by the king and a lord.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame"
+   ],
+   "example_births": [
+    "8-8-1912"
+   ]
+  },
+  {
+   "num": 28,
+   "name": "Gauri Yoga",
+   "definition": "\u2014 The lord of the Navamsa occu- pied by the lord of the 10th should join the 10th in exaltation and combined with the lord of",
+   "results": "\u2014 The person belongs to a respect- able family, owns several lands, charitable, performs religious rites, his sons will be of good character and he will be praised by all.",
+   "outcome_classes": [
+    "character"
+   ],
+   "example_births": [
+    "1-8-1908"
+   ]
+  },
+  {
+   "num": 29,
+   "name": "Bharathi Yoga",
+   "definition": "\u2014 The lords of the Navamsas occupied by the lords of the 2nd, 5th and 11th should be exalted and combined with the 9th lord.",
+   "results": "\u2014 World famous, a reputed scholar, !<md of music, romantic, handsome, attractive, religiously inclined and bewitching eyes.",
+   "outcome_classes": [
+    "fame",
+    "learning",
+    "character"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 31,
+   "name": "Chapa Yoga",
+   "definition": "",
+   "results": "\u2014 The person will grace a King\u2019s Council, wealthy, full of strength and an Exche- quer or a Comptroller of treasury.",
+   "outcome_classes": [
+    "authority",
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 32,
+   "name": "Sreenatha Yoga",
+   "definition": "\u2014 If the exalted lord of the seventh occupies the tenth and the lord of the lOih is in the 9lh, Sreenatha Yoga is caused.",
+   "results": "\u2014 The natne will have on his body the insignia of Vishnu, viz., the conch, the wheel, etc., agreeable speaker, godly, good wife and children and loved by all.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 45,
+   "name": "Sankha Yoga",
+   "definition": "\u2014 The lords of the 5th and 6ih should be in mutual kendras and the lord of Lagna must be powerful.",
+   "results": "\u2014 Fond of pleasures, humanitanan, blessed with wife, children and lands, righteous]}' inclined, doing good deeds, learned in sciences and living upto a good old age.",
+   "outcome_classes": [
+    "learning",
+    "character"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 47,
+   "name": "Matsya Yoga",
+   "definition": "\u2014 Maiefics should be disposed in Lagna and the 9th ; the fifth house should contain both malefics and benefics ; and the fourth and 8th should be occupied by malefics.",
+   "results": "\u2014 The nati\\e will be a clever prophet, an ocean of kindness, intelligent, well-behaving, famous and learned.",
+   "outcome_classes": [
+    "fame",
+    "learning"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 48,
+   "name": "Mridanga Yoga",
+   "definition": "\u2014 The lord of the Navamsa occu- pied by an exalted planet \u25a0should be posited in a trine or quadrant identical with friendly or exalted sign, and the lord of Lagna should be strongly disposed.",
+   "results": "\u2014 Respected by rulers, famous, attrac- tive and commanding much influence.",
+   "outcome_classes": [
+    "authority",
+    "fame"
+   ],
+   "example_births": [
+    "14-12-1895"
+   ]
+  },
+  {
+   "num": 49,
+   "name": "Parijatha Yoga",
+   "definition": "\u2014 The lord of the sign in which the lord of the house occupied by the Ascendant lord; or the lord of Navamsa occupied by the lord 88 THREE HUNDRED IMPORT A\\1 COMBINATIONS In rdl such cases, where big results are attri- buted to yogas, the astrologer should be ver\\ careful in assessing the leal strength of the mam lord causing the yoga. The combination of the 9th and 10th loids constitutes m itself a powerful Raja and this occurring in the 2nd, com- bined with the Amsa lord, is indeed a powerful ",
+   "results": "\u2014 The person will enjoj luxurious foods, will be respected by Brahmins and learned men, will be highly learned, long lived, charitable and always bent on doing good deeds.",
+   "outcome_classes": [
+    "learning",
+    "character",
+    "longevity"
+   ],
+   "example_births": [
+    "7-5-1886"
+   ]
+  },
+  {
+   "num": 66,
+   "name": "Imdra Yoga",
+   "definition": "\u2014 It the lords of the 5th and 11th interchange their houses and the Moon is in the 5th, Indra Yoga is caused.",
+   "results": "\u2014 Highly courageous, lasting fame, a King ol Kings, good enjoyments and living upto 36 years.",
+   "outcome_classes": [
+    "authority",
+    "fame"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 67,
+   "name": "Ravi Yoga",
+   "definition": "\u2014 The Sun should join the 10th and the lord of the 10th must be in the 3rd in conjunction with Saturn.",
+   "results": "\u2014 Respected by rulers, well-versed in sciences, becoming famous after the 15th year, highly passionate, liking simple food, possessing lotus-like eyes and well developed chest.",
+   "outcome_classes": [
+    "authority",
+    "fame"
+   ],
+   "example_births": [
+    "21-3-1921",
+    "2-1-1901"
+   ]
+  },
+  {
+   "num": 70,
+   "name": "Gola Yoga",
+   "definition": "\u2014 If the Full Moon is in the 9th m conjunction with jupitei and \\\u2019enus, and Mercury joins Navamsa Lagna, Gola Yoga is produced.",
+   "results": "\u2014 Polite, learned, Magistrate or head of a village, long-lived and eating wholesome food.",
+   "outcome_classes": [
+    "authority",
+    "learning",
+    "longevity"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 71,
+   "name": "Thriiochana Yoga",
+   "definition": "\u2014 The Sun, the Moon and Mars should be in trines from each other.",
+   "results": "\u2014 Great wealth, a terror to his enemies, highly intelligent and good longevit}. '98 THREE HUNDRED IMPORT \\NT COMBINATIONS",
+   "outcome_classes": [
+    "wealth",
+    "learning"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 72,
+   "name": "Lakshmi Yoga",
+   "definition": "\u2014 If the lord of Lagna is powerful and the lord of the 9th occupies own or exaltation sign identical with a Kendra or Thrikona, Lakshmi Yoga is caused.",
+   "results": "\u2014 The person will be wealthy, noble, learned, a man of high integrity and reputation, handsome appearance, a good ruler, and enjoying all the pleasures and comforts of life.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame",
+    "learning",
+    "character"
+   ],
+   "example_births": [
+    "14-7-1887"
+   ]
+  },
+  {
+   "num": 73,
+   "name": "Jaya Yoga",
+   "definition": "\u2014 When the lord of the 6th is debilitated and the lord of the 10th is exalted, the resulting combination goes under the name of Jaya Yoga. JAVA YOGA 99 ( I 1",
+   "results": "\u2014 The person will ahvays be success- ful,' h'ippy and long-lived.",
+   "outcome_classes": [
+    "longevity"
+   ],
+   "example_births": [
+    "25-2-1894"
+   ]
+  },
+  {
+   "num": 78,
+   "name": "Daiida Yoga",
+   "definition": "\u2014 When all the planets occupy four signs contiguously from the Lagna and other kend- ras, Yupa, Ishu, Sakti and Danda Yogas are caused.",
+   "results": "\u2014 One born in Yupa becomes liberal, self-possessed and noted for charitable deeds. Ishu makes one successful as a superintendent or head of a jail, concentration camp, etc., Sakti renders the native lazy, slothful, devoid of riches, and generally disliked by people and Danda suggests that the person will lack happiness due from wife and children.",
+   "outcome_classes": [
+    "wealth",
+    "character"
+   ],
+   "example_births": [
+    "1-10-1945",
+    "28-8-1921"
+   ]
+  },
+  {
+   "num": 82,
+   "name": "Chapa Yoga",
+   "definition": "\u2014 By virtue of the disposition of the seven planets in seven contiguous houses from Lagna, fourth house, 7th house and 10th house respectively, Nav, Kuta, Chatra and Chapa Yogas are produced.",
+   "results": "\u2014 Nav makes one occasionally happy, famous and miserly; one born in Kuta becomes a liar and a jailor. Chatra Yoga produces a happy individual while one born in Chapa becomes brave and happy in the first and last periods of his life.",
+   "outcome_classes": [
+    "fame"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 83,
+   "name": "Ardha Chandra Yoga",
+   "definition": "\u2014 All the planets should occupy the seven houses beginning from a Panapara or",
+   "results": "\u2014 The native will have fair features and will be happy throughout life.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 84,
+   "name": "Chakra Yoga",
+   "definition": "\u2014 All the planets should occupy the 1st, 3rd, 5th, 7th, 9th and 11th houses.",
+   "results": "\u2014 The subject will be a king or an equal to him. He will command respect and submission from others and he will earn and spend well. 8 106 THREE HUNDRED IMPORTANT COMBINATIONS",
+   "outcome_classes": [
+    "authority"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 87,
+   "name": "Vihaga Yoga",
+   "definition": "\u2014 All the planets occupying two adjacent kendras, the first and seventh houses, and the 4th and 10th houses respectively will produce Gada, Sakata and Vihaga Yogas. Results: \u2014 Gada Yoga makes one highly reli- gious and wealthy ; Sakata renders one poor and unhapyy in domestic life ; and one born in Vihaga \u2022will be a vagrant, quarrelsome and mean. Remarks'. \u2014 A study of the Nabhasa Yogas outlined in Brihat Jataka and the comments made by Varah9,mihira clearly reveals that at- tempts had been made",
+   "results": "",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 89,
+   "name": "Yava Yoga",
+   "definition": "\u2014 Benefics occupying the ascendant and the seventh house, while malefics occupying the 4th and the 10th give rise to Vajra Yoga ; the reverse will be the case in Yava Yoga.",
+   "results": "\u2014 Vajra gives rise to a happy and \u2022 handsome person ; Yava makes one happy in his middle life.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 91,
+   "name": "Hala Yoga",
+   "definition": "",
+   "results": "\u2014 One born in Sringhataka becomes happy in later life while Hala Yoga makes one an agriculturist.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 93,
+   "name": "Vapee Yoga",
+   "definition": "\u2014 Kamala Yoga will result when the planets are situated in the four kendras, while Vapee is caused when they are ranged in the four panaparas or the four apoklimas. 112 THREE HUNDRED IMPORTANT COMBINATIONS",
+   "results": "\u2014 One born in Kamala will not become much wealthy, but he will command high prestige, wide fame and innumerable virtues. Vapee makes one a hoarder of money.",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame"
+   ],
+   "example_births": [
+    "25-7-1896"
+   ]
+  },
+  {
+   "num": 94,
+   "name": "Samudra Yoga",
+   "definition": "\u2014 All planets must occupy the six even houses.",
+   "results": "\u2014 The native will be a ruler or live like him free from care and worry.",
+   "outcome_classes": [
+    "authority"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 95,
+   "name": "Vallaki Yoga",
+   "definition": "\u2014 All the planets must occupy any seven signs.",
+   "results": "\u2014 The person will have a large num- ber of friends, fond of music and fine arts, learned, happy and famous.",
+   "outcome_classes": [
+    "fame",
+    "learning"
+   ],
+   "example_births": [
+    "10-8-1937"
+   ]
+  },
+  {
+   "num": 96,
+   "name": "Damini Yoga",
+   "definition": "",
+   "results": "The person will be highly charitable, always helping others and a protector of cattle. Remarks : \u2014 In ascribing results to these Yogas, classical writers have differed from each other. For instance, the effects given above for Damini are based on Varahamihira while Sara- vali glorifies the Yoga considerably. But ai writers seem almost agreed about the genera 116 THREE HUNDRED IMPORTANT COMBINATIONS good or bad nature of the results due to a yoga, Damini or Dama Yoga seems to give a man intellect",
+   "outcome_classes": [
+    "character"
+   ],
+   "example_births": [
+    "11-10-1916",
+    "29-12-1893"
+   ]
+  },
+  {
+   "num": 98,
+   "name": "Kedara Yoga",
+   "definition": "",
+   "results": "\u2014 The person will earn his livelihood by agriculture and be highly helpful to others.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 101,
+   "name": "Gola Yoga",
+   "definition": "\u2014 Sula Yoga. Yuga and Gola are given rise to by the Se\\en planets occupying res- pectively, any three signs, two signs or single sign.",
+   "results": "\u2014 Sula makes one devoid of wealth, courageous, cruel, and possess marks of wounds received in battle ; Yuga renders one poor, ostra- cised by society, heretical and a drunkard. Gola gives rise to a poor, dirty, unnamed, ignorant and indolent individual.",
+   "outcome_classes": [
+    "wealth",
+    "misfortune"
+   ],
+   "example_births": [
+    "8-12-1921",
+    "9-10-1923"
+   ]
+  },
+  {
+   "num": 104,
+   "name": "Nala Yoga",
+   "definition": "\u2014 If all the planets exclusively occupy movable, fixed or common signs respect- ively, Rajju, Musala and Nala Yogas are caused.",
+   "results": "\u2014 The person born in Rajju will be fond of travel, handsome, searching for wealth in foreign countries, somewhat cruel and envious. One born in Musala will be endowed with self- respect, wealth, learning and a steady mind, engaged in many works, famous and proud. Nala Yoga makes one deformed, shrewd and dejected. In Chart No. 78 all the planets are in movable signs and therefore illustrates Rajju",
+   "outcome_classes": [
+    "authority",
+    "wealth",
+    "fame",
+    "learning"
+   ],
+   "example_births": [
+    "1-11-1910"
+   ]
+  },
+  {
+   "num": 106,
+   "name": "Sarpa Yoga",
+   "definition": "\u2014 If the lord of the 10th is situated in the 6th, 8th or 12th Duryoga is caused.",
+   "results": "\u2014 The person born in Srik Yoga will live in comfort, will possess conveyances, and will have many enjoyments. Sarpa Yoga renders one miserable in manj'- ways, cruel and stupid.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 108,
+   "name": "Daridra Yoga",
+   "definition": "\u2014 The lord of the 11th in the 6th, 8th or 12th will give rise to Dandra Yoga.",
+   "results": "\u2014 The native will contract huge debts, will be very poor, will suffer from auditory troubles, will be mean and will commit sinful and criminal deeds.",
+   "outcome_classes": [
+    "misfortune"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 111,
+   "name": "Vimala Yoga",
+   "definition": "\u2014 The lords of the 6th, 8th and 12th occupying the 6th, 8th and 12th will give rise to Harsha, Sarala and Vimala Yogas repsectively.",
+   "results": "\u2014 Harsha makes one fortunate, happy, invincible, physically strong, wealthy, famous and 128 THREE HUNDRED IMPORTANT COMBINATIONS afraid of sinful deeds. One born in Sarala becomes long-lived, fearless, learned, a terror to enemies, celebrated and prosperous. Vitnala renders the person frugal, happy, independent and possessed of ennobling qualities.",
+   "outcome_classes": [
+    "wealth",
+    "fame",
+    "learning",
+    "misfortune",
+    "longevity"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 112,
+   "name": "Sareera Soukhya Yoga",
+   "definition": "\u2014 The lord of Lagna, Jupiter or Venus, should occupy a quadrant.",
+   "results": "\u2014 The subject will be endowed with long life, wealth and political favours. DEHAKASHTA YOGA 129",
+   "outcome_classes": [
+    "wealth",
+    "longevity"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 113,
+   "name": "Dehapushtl Yoga",
+   "definition": "\u2014 The ascendant lord in a mova- ble sign aspected by a benefic, gives rise to this",
+   "results": "\u2014 The native will be happy, will possess a well-developed body, will become rich and will enjoy life.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": [
+    "29-7-1909"
+   ]
+  },
+  {
+   "num": 121,
+   "name": "Sada Sanchara Yoga",
+   "definition": "\u2014 The lord of either Lagna or the sign occupied by Lagna lord must be in a mova- ble sign.",
+   "results": "\u2014 The native will almost always be a wanderer.",
+   "outcome_classes": [],
+   "example_births": [
+    "30-6-1897",
+    "15-5-1904",
+    "20-8-1944"
+   ]
+  },
+  {
+   "num": 133,
+   "name": "Bahudravyarjana Yoga",
+   "definition": "",
+   "results": "\u2014 The person will acquire money by self-effort towards the middle part of his life.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": [
+    "2-6-1892",
+    "8-8-1912"
+   ]
+  },
+  {
+   "num": 139,
+   "name": "Balya Dhana Yoga",
+   "definition": "\u2014 The lords of the 2ad and 10th should be in conjunction in a kendra aspected by the' lord of the Navamsa occupied by the ascen- dant lord.",
+   "results": "\u2014 The person acquires immense riches in the early part of life.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 142,
+   "name": "Matrumooladdhana Yoga",
+   "definition": "",
+   "results": "\u2014 One earns money with the help of one\u2019s mother.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 143,
+   "name": "Putramuladdhana Yoga",
+   "definition": "\u2014 If the strong lord of the 2nd is in conjunction with the 5th lord or Jupiter and if the lord of lagna is in Vaiseshikamsa, the above yoga arises.",
+   "results": "\u2014 The person gets wealth through his sons.",
+   "outcome_classes": [
+    "wealth"
+   ],
+   "example_births": []
+  },
+  {
+   "num": 144,
+   "name": "Satrumuladdhana Yoga",
+   "definition": "\u2014 The strong lord of the 2nd should join the lord of the 6th or Mars and the powerful lord of lagna should be in Vaiseshikamsa. 150 IHREL UmDREI) IMPORTANT COMBINATIONS",
+   "results": "riie native earns moiie)\" through his enemies",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 160,
+   "name": "Pari H Asa Ka Yoga",
+   "definition": "\u2014 The lord of the Navamsa occu- pied by the Sun should attain Vaiseshikamsa and join the 2nd house.",
+   "results": "\u2014 The person becomes a humorous and witty speaker.",
+   "outcome_classes": [],
+   "example_births": []
+  },
+  {
+   "num": 162,
+   "name": "Jada Yoga",
+   "definition": "\u2014 The lord of the 2nd should be posited in the 10th with malefics or the 2nd must be joined by the Sun and Mandi.",
+   "results": "\u2014 The person becomes nervous in public assemblies.",
+   "outcome_classes": [],
+   "example_births": []
+  }
+ ]
+}

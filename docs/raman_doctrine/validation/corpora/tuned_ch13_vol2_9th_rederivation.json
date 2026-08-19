@@ -1,0 +1,138 @@
+{
+ "_WARNING": "NOT HELD-OUT. Vol 2 Ch XIII (9th house) IS the tuned h9 calibration chapter (docs/raman_doctrine/audit/corpora/htjah_h9_calibration.json, \"ch13 (Vol. II)\"). The engine was hand-decoded AND Phase-B-fit on these charts. Retained only as a tuned-vs-live consistency check (does the live sign-reconstruction engine reproduce the tuned tokens?), NOT as validation. Genuine held-out strength = Ch VII 4th house only (heldout_ch07_4th.json).",
+ "source": "B. V. Raman, How to Judge a Horoscope, Vol. II",
+ "chapter": "Ch. XIII -- Ninth House (Pitrukaraka = Sun)",
+ "status": "tuned-chapter re-derivation (not held-out)",
+ "charts": [
+  {
+   "chart_no": 92,
+   "house_judged": 9,
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Capricorn",
+    "Mars": "Pisces",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Gemini",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the ninth house from Lagna is well placed with slight afflictions"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the ninth lord Mercury is well placed with slight afflictions"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "karaka Sun is well placed with slight afflictions"
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Libra (9th Gemini, lord Mercury in 3rd Sag per prose; Sun/Moon/Venus/Jupiter cluster in 4th Capricorn per prose, corrected from diagram). All three factors carry ONE collective hedged verdict -> unmappable."
+  },
+  {
+   "chart_no": 93,
+   "house_judged": 9,
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Leo",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Taurus",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the ninth house from Lagna has no afflictions"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the ninth lord is afflicted by Mars"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Same nativity as Vol1 ch64 (8-8-1912); positions reused & prose-confirmed (Venus/Mars/Merc in 7th Leo, Sun in 6th Cancer, Jupiter Scorpio vargottama). Karaka Sun verdict OMITTED: Raman hedges it (\"dusthana afflicted by Saturn, but Saturn does not afflict in the strict sense\") -> non-gradable."
+  },
+  {
+   "chart_no": 94,
+   "house_judged": 9,
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Scorpio",
+    "Mars": "Leo",
+    "Mercury": "Virgo",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Leo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Scorpio",
+    "Mars": "Gemini",
+    "Mercury": "Cancer",
+    "Jupiter": "Capricorn",
+    "Venus": "Aquarius",
+    "Saturn": "Scorpio",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the ninth house is quite strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the ninth lord is strongly fortified"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Sun",
+     "phrase": "the karaka Sun in the ninth is not very welcome but protected by subhakartari"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aquarius; 9th Libra debil Sun w/ neechabhanga, subhakartari, aspected Saturn; 9th lord Venus in 10th Scorpio (powerful kendra) w/ debil Moon. lord \"strongly fortified\"=bare-strong (unmapped); karaka hedged (unmapped)."
+  }
+ ]
+}

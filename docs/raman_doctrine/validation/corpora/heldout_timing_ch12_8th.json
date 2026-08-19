@@ -1,0 +1,268 @@
+{
+ "source": "B. V. Raman, HTJAH Vol II Ch XII (8th house) -- death timing, held-out (non-tuned)",
+ "note": "Scoreable events hand-verified against prose (balance + stated death age + MD/AD). retained_death_dasas: Raman names the death Dasa/Bhukti but states no clean death age, so they seed no placement -- captured for reuse, MD/AD auto-extracted (unverified).",
+ "charts": [
+  {
+   "chart_no": 43,
+   "birth_line": "Born 19-10-1959 at 11-45p.m. (I.S.T.) at 20\u00b0 N, 56', 77 E 48.",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Sun",
+    "years": 0,
+    "months": 10,
+    "days": 21
+   },
+   "events": [
+    {
+     "desc": "The native died at 16 years in Ketu Bhukti, Mars Dasa.",
+     "age_years": 16,
+     "md": "Mars",
+     "ad": "Ketu",
+     "source": "HTJAH Vol II Ch XII (8th), hand-verified"
+    }
+   ]
+  },
+  {
+   "chart_no": 57,
+   "birth_line": "Born 12-2-1880 at 0-40 a.m. (L.M.T.) at 41 N 2, 93 W 25.",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 9,
+    "months": 10,
+    "days": 17
+   },
+   "events": [
+    {
+     "desc": "The native died in June 1969 in Rahu Bhukti, Mars Dasa in his ninetieth year.",
+     "age_years": 89,
+     "md": "Mars",
+     "ad": "Rahu",
+     "source": "HTJAH Vol II Ch XII (8th), hand-verified"
+    }
+   ]
+  },
+  {
+   "chart_no": 58,
+   "birth_line": "Born 24-5-1819 at 4-04 a.m. (L.M.T.) at 51 N 30, 0 W 5.",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 7,
+    "months": 3,
+    "days": 0
+   },
+   "events": [
+    {
+     "desc": "The native died in 1903 in Mercury Dasa, Saturn Bhukti.",
+     "age_years": 84,
+     "md": "Mercury",
+     "ad": "Saturn",
+     "source": "HTJAH Vol II Ch XII (8th), hand-verified"
+    }
+   ]
+  },
+  {
+   "chart_no": 70,
+   "birth_line": "Born 15-10-1891 at 10-30 p.m. (G.M.T.) at 53 N 12, 0 W 30.",
+   "house_judged": 8,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 12,
+    "months": 2,
+    "days": 16
+   },
+   "events": [
+    {
+     "desc": "Death occurred in Sun Bhukti of Mercury Dasa.",
+     "age_years": 38.22,
+     "md": "Mercury",
+     "ad": "Sun",
+     "source": "HTJAH Vol II Ch XII (8th), hand-verified"
+    }
+   ]
+  }
+ ],
+ "retained_death_dasas": [
+  {
+   "chart_no": 39,
+   "balance_of_dasa": {
+    "lord": "Jupiter",
+    "years": 2,
+    "months": 7,
+    "days": 13
+   },
+   "md": "Saturn",
+   "ad": "Ketu",
+   "desc": "The child died in Saturn Dasa, Ketu Bhukti."
+  },
+  {
+   "chart_no": 45,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 2,
+    "months": 1,
+    "days": 15
+   },
+   "md": "Moon",
+   "ad": "Venus",
+   "desc": "The native died in Venus Bhukti of Moon Dasa."
+  },
+  {
+   "chart_no": 47,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 6,
+    "months": 1,
+    "days": 24
+   },
+   "md": "Mars",
+   "ad": "Venus",
+   "desc": "Death took place in Venus Bhukti of Mars Dasa."
+  },
+  {
+   "chart_no": 48,
+   "balance_of_dasa": {
+    "lord": "Moon",
+    "years": 9,
+    "months": 6,
+    "days": 23
+   },
+   "md": "Rahu",
+   "ad": "Venus",
+   "desc": "The native died in Venus Bhukti, Rahu Dasa."
+  },
+  {
+   "chart_no": 49,
+   "balance_of_dasa": {
+    "lord": "Rahu",
+    "years": 13,
+    "months": 7,
+    "days": 27
+   },
+   "md": "Saturn",
+   "ad": "Saturn",
+   "desc": "Death took place in Saturn Dasa, Saturn Bhukti."
+  },
+  {
+   "chart_no": 51,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 12,
+    "months": 5,
+    "days": 28
+   },
+   "md": "Sun",
+   "ad": "Venus",
+   "desc": "Death occurred in Venus Bhukti, Sun Dasa."
+  },
+  {
+   "chart_no": 53,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 1,
+    "months": 0,
+    "days": 0
+   },
+   "md": "Jupiter",
+   "ad": "Saturn",
+   "desc": "The native died in Saturn Bhukti, Jupiter Dasa."
+  },
+  {
+   "chart_no": 56,
+   "balance_of_dasa": {
+    "lord": "Saturn",
+    "years": 1,
+    "months": 9,
+    "days": 19
+   },
+   "md": "Saturn",
+   "ad": "Mars",
+   "desc": "Death took place in Saturn Dasa, Mars Bhukti."
+  },
+  {
+   "chart_no": 59,
+   "balance_of_dasa": {
+    "lord": "Mercury",
+    "years": 10,
+    "months": 2,
+    "days": 20
+   },
+   "md": "Jupiter",
+   "ad": "Jupiter",
+   "desc": "The native died in Jupiter Dasa, Jupiter Bhukti."
+  },
+  {
+   "chart_no": 61,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 12,
+    "months": 3,
+    "days": 9
+   },
+   "md": "Saturn",
+   "ad": "Moon",
+   "desc": "The death of the native occurred in Moon Bhukti of Saturn Dasa."
+  },
+  {
+   "chart_no": 62,
+   "balance_of_dasa": {
+    "lord": "Ketu",
+    "years": 3,
+    "months": 2,
+    "days": 22
+   },
+   "md": "Jupiter",
+   "ad": "Rahu",
+   "desc": "Death took place in Jupiter Dasa, Rahu Bhukti."
+  },
+  {
+   "chart_no": 63,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 13,
+    "months": 11,
+    "days": 12
+   },
+   "md": "Saturn",
+   "ad": "Mercury",
+   "desc": "The native died in Mercury Bhukti of Saturn Dasa."
+  },
+  {
+   "chart_no": 72,
+   "balance_of_dasa": {
+    "lord": "Mars",
+    "years": 2,
+    "months": 5,
+    "days": 9
+   },
+   "md": "Saturn",
+   "ad": "Saturn",
+   "desc": "Death occurred in Saturn Dasa, Saturn Bhukti."
+  },
+  {
+   "chart_no": 75,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 1,
+    "months": 0,
+    "days": 0
+   },
+   "md": "Jupiter",
+   "ad": "Saturn",
+   "desc": "He died in Saturn Bhukti, Jupiter Dasa."
+  },
+  {
+   "chart_no": 78,
+   "balance_of_dasa": {
+    "lord": "Venus",
+    "years": 16,
+    "months": 4,
+    "days": 6
+   },
+   "md": "Rahu",
+   "ad": "Moon",
+   "desc": "Death occurred in Rahu Dasa, Moon Bhukti."
+  }
+ ]
+}

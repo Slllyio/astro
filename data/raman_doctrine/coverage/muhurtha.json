@@ -1,0 +1,21 @@
+{
+ "book": "muhurtha",
+ "chapters": [
+  {
+   "label": "1",
+   "title": "The Panchanga (five limbs)",
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "2",
+   "title": "Tarabala, Chandrabala, Panchaka",
+   "status": "swept",
+   "rule_count": 3,
+   "sweep_id": "p7_deep",
+   "notes": null
+  }
+ ]
+}

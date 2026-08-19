@@ -1,0 +1,21 @@
+{
+ "book": "prasna_marga_2",
+ "chapters": [
+  {
+   "label": "ch17",
+   "title": "Vivaha Prasna (marriage)",
+   "status": "swept",
+   "rule_count": 4,
+   "sweep_id": "p7_deep",
+   "notes": null
+  },
+  {
+   "label": "ch18",
+   "title": "Santana Prasna (children)",
+   "status": "swept",
+   "rule_count": 6,
+   "sweep_id": "p7_deep",
+   "notes": null
+  }
+ ]
+}

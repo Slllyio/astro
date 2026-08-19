@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from app.core.config import settings
+from app.llm.citations import Citation, gather_citations
 from app.llm.client import LLMClient, OllamaClient, OllamaUnavailable
 from app.llm.templates import (
     ALLOWED_SECTIONS,
@@ -42,6 +43,7 @@ class Interpretation:
     section: str | None
     source: Literal["llm", "fallback"]
     model: str | None  # populated only when source == "llm"
+    citations: tuple[Citation, ...] = ()  # grounding passages, empty unless enabled
 
 
 def _default_client() -> LLMClient | None:
@@ -87,6 +89,13 @@ def interpret_chart(
 
     effective_client = client if client is not None else _default_client()
 
+    # Grounding passages, attached only when the feature flag is on. Gathering
+    # never raises (it swallows RAG failures and returns ()), so interpretation
+    # cannot fail because of citations.
+    citations: tuple[Citation, ...] = ()
+    if settings.INTERPRET_CITATIONS_ENABLED:
+        citations = gather_citations(chart, mode=mode, section=section)
+
     # Build the prompt regardless — both paths need it for inspection
     # (deterministic fallback ignores the prompt; tests inspect it).
     if mode == "summary":
@@ -103,7 +112,7 @@ def interpret_chart(
         )
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="fallback", model=None,
+            source="fallback", model=None, citations=citations,
         )
 
     # LLM available — try, fall back on transport failure.
@@ -112,7 +121,7 @@ def interpret_chart(
         model_name = getattr(effective_client, "model", "unknown")
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="llm", model=str(model_name),
+            source="llm", model=str(model_name), citations=citations,
         )
     except OllamaUnavailable:
         logger.warning("LLM unavailable; serving deterministic fallback")
@@ -123,5 +132,5 @@ def interpret_chart(
         )
         return Interpretation(
             text=text, mode=mode, section=section,
-            source="fallback", model=None,
+            source="fallback", model=None, citations=citations,
         )

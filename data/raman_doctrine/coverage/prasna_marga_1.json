@@ -1,0 +1,21 @@
+{
+ "book": "prasna_marga_1",
+ "chapters": [
+  {
+   "label": "intro",
+   "title": "Introduction (horary foundations)",
+   "status": "swept",
+   "rule_count": 5,
+   "sweep_id": "p6_t2",
+   "notes": null
+  },
+  {
+   "label": "prognostics",
+   "title": "",
+   "status": "swept",
+   "rule_count": 5,
+   "sweep_id": "p7_deep",
+   "notes": null
+  }
+ ]
+}

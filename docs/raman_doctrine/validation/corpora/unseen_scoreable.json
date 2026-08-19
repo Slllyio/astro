@@ -1,0 +1,267 @@
+{
+ "source": "HTJAH Vol I & II -- FRESH (engine-unseen) worked charts, Tier-2. Sign grids vision-extracted and hand-verified against Raman's own prose placements; verdicts are his verbatim phrases. ch35 is Rasi-axis-only (Navamsa failed the reachability gate). Charts 65/91 were dropped (unreconcilable grid / ambiguous verdict). Measurement-only; the engine was never tuned on these.",
+ "charts": [
+  {
+   "chart_no": 68,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 13-10-1896 at 7-56 a.m.",
+   "house_judged": 4,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The fourth lord is moderately strong"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "Matrukaraka is feebly strong",
+     "karaka": "Moon"
+    },
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is considerably afflicted"
+    }
+   ],
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Sagittarius",
+    "Mars": "Gemini",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Libra",
+    "Saturn": "Libra",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "lagna_rasi": "Libra",
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Libra",
+    "Mars": "Scorpio",
+    "Mercury": "Cancer",
+    "Jupiter": "Cancer",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "lagna_navamsa": "Gemini"
+  },
+  {
+   "chart_no": 87,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 28-8-1909 at 9-52 a.m.",
+   "house_judged": 4,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "The fourth lord is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "Grihakaraka is weak",
+     "karaka": "Mars"
+    }
+   ],
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Capricorn",
+    "Mars": "Pisces",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "lagna_rasi": "Libra",
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Scorpio",
+    "Mercury": "Capricorn",
+    "Jupiter": "Sagittarius",
+    "Venus": "Taurus",
+    "Saturn": "Aries",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "lagna_navamsa": "Capricorn"
+  },
+  {
+   "chart_no": 52,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 17-10-1867 at 2-30 p.m.",
+   "house_judged": 8,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "the 8th lord is fairly strong"
+    },
+    {
+     "factor": "bhava",
+     "phrase": "The 8th house is afflicted by Rahu"
+    }
+   ],
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Libra",
+    "Mercury": "Libra",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "lagna_rasi": "Capricorn",
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Leo",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Cancer",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "lagna_navamsa": "Cancer"
+  },
+  {
+   "chart_no": 93,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 3-6-1903 at 4-45 p.m.",
+   "house_judged": 5,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "Mars the 5th lord is considerably afflicted"
+    }
+   ],
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Virgo",
+    "Mars": "Virgo",
+    "Mercury": "Aries",
+    "Jupiter": "Aquarius",
+    "Venus": "Cancer",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "lagna_rasi": "Sagittarius",
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Aquarius",
+    "Mars": "Pisces",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Scorpio",
+    "Saturn": "Gemini",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "lagna_navamsa": "Libra"
+  },
+  {
+   "chart_no": 92,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 30-9-1912 at 5-15 p.m.",
+   "house_judged": 5,
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 5th house is unafflicted"
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mercury the lord is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "the karaka is moderately blemished",
+     "karaka": "Jupiter"
+    }
+   ],
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Taurus",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Libra",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "lagna_rasi": "Aquarius",
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Capricorn",
+    "Mars": "Virgo",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "lagna_navamsa": "Capricorn"
+  },
+  {
+   "chart_no": 80,
+   "vol": "htjah_vol1",
+   "birth_line": "Born on 7-9-1856 at 4 p.m.",
+   "house_judged": 4,
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is unafflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "Vidyakaraka is considerably afflicted",
+     "karaka": "Jupiter"
+    }
+   ],
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Scorpio",
+    "Mars": "Scorpio",
+    "Mercury": "Virgo",
+    "Jupiter": "Pisces",
+    "Venus": "Virgo",
+    "Saturn": "Gemini",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "lagna_rasi": "Capricorn",
+   "axis": "rasi"
+  },
+  {
+   "chart_no": 35,
+   "vol": "htjah_vol2",
+   "birth_line": "Born 30/31-1-1896 at 4-30 a.m.",
+   "house_judged": 8,
+   "verdicts": [
+    {
+     "factor": "lord",
+     "phrase": "the 8th lord is full and very powerful"
+    }
+   ],
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Sagittarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Cancer",
+    "Venus": "Sagittarius",
+    "Saturn": "Scorpio",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "lagna_rasi": "Sagittarius",
+   "axis": "rasi"
+  }
+ ]
+}

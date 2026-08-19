@@ -1,0 +1,1896 @@
+{
+ "source": "HTJAH Vol 2 Ch XII (8th house) -- held-out (non-tuned); vision-agent extract, gate-verified",
+ "house": 8,
+ "charts": [
+  {
+   "chart_no": 37,
+   "birth_line": "Born 2-2-1871 at 5-21 p.m. (L.M.T.) at 54 N 56, 1 W 25.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Gemini",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Taurus",
+    "Venus": "Aquarius",
+    "Saturn": "Sagittarius",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Pisces",
+    "Mars": "Taurus",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Leo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 0 years, 2 months and 29 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Balarishta (child-death) example; no 8th-house/lord/karaka grading in prose. Rasi confirmed by prose (Moon+Rahu in Gemini afflicted by Saturn's 7th aspect from Sagittarius; Lagna Leo per Moon/Rahu moving to 12th bhava). Navamsa Mercury/Venus placement (bottom-left cells) slightly uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 38,
+   "birth_line": "Born 7-8-1873 at 9-05 a.m. at 54 N 56. 1 W 25",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Capricorn",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Leo",
+    "Venus": "Gemini",
+    "Saturn": "Capricorn",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Taurus",
+    "Jupiter": "Leo",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 1 year, 6 months and 27 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Balarishta example; no strength grading. Rasi confirmed (Moon+Saturn in Capricorn, Saturn in 5th, Mars aspects Moon per prose). Navamsa Jupiter placement (right column) uncertain between Leo and Virgo.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 39,
+   "birth_line": "Born 22-10-1960 at 2-32 a.m. (L.M.T.) at 38 N 17. 88 W 55.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Scorpio",
+    "Mars": "Gemini",
+    "Mercury": "Scorpio",
+    "Jupiter": "Sagittarius",
+    "Venus": "Scorpio",
+    "Saturn": "Sagittarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Cancer",
+    "Mars": "Libra",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Virgo",
+    "Saturn": "Libra",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : 2 years, 7 months and 13 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Balarishta example; no strength grading. Fully confirmed by prose: Rahu on Lagna (Leo), Ketu in 7th (Aquarius), Moon in 4th (Scorpio) hemmed between Sun (Libra) and Saturn (Sagittarius); Saturn in 5th aspected by Mars.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 40,
+   "birth_line": "Born 14-4-1920 at 9 p.m. (E.S.T.) at 14E 31,51 N.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Aquarius",
+    "Mars": "Libra",
+    "Mercury": "Pisces",
+    "Jupiter": "Cancer",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Capricorn",
+    "Mars": "Capricorn",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 12 years, 2 months and 2 days.",
+   "verdicts": [],
+   "confidence": "medium",
+   "notes": "Balarishta example; no strength grading. Rasi confirmed by prose (Lagna+Mars+Rahu same sign Libra; Sun+Ketu in 7th Aries; Moon in Aquarius aspected by Saturn from Leo). Navamsa uncertain: two cells each read with 'Moon' (Capricorn 'Mars Moon' and Libra 'Moon Venus'); resolved to Mars+Moon in Capricorn, Venus in Libra, but Moon/Venus placement is low-confidence.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 41,
+   "birth_line": "Born 1-9-1968 at 10-30 a.m. at 13° N, 77 E35.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Sagittarius",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Virgo",
+    "Saturn": "Aries",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Aries",
+    "Mars": "Aquarius",
+    "Mercury": "Pisces",
+    "Jupiter": "Libra",
+    "Venus": "Pisces",
+    "Saturn": "Aries",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth : 5 years, 4 months and 14 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Balarishta example; no strength grading. Fully confirmed: debilitated Saturn (Aries) in 7th, Mars in 10th (Cancer), Jupiter combust with Sun in Leo aspecting Moon; Lagna-lord Venus debilitated+eclipsed by Ketu in Virgo (12th).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 42,
+   "birth_line": "Born 21-2-1925 at 5-15 p.m. (C.E.T.) at 14 E 31, 51 N.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Capricorn",
+    "Mars": "Aries",
+    "Mercury": "Aquarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Capricorn",
+    "Saturn": "Libra",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Libra",
+    "Venus": "Leo",
+    "Saturn": "Aries",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 1 year, 0 month and 0 days.",
+   "verdicts": [],
+   "confidence": "high",
+   "notes": "Balarishta example; no strength grading. Confirmed: Moon+Ketu in dusthana Capricorn (6th from Leo), Rahu in Cancer (12th) aspected by Saturn from Libra. Prose 'Mars is in the 12th' is loose (Mars in Aries 9th, 4th-aspects Cancar/12th).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 43,
+   "birth_line": "Born 19-10-1959 at 11-45p.m. (I.S.T.) at 20° N, 56', 77 E 48.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Libra",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Leo",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Leo",
+    "Jupiter": "Libra",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 0 years, 10 months and 21 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Capricorn is the 8th house free of aspects or occupation. It is hemmed between malefics Saturn and Ketu."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn is in the 7th in a kendra but in the 12th house from the 8th house. He is aspected by a combust Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in his own sign but in a maraka-sthana and aspected by a malefic Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Cancer confirmed (Vargottama; Lagna-lord Moon exalted in Taurus; Rahu+Mercury afflict 3rd/3rd-lord in Virgo; Saturn 8th-lord in own sign Capricorn=7th). NOTE: the 8th house is actually AQUARIUS (hemmed between Saturn in Capricorn and Ketu in Pisces); the printed bhava phrase's word 'Capricorn' appears to be a book misprint for Aquarius — transcribed verbatim as printed.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 44,
+   "birth_line": "Born 4-4-1948 at 6 a.m. (I.S.T.) at 26 N 18, 73 E 04.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Capricorn",
+    "Mars": "Cancer",
+    "Mercury": "Pisces",
+    "Jupiter": "Sagittarius",
+    "Venus": "Taurus",
+    "Saturn": "Cancer",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Aquarius",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Aquarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 1 year, 11 months and 7 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Libra is occupied by a malefic Ketu and aspected by a debilitated Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is well placed in his own sign Taurus but in the constellation of 6th lord the Sun."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 5th house aspected by 5th lord the Moon but in very close conjunction with debilitated Mars. He occupies the constellation of 7th lord Mercury."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Alpayu. Fully confirmed: 8th=Libra (Ketu, aspected by debilitated Mars from Cancer), 8th-lord Venus in own sign Taurus, Saturn in 5th (Cancer) conjunct debilitated Mars.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 45,
+   "birth_line": "Born 26-5-1950 at 6-30 a.m. (I.S.T.) at 82 E 13, 16N52.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Virgo",
+    "Mercury": "Aries",
+    "Jupiter": "Aquarius",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Scorpio",
+    "Mars": "Capricorn",
+    "Mercury": "Scorpio",
+    "Jupiter": "Capricorn",
+    "Venus": "Pisces",
+    "Saturn": "Virgo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 2 years 1 month and 15 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 8th house is Sagittarius aspected by 7th lord eclipsed Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter, the 8th lord, is in a kendra aspected by Moon and Saturn. Jupiter is in an astorism of Rahu who though in the 11th is aspected by 7th lord Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies his inimical sign Leo with 3rd lord Moon and is aspected by 8th lord Jupiter."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Alpayu. Rasi fully confirmed by prose (8th=Sagittarius; Mars+Ketu eclipsed in Virgo aspect it; Jupiter 8th-lord in kendra Aquarius; Saturn+Moon in Leo). Rasi Mars+Ketu in Virgo inferred from prose (faint in scan). Navamsa left cells ambiguous: labels read 'Mars Jupit' (Capricorn) and 'Mars Ketu' (Sagittarius) both containing Mars; resolved via Rahu(Libra)-Ketu opposition to Ketu in Aries with Sun, Mars+Jupiter in Capricorn — medium confidence.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 46,
+   "birth_line": "Born 29-1-1955 at 10 p.m. (I.S.T.) at 9 N 58, 76 E 17.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Pisces",
+    "Mars": "Pisces",
+    "Mercury": "Aquarius",
+    "Jupiter": "Cancer",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Scorpio",
+    "Jupiter": "Cancer",
+    "Venus": "Aries",
+    "Saturn": "Gemini",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 3 years, 5 months and 9 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "It is aspected by an exalted ayushkaraka Saturn who is in the asterism of the 7th lord."
+    },
+    {
+     "factor": "lord",
+     "phrase": "In Chart No. 46 Mars is in the 7th house (in the 12th from the 8th) with 11th lord Moon aspected by 7th lord exalted Jupiter."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is exalted in the 2nd and is aspected adversely by 8th lord Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Alpayu. Fully confirmed: 8th=Aries; Mars(8th-lord)+Moon in Pisces (7th); Jupiter exalted in Cancer aspects them; Saturn exalted in Libra (2nd).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 47,
+   "birth_line": "Born 2-11-1935 at 5-40 a.m. (I.S.T.) at 13° N 28', 77 E 32.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Sagittarius",
+    "Mars": "Sagittarius",
+    "Mercury": "Virgo",
+    "Jupiter": "Scorpio",
+    "Venus": "Virgo",
+    "Saturn": "Aquarius",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Libra",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Virgo",
+    "Venus": "Capricorn",
+    "Saturn": "Capricorn",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 6 years, 1 month and 24 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 47 Taurus is aspected by 3rd and 6th lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is debillitated in the 12th house with 12th lord Mercury."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies his moolatrikona sign Aquarius but in a nodal constellation."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Alpayu. Fully confirmed: 8th=Taurus aspected by Jupiter (Scorpio); Lagna-lord & 8th-lord Venus debilitated in Virgo (12th) with Mercury; Saturn in moolatrikona Aquarius; Sun debilitated in Lagna (Libra).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 48,
+   "birth_line": "Born 3-4-1949 at 8a.m. (I.ST.) at 13° N, 77 E35.",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Pisces",
+    "Jupiter": "Capricorn",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Aries",
+    "Mars": "Sagittarius",
+    "Mercury": "Libra",
+    "Jupiter": "Pisces",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 9 years, 6 months and 23 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 48 Scorpio is the 8th house aspected by an exalted 4th lord Moon."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars is in the 12th in exact conjunction with 2nd and 7th lord Venus and is also combust. He is with 3rd and 6th lord Mercury."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 5th in an inimical sign in the constellation of Ketu who occupies marakasthana, the 7th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Alpayu. Fully confirmed: 8th=Scorpio aspected by exalted Moon (Taurus); 8th-lord Mars in 12th (Pisces) combust with Venus+Mercury+Sun; Saturn in 5th (Leo).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 49,
+   "birth_line": "Born 24-8-1944 at 5-15 a.m. (W.T.) at 41 N28.81 W 40.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Libra",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Leo",
+    "Venus": "Leo",
+    "Saturn": "Gemini",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Sagittarius",
+    "Mars": "Aquarius",
+    "Mercury": "Capricorn",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Aquarius",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Rahu Dasa at birth : 13 years, 7 months and 27 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Capricorn is the 8th house aspected by 2nd lord Sun, 6th and 9th lord Jupiter and 4th and 10th lord Venus."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn is the 8th lord placed in the 12th house."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is the 7th and 8th lord as well placed in a dusthana, the 12th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Alpayu. Lagna Cancer confirmed by lordships in prose (2nd-lord Sun, 6th/9th-lord Jupiter). Sun+Jupiter+Venus in Leo (opposite/aspecting 8th); Saturn 8th-lord in 12th (Gemini). NOTE: the 8th house is actually AQUARIUS (11th from Lagna Cancer), aspected by Sun/Jupiter/Venus from Leo; the printed bhava phrase's word 'Capricorn' appears to be a book misprint for Aquarius — transcribed verbatim. Prose '4th and 10th lord Venus' likely a misprint for '4th and 11th'.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 50,
+   "birth_line": "Born 25-12-1917 at 11-55 p.m. (G M.T) at 0 W 05, 51 N 31.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Taurus",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Aries",
+    "Mars": "Aquarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 7 years, 7 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The 8th house is Aries aspected adversely by the 8th lord Mars and Saturn, the 5th and 6th lord in Chart No. 50."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars the 8th lord is placed in Lagna Kendra and aspected by 7th lord Jupiter and Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is placed in the 11th house aspected by 2nd and 9th lord Venus."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu (first Madhyayu example). Fully confirmed: 8th=Aries; Mars(8th-lord)+Lagna in Virgo (1st, kendra); Saturn in 11th (Cancer). Moon in Taurus — 8th from Moon is Sagittarius occupied by Mercury+Sun+Rahu.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 51,
+   "birth_line": "Born 12-7-1877 at 10 a.m. (L.M.T.) at 46 N 13. 6 E 07.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Cancer",
+    "Mars": "Aquarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Aquarius",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Capricorn",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Taurus",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 12 years, 5 months and 28 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 51 Aries is aspected by 6th lord Satum and 7th lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars is afflicted by Rahu and Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies his moolatrikona sign but is subject to affliction by Rahu and Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu. Fully confirmed: 8th=Aries aspected by Saturn (Aquarius) and Jupiter (Sagittarius); 8th-lord Mars in Aquarius with Rahu+Saturn; Saturn in moolatrikona Aquarius.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 53,
+   "birth_line": "Born 29-5-1917 at 3-00 p.m. (E.S.T.) at 718 W, 42N05.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Taurus",
+    "Venus": "Taurus",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Taurus",
+    "Moon": "Scorpio",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Leo",
+    "Saturn": "Leo",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 1 year, 0 months and 0 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The eighth house is occupied by own lord Mars and Lagna lord Mercury. It is aspected by 5th and 6th lord Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars is the 8th lord and occupies his moolatrikona sign Aries with Lagna lord Mercury and is aspected by Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 11th house in his own asterism aspected by 8th lord Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu. Fully confirmed: 8th=Aries occupied by own-lord Mars + Lagna-lord Mercury; Saturn in 11th (Cancer) aspected by Mars. Navamsa Jupiter placement (Capricorn) not prose-verified. Birth-line longitude '718 W' transcribed as printed (likely OCR of a garbled coordinate).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 54,
+   "birth_line": "Born 12-1-1863 at 6-33 p.m. (L.M.T.) at 22 N 40. 88 E 30.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Aries",
+    "Mercury": "Capricorn",
+    "Jupiter": "Libra",
+    "Venus": "Capricorn",
+    "Saturn": "Virgo",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Gemini",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Scorpio",
+    "Venus": "Pisces",
+    "Saturn": "Taurus",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 3 years, 3 months and 27 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 54 Cancer is aspected by 9th lord Sun, 6th and 11th lord Venus and 7th and 10th lord Mercury."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The Moon is 8th lord in the 10th with 2nd and 3rd lord Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 10th with 8th lord Moon. He has exchanged signs with 7th and 10th lord Mercury."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu. Fully confirmed: 8th=Cancer aspected by Sun+Venus+Mercury from Capricorn; 8th-lord Moon in 10th (Virgo) with Saturn; Saturn–Mercury parivartana (Saturn in Virgo, Mercury in Capricorn).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 55,
+   "birth_line": "Born 24-3-1883 at 6 a.m. (L.M.T.) at 13° N. 77 E 35.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Virgo",
+    "Mars": "Aquarius",
+    "Mercury": "Aquarius",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Libra",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 6 years.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "It is occupied by Rahu and aspected by Lagna and 10th lord Jupiter (see Chart No. 55)."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is well placed as 8th lord in the 11th house."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 3rd house aspected by 2nd and 9th lord Mars and has exchanged signs with 3rd lord Venus."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu. Fully confirmed: 8th=Libra (Rahu) aspected by Lagna-lord Jupiter (Gemini); 8th-lord Venus in 11th (Capricorn); Saturn in 3rd (Taurus), Saturn–Venus exchange.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 56,
+   "birth_line": "Born 9-3-1894 at 3-00 a.m. (C.E.T.) at 13 E 42. 51 N.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Pisces",
+    "Mars": "Sagittarius",
+    "Mercury": "Pisces",
+    "Jupiter": "Taurus",
+    "Venus": "Capricorn",
+    "Saturn": "Libra",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Scorpio",
+    "Mars": "Scorpio",
+    "Mercury": "Virgo",
+    "Jupiter": "Aquarius",
+    "Venus": "Virgo",
+    "Saturn": "Libra",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : 1 year, 9 months and 19 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 56 Cancer is the 8th aspected adversely by 5th and 12th lord Mars. It is powerfully aspected by 2nd and 3rd lord and karaka exalted, Vargottama Saturn. Venus, the 6th and 11th lord, also aspects the 8th house."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The Moon occupies a quadrant with 7th lord Mercury and Rahu. He is aspected by Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is very powerfully placed in the 11th house in Vargottama exaltation."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Madhyayu. Fully confirmed: 8th=Cancer; 8th-lord Moon in kendra (Pisces, 4th) with Mercury+Rahu; Saturn Vargottama exalted in Libra (11th) in both rasi and navamsa.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 57,
+   "birth_line": "Born 12-2-1880 at 0-40 a.m. (L.M.T.) at 41 N 2, 93 W 25.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Pisces",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Libra",
+    "Jupiter": "Gemini",
+    "Venus": "Scorpio",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth : 9 years, 10 months and 17 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Taurus is aspected by yogakaraka Saturn and occupied by 2nd and 7th lord Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is also the Lagna lord and occupies the 3rd house with Rahu. He is aspected by the 4th and 5th lord Saturn and adversely by 7th lord Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 6th house but has exchanged signs with 6th lord Jupiter gaining strength thereby. Also he occupies his own sign in Navamsa."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Purnayu (first Purnayu example). Fully confirmed: 8th=Taurus occupied by Mars, aspected by yogakaraka Saturn (Pisces); 8th/Lagna-lord Venus in 3rd (Sagittarius) with Rahu; Saturn in 6th (Pisces), Saturn–Jupiter exchange, Saturn own sign (Capricorn) in navamsa. Navamsa Venus in Scorpio per prose (7th from navamsa-Moon).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 58,
+   "birth_line": "Born 24-5-1819 at 4-04 a.m. (L.M.T.) at 51 N 30, 0 W 5.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Aries",
+    "Jupiter": "Capricorn",
+    "Venus": "Aries",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Virgo",
+    "Jupiter": "Virgo",
+    "Venus": "Gemini",
+    "Saturn": "Virgo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 7 years and 3 months.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Sagittarius rises in the 8th house aspected by 9th and 10th lord Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter is in the 9th debilitated but has exchanged signs with 9th lord Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 11th in mutual exchange of signs with 11th lord Jupiter in his own constellation gaining strength thereby. He is with 7th lord Mars and Rahu, both Vargottama."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Purnayu. Fully confirmed: 8th=Sagittarius aspected by Saturn (Pisces, 10th-aspect); 8th-lord Jupiter debilitated in 9th (Capricorn), Jupiter–Saturn exchange; Saturn in 11th (Pisces) with Mars+Rahu.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 59,
+   "birth_line": "Born 7-5-1861 at 2-51 a.m. (L.M-T.) at 88 E 30.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Pisces",
+    "Mars": "Gemini",
+    "Mercury": "Aries",
+    "Jupiter": "Cancer",
+    "Venus": "Aries",
+    "Saturn": "Leo",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Capricorn",
+    "Mars": "Libra",
+    "Mercury": "Gemini",
+    "Jupiter": "Pisces",
+    "Venus": "Scorpio",
+    "Saturn": "Cancer",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 10 years, 2 months and 20 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Libra is the eighth house aspected by 8th lord Venus, 6th lord Sun and 7th lord Mercury. Saturn also aspects it."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The eighth lord Venus occupies the 2nd house with 6th lord Sun and 7th lord Mercury."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 6th house in an inimical sign."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Purnayu. Fully confirmed: 8th=Libra aspected by Venus+Sun+Mercury (Aries, opposition) and Saturn (Leo, 3rd-aspect); 8th-lord Venus in 2nd (Aries); Saturn in 6th (Leo, inimical).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 60,
+   "birth_line": "Born 26-7-1856 at about midnight at 53 N 2, 6 W 16.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Libra",
+    "Mercury": "Gemini",
+    "Jupiter": "Pisces",
+    "Venus": "Cancer",
+    "Saturn": "Gemini",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Taurus",
+    "Mars": "Scorpio",
+    "Mercury": "Gemini",
+    "Jupiter": "Sagittarius",
+    "Venus": "Scorpio",
+    "Saturn": "Pisces",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 6 years, 6 months and 18 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 60 Sagittarius is the eighth house aspected by 2nd lord Vargottama (occupies the same sign in Navamsa) Mercury and Saturn, the 9th and 10th lord."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter is in the 11th house in his own sign with Vargottama Rahu aspected by Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 2nd house with Mercury but in the constellation of Rahu. Rahu, in turn, is well placed in the 11th house in Vargottama with 8th lord Jupiter."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Purnayu. Fully confirmed: 8th=Sagittarius aspected by Mercury (Gemini, Vargottama) and Saturn (Gemini); 8th-lord Jupiter in own sign Pisces (11th) with Vargottama Rahu; Saturn in 2nd (Gemini). Lagna Taurus Vargottama with exalted Vargottama Moon.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 61,
+   "birth_line": "Born 12-2-1856 at 12-21 p.m. (L.M.T.) at 18 N, 84 E.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Aries",
+    "Mars": "Libra",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aquarius",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Libra",
+    "Moon": "Virgo",
+    "Mars": "Libra",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Aries",
+    "Venus": "Libra",
+    "Saturn": "Libra",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 12 years, 3 months and 9 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 61 Sagittarius is the 8th house occupied by Lagna lord Venus and aspected by 9th and 10th lord Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter, the 8th lord, is in a quadrant in the 10th house with 2nd and 5th lord Mercury and 4th lord Sun."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 2nd house aspected by Lagna lord and 8th lord Jupiter."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Taurus; 8th=Sagittarius (Venus). Rasi fully cross-checked: Mars+Ketu in Libra (7th/12th-from-8th from Moon in Aries), Mars Vargottama (Libra in both), Venus moolatrikona Navamsa Libra.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 62,
+   "birth_line": "Born 15-8-1872 at 5-17 a.m. (L.M.T.) at 22 N 30, 88 E 30.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Pisces",
+   "rasi": {
+    "Sun": "Leo",
+    "Moon": "Sagittarius",
+    "Mars": "Cancer",
+    "Mercury": "Leo",
+    "Jupiter": "Cancer",
+    "Venus": "Leo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Gemini",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Aquarius",
+    "Venus": "Gemini",
+    "Saturn": "Libra",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "balance_of_dasa": "Balance of Ketu Dasa at birth: 3 years, 2 months and 22 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Aquarius is the 8th house aspected by 2nd lord Sun, 4th and 11th lord Venus and 3rd and 12th lord Mercury. It is also aspected by debilitated Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn, the eighth lord, is in the 6th house with the Lagna lord Moon."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is also the karaka besides being the 8th lord and occupies the 6th house with Lagna lord Moon."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Rasi high (Lagna Cancer; Jupiter exalted + Mars debilitated in Cancer per 'considered from Moon'; Rahu in Taurus per death prose). Navamsa lagna Pisces/Aries and Mercury+Saturn cell (Libra vs Scorpio) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 63,
+   "birth_line": "Born 23-11-1902 at 5-16 a.m. (L.M.T.) at 23 N 6, 72 E 40.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Taurus",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Leo",
+    "Mars": "Leo",
+    "Mercury": "Libra",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Gemini",
+    "Jupiter": "Cancer",
+    "Venus": "Virgo",
+    "Saturn": "Capricorn",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 13 years, 11 months and 12 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 63 Taurus is the 8th house aspected by Lagna and 8th lord Venus and 11th lord Sun. It is also aspected by a debilitated Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus occupies the 2nd house aspected by the 2nd lord Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 4th house, a quadrant, his own sign Capricorn in Vargottama. He is with debilitated 3rd and 6th lord Jupiter."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Libra (Saturn 4th=Capricorn Vargottama; Mercury+Rahu in Lagna). Saturn Vargottama Capricorn. Moon+Mars in Leo derived from 'Jupiter 6th from Moon'.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 64,
+   "birth_line": "Born 4-4-1948 at 6 a.m. (I.S.T.) at 73 E 04. 26 N 18.",
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Capricorn",
+    "Mars": "Cancer",
+    "Mercury": "Aquarius",
+    "Jupiter": "Sagittarius",
+    "Venus": "Taurus",
+    "Saturn": "Cancer",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Cancer",
+    "Mars": "Aquarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Aquarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 2 years, 11 months and 7 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 64 Libra, the 8th house, is occupied by Ketu and aspected by 2nd and 9th lord neechabhanga Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is in his own sign in Rasi in the 3rd house and exalted in the Navamsa."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is placed in a trine but with Mars aspected by 5th lord Moon."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Pisces (Lagna+Sun; 8th=Libra with Ketu). Moon Capricorn derived from '8th lord Sun in 3rd from Moon'. Venus exalted (Pisces) in Navamsa per prose.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 65,
+   "birth_line": "Born 15-7-1942 at 2-30 p.m. (I.S.T.) at 77 E 29, 8 N 11.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Cancer",
+    "Mars": "Cancer",
+    "Mercury": "Gemini",
+    "Jupiter": "Gemini",
+    "Venus": "Taurus",
+    "Saturn": "Taurus",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Scorpio",
+    "Mars": "Pisces",
+    "Mercury": "Capricorn",
+    "Jupiter": "Aquarius",
+    "Venus": "Virgo",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : 2 years, 2 months and 0 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Sagittarius, a fiery sign, is the 8th house and is aspected by 8th lord Jupiter and 2nd and 5th lord Mercury."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter occupies the 2nd house with 2nd lord Mercury."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in Lagna Kendra with Lagna lord Venus aspected by no other planet."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Taurus (Saturn+Venus in Lagna). Rasi cross-checked with conclusion (Ketu Aquarius=10th, Rahu Leo=4th, Moon Cancer from '8th house Aquarius from Moon'). Venus debilitated (Virgo) Navamsa per conclusion. Navamsa Moon (Scorpio) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 66,
+   "birth_line": "Born 3-4-1949 at 8 a.m. (I.S.T.) at 77 E 35, 13° N.",
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Taurus",
+    "Mars": "Pisces",
+    "Mercury": "Pisces",
+    "Jupiter": "Capricorn",
+    "Venus": "Pisces",
+    "Saturn": "Leo",
+    "Rahu": "Aries",
+    "Ketu": "Libra"
+   },
+   "navamsa": {
+    "Sun": "Capricorn",
+    "Moon": "Aries",
+    "Mars": "Sagittarius",
+    "Mercury": "Libra",
+    "Jupiter": "Pisces",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 9 years, 6 months and 23 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "Scorpio is aspected by 4th lord Moon."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars as 8th lord is in the 12th house combust in the Sun with 2nd and 7th lord Venus and 3rd and 6th lord Mercury."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in an inimical sign in the 5th house aspecting the Moon."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aries (Lagna+Rahu; 8th=Scorpio). Rasi cross-checked (Sun/Mars/Mercury/Venus in Pisces=12th; Jupiter Capricorn neechabhanga; Saturn Leo=5th). Lord phrase printed as 'Mats' (OCR) = Mars. Navamsa Sun (Capricorn) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 67,
+   "birth_line": "Born 26-11-1959 at 4-30 p.m. (I.S.T.) at 79 E 33, 29 N 23.",
+   "lagna_rasi": "Taurus",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Scorpio",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Scorpio",
+    "Jupiter": "Scorpio",
+    "Venus": "Virgo",
+    "Saturn": "Sagittarius",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Gemini",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Sagittarius",
+    "Venus": "Leo",
+    "Saturn": "Leo",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 4 years, 5 months and 7 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 67 Sagittarius is occupied by 9th and 10th lord Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter is in the 7th house in the 12th from the 8th house with 7th lord Mars, 4th lord Sun and 2nd and 5th lord Mercury all afflicted."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 8th house whose lord Jupiter is in the 12th therefrom."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Taurus (8th=Sagittarius with Saturn). Rasi cross-checked: Moon/Venus/Rahu in Virgo (Rahu 5th=mercurial per death; Rahu-Ketu Virgo/Pisces); Sun/Mars/Merc(R)/Jupiter in Scorpio (7th). Navamsa Sun (Scorpio) and lagna (Capricorn) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 68,
+   "birth_line": "Born 24-5-1906 at 4 p.m. at 0 W 05, 51 N 30.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Taurus",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Taurus",
+    "Venus": "Gemini",
+    "Saturn": "Aquarius",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Leo",
+    "Mars": "Virgo",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Leo",
+    "Venus": "Sagittarius",
+    "Saturn": "Aries",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 5 years, 7 months and 3 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 68 Taurus is occupied by 2nd and 7th lord Mars, 3rd and 6th lord Jupiter, 11th lord Sun and 10th lord Moon."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is in the 9th house hemmed between Mars and Rahu."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies his own sign Aquarius in the 5th house."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Lagna Libra (8th=Taurus New-Moon stellium Sun/Moon/Mars/Jupiter; Venus 9th=Gemini; Saturn 5th=Aquarius; Rahu 10th=Cancer per death). Rasi high. Navamsa less certain: Sun+Saturn top cell (Aries est.) and lagna (Scorpio) approximate.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 69,
+   "birth_line": "Born 10-11-1897 at 1-15 a.m. (L.M.T.) at 45 N, 93 W.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Libra",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Scorpio",
+    "Mercury": "Libra",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Pisces",
+    "Mars": "Cancer",
+    "Mercury": "Gemini",
+    "Jupiter": "Aries",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 1 year, 3 months and 17 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The Lagna being Leo, the 8th house is Pisces aspected by own lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter is in the 2nd house with no aspects or associations."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies a martian watery sign with Mars in the 7th from the Moon. In Navamsa, though exalted and aspected by Jupiter, he is aspected by an afflicted debilitated Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Leo (Jupiter 2nd=Virgo; Rahu Capricorn / Ketu Cancer per conclusion; Saturn+Mars in Scorpio=martian watery, 7th from Moon Taurus). Saturn exalted Libra in Navamsa, Mars debilitated Cancer Navamsa per karaka. Navamsa Venus (Sagittarius) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 70,
+   "birth_line": "Born 15-10-1891 at 10-30 p.m. (G.M.T.) at 53 N 12, 0 W 30.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Virgo",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Virgo",
+    "Jupiter": "Aquarius",
+    "Venus": "Libra",
+    "Saturn": "Virgo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Virgo",
+    "Mars": "Aquarius",
+    "Mercury": "Cancer",
+    "Jupiter": "Pisces",
+    "Venus": "Sagittarius",
+    "Saturn": "Aquarius",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Jupiter Dasa at birth: 12 years, 2 months and 16 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "in Chart No. 70 Aquarius is the 8th house occupied by 6th and 9th lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn is the 8th lord in the 3rd house with 5th and 10th lord Mars and 3rd and 12th lord Mercury. He is aspected by Lagna lord Moon."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 3rd house from Lagna and the 7th house from the Moon in association with Mars and Mercury. In Navamsa, he occupies his own sign with Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Cancer (Lagna lord Moon; 8th=Aquarius Jupiter). Moon Pisces (9th) + Sun/Venus Libra (4th) + Mars/Sat/Merc Virgo (3rd) cross-checked; Ketu Scorpio (papakartari to 8th-from-Moon Libra), Rahu Taurus. Saturn+Mars own sign Aquarius Navamsa per karaka. Navamsa Sun (Scorpio) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 72,
+   "birth_line": "Born 2-11-1755 at about 8 p.m. at 46 N 30, 30 E.",
+   "lagna_rasi": "Gemini",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Libra",
+    "Mars": "Gemini",
+    "Mercury": "Scorpio",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Capricorn",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Scorpio",
+    "Mars": "Gemini",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Aquarius",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Mars Dasa at birth : 2 years, 5 months and 9 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 72, the 8th is occupied by 8th lord Saturn and aspected adversely by Mars, the 6th and 11th lord, and an afflicted 7th lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn, the 8th lord, occupies his own sign and is aspected by Mars and Jupiter."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is also the karaka and is aspected by 7th lord, afflicted Jupiter, and 6th and 11th lord Mars."
+    }
+   ],
+   "confidence": "medium",
+   "notes": "Marie Antoinette. Lagna Gemini (8th=Capricorn Saturn; Mars in Lagna, 9th from Moon per death). Sun/Moon/Venus in Libra (Sun debilitated with 8th-from-Moon lord Venus). Rasi high. Navamsa: Saturn+Rahu Aquarius (nav-lagna, maraka aspect per death); Sun+Venus top cell (Pisces est.) and Moon (Scorpio est.) uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 73,
+   "birth_line": "Born 12-2-1809 at 7-32 a.m. (L.M.T.) at 35 N, 89 E.",
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Aquarius",
+   "rasi": {
+    "Sun": "Aquarius",
+    "Moon": "Capricorn",
+    "Mars": "Libra",
+    "Mercury": "Aquarius",
+    "Jupiter": "Pisces",
+    "Venus": "Pisces",
+    "Saturn": "Scorpio",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Aquarius",
+    "Mars": "Scorpio",
+    "Mercury": "Capricorn",
+    "Jupiter": "Cancer",
+    "Venus": "Sagittarius",
+    "Saturn": "Libra",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Sun Dasa at birth : 2 years, 1 month and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 73 Virgo rises in the 8th Bhava aspected by Jupiter and exalted Venus."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mercury is well placed in the Ascendant with the 7th lord Sun."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies Scorpio in the 10th house aspected by Jupiter in own sign."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Abraham Lincoln. Lagna Aquarius (Sun+Mercury+Lagna; 8th=Virgo). Jupiter+Venus(exalted) Pisces; Saturn Scorpio(10th); Moon Capricorn(12th); Rahu Libra/Ketu Aries. Navamsa reads cleanly.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 75,
+   "birth_line": "Born 29-5-1917 at 3-00 p.m. (E.S.T.) at 71 W 8, 42 N 05.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Taurus",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Taurus",
+    "Venus": "Taurus",
+    "Saturn": "Cancer",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Libra",
+    "Mars": "Sagittarius",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Capricorn",
+    "Venus": "Leo",
+    "Saturn": "Leo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 1 year.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 75 A fiery sign Aries rises on the 8th Bhava and is occupied by Lagna and 10th lord Mercury and 3rd and 8th lord Mars and aspected by Saturn, the 5th and 6th Lord."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mars occupies his own sign in the 8th house with Mercury and is aspected by Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 11th house and is aspected by 8th lord Mars from the 8th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "J.F. Kennedy. Lagna Virgo (Mercury Lagna+10th lord in 8th=Aries with Mars; Saturn 11th=Cancer). Moon Leo confirmed ('8th house Pisces from Moon'; Jupiter/Sun/Venus in Taurus papakartari by Mars & Ketu). Rahu Sagittarius/Ketu Gemini. Navamsa Sun (Gemini) and Moon (Libra) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 77,
+   "birth_line": "Born 29-7-1883 at 2 P.m. (L.M.T.) at 41 N, 16 E.",
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Taurus",
+    "Mercury": "Cancer",
+    "Jupiter": "Gemini",
+    "Venus": "Cancer",
+    "Saturn": "Taurus",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "navamsa": {
+    "Sun": "Sagittarius",
+    "Moon": "Gemini",
+    "Mars": "Cancer",
+    "Mercury": "Sagittarius",
+    "Jupiter": "Gemini",
+    "Venus": "Cancer",
+    "Saturn": "Gemini",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Moon Dasa at birth : 3 years, 8 months and 26 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 77 Jupiter, the 2nd and 5th lord, occupies the 8th house."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Mercury is in the 9th house with 7th lord Venus and 10th lord Sun and aspected by malefic Mars."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies the 7th house with Mars and exalted Moon."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Mussolini. Lagna Scorpio (Jupiter 2nd&5th lord in 8th=Gemini; Saturn+Mars+exalted Moon Taurus=7th; Sun/Mercury/Venus Cancer=9th). Rahu Libra/Ketu Aries (Lagna+Rahu Scorpio adjacent to Rahu-Libra cell). Navamsa Sun+Mercury cell (Sagittarius) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 78,
+   "birth_line": "Born 20-4-1889 at 6-30 p.m. (L.M.T.) at 48° N, 13° E.",
+   "lagna_rasi": "Libra",
+   "lagna_navamsa": "Scorpio",
+   "rasi": {
+    "Sun": "Aries",
+    "Moon": "Sagittarius",
+    "Mars": "Aries",
+    "Mercury": "Aries",
+    "Jupiter": "Sagittarius",
+    "Venus": "Aries",
+    "Saturn": "Cancer",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Cancer",
+    "Mars": "Scorpio",
+    "Mercury": "Taurus",
+    "Jupiter": "Virgo",
+    "Venus": "Scorpio",
+    "Saturn": "Capricorn",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 16 years, 4 months and 6 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 78 Taurus is the 8th house subject to a papakartari yoga caused by Rahu and Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Venus is in a fiery sign Aries with Mars, Sun and Mercury aspected by Saturn."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 10th aspected by a powerful Mars."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Hitler. Lagna Libra (8th=Taurus papakartari by Rahu Gemini & Mars Aries; Sun/Mars/Merc/Venus Aries=7th; Saturn Cancer=10th). Moon+Jupiter+Ketu Sagittarius (Moon 3rd from Lagna, Rahu 7th from Moon). Navamsa: nav-lagna Scorpio (Rahu Taurus=7th per death); Saturn (Capricorn) and Sun/top-cell approximate.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 79,
+   "birth_line": "Born 25-9-1916 at 1-58 p.m. (L.M.T.) at 27 N 28, 77 E 41.",
+   "lagna_rasi": "Sagittarius",
+   "lagna_navamsa": "Sagittarius",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Virgo",
+    "Jupiter": "Aries",
+    "Venus": "Cancer",
+    "Saturn": "Cancer",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Leo",
+    "Mars": "Pisces",
+    "Mercury": "Virgo",
+    "Jupiter": "Cancer",
+    "Venus": "Aquarius",
+    "Saturn": "Leo",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 17 years, 3 months and 2? days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 79 Cancer is occupied by Ketu, Venus and Saturn."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The Moon is in the 9th house hemmed between Saturn and Sun."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is in the 8th house afflicted by Ketu and associating with Venus."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Sagittarius (8th=Cancer with Ketu/Venus/Saturn). Moon Leo (9th) hemmed by Saturn(Cancer) & Sun(Virgo); Jupiter Aries (fiery, 8th lord from Moon); Mars Libra (aspects Rahu Capricorn). Balance-of-dasa last digit unclear in scan. Navamsa reads cleanly (left column Pisces/Aquarius/Capricorn/Sagittarius).",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 80,
+   "birth_line": "Born 6-10-1885 at 1-36 a.m. (L.M.T.) at 20 N 30, 72 E 58.",
+   "lagna_rasi": "Cancer",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Leo",
+    "Mars": "Cancer",
+    "Mercury": "Virgo",
+    "Jupiter": "Virgo",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "navamsa": {
+    "Sun": "Cancer",
+    "Moon": "Libra",
+    "Mars": "Capricorn",
+    "Mercury": "Gemini",
+    "Jupiter": "Capricorn",
+    "Venus": "Cancer",
+    "Saturn": "Pisces",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "balance_of_dasa": "Balance of Venus Dasa at birth : 9 years, 9 months and 9 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 80 Cancer rising gives Aquarius as the 8th house. It is aspected by debilitated Mars."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Saturn is the 8th lord and occupies the 12th house."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn occupies a friendly sign in the 12th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Cancer (8th=Aquarius; Saturn 12th=Gemini; Mars debilitated in Lagna Cancer). Sun/Jupiter/Mercury/Rahu Virgo (3rd, per death); Moon Leo (8th=Pisces Ketu from Moon); Rahu Virgo/Ketu Pisces. Navamsa Mercury and Moon positions somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 81,
+   "birth_line": "Born 21-10-1953 at 2 a.m. (I.S.T.) at 18 N 31, 73 E 55.",
+   "lagna_rasi": "Leo",
+   "lagna_navamsa": "Aries",
+   "rasi": {
+    "Sun": "Libra",
+    "Moon": "Pisces",
+    "Mars": "Virgo",
+    "Mercury": "Libra",
+    "Jupiter": "Gemini",
+    "Venus": "Virgo",
+    "Saturn": "Libra",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Scorpio",
+    "Mars": "Capricorn",
+    "Mercury": "Gemini",
+    "Jupiter": "Scorpio",
+    "Venus": "Aries",
+    "Saturn": "Sagittarius",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "balance_of_dasa": "Balance of Saturn Dasa at birth : 1 year, 2 months and 16 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 81 Pisces is occupied by the Moon and aspected by Mars and Venus."
+    },
+    {
+     "factor": "lord",
+     "phrase": "Jupiter is in the 11th house free of any afflictions."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is exalted in the 3rd house but is combust and with 2nd lord Mercury. He is aspected by 8th lord Jupiter."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Leo (8th=Pisces Moon; Jupiter 11th=Gemini; Saturn exalted Libra=3rd, combust, with Mercury; Sun+Mercury+Saturn Libra; Venus+Mars Virgo per 'Venus with Mars, Mars 7th from Moon & 2nd from Lagna'; Ketu 12th=Cancer). Navamsa Mars (Capricorn) somewhat uncertain.",
+   "house_judged": 8
+  },
+  {
+   "chart_no": 82,
+   "birth_line": "Born 12-7-1877 at 10 a.m. (L.M.T.) at 46 N 13, 6 E 07.",
+   "lagna_rasi": "Virgo",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Cancer",
+    "Mars": "Aquarius",
+    "Mercury": "Gemini",
+    "Jupiter": "Sagittarius",
+    "Venus": "Cancer",
+    "Saturn": "Aquarius",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "navamsa": {
+    "Sun": "Gemini",
+    "Moon": "Capricorn",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Taurus",
+    "Venus": "Sagittarius",
+    "Saturn": "Gemini",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer"
+   },
+   "balance_of_dasa": "Balance of Mercury Dasa at birth : 12 years, 5 months and 28 days.",
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "In Chart No. 82 it is not occupied by any planet but is aspected by an afflicted 6th lord Saturn and 7th lord Jupiter."
+    },
+    {
+     "factor": "lord",
+     "phrase": "The 8th lord Mars is in the 6th with 6th lord Saturn and Rahu."
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Saturn",
+     "phrase": "Saturn is afflicted by Rahu and Mars in the 6th house."
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Virgo (8th=Aries unoccupied; Saturn+Mars+Rahu Aquarius=6th; Moon+Venus Cancer=11th, Moon its own 8th lord; Sun+Mercury Gemini=10th, Sun 12th lord). Ketu Leo/Rahu Aquarius. Navamsa Venus Sagittarius derived from '12th from Navamsa Lagna Capricorn'. Beyond nominal ~81 range but fully present in scans.",
+   "house_judged": 8
+  }
+ ]
+}

@@ -1,0 +1,294 @@
+{
+ "source": "HTJAH Vol.1 Ch.VII (4th house), PDF scans",
+ "chapter": "ch07_4th",
+ "charts": [
+  {
+   "chart_no": 64,
+   "house_judged": 4,
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Leo",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Leo",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "navamsa": {
+    "Sun": "Aquarius",
+    "Moon": "Leo",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Taurus",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is fairly strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord Venus is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "Matrukaraka is definitely afflicted",
+     "karaka": "Moon"
+    }
+   ],
+   "confidence": "high"
+  },
+  {
+   "chart_no": 69,
+   "house_judged": 4,
+   "axis": "rasi",
+   "lagna_rasi": "Aries",
+   "rasi": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Scorpio",
+    "Mercury": "Aquarius",
+    "Jupiter": "Leo",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Gemini",
+    "Ketu": "Sagittarius"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is moderately strong"
+    }
+   ],
+   "confidence": "high",
+   "notes": "navamsa Mars unreadable -> rasi-axis"
+  },
+  {
+   "chart_no": 70,
+   "house_judged": 4,
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Leo",
+   "rasi": {
+    "Sun": "Virgo",
+    "Moon": "Capricorn",
+    "Mars": "Gemini",
+    "Mercury": "Leo",
+    "Jupiter": "Virgo",
+    "Venus": "Libra",
+    "Saturn": "Scorpio",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Taurus",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Leo",
+    "Venus": "Gemini",
+    "Saturn": "Scorpio",
+    "Rahu": "Libra",
+    "Ketu": "Aries"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is moderately strong"
+    },
+    {
+     "factor": "lord",
+     "phrase": "The fourth lord and Matrukaraka are considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "The fourth lord and Matrukaraka are considerably afflicted",
+     "karaka": "Moon"
+    }
+   ],
+   "confidence": "high"
+  },
+  {
+   "chart_no": 71,
+   "house_judged": 4,
+   "lagna_rasi": "Aquarius",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Gemini",
+    "Moon": "Leo",
+    "Mars": "Virgo",
+    "Mercury": "Cancer",
+    "Jupiter": "Virgo",
+    "Venus": "Taurus",
+    "Saturn": "Gemini",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius"
+   },
+   "navamsa": {
+    "Sun": "Aries",
+    "Moon": "Leo",
+    "Mars": "Aries",
+    "Mercury": "Scorpio",
+    "Jupiter": "Pisces",
+    "Venus": "Taurus",
+    "Saturn": "Aries",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "The fourth house is fairly strong"
+    },
+    {
+     "factor": "karaka",
+     "phrase": "The Matrukaraka Moon is considerably afflicted",
+     "karaka": "Moon"
+    }
+   ],
+   "confidence": "high"
+  },
+  {
+   "chart_no": 72,
+   "house_judged": 4,
+   "lagna_rasi": "Scorpio",
+   "lagna_navamsa": "Cancer",
+   "rasi": {
+    "Sun": "Pisces",
+    "Moon": "Aries",
+    "Mars": "Taurus",
+    "Mercury": "Aries",
+    "Jupiter": "Virgo",
+    "Venus": "Aquarius",
+    "Saturn": "Aries",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Pisces",
+    "Moon": "Gemini",
+    "Mars": "Leo",
+    "Mercury": "Taurus",
+    "Jupiter": "Gemini",
+    "Venus": "Capricorn",
+    "Saturn": "Taurus",
+    "Rahu": "Pisces",
+    "Ketu": "Virgo"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is unblemished"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is considerably afflicted"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is considerably afflicted"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Scorpio; 4th Aquarius w/ natural-benefic Venus (unblemished); 4th lord Saturn neecha in 6th + Papakartari + Matrukaraka Moon w/ Saturn, both considerably afflicted (Conclusion p181). Gate 9/9."
+  },
+  {
+   "chart_no": 73,
+   "house_judged": 4,
+   "lagna_rasi": "Aries",
+   "lagna_navamsa": "Gemini",
+   "rasi": {
+    "Sun": "Sagittarius",
+    "Moon": "Libra",
+    "Mars": "Aquarius",
+    "Mercury": "Capricorn",
+    "Jupiter": "Capricorn",
+    "Venus": "Scorpio",
+    "Saturn": "Leo",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio"
+   },
+   "navamsa": {
+    "Sun": "Scorpio",
+    "Moon": "Aquarius",
+    "Mars": "Taurus",
+    "Mercury": "Pisces",
+    "Jupiter": "Leo",
+    "Venus": "Scorpio",
+    "Saturn": "Scorpio",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is fairly powerful"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is moderately blemished"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is moderately blemished"
+    }
+   ],
+   "confidence": "high",
+   "notes": "Lagna Aries; 4th Cancer empty, aspected by debilitated Jupiter+Mercury (neechabhanga in nav) -> fairly powerful; 4th lord Moon = Matrukaraka in Libra aspected by Saturn -> moderately blemished (Conclusion p182). Gate 9/9."
+  },
+  {
+   "chart_no": 74,
+   "house_judged": 4,
+   "lagna_rasi": "Pisces",
+   "lagna_navamsa": "Capricorn",
+   "rasi": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Taurus",
+    "Mercury": "Cancer",
+    "Jupiter": "Scorpio",
+    "Venus": "Gemini",
+    "Saturn": "Sagittarius",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus"
+   },
+   "navamsa": {
+    "Sun": "Virgo",
+    "Moon": "Pisces",
+    "Mars": "Leo",
+    "Mercury": "Aquarius",
+    "Jupiter": "Libra",
+    "Venus": "Pisces",
+    "Saturn": "Gemini",
+    "Rahu": "Sagittarius",
+    "Ketu": "Gemini"
+   },
+   "verdicts": [
+    {
+     "factor": "bhava",
+     "phrase": "the fourth house is feebly blemished"
+    },
+    {
+     "factor": "lord",
+     "phrase": "the fourth lord is feebly blemished"
+    },
+    {
+     "factor": "karaka",
+     "karaka": "Moon",
+     "phrase": "the Matrukaraka is feebly blemished"
+    }
+   ],
+   "confidence": "high",
+   "notes": "all three feebly blemished (Conclusion p192)"
+  }
+ ]
+}

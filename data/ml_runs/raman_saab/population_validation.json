@@ -1,0 +1,1117 @@
+{
+  "corpus": "app/medini/data/raman_saab/death_corpus.parquet",
+  "n_persons": 82589,
+  "primary_hour_local": 12.0,
+  "perm_samples": 1000,
+  "n_rule_tests": 15,
+  "bonferroni_alpha": 0.0006666666666666666,
+  "rule_results": [
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 14510,
+      "expected": 14916.08,
+      "rr": 0.9728,
+      "z": -4.029,
+      "p_one_sided": 0.9999720266378451
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 14510,
+      "expected": 13308.19,
+      "rr": 1.0903,
+      "z": 12.054,
+      "p_one_sided": 9.268219167013545e-34
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 12722,
+      "expected": 12629.37,
+      "rr": 1.0073,
+      "z": 0.899,
+      "p_one_sided": 0.18430569792211876
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 12722,
+      "expected": 13099.97,
+      "rr": 0.9711,
+      "z": -3.608,
+      "p_one_sided": 0.9998458753505426
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 24963,
+      "expected": 25291.75,
+      "rr": 0.987,
+      "z": -2.561,
+      "p_one_sided": 0.9947812764054563
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 24963,
+      "expected": 24202.61,
+      "rr": 1.0314,
+      "z": 5.929,
+      "p_one_sided": 1.520090476998375e-09
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 18213,
+      "expected": 18706.83,
+      "rr": 0.9736,
+      "z": -4.32,
+      "p_one_sided": 0.999992197600649
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 18213,
+      "expected": 18682.63,
+      "rr": 0.9749,
+      "z": -4.031,
+      "p_one_sided": 0.9999722654650329
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 17536,
+      "expected": 17594.96,
+      "rr": 0.9966,
+      "z": -0.502,
+      "p_one_sided": 0.6922179751529438
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 17536,
+      "expected": 17835.5,
+      "rr": 0.9832,
+      "z": -2.536,
+      "p_one_sided": 0.9943922108928658
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 31892,
+      "expected": 32353.63,
+      "rr": 0.9857,
+      "z": -3.346,
+      "p_one_sided": 0.9995900942777802
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 31892,
+      "expected": 32409.97,
+      "rr": 0.984,
+      "z": -3.732,
+      "p_one_sided": 0.9999049822384312
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 37801,
+      "expected": 38231.39,
+      "rr": 0.9887,
+      "z": -3.091,
+      "p_one_sided": 0.9990018924517422
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 37801,
+      "expected": 40937.33,
+      "rr": 0.9234,
+      "z": -22.311,
+      "p_one_sided": 1.0
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 38971,
+      "expected": 39074.45,
+      "rr": 0.9974,
+      "z": -0.722,
+      "p_one_sided": 0.7647733969565387
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 38971,
+      "expected": 39049.16,
+      "rr": 0.998,
+      "z": -0.545,
+      "p_one_sided": 0.7071748665128411
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 58857,
+      "expected": 59254.65,
+      "rr": 0.9933,
+      "z": -3.097,
+      "p_one_sided": 0.9990214169653313
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 58857,
+      "expected": 60553.71,
+      "rr": 0.972,
+      "z": -13.435,
+      "p_one_sided": 1.0
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 44788,
+      "expected": 44357.61,
+      "rr": 1.0097,
+      "z": 3.091,
+      "p_one_sided": 0.9990018924517423
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md",
+      "direction": "deplete",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 44788,
+      "expected": 41651.67,
+      "rr": 1.0753,
+      "z": 22.311,
+      "p_one_sided": 1.0
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "ad",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 43618,
+      "expected": 43514.55,
+      "rr": 1.0024,
+      "z": 0.722,
+      "p_one_sided": 0.7647733969565387
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "ad",
+      "direction": "deplete",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 43618,
+      "expected": 43539.84,
+      "rr": 1.0018,
+      "z": 0.545,
+      "p_one_sided": 0.7071748665128411
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md_or_ad",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 64674,
+      "expected": 64537.81,
+      "rr": 1.0021,
+      "z": 1.157,
+      "p_one_sided": 0.8764507528528227
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md_or_ad",
+      "direction": "deplete",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 64674,
+      "expected": 63156.22,
+      "rr": 1.024,
+      "z": 12.532,
+      "p_one_sided": 1.0
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 16274,
+      "expected": 16211.6,
+      "rr": 1.0038,
+      "z": 0.57,
+      "p_one_sided": 0.2842565775800938
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 16274,
+      "expected": 18447.4,
+      "rr": 0.8822,
+      "z": -18.626,
+      "p_one_sided": 1.0
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 17212,
+      "expected": 17227.72,
+      "rr": 0.9991,
+      "z": -0.135,
+      "p_one_sided": 0.5536478486786018
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 17212,
+      "expected": 17077.02,
+      "rr": 1.0079,
+      "z": 1.161,
+      "p_one_sided": 0.12282874099682528
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 30171,
+      "expected": 30144.46,
+      "rr": 1.0009,
+      "z": 0.194,
+      "p_one_sided": 0.4229314254702159
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "exposure",
+      "n": 82589,
+      "observed": 30171,
+      "expected": 31656.1,
+      "rr": 0.9531,
+      "z": -10.726,
+      "p_one_sided": 1.0
+    }
+  ],
+  "lord_results": [
+    {
+      "lord": "Jupiter",
+      "level": "md",
+      "null": "permutation",
+      "observed": 11364,
+      "expected": 11295.84,
+      "rr": 1.006,
+      "z": 0.765
+    },
+    {
+      "lord": "Ketu",
+      "level": "md",
+      "null": "permutation",
+      "observed": 5769,
+      "expected": 5652.13,
+      "rr": 1.0207,
+      "z": 1.677
+    },
+    {
+      "lord": "Mars",
+      "level": "md",
+      "null": "permutation",
+      "observed": 3703,
+      "expected": 3790.74,
+      "rr": 0.9769,
+      "z": -1.525
+    },
+    {
+      "lord": "Mercury",
+      "level": "md",
+      "null": "permutation",
+      "observed": 15165,
+      "expected": 14890.59,
+      "rr": 1.0184,
+      "z": 2.779
+    },
+    {
+      "lord": "Moon",
+      "level": "md",
+      "null": "permutation",
+      "observed": 5444,
+      "expected": 5475.51,
+      "rr": 0.9942,
+      "z": -0.472
+    },
+    {
+      "lord": "Rahu",
+      "level": "md",
+      "null": "permutation",
+      "observed": 10505,
+      "expected": 10559.47,
+      "rr": 0.9948,
+      "z": -0.635
+    },
+    {
+      "lord": "Saturn",
+      "level": "md",
+      "null": "permutation",
+      "observed": 14510,
+      "expected": 14916.08,
+      "rr": 0.9728,
+      "z": -4.029
+    },
+    {
+      "lord": "Sun",
+      "level": "md",
+      "null": "permutation",
+      "observed": 3314,
+      "expected": 3312.95,
+      "rr": 1.0003,
+      "z": 0.019
+    },
+    {
+      "lord": "Venus",
+      "level": "md",
+      "null": "permutation",
+      "observed": 12815,
+      "expected": 12695.68,
+      "rr": 1.0094,
+      "z": 1.301
+    },
+    {
+      "lord": "Jupiter",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 10934,
+      "expected": 10873.89,
+      "rr": 1.0055,
+      "z": 0.62
+    },
+    {
+      "lord": "Ketu",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 4726,
+      "expected": 4741.9,
+      "rr": 0.9966,
+      "z": -0.238
+    },
+    {
+      "lord": "Mars",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 4814,
+      "expected": 4965.59,
+      "rr": 0.9695,
+      "z": -2.222
+    },
+    {
+      "lord": "Mercury",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 11220,
+      "expected": 11315.85,
+      "rr": 0.9915,
+      "z": -0.974
+    },
+    {
+      "lord": "Moon",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 7222,
+      "expected": 7100.81,
+      "rr": 1.0171,
+      "z": 1.507
+    },
+    {
+      "lord": "Rahu",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 12486,
+      "expected": 12485.82,
+      "rr": 1.0,
+      "z": 0.002
+    },
+    {
+      "lord": "Saturn",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 12722,
+      "expected": 12629.37,
+      "rr": 1.0073,
+      "z": 0.899
+    },
+    {
+      "lord": "Sun",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 4223,
+      "expected": 4251.78,
+      "rr": 0.9932,
+      "z": -0.454
+    },
+    {
+      "lord": "Venus",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 14242,
+      "expected": 14224.0,
+      "rr": 1.0013,
+      "z": 0.166
+    }
+  ],
+  "birth_time_sensitivity": {
+    "raman.karaka.saturn_dasha|md": [
+      {
+        "hour": 0.0,
+        "rr": 0.9772,
+        "z": -3.388,
+        "p": 0.999648478957766
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9754,
+        "z": -3.642,
+        "p": 0.9998648478123561
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9728,
+        "z": -4.029,
+        "p": 0.9999720266378451
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9817,
+        "z": -2.701,
+        "p": 0.9965412278396728
+      }
+    ],
+    "raman.karaka.saturn_dasha|ad": [
+      {
+        "hour": 0.0,
+        "rr": 1.0033,
+        "z": 0.41,
+        "p": 0.3408193216639047
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9987,
+        "z": -0.165,
+        "p": 0.5655293549553387
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0073,
+        "z": 0.899,
+        "p": 0.18430569792211876
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0043,
+        "z": 0.529,
+        "p": 0.29832054817464715
+      }
+    ],
+    "raman.karaka.saturn_dasha|md_or_ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9906,
+        "z": -1.85,
+        "p": 0.9678197655737251
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9801,
+        "z": -3.917,
+        "p": 0.9999551967939004
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.987,
+        "z": -2.561,
+        "p": 0.9947812764054563
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9889,
+        "z": -2.175,
+        "p": 0.9852006953971006
+      }
+    ],
+    "raman.karaka.mars_saturn_dasha|md": [
+      {
+        "hour": 0.0,
+        "rr": 0.988,
+        "z": -1.973,
+        "p": 0.9757700809866391
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9795,
+        "z": -3.349,
+        "p": 0.9995945143297013
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9736,
+        "z": -4.32,
+        "p": 0.999992197600649
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9809,
+        "z": -3.119,
+        "p": 0.9990931064058404
+      }
+    ],
+    "raman.karaka.mars_saturn_dasha|ad": [
+      {
+        "hour": 0.0,
+        "rr": 1.0018,
+        "z": 0.272,
+        "p": 0.3928915815074507
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9975,
+        "z": -0.368,
+        "p": 0.6437026074221832
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9966,
+        "z": -0.502,
+        "p": 0.6922179751529438
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0066,
+        "z": 0.982,
+        "p": 0.16309675458606054
+      }
+    ],
+    "raman.karaka.mars_saturn_dasha|md_or_ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9936,
+        "z": -1.502,
+        "p": 0.9334640156472103
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9836,
+        "z": -3.843,
+        "p": 0.999939141818034
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9857,
+        "z": -3.346,
+        "p": 0.9995900942777802
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9931,
+        "z": -1.624,
+        "p": 0.9477694541991096
+      }
+    ],
+    "raman.malefic_dasha|md": [
+      {
+        "hour": 0.0,
+        "rr": 0.995,
+        "z": -1.381,
+        "p": 0.9163601227247388
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9921,
+        "z": -2.166,
+        "p": 0.9848346056429569
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9887,
+        "z": -3.091,
+        "p": 0.9990018924517422
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9928,
+        "z": -1.987,
+        "p": 0.9765599461157509
+      }
+    ],
+    "raman.malefic_dasha|ad": [
+      {
+        "hour": 0.0,
+        "rr": 1.0003,
+        "z": 0.094,
+        "p": 0.4625398228428859
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0026,
+        "z": 0.707,
+        "p": 0.23993694200319832
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9974,
+        "z": -0.722,
+        "p": 0.7647733969565387
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0019,
+        "z": 0.507,
+        "p": 0.3062379226375218
+      }
+    ],
+    "raman.malefic_dasha|md_or_ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9982,
+        "z": -0.812,
+        "p": 0.7915715099796643
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9976,
+        "z": -1.097,
+        "p": 0.8635704725031388
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9933,
+        "z": -3.097,
+        "p": 0.9990214169653313
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9983,
+        "z": -0.776,
+        "p": 0.7812536773360785
+      }
+    ],
+    "raman.benefic_dasha_protective|md": [
+      {
+        "hour": 0.0,
+        "rr": 1.0043,
+        "z": 1.381,
+        "p": 0.9163601227247388
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0068,
+        "z": 2.166,
+        "p": 0.9848346056429549
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0097,
+        "z": 3.091,
+        "p": 0.9990018924517423
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0062,
+        "z": 1.987,
+        "p": 0.9765599461157509
+      }
+    ],
+    "raman.benefic_dasha_protective|ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9997,
+        "z": -0.094,
+        "p": 0.4625398228428859
+      },
+      {
+        "hour": 6.0,
+        "rr": 0.9977,
+        "z": -0.707,
+        "p": 0.23993694200319832
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0024,
+        "z": 0.722,
+        "p": 0.7647733969565387
+      },
+      {
+        "hour": 18.0,
+        "rr": 0.9983,
+        "z": -0.507,
+        "p": 0.30623792263752175
+      }
+    ],
+    "raman.benefic_dasha_protective|md_or_ad": [
+      {
+        "hour": 0.0,
+        "rr": 1.0012,
+        "z": 0.633,
+        "p": 0.7365877863314911
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0009,
+        "z": 0.505,
+        "p": 0.6932981040958737
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0021,
+        "z": 1.157,
+        "p": 0.8764507528528227
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0016,
+        "z": 0.888,
+        "p": 0.8127792214203995
+      }
+    ],
+    "raman.karaka.rahu_ketu_dasha|md": [
+      {
+        "hour": 0.0,
+        "rr": 0.9966,
+        "z": -0.501,
+        "p": 0.6919644074232281
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0045,
+        "z": 0.662,
+        "p": 0.2541054911247782
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0038,
+        "z": 0.57,
+        "p": 0.2842565775800938
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0049,
+        "z": 0.72,
+        "p": 0.23565763349959762
+      }
+    ],
+    "raman.karaka.rahu_ketu_dasha|ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9993,
+        "z": -0.102,
+        "p": 0.5405893295190991
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0082,
+        "z": 1.209,
+        "p": 0.11334588943598944
+      },
+      {
+        "hour": 12.0,
+        "rr": 0.9991,
+        "z": -0.135,
+        "p": 0.5536478486786018
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0029,
+        "z": 0.433,
+        "p": 0.33237262440386145
+      }
+    ],
+    "raman.karaka.rahu_ketu_dasha|md_or_ad": [
+      {
+        "hour": 0.0,
+        "rr": 0.9981,
+        "z": -0.429,
+        "p": 0.6659137278871319
+      },
+      {
+        "hour": 6.0,
+        "rr": 1.0026,
+        "z": 0.586,
+        "p": 0.2790478267933432
+      },
+      {
+        "hour": 12.0,
+        "rr": 1.0009,
+        "z": 0.194,
+        "p": 0.4229314254702159
+      },
+      {
+        "hour": 18.0,
+        "rr": 1.0018,
+        "z": 0.387,
+        "p": 0.34928673015744943
+      }
+    ]
+  },
+  "age_stratified_55_85": {
+    "n_persons": 55000,
+    "rule_results": [
+      {
+        "rule_id": "raman.karaka.saturn_dasha",
+        "level": "md",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 9506,
+        "expected": 9907.31,
+        "rr": 0.9595,
+        "z": -4.884,
+        "p_one_sided": 0.999999479177069
+      },
+      {
+        "rule_id": "raman.karaka.saturn_dasha",
+        "level": "ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 8219,
+        "expected": 8412.71,
+        "rr": 0.977,
+        "z": -2.304,
+        "p_one_sided": 0.9893788536514815
+      },
+      {
+        "rule_id": "raman.karaka.saturn_dasha",
+        "level": "md_or_ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 16263,
+        "expected": 16823.87,
+        "rr": 0.9667,
+        "z": -5.355,
+        "p_one_sided": 0.9999999572808143
+      },
+      {
+        "rule_id": "raman.karaka.mars_saturn_dasha",
+        "level": "md",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 11719,
+        "expected": 12414.98,
+        "rr": 0.9439,
+        "z": -7.471,
+        "p_one_sided": 0.9999999999999603
+      },
+      {
+        "rule_id": "raman.karaka.mars_saturn_dasha",
+        "level": "ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 11500,
+        "expected": 11722.19,
+        "rr": 0.981,
+        "z": -2.319,
+        "p_one_sided": 0.9897935376203921
+      },
+      {
+        "rule_id": "raman.karaka.mars_saturn_dasha",
+        "level": "md_or_ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 20736,
+        "expected": 21517.41,
+        "rr": 0.9637,
+        "z": -6.942,
+        "p_one_sided": 0.9999999999980728
+      },
+      {
+        "rule_id": "raman.malefic_dasha",
+        "level": "md",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 24488,
+        "expected": 25417.21,
+        "rr": 0.9634,
+        "z": -8.179,
+        "p_one_sided": 0.9999999999999999
+      },
+      {
+        "rule_id": "raman.malefic_dasha",
+        "level": "ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 25708,
+        "expected": 26027.04,
+        "rr": 0.9877,
+        "z": -2.727,
+        "p_one_sided": 0.9968086829803893
+      },
+      {
+        "rule_id": "raman.malefic_dasha",
+        "level": "md_or_ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 38547,
+        "expected": 39443.52,
+        "rr": 0.9773,
+        "z": -8.553,
+        "p_one_sided": 1.0
+      },
+      {
+        "rule_id": "raman.benefic_dasha_protective",
+        "level": "md",
+        "direction": "deplete",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 30512,
+        "expected": 29582.79,
+        "rr": 1.0314,
+        "z": 8.179,
+        "p_one_sided": 0.9999999999999999
+      },
+      {
+        "rule_id": "raman.benefic_dasha_protective",
+        "level": "ad",
+        "direction": "deplete",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 29292,
+        "expected": 28972.96,
+        "rr": 1.011,
+        "z": 2.727,
+        "p_one_sided": 0.9968086829803893
+      },
+      {
+        "rule_id": "raman.benefic_dasha_protective",
+        "level": "md_or_ad",
+        "direction": "deplete",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 43351,
+        "expected": 42999.27,
+        "rr": 1.0082,
+        "z": 3.665,
+        "p_one_sided": 0.9998764493371117
+      },
+      {
+        "rule_id": "raman.karaka.rahu_ketu_dasha",
+        "level": "md",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 10469,
+        "expected": 10789.34,
+        "rr": 0.9703,
+        "z": -3.588,
+        "p_one_sided": 0.9998336602783563
+      },
+      {
+        "rule_id": "raman.karaka.rahu_ketu_dasha",
+        "level": "ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 11399,
+        "expected": 11472.2,
+        "rr": 0.9936,
+        "z": -0.77,
+        "p_one_sided": 0.7792457599321587
+      },
+      {
+        "rule_id": "raman.karaka.rahu_ketu_dasha",
+        "level": "md_or_ad",
+        "direction": "enrich",
+        "null": "permutation",
+        "n": 55000,
+        "observed": 19780,
+        "expected": 20070.21,
+        "rr": 0.9855,
+        "z": -2.605,
+        "p_one_sided": 0.9954031557431512
+      }
+    ]
+  },
+  "notes": [
+    "PRIMARY null = permutation (shuffled age-at-death); controls the dasha-length endpoint bias AND the age confound.",
+    "Exposure null is descriptive only and length-biased \u2014 do not use for verdicts.",
+    "Single corpus (Wikidata) -> max ratchet status 'provisional'.",
+    "Birth times unknown; house/lord maraka rules not tested."
+  ]
+}

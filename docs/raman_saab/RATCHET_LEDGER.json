@@ -1,0 +1,1417 @@
+{
+ "runs": [
+  {
+   "run_id": "2026-07-02T-wikidata-n82589",
+   "corpus": "app/medini/data/raman_saab/death_corpus.parquet",
+   "entries": [
+    {
+     "rule_id": "raman.karaka.saturn_dasha",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 12722,
+      "expected": 12629.37,
+      "rr": 1.0073,
+      "z": 0.899,
+      "p_one_sided": 0.18430569792211876
+     },
+     "n": 82589,
+     "bonferroni_alpha": 0.0006666666666666666,
+     "citation": "Raman, How to Judge a Horoscope; EVENT_KARAKAS['death']=(Saturn,)",
+     "reason": "failed G1 at high power (N=82589); best ad RR=1.0073 (need >=1.20)",
+     "run_id": "2026-07-02T-wikidata-n82589"
+    },
+    {
+     "rule_id": "raman.karaka.mars_saturn_dasha",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 17536,
+      "expected": 17594.96,
+      "rr": 0.9966,
+      "z": -0.502,
+      "p_one_sided": 0.6922179751529438
+     },
+     "n": 82589,
+     "bonferroni_alpha": 0.0006666666666666666,
+     "citation": "EVENT_KARAKAS['death by disease']=(Saturn, Mars)",
+     "reason": "failed G1 at high power (N=82589); best ad RR=0.9966 (need >=1.20)",
+     "run_id": "2026-07-02T-wikidata-n82589"
+    },
+    {
+     "rule_id": "raman.malefic_dasha",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.malefic_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 38971,
+      "expected": 39074.45,
+      "rr": 0.9974,
+      "z": -0.722,
+      "p_one_sided": 0.7647733969565387
+     },
+     "n": 82589,
+     "bonferroni_alpha": 0.0006666666666666666,
+     "citation": "Classical natural-malefic set (BPHS)",
+     "reason": "failed G1 at high power (N=82589); best ad RR=0.9974 (need >=1.20)",
+     "run_id": "2026-07-02T-wikidata-n82589"
+    },
+    {
+     "rule_id": "raman.benefic_dasha_protective",
+     "family": "longevity",
+     "direction": "deplete",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md_or_ad",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 64674,
+      "expected": 64537.81,
+      "rr": 1.0021,
+      "z": 1.157,
+      "p_one_sided": 0.8764507528528227
+     },
+     "n": 82589,
+     "bonferroni_alpha": 0.0006666666666666666,
+     "citation": "Dual of the malefic rule (benefics as protective)",
+     "reason": "failed G1 at high power (N=82589); best md_or_ad RR=1.0021 (need <=0.83)",
+     "run_id": "2026-07-02T-wikidata-n82589"
+    },
+    {
+     "rule_id": "raman.karaka.rahu_ketu_dasha",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 82589,
+      "observed": 16274,
+      "expected": 16211.6,
+      "rr": 1.0038,
+      "z": 0.57,
+      "p_one_sided": 0.2842565775800938
+     },
+     "n": 82589,
+     "bonferroni_alpha": 0.0006666666666666666,
+     "citation": "Nodal dashas as sudden/unusual death (bayesian_rule_validation rahu_in_8th_unusual_death, ketu_in_8th_spiritual_end)",
+     "reason": "failed G1 at high power (N=82589); best md RR=1.0038 (need >=1.20)",
+     "run_id": "2026-07-02T-wikidata-n82589"
+    }
+   ]
+  },
+  {
+   "run_id": "2026-07-03T-adb-timed-n4586",
+   "corpus": "app/medini/data/raman_saab/adb_timed_death_corpus.parquet",
+   "corpus_kind": "ADB timed births (Rodden AA/A/B) via Wayback",
+   "entries": [
+    {
+     "rule_id": "raman.maraka.lords_2_7",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "candidate",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.maraka.lords_2_7",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1069,
+      "expected": 1080.62,
+      "rr": 0.9892,
+      "z": -0.443,
+      "p_one_sided": 0.6710680601870955
+     },
+     "n": 4586,
+     "bonferroni_alpha": 0.0008333333333333334,
+     "citation": "Raman, How to Judge a Horoscope (maraka adhyaya); BPHS Ch.44 (2nd & 7th lords as marakas)",
+     "reason": "underpowered; inconclusive",
+     "run_id": "2026-07-03T-adb-timed-n4586"
+    },
+    {
+     "rule_id": "raman.maraka.lord_8",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "candidate",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.maraka.lord_8",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 573,
+      "expected": 580.65,
+      "rr": 0.9868,
+      "z": -0.373,
+      "p_one_sided": 0.6455615450604358
+     },
+     "n": 4586,
+     "bonferroni_alpha": 0.0008333333333333334,
+     "citation": "8th lord as ayus lord; its dasha as a mortality window",
+     "reason": "underpowered; inconclusive",
+     "run_id": "2026-07-03T-adb-timed-n4586"
+    },
+    {
+     "rule_id": "raman.maraka.lords_2_7_8",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "candidate",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.maraka.lords_2_7_8",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1561,
+      "expected": 1573.84,
+      "rr": 0.9918,
+      "z": -0.439,
+      "p_one_sided": 0.6695167905840002
+     },
+     "n": 4586,
+     "bonferroni_alpha": 0.0008333333333333334,
+     "citation": "Union of maraka lords and 8th lord",
+     "reason": "underpowered; inconclusive",
+     "run_id": "2026-07-03T-adb-timed-n4586"
+    },
+    {
+     "rule_id": "raman.maraka.saturn_as_maraka",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "candidate",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "rule_id": "raman.maraka.saturn_as_maraka",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 1625,
+      "observed": 477,
+      "expected": 498.06,
+      "rr": 0.9577,
+      "z": -1.164,
+      "p_one_sided": 0.8778092008262443
+     },
+     "n": 4586,
+     "bonferroni_alpha": 0.0008333333333333334,
+     "citation": "Raman/classical: 'Saturn as a maraka lord kills without compunction' \u2014 Saturn's dasha in charts where Saturn rules 2H or 7H",
+     "reason": "underpowered; inconclusive",
+     "run_id": "2026-07-03T-adb-timed-n4586"
+    }
+   ]
+  },
+  {
+   "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091",
+   "entries": [
+    {
+     "rule_id": "raman.triple_lock.leg1_maraka",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "power_at_threshold": 1.0
+     },
+     "best_result": {
+      "rr": 0.9779,
+      "z": -0.881,
+      "p_one_sided": 0.8107681571525058,
+      "observed": 826,
+      "expected": 844.71
+     },
+     "n": 2091,
+     "alpha": 0.0025,
+     "rr_threshold": 1.2,
+     "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=0.9779",
+     "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+    },
+    {
+     "rule_id": "raman.triple_lock.leg2_gochara",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "power_at_threshold": 1.0
+     },
+     "best_result": {
+      "rr": 1.0198,
+      "z": 0.717,
+      "p_one_sided": 0.2367495434005052,
+      "observed": 800,
+      "expected": 784.45
+     },
+     "n": 2091,
+     "alpha": 0.0025,
+     "rr_threshold": 1.2,
+     "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=1.0198",
+     "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+    },
+    {
+     "rule_id": "raman.triple_lock.leg3_ayurdaya",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "power_at_threshold": 1.0
+     },
+     "best_result": {
+      "rr": 1.0326,
+      "z": 1.201,
+      "p_one_sided": 0.11492471861891312,
+      "observed": 706,
+      "expected": 683.7
+     },
+     "n": 2091,
+     "alpha": 0.0025,
+     "rr_threshold": 1.2,
+     "reason": "failed G1 at adequate power (power=1.000 >= 0.9 for RR>=1.2); observed RR=1.0326",
+     "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+    },
+    {
+     "rule_id": "raman.triple_lock.triple_lock",
+     "family": "longevity",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": false,
+      "power_at_threshold": 0.9951
+     },
+     "best_result": {
+      "rr": 0.9915,
+      "z": -0.091,
+      "p_one_sided": 0.5363424063079791,
+      "observed": 102,
+      "expected": 102.87
+     },
+     "n": 2091,
+     "alpha": 0.0025,
+     "rr_threshold": 1.5,
+     "reason": "failed G1 at adequate power (power=0.995 >= 0.9 for RR>=1.5); observed RR=0.9915",
+     "run_id": "2026-07-03-triple-lock-adb-astrocrm-n2091"
+    }
+   ]
+  },
+  {
+   "run_id": "2026-07-14-astrocrm-vocation-n60540",
+   "corpus": "data/holos/vocation_corpus.parquet",
+   "corpus_kind": "ASTROCRM timed births (Rodden AA/A/B) + Astro-Databank vocation/eminence labels",
+   "n": 60540,
+   "primary_null": "birth-decade-stratified label permutation",
+   "validity": {
+    "null_z_mean": 0.015,
+    "null_z_sd": 0.976,
+    "planted_rr120_recovered": 1.1992,
+    "planted_z": 19.022
+   },
+   "entries": [
+    {
+     "rule_id": "raman.karaka_vocation.voc_sports_mars",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 8703,
+      "observed": 5829.0,
+      "expected": 5821.44,
+      "rr": 1.0013,
+      "z": 0.192,
+      "p_one_sided": 0.42374419545230757
+     },
+     "n": 8703,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0013 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_military_mars",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 3770,
+      "observed": 2563.0,
+      "expected": 2518.17,
+      "rr": 1.0178,
+      "z": 1.642,
+      "p_one_sided": 0.050332175952702576
+     },
+     "n": 3770,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0178 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_medical_mars",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 2090,
+      "observed": 1384.0,
+      "expected": 1388.32,
+      "rr": 0.9969,
+      "z": -0.209,
+      "p_one_sided": 0.5826115855463336
+     },
+     "n": 2090,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.9969 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_writers_mercury",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 13191,
+      "observed": 8563.0,
+      "expected": 8539.46,
+      "rr": 1.0028,
+      "z": 0.491,
+      "p_one_sided": 0.31154388941802175
+     },
+     "n": 13191,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0028 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_science_mercury",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 2901,
+      "observed": 1912.0,
+      "expected": 1880.62,
+      "rr": 1.0167,
+      "z": 1.285,
+      "p_one_sided": 0.09933289272080577
+     },
+     "n": 2901,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0167 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_business_mercury",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 4605,
+      "observed": 3005.0,
+      "expected": 2980.15,
+      "rr": 1.0083,
+      "z": 0.801,
+      "p_one_sided": 0.21156320090227115
+     },
+     "n": 4605,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0083 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_education_jupiter",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 5209,
+      "observed": 3707.0,
+      "expected": 3747.52,
+      "rr": 0.9892,
+      "z": -1.322,
+      "p_one_sided": 0.9068410111935699
+     },
+     "n": 5209,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.9892 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_law_jupiter",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 2098,
+      "observed": 1498.0,
+      "expected": 1509.13,
+      "rr": 0.9926,
+      "z": -0.552,
+      "p_one_sided": 0.7096349028159487
+     },
+     "n": 2098,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.9926 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_religion_jupiter",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 1337,
+      "observed": 938.0,
+      "expected": 960.85,
+      "rr": 0.9762,
+      "z": -1.413,
+      "p_one_sided": 0.9211620373117186
+     },
+     "n": 1337,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.9762 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_entertainment_venus",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 18775,
+      "observed": 12254.0,
+      "expected": 12202.48,
+      "rr": 1.0042,
+      "z": 0.975,
+      "p_one_sided": 0.1647593638138931
+     },
+     "n": 18775,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=1.0042 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_art_venus",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 3667,
+      "observed": 2320.0,
+      "expected": 2355.32,
+      "rr": 0.985,
+      "z": -1.268,
+      "p_one_sided": 0.8976094369945067
+     },
+     "n": 3667,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.985 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.karaka_vocation.voc_politics_sun",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 7798,
+      "observed": 4684.0,
+      "expected": 4740.87,
+      "rr": 0.988,
+      "z": -1.423,
+      "p_one_sided": 0.9226104451797068
+     },
+     "n": 7798,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Raman, How to Judge a Horoscope; classical karaka significators",
+     "reason": "failed G1 at power (N=60540); RR=0.988 (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.eminence_yoga.pmp",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 4214,
+      "observed": 1455.0,
+      "expected": 1418.04,
+      "rr": 1.0261,
+      "z": 1.268,
+      "p_one_sided": 0.10235430969812895
+     },
+     "n": 4214,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "BPHS Pancha-Mahapurusha/Raja yogas; yoga_library increments 34-38",
+     "reason": "failed G1 at power; RR=1.0261 among top-5% eminent (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.eminence_yoga.raja",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 4214,
+      "observed": 2886.0,
+      "expected": 2888.0,
+      "rr": 0.9993,
+      "z": -0.069,
+      "p_one_sided": 0.527628866877504
+     },
+     "n": 4214,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "BPHS Pancha-Mahapurusha/Raja yogas; yoga_library increments 34-38",
+     "reason": "failed G1 at power; RR=0.9993 among top-5% eminent (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.eminence_yoga.tenth_lord_strong",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 4214,
+      "observed": 1799.0,
+      "expected": 1789.12,
+      "rr": 1.0055,
+      "z": 0.321,
+      "p_one_sided": 0.3742081067484767
+     },
+     "n": 4214,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "BPHS Pancha-Mahapurusha/Raja yogas; yoga_library increments 34-38",
+     "reason": "failed G1 at power; RR=1.0055 among top-5% eminent (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "raman.eminence_yoga.eminence_union",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "natal",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 4214,
+      "observed": 3711.0,
+      "expected": 3681.14,
+      "rr": 1.0081,
+      "z": 1.443,
+      "p_one_sided": 0.07453113674058398
+     },
+     "n": 4214,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "BPHS Pancha-Mahapurusha/Raja yogas; yoga_library increments 34-38",
+     "reason": "failed G1 at power; RR=1.0081 among top-5% eminent (need >=1.20)",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "gauquelin.mars_plus_zone.eminent_sports",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "mundane",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 2084,
+      "observed": 344.0,
+      "expected": 356.85,
+      "rr": 0.964,
+      "z": -0.769,
+      "p_one_sided": 0.7790198549603264
+     },
+     "n": 2084,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Gauquelin Mars-effect (mundane plus-zones, houses 12/9)",
+     "reason": "failed G1 at power; RR=0.964 (need >=1.20); wrong direction",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "gauquelin.mars_plus_zone.eminent_military",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "mundane",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 225,
+      "observed": 37.0,
+      "expected": 37.98,
+      "rr": 0.9742,
+      "z": -0.175,
+      "p_one_sided": 0.5696045278116473
+     },
+     "n": 225,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Gauquelin Mars-effect (mundane plus-zones, houses 12/9)",
+     "reason": "failed G1 at power; RR=0.9742 (need >=1.20); wrong direction",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    },
+    {
+     "rule_id": "gauquelin.mars_plus_zone.eminent_sports_or_military",
+     "family": "vocation",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "level": "mundane",
+      "direction": "enrich",
+      "null": "stratified_permutation",
+      "n": 2257,
+      "observed": 369.0,
+      "expected": 385.93,
+      "rr": 0.9561,
+      "z": -0.973,
+      "p_one_sided": 0.8348359098849505
+     },
+     "n": 2257,
+     "bonferroni_alpha": 0.002631578947368421,
+     "citation": "Gauquelin Mars-effect (mundane plus-zones, houses 12/9)",
+     "reason": "failed G1 at power; RR=0.9561 (need >=1.20); wrong direction",
+     "run_id": "2026-07-14-astrocrm-vocation-n60540"
+    }
+   ]
+  },
+  {
+   "run_id": "2026-08-19-personality-native-profile",
+   "corpus": "data/vedastro/marriage_corpus.parquet (N=14278 AA) + data/holos/vocation_corpus.parquet (N=59983)",
+   "prereg": "docs/raman_saab/PERSONALITY_PREREG.md",
+   "verdict_doc": "docs/ml_runs/raman_saab_personality_VERDICT.md",
+   "validity": {
+    "null_calibration": {
+     "reps": 300,
+     "z_mean": 0.053,
+     "z_sd": 1.028
+    },
+    "planted_rr120": {
+     "target_rr": 1.2,
+     "base_rate": 0.4793,
+     "n_label": 3419,
+     "rr": 1.1985,
+     "z": 12.812,
+     "p_one_sided": 7.043896494802074e-38
+    }
+   },
+   "entries": [
+    {
+     "rule_id": "personality.relationship.venus_wellplaced",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "marriage_intact",
+      "null": "stratified_permutation",
+      "n": 14278,
+      "n_label": 10859,
+      "rr": 0.9971,
+      "z": -0.607,
+      "p_one_sided": 0.7280360751316031
+     },
+     "continuous": {
+      "n_intact": 10859,
+      "n_dissolved": 3419,
+      "mean_intact": 55.733,
+      "mean_dissolved": 55.588,
+      "mean_diff": 0.145,
+      "welch_t": 0.615,
+      "welch_p": 0.5387059117170796,
+      "mannwhitney_p": 0.39131961761096135,
+      "perm_null_p_two_sided": 0.505,
+      "cohens_d": 0.0121
+     },
+     "n": 14278,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile.py relationship style (Venus well_placed); Raman, How to Judge a Horoscope",
+     "reason": "failed G1 at power (N=14278 AA); Venus-well->intact RR=0.9971 (need >=1.20); continuous d=0.0121",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_sports",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_sports",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 8702,
+      "rr": 1.0087,
+      "z": 0.824,
+      "p_one_sided": 0.20505758023516668
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_sports",
+     "reason": "failed G1 at power; RR=1.0087 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_military",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_military",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 3770,
+      "rr": 0.9834,
+      "z": -0.979,
+      "p_one_sided": 0.836197321152421
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_military",
+     "reason": "failed G1 at power; RR=0.9834 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mars_voc_medical",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_medical",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2090,
+      "rr": 1.0081,
+      "z": 0.351,
+      "p_one_sided": 0.36264761842560256
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mars well_placed) -> voc_medical",
+     "reason": "failed G1 at power; RR=1.0081 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_writers",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_writers",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 13189,
+      "rr": 0.9967,
+      "z": -0.248,
+      "p_one_sided": 0.5979737600162623
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_writers",
+     "reason": "failed G1 at power; RR=0.9967 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_science",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_science",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2899,
+      "rr": 0.9497,
+      "z": -1.624,
+      "p_one_sided": 0.9477695192444755
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_science",
+     "reason": "failed G1 at power; RR=0.9497 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.mercury_voc_business",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_business",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 4605,
+      "rr": 1.0117,
+      "z": 0.468,
+      "p_one_sided": 0.319993133345752
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Mercury well_placed) -> voc_business",
+     "reason": "failed G1 at power; RR=1.0117 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_education",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_education",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 5209,
+      "rr": 0.997,
+      "z": -0.215,
+      "p_one_sided": 0.5849590301519768
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_education",
+     "reason": "failed G1 at power; RR=0.9970 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_law",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_law",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 2098,
+      "rr": 0.9728,
+      "z": -1.183,
+      "p_one_sided": 0.8815617628496973
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_law",
+     "reason": "failed G1 at power; RR=0.9728 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.jupiter_voc_religion",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_religion",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 1337,
+      "rr": 1.0036,
+      "z": 0.126,
+      "p_one_sided": 0.4498382910073434
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Jupiter well_placed) -> voc_religion",
+     "reason": "failed G1 at power; RR=1.0036 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.venus_voc_entertainment",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_entertainment",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 18766,
+      "rr": 0.9916,
+      "z": -1.349,
+      "p_one_sided": 0.9113524316060841
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Venus well_placed) -> voc_entertainment",
+     "reason": "failed G1 at power; RR=0.9916 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.venus_voc_art",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_art",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 3668,
+      "rr": 1.0039,
+      "z": 0.231,
+      "p_one_sided": 0.4085634800311268
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Venus well_placed) -> voc_art",
+     "reason": "failed G1 at power; RR=1.0039 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    },
+    {
+     "rule_id": "personality.vocation.sun_voc_politics",
+     "family": "personality",
+     "direction": "enrich",
+     "from_status": "candidate",
+     "to_status": "refuted",
+     "gate": {
+      "G1": false,
+      "G2_replication": null,
+      "G3": null,
+      "G4": null
+     },
+     "best_result": {
+      "outcome": "voc_politics",
+      "null": "stratified_permutation",
+      "n": 59983,
+      "n_group": 7798,
+      "rr": 0.9951,
+      "z": -0.398,
+      "p_one_sided": 0.6545233933067781
+     },
+     "n": 59983,
+     "bonferroni_alpha": 0.0038461538461538464,
+     "citation": "native_profile predictor (Sun well_placed) -> voc_politics",
+     "reason": "failed G1 at power; RR=0.9951 (need >=1.20)",
+     "run_id": "2026-08-19-personality-native-profile"
+    }
+   ]
+  }
+ ],
+ "run4": [
+  {
+   "rule_id": "raman.composite.as_practiced_v1",
+   "family": "longevity",
+   "run_id": "2026-07-03T-run4-raman-frame-n2091",
+   "from_status": "candidate",
+   "to_status": "refuted",
+   "gate": {
+    "preflight_shuffled_pairing": true,
+    "P1_top_decile": {
+     "rr": 1.0045,
+     "threshold": 1.25,
+     "pass": false,
+     "p": 0.47455105088383837
+    },
+    "P2_mean_percentile": {
+     "mean": 0.5062,
+     "threshold": 0.53,
+     "pass": false,
+     "p": 0.16267681400185863
+    },
+    "P3_band_kappa": {
+     "kappa": 0.0145,
+     "threshold": 0.05,
+     "pass": false,
+     "p": 0.22954091816367264
+    },
+    "G2_replication": false
+   },
+   "n": 2091,
+   "fidelity_prior": "PARTIAL (docs/raman_saab/FIDELITY_REPORT.md): golden-set median death-window percentile 21% vs 50% chance; did NOT generalize (population P2 = 0.5062).",
+   "weights_sha256": "459ff1dfeba8a17bd2a94524657e276069fdfd234c99ff595931654b15a4fa41",
+   "citation": "Raman, Notable Horoscopes (archive.org NotableHoroscopesBVR) \u2014 mechanisms cited per-weight in raman_method.RAMAN_WEIGHTS",
+   "reason": "All three pre-registered primaries null at N=2,091 (>= min 1,500): RR 1.0045 (need >=1.25), mean pct 0.5062 (need >=0.53), kappa 0.0145 (need >=0.05). Refutes the encoded composite at its demonstrated fidelity level; the un-encodable intuitive residue is unfalsifiable by construction (stated in prereg, not post-hoc).",
+   "prereg": "docs/raman_saab/RUN4_PREREG.md"
+  }
+ ],
+ "run5": [
+  {
+   "rule_id": "raman.composite.as_practiced_v2",
+   "family": "longevity",
+   "run_id": "2026-07-03T-run5-heldout-gated-n2091",
+   "from_status": "candidate",
+   "to_status": "refuted",
+   "gate": {
+    "heldout_HG1_median": 0.123,
+    "heldout_HG1_pass": true,
+    "heldout_HG2_frac_below_50": 0.625,
+    "heldout_HG2_pass": false,
+    "heldout_HG3_killer_rate": 0.62,
+    "preflight_shuffled_pairing": true,
+    "P1_top_decile": {
+     "rr": 0.9675,
+     "threshold": 1.25,
+     "pass": false,
+     "p": 0.6770969990820295
+    },
+    "P2_mean_percentile": {
+     "mean": 0.495,
+     "threshold": 0.53,
+     "pass": false,
+     "p": 0.7843071849472785
+    },
+    "P3_band_kappa": {
+     "kappa": -0.0234,
+     "threshold": 0.05,
+     "pass": false,
+     "p": 0.9560878243512974
+    },
+    "G2_replication": false
+   },
+   "n": 2091,
+   "prereg": "docs/raman_saab/RUN5_PREREG.md",
+   "weights_sha256": "c4faf677b193f70ddac57f22937b64337ed7434a9ba4a697689fe8088445616d",
+   "reason": "All three primaries null at N=2,091 despite the encoder PASSING the held-out fidelity gate on Raman's own unseen charts (median death-window percentile 0.123 in-book vs 0.495 = chance on real timed deaths). The audit-corrected, treatise-complete, held-out-validated composite does not transfer beyond the casebook: the coherence is a property of the literature, not of the population."
+  }
+ ]
+}

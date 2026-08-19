@@ -1,0 +1,568 @@
+{
+  "corpus": "app/medini/data/raman_saab/adb_timed_death_corpus.parquet",
+  "n_persons": 4586,
+  "corpus_kind": "ADB timed births (Rodden AA/A/B) via Wayback",
+  "perm_samples": 1000,
+  "n_chart_rule_tests": 12,
+  "bonferroni_alpha": 0.0008333333333333334,
+  "chart_rule_results": [
+    {
+      "rule_id": "raman.maraka.lords_2_7",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1069,
+      "expected": 1080.62,
+      "rr": 0.9892,
+      "z": -0.443,
+      "p_one_sided": 0.6710680601870955
+    },
+    {
+      "rule_id": "raman.maraka.lords_2_7",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 993,
+      "expected": 1034.36,
+      "rr": 0.96,
+      "z": -1.488,
+      "p_one_sided": 0.9316634835350018
+    },
+    {
+      "rule_id": "raman.maraka.lords_2_7",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1792,
+      "expected": 1840.13,
+      "rr": 0.9738,
+      "z": -1.535,
+      "p_one_sided": 0.9375735494624532
+    },
+    {
+      "rule_id": "raman.maraka.lord_8",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 573,
+      "expected": 580.65,
+      "rr": 0.9868,
+      "z": -0.373,
+      "p_one_sided": 0.6455615450604358
+    },
+    {
+      "rule_id": "raman.maraka.lord_8",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 546,
+      "expected": 566.46,
+      "rr": 0.9639,
+      "z": -0.928,
+      "p_one_sided": 0.8232274300667253
+    },
+    {
+      "rule_id": "raman.maraka.lord_8",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1047,
+      "expected": 1066.33,
+      "rr": 0.9819,
+      "z": -0.708,
+      "p_one_sided": 0.7604404040975413
+    },
+    {
+      "rule_id": "raman.maraka.lords_2_7_8",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1561,
+      "expected": 1573.84,
+      "rr": 0.9918,
+      "z": -0.439,
+      "p_one_sided": 0.6695167905840002
+    },
+    {
+      "rule_id": "raman.maraka.lords_2_7_8",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1475,
+      "expected": 1524.52,
+      "rr": 0.9675,
+      "z": -1.578,
+      "p_one_sided": 0.9426721977439004
+    },
+    {
+      "rule_id": "raman.maraka.lords_2_7_8",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 2488,
+      "expected": 2540.0,
+      "rr": 0.9795,
+      "z": -1.623,
+      "p_one_sided": 0.9477265161314017
+    },
+    {
+      "rule_id": "raman.maraka.saturn_as_maraka",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 1625,
+      "observed": 274,
+      "expected": 290.52,
+      "rr": 0.9431,
+      "z": -1.154,
+      "p_one_sided": 0.8756495110308737
+    },
+    {
+      "rule_id": "raman.maraka.saturn_as_maraka",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 1625,
+      "observed": 238,
+      "expected": 251.32,
+      "rr": 0.947,
+      "z": -0.916,
+      "p_one_sided": 0.8202269519816425
+    },
+    {
+      "rule_id": "raman.maraka.saturn_as_maraka",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 1625,
+      "observed": 477,
+      "expected": 498.06,
+      "rr": 0.9577,
+      "z": -1.164,
+      "p_one_sided": 0.8778092008262443
+    }
+  ],
+  "fixed_rule_replication": [
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 795,
+      "expected": 823.63,
+      "rr": 0.9652,
+      "z": -1.191,
+      "p_one_sided": 0.8832494408679066
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 679,
+      "expected": 711.41,
+      "rr": 0.9544,
+      "z": -1.326,
+      "p_one_sided": 0.9075572679635993
+    },
+    {
+      "rule_id": "raman.karaka.saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1361,
+      "expected": 1409.36,
+      "rr": 0.9657,
+      "z": -1.591,
+      "p_one_sided": 0.944230795130417
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1014,
+      "expected": 1040.21,
+      "rr": 0.9748,
+      "z": -0.967,
+      "p_one_sided": 0.8331739054887864
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 952,
+      "expected": 988.13,
+      "rr": 0.9634,
+      "z": -1.3,
+      "p_one_sided": 0.9031922971363606
+    },
+    {
+      "rule_id": "raman.karaka.mars_saturn_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1763,
+      "expected": 1806.79,
+      "rr": 0.9758,
+      "z": -1.344,
+      "p_one_sided": 0.9105502242608957
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 2166,
+      "expected": 2141.65,
+      "rr": 1.0114,
+      "z": 0.741,
+      "p_one_sided": 0.2293454065655865
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 2142,
+      "expected": 2177.09,
+      "rr": 0.9839,
+      "z": -1.039,
+      "p_one_sided": 0.8505084197619877
+    },
+    {
+      "rule_id": "raman.malefic_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 3279,
+      "expected": 3304.21,
+      "rr": 0.9924,
+      "z": -0.836,
+      "p_one_sided": 0.7984324281234927
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 2420,
+      "expected": 2444.35,
+      "rr": 0.99,
+      "z": -0.741,
+      "p_one_sided": 0.2293454065655865
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "ad",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 2444,
+      "expected": 2408.91,
+      "rr": 1.0146,
+      "z": 1.039,
+      "p_one_sided": 0.8505084197619908
+    },
+    {
+      "rule_id": "raman.benefic_dasha_protective",
+      "level": "md_or_ad",
+      "direction": "deplete",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 3557,
+      "expected": 3571.48,
+      "rr": 0.9959,
+      "z": -0.52,
+      "p_one_sided": 0.3016361949627726
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 954,
+      "expected": 920.33,
+      "rr": 1.0366,
+      "z": 1.283,
+      "p_one_sided": 0.09979042669725924
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 975,
+      "expected": 952.89,
+      "rr": 1.0232,
+      "z": 0.806,
+      "p_one_sided": 0.2101688612248328
+    },
+    {
+      "rule_id": "raman.karaka.rahu_ketu_dasha",
+      "level": "md_or_ad",
+      "direction": "enrich",
+      "null": "permutation",
+      "n": 4586,
+      "observed": 1711,
+      "expected": 1684.84,
+      "rr": 1.0155,
+      "z": 0.81,
+      "p_one_sided": 0.20899169219315533
+    }
+  ],
+  "lord_results": [
+    {
+      "lord": "Jupiter",
+      "level": "md",
+      "null": "permutation",
+      "observed": 640,
+      "expected": 633.21,
+      "rr": 1.0107,
+      "z": 0.315
+    },
+    {
+      "lord": "Ketu",
+      "level": "md",
+      "null": "permutation",
+      "observed": 337,
+      "expected": 323.11,
+      "rr": 1.043,
+      "z": 0.831
+    },
+    {
+      "lord": "Mars",
+      "level": "md",
+      "null": "permutation",
+      "observed": 219,
+      "expected": 216.57,
+      "rr": 1.0112,
+      "z": 0.176
+    },
+    {
+      "lord": "Mercury",
+      "level": "md",
+      "null": "permutation",
+      "observed": 798,
+      "expected": 781.7,
+      "rr": 1.0208,
+      "z": 0.702
+    },
+    {
+      "lord": "Moon",
+      "level": "md",
+      "null": "permutation",
+      "observed": 277,
+      "expected": 301.25,
+      "rr": 0.9195,
+      "z": -1.532
+    },
+    {
+      "lord": "Rahu",
+      "level": "md",
+      "null": "permutation",
+      "observed": 617,
+      "expected": 597.22,
+      "rr": 1.0331,
+      "z": 0.95
+    },
+    {
+      "lord": "Saturn",
+      "level": "md",
+      "null": "permutation",
+      "observed": 795,
+      "expected": 823.63,
+      "rr": 0.9652,
+      "z": -1.191
+    },
+    {
+      "lord": "Sun",
+      "level": "md",
+      "null": "permutation",
+      "observed": 198,
+      "expected": 181.12,
+      "rr": 1.0932,
+      "z": 1.323
+    },
+    {
+      "lord": "Venus",
+      "level": "md",
+      "null": "permutation",
+      "observed": 705,
+      "expected": 728.19,
+      "rr": 0.9682,
+      "z": -1.038
+    },
+    {
+      "lord": "Jupiter",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 603,
+      "expected": 603.26,
+      "rr": 0.9996,
+      "z": -0.011
+    },
+    {
+      "lord": "Ketu",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 251,
+      "expected": 260.88,
+      "rr": 0.9621,
+      "z": -0.631
+    },
+    {
+      "lord": "Mars",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 273,
+      "expected": 276.72,
+      "rr": 0.9865,
+      "z": -0.231
+    },
+    {
+      "lord": "Mercury",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 648,
+      "expected": 623.16,
+      "rr": 1.0399,
+      "z": 1.074
+    },
+    {
+      "lord": "Moon",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 410,
+      "expected": 393.48,
+      "rr": 1.042,
+      "z": 0.872
+    },
+    {
+      "lord": "Rahu",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 724,
+      "expected": 692.02,
+      "rr": 1.0462,
+      "z": 1.323
+    },
+    {
+      "lord": "Saturn",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 679,
+      "expected": 711.41,
+      "rr": 0.9544,
+      "z": -1.326
+    },
+    {
+      "lord": "Sun",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 215,
+      "expected": 236.06,
+      "rr": 0.9108,
+      "z": -1.409
+    },
+    {
+      "lord": "Venus",
+      "level": "ad",
+      "null": "permutation",
+      "observed": 783,
+      "expected": 789.02,
+      "rr": 0.9924,
+      "z": -0.236
+    }
+  ],
+  "natal_8h_longevity": [
+    {
+      "planet": "Saturn",
+      "n_in_8h": 121,
+      "n_rest": 1335,
+      "mean_age_in_8h": 71.96,
+      "mean_age_rest": 69.55,
+      "delta_years": 2.41,
+      "z_two_sided": 1.63,
+      "p_two_sided": 0.10311845324999093
+    },
+    {
+      "planet": "Mars",
+      "n_in_8h": 113,
+      "n_rest": 1343,
+      "mean_age_in_8h": 69.96,
+      "mean_age_rest": 69.73,
+      "delta_years": 0.22,
+      "z_two_sided": 0.121,
+      "p_two_sided": 0.9036962641128857
+    },
+    {
+      "planet": "Rahu",
+      "n_in_8h": 107,
+      "n_rest": 1349,
+      "mean_age_in_8h": 70.07,
+      "mean_age_rest": 69.73,
+      "delta_years": 0.34,
+      "z_two_sided": 0.191,
+      "p_two_sided": 0.8484013476124351
+    },
+    {
+      "planet": "Ketu",
+      "n_in_8h": 128,
+      "n_rest": 1328,
+      "mean_age_in_8h": 69.43,
+      "mean_age_rest": 69.78,
+      "delta_years": -0.36,
+      "z_two_sided": -0.234,
+      "p_two_sided": 0.8150855552178822
+    },
+    {
+      "planet": "Jupiter",
+      "n_in_8h": 115,
+      "n_rest": 1341,
+      "mean_age_in_8h": 68.63,
+      "mean_age_rest": 69.85,
+      "delta_years": -1.22,
+      "z_two_sided": -0.807,
+      "p_two_sided": 0.41984866165811563
+    },
+    {
+      "planet": "Venus",
+      "n_in_8h": 111,
+      "n_rest": 1345,
+      "mean_age_in_8h": 70.93,
+      "mean_age_rest": 69.65,
+      "delta_years": 1.27,
+      "z_two_sided": 0.828,
+      "p_two_sided": 0.4076264476905308
+    }
+  ],
+  "notes": [
+    "PRIMARY null = permutation (shuffled age-at-death) \u2014 as in run 1.",
+    "Chart rules use per-person lord sets from the real lagna (Rodden AA/A/B birth times, ADB tz offsets incl. LMT).",
+    "natal_8h tests restricted to births <= 1900 to avoid right-truncation (late cohorts contain only young deaths).",
+    "Second, independent corpus \u2014 provides the G2 replication axis for run 1's fixed-lord rules."
+  ]
+}

@@ -1,0 +1,31 @@
+# RUN-5 pre-registered gate — committed BEFORE the held-out read-out and the
+# population evaluation. Any change to the pinned files voids the run.
+
+[freeze]
+raman_method_v2_sha256 = "e6d677419d5a4f5956967fa698d661eafd07d91c6de97688b830410fe30f3579"
+run5_weights_sha256 = "c4faf677b193f70ddac57f22937b64337ed7434a9ba4a697689fe8088445616d"
+golden_registry_sha256 = "e386f42228d981c37d18d24865176791ba7b05cc388fc7ab0818eb86f2e8836a"
+corpus_sha256 = "45c7cd38fb7d6737b850c33e47d52372653869bba4b57c6949791a9242d943ef"
+corpus = "data/raman_saab/death_corpus_run3.parquet"   # N = 2,091 (runs 3-4 corpus)
+split_seed = 20260704
+population_seed = 20260705
+perm_samples = 1000
+ayanamsa = "RAMAN"
+transits_in_primaries = false   # calibration rule outcome: gain -0.006 < +0.05
+
+[heldout_gate]
+hg1_median_max_proceed = 0.35
+hg1_median_abort = 0.45        # >= this -> ABORT, population unspent
+hg2_frac_below_50_min = 0.65
+hg3_killer_hit_min_soft = 0.70 # reported, non-gating
+
+[primaries]                     # unchanged from run 4
+alpha = 0.0033333
+p1_rr_min = 1.25
+p2_mean_min = 0.53
+p3_kappa_min = 0.05
+min_n_for_refuted = 1500
+
+[preflight]
+shuffled_pairing_abs_z_max = 3.0
+band_degeneracy_soft_flag_pct = 2.0

@@ -1,0 +1,125 @@
+{
+ "book": "htjah_vol1",
+ "chapters": [
+  {
+   "label": "1",
+   "title": "General Introduction",
+   "status": "swept",
+   "rule_count": 16,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "2",
+   "title": "Considerations in Judging a House",
+   "status": "swept",
+   "rule_count": 51,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "3",
+   "title": "Determination of Longevity",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "4",
+   "title": "Concerning the First House",
+   "status": "swept",
+   "rule_count": 21,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "5",
+   "title": "Concerning the Second House",
+   "status": "swept",
+   "rule_count": 20,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "6",
+   "title": "Concerning the Third House",
+   "status": "swept",
+   "rule_count": 14,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "7",
+   "title": "Concerning the Fourth House",
+   "status": "swept",
+   "rule_count": 16,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "8",
+   "title": "The Fifth House",
+   "status": "swept",
+   "rule_count": 27,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "9",
+   "title": "Concerning the Sixth House",
+   "status": "swept",
+   "rule_count": 21,
+   "sweep_id": "p4_t1",
+   "notes": null
+  },
+  {
+   "label": "ch5",
+   "title": "",
+   "status": "swept",
+   "rule_count": 26,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch4",
+   "title": "",
+   "status": "swept",
+   "rule_count": 105,
+   "sweep_id": "htjah_h1",
+   "notes": null
+  },
+  {
+   "label": "ch6",
+   "title": "",
+   "status": "swept",
+   "rule_count": 12,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch7",
+   "title": "",
+   "status": "swept",
+   "rule_count": 32,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch8",
+   "title": "",
+   "status": "swept",
+   "rule_count": 39,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  },
+  {
+   "label": "ch9",
+   "title": "",
+   "status": "swept",
+   "rule_count": 34,
+   "sweep_id": "htjah_deep",
+   "notes": null
+  }
+ ]
+}

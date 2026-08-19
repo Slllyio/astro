@@ -1,0 +1,18 @@
+.git
+.github
+android
+tests
+docs
+scratchpad
+.claude
+**/__pycache__
+**/*.pyc
+**/*.parquet
+# Large validation/ML data not needed to serve a reading (Dockerfile copies only
+# the compendium + schema + conflicts it actually needs at runtime).
+data/holos
+data/ml_runs
+data/raman_saab
+data/raman_doctrine/validation
+data/raman_doctrine/page_maps
+data/raman_doctrine/coverage

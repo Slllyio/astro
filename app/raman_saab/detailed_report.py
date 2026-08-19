@@ -2252,7 +2252,27 @@ class SodyaPindaRow:
     """One planet's Rasi/Graha Gunakara figures and their sum — Raman's Sodya Pinda by his own
     naming, "The sum of the Rasi figures (Rasi Pinda) and Planetary figures (Graha Pinda) will
     be the Sodya Pinda for each planet" (ASP-14:196-198). Pure re-read of
-    `ashtakavarga_pinda` (HPA-26:1130-1404)."""
+    `ashtakavarga_pinda` (HPA-26:1130-1404).
+
+    WHY THE LAST STEP IS NOT TAKEN — SETTLED 2026-08-19 against the mounted corpus, so no
+    future session re-opens it. HPA-26 §51 onward (HPA-26:1135-1404) carries the complete
+    Ashtakavarga Ayurdaya method: these very Gunakara multipliers, summed into the Sodya
+    Pinda, are then converted into a span of years. Every input is already computed here.
+    Only the conversion is missing, and it is missing ON PURPOSE, for three reasons that
+    now all have anchors:
+
+      1. RAMAN DOWNGRADES THE METHOD HIMSELF: "Ashtakavarga method is equally important.
+         But, IT DOES NOT SEEM TO BE QUITE RELIABLE. The Ashtakavarga method of longevity
+         determination has been explained in detail in our book Ashtakavarga System of
+         Prediction." (HTJAH-II:4453-4456).
+      2. PREC-4 already encodes exactly that line — Ashtakavarga never outranks the
+         Raman band.
+      3. PREC-8 is the engine's standing rule for lifespan: band, then marakas, never a
+         number. A Sodya-Pinda year count is precisely the number PREC-8 refuses.
+
+    So the figures render in full (the reader gets everything Raman computes) and stop
+    where he stops trusting them. This is a documented deliberate omission under the PRIME
+    DIRECTIVE's no-silent-approximation rule, not an unfinished feature."""
     planet: str
     rasi: int
     graha: int

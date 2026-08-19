@@ -56,3 +56,25 @@ def test_registry_slugs_coupled_to_etl_bundle():
     for b in br.BOOKS:
         if b.status == "live":
             assert b.slug in bundle_slugs, f"live book {b.tag} ({b.slug}) missing from ETL bundle"
+
+
+def test_unsplit_books_match_the_registry():
+    """A book the registry pins to ``chapter_001_full-text-unsplit.md`` must carry
+    ``never_split`` in the ETL bundle.
+
+    Its citations are line offsets into ONE continuous document, so a chapter split does
+    not merely reorganise the text — it destroys every anchor into that book and, because
+    the pinned filename is then never written, the tag resolves to nothing at all. Found
+    on a clean re-import 2026-08-19: NH split into two spurious chapters under the default
+    header regex, and every NH citation in the engine stopped resolving. HTJAH-I and
+    HTJAH-II happened to survive only because no header matched them."""
+    from app.medini.etl.import_archive_text import _CLASSICAL_BUNDLE
+    by_slug = {b.book_slug: b for b in _CLASSICAL_BUNDLE}
+    for b in br.BOOKS:
+        if b.status != "live" or b.fixed_file != "chapter_001_full-text-unsplit.md":
+            continue
+        entry = by_slug.get(b.slug)
+        assert entry is not None, f"{b.tag}: not in the ETL bundle"
+        assert entry.never_split, (
+            f"{b.tag} ({b.slug}) is pinned unsplit in the registry but the ETL bundle "
+            f"would chapter-split it — every citation into it would break on re-import")

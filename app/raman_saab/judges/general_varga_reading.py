@@ -42,16 +42,31 @@ class GeneralVargaSpec:
     citation: str
 
 
+#: CITATION ANCHOR — corrected 2026-08-19 to the pointer these four are actually admitted under.
+#:
+#: These specs previously carried per-varga anchors HPA-11:100 / :110 / :113 / :116. Three
+#: problems: (a) they contradicted `doctrine/varga_domains.py`, which cites HPA-11:195 for the
+#: same four and states the policy verbatim — "the six SHADVARGA members Raman teaches in full…
+#: cite their own HPA-11 definition lines. **The remaining divisions cite RAMAN'S OWN POINTER at
+#: HPA-11:195-201**"; (b) they appear nowhere else in the repo, and the only test on them merely
+#: asserted the string was printed; (c) judge-module cite strings are free text — `source_lock`
+#: enumerates rules, yogas, significations and lookups, so nothing checked them.
+#:
+#: The corpus is not mounted on this machine, so NEITHER anchor can be verified here. What is
+#: decidable is which one the written policy licenses, and that is the pointer: Raman names the
+#: shodasavarga scheme and defers the rest to Parashara. If a mounted corpus later shows the
+#: per-varga definition lines are real, restoring them is a one-line change (git history keeps
+#: them) — but the pointer is the honest anchor for a reading rule Raman never gave.
 _SPECS: Final[dict[int, GeneralVargaSpec]] = {
     27: GeneralVargaSpec(27, "Bhāṁśa", "general strength & weakness (bala/abala)",
-                         "RAMAN_GENERAL_PRINCIPLE", "HPA-11:100"),
+                         "RAMAN_GENERAL_PRINCIPLE", "HPA-11:195"),
     40: GeneralVargaSpec(40, "Khavedāṁśa", "auspicious & inauspicious general effects; the "
-                         "mother's-lineage karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:110"),
+                         "mother's-lineage karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:195"),
     45: GeneralVargaSpec(45, "Akṣavedāṁśa", "general character & conduct; the father's-lineage "
-                         "karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:113"),
+                         "karma (Rath)", "CLASSICAL_NONCITABLE", "HPA-11:195"),
     60: GeneralVargaSpec(60, "Ṣaṣṭyāṁśa", "all matters; the accumulated karma of past births "
                          "(Rath gives it the highest weightage)", "CLASSICAL_NONCITABLE",
-                         "HPA-11:116"),
+                         "HPA-11:195"),
 }
 
 #: The general (matterless) vargas this reader covers.

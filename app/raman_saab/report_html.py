@@ -773,6 +773,38 @@ def _themes_section(r: DetailedReport) -> str:
            'mechanism, states how strongly they converge, and names any tension with the '
            'precedence rule that resolves it. The direction of every theme is the engine&rsquo;s '
            'own house verdict, unchanged.</p>']
+    # PREC-8 order: establish the span BEFORE reading anything inside it
+    lf = getattr(ts, "longevity", None)
+    if lf is not None:
+        out.append('<h3>The span this reading sits inside</h3>')
+        out.append(f'<p class="section-sub"><i>{_esc(lf.frame)}</i></p><ul>')
+        # whole years only — a two-decimal lifespan is false precision the report bans
+        out.append(f'<li><b>Band</b> &mdash; {_esc(lf.band)}; Ayurdaya cross-check about '
+                   f'{round(lf.years)} years ({lf.ymd[0]}y {lf.ymd[1]}m {lf.ymd[2]}d)'
+                   + (f'; Balarishta {_esc(lf.balarishta)}' if lf.balarishta else '') + '.</li>')
+        if lf.span_year:
+            out.append(f'<li><b>Reach</b> &mdash; the band runs to about {lf.span_year}; the '
+                       f'furthest window this reading names is '
+                       f'{lf.reading_reaches or "none"} &mdash; '
+                       + ('inside the span.' if lf.within_span
+                          else 'OUTSIDE the span, disclosed where it appears.') + '</li>')
+        out.append('<li><b>Running period</b> &mdash; '
+                   + ('carries a maraka-tier lord.' if lf.maraka_now
+                      else 'carries no maraka-tier lord.') + '</li>')
+        out.append('</ul>')
+        if lf.maraka_windows:
+            out.append('<p class="section-sub"><b>Maraka-tier bhuktis ahead carrying the '
+                       'classical Saturn signal</b> &mdash; Raman&rsquo;s step two, after the '
+                       'band.</p>')
+            out.append('<table><thead><tr><th>Bhukti</th><th>Window</th>'
+                       '<th>Tier-score</th><th>Against the band</th></tr></thead><tbody>')
+            for bh, sp, sc, st in lf.maraka_windows:
+                out.append(f'<tr><td>{_esc(bh)}</td><td>{_esc(sp)}</td><td>{sc}</td>'
+                           f'<td>{_esc(st or "-")}</td></tr>')
+            out.append('</tbody></table>')
+        out.append(f'<p class="muted"><i>{_esc(lf.honesty)}</i></p>')
+        out.append(f'<p class="muted"><i>Citation: {_esc(lf.citation)}</i></p>')
+
     p = ts.portrait
     out.append('<h3>Executive portrait</h3><ul class="portrait">')
     if getattr(p, "identity", ""):
@@ -794,6 +826,11 @@ def _themes_section(r: DetailedReport) -> str:
     if getattr(p, "concordance_note", ""):
         out.append(f'<li><b>How far the techniques agree</b> &mdash; '
                    f'{_esc(p.concordance_note)}</li>')
+    if getattr(p, "reading_stability", ""):
+        out.append(f'<li><b>How firm is the cast moment?</b> &mdash; '
+                   f'{_esc(p.reading_stability)}</li>')
+    if getattr(p, "chara_now", ""):
+        out.append(f'<li><b>Jaimini chara dasha (walled)</b> &mdash; {_esc(p.chara_now)}</li>')
     if p.current_chapter:
         nxt = f"; {_esc(p.next_chapter)}" if p.next_chapter else ""
         out.append(f'<li><b>Current chapter</b> &mdash; {_esc(p.current_chapter)}{nxt}.</li>')
@@ -811,6 +848,11 @@ def _themes_section(r: DetailedReport) -> str:
         out.append("</ul>")
 
     out.append("<h3>Major life-themes</h3>")
+    # one constant string across every theme's DissentSummary — stated once, not twelve times
+    _mn = next((t.dissent.method_note for t in ts.themes
+                if getattr(t, "dissent", None) is not None and t.dissent.method_note), "")
+    if _mn:
+        out.append(f'<p class="section-sub"><i>On the cross-checks below: {_esc(_mn)}</i></p>')
     for t in ts.themes:
         houses = ", ".join(f"H{h}" for h in t.houses)
         dom = ", ".join(t.dominant_planets) if t.dominant_planets else "the chart"
@@ -825,6 +867,28 @@ def _themes_section(r: DetailedReport) -> str:
             out.append(f'<li><b>Within this house</b> &mdash; {facets}.</li>')
         out.append(f'<li><b>Convergence</b> &mdash; {_esc(_conv_label(t))}: '
                    f'{_esc(t.convergence_why)}</li>')
+        if getattr(t, "activation_in_span", ""):
+            out.append(f'<li><b>That window inside the span</b> &mdash; '
+                       f'{_esc(t.activation_in_span)}</li>')
+        if getattr(t, "weather_on_window", ""):
+            out.append(f'<li><b>Weather across that window</b> &mdash; '
+                       f'{_esc(t.weather_on_window)}</li>')
+        if getattr(t, "pitru_screen", ""):
+            out.append(f'<li><b>Ancestral screen (separate layer)</b> &mdash; '
+                       f'{_esc(t.pitru_screen)}</li>')
+        ds = getattr(t, "dissent", None)
+        if ds is not None:
+            out.append(f'<li><b>How settled is this?</b> &mdash; {_esc(ds.reading)}')
+            for ck in ds.checks:
+                cite = f", {_esc(ck.citation)}" if ck.citation else ""
+                indep = ("independent" if ck.independent
+                         else "not independent of the verdict")
+                out.append(f'<br><span class="muted">{_esc(ck.system)} &mdash; '
+                           f'{_esc(ck.tier)}; {_esc(ck.relation)}; {indep} '
+                           f'({_esc(ck.governing)}{cite}). {_esc(ck.note)}</span>')
+            if ds.walled_note:
+                out.append(f'<br><span class="muted">{_esc(ds.walled_note)}</span>')
+            out.append('</li>')
         c = getattr(t, "concordance", None)
         if c is not None:
             out.append(f'<li><b>Do the techniques agree?</b> &mdash; {_esc(c.reading)}')
@@ -840,6 +904,42 @@ def _themes_section(r: DetailedReport) -> str:
         for g in getattr(t, "driver_concordance", ()) or ():
             out.append(f'<li><b>{_esc(g.planet)} (force vs intent)</b> &mdash; '
                        f'{_esc(g.reading)}</li>')
+        for d in getattr(t, "divisional_checks", ()) or ():
+            out.append(f'<li><b>{_esc(d.varga)}</b> ({_esc(d.relation)}) &mdash; '
+                       f'{_esc(d.verdict)}. {_esc(d.note)}</li>')
+        av = getattr(t, "av_support", ()) or ()
+        if av:
+            out.append('<li><b>Ashtakavarga backing (in this bhava&rsquo;s own sign)</b> &mdash; '
+                       + _esc("; ".join(
+                           f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, Sodya Pinda "
+                           f"{a.sodya_pinda}) — {a.verdict}" for a in av)) + '</li>')
+        for tr in getattr(t, "transits", ()) or ():
+            out.append(f'<li><b>Transit: {_esc(tr.planet)}</b> &mdash; {_esc(tr.note)}</li>')
+        for y in getattr(t, "yogas", ()) or ():
+            rank = f"#{y.rank} " if y.rank is not None else ""
+            bits = [f'<li><b>Yoga {rank}{_esc(y.name)}</b> ({_esc(y.kind)}) &mdash; '
+                    f'{_esc(y.effect)}']
+            if y.participants:
+                bits.append(f'<br><span class="muted">participants: '
+                            f'{_esc(", ".join(y.participants))}</span>')
+            if y.strength_note:
+                bits.append(f'<br><span class="muted">strength: {_esc(y.strength_note)}</span>')
+            if y.windows:
+                tail = "" if y.ahead else " &mdash; all of them behind the reference moment"
+                bits.append(f'<br><span class="muted">operates in: '
+                            f'{_esc("; ".join(y.windows))}{tail}</span>')
+            if y.cancellation:
+                bits.append(f'<br><span class="muted">cancellation: '
+                            f'{_esc(y.cancellation)}</span>')
+            out.append("".join(bits) + "</li>")
+        k = getattr(t, "karmic_lens", None)
+        if k is not None:
+            out.append(f'<li><b>Karmic lens ({_esc(k.aspect)}, walled)</b> &mdash; '
+                       f'{_esc(k.note)}</li>')
+        dist = getattr(t, "distinctive", ()) or ()
+        if dist:
+            out.append('<li><b>How unusual is this?</b> &mdash; ' + _esc("; ".join(
+                f"{x.signification} ({x.rarity}): {x.population_note}" for x in dist[:4])) + '</li>')
         out.append(f'<li><b>Divisional (D9)</b> &mdash; {_esc(t.varga_relation)}.</li>')
         if t.activation_span:
             out.append(f'<li><b>Timing</b> &mdash; {_esc(t.activation_span)}</li>')
@@ -874,6 +974,39 @@ def _themes_section(r: DetailedReport) -> str:
                        f'<td>{_esc(g.avastha)}</td><td>{_esc(g.agreement)}</td>'
                        f'<td>{_esc(g.pattern)}</td></tr>')
         out.append('</tbody></table>')
+    if getattr(ts, "contested_themes", None):
+        out.append('<p class="section-sub"><b>Themes with a cross-check reading against the '
+                   'verdict</b> &mdash; an inventory, not a grade. The verdicts stand (none of '
+                   'these may overturn a bhava judgment); each dissent is named at its own tier '
+                   'so the reader can weigh it as Raman asks &mdash; &ldquo;all these must be '
+                   'properly weighed&rdquo; (HTJAH-I:495) &mdash; rather than count it.</p><ul>')
+        for nm, d in ts.contested_themes:
+            out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.reading)}</li>')
+        out.append('</ul>')
+    if getattr(ts, "divisional_divergences", None):
+        out.append('<p class="section-sub"><b>Divisions that read against the rasi</b> &mdash; a '
+                   'varga is the classical confirmation device, so its dissent is worth naming. '
+                   'The D1 Raman core decides and the division corroborates '
+                   '(PREC-11).</p><ul>')
+        for nm, d in ts.divisional_divergences:
+            out.append(f'<li><b>{_esc(nm)}</b> &mdash; {_esc(d.varga)} reads '
+                       f'{_esc(d.verdict)}, against the rasi verdict.</li>')
+        out.append('</ul>')
+    cal = getattr(ts, "calendar", None)
+    if cal is not None and cal.windows:
+        out.append('<h3>The weather over these years</h3>')
+        out.append(f'<p class="section-sub"><i>{_esc(cal.frame)}</i></p>')
+        out.append('<table><thead><tr><th>From</th><th>To</th><th>Scheme</th><th>Stretch</th>'
+                   '<th>What it measures</th><th>Governing</th></tr></thead><tbody>')
+        for w in cal.windows:
+            now = ' <b>(running now)</b>' if w.current else ''
+            out.append(f'<tr><td>{w.start_year}</td><td>{w.end_year}</td>'
+                       f'<td>{_esc(w.kind)}</td><td>{_esc(w.label)}{now}</td>'
+                       f'<td>{_esc(w.detail)}</td>'
+                       f'<td>{_esc(w.governing)} ({_esc(w.citation)})</td></tr>')
+        out.append('</tbody></table>')
+        out.append(f'<p class="muted"><i>{_esc(cal.honesty)}</i></p>')
+
     if getattr(ts, "contested_bhavas", None):
         out.append('<p class="section-sub"><b>Contested bhavas</b> &mdash; houses whose verdict '
                    'runs against the weight of their own testimony. The verdict stands (a bhava '
@@ -902,7 +1035,9 @@ def _themes_section(r: DetailedReport) -> str:
             now = " (now)" if ch.is_current else ""
             via = getattr(ch, "acts_through", ()) or ()
             through = f' (acting through {_esc(", ".join(via))})' if via else ""
-            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}</td><td>{_esc(ch.span)}</td>'
+            cond = f' &mdash; lord {_esc(ch.lord_condition)}' if getattr(ch, "lord_condition", "") else ''
+            cond += f'; {_esc(ch.av_seat)}' if getattr(ch, "av_seat", "") else ''
+            out.append(f'<tr><td>{_esc(ch.maha)} MD{now}{through}{cond}</td><td>{_esc(ch.span)}</td>'
                        f'<td>{_esc(ch.lean)}</td><td>{_esc(", ".join(ch.emerging) or "-")}</td>'
                        f'<td>{_esc(", ".join(ch.continuing) or "-")}</td></tr>')
         out.append("</tbody></table>")

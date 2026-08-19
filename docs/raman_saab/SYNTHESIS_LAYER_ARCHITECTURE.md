@@ -169,7 +169,7 @@ existing precedence rule (`INTERPRETATION_GUIDE['precedence']`, `interpretation_
 | B. Different levels (house vs sub-matter) | `house_dashboard_conflicts` (`:1186`): dashboard verdict ≠ bhava rollup | PREC-1 (matter judged by its dedicated reader) |
 | D. House condition vs sub-matter | `signification_tenor_split`/`TenorSplit` (`:752`) — split-status within a house | PREC-3 (the house's weakest decided matter drives the headline) |
 | E. Strength vs beneficence | `is_powerful`==True AND rollup=='afflicted' | GBB-9 note (strong house delivers its difficulty with force) |
-| F. General vs divisional | rollup ≠ `navamsa_status` (D9) | PREC-5 (navamsa modulates, does not overturn) |
+| F. General vs divisional | rollup ≠ `navamsa_status` (D9) | PREC-11 (the D1 core decides, the divisional corroborates). *Corrected from PREC-5, which governs Laghu Parashari timing bands, not divisionals.* |
 | G. Primary vs corroboration | a RAMAN-band link opposed by a CLASSICAL/AV-band `FiredInsight` | PREC-4 (Raman > classical > AV, the `detect_synthesis` sort order) |
 | H. Population vs doctrine | `CalibratedEntry.inverted_warning` / a percentile opposing the verdict | PREC-9 (the overlay may invert *confidence*, never a verdict) |
 | C. Natal promise vs timing | favourable rollup but the theme's houses `not lit` in the running period | timer doctrine (promise ≠ current activation) |
@@ -177,6 +177,36 @@ existing precedence rule (`INTERPRETATION_GUIDE['precedence']`, `interpretation_
 Every contradiction stores both poles *with their accessors*, the governing PREC-id, and a
 resolving sentence. Unresolvable ones are marked, not hidden. The archetypal case
 ("H4 afflicted" ≠ "mother afflicted") is exactly class B → PREC-1.
+
+### F.1 Cross-checks are laid on a cited ladder — and deliberately not graded
+
+Each theme also carries a `DissentSummary`: the *inventory* of every independent cross-check on
+that bhava, each placed at its own **cited** reliability tier with the PREC-id that governs it.
+
+| Cross-check | Tier | Independent? | Governing |
+|---|---|---|---|
+| the bhava's own testimony ledger | D1 core (lord / karaka / navamsa), HTJAH-I:983-991 | **No** — these are the verdict's own inputs restated by name | PREC-3 |
+| the assigned division | corroborating (the D1 core decides) | Yes | PREC-11 |
+| Ashtakavarga | lower-reliability tier, on Raman's own caveat ("equally important. But, it does not seem to be quite reliable", HTJAH-II:4453-4456) | Yes | PREC-4 |
+| the Jaimini/karmic lens | **outside the cross-checks entirely** — walled, recorded in `walled_note` | n/a | wall |
+
+**No aggregate confidence grade is produced, by design.** An earlier version scored a bhava
+*settled / qualified / seriously contested* by counting how many cross-checks dissented. That was
+invented arithmetic, and three findings already in this repo kill it:
+
+1. `docs/raman_saab/COMPARATIVE_WEIGHING.md:52-56` — head-counting influences was measured
+   against Raman's own reasoning on all seven Type-A cases and **held 0 of 7**: *"Raman does NOT
+   head-count influences."*
+2. `detailed_report.py` (HouseTestimonies) already records, with citation, that *Raman states no
+   numeric N-testimonies rule (HTJAH-I:495 says only "all these must be properly weighed")* — so
+   any 0/1/2 cutoff is exactly the class of invented threshold a doctrine review strikes out.
+3. `report_html.py` states the witnesses *are NOT independent votes: lord, karaka and navamsa are
+   the verdict's own inputs restated by name* — so the testimony ledger cannot be tallied as an
+   independent dissenter at all without double-counting the verdict.
+
+The tiers are Raman's; the arithmetic would have been ours. `contested_themes` is therefore the
+plain inventory of themes carrying **any** cross-check that reads against the verdict — no `>= 2`
+threshold — and every surface names the dissent at its tier rather than scoring it.
 
 ## G. Theme-discovery methodology
 
@@ -189,6 +219,60 @@ attach the same planet or yoga to both, the layer *discovers* (does not assert) 
 a wealth theme (H2/H11) and a career theme (H10/H2/H11) share H2 and possibly a dominant
 planet. Nabhasa/Akriti whole-chart yogas (which resolve no house — `_yoga_planets`→None) are
 rendered as **disclosed coverage-gap nodes**, never dropped or force-attached.
+
+### G.1 The span frames the reading (PREC-8)
+
+`LongevityFrame` is built FIRST and rendered first, because that is Raman's own order:
+*"first establish the band by combination, THEN fix the period by the marakas. The numeric span
+is a cross-check, never a prediction of death"* (HTJAH-II:4465-4472, PREC-8). Before this the
+synthesis named forward windows out to the 2040s without once asking whether they sat inside the
+span the engine had already computed — the band was a chapter beside the reading rather than the
+frame around it.
+
+What it does: states the band (`r.longevity_class`, harmonised label) with the ayurdaya number as
+a **cross-check**, tests every window the reading names against the span, dates each theme's own
+window at its ordinal year of life (`activation_in_span`), and names Raman's step two — the
+maraka-tier bhuktis carrying the classical Saturn signal (`r.maraka_saturn`, HTJAH-II:4846-4849)
+— **after** the band, deduplicated per bhukti and each marked inside or beyond the span. Where
+the two methods disagree (the maraka scheme runs the whole Vimshottari timeline while the
+ayurdaya stops), the disagreement is disclosed and Raman's order settles which leads.
+
+Guard: every string is held to `_FORBIDDEN_RE` by test. The 2026-08-17 decision permits timed
+indications in the classical idiom and still refuses the decree voice; longevity is the
+highest-stakes surface for that line. Rendering rounds to whole years — a two-decimal lifespan is
+false precision the report has banned since v2.
+
+### G.2 Connections name a mechanism, not a join
+
+A tie needs the same CHIEF driving graha or one theme's primary house inside the other's network.
+What changed is the note. It used to be a template ("A and B overlap at H6, tying the two areas
+together"), which restates the join and says nothing about the chart. Now a shared bhava is
+reported as one bhava in two roles (whose primary, what the other draws through), a shared graha
+carries that graha's own measured condition from `driver_concordance` (Ishta/Kashta, avastha,
+the named pattern), and every note sets the two verdicts against each other — an inversion
+(favourable one end, afflicted the other) reads as strength-and-strain, a difference of degree
+does not. Ties rank graha-before-house and no theme may hold more than `_CONN_PER_THEME` of them:
+the busiest theme has the widest network by construction, and uncapped it took four of six slots.
+
+### G.3 The weather calendar — subordinate by citation
+
+`AfflictionCalendar` joins three schemes the engine ran in full and the synthesis never consulted:
+Sade Sati phases, the MD/AD lord meeting its own **adverse** transit (`r.dasha_transit_adverse`,
+the mirror of the favourable confluence already read), and the eightfold Dasha Kakshya split.
+Forward-only; contiguous passes inside one Mahadasha merge into one stretch. Each theme's own
+window is then read against it (`weather_on_window`) — the join that was missing, since a bhukti
+grading *par excellence* while Sade Sati sits over the Moon is not the same window as one running
+clear.
+
+Subordination travels with the data, not just the section header: every window carries its
+governing rule — PREC-6 (*"transits are always secondary in importance… like catalytic agents"*,
+HTJAH-II:4679) or PREC-7 (Dasha Kakshya is *"a timing lens, never a verdict"*, ASP-12:174). A
+window can say a stretch runs rough; it can never say a bhava is afflicted.
+
+The **pitru** screen rides beside this as `pitru_screen` on the 5th and the 9th only, governed by
+PREC-12 (*non-Raman screens are a different layer, not a contradiction*). It is CLASSICAL_NONCITABLE
+(BPHS provenance), so it wears that on its face and is walled out of the cross-checks, the
+evidence links and the contradictions — tested in all three directions.
 
 ## H. Dasha synthesis methodology (the time axis)
 

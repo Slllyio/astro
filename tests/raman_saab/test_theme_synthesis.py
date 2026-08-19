@@ -561,6 +561,350 @@ class TestThemeSynthesisContract:
         for c in ts.contested_bhavas:
             assert f"H{c.house}" in note, "a contested bhava is missing from the portrait note"
 
+    def test_each_theme_reads_its_own_division(self, mainpuri, canonical):
+        """The engine casts and reads FIFTEEN vargas, each with its own verdict and citations, and
+        the roster names the division that belongs to each bhava — yet the layer consulted only the
+        D9 relation. A theme whose roster varga has a deep-read must now carry it, matched from the
+        engine's own headline text and never recomputed."""
+        for r, ts in (mainpuri, canonical):
+            heads = [h for h, _b in r.divisional]
+            by = {t.theme_id: t for t in ts.themes}
+            for tid, varga in (("wealth", 2), ("career", 10), ("children", 7), ("siblings", 3)):
+                t = by[tid]
+                own = [d for d in t.divisional_checks if d.varga.startswith(f"D-{varga} ")]
+                assert own, f"{tid}: its own D-{varga} deep-read was not consulted"
+                assert any(own[0].varga in h for h in heads), "the label is not the engine's own"
+                assert own[0].relation in ("concurs", "diverges", "reads its own matter")
+
+    def test_a_division_reading_against_the_rasi_is_disclosed(self, mainpuri):
+        """A varga is the classical confirmation device, so its dissent is the finding. On Mainpuri
+        the D-30 Trimsamsa reads health FAVOURABLE while H6 reads afflicted. The rasi verdict must
+        be untouched — a division modulates confidence, it never overturns (PREC-11: the D1
+        Raman core decides and the varga corroborates. PREC-5 governs Laghu Parashari timing
+        bands, not divisionals, and this test accepted the mis-citation as a fallback)."""
+        r, ts = mainpuri
+        assert ts.divisional_divergences, "the D-30/H6 divergence was not caught"
+        for nm, d in ts.divisional_divergences:
+            assert d.relation == "diverges"
+            assert "PREC-11" in d.note
+            theme = next(t for t in ts.themes if t.name == nm)
+            # the passthrough is intact: disclosure only
+            pf = {p.house: p for p in r.proformas}[theme.houses[0]]
+            assert theme.headline_verdict == pf.rollup
+
+    def test_divisional_checks_never_invent_a_reading(self, mainpuri, canonical):
+        """Every check quotes a verdict the engine actually printed for that division."""
+        for r, ts in (mainpuri, canonical):
+            printed = {h for h, _b in r.divisional}
+            for t in ts.themes:
+                for d in t.divisional_checks:
+                    assert any(h.startswith(d.varga) and d.verdict in h for h in printed), (
+                        f"{d.varga}: {d.verdict!r} is not a verdict the engine printed")
+
+    def test_distinctiveness_keeps_the_concordance_honest(self, mainpuri):
+        """Techniques agreeing means little when the thing agreed on is what most charts show. The
+        calibration layer already measures rarity per signification; each theme now reports it for
+        its own houses, re-read verbatim (CLAUDE.md Measured Truth)."""
+        r, ts = mainpuri
+        src = {(h, e.signification): e for h, e in r.distinctive}
+        seen = 0
+        for t in ts.themes:
+            for x in t.distinctive:
+                seen += 1
+                assert x.house in t.houses
+                e = src[(x.house, x.signification)]
+                assert x.rarity == e.rarity and x.population_note == e.note
+                assert x.verdict == e.verdict
+        assert seen, "no distinctiveness surfaced on a chart that has 22 entries"
+
+    def test_karmic_lens_is_walled_and_never_corroborates(self, mainpuri, canonical):
+        """r.soul reads poorvapunya (5th), dharma (9th) and moksha (12th) independently of the
+        Parashari verdict on the same bhavas. r.karmic.frame states the wall explicitly: nothing
+        in the Jaimini layer feeds or alters the natal verdicts. So the lens is recorded for the
+        reader, carries the wall in its own note, and must NOT enter the evidence links or the
+        convergence count — otherwise a walled layer would be quietly corroborating a verdict."""
+        for r, ts in (mainpuri, canonical):
+            core = r.soul.core
+            seen = 0
+            for t in ts.themes:
+                k = t.karmic_lens
+                if k is None:
+                    continue
+                seen += 1
+                assert k.house == t.houses[0]
+                # verbatim passthrough of the soul layer's own verdict
+                assert k.karmic_verdict == str(getattr(core, f"{k.aspect}_verdict"))
+                assert k.natal_verdict == t.headline_verdict
+                assert k.relation == ("concurs" if k.karmic_verdict == k.natal_verdict
+                                      else "differs")
+                assert "WALLED" in k.note or "walled" in k.note
+                # the wall in force: no evidence link carries the karmic reading
+                for lk in t.links:
+                    assert k.aspect not in lk.label.lower()
+            assert seen >= 2, "the karmic lens attached to fewer bhavas than the soul layer reads"
+
+    def test_karmic_difference_is_not_treated_as_a_contradiction(self, mainpuri):
+        """A walled lens differing from the rasi is NOT a contradiction to resolve — the two
+        answer different questions. It must never appear in `contradictions`, which is reserved
+        for genuine precedence conflicts inside the Parashari reading."""
+        _r, ts = mainpuri
+        for t in ts.themes:
+            k = t.karmic_lens
+            if k is None or k.relation != "differs":
+                continue
+            for c in t.contradictions:
+                assert k.aspect not in c.kind.lower()
+                assert k.aspect not in c.resolution.lower()
+
+    def test_yogas_are_read_whole_not_as_a_bare_name(self, mainpuri, canonical):
+        """A yoga IS a combination — the classical integrative unit. The engine computes it across
+        three fields (r.yogas fired it, r.yoga_deep carries participants/strength/cancellation/rank,
+        r.yoga_timing carries the periods its participants run) and the layer had been using a
+        fragment of the first. Each bearing yoga must now arrive whole, every part a passthrough."""
+        for r, ts in (mainpuri, canonical):
+            deep = {d.name: d for d in r.yoga_deep}
+            fired = {y.name: y for y in r.yogas}
+            seen = 0
+            for t in ts.themes:
+                for y in t.yogas:
+                    seen += 1
+                    assert y.name in fired, "a yoga was reported that never fired"
+                    assert y.effect == fired[y.name].effect     # the promise, verbatim
+                    d = deep.get(y.name)
+                    if d is not None:
+                        assert y.rank == d.comparison_rank
+                        assert y.strength_note == (d.strength_note or "")
+                        assert y.cancellation == (d.cancellation_note or "")
+            assert seen, "no yoga reached any theme"
+
+    def test_yoga_operating_windows_come_from_the_timing_engine(self, mainpuri):
+        """A yoga promises; the dasha of its participants is when it delivers. Every window must
+        be one r.yoga_timing actually produced for that yoga, naming that period lord."""
+        r, ts = mainpuri
+        by_name: dict[str, set[str]] = {}
+        for tm in r.yoga_timing:
+            by_name.setdefault(tm.yoga_name, set()).add(tm.planet)
+        for t in ts.themes:
+            for y in t.yogas:
+                for w in y.windows:
+                    lord = w.split()[0]
+                    assert lord in by_name.get(y.name, set()), (
+                        f"{y.name}: window {w!r} names a lord the timing engine never gave it")
+
+    def test_a_cancelled_yoga_is_never_presented_as_active(self, mainpuri, canonical):
+        """The bhanga note is carried VERBATIM rather than summarised away — a cancelled yoga
+        presented as an active promise would be the worst kind of silent overstatement."""
+        for r, ts in (mainpuri, canonical):
+            deep = {d.name: d for d in r.yoga_deep}
+            for t in ts.themes:
+                for y in t.yogas:
+                    d = deep.get(y.name)
+                    if d is not None and d.cancellation_note:
+                        assert y.cancellation == d.cancellation_note
+
+    def test_each_chapter_grades_its_own_lord(self, mainpuri, canonical):
+        """A period run by a strong, vargottama lord is not the same chapter as one run by a weak
+        one. r.md_condition grades exactly that and was never attached to the period's narrative."""
+        for r, ts in (mainpuri, canonical):
+            cond = {c.maha: c for c in r.md_condition}
+            graded = 0
+            for ch in ts.dasha_evolution:
+                mc = cond.get(ch.maha)
+                if mc is None:
+                    continue
+                graded += 1
+                assert ch.lord_condition, f"{ch.maha} chapter does not grade its own lord"
+                # `==` binds tighter than `or`, so the old one-liner passed whenever the text
+                # contained "not strong", whatever mc.strong said. Compare the arms explicitly.
+                if mc.strong:
+                    assert "strong" in ch.lord_condition
+                    assert "not strong" not in ch.lord_condition
+                else:
+                    assert "not strong" in ch.lord_condition
+                assert ("vargottama" in ch.lord_condition) == bool(mc.vargottama)
+            assert graded, "no chapter matched an md_condition row"
+
+    def test_ashtakavarga_backs_the_driver_in_the_right_sign(self, mainpuri, canonical):
+        """Ashtakavarga is an independent measurement system, and the synthesis read none of it.
+        The question is narrow: how many bindus does THIS theme's driving graha hold in the sign
+        THIS theme's bhava occupies. BavMatrixRow.bindus is indexed by sign — verified here
+        against the row's own seat_sign/seat_bindus so the indexing can never drift."""
+        for r, ts in (mainpuri, canonical):
+            bav = {row.planet: row for row in r.bav_matrix}
+            for row in r.bav_matrix:            # the indexing contract itself
+                assert row.bindus[row.seat_sign - 1] == row.seat_bindus
+            seen = 0
+            for t in ts.themes:
+                sign = ((r.chart.asc_sign - 1 + t.houses[0] - 1) % 12) + 1
+                for a in t.av_support:
+                    seen += 1
+                    assert a.sign == sign and a.house == t.houses[0]
+                    assert a.bindus == bav[a.planet].bindus[sign - 1]
+                    assert a.planet in t.dominant_planets
+                    assert a.verdict in ("well supported", "about average", "poorly supported")
+            assert seen, "no Ashtakavarga backing reached any theme"
+
+    def test_a_nodal_chapter_has_no_bindu_reading(self, mainpuri):
+        """Rahu and Ketu contribute no Ashtakavarga, so a nodal Mahadasha has no seat reading —
+        an honest absence, never a neutral verdict dressed as data."""
+        r, ts = mainpuri
+        seats = {sc.maha: sc for sc in r.av_dasha_seats}
+        for ch in ts.dasha_evolution:
+            sc = seats.get(ch.maha)
+            if sc is not None and getattr(sc, "bindus", None) is None:
+                assert "no bindu reading" in ch.av_seat
+                assert "adverse" not in ch.av_seat and "auspicious" not in ch.av_seat
+
+    def test_chapter_carries_three_independent_readings(self, mainpuri):
+        """A chapter now states its Ishta/Kashta lean, its lord's own condition, AND Ashtakavarga's
+        seat verdict — three systems that can disagree. On Mainpuri the Saturn Mahadasha reads
+        `good` by lean with a strong lord while Ashtakavarga reads the seat adverse; the point of
+        the integration is that the reader sees all three, not a blended score."""
+        r, ts = mainpuri
+        cur = next(c for c in ts.dasha_evolution if c.is_current)
+        assert cur.lean and cur.lord_condition and cur.av_seat
+        seats = {sc.maha: sc for sc in r.av_dasha_seats}
+        assert seats[cur.maha].read in cur.av_seat      # verbatim, not re-derived
+
+    def test_transits_stay_subordinate(self, mainpuri, canonical):
+        """Raman: transits are catalytic, all conclusions rest primarily on Dasa-vichara
+        (HTJAH-II:4679-4687). A transit note reports the engine's own net_good (which already
+        applies vedha) and must never become a direction the theme carries."""
+        for r, ts in (mainpuri, canonical):
+            rows = {(g.planet, g.house_from_moon) for g in r.gochara}
+            for t in ts.themes:
+                for tr in t.transits:
+                    assert (tr.planet, tr.house_from_moon) in rows
+                    assert "catalytic" in tr.note        # the subordination is stated every time
+                    # and it never enters the direction-bearing evidence links
+                    for lk in t.links:
+                        if lk.axis == "transit":
+                            assert lk.lean in ("neutral", "mixed")
+
+    def test_report_survives_a_synthesis_failure(self, monkeypatch):
+        """REGRESSION. build_detailed_report wraps the synthesis in try/except precisely so a
+        sparse or Track-B chart degrades to the 'not available' fallback instead of taking the
+        whole report down. A debug-log line added to that handler referenced a `logger` the module
+        never defined — so the handler ITSELF raised NameError, converting graceful degradation
+        into a crash. It only fires when synthesis raises, which no fixture chart does, so the
+        suite stayed green and it shipped. This test exercises the failure path directly."""
+        from app.raman_saab import detailed_report as dr
+        import app.raman_saab.theme_synthesis as ths
+
+        def _boom(_r):
+            raise RuntimeError("synthesis blew up")
+
+        monkeypatch.setattr(ths, "build_theme_synthesis", _boom)
+        rep = dr.build_detailed_report(_CANONICAL, on=_ON)     # must NOT raise
+        assert rep is not None
+        assert rep.themes is None                              # degraded, as designed
+        assert "not available" in dr.to_markdown(rep)          # and the fallback prose renders
+
+    def test_the_reading_states_how_firm_the_cast_moment_is(self, mainpuri):
+        """Every verdict rests on the cast moment, so its stability qualifies all of them. The
+        engine measures it (r.rect_confidence) and the synthesis never said it."""
+        r, ts = mainpuri
+        st = ts.portrait.reading_stability
+        assert st and r.rect_confidence.label in st
+        assert str(r.rect_confidence.stable_count) in st
+
+    def test_protections_carry_their_counterweight(self, mainpuri, canonical):
+        """The Arishta chapter's cited protections are surfaced — and so is any UNCANCELLED
+        debility, because a protection list without its counterweight is selective."""
+        for r, ts in (mainpuri, canonical):
+            pf = ts.portrait.protective_factors
+            for prot in r.arishta.protections:
+                assert any(str(prot) in x for x in pf), "a cited protection went unreported"
+            for deb in r.arishta.uncancelled_debilities:
+                assert any(str(deb) in x for x in pf), "an uncancelled debility was hidden"
+
+    def test_chara_dasha_is_walled_like_the_karmic_lens(self, mainpuri):
+        """The Jaimini chara dasha runs beside the Vimshottari chapter but is never a second
+        timing authority — the wall must be stated wherever it appears."""
+        _r, ts = mainpuri
+        if ts.portrait.chara_now:
+            assert "walled" in ts.portrait.chara_now
+
+    def test_cross_checks_sit_on_the_cited_ladder_not_on_a_tally(self, mainpuri, canonical):
+        """Every cross-check is placed at its own CITED reliability tier and none is scored.
+
+        Astronomical/doctrinal fact under test: Raman states no numeric N-testimonies rule —
+        HTJAH-I:495 says only that "all these must be properly weighed" — and this project already
+        measured head-counting influences against his own reasoning on all seven Type-A cases and
+        found it held 0 of 7 (COMPARATIVE_WEIGHING.md). So the summary may inventory dissent but
+        must never grade it."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                d = t.dissent
+                assert d is not None, f"{t.theme_id} carries no dissent summary"
+                # the invented arithmetic is GONE — no grade, no tally, no agree/disagree score
+                for banned in ("confidence", "systems_checked", "agreeing", "score"):
+                    assert not hasattr(d, banned), f"{banned} is invented arithmetic, not doctrine"
+                assert "HTJAH-I:495" in d.method_note
+                for ck in d.checks:
+                    assert ck.tier and ck.governing.startswith("PREC-")
+                    assert ck.relation in ("reads with", "reads against", "restates the verdict")
+                    if ck.system == "the bhava's own testimony ledger":
+                        # the lord, karaka and navamsa ARE the verdict's own inputs restated by
+                        # name, so this check can never be an independent vote (PREC-3)
+                        assert ck.independent is False and ck.governing == "PREC-3"
+                        assert ck.relation == ("reads against" if t.concordance.divergence
+                                               else "reads with")
+                    if ck.system == "the assigned division":
+                        # PREC-11: the D1 Raman core decides, the varga corroborates
+                        assert ck.independent and ck.governing == "PREC-11"
+                        assert ck.relation == ("reads against"
+                                               if any(x.relation == "diverges"
+                                                      for x in t.divisional_checks)
+                                               else "reads with")
+                    if ck.system == "Ashtakavarga":
+                        # Raman's own caveat puts AV a tier below a Raman-band reading
+                        assert ck.governing == "PREC-4" and "HTJAH-II:4453" in ck.citation
+                        assert t.av_support
+                assert d.dissenting == tuple(c.system for c in d.checks
+                                             if c.relation == "reads against")
+
+    def test_the_walled_lens_is_never_a_cross_check(self, mainpuri, canonical):
+        """A walled layer must not move a Parashari reading — including by arithmetic. The Jaimini
+        karmic lens is recorded OUTSIDE the cross-checks entirely, never as one of them."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                d = t.dissent
+                for name in [c.system for c in d.checks] + list(d.dissenting):
+                    assert "karmic" not in name.lower() and "jaimini" not in name.lower()
+                if t.karmic_lens is not None:
+                    assert d.walled_note
+                    assert "never" in d.walled_note and "neither a cross-check" in d.walled_note
+
+    def test_contested_themes_are_the_inventory_not_a_threshold(self, mainpuri):
+        """Chart level: a theme is listed iff ANY cross-check reads against it. The old ">= 2
+        systems" cutoff was an invented threshold of exactly the kind HTJAH-I:495 forbids."""
+        _r, ts = mainpuri
+        named = {n for n, _d in ts.contested_themes}
+        for t in ts.themes:
+            if t.dissent.dissenting:
+                assert t.name in named
+            else:
+                assert t.name not in named
+        for _n, d in ts.contested_themes:
+            assert d.dissenting
+            # the passthrough is never in question: dissent discloses, it never overturns
+            assert "may overturn a bhava judgment" in d.reading
+
+    def test_the_narrative_does_not_repeat_the_dissent_it_summarises(self, mainpuri, canonical):
+        """The sentence used to chain a clause per dissenting system AND then summarise them,
+        saying the same thing twice and reaching 667 characters. It states the count once."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                body = t.final_interpretation
+                assert body.count("Reading against it") <= 1
+                # the superseded per-system clauses are gone
+                assert "Ashtakavarga does not back it in the same place" not in body
+                assert "Its own testimonies do not sit where the verdict does" not in body
+                # and the superseded arithmetic grade never reaches the prose
+                for graded in ("seriously contested", "cross-checks read against"):
+                    assert graded not in body
+
     def test_layer_never_imports_into_the_verdict_path(self):
         """K13 — theme_synthesis is on the overlay side: the D1 verdict modules must not import
         it (that is what keeps the golden ratchet byte-identical)."""
@@ -575,3 +919,253 @@ class TestThemeSynthesisContract:
             src = pathlib.Path(rel).read_text(encoding="utf-8")
             assert "theme_synthesis" not in src, (
                 f"{rel} imports theme_synthesis — the overlay must never enter the verdict path")
+
+    def test_the_longevity_band_frames_the_reading(self, mainpuri, canonical):
+        """PREC-8 restored: Raman establishes the SPAN first and the marakas second.
+
+        Astronomical/doctrinal fact under test: HTJAH-II:4465-4472 — "first establish the band by
+        combination, THEN fix the period by the marakas. The numeric span is a cross-check, never
+        a prediction of death." The synthesis used to read forward windows out to the 2040s
+        without ever setting them against the span the engine had already computed."""
+        for r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            assert lf is not None, "the band was computed and the reading never stated it"
+            # the band is the ENGINE's, passed through — never re-derived here
+            assert r.longevity_class in lf.band
+            assert lf.years == r.longevity_years and tuple(lf.ymd) == tuple(r.longevity_ymd)
+            assert lf.maraka_now is bool(r.maraka_period_now)
+            # Raman's ORDER is the load-bearing claim, so it must be stated, in his words
+            frame = lf.frame.lower()
+            assert "span" in frame and "maraka" in frame
+            assert frame.index("span") < frame.index("maraka periods second")
+            assert "HTJAH-II:4465-4472" in lf.citation and "PREC-8" in lf.citation
+            # the numeric is a cross-check, and the reading says so every time
+            assert "cross-check" in lf.honesty and "never a forecast" in lf.honesty
+
+    def test_every_named_window_is_tested_against_the_span(self, mainpuri, canonical):
+        """A window is only meaningful inside a lifetime. Each theme's forward bhukti is read at
+        its ordinal year of life and placed inside or outside the band — never left as a bare
+        calendar range the reader has to date against a birth year themselves."""
+        for r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            born = r.birth.year
+            for t in ts.themes:
+                if not t.activation_span:
+                    assert not t.activation_in_span
+                    continue
+                assert t.activation_in_span, f"{t.theme_id} names a window and never dates it"
+                assert "year" in t.activation_in_span
+                # the ordinal is computed off the ENGINE's birth year, not invented
+                import re as _re
+                m = _re.search(r"\((\d{4})(?:-(\d{4}))?\)", t.activation_span)
+                assert m, "the timing clause must carry its own calendar window"
+                y0 = int(m.group(1))
+                assert f"{y0 - born}" in t.activation_in_span
+            # the chart-level reach agrees with the per-theme windows
+            if lf.reading_reaches:
+                assert lf.within_span == (lf.reading_reaches <= lf.span_year)
+
+    def test_maraka_windows_are_named_after_the_band_and_never_predict(self, mainpuri):
+        """Raman's step TWO. Each maraka-tier bhukti carrying the classical Saturn signal
+        (HTJAH-II:4846-4849) is named, deduplicated per bhukti, and placed against the band —
+        including when the two methods disagree, which is disclosed rather than reconciled."""
+        _r, ts = mainpuri
+        lf = ts.longevity
+        assert lf.maraka_windows, "the engine computed maraka x Saturn confluences; name them"
+        bhuktis = [w[0] for w in lf.maraka_windows]
+        assert len(bhuktis) == len(set(bhuktis)), "one bhukti, one window — not one per pass"
+        for _bh, span, score, standing in lf.maraka_windows:
+            assert score >= 0 and standing in ("inside the band", "beyond the band", "")
+            y0 = int(span.split("-")[0])
+            assert (standing == "beyond the band") == (y0 > lf.span_year)
+        # every window is FORWARD of the reading's anchor — a past maraka period is not a window
+        assert all(int(w[1].split("-")[0]) >= _ON[0] for w in lf.maraka_windows)
+
+    def test_the_longevity_frame_never_speaks_in_decree(self, mainpuri, canonical):
+        """The 2026-08-17 decision permits TIMED INDICATIONS in the classical idiom and still
+        refuses the decree voice. Longevity is the highest-stakes surface for that line, so
+        every string this frame emits is held to the engine's own guard."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for _r, ts in (mainpuri, canonical):
+            lf = ts.longevity
+            texts = [lf.frame, lf.honesty, lf.citation, lf.band]
+            texts += [t.activation_in_span for t in ts.themes]
+            for txt in texts:
+                hit = _FORBIDDEN_RE.search(txt or "")
+                assert hit is None, f"decree language in the longevity frame: {hit.group(0)!r}"
+            # and the walled-off Measured-Truth disclosure is never dropped
+            assert "REAL_OUTCOME_GENERALIZATION.md" in lf.honesty
+
+    def test_a_connection_names_a_mechanism_not_a_join(self, mainpuri, canonical):
+        """A tie must say what the shared thing DOES on each side, not that a join exists.
+
+        The old note was a template — "A and B overlap at H6, tying the two areas together" —
+        which restates the join and tells the reader nothing about the chart. Every connection now
+        carries the two verdicts it spans, and a shared bhava names whose primary it is."""
+        for _r, ts in (mainpuri, canonical):
+            names = {t.name: t for t in ts.themes}
+            for c in ts.connections:
+                assert c.note and c.theme_a in c.note and c.theme_b in c.note
+                # the dead template must not come back
+                assert "tying the two areas together" not in c.note
+                # the verdicts on both ends are always stated — that is the integration
+                va = names[c.theme_a].headline_verdict
+                vb = names[c.theme_b].headline_verdict
+                assert (f"read {va}" in c.note or f"reads {va}" in c.note)
+                assert (f"read {vb}" in c.note or f"reads {vb}" in c.note)
+                if c.shared.startswith("H"):
+                    h = int(c.shared[1:])
+                    # a shared bhava is one bhava in two roles; the note says which is which
+                    assert "own bhava" in c.note and "draws on it" in c.note
+                    assert h in names[c.theme_a].houses and h in names[c.theme_b].houses
+                else:
+                    # a shared graha leads BOTH — and its own measured condition is reported
+                    assert names[c.theme_a].dominant_planets[0] == c.shared
+                    assert names[c.theme_b].dominant_planets[0] == c.shared
+                    assert "leads both" in c.note
+
+    def test_no_single_theme_crowds_out_the_connection_fabric(self, mainpuri, canonical):
+        """The busiest theme has the widest network BY CONSTRUCTION, so an uncapped list reports
+        its breadth rather than the chart's fabric. On Mainpuri, Career took 4 of 6 slots."""
+        from collections import Counter
+        from app.raman_saab.theme_synthesis import _CONN_PER_THEME
+        for _r, ts in (mainpuri, canonical):
+            seen = Counter()
+            for c in ts.connections:
+                seen[c.theme_a] += 1
+                seen[c.theme_b] += 1
+            assert not seen or max(seen.values()) <= _CONN_PER_THEME
+            # and a shared chief graha outranks a bare structural overlap
+            kinds = [not c.shared.startswith("H") for c in ts.connections]
+            assert kinds == sorted(kinds, reverse=True), "graha ties must rank above house ties"
+
+    def test_the_span_is_never_rendered_to_two_decimals(self, mainpuri):
+        """Raman gives a BAND; the ayurdaya number is a cross-check, and printing it to 1/100th
+        of a year claims a precision the method does not have. The report has banned that since
+        v2 (test_longevity_is_band_first_and_not_false_precision) and the frame must not
+        reintroduce it on any surface."""
+        import re as _re
+        from app.raman_saab.detailed_report import to_markdown
+        from app.raman_saab.report_html import standalone_html
+        r, ts = mainpuri
+        precise = f"{ts.longevity.years:.2f}"
+        for surface in (to_markdown(r), standalone_html(r)):
+            i = surface.find("span this reading sits inside")
+            assert i > 0
+            assert precise not in surface[i:i + 4000]
+        # the raw float still travels in the DATA — it is the RENDERING that must round
+        assert _re.match(r"^\d+\.\d+$", str(ts.longevity.years))
+
+    def test_the_weather_calendar_is_subordinate_by_citation(self, mainpuri, canonical):
+        """Three schemes the engine ran in full and the reading never consulted.
+
+        Astronomical/doctrinal fact under test: transits are "always secondary in importance…
+        like catalytic agents" (PREC-6, HTJAH-II:4679), and the eightfold Dasha Kakshya split is
+        "a timing lens, never a verdict" (PREC-7, ASP-12:174). So the calendar may qualify a
+        window and may never grade a bhava — and every window carries the rule that says so."""
+        for _r, ts in (mainpuri, canonical):
+            cal = ts.calendar
+            if cal is None:
+                continue
+            assert cal.windows and "SUBORDINATE" in cal.frame
+            assert "PREC-6" in cal.frame and "PREC-7" in cal.frame
+            assert "REAL_OUTCOME_GENERALIZATION.md" in cal.honesty
+            ref_year = _ON[0]
+            for w in cal.windows:
+                assert w.kind in ("Sade Sati", "Dasha x adverse transit", "Dasha Kakshya",
+                                  "Slow-mover gochara")
+                assert w.governing in ("PREC-6", "PREC-7") and w.citation
+                assert w.governing == ("PREC-7" if w.kind == "Dasha Kakshya" else "PREC-6")
+                # FORWARD only — a stretch that closed before the anchor is not a window ahead
+                assert w.end_year >= ref_year
+                assert w.current == (w.start_year <= ref_year <= w.end_year)
+                assert w.span == (f"{w.start_year}-{w.end_year}"
+                                  if w.end_year != w.start_year else str(w.start_year))
+            assert list(cal.windows) == sorted(cal.windows,
+                                               key=lambda w: (w.start_year, w.kind))
+            assert set(cal.now) == {f"{w.kind}: {w.label} ({w.span})"
+                                    for w in cal.windows if w.current}
+
+    def test_each_theme_window_is_read_against_the_weather(self, mainpuri, canonical):
+        """The join the report never made: a bhukti that grades par excellence for a bhava while
+        Sade Sati sits over the Moon is not the same window as one running clear. Both halves
+        were computed and neither knew about the other."""
+        for _r, ts in (mainpuri, canonical):
+            cal = ts.calendar
+            for t in ts.themes:
+                if not t.activation_span:
+                    assert not t.weather_on_window
+                    continue
+                assert t.weather_on_window
+                # subordination travels with every statement, never just the section header
+                assert "PREC-6" in t.weather_on_window and "PREC-7" in t.weather_on_window
+                import re as _re
+                m = _re.search(r"\((\d{4})(?:-(\d{4}))?\)", t.activation_span)
+                y0 = int(m.group(1))
+                y1 = int(m.group(2) or m.group(1))
+                overlapping = [w for w in (cal.windows if cal else ())
+                               if not (w.end_year < y0 or w.start_year > y1)]
+                if overlapping:
+                    for w in overlapping:
+                        assert w.label in t.weather_on_window
+                else:
+                    assert "clear weather" in t.weather_on_window
+
+    def test_the_ancestral_screen_is_a_separate_layer_not_a_dissent(self, mainpuri, canonical):
+        """PREC-12 — non-Raman screens are a different layer, not a contradiction. The pitru
+        reading is CLASSICAL_NONCITABLE (BPHS provenance), so it must carry its provenance on its
+        face and must never reach the cross-checks, the evidence links or the convergence count."""
+        for _r, ts in (mainpuri, canonical):
+            for t in ts.themes:
+                if not t.pitru_screen:
+                    continue
+                assert t.houses[0] in (5, 9)
+                assert "NOT Raman" in t.pitru_screen and "PREC-12" in t.pitru_screen
+                assert "never a contradiction" in t.pitru_screen
+                # walled: it is not a cross-check, not a link, not a contradiction
+                if t.dissent is not None:
+                    for c in t.dissent.checks:
+                        assert "pitru" not in c.system.lower()
+                for lk in t.links:
+                    assert "pitru" not in f"{lk.label} {lk.value} {lk.accessor}".lower()
+                for c in t.contradictions:
+                    assert "pitru" not in f"{c.poles} {c.resolution}".lower()
+
+    def test_the_calendar_never_speaks_in_decree(self, mainpuri, canonical):
+        """Every string the weather layer emits is held to the engine's own guard — a rough
+        stretch is an indication in the classical idiom, never a decree that something occurs."""
+        from app.llm.report_explainer import _FORBIDDEN_RE
+        for _r, ts in (mainpuri, canonical):
+            texts: list[str] = []
+            if ts.calendar is not None:
+                texts += [ts.calendar.frame, ts.calendar.honesty]
+                texts += [w.detail for w in ts.calendar.windows]
+            texts += [t.weather_on_window for t in ts.themes]
+            texts += [t.pitru_screen for t in ts.themes]
+            texts += [c.note for c in ts.connections]
+            for txt in texts:
+                hit = _FORBIDDEN_RE.search(txt or "")
+                assert hit is None, f"decree language: {hit.group(0)!r}"
+
+    def test_the_portrait_names_the_RUNNING_pratyantardasha(self, mainpuri, canonical):
+        """The label reads "Current chapter", so the pratyantar in it must be the one running.
+
+        Astronomical fact under test: ``pratyantar_now`` holds all NINE pratyantardashas of the
+        current bhukti, each with its own start/end. Taking ``pn[0]`` named the FIRST of the nine,
+        which is the running one for roughly one ninth of any bhukti — on both fixtures it named a
+        PD that was not running (Mainpuri said Jupiter PD while Ketu PD ran). The row containing
+        ``ref_jd`` is the only correct one, as ``report_html._pratyantar_block`` already knew."""
+        for r, ts in (mainpuri, canonical):
+            pn = getattr(r, "pratyantar_now", ()) or ()
+            cur = ts.portrait.current_chapter
+            if not pn or not cur:
+                continue
+            run = next((x for x in pn
+                        if x.start_jd <= r.ref_jd < x.end_jd), None)
+            assert run is not None, "the anchor date falls in no pratyantar of the current bhukti"
+            assert f"{run.pratyantar} PD" in cur, (
+                f"portrait names a pratyantar that is not running: {cur!r} "
+                f"(running is {run.pratyantar})")
+            # and it must not merely be pn[0] coinciding — assert the bug's own signature is gone
+            if pn[0].pratyantar != run.pratyantar:
+                assert f"{pn[0].pratyantar} PD" not in cur

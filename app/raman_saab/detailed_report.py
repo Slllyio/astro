@@ -20,6 +20,7 @@ Usage:
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, replace as _dc_replace
 from typing import Final, Optional
 
@@ -30,6 +31,12 @@ from app.raman_saab import (
 )
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.constants import SIGN_LORDS
+
+#: module logger. NB: this module had NO logger while a debug call referenced one — the
+#: call sits in the theme-synthesis except handler, which only runs when synthesis
+#: raises, so healthy charts never reached it and CI stayed green while a sparse chart
+#: would have died of NameError inside the very handler meant to keep it alive.
+logger = logging.getLogger(__name__)
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges.calibrated_reading import (
     _VALIDITY,
@@ -4124,6 +4131,40 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
              "own house verdict, carried through unchanged._")
     L.append("")
 
+    # PREC-8 order: the span is established BEFORE anything is read inside it. So the band
+    # opens the integrated reading rather than sitting in a chapter beside it.
+    lf = getattr(ts, "longevity", None)
+    if lf is not None:
+        L.append("### The span this reading sits inside")
+        L.append("")
+        L.append(f"_{lf.frame}_")
+        L.append("")
+        # whole years only — a two-decimal lifespan is false precision the report bans
+        # (test_longevity_is_band_first_and_not_false_precision); the ymd carries the detail
+        L.append(f"- **Band** — {_md_cell(lf.band)}; Ayurdaya cross-check about "
+                 f"{round(lf.years)} years ({lf.ymd[0]}y {lf.ymd[1]}m {lf.ymd[2]}d)"
+                 + (f"; Balarishta {lf.balarishta}" if lf.balarishta else "") + ".")
+        if lf.span_year:
+            L.append(f"- **Reach** — the band runs to about {lf.span_year}; the furthest window "
+                     f"this reading names is {lf.reading_reaches or 'none'} — "
+                     + ("inside the span." if lf.within_span else "OUTSIDE the span, disclosed "
+                        "where it appears."))
+        L.append("- **Running period** — "
+                 + ("carries a maraka-tier lord." if lf.maraka_now
+                    else "carries no maraka-tier lord."))
+        if lf.maraka_windows:
+            L.append("- **Maraka-tier bhuktis ahead carrying the classical Saturn signal** "
+                     "(Raman's step two, after the band):")
+            L.append("")
+            L.append("| Bhukti | Window | Tier-score | Against the band |")
+            L.append("|---|---|---|---|")
+            for bh, sp, sc, st in lf.maraka_windows:
+                L.append(f"| {_md_cell(bh)} | {_md_cell(sp)} | {sc} | {_md_cell(st or '-')} |")
+            L.append("")
+        L.append(f"- _{lf.honesty}_")
+        L.append(f"- _Citation: {lf.citation}_")
+        L.append("")
+
     p = ts.portrait
     L.append("### Executive portrait")
     L.append("")
@@ -4147,6 +4188,10 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
         L.append(f"- **Principal tension** — {p.principal_tension}")
     if getattr(p, "concordance_note", ""):
         L.append(f"- **How far the techniques agree** — {p.concordance_note}")
+    if getattr(p, "reading_stability", ""):
+        L.append(f"- **How firm is the cast moment?** — {p.reading_stability}")
+    if getattr(p, "chara_now", ""):
+        L.append(f"- **Jaimini chara dasha (walled)** — {p.chara_now}")
     if p.current_chapter:
         nxt = f"; {p.next_chapter}" if p.next_chapter else ""
         L.append(f"- **Current chapter** — {p.current_chapter}{nxt}.")
@@ -4171,6 +4216,14 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
     # every theme, ranked
     L.append("### Major life-themes")
     L.append("")
+    # the method note governing every "How settled is this?" line below. It is one constant
+    # string on every theme's DissentSummary, so it is stated once here rather than repeated
+    # twelve times — the field is rendered, not hidden.
+    _mn = next((t.dissent.method_note for t in ts.themes
+                if getattr(t, "dissent", None) is not None and t.dissent.method_note), "")
+    if _mn:
+        L.append(f"_On the cross-checks below: {_mn}_")
+        L.append("")
     for t in ts.themes:
         houses = ", ".join(f"H{h}" for h in t.houses)
         L.append(f"#### {t.name} — **{t.headline_verdict}** ({_theme_conv_label(t)})")
@@ -4186,8 +4239,25 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             facets = "; ".join(f"{m} reads {v}" for m, v in t.sub_matters)
             L.append(f"- **Within this house** — {facets}.")
         L.append(f"- **Convergence** — {_theme_conv_label(t)}: {t.convergence_why}")
+        if getattr(t, "activation_in_span", ""):
+            L.append(f"- **That window inside the span** — {t.activation_in_span}")
+        if getattr(t, "weather_on_window", ""):
+            L.append(f"- **Weather across that window** — {t.weather_on_window}")
+        if getattr(t, "pitru_screen", ""):
+            L.append(f"- **Ancestral screen (separate layer)** — {t.pitru_screen}")
         # the engine's OWN testimony ledger for this bhava (Raman's three-fold: lord/karaka/navamsa
         # as core, everything else as overlay) — the authoritative agreement check
+        ds = getattr(t, "dissent", None)
+        if ds is not None:
+            L.append(f"- **How settled is this?** — {ds.reading}")
+            for ck in ds.checks:
+                cite = f", {ck.citation}" if ck.citation else ""
+                indep = "independent" if ck.independent else "not independent of the verdict"
+                L.append(f"    - {_md_cell(ck.system)} — {_md_cell(ck.tier)}; "
+                         f"{_md_cell(ck.relation)}; {indep} ({ck.governing}{cite}). "
+                         f"{_md_cell(ck.note)}")
+            if ds.walled_note:
+                L.append(f"    - {ds.walled_note}")
         c = getattr(t, "concordance", None)
         if c is not None:
             L.append(f"- **Do the techniques agree?** — {c.reading}")
@@ -4200,6 +4270,36 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
                          f"{', '.join(c.overlay_against) or 'none'} against")
         for g in getattr(t, "driver_concordance", ()) or ():
             L.append(f"- **{g.planet} (force vs intent)** — {g.reading}")
+        for d in getattr(t, "divisional_checks", ()) or ():
+            L.append(f"- **{d.varga}** ({d.relation}) — {d.verdict}. {d.note}")
+        av = getattr(t, "av_support", ()) or ()
+        if av:
+            L.append("- **Ashtakavarga backing (in this bhava's own sign)** — "
+                     + "; ".join(f"{a.planet}: {a.bindus} bindus (reduced {a.reduced}, "
+                                 f"Sodya Pinda {a.sodya_pinda}) — {a.verdict}" for a in av))
+        # NB: not `tr` — that shadows the module-level `transits as tr` import (line 77)
+        for tnote in getattr(t, "transits", ()) or ():
+            L.append(f"- **Transit: {tnote.planet}** — {tnote.note}")
+        for y in getattr(t, "yogas", ()) or ():
+            rank = f"#{y.rank} " if y.rank is not None else ""
+            L.append(f"- **Yoga {rank}{y.name}** ({y.kind}) — {y.effect}")
+            if y.participants:
+                L.append(f"    - participants: {', '.join(y.participants)}")
+            if y.strength_note:
+                L.append(f"    - strength: {y.strength_note}")
+            if y.windows:
+                L.append(f"    - operates in: {'; '.join(y.windows)}"
+                         + ("" if y.ahead else " — all of them behind the reference moment"))
+            if y.cancellation:
+                L.append(f"    - cancellation: {y.cancellation}")
+        k = getattr(t, "karmic_lens", None)
+        if k is not None:
+            L.append(f"- **Karmic lens ({k.aspect}, walled)** — {k.note}")
+        dist = getattr(t, "distinctive", ()) or ()
+        if dist:
+            L.append("- **How unusual is this?** — "
+                     + "; ".join(f"{x.signification} ({x.rarity}): {x.population_note}"
+                                 for x in dist[:4]))
         L.append(f"- **Divisional (D9)** — {t.varga_relation}.")
         if t.activation_span:
             L.append(f"- **Timing** — {t.activation_span}")
@@ -4240,6 +4340,41 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             L.append(f"| **{_md_cell(g.planet)}** | {ru} | {ish} | {kas} | "
                      f"{_md_cell(g.avastha)} | {_md_cell(g.agreement)} | {_md_cell(g.pattern)} |")
         L.append("")
+    if getattr(ts, "contested_themes", None):
+        L.append("_**Themes with a cross-check reading against the verdict** — an inventory, not "
+                 "a grade. The verdicts stand (none of these may overturn a bhava judgment); each "
+                 "dissent is named at its own tier so the reader can weigh it as Raman asks — "
+                 "\"all these must be properly weighed\" (HTJAH-I:495) — rather than count it:_")
+        L.append("")
+        for nm, d in ts.contested_themes:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.reading)}")
+        L.append("")
+    if getattr(ts, "divisional_divergences", None):
+        L.append("_**Divisions that read against the rasi** — a varga is the classical "
+                 "confirmation device, so its dissent is worth naming. It modulates confidence in "
+                 "the natal indication; the D1 core decides and the division corroborates (PREC-11):_")
+        L.append("")
+        for nm, d in ts.divisional_divergences:
+            L.append(f"- **{_md_cell(nm)}** — {_md_cell(d.varga)} reads "
+                     f"{_md_cell(d.verdict)}, against the rasi verdict.")
+        L.append("")
+    cal = getattr(ts, "calendar", None)
+    if cal is not None and cal.windows:
+        L.append("### The weather over these years")
+        L.append("")
+        L.append(f"_{cal.frame}_")
+        L.append("")
+        L.append("| From | To | Scheme | Stretch | What it measures | Governing |")
+        L.append("|---|---|---|---|---|---|")
+        for w in cal.windows:
+            now = " (running now)" if w.current else ""
+            L.append(f"| {w.start_year} | {w.end_year} | {_md_cell(w.kind)} | "
+                     f"{_md_cell(w.label)}{now} | {_md_cell(w.detail)} | "
+                     f"{w.governing} ({_md_cell(w.citation)}) |")
+        L.append("")
+        L.append(f"- _{cal.honesty}_")
+        L.append("")
+
     if getattr(ts, "contested_bhavas", None):
         L.append("_**Contested bhavas** — houses whose verdict runs against the weight of their "
                  "own testimony. The verdict stands (a bhava is graded by its weakest decided "
@@ -4276,7 +4411,9 @@ def _integrated_reading_lines(r: DetailedReport) -> list[str]:
             now = " (now)" if ch.is_current else ""
             via = getattr(ch, "acts_through", ()) or ()
             through = f" (acting through {', '.join(via)})" if via else ""
-            L.append(f"| {_md_cell(ch.maha)} MD{now}{through} | {_md_cell(ch.span)} | "
+            cond = f" — lord {_md_cell(ch.lord_condition)}" if getattr(ch, "lord_condition", "") else ""
+            cond += f"; {_md_cell(ch.av_seat)}" if getattr(ch, "av_seat", "") else ""
+            L.append(f"| {_md_cell(ch.maha)} MD{now}{through}{cond} | {_md_cell(ch.span)} | "
                      f"{_md_cell(ch.lean)} | {_md_cell(', '.join(ch.emerging) or '-')} | "
                      f"{_md_cell(', '.join(ch.continuing) or '-')} |")
         L.append("")

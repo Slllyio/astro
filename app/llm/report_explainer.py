@@ -454,6 +454,34 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
             _f(facts, f"The chart's principal tension: {_por['principal_tension']}")
         if _por.get("concordance_note"):
             _f(facts, f"How far the independent techniques agree: {_por['concordance_note']}")
+        if _por.get("reading_stability"):
+            _f(facts, f"How firm the cast moment is: {_por['reading_stability']}")
+        if _por.get("chara_now"):
+            _f(facts, f"Jaimini chara dasha (a walled layer, not a second timing authority): "
+                      f"{_por['chara_now']}")
+        _lf = ts.get("longevity")
+        if _lf:
+            # PREC-8: the band frames the whole reading, so it is stated before anything read
+            # inside it. Timed-indication idiom only; the Measured-Truth line rides with it.
+            _f(facts, f"The span this reading sits inside: {_lf['frame']}",
+               cite="HTJAH-II:4465-4472")
+            _f(facts, _lf["honesty"])
+            for _bh, _sp, _sc, _st in _lf.get("maraka_windows", []):
+                _f(facts, f"A maraka-tier bhukti ahead carrying the classical Saturn signal: "
+                          f"{_bh} ({_sp}), tier-score {_sc}, {_st} — classically sensitive, a "
+                          f"disclosure of the method and never a forecast.",
+                   cite="HTJAH-II:4846-4849")
+        _cal = ts.get("calendar")
+        if _cal:
+            # subordinate by citation (PREC-6 / PREC-7) — the frame carries that on its face
+            _f(facts, f"The timing weather over these years: {_cal['frame']}",
+               cite="HTJAH-II:4679")
+            _f(facts, _cal["honesty"])
+            for _w in _cal.get("windows", []):
+                _f(facts, f"{_w['kind']} — {_w['label']} ({_w['span']})"
+                          + (" running now" if _w.get("current") else "")
+                          + f": {_w['detail']} Subordinate under {_w['governing']}.",
+                   cite=_w.get("citation") or None)
         for g in ts.get("graha_concordance", []):
             _f(facts, f"{g['planet']} — {g['reading']}")
         for c in ts.get("contested_bhavas", []):
@@ -468,9 +496,47 @@ def _section_facts(R: dict, key: str) -> list[Fact]:
                 _f(facts, f"Within {th['name']}, {m} reads {v} by its own dedicated reader.")
             if th.get("activation_span"):
                 _f(facts, f"Timing for {th['name']}: {th['activation_span']}")
+            if th.get("activation_in_span"):
+                _f(facts, f"That window read inside the longevity band, for {th['name']}: "
+                          f"{th['activation_in_span']}", cite="HTJAH-II:4465-4472")
+            if th.get("weather_on_window"):
+                _f(facts, f"Timing weather across {th['name']}'s window: "
+                          f"{th['weather_on_window']}", cite="HTJAH-II:4679")
+            if th.get("pitru_screen"):
+                _f(facts, th["pitru_screen"])
+            _d = th.get("dissent")
+            if _d:
+                _f(facts, f"How settled {th['name']} is: {_d['reading']}")
+                for _ck in _d.get("checks", []):
+                    _ind = ("independent" if _ck.get("independent")
+                            else "not independent of the verdict")
+                    _f(facts, f"Cross-check on {th['name']} — {_ck['system']} sits at the "
+                              f"{_ck['tier']} tier and {_ck['relation']}; {_ind} "
+                              f"({_ck['governing']}). {_ck['note']}")
+                if _d.get("walled_note"):
+                    _f(facts, _d["walled_note"])
+                if _d.get("method_note"):
+                    _f(facts, f"Why no confidence grade is given: {_d['method_note']}")
             _c = th.get("concordance")
             if _c and _c.get("reading"):
                 _f(facts, f"Testimony agreement for {th['name']}: {_c['reading']}")
+            for d in th.get("divisional_checks", []):
+                _f(facts, f"For {th['name']}, {d['varga']} ({d['relation']}): {d['verdict']}")
+            for a in th.get("av_support", []):
+                _f(facts, f"Ashtakavarga on {th['name']}: {a['planet']} holds {a['bindus']} "
+                          f"bindus in the sign this bhava occupies — {a['verdict']}.")
+            for tr in th.get("transits", []):
+                _f(facts, f"Transit bearing on {th['name']}: {tr['note']}")
+            for y in th.get("yogas", []):
+                _f(facts, f"{y['name']} ({y['kind']}) bears on {th['name']}: {y['effect']}"
+                          + (f" It operates in {'; '.join(y['windows'])}." if y.get("windows") else ""))
+            _k = th.get("karmic_lens")
+            if _k:
+                _f(facts, f"Karmic lens on {th['name']} ({_k['aspect']}, a walled layer that "
+                          f"never feeds the natal verdict): {_k['note']}")
+            for x in th.get("distinctive", [])[:3]:
+                _f(facts, f"On {th['name']}, {x['signification']} is {x['rarity']} — "
+                          f"{x['population_note']}")
             for c in th.get("contradictions", []):
                 _f(facts, f"On {th['name']}, a tension ({c['kind']}) is resolved by "
                           f"{c['governing']}: {c['resolution']}")

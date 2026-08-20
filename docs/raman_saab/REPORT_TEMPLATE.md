@@ -983,3 +983,58 @@ six thin signification sets.
 
 **Side effect on record:** the two new digest head items shift later digest positions, so
 `chart_feedback` rows stored under older qids are position-stale.
+
+---
+
+## v36 amendment (2026-08-20, user-requested) — the feedback instrument
+
+**One section appended at the very END of `SECTION_CONTRACT`: `feedback` / `## Your feedback`
+/ `id="feedback"`.** `_FROZEN` grown in the same commit, per the amendment procedure.
+
+The report gains the one section that asks rather than tells, generated with the reading from
+the chart's own calibration and timeline (`app/raman_saab/feedback_instrument.py`, shipped via
+`to_report_dict` as `feedback_instrument`).
+
+Four parts, in a fixed order:
+
+| Part | What it asks | Chart-specific? |
+|---|---|---|
+| **A** | Plain life questions with no astrology in them | no — deliberately |
+| **B** | How far the ascendant sits from its own cusp, and which of the two neighbouring sign portraits fits | yes, computed |
+| **C** | Each of the chart's own readings against its exact inverse, both unlabelled | yes, ranked by rarity |
+| **D** | What the reading got wrong, and what it could not have guessed | no |
+
+**Why Part C is ordered by `band_share` and not by the digest.** The digest ranks by how loudly
+the engine speaks, and the engine is loudest where every chart agrees — the older
+`feedback_questions` generator therefore leads with a 42%-share wealth reading, a question that
+cannot fail. Ordering by population share ascending leads instead with what only ~4% of the
+16,450-chart population carries, and nothing above the median is asked at all. At most two items
+per house, so the set spreads across a life.
+
+**The answer key is not part of the report and never renders.** This is a deliberate, documented
+exception to the completeness law: the key is not a reading, and printing it beside the questions
+destroys the only property that makes the answers worth collecting.
+`feedback_instrument.instrument_key` recomputes it server-side for scoring, and a test pins that
+the shipped payload carries none of the calibration metadata it is built from, so it cannot be
+reconstructed either.
+
+**Surface differences, stated rather than silent.** The interactive page and the standalone HTML
+carry every question in English AND Hindi. The markdown carries the English alone and says so in
+its own output: that surface runs through `_fold_ascii` for the whole document, and Devanagari
+has no ASCII fold — it would print as a row of question marks.
+
+**Never asked:** lifespan. No answer a person can give confirms or refutes a longevity band, the
+question does harm, and the engine's own guard refuses the decree voice on exactly this material
+(`EXCLUDED_SIGNIFICATIONS` = death, longevity, left_eye).
+
+**Two questions are traps, by design.** Both sit on channels the astrobank atlas proved run
+BACKWARDS (`inverted_warning`). They stay in the set as the honesty check — a reader who agrees
+there while disagreeing elsewhere is agreeing with whatever is put in front of them. Flagged in
+the key, never in the payload.
+
+**Storage:** `POST /report/feedback/instrument` rebuilds the instrument server-side and validates
+every qid and option value against what it would itself have asked; the stored question text
+comes from that rebuild, never from the request (the older `/report/feedback` takes it from the
+body). Whether Part A was answered before the reading was read is recorded as its own
+`inst.<v>.meta.context` row — the schema is created with `create_all` and has no migration path,
+so a new column would exist on a fresh database and be missing on every deployed one.

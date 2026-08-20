@@ -280,11 +280,25 @@ def _engine_regions(report: dict) -> tuple[set[str], int]:
     return codes, unmapped
 
 
+def _career_frames(prof: dict) -> tuple:
+    """The vocation frames, whichever shape `profession.career_frames` arrives in.
+
+    It is a DICT — `{"frames": (...), "strongest": ..., "citation": ...}` — not a list of
+    frames. Iterating it directly yields its KEYS, so the old code called `.get("trade")` on
+    the string `"frames"` and raised. The list form is accepted too, so a later change to the
+    report shape cannot silently empty this comparison instead of failing loudly.
+    """
+    frames = prof.get("career_frames")
+    if isinstance(frames, dict):
+        frames = frames.get("frames") or ()
+    return tuple(f for f in (frames or ()) if isinstance(f, dict))
+
+
 def _engine_trades(report: dict) -> set[str]:
     """Every trade family any of the engine's vocation frames names for this chart."""
     prof = report.get("profession") or {}
     blob = " ".join(str(s.get("trades", "")) for s in prof.get("sources") or ())
-    for f in prof.get("career_frames") or ():
+    for f in _career_frames(prof):
         blob += " " + str(f.get("trade", "")) + " " + str(f.get("sign_career", ""))
     return _map_words(blob, _TRADE_KEYWORDS)
 

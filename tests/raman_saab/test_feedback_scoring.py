@@ -582,3 +582,47 @@ class TestThePooledSpineNullIsTheOneThatWasComputed:
         from app.raman_saab import feedback_scoring as fs
         src = inspect.getsource(fs.aggregate)
         assert "0.25" not in src, "aggregate still carries a hard-coded spine null"
+
+
+class TestTheTradeComparisonReadsTheFramesItMeansTo:
+    """`profession.career_frames` is a DICT — `{"frames": (...), "strongest": ..., ...}` —
+    not a list of frames. `_engine_trades` iterated it directly, which yields its KEYS, and
+    then called `.get("trade")` on the string `"frames"`.
+
+    It raised `AttributeError` the first time a reader answered the trades question on a real
+    chart, taking the whole operator scorecard down with it. It survived this long because the
+    other half of the function (`profession.sources`) IS a list and supplies enough words on
+    its own that no existing test noticed the frames contributing nothing.
+    """
+
+    def test_it_does_not_raise_on_a_real_report(self, report, inst):
+        qid = next(q["qid"] for p in inst["parts"] for q in p["questions"]
+                   if q.get("maps_to") == "career.trades")
+        card = score_chart(report, [(qid, "teaching,writing_media", None)])
+        item = next(i for i in card.life if i.qid == qid)
+        assert item.verdict in ("hit", "miss", "not_scoreable")
+
+    def test_the_frames_actually_contribute_their_trades(self, report):
+        """The regression that matters: reading the keys silently returned the sources' words
+        alone, so a frame naming a trade no source named was invisible."""
+        from app.raman_saab.feedback_scoring import _engine_trades
+        frames = (report["profession"]["career_frames"] or {}).get("frames") or ()
+        assert frames, "the canonical chart has no career frames to read"
+        assert any(f.get("trade") for f in frames), "no frame names a trade"
+        assert _engine_trades(report), "the engine names no trade family at all"
+
+    def test_a_frames_only_report_still_yields_trades(self):
+        """Isolate the frames path from the sources path — with sources emptied, anything the
+        function returns can only have come from the frames."""
+        from app.raman_saab.feedback_scoring import _engine_trades
+        only_frames = {"profession": {"sources": [], "career_frames": {
+            "frames": ({"trade": "medicine, surgery", "sign_career": "teaching"},)}}}
+        assert _engine_trades(only_frames), "the frames path contributes nothing"
+
+    def test_a_list_shaped_career_frames_is_still_read(self):
+        """Defensive: accept either shape, so a later change to the report cannot silently
+        empty this comparison again."""
+        from app.raman_saab.feedback_scoring import _engine_trades
+        as_list = {"profession": {"sources": [],
+                                  "career_frames": [{"trade": "medicine", "sign_career": ""}]}}
+        assert _engine_trades(as_list)

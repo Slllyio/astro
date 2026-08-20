@@ -7192,7 +7192,69 @@ def to_markdown(r: DetailedReport) -> str:
     L.append("---")
     L.append(f"_Italicised population context is EMPIRICAL_ASTRODATABANK provenance (n="
              f"{pop:,}) - explicitly not Raman. {_VALIDITY}_")
-    return _fold_ascii("\n".join(_inject_plain_layer(L)))
+    return _fold_ascii(_gloss_first_use("\n".join(_inject_plain_layer(L))))
+
+
+def _gloss_first_use(md: str) -> str:
+    """Name each technical term in plain words the FIRST time the document uses it.
+
+    The standalone HTML and the interactive page both already mark first occurrences —
+    `report_html._apply_glossary_abbrs` and the page's `glossWalk` — and a hover shows the
+    gloss. Markdown has no hover, so a reader of the markdown (or of a PDF printed from it)
+    met every term cold: the same words, with the plain-terms chapter a thousand lines away.
+    This closes that gap with the one device markdown has, a parenthesis.
+
+    Deliberately narrow, because a substitution over a finished document is easy to get
+    wrong: prose lines only (never a heading, a table row, a citation line or a quotation),
+    never inside the plain-terms chapter that defines these words in the first place, and
+    never where the term is already followed by its own parenthetical.
+    """
+    import re
+
+    from app.raman_saab.plain_terms import TERM_GLOSS
+    terms = sorted(TERM_GLOSS, key=len, reverse=True)
+    # not inside a hyphenated compound ("Kashta-dominant" must not become
+    # "Kashta (hard-yield potential)-dominant"), and not where a parenthetical follows
+    pattern = re.compile(r"(?<![\w-])(" + "|".join(re.escape(t) for t in terms)
+                         + r")(?![\w-])(?! ?\()")
+    seen: set[str] = set()
+    out: list[str] = []
+    in_glossary = False
+    for line in md.split("\n"):
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            # the plain-terms chapter defines these words; glossing them there is noise
+            in_glossary = stripped.startswith(("## Glossary", "### In plain terms"))
+            out.append(line)
+            continue
+        if (in_glossary or not stripped or stripped.startswith(("|", ">", "_Citation"))
+                or '"' in line):
+            out.append(line)
+            continue
+
+        def _sub(m: "re.Match[str]") -> str:
+            term = m.group(1)
+            if term in seen:
+                return term
+            # never nest a gloss inside another parenthetical — "(Kashta 11 over Ishta
+            # (good-yield potential) 7)" reads worse than the jargon it replaces
+            head = line[:m.start()]
+            if head.count("(") > head.count(")"):
+                return term
+            # never inside a **bold** span: those are the structural row labels
+            # ("**Karaka**"), and a gloss there is a renamed field, not an explanation
+            if head.count("**") % 2:
+                return term
+            # some plain names carry their own parenthetical ("the soul significator
+            # (highest-degree planet)"); nested parens read worse than the term did
+            plain = re.sub(r"\s*\([^)]*\)", "", TERM_GLOSS[term].plain).strip(" ,-")
+            if not plain:
+                return term
+            seen.add(term)
+            return f"{term} ({plain})"
+
+        out.append(pattern.sub(_sub, line))
+    return "\n".join(out)
 
 
 #: The ten SECTION_METHOD chapters added 2026-08-17 whose preambles are injected

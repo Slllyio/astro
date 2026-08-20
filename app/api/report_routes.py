@@ -613,6 +613,114 @@ async def post_feedback_questions(req: ReportRequest) -> dict:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
+class InstrumentAnswer(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    qid: str = Field(..., min_length=1, max_length=80)
+    answer: Optional[str] = Field(None, max_length=40)
+    free_text: Optional[str] = Field(None, max_length=4000)
+
+
+class InstrumentFeedbackRequest(ReportRequest):
+    #: The four-part instrument runs to ~56 questions and several carry a confidence rating,
+    #: so the older flow's cap of 10 would truncate a completed form. Still bounded.
+    answers: list[InstrumentAnswer] = Field(..., min_length=1, max_length=200)
+    #: Whether Part A was answered BEFORE the reading was read. This is the difference between
+    #: evidence and a satisfaction survey, and it is recorded rather than assumed: a reader who
+    #: answers after reading has been told what the chart says and can no longer report what
+    #: they would have said on their own. Stored as its own row so a query can split the two.
+    context: Literal["before_reading", "after_reading"] = "after_reading"
+
+
+@report_router.post("/feedback/instrument")
+async def post_feedback_instrument(request: Request, req: InstrumentFeedbackRequest,
+                                   db: AsyncSession = Depends(get_db)) -> dict:
+    """Persist answers to the four-part feedback instrument.
+
+    The instrument is deterministic for a chart, so the server REBUILDS it and validates every
+    qid and every option value against what it would itself have asked. Nothing the client says
+    about a question — not its text, not its options — reaches storage: the question text is
+    taken from the rebuilt instrument. A client cannot invent a question, and cannot relabel one
+    it was asked.
+
+    The answer key is not consulted here and is not returned. Scoring is a separate, deliberate
+    step (`feedback_instrument.instrument_key`); an endpoint that told the submitter how they
+    scored would turn the instrument into a quiz and poison every later submission for the chart.
+    """
+    from app.models.domain import Account, ChartFeedback
+    from app.raman_saab.feedback_instrument import (
+        build_feedback_instrument, validate_instrument_answers)
+
+    if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
+
+    def _instrument() -> dict:
+        birth = BirthData(name=req.name, year=req.year, month=req.month, day=req.day,
+                          hour=req.hour, minute=req.minute, tz_offset=req.tz_offset,
+                          latitude=req.latitude, longitude=req.longitude)
+        r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
+                                  years_back=req.years_back, years_forward=req.years_forward)
+        return to_report_dict(r)
+
+    try:
+        report = await asyncio.to_thread(_instrument)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+
+    payload = [{"qid": a.qid, "answer": a.answer} for a in req.answers if a.answer is not None]
+    problems = validate_instrument_answers(report, payload)
+    if problems:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="; ".join(problems[:5]))
+
+    inst = build_feedback_instrument(report)
+    text_by_qid = {q["qid"]: q["text_en"]
+                   for part in inst["parts"] for q in part["questions"]}
+
+    account_id: Optional[int] = None
+    auth = request.headers.get("authorization", "")
+    if auth.startswith("Bearer "):
+        try:
+            from app.core.auth import decode_access_token
+            candidate = int(decode_access_token(
+                auth.removeprefix("Bearer ").strip()).get("sub", ""))
+            if await db.get(Account, candidate) is not None:
+                account_id = candidate
+        except (HTTPException, ValueError):
+            account_id = None                          # bad token -> anonymous, not an error
+
+    key = _chart_key(req)
+    rows = []
+    for a in req.answers:
+        if a.answer is None and not (a.free_text or "").strip():
+            continue                                   # an untouched question is not an answer
+        base = a.qid.removesuffix(".confidence")
+        text = text_by_qid.get(base, base)
+        if a.qid.endswith(".confidence"):
+            text = f"[confidence] {text}"
+        rows.append(ChartFeedback(chart_key=key, account_id=account_id, question_id=a.qid,
+                                  question_text=text[:500], answer=(a.answer or "")[:40],
+                                  free_text=(a.free_text or None)))
+    if not rows:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="no answers to store")
+
+    # The reading-order context is a row of its own rather than a column: the schema is created
+    # with `create_all` and has no migration path, so an added column would exist on a fresh
+    # database and be missing on every deployed one.
+    rows.append(ChartFeedback(
+        chart_key=key, account_id=account_id,
+        question_id=f"inst.{inst['version']}.meta.context",
+        question_text="Was Part A answered before the reading was read?",
+        answer=req.context, free_text=None))
+
+    db.add_all(rows)
+    await db.commit()
+    logger.info("instrument feedback stored: %d row(s) for %s (%s)",
+                len(rows), key, req.context)
+    return {"stored": len(rows), "chart_key": key, "context": req.context,
+            "note": "Thank you — stored for honest calibration. Your answers are not scored "
+                    "back to you: knowing which option the chart took would change how the "
+                    "next person answers."}
+
+
 @report_router.post("/feedback")
 async def post_feedback(request: Request, req: FeedbackRequest,
                         db: AsyncSession = Depends(get_db)) -> dict:

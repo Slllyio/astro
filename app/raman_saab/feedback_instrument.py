@@ -62,6 +62,12 @@ INSTRUMENT_VERSION = "v1"
 #: `feedback_questions` flow uses, so both write comparable rows.
 ANSWER_SCALE: tuple[str, ...] = ("agree", "partly", "disagree", "not sure")
 
+#: The four scale values in Hindi. The STORED value stays the English token whatever the reader
+#: sees, so answers pool across languages — the same rule the older feedback flow follows.
+_SCALE_HI: dict[str, str] = {
+    "agree": "सहमत", "partly": "कुछ हद तक", "disagree": "असहमत", "not sure": "पता नहीं",
+}
+
 #: How sure the reader is of a forced choice. Asked on every Part C item — a confident wrong
 #: answer and a coin-flip right one are different evidence and must not be pooled.
 CONFIDENCE_SCALE: tuple[str, ...] = ("1", "2", "3", "4", "5")
@@ -518,7 +524,7 @@ def _boundary_rows(report: dict) -> list[dict[str, str]]:
     return out
 
 
-def _rectification(report: dict, lang: Lang) -> Optional[dict[str, Any]]:
+def _rectification(report: dict) -> Optional[dict[str, Any]]:
     """How close the ascendant sits to its own cusp, and the two portraits that settle it.
 
     A round birth time is usually a rounded one, and an ascendant a few minutes from a cusp
@@ -541,37 +547,53 @@ def _rectification(report: dict, lang: Lang) -> Optional[dict[str, Any]]:
         gap_deg, direction = from_prev, "earlier"
     minutes = int(round(gap_deg / _DEG_PER_MINUTE))
 
-    here = _SIGN_PORTRAIT[asc_sign][1 if lang == "hi" else 0]
-    there = _SIGN_PORTRAIT[neighbour][1 if lang == "hi" else 0]
-    if lang == "hi":
-        note = (f"आपका लग्न {_sign_name(asc_sign, 'hi')} में {deg_in_sign:.1f}° पर है — "
-                f"{_sign_name(neighbour, 'hi')} की सीमा से लगभग {minutes} मिनट "
-                f"{'बाद' if direction == 'later' else 'पहले'}। इतने मिनट की भी गड़बड़ी पूरी कुंडली बदल देती है।")
-        q = "इनमें से कौन-सा आप पर ज़्यादा ठीक बैठता है?"
-    else:
-        note = (f"Your ascendant stands at {deg_in_sign:.1f}° of "
-                f"{_sign_name(asc_sign, 'en')} — about {minutes} minutes of clock time "
-                f"{'before' if direction == 'later' else 'after'} the "
-                f"{_sign_name(neighbour, 'en')} cusp. An error of that many minutes changes "
-                f"every house in the chart, not part of it.")
-        q = "Which of these two fits you better?"
+    note_en = (f"Your ascendant stands at {deg_in_sign:.1f}\u00b0 of "
+               f"{_sign_name(asc_sign, 'en')} — about {minutes} minutes of clock time "
+               f"{'before' if direction == 'later' else 'after'} the "
+               f"{_sign_name(neighbour, 'en')} cusp. An error of that many minutes changes "
+               f"every house in the chart, not part of it.")
+    note_hi = (f"आपका लग्न {_sign_name(asc_sign, 'hi')} में {deg_in_sign:.1f}\u00b0 पर है — "
+               f"{_sign_name(neighbour, 'hi')} की सीमा से लगभग {minutes} मिनट "
+               f"{'पहले' if direction == 'later' else 'बाद'}। इतने मिनट की गड़बड़ी भी पूरी कुंडली "
+               f"बदल देती है, उसका कोई हिस्सा नहीं।")
     return {
-        "asc_sign": asc_sign, "asc_sign_name": _sign_name(asc_sign, lang),
-        "neighbour_sign": neighbour, "neighbour_sign_name": _sign_name(neighbour, lang),
+        "asc_sign": asc_sign,
+        "asc_sign_name_en": _sign_name(asc_sign, "en"),
+        "asc_sign_name_hi": _sign_name(asc_sign, "hi"),
+        "neighbour_sign": neighbour,
+        "neighbour_sign_name_en": _sign_name(neighbour, "en"),
+        "neighbour_sign_name_hi": _sign_name(neighbour, "hi"),
         "degrees_into_sign": round(deg_in_sign, 2),
         "gap_degrees": round(gap_deg, 2), "approx_gap_minutes": minutes,
         "cusp_direction": direction,
-        "note": note, "question": q,
-        "portrait_here": here, "portrait_neighbour": there,
+        "note_en": note_en, "note_hi": note_hi,
+        "question_en": "Which of these two fits you better?",
+        "question_hi": "इनमें से कौन-सा आप पर ज़्यादा ठीक बैठता है?",
+        "portrait_here_en": _SIGN_PORTRAIT[asc_sign][0],
+        "portrait_here_hi": _SIGN_PORTRAIT[asc_sign][1],
+        "portrait_neighbour_en": _SIGN_PORTRAIT[neighbour][0],
+        "portrait_neighbour_hi": _SIGN_PORTRAIT[neighbour][1],
+        #: A birth time this close to a cusp is a coin-flip dressed as a reading. The page
+        #: raises the rectification part to the top of the section when this is true.
         "tight": minutes <= 30,
     }
 
 
-def _q(qid: str, part: str, group: str, group_label: str, kind: str, text: str,
-       hint: str = "", options: tuple[dict[str, str], ...] = (),
+def _q(qid: str, part: str, group: str, group_label_en: str, group_label_hi: str, kind: str,
+       text_en: str, text_hi: str, hint_en: str = "", hint_hi: str = "",
+       options: tuple[dict[str, str], ...] = (),
        confidence: bool = False, allow_free_text: bool = True) -> dict[str, Any]:
-    return {"qid": qid, "part": part, "group": group, "group_label": group_label,
-            "kind": kind, "text": text, "hint": hint, "options": list(options),
+    """One question, in BOTH languages.
+
+    The page toggles language on the client without re-fetching, so a payload carrying only the
+    language that was asked for would leave a Hindi reader answering an English questionnaire
+    inside an otherwise Hindi page. There is no `text` key on purpose: a consumer must choose a
+    language rather than silently getting whichever one the request happened to default to.
+    """
+    return {"qid": qid, "part": part, "group": group,
+            "group_label_en": group_label_en, "group_label_hi": group_label_hi,
+            "kind": kind, "text_en": text_en, "text_hi": text_hi,
+            "hint_en": hint_en, "hint_hi": hint_hi, "options": list(options),
             "confidence": confidence, "allow_free_text": allow_free_text}
 
 
@@ -586,7 +608,6 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
     """The single builder. Returns (reader-facing payload, server-only key) so the two public
     entry points cannot drift apart — the key is derived from the same rows, in the same order,
     with the same shuffle, and is simply not attached to what ships."""
-    hi = lang == "hi"
     seed = _seed(report)
     key_answers: dict[str, str] = {}
     key_meta: dict[str, Any] = {}
@@ -595,30 +616,32 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
     # ── Part A ──────────────────────────────────────────────────────────────────────────
     a_questions = [
         _q(f"inst.{INSTRUMENT_VERSION}.{sid}", "A", group,
-           _PART_A_GROUPS[group][1 if hi else 0], "open",
-           text_hi if hi else text_en, hint_hi if hi else hint_en)
+           _PART_A_GROUPS[group][0], _PART_A_GROUPS[group][1], "open",
+           text_en, text_hi, hint_en, hint_hi)
         for sid, group, text_en, text_hi, hint_en, hint_hi in _PART_A]
 
     # ── Part B ──────────────────────────────────────────────────────────────────────────
-    rect = _rectification(report, lang)
+    rect = _rectification(report)
+    b_label = ("Checking the birth time", "जन्म-समय की जाँच")
     b_questions: list[dict[str, Any]] = []
     if rect is not None:
         qid = f"inst.{INSTRUMENT_VERSION}.B1"
-        pair = [("here", rect["portrait_here"]), ("there", rect["portrait_neighbour"])]
+        pair = [("here", rect["portrait_here_en"], rect["portrait_here_hi"]),
+                ("there", rect["portrait_neighbour_en"], rect["portrait_neighbour_hi"])]
         if _flip(seed, qid):
             pair.reverse()
-        opts = tuple({"value": f"opt{i}", "text": txt} for i, (_who, txt) in enumerate(pair, 1))
-        b_questions.append(_q(qid, "B", "rectification",
-                              "Checking the birth time" if not hi else "जन्म-समय की जाँच",
-                              "choice", rect["question"], rect["note"], opts))
-        key_answers[qid] = f"opt{[w for w, _t in pair].index('here') + 1}"
+        opts = tuple({"value": f"opt{i}", "text_en": en, "text_hi": hin}
+                     for i, (_who, en, hin) in enumerate(pair, 1))
+        b_questions.append(_q(qid, "B", "rectification", b_label[0], b_label[1], "choice",
+                              rect["question_en"], rect["question_hi"],
+                              rect["note_en"], rect["note_hi"], opts))
+        key_answers[qid] = f"opt{[w for w, _e, _h in pair].index('here') + 1}"
         key_meta[qid] = {"kind": "rectification", "asc_sign": rect["asc_sign"],
                          "neighbour_sign": rect["neighbour_sign"],
                          "approx_gap_minutes": rect["approx_gap_minutes"]}
     b_questions += [
-        _q(f"inst.{INSTRUMENT_VERSION}.{sid}", "B", "rectification",
-           "Checking the birth time" if not hi else "जन्म-समय की जाँच", "open",
-           text_hi if hi else text_en, hint_hi if hi else hint_en)
+        _q(f"inst.{INSTRUMENT_VERSION}.{sid}", "B", "rectification", b_label[0], b_label[1],
+           "open", text_en, text_hi, hint_en, hint_hi)
         for sid, text_en, text_hi, hint_en, hint_hi in _PART_B_FIXED]
 
     # ── Part C ──────────────────────────────────────────────────────────────────────────
@@ -626,19 +649,20 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
     for n, row in enumerate(_choice_rows(report, max_choices), 1):
         qid = f"inst.{INSTRUMENT_VERSION}.C{n}"
         mine, theirs = _OPPOSITE[row["verdict"]]
-        pair = [("mine", _claim(row, mine, lang)), ("inverse", _claim(row, theirs, lang))]
+        pair = [("mine", _claim(row, mine, "en"), _claim(row, mine, "hi")),
+                ("inverse", _claim(row, theirs, "en"), _claim(row, theirs, "hi"))]
         if _flip(seed, qid):
             pair.reverse()
-        opts = tuple({"value": f"opt{i}", "text": txt} for i, (_who, txt) in enumerate(pair, 1))
-        topic = TOPIC[row["signification"]][1 if hi else 0]
+        opts = tuple({"value": f"opt{i}", "text_en": en, "text_hi": hin}
+                     for i, (_who, en, hin) in enumerate(pair, 1))
+        topic_en, topic_hi = TOPIC[row["signification"]]
         c_questions.append(_q(
             qid, "C", "forced_choice",
-            "Which one is closer?" if not hi else "कौन-सा ज़्यादा नज़दीक है?",
-            "choice",
-            (f"{topic} — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?" if hi
-             else f"{topic[0].upper()}{topic[1:]} — which is closer to your life?"),
-            "", opts, confidence=True))
-        key_answers[qid] = f"opt{[w for w, _t in pair].index('mine') + 1}"
+            "Which one is closer?", "कौन-सा ज़्यादा नज़दीक है?", "choice",
+            f"{topic_en[0].upper()}{topic_en[1:]} — which is closer to your life?",
+            f"{topic_hi} — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
+            options=opts, confidence=True))
+        key_answers[qid] = f"opt{[w for w, _e, _h in pair].index('mine') + 1}"
         key_meta[qid] = {"kind": "forced_choice", "house": row["house"],
                          "signification": row["signification"], "verdict": row["verdict"],
                          "degree": row["degree"], "band_share": row["band_share"],
@@ -652,84 +676,89 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
     if boundaries:
         qid = f"inst.{INSTRUMENT_VERSION}.C0"
         c_questions.append(_q(
-            qid, "C", "dated_spine",
-            "The dates" if not hi else "तिथियाँ", "open",
-            ("ये वे तिथियाँ हैं जिन पर कुंडली की महादशा बदलती है। अपने ही लिखे मोड़ों को देखिए — "
-             "उन्हें अब बदलिए मत — और बताइए कि कितने इनमें से किसी के लगभग तीन महीने के भीतर आते हैं।"
-             if hi else
-             "These are the dates on which the chart's major periods change. Look back at the "
-             "turning points you listed yourself — do not change that answer now — and say how "
-             "many of them fall within about three months of one of these."),
-            ("Use three months, not six: the period changes cluster, so a wider window covers "
-             "much of a life and half-passes the test by itself." if not hi else
-             "तीन महीने लीजिए, छह नहीं: दशा-परिवर्तन पास-पास आते हैं, और बड़ी खिड़की जीवन का बड़ा "
-             "हिस्सा ढक लेती है।")))
+            qid, "C", "dated_spine", "The dates", "तिथियाँ", "open",
+            "These are the dates on which the chart's major periods change. Look back at the "
+            "turning points you listed yourself — do not change that answer now — and say how "
+            "many of them fall within about three months of one of these.",
+            "ये वे तिथियाँ हैं जिन पर कुंडली की महादशा बदलती है। अपने ही लिखे मोड़ों को देखिए — "
+            "उन्हें अब बदलिए मत — और बताइए कि कितने इनमें से किसी के लगभग तीन महीने के भीतर आते हैं।",
+            "Use three months, not six: the period changes cluster, so a wider window covers "
+            "much of a life and half-passes the test by itself.",
+            "तीन महीने लीजिए, छह नहीं: दशा-परिवर्तन पास-पास आते हैं, और बड़ी खिड़की जीवन का बड़ा "
+            "हिस्सा ढक लेती है।"))
 
     # ── Part D ──────────────────────────────────────────────────────────────────────────
     d_questions = []
     for sid, kind, text_en, text_hi in _PART_D:
         qid = f"inst.{INSTRUMENT_VERSION}.{sid}"
-        opts = (tuple({"value": v, "text": v} for v in ANSWER_SCALE) if kind == "scale" else ())
-        d_questions.append(_q(qid, "D", "reaction",
-                              "After the reading" if not hi else "फलादेश पढ़ने के बाद",
-                              kind, text_hi if hi else text_en, "", opts))
+        opts = (tuple({"value": v, "text_en": v, "text_hi": _SCALE_HI[v]} for v in ANSWER_SCALE)
+                if kind == "scale" else ())
+        d_questions.append(_q(qid, "D", "reaction", "After the reading", "फलादेश पढ़ने के बाद",
+                              kind, text_en, text_hi, options=opts))
 
     parts = [
         {"part": "A",
-         "title": "Your life, in your own words" if not hi else "आपका जीवन, आपके अपने शब्दों में",
-         "note": ("Nothing here mentions astrology, and nothing is being checked against a "
-                  "prediction yet. Answer this part BEFORE reading the rest of the report — "
-                  "once you have read what a chart says about you, you can no longer report "
-                  "what you would have said on your own, and that is the only answer worth "
-                  "measuring." if not hi else
-                  "यहाँ ज्योतिष का कोई ज़िक्र नहीं है, और अभी किसी भविष्यवाणी से कुछ नहीं मिलाया जा रहा। "
-                  "यह भाग बाक़ी फलादेश पढ़ने से पहले भरें — एक बार पढ़ लेने के बाद आप वह नहीं बता सकते "
-                  "जो आप अपनी ओर से कहते, और मापने लायक़ वही एक उत्तर है।"),
+         "title_en": "Your life, in your own words",
+         "title_hi": "आपका जीवन, आपके अपने शब्दों में",
+         "note_en": "Nothing here mentions astrology, and nothing is being checked against a "
+                    "prediction yet. Answer this part BEFORE reading the rest of the report — "
+                    "once you have read what a chart says about you, you can no longer report "
+                    "what you would have said on your own, and that is the only answer worth "
+                    "measuring.",
+         "note_hi": "यहाँ ज्योतिष का कोई ज़िक्र नहीं है, और अभी किसी भविष्यवाणी से कुछ नहीं मिलाया जा "
+                    "रहा। यह भाग बाक़ी फलादेश पढ़ने से पहले भरें — एक बार पढ़ लेने के बाद आप वह नहीं बता "
+                    "सकते जो आप अपनी ओर से कहते, और मापने लायक़ वही एक उत्तर है।",
          "questions": a_questions},
         {"part": "B",
-         "title": "Checking the birth time" if not hi else "जन्म-समय की जाँच",
-         "note": ("A round birth time is usually a rounded one. If the true time is even a few "
-                  "minutes off, the rising sign can change and no part of the reading stands."
-                  if not hi else
-                  "गोल जन्म-समय अक्सर अनुमानित होता है। यदि वास्तविक समय कुछ मिनट भी अलग है, तो लग्न "
-                  "बदल सकता है और फलादेश का कोई हिस्सा नहीं टिकता।"),
+         "title_en": "Checking the birth time",
+         "title_hi": "जन्म-समय की जाँच",
+         "note_en": "A round birth time is usually a rounded one. If the true time is even a "
+                    "few minutes off, the rising sign can change and no part of the reading "
+                    "stands.",
+         "note_hi": "गोल जन्म-समय अक्सर अनुमानित होता है। यदि वास्तविक समय कुछ मिनट भी अलग है, तो "
+                    "लग्न बदल सकता है और फलादेश का कोई हिस्सा नहीं टिकता।",
          "questions": b_questions},
         {"part": "C",
-         "title": "Which one is closer?" if not hi else "कौन-सा ज़्यादा नज़दीक है?",
-         "note": ("Each pair holds one statement drawn from your chart and one that is its exact "
-                  "opposite, and you are not told which is which. A coin gets half of them "
-                  "right — that is the point, and it is why an answer here is worth something."
-                  if not hi else
-                  "हर जोड़ी में एक कथन आपकी कुंडली से लिया गया है और दूसरा उसका ठीक उल्टा; आपको बताया "
-                  "नहीं जाएगा कि कौन-सा कौन है। सिक्का उछालने पर भी आधे सही आ जाते हैं — इसीलिए यहाँ "
-                  "दिया गया उत्तर कुछ मायने रखता है।"),
+         "title_en": "Which one is closer?",
+         "title_hi": "कौन-सा ज़्यादा नज़दीक है?",
+         "note_en": "Each pair holds one statement drawn from your chart and one that is its "
+                    "exact opposite, and you are not told which is which. A coin gets half of "
+                    "them right — that is the point, and it is why an answer here is worth "
+                    "something.",
+         "note_hi": "हर जोड़ी में एक कथन आपकी कुंडली से लिया गया है और दूसरा उसका ठीक उल्टा; आपको "
+                    "बताया नहीं जाएगा कि कौन-सा कौन है। सिक्का उछालने पर भी आधे सही आ जाते हैं — "
+                    "इसीलिए यहाँ दिया गया उत्तर कुछ मायने रखता है।",
          "questions": c_questions},
         {"part": "D",
-         "title": "After the reading" if not hi else "फलादेश पढ़ने के बाद",
-         "note": ("This part is about the reading itself, not about the chart. Being blunt here "
-                  "is more useful than being kind." if not hi else
-                  "यह भाग फलादेश के बारे में है, कुंडली के बारे में नहीं। यहाँ साफ़-साफ़ कहना, "
-                  "सँभालकर कहने से ज़्यादा उपयोगी है।"),
+         "title_en": "After the reading",
+         "title_hi": "फलादेश पढ़ने के बाद",
+         "note_en": "This part is about the reading itself, not about the chart. Being blunt "
+                    "here is more useful than being kind.",
+         "note_hi": "यह भाग फलादेश के बारे में है, कुंडली के बारे में नहीं। यहाँ साफ़-साफ़ कहना, "
+                    "सँभालकर कहने से ज़्यादा उपयोगी है।",
          "questions": d_questions},
     ]
 
     payload = {
         "version": INSTRUMENT_VERSION,
+        #: The language the caller asked for. Content is ALWAYS carried in both — the page
+        #: toggles on the client without re-fetching — so this is a default hint for a
+        #: consumer that renders one, never a statement that the other is absent.
         "lang": lang,
         "parts": parts,
         "boundaries": boundaries,
         "rectification": rect,
         "answer_scale": list(ANSWER_SCALE),
+        "answer_scale_hi": {k: _SCALE_HI[k] for k in ANSWER_SCALE},
         "confidence_scale": list(CONFIDENCE_SCALE),
-        "caveat": ("These questions calibrate the reading; they do not validate it. This "
-                   "project's own measurement found no chart-specific signal against real "
-                   "outcomes, so your answers measure how a faithful rendering of Raman's "
-                   "method meets one real life — never a claim that it predicted it."
-                   if not hi else
-                   "ये प्रश्न फलादेश को कैलिब्रेट करते हैं, उसे प्रमाणित नहीं करते। इस परियोजना के अपने "
-                   "मापन में वास्तविक जीवन-घटनाओं के विरुद्ध कोई कुंडली-विशिष्ट संकेत नहीं मिला, इसलिए "
-                   "आपके उत्तर यह मापते हैं कि रामन की पद्धति का निष्ठापूर्ण प्रस्तुतीकरण एक वास्तविक जीवन "
-                   "से कैसे मिलता है — यह दावा कभी नहीं कि उसने भविष्य बताया।"),
+        "caveat_en": "These questions calibrate the reading; they do not validate it. This "
+                     "project's own measurement found no chart-specific signal against real "
+                     "outcomes, so your answers measure how a faithful rendering of Raman's "
+                     "method meets one real life — never a claim that it predicted it.",
+        "caveat_hi": "ये प्रश्न फलादेश को कैलिब्रेट करते हैं, उसे प्रमाणित नहीं करते। इस परियोजना के "
+                     "अपने मापन में वास्तविक जीवन-घटनाओं के विरुद्ध कोई कुंडली-विशिष्ट संकेत नहीं मिला, "
+                     "इसलिए आपके उत्तर यह मापते हैं कि रामन की पद्धति का निष्ठापूर्ण प्रस्तुतीकरण एक "
+                     "वास्तविक जीवन से कैसे मिलता है — यह दावा कभी नहीं कि उसने भविष्य बताया।",
         "counts": {"A": len(a_questions), "B": len(b_questions),
                    "C": len(c_questions), "D": len(d_questions)},
     }

@@ -76,10 +76,11 @@ class TestTheKeyNeverShips:
                      "rarity", "verdict", "forced_choice\", \"house"):
             assert leak not in blob, leak
         for q in _all_questions(payload):
-            assert set(q) == {"qid", "part", "group", "group_label", "kind", "text", "hint",
+            assert set(q) == {"qid", "part", "group", "group_label_en", "group_label_hi",
+                              "kind", "text_en", "text_hi", "hint_en", "hint_hi",
                               "options", "confidence", "allow_free_text"}
             for o in q["options"]:
-                assert set(o) == {"value", "text"}
+                assert set(o) == {"value", "text_en", "text_hi"}
 
     def test_the_inverted_channels_are_flagged_only_in_the_key(self, payload, key):
         """Two readings sit on channels the atlas proved run BACKWARDS. They stay in the set as
@@ -125,12 +126,15 @@ class TestDeterminism:
                                        text=True, env=env, timeout=600).stdout.strip())
         assert outs[0] and outs[0] == outs[1], outs
 
-    def test_the_qids_do_not_depend_on_the_display_language(self, report):
-        """Answers given in Hindi must pool with answers given in English."""
+    def test_the_lang_argument_never_changes_the_questions(self, report):
+        """Content is carried in BOTH languages and the page toggles on the client, so asking
+        for Hindi must not produce a different instrument — only a different default hint.
+        Answers given in Hindi therefore pool with answers given in English by construction."""
         en = build_feedback_instrument(report, lang="en")
         hi = build_feedback_instrument(report, lang="hi")
-        assert [q["qid"] for q in _all_questions(en)] == [q["qid"] for q in _all_questions(hi)]
-        assert instrument_key(report)["answers"] == instrument_key(report)["answers"]
+        assert en["lang"] == "en" and hi["lang"] == "hi"
+        del en["lang"], hi["lang"]
+        assert en == hi
 
     def test_the_shuffle_is_not_constant(self, report, other):
         """A shuffle that always puts the chart's claim first is not a shuffle. Across both
@@ -201,40 +205,66 @@ class TestPartsAndWording:
     def test_all_four_parts_are_built_in_order(self, payload):
         assert [p["part"] for p in payload["parts"]] == ["A", "B", "C", "D"]
         for p in payload["parts"]:
-            assert p["title"] and p["note"] and p["questions"]
+            assert p["title_en"] and p["title_hi"]
+            assert p["note_en"] and p["note_hi"] and p["questions"]
 
-    def test_part_a_mentions_no_astrology(self, payload):
+    def test_part_a_says_nothing_about_this_chart(self, payload):
         """Part A is the only unbiased evidence the reader can give, and it stops being that
-        the moment a rasi, a graha or a dasha appears in it."""
+        the moment a rasi, a graha or a dasha appears in it.
+
+        The birth-record group is exempt and has to be: asking where the time came from means
+        asking whether a horoscope was cast at the time and whether an astrologer has since
+        moved it. The word "astrology" is likewise allowed anywhere in Part A because the
+        vocation question lists it among the trades a person may work in. Both name the CRAFT,
+        never a placement in this nativity — that is the line that matters, and the test below
+        draws it."""
+        part_a = next(p for p in payload["parts"] if p["part"] == "A")
+        graded = [q for q in part_a["questions"] if q["group"] != "birth_record"]
+        assert len(graded) >= 25
+        blob = " ".join(_all_text(graded)).casefold()
+        for term in ("dasha", "dasa", "rasi", "graha", "lagna", "ascendant", "nakshatra",
+                     "planet", "yoga", "bhukti", "horoscope",
+                     "कुंडली", "लग्न", "दशा"):
+            assert term not in blob, f"Part A leaks {term!r}"
+
+    def test_even_the_birth_record_group_names_no_placement(self, payload):
+        """The exemption above is for the craft, not for this chart. Nothing anywhere in Part A
+        may name a sign, a graha or a period of THIS nativity."""
         part_a = next(p for p in payload["parts"] if p["part"] == "A")
         blob = " ".join(_all_text(part_a)).casefold()
-        for term in ("dasha", "dasa", "rasi", "graha", "lagna", "ascendant", "nakshatra",
-                     "house", "planet", "yoga", "bhukti"):
-            assert term not in blob, f"Part A leaks {term!r}"
+        for term in ("aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra",
+                     "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
+                     "sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn",
+                     "rahu", "ketu"):
+            assert term not in blob, f"Part A names {term!r}"
 
     def test_part_a_says_to_answer_it_before_reading(self, payload):
         part_a = next(p for p in payload["parts"] if p["part"] == "A")
-        assert "BEFORE reading" in part_a["note"]
+        assert "BEFORE reading" in part_a["note_en"]
+        assert "पढ़ने से पहले" in part_a["note_hi"]
 
     def test_every_choice_offers_two_genuinely_different_options(self, payload):
         for q in _all_questions(payload):
             if q["kind"] != "choice":
                 continue
-            texts = [o["text"] for o in q["options"]]
-            assert len(texts) == 2 and texts[0] != texts[1], q["qid"]
+            for field in ("text_en", "text_hi"):
+                texts = [o[field] for o in q["options"]]
+                assert len(texts) == 2 and texts[0] != texts[1], (q["qid"], field)
             assert [o["value"] for o in q["options"]] == ["opt1", "opt2"]
 
     def test_the_dated_spine_asks_for_three_months_not_six(self, payload):
         """The period changes cluster, so a six-month window covers much of a life and
         half-passes the test by itself."""
         q = next(q for q in _all_questions(payload) if q["qid"].endswith(".C0"))
-        assert "three months" in q["text"]
-        assert "cluster" in q["hint"]
+        assert "three months" in q["text_en"]
+        assert "तीन महीने" in q["text_hi"]
+        assert "cluster" in q["hint_en"]
 
     def test_the_caveat_keeps_the_measured_truth_frame(self, payload):
-        assert "calibrate" in payload["caveat"] or "calibrates" in payload["caveat"]
-        assert "never a claim" in payload["caveat"]
-        assert "validate" in payload["caveat"]
+        assert "calibrate" in payload["caveat_en"]
+        assert "never a claim" in payload["caveat_en"]
+        assert "do not validate it" in payload["caveat_en"]
+        assert payload["caveat_hi"]
 
     def test_every_emitted_string_is_clean_under_the_decree_guard(self, payload):
         """The instrument asks about a life already lived; nothing in it may slip into the
@@ -244,14 +274,17 @@ class TestPartsAndWording:
             m = _FORBIDDEN_RE.search(s)
             assert m is None, f"decree voice {m.group(0)!r} in: {s[:90]}"
 
-    def test_both_languages_are_complete(self, report):
+    def test_both_languages_are_complete(self, payload):
         """A half-translated form is worse than an English one — the reader stops trusting it
-        mid-page. Every question carries text in whichever language was asked for."""
-        for lang in ("en", "hi"):
-            for q in _all_questions(build_feedback_instrument(report, lang=lang)):
-                assert q["text"].strip(), (lang, q["qid"])
-                for o in q["options"]:
-                    assert o["text"].strip(), (lang, q["qid"])
+        mid-page and answers the rest carelessly. EVERY question and option carries both."""
+        for q in _all_questions(payload):
+            assert q["text_en"].strip() and q["text_hi"].strip(), q["qid"]
+            assert q["text_en"] != q["text_hi"], q["qid"]
+            for o in q["options"]:
+                assert o["text_en"].strip() and o["text_hi"].strip(), q["qid"]
+        for part in payload["parts"]:
+            assert part["title_en"] != part["title_hi"]
+            assert part["note_en"] != part["note_hi"]
 
 
 class TestRectification:
@@ -259,7 +292,7 @@ class TestRectification:
         r = payload["rectification"]
         assert r is not None
         assert 0 <= r["degrees_into_sign"] < 30
-        assert abs(((r["asc_sign"] - r["neighbour_sign"]) % 12)) in (1, 11)
+        assert ((r["asc_sign"] - r["neighbour_sign"]) % 12) in (1, 11)
         assert r["approx_gap_minutes"] >= 0
 
     def test_a_chart_near_its_cusp_is_marked_tight(self, other):
@@ -267,12 +300,14 @@ class TestRectification:
         a birth time recorded as a round 05:00. That is exactly the case the flag exists for."""
         r = build_feedback_instrument(other)["rectification"]
         assert r["tight"] is True
-        assert r["neighbour_sign_name"] == "Capricorn"
+        assert r["neighbour_sign_name_en"] == "Capricorn"
+        assert r["neighbour_sign_name_hi"] == "मकर"
         assert r["approx_gap_minutes"] <= 15
 
     def test_the_two_portraits_differ(self, payload):
         r = payload["rectification"]
-        assert r["portrait_here"] != r["portrait_neighbour"]
+        assert r["portrait_here_en"] != r["portrait_neighbour_en"]
+        assert r["portrait_here_hi"] != r["portrait_neighbour_hi"]
 
 
 class TestBoundaries:

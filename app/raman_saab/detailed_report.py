@@ -624,6 +624,14 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     # the append-only default; _FROZEN grown in the same commit.
     SectionSpec("medical", "## Medical read (classical correspondence)", 'id="medical"',
                 "v35"),
+    # v36 (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
+    # answers about their own life, generated with the reading rather than bolted on after it.
+    # Appended at the very END on purpose: it is the one section that asks rather than tells,
+    # and it closes the document. Its Part A is meant to be answered BEFORE the reading is read
+    # (the section says so, and the interactive page offers a jump to it from the top), which is
+    # why the part carries no astrology at all. Appended per the append-only default; _FROZEN
+    # grown in the same commit.
+    SectionSpec("feedback", "## Your feedback", 'id="feedback"', "v36"),
 )
 
 #: The HTML renderer's document order (the signature chips live in the page header, and the
@@ -648,6 +656,7 @@ HTML_SECTION_ORDER: tuple[str, ...] = (
     "nichod",
     "aptitude",   # v33 (2026-08-14): appended at the end, same order as SECTION_CONTRACT
     "medical",    # v35 (2026-08-19): the HPA-29 medical read, appended likewise
+    "feedback",   # v36 (2026-08-20): the feedback instrument, last — it closes the document
 )
 
 
@@ -7019,6 +7028,64 @@ def to_markdown(r: DetailedReport) -> str:
                      f"{_md_cell(', '.join(med.complaints_indicated))}")
         L.append("")
         L.append(f"_{_md_cell(med.provenance)}_")
+
+    # ── the feedback instrument (v36) ─────────────────────────────────────────
+    # Built from the report's own calibration and timeline. Rendered in full — every part,
+    # every question, both languages — per the completeness law. The one thing NOT rendered is
+    # the answer key, which is not a reading and would destroy the instrument if printed beside
+    # it; `feedback_instrument.instrument_key` recomputes it server-side for scoring.
+    try:
+        from app.raman_saab.report_json import feedback_instrument_for
+        inst = feedback_instrument_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        inst = None
+    if inst:
+        L.append("")
+        L.append("## Your feedback")
+        L.append("")
+        L.append(f"_{_md_cell(inst['caveat_en'])}_")
+        L.append("")
+        # This surface is ASCII by construction (`_fold_ascii` runs over the whole document, so
+        # the varga renderers' IAST folds to base letters instead of mangling). Devanagari has
+        # no ASCII fold and would come out as a row of question marks, which is worse than not
+        # printing it — so the markdown carries the English and says plainly where the Hindi is,
+        # rather than dropping it silently.
+        L.append("_Hindi is generated for every question below and renders on the interactive "
+                 "page and the standalone HTML; this markdown surface is ASCII-only, so it "
+                 "carries the English alone._")
+        for part in inst["parts"]:
+            L.append("")
+            L.append(f"### Part {part['part']} — {_md_cell(part['title_en'])}")
+            L.append("")
+            L.append(_md_cell(part["note_en"]))
+            L.append("")
+            for q in part["questions"]:
+                L.append(f"**{_md_cell(q['qid'])}** — {_md_cell(q['text_en'])}")
+                if q["hint_en"]:
+                    L.append("")
+                    L.append(f"> {_md_cell(q['hint_en'])}")
+                for o in q["options"]:
+                    L.append("")
+                    L.append(f"- ( ) **{_md_cell(o['value'])}** {_md_cell(o['text_en'])}")
+                if q["confidence"]:
+                    L.append("")
+                    L.append(f"- How sure? {' / '.join(inst['confidence_scale'])}")
+                L.append("")
+        if inst["boundaries"]:
+            L.append("")
+            L.append("| Period changes on | Mahadasha begins |")
+            L.append("|---|---|")
+            for row in inst["boundaries"]:
+                L.append(f"| {_md_cell(row['date'])} | {_md_cell(row['maha'])} |")
+        rect = inst.get("rectification")
+        if rect:
+            L.append("")
+            L.append(f"- **Ascendant against its own cusp** — {rect['degrees_into_sign']}"
+                     f"\u00b0 into {_md_cell(rect['asc_sign_name_en'])}, about "
+                     f"{rect['approx_gap_minutes']} minutes of clock time from the "
+                     f"{_md_cell(rect['neighbour_sign_name_en'])} cusp"
+                     + (" — **tight**, so the birth time needs settling before any of this "
+                        "reading is scored" if rect["tight"] else ""))
 
     # ── footer ────────────────────────────────────────────────────────────────
     L.append("")

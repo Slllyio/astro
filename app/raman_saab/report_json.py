@@ -213,6 +213,30 @@ def _yoga_coverage(r: DetailedReport) -> dict:
     }
 
 
+def feedback_instrument_for(r: DetailedReport) -> dict:
+    """The instrument, from the four projections it actually reads.
+
+    `build_feedback_instrument` takes the report DICT, and calling `to_report_dict` from inside
+    `to_report_dict` is not an option — so the inputs are projected once here, with the same
+    helpers the full dict uses, and handed over. Keep this list in step with what the module
+    reads; a silently missing key degrades a part rather than raising.
+
+    Public because the markdown and standalone renderers need it too and hold a DetailedReport,
+    not a dict. They import it lazily inside their own function bodies: this module imports
+    `detailed_report` at module level, so a top-level import back the other way would cycle.
+    """
+    from app.raman_saab.feedback_instrument import build_feedback_instrument
+    b = r.birth
+    return build_feedback_instrument({
+        "birth": {"year": b.year, "month": b.month, "day": b.day, "hour": b.hour,
+                  "minute": b.minute, "tz_offset": b.tz_offset,
+                  "latitude": b.latitude, "longitude": b.longitude},
+        "chart": {"asc_sign": r.chart.asc_sign, "asc_lon": round(r.chart.asc_lon, 6)},
+        "calibration": {str(h): _ad(cr) for h, cr in r.calibration.items()},
+        "timeline": _timeline_dict(r.timeline, r.chart),
+    })
+
+
 def to_report_dict(r: DetailedReport) -> dict:
     """The full structured report as a JSON-safe dict — the shared grounding contract."""
     from app.raman_saab.judgment_graph import build_judgment_graph
@@ -246,6 +270,12 @@ def to_report_dict(r: DetailedReport) -> dict:
         # houses + the honesty overlay + the strength / preponderance cross-checks
         "proformas": [_proforma_dict(pf) for pf in r.proformas],
         "calibration": {str(h): _ad(cr) for h, cr in r.calibration.items()},
+        # The feedback instrument — the questionnaire the reader answers about their own life.
+        # Built here rather than in the route so every surface gets the same one, and built
+        # WITHOUT its answer key: `feedback_instrument.instrument_key` recomputes that
+        # server-side for scoring, and shipping it beside the questions would destroy the only
+        # property that makes the answers worth collecting (see that module's docstring).
+        "feedback_instrument": feedback_instrument_for(r),
         "house_strength": _each(r.house_strength),
         "preponderance": _ad(r.preponderance),
         "dashboard": _ad(r.dashboard),

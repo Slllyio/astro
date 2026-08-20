@@ -426,16 +426,22 @@ class TestDetailedReport:
         Asserted by lookup rather than by negative index: pinning `SECTION_CONTRACT[-1]`
         made this test fail on every future append (it broke on v35, the medical read),
         which taught nothing — the invariant worth guarding is that nothing is inserted
-        BEFORE nichod and that the tail stays in ascending version order."""
+        BEFORE nichod and that the tail stays in ascending version order.
+
+        The tail's exact membership is NOT pinned either, for the same reason: it was, and it
+        duly broke again on v36 (the feedback instrument) after the docstring above had already
+        diagnosed the mistake. `test_registry_is_append_only` in the template-contract suite is
+        what guards membership, against _FROZEN, which is amended deliberately."""
         from app.raman_saab.detailed_report import SECTION_CONTRACT
         ids = [s.section_id for s in SECTION_CONTRACT]
         by_id = {s.section_id: s for s in SECTION_CONTRACT}
         assert by_id["nichod"].since == "v4"
         tail = SECTION_CONTRACT[ids.index("nichod") + 1:]
-        assert [s.section_id for s in tail] == ["aptitude", "medical"]
+        assert tail, "later chapters append after nichod"
         versions = [int(s.since.lstrip("v")) for s in tail]
         assert versions == sorted(versions), "appended chapters must stay in added order"
         assert all(v > 4 for v in versions), "nothing older than nichod may follow it"
+        assert len(set(versions)) == len(versions), "each appended chapter gets its own version"
 
     def test_gochara_outlook_covers_the_four_slow_movers(self, report):
         """The multi-year outlook is attached for exactly Jupiter/Saturn/Rahu/Ketu, spanning the

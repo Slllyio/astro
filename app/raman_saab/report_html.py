@@ -107,6 +107,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
 h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6rem 0 .3rem;
   padding-top:1.6rem;border-top:1px solid var(--rule);text-wrap:balance}
 .section-sub{color:var(--ink-soft);font-size:.86rem;margin:.2rem 0 1.2rem}
+/* the feedback instrument (v36): the Hindi line sits under its English twin, and the
+   forced-choice options print as an answerable list rather than running prose. */
+.fb-q{margin:1.1rem 0 .1rem}
+.fb-q-hi{color:var(--ink-soft);font-size:.92rem;margin:.15rem 0 .2rem;line-height:1.6}
+.fb-opts{list-style:none;padding:0;margin:.45rem 0 .2rem}
+.fb-opts li{margin:.3rem 0;padding-left:.1rem;line-height:1.55}
 .long{font-family:var(--serif);font-size:1.15rem}
 .long b{color:var(--doctrine)}
 .long-combos{list-style:none;padding:0;margin:.7rem 0 0}
@@ -2565,6 +2571,68 @@ def _medical_section(r: DetailedReport) -> str:
         + f'<p class="muted"><i>{_esc(med.provenance)}</i></p>')
 
 
+def _feedback_section(r: DetailedReport) -> str:
+    """v36 — the feedback instrument, rendered whole.
+
+    Every part, every question, both languages, and the forced-choice options as printable
+    radio rows so a reader can answer this on paper. What is NOT here is the answer key: it is
+    not a reading, and printing it beside the questions would make every answer worthless.
+    `feedback_instrument.instrument_key` recomputes it server-side when the answers are scored.
+    """
+    try:
+        from app.raman_saab.report_json import feedback_instrument_for
+        inst = feedback_instrument_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole document
+        return ""
+    if not inst:
+        return ""
+
+    blocks: list[str] = []
+    for part in inst["parts"]:
+        qs: list[str] = []
+        for q in part["questions"]:
+            bits = [f'<p class="fb-q"><b>{_esc(q["qid"])}</b> &mdash; '
+                    f'{_esc(q["text_en"])}</p>',
+                    f'<p class="fb-q-hi">{_esc(q["text_hi"])}</p>']
+            if q["hint_en"]:
+                bits.append(f'<p class="muted"><i>{_esc(q["hint_en"])} &middot; '
+                            f'{_esc(q["hint_hi"])}</i></p>')
+            if q["options"]:
+                opts = "".join(
+                    f'<li>&#9711; <b>{_esc(o["value"])}</b> {_esc(o["text_en"])} '
+                    f'&middot; {_esc(o["text_hi"])}</li>' for o in q["options"])
+                bits.append(f'<ul class="fb-opts">{opts}</ul>')
+            if q["confidence"]:
+                bits.append('<p class="muted">How sure? &nbsp;'
+                            + " &nbsp; ".join(f"&#9711; {_esc(v)}"
+                                              for v in inst["confidence_scale"]) + '</p>')
+            qs.append("".join(bits))
+        blocks.append(
+            f'<h3>Part {_esc(part["part"])} &mdash; {_esc(part["title_en"])} '
+            f'/ {_esc(part["title_hi"])}</h3>'
+            f'<p>{_esc(part["note_en"])}</p>'
+            f'<p class="fb-q-hi">{_esc(part["note_hi"])}</p>' + "".join(qs))
+
+    extra = ""
+    if inst["boundaries"]:
+        rows = "".join(f'<tr><td>{_esc(b["date"])}</td><td>{_esc(b["maha"])}</td></tr>'
+                       for b in inst["boundaries"])
+        extra += ('<table><thead><tr><th>Period changes on</th>'
+                  f'<th>Mahadasha begins</th></tr></thead><tbody>{rows}</tbody></table>')
+    rect = inst.get("rectification")
+    if rect:
+        tight = (' &mdash; <b>tight</b>: settle the birth time before scoring any of this '
+                 'reading' if rect["tight"] else "")
+        extra += (f'<p>{_esc(rect["note_en"])}{tight}</p>'
+                  f'<p class="fb-q-hi">{_esc(rect["note_hi"])}</p>')
+
+    return (
+        '<h2 class="section" id="feedback">Your feedback</h2>'
+        f'<p class="section-sub"><i>{_esc(inst["caveat_en"])}</i></p>'
+        f'<p class="section-sub fb-q-hi"><i>{_esc(inst["caveat_hi"])}</i></p>'
+        + "".join(blocks) + extra)
+
+
 def _arishta_section(r: DetailedReport) -> str:
     """v22 — Arishta & Bhanga: afflictions AND their doctrinal cancellations."""
     a = r.arishta
@@ -3911,6 +3979,8 @@ def to_html(r: DetailedReport) -> str:
   {_aptitude_section(r)}
 
   {_medical_section(r)}
+
+  {_feedback_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

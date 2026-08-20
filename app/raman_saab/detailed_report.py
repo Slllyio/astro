@@ -6213,15 +6213,32 @@ def to_markdown(r: DetailedReport) -> str:
                 continue
             L.append(f"- **Running Mahadashas** — {', '.join(d.md_lords) or '-'}"
                      + (f" (leans: {', '.join(d.leans)})" if d.leans else ""))
-            if d.areas_favourable:
-                L.append(f"- **Areas the method reads favourably here** — "
-                         f"{'; '.join(d.areas_favourable)}")
-            if d.areas_challenged:
-                L.append(f"- **Areas the method reads as challenged here** — "
-                         f"{'; '.join(d.areas_challenged)}")
+            # One area per ROW and one Mahadasha per COLUMN. The chip lists carry the
+            # same facts as a single semicolon-run; read aloud they are unusable, so
+            # the grid is what is rendered and the chips stay in the JSON.
+            for title, grid in (("Areas the method reads favourably here",
+                                 d.favourable_grid),
+                                ("Areas the method reads as challenged here",
+                                 d.challenged_grid)):
+                if not grid:
+                    continue
+                L.append("")
+                L.append(f"**{title}**")
+                L.append("")
+                L.append("| life area | house | "
+                         + " | ".join(f"{m} MD" for m in d.md_lords) + " |")
+                L.append("|---|---|" + "---|" * len(d.md_lords))
+                for row in grid:
+                    L.append(f"| {row.area} | H{row.house} | "
+                             + " | ".join(g or "-" for g in row.grades) + " |")
+                L.append("")
             if d.yogas_ripening:
-                L.append(f"- **Yogas ripening** — {'; '.join(d.yogas_ripening)}")
-            L.append(f"- _{d.note}_")
+                L.append("**Yogas ripening**")
+                L.append("")
+                for y in d.yogas_ripening:
+                    L.append(f"- {y}")
+                L.append("")
+            L.append(f"_{d.note}_")
             L.append("")
 
     # ── current transits with Vedha (the honest gochara table) ────────────────

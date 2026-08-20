@@ -223,6 +223,8 @@
   .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
   .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
   .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
+  .decade-grid{width:100%;margin:.2rem 0 .5rem;font-size:.82rem}
+  .decade-grid td:nth-child(2){white-space:nowrap;text-align:center}
   .decade-cols>div{flex:1 1 180px}
   .decade .chip{display:inline-block;font-size:.74rem;border-radius:3px;padding:0 .35rem;
     margin:.08rem .2rem .08rem 0;border:1px solid rgba(139,111,71,.3)}
@@ -1095,6 +1097,10 @@ const I18N_HI = {
   "graha": "ग्रह",
   "sign": "राशि",
   "house": "भाव",
+  "life area": "जीवन-क्षेत्र",
+  "MD": "महादशा",
+  "Favourable": "अनुकूल",
+  "Challenged": "चुनौतीपूर्ण",
   "nakshatra": "नक्षत्र",
   "pada": "चरण",
   "navamsa": "नवांश",
@@ -3410,12 +3416,22 @@ function render(R, S, FQ){
     for(const dc of dt.decades){
       const card=el('div',{class:'decade'});
       card.append(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
-      const cols=el('div',{class:'decade-cols'});
-      const cf=el('div',{}); for(const a of (dc.areas_favourable||[])) cf.append(el('span',{class:'chip fav'},a));
-      const ca=el('div',{}); for(const a of (dc.areas_challenged||[])) ca.append(el('span',{class:'chip aff'},a));
-      if(cf.childNodes.length){ cf.prepend(el('div',{class:'muted'},t('Favourable'))); cols.append(cf); }
-      if(ca.childNodes.length){ ca.prepend(el('div',{class:'muted'},t('Challenged'))); cols.append(ca); }
-      if(cols.childNodes.length) card.append(cols);
+      // One life-area per ROW, one running Mahadasha per COLUMN. The chip lists carry
+      // the same facts chained into a single semicolon-run — the densest line in the
+      // report — so the grid is what is shown here.
+      const mdl=(dc.md_lords||[]);
+      for(const g of [['Favourable','fav',dc.favourable_grid||[]],
+                      ['Challenged','aff',dc.challenged_grid||[]]]){
+        if(!g[2].length) continue;
+        card.append(para(t(g[0]),'muted'));
+        const gt=el('table',{class:'decade-grid '+g[1]});
+        gt.append(el('tr',{},el('th',{},t('life area')),el('th',{},t('house')),
+                    ...mdl.map(m=>el('th',{},m+' '+t('MD')))));
+        for(const row of g[2])
+          gt.append(el('tr',{},el('td',{},row.area||''),el('td',{},'H'+row.house),
+                      ...(row.grades||[]).map(x=>el('td',{},x||'—'))));
+        card.append(gt);
+      }
       for(const y of (dc.yogas_ripening||[])) card.append(para('Yoga ripening: '+y,'muted'));
       for(const l2 of (dc.leans||[])) card.append(para('Lean: '+l2,'timing'));
       if(dc.note) card.append(para(dc.note,'muted'));

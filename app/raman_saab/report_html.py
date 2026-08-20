@@ -2400,15 +2400,28 @@ def _decades_section(r: DetailedReport) -> str:
             continue
         rows = [("Running Mahadashas", _esc(", ".join(d.md_lords) or "-")
                  + (f" (leans: {_esc(', '.join(d.leans))})" if d.leans else ""))]
-        if d.areas_favourable:
-            rows.append(("Read favourably here", _esc("; ".join(d.areas_favourable))))
-        if d.areas_challenged:
-            rows.append(("Read as challenged here", _esc("; ".join(d.areas_challenged))))
         if d.yogas_ripening:
-            rows.append(("Yogas ripening", _esc("; ".join(d.yogas_ripening))))
+            rows.append(("Yogas ripening",
+                         "<br>".join(_esc(y) for y in d.yogas_ripening)))
         body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                        f'<span class="vv">{v}</span></div>' for k, v in rows)
-        blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>')
+        # One area per row, one running Mahadasha per column — the chip form chains
+        # every area into one unreadable line (see life_arc.DecadeAreaRow).
+        grids = ""
+        for title, grid in (("Read favourably here", d.favourable_grid),
+                            ("Read as challenged here", d.challenged_grid)):
+            if not grid:
+                continue
+            head = ("<tr><th>life area</th><th>house</th>"
+                    + "".join(f"<th>{_esc(m)} MD</th>" for m in d.md_lords)
+                    + "</tr>")
+            trs = "".join(
+                f"<tr><td>{_esc(r.area)}</td><td>H{r.house}</td>"
+                + "".join(f"<td>{_esc(g) if g else '&ndash;'}</td>" for g in r.grades)
+                + "</tr>" for r in grid)
+            grids += (f'<p class="section-sub"><b>{title}</b></p>'
+                      f'<table><thead>{head}</thead><tbody>{trs}</tbody></table>')
+        blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>{grids}')
     return ('<h2 class="section" id="decades">Decade indication timeline</h2>'
             f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
 

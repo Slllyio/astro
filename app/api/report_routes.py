@@ -69,6 +69,11 @@ class ReportRequest(BaseModel):
     # language. "en" is the only language with full deterministic-report coverage; "hi"
     # covers the UI chrome + every LLM-narrated surface (see PROCESS_AND_METHODOLOGY.md).
     lang: Literal["en", "hi"] = "en"
+    # Reading LENGTH — a rendering choice, never a different computation. "full" is the
+    # default and stays the default: nothing is hidden unless a reader asks for the gist.
+    # "short" re-renders the SAME built report through `short_reading`, so a caller can ask
+    # for either without re-casting, and the JSON payload always carries both.
+    reading: Literal["full", "short"] = "full"
 
 
 def _summary(r) -> dict:
@@ -158,13 +163,22 @@ async def post_report(req: ReportRequest) -> dict:
                           latitude=req.latitude, longitude=req.longitude)
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
-        out: dict = {"ayanamsa": req.ayanamsa, "format": req.fmt, "summary": _summary(r)}
+        out: dict = {"ayanamsa": req.ayanamsa, "format": req.fmt,
+                     "reading": req.reading, "summary": _summary(r)}
         if req.fmt == "json":
             out["report"] = to_report_dict(r)           # the structured grounding contract
             # chart-specific feedback questions ride along with the JSON report so the
             # frontend never has to re-cast the chart just to ask them (Part E).
             from app.raman_saab.feedback_questions import build_feedback_questions
             out["feedback_questions"] = build_feedback_questions(out["report"], lang=req.lang)
+        elif req.reading == "short":
+            from app.raman_saab import short_reading as sr_mod
+            short = sr_mod.build_short_reading(to_report_dict(r))
+            if short is None:
+                raise ValueError("this chart is too sparse for a short reading")
+            out["report"] = (sr_mod.to_html(short, lang=req.lang, title=req.name)
+                             if req.fmt == "html"
+                             else sr_mod.to_markdown(short, lang=req.lang))
         else:
             out["report"] = standalone_html(r) if req.fmt == "html" else to_markdown(r)
         return out

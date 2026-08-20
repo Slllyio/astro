@@ -224,6 +224,25 @@
   .honesty-rules{margin:.3rem 0 .8rem 1.2rem;padding:0;font-size:.88rem;line-height:1.55;
     color:var(--ink-soft,inherit)}
   .honesty-rules li{margin:.3rem 0}
+  /* ---- reading-length toggle + the short reading ---- */
+  .rl-toggle{display:flex;align-items:center;gap:.35rem;margin:0 0 .9rem;font-size:.78rem}
+  .rl-label{font-variant:small-caps;letter-spacing:.08em;color:var(--ink-faded)}
+  .rl-btn{border:1px solid var(--ink-faded);background:transparent;color:var(--ink-soft,inherit);
+    border-radius:3px;padding:.1rem .55rem;cursor:pointer;font:inherit}
+  .rl-btn.on{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;border-color:transparent}
+  .short-reading .sr-h{font-size:1rem;margin:1.3rem 0 .3rem}
+  .sr-list{margin:.2rem 0 .6rem 1.1rem;padding:0}
+  .sr-period{border-left:2px solid var(--ink-faded);padding:.1rem 0 .1rem .7rem;margin:.5rem 0}
+  .sr-period.now{border-left-color:var(--saffron-deep,#8b6f47)}
+  .sr-when{font-weight:600}
+  .sr-nowchip{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;font-size:.68rem;
+    border-radius:3px;padding:0 .35rem;margin-left:.45rem;vertical-align:middle}
+  .sr-strength{margin:.1rem 0 .35rem}
+  .sr-comb{margin:.4rem 0}
+  .sr-tone{font-size:.68rem;border-radius:3px;padding:0 .35rem;margin-left:.4rem;
+    background:rgba(139,111,71,.16)}
+  .sr-tone.t-difficult{background:rgba(160,60,40,.18)}
+  .sr-tone.t-supportive{background:rgba(70,120,60,.18)}
   .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
   .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
   .decade-grid{width:100%;margin:.2rem 0 .5rem;font-size:.82rem}
@@ -1100,6 +1119,22 @@ const I18N_HI = {
   "graha": "ग्रह",
   "sign": "राशि",
   "house": "भाव",
+  "Reading": "पाठ",
+  "short": "संक्षिप्त",
+  "full": "विस्तृत",
+  "Your reading, in short": "आपका फलादेश, संक्षेप में",
+  "What this reading calls favourable": "जिन्हें यह फलादेश अनुकूल कहता है",
+  "What it calls difficult": "जिन्हें यह कठिन कहता है",
+  "What it reads both ways": "जिन्हें यह दोनों तरह पढ़ता है",
+  "What is coming": "आगे क्या है",
+  "Running well": "अच्छा चलता हुआ",
+  "Meeting friction": "रुकावट का सामना",
+  "The combinations your chart carries": "आपकी कुंडली के योग",
+  "What is unusual here": "यहाँ असामान्य क्या है",
+  "How much of this is true of everyone": "इसमें से कितना सबके लिए सच है",
+  "READ THE FULL READING": "विस्तृत फलादेश पढ़ें",
+  "This chart is too sparse for a short reading — switch to the full reading.": "इस कुंडली के लिए संक्षिप्त फलादेश हेतु पर्याप्त सामग्री नहीं — विस्तृत फलादेश पर जाइए।",
+  "You are reading the short version. The rest of the book fills in when you switch to the full reading.": "आप संक्षिप्त संस्करण पढ़ रहे हैं। विस्तृत फलादेश पर जाते ही शेष पुस्तक भर जाएगी।",
   "The honesty rules that govern this table — read them before the counts.": "इस तालिका पर लागू ईमानदारी-नियम — गणना पढ़ने से पहले इन्हें पढ़ें।",
   "life area": "जीवन-क्षेत्र",
   "MD": "महादशा",
@@ -2599,6 +2634,104 @@ function adverseTransitRows(R){ const out=[];
       interference:'—'}); }
   out.sort((a,b2)=>a.start_jd-b2.start_jd); return out; }
 
+// ---- reading LENGTH: the same cast, read two ways ----------------------------
+// The full reading is the default and stays the default — nothing is hidden unless a reader
+// asks for the gist. Switching re-renders from the payload already in memory: both readings
+// ride in every response, so the toggle never re-casts the chart.
+let READ_LEN = 'full';
+let LAST_RENDER = null;          // [R, S, FQ] — so the toggle can redraw without a fetch
+
+function setReadingLength(v){
+  if(v===READ_LEN || !LAST_RENDER) return;
+  READ_LEN = v;
+  render(LAST_RENDER[0], LAST_RENDER[1], LAST_RENDER[2]);
+  if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2);
+}
+
+// Rendered on EVERY folio, because in the short reading the other folios are where a reader
+// discovers the switch exists — a mode you cannot find your way out of is a trap.
+function readingLengthToggle(){
+  const w=el('div',{class:'rl-toggle'});
+  w.append(el('span',{class:'rl-label'}, t('Reading')));
+  for(const [v,label] of [['short', t('short')], ['full', t('full')]]){
+    const b=el('button',{class:'rl-btn'+(READ_LEN===v?' on':''),type:'button'},label);
+    b.setAttribute('aria-pressed', READ_LEN===v ? 'true' : 'false');
+    b.onclick=()=>setReadingLength(v);
+    w.append(b);
+  }
+  return w;
+}
+
+function shortList(items){
+  const ul=el('ul',{class:'sr-list'});
+  for(const x of (items||[])) ul.append(el('li',{},x));
+  return ul;
+}
+
+// The short reading itself. Every string arrives already written in the reader's language —
+// t() cannot translate a sentence composed at runtime, so the payload carries both and this
+// picks. Safe DOM only, per the project rule.
+function shortReadingCard(sr){
+  const hi = LANG==='hi';
+  const pick=(o,f)=> (hi ? o[f+'_hi'] : o[f+'_en']) || '';
+  const box=el('div',{class:'short-reading'});
+  box.append(H2('Your reading, in short'));
+  if(pick(sr,'opening')) box.append(para(pick(sr,'opening'),'lede'));
+  if(pick(sr,'you')) box.append(para(pick(sr,'you'),'lede'));
+
+  for(const [field,label] of [['strengths','What this reading calls favourable'],
+                              ['difficulties','What it calls difficult'],
+                              ['mixed','What it reads both ways']]){
+    const items = hi ? sr[field+'_hi'] : sr[field+'_en'];
+    if(!(items||[]).length) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(shortList(items));
+  }
+
+  if((sr.periods||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('What is coming')));
+    if(pick(sr,'ahead_lead')) box.append(para(pick(sr,'ahead_lead'),'muted'));
+    for(const p of sr.periods){
+      const card=el('div',{class:'sr-period'+(p.is_now?' now':'')});
+      const head=el('div',{class:'sr-when'});
+      head.append(pick(p,'from_label')+' – '+pick(p,'to_label'));
+      if(p.is_now) head.append(el('span',{class:'sr-nowchip'}, t('now')));
+      card.append(head);
+      card.append(para(pick(p,'strength'),'sr-strength'));
+      const sup = hi ? p.supportive_hi : p.supportive_en;
+      const str = hi ? p.strained_hi : p.strained_en;
+      if((sup||[]).length){ card.append(el('div',{class:'muted'}, t('Running well'))); card.append(shortList(sup)); }
+      if((str||[]).length){ card.append(el('div',{class:'muted'}, t('Meeting friction'))); card.append(shortList(str)); }
+      box.append(card);
+    }
+  }
+
+  if((sr.combinations||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('The combinations your chart carries')));
+    if(pick(sr,'combinations_lead')) box.append(para(pick(sr,'combinations_lead'),'muted'));
+    for(const c of sr.combinations){
+      const row=el('div',{class:'sr-comb'});
+      row.append(el('b',{},c.name||''));
+      row.append(el('span',{class:'sr-tone t-'+String(c.tone||'mixed')}, pick(c,'tone')));
+      row.append(' — '+pick(c,'plain')+(pick(c,'when') ? '; '+pick(c,'when') : ''));
+      box.append(row);
+    }
+  }
+
+  for(const [field,label] of [['unusual','What is unusual here'],
+                              ['common','How much of this is true of everyone']]){
+    if(!pick(sr,field)) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(para(pick(sr,field)));
+  }
+  if(pick(sr,'caveat')) box.append(para(pick(sr,'caveat'),'muted'));
+  if(pick(sr,'more')) box.append(para(pick(sr,'more'),'muted'));
+  const b=el('button',{class:'leaf-button secondary',type:'button'}, t('READ THE FULL READING'));
+  b.onclick=()=>setReadingLength('full');
+  box.append(b);
+  return box;
+}
+
 function render(R, S, FQ){
   RPT=R;  // expose to H2's plain-language layer
   PAGE_TOC=[];
@@ -2607,8 +2740,32 @@ function render(R, S, FQ){
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
   const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); CUR_LEAF=i; };
+  LAST_RENDER = [R, S, FQ];
+
+  // ---- the SHORT reading: one folio instead of eleven ----
+  // The other folios are not left blank — a reader who keeps turning is told what happened
+  // and handed the way back, which is the difference between a mode and a dead end. The
+  // feedback section still renders on the colophon: shortening the reading must not quietly
+  // switch off the thing that measures how well it lands.
+  if(READ_LEN==='short'){
+    chapter(2);
+    add(readingLengthToggle());
+    if(R.short_reading) add(shortReadingCard(R.short_reading));
+    else add(para(t('This chart is too sparse for a short reading — switch to the full reading.'),'muted'));
+    for(let i=3;i<=11;i++){
+      chapter(i);
+      add(readingLengthToggle());
+      add(para(t('You are reading the short version. The rest of the book fills in when you switch to the full reading.'),'muted'));
+    }
+    chapter(12);
+    if(FQ&&FQ.length) add(feedbackCard(FQ));
+    if(R.feedback_instrument){ add(H2('Your feedback')); add(feedbackInstrument(R.feedback_instrument)); }
+    buildToc();
+    return;
+  }
 
   chapter(2);
+  add(readingLengthToggle());
   // ===== What matters most (the engine's ranked digest — first thing you see) =====
   const dg=R.digest||{};
   if(dg.headline||(dg.items&&dg.items.length)){

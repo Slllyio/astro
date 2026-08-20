@@ -247,6 +247,24 @@ def simple_summary_for_dict(report: dict) -> Optional[dict]:
     return asdict(summary) if summary is not None else None
 
 
+def short_reading_for_dict(report: dict) -> Optional[dict]:
+    """The short reading as a JSON-safe dict, from an already-built report dict.
+
+    Always present in the payload, whichever reading length the caller asked for: the mode is
+    a rendering choice, and a page that can toggle between the two without a second cast is
+    only possible if both are carried."""
+    from dataclasses import asdict
+
+    from app.raman_saab.short_reading import build_short_reading
+    short = build_short_reading(report)
+    return asdict(short) if short is not None else None
+
+
+def short_reading_for(r: DetailedReport) -> Optional[dict]:
+    """The same, from a DetailedReport — for the markdown and standalone renderers."""
+    return short_reading_for_dict(to_report_dict(r))
+
+
 def simple_summary_for(r: DetailedReport) -> Optional[dict]:
     """The same, from a DetailedReport — for the markdown and standalone renderers, which hold
     the report object rather than the dict. Imported lazily by them: this module imports
@@ -449,4 +467,7 @@ def to_report_dict(r: DetailedReport) -> dict:
     # which are keys above. Building it here rather than inside the literal is what lets it
     # read them without `to_report_dict` calling itself.
     out["simple_summary"] = simple_summary_for_dict(out)
+    # The short reading is composed from the finished dict for the same reason — it re-reads
+    # the graded timeline, the fired combinations and the plain summary, all keys above.
+    out["short_reading"] = short_reading_for_dict(out)
     return out

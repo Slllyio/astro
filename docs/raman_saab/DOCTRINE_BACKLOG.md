@@ -913,6 +913,69 @@ exchange with an afflicted partner; measure exact/within-1/real-errors before an
 report both axes side by side per MEASURED TRUTH.
 
 
+### MEASURED 2026-08-20 — implemented behind flags, BOTH SHIPPED OFF, awaiting decision
+
+Implemented in `judges/house_template.py` on the `B1_DOMINANT_FACTOR_GUARD` pattern
+(module-level, read LIVE, default OFF) and measured. Nothing is enabled; the golden ratchet
+is byte-identical at the shipped values.
+
+Two arms, because "an exchange transmits the partner's condition" can mean two things:
+
+* **Arm A — `PARIVARTANA_DIRECTIONAL`** withholds the existing relief when the exchange
+  partner is itself in trouble.
+* **Arm B — `PARIVARTANA_TRANSMITS`** goes further: the lord itself counts hard-afflicted,
+  which is literally what HTJAH-I:9119 says, and is the channel the B1 guard already reads.
+
+And three readings of "partner in trouble" (`PARIVARTANA_PARTNER_TEST`), because Raman's two
+counter-examples do NOT name the same mechanism: `condition` (partner combust /
+debilitated-uncancelled / a maraka), `dusthana` (partner lords the 6th, 8th or 12th — the
+mechanism at :9119, where the 8th lordship is what travels), and `either`. HTJAH-I:9143
+("exchange … with 5th lord Saturn is not desirable") fits neither and is deliberately not
+encoded: the 5th is no dusthana and Saturn is not described as afflicted there.
+
+Measured over the 225 golden charts, 12,600 significations, both ratchet axes:
+
+| variant | exact | within-1 | real errors | significations moved |
+|---|---|---|---|---|
+| baseline (shipped) | 259/293 | 283/293 | 10 | — |
+| A / partner=condition | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| A / partner=dusthana | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| A / partner=either | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| B / partner=condition | 259/293 | 283/293 | 10 | 159 (1.26%) |
+| B / partner=dusthana | 259/293 | 283/293 | 10 | 74 (0.59%) |
+| B / partner=either | 259/293 | 283/293 | 10 | 162 (1.29%) |
+| A+B (any reading) | 259/293 | 283/293 | 10 | same as B alone |
+
+**Every variant leaves all three fidelity numbers exactly unchanged.**
+
+**Arm A is a measured no-op — 0 of 12,600.** The reason is not that the rule is right; it is
+that the relief it would qualify almost never fires. Across 225 charts, 93 carry at least
+one exchange, but only **5** exchange members are debilitated-and-uncancelled — the shipped
+relief's actual trigger — and none of those five has an afflicted partner. The backlog's
+doctrinal criticism stands; its practical consequence is nil, and no golden can test it.
+
+**Arm B moves 0.59%–1.29% of all output, always one step downward** (161 favourable→mixed,
+1 favourable→afflicted at `either`). On the pinned corpus it is an exact wash: it FIXES
+`HTJAH-II.h10_05 H10/status_honour` (favourable→mixed, Raman: mixed) and BREAKS
+`HTJAH-II.h11_05 H11/elder_siblings` (favourable→mixed, Raman: favourable).
+
+**Recommendation: do not enable either arm.** Arm A cannot be justified because it changes
+nothing. Arm B is a real change to 1.29% of every reading, tightening favourable verdicts
+toward mixed, bought with one golden fixed and one golden broken — no measured fidelity gain
+on either axis. The B1 precedent does not apply: B1 was enabled because it cut real errors
+(inversions) 12 → 10 at a known strict cost. Arm B cuts nothing. Enabling it would be a
+purely doctrinal act, and the doctrine itself is split — :8837 has exchanges benefiting,
+:9119 has one transmitting affliction, :9143 objects to an exchange on neither ground.
+
+If a human wants it anyway, `dusthana` is the reading with the best textual warrant (it is
+the mechanism :9119 actually describes) and the smallest blast radius (0.59%), and it moves
+no golden at all.
+
+Reproduce: `tests/raman_saab/judges/test_directional_parivartana.py` pins the helpers and
+the flags-off no-op; the sweep script is in the session scratchpad
+(`measure_parivartana_full.py`) and rebinds the three module flags directly.
+
+
 ## Kemadruma bhanga attribution (2026-08-19) — OPEN, needs doctrine review + user sign-off
 
 `bhangas.kemadruma_bhanga` cites 3HC:2182-2185 for its three cancellation branches. The

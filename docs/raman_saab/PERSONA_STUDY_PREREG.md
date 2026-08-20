@@ -238,6 +238,34 @@ that pass, in registered order — the next registered name in that stratum take
 Round-hour and quarter-hour times are **kept**, not excluded, since they are real claims about
 the hour; each person's time precision is recorded and the results are split by it.
 
+### Deviation 2 — the sham gate extended to the contrast (added AFTER seeing the contrast)
+
+**This one is post-hoc and is recorded as such.** §2b specified the coin-flip arm as a gate on
+the *primary*. It did not say the coin-flip answers must also be run through the *cross-chart
+contrast*. When the first full scoring run returned a null primary (p=.39) alongside a
+cross-chart contrast at permutation p=.044, that gap became the first thing to check, and it
+was checked before any result was written up.
+
+The concern is specific, not general. The two arms of the contrast do not have the same item
+composition. Part C selects each chart's **rarest** readings, so a persona's significations are
+by construction unusual for their own chart and comparatively typical on anyone else's. On top
+of that the poles are not symmetric: `one_way` agrees with a favourable *or* an afflicted
+verdict while `mixed` agrees only with `mixed`. Either asymmetry could manufacture a positive
+contrast out of an answerer who knows nothing at all, and the primary's sham gate would not
+notice, because the primary is scored against a 0.5 that holds by construction.
+
+So the coin-flip arm is now run through the identical cross-chart and permutation machinery.
+It can only ever *invalidate* a result, never create one: a contrast the coin flip also
+produces is a property of the statistic, not of the charts.
+
+**Gate:** |contrast| < 0.02 on the coin-flip arm. Above that, the observed contrast is reported
+as biased and is not evidence of anything.
+
+Adding a control after seeing a number is worth naming plainly. It is legitimate here only
+because of the direction it can move the conclusion — it cannot turn a null into a finding, and
+the pre-registered interpretation rule already said a result away from chance is a flag to hunt
+artifacts rather than a discovery. This is that hunt, done rather than promised.
+
 ## 7. Governance
 
 Committed before any data is collected. The results document reports every arm, every drop,

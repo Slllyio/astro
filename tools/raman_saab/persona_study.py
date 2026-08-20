@@ -472,7 +472,7 @@ def _cmd_score(args) -> int:
 
     roster = json.loads((OUT / "roster.json").read_text(encoding="utf-8"))
     by_slug = {r["slug"]: r for r in roster["admitted"]}
-    cards, coin_cards, claims, verdicts = [], [], {}, {}
+    cards, coin_cards, claims, coin_claims, verdicts = [], [], {}, {}, {}
 
     for slug, rec in sorted(by_slug.items()):
         ans_path = OUT / "answers" / f"{slug}.json"
@@ -493,16 +493,19 @@ def _cmd_score(args) -> int:
             report, [(q, v, None) for q, v in coin.items()]
             + [("inst.v2.meta.context", "before_reading", None)], chart_key=ckey))
 
-        given = {q: v for q, v in (doc.get("answers") or {}).items()}
-        items = []
-        for qid, expected in key["answers"].items():
-            meta = key["meta"].get(qid, {})
-            if meta.get("kind") != "forced_choice" or qid not in given:
-                continue
-            pole = _pole(meta["verdict"], given[qid] == expected)
-            if pole:
-                items.append((meta["signification"], pole))
-        claims[slug] = items
+        def _claims(given: dict) -> list:
+            out = []
+            for qid, expected in key["answers"].items():
+                meta = key["meta"].get(qid, {})
+                if meta.get("kind") != "forced_choice" or qid not in given:
+                    continue
+                pole = _pole(meta["verdict"], given[qid] == expected)
+                if pole:
+                    out.append((meta["signification"], pole))
+            return out
+
+        claims[slug] = _claims(doc.get("answers") or {})
+        coin_claims[slug] = _claims(coin)
         verdicts[slug] = json.loads(
             (OUT / "verdicts" / f"{slug}.json").read_text(encoding="utf-8"))["verdicts"]
 
@@ -536,6 +539,24 @@ def _cmd_score(args) -> int:
     print(f"  contrast    {cc['contrast'] is not None and round(cc['contrast'], 4)}   "
           f"permutation p={pperm}")
 
+    # The sham gate has to cover the CONTRAST too, not only the primary. The contrast is a
+    # difference between two arms with different item compositions — Part C selects each
+    # chart's RAREST readings, so a persona's significations are unusual for their own chart
+    # and typical elsewhere — and an asymmetry there would manufacture a contrast out of an
+    # answerer who knows nothing. Running the coin-flip arm through the identical machinery
+    # is the only way to tell a real contrast from a biased statistic.
+    cc_coin = cross_chart(coin_claims, verdicts)
+    pperm_coin = permutation_p(coin_claims, verdicts, rounds=args.permutations)
+    print("\n=== SHAM GATE on the CONTRAST — the same control, coin-flip answers ===")
+    print(f"  matched     {cc_coin['matched'][0]}/{cc_coin['matched'][1]} = "
+          f"{cc_coin['matched_rate'] and round(cc_coin['matched_rate'], 4)}")
+    print(f"  mismatched  {cc_coin['mismatched'][0]}/{cc_coin['mismatched'][1]} = "
+          f"{cc_coin['mismatched_rate'] and round(cc_coin['mismatched_rate'], 4)}")
+    print(f"  contrast    {cc_coin['contrast'] is not None and round(cc_coin['contrast'], 4)}"
+          f"   permutation p={pperm_coin}")
+    contrast_gate = cc_coin["contrast"] is not None and abs(cc_coin["contrast"]) < 0.02
+    print(f"  gate {'PASS — the contrast statistic is unbiased' if contrast_gate else 'FAIL — the contrast is biased; the real one cannot be read as evidence'}")
+
     out = {"charts": len(cards), "sham_gate_passed": gate_ok,
            "coinflip": {"hits": coin.forced.hits, "n": coin.forced.n,
                         "rate": coin.forced.rate, "p": coin.forced.p_value},
@@ -549,6 +570,8 @@ def _cmd_score(args) -> int:
                      "chance": blind.spine_chance, "p": blind.spine_p},
            "event_houses": {"top": blind.event_top_grade, "n": blind.event_scored},
            "cross_chart": cc, "permutation_p": pperm,
+           "contrast_sham": {"cross_chart": cc_coin, "permutation_p": pperm_coin,
+                             "passed": contrast_gate},
            "per_signification": blind.per_signification}
     (OUT / "results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     if args.html:

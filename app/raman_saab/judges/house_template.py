@@ -943,7 +943,7 @@ def _bucket_fired(
     benefic: list[rf.FiredRule] = []
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
-    for fr in rf.fire_house(chart, sig.house):
+    for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
             continue
         pol = fr.rule.polarity

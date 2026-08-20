@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Final
 
 import swisseph as swe
@@ -196,10 +197,44 @@ class GocharaSegment:
     vedha_sample_fraction: float
 
 
+#: MEASURED, and the measurement killed two plausible optimisations — recorded here so the
+#: next reader does not re-try them.
+#:
+#: The three `gochara_timeline` sweeps a report runs share one `ref_jd` but start at three
+#: different offsets, so their 5-day grids are misaligned and almost never land on the same
+#: date: 10,119 calls over 10,119 DISTINCT dates. Memoising therefore buys NOTHING within a
+#: report. The cache is kept only for the cross-report case a busy server sees, and sized above
+#: one report's working set so it cannot thrash — at 8,192 it scored exactly zero hits, because
+#: the set is larger than the cache and every entry was evicted before its reuse.
+#:
+#: The second idea was to compute only the planets each sweep asks for, two of the three
+#: wanting Saturn alone. That IS much faster — 81,984 ephemeris calls fall to 15,535 and the
+#: build to 1.18s — and it is WRONG: `_vedha` reads `hfm_of` for every transiting graha to find
+#: the obstructors, so a restricted set silently empties it. Caught by diffing two charts'
+#: full output against the previous code: segment boundaries, signs and bindus were identical
+#: and every `vedha_sample_fraction` had changed. Do not restrict the body set.
+#:
+#: What is left, if someone wants the time back: align the three sweeps to one absolute grid so
+#: the cache hits. That changes WHICH dates are sampled, so vedha fractions and segment edges
+#: move by up to `step_days` — a deliberate output change, not an optimisation, and it needs
+#: sign-off rather than a quiet commit.
+_TRANSIT_SIGN_CACHE = 32768
+
+
+@lru_cache(maxsize=_TRANSIT_SIGN_CACHE)
 def _transiting_signs(year: int, month: int, day: int, *, ayanamsa: str) -> dict[str, int]:
-    """Sign (1..12) of all 9 grahas at noon UT. Deliberately skips `cast_chart`'s Shadbala/
-    maraka/upagraha passes — a multi-year timeline sampled every few days cannot afford to
-    recompute those per sample, and a Gochara outlook needs only the transiting sign."""
+    """Sign (1..12) of all 9 grahas at noon UT.
+
+    Deliberately skips `cast_chart`'s Shadbala/maraka/upagraha passes — a multi-year timeline
+    sampled every few days cannot afford to recompute those per sample, and a Gochara outlook
+    needs only the transiting sign. ALL nine are computed even when the caller wants one: the
+    vedha check needs the others (see the note above).
+
+    Memoised: pure in `(year, month, day, ayanamsa)` and the ephemeris is deterministic, so a
+    hit returns exactly what a recomputation would. The returned dict is SHARED between callers
+    — every call site reads it and none mutates it, and a mutation would now be visible to the
+    next caller, so keep it that way.
+    """
     jd = swe.julday(year, month, day, 12.0, swe.GREG_CAL)
     with sidereal_mode(ayanamsa):
         signs: dict[str, int] = {}

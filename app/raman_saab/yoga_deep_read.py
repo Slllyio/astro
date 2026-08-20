@@ -67,8 +67,24 @@ def describe(cond: C.Condition) -> str:
                 + ")")
     name = type(cond).__name__
     attrs = {k: v for k, v in vars(cond).items() if not k.startswith("_")}
-    inner = ", ".join(f"{k}={v}" for k, v in attrs.items())
+    inner = ", ".join(f"{k}={_describe_value(v)}" for k, v in attrs.items())
     return f"{name}({inner})"
+
+
+def _describe_value(v: object) -> str:
+    """Render one condition argument DETERMINISTICALLY.
+
+    A bare f-string on a `set`/`frozenset` renders it in iteration order, which follows the
+    interpreter's per-process string hash — so the same chart produced
+    ``states={'moolatrikona', 'own'}`` in one process and ``states={'own', 'moolatrikona'}`` in
+    the next. One line of an otherwise byte-stable report changing between runs is a real
+    defect: it breaks output diffing, which is how a refactor is proven not to have moved a
+    verdict (this was found by exactly such a diff). Sets are sorted; everything else is
+    unchanged.
+    """
+    if isinstance(v, (set, frozenset)):
+        return "{" + ", ".join(repr(x) for x in sorted(v, key=repr)) + "}"
+    return str(v)
 
 
 def participants(cond: C.Condition) -> tuple[str, ...]:

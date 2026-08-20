@@ -292,6 +292,14 @@
   .ai-text{color:#e6eaf2;font-size:.98rem;line-height:1.7;margin:.55rem 0}
   .ai-wall .folio-loading{color:#aab4c8}
   .ai-wall .muted{color:#8a94a8}
+  /* the plain-words summary (v37) — the one section aimed at a reader with no astrology.
+     Set a touch larger and looser than the body, because it is meant to be readable at a
+     glance by someone who will not read the chapters. */
+  .ss{margin:.8rem 0 0}
+  .ss-lede{font-size:1.04rem;line-height:1.68}
+  .ss-p{font-size:1rem;line-height:1.66;margin:.85rem 0 0}
+  .ss-list{margin:.4rem 0 .2rem;padding-left:1.25rem}
+  .ss-list li{margin:.28rem 0;line-height:1.5;font-size:.99rem}
   /* the four-part feedback instrument (v36) — the questionnaire that closes the report.
      Part A is answerable BEFORE the reading; B/C/D stay shut until it is marked done, which
      is the whole reason the section can be scored rather than just liked. */
@@ -1166,6 +1174,7 @@ const I18N_HI = {
   "not sure": "निश्चित नहीं",
   // ---- the four-part feedback instrument (v36) ----
   "Your feedback": "आपकी प्रतिक्रिया",
+  "In simple words": "सरल शब्दों में",
   "PART": "भाग",
   "HOW SURE?": "कितना विश्वास?",
   "why? (optional)": "क्यों? (वैकल्पिक)",
@@ -1749,7 +1758,7 @@ const SEC_ID={
   'Pitru dosha screen (classical, non-Raman)':'pitru','Integrated insights':'synthesis',
   'What stands out':'stands_out','Information content of this reading':'info_content',
   'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod',
-  'Your feedback':'feedback'};
+  'Your feedback':'feedback','In simple words':'simple_summary'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
@@ -2617,6 +2626,9 @@ function render(R, S, FQ){
     const rb=el('button',{class:'digest-read',type:'button'},t('Read this as one story →'));
     rb.onclick=()=>readAsStory(rb); add(rb);
   }
+
+  // ===== In simple words (v37) — the first thing on the leaf, before the digest =====
+  if(R.simple_summary){ add(H2('In simple words')); add(simpleSummary(R.simple_summary)); }
 
   // ===== the invitation to answer Part A blind, offered BEFORE the reading =====
   // The feedback section itself sits at the end, where a closing section belongs. But its
@@ -3602,6 +3614,32 @@ function aiInterpretPanel(){
 // answer worth measuring. So B/C/D stay shut until Part A is marked done, and whether the
 // reading had been read is RECORDED rather than assumed.
 // Safe DOM only — createElement/textContent, never innerHTML (project rule).
+// ---- the plain-words summary (v37) --------------------------------------------------
+// The section that exists for the reader the technical chapters lose. Rendered FIRST on the
+// reading leaf, before the digest and before "Your Reading": a summary a reader meets after
+// the chapters is not a summary. Prose comes bilingual from the server — t() cannot translate
+// a sentence composed at runtime — so this picks by LANG rather than translating.
+function simpleSummary(ss){
+  const hi = (LANG==='hi');
+  const wrap = el('div',{class:'ss'});
+  const block = (prose, itemsKey) => {
+    const text = ss[prose + (hi?'_hi':'_en')];
+    if(!text) return;
+    wrap.append(para(text, prose==='opening' ? 'ss-lede' : 'ss-p'));
+    const items = itemsKey ? ss[itemsKey + (hi?'_hi':'_en')] : null;
+    if(items && items.length){
+      const ul = el('ul',{class:'ss-list'});
+      for(const it of items) ul.append(el('li',{}, it));
+      wrap.append(ul);
+    }
+  };
+  block('opening'); block('you');
+  block('good','good_items'); block('hard','hard_items'); block('mixed','mixed_items');
+  block('now','now_items');
+  block('unusual'); block('common'); block('how_to_read'); block('caveat');
+  return wrap;
+}
+
 let INST_ANSWERS = {};              // qid -> {answer, free_text}
 let INST_CONTEXT = 'after_reading'; // flipped by the top invitation, flipped back on navigation
 

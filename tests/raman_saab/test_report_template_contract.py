@@ -28,6 +28,10 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 #: marker change must consciously touch this file too. Append-only: may only ever GROW.
 _FROZEN = (
     ("title", "# Detailed reading", 'class="name"'),
+    # v37 amendment (2026-08-20, conscious, same-commit as the module, user-requested): the
+    # plain-words summary, inserted FIRST. Third exception to append-at-the-end, after v5 and
+    # v32 — a summary a reader meets after the technical chapters is not a summary.
+    ("simple_summary", "## In simple words", 'id="simple-summary"'),
     # v5 amendment (2026-07-26, conscious, same-commit as the module): "Your Reading" is the
     # ONE deliberate exception to "append at the end" — it must come FIRST after the title,
     # since it exists specifically to be read before every technical section below it.
@@ -243,7 +247,7 @@ class TestTemplateContract:
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
             "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34",
-            "v35", "v36"
+            "v35", "v36", "v37"
         }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6

@@ -1098,3 +1098,46 @@ and refuses to be quoted without its caveats — `render_aggregate` prints them 
 Run it: `python -m app.raman_saab.feedback_scoring [--chart-key ...] [--json]`. There is no
 endpoint on purpose: an API that told a submitter how they scored would turn the instrument
 into a quiz, and the answer would reach the next reader of the same chart.
+
+---
+
+## v37 amendment (2026-08-20, user-requested) — "In simple words"
+
+**One section INSERTED FIRST**, immediately after the title and before "Your Reading":
+`simple_summary` / `## In simple words` / `id="simple-summary"`. `_FROZEN` reordered in the
+same commit, per the amendment procedure.
+
+This is the **third conscious exception** to append-at-the-end, after v5 (Your Reading) and
+v32 (Judgment graph), and for the same reason both of those had: a section a reader meets
+*after* the technical chapters is not doing the job it exists for.
+
+**Why it exists.** Real feedback: *"the report is too technical."* Reading "Your Reading" back,
+that is fair — it names the planet that shapes the temperament, quotes rules, and reconciles
+verdicts against each other. **Plain English is not the same thing as plain sense.** This is a
+further step down: nine short blocks, no Sanskrit, no planet names, no house numbers, no
+citations, no percentages.
+
+**It creates nothing.** Every block re-reads material judged elsewhere (PREC-10) — house
+verdicts and population shares from `calibration`, the uncommon readings from `distinctive`,
+the honesty counts from `info`, the running period from the Nichod's own current-period line,
+the temperament from `psych`. The opening paragraph says so on its face: *"if this page and a
+chapter below disagree, the chapter is right."*
+
+**The two paragraphs that must never be cut in simplification:**
+- *what is unusual here* — nearly everything a chart says is said about nearly everybody, so
+  the few readings that are not are the only place a reader can usefully test it;
+- *how much of it is common* — the actual counts for this chart, in words ("56 judgements, 8
+  of them held by half the population or more").
+
+Readings on the **atlas-proven inverted channels are excluded from the "unusual" paragraph** —
+naming one there would promote a known error to the most-read sentence in the report.
+
+**Both languages are generated**, not translated at render time: the page toggles on the client
+and `t()` cannot translate a sentence composed at runtime, so a Hindi reader would otherwise
+meet an English summary inside a Hindi report. The markdown surface carries the English alone
+and says so, for the same `_fold_ascii` reason the feedback section does.
+
+**Guarded by** `tests/raman_saab/test_simple_summary.py`: a jargon blocklist over every emitted
+string (including house numbers and planet names), a sentence-length ceiling, the decree guard,
+and a check that each verdict group matches the calibration the chapters are built from — so
+the summary cannot drift into judging on its own.

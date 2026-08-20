@@ -398,6 +398,12 @@ SECTION_META: Final[dict[str, SectionMeta]] = {
         "What do the technical words mean?",
         "पारिभाषिक शब्दों का अर्थ क्या है?",
         1),
+    "simple_summary": SectionMeta(
+        "The whole reading in ordinary words — no Sanskrit, no planet names, no house numbers",
+        "पूरा फलादेश साधारण शब्दों में — कोई संस्कृत नहीं, ग्रह-नाम नहीं, भाव-संख्या नहीं",
+        "What does all this actually say about me?",
+        "यह सब मेरे बारे में असल में क्या कहता है?",
+        1, "section:simple_summary"),
     "feedback": SectionMeta(
         "Your answers about your own life — the only way to find out whether any of this "
         "matched",

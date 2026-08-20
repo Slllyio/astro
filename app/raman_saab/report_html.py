@@ -109,6 +109,11 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .section-sub{color:var(--ink-soft);font-size:.86rem;margin:.2rem 0 1.2rem}
 /* the feedback instrument (v36): the Hindi line sits under its English twin, and the
    forced-choice options print as an answerable list rather than running prose. */
+/* the plain-words summary (v37): the Hindi line sits under its English twin, and the
+   verdict groups are lists because the plain house names carry commas of their own. */
+.ss-hi{color:var(--ink-soft);font-size:.92rem;line-height:1.6;margin:.1rem 0 .7rem}
+.ss-list{margin:.3rem 0 1rem;padding-left:1.2rem}
+.ss-list li{margin:.25rem 0;line-height:1.5}
 .fb-q{margin:1.1rem 0 .1rem}
 .fb-q-hi{color:var(--ink-soft);font-size:.92rem;margin:.15rem 0 .2rem;line-height:1.6}
 .fb-opts{list-style:none;padding:0;margin:.45rem 0 .2rem}
@@ -2571,6 +2576,47 @@ def _medical_section(r: DetailedReport) -> str:
         + f'<p class="muted"><i>{_esc(med.provenance)}</i></p>')
 
 
+def _simple_summary_section(r: DetailedReport) -> str:
+    """v37 — the whole reading in plain words, rendered FIRST.
+
+    Both languages, because the section exists for readers the technical chapters lose and a
+    Hindi reader is exactly such a reader. The Hindi lines sit under their English twins rather
+    than behind a toggle: this surface is a single self-contained file with no client state.
+    """
+    try:
+        from app.raman_saab.report_json import simple_summary_for
+        ss = simple_summary_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole document
+        return ""
+    if not ss:
+        return ""
+
+    def block(prose: str, items_key: str = "") -> str:
+        en, hi = ss.get(prose + "_en") or "", ss.get(prose + "_hi") or ""
+        if not en:
+            return ""
+        out = f'<p>{_esc(en)}</p><p class="ss-hi">{_esc(hi)}</p>'
+        items_en = ss.get(items_key + "_en") if items_key else ()
+        items_hi = ss.get(items_key + "_hi") if items_key else ()
+        if items_en:
+            rows = "".join(
+                f'<li>{_esc(a)}<span class="ss-hi"> &middot; {_esc(b)}</span></li>'
+                for a, b in zip(items_en, items_hi or items_en))
+            out += f'<ul class="ss-list">{rows}</ul>'
+        return out
+
+    body = "".join([
+        block("opening"), block("you"),
+        block("good", "good_items"), block("hard", "hard_items"),
+        block("mixed", "mixed_items"), block("now", "now_items"),
+        block("unusual"), block("common"), block("how_to_read"), block("caveat"),
+    ])
+    return ('<h2 class="section" id="simple-summary">In simple words</h2>'
+            '<p class="section-sub"><i>No Sanskrit, no planet names, no house numbers. '
+            'Everything below this section says the same things in the traditional way, '
+            'with the reasons.</i></p>' + body)
+
+
 def _feedback_section(r: DetailedReport) -> str:
     """v36 — the feedback instrument, rendered whole.
 
@@ -3834,6 +3880,8 @@ def to_html(r: DetailedReport) -> str:
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
       (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
+    {_simple_summary_section(r)}
+
     {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
     <div class="legend">This reading speaks in two voices. The

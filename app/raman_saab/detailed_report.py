@@ -443,6 +443,16 @@ class SectionSpec:
 #: in this order, and that the v1 prefix is byte-stable.
 SECTION_CONTRACT: tuple[SectionSpec, ...] = (
     SectionSpec("title", "# Detailed reading", 'class="name"', "v1"),
+    # v37 (2026-08-20, user-requested: "the report is too technical; we should have one
+    # section that gives a summary in very simple terms"). Inserted FIRST, before even the
+    # plain-English chapter — the third such conscious exception to append-at-the-end, after
+    # v5 and v32, and for the same reason each of those had: a reader has to meet this before
+    # anything else or it is not doing its job. "Your Reading" is plain ENGLISH; this is plain
+    # SENSE — no Sanskrit, no planet names, no house numbers, no citations, no percentages.
+    # It creates nothing (PREC-10): every line re-reads a verdict judged elsewhere, and it
+    # says on its own face that the chapter governs when the two disagree. _FROZEN in the
+    # contract test was reordered to match, in the same commit, per the procedure.
+    SectionSpec("simple_summary", "## In simple words", 'id="simple-summary"', "v37"),
     # v5 (2026-07-26, conscious amendment): "Your Reading" inserted right after the title — the
     # ONE deliberate exception to "append at the end". Every prior amendment (v2/v3/v4) only
     # ever grew the list downward; this one must come FIRST, because it exists specifically to
@@ -637,7 +647,7 @@ SECTION_CONTRACT: tuple[SectionSpec, ...] = (
 #: The HTML renderer's document order (the signature chips live in the page header, and the
 #: chart grids/now-box are HTML-only). Same append-only rule applies.
 HTML_SECTION_ORDER: tuple[str, ...] = (
-    "title", "plain_reading", "chart_signature", "judgment_graph", "ruler", "planet_bios", "psych",
+    "title", "simple_summary", "plain_reading", "chart_signature", "judgment_graph", "ruler", "planet_bios", "psych",
     "now_box",
     "info_content", "interpretation_guide", "themes", "stands_out", "digest",
     "dashboard",
@@ -4610,6 +4620,32 @@ def to_markdown(r: DetailedReport) -> str:
 
     # ── your reading: the one genuinely plain-English section, read FIRST ──────
     pr = r.plain_reading
+    # ── the plain-words summary (v37) — FIRST, before the plain-English chapter ─
+    try:
+        from app.raman_saab.report_json import simple_summary_for
+        _ss = simple_summary_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole reading
+        _ss = None
+    if _ss:
+        L.append("")
+        L.append("## In simple words")
+        L.append("")
+        L.append(_md_cell(_ss["opening_en"]))
+        for prose, items in (("you", ()), ("good", "good_items_en"),
+                             ("hard", "hard_items_en"), ("mixed", "mixed_items_en"),
+                             ("now", "now_items_en"), ("unusual", ()), ("common", ()),
+                             ("how_to_read", ()), ("caveat", ())):
+            text = _ss.get(prose + "_en") or ""
+            if not text:
+                continue
+            L.append("")
+            L.append(_md_cell(text))
+            for it in (_ss.get(items) or () if items else ()):
+                L.append(f"- {_md_cell(it)}")
+        L.append("")
+        L.append("_Hindi for this section is generated too and renders on the interactive "
+                 "page and the standalone HTML; this markdown surface is ASCII-only._")
+    
     L.append("## Your Reading")
     L.append("")
     L.append(pr.opening)

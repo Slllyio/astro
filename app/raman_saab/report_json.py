@@ -23,7 +23,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
-from typing import Any
+from typing import Any, Optional
 
 from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
                                             gochara_synthesis_sentence, graded_buckets,
@@ -237,12 +237,28 @@ def feedback_instrument_for(r: DetailedReport) -> dict:
     })
 
 
+def simple_summary_for_dict(report: dict) -> Optional[dict]:
+    """The plain-words summary as a JSON-safe dict, from an already-built report dict."""
+    from dataclasses import asdict
+
+    from app.raman_saab.simple_summary import build_simple_summary
+    summary = build_simple_summary(report)
+    return asdict(summary) if summary is not None else None
+
+
+def simple_summary_for(r: DetailedReport) -> Optional[dict]:
+    """The same, from a DetailedReport — for the markdown and standalone renderers, which hold
+    the report object rather than the dict. Imported lazily by them: this module imports
+    `detailed_report` at module level, so a top-level import back the other way would cycle."""
+    return simple_summary_for_dict(to_report_dict(r))
+
+
 def to_report_dict(r: DetailedReport) -> dict:
     """The full structured report as a JSON-safe dict — the shared grounding contract."""
     from app.raman_saab.judgment_graph import build_judgment_graph
     b = r.birth
     _jg = build_judgment_graph(r)
-    return {
+    out: dict = {
         "birth": {"name": b.name, "year": b.year, "month": b.month, "day": b.day,
                   "hour": b.hour, "minute": b.minute, "tz_offset": b.tz_offset,
                   "latitude": b.latitude, "longitude": b.longitude},
@@ -422,3 +438,9 @@ def to_report_dict(r: DetailedReport) -> dict:
         "sade_sati_phases": _each(r.sade_sati_phases),
         "chara_sequence": _each(r.chara_sequence),
     }
+    # The plain-words summary is composed FROM the finished dict — it re-reads the house
+    # verdicts, the distinctive readings, the honesty counts and the running period, all of
+    # which are keys above. Building it here rather than inside the literal is what lets it
+    # read them without `to_report_dict` calling itself.
+    out["simple_summary"] = simple_summary_for_dict(out)
+    return out

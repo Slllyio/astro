@@ -221,6 +221,9 @@
     background:rgba(139,111,71,.15);border:1px solid rgba(139,111,71,.35);border-radius:3px;
     padding:0 .3rem;margin-right:.35rem}
   .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
+  .honesty-rules{margin:.3rem 0 .8rem 1.2rem;padding:0;font-size:.88rem;line-height:1.55;
+    color:var(--ink-soft,inherit)}
+  .honesty-rules li{margin:.3rem 0}
   .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
   .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
   .decade-grid{width:100%;margin:.2rem 0 .5rem;font-size:.82rem}
@@ -1097,6 +1100,7 @@ const I18N_HI = {
   "graha": "ग्रह",
   "sign": "राशि",
   "house": "भाव",
+  "The honesty rules that govern this table — read them before the counts.": "इस तालिका पर लागू ईमानदारी-नियम — गणना पढ़ने से पहले इन्हें पढ़ें।",
   "life area": "जीवन-क्षेत्र",
   "MD": "महादशा",
   "Favourable": "अनुकूल",
@@ -3165,6 +3169,15 @@ function render(R, S, FQ){
   // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
   if((pp.houses||[]).length){ add(H2('Preponderance of testimonies'));
+    // The honesty rules that govern this table. They were on the markdown and the
+    // standalone HTML but had never reached this page — the surface most people read.
+    if((R.preponderance_rules||[]).length){
+      add(para(t('The honesty rules that govern this table — read them before the counts.'),'muted'));
+      const ol=el('ol',{class:'honesty-rules'});
+      for(const rl of R.preponderance_rules){
+        const li=el('li'); li.append(el('b',{},rl.heading+'.'),' '); li.append(citeText(rl.body||''));
+        ol.append(li); }
+      add(ol); }
     add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
     const _pb=prepBars(R);
     if(_pb) add(vizCard('Witness balance per house — favourable vs adverse', _pb,

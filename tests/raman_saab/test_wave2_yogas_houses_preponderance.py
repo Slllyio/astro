@@ -436,3 +436,53 @@ class TestGuardSweep:
             probes.append(sent)
         for text in probes:
             assert not _FORBIDDEN_RE.search(text or ""), text
+
+
+class TestTheHonestyRulesReachEverySurface:
+    """The rules that say what the Preponderance counts are NOT.
+
+    They were two run-on italic paragraphs — rule (3) alone ran ~250 words in one sentence
+    — duplicated by hand between the markdown and the standalone HTML, and absent from the
+    interactive page entirely, which is the surface most readers actually use. They are now
+    one shared list; these tests pin that every surface renders all of it.
+    """
+
+    def test_every_rule_reaches_the_markdown(self, markdown):
+        from app.raman_saab.detailed_report import PREPONDERANCE_RULES
+        for head, body in PREPONDERANCE_RULES:
+            assert head in markdown, head
+            # the markdown is ASCII-folded, so compare on a fragment free of em-dashes
+            assert body.split("—")[0].strip()[:60] in markdown, head
+
+    def test_every_rule_reaches_the_standalone_html(self, report):
+        from app.raman_saab.detailed_report import PREPONDERANCE_RULES
+        from app.raman_saab.report_html import to_html
+        html = to_html(report)
+        for head, _body in PREPONDERANCE_RULES:
+            assert head.replace("'", "&#x27;") in html or head in html, head
+
+    def test_the_two_phrases_earlier_tests_pin_survive_the_split(self, markdown):
+        """Both were load-bearing in the old paragraphs and are asserted elsewhere."""
+        assert "NOT counted among its own witnesses" in markdown
+        assert "NO numeric rule" in markdown
+
+    def test_the_json_carries_them_so_the_page_can_render_them(self, report):
+        from app.raman_saab.detailed_report import PREPONDERANCE_RULES
+        from app.raman_saab.report_json import to_report_dict
+        rules = to_report_dict(report)["preponderance_rules"]
+        assert [(r["heading"], r["body"]) for r in rules] == list(PREPONDERANCE_RULES)
+
+    def test_the_interactive_page_renders_them(self):
+        """Defined-but-never-called is the failure this whole factoring exists to prevent."""
+        import pathlib
+        page = (pathlib.Path(__file__).resolve().parents[2]
+                / "app" / "medini" / "templates" / "report.html").read_text(encoding="utf-8")
+        assert "R.preponderance_rules" in page
+        assert "class:'honesty-rules'" in page
+
+    def test_no_rule_is_a_run_on(self):
+        """The defect was shape, not content: no single rule may exceed 120 words, which is
+        what rule (3) reached before it was cut at its own joints."""
+        from app.raman_saab.detailed_report import PREPONDERANCE_RULES
+        for head, body in PREPONDERANCE_RULES:
+            assert len(body.split()) <= 120, (head, len(body.split()))

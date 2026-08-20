@@ -192,6 +192,60 @@ def _lagna_ledger(sv: SignificationVerdict) -> FrameLedger:
 
 
 #: lay-reader life-area names (for the plain-language bhukti summary).
+#: The honesty rules that govern the Preponderance table, ONE per entry: (heading, body).
+#:
+#: These used to be two italic paragraphs, and rule (3) alone ran ~250 words in a single
+#: sentence carrying six subordinate clauses and eight citations — the densest disclosure in
+#: the report, and the one most likely to be skipped by exactly the reader it protects.
+#: Nothing is dropped or softened here: every clause, every caveat and every citation is the
+#: same text, cut at its own joints and given the heading it always implied. Shared by all
+#: three renderers so the disclosure cannot drift between surfaces (it was missing from the
+#: interactive page entirely until this was factored out).
+PREPONDERANCE_RULES: tuple[tuple[str, str], ...] = (
+    ("A verdict is not one of its own witnesses",
+     "The Verdict column is the authoritative House-by-house verdict, unchanged, and it is "
+     "deliberately NOT counted among its own witnesses \u2014 a headline cannot corroborate "
+     "itself."),
+    ("The counting is a presentation convention, not Raman's weighing",
+     "Raman states NO numeric rule for how many testimonies decide a matter: HTJAH-I:495 says "
+     "only that all must be properly weighed, and his own worked conclusion weighs witnesses "
+     "unequally (HTJAH-I:8870-8876). The Preponderance column is a simple equal-weight "
+     "majority of the leaning witnesses \u2014 his vocabulary, not his weighing. It never "
+     "alters a verdict, and a 'contested' row means the witnesses split, not that the verdict "
+     "is wrong."),
+    ("The witnesses are NOT independent votes",
+     "Lord, karaka and navamsa are the verdict's own inputs restated by name, and the "
+     "majority tenor derives from the same significations as the headline."),
+    ("How yogas are mapped to houses",
+     "Yogas bearing on a house are Raman's Primary Considerations (e.g. HTJAH-I:4135-4139) "
+     "and ARE tallied here. They are mapped on his worked-chart principle: the houses each "
+     "yoga's constituent planets own, occupy or aspect \u2014 \"the nature of ownership of "
+     "the planets causing the yoga\" (HTJAH-I:2879-2890). That is the principle, not an "
+     "exact derivation; his own example there names one house this mapping cannot produce."),
+    ("Two limits on the yoga mapping, disclosed",
+     "Whole-chart pattern yogas carry no constituent identity and are left unmapped. "
+     "Formation-strength modifiers are not graded: dusthana formation can nullify Gajakesari "
+     "(HTJAH-I:2948-2956) and can bring Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not "
+     "absolutely, 15531), so a dusthana-formed raja yoga may lean favourable here despite a "
+     "possible bhanga."),
+    ("Which way a yoga row leans",
+     "By its encoded kind \u2014 raja and dhana favourable, arishta adverse \u2014 and, for "
+     "the yogas whose classical printed effect is unambiguous, by that effect: the Pancha "
+     "Mahapurusha, Budha-Aditya, Vasumathi and Jaya favourable; Daridra and Asatyavadi "
+     "adverse, each with its own citation in the Yogas section. Lunar and the remaining "
+     "other-kind yogas stay neutral, since a conditionally-benefic lunar yoga can be "
+     "nullified in dusthana formation. Bhava-Bala rank is shown as a magnitude and carries "
+     "no direction."),
+    ("Core testimony is separated from overlay cross-checks",
+     "A witness-class tag separates core testimony \u2014 the house's own lord, karaka and "
+     "navamsa, the axes Raman's summing-up itself names (HTJAH-I:983-991) \u2014 from "
+     "overlay cross-checks (SAV band, Bhava-Bala rank, matter-vargas, majority tenor, yoga "
+     "bearings). The Core column restates the same rows as a second count pair; it is Raman's "
+     "unequal weighing made visible, not a new weighting, and it alters nothing. Yoga-bearing "
+     "rows additionally disclose their link: [direct - own/occupy], the factor his worked "
+     "charts demonstrate, vs [aspect-derived - admitted extension]."),
+)
+
 _PLAIN_AREA = {1: "self & health", 2: "wealth & family", 3: "courage & siblings",
                4: "home & mother", 5: "children & creativity", 6: "health & rivals",
                7: "marriage & partnership", 8: "longevity", 9: "fortune & father",
@@ -3457,11 +3511,20 @@ def _chapter_narrative(r: DetailedReport, maha: str, lo: float, hi: float,
         bits.append(f"Yogas ripening here: {names} — a yoga's lord delivers its results in "
                     f"his own Dasha or Bhukti (HTJAH-I:4324).")
     if houses_lit:
-        hl = ", ".join(f"H{h} ({tier}; natal {v})" for h, tier, v in houses_lit)
-        bits.append(f"Houses whose indications fructify across its bhuktis — peak tier "
-                    f"reached in at least one bhukti, see the Life-narrative rows above for "
-                    f"which sub-period: {hl} — each delivering per its unchanged natal "
-                    f"verdict.")
+        # Grouped by tier and by natal verdict, and named in words. The flat form —
+        # "H1 (par excellence; natal favourable), H2 (par excellence; natal favourable), …"
+        # for all twelve — was one 100-word clause of bare house numbers in the middle of
+        # a paragraph, and the reader had to hold the tier in mind across every item.
+        # Same rows, same order, nothing added but the matter each house carries.
+        grouped: dict[tuple[str, str], list[str]] = {}
+        for h, tier, v in houses_lit:
+            grouped.setdefault((tier, v), []).append(f"{_PLAIN_AREA[h]} (H{h})")
+        bits.append("Houses whose indications fructify across its bhuktis — peak tier "
+                    "reached in at least one bhukti, see the Life-narrative rows above "
+                    "for which sub-period, each delivering per its unchanged natal "
+                    "verdict.")
+        for (tier, v), names in grouped.items():
+            bits.append(f"At {tier}, reading {v}: {', '.join(names)}.")
     if seat is not None and seat.bindus is not None:
         bits.append(f"His own Ashtakavarga seat reads {seat.read} ({seat.bindus} bindus) — "
                     f"under Raman's own reliability caveat for the AV tier.")
@@ -5710,50 +5773,10 @@ def to_markdown(r: DetailedReport) -> str:
                  "Raman's own conclusion word: \"there is a preponderance of benefic "
                  "influences...\" (HTJAH-I:8870).")
         L.append("")
-        L.append("_Three honesty rules govern this table. (1) The Verdict column is the "
-                 "authoritative House-by-house verdict, unchanged — and it is deliberately "
-                 "NOT counted among its own witnesses (a headline cannot corroborate itself). "
-                 "(2) Raman states NO numeric rule for how many testimonies decide a matter "
-                 "(HTJAH-I:495 says only that all must be properly weighed — and his own "
-                 "worked conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the "
-                 "Preponderance column here is a simple equal-weight majority of leaning "
-                 "witnesses — a presentation convention borrowing his vocabulary, not his "
-                 "weighing — it never alters a verdict, and a 'contested' row means the "
-                 "witnesses split, not that the verdict is wrong. (3) The witnesses are NOT "
-                 "independent votes: lord, karaka and navamsa are the verdict's own inputs "
-                 "restated by name, and the majority tenor derives from the same "
-                 "significations as the headline. Yogas bearing on a house (Raman's Primary "
-                 "Considerations, e.g. HTJAH-I:4135-4139) ARE now tallied, mapped on his "
-                 "worked-chart principle — the houses each yoga's constituent planets own, "
-                 "occupy or aspect (\"the nature of ownership of the planets causing the "
-                 "yoga,\" HTJAH-I:2879-2890 — the principle, not an exact derivation; his own "
-                 "example there names one house this mapping cannot produce) — with disclosed "
-                 "limits: whole-chart pattern yogas carry no constituent identity and are "
-                 "unmapped, and formation-strength modifiers are not graded — dusthana "
-                 "formation can nullify Gajakesari (HTJAH-I:2948-2956) and can bring "
-                 "Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a "
-                 "dusthana-formed raja yoga may lean favourable here despite a possible "
-                 "bhanga. A yoga row leans by its encoded kind (raja/dhana favourable, arishta "
-                 "adverse) and, for the specific yogas whose classical printed effect is "
-                 "unambiguous, by that effect — the Pancha Mahapurusha, Budha-Aditya, "
-                 "Vasumathi and Jaya favourable; Daridra and Asatyavadi adverse (each with its "
-                 "own citation in the Yogas section). Lunar and the remaining other-kind yogas "
-                 "stay neutral (a conditionally-benefic lunar yoga can be nullified in dusthana "
-                 "formation). Bhava-Bala rank is shown as a magnitude and carries no "
-                 "direction._")
+        L.append("_The honesty rules that govern this table - read them before the counts._")
         L.append("")
-        # Wave-2 E (2026-08-18, add-only): the witness-class disclosure — a fourth
-        # honesty rule beside the three above; the flat counts and every status word
-        # derived from them are untouched.
-        L.append("_(4) A witness-class tag separates core testimony - the house's own "
-                 "lord, karaka and navamsa, the axes Raman's summing-up itself names "
-                 "(HTJAH-I:983-991) - from overlay cross-checks (SAV band, Bhava-Bala "
-                 "rank, matter-vargas, majority tenor, yoga bearings). The Core column "
-                 "restates the same rows as a second count pair; it is Raman's unequal "
-                 "weighing made visible, not a new weighting, and it alters nothing. "
-                 "Yoga-bearing rows additionally disclose their link: [direct - "
-                 "own/occupy], the factor his worked charts demonstrate, vs "
-                 "[aspect-derived - admitted extension]._")
+        for _n, (_head, _body) in enumerate(PREPONDERANCE_RULES, 1):
+            L.append(f"{_n}. **{_head}.** {_body}")
         L.append("")
         L.append("| House | Matter | Verdict | For | Against | Neutral | Absent | "
                  "Core (For/Against) | Preponderance | Status |")

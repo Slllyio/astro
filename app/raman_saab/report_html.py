@@ -32,6 +32,7 @@ from app.raman_saab.detailed_report import (
     format_maraka_reasons,
     gochara_synthesis_sentence,
     graded_buckets,
+    PREPONDERANCE_RULES,
     influence_basis,
     influence_basis_table,
     longevity_band_label,
@@ -135,6 +136,8 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .chip--mixed{background:var(--tag-bg);color:var(--tag-ink)}
 .active-badge{font-size:.68rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   color:var(--favourable)}
+.honesty-rules{margin:.4rem 0 .9rem 1.2rem;padding:0;font-size:.92rem;line-height:1.55}
+.honesty-rules li{margin:.35rem 0}
 .instrument{margin:.9rem 0 0;padding:.75rem 0 .2rem 1rem;border-left:2px solid var(--instrument);
   background:var(--instrument-soft)}
 .instrument-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
@@ -1508,51 +1511,27 @@ def _preponderance_section(r: DetailedReport) -> str:
         'testimony the report holds elsewhere and counts where the balance lies &mdash; '
         'Raman&rsquo;s own conclusion word: &ldquo;there is a preponderance of benefic '
         'influences&hellip;&rdquo; (HTJAH-I:8870).</p>'
-        '<p class="section-sub"><i>Three honesty rules govern this table.</i> (1) The Verdict '
-        'column is the authoritative House-by-house verdict, unchanged &mdash; and it is '
-        'deliberately NOT counted among its own witnesses (a headline cannot corroborate '
-        'itself). (2) Raman states NO numeric rule for how many testimonies decide a matter '
-        '(HTJAH-I:495 says only that all must be properly weighed &mdash; and his own worked '
-        'conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the Preponderance column '
-        'here is a simple equal-weight majority of leaning witnesses &mdash; a presentation '
-        'convention borrowing his vocabulary, not his weighing &mdash; it never alters a '
-        'verdict, and a &ldquo;contested&rdquo; row means the witnesses split, not that the '
-        'verdict is wrong. (3) The witnesses are NOT independent votes: lord, karaka and '
-        'navamsa are the verdict&rsquo;s own inputs restated by name, and the majority tenor '
-        'derives from the same significations as the headline. Yogas bearing on a house '
-        '(Raman&rsquo;s Primary Considerations, e.g. HTJAH-I:4135-4139) ARE now tallied, '
-        'mapped on his worked-chart principle &mdash; the houses each yoga&rsquo;s '
-        'constituent planets own, occupy or aspect (&ldquo;the nature of ownership of the '
-        'planets causing the yoga,&rdquo; HTJAH-I:2879-2890 &mdash; the principle, not an '
-        'exact derivation; his own example there names one house this mapping cannot '
-        'produce) &mdash; with disclosed limits: whole-chart pattern yogas carry no '
-        'constituent identity and are unmapped, and formation-strength modifiers are not '
-        'graded &mdash; dusthana formation can nullify Gajakesari (HTJAH-I:2948-2956) and '
-        'can bring Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a '
-        'dusthana-formed raja yoga may lean favourable here despite a possible bhanga. A '
-        'yoga row leans by its encoded kind (raja/dhana favourable, arishta adverse) and, for '
-        'the specific yogas whose classical printed effect is unambiguous, by that effect '
-        '&mdash; the Pancha Mahapurusha, Budha-Aditya, Vasumathi and Jaya favourable; Daridra '
-        'and Asatyavadi adverse (each with its own citation in the Yogas section). Lunar and '
-        'the remaining other-kind yogas stay neutral (a conditionally-benefic lunar yoga can '
-        'be nullified in dusthana formation). Bhava-Bala rank is shown as a magnitude and '
-        'carries no direction.</p>'
-        '<p class="section-sub"><i>(4) A witness-class tag separates core testimony '
-        '&mdash; the house&rsquo;s own lord, karaka and navamsa, the axes Raman&rsquo;s '
-        'summing-up itself names (HTJAH-I:983-991) &mdash; from overlay cross-checks '
-        '(SAV band, Bhava-Bala rank, matter-vargas, majority tenor, yoga bearings). The '
-        'Core column restates the same rows as a second count pair; it is Raman&rsquo;s '
-        'unequal weighing made visible, not a new weighting, and it alters nothing. '
-        'Yoga-bearing rows additionally disclose their link: [direct - own/occupy], the '
-        'factor his worked charts demonstrate, vs [aspect-derived - admitted '
-        'extension].</i></p>'
-        '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
+        '<p class="section-sub"><i>The honesty rules that govern this table &mdash; read '
+        'them before the counts.</i></p>'
+        + _preponderance_rules_html()
+        + '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
         '<th class="num">for</th><th class="num">against</th><th class="num">neutral</th>'
         '<th class="num">absent</th><th>core (for/against)</th>'
         '<th>preponderance</th><th>status</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>'
         f'<div class="instrument">{details}</div>'
         f'{picks_html}')
+
+
+def _preponderance_rules_html() -> str:
+    """The shared honesty rules (see detailed_report.PREPONDERANCE_RULES) as an ordered list.
+
+    One rule per item rather than two run-on paragraphs: the disclosure only protects a
+    reader who actually reads it.
+    """
+    items = "".join(f"<li><b>{_esc(head)}.</b> {_esc(body)}</li>"
+                    for head, body in PREPONDERANCE_RULES)
+    return f'<ol class="honesty-rules">{items}</ol>'
 
 
 def _yoga_timing_section(r: DetailedReport) -> str:

@@ -25,7 +25,8 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import Any, Optional
 
-from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
+from app.raman_saab.detailed_report import (PREPONDERANCE_RULES, DetailedReport,
+                                            distinctive_gloss,
                                             gochara_synthesis_sentence, graded_buckets,
                                             influence_basis, influence_basis_table)
 from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
@@ -294,6 +295,11 @@ def to_report_dict(r: DetailedReport) -> dict:
         "feedback_instrument": feedback_instrument_for(r),
         "house_strength": _each(r.house_strength),
         "preponderance": _ad(r.preponderance),
+        # the honesty rules that govern that table, one (heading, body) per rule —
+        # shared verbatim with the markdown and standalone renderers so the
+        # disclosure cannot drift between surfaces
+        "preponderance_rules": [{"heading": h, "body": b}
+                                for h, b in PREPONDERANCE_RULES],
         "dashboard": _ad(r.dashboard),
         # append-only 2026-08-17: `gloss` — the plain-language midpoint-side sentence the
         # markdown "What stands out" table shows; existing fields untouched.

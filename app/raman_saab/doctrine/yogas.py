@@ -726,8 +726,13 @@ YOGAS: tuple[YogaRecord, ...] = (
         # No planets on either side of the Moon (3HC:2172-2174); the record
         # fires only while UNCANCELLED. Bhanga per 3HC:2182-2185 verbatim:
         # "if planets are [in] a kendra from birth or from the Moon or if the
-        # Moon is in conjunction with a planet there is no Kemadruma". The
-        # benefic-drishti-on-Moon branch inside kemadruma_bhanga is EXTENDED
+        # Moon is in conjunction with a planet there is no Kemadruma".
+        # Raman REPORTS that line as "some authors", but he then applies the
+        # two kendra branches himself on worked charts (3HC:2263-2268, and the
+        # converse at :2255-2261), so his "not generally acceptable" at :2188
+        # dismisses the OTHER reported opinion, not these. See
+        # bhangas.kemadruma_bhanga for the full reading (Track 4b, 2026-08-20).
+        # The benefic-drishti-on-Moon branch inside kemadruma_bhanga is EXTENDED
         # doctrine (Phase-2 backfill), NOT from that line.
         condition=C.And(_Kemadruma(), C.Not(_KemadrumaBhanga())),
         effect=("Dirty, sorrowful, doing unrighteous deeds, poor, dependent, "

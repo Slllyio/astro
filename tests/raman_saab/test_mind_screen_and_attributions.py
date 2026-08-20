@@ -92,11 +92,20 @@ class TestKemadrumaAttributionCorrected:
 
     def test_the_benefic_drishti_branch_stays_labelled_not_ramans(self):
         """The backlog asked: if Raman states the extended branch elsewhere, pin it and
-        relabel. He does not — Kemadruma appears in the mounted 3HC only at :2170-2266."""
+        relabel. He does not.
+
+        This test used to pin the sentence "He does not state it", justified by "Kemadruma
+        appears in the mounted 3HC only at :2170-2266" — a claim that was itself the product
+        of a spelling-exact search. Track 4b found two further mentions the OCR spells
+        "Kemadiuma" / "Kemidiumi", and they changed the reading of the OTHER branches. The
+        conclusion about THIS branch survived; the wording moved, so the assertion is now on
+        the label rather than on one sentence of prose.
+        """
         from app.raman_saab.primitives import bhangas
         doc = inspect.getdoc(bhangas.kemadruma_bhanga) or ""
         assert "NOT attributable to 3HC" in doc
-        assert "He does not state it" in doc
+        assert "NOT-3HC" in doc
+        assert "nowhere in 3HC" in doc
 
     def test_the_verdict_path_question_is_logged_not_silently_changed(self):
         """Narrowing the branches would move the ratchet, so it is a review question."""

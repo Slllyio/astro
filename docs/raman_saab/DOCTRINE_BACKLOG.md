@@ -1010,6 +1010,67 @@ backlog asked "if Raman states it elsewhere, pin it and relabel" — searching t
 3HC finds Kemadruma only at :2170-2266 and no such statement. The NOT-3HC label is correct
 and stays.
 
+### RESOLVED 2026-08-20 (Track 4b) — the text settles it; no code change proposed
+
+The scope question does NOT need a reviewer with the printed page. It is answerable from
+the mounted corpus, and the earlier pass missed the answer for a mechanical reason: it
+searched for "Kemadruma", and the two decisive passages are OCR'd as **"Kemadiuma"** and
+**"Kemidiumi s"**. A spelling-tolerant search finds exactly six mentions in the whole book —
+:2170, :2173, :2185, :2255, :2263, :2266 — and the last three were never read.
+
+Immediately after the Remarks, Raman applies the cancellation **in his own voice, on worked
+charts, in both directions**:
+
+> 3HC:2263-2268 — "Here you will see that Kemadruma is present because the houses on either
+> side of the Moon are vacant. But there is distinct cancellation of the Kemadruma because
+> (a) the kendras from the Moon are occupied and (b) kendras from the Lagna are also
+> occupied."
+
+> 3HC:2255-2261 — the converse, on Chart No. 8: "The above is a typically Kemadruma Yoga
+> horoscope. No planets are placed on either side of Chandra and no planets are to be found
+> in kendras either from Lagna or from the Moon."
+
+A man does not demonstrate a cancellation twice, once each way, and mean it to be "not
+generally acceptable". **:2187-2188 attaches to the SECOND reported group only** ("yet other
+authors … these yogas arise from kendras and navamsas"). Branches (a) and (b) are Raman's
+own applied doctrine, not merely "some authors", and the attribution defect is a citation
+fix, not a behaviour question.
+
+(The two passages describe charts with opposite kendra occupancy and no chart header stands
+between them, so :2263 discusses a chart the OCR did not carry. Which chart it is does not
+affect the reading: both statements assert the same rule.)
+
+**Two further findings, both measured over the 225 golden charts / 12,600 significations:**
+
+| reading | bhanga fires | exact | within-1 | real errors | significations moved |
+|---|---|---|---|---|---|
+| R1 shipped — (a)(b)(c)+extended | 63/63 | 259/293 | 283/293 | 10 | — |
+| R2 drop (c) conjunction | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R3 drop extended drishti | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R4 keep only what Raman works | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R5 maximal dismissal — no bhanga | 0/63 | 259/293 | 283/293 | 10 | 0 |
+
+1. **Branch (c) is provably dead**, not merely unused. `_in_kendra_from` scores the same
+   rasi-house as distance 1, the 1st is a kendra, and the Sun is not excluded from branch
+   (b) — so every conjunction (c) can see, (b) has already seen. The docstring's claim that
+   (c) earned its keep through the Sun was wrong and is corrected. The extended
+   benefic-drishti branch is different: it is NOT provably redundant (Jupiter in the 5th or
+   9th from the Moon aspects it from outside every kendra) but never once supplies a
+   cancellation (a)/(b) had not already made across these 225 charts.
+
+2. **The whole question is currently inert in the verdict path.** Even R5 — cancel nothing,
+   so Kemadruma stands on all 63 charts that form it — moves **zero significations** and
+   leaves all three fidelity numbers untouched. It does change the yoga layer visibly:
+   `Y.KEMADRUMA` fires on 63/63 instead of 0/63, which reaches the Yogas section, the
+   Arishta chapter's kemadruma note, and the preponderance ledger (an arishta yoga leans
+   adverse). So the stake is a REPORT claim, not a verdict.
+
+**Recommendation: change no behaviour.** The doctrine came out in favour of what is already
+encoded. What was actually wrong was the citation and two claims in the docstring, and those
+are fixed in this commit. The one live question left for a human is cosmetic-but-honest:
+branch (c) is dead code kept "for textual fidelity" — keep it as a mirror of the quoted line,
+or delete it as provably unreachable? Either is defensible; it cannot change a reading.
+
 ## Chara dasa x Karakamsa pairing (2026-08-19) — NOT ENCODABLE from the mounted text
 
 The audit wanted the sentence that reads the karakamsa indications THROUGH the running

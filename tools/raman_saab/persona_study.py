@@ -322,6 +322,243 @@ def chart_key_for(rec: dict) -> str:
             f"@{float(rec['latitude']):.4f},{float(rec['longitude']):.4f}")
 
 
+def _answer_rows(doc: dict) -> list:
+    """(question_id, answer, free_text) triples — the shape `score_chart` consumes."""
+    free = doc.get("free_text") or {}
+    rows = [(qid, str(val), free.get(qid)) for qid, val in (doc.get("answers") or {}).items()]
+    return rows + [(qid, "answered", text) for qid, text in free.items()
+                   if qid not in (doc.get("answers") or {})]
+
+
+def _cmd_verify(args) -> int:
+    """Hash every collected answer file BEFORE any key is computed.
+
+    This is what makes the blind real for the operator, not only for the answerer: once the
+    digest is written, the answers cannot be revised in the light of a score.
+    """
+    answers = sorted((OUT / "answers").glob("*.json"))
+    manifest = {}
+    for path in answers:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        manifest[doc["slug"]] = {"sha256": sha256_of(path),
+                                 "answers": len(doc.get("answers") or {}),
+                                 "free_text": len(doc.get("free_text") or {})}
+        print(f"[persona-study] {doc['slug']:26} {manifest[doc['slug']]['answers']:3d} answers "
+              f"sha256={manifest[doc['slug']]['sha256'][:16]}")
+    dest = OUT / "answers_manifest.json"
+    dest.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    print(f"[persona-study] {len(manifest)} files hashed -> {dest}")
+    return 0
+
+
+#: How a Part C answer decodes into a claim about a life. The instrument pairs the chart's
+#: own predicate with its exact inverse, so answering the key means claiming the chart's
+#: pole and answering the other means claiming its opposite (`feedback_instrument._OPPOSITE`).
+def _pole(verdict: str, chose_key: bool) -> str:
+    from app.raman_saab.feedback_instrument import _OPPOSITE
+    pair = _OPPOSITE.get(verdict)
+    return "" if pair is None else (pair[0] if chose_key else pair[1])
+
+
+def _pole_matches(pole: str, verdict: str) -> Optional[bool]:
+    """Does a claimed pole agree with some chart's verdict on the same signification?
+
+    `one_way` is the inverse of `mixed` and means "solidly one thing or the other", so it
+    agrees with a favourable OR an afflicted verdict. A verdict the engine abstained on
+    (`insufficient-evidence`) is not comparable and returns None rather than a miss.
+    """
+    if verdict not in ("favourable", "afflicted", "mixed"):
+        return None
+    if pole == "one_way":
+        return verdict in ("favourable", "afflicted")
+    if pole == "mixed":
+        return verdict == "mixed"
+    if pole in ("favourable", "afflicted"):
+        return verdict == pole
+    return None
+
+
+def cross_chart(claims: dict, verdicts: dict) -> dict:
+    """The study's decisive control (PREREG §2a).
+
+    `claims[slug]` is that persona's list of (signification, pole). `verdicts[slug]` is that
+    chart's verdict per signification. Scores each persona against their OWN chart and
+    against every OTHER chart, and reports the contrast — because neither arm has a null of
+    0.5 on its own and between-chart agreement is itself unstable.
+    """
+    matched_hits = matched_n = 0
+    mism_hits = mism_n = 0
+    per_persona = {}
+    for slug, items in claims.items():
+        own = verdicts.get(slug, {})
+        m_h = m_n = 0
+        for sig, pole in items:
+            got = _pole_matches(pole, (own.get(sig) or {}).get("verdict", ""))
+            if got is not None:
+                m_n += 1
+                m_h += int(got)
+        x_h = x_n = 0
+        for other, their in verdicts.items():
+            if other == slug:
+                continue
+            for sig, pole in items:
+                got = _pole_matches(pole, (their.get(sig) or {}).get("verdict", ""))
+                if got is not None:
+                    x_n += 1
+                    x_h += int(got)
+        matched_hits += m_h
+        matched_n += m_n
+        mism_hits += x_h
+        mism_n += x_n
+        per_persona[slug] = {"matched": [m_h, m_n], "mismatched": [x_h, x_n]}
+    return {"matched": [matched_hits, matched_n], "mismatched": [mism_hits, mism_n],
+            "matched_rate": (matched_hits / matched_n) if matched_n else None,
+            "mismatched_rate": (mism_hits / mism_n) if mism_n else None,
+            "contrast": ((matched_hits / matched_n) - (mism_hits / mism_n))
+                        if matched_n and mism_n else None,
+            "per_persona": per_persona}
+
+
+def permutation_p(claims: dict, verdicts: dict, *, rounds: int = 2000,
+                  seed: str = "persona-study") -> Optional[float]:
+    """How often a RANDOM persona-to-chart assignment beats the real one.
+
+    The null is "the chart carries no person-specific information", under which the real
+    pairing is just one of the many possible pairings. Deterministic: the shuffle is driven
+    by a digest, because `random` is not reproducible across runs without pinning and this
+    number goes into a results document.
+    """
+    slugs = [s for s in claims if s in verdicts]
+    if len(slugs) < 3:
+        return None
+
+    def rate(assign: dict) -> Optional[float]:
+        hits = n = 0
+        for persona, chart in assign.items():
+            their = verdicts[chart]
+            for sig, pole in claims[persona]:
+                got = _pole_matches(pole, (their.get(sig) or {}).get("verdict", ""))
+                if got is not None:
+                    n += 1
+                    hits += int(got)
+        return (hits / n) if n else None
+
+    observed = rate({s: s for s in slugs})
+    if observed is None:
+        return None
+    beat = 0
+    for r in range(rounds):
+        order = sorted(slugs, key=lambda s: hashlib.sha256(f"{seed}:{r}:{s}".encode()).digest())
+        shuffled = rate(dict(zip(slugs, order)))
+        if shuffled is not None and shuffled >= observed:
+            beat += 1
+    return (beat + 1) / (rounds + 1)
+
+
+def _report_for(rec: dict):
+    from app.raman_saab.chart.model import BirthData
+    from app.raman_saab.detailed_report import build_detailed_report
+    from app.raman_saab.report_json import to_report_dict
+    birth = BirthData(rec["name"], rec["year"], rec["month"], rec["day"], rec["hour"],
+                      rec["minute"], float(rec["tz_offset"]), float(rec["latitude"]),
+                      float(rec["longitude"]))
+    return to_report_dict(build_detailed_report(birth, on=tuple(rec["reference_date"])))
+
+
+def _cmd_score(args) -> int:
+    from app.raman_saab.feedback_instrument import instrument_key
+    from app.raman_saab.feedback_scoring import (
+        aggregate, binomial_p_two_sided, render_aggregate, render_aggregate_html, score_chart)
+
+    roster = json.loads((OUT / "roster.json").read_text(encoding="utf-8"))
+    by_slug = {r["slug"]: r for r in roster["admitted"]}
+    cards, coin_cards, claims, verdicts = [], [], {}, {}
+
+    for slug, rec in sorted(by_slug.items()):
+        ans_path = OUT / "answers" / f"{slug}.json"
+        if not ans_path.is_file():
+            print(f"[persona-study] {slug:26} no answers yet — skipped")
+            continue
+        doc = json.loads(ans_path.read_text(encoding="utf-8"))
+        report = _report_for(rec)
+        key = instrument_key(report)
+        ckey = chart_key_for(rec)
+
+        rows = _answer_rows(doc) + [(f"inst.v2.meta.context", "before_reading", None)]
+        cards.append(score_chart(report, rows, chart_key=ckey))
+
+        payload = json.loads((OUT / "payloads" / f"{slug}.json").read_text(encoding="utf-8"))
+        coin = coinflip_answers(payload, seed=args.seed)
+        coin_cards.append(score_chart(
+            report, [(q, v, None) for q, v in coin.items()]
+            + [("inst.v2.meta.context", "before_reading", None)], chart_key=ckey))
+
+        given = {q: v for q, v in (doc.get("answers") or {}).items()}
+        items = []
+        for qid, expected in key["answers"].items():
+            meta = key["meta"].get(qid, {})
+            if meta.get("kind") != "forced_choice" or qid not in given:
+                continue
+            pole = _pole(meta["verdict"], given[qid] == expected)
+            if pole:
+                items.append((meta["signification"], pole))
+        claims[slug] = items
+        verdicts[slug] = json.loads(
+            (OUT / "verdicts" / f"{slug}.json").read_text(encoding="utf-8"))["verdicts"]
+
+    if not cards:
+        print("[persona-study] no answers collected yet")
+        return 1
+
+    blind, coin = aggregate(cards), aggregate(coin_cards)
+    print("\n=== SHAM GATE (PREREG 2b) — coin-flip arm ===")
+    print(f"  {coin.forced.hits}/{coin.forced.n} = {coin.forced.rate}   "
+          f"p={coin.forced.p_value}")
+    gate_ok = coin.forced.n > 0 and coin.forced.p_value is not None \
+        and coin.forced.p_value > 0.05
+    print(f"  gate {'PASS — the rest may be read' if gate_ok else 'FAIL — STOP, pipeline defect'}")
+
+    print("\n=== PRIMARY — blind forced choice against own chart ===")
+    print(f"  {blind.forced.hits}/{blind.forced.n} = {blind.forced.rate}   "
+          f"p={blind.forced.p_value}")
+    print(f"  rarity-weighted {blind.forced.weighted_rate}")
+    print(f"  inverted channels (read backwards) {blind.inverted.hits}/{blind.inverted.n}")
+    print(f"  confident {blind.confident.hits}/{blind.confident.n}   "
+          f"unsure {blind.unsure.hits}/{blind.unsure.n}")
+
+    cc = cross_chart(claims, verdicts)
+    pperm = permutation_p(claims, verdicts, rounds=args.permutations)
+    print("\n=== CONTROL — cross-chart falsification (PREREG 2a) ===")
+    print(f"  matched     {cc['matched'][0]}/{cc['matched'][1]} = "
+          f"{cc['matched_rate'] and round(cc['matched_rate'], 4)}")
+    print(f"  mismatched  {cc['mismatched'][0]}/{cc['mismatched'][1]} = "
+          f"{cc['mismatched_rate'] and round(cc['mismatched_rate'], 4)}")
+    print(f"  contrast    {cc['contrast'] is not None and round(cc['contrast'], 4)}   "
+          f"permutation p={pperm}")
+
+    out = {"charts": len(cards), "sham_gate_passed": gate_ok,
+           "coinflip": {"hits": coin.forced.hits, "n": coin.forced.n,
+                        "rate": coin.forced.rate, "p": coin.forced.p_value},
+           "primary": {"hits": blind.forced.hits, "n": blind.forced.n,
+                       "rate": blind.forced.rate, "p": blind.forced.p_value,
+                       "weighted_rate": blind.forced.weighted_rate},
+           "inverted": {"hits": blind.inverted.hits, "n": blind.inverted.n},
+           "confident": {"hits": blind.confident.hits, "n": blind.confident.n},
+           "unsure": {"hits": blind.unsure.hits, "n": blind.unsure.n},
+           "spine": {"near": blind.spine_near, "events": blind.spine_events,
+                     "chance": blind.spine_chance, "p": blind.spine_p},
+           "event_houses": {"top": blind.event_top_grade, "n": blind.event_scored},
+           "cross_chart": cc, "permutation_p": pperm,
+           "per_signification": blind.per_signification}
+    (OUT / "results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    if args.html:
+        Path(args.html).write_text(render_aggregate_html(blind, cards), encoding="utf-8")
+        print(f"\n[persona-study] wrote {args.html}")
+    (OUT / "scorecard.txt").write_text(render_aggregate(blind), encoding="utf-8")
+    print(f"[persona-study] wrote {OUT / 'results.json'}")
+    return 0
+
+
 def main(argv: Optional[list] = None) -> int:
     ap = argparse.ArgumentParser(description="Run a stage of the persona study.")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -329,9 +566,14 @@ def main(argv: Optional[list] = None) -> int:
     b = sub.add_parser("build", help="cast each nativity, emit its blind question payload")
     b.add_argument("--force", action="store_true", help="rebuild payloads that already exist")
     sub.add_parser("questions", help="render each payload as a compact blind question block")
+    sub.add_parser("verify", help="hash the collected answers BEFORE any key is computed")
+    s = sub.add_parser("score", help="primary, controls, and the sham gate")
+    s.add_argument("--html", default="", help="write the operator scorecard here")
+    s.add_argument("--seed", default="persona-study", help="coin-flip control arm seed")
+    s.add_argument("--permutations", type=int, default=2000)
     args = ap.parse_args(argv)
-    return {"roster": _cmd_roster, "build": _cmd_build,
-            "questions": _cmd_questions}[args.cmd](args)
+    return {"roster": _cmd_roster, "build": _cmd_build, "questions": _cmd_questions,
+            "verify": _cmd_verify, "score": _cmd_score}[args.cmd](args)
 
 
 if __name__ == "__main__":

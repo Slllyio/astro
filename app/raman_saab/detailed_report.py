@@ -7060,7 +7060,12 @@ def to_markdown(r: DetailedReport) -> str:
             L.append(_md_cell(part["note_en"]))
             L.append("")
             for q in part["questions"]:
-                L.append(f"**{_md_cell(q['qid'])}** — {_md_cell(q['text_en'])}")
+                # A printed form has to say HOW to answer, or a multi-select reads as a
+                # single choice and an events grid reads as a list of examples.
+                how = {"choice": " _(choose one)_", "multi": " _(choose any that apply)_",
+                       "scale": " _(choose one)_", "year": " _(write the year)_",
+                       "events": " _(one row per event: year, month, kind)_"}.get(q["kind"], "")
+                L.append(f"**{_md_cell(q['qid'])}** — {_md_cell(q['text_en'])}{how}")
                 if q["hint_en"]:
                     L.append("")
                     L.append(f"> {_md_cell(q['hint_en'])}")

@@ -2591,8 +2591,12 @@ def _feedback_section(r: DetailedReport) -> str:
     for part in inst["parts"]:
         qs: list[str] = []
         for q in part["questions"]:
+            how = {"choice": "choose one", "multi": "choose any that apply",
+                   "scale": "choose one", "year": "write the year",
+                   "events": "one row per event: year, month, kind"}.get(q["kind"], "")
             bits = [f'<p class="fb-q"><b>{_esc(q["qid"])}</b> &mdash; '
-                    f'{_esc(q["text_en"])}</p>',
+                    f'{_esc(q["text_en"])}'
+                    + (f' <i class="muted">({_esc(how)})</i>' if how else "") + '</p>',
                     f'<p class="fb-q-hi">{_esc(q["text_hi"])}</p>']
             if q["hint_en"]:
                 bits.append(f'<p class="muted"><i>{_esc(q["hint_en"])} &middot; '

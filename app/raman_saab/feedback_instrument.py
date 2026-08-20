@@ -56,7 +56,7 @@ Lang = Literal["en", "hi"]
 #: Bumped when the question set changes in a way that makes old answers non-comparable. Stored
 #: rows carry it inside the qid (`inst.v1.C3`), so a later version never silently pools with this
 #: one in the same analysis.
-INSTRUMENT_VERSION = "v1"
+INSTRUMENT_VERSION = "v2"
 
 #: The fixed scale for the agree/disagree items (Part D). Same four values the older
 #: `feedback_questions` flow uses, so both write comparable rows.
@@ -219,162 +219,373 @@ _SIGN_NAMES_HI: tuple[str, ...] = (
 _DEG_PER_MINUTE = 0.25
 
 
-# ── Part A: the blind bank ──────────────────────────────────────────────────────────────────
-# Chart-INDEPENDENT by design. These are the questions whose answers can be scored against the
-# reading afterwards, and they are worth nothing if the reader has already been told what the
-# chart says. Only A34 reaches into the chart, and only to be compared later — never shown with
-# its dates attached.
+# ── the closed answer vocabularies ──────────────────────────────────────────────────────────
+# Every question below is answered by SELECTING, not by writing. Two reasons, and the second
+# is the one that changed the design:
 #
-# Each row: (qid suffix, group, english, hindi, hint_en, hint_hi)
-_PART_A: tuple[tuple[str, str, str, str, str, str], ...] = (
-    ("A1", "birth_record",
-     "Where did your birth time come from — a hospital record, a birth certificate, a horoscope "
-     "written at the time, or someone's memory?",
-     "आपका जन्म-समय कहाँ से आया — अस्पताल का रिकॉर्ड, जन्म प्रमाण-पत्र, उस समय बनी कुंडली, या किसी की याददाश्त?",
-     "", ""),
-    ("A2", "birth_record",
-     "If it came from memory, was it a round number like \"about five\", a time of day like "
-     "\"just before dawn\", or an exact clock reading?",
-     "अगर याददाश्त से — कोई गोल समय जैसे \"लगभग पाँच\", दिन का कोई पहर जैसे \"भोर से ठीक पहले\", या घड़ी का सटीक समय?",
-     "", ""),
-    ("A3", "birth_record",
-     "Has any astrologer already changed or corrected this time? To what, and on what grounds?",
-     "क्या किसी ज्योतिषी ने यह समय पहले बदला या शोधित किया है? किस समय पर, और किस आधार पर?",
-     "", ""),
-    ("A4", "health",
-     "List every illness, injury, surgery or hospital stay you have had, with the year of each.",
-     "हर बीमारी, चोट, ऑपरेशन या अस्पताल में भर्ती होने की सूची, वर्ष सहित।",
-     "", ""),
-    ("A5", "health",
-     "Which parts of your body give you recurring trouble — the ones you would mention to a new "
-     "doctor without being asked?",
-     "शरीर के कौन-से हिस्से बार-बार परेशान करते हैं — जो आप नए डॉक्टर को बिना पूछे बताएँगे?",
-     "", ""),
-    ("A6", "health",
-     "Were you a sickly infant or a healthy one? Was there any danger to your life before the "
-     "age of eight?",
-     "बचपन में सेहत कैसी थी? आठ वर्ष की आयु से पहले जान का कोई ख़तरा?",
-     "", ""),
-    ("A7", "health",
-     "How long did your grandparents live? How is your parents' health now?",
-     "दादा-दादी / नाना-नानी कितने वर्ष जिए? माता-पिता का वर्तमान स्वास्थ्य कैसा है?",
-     "", ""),
-    ("A8", "family",
-     "Describe your relationship with your father — including any long absence, illness, "
-     "financial reversal, conflict, or early death.",
-     "पिता से अपने संबंध बताइए — लंबी अनुपस्थिति, बीमारी, आर्थिक नुक़सान, मतभेद, या असमय मृत्यु सहित।",
-     "", ""),
-    ("A9", "family",
-     "The same for your mother.",
-     "यही माता के बारे में।",
-     "", ""),
-    ("A10", "family",
-     "Your relationship with your siblings — close, distant, or absent? Any loss among them?",
-     "भाई-बहनों से संबंध — निकट, दूर, या नहीं? कोई हानि?",
-     "", ""),
-    ("A11", "education",
-     "Your highest completed education — and did it go smoothly, or was it interrupted?",
-     "आपकी उच्चतम शिक्षा — वह सहज रही या बीच में रुकी?",
-     "", ""),
-    ("A12", "money",
-     "How do you actually earn — salary, own business, trade, commission, professional practice, "
-     "farming, something else? Has that changed over the years?",
-     "आप वास्तव में कैसे कमाते हैं — वेतन, अपना व्यवसाय, व्यापार, कमीशन, पेशेवर प्रैक्टिस, खेती, या कुछ और? क्या यह बदला है?",
-     "", ""),
-    ("A13", "money",
-     "Have you had significant money from travel, from outside your home district, or from "
-     "abroad?",
-     "यात्रा से, अपने ज़िले के बाहर से, या विदेश से कोई बड़ी आमदनी हुई है?",
-     "", ""),
-    ("A14", "money",
-     "Have you ever gained or lost significantly through speculation, lottery, betting, shares, "
-     "or crypto? Roughly when, and how large against your income?",
-     "सट्टा, लॉटरी, शेयर, या क्रिप्टो से कभी बड़ा लाभ या हानि? कब, और आय के मुक़ाबले कितना?",
-     "", ""),
-    ("A15", "money",
-     "Any inheritance, legacy, insurance payout, or unexpected windfall? Do you carry debt now?",
-     "कोई विरासत, बीमा, या अप्रत्याशित धन? क्या इस समय आप पर कर्ज़ है?",
-     "", ""),
-    ("A16", "work",
-     "What is your work — stated plainly enough that a stranger would understand it?",
-     "आपका काम क्या है — इतना सीधा बताइए कि कोई अजनबी समझ जाए।",
-     "", ""),
-    ("A17", "work",
-     "Have you ever worked in, or been drawn to: metals, machinery, construction, fire or heat "
-     "trades, military or police, surgery or pharmacy, driving or transport?",
-     "धातु, मशीन, निर्माण, आग/गर्मी वाले काम, सेना या पुलिस, सर्जरी या दवा, ड्राइविंग या परिवहन — कभी काम किया या आकर्षण रहा?",
-     "Answer even if it was brief, or only an attraction that went nowhere.",
-     "अगर थोड़े समय के लिए भी, या सिर्फ़ आकर्षण रहा हो, तब भी बताइए।"),
-    ("A18", "work",
-     "Have you ever worked in, or been drawn to: writing, journalism, mathematics, accounts, "
-     "teaching, astrology, or design?",
-     "लेखन, पत्रकारिता, गणित, लेखा, अध्यापन, ज्योतिष, या डिज़ाइन — कभी काम किया या आकर्षण रहा?",
-     "", ""),
-    ("A19", "work",
-     "Have you ever worked in, or been drawn to: law, counselling, banking, or religious and "
-     "advisory work?",
-     "क़ानून, परामर्श, बैंकिंग, या धार्मिक/सलाहकार कार्य — कभी?",
-     "", ""),
-    ("A20", "work",
-     "Do you work under an authority — an employer, the government, a senior — or for yourself? "
-     "Which has gone better for you?",
-     "आप किसी के अधीन काम करते हैं या अपने लिए? कौन-सा बेहतर रहा?",
-     "", ""),
-    ("A21", "work",
-     "Any promotion, public recognition, honour or title — or any public setback or humiliation? "
-     "Give the year of each.",
-     "कोई पदोन्नति, सार्वजनिक सम्मान या उपाधि — या कोई सार्वजनिक झटका या अपमान? हर एक का वर्ष बताइए।",
-     "", ""),
-    ("A22", "marriage",
-     "Are you married? If yes, the month and year. If not, has marriage been attempted, "
-     "arranged, delayed, or broken off — and when?",
-     "विवाह हुआ? हाँ तो महीना और वर्ष। नहीं तो — प्रयास, तय होकर टूटना, या देरी — कब?",
-     "", ""),
-    ("A23", "marriage",
-     "By your family's standards, was there delay or difficulty in it happening? Describe the "
-     "marriage, or your closest partnership, plainly — happy, strained, separated?",
-     "आपके परिवार के हिसाब से इसमें देरी या कठिनाई हुई? विवाह या निकटतम साझेदारी को सीधे शब्दों में बताइए — सुखी, तनावपूर्ण, अलगाव?",
-     "", ""),
-    ("A24", "marriage",
-     "Any business partnership? How did it end?",
-     "कोई व्यापारिक साझेदारी? उसका अंत कैसे हुआ?",
-     "", ""),
-    ("A25", "children",
-     "Children — how many, and the year of each. Any difficulty conceiving, or any loss?",
-     "संतान — कितने, हर एक का वर्ष। गर्भधारण में कठिनाई, या कोई हानि?",
-     "", ""),
-    ("A26", "mind",
-     "In three words, how would someone who dislikes you describe you?",
-     "तीन शब्दों में — जो आपको नापसंद करता है, वह आपका वर्णन कैसे करेगा?",
-     "", ""),
-    ("A27", "mind",
-     "Have you had any period of depression, severe anxiety, breakdown, or treatment for the "
-     "mind?",
-     "अवसाद, गंभीर चिंता, या मानसिक इलाज का कोई दौर?",
-     "Leave this blank if you would rather not answer.",
-     "यदि उत्तर न देना चाहें तो खाली छोड़ दें।"),
-    ("A28", "mind",
-     "Are you drawn to religion, philosophy, the occult, or solitary practice? To what degree?",
-     "धर्म, दर्शन, गूढ़ विद्या, या एकांत साधना में रुचि? कितनी?",
-     "", ""),
-    ("A29", "mind",
-     "Have you lived away from your birthplace for long? Abroad? In a hostel, institution, "
-     "ashram, hospital, or confinement of any kind?",
-     "जन्मस्थान से लंबे समय दूर रहे? विदेश? किसी छात्रावास, संस्था, आश्रम, अस्पताल, या बंदिश में?",
-     "", ""),
-    ("A30", "turning_points",
-     "Without thinking about astrology at all, list the five to eight turning points of your "
-     "life so far — each with a month and year. Anything that changed your direction: a move, a "
-     "job, a loss, an illness, a marriage, a break, a beginning.",
-     "ज्योतिष को बिल्कुल भूलकर — अब तक के पाँच से आठ निर्णायक मोड़, हर एक का महीना और वर्ष लिखिए। "
-     "जिसने भी आपकी दिशा बदली: स्थानांतरण, नौकरी, हानि, बीमारी, विवाह, कोई अंत, कोई शुरुआत।",
-     "This is the most valuable answer on the form. Write it before you read anything else, and "
-     "do not go back and change it later.",
-     "यह इस फ़ॉर्म का सबसे मूल्यवान उत्तर है। कुछ भी और पढ़ने से पहले लिखिए, और बाद में बदलिए मत।"),
-    ("A31", "turning_points",
-     "Which single year of your life was the worst? Which was the best?",
-     "कौन-सा एक वर्ष सबसे बुरा रहा? कौन-सा सबसे अच्छा?",
-     "", ""),
+#   1. Prose cannot be scored. Thirty-one paragraphs about a life are thirty-one paragraphs a
+#      person has to read before anything is learned, and nothing aggregates across charts.
+#   2. Several of these vocabularies are the ENGINE'S OWN. The body regions are the values
+#      HPA-29's sign->anatomy table emits; the trade families are the vocation words
+#      HTJAH-II's tables emit; the work modes are the four H10 profession significations. So a
+#      reader's selection can be compared with what the engine said DIRECTLY, code against
+#      code, with no interpretation step in between — which is what makes the scoring in
+#      `feedback_scoring.py` an objective measurement rather than a reading of free text.
+#
+# Free text stays available on every question as a supplement (`allow_free_text`), never as
+# the answer itself.
+
+#: value -> (english, hindi). Body regions, the vocabulary HPA-29's own anatomy table speaks.
+BODY_REGIONS: dict[str, tuple[str, str]] = {
+    "head": ("head, brain", "सिर, मस्तिष्क"),
+    "eyes": ("eyes, sight", "आँखें, दृष्टि"),
+    "ears": ("ears, hearing", "कान, श्रवण"),
+    "throat_neck": ("throat, neck, thyroid, voice", "गला, गर्दन, थायरॉइड, आवाज़"),
+    "teeth_jaw": ("teeth, jaw", "दाँत, जबड़ा"),
+    "chest_lungs": ("chest, lungs, breathing", "छाती, फेफड़े, साँस"),
+    "heart": ("heart, blood pressure", "हृदय, रक्तचाप"),
+    "stomach": ("stomach, digestion, bowels", "पेट, पाचन, आँतें"),
+    "liver": ("liver, bile", "यकृत, पित्त"),
+    "kidney_urinary": ("kidneys, urinary system", "गुर्दे, मूत्र-तंत्र"),
+    "reproductive": ("reproductive system", "प्रजनन-तंत्र"),
+    "skin": ("skin", "त्वचा"),
+    "joints": ("joints, arthritis", "जोड़, गठिया"),
+    "back_spine": ("back, spine", "पीठ, रीढ़"),
+    "nerves": ("nerves, sleep, anxiety", "स्नायु, नींद, चिंता"),
+    "blood_sugar": ("blood sugar, metabolism", "रक्त-शर्करा, चयापचय"),
+    "legs_feet": ("legs, feet", "पैर, तलवे"),
+    "none": ("nothing recurring", "कुछ भी बार-बार नहीं"),
+}
+
+#: value -> (english, hindi). Trade families, drawn from Raman's own vocation vocabulary so a
+#: reader's working life can be matched against the three career frames without paraphrase.
+TRADE_FAMILIES: dict[str, tuple[str, str]] = {
+    "metals_machinery": ("metals, machinery, engineering", "धातु, मशीन, इंजीनियरिंग"),
+    "construction": ("construction, buildings, land", "निर्माण, भवन, भूमि"),
+    "fire_heat": ("fire or heat trades, chemicals", "आग/गर्मी वाले काम, रसायन"),
+    "military_police": ("military, police, security", "सेना, पुलिस, सुरक्षा"),
+    "medicine_surgery": ("medicine, surgery, pharmacy", "चिकित्सा, सर्जरी, दवा"),
+    "transport": ("driving, transport, logistics", "ड्राइविंग, परिवहन"),
+    "writing_media": ("writing, journalism, media", "लेखन, पत्रकारिता, मीडिया"),
+    "maths_accounts": ("mathematics, accounts, analysis", "गणित, लेखा, विश्लेषण"),
+    "teaching": ("teaching, research", "अध्यापन, शोध"),
+    "astrology_occult": ("astrology, the occult, priestcraft", "ज्योतिष, गूढ़ विद्या, पौरोहित्य"),
+    "design_art": ("design, art, music, performance", "डिज़ाइन, कला, संगीत, प्रदर्शन"),
+    "law": ("law, courts", "क़ानून, न्यायालय"),
+    "counselling": ("counselling, advisory work", "परामर्श, सलाहकार कार्य"),
+    "banking_finance": ("banking, finance, insurance", "बैंकिंग, वित्त, बीमा"),
+    "religious": ("religious or charitable work", "धार्मिक या सेवा कार्य"),
+    "agriculture": ("agriculture, horticulture", "कृषि, बाग़वानी"),
+    "textiles_luxury": ("textiles, jewellery, luxury goods", "वस्त्र, आभूषण, विलासिता"),
+    "trade_retail": ("trade, retail, buying and selling", "व्यापार, दुकानदारी"),
+    "none": ("none of these", "इनमें से कोई नहीं"),
+}
+
+#: value -> (english, hindi). How a person earns. These four map onto the H10 profession
+#: significations the engine already judges separately, which is why they are asked separately.
+WORK_MODES: dict[str, tuple[str, str]] = {
+    "salary_government": ("salaried, government or public body",
+                          "वेतनभोगी, सरकारी या सार्वजनिक संस्था"),
+    "salary_private": ("salaried, private employer", "वेतनभोगी, निजी नियोक्ता"),
+    "own_business": ("own business or firm", "अपना व्यवसाय या फर्म"),
+    "trade": ("trade, buying and selling", "व्यापार, ख़रीद-बिक्री"),
+    "commission": ("commission or brokerage", "कमीशन या दलाली"),
+    "professional_practice": ("professional practice of my own",
+                              "अपनी पेशेवर प्रैक्टिस"),
+    "farming": ("farming or land", "खेती या भूमि"),
+    "manual": ("manual or service work", "श्रम या सेवा कार्य"),
+    "not_earning": ("not earning at present", "इस समय कोई आय नहीं"),
+}
+
+#: value -> (english, hindi). Life-event categories for the dated spine. Each maps to the house
+#: the engine reads that matter from, so a dated event can be checked against what the engine
+#: said about that house during the period it fell in.
+EVENT_KINDS: dict[str, tuple[str, str]] = {
+    "move_home": ("moved home or city", "घर या शहर बदला"),
+    "moved_abroad": ("moved abroad", "विदेश गए"),
+    "job_start": ("started a job or business", "नौकरी या व्यवसाय शुरू किया"),
+    "job_loss": ("lost a job, or a business failed", "नौकरी गई, या व्यवसाय बंद हुआ"),
+    "promotion": ("promotion or public recognition", "पदोन्नति या सार्वजनिक पहचान"),
+    "marriage": ("marriage or engagement", "विवाह या सगाई"),
+    "separation": ("separation or divorce", "अलगाव या तलाक़"),
+    "child_born": ("a child was born", "संतान का जन्म"),
+    "bereavement": ("a death in the family", "परिवार में मृत्यु"),
+    "own_illness": ("serious illness or surgery of my own",
+                    "अपनी गंभीर बीमारी या ऑपरेशन"),
+    "family_illness": ("serious illness of someone close", "किसी निकट की गंभीर बीमारी"),
+    "money_gain": ("a significant financial gain", "बड़ा आर्थिक लाभ"),
+    "money_loss": ("a significant financial loss or debt", "बड़ी आर्थिक हानि या कर्ज़"),
+    "education": ("started or finished a course of study", "पढ़ाई शुरू या पूरी की"),
+    "legal": ("a court case or legal trouble", "मुक़दमा या क़ानूनी परेशानी"),
+    "accident": ("an accident", "दुर्घटना"),
+    "spiritual": ("a turn toward religion or practice", "धर्म या साधना की ओर मोड़"),
+    "other": ("something else", "कुछ और"),
+}
+
+#: Which house each event category is read from. Used ONLY by the scorer, to ask whether the
+#: engine's verdict for that house was active in the period the event actually fell in. Kept
+#: beside the vocabulary so the two cannot drift apart.
+EVENT_HOUSE: dict[str, int] = {
+    "move_home": 4, "moved_abroad": 12, "job_start": 10, "job_loss": 10, "promotion": 10,
+    "marriage": 7, "separation": 7, "child_born": 5, "bereavement": 8, "own_illness": 6,
+    "family_illness": 6, "money_gain": 11, "money_loss": 12, "education": 4, "legal": 6,
+    "accident": 6, "spiritual": 12, "other": 0,
+}
+
+
+@dataclass(frozen=True)
+class Q:
+    """One question in the fixed banks.
+
+    `maps_to` names the engine fact this answer is scored against. It lives here rather than in
+    the scorer so the two cannot drift: a question whose comparison target is renamed fails
+    loudly in one place instead of silently scoring nothing.
+    """
+    sid: str
+    group: str
+    kind: str                                   # choice | multi | scale | events | year | open
+    en: str
+    hi: str
+    options: tuple[tuple[str, str, str], ...] = ()      # (value, english, hindi)
+    hint_en: str = ""
+    hint_hi: str = ""
+    maps_to: str = ""
+
+
+def _opts(vocab: dict[str, tuple[str, str]]) -> tuple[tuple[str, str, str], ...]:
+    return tuple((k, en, hi) for k, (en, hi) in vocab.items())
+
+
+_YES_NO = (("yes", "yes", "हाँ"), ("no", "no", "नहीं"), ("unknown", "I don't know", "पता नहीं"))
+
+# ── Part A: the blind bank, all closed ──────────────────────────────────────────────────────
+_PART_A: tuple[Q, ...] = (
+    Q("A1", "birth_record", "choice", "Where did your birth time come from?",
+      "आपका जन्म-समय कहाँ से आया?",
+      (("hospital", "a hospital record", "अस्पताल का रिकॉर्ड"),
+       ("certificate", "a birth certificate", "जन्म प्रमाण-पत्र"),
+       ("horoscope_then", "a horoscope cast at the time", "उस समय बनी कुंडली"),
+       ("family_memory", "someone's memory", "किसी की याददाश्त"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="rect.source"),
+    Q("A2", "birth_record", "choice", "How precise is that time?",
+      "वह समय कितना सटीक है?",
+      (("exact", "an exact clock reading", "घड़ी का सटीक समय"),
+       ("to_5", "right to within about 5 minutes", "लगभग 5 मिनट तक सही"),
+       ("to_15", "right to within about 15 minutes", "लगभग 15 मिनट तक सही"),
+       ("round_hour", "a round number — the hour or the half hour",
+        "गोल समय — घंटा या आधा घंटा"),
+       ("part_of_day", "only a part of the day", "केवल दिन का एक पहर"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="rect.precision"),
+    Q("A3", "birth_record", "choice",
+      "Has an astrologer already changed or corrected this time?",
+      "क्या किसी ज्योतिषी ने यह समय पहले बदला या शोधित किया है?", _YES_NO,
+      maps_to="rect.already_rectified"),
+
+    Q("A4", "health", "choice", "How many times have you been admitted to hospital?",
+      "आप कितनी बार अस्पताल में भर्ती हुए हैं?",
+      (("none", "never", "कभी नहीं"), ("one", "once", "एक बार"),
+       ("two_three", "two or three times", "दो या तीन बार"),
+       ("four_plus", "four or more", "चार या अधिक")), maps_to="health.hospitalisations"),
+    Q("A5", "health", "choice", "How many surgeries have you had?",
+      "आपके कितने ऑपरेशन हुए हैं?",
+      (("none", "none", "कोई नहीं"), ("one", "one", "एक"),
+       ("two_plus", "two or more", "दो या अधिक")), maps_to="health.surgeries"),
+    Q("A6", "health", "multi",
+      "Which parts of your body give you recurring trouble?",
+      "शरीर के कौन-से हिस्से बार-बार परेशान करते हैं?", _opts(BODY_REGIONS),
+      "Choose any that apply, or the last option if nothing troubles you regularly.",
+      "जितने लागू हों चुनें, या यदि कुछ भी नियमित रूप से परेशान नहीं करता तो अंतिम विकल्प।",
+      maps_to="medical.regions"),
+    Q("A7", "health", "choice", "How was your health as a small child?",
+      "छोटी उम्र में आपका स्वास्थ्य कैसा था?",
+      (("sickly", "sickly — often ill", "कमज़ोर — अक्सर बीमार"),
+       ("average", "about average", "सामान्य"),
+       ("robust", "robust — rarely ill", "मज़बूत — कम बीमार"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="arishta.balarishta"),
+    Q("A8", "health", "choice", "Was there danger to your life before the age of eight?",
+      "आठ वर्ष की आयु से पहले जान का कोई ख़तरा था?", _YES_NO,
+      maps_to="arishta.balarishta"),
+    Q("A9", "health", "choice", "How long did your grandparents live, on average?",
+      "आपके दादा-दादी / नाना-नानी औसतन कितने वर्ष जिए?",
+      (("under60", "under 60", "60 से कम"), ("60_70", "60 to 70", "60 से 70"),
+       ("70_80", "70 to 80", "70 से 80"), ("80_90", "80 to 90", "80 से 90"),
+       ("over90", "over 90", "90 से अधिक"),
+       ("mixed", "very mixed", "बहुत भिन्न"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="longevity.family"),
+
+    Q("A10", "family", "choice", "Your relationship with your father:",
+      "पिता से आपका संबंध:",
+      (("close", "close and supportive", "निकट और सहयोगी"),
+       ("distant", "distant but not hostile", "दूर, पर वैमनस्य नहीं"),
+       ("conflicted", "conflicted", "मतभेदपूर्ण"),
+       ("absent", "absent for long stretches", "लंबे समय अनुपस्थित"),
+       ("died_early", "he died while I was young", "मेरे बचपन में उनकी मृत्यु हुई"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="h9.father"),
+    Q("A11", "family", "choice", "Your father's fortunes during your childhood:",
+      "आपके बचपन में पिता की आर्थिक स्थिति:",
+      (("prospered", "prospered", "समृद्ध हुई"), ("steady", "steady", "स्थिर रही"),
+       ("reversal", "suffered a reversal", "बड़ा नुक़सान हुआ"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="h9.father"),
+    Q("A12", "family", "choice", "Your relationship with your mother:",
+      "माता से आपका संबंध:",
+      (("close", "close and supportive", "निकट और सहयोगी"),
+       ("distant", "distant but not hostile", "दूर, पर वैमनस्य नहीं"),
+       ("conflicted", "conflicted", "मतभेदपूर्ण"),
+       ("absent", "absent for long stretches", "लंबे समय अनुपस्थित"),
+       ("died_early", "she died while I was young", "मेरे बचपन में उनकी मृत्यु हुई"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="h4.mother"),
+    Q("A13", "family", "choice", "Your brothers and sisters:",
+      "आपके भाई-बहन:",
+      (("none", "I have none", "कोई नहीं"),
+       ("close", "close to them", "उनसे निकट"),
+       ("distant", "distant from them", "उनसे दूर"),
+       ("conflicted", "in conflict with them", "उनसे मतभेद"),
+       ("lost", "I have lost one", "एक की मृत्यु हो चुकी")), maps_to="h3.siblings"),
+
+    Q("A14", "education", "choice", "Your highest completed education:",
+      "आपकी उच्चतम पूर्ण शिक्षा:",
+      (("none", "no formal schooling", "औपचारिक शिक्षा नहीं"),
+       ("school", "school", "विद्यालय"),
+       ("higher_secondary", "higher secondary", "उच्चतर माध्यमिक"),
+       ("graduate", "graduate", "स्नातक"),
+       ("postgraduate", "postgraduate", "स्नातकोत्तर"),
+       ("doctorate", "doctorate", "पीएच.डी.")), maps_to="h9.higher_learning"),
+    Q("A15", "education", "choice", "Was your education interrupted?",
+      "क्या आपकी पढ़ाई बीच में रुकी?",
+      (("no", "no", "नहीं"), ("brief", "briefly", "थोड़े समय के लिए"),
+       ("serious", "seriously", "गंभीर रूप से")), maps_to="h4.education"),
+
+    Q("A16", "work", "multi", "How do you earn? Choose everything that applies.",
+      "आप कैसे कमाते हैं? जितने लागू हों चुनें।", _opts(WORK_MODES), "", "",
+      maps_to="h10.modes"),
+    Q("A17", "work", "choice",
+      "Which has gone better for you — working under an authority, or working for yourself?",
+      "आपके लिए कौन बेहतर रहा — किसी के अधीन काम, या अपना काम?",
+      (("under_authority", "under an employer, government or senior",
+        "नियोक्ता, सरकार या वरिष्ठ के अधीन"),
+       ("own", "for myself", "अपने लिए"),
+       ("both_equal", "about the same", "दोनों बराबर"),
+       ("untested", "I have only tried one", "मैंने केवल एक ही आज़माया है")),
+      maps_to="h10.authority_vs_trade"),
+    Q("A18", "work", "multi",
+      "Which kinds of work have you actually done, or been strongly drawn to?",
+      "आपने वास्तव में किस तरह का काम किया है, या किसकी ओर प्रबल आकर्षण रहा है?",
+      _opts(TRADE_FAMILIES),
+      "Include work you only tried briefly, and attractions that went nowhere.",
+      "थोड़े समय किया हुआ काम और अधूरे आकर्षण भी शामिल करें।",
+      maps_to="career.trades"),
+    Q("A19", "work", "choice", "Recognition compared with the work you actually did:",
+      "आपके वास्तविक काम की तुलना में मिली पहचान:",
+      (("above", "more than it deserved", "काम से ज़्यादा"),
+       ("about_right", "about right", "उचित"),
+       ("short", "less than it deserved", "काम से कम"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="h10.status_honour"),
+
+    Q("A20", "money", "choice", "Money earned far from your birthplace, or abroad:",
+      "जन्मस्थान से दूर या विदेश से अर्जित धन:",
+      (("none", "none", "कोई नहीं"), ("some", "some of my income", "आय का कुछ हिस्सा"),
+       ("most", "most of my income", "आय का अधिकांश")), maps_to="h12.foreign_residence"),
+    Q("A21", "money", "choice",
+      "Speculation, betting, lottery or shares — how has it gone overall?",
+      "सट्टा, लॉटरी या शेयर — कुल मिलाकर कैसा रहा?",
+      (("never", "I have never done it", "मैंने कभी नहीं किया"),
+       ("net_loss", "a net loss", "कुल मिलाकर हानि"),
+       ("about_even", "about even", "बराबर"),
+       ("net_gain", "a net gain", "कुल मिलाकर लाभ")), maps_to="h5.poorvapunya"),
+    Q("A22", "money", "choice", "Inheritance, insurance, or an unexpected windfall:",
+      "विरासत, बीमा, या अप्रत्याशित धन:",
+      (("none", "none", "कोई नहीं"), ("small", "something small", "छोटी राशि"),
+       ("significant", "something significant", "बड़ी राशि")), maps_to="h8.legacies"),
+    Q("A23", "money", "choice", "Debt:",
+      "कर्ज़:",
+      (("none", "none", "कोई नहीं"),
+       ("manageable", "some, manageable", "कुछ, संभाला जा सकता है"),
+       ("serious_past", "serious trouble in the past", "पहले गंभीर संकट रहा"),
+       ("serious_now", "serious trouble now", "अभी गंभीर संकट")), maps_to="h6.debts"),
+
+    Q("A24", "marriage", "choice", "Your marital status:",
+      "आपकी वैवाहिक स्थिति:",
+      (("never_married", "never married", "अविवाहित"),
+       ("engaged", "engaged, not yet married", "सगाई हुई, विवाह नहीं"),
+       ("married", "married", "विवाहित"),
+       ("separated", "separated", "अलग"),
+       ("divorced", "divorced", "तलाक़शुदा"),
+       ("widowed", "widowed", "विधुर/विधवा")), maps_to="marriage.status"),
+    Q("A25", "marriage", "year", "If you married, in which year?",
+      "यदि विवाह हुआ, तो किस वर्ष?", (), "", "", maps_to="marriage.year"),
+    Q("A26", "marriage", "choice",
+      "By your family's usual pattern, was the marriage early or late?",
+      "आपके परिवार के सामान्य ढर्रे के हिसाब से विवाह जल्दी हुआ या देर से?",
+      (("early", "early", "जल्दी"), ("on_time", "about usual", "सामान्य समय पर"),
+       ("late", "late", "देर से"), ("very_late", "much later than usual", "बहुत देर से"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="marriage.delay"),
+    Q("A27", "marriage", "choice", "The marriage or your closest partnership has been:",
+      "विवाह या आपकी निकटतम साझेदारी रही है:",
+      (("happy", "happy", "सुखी"), ("mixed", "mixed", "मिली-जुली"),
+       ("strained", "strained", "तनावपूर्ण"),
+       ("ended", "it ended", "समाप्त हो गई"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="h7.marital_happiness"),
+    Q("A28", "children", "choice", "Children:",
+      "संतान:",
+      (("none", "none", "कोई नहीं"), ("one", "one", "एक"), ("two", "two", "दो"),
+       ("three_plus", "three or more", "तीन या अधिक")), maps_to="h5.children"),
+    Q("A29", "children", "choice", "Difficulty conceiving, or the loss of a child:",
+      "संतान होने में कठिनाई, या संतान की हानि:",
+      (("no", "no", "नहीं"), ("yes", "yes", "हाँ"),
+       ("na", "does not apply", "लागू नहीं")), maps_to="h5.children"),
+
+    Q("A30", "mind", "multi",
+      "Which of these describe you? Choose as many as fit.",
+      "इनमें से कौन आप पर लागू होते हैं? जितने ठीक बैठें चुनें।",
+      (("outspoken", "outspoken, says it plainly", "स्पष्टवादी, सीधा कहने वाला"),
+       ("reserved", "reserved, keeps things back", "संयमित, बात रखने वाला"),
+       ("quick_tempered", "quick-tempered", "जल्दी क्रोधित"),
+       ("patient", "patient", "धैर्यवान"),
+       ("cautious", "cautious", "सतर्क"), ("bold", "bold", "साहसी"),
+       ("solitary", "happiest alone", "एकांत में प्रसन्न"),
+       ("sociable", "happiest among people", "लोगों के बीच प्रसन्न"),
+       ("practical", "practical", "व्यावहारिक"),
+       ("philosophical", "philosophical", "दार्शनिक")), maps_to="psych.temperament"),
+    Q("A31", "mind", "choice",
+      "Have you had a period of depression, severe anxiety, or treatment for the mind?",
+      "क्या आपको अवसाद, गंभीर चिंता, या मानसिक उपचार का कोई दौर रहा है?",
+      (("no", "no", "नहीं"), ("brief", "yes, briefly", "हाँ, थोड़े समय"),
+       ("extended", "yes, for an extended period", "हाँ, लंबे समय"),
+       ("prefer_not", "I would rather not say", "मैं नहीं बताना चाहूँगा/चाहूँगी")),
+      maps_to="psych.mind_screen"),
+    Q("A32", "mind", "choice", "Religion, philosophy, the occult, or solitary practice:",
+      "धर्म, दर्शन, गूढ़ विद्या, या एकांत साधना:",
+      (("none", "no interest", "कोई रुचि नहीं"), ("mild", "mild interest", "थोड़ी रुचि"),
+       ("strong", "strong interest", "प्रबल रुचि"),
+       ("central", "central to my life", "मेरे जीवन का केंद्र")), maps_to="h12.moksha"),
+    Q("A33", "mind", "choice", "Time lived away from your birthplace:",
+      "जन्मस्थान से दूर बिताया समय:",
+      (("never", "never", "कभी नहीं"), ("under1", "under a year", "एक वर्ष से कम"),
+       ("1_5", "one to five years", "एक से पाँच वर्ष"),
+       ("over5", "more than five years", "पाँच वर्ष से अधिक"),
+       ("abroad", "abroad", "विदेश में")), maps_to="h12.foreign_residence"),
+    Q("A34", "mind", "choice",
+      "Time in a hostel, institution, hospital, or any kind of confinement:",
+      "छात्रावास, संस्था, अस्पताल, या किसी बंदिश में बिताया समय:",
+      (("never", "never", "कभी नहीं"), ("brief", "briefly", "थोड़े समय"),
+       ("extended", "for an extended period", "लंबे समय")), maps_to="h12.incarceration"),
+
+    Q("A35", "turning_points", "events",
+      "The turning points of your life so far. Add a row for each: the year, the month if you "
+      "remember it, and what kind of event it was.",
+      "अब तक के जीवन के निर्णायक मोड़। हर एक के लिए एक पंक्ति जोड़ें: वर्ष, महीना (यदि याद हो), "
+      "और वह किस तरह की घटना थी।",
+      _opts(EVENT_KINDS),
+      "Five to eight is plenty. This is the most valuable answer here — fill it in before you "
+      "read the rest of the report, and do not go back and change it afterwards.",
+      "पाँच से आठ पर्याप्त हैं। यह यहाँ का सबसे मूल्यवान उत्तर है — बाक़ी फलादेश पढ़ने से पहले भरें, "
+      "और बाद में बदलें नहीं।", maps_to="spine.events"),
+    Q("A36", "turning_points", "choice",
+      "Compared with the six years before it, the time since the middle of 2023 has been:",
+      "उससे पहले के छह वर्षों की तुलना में, मध्य-2023 के बाद का समय रहा है:",
+      (("much_better", "much better", "बहुत बेहतर"), ("better", "better", "बेहतर"),
+       ("same", "about the same", "लगभग वैसा ही"), ("worse", "worse", "ख़राब"),
+       ("much_worse", "much worse", "बहुत ख़राब")), maps_to="spine.recent"),
 )
 
 _PART_A_GROUPS: dict[str, tuple[str, str]] = {
@@ -382,51 +593,109 @@ _PART_A_GROUPS: dict[str, tuple[str, str]] = {
     "health": ("Body and health", "शरीर और स्वास्थ्य"),
     "family": ("Parents and siblings", "माता-पिता और भाई-बहन"),
     "education": ("Education", "शिक्षा"),
-    "money": ("Money", "धन"),
     "work": ("Work", "काम"),
+    "money": ("Money", "धन"),
     "marriage": ("Marriage and partnership", "विवाह और साझेदारी"),
     "children": ("Children", "संतान"),
     "mind": ("Mind and temperament", "मन और स्वभाव"),
     "turning_points": ("The turning points", "जीवन के मोड़"),
 }
 
-# ── Part B: the fixed rectification questions ───────────────────────────────────────────────
-_PART_B_FIXED: tuple[tuple[str, str, str, str, str], ...] = (
-    ("B2", "Your build — lean and on the taller side, or solid and heavy-set with a tendency to "
-            "put on weight?",
-     "शरीर — दुबला और कुछ लंबा, या भारी और वज़न बढ़ने की प्रवृत्ति वाला?", "", ""),
-    ("B3", "Your complexion and hair — and do people guess your age older or younger than you "
-            "are?",
-     "रंग और बाल — लोग आपकी उम्र ज़्यादा आँकते हैं या कम?", "", ""),
-    ("B4", "Any distinguishing mark, mole or scar on your head, face or upper body — and on "
-            "which side?",
-     "सिर, चेहरे या ऊपरी शरीर पर कोई तिल, निशान या दाग़ — और किस तरफ़?", "", ""),
-    ("B5", "Are you the eldest, middle, or youngest? Were you born at home or in a hospital?",
-     "आप सबसे बड़े, मंझले, या सबसे छोटे? जन्म घर पर हुआ या अस्पताल में?", "", ""),
-    ("B6", "Give exact months, as far as you can, for: your father's death or major illness, "
-            "your marriage, your first job, and any surgery.",
-     "इनके सटीक महीने बताइए: पिता की मृत्यु या गंभीर बीमारी, विवाह, पहली नौकरी, और कोई ऑपरेशन।",
-     "These are the events a birth time is actually corrected against, so exact months matter "
-     "more here than anywhere else on the form.",
-     "जन्म-समय इन्हीं घटनाओं से शोधित होता है, इसलिए यहाँ सटीक महीने सबसे ज़्यादा मायने रखते हैं।"),
+# ── Part B: rectification, all closed ───────────────────────────────────────────────────────
+_PART_B_FIXED: tuple[Q, ...] = (
+    Q("B2", "rectification", "choice", "Your build:", "आपकी शारीरिक बनावट:",
+      (("lean_tall", "lean and tall-ish", "दुबला और कुछ लंबा"),
+       ("lean_short", "lean and short", "दुबला और नाटा"),
+       ("medium", "medium", "मध्यम"),
+       ("solid_heavy", "solid, puts on weight easily", "भारी, वज़न जल्दी बढ़ता है")),
+      maps_to="rect.build"),
+    Q("B3", "rectification", "choice", "People usually guess your age as:",
+      "लोग आमतौर पर आपकी उम्र आँकते हैं:",
+      (("older", "older than I am", "मेरी उम्र से ज़्यादा"),
+       ("right", "about right", "लगभग सही"),
+       ("younger", "younger than I am", "मेरी उम्र से कम")), maps_to="rect.apparent_age"),
+    Q("B4", "rectification", "choice", "Your birth order:", "जन्म-क्रम:",
+      (("only", "only child", "इकलौता"), ("eldest", "eldest", "सबसे बड़ा"),
+       ("middle", "middle", "मंझला"), ("youngest", "youngest", "सबसे छोटा")),
+      maps_to="rect.birth_order"),
+    Q("B5", "rectification", "choice", "You were born:", "आपका जन्म हुआ:",
+      (("hospital", "in a hospital", "अस्पताल में"), ("home", "at home", "घर पर"),
+       ("unknown", "I don't know", "पता नहीं")), maps_to="rect.birth_place"),
+    Q("B6", "rectification", "events",
+      "The events a birth time is actually corrected against. Give the year and, where you "
+      "can, the month.",
+      "जिन घटनाओं से जन्म-समय शोधित होता है। वर्ष और यदि संभव हो तो महीना बताएँ।",
+      (("father_death", "father's death or major illness",
+        "पिता की मृत्यु या गंभीर बीमारी"),
+       ("mother_death", "mother's death or major illness",
+        "माता की मृत्यु या गंभीर बीमारी"),
+       ("marriage", "marriage", "विवाह"),
+       ("first_job", "first job", "पहली नौकरी"),
+       ("own_surgery", "a surgery of my own", "अपना ऑपरेशन"),
+       ("child_born", "the birth of a first child", "पहली संतान का जन्म")),
+      "Exact months matter more here than anywhere else on the form.",
+      "यहाँ सटीक महीने बाक़ी फ़ॉर्म से ज़्यादा मायने रखते हैं।", maps_to="rect.anchors"),
 )
 
-# ── Part D: after the reading ───────────────────────────────────────────────────────────────
-_PART_D: tuple[tuple[str, str, str, str], ...] = (
-    ("D1", "open", "What in the reading was wrong — plainly, factually wrong about your life?",
-     "फलादेश में क्या ग़लत था — आपके जीवन के बारे में साफ़ तौर पर तथ्यतः ग़लत?"),
-    ("D2", "open", "What was right in a way that could not have been guessed about just anyone?",
-     "क्या ऐसा सही था जो किसी के भी बारे में अंदाज़े से नहीं कहा जा सकता था?"),
-    ("D3", "open", "Which parts felt true of you — and also true of most people you know?",
-     "कौन-से हिस्से आप पर सही लगे — और आपके अधिकांश परिचितों पर भी?"),
-    ("D4", "open", "Was anything upsetting, frightening, or badly worded?",
-     "कुछ परेशान करने वाला, डरावना, या ग़लत शब्दों में कहा हुआ था?"),
-    ("D5", "open", "Which section did you skip, or not understand?",
-     "कौन-सा भाग आपने छोड़ दिया, या समझ नहीं आया?"),
-    ("D6", "scale", "Overall, how well did this reading match your life?",
-     "कुल मिलाकर, यह फलादेश आपके जीवन से कितना मेल खाता है?"),
+# ── Part D: after the reading, all closed ───────────────────────────────────────────────────
+# D1/D2/D3/D5 are multi-selects over the report's OWN section list, which is built at render
+# time from SECTION_CONTRACT — so "which chapters got me wrong" comes back as section ids the
+# scorer can count per chapter, and a chapter that is wrong for many readers is named rather
+# than buried in prose.
+_PART_D: tuple[Q, ...] = (
+    Q("D1", "reaction", "multi",
+      "Which chapters said something plainly WRONG about your life?",
+      "किन अध्यायों ने आपके जीवन के बारे में साफ़ ग़लत बात कही?", (), "", "",
+      maps_to="reaction.wrong"),
+    Q("D2", "reaction", "multi",
+      "Which chapters said something right that could NOT have been guessed about anyone?",
+      "किन अध्यायों ने ऐसा सही कहा जो किसी के भी बारे में अंदाज़े से नहीं कहा जा सकता था?",
+      (), "", "", maps_to="reaction.specific"),
+    Q("D3", "reaction", "multi",
+      "Which chapters felt true of you AND of most people you know?",
+      "कौन-से अध्याय आप पर और आपके अधिकांश परिचितों पर भी सही लगे?", (), "", "",
+      maps_to="reaction.barnum"),
+    Q("D4", "reaction", "multi",
+      "Which chapters did you skip, or not understand?",
+      "कौन-से अध्याय आपने छोड़ दिए, या समझ नहीं आए?", (), "", "",
+      maps_to="reaction.skipped"),
+    Q("D5", "reaction", "choice", "Was anything upsetting or frightening?",
+      "क्या कुछ परेशान करने वाला या डरावना था?",
+      (("no", "no", "नहीं"), ("mildly", "mildly", "थोड़ा"),
+       ("yes", "yes", "हाँ")), maps_to="reaction.harm"),
+    Q("D6", "reaction", "scale", "Overall, how well did this reading match your life?",
+      "कुल मिलाकर, यह फलादेश आपके जीवन से कितना मेल खाता है?", (), "", "",
+      maps_to="reaction.overall"),
+    Q("D7", "reaction", "choice", "Would this have been worth paying for?",
+      "क्या यह पैसे देने लायक़ होता?",
+      (("no", "no", "नहीं"), ("maybe", "maybe", "शायद"),
+       ("yes", "yes", "हाँ")), maps_to="reaction.worth_paying"),
+    Q("D8", "reaction", "open", "Anything else you want to say?",
+      "और कुछ कहना चाहेंगे?", (), "", "", maps_to=""),
 )
 
+#: The chapters a reader actually experiences, as a closed vocabulary for Part D. Deliberately
+#: NOT the 56 rows of SECTION_CONTRACT: a person cannot usefully say which of fifty-six sections
+#: was wrong, and a list that long is not answered at all. Values are real section ids, so a
+#: count of "wrong" answers per chapter points straight at the code that produced it.
+REPORT_CHAPTERS: dict[str, tuple[str, str]] = {
+    "plain_reading": ("The plain-English reading", "सरल भाषा का फलादेश"),
+    "houses": ("The twelve matters, house by house", "बारह भाव, एक-एक करके"),
+    "longevity": ("Longevity and the span", "आयु और जीवन-काल"),
+    "health_readout": ("Health and vulnerability", "स्वास्थ्य और दुर्बलता"),
+    "medical": ("The medical read — body areas", "चिकित्सा पाठ — शरीर के अंग"),
+    "marriage": ("Marriage", "विवाह"),
+    "children": ("Children", "संतान"),
+    "profession": ("Profession and career", "व्यवसाय और करियर"),
+    "wealth": ("Wealth and money", "धन और सम्पत्ति"),
+    "psych": ("Temperament and the inner portrait", "स्वभाव और आंतरिक चित्र"),
+    "aptitude": ("Aptitude and working style", "योग्यता और कार्यशैली"),
+    "timeline": ("The dasha timeline — when things happen", "दशा-काल — कब क्या होता है"),
+    "gochara": ("Transits", "गोचर"),
+    "divisional": ("The divisional charts", "वर्ग कुंडलियाँ"),
+    "karmic": ("Soul, karma and destiny", "आत्मा, कर्म और भाग्य"),
+    "nichod": ("The Nichod — the distilled essence", "निचोड़ — सार"),
+}
 
 # ── builders ────────────────────────────────────────────────────────────────────────────────
 
@@ -435,15 +704,37 @@ def _sign_name(sign: int, lang: Lang) -> str:
     return table[sign - 1] if 1 <= sign <= 12 else f"sign {sign}"
 
 
+#: The seed's field precision, chosen to match `_chart_key` in the report routes EXACTLY.
+#: Scoring recasts a chart from its stored `chart_key`, which keeps latitude and longitude to
+#: four places and the offset to two. Seeding on anything finer — the ascendant longitude was
+#: in here, to six places — means the recast produces a DIFFERENT shuffle from the one the
+#: reader answered, and every stored answer silently inverts. The seed must therefore depend
+#: only on what the key round-trips.
+_SEED_FIELDS: tuple[tuple[str, str], ...] = (
+    ("year", "04d"), ("month", "02d"), ("day", "02d"), ("hour", "02d"), ("minute", "02d"),
+    ("tz_offset", "+.2f"), ("latitude", ".4f"), ("longitude", ".4f"),
+)
+
+
 def _seed(report: dict) -> str:
-    """A stable per-chart seed. Built from the birth fields ONLY (the name is left out, so two
-    readings of the same nativity get the same instrument), and hashed with sha256 rather than
-    `hash()` — the interpreter's string hash is randomised per process, which would reshuffle
-    the forced choices on every restart and make stored answers unscoreable."""
+    """A stable per-chart seed.
+
+    Built from the birth fields only — the name is left out, so two readings of the same
+    nativity get the same instrument — at the precision `chart_key` preserves, so a chart
+    recast from a stored key reproduces the shuffle the reader actually saw.
+
+    Hashed with sha256 rather than `hash()`: the interpreter's string hash is salted per
+    process, so a hash()-based shuffle would differ between the request that asked the
+    questions and the request that scores them.
+    """
     b = report.get("birth") or {}
-    parts = [str(b.get(k, "")) for k in
-             ("year", "month", "day", "hour", "minute", "tz_offset", "latitude", "longitude")]
-    parts.append(str((report.get("chart") or {}).get("asc_lon", "")))
+    parts = []
+    for field, fmt in _SEED_FIELDS:
+        v = b.get(field)
+        try:
+            parts.append(format(float(v) if "f" in fmt else int(v), fmt))
+        except (TypeError, ValueError):
+            parts.append("")
     return hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()
 
 
@@ -582,19 +873,34 @@ def _rectification(report: dict) -> Optional[dict[str, Any]]:
 def _q(qid: str, part: str, group: str, group_label_en: str, group_label_hi: str, kind: str,
        text_en: str, text_hi: str, hint_en: str = "", hint_hi: str = "",
        options: tuple[dict[str, str], ...] = (),
-       confidence: bool = False, allow_free_text: bool = True) -> dict[str, Any]:
-    """One question, in BOTH languages.
+       confidence: bool = False, allow_free_text: bool = True,
+       maps_to: str = "") -> dict[str, Any]:
+    """One question, in BOTH languages, with its options as CODES.
 
-    The page toggles language on the client without re-fetching, so a payload carrying only the
-    language that was asked for would leave a Hindi reader answering an English questionnaire
-    inside an otherwise Hindi page. There is no `text` key on purpose: a consumer must choose a
-    language rather than silently getting whichever one the request happened to default to.
+    Two things are load-bearing here. Options carry a stable `value` code and the display text
+    beside it, so an answer means the same thing whichever language it was given in and can be
+    compared with the engine's own output without parsing prose. And `maps_to` names the engine
+    fact this answer is scored against, travelling with the question rather than living in a
+    parallel table in the scorer, where the two would drift.
+
+    There is no `text` key on purpose: a consumer must choose a language rather than silently
+    getting whichever one the request happened to default to.
     """
     return {"qid": qid, "part": part, "group": group,
             "group_label_en": group_label_en, "group_label_hi": group_label_hi,
             "kind": kind, "text_en": text_en, "text_hi": text_hi,
             "hint_en": hint_en, "hint_hi": hint_hi, "options": list(options),
-            "confidence": confidence, "allow_free_text": allow_free_text}
+            "confidence": confidence, "allow_free_text": allow_free_text,
+            "maps_to": maps_to}
+
+
+def _bank_q(q: "Q", part: str) -> dict[str, Any]:
+    """A fixed-bank row -> a question dict."""
+    label = _PART_A_GROUPS.get(q.group) or ("Checking the birth time", "जन्म-समय की जाँच") \
+        if part in ("A", "B") else ("After the reading", "फलादेश पढ़ने के बाद")
+    opts = tuple({"value": v, "text_en": en, "text_hi": hi} for v, en, hi in q.options)
+    return _q(f"inst.{INSTRUMENT_VERSION}.{q.sid}", part, q.group, label[0], label[1],
+              q.kind, q.en, q.hi, q.hint_en, q.hint_hi, opts, maps_to=q.maps_to)
 
 
 def _claim(row: dict[str, Any], which: str, lang: Lang) -> str:
@@ -612,13 +918,11 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
     key_answers: dict[str, str] = {}
     key_meta: dict[str, Any] = {}
     inverted: list[str] = []
+    chapter_opts = tuple({"value": k, "text_en": en, "text_hi": hi}
+                         for k, (en, hi) in REPORT_CHAPTERS.items())
 
     # ── Part A ──────────────────────────────────────────────────────────────────────────
-    a_questions = [
-        _q(f"inst.{INSTRUMENT_VERSION}.{sid}", "A", group,
-           _PART_A_GROUPS[group][0], _PART_A_GROUPS[group][1], "open",
-           text_en, text_hi, hint_en, hint_hi)
-        for sid, group, text_en, text_hi, hint_en, hint_hi in _PART_A]
+    a_questions = [_bank_q(q, "A") for q in _PART_A]
 
     # ── Part B ──────────────────────────────────────────────────────────────────────────
     rect = _rectification(report)
@@ -634,15 +938,13 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
                      for i, (_who, en, hin) in enumerate(pair, 1))
         b_questions.append(_q(qid, "B", "rectification", b_label[0], b_label[1], "choice",
                               rect["question_en"], rect["question_hi"],
-                              rect["note_en"], rect["note_hi"], opts))
+                              rect["note_en"], rect["note_hi"], opts,
+                              maps_to="rect.portrait"))
         key_answers[qid] = f"opt{[w for w, _e, _h in pair].index('here') + 1}"
         key_meta[qid] = {"kind": "rectification", "asc_sign": rect["asc_sign"],
                          "neighbour_sign": rect["neighbour_sign"],
                          "approx_gap_minutes": rect["approx_gap_minutes"]}
-    b_questions += [
-        _q(f"inst.{INSTRUMENT_VERSION}.{sid}", "B", "rectification", b_label[0], b_label[1],
-           "open", text_en, text_hi, hint_en, hint_hi)
-        for sid, text_en, text_hi, hint_en, hint_hi in _PART_B_FIXED]
+    b_questions += [_bank_q(q, "B") for q in _PART_B_FIXED]
 
     # ── Part C ──────────────────────────────────────────────────────────────────────────
     c_questions: list[dict[str, Any]] = []
@@ -661,7 +963,7 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
             "Which one is closer?", "कौन-सा ज़्यादा नज़दीक है?", "choice",
             f"{topic_en[0].upper()}{topic_en[1:]} — which is closer to your life?",
             f"{topic_hi} — इनमें से कौन-सा आपके जीवन के ज़्यादा नज़दीक है?",
-            options=opts, confidence=True))
+            options=opts, confidence=True, maps_to="forced_choice"))
         key_answers[qid] = f"opt{[w for w, _e, _h in pair].index('mine') + 1}"
         key_meta[qid] = {"kind": "forced_choice", "house": row["house"],
                          "signification": row["signification"], "verdict": row["verdict"],
@@ -673,28 +975,17 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
             inverted.append(qid)
 
     boundaries = _boundary_rows(report)
-    if boundaries:
-        qid = f"inst.{INSTRUMENT_VERSION}.C0"
-        c_questions.append(_q(
-            qid, "C", "dated_spine", "The dates", "तिथियाँ", "open",
-            "These are the dates on which the chart's major periods change. Look back at the "
-            "turning points you listed yourself — do not change that answer now — and say how "
-            "many of them fall within about three months of one of these.",
-            "ये वे तिथियाँ हैं जिन पर कुंडली की महादशा बदलती है। अपने ही लिखे मोड़ों को देखिए — "
-            "उन्हें अब बदलिए मत — और बताइए कि कितने इनमें से किसी के लगभग तीन महीने के भीतर आते हैं।",
-            "Use three months, not six: the period changes cluster, so a wider window covers "
-            "much of a life and half-passes the test by itself.",
-            "तीन महीने लीजिए, छह नहीं: दशा-परिवर्तन पास-पास आते हैं, और बड़ी खिड़की जीवन का बड़ा "
-            "हिस्सा ढक लेती है।"))
 
     # ── Part D ──────────────────────────────────────────────────────────────────────────
     d_questions = []
-    for sid, kind, text_en, text_hi in _PART_D:
-        qid = f"inst.{INSTRUMENT_VERSION}.{sid}"
-        opts = (tuple({"value": v, "text_en": v, "text_hi": _SCALE_HI[v]} for v in ANSWER_SCALE)
-                if kind == "scale" else ())
-        d_questions.append(_q(qid, "D", "reaction", "After the reading", "फलादेश पढ़ने के बाद",
-                              kind, text_en, text_hi, options=opts))
+    for q in _PART_D:
+        row = _bank_q(q, "D")
+        if q.kind == "multi" and not row["options"]:
+            row["options"] = list(chapter_opts)          # the chapter list, not 56 section ids
+        if q.kind == "scale":
+            row["options"] = [{"value": v, "text_en": v, "text_hi": _SCALE_HI[v]}
+                              for v in ANSWER_SCALE]
+        d_questions.append(row)
 
     parts = [
         {"part": "A",
@@ -704,10 +995,11 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
                     "prediction yet. Answer this part BEFORE reading the rest of the report — "
                     "once you have read what a chart says about you, you can no longer report "
                     "what you would have said on your own, and that is the only answer worth "
-                    "measuring.",
+                    "measuring. Every question is answered by choosing, not by writing.",
          "note_hi": "यहाँ ज्योतिष का कोई ज़िक्र नहीं है, और अभी किसी भविष्यवाणी से कुछ नहीं मिलाया जा "
                     "रहा। यह भाग बाक़ी फलादेश पढ़ने से पहले भरें — एक बार पढ़ लेने के बाद आप वह नहीं बता "
-                    "सकते जो आप अपनी ओर से कहते, और मापने लायक़ वही एक उत्तर है।",
+                    "सकते जो आप अपनी ओर से कहते, और मापने लायक़ वही एक उत्तर है। हर प्रश्न का उत्तर "
+                    "चुनकर दिया जाता है, लिखकर नहीं।",
          "questions": a_questions},
         {"part": "B",
          "title_en": "Checking the birth time",
@@ -732,10 +1024,10 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
         {"part": "D",
          "title_en": "After the reading",
          "title_hi": "फलादेश पढ़ने के बाद",
-         "note_en": "This part is about the reading itself, not about the chart. Being blunt "
-                    "here is more useful than being kind.",
-         "note_hi": "यह भाग फलादेश के बारे में है, कुंडली के बारे में नहीं। यहाँ साफ़-साफ़ कहना, "
-                    "सँभालकर कहने से ज़्यादा उपयोगी है।",
+         "note_en": "This part is about the reading itself, not about the chart. Naming the "
+                    "chapters that got you wrong is more useful than being kind about them.",
+         "note_hi": "यह भाग फलादेश के बारे में है, कुंडली के बारे में नहीं। जिन अध्यायों ने ग़लत कहा "
+                    "उन्हें नाम से बताना, उनके बारे में सँभालकर कहने से ज़्यादा उपयोगी है।",
          "questions": d_questions},
     ]
 
@@ -751,6 +1043,8 @@ def _build(report: dict, lang: Lang, max_choices: int) -> tuple[dict[str, Any], 
         "answer_scale": list(ANSWER_SCALE),
         "answer_scale_hi": {k: _SCALE_HI[k] for k in ANSWER_SCALE},
         "confidence_scale": list(CONFIDENCE_SCALE),
+        "event_kinds": {k: {"text_en": en, "text_hi": hi}
+                        for k, (en, hi) in EVENT_KINDS.items()},
         "caveat_en": "These questions calibrate the reading; they do not validate it. This "
                      "project's own measurement found no chart-specific signal against real "
                      "outcomes, so your answers measure how a faithful rendering of Raman's "
@@ -772,9 +1066,9 @@ def build_feedback_instrument(report: dict, *, lang: Lang = "en",
                               max_choices: int = 12) -> dict[str, Any]:
     """The reader-facing instrument for one report dict (``to_report_dict`` output).
 
-    Deterministic for a chart, in either language, with language-independent `qid`s so answers
-    given in Hindi pool with answers given in English. Carries NO indication of which option
-    each forced choice was drawn from — see `instrument_key`.
+    Deterministic for a chart, in either language, with language-independent `qid`s and option
+    codes so answers given in Hindi pool with answers given in English. Carries NO indication of
+    which option each forced choice was drawn from — see `instrument_key`.
     """
     lang = lang if lang in ("en", "hi") else "en"
     payload, _key = _build(report, lang, max_choices)
@@ -795,6 +1089,14 @@ def instrument_key(report: dict, *, max_choices: int = 12) -> dict[str, Any]:
     return key
 
 
+#: An events answer is stored one row per event, `qid#n`, valued `YYYY-MM:kind` or `YYYY:kind`.
+#: One row per event rather than a packed blob because the scorer reads them individually, and
+#: because a single column of comma-joined dates is the kind of thing nobody ever queries again.
+_EVENT_RE = __import__("re").compile(r"^(\d{4})(?:-(0[1-9]|1[0-2]))?:([a-z_]+)$")
+#: A multi-select answer is stored as comma-joined codes in one row.
+_MULTI_SEP = ","
+
+
 def validate_instrument_answers(report: dict, answers: list[dict[str, Any]], *,
                                 max_choices: int = 12) -> list[str]:
     """Check submitted answers against the instrument this chart actually generates.
@@ -808,8 +1110,8 @@ def validate_instrument_answers(report: dict, answers: list[dict[str, Any]], *,
     problems: list[str] = []
     for a in answers:
         qid = str(a.get("qid", ""))
-        base, _, suffix = qid.partition(".confidence")
-        q = by_qid.get(base if suffix == "" and base != qid else qid) or by_qid.get(base)
+        base = qid.removesuffix(".confidence").split("#", 1)[0]
+        q = by_qid.get(base)
         if q is None:
             problems.append(f"unknown question {qid!r}")
             continue
@@ -820,13 +1122,30 @@ def validate_instrument_answers(report: dict, answers: list[dict[str, Any]], *,
             elif str(value) not in CONFIDENCE_SCALE:
                 problems.append(f"{qid!r}: confidence must be one of {CONFIDENCE_SCALE}")
             continue
-        if q["kind"] == "choice":
-            legal = {o["value"] for o in q["options"]}
+        legal = {o["value"] for o in q["options"]}
+        kind = q["kind"]
+        if kind == "choice":
             if str(value) not in legal:
                 problems.append(f"{qid!r}: answer must be one of {sorted(legal)}")
-        elif q["kind"] == "scale":
+        elif kind == "multi":
+            picked = [v.strip() for v in str(value or "").split(_MULTI_SEP) if v.strip()]
+            if not picked:
+                problems.append(f"{qid!r}: choose at least one option")
+            for v in picked:
+                if v not in legal:
+                    problems.append(f"{qid!r}: {v!r} is not one of {sorted(legal)}")
+        elif kind == "scale":
             if str(value) not in ANSWER_SCALE:
                 problems.append(f"{qid!r}: answer must be one of {ANSWER_SCALE}")
+        elif kind == "year":
+            if not (str(value or "").isdigit() and 1800 <= int(value) <= 2200):
+                problems.append(f"{qid!r}: expected a four-digit year")
+        elif kind == "events":
+            m = _EVENT_RE.match(str(value or ""))
+            if m is None:
+                problems.append(f"{qid!r}: expected YYYY:kind or YYYY-MM:kind")
+            elif m.group(3) not in legal:
+                problems.append(f"{qid!r}: {m.group(3)!r} is not one of {sorted(legal)}")
         elif value not in (None, "", "answered"):
             problems.append(f"{qid!r} is an open question and takes free text only")
     return problems

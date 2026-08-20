@@ -30,9 +30,16 @@ def _instrument() -> dict:
 
 
 def _first_scored_choice() -> dict:
+    """A Part C item: the only kind that carries a confidence rating."""
     inst = _instrument()
     return next(q for p in inst["parts"] for q in p["questions"]
                 if q["kind"] == "choice" and q["confidence"])
+
+
+def _by_maps_to(name: str) -> dict:
+    inst = _instrument()
+    return next(q for p in inst["parts"] for q in p["questions"]
+                if q.get("maps_to") == name)
 
 
 class TestInstrumentRidesTheReport:
@@ -120,7 +127,7 @@ class TestSubmission:
         assert "opt" in resp.json()["detail"]
 
     async def test_an_unknown_question_is_refused(self, client):
-        body = {**CANONICAL, "answers": [{"qid": "inst.v1.NOPE", "answer": "opt1"}]}
+        body = {**CANONICAL, "answers": [{"qid": "inst.v2.NOPE", "answer": "opt1"}]}
         assert (await client.post("/report/feedback/instrument",
                                   json=body)).status_code == 400
 
@@ -132,15 +139,16 @@ class TestSubmission:
         q = _first_scored_choice()
         body = {**CANONICAL, "answers": [
             {"qid": q["qid"], "answer": q["options"][0]["value"]},
-            {"qid": "inst.v1.A5"},
-            {"qid": "inst.v1.A6", "free_text": "   "},
+            {"qid": _by_maps_to("h6.debts")["qid"]},
+            {"qid": _by_maps_to("h9.father")["qid"], "free_text": "   "},
         ]}
         assert (await client.post("/report/feedback/instrument", json=body)).status_code == 200
         sm = async_sessionmaker(db_engine, expire_on_commit=False)
         async with sm() as s:
             rows = (await s.execute(select(ChartFeedback))).scalars().all()
         stored = {r.question_id for r in rows}
-        assert "inst.v1.A5" not in stored and "inst.v1.A6" not in stored
+        assert _by_maps_to("h6.debts")["qid"] not in stored
+        assert _by_maps_to("h9.father")["qid"] not in stored
 
     async def test_the_response_never_tells_the_submitter_how_they_scored(self, client):
         """An endpoint that scored back would turn the instrument into a quiz, and the answer
@@ -150,3 +158,56 @@ class TestSubmission:
         data = (await client.post("/report/feedback/instrument", json=body)).json()
         assert set(data) == {"stored", "chart_key", "context", "note"}
         assert "not scored back to you" in data["note"]
+
+
+class TestClosedAnswerKinds:
+    async def test_a_multi_select_round_trips_as_joined_codes(self, client, db_engine):
+        """Body regions are stored as the codes the reader picked, comma-joined, because the
+        scorer compares them against the engine's own region codes directly."""
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+        from app.models.domain import ChartFeedback
+        q = _by_maps_to("medical.regions")
+        body = {**CANONICAL, "answers": [{"qid": q["qid"], "answer": "throat_neck,skin"}]}
+        assert (await client.post("/report/feedback/instrument", json=body)).status_code == 200
+        sm = async_sessionmaker(db_engine, expire_on_commit=False)
+        async with sm() as s:
+            row = (await s.execute(
+                select(ChartFeedback).where(ChartFeedback.question_id == q["qid"]))
+            ).scalars().one()
+        assert row.answer == "throat_neck,skin"
+
+    async def test_a_code_the_instrument_never_offered_is_refused(self, client):
+        q = _by_maps_to("medical.regions")
+        body = {**CANONICAL, "answers": [{"qid": q["qid"], "answer": "throat_neck,nose"}]}
+        resp = await client.post("/report/feedback/instrument", json=body)
+        assert resp.status_code == 400 and "nose" in resp.json()["detail"]
+
+    async def test_dated_events_post_one_row_each(self, client, db_engine):
+        """A turning point per row, `qid#n`, so the scorer reads them individually instead of
+        unpacking a blob nobody would ever query again."""
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+        from app.models.domain import ChartFeedback
+        q = _by_maps_to("spine.events")
+        body = {**CANONICAL, "answers": [
+            {"qid": q["qid"] + "#1", "answer": "2019-03:job_start"},
+            {"qid": q["qid"] + "#2", "answer": "2021:marriage"}]}
+        assert (await client.post("/report/feedback/instrument", json=body)).status_code == 200
+        sm = async_sessionmaker(db_engine, expire_on_commit=False)
+        async with sm() as s:
+            rows = (await s.execute(select(ChartFeedback))).scalars().all()
+        stored = {r.question_id: r.answer for r in rows}
+        assert stored[q["qid"] + "#1"] == "2019-03:job_start"
+        assert stored[q["qid"] + "#2"] == "2021:marriage"
+
+    async def test_a_malformed_event_is_refused(self, client):
+        q = _by_maps_to("spine.events")
+        body = {**CANONICAL, "answers": [{"qid": q["qid"] + "#1", "answer": "March 2019"}]}
+        assert (await client.post("/report/feedback/instrument",
+                                  json=body)).status_code == 400
+
+    async def test_a_year_answer_must_be_a_year(self, client):
+        q = _by_maps_to("marriage.year")
+        ok = {**CANONICAL, "answers": [{"qid": q["qid"], "answer": "2021"}]}
+        bad = {**CANONICAL, "answers": [{"qid": q["qid"], "answer": "two thousand"}]}
+        assert (await client.post("/report/feedback/instrument", json=ok)).status_code == 200
+        assert (await client.post("/report/feedback/instrument", json=bad)).status_code == 400

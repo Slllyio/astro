@@ -325,6 +325,11 @@
   .fbi-invite{margin:1rem 0 0;padding:.75rem .95rem;border-left:3px solid var(--madder);
     background:rgba(232,213,168,.4);font-size:.92rem;line-height:1.55}
   .fbi-invite button{margin-top:.5rem}
+  .fbi-rows{display:flex;flex-direction:column;gap:.4rem;margin:.5rem 0 0}
+  .fbi-row{display:flex;gap:.4rem;flex-wrap:wrap}
+  .fbi-row .fbi-year{max-width:6rem}
+  .fbi-row select{flex:1 1 8rem;min-width:0}
+  .fbi-more{margin:.5rem 0 0;font-size:.7rem;padding:.35rem .8rem}
   .fbi-dates{margin:.5rem 0 0;font-size:.88rem}
   .fbi-dates td,.fbi-dates th{padding:.25rem .55rem}
   /* feedback card on the colophon — chart-specific calibration questions */
@@ -1179,6 +1184,11 @@ const I18N_HI = {
   "Before you read: there are a few questions about your own life at the end of this report. Answering them FIRST is what makes your feedback worth anything — once you have read what the chart says, you can no longer say what you would have said on your own.":
     "पढ़ने से पहले: इस फलादेश के अंत में आपके अपने जीवन के बारे में कुछ प्रश्न हैं। उन्हें पहले भरना ही आपकी प्रतिक्रिया को मूल्यवान बनाता है — एक बार पढ़ लेने के बाद आप वह नहीं कह सकते जो आप अपनी ओर से कहते।",
   "ANSWER THOSE FIRST": "पहले वे प्रश्न भरें",
+  "year": "वर्ष",
+  "month (if you remember)": "महीना (यदि याद हो)",
+  "what kind of event?": "किस तरह की घटना?",
+  "ADD ANOTHER": "एक और जोड़ें",
+  "anything to add? (optional)": "कुछ और जोड़ना चाहें? (वैकल्पिक)",
 };
 
 let LANG = 'en';
@@ -3599,13 +3609,67 @@ function instText(o, field){ return (LANG==='hi' ? o[field+'_hi'] : o[field+'_en
 
 function instSet(qid, patch){ INST_ANSWERS[qid] = Object.assign({}, INST_ANSWERS[qid]||{}, patch); }
 
+// A repeating (year, month, kind) row. Turning points are collected as STRUCTURED rows
+// rather than a paragraph, because a paragraph cannot be compared with the period-change
+// dates and a date the reader types in prose cannot be parsed reliably. Each row posts as
+// its own answer, `qid#n`, valued YYYY-MM:kind.
+function instEventRows(q, box){
+  const rows = el('div',{class:'fbi-rows'});
+  let n = 0;
+  const addRow = () => {
+    n += 1;
+    const rid = q.qid + '#' + n;
+    const row = el('div',{class:'fbi-row'});
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    const mo = el('select',{class:'leaf-input fbi-month'});
+    mo.append(el('option',{value:''},t('month (if you remember)')));
+    for(let i=1;i<=12;i++) mo.append(el('option',{value:String(i).padStart(2,'0')},
+      String(i).padStart(2,'0')));
+    const kind = el('select',{class:'leaf-input fbi-kind'});
+    kind.append(el('option',{value:''},t('what kind of event?')));
+    for(const o of (q.options||[])) kind.append(el('option',{value:o.value},instText(o,'text')));
+    const sync=()=>{ const y=(yr.value||'').trim(), k=kind.value;
+      if(y.length===4 && k) instSet(rid,{answer: y+(mo.value?('-'+mo.value):'')+':'+k});
+      else instSet(rid,{answer:undefined}); };
+    yr.oninput=sync; mo.onchange=sync; kind.onchange=sync;
+    row.append(yr,mo,kind); rows.append(row);
+  };
+  for(let i=0;i<5;i++) addRow();
+  const more = el('button',{class:'leaf-button secondary fbi-more',type:'button'},
+    t('ADD ANOTHER'));
+  more.onclick=()=>addRow();
+  box.append(rows, more);
+}
+
 function instQuestion(q){
   const box = el('div',{class:'fbi-q'});
   box.append(el('div',{class:'fbi-qt'}, instText(q,'text')));
   const hint = instText(q,'hint');
   if(hint) box.append(el('div',{class:'fbi-hint muted'}, hint));
 
-  if(q.options && q.options.length){
+  if(q.kind === 'events'){
+    instEventRows(q, box);
+  } else if(q.kind === 'year'){
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    yr.oninput=()=>{ const v=(yr.value||'').trim();
+      instSet(q.qid,{answer: v.length===4 ? v : undefined}); };
+    box.append(yr);
+  } else if(q.kind === 'multi'){
+    // Multi-select: the stored answer is the comma-joined codes, which is what the server
+    // validates and the scorer reads. Codes, never display text — so an answer given in
+    // Hindi means exactly what the same answer given in English means.
+    const picked = new Set();
+    for(const o of (q.options||[])){
+      const b=el('button',{class:'fbi-opt',type:'button'});
+      b.append(el('span',{},instText(o,'text')));
+      b.onclick=()=>{ if(picked.has(o.value)) picked.delete(o.value); else picked.add(o.value);
+        b.classList.toggle('sel', picked.has(o.value));
+        instSet(q.qid,{answer: picked.size ? Array.from(picked).join(',') : undefined}); };
+      box.append(b);
+    }
+  } else if(q.options && q.options.length){
     const btns=[];
     for(const o of q.options){
       const b=el('button',{class:'fbi-opt',type:'button'});
@@ -3629,7 +3693,7 @@ function instQuestion(q){
   }
   if(q.allow_free_text){
     const free=el('input',{class:'leaf-input fbi-free',type:'text',maxlength:'4000',
-      placeholder: q.options&&q.options.length ? t('why? (optional)') : t('your answer')});
+      placeholder: q.kind==='open' ? t('your answer') : t('anything to add? (optional)')});
     free.oninput=()=>{ instSet(q.qid,{free_text:free.value}); };
     box.append(free);
   }

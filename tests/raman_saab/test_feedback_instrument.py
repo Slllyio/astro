@@ -78,7 +78,7 @@ class TestTheKeyNeverShips:
         for q in _all_questions(payload):
             assert set(q) == {"qid", "part", "group", "group_label_en", "group_label_hi",
                               "kind", "text_en", "text_hi", "hint_en", "hint_hi",
-                              "options", "confidence", "allow_free_text"}
+                              "options", "confidence", "allow_free_text", "maps_to"}
             for o in q["options"]:
                 assert set(o) == {"value", "text_en", "text_hi"}
 
@@ -90,13 +90,17 @@ class TestTheKeyNeverShips:
         for qid in key["inverted"]:
             assert key["meta"][qid]["inverted_warning"] is True
 
-    def test_the_key_covers_every_forced_choice_and_nothing_else(self, payload, key):
-        choices = [q for q in _all_questions(payload)
-                   if q["kind"] == "choice"]
-        assert {q["qid"] for q in choices} == set(key["answers"])
+    def test_the_key_covers_every_shuffled_item_and_nothing_else(self, payload, key):
+        """Since v2 every question is answered by choosing, so "is a choice" no longer marks
+        the scored ones. The key covers exactly the items whose OPTIONS WERE SHUFFLED — the
+        Part C pairs and the Part B portrait — because those are the only ones where knowing
+        the order would tell a reader the answer."""
+        by_qid = {q["qid"]: q for q in _all_questions(payload)}
+        shuffled = {q["qid"] for q in _all_questions(payload)
+                    if q["maps_to"] in ("forced_choice", "rect.portrait")}
+        assert shuffled == set(key["answers"])
         for qid, val in key["answers"].items():
-            q = next(q for q in choices if q["qid"] == qid)
-            assert val in {o["value"] for o in q["options"]}
+            assert val in {o["value"] for o in by_qid[qid]["options"]}
 
 
 class TestDeterminism:
@@ -221,6 +225,9 @@ class TestPartsAndWording:
         part_a = next(p for p in payload["parts"] if p["part"] == "A")
         graded = [q for q in part_a["questions"] if q["group"] != "birth_record"]
         assert len(graded) >= 25
+        # "astrology" is one of the trade families a person may work in, and "occult" rides
+        # with it; both name the CRAFT, never a placement in this nativity.
+        graded = [q for q in graded if q["maps_to"] != "career.trades"]
         blob = " ".join(_all_text(graded)).casefold()
         for term in ("dasha", "dasa", "rasi", "graha", "lagna", "ascendant", "nakshatra",
                      "planet", "yoga", "bhukti", "horoscope",
@@ -243,22 +250,46 @@ class TestPartsAndWording:
         assert "BEFORE reading" in part_a["note_en"]
         assert "पढ़ने से पहले" in part_a["note_hi"]
 
-    def test_every_choice_offers_two_genuinely_different_options(self, payload):
+    def test_every_shuffled_pair_offers_two_genuinely_different_options(self, payload):
+        """Only the shuffled items are pairs. The rest of the form is closed-choice too, but
+        with as many options as the matter needs."""
         for q in _all_questions(payload):
-            if q["kind"] != "choice":
+            if q["maps_to"] not in ("forced_choice", "rect.portrait"):
                 continue
             for field in ("text_en", "text_hi"):
                 texts = [o[field] for o in q["options"]]
                 assert len(texts) == 2 and texts[0] != texts[1], (q["qid"], field)
             assert [o["value"] for o in q["options"]] == ["opt1", "opt2"]
 
-    def test_the_dated_spine_asks_for_three_months_not_six(self, payload):
-        """The period changes cluster, so a six-month window covers much of a life and
-        half-passes the test by itself."""
-        q = next(q for q in _all_questions(payload) if q["qid"].endswith(".C0"))
-        assert "three months" in q["text_en"]
-        assert "तीन महीने" in q["text_hi"]
-        assert "cluster" in q["hint_en"]
+    def test_every_question_is_answered_by_choosing_not_by_writing(self, payload):
+        """The whole v2 change. Prose cannot be scored and does not aggregate; one free-text
+        box at the very end is the only exception, and it is a supplement to the rest."""
+        qs = _all_questions(payload)
+        open_qs = [q for q in qs if q["kind"] == "open"]
+        assert len(open_qs) <= 1, [q["qid"] for q in open_qs]
+        for q in qs:
+            if q["kind"] in ("choice", "multi", "scale", "events"):
+                assert len(q["options"]) >= 2, q["qid"]
+            assert q["allow_free_text"] is True          # always a supplement, never the answer
+
+    def test_every_scoreable_question_declares_what_it_is_scored_against(self, payload):
+        """`maps_to` travels with the question so the scorer does not keep a parallel table
+        that can drift out of step with the bank."""
+        for q in _all_questions(payload):
+            if q["kind"] == "open":
+                continue
+            assert q["maps_to"], q["qid"]
+
+    def test_the_reader_is_not_asked_to_count_their_own_hits(self, payload):
+        """v1 showed the reader the period-change dates and asked how many of their turning
+        points landed near one. That is the reader doing the scorer's job, badly and with the
+        answer in front of them. v2 collects the dated events as structured rows and computes
+        the count in `feedback_scoring`, where the chance rate is computed too."""
+        assert not any(q["qid"].endswith(".C0") for q in _all_questions(payload))
+        events = [q for q in _all_questions(payload) if q["kind"] == "events"]
+        assert events, "the dated turning points must still be collected"
+        for q in events:
+            assert len(q["options"]) >= 6            # a closed vocabulary of event kinds
 
     def test_the_caveat_keeps_the_measured_truth_frame(self, payload):
         assert "calibrate" in payload["caveat_en"]

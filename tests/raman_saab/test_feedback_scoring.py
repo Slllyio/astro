@@ -626,3 +626,48 @@ class TestTheTradeComparisonReadsTheFramesItMeansTo:
         as_list = {"profession": {"sources": [],
                                   "career_frames": [{"trade": "medicine", "sign_career": ""}]}}
         assert _engine_trades(as_list)
+
+
+class TestDatesOfMixedPrecisionInTheSameAnswer:
+    """Events are parsed as `(year, month-or-None, kind)` and then sorted. Python cannot
+    order `None` against an `int`, so the moment one event carried a month and another in the
+    same submission did not, `parse_answers` raised `TypeError` and took the scorer down.
+
+    This is the ordinary case, not an exotic one: a reader remembers "March 1990" for one
+    turning point and only "1985" for another. Every measurement that reads events — the
+    dated spine and the event-vs-house comparison — was unreachable for such a submission.
+    """
+
+    def test_a_dated_and_an_undated_event_in_the_SAME_year_do_not_raise(self):
+        """The year has to match for the crash to fire. Tuples compare element by element,
+        so differing years are decided on the first element and `None` is never reached —
+        which is exactly why this hid: the obvious test case does not reproduce it."""
+        rows = [("inst.v2.A35#1", "1990-03:job_start", None),
+                ("inst.v2.A35#2", "1990:marriage", None)]
+        events = parse_answers(rows).events["inst.v2.A35"]
+        assert len(events) == 2
+
+    def test_different_years_were_never_the_problem(self):
+        rows = [("inst.v2.A35#1", "1990-03:job_start", None),
+                ("inst.v2.A35#2", "1985:marriage", None)]
+        assert len(parse_answers(rows).events["inst.v2.A35"]) == 2
+
+    def test_they_come_back_in_chronological_order(self):
+        """Sorting is what the crash was for, so it still has to sort."""
+        rows = [("inst.v2.A35#1", "1990-03:job_start", None),
+                ("inst.v2.A35#2", "1990:marriage", None),
+                ("inst.v2.A35#3", "1990-01:money_gain", None)]
+        events = parse_answers(rows).events["inst.v2.A35"]
+        assert [e[1] for e in events] == [None, 1, 3], \
+            "an undated event should lead its year, and the dated ones follow in order"
+
+    def test_the_missing_month_is_preserved_not_invented(self):
+        """The sort must not backfill a month — `_score_spine` applies its own default of 6,
+        and a month silently written in here would look like something the reader said."""
+        events = parse_answers([("inst.v2.A35#1", "1985:marriage", None)]).events
+        assert events["inst.v2.A35"][0] == (1985, None, "marriage")
+
+    def test_two_undated_events_in_one_year_still_sort(self):
+        rows = [("inst.v2.A35#1", "1985:marriage", None),
+                ("inst.v2.A35#2", "1985:job_loss", None)]
+        assert len(parse_answers(rows).events["inst.v2.A35"]) == 2

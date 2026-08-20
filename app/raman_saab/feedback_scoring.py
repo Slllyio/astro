@@ -221,7 +221,14 @@ def parse_answers(rows: Iterable[tuple[str, str, Optional[str]]]) -> Answers:
             by_qid[base] = answer
     return Answers(by_qid=by_qid,
                    multi={k: v for k, v in multi.items()},
-                   events={k: tuple(sorted(v)) for k, v in events.items()},
+                   # Sort on a key rather than the raw tuples: an event's month is None when
+                   # the reader gave only a year, and `None < 3` raises. Tuples compare
+                   # element by element, so this only bites when two events share a YEAR —
+                   # "March 1990" beside a bare "1990" — which is why it went unnoticed and
+                   # why it is entirely ordinary. The stored value keeps its None; only the
+                   # ordering treats it as 0, so an undated event leads its year.
+                   events={k: tuple(sorted(v, key=lambda e: (e[0], e[1] or 0, e[2])))
+                           for k, v in events.items()},
                    confidence=confidence, free_text=free_text, context=context)
 
 

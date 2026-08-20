@@ -137,7 +137,8 @@ and is never silently replaced by a later name being promoted out of order.
 
 1. **Rodden AA or A** — birth certificate/civil record, or from the person or family. B, C, DD,
    X are refused. The rating is recorded per person and results are split by it.
-2. **A birth time is stated.** A date alone is refused.
+2. **A birth time is stated, and it is not a noon default.** A date alone is refused, and so
+   is a time of `12:00` — see Deviation 1.
 3. **The birthplace was on standard time at that date** — the offset must be a whole
    quarter-hour. `zoneinfo` answers pre-standard-time dates with the *zone's* local mean time,
    which belongs to the reference city rather than the birth city (1879 Ulm returns Berlin's
@@ -212,7 +213,32 @@ present-or-absent and ships its own caution that it is not a diagnosis.
 3. **n = 24**, powered only past the field's own noise floor (§1).
 4. **Blinding is procedural**, with the residual risk named in §3.
 
-## 6. Governance
+## 6. Deviations
+
+Recorded here as they happen. Each names what changed, when relative to data collection, and
+why.
+
+### Deviation 1 — noon defaults excluded (amended BEFORE any answer was collected)
+
+The gate as first written asked only that a birth time be *stated*. Running it over the
+candidate list surfaced a time of exactly `12:00` (Martin Luther King, Rodden A), which is the
+classic noon default — the value a record carries when the hour is unknown, not a claim about
+the hour.
+
+This project's own locked methodology already excludes it at every quality tier:
+`tools/raman_saab/astrobank/_names.py` classifies a `12:00` prefix as `noon_default`, and
+`quality_tier` returns `None` for it — "Noon-default/unknown times are excluded outright"
+(`astrobank/METHODOLOGY.md:33-36`). §4's gate was modelled on that scheme and should have
+carried the rule; omitting it was an oversight, not a choice.
+
+The gate now refuses `12:00`. This is a **tightening**, applied before any answer existed, and
+it is mechanical rather than discretionary. Under the standing rule — first four per stratum
+that pass, in registered order — the next registered name in that stratum takes the place.
+
+Round-hour and quarter-hour times are **kept**, not excluded, since they are real claims about
+the hour; each person's time precision is recorded and the results are split by it.
+
+## 7. Governance
 
 Committed before any data is collected. The results document reports every arm, every drop,
 every deviation, and leads with what the study cannot show. Nothing in this study touches the

@@ -45,12 +45,13 @@ import json
 import logging
 import math
 import re
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Any, Iterable, Optional, Sequence
 
 from app.raman_saab.chart.model import BirthData
 from app.raman_saab.feedback_instrument import (
-    BODY_REGIONS, EVENT_HOUSE, TRADE_FAMILIES, build_feedback_instrument, instrument_key)
+    BODY_REGIONS, EVENT_HOUSE, EVENT_VALENCE, TRADE_FAMILIES, build_feedback_instrument,
+    instrument_key)
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +147,28 @@ def binomial_p_two_sided(hits: int, n: int, p: float = 0.5) -> Optional[float]:
     probs = [math.comb(n, i) * (p ** i) * ((1 - p) ** (n - i)) for i in range(n + 1)]
     observed = probs[hits]
     return min(1.0, sum(x for x in probs if x <= observed + 1e-12))
+
+
+def poisson_binomial_tail(probs: Sequence[float], hits: int) -> Optional[float]:
+    """P(X >= hits) where each trial has its OWN success probability.
+
+    The event-house test needs this rather than a plain binomial: each dated event is scored
+    against the base rate of ITS house, and those differ — a house at top grade for 60% of the
+    timeline and one at 30% are not the same trial. Averaging them into a single p would be an
+    approximation dressed as an exact test, and the counts here are small enough (a reader
+    lists five to eight turning points) that the exact DP costs nothing.
+    """
+    if not probs:
+        return None
+    dist = [1.0]
+    for p in probs:
+        p = min(max(float(p), 0.0), 1.0)
+        nxt = [0.0] * (len(dist) + 1)
+        for k, acc in enumerate(dist):
+            nxt[k] += acc * (1.0 - p)
+            nxt[k + 1] += acc * p
+        dist = nxt
+    return min(1.0, sum(dist[min(hits, len(dist) - 1):]))
 
 
 def _months(year: int, month: int) -> int:
@@ -485,6 +508,38 @@ class Spine:
     detail: tuple[tuple[str, str, bool], tuple[()], ...] | tuple = ()
 
 
+#: The activation grades the engine emits, best first. A house is "strongly lit" in a period
+#: when it carries the top grade; the four-tier scheme is Raman's own (HTJAH-I "When Do
+#: Indications Fructify?") and only the top tier is treated as a positive claim here.
+_TOP_GRADES: frozenset[str] = frozenset({"par_excellence"})
+
+
+@dataclass(frozen=True)
+class EventHouses:
+    """Dated life events against the periods the engine graded highest for THEIR house.
+
+    Why grade and not "was the house active at all": measured, every house is activated in
+    74-100% of periods on a real chart (mean ~88%). That is Raman's timer_set being
+    deliberately broad — the five/six factors light nearly everything nearly always — so a
+    was-it-lit test scores ~88% by construction and says nothing. The GRADE does discriminate:
+    61%/39% top-vs-lower across a chart, and per house it swings much further.
+
+    `direction` is reported as bare counts. Its null is not computable from one chart — it
+    would need the population base rate of good-vs-bad life events, which this project does not
+    have — so a p-value there would be invented. The same restraint the life-facts section
+    takes.
+    """
+    events: int                       # dated events that fell inside the timeline window
+    outside_window: int               # dated events the timeline does not cover
+    unscoreable: int                  # inside the window but the house was not activated
+    top_grade: int                    # events landing in a top-grade period for their house
+    expected: Optional[float]         # sum of the per-event base rates
+    p_value: Optional[float]          # exact Poisson-binomial, P(X >= top_grade)
+    direction_scored: int = 0         # events with a good/bad valence and a house verdict
+    direction_hits: int = 0
+    per_event: tuple[tuple[str, str, int, str, bool], ...] = ()   # date, kind, house, grade, top
+
+
 @dataclass(frozen=True)
 class Reaction:
     """Part D, counted rather than scored."""
@@ -505,14 +560,30 @@ class ChartScorecard:
     answered: int
     forced: ForcedChoice
     inverted: ForcedChoice
+    #: The same items split by how sure the reader said they were. A confident hit and a
+    #: coin-flip hit are different evidence, and a reader who scores at chance exactly where
+    #: they were most certain is telling you something the pooled number hides.
+    confident: ForcedChoice
+    unsure: ForcedChoice
     life: tuple[Item, ...]
     spine: Spine
+    event_houses: EventHouses
     reaction: Reaction
+    #: qid -> what the reader wrote there, carried so `aggregate` can group it by question.
+    free_text: dict[str, str] = field(default_factory=dict)
     rectification_tight: bool = False
     headline: str = ""
 
 
-def _score_forced(report: dict, inst: dict, ans: Answers) -> tuple[ForcedChoice, ForcedChoice]:
+#: A rating at or above this is "sure"; at or below the other, "unsure". The middle value is
+#: neither and is left out of both, rather than being pushed to whichever side makes the
+#: numbers look better.
+_CONFIDENT_AT = 4
+_UNSURE_AT = 2
+
+
+def _score_forced(report: dict, inst: dict, ans: Answers,
+                  ) -> tuple[ForcedChoice, ForcedChoice, ForcedChoice, ForcedChoice]:
     key = instrument_key(report)
     meta = key["meta"]
     inverted_ids = set(key["inverted"])
@@ -539,7 +610,10 @@ def _score_forced(report: dict, inst: dict, ans: Answers) -> tuple[ForcedChoice,
                             weighted_hits=round(wh, 3), weighted_n=round(wn, 3),
                             per_item=tuple(rows))
 
-    return build(buckets[False]), build(buckets[True])
+    main = buckets[False]
+    sure = [r for r in main if (ans.confidence.get(r[0]) or 0) >= _CONFIDENT_AT]
+    unsure = [r for r in main if 0 < (ans.confidence.get(r[0]) or 0) <= _UNSURE_AT]
+    return build(main), build(buckets[True]), build(sure), build(unsure)
 
 
 def _score_spine(inst: dict, ans: Answers) -> Spine:
@@ -591,6 +665,91 @@ def _score_spine(inst: dict, ans: Answers) -> Spine:
                  span_months=span, boundaries_in_span=in_span, detail=detail)
 
 
+def _house_top_grade_base_rate(report: dict) -> dict[int, float]:
+    """Per house, the share of the covered timeline spent at the TOP activation grade.
+
+    Duration-weighted, not period-counted: bhuktis differ in length by years, so counting
+    periods would let a run of short ones outvote a long one and quietly bias the null in
+    whichever direction the chart happens to favour.
+    """
+    span: dict[int, float] = {}
+    top: dict[int, float] = {}
+    for p in report.get("timeline") or ():
+        try:
+            days = float(p["end_jd"]) - float(p["start_jd"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if days <= 0:
+            continue
+        for a in p.get("activated") or ():
+            h = a.get("house")
+            if not isinstance(h, int):
+                continue
+            span[h] = span.get(h, 0.0) + days
+            if a.get("grade") in _TOP_GRADES:
+                top[h] = top.get(h, 0.0) + days
+    return {h: (top.get(h, 0.0) / d) for h, d in span.items() if d > 0}
+
+
+def _score_event_houses(report: dict, ans: Answers) -> EventHouses:
+    """Dated life events against the grade the engine gave THEIR house at THAT time.
+
+    This is the strongest test the instrument can run, because the reader supplies both halves
+    blind: they date the event before reading anything, and the house each kind of event is
+    read from is fixed doctrine, not a choice made after the fact.
+    """
+    import swisseph as swe
+
+    events: list[tuple[int, Optional[int], str]] = []
+    for qid, evs in ans.events.items():
+        if qid.endswith(".A35"):                 # the turning points, not the rectification grid
+            events.extend(evs)
+    periods = list(report.get("timeline") or ())
+    base = _house_top_grade_base_rate(report)
+    if not events or not periods:
+        return EventHouses(events=0, outside_window=0, unscoreable=0, top_grade=0,
+                           expected=None, p_value=None)
+
+    outside = unscoreable = top = 0
+    dir_scored = dir_hits = 0
+    probs: list[float] = []
+    detail: list[tuple[str, str, int, str, bool]] = []
+
+    for year, month, kind in events:
+        house = EVENT_HOUSE.get(kind, 0)
+        if not house:
+            continue                              # "other" maps nowhere and is not scored
+        jd = swe.julday(year, month or 6, 15, 12.0, swe.GREG_CAL)
+        period = next((p for p in periods
+                       if float(p.get("start_jd", 0)) <= jd <= float(p.get("end_jd", 0))), None)
+        if period is None:
+            outside += 1
+            continue
+        act = next((a for a in period.get("activated") or ()
+                    if a.get("house") == house), None)
+        if act is None:
+            unscoreable += 1
+            continue
+        grade = str(act.get("grade", ""))
+        is_top = grade in _TOP_GRADES
+        top += 1 if is_top else 0
+        probs.append(base.get(house, 0.5))
+        detail.append((f"{year:04d}-{(month or 6):02d}", kind, house, grade, is_top))
+
+        valence = EVENT_VALENCE.get(kind, "neutral")
+        verdict = act.get("natal_verdict")
+        if valence in ("good", "bad") and verdict in (_VERDICT_GOOD, _VERDICT_BAD):
+            dir_scored += 1
+            if (valence == "good") == (verdict == _VERDICT_GOOD):
+                dir_hits += 1
+
+    return EventHouses(
+        events=len(probs), outside_window=outside, unscoreable=unscoreable, top_grade=top,
+        expected=round(sum(probs), 2) if probs else None,
+        p_value=poisson_binomial_tail(probs, top) if probs else None,
+        direction_scored=dir_scored, direction_hits=dir_hits, per_event=tuple(detail))
+
+
 def _score_reaction(inst: dict, ans: Answers) -> Reaction:
     by_maps = {q["maps_to"]: q["qid"] for p in inst["parts"] for q in p["questions"]
                if q.get("maps_to")}
@@ -617,9 +776,10 @@ def score_chart(report: dict, rows: Iterable[tuple[str, str, Optional[str]]], *,
     """One reader's submission, measured against the chart they were given."""
     inst = build_feedback_instrument(report)
     ans = parse_answers(rows)
-    forced, inverted = _score_forced(report, inst, ans)
+    forced, inverted, confident, unsure = _score_forced(report, inst, ans)
     life = tuple(_score_life(report, inst, ans))
     spine = _score_spine(inst, ans)
+    event_houses = _score_event_houses(report, ans)
     reaction = _score_reaction(inst, ans)
     answered = (len(ans.by_qid) + len(ans.multi)
                 + sum(len(v) for v in ans.events.values()))
@@ -636,13 +796,20 @@ def score_chart(report: dict, rows: Iterable[tuple[str, str, Optional[str]]], *,
         bits.append(f"turning points near a period change "
                     f"{spine.near_boundary}/{spine.events}"
                     + (f" (expected {spine.expected})" if spine.expected is not None else ""))
+    if event_houses.events:
+        bits.append(f"events in a top-graded period for their own matter "
+                    f"{event_houses.top_grade}/{event_houses.events}"
+                    + (f" (expected {event_houses.expected})"
+                       if event_houses.expected is not None else ""))
     if ans.context != "before_reading":
         bits.append("ANSWERED AFTER READING — treat as a satisfaction survey, not evidence")
 
     return ChartScorecard(
         chart_key=chart_key, instrument_version=str(inst.get("version", "")),
         context=ans.context, answered=answered, forced=forced, inverted=inverted,
-        life=life, spine=spine, reaction=reaction,
+        confident=confident, unsure=unsure,
+        life=life, spine=spine, event_houses=event_houses, reaction=reaction,
+        free_text=dict(ans.free_text),
         rectification_tight=bool((inst.get("rectification") or {}).get("tight")),
         headline="; ".join(bits) or "nothing scoreable was answered")
 
@@ -657,9 +824,16 @@ class Aggregate:
     forced: ForcedChoice
     inverted: ForcedChoice
     forced_blind_only: ForcedChoice
+    #: The same items split by how sure the reader said they were, pooled across charts.
+    confident: ForcedChoice
+    unsure: ForcedChoice
     spine_events: int
     spine_near: int
     spine_p: Optional[float]
+    #: Pooled event-house result. No pooled p-value: each chart's null is its own set of
+    #: per-house base rates, so the tails cannot simply be added.
+    event_top_grade: int = 0
+    event_scored: int = 0
     #: signification -> (hits, n). The improvement list: a reading that scores at chance across
     #: many readers is not carrying information about a life, however faithful it is to Raman.
     per_signification: dict[str, tuple[int, int]] = field(default_factory=dict)
@@ -672,6 +846,11 @@ class Aggregate:
     chapter_skipped: dict[str, int] = field(default_factory=dict)
     overall_scale: dict[str, int] = field(default_factory=dict)
     harm_reports: int = 0
+    #: What people wrote, grouped by the question they wrote it against. Quotations, never
+    #: summarised and never sent to a model: the whole point of keeping one free-text box in an
+    #: otherwise closed form is to hear the thing the options did not anticipate, and a summary
+    #: is exactly where that gets lost.
+    free_text: dict[str, tuple[str, ...]] = field(default_factory=dict)
     notes: tuple[str, ...] = ()
 
 
@@ -705,6 +884,8 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
     scale: dict[str, int] = {}
     harm = 0
     ev = near = 0
+    ev_top = ev_n = 0
+    free: dict[str, list[str]] = {}
 
     for c in cards:
         for _qid, sig, hit, _w in c.forced.per_item:
@@ -730,6 +911,11 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
             harm += 1
         ev += c.spine.events
         near += c.spine.near_boundary
+        ev_top += c.event_houses.top_grade
+        ev_n += c.event_houses.events
+        for qid, text in c.free_text.items():
+            if text and text.strip():
+                free.setdefault(qid.rsplit(".", 1)[-1], []).append(text.strip())
 
     notes: list[str] = []
     if not blind and cards:
@@ -747,6 +933,7 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
         charts=len(cards), blind_charts=len(blind),
         forced=_pool(cards, "forced"), inverted=_pool(cards, "inverted"),
         forced_blind_only=_pool(blind, "forced"),
+        confident=_pool(cards, "confident"), unsure=_pool(cards, "unsure"),
         spine_events=ev, spine_near=near,
         spine_p=binomial_p_two_sided(near, ev, 0.25) if ev else None,
         per_signification={k: (v[0], v[1]) for k, v in sorted(per_sig.items())},
@@ -755,7 +942,10 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
         chapter_specific=dict(sorted(chap_specific.items(), key=lambda kv: -kv[1])),
         chapter_barnum=dict(sorted(chap_barnum.items(), key=lambda kv: -kv[1])),
         chapter_skipped=dict(sorted(chap_skipped.items(), key=lambda kv: -kv[1])),
-        overall_scale=scale, harm_reports=harm, notes=tuple(notes))
+        overall_scale=scale, harm_reports=harm,
+        free_text={k: tuple(v) for k, v in sorted(free.items())},
+        event_top_grade=ev_top, event_scored=ev_n,
+        notes=tuple(notes))
 
 
 def render_aggregate(agg: Aggregate) -> str:
@@ -779,7 +969,22 @@ def render_aggregate(agg: Aggregate) -> str:
     if i.n:
         L.append(f"  INVERTED channels (agreement is evidence AGAINST): {i.hits}/{i.n}"
                  f" = {i.rate}")
+    conf, unsure = agg.confident, agg.unsure
+    if conf.n or unsure.n:
+        L.append(f"  answered SURE   {conf.hits}/{conf.n} = {conf.rate}"
+                 + (f"   p={conf.p_value:.4f}" if conf.p_value is not None else ""))
+        L.append(f"  answered UNSURE {unsure.hits}/{unsure.n} = {unsure.rate}")
+        if conf.n >= 5 and unsure.n >= 5 and conf.rate is not None \
+                and unsure.rate is not None and conf.rate <= unsure.rate:
+            L.append("  ! scored no better where the reader was MORE certain — that pattern "
+                     "belongs to agreeing with whatever is shown, not to recognising a chart.")
     L.append("")
+    if agg.event_scored:
+        L.append(f"EVENT vs PERIOD  {agg.event_top_grade}/{agg.event_scored} dated events fell "
+                 f"in a top-graded period for their own matter")
+        L.append("  (no pooled p-value: each chart's null is its own per-house base rates, so "
+                 "the tails cannot be added — see the per-chart cards)")
+        L.append("")
     if agg.spine_events:
         L.append(f"DATED SPINE     {agg.spine_near}/{agg.spine_events} turning points within "
                  f"{SPINE_TOLERANCE_MONTHS} months of a period change"
@@ -809,7 +1014,15 @@ def render_aggregate(agg: Aggregate) -> str:
         L.append("")
     if agg.overall_scale:
         L.append("OVERALL FIT: " + ", ".join(f"{k}={v}" for k, v in agg.overall_scale.items()))
+    if agg.free_text:
+        L.append("")
+        L.append("WHAT PEOPLE WROTE (verbatim — the options did not anticipate these):")
+        for qid, texts in agg.free_text.items():
+            L.append(f"  {qid}:")
+            for t in texts:
+                L.append(f"    \u201c{t}\u201d")
     return "\n".join(L)
+
 
 
 # ── reading the stored rows ─────────────────────────────────────────────────────────────────
@@ -847,10 +1060,25 @@ async def load_and_score(database_url: str = "", *, chart_key: str = "",
         grouped.setdefault(r.chart_key, []).append(
             (r.question_id, r.answer, r.free_text))
 
+    from app.raman_saab.feedback_instrument import INSTRUMENT_VERSION
+    current = f"inst.{INSTRUMENT_VERSION}."
     cards: list[ChartScorecard] = []
+    stale_rows = 0
+    legacy_charts = 0
     for key, answers in list(grouped.items())[:limit_charts]:
-        if not any(a[0].startswith("inst.") for a in answers):
+        instrument_rows = [a for a in answers if a[0].startswith("inst.")]
+        if not instrument_rows:
+            legacy_charts += 1
             continue                        # rows from the older five-question flow
+        # An earlier instrument version asked different questions under qids that no longer
+        # exist, so its rows would rebuild to nothing and score zero — data loss that reads
+        # exactly like a null result. Count them and say so rather than letting them vanish.
+        stale = [a for a in instrument_rows if not a[0].startswith(current)]
+        if stale:
+            stale_rows += len(stale)
+            answers = [a for a in answers if a not in stale]
+            if not any(a[0].startswith(current) for a in answers):
+                continue
         birth = parse_chart_key(key)
         if birth is None:
             logger.warning("unparseable chart_key, skipped: %s", key)
@@ -861,7 +1089,122 @@ async def load_and_score(database_url: str = "", *, chart_key: str = "",
             logger.exception("could not recast chart, skipped: %s", key)
             continue
         cards.append(score_chart(report, answers, chart_key=key))
-    return cards, aggregate(cards)
+    agg = aggregate(cards)
+    extra: list[str] = []
+    if stale_rows:
+        extra.append(f"{stale_rows} stored answer(s) came from an older instrument version "
+                     f"than {INSTRUMENT_VERSION} and were SKIPPED, not scored — their "
+                     f"questions no longer exist, so scoring them would read as disagreement.")
+    if legacy_charts:
+        extra.append(f"{legacy_charts} chart(s) carried only the older five-question feedback "
+                     f"flow and are not part of any number here.")
+    if extra:
+        agg = replace(agg, notes=tuple(extra) + agg.notes)
+    return cards, agg
+
+
+def render_aggregate_html(agg: Aggregate, cards: Sequence[ChartScorecard]) -> str:
+    """The scorecard as a self-contained page for whoever is running the study.
+
+    A FILE, deliberately, and not a route. This codebase has no admin role — `app/core/auth.py`
+    offers only `CurrentAccount` — so a live scorecard endpoint would be readable by any signed-in
+    user, and a reader who can see which readings score well can infer the answer key for their
+    own chart. That would poison every submission after it. If an admin role is ever added, this
+    is still the wrong thing to expose without thinking about that inference.
+    """
+    def esc(x: object) -> str:
+        return (str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace('"', "&quot;"))
+
+    def fc_row(label: str, f: ForcedChoice) -> str:
+        if not f.n:
+            return ""
+        p = f"{f.p_value:.4f}" if f.p_value is not None else "&mdash;"
+        return (f"<tr><td>{esc(label)}</td><td class='n'>{f.hits}/{f.n}</td>"
+                f"<td class='n'>{f.rate}</td><td class='n'>{p}</td></tr>")
+
+    rows = "".join([fc_row("All forced choices", agg.forced),
+                    fc_row("Answered blind only", agg.forced_blind_only),
+                    fc_row("Answered SURE", agg.confident),
+                    fc_row("Answered UNSURE", agg.unsure),
+                    fc_row("INVERTED channels (agreement is evidence AGAINST)", agg.inverted)])
+
+    def bar(hits: int, n: int) -> str:
+        pct = int(round(100 * hits / n)) if n else 0
+        return (f"<span class='bar'><span style='width:{pct}%'></span></span> "
+                f"<span class='n'>{hits}/{n}</span>")
+
+    sig = "".join(f"<tr><td>{esc(k)}</td><td>{bar(h, n)}</td></tr>"
+                  for k, (h, n) in sorted(agg.per_signification.items(),
+                                          key=lambda kv: (kv[1][0] / kv[1][1]) if kv[1][1] else 1))
+    life = "".join(f"<tr><td>{esc(k)}</td><td>{bar(h, n)}</td></tr>"
+                   for k, (h, n) in sorted(agg.per_life_fact.items(),
+                                           key=lambda kv: (kv[1][0] / kv[1][1]) if kv[1][1] else 1))
+    chap = "".join(f"<tr><td>{esc(k)}</td><td class='n'>{v}</td></tr>"
+                   for k, v in agg.chapter_wrong.items())
+    barnum = "".join(f"<tr><td>{esc(k)}</td><td class='n'>{v}</td></tr>"
+                     for k, v in agg.chapter_barnum.items())
+    quotes = "".join(
+        f"<h3>{esc(q)}</h3>" + "".join(f"<blockquote>{esc(t)}</blockquote>" for t in texts)
+        for q, texts in agg.free_text.items())
+    per_chart = "".join(
+        f"<tr><td class='mono'>{esc(c.chart_key or '&mdash;')}</td>"
+        f"<td>{esc(c.context)}</td><td class='n'>{c.forced.hits}/{c.forced.n}</td>"
+        f"<td class='n'>{c.event_houses.top_grade}/{c.event_houses.events}</td>"
+        f"<td class='n'>{c.spine.near_boundary}/{c.spine.events}</td></tr>" for c in cards)
+    notes = "".join(f"<li>{esc(n)}</li>" for n in agg.notes)
+
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feedback scorecard</title><style>
+:root{{--ink:#1b1e28;--muted:#5a6070;--rule:#e2ddd4;--paper:#f7f5f1;--accent:#2f3e8c;
+--warn:#8a5a16;--warnbg:#faf0de}}
+@media(prefers-color-scheme:dark){{:root{{--ink:#e9e7e2;--muted:#9ba1b2;--rule:#2b2f3a;
+--paper:#12141a;--accent:#94a2f0;--warn:#e0a44e;--warnbg:#2c2314}}}}
+body{{margin:0;background:var(--paper);color:var(--ink);
+font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif}}
+main{{max-width:52rem;margin:0 auto;padding:2rem 1.2rem 5rem}}
+h1{{font-size:1.6rem;margin:0 0 .3rem}}h2{{font-size:1.05rem;margin:2.2rem 0 .5rem;
+letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}}
+h3{{font-size:.92rem;margin:1rem 0 .3rem;color:var(--muted)}}
+table{{border-collapse:collapse;width:100%;margin:.5rem 0;font-size:.94rem}}
+td,th{{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--rule);
+vertical-align:middle}}
+.n{{font-variant-numeric:tabular-nums;white-space:nowrap}}
+.mono{{font-family:ui-monospace,Menlo,monospace;font-size:.8rem}}
+.bar{{display:inline-block;width:8rem;height:.55rem;background:var(--rule);
+border-radius:3px;overflow:hidden;vertical-align:middle;margin-right:.5rem}}
+.bar>span{{display:block;height:100%;background:var(--accent)}}
+.notes{{background:var(--warnbg);border-left:3px solid var(--warn);padding:.8rem 1rem;
+margin:1rem 0;border-radius:3px}}.notes li{{margin:.3rem 0}}
+blockquote{{margin:.4rem 0;padding:.5rem .8rem;border-left:2px solid var(--rule);
+color:var(--muted);font-style:italic}}
+.sub{{color:var(--muted);margin:0 0 1rem}}
+</style></head><body><main>
+<h1>Feedback scorecard</h1>
+<p class="sub">{agg.charts} chart(s) scored &middot; {agg.blind_charts} answered before the
+reading. Read the caveats first &mdash; a number here quoted without them is the exact mistake
+this project's validation record exists to prevent.</p>
+{f'<div class="notes"><ul>{notes}</ul></div>' if notes else ''}
+<h2>Forced choice &mdash; chance is 0.5</h2>
+<table><tr><th>Pool</th><th>Hits</th><th>Rate</th><th>p</th></tr>{rows}</table>
+<h2>Dated events vs the periods for their own matter</h2>
+<p class="sub">{agg.event_top_grade}/{agg.event_scored} landed in a top-graded period.
+No pooled p-value: each chart's null is its own set of per-house base rates.</p>
+<h2>By reading &mdash; the improvement list, worst first</h2>
+<table>{sig or '<tr><td>nothing scored yet</td></tr>'}</table>
+<h2>By life fact &mdash; counts, not p-values</h2>
+<table>{life or '<tr><td>nothing scored yet</td></tr>'}</table>
+<h2>Chapters readers called wrong</h2>
+<table>{chap or '<tr><td>none reported</td></tr>'}</table>
+<h2>Chapters readers said were true of everyone</h2>
+<table>{barnum or '<tr><td>none reported</td></tr>'}</table>
+<h2>Per chart</h2>
+<table><tr><th>Chart</th><th>Answered</th><th>Forced</th><th>Events</th>
+<th>Spine</th></tr>{per_chart}</table>
+<h2>What people wrote</h2>
+{quotes or '<p class="sub">nothing yet</p>'}
+</main></body></html>"""
 
 
 def _card_json(c: ChartScorecard) -> dict[str, Any]:
@@ -880,14 +1223,21 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--chart-key", default="", help="score one nativity only")
     ap.add_argument("--limit-charts", type=int, default=500)
     ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--html", default="", metavar="PATH",
+                    help="write a self-contained operator page (a FILE, never a route — see "
+                         "render_aggregate_html)")
     args = ap.parse_args(argv)
 
     cards, agg = asyncio.run(load_and_score(args.database_url, chart_key=args.chart_key,
                                             limit_charts=args.limit_charts))
+    if args.html:
+        import pathlib as _pl
+        _pl.Path(args.html).write_text(render_aggregate_html(agg, cards), encoding="utf-8")
+        print(f"wrote {args.html}")
     if args.json:
         print(json.dumps({"charts": [_card_json(c) for c in cards],
                           "aggregate": asdict(agg)}, indent=2, default=str))
-    else:
+    elif not args.html:
         print(render_aggregate(agg))
         if args.chart_key and cards:
             print()

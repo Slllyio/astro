@@ -284,3 +284,208 @@ class TestAnswerParsing:
         assert ans.confidence["inst.v2.C1"] == 4
         assert ans.free_text["inst.v2.C1"] == "because X"
         assert ans.context == "before_reading"
+
+
+class TestEventsAgainstTheirOwnHouse:
+    """The strongest test the instrument runs: the reader supplies both halves blind — they
+    date the event before reading anything, and the house each kind of event is read from is
+    fixed doctrine rather than a choice made afterwards."""
+
+    def test_it_grades_rather_than_asking_whether_the_house_was_lit_at_all(self, report):
+        """Measured on a real chart, every house is activated in 74-100% of periods (mean
+        ~88%) — Raman's timer_set is deliberately broad. A was-it-lit test would score ~88% by
+        construction. The GRADE discriminates, so that is what is scored, and the base rates
+        must land well away from 1.0 for the test to mean anything."""
+        from app.raman_saab.feedback_scoring import _house_top_grade_base_rate
+        base = _house_top_grade_base_rate(report)
+        assert base, "no timeline to derive a base rate from"
+        assert all(0.0 <= v <= 1.0 for v in base.values())
+        assert min(base.values()) < 0.8, (
+            f"every house is at top grade almost always ({base}) — this test cannot "
+            f"discriminate on this chart and the scorer must not pretend otherwise")
+
+    def test_the_base_rate_is_duration_weighted_not_period_counted(self):
+        """Bhuktis differ in length by years. Counting periods would let a run of short ones
+        outvote one long one and bias the null."""
+        from app.raman_saab.feedback_scoring import _house_top_grade_base_rate
+        rep = {"timeline": [
+            {"start_jd": 0.0, "end_jd": 900.0,
+             "activated": [{"house": 7, "grade": "limited"}]},
+            {"start_jd": 900.0, "end_jd": 1000.0,
+             "activated": [{"house": 7, "grade": "par_excellence"}]},
+        ]}
+        # one period each way, but the top-grade one is a tenth of the span
+        assert _house_top_grade_base_rate(rep)[7] == pytest.approx(0.1)
+
+    def test_an_event_in_a_top_graded_period_counts_and_one_below_does_not(self, report):
+        """Both directions, so a scorer that always said 'hit' fails."""
+        from app.raman_saab.feedback_scoring import _house_top_grade_base_rate
+        import swisseph as swe
+        wanted = {}
+        for p in report["timeline"]:
+            for a in p["activated"]:
+                if a["house"] == 7 and a["grade"] not in wanted:
+                    y, m, _d, _h = swe.revjul((p["start_jd"] + p["end_jd"]) / 2,
+                                              swe.GREG_CAL)
+                    wanted[a["grade"]] = f"{int(y):04d}-{int(m):02d}:marriage"
+        if len(wanted) < 2:
+            pytest.skip("H7 never changes grade on this chart")
+        top = next(v for k, v in wanted.items() if k == "par_excellence")
+        low = next(v for k, v in wanted.items() if k != "par_excellence")
+        hit = score_chart(report, [("inst.v2.A35#1", top, None)])
+        miss = score_chart(report, [("inst.v2.A35#1", low, None)])
+        assert hit.event_houses.top_grade == 1 and hit.event_houses.events == 1
+        assert miss.event_houses.top_grade == 0 and miss.event_houses.events == 1
+
+    def test_an_event_outside_the_timeline_is_reported_not_counted(self, report):
+        """The timeline covers a window. Scoring an event the engine never spoke about would
+        be inventing a result; dropping it silently would hide how much was unscoreable."""
+        card = score_chart(report, [("inst.v2.A35#1", "1900-01:marriage", None)])
+        assert card.event_houses.outside_window == 1
+        assert card.event_houses.events == 0
+
+    def test_a_neutral_event_is_not_direction_scored(self, report):
+        """Moving abroad is an opportunity to some people and an upheaval to others. Forcing a
+        sign on it would manufacture agreement out of the labelling."""
+        from app.raman_saab.feedback_instrument import EVENT_VALENCE
+        assert EVENT_VALENCE["moved_abroad"] == "neutral"
+        card = score_chart(report, [("inst.v2.A35#1", "2024-06:moved_abroad", None)])
+        assert card.event_houses.direction_scored == 0
+
+    def test_the_rectification_grid_is_not_pooled_with_the_turning_points(self, report):
+        """Part B collects anchor events for rectification, in the same row format. They are a
+        different question and must not inflate this measurement."""
+        card = score_chart(report, [("inst.v2.B6#1", "2024-06:marriage", None)])
+        assert card.event_houses.events == 0
+
+
+class TestThePoissonBinomialNull:
+    def test_it_matches_the_plain_binomial_when_every_rate_is_equal(self):
+        """Sanity anchor: with identical probabilities it must reduce to the ordinary case."""
+        from app.raman_saab.feedback_scoring import poisson_binomial_tail
+        assert poisson_binomial_tail([0.5] * 5, 5) == pytest.approx(0.5 ** 5)
+        assert poisson_binomial_tail([0.5] * 5, 0) == pytest.approx(1.0)
+
+    def test_unequal_rates_are_honoured(self):
+        """The whole reason for it: a house at top grade 90% of the time and one at 10% are
+        not the same trial, and averaging them would be an approximation dressed as exact."""
+        from app.raman_saab.feedback_scoring import poisson_binomial_tail
+        assert poisson_binomial_tail([0.9, 0.1], 2) == pytest.approx(0.09)
+        assert poisson_binomial_tail([0.9, 0.1], 1) == pytest.approx(0.9 + 0.1 - 0.09)
+
+    def test_a_certain_house_cannot_manufacture_a_finding(self):
+        """A house at top grade for the whole timeline gives a guaranteed hit. The null must
+        absorb it — p stays 1.0 — rather than counting it as evidence."""
+        from app.raman_saab.feedback_scoring import poisson_binomial_tail
+        assert poisson_binomial_tail([1.0, 1.0], 2) == pytest.approx(1.0)
+
+
+class TestConfidenceIsScored:
+    def test_sure_and_unsure_are_split_and_the_middle_is_left_out(self, report, key):
+        """A 3 out of 5 is neither, and pushing it to whichever side flatters the numbers is
+        exactly the sort of choice that makes a measurement worthless."""
+        rows = _forced_rows(key, correct=True)
+        graded = []
+        for i, (qid, ans, _f) in enumerate(rows):
+            graded.append((qid, ans, None))
+            graded.append((qid + ".confidence", ("5", "3", "1")[i % 3], None))
+        card = score_chart(report, graded)
+        assert card.confident.n + card.unsure.n < card.forced.n
+        assert card.confident.n and card.unsure.n
+
+    def test_the_scorecard_says_so_when_certainty_buys_nothing(self, report, key):
+        """A reader who scores no better where they were most certain is agreeing with
+        whatever is shown. That has to be said in words, not left in a table."""
+        rows = []
+        for i, (qid, expected, _f) in enumerate(_forced_rows(key, correct=True)):
+            wrong = "opt2" if expected == "opt1" else "opt1"
+            rows.append((qid, wrong if i % 2 == 0 else expected, None))
+            rows.append((qid + ".confidence", "5" if i % 2 == 0 else "1", None))
+        text = render_aggregate(aggregate([score_chart(report, rows)]))
+        if "answered SURE" in text:
+            assert "MORE certain" in text
+
+
+class TestFreeTextReachesTheOperator:
+    def test_it_is_quoted_verbatim_and_grouped_by_question(self, report):
+        card = score_chart(report, [("inst.v2.D8", "", "the marriage chapter was uncanny")])
+        agg = aggregate([card])
+        assert agg.free_text.get("D8") == ("the marriage chapter was uncanny",)
+        assert "the marriage chapter was uncanny" in render_aggregate(agg)
+
+    def test_blank_supplements_are_not_carried(self, report):
+        card = score_chart(report, [("inst.v2.D8", "", "   ")])
+        assert aggregate([card]).free_text == {}
+
+
+class TestTheOperatorScorecardIsAFileNotARoute:
+    def test_no_scoring_route_is_registered(self):
+        """There is no admin role in this codebase, so a live scorecard would be readable by
+        any signed-in user — and a reader who can see which readings score well can infer the
+        key for their own chart, poisoning every later submission."""
+        import ast
+        import pathlib
+        src = (pathlib.Path(__file__).resolve().parents[2] / "app" / "api"
+               / "report_routes.py").read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        # Checked against the PARSED module, not the text: `report_routes` mentions
+        # `instrument_key` in a docstring, explaining why the submit endpoint deliberately does
+        # not score back. A substring check would fail on that comment — punishing the file for
+        # documenting the rule it obeys.
+        imported: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom) and node.module:
+                if "feedback_scoring" in node.module:
+                    imported.add(node.module)
+                for alias in node.names:
+                    if alias.name in ("instrument_key", "score_chart", "aggregate"):
+                        imported.add(alias.name)
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    if "feedback_scoring" in alias.name:
+                        imported.add(alias.name)
+        assert not imported, f"the routes reach the scorer: {sorted(imported)}"
+
+    def test_the_reason_is_recorded_where_someone_would_add_one(self):
+        import inspect
+        from app.raman_saab.feedback_scoring import render_aggregate_html
+        doc = inspect.getdoc(render_aggregate_html) or ""
+        assert "not a route" in doc and "admin role" in doc
+
+    def test_the_page_is_self_contained_and_well_formed(self, report, key):
+        import html.parser
+        from app.raman_saab.feedback_scoring import render_aggregate_html
+        cards = [score_chart(report, _forced_rows(key, correct=True), chart_key="k")]
+        page = render_aggregate_html(aggregate(cards), cards)
+        assert "<script" not in page and "http://" not in page and "https://" not in page
+
+        void = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+                "meta", "param", "source", "track", "wbr"}
+
+        class P(html.parser.HTMLParser):
+            def __init__(self) -> None:
+                super().__init__()
+                self.stack: list[str] = []
+                self.errors: list[str] = []
+
+            def handle_starttag(self, tag, attrs):
+                if tag not in void:
+                    self.stack.append(tag)
+
+            def handle_endtag(self, tag):
+                if tag in void:
+                    return
+                if not self.stack or self.stack[-1] != tag:
+                    self.errors.append(tag)
+                else:
+                    self.stack.pop()
+
+        p = P()
+        p.feed(page)
+        assert not p.errors and not p.stack, (p.errors, p.stack)
+
+    def test_the_caveats_render_above_the_numbers(self, report, key):
+        from app.raman_saab.feedback_scoring import render_aggregate_html
+        cards = [score_chart(report, _forced_rows(key, correct=True), chart_key="k")]
+        page = render_aggregate_html(aggregate(cards), cards)
+        assert page.index('class="notes"') < page.index("Forced choice")

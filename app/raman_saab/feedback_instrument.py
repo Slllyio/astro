@@ -322,6 +322,20 @@ EVENT_KINDS: dict[str, tuple[str, str]] = {
     "other": ("something else", "कुछ और"),
 }
 
+#: Whether an event is a good thing, a bad thing, or genuinely neither. Used ONLY by the
+#: scorer, to ask whether an event's direction agrees with the engine's verdict for its house.
+#: Anything a reasonable person could file either way is `neutral` and is NOT direction-scored
+#: — moving abroad and finishing a course are opportunities to some people and upheavals to
+#: others, and forcing a sign on them would manufacture agreement out of the labelling.
+EVENT_VALENCE: dict[str, str] = {
+    "promotion": "good", "marriage": "good", "child_born": "good", "money_gain": "good",
+    "job_start": "good",
+    "job_loss": "bad", "separation": "bad", "bereavement": "bad", "own_illness": "bad",
+    "family_illness": "bad", "money_loss": "bad", "legal": "bad", "accident": "bad",
+    "move_home": "neutral", "moved_abroad": "neutral", "education": "neutral",
+    "spiritual": "neutral", "other": "neutral",
+}
+
 #: Which house each event category is read from. Used ONLY by the scorer, to ask whether the
 #: engine's verdict for that house was active in the period the event actually fell in. Kept
 #: beside the vocabulary so the two cannot drift apart.

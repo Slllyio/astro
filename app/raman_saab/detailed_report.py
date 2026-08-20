@@ -5982,13 +5982,18 @@ def to_markdown(r: DetailedReport) -> str:
              "(HTJAH-II:10004-10008): well / mixed / poorly / unknown. 'MD well, AD mixed' "
              "means the Mahadasha lord delivers well and the bhukti lord mixed; a limited row "
              "carries only its AD tag, a feeble row only its MD tag.")
+    L.append("")
+    L.append("Each bhukti below opens with its span and its association, then a plain-terms "
+             "line, then ONE ROW PER LIT HOUSE: the house, the matter it carries, the grade "
+             "that period gives it, the unchanged natal reading, the delivery tags and the "
+             "factors the influence rests on.")
 
     # Wave-2 (2026-08-18): the influence BASIS — derive the tier, don't assert it. Raman
     # names the factor ("Saturn, as lord of the 2nd, aspecting its lord..."); the engine
     # knew it inside timer_set but flattened it away. `timer_roles` (role-preserving, pinned
     # equal to timer_set by test) restores the derivation per lit house.
     L.append("")
-    L.append("**Influence basis** (per lit house, in square brackets): BY WHICH of Raman's "
+    L.append("**Influence basis** (per lit house, the table's last column): BY WHICH of Raman's "
              "enumerated factors (HTJAH-I:1586-1596) each period-lord influences the house - "
              "owns / karaka / occupies / aspects house / conjoins lord / aspects lord / lord "
              "from Moon / node of a timer's sign. 'via H11' (and 2/9/12 likewise) marks a "
@@ -6020,19 +6025,33 @@ def to_markdown(r: DetailedReport) -> str:
             L.append("")
             L.append(f"### {cur_md} Mahadasha")
         associated, raw = graded_buckets(tp, r.chart)     # ONE grading implementation
-        buckets = {k: [f"H{a.house} {a.natal_verdict} ({_delivery(a)}){_basis(a)}" for a in v]
-                   for k, v in raw.items()}
         assoc = "own bhukti" if antar == maha else \
             ("AD associated with MD" if associated else "AD not associated with MD")
         now = "  **<- now**" if tp.period.start_jd <= r.ref_jd < tp.period.end_jd else ""
         ad = antar or maha
-        seg = [f"{'**' if k in ('par excellence', 'ordinary') else ''}{_TIER_LABEL[k]}: "
-               f"{', '.join(buckets[k])}{'**' if k in ('par excellence', 'ordinary') else ''}"
-               for k in _TIER_LABEL if buckets[k]]
-        L.append(f"- **{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
-                 f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}; "
-                 f"{'; '.join(seg) or '(no house influenced)'}")
-        L.append(f"  - _{plain_bhukti_summary(rows, associated)}_")
+        L.append("")
+        L.append(f"**{ad} AD** ({_jd_to_date(tp.period.start_jd)} .. "
+                 f"{_jd_to_date(tp.period.end_jd)}){now} - {assoc}")
+        L.append("")
+        L.append(f"_{plain_bhukti_summary(rows, associated)}_")
+        L.append("")
+        # ONE LIT HOUSE PER ROW. These four buckets used to be joined into a single bullet:
+        # every house, its verdict, its two delivery tags and its bracketed influence basis
+        # run together with commas and semicolons — 214 words on the canonical chart, and the
+        # reader has to count brackets to find where one house ends and the next begins. The
+        # table carries exactly the same six facts per house; only the shape changed.
+        lit = [(k, a) for k in _TIER_LABEL for a in raw[k]]
+        if not lit:
+            L.append("_(no house influenced)_")
+            L.append("")
+            continue
+        L.append("| house | matter | grade | reading | delivery | why it is lit |")
+        L.append("|---|---|---|---|---|---|")
+        for k, a in lit:
+            L.append(f"| H{a.house} | {_PLAIN_AREA[a.house]} | {_TIER_LABEL[k]} | "
+                     f"{a.natal_verdict} | {_delivery(a)} | "
+                     f"{_basis(a).strip().strip('[]') or '-'} |")
+        L.append("")
 
     # ── Wave-1: pratyantar drill-down for the CURRENT bhukti (third Vimshottari level) ──
     if r.pratyantar_now:

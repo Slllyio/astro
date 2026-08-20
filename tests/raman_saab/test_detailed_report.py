@@ -73,7 +73,7 @@ class TestDetailedReport:
             assert tp.period.antar is not None
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
-        assert "Mahadasha" in markdown and " AD** (" in markdown
+        assert "Mahadasha" in markdown and "**Saturn AD** (" in markdown
         # the HTJAH-I four-tier grading vocabulary all appears across the window
         for tier in ("par excellence", "ordinary", "limited (bhukti lord only)",
                      "feeble (MD lord only)"):
@@ -1770,11 +1770,15 @@ class TestWave1TimingSurfaces:
         the markdown renderer; now every lit house carries its activating lords' tags."""
         import re
         assert "**Delivery tags**" in markdown
-        # both-lords tiers carry both tags; limited only the AD tag; feeble only the MD tag
-        assert re.search(r"H\d+ \w+ \(MD (?:well|mixed|poorly|unknown), "
-                         r"AD (?:well|mixed|poorly|unknown)\)", markdown)
-        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD ", markdown)
-        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD ", markdown)
+        # One lit house per table row: | house | matter | grade | reading | delivery | why |.
+        # Both-lords tiers carry both tags; limited only the AD tag; feeble only the MD tag.
+        _tag = r"(?:well|mixed|poorly|unknown)"
+        assert re.search(r"\| H\d+ \|[^|]+\| par excellence \|[^|]+\| MD " + _tag
+                         + r", AD " + _tag + r" \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| limited \(bhukti lord only\) \|[^|]+\| AD "
+                         + _tag + r" \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| feeble \(MD lord only\) \|[^|]+\| MD "
+                         + _tag + r" \|", markdown)
         # the tag is the SAME lord_quality read the engine already computes, not a new scale
         from app.raman_saab.primitives import vimshottari as vd
         tp = report.timeline.periods[0]
@@ -2189,12 +2193,14 @@ class TestWave2TimingDivisionalSoul:
         import re
         assert "**Influence basis**" in markdown
         assert "HTJAH-I:1586-1596" in markdown
-        # a both-lords row carries both MD and AD bases; single-lord rows carry one
-        assert re.search(r"H\d+ \w+ \(MD [a-z]+, AD [a-z]+\) \[MD [a-z][^\]]*; AD [^\]]+\]",
-                         markdown)
-        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD [a-z]+\) \[AD ",
-                         markdown)
-        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD [a-z]+\) \[MD ", markdown)
+        # the basis is the table's last column; a both-lords row carries both MD and AD
+        # bases, single-lord rows carry one
+        assert re.search(r"\| H\d+ \|[^|]+\| par excellence \|[^|]+\|[^|]+\| "
+                         r"MD [a-z][^|;]*; AD [^|]+ \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| limited \(bhukti lord only\) \|[^|]+\|"
+                         r"[^|]+\| AD [^|]+ \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| feeble \(MD lord only\) \|[^|]+\|"
+                         r"[^|]+\| MD [^|]+ \|", markdown)
 
     def test_influence_basis_agrees_with_timer_roles(self, report):
         """The rendered basis is the timer_roles decomposition, never an independent grading:

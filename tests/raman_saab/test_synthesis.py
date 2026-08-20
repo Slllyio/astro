@@ -73,3 +73,42 @@ def test_frame_disclosure_is_ascii():
     line = _compose("afflicted", "confirms", None, None, None,
                     lead_frame="moon", lagna_navamsa="neutral")
     assert line == line.encode("ascii", "ignore").decode()
+
+
+class TestAChartReadBeyondItsDashaTimeline:
+    """The Vimshottari sequence is unrolled 140 years from the birth Mahadasha's start
+    (``vimshottari.mahadasha_timeline``'s ``span_years``). Read on a date past that end,
+    ``dasha_on`` legitimately has no period to return — a historical nativity read today is
+    the ordinary case, not an exotic one. The synthesis must say so rather than crash.
+
+    Before this, ``synthesize`` dereferenced ``period.maha`` on ``None`` and every birth
+    more than ~140 years back raised ``AttributeError`` — reachable from the public API,
+    which accepts ``year >= 1800``, so it surfaced as a 500.
+    """
+
+    _EINSTEIN = BirthData(name="E", year=1879, month=3, day=14, hour=11, minute=30,
+                          tz_offset=1.0, latitude=48.40, longitude=9.99)
+
+    def test_a_nineteenth_century_birth_read_today_does_not_raise(self):
+        """1879 + 140 years of unrolled Vimshottari ends in 2019; 2026 is past it."""
+        s = synthesize(self._EINSTEIN, on=(2026, 8, 20))
+        assert len(s.matters) == 12
+
+    def test_the_running_period_says_it_is_beyond_the_sequence(self):
+        """Honest absence, in the same words the chara dasha already uses two lines below
+        it — not a silent fallback to the first Mahadasha, which would read as a real
+        period and be indistinguishable from one."""
+        s = synthesize(self._EINSTEIN, on=(2026, 8, 20))
+        assert s.running_md == "(beyond computed sequence)"
+        assert s.running_ad == "(beyond computed sequence)"
+
+    def test_to_text_still_renders_the_header(self):
+        """The header interpolates both fields; a None would render as the string 'None'."""
+        assert "(beyond computed sequence)" in to_text(synthesize(self._EINSTEIN, on=(2026, 8, 20)))
+
+    def test_the_same_chart_inside_its_window_still_names_real_lords(self):
+        """The fallback must not leak into charts that DO have a running period — read at
+        age 40 the same nativity sits well inside the unrolled sequence."""
+        s = synthesize(self._EINSTEIN, on=(1919, 3, 14))
+        assert s.running_md != "(beyond computed sequence)"
+        assert s.running_ad != "(beyond computed sequence)"

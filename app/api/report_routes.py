@@ -38,6 +38,7 @@ from app.raman_saab.detailed_report import (
     to_markdown,
 )
 from app.raman_saab.doctrine import sources
+from app.raman_saab.feedback_instrument import MAX_ANSWER_CHARS
 from app.raman_saab.report_html import standalone_html
 from app.raman_saab.report_json import to_report_dict
 
@@ -630,7 +631,10 @@ async def post_feedback_questions(req: ReportRequest) -> dict:
 class InstrumentAnswer(BaseModel):
     model_config = ConfigDict(extra="forbid")
     qid: str = Field(..., min_length=1, max_length=80)
-    answer: Optional[str] = Field(None, max_length=40)
+    #: Bounded by what the instrument can itself emit — a multi-select ships its codes
+    #: comma-joined into one answer, and the widest vocabulary runs to 236 characters. A
+    #: hand-set 40 here rejected three ticked trades with a 422 before validation ever ran.
+    answer: Optional[str] = Field(None, max_length=MAX_ANSWER_CHARS)
     free_text: Optional[str] = Field(None, max_length=4000)
 
 
@@ -710,8 +714,12 @@ async def post_feedback_instrument(request: Request, req: InstrumentFeedbackRequ
         text = text_by_qid.get(base, base)
         if a.qid.endswith(".confidence"):
             text = f"[confidence] {text}"
+        # Slice at the SAME bound the field validates against. At 40 this cut multi-select
+        # codes in half on the way in, so a stored answer could no longer be parsed back to
+        # the options the reader actually ticked.
         rows.append(ChartFeedback(chart_key=key, account_id=account_id, question_id=a.qid,
-                                  question_text=text[:500], answer=(a.answer or "")[:40],
+                                  question_text=text[:500],
+                                  answer=(a.answer or "")[:MAX_ANSWER_CHARS],
                                   free_text=(a.free_text or None)))
     if not rows:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="no answers to store")

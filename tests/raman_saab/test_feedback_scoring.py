@@ -489,3 +489,96 @@ class TestTheOperatorScorecardIsAFileNotARoute:
         cards = [score_chart(report, _forced_rows(key, correct=True), chart_key="k")]
         page = render_aggregate_html(aggregate(cards), cards)
         assert page.index('class="notes"') < page.index("Forced choice")
+
+
+class TestEveryAnsweredQuestionReachesTheScorecard:
+    """Three Part A questions were stored and then silently dropped at scoring.
+
+    All three shared one cause: `_score_life` dispatches on `maps_to`, but `maps_to` is not
+    unique. A10 and A11 both carry `h9.father`, A28 and A29 both carry `h5.children`, and
+    `_POLARITY_MAP` held only the FIRST question's vocabulary — so the second question's
+    answers matched neither the good nor the bad tuple and fell out as `not_scoreable`
+    forever. A31 had no entry at all and produced no `Item` whatsoever.
+
+    A reader who answers a question is owed its appearance in the scorecard. Silently
+    discarding the answer is the same defect class as a report section that renders a count
+    instead of its rows.
+    """
+
+    @staticmethod
+    def _qid(inst: dict, sid: str) -> str:
+        """Look up by question id, not by `maps_to` — `maps_to` is what was ambiguous."""
+        return next(q["qid"] for p in inst["parts"] for q in p["questions"]
+                    if q["qid"].endswith("." + sid))
+
+    @pytest.mark.parametrize("sid,answer", [("A11", "prospered"), ("A11", "reversal"),
+                                            ("A29", "no"), ("A29", "yes")])
+    def test_the_second_question_on_a_shared_topic_is_scored(self, report, inst, sid, answer):
+        """`prospered`/`reversal` are H9 father and `no`/`yes` are H5 children just as surely
+        as the vocabularies that were already mapped."""
+        qid = self._qid(inst, sid)
+        item = next(i for i in score_chart(report, [(qid, answer, None)]).life if i.qid == qid)
+        assert item.verdict in ("hit", "miss"), \
+            f"{sid}={answer} scored {item.verdict!r}, so the answer never reached the reader"
+
+    def test_the_two_poles_of_a_shared_topic_disagree_with_each_other(self, report, inst):
+        """The real check: opposite answers must not both be hits. A mapping that put every
+        value in the good tuple would satisfy the test above and still measure nothing."""
+        for sid, good, bad in (("A11", "prospered", "reversal"), ("A29", "no", "yes")):
+            qid = self._qid(inst, sid)
+            a = next(i for i in score_chart(report, [(qid, good, None)]).life if i.qid == qid)
+            b = next(i for i in score_chart(report, [(qid, bad, None)]).life if i.qid == qid)
+            assert a.verdict != b.verdict, f"{sid}: both poles scored {a.verdict!r}"
+
+    def test_the_first_question_on_a_shared_topic_still_works(self, report, inst):
+        """The fix widens the vocabulary; it must not disturb what already scored."""
+        for sid, answer in (("A10", "close"), ("A28", "none")):
+            qid = self._qid(inst, sid)
+            item = next(i for i in score_chart(report, [(qid, answer, None)]).life
+                        if i.qid == qid)
+            assert item.verdict in ("hit", "miss")
+
+    def test_the_mental_health_question_is_recorded_but_never_scored(self, report, inst):
+        """A31 asks about periods of low mood or anxiety. The engine's mind screen is
+        explicitly present-or-absent and carries its own caution that it is not a diagnosis
+        (`psych.mind_caution`), so scoring this as a hit would have the scorecard claim the
+        engine diagnoses mental illness. It must appear — the answer was given — as
+        informational, at weight zero, alongside build and birth order."""
+        qid = self._qid(inst, "A31")
+        item = next((i for i in score_chart(report, [(qid, "brief", None)]).life
+                     if i.qid == qid), None)
+        assert item is not None, "A31 produced no Item at all — the answer vanished"
+        assert item.verdict == "informational" and item.weight == 0.0
+
+
+class TestThePooledSpineNullIsTheOneThatWasComputed:
+    """`_score_spine` derives each chart's chance rate from the reader's own event span and
+    the Mahadasha boundaries inside it. `aggregate` then threw that away and tested the pooled
+    count against a hard-coded 0.25, which is nobody's chance rate — it is the fraction a
+    +/-3-month window would cover if boundaries fell every two years, which they do not.
+
+    The pooled p-value is therefore reported against a null the data never had.
+    """
+
+    def test_the_pooled_null_is_the_mean_of_the_per_chart_rates(self, report, key, inst):
+        qid = next(q["qid"] for p in inst["parts"] for q in p["questions"]
+                   if q.get("maps_to") == "spine.events")
+        boundaries = [b["date"] for b in inst["boundaries"]]
+        assert boundaries, "the canonical chart has no Mahadasha boundary in its window"
+        rows = _forced_rows(key, correct=True)
+        rows += [(f"{qid}#1", f"{boundaries[0][:7]}:marriage", None),
+                 (f"{qid}#2", "1998-04:job_start", None)]
+        card = score_chart(report, rows)
+        agg = aggregate([card])
+        assert card.spine.chance_rate is not None
+        assert agg.spine_chance is not None, "the pooled null is not reported at all"
+        assert abs(agg.spine_chance - card.spine.chance_rate) < 1e-9, (
+            f"pooled null {agg.spine_chance} ignores this chart's computed "
+            f"{card.spine.chance_rate}")
+
+    def test_the_hard_coded_quarter_is_gone(self):
+        """Named explicitly so a later refactor cannot quietly reintroduce it."""
+        import inspect
+        from app.raman_saab import feedback_scoring as fs
+        src = inspect.getsource(fs.aggregate)
+        assert "0.25" not in src, "aggregate still carries a hard-coded spine null"

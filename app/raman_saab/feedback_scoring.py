@@ -324,7 +324,10 @@ def _polarity(value: str, good: Sequence[str], bad: Sequence[str]) -> Optional[s
 #: and which answer codes count as the good pole and which as the bad one. Everything not
 #: listed either has its own function below or is informational.
 _POLARITY_MAP: dict[str, tuple[int, str, tuple[str, ...], tuple[str, ...]]] = {
-    "h9.father": (9, "father", ("close",), ("conflicted", "absent", "died_early")),
+    # Two questions share this key (A10 relationship, A11 the father's own fortunes), so both
+    # vocabularies belong here — with only A10's, every A11 answer fell out as not_scoreable.
+    "h9.father": (9, "father", ("close", "prospered"),
+                  ("conflicted", "absent", "died_early", "reversal")),
     "h4.mother": (4, "mother", ("close",), ("conflicted", "absent", "died_early")),
     "h3.siblings": (3, "siblings", ("close",), ("distant", "conflicted", "lost")),
     "h9.higher_learning": (9, "higher_learning", ("graduate", "postgraduate", "doctorate"),
@@ -339,7 +342,9 @@ _POLARITY_MAP: dict[str, tuple[int, str, tuple[str, ...], tuple[str, ...]]] = {
     "h12.moksha": (12, "moksha", ("strong", "central"), ("none",)),
     "h12.incarceration": (12, "incarceration", ("never",), ("extended",)),
     "h7.marital_happiness": (7, "marital_happiness", ("happy",), ("strained", "ended")),
-    "h5.children": (5, "children", ("two", "three_plus"), ("none",)),
+    # Likewise A28 (how many) and A29 (was it difficult) — "no" is no difficulty, i.e. the
+    # favourable pole. Neither token collides with A28's none/one/two/three_plus.
+    "h5.children": (5, "children", ("two", "three_plus", "no"), ("none", "yes")),
 }
 
 
@@ -459,9 +464,15 @@ def _score_life(report: dict, inst: dict, ans: Answers) -> list[Item]:
                                 "the reader's own temperament against the cast ascendant"))
             continue
 
+        # `psych.mind_screen` is here rather than in `_POLARITY_MAP` on purpose. The engine's
+        # mind screen is present-or-absent and ships its own caution that it is not a
+        # diagnosis (`psych.mind_caution`); scoring a reader's history of low mood as a hit
+        # would have this scorecard claim the engine diagnoses mental illness. It is recorded
+        # because the reader answered it, and left unscored because it is not ours to score.
         if maps_to in ("longevity.family", "rect.source", "rect.precision", "rect.build",
                        "rect.apparent_age", "rect.birth_order", "rect.birth_place",
-                       "psych.temperament", "h10.modes", "health.hospitalisations",
+                       "psych.temperament", "psych.mind_screen", "h10.modes",
+                       "health.hospitalisations",
                        "health.surgeries", "marriage.status", "marriage.year",
                        "spine.recent", "rect.already_rectified", "rect.anchors"):
             out.append(Item(qid, maps_to, text,
@@ -830,6 +841,11 @@ class Aggregate:
     spine_events: int
     spine_near: int
     spine_p: Optional[float]
+    #: The pooled spine null, event-weighted across the charts that contributed events. Each
+    #: chart computes its OWN chance rate from its own event span and the Mahadasha boundaries
+    #: inside it (`_score_spine`); pooling has to carry those rates forward rather than assume
+    #: a shared one. `None` when no chart supplied a computable rate.
+    spine_chance: Optional[float] = None
     #: Pooled event-house result. No pooled p-value: each chart's null is its own set of
     #: per-house base rates, so the tails cannot simply be added.
     event_top_grade: int = 0
@@ -867,6 +883,22 @@ def _pool(cards: Sequence[ChartScorecard], attr: str) -> ForcedChoice:
                         per_item=tuple(rows))
 
 
+def _pooled_spine_chance(rates: Sequence[tuple[int, float]]) -> Optional[float]:
+    """The pooled dated-spine null: each chart's own computed chance rate, weighted by how
+    many events that chart contributed.
+
+    Event-weighted rather than a plain mean because the pooled statistic counts EVENTS, not
+    charts — a reader who dated ten turning points must move the null ten times as far as one
+    who dated a single event, or the p-value is tested against a rate the pooled numerator
+    never had. Returns None when no chart produced a rate (no events, or a span too short to
+    derive one), which is the honest answer: there is no null, so there is no p-value.
+    """
+    total = sum(n for n, _r in rates)
+    if not total:
+        return None
+    return sum(n * r for n, r in rates) / total
+
+
 def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
     """Pool the scorecards. Two things are kept separate on purpose and must stay that way.
 
@@ -884,6 +916,9 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
     scale: dict[str, int] = {}
     harm = 0
     ev = near = 0
+    #: (events, chance_rate) per contributing chart, so the pooled null can be event-weighted
+    #: from the rates the charts actually computed instead of a shared guess.
+    spine_rates: list[tuple[int, float]] = []
     ev_top = ev_n = 0
     free: dict[str, list[str]] = {}
 
@@ -911,6 +946,8 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
             harm += 1
         ev += c.spine.events
         near += c.spine.near_boundary
+        if c.spine.events and c.spine.chance_rate is not None:
+            spine_rates.append((c.spine.events, float(c.spine.chance_rate)))
         ev_top += c.event_houses.top_grade
         ev_n += c.event_houses.events
         for qid, text in c.free_text.items():
@@ -929,13 +966,17 @@ def aggregate(cards: Sequence[ChartScorecard]) -> Aggregate:
         notes.append(f"{harm} reader(s) reported the reading as upsetting or frightening — "
                      f"that is a product defect to fix before any accuracy work.")
 
+    spine_chance = _pooled_spine_chance(spine_rates)
+
     return Aggregate(
         charts=len(cards), blind_charts=len(blind),
         forced=_pool(cards, "forced"), inverted=_pool(cards, "inverted"),
         forced_blind_only=_pool(blind, "forced"),
         confident=_pool(cards, "confident"), unsure=_pool(cards, "unsure"),
         spine_events=ev, spine_near=near,
-        spine_p=binomial_p_two_sided(near, ev, 0.25) if ev else None,
+        spine_chance=spine_chance,
+        spine_p=(binomial_p_two_sided(near, ev, spine_chance)
+                 if ev and spine_chance is not None else None),
         per_signification={k: (v[0], v[1]) for k, v in sorted(per_sig.items())},
         per_life_fact={k: (v[0], v[1]) for k, v in sorted(per_life.items())},
         chapter_wrong=dict(sorted(chap_wrong.items(), key=lambda kv: -kv[1])),
@@ -989,6 +1030,11 @@ def render_aggregate(agg: Aggregate) -> str:
         L.append(f"DATED SPINE     {agg.spine_near}/{agg.spine_events} turning points within "
                  f"{SPINE_TOLERANCE_MONTHS} months of a period change"
                  + (f"   p={agg.spine_p:.4f}" if agg.spine_p is not None else ""))
+        if agg.spine_chance is not None:
+            L.append(f"  chance rate {agg.spine_chance:.3f} — event-weighted from each chart's "
+                     f"own event span and boundaries, never assumed")
+        else:
+            L.append("  no chance rate could be computed, so no p-value is offered")
         L.append("")
     if agg.per_signification:
         L.append("BY READING (forced choice) — the improvement list, worst first:")

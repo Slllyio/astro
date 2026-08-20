@@ -211,3 +211,61 @@ class TestClosedAnswerKinds:
         bad = {**CANONICAL, "answers": [{"qid": q["qid"], "answer": "two thousand"}]}
         assert (await client.post("/report/feedback/instrument", json=ok)).status_code == 200
         assert (await client.post("/report/feedback/instrument", json=bad)).status_code == 400
+
+
+class TestAMultiSelectSurvivesTheWire:
+    """Ticking several boxes must not be rejected, and must not be silently shortened.
+
+    `InstrumentAnswer.answer` was capped at 40 characters and the row was additionally stored
+    as `answer[:40]`. The instrument's own closed vocabularies are longer than that: three
+    trade families join to 50 characters, three work modes to 54, four body regions to 51, and
+    all nineteen trades to 236. So a reader ticking three trades in the real UI got a 422
+    before validation ever ran — and any answer that did squeak past would have been truncated
+    mid-code on the way into the database, turning a real answer into an unparseable one.
+
+    Both halves are checked here: the request must be ACCEPTED, and what comes back out of the
+    database must be byte-identical to what went in.
+    """
+
+    @staticmethod
+    def _longest(q: dict, n: int) -> str:
+        """The n longest codes — the realistic worst case, not the first n alphabetically."""
+        return ",".join(sorted((o["value"] for o in q["options"]), key=len, reverse=True)[:n])
+
+    async def test_three_trades_are_accepted_rather_than_rejected(self, client):
+        q = _by_maps_to("career.trades")
+        picks = self._longest(q, 3)
+        assert len(picks) > 40, "pick three that actually exceed the old cap"
+        resp = await client.post("/report/feedback/instrument", json={
+            **CANONICAL, "answers": [{"qid": q["qid"], "answer": picks}]})
+        assert resp.status_code == 200, resp.text
+
+    async def test_the_stored_answer_is_not_truncated(self, client, db_session):
+        """A code cut in half scores as nothing and reads as a wrong answer."""
+        from app.models.domain import ChartFeedback
+        q = _by_maps_to("medical.regions")
+        picks = self._longest(q, 4)
+        assert len(picks) > 40
+        resp = await client.post("/report/feedback/instrument", json={
+            **CANONICAL, "answers": [{"qid": q["qid"], "answer": picks}]})
+        assert resp.status_code == 200, resp.text
+        rows = (await db_session.execute(
+            select(ChartFeedback).where(ChartFeedback.question_id == q["qid"]))).scalars().all()
+        assert rows and any(r.answer == picks for r in rows), \
+            f"stored {[r.answer for r in rows]!r}, expected {picks!r}"
+
+    async def test_every_option_at_once_still_fits(self, client):
+        """The widest legal answer the instrument can itself produce — all nineteen trades,
+        236 characters. The limit is derived from the vocabularies, so this is the bound."""
+        q = _by_maps_to("career.trades")
+        picks = ",".join(o["value"] for o in q["options"])
+        resp = await client.post("/report/feedback/instrument", json={
+            **CANONICAL, "answers": [{"qid": q["qid"], "answer": picks}]})
+        assert resp.status_code == 200, resp.text
+
+    async def test_an_absurd_answer_is_still_refused(self, client):
+        """Raising the cap must not remove it — the field is still bounded."""
+        q = _by_maps_to("career.trades")
+        resp = await client.post("/report/feedback/instrument", json={
+            **CANONICAL, "answers": [{"qid": q["qid"], "answer": "x" * 5000}]})
+        assert resp.status_code == 422

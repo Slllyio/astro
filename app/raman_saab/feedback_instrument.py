@@ -1111,6 +1111,29 @@ _EVENT_RE = __import__("re").compile(r"^(\d{4})(?:-(0[1-9]|1[0-2]))?:([a-z_]+)$"
 _MULTI_SEP = ","
 
 
+def _widest_multi_answer() -> int:
+    """Length of the longest answer this instrument can legally produce.
+
+    A multi-select ships as its codes comma-joined into ONE row, so the widest closed
+    vocabulary sets the bound — today `TRADE_FAMILIES`, whose nineteen codes join to 236
+    characters. Derived rather than written down because a vocabulary gains entries over time
+    and a hand-set number silently stops covering it: the transport limit was 40, which three
+    trades already exceeded, so a reader ticking three boxes got a 422 and any answer that did
+    get through was truncated mid-code on its way into the database.
+    """
+    banks = (BODY_REGIONS, TRADE_FAMILIES, WORK_MODES, EVENT_KINDS, REPORT_CHAPTERS)
+    widest = max(len(_MULTI_SEP.join(bank)) for bank in banks)
+    inline = max((len(_MULTI_SEP.join(o[0] for o in q.options))
+                  for q in _PART_A + _PART_B_FIXED + _PART_D if q.kind == "multi"),
+                 default=0)
+    return max(widest, inline)
+
+
+#: Transport bound for one stored answer. Rounded up from the widest the instrument can emit,
+#: so the wire never refuses an answer its own question offered, while staying a real bound.
+MAX_ANSWER_CHARS: int = ((_widest_multi_answer() // 64) + 1) * 64
+
+
 def validate_instrument_answers(report: dict, answers: list[dict[str, Any]], *,
                                 max_choices: int = 12) -> list[str]:
     """Check submitted answers against the instrument this chart actually generates.

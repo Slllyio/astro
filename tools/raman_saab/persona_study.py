@@ -211,12 +211,127 @@ def _cmd_roster(args) -> int:
     return 0
 
 
+#: Fields that would betray which option is the chart's own. `build` asserts none of them
+#: reaches a payload file rather than trusting that they do not — the blind is the study.
+_KEY_TOKENS = ("band_share", "signification", "verdict", "inverted_warning",
+               "favourability_percentile", "rarity")
+
+
+def _cmd_build(args) -> int:
+    """Cast each admitted nativity and split what it produces into two directories.
+
+    `payloads/` is what a persona agent may see: questions and options, nothing else.
+    `verdicts/` is answer-key material — the chart's own reading of every signification,
+    needed later for the cross-chart control — and no agent is given its path.
+    """
+    from app.raman_saab.chart.model import BirthData
+    from app.raman_saab.detailed_report import build_detailed_report
+    from app.raman_saab.report_json import to_report_dict
+
+    roster = json.loads((OUT / "roster.json").read_text(encoding="utf-8"))
+    (OUT / "payloads").mkdir(parents=True, exist_ok=True)
+    (OUT / "verdicts").mkdir(parents=True, exist_ok=True)
+
+    for rec in roster["admitted"]:
+        dest = OUT / "payloads" / f"{rec['slug']}.json"
+        if dest.is_file() and not args.force:
+            print(f"[persona-study] {rec['slug']:26} payload exists, skipping")
+            continue
+        birth = BirthData(rec["name"], rec["year"], rec["month"], rec["day"], rec["hour"],
+                          rec["minute"], float(rec["tz_offset"]), float(rec["latitude"]),
+                          float(rec["longitude"]))
+        report = to_report_dict(build_detailed_report(
+            birth, on=tuple(rec["reference_date"])))
+        inst = report["feedback_instrument"]
+
+        blob = json.dumps(inst, ensure_ascii=False)
+        leaked = [t for t in _KEY_TOKENS if t in blob]
+        if leaked:
+            raise SystemExit(f"[persona-study] ABORT: {rec['slug']} payload leaks {leaked}")
+
+        dest.write_text(json.dumps(
+            {"slug": rec["slug"], "name": rec["name"], "instrument": inst},
+            indent=1, ensure_ascii=False), encoding="utf-8")
+        (OUT / "verdicts" / f"{rec['slug']}.json").write_text(json.dumps(
+            {"slug": rec["slug"],
+             "chart_key": chart_key_for(rec),
+             "verdicts": {e["signification"]: {"house": int(h), "verdict": e["verdict"],
+                                               "band_share": e["band_share"]}
+                          for h, hd in report["calibration"].items()
+                          for e in hd["entries"]}},
+            indent=1, ensure_ascii=False), encoding="utf-8")
+        counts = inst["counts"]
+        print(f"[persona-study] {rec['slug']:26} built  A{counts['A']} B{counts['B']} "
+              f"C{counts['C']} D{counts['D']}  no key in payload")
+    return 0
+
+
+def render_questions(payload: dict) -> str:
+    """The instrument as a compact block a blind answerer can work from.
+
+    Deliberately carries the qid, the question, and the option CODES only. No part labels
+    beyond the section titles, no hints about which option a chart would pick, and — because
+    the payload never held them — no verdicts to leak.
+    """
+    lines: list[str] = []
+    for part in payload["instrument"]["parts"]:
+        lines.append(f"\n## {part['part']}. {part['title_en']}")
+        for q in part["questions"]:
+            opts = "  |  ".join(f"{o['value']} = {o['text_en']}" for o in q["options"])
+            lines.append(f"[{q['qid']}] ({q['kind']}) {q['text_en']}")
+            if opts:
+                lines.append(f"    {opts}")
+            if q.get("confidence"):
+                lines.append(f"    also answer {q['qid']}.confidence = 1..5")
+    return "\n".join(lines)
+
+
+def _cmd_questions(args) -> int:
+    (OUT / "questions").mkdir(parents=True, exist_ok=True)
+    for src in sorted((OUT / "payloads").glob("*.json")):
+        payload = json.loads(src.read_text(encoding="utf-8"))
+        dest = OUT / "questions" / f"{payload['slug']}.txt"
+        dest.write_text(render_questions(payload), encoding="utf-8")
+        print(f"[persona-study] {payload['slug']:26} {len(dest.read_text()):6d} chars")
+    return 0
+
+
+def coinflip_answers(payload: dict, *, seed: str) -> dict:
+    """The control arm: an answerer with no knowledge of anything.
+
+    Deterministic so the arm is reproducible — the digest of (seed, qid) picks the option,
+    which is the same construction the instrument itself uses to shuffle them. It must score
+    0.5, and until it does no other number in the study may be read (PREREG §2b).
+    """
+    out: dict[str, str] = {}
+    for part in payload["instrument"]["parts"]:
+        for q in part["questions"]:
+            if q["kind"] != "choice" or not q["options"]:
+                continue
+            digest = hashlib.sha256(f"{seed}:{q['qid']}".encode()).hexdigest()
+            pick = q["options"][int(digest[:8], 16) % len(q["options"])]
+            out[q["qid"]] = pick["value"]
+    return out
+
+
+def chart_key_for(rec: dict) -> str:
+    """The server's own chart_key format (`report_routes._chart_key`), reproduced so a
+    submission and a score agree on which nativity they are talking about."""
+    return (f"{rec['year']:04d}-{rec['month']:02d}-{rec['day']:02d}"
+            f"T{rec['hour']:02d}:{rec['minute']:02d}{float(rec['tz_offset']):+.2f}"
+            f"@{float(rec['latitude']):.4f},{float(rec['longitude']):.4f}")
+
+
 def main(argv: Optional[list] = None) -> int:
     ap = argparse.ArgumentParser(description="Run a stage of the persona study.")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("roster", help="resolve the pre-registered candidates through the gate")
+    b = sub.add_parser("build", help="cast each nativity, emit its blind question payload")
+    b.add_argument("--force", action="store_true", help="rebuild payloads that already exist")
+    sub.add_parser("questions", help="render each payload as a compact blind question block")
     args = ap.parse_args(argv)
-    return {"roster": _cmd_roster}[args.cmd](args)
+    return {"roster": _cmd_roster, "build": _cmd_build,
+            "questions": _cmd_questions}[args.cmd](args)
 
 
 if __name__ == "__main__":

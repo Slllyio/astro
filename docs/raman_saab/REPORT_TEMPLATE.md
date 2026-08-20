@@ -1038,3 +1038,63 @@ comes from that rebuild, never from the request (the older `/report/feedback` ta
 body). Whether Part A was answered before the reading was read is recorded as its own
 `inst.<v>.meta.context` row — the schema is created with `create_all` and has no migration path,
 so a new column would exist on a fresh database and be missing on every deployed one.
+
+### v36 addendum (2026-08-20) — instrument v2: closed answers, and a scorer
+
+Two changes, both user-requested, and the second is why the first mattered.
+
+**Every question is now answered by SELECTING.** v1's Part A was 31 free-text boxes. Prose
+cannot be scored, does not aggregate across readers, and is thirty-one paragraphs somebody has
+to read before anything is learned. v2 is 61 questions of which exactly one — "anything else
+you want to say" — is open; free text remains available on every other question as a
+supplement, never as the answer. `INSTRUMENT_VERSION` is `v2`, so v1 answers never pool with
+v2 ones in the same analysis.
+
+**Several vocabularies are the engine's own**, which is the point:
+
+| Question | Options are | Compared against |
+|---|---|---|
+| body regions | HPA-29's sign→anatomy values | `medical.regions_marked` |
+| trade families | HTJAH-II's vocation words | the three career frames |
+| work modes | the four H10 profession significations | `profession.mode_split` |
+| event kinds | one per house the engine reads that matter from | the dasha boundaries |
+
+A reader's selection can therefore be compared with the engine's output CODE AGAINST CODE, with
+no interpretation step in between. That is what makes the scoring a measurement rather than a
+reading of somebody's prose. Each question also carries `maps_to`, naming the engine fact it is
+scored against, so the scorer does not keep a parallel table that can drift.
+
+**Two structural changes.** Turning points are collected as structured `(year, month, kind)`
+rows, one stored row each (`qid#n`, valued `YYYY-MM:kind`), instead of a paragraph. And v1's C0
+— which showed the reader the period-change dates and asked how many of their turning points
+landed near one — is GONE: that was the reader doing the scorer's job, badly, with the answer
+in front of them. The count and its chance rate are computed in `feedback_scoring`.
+
+**The seed was narrowed to what `chart_key` round-trips.** It included the ascendant longitude
+to six decimal places; the key keeps latitude and longitude to four. A chart recast from a
+stored key would therefore have dealt the forced-choice options the other way round, and every
+stored answer would have silently inverted at scoring time. `_SEED_FIELDS` now matches
+`_chart_key` exactly, and a test proves the recast reproduces the shuffle.
+
+### `app/raman_saab/feedback_scoring.py` — processing the feedback
+
+Four measurements, reported side by side and never averaged:
+
+1. **Forced choice** — the only one with a clean null (0.5 by construction). Hits of n with an
+   exact two-sided binomial p, plus a rarity-weighted variant (`1 − band_share`).
+2. **Inverted channels** — scored SEPARATELY and read backwards. Agreement there is evidence the
+   reader is agreeing with whatever is shown; pooling would launder acquiescence into accuracy.
+3. **Life facts** — each Part A answer against the engine's verdict for the same matter.
+   Reported as hit/miss counts and explicitly NOT as a p-value: the population base rate of a
+   happy marriage is not known to this project.
+4. **The dated spine** — turning points against Mahadasha boundaries, ±3 months, with the chance
+   rate computed from the actual UNION of tolerance windows over the reported span. Summing the
+   windows instead would roughly double the denominator and make a coin flip look like a finding.
+
+Part D is counted, not scored: "which chapters got me wrong", aggregated across readers, is a
+work list. `aggregate()` also splits blind submissions from those answered after the reading,
+and refuses to be quoted without its caveats — `render_aggregate` prints them first.
+
+Run it: `python -m app.raman_saab.feedback_scoring [--chart-key ...] [--json]`. There is no
+endpoint on purpose: an API that told a submitter how they scored would turn the instrument
+into a quiz, and the answer would reach the next reader of the same chart.

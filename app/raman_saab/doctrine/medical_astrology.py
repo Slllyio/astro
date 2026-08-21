@@ -65,6 +65,14 @@ CITE_PLANET_RULERSHIP: Final[Citation] = Citation("HPA-29", 394)
 CITE_APPLICATION: Final[Citation] = Citation("HPA-29", 433)
 CITE_PROVENANCE_CAUTION: Final[Citation] = Citation("HPA-29", 353)
 
+#: Every anchor this module cites, enumerated so `source_lock` can pin HPA-29's body and line
+#: count. Without this the lock cannot see the chapter at all: a citation into a file no
+#: registry enumerates is exactly the drift the lock exists to catch, and it was silently
+#: uncovered here.
+CITED_ANCHORS: Final[tuple] = (
+    CITE_SIGN_ANATOMY, CITE_SIGN_DISEASES, CITE_PLANET_ORGANS, CITE_PLANET_RULERSHIP,
+    CITE_APPLICATION, CITE_PROVENANCE_CAUTION)
+
 #: Raman's own application rule, verbatim (HPA-29:433-440). The sign gives the body PART,
 #: the planet gives the DISEASE — that division of labour is his, not an inference.
 APPLICATION: Final[str] = (

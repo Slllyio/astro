@@ -684,8 +684,16 @@ async def post_feedback_instrument(request: Request, req: InstrumentFeedbackRequ
     except ValueError as exc:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
+    # Every submitted row is validated, including one that carries only free text. Filtering
+    # on `a.answer is not None` let a prose-only row skip the check entirely and be stored
+    # under a qid the instrument never asked, with the qid standing in for the question text —
+    # which is precisely what this endpoint promises cannot happen. Rows without an answer are
+    # checked for a KNOWN qid only: an untouched question is not a malformed one.
     payload = [{"qid": a.qid, "answer": a.answer} for a in req.answers if a.answer is not None]
     problems = validate_instrument_answers(report, payload)
+    problems += [p for p in validate_instrument_answers(
+        report, [{"qid": a.qid, "answer": None} for a in req.answers if a.answer is None])
+        if p.startswith("unknown question")]
     if problems:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="; ".join(problems[:5]))
 

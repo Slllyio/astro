@@ -1,0 +1,668 @@
+{
+ "admitted": [
+  {
+   "slug": "Elizabeth_II",
+   "name": "Elizabeth II",
+   "year": 1926,
+   "month": 4,
+   "day": 21,
+   "hour": 2,
+   "minute": 40,
+   "place": "Mayfair, London (United Kingdom)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 51.5111,
+   "longitude": -0.1471,
+   "zone": "Europe/London",
+   "tz_offset": 1.0,
+   "stratum": 1,
+   "time_precision": "minute",
+   "reference_date": [
+    1966,
+    4,
+    21
+   ]
+  },
+  {
+   "slug": "Katharine_Hepburn",
+   "name": "Katharine Hepburn",
+   "year": 1907,
+   "month": 5,
+   "day": 12,
+   "hour": 17,
+   "minute": 47,
+   "place": "Hartford (CT) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 42.3144,
+   "longitude": -71.0729,
+   "zone": "America/New_York",
+   "tz_offset": -5.0,
+   "stratum": 1,
+   "time_precision": "minute",
+   "reference_date": [
+    1947,
+    5,
+    12
+   ]
+  },
+  {
+   "slug": "Jimmy_Carter",
+   "name": "Jimmy Carter",
+   "year": 1924,
+   "month": 10,
+   "day": 1,
+   "hour": 7,
+   "minute": 0,
+   "place": "Plains (GA) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 32.0341,
+   "longitude": -84.3927,
+   "zone": "America/New_York",
+   "tz_offset": -5.0,
+   "stratum": 1,
+   "time_precision": "round_hour",
+   "reference_date": [
+    1964,
+    10,
+    1
+   ]
+  },
+  {
+   "slug": "Clint_Eastwood",
+   "name": "Clint Eastwood",
+   "year": 1930,
+   "month": 5,
+   "day": 31,
+   "hour": 17,
+   "minute": 35,
+   "place": "San Francisco (CA) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 37.7879,
+   "longitude": -122.4075,
+   "zone": "America/Los_Angeles",
+   "tz_offset": -8.0,
+   "stratum": 1,
+   "time_precision": "minute",
+   "reference_date": [
+    1970,
+    5,
+    31
+   ]
+  },
+  {
+   "slug": "Marilyn_Monroe",
+   "name": "Marilyn Monroe",
+   "year": 1926,
+   "month": 6,
+   "day": 1,
+   "hour": 9,
+   "minute": 30,
+   "place": "Los Angeles (CA) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 34.0537,
+   "longitude": -118.2428,
+   "zone": "America/Los_Angeles",
+   "tz_offset": -8.0,
+   "stratum": 2,
+   "time_precision": "quarter",
+   "reference_date": [
+    1953,
+    6,
+    1
+   ]
+  },
+  {
+   "slug": "James_Dean",
+   "name": "James Dean",
+   "year": 1931,
+   "month": 2,
+   "day": 8,
+   "hour": 9,
+   "minute": 0,
+   "place": "Marion, Grant County (IN) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 40.5584,
+   "longitude": -85.6591,
+   "zone": "America/Indiana/Indianapolis",
+   "tz_offset": -6.0,
+   "stratum": 2,
+   "time_precision": "round_hour",
+   "reference_date": [
+    1952,
+    2,
+    8
+   ]
+  },
+  {
+   "slug": "John_Fitzgerald_Kennedy",
+   "name": "John Fitzgerald Kennedy",
+   "year": 1917,
+   "month": 5,
+   "day": 29,
+   "hour": 15,
+   "minute": 0,
+   "place": "Brookline (MA) (United States)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 42.3329,
+   "longitude": -71.1188,
+   "zone": "America/New_York",
+   "tz_offset": -5.0,
+   "stratum": 2,
+   "time_precision": "round_hour",
+   "reference_date": [
+    1957,
+    5,
+    29
+   ]
+  },
+  {
+   "slug": "Janis_Joplin",
+   "name": "Janis Joplin",
+   "year": 1943,
+   "month": 1,
+   "day": 19,
+   "hour": 9,
+   "minute": 45,
+   "place": "Port Arthur (TX) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 29.8717,
+   "longitude": -93.9332,
+   "zone": "America/Chicago",
+   "tz_offset": -5.0,
+   "stratum": 2,
+   "time_precision": "quarter",
+   "reference_date": [
+    1965,
+    1,
+    19
+   ]
+  },
+  {
+   "slug": "Bernard_Madoff",
+   "name": "Bernard Madoff",
+   "year": 1938,
+   "month": 4,
+   "day": 29,
+   "hour": 13,
+   "minute": 50,
+   "place": "New York (NY) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 40.7127,
+   "longitude": -74.006,
+   "zone": "America/New_York",
+   "tz_offset": -4.0,
+   "stratum": 3,
+   "time_precision": "minute",
+   "reference_date": [
+    1978,
+    4,
+    29
+   ]
+  },
+  {
+   "slug": "O.J._Simpson",
+   "name": "O.J. Simpson",
+   "year": 1947,
+   "month": 7,
+   "day": 9,
+   "hour": 8,
+   "minute": 8,
+   "place": "San Francisco (CA) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 37.7879,
+   "longitude": -122.4075,
+   "zone": "America/Los_Angeles",
+   "tz_offset": -8.0,
+   "stratum": 3,
+   "time_precision": "minute",
+   "reference_date": [
+    1987,
+    7,
+    9
+   ]
+  },
+  {
+   "slug": "Martha_Stewart",
+   "name": "Martha Stewart",
+   "year": 1941,
+   "month": 8,
+   "day": 3,
+   "hour": 13,
+   "minute": 33,
+   "place": "Jersey City (NJ) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 40.7216,
+   "longitude": -74.0475,
+   "zone": "America/New_York",
+   "tz_offset": -4.0,
+   "stratum": 3,
+   "time_precision": "minute",
+   "reference_date": [
+    1981,
+    8,
+    3
+   ]
+  },
+  {
+   "slug": "Patty_Hearst",
+   "name": "Patty Hearst",
+   "year": 1954,
+   "month": 2,
+   "day": 20,
+   "hour": 18,
+   "minute": 1,
+   "place": "San Francisco (CA) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 37.7879,
+   "longitude": -122.4075,
+   "zone": "America/Los_Angeles",
+   "tz_offset": -8.0,
+   "stratum": 3,
+   "time_precision": "minute",
+   "reference_date": [
+    1994,
+    2,
+    20
+   ]
+  },
+  {
+   "slug": "Stevie_Wonder",
+   "name": "Stevie Wonder",
+   "year": 1950,
+   "month": 5,
+   "day": 13,
+   "hour": 16,
+   "minute": 15,
+   "place": "Saginaw (MI) (United States)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 43.42,
+   "longitude": -83.949,
+   "zone": "America/Detroit",
+   "tz_offset": -5.0,
+   "stratum": 4,
+   "time_precision": "quarter",
+   "reference_date": [
+    1990,
+    5,
+    13
+   ]
+  },
+  {
+   "slug": "Christopher_Reeve",
+   "name": "Christopher Reeve",
+   "year": 1952,
+   "month": 9,
+   "day": 25,
+   "hour": 3,
+   "minute": 12,
+   "place": "Manhattan, New York (NY) (United States)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 40.758,
+   "longitude": -73.9855,
+   "zone": "America/New_York",
+   "tz_offset": -4.0,
+   "stratum": 4,
+   "time_precision": "minute",
+   "reference_date": [
+    1992,
+    9,
+    25
+   ]
+  },
+  {
+   "slug": "Michael_J._Fox",
+   "name": "Michael J. Fox",
+   "year": 1961,
+   "month": 6,
+   "day": 9,
+   "hour": 0,
+   "minute": 15,
+   "place": "Edmonton, Alberta (Canada)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 53.5462,
+   "longitude": -113.4912,
+   "zone": "America/Edmonton",
+   "tz_offset": -7.0,
+   "stratum": 4,
+   "time_precision": "quarter",
+   "reference_date": [
+    2001,
+    6,
+    9
+   ]
+  },
+  {
+   "slug": "Elizabeth_Taylor",
+   "name": "Elizabeth Taylor",
+   "year": 1932,
+   "month": 2,
+   "day": 27,
+   "hour": 2,
+   "minute": 30,
+   "place": "London (United Kingdom)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 51.5074,
+   "longitude": -0.1278,
+   "zone": "Europe/London",
+   "tz_offset": 0.0,
+   "stratum": 5,
+   "time_precision": "quarter",
+   "reference_date": [
+    1972,
+    2,
+    27
+   ]
+  },
+  {
+   "slug": "Marlene_Dietrich",
+   "name": "Marlene Dietrich",
+   "year": 1901,
+   "month": 12,
+   "day": 27,
+   "hour": 21,
+   "minute": 15,
+   "place": "Berlin-Schöneberg (Germany)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 52.4793,
+   "longitude": 13.3519,
+   "zone": "Europe/Berlin",
+   "tz_offset": 1.0,
+   "stratum": 5,
+   "time_precision": "quarter",
+   "reference_date": [
+    1941,
+    12,
+    27
+   ]
+  },
+  {
+   "slug": "Greta_Garbo",
+   "name": "Greta Garbo",
+   "year": 1905,
+   "month": 9,
+   "day": 18,
+   "hour": 19,
+   "minute": 30,
+   "place": "Stockholm (Sweden)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 59.3251,
+   "longitude": 18.0711,
+   "zone": "Europe/Stockholm",
+   "tz_offset": 1.0,
+   "stratum": 5,
+   "time_precision": "quarter",
+   "reference_date": [
+    1945,
+    9,
+    18
+   ]
+  },
+  {
+   "slug": "Oprah_Winfrey",
+   "name": "Oprah Winfrey",
+   "year": 1954,
+   "month": 1,
+   "day": 29,
+   "hour": 4,
+   "minute": 30,
+   "place": "Kosciusko (MS) (United States)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 33.0576,
+   "longitude": -89.5876,
+   "zone": "America/Chicago",
+   "tz_offset": -6.0,
+   "stratum": 5,
+   "time_precision": "quarter",
+   "reference_date": [
+    1994,
+    1,
+    29
+   ]
+  },
+  {
+   "slug": "Walt_Disney",
+   "name": "Walt Disney",
+   "year": 1901,
+   "month": 12,
+   "day": 5,
+   "hour": 0,
+   "minute": 35,
+   "place": "Chicago (IL) (United States)",
+   "rodden": "A",
+   "source_note": "From memory or autobiography",
+   "latitude": 41.8756,
+   "longitude": -87.6244,
+   "zone": "America/Chicago",
+   "tz_offset": -6.0,
+   "stratum": 6,
+   "time_precision": "minute",
+   "reference_date": [
+    1941,
+    12,
+    5
+   ]
+  },
+  {
+   "slug": "Willie_Nelson",
+   "name": "Willie Nelson",
+   "year": 1933,
+   "month": 4,
+   "day": 30,
+   "hour": 0,
+   "minute": 30,
+   "place": "Abbott (TX) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 31.8899,
+   "longitude": -97.0871,
+   "zone": "America/Chicago",
+   "tz_offset": -6.0,
+   "stratum": 6,
+   "time_precision": "quarter",
+   "reference_date": [
+    1973,
+    4,
+    30
+   ]
+  },
+  {
+   "slug": "Elvis_Presley",
+   "name": "Elvis Presley",
+   "year": 1935,
+   "month": 1,
+   "day": 8,
+   "hour": 4,
+   "minute": 35,
+   "place": "Tupelo (MS) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 34.2576,
+   "longitude": -88.7034,
+   "zone": "America/Chicago",
+   "tz_offset": -6.0,
+   "stratum": 6,
+   "time_precision": "minute",
+   "reference_date": [
+    1975,
+    1,
+    8
+   ]
+  },
+  {
+   "slug": "Donald_Trump",
+   "name": "Donald Trump",
+   "year": 1946,
+   "month": 6,
+   "day": 14,
+   "hour": 10,
+   "minute": 54,
+   "place": "Jamaica, Queens, New York (NY) (United States)",
+   "rodden": "AA",
+   "source_note": "birth certificate or birth record",
+   "latitude": 40.6998,
+   "longitude": -73.8077,
+   "zone": "America/New_York",
+   "tz_offset": -4.0,
+   "stratum": 6,
+   "time_precision": "minute",
+   "reference_date": [
+    1986,
+    6,
+    14
+   ]
+  }
+ ],
+ "dropped": [
+  {
+   "slug": "George_Burns",
+   "stratum": 1,
+   "reason": "page states no nativity"
+  },
+  {
+   "slug": "Bob_Hope",
+   "stratum": 1,
+   "reason": "Rodden C"
+  },
+  {
+   "slug": "Sean_Connery",
+   "stratum": 1,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Charlie_Chaplin",
+   "stratum": 1,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Martin_Luther_King",
+   "stratum": 2,
+   "reason": "12:00 is a noon default, not a stated hour (Deviation 1)"
+  },
+  {
+   "slug": "Jimi_Hendrix",
+   "stratum": 2,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Bruce_Lee",
+   "stratum": 2,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Lady_Diana",
+   "stratum": 2,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Nelson_Mandela",
+   "stratum": 3,
+   "reason": "Rodden DD"
+  },
+  {
+   "slug": "Al_Capone",
+   "stratum": 3,
+   "reason": "Rodden C"
+  },
+  {
+   "slug": "Mike_Tyson",
+   "stratum": 3,
+   "reason": "page states no nativity"
+  },
+  {
+   "slug": "Jean_Genet",
+   "stratum": 3,
+   "reason": "Paris 6e (France) was not on standard time in 1910"
+  },
+  {
+   "slug": "Stephen_Hawking",
+   "stratum": 4,
+   "reason": "Rodden C"
+  },
+  {
+   "slug": "Ray_Charles",
+   "stratum": 4,
+   "reason": "page states no nativity"
+  },
+  {
+   "slug": "Helen_Keller",
+   "stratum": 4,
+   "reason": "Tuscumbia (AL) (United States) was not on standard time in 1880"
+  },
+  {
+   "slug": "Frida_Kahlo",
+   "stratum": 4,
+   "reason": "Coyoacán, Mexico (Mexico) was not on standard time in 1907"
+  },
+  {
+   "slug": "Franklin_D._Roosevelt",
+   "stratum": 4,
+   "reason": "Hyde Park (Dutchess County), New York (NY) (United States) was not on standard time in 1882"
+  },
+  {
+   "slug": "Dolly_Parton",
+   "stratum": 5,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Coco_Chanel",
+   "stratum": 5,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Mia_Farrow",
+   "stratum": 5,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Jack_Nicholson",
+   "stratum": 5,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "MC_Hammer",
+   "stratum": 6,
+   "reason": "page states no nativity"
+  },
+  {
+   "slug": "Larry_King",
+   "stratum": 6,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Judy_Garland",
+   "stratum": 6,
+   "reason": "stratum already filled by earlier registered names"
+  },
+  {
+   "slug": "Burt_Reynolds",
+   "stratum": 6,
+   "reason": "stratum already filled by earlier registered names"
+  }
+ ],
+ "counts": {
+  "1": 4,
+  "2": 4,
+  "3": 4,
+  "4": 3,
+  "5": 4,
+  "6": 4
+ }
+}

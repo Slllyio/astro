@@ -14,14 +14,12 @@ blind is enforced by ORDER — answers are written and hashed before any answer 
     roster    resolve the pre-registered candidates through the admission gate
     build     cast each admitted nativity and emit its blind question payload
     verify    assert the payloads carry no answer key, and hash the collected answers
-    submit    post the answers through the real endpoint, context=before_reading
     score     the primary, the cross-chart control, and the coin-flip sham gate
 
 Usage:
     py -3.12 -m tools.raman_saab.persona_study roster
     py -3.12 -m tools.raman_saab.persona_study build
     py -3.12 -m tools.raman_saab.persona_study verify
-    py -3.12 -m tools.raman_saab.persona_study submit --base-url http://127.0.0.1:8000
     py -3.12 -m tools.raman_saab.persona_study score --html data/persona_study/scorecard.html
 """
 from __future__ import annotations
@@ -31,6 +29,7 @@ import dataclasses
 import hashlib
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -247,9 +246,17 @@ _KEY_TOKENS = ("band_share", "signification", "verdict", "inverted_warning",
 def _cmd_build(args) -> int:
     """Cast each admitted nativity and split what it produces into two directories.
 
-    `payloads/` is what a persona agent may see: questions and options, nothing else.
+    `payloads/` is what a persona agent may see: questions and options, nothing else — the
+    leak assertion below proves it carries no verdict, band share or signification name.
     `verdicts/` is answer-key material — the chart's own reading of every signification,
-    needed later for the cross-chart control — and no agent is given its path.
+    needed by `readings` and by the cross-chart control — and no agent is given its path.
+
+    Note what the blind therefore does and does not rest on. It rests on CONSTRUCTION: the
+    payload provably cannot carry the key, so an answerer cannot see one however it is
+    served. It does NOT rest on the key being computed later — `verdicts/` is written here,
+    at build time, because the contaminated arm's own input is derived from it. What
+    `verify` adds is the operator's half: once answers are hashed they cannot be revised in
+    the light of a score.
     """
     from app.raman_saab.chart.model import BirthData
     from app.raman_saab.detailed_report import build_detailed_report
@@ -403,24 +410,90 @@ def _cmd_readings(args) -> int:
     return 0
 
 
-def _cmd_verify(args) -> int:
-    """Hash every collected answer file BEFORE any key is computed.
+#: An answer arriving from an events question carries its code behind the date: `1990-06:marriage`.
+_EVENT_ANSWER = re.compile(r"^\d{4}(?:-\d{2})?:(.+)$")
 
-    This is what makes the blind real for the operator, not only for the answerer: once the
-    digest is written, the answers cannot be revised in the light of a score.
+#: Both collected arms. The blind arm answers from a life alone; the contaminated arm reads the
+#: chart's own reading first (PREREG 2c). Both are collected data and both are hashed before any
+#: key exists — the second one is not a lesser record for having been contaminated by design.
+ARMS: tuple = ("answers", "answers_contaminated")
+
+
+def option_vocabulary(payload: dict) -> dict:
+    """Every legal option code, by qid, from the chart's own question payload.
+
+    A question that offers no options — a year, a date, free prose — maps to an empty set,
+    which is how `off_vocabulary` tells "nothing to check here" apart from "no such question".
     """
-    answers = sorted((OUT / "answers").glob("*.json"))
-    manifest = {}
-    for path in answers:
-        doc = json.loads(path.read_text(encoding="utf-8"))
-        manifest[doc["slug"]] = {"sha256": sha256_of(path),
-                                 "answers": len(doc.get("answers") or {}),
-                                 "free_text": len(doc.get("free_text") or {})}
-        print(f"[persona-study] {doc['slug']:26} {manifest[doc['slug']]['answers']:3d} answers "
-              f"sha256={manifest[doc['slug']]['sha256'][:16]}")
+    return {q["qid"]: frozenset(o["value"] for o in q["options"])
+            for part in payload["instrument"]["parts"] for q in part["questions"]}
+
+
+def off_vocabulary(answers: dict, vocab: dict) -> dict:
+    """Answer tokens no question offered — the quiet data error the scorer absorbs.
+
+    An unknown code crashes nothing. It simply never matches, so the item scores as one
+    fewer agreement and the study reports a colder number for a reason that appears nowhere
+    on the record. That is the worst kind of error this study can make, because it looks
+    exactly like an honest result. Naming the strays at verify time, before any key is
+    computed, is the last point at which seeing them is still free.
+    """
+    stray: dict = {}
+    for qid, value in answers.items():
+        base = qid.removesuffix(".confidence").split("#", 1)[0]
+        if base not in vocab:
+            stray[qid] = ("<no such question>",)
+            continue
+        if qid.endswith(".confidence"):
+            continue
+        options = vocab[base]
+        if not options:
+            continue
+        given = []
+        for token in str(value).split(","):
+            token = token.strip()
+            if not token:
+                continue
+            m = _EVENT_ANSWER.match(token)
+            given.append(m.group(1) if m else token)
+        bad = tuple(g for g in given if g not in options)
+        if bad:
+            stray[qid] = bad
+    return stray
+
+
+def _cmd_verify(args) -> int:
+    """Hash every collected answer file before it is scored.
+
+    This is the operator's half of the blind — the answerer's half is enforced in `build`, by
+    a payload that provably carries no key. Once the digest is written the answers cannot be
+    revised in the light of a score. (It is NOT a claim that no key existed yet: `build`
+    writes `verdicts/` because the contaminated arm is rendered from it.) Both arms are
+    hashed, and each file is checked against its own chart's option bank on the way past.
+    """
+    manifest: dict = {}
+    strays = 0
+    for arm in ARMS:
+        for path in sorted((OUT / arm).glob("*.json")):
+            doc = json.loads(path.read_text(encoding="utf-8"))
+            payload = json.loads(
+                (OUT / "payloads" / f"{doc['slug']}.json").read_text(encoding="utf-8"))
+            given = doc.get("answers") or {}
+            off = off_vocabulary(given, option_vocabulary(payload))
+            strays += len(off)
+            entry = {"sha256": sha256_of(path), "answers": len(given),
+                     "free_text": len(doc.get("free_text") or {}),
+                     "off_vocabulary": {k: list(v) for k, v in sorted(off.items())}}
+            manifest.setdefault(arm, {})[doc["slug"]] = entry
+            flag = f"  OFF-VOCAB {off}" if off else ""
+            print(f"[persona-study] {arm:20} {doc['slug']:26} {entry['answers']:3d} answers "
+                  f"sha256={entry['sha256'][:16]}{flag}")
     dest = OUT / "answers_manifest.json"
     dest.write_text(json.dumps(manifest, indent=1), encoding="utf-8")
-    print(f"[persona-study] {len(manifest)} files hashed -> {dest}")
+    counts = " + ".join(f"{len(v)} {k}" for k, v in manifest.items())
+    print(f"[persona-study] {counts} hashed -> {dest}")
+    print(f"[persona-study] off-vocabulary answers: {strays}"
+          + ("  (recorded, not corrected — they score as misses)" if strays else ""))
     return 0
 
 
@@ -593,6 +666,11 @@ def _cmd_score(args) -> int:
     gate_ok = coin.forced.n > 0 and coin.forced.p_value is not None \
         and coin.forced.p_value > 0.05
     print(f"  gate {'PASS — the rest may be read' if gate_ok else 'FAIL — STOP, pipeline defect'}")
+    if not gate_ok:
+        # Pre-registered: no other number may be read until the coin-flip arm returns chance.
+        # Printing the primary anyway and trusting the operator not to look at it is not a gate.
+        print("[persona-study] the sham gate did not pass — nothing further is reported")
+        return 1
 
     print("\n=== PRIMARY — blind forced choice against own chart ===")
     print(f"  {blind.forced.hits}/{blind.forced.n} = {blind.forced.rate}   "

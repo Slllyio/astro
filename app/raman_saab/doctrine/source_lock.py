@@ -70,11 +70,13 @@ def iter_citations() -> Iterator[Citation]:
     # The graha-chapter line-range tables (HPA-21/22/24/34) — verbatim-quote anchors.
     from app.raman_saab.doctrine.lookups.graha_chapters import (
         CITED_ANCHORS as _GRAHA_ANCHORS)
+    from app.raman_saab.doctrine.medical_astrology import CITED_ANCHORS as _MEDICAL_ANCHORS
     from app.raman_saab.karmic_evolution import CITED_ANCHORS as _KARMIC_ANCHORS
     from app.raman_saab.monographs import CITED_ANCHORS as _MONOGRAPH_ANCHORS
     yield from _GRAHA_ANCHORS
     yield from _MONOGRAPH_ANCHORS
     yield from _KARMIC_ANCHORS
+    yield from _MEDICAL_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:
@@ -102,10 +104,17 @@ def _body_bytes(path: Path) -> bytes:
     body hash cannot see.
     """
     raw = path.read_bytes()
-    if not raw.startswith(b"---"):
+    # Both delimiters must be a COMPLETE line. `startswith(b"---")` also matched a file
+    # opening on a horizontal rule, and searching for b"\n---" also matched a content line
+    # that merely began with three dashes — either way real corpus text fell out of the hash,
+    # which is the one thing this function must never do quietly.
+    lines = raw.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
         return raw
-    end = raw.find(b"\n---", 3)
-    return raw if end == -1 else raw[end + 4:]
+    for index, line in enumerate(lines[1:], start=1):
+        if line.rstrip(b"\r\n") == b"---":
+            return b"".join(lines[index + 1:])
+    return raw
 
 
 def file_sha256(path: Path) -> str:

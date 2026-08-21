@@ -1074,10 +1074,16 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
     # PARIVARTANA_DIRECTIONAL (arm A, OFF): withhold that relief where the exchange partner
     # is itself afflicted or lords a dusthana — Raman's exchanges transmit the partner's
     # condition (HTJAH-I:9119, :9143) as readily as they benefit (HTJAH-I:8837).
-    lord_partner_bad = _partner_afflicted(lord, pairs, chart, marakas) \
-        if _in_parivartana(lord, pairs) else False
-    karaka_partner_bad = _partner_afflicted(karaka, pairs, chart, marakas) \
-        if _in_parivartana(karaka, pairs) else False
+    # Both arms ship OFF, and every use below is gated on a flag, so at the shipped defaults
+    # this whole measurement is discarded. `_partner_afflicted` runs `dignity`, `neecha_bhanga`,
+    # a combustion grade and a dusthana-lordship scan per exchange partner, once per
+    # signification per frame — the same reason `_effective_strength` returns early for its own
+    # disabled measurement. Flipping either arm on restores the work unchanged.
+    _arms_on = PARIVARTANA_DIRECTIONAL or PARIVARTANA_TRANSMITS
+    lord_partner_bad = (_arms_on and _in_parivartana(lord, pairs)
+                        and _partner_afflicted(lord, pairs, chart, marakas))
+    karaka_partner_bad = (_arms_on and _in_parivartana(karaka, pairs)
+                          and _partner_afflicted(karaka, pairs, chart, marakas))
     if parivartana_resilient:
         if lord_strong is False and _in_parivartana(lord, pairs) \
                 and _debilitated_uncancelled(lord, chart) \

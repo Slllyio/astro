@@ -16,7 +16,8 @@ import pytest
 from tools.raman_saab.persona_birthdata import BirthRecord
 from tools.raman_saab.persona_study import (
     Candidate, PER_STRATUM, ROSTER, _pole, _pole_matches, admit, chart_key_for,
-    coinflip_answers, cross_chart, permutation_p, reference_date, time_precision)
+    coinflip_answers, cross_chart, off_vocabulary, option_vocabulary, permutation_p,
+    reference_date, time_precision)
 
 
 def _rec(**kw) -> BirthRecord:
@@ -218,3 +219,48 @@ class TestBookkeeping:
     def test_no_person_is_registered_twice(self):
         slugs = [c.slug for c in ROSTER]
         assert len(slugs) == len(set(slugs))
+
+
+class TestTheAnswerVocabularyGate:
+    """An option code no question offered does not crash anything — it simply never matches,
+    so the study reports a colder number for a reason recorded nowhere. `verify` is the last
+    point at which that is still cheap to see, and it runs before any key is computed.
+    """
+
+    payload = {"instrument": {"parts": [{"part": "A", "questions": [
+        {"qid": "inst.v2.A18", "kind": "multi", "options": [
+            {"value": "law"}, {"value": "transport"}]},
+        {"qid": "inst.v2.A25", "kind": "year", "options": []},
+        {"qid": "inst.v2.A35", "kind": "events", "options": [
+            {"value": "marriage"}, {"value": "job_start"}]},
+        {"qid": "inst.v2.C1", "kind": "choice", "options": [
+            {"value": "opt1"}, {"value": "opt2"}]},
+    ]}]}}
+
+    def _stray(self, answers: dict) -> dict:
+        return off_vocabulary(answers, option_vocabulary(self.payload))
+
+    def test_every_code_the_question_offered_passes_silently(self):
+        """A multi answer drawn wholly from its own option bank raises nothing."""
+        assert self._stray({"inst.v2.A18": "law,transport"}) == {}
+
+    def test_a_code_belonging_to_another_question_is_named(self):
+        """`manual` is a work-MODE code; on the trade question it can only ever miss."""
+        assert self._stray({"inst.v2.A18": "law,manual"}) == {"inst.v2.A18": ("manual",)}
+
+    def test_a_repeat_row_is_checked_against_its_base_question(self):
+        """Event rows arrive as `A35#3`; the vocabulary belongs to `A35`."""
+        assert self._stray({"inst.v2.A35#3": "1990-06:marriage"}) == {}
+        assert self._stray({"inst.v2.A35#3": "1990:divorce"}) == {"inst.v2.A35#3": ("divorce",)}
+
+    def test_a_question_with_no_options_is_left_alone(self):
+        """A year is a year — there is no bank to check it against."""
+        assert self._stray({"inst.v2.A25": "1959"}) == {}
+
+    def test_a_confidence_carries_no_option_code(self):
+        """`C1.confidence` is 1..5, not one of C1's two poles."""
+        assert self._stray({"inst.v2.C1": "opt2", "inst.v2.C1.confidence": "4"}) == {}
+
+    def test_an_answer_to_a_question_that_does_not_exist_is_named(self):
+        """A qid the payload never carried is a worse error than a stray code, not a lesser one."""
+        assert self._stray({"inst.v2.A99": "yes"}) == {"inst.v2.A99": ("<no such question>",)}

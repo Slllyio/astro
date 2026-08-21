@@ -269,3 +269,38 @@ class TestAMultiSelectSurvivesTheWire:
         resp = await client.post("/report/feedback/instrument", json={
             **CANONICAL, "answers": [{"qid": q["qid"], "answer": "x" * 5000}]})
         assert resp.status_code == 422
+
+
+class TestAFreeTextRowIsCheckedLikeAnyOther:
+    """The endpoint's promise is that a client cannot invent a question. That promise was
+    only kept for rows carrying an `answer`: the validation payload filtered on
+    `a.answer is not None`, so a row with free text and no answer skipped validation
+    entirely and was stored under whatever qid the client sent, with the qid itself
+    standing in for the question text.
+    """
+
+    async def test_an_invented_qid_carrying_only_free_text_is_refused(self, client):
+        """A qid the instrument never asked is rejected whether or not it has an answer."""
+        body = {**CANONICAL, "answers": [
+            {"qid": "inst.v2.NOT_A_QUESTION", "free_text": "stored under a made-up question"}]}
+        resp = await client.post("/report/feedback/instrument", json=body)
+        assert resp.status_code == 400, resp.text
+        assert "unknown question" in resp.text
+
+    async def test_a_real_question_answered_only_in_prose_is_still_accepted(self, client,
+                                                                           db_engine):
+        """Refusing the invented qid must not refuse the legitimate case: a reader who writes
+        a sentence against a real question without ticking any option."""
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+        from sqlalchemy import select
+        from app.models.domain import ChartFeedback
+        q = _first_scored_choice()
+        body = {**CANONICAL, "answers": [{"qid": q["qid"], "free_text": "no option fits me"}]}
+        resp = await client.post("/report/feedback/instrument", json=body)
+        assert resp.status_code == 200, resp.text
+        sm = async_sessionmaker(db_engine, expire_on_commit=False)
+        async with sm() as s:
+            rows = (await s.execute(select(ChartFeedback))).scalars().all()
+        stored = {r.question_id: r for r in rows}[q["qid"]]
+        assert stored.free_text == "no option fits me"
+        assert stored.question_text == q["text_en"]      # server's text, not the bare qid

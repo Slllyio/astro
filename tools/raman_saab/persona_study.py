@@ -201,6 +201,12 @@ def resolve_roster(*, pause: float = 0.3) -> dict:
 
 
 def sha256_of(path: Path) -> str:
+    """The digest recorded in `answers_manifest.json` for one collected answer file.
+
+    Whole-file, not content-normalised: any edit at all — a reordered key, a changed
+    confidence, a re-run answer — must change the digest, because the manifest's only job is
+    to make "these answers were not revised after a score was seen" checkable by a stranger.
+    """
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 

@@ -240,7 +240,12 @@ def build_marriage_timing(r) -> Optional[MarriageTiming]:
             _add(p, "a planet occupying the 7th house", 867)
 
     ranked = [g for g in givers if g.ranked]
-    strongest = max(ranked, key=lambda g: g.strength_rupas).planet if ranked else ""
+    # `_rupas` returns 0.0 for a planet carrying no Shadbala. If NO ranked giver has a measured
+    # strength, every candidate ties at zero and `max` returns whichever was built first — so
+    # "the strongest of these lords" would be answered by construction order. Raman ranks by
+    # strength; without a strength there is no ranking, and the field stays empty.
+    measured = [g for g in ranked if g.strength_rupas > 0.0]
+    strongest = max(measured, key=lambda g: g.strength_rupas).planet if measured else ""
     givers.sort(key=lambda g: (not g.ranked, -g.strength_rupas, g.planet))
 
     # ── the two delay factors ────────────────────────────────────────────────

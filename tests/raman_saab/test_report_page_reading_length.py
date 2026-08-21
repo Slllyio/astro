@@ -49,8 +49,10 @@ class TestWiring:
 
     def test_the_toggle_is_offered_on_the_full_reading_too(self, page):
         """Otherwise the short reading is undiscoverable from where readers start."""
-        head = page[page.index("chapter(2);\n  add(readingLengthToggle());"):]
-        assert head.startswith("chapter(2);")
+        # `page[page.index(x):].startswith("chapter(2);")` is true by construction once the
+        # index call succeeds — the only real check was the ValueError it would otherwise raise.
+        assert "chapter(2);\n  add(readingLengthToggle());" in page, \
+            "the reading-length toggle no longer follows chapter(2) in the full reading"
 
     def test_every_folio_carries_the_way_back(self, page):
         """A mode you cannot find your way out of is a trap: in the short reading the other

@@ -231,14 +231,51 @@ class TestVerdictAuthorityInvariant:
         this is the same wall `varga_judge` and the matter-varga readings stand behind."""
         import pathlib
         root = pathlib.Path(__file__).resolve().parents[2] / "app" / "raman_saab"
+        # The verdict path, by its real paths. `judges/total.py` and `judges/conditions.py`
+        # do not exist — EvalContext lives in `doctrine/conditions.py` and the Shadbala total
+        # in `primitives/shadbala/total.py` — so the old tuple resolved to one file and the
+        # `if f.exists()` guard silently skipped the rest. A guard that inspects nothing
+        # passes, which is the one thing an invariant test must never do.
         verdict_path = (
             root / "judges" / "house_template.py",
-            root / "judges" / "total.py",
-            root / "judges" / "conditions.py",
+            root / "judges" / "house_judge.py",
+            root / "doctrine" / "conditions.py",
+            root / "primitives" / "shadbala" / "total.py",
         )
+        read = 0
         for f in verdict_path:
-            if not f.exists():
-                continue
+            assert f.exists(), f"the verdict path moved: {f}"
+            read += 1
             src = f.read_text(encoding="utf-8")
             assert "medical_astrology" not in src, f
             assert "medical_reading" not in src, f
+        assert read == len(verdict_path)
+
+
+class TestEverySurfaceCarriesTheSixthLordsNavamsa:
+    """REPORT COMPLETENESS: every field the report computes appears on every surface. The 6th
+    lord's navamsa sign is computed by `build_medical_reading` and printed by the markdown
+    renderer, but the standalone HTML dropped it — so the two surfaces disagreed about what
+    the medical read contains.
+    """
+
+    @pytest.fixture(scope="class")
+    def rendered(self):
+        from app.raman_saab.detailed_report import build_detailed_report
+        from app.raman_saab.detailed_report import to_markdown
+        from app.raman_saab.report_html import standalone_html
+        r = build_detailed_report(_CANONICAL)
+        return r, standalone_html(r), to_markdown(r)
+
+    def test_the_navamsa_sign_is_computed(self, rendered):
+        """The reading carries it, so both renderers owe the reader a sight of it."""
+        r, _html, _md = rendered
+        assert 1 <= r.medical.sixth_lord_navamsa_sign <= 12
+
+    def test_it_reaches_the_markdown_and_the_standalone_html_alike(self, rendered):
+        """Whichever surface a reader opens, the same fact is on it."""
+        from app.raman_saab.detailed_report import _MED_SIGNS
+        r, html, md = rendered
+        name = _MED_SIGNS[r.medical.sixth_lord_navamsa_sign - 1]
+        assert f"navamsa {name}" in md
+        assert f"navamsa {name}" in html

@@ -3532,8 +3532,12 @@ function render(R, S, FQ){
     add(para(md.caveat,'lede'));
     add(para(t('Raman\u2019s own procedure')+': \u201c'+md.application+'\u201d (HPA-29:433-440)','quote'));
     add(para(t('The SIGN supplies the body part; the PLANET supplies the complaint \u2014 that division of labour is Raman\u2019s own last clause.'),'muted'));
+    /* the lord's navamsa rides here on every surface — the markdown and the standalone HTML
+       both print it, and a field the report computes appears in every reading. */
     add(para(t('The 6th from lagna')+' \u2014 '+md.sixth_sign_name+', '+t('lord')+' '+md.sixth_lord
-             +(md.sixth_lord_house?(' '+t('in house')+' '+md.sixth_lord_house):'')));
+             +(md.sixth_lord_house?(' '+t('in house')+' '+md.sixth_lord_house):'')
+             +((md.sixth_lord_navamsa_sign>=1&&md.sixth_lord_navamsa_sign<=12)
+                 ?(', '+t('navamsa')+' '+SIGN[md.sixth_lord_navamsa_sign]):'')));
     if((md.occupants||[]).length) add(para(t('In the 6th')+' \u2014 '+md.occupants.join(', ')));
     if((md.aspecting||[]).length) add(para(t('Aspecting the 6th')+' \u2014 '+md.aspecting.join(', ')));
     if((md.unlisted_bodies||[]).length) add(para(t('Present but not tabled')+' \u2014 '+md.unlisted_bodies.join(', ')

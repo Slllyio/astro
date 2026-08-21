@@ -192,7 +192,14 @@ def build_career_frames(r) -> Optional[CareerFrames]:
     if not centres:
         return None
 
-    strongest = max(centres, key=lambda c: strengths.get(c[0], 0.0))[0]
+    # `strengths` is empty on a chart that carries neither a bhava bala for the first house
+    # nor a shadbala for either luminary. Every centre then scores 0.0, `max` returns whichever
+    # was appended first, and the reading prints "Lagna carries 0.0 rupas ..., the highest of
+    # the three centres" — a ranking produced by list order and presented as a measurement.
+    # This module's own contract is that a centre the chart cannot support would be an
+    # invention, so the comparison is withheld instead of decided.
+    measured = bool(strengths)
+    strongest = max(centres, key=lambda c: strengths.get(c[0], 0.0))[0] if measured else ""
     top = strengths.get(strongest, 0.0)
 
     frames: list[CareerFrame] = []
@@ -223,7 +230,7 @@ def build_career_frames(r) -> Optional[CareerFrames]:
             sign_career=CAREER_BY_SIGN.get(tenth, ""),
             strength_rupas=round(strengths.get(centre, 0.0), 2),
             strength_basis=_STRENGTH_BASIS.get(centre, ""),
-            is_strongest=(centre == strongest),
+            is_strongest=(measured and centre == strongest),
             note=note))
 
     # the blending clause: centres within the tolerance of the top are "more or less of
@@ -268,7 +275,12 @@ def build_career_frames(r) -> Optional[CareerFrames]:
             f"{strongest} carries {round(top, 2)} rupas ({_STRENGTH_BASIS.get(strongest, '')}), "
             f"the highest of the three centres. Raman compares an ascendant bhava bala "
             f"against a graha shadbala in exactly this way at HTJAH-I:13986, so the mixed "
-            f"basis is his precedent; each centre's own measure is named beside it."),
+            f"basis is his precedent; each centre's own measure is named beside it."
+            if measured else
+            "This chart carries no strength measure for any of the three centres, so no centre "
+            "can be ranked. All three reckonings are reported side by side and none is "
+            "preferred — Raman ranks by strength, and without a strength there is no ranking "
+            "to report."),
         blended=blended,
         blended_note=blended_note,
         convergent=convergent,

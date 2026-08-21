@@ -121,7 +121,8 @@ be, btot, _ = G.track_b_scoreboard()
 bw, _t, breal = G.track_b_ordinal_scoreboard()
 print(f"charts={len(CHARTS)}  significations={len(base_all)}")
 hdr = f"{'reading':38} {'bhanga fires':>13} {'exact':>10} {'within-1':>10} {'real':>5} {'moved':>7}"
-print(hdr); print("-" * len(hdr))
+print(hdr)
+print("-" * len(hdr))
 notes = []
 for name, a, b, c, ext in READINGS:
     fn = make(a, b, c, ext)

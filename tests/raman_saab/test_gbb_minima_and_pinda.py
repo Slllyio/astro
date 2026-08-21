@@ -37,6 +37,12 @@ class TestMinimaMatchRaman:
     def test_every_planet_matches_the_printed_figure(self):
         """All seven bars are Raman's own, not tuned values wearing his citation."""
         from app.raman_saab.primitives.shadbala.total import MIN_REQUIRED
+        # Iterating _RAMAN_MINIMA alone leaves the check one-way: a key MIN_REQUIRED gains
+        # that Raman prints no bar for — a node, or a renamed body — would pass unnoticed,
+        # which is exactly the "tuned value wearing his citation" this test exists to catch.
+        assert set(MIN_REQUIRED) == set(_RAMAN_MINIMA), (
+            f"MIN_REQUIRED carries planets GBB-8:303-312 prints no bar for: "
+            f"{sorted(set(MIN_REQUIRED) - set(_RAMAN_MINIMA))}")
         for planet, want in _RAMAN_MINIMA.items():
             assert MIN_REQUIRED[planet] == want, (
                 f"{planet}: engine {MIN_REQUIRED[planet]} vs GBB-8:303-312 {want}")

@@ -198,8 +198,64 @@ class TestVerdictAuthorityInvariant:
         reports the three reckonings and must never feed the decision."""
         import pathlib
         root = pathlib.Path(__file__).resolve().parents[2] / "app" / "raman_saab"
-        for f in (root / "judges" / "house_template.py",
-                  root / "judges" / "total.py",
-                  root / "judges" / "conditions.py"):
-            if f.exists():
-                assert "career_frames" not in f.read_text(encoding="utf-8"), f
+        # The verdict path, by its real paths. `judges/total.py` and `judges/conditions.py`
+        # do not exist — EvalContext lives in `doctrine/conditions.py` and the Shadbala total
+        # in `primitives/shadbala/total.py` — so the old tuple resolved to one file and the
+        # `if f.exists()` guard silently skipped the rest. A guard that inspects nothing
+        # passes, which is the one thing an invariant test must never do.
+        verdict_path = (
+            root / "judges" / "house_template.py",
+            root / "judges" / "house_judge.py",
+            root / "doctrine" / "conditions.py",
+            root / "primitives" / "shadbala" / "total.py",
+        )
+        read = 0
+        for f in verdict_path:
+            assert f.exists(), f"the verdict path moved: {f}"
+            read += 1
+            src = f.read_text(encoding="utf-8")
+            assert "career_frames" not in src, f
+        assert read == len(verdict_path)
+
+
+class TestAnUnmeasuredChartNamesNoStrongestCentre:
+    """Raman ranks the three centres by strength, and the module's own docstring says a centre
+    the chart cannot support would be an invention. When no strength is available at all —
+    no bhava bala on the first house and no shadbala on either luminary, which is a Track-B
+    chart — every centre scores 0.0 and `max` returns whichever came first in construction
+    order. The reading then prints "Lagna carries 0.0 rupas ..., the highest of the three
+    centres" and marks it "(strongest)": a ranking produced by list order, presented as a
+    measurement.
+    """
+
+    def test_with_no_strength_data_no_centre_is_marked_strongest(self, report):
+        """The comparison is withheld, not decided by which centre happens to be listed first."""
+        import types
+
+        class _Unmeasured:
+            """The real planet with its shadbala removed — a Track-B chart carries none."""
+            def __init__(self, src):
+                object.__setattr__(self, "_src", src)
+
+            shadbala_rupas = None
+
+            def __getattr__(self, name):
+                return getattr(object.__getattribute__(self, "_src"), name)
+
+        chart = types.SimpleNamespace(
+            asc_sign=report.chart.asc_sign,
+            planets={k: _Unmeasured(v) for k, v in report.chart.planets.items()})
+        bare = types.SimpleNamespace(chart=chart, house_strength=())
+
+        out = build_career_frames(bare)
+        assert out is not None
+        assert out.strongest == ""
+        assert not any(f.is_strongest for f in out.frames)
+        assert "no centre can be ranked" in out.strongest_why
+        assert "0.0 rupas" not in out.strongest_why
+
+    def test_a_measured_chart_still_ranks_its_centres(self, frames):
+        """The canonical chart carries strength, so the ranking is a real one and survives."""
+        assert frames.strongest in {"Lagna", "Moon", "Sun"}
+        assert sum(1 for f in frames.frames if f.is_strongest) == 1
+        assert "rupas" in frames.strongest_why

@@ -60,11 +60,19 @@ class TestTheWholeReportIsStableAcrossProcesses:
             "m=to_markdown(build_detailed_report("
             "BirthData('Canonical Test',1990,7,15,12,0,5.5,12.97,77.59)));"
             "print(hashlib.sha256(m.encode()).hexdigest())")
+        # Anchor the child on the repo root derived from __file__, not on the parent's cwd.
+        # `PYTHONPATH: "."` resolves against wherever pytest was launched, so running the
+        # suite from a subdirectory made the child fail to import app.raman_saab — an import
+        # error reported as a determinism failure. It also discarded any inherited PYTHONPATH.
+        import pathlib
+        root = pathlib.Path(__file__).resolve().parents[2]
+        inherited = os.environ.get("PYTHONPATH", "")
         digests = []
         for seed in ("1", "12345"):
-            env = {**os.environ, "PYTHONHASHSEED": seed, "PYTHONPATH": "."}
+            env = {**os.environ, "PYTHONHASHSEED": seed,
+                   "PYTHONPATH": os.pathsep.join(x for x in (str(root), inherited) if x)}
             r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
-                               env=env, timeout=900)
+                               env=env, cwd=str(root), timeout=900)
             assert r.returncode == 0, r.stderr[-2000:]
             digests.append(r.stdout.strip())
         assert digests[0] and digests[0] == digests[1], digests

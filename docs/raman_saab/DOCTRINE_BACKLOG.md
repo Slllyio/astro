@@ -1063,7 +1063,7 @@ affect the reading: both statements assert the same rule.)
 
 | reading | bhanga fires | exact | within-1 | real errors | significations moved |
 |---|---|---|---|---|---|
-| R1 shipped — (a)(b)(c)+extended | 63/63 | 259/293 | 283/293 | 10 | — |
+| R1 as measured — (a)(b)(c)+extended | 63/63 | 259/293 | 283/293 | 10 | — |
 | R2 drop (c) conjunction | 63/63 | 259/293 | 283/293 | 10 | 0 |
 | R3 drop extended drishti | 63/63 | 259/293 | 283/293 | 10 | 0 |
 | R4 keep only what Raman works | 63/63 | 259/293 | 283/293 | 10 | 0 |
@@ -1086,9 +1086,19 @@ affect the reading: both statements assert the same rule.)
 
 **Recommendation: change no behaviour.** The doctrine came out in favour of what is already
 encoded. What was actually wrong was the citation and two claims in the docstring, and those
-are fixed in this commit. The one live question left for a human is cosmetic-but-honest:
+are fixed in this commit. The one live question left for a human was cosmetic-but-honest:
 branch (c) is dead code kept "for textual fidelity" — keep it as a mirror of the quoted line,
 or delete it as provably unreachable? Either is defensible; it cannot change a reading.
+
+**CLOSED 2026-08-21 — branch (c) DELETED on user sign-off.** The shipped reading is now
+**(a)(b)+extended**; the table above records the measurement as it stood, so R1 names the
+configuration measured, not the one shipped. Deletion moved nothing, exactly as R2 predicted:
+259/293 · 283/293 · 10 real errors, 0 significations moved. `bhangas.kemadruma_bhanga`
+quotes the line in full in its docstring, which is where fidelity to the text belongs — an
+`if` that cannot fire records nothing a reader can check. The extended benefic-drishti branch
+STAYS (it is not provably redundant) and keeps its NOT-3HC label; a test now builds the chart
+only it can cancel — Moon in the 2nd, Jupiter in the 6th — so deleting it would fail loudly
+rather than silently.
 
 ## Chara dasa x Karakamsa pairing (2026-08-19) — NOT ENCODABLE from the mounted text
 

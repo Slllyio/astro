@@ -79,8 +79,10 @@ class TestAnchorsLandOnText:
         for yoga, toks in NH_EXAMPLES.items():
             for tok in toks:
                 p = sources.passage(tok, context=0)
-                if p is None:
-                    continue
+                # Skipping an unresolved token made this test pass when an anchor was
+                # malformed or out of range — the two failures a re-mine is most likely to
+                # introduce. The whole test is corpus-gated, so absence is already handled.
+                assert p is not None, f"{yoga} @ {tok} resolves to nothing"
                 if yoga.lower() not in str(p.get("text", "")).lower():
                     wrong.append(f"{yoga} @ {tok}")
         assert not wrong, f"anchors that do not name their yoga: {wrong}"

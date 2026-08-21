@@ -2531,7 +2531,11 @@ def _medical_section(r: DetailedReport) -> str:
     from app.raman_saab.doctrine.medical_astrology import APPLICATION
     head = [f'<b>The 6th from lagna</b> &mdash; {_esc(med.sixth_sign_name)}, '
             f'lord {_esc(med.sixth_lord)}'
-            + (f' in house {med.sixth_lord_house}' if med.sixth_lord_house else '')]
+            + (f' in house {med.sixth_lord_house}' if med.sixth_lord_house else '')
+            # the markdown surface prints the lord's navamsa here too; REPORT COMPLETENESS
+            # means the two renderers show the same reading, not two different subsets of it.
+            + (f', navamsa {_esc(_SIGN_NAME[med.sixth_lord_navamsa_sign])}'
+               if 1 <= med.sixth_lord_navamsa_sign <= 12 else '')]
     if med.occupants:
         head.append(f'<b>In the 6th</b> &mdash; {_esc(", ".join(med.occupants))}')
     if med.aspecting:

@@ -71,7 +71,6 @@ class TestItIsActuallyPlain:
         """Two more things a reader without the background cannot use. Raw counts stay — "8 of
         56 readings" is a fact anyone can hold — but a percentile is not."""
         blob = " ".join(_prose(summary))
-        assert ":" not in blob.replace("these: ", "").replace("directions:", "") or True
         assert "%" not in blob
         assert "percentile" not in blob.casefold()
 
@@ -181,3 +180,33 @@ class TestGuardsAndShape:
             en = getattr(summary, f"{group}_items_en")
             hi = getattr(summary, f"{group}_items_hi")
             assert len(en) == len(hi)
+
+
+class TestAHouseNothingReadIsNotAContradiction:
+    """`_house_rollup` counts each house's entries as favourable, afflicted, or `other`, and
+    the presence guard admits a house on `other` alone. A house whose every entry is
+    insufficient-evidence therefore falls through to the final `else` and is labelled
+    "mixed" — which the renderer prints under "the parts it reads both ways at once, where
+    the old texts pull in different directions". That states a disagreement the data does not
+    contain, and the same houses flow on into `ShortReading.mixed_en`.
+    """
+
+    def _rollup(self, entries_by_house: dict) -> dict:
+        from app.raman_saab.simple_summary import _house_rollup
+        return _house_rollup({"calibration": {
+            str(h): {"entries": [{"verdict": v} for v in verdicts]}
+            for h, verdicts in entries_by_house.items()}})
+
+    def test_a_house_read_only_as_insufficient_is_not_reported_at_all(self):
+        """Nothing was read either way, so there is no direction to report — and above all
+        no contradiction."""
+        assert self._rollup({7: ["insufficient-evidence", "insufficient-evidence"]}) == {}
+
+    def test_a_house_with_both_poles_is_still_mixed(self):
+        """The genuine contradiction case is untouched."""
+        assert self._rollup({7: ["favourable", "afflicted"]}) == {7: "mixed"}
+
+    def test_one_pole_beside_silence_still_reports_that_pole(self):
+        """An unread entry must not cancel a reading that IS there."""
+        assert self._rollup({7: ["favourable", "insufficient-evidence"]}) == {7: "good"}
+        assert self._rollup({8: ["afflicted", "insufficient-evidence"]}) == {8: "hard"}

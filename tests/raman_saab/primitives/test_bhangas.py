@@ -123,6 +123,25 @@ class TestKemadrumaBhangaAttribution:
         """Jupiter in the 5th or 9th from the Moon aspects it from outside every kendra, so
         unlike (c) this branch could matter — which is exactly why its NOT-3HC label has to
         survive."""
-        from app.raman_saab.primitives.bhangas import _KENDRA, kemadruma_bhanga
+        from app.raman_saab.primitives.bhangas import _KENDRA, kemadruma, kemadruma_bhanga
         assert 5 not in _KENDRA and 9 not in _KENDRA
         assert "NOT-3HC" in (kemadruma_bhanga.__doc__ or "")
+
+        # Moon in the 2nd, Jupiter in the 6th. Jupiter is 5th from the Moon, so it stands
+        # outside every kendra from the Moon AND outside every kendra from the Lagna — (a)
+        # and (b) both miss — while its 9th drishti still lands on the Moon. Only the
+        # extended branch can cancel here, so deleting that branch fails this assertion.
+        class _P:
+            def __init__(self, h, sign):
+                self.rasi_house, self.sign = h, sign
+
+        class _C:
+            asc_sign = 1
+            planets = {"Moon": _P(2, 2), "Jupiter": _P(6, 6)}
+
+        c = _C()
+        assert kemadruma(c) is True, "the Moon must be isolated for a bhanga to matter"
+        assert 6 not in _KENDRA
+        assert ((6 - 2) % 12) + 1 == 5      # Jupiter is 5th from the Moon: no kendra
+        assert kemadruma_bhanga(c) is True, \
+            "the extended benefic-drishti branch is the only one that can fire here"

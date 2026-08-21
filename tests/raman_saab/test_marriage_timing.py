@@ -203,8 +203,46 @@ class TestVerdictAuthorityInvariant:
         """The H7 verdict stays Raman's rasi judgment through `house_template`."""
         import pathlib
         root = pathlib.Path(__file__).resolve().parents[2] / "app" / "raman_saab"
-        for f in (root / "judges" / "house_template.py",
-                  root / "judges" / "total.py",
-                  root / "judges" / "conditions.py"):
-            if f.exists():
-                assert "marriage_timing" not in f.read_text(encoding="utf-8"), f
+        # The verdict path, by its real paths. `judges/total.py` and `judges/conditions.py`
+        # do not exist — EvalContext lives in `doctrine/conditions.py` and the Shadbala total
+        # in `primitives/shadbala/total.py` — so the old tuple resolved to one file and the
+        # `if f.exists()` guard silently skipped the rest. A guard that inspects nothing
+        # passes, which is the one thing an invariant test must never do.
+        verdict_path = (
+            root / "judges" / "house_template.py",
+            root / "judges" / "house_judge.py",
+            root / "doctrine" / "conditions.py",
+            root / "primitives" / "shadbala" / "total.py",
+        )
+        read = 0
+        for f in verdict_path:
+            assert f.exists(), f"the verdict path moved: {f}"
+            read += 1
+            src = f.read_text(encoding="utf-8")
+            assert "marriage_timing" not in src, f
+        assert read == len(verdict_path)
+
+
+class TestAnUnmeasuredChartNamesNoStrongestGiver:
+    """Raman names "the strongest of these lords", and `_rupas` returns 0.0 for a planet that
+    carries no Shadbala. On a chart where no ranked giver has a measured strength every giver
+    scores 0.0, `max` returns whichever was built first, and both renderers print that planet
+    as "**(strongest)**" and "Here that is X" — a ranking asserted from construction order.
+    """
+
+    def test_all_zero_strengths_name_no_strongest(self, report, monkeypatch):
+        """Without a measure there is no strongest, and the field says so by being empty."""
+        monkeypatch.setattr(mtm, "_rupas", lambda chart, planet: 0.0)
+        out = build_marriage_timing(report)
+        assert out is not None
+        assert out.strongest == ""
+        assert any(g.ranked for g in out.givers), "the givers themselves must survive"
+
+    def test_a_measured_chart_still_names_its_strongest(self, timing):
+        """The canonical chart carries Shadbala, so the ranking is real and is kept."""
+        ranked = [g for g in timing.givers if g.ranked]
+        if not ranked or not any(g.strength_rupas > 0.0 for g in ranked):
+            pytest.skip("this chart carries no measured giver strength")
+        assert timing.strongest
+        best = max(ranked, key=lambda g: g.strength_rupas)
+        assert timing.strongest == best.planet

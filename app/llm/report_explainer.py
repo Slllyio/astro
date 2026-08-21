@@ -178,6 +178,17 @@ class GroundedAnswer:
 # ─── evidence assembly (from the structured report dict) ────────────────────────
 
 def _f(facts: list, text: str, cite: Optional[str] = None) -> None:
+    """Append a numbered fact, unless there is nothing to say.
+
+    Several callers pass an optional field straight through (`mt["subordination"]`,
+    `_cf["convergence_note"]`, `_cf["caution"]`, `med["provenance"]`). When one is absent an
+    unguarded append produced a numbered `[Fact N]` carrying no text — which the model can
+    cite, and which shifts every later fact number by one, so a citation that looks right
+    points at the wrong evidence. Dropping the blank here keeps the numbering contiguous for
+    every caller at once, rather than relying on each site to remember its own guard.
+    """
+    if not (text or "").strip():
+        return
     facts.append(Fact(n=len(facts) + 1, text=text, cite=cite))
 
 

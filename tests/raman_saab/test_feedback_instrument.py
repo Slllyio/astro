@@ -404,8 +404,21 @@ class TestVerdictAuthorityInvariant:
         """Asking a reader about a house must never be able to change how the house is judged."""
         import pathlib
         root = pathlib.Path(__file__).resolve().parents[2] / "app" / "raman_saab"
-        for f in (root / "judges" / "house_template.py",
-                  root / "judges" / "total.py",
-                  root / "judges" / "conditions.py"):
-            if f.exists():
-                assert "feedback_instrument" not in f.read_text(encoding="utf-8"), f
+        # The verdict path, by its real paths. `judges/total.py` and `judges/conditions.py`
+        # do not exist — EvalContext lives in `doctrine/conditions.py` and the Shadbala total
+        # in `primitives/shadbala/total.py` — so the old tuple resolved to one file and the
+        # `if f.exists()` guard silently skipped the rest. A guard that inspects nothing
+        # passes, which is the one thing an invariant test must never do.
+        verdict_path = (
+            root / "judges" / "house_template.py",
+            root / "judges" / "house_judge.py",
+            root / "doctrine" / "conditions.py",
+            root / "primitives" / "shadbala" / "total.py",
+        )
+        read = 0
+        for f in verdict_path:
+            assert f.exists(), f"the verdict path moved: {f}"
+            read += 1
+            src = f.read_text(encoding="utf-8")
+            assert "feedback_instrument" not in src, f
+        assert read == len(verdict_path)

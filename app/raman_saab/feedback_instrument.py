@@ -808,8 +808,8 @@ def _choice_rows(report: dict, max_choices: int) -> list[dict[str, Any]]:
 def _boundary_rows(report: dict) -> list[dict[str, str]]:
     """Every Mahadasha change inside the report's own window, as calendar dates.
 
-    These are what a freely-given list of turning points (A30) is compared against. They are
-    shown only in Part C, never beside A30 — a reader who sees the dates first will find events
+    These are what a freely-given list of turning points (A35) is compared against. They are
+    shown only in Part C, never beside A35 — a reader who sees the dates first will find events
     near them, which is the failure mode the whole instrument exists to avoid.
     """
     out: list[dict[str, str]] = []

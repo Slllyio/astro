@@ -73,7 +73,13 @@ class TestDetailedReport:
             assert tp.period.antar is not None
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
-        assert "Mahadasha" in markdown and "**Saturn AD** (" in markdown
+        assert "Mahadasha" in markdown
+        # Derived from the window, not pinned to a lord. `ref_jd` follows the wall clock, so
+        # the windowed bhukti list moves with real time and "Saturn AD" would eventually leave
+        # it — failing this test on a future date with no code change at all.
+        assert any(f"**{tp.period.antar} AD** (" in markdown
+                   for tp in report.timeline.periods), \
+            "no Antardasha in the window is labelled in the narrative"
         # the HTJAH-I four-tier grading vocabulary all appears across the window
         for tier in ("par excellence", "ordinary", "limited (bhukti lord only)",
                      "feeble (MD lord only)"):

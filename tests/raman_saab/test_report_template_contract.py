@@ -753,8 +753,10 @@ class TestInterpretationGuide:
         skipped = []
         for cite in cites:
             work, line = cite.rsplit(":", 1)
-            book = work.split("-")[0]
-            if book not in have:
+            # Compare the WHOLE tag. `work.split("-")[0]` turned HTJAH-I and HTJAH-II into
+            # "HTJAH", which `vendored_books()` never returns, so every citation into the two
+            # largest books was skipped instead of checked — 12 of 18 in all.
+            if work not in have:
                 skipped.append(cite)
                 continue
             assert verify(Citation(work, int(line))), cite

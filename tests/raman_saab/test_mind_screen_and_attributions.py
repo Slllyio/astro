@@ -148,3 +148,31 @@ class TestJaiminiPairingRecordedAsUnavailable:
         assert chara is not None, "the Chara Dasa chapter is not mounted"
         assert hits[chara] == 0, "chapter 4 now mentions karakamsa — re-open the item"
         assert any(v > 0 for n, v in hits.items() if "summary" in n)
+
+
+class TestAnEmptyFactIsNeverNumbered:
+    """`_f` numbers each fact by its position, and the model is told to cite by that number.
+    Several callers pass a possibly-absent field straight through — `mt["subordination"]`,
+    `_cf["convergence_note"]`, `_cf["caution"]`, `med["provenance"]`. When one is missing the
+    evidence list gains a numbered `[Fact N]` with no text: the model can cite an empty fact,
+    and every later fact number shifts by one, so a citation that looks right points at the
+    wrong evidence.
+    """
+
+    def test_a_blank_fact_is_dropped_rather_than_numbered(self):
+        from app.llm.report_explainer import _f
+        facts = []
+        _f(facts, "a real fact", cite="HTJAH-I:1")
+        _f(facts, "", cite="HTJAH-II:881")
+        _f(facts, "   ", cite="HPA-29:353")
+        _f(facts, "another real fact")
+        assert [x.text for x in facts] == ["a real fact", "another real fact"]
+
+    def test_the_numbering_stays_contiguous_from_one(self):
+        """This is the point: a dropped blank must not leave a hole in the sequence."""
+        from app.llm.report_explainer import _f
+        facts = []
+        for text in ("first", "", "second", None, "third"):
+            _f(facts, text or "")
+        assert [x.n for x in facts] == [1, 2, 3]
+        assert [x.text for x in facts] == ["first", "second", "third"]

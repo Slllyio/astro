@@ -182,6 +182,12 @@ def _house_rollup(report: dict) -> dict[int, str]:
                 other += 1
         if not (good or bad or other):
             continue
+        if not (good or bad):
+            # Every entry was insufficient-evidence: nothing was read either way. Falling
+            # through to the `else` below labelled this "mixed", which the renderer prints as
+            # "reads both ways at once, where the old texts pull in different directions" — a
+            # disagreement the data does not contain. Silence is not a contradiction.
+            continue
         if good and not bad:
             out[house] = "good"
         elif bad and not good:

@@ -1215,7 +1215,7 @@ def render_aggregate_html(agg: Aggregate, cards: Sequence[ChartScorecard]) -> st
         f"<h3>{esc(q)}</h3>" + "".join(f"<blockquote>{esc(t)}</blockquote>" for t in texts)
         for q, texts in agg.free_text.items())
     per_chart = "".join(
-        f"<tr><td class='mono'>{esc(c.chart_key or '&mdash;')}</td>"
+        f"<tr><td class='mono'>{esc(c.chart_key or '—')}</td>"
         f"<td>{esc(c.context)}</td><td class='n'>{c.forced.hits}/{c.forced.n}</td>"
         f"<td class='n'>{c.event_houses.top_grade}/{c.event_houses.events}</td>"
         f"<td class='n'>{c.spine.near_boundary}/{c.spine.events}</td></tr>" for c in cards)
@@ -1276,9 +1276,13 @@ No pooled p-value: each chart's null is its own set of per-house base rates.</p>
 
 def _card_json(c: ChartScorecard) -> dict[str, Any]:
     d = asdict(c)
-    d["forced"]["rate"] = c.forced.rate
-    d["forced"]["weighted_rate"] = c.forced.weighted_rate
-    d["inverted"]["rate"] = c.inverted.rate
+    # `asdict` drops @property values, so every nested ForcedChoice loses `rate` and
+    # `weighted_rate`. Re-adding them for some pools and not others left a JSON consumer
+    # looking at four pools with three different shapes.
+    for name in ("forced", "inverted", "confident", "unsure"):
+        pool = getattr(c, name)
+        d[name]["rate"] = pool.rate
+        d[name]["weighted_rate"] = pool.weighted_rate
     return d
 
 

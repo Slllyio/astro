@@ -23,9 +23,10 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
-from typing import Any
+from typing import Any, Optional
 
-from app.raman_saab.detailed_report import (DetailedReport, distinctive_gloss,
+from app.raman_saab.detailed_report import (PREPONDERANCE_RULES, DetailedReport,
+                                            distinctive_gloss,
                                             gochara_synthesis_sentence, graded_buckets,
                                             influence_basis, influence_basis_table)
 from app.raman_saab.detailed_report import POPULATION_NOTE as _POPULATION_NOTE
@@ -213,12 +214,70 @@ def _yoga_coverage(r: DetailedReport) -> dict:
     }
 
 
+def feedback_instrument_for(r: DetailedReport) -> dict:
+    """The instrument, from the four projections it actually reads.
+
+    `build_feedback_instrument` takes the report DICT, and calling `to_report_dict` from inside
+    `to_report_dict` is not an option — so the inputs are projected once here, with the same
+    helpers the full dict uses, and handed over. Keep this list in step with what the module
+    reads; a silently missing key degrades a part rather than raising.
+
+    Public because the markdown and standalone renderers need it too and hold a DetailedReport,
+    not a dict. They import it lazily inside their own function bodies: this module imports
+    `detailed_report` at module level, so a top-level import back the other way would cycle.
+    """
+    from app.raman_saab.feedback_instrument import build_feedback_instrument
+    b = r.birth
+    return build_feedback_instrument({
+        "birth": {"year": b.year, "month": b.month, "day": b.day, "hour": b.hour,
+                  "minute": b.minute, "tz_offset": b.tz_offset,
+                  "latitude": b.latitude, "longitude": b.longitude},
+        "chart": {"asc_sign": r.chart.asc_sign, "asc_lon": round(r.chart.asc_lon, 6)},
+        "calibration": {str(h): _ad(cr) for h, cr in r.calibration.items()},
+        "timeline": _timeline_dict(r.timeline, r.chart),
+    })
+
+
+def simple_summary_for_dict(report: dict) -> Optional[dict]:
+    """The plain-words summary as a JSON-safe dict, from an already-built report dict."""
+    from dataclasses import asdict
+
+    from app.raman_saab.simple_summary import build_simple_summary
+    summary = build_simple_summary(report)
+    return asdict(summary) if summary is not None else None
+
+
+def short_reading_for_dict(report: dict) -> Optional[dict]:
+    """The short reading as a JSON-safe dict, from an already-built report dict.
+
+    Always present in the payload, whichever reading length the caller asked for: the mode is
+    a rendering choice, and a page that can toggle between the two without a second cast is
+    only possible if both are carried."""
+    from dataclasses import asdict
+
+    from app.raman_saab.short_reading import build_short_reading
+    short = build_short_reading(report)
+    return asdict(short) if short is not None else None
+
+
+def short_reading_for(r: DetailedReport) -> Optional[dict]:
+    """The same, from a DetailedReport — for the markdown and standalone renderers."""
+    return short_reading_for_dict(to_report_dict(r))
+
+
+def simple_summary_for(r: DetailedReport) -> Optional[dict]:
+    """The same, from a DetailedReport — for the markdown and standalone renderers, which hold
+    the report object rather than the dict. Imported lazily by them: this module imports
+    `detailed_report` at module level, so a top-level import back the other way would cycle."""
+    return simple_summary_for_dict(to_report_dict(r))
+
+
 def to_report_dict(r: DetailedReport) -> dict:
     """The full structured report as a JSON-safe dict — the shared grounding contract."""
     from app.raman_saab.judgment_graph import build_judgment_graph
     b = r.birth
     _jg = build_judgment_graph(r)
-    return {
+    out: dict = {
         "birth": {"name": b.name, "year": b.year, "month": b.month, "day": b.day,
                   "hour": b.hour, "minute": b.minute, "tz_offset": b.tz_offset,
                   "latitude": b.latitude, "longitude": b.longitude},
@@ -246,8 +305,19 @@ def to_report_dict(r: DetailedReport) -> dict:
         # houses + the honesty overlay + the strength / preponderance cross-checks
         "proformas": [_proforma_dict(pf) for pf in r.proformas],
         "calibration": {str(h): _ad(cr) for h, cr in r.calibration.items()},
+        # The feedback instrument — the questionnaire the reader answers about their own life.
+        # Built here rather than in the route so every surface gets the same one, and built
+        # WITHOUT its answer key: `feedback_instrument.instrument_key` recomputes that
+        # server-side for scoring, and shipping it beside the questions would destroy the only
+        # property that makes the answers worth collecting (see that module's docstring).
+        "feedback_instrument": feedback_instrument_for(r),
         "house_strength": _each(r.house_strength),
         "preponderance": _ad(r.preponderance),
+        # the honesty rules that govern that table, one (heading, body) per rule —
+        # shared verbatim with the markdown and standalone renderers so the
+        # disclosure cannot drift between surfaces
+        "preponderance_rules": [{"heading": h, "body": b}
+                                for h, b in PREPONDERANCE_RULES],
         "dashboard": _ad(r.dashboard),
         # append-only 2026-08-17: `gloss` — the plain-language midpoint-side sentence the
         # markdown "What stands out" table shows; existing fields untouched.
@@ -327,6 +397,10 @@ def to_report_dict(r: DetailedReport) -> dict:
         "rect_confidence": (_ad(r.rect_confidence)
                             if r.rect_confidence is not None else None),     # v31
         "aptitude": _ad(r.aptitude) if r.aptitude is not None else None,     # v33
+        # v35: the HPA-29 medical read (sign -> body region, planet -> complaint, applied
+        # through Raman's own 6th-house procedure). Every field ships; the page quotes
+        # `application` rather than re-importing the doctrine module.
+        "medical": _ad(r.medical) if getattr(r, "medical", None) is not None else None,
         "themes": _ad(r.themes) if r.themes is not None else None,           # v34 integrated reading
         # the plain-terms layer (2026-08-04) — the ONE glossary source every surface
         # renders from; vocabulary only, never new astrology.
@@ -388,3 +462,12 @@ def to_report_dict(r: DetailedReport) -> dict:
         "sade_sati_phases": _each(r.sade_sati_phases),
         "chara_sequence": _each(r.chara_sequence),
     }
+    # The plain-words summary is composed FROM the finished dict — it re-reads the house
+    # verdicts, the distinctive readings, the honesty counts and the running period, all of
+    # which are keys above. Building it here rather than inside the literal is what lets it
+    # read them without `to_report_dict` calling itself.
+    out["simple_summary"] = simple_summary_for_dict(out)
+    # The short reading is composed from the finished dict for the same reason — it re-reads
+    # the graded timeline, the fired combinations and the plain summary, all keys above.
+    out["short_reading"] = short_reading_for_dict(out)
+    return out

@@ -34,6 +34,10 @@ from app.raman_saab.primitives import longevity_combos as lc
 
 _SIGNS = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio",
           "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+#: What a dasha field says when the reference date falls outside the unrolled sequence.
+#: One constant so the Vimshottari and chara answers are worded identically — a reader who
+#: learns what it means in one row does not have to learn it again in the next.
+_BEYOND = "(beyond computed sequence)"
 _HOUSE = {1: "Self/Body", 2: "Wealth/Family", 3: "Siblings/Courage", 4: "Mother/Home",
           5: "Children/Mind", 6: "Health/Enemies", 7: "Spouse/Partnership", 8: "Longevity",
           9: "Father/Fortune", 10: "Career", 11: "Gains", 12: "Loss/Moksha/Spirituality"}
@@ -241,8 +245,14 @@ def synthesize(birth: BirthData, *, on: Optional[tuple[int, int, int]] = None,
         career=_career_line(chart),
         longevity_combos=tuple(f"{cls} ({span}): {desc}" for cls, span, desc in lc.fired(chart)),
         panchanga=_panchanga_line(birth, chart),
-        running_md=period.maha, running_ad=period.antar,
-        chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else "(beyond computed sequence)")(
+        # `dasha_on` returns None once `jd` runs past the unrolled sequence (140 years from
+        # the birth MD's start) — the ordinary case for a historical nativity read today, and
+        # a 500 from the public API until this was handled. Say so in the SAME words the chara
+        # dasha uses one line below, rather than falling back to a lord that would read as a
+        # real running period. `antar` is None too on an MD-level hit.
+        running_md=period.maha if period else _BEYOND,
+        running_ad=(period.antar or _BEYOND) if period else _BEYOND,
+        chara=(lambda cp: _SIGNS[cp[0] - 1] if cp else _BEYOND)(
             cd.chara_dasha_on(chart, age)),       # surface None honestly, not a silent Lagna fallback
         sade_sati=tr.sade_sati(chart, y, m, d, ayanamsa=ayanamsa), matters=tuple(matters))
 

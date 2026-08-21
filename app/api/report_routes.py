@@ -38,6 +38,7 @@ from app.raman_saab.detailed_report import (
     to_markdown,
 )
 from app.raman_saab.doctrine import sources
+from app.raman_saab.feedback_instrument import MAX_ANSWER_CHARS
 from app.raman_saab.report_html import standalone_html
 from app.raman_saab.report_json import to_report_dict
 
@@ -69,6 +70,11 @@ class ReportRequest(BaseModel):
     # language. "en" is the only language with full deterministic-report coverage; "hi"
     # covers the UI chrome + every LLM-narrated surface (see PROCESS_AND_METHODOLOGY.md).
     lang: Literal["en", "hi"] = "en"
+    # Reading LENGTH — a rendering choice, never a different computation. "full" is the
+    # default and stays the default: nothing is hidden unless a reader asks for the gist.
+    # "short" re-renders the SAME built report through `short_reading`, so a caller can ask
+    # for either without re-casting, and the JSON payload always carries both.
+    reading: Literal["full", "short"] = "full"
 
 
 def _summary(r) -> dict:
@@ -158,13 +164,22 @@ async def post_report(req: ReportRequest) -> dict:
                           latitude=req.latitude, longitude=req.longitude)
         r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
                                   years_back=req.years_back, years_forward=req.years_forward)
-        out: dict = {"ayanamsa": req.ayanamsa, "format": req.fmt, "summary": _summary(r)}
+        out: dict = {"ayanamsa": req.ayanamsa, "format": req.fmt,
+                     "reading": req.reading, "summary": _summary(r)}
         if req.fmt == "json":
             out["report"] = to_report_dict(r)           # the structured grounding contract
             # chart-specific feedback questions ride along with the JSON report so the
             # frontend never has to re-cast the chart just to ask them (Part E).
             from app.raman_saab.feedback_questions import build_feedback_questions
             out["feedback_questions"] = build_feedback_questions(out["report"], lang=req.lang)
+        elif req.reading == "short":
+            from app.raman_saab import short_reading as sr_mod
+            short = sr_mod.build_short_reading(to_report_dict(r))
+            if short is None:
+                raise ValueError("this chart is too sparse for a short reading")
+            out["report"] = (sr_mod.to_html(short, lang=req.lang, title=req.name)
+                             if req.fmt == "html"
+                             else sr_mod.to_markdown(short, lang=req.lang))
         else:
             out["report"] = standalone_html(r) if req.fmt == "html" else to_markdown(r)
         return out
@@ -611,6 +626,129 @@ async def post_feedback_questions(req: ReportRequest) -> dict:
         return await asyncio.to_thread(_build)
     except ValueError as exc:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+
+
+class InstrumentAnswer(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    qid: str = Field(..., min_length=1, max_length=80)
+    #: Bounded by what the instrument can itself emit — a multi-select ships its codes
+    #: comma-joined into one answer, and the widest vocabulary runs to 236 characters. A
+    #: hand-set 40 here rejected three ticked trades with a 422 before validation ever ran.
+    answer: Optional[str] = Field(None, max_length=MAX_ANSWER_CHARS)
+    free_text: Optional[str] = Field(None, max_length=4000)
+
+
+class InstrumentFeedbackRequest(ReportRequest):
+    #: The four-part instrument runs to ~56 questions and several carry a confidence rating,
+    #: so the older flow's cap of 10 would truncate a completed form. Still bounded.
+    answers: list[InstrumentAnswer] = Field(..., min_length=1, max_length=200)
+    #: Whether Part A was answered BEFORE the reading was read. This is the difference between
+    #: evidence and a satisfaction survey, and it is recorded rather than assumed: a reader who
+    #: answers after reading has been told what the chart says and can no longer report what
+    #: they would have said on their own. Stored as its own row so a query can split the two.
+    context: Literal["before_reading", "after_reading"] = "after_reading"
+
+
+@report_router.post("/feedback/instrument")
+async def post_feedback_instrument(request: Request, req: InstrumentFeedbackRequest,
+                                   db: AsyncSession = Depends(get_db)) -> dict:
+    """Persist answers to the four-part feedback instrument.
+
+    The instrument is deterministic for a chart, so the server REBUILDS it and validates every
+    qid and every option value against what it would itself have asked. Nothing the client says
+    about a question — not its text, not its options — reaches storage: the question text is
+    taken from the rebuilt instrument. A client cannot invent a question, and cannot relabel one
+    it was asked.
+
+    The answer key is not consulted here and is not returned. Scoring is a separate, deliberate
+    step (`feedback_instrument.instrument_key`); an endpoint that told the submitter how they
+    scored would turn the instrument into a quiz and poison every later submission for the chart.
+    """
+    from app.models.domain import Account, ChartFeedback
+    from app.raman_saab.feedback_instrument import (
+        build_feedback_instrument, validate_instrument_answers)
+
+    if req.ayanamsa not in _SUPPORTED_AYANAMSAS:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="unsupported ayanamsa")
+
+    def _instrument() -> dict:
+        birth = BirthData(name=req.name, year=req.year, month=req.month, day=req.day,
+                          hour=req.hour, minute=req.minute, tz_offset=req.tz_offset,
+                          latitude=req.latitude, longitude=req.longitude)
+        r = build_detailed_report(birth, ayanamsa=req.ayanamsa,
+                                  years_back=req.years_back, years_forward=req.years_forward)
+        return to_report_dict(r)
+
+    try:
+        report = await asyncio.to_thread(_instrument)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+
+    # Every submitted row is validated, including one that carries only free text. Filtering
+    # on `a.answer is not None` let a prose-only row skip the check entirely and be stored
+    # under a qid the instrument never asked, with the qid standing in for the question text —
+    # which is precisely what this endpoint promises cannot happen. Rows without an answer are
+    # checked for a KNOWN qid only: an untouched question is not a malformed one.
+    payload = [{"qid": a.qid, "answer": a.answer} for a in req.answers if a.answer is not None]
+    problems = validate_instrument_answers(report, payload)
+    problems += [p for p in validate_instrument_answers(
+        report, [{"qid": a.qid, "answer": None} for a in req.answers if a.answer is None])
+        if p.startswith("unknown question")]
+    if problems:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="; ".join(problems[:5]))
+
+    inst = build_feedback_instrument(report)
+    text_by_qid = {q["qid"]: q["text_en"]
+                   for part in inst["parts"] for q in part["questions"]}
+
+    account_id: Optional[int] = None
+    auth = request.headers.get("authorization", "")
+    if auth.startswith("Bearer "):
+        try:
+            from app.core.auth import decode_access_token
+            candidate = int(decode_access_token(
+                auth.removeprefix("Bearer ").strip()).get("sub", ""))
+            if await db.get(Account, candidate) is not None:
+                account_id = candidate
+        except (HTTPException, ValueError):
+            account_id = None                          # bad token -> anonymous, not an error
+
+    key = _chart_key(req)
+    rows = []
+    for a in req.answers:
+        if a.answer is None and not (a.free_text or "").strip():
+            continue                                   # an untouched question is not an answer
+        base = a.qid.removesuffix(".confidence")
+        text = text_by_qid.get(base, base)
+        if a.qid.endswith(".confidence"):
+            text = f"[confidence] {text}"
+        # Slice at the SAME bound the field validates against. At 40 this cut multi-select
+        # codes in half on the way in, so a stored answer could no longer be parsed back to
+        # the options the reader actually ticked.
+        rows.append(ChartFeedback(chart_key=key, account_id=account_id, question_id=a.qid,
+                                  question_text=text[:500],
+                                  answer=(a.answer or "")[:MAX_ANSWER_CHARS],
+                                  free_text=(a.free_text or None)))
+    if not rows:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="no answers to store")
+
+    # The reading-order context is a row of its own rather than a column: the schema is created
+    # with `create_all` and has no migration path, so an added column would exist on a fresh
+    # database and be missing on every deployed one.
+    rows.append(ChartFeedback(
+        chart_key=key, account_id=account_id,
+        question_id=f"inst.{inst['version']}.meta.context",
+        question_text="Was Part A answered before the reading was read?",
+        answer=req.context, free_text=None))
+
+    db.add_all(rows)
+    await db.commit()
+    logger.info("instrument feedback stored: %d row(s) for %s (%s)",
+                len(rows), key, req.context)
+    return {"stored": len(rows), "chart_key": key, "context": req.context,
+            "note": "Thank you — stored for honest calibration. Your answers are not scored "
+                    "back to you: knowing which option the chart took would change how the "
+                    "next person answers."}
 
 
 @report_router.post("/feedback")

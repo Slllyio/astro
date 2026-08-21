@@ -12,6 +12,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.auth_routes import auth_router
@@ -98,6 +99,18 @@ app = FastAPI(
 # session cookie across the redirect to Google. SessionMiddleware is the
 # Starlette primitive that backs that cookie. Reuses SECRET_KEY for signing.
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+
+# A detailed reading is ~947 KB of JSON and was going over the wire uncompressed. It gzips to
+# 132 KB — 14% — because it is repetitive prose and structure, so this one line is worth more
+# than seven times what splitting the chart-independent sections into a separately cacheable
+# endpoint would have saved (that idea was measured at ~120 KB raw, which is ~17 KB once
+# gzipped, and it cost a new route, ETag handling and a page change; it was dropped for this).
+#
+# Added AFTER SessionMiddleware so it ends up OUTERMOST — Starlette applies middleware in
+# reverse registration order — and therefore also compresses the vendored Flask portal mounted
+# below. Safe here because nothing in this app streams: there is no StreamingResponse, no SSE
+# and no FileResponse for it to buffer.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Rate-limit plumbing: register the limiter on app.state so @limiter.limit
 # decorators on routes can find it, and install slowapi's 429 error handler.

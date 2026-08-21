@@ -225,6 +225,11 @@ class MarriageMonograph:
     coverture: Optional[str] = None              # H7 'coverture' verdict (degree)
     kuja_narration: tuple[str, ...] = ()         # per-frame dosha narration lines
     jupiter_h7_windows: tuple[str, ...] = ()     # favourable Jupiter windows, 7th from Moon
+    # v36 (2026-08-19, corpus-unblocked): the COMPUTED timing layer. `timing_navamsa`
+    # above prints Raman's timing paragraph verbatim and computes none of it; this is the
+    # marriage-giving roster (HTJAH-II:852-867), his two delay screens (HTJAH-II:875-881)
+    # and the Jupiter-transit sphutas (HTJAH-II:869-873), applied to this chart.
+    timing: object = None
 
 
 def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]:
@@ -270,6 +275,13 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         for seg in r.gochara_outlook.get("Jupiter", ())
         if seg.gochara_good and (seg.end_jd - seg.start_jd) >= 25
         and seg.house_from_moon == 7)
+    # v36: the computed timing layer. Its own try — a failure here must never silence the
+    # rest of the monograph — and report-only: imported by nothing in the verdict path.
+    try:
+        from app.raman_saab.judges.marriage_timing import build_marriage_timing
+        _marriage_timing = build_marriage_timing(r)
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        _marriage_timing = None
     return MarriageMonograph(
         seventh_covers=_pull(_H2, MARRIAGE_INTRO) or "",
         lord_placement_house=lord_house,
@@ -285,7 +297,8 @@ def build_marriage_monograph(r: "DetailedReport") -> Optional[MarriageMonograph]
         marital_happiness=_sig7("marital_happiness"),
         coverture=_sig7("coverture"),
         kuja_narration=kuja,
-        jupiter_h7_windows=jup7)
+        jupiter_h7_windows=jup7,
+        timing=_marriage_timing)
 
 
 # ── v26 Children ────────────────────────────────────────────────────────────────
@@ -381,6 +394,12 @@ class PsychProfile:
     moon_mind: tuple[tuple[str, str, str], ...] = ()   # fired H1.M.* (id, text, cite)
     mercury_line: str = ""                             # buddhi condition (computed)
     deeptadi_moon: str = ""                            # Moon's avastha cross-reference
+    # v36 (2026-08-19, corpus-unblocked): Raman's affliction-to-the-mind screen. The
+    # audit marked this FOR CORPUS VERIFICATION and it was never implemented; the
+    # anchors are now verified. Reported in the classical indication register with his
+    # own caution attached — never as a diagnosis, and never in the decree voice.
+    mind_screen: tuple[tuple[str, str, str], ...] = ()   # (name, finding, cite)
+    mind_caution: str = ""                               # Raman's own hedge, verbatim
 
 
 def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
@@ -446,7 +465,55 @@ def build_psych_profile(r: "DetailedReport") -> Optional[PsychProfile]:
     woven += " " + conclusion(
         "each thread is quoted or re-read from its own section; nothing here is a new "
         "judgment")
+    # ── v36: Raman's affliction-to-the-mind screen (corpus-verified 2026-08-19) ──
+    # Two anchors, both mechanical, reported as SCREENS — present or absent — in the
+    # classical indication register. Raman's own hedge on this material travels with
+    # them and is not droppable: "In all these cases, a careful weighing of the pros and
+    # cons of the affliction or fortification is absolutely necessary. No slip-shod
+    # interpretation should be made and a premature conclusion arrived at."
+    # (HTJAH-I:4297-4299). His wording for the first is "the native WILL SUFFER FROM
+    # mental disorders"; that is his voice for a combination, and this engine does not
+    # repeat it as a claim about the reader — the screen states that the configuration is
+    # present, names it, and stops. Nothing here diagnoses.
+    _mind: list[tuple[str, str, str]] = []
+    try:
+        _ch = r.chart
+        _moon = _ch.planets.get("Moon")
+        _rahu = _ch.planets.get("Rahu")
+        if _moon is not None and _rahu is not None:
+            from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS
+            _moon_h = int(getattr(_moon, "rasi_house", 0) or 0)
+            _with_malefic = sorted(
+                n for n, pl in _ch.planets.items()
+                if n in NATURAL_MALEFICS and n != "Moon"
+                and int(getattr(pl, "rasi_house", 0) or 0) == _moon_h)
+            _rahu_h = int(getattr(_rahu, "rasi_house", 0) or 0)
+            if _with_malefic and _rahu_h in (5, 8, 12):
+                _mind.append((
+                    "Moon with a malefic, Rahu in the 5th/8th/12th",
+                    f"present: the Moon shares house {_moon_h} with "
+                    f"{', '.join(_with_malefic)}, and Rahu stands in house {_rahu_h}. "
+                    f"Raman gives this combination for disturbance of mind; it is a "
+                    f"classical configuration, not a finding about this reader.",
+                    "HTJAH-I:10077-10078"))
+            else:
+                _mind.append((
+                    "Moon with a malefic, Rahu in the 5th/8th/12th",
+                    "absent: the configuration does not form on this chart. Reported "
+                    "either way, so a silent screen is not mistaken for one not run.",
+                    "HTJAH-I:10077-10078"))
+    except Exception:  # noqa: BLE001 — sparse/Track-B chart
+        _mind = []
+    _mind_caution = (
+        "In all these cases, a careful weighing of the pros and cons of the affliction "
+        "or fortification is absolutely necessary. No slip-shod interpretation should be "
+        "made and a premature conclusion arrived at. (HTJAH-I:4297-4299 — Raman's own "
+        "caution on affliction readings of this kind.) These are classical combinations "
+        "reported as present or absent; nothing here is a diagnosis or a statement about "
+        "this reader's health." if _mind else "")
     return PsychProfile(
+        mind_screen=tuple(_mind),
+        mind_caution=_mind_caution,
         lagna_quote=(quote, cite),
         moon_state=moon,
         temperament=r.ruler.temperament,

@@ -40,6 +40,24 @@ _AREA: Final[dict[int, str]] = {
 
 
 @dataclass(frozen=True)
+class DecadeAreaRow:
+    """One life-area's reading in one decade, laid out as a grid row.
+
+    The same facts as the matching entry in `areas_favourable` / `areas_challenged`,
+    but taken apart so a renderer can put ONE AREA ON ONE ROW and each running
+    Mahadasha in its own column. The chip form chains every area into a single
+    semicolon-run — measured at 338 words per "sentence", the densest line in the
+    whole report — which is a shape problem, not a wording one.
+    """
+    house: int
+    area: str
+    #: one entry per lord in `DecadeReading.md_lords`, SAME ORDER; "" where that
+    #: Mahadasha does not light this house. Several tiers in one Mahadasha join
+    #: with " / " rather than being dropped.
+    grades: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class DecadeReading:
     label: str                              # e.g. "1989-1999 (ages 0-10)"
     inside_window: bool
@@ -49,6 +67,10 @@ class DecadeReading:
     yogas_ripening: tuple[str, ...]
     leans: tuple[str, ...]                  # MD Ishta/Kashta leans present
     note: str
+    #: the same two chip lists as a grid (area x Mahadasha). Append-only, defaulted
+    #: so the two positional constructions above stay valid.
+    favourable_grid: tuple[DecadeAreaRow, ...] = ()
+    challenged_grid: tuple[DecadeAreaRow, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -114,6 +136,18 @@ def build_decade_timeline(r: "DetailedReport") -> Optional[DecadeTimeline]:
             detail = "; ".join(f"{tier} in {maha} MD" for tier, maha in attributions)
             return f"{area} (H{h} - {detail})"
 
+        def _grid(by_house: dict[int, list[tuple[str, str]]]) -> tuple[DecadeAreaRow, ...]:
+            """The chips' own data, one row per area and one column per running MD."""
+            rows: list[DecadeAreaRow] = []
+            for h, attrs in by_house.items():
+                per_md: dict[str, list[str]] = {}
+                for tier, maha in attrs:
+                    per_md.setdefault(maha, []).append(tier)
+                rows.append(DecadeAreaRow(
+                    house=h, area=_AREA.get(h, f"house {h}"),
+                    grades=tuple(" / ".join(per_md.get(m, ())) for m in mds)))
+            return tuple(rows)
+
         fav = [_chip(h, attrs) for h, attrs in fav_by_house.items()]
         chal = [_chip(h, attrs) for h, attrs in chal_by_house.items()]
         yogas = []
@@ -126,7 +160,9 @@ def build_decade_timeline(r: "DetailedReport") -> Optional[DecadeTimeline]:
             else ""
         out.append(DecadeReading(label, True, tuple(mds), tuple(fav), tuple(chal),
                                  tuple(yogas), tuple(leans),
-                                 f"read from the windowed timeline{partial}"))
+                                 f"read from the windowed timeline{partial}",
+                                 favourable_grid=_grid(fav_by_house),
+                                 challenged_grid=_grid(chal_by_house)))
     return DecadeTimeline(decades=tuple(out), frame=_FRAME)
 
 

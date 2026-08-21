@@ -983,3 +983,161 @@ six thin signification sets.
 
 **Side effect on record:** the two new digest head items shift later digest positions, so
 `chart_feedback` rows stored under older qids are position-stale.
+
+---
+
+## v36 amendment (2026-08-20, user-requested) — the feedback instrument
+
+**One section appended at the very END of `SECTION_CONTRACT`: `feedback` / `## Your feedback`
+/ `id="feedback"`.** `_FROZEN` grown in the same commit, per the amendment procedure.
+
+The report gains the one section that asks rather than tells, generated with the reading from
+the chart's own calibration and timeline (`app/raman_saab/feedback_instrument.py`, shipped via
+`to_report_dict` as `feedback_instrument`).
+
+Four parts, in a fixed order:
+
+| Part | What it asks | Chart-specific? |
+|---|---|---|
+| **A** | Plain life questions with no astrology in them | no — deliberately |
+| **B** | How far the ascendant sits from its own cusp, and which of the two neighbouring sign portraits fits | yes, computed |
+| **C** | Each of the chart's own readings against its exact inverse, both unlabelled | yes, ranked by rarity |
+| **D** | What the reading got wrong, and what it could not have guessed | no |
+
+**Why Part C is ordered by `band_share` and not by the digest.** The digest ranks by how loudly
+the engine speaks, and the engine is loudest where every chart agrees — the older
+`feedback_questions` generator therefore leads with a 42%-share wealth reading, a question that
+cannot fail. Ordering by population share ascending leads instead with what only ~4% of the
+16,450-chart population carries, and nothing above the median is asked at all. At most two items
+per house, so the set spreads across a life.
+
+**The answer key is not part of the report and never renders.** This is a deliberate, documented
+exception to the completeness law: the key is not a reading, and printing it beside the questions
+destroys the only property that makes the answers worth collecting.
+`feedback_instrument.instrument_key` recomputes it server-side for scoring, and a test pins that
+the shipped payload carries none of the calibration metadata it is built from, so it cannot be
+reconstructed either.
+
+**Surface differences, stated rather than silent.** The interactive page and the standalone HTML
+carry every question in English AND Hindi. The markdown carries the English alone and says so in
+its own output: that surface runs through `_fold_ascii` for the whole document, and Devanagari
+has no ASCII fold — it would print as a row of question marks.
+
+**Never asked:** lifespan. No answer a person can give confirms or refutes a longevity band, the
+question does harm, and the engine's own guard refuses the decree voice on exactly this material
+(`EXCLUDED_SIGNIFICATIONS` = death, longevity, left_eye).
+
+**Two questions are traps, by design.** Both sit on channels the astrobank atlas proved run
+BACKWARDS (`inverted_warning`). They stay in the set as the honesty check — a reader who agrees
+there while disagreeing elsewhere is agreeing with whatever is put in front of them. Flagged in
+the key, never in the payload.
+
+**Storage:** `POST /report/feedback/instrument` rebuilds the instrument server-side and validates
+every qid and option value against what it would itself have asked; the stored question text
+comes from that rebuild, never from the request (the older `/report/feedback` takes it from the
+body). Whether Part A was answered before the reading was read is recorded as its own
+`inst.<v>.meta.context` row — the schema is created with `create_all` and has no migration path,
+so a new column would exist on a fresh database and be missing on every deployed one.
+
+### v36 addendum (2026-08-20) — instrument v2: closed answers, and a scorer
+
+Two changes, both user-requested, and the second is why the first mattered.
+
+**Every question is now answered by SELECTING.** v1's Part A was 31 free-text boxes. Prose
+cannot be scored, does not aggregate across readers, and is thirty-one paragraphs somebody has
+to read before anything is learned. v2 is 61 questions of which exactly one — "anything else
+you want to say" — is open; free text remains available on every other question as a
+supplement, never as the answer. `INSTRUMENT_VERSION` is `v2`, so v1 answers never pool with
+v2 ones in the same analysis.
+
+**Several vocabularies are the engine's own**, which is the point:
+
+| Question | Options are | Compared against |
+|---|---|---|
+| body regions | HPA-29's sign→anatomy values | `medical.regions_marked` |
+| trade families | HTJAH-II's vocation words | the three career frames |
+| work modes | the four H10 profession significations | `profession.mode_split` |
+| event kinds | one per house the engine reads that matter from | the dasha boundaries |
+
+A reader's selection can therefore be compared with the engine's output CODE AGAINST CODE, with
+no interpretation step in between. That is what makes the scoring a measurement rather than a
+reading of somebody's prose. Each question also carries `maps_to`, naming the engine fact it is
+scored against, so the scorer does not keep a parallel table that can drift.
+
+**Two structural changes.** Turning points are collected as structured `(year, month, kind)`
+rows, one stored row each (`qid#n`, valued `YYYY-MM:kind`), instead of a paragraph. And v1's C0
+— which showed the reader the period-change dates and asked how many of their turning points
+landed near one — is GONE: that was the reader doing the scorer's job, badly, with the answer
+in front of them. The count and its chance rate are computed in `feedback_scoring`.
+
+**The seed was narrowed to what `chart_key` round-trips.** It included the ascendant longitude
+to six decimal places; the key keeps latitude and longitude to four. A chart recast from a
+stored key would therefore have dealt the forced-choice options the other way round, and every
+stored answer would have silently inverted at scoring time. `_SEED_FIELDS` now matches
+`_chart_key` exactly, and a test proves the recast reproduces the shuffle.
+
+### `app/raman_saab/feedback_scoring.py` — processing the feedback
+
+Four measurements, reported side by side and never averaged:
+
+1. **Forced choice** — the only one with a clean null (0.5 by construction). Hits of n with an
+   exact two-sided binomial p, plus a rarity-weighted variant (`1 − band_share`).
+2. **Inverted channels** — scored SEPARATELY and read backwards. Agreement there is evidence the
+   reader is agreeing with whatever is shown; pooling would launder acquiescence into accuracy.
+3. **Life facts** — each Part A answer against the engine's verdict for the same matter.
+   Reported as hit/miss counts and explicitly NOT as a p-value: the population base rate of a
+   happy marriage is not known to this project.
+4. **The dated spine** — turning points against Mahadasha boundaries, ±3 months, with the chance
+   rate computed from the actual UNION of tolerance windows over the reported span. Summing the
+   windows instead would roughly double the denominator and make a coin flip look like a finding.
+
+Part D is counted, not scored: "which chapters got me wrong", aggregated across readers, is a
+work list. `aggregate()` also splits blind submissions from those answered after the reading,
+and refuses to be quoted without its caveats — `render_aggregate` prints them first.
+
+Run it: `python -m app.raman_saab.feedback_scoring [--chart-key ...] [--json]`. There is no
+endpoint on purpose: an API that told a submitter how they scored would turn the instrument
+into a quiz, and the answer would reach the next reader of the same chart.
+
+---
+
+## v37 amendment (2026-08-20, user-requested) — "In simple words"
+
+**One section INSERTED FIRST**, immediately after the title and before "Your Reading":
+`simple_summary` / `## In simple words` / `id="simple-summary"`. `_FROZEN` reordered in the
+same commit, per the amendment procedure.
+
+This is the **third conscious exception** to append-at-the-end, after v5 (Your Reading) and
+v32 (Judgment graph), and for the same reason both of those had: a section a reader meets
+*after* the technical chapters is not doing the job it exists for.
+
+**Why it exists.** Real feedback: *"the report is too technical."* Reading "Your Reading" back,
+that is fair — it names the planet that shapes the temperament, quotes rules, and reconciles
+verdicts against each other. **Plain English is not the same thing as plain sense.** This is a
+further step down: nine short blocks, no Sanskrit, no planet names, no house numbers, no
+citations, no percentages.
+
+**It creates nothing.** Every block re-reads material judged elsewhere (PREC-10) — house
+verdicts and population shares from `calibration`, the uncommon readings from `distinctive`,
+the honesty counts from `info`, the running period from the Nichod's own current-period line,
+the temperament from `psych`. The opening paragraph says so on its face: *"if this page and a
+chapter below disagree, the chapter is right."*
+
+**The two paragraphs that must never be cut in simplification:**
+- *what is unusual here* — nearly everything a chart says is said about nearly everybody, so
+  the few readings that are not are the only place a reader can usefully test it;
+- *how much of it is common* — the actual counts for this chart, in words ("56 judgements, 8
+  of them held by half the population or more").
+
+Readings on the **atlas-proven inverted channels are excluded from the "unusual" paragraph** —
+naming one there would promote a known error to the most-read sentence in the report.
+
+**Both languages are generated**, not translated at render time: the page toggles on the client
+and `t()` cannot translate a sentence composed at runtime, so a Hindi reader would otherwise
+meet an English summary inside a Hindi report. The markdown surface carries the English alone
+and says so, for the same `_fold_ascii` reason the feedback section does.
+
+**Guarded by** `tests/raman_saab/test_simple_summary.py`: a jargon blocklist over every emitted
+string (including house numbers and planet names), a sentence-length ceiling, the decree guard,
+and a check that each verdict group matches the calibration the chapters are built from — so
+the summary cannot drift into judging on its own.

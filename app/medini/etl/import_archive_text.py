@@ -124,6 +124,15 @@ class _Book:
     translator: str
     classical_ref_prefix: str  # e.g. "BPHS" -> classical_refs become BPHS.1, BPHS.2
     header_regex: str = _DEFAULT_HEADER_REGEX
+    #: Skip chapter-splitting entirely and always emit one
+    #: ``chapter_001_full-text-unsplit.md``. Set for the books whose `book_registry`
+    #: entry pins that exact `fixed_file` — their citation anchors are line offsets
+    #: into ONE continuous document, so any split silently destroys every anchor.
+    #: HTJAH-I and HTJAH-II reach the same result by accident (their headers do not
+    #: match, so the <2-chapter fallback fires); NH does NOT — its default-regex run
+    #: yields two spurious chapters and the book then resolves to nothing at all.
+    #: Coupled to the registry by `test_unsplit_books_match_the_registry`.
+    never_split: bool = False
 
 
 _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
@@ -270,6 +279,11 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         translator="(original English)",
         classical_ref_prefix="Raman.NH",
         header_regex=_DEFAULT_HEADER_REGEX,
+        # Under the default regex this book splits into two spurious chapters and the
+        # NH tag then resolves to NOTHING (2026-08-19: verified on a clean re-import —
+        # `chapter_007_of-jataka-parijata-...` + `chapter_022_of-horasara-...`, and the
+        # registry's pinned `chapter_001_full-text-unsplit.md` never written).
+        never_split=True,
     ),
     _Book(
         identifier="hindupredictiveastrologyofbvraman",
@@ -316,6 +330,10 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         translator="R. Santhanam",
         classical_ref_prefix="Raman.HJaH",
         header_regex=_DEFAULT_HEADER_REGEX,
+        # Reaches the unsplit form by accident today (no header matches, so the
+        # <2-chapter fallback fires). Pinned explicitly so a regex change cannot
+        # silently shatter the anchors: the registry wants ONE document here.
+        never_split=True,
     ),
     _Book(
         identifier="how-to-judge-a-horoscope-r.-santhanam",
@@ -594,7 +612,11 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
     ),
     _Book(
         identifier="gzwo_graha-and-bhava-balas-by-b-v-raman-english-sanskrit-astrology-hindu-astrolo",
-        filename="Graha and Bhava Balas By B V Raman - English Sanskrit Astrology Hindu Astrology Astronomy Indo-Aryan Religion Hindu_djvu.txt",
+        # Filename corrected 2026-08-19: the recorded name 404s. The item is intact and
+        # still carries the text; archive.org renamed the derivative. Verified live
+        # against https://archive.org/metadata/<identifier>.
+        filename=("Graha And Bhava Balas by B V Raman English Sanskrit Astrology Hindu "
+                  "Astrology Bangalore 1942 - Raman Publications_djvu.txt"),
         book_slug="graha_bhava_balas_raman",
         book_title="Graha and Bhava Balas",
         author="B. V. Raman",
@@ -614,13 +636,19 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
     ),
     _Book(
         identifier="raman-how-to-judge-horoscope-2",
-        filename="How to judge horoscope by B. V. RAMAN_djvu.txt",
+        # Filename corrected 2026-08-19: the recorded name 404s. The item holds both
+        # volumes as `raman-how-to-judge-horoscope-{1,2}_djvu.txt`; this entry is vol II.
+        filename="raman-how-to-judge-horoscope-2_djvu.txt",
         book_slug="how_to_judge_horoscope_raman2",
         book_title="How to Judge a Horoscope (Raman, 2nd alt)",
         author="B. V. Raman",
         translator="(original English)",
         classical_ref_prefix="Raman.HJaH2",
         header_regex=_DEFAULT_HEADER_REGEX,
+        # Reaches the unsplit form by accident today (no header matches, so the
+        # <2-chapter fallback fires). Pinned explicitly so a regex change cannot
+        # silently shatter the anchors: the registry wants ONE document here.
+        never_split=True,
     ),
     _Book(
         identifier="studies-in-jaimini-astrology-by-b-v-raman-127930441",
@@ -829,12 +857,18 @@ def import_book(
     book_title_pattern = (
         rf"^\s*{re.escape(book.book_title.split('—')[0].strip())}.*$"
     )
-    header_re = re.compile(book.header_regex, re.MULTILINE | re.IGNORECASE)
-    chapters = split_by_chapter(text, header_regex=header_re, book_title_pattern=book_title_pattern)
-    if len(chapters) < 2:
-        logger.info("%s: chapter-split found %d, falling back to single-artefact wrap",
-                    book.book_slug, len(chapters))
+    if book.never_split:
+        logger.info("%s: never_split set — emitting the single unsplit artefact the "
+                    "registry pins", book.book_slug)
         chapters = fallback_single_artefact(text, book_title_pattern=book_title_pattern)
+    else:
+        header_re = re.compile(book.header_regex, re.MULTILINE | re.IGNORECASE)
+        chapters = split_by_chapter(text, header_regex=header_re,
+                                    book_title_pattern=book_title_pattern)
+        if len(chapters) < 2:
+            logger.info("%s: chapter-split found %d, falling back to single-artefact wrap",
+                        book.book_slug, len(chapters))
+            chapters = fallback_single_artefact(text, book_title_pattern=book_title_pattern)
     scraped_at = dt.datetime.now(dt.timezone.utc).isoformat()
 
     n_persisted = 0

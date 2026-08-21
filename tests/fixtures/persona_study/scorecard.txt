@@ -1,0 +1,104 @@
+charts scored: 23  (answered blind: 23)
+
+  ! only 23 chart(s): far too few to conclude anything; the forced-choice pool needs hundreds of items before its p-value means much.
+
+FORCED CHOICE   134/267 = 0.502   chance 0.5   p=1.0000
+  rarity-weighted 118.339/232.963 = 0.508
+  blind submissions only: 134/267 = 0.502   p=1.0000
+  INVERTED channels (agreement is evidence AGAINST): 4/9 = 0.444
+  answered SURE   65/135 = 0.481   p=0.7308
+  answered UNSURE 23/37 = 0.622
+  ! scored no better where the reader was MORE certain — that pattern belongs to agreeing with whatever is shown, not to recognising a chart.
+
+EVENT vs PERIOD  59/114 dated events fell in a top-graded period for their own matter
+  (no pooled p-value: each chart's null is its own per-house base rates, so the tails cannot be added — see the per-chart cards)
+
+DATED SPINE     10/394 turning points within 3 months of a period change   p=0.7381
+  chance rate 0.023 — event-weighted from each chart's own event span and boundaries, never assumed
+
+BY READING (forced choice) — the improvement list, worst first:
+  accidents                0/3
+  fortune                  0/2
+  gains                    0/7
+  disease_chronic          1/7
+  career                   1/6
+  father                   1/6
+  virility                 1/6
+  intellect                2/8
+  sudden_gains             2/8
+  acquisitions             3/9
+  body                     2/6
+  elder_siblings           2/6
+  family                   1/3
+  profession_learned       1/3
+  partnership              3/8
+  poorvapunya              2/5
+  ear_throat               4/9
+  coverture                2/4
+  education                3/6
+  foreign_residence        2/4
+  health                   3/6
+  long_journeys            2/4
+  marital_happiness        3/6
+  property                 3/6
+  short_journeys           1/2
+  siblings                 1/2
+  speech                   2/4
+  vehicles                 2/4
+  vision                   1/2
+  happiness                4/7
+  legacies                 7/12
+  children                 3/5
+  higher_learning          3/5
+  status_honour            3/5
+  expenditure              2/3
+  home_comforts            4/6
+  profession_authority     2/3
+  profession_labour        2/3
+  spouse                   4/6
+  moksha                   7/10
+  dharma                   5/7
+  loss_moksha              3/4
+  wealth_through_marriage  3/4
+  profession_trade         7/9
+  friends                  5/6
+  enemies                  6/7
+  debts                    5/5
+  enemies_disease          4/4
+  mother                   2/2
+  wealth                   2/2
+
+BY LIFE FACT (no null — a count, not a p-value):
+  marriage.delay               4/19
+  h4.education                 3/13
+  h12.foreign_residence        12/39
+  h9.father                    12/32
+  h4.mother                    9/20
+  h3.siblings                  10/22
+  h5.children                  19/39
+  h10.status_honour            4/8
+  rect.portrait                12/23
+  h6.debts                     9/17
+  h8.legacies                  12/22
+  h7.marital_happiness         9/16
+  h9.higher_learning           10/17
+  h12.moksha                   6/10
+  h12.incarceration            10/14
+  medical.regions              15/21
+  h5.poorvapunya               7/9
+  arishta.balarishta           18/23
+  h10.authority_vs_trade       6/7
+  career.trades                23/23
+
+OVERALL FIT: not sure=2
+
+WHAT PEOPLE WROTE (verbatim — the options did not anticipate these):
+  D8:
+    “Answered as Christopher Reeve (1952-2004) strictly from documented public biography: Cornell and Juilliard; Broadway debut opposite Katharine Hepburn (1976); Superman (1978) and worldwide fame; two children with Gae Exton (Matthew 1979, Alexandra 1983) and years living in London; marriage to Dana Morosini (April 1992) and son Will (June 1992); the equestrian fall at Culpeper, Virginia on 27 May 1995 causing C1-C2 fracture and quadriplegia, spinal fusion surgery, ventilator dependence and long rehabilitation; advocacy, directing and two memoirs afterwards; diaphragm-pacing surgery in 2003; death on 10 October 2004 from cardiac arrest following an infected pressure ulcer and adverse drug reaction. No reading was seen, so Part D reflects that rather than a judgement of any chapters.”
+    “Completed strictly as a biographical exercise from the public record: no reading, chart or verdict was viewed, so Part D's questions about a reading (D1-D7) were left unanswered rather than invented. Where the record is genuinely contested - the exact finalisation of the first divorce, the childhood appendectomy, how much credit is 'deserved' - the answer given is the one a careful biographer could defend from published sources, and the notes field records the reasoning.”
+    “I would rather be let alone. What is on the record is enough: a poor childhood in Sodermalm, my father gone when I was fourteen, the store and the barbershop, the Dramatic Theatre school, Stiller, and then America. I worked for a studio for sixteen years, I was never married, I had no children, and after 1941 I did not make another picture. I kept my money, my pictures on the wall, and my privacy. Anything beyond that is other people's invention.”
+    “Answered strictly from the documented public record: born 1 October 1924 in the Wise Sanitarium at Plains, Georgia (the first US president born in a hospital); Naval Academy 1943-46; married Rosalynn Smith 7 July 1946; four children (John William 1947, James Earl III 1950, Donnel Jeffrey 1952, Amy Lynn 1967); left the Navy in 1953 after his father Earl's death to take over the family peanut land and warehouse; Georgia state senate 1963-67, defeated for governor 1966, born-again turn 1967, Governor 1971-75, President 1977-81, defeated by Reagan November 1980; left office roughly a million dollars in debt from the warehouse and sold the business; founded the Carter Center in 1982 and taught at Emory; Nobel Peace Prize 2002; metastatic melanoma with liver and brain lesions in 2015, falls and brain surgery in 2019, home hospice from February 2023, Rosalynn's death November 2023. Part D was left blank on purpose - no reading was viewed, so there is nothing honest to say about it.”
+    “The record of my life is public to a fault, and I put a good deal of it there myself, some of it wrong on purpose. I was born in Hartford on the twelfth of May, 1907 - though for years I gave out my brother Tom's birthday, the eighth of November, because after he died in 1921 I could not stand to have a day of my own. Take the dates from the books, not from what I said at the time. What matters in it: Tom; my father and mother, who were the two best people I knew; Bryn Mawr; Luddy, whom I married in 1928 and used badly; the pictures; Spencer, for twenty-six years, which was not a settled married life and was never going to be; Fenwick, and the water. I did not want children and I did not have them, and I have never once regretted it. I worked, which is the whole of it.”
+    “Answered strictly from documented public biography, in the first person as Stevland Hardaway Morris (b. Stevland Hardaway Judkins, Saginaw, Michigan, 13 May 1950). Born roughly six weeks premature; retinopathy of prematurity (retrolental fibroplasia), associated with the oxygen given in the incubator, left me blind in infancy. Third of six children of Lula Mae Hardaway; my father, Calvin Judkins, was largely absent after my mother took the children to Detroit around 1954, and I later took my mother's married name, Morris. Signed to Motown (Tamla) in 1961 at eleven; 'Fingertips, Pt. 2' went to No. 1 in August 1963. Graduated from the Michigan School for the Blind in Lansing, 1969. Married Syreeta Wright in September 1970; divorced 1972. Let the Motown contract lapse at 21 in 1971 and re-signed on my own terms, with creative control and my own publishing (Black Bull). Nearly killed in a car accident near Salisbury, North Carolina, on 6 August 1973 - four days in a coma, permanent loss of the sense of smell. First child, Aisha Morris, born February 1975; nine children in all. Long campaign that made Dr. King's birthday a federal holiday (signed 1983). Mother died 31 May 2006. Kidney transplant in December 2019. Later married Kai Millard Morris (2001, divorced) and Tomeeka Robyn Bracy (2017); moved to Ghana and took Ghanaian citizenship. Section D was left unanswered: it asks about a reading I was not shown, and I did not open the verdicts or readings folders.”
+  note:
+    “No astrological material was consulted, computed or reasoned about at any point.”

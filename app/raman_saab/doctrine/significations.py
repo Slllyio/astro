@@ -22,6 +22,53 @@ Usage:
     k = karaka_for(4, "mother")          # "Moon"
     k = karaka_for(4, "happiness")       # "Jupiter"
     k = karaka_for(4, "unknown_key")     # falls back to BHAVA_KARAKA[4] = "Moon"
+
+THIN-SIGNIFICATION GAPS — settled 2026-08-19, and settled AGAINST adding them.
+
+The report-critique audit listed six significations as thin against Raman's chapter tables
+(H1 appearance/character, H2 food, H3 writing/neighbours, H5 speculation and upasana,
+H6 servants, H12 bed-comforts) and asked for each as "an add-only row here + a rule
+bucket". With the corpus mounted, two separate checks were run and both say no.
+
+CHECK 1 — does Raman state them? HPA-19 "Judgment of Bhavas (Houses)" gives each bhava's
+signification list in one sentence. Four of the six ARE his:
+
+  H1  "...personality, the physical body and the character"      HPA-19:64-67
+  H2  "...right eye, food, wealth, literary gift..."             HPA-19:114-117
+  H3  "...neighbours, immediate relations and letters and writings"  HPA-19:190-193
+  H5  "Intelligence of father, discriminating power, children, intelligence, fame and
+       position"                                                  HPA-19:300-303
+
+Three are NOT, in the bhava they were requested for:
+  * H5 "speculation" — absent from his H5 list entirely.
+  * H5 "upasana"     — worship is his TWELFTH-house matter ("piety, divine knowledge and
+                       worship", HPA-19:785), not the 5th.
+  * H6 "servants"    — absent from his H6 list, which reads "enemies, thieves, cuts and
+                       wounds in the body, disappointments, miseries, sorrows, debts,
+                       illness, and diseases" (HPA-19:350-353).
+  * H12 "bed-comforts" — absent from his H12 list (HPA-19:783-786).
+  Those are BPHS/classical house attributions, not Raman's, and the divergence firewall
+  bars adding them on his authority.
+
+CHECK 2 — and this is the one that decides it. The four he DOES state were added
+experimentally (character, environment, food, literary_gift, writings, neighbours,
+fame_position, discrimination, worship) and MEASURED. Result:
+
+    cross-layer agreement 0.475 -> 0.439   (test_cross_layer_convergence, 62 evidence
+    snapshots also churned; the scored golden ratchet was unmoved at 259/293 because a new
+    signification carries no golden expectation and is therefore never scored)
+
+The additions were reverted on that measurement. The reason is doctrinal, not mechanical:
+NAMING a matter is not the same as giving rules to judge it. Raman lists these matters in
+a definitional sentence and nowhere gives combinations for them, so a signification added
+here routes to no rule bucket and is decided by the polarity fallback alone — a verdict
+manufactured from no evidence. The engine would gain nine more confident-looking rows and
+lose 3.6 points of agreement between its own layers, which is exactly the trade the PRIME
+DIRECTIVE's no-silent-approximation rule forbids.
+
+TO RE-OPEN, the prerequisite is the rule bucket, not the row: find Raman's COMBINATIONS for
+(say) food or writings, encode those, and the signification follows. The audit's own
+wording — "an add-only row + a rule bucket" — had it right; only the row is cheap.
 """
 from __future__ import annotations
 

@@ -875,3 +875,272 @@ proven 88.4% ceiling.
 longevity foundation) shift the positions of later digest items, so `chart_feedback` rows
 stored under older qids no longer align with the current digest. Harmless for new feedback;
 historical rows should be treated as position-stale if they are ever re-analysed.
+
+
+## Directional parivartana (2026-08-19) — OPEN, needs doctrine review + user sign-off
+
+Found while citing the moderating-factor clause with the corpus mounted. NOT actioned:
+this sits in the verdict path and would move the golden ratchet, so it is recorded rather
+than changed.
+
+`house_template._decide` credits `parivartana_resilient` as flat relief — a lord or karaka
+in an exchange has a debilitation penalty bypassed (`house_template.py:1009-1020`,
+"treat a debil-but-exchanged pillar as not-weak"), **regardless of the condition of the
+exchange partner**.
+
+Raman's own worked charts run BOTH ways:
+
+- benign: "Jupiter and Venus have exchanged signs (parivartana), mutually benefiting each
+  other" (HTJAH-I:8837)
+- transmitting affliction: "the 8th and 10th lords have exchanged signs so that Saturn who
+  is the 7th lord **also is afflicted by this parivartana**" (HTJAH-I:9119)
+- explicitly undesirable: "Although the 7th lord Jupiter is strongly placed, his exchange
+  of signs with 5th lord Saturn **is not desirable as it can deny marriage or progeny**"
+  (HTJAH-I:9143)
+
+On that showing an exchange TRANSMITS the partner's condition; it does not shield by
+itself. A direction-aware rule would credit resilience only where the partner is itself
+unafflicted, and would let an exchange with an afflicted or dusthana lord carry affliction
+across instead.
+
+**Why it was not changed here:** `parivartana_resilient` feeds `_decide`, so any change
+moves the ratchet and needs the doctrine-review + user-sign-off path that B1-B4 went
+through. The reporting side WAS corrected in the same commit — the moderating-factor clause
+no longer implies Raman grants relief unconditionally and now names his counter-examples.
+
+**If actioned**, expect movement on charts where a debilitated lord/karaka sits in an
+exchange with an afflicted partner; measure exact/within-1/real-errors before and after and
+report both axes side by side per MEASURED TRUTH.
+
+
+### CLOSED 2026-08-21 — WILL NOT SHIP (user sign-off). Both flags stay off, permanently.
+
+Implemented in `judges/house_template.py` on the `B1_DOMINANT_FACTOR_GUARD` pattern
+(module-level, read LIVE, default OFF) and measured. Nothing is enabled; the golden ratchet
+is byte-identical at the shipped values.
+
+Two arms, because "an exchange transmits the partner's condition" can mean two things:
+
+* **Arm A — `PARIVARTANA_DIRECTIONAL`** withholds the existing relief when the exchange
+  partner is itself in trouble.
+* **Arm B — `PARIVARTANA_TRANSMITS`** goes further: the lord itself counts hard-afflicted,
+  which is literally what HTJAH-I:9119 says, and is the channel the B1 guard already reads.
+
+And three readings of "partner in trouble" (`PARIVARTANA_PARTNER_TEST`), because Raman's two
+counter-examples do NOT name the same mechanism: `condition` (partner combust /
+debilitated-uncancelled / a maraka), `dusthana` (partner lords the 6th, 8th or 12th — the
+mechanism at :9119, where the 8th lordship is what travels), and `either`. HTJAH-I:9143
+("exchange … with 5th lord Saturn is not desirable") fits neither and is deliberately not
+encoded: the 5th is no dusthana and Saturn is not described as afflicted there.
+
+Measured over the 225 golden charts, 12,600 significations, both ratchet axes:
+
+| variant | exact | within-1 | real errors | significations moved |
+|---|---|---|---|---|
+| baseline (shipped) | 259/293 | 283/293 | 10 | — |
+| A / partner=condition | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| A / partner=dusthana | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| A / partner=either | 259/293 | 283/293 | 10 | 0 (0.00%) |
+| B / partner=condition | 259/293 | 283/293 | 10 | 159 (1.26%) |
+| B / partner=dusthana | 259/293 | 283/293 | 10 | 74 (0.59%) |
+| B / partner=either | 259/293 | 283/293 | 10 | 162 (1.29%) |
+| A+B (any reading) | 259/293 | 283/293 | 10 | same as B alone |
+
+**Every variant leaves all three fidelity numbers exactly unchanged.**
+
+**Arm A is a measured no-op — 0 of 12,600.** The reason is not that the rule is right; it is
+that the relief it would qualify almost never fires. Across 225 charts, 93 carry at least
+one exchange, but only **5** exchange members are debilitated-and-uncancelled — the shipped
+relief's actual trigger — and none of those five has an afflicted partner. The backlog's
+doctrinal criticism stands; its practical consequence is nil, and no golden can test it.
+
+**Arm B moves 0.59%–1.29% of all output, always one step downward** (161 favourable→mixed,
+1 favourable→afflicted at `either`). On the pinned corpus it is an exact wash: it FIXES
+`HTJAH-II.h10_05 H10/status_honour` (favourable→mixed, Raman: mixed) and BREAKS
+`HTJAH-II.h11_05 H11/elder_siblings` (favourable→mixed, Raman: favourable).
+
+**Recommendation: do not enable either arm.** Arm A cannot be justified because it changes
+nothing. Arm B is a real change to 1.29% of every reading, tightening favourable verdicts
+toward mixed, bought with one golden fixed and one golden broken — no measured fidelity gain
+on either axis. The B1 precedent does not apply: B1 was enabled because it cut real errors
+(inversions) 12 → 10 at a known strict cost. Arm B cuts nothing. Enabling it would be a
+purely doctrinal act, and the doctrine itself is split — :8837 has exchanges benefiting,
+:9119 has one transmitting affliction, :9143 objects to an exchange on neither ground.
+
+If a human wants it anyway, `dusthana` is the reading with the best textual warrant (it is
+the mechanism :9119 actually describes) and the smallest blast radius (0.59%), and it moves
+no golden at all.
+
+Reproduce: `tests/raman_saab/judges/test_directional_parivartana.py` pins the helpers and
+the flags-off no-op; the sweep is committed as
+`tools/raman_saab/measure_directional_parivartana.py` and rebinds the three module flags
+directly. (This paragraph previously pointed at a session scratchpad file,
+`measure_parivartana_full.py`, which was never committed — corrected 2026-08-21.)
+
+**DECISION 2026-08-21 — closed, will not ship.** The user signed off on the recommendation
+above. `PARIVARTANA_DIRECTIONAL` and `PARIVARTANA_TRANSMITS` stay `False`, and the code stays
+in place as the record of a measurement rather than as a rule awaiting a switch.
+
+The reasoning is worth keeping short and blunt so it is not re-opened on a whim. Arm A is a
+measured no-op — 0 of 12,600 significations — because the relief it would qualify almost never
+fires: 93 of 225 charts carry an exchange, only 5 exchange members are debilitated-and-uncancelled,
+and none of those five has an afflicted partner. There is nothing to enable. Arm B is a real
+change to 1.29% of every reading, always one step downward, and it buys one pinned golden fixed
+against one broken with no movement on either fidelity axis. The B1 precedent does not transfer:
+B1 shipped because it cut inversions 12 -> 10 at a known strict cost, and arm B cuts nothing.
+
+Enabling either would be a purely doctrinal act on a doctrine that is itself split —
+HTJAH-I:8837 has exchanges mutually benefiting, :9119 has one transmitting affliction, and
+:9143 objects to an exchange on neither ground. Where the texts disagree and the measurement is
+silent, the engine keeps what it already encodes.
+
+
+## Kemadruma bhanga attribution (2026-08-19) — OPEN, needs doctrine review + user sign-off
+
+`bhangas.kemadruma_bhanga` cites 3HC:2182-2185 for its three cancellation branches. The
+quoted Remark does not end there. The full passage runs to 3HC:2188:
+
+> "Some authors say that if planets are m a kendra from birth or from the Moon or if the
+> Moon is in conjunction with a planet there is no Kemadruma. Theie are yet other authors
+> who say that these yogas arise from kendras and navamsas **but these observations are not
+> generally acceptable.**"
+
+Two problems:
+
+1. Raman **attributes** the cancellation to "some authors" — he never asserts in his own
+   voice that there is no Kemadruma in these cases. The engine cites the line as though he
+   did.
+2. His dismissal at :2188 is grammatically ambiguous. "these observations" attaches most
+   immediately to the SECOND group ("kendras and navamsas"), but can be read as covering
+   both reported opinions, since he is reporting throughout rather than endorsing.
+
+**Not actioned:** `kemadruma_bhanga` feeds the yoga layer and therefore the verdict path, so
+narrowing or dropping the branches moves the golden ratchet and needs the doctrine-review +
+sign-off path. The DOCSTRING was corrected in the same commit — the anchor is now quoted in
+full including the dismissal, and the attribution is stated.
+
+**If actioned**, the question to settle first is scope: does :2188 dismiss the kendra/
+conjunction cancellations too, or only the kendra-and-navamsa claim? A reviewer with the
+printed page (the OCR is poor here — "Theie", "m" for "in") should decide before any code
+moves. Expect movement on charts carrying an otherwise-formed Kemadruma.
+
+**Settled in the same pass:** the extended benefic-drishti branch is NOT Raman's. The
+backlog asked "if Raman states it elsewhere, pin it and relabel" — searching the mounted
+3HC finds Kemadruma only at :2170-2266 and no such statement. The NOT-3HC label is correct
+and stays.
+
+### RESOLVED 2026-08-20 (Track 4b) — the text settles it; no code change proposed
+
+The scope question does NOT need a reviewer with the printed page. It is answerable from
+the mounted corpus, and the earlier pass missed the answer for a mechanical reason: it
+searched for "Kemadruma", and the two decisive passages are OCR'd as **"Kemadiuma"** and
+**"Kemidiumi s"**. A spelling-tolerant search finds exactly six mentions in the whole book —
+:2170, :2173, :2185, :2255, :2263, :2266 — and the last three were never read.
+
+Immediately after the Remarks, Raman applies the cancellation **in his own voice, on worked
+charts, in both directions**:
+
+> 3HC:2263-2268 — "Here you will see that Kemadruma is present because the houses on either
+> side of the Moon are vacant. But there is distinct cancellation of the Kemadruma because
+> (a) the kendras from the Moon are occupied and (b) kendras from the Lagna are also
+> occupied."
+
+> 3HC:2255-2261 — the converse, on Chart No. 8: "The above is a typically Kemadruma Yoga
+> horoscope. No planets are placed on either side of Chandra and no planets are to be found
+> in kendras either from Lagna or from the Moon."
+
+A man does not demonstrate a cancellation twice, once each way, and mean it to be "not
+generally acceptable". **:2187-2188 attaches to the SECOND reported group only** ("yet other
+authors … these yogas arise from kendras and navamsas"). Branches (a) and (b) are Raman's
+own applied doctrine, not merely "some authors", and the attribution defect is a citation
+fix, not a behaviour question.
+
+(The two passages describe charts with opposite kendra occupancy and no chart header stands
+between them, so :2263 discusses a chart the OCR did not carry. Which chart it is does not
+affect the reading: both statements assert the same rule.)
+
+**Two further findings, both measured over the 225 golden charts / 12,600 significations:**
+
+| reading | bhanga fires | exact | within-1 | real errors | significations moved |
+|---|---|---|---|---|---|
+| R1 as measured — (a)(b)(c)+extended | 63/63 | 259/293 | 283/293 | 10 | — |
+| R2 drop (c) conjunction | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R3 drop extended drishti | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R4 keep only what Raman works | 63/63 | 259/293 | 283/293 | 10 | 0 |
+| R5 maximal dismissal — no bhanga | 0/63 | 259/293 | 283/293 | 10 | 0 |
+
+1. **Branch (c) is provably dead**, not merely unused. `_in_kendra_from` scores the same
+   rasi-house as distance 1, the 1st is a kendra, and the Sun is not excluded from branch
+   (b) — so every conjunction (c) can see, (b) has already seen. The docstring's claim that
+   (c) earned its keep through the Sun was wrong and is corrected. The extended
+   benefic-drishti branch is different: it is NOT provably redundant (Jupiter in the 5th or
+   9th from the Moon aspects it from outside every kendra) but never once supplies a
+   cancellation (a)/(b) had not already made across these 225 charts.
+
+2. **The whole question is currently inert in the verdict path.** Even R5 — cancel nothing,
+   so Kemadruma stands on all 63 charts that form it — moves **zero significations** and
+   leaves all three fidelity numbers untouched. It does change the yoga layer visibly:
+   `Y.KEMADRUMA` fires on 63/63 instead of 0/63, which reaches the Yogas section, the
+   Arishta chapter's kemadruma note, and the preponderance ledger (an arishta yoga leans
+   adverse). So the stake is a REPORT claim, not a verdict.
+
+**Recommendation: change no behaviour.** The doctrine came out in favour of what is already
+encoded. What was actually wrong was the citation and two claims in the docstring, and those
+are fixed in this commit. The one live question left for a human was cosmetic-but-honest:
+branch (c) is dead code kept "for textual fidelity" — keep it as a mirror of the quoted line,
+or delete it as provably unreachable? Either is defensible; it cannot change a reading.
+
+**CLOSED 2026-08-21 — branch (c) DELETED on user sign-off.** The shipped reading is now
+**(a)(b)+extended**; the table above records the measurement as it stood, so R1 names the
+configuration measured, not the one shipped. Deletion moved nothing, exactly as R2 predicted:
+259/293 · 283/293 · 10 real errors, 0 significations moved. `bhangas.kemadruma_bhanga`
+quotes the line in full in its docstring, which is where fidelity to the text belongs — an
+`if` that cannot fire records nothing a reader can check. The extended benefic-drishti branch
+STAYS (it is not provably redundant) and keeps its NOT-3HC label; a test now builds the chart
+only it can cancel — Moon in the 2nd, Jupiter in the 6th — so deleting it would fail loudly
+rather than silently.
+
+## Chara dasa x Karakamsa pairing (2026-08-19) — NOT ENCODABLE from the mounted text
+
+The audit wanted the sentence that reads the karakamsa indications THROUGH the running
+chara period. It cannot be composed from what is mounted, and the reason is the import, not
+the doctrine:
+
+* the JAIMINI import is PARTIAL — 6 chapters (4, 5, 6, 9, 11, 49), and chapter 5 is 48
+  lines of OCR junk;
+* "karakamsa" appears **only** in chapter 9 (the Summary), at :797-838, where Raman lists
+  what the karakamsa reveals (appearance via its lord, character and mind, pre-disposition
+  to troubles, education, profession) — a topic index, not a timing rule;
+* chapter 4 is the Chara Dasa chapter and mentions karakamsa **zero times**.
+
+So the pairing is either in a chapter that did not import or is not stated. The
+navigational cross-reference that shipped instead remains the correct surface. A session
+with a complete Studies-in-Jaimini scan should look for an article pairing the two before
+re-opening this.
+
+
+## Thin significations (2026-08-19) — CLOSED, measured, and closed AGAINST adding them
+
+The audit's six thin significations were checked twice with the corpus mounted. Detail and
+anchors live in the `doctrine/significations.py` module docstring; the summary:
+
+* **Four of six ARE Raman's** (H1 character/environment, H2 food/literary gift,
+  H3 writings/neighbours, H5 fame-and-position/discriminating-power) — HPA-19:64-67,
+  :114-117, :190-193, :300-303.
+* **Three are not his, in the bhava requested**: H5 speculation (absent), H5 upasana
+  (worship is his 12th-house matter, HPA-19:785), H6 servants (absent), H12 bed-comforts
+  (absent). BPHS/classical attributions, barred by the divergence firewall.
+* **The four he does state were added and MEASURED, then reverted**: cross-layer agreement
+  fell **0.475 → 0.439** and 62 tier-3 evidence snapshots churned. The scored golden
+  ratchet did NOT move (259/293) because a new signification carries no golden expectation
+  and is never scored — which is precisely why the ratchet alone was not a sufficient gate
+  here, and the convergence test was.
+
+**The doctrinal reason**: naming a matter is not giving rules to judge it. Raman lists
+these in a definitional sentence and gives no combinations for them, so a signification
+added here routes to no rule bucket and is decided by the polarity fallback — a verdict
+manufactured from no evidence.
+
+**To re-open**: the prerequisite is the RULE BUCKET, not the row. Find Raman's combinations
+for the matter, encode those, and the signification follows. The audit's own phrasing ("an
+add-only row + a rule bucket") had it right; only the row is cheap.

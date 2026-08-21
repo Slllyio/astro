@@ -28,6 +28,10 @@ _CANONICAL = BirthData("Canonical Test", 1990, 7, 15, 12, 0, 5.5, 12.97, 77.59)
 #: marker change must consciously touch this file too. Append-only: may only ever GROW.
 _FROZEN = (
     ("title", "# Detailed reading", 'class="name"'),
+    # v37 amendment (2026-08-20, conscious, same-commit as the module, user-requested): the
+    # plain-words summary, inserted FIRST. Third exception to append-at-the-end, after v5 and
+    # v32 — a summary a reader meets after the technical chapters is not a summary.
+    ("simple_summary", "## In simple words", 'id="simple-summary"'),
     # v5 amendment (2026-07-26, conscious, same-commit as the module): "Your Reading" is the
     # ONE deliberate exception to "append at the end" — it must come FIRST after the title,
     # since it exists specifically to be read before every technical section below it.
@@ -152,6 +156,13 @@ _FROZEN = (
     # v33 amendment (2026-08-14, conscious, same-commit as the module, user-requested):
     # aptitude, intelligence & work style — appended at the END per the append-only default.
     ("aptitude", "## Aptitude, intelligence & work style", 'id="aptitude"'),
+    # v35 (2026-08-19): the medical read — HPA-29's own tables through Raman's own
+    # 6th-house procedure. Appended likewise; _FROZEN grown in the same commit.
+    ("medical", "## Medical read (classical correspondence)", 'id="medical"'),
+    # v36 (2026-08-20, user-requested): the feedback instrument — the questionnaire the reader
+    # answers about their own life, generated with the reading. Appended at the very END: it is
+    # the one section that asks rather than tells. _FROZEN grown in the same commit.
+    ("feedback", "## Your feedback", 'id="feedback"'),
 )
 _FROZEN_IDS = tuple(row[0] for row in _FROZEN)
 
@@ -235,7 +246,9 @@ class TestTemplateContract:
         assert {s.since for s in SECTION_CONTRACT} <= {
             "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
             "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24",
-            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34"}
+            "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34",
+            "v35", "v36", "v37"
+        }
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v1") == 17
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v2") == 6
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v3") == 1
@@ -270,6 +283,10 @@ class TestTemplateContract:
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v32") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v33") == 1
         assert sum(1 for s in SECTION_CONTRACT if s.since == "v34") == 1
+        # v35: the medical read (HPA-29 sign->anatomy / planet->disease, applied through
+        # Raman's own 6th-house rule) — the audit's largest content gap, closed once the
+        # doctrine corpus was mounted and the chapter's anchors verified line-for-line.
+        assert sum(1 for s in SECTION_CONTRACT if s.since == "v35") == 1
 
 
 class TestRectConfidence:
@@ -720,14 +737,32 @@ class TestInterpretationGuide:
 
     @needs_corpus
     def test_guide_citations_resolve(self):
-        """Every corpus citation the guide prints must verify against the sources."""
+        """Every corpus citation the guide prints must verify — for books vendored here.
+
+        Citations into a book this machine does not carry are collected and reported rather
+        than failed: ASP is a local OCR of a user-supplied scan with no archive.org source, so
+        its absence is a fact about the box. Failing on it made this read as "the guide's
+        citations are broken" when every citation into a book we actually have was fine."""
+        from corpus_presence import vendored_books
+
         from app.raman_saab.doctrine.sources import Citation, verify
         from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        have = vendored_books()
         cites = [c for prec in ig["precedence"] for c in prec["citations"]]
         cites += [a["citation"] for a in ig["axes"]]
+        skipped = []
         for cite in cites:
             work, line = cite.rsplit(":", 1)
+            # Compare the WHOLE tag. `work.split("-")[0]` turned HTJAH-I and HTJAH-II into
+            # "HTJAH", which `vendored_books()` never returns, so every citation into the two
+            # largest books was skipped instead of checked — 12 of 18 in all.
+            if work not in have:
+                skipped.append(cite)
+                continue
             assert verify(Citation(work, int(line))), cite
+        if skipped:
+            pytest.skip(f"book(s) not vendored here, {len(skipped)} citation(s) unchecked: "
+                        f"{sorted(set(c.split(':')[0] for c in skipped))}")
 
 
 class TestHealthReadout:

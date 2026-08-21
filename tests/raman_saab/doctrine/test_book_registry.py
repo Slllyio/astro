@@ -8,7 +8,7 @@ and is recorded in book_registry's comments + DOCTRINE_BACKLOG.
 """
 from __future__ import annotations
 
-from corpus_presence import needs_corpus
+from corpus_presence import needs_corpus, vendored_books
 
 from app.raman_saab.doctrine import book_registry as br
 from app.raman_saab.doctrine.sources import Citation, _CORPUS, _resolve_file, verify
@@ -21,11 +21,21 @@ def test_registry_status_values_valid():
 
 @needs_corpus
 def test_live_books_resolve_on_disk():
-    """Every live book resolves to a real file (single-file via its tag; multi-chapter via a real
-    chapter file under its folder)."""
+    """Every live book that is VENDORED HERE resolves to a real file (single-file via its tag;
+    multi-chapter via a real chapter file under its folder).
+
+    Books absent from this machine are skipped over rather than failed. ASP is the standing
+    case: it is the one live book with no archive.org source — the bundle records it as a
+    local OCR of a user-supplied scan — so it cannot be recovered by download, and its
+    absence is a provisioning fact about the box, not a defect in the registry. Skipping the
+    whole test on ASP's account would stop checking the other ten, so the skip is per book
+    and the absentees are named."""
+    have = vendored_books()
+    checked = 0
     for b in br.BOOKS:
-        if b.status != "live":
+        if b.status != "live" or b.tag not in have:
             continue
+        checked += 1
         if b.multi_chapter:
             folder = _CORPUS / b.slug
             assert folder.is_dir(), f"{b.tag}: folder {b.slug} missing"
@@ -33,6 +43,7 @@ def test_live_books_resolve_on_disk():
         else:
             f = _resolve_file(b.tag)
             assert f is not None and f.is_file(), f"{b.tag} does not resolve to a file"
+    assert checked, "no live book is vendored here — the corpus guard should have skipped"
 
 
 def test_out_of_scope_books_are_non_citable():
@@ -56,3 +67,25 @@ def test_registry_slugs_coupled_to_etl_bundle():
     for b in br.BOOKS:
         if b.status == "live":
             assert b.slug in bundle_slugs, f"live book {b.tag} ({b.slug}) missing from ETL bundle"
+
+
+def test_unsplit_books_match_the_registry():
+    """A book the registry pins to ``chapter_001_full-text-unsplit.md`` must carry
+    ``never_split`` in the ETL bundle.
+
+    Its citations are line offsets into ONE continuous document, so a chapter split does
+    not merely reorganise the text — it destroys every anchor into that book and, because
+    the pinned filename is then never written, the tag resolves to nothing at all. Found
+    on a clean re-import 2026-08-19: NH split into two spurious chapters under the default
+    header regex, and every NH citation in the engine stopped resolving. HTJAH-I and
+    HTJAH-II happened to survive only because no header matched them."""
+    from app.medini.etl.import_archive_text import _CLASSICAL_BUNDLE
+    by_slug = {b.book_slug: b for b in _CLASSICAL_BUNDLE}
+    for b in br.BOOKS:
+        if b.status != "live" or b.fixed_file != "chapter_001_full-text-unsplit.md":
+            continue
+        entry = by_slug.get(b.slug)
+        assert entry is not None, f"{b.tag}: not in the ETL bundle"
+        assert entry.never_split, (
+            f"{b.tag} ({b.slug}) is pinned unsplit in the registry but the ETL bundle "
+            f"would chapter-split it — every citation into it would break on re-import")

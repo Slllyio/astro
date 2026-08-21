@@ -37,3 +37,43 @@ def needs_file(*paths: str) -> pytest.MarkDecorator:
     return pytest.mark.skipif(
         bool(missing),
         reason=f"gitignored data not present on this machine: {', '.join(missing)}")
+
+def vendored_books() -> set[str]:
+    """Tags of live books that actually have text on this machine.
+
+    `HAS_CORPUS` is all-or-nothing: truthy the moment ANY cited file resolves. That is right
+    for CI, where nothing is vendored and everything skips, and wrong on a box that has most
+    of the corpus but not all of it — one absent book turns into hard failures in tests that
+    are really reporting "this scan is not on this machine".
+
+    The concrete case is ASP (`ashtakavarga_system_raman`). It is the one live book with no
+    archive.org source — the bundle records it as a local OCR of a user-supplied PDF — so it
+    cannot be re-downloaded, and its folder exists but is empty here.
+    """
+    from app.raman_saab.doctrine import book_registry as br
+    from app.raman_saab.doctrine.sources import _CORPUS, _resolve_file
+
+    out = set()
+    for b in br.BOOKS:
+        if b.status != "live":
+            continue
+        if b.multi_chapter:
+            if any((_CORPUS / b.slug).glob("chapter_*.md")):
+                out.add(b.tag)
+        else:
+            f = _resolve_file(b.tag)
+            if f is not None and f.is_file():
+                out.add(b.tag)
+    return out
+
+
+def needs_book(*tags: str) -> pytest.MarkDecorator:
+    """Skip unless EVERY named live book has text on this machine.
+
+    Use where a test asserts about one book's content, so a book nobody can re-download does
+    not read as a regression in unrelated doctrine.
+    """
+    have = vendored_books() if HAS_CORPUS else set()
+    missing = [t for t in tags if t not in have]
+    return pytest.mark.skipif(
+        bool(missing), reason=f"book(s) not vendored on this machine: {', '.join(missing)}")

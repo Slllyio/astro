@@ -70,7 +70,28 @@ EFF_W_NODE: float = 0.0
 EFF_W_COMBUST: float = 0.0
 EFF_W_DIGNITY: float = 0.0
 
-# Minimum-required total Shadbala in Rupas per planet (GBB-8:303-312).
+# Minimum-required TOTAL Shadbala in Rupas per planet (GBB-8:303-312, Raman's §122
+# "Powerful Planets").
+#
+# VERIFIED AGAINST THE PRINTED TEXT 2026-08-19 (corpus mounted). All seven match his
+# figures exactly: "Ravi is held to be powerful when his Shad Bala Pinda is 5 or more
+# Rupas. Chandra becomes strong when his Shad Bala Pinda is 6 or more Rupas. Kuja becomes
+# powerful when his Shad Bala Pinda does not fall short of 5 Rupas. Budha becomes potent by
+# having his Shad Bala Pinda as 7 Rupas. Guru, Sukra and Sani become thoroughly powerful if
+# their Shad Bala Pindas are 6.5, 5.5 and 5 Rupas or more respectively."
+#
+# THIS CLOSES AN OPEN USER DECISION. The backlog carried "Sun MIN_REQUIRED 5.0 (tuned) vs
+# GBB-8:303's printed 6.5 - retune or relabel". There is nothing to decide: 6.5 is GURU's
+# figure, not the Sun's. Raman's printed minimum for Ravi IS 5.0 and this table already has
+# it. The decision was resting on a misread line.
+#
+# NO PER-COMPONENT MINIMA EXIST. The backlog also asked for "GBB-8's component requirement
+# table" to turn the report's weakest-component pointer into a real per-component verdict.
+# Searching all nine imported GBB chapters (2026-08-19) finds no such table: §122 sets a bar
+# for the shadbala PINDA - the total - and Raman sets none for sthana/dig/kala/chesta/
+# naisargika/drik individually. The pointer therefore stays explicitly arithmetic-only,
+# which is how it already ships, and that is now a settled finding rather than a gap.
+#
 # Also a golden-tuned knob (see BHAVA_BALA_MIN_SH note); intentionally not ``Final``.
 MIN_REQUIRED: dict[str, float] = {
     "Sun": 5.0,

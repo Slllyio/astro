@@ -221,8 +221,32 @@
     background:rgba(139,111,71,.15);border:1px solid rgba(139,111,71,.35);border-radius:3px;
     padding:0 .3rem;margin-right:.35rem}
   .timing{font-size:.8rem;color:var(--madder);margin:.12rem 0}
+  .honesty-rules{margin:.3rem 0 .8rem 1.2rem;padding:0;font-size:.88rem;line-height:1.55;
+    color:var(--ink-soft,inherit)}
+  .honesty-rules li{margin:.3rem 0}
+  /* ---- reading-length toggle + the short reading ---- */
+  .rl-toggle{display:flex;align-items:center;gap:.35rem;margin:0 0 .9rem;font-size:.78rem}
+  .rl-label{font-variant:small-caps;letter-spacing:.08em;color:var(--ink-faded)}
+  .rl-btn{border:1px solid var(--ink-faded);background:transparent;color:var(--ink-soft,inherit);
+    border-radius:3px;padding:.1rem .55rem;cursor:pointer;font:inherit}
+  .rl-btn.on{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;border-color:transparent}
+  .short-reading .sr-h{font-size:1rem;margin:1.3rem 0 .3rem}
+  .sr-list{margin:.2rem 0 .6rem 1.1rem;padding:0}
+  .sr-period{border-left:2px solid var(--ink-faded);padding:.1rem 0 .1rem .7rem;margin:.5rem 0}
+  .sr-period.now{border-left-color:var(--saffron-deep,#8b6f47)}
+  .sr-when{font-weight:600}
+  .sr-nowchip{background:var(--saffron-deep,#8b6f47);color:#fbf7ef;font-size:.68rem;
+    border-radius:3px;padding:0 .35rem;margin-left:.45rem;vertical-align:middle}
+  .sr-strength{margin:.1rem 0 .35rem}
+  .sr-comb{margin:.4rem 0}
+  .sr-tone{font-size:.68rem;border-radius:3px;padding:0 .35rem;margin-left:.4rem;
+    background:rgba(139,111,71,.16)}
+  .sr-tone.t-difficult{background:rgba(160,60,40,.18)}
+  .sr-tone.t-supportive{background:rgba(70,120,60,.18)}
   .decade{border:1px solid rgba(139,111,71,.3);border-radius:6px;padding:.45rem .65rem;margin:.4rem 0}
   .decade-cols{display:flex;gap:1rem;flex-wrap:wrap}
+  .decade-grid{width:100%;margin:.2rem 0 .5rem;font-size:.82rem}
+  .decade-grid td:nth-child(2){white-space:nowrap;text-align:center}
   .decade-cols>div{flex:1 1 180px}
   .decade .chip{display:inline-block;font-size:.74rem;border-radius:3px;padding:0 .35rem;
     margin:.08rem .2rem .08rem 0;border:1px solid rgba(139,111,71,.3)}
@@ -292,6 +316,54 @@
   .ai-text{color:#e6eaf2;font-size:.98rem;line-height:1.7;margin:.55rem 0}
   .ai-wall .folio-loading{color:#aab4c8}
   .ai-wall .muted{color:#8a94a8}
+  /* the plain-words summary (v37) — the one section aimed at a reader with no astrology.
+     Set a touch larger and looser than the body, because it is meant to be readable at a
+     glance by someone who will not read the chapters. */
+  .ss{margin:.8rem 0 0}
+  .ss-lede{font-size:1.04rem;line-height:1.68}
+  .ss-p{font-size:1rem;line-height:1.66;margin:.85rem 0 0}
+  .ss-list{margin:.4rem 0 .2rem;padding-left:1.25rem}
+  .ss-list li{margin:.28rem 0;line-height:1.5;font-size:.99rem}
+  /* the four-part feedback instrument (v36) — the questionnaire that closes the report.
+     Part A is answerable BEFORE the reading; B/C/D stay shut until it is marked done, which
+     is the whole reason the section can be scored rather than just liked. */
+  .fbi{margin:1.4rem 0 0}
+  .fbi-part{margin:1.4rem 0 0;padding:.9rem 1rem;border:1px solid var(--ink-faded);border-radius:6px;
+    background:rgba(232,213,168,.28)}
+  .fbi-part-head{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.14em;
+    color:var(--madder);margin-bottom:.35rem}
+  .fbi-note{font-size:.88rem;line-height:1.55;margin:.2rem 0 .6rem}
+  .fbi-q{margin:.95rem 0 0;padding-top:.75rem;border-top:1px dashed var(--ink-faded)}
+  .fbi-qt{font-family:'EB Garamond',serif;font-size:1rem;line-height:1.5;margin-bottom:.35rem}
+  .fbi-hint{font-size:.82rem;line-height:1.5;font-style:italic;margin:.1rem 0 .4rem}
+  .fbi-opt{display:flex;align-items:flex-start;gap:.55rem;margin:.35rem 0;padding:.5rem .65rem;
+    border:1px solid var(--ink-faded);border-radius:5px;cursor:pointer;line-height:1.45;
+    font-size:.94rem;background:transparent;text-align:left;width:100%;font-family:inherit;
+    color:var(--ink-primary);touch-action:manipulation}
+  .fbi-opt.sel{background:rgba(139,26,26,.10);border-color:var(--madder)}
+  .fbi-conf{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:.45rem 0 0}
+  .fbi-conf-lab{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.12em;
+    color:var(--ink-secondary)}
+  .fbi-conf button{min-width:2.1rem;padding:.3rem .45rem;border:1px solid var(--ink-faded);
+    border-radius:4px;background:transparent;cursor:pointer;font-size:.82rem;
+    color:var(--ink-secondary);touch-action:manipulation}
+  .fbi-conf button.sel{background:var(--madder);border-color:var(--madder);color:#fff}
+  .fbi-free{width:100%;margin:.45rem 0 0}
+  .fbi-gate{margin:1rem 0 0;padding:.7rem .9rem;border:1px dashed var(--ink-faded);border-radius:5px;
+    font-size:.9rem;cursor:pointer;display:flex;gap:.6rem;align-items:flex-start;
+    background:transparent;width:100%;text-align:left;font-family:inherit;color:var(--ink-primary)}
+  .fbi-locked{display:none}
+  .fbi-locked.open{display:block}
+  .fbi-invite{margin:1rem 0 0;padding:.75rem .95rem;border-left:3px solid var(--madder);
+    background:rgba(232,213,168,.4);font-size:.92rem;line-height:1.55}
+  .fbi-invite button{margin-top:.5rem}
+  .fbi-rows{display:flex;flex-direction:column;gap:.4rem;margin:.5rem 0 0}
+  .fbi-row{display:flex;gap:.4rem;flex-wrap:wrap}
+  .fbi-row .fbi-year{max-width:6rem}
+  .fbi-row select{flex:1 1 8rem;min-width:0}
+  .fbi-more{margin:.5rem 0 0;font-size:.7rem;padding:.35rem .8rem}
+  .fbi-dates{margin:.5rem 0 0;font-size:.88rem}
+  .fbi-dates td,.fbi-dates th{padding:.25rem .55rem}
   /* feedback card on the colophon — chart-specific calibration questions */
   .fb-card{margin:1.6rem auto 0;max-width:560px;padding:1rem 1.2rem;background:rgba(232,213,168,.55);
     border:1px solid var(--ink-faded);border-radius:6px;text-align:left}
@@ -694,6 +766,65 @@ const I18N_HI = {
   'division':'वर्ग',
   'domain (non-Raman label)':'क्षेत्र (रामन्-भिन्न नाम)',
   'engine\u2019s own reading':'इंजन का अपना पाठ',
+  /* v36 — psych mind stack */
+  'The Moon\u2019s mental disposition':'चन्द्र की मानसिक प्रवृत्ति',
+  'Mercury (buddhi) condition':'बुध (बुद्धि) की स्थिति',
+  'The Moon\u2019s avastha (cross-reference)':'चन्द्र की अवस्था (सन्दर्भ)',
+  /* v36 — marriage timing */
+  'Marriage timing — the giving lords and the delay screens':'विवाह-काल — दाता ग्रह और विलम्ब-परीक्षा',
+  'Planets Raman names as able to give marriage in their periods':'रमण द्वारा नामित विवाह-दाता ग्रह',
+  'planet':'ग्रह',
+  'nominated by':'किस नियम से',
+  'in the ranking?':'क्रम में?',
+  'yes':'हाँ',
+  'no':'नहीं',
+  'Here that is':'यहाँ वह है',
+  'not resolvable':'अनिर्णीत',
+  'FIRES':'सक्रिय',
+  'silent':'मौन',
+  'Found here':'यहाँ प्राप्त',
+  'The lean':'झुकाव',
+  'Jupiter-transit resultant':'गुरु-गोचर फलित राशि',
+  'trines':'त्रिकोण',
+  'Marital happiness (H7)':'वैवाहिक सुख (स7)',
+  'Coverture (H7)':'दाम्पत्य (स7)',
+  'Jupiter transiting the 7th from the Moon':'चन्द्र से सप्तम में गुरु का गोचर',
+  /* v36 — the three career centres */
+  'The 10th reckoned from all three centres':'तीनों केन्द्रों से गणित दशम भाव',
+  'The 10th from Lagna, the Moon and the Sun':'लग्न, चन्द्र और सूर्य से दशम',
+  'centre':'केन्द्र',
+  'strongest':'सर्वाधिक बलवान',
+  'its 10th':'उसका दशम',
+  '10th lord':'दशमेश',
+  'navamsa dispositor':'नवांश स्वामी',
+  'Raman\u2019s vocation words':'रमण के व्यवसाय-शब्द',
+  'strength':'बल',
+  'rupas':'रूप',
+  'measure':'माप',
+  'Strongest centre':'सर्वाधिक बलवान केन्द्र',
+  'Reckoning from it':'उससे गणना',
+  'Blended':'मिश्रित',
+  'Convergent across centres':'केन्द्रों में समान',
+  'On convergence':'समानता पर',
+  'One planet, several hats':'एक ग्रह, कई भूमिकाएँ',
+  'H10 activation in the window (a timing lens, never a promise)':'इस अवधि में दशम भाव की सक्रियता (काल-दृष्टि, वचन नहीं)',
+  /* v35 — the HPA-29 medical read */
+  'Raman\u2019s own procedure':'रमण की अपनी विधि',
+  'The 6th from lagna':'लग्न से षष्ठ भाव',
+  'In the 6th':'षष्ठ में स्थित',
+  'Aspecting the 6th':'षष्ठ पर दृष्टि',
+  'Present but not tabled':'उपस्थित, किन्तु तालिका में नहीं',
+  'testimony':'साक्ष्य',
+  'speaks through':'किसके द्वारा',
+  'body regions':'शरीर के अंग',
+  'complaints indicated':'सूचित रोग',
+  'cite':'सन्दर्भ',
+  'The four testimonies Raman names':'रमण द्वारा नामित चार साक्ष्य',
+  'Body regions this chart marks':'यह कुण्डली जिन अंगों को चिह्नित करती है',
+  'Complaints the tables associate':'तालिकाओं से सम्बद्ध रोग',
+  'union of the testimonies, de-duplicated':'साक्ष्यों का योग, पुनरुक्ति रहित',
+  'in house':'भाव में',
+  'lord':'स्वामी',
   /* the two kinds of a 'neutral' status — cancelled testimony vs no testimony at all */
   'contested':'परस्पर विरोधी',
   'silent':'मौन',
@@ -988,6 +1119,27 @@ const I18N_HI = {
   "graha": "ग्रह",
   "sign": "राशि",
   "house": "भाव",
+  "Reading": "पाठ",
+  "short": "संक्षिप्त",
+  "full": "विस्तृत",
+  "Your reading, in short": "आपका फलादेश, संक्षेप में",
+  "What this reading calls favourable": "जिन्हें यह फलादेश अनुकूल कहता है",
+  "What it calls difficult": "जिन्हें यह कठिन कहता है",
+  "What it reads both ways": "जिन्हें यह दोनों तरह पढ़ता है",
+  "What is coming": "आगे क्या है",
+  "Running well": "अच्छा चलता हुआ",
+  "Meeting friction": "रुकावट का सामना",
+  "The combinations your chart carries": "आपकी कुंडली के योग",
+  "What is unusual here": "यहाँ असामान्य क्या है",
+  "How much of this is true of everyone": "इसमें से कितना सबके लिए सच है",
+  "READ THE FULL READING": "विस्तृत फलादेश पढ़ें",
+  "This chart is too sparse for a short reading — switch to the full reading.": "इस कुंडली के लिए संक्षिप्त फलादेश हेतु पर्याप्त सामग्री नहीं — विस्तृत फलादेश पर जाइए।",
+  "You are reading the short version. The rest of the book fills in when you switch to the full reading.": "आप संक्षिप्त संस्करण पढ़ रहे हैं। विस्तृत फलादेश पर जाते ही शेष पुस्तक भर जाएगी।",
+  "The honesty rules that govern this table — read them before the counts.": "इस तालिका पर लागू ईमानदारी-नियम — गणना पढ़ने से पहले इन्हें पढ़ें।",
+  "life area": "जीवन-क्षेत्र",
+  "MD": "महादशा",
+  "Favourable": "अनुकूल",
+  "Challenged": "चुनौतीपूर्ण",
   "nakshatra": "नक्षत्र",
   "pada": "चरण",
   "navamsa": "नवांश",
@@ -1064,7 +1216,33 @@ const I18N_HI = {
   "agree": "सहमत",
   "partly": "आंशिक रूप से",
   "disagree": "असहमत",
-  "not sure": "निश्चित नहीं"
+  "not sure": "निश्चित नहीं",
+  // ---- the four-part feedback instrument (v36) ----
+  "Your feedback": "आपकी प्रतिक्रिया",
+  "In simple words": "सरल शब्दों में",
+  "PART": "भाग",
+  "HOW SURE?": "कितना विश्वास?",
+  "why? (optional)": "क्यों? (वैकल्पिक)",
+  "your answer": "आपका उत्तर",
+  "I have finished Part A — open the rest": "मैंने भाग A पूरा कर लिया — बाक़ी खोलें",
+  "Part A done": "भाग A पूरा हुआ",
+  "Period changes on": "दशा बदलती है",
+  "Mahadasha begins": "महादशा आरंभ",
+  "Settle the birth time before treating any of this reading as measured.":
+    "इस फलादेश को मापा हुआ मानने से पहले जन्म-समय निश्चित करें।",
+  "SEND MY ANSWERS": "मेरे उत्तर भेजें",
+  "Answer at least one question first.": "पहले कम से कम एक प्रश्न का उत्तर दें।",
+  "Thank you — {N} answer(s) stored.": "धन्यवाद — {N} उत्तर सुरक्षित हुए।",
+  "Your answers are not scored back to you: knowing which option the chart took would change how the next person answers.":
+    "आपके उत्तरों का अंक आपको नहीं बताया जाता: यह जान लेना कि कुंडली ने कौन-सा विकल्प लिया, अगले व्यक्ति के उत्तर बदल देगा।",
+  "Before you read: there are a few questions about your own life at the end of this report. Answering them FIRST is what makes your feedback worth anything — once you have read what the chart says, you can no longer say what you would have said on your own.":
+    "पढ़ने से पहले: इस फलादेश के अंत में आपके अपने जीवन के बारे में कुछ प्रश्न हैं। उन्हें पहले भरना ही आपकी प्रतिक्रिया को मूल्यवान बनाता है — एक बार पढ़ लेने के बाद आप वह नहीं कह सकते जो आप अपनी ओर से कहते।",
+  "ANSWER THOSE FIRST": "पहले वे प्रश्न भरें",
+  "year": "वर्ष",
+  "month (if you remember)": "महीना (यदि याद हो)",
+  "what kind of event?": "किस तरह की घटना?",
+  "ADD ANOTHER": "एक और जोड़ें",
+  "anything to add? (optional)": "कुछ और जोड़ना चाहें? (वैकल्पिक)",
 };
 
 let LANG = 'en';
@@ -1624,7 +1802,8 @@ const SEC_ID={
   'Soul & destiny (Jaimini)':'soul','Karmic evolution (Jaimini)':'karmic',
   'Pitru dosha screen (classical, non-Raman)':'pitru','Integrated insights':'synthesis',
   'What stands out':'stands_out','Information content of this reading':'info_content',
-  'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod'};
+  'Full life synthesis':'life_synthesis','Nichod (the essence)':'nichod',
+  'Your feedback':'feedback','In simple words':'simple_summary'};
 function birthBody(){ return { name:$('name').value, year:+$('year').value, month:+$('month').value, day:+$('day').value,
   hour:+$('hour').value, minute:+$('minute').value, latitude:+$('latitude').value, longitude:+$('longitude').value,
   tz_offset:+$('tz_offset').value, ayanamsa:$('ayanamsa').value, lang:LANG }; }
@@ -2455,15 +2634,138 @@ function adverseTransitRows(R){ const out=[];
       interference:'—'}); }
   out.sort((a,b2)=>a.start_jd-b2.start_jd); return out; }
 
+// ---- reading LENGTH: the same cast, read two ways ----------------------------
+// The full reading is the default and stays the default — nothing is hidden unless a reader
+// asks for the gist. Switching re-renders from the payload already in memory: both readings
+// ride in every response, so the toggle never re-casts the chart.
+let READ_LEN = 'full';
+let LAST_RENDER = null;          // [R, S, FQ] — so the toggle can redraw without a fetch
+
+function setReadingLength(v){
+  if(v===READ_LEN || !LAST_RENDER) return;
+  READ_LEN = v;
+  render(LAST_RENDER[0], LAST_RENDER[1], LAST_RENDER[2]);
+  if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(2);
+}
+
+// Rendered on EVERY folio, because in the short reading the other folios are where a reader
+// discovers the switch exists — a mode you cannot find your way out of is a trap.
+function readingLengthToggle(){
+  const w=el('div',{class:'rl-toggle'});
+  w.append(el('span',{class:'rl-label'}, t('Reading')));
+  for(const [v,label] of [['short', t('short')], ['full', t('full')]]){
+    const b=el('button',{class:'rl-btn'+(READ_LEN===v?' on':''),type:'button'},label);
+    b.setAttribute('aria-pressed', READ_LEN===v ? 'true' : 'false');
+    b.onclick=()=>setReadingLength(v);
+    w.append(b);
+  }
+  return w;
+}
+
+function shortList(items){
+  const ul=el('ul',{class:'sr-list'});
+  for(const x of (items||[])) ul.append(el('li',{},x));
+  return ul;
+}
+
+// The short reading itself. Every string arrives already written in the reader's language —
+// t() cannot translate a sentence composed at runtime, so the payload carries both and this
+// picks. Safe DOM only, per the project rule.
+function shortReadingCard(sr){
+  const hi = LANG==='hi';
+  const pick=(o,f)=> (hi ? o[f+'_hi'] : o[f+'_en']) || '';
+  const box=el('div',{class:'short-reading'});
+  box.append(H2('Your reading, in short'));
+  if(pick(sr,'opening')) box.append(para(pick(sr,'opening'),'lede'));
+  if(pick(sr,'you')) box.append(para(pick(sr,'you'),'lede'));
+
+  for(const [field,label] of [['strengths','What this reading calls favourable'],
+                              ['difficulties','What it calls difficult'],
+                              ['mixed','What it reads both ways']]){
+    const items = hi ? sr[field+'_hi'] : sr[field+'_en'];
+    if(!(items||[]).length) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(shortList(items));
+  }
+
+  if((sr.periods||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('What is coming')));
+    if(pick(sr,'ahead_lead')) box.append(para(pick(sr,'ahead_lead'),'muted'));
+    for(const p of sr.periods){
+      const card=el('div',{class:'sr-period'+(p.is_now?' now':'')});
+      const head=el('div',{class:'sr-when'});
+      head.append(pick(p,'from_label')+' – '+pick(p,'to_label'));
+      if(p.is_now) head.append(el('span',{class:'sr-nowchip'}, t('now')));
+      card.append(head);
+      card.append(para(pick(p,'strength'),'sr-strength'));
+      const sup = hi ? p.supportive_hi : p.supportive_en;
+      const str = hi ? p.strained_hi : p.strained_en;
+      if((sup||[]).length){ card.append(el('div',{class:'muted'}, t('Running well'))); card.append(shortList(sup)); }
+      if((str||[]).length){ card.append(el('div',{class:'muted'}, t('Meeting friction'))); card.append(shortList(str)); }
+      box.append(card);
+    }
+  }
+
+  if((sr.combinations||[]).length){
+    box.append(el('h3',{class:'sr-h'}, t('The combinations your chart carries')));
+    if(pick(sr,'combinations_lead')) box.append(para(pick(sr,'combinations_lead'),'muted'));
+    for(const c of sr.combinations){
+      const row=el('div',{class:'sr-comb'});
+      row.append(el('b',{},c.name||''));
+      row.append(el('span',{class:'sr-tone t-'+String(c.tone||'mixed')}, pick(c,'tone')));
+      row.append(' — '+pick(c,'plain')+(pick(c,'when') ? '; '+pick(c,'when') : ''));
+      box.append(row);
+    }
+  }
+
+  for(const [field,label] of [['unusual','What is unusual here'],
+                              ['common','How much of this is true of everyone']]){
+    if(!pick(sr,field)) continue;
+    box.append(el('h3',{class:'sr-h'}, t(label)));
+    box.append(para(pick(sr,field)));
+  }
+  if(pick(sr,'caveat')) box.append(para(pick(sr,'caveat'),'muted'));
+  if(pick(sr,'more')) box.append(para(pick(sr,'more'),'muted'));
+  const b=el('button',{class:'leaf-button secondary',type:'button'}, t('READ THE FULL READING'));
+  b.onclick=()=>setReadingLength('full');
+  box.append(b);
+  return box;
+}
+
 function render(R, S, FQ){
   RPT=R;  // expose to H2's plain-language layer
   PAGE_TOC=[];
+  INST_ANSWERS={}; INST_CONTEXT='after_reading';
   // clear every chapter folio, then append each section-group into its leaf via chapter()
   for(let i=2;i<=12;i++){ const b=$('leaf'+i+'-body'); if(b) b.replaceChildren(); }
   let _leaf=null; const add=(...n)=>{ if(_leaf) _leaf.append(...n.filter(Boolean)); };
   const chapter=(i)=>{ _leaf=$('leaf'+i+'-body'); CUR_LEAF=i; };
+  LAST_RENDER = [R, S, FQ];
+
+  // ---- the SHORT reading: one folio instead of eleven ----
+  // The other folios are not left blank — a reader who keeps turning is told what happened
+  // and handed the way back, which is the difference between a mode and a dead end. The
+  // feedback section still renders on the colophon: shortening the reading must not quietly
+  // switch off the thing that measures how well it lands.
+  if(READ_LEN==='short'){
+    chapter(2);
+    add(readingLengthToggle());
+    if(R.short_reading) add(shortReadingCard(R.short_reading));
+    else add(para(t('This chart is too sparse for a short reading — switch to the full reading.'),'muted'));
+    for(let i=3;i<=11;i++){
+      chapter(i);
+      add(readingLengthToggle());
+      add(para(t('You are reading the short version. The rest of the book fills in when you switch to the full reading.'),'muted'));
+    }
+    chapter(12);
+    if(FQ&&FQ.length) add(feedbackCard(FQ));
+    if(R.feedback_instrument){ add(H2('Your feedback')); add(feedbackInstrument(R.feedback_instrument)); }
+    buildToc();
+    return;
+  }
 
   chapter(2);
+  add(readingLengthToggle());
   // ===== What matters most (the engine's ranked digest — first thing you see) =====
   const dg=R.digest||{};
   if(dg.headline||(dg.items&&dg.items.length)){
@@ -2491,6 +2793,15 @@ function render(R, S, FQ){
     const rb=el('button',{class:'digest-read',type:'button'},t('Read this as one story →'));
     rb.onclick=()=>readAsStory(rb); add(rb);
   }
+
+  // ===== In simple words (v37) — the first thing on the leaf, before the digest =====
+  if(R.simple_summary){ add(H2('In simple words')); add(simpleSummary(R.simple_summary)); }
+
+  // ===== the invitation to answer Part A blind, offered BEFORE the reading =====
+  // The feedback section itself sits at the end, where a closing section belongs. But its
+  // Part A is only evidence if it is answered before the reader learns what the chart says,
+  // so the offer to jump there has to be made here, at the top, and it is.
+  if(R.feedback_instrument) add(feedbackInvite());
 
   // ===== Your Reading (plain) =====
   add(H2('Your Reading'));
@@ -2853,7 +3164,16 @@ function render(R, S, FQ){
     if(ps.moon_state) add(para('The mind\'s significator — '+ps.moon_state,'muted'));
     if(ps.temperament) add(para('Temperament of the strongest planet — '+ps.temperament+' (HTJAH-I:6248-6268)','muted'));
     if(ps.nature_stamp) add(para('Nature & appearance stamped by — '+ps.nature_stamp+' (HTJAH-I:3892-3897)','muted'));
-    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted')); }
+    if(ps.atmakaraka) add(para('Atmakaraka — '+ps.atmakaraka+' (the 7-karaka scheme)','muted'));
+    /* completeness repair 2026-08-19: the mind-stack completions (the fired H1.M.* Moon
+       disposition rules, the Mercury buddhi line and the Deeptadi cross-reference) ship in
+       the JSON and render on markdown + standalone but never here. */
+    for(const f of (ps.moon_mind||[])) add(ruleLine(f[0],t('The Moon\u2019s mental disposition')+' — '+f[1],f[2]));
+    if(ps.mercury_line) add(para(t('Mercury (buddhi) condition')+' — '+ps.mercury_line,'muted'));
+    if(ps.deeptadi_moon) add(para(t('The Moon\u2019s avastha (cross-reference)')+' — '+ps.deeptadi_moon,'muted'));
+    /* v36 — Raman's affliction-to-the-mind screen: present-or-absent, never a diagnosis. */
+    for(const m of (ps.mind_screen||[])) add(para(m[0]+' — '+m[1]+' ('+m[2]+')','muted'));
+    if(ps.mind_caution) add(para(ps.mind_caution,'muted fineprint')); }
 
   chapter(7);   // step 4 — WHY: the raw chart data
   // ===== Charts — Rasi · Navamsa · Gochara (visual grids; supplement the positions table below) =====
@@ -3006,6 +3326,15 @@ function render(R, S, FQ){
   // ===== Preponderance of testimonies (full witness ledger per house) =====
   const pp=R.preponderance||{};
   if((pp.houses||[]).length){ add(H2('Preponderance of testimonies'));
+    // The honesty rules that govern this table. They were on the markdown and the
+    // standalone HTML but had never reached this page — the surface most people read.
+    if((R.preponderance_rules||[]).length){
+      add(para(t('The honesty rules that govern this table — read them before the counts.'),'muted'));
+      const ol=el('ol',{class:'honesty-rules'});
+      for(const rl of R.preponderance_rules){
+        const li=el('li'); li.append(el('b',{},rl.heading+'.'),' '); li.append(citeText(rl.body||''));
+        ol.append(li); }
+      add(ol); }
     add(para('Most-corroborated favourable: H'+(pp.most_corroborated_favourable??'—')+' · most-corroborated afflicted: H'+(pp.most_corroborated_afflicted??'—')+' · most-contested: H'+(pp.most_contested??'—')+' (its witnesses lean against its own headline).','muted'));
     const _pb=prepBars(R);
     if(_pb) add(vizCard('Witness balance per house — favourable vs adverse', _pb,
@@ -3088,7 +3417,38 @@ function render(R, S, FQ){
     if(mg.timing_navamsa) add(para('Timing by navamsa (verbatim) — "'+mg.timing_navamsa+'" (HTJAH-II:853)','quote'));
     for(const w of (mg.timing_windows||[])) add(para('Window: '+w,'timing'));
     if(mg.children_after) add(para('Children after (H5): '+mg.children_after,'muted'));
-    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote')); }
+    if(mg.separation_quote) add(para('On loss of the partner — Raman\'s own words, a statement of the method, not a prediction: "'+mg.separation_quote+'" (HTJAH-II:887)','quote'));
+    /* completeness repair 2026-08-19: the B3 happiness/coverture split, the Kuja-dosha
+       per-frame narration and the Jupiter H7 transit windows all ship in the JSON and
+       render on markdown + standalone but never here. */
+    if(mg.marital_happiness) add(para(t('Marital happiness (H7)')+' — '+mg.marital_happiness,'muted'));
+    if(mg.coverture) add(para(t('Coverture (H7)')+' — '+mg.coverture,'muted'));
+    for(const k of (mg.kuja_narration||[])) add(para(k,'muted'));
+    for(const w of (mg.jupiter_h7_windows||[])) add(para(t('Jupiter transiting the 7th from the Moon')+': '+w,'timing'));
+    /* v36 — the COMPUTED timing layer: `timing_navamsa` above prints Raman's timing
+       paragraph verbatim and computes none of it (HTJAH-II:852-883). */
+    const mt=mg.timing;
+    if(mt){
+      add(para(t('Marriage timing — the giving lords and the delay screens'),'muted'));
+      add(para(mt.caveat,'lede'));
+      const gv=(mt.givers||[]).map(g=>({
+        [t('planet')]:g.planet+(g.planet===mt.strongest?(' ('+t('strongest')+')'):''),
+        [t('nominated by')]:(g.clauses||[]).join('; '),
+        [t('strength')]:g.strength_rupas+' '+t('rupas'),
+        [t('in the ranking?')]:g.ranked?t('yes'):(t('no')+' — '+g.condition)}));
+      const gtab=sectionTable(t('Planets Raman names as able to give marriage in their periods'), gv, null,
+        t('Ranked by strength because Raman says the strongest of these lords gives marriage in his Dasa. A graha nominated by several clauses keeps them all \u2014 that is support, though it does not change the ranking.'));
+      if(gtab) add(gtab);
+      add(para('\u201c'+mt.strongest_rule+'\u201d '+t('Here that is')+' '+(mt.strongest||t('not resolvable'))+' ('+mt.citation+')'));
+      for(const d of (mt.delays||[])){
+        add(para('['+(d.fired?t('FIRES'):t('silent'))+'] '+d.name+' — \u201c'+d.rule+'\u201d ('+d.citation+')'
+                 +((d.because||[]).length?(' '+t('Found here')+': '+d.because.join('; ')+'.'):'')
+                 +' '+d.condition, d.fired?'':'muted'));
+      }
+      add(para(t('The lean')+' — '+mt.lean));
+      for(const sp of (mt.jupiter_sphutas||[])) add(para(t('Jupiter-transit resultant')+' ('+sp[0]+') — '+sp[1]+'; '+t('trines')+' '+sp[2],'timing'));
+      add(para(mt.subordination+' (HTJAH-II:881-883)','muted'));
+    } }
 
   // ===== Children chapter (v26) — completeness repair 2026-08-14 =====
   if(R.children){ const cc=R.children;
@@ -3104,7 +3464,37 @@ function render(R, S, FQ){
     add(H2('Profession synthesis'));
     if((pf.convergent||[]).length) add(para('Convergent trades (named by ≥2 angles): '+pf.convergent.map(c=>c[0]+' ('+c[1]+')').join(', '),'lede'));
     for(const s2 of (pf.sources||[])) add(para(s2.source+' → '+s2.key+': '+s2.trades+' ('+s2.cite+')'+(s2.note?(' — '+s2.note):''),'muted'));
-    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted')); }
+    for(const m of (pf.mode_split||[])) add(para('H10 mode: '+m[0]+' — '+m[1],'muted'));
+    /* completeness repair 2026-08-19: the D-10 row, the H10 activation windows and the
+       same-graha disclosure ship in the JSON and rendered on markdown + standalone but
+       never here, so the page had been showing a strictly smaller profession chapter. */
+    if((pf.dasamsa_row||[]).length>=4) add(para(pf.dasamsa_row[0]+' → '+pf.dasamsa_row[1]+': '+pf.dasamsa_row[2]+' ('+pf.dasamsa_row[3]+')','muted'));
+    if(pf.convergence_note) add(para(t('One planet, several hats')+' — '+pf.convergence_note,'muted'));
+    for(const w of (pf.h10_windows||[])) add(para(t('H10 activation in the window (a timing lens, never a promise)')+' — '+w,'muted'));
+    /* v36 — the 10th reckoned from all THREE of Raman's centres (HTJAH-I:13960-13962).
+       Every derivation above reckons from the Lagna alone, one frame of the three. */
+    const cfr=pf.career_frames;
+    if(cfr){
+      add(para(t('The 10th reckoned from all three centres'),'muted'));
+      add(para('\u201c'+cfr.rule+'\u201d ('+cfr.citation+')','quote'));
+      const cft=(cfr.frames||[]).map(f=>({
+        [t('centre')]:f.centre+(f.is_strongest?(' ('+t('strongest')+')'):''),
+        [t('its 10th')]:f.tenth_sign_name,
+        [t('10th lord')]:f.tenth_lord+(f.tenth_lord_house?(' (h'+f.tenth_lord_house+')'):''),
+        [t('navamsa dispositor')]:f.navamsa_dispositor||'—',
+        [t('Raman\u2019s vocation words')]:f.trade||f.note||'—',
+        [t('strength')]:f.strength_rupas+' '+t('rupas'),
+        [t('measure')]:f.strength_basis}));
+      const cftab=sectionTable(t('The 10th from Lagna, the Moon and the Sun'), cft, null,
+        t('Raman reckons the 10th from all three centres and reads from the strongest. The Lagna carries a bhava bala and the luminaries a shadbala \u2014 the mixed comparison is his own (HTJAH-I:13986), and each centre\u2019s measure is named beside it.'));
+      if(cftab) add(cftab);
+      add(para(t('Strongest centre')+' — '+cfr.strongest_why,'muted'));
+      add(para(t('Reckoning from it')+' — '+cfr.leading_indication));
+      if(cfr.blended) add(para(t('Blended')+' — '+cfr.blended_note,'muted'));
+      if((cfr.convergent||[]).length) add(para(t('Convergent across centres')+' — '+cfr.convergent.map(c=>c[0]+' ('+c[1]+')').join(', ')));
+      add(para(t('On convergence')+' — '+cfr.convergence_note,'muted'));
+      add(para(cfr.caution,'muted'));
+    } }
 
   // ===== Wealth chapter (v24) — completeness repair 2026-08-14 =====
   if(R.wealth){ const wc=R.wealth;
@@ -3132,6 +3522,35 @@ function render(R, S, FQ){
     if(ap.saturn_state) add(para('Saturn\'s condition — '+ap.saturn_state,'muted'));
     if(ap.mars_state) add(para('Mars\'s condition — '+ap.mars_state,'muted'));
     if((ap.style_modern||[]).length) add(para('Modern keywords [MODERN_SYNTHESIS — no Raman citation, no demonstrated predictive weight] — '+ap.style_modern.join('; '),'muted')); }
+
+  // ===== Medical read (v35 — HPA-29 tables through Raman's own 6th-house rule) =====
+  /* Completeness: every field of every testimony renders — the four clauses, their
+     regions and complaints, the per-row citation, the union lists, the nodes that carry
+     no table, the caveat and the provenance note. */
+  if(R.medical){ const md=R.medical;
+    add(H2('Medical read (classical correspondence)','medical'));
+    add(para(md.caveat,'lede'));
+    add(para(t('Raman\u2019s own procedure')+': \u201c'+md.application+'\u201d (HPA-29:433-440)','quote'));
+    add(para(t('The SIGN supplies the body part; the PLANET supplies the complaint \u2014 that division of labour is Raman\u2019s own last clause.'),'muted'));
+    /* the lord's navamsa rides here on every surface — the markdown and the standalone HTML
+       both print it, and a field the report computes appears in every reading. */
+    add(para(t('The 6th from lagna')+' \u2014 '+md.sixth_sign_name+', '+t('lord')+' '+md.sixth_lord
+             +(md.sixth_lord_house?(' '+t('in house')+' '+md.sixth_lord_house):'')
+             +((md.sixth_lord_navamsa_sign>=1&&md.sixth_lord_navamsa_sign<=12)
+                 ?(', '+t('navamsa')+' '+SIGN[md.sixth_lord_navamsa_sign]):'')));
+    if((md.occupants||[]).length) add(para(t('In the 6th')+' \u2014 '+md.occupants.join(', ')));
+    if((md.aspecting||[]).length) add(para(t('Aspecting the 6th')+' \u2014 '+md.aspecting.join(', ')));
+    if((md.unlisted_bodies||[]).length) add(para(t('Present but not tabled')+' \u2014 '+md.unlisted_bodies.join(', ')
+             +': '+t('Raman\u2019s tables cover the seven visible grahas, so the nodes contribute nothing here. Shown rather than skipped, so the silence is visible.'),'muted'));
+    const mt=(md.testimonies||[]).map(x=>({[t('testimony')]:x.clause, [t('speaks through')]:x.actor,
+      [t('body regions')]:(x.regions||[]).join(', '), [t('complaints indicated')]:(x.complaints||[]).join(', '),
+      [t('cite')]:x.citation}));
+    const mtab=sectionTable(t('The four testimonies Raman names'), mt, null,
+      t('One row per clause of HPA-29 \u00a710. An aspecting planet lends its complaints but claims no body region \u2014 Raman ties the region to the sign and the planet standing in it.'));
+    if(mtab) add(mtab);
+    if((md.regions_marked||[]).length) add(para(t('Body regions this chart marks')+' ('+t('union of the testimonies, de-duplicated')+') \u2014 '+md.regions_marked.join(', ')));
+    if((md.complaints_indicated||[]).length) add(para(t('Complaints the tables associate')+' \u2014 '+md.complaints_indicated.join(', ')));
+    add(para(md.provenance,'muted')); }
 
   chapter(11);  // step 5 — WHEN
   // ===== Life-narrative timeline + companions =====
@@ -3171,12 +3590,22 @@ function render(R, S, FQ){
     for(const dc of dt.decades){
       const card=el('div',{class:'decade'});
       card.append(para(dc.label+(dc.inside_window?'':' (outside the displayed window)')+' — MD lords: '+(dc.md_lords||[]).join(', '),'lede'));
-      const cols=el('div',{class:'decade-cols'});
-      const cf=el('div',{}); for(const a of (dc.areas_favourable||[])) cf.append(el('span',{class:'chip fav'},a));
-      const ca=el('div',{}); for(const a of (dc.areas_challenged||[])) ca.append(el('span',{class:'chip aff'},a));
-      if(cf.childNodes.length){ cf.prepend(el('div',{class:'muted'},t('Favourable'))); cols.append(cf); }
-      if(ca.childNodes.length){ ca.prepend(el('div',{class:'muted'},t('Challenged'))); cols.append(ca); }
-      if(cols.childNodes.length) card.append(cols);
+      // One life-area per ROW, one running Mahadasha per COLUMN. The chip lists carry
+      // the same facts chained into a single semicolon-run — the densest line in the
+      // report — so the grid is what is shown here.
+      const mdl=(dc.md_lords||[]);
+      for(const g of [['Favourable','fav',dc.favourable_grid||[]],
+                      ['Challenged','aff',dc.challenged_grid||[]]]){
+        if(!g[2].length) continue;
+        card.append(para(t(g[0]),'muted'));
+        const gt=el('table',{class:'decade-grid '+g[1]});
+        gt.append(el('tr',{},el('th',{},t('life area')),el('th',{},t('house')),
+                    ...mdl.map(m=>el('th',{},m+' '+t('MD')))));
+        for(const row of g[2])
+          gt.append(el('tr',{},el('td',{},row.area||''),el('td',{},'H'+row.house),
+                      ...(row.grades||[]).map(x=>el('td',{},x||'—'))));
+        card.append(gt);
+      }
       for(const y of (dc.yogas_ripening||[])) card.append(para('Yoga ripening: '+y,'muted'));
       for(const l2 of (dc.leans||[])) card.append(para('Lean: '+l2,'timing'));
       if(dc.note) card.append(para(dc.note,'muted'));
@@ -3317,6 +3746,10 @@ function render(R, S, FQ){
   // ===== Chart-specific feedback (questions derived from THIS chart's digest) =====
   if(FQ&&FQ.length) add(feedbackCard(FQ));
 
+  // ===== the four-part feedback instrument (v36) — the section that asks rather than tells =====
+  if(R.feedback_instrument){ add(H2('Your feedback'));
+    add(feedbackInstrument(R.feedback_instrument)); }
+
   // ===== the guided-journey TOC — built from PAGE_TOC after every H2 registered =====
   buildToc();
   // ===== first-occurrence glossary marking (client-side _apply_glossary_abbrs) =====
@@ -3362,6 +3795,243 @@ function aiInterpretPanel(){
     finally{ btn.disabled=false; btn.replaceChildren(t('REGENERATE AI INTERPRETATION')); }
   };
   return wall;
+}
+
+// ---- the four-part feedback instrument (v36) ----------------------------------------
+// The questionnaire that closes the report. Part A carries no astrology and is meant to be
+// answered BEFORE the reading is read — a reader who has already been told what the chart
+// says can no longer report what they would have said on their own, and that is the only
+// answer worth measuring. So B/C/D stay shut until Part A is marked done, and whether the
+// reading had been read is RECORDED rather than assumed.
+// Safe DOM only — createElement/textContent, never innerHTML (project rule).
+// ---- the plain-words summary (v37) --------------------------------------------------
+// The section that exists for the reader the technical chapters lose. Rendered FIRST on the
+// reading leaf, before the digest and before "Your Reading": a summary a reader meets after
+// the chapters is not a summary. Prose comes bilingual from the server — t() cannot translate
+// a sentence composed at runtime — so this picks by LANG rather than translating.
+function simpleSummary(ss){
+  const hi = (LANG==='hi');
+  const wrap = el('div',{class:'ss'});
+  const block = (prose, itemsKey) => {
+    const text = ss[prose + (hi?'_hi':'_en')];
+    if(!text) return;
+    wrap.append(para(text, prose==='opening' ? 'ss-lede' : 'ss-p'));
+    const items = itemsKey ? ss[itemsKey + (hi?'_hi':'_en')] : null;
+    if(items && items.length){
+      const ul = el('ul',{class:'ss-list'});
+      for(const it of items) ul.append(el('li',{}, it));
+      wrap.append(ul);
+    }
+  };
+  block('opening'); block('you');
+  block('good','good_items'); block('hard','hard_items'); block('mixed','mixed_items');
+  block('now','now_items');
+  block('unusual'); block('common'); block('how_to_read'); block('caveat');
+  return wrap;
+}
+
+let INST_ANSWERS = {};              // qid -> {answer, free_text}
+let INST_CONTEXT = 'after_reading'; // flipped by the top invitation, flipped back on navigation
+
+function instText(o, field){ return (LANG==='hi' ? o[field+'_hi'] : o[field+'_en']) || o[field+'_en'] || ''; }
+
+function instSet(qid, patch){ INST_ANSWERS[qid] = Object.assign({}, INST_ANSWERS[qid]||{}, patch); }
+
+// A repeating (year, month, kind) row. Turning points are collected as STRUCTURED rows
+// rather than a paragraph, because a paragraph cannot be compared with the period-change
+// dates and a date the reader types in prose cannot be parsed reliably. Each row posts as
+// its own answer, `qid#n`, valued YYYY-MM:kind.
+function instEventRows(q, box){
+  const rows = el('div',{class:'fbi-rows'});
+  let n = 0;
+  const addRow = () => {
+    n += 1;
+    const rid = q.qid + '#' + n;
+    const row = el('div',{class:'fbi-row'});
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    const mo = el('select',{class:'leaf-input fbi-month'});
+    mo.append(el('option',{value:''},t('month (if you remember)')));
+    for(let i=1;i<=12;i++) mo.append(el('option',{value:String(i).padStart(2,'0')},
+      String(i).padStart(2,'0')));
+    const kind = el('select',{class:'leaf-input fbi-kind'});
+    kind.append(el('option',{value:''},t('what kind of event?')));
+    for(const o of (q.options||[])) kind.append(el('option',{value:o.value},instText(o,'text')));
+    const sync=()=>{ const y=(yr.value||'').trim(), k=kind.value;
+      if(y.length===4 && k) instSet(rid,{answer: y+(mo.value?('-'+mo.value):'')+':'+k});
+      else instSet(rid,{answer:undefined}); };
+    yr.oninput=sync; mo.onchange=sync; kind.onchange=sync;
+    row.append(yr,mo,kind); rows.append(row);
+  };
+  for(let i=0;i<5;i++) addRow();
+  const more = el('button',{class:'leaf-button secondary fbi-more',type:'button'},
+    t('ADD ANOTHER'));
+  more.onclick=()=>addRow();
+  box.append(rows, more);
+}
+
+function instQuestion(q){
+  const box = el('div',{class:'fbi-q'});
+  box.append(el('div',{class:'fbi-qt'}, instText(q,'text')));
+  const hint = instText(q,'hint');
+  if(hint) box.append(el('div',{class:'fbi-hint muted'}, hint));
+
+  if(q.kind === 'events'){
+    instEventRows(q, box);
+  } else if(q.kind === 'year'){
+    const yr = el('input',{class:'leaf-input fbi-year',type:'number',min:'1900',max:'2100',
+      placeholder:t('year')});
+    yr.oninput=()=>{ const v=(yr.value||'').trim();
+      instSet(q.qid,{answer: v.length===4 ? v : undefined}); };
+    box.append(yr);
+  } else if(q.kind === 'multi'){
+    // Multi-select: the stored answer is the comma-joined codes, which is what the server
+    // validates and the scorer reads. Codes, never display text — so an answer given in
+    // Hindi means exactly what the same answer given in English means.
+    const picked = new Set();
+    for(const o of (q.options||[])){
+      const b=el('button',{class:'fbi-opt',type:'button'});
+      b.append(el('span',{},instText(o,'text')));
+      b.onclick=()=>{ if(picked.has(o.value)) picked.delete(o.value); else picked.add(o.value);
+        b.classList.toggle('sel', picked.has(o.value));
+        instSet(q.qid,{answer: picked.size ? Array.from(picked).join(',') : undefined}); };
+      box.append(b);
+    }
+  } else if(q.options && q.options.length){
+    const btns=[];
+    for(const o of q.options){
+      const b=el('button',{class:'fbi-opt',type:'button'});
+      b.append(el('span',{},instText(o,'text')));
+      b.onclick=()=>{ instSet(q.qid,{answer:o.value});
+        btns.forEach(x=>x.classList.toggle('sel', x===b)); };
+      btns.push(b); box.append(b);
+    }
+  }
+  if(q.confidence){
+    const row=el('div',{class:'fbi-conf'});
+    row.append(el('span',{class:'fbi-conf-lab'}, t('HOW SURE?')));
+    const cbtns=[];
+    for(const v of (RPT.feedback_instrument.confidence_scale||[])){
+      const b=el('button',{type:'button'}, v);
+      b.onclick=()=>{ instSet(q.qid+'.confidence',{answer:v});
+        cbtns.forEach(x=>x.classList.toggle('sel', x===b)); };
+      cbtns.push(b); row.append(b);
+    }
+    box.append(row);
+  }
+  if(q.allow_free_text){
+    const free=el('input',{class:'leaf-input fbi-free',type:'text',maxlength:'4000',
+      placeholder: q.kind==='open' ? t('your answer') : t('anything to add? (optional)')});
+    free.oninput=()=>{ instSet(q.qid,{free_text:free.value}); };
+    box.append(free);
+  }
+  return box;
+}
+
+function instPart(part){
+  const box = el('div',{class:'fbi-part'});
+  box.append(el('div',{class:'fbi-part-head'},
+    t('PART')+' '+part.part+' — '+(LANG==='hi'?part.title_hi:part.title_en)));
+  box.append(el('div',{class:'fbi-note muted'}, LANG==='hi'?part.note_hi:part.note_en));
+  for(const q of (part.questions||[])) box.append(instQuestion(q));
+  return box;
+}
+
+function feedbackInstrument(inst){
+  const wrap = el('div',{class:'fbi'});
+  wrap.append(para(LANG==='hi'?inst.caveat_hi:inst.caveat_en,'muted'));
+
+  const parts = inst.parts||[];
+  const partA = parts.filter(p=>p.part==='A');
+  const rest  = parts.filter(p=>p.part!=='A');
+  for(const p of partA) wrap.append(instPart(p));
+
+  // the gate: everything after Part A stays shut until the reader says Part A is done.
+  const locked = el('div',{class:'fbi-locked'});
+  const gate = el('button',{class:'fbi-gate',type:'button'});
+  gate.append(el('span',{},'☐'));
+  gate.append(el('span',{}, t('I have finished Part A — open the rest')));
+  gate.onclick=()=>{ locked.classList.add('open'); gate.replaceChildren(
+    el('span',{},'☑'), el('span',{}, t('Part A done'))); gate.disabled=true; };
+  wrap.append(gate);
+
+  for(const p of rest){
+    locked.append(instPart(p));
+    if(p.part==='C' && (inst.boundaries||[]).length){
+      const tbl=el('table',{class:'fbi-dates'});
+      const head=el('tr',{}); head.append(el('th',{},t('Period changes on')),
+        el('th',{},t('Mahadasha begins'))); tbl.append(head);
+      for(const b of inst.boundaries){ const tr=el('tr',{});
+        tr.append(el('td',{},b.date), el('td',{},b.maha)); tbl.append(tr); }
+      locked.append(tbl);
+    }
+  }
+  const rect = inst.rectification;
+  if(rect && rect.tight){
+    locked.append(para((LANG==='hi'?rect.note_hi:rect.note_en)+' '+
+      t('Settle the birth time before treating any of this reading as measured.'),'muted'));
+  }
+  wrap.append(locked);
+
+  const send = el('button',{class:'leaf-button fbi-send',type:'button'}, t('SEND MY ANSWERS'));
+  const note = el('div',{class:'fb-note muted'});
+  send.onclick=async()=>{
+    const answers = Object.entries(INST_ANSWERS)
+      .filter(([,v]) => (v.answer!==undefined && v.answer!==null) ||
+                        (v.free_text && v.free_text.trim()))
+      .map(([qid,v]) => ({qid, answer: v.answer===undefined?null:v.answer,
+                          free_text: v.free_text ? v.free_text.slice(0,4000) : null}));
+    if(!answers.length){ note.textContent=t('Answer at least one question first.'); return; }
+    send.disabled=true; note.textContent=t('Sending…');
+    try{
+      const r=await fetch('/report/feedback/instrument',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...birthBody(), answers, context: INST_CONTEXT})});
+      const d=await r.json();
+      if(r.ok){ note.textContent=t('Thank you — {N} answer(s) stored.').replace('{N}',d.stored)+
+        ' '+t('Your answers are not scored back to you: knowing which option the chart took '+
+              'would change how the next person answers.'); }
+      else{ note.textContent=t('Could not store: ')+(d.detail||r.statusText); send.disabled=false; }
+    }catch(e){ note.textContent=t('Could not send: ')+e.message; send.disabled=false; }
+  };
+  wrap.append(send, note);
+  return wrap;
+}
+
+// Once the reader claims to be answering blind, that claim has to survive contact with what
+// they do next: flipping to any leaf other than the feedback one means they went and read.
+// Wrapping the navigator is how the page finds out, and the claim is taken back rather than
+// left standing — a wrong "before_reading" label is worse than an honest "after_reading" one,
+// because it would put a satisfaction survey into the evidence column.
+let INST_NAV_WATCHED = false;
+function instWatchNavigation(){
+  if(INST_NAV_WATCHED) return;
+  const go = window.goToManuscriptPage;
+  if(typeof go !== 'function') return;
+  INST_NAV_WATCHED = true;
+  window.goToManuscriptPage = function(n){
+    if(n !== 12) INST_CONTEXT = 'after_reading';
+    return go.apply(this, arguments);
+  };
+}
+
+// The invitation that makes Part A worth answering: offered at the TOP of the reading, so a
+// reader can answer it before learning what the chart says. Clicking it records that this is
+// what happened; navigating anywhere else in the manuscript takes the claim back.
+function feedbackInvite(){
+  const box = el('div',{class:'fbi-invite'});
+  box.append(el('div',{}, t('Before you read: there are a few questions about your own life at '+
+    'the end of this report. Answering them FIRST is what makes your feedback worth anything — '+
+    'once you have read what the chart says, you can no longer say what you would have said '+
+    'on your own.')));
+  const b = el('button',{class:'leaf-button secondary',type:'button'},
+    t('ANSWER THOSE FIRST'));
+  b.onclick=()=>{ INST_CONTEXT='before_reading'; instWatchNavigation();
+    if(typeof window.goToManuscriptPage==='function') window.goToManuscriptPage(12);
+    setTimeout(()=>{ const h=document.getElementById('sec-yourfeedback');
+      if(h) h.scrollIntoView({block:'start'}); }, 600); };
+  box.append(b);
+  return box;
 }
 
 // ---- feedback card: the engine's own questions about this chart; answers POST to

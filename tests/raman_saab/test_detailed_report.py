@@ -73,7 +73,13 @@ class TestDetailedReport:
             assert tp.period.antar is not None
             assert tp.period.end_jd >= lo and tp.period.start_jd <= hi
         assert "## Life-narrative (Vimshottari Dasha) -" in markdown
-        assert "Mahadasha" in markdown and " AD** (" in markdown
+        assert "Mahadasha" in markdown
+        # Derived from the window, not pinned to a lord. `ref_jd` follows the wall clock, so
+        # the windowed bhukti list moves with real time and "Saturn AD" would eventually leave
+        # it — failing this test on a future date with no code change at all.
+        assert any(f"**{tp.period.antar} AD** (" in markdown
+                   for tp in report.timeline.periods), \
+            "no Antardasha in the window is labelled in the narrative"
         # the HTJAH-I four-tier grading vocabulary all appears across the window
         for tier in ("par excellence", "ordinary", "limited (bhukti lord only)",
                      "feeble (MD lord only)"):
@@ -418,15 +424,30 @@ class TestDetailedReport:
         for field in (report.plain_reading.opening, report.plain_reading.notable):
             assert not re.search(r"\bH\d\b", field), field
 
-    def test_nichod_section_is_v4_and_appended_last(self):
-        """The Nichod is registered as v4 and closed the contract until v33 — the append-only
-        default (2026-08-14 amendment, same commit as the module) placed the aptitude chapter
-        after it, so Nichod is now the last row of the pre-v33 contract."""
+    def test_nichod_closes_the_original_contract_and_later_chapters_append_after_it(self):
+        """The Nichod is registered as v4 and closed the contract as it then stood. Every
+        chapter added since appends AFTER it, in the order it was added — the append-only
+        default the template contract is built on.
+
+        Asserted by lookup rather than by negative index: pinning `SECTION_CONTRACT[-1]`
+        made this test fail on every future append (it broke on v35, the medical read),
+        which taught nothing — the invariant worth guarding is that nothing is inserted
+        BEFORE nichod and that the tail stays in ascending version order.
+
+        The tail's exact membership is NOT pinned either, for the same reason: it was, and it
+        duly broke again on v36 (the feedback instrument) after the docstring above had already
+        diagnosed the mistake. `test_registry_is_append_only` in the template-contract suite is
+        what guards membership, against _FROZEN, which is amended deliberately."""
         from app.raman_saab.detailed_report import SECTION_CONTRACT
-        assert SECTION_CONTRACT[-2].section_id == "nichod"
-        assert SECTION_CONTRACT[-2].since == "v4"
-        assert SECTION_CONTRACT[-1].section_id == "aptitude"
-        assert SECTION_CONTRACT[-1].since == "v33"
+        ids = [s.section_id for s in SECTION_CONTRACT]
+        by_id = {s.section_id: s for s in SECTION_CONTRACT}
+        assert by_id["nichod"].since == "v4"
+        tail = SECTION_CONTRACT[ids.index("nichod") + 1:]
+        assert tail, "later chapters append after nichod"
+        versions = [int(s.since.lstrip("v")) for s in tail]
+        assert versions == sorted(versions), "appended chapters must stay in added order"
+        assert all(v > 4 for v in versions), "nothing older than nichod may follow it"
+        assert len(set(versions)) == len(versions), "each appended chapter gets its own version"
 
     def test_gochara_outlook_covers_the_four_slow_movers(self, report):
         """The multi-year outlook is attached for exactly Jupiter/Saturn/Rahu/Ketu, spanning the
@@ -1755,11 +1776,15 @@ class TestWave1TimingSurfaces:
         the markdown renderer; now every lit house carries its activating lords' tags."""
         import re
         assert "**Delivery tags**" in markdown
-        # both-lords tiers carry both tags; limited only the AD tag; feeble only the MD tag
-        assert re.search(r"H\d+ \w+ \(MD (?:well|mixed|poorly|unknown), "
-                         r"AD (?:well|mixed|poorly|unknown)\)", markdown)
-        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD ", markdown)
-        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD ", markdown)
+        # One lit house per table row: | house | matter | grade | reading | delivery | why |.
+        # Both-lords tiers carry both tags; limited only the AD tag; feeble only the MD tag.
+        _tag = r"(?:well|mixed|poorly|unknown)"
+        assert re.search(r"\| H\d+ \|[^|]+\| par excellence \|[^|]+\| MD " + _tag
+                         + r", AD " + _tag + r" \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| limited \(bhukti lord only\) \|[^|]+\| AD "
+                         + _tag + r" \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| feeble \(MD lord only\) \|[^|]+\| MD "
+                         + _tag + r" \|", markdown)
         # the tag is the SAME lord_quality read the engine already computes, not a new scale
         from app.raman_saab.primitives import vimshottari as vd
         tp = report.timeline.periods[0]
@@ -2067,7 +2092,10 @@ class TestFoundationWave2:
         flags, Lagna-lord disposition and the day-lord observation — all computed."""
         from app.raman_saab.detailed_report import signature_first_glance
         rows = dict(signature_first_glance(report))
-        assert rows["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        # the label carries the citation found 2026-08-19 (HPA-13:130-160, Raman's own
+        # proportional deduction of the expired nakshatra portion); the VALUE stays clean
+        # so consumers parsing it are unaffected.
+        assert rows["Balance of dasha at birth (HPA-13:130-160)"] == "Mercury 4y 8m 10d"
         assert rows["Lagna degree"] == "23 Vi 59'17\""
         assert rows["Moon degree"] == "26 Pi 19'03\""
         assert rows["Moon at a glance"].startswith(
@@ -2077,7 +2105,8 @@ class TestFoundationWave2:
         assert rows["Day lord"].startswith("born on Sunday, the Sun's day")
         sig = markdown[markdown.find("## Chart signature"):
                        markdown.find("## Ruler of the nativity")]
-        assert "**Balance of dasha at birth** - Mercury 4y 8m 10d" in sig
+        assert ("**Balance of dasha at birth (HPA-13:130-160)** - Mercury 4y 8m 10d"
+                in sig)
         assert "**Lagna degree** - 23 Vi 59'17\"" in sig
         assert "**Moon degree** - 26 Pi 19'03\"" in sig
 
@@ -2132,7 +2161,7 @@ class TestFoundationWave2:
         from app.raman_saab.report_json import to_report_dict
         d = to_report_dict(report)
         fg = dict(map(tuple, d["signature_first_glance"]))
-        assert fg["Balance of dasha at birth"] == "Mercury 4y 8m 10d"
+        assert fg["Balance of dasha at birth (HPA-13:130-160)"] == "Mercury 4y 8m 10d"
         assert any(row[0] == "Saturn" and "Sakta" in row[1]
                    for row in d["deeptadi_table"])
         assert d["ruler"]["ll_dispositor"] == "Moon"
@@ -2170,12 +2199,14 @@ class TestWave2TimingDivisionalSoul:
         import re
         assert "**Influence basis**" in markdown
         assert "HTJAH-I:1586-1596" in markdown
-        # a both-lords row carries both MD and AD bases; single-lord rows carry one
-        assert re.search(r"H\d+ \w+ \(MD [a-z]+, AD [a-z]+\) \[MD [a-z][^\]]*; AD [^\]]+\]",
-                         markdown)
-        assert re.search(r"limited \(bhukti lord only\): H\d+ \w+ \(AD [a-z]+\) \[AD ",
-                         markdown)
-        assert re.search(r"feeble \(MD lord only\): H\d+ \w+ \(MD [a-z]+\) \[MD ", markdown)
+        # the basis is the table's last column; a both-lords row carries both MD and AD
+        # bases, single-lord rows carry one
+        assert re.search(r"\| H\d+ \|[^|]+\| par excellence \|[^|]+\|[^|]+\| "
+                         r"MD [a-z][^|;]*; AD [^|]+ \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| limited \(bhukti lord only\) \|[^|]+\|"
+                         r"[^|]+\| AD [^|]+ \|", markdown)
+        assert re.search(r"\| H\d+ \|[^|]+\| feeble \(MD lord only\) \|[^|]+\|"
+                         r"[^|]+\| MD [^|]+ \|", markdown)
 
     def test_influence_basis_agrees_with_timer_roles(self, report):
         """The rendered basis is the timer_roles decomposition, never an independent grading:

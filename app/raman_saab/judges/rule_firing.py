@@ -70,5 +70,33 @@ def fire_rules(chart: RamanChart, rules=ALL_RULES) -> list[FiredRule]:
 
 
 def fire_house(chart: RamanChart, house: int) -> list[FiredRule]:
-    """Fired rules for a single house (1..12)."""
+    """Fired rules for a single house (1..12).
+
+    Evaluates every rule and then discards eleven twelfths of the result, so calling it once
+    per house per signification costs a full pass each time. That is what the house judge used
+    to do — 967 passes over one chart, 293,519 condition evaluations. Kept as-is for direct
+    callers and tests; anything in a loop wants `fire_house_cached` below.
+    """
     return [fr for fr in fire_rules(chart) if fr.rule.house == house]
+
+
+def fire_house_cached(chart: RamanChart, house: int, ctx: EvalContext) -> list[FiredRule]:
+    """Fired rules for one house, evaluating the rule set at most once per chart.
+
+    `EvalContext` is the project's per-chart memo store and already carries the parivartana
+    pairs, the functional natures and the fired yogas; the fired RULES belong in it for exactly
+    the same reason. The whole set is fired once and indexed by house, so the second and every
+    later call is a dict lookup.
+
+    Correctness rests on the context's own guarantee: it is frozen with `init=False` on its
+    cache precisely so `dataclasses.replace(ctx, chart=…)` yields a FRESH cache rather than
+    carrying this chart's rules into another one (`doctrine/conditions.py:141-152`). Never
+    stash the index anywhere else.
+    """
+    def _index() -> dict[int, list[FiredRule]]:
+        by_house: dict[int, list[FiredRule]] = {}
+        for fr in fire_rules(chart):
+            by_house.setdefault(fr.rule.house, []).append(fr)
+        return by_house
+
+    return ctx.get_or_compute("fired_rules_by_house", _index).get(house, [])

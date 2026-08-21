@@ -32,6 +32,7 @@ from app.raman_saab.detailed_report import (
     format_maraka_reasons,
     gochara_synthesis_sentence,
     graded_buckets,
+    PREPONDERANCE_RULES,
     influence_basis,
     influence_basis_table,
     longevity_band_label,
@@ -107,6 +108,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
 h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6rem 0 .3rem;
   padding-top:1.6rem;border-top:1px solid var(--rule);text-wrap:balance}
 .section-sub{color:var(--ink-soft);font-size:.86rem;margin:.2rem 0 1.2rem}
+/* the feedback instrument (v36): the Hindi line sits under its English twin, and the
+   forced-choice options print as an answerable list rather than running prose. */
+/* the plain-words summary (v37): the Hindi line sits under its English twin, and the
+   verdict groups are lists because the plain house names carry commas of their own. */
+.ss-hi{color:var(--ink-soft);font-size:.92rem;line-height:1.6;margin:.1rem 0 .7rem}
+.ss-list{margin:.3rem 0 1rem;padding-left:1.2rem}
+.ss-list li{margin:.25rem 0;line-height:1.5}
+.fb-q{margin:1.1rem 0 .1rem}
+.fb-q-hi{color:var(--ink-soft);font-size:.92rem;margin:.15rem 0 .2rem;line-height:1.6}
+.fb-opts{list-style:none;padding:0;margin:.45rem 0 .2rem}
+.fb-opts li{margin:.3rem 0;padding-left:.1rem;line-height:1.55}
 .long{font-family:var(--serif);font-size:1.15rem}
 .long b{color:var(--doctrine)}
 .long-combos{list-style:none;padding:0;margin:.7rem 0 0}
@@ -124,6 +136,8 @@ h2.section{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:2.6r
 .chip--mixed{background:var(--tag-bg);color:var(--tag-ink)}
 .active-badge{font-size:.68rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   color:var(--favourable)}
+.honesty-rules{margin:.4rem 0 .9rem 1.2rem;padding:0;font-size:.92rem;line-height:1.55}
+.honesty-rules li{margin:.35rem 0}
 .instrument{margin:.9rem 0 0;padding:.75rem 0 .2rem 1rem;border-left:2px solid var(--instrument);
   background:var(--instrument-soft)}
 .instrument-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
@@ -1497,51 +1511,27 @@ def _preponderance_section(r: DetailedReport) -> str:
         'testimony the report holds elsewhere and counts where the balance lies &mdash; '
         'Raman&rsquo;s own conclusion word: &ldquo;there is a preponderance of benefic '
         'influences&hellip;&rdquo; (HTJAH-I:8870).</p>'
-        '<p class="section-sub"><i>Three honesty rules govern this table.</i> (1) The Verdict '
-        'column is the authoritative House-by-house verdict, unchanged &mdash; and it is '
-        'deliberately NOT counted among its own witnesses (a headline cannot corroborate '
-        'itself). (2) Raman states NO numeric rule for how many testimonies decide a matter '
-        '(HTJAH-I:495 says only that all must be properly weighed &mdash; and his own worked '
-        'conclusion weighs witnesses unequally, HTJAH-I:8870-8876); the Preponderance column '
-        'here is a simple equal-weight majority of leaning witnesses &mdash; a presentation '
-        'convention borrowing his vocabulary, not his weighing &mdash; it never alters a '
-        'verdict, and a &ldquo;contested&rdquo; row means the witnesses split, not that the '
-        'verdict is wrong. (3) The witnesses are NOT independent votes: lord, karaka and '
-        'navamsa are the verdict&rsquo;s own inputs restated by name, and the majority tenor '
-        'derives from the same significations as the headline. Yogas bearing on a house '
-        '(Raman&rsquo;s Primary Considerations, e.g. HTJAH-I:4135-4139) ARE now tallied, '
-        'mapped on his worked-chart principle &mdash; the houses each yoga&rsquo;s '
-        'constituent planets own, occupy or aspect (&ldquo;the nature of ownership of the '
-        'planets causing the yoga,&rdquo; HTJAH-I:2879-2890 &mdash; the principle, not an '
-        'exact derivation; his own example there names one house this mapping cannot '
-        'produce) &mdash; with disclosed limits: whole-chart pattern yogas carry no '
-        'constituent identity and are unmapped, and formation-strength modifiers are not '
-        'graded &mdash; dusthana formation can nullify Gajakesari (HTJAH-I:2948-2956) and '
-        'can bring Raja-Yoga Bhanga (HTJAH-I:15903, 16139; not absolutely, 15531), so a '
-        'dusthana-formed raja yoga may lean favourable here despite a possible bhanga. A '
-        'yoga row leans by its encoded kind (raja/dhana favourable, arishta adverse) and, for '
-        'the specific yogas whose classical printed effect is unambiguous, by that effect '
-        '&mdash; the Pancha Mahapurusha, Budha-Aditya, Vasumathi and Jaya favourable; Daridra '
-        'and Asatyavadi adverse (each with its own citation in the Yogas section). Lunar and '
-        'the remaining other-kind yogas stay neutral (a conditionally-benefic lunar yoga can '
-        'be nullified in dusthana formation). Bhava-Bala rank is shown as a magnitude and '
-        'carries no direction.</p>'
-        '<p class="section-sub"><i>(4) A witness-class tag separates core testimony '
-        '&mdash; the house&rsquo;s own lord, karaka and navamsa, the axes Raman&rsquo;s '
-        'summing-up itself names (HTJAH-I:983-991) &mdash; from overlay cross-checks '
-        '(SAV band, Bhava-Bala rank, matter-vargas, majority tenor, yoga bearings). The '
-        'Core column restates the same rows as a second count pair; it is Raman&rsquo;s '
-        'unequal weighing made visible, not a new weighting, and it alters nothing. '
-        'Yoga-bearing rows additionally disclose their link: [direct - own/occupy], the '
-        'factor his worked charts demonstrate, vs [aspect-derived - admitted '
-        'extension].</i></p>'
-        '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
+        '<p class="section-sub"><i>The honesty rules that govern this table &mdash; read '
+        'them before the counts.</i></p>'
+        + _preponderance_rules_html()
+        + '<div class="tablewrap"><table class="grid"><thead><tr><th>house</th><th>verdict</th>'
         '<th class="num">for</th><th class="num">against</th><th class="num">neutral</th>'
         '<th class="num">absent</th><th>core (for/against)</th>'
         '<th>preponderance</th><th>status</th></tr></thead>'
         f'<tbody>{rows}</tbody></table></div>'
         f'<div class="instrument">{details}</div>'
         f'{picks_html}')
+
+
+def _preponderance_rules_html() -> str:
+    """The shared honesty rules (see detailed_report.PREPONDERANCE_RULES) as an ordered list.
+
+    One rule per item rather than two run-on paragraphs: the disclosure only protects a
+    reader who actually reads it.
+    """
+    items = "".join(f"<li><b>{_esc(head)}.</b> {_esc(body)}</li>"
+                    for head, body in PREPONDERANCE_RULES)
+    return f'<ol class="honesty-rules">{items}</ol>'
 
 
 def _yoga_timing_section(r: DetailedReport) -> str:
@@ -2389,15 +2379,28 @@ def _decades_section(r: DetailedReport) -> str:
             continue
         rows = [("Running Mahadashas", _esc(", ".join(d.md_lords) or "-")
                  + (f" (leans: {_esc(', '.join(d.leans))})" if d.leans else ""))]
-        if d.areas_favourable:
-            rows.append(("Read favourably here", _esc("; ".join(d.areas_favourable))))
-        if d.areas_challenged:
-            rows.append(("Read as challenged here", _esc("; ".join(d.areas_challenged))))
         if d.yogas_ripening:
-            rows.append(("Yogas ripening", _esc("; ".join(d.yogas_ripening))))
+            rows.append(("Yogas ripening",
+                         "<br>".join(_esc(y) for y in d.yogas_ripening)))
         body = "".join(f'<div class="vrow"><span class="vk">{k}</span>'
                        f'<span class="vv">{v}</span></div>' for k, v in rows)
-        blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>')
+        # One area per row, one running Mahadasha per column — the chip form chains
+        # every area into one unreadable line (see life_arc.DecadeAreaRow).
+        grids = ""
+        for title, grid in (("Read favourably here", d.favourable_grid),
+                            ("Read as challenged here", d.challenged_grid)):
+            if not grid:
+                continue
+            head = ("<tr><th>life area</th><th>house</th>"
+                    + "".join(f"<th>{_esc(m)} MD</th>" for m in d.md_lords)
+                    + "</tr>")
+            trs = "".join(
+                f"<tr><td>{_esc(r.area)}</td><td>H{r.house}</td>"
+                + "".join(f"<td>{_esc(g) if g else '&ndash;'}</td>" for g in r.grades)
+                + "</tr>" for r in grid)
+            grids += (f'<p class="section-sub"><b>{title}</b></p>'
+                      f'<table><thead>{head}</thead><tbody>{trs}</tbody></table>')
+        blocks.append(f'<h3>{_esc(d.label)}</h3><div class="vsec">{body}</div>{grids}')
     return ('<h2 class="section" id="decades">Decade indication timeline</h2>'
             f'<p class="section-sub"><i>{_esc(dt.frame)}</i></p>' + "".join(blocks))
 
@@ -2432,6 +2435,12 @@ def _psych_section(r: DetailedReport) -> str:
         rows.append(("Mercury (buddhi)", _esc(ps.mercury_line)))
     if ps.deeptadi_moon:
         rows.append(("The Moon's avastha (cross-reference)", _esc(ps.deeptadi_moon)))
+    # v36: the affliction-to-the-mind screen — present-or-absent, never a diagnosis
+    for _mn, _mf, _mc in getattr(ps, "mind_screen", ()):
+        rows.append((_esc(_mn), f'{_esc(_mf)} <span class="cite">{_esc(_mc)}</span>'))
+    if getattr(ps, "mind_caution", ""):
+        rows.append(("On reading affliction to the mind",
+                     f'<i>{_esc(ps.mind_caution)}</i>'))
     if ps.temperament:
         rows.append(("Temperament of the strongest planet",
                      _esc(ps.temperament) + " (HTJAH-I:6248-6268)"))
@@ -2508,6 +2517,166 @@ def _aptitude_section(r: DetailedReport) -> str:
             f'{_method_preamble_html("aptitude")}'
             f'<p class="section-sub"><i>{_esc(ap.woven)}</i></p>'
             f'<div class="vsec">{body}</div>')
+
+
+def _medical_section(r: DetailedReport) -> str:
+    """v35 — the HPA-29 medical read: Raman's own 6th-house procedure over his own tables.
+
+    Every field of every testimony renders (REPORT COMPLETENESS): the four clauses, their
+    regions and complaints, the citation per row, the union lists, the nodes that carry no
+    table, the caveat and the provenance note."""
+    med = getattr(r, "medical", None)
+    if med is None:
+        return ""
+    from app.raman_saab.doctrine.medical_astrology import APPLICATION
+    head = [f'<b>The 6th from lagna</b> &mdash; {_esc(med.sixth_sign_name)}, '
+            f'lord {_esc(med.sixth_lord)}'
+            + (f' in house {med.sixth_lord_house}' if med.sixth_lord_house else '')
+            # the markdown surface prints the lord's navamsa here too; REPORT COMPLETENESS
+            # means the two renderers show the same reading, not two different subsets of it.
+            + (f', navamsa {_esc(_SIGN_NAME[med.sixth_lord_navamsa_sign])}'
+               if 1 <= med.sixth_lord_navamsa_sign <= 12 else '')]
+    if med.occupants:
+        head.append(f'<b>In the 6th</b> &mdash; {_esc(", ".join(med.occupants))}')
+    if med.aspecting:
+        head.append(f'<b>Aspecting the 6th</b> &mdash; {_esc(", ".join(med.aspecting))}')
+    if med.unlisted_bodies:
+        head.append(
+            f'<b>Present but not tabled</b> &mdash; {_esc(", ".join(med.unlisted_bodies))}: '
+            f'Raman&rsquo;s tables cover the seven visible grahas, so the nodes contribute '
+            f'nothing here. Shown rather than skipped, so the silence is visible.')
+    rows = "".join(
+        f'<tr><td>{_esc(t.clause)}</td><td>{_esc(t.actor)}</td>'
+        f'<td>{_esc(", ".join(t.regions)) or "&mdash;"}</td>'
+        f'<td>{_esc(", ".join(t.complaints)) or "&mdash;"}</td>'
+        f'<td class="cite">{_esc(t.citation)}</td></tr>' for t in med.testimonies)
+    tail = []
+    if med.regions_marked:
+        tail.append(f'<b>Body regions this chart marks</b> (union of the testimonies, '
+                    f'de-duplicated) &mdash; {_esc(", ".join(med.regions_marked))}')
+    if med.complaints_indicated:
+        tail.append(f'<b>Complaints the tables associate</b> &mdash; '
+                    f'{_esc(", ".join(med.complaints_indicated))}')
+    return (
+        '<h2 class="section" id="medical">Medical read (classical correspondence)</h2>'
+        f'<p class="section-sub"><i>{_esc(med.caveat)}</i></p>'
+        f'<blockquote class="quote">{_esc(APPLICATION)}'
+        f'<footer>HPA-29:433-440</footer></blockquote>'
+        '<p class="section-sub">The SIGN supplies the body part; the PLANET supplies the '
+        'complaint &mdash; that division of labour is Raman&rsquo;s own last clause.</p>'
+        + "".join(f'<p>{h}</p>' for h in head)
+        + '<table><thead><tr><th>Testimony</th><th>Speaks through</th>'
+          '<th>Body regions</th><th>Complaints indicated</th><th>Cite</th></tr></thead>'
+          f'<tbody>{rows}</tbody></table>'
+        + "".join(f'<p>{t}</p>' for t in tail)
+        + f'<p class="muted"><i>{_esc(med.provenance)}</i></p>')
+
+
+def _simple_summary_section(r: DetailedReport) -> str:
+    """v37 — the whole reading in plain words, rendered FIRST.
+
+    Both languages, because the section exists for readers the technical chapters lose and a
+    Hindi reader is exactly such a reader. The Hindi lines sit under their English twins rather
+    than behind a toggle: this surface is a single self-contained file with no client state.
+    """
+    try:
+        from app.raman_saab.report_json import simple_summary_for
+        ss = simple_summary_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole document
+        return ""
+    if not ss:
+        return ""
+
+    def block(prose: str, items_key: str = "") -> str:
+        en, hi = ss.get(prose + "_en") or "", ss.get(prose + "_hi") or ""
+        if not en:
+            return ""
+        out = f'<p>{_esc(en)}</p><p class="ss-hi">{_esc(hi)}</p>'
+        items_en = ss.get(items_key + "_en") if items_key else ()
+        items_hi = ss.get(items_key + "_hi") if items_key else ()
+        if items_en:
+            rows = "".join(
+                f'<li>{_esc(a)}<span class="ss-hi"> &middot; {_esc(b)}</span></li>'
+                for a, b in zip(items_en, items_hi or items_en))
+            out += f'<ul class="ss-list">{rows}</ul>'
+        return out
+
+    body = "".join([
+        block("opening"), block("you"),
+        block("good", "good_items"), block("hard", "hard_items"),
+        block("mixed", "mixed_items"), block("now", "now_items"),
+        block("unusual"), block("common"), block("how_to_read"), block("caveat"),
+    ])
+    return ('<h2 class="section" id="simple-summary">In simple words</h2>'
+            '<p class="section-sub"><i>No Sanskrit, no planet names, no house numbers. '
+            'Everything below this section says the same things in the traditional way, '
+            'with the reasons.</i></p>' + body)
+
+
+def _feedback_section(r: DetailedReport) -> str:
+    """v36 — the feedback instrument, rendered whole.
+
+    Every part, every question, both languages, and the forced-choice options as printable
+    radio rows so a reader can answer this on paper. What is NOT here is the answer key: it is
+    not a reading, and printing it beside the questions would make every answer worthless.
+    `feedback_instrument.instrument_key` recomputes it server-side when the answers are scored.
+    """
+    try:
+        from app.raman_saab.report_json import feedback_instrument_for
+        inst = feedback_instrument_for(r)
+    except Exception:  # noqa: BLE001 — a sparse chart must not lose the whole document
+        return ""
+    if not inst:
+        return ""
+
+    blocks: list[str] = []
+    for part in inst["parts"]:
+        qs: list[str] = []
+        for q in part["questions"]:
+            how = {"choice": "choose one", "multi": "choose any that apply",
+                   "scale": "choose one", "year": "write the year",
+                   "events": "one row per event: year, month, kind"}.get(q["kind"], "")
+            bits = [f'<p class="fb-q"><b>{_esc(q["qid"])}</b> &mdash; '
+                    f'{_esc(q["text_en"])}'
+                    + (f' <i class="muted">({_esc(how)})</i>' if how else "") + '</p>',
+                    f'<p class="fb-q-hi">{_esc(q["text_hi"])}</p>']
+            if q["hint_en"]:
+                bits.append(f'<p class="muted"><i>{_esc(q["hint_en"])} &middot; '
+                            f'{_esc(q["hint_hi"])}</i></p>')
+            if q["options"]:
+                opts = "".join(
+                    f'<li>&#9711; <b>{_esc(o["value"])}</b> {_esc(o["text_en"])} '
+                    f'&middot; {_esc(o["text_hi"])}</li>' for o in q["options"])
+                bits.append(f'<ul class="fb-opts">{opts}</ul>')
+            if q["confidence"]:
+                bits.append('<p class="muted">How sure? &nbsp;'
+                            + " &nbsp; ".join(f"&#9711; {_esc(v)}"
+                                              for v in inst["confidence_scale"]) + '</p>')
+            qs.append("".join(bits))
+        blocks.append(
+            f'<h3>Part {_esc(part["part"])} &mdash; {_esc(part["title_en"])} '
+            f'/ {_esc(part["title_hi"])}</h3>'
+            f'<p>{_esc(part["note_en"])}</p>'
+            f'<p class="fb-q-hi">{_esc(part["note_hi"])}</p>' + "".join(qs))
+
+    extra = ""
+    if inst["boundaries"]:
+        rows = "".join(f'<tr><td>{_esc(b["date"])}</td><td>{_esc(b["maha"])}</td></tr>'
+                       for b in inst["boundaries"])
+        extra += ('<table><thead><tr><th>Period changes on</th>'
+                  f'<th>Mahadasha begins</th></tr></thead><tbody>{rows}</tbody></table>')
+    rect = inst.get("rectification")
+    if rect:
+        tight = (' &mdash; <b>tight</b>: settle the birth time before scoring any of this '
+                 'reading' if rect["tight"] else "")
+        extra += (f'<p>{_esc(rect["note_en"])}{tight}</p>'
+                  f'<p class="fb-q-hi">{_esc(rect["note_hi"])}</p>')
+
+    return (
+        '<h2 class="section" id="feedback">Your feedback</h2>'
+        f'<p class="section-sub"><i>{_esc(inst["caveat_en"])}</i></p>'
+        f'<p class="section-sub fb-q-hi"><i>{_esc(inst["caveat_hi"])}</i></p>'
+        + "".join(blocks) + extra)
 
 
 def _arishta_section(r: DetailedReport) -> str:
@@ -3382,6 +3551,39 @@ def to_html(r: DetailedReport) -> str:
             conv += ('<p class="section-sub"><b>H10 activations in the window</b> '
                      '(a timing lens, never a promise) &mdash; '
                      + _esc("; ".join(pf.h10_windows)) + '</p>')
+        # v36 (2026-08-19): the 10th from all THREE of Raman's centres (HTJAH-I:13960-13962).
+        _cf = getattr(pf, "career_frames", None)
+        if _cf is not None:
+            _rows = "".join(
+                f'<tr><td>{_esc(f.centre)}'
+                + (' <b>(strongest)</b>' if f.is_strongest else '')
+                + f'</td><td>{_esc(f.tenth_sign_name)}</td>'
+                  f'<td>{_esc(f.tenth_lord)}'
+                + (f' (h{f.tenth_lord_house})' if f.tenth_lord_house else '')
+                + f'</td><td>{_esc(f.navamsa_dispositor) or "&mdash;"}</td>'
+                  f'<td>{_esc(f.trade) or _esc(f.note) or "&mdash;"}</td>'
+                  f'<td>{f.strength_rupas} rupas</td>'
+                  f'<td>{_esc(f.strength_basis)}</td></tr>' for f in _cf.frames)
+            conv += (
+                '<h3>The 10th reckoned from all three centres</h3>'
+                f'<blockquote class="quote">{_esc(_cf.rule)}'
+                f'<footer>{_esc(_cf.citation)}</footer></blockquote>'
+                '<table><thead><tr><th>Centre</th><th>Its 10th</th><th>10th lord</th>'
+                '<th>Navamsa dispositor</th><th>Raman&rsquo;s vocation words</th>'
+                '<th>Strength</th><th>Measure</th></tr></thead>'
+                f'<tbody>{_rows}</tbody></table>'
+                f'<p class="section-sub"><b>Strongest centre</b> &mdash; '
+                f'{_esc(_cf.strongest_why)}</p>'
+                f'<p class="section-sub"><b>Reckoning from it</b> &mdash; '
+                f'{_esc(_cf.leading_indication)}</p>'
+                + (f'<p class="section-sub"><b>Blended</b> &mdash; '
+                   f'{_esc(_cf.blended_note)}</p>' if _cf.blended else '')
+                + (f'<p class="section-sub"><b>Convergent across centres</b> &mdash; '
+                   + _esc(", ".join(f"{w} ({n})" for w, n in _cf.convergent))
+                   + '</p>' if _cf.convergent else '')
+                + f'<p class="section-sub"><b>On convergence</b> &mdash; '
+                  f'{_esc(_cf.convergence_note)}</p>'
+                + f'<p class="muted"><i>{_esc(_cf.caution)}</i></p>')
         modes = ("" if not pf.mode_split else
                  '<p class="section-sub"><b>H10 mode split</b> &mdash; '
                  + _esc("; ".join(f"{k}: {v}" for k, v in pf.mode_split)) + '</p>')
@@ -3473,6 +3675,40 @@ def to_html(r: DetailedReport) -> str:
         # Wave-2 (item 1c): the method's own favourable Jupiter windows on the 7th
         # from the Moon — a filter of the Gochara outlook, no new doctrine claim.
         jup_html = ""
+        # v36: the COMPUTED timing layer (giving lords, delay screens, Jupiter sphutas).
+        _mt = getattr(m, "timing", None)
+        if _mt is not None:
+            _grows = "".join(
+                f'<tr><td>{_esc(g.planet)}'
+                + (' <b>(strongest)</b>' if g.planet == _mt.strongest else '')
+                + f'</td><td>{_esc("; ".join(g.clauses))}</td>'
+                  f'<td>{g.strength_rupas} rupas</td>'
+                  f'<td>{"yes" if g.ranked else "no &mdash; " + _esc(g.condition)}</td></tr>'
+                for g in _mt.givers)
+            _drows = "".join(
+                f'<li><b>{_esc(d.name)}</b> &mdash; '
+                f'{"<b>FIRES</b>" if d.fired else "silent"}. &ldquo;{_esc(d.rule)}&rdquo; '
+                f'({_esc(d.citation)})'
+                + ('' if not d.because else
+                   ' Found here: ' + _esc("; ".join(d.because)) + '.')
+                + f' {_esc(d.condition)}</li>' for d in _mt.delays)
+            _sph = "".join(
+                f'<li><b>Jupiter-transit resultant ({_esc(lbl)})</b> &mdash; {_esc(sgn)}; '
+                f'trines {_esc(tri)}. Jupiter transiting the resultant rasi or its trines '
+                f'is classically favourable for marriage (HTJAH-II:869-873).</li>'
+                for lbl, sgn, tri in _mt.jupiter_sphutas)
+            extras += (
+                '<h3>Marriage timing &mdash; the giving lords and the delay screens</h3>'
+                f'<p class="section-sub"><i>{_esc(_mt.caveat)}</i></p>'
+                '<table><thead><tr><th>Planet</th><th>Nominated by</th><th>Strength</th>'
+                '<th>In the ranking?</th></tr></thead>'
+                f'<tbody>{_grows}</tbody></table>'
+                f'<p class="section-sub"><b>{_esc(_mt.strongest_rule)}</b> Here that is '
+                f'{_esc(_mt.strongest) or "not resolvable"} ({_esc(_mt.citation)}).</p>'
+                f'<ul>{_drows}{_sph}</ul>'
+                f'<p class="section-sub"><b>The lean</b> &mdash; {_esc(_mt.lean)}</p>'
+                f'<p class="muted"><i>{_esc(_mt.subordination)} '
+                f'(HTJAH-II:881-883)</i></p>')
         if getattr(m, "jupiter_h7_windows", ()):
             jup_html = (
                 '<p class="section-sub"><b>Jupiter transits touching the 7th (from '
@@ -3640,6 +3876,8 @@ def to_html(r: DetailedReport) -> str:
     <h1 class="name">{_esc(b.name)}</h1>
     <div class="birth">Born {b.year:04d}-{b.month:02d}-{b.day:02d} {b.hour:02d}:{b.minute:02d}
       (tz {b.tz_offset:+g}) &middot; {b.latitude:.4f}, {b.longitude:.4f} &middot; Lahiri sidereal</div>
+    {_simple_summary_section(r)}
+
     {_plain_reading_section(r)}
     <div class="sig">{sig_html}</div>
     <div class="legend">This reading speaks in two voices. The
@@ -3787,6 +4025,10 @@ def to_html(r: DetailedReport) -> str:
   {_nichod_section(r)}
 
   {_aptitude_section(r)}
+
+  {_medical_section(r)}
+
+  {_feedback_section(r)}
 
   <div class="provenance">Doctrine faithful to B. V. Raman; italicised population context is
     EMPIRICAL_ASTRODATABANK provenance (n={r.calibration[1].population_n:,}), explicitly not Raman.

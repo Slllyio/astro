@@ -353,6 +353,24 @@ B1_DOMINANT_FACTOR_GUARD: bool = True
 #: is a HUMAN decision recorded in DOCTRINE_BACKLOG B1, never a tuner move. Read LIVE.
 B1_GUARD_EXEMPT_HOUSES: frozenset[int] = frozenset()
 
+#: DIRECTIONAL PARIVARTANA (DOCTRINE_BACKLOG "Directional parivartana"). Both OFF —
+#: this is a MEASUREMENT, not a shipped rule; enabling either is a human decision on the
+#: recorded numbers, exactly as B1 was. Read LIVE off the module so a sweep can rebind them.
+#:
+#: Today `_decide` credits an exchange as flat relief: a debilitated lord or karaka in a
+#: parivartana has its penalty bypassed regardless of what the partner is doing. Raman's own
+#: worked charts run both ways — "mutually benefiting each other" (HTJAH-I:8837), but also
+#: "Saturn who is the 7th lord ALSO IS AFFLICTED BY THIS PARIVARTANA" (HTJAH-I:9119) and
+#: "his exchange of signs with 5th lord Saturn is not desirable as it can deny marriage or
+#: progeny" (HTJAH-I:9143). On that showing an exchange transmits the partner's condition.
+#:
+#: Arm A — withhold: grant the relief only when the exchange partner is itself unafflicted.
+PARIVARTANA_DIRECTIONAL: bool = False
+#: Arm B — transmit: an exchange with an afflicted or dusthana-lording partner makes the
+#: lord itself count as hard-afflicted (what HTJAH-I:9119 says in as many words), which is
+#: what the B1 dominant-factor guard reads. Strictly stronger than arm A.
+PARIVARTANA_TRANSMITS: bool = False
+
 
 def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     """Does the LORD carry an affliction Raman reads as overriding its Shadbala total?
@@ -917,6 +935,48 @@ def _in_parivartana(planet: str, pairs: frozenset[frozenset[str]]) -> bool:
     return any(planet in pair for pair in pairs)
 
 
+def _parivartana_partners(planet: str, pairs: frozenset[frozenset[str]]) -> frozenset[str]:
+    """Every planet `planet` has exchanged signs with (a graha can hold two exchanges)."""
+    return frozenset(other for pair in pairs if planet in pair
+                     for other in pair if other != planet)
+
+
+#: Which reading of "afflicted partner" the directional arms use. Raman's two counter-
+#: examples do NOT name the same mechanism, so the choice is a doctrine call, not a tuning
+#: knob, and each is measured separately:
+#:   "condition" — the partner is combust, debilitated-uncancelled, or a maraka.
+#:   "dusthana"  — the partner lords a dusthana; this is the mechanism in HTJAH-I:9119
+#:                 ("the 8th and 10th lords have exchanged signs so that Saturn ... also is
+#:                 afflicted by this parivartana"), where the 8th lordship is what travels.
+#:   "either"    — the union.
+#: HTJAH-I:9143 ("exchange ... with 5th lord Saturn is not desirable") fits NEITHER: the 5th
+#: is no dusthana and Saturn is not described as afflicted there, so that objection is to the
+#: exchange itself and is deliberately NOT encoded by any of these.
+PARIVARTANA_PARTNER_TEST: str = "either"
+
+
+def _partner_afflicted(planet: str, pairs: frozenset[frozenset[str]], chart: RamanChart,
+                       marakas: frozenset[str]) -> bool:
+    """Is the far end of the exchange itself in trouble?
+
+    Built only from vocabulary the module ALREADY judges by — combustion, an uncancelled
+    debility, maraka membership, dusthana lordship — so this introduces no new scale, only
+    a direction. ANY partner in trouble counts: a graha holding two exchanges cannot be
+    shielded by the healthy one while the other transmits (HTJAH-I:9119).
+    """
+    test = PARIVARTANA_PARTNER_TEST
+    for partner in _parivartana_partners(planet, pairs):
+        if test in ("condition", "either") and (
+                _combust_graded(partner, chart)
+                or _debilitated_uncancelled(partner, chart)
+                or partner in marakas):
+            return True
+        if test in ("dusthana", "either") and any(
+                _lord_of_sign(chart.asc_sign, d) == partner for d in (6, 8, 12)):
+            return True
+    return False
+
+
 def _bhava_bala_for(chart: RamanChart, house: int) -> Optional[float]:
     """Total Bhava Bala (Shashtiamsas) for `house`, or None on Track-B (no madhyas)."""
     if not chart.bhava_madhyas or len(chart.bhava_madhyas) < house:
@@ -943,7 +1003,7 @@ def _bucket_fired(
     benefic: list[rf.FiredRule] = []
     malefic: list[rf.FiredRule] = []
     neutral: list[rf.FiredRule] = []
-    for fr in rf.fire_house(chart, sig.house):
+    for fr in rf.fire_house_cached(chart, sig.house, ctx):
         if tags and fr.rule.signification not in tags:
             continue
         pol = fr.rule.polarity
@@ -1010,15 +1070,39 @@ def _build_frame_ledger(chart: RamanChart, sig: Signification, frame: Frame,
 
     # parivartana leniency: a lord/karaka in an exchange bypasses an inimical/debilitation
     # penalty — treat a debil-but-exchanged pillar as not-weak.
+    #
+    # PARIVARTANA_DIRECTIONAL (arm A, OFF): withhold that relief where the exchange partner
+    # is itself afflicted or lords a dusthana — Raman's exchanges transmit the partner's
+    # condition (HTJAH-I:9119, :9143) as readily as they benefit (HTJAH-I:8837).
+    # Both arms ship OFF, and every use below is gated on a flag, so at the shipped defaults
+    # this whole measurement is discarded. `_partner_afflicted` runs `dignity`, `neecha_bhanga`,
+    # a combustion grade and a dusthana-lordship scan per exchange partner, once per
+    # signification per frame — the same reason `_effective_strength` returns early for its own
+    # disabled measurement. Flipping either arm on restores the work unchanged.
+    _arms_on = PARIVARTANA_DIRECTIONAL or PARIVARTANA_TRANSMITS
+    lord_partner_bad = (_arms_on and _in_parivartana(lord, pairs)
+                        and _partner_afflicted(lord, pairs, chart, marakas))
+    karaka_partner_bad = (_arms_on and _in_parivartana(karaka, pairs)
+                          and _partner_afflicted(karaka, pairs, chart, marakas))
     if parivartana_resilient:
         if lord_strong is False and _in_parivartana(lord, pairs) \
-                and _debilitated_uncancelled(lord, chart):
+                and _debilitated_uncancelled(lord, chart) \
+                and not (PARIVARTANA_DIRECTIONAL and lord_partner_bad):
             lord_strong = True
         if karaka_strong is False and _in_parivartana(karaka, pairs) \
-                and _debilitated_uncancelled(karaka, chart):
+                and _debilitated_uncancelled(karaka, chart) \
+                and not (PARIVARTANA_DIRECTIONAL and karaka_partner_bad):
             karaka_strong = True
         if lord_karaka_identical:
             karaka_strong = lord_strong
+
+    # PARIVARTANA_TRANSMITS (arm B, OFF): the exchange does not merely fail to shield, it
+    # carries the affliction across — "Saturn who is the 7th lord ALSO IS AFFLICTED BY THIS
+    # PARIVARTANA" (HTJAH-I:9119). Expressed as the lord counting hard-afflicted, which is
+    # the channel the B1 dominant-factor guard already reads; no new scale is introduced.
+    if PARIVARTANA_TRANSMITS and lord_partner_bad and sig.house not in B1_GUARD_EXEMPT_HOUSES:
+        lord_hard = True
+        flags.append("PARIVARTANA_TRANSMITTED_AFFLICTION")
 
     bb = _bhava_bala_for(chart, sig.house)
     bb_strong: Optional[bool] = None if bb is None else (bb >= shadbala_total.BHAVA_BALA_MIN_SH)

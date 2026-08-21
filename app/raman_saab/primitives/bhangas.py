@@ -160,22 +160,92 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
       (b) any planet other than the Moon in a kendra counted from the Moon's
           rasi-house (the Moon itself is trivially its own 1st and is excluded);
       (c) the Moon in conjunction with a planet (same rasi, whole-sign — the
-          convention of :mod:`app.raman_saab.primitives.relationships`).
-          Subsumed by (b) since the 1st-from-Moon is a kendra, but kept as an
-          explicit branch for textual fidelity.
+          convention of :mod:`app.raman_saab.primitives.relationships`). NOT
+          encoded as a branch: it cannot fire. See below.
 
     Sun policy: the cited line says "planets" / "a planet" with NO exception,
-    so the Sun counts in every branch. This is also the only reading that
-    gives branch (c) independent effect: :func:`kemadruma` already excludes
-    every non-Sun planet conjunct the Moon at formation time, so the Sun is
-    the one planet whose conjunction can still cancel an otherwise-formed
-    Kemadruma. Nodes are excluded per the project chaya-graha convention
-    (3HC names no nodes here).
+    so the Sun counts in every branch. Nodes are excluded per the project
+    chaya-graha convention (3HC names no nodes here).
+
+    Branch (c) was PROVABLY REDUNDANT and is DELETED (measured 2026-08-20,
+    removed 2026-08-21 on user sign-off). `_in_kendra_from` scores the same
+    rasi-house as distance 1, the 1st is a kendra, and the Sun is not excluded
+    from branch (b) — so every conjunction (c) could see, (b) had already seen.
+    Not merely unused on a sample: unreachable by construction.
+
+    It was kept for a while "for textual fidelity to the quoted line", and that
+    is the argument for keeping dead code generally. It does not survive this
+    case. The docstring had ALREADY drifted once into claiming (c) earned its
+    keep through the Sun — a conjunction cancelling where :func:`kemadruma` has
+    excluded every other planet — which was simply false. A branch that cannot
+    run invites exactly that: nobody can test the claim against behaviour,
+    because there is no behaviour. Fidelity to the line is this docstring's
+    job, which quotes it in full; the line does not need an `if` that never
+    fires to be faithfully recorded.
 
     EXTENDED bhanga — NOT attributable to 3HC:2182-2185: a natural benefic
     casting drishti on the Moon also cancels. This branch comes from the
     Phase-2 aspect backfill (standard doctrine) and is kept distinct so the
     corpus citation is not over-claimed.
+
+    THE QUOTED REMARK DOES NOT END WHERE THIS DOCSTRING USED TO STOP (found
+    2026-08-19, corpus mounted). The full Remarks run to 3HC:2188:
+
+        "Some authors say that if planets are m a kendra from birth or from the
+        Moon or if the Moon is in conjunction with a planet there is no
+        Kemadruma. Theie are yet other authors who say that these yogas arise
+        from kendras and navamsas BUT THESE OBSERVATIONS ARE NOT GENERALLY
+        ACCEPTABLE."
+
+    Two things follow, and both matter:
+
+      * Raman ATTRIBUTES the cancellation to "some authors". He never states in
+        his own voice that there is no Kemadruma in these cases. Citing
+        3HC:2182-2185 as if it were his assertion over-claims the anchor, which
+        is what this docstring did.
+      * His dismissal at :2188 is grammatically ambiguous. "these observations"
+        attaches most immediately to the SECOND group ("yet other authors ...
+        kendras and navamsas"), but it can be read as covering both reported
+        opinions, since he is reporting rather than endorsing throughout.
+
+    The BEHAVIOUR here is deliberately unchanged: `kemadruma_bhanga` feeds the
+    yoga layer and therefore the verdict path, so narrowing it would move the
+    golden ratchet and needs the doctrine-review + user-sign-off path. Logged in
+    DOCTRINE_BACKLOG "Kemadruma bhanga attribution". What IS fixed here is the
+    claim: the anchor is now quoted in full, including the dismissal.
+
+    RESOLVED 2026-08-20 (Track 4b): the ambiguity is settled by the mounted
+    text itself, and in FAVOUR of branches (a) and (b). Raman applies them in
+    his own voice, on worked charts, immediately after the Remarks:
+
+        3HC:2263-2268 — "Here you will see that Kemadruma is present because
+        the houses on either side of the Moon are vacant. But there is distinct
+        cancellation of the Kemadruma because (a) the kendras from the Moon are
+        occupied and (b) kendras from the Lagna are also occupied."
+
+        3HC:2255-2261 — the converse, on Chart No. 8: "The above is a typically
+        Kemadruma Yoga horoscope. No planets are placed on either side of
+        Chandra and no planets are to be found in kendras either from Lagna or
+        from the Moon."
+
+    A man does not demonstrate a cancellation twice, once each way, and mean it
+    to be "not generally acceptable". :2187-2188 therefore attaches to the
+    SECOND reported group only ("yet other authors ... these yogas arise from
+    kendras and navamsas"). Branches (a) and (b) are Raman's own applied
+    doctrine, not merely "some authors"; branch (c) was only ever attributed,
+    and was unreachable anyway (above).
+
+    Why the earlier pass concluded a printed page was needed: it searched for
+    "Kemadruma" and these two passages are OCR'd as "Kemadiuma" and
+    "Kemidiumi s". A spelling-tolerant search finds exactly six mentions in the
+    whole book — :2170, :2173, :2185, :2255, :2263, :2266 — and the last three
+    are the ones that settle it.
+
+    The extended benefic-drishti branch is still NOT Raman's; he states it
+    nowhere in 3HC, and the label stays NOT-3HC. Unlike (c) it is not provably
+    redundant — Jupiter in the 5th or 9th from the Moon aspects it from outside
+    every kendra — though across the 225 golden charts it never once supplies a
+    cancellation that (a) or (b) had not already made.
     """
     if "Moon" not in chart.planets:
         return False
@@ -189,11 +259,11 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
         # (a) planet in a kendra from birth (Lagna)
         if pl.rasi_house in _KENDRA:
             return True
-        # (b) planet in a kendra from the Moon
+        # (b) planet in a kendra from the Moon. This also covers the quoted line's third
+        # clause — the Moon conjunct a planet — because `_in_kendra_from` scores the same
+        # rasi-house as distance 1 and the 1st is a kendra. See the docstring: that clause
+        # was a separate branch here until 2026-08-21 and could never fire.
         if _in_kendra_from(name, moon_h, chart):
-            return True
-        # (c) the Moon in conjunction with a planet (same rasi)
-        if pl.rasi_house == moon_h:
             return True
     # EXTENDED (not 3HC:2182-2185): a benefic aspecting the Moon breaks kemadruma
     for name in NATURAL_BENEFICS:

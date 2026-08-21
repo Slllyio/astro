@@ -70,11 +70,13 @@ def iter_citations() -> Iterator[Citation]:
     # The graha-chapter line-range tables (HPA-21/22/24/34) — verbatim-quote anchors.
     from app.raman_saab.doctrine.lookups.graha_chapters import (
         CITED_ANCHORS as _GRAHA_ANCHORS)
+    from app.raman_saab.doctrine.medical_astrology import CITED_ANCHORS as _MEDICAL_ANCHORS
     from app.raman_saab.karmic_evolution import CITED_ANCHORS as _KARMIC_ANCHORS
     from app.raman_saab.monographs import CITED_ANCHORS as _MONOGRAPH_ANCHORS
     yield from _GRAHA_ANCHORS
     yield from _MONOGRAPH_ANCHORS
     yield from _KARMIC_ANCHORS
+    yield from _MEDICAL_ANCHORS
 
 
 def cited_files() -> dict[str, Path]:
@@ -88,8 +90,36 @@ def cited_files() -> dict[str, Path]:
     return out
 
 
+def _body_bytes(path: Path) -> bytes:
+    """The file with its YAML front matter removed.
+
+    The ETL stamps `scraped_at: <now>` into every chapter's front matter on every import
+    (`app/medini/etl/import_archive_text.py`), so a whole-file sha256 changes on every
+    re-import even when the text is byte-identical. That made this lock unable to survive an
+    import it had no quarrel with, and buried the three files whose CONTENT really had moved
+    among twenty-one whose timestamps had.
+
+    Line offsets still matter — citations are line numbers into the whole file, front matter
+    included — so `line_count` continues to cover the whole file and catches any shift the
+    body hash cannot see.
+    """
+    raw = path.read_bytes()
+    # Both delimiters must be a COMPLETE line. `startswith(b"---")` also matched a file
+    # opening on a horizontal rule, and searching for b"\n---" also matched a content line
+    # that merely began with three dashes — either way real corpus text fell out of the hash,
+    # which is the one thing this function must never do quietly.
+    lines = raw.splitlines(keepends=True)
+    if not lines or lines[0].rstrip(b"\r\n") != b"---":
+        return raw
+    for index, line in enumerate(lines[1:], start=1):
+        if line.rstrip(b"\r\n") == b"---":
+            return b"".join(lines[index + 1:])
+    return raw
+
+
 def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """sha256 of the file's BODY — see `_body_bytes` for why the front matter is excluded."""
+    return hashlib.sha256(_body_bytes(path)).hexdigest()
 
 
 def _line_count(path: Path) -> int:
@@ -97,10 +127,21 @@ def _line_count(path: Path) -> int:
         return sum(1 for _ in fh)
 
 
-def compute_lock() -> dict[str, dict]:
-    """The lock that SHOULD be on disk for the current citations + corpus."""
-    return {key: {"sha256": file_sha256(p), "line_count": _line_count(p)}
-            for key, p in sorted(cited_files().items())}
+def compute_lock(*, carry_absent: bool = True) -> dict[str, dict]:
+    """The lock that SHOULD be on disk for the current citations + corpus.
+
+    Entries for cited files this machine does NOT have are carried forward from the existing
+    lock rather than dropped. A lock is a record of every cited file; regenerating it on a box
+    that happens to be missing one book would delete that book's record permanently and hand
+    the next machine — which does have it — a file with no locked hash to check against. ASP
+    is the standing case: a local OCR of a user-supplied scan, unrecoverable by download.
+    """
+    fresh = {key: {"sha256": file_sha256(p), "line_count": _line_count(p)}
+             for key, p in sorted(cited_files().items())}
+    if carry_absent:
+        for key, entry in load_lock().items():
+            fresh.setdefault(key, entry)
+    return dict(sorted(fresh.items()))
 
 
 def load_lock() -> dict[str, dict]:

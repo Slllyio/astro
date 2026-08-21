@@ -17,6 +17,7 @@ import pytest
 from app.empirical.acquire.lunarastro_import import (
     LunarAstroRecord,
     assign_time_tiers,
+    flag_consultation_rows,
     import_all,
     natural_key,
     parse_row,
@@ -143,6 +144,116 @@ class TestPlaceholderTimes:
             "rodden_rating": "", "categories": "", "source_url": "",
         }
         assert parse_row(row).time_is_placeholder is False
+
+
+class TestFlagConsultationRows:
+    """Private consultation requests: excluded from cohorts, words not retained.
+
+    The corpus mixes curated public-figure records with a tail of live
+    questions typed by private individuals. These tests pin both obligations —
+    the population one (flagged, so the standard quality filter drops them)
+    and the privacy one (narrative redacted, never carried).
+    """
+
+    def _record(self, categories, *, quality="ok", key="lunar_a"):
+        return LunarAstroRecord(
+            source_id=key, name="X", birth_year=1950, birth_month=1, birth_day=1,
+            birth_hour_local=8, birth_minute=17, birth_second=0, tz_offset=0.0,
+            birth_ut_hour=8.28, latitude=10.0, longitude=10.0,
+            categories=categories, time_is_placeholder=False,
+            time_tier="A", data_quality=quality, source_url="u",
+        )
+
+    def test_long_singleton_category_is_flagged_and_redacted(self):
+        """A one-off sentence is a question, not a taxonomy label."""
+        narrative = "My brother has no job n no earning he is on the verge of suicide plz help"
+        records = [self._record((narrative,))]
+        out, n = flag_consultation_rows(records)
+        assert n == 1
+        assert out[0].data_quality == "consultation_request"
+        assert narrative not in out[0].categories
+        assert out[0].categories == ("[redacted:consultation_request]",)
+
+    def test_common_taxonomy_tag_is_untouched(self):
+        """'Vocation' recurs across the corpus — a label, never redacted."""
+        records = [self._record(("Vocation",), key=f"lunar_{i}") for i in range(5)]
+        out, n = flag_consultation_rows(records)
+        assert n == 0
+        assert all(r.categories == ("Vocation",) for r in out)
+        assert all(r.data_quality == "ok" for r in out)
+
+    def test_a_narrative_shared_by_two_charts_is_still_caught(self):
+        """One question can be filed against several charts — the corpus has
+        'BOTH PARTNERS BORN ON SAME DATE. Will we get married?' on both
+        partners' nativities. A strict occurs-once rule missed exactly those,
+        which is the worst case to miss: a question spanning two charts is
+        more identifying, not less."""
+        narrative = "BOTH PARTNERS BORN ON SAME DATE. Will we get married?"
+        records = [
+            self._record((narrative,), key="lunar_p1"),
+            self._record((narrative,), key="lunar_p2"),
+        ]
+        out, n = flag_consultation_rows(records)
+        assert n == 2
+        assert all(narrative not in r.categories for r in out)
+        assert all(r.data_quality == "consultation_request" for r in out)
+
+    def test_short_singleton_is_not_treated_as_a_narrative(self):
+        """A rare-but-short tag ('Cartoon Artist') is a niche label, not a
+        question — length is what separates the two, and it must be respected
+        or genuine rare professions would be scrubbed."""
+        records = [self._record(("Cartoon Artist",))]
+        out, n = flag_consultation_rows(records)
+        assert n == 0
+        assert out[0].categories == ("Cartoon Artist",)
+
+    def test_clean_tags_survive_on_a_flagged_row(self):
+        """Redaction is per-tag: a row carrying both a real label and a
+        narrative keeps the label."""
+        narrative = "Urgent Request for Assistance Regarding My Birth Chart and Well-being"
+        records = [self._record(("Vocation", narrative))] + [
+            self._record(("Vocation",), key=f"lunar_{i}") for i in range(3)
+        ]
+        out, n = flag_consultation_rows(records)
+        assert n == 1
+        flagged = out[0]
+        assert "Vocation" in flagged.categories
+        assert narrative not in flagged.categories
+
+    def test_existing_quality_flag_is_not_overwritten(self):
+        """A row can be both epoch-placeholder and a consultation request; the
+        first-detected defect stays reported rather than being masked."""
+        narrative = "Please tell me about my career and my mental health issues thank you"
+        records = [self._record((narrative,), quality="epoch_placeholder")]
+        out, n = flag_consultation_rows(records)
+        assert n == 1
+        assert out[0].data_quality == "epoch_placeholder"
+        assert narrative not in out[0].categories
+
+    def test_flagged_rows_cannot_claim_tier_a(self):
+        """The quality flag must exclude them from the minute-precise tier,
+        which is what keeps them out of a transit-level cohort."""
+        narrative = "My sister mental health is deteriorating and I need urgent guidance"
+        records, _ = flag_consultation_rows([self._record((narrative,))])
+        tiered, _rounded = assign_time_tiers(records)
+        assert tiered[0].time_tier != "A"
+
+    def test_import_all_excludes_them_from_the_scored_cohort(self, tmp_path):
+        """End to end: the standard `data_quality == ok` filter drops them."""
+        narrative = "Please help me my husband died recently and I do not know what to do next"
+        text = (
+            _HEADER
+            + "Notable Person,1950-01-01,08:17:00,10.0,10.0,0,,Vocation,u1\n"
+            + f"Private Person,1975-05-05,09:21:00,20.0,20.0,0,,{narrative},u2\n"
+        )
+        raw = tmp_path / "raw.csv"
+        raw.write_text(text, encoding="utf-8")
+        records, stats = import_all(raw)
+        assert stats["consultation_requests"] == 1
+        scored = [r for r in records if r.data_quality == "ok"]
+        assert len(scored) == 1
+        assert scored[0].name == "Notable Person"
+        assert all(narrative not in c for r in records for c in r.categories)
 
 
 class TestNaturalKey:

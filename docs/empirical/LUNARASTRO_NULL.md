@@ -1,29 +1,35 @@
 # A third null, on the best birth-time data in this repo
 
 **Date**: 2026-08-21
-**Corpus**: LunarAstro research-site scrape, 13,825 tier-A (minute-precise) persons
-**Screened**: 49 category tags cleared the 200-row threshold; 98 (bank x category)
+**Corpus**: LunarAstro research-site scrape, 13,703 tier-A (minute-precise) persons
+**Screened**: 49 category tags cleared the 200-row threshold; 97 (bank x category)
 tests registered, all cleared the sham gate
-**Holdout**: 3,485 persons, frozen and unread
+**Holdout**: 3,450 persons, frozen and unread
 **Status**: screening, exploratory — the pre-registration is still all drafts
 
 ## Result
 
-**Zero survivors out of 98 tests, at Benjamini-Hochberg q=0.10.**
+**Zero survivors out of 97 tests, at Benjamini-Hochberg q=0.10.**
 
 | | value |
 |---|---:|
-| Tests registered | 98 |
-| Tests admitted (passed every control arm) | 98 |
+| Tests registered | 97 |
+| Tests admitted (passed every control arm) | 97 |
 | Survivors | **0** |
-| Sham statistic range across all 98 tests | 0.4716 - 0.5152 |
-| Largest delta observed | **+0.0122** (raw_astronomy / `Profession`, p=0.055, n=2,656) |
+| Sham statistic range across all 97 tests | 0.4819 - 0.5227 |
+| Largest delta observed | **+0.0115** (raw_astronomy / `Profession`, p=0.070, n=2,633) |
 
 No chart bank beat its own chartless twin on any of the 49 tested category tags,
 at either the `western` (tropical positions/houses/aspects) or `raw_astronomy`
 (the same sky with no astrological interpretation) encoding. The single largest
-delta observed across all 98 tests does not clear even the uncorrected p<0.05
+delta observed across all 97 tests does not clear even the uncorrected p<0.05
 bar, let alone survive correction across the full family.
+
+These are the figures from the **second** run, after 182 live consultation
+requests from private individuals were flagged and excluded (see below). The
+first run, which included 122 of them in its cohort, returned the same verdict
+— 98 tests, zero survivors, largest delta +0.0122 at p=0.055 — so the
+exclusion changed the population correctly without changing the answer.
 
 ## Why this corpus is a stronger test than either prior one
 
@@ -35,7 +41,7 @@ the strongest test of the three on birth-time quality specifically:
   narrowest test family.
 * **Wikidata** (`EVENT_TIMING_NULL.md`): 683k people, but tier C — no birth time
   at all, so houses/ascendant/Moon are untestable by construction.
-* **LunarAstro** (here): 13,825 tier-A persons — more minute-precise births
+* **LunarAstro** (here): 13,703 tier-A persons — more minute-precise births
   than Gauquelin — AND 49 distinct outcome categories, the widest target family
   tested against a chartless twin so far in this project.
 
@@ -68,6 +74,29 @@ single profession label.
   independently-defined profession codes. A null here says the *chart* adds
   nothing over the chartless twin for these tags; it does not certify the tags
   themselves as meaningful psychological or vocational categories.
+* **It is not one population, and part of it is private people.** Most rows
+  are curated public-figure records. A tail of **182 rows are live
+  consultation requests**: private individuals who gave the site their birth
+  data and a question, so their "category" is the question itself — a
+  sentence about a relative's suicidal ideation, a baby's medical emergency,
+  their own depression. This is both a population confound (ordinary
+  help-seekers against notable people — a selection boundary a model can
+  learn instead of astrology) and a privacy matter (identifiable living
+  individuals; publication to a website does not make it research data).
+  `lunarastro_import.flag_consultation_rows` flags them
+  `consultation_request` so the standard `data_quality == "ok"` filter
+  excludes them from any scored cohort, and redacts the narrative so this
+  corpus never carries their words. 122 of them had reached the first
+  screening cohort; the numbers reported above are from the re-run after
+  exclusion (13,703 tier-A rows, down from 13,825).
+
+  The detection rule is "longer than 40 characters and occurring at most 3
+  times". It is deliberately not "occurring exactly once": one question can be
+  filed against several charts — the corpus carries *"BOTH PARTNERS BORN ON
+  SAME DATE. Will we get married?"* on both partners' nativities — and a
+  singleton-only rule left exactly those rows unredacted, which is the worst
+  case to miss, since a question spanning two charts is more identifying, not
+  less.
 
 ## The demographic-confound signal, disclosed rather than hidden
 
@@ -87,12 +116,12 @@ with no baseline in sight; scored as `+0.0006` it is what it actually is.
 
 **Covers**: tropical Western chart features (positions, Placidus houses,
 Ptolemaic aspects) and the raw uninterpreted sky, against 49 category-tag
-outcomes, on 13,825 people with real, minute-frequency-verified birth times,
+outcomes, on 13,703 people with real, minute-frequency-verified birth times,
 sham-gated and chartless-baseline-scored throughout.
 
 **Does not cover**:
 
-* **Confirmation.** This is screening. The 3,485-person holdout has never been
+* **Confirmation.** This is screening. The 3,450-person holdout has never been
   read and no pre-registration row is locked — nothing here is a finding.
 * **Vedic/sidereal features.** This screen used only the Western tropical
   toolkit (`app/empirical/western/`); it says nothing about Lahiri-sidereal

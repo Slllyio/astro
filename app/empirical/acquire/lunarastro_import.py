@@ -42,6 +42,18 @@ dropped or coerced** (the repo's standing rule — see `gauquelin_import.py`):
   on every row of this scrape. Time-tier honesty here rests entirely on the
   minute-frequency measurement (:func:`assign_time_tiers`), not on a
   publisher's own rating, and that limitation is real: report it as such.
+* **It is not one population, and part of it is private people.** Most rows
+  are curated public-figure records with broad taxonomy categories. A tail of
+  ~174 rows are **live consultation requests**: private individuals who gave
+  the site their birth data and a question, so their "category" is a sentence
+  about a relative's suicidal ideation, a baby's medical emergency, their own
+  depression. Both a population confound (ordinary help-seekers vs. notable
+  people — a selection boundary a model can learn instead of astrology) and a
+  privacy matter (identifiable living individuals; publication to a website
+  does not make it research data). :func:`flag_consultation_rows` flags them
+  ``consultation_request`` so the standard quality filter excludes them from
+  any scored cohort, and redacts the narrative so this corpus never carries
+  or redistributes their words.
 
 Usage:
     python -m app.empirical.acquire.lunarastro_import \\
@@ -66,6 +78,7 @@ __all__ = [
     "LunarAstroRecord",
     "natural_key",
     "parse_row",
+    "flag_consultation_rows",
     "assign_time_tiers",
     "import_all",
     "write_csv",
@@ -90,6 +103,31 @@ _PLAUSIBLE_YEARS: Final[tuple[int, int]] = (1700, 2026)
 #: share before it is judged clerical rounding rather than chance. Same
 #: threshold and same rationale as `gauquelin_import._ROUNDING_EXCESS`.
 _ROUNDING_EXCESS: Final[float] = 3.0
+
+#: A "category" longer than this, occurring at most
+#: :data:`_CONSULTATION_MAX_OCCURRENCES` times, is a free-text consultation
+#: request rather than a taxonomy tag. Measured: the corpus's 2,704 distinct
+#: tags are bimodal — 63 broad taxonomy labels ("Vocation", "Writers")
+#: recurring hundreds to thousands of times, against a long tail of sentences
+#: a site user typed as their question. 40 characters separates them cleanly;
+#: no genuine taxonomy label in this corpus is that long.
+_CONSULTATION_MIN_LEN: Final[int] = 40
+
+#: Why this is not "occurs exactly once": a single question can be attached to
+#: SEVERAL charts. The corpus contains "BOTH PARTNERS BORN ON SAME DATE. Will
+#: we get married?" on two charts — one couple's question, filed against both
+#: their nativities — and other questions duplicated across a family's charts.
+#: A strict singleton rule left exactly those rows unredacted, which is the
+#: worst case to miss: a question spanning two charts is more identifying, not
+#: less. Three is comfortably below the frequency of any real taxonomy label
+#: (the rarest of those recurs in the hundreds).
+_CONSULTATION_MAX_OCCURRENCES: Final[int] = 3
+
+#: What replaces a redacted consultation narrative. The row is kept and
+#: flagged — dropping it would hide the defect, which this repo does not do —
+#: but the person's own words are not retained. See
+#: :func:`flag_consultation_rows`.
+_REDACTED: Final[str] = "[redacted:consultation_request]"
 
 
 @dataclass(frozen=True)
@@ -264,6 +302,70 @@ def _merge_duplicates(records: list[LunarAstroRecord]) -> tuple[list[LunarAstroR
     return list(by_key.values()), merged
 
 
+def flag_consultation_rows(
+    records: list[LunarAstroRecord],
+    *,
+    min_len: int = _CONSULTATION_MIN_LEN,
+    max_occurrences: int = _CONSULTATION_MAX_OCCURRENCES,
+) -> tuple[list[LunarAstroRecord], int]:
+    """Flag and redact rows that are live consultation requests, not biography.
+
+    This corpus is not one population. Most of it is curated public-figure
+    records whose ``categories`` are broad taxonomy labels. A small tail is
+    something else entirely: **private individuals who submitted their birth
+    data to the site with a question**, whose "category" is the question
+    itself — a sentence about a relative's suicidal ideation, a baby's medical
+    emergency, their own depression.
+
+    Two independent reasons these must not sit in a scored cohort:
+
+    * **Population.** They are ordinary help-seekers; the rest are notable
+      people selected into a biographical database. Mixing them puts a
+      selection boundary inside the corpus that any model can learn instead of
+      astrology — the same class of confound as
+      ``docs/empirical/TIME_BASIS_CONFOUND.md``.
+    * **Privacy.** They are identifiable living private individuals and the
+      text is sensitive personal information. It was published to a website;
+      that does not make it research data.
+
+    The row is KEPT and flagged (this repo does not silently drop source
+    defects — the count must stay visible), but the person's own words are
+    replaced with :data:`_REDACTED`, so the corpus never carries or
+    redistributes them. An existing non-``ok`` quality flag is never
+    overwritten: a row can be both epoch-placeholder and a consultation
+    request, and the first-detected defect is the one reported.
+
+    Returns:
+      ``(records, n_flagged)`` — the count is the evidence.
+    """
+    counts = Counter(cat for r in records for cat in r.categories)
+
+    def _is_consultation(cat: str) -> bool:
+        return counts[cat] <= max_occurrences and len(cat) > min_len
+
+    out: list[LunarAstroRecord] = []
+    flagged = 0
+    for r in records:
+        hits = [c for c in r.categories if _is_consultation(c)]
+        if not hits:
+            out.append(r)
+            continue
+        flagged += 1
+        redacted = tuple(
+            _REDACTED if _is_consultation(c) else c for c in r.categories
+        )
+        out.append(
+            replace(
+                r,
+                categories=redacted,
+                data_quality=(
+                    "consultation_request" if r.data_quality == "ok" else r.data_quality
+                ),
+            )
+        )
+    return out, flagged
+
+
 def assign_time_tiers(
     records: list[LunarAstroRecord],
     *,
@@ -309,12 +411,19 @@ def import_all(raw_path: str | Path) -> tuple[list[LunarAstroRecord], dict[str, 
             parsed.append(record)
 
     deduped, merged = _merge_duplicates(parsed)
-    tiered, rounded = assign_time_tiers(deduped)
+    # Consultation flagging runs on the DEDUPLICATED set: a tag's "appears
+    # exactly once" test must be over distinct charts, or one chart tagged
+    # twice under the same question would look like two occurrences and hide
+    # the row. It runs BEFORE tiering so that the quality flag it sets is
+    # visible to the tier rule (a flagged row can never claim tier A).
+    flagged_records, consultations = flag_consultation_rows(deduped)
+    tiered, rounded = assign_time_tiers(flagged_records)
 
     stats = {
         "rows_read": len(parsed) + skipped,
         "skipped_unparseable": skipped,
         "duplicates_merged": merged,
+        "consultation_requests": consultations,
         "records": len(tiered),
         "tier_A": sum(1 for r in tiered if r.time_tier == "A"),
         "tier_B": sum(1 for r in tiered if r.time_tier == "B"),

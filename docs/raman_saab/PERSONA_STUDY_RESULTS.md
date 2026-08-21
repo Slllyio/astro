@@ -2,7 +2,28 @@
 
 Twenty-three documented lives answered the feedback instrument blind. Pre-registration:
 `PERSONA_STUDY_PREREG.md`, committed before any chart was cast. Every number here comes from
-`tools/raman_saab/persona_study.py score`; the raw output is `data/persona_study/results.json`.
+`tools/raman_saab/persona_study.py score`.
+
+> ## ⚠ PROVENANCE CORRECTION — this run's raw data no longer exists
+>
+> **The figures below cannot be re-derived.** A container restart destroyed
+> `data/persona_study/` in its entirety: all 23 blind answer files, the SHA-256 manifest this
+> document cites as evidence the answers were hashed before scoring, the roster, the payloads,
+> the verdicts and the scorecard. Nothing of the raw data survives anywhere.
+>
+> The cause was mine and it was structural, not bad luck. The persona answers are *collected*
+> data — irreproducible, since a language model does not answer identically twice — and I wrote
+> them to `data/`, which this repository gitignores for *derived* artifacts that can always be
+> rebuilt. A container reset then did exactly what a reset does.
+>
+> So this section stands on the numbers as published and on nothing else. The blinding claim in
+> §3 is no longer auditable: the manifest that evidenced it is gone. Read every figure below
+> with that attached.
+>
+> A second run re-collects both arms and commits the answers to `tests/fixtures/persona_study/`,
+> alongside the engine SHA they were scored under, so the chain holds next time. Its numbers
+> will differ — the answerers are not deterministic — and it will supersede this section rather
+> than overwrite it.
 
 ---
 

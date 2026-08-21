@@ -266,6 +266,33 @@ because of the direction it can move the conclusion — it cannot turn a null in
 the pre-registered interpretation rule already said a result away from chance is a flag to hunt
 artifacts rather than a discovery. This is that hunt, done rather than promised.
 
+### Deviation 3 — the contaminated arm was specified and not run (recorded after the fact)
+
+§2c pre-registered three control arms. The first run executed two of them — the coin-flip sham
+gate and the cross-chart falsification — and **did not execute the contaminated arm at all**. It
+was missed, not dropped: no decision was taken to omit it, and the study was reported as complete
+while one of its own arms had never been run.
+
+That matters beyond bookkeeping, because the contaminated arm is the one carrying the study's
+most useful potential finding. Blind at chance beside contaminated well above it would
+demonstrate the curation asymmetry inside our own harness — the mechanism
+`WHY_THE_ENGINE_FAILS_ON_REAL_CHARTS.md:154-164` names as what produces sincere false conviction.
+Without it the first run could report a null and nothing else.
+
+The second run carries all three arms. This deviation is recorded rather than quietly repaired
+because the first run's write-up claimed a completeness it did not have.
+
+### Deviation 4 — the first run's raw data was destroyed
+
+A container restart removed `data/persona_study/` entirely, including the answer manifest §3
+relies on to evidence that answers were hashed before any key was computed. The first run is
+therefore unauditable and its figures cannot be re-derived.
+
+The collected answers should never have been in `data/` — that directory is gitignored for
+derived artifacts, and persona answers are primary data that no rebuild can reproduce. The
+second run writes them to `tests/fixtures/persona_study/`, committed, with the engine SHA they
+were scored under, so the same accident cannot repeat.
+
 ## 7. Governance
 
 Committed before any data is collected. The results document reports every arm, every drop,

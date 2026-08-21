@@ -8,12 +8,24 @@ live here but whose content natal rules still never cite. A book is either:
   * ``live``                      — a Raman source; its tag is CITABLE (by the subsystem whose
                                     scope it belongs to — natal books by natal rules, PRASNA/
                                     MUHURTHA by their own subsystems only).
+  * ``corroboration``             — a CLASSICAL non-Raman source (BPHS, Phaladeepika) admitted
+                                    2026-08-21 for the VARGA-interpretation module only. Its tag
+                                    RESOLVES (click-to-source works) but it is **not natal-citable**
+                                    — natal rules/yogas/significations cite ``live`` tags ONLY,
+                                    a guarantee re-expressed as its own guard
+                                    (`test_natal_citations_are_raman_only`) now that resolution no
+                                    longer implies citability. Where Raman speaks, Raman wins;
+                                    classical corroborates, it never overrides.
   * ``catalog-only-out-of-scope`` — present on disk but out of every admitted scope
-                                    (Jaimini / annual); its tag is **NON-citable**.
+                                    (annual / different systems); its tag is **NON-resolvable**.
 
-The non-citable rule is the divergence firewall: `sources._resolve_file` consults this registry
-and returns None for any non-live tag, so no rule can ever cite an out-of-scope book. The
-guarantee is pinned by `tests/raman_saab/doctrine/test_book_registry.py`.
+Two predicates, deliberately split (this is the 2026-08-21 change):
+  * RESOLUTION  — `_RESOLVABLE` = live + corroboration. `entry_for`/`sources._resolve_file`
+                  resolve these to on-disk text, so a corroboration verse renders click-to-source.
+  * NATAL-CITABILITY — `_LIVE` = live only. The divergence firewall for the strictly-Raman house
+                  engine is now the natal-only citation guard, NOT "non-live ⇒ non-resolvable".
+Out-of-scope / lineage tags are in neither set: unknown to `entry_for`, so still non-resolvable.
+The guarantees are pinned by `tests/raman_saab/doctrine/test_book_registry.py`.
 
 Citation-tag convention (see `sources` + `00_method_overview`):
   * single-file legacy book:  ``TAG:line``        (e.g. HTJAH-I:1586)
@@ -30,7 +42,9 @@ class BookEntry:
     tag: str                    # citation prefix: exact tag (single-file) or stem before '-CH'
     slug: str                   # folder under data/knowledge_library/sources/
     multi_chapter: bool         # True -> 'TAG-CH:line' resolves chapter_{CH:03d}_*.md
-    status: str                 # "live" (citable) | "catalog-only-out-of-scope" (non-citable)
+    status: str                 # "live" (natal-citable + resolvable) | "corroboration" (classical,
+                                # resolvable but NOT natal-citable; varga module only) |
+                                # "catalog-only-out-of-scope" (non-resolvable)
                                 # | "lineage-catalog" (B. Suryanarain Rao shelf — Raman's
                                 #   grandfather and teacher; recorded and findable, NON-citable
                                 #   until rules earn them through the review gate. Where Rao and
@@ -159,18 +173,40 @@ BOOKS: tuple[BookEntry, ...] = (
               None, "Sarvartha Chintamani, Rao translation (1899)"),
     BookEntry("ROW-INTRO", "intro_astrology_row_1900", True, "lineage-catalog",
               None, "Introduction to the Study of Astrology (B. Suryanarain Rao, 1900)"),
+    # --- CORROBORATION: classical non-Raman, resolvable for the VARGA module, NOT natal-citable
+    #     (admitted 2026-08-21; the strictly-Raman house engine keeps its own natal-only guard) ---
+    BookEntry("BPHS", "bphs", True, "corroboration",
+              None, "Brihat Parashara Hora Shastra (Santhanam)", "BPHSEnglish"),
+    BookEntry("PHALA", "phaladeepika", False, "corroboration",
+              "chapter_05_chapter-3-divisions-of-the-zodiac.md",
+              "Phaladeepika ch.3 — Divisions of the Zodiac (Mantreswara)"),
 )
 
+# NATAL-CITABLE: only Raman ``live`` books may be cited by the natal verdict engine.
 _LIVE: tuple[BookEntry, ...] = tuple(b for b in BOOKS if b.status == "live")
+# RESOLVABLE: live + corroboration. These resolve to on-disk text (click-to-source); admitting a
+# corroboration tag here does NOT make it natal-citable — that is guarded separately
+# (`test_natal_citations_are_raman_only`). Out-of-scope / lineage books are in neither set.
+_RESOLVABLE: tuple[BookEntry, ...] = tuple(
+    b for b in BOOKS if b.status in ("live", "corroboration"))
 
 
 def entry_for(work: str) -> Optional[BookEntry]:
-    """The LIVE BookEntry a citation work-tag maps to, or None if the tag is unknown OR
-    out-of-scope. Out-of-scope tags never match -> they are NON-citable (the firewall)."""
-    for b in _LIVE:
+    """The RESOLVABLE BookEntry a citation work-tag maps to, or None if the tag is unknown /
+    out-of-scope. Resolution spans ``live`` + ``corroboration``; being resolvable does NOT make a
+    tag natal-citable (that is `is_natal_citable` / the natal-only guard)."""
+    for b in _RESOLVABLE:
         if b.multi_chapter:
             if work.startswith(b.tag + "-"):
                 return b
         elif work == b.tag:
             return b
     return None
+
+
+def is_natal_citable(work: str) -> bool:
+    """True only if ``work`` maps to a ``live`` (Raman) book — the natal verdict engine cites
+    these alone. Corroboration tags resolve but return False here; the strictly-Raman guard
+    (`test_natal_citations_are_raman_only`) asserts no natal citation is anything but live."""
+    entry = entry_for(work)
+    return entry is not None and entry.status == "live"

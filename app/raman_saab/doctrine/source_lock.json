@@ -3,6 +3,10 @@
     "line_count": 347,
     "sha256": "b2d3366f23c9b8e6770d4f00621f570c11553db2f318140a93928cb293afcff3"
   },
+  "bphs/chapter_007_divisional-consideration.md": {
+    "line_count": 1028,
+    "sha256": "1477fde174e173211606cab2db6f79535f12acf34d088c069b84c0d67a982706"
+  },
   "graha_bhava_balas_raman/chapter_001_chapter.md": {
     "line_count": 218,
     "sha256": "302083218d4337e7d78477131397c68061dd6be3f84fe063a3e77ab1fa5331f0"
@@ -14,6 +18,10 @@
   "graha_bhava_balas_raman/chapter_010_ishta-and-kashta-phalas.md": {
     "line_count": 1428,
     "sha256": "61de1d3b768145ecf96189fc40654246720d3cf7841da64869e74fb0bc79d7a8"
+  },
+  "hindu_predictive_astrology_raman/chapter_011_the-shadvargas.md": {
+    "line_count": 201,
+    "sha256": "5f35904d050ed505dd4802d28b9d123797efab0d318495dc80ebb2cfb678eee3"
   },
   "hindu_predictive_astrology_raman/chapter_018_results-of-ascending-signs.md": {
     "line_count": 327,
@@ -74,6 +82,10 @@
   "notable_horoscopes_raman/chapter_001_full-text-unsplit.md": {
     "line_count": 14272,
     "sha256": "d75cc598b22ce43daa3417f93a85f3e03a84bdb4cb848455b0954061e00ca97a"
+  },
+  "phaladeepika/chapter_05_chapter-3-divisions-of-the-zodiac.md": {
+    "line_count": 334,
+    "sha256": "38a5daddf9f3f3a12886008e9a98e0654c0718a14664fccbc1234a6e4776ab6b"
   },
   "prasna_tantra_raman/chapter_002_bhava-prasna.md": {
     "line_count": 486,

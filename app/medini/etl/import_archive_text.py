@@ -77,6 +77,19 @@ _PADA_REGEX = (
     rf"(?P<numpart>{_ROMAN_PATTERN}|{_ARABIC_PATTERN})"
     rf"\s*[.\-:]?\s*(?P<title>[^\n]*?)\s*$"
 )
+# BPHS (Santhanam) prints the chapter number as a running page-header on EVERY page
+# ("Chapter 7 93", "Chapter 7 ^"), so the default one-line regex splits a chapter into
+# one-page fragments (this is why the old import left ch.6 a single page and dropped ch.7-8).
+# Real headings are the ONLY place "Chapter N" sits alone on a line, followed by a blank and
+# a Title-Case title ("Chapter 6\n\nThe Sixteen Divisions Of A Sign"). The two-line shape
+# rejects running headers (they carry a page number / caret on the same line); pairing this
+# with monotonic=True on the _Book rejects the few in-body false matches (a stray "Chapter N"
+# page-header whose next line happens to be capitalised — always out of chapter sequence).
+# `(?-i:[A-Z])` keeps the Title-Case anchor even under the driver's re.IGNORECASE.
+_BPHS_HEADER_REGEX = (
+    r"(?:^|\n)[ \t]*Chapter[ \t]+(?P<numpart>\d{1,3})[ \t]*\n"
+    r"\s*\n[ \t]*(?P<title>(?-i:[A-Z])[A-Za-z][A-Za-z ]{2,58})[ \t]*(?:\n|$)"
+)
 
 
 # Roman numeral -> int (small range)
@@ -124,9 +137,28 @@ class _Book:
     translator: str
     classical_ref_prefix: str  # e.g. "BPHS" -> classical_refs become BPHS.1, BPHS.2
     header_regex: str = _DEFAULT_HEADER_REGEX
+    monotonic: bool = False    # enforce increasing chapter numbers (rejects running-header
+                               # / OCR false matches whose number is out of sequence)
 
 
 _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
+    # BPHS (Brihat Parashara Hora Shastra), R. Santhanam English translation, Vol I.
+    # Admitted 2026-08-21 as a `corroboration`-tier source for the VARGA module only (the
+    # per-varga domain slokas + Vimsopaka bala live in ch.6-7 "The Sixteen Divisions" /
+    # "Divisional Consideration"). Uses the monotonic real-heading split so ch.6-7 are carved
+    # whole instead of one-page fragments. Vol II (ch.51-100, Ashtakavarga/dashas) is not
+    # needed for varga domains and is omitted; add it if a citation ever lands there.
+    _Book(
+        identifier="BPHSEnglish",
+        filename="BPHS - 1 RSanthanam_djvu.txt",
+        book_slug="bphs",
+        book_title="Brihat Parashara Hora Shastra (Vol I)",
+        author="Maharshi Parashara",
+        translator="R. Santhanam",
+        classical_ref_prefix="BPHS",
+        header_regex=_BPHS_HEADER_REGEX,
+        monotonic=True,
+    ),
     _Book(
         identifier="JatakaParijataVolIOfIIByVSubrahmanyaSastri",
         filename="Jataka Parijata Vol I of II by V Subrahmanya Sastri_djvu.txt",
@@ -717,26 +749,40 @@ def split_by_chapter(
     *,
     header_regex: Pattern,
     book_title_pattern: str | None = None,
+    monotonic: bool = False,
 ) -> list[dict]:
     matches = list(header_regex.finditer(text))
     if not matches:
         return []
-    chapters: list[dict] = []
-    for i, m in enumerate(matches):
+    # First pass: pick the ACCEPTED headings. In monotonic mode an out-of-sequence heading
+    # (a running-header / OCR false match whose number <= the last real chapter) is dropped
+    # HERE, before any body is sliced — so it never becomes a body boundary and its text stays
+    # with the preceding real chapter. Slicing to the next *raw* match instead would truncate a
+    # chapter at the false heading (the bug that left BPHS ch.6-7 short).
+    accepted: list[tuple] = []  # (match, ch_num, title)
+    last_num = 0
+    for m in matches:
         num_str = m.group("numpart") if "numpart" in (m.groupdict() or {}) else m.group(1)
         ch_num = _parse_chapter_num(num_str)
         if ch_num is None:
+            continue
+        if monotonic and ch_num <= last_num:
             continue
         try:
             title_raw = m.group("title")
         except (IndexError, KeyError):
             title_raw = m.group(2) if (m.lastindex and m.lastindex >= 2) else ""
         ch_title = (title_raw or "").strip().rstrip(".") or f"Chapter {ch_num}"
+        accepted.append((m, ch_num, ch_title))
+        last_num = ch_num
+    # Second pass: slice each accepted chapter's body to the NEXT accepted heading.
+    chapters: list[dict] = []
+    for i, (m, ch_num, ch_title) in enumerate(accepted):
         start = m.end()
-        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        end = accepted[i + 1][0].start() if i + 1 < len(accepted) else len(text)
         body = _clean_ocr(text[start:end], book_title_pattern=book_title_pattern)
         existing = next((c for c in chapters if c["chapter_num"] == ch_num), None)
-        if existing:
+        if existing:                                    # non-monotonic dedup: keep the longer body
             if len(body) > len(existing["body"]):
                 existing["body"] = body
                 existing["title"] = ch_title
@@ -862,7 +908,8 @@ def import_book(
         rf"^\s*{re.escape(book.book_title.split('—')[0].strip())}.*$"
     )
     header_re = re.compile(book.header_regex, re.MULTILINE | re.IGNORECASE)
-    chapters = split_by_chapter(text, header_regex=header_re, book_title_pattern=book_title_pattern)
+    chapters = split_by_chapter(text, header_regex=header_re, book_title_pattern=book_title_pattern,
+                                monotonic=book.monotonic)
     if len(chapters) < 2:
         logger.info("%s: chapter-split found %d, falling back to single-artefact wrap",
                     book.book_slug, len(chapters))

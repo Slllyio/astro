@@ -78,11 +78,13 @@ _CITE_RE = re.compile(r"^(?P<work>.+):(?P<start>\d+)(?:-(?P<end>\d+))?$")
 def passage(cite: str, *, context: int = 0) -> Optional[dict]:
     """The verbatim source lines a citation token points to — the click-to-source backend.
 
-    Returns ``{"work", "start", "end", "text"}`` or None. None when the token is malformed OR
-    its work is outside the citable registry (the divergence firewall — CLASSICAL_NONCITABLE
-    works like BPHS / Praśna Mārga are deliberately NOT resolved here; the caller shows a
-    "classical corroboration, outside Raman's citable canon" note instead). `context` widens the
-    returned window by N lines on each side for readability without changing the cited span."""
+    Returns ``{"work", "start", "end", "text"}`` or None. None when the token is malformed OR its
+    work is not in the RESOLVABLE registry (live Raman OR, since 2026-08-21, `corroboration`
+    classical sources like BPHS / Phaladeepika — these now resolve click-to-source for the varga
+    module; being resolvable does NOT make them natal-citable, see `book_registry.is_natal_citable`).
+    Out-of-scope / different-system tags still return None (the divergence firewall), and the caller
+    shows a "classical corroboration, outside Raman's citable canon" note instead. `context` widens
+    the returned window by N lines on each side for readability without changing the cited span."""
     m = _CITE_RE.match(cite.strip())
     if m is None:
         return None

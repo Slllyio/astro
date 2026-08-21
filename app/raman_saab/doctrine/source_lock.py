@@ -75,6 +75,13 @@ def iter_citations() -> Iterator[Citation]:
     yield from _GRAHA_ANCHORS
     yield from _MONOGRAPH_ANCHORS
     yield from _KARMIC_ANCHORS
+    # The Shodasavarga domain table — each division's domain sloka. Live-Raman (HPA-11) for the
+    # divisions Raman details; corroboration (BPHS-7 / PHALA) for the pure-pointer divisions
+    # (admitted 2026-08-21). Enumerated here so a re-import that shifts the classical OCR line
+    # numbers fails the lock loudly instead of rotting the varga citations.
+    from app.raman_saab.doctrine.varga_domains import DOMAINS as _VARGA_DOMAINS
+    for _d in _VARGA_DOMAINS:
+        yield _d.source
 
 
 def cited_files() -> dict[str, Path]:

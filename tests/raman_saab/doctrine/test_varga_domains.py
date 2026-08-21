@@ -46,9 +46,12 @@ class TestRamanExplicitRows:
         assert set(d.karakas) == {"Sun", "Moon"}  # Pitru- and Matru-karakas
 
     def test_navamsa_is_the_verdict_varga(self) -> None:
-        """The D9 row records its unique D1-verdict-modulating role."""
+        """The D9 row records its PRIMARY D1-verdict-modulating role. (Was 'the ONLY division'
+        until 2026-08-21 — stale since the 2026-07-22 D-7 promotion; the modulation surface is now
+        D9 all-matters + D7 H5-only, pinned by test_only_d9_and_d7_modulate_the_verdict.)"""
         d = domain_for(9)
-        assert "ONLY division that modulates" in d.notes
+        assert "PRIMARY division that modulates" in d.notes
+        assert "Sapthamsa" in d.notes and "H5" in d.notes   # names the D-7 addition
 
     def test_unsupported_division_raises(self) -> None:
         with pytest.raises(ValueError):

@@ -86,10 +86,25 @@ _PADA_REGEX = (
 # with monotonic=True on the _Book rejects the few in-body false matches (a stray "Chapter N"
 # page-header whose next line happens to be capitalised — always out of chapter sequence).
 # `(?-i:[A-Z])` keeps the Title-Case anchor even under the driver's re.IGNORECASE.
+#
+# OCR TOLERANCE (2026-08-22 — this is what took Vol I from 37 to 45 of 45 chapters). The scan
+# mangles roughly one heading in five, and every "missing chapter" turned out to be a regex
+# defect, not a corpus gap. Three classes, all real, all from BPHS Vol I:
+#   * the WORD: "Chanter 38" (p->n), "Chatter 11" (p->t) -> `Cha[a-z]{1,2}ter`.
+#   * the NUMBER: "Chapter S" for 5 (S<->5) -> `[\dSslOo]` + `_OCR_DIGITS` before int().
+#   * the TITLE: "Effects Of Non -Luminous Planets" (hyphen), "Maraka (Killer) Planets" (parens),
+#     ". The Creation" (leading period), "Effects Of The 12th House" (digits), and a trailing
+#     "Chapter 24." (period after the number) -> widened title class + optional punctuation.
+# Keep the two-line shape and monotonic=True: those are what reject the running page-headers.
+# Widen this pattern only against a real failing heading, and re-run the chapter-count check.
 _BPHS_HEADER_REGEX = (
-    r"(?:^|\n)[ \t]*Chapter[ \t]+(?P<numpart>\d{1,3})[ \t]*\n"
-    r"\s*\n[ \t]*(?P<title>(?-i:[A-Z])[A-Za-z][A-Za-z ]{2,58})[ \t]*(?:\n|$)"
+    r"(?:^|\n)[ \t]*Cha[a-z]{1,2}ter[ \t]+(?P<numpart>[\dSslOo]{1,3})[ \t]*[.:\-]?[ \t]*\n"
+    r"\s*\n[ \t]*(?:[IilJ1|.\-][ \t]+)?"
+    r"(?P<title>(?-i:[A-Z])[A-Za-z][A-Za-z0-9 ,.'’()—–\-]{2,58})[ \t]*(?:\n|$)"
 )
+
+#: OCR letter->digit confusions seen in BPHS chapter numbers ("Chapter S" == Chapter 5).
+_OCR_DIGITS = str.maketrans({"S": "5", "s": "5", "l": "1", "O": "0", "o": "0"})
 
 
 # Roman numeral -> int (small range)
@@ -118,9 +133,17 @@ def _parse_chapter_num(num_str: str) -> int | None:
     # Roman numeral
     try:
         n = _roman_to_int(s)
-        return n if 1 <= n <= 200 else None
+        if 1 <= n <= 200:
+            return n
     except Exception:
-        return None
+        pass
+    # LAST RESORT: OCR letter->digit confusion ("Chapter S" == Chapter 5). Tried only after the
+    # digit and roman paths so roman-numeral books are unaffected (e.g. "L" still parses as 50).
+    t = s.translate(_OCR_DIGITS)
+    if t.isdigit():
+        n = int(t)
+        return n if 1 <= n <= 200 else None
+    return None
 
 
 # --------------------------------------------------------------------------- #
@@ -153,6 +176,22 @@ _CLASSICAL_BUNDLE: tuple[_Book, ...] = (
         filename="BPHS - 1 RSanthanam_djvu.txt",
         book_slug="bphs",
         book_title="Brihat Parashara Hora Shastra (Vol I)",
+        author="Maharshi Parashara",
+        translator="R. Santhanam",
+        classical_ref_prefix="BPHS",
+        header_regex=_BPHS_HEADER_REGEX,
+        monotonic=True,
+    ),
+    # BPHS Vol II (ch.46-97) — added 2026-08-22. Chapter numbering CONTINUES from Vol I, so the
+    # two volumes write into the same `bphs/` folder without collision and `BPHS-46:…` resolves
+    # exactly like `BPHS-7:…`. This volume carries the conditional-dasha systems (ch.46 defines
+    # Ashtottari/Kalachakra/Shatabdika/Chaturaseeti/Dwisaptati/Panchottari/Yogini and their
+    # applicability rules), the Ashtakavarga sodhana chapters, and Stri Jataka.
+    _Book(
+        identifier="BPHSEnglish",
+        filename="BPHS - 2 RSanthanam_djvu.txt",
+        book_slug="bphs",
+        book_title="Brihat Parashara Hora Shastra (Vol II)",
         author="Maharshi Parashara",
         translator="R. Santhanam",
         classical_ref_prefix="BPHS",

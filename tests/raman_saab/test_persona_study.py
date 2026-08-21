@@ -16,8 +16,8 @@ import pytest
 from tools.raman_saab.persona_birthdata import BirthRecord
 from tools.raman_saab.persona_study import (
     Candidate, PER_STRATUM, ROSTER, _pole, _pole_matches, admit, chart_key_for,
-    coinflip_answers, cross_chart, off_vocabulary, option_vocabulary, permutation_p,
-    reference_date, time_precision)
+    coinflip_answers, cross_chart, mcnemar, off_vocabulary, option_vocabulary,
+    paired_outcomes, permutation_p, reference_date, time_precision)
 
 
 def _rec(**kw) -> BirthRecord:
@@ -264,3 +264,78 @@ class TestTheAnswerVocabularyGate:
     def test_an_answer_to_a_question_that_does_not_exist_is_named(self):
         """A qid the payload never carried is a worse error than a stray code, not a lesser one."""
         assert self._stray({"inst.v2.A99": "yes"}) == {"inst.v2.A99": ("<no such question>",)}
+
+
+class TestThePairedComparisonBetweenArms:
+    """The blind and contaminated arms answer the SAME items for the same charts, so the two
+    rates are paired, not independent. Items both arms get right — or both get wrong — say
+    nothing about which arm is better; only the discordant pairs do. Comparing two unpaired
+    proportions here would throw away that structure and overstate its own confidence.
+    """
+
+    def test_only_discordant_pairs_are_counted(self):
+        """Agreement carries no signal, however much of it there is."""
+        first = {("a", "q1"): True, ("a", "q2"): True, ("a", "q3"): False}
+        second = {("a", "q1"): True, ("a", "q2"): True, ("a", "q3"): False}
+        b, c, p = mcnemar(first, second)
+        assert (b, c) == (0, 0) and p is None
+
+    def test_an_arm_that_is_right_where_the_other_is_wrong_is_counted_once_each_way(self):
+        """b is first-only, c is second-only — the two directions are kept apart."""
+        first = {("a", "q1"): True, ("a", "q2"): False, ("a", "q3"): True}
+        second = {("a", "q1"): False, ("a", "q2"): True, ("a", "q3"): True}
+        b, c, _ = mcnemar(first, second)
+        assert (b, c) == (1, 1)
+
+    def test_a_one_sided_advantage_becomes_a_small_p(self):
+        """Eight discordant pairs all favouring one arm is 2 * 0.5**8."""
+        first = {("a", f"q{i}"): True for i in range(8)}
+        second = {("a", f"q{i}"): False for i in range(8)}
+        b, c, p = mcnemar(first, second)
+        assert (b, c) == (8, 0)
+        assert p is not None and abs(p - 2 * 0.5 ** 8) < 1e-9
+
+    def test_an_even_split_is_not_evidence(self):
+        """Four each way is exactly what no difference looks like."""
+        first = {("a", f"q{i}"): i < 4 for i in range(8)}
+        second = {("a", f"q{i}"): i >= 4 for i in range(8)}
+        b, c, p = mcnemar(first, second)
+        assert (b, c) == (4, 4) and p == 1.0
+
+    def test_items_only_one_arm_answered_are_dropped(self):
+        """An unpaired item has no pair; including it would be comparing unlike things."""
+        first = {("a", "q1"): True, ("a", "q2"): True}
+        second = {("a", "q1"): False}
+        b, c, _ = mcnemar(first, second)
+        assert (b, c) == (1, 0)
+
+    def test_the_same_qid_on_different_charts_stays_separate(self):
+        """Keys are (slug, qid): two personas answering C1 are two items, not one."""
+        first = {("a", "q1"): True, ("b", "q1"): True}
+        second = {("a", "q1"): False, ("b", "q1"): False}
+        b, c, _ = mcnemar(first, second)
+        assert (b, c) == (2, 0)
+
+
+class TestWhichItemsAreScoredAsForcedChoice:
+    """The primary measure is the Part C forced choice, whose null is exactly 0.5 by
+    construction. Anything else in the instrument has a null nobody knows, so it must not
+    reach this pool."""
+
+    key = {"answers": {"inst.v2.C1": "opt1", "inst.v2.C2": "opt2", "inst.v2.A7": "robust"},
+           "meta": {"inst.v2.C1": {"kind": "forced_choice", "verdict": "favourable"},
+                    "inst.v2.C2": {"kind": "forced_choice", "verdict": "afflicted"},
+                    "inst.v2.A7": {"kind": "life_fact"}}}
+
+    def test_a_forced_choice_answered_with_the_key_is_a_hit(self):
+        assert paired_outcomes(self.key, {"inst.v2.C1": "opt1"}) == {"inst.v2.C1": True}
+
+    def test_a_forced_choice_answered_the_other_way_is_a_miss(self):
+        assert paired_outcomes(self.key, {"inst.v2.C1": "opt2"}) == {"inst.v2.C1": False}
+
+    def test_a_life_fact_never_enters_the_forced_choice_pool(self):
+        """A7 has no 0.5 null — pooling it would silently change what the p-value means."""
+        assert paired_outcomes(self.key, {"inst.v2.A7": "robust"}) == {}
+
+    def test_an_unanswered_item_contributes_nothing(self):
+        assert paired_outcomes(self.key, {}) == {}

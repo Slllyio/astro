@@ -601,6 +601,35 @@ def permutation_p(claims: dict, verdicts: dict, *, rounds: int = 2000,
     return (beat + 1) / (rounds + 1)
 
 
+def paired_outcomes(key: dict, given: dict) -> dict:
+    """qid -> did this answerer pick the chart's own reading, for each forced-choice item.
+
+    Only Part C enters. Its null is exactly 0.5 by construction — the item pairs the chart's
+    own predicate with its exact inverse — and nothing else in the instrument has a null
+    anyone knows, so pooling anything else would quietly change what the p-value means.
+    """
+    return {qid: given[qid] == expected
+            for qid, expected in key["answers"].items()
+            if key["meta"].get(qid, {}).get("kind") == "forced_choice" and qid in given}
+
+
+def mcnemar(first: dict, second: dict) -> tuple:
+    """The paired test for two arms that answered the SAME items.
+
+    The blind and contaminated arms are not two independent samples: the same personas answer
+    the same questions about the same charts, and the only thing separating them is whether
+    the reading was read first. Items both arms get right — or both get wrong — carry no
+    information about which arm is better, so an unpaired two-proportion test would dilute the
+    real signal with agreement and overstate its own confidence. Returns
+    (first_only, second_only, p); p is None when nothing is discordant.
+    """
+    from app.raman_saab.feedback_scoring import binomial_p_two_sided
+    shared = set(first) & set(second)
+    b = sum(1 for k in shared if first[k] and not second[k])
+    c = sum(1 for k in shared if second[k] and not first[k])
+    return b, c, (binomial_p_two_sided(b, b + c, 0.5) if (b + c) else None)
+
+
 def _report_for(rec: dict):
     from app.raman_saab.chart.model import BirthData
     from app.raman_saab.detailed_report import build_detailed_report
@@ -619,6 +648,11 @@ def _cmd_score(args) -> int:
     roster = json.loads((OUT / "roster.json").read_text(encoding="utf-8"))
     by_slug = {r["slug"]: r for r in roster["admitted"]}
     cards, coin_cards, claims, coin_claims, verdicts = [], [], {}, {}, {}
+    #: The contaminated arm (PREREG 2c): the same personas, the same items, but the chart's own
+    #: reading was read BEFORE answering. Its context is `after_reading`, which is what that
+    #: field exists to record.
+    contam_cards, contam_claims = [], {}
+    blind_picks, contam_picks = {}, {}
 
     for slug, rec in sorted(by_slug.items()):
         ans_path = OUT / "answers" / f"{slug}.json"
@@ -654,6 +688,18 @@ def _cmd_score(args) -> int:
         coin_claims[slug] = _claims(coin)
         verdicts[slug] = json.loads(
             (OUT / "verdicts" / f"{slug}.json").read_text(encoding="utf-8"))["verdicts"]
+
+        blind_picks.update({(slug, q): hit for q, hit
+                            in paired_outcomes(key, doc.get("answers") or {}).items()})
+        contam_path = OUT / "answers_contaminated" / f"{slug}.json"
+        if contam_path.is_file():
+            cdoc = json.loads(contam_path.read_text(encoding="utf-8"))
+            contam_cards.append(score_chart(
+                report, _answer_rows(cdoc) + [("inst.v2.meta.context", "after_reading", None)],
+                chart_key=ckey))
+            contam_claims[slug] = _claims(cdoc.get("answers") or {})
+            contam_picks.update({(slug, q): hit for q, hit
+                                 in paired_outcomes(key, cdoc.get("answers") or {}).items()})
 
     if not cards:
         print("[persona-study] no answers collected yet")
@@ -708,6 +754,39 @@ def _cmd_score(args) -> int:
     contrast_gate = cc_coin["contrast"] is not None and abs(cc_coin["contrast"]) < 0.02
     print(f"  gate {'PASS — the contrast statistic is unbiased' if contrast_gate else 'FAIL — the contrast is biased; the real one cannot be read as evidence'}")
 
+    contam = aggregate(contam_cards) if contam_cards else None
+    contam_block = None
+    if contam is not None:
+        cc_contam = cross_chart(contam_claims, verdicts)
+        pperm_contam = permutation_p(contam_claims, verdicts, rounds=args.permutations)
+        b, c, mp = mcnemar(blind_picks, contam_picks)
+        print("\n=== CONTAMINATED ARM (PREREG 2c) — the reading read FIRST ===")
+        print(f"  charts      {len(contam_cards)}")
+        print(f"  forced      {contam.forced.hits}/{contam.forced.n} = {contam.forced.rate}"
+              f"   p={contam.forced.p_value}")
+        print(f"  rarity-weighted {contam.forced.weighted_rate}")
+        print(f"  cross-chart contrast {cc_contam['contrast'] is not None and round(cc_contam['contrast'], 4)}"
+              f"   permutation p={pperm_contam}")
+        print("\n  --- paired against the blind arm (same personas, same items) ---")
+        print(f"  blind-only hits {b}   contaminated-only hits {c}   discordant {b + c}"
+              f"   McNemar p={mp}")
+        print("\n  This arm is the curation asymmetry measured inside our own harness. Blind at"
+              "\n  chance beside contaminated well above it is the finding. If BOTH land at"
+              "\n  chance, that is a finding about the harness and is reported as one — the"
+              "\n  contaminated arm is not a result the study is entitled to assume.")
+        contam_block = {
+            "charts": len(contam_cards),
+            "forced": {"hits": contam.forced.hits, "n": contam.forced.n,
+                       "rate": contam.forced.rate, "p": contam.forced.p_value,
+                       "weighted_rate": contam.forced.weighted_rate},
+            "inverted": {"hits": contam.inverted.hits, "n": contam.inverted.n},
+            "confident": {"hits": contam.confident.hits, "n": contam.confident.n},
+            "unsure": {"hits": contam.unsure.hits, "n": contam.unsure.n},
+            "cross_chart": cc_contam, "permutation_p": pperm_contam,
+            "paired_vs_blind": {"blind_only": b, "contaminated_only": c,
+                                "discordant": b + c, "mcnemar_p": mp},
+            "per_signification": contam.per_signification}
+
     out = {"charts": len(cards), "sham_gate_passed": gate_ok,
            "engine_git_sha": engine_git_sha(), "instrument_version": "v2",
            "coinflip": {"hits": coin.forced.hits, "n": coin.forced.n,
@@ -724,7 +803,8 @@ def _cmd_score(args) -> int:
            "cross_chart": cc, "permutation_p": pperm,
            "contrast_sham": {"cross_chart": cc_coin, "permutation_p": pperm_coin,
                              "passed": contrast_gate},
-           "per_signification": blind.per_signification}
+           "per_signification": blind.per_signification,
+           "contaminated": contam_block}
     (OUT / "results.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     if args.html:
         Path(args.html).write_text(render_aggregate_html(blind, cards), encoding="utf-8")

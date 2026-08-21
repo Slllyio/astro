@@ -293,6 +293,30 @@ derived artifacts, and persona answers are primary data that no rebuild can repr
 second run writes them to `tests/fixtures/persona_study/`, committed, with the engine SHA they
 were scored under, so the same accident cannot repeat.
 
+### Deviation 5 — one file's event rows were re-encoded, and one stray token was not
+
+Two answer-format problems surfaced when `off_vocabulary` — a check added in the second run,
+after the first run had already been scored — was run across all 46 collected files.
+
+**Re-encoded.** `answers_contaminated/Christopher_Reeve.json` recorded its A35 turning points and
+B6 rectification anchors as a single prose blob per question (`YYYY|code (prose); ...`) instead of
+one `#n` key per row, so `parse_answers` could read none of them: 21 dated turning points and 4
+anchors would have dropped out in silence. They were re-encoded mechanically to the instrument's
+own `YYYY[-MM]:code` form. **No event, date or code was changed** — the transformation reads the
+answerer's own rows and rewrites their punctuation — and the original strings are kept verbatim in
+the file under `raw_events_as_given`, outside `answers` so nothing can score them. Two rows the
+answerer marked `na` are omitted, which is how every other persona records an event that did not
+occur. The re-encoding was done before `verify` hashed anything and before any score was computed.
+
+**Not corrected.** `answers/Bernard_Madoff.json` answers A18 (trade families) with `manual`, which
+is a work-*mode* code from A16 and not on A18's list. It is left exactly as given. Rewriting a
+respondent's answer to a value they did not choose is not a formatting fix, and the honest cost —
+one trade that can never match — is recorded here and in the manifest rather than removed.
+
+The general rule this sets: **formatting may be normalised, content may not.** A normalisation
+that changes what a respondent said is a fabrication however well intentioned, and the difference
+between the two cases above is exactly that line.
+
 ## 7. Governance
 
 Committed before any data is collected. The results document reports every arm, every drop,

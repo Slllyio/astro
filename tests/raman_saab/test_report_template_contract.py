@@ -737,14 +737,30 @@ class TestInterpretationGuide:
 
     @needs_corpus
     def test_guide_citations_resolve(self):
-        """Every corpus citation the guide prints must verify against the sources."""
+        """Every corpus citation the guide prints must verify — for books vendored here.
+
+        Citations into a book this machine does not carry are collected and reported rather
+        than failed: ASP is a local OCR of a user-supplied scan with no archive.org source, so
+        its absence is a fact about the box. Failing on it made this read as "the guide's
+        citations are broken" when every citation into a book we actually have was fine."""
+        from corpus_presence import vendored_books
+
         from app.raman_saab.doctrine.sources import Citation, verify
         from app.raman_saab.interpretation_guide import INTERPRETATION_GUIDE as ig
+        have = vendored_books()
         cites = [c for prec in ig["precedence"] for c in prec["citations"]]
         cites += [a["citation"] for a in ig["axes"]]
+        skipped = []
         for cite in cites:
             work, line = cite.rsplit(":", 1)
+            book = work.split("-")[0]
+            if book not in have:
+                skipped.append(cite)
+                continue
             assert verify(Citation(work, int(line))), cite
+        if skipped:
+            pytest.skip(f"book(s) not vendored here, {len(skipped)} citation(s) unchecked: "
+                        f"{sorted(set(c.split(':')[0] for c in skipped))}")
 
 
 class TestHealthReadout:

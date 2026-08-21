@@ -41,16 +41,25 @@ if TYPE_CHECKING:  # pragma: no cover
 _GRAHAS: Final[frozenset[str]] = frozenset({
     "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"})
 
-#: Notable Horoscopes mentions per yoga-name fragment (mined 2026-08-03; the passage
-#: around each line names the nativity — Nero, Akbar, et al.).
+#: Notable Horoscopes mentions per yoga-name fragment; the passage around each line names
+#: the nativity — Nero, Akbar, et al.
+#:
+#: RE-MINED 2026-08-21. The first mining (2026-08-03) ran against an NH derivation that
+#: e773041 then replaced: a `never_split` fix stopped the book shattering into spurious
+#: chapters and it grew 14,272 -> 17,062 lines, moving every anchor below the change. Three
+#: of the old anchors (NH lines 1330, 2626 and 3099) came to rest on BLANK lines, so
+#: click-to-source on Hamsa, Malavya, Sasa and Ruchaka returned nothing at all — and the
+#: existing check could not see it, because `sources.verify` only asks whether a line number
+#: is in range. Every anchor below was re-derived by searching the current text for the yoga
+#: name and confirmed to contain it.
 NH_EXAMPLES: Final[dict[str, tuple[str, ...]]] = {
-    "Gajakesari": ("NH:1181", "NH:1189", "NH:1778", "NH:1993"),
-    "Hamsa": ("NH:1330", "NH:1346", "NH:1441", "NH:1778", "NH:2580"),
-    "Adhi": ("NH:1369", "NH:1442"),
-    "Anapha": ("NH:2484",),
-    "Malavya": ("NH:2580", "NH:2626", "NH:3099"),
-    "Sasa": ("NH:3099",),
-    "Ruchaka": ("NH:3099",),
+    "Gajakesari": ("NH:1591", "NH:1600", "NH:2381", "NH:2667", "NH:4677"),
+    "Hamsa": ("NH:1804", "NH:1821", "NH:1902", "NH:1922", "NH:2381"),
+    "Adhi": ("NH:1845", "NH:1923", "NH:4979", "NH:5044", "NH:5048"),
+    "Anapha": ("NH:3374", "NH:4559", "NH:6385", "NH:7758", "NH:11344"),
+    "Malavya": ("NH:3533", "NH:3579", "NH:4238", "NH:4239", "NH:8362"),
+    "Sasa": ("NH:4238", "NH:13600", "NH:14300", "NH:14306", "NH:14414"),
+    "Ruchaka": ("NH:4238", "NH:4240", "NH:10017", "NH:12160", "NH:12165"),
 }
 
 

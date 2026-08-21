@@ -32,7 +32,7 @@ registered, citing it, not this chapter.
 
 Raman's worked example is the fixture: the Sun's reduced table gives Rasi 112, and with the
 example occupancies (Sun-Cancer, Moon/Saturn-Taurus, Mars/Mercury/Venus-Leo, Jupiter-Scorpio)
-Graha 45; "The sign total is 112 and the planet total is 45, i.e., 112+45=157" (HPA-26:1394).
+Graha 45; "The sign total is 112 and the planet total is 45, i.e., 112+45=157" (HPA-26:1414).
 
 Usage:
     from app.raman_saab.primitives.ashtakavarga_pinda import ashtakavarga_pinda

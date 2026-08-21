@@ -487,7 +487,9 @@ RAMAN_RULES: Final[tuple[SynthesisRule, ...]] = (
         "Raman's own application allowed 'a slight modification' on one chart, which is his "
         "judgment there rather than a widening of the dictum.",
         "A classical Libra-ascendant combination that marks Saturn's period as the fortunate one.",
-        ("Life-narrative", "Chart signature"), Citation("NH", 9580)),
+        # NH:9580 until 2026-08-21, when re-validation found it pointing at a 1876
+        # birth-details block: e773041's NH re-scrape moved the dictum +3,195 lines.
+        ("Life-narrative", "Chart signature"), Citation("NH", 12775)),
     SynthesisRule(
         "SYN_R8_TRANSIT_CATALYST", "raman", "R8",
         "Transits are catalysts gated by the dasha", "evaluable", _R,
@@ -699,7 +701,7 @@ def _chk_r7(ctx: SynthesisContext) -> Optional[str]:
 
 
 def _chk_r14(ctx: SynthesisContext) -> Optional[str]:
-    """Bhavartha Ratnakara's Libra dictum, as Raman reproduces it (NH:9578-9581).
+    """Bhavartha Ratnakara's Libra dictum, as Raman reproduces it (NH:12775-12778).
 
     "The dictum of Bhavartha Ratnakara, with a slight modification, is eminently applicable in
     this case. The combination suggests that 'one born in Libra becomes fortunate during Saturn

@@ -88,8 +88,29 @@ def cited_files() -> dict[str, Path]:
     return out
 
 
+def _body_bytes(path: Path) -> bytes:
+    """The file with its YAML front matter removed.
+
+    The ETL stamps `scraped_at: <now>` into every chapter's front matter on every import
+    (`app/medini/etl/import_archive_text.py`), so a whole-file sha256 changes on every
+    re-import even when the text is byte-identical. That made this lock unable to survive an
+    import it had no quarrel with, and buried the three files whose CONTENT really had moved
+    among twenty-one whose timestamps had.
+
+    Line offsets still matter — citations are line numbers into the whole file, front matter
+    included — so `line_count` continues to cover the whole file and catches any shift the
+    body hash cannot see.
+    """
+    raw = path.read_bytes()
+    if not raw.startswith(b"---"):
+        return raw
+    end = raw.find(b"\n---", 3)
+    return raw if end == -1 else raw[end + 4:]
+
+
 def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """sha256 of the file's BODY — see `_body_bytes` for why the front matter is excluded."""
+    return hashlib.sha256(_body_bytes(path)).hexdigest()
 
 
 def _line_count(path: Path) -> int:
@@ -97,10 +118,21 @@ def _line_count(path: Path) -> int:
         return sum(1 for _ in fh)
 
 
-def compute_lock() -> dict[str, dict]:
-    """The lock that SHOULD be on disk for the current citations + corpus."""
-    return {key: {"sha256": file_sha256(p), "line_count": _line_count(p)}
-            for key, p in sorted(cited_files().items())}
+def compute_lock(*, carry_absent: bool = True) -> dict[str, dict]:
+    """The lock that SHOULD be on disk for the current citations + corpus.
+
+    Entries for cited files this machine does NOT have are carried forward from the existing
+    lock rather than dropped. A lock is a record of every cited file; regenerating it on a box
+    that happens to be missing one book would delete that book's record permanently and hand
+    the next machine — which does have it — a file with no locked hash to check against. ASP
+    is the standing case: a local OCR of a user-supplied scan, unrecoverable by download.
+    """
+    fresh = {key: {"sha256": file_sha256(p), "line_count": _line_count(p)}
+             for key, p in sorted(cited_files().items())}
+    if carry_absent:
+        for key, entry in load_lock().items():
+            fresh.setdefault(key, entry)
+    return dict(sorted(fresh.items()))
 
 
 def load_lock() -> dict[str, dict]:

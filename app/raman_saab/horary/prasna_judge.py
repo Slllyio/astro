@@ -121,7 +121,7 @@ def judge_prasna(*, positions: dict[str, float], lagna_lon: float, query_house: 
                         "(PRASNA-49:178-184)")
     elif benefics_on_lord:
         quarters = 2
-        evidence.append("50%: benefics aspect the lagna lord (PRASNA-49:176)")
+        evidence.append("50%: benefics aspect the lagna lord (PRASNA-49:152)")
     else:
         quarters = 1
         evidence.append("25%: the lagna has neither its lord's nor a benefic's aspect "

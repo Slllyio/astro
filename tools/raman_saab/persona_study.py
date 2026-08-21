@@ -42,7 +42,16 @@ from tools.raman_saab.persona_birthdata import (
 
 logger = logging.getLogger(__name__)
 
-OUT = Path("data/persona_study")
+#: Where the study's data lives. `tests/fixtures/` and not `data/`, because these are
+#: COLLECTED answers — a language model does not answer identically twice, so nothing here can
+#: be rebuilt once lost. `data/` is gitignored for DERIVED artifacts that always can be, and
+#: the first run learned the difference the hard way: a container restart took every answer
+#: file and the hash manifest that evidenced the blind with it. `tests/fixtures/field_case_01.json`
+#: is the existing precedent for committed primary data.
+OUT = Path("tests/fixtures/persona_study")
+#: Derived and NOT committed: both are reproducible from the roster plus the engine at a known
+#: commit, which is why `results.json` records `engine_git_sha`.
+_DERIVED = ("payloads", "verdicts", "questions", "readings")
 
 #: Times that are not a claim about the hour. `astrobank/_names.py` classifies a 12:00 prefix
 #: as `noon_default` and `quality_tier` returns None for it at every tier — see the
@@ -196,6 +205,24 @@ def sha256_of(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def engine_git_sha() -> str:
+    """The commit the engine was at when a run was scored.
+
+    Recorded in `results.json` because the payloads and verdicts are NOT committed — they are
+    reproducible from the roster, but only against the same engine. Without this, a later
+    reader could re-run `score` on a moved engine and get different numbers with nothing to
+    say why. Follows `tools/raman_saab/astrobank/real_outcome_baseline.json`, which stamps the
+    same field for the same reason.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+                             timeout=10)
+        return out.stdout.strip() or "(unknown)"
+    except Exception:                                     # noqa: BLE001 — no git, no matter
+        return "(unknown)"
+
+
 def _cmd_roster(args) -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     data = resolve_roster()
@@ -328,6 +355,52 @@ def _answer_rows(doc: dict) -> list:
     rows = [(qid, str(val), free.get(qid)) for qid, val in (doc.get("answers") or {}).items()]
     return rows + [(qid, "answered", text) for qid, text in free.items()
                    if qid not in (doc.get("answers") or {})]
+
+
+def _cmd_readings(args) -> int:
+    """Emit each persona's rendered reading — the contaminated arm's input (PREREG 2c).
+
+    This is the ONE directory an answerer is meant to see the chart through. It exists to
+    measure the curation asymmetry: an answerer who has read the reading first should agree
+    with it more than a blind one, and by how much is the number worth having.
+    """
+    from app.raman_saab.detailed_report import build_detailed_report
+    from app.raman_saab.report_json import to_report_dict
+    from app.raman_saab.chart.model import BirthData
+
+    roster = json.loads((OUT / "roster.json").read_text(encoding="utf-8"))
+    (OUT / "readings").mkdir(parents=True, exist_ok=True)
+    for rec in roster["admitted"]:
+        dest = OUT / "readings" / f"{rec['slug']}.txt"
+        if dest.is_file() and not args.force:
+            print(f"[persona-study] {rec['slug']:26} reading exists, skipping")
+            continue
+        birth = BirthData(rec["name"], rec["year"], rec["month"], rec["day"], rec["hour"],
+                          rec["minute"], float(rec["tz_offset"]), float(rec["latitude"]),
+                          float(rec["longitude"]))
+        d = to_report_dict(build_detailed_report(birth, on=tuple(rec["reference_date"])))
+        sr = d.get("short_reading") or {}
+        ss = d.get("simple_summary") or {}
+        lines = [f"# What the chart says about {rec['name']}", ""]
+        for label, key, src in (
+                ("In plain words", "opening_en", ss), ("About you", "you_en", ss),
+                ("What reads well", "good_en", ss), ("What reads hard", "hard_en", ss),
+                ("Mixed", "mixed_en", ss), ("Right now", "now_en", ss),
+                ("Unusual for this chart", "unusual_en", ss),
+                ("What is coming", "periods_en", sr), ("Combinations", "combinations_en", sr)):
+            val = src.get(key)
+            if val:
+                lines += [f"## {label}", str(val), ""]
+        for label, key in (("Matters that read well", "good_items_en"),
+                           ("Matters that read hard", "hard_items_en"),
+                           ("Matters that read mixed", "mixed_items_en"),
+                           ("Live right now", "now_items_en")):
+            items = ss.get(key) or ()
+            if items:
+                lines += [f"## {label}"] + [f"- {i}" for i in items] + [""]
+        dest.write_text("\n".join(lines), encoding="utf-8")
+        print(f"[persona-study] {rec['slug']:26} reading {len(dest.read_text()):6d} chars")
+    return 0
 
 
 def _cmd_verify(args) -> int:
@@ -558,6 +631,7 @@ def _cmd_score(args) -> int:
     print(f"  gate {'PASS — the contrast statistic is unbiased' if contrast_gate else 'FAIL — the contrast is biased; the real one cannot be read as evidence'}")
 
     out = {"charts": len(cards), "sham_gate_passed": gate_ok,
+           "engine_git_sha": engine_git_sha(), "instrument_version": "v2",
            "coinflip": {"hits": coin.forced.hits, "n": coin.forced.n,
                         "rate": coin.forced.rate, "p": coin.forced.p_value},
            "primary": {"hits": blind.forced.hits, "n": blind.forced.n,
@@ -589,6 +663,8 @@ def main(argv: Optional[list] = None) -> int:
     b = sub.add_parser("build", help="cast each nativity, emit its blind question payload")
     b.add_argument("--force", action="store_true", help="rebuild payloads that already exist")
     sub.add_parser("questions", help="render each payload as a compact blind question block")
+    r = sub.add_parser("readings", help="render each reading — the contaminated arm's input")
+    r.add_argument("--force", action="store_true", help="re-render readings that exist")
     sub.add_parser("verify", help="hash the collected answers BEFORE any key is computed")
     s = sub.add_parser("score", help="primary, controls, and the sham gate")
     s.add_argument("--html", default="", help="write the operator scorecard here")
@@ -596,7 +672,8 @@ def main(argv: Optional[list] = None) -> int:
     s.add_argument("--permutations", type=int, default=2000)
     args = ap.parse_args(argv)
     return {"roster": _cmd_roster, "build": _cmd_build, "questions": _cmd_questions,
-            "verify": _cmd_verify, "score": _cmd_score}[args.cmd](args)
+            "readings": _cmd_readings, "verify": _cmd_verify,
+            "score": _cmd_score}[args.cmd](args)
 
 
 if __name__ == "__main__":

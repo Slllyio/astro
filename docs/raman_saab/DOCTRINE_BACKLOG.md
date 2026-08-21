@@ -913,7 +913,7 @@ exchange with an afflicted partner; measure exact/within-1/real-errors before an
 report both axes side by side per MEASURED TRUTH.
 
 
-### MEASURED 2026-08-20 — implemented behind flags, BOTH SHIPPED OFF, awaiting decision
+### CLOSED 2026-08-21 — WILL NOT SHIP (user sign-off). Both flags stay off, permanently.
 
 Implemented in `judges/house_template.py` on the `B1_DOMINANT_FACTOR_GUARD` pattern
 (module-level, read LIVE, default OFF) and measured. Nothing is enabled; the golden ratchet
@@ -972,8 +972,27 @@ the mechanism :9119 actually describes) and the smallest blast radius (0.59%), a
 no golden at all.
 
 Reproduce: `tests/raman_saab/judges/test_directional_parivartana.py` pins the helpers and
-the flags-off no-op; the sweep script is in the session scratchpad
-(`measure_parivartana_full.py`) and rebinds the three module flags directly.
+the flags-off no-op; the sweep is committed as
+`tools/raman_saab/measure_directional_parivartana.py` and rebinds the three module flags
+directly. (This paragraph previously pointed at a session scratchpad file,
+`measure_parivartana_full.py`, which was never committed — corrected 2026-08-21.)
+
+**DECISION 2026-08-21 — closed, will not ship.** The user signed off on the recommendation
+above. `PARIVARTANA_DIRECTIONAL` and `PARIVARTANA_TRANSMITS` stay `False`, and the code stays
+in place as the record of a measurement rather than as a rule awaiting a switch.
+
+The reasoning is worth keeping short and blunt so it is not re-opened on a whim. Arm A is a
+measured no-op — 0 of 12,600 significations — because the relief it would qualify almost never
+fires: 93 of 225 charts carry an exchange, only 5 exchange members are debilitated-and-uncancelled,
+and none of those five has an afflicted partner. There is nothing to enable. Arm B is a real
+change to 1.29% of every reading, always one step downward, and it buys one pinned golden fixed
+against one broken with no movement on either fidelity axis. The B1 precedent does not transfer:
+B1 shipped because it cut inversions 12 -> 10 at a known strict cost, and arm B cuts nothing.
+
+Enabling either would be a purely doctrinal act on a doctrine that is itself split —
+HTJAH-I:8837 has exchanges mutually benefiting, :9119 has one transmitting affliction, and
+:9143 objects to an exchange on neither ground. Where the texts disagree and the measurement is
+silent, the engine keeps what it already encodes.
 
 
 ## Kemadruma bhanga attribution (2026-08-19) — OPEN, needs doctrine review + user sign-off

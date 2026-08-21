@@ -160,23 +160,28 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
       (b) any planet other than the Moon in a kendra counted from the Moon's
           rasi-house (the Moon itself is trivially its own 1st and is excluded);
       (c) the Moon in conjunction with a planet (same rasi, whole-sign — the
-          convention of :mod:`app.raman_saab.primitives.relationships`).
-          Subsumed by (b) since the 1st-from-Moon is a kendra, but kept as an
-          explicit branch for textual fidelity.
+          convention of :mod:`app.raman_saab.primitives.relationships`). NOT
+          encoded as a branch: it cannot fire. See below.
 
     Sun policy: the cited line says "planets" / "a planet" with NO exception,
     so the Sun counts in every branch. Nodes are excluded per the project
     chaya-graha convention (3HC names no nodes here).
 
-    Branch (c) is PROVABLY REDUNDANT (measured 2026-08-20, Track 4b). It is
-    kept for textual fidelity to the quoted line and for no other reason. The
-    docstring used to claim it earned its keep through the Sun — that a
-    conjunction can still cancel where :func:`kemadruma` has already excluded
-    every other planet — and that was simply wrong: `_in_kendra_from` scores
-    the same house as distance 1, the 1st is a kendra, and the Sun is not
-    excluded from branch (b). So every conjunction (c) can see, (b) has
-    already seen. Removing it changes nothing by construction, not merely on
-    a sample.
+    Branch (c) was PROVABLY REDUNDANT and is DELETED (measured 2026-08-20,
+    removed 2026-08-21 on user sign-off). `_in_kendra_from` scores the same
+    rasi-house as distance 1, the 1st is a kendra, and the Sun is not excluded
+    from branch (b) — so every conjunction (c) could see, (b) had already seen.
+    Not merely unused on a sample: unreachable by construction.
+
+    It was kept for a while "for textual fidelity to the quoted line", and that
+    is the argument for keeping dead code generally. It does not survive this
+    case. The docstring had ALREADY drifted once into claiming (c) earned its
+    keep through the Sun — a conjunction cancelling where :func:`kemadruma` has
+    excluded every other planet — which was simply false. A branch that cannot
+    run invites exactly that: nobody can test the claim against behaviour,
+    because there is no behaviour. Fidelity to the line is this docstring's
+    job, which quotes it in full; the line does not need an `if` that never
+    fires to be faithfully recorded.
 
     EXTENDED bhanga — NOT attributable to 3HC:2182-2185: a natural benefic
     casting drishti on the Moon also cancels. This branch comes from the
@@ -227,8 +232,8 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
     to be "not generally acceptable". :2187-2188 therefore attaches to the
     SECOND reported group only ("yet other authors ... these yogas arise from
     kendras and navamsas"). Branches (a) and (b) are Raman's own applied
-    doctrine, not merely "some authors"; branch (c) is still only attributed,
-    and it is redundant anyway (above).
+    doctrine, not merely "some authors"; branch (c) was only ever attributed,
+    and was unreachable anyway (above).
 
     Why the earlier pass concluded a printed page was needed: it searched for
     "Kemadruma" and these two passages are OCR'd as "Kemadiuma" and
@@ -254,11 +259,11 @@ def kemadruma_bhanga(chart: RamanChart) -> bool:
         # (a) planet in a kendra from birth (Lagna)
         if pl.rasi_house in _KENDRA:
             return True
-        # (b) planet in a kendra from the Moon
+        # (b) planet in a kendra from the Moon. This also covers the quoted line's third
+        # clause — the Moon conjunct a planet — because `_in_kendra_from` scores the same
+        # rasi-house as distance 1 and the 1st is a kendra. See the docstring: that clause
+        # was a separate branch here until 2026-08-21 and could never fire.
         if _in_kendra_from(name, moon_h, chart):
-            return True
-        # (c) the Moon in conjunction with a planet (same rasi)
-        if pl.rasi_house == moon_h:
             return True
     # EXTENDED (not 3HC:2182-2185): a benefic aspecting the Moon breaks kemadruma
     for name in NATURAL_BENEFICS:

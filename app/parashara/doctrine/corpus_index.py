@@ -21,8 +21,10 @@ from typing import Final, Optional
 
 from app.parashara.doctrine.sources import Citation, resolve_file
 
-#: A numbered sloka start: "N." / "N-M." / "N)" etc., tolerant of OCR separators.
-_SLOKA_RE: Final[re.Pattern] = re.compile(r"^\s*(\d+)(?:\s*-\s*\d+)?\s*[.\-):]\s")
+#: A numbered sloka start: "N<sep> " (period/colon/paren/hyphen) OR a bare range "N-M " (the range
+#: itself is a strong sloka signal, so it needs no separator — OCR often drops the period after it).
+#: A plain "N " with neither separator nor range is rejected (page numbers, inline numerals).
+_SLOKA_RE: Final[re.Pattern] = re.compile(r"^\s*(\d+)(?:\s*-\s*\d+\s*[.\-):]?|\s*[.\-):])\s")
 #: A topic heading candidate: the text before the first colon on a numbered line.
 _TITLE_RE: Final[re.Pattern] = re.compile(r"^\s*\d+(?:\s*-\s*\d+)?\s*[.\-):]\s*([^:]{3,55}):")
 #: Forward gap tolerated when a sloka number is OCR-lost (still strictly increasing).

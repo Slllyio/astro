@@ -29,6 +29,12 @@ class TestSlokasOf:
         assert slokas_of("BPHS-999") == ()
         assert slokas_of("NOSUCHBOOK-1") == ()
 
+    def test_range_prefixed_slokas_are_indexed(self):
+        """Chapters that number slokas as ranges without a trailing period ("3-5 These yogas...",
+        "6-7 MAHA RAJA YOGA") must still index — Raja (ch.39) and Dhana (ch.41) use this heavily."""
+        assert len(slokas_of("BPHS-39")) >= 25
+        assert len(slokas_of("BPHS-41")) >= 15
+
     def test_topics_are_clean_ascii(self):
         for s in slokas_of("BPHS-13"):            # wealth chapter — has ALL-CAPS headings
             if s.topic:

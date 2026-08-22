@@ -7,6 +7,10 @@ This overlay corrects the *instrument's honesty*, not its verdicts: every unchan
 contextualized against the empirical distribution of 16,450 real charts (the committed
 `doctrine/data/calibration_table.json`), yielding a population percentile, a rarity note, and — for
 the two channels the atlas proved INVERTED (H3 courage, H12 incarceration) — an explicit warning.
+Since 2026-08-22 it also discloses the atlas's finding for the OTHER 16 significations it tested
+(PURE-NOISE, SATURATED-*, WEAK-SIGNAL, UNDER-POWERED — see `_ATLAS_CLASS_NOTES`): that data sat
+unread in the table until then, so a reader of a wealth or marriage reading was never told those
+channels had been measured against real outcomes and found to carry no signal.
 
 WHAT THIS DELIBERATELY DOES NOT DO: it does not adjust any verdict toward real outcomes. The
 astrobank program proved (five independent ways) that the readings carry no chart-specific
@@ -40,6 +44,43 @@ _TABLE_PATH: Final[Path] = Path(__file__).resolve().parents[1] / "doctrine" / "c
 
 #: channels the Failure Atlas classified INVERTED (real cases read in the WRONG direction).
 _INVERTED: Final[frozenset[str]] = frozenset({"H3_courage", "H12_incarceration"})
+
+#: What each Failure-Atlas class means for a READER of this signification, in plain words.
+#:
+#: Added 2026-08-22. The table has carried `atlas_failure_classes` on 18 of its 56 significations
+#: since it was built, but nothing read the field — only the hardcoded `_INVERTED` pair produced
+#: any disclosure, so a reader of a WEALTH or MARRIAGE reading was told nothing about those
+#: channels having been measured against real outcomes and found to carry no signal. That is a
+#: disclosure gap in an overlay whose entire purpose is disclosure. Derived from the table rather
+#: than hardcoded per-signification, so a future atlas re-run stays in sync automatically.
+#:
+#: Wording discipline: each string states what was MEASURED, never more. UNDER-POWERED is not a
+#: failure of the reading (the sample was too small to say anything either way) and must not be
+#: reported as one; WEAK-SIGNAL is the atlas's single better-than-chance result and is reported as
+#: the weak positive it is, not as a success.
+_ATLAS_CLASS_NOTES: Final[dict[str, str]] = {
+    "PURE-NOISE":
+        "measured against real outcomes and found indistinguishable from chance — this channel "
+        "carried no detectable real-world signal in either direction",
+    "SATURATED-FAVOURABLE":
+        "the engine reads this favourably for nearly everyone, so a favourable reading here says "
+        "little about this chart specifically",
+    "SATURATED-AFFLICTED":
+        "the engine reads this afflicted for nearly everyone, so an afflicted reading here says "
+        "little about this chart specifically",
+    "SATURATED-FAVOURABLE-AGAINST":
+        "the engine reads this favourably for nearly everyone INCLUDING the real cases that went "
+        "the other way — a favourable reading here is not evidence against the adverse outcome",
+    "SATURATED-AFFLICTED-AGAINST":
+        "the engine reads this afflicted for nearly everyone INCLUDING the real cases that went "
+        "the other way — an afflicted reading here is not evidence against the favourable outcome",
+    "WEAK-SIGNAL":
+        "the one channel the atlas measured as slightly better than chance — still weak, and not "
+        "a validated prediction",
+    "UNDER-POWERED":
+        "tested against real outcomes but on too few cases to conclude anything either way — "
+        "neither supported nor refuted",
+}
 
 _LEVEL_INDEX: Final[dict[tuple[str, str | None], int]] = {
     ("afflicted", "strong"): 0, ("afflicted", "moderate"): 1, ("afflicted", "mild"): 2,
@@ -82,6 +123,33 @@ _VALIDITY: Final[str] = (
     "docs/raman_saab/REAL_OUTCOME_GENERALIZATION.md).")
 
 
+def _atlas_notes(row: dict, *, skip_inverted: bool) -> list[str]:
+    """One disclosure line per DISTINCT Failure-Atlas class recorded on this signification.
+
+    A signification can carry several findings (H2 wealth was tested against both `wealthy` and
+    `bankrupt`); the class is what a reader needs, and the same class twice adds nothing, so
+    classes are de-duplicated while keeping the table's order. The tested-outcome labels are named
+    so the disclosure is checkable rather than a bare adjective.
+
+    `skip_inverted` avoids restating INVERTED when the stronger hardcoded warning already fired.
+    An unrecognised class is skipped silently rather than rendered raw: a future atlas re-run must
+    not leak an internal enum into a reader's report.
+    """
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in row.get("atlas_failure_classes") or ():
+        outcome, _, klass = str(item).partition(":")
+        if not klass or klass in seen:
+            continue
+        seen.add(klass)
+        if klass == "INVERTED" and skip_inverted:
+            continue
+        note = _ATLAS_CLASS_NOTES.get(klass)
+        if note:
+            out.append(f"real-outcome check ({outcome}): {note}")
+    return out
+
+
 def _calibrate(house: int, sig: str, verdict: str, degree: str) -> CalibratedEntry:
     key = f"H{house}_{sig}"
     row = _table()["table"].get(key)
@@ -105,6 +173,7 @@ def _calibrate(house: int, sig: str, verdict: str, degree: str) -> CalibratedEnt
     if inverted:
         bits.append("WARNING: atlas-proven INVERTED channel — real-world cases were read in the "
                     "opposite direction; treat with maximal skepticism")
+    bits.extend(_atlas_notes(row, skip_inverted=inverted))
     return CalibratedEntry(sig, verdict, degree, round(pct, 4), round(band, 4), rarity,
                            inverted, "; ".join(bits))
 

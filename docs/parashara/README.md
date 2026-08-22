@@ -105,6 +105,9 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   Anapha / Durudhara (a graha in her 2nd / 12th / both), Kemadruma (the Moon bare, with the
   kendra-from-lagna cancellation), Adhi (benefics in her 6th/7th/8th) and the Moon-Dhana yoga. Each
   cites its ch.37 sloka; surfaced per-nativity in the reading.
+- **Pancha Mahapurusha yogas** (Saravali ch.37 — allied) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each
+  formed by its non-luminary in own or exaltation sign in a kendra. Cited to the allied text (BPHS is
+  silent — exactly the allied tier's job); surfaced per-nativity. Detector + effect citations.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own

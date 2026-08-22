@@ -36,6 +36,7 @@ from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
+from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
@@ -95,6 +96,7 @@ class ParasharaReading:
     bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
+    mahapurusha: tuple[MahapurushaYoga, ...]  # Pancha Mahapurusha (Saravali ch.37, allied)
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -174,6 +176,12 @@ def _chandra_yogas(chart: ParasharaChart) -> tuple[ChandraYoga, ...]:
     return detect_chandra_yogas(signs, moon_sign=moon_sign, asc_sign=chart.asc_sign)
 
 
+def _mahapurusha(chart: ParasharaChart) -> tuple[MahapurushaYoga, ...]:
+    """Pancha Mahapurusha yogas (Saravali ch.37): a non-luminary in own/exaltation, in a kendra."""
+    signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
+    return detect_mahapurusha(signs, asc_sign=chart.asc_sign)
+
+
 def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
     The seven grahas only — ch.45's avasthas have no nodes."""
@@ -205,6 +213,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         bhava_lord_effects=_bhava_lord_effects(chart),
         nabhasa=_nabhasa(chart),
         chandra_yogas=_chandra_yogas(chart),
+        mahapurusha=_mahapurusha(chart),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

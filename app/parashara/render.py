@@ -106,6 +106,19 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("_No lunar yoga detected._")
     out.append("")
 
+    # --- Pancha Mahapurusha yogas (Saravali ch.37, allied) ---
+    out.append("## Pancha Mahapurusha yogas (Saravali ch.37)")
+    out.append("")
+    if reading.mahapurusha:
+        out.append("| Yoga | Graha | Dignity | Kendra | Source |")
+        out.append("|---|---|---|---|---|")
+        for y in reading.mahapurusha:
+            out.append(f"| {y.name} | {y.planet} | {y.dignity} | {y.house} | "
+                       f"{y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No Pancha Mahapurusha yoga (no non-luminary in own/exaltation in a kendra)._")
+    out.append("")
+
     # --- Vimsopaka (ch.7) ---
     out.append("## Vimsopaka bala — cross-varga strength (BPHS ch.7)")
     out.append("")

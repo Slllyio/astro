@@ -60,6 +60,27 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {h} | {hsign} | {_VERDICT_MARK[v.verdict]} | {reasons} |")
     out.append("")
 
+    # --- Bhava-lord effects (ch.24) ---
+    out.append("## House-lord placements — Parashara's effects (BPHS ch.24)")
+    out.append("")
+    out.append("For each house, its lord and the house that lord occupies, with Parashara's own "
+               "effect for that placement. Each effect cites its ch.24 sloka.")
+    out.append("")
+    out.append("| House | Lord | Lord in house | Effect (BPHS ch.24) | Source |")
+    out.append("|---|---|---|---|---|")
+    for h in range(1, 13):
+        p = reading.bhava_lord_effects.get(h)
+        if p is None:
+            continue
+        if p.effect is not None:
+            text = p.effect.text if len(p.effect.text) <= 300 else p.effect.text[:297] + "…"
+            src = f"{p.effect.source.work}:{p.effect.source.line}"
+        else:
+            text = "— (sloka unrecoverable from the OCR; not guessed)"
+            src = "—"
+        out.append(f"| {h} | {p.lord} | {p.in_house} | {text} | {src} |")
+    out.append("")
+
     # --- Vimsopaka (ch.7) ---
     out.append("## Vimsopaka bala — cross-varga strength (BPHS ch.7)")
     out.append("")

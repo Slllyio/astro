@@ -47,6 +47,15 @@ def _resolve_file(work: str) -> Optional[Path]:
     return _first(_CORPUS / entry.slug)
 
 
+def resolve_file(work: str) -> Optional[Path]:
+    """Public: the corpus file backing a work tag (e.g. ``"BPHS-24"``), or None.
+
+    For doctrine modules that INDEX a whole chapter in place (rather than cite single lines) — they
+    parse the file `resolve_file` returns, so effect text is never transcribed into code, only keyed.
+    """
+    return _resolve_file(work)
+
+
 def _glob_chapter(folder: str, num: str) -> Optional[Path]:
     try:
         hits = sorted((_CORPUS / folder).glob(f"chapter_{int(num):03d}_*.md"))

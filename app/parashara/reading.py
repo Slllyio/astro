@@ -1,11 +1,13 @@
 """The Parashara reading — everything the engine knows, assembled for one nativity.
 
 The capstone that turns the primitives into an engine: cast a chart, then produce a single cited
-BPHS reading combining the four capabilities built so far —
+BPHS reading combining the capabilities built so far —
 
   * the twelve bhava verdicts (Parashara's own ch.11 prosperity/annihilation method),
-  * each graha's Vimsopaka strength (ch.7),
-  * the applicable conditional dashas (ch.46), and
+  * each graha's Vimsopaka strength (ch.7) and complete six-fold Shadbala (ch.27),
+  * each house-lord's placement and its ch.24 effect,
+  * the planetary avasthas (ch.45),
+  * the applicable conditional dashas (ch.46) and the Sthira rasi dasha, and
   * the natural longevity span (Nisargayu, ch.43).
 
 Every element carries the BPHS citation the underlying primitive already holds, so the whole
@@ -32,6 +34,7 @@ from app.parashara.chart.bhava_chart import judge_all_bhavas
 from app.parashara.chart.brahma_graha import BrahmaGraha, brahma_graha
 from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
+from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
@@ -71,12 +74,22 @@ class SthiraReading:
 
 
 @dataclass(frozen=True)
+class BhavaLordPlacement:
+    """Where a house's lord sits, and Parashara's ch.24 effect for that placement."""
+    house: int                           # 1..12 — the bhava whose lord this is
+    lord: str                            # the graha lording that bhava's sign
+    in_house: int                        # 1..12 — the house the lord occupies
+    effect: BhavaLordEffect | None       # ch.24 sloka (None only if OCR left the pair unrecoverable)
+
+
+@dataclass(frozen=True)
 class ParasharaReading:
     chart: ParasharaChart
     bhavas: Mapping[int, BhavaVerdict]
     vimsopaka: Mapping[str, VimsopakaScore]
-    shadbala: Mapping[str, PartialShadbala]   # PARTIAL: Sthana + Dig + Naisargika + Kala:Paksha
+    shadbala: Mapping[str, PartialShadbala]   # the complete six-fold Shadbala (Sthana..Kala)
     avasthas: Mapping[str, GrahaAvastha]
+    bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -114,6 +127,23 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     return (yogini, ashtottari)
 
 
+def _bhava_lord_effects(chart: ParasharaChart) -> dict[int, BhavaLordPlacement]:
+    """For each of the twelve houses: its lord, where the lord sits, and Parashara's ch.24 effect."""
+    def sign_of(lon: float) -> int:
+        return int(lon % 360.0 // 30) + 1
+    out: dict[int, BhavaLordPlacement] = {}
+    for house in range(1, 13):
+        house_sign = ((chart.asc_sign - 1 + house - 1) % 12) + 1
+        lord = SIGN_LORDS[house_sign]
+        lord_lon = chart.longitudes.get(lord)
+        if lord_lon is None:
+            continue
+        in_house = ((sign_of(lord_lon) - chart.asc_sign) % 12) + 1
+        out[house] = BhavaLordPlacement(house=house, lord=lord, in_house=in_house,
+                                        effect=effect_of(house, in_house))
+    return out
+
+
 def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
     The seven grahas only — ch.45's avasthas have no nodes."""
@@ -142,6 +172,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
                                       speeds=chart.speeds, ayanamsa=chart.ayanamsa,
                                       kala_ctx=chart.kala),
         avasthas=_avasthas(chart),
+        bhava_lord_effects=_bhava_lord_effects(chart),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

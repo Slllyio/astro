@@ -119,6 +119,18 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("_No Pancha Mahapurusha yoga (no non-luminary in own/exaltation in a kendra)._")
     out.append("")
 
+    # --- Special yogas (ch.36) ---
+    out.append("## Other yogas (BPHS ch.36)")
+    out.append("")
+    if reading.special_yogas:
+        out.append("| Yoga | Why | Source |")
+        out.append("|---|---|---|")
+        for y in reading.special_yogas:
+            out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No ch.36 special yoga (e.g. Gaja-Kesari) detected._")
+    out.append("")
+
     # --- Vimsopaka (ch.7) ---
     out.append("## Vimsopaka bala — cross-varga strength (BPHS ch.7)")
     out.append("")

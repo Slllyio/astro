@@ -38,6 +38,7 @@ from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
+from app.parashara.doctrine.special_yogas import SpecialYoga, detect as detect_special_yogas
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
@@ -97,6 +98,7 @@ class ParasharaReading:
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
     mahapurusha: tuple[MahapurushaYoga, ...]  # Pancha Mahapurusha (Saravali ch.37, allied)
+    special_yogas: tuple[SpecialYoga, ...]    # ch.36 "many other yogas" — Gaja-Kesari (strict)
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -182,6 +184,13 @@ def _mahapurusha(chart: ParasharaChart) -> tuple[MahapurushaYoga, ...]:
     return detect_mahapurusha(signs, asc_sign=chart.asc_sign)
 
 
+def _special_yogas(chart: ParasharaChart) -> tuple[SpecialYoga, ...]:
+    """Ch.36 special yogas (Gaja-Kesari), which need longitudes (combustion) and Jupiter's motion."""
+    return detect_special_yogas(chart.longitudes, asc_sign=chart.asc_sign,
+                                moon_waxing=chart.moon_waxing,
+                                jupiter_retrograde=chart.speeds.get("Jupiter", 0.0) < 0.0)
+
+
 def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
     The seven grahas only — ch.45's avasthas have no nodes."""
@@ -214,6 +223,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         nabhasa=_nabhasa(chart),
         chandra_yogas=_chandra_yogas(chart),
         mahapurusha=_mahapurusha(chart),
+        special_yogas=_special_yogas(chart),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

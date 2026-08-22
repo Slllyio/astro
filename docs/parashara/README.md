@@ -108,6 +108,13 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Pancha Mahapurusha yogas** (Saravali ch.37 — allied) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each
   formed by its non-luminary in own or exaltation sign in a kendra. Cited to the allied text (BPHS is
   silent — exactly the allied tier's job); surfaced per-nativity. Detector + effect citations.
+- **Combustion / Astangata** (ch.7) — a planet within its Sun-orb loses its rays; the BPHS
+  combustion table (Moon 12°, Mars 17/8, Mercury 14/12, Jupiter 11, Venus 10/8, Saturn 16°, direct/
+  retrograde), Sun and nodes never combust. A reusable primitive (`is_combust`, `combust_planets`).
+- **Gaja-Kesari** (ch.36) — encoded in Parashara's STRICT form (not the loose "Jupiter in a kendra
+  from the Moon" his own Notes criticise): Jupiter in a kendra from lagna OR Moon, conjunct/aspected
+  by a benefic, and free of debilitation, combustion and an enemy's sign. Uses the combustion
+  primitive + ch.3 relationships; surfaced per-nativity.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own

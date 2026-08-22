@@ -68,6 +68,13 @@ class TestReadingStructure:
             else:
                 assert d.timeline == ()
 
+    def test_avasthas_present_for_seven_grahas(self, reading):
+        """REPORT COMPLETENESS: the computed avasthas must be surfaced in the reading."""
+        assert set(reading.avasthas) == set(rel.GRAHAS)
+        for a in reading.avasthas.values():
+            assert a.baladi in ("bala", "kumara", "yuva", "vriddha", "mrita")
+            assert a.jagradadi in ("jagrat", "swapna", "sushupti")
+
     def test_nisargayu_present_and_flagged_pre_reduction(self, reading):
         assert reading.nisargayu.reductions_applied is False
         assert 60.0 - 1e-6 <= reading.nisargayu.natural_years <= 120.0 + 1e-6

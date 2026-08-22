@@ -74,6 +74,21 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {g} | {s.score:.2f} | {s.band} | {s.source.work}:{s.source.line} |")
     out.append("")
 
+    # --- Avasthas (ch.45) ---
+    out.append("## Planetary avasthas (BPHS ch.45)")
+    out.append("")
+    out.append("Baladi = age-state by degree (bala/kumara/yuva/vriddha/mrita); "
+               "Jagradadi = awake/dreaming/sleeping by dignity.")
+    out.append("")
+    out.append("| Graha | Baladi | Jagradadi |")
+    out.append("|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        a = reading.avasthas.get(g)
+        if a is None:
+            continue
+        out.append(f"| {g} | {a.baladi} | {a.jagradadi} |")
+    out.append("")
+
     # --- Dashas (ch.46) ---
     out.append("## Conditional dashas (BPHS ch.46)")
     out.append("")

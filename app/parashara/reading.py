@@ -34,9 +34,11 @@ from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
 from app.parashara.primitives import ashtottari_dasha as ash
 from app.parashara.primitives import yogini_dasha as yog
+from app.parashara.primitives.baladi_avastha import baladi_from_longitude
+from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
 from app.parashara.primitives.nakshatra_dasha import DashaPeriod
-from app.parashara.primitives.relationships import SIGN_LORDS
+from app.parashara.primitives.relationships import GRAHAS, SIGN_LORDS
 from app.parashara.primitives.vimsopaka import VimsopakaScore
 
 
@@ -49,10 +51,20 @@ class DashaReading:
 
 
 @dataclass(frozen=True)
+class GrahaAvastha:
+    """A graha's two computable avastha states (ch.45)."""
+    baladi: str          # bala | kumara | yuva | vriddha | mrita (age-state by degree)
+    baladi_grade: float
+    jagradadi: str       # jagrat | swapna | sushupti (awake/dreaming/sleeping by dignity)
+    jagradadi_grade: float
+
+
+@dataclass(frozen=True)
 class ParasharaReading:
     chart: ParasharaChart
     bhavas: Mapping[int, BhavaVerdict]
     vimsopaka: Mapping[str, VimsopakaScore]
+    avasthas: Mapping[str, GrahaAvastha]
     dashas: tuple[DashaReading, ...]
     nisargayu: NisargayuSpan
     balance_adjusted: bool               # False: timelines are not birth-balance-adjusted
@@ -89,6 +101,21 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     return (yogini, ashtottari)
 
 
+def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
+    """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
+    The seven grahas only — ch.45's avasthas have no nodes."""
+    out: dict[str, GrahaAvastha] = {}
+    for g in GRAHAS:
+        lon = chart.longitudes.get(g)
+        if lon is None:
+            continue
+        b = baladi_from_longitude(lon)
+        j = jagradadi_avastha(g, int(lon % 360.0 // 30) + 1)
+        out[g] = GrahaAvastha(baladi=b.state, baladi_grade=b.grade,
+                              jagradadi=j.state, jagradadi_grade=j.grade)
+    return out
+
+
 def read(chart: ParasharaChart) -> ParasharaReading:
     """Assemble the full Parashara reading for a cast chart."""
     return ParasharaReading(
@@ -96,6 +123,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
                                 moon_waxing=chart.moon_waxing),
         vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
+        avasthas=_avasthas(chart),
         dashas=_dashas(chart),
         nisargayu=nisargayu_span(chart.longitudes),
         balance_adjusted=False,

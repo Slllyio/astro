@@ -15,16 +15,30 @@ per the Prime Directive) is a named next task.
 """
 from __future__ import annotations
 
+import math
 from typing import Final, Mapping
 
 from app.parashara.doctrine.sources import Citation
 from app.parashara.primitives.functional_nature import natural_benefic
 
 PAKSHA_SOURCE: Final[Citation] = Citation("BPHS-27", 304)
+AYANA_SOURCE: Final[Citation] = Citation("BPHS-27", 1451)
 
-#: Sub-components of Kala bala still to encode (each needs the ephemeris time/declination layer).
+#: Sub-components of Kala bala still to encode. Paksha and Ayana are done; the rest need the
+#: birth-time / sunrise / Hindu-calendar layer (day-night thirds, planetary-hour and weekday/
+#: month/year lords) — and Nathonnata's OCR polarity is ambiguous, so it is deferred rather than
+#: risk inverting the day/night sign.
 PENDING_SUBCOMPONENTS: Final[tuple[str, ...]] = (
-    "nathonnata", "tribhaga", "varsha", "masa", "vara", "hora", "ayana")
+    "nathonnata", "tribhaga", "varsha", "masa", "vara", "hora")
+
+#: Obliquity of the ecliptic (deg) — 23 deg 27', the value BPHS uses for the Ayana formula.
+_OBLIQUITY: Final[float] = 23.0 + 27.0 / 60.0
+#: 60 / 46 deg 54' = 1.2793 — the sloka's own constant (max Kranti span is 2 x obliquity).
+_AYANA_K: Final[float] = 60.0 / (2.0 * _OBLIQUITY)
+
+#: Planets whose NORTHERN declination is favourable (take +Kranti); the others favour Southern.
+_NORTH_FAVOURED: Final[frozenset[str]] = frozenset({"Sun", "Mars", "Jupiter", "Venus"})
+_SOUTH_FAVOURED: Final[frozenset[str]] = frozenset({"Moon", "Saturn"})
 
 
 def _benefic_paksha(longitudes: Mapping[str, float]) -> float:
@@ -59,3 +73,31 @@ def paksha_bala(planet: str, longitudes: Mapping[str, float], *, moon_waxing: bo
     if planet == "Moon":
         value *= 2.0                        # the Moon's Paksha bala is always doubled
     return value
+
+
+def _kranti(sidereal_longitude: float, ayanamsa: float) -> float:
+    """Declination (Kranti, deg) of a body: dec = asin(sin(obliquity) * sin(sayana longitude)),
+    where sayana = nirayana + ayanamsa (BPHS-27:1451, "Add Ayanamsa ... find the Bhuja")."""
+    sayana = math.radians((sidereal_longitude + ayanamsa) % 360.0)
+    return math.degrees(math.asin(math.sin(math.radians(_OBLIQUITY)) * math.sin(sayana)))
+
+
+def ayana_bala(planet: str, sidereal_longitude: float, ayanamsa: float) -> float:
+    """Equinoctial strength (BPHS-27:1451-1474): (23deg27' +/- Kranti) x 1.2793, the Sun doubled.
+
+    +Kranti when the declination is in the planet's favoured hemisphere (north for Sun/Mars/Jupiter/
+    Venus, south for Moon/Saturn), -Kranti otherwise; Mercury always +. Ranges 0..60 (120 for Sun).
+    """
+    if planet not in _NORTH_FAVOURED and planet not in _SOUTH_FAVOURED and planet != "Mercury":
+        raise ValueError(f"Ayana bala is for the seven grahas, not {planet!r}")
+    decl = _kranti(sidereal_longitude, ayanamsa)
+    is_north = decl >= 0.0
+    if planet == "Mercury":
+        favourable = True
+    elif planet in _NORTH_FAVOURED:
+        favourable = is_north
+    else:                                    # Moon, Saturn
+        favourable = not is_north
+    signed = abs(decl) if favourable else -abs(decl)
+    bala = (_OBLIQUITY + signed) * _AYANA_K
+    return bala * 2.0 if planet == "Sun" else bala

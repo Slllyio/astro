@@ -100,17 +100,17 @@ class TestTotal:
              "Jupiter": 96.8, "Venus": 62.5, "Saturn": 262.9}
 
     def test_partial_is_flagged_incomplete(self):
-        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
+        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
         assert r.complete is False
-        assert T.PENDING_BALAS == ("kala:rest", "cheshta", "drik")
+        assert T.PENDING_BALAS == ("kala:rest", "drik")
 
     def test_virupas_is_the_three_bala_sum(self):
-        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
-        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.kala_paksha)
+        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
+        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.cheshta + r.kala_paksha + r.kala_ayana)
         assert r.rupas == pytest.approx(r.virupas / 60.0)
 
     def test_all_seven_scored(self):
-        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
+        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speeds={p: 0.5 for p in self._LONS}, ayanamsa=24.0)
         assert len(got) == 7
         for r in got.values():
             assert r.virupas > 0
@@ -120,3 +120,60 @@ class TestCitations:
     def test_sources_resolve(self):
         assert verify(N.SOURCE) and verify(D.SOURCE)
         assert verify(S.SOURCE) and verify(S.SAPTAVARGAJA_SOURCE)
+
+
+class TestCheshta:
+    from app.parashara.primitives.shadbala import cheshta as _C
+
+    def test_retrograde_is_vakra_60(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        assert C.cheshta_bala("Saturn", speed=-0.05) == 60.0        # retrograde -> Vakra
+        assert C.MOTION_VIRUPAS["vakra"] == 60.0
+
+    def test_sun_cheshta_is_its_ayana(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        assert C.cheshta_bala("Sun", speed=0.98, sun_ayana=42.0) == 42.0
+
+    def test_moon_cheshta_is_its_paksha(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        assert C.cheshta_bala("Moon", speed=13.0, moon_paksha=50.0) == 50.0
+
+    def test_near_mean_is_sama(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        assert C.cheshta_bala("Mars", speed=0.524) == C.MOTION_VIRUPAS["sama"]   # ~mean
+
+    def test_fast_is_chara_or_atichara(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        assert C.cheshta_bala("Mars", speed=0.524 * 2.0) == C.MOTION_VIRUPAS["atichara"]
+
+    def test_sun_without_ayana_raises(self):
+        from app.parashara.primitives.shadbala import cheshta as C
+        with pytest.raises(ValueError):
+            C.cheshta_bala("Sun", speed=0.98)
+
+
+class TestAyana:
+    def test_sun_doubled_and_maxes_at_120(self):
+        """Sun's Ayana is doubled; maximal at its favoured (north) solstice ~ sayana 90."""
+        from app.parashara.primitives.shadbala.kala import ayana_bala
+        # sidereal + ayanamsa = 90 -> max north declination; Sun favours north.
+        assert ayana_bala("Sun", 90 - 24.0, 24.0) == pytest.approx(120.0, abs=0.5)
+
+    def test_saturn_favours_south(self):
+        """Moon/Saturn favour southern declination: Saturn at max SOUTH (sayana 270) -> ~60."""
+        from app.parashara.primitives.shadbala.kala import ayana_bala
+        assert ayana_bala("Saturn", 270 - 24.0, 24.0) == pytest.approx(60.0, abs=0.5)
+
+    def test_mercury_always_positive_kranti(self):
+        """Mercury always takes +Kranti, so its Ayana never drops below the 23ded27' floor/... i.e.
+        it is >= half of the max regardless of hemisphere."""
+        from app.parashara.primitives.shadbala.kala import ayana_bala
+        for lon in (0.0, 90.0, 180.0, 270.0):
+            assert ayana_bala("Mercury", lon, 24.0) >= 30.0
+
+    def test_ayana_in_range(self):
+        from app.parashara.primitives.shadbala.kala import ayana_bala
+        for p in ("Mars", "Jupiter", "Venus", "Moon", "Saturn"):
+            for lon in range(0, 360, 30):
+                v = ayana_bala(p, float(lon), 24.0)
+                assert 0.0 - 1e-9 <= v <= 60.0 + 1e-6, (p, lon, v)

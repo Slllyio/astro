@@ -15,6 +15,7 @@ from typing import Final, Mapping
 
 import app.core.ephemeris_engine as _eph   # pure-astronomy substrate (swisseph); named in full so
                                            # the isolation guard sees the exact module, not the pkg
+from app.parashara.chart.ephemeris import speeds_and_ayanamsa
 
 _NAK_SPAN: Final[float] = 360.0 / 27.0
 
@@ -27,6 +28,8 @@ class ParasharaChart:
     asc_longitude: float
     moon_waxing: bool                   # Shukla Paksha (Moon ahead of Sun by 0..180)
     janma_nakshatra: int                # 1..27 (Moon's nakshatra)
+    speeds: Mapping[str, float]         # graha -> longitudinal speed (deg/day); <0 retrograde
+    ayanamsa: float                     # Lahiri ayanamsa (deg) at birth — for Ayana bala
 
 
 def _nakshatra_number(longitude: float) -> int:
@@ -49,10 +52,14 @@ def cast(*, year: int, month: int, day: int, hour: int, minute: int,
         raise ValueError("ascendant could not be computed; latitude/longitude required")
 
     longitudes = {name: pos["longitude"] for name, pos in d1.items()}
+    speeds, ayanamsa = speeds_and_ayanamsa(year=year, month=month, day=day, hour=hour,
+                                           minute=minute, tz_offset=tz_offset)
     return ParasharaChart(
         longitudes=longitudes,
         asc_sign=asc["sign"],
         asc_longitude=asc["longitude"],
         moon_waxing=_moon_is_waxing(longitudes["Sun"], longitudes["Moon"]),
         janma_nakshatra=_nakshatra_number(longitudes["Moon"]),
+        speeds=speeds,
+        ayanamsa=ayanamsa,
     )

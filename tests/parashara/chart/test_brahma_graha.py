@@ -38,7 +38,8 @@ class TestSelection:
                 "Mercury": 100.0, "Jupiter": 95.0, "Venus": 62.5, "Saturn": 250.0,
                 "Rahu": 300.0, "Ketu": 120.0}
         ch = ParasharaChart(longitudes=lons, asc_sign=asc, asc_longitude=5.0,
-                            moon_waxing=True, janma_nakshatra=3)
+                            moon_waxing=True, janma_nakshatra=3,
+                            speeds={p: 0.5 for p in lons}, ayanamsa=24.0)
         bg = brahma_graha(ch)
         assert bg.planet == "Mars" and "8th lord" in bg.reason
 

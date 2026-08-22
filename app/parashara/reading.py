@@ -39,6 +39,7 @@ from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
 from app.parashara.primitives.nakshatra_dasha import DashaPeriod
 from app.parashara.primitives.relationships import GRAHAS, SIGN_LORDS
+from app.parashara.primitives.shadbala.total import PartialShadbala, partial_shadbala_all
 from app.parashara.primitives.vimsopaka import VimsopakaScore
 
 
@@ -64,6 +65,7 @@ class ParasharaReading:
     chart: ParasharaChart
     bhavas: Mapping[int, BhavaVerdict]
     vimsopaka: Mapping[str, VimsopakaScore]
+    shadbala: Mapping[str, PartialShadbala]   # PARTIAL: Sthana + Dig + Naisargika (3 of 6 balas)
     avasthas: Mapping[str, GrahaAvastha]
     dashas: tuple[DashaReading, ...]
     nisargayu: NisargayuSpan
@@ -123,6 +125,8 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
                                 moon_waxing=chart.moon_waxing),
         vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
+        shadbala=partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
+                                      asc_longitude=chart.asc_longitude),
         avasthas=_avasthas(chart),
         dashas=_dashas(chart),
         nisargayu=nisargayu_span(chart.longitudes),

@@ -74,6 +74,22 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {g} | {s.score:.2f} | {s.band} | {s.source.work}:{s.source.line} |")
     out.append("")
 
+    # --- Shadbala (ch.27) — PARTIAL ---
+    out.append("## Shadbala — strength (BPHS ch.27)")
+    out.append("")
+    out.append("_PARTIAL: Sthana + Dig + Naisargika bala only (3 of the 6). Kala, Cheshta and Drik "
+               "are not yet encoded, so this is not the six-fold total._")
+    out.append("")
+    out.append("| Graha | Sthana | Dig | Naisargika | Sub-total (rupas) |")
+    out.append("|---|---|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        s = reading.shadbala.get(g)
+        if s is None:
+            continue
+        out.append(f"| {g} | {s.sthana.total:.1f} | {s.dig:.1f} | {s.naisargika:.1f} | "
+                   f"{s.rupas:.2f} |")
+    out.append("")
+
     # --- Avasthas (ch.45) ---
     out.append("## Planetary avasthas (BPHS ch.45)")
     out.append("")

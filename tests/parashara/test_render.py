@@ -23,8 +23,8 @@ def md():
 class TestCompleteness:
     def test_every_section_is_present(self, md):
         for heading in ("# Parashara reading",
-                        "## House judgments", "## Vimsopaka bala", "## Planetary avasthas",
-                        "## Conditional dashas", "## Nisargayu"):
+                        "## House judgments", "## Vimsopaka bala", "## Shadbala",
+                        "## Planetary avasthas", "## Conditional dashas", "## Nisargayu"):
             assert heading in md, heading
 
     def test_all_twelve_houses_rendered(self, md):

@@ -68,6 +68,13 @@ class TestReadingStructure:
             else:
                 assert d.timeline == ()
 
+    def test_shadbala_present_and_flagged_partial(self, reading):
+        """Partial Shadbala (3 of 6 balas) surfaced, and every entry declares itself incomplete."""
+        assert set(reading.shadbala) == set(rel.GRAHAS)
+        for s in reading.shadbala.values():
+            assert s.complete is False
+            assert s.virupas > 0
+
     def test_avasthas_present_for_seven_grahas(self, reading):
         """REPORT COMPLETENESS: the computed avasthas must be surfaced in the reading."""
         assert set(reading.avasthas) == set(rel.GRAHAS)

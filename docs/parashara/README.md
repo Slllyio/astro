@@ -90,6 +90,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
+- **Argala** — planetary intervention (ch.31): for any target sign, the argalas acting on it (from
+  the 2nd/4th/11th/5th), their obstructors (12th/10th/3rd/9th), whether each prevails by count, and
+  the Vipareeta argala of 3+ malefics in the 3rd. Pinned to Parashara's own hypothetical chart. A
+  queryable analytical module (`argala_for`), applied on-demand rather than dumped per-reading.
 - **General corpus index** (`corpus_index.slokas_of`) — a faithful numbered-sloka index for ANY
   chapter (BPHS or allied), each cited to its own line. The shared backbone the structured modules
   build meaning on; `find_slokas` is a cited grep over a chapter. Coverage: **BPHS** 88/97 chapters

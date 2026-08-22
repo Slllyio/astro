@@ -29,6 +29,15 @@ class TestFunctionalNature:
         a waning state.'"""
         assert fn.natural_benefic("Moon", moon_waxing=False, companions=["Jupiter"]) is True
 
+    def test_waning_moon_aspected_by_benefic_turns_benefic(self):
+        """BPHS-3:208 also says 'or aspected by a benefic' — the aspect half the audit found missing.
+        A waning Moon with no benefic companion but a benefic aspect must still turn benefic."""
+        assert fn.natural_benefic("Moon", moon_waxing=False,
+                                  companions=[], aspected_by_benefic=True) is True
+        # ...and stays malefic with neither conjunction nor aspect.
+        assert fn.natural_benefic("Moon", moon_waxing=False,
+                                  companions=[], aspected_by_benefic=False) is False
+
     def test_mercury_takes_the_nature_of_his_company(self):
         """'Mercury, however, is a malefic if he joins a malefic' — otherwise benefic."""
         assert fn.natural_benefic("Mercury") is True

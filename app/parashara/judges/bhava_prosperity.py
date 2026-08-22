@@ -38,8 +38,12 @@ from app.parashara.doctrine.sources import Citation
 
 Verdict = Literal["flourishing", "ordinary", "annihilated"]
 
-PROSPERITY_SOURCE: Final[Citation] = Citation("BPHS-11", 14)
-ANNIHILATION_SOURCE: Final[Citation] = Citation("BPHS-11", 16)
+# Line numbers into chapter_011_*.md (NOT sloka numbers — sloka 14-16 sits at line 147+; the
+# frontmatter occupies the first ~17 lines, so citing 14/16 would resolve into YAML. Caught by the
+# doctrine audit, 2026-08-22).
+PROSPERITY_SOURCE: Final[Citation] = Citation("BPHS-11", 147)      # "PROSPERITY OR ANNIHILATION..."
+ANNIHILATION_SOURCE: Final[Citation] = Citation("BPHS-11", 151)    # "The bhava which is not aspected..."
+SUPTA_SOURCE: Final[Citation] = Citation("BPHS-11", 158)           # the three killing Avasthas named
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,8 @@ class BhavaFactors:
     lord_conjunct_dusthana_lord: bool = False          # (A-c) lord joins a 6/8/12 lord
     lord_is_itself_dusthana_lord: bool = False         # (A-c antidote) lord already a 6/8/12 lord
     lord_defeated_in_war: bool = False                 # (A-d) graha yuddha loss
+    lord_in_supta: bool = False                        # (A-f) Suptavastha: lord debilitated or in
+                                                       # an enemy's sign (BPHS-11:158, defined :271)
 
 
 @dataclass(frozen=True)
@@ -128,6 +134,12 @@ def judge_prosperity(f: BhavaFactors) -> BhavaVerdict:
         FiredCondition("lord_in_vriddha_or_mrita", f.lord_avastha in ("vriddha", "mrita"), False,
                        f"the lord is in {f.lord_avastha}avastha (a spent age-state)",
                        ANNIHILATION_SOURCE),
+        # The THIRD killing avastha the sloka names alongside Vriddha and Mrita — Supta, i.e. the
+        # lord debilitated or in an enemy's sign (Jagradadi sushupti). Omitting it left the
+        # annihilation side asymmetric with the prosperity side's Prabuddha/Jagrad clause.
+        FiredCondition("lord_in_supta", f.lord_in_supta, False,
+                       "the lord is in Suptavastha (debilitated or in an enemy's sign)",
+                       SUPTA_SOURCE),
     ]
 
     net_p = sum(1 for c in p if c.fired)

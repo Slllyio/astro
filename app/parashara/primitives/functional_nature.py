@@ -32,7 +32,8 @@ MOON_BENEFIC_COMPANY_SOURCE: Final[Citation] = Citation("BPHS-3", 208)
 def natural_benefic(planet: str, *,
                     moon_waxing: Optional[bool] = None,
                     companions: Iterable[str] = (),
-                    companions_are_benefic: Optional[bool] = None) -> bool:
+                    companions_are_benefic: Optional[bool] = None,
+                    aspected_by_benefic: bool = False) -> bool:
     """Is `planet` a natural benefic per BPHS ch.3 sl.11?
 
     Args:
@@ -64,7 +65,10 @@ def natural_benefic(planet: str, *,
             raise ValueError("the Moon's nature needs paksha (moon_waxing=True/False)")
         if moon_waxing:
             return True
-        # waning Moon: malefic, UNLESS in benefic company (BPHS-3:208).
+        # waning Moon: malefic, UNLESS conjunct OR aspected by a benefic (BPHS-3:208 —
+        # "conjunct a benefic or aspected by a benefic ... turns a benefic").
+        if aspected_by_benefic:
+            return True
         if companions_are_benefic is True:
             return True
         return _any_companion_benefic(companions)

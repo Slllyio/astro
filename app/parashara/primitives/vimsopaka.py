@@ -68,6 +68,12 @@ from app.parashara.doctrine.sources import Citation
 SHADVARGA: Final[Mapping[str, float]] = {
     "D1": 6.0, "D2": 2.0, "D3": 4.0, "D9": 5.0, "D12": 2.0, "D30": 1.0,
 }
+# NOTE (doctrine audit, 2026-08-22): the ch.7 PROSE sloka gives Navamsa 4.5 / Dwadasamsa 2.5 (D9 the
+# heaviest sub-Rasi weight, consistent with Shadvarga's D9=5 and Shodasavarga's D9=3). The chapter's
+# printed TABLE (chapter_007_*.md:347,355) shows these two TRANSPOSED (D9=2.5, D12=4.5) — an OCR/
+# typesetting artifact that demotes Navamsa below Dwadasamsa. The prose reading here is correct and
+# is independently corroborated by the repo's other engine (app/core/vimsopaka_bala.py: "Navamsa —
+# heaviest" = 4.5). Do NOT "fix" this to match the corrupted table.
 SAPTAVARGA: Final[Mapping[str, float]] = {
     "D1": 5.0, "D2": 2.0, "D3": 3.0, "D7": 2.5, "D9": 4.5, "D12": 2.0, "D30": 1.0,
 }
@@ -110,7 +116,7 @@ VARGA_VISWA: Final[Mapping[str, float]] = {
     "shatru": 7.0,         # enemy
     "adhi_shatru": 5.0,    # sworn enemy
 }
-VISWA_SOURCE: Final[Citation] = Citation("BPHS-7", 268)
+VISWA_SOURCE: Final[Citation] = Citation("BPHS-7", 272)
 
 #: Parashara's own bands (BPHS-7:286-290), as (inclusive upper bound, label, his own phrasing).
 _BANDS: Final[tuple[tuple[float, str, str], ...]] = (

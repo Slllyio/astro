@@ -109,6 +109,38 @@ class TestNetVerdict:
         for c in v.prosperity + v.annihilation:
             assert verify(c.source), f"{c.key}: {c.source.work}:{c.source.line}"
 
+    def test_citations_point_at_doctrine_not_frontmatter(self):
+        """Regression guard for the 2026-08-22 audit defect: the sources cited sloka NUMBERS (14/16)
+        as line numbers, which landed in the YAML frontmatter. `verify()` passed but `passage()`
+        returned 'topics:' / 'classical_refs:'. Assert the cited lines are REAL doctrine text."""
+        from app.parashara.doctrine.sources import passage
+        v = judge_prosperity(_neutral(benefic_occupant=True))
+        for c in v.prosperity + v.annihilation:
+            text = passage(f"{c.source.work}:{c.source.line}")["text"].lower()
+            assert "topics:" not in text and "classical_refs:" not in text, \
+                f"{c.key} cites frontmatter: {text[:40]!r}"
+            assert len(text.strip()) > 10, f"{c.key} cites an empty/near-empty line"
+
+
+class TestSuptavastha:
+    """The third killing avastha (BPHS-11:158), added after the audit found it missing."""
+
+    def test_supta_alone_annihilates(self):
+        v = judge_prosperity(_neutral(lord_in_supta=True))
+        assert v.verdict == "annihilated" and v.net_annihilation == 1
+
+    def test_supta_is_independent_of_the_baladi_avasthas(self):
+        """Supta (debil/enemy-sign, Jagradadi) is distinct from Vriddha/Mrita (Baladi by degree);
+        a lord can be spent by degree AND sleeping by dignity — two separate afflictions."""
+        both = judge_prosperity(_neutral(lord_avastha="mrita", lord_in_supta=True))
+        assert both.net_annihilation == 2
+
+    def test_supta_condition_cites_its_sloka(self):
+        from app.parashara.doctrine.sources import passage
+        v = judge_prosperity(_neutral(lord_in_supta=True))
+        supta = next(c for c in v.annihilation if c.key == "lord_in_supta")
+        assert "avasthas" in passage(f"{supta.source.work}:{supta.source.line}")["text"].lower()
+
 
 class TestChartAdapter:
     #: Canonical baseline chart (CLAUDE.md), sidereal longitudes; Virgo lagna (sign 6).

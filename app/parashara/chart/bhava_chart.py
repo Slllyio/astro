@@ -16,6 +16,7 @@ from app.parashara.judges.bhava_prosperity import BhavaFactors, BhavaVerdict, ju
 from app.parashara.primitives import functional_nature as fn
 from app.parashara.primitives import graha_drishti as gd
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
+from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.relationships import EXALTATION, SIGN_LORDS
 
 _LUMINARIES = ("Sun", "Moon")
@@ -105,6 +106,10 @@ def bhava_factors(house: int, longitudes: Mapping[str, float], *,
         lord_conjunct_dusthana_lord=dusthana_companion,
         lord_is_itself_dusthana_lord=(lord in dusthana),
         lord_defeated_in_war=_defeated_in_war(lord, longitudes),
+        # Suptavastha (BPHS-11:158/271): the lord debilitated or in an enemy's sign == Jagradadi
+        # sushupti. Nodes have no Jagradadi, so a nodal lord contributes no Supta condition.
+        lord_in_supta=(lord_sign is not None and lord in EXALTATION
+                       and jagradadi_avastha(lord, lord_sign).state == "sushupti"),
     )
 
 

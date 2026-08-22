@@ -27,13 +27,16 @@ from app.parashara.doctrine.sources import Citation
 #: Odd-sign order, ascending by 6-degree band. Even signs reverse this list.
 _ODD_ORDER: Final[tuple[str, ...]] = ("bala", "kumara", "yuva", "vriddha", "mrita")
 
-#: Result grade per state (BPHS-45:66): 1/4, 1/2, full, negligible, nil.
+#: Result grade per state (BPHS-45:71 — "one fourth, half, full, negligible and nil").
+#: NOTE: `vriddha` = 0.125 is an INTERPOLATION — BPHS says only "negligible", unquantified. 0.125
+#: (half of bala's quarter) is a defensible ordering (negligible < a quarter, > nil) but it is the
+#: engine's choice, not Parashara's number. Flagged by the doctrine audit (2026-08-22).
 RESULT_GRADE: Final[dict[str, float]] = {
     "bala": 0.25, "kumara": 0.5, "yuva": 1.0, "vriddha": 0.125, "mrita": 0.0,
 }
 
 STATE_SOURCE: Final[Citation] = Citation("BPHS-45", 45)
-GRADE_SOURCE: Final[Citation] = Citation("BPHS-45", 66)
+GRADE_SOURCE: Final[Citation] = Citation("BPHS-45", 71)
 
 
 @dataclass(frozen=True)

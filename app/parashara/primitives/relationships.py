@@ -150,7 +150,7 @@ def varga_viswa_key(planet: str, varga_sign: int, *,
     """The Varga Viswa key for `planet` sitting in `varga_sign` within some division.
 
     Own sign scores the full 20 regardless of relationship ("the Vimsopaka strength remains as 20
-    ... only when the planet is in own house Vargas", BPHS-7:266), so own-sign short-circuits.
+    ... only when the planet is in own house Vargas", BPHS-7:270), so own-sign short-circuits.
     Otherwise the caller supplies the compound relationship to that sign's lord.
     """
     lord = SIGN_LORDS[varga_sign]

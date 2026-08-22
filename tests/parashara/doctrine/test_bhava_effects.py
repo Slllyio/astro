@@ -37,7 +37,7 @@ class TestMapping:
 
     def test_effects_are_in_sloka_order(self):
         for h in range(1, 13):
-            slokas = [e.sloka for e in BE.effects_for_house(h)]
+            slokas = [e.number for e in BE.effects_for_house(h)]
             assert slokas == sorted(slokas)
 
     def test_out_of_range_raises(self):

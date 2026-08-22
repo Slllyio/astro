@@ -1,7 +1,7 @@
-"""Shadbala (partial: Sthana + Dig + Naisargika) — BPHS ch.27.
+"""Shadbala (complete: all six balas) — BPHS ch.27.
 
 Values pinned to Parashara's own numbers and worked example (Uchcha 152°15'/3 = 50.75, BPHS-27:97).
-The partial total is asserted to declare itself incomplete (three of six balas).
+The total is asserted to declare itself complete and to sum all six balas.
 """
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from app.parashara.primitives.shadbala import naisargika as N
 from app.parashara.primitives.shadbala import dig as D
 from app.parashara.primitives.shadbala import sthana as S
 from app.parashara.primitives.shadbala import total as T
+from app.parashara.primitives.shadbala.kala import KalaContext
 
 
 class TestNaisargika:
@@ -98,19 +99,23 @@ class TestSthanaSubComponents:
 class TestTotal:
     _LONS = {"Sun": 89.1, "Moon": 355.3, "Mars": 21.7, "Mercury": 111.4,
              "Jupiter": 96.8, "Venus": 62.5, "Saturn": 262.9}
+    # A synthetic birth-time context (any consistent one; the assertions are structural).
+    _KALA = KalaContext(is_day=True, day_third=2, unnata_fraction=0.6,
+                        weekday_lord="Sun", hora_lord="Jupiter",
+                        varsha_lord="Moon", masa_lord="Moon")
 
-    def test_partial_is_flagged_incomplete(self):
-        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
-        assert r.complete is False
-        assert T.PENDING_BALAS == ("kala:rest",)
+    def test_total_is_flagged_complete(self):
+        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0, kala_ctx=self._KALA)
+        assert r.complete is True
+        assert T.PENDING_BALAS == ()
 
-    def test_virupas_is_the_three_bala_sum(self):
-        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
-        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.cheshta + r.drik + r.kala_paksha + r.kala_ayana)
+    def test_virupas_is_the_six_bala_sum(self):
+        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0, kala_ctx=self._KALA)
+        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.cheshta + r.drik + r.kala.total)
         assert r.rupas == pytest.approx(r.virupas / 60.0)
 
     def test_all_seven_scored(self):
-        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speeds={p: 0.5 for p in self._LONS}, ayanamsa=24.0)
+        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speeds={p: 0.5 for p in self._LONS}, ayanamsa=24.0, kala_ctx=self._KALA)
         assert len(got) == 7
         for r in got.values():
             assert r.virupas > 0
@@ -120,6 +125,63 @@ class TestCitations:
     def test_sources_resolve(self):
         assert verify(N.SOURCE) and verify(D.SOURCE)
         assert verify(S.SOURCE) and verify(S.SAPTAVARGAJA_SOURCE)
+
+    def test_kala_sources_resolve(self):
+        from app.parashara.primitives.shadbala import kala as K
+        assert verify(K.PAKSHA_SOURCE) and verify(K.AYANA_SOURCE)
+        assert verify(K.NATHONNATA_SOURCE) and verify(K.TRIBHAGA_SOURCE) and verify(K.CALENDAR_SOURCE)
+
+
+class TestKalaTime:
+    """The four time-based Kala sub-components (BPHS-27:232-363), driven by a KalaContext."""
+
+    def _ctx(self, **kw):
+        base = dict(is_day=True, day_third=2, unnata_fraction=1.0,
+                    weekday_lord="Sun", hora_lord="Jupiter", varsha_lord="Moon", masa_lord="Mars")
+        base.update(kw)
+        return KalaContext(**base)
+
+    def test_nathonnata_noon_favours_day_group(self):
+        """At noon (unnata_fraction=1) Sun/Jupiter/Venus get 60, Moon/Mars/Saturn 0, Mercury 60."""
+        from app.parashara.primitives.shadbala import kala as K
+        ctx = self._ctx(unnata_fraction=1.0)
+        for g in ("Sun", "Jupiter", "Venus"):
+            assert K.nathonnata_bala(g, ctx) == pytest.approx(60.0)
+        for g in ("Moon", "Mars", "Saturn"):
+            assert K.nathonnata_bala(g, ctx) == pytest.approx(0.0)
+        assert K.nathonnata_bala("Mercury", ctx) == 60.0
+
+    def test_nathonnata_midnight_flips(self):
+        """At midnight (unnata_fraction=0) the night group gets 60 and the day group 0."""
+        from app.parashara.primitives.shadbala import kala as K
+        ctx = self._ctx(unnata_fraction=0.0)
+        assert K.nathonnata_bala("Moon", ctx) == pytest.approx(60.0)
+        assert K.nathonnata_bala("Sun", ctx) == pytest.approx(0.0)
+
+    def test_tribhaga_two_planets_score(self):
+        """Jupiter always 60; the ruler of the birth's third (2nd of day -> Sun) 60; others 0."""
+        from app.parashara.primitives.shadbala import kala as K
+        ctx = self._ctx(is_day=True, day_third=2)
+        assert K.tribhaga_bala("Jupiter", ctx) == 60.0
+        assert K.tribhaga_bala("Sun", ctx) == 60.0            # 2nd third of day -> Sun
+        scored = [g for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+                  if K.tribhaga_bala(g, ctx) > 0]
+        assert set(scored) == {"Jupiter", "Sun"}              # exactly two
+
+    def test_tribhaga_night_ruler(self):
+        """1st third of night -> the Moon (plus Jupiter)."""
+        from app.parashara.primitives.shadbala import kala as K
+        ctx = self._ctx(is_day=False, day_third=1)
+        assert K.tribhaga_bala("Moon", ctx) == 60.0
+
+    def test_calendar_lord_values(self):
+        """Varsha 15, Masa 30, Vara 45, Hora 60 to the named lord; 0 to anyone else (BPHS-27:363)."""
+        from app.parashara.primitives.shadbala import kala as K
+        ctx = self._ctx(varsha_lord="Moon", masa_lord="Mars", weekday_lord="Sun", hora_lord="Jupiter")
+        assert K.varsha_bala("Moon", ctx) == 15.0 and K.varsha_bala("Sun", ctx) == 0.0
+        assert K.masa_bala("Mars", ctx) == 30.0 and K.masa_bala("Moon", ctx) == 0.0
+        assert K.vara_bala("Sun", ctx) == 45.0 and K.vara_bala("Mars", ctx) == 0.0
+        assert K.hora_bala("Jupiter", ctx) == 60.0 and K.hora_bala("Moon", ctx) == 0.0
 
 
 class TestCheshta:

@@ -31,15 +31,19 @@ class TestSelection:
         """Rule 1: if the 8th lord occupies the 8th, it is the Brahma Graha, regardless of others."""
         from app.parashara.chart.cast import ParasharaChart
         from app.parashara.primitives.relationships import SIGN_LORDS
+        from app.parashara.primitives.shadbala.kala import KalaContext
         asc = 1                              # Aries lagna -> 8th sign = Scorpio (8), lord Mars
         eighth_lord = SIGN_LORDS[8]          # Mars
         assert eighth_lord == "Mars"
         lons = {"Sun": 5.0, "Moon": 40.0, "Mars": 220.0,   # Mars in Scorpio (8th)
                 "Mercury": 100.0, "Jupiter": 95.0, "Venus": 62.5, "Saturn": 250.0,
                 "Rahu": 300.0, "Ketu": 120.0}
+        kala = KalaContext(is_day=True, day_third=1, unnata_fraction=0.5,
+                           weekday_lord="Sun", hora_lord="Sun",
+                           varsha_lord="Sun", masa_lord="Sun")
         ch = ParasharaChart(longitudes=lons, asc_sign=asc, asc_longitude=5.0,
                             moon_waxing=True, janma_nakshatra=3,
-                            speeds={p: 0.5 for p in lons}, ayanamsa=24.0)
+                            speeds={p: 0.5 for p in lons}, ayanamsa=24.0, kala=kala)
         bg = brahma_graha(ch)
         assert bg.planet == "Mars" and "8th lord" in bg.reason
 

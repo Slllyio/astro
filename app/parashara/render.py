@@ -74,23 +74,33 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {g} | {s.score:.2f} | {s.band} | {s.source.work}:{s.source.line} |")
     out.append("")
 
-    # --- Shadbala (ch.27) — PARTIAL ---
+    # --- Shadbala (ch.27) — COMPLETE, all six balas ---
     out.append("## Shadbala — strength (BPHS ch.27)")
     out.append("")
-    out.append("_All six bala CATEGORIES contribute (Sthana, Dig, Naisargika, Cheshta, Drik, and "
-               "Kala's Paksha+Ayana). Kala is still partial — its day-night/hora/calendar sub-"
-               "components need the sunrise/Hindu-calendar layer — so the six-fold total is "
-               "near-complete, not exact. Drik may be negative._")
+    out.append("_The complete six-fold strength: Sthana, Dig, Naisargika, Cheshta, Drik, and Kala. "
+               "Kala is itself eight sub-components (broken out below). Drik may be negative. Totals "
+               "are in rupas (60 virupas = 1 rupa)._")
     out.append("")
-    out.append("| Graha | Sthana | Dig | Naisarg | Cheshta | Drik | Kala(Pk+Ay) | Sub-total (rupas) |")
+    out.append("| Graha | Sthana | Dig | Naisarg | Cheshta | Drik | Kala | Total (rupas) |")
     out.append("|---|---|---|---|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         s = reading.shadbala.get(g)
         if s is None:
             continue
         out.append(f"| {g} | {s.sthana.total:.1f} | {s.dig:.1f} | {s.naisargika:.1f} | "
-                   f"{s.cheshta:.1f} | {s.drik:.1f} | {s.kala_paksha + s.kala_ayana:.1f} | "
-                   f"{s.rupas:.2f} |")
+                   f"{s.cheshta:.1f} | {s.drik:.1f} | {s.kala.total:.1f} | {s.rupas:.2f} |")
+    out.append("")
+    out.append("### Kala bala — the eight temporal sub-components (virupas)")
+    out.append("")
+    out.append("| Graha | Nathonnata | Paksha | Tribhaga | Varsha | Masa | Vara | Hora | Ayana |")
+    out.append("|---|---|---|---|---|---|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        s = reading.shadbala.get(g)
+        if s is None:
+            continue
+        k = s.kala
+        out.append(f"| {g} | {k.nathonnata:.1f} | {k.paksha:.1f} | {k.tribhaga:.0f} | "
+                   f"{k.varsha:.0f} | {k.masa:.0f} | {k.vara:.0f} | {k.hora:.0f} | {k.ayana:.1f} |")
     out.append("")
 
     # --- Avasthas (ch.45) ---

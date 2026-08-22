@@ -57,7 +57,8 @@ def _strength(planet: str, chart: ParasharaChart) -> float:
         return 0.0
     return partial_shadbala(planet, chart.longitudes, asc_sign=chart.asc_sign,
                             asc_longitude=chart.asc_longitude, moon_waxing=chart.moon_waxing,
-                            speed=chart.speeds.get(planet, 0.0), ayanamsa=chart.ayanamsa).virupas
+                            speed=chart.speeds.get(planet, 0.0), ayanamsa=chart.ayanamsa,
+                            kala_ctx=chart.kala).virupas
 
 
 def _pick(candidates: list[str], chart: ParasharaChart) -> str:

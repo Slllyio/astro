@@ -15,7 +15,8 @@ from typing import Final, Mapping
 
 import app.core.ephemeris_engine as _eph   # pure-astronomy substrate (swisseph); named in full so
                                            # the isolation guard sees the exact module, not the pkg
-from app.parashara.chart.ephemeris import speeds_and_ayanamsa
+from app.parashara.chart.ephemeris import kala_context, speeds_and_ayanamsa
+from app.parashara.primitives.shadbala.kala import KalaContext
 
 _NAK_SPAN: Final[float] = 360.0 / 27.0
 
@@ -30,6 +31,7 @@ class ParasharaChart:
     janma_nakshatra: int                # 1..27 (Moon's nakshatra)
     speeds: Mapping[str, float]         # graha -> longitudinal speed (deg/day); <0 retrograde
     ayanamsa: float                     # Lahiri ayanamsa (deg) at birth — for Ayana bala
+    kala: KalaContext                   # birth's time facts — for Kala bala's time sub-components
 
 
 def _nakshatra_number(longitude: float) -> int:
@@ -54,6 +56,8 @@ def cast(*, year: int, month: int, day: int, hour: int, minute: int,
     longitudes = {name: pos["longitude"] for name, pos in d1.items()}
     speeds, ayanamsa = speeds_and_ayanamsa(year=year, month=month, day=day, hour=hour,
                                            minute=minute, tz_offset=tz_offset)
+    kala = kala_context(year=year, month=month, day=day, hour=hour, minute=minute,
+                        tz_offset=tz_offset, latitude=latitude, longitude=longitude)
     return ParasharaChart(
         longitudes=longitudes,
         asc_sign=asc["sign"],
@@ -62,4 +66,5 @@ def cast(*, year: int, month: int, day: int, hour: int, minute: int,
         janma_nakshatra=_nakshatra_number(longitudes["Moon"]),
         speeds=speeds,
         ayanamsa=ayanamsa,
+        kala=kala,
     )

@@ -54,7 +54,8 @@ class TestReadingStructure:
 
     def test_dashas_reported_with_applicability(self, reading):
         systems = {d.system: d for d in reading.dashas}
-        assert "yogini" in systems and "ashtottari" in systems
+        assert "vimshottari" in systems and "yogini" in systems and "ashtottari" in systems
+        assert systems["vimshottari"].applicable is True       # the primary system, always reported
         assert systems["yogini"].applicable is True            # general system
         # Ashtottari applicability is a real boolean with a stated reason either way.
         assert isinstance(systems["ashtottari"].applicable, bool)
@@ -64,7 +65,7 @@ class TestReadingStructure:
         for d in reading.dashas:
             if d.applicable:
                 total = sum(p.years for p in d.timeline)
-                assert total in (36, 108), (d.system, total)
+                assert total in (36, 108, 120), (d.system, total)  # yogini / ashtottari / vimshottari
             else:
                 assert d.timeline == ()
 

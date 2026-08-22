@@ -41,6 +41,7 @@ from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
 from app.parashara.primitives import ashtottari_dasha as ash
+from app.parashara.primitives import vimshottari_dasha as vim
 from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
@@ -114,6 +115,12 @@ def _rahu_house_from(chart: ParasharaChart) -> tuple[int, int | None]:
 
 def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     nak = chart.janma_nakshatra
+    # Vimshottari is the primary system — "the most appropriate and the best of all Dasas"
+    # (BPHS-46 sl.12-14) — general, always reported first.
+    vimshottari = DashaReading(
+        system="vimshottari", applicable=True,
+        reason="the primary 120-year system (BPHS-46 sl.12-14)",
+        timeline=vim.timeline(nak))
     # Yogini is a general system (no adoption condition stated) — always reported.
     yogini = DashaReading(
         system="yogini", applicable=True,
@@ -128,7 +135,7 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
         reason=("Rahu not in Lagna/Kendra or a trikona from the lagna lord"
                 if ash_ok else "Rahu in Lagna/Kendra or a trikona from the lagna lord"),
         timeline=ash.timeline(nak) if ash_ok else ())
-    return (yogini, ashtottari)
+    return (vimshottari, yogini, ashtottari)
 
 
 def _bhava_lord_effects(chart: ParasharaChart) -> dict[int, BhavaLordPlacement]:

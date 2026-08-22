@@ -53,7 +53,7 @@ r = read(cast(year=1990, month=7, day=15, hour=12, minute=0,
 r.bhavas[10].verdict            # Parashara's ch.11 judgment of the 10th
 r.vimsopaka["Jupiter"].score    # 20-point cross-varga strength
 r.shadbala["Saturn"].rupas      # complete six-fold strength (Sthana..Kala)
-r.dashas                        # Yogini (general) + Ashtottari (if applicable)
+r.dashas                        # Vimshottari (primary) + Yogini + Ashtottari (if applicable)
 r.sthira.timeline               # Sthira rasi dasha, seeded by the Brahma Graha
 r.nisargayu.natural_years       # natural longevity (pre-reduction)
 ```
@@ -107,7 +107,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   cites its ch.37 sloka; surfaced per-nativity in the reading.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
-- **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:
+- **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own
+  Krittika-reckoned formulation (which reproduces the standard Aswini→Ketu scheme); the canonical
+  baseline's Revati Moon correctly seeds the Mercury mahadasha. Reported first in every reading.
+- **Conditional dashas** (ch.46) — NINE further nakshatra-seeded systems over one shared framework:
   Ashtottari (108), Yogini (36), Shodasottari (116), Dwadasottari (112), Panchottari (105),
   Shatabdika (100), Chaturashiti-sama (84), Dwisaptati-sama (72), Shattrimsat-sama (36). Each cited,
   with its applicability condition; the inclusive counting convention is pinned by Parashara's own

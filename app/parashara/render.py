@@ -94,6 +94,18 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("_No Asraya or Sankhya Nabhasa yoga detected._")
     out.append("")
 
+    # --- Lunar (Chandra) yogas (ch.37) ---
+    out.append("## Lunar yogas — reckoned from the Moon (BPHS ch.37)")
+    out.append("")
+    if reading.chandra_yogas:
+        out.append("| Yoga | Why | Source |")
+        out.append("|---|---|---|")
+        for y in reading.chandra_yogas:
+            out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No lunar yoga detected._")
+    out.append("")
+
     # --- Vimsopaka (ch.7) ---
     out.append("## Vimsopaka bala — cross-varga strength (BPHS ch.7)")
     out.append("")

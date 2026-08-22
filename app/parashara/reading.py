@@ -35,6 +35,7 @@ from app.parashara.chart.brahma_graha import BrahmaGraha, brahma_graha
 from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
+from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
@@ -92,6 +93,7 @@ class ParasharaReading:
     avasthas: Mapping[str, GrahaAvastha]
     bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
+    chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -156,6 +158,15 @@ def _nabhasa(chart: ParasharaChart) -> tuple[NabhasaYoga, ...]:
     return tuple(found)
 
 
+def _chandra_yogas(chart: ParasharaChart) -> tuple[ChandraYoga, ...]:
+    """Lunar yogas reckoned from the Moon (ch.37)."""
+    signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
+    moon_sign = signs.get("Moon")
+    if moon_sign is None:
+        return ()
+    return detect_chandra_yogas(signs, moon_sign=moon_sign, asc_sign=chart.asc_sign)
+
+
 def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
     The seven grahas only — ch.45's avasthas have no nodes."""
@@ -186,6 +197,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         avasthas=_avasthas(chart),
         bhava_lord_effects=_bhava_lord_effects(chart),
         nabhasa=_nabhasa(chart),
+        chandra_yogas=_chandra_yogas(chart),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

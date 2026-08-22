@@ -101,6 +101,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   the two computationally-unambiguous families: Asraya (Rajju/Musala/Nala, by shared modality) and
   Sankhya (Gola…Veena, by count of signs occupied). Surfaced per-nativity in the reading; the Dala
   and 20 Akriti figures are catalogued, their pattern-detection a documented next step.
+- **Lunar (Chandra) yogas** (ch.37) — detectors for the yogas reckoned from the Moon: Sunapha /
+  Anapha / Durudhara (a graha in her 2nd / 12th / both), Kemadruma (the Moon bare, with the
+  kendra-from-lagna cancellation), Adhi (benefics in her 6th/7th/8th) and the Moon-Dhana yoga. Each
+  cites its ch.37 sloka; surfaced per-nativity in the reading.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:

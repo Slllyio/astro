@@ -106,6 +106,38 @@ class _ConjunctAnyMalefic(C.Condition):
                    for name, q in ctx.chart.planets.items())
 
 
+class _ClassAspectsHouseLocal(C.Condition):
+    """Some natural planet of `klass` casts a whole-sign drishti on whole-sign `house`."""
+    def __init__(self, house: int, klass: str) -> None:
+        self.house, self.klass = house, klass
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        group = NATURAL_MALEFICS if self.klass == "malefic" else NATURAL_BENEFICS
+        return any(name in group and drishti.aspects_house(name, self.house, ctx.chart)
+                   for name in ctx.chart.planets)
+
+
+class _EighthLordDecisivelyWeak(C.Condition):
+    """The 8th lord is B1-decisively-weak (weak Shadbala band, substantially combust, or
+    debilitated-uncancelled) — Raman's "the 8th lord weak" (HTJAH-II:3584), the same B1
+    reading shipped for H11.C.5. Note `death` is an AFFLICTION_MATTER: unlike H1.N.38's
+    reverted self rule, a malefic testimony here cannot manufacture a favour-blocking
+    contradiction on a matter clause-1.5 already confirms from any lone malefic."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        lord = _lord_of(8, ctx.chart)
+        return (lord in ctx.chart.planets
+                and effective_strength(lord, ctx.chart).decisively_weak)
+
+
+class _SaturnOccupiesOrAspects8th(C.Condition):
+    """Saturn occupies or whole-sign-aspects the 8th house."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get("Saturn")
+        return p is not None and (p.rasi_house == 8
+                                  or drishti.aspects_house("Saturn", 8, ctx.chart))
+
+
 class _AspectedByClass(C.Condition):
     """Some natural planet of `klass` ∈ {"malefic","benefic"} (other than `target`)
     casts a whole-sign drishti on `target`."""
@@ -532,13 +564,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="Saturn in the 8th with a malefic, or Rahu in the Lagna → stomach complaints",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3583)),
+    # D.2 — the "8th-lord-weak gate" TODO was stale: B1 effective_strength ships the exact
+    #       weak/debilitated/combust reading. Encoded 2026-08-23; review in DOCTRINE_BACKLOG
+    #       "H8-H3 sweep finale".
     RuleRecord(
-        id="H8.D.2", house=8, signification="death", group="combination", kind="descriptive",
-        condition=None,
+        id="H8.D.2", house=8, signification="death", group="combination", kind="evaluable",
+        condition=C.And(_ClassAspectsHouseLocal(1, "malefic"),
+                        _EighthLordDecisivelyWeak(),
+                        _SaturnOccupiesOrAspects8th()),
         fortified=None,
         afflicted="Lagna aspected by a malefic, the 8th lord weak, and the 8th aspected or "
                   "occupied by Saturn → a disease that prevents the intake of food (minor: "
-                  "colds/mumps; serious: cancer, by affliction-grade). TODO(predicate: "
-                  "8th-lord-weak gate)",
+                  "colds/mumps; serious: cancer, by affliction-grade)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 3584)),
 )

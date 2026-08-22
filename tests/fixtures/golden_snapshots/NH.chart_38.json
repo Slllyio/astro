@@ -1,10 +1,12 @@
 {
   "H10": {
     "citations": [
+      "HTJAH-II:14214",
       "HTJAH-II:9537",
       "HTJAH-II:9841"
     ],
     "fired_rule_ids": [
+      "H10.C.56",
       "H10.L.9",
       "H10.P.Mars"
     ],
@@ -49,12 +51,14 @@
       "HTJAH-I:2458",
       "HTJAH-I:2461",
       "HTJAH-I:2465",
+      "HTJAH-I:2498",
       "HTJAH-I:2710"
     ],
     "fired_rule_ids": [
       "H2.C.16",
       "H2.C.17",
       "H2.C.22",
+      "H2.C.40",
       "H2.C.6",
       "H2.C.62",
       "H2.L.11"
@@ -86,18 +90,20 @@
   "H8": {
     "citations": [
       "HTJAH-II:3011",
+      "HTJAH-II:3584",
       "HTJAH-II:3906"
     ],
     "fired_rule_ids": [
       "H8.C.26",
+      "H8.D.2",
       "H8.L.9"
     ],
-    "rollup": "favourable",
+    "rollup": "afflicted",
     "significations": {
       "death": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "afflicted"
       },
       "legacies": {
         "degree": "mild",

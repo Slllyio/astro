@@ -259,14 +259,19 @@ class TestDetailedReport:
         assert "Split status" in markdown
         assert "the headline follows the single weakest decided matter" in markdown
 
-    def test_split_status_silent_when_headline_matches_majority(self, report):
-        """A genuinely afflicted house (majority itself afflicted) gets no split note — the
-        note exists to prevent false alarm, not to annotate every house."""
+    def test_split_status_notes_headline_minority_on_canonical_h6(self, report):
+        """The canonical chart's H6 headline diverged from its majority on 2026-08-23 when
+        the doctrine-reviewed H6.C.19 (HTJAH-I:6105, 6th lord in a benefic's sign aspected by
+        a benefic -> many friends) began firing here, lifting `enemies` to favourable: the
+        matter headline reads mixed while 3 of 5 sub-readings stay afflicted — exactly the
+        false-alarm case the tenor note EXISTS to annotate, so the pin now asserts the note
+        is PRESENT (previously: majority==headline and no note)."""
         from app.raman_saab.detailed_report import signification_tenor_split, tenor_note
         mr6 = next(m for m in report.synthesis.matters if m.house == 6)
         split = signification_tenor_split(report.calibration[6])
-        assert split.majority == mr6.verdict           # canonical H6 is genuinely afflicted
-        assert tenor_note(split, mr6.verdict) is None
+        assert split.majority == "afflicted" and mr6.verdict == "mixed"
+        note = tenor_note(split, mr6.verdict)
+        assert note is not None and "3 of 5" in note
 
     def test_tenor_split_tie_reads_as_even_split_not_zero_mixed(self):
         """A 2-favourable/2-afflicted tie must read as 'an even split', never as a nonsensical

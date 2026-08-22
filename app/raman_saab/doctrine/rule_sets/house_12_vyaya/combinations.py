@@ -39,6 +39,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
@@ -57,6 +58,42 @@ def _lord_of(house: int, chart: RamanChart) -> str:
 
 def _twelfth_sign(chart: RamanChart) -> int:
     return ((chart.asc_sign - 1) + 11) % 12 + 1
+
+
+class _SaturnOrMandiOn12th(C.Condition):
+    """Saturn aspects or occupies the 12th, OR Mandi occupies the 12th (HTJAH-II:16491).
+
+    Mandi is read from `chart.upagrahas` (cast by the adapter for ephemeris charts); on a
+    Track-B stated-positions chart upagrahas is None and the Mandi leg is silently absent —
+    the Saturn leg still evaluates, so the rule degrades to its stronger half rather than
+    faking a Mandi position."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        sat = ctx.chart.planets.get("Saturn")
+        if sat is not None and (sat.rasi_house == 12
+                                or drishti.aspects_house("Saturn", 12, ctx.chart)):
+            return True
+        up = ctx.chart.upagrahas or {}
+        mandi = up.get("Mandi")
+        return mandi is not None and getattr(mandi, "rasi_house", None) == 12
+
+
+class _CombustOrDebilMaleficAfflicts12th(C.Condition):
+    """Some natural malefic that is itself substantially combust ('eclipsed'/'combustion')
+    or debilitated-uncancelled ('debilitation') occupies or aspects the 12th
+    (HTJAH-II:16498). Combustion bar = the engine-wide substantial threshold (Combust
+    condition / B7); debilitation is bhanga-gated per the B1 convention."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        for name in NATURAL_MALEFICS:
+            p = ctx.chart.planets.get(name)
+            if p is None:
+                continue
+            combust = getattr(p, "combust_fraction", 0.0) >= 0.5
+            deb = dignity(name, ctx.chart) == "debil" and not neecha_bhanga(name, ctx.chart)
+            if not (combust or deb):
+                continue
+            if p.rasi_house == 12 or drishti.aspects_house(name, 12, ctx.chart):
+                return True
+        return False
 
 
 # ── local leaf predicates ─────────────────────────────────────────────────────
@@ -502,13 +539,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified=None,
         afflicted="the Sun in debility in the 9th and Mars in the 8th → appalling poverty",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16397)),
+    # C3 — was DESCRIPTIVE; the "Navamsa-debility overlay" TODO was stale (VargaDignity
+    #      covers it: Sun D9-debil = Libra navamsa, Venus D9-debil = Virgo navamsa, so
+    #      "Venus in Virgo in Rasi AND Navamsa" is InSign + VargaDignity{debil} exactly).
     RuleRecord(
         id="H12.C.C3", house=12, signification="loss_moksha", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.Or(
+            C.And(C.InSign("Sun", 1), _AspectedByClass("Sun", "malefic"),
+                  C.VargaDignity("Sun", varga="D9", states={"debil"})),
+            C.And(C.InSign("Venus", 6), C.VargaDignity("Venus", varga="D9", states={"debil"})),
+        ),
         fortified=None,
         afflicted="the Sun in Aries aspected by a malefic and debilitated in Navamsa; or Venus "
-                  "in Virgo both in Rasi and Navamsa → a beggar is born. TODO(predicate: "
-                  "Navamsa-debility overlay)",
+                  "in Virgo both in Rasi and Navamsa → a beggar is born",
         frame="LAGNA", varga="D9", polarity="malefic", source=Citation("HTJAH-II", 16398)),
     RuleRecord(
         id="H12.C.C4", house=12, signification="loss_moksha", group="combination",
@@ -656,7 +700,12 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         kind="descriptive", condition=None,
         fortified=None,
         afflicted="rulers of (2&12)/(5&9)/(6&12)/(3&11)/(4&10) equal in strength → criminal "
-                  "action (absent other mitigation). TODO(predicate: equal-strength gate)",
+                  "action (absent other mitigation). TODO(predicate: equal-strength gate) — "
+                  "investigated 2026-08-22 and HELD, not a simple TODO: reusing the B2 "
+                  "MARGINAL_BAND (tuned for one planet vs. its own bar) as a planet-vs-planet "
+                  "tolerance fired on 27% of golden charts, likely a chance artifact of ORing "
+                  "5 loosely-toleranced pairwise checks, not a doctrinally-selective signal. "
+                  "See DOCTRINE_BACKLOG.md for what a real fix needs.",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16444)),
 
     # ===== Group E — Bed-pleasures / sayana-sukha (16289-16305) — sig loss_moksha =====
@@ -688,22 +737,28 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16299)),
 
     # ===== Group F — After-death state of the soul (16491-16523) — sig moksha =====
+    # F1/F2 — were DESCRIPTIVE with stale TODOs: TaraOf has carried "LORD_OF:n" support for
+    #         the Vipat/Pratyak/Naidhana gate, Mandi is on chart.upagrahas, and combust/debil
+    #         states are long-standing primitives. Encoded 2026-08-23; review record in
+    #         DOCTRINE_BACKLOG "H12 dead-rule sweep".
     RuleRecord(
         id="H12.C.F1", house=12, signification="moksha", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(_SaturnOrMandiOn12th(),
+                        C.TaraOf("LORD_OF:12", {3, 5, 7})),
         fortified=None,
         afflicted="the 12th aspected/occupied by Saturn or Mandi AND the 12th lord in a Vipat "
                   "(3rd)/Pratyak (5th)/Naidhana (7th) constellation from Janma Nakshatra → "
-                  "calamities, vicious conduct, goes to hell after death. TODO(predicate: "
-                  "Tara-from-Janma + Mandi)",
+                  "calamities, vicious conduct, goes to hell after death (Mandi leg absent on "
+                  "stated-position charts, which carry no upagrahas)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16491)),
     RuleRecord(
         id="H12.C.F2", house=12, signification="moksha", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_CombustOrDebilMaleficAfflicts12th(),
         fortified=None,
         afflicted="a malefic in combustion/debilitation/eclipse afflicting the 12th → may go "
-                  "to lower planes such as hell after death. TODO(predicate: combust/debil/"
-                  "eclipse state of the afflicting planet)",
+                  "to lower planes such as hell after death",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 16498)),
     RuleRecord(
         id="H12.C.F3", house=12, signification="moksha", group="combination",

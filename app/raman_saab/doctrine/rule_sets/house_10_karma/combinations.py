@@ -110,6 +110,23 @@ class _HouseInfluencedByClass(C.Condition):
 
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
+class _NeechabhangaRajayoga(C.Condition):
+    """Some visible graha is debilitated in Rasi with the debilitation cancelled — the
+    unitary `neecha_bhanga` doctrine. The primitive's conditions 1-2 ARE the citation's
+    dispositor/exaltation-lord-in-kendra forms and its condition 4 IS the neecha-in-Rasi-
+    exalted-in-Amsa form (HTJAH-II:14214, itself introduced as "SOME important combinations"
+    — non-exhaustive); condition 3 (conjunct its dispositor) is the standard Parashari
+    completion the engine already applies everywhere else — a citation-trimmed fork here
+    would create two competing bhanga definitions in one engine. Nodes excluded: no
+    classical debilitation sign in the engine's DEBILITATION table."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.bhangas import neecha_bhanga
+        return any(
+            dignity(name, ctx.chart) == "debil" and neecha_bhanga(name, ctx.chart)
+            for name in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+            if name in ctx.chart.planets)
+
+
 RULES: Final[tuple[RuleRecord, ...]] = (
     # ===== A. Nature of profession (anchors) — fine profession_* significations =====
     RuleRecord(
@@ -262,13 +279,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified="benefics in the 10th, 11th and 3rd → Rajayoga",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14211)),
+    # C.56 — the TODO was stale on BOTH legs: primitives/bhangas.neecha_bhanga implements
+    #        exactly the dispositor/exaltation-lord-in-kendra-from-Lagna/Moon conditions
+    #        (its own docstring, conditions 1-2), and Rasi-debil+Amsa-exalt is
+    #        HasDignity{debil} x VargaDignity(D9,{exalt}). Encoded 2026-08-23.
     RuleRecord(
         id="H10.C.56", house=10, signification="status_honour", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_NeechabhangaRajayoga(),
         fortified="Neechabhanga Rajayogas: a debilitated planet whose dispositor/exaltation-lord "
                   "is in a kendra from the Moon/Lagna, or a planet neecha in Rasi but exalted in "
-                  "Amsa, raises the native to power. TODO(predicate: neechabhanga-in-kendra, "
-                  "Rasi-debil + Amsa-exalt)",
+                  "Amsa, raises the native to power",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14214)),
 

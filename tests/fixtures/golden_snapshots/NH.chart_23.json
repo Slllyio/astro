@@ -53,12 +53,14 @@
       "HTJAH-I:4184",
       "HTJAH-I:4717",
       "HTJAH-I:4919",
+      "HTJAH-I:4929",
       "HTJAH-I:4931",
       "HTJAH-I:4946"
     ],
     "fired_rule_ids": [
       "H4.C.34",
       "H4.C.40",
+      "H4.C.42",
       "H4.C.43",
       "H4.C.46",
       "H4.L.11"

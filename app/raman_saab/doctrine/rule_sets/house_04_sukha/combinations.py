@@ -96,6 +96,26 @@ class _PlanetInOrAspectsHouse(C.Condition):
         return p.rasi_house == self.house or drishti.aspects_house(self.planet, self.house, ctx.chart)
 
 
+class _FourthLordConjunctMoon(C.Condition):
+    """The 4th lord shares a whole-sign house with the Moon (identity → False: when the Moon
+    itself lords the 4th, 'conjunct the Moon' is not a configuration)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(4, ctx.chart)
+        if lord == "Moon":
+            return False
+        p, moon = ctx.chart.planets.get(lord), ctx.chart.planets.get("Moon")
+        return p is not None and moon is not None and p.rasi_house == moon.rasi_house
+
+
+class _LagnaInSignsLocal(C.Condition):
+    """The ascendant sign is one of `signs` (1..12)."""
+    def __init__(self, signs: frozenset[int]) -> None:
+        self.signs = signs
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return ctx.chart.asc_sign in self.signs
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -325,12 +345,23 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "fitting vahana",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4937)),
+    # C.42 — the "lords-associated-in-house, lord-conjunct" TODOs were stale: LordsConjunct,
+    #        LordIn and _LagnaInSigns-style checks all exist. Encoded 2026-08-23 as the
+    #        three-disjunct transcription. Review in DOCTRINE_BACKLOG "H8-H3 sweep finale".
     RuleRecord(
-        id="H4.C.42", house=4, signification="vehicles", group="combination", kind="descriptive",
-        condition=None,
+        id="H4.C.42", house=4, signification="vehicles", group="combination", kind="evaluable",
+        condition=C.Or(
+            # lords of the 4th & 9th associated (conjunct) IN the Lagna or the 7th
+            C.And(C.LordsConjunct(4, 9), C.Or(C.LordIn(4, 1), C.LordIn(4, 7))),
+            # the 4th lord conjunct the Moon
+            _FourthLordConjunctMoon(),
+            # Venus-as-4th-lord (Aquarius/Cancer Lagna) in the 11th/10th/9th
+            C.And(_LagnaInSignsLocal(frozenset({11, 4})),
+                  C.Or(C.LordIn(4, 11), C.LordIn(4, 10), C.LordIn(4, 9))),
+        ),
         fortified="lords of the 4th & 9th associated in the Lagna or 7th, OR the 4th lord "
                   "conjunct the Moon, OR Venus-as-4th-lord (Aquarius/Cancer Lagna) in 11/10/9 → "
-                  "possession of a vehicle. TODO(predicate: lords-associated-in-house, lord-conjunct)",
+                  "possession of a vehicle",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 4929)),
 

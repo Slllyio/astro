@@ -151,6 +151,21 @@ class _PlanetAspectsLord(C.Condition):
         return lord != self.planet and drishti.aspects_planet(self.planet, lord, ctx.chart)
 
 
+class _JupiterStrong5thLordAspectedByLagnaLord(C.Condition):
+    """Jupiter IS the 5th lord (Scorpio/Leo lagna), B1-strong (band 'strong', not decisively
+    weak), and the Lagna lord casts a whole-sign drishti on it (HTJAH-I:5185, rasi core)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.effective_strength import effective_strength
+        if _lord_of(5, ctx.chart) != "Jupiter" or "Jupiter" not in ctx.chart.planets:
+            return False
+        es = effective_strength("Jupiter", ctx.chart)
+        if es.band != "strong" or es.decisively_weak:
+            return False
+        lagna_lord = _lord_of(1, ctx.chart)
+        return (lagna_lord != "Jupiter"
+                and drishti.aspects_planet(lagna_lord, "Jupiter", ctx.chart))
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -174,13 +189,18 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         fortified="a strong 2nd lord in the 5th aspected by Jupiter → birth of children",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 5186)),
+    # C.3 — the "strength gate" TODO was stale (B1 effective_strength); the rasi core is
+    #       encoded on it, the Navamsa-dispositor overlays stay deferred in the result text
+    #       (the H9.B.29 encode-the-core precedent). Encoded 2026-08-23.
     RuleRecord(
-        id="H5.C.3", house=5, signification="children", group="combination", kind="descriptive",
-        condition=None,
-        fortified="Jupiter as a strong 5th lord aspected by the Lagna lord → many issues; and "
-                  "the Navamsa overlays (5th-lord-Navamsa-dispositor benefic / 5th lord in benefic "
-                  "amsa / that dispositor in Lagna Bhava) → birth of children. TODO(predicate: "
-                  "strength gate, Navamsa-dispositor-of-lord)",
+        id="H5.C.3", house=5, signification="children", group="combination", kind="evaluable",
+        condition=_JupiterStrong5thLordAspectedByLagnaLord(),
+        fortified="Jupiter as a strong 5th lord aspected by the Lagna lord → many issues. "
+                  "The source's following sentence ('Birth of children is ALSO indicated "
+                  "when...' — 5th-lord-Navamsa-dispositor benefic / 5th lord in benefic amsa / "
+                  "that dispositor in Lagna Bhava) lists three INDEPENDENT combinations, not "
+                  "overlays on this rule — when encoded they belong as separate rule(s), never "
+                  "as an And-gate here",
         afflicted=None,
         frame="LAGNA", varga="D9", polarity="benefic", source=Citation("HTJAH-I", 5185)),
 

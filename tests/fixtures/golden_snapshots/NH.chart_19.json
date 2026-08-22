@@ -2,9 +2,11 @@
   "H10": {
     "citations": [
       "HTJAH-II:10181",
+      "HTJAH-II:14214",
       "HTJAH-II:9467"
     ],
     "fired_rule_ids": [
+      "H10.C.56",
       "H10.C.61",
       "H10.L.2"
     ],
@@ -55,6 +57,7 @@
       "HTJAH-I:2469",
       "HTJAH-I:2472",
       "HTJAH-I:2474",
+      "HTJAH-I:2498",
       "HTJAH-I:2540",
       "HTJAH-I:2544",
       "HTJAH-I:2549",
@@ -78,6 +81,7 @@
       "H2.C.25",
       "H2.C.26",
       "H2.C.28",
+      "H2.C.40",
       "H2.C.47",
       "H2.C.5",
       "H2.C.50",

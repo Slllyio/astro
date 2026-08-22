@@ -38,6 +38,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 
@@ -200,6 +201,47 @@ def _lord_in_own_house(house: int) -> C.Condition:
     return C.LordIn(house, house)
 
 
+class _FortifiedPlanetIn11(C.Condition):
+    """Some planet in the 11th is FORTIFIED — Shadbala band 'strong' (total >= its own
+    MIN_REQUIRED bar, GBB-8:303) with no hard placement affliction (B1 effective_strength).
+    Per-planet-vs-its-own-bar is exactly the context that measure was tuned for. Rahu/Ketu
+    carry no Shadbala (band 'unknown') and Track-B stated-position charts have none at all —
+    on those this rule simply cannot fire, which is honest: 'fortified' is a strength claim
+    the chart cannot substantiate without Shadbala."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(
+            p.rasi_house == 11
+            and (es := effective_strength(name, ctx.chart)).band == "strong"
+            and not es.decisively_weak
+            for name, p in ctx.chart.planets.items())
+
+
+class _WeakPlanetIn11(C.Condition):
+    """Some planet in the 11th is decisively WEAK — Shadbala below its bar, combust
+    ('eclipsed'), or debilitated-uncancelled ('depressed') per B1 effective_strength.
+    Raman's other two legs are partially covered rather than separately gated: defeat in
+    planetary war already depresses the Shadbala total through Yuddha Bala (kala.py), and
+    'inimical vargas' is NOT modelled — noted, not faked. The combust/debilitation legs are
+    positional, so this rule CAN fire on Track-B charts without Shadbala."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        return any(
+            p.rasi_house == 11 and effective_strength(name, ctx.chart).decisively_weak
+            for name, p in ctx.chart.planets.items()
+            if name not in ("Rahu", "Ketu"))     # nodes have no bar; 'weak node' is not a claim
+                                                 # this citation makes
+
+
+# NOTE (2026-08-22): C.6/C.7 were briefly encoded on NAISARGIKA lord-relationships and
+# reverted the same day — bphs-doctrine-reviewer proved the predicates UNSATISFIABLE by
+# enumerating all 12 lagnas (lordship is fixed per lagna, naisargika fixed per planet pair;
+# no lagna yields three mutually-friendly 1/2/11 lords, nor both 2nd+11th lords natural
+# enemies of the lagna lord — even one-directionally). Raman wrote those sentences about real
+# nativities, so "friendly"/"inimical" there MUST mean the chart-dependent COMPOUND relation
+# (naisargika x tatkalika), which exists in-repo as dignity._compound_relation (private,
+# consumed by Sthana Bala) but is not yet exposed to the conditions algebra. Re-encode both
+# together on that, then re-measure. Record: DOCTRINE_BACKLOG "H11 dead-rule sweep".
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -224,28 +266,34 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "of earning",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="neutral", source=Citation("HTJAH-II", 14360)),
+    # #4/#5/#6/#7 — were DESCRIPTIVE with stale TODOs; the blocking primitives now exist
+    # (B1 effective_strength for the strength gates, primitives.relationships.naisargika for
+    # the friendship/enmity gates). Encoded 2026-08-22; bphs-doctrine-reviewer + ratchet
+    # sign-off recorded in DOCTRINE_BACKLOG "H11 dead-rule sweep".
     RuleRecord(
-        id="H11.C.4", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.4", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_FortifiedPlanetIn11(),
         fortified="fortified planets in the 11th → fortunate conveyances, bungalows and all "
-                  "comforts; a noble beautiful wife; fond of clothes, food and enjoyments. "
-                  "TODO(predicate: planet strength gate)",
+                  "comforts; a noble beautiful wife; fond of clothes, food and enjoyments",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14362)),
     RuleRecord(
-        id="H11.C.5", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.5", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_WeakPlanetIn11(),
         fortified=None,
         afflicted="the 11th occupied by a weak planet — eclipsed, depressed, defeated in planetary "
                   "war, or in inimical vargas → even one born affluent loses everything and wanders "
-                  "without self-respect. TODO(predicate: weakness/eclipse/planetary-war gate)",
+                  "without self-respect (war-defeat covered via Yuddha Bala inside the Shadbala "
+                  "total; the inimical-vargas leg is NOT modelled)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14367)),
     RuleRecord(
         id="H11.C.6", house=11, signification="gains", group="combination", kind="descriptive",
         condition=None,
-        fortified="the Lagna, 2nd and 11th lords mutually friendly → earnings used for honourable "
-                  "ends (legitimate expenses and charity). TODO(predicate: functional-friendship "
-                  "between three lords)",
+        fortified="the Lagna, 2nd and 11th lords friendly → earnings used for honourable "
+                  "ends (legitimate expenses and charity). TODO(predicate: COMPOUND lord-"
+                  "relationship — naisargika encoding proven unsatisfiable over all 12 lagnas, "
+                  "see the note above the RULES tuple; needs dignity._compound_relation exposed "
+                  "to the conditions algebra)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14388)),
     RuleRecord(
@@ -253,7 +301,9 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         condition=None,
         fortified=None,
         afflicted="the 2nd and 11th lords afflicted and inimical to the Lagna lord → money "
-                  "squandered on wine and women. TODO(predicate: affliction + lord-enmity gate)",
+                  "squandered on wine and women. TODO(predicate: COMPOUND lord-relationship — "
+                  "same unsatisfiability proof and fix path as H11.C.6; re-encode the pair "
+                  "together)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14390)),
     RuleRecord(
         id="H11.C.8", house=11, signification="gains", group="combination", kind="evaluable",

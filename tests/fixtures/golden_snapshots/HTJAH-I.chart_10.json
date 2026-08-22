@@ -6,16 +6,20 @@
       "HTJAH-I:1133",
       "HTJAH-I:1138",
       "HTJAH-I:1139",
+      "HTJAH-I:1146",
       "HTJAH-I:1260",
-      "HTJAH-I:1435"
+      "HTJAH-I:1435",
+      "HTJAH-I:1972"
     ],
     "fired_rule_ids": [
       "H1.B.14",
       "H1.C.30",
       "H1.C.33",
       "H1.C.34",
+      "H1.C.37",
       "H1.L.4",
       "H1.M.S02",
+      "H1.N.66",
       "H1.S.9"
     ],
     "rollup": "afflicted",

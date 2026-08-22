@@ -190,6 +190,39 @@ class _LordsJoinKendraWith(C.Condition):
                 and l1 != self.planet and l2 != self.planet)
 
 
+class _EvilSixthLordIn_1_8_10(C.Condition):
+    """The 6th lord occupies the Lagna, 8th or 10th AND is 'evil' — functionally malefic for
+    this lagna per Raman's own per-lagna table (HTJAH-I:523-604 via functional_nature; the
+    chapter's usage at 6072/6104 reads "evil planets" as the malefic class). This qualifier
+    is what keeps the rule from double-counting the ungated L.1/L.8/L.10 placements.
+
+    A decisively-weak arm ('evil' = weak) was encoded and DROPPED on review 2026-08-23:
+    HTJAH-II:14229-14230 prints the OPPOSITE valence in Raman's own voice — weak dusthana
+    lords "if weak, produce Rajayoga" — so weakness is classically favourable for this
+    signification, not evil. Re-addable only on an explicit user ruling."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.functional_nature import functional_nature
+        lord = _lord_of(6, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or p.rasi_house not in (1, 8, 10):
+            return False
+        return functional_nature(lord, ctx.chart) == "malefic"
+
+
+class _SixthLordInBeneficSignBeneficAspected(C.Condition):
+    """The 6th lord occupies a sign OWNED by a natural benefic (its dispositor is a benefic)
+    AND Jupiter or Venus aspects it (HTJAH-I:6105). Benefic-aspect set per the corpus's
+    identical-phrase precedent."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        from app.raman_saab.primitives.dispositor import dispositor
+        lord = _lord_of(6, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or dispositor(lord, ctx.chart) not in NATURAL_BENEFICS:
+            return False
+        return any(b != lord and drishti.aspects_planet(b, lord, ctx.chart)
+                   for b in ("Jupiter", "Venus"))
+
+
 # ── RULES ─────────────────────────────────────────────────────────────────────
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -201,14 +234,17 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # "evil lord" strength gate and (b) duplicate the L.1 / L.8 / L.10 placements
     # exactly, all already routed to enemies_disease — a same-signification
     # double-count. So it is surfaced narratively, not boolean-scored.
+    # C.1 — the deferral asked for exactly the gate that now exists: 'evil' = functionally
+    #       malefic for this lagna (primitives.functional_nature) OR B1-decisively-weak. The
+    #       gate is what separates this from the ungated L.1/L.8/L.10 placement double-count
+    #       the old note warned about. Encoded 2026-08-23.
     RuleRecord(
-        id="H6.C.1", house=6, signification="enemies_disease", group="combination", kind="descriptive",
-        condition=None,
+        id="H6.C.1", house=6, signification="enemies_disease", group="combination",
+        kind="evaluable",
+        condition=_EvilSixthLordIn_1_8_10(),
         fortified=None,
         afflicted="the EVIL (functional-malefic / weak / ill-disposed) lord of the 6th in "
-                  "Lagna, the 8th or the 10th → the native suffers from boils. "
-                  "TODO(predicate: 'evil 6th-lord' functional-nature + strength gate; ungated "
-                  "this would double-count the L.1/L.8/L.10 placements under enemies_disease)",
+                  "Lagna, the 8th or the 10th → the native suffers from boils",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6073)),
     # Rule 2 — 6th lord in 6th/8th with a co-occupant → boils localised by the
     # co-planet (head / face / front / nose / eyes / armpits). Rasi-core fires; the
@@ -412,14 +448,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-I", 6104)),
     # Rule 19 — 6th lord in a benefic's house aspected by good planets → many
     # friends. "Benefic's house" (sign owned by a natural benefic) is approximated
-    # by the good-aspect testimony; the dispositor-benefic gate is deferred. Kept
-    # descriptive to flag the missing "house of a benefic" qualifier.
+    # Rule 19 — the "dispositor-of-lord natural nature" TODO was stale: primitives/
+    # dispositor.py ships it. Encoded 2026-08-23: 6th lord's sign owned by a natural benefic
+    # AND Jupiter/Venus aspect on the lord.
     RuleRecord(
-        id="H6.C.19", house=6, signification="enemies", group="combination", kind="descriptive",
-        condition=None,
+        id="H6.C.19", house=6, signification="enemies", group="combination", kind="evaluable",
+        condition=_SixthLordInBeneficSignBeneficAspected(),
         fortified="the 6th lord in the house (sign) of a benefic planet and aspected by good "
-                  "planets → he will have many friends (few enemies). TODO(predicate: "
-                  "dispositor-of-lord natural nature)",
+                  "planets → he will have many friends (few enemies)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-I", 6105)),
     # Rule 20 — Lagna-lord in 6th aspected by 6th lord, OR both (Lagna-lord & 6th

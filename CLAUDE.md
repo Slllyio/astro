@@ -72,6 +72,48 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   case). Guards: the golden ratchet (fidelity) + `test_astrobank_ratchet.py` (generalization
   floors). The two axes are reported side by side, never averaged.
 
+### ★★★ NORTH STAR PLAYBOOK (2026-08-23) — how fidelity actually moves; binding on all future sessions
+
+Distilled from the all-houses dead-rule sweep (12 house passes, 19 rules shipped, 6 held by
+proof, the first strict-ratchet gain since the measured ceiling: 259→260 via H2.C.40). Every
+rule below was EARNED by a caught mistake, with the receipts in `DOCTRINE_BACKLOG.md`:
+
+1. **"Best in the world" = most faithful to Raman + most honest about what a reading can
+   claim.** Those are the only two axes. Real-outcome "accuracy" is measured NULL and is not
+   a target — chasing it is overfitting, forbidden by `astrobank/METHODOLOGY.md`.
+2. **Citation first, always.** Real-people data may only PRIORITIZE where to look or satisfy
+   a pre-registered gate — never justify a change. And a pre-registered fix can still be
+   refuted by its own citation's conditions (the Tier-3 bhava-rescue was: gate met, fix
+   refuted twice — that outcome is a SUCCESS of the process, record it and stop).
+3. **Measure BEFORE doctrine review, review BEFORE ship.** Per rule: (a) firing rate over the
+   Track-B goldens; (b) whether any firing chart carries a scored expectation for that house;
+   (c) co-fire against live rules sharing a conjunct; (d) SATISFIABILITY BY ENUMERATION for
+   any predicate built from lagna-fixed lordship + fixed pair-tables (H11.C.6/7) or a derived
+   point's reachable set (H2.C.46's parity proof — Arudha offsets are always even).
+4. **A green ratchet proves NO REGRESSION, never correctness.** Three documented blindness
+   modes: corroboration-only firing, evidence-redundancy on AFFLICTION_MATTER keys,
+   coverage gaps (no scored chart fires the rule). A ratchet GAIN is banked only after
+   adversarial review of the responsible rule (H2.C.40's 52% rate got an enumeration before
+   the baseline bump).
+5. **An honest hold beats a forced ship.** Every hold gets a backlog entry with its re-open
+   path. A faithful predicate can still be wrong to FIRE given the verdict machinery around
+   it (H1.N.38 reproduced the exact chart_33 contradiction its sibling's deferral note
+   predicted). Deferral notes are design decisions — read WHY a rule is descriptive before
+   assuming the TODO is stale.
+6. **Stale-TODO audits are the cheapest fidelity lever.** Primitives ship after rules are
+   deferred and nobody revisits (maraka/arudha/dispositor/effective_strength all unlocked
+   rules years-of-sessions later). When sweeping: reuse the B1/B2 measures ONLY in the
+   statistical context they were tuned for (H12.C.D6 died on exactly this).
+7. **The accuracy lever now is the GOLDEN CORPUS, not the judge.** Confirm engine-matches
+   from DRAFTs (never confirm mismatches to pad), extract remaining worked charts, and let
+   the denominator grow. The judge's remaining 10 dist-2 errors are ONE mechanism (the
+   pillar-preponderance clause) at a PROVEN local optimum — a new mechanism is design work,
+   not tuning (sweep table in DOCTRINE_BACKLOG).
+8. **Grow the private real-outcome set** (`data/private/real_outcomes.json`, guarded by
+   `.githooks/pre-commit`): owner-confirmed facts only, floors measured-then-locked, misses
+   recorded honestly (never fudged). It is the only ground-truth instrument the project
+   fully controls.
+
 ## Project shape
 
 - Python **3.12** primary interpreter (`py -3.12` on Windows, `.venv/Scripts/python.exe` for the local venv).

@@ -5,14 +5,16 @@
       "HTJAH-I:1086",
       "HTJAH-I:1127",
       "HTJAH-I:1139",
-      "HTJAH-I:1330"
+      "HTJAH-I:1330",
+      "HTJAH-I:1972"
     ],
     "fired_rule_ids": [
       "H1.C.1c",
       "H1.C.26a",
       "H1.C.34",
       "H1.L.3",
-      "H1.M.S06"
+      "H1.M.S06",
+      "H1.N.66"
     ],
     "rollup": "mixed",
     "significations": {

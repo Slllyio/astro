@@ -27,17 +27,65 @@ from __future__ import annotations
 
 from typing import Final
 
+from app.raman_saab.chart.constants import SIGN_LORDS
+from app.raman_saab.chart.model import RamanChart
 from app.raman_saab.doctrine import conditions as C
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.effective_strength import effective_strength
+
+
+def _lord_of(house: int, chart: RamanChart) -> str:
+    return SIGN_LORDS[((chart.asc_sign - 1) + (house - 1)) % 12 + 1]
+
+
+class _LagnaLordDecisivelyWeak(C.Condition):
+    """The Lagna lord is B1-decisively-weak — Shadbala band weak, substantially combust, or
+    debilitated-uncancelled (`effective_strength`, DOCTRINE_BACKLOG B1). Raman's own list
+    here — "weak, debilitated or combust" (HTJAH-I:1709) — is literally the three facts the
+    B1 measure was built from, so this is reuse in the measure's exact founding context."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(1, ctx.chart)
+        return (lord in ctx.chart.planets
+                and effective_strength(lord, ctx.chart).decisively_weak)
+
+
+class _LordsInContact(C.Condition):
+    """The lords of `h1` and `h2` are in contact: conjunction (same whole-sign house) or an
+    aspect in EITHER direction — Raman's "aspect or association" (HTJAH-I:1972). Identity
+    (one planet lords both, e.g. Venus for a Taurus lagna owning 1 and 6) is NOT contact:
+    Raman's worked case (Chart 18) is a two-planet configuration, dual lordship is a
+    functional-nature matter the engine already reads elsewhere, and counting it here would
+    blanket-fire this malefic on every Taurus/Scorpio-lagna chart from the lagna alone."""
+    def __init__(self, h1: int, h2: int) -> None:
+        self.h1, self.h2 = h1, h2
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        a, b = _lord_of(self.h1, ctx.chart), _lord_of(self.h2, ctx.chart)
+        if a == b:
+            return False
+        pa, pb = ctx.chart.planets.get(a), ctx.chart.planets.get(b)
+        if pa is None or pb is None:
+            return False
+        return (pa.rasi_house == pb.rasi_house
+                or drishti.aspects_planet(a, b, ctx.chart)
+                or drishti.aspects_planet(b, a, ctx.chart))
+
 
 RULES: Final[tuple[RuleRecord, ...]] = (
 
     # ── #38 — Lagnadhipati weak / debilitated / combust ──────────────────────
-    # G13: HasDignity and Combust both require a static planet name; the lord of
-    # house 1 is chart-dependent. No predicate covers "debil OR combust for
-    # dynamically-resolved lord". → descriptive.
-    # TODO(G13): encode when a LAGNADHIPATI_WEAK(or_combust) predicate exists.
+    # ENCODED AND REVERTED SAME DAY (2026-08-23). The G13 predicate gap is closed
+    # (the working _LagnaLordDecisivelyWeak above is a faithful transcription — "weak,
+    # debilitated or combust" IS the B1 decisively_weak definition, HTJAH-I:3788 lineage),
+    # but firing it as a boolean malefic reproduces EXACTLY the failure H1.C.W33's deferral
+    # note predicted for this rule class: on chart_33 (lagna lord neecha) it manufactures a
+    # benefic-vs-malefic CONTRADICTION that blocks the Y.SAKATA arishta drop, flipping the
+    # golden's correct 'afflicted' to 'mixed' — measured: strict 259→258, within-1/real
+    # errors unmoved, a pure one-sided loss. Same promotion condition as W33: a
+    # lord-dignity-aware contradiction policy. The predicate class is retained at the top
+    # of this file (used by no rule) for that promotion.
     RuleRecord(
         id="H1.N.38", house=1, signification="self", group="navamsa_qualifier",
         kind="descriptive",
@@ -297,15 +345,20 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-I", 1766)),
 
     # ── #58 — Amplifier: either lord (1st/9th) exalted ───────────────────────
-    # G13: HasDignity requires a static planet name; LORD_OF:1 and LORD_OF:9
-    # are chart-dependent. → descriptive.
-    # TODO(G13): Or(HasDignity("LORD_OF:1",{"exalt"}), HasDignity("LORD_OF:9",{"exalt"}))
+    # Was descriptive under G13; stale — LordHasDignity IS the dynamic-lord dignity form.
+    # ENCODING CORRECTED ON REVIEW (2026-08-23): "either of the lords" in HTJAH-I:1767 is
+    # scoped to the PARAGRAPH's base configuration (Lagnadhipati joined with the 9th lord IN
+    # the 9th, :1764 — the same base N.56 encodes), like every other amplifier in this series
+    # (N.50/N.53 precedent: And(base, qualifier)). A standalone Or(...) dropped that gate and
+    # fired on any exalted 1st-or-9th lord (36/209); gated, it is the rare event Raman wrote.
     RuleRecord(
         id="H1.N.58", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
-        fortified="either the 1st or 9th lord exalted → influx of wealth, "
-                  "expenditure on desirable and deserving causes",
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 9), C.LordsConjunct(1, 9),
+                        C.Or(C.LordHasDignity(1, {"exalt"}), C.LordHasDignity(9, {"exalt"}))),
+        fortified="either the 1st or 9th lord exalted (with the Lagnadhipati joined to the "
+                  "9th lord in the 9th) → influx of wealth, expenditure on desirable and "
+                  "deserving causes",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 1767)),
@@ -400,17 +453,16 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         source=Citation("HTJAH-I", 1788)),
 
     # ── #66 — Diagnostic: contact between lords of 1st and 6th ───────────────
-    # The full condition is "aspect OR association" between the lords — but
-    # MutualAspect and Aspects require static planet names, not LORD_OF origins.
-    # LordsConjunct(1,6) covers the association half; the aspect half is G13.
-    # Encoding as descriptive to capture Raman's full intent without truncating
-    # the OR.
-    # TODO(G13): Or(LordsConjunct(1,6), <aspect between LORD_OF:1 and LORD_OF:6>)
-    # once an AspectsBetweenLords(h1, h2) predicate exists.
+    # Was descriptive because the aspect half of "aspect OR association" had no
+    # dynamic-lord predicate; the local _LordsInContact helper (top of file) now
+    # carries the full OR without truncation. Encoded 2026-08-23. Fires MALEFIC on
+    # contact (the afflicted text); the protective no-contact half remains display
+    # prose — the rule engine is fire-on-true and absence-of-contact is the default
+    # state of most charts, not a testimony.
     RuleRecord(
         id="H1.N.66", house=1, signification="self", group="navamsa_qualifier",
-        kind="descriptive",
-        condition=None,
+        kind="evaluable",
+        condition=_LordsInContact(1, 6),
         fortified="no contact (aspect or association) between lords of 1st and "
                   "6th → health protective; violation implicates illness/defamation",
         afflicted="contact between lords of 1st and 6th (aspect or association) "

@@ -13,9 +13,16 @@ Encoding policy (kept honest, atom by atom):
 
 * The condition algebra has no Mars-frame "from the karaka" varga-count machinery
   and no D9 *sibling-count* predicate (number-of-Navamsa-gained / -passed / -yet-to-
-  pass). The four counting / strength-aggregate atoms — #4, #15, #16, #17 — are
-  therefore encoded as ``kind="descriptive"`` with a ``TODO(predicate)`` note; they
-  are surfaced by placement with their citation, NOT faked with a stand-in boolean.
+  pass). The three counting atoms — #15, #16, #17 — are therefore encoded as
+  ``kind="descriptive"`` with a ``TODO(predicate)`` note; they are surfaced by
+  placement with their citation, NOT faked with a stand-in boolean.
+* #4 ("brave and straightforward") was the same descriptive placeholder until this
+  pass, blocked on a "well disposed" strength-aggregate the algebra didn't carry.
+  It is now encoded compositionally: nakshatra-lordship (benefic) for "beneficial
+  Nakshatra", ``VargaDignity`` on D9 for "beneficial Navamsha", a local
+  aspected-by-benefic check for the 3rd lord, and the shipped, golden-tuned B1
+  ``effective_strength().decisively_weak`` measure (DOCTRINE_BACKLOG B1) — not a new
+  invented threshold — for "Mars equally well disposed". See ``H3.C.4`` below.
 * The other 26 atoms compose from the existing predicate set (``LordIn``,
   ``InRashiHouse``, ``Conjunct``, ``HasDignity``, ``Combust``, ``VargaDignity``,
   ``InHouseClass``, ``LordsConjunct``, ``CountInHouse``) plus a handful of local
@@ -39,12 +46,20 @@ from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
 from app.raman_saab.primitives.bhangas import neecha_bhanga
 from app.raman_saab.primitives.dignity import dignity
+from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
 from app.raman_saab.primitives.relationships import naisargika
+from app.raman_saab.primitives import nakshatra
 
 # Karaka for the 3rd house — the single natural significator of brothers.
 _KARAKA: Final[str] = "Mars"
+
+#: Benefics whose aspect Raman counts favourably in the H3.C.4 "brave and straightforward"
+#: combination. Mercury/Moon are excluded here (as in most other houses' equivalent atoms —
+#: e.g. house_02_dhana.combinations:320) since their benefic quality is association-dependent,
+#: unlike Jupiter/Venus.
+_STRICT_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus"})
 
 # Sex-of-aspecting-planet classification (engine note in the methodology):
 # masculine = Sun, Mars, Jupiter; feminine = Moon, Venus; Mercury & Saturn are
@@ -56,6 +71,38 @@ _FEMININE: Final[frozenset[str]] = frozenset({"Moon", "Venus"})
 def _third_lord(chart: RamanChart) -> str:
     """Name of the D1 lord of the 3rd whole-sign house counted from the Lagna."""
     return SIGN_LORDS[((chart.asc_sign - 1) + 2) % 12 + 1]
+
+
+class _ThirdLordInBeneficialNakshatra(C.Condition):
+    """The 3rd lord occupies a nakshatra ruled by a natural benefic — the engine's reading of
+    "a beneficial Nakshatra" (HTJAH-I:3421), reusing the existing nakshatra-lordship primitive
+    (``primitives.nakshatra.nakshatra_lord``, the same one ``conditions.InStarOf`` uses) rather
+    than inventing a gana/tara classification with no textual anchor."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(_third_lord(ctx.chart))
+        return (p is not None and p.nakshatra is not None
+                and nakshatra.nakshatra_lord(p.nakshatra) in NATURAL_BENEFICS)
+
+
+class _ThirdLordAspectedByBenefic(C.Condition):
+    """Jupiter or Venus casts a whole-sign drishti on the 3rd lord (identity → False)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _third_lord(ctx.chart)
+        return any(b != lord and drishti.aspects_planet(b, lord, ctx.chart)
+                   for b in _STRICT_BENEFICS)
+
+
+class _NotDecisivelyWeak(C.Condition):
+    """`planet` is not B1-decisively-weak — raw Shadbala with combustion/debilitation folded
+    in (DOCTRINE_BACKLOG B1, ``effective_strength``). The project's own shipped, golden-tuned
+    "well disposed" proxy, reused here rather than inventing a new strength threshold; see that
+    module's own warning that a naive `is_powerful`-style shortcut over-fires badly."""
+    def __init__(self, planet: str) -> None:
+        self.planet = planet
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        p = ctx.chart.planets.get(self.planet)
+        return p is not None and not effective_strength(self.planet, ctx.chart).decisively_weak
 
 
 # ── local leaf predicates (conditions.py is intentionally untouched) ─────────
@@ -418,13 +465,22 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "from the 11th)",
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 3353)),
-    # #4 — DESCRIPTIVE: beneficial Nakshatra + Navamsha + benefic aspect + Mars well
-    #      disposed -> man of character. TODO(predicate): needs a "beneficial
-    #      nakshatra" classifier and a Mars strength-aggregate that the condition
-    #      algebra does not yet carry; surfaced by placement, not faked.
+    # #4 — beneficial Nakshatra + Navamsha + benefic aspect + Mars well disposed ->
+    #      man of character. Was DESCRIPTIVE pending a "beneficial nakshatra"
+    #      classifier and a Mars strength measure; now composed from
+    #      nakshatra-lordship, VargaDignity(D9), a local benefic-aspect check, and the
+    #      shipped B1 effective_strength() "well disposed" proxy -- no new invented
+    #      threshold. bphs-doctrine-reviewer + golden-ratchet sign-off pending before
+    #      this ships (see DOCTRINE_BACKLOG.md).
     RuleRecord(
         id="H3.C.4", house=3, signification="courage", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(
+            _ThirdLordInBeneficialNakshatra(),
+            C.VargaDignity("LORD_OF:3", varga="D9", states={"exalt", "own", "friend"}),
+            _ThirdLordAspectedByBenefic(),
+            _NotDecisivelyWeak("Mars"),
+        ),
         fortified="3rd lord in a beneficial Nakshatra and Navamsha, aspected by "
                   "benefics, with Mars equally well disposed -> a man of character and "
                   "conviction, brave and straightforward",

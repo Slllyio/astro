@@ -8,7 +8,8 @@
       "HTJAH-I:1127",
       "HTJAH-I:1139",
       "HTJAH-I:1428",
-      "HTJAH-I:1541"
+      "HTJAH-I:1541",
+      "HTJAH-I:1972"
     ],
     "fired_rule_ids": [
       "H1.B.13",
@@ -18,6 +19,7 @@
       "H1.C.34",
       "H1.L.12",
       "H1.M.S11",
+      "H1.N.66",
       "H1.P.Saturn"
     ],
     "rollup": "favourable",

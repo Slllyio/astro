@@ -70,7 +70,10 @@ the harness works*, not the corpus that tunes the engine.
   (HTJAH-I:5012 intellect + 2316 speech), instead of the generic `illness_accident` H6/H8 disease
   register — so the event tests the houses the static verdicts actually concern. (Register choice
   flagged for a `bphs-doctrine-reviewer` confirmation.)
-- **[OPEN] Elicit the wife's H3 + one orthogonal dated event.** Her independent H3
+- **[DONE 2026-08-22 — H3 half] Elicit the wife's H3 + one orthogonal dated event.** Her H3
+  arrived (younger brother very good relations → siblings favourable; engine afflicted — the
+  second counterexample, recorded in `data/private/real_outcomes.json`). The orthogonal
+  dated event for rectification remains open. Her independent H3
   (siblings/courage) is the decisive second counterexample that de-risks the Tier-3 fix from
   overfitting (n=1→n=2); an orthogonal day-precise event (career/property, not the Venus/Jupiter
   marital cluster) unlocks her rectification to ~13-min class.
@@ -88,7 +91,14 @@ the harness works*, not the corpus that tunes the engine.
   single chart can give. Report-only; any "family signature" recurrence is `ABSENT_IN_RAMAN`.
 
 ### Tier 3 — the one doctrine fix the data reveals (gated)
-- **[OPEN, GATED] H3 over-affliction (bhava-rescue).** The anchor chart's only dist=2 misses are
+- **[CLOSED-REFUTED 2026-08-22] H3 over-affliction (bhava-rescue).** The gate was MET (wife's
+  H3 confirms the pattern, n=2) — and the fix was then refuted twice: (1) HTJAH-I:503-505's own
+  conditions (lord badly placed + benefic conjunctions/aspects on the house) are ABSENT on both
+  family charts, so a faithful encoding cannot fire on them; (2) the actual mechanisms (D9
+  weakens-drop on contradiction-mixed; decisive H3 rules) are load-bearing — blocking the drop
+  costs 11 exact goldens to fix 1. Full record: DOCTRINE_BACKLOG "Tier-3 bhava-rescue". Do not
+  re-open without a different verbatim citation. Original text kept below for the record. The
+  anchor chart's only dist=2 misses are
   H3 siblings/courage: three malefic rules fire on a genuinely favourable life, and the pipeline
   drops the verdict to afflicted. The doctrinal fix — port the **bhava-rescue** (HTJAH-I:503-505,
   "if the house itself has good aspects, evil should NOT be predicted") onto the contradiction
@@ -96,8 +106,12 @@ the harness works*, not the corpus that tunes the engine.
   and (b) it zero-regresses all 241 goldens. Cited fix, held-out-confirmed, ratchet-gated.
 
 ### Tier 4 — hardening the real-outcome track
-- Populate `data/private/real_outcomes.json` per member; wire `real_outcome_validate` into a local
-  pre-commit hook (CI can't see gitignored `data/`); tighten its timing check with the scorer's
+- Populate `data/private/real_outcomes.json` per member **[PARTIAL 2026-08-22: mother added as
+  case 2 — 9 owner-confirmed static verdicts + 5 timing events, floors measured-then-locked]**;
+  wire `real_outcome_validate` into a local pre-commit hook (CI can't see gitignored `data/`)
+  **[DONE 2026-08-22: `.githooks/pre-commit`, enabled via `git config core.hooksPath .githooks`
+  — the hook is a no-op on machines without the private data, same CI-safe design as the tool]**;
+  tighten its timing check with the scorer's
   precision (`_covers`) gate; commit an **anonymized** timing fixture (like `field_case_01`) so the
   family timing track gains some CI protection without PII.
 

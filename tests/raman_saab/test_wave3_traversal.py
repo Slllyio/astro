@@ -217,7 +217,9 @@ class TestCalibrationRollup:
         line = calibration_rollup_line(report.calibration[1])
         assert line.startswith("Rollup: 3 of 3 sub-readings return the same favourable")
         line6 = calibration_rollup_line(report.calibration[6])
-        assert "5 of 5 are near-universal" in line6
+        # 5-of-5 until 2026-08-23, when the doctrine-reviewed H6.C.19 lifted the canonical
+        # chart's `enemies` to favourable — a rare band, so one row left the near-universal set.
+        assert "4 of 5 are near-universal" in line6
 
     def test_no_rollup_when_the_rows_do_not_repeat(self, report):
         """A house whose sub-readings differ gets no rollup line — the device fires only

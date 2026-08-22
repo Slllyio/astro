@@ -24,8 +24,11 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.arudha import arudha_lagna
+from app.raman_saab.primitives.dignity import dignity
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
+from app.raman_saab.primitives.maraka import maraka_points
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -40,6 +43,95 @@ def _second_lord(chart: RamanChart) -> str:
 
 
 # ── local leaf predicates (conditions.py intentionally untouched) ─────────────
+
+#: Sign modality by sign number (1..12): movable/chara, fixed/sthira, common/dwiswabhava.
+_MOVABLE: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
+_FIXED: Final[frozenset[int]] = frozenset({2, 5, 8, 11})
+_COMMON: Final[frozenset[int]] = frozenset({3, 6, 9, 12})
+
+
+class _ArudhaLagnaInHousesFromLagna(C.Condition):
+    """The Arudha Lagna falls in one of `houses` counted from the Lagna (HTJAH-I:2497-2535
+    group). None-safe: a sparse Track-B chart whose lagna lord is absent has no AL and the
+    condition is False rather than guessed."""
+    def __init__(self, houses: frozenset[int]) -> None:
+        self.houses = houses
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        al = arudha_lagna(ctx.chart)
+        if al is None:
+            return False
+        house_from_lagna = ((al - ctx.chart.asc_sign) % 12) + 1
+        return house_from_lagna in self.houses
+
+
+class _SaturnOrMarsDebilIn11thFromArudha(C.Condition):
+    """Saturn or Mars DEBILITATED in the 11th sign from the Arudha Lagna → good earnings
+    (HTJAH-I:2497). Debility is positional (sign-level) — in this rule debility is the
+    TRIGGER of a benefic result (a deliberate classical paradox), so the bhanga gate that
+    guards 'weak' readings does not apply: the text keys on the placement itself."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        al = arudha_lagna(ctx.chart)
+        if al is None:
+            return False
+        eleventh = ((al - 1) + 10) % 12 + 1
+        for name in ("Saturn", "Mars"):
+            p = ctx.chart.planets.get(name)
+            if p is not None and p.sign == eleventh and dignity(name, ctx.chart) == "debil":
+                return True
+        return False
+
+
+class _ThirdLordInThirdAspectedByBenefics(C.Condition):
+    """The 3rd lord occupies the 3rd ('its lord there') aspected by Jupiter or Venus, with
+    the 3rd sign's modality in `modality` — the HTJAH-I:2492-2496 wealth-magnitude triplet
+    (common → 'by thousands', fixed → 'by hundreds', movable → 'within two hundred').
+    Benefic set per the corpus's identical-phrase precedent (Jupiter/Venus only)."""
+    def __init__(self, modality: frozenset[int]) -> None:
+        self.modality = modality
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        third_sign = ((ctx.chart.asc_sign - 1) + 2) % 12 + 1
+        if third_sign not in self.modality:
+            return False
+        lord = SIGN_LORDS[third_sign]
+        p = ctx.chart.planets.get(lord)
+        if p is None or p.rasi_house != 3:
+            return False
+        return any(b != lord and drishti.aspects_planet(b, lord, ctx.chart)
+                   for b in ("Jupiter", "Venus"))
+
+
+class _LordTouchedByMaraka(C.Condition):
+    """The lord of `house` is conjunct with, or aspected by, a PRIMARY-tier maraka graha —
+    Raman's "with/aspected by a Maraka planet" (HTJAH-I:2526-2528).
+
+    PRIMARY tier only, deliberately. `primitives.maraka.maraka_points` returns three tiers,
+    and the all-tier set averages 5.5 of 7 grahas across the golden corpus — a test that broad
+    asserts almost nothing. The primary tier (2nd/7th lords, malefic occupants of 2/7, malefic
+    associates of those lords — HTJAH-I:776-814) is the maraka proper, averaging 3.0 of 7, and
+    is the reading that keeps this qualifier doing real work rather than passing on nearly
+    every chart. Identity (the lord is itself the maraka) → not counted: Raman's phrasing is
+    association WITH a maraka, not being one."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(self.house, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None:
+            return False
+        marakas = {u.graha for u in maraka_points(ctx.chart).units if u.tier == "primary"}
+        for m in marakas:
+            if m == lord:
+                continue
+            q = ctx.chart.planets.get(m)
+            if q is None:
+                continue
+            if q.rasi_house == p.rasi_house or drishti.aspects_planet(m, lord, ctx.chart):
+                return True
+        return False
+
 
 class _SecondLordConjunct(C.Condition):
     """The 2nd lord shares a whole-sign house with `planet`.  Identity → False."""
@@ -550,50 +642,51 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2489)),
 
-    # #36 — DESCRIPTIVE: 3rd is common sign, lord there aspected by benefics.
-    #       TODO(predicate): SignModality.
+    # #36/#37/#38 — the sign-modality wealth-magnitude triplet; the "SignModality" TODO was
+    #       trivially computable all along (sign % 3). Encoded 2026-08-23.
     RuleRecord(
         id="H2.C.36", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_ThirdLordInThirdAspectedByBenefics(_COMMON),
         fortified="3rd is a common sign, its lord there aspected by benefics → "
                   "wealth 'by thousands' in that planet's Dasha",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2492)),
 
-    # #37 — DESCRIPTIVE: same but fixed sign → hundreds.
     RuleRecord(
         id="H2.C.37", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_ThirdLordInThirdAspectedByBenefics(_FIXED),
         fortified="same combination in a fixed sign → earnings 'by hundreds'",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2495)),
 
-    # #38 — DESCRIPTIVE: same but movable sign → within two hundred.
     RuleRecord(
         id="H2.C.38", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_ThirdLordInThirdAspectedByBenefics(_MOVABLE),
         fortified="same combination in a movable sign → earns within two hundred",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2496)),
 
-    # #39 — DESCRIPTIVE: Saturn/Mars debilitated in 11th from Arudha Lagna.
-    #       TODO(predicate): ArudhaLagna.
+    # #39/#40 — the "ArudhaLagna" TODOs were stale: primitives/arudha.py has shipped since,
+    #       and the AL is cast onto every ephemeris chart. Encoded 2026-08-23.
     RuleRecord(
         id="H2.C.39", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_SaturnOrMarsDebilIn11thFromArudha(),
         fortified="Saturn or Mars debilitated in 11th from Arudha Lagna → good earnings",
         afflicted=None,
         frame="ARUDHA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2497)),
 
-    # #40 — DESCRIPTIVE: Arudha Lagna in 11/4/5/7 from Lagna → becomes rich.
-    #       TODO(predicate): ArudhaLagna.
     RuleRecord(
         id="H2.C.40", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_ArudhaLagnaInHousesFromLagna(frozenset({11, 4, 5, 7})),
         fortified="Arudha Lagna in 11th, 4th, 5th or 7th from Lagna → becomes rich",
         afflicted=None,
         frame="ARUDHA", varga="D1", polarity="benefic",
@@ -601,11 +694,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
 
     # ── B. POVERTY BLOCK (HTJAH-I:2526–2536) ─────────────────────────────────
 
-    # #41 — DESCRIPTIVE: Lagna-lord in 12th with/aspected by Maraka → extreme poverty.
-    #       TODO(predicate): MarakaDetection.
+    # #41 — Lagna-lord in 12th with/aspected by Maraka → extreme poverty. Was DESCRIPTIVE
+    #       pending MarakaDetection; primitives/maraka.py now exists, so the TODO was stale.
+    #       Encoded on the PRIMARY maraka tier (see _LordTouchedByMaraka for why not all tiers).
     RuleRecord(
         id="H2.C.41", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.LordIn(1, 12), _LordTouchedByMaraka(1)),
         fortified=None,
         afflicted="Lagna-lord in 12th with/aspected by a Maraka planet → "
                   "extreme poverty",
@@ -657,13 +752,21 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2533)),
 
-    # #46 — DESCRIPTIVE: 6/8/12 from Lagna becomes Arudha → poverty.
-    #       TODO(predicate): ArudhaLagna.
+    # #46 — ENCODED AND HELD SAME DAY (2026-08-23): UNSATISFIABLE BY PARITY. The AL's
+    #       offset from the Lagna is 2d mod 12 (d = lord's offset) — always EVEN — so the
+    #       raw AL can only occupy odd houses {1,3,5,7,9,11}, and the Jaimini redirect maps
+    #       those to {3,4,5,9,10,11}. Houses 6/8/12 are unreachable under BOTH conventions.
+    #       The contradiction is internal to the SOURCE: Raman's poverty sentence (2535)
+    #       cannot fire under his own sign-based AL definition (2518-2520) — likely inherited
+    #       from a tradition computing Arudha differently and transcribed unreconciled.
+    #       Per the H11.C.6 precedent an evaluable rule that cannot fire fakes coverage.
     RuleRecord(
         id="H2.C.46", house=2, signification="wealth", group="combination",
         kind="descriptive", condition=None,
         fortified=None,
-        afflicted="6th, 8th or 12th from Lagna becomes Arudha → suffers poverty",
+        afflicted="6th, 8th or 12th from Lagna becomes Arudha → suffers poverty "
+                  "(UNSATISFIABLE under sign-based Arudha arithmetic — see the parity note "
+                  "above and DOCTRINE_BACKLOG 'H2 dead-rule sweep')",
         frame="ARUDHA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2535)),
 

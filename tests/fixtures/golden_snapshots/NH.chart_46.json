@@ -7,13 +7,15 @@
       "HTJAH-II:16262",
       "HTJAH-II:16328",
       "HTJAH-II:16410",
-      "HTJAH-II:16454"
+      "HTJAH-II:16454",
+      "HTJAH-II:16491"
     ],
     "fired_rule_ids": [
       "H12.C.A16",
       "H12.C.A2",
       "H12.C.A4",
       "H12.C.C5",
+      "H12.C.F1",
       "H12.C.H2",
       "H12.C.J4",
       "H12.L.2"

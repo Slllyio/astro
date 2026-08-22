@@ -33,10 +33,65 @@ from __future__ import annotations
 
 from typing import Final
 
+from app.raman_saab.chart.constants import SIGN_LORDS
+from app.raman_saab.chart.model import RamanChart
+from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.conditions import (
-    And, CountInHouse, LordHasDignity, LordIn, NeechaBhanga, Not, Or, TaraOf)
+    And, Condition, CountInHouse, EvalContext, LordHasDignity, LordIn, NeechaBhanga, Not, Or,
+    TaraOf)
 from app.raman_saab.doctrine.rules import RuleRecord
+from app.raman_saab.primitives.dispositor import dispositor
+from app.raman_saab.primitives.effective_strength import effective_strength
+from app.raman_saab.primitives.functional_nature import NATURAL_MALEFICS
 from app.raman_saab.doctrine.sources import Citation
+
+
+def _lord_of_house1(chart: RamanChart) -> str:
+    return SIGN_LORDS[chart.asc_sign]
+
+
+#: Grahas whose conjunction/aspect blemishes a dispositor — the project's settled B4 blemish
+#: set (`house_template._BLEMISH_MALEFICS`): the Sun is EXCLUDED because the Sun's affliction
+#: of a graha is COMBUSTION, which already enters below via `decisively_weak`, not a mere
+#: conjunction/aspect. Duplicated as a constant rather than imported so this rule set never
+#: depends on the judge layer.
+_BLEMISH_MALEFICS: Final[frozenset[str]] = NATURAL_MALEFICS - {"Sun"}
+
+
+class _LagnaLordStrongButDispositorBlemished(Condition):
+    """Lagnadhipati strong (B1 band 'strong', no hard affliction) while its DISPOSITOR — the
+    lord of the sign it occupies — is blemished (HTJAH-I:1146-1148).
+
+    "Blemished" is the project's blemishless-Venus precedent inverted: conjunct/aspected by a
+    cruel malefic (Mars/Saturn/Rahu/Ketu — the Sun blemishes only through combustion, which
+    the decisively-weak leg carries), or B1-decisively-weak (weak band / combust / uncancelled
+    debility). Identity (the lord in its own sign disposits itself) → False: Raman's sentence
+    is about a DIFFERENT planet holding the lord's fate."""
+    def evaluate(self, ctx: EvalContext) -> bool:
+        lord = _lord_of_house1(ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None:
+            return False
+        es = effective_strength(lord, ctx.chart)
+        if es.band != "strong" or es.decisively_weak:
+            return False
+        disp = dispositor(lord, ctx.chart)
+        if disp == lord:
+            return False
+        d = ctx.chart.planets.get(disp)
+        if d is None:
+            return False
+        if effective_strength(disp, ctx.chart).decisively_weak:
+            return True
+        for m in _BLEMISH_MALEFICS:
+            if m == disp:
+                continue
+            q = ctx.chart.planets.get(m)
+            if q is None:
+                continue
+            if q.rasi_house == d.rasi_house or drishti.aspects_planet(m, disp, ctx.chart):
+                return True
+        return False
 
 
 RULES: Final[tuple[RuleRecord, ...]] = (
@@ -170,11 +225,14 @@ RULES: Final[tuple[RuleRecord, ...]] = (
     # HTJAH-I:1146-1148: "Even when Lagnadhipati is strong but the lord of sign occupied by
     # Lagnadhipati is blemished, the benefice results decrease and the malefic effects are
     # augmented."
-    # "Blemished" dispositor requires a Shadbala-strength or compound-dignity predicate not yet
-    # available. Descriptive.
+    # Was descriptive — the "Shadbala-strength predicate not yet available" note was stale
+    # (B1 effective_strength has shipped since). "Blemished" follows the project's own
+    # blemishless-Venus precedent inverted: malefic-conjunct/aspected, substantially combust,
+    # or decisively weak. Encoded 2026-08-23; review record in DOCTRINE_BACKLOG
+    # "H1 dead-rule sweep".
     RuleRecord(
-        id="H1.C.37", house=1, signification="self", group="combination", kind="descriptive",
-        condition=None,
+        id="H1.C.37", house=1, signification="self", group="combination", kind="evaluable",
+        condition=_LagnaLordStrongButDispositorBlemished(),
         fortified=None,
         afflicted="benefic results decrease and malefic effects augmented (Lagnadhipati strong "
                   "but its dispositor — lord of the sign it occupies — is blemished)",

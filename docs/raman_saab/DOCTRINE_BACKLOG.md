@@ -340,6 +340,26 @@ These are CONFIRMED goldens the engine misses; each is a deliberate limit, not a
   rule fires, but Raman reads it favourable; the blemishless-Venus floor correctly does NOT rescue it
   (its Venus has Mars on it → not blemishless). Softening the decisive rule risks regression.
 - **h12_13 / h5_14** — HELD DRAFTs (engine matches but deliberately not confirmed pending a fresh call).
+- **chart_17** — H1 self *favourable*, engine *afflicted* (dist 2). ADDED 2026-08-22; this and
+  chart_31 were the only two current dist-2 misses with NO prior register entry. Diagnosed, not
+  guessed: the deciding frame is the **MOON** frame (lagna is the alternate), and in it all three
+  pillars are strong (lord Jupiter strong, karaka Sun strong, bhava-bala strong, lord NOT
+  hard-afflicted) with fired evidence **benefic-dominant 5:2**. No decisive-affliction rule fires;
+  the arishta yoga drop correctly does NOT apply (its `not (fired_benefic and fired_malefic)`
+  guard blocks it — both polarities fired). The verdict is `borderline_shifted=True` with
+  **`navamsa_status='weakens'` and no yoga metadata**, so a borderline mixed was dropped to
+  afflicted by the **D9 navamsa modulation** — against benefic-dominant rasi evidence and three
+  strong pillars. Raman's prose is favourable-with-worry ("self-reliant, endurance and energy;
+  high distinction in the legal line" — the negatives he names, "not happy regarding children",
+  are H5 matters, not H1). Whether a navamsa drop should be able to outvote a benefic-dominant,
+  all-pillars-strong rasi ledger is a real doctrinal question and NOT attempted here.
+- **chart_31** — H1 self *afflicted*, engine *favourable* (dist 2). ADDED 2026-08-22. The mirror
+  of chart_17 and why no single directional fix serves both: lagna frame, all three pillars
+  strong, evidence an even 2:2, `navamsa_status='neutral'`, `borderline_shifted=False` — the
+  engine reaches favourable by ordinary preponderance with nothing anomalous in the machinery.
+  Raman reads afflicted on "lack of happiness" (stated twice) despite granting good build, honesty
+  and a "clear quick mind". This is the `self`-as-wellbeing vs `self`-as-body/character boundary;
+  the engine reads the latter. Likely not mechanically separable without an outcome layer.
 The B1 comparative-weighing mechanism (backlog B1) is the single lever that would address chart_52 +
 chart_60; it is high-risk (med) and was deliberately narrowed into the H3.C.39 combust-lord rule rather
 than attempted wholesale. Deferred pending a careful, chart_54-guarded design.
@@ -1144,3 +1164,644 @@ manufactured from no evidence.
 **To re-open**: the prerequisite is the RULE BUCKET, not the row. Find Raman's combinations
 for the matter, encode those, and the signification follows. The audit's own phrasing ("an
 add-only row + a rule bucket") had it right; only the row is cheap.
+
+
+## H3.C.4 courage-favourable rule encoded (2026-08-22) — ✅ SHIPPED, two open caveats
+
+**Trigger** (prioritization only, not justification — see below): a real-outcome study
+(`docs/raman_saab/FAILURE_ATLAS.md`, AstroDatabank) found H3 `courage` reads AUC 0.480
+against a "military service" indicator, labeled INVERTED. Per this project's own governance
+(`tools/raman_saab/astrobank/METHODOLOGY.md`: "No engine constant, threshold, or rule may be
+tuned from these results directly"), that finding is **not** the reason for this change — it
+only motivated auditing H3's rule coverage, where a genuine, citation-backed gap turned out
+to already exist independent of any real-outcome number.
+
+**The gap**: `H3.C.4` (HTJAH-I:3421) — "3rd lord in a beneficial Nakshatra and Navamsha,
+aspected by benefics, with Mars equally well disposed → a man of character and conviction,
+brave and straightforward" — was `kind="descriptive", condition=None` since the rule set was
+first written, the only rich *favourable* courage combination in the file (everything else
+feeding courage is malefic-leaning "3rd lord with X" temperament atoms, or bridged in from
+the `siblings` bucket).
+
+**Encoding** (`house_03_sahaja/combinations.py`, four conjuncts, one per clause of Raman's
+sentence, all reused from already-shipped primitives — no new invented threshold):
+1. `_ThirdLordInBeneficialNakshatra` — 3rd lord's nakshatra ruled by a natural benefic
+   (`primitives.nakshatra.nakshatra_lord`, the function `conditions.InStarOf` already uses).
+2. `C.VargaDignity("LORD_OF:3", varga="D9", states={"exalt","own","friend"})` — beneficial
+   Navamsha, the project's existing "beneficial" dignity-state set.
+3. `_ThirdLordAspectedByBenefic` — Jupiter/Venus only, matching the identical-phrase
+   precedent at `house_02_dhana/combinations.py:320` and `house_05_putra/combinations.py:228`.
+4. `_NotDecisivelyWeak("Mars")` — `not effective_strength("Mars", chart).decisively_weak`,
+   the shipped, golden-tuned B1 measure (this same file's `DOCTRINE_BACKLOG` B1 entry),
+   deliberately NOT a stricter `is_powerful`-style gate (that shortcut is the one the B1
+   module's own docstring records as over-firing Shankha/Kahala 102/164, 48/164).
+
+**Measured**: full 293-chart golden corpus, before/after byte-identical — strict exact
+259/293, within-1 283/293, real errors 10. The rule fired on exactly one golden
+(HTJAH-I chart_61) as additional corroborating evidence for an already-correct
+"courage: favourable" verdict; it changed zero verdicts anywhere in the corpus.
+Evidence snapshot `HTJAH-I.chart_61.json` regenerated to include the new citation/fired-id.
+
+**bphs-doctrine-reviewer verdict: SHIP-WITH-CAVEAT** (confidence MEDIUM). Two open caveats
+recorded rather than silently resolved:
+1. "Beneficial Nakshatra" has no formal BPHS anchor on disk (no gana/tara-from-Moon/named-list
+   definition found in `data/knowledge_library/`) — nakshatra-lordship-by-nature is a
+   *consistent*, not an *invented*, reading (it's the concept `InStarOf` already operationalizes
+   elsewhere), but it is one plausible reading among others (a tara-from-Moon sense is the more
+   common classical use of "auspicious star"). Revisit if a tara/gana-based source surfaces.
+2. `decisively_weak=False` is a materially looser bar than the `{exalt,own,friend}` requirement
+   the SAME sentence sets for the 3rd lord two clauses earlier — Raman's "equally well disposed"
+   reads as parallel-positive, not merely "not ruined." Deliberate (matches the project's own
+   anti-overfire precedent rather than risk a stricter gate over-firing), but asymmetric — a
+   future tightening pass must re-run the golden ratchet before "fixing" this asymmetry, not
+   assume tightening is free.
+
+Not yet touched by this pass: the question of whether bridging courage's evidence through
+the shared `rule_tags=("siblings","courage")` bucket is itself doctrinally correct
+(HTJAH-I:3324 vs 3428 read as one combined reading or two) — deferred to a follow-up pass.
+
+
+## H12.C.D6 "equal in strength" (2026-08-22) — INVESTIGATED and HELD, not shipped
+
+**Attempted**: encode the last dead H12 combination, `H12.C.D6` (HTJAH-II:16444) — "rulers of
+(2&12)/(5&9)/(6&12)/(3&11)/(4&10) equal in strength → criminal action (absent other
+mitigation)" — using a new `_LordsEqualInStrength(house_a, house_b)` condition comparing two
+D1 lords' total Shadbala rupas, `C.Or`-ed across the five cited house-pairs. "Equal" was read
+as `abs(rupas_a - rupas_b) <= MARGINAL_BAND`, reusing the project's own shipped B2 constant
+(0.2 rupas) rather than inventing a new number.
+
+**Why it was held**: `MARGINAL_BAND` was tuned and golden-validated for a *different*
+statistical question — one planet's total vs. its OWN fixed, planet-specific bar
+(`MIN_REQUIRED`, 5.0-7.0 rupas) — not the spread between two independently-varying planets'
+totals, which has different natural variance. Measured against the 209 Track-B golden
+charts, the reused-tolerance version fired on **57/209 = 27%** of charts. The full 293-chart
+ratchet stayed byte-identical (259/293 exact, 283/293 within-1, 10 real errors) throughout,
+but that silence is NOT evidence of good calibration here: `incarceration` sits in
+`house_template._DUSTHANA_AFFLICTION_KEYS`, so any single fired malefic with no benefic
+contradiction already confirms "afflicted" — a 27%-firing rule can ride along on charts
+already decided by other evidence and never be tested as the DECIDING factor on any golden.
+
+**bphs-doctrine-reviewer verdict: INSUFFICIENT-EVIDENCE / HOLD-AS-DOCUMENTED-LIMIT.**
+Back-of-envelope: rupas empirically span ~0-12 (`test_adapter.py`, `test_shadbala_compute.py`
+pins); a uniform-spread estimate puts a single pair's P(|Δ|≤0.2) at roughly 3-4%, and only 7
+grahas hold lordship across the 10 house-slots in play (a birthday-paradox-style crowding
+effect across the 5 pairs) — ORing five such checks lands close to the observed 27% by
+arithmetic alone, not because the combination is doctrinally common. The `C.Or` structure
+itself is textually correct (Raman lists the pairs disjunctively); the defect is the
+per-pair tolerance, reused from a context it was never validated for. DOCTRINE_BACKLOG's own
+B2 entry already recorded once that widening that band beyond its original narrow scope
+broke a golden (chart_54 H10) — this reuse repeated the same class of mistake without
+re-testing against that precedent.
+
+**Reverted**: `H12.C.D6` is back to `kind="descriptive", condition=None` (dead, as before),
+its `afflicted=` text updated to record this investigation so a future session doesn't
+re-attempt the same reuse. Confirmed the revert restores the byte-identical ratchet.
+
+**To re-open** (per the reviewer's own conditions — either one, not a same-day constant
+reuse):
+1. Derive the pairwise "equal" tolerance empirically from this project's own chart corpus
+   (e.g. the percentile spread of `|rupas_A - rupas_B|` per specific lord-pair across the
+   golden/reference set) instead of reusing `MARGINAL_BAND`, then re-run the ratchet.
+2. Build a test that isolates charts where this rule would be the SOLE fired evidence for
+   `incarceration` (not merely corroborating alongside another malefic) and confirm it
+   doesn't over-fire there — the ratchet's redundancy blindness means this has never
+   actually been checked, for this rule or for how many of H12's other malefic rules ride
+   the same confirmation mechanism.
+
+
+## Dead-rule inventory (2026-08-22) — a systematic, citation-backed coverage gap
+
+Measured across the whole rule corpus: **128 of 847 rules (15.1%) are dead** —
+`kind="descriptive"` / `condition=None`, so they can never fire. By house:
+
+| house | dead/total | | house | dead/total |
+|---|---|---|---|---|
+| H1 | 19/106 (17.9%) | | H7 | 6/73 (8.2%) |
+| H2 | 19/92 (20.7%) | | H8 | 11/71 (15.5%) |
+| H3 | 3/61 (4.9%) | | H9 | 7/73 (9.6%) |
+| H4 | 6/50 (12.0%) | | H10 | 6/42 (14.3%) |
+| H5 | 4/50 (8.0%) | | H11 | **21/75 (28.0%)** |
+| H6 | 4/50 (8.0%) | | H12 | 22/104 (21.2%) |
+
+**The load-bearing finding: many `TODO(predicate)` notes are STALE.** They were written when
+the blocking primitive did not exist; the primitive was built later and nobody revisited the
+rule. Confirmed present today: `primitives/maraka.py`, `primitives/arudha.py`,
+`primitives/dispositor.py`, the `shadbala/` package. H2 alone has 4 Arudha-blocked rules
+(C.39/40/46/68), 3 Maraka-blocked (C.41/42/43 — C.41 now encoded, below), 2 navamsa-dispositor
+(C.33/34), 3 sign-modality (C.36/37/38, trivially computable), 1 Kalabala (C.35), 1 dispositor
+(C.31). This is a real, doctrine-cited backlog independent of any real-outcome measurement,
+and a future session should walk it house by house rather than trust the TODO text.
+
+**Not a polarity story for H2** (checked, because it WAS the story for H3.C.4): H2 `wealth`'s
+live rules are already balanced 25 benefic / 25 malefic / 12 neutral, and its dead rules are
+proportionally balanced too (9/6/2). Encoding them would not systematically shift H2's
+favourable/afflicted lean either way.
+
+
+## H2.C.41 Lagna-lord-in-12 + Maraka (2026-08-22) — ✅ SHIPPED WITH CAVEAT, gate discharged
+
+**Shipped**: the previously-dead `H2.C.41` (HTJAH-I:2526, POVERTY block) encoded as
+`C.And(C.LordIn(1, 12), _LordTouchedByMaraka(1))`. The old `TODO(predicate): MarakaDetection`
+was stale — `primitives/maraka.py` postdates the deferral.
+
+**Doctrinal choice — PRIMARY maraka tier only.** `maraka_points()`'s all-tier set averages 5.5
+of 7 grahas and would fire on ~all 19 Lagna-lord-in-12th goldens, rendering Raman's own explicit
+"with/aspected by a Maraka" qualifier INERT — a reading that deletes a cited clause is worse
+doctrine than a narrowing that preserves it. Secondary/tertiary hold benefics-conjunct-2/7-lords,
+the 6th lord and the Shadbala-weakest planet (`00_method_overview.md:160`) — longevity-net
+members, not "a Maraka planet" in a poverty rule. Primary averages 3.0 of 7. The local
+inconsistency with `house_template._maraka_grahas` (all tiers) points the RIGHT way: B3 exists
+precisely because the all-tier set over-afflicts non-death matters. HTJAH-I:783's within-primary
+gradation ("associates kill hardest, lords least") is deliberately NOT modelled; #41's phrase
+is bare.
+
+**Measured.** Fires 14/209 Track-B goldens (6.7%). Full 293-chart ratchet byte-identical:
+259/293 exact, 283/293 within-1, 10 real errors. Suite 605 passed. The primary tier is
+Shadbala-independent, so Track-B and ephemeris charts behave identically (a point D6 lacked).
+
+**Gate discharged — H2.C.29 double-count check.** The reviewer flagged that `H2.C.29`
+(HTJAH-I:2475, `wealth`/malefic) also requires `C.LordIn(1, 12)`, so one placement could enter
+the wealth ledger as two malefic testimonies — which would break the "one testimony among many,
+preponderance contextualizes it" argument this ship rests on. **Measured: co-fire on 2/209
+charts** (`HTJAH-I.h6_04`, `HTJAH-I.h6_12`) — 2 of C.41's 14 firings, 14%. Low, and the rules
+are not substantively redundant: C.29 additionally requires evil planets in the 2nd AND
+10th/11th-lord involvement, and reads "always in debt", a different combination and outcome
+that merely shares one conjunct. Gate passes; ship stands.
+
+**Caveat, recorded honestly — the ratchet CANNOT validate this rule.** Zero of the 14 firing
+charts carries a scored H2 expectation. This is a plain coverage gap, NOT evidence-redundancy
+(cf. H12.C.D6, where `incarceration`'s `_DUSTHANA_AFFLICTION_KEYS` membership caused the
+blindness); `wealth` goes through normal preponderance weighing, so the ratchet WOULD be
+sensitive if a scored chart existed. The B4 precedent (fires 20/225, changes 0 confirmed
+verdicts) therefore does NOT cleanly extend: B4's basis included firing on `h7_16` WITHOUT
+flipping it — a real stress case surviving. That element is absent here.
+
+**Discrimination is weak, by arithmetic not by defect.** Lagna-lord-in-12th base rate is
+19/209 = 9.1% (≈1/12); the maraka qualifier passes 74% of the time, so the rule is
+~"Lagna-lord in 12th" minus a 26% haircut. With whole-sign drishti + Jupiter 5/9 + Mars 4/8 +
+Saturn 3/10 + the locked Rahu/Ketu 5/9, ~3 primary marakas contacting one planet is near-certain.
+Acceptable as a preponderance input; not a discriminating test.
+
+**Corpus-machine follow-up**: HTJAH-I:2526 verbatim. All sourcing here is the repo's derived
+methodology table (`house_02_dhana.md:135`), not Raman's printed line — verify (a) the exact
+phrasing of "a Maraka planet" and whether Raman qualifies which maraka, (b) whether "extreme
+poverty" is stated absolutely or conditioned on absence of mitigation like #44's Jupiter clause.
+
+**Sibling rules NOT unblocked by this**: `H2.C.42` and `H2.C.43` cite the same maraka predicate
+and remain descriptive; they need `Parivartana(1,6)`-with-maraka and a functional-nature-filtered
+malefic set respectively. Encode only after this rule's corpus-machine follow-up is discharged.
+
+
+## H7 marriage backlog re-checked (2026-08-22) — NO REMAINING WORK, closed
+
+Picked up the "H7-marriage (+H5) DRAFT backlog" above expecting live rows to work. Re-reading it
+against the current engine: **there are none.** Recorded so no future session re-opens it:
+
+* **Mode-A (10 items)** is already closed as a DOCUMENTED LIMIT, by measurement, not opinion — a
+  benefic-relief lift was built and tested and does not discriminate (the reliefs it keys on are
+  present on genuinely-afflicted charts too, and enabling it would regress the shipped
+  h7_02/05/15 fixes). The section's own verdict: "do NOT pursue a relief lift."
+* **Mode-B** is fully shipped: h7_02/05/15 via `H7.C.86`, h7_16/19 via `_marital_bond_gate`.
+* **Measured today**: of the engine's 10 remaining dist-2 errors, **zero are H7** (or any marriage
+  signification). The marriage work genuinely landed.
+
+The 10 current dist-2 errors are: H1 self ×3 (chart_09/17/31), H5 children ×2 (h5_10/h5_16), and
+one each of H2 wealth (chart_44), H3 siblings (chart_60), H6 disease_chronic (h6_04), H9 father
+(h9_02), H11 elder_siblings (h11_01). chart_44 and chart_60 were already registered limits;
+chart_17 and chart_31 are newly registered above. **H1 `self` is now the largest single cluster
+(3 of 10)** and is the natural next target for dedicated work — not H7.
+
+
+## The 10 remaining dist-2 errors are ONE mechanism (2026-08-22) — measured, and already optimal
+
+Profiled all 10 current dist-2 errors together (engine verdict, Raman's verdict, fired benefic /
+malefic counts, and the three pillar-strength booleans). The result is far more concentrated than
+the per-chart register entries suggest:
+
+| chart | sig | engine | Raman | ben/mal | pillars L/K/B |
+|---|---|---|---|---|---|
+| chart_09 | self | favourable | insufficient-evidence | **1/4** | 1/1/1 |
+| chart_31 | self | favourable | afflicted | 2/2 | 1/1/1 |
+| chart_60 | siblings | favourable | afflicted | 3/3 | 1/1/1 |
+| chart_44 | wealth | favourable | afflicted | **1/2** | 0/1/1 |
+| h5_10 | children | favourable | afflicted | **0/0** | 1/1/1 |
+| h11_01 | elder_siblings | favourable | afflicted | 2/0 | 1/1/1 |
+| h9_02 | father | favourable | afflicted | 6/6 | 1/1/1 |
+| h6_04 | disease_chronic | favourable | afflicted | 1/1 | 1/0/1 |
+| chart_17 | self | afflicted | favourable | 5/2 | 1/1/1 |
+| h5_16 | children | afflicted | favourable | 2/1 | 1/1/1 |
+
+**8 of 10 are the engine reading favourable where Raman reads afflicted or abstains**; only 2 run
+the other way. Nearly all carry all-three-pillars-strong.
+
+**This is BY DESIGN, not a defect.** `_decide` clause 2 (`house_template.py:457-501`) deliberately
+does NOT count fired-rule surplus — it weighs Raman's three strength PILLARS (lord, karaka,
+Bhava-Bala) per the three-factors doctrine, thresholds `CONTRA_PILLAR_AFFLICT=3` /
+`CONTRA_PILLAR_FAVOUR=2` ("Stage-3 calibration, user-signed-off V2"). So chart_09's 4:1 malefic
+evidence is irrelevant by construction: 3 strong pillars ≥ 2 → favourable. Any apparent
+"tie should read mixed" intuition is a red herring — counts never enter this clause.
+
+**Threshold sweep — the current setting is already a local optimum.** The knobs are read live
+specifically so a tuner can monkeypatch them; swept both:
+
+| AFFLICT | FAVOUR | exact | within-1 | real errors |
+|---|---|---|---|---|
+| 2 | 2 | 256 | 282 | 11 |
+| 2 | 3 | 252 | 283 | 10 |
+| 2 | 4 | 234 | 285 | 8 |
+| **3** | **2** | **259** | **283** | **10** ← current |
+| 3 | 3 | 255 | 284 | 9 |
+| 3 | 4 | 237 | 286 | 7 |
+
+Raising FAVOUR trades strict accuracy for real errors at a poor rate: 2→3 costs **4 exact** to
+save **1** real error (+1 within-1); 2→4 costs **22 exact** to save 3. Compare the B1 guard that
+DID ship: −2 exact, **+2** within-1, −2 real errors — a genuinely two-sided gain. Nothing in this
+sweep matches that shape. **Do not re-run this sweep; do not re-tune these knobs on this
+evidence.** A real improvement here needs a NEW mechanism that separates these 8 charts from the
+strong-pillar charts the engine currently gets right — not a threshold move, which trades one
+error class for a larger one.
+
+This supersedes the framing in the documented-limits register that B1 comparative-weighing is
+"the single lever [for] chart_52 + chart_60": it is the lever for **8 of the 10** remaining
+errors, which raises its value — and the sweep above shows the lever cannot be pulled by
+threshold alone.
+
+
+## Tier-3 bhava-rescue (2026-08-22) — gate MET, fix REFUTED twice, CLOSED
+
+The FEEDBACK_UTILIZATION_PLAN Tier-3 item ("H3 over-affliction bhava-rescue", HTJAH-I:503-505,
+gated on the wife's H3 as the n=2 counterexample) came due today: the wife's sibling facts
+arrived (younger brother = very good relations → H3 siblings truth favourable; engine reads
+afflicted — the same over-affliction shape as the anchor chart). **Condition (a) of the gate is
+satisfied.** The fix itself was then investigated and is REFUTED, on two independent grounds:
+
+**1. Refuted by the source's own conditions.** The verbatim passage (read today from
+`knowledge_library/how_to_judge_a_horoscope_raman/chapter_001`, lines ~503-505): "But if in a
+particular case, **the lord is badly placed**, and **the house itself has good conjunctions and
+aspects** then evil results should not be predicted." Diagnosed both family charts against it:
+father — H3 lord Saturn STRONG (house 2), H3 has ZERO occupants and ZERO benefic aspects;
+mother — H3 lord Jupiter STRONG (house 5), H3 likewise empty of benefic conjunction/aspect.
+Neither condition obtains on either chart. A faithful encoding of the citation **cannot fire on
+the two charts it was pre-registered to fix.** Loosening the conditions until it does would be
+citation-shopping — encoding the target, not the text.
+
+**2. The actual mechanisms are load-bearing, by measurement.** What really produces the family
+afflicted verdicts: father — the D9 `weakens` modulation dropping a contradiction-mixed to
+afflicted (`_navamsa_modulate`; the SAME mechanism as registered golden miss chart_17, now two
+independent counterexamples); mother — decisive rules H3.C.36/38/39. A/B on the goldens
+(monkeypatch, nothing shipped): blocking the weakens-drop on contradiction-mixed alone costs
+**exact 259→248 (−11)** for within-1 +1 and real-errors −1 (chart_17). Eleven goldens where
+Raman HIMSELF reads afflicted depend on that drop. Decisively worse than any shippable trade
+(B1 precedent: −2/+2/−2).
+
+**Closure.** The family H3 misses are genuine documented limits of the chart_60 class: the
+doctrine as encoded from Raman's own worked charts reads these configurations afflicted, and
+the lives are favourable — the real-outcome generalization gap, not an implementation bug. The
+n=2 pattern the gate was designed to detect is REAL; the pre-registered mechanism just does not
+cover it, and no alternative mechanism survives the golden A/B. **Do not re-open without a
+DIFFERENT verbatim citation whose conditions actually obtain on such charts.** Tier-1
+(elicitation) is DONE; Tier-3 is CLOSED-REFUTED.
+
+
+## H11 dead-rule sweep (2026-08-22) — pass 1 of the all-houses sweep: 2 shipped, 2 held, 17 correctly left
+
+First house pass of the full dead-rule sweep (H11 first: worst dead-rate 21/75 = 28%, plus the
+mother's confirmed elder_siblings miss). Full triage of all 21:
+
+**Correctly descriptive, no action (13):** C.24-30 (seven source-of-gains flavour texts whose
+conditions are ALREADY live as H11.P.* placement rules — kept descriptive precisely to avoid
+double-counting); C.32-36 (five ear/health outputs with no H11 signification key — and the
+"Thin significations" entry already closed AGAINST adding keys without rule buckets); C.40
+(a co-born COUNT output, which the verdict engine cannot express, and which Raman himself
+hedges — "students should test it for themselves").
+
+**Genuinely still blocked (4):** C.12 (Navamsa-dispositor-of-lagna-lord multi-clause), C.16
+(Vaiseshikamsa / multi-varga attainment — no such primitive in app/), C.17/C.18 (Dasa-timing
+predicates — the rule engine is static-natal; no dasha context in EvalContext by design).
+
+**✅ SHIPPED — H11.C.4** (HTJAH-II:14362, "fortified planets in the 11th"): encoded as any
+11th-occupant with B1 `effective_strength` band "strong" AND not decisively-weak — per-planet-
+vs-its-own-bar, the exact context B1 was tuned for. Reviewer: VALIDATED/SHIP, HIGH confidence —
+Raman's "fortified" is a generic strength word (when he means dignity he names it, cf. the H12
+`_LordHasDignity` precedent). Fires 62/209 (30%, blunt but placement-class-normal), and
+**12 firing charts carry scored H11 expectations — the ratchet genuinely tested this rule**
+(unlike H2.C.41's coverage-gap blindness) and stayed byte-identical. Designed behaviour, not a
+gap: Rahu/Ketu (no Shadbala bar) and Track-B stated-position charts cannot fire it — "fortified"
+is a strength claim such charts cannot substantiate.
+
+**✅ SHIPPED WITH CAVEAT — H11.C.5** (HTJAH-II:14367, "weak planet in the 11th — eclipsed,
+depressed, defeated in planetary war, or in inimical vargas"): encoded as any non-node
+11th-occupant `decisively_weak` (weak band / combust="eclipsed" / debil-uncancelled=
+"depressed" — the two facts B1 was literally built from). War-defeat carried indirectly (Yuddha
+Bala depresses the Shadbala total). Fires 31/209 (15%), 4 scored firing charts, ratchet
+unchanged. Caveats recorded: (a) the inimical-vargas leg is NOT modelled — disjunct-only, so
+its absence causes only false negatives, disclosed in the rule text; pending a varga-dignity
+predicate; (b) the weak-band leg reads Raman's em-dash list as examples of "weak" (head-noun
+reading), a slight deliberate broadening.
+
+**⛔ HELD (reverted same day) — H11.C.6 / H11.C.7** (HTJAH-II:14388/14390, friendly/inimical
+lord-relationships): briefly encoded on NAISARGIKA relationships; the reviewer PROVED both
+predicates unsatisfiable by enumerating all 12 lagnas (lordship fixed per lagna x naisargika
+fixed per pair: no lagna yields three mutually-friendly 1/2/11 lords, none yields both 2nd+11th
+lords natural enemies of the lagna lord — even one-directionally). An evaluable rule no chart
+can satisfy is WORSE than a descriptive stub: it claims coverage the engine does not have. The
+decisive doctrinal inference: Raman wrote these sentences about real nativities, so "friendly"/
+"inimical" there cannot mean fixed natural friendship — it must be the chart-dependent COMPOUND
+relation (naisargika x tatkalika), which exists in-repo as `dignity._compound_relation`
+(private, already trusted by Sthana Bala) but is not exposed to the conditions algebra.
+**Re-open path**: expose the compound relation as a condition, re-encode the PAIR together
+(they are Raman's paired opposite sentences), measure firing + ratchet, re-review. Reverted to
+descriptive with the proof noted in the rule file itself.
+
+**New sweep lesson (added to the per-rule protocol):** for any predicate built ONLY from
+lagna-fixed lordship and pair-fixed tables (naisargika, sign lords), CHECK SATISFIABILITY BY
+ENUMERATION over the 12 lagnas before encoding — a 0% corpus firing rate on such a predicate is
+a proof of impossibility, not a small-sample observation.
+
+**H11 elder_siblings note (the mother's miss):** nothing in the dead inventory serves it — the
+only dead elder_siblings rule (C.40) is a count-output. Her H11 miss remains a real-outcome
+observation with no citation-backed engine gap behind it; per governance it stays a
+prioritization signal only.
+
+
+## H12 dead-rule sweep (2026-08-23) — pass 2: 3 shipped, 1 already-held, 18 correctly left
+
+Second house pass (H12: 22 dead, second-worst rate; the mother's expenditure miss set the
+order). Triage of all 22:
+
+**Genuinely blocked (16):** the bulk of H12's dead inventory needs varga machinery the
+conditions algebra does not carry — shashtyamsa/D60 class overlays (A23, B1, F3, I6-partial),
+"benefic vargas" plural (A1, E2-half, F6), drekkana + vaiseshikamsa (B4), navamsa-dispositor-
+of-house (A21, B1), karakamsa frame (G2), navamsa moolatrikona (F7 — EXCLUDED BY DESIGN,
+`_VARGA_DIGNITY_STATES` deliberately omits it), comparative cross-planet strength (C4 — same
+class as the held D6), multi-house affliction-grade aggregate (A5), amsa overlays (A22),
+vague "beneficially disposed" gates (E1), and Dasa-free source reads needing verification
+(B3's "(and variants)" compression). G1 (a single ultra-specific four-condition nativity)
+is encodable but would assert one exact configuration — left descriptive as effort-vs-value.
+D6 stays HELD (its own entry above).
+
+**✅ SHIPPED — H12.C.C3** (HTJAH-II:16398, "a beggar is born"): the "Navamsa-debility overlay"
+TODO was stale — `VargaDignity` covers it exactly (Sun D9-debil = Libra, Venus D9-debil =
+Virgo, so "Venus in Virgo in Rasi AND Navamsa" is InSign+VargaDignity{debil} literally).
+Reviewer: VALIDATED/SHIP, HIGH — printed text read verbatim, one-to-one transcription, no
+dropped clause. Fires 2/209 (1%), zero scored-chart exposure, ratchet byte-identical.
+
+**✅ SHIPPED WITH CAVEAT — H12.C.F1** (HTJAH-II:16491, Saturn/Mandi on 12th + 12th lord in
+Vipat/Pratyak/Naidhana tara): the Tara TODO was stale — `TaraOf` has carried `LORD_OF:n`
+support (its own docstring cites HTJAH-I:1142-1146); Mandi read from `chart.upagrahas`.
+Reviewer: VALIDATED, HIGH — source parentheses ARE {3,5,7}; the 10% firing rate is the
+predicate's own arithmetic (Saturn covers ~4/12 houses x 3/9 taras ≈ 11%), a severity
+mismatch present in Raman's own text, accepted per the H2.C.41 preponderance reasoning.
+Caveats: (i) Mandi leg absent on Track-B charts (no upagrahas) — disclosed in the rule text;
+(ii) Mandi-ASPECT is unmodelled (occupancy only — Mandi is an upagraha point with no standard
+drishti); both disjunct-only, false-negatives-only.
+
+**✅ SHIPPED WITH CAVEAT — H12.C.F2** (HTJAH-II:16498, combust/debilitated malefic afflicting
+the 12th): combust bar = the engine-wide B7 substantial threshold; debility bhanga-gated per
+B1. Reviewer: VALIDATED, MEDIUM — "a state of eclipse" is read as combustion per Raman's own
+usage in the SAME chapter (16381-16385 treats "eclipsed" and "combust" as one register) and
+the H11.C.5 precedent; the alternative grahana reading (Sun/Moon under node-eclipse) is
+unmodelled — concretely, a Sun-conjunct-Rahu afflicting the 12th will not fire (the Sun can
+never be combust). Disjunct-only, false negatives only. Revisit if a corpus pass finds Raman
+glossing "eclipse" with node language.
+
+**Ratchet-blindness ledger for this pass** (per the cross-cutting entry below): only F2 was
+genuinely ratchet-tested (one scored firing chart, HTJAH-II.h12_10, verdict unmoved); C3 and
+F1 shipped on coverage-gap silence — their fidelity rests on the reviewer's verbatim source
+reads, not on the ratchet. One tier-3 evidence snapshot regenerated (NH.chart_46 —
+evidence-only, all six H12 verdicts identical).
+
+
+## H1 dead-rule sweep (2026-08-23) — pass 3: 3 shipped (2 review-corrected), 1 reverted-by-measurement, 15 correctly left
+
+Third house pass (H1: 19 dead; the golden corpus's largest error cluster and the mother's
+health miss set the order). The most instructive pass so far — the ratchet caught a live
+regression, and the reviewer corrected an encoding before it shipped wrong.
+
+**Correctly left (15):** H1.M.G1/H1.M.MD (methodological prose, not predicates); H1.C.32
+(vague "decent position"); H1.N.57/60/62 (vague "adverse Navamsha" summary rows); H1.C.23
+(blocked: friendly-Drekkana class, no D3 in the algebra); H1.N.52 (comparative lord strength —
+the held D6 class); H1.N.65 (navamsa-dispositor chain); H1.N.67 ("well disposed" holistic
+gate); H1.C.22/24/25 (encodable but blunt/phase-output; deferred as effort-vs-value);
+**H1.C.W33 — confirmed NOT a stale TODO**: its deferral note is a live design decision
+(boolean malefic would double-count the chart-33 affliction the Sakata arishta already
+carries) — and this pass PROVED that note right, see N.38 below.
+
+**⛔ ENCODED AND REVERTED — H1.N.38** (HTJAH-I:1709, lord of Lagna weak/debilitated/combust →
+sickly): the predicate is a faithful transcription ("weak, debilitated or combust" IS the B1
+`decisively_weak` founding list) — and firing it as a context-free boolean malefic reproduced
+EXACTLY the failure W33's deferral note predicted for this rule class: on chart_33 (lagna lord
+neecha) it manufactured a benefic-vs-malefic contradiction that blocked the Y.SAKATA arishta
+drop, flipping the golden's correct 'afflicted' to 'mixed'. **Measured: strict 259→258,
+within-1 and real-errors unmoved — a pure one-sided loss.** Reverted; reviewer confirmed the
+revert ("a change buying nothing on any axis cannot ship"). The working predicate class
+(`_LagnaLordDecisivelyWeak`) is retained unused for promotion behind the same gate W33 names:
+a lord-dignity-aware contradiction policy. THE RATCHET DID ITS JOB — first live catch of the
+sweep.
+
+**✅ SHIPPED (review-corrected) — H1.N.58** (HTJAH-I:1767, 1st/9th lord exalted → wealth
+influx): first encoding was a standalone `Or(exalt-1st, exalt-9th)` firing 36/209 (17%). The
+reviewer read the source paragraph and HELD it: "either of the lords" is scoped to the
+paragraph's base configuration — Lagnadhipati JOINED WITH the 9th lord IN the 9th (:1764, the
+base N.56 already encodes), per the file's own amplifier convention (N.50/N.53 =
+And(base, qualifier)). Re-encoded with the gate: **fires 2/209 (1%)** — the rare event Raman
+actually wrote, a 34-chart over-fire caught before shipping. Ratchet unchanged.
+
+**✅ SHIPPED WITH CAVEAT — H1.N.66** (HTJAH-I:1972, contact between 1st and 6th lords →
+health/defamation risk): `_LordsInContact(1,6)` — conjunction or aspect in EITHER direction.
+Reviewer VALIDATED both scrutinized choices: identity→False (Raman's dictum is a two-place
+relation; his worked Chart 18 is two planets; counting Taurus/Scorpio dual-lordship would
+blanket-fire from the lagna alone) and either-direction aspect (the dictum is directionless;
+restricting to the Chart-18 gloss's direction would encode the example, not the rule; and
+mutual-only could fail Raman's own worked case under directional drishti). Fires 58/209
+(28%) — honest arithmetic, accepted per the H2.C.41 preponderance class. Caveat: the
+"health suffers" wording is signification-INFERRED (the printed lines support "fortunes
+subject to much change" + defamation, not health verbatim).
+
+**✅ SHIPPED WITH CAVEAT (review-corrected) — H1.C.37** (HTJAH-I:1146-1148, Lagnadhipati
+strong but dispositor blemished): first encoding blemished on ALL of NATURAL_MALEFICS; the
+reviewer flagged that the very precedent the docstring cited (B4 blemishless-Venus,
+`_BLEMISH_MALEFICS`) EXCLUDES the Sun — the Sun blemishes only through combustion, which the
+decisively-weak leg already carries. Corrected to Mars/Saturn/Rahu/Ketu touch + decisively-
+weak dispositor. Fires 73/209 (35%, down from 37% — the Sun leg was precedent-inconsistent
+surplus). Identity→False validated (a lord in own sign disposits itself; Raman's sentence is
+about a DIFFERENT planet holding the lord's fate). Caveat: "blemished" is Raman-undefined at
+this line; the encoding follows the project's settled register.
+
+**Ratchet-blindness ledger:** H1 has the corpus's densest scored coverage (23 charts), so all
+three shipped rules were GENUINELY ratchet-tested (6-9 scored firing charts each, no verdict
+moved) — and N.38's regression was caught live. Snapshots regenerated twice (9 then 3,
+verified evidence-only both times, zero verdict changes).
+
+
+## H2 dead-rule sweep (2026-08-23) — pass 4: 5 shipped, 1 held-by-parity-proof, 12 left — AND THE SWEEP'S FIRST ACCURACY GAIN
+
+Fourth house pass (H2's remaining 18 after C.41). **Strict ratchet 259/293 → 260/293** —
+the first exact-accuracy gain since the ceiling was measured, earned by a dead rule whose
+TODO went stale, and banked only after the reviewer's arithmetic proved it legitimate.
+
+**Correctly left (12):** C.33/34 (navamsa-dispositor chain), C.35 (blocked by the SETTLED
+"no per-component Shadbala minima exist" finding — "having Kalabala" has no bar), C.11
+(absence-as-trigger, the N.66-note default-state concern), C.13 ("all good" vague), C.15
+(encodable, deferred effort-vs-value), C.31 (multi-gate, deferred), C.42/C.43 (still gated
+on the C.41 corpus-machine follow-up, per that entry's own condition), C.45 (deferred),
+C.67 (routing note — already covered by H2.L.1-12), C.68 (vague composite outcome).
+
+**✅ SHIPPED — the modality triplet H2.C.36/37/38** (HTJAH-I:2492-2496): 3rd lord in the 3rd
+aspected by Jupiter/Venus, with the 3rd common/fixed/movable → wealth by thousands/hundreds/
+within-two-hundred. The "SignModality" TODO was trivially computable all along. Reviewer:
+VALIDATED×3, HIGH — source read verbatim, "its lord is situated there" = lord in the 3rd
+confirmed, modality attaches to the house's sign, wealth routing explicit in the outcome
+clause; Raman's own "naturally applies where movable signs ascend" remark is a consistency
+note, correctly not encoded. Fires 0/1/0 of 209 (four-conjunct narrow rules, position-
+dependent — NOT the lagna-fixed unsatisfiability class). The magnitude gradient survives
+only in the fortified prose (RuleRecord carries no magnitude channel — framework limit).
+Noted for a future precedent re-litigation: Jupiter/Venus-only for "benefics" is a corpus
+precedent call; Raman names Mercury as a benefic 2nd-house resident two lines earlier.
+
+**✅ SHIPPED WITH CAVEAT — H2.C.39** (HTJAH-I:2497, Saturn/Mars debilitated in the 11th
+FROM ARUDHA LAGNA → good earnings): sign-from-AL confirmed verbatim; bhanga gate correctly
+SKIPPED (debility is the TRIGGER of a benefic result here — a classical paradox rule — so
+the guard that protects 'weak' readings points the wrong way; a bhanga'd planet satisfies
+the rule more, not less). Fires 7/209, 2 scored charts, no verdict moved. **CAVEAT → NEW
+AUDIT TICKET (arudha.py)**: Raman's own worked AL example (HTJAH-I:2518-2520, Aquarius
+Lagna → Leo AL, kept in the 7th) does NOT apply the Jaimini same-sign/7th redirect that
+`primitives/arudha.py:34-35` applies — for ~17% of charts (raw AL in 1st/7th) the code's AL
+differs from Raman's. Per the Prime Directive (Raman wins) the primitive needs its own
+review; C.39's fire-set is affected, C.40's provably is NOT (below).
+
+**✅ SHIPPED — H2.C.40** (HTJAH-I:2498, AL in 11th/4th/5th/7th from Lagna → becomes rich):
+**fixed golden chart_45 H2 wealth (mixed → favourable, Raman agrees) — strict 260/293, zero
+new misses.** The 52% fire rate triggered full scrutiny and survived it: the reviewer
+ENUMERATED the arithmetic — AL offset = 2·d mod 12 (d = lagna lord's offset) is ALWAYS
+EVEN, so the attainable AL houses are {3,4,5,9,10,11} (after redirect), and Raman's four
+named houses span exactly 3 of those 6 → ~50% is Raman's own arithmetic, the H12.C.F1
+precedent class. Decisive robustness result: the fire-set is IDENTICAL under the code's
+redirect convention and under Raman's own no-redirect construction (his set contains both
+7 and 4, so the redirected case fires either way) — the chart_45 gain does not depend on
+the open arudha.py question. Raman's own worked example is itself a C.40-firing chart.
+Baseline bumped 259→260 in this change-set with the mechanism recorded in `_comment`.
+
+**⛔ HELD BY PARITY PROOF — H2.C.46** (HTJAH-I:2535, AL in 6/8/12 → poverty): encoded and
+reverted same day. The same enumeration proves it UNSATISFIABLE under BOTH conventions:
+2·d mod 12 is always even; houses 6/8/12 sit at odd offsets and are unreachable. The
+contradiction is INTERNAL TO THE SOURCE — Raman's poverty sentence cannot fire under his
+own sign-based AL definition fourteen lines earlier (likely inherited from a tradition
+computing Arudha differently, transcribed unreconciled). Per the H11.C.6 precedent, an
+evaluable rule that cannot fire fakes coverage. Reverted to descriptive with the proof in
+the rule text. C.40 does NOT revert with it — the pairing is superficial; the asymmetry is
+arithmetic.
+
+**Sweep protocol addendum (from the C.40/C.46 pair):** when a predicate is built on a
+DERIVED point (Arudha, upagraha, sphuta), enumerate the derivation's reachable set first —
+the same discipline as the lagna-fixed satisfiability check, one level up.
+
+
+## H8-H3 dead-rule sweep finale (2026-08-23) — passes 5-12, closing the all-houses sweep
+
+Final passes over the remaining eight houses (H8, H9, H10, H4, H5, H6, H7, H3 — 47 dead
+rules). Full triage; six candidates encoded (verdicts below finalized after batch review).
+
+**Correctly left, by blocking class:**
+* Drekkana/D60/varga machinery absent: H8.C.21 (22nd drekkana), H8.C.22/C.27
+  (navamsa-lagna-lord chains), H5.C.11 (drekkana dispositor), H4.C.47 (Gopura/shashtiamsa
+  legs), H6.C.26 ("cruel Navamsha" 4-planet battle-death), H10.C.5/C.15 (navamsa-dispositor
+  profession table, karakamsa overlay).
+* Dasa-timing (Phase-F, no dasha context in EvalContext by design): H9.D.44/45/46,
+  H10.C.60, H8.C.19-partial.
+* Requires the FATHER'S chart (impossible from one nativity): H9.A.14, H9.A.16.
+* Affliction-grade aggregates (no graded predicate): H8.C.4, H5.C.37.
+* Deliberate dedups (refinements of already-scored placements, kept descriptive to avoid
+  double-counting): H8.C.5, H8.C.6, H8.C.14, H4.C.3, H4.C.30, H5.C.8, H7.C.14 (promoted
+  long ago into H7.C.86 branch (a)).
+* Output-flavour / no verdict polarity: H8.C.20 (cause-by-planet table), H8.C.27 (place of
+  death), H3.C.15/16/17 (co-born COUNT outputs — the whole of H3's remainder), H8.C.7
+  (dual-polarity per-occupant flavour — does not fit one boolean; splitting would fork the
+  rule id), H10.C.44 (ascetic counting), H9.A.10 (adoption, neutral), H9.A.12 ("beneficially
+  disposed" vague), H4.C.24 (vague multi-clause), H4.C.26 ("strong 4th" house-strength gate),
+  H7.C.81 (comparative-strength timing, the held D6 class), H10.C.27 (the 32-yoga royalty
+  BANK — a yoga-file project, not one rule).
+* **H7 deliberately untouched beyond the dedup note**: the marriage machinery is the
+  project's densest-gated, most-scored surface with its backlog explicitly CLOSED; its
+  remaining dead rules (C.5/C.8/C.31/C.35) include lagna-fixed blanket benefics (a benefic
+  7th SIGN covers 7 of 12 lagnas → ~58% lagna-only fire) with real regression risk for no
+  measured need. Recorded, not encoded.
+
+**Encoded — all six SHIPPED (3 clean, 3 with caveats applied same-day):**
+
+* **✅ H8.D.2** (HTJAH-II:3584, food-intake disease) — SHIP, exact three-conjunct
+  transcription; the reviewer confirmed aspect-only on the Lagna leg is faithful ("aspected
+  by", so a malefic IN the Lagna correctly does not fire). Fires 14/209. NH.chart_38's
+  unpinned `death` manner moving insufficient-evidence → afflicted while its pinned
+  `longevity` favourable stands is the established span-vs-manner dual reading.
+* **✅ H10.C.56** (HTJAH-II:14214, Neechabhanga Rajayoga) — SHIP-WITH-CAVEAT. The
+  broader-than-citation question was ruled FAITHFUL: the source introduces its list as
+  "SOME important combinations" (non-exhaustive), `bhangas.py` anchors the 4-condition set
+  as the standard doctrine Raman's method accepts, and a citation-trimmed fork would create
+  two competing bhanga definitions in one engine. Caveat-fix applied: the separate
+  `VargaDignity(D9,{exalt})` OR-branch was REMOVED as provably redundant (bhanga condition
+  4 is the same test) — the docstring now states the unitary-doctrine reasoning instead of
+  misdescribing the branch. Fires 80/209 (38%) — the doctrine's real breadth (any-of-7
+  debil is ~40-50% of charts; Raman applies bhanga liberally in his own worked voice at
+  14200), a weak testimony by construction; recorded for any future H10 re-weighing. Forms
+  (1)/(4)/(5) of the citation remain unencoded (correct conservatism).
+* **✅ H4.C.42** (HTJAH-I:4929, Vahana yoga) — SHIP, all three disjuncts parse-verified
+  against the printed sentence; both identity→False guards ruled correct (Aquarius' Venus
+  lords both 4 and 9 — "association of the lords" cannot be self-association; disjunct 3
+  still covers those charts). Aquarius/Cancer → Venus-as-4th-lord derivations confirmed.
+  Fires 22/209.
+* **✅ H5.C.3** (HTJAH-I:5185, Jupiter as strong 5th lord) — SHIP-WITH-CAVEAT. Rasi core
+  exact. Caveat-fix applied: the source's next sentence ("Birth of children is ALSO
+  indicated when...") lists three INDEPENDENT combinations, not overlays — the rule text
+  now says so explicitly, so a future encode makes them separate rules, never an And-gate
+  here. Fires 0/209 (2/12-lagna × strength × aspect; satisfiable; liveness baseline
+  consciously bumped 84→85).
+* **✅ H6.C.1** (HTJAH-I:6073, evil 6th lord in 1/8/10) — SHIP-WITH-CAVEAT, and the caveat
+  was decisive: the reviewer found Raman's own counter-citation for my `decisively_weak`
+  arm — HTJAH-II:14229-14230, weak dusthana lords "if weak, produce Rajayoga" — weakness
+  is classically FAVOURABLE for this signification. **The weak arm was DROPPED same-day**
+  (fires 42→32/209); the surviving functional-malefic arm reads Raman's own per-lagna
+  table (HTJAH-I:523-604) and is what keeps the rule from double-counting the ungated
+  L.1/L.8/L.10 placements (double-count concern ruled adequately addressed — the gate is
+  new testimony, not duplication). Weak arm re-addable only on explicit user ruling.
+* **✅ H6.C.19** (HTJAH-I:6105, 6th lord in a benefic's sign → many friends) — SHIP;
+  dispositor-∈-benefics is the standard "house of a benefic" reading; any-one-of
+  Jupiter/Venus for "good planets" (plural) matches the corpus's loose class-plural usage.
+  Fires 34/209.
+
+Ratchet stable 260/293 · 283 · 10 through the whole finale; scored-house overlap
+1/16/1/0/2/3 charts respectively — H10.C.56 was genuinely ratchet-tested on 16 scored
+charts. 11 evidence snapshots regenerated (verdict changes: only the chart_38 dual-reading
+above).
+
+**THE ALL-HOUSES SWEEP IS COMPLETE.** Totals across all 12 houses: **19 rules shipped**
+(H3.C.4; H2.C.41+36/37/38/39/40; H11.C.4/5; H12.C.C3/F1/F2; H1.N.58/66 + C.37; H8.D.2;
+H10.C.56; H4.C.42; H5.C.3; H6.C.1/19 — counting the pair-corrected ships once), **6
+held/reverted with a measured or proven reason** (H12.C.D6 tolerance-misuse; H11.C.6/7
+naisargika-unsatisfiability; H1.N.38 chart_33 contradiction; H2.C.46 parity-proof; H6.C.1's
+weak arm counter-citation), **1 golden chart fixed** (chart_45, strict 259→260 — the first
+exact gain since the measured ceiling), **~78 dead rules correctly left** with their
+blocking class named, and **3 standing audit tickets** (compound-relation exposure for
+H11.C.6/7; arudha.py's Jaimini redirect vs Raman's worked example HTJAH-I:2518-2520; the
+H2.C.41 corpus-machine verbatim check gating C.42/C.43).
+
+
+## Cross-cutting: "ratchet unchanged" is NOT evidence of correctness (2026-08-22)
+
+Three rules were encoded or attempted in one session; in **all three** the golden ratchet was
+byte-identical, and in **none** did that silence carry evidential weight about correctness:
+
+* `H3.C.4` — fired on 1 golden, corroborating an already-correct verdict. Ratchet blind
+  because the rule never had to decide anything.
+* `H12.C.D6` — fired on 27% of charts. Ratchet blind through **evidence redundancy**:
+  `incarceration` sits in `_DUSTHANA_AFFLICTION_KEYS`, so any single fired malefic with no
+  benefic contradiction already confirms "afflicted"; a badly-calibrated rule rides along
+  invisibly. HELD on review.
+* `H2.C.41` — fired on 14 charts. Ratchet blind through **coverage gap**: zero of those
+  charts has a scored H2 expectation at all.
+
+The ratchet is a strong guard against REGRESSION and remains sovereign for that purpose. It is
+not, and was never designed as, a validator for newly-encoded rules. Any future dead-rule
+encoding should measure (a) the firing rate, (b) whether any firing chart carries a scored
+expectation for that house, and (c) co-fire against rules sharing a conjunct — before treating
+a green ratchet as permission to ship.

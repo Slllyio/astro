@@ -2,9 +2,11 @@
   "H2": {
     "citations": [
       "HTJAH-I:2395",
+      "HTJAH-I:2498",
       "HTJAH-I:2800"
     ],
     "fired_rule_ids": [
+      "H2.C.40",
       "H2.C.69",
       "H2.L.9"
     ],

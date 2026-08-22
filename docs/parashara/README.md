@@ -83,6 +83,13 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Nisargayu** (ch.43 sl.16-17 + ch.3 sl.49-50) — natural longevity, the 120-year allotment scaled
   by deep-exaltation (the third method, which the Raman engine lacks). Pre-reduction core.
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
+- **Bhava-lord effects** (ch.24) — the full 144-statement catalogue (lord of each house in each
+  house), indexed from the corpus in place so every effect cites Parashara's own sloka; surfaced
+  per-nativity in the reading against the chart's actual house-lord placements.
+- **House effects** (ch.12-23) — a per-house cited index of Parashara's effect-slokas, with topic
+  headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
+  `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
+  fire-on-chart rules layer.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:

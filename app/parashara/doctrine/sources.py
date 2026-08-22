@@ -57,11 +57,21 @@ def resolve_file(work: str) -> Optional[Path]:
 
 
 def _glob_chapter(folder: str, num: str) -> Optional[Path]:
+    """chapter_NNN_*.md for a chapter number, tolerating 3-, 2- or 1-digit zero-padding on disk
+    (the allied scrapes are inconsistent — Phaladeepika files are `chapter_05_`, BPHS `chapter_005_`)."""
     try:
-        hits = sorted((_CORPUS / folder).glob(f"chapter_{int(num):03d}_*.md"))
-    except (ValueError, OSError):
+        n = int(num)
+    except ValueError:
         return None
-    return hits[0] if hits else None
+    base = _CORPUS / folder
+    for pat in (f"chapter_{n:03d}_*.md", f"chapter_{n:02d}_*.md", f"chapter_{n}_*.md"):
+        try:
+            hits = sorted(base.glob(pat))
+        except OSError:
+            return None
+        if hits:
+            return hits[0]
+    return None
 
 
 def _first(folder: Path) -> Optional[Path]:

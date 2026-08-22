@@ -91,8 +91,12 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
 - **General corpus index** (`corpus_index.slokas_of`) — a faithful numbered-sloka index for ANY
-  chapter (88/97 BPHS chapters, ~1035 slokas), each cited to its own line. The shared backbone the
-  structured modules build meaning on; `find_slokas` is a cited grep over a chapter.
+  chapter (BPHS or allied), each cited to its own line. The shared backbone the structured modules
+  build meaning on; `find_slokas` is a cited grep over a chapter. Coverage: **BPHS** 88/97 chapters
+  (~1035 slokas, root) + the **allied lineage** — **Saravali** 55 chapters/~1020 slokas and **Brihat
+  Jataka** ~19/268 (allied tier, citable where BPHS is silent). Phaladeepika, Uttara Kalamrita, Hora
+  Sara and Jataka Parijata are sparsely imported / OCR-damaged in this snapshot — a recorded
+  source-quality gap, not hidden (see `BPHS_CORPUS_COVERAGE.md`).
 - **Nabhasa yogas** (ch.35) — the cited catalogue of all 32 distribution yogas, plus detectors for
   the two computationally-unambiguous families: Asraya (Rajju/Musala/Nala, by shared modality) and
   Sankhya (Gola…Veena, by count of signs occupied). Surfaced per-nativity in the reading; the Dala

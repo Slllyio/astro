@@ -57,13 +57,17 @@ judges/       bhava_prosperity  (the verdict layer — BPHS ch.11, NOT Raman's _
   point of divergence from Raman's engine).
 - **Baladi avastha** (ch.45) and **graha drishti** (ch.26).
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
-- **Conditional dashas** (ch.46) — Ashtottari (108) and Yogini (36), with a generic framework the
-  remaining variants plug into.
+- **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:
+  Ashtottari (108), Yogini (36), Shodasottari (116), Dwadasottari (112), Panchottari (105),
+  Shatabdika (100), Chaturashiti-sama (84), Dwisaptati-sama (72), Shattrimsat-sama (36). Each cited,
+  with its applicability condition; the inclusive counting convention is pinned by Parashara's own
+  worked examples. **Not encoded:** Shastihayani (its ch.46 OCR is internally inconsistent — 69≠60);
+  Kalachakra/Chara/Sthira (rasi-based, a different framework).
 
 ## Next tranches (documented, not yet built)
 
-- The remaining ch.46 dashas (Shodasottari, Dwadasottari, Panchottari, Shatabdika, the -sama
-  family, Kalachakra) — same `nakshatra_dasha` framework, each needs its table sourced from ch.46.
+- Rasi dashas: Kalachakra (ch.46 sl.100+), Chara, Sthira — a separate rasi-based framework.
+- Shastihayani — once a clean source resolves the 69-vs-60 inconsistency.
 - Nisargayu (the third longevity method) and the Jagradadi/Sayanadi avasthas.
 - A full chart adapter + report surface; BPHS goldens from worked nativities where the text gives
   them.

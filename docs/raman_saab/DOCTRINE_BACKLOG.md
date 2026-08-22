@@ -1901,3 +1901,52 @@ compound friendship needs only a friendly mutual placement plus no natural enmit
 2026-08-22 unsatisfiability was purely a naisargika artifact, exactly as the hold note
 predicted. Ratchet byte-identical (261/294, 284/294, 10); liveness 741→743, never-fired 85.
 All three sweep audit tickets are now closed.
+
+## H1-cluster mechanism design session (2026-08-23) — majority-loci affliction PROBED and REFUTED
+
+The follow-up the threshold-sweep entry demanded: "a real improvement here needs a NEW mechanism
+that separates these 8 charts from the strong-pillar charts the engine currently gets right."
+A candidate was designed from the error charts' own printed reasoning and measured. It fails.
+Recorded so the next session does not redesign it.
+
+**The candidate (doctrine-anchored, not invented)**: per-locus CONTACT-affliction as an axis
+separate from strength. Raman's own error-chart paragraphs weigh it exactly so — chart_60
+(HTJAH-I:3802-3816): house (Mandi + Mars/Saturn aspects, Jupiter aspect "somewhat mitigates"
+but "still the Bhava is not sufficiently strong") + lord (well-placed, D9-exalt, BUT Jupiter-
+Ketu association + D9 Mars aspect) + karaka (good house BUT enemy sign + Sun + Saturn aspect)
+→ "Though Jupiter is well-disposed... the Karaka and the third house are subject to affliction.
+The native has no brothers." And h9_02 (HTJAH-II:7945-7985): "The Sun in exaltation with
+Vargottama Jupiter... gave an exalted father — BUT the papakartari to the 9th house (from Rahu
+and Mars), the 9th lord (from Saturn and Sun)..." — strength gave the QUALITY, contact gave the
+VERDICT. Proposed clause: demote-only guard on the clause-2 FAVOUR lift when >=2 of the three
+loci (bhava/lord/karaka) are contact-afflicted — the exact B1/navamsa-guard mold.
+
+**The measurement (scratch probe, no engine change; all 294 confirmed Track-B verdicts)**:
+four variants — {any-malefic-contact, hard-gates (>=2 distinct malefic contactors / papakartari
+/ node-conjunction)} x {gross, net-of-benefic-contact}. NO variant separates:
+
+| variant | threshold | errors caught (of 8) | correct favourables flagged |
+|---|---|---|---|
+| any-contact NET   | >=2 | 3 | 24 |
+| any-contact GROSS | >=2 | 7 | 100 |
+| any-contact GROSS | =3  | 3 | 38 |
+| hard-gates NET    | >=2 | 0 | 9  |
+| hard-gates GROSS  | >=2 | 1 | 31 |
+
+The error charts sit at the SAME afflicted-loci counts as the correctly-favourable population —
+the base-rate problem is structural, and it is the Measured-Truth mechanism operating inside
+Raman's own corpus: malefic contact on a majority of loci is ordinary, therefore non-
+differential. Raman's per-locus judgments in the very paragraphs above are finer than any
+tally: WHICH malefic (functional nature), HOW (papakartari vs single aspect vs association),
+mitigation weight ("somewhat mitigates" ≠ clears), D9 confirmation, enemy-sign placement,
+Mandi/upagrahas (not modelled), and the Moon-reference check. His grading is the full reading,
+not a countable proxy of it.
+
+**Status: CLOSED-REFUTED** (same shape as the Tier-3 bhava-rescue: designed from citations,
+killed by measurement — a success of the process). Together with the threshold sweep this
+closes BOTH obvious mechanism families for the 10-error cluster. **Re-open path**: not a new
+clause guess — systematic extraction of Raman's per-locus grading LANGUAGE from all worked
+examples (the "sufficiently strong / not very good / quite afflicted" vocabulary) into a graded
+per-locus dataset, then a mechanism designed against that dataset. That is golden-corpus work
+(playbook rule 7), which is already the declared accuracy lever. Probe script preserved in the
+session scratchpad; numbers above are the durable record.

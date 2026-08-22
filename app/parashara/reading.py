@@ -1,0 +1,102 @@
+"""The Parashara reading — everything the engine knows, assembled for one nativity.
+
+The capstone that turns the primitives into an engine: cast a chart, then produce a single cited
+BPHS reading combining the four capabilities built so far —
+
+  * the twelve bhava verdicts (Parashara's own ch.11 prosperity/annihilation method),
+  * each graha's Vimsopaka strength (ch.7),
+  * the applicable conditional dashas (ch.46), and
+  * the natural longevity span (Nisargayu, ch.43).
+
+Every element carries the BPHS citation the underlying primitive already holds, so the whole
+reading is traceable to Parashara's own slokas.
+
+Honest scope: the dasha timelines are reported FROM THE START of the birth mahadasha
+(`elapsed_fraction=0`), not adjusted for the balance-at-birth — that needs Bhayat/Bhabhog (the
+Moon's ghatika position), a birth-time-precision step flagged on the output rather than faked. The
+Nisargayu span is the pre-reduction natural figure (its own flag). Nothing here is presented as more
+settled than it is.
+
+Usage:
+    from app.parashara.chart.cast import cast
+    from app.parashara.reading import read
+    r = read(cast(year=1990, month=7, day=15, hour=12, minute=0,
+                   tz_offset=5.5, latitude=12.97, longitude=77.59))
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Mapping
+
+from app.parashara.chart.bhava_chart import judge_all_bhavas
+from app.parashara.chart.cast import ParasharaChart
+from app.parashara.chart.vimsopaka_chart import vimsopaka_all
+from app.parashara.judges.bhava_prosperity import BhavaVerdict
+from app.parashara.primitives import ashtottari_dasha as ash
+from app.parashara.primitives import yogini_dasha as yog
+from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
+from app.parashara.primitives.nakshatra_dasha import DashaPeriod
+from app.parashara.primitives.relationships import SIGN_LORDS
+from app.parashara.primitives.vimsopaka import VimsopakaScore
+
+
+@dataclass(frozen=True)
+class DashaReading:
+    system: str
+    applicable: bool
+    reason: str                          # why it applies / does not
+    timeline: tuple[DashaPeriod, ...]    # from the start of the birth mahadasha (see module note)
+
+
+@dataclass(frozen=True)
+class ParasharaReading:
+    chart: ParasharaChart
+    bhavas: Mapping[int, BhavaVerdict]
+    vimsopaka: Mapping[str, VimsopakaScore]
+    dashas: tuple[DashaReading, ...]
+    nisargayu: NisargayuSpan
+    balance_adjusted: bool               # False: timelines are not birth-balance-adjusted
+
+
+def _rahu_house_from(chart: ParasharaChart) -> tuple[int, int | None]:
+    """Rahu's house from the lagna, and from the lagna LORD's sign (for Ashtottari applicability)."""
+    def sign_of(lon: float) -> int:
+        return int(lon % 360.0 // 30) + 1
+    rahu_sign = sign_of(chart.longitudes["Rahu"])
+    from_lagna = ((rahu_sign - chart.asc_sign) % 12) + 1
+    lord = SIGN_LORDS[chart.asc_sign]
+    lord_lon = chart.longitudes.get(lord)
+    from_lord = (((rahu_sign - sign_of(lord_lon)) % 12) + 1) if lord_lon is not None else None
+    return from_lagna, from_lord
+
+
+def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
+    nak = chart.janma_nakshatra
+    # Yogini is a general system (no adoption condition stated) — always reported.
+    yogini = DashaReading(
+        system="yogini", applicable=True,
+        reason="general system (no special adoption condition)",
+        timeline=yog.timeline(nak))
+    # Ashtottari is conditional on Rahu's placement.
+    from_lagna, from_lord = _rahu_house_from(chart)
+    ash_ok = ash.is_applicable(rahu_house_from_lagna=from_lagna,
+                               rahu_house_from_lagna_lord=from_lord)
+    ashtottari = DashaReading(
+        system="ashtottari", applicable=ash_ok,
+        reason=("Rahu not in Lagna/Kendra or a trikona from the lagna lord"
+                if ash_ok else "Rahu in Lagna/Kendra or a trikona from the lagna lord"),
+        timeline=ash.timeline(nak) if ash_ok else ())
+    return (yogini, ashtottari)
+
+
+def read(chart: ParasharaChart) -> ParasharaReading:
+    """Assemble the full Parashara reading for a cast chart."""
+    return ParasharaReading(
+        chart=chart,
+        bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
+                                moon_waxing=chart.moon_waxing),
+        vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
+        dashas=_dashas(chart),
+        nisargayu=nisargayu_span(chart.longitudes),
+        balance_adjusted=False,
+    )

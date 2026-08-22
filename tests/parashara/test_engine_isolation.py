@@ -40,6 +40,13 @@ _SUBSTRATE_ALLOWLIST: frozenset[str] = frozenset({
     "app.raman_saab.chart.varga_chart",  # casting a varga chart from longitudes
 })
 
+#: `app.core` is the older, defunct general engine — itself a (retired) stream. parashara may use
+#: only its PURE-ASTRONOMY modules (swisseph position maths), never its doctrine/reading layers.
+_CORE_ASTRONOMY_ALLOWLIST: frozenset[str] = frozenset({
+    "app.core.ephemeris_engine",         # swisseph positions, ascendant, JD — pure astronomy
+    "app.core.nakshatra",                # nakshatra-from-longitude arithmetic
+})
+
 
 def _imports_of(py: Path) -> set[str]:
     """Every module name imported by `py` (both `import x` and `from x import y`)."""
@@ -86,6 +93,22 @@ def test_parashara_never_imports_raman_doctrine_or_judges():
         "parashara imported Raman doctrine/judging. BPHS must be encoded from BPHS, not inherited "
         "from another stream's reading of it. If the import is genuinely stream-agnostic maths, "
         "add it to _SUBSTRATE_ALLOWLIST deliberately:\n" + "\n".join(offenders))
+
+
+def test_parashara_uses_only_pure_astronomy_from_core():
+    """`app.core` is a retired BPHS-ish stream; parashara may borrow its swisseph astronomy but NOT
+    its doctrine or reading composers (that would be inheriting another engine's interpretation)."""
+    offenders: list[str] = []
+    for py in _py_files(_PARASHARA):
+        for mod in _imports_of(py):
+            if not mod.startswith("app.core"):
+                continue
+            if mod in _CORE_ASTRONOMY_ALLOWLIST:
+                continue
+            offenders.append(f"{py.relative_to(_APP)} imports {mod}")
+    assert not offenders, (
+        "parashara imported a non-astronomy app.core module. Only pure-astronomy substrate is "
+        "allowed; anything doctrinal must be encoded from BPHS here:\n" + "\n".join(offenders))
 
 
 def test_parashara_has_its_own_registry_with_bphs_as_root():

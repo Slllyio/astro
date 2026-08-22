@@ -39,6 +39,7 @@ from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_c
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
 from app.parashara.doctrine.special_yogas import SpecialYoga, detect as detect_special_yogas
+from app.parashara.doctrine.vargottama import vargottama_bodies
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
@@ -99,6 +100,7 @@ class ParasharaReading:
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
     mahapurusha: tuple[MahapurushaYoga, ...]  # Pancha Mahapurusha (Saravali ch.37, allied)
     special_yogas: tuple[SpecialYoga, ...]    # ch.36 "many other yogas" — Gaja-Kesari (strict)
+    vargottama: tuple[str, ...]          # bodies in the same sign in D1 and D9 (Saravali ch.3)
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -224,6 +226,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         chandra_yogas=_chandra_yogas(chart),
         mahapurusha=_mahapurusha(chart),
         special_yogas=_special_yogas(chart),
+        vargottama=vargottama_bodies(chart.longitudes, asc_longitude=chart.asc_longitude),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

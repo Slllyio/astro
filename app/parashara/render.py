@@ -12,7 +12,10 @@ from __future__ import annotations
 
 from typing import Final
 
+from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
 from app.parashara.reading import ParasharaReading
+
+SOURCE_VARGOTTAMA: Final[str] = f"{_VARGOTTAMA_SOURCE.work}:{_VARGOTTAMA_SOURCE.line}"
 
 _SIGN_NAMES: Final[tuple[str, ...]] = (
     "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
@@ -129,6 +132,16 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
     else:
         out.append("_No ch.36 special yoga (e.g. Gaja-Kesari) detected._")
+    out.append("")
+
+    # --- Vargottama (Saravali ch.3) ---
+    out.append("## Vargottama — same sign in Rasi and Navamsa (Saravali ch.3)")
+    out.append("")
+    if reading.vargottama:
+        out.append(f"Vargottama (strong): **{', '.join(reading.vargottama)}** "
+                   f"({SOURCE_VARGOTTAMA}).")
+    else:
+        out.append("_No body is Vargottama._")
     out.append("")
 
     # --- Vimsopaka (ch.7) ---

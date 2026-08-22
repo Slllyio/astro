@@ -90,6 +90,9 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
+- **Vargottama** (Saravali ch.3 sl.13) — a body in the same sign in Rasi (D1) and Navamsa (D9), a
+  recognized strength; the positional definition (1st navamsa of movable, 5th of fixed, 9th of dual)
+  is verified equivalent to D9==D1. Grahas + the Lagna; surfaced per-nativity.
 - **Argala** — planetary intervention (ch.31): for any target sign, the argalas acting on it (from
   the 2nd/4th/11th/5th), their obstructors (12th/10th/3rd/9th), whether each prevails by count, and
   the Vipareeta argala of 3+ malefics in the 3rd. Pinned to Parashara's own hypothetical chart. A

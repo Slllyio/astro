@@ -47,9 +47,20 @@ _COMPOUND: Final[dict[tuple[str, str], str]] = {
 }
 
 
-def _compound_relation(of: str, lord: str, chart: RamanChart) -> str:
-    if lord in ("Rahu", "Ketu") or of == lord or lord not in chart.planets:
+def compound_relation(of: str, towards: str, chart: RamanChart) -> str:
+    """Compound (panchadha) relation of `of` towards `towards`: naisargika x tatkalika per
+    the standard ladder (friend+friend=friend, enemy+enemy=enemy, mixed=neutral, neutral
+    follows the temporal side). DIRECTIONAL — naisargika is asymmetric; the temporal side
+    (2/3/4/10/11/12 whole-sign distance) is symmetric by construction. Nodes and identity
+    → neutral. Public since 2026-08-23 (H11.C.6/C.7 audit ticket): Raman's lord-friendship
+    sentences describe real nativities, so they must mean this chart-dependent relation —
+    the pure-naisargika reading was proven unsatisfiable over all 12 lagnas."""
+    if towards in ("Rahu", "Ketu") or of == towards or towards not in chart.planets:
         return "neutral"
-    nat = r.naisargika(of, lord)
-    tmp = _temporal(of, lord, chart)
+    nat = r.naisargika(of, towards)
+    tmp = _temporal(of, towards, chart)
     return _COMPOUND[(nat, tmp)]
+
+
+# Backwards-compatible private alias (Sthana Bala imports this name).
+_compound_relation = compound_relation

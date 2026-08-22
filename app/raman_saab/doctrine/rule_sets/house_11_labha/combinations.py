@@ -38,6 +38,7 @@ from app.raman_saab.doctrine import conditions as C
 from app.raman_saab.doctrine import drishti
 from app.raman_saab.doctrine.rules import RuleRecord
 from app.raman_saab.doctrine.sources import Citation
+from app.raman_saab.primitives.dignity import compound_relation
 from app.raman_saab.primitives.effective_strength import effective_strength
 from app.raman_saab.primitives.functional_nature import (
     NATURAL_BENEFICS, NATURAL_MALEFICS)
@@ -231,15 +232,65 @@ class _WeakPlanetIn11(C.Condition):
                                                  # this citation makes
 
 
-# NOTE (2026-08-22): C.6/C.7 were briefly encoded on NAISARGIKA lord-relationships and
-# reverted the same day — bphs-doctrine-reviewer proved the predicates UNSATISFIABLE by
-# enumerating all 12 lagnas (lordship is fixed per lagna, naisargika fixed per planet pair;
-# no lagna yields three mutually-friendly 1/2/11 lords, nor both 2nd+11th lords natural
-# enemies of the lagna lord — even one-directionally). Raman wrote those sentences about real
-# nativities, so "friendly"/"inimical" there MUST mean the chart-dependent COMPOUND relation
-# (naisargika x tatkalika), which exists in-repo as dignity._compound_relation (private,
-# consumed by Sthana Bala) but is not yet exposed to the conditions algebra. Re-encode both
-# together on that, then re-measure. Record: DOCTRINE_BACKLOG "H11 dead-rule sweep".
+# NOTE (2026-08-22, resolved 2026-08-23): C.6/C.7 were briefly encoded on NAISARGIKA
+# lord-relationships and reverted the same day — bphs-doctrine-reviewer proved the predicates
+# UNSATISFIABLE by enumerating all 12 lagnas (lordship is fixed per lagna, naisargika fixed
+# per planet pair; no lagna yields three mutually-friendly 1/2/11 lords, nor both 2nd+11th
+# lords natural enemies of the lagna lord — even one-directionally). Raman wrote those
+# sentences about real nativities, so "friendly"/"inimical" there MUST mean the chart-
+# dependent COMPOUND relation (naisargika x tatkalika). dignity.compound_relation is now
+# public and both rules are re-encoded on it below. The compound relation is satisfiable in
+# both directions: its temporal side is symmetric by construction (whole-sign distance d and
+# 14-d are in the friendly set together), so mutual friendship needs only a friendly mutual
+# placement plus no natural enmity. Record: DOCTRINE_BACKLOG "H11 dead-rule sweep" + the
+# 2026-08-23 audit-ticket entry.
+
+
+class _LordsMutuallyCompoundFriendly(C.Condition):
+    """Every pair of lords among `houses` is MUTUALLY compound-friendly (each direction
+    "friend"). A pair sharing one planet (e.g. Capricorn lagna: Saturn owns 1 and 2) is
+    vacuously friendly — a planet is not its own enemy. All-lords-present required."""
+    def __init__(self, houses: tuple[int, ...]) -> None:
+        self.houses = houses
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lords = [_lord_of(h, ctx.chart) for h in self.houses]
+        if any(l not in ctx.chart.planets for l in lords):
+            return False
+        for i in range(len(lords)):
+            for j in range(i + 1, len(lords)):
+                a, b = lords[i], lords[j]
+                if a == b:
+                    continue
+                if (compound_relation(a, b, ctx.chart) != "friend"
+                        or compound_relation(b, a, ctx.chart) != "friend"):
+                    return False
+        return True
+
+
+class _LordAfflictedAndInimicalToLagnaLord(C.Condition):
+    """The lord of `house` is (a) afflicted — conjunct with or aspected by a natural malefic
+    other than itself — AND (b) compound-inimical TOWARDS the Lagna lord (directional, as
+    Raman writes it: "the 2nd and 11th lords ... inimical to the Lagna lord"). A lord that
+    IS the Lagna lord cannot be its own enemy → False."""
+    def __init__(self, house: int) -> None:
+        self.house = house
+
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lord = _lord_of(self.house, ctx.chart)
+        lagna_lord = _lord_of(1, ctx.chart)
+        p = ctx.chart.planets.get(lord)
+        if p is None or lord == lagna_lord or lagna_lord not in ctx.chart.planets:
+            return False
+        if compound_relation(lord, lagna_lord, ctx.chart) != "enemy":
+            return False
+        for m in NATURAL_MALEFICS:
+            if m == lord or ctx.chart.planets.get(m) is None:
+                continue
+            q = ctx.chart.planets[m]
+            if q.rasi_house == p.rasi_house or drishti.aspects_planet(m, lord, ctx.chart):
+                return True
+        return False
 
 
 # ── RULES ─────────────────────────────────────────────────────────────────────
@@ -286,24 +337,24 @@ RULES: Final[tuple[RuleRecord, ...]] = (
                   "without self-respect (war-defeat covered via Yuddha Bala inside the Shadbala "
                   "total; the inimical-vargas leg is NOT modelled)",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14367)),
+    # #6/#7 — re-encoded 2026-08-23 on the COMPOUND lord-relation (see the resolved note
+    #         above the predicates): the naisargika reading was proven unsatisfiable, the
+    #         compound (naisargika x tatkalika) reading is the one Raman's real-nativity
+    #         sentences can mean.
     RuleRecord(
-        id="H11.C.6", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
-        fortified="the Lagna, 2nd and 11th lords friendly → earnings used for honourable "
-                  "ends (legitimate expenses and charity). TODO(predicate: COMPOUND lord-"
-                  "relationship — naisargika encoding proven unsatisfiable over all 12 lagnas, "
-                  "see the note above the RULES tuple; needs dignity._compound_relation exposed "
-                  "to the conditions algebra)",
+        id="H11.C.6", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=_LordsMutuallyCompoundFriendly((1, 2, 11)),
+        fortified="the Lagna, 2nd and 11th lords friendly (compound relation, mutual) → "
+                  "earnings used for honourable ends (legitimate expenses and charity)",
         afflicted=None,
         frame="LAGNA", varga="D1", polarity="benefic", source=Citation("HTJAH-II", 14388)),
     RuleRecord(
-        id="H11.C.7", house=11, signification="gains", group="combination", kind="descriptive",
-        condition=None,
+        id="H11.C.7", house=11, signification="gains", group="combination", kind="evaluable",
+        condition=C.And(_LordAfflictedAndInimicalToLagnaLord(2),
+                        _LordAfflictedAndInimicalToLagnaLord(11)),
         fortified=None,
-        afflicted="the 2nd and 11th lords afflicted and inimical to the Lagna lord → money "
-                  "squandered on wine and women. TODO(predicate: COMPOUND lord-relationship — "
-                  "same unsatisfiability proof and fix path as H11.C.6; re-encode the pair "
-                  "together)",
+        afflicted="the 2nd and 11th lords afflicted and inimical to the Lagna lord "
+                  "(compound relation) → money squandered on wine and women",
         frame="LAGNA", varga="D1", polarity="malefic", source=Citation("HTJAH-II", 14390)),
     RuleRecord(
         id="H11.C.8", house=11, signification="gains", group="combination", kind="evaluable",

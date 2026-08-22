@@ -1874,3 +1874,30 @@ the exception this fix removed; (b) Santhanam's BPHS 30.1-6 anchors UL to the 2n
 ("the bhava following the natal ascendant"), not the 12th the primitive uses (the Rao/Rath
 reading). Today UL is display-only (special_points/synthesis); if a UL verdict rule is ever
 proposed, resolve both variants through doctrine review first.
+
+## Audit ticket DISCHARGED: compound_relation exposed, H11.C.6/C.7 re-encoded — both VALIDATED (2026-08-23)
+
+The third and last standing ticket from the all-houses sweep. `dignity._compound_relation`
+(naisargika x tatkalika via the standard ladder, previously private to Sthana Bala) is now
+public as `dignity.compound_relation`, and the H11 pair whose naisargika encodings were proven
+unsatisfiable over all 12 lagnas (2026-08-22) is re-encoded on it:
+
+* **H11.C.6** = all three of the Lagna/2nd/11th lords pairwise MUTUALLY compound-friendly
+  (identity pairs vacuous — Capricorn and Leo lagnas collapse to a two-planet test). Reviewer
+  VALIDATED (MEDIUM-HIGH): mutual is the faithful reading of "the lords are friendly"; the one
+  recorded LAXER variant — "friendly" = non-enemy both ways — is noted here per the review and
+  re-opens only on new textual evidence. Fires 12/211, scored-H11 overlap on 2 goldens.
+* **H11.C.7** = 2nd AND 11th lords each malefic-associated (conjunct/aspected, the codebase's
+  standard "afflicted" floor) and compound-ENEMY one-way toward the Lagna lord, exactly as
+  Raman's directional syntax reads ("inimical TO the Lagna lord"). Reviewer VALIDATED (HIGH):
+  the neighbouring HTJAH-II:14367 sentence enumerates heavier weaknesses by name, proving bare
+  "afflicted" here is the associational floor. Fires 17/211 with ZERO scored-H11 overlap —
+  logged as a coverage-gap blindness mode per playbook rule 4: the ratchet cannot see this rule
+  until a scored H11 chart fires it.
+
+Satisfiability point for the record: the compound relation's temporal side is symmetric by
+construction (whole-sign distances d and 14-d are in the friendly set together), so mutual
+compound friendship needs only a friendly mutual placement plus no natural enmity — the
+2026-08-22 unsatisfiability was purely a naisargika artifact, exactly as the hold note
+predicted. Ratchet byte-identical (261/294, 284/294, 10); liveness 741→743, never-fired 85.
+All three sweep audit tickets are now closed.

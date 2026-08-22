@@ -44,9 +44,10 @@ def navamsa_seventh_lord(chart: RamanChart) -> str:
 
 
 def arudha_lagna(chart: RamanChart) -> SpecialPoint:
-    """Jaimini Arudha (Pada) Lagna as a point. Delegates the sign to the single-source-of-truth
-    formula in primitives/arudha.py (count from the lagna-lord; 1st/7th -> 10th); falls back to the
-    Lagna itself only when the lagna-lord is absent (sparse Track-B chart)."""
+    """Arudha (Pada) Lagna as a point. Delegates the sign to the single-source-of-truth
+    formula in primitives/arudha.py (Raman's plain double-count, HTJAH-I:2519-2522 — no Jaimini
+    1st/7th exception); falls back to the Lagna itself only when the lagna-lord is absent
+    (sparse Track-B chart)."""
     from app.raman_saab.primitives.arudha import arudha_pada
     a = arudha_pada(chart, 1)
     if a is None:                                   # lagna-lord absent (sparse chart)

@@ -1805,3 +1805,72 @@ not, and was never designed as, a validator for newly-encoded rules. Any future 
 encoding should measure (a) the firing rate, (b) whether any firing chart carries a scored
 expectation for that house, and (c) co-fire against rules sharing a conjunct — before treating
 a green ratchet as permission to ship.
+
+## DRAFT golden pool fully adjudicated (2026-08-23) — 1 confirmed, 94 legitimate-mismatch backlog
+
+All 95 remaining DRAFT verdicts were enumerated against the current engine. Exactly ONE is an
+engine-match: **HTJAH-I.h5_15** (H5 children, favourable), reviewer CONFIRM/HIGH against
+HTJAH-I:5906-5922 read verbatim (Chart No. 105: "5th house is unafflicted... fairly well
+disposed"; the single infant death among ~9 counted / 8 born is a Navamsha-counting deduction in
+Raman's own method, not an affliction verdict — the old "mixed" was exactly the over-weighting
+the June backlog predicted). The engine's mixed→favourable movement pre-dates this adjudication
+(D-7 confirm layer, PROGRESS_LOG "improves toward Raman's recorded verdict") — the engine moved
+toward the text, not the label toward the engine. Ratchet: 260/293 → **261/294** exact,
+283/293 → **284/294** within-1, real errors 10 (unchanged). The other 94 DRAFTs are the
+legitimate mismatch backlog and stay DRAFT per the never-confirm-to-pad discipline; they are the
+raw material for future mechanism work (the pillar-clause cluster chief among them), not for
+label flips.
+
+## Audit ticket DISCHARGED: H2.C.41 corpus-machine verbatim check → C.42/C.43 shipped (2026-08-23)
+
+The H2 sweep's standing ticket (verify HTJAH-I:2526-2528 verbatim through the corpus machine
+before encoding the gated siblings) was discharged after the corpus reconciliation made the
+passage readable: all three poverty sentences read exactly as the rule prose claimed.
+**H2.C.42** encoded as `Parivartana(1,6) AND (lord-1 OR lord-6 touched by primary maraka)` —
+reviewer CONFIRM/HIGH (BPHS vol1 ch.42 v.3 corroborates; Raman's "either of these" broadens
+BPHS's narrower attachment and Raman wins). Fires 1/211 (NH.chart_43). **H2.C.43** encoded as
+`_MaleficNotOwning9or10InLagnaTouchedByMaraka` — reviewer REVISE→fixed same-day: the review
+proved by enumeration that IF the counterpart node ever counted as a maraka, a node in the Lagna
+would satisfy the maraka-touch qualifier on every chart (twin always in the 7th). The node-pair
+guard was added as a **pinned invariant**; measurement then showed maraka.py already excludes
+nodes from every tier (maraka.py:134), so the guard is defensive, not a live filter — fire rate
+identical with and without (29/211, 4 scored-H2 overlaps, no verdict moved). Reviewer's two
+side-questions settled: existential reading of "malefics" is correct (BPHS 42.8 generic plural);
+nodes stay in the candidate-occupant set (the carve-out filters on ownership, and the house_11
+node exclusion was a Shadbala-capability argument with no analogue here). Ratchet unchanged
+261/294; liveness 739→741 evaluable, never-fired stays 85. H2's "left" count drops 12→10.
+
+## Audit ticket DISCHARGED: arudha.py follows Raman, not the Jaimini 1st/7th redirect (2026-08-23)
+
+Raman's own worked example (HTJAH-I:2521-2522: Aquarius Lagna, Saturn in Taurus → "the 4th from
+Taurus, viz., Leo becomes Arudha Lagna") lands the AL in the **7th from Lagna and keeps it** —
+strict Jaimini would redirect it to the 10th therefrom (Taurus), and `primitives/arudha.py` was
+doing exactly that. The redirect was REMOVED: plain double-count, no exception, per the
+definition sentence (HTJAH-I:2519-2521) and the Prime Directive (Raman wins). Consumer audit:
+H2.C.39/C.40 verdict rules + report display only; the walled Jaimini subsystem does not consume
+this primitive. Measured: Raman's example now reproduces (engine previously returned Taurus for
+it); golden ratchet byte-identical (261/294, 284/294, 10); chart_45 still fires C.40. Parity
+consequence recorded on C.40: the plain count reaches only ODD houses from Lagna, so of Raman's
+four named houses {11,4,5,7} house 4 is now arithmetically unreachable (under the old redirect
+it was house 7 — each formula kills exactly one). C.46's 6/8/12 unsatisfiability proof survives
+under both formulas. Two tests that pinned the old exception were re-pinned to Raman's
+arithmetic, including a new test reproducing the worked example verbatim.
+
+**Review outcome (same day): VALIDATED/HIGH, with stronger evidence than dispatched.** The
+reviewer found Raman keeps the plain count in FOUR independent passages covering BOTH exception
+arms: the 7th-landing example above, the exception-free glossary definition (HTJAH-I:7187-7192,
+generic per-house — the anchor for one formula across all 12 houses), Studies in Jaimini §19
+(same definition + a second example), and decisively Studies in Jaimini **Ex. 48 (Hitler)**:
+"lord of Lagna Sukra is in the 7th, and the 7th from the 7th, viz., Lagna itself will be Arudha
+Lagna" — the SELF-landing case kept, where the exception would force Capricorn. So no flag is
+needed for the walled Jaimini subsystem: Raman's own Jaimini book uses the plain count. The
+exception's real home is **BPHS 29.4-5** (in-corpus, non-citable for natal verdicts), which on
+Raman's own Aquarius configuration yields Taurus — exactly what the old code returned.
+
+**Standing note before any Upapada-based verdict rule ships**: `upapada_lagna` has NO Raman
+anchor (zero corpus hits in any Raman source — UL is defined only by BPHS ch.30 / KN Rao / Rath,
+inside the ch.29 exception framework). Two open variants: (a) strict-classical UL would apply
+the exception this fix removed; (b) Santhanam's BPHS 30.1-6 anchors UL to the 2nd house
+("the bhava following the natal ascendant"), not the 12th the primitive uses (the Rao/Rath
+reading). Today UL is display-only (special_points/synthesis); if a UL verdict rule is ever
+proposed, resolve both variants through doctrine review first.

@@ -133,6 +133,44 @@ class _LordTouchedByMaraka(C.Condition):
         return False
 
 
+class _MaleficNotOwning9or10InLagnaTouchedByMaraka(C.Condition):
+    """Some natural malefic that owns neither the 9th nor the 10th occupies the Lagna
+    AND is conjunct with, or aspected by, a PRIMARY-tier maraka (HTJAH-I:2528).
+
+    The 9/10-lord exemption is Raman's own carve-out in the sentence ("malefics — not
+    owning the 9th and 10th"): a yogakaraka malefic in Lagna is fortune, not poverty.
+    Rahu/Ketu own nothing, so they pass the ownership filter as written — the sentence
+    filters on ownership, not on planet identity. Same PRIMARY-tier maraka reading and
+    identity exclusion as _LordTouchedByMaraka, for the same fire-rate reason.
+
+    The counterpart node is excluded as the toucher (doctrine review 2026-08-23): a node
+    in the Lagna ALWAYS has its twin in the 7th — if the twin ever counted as a maraka,
+    the nodes' permanent mutual opposition would satisfy Raman's contingent "with/aspected
+    by a Maraka" qualifier on every node-in-Lagna chart, asserting nothing. Today
+    maraka.py already excludes nodes from every tier (maraka.py:134), so this guard is a
+    pinned invariant, not a live filter — it keeps the rule sound if Phase-2 node-maraka
+    treatment (dispositor/conjunction) ever lands. Fire rate measured identical with and
+    without it (29/211)."""
+    def evaluate(self, ctx: C.EvalContext) -> bool:
+        lords_9_10 = {_lord_of(9, ctx.chart), _lord_of(10, ctx.chart)}
+        marakas = {u.graha for u in maraka_points(ctx.chart).units if u.tier == "primary"}
+        for name in NATURAL_MALEFICS:
+            if name in lords_9_10:
+                continue
+            p = ctx.chart.planets.get(name)
+            if p is None or p.rasi_house != 1:
+                continue
+            for m in marakas:
+                if m == name or {name, m} == {"Rahu", "Ketu"}:
+                    continue
+                q = ctx.chart.planets.get(m)
+                if q is None:
+                    continue
+                if q.rasi_house == p.rasi_house or drishti.aspects_planet(m, name, ctx.chart):
+                    return True
+        return False
+
+
 class _SecondLordConjunct(C.Condition):
     """The 2nd lord shares a whole-sign house with `planet`.  Identity → False."""
     def __init__(self, planet: str) -> None:
@@ -683,6 +721,13 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="ARUDHA", varga="D1", polarity="benefic",
         source=Citation("HTJAH-I", 2497)),
 
+    # Parity note (2026-08-23, arudha audit-ticket fix): under Raman's plain double-count
+    # the AL-from-Lagna offset is 2d (even), so the AL can only fall in ODD houses from the
+    # Lagna — of Raman's four named houses {11,4,5,7}, house 4 is arithmetically unreachable
+    # (just as house 7 was unreachable under the old Jaimini-redirect formula; each formula
+    # kills exactly one of the four). The set is kept verbatim to the text; the dead member
+    # simply never fires. Same internal-tension shape as C.46's 6/8/12, recorded in
+    # DOCTRINE_BACKLOG "H2 dead-rule sweep".
     RuleRecord(
         id="H2.C.40", house=2, signification="wealth", group="combination",
         kind="evaluable",
@@ -707,22 +752,29 @@ RULES: Final[tuple[RuleRecord, ...]] = (
         frame="LAGNA+MARAKA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2526)),
 
-    # #42 — DESCRIPTIVE: exchange of 1st & 6th lords + Maraka involvement.
-    #       TODO(predicate): MarakaDetection.
+    # #42 — 1st↔6th lord exchange, either lord with/aspected by a Maraka. Was DESCRIPTIVE
+    #       pending MarakaDetection; unblocked by the same primitives as C.41, and encoded
+    #       once the C.41 audit ticket's verbatim read of HTJAH-I:2526-2528 confirmed the
+    #       sentence ("either of these remaining with or aspected by a Maraka planet").
     RuleRecord(
         id="H2.C.42", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=C.And(C.Parivartana(1, 6),
+                        C.Or(_LordTouchedByMaraka(1), _LordTouchedByMaraka(6))),
         fortified=None,
         afflicted="exchange of 1st & 6th lords, either with/aspected by a Maraka "
                   "→ extreme poverty",
         frame="LAGNA+MARAKA", varga="D1", polarity="malefic",
         source=Citation("HTJAH-I", 2527)),
 
-    # #43 — DESCRIPTIVE: malefics (not 9/10 lords) in asc + Maraka → extremely poor.
-    #       TODO(predicate): MarakaDetection + FunctionalNatureFilter.
+    # #43 — malefic (not owning 9th/10th) in the ascendant with/aspected by a Maraka.
+    #       Was DESCRIPTIVE pending MarakaDetection + FunctionalNatureFilter; the ownership
+    #       carve-out needs no separate primitive — it is two _lord_of calls inside the
+    #       predicate. Same verbatim-confirmation gate as C.42.
     RuleRecord(
         id="H2.C.43", house=2, signification="wealth", group="combination",
-        kind="descriptive", condition=None,
+        kind="evaluable",
+        condition=_MaleficNotOwning9or10InLagnaTouchedByMaraka(),
         fortified=None,
         afflicted="malefics (not owning 9th/10th) in ascendant with/aspected by "
                   "Maraka → extremely poor",

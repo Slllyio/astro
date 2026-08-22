@@ -1,10 +1,23 @@
-"""Jaimini Arudha padas — the "image / manifestation" of a bhava.
+"""Arudha padas — the "image / manifestation" of a bhava, as B. V. Raman computes them.
 
 The Arudha pada of a house is found by counting from the house to its lord, then the same count
-again from the lord; the resulting sign is the Arudha. Jaimini exception: if the Arudha falls in
-the house itself (1st) or the 7th from it, take the 10th sign from that Arudha. The Arudha of the
-Lagna is the **Arudha Lagna (AL)** — how the native is perceived by the world (status, wealth,
-public image), as distinct from the Lagna (the actual self). Raman uses it for image/affluence.
+again from the lord; the resulting sign is the Arudha. **No 1st/7th exception.** Strict Jaimini
+(Jaimini Sutras / later tradition) redirects an Arudha landing in the house itself or its 7th to
+the 10th therefrom — Raman does not: his definition (HTJAH-I:2519-2521, "the sign arrived at by
+counting as many signs from lord of Lagna as lord of Lagna is removed from Lagna") states no
+exception, and his worked examples cover BOTH exception arms: the 7th-landing AL is kept
+(Aquarius Lagna, Saturn in Taurus → "the 4th from Taurus, viz., Leo becomes Arudha Lagna" — Leo
+IS the 7th from Aquarius, HTJAH-I:2521-2522), and the SELF-landing AL is kept in his own Jaimini
+book (Studies in Jaimini Ex. 48, Hitler: "lord of Lagna Sukra is in the 7th, and the 7th from
+the 7th, viz., Lagna itself will be Arudha Lagna" — Thula, where the exception would force
+Capricorn). The exception's actual home is BPHS 29.4-5 (Parasara / later Rath school), which on
+the identical Aquarius configuration yields Taurus — exactly what the old code returned: a BPHS
+behavior wearing a Raman label. Per the Prime Directive, Raman's printed arithmetic wins.
+(2026-08-23 audit-ticket fix, reviewer VALIDATED/HIGH.)
+
+The Arudha of the Lagna is the **Arudha Lagna (AL)** — how the native is perceived by the world
+(status, wealth, public image), as distinct from the Lagna (the actual self). Raman uses it for
+image/affluence.
 
 Usage:
     from app.raman_saab.primitives import arudha
@@ -28,12 +41,10 @@ def arudha_pada(chart: RamanChart, house: int) -> Optional[int]:
     if p is None:
         return None
     lord_sign = p.sign
-    # count house->lord, then the same count lord-> : arudha = 2*lord - house (1-based, mod 12)
-    ar = ((2 * lord_sign - house_sign - 1) % 12) + 1
-    seventh = ((house_sign - 1 + 6) % 12) + 1
-    if ar == house_sign or ar == seventh:           # Jaimini exception -> 10th from the Arudha
-        ar = ((ar - 1 + 9) % 12) + 1
-    return ar
+    # count house->lord, then the same count lord-> : arudha = 2*lord - house (1-based, mod 12).
+    # Deliberately NO 1st/7th->10th exception — Raman's formula and worked example
+    # (HTJAH-I:2519-2522) apply the plain count; see the module docstring.
+    return ((2 * lord_sign - house_sign - 1) % 12) + 1
 
 
 def arudha_lagna(chart: RamanChart) -> Optional[int]:

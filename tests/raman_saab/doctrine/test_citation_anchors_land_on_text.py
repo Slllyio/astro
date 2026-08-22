@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import pathlib
 import re
-import subprocess
 
 import pytest
 
@@ -32,11 +31,22 @@ _TOKEN = re.compile(r"\b([A-Z][A-Za-z]*(?:-[A-Za-z0-9]+)*):(\d+)(?:-(\d+))?\b")
 
 
 def _tokens() -> set[str]:
-    """Every citation token written anywhere in the engine's Python."""
-    out = subprocess.run(
-        ["grep", "-rhoE", r"\b[A-Z][A-Za-z]*(-[A-Za-z0-9]+)*:[0-9]+(-[0-9]+)?\b",
-         str(_APP), "--include=*.py"], capture_output=True, text=True).stdout
-    return {t for t in out.split() if _TOKEN.match(t)}
+    """Every citation token written anywhere in the engine's Python.
+
+    Scanned in Python rather than a `grep` subprocess: the original shell-out silently
+    returned ZERO tokens on Windows (the Git-for-Windows grep 3.0 on PATH rejects `\\b` in
+    ERE with rc=1 and no stderr), which made this whole file fail as "only 0 anchors
+    resolved" on any Windows checkout while passing on Linux. Same `_TOKEN` regex, same
+    token set, no platform dependence."""
+    tokens: set[str] = set()
+    for py in _APP.rglob("*.py"):
+        try:
+            text = py.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        for m in _TOKEN.finditer(text):
+            tokens.add(m.group(0))
+    return tokens
 
 
 @pytest.fixture(scope="module")

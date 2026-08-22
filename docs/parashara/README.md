@@ -33,10 +33,24 @@ authority assigned to a text is what differs, not the machinery.
 
 ```
 doctrine/     book_registry (BPHS=root, allied lineage citable, Raman corroboration), sources
-primitives/   vimsopaka, relationships, functional_nature, baladi_avastha, graha_drishti,
-              nakshatra_dasha, yogini_dasha, ashtottari_dasha
-chart/        vimsopaka_chart, bhava_chart  (thin adapters over the shared caster)
+primitives/   vimsopaka, relationships, functional_nature, baladi_avastha, graha_drishti, longevity
+              (Nisargayu), nakshatra_dasha, yogini_dasha, ashtottari_dasha, conditional_dasha_systems
+chart/        cast (birth -> chart via shared ephemeris), vimsopaka_chart, bhava_chart
 judges/       bhava_prosperity  (the verdict layer — BPHS ch.11, NOT Raman's _decide)
+reading.py    the capstone: cast a birth -> one cited reading (bhavas + vimsopaka + dashas + ayu)
+```
+
+End to end:
+
+```python
+from app.parashara.chart.cast import cast
+from app.parashara.reading import read
+r = read(cast(year=1990, month=7, day=15, hour=12, minute=0,
+              tz_offset=5.5, latitude=12.97, longitude=77.59))
+r.bhavas[10].verdict            # Parashara's ch.11 judgment of the 10th
+r.vimsopaka["Jupiter"].score    # 20-point cross-varga strength
+r.dashas                        # Yogini (general) + Ashtottari (if applicable)
+r.nisargayu.natural_years       # natural longevity (pre-reduction)
 ```
 
 ## Phase status
@@ -56,7 +70,11 @@ judges/       bhava_prosperity  (the verdict layer — BPHS ch.11, NOT Raman's _
 - **Functional nature** (ch.3 sl.11) — with Mercury and Moon kept conditional (the documented
   point of divergence from Raman's engine).
 - **Baladi avastha** (ch.45) and **graha drishti** (ch.26).
+- **Nisargayu** (ch.43 sl.16-17 + ch.3 sl.49-50) — natural longevity, the 120-year allotment scaled
+  by deep-exaltation (the third method, which the Raman engine lacks). Pre-reduction core.
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
+- **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
+  the above.
 - **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:
   Ashtottari (108), Yogini (36), Shodasottari (116), Dwadasottari (112), Panchottari (105),
   Shatabdika (100), Chaturashiti-sama (84), Dwisaptati-sama (72), Shattrimsat-sama (36). Each cited,

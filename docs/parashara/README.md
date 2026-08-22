@@ -90,6 +90,13 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
+- **General corpus index** (`corpus_index.slokas_of`) — a faithful numbered-sloka index for ANY
+  chapter (88/97 BPHS chapters, ~1035 slokas), each cited to its own line. The shared backbone the
+  structured modules build meaning on; `find_slokas` is a cited grep over a chapter.
+- **Nabhasa yogas** (ch.35) — the cited catalogue of all 32 distribution yogas, plus detectors for
+  the two computationally-unambiguous families: Asraya (Rajju/Musala/Nala, by shared modality) and
+  Sankhya (Gola…Veena, by count of signs occupied). Surfaced per-nativity in the reading; the Dala
+  and 20 Akriti figures are catalogued, their pattern-detection a documented next step.
 - **A chart caster + unified reading** — cast a birth and get one cited reading combining all of
   the above.
 - **Conditional dashas** (ch.46) — NINE nakshatra-seeded systems over one shared framework:

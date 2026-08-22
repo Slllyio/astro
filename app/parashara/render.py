@@ -81,6 +81,19 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {h} | {p.lord} | {p.in_house} | {text} | {src} |")
     out.append("")
 
+    # --- Nabhasa yogas (ch.35) ---
+    out.append("## Nabhasa yogas — planetary distribution (BPHS ch.35)")
+    out.append("")
+    if reading.nabhasa:
+        out.append("| Yoga | Family | Why | Operable | Source |")
+        out.append("|---|---|---|---|---|")
+        for y in reading.nabhasa:
+            op = {True: "yes", False: "no", None: "if no Akriti/Dala yoga forms"}[y.operable]
+            out.append(f"| {y.name} | {y.family} | {y.reason} | {op} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No Asraya or Sankhya Nabhasa yoga detected._")
+    out.append("")
+
     # --- Vimsopaka (ch.7) ---
     out.append("## Vimsopaka bala — cross-varga strength (BPHS ch.7)")
     out.append("")

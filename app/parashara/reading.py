@@ -35,6 +35,7 @@ from app.parashara.chart.brahma_graha import BrahmaGraha, brahma_graha
 from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
+from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
@@ -90,6 +91,7 @@ class ParasharaReading:
     shadbala: Mapping[str, PartialShadbala]   # the complete six-fold Shadbala (Sthana..Kala)
     avasthas: Mapping[str, GrahaAvastha]
     bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
+    nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -144,6 +146,16 @@ def _bhava_lord_effects(chart: ParasharaChart) -> dict[int, BhavaLordPlacement]:
     return out
 
 
+def _nabhasa(chart: ParasharaChart) -> tuple[NabhasaYoga, ...]:
+    """Detected Nabhasa distribution yogas (ch.35): the Asraya yoga if all seven share a modality,
+    and the Sankhya yoga for how many signs they occupy (its operability flagged, per Parashara)."""
+    signs = {g: int(chart.longitudes[g] % 360.0 // 30) + 1
+             for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
+             if g in chart.longitudes}
+    found = [y for y in (asraya_yoga(signs), sankhya_yoga(signs)) if y is not None]
+    return tuple(found)
+
+
 def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
     """Baladi (age-state by degree) + Jagradadi (awake/dreaming/sleeping by dignity) per graha.
     The seven grahas only — ch.45's avasthas have no nodes."""
@@ -173,6 +185,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
                                       kala_ctx=chart.kala),
         avasthas=_avasthas(chart),
         bhava_lord_effects=_bhava_lord_effects(chart),
+        nabhasa=_nabhasa(chart),
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

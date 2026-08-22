@@ -90,6 +90,9 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
+- **Bhava karakas** (ch.32 sl.31-34) — the natural significator of each house (1→Sun, 2/5/9/11→
+  Jupiter, 3/6→Mars, 4→Moon, 7→Venus, 8/12→Saturn, 10→Mercury), Parashara's stated order. Queryable
+  `karaka_of`.
 - **Vargottama** (Saravali ch.3 sl.13) — a body in the same sign in Rasi (D1) and Navamsa (D9), a
   recognized strength; the positional definition (1st navamsa of movable, 5th of fixed, 9th of dual)
   is verified equivalent to D9==D1. Grahas + the Lagna; surfaced per-nativity.

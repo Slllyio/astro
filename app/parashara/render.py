@@ -124,6 +124,19 @@ def to_markdown(reading: ParasharaReading) -> str:
                 out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} |")
             out.append("")
 
+    # --- Sthira rasi dasha (ch.46), seeded by the Brahma Graha ---
+    sth = reading.sthira
+    out.append("## Sthira dasha (BPHS ch.46)")
+    out.append("")
+    out.append(f"_Seeded from the Brahma Graha: **{sth.brahma_graha.planet}** in "
+               f"{_sign(sth.brahma_graha.sign)} — {sth.brahma_graha.reason}._")
+    out.append("")
+    out.append("| Sign | Starts (yrs) | Length (yrs) |")
+    out.append("|---|---|---|")
+    for p in sth.timeline:
+        out.append(f"| {_sign(p.sign)} | {p.start_year:.0f} | {p.years:.0f} |")
+    out.append("")
+
     # --- Nisargayu (ch.43) ---
     out.append("## Nisargayu — natural longevity (BPHS ch.43)")
     out.append("")

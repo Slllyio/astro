@@ -29,8 +29,11 @@ from dataclasses import dataclass
 from typing import Mapping
 
 from app.parashara.chart.bhava_chart import judge_all_bhavas
+from app.parashara.chart.brahma_graha import BrahmaGraha, brahma_graha
 from app.parashara.chart.cast import ParasharaChart
 from app.parashara.chart.vimsopaka_chart import vimsopaka_all
+from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
+from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
 from app.parashara.primitives import ashtottari_dasha as ash
 from app.parashara.primitives import yogini_dasha as yog
@@ -61,13 +64,21 @@ class GrahaAvastha:
 
 
 @dataclass(frozen=True)
+class SthiraReading:
+    """Sthira (rasi) dasha, seeded by the Brahma Graha computed from the chart's strengths."""
+    brahma_graha: BrahmaGraha
+    timeline: tuple[RasiDashaPeriod, ...]
+
+
+@dataclass(frozen=True)
 class ParasharaReading:
     chart: ParasharaChart
     bhavas: Mapping[int, BhavaVerdict]
     vimsopaka: Mapping[str, VimsopakaScore]
-    shadbala: Mapping[str, PartialShadbala]   # PARTIAL: Sthana + Dig + Naisargika (3 of 6 balas)
+    shadbala: Mapping[str, PartialShadbala]   # PARTIAL: Sthana + Dig + Naisargika + Kala:Paksha
     avasthas: Mapping[str, GrahaAvastha]
     dashas: tuple[DashaReading, ...]
+    sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
     balance_adjusted: bool               # False: timelines are not birth-balance-adjusted
 
@@ -126,9 +137,16 @@ def read(chart: ParasharaChart) -> ParasharaReading:
                                 moon_waxing=chart.moon_waxing),
         vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
         shadbala=partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
-                                      asc_longitude=chart.asc_longitude),
+                                      asc_longitude=chart.asc_longitude,
+                                      moon_waxing=chart.moon_waxing),
         avasthas=_avasthas(chart),
         dashas=_dashas(chart),
+        sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),
         balance_adjusted=False,
     )
+
+
+def _sthira(chart: ParasharaChart) -> SthiraReading:
+    bg = brahma_graha(chart)
+    return SthiraReading(brahma_graha=bg, timeline=sthira_timeline(bg.sign))

@@ -100,17 +100,17 @@ class TestTotal:
              "Jupiter": 96.8, "Venus": 62.5, "Saturn": 262.9}
 
     def test_partial_is_flagged_incomplete(self):
-        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99)
+        r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
         assert r.complete is False
-        assert T.PENDING_BALAS == ("kala", "cheshta", "drik")
+        assert T.PENDING_BALAS == ("kala:rest", "cheshta", "drik")
 
     def test_virupas_is_the_three_bala_sum(self):
-        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99)
-        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika)
+        r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
+        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.kala_paksha)
         assert r.rupas == pytest.approx(r.virupas / 60.0)
 
     def test_all_seven_scored(self):
-        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99)
+        got = T.partial_shadbala_all(self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False)
         assert len(got) == 7
         for r in got.values():
             assert r.virupas > 0

@@ -102,11 +102,11 @@ class TestTotal:
     def test_partial_is_flagged_incomplete(self):
         r = T.partial_shadbala("Jupiter", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
         assert r.complete is False
-        assert T.PENDING_BALAS == ("kala:rest", "drik")
+        assert T.PENDING_BALAS == ("kala:rest",)
 
     def test_virupas_is_the_three_bala_sum(self):
         r = T.partial_shadbala("Saturn", self._LONS, asc_sign=6, asc_longitude=173.99, moon_waxing=False, speed=0.5, ayanamsa=24.0)
-        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.cheshta + r.kala_paksha + r.kala_ayana)
+        assert r.virupas == pytest.approx(r.sthana.total + r.dig + r.naisargika + r.cheshta + r.drik + r.kala_paksha + r.kala_ayana)
         assert r.rupas == pytest.approx(r.virupas / 60.0)
 
     def test_all_seven_scored(self):
@@ -177,3 +177,35 @@ class TestAyana:
             for lon in range(0, 360, 30):
                 v = ayana_bala(p, float(lon), 24.0)
                 assert 0.0 - 1e-9 <= v <= 60.0 + 1e-6, (p, lon, v)
+
+
+class TestDrik:
+    def test_benefic_aspect_adds_malefic_subtracts(self):
+        """Sloka 19: +1/4 drishti for a benefic aspect, -1/4 for a malefic."""
+        from app.parashara.primitives.shadbala.drik import drik_bala
+        # Jupiter (benefic) in Aries(1) aspects Leo(5) with its special 5th -> full 60 -> +60 super
+        # + 60/4 quarter. Saturn (malefic) elsewhere not aspecting keeps it positive.
+        signs = {"Jupiter": 1, "Sun": 5}          # target Sun in Leo, Jupiter 5th aspect (full)
+        v = drik_bala("Sun", signs, moon_waxing=True)
+        assert v > 0                               # benefic Jupiter full aspect
+
+    def test_malefic_only_is_negative(self):
+        """A target aspected only by a malefic loses aspectual strength (Drik can be negative)."""
+        from app.parashara.primitives.shadbala.drik import drik_bala
+        signs = {"Saturn": 1, "Moon": 10}          # Saturn 10th aspect (special full) on Moon
+        v = drik_bala("Moon", signs, moon_waxing=True)
+        assert v < 0
+
+    def test_mercury_jupiter_super_added(self):
+        """Merc/Jup aspects are added ENTIRE on top of their quarter (super-add)."""
+        from app.parashara.primitives.shadbala.drik import drik_bala
+        from app.parashara.primitives.graha_drishti import drishti_value
+        signs = {"Jupiter": 1, "Venus": 7}         # Jupiter 7th on Venus -> full 60
+        dv = drishti_value("Jupiter", 1, 7)
+        v = drik_bala("Venus", signs, moon_waxing=True)
+        assert v == pytest.approx(dv / 4 + dv)     # quarter + entire super-add
+
+    def test_nodes_cast_no_drishti(self):
+        from app.parashara.primitives.graha_drishti import drishti_value
+        assert drishti_value("Rahu", 1, 7) == 0.0
+        assert drishti_value("Ketu", 1, 7) == 0.0

@@ -77,18 +77,20 @@ def to_markdown(reading: ParasharaReading) -> str:
     # --- Shadbala (ch.27) — PARTIAL ---
     out.append("## Shadbala — strength (BPHS ch.27)")
     out.append("")
-    out.append("_PARTIAL: Sthana + Dig + Naisargika + Cheshta + Kala(Paksha, Ayana). Drik and the "
-               "rest of Kala (day-night/hora/calendar lords) are not yet encoded, so this is not the "
-               "full six-fold total._")
+    out.append("_All six bala CATEGORIES contribute (Sthana, Dig, Naisargika, Cheshta, Drik, and "
+               "Kala's Paksha+Ayana). Kala is still partial — its day-night/hora/calendar sub-"
+               "components need the sunrise/Hindu-calendar layer — so the six-fold total is "
+               "near-complete, not exact. Drik may be negative._")
     out.append("")
-    out.append("| Graha | Sthana | Dig | Naisargika | Cheshta | Kala(Pk+Ay) | Sub-total (rupas) |")
-    out.append("|---|---|---|---|---|---|---|")
+    out.append("| Graha | Sthana | Dig | Naisarg | Cheshta | Drik | Kala(Pk+Ay) | Sub-total (rupas) |")
+    out.append("|---|---|---|---|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         s = reading.shadbala.get(g)
         if s is None:
             continue
         out.append(f"| {g} | {s.sthana.total:.1f} | {s.dig:.1f} | {s.naisargika:.1f} | "
-                   f"{s.cheshta:.1f} | {s.kala_paksha + s.kala_ayana:.1f} | {s.rupas:.2f} |")
+                   f"{s.cheshta:.1f} | {s.drik:.1f} | {s.kala_paksha + s.kala_ayana:.1f} | "
+                   f"{s.rupas:.2f} |")
     out.append("")
 
     # --- Avasthas (ch.45) ---

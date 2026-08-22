@@ -44,6 +44,30 @@ def aspects_sign(planet: str, planet_sign: int, target_sign: int) -> bool:
     return distance in full_aspect_distances(planet)
 
 
+#: Graded (ordinary) rasi drishti value in virupas, by house-distance (BPHS-26:47, sl.2-5):
+#: "on these places the aspects increase gradually in slabs of quarters i.e 1/4, 1/2, 3/4 and full"
+#: -> 3rd/10th = 15, 5th/9th = 30, 4th/8th = 45, 7th = 60. This is Parashara's OWN sign-based
+#: aspectual evaluation, distinct from the OCR-ambiguous degree-based Sphuta Drishti (sl.6-12).
+_GRADED: Final[Mapping[int, float]] = {3: 15.0, 10: 15.0, 5: 30.0, 9: 30.0,
+                                       4: 45.0, 8: 45.0, 7: 60.0}
+
+
+def drishti_value(planet: str, planet_sign: int, target_sign: int) -> float:
+    """The graded rasi drishti (virupas, 0..60) `planet` casts on `target_sign` (BPHS-26 sl.2-5).
+
+    Every graha casts the graded value on 3/10, 5/9, 4/8, 7. A planet's SPECIAL houses get the FULL
+    60 instead of the graded amount (Saturn 3/10, Jupiter 5/9, Mars 4/8) — that is what "special
+    aspect" means. The nodes have no drishti in this BPHS-root engine, so they return 0.
+    """
+    if planet not in _SPECIAL and planet not in (
+            "Sun", "Moon", "Mercury", "Venus"):     # e.g. Rahu/Ketu -> no drishti
+        return 0.0
+    distance = ((target_sign - planet_sign) % 12) + 1
+    if distance in _SPECIAL.get(planet, frozenset()):
+        return 60.0                                  # special aspect -> full
+    return _GRADED.get(distance, 0.0)
+
+
 def planets_aspecting_sign(target_sign: int,
                            planet_signs: Mapping[str, int]) -> tuple[str, ...]:
     """Every graha in `planet_signs` that casts a full aspect on `target_sign`.

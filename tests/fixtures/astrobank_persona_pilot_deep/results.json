@@ -1,0 +1,868 @@
+{
+ "charts": 12,
+ "sham_gate_passed": true,
+ "engine_git_sha": "484b3010b2c479578515664522ed3875c5d64fa1",
+ "instrument_version": "v2",
+ "coinflip": {
+  "hits": 70,
+  "n": 138,
+  "rate": 0.507,
+  "p": 0.9322024875049741
+ },
+ "primary": {
+  "hits": 78,
+  "n": 138,
+  "rate": 0.565,
+  "p": 0.14759186416886072,
+  "weighted_rate": 0.567
+ },
+ "inverted": {
+  "hits": 4,
+  "n": 6
+ },
+ "confident": {
+  "hits": 43,
+  "n": 76
+ },
+ "unsure": {
+  "hits": 4,
+  "n": 15
+ },
+ "spine": {
+  "near": 0,
+  "events": 204,
+  "chance": 0.023892156862745102,
+  "p": 0.017789468577648584
+ },
+ "event_houses": {
+  "top": 35,
+  "n": 64
+ },
+ "cross_chart": {
+  "matched": [
+   82,
+   144
+  ],
+  "mismatched": [
+   730,
+   1580
+  ],
+  "matched_rate": 0.5694444444444444,
+  "mismatched_rate": 0.4620253164556962,
+  "contrast": 0.1074191279887482,
+  "per_persona": {
+   "Bill_Clinton": {
+    "matched": [
+     9,
+     12
+    ],
+    "mismatched": [
+     50,
+     132
+    ]
+   },
+   "David_Bowie": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     47,
+     132
+    ]
+   },
+   "Emmanuel_Macron": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     70,
+     131
+    ]
+   },
+   "Jacinda_Ardern": {
+    "matched": [
+     9,
+     12
+    ],
+    "mismatched": [
+     78,
+     132
+    ]
+   },
+   "John_Lennon": {
+    "matched": [
+     8,
+     12
+    ],
+    "mismatched": [
+     52,
+     131
+    ]
+   },
+   "Justin_Trudeau": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     74,
+     132
+    ]
+   },
+   "Madonna": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     43,
+     131
+    ]
+   },
+   "Margaret_Thatcher": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     78,
+     132
+    ]
+   },
+   "Michael_Jackson": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     49,
+     131
+    ]
+   },
+   "Mother_Teresa": {
+    "matched": [
+     6,
+     12
+    ],
+    "mismatched": [
+     63,
+     132
+    ]
+   },
+   "Muhammad_Ali": {
+    "matched": [
+     7,
+     12
+    ],
+    "mismatched": [
+     58,
+     132
+    ]
+   },
+   "Steve_Jobs": {
+    "matched": [
+     5,
+     12
+    ],
+    "mismatched": [
+     68,
+     132
+    ]
+   }
+  }
+ },
+ "permutation_p": 0.008198360327934412,
+ "contrast_sham": {
+  "cross_chart": {
+   "matched": [
+    75,
+    144
+   ],
+   "mismatched": [
+    707,
+    1580
+   ],
+   "matched_rate": 0.5208333333333334,
+   "mismatched_rate": 0.44746835443037974,
+   "contrast": 0.07336497890295363,
+   "per_persona": {
+    "Bill_Clinton": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      59,
+      132
+     ]
+    },
+    "David_Bowie": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      53,
+      132
+     ]
+    },
+    "Emmanuel_Macron": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      50,
+      131
+     ]
+    },
+    "Jacinda_Ardern": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      68,
+      132
+     ]
+    },
+    "John_Lennon": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      64,
+      131
+     ]
+    },
+    "Justin_Trudeau": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      50,
+      132
+     ]
+    },
+    "Madonna": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      54,
+      131
+     ]
+    },
+    "Margaret_Thatcher": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      70,
+      132
+     ]
+    },
+    "Michael_Jackson": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      63,
+      131
+     ]
+    },
+    "Mother_Teresa": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      71,
+      132
+     ]
+    },
+    "Muhammad_Ali": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      50,
+      132
+     ]
+    },
+    "Steve_Jobs": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      55,
+      132
+     ]
+    }
+   }
+  },
+  "permutation_p": 0.020995800839832032,
+  "passed": false
+ },
+ "per_signification": {
+  "acquisitions": [
+   1,
+   5
+  ],
+  "body": [
+   1,
+   1
+  ],
+  "career": [
+   2,
+   3
+  ],
+  "children": [
+   1,
+   2
+  ],
+  "coverture": [
+   0,
+   1
+  ],
+  "debts": [
+   1,
+   3
+  ],
+  "dharma": [
+   1,
+   1
+  ],
+  "disease_chronic": [
+   3,
+   7
+  ],
+  "ear_throat": [
+   3,
+   6
+  ],
+  "elder_siblings": [
+   1,
+   2
+  ],
+  "enemies": [
+   2,
+   5
+  ],
+  "enemies_disease": [
+   1,
+   1
+  ],
+  "expenditure": [
+   1,
+   3
+  ],
+  "family": [
+   3,
+   3
+  ],
+  "father": [
+   1,
+   6
+  ],
+  "foreign_residence": [
+   4,
+   5
+  ],
+  "fortune": [
+   1,
+   1
+  ],
+  "friends": [
+   2,
+   3
+  ],
+  "gains": [
+   1,
+   3
+  ],
+  "happiness": [
+   1,
+   1
+  ],
+  "health": [
+   1,
+   1
+  ],
+  "higher_learning": [
+   0,
+   1
+  ],
+  "home_comforts": [
+   3,
+   3
+  ],
+  "intellect": [
+   1,
+   2
+  ],
+  "legacies": [
+   3,
+   5
+  ],
+  "long_journeys": [
+   2,
+   3
+  ],
+  "loss_moksha": [
+   0,
+   2
+  ],
+  "marital_happiness": [
+   0,
+   1
+  ],
+  "moksha": [
+   4,
+   4
+  ],
+  "mother": [
+   1,
+   3
+  ],
+  "partnership": [
+   3,
+   4
+  ],
+  "poorvapunya": [
+   1,
+   2
+  ],
+  "profession_authority": [
+   2,
+   2
+  ],
+  "profession_labour": [
+   1,
+   1
+  ],
+  "profession_learned": [
+   4,
+   4
+  ],
+  "profession_trade": [
+   2,
+   3
+  ],
+  "property": [
+   3,
+   5
+  ],
+  "short_journeys": [
+   1,
+   1
+  ],
+  "siblings": [
+   0,
+   1
+  ],
+  "speech": [
+   4,
+   4
+  ],
+  "spouse": [
+   3,
+   4
+  ],
+  "status_honour": [
+   2,
+   3
+  ],
+  "sudden_gains": [
+   1,
+   4
+  ],
+  "vehicles": [
+   0,
+   2
+  ],
+  "virility": [
+   1,
+   2
+  ],
+  "vision": [
+   0,
+   4
+  ],
+  "wealth": [
+   2,
+   2
+  ],
+  "wealth_through_marriage": [
+   2,
+   3
+  ]
+ },
+ "contaminated": {
+  "charts": 12,
+  "forced": {
+   "hits": 80,
+   "n": 138,
+   "rate": 0.58,
+   "p": 0.07345060421252658,
+   "weighted_rate": 0.583
+  },
+  "inverted": {
+   "hits": 4,
+   "n": 6
+  },
+  "confident": {
+   "hits": 48,
+   "n": 87
+  },
+  "unsure": {
+   "hits": 6,
+   "n": 15
+  },
+  "cross_chart": {
+   "matched": [
+    84,
+    144
+   ],
+   "mismatched": [
+    710,
+    1580
+   ],
+   "matched_rate": 0.5833333333333334,
+   "mismatched_rate": 0.44936708860759494,
+   "contrast": 0.13396624472573843,
+   "per_persona": {
+    "Bill_Clinton": {
+     "matched": [
+      9,
+      12
+     ],
+     "mismatched": [
+      49,
+      132
+     ]
+    },
+    "David_Bowie": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      47,
+      132
+     ]
+    },
+    "Emmanuel_Macron": {
+     "matched": [
+      8,
+      12
+     ],
+     "mismatched": [
+      71,
+      131
+     ]
+    },
+    "Jacinda_Ardern": {
+     "matched": [
+      9,
+      12
+     ],
+     "mismatched": [
+      78,
+      132
+     ]
+    },
+    "John_Lennon": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      57,
+      131
+     ]
+    },
+    "Justin_Trudeau": {
+     "matched": [
+      6,
+      12
+     ],
+     "mismatched": [
+      65,
+      132
+     ]
+    },
+    "Madonna": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      50,
+      131
+     ]
+    },
+    "Margaret_Thatcher": {
+     "matched": [
+      5,
+      12
+     ],
+     "mismatched": [
+      68,
+      132
+     ]
+    },
+    "Michael_Jackson": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      49,
+      131
+     ]
+    },
+    "Mother_Teresa": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      56,
+      132
+     ]
+    },
+    "Muhammad_Ali": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      58,
+      132
+     ]
+    },
+    "Steve_Jobs": {
+     "matched": [
+      7,
+      12
+     ],
+     "mismatched": [
+      62,
+      132
+     ]
+    }
+   }
+  },
+  "permutation_p": 0.0021995600879824036,
+  "paired_vs_blind": {
+   "blind_only": 8,
+   "contaminated_only": 10,
+   "discordant": 18,
+   "mcnemar_p": 0.8145294189453125
+  },
+  "per_signification": {
+   "acquisitions": [
+    0,
+    5
+   ],
+   "body": [
+    1,
+    1
+   ],
+   "career": [
+    2,
+    3
+   ],
+   "children": [
+    2,
+    2
+   ],
+   "coverture": [
+    1,
+    1
+   ],
+   "debts": [
+    2,
+    3
+   ],
+   "dharma": [
+    1,
+    1
+   ],
+   "disease_chronic": [
+    3,
+    7
+   ],
+   "ear_throat": [
+    3,
+    6
+   ],
+   "elder_siblings": [
+    1,
+    2
+   ],
+   "enemies": [
+    1,
+    5
+   ],
+   "enemies_disease": [
+    0,
+    1
+   ],
+   "expenditure": [
+    1,
+    3
+   ],
+   "family": [
+    2,
+    3
+   ],
+   "father": [
+    1,
+    6
+   ],
+   "foreign_residence": [
+    3,
+    5
+   ],
+   "fortune": [
+    1,
+    1
+   ],
+   "friends": [
+    3,
+    3
+   ],
+   "gains": [
+    1,
+    3
+   ],
+   "happiness": [
+    1,
+    1
+   ],
+   "health": [
+    1,
+    1
+   ],
+   "higher_learning": [
+    0,
+    1
+   ],
+   "home_comforts": [
+    3,
+    3
+   ],
+   "intellect": [
+    2,
+    2
+   ],
+   "legacies": [
+    2,
+    5
+   ],
+   "long_journeys": [
+    2,
+    3
+   ],
+   "loss_moksha": [
+    1,
+    2
+   ],
+   "marital_happiness": [
+    0,
+    1
+   ],
+   "moksha": [
+    4,
+    4
+   ],
+   "mother": [
+    2,
+    3
+   ],
+   "partnership": [
+    4,
+    4
+   ],
+   "poorvapunya": [
+    2,
+    2
+   ],
+   "profession_authority": [
+    2,
+    2
+   ],
+   "profession_labour": [
+    0,
+    1
+   ],
+   "profession_learned": [
+    4,
+    4
+   ],
+   "profession_trade": [
+    2,
+    3
+   ],
+   "property": [
+    3,
+    5
+   ],
+   "short_journeys": [
+    1,
+    1
+   ],
+   "siblings": [
+    0,
+    1
+   ],
+   "speech": [
+    4,
+    4
+   ],
+   "spouse": [
+    3,
+    4
+   ],
+   "status_honour": [
+    2,
+    3
+   ],
+   "sudden_gains": [
+    1,
+    4
+   ],
+   "vehicles": [
+    0,
+    2
+   ],
+   "virility": [
+    1,
+    2
+   ],
+   "vision": [
+    0,
+    4
+   ],
+   "wealth": [
+    2,
+    2
+   ],
+   "wealth_through_marriage": [
+    2,
+    3
+   ]
+  }
+ }
+}

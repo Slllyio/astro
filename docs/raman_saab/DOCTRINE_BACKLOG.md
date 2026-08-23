@@ -2264,3 +2264,60 @@ this is the recorded refutation.
 Note the narrower claim that survives: `outcome_clause` is still correct for what it actually does
 in the extractor — choosing WHICH clause of a paragraph to hand the classifier once you already
 know the paragraph is a conclusion. It is a clause selector, not a conclusion detector.
+
+## ★★ FULL ADJUDICATION (2026-08-23) — the honest fidelity figure is 269/381 = 70.6%
+
+The complete DRAFT queue, reviewed. This supersedes every earlier fidelity number in this file.
+
+**Method.** All 94 adjudicable DRAFT rows were split into four disjoint slices and sent to four
+parallel `bphs-doctrine-reviewer` agents. Each judged **blind to the engine** — engine verdicts
+were deliberately withheld from the prompts — against the single question: *is this Raman's
+CONCLUSION about the matter, or an OBSERVATION about one contributing factor?* Reviewers verified
+every row in the printed source and returned a decisive quote with a line number.
+
+**Outcome: 59 CONFIRM, 17 REVISE, 18 REJECT.** The 17 revisions corrected an ordinal, a
+signification, or both, before confirming. Reject rate 19%.
+
+**The figure: 263/306 → `269/381 = 70.6% exact`, `329/381 = 86.4% within-1`, `52 real errors`.**
+Cumulative from the day's start: 261/294 = 88.8% → 70.6%. **Not one line of judge or doctrine
+code changed.** The engine is exactly what it was this morning; the measurement stopped being
+one-sided.
+
+**What the rejects were** (these stay DRAFT, unscored, and must never be confirmed):
+observations about a single factor mid-analysis ("the Lagna is weak, being occupied by
+debilitated Mars"), and prose corrupted by splices. Three splice classes were found and are worth
+fixing in the extractor: a **footnote splice** that inverted polarity (NH.chart_5 — the real text
+says the Lagna is *unafflicted*), a **section-heading splice** that swallowed the next section's
+title and drove the signification off it (HTJAH-I.x75 took "Education and Learning" while the
+conclusion judged the mother), and a **two-passage splice** that dropped Raman's own hedge
+(NH.chart_41 H10 omitted "Of course this is a general statement and may have exceptions").
+
+**One row HELD, and the rule it establishes.** NH.chart_38 H9 was graded `afflicted` by one
+reviewer and `mixed` by another, both reasoned. **A contested label never enters the scored
+pool** — reviewer disagreement is evidence the label is genuinely contestable, and confirming it
+would inject adjudication noise into the accuracy figure. Held unscored until resolved.
+
+### The real error surface — 52 rows, and the old diagnosis does not describe it
+
+| kind | n |
+|---|---|
+| engine favourable, Raman afflicted | 26 |
+| engine afflicted, Raman favourable | 16 |
+| **engine ABSTAINS** (insufficient-evidence, scored distance 2 by convention) | 9 |
+| mixed-vs-abstain | 1 |
+
+By house: H5 **9**, H4 **7**, H1/H2/H10 **6** each, H7/H9 5, H3 2, H8 3, H6/H11/H12 1.
+
+**The standing "10 dist-2 errors are ONE mechanism (the pillar clause) at a proven local
+optimum" finding is now STALE** — it characterised the selected pool. It has not been re-derived
+against these 52 and must not be assumed to generalise. The nine ABSTENTIONS are a different
+failure mode entirely (the engine declining to judge where Raman concluded), and they were
+invisible while the pool only contained rows the engine had already graded. Any future mechanism
+work starts by re-profiling these 52.
+
+**What did NOT change, and is worth stating plainly.** The doctrine layer, the 847 cited rules,
+the whole-sign conventions, and every reviewer-validated fix shipped today stand untouched. The
+engine remains the most faithful encoding of Raman's system this project can build; we simply now
+know what its fidelity actually is when measured without a thumb on the scale. Both axes remain
+reported side by side: textbook fidelity **70.6% exact / 86.4% within-1**, real-outcome
+generalization **NULL**.

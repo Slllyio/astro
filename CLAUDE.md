@@ -42,11 +42,20 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
   below was measured honestly *within its pool*, and the five ceiling proofs still stand *for
   that pool* — but the pool itself could only ever admit verdicts the engine already agreed
   with, because old playbook rule 7 confirmed engine-MATCHES from the DRAFT queue and left
-  mismatches parked. Once that gate was removed and an engine-blind reviewer began confirming
-  what Raman actually concluded, the figure moved to **263/306 = 85.9% exact, 291/306 = 95.1%
-  within-1, inversions 15**, and **it is expected to fall further toward ~70-75% as the
-  remaining ~109 DRAFT rows are adjudicated.** Nothing regressed in the engine; the measurement
-  stopped being one-sided. Full record: DOCTRINE_BACKLOG "AUDIT + CONFIRMATION-RULE AMENDMENT".
+  mismatches parked. The gate was removed and the ENTIRE adjudicable DRAFT queue (94 rows) was
+  then reviewed by four parallel engine-blind `bphs-doctrine-reviewer` agents against Raman's
+  printed text — 59 CONFIRM, 17 REVISE, 18 REJECT.
+- **★ THE HONEST FIGURE, and the only one to quote: 269/381 = 70.6% exact, 329/381 = 86.4%
+  within one ordinal step, 52 real errors (distance ≥ 2).** Nothing regressed in the engine
+  between 88.8% and 70.6% — not one line of judge or doctrine code changed. The old number
+  measured a pool that could only admit verdicts the engine already agreed with; this measures
+  every conclusion Raman actually reached, hit or miss. Full record: DOCTRINE_BACKLOG
+  "AUDIT + CONFIRMATION-RULE AMENDMENT" and "FULL ADJUDICATION".
+  - Rejected rows (18) stay DRAFT and unscored: they are observations about a single factor, or
+    prose corrupted by a footnote/section-heading splice — they were never Raman verdicts.
+  - One row is HELD unscored (NH.chart_38 H9) because two independent reviewers graded it
+    differently. **A contested label never enters the scored pool**; reviewer disagreement is
+    evidence the label is genuinely contestable, not something to average away.
   - Historic (selected-pool) figure, retained because the ceiling analysis references it:
     259/293 = 88.4% exact, 283/293 = 96.6% within-1, externally verified casting (96.7%
     ascendant agreement with AstroDatabank). Five independent methods proved that pool's ceiling
@@ -55,6 +64,14 @@ report both"). The results are settled and MUST NOT be re-litigated by re-runnin
     hand-tuned judge). **Those findings are about the JUDGE and remain binding: do not chase
     accuracy by tuning; it is not there without overfitting.** What changed is the DENOMINATOR,
     not the judge.
+  - **STALE, do not act on it: "the 10 remaining dist-2 errors are ONE mechanism at a proven
+    local optimum".** That described the selected pool. The real error surface is **52 rows**:
+    26 favourable-where-Raman-says-afflicted, 16 the reverse, 9 engine ABSTENTIONS
+    (insufficient-evidence, scored distance 2 by the deliberate `_ordinal_distance` convention),
+    1 mixed. Concentrated in H5 (9), H4 (7), H1/H2/H10 (6 each). The one-mechanism diagnosis has
+    NOT been re-derived against these 52 and must not be assumed to generalise — the nine
+    abstentions in particular are a different failure from a wrong grade, and were invisible
+    before. Re-derive before designing any fix.
   - **Read the two fidelity axes side by side, never just the strict one.** The strict figure
     moved DOWN 261→259 on 2026-08-03 — deliberately, user-signed-off — when the B1 dominant-factor
     guard was enabled (`house_template.B1_DOMINANT_FACTOR_GUARD`). It bought within-1 281→283 and

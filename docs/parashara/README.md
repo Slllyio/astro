@@ -55,24 +55,33 @@ maps onto it):
 
 ```
 Raman engine            vs golden : exact=259/293  within-1=283/293   (the engine tuned to Raman)
-Parashara ch.11 only    vs golden : exact=123/293  within-1=198/293   (bare prosperity/annihilation)
-Parashara ch.11+str+yoga vs golden: exact=118/293  within-1=197/293   (the richer verdict)
+Parashara ch.11 only    vs golden : exact=118/293  within-1=199/293  inversions=93  (bare prosperity/annihilation)
+Parashara ch.11+str+yoga vs golden: exact=124/293  within-1=190/293  inversions=102 (the richer verdict)
 ```
 
-**Read this as overlap, not accuracy.** It is NOT "BPHS is 123/293 accurate." Raman deliberately
+**Read this as overlap, not accuracy.** It is NOT "BPHS is 118/293 accurate." Raman deliberately
 revised and *elaborated* Parashara across many chapters plus his own refinements; the parashara
 number is BPHS's own method, so where they differ the divergence is a real BPHS-vs-Raman doctrinal
-difference (each attributed off-axis / boundary / inversion), not a bug. The gap between 259 and 123
+difference (each attributed off-axis / boundary / inversion), not a bug. The gap between 259 and 118
 IS the measure of how much Raman's system is more than ch.11 alone.
 
-**The richer verdict is the integrity check.** `richer_bhava.py` extends ch.11 with Parashara's own
-strength and yoga votes (lord Vimsopaka band ch.7, karaka dignity ch.32, SAV bindus ch.66, a
-Mahapurusha yoga on the lord/karaka) — same net-vote rule, every vote cited. It was **not tuned
-toward Raman**, and the proof is in the number: it agrees with Raman *slightly LESS* (118 vs 123), not
-more. Folding in more faithful BPHS doctrine moves the engine *away* from Raman, not toward him —
-confirming these are genuinely different systems, not one an approximation of the other.
-`test_cross_engine_agreement.py` re-derives Raman's 259/293 to prove the harness is valid and asserts
-the richer verdict never jumps toward Raman.
+**The anti-tuning guarantee is structural, not numeric.** `richer_bhava.py` extends ch.11 with
+Parashara's own strength and yoga votes (lord Vimsopaka band ch.7, karaka dignity ch.32, SAV bindus
+ch.66, a Mahapurusha yoga on the lord/karaka) — same net-vote rule, every vote cited. It imports
+nothing Raman-directed and reads no goldens (`test_engine_isolation.py`), so it *cannot* be a
+backdoor to chase Raman. On the numbers it captures only 124/259 = 48% of Raman's agreement — deep
+in overlap territory, nowhere near chasing 259.
+
+**A worked example of "fidelity, not tuning": the BPHS-11:16(b) antidote fix (2026-08-23).** Encoding
+ch.11's own antidotes (a malefic joined to the bhava lord is benign if it is friendly to the lord,
+exalted, or in a favourable house) — doctrine-pure and Raman-blind — improved *both* engines' fidelity
+(bare ch.11's inversions fell 94→93) yet moved ch.11's *exact* Raman-agreement DOWN 123→118, because
+Raman does not apply those antidotes. The richer verdict went 120→124, opening a +6 gap over bare
+ch.11. This is the overlap thesis in miniature: more faithful BPHS is not more Raman.
+`test_cross_engine_agreement.py` re-derives Raman's 259/293 to prove the harness is valid, then
+asserts the richer verdict stays far below 259 and never towers over bare ch.11. (The earlier
+tripwire — richer ≤ ch.11 + 3 — assumed bare ch.11 was a fixed floor; the antidote fix invalidated
+that premise by improving ch.11 itself, so it was re-framed. USER-signed-off.)
 
 ## Layout
 

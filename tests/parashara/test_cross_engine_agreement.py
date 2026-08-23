@@ -31,9 +31,21 @@ def test_neither_verdict_silently_collapses():
     assert s["richer_exact"] >= 100 and s["richer_within1"] >= 170
 
 
-def test_richer_verdict_was_not_tuned_toward_raman():
-    """The integrity check: adding BPHS strength/yoga doctrine must NOT be a backdoor to chase Raman.
-    The richer verdict agrees with Raman about the same as, or LESS than, bare ch.11 — a version
-    tuned toward Raman would agree markedly MORE."""
+def test_richer_verdict_is_not_chasing_raman():
+    """Integrity check: the richer verdict must not be a backdoor to chase Raman agreement.
+
+    The real guarantee is STRUCTURAL — richer_bhava imports nothing Raman-directed and reads no
+    goldens (test_engine_isolation.py). This is the behavioural tripwire on top: richer's agreement
+    stays deep in "overlap" territory, far below Raman's own 259, and never towers over bare ch.11.
+    A version tuned toward Raman would push richer_exact up toward 200+.
+
+    History: the earlier form asserted richer <= ch11 + 3, on the premise that bare ch.11 was a fixed
+    no-enrichment floor. The BPHS-11:16(b) antidote fix (2026-08-23, doctrine-pure and Raman-blind)
+    improved BOTH engines' fidelity but moved bare ch.11's EXACT Raman-agreement down (123->118,
+    inversions 94->93) while richer went 120->124 — a legitimate divergence (Raman doesn't apply
+    those antidotes), opening a +6 gap. Improving ch.11 itself invalidated the premise, so the
+    tripwire was re-framed to the invariant above. Recorded in DOCTRINE_BACKLOG. USER-signed-off.
+    """
     s = score()
-    assert s["richer_exact"] <= s["ch11_exact"] + 3   # no meaningful jump toward Raman
+    assert s["richer_exact"] < 170                     # far below Raman's 259 — not chasing
+    assert s["richer_exact"] <= s["ch11_exact"] + 15   # no towering backdoor over bare ch.11

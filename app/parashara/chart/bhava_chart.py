@@ -17,7 +17,7 @@ from app.parashara.primitives import functional_nature as fn
 from app.parashara.primitives import graha_drishti as gd
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
-from app.parashara.primitives.relationships import EXALTATION, SIGN_LORDS
+from app.parashara.primitives.relationships import EXALTATION, MOOLATRIKONA, SIGN_LORDS, naisargika
 
 _LUMINARIES = ("Sun", "Moon")
 
@@ -68,6 +68,16 @@ def _defeated_in_war(planet: str, longitudes: Mapping[str, float]) -> bool:
     return False
 
 
+def _malefic_antidoted(lord: str, malefic: str, planet_signs: Mapping[str, int]) -> bool:
+    """BPHS-11:16(b): a malefic joined to the lord is benign if it is exalted, or friendly to the
+    lord. Nodes have neither exaltation nor a naisargika relation, so they are never antidoted here."""
+    if planet_signs.get(malefic) == EXALTATION.get(malefic):
+        return True
+    if lord in MOOLATRIKONA and malefic in MOOLATRIKONA:      # naisargika is defined for the 7 only
+        return naisargika(lord, malefic) == "mitra"
+    return False
+
+
 def bhava_factors(house: int, longitudes: Mapping[str, float], *,
                   asc_sign: int, moon_waxing: bool) -> BhavaFactors:
     """Compute the ch.11 factors for one house from the chart."""
@@ -86,7 +96,18 @@ def bhava_factors(house: int, longitudes: Mapping[str, float], *,
 
     dusthana = _dusthana_lords(asc_sign)
     dusthana_companion = any(c in dusthana for c in lord_companions)
-    malefic_companion = any(not benefic.get(c, False) for c in lord_companions)
+    malefic_companions = [c for c in lord_companions if not benefic.get(c, False)]
+    malefic_companion = bool(malefic_companions)
+    # BPHS-11:16(b): the malefic conjunction "evil is minimized" if the malefic is friendly to the
+    # bhava lord, or they join in a favourable house, or the malefic is exalted. All three limbs are
+    # in the verbatim text; two are pure table lookups. "Favourable house" = kendra+trikona (the
+    # classical auspicious set). Nodes have no naisargika/exaltation, so a nodal malefic is never
+    # individually antidoted (conservative). ponytail: kendra+trikona for "favourable"; widen only
+    # with a doctrine call.
+    malefic_mitigated = bool(malefic_companions) and (
+        lord_house in (1, 4, 5, 7, 9, 10)
+        or all(_malefic_antidoted(lord, c, planet_signs) for c in malefic_companions)
+    )
 
     lord_av = baladi_from_longitude(longitudes[lord]) if lord in longitudes else None
 
@@ -99,10 +120,10 @@ def bhava_factors(house: int, longitudes: Mapping[str, float], *,
         lord_in_tenth=(lord_house == 10),
         lord_aspects_bhava=(lord in planet_signs and gd.aspects_sign(lord, lord_sign, hsign)),
         lord_conjunct_malefic=malefic_companion,
-        # A friendly-planet / favourable-house mitigation would need the relationship + house of the
-        # specific malefic; left False here (conservative — no unfired antidote invented). The
-        # lord's own aspect on the bhava remains the antidote the judge applies.
-        lord_malefic_conjunction_mitigated=False,
+        # BPHS-11:16(b)'s own antidotes: malefic friendly to the lord / exalted / in a favourable
+        # house (computed above). Previously hardcoded False, which over-fired annihilation whenever
+        # the lord failed to aspect its bhava even though the offending malefic was benign.
+        lord_malefic_conjunction_mitigated=malefic_mitigated,
         lord_conjunct_dusthana_lord=dusthana_companion,
         lord_is_itself_dusthana_lord=(lord in dusthana),
         lord_defeated_in_war=_defeated_in_war(lord, longitudes),

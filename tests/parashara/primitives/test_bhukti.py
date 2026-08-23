@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.parashara.primitives.nakshatra_dasha import bhukti_timeline
+from app.parashara.primitives.nakshatra_dasha import bhukti_timeline, pratyantar_timeline
 from app.parashara.primitives.vimshottari_dasha import CYCLE, seed
 
 
@@ -39,3 +39,22 @@ class TestBhukti:
     def test_out_of_range_raises(self):
         with pytest.raises(ValueError):
             bhukti_timeline(CYCLE, 99)
+
+
+class TestPratyantar:
+    def test_pratyantars_total_the_bhukti_length(self):
+        idx = seed(27).index                       # Mercury MD
+        for bi in range(len(CYCLE)):
+            bhukti = bhukti_timeline(CYCLE, idx)[bi]
+            pr = pratyantar_timeline(CYCLE, idx, bi)
+            assert sum(p.years for p in pr) == pytest.approx(bhukti.years)
+            assert pr[0].lord == bhukti.lord        # first pratyantar = the bhukti lord's own
+
+    def test_known_triple_value(self):
+        idx = seed(27).index                       # Mercury MD, Mercury bhukti (index 0)
+        pr = {p.lord: p.years for p in pratyantar_timeline(CYCLE, idx, 0)}
+        assert pr["Mercury"] == pytest.approx(17 * 17 * 17 / 120 / 120)   # Merc-Merc-Merc
+
+    def test_start_year_is_absolute(self):
+        pr = pratyantar_timeline(CYCLE, seed(27).index, 0, bhukti_start_year=40.0)
+        assert pr[0].start_year == 40.0

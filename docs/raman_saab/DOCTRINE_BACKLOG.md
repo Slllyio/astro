@@ -2118,3 +2118,40 @@ Notable Horoscopes carries **868 printed degrees** across 71 birth lines in the 
 format the corpus prefers and that `extract_nh_goldens.py` already handles — 60 records extracted
 so far. The Astrological Magazine v75 (~50k lines, 489 printed degrees, 54 birth lines) is
 essentially untouched. Either is a better next seam than more HTJAH grid work.
+
+## Verdict-merge pass + Notable Horoscopes exhausted (2026-08-23) — DRAFT verdicts 106 → 136
+
+Follow-up to batch 2, chasing the seam the batch-2 entry identified. Two findings.
+
+**A block-boundary bug was suppressing 92% of the available verdicts.** Chart discussions were
+bounded at the next MENTION of a chart number, but Raman cross-references charts constantly in
+his prose ("...as in Chart No. 44"). Vol I has 754 mentions against only 364 real presentations,
+and **270 of those 364 were being truncated before their Conclusion paragraph** — precisely where
+the verdict lives. Bounding blocks at the next PRESENTATION instead (a chart number with "Born"
+within three lines) took Conclusions captured from **10 to 130**, and available house-verdicts
+from 37 to 63.
+
+**Raman re-presents the same nativity across chapters** — up to ten times, 111 of 180 nativities
+more than once — each time concluding on THAT chapter's house. Deduplicating by birth moment was
+discarding those extra judgments. `merge_by_nativity` + `merged_verdicts` now group presentations
+and collect one verdict per house; where two presentations disagree on a house the first is kept
+and the collision recorded rather than averaged, because a disagreement is a reviewer's call.
+Result: **26 existing records gained a DRAFT house-verdict (+26)**. Existing verdicts are never
+overwritten — CONFIRMED ones are the ratchet's own ground truth.
+
+**Notable Horoscopes is now exhausted as a chart source**: of its 74 parseable charts, 70 were
+already goldens and the last 4 were ingested. NH remains the corpus's strongest material — its
+records carry Raman's OWN printed longitudes (`position_source=printed_degree`, 224 verdicts
+across 64 records, averaging 3.5 houses each), immune to the birth-data reconstruction HTJAH
+records need. It simply has no more charts to give.
+
+**Totals for the day.** Corpus **225 → 346** charts. DRAFT verdicts **94 → 136**. Dormant rules
+**85 → 58** (a 32% cut in dead doctrine surface), yogas firing 49 → 52. **The verdict ratchet
+never moved: 261/294 exact, 284/294 within-1, 10 inversions** — every batch carries DRAFT
+verdicts only, and DRAFTs are unscored by construction.
+
+**What is left, ranked.** (a) The 136 DRAFT verdicts are a review queue; promoting them per-record
+against Raman's text is the only thing that moves 261/294, and it must stay per-record — never
+confirm to pad. (b) The Astrological Magazine v75 is the last substantial untouched seam (~50k
+lines, 489 printed degrees, 54 birth lines) and would need its own extractor. (c) HTJAH's
+remaining unextracted charts are overwhelmingly chart-only and cannot yield verdicts.

@@ -363,18 +363,23 @@ def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candid
     digitally-typeset PDF — because both print the same sentences. `origin` is recorded on each
     candidate so a record's provenance says which printing it came from."""
     lines = text.splitlines()
+    # A chart's discussion runs to the next PRESENTATION, not to the next mention of a chart
+    # number. Raman cross-references charts constantly inside his prose ("...as in Chart No. 44"),
+    # and 754 of Vol I's mentions are only 364 presentations: bounding blocks at every mention
+    # truncated 270 of them before their Conclusion paragraph, which is where the verdict lives.
+    # A presentation is a chart number with "Born" close behind it.
     starts: list[tuple[int, int]] = []
     for i, line in enumerate(lines):
         m = _CHART_RE.search(line)
-        if m:
+        if m and re.search(r"\bBorn\b", "\n".join(lines[i:i + 3]), re.IGNORECASE):
             starts.append((int(m.group(1)), i))
     out: list[Candidate] = []
     prev = 0
     for idx, (no, i) in enumerate(starts):
         end = starts[idx + 1][1] if idx + 1 < len(starts) else len(lines)
-        block = "\n".join(lines[i:min(end, i + 120)])
+        block = "\n".join(lines[i:min(end, i + 200)])
         if not re.search(r"\bBorn\b", block[:400], re.IGNORECASE):
-            continue                                    # a cross-reference, not a presentation
+            continue                                    # defensive; starts are presentations
         c = Candidate(book=book, chart_no=no, line=i + 1, origin=origin)
         # The house comes from the chapter this chart sits under. Scan from the previous chart
         # forward so the running chapter state is carried without re-reading the whole book.
@@ -553,6 +558,34 @@ def draft_verdict(c: Candidate) -> dict[str, Any]:
             "verdict_review": "DRAFT",
         }
     }
+
+
+def merge_by_nativity(cands: list[Candidate]) -> dict[str, list[Candidate]]:
+    """Group VERIFIED candidates by birth moment.
+
+    Raman re-presents the same nativity in several chapters — up to ten times — and each
+    presentation carries the Conclusion for THAT chapter's house. Deduplicating them away throws
+    the extra houses out; grouping keeps every judgment he made about the chart."""
+    out: dict[str, list[Candidate]] = {}
+    for c in cands:
+        if c.status == "verified" and c.birth:
+            out.setdefault(str(c.birth["dt"])[:16], []).append(c)
+    return out
+
+
+def merged_verdicts(group: list[Candidate]) -> dict[str, Any]:
+    """Every house verdict available for one nativity, across all its presentations.
+
+    Where two presentations disagree about the same house the FIRST is kept and the collision
+    recorded — a disagreement is a reviewer's problem to adjudicate, not something to average."""
+    out: dict[str, Any] = {}
+    for c in sorted(group, key=lambda x: (x.book, x.line)):
+        for tag, v in draft_verdict(c).items():
+            if tag not in out:
+                out[tag] = v
+            elif out[tag]["verdict"] != v["verdict"]:
+                out[tag].setdefault("_collision", []).append(v["verdict"])
+    return out
 
 
 def to_record(c: Candidate) -> dict[str, Any]:

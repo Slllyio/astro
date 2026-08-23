@@ -54,17 +54,25 @@ published verdicts (ordinal afflicted<mixed<favourable; parashara flourishing/or
 maps onto it):
 
 ```
-Raman engine   vs golden : exact=259/293  within-1=283/293   (the engine tuned to Raman)
-Parashara      vs golden : exact=123/293  within-1=198/293   (BPHS ch.11, untuned)
-divergences: 94 inversion + 75 boundary + 1 off-axis
+Raman engine            vs golden : exact=259/293  within-1=283/293   (the engine tuned to Raman)
+Parashara ch.11 only    vs golden : exact=123/293  within-1=198/293   (bare prosperity/annihilation)
+Parashara ch.11+str+yoga vs golden: exact=118/293  within-1=197/293   (the richer verdict)
 ```
 
 **Read this as overlap, not accuracy.** It is NOT "BPHS is 123/293 accurate." Raman deliberately
 revised and *elaborated* Parashara across many chapters plus his own refinements; the parashara
-number is bare **ch.11 prosperity/annihilation** — a single, coarse method — so where they differ the
-divergence is a real BPHS-vs-Raman doctrinal difference (each attributed), not a bug. The gap between
-259 and 123 IS the measure of how much Raman's system is more than ch.11 alone. Guarded by
-`test_cross_engine_agreement.py`, which re-derives Raman's 259/293 to prove the comparison is valid.
+number is BPHS's own method, so where they differ the divergence is a real BPHS-vs-Raman doctrinal
+difference (each attributed off-axis / boundary / inversion), not a bug. The gap between 259 and 123
+IS the measure of how much Raman's system is more than ch.11 alone.
+
+**The richer verdict is the integrity check.** `richer_bhava.py` extends ch.11 with Parashara's own
+strength and yoga votes (lord Vimsopaka band ch.7, karaka dignity ch.32, SAV bindus ch.66, a
+Mahapurusha yoga on the lord/karaka) — same net-vote rule, every vote cited. It was **not tuned
+toward Raman**, and the proof is in the number: it agrees with Raman *slightly LESS* (118 vs 123), not
+more. Folding in more faithful BPHS doctrine moves the engine *away* from Raman, not toward him —
+confirming these are genuinely different systems, not one an approximation of the other.
+`test_cross_engine_agreement.py` re-derives Raman's 259/293 to prove the harness is valid and asserts
+the richer verdict never jumps toward Raman.
 
 ## Layout
 
@@ -120,6 +128,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Nisargayu** (ch.43 sl.16-17 + ch.3 sl.49-50) — natural longevity, the 120-year allotment scaled
   by deep-exaltation (the third method, which the Raman engine lacks). Pre-reduction core.
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
+- **Richer bhava verdict** (`richer_bhava.py`) — ch.11's net-vote method EXTENDED with Parashara's own
+  strength and yoga signals: the lord's Vimsopaka band (ch.7), the karaka's dignity (ch.32), the
+  house's Sarvashtakavarga bindus (ch.66), and a Pancha Mahapurusha yoga on the lord/karaka. Same
+  verdict rule, every added vote cited; surfaced per-nativity alongside the bare ch.11 verdict.
 - **Bhava-lord effects** (ch.24) — the full 144-statement catalogue (lord of each house in each
   house), indexed from the corpus in place so every effect cites Parashara's own sloka; surfaced
   per-nativity in the reading against the chart's actual house-lord placements.

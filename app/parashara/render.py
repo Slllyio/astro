@@ -63,6 +63,24 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {h} | {hsign} | {_VERDICT_MARK[v.verdict]} | {reasons} |")
     out.append("")
 
+    # --- Richer bhava verdict (ch.11 + strength + yoga) ---
+    out.append("## House judgments — richer verdict: ch.11 + strength + yoga")
+    out.append("")
+    out.append("The ch.11 method extended by Parashara's own strength and yoga signals — the lord's "
+               "Vimsopaka band (ch.7), the karaka's dignity (ch.32), the house's Sarvashtakavarga "
+               "bindus (ch.66), and any Pancha Mahapurusha yoga on the lord/karaka. Same net-vote "
+               "rule as ch.11; every added vote cites its own sloka.")
+    out.append("")
+    out.append("| House | Sign | Richer verdict | ch.11 | Votes (p/a) | Factors |")
+    out.append("|---|---|---|---|---|---|")
+    for h in range(1, 13):
+        rv = reading.richer_bhavas[h]
+        hsign = _sign((c.asc_sign - 1 + h - 1) % 12 + 1)
+        factors = "; ".join(rv.factors) if rv.factors else "— (no factor either way)"
+        out.append(f"| {h} | {hsign} | {_VERDICT_MARK[rv.verdict]} | {_VERDICT_MARK[rv.base.verdict]} "
+                   f"| {rv.prosperity_votes}/{rv.annihilation_votes} | {factors} |")
+    out.append("")
+
     # --- Bhava-lord effects (ch.24) ---
     out.append("## House-lord placements — Parashara's effects (BPHS ch.24)")
     out.append("")

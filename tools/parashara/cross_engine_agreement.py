@@ -24,6 +24,7 @@ from typing import Any, Optional
 
 from app.parashara.chart.bhava_chart import judge_all_bhavas
 from app.parashara.chart.cast import cast as cast_parashara
+from app.parashara.judges.richer_bhava import richer_all_bhavas
 from app.raman_saab.chart.adapter import cast_chart
 from app.raman_saab.chart.model import BirthData, RamanChart
 from app.raman_saab.judges import house_template as ht
@@ -100,27 +101,39 @@ def _raman_verdict(chart: RamanChart, house: int, sig: str) -> Optional[str]:
     return None
 
 
-def _parashara_verdicts(rec: dict[str, Any]) -> dict[int, str]:
-    """{house: raman-vocabulary verdict} from the parashara ch.11 judge.
+def _chart_inputs(rec: dict[str, Any]) -> Optional[tuple[dict[str, float], int, bool]]:
+    """(longitudes, asc_sign, moon_waxing) for the parashara judges, or None if unbuildable.
 
     Birth-based records (empty stated_positions) are FRESH-CAST with the parashara caster (Lahiri, its
-    native ayanamsa); book records use the stated longitudes + printed lagna directly. So the two
-    engines use their own native ayanamsa on birth charts — a real engine difference, and identical
-    stated longitudes on book charts (pure doctrine comparison there)."""
+    native ayanamsa); book records use the stated longitudes + printed lagna directly. So on birth
+    charts each engine uses its own native ayanamsa (a real engine difference), and on book charts
+    both see identical stated longitudes (pure doctrine comparison there)."""
     birth = _birth(rec)
     if birth is not None:
         ch = cast_parashara(year=birth.year, month=birth.month, day=birth.day, hour=birth.hour,
                             minute=birth.minute, tz_offset=birth.tz_offset,
                             latitude=birth.latitude, longitude=birth.longitude)
-        verdicts = judge_all_bhavas(ch.longitudes, asc_sign=ch.asc_sign, moon_waxing=ch.moon_waxing)
-        return {h: _PARA_TO_RAMAN[v.verdict] for h, v in verdicts.items()}
+        return dict(ch.longitudes), ch.asc_sign, ch.moon_waxing
     longitudes = {n: _lon(e) for n, e in rec["stated_positions"].items()}
     if not longitudes:
-        return {}
+        return None
     lagna = rec.get("lagna_sign")
     asc_sign = int(lagna) if lagna else (int(longitudes.get("Sun", 5.0) // 30) + 1)
     sun, moon = longitudes.get("Sun"), longitudes.get("Moon")
     moon_waxing = (0.0 < (moon - sun) % 360.0 < 180.0) if (sun is not None and moon is not None) else True
+    return longitudes, asc_sign, moon_waxing
+
+
+def _parashara_verdicts(rec: dict[str, Any], *, richer: bool = False) -> dict[int, str]:
+    """{house: raman-vocabulary verdict} from the parashara judge — bare ch.11, or the richer
+    ch.11+strength+yoga verdict when `richer=True`."""
+    inputs = _chart_inputs(rec)
+    if inputs is None:
+        return {}
+    longitudes, asc_sign, moon_waxing = inputs
+    if richer:
+        rv = richer_all_bhavas(longitudes, asc_sign=asc_sign, moon_waxing=moon_waxing)
+        return {h: _PARA_TO_RAMAN[v.verdict] for h, v in rv.items()}
     verdicts = judge_all_bhavas(longitudes, asc_sign=asc_sign, moon_waxing=moon_waxing)
     return {h: _PARA_TO_RAMAN[v.verdict] for h, v in verdicts.items()}
 
@@ -136,69 +149,52 @@ def _dist(got: Optional[str], expected: str) -> int:
 def score() -> dict[str, Any]:
     goldens = load_goldens()
     recs = _ratchet_records(goldens)
-    r_exact = r_w1 = p_exact = p_w1 = agree_exact = agree_w1 = total = 0
-    off_axis = boundary = inversion = 0     # golden=insufficient-evidence / dist-1 / dist-2 on-axis
-    divergences: list[str] = []
+    r_exact = r_w1 = p_exact = p_w1 = x_exact = x_w1 = total = 0
+    p_inv = x_inv = 0                        # dist-2 on-axis inversions, ch.11 vs richer
     for rec in recs:
         rchart = _raman_chart(rec)
         pverd = _parashara_verdicts(rec)
+        xverd = _parashara_verdicts(rec, richer=True)
         for house, entry in _confirmed(rec):
             gold = entry["verdict"]
-            sig = entry["signification"]
-            rv = _raman_verdict(rchart, house, sig)
-            pv = pverd.get(house)
+            pv, xv = pverd.get(house), xverd.get(house)
+            rv = _raman_verdict(rchart, house, entry["signification"])
             total += 1
             r_exact += rv == gold
             r_w1 += _dist(rv, gold) <= 1
             p_exact += pv == gold
             p_w1 += _dist(pv, gold) <= 1
-            agree_exact += rv == pv
-            agree_w1 += _dist(pv, rv) <= 1
-            d = _dist(pv, gold)
-            if d >= 1:
-                # Categorise the divergence for honest attribution.
-                if gold not in _ORD:            # insufficient-evidence: off parashara's 3-verdict axis
-                    off_axis += 1
-                    kind = "off-axis (golden=insufficient-evidence; ch.11 has no such verdict)"
-                elif d == 1:                    # favourable<->mixed / mixed<->afflicted: contestable
-                    boundary += 1
-                    kind = "boundary (one ordinal step — contestable)"
-                else:                           # flourishing<->afflicted: a real doctrinal inversion
-                    inversion += 1
-                    kind = "INVERSION (opposite poles — a real BPHS-vs-Raman difference)"
-                divergences.append(
-                    f"  {rec['id']} H{house}/{sig}: parashara={pv!r} raman={rv!r} golden={gold!r}"
-                    f"  [{kind}]")
+            x_exact += xv == gold
+            x_w1 += _dist(xv, gold) <= 1
+            p_inv += gold in _ORD and _dist(pv, gold) >= 2
+            x_inv += gold in _ORD and _dist(xv, gold) >= 2
     return {"total": total, "raman_exact": r_exact, "raman_within1": r_w1,
-            "para_exact": p_exact, "para_within1": p_w1,
-            "agree_exact": agree_exact, "agree_within1": agree_w1,
-            "off_axis": off_axis, "boundary": boundary, "inversion": inversion,
-            "divergences": divergences}
+            "ch11_exact": p_exact, "ch11_within1": p_w1, "ch11_inversion": p_inv,
+            "richer_exact": x_exact, "richer_within1": x_w1, "richer_inversion": x_inv}
 
 
 def main() -> None:
     s = score()
     n = s["total"]
+
+    def line(label: str, ex: int, w1: int, inv: Optional[int] = None) -> str:
+        extra = f"  inversions={inv}" if inv is not None else ""
+        return (f"  {label:24s}: exact={ex}/{n}={ex/n:.3f}  within-1={w1}/{n}={w1/n:.3f}{extra}")
+
     print(f"\nCross-engine agreement on the {n} CONFIRMED Raman goldens "
-          f"(parashara ch.11 vs Raman's published verdicts):\n")
-    print(f"  Raman engine   vs golden : exact={s['raman_exact']}/{n}={s['raman_exact']/n:.3f}  "
-          f"within-1={s['raman_within1']}/{n}={s['raman_within1']/n:.3f}")
-    print(f"  Parashara      vs golden : exact={s['para_exact']}/{n}={s['para_exact']/n:.3f}  "
-          f"within-1={s['para_within1']}/{n}={s['para_within1']/n:.3f}")
-    print(f"  Parashara vs Raman engine: exact={s['agree_exact']}/{n}={s['agree_exact']/n:.3f}  "
-          f"within-1={s['agree_within1']}/{n}={s['agree_within1']/n:.3f}")
-    print(f"\n  divergence breakdown ({len(s['divergences'])} total):")
-    print(f"    off-axis  (golden=insufficient-evidence, no ch.11 equivalent): {s['off_axis']}")
-    print(f"    boundary  (one ordinal step — contestable)                   : {s['boundary']}")
-    print(f"    INVERSION (opposite poles — a real BPHS-vs-Raman difference) : {s['inversion']}")
-    print(f"\n[cross-engine] parashara agrees with Raman's published verdicts on "
-          f"{s['para_exact']}/{n} exact, {s['para_within1']}/{n} within-1")
-    print("(overlap + attributed divergences — NOT 'BPHS accuracy'; where BPHS revises Raman, "
-          "divergence is correct)")
-    if s["divergences"]:
-        print(f"\nfirst divergences (each a BPHS-vs-Raman difference):")
-        for line in s["divergences"][:20]:
-            print(line)
+          f"(vs Raman's published verdicts):\n")
+    print(line("Raman engine vs golden", s["raman_exact"], s["raman_within1"]))
+    print(line("Parashara ch.11 only", s["ch11_exact"], s["ch11_within1"], s["ch11_inversion"]))
+    print(line("Parashara ch.11+strength+yoga", s["richer_exact"], s["richer_within1"],
+               s["richer_inversion"]))
+    d_ex = s["richer_exact"] - s["ch11_exact"]
+    d_w1 = s["richer_within1"] - s["ch11_within1"]
+    d_inv = s["richer_inversion"] - s["ch11_inversion"]
+    print(f"\n  richer vs ch.11: exact {d_ex:+d}, within-1 {d_w1:+d}, inversions {d_inv:+d}")
+    print(f"\n[cross-engine] richer parashara agrees with Raman's published verdicts on "
+          f"{s['richer_exact']}/{n} exact, {s['richer_within1']}/{n} within-1")
+    print("(overlap, NOT 'BPHS accuracy'; where BPHS revises Raman the divergence is correct. The "
+          "richer verdict was NOT tuned toward Raman — every vote cites its own sloka.)")
 
 
 if __name__ == "__main__":

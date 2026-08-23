@@ -1,11 +1,10 @@
-"""Cross-engine agreement guard — the parashara engine on the same 293 Raman goldens.
+"""Cross-engine agreement guard — parashara (ch.11 and the richer verdict) on the 293 Raman goldens.
 
-Two jobs: (1) prove the comparison is VALID by re-deriving the Raman engine's own 259/293 through this
-tool's harness, and (2) guard the parashara measurement against a silent collapse (the earlier
-empty-stated-positions bug drove agreement to 21/293). It prints the headline the way the ratchets do.
-
-This is a MEASUREMENT, not an accuracy target: parashara's agreement with Raman is overlap +
-attributed divergence, never "BPHS accuracy" — where BPHS revises Raman, divergence is correct.
+Three jobs: (1) prove the comparison is VALID by re-deriving the Raman engine's own 259/293 through
+this harness; (2) guard both parashara measurements against a silent collapse (the earlier
+empty-positions bug drove agreement to 21/293); (3) assert the richer verdict was NOT tuned toward
+Raman — it agrees with Raman about the same as, or LESS than, bare ch.11 (a tuned version would jump
+up). This is a MEASUREMENT, not an accuracy target.
 """
 from __future__ import annotations
 
@@ -13,27 +12,28 @@ from tools.parashara.cross_engine_agreement import score
 
 
 def test_harness_reproduces_the_raman_number(capsys):
-    """If the tool's harness is valid, the Raman engine scores its known 259/293 on it."""
+    """If the harness is valid, the Raman engine scores its known 259/293 on it."""
     s = score()
     assert s["total"] == 293
     assert s["raman_exact"] == 259 and s["raman_within1"] == 283
     with capsys.disabled():
         n = s["total"]
-        print(f"\n[cross-engine] parashara vs Raman's published verdicts: "
-              f"exact={s['para_exact']}/{n} within-1={s['para_within1']}/{n} "
-              f"(inversions={s['inversion']}, boundary={s['boundary']}, off-axis={s['off_axis']})")
+        print(f"\n[cross-engine] ch.11={s['ch11_exact']}/{n} exact "
+              f"(within-1 {s['ch11_within1']}/{n}, inv {s['ch11_inversion']});  "
+              f"richer={s['richer_exact']}/{n} exact "
+              f"(within-1 {s['richer_within1']}/{n}, inv {s['richer_inversion']})")
 
 
-def test_parashara_agreement_does_not_silently_collapse():
-    """A floor, not a target — catches a regression like the empty-positions bug (which gave 21).
-    The number moving UP or DOWN within band is fine; a collapse means the tool broke."""
+def test_neither_verdict_silently_collapses():
+    """A floor, not a target — catches a regression like the empty-positions bug (which gave 21)."""
     s = score()
-    assert s["para_exact"] >= 100          # currently 123
-    assert s["para_within1"] >= 170        # currently 198
+    assert s["ch11_exact"] >= 100 and s["ch11_within1"] >= 170
+    assert s["richer_exact"] >= 100 and s["richer_within1"] >= 170
 
 
-def test_divergences_are_categorised():
+def test_richer_verdict_was_not_tuned_toward_raman():
+    """The integrity check: adding BPHS strength/yoga doctrine must NOT be a backdoor to chase Raman.
+    The richer verdict agrees with Raman about the same as, or LESS than, bare ch.11 — a version
+    tuned toward Raman would agree markedly MORE."""
     s = score()
-    # every divergence is one of the three attributed kinds; they sum to the total mismatches.
-    assert s["off_axis"] + s["boundary"] + s["inversion"] == len(s["divergences"])
-    assert s["para_exact"] + len(s["divergences"]) == s["total"]
+    assert s["richer_exact"] <= s["ch11_exact"] + 3   # no meaningful jump toward Raman

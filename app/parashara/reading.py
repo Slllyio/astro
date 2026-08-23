@@ -45,6 +45,7 @@ from app.parashara.primitives import ashtakavarga as _av
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
+from app.parashara.judges.richer_bhava import RicherBhavaVerdict, richer_all_bhavas
 from app.parashara.primitives import ashtottari_dasha as ash
 from app.parashara.primitives import vimshottari_dasha as vim
 from app.parashara.primitives import yogini_dasha as yog
@@ -94,6 +95,7 @@ class BhavaLordPlacement:
 class ParasharaReading:
     chart: ParasharaChart
     bhavas: Mapping[int, BhavaVerdict]
+    richer_bhavas: Mapping[int, RicherBhavaVerdict]   # ch.11 + strength (Vimsopaka/SAV/dignity) + yoga
     vimsopaka: Mapping[str, VimsopakaScore]
     shadbala: Mapping[str, PartialShadbala]   # the complete six-fold Shadbala (Sthana..Kala)
     avasthas: Mapping[str, GrahaAvastha]
@@ -234,6 +236,8 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         chart=chart,
         bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
                                 moon_waxing=chart.moon_waxing),
+        richer_bhavas=richer_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
+                                        moon_waxing=chart.moon_waxing),
         vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
         shadbala=partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
                                       asc_longitude=chart.asc_longitude,

@@ -126,6 +126,21 @@ _BAL_COMPACT_RE = re.compile(
     re.IGNORECASE)
 
 _LORDS = {"Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"}
+#: Vimshottari mahadasha spans, used to convert a balance disagreement into the Moon-longitude
+#: disagreement that actually caused it.
+_SPAN: Final[dict[str, int]] = {
+    "Ketu": 7, "Venus": 20, "Sun": 6, "Moon": 10, "Mars": 7,
+    "Rahu": 18, "Jupiter": 16, "Saturn": 19, "Mercury": 17,
+}
+#: Default gate width, in DEGREES of Moon longitude. Chosen from measurement, not taste: across
+#: 227 charts carrying a printed balance, the offset between Raman's implied Moon and a modern
+#: cast has median -0.010 deg, mean +0.161, stdev 1.248 — no systematic bias, so there is nothing
+#: to calibrate, only per-chart noise from era table interpolation and rounded birth times.
+#: 2.5 deg is ~2 sigma of that noise and admits 209 of the 227.
+_TOL_DEG: Final[float] = 2.5
+#: A nakshatra is 360/27 degrees; a mahadasha maps one-to-one onto it, which is what makes the
+#: balance invertible back to a Moon longitude.
+_NAK_DEG: Final[float] = 360.0 / 27.0
 
 
 @dataclass
@@ -142,6 +157,8 @@ class Candidate:
     # filled by the gate
     cast_lord: Optional[str] = None
     cast_years: Optional[float] = None
+    moon_offset_deg: Optional[float] = None
+    house: Optional[int] = None
     status: str = "unparsed"
     reason: str = ""
     notes: list[str] = field(default_factory=list)
@@ -281,8 +298,62 @@ def _parse_balance(block: str) -> tuple[Optional[str], Optional[float]]:
 
 
 def _conclusion(block: str) -> Optional[str]:
-    m = re.search(r"Conclusion\s*[:\.\-—]\s*(.{40,600}?)(?:\n\s*\n|Chart\s*No)", block, re.S | re.I)
-    return " ".join(m.group(1).split()) if m else None
+    """Raman's summing-up paragraph for the chart, normalised to one line.
+
+    The two printings punctuate the label differently ("Conclusion :" in the scans,
+    "Conclusion.—" in the Motilal setting) and neither reliably ends the paragraph with a blank
+    line, so the capture runs to the first structural marker that DOES appear — the next chart,
+    a page footer, a following section heading, or a blank line — and otherwise simply stops at
+    a sane length rather than failing."""
+    m = re.search(r"Conclusion\s*[:.\-—]+\s*(.+)", block, re.S | re.I)
+    if not m:
+        return None
+    tail = m.group(1)
+    stops = [tail.find(mark) for mark in ("\n\n", "Chart No")]
+    stops += [p.start() for p in re.finditer(r"\nPage \d+ of \d+|\n\s*[IVXL]+\.\s+[A-Z]", tail)]
+    cut = min([s for s in stops if s > 40] or [600])
+    text = " ".join(tail[:min(cut, 600)].split())
+    return text or None
+
+
+#: Chapter headings carry the house each worked judgment belongs to. The scans mangle the
+#: ordinals ("Twelth", "Eleveath", "Eieventh", "Elevanth" all occur), so every observed variant
+#: is listed rather than relying on a clean spelling.
+_HOUSE_WORD: Final[dict[str, int]] = {
+    "first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6,
+    "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10,
+    "eleventh": 11, "eleveath": 11, "eievenzh": 11, "eieventh": 11, "elevanth": 11,
+    "twelfth": 12, "twelth": 12,
+}
+_CHAPTER_RE = re.compile(
+    r"Concerning the ([A-Za-z]+) House|^\s*(?:X{0,3}(?:IX|IV|V?I{0,3})\.\s*)?The ([A-Za-z]+) House\s*$",
+    re.IGNORECASE | re.MULTILINE)
+
+
+#: A table-of-contents row names every chapter in the book and would otherwise leave the running
+#: house state pointing at the LAST one listed — which is why the first charts of Vol I were
+#: initially attributed to the 12th house. TOC rows are recognisable by their leader dots or by
+#: ending in a bare page number.
+_TOC_ROW = re.compile(r"\.{3,}|\.\s*\d{1,3}\s*$|\s\d{1,3}\s*$")
+
+
+def house_of_chapter(text: str) -> Optional[int]:
+    """The house of the LAST real chapter heading in `text`, or None.
+
+    Used to attribute a chart to the house whose chapter it appears under — Raman organises the
+    volumes by house, so a chart's judgment belongs to the chapter it sits in. Table-of-contents
+    rows are skipped: they list every chapter and would pin the running state to the last one."""
+    found = None
+    for line in text.splitlines():
+        if _TOC_ROW.search(line):
+            continue
+        m = _CHAPTER_RE.search(line)
+        if not m:
+            continue
+        word = (m.group(1) or m.group(2) or "").lower()
+        if word in _HOUSE_WORD:
+            found = _HOUSE_WORD[word]
+    return found
 
 
 def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candidate]:
@@ -298,12 +369,18 @@ def collect_text(book: str, text: str, *, origin: str = "corpus") -> list[Candid
         if m:
             starts.append((int(m.group(1)), i))
     out: list[Candidate] = []
+    prev = 0
     for idx, (no, i) in enumerate(starts):
         end = starts[idx + 1][1] if idx + 1 < len(starts) else len(lines)
         block = "\n".join(lines[i:min(end, i + 120)])
         if not re.search(r"\bBorn\b", block[:400], re.IGNORECASE):
             continue                                    # a cross-reference, not a presentation
         c = Candidate(book=book, chart_no=no, line=i + 1, origin=origin)
+        # The house comes from the chapter this chart sits under. Scan from the previous chart
+        # forward so the running chapter state is carried without re-reading the whole book.
+        c.house = house_of_chapter("\n".join(lines[prev:i + 1])) or (
+            out[-1].house if out else None)
+        prev = i
         c.birth, notes = _parse_birth(block)
         c.notes.extend(notes)
         c.printed_lord, c.printed_years = _parse_balance(block)
@@ -334,18 +411,38 @@ def collect_pdf(path: Path) -> list[Candidate]:
 
     doc = fitz.open(path)
     pages = [p.get_text() for p in doc]
-    # "Volume Two" begins at the page whose text announces it after the contents pages.
+    head = "\n".join(pages[:6])
+    # A file may hold both volumes (the Motilal omnibus) or just one. Detect which, rather than
+    # assuming: a single-volume file mislabelled as an omnibus would attribute every Vol II
+    # chart to Vol I and corrupt the house attribution downstream.
     vol2_page = next((i for i, t in enumerate(pages)
-                      if i > 20 and re.search(r"^\s*Volume Two\s*$", t, re.M)), len(pages))
+                      if i > 20 and re.search(r"^\s*Volume Two\s*$", t, re.M)), None)
+    if vol2_page is None:
+        only = "HTJAH-II" if re.search(r"Volume\s+Two", head, re.I) else "HTJAH-I"
+        spans = [(only, 0, len(pages))]
+    else:
+        spans = [("HTJAH-I", 0, vol2_page), ("HTJAH-II", vol2_page, len(pages))]
     out: list[Candidate] = []
-    for tag, lo, hi in (("HTJAH-I", 0, vol2_page), ("HTJAH-II", vol2_page, len(pages))):
+    for tag, lo, hi in spans:
         text = "\n".join(pages[lo:hi])
-        for c in collect_text(tag, text, origin=f"motilal-pdf:{path.name}"):
-            out.append(c)
+        out.extend(collect_text(tag, text, origin=f"pdf:{path.name}"))
     return out
 
 
-def gate(c: Candidate, tolerance_days: float) -> Candidate:
+def moon_offset_deg(cast_years: float, printed_years: float, lord: str) -> float:
+    """How far apart Raman's Moon and the cast Moon are, in degrees of longitude.
+
+    A mahadasha balance is just the unelapsed fraction of the Moon's nakshatra, so the balance
+    disagreement inverts directly to the longitude disagreement that produced it. Comparing in
+    DEGREES rather than in days is what makes the gate scale-free: the same 1 deg of Moon error
+    shows up as ~4 months inside a 6-year Sun dasha and ~1.5 years inside a 20-year Venus one, so
+    a flat day tolerance silently applies a threshold three times stricter to Sun-dasha charts
+    than to Venus-dasha ones."""
+    span = _SPAN[lord]
+    return abs((cast_years - printed_years) / span) * _NAK_DEG
+
+
+def gate(c: Candidate, tolerance_deg: float = _TOL_DEG) -> Candidate:
     """Cast the chart and require Raman's OWN printed dasha balance to reproduce."""
     if c.birth is None:
         return c
@@ -377,14 +474,15 @@ def gate(c: Candidate, tolerance_days: float) -> Candidate:
     if c.printed_years is None:
         c.status, c.reason = "gate-partial", "lord matches; Raman printed no duration"
         return c
-    delta_days = abs(c.cast_years - c.printed_years) * 365.2425
-    if delta_days > tolerance_days:
+    off = moon_offset_deg(c.cast_years, c.printed_years, c.cast_lord)
+    c.moon_offset_deg = round(off, 3)
+    if off > tolerance_deg:
         c.status = "gate-failed"
-        c.reason = (f"balance off by {delta_days:.0f}d "
+        c.reason = (f"Moon off by {off:.2f} deg "
                     f"(cast {c.cast_years:.2f}y vs printed {c.printed_years:.2f}y)")
         return c
     c.status = "verified"
-    c.reason = f"lord {c.cast_lord}, balance within {delta_days:.0f}d"
+    c.reason = f"lord {c.cast_lord}, Moon within {off:.2f} deg"
     return c
 
 
@@ -424,18 +522,55 @@ def existing_birth_keys() -> set[str]:
     return have
 
 
+#: H8's primary signification is `longevity`, which the judge deliberately does NOT decide from
+#: raw positions — LONGEVITY_GUARD defers the numeric span to the ayurdaya pre-pass and returns
+#: insufficient-evidence. A scored H8 longevity verdict would therefore measure the guard rather
+#: than the doctrine, so H8 charts are extracted WITHOUT a verdict.
+_NO_VERDICT_HOUSES: Final[frozenset[int]] = frozenset({8})
+
+
+def draft_verdict(c: Candidate) -> dict[str, Any]:
+    """`expected_verdicts` for a candidate — DRAFT, or empty when nothing can be said.
+
+    The ordinal comes from `extract_goldens.classify_prose`, the project's existing and tested
+    prose classifier: it is conservative by construction (an explicit concession outranks a bare
+    affliction word; anything it cannot read becomes insufficient-evidence) and it never invents
+    a reading. Everything it produces is marked DRAFT, and only CONFIRMED verdicts are scored by
+    the accuracy ratchet — so this cannot move fidelity, only queue work for a reviewer."""
+    from app.raman_saab.doctrine.significations import significations_of
+    from tools.raman_saab.extract_goldens import classify_prose
+
+    if not c.conclusion or not c.house or c.house in _NO_VERDICT_HOUSES:
+        return {}
+    keys = significations_of(c.house)
+    if not keys:
+        return {}
+    return {
+        f"H{c.house}": {
+            "signification": keys[0].key,          # the house's primary matter
+            "verdict": classify_prose(c.conclusion),
+            "verdict_prose": c.conclusion[:600],
+            "verdict_review": "DRAFT",
+        }
+    }
+
+
 def to_record(c: Candidate) -> dict[str, Any]:
-    """A DRAFT golden record. The verdict is deliberately left unset — this tool extracts
-    CHARTS, and the verdict is a doctrine judgment a reviewer makes by reading Raman."""
+    """A DRAFT golden record.
+
+    Any verdict here is a keyword reading of Raman's own Conclusion paragraph, marked DRAFT and
+    therefore unscored; the paragraph itself is stored verbatim so a reviewer can promote it
+    without reopening the book."""
+    verdicts = draft_verdict(c)
     return {
         "id": f"{c.book}.x{c.chart_no}",
         "book": c.book,
-        "name": f"Chart {c.chart_no} (extraction pending review)",
+        "name": f"Chart {c.chart_no} (extracted, DRAFT)",
         "case_type": "worked_example",
         "birth": c.birth,
         "lagna_sign": None,
         "stated_positions": {},
-        "expected_verdicts": {},
+        "expected_verdicts": verdicts,
         "expected_longevity": None,
         # Track B only. Track A asserts the engine reproduces Raman's PRINTED placements, and
         # these records have none — the HTJAH chart grids OCR into unusable fragments, which is
@@ -449,6 +584,8 @@ def to_record(c: Candidate) -> dict[str, Any]:
             "origin": c.origin,
             "printed_balance": {"lord": c.printed_lord, "years": c.printed_years},
             "cast_balance": {"lord": c.cast_lord, "years": c.cast_years},
+            "moon_offset_deg": c.moon_offset_deg,
+            "house_from_chapter": c.house,
             "notes": c.notes,
             "conclusion_prose": c.conclusion,
         },
@@ -462,51 +599,61 @@ def main(argv: list[str] | None = None) -> int:
         pass
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--emit", action="store_true", help="print JSONL for verified NEW charts")
-    ap.add_argument("--tolerance-days", type=float, default=30.0,
-                    help="max disagreement with Raman's printed dasha balance (default 30)")
+    ap.add_argument("--tolerance-deg", type=float, default=_TOL_DEG,
+                    help=f"max Moon-longitude disagreement with Raman's printed dasha balance, "
+                         f"in degrees (default {_TOL_DEG}; ~2 sigma of the measured noise)")
     ap.add_argument("--book", choices=sorted(_BOOKS), help="limit to one book")
-    ap.add_argument("--pdf", type=Path,
-                    help="a digitally-typeset PDF of both volumes, used INSTEAD of the vendored "
-                         "OCR markdown (citations still resolve against the locked corpus)")
+    ap.add_argument("--pdf", type=Path, action="append", default=[],
+                    help="a digitally-typeset PDF (repeatable, e.g. one per volume). Used in "
+                         "preference to the vendored OCR markdown; citations still resolve "
+                         "against the hash-locked corpus, which this never touches.")
+    ap.add_argument("--with-corpus", action="store_true",
+                    help="also scan the vendored OCR markdown for nativities the PDFs miss")
     a = ap.parse_args(argv)
 
-    have = existing_chart_numbers()
     all_c: list[Candidate] = []
-    if a.pdf:
-        if not a.pdf.is_file():
-            print(f"[error] no such PDF: {a.pdf}", file=sys.stderr)
+    for pdf in a.pdf:
+        if not pdf.is_file():
+            print(f"[error] no such PDF: {pdf}", file=sys.stderr)
             return 2
-        for c in collect_pdf(a.pdf):
-            if a.book and c.book != a.book:
-                continue
-            all_c.append(gate(c, a.tolerance_days))
-    else:
-        books = {a.book: _BOOKS[a.book]} if a.book else _BOOKS
-        for tag, path in books.items():
+        all_c.extend(gate(c, a.tolerance_deg) for c in collect_pdf(pdf))
+    if a.with_corpus or not a.pdf:
+        for tag, path in _BOOKS.items():
             if not path.is_file():
                 print(f"[skip] {tag}: corpus file absent", file=sys.stderr)
                 continue
-            for c in collect(tag, path):
-                all_c.append(gate(c, a.tolerance_days))
+            all_c.extend(gate(c, a.tolerance_deg) for c in collect(tag, path))
+    if a.book:
+        all_c = [c for c in all_c if c.book == a.book]
 
-    new = [c for c in all_c if (c.book, c.chart_no) not in have]
-    verified_new = [c for c in new if c.status == "verified"]
+    # Deduplicate by NATIVITY, not chart number: the editions number charts differently, so the
+    # same birth moment appears under different numbers in different sources.
+    have = existing_birth_keys()
+    fresh: dict[str, Candidate] = {}
+    for c in all_c:
+        if c.status != "verified" or not c.birth:
+            continue
+        key = str(c.birth["dt"])[:16]
+        if key in have or key in fresh:
+            continue
+        fresh[key] = c
+    verified_new = list(fresh.values())
 
     from collections import Counter
     print(f"[htjah] chart presentations found : {len(all_c)}")
-    print(f"[htjah] already in golden corpus  : {len(all_c) - len(new)}")
-    print(f"[htjah] NOT yet extracted         : {len(new)}")
-    print(f"[htjah] status of the unextracted : "
-          f"{dict(Counter(c.status for c in new))}")
-    print(f"[htjah] VERIFIED against Raman's printed dasha balance : {len(verified_new)}")
-    withconc = sum(1 for c in verified_new if c.conclusion)
-    print(f"[htjah]   ...of which carry a Conclusion paragraph      : {withconc}")
+    print(f"[htjah] status of every candidate : {dict(Counter(c.status for c in all_c))}")
+    print(f"[htjah] VERIFIED (lord + Moon within {a.tolerance_deg} deg) : "
+          f"{sum(1 for c in all_c if c.status == 'verified')}")
+    print(f"[htjah]   ...NEW nativities after dedupe               : {len(verified_new)}")
+    print(f"[htjah]   ...carrying a Conclusion paragraph           : "
+          f"{sum(1 for c in verified_new if c.conclusion)}")
+    print(f"[htjah]   ...that yield a DRAFT verdict                : "
+          f"{sum(1 for c in verified_new if draft_verdict(c))}")
 
     if not a.emit:
-        for c in sorted(new, key=lambda x: (x.book, x.chart_no))[:200]:
-            flag = {"verified": "OK ", "gate-failed": "GATE", "unparsed": "PARSE",
-                    "ungated": "NOGATE", "gate-partial": "PART", "cast-failed": "CAST"}.get(c.status, "?")
-            print(f"  {flag:6s} {c.book}.{c.chart_no:<4d} L{c.line:<6d} {c.reason[:78]}")
+        for c in sorted(verified_new, key=lambda x: (x.book, x.chart_no))[:250]:
+            h = f"H{c.house}" if c.house else "H?"
+            print(f"  OK  {c.book}.{c.chart_no:<4d} {h:4s} {c.reason[:64]}")
         return 0
 
     for c in sorted(verified_new, key=lambda x: (x.book, x.chart_no)):

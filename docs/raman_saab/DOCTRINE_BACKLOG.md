@@ -2072,3 +2072,49 @@ is the highest-value next step on this thread: it would supply Raman's printed p
 ~600 charts across both volumes, gate them at sign level, and make the fresh-cast fallback
 unnecessary. Until then the 57 already-ingested fresh-cast charts stand — they carry no verdicts,
 so they cannot affect fidelity, and their sign-level placements are sound per finding (1).
+
+## Golden corpus batch 2 (2026-08-23) — clean-edition harvest, dormancy 85 → 60 across the day
+
+Owner directive: *"i want to increase the examples from raman sor books because it will give
+engine more insights."* Two digitally-typeset PDFs (Vol I Motilal 12th ed., Vol II) were supplied
+and harvested. What shipped, and what the evidence would not support:
+
+**Shipped.** 60 further nativities, corpus **282 → 342** charts, deduped by BIRTH MOMENT rather
+than chart number (the editions number differently, so the same nativity carries different
+numbers in different sources — `existing_birth_keys`). Twelve DRAFT verdicts were added: 6 on new
+records, 6 by enriching batch-1 records that had been extracted chart-only. DRAFT total 94 → 106.
+
+**The gate was re-based from days to DEGREES**, and this was the substantive correction. The flat
+30-day tolerance had been rejecting 74 of 108 gated charts, but the measurement showed why that
+was wrong: the Raman-vs-modern Moon offset has median −0.010° and stdev 1.248°, so the rejections
+were era table noise, not parse errors. Worse, a flat day limit is not scale-free — the same 1° of
+Moon error surfaces as ~4 months inside a 6-year Sun dasha and ~1.5 years inside a 20-year Venus
+one, so it silently applied a threshold three times stricter to Sun-dasha charts. The gate now
+requires the dasha LORD to match (227/227 on Vol I — chance is 1 in 9) and the implied Moon
+longitude to agree within **2.5°** (~2σ). Yield on Vol I alone: 209 of 227.
+
+**Verdicts are read off Raman's own Conclusion paragraph** by the existing conservative
+`classify_prose` lexicon, stored with the prose verbatim, and marked DRAFT — unscored, so
+extraction still cannot inflate fidelity. House attribution comes from the running chapter
+heading, with the observed OCR variants (`Twelth`, `Eleveath`, `Eieventh`, `Elevanth`) accepted;
+a table-of-contents row is explicitly NOT a heading, a bug that had pinned Vol I's first charts to
+the twelfth house. **H8 is deliberately given no verdict**: its primary key `longevity` is
+deferred by LONGEVITY_GUARD, so a scored verdict there would measure the guard, not the doctrine.
+
+**The measured gain is coverage.** Dormant rules **71 → 60** (11 more woke), yogas 50 → 52.
+Cumulative across both batches today: corpus **225 → 342** charts, dormancy **85 → 60** — a 29%
+cut in dead doctrine surface, bought purely by giving the rules more of Raman's own nativities.
+**The verdict ratchet stayed at 261/294 throughout, by construction.**
+
+**The honest ceiling, and it matters for planning.** Only 10 of the 60 new charts carry a
+Conclusion paragraph at all. Both volumes hold 252 Conclusions between them, but ~240 attach to
+charts the corpus ALREADY had — the original curation went after exactly the verdict-bearing
+charts. **What remains unextracted is overwhelmingly chart-only material**: valuable for rule
+liveness and astronomy coverage, but it cannot yield verdicts, and therefore cannot move
+261/294. Further HTJAH harvesting should be costed on that basis.
+
+**Where the remaining verdict-bearing material actually is** (measured over the vendored library):
+Notable Horoscopes carries **868 printed degrees** across 71 birth lines in the prose-positions
+format the corpus prefers and that `extract_nh_goldens.py` already handles — 60 records extracted
+so far. The Astrological Magazine v75 (~50k lines, 489 printed degrees, 54 birth lines) is
+essentially untouched. Either is a better next seam than more HTJAH grid work.

@@ -77,7 +77,7 @@ class TestRefusals:
         c = ex.Candidate(book="HTJAH-II", chart_no=999, line=1)
         c.birth, _ = ex._parse_birth("Born 3-8-1942 at 7-23 a.m. at 13 N 0, 77 E 35.")
         c.printed_lord, c.printed_years = "Saturn", 5.0      # deliberately not this chart's
-        ex.gate(c, tolerance_days=30.0)
+        ex.gate(c)
         assert c.status == "gate-failed"
 
     def test_truncated_longitude_is_refused(self):
@@ -114,7 +114,7 @@ class TestGate:
         c = ex.Candidate(book="HTJAH-II", chart_no=20, line=2002)
         c.birth = {"dt": "1893-04-07T09:31:00", "tz": 75.9167 / 15, "lat": 20.9333, "lon": 75.9167}
         c.printed_lord, c.printed_years = "Ketu", 6 + 4 / 12 + 4 / 365.2425
-        ex.gate(c, tolerance_days=30.0)
+        ex.gate(c)
         assert c.status == "verified", c.reason
         assert c.cast_lord == "Ketu"
         assert abs(c.cast_years - c.printed_years) * 365.2425 < 10
@@ -125,14 +125,14 @@ class TestGate:
         c = ex.Candidate(book="HTJAH-II", chart_no=20, line=2002)
         c.birth = {"dt": "1893-04-07T21:31:00", "tz": 75.9167 / 15, "lat": 20.9333, "lon": 75.9167}
         c.printed_lord, c.printed_years = "Ketu", 6 + 4 / 12 + 4 / 365.2425
-        ex.gate(c, tolerance_days=30.0)
+        ex.gate(c)
         assert c.status == "gate-failed", c.reason
 
     def test_a_chart_without_a_printed_balance_is_never_verified(self):
         """No independent check exists for these, so they may be reported but never emitted."""
         c = ex.Candidate(book="HTJAH-I", chart_no=1, line=1)
         c.birth = {"dt": "1900-01-01T06:00:00", "tz": 5.5, "lat": 13.0, "lon": 77.0}
-        ex.gate(c, tolerance_days=30.0)
+        ex.gate(c)
         assert c.status == "ungated"
 
 
@@ -141,18 +141,82 @@ class TestAgainstTheVendoredBooks:
     def test_extraction_finds_charts_and_gates_a_subset(self):
         """End-to-end over the real scans: the tool must find worked charts, and the verified
         set must be a strict subset of what it found — a gate that passes everything is broken."""
-        cands = [ex.gate(c, 30.0) for c in ex.collect("HTJAH-II", ex._BOOKS["HTJAH-II"])]
+        cands = [ex.gate(c) for c in ex.collect("HTJAH-II", ex._BOOKS["HTJAH-II"])]
         assert len(cands) > 100, f"only {len(cands)} chart presentations found"
         verified = [c for c in cands if c.status == "verified"]
         assert 0 < len(verified) < len(cands)
 
     def test_every_emitted_record_is_draft_and_carries_its_provenance(self):
-        """A DRAFT is not scored by the accuracy ratchet, so extraction can never inflate it.
-        Each record must also carry the printed-vs-cast balance that justified emitting it."""
-        cands = [ex.gate(c, 30.0) for c in ex.collect("HTJAH-II", ex._BOOKS["HTJAH-II"])]
+        """The tool MAY now author a verdict — read off Raman's own Conclusion paragraph by the
+        existing conservative classifier — but every one must be DRAFT, and only CONFIRMED
+        verdicts are scored, so extraction still cannot inflate fidelity. Each record must also
+        carry the printed-vs-cast balance that justified emitting it, and the prose that
+        justified the verdict, so a reviewer can promote it without reopening the book."""
+        cands = [ex.gate(c) for c in ex.collect("HTJAH-II", ex._BOOKS["HTJAH-II"])]
         for c in (x for x in cands if x.status == "verified"):
             rec = ex.to_record(c)
-            assert rec["expected_verdicts"] == {}, "the tool must not author verdicts"
+            for tag, v in rec["expected_verdicts"].items():
+                assert v["verdict_review"] == "DRAFT", f"{tag} must not be asserted"
+                assert v["verdict_prose"], f"{tag} must carry the prose it was read from"
+                assert 1 <= int(tag[1:]) <= 12
             prov = rec["_extraction"]
             assert prov["printed_balance"]["lord"] == prov["cast_balance"]["lord"]
             assert rec["birth"] and rec["citations"]
+
+    def test_the_longevity_house_is_never_given_a_verdict(self):
+        """H8's primary signification is `longevity`, which the judge deliberately defers to the
+        ayurdaya pre-pass under LONGEVITY_GUARD. A verdict there would measure the guard, not the
+        doctrine, so H8 charts are extracted without one."""
+        c = ex.Candidate(book="HTJAH-II", chart_no=1, line=1, house=8)
+        c.conclusion = "The native died early; the eighth house is afflicted."
+        assert ex.draft_verdict(c) == {}
+
+
+class TestVerdictExtraction:
+    def test_verdict_is_draft_and_read_from_the_conclusion(self):
+        c = ex.Candidate(book="HTJAH-I", chart_no=9, line=1, house=1)
+        c.conclusion = "The native rose to great eminence and enjoyed high position and fame."
+        v = ex.draft_verdict(c)
+        assert list(v) == ["H1"]
+        assert v["H1"]["verdict"] == "favourable"
+        assert v["H1"]["verdict_review"] == "DRAFT"
+        assert v["H1"]["signification"] == "self"
+
+    def test_no_house_means_no_verdict(self):
+        """A chart printed before its chapter heading cannot be attributed, and an unattributed
+        verdict would be assigned to the wrong matter."""
+        c = ex.Candidate(book="HTJAH-I", chart_no=2, line=1, house=None)
+        c.conclusion = "The native was fortunate and prosperous."
+        assert ex.draft_verdict(c) == {}
+
+
+class TestHouseAttribution:
+    def test_chapter_heading_sets_the_house(self):
+        assert ex.house_of_chapter("XI. Concerning the Seventh House") == 7
+        assert ex.house_of_chapter("Concerning the Twelfth House") == 12
+
+    def test_ocr_variants_of_the_ordinal_are_accepted(self):
+        """'Twelth', 'Eleveath', 'Eieventh' and 'Elevanth' all occur in these scans."""
+        assert ex.house_of_chapter("Concerning the Twelth House") == 12
+        assert ex.house_of_chapter("Concerning the Eleveath House") == 11
+
+    def test_a_table_of_contents_row_is_not_a_chapter(self):
+        """The contents page names every chapter; treating those rows as headings pinned the
+        first charts of Vol I to the twelfth house."""
+        toc = ("IV. Concerning the First House ....................... 21\n"
+               "XVI. Concerning the Twelfth House .................... 389\n")
+        assert ex.house_of_chapter(toc) is None
+
+    def test_the_last_real_heading_wins(self):
+        text = "Concerning the First House\nsome prose\nConcerning the Second House\nmore prose"
+        assert ex.house_of_chapter(text) == 2
+
+
+class TestDegreeGate:
+    def test_offset_is_scale_free_across_dasha_spans(self):
+        """The same half-year balance disagreement is a much larger Moon error inside a short
+        dasha than a long one — which is exactly why the gate compares degrees, not days."""
+        short = ex.moon_offset_deg(3.5, 4.0, "Sun")       # 6-year span
+        long_ = ex.moon_offset_deg(19.5, 20.0, "Venus")   # 20-year span
+        assert short > long_ * 3
+        assert ex.moon_offset_deg(5.0, 5.0, "Ketu") == 0.0

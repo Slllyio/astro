@@ -123,6 +123,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   Anapha / Durudhara (a graha in her 2nd / 12th / both), Kemadruma (the Moon bare, with the
   kendra-from-lagna cancellation), Adhi (benefics in her 6th/7th/8th) and the Moon-Dhana yoga. Each
   cites its ch.37 sloka; surfaced per-nativity in the reading.
+- **Yoga catalogue** (ch.35-42) — a cited index of every yoga chapter. The Raja yogas (ch.39,
+  Karakamsa-based), royal-association (ch.40), Dhana/wealth (ch.41) and penury (ch.42) yogas are
+  bespoke specific combinations with no single citable general rule, so they are preserved faithfully
+  as a queryable catalogue (`catalogue`, `find`) rather than synthesized into misattributed detectors.
 - **Solar (Ravi) yogas** (ch.38) — Vesi / Vasi / Ubhayachari: a tara-graha (barring the Moon) in the
   2nd / 12th / both from the Sun. The Sun-analogue of the lunar yogas; cited, surfaced per-nativity.
 - **Pancha Mahapurusha yogas** (Saravali ch.37 — allied) — Ruchaka/Bhadra/Hamsa/Malavya/Sasa, each

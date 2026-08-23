@@ -232,18 +232,21 @@ def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
 
 def read(chart: ParasharaChart) -> ParasharaReading:
     """Assemble the full Parashara reading for a cast chart."""
+    shadbala = partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
+                                    asc_longitude=chart.asc_longitude,
+                                    moon_waxing=chart.moon_waxing,
+                                    speeds=chart.speeds, ayanamsa=chart.ayanamsa,
+                                    kala_ctx=chart.kala)
     return ParasharaReading(
         chart=chart,
         bhavas=judge_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
                                 moon_waxing=chart.moon_waxing),
+        # the richer verdict gets the full six-fold Shadbala here (a cast chart can compute it).
         richer_bhavas=richer_all_bhavas(chart.longitudes, asc_sign=chart.asc_sign,
-                                        moon_waxing=chart.moon_waxing),
+                                        moon_waxing=chart.moon_waxing,
+                                        shadbala_rupas={g: s.rupas for g, s in shadbala.items()}),
         vimsopaka=vimsopaka_all(chart.longitudes, scheme="shodasavarga"),
-        shadbala=partial_shadbala_all(chart.longitudes, asc_sign=chart.asc_sign,
-                                      asc_longitude=chart.asc_longitude,
-                                      moon_waxing=chart.moon_waxing,
-                                      speeds=chart.speeds, ayanamsa=chart.ayanamsa,
-                                      kala_ctx=chart.kala),
+        shadbala=shadbala,
         avasthas=_avasthas(chart),
         bhava_lord_effects=_bhava_lord_effects(chart),
         nabhasa=_nabhasa(chart),

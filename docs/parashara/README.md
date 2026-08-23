@@ -130,8 +130,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Bhava prosperity/annihilation** (ch.11 sl.14-16) — the verdict spine, with antidote clauses.
 - **Richer bhava verdict** (`richer_bhava.py`) — ch.11's net-vote method EXTENDED with Parashara's own
   strength and yoga signals: the lord's Vimsopaka band (ch.7), the karaka's dignity (ch.32), the
-  house's Sarvashtakavarga bindus (ch.66), and a Pancha Mahapurusha yoga on the lord/karaka. Same
-  verdict rule, every added vote cited; surfaced per-nativity alongside the bare ch.11 verdict.
+  house's Sarvashtakavarga bindus (ch.66), a Pancha Mahapurusha yoga on the lord/karaka, and — on a
+  cast chart — the lord's full six-fold **Shadbala vs its required strength** (ch.27:3747, Parashara's
+  own minimums: Sun 6.5 … Mercury 7.0 rupas). Same verdict rule, every added vote cited; surfaced
+  per-nativity alongside the bare ch.11 verdict.
 - **Bhava-lord effects** (ch.24) — the full 144-statement catalogue (lord of each house in each
   house), indexed from the corpus in place so every effect cites Parashara's own sloka; surfaced
   per-nativity in the reading against the chart's actual house-lord placements.

@@ -42,6 +42,25 @@ class TestStructure:
             assert v.annihilation_votes >= v.base.net_annihilation
 
 
+class TestShadbalaVote:
+    def test_required_shadbala_adds_a_prosperity_vote(self):
+        """A lord meeting its required Shadbala (BPHS-27:3747) adds a prosperity vote; short falls to
+        annihilation. Only fires when shadbala_rupas is supplied (a cast chart)."""
+        from app.parashara.judges.richer_bhava import REQUIRED_SHADBALA
+        ch = _canonical()
+        # Force every graha well above required -> a Shadbala prosperity vote everywhere.
+        strong = {g: REQUIRED_SHADBALA[g] + 2.0 for g in REQUIRED_SHADBALA}
+        r = richer_all_bhavas(ch.longitudes, asc_sign=ch.asc_sign, moon_waxing=ch.moon_waxing,
+                              shadbala_rupas=strong)
+        fired = [f for v in r.values() for f in v.factors if "required Shadbala" in f and f.startswith("+")]
+        assert fired, "no Shadbala prosperity vote fired despite all lords above required"
+
+    def test_no_shadbala_vote_without_the_dict(self):
+        ch = _canonical()
+        r = richer_all_bhavas(ch.longitudes, asc_sign=ch.asc_sign, moon_waxing=ch.moon_waxing)
+        assert not any("Shadbala" in f for v in r.values() for f in v.factors)
+
+
 class TestFactorsCited:
     def test_added_factors_carry_a_citation_tag(self):
         ch = _canonical()

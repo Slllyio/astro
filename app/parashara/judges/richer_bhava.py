@@ -22,7 +22,9 @@ only, so it runs identically on book charts and cast charts.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping, Optional
+from typing import Final, Mapping, Optional
+
+from app.parashara.doctrine.sources import Citation
 
 from app.parashara.chart.bhava_chart import judge_bhava
 from app.parashara.doctrine import mahapurusha
@@ -31,6 +33,13 @@ from app.parashara.judges.bhava_prosperity import BhavaVerdict, Verdict
 from app.parashara.primitives import ashtakavarga as _av
 from app.parashara.primitives.relationships import EXALTATION, GRAHAS, SIGN_LORDS, naisargika
 from app.parashara.chart.vimsopaka_chart import vimsopaka_for
+
+
+#: Parashara's minimum required Shadbala per graha, in rupas (BPHS-27:3739-3745). "If a planet has
+#: the required shadbala, it will prove favourable" (BPHS-27:3747); below it, the graha is deficient.
+REQUIRED_SHADBALA: Final[Mapping[str, float]] = {
+    "Sun": 6.5, "Moon": 6.0, "Mars": 5.0, "Mercury": 7.0, "Jupiter": 6.5, "Venus": 5.5, "Saturn": 5.0}
+SHADBALA_SOURCE: Final[Citation] = Citation("BPHS-27", 3747)
 
 
 @dataclass(frozen=True)
@@ -60,9 +69,17 @@ def _dignity(planet: str, sign: int) -> int:
     return 0
 
 
-def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int,
-                      moon_waxing: bool) -> dict[int, RicherBhavaVerdict]:
-    """The richer verdict for all twelve bhavas (ch.11 + strength + yoga), from longitudes alone."""
+def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int, moon_waxing: bool,
+                      shadbala_rupas: Optional[Mapping[str, float]] = None,
+                      ) -> dict[int, RicherBhavaVerdict]:
+    """The richer verdict for all twelve bhavas (ch.11 + strength + yoga).
+
+    Runs on longitudes alone (book charts + cast charts). When `shadbala_rupas` (the six-fold
+    Shadbala in rupas per graha) is supplied — only cast charts can compute it, as it needs
+    birth-time speeds + the sunrise/Kala context — a further vote fires: the lord's Shadbala meeting
+    its required strength (BPHS-27:3747) adds a prosperity vote, falling short adds an annihilation
+    vote. Book charts pass None and simply do not cast that vote.
+    """
     planet_signs = {p: _sign_of(l) for p, l in longitudes.items()}
     sav = _av.sarvashtakavarga({g: planet_signs[g] for g in _av.PLANETS if g in planet_signs},
                                asc_sign=asc_sign) if any(g in planet_signs for g in _av.PLANETS) else {}
@@ -109,6 +126,17 @@ def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int,
 
         if lord in maha_planets or karaka in maha_planets:
             p += 1; factors.append("+ a Pancha Mahapurusha yoga strengthens the lord/karaka (SARAVALI-37)")
+
+        if shadbala_rupas is not None and lord in shadbala_rupas and lord in REQUIRED_SHADBALA:
+            rupas = shadbala_rupas[lord]
+            if rupas >= REQUIRED_SHADBALA[lord]:
+                p += 1; factors.append(
+                    f"+ lord {lord} has its required Shadbala ({rupas:.2f} >= "
+                    f"{REQUIRED_SHADBALA[lord]} rupas) (BPHS-27)")
+            else:
+                a += 1; factors.append(
+                    f"- lord {lord} short of required Shadbala ({rupas:.2f} < "
+                    f"{REQUIRED_SHADBALA[lord]} rupas) (BPHS-27)")
 
         verdict: Verdict = "flourishing" if p > a else "annihilated" if a > p else "ordinary"
         out[house] = RicherBhavaVerdict(house=house, verdict=verdict, prosperity_votes=p,

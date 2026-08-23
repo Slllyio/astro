@@ -106,3 +106,20 @@ def kala_context(*, year: int, month: int, day: int, hour: int, minute: int,
     return KalaContext(is_day=is_day, day_third=day_third, unnata_fraction=unnata_fraction,
                        weekday_lord=weekday_lord, hora_lord=hora_lord,
                        varsha_lord=varsha_lord, masa_lord=masa_lord)
+
+
+def transit_signs(*, year: int, month: int, day: int, hour: int = 12, minute: int = 0,
+                  tz_offset: float = 0.0) -> dict[str, int]:
+    """The sidereal sign (1..12) of each graha on a transit date — the input gochara needs.
+
+    Lahiri sidereal, matching the platform; noon by default (a transit sign rarely turns within a
+    day for the slow grahas). Ketu mirrors Rahu (180 deg opposite -> the 7th sign)."""
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    jd = calculate_jd(year, month, day, to_decimal_hours(hour, minute), tz_offset)
+    out: dict[str, int] = {}
+    for name, pid in PLANETS.items():
+        xx, _ = swe.calc_ut(jd, pid, _FLAGS)
+        out[name] = int(xx[0] % 360.0 // 30) + 1
+    if "Rahu" in out:
+        out["Ketu"] = ((out["Rahu"] - 1 + 6) % 12) + 1
+    return out

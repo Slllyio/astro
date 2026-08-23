@@ -158,6 +158,12 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
 - **Vargottama** (Saravali ch.3 sl.13) — a body in the same sign in Rasi (D1) and Navamsa (D9), a
   recognized strength; the positional definition (1st navamsa of movable, 5th of fixed, 9th of dual)
   is verified equivalent to D9==D1. Grahas + the Lagna; surfaced per-nativity.
+- **Gochara** — transit by Ashtakavarga (ch.70): a graha transiting a sign is judged by its own
+  Bhinnashtakavarga benefic-count there (>=5 favourable, <=3 unfavourable, around the 0-8 midpoint) —
+  Parashara's OWN transit method, reusing the checksum-guarded ashtakavarga. `transit_quality` /
+  `all_transits` + a `chart.ephemeris.transit_signs(date)` helper; a queryable capability applied
+  on-demand with a transit date. The Pinda-scaled ch.70 predictions stay deferred (they need the
+  OCR-inconsistent Sodhya Pinda).
 - **Argala** — planetary intervention (ch.31): for any target sign, the argalas acting on it (from
   the 2nd/4th/11th/5th), their obstructors (12th/10th/3rd/9th), whether each prevails by count, and
   the Vipareeta argala of 3+ malefics in the 3rd. Pinned to Parashara's own hypothetical chart. A

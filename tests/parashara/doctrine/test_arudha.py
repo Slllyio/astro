@@ -13,10 +13,12 @@ from app.parashara.doctrine.arudha import (
     QUANTUM_SOURCE,
     RULE_SOURCE,
     UNINTERRUPTED_SOURCE,
+    UPAPADA_SPOUSE_SOURCE,
     arudha_lagna,
     arudha_pada,
     bhava_arudhas,
     pada_finance,
+    spouse_from_upapada,
     upapada,
 )
 from app.parashara.doctrine.sources import verify
@@ -103,6 +105,33 @@ class TestPadaFinance:
     def test_finance_sources_resolve(self):
         for c in (FINANCE_SOURCE, UNINTERRUPTED_SOURCE, QUANTUM_SOURCE):
             assert verify(c) and c.work == "BPHS-29"
+
+
+class TestSpouseFromUpapada:
+    def _chart(self):
+        return cast(year=1990, month=7, day=15, hour=12, minute=0,
+                    tz_offset=5.5, latitude=12.97, longitude=77.59)
+
+    def test_second_is_second_from_upapada(self):
+        s = spouse_from_upapada(self._chart())
+        assert s.second_sign == (s.upapada % 12) + 1     # the 2nd from UL
+
+    def test_benefic_sign_gives_a_favourable_reading(self):
+        # canonical: 2nd-from-UL is Taurus, a benefic (Venus) sign
+        s = spouse_from_upapada(self._chart())
+        if s.benefic_sign and not s.afflicted:
+            assert s.verdict in ("favourable", "mixed")
+
+    def test_verdict_is_one_of_the_four(self):
+        assert spouse_from_upapada(self._chart()).verdict in (
+            "favourable", "afflicted", "mixed", "neutral")
+
+    def test_gemini_special_flag_tracks_the_sign(self):
+        s = spouse_from_upapada(self._chart())
+        assert s.gemini_special == (s.second_sign == 3)
+
+    def test_source_resolves(self):
+        assert verify(UPAPADA_SPOUSE_SOURCE) and UPAPADA_SPOUSE_SOURCE.work == "BPHS-30"
 
 
 class TestCitations:

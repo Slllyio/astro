@@ -105,6 +105,25 @@ def to_markdown(reading: ParasharaReading) -> str:
                   f"{'; gains uninterrupted' if pf.uninterrupted else ''}."
                   if pf.related else "no planet occupies or aspects it."))
     out.append("")
+    sp = reading.spouse_from_upapada
+    _sv = {"favourable": "a good spouse and marital happiness are indicated",
+           "afflicted": "affliction to the spouse is indicated",
+           "mixed": "mixed indications for the spouse", "neutral": "no strong marriage indication"}
+    detail = []
+    if sp.benefic_sign:
+        detail.append("a benefic sign")
+    if sp.benefic_related:
+        detail.append("benefic occupying/aspecting")
+    if sp.excellent:
+        detail.append("an exalted/own or aspected occupant (many good spouses)")
+    if sp.gemini_special:
+        detail.append("Gemini (many spouses)")
+    if sp.afflicted:
+        detail.append("a debilitated/malefic occupant (loss of spouse)")
+    out.append(f"**Spouse from the Upapada (BPHS-30:7-12):** the 2nd from the Upapada is "
+               f"{_SIGN_NAMES[sp.second_sign - 1]} — {_sv[sp.verdict]}"
+               + (f" ({'; '.join(detail)})." if detail else "."))
+    out.append("")
 
     # --- Sudarshana Chakra (BPHS ch.74) ---
     out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")

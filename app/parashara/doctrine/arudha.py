@@ -79,6 +79,72 @@ def upapada(chart) -> int:
 
 
 # --------------------------------------------------------------------------- #
+# Spouse from the Upapada — BPHS ch.30 sl.7-12                                 #
+# --------------------------------------------------------------------------- #
+
+UPAPADA_SPOUSE_SOURCE: Final[Citation] = Citation("BPHS-30", 113)   # sl.7-12, EFFECT OF 2ND FROM UPAPADA
+
+#: signs owned by a natural benefic (Jupiter, Venus, Mercury, Moon).
+_BENEFIC_SIGNS: Final[frozenset[int]] = frozenset({4, 3, 6, 7, 2, 9, 12})
+_BENEFICS: Final[frozenset[str]] = frozenset({"Jupiter", "Venus", "Mercury", "Moon"})
+
+
+def _debilitation(planet: str) -> int:
+    return ((EXALTATION[planet] + 6 - 1) % 12) + 1
+
+
+@dataclass(frozen=True)
+class SpouseFromUpapada:
+    upapada: int                 # UL sign
+    second_sign: int             # the 2nd from the Upapada — the marriage house
+    benefic_sign: bool           # the 2nd-from-UL is a benefic-owned sign
+    benefic_related: bool        # a benefic occupies or aspects it
+    occupants: tuple[str, ...]   # planets in the 2nd-from-UL
+    afflicted: bool              # an occupant debilitated, or with a debilitated/malefic -> loss of wife
+    excellent: bool              # an occupant exalted/own, or aspected -> many good wives
+    gemini_special: bool         # the 2nd-from-UL is Gemini -> many wives
+    verdict: str                 # "favourable" | "afflicted" | "mixed" | "neutral"
+
+
+def spouse_from_upapada(chart) -> SpouseFromUpapada:
+    """BPHS ch.30 sl.7-12: marriage read from the 2nd from the Upapada. A benefic sign / benefic
+    occupying or aspecting it gives a good spouse and progeny; an occupant debilitated (or with a
+    debilitated/malefic) means destruction of the wife; an occupant exalted/own or aspected means
+    many charming virtuous wives; Gemini there also many. Only the clean core clauses are encoded;
+    the finer conditions (own-lord -> death at advanced age, 2nd-lord placements) are left descriptive."""
+    from app.parashara.primitives import graha_drishti as gd
+
+    ul = upapada(chart)
+    second = _nth_from(ul, 2)
+    signs = {p: int(chart.longitudes[p] % 360.0 // 30) + 1 for p in chart.longitudes}
+    occupants = tuple(sorted(p for p, s in signs.items() if s == second))
+    aspecters = set(gd.planets_aspecting_sign(second, signs))
+
+    benefic_sign = second in _BENEFIC_SIGNS
+    benefic_related = any(p in _BENEFICS for p in set(occupants) | aspecters)
+
+    def debilitated(p: str) -> bool:
+        return signs.get(p) == _debilitation(p)
+
+    afflicted = any(
+        debilitated(occ)
+        or any(q != occ and signs[q] == second and (debilitated(q) or q not in _BENEFICS)
+               for q in signs)
+        for occ in occupants)
+    excellent = any(signs[occ] == EXALTATION.get(occ) or SIGN_LORDS[signs[occ]] == occ
+                    for occ in occupants) or bool(occupants and aspecters)
+    gemini_special = second == 3
+
+    favourable = benefic_sign or benefic_related or excellent or gemini_special
+    verdict = ("mixed" if favourable and afflicted else "favourable" if favourable
+               else "afflicted" if afflicted else "neutral")
+    return SpouseFromUpapada(upapada=ul, second_sign=second, benefic_sign=benefic_sign,
+                             benefic_related=benefic_related, occupants=occupants,
+                             afflicted=afflicted, excellent=excellent,
+                             gemini_special=gemini_special, verdict=verdict)
+
+
+# --------------------------------------------------------------------------- #
 # Pada and finance — BPHS ch.29 sl.8-15                                        #
 # --------------------------------------------------------------------------- #
 

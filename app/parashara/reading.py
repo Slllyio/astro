@@ -49,7 +49,9 @@ from app.parashara.chart.sudarshana import SudarshanaPosition, sudarshana_positi
 from app.parashara.doctrine.arudha import (
     bhava_arudhas as _bhava_arudhas,
     pada_finance as _pada_finance,
+    spouse_from_upapada as _spouse_from_upapada,
     PadaFinance,
+    SpouseFromUpapada,
     PADA_NAMES,
 )
 from app.parashara.doctrine.saravali_conjunctions import (
@@ -153,6 +155,7 @@ class ParasharaReading:
     sudarshana: Mapping[str, SudarshanaPosition]   # BPHS ch.74 — each body's house from Lagna/Moon/Sun
     arudhas: Mapping[int, int]           # BPHS ch.29-30 — each house's Arudha pada sign (1=Arudha Lagna)
     pada_finance: PadaFinance            # BPHS ch.29 sl.8-15 — wealth from the 11th-from-Arudha-Lagna
+    spouse_from_upapada: SpouseFromUpapada  # BPHS ch.30 sl.7-12 — marriage from the 2nd-from-Upapada
     gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
     gulika_house: int                    # Gulika's house from the lagna (1..12)
     gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
@@ -458,6 +461,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         sudarshana=_sudarshana(chart),
         arudhas=_bhava_arudhas(chart),
         pada_finance=_pada_finance(chart),
+        spouse_from_upapada=_spouse_from_upapada(chart),
         gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
         gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
         gulika_effect=gulika_effect_in_house(

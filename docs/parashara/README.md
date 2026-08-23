@@ -119,7 +119,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   checked against Parashara's own worked examples.
 - **Functional nature** (ch.3 sl.11) — with Mercury and Moon kept conditional (the documented
   point of divergence from Raman's engine).
-- **Baladi avastha** (ch.45) and **graha drishti** (ch.26).
+- **Avasthas** (ch.45) — the full triad: **Baladi** (age-state by degree), **Jagradadi** (awake/
+  dreaming/sleeping by dignity), and **Deeptadi** (dignity/placement state — Deepta/Swastha/Pramudita/
+  Santa/Deena/Khala, plus Vikala if sharing its sign with a malefic and Kopa if combust). **Graha
+  drishti** (ch.26).
 - **Shadbala** (ch.27) — the **complete six-fold** planetary strength in Parashara's virupas:
   Sthana (5 sub-components), Dig, Naisargika, Cheshta (from speed), Drik (aspectual, may be
   negative), and Kala (8 sub-components: Nathonnata, Paksha, Tribhaga, the four calendar-lords

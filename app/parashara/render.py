@@ -242,15 +242,17 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append("## Planetary avasthas (BPHS ch.45)")
     out.append("")
     out.append("Baladi = age-state by degree (bala/kumara/yuva/vriddha/mrita); "
-               "Jagradadi = awake/dreaming/sleeping by dignity.")
+               "Jagradadi = awake/dreaming/sleeping by dignity; "
+               "Deeptadi = dignity/placement state (+Vikala if with a malefic, +Kopa if combust).")
     out.append("")
-    out.append("| Graha | Baladi | Jagradadi |")
-    out.append("|---|---|---|")
+    out.append("| Graha | Baladi | Jagradadi | Deeptadi |")
+    out.append("|---|---|---|---|")
     for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
         a = reading.avasthas.get(g)
         if a is None:
             continue
-        out.append(f"| {g} | {a.baladi} | {a.jagradadi} |")
+        deept = a.deeptadi + (" +Vikala" if a.deeptadi_vikala else "") + (" +Kopa" if a.deeptadi_kopa else "")
+        out.append(f"| {g} | {a.baladi} | {a.jagradadi} | {deept} |")
     out.append("")
 
     # --- Dashas (ch.46) ---

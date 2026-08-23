@@ -50,6 +50,7 @@ from app.parashara.primitives import ashtottari_dasha as ash
 from app.parashara.primitives import vimshottari_dasha as vim
 from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
+from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
 from app.parashara.primitives.nakshatra_dasha import DashaPeriod, bhukti_timeline
@@ -71,11 +72,14 @@ class DashaReading:
 
 @dataclass(frozen=True)
 class GrahaAvastha:
-    """A graha's two computable avastha states (ch.45)."""
+    """A graha's computable avastha states (ch.45): Baladi, Jagradadi and Deeptadi."""
     baladi: str          # bala | kumara | yuva | vriddha | mrita (age-state by degree)
     baladi_grade: float
     jagradadi: str       # jagrat | swapna | sushupti (awake/dreaming/sleeping by dignity)
     jagradadi_grade: float
+    deeptadi: str        # Deepta | Swastha | Pramudita | Santa | Deena | Khala (dignity/placement)
+    deeptadi_vikala: bool  # also shares its sign with a malefic
+    deeptadi_kopa: bool    # also combust
 
 
 @dataclass(frozen=True)
@@ -233,8 +237,10 @@ def _avasthas(chart: ParasharaChart) -> dict[str, GrahaAvastha]:
             continue
         b = baladi_from_longitude(lon)
         j = jagradadi_avastha(g, int(lon % 360.0 // 30) + 1)
+        d = deeptadi(g, chart.longitudes, speeds=chart.speeds)
         out[g] = GrahaAvastha(baladi=b.state, baladi_grade=b.grade,
-                              jagradadi=j.state, jagradadi_grade=j.grade)
+                              jagradadi=j.state, jagradadi_grade=j.grade,
+                              deeptadi=d.state, deeptadi_vikala=d.vikala, deeptadi_kopa=d.kopa)
     return out
 
 

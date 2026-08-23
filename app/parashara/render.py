@@ -79,6 +79,22 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
 
+    # --- Sudarshana Chakra (BPHS ch.74) ---
+    out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")
+    out.append("")
+    out.append("Each body's house counted from all three references at once — the Ascendant, the Moon "
+               "(Chandra Lagna) and the Sun (Surya Lagna, BPHS-74:91). A matter confirmed from all "
+               "three circles is the strongest reading.")
+    out.append("")
+    out.append("| Body | from Lagna | from Moon | from Sun |")
+    out.append("|---|---|---|---|")
+    for body in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"):
+        p = reading.sudarshana.get(body)
+        if p is None:
+            continue
+        out.append(f"| {body} | {p.from_lagna} | {p.from_moon} | {p.from_sun} |")
+    out.append("")
+
     # --- Shodasavarga (BPHS ch.6-7) ---
     _SIGN_ABBR = ("Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi")
     from app.parashara.chart.shodasavarga import VARGAS as _VARGAS, DIVISIONS_SOURCE as _VSRC

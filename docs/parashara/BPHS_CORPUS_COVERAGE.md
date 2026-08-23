@@ -10,12 +10,13 @@ Regenerate: `python -m app.medini.etl.import_archive_text --bundle classical_jyo
 |---|---|---|
 | 54 | Effects of the Antardasas in the Dasa of the Moon | heading present, **title line lost in the scan** |
 | 65 | Effects of Dasas of Rasis in Aries Amsa | heading present, title line lost |
-| 75 | Characteristic Features of Panchamahapurusha | heading present, title line lost |
 | 81 | (female horoscopy cont.) | heading present, title line lost |
 | 83 | (moles/marks cont.) | heading present, title line lost |
 | 94 | Remedies from Evil Effects of Birth in Jyeshta | heading present, title line lost |
 
-All six have a surviving `Chapter N` marker but no legible title line, so the two-line heading shape cannot anchor them; their text is absorbed into the preceding chapter. They are **antardasa result-tables and remedial chapters** — none carries a dasha *system* definition or a computational rule. Recovering them needs a TOC-page-number anchor, which is deferred until a citation actually lands in one.
+These five have a surviving `Chapter N` marker but no legible title line, so the two-line heading shape cannot anchor them; their text is absorbed into the preceding chapter. They are **antardasa result-tables and remedial chapters** — none carries a dasha *system* definition or a computational rule. Recovering them needs a TOC-page-number anchor, which is deferred until a citation actually lands in one.
+
+**Ch.75 (Panchamahapurusha) was recovered 2026-08-23** — its text had been absorbed into the ch.74 (Sudarshana) file; when the Mahapurusha doctrine needed a root citation it was split out to `chapter_075_*.md` (both the definition and all five effect descriptions are legible). Because the corpus is gitignored (provisioned per machine), the split is committed as the idempotent, content-keyed repair `tools/parashara/repair_corpus_ch75.py` — **run it once after provisioning the BPHS corpus** so `BPHS-75` resolves. This is the pattern for the five above: split on demand, when a citation lands.
 
 ## Present chapters
 
@@ -92,7 +93,8 @@ All six have a surviving `Chapter N` marker but no legible title line, so the tw
 | 71 | Determination of Longevity Through | 2K | 99% |
 | 72 | Aggregrhtional Ashtakavarga | 12K | 100% |
 | 73 | Effects of the Rays of the Planents | 9K | 100% |
-| 74 | Effects of the Sudarshana Chakra | 20K | 100% |
+| 74 | Effects of the Sudarshana Chakra | 18K | 100% |
+| 75 | Characteristic Features of Panchamahapurushas | 3K | 100% |
 | 76 | Effects of the Five Elements — Earth, | 5K | 100% |
 | 77 | Effects of the Satwa Guna etc | 6K | 100% |
 | 78 | Lost Horoscopy | 20K | 100% |

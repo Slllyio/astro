@@ -1,16 +1,17 @@
-"""Pancha Mahapurusha yogas — the five "great men" yogas (Saravali ch.37).
+"""Pancha Mahapurusha yogas — the five "great men" yogas (BPHS ch.75, root).
 
-BPHS itself does not define these five yogas cleanly; the allied Parashari lineage does, and the
-registry permits citing allied texts where the root is silent. Saravali states them plainly:
+BPHS DOES define these cleanly — the definition and all five effect descriptions are ch.75, which the
+OCR had left stranded inside the ch.74 (Sudarshana Chakra) file; it was split out to
+`chapter_075_*.md` so the root can be cited directly (2026-08-23). Parashara states them plainly:
 
-    "Venus, Mars, Saturn, Jupiter and Mercury remaining in their respective own Houses, or exaltation
-     Signs, identical with Angles, cause Malavya, Ruchaka, Sasa, Hamsa and Bhadra (Yogas)."
-     (SARAVALI-37:27)
+    "When Mars, Mercury, Jupiter, Venus and Saturn being in their own sign or in their sign of
+     exaltation, be in kendra to the Ascendant, they give rise to Ruchaka, Bhadra, Hamsa, Malavya
+     and Sasa yogas respectively." (BPHS-75:34)
 
 So each of the five non-luminaries, when it stands in its OWN or EXALTATION sign AND that sign is a
 KENDRA from the ascendant, forms its Mahapurusha yoga: Mars->Ruchaka, Mercury->Bhadra, Jupiter->Hamsa,
 Venus->Malavya, Saturn->Sasa. Chart-computable from dignity + house; the Sun, Moon and nodes do not
-form these.
+form these. Saravali-37:27 corroborates the same rule (allied).
 """
 from __future__ import annotations
 
@@ -20,13 +21,14 @@ from typing import Final, Mapping
 from app.parashara.doctrine.sources import Citation
 from app.parashara.primitives.relationships import EXALTATION, SIGN_LORDS
 
-_WORK: Final[str] = "SARAVALI-37"
-DEF_SOURCE: Final[Citation] = Citation(_WORK, 27)      # sl.2 — the defining sloka
+_WORK: Final[str] = "BPHS-75"
+DEF_SOURCE: Final[Citation] = Citation(_WORK, 34)          # sl.1-2 — the defining sloka
+CORROBORATION: Final[Citation] = Citation("SARAVALI-37", 27)   # allied cross-ref (same rule)
 
-#: planet -> (yoga name, effect-sloka line in Saravali ch.37).
+#: planet -> (yoga name, effect-sloka line in BPHS ch.75).
 _YOGA: Final[Mapping[str, tuple[str, int]]] = {
-    "Mars": ("Ruchaka", 41), "Mercury": ("Bhadra", 72), "Jupiter": ("Hamsa", 62),
-    "Venus": ("Malavya", 32), "Saturn": ("Sasa", 54)}
+    "Mars": ("Ruchaka", 63), "Mercury": ("Bhadra", 98), "Jupiter": ("Hamsa", 127),
+    "Venus": ("Malavya", 149), "Saturn": ("Sasa", 165)}
 _KENDRAS: Final[frozenset[int]] = frozenset({1, 4, 7, 10})
 
 

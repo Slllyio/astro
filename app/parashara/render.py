@@ -15,6 +15,7 @@ from typing import Final
 from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
 from app.parashara.doctrine.saravali_grids import normalize_house_phrase
 from app.parashara.doctrine.chara_karaka import ROLE_NAMES
+from app.parashara.doctrine.karakamsa_effects import karakamsa_in_signs
 from app.parashara.primitives.ashtakavarga import sav_band as _sav_band
 from app.parashara.primitives.yogini_dasha import YOGINI_BY_LORD as _YOGINI_BY_LORD
 from app.parashara.reading import ParasharaReading
@@ -117,6 +118,13 @@ def to_markdown(reading: ParasharaReading) -> str:
     out.append(f"**Karakamsa** (navamsa sign of the Atmakaraka, the ch.33 reading-lagna): "
                f"{_SIGN_NAMES[ks - 1]}.")
     out.append("")
+    _ksign = karakamsa_in_signs()
+    if _ksign is not None:
+        out.append(f"Parashara's effects by the Karakamsa's sign ({_ksign.source.work}:"
+                   f"{_ksign.source.line}) — locate {_SIGN_NAMES[ks - 1]} in the passage:")
+        out.append("")
+        out.append("> " + _ksign.text)
+        out.append("")
 
     # --- Dignity concentrations (Saravali ch.45) ---
     if reading.dignity_concentrations:

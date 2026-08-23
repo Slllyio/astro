@@ -42,6 +42,25 @@ class TestStructure:
             assert v.annihilation_votes >= v.base.net_annihilation
 
 
+class TestDegree:
+    def test_degree_matches_the_vote_margin(self):
+        ch = _canonical()
+        for v in richer_all_bhavas(ch.longitudes, asc_sign=ch.asc_sign,
+                                   moon_waxing=ch.moon_waxing).values():
+            margin = abs(v.prosperity_votes - v.annihilation_votes)
+            expect = "balanced" if margin == 0 else "strong" if margin >= 3 else "moderate"
+            assert v.degree == expect
+
+    def test_ordinary_is_balanced_and_graded_reads_plainly(self):
+        ch = _canonical()
+        for v in richer_all_bhavas(ch.longitudes, asc_sign=ch.asc_sign,
+                                   moon_waxing=ch.moon_waxing).values():
+            if v.verdict == "ordinary":
+                assert v.degree == "balanced" and v.graded == "ordinary"
+            else:
+                assert v.graded == f"{'strongly' if v.degree == 'strong' else 'moderately'} {v.verdict}"
+
+
 class TestShadbalaVote:
     def test_required_shadbala_adds_a_prosperity_vote(self):
         """A lord meeting its required Shadbala (BPHS-27:3747) adds a prosperity vote; short falls to

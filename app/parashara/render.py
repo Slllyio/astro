@@ -77,7 +77,7 @@ def to_markdown(reading: ParasharaReading) -> str:
         rv = reading.richer_bhavas[h]
         hsign = _sign((c.asc_sign - 1 + h - 1) % 12 + 1)
         factors = "; ".join(rv.factors) if rv.factors else "— (no factor either way)"
-        out.append(f"| {h} | {hsign} | {_VERDICT_MARK[rv.verdict]} | {_VERDICT_MARK[rv.base.verdict]} "
+        out.append(f"| {h} | {hsign} | {rv.graded} | {_VERDICT_MARK[rv.base.verdict]} "
                    f"| {rv.prosperity_votes}/{rv.annihilation_votes} | {factors} |")
     out.append("")
 

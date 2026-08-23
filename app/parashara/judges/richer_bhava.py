@@ -47,10 +47,26 @@ SHADBALA_SOURCE: Final[Citation] = Citation("BPHS-27", 3747)
 class RicherBhavaVerdict:
     house: int
     verdict: Verdict             # flourishing | ordinary | annihilated
+    degree: str                  # strong | moderate | balanced — how decisively the votes fell
     prosperity_votes: int
     annihilation_votes: int
     factors: tuple[str, ...]     # every vote, prosperity then added, each citing its source
     base: BhavaVerdict           # the underlying ch.11 verdict (unchanged)
+
+    @property
+    def graded(self) -> str:
+        """The verdict qualified by its decisiveness, e.g. 'strongly flourishing', 'ordinary'."""
+        if self.verdict == "ordinary":
+            return "ordinary"
+        return f"{'strongly' if self.degree == 'strong' else 'moderately'} {self.verdict}"
+
+
+def _degree(margin: int) -> str:
+    """How decisively the net vote fell: |prosperity - annihilation|. Transparent from the votes,
+    not a separate doctrinal claim — it only surfaces the margin the 3-way verdict discards."""
+    if margin == 0:
+        return "balanced"
+    return "strong" if margin >= 3 else "moderate"
 
 
 def _sign_of(lon: float) -> int:
@@ -152,6 +168,7 @@ def richer_all_bhavas(longitudes: Mapping[str, float], *, asc_sign: int, moon_wa
                     f"{REQUIRED_SHADBALA[lord]} rupas) (BPHS-27)")
 
         verdict: Verdict = "flourishing" if p > a else "annihilated" if a > p else "ordinary"
-        out[house] = RicherBhavaVerdict(house=house, verdict=verdict, prosperity_votes=p,
-                                        annihilation_votes=a, factors=tuple(factors), base=base)
+        out[house] = RicherBhavaVerdict(house=house, verdict=verdict, degree=_degree(abs(p - a)),
+                                        prosperity_votes=p, annihilation_votes=a,
+                                        factors=tuple(factors), base=base)
     return out

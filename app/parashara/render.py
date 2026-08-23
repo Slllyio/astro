@@ -14,6 +14,7 @@ from typing import Final
 
 from app.parashara.doctrine.vargottama import SOURCE as _VARGOTTAMA_SOURCE
 from app.parashara.doctrine.saravali_grids import normalize_house_phrase
+from app.parashara.doctrine.chara_karaka import ROLE_NAMES
 from app.parashara.primitives.ashtakavarga import sav_band as _sav_band
 from app.parashara.primitives.yogini_dasha import YOGINI_BY_LORD as _YOGINI_BY_LORD
 from app.parashara.reading import ParasharaReading
@@ -93,6 +94,28 @@ def to_markdown(reading: ParasharaReading) -> str:
         text = normalize_house_phrase(s.text, house)
         text = text if len(text) <= 300 else text[:297] + "…"
         out.append(f"| {g} | {house} | {text} | {s.source.work}:{s.source.line} |")
+    out.append("")
+
+    # --- Chara karakas + Karakamsa (BPHS ch.32-33) ---
+    _SIGN_NAMES = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra",
+                   "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+    out.append("## Chara karakas & Karakamsa (BPHS ch.32–33)")
+    out.append("")
+    out.append("Parashara's 7 movable karakas — the visible planets ranked by degree within their "
+               "sign (BPHS-32:60). The 7-planet scheme is Parashara's own primary; the 8th (Rahu, "
+               "degree-inverted) is the \"some say\" minority BPHS-32:152 names, not used — the "
+               "Atmakaraka is never a node.")
+    out.append("")
+    out.append("| Role | Karaka | Planet |")
+    out.append("|---|---|---|")
+    for role in ("AK", "AmK", "BK", "MK", "PiK", "GK", "DK"):
+        planet = reading.chara_karakas.get(role)
+        if planet:
+            out.append(f"| {role} | {ROLE_NAMES[role]} | {planet} |")
+    out.append("")
+    ks = reading.karakamsa_sign
+    out.append(f"**Karakamsa** (navamsa sign of the Atmakaraka, the ch.33 reading-lagna): "
+               f"{_SIGN_NAMES[ks - 1]}.")
     out.append("")
 
     # --- Dignity concentrations (Saravali ch.45) ---

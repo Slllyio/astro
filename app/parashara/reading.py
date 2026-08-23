@@ -41,6 +41,7 @@ from app.parashara.doctrine.gulika import GulikaEffect, effect_in_house as gulik
 from app.parashara.doctrine.maraka import Maraka, maraka_planets
 from app.parashara.doctrine.saravali_grids import planet_in_house
 from app.parashara.doctrine.saravali_dignity import active_concentrations
+from app.parashara.doctrine.chara_karaka import chara_karakas, karakamsa, ROLE_NAMES
 from app.parashara.doctrine.corpus_index import Sloka
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
@@ -122,6 +123,8 @@ class ParasharaReading:
     maraka_planets: tuple[Maraka, ...]   # ch.44 — the fuller maraka set (lords + malefics in/with)
     planet_house_effects: Mapping[str, tuple[int, Sloka]]  # Saravali ch.30 — graha in its house
     dignity_concentrations: Mapping[str, tuple[int, Sloka]]  # Saravali ch.45 — N grahas share a dignity
+    chara_karakas: Mapping[str, str]     # BPHS ch.32 — the 7 movable karakas (role -> planet)
+    karakamsa_sign: int                  # BPHS ch.33 — navamsa sign of the Atmakaraka
     gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
     gulika_house: int                    # Gulika's house from the lagna (1..12)
     gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
@@ -403,6 +406,8 @@ def read(chart: ParasharaChart) -> ParasharaReading:
             {g: int(chart.longitudes[g] % 360.0 // 30) + 1
              for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn")
              if g in chart.longitudes}),
+        chara_karakas=chara_karakas(chart.longitudes),
+        karakamsa_sign=karakamsa(chart.longitudes),
         gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
         gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
         gulika_effect=gulika_effect_in_house(

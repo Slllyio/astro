@@ -2453,3 +2453,55 @@ the refuted arms so they cannot return by accident.
    printed positions supply. HTJAH-I:3788 — *"the ruler of the third becoming combust and hence
    powerless"*, this project's strongest lord-weakness citation and the basis of the B1 guard —
    **is itself a printed book chart**. Take this next.
+
+## Combustion on book charts — the data was never computed (2026-08-24)
+
+Ticket 3 from the sparse-strength review, and the best-cited of the three. **Closed.**
+
+**The defect.** `RamanChart.from_stated_positions` never ran a combustion pass, so
+`combust_fraction` sat at its `0.0` default on every printed book chart — the engine read every
+graha on every such chart as un-combust. The fresh-cast path (`chart/adapter.py`) has always run
+that pass. Nothing about combustion needs a birth time: `combustion.combust_fraction` reads the
+Sun's longitude and the planet's, both of which a printed chart supplies.
+
+**Why it mattered more than an ordinary data gap.** Combustion is a factor Raman applies
+CATEGORICALLY, and he applies it on exactly these charts. HTJAH-I:3780, **Chart No. 59**, of the
+third lord: *"in the Rashi he is with an inimical planet Sun and has become combust. This makes
+him weak in the chart."* That passage (at :3788) is the citation the **B1 dominant-factor guard**
+is built on. So the engine held a rule derived from a printed book chart that it could not apply
+to printed book charts.
+
+**Two fixes, both closing that circle:**
+1. `from_stated_positions` now runs the same combustion pass as the adapter. Result: **24 of 32**
+   sparse golden charts carry at least one combust graha, where previously all were silently 0.0.
+2. `_lord_hard_afflicted` no longer early-returns on `shadbala_rupas is None`. It reads
+   `es.combust` and `es.debilitated_uncancelled`, neither of which needs Shadbala — only
+   `rupas`/`band` do, and it reads neither. Result: B1 now reports on **18 of 98** sparse rows,
+   where it previously returned None on all 98.
+
+**Measured: NET ZERO again.** 269/381 exact, 52 dist-2, unchanged (abstentions 9 → 8 from the
+dignity fallback in the preceding entry). The 18 rows where B1 now fires did not reach the
+clause-2 favourable-lift branch it gates, so no verdict moved on this corpus. The ledger is
+nonetheless correct where it was previously blank, and that ledger is surfaced to readers.
+
+**Shipped on the same standard as the preceding entry:** the justification is HTJAH-I:3780 plus
+the plain fact that the value was computable and discarded. A correctness fix that measures net
+zero is still a correctness fix; net-NEGATIVE would have meant holding it.
+
+**Contract test updated, with its sound half preserved.**
+`test_b1_dominant_factor.py::test_track_b_chart_returns_none` asserted "No Shadbala -> no
+judgement, rather than a default that would deny the matter". Its own fixture put Mercury 2° from
+the Sun — genuinely combust — so returning None was not withholding judgement but discarding a
+stated fact. It is now three tests: a combust book-chart lord reports True, an uncombust one
+reports False (reporting must not mean flagging), and a graha ABSENT from the chart still returns
+None — the sound half of the old contract, kept.
+
+### Still open from that review
+
+- **Clause 2 is one-way on sparse charts** (afflicted arm unreachable at two knowable pillars,
+  `CONTRA_PILLAR_AFFLICT = 3`). Now more pointed than when filed: B1 fires on 18 sparse rows but
+  gates only the favourable lift, so the demotion path it feeds is the one that cannot be
+  reached. Proposed `weak >= min(CONTRA_PILLAR_AFFLICT, len(known))` — a no-op with all three
+  pillars known. Needs its own measurement and review.
+- **BHAVA-RESCUE is structurally dead on Track-B** (`bhava_bala_strong is True` never holds
+  without bhava madhyas, while the adjacent `bhava_ok` already treats None as permissive).

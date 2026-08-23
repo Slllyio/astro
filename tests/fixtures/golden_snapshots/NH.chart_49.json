@@ -53,7 +53,8 @@
       "HTJAH-II:16328",
       "HTJAH-II:16337",
       "HTJAH-II:16410",
-      "HTJAH-II:16461"
+      "HTJAH-II:16461",
+      "HTJAH-II:16498"
     ],
     "fired_rule_ids": [
       "H12.C.A16",
@@ -63,6 +64,7 @@
       "H12.C.A6",
       "H12.C.C5",
       "H12.C.E3",
+      "H12.C.F2",
       "H12.C.H2",
       "H12.C.J6",
       "H12.L.5"
@@ -113,6 +115,7 @@
       "HTJAH-I:3465",
       "HTJAH-I:3467",
       "HTJAH-I:3476",
+      "HTJAH-I:3788",
       "HTJAH-I:4087"
     ],
     "fired_rule_ids": [
@@ -124,6 +127,7 @@
       "H3.C.32",
       "H3.C.34",
       "H3.C.35",
+      "H3.C.39",
       "H3.C.7",
       "H3.C.8",
       "H3.C.9",
@@ -150,7 +154,7 @@
       "siblings": {
         "degree": "mild",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "afflicted"
       }
     }
   },

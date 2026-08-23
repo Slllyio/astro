@@ -439,9 +439,17 @@ def _lord_hard_afflicted(lord: str, chart: RamanChart) -> Optional[bool]:
     Only the two afflictions Raman treats as making a planet powerless in itself count here:
     combustion and an uncancelled debilitation. Dusthana placement is deliberately excluded —
     Raman's dusthana readings are matter-specific (a strong dusthana lord FEEDS an affliction,
-    clause 1.5), so folding it in would double-count. None on Track-B."""
+    clause 1.5), so folding it in would double-count.
+
+    **Runs on sparse charts too, since 2026-08-24.** It used to return None whenever Shadbala was
+    absent, which was self-contradictory: the citation this guard is BUILT ON is itself a printed
+    book chart. HTJAH-I:3780 is Chart No. 59, where Raman writes of the third lord "in the Rashi
+    he is with an inimical planet Sun and has become combust. This makes him weak in the chart."
+    A rule derived from a book chart could not be applied to book charts. Both inputs it needs
+    are available there — `combust` wants only two longitudes and `debilitated_uncancelled` only
+    a sign — and only `rupas`/`band` require Shadbala, neither of which this reads."""
     p = chart.planets.get(lord)
-    if p is None or p.shadbala_rupas is None:
+    if p is None:
         return None
     es = effective_strength(lord, chart)
     return bool(es.combust > 0.0 or es.debilitated_uncancelled)

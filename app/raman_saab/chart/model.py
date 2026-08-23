@@ -1,4 +1,5 @@
 from __future__ import annotations
+import dataclasses
 from dataclasses import dataclass
 from typing import Literal, Mapping, Optional
 from app.raman_saab.chart import varga
@@ -102,5 +103,20 @@ class RamanChart:
                 nakshatra=nak, pada=pada, retrograde=False,
                 navamsa_sign=nav, vargottama=(nav == sign),
                 dispositor=SIGN_LORDS[sign])
-        return cls(ayanamsa=ayanamsa, jd_ut=None, asc_sign=asc_sign, asc_lon=asc_lon,
-                   bhava_madhyas=(), bhava_sandhis=(), planets=planets)
+        chart = cls(ayanamsa=ayanamsa, jd_ut=None, asc_sign=asc_sign, asc_lon=asc_lon,
+                    bhava_madhyas=(), bhava_sandhis=(), planets=planets)
+        # Combustion pass — the same one `chart.adapter` runs for a fresh cast, and it belongs
+        # here just as much. `combust_fraction` needs ONLY the Sun's longitude and the planet's,
+        # both of which a printed chart supplies; without this pass it stayed silently 0.0 on
+        # every book chart, so the engine read every graha as un-combust.
+        #
+        # That mattered because combustion is a factor Raman applies CATEGORICALLY on exactly
+        # these charts. HTJAH-I:3780-3790, Chart No. 59, of the third lord: "in the Rashi he is
+        # with an inimical planet Sun and has become combust. This makes him weak in the chart."
+        # It is also the citation behind the B1 dominant-factor guard (HTJAH-I:3788) — a rule
+        # derived from a printed book chart, which the engine could not apply to printed book
+        # charts.
+        from app.raman_saab.primitives import combustion as _combustion
+        return dataclasses.replace(chart, planets={
+            n: dataclasses.replace(p, combust_fraction=_combustion.combust_fraction(n, chart))
+            for n, p in planets.items()})

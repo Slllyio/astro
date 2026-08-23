@@ -43,7 +43,7 @@ class TestSelection:
                            varsha_lord="Sun", masa_lord="Sun")
         ch = ParasharaChart(longitudes=lons, asc_sign=asc, asc_longitude=5.0,
                             moon_waxing=True, janma_nakshatra=3,
-                            speeds={p: 0.5 for p in lons}, ayanamsa=24.0, kala=kala)
+                            speeds={p: 0.5 for p in lons}, ayanamsa=24.0, kala=kala, gulika=15.0)
         bg = brahma_graha(ch)
         assert bg.planet == "Mars" and "8th lord" in bg.reason
 

@@ -76,6 +76,19 @@ def to_markdown(reading: ParasharaReading) -> str:
             out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
         out.append("")
 
+    # --- Gulika (ch.3 / ch.25) ---
+    out.append("## Gulika (Mandi) — the chief non-luminous point (BPHS ch.3, ch.25)")
+    out.append("")
+    ge = reading.gulika_effect
+    out.append(f"Gulika is in **{_sign(reading.gulika_sign)}**, the **{reading.gulika_house}th** "
+               f"house from the lagna.")
+    out.append("")
+    if ge is not None and ge.text:
+        out.append(f"_Effect ({ge.source.work}:{ge.source.line}):_ {ge.text}")
+    else:
+        out.append("_Effect for this house not recoverable from the OCR (not guessed)._")
+    out.append("")
+
     # --- Bhava verdicts (ch.11) ---
     out.append("## House judgments — prosperity or annihilation (BPHS ch.11)")
     out.append("")

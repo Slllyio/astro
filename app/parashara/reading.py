@@ -37,6 +37,7 @@ from app.parashara.chart.vimsopaka_chart import vimsopaka_all
 from app.parashara.doctrine.argala import Argala, argala_for
 from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine import functional_by_lagna as fbl
+from app.parashara.doctrine.gulika import GulikaEffect, effect_in_house as gulika_effect_in_house
 from app.parashara.doctrine.maraka import Maraka, maraka_planets
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
@@ -116,6 +117,9 @@ class ParasharaReading:
     yogakarakas: tuple[str, ...]         # ch.34 — grahas owning both a kendra and a trikona
     marakas: tuple[str, ...]             # ch.34 — grahas lording a maraka (2nd/7th) house
     maraka_planets: tuple[Maraka, ...]   # ch.44 — the fuller maraka set (lords + malefics in/with)
+    gulika_sign: int                     # Gulika/Mandi's sign (1..12), BPHS ch.3
+    gulika_house: int                    # Gulika's house from the lagna (1..12)
+    gulika_effect: GulikaEffect | None   # ch.25 — Gulika's effect in that house
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
     solar_yogas: tuple[SolarYoga, ...]   # ch.38 — Vesi/Vasi/Ubhayachari (from the Sun)
@@ -375,6 +379,10 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         marakas=tuple(p for p in fbl.classify_all(chart.asc_sign)
                       if fbl.is_maraka(p, chart.asc_sign)),
         maraka_planets=maraka_planets(_graha_signs_with_nodes(chart), asc_sign=chart.asc_sign),
+        gulika_sign=int(chart.gulika % 360.0 // 30) + 1,
+        gulika_house=((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1,
+        gulika_effect=gulika_effect_in_house(
+            ((int(chart.gulika % 360.0 // 30) + 1 - chart.asc_sign) % 12) + 1),
         nabhasa=_nabhasa(chart),
         chandra_yogas=_chandra_yogas(chart),
         solar_yogas=_solar_yogas(chart),

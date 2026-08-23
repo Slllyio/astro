@@ -123,3 +123,34 @@ def transit_signs(*, year: int, month: int, day: int, hour: int = 12, minute: in
     if "Rahu" in out:
         out["Ketu"] = ((out["Rahu"] - 1 + 6) % 12) + 1
     return out
+
+
+def gulika_longitude(*, year: int, month: int, day: int, hour: int, minute: int,
+                     tz_offset: float, latitude: float, longitude: float) -> float:
+    """Gulika's (Mandi's) sidereal longitude — the ascendant rising at the start of SATURN's eighth
+    of the day (night: the eighth counted from the 5th weekday lord). BPHS ch.3:1303-1325.
+
+    The day (sunrise->sunset) or night (sunset->next sunrise) is split into 8 equal parts; the 1st is
+    the weekday lord (night: the 5th weekday lord), then in weekday order; Saturn's part is Gulika.
+    """
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    jd = calculate_jd(year, month, day, to_decimal_hours(hour, minute), tz_offset)
+    geopos = (longitude, latitude, 0.0)
+    sunrise = _sunrise(jd - 1.0, geopos, rise=True)
+    if sunrise > jd:
+        sunrise = _sunrise(jd - 2.0, geopos, rise=True)
+    sunset = _sunrise(sunrise, geopos, rise=False)
+    is_day = sunrise <= jd < sunset
+
+    weekday = _weekday(sunrise)                          # 0=Sun..6=Saturn (Saturn's index = 6)
+    if is_day:
+        span_start, span_end, start_lord = sunrise, sunset, weekday
+    else:
+        span_start = sunset if jd >= sunset else _sunrise(sunrise - 1.0, geopos, rise=False)
+        span_end = _sunrise(sunset, geopos, rise=True) if jd >= sunset else sunrise
+        start_lord = (weekday + 4) % 7                   # the 5th weekday lord (night)
+    part = (span_end - span_start) / 8.0
+    saturn_k = (6 - start_lord) % 7                      # which eighth Saturn rules (Saturn index 6)
+    gulika_jd = span_start + saturn_k * part
+    _, ascmc = swe.houses_ex(gulika_jd, latitude, longitude, b"P", swe.FLG_SIDEREAL)
+    return ascmc[0] % 360.0

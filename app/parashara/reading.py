@@ -38,6 +38,7 @@ from app.parashara.doctrine.bhava_lord_effects import BhavaLordEffect, effect_of
 from app.parashara.doctrine.chandra_yogas import ChandraYoga, detect as detect_chandra_yogas
 from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect_mahapurusha
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
+from app.parashara.doctrine.solar_yogas import SolarYoga, detect as detect_solar_yogas
 from app.parashara.doctrine.special_yogas import SpecialYoga, detect as detect_special_yogas
 from app.parashara.doctrine.vargottama import vargottama_bodies
 from app.parashara.primitives import ashtakavarga as _av
@@ -99,6 +100,7 @@ class ParasharaReading:
     bhava_lord_effects: Mapping[int, BhavaLordPlacement]  # ch.24 — each house's lord's placement
     nabhasa: tuple[NabhasaYoga, ...]     # ch.35 — detected Asraya/Sankhya distribution yogas
     chandra_yogas: tuple[ChandraYoga, ...]  # ch.37 — lunar yogas (Sunapha..Kemadruma, Adhi)
+    solar_yogas: tuple[SolarYoga, ...]   # ch.38 — Vesi/Vasi/Ubhayachari (from the Sun)
     mahapurusha: tuple[MahapurushaYoga, ...]  # Pancha Mahapurusha (Saravali ch.37, allied)
     special_yogas: tuple[SpecialYoga, ...]    # ch.36 "many other yogas" — Gaja-Kesari (strict)
     vargottama: tuple[str, ...]          # bodies in the same sign in D1 and D9 (Saravali ch.3)
@@ -189,6 +191,15 @@ def _chandra_yogas(chart: ParasharaChart) -> tuple[ChandraYoga, ...]:
     return detect_chandra_yogas(signs, moon_sign=moon_sign, asc_sign=chart.asc_sign)
 
 
+def _solar_yogas(chart: ParasharaChart) -> tuple[SolarYoga, ...]:
+    """Solar yogas reckoned from the Sun (ch.38)."""
+    signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
+    sun_sign = signs.get("Sun")
+    if sun_sign is None:
+        return ()
+    return detect_solar_yogas(signs, sun_sign=sun_sign)
+
+
 def _mahapurusha(chart: ParasharaChart) -> tuple[MahapurushaYoga, ...]:
     """Pancha Mahapurusha yogas (Saravali ch.37): a non-luminary in own/exaltation, in a kendra."""
     signs = {g: int(lon % 360.0 // 30) + 1 for g, lon in chart.longitudes.items()}
@@ -233,6 +244,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         bhava_lord_effects=_bhava_lord_effects(chart),
         nabhasa=_nabhasa(chart),
         chandra_yogas=_chandra_yogas(chart),
+        solar_yogas=_solar_yogas(chart),
         mahapurusha=_mahapurusha(chart),
         special_yogas=_special_yogas(chart),
         vargottama=vargottama_bodies(chart.longitudes, asc_longitude=chart.asc_longitude),

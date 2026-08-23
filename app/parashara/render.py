@@ -109,6 +109,18 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("_No lunar yoga detected._")
     out.append("")
 
+    # --- Solar yogas (ch.38) ---
+    out.append("## Solar yogas — reckoned from the Sun (BPHS ch.38)")
+    out.append("")
+    if reading.solar_yogas:
+        out.append("| Yoga | Why | Source |")
+        out.append("|---|---|---|")
+        for y in reading.solar_yogas:
+            out.append(f"| {y.name} | {y.reason} | {y.source.work}:{y.source.line} |")
+    else:
+        out.append("_No solar yoga detected._")
+    out.append("")
+
     # --- Pancha Mahapurusha yogas (Saravali ch.37, allied) ---
     out.append("## Pancha Mahapurusha yogas (Saravali ch.37)")
     out.append("")

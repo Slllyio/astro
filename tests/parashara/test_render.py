@@ -62,7 +62,7 @@ class TestCitationDiscipline:
 
 class TestHonesty:
     def test_dasha_balance_caveat_shown(self, md):
-        assert "not adjusted for" in md and "Bhayat" in md
+        assert "birth-balance-adjusted" in md and "Bhayat" in md
 
     def test_nisargayu_pre_reduction_caveat_shown(self, md):
         assert "Pre-reduction" in md.split("## Nisargayu")[1]

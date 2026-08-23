@@ -258,9 +258,10 @@ def to_markdown(reading: ParasharaReading) -> str:
     # --- Dashas (ch.46) ---
     out.append("## Conditional dashas (BPHS ch.46)")
     out.append("")
-    if not reading.balance_adjusted:
-        out.append("_Timelines run from the start of the birth mahadasha — not adjusted for "
-                   "the balance at birth, which needs Bhayat/Bhabhog (the Moon's ghatika position)._")
+    if reading.balance_adjusted:
+        out.append("_Dates are birth-balance-adjusted: the birth mahadasha shows its remaining span "
+                   "from the Moon's arc through its nakshatra (BPHS-46:21-22, arc-proportional "
+                   "Bhayat/Bhabhog). Years-after-birth; negative bhukti dates began before birth._")
         out.append("")
     for d in reading.dashas:
         head = f"### {d.system.title()} — " + ("applicable" if d.applicable else "not applicable")

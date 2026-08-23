@@ -87,9 +87,14 @@ class TestReadingStructure:
         assert reading.nisargayu.reductions_applied is False
         assert 60.0 - 1e-6 <= reading.nisargayu.natural_years <= 120.0 + 1e-6
 
-    def test_reading_flags_that_dashas_are_not_balance_adjusted(self, reading):
-        """Honesty flag: the timelines start at the birth mahadasha, not the balance-at-birth."""
-        assert reading.balance_adjusted is False
+    def test_dashas_are_birth_balance_adjusted(self, reading):
+        """The timelines use the Moon's-arc birth balance: the birth mahadasha shows less than its
+        full span (its elapsed portion is dropped), so the visible Vimshottari total is under 120."""
+        assert reading.balance_adjusted is True
+        vim = next(d for d in reading.dashas if d.system == "vimshottari")
+        total_visible = vim.timeline[-1].end_year
+        assert total_visible < 120.0                 # elapsed portion of the birth MD is not shown
+        assert vim.timeline[0].end_year - vim.timeline[0].start_year <= vim.timeline[0].years
 
 
 class TestTraceability:

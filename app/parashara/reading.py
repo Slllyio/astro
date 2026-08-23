@@ -13,9 +13,9 @@ BPHS reading combining the capabilities built so far —
 Every element carries the BPHS citation the underlying primitive already holds, so the whole
 reading is traceable to Parashara's own slokas.
 
-Honest scope: the dasha timelines are reported FROM THE START of the birth mahadasha
-(`elapsed_fraction=0`), not adjusted for the balance-at-birth — that needs Bhayat/Bhabhog (the
-Moon's ghatika position), a birth-time-precision step flagged on the output rather than faked. The
+Honest scope: the dasha timelines ARE birth-balance-adjusted — the birth mahadasha shows its
+remaining span from the Moon's arc through its nakshatra (BPHS-46:21-22, arc-proportional
+Bhayat/Bhabhog); the strict time-based ghatika variant is a later refinement. The
 Nisargayu span is the pre-reduction natural figure (its own flag). Nothing here is presented as more
 settled than it is.
 
@@ -118,7 +118,7 @@ class ParasharaReading:
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
-    balance_adjusted: bool               # False: timelines are not birth-balance-adjusted
+    balance_adjusted: bool               # True: timelines use the Moon's-arc birth balance
 
 
 def _rahu_house_from(chart: ParasharaChart) -> tuple[int, int | None]:
@@ -133,24 +133,39 @@ def _rahu_house_from(chart: ParasharaChart) -> tuple[int, int | None]:
     return from_lagna, from_lord
 
 
+def _birth_balance(chart: ParasharaChart) -> float:
+    """The fraction of the birth mahadasha already elapsed at birth — the Moon's arc THROUGH its
+    nakshatra (BPHS-46:21-22, the Bhayat/Bhabhog balance, in its arc-proportional form). The Moon's
+    longitude is already in the chart, so this needs no extra input; the strict time-based
+    Bhayat/Bhabhog (ghatika) variant is a later refinement."""
+    nak_span = 360.0 / 27.0
+    return (chart.longitudes["Moon"] % nak_span) / nak_span
+
+
 def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     nak = chart.janma_nakshatra
+    elapsed = _birth_balance(chart)
     # Vimshottari is the primary system — "the most appropriate and the best of all Dasas"
-    # (BPHS-46 sl.12-14) — general, always reported first.
-    vim_periods = vim.timeline(nak)
+    # (BPHS-46 sl.12-14) — general, always reported first, balance-adjusted from the Moon's arc.
+    vim_periods = vim.timeline(nak, elapsed_fraction=elapsed)
     _vim_index = {lord: i for i, (lord, _) in enumerate(vim.CYCLE)}
-    vim_bhuktis = tuple(
-        (p.lord, bhukti_timeline(vim.CYCLE, _vim_index[p.lord], mahadasha_start_year=p.start_year))
-        for p in vim_periods)
+    vim_bhuktis: list[tuple[str, tuple[DashaPeriod, ...]]] = []
+    for i, p in enumerate(vim_periods):
+        md_years = vim.CYCLE[_vim_index[p.lord]][1]
+        # The birth mahadasha truly began `elapsed` of its length BEFORE birth; anchor its bhuktis
+        # there so the running bhukti and every future date are correct (later mahadashas start clean).
+        md_start = p.start_year - elapsed * md_years if i == 0 else p.start_year
+        vim_bhuktis.append((p.lord, bhukti_timeline(vim.CYCLE, _vim_index[p.lord],
+                                                    mahadasha_start_year=md_start)))
     vimshottari = DashaReading(
         system="vimshottari", applicable=True,
         reason="the primary 120-year system (BPHS-46 sl.12-14)",
-        timeline=vim_periods, bhuktis=vim_bhuktis)
+        timeline=vim_periods, bhuktis=tuple(vim_bhuktis))
     # Yogini is a general system (no adoption condition stated) — always reported.
     yogini = DashaReading(
         system="yogini", applicable=True,
         reason="general system (no special adoption condition)",
-        timeline=yog.timeline(nak))
+        timeline=yog.timeline(nak, elapsed_fraction=elapsed))
     # Ashtottari is conditional on Rahu's placement.
     from_lagna, from_lord = _rahu_house_from(chart)
     ash_ok = ash.is_applicable(rahu_house_from_lagna=from_lagna,
@@ -159,7 +174,7 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
         system="ashtottari", applicable=ash_ok,
         reason=("Rahu not in Lagna/Kendra or a trikona from the lagna lord"
                 if ash_ok else "Rahu in Lagna/Kendra or a trikona from the lagna lord"),
-        timeline=ash.timeline(nak) if ash_ok else ())
+        timeline=ash.timeline(nak, elapsed_fraction=elapsed) if ash_ok else ())
     return (vimshottari, yogini, ashtottari)
 
 
@@ -275,7 +290,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),
-        balance_adjusted=False,
+        balance_adjusted=True,
     )
 
 

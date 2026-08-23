@@ -2243,3 +2243,24 @@ the honest figure lands near **70-75% exact on a ~380-verdict denominator**. **E
 falling as review proceeds, and do not treat that as regression** — it is the same standard
 already applied when real-outcome generalization was reported NULL rather than buried. The two
 axes stay reported side by side, and neither is ever averaged with the other.
+
+### Negative result: automated conclusion-vs-observation triage does NOT work (2026-08-23)
+
+Before committing reviewer time to the remaining 109 DRAFT rows, the obvious cost-saver was
+tested: use the `outcome_clause` marker set (hence / thus / the native / this gave / …) to triage
+rows into "usable conclusion" vs "factor observation" mechanically, and only send the usable ones
+to review. It was validated against the 14 rows an engine-blind reviewer had already adjudicated.
+
+**It agreed with the reviewer on 3 of 14.** It rejected genuine conclusions wholesale, because
+Raman states most outcomes as bare fact with no discourse marker at all — *"the Gaekwar was very
+unfortunate in regard to his children as most of them died during his life-time"* carries no
+"hence", and is unambiguously a conclusion. Marker presence simply does not track the distinction.
+
+**Consequence: there is no cheap path. The distinction requires reading, per row.** The full queue
+was therefore split into four disjoint slices and sent to four parallel `bphs-doctrine-reviewer`
+agents under the engine-blind protocol. Do not re-attempt heuristic triage without new evidence;
+this is the recorded refutation.
+
+Note the narrower claim that survives: `outcome_clause` is still correct for what it actually does
+in the extractor — choosing WHICH clause of a paragraph to hand the classifier once you already
+know the paragraph is a conclusion. It is a clause selector, not a conclusion detector.

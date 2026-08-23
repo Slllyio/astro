@@ -2155,3 +2155,91 @@ against Raman's text is the only thing that moves 261/294, and it must stay per-
 confirm to pad. (b) The Astrological Magazine v75 is the last substantial untouched seam (~50k
 lines, 489 printed degrees, 54 birth lines) and would need its own extractor. (c) HTJAH's
 remaining unextracted charts are overwhelmingly chart-only and cannot yield verdicts.
+
+## ★ AUDIT + CONFIRMATION-RULE AMENDMENT (2026-08-23) — the ratchet falls 88.8% → 85.9%, on purpose
+
+A deep audit of the day's corpus work, prompted by the owner ("this is swaying a lot"). It found
+one real bug of mine, one structural flaw in the project's own playbook, and it changed the
+headline number for the first time in a downward direction. Binding record.
+
+### The bug I introduced, and its blast radius
+
+Batch 1 deduplicated by CHART NUMBER instead of by BIRTH MOMENT. The printings number charts
+differently, so this leaked **19 duplicate records** (~14 nativities). The follow-up
+"merge verdicts across presentations" pass then wrote the same DRAFT verdict onto every copy:
+**14 duplicated matters, nine of which CONTRADICTED an already-CONFIRMED verdict** for that same
+matter with a different ordinal (e.g. HTJAH-II.h9_11 CONFIRMED H9/father *favourable* vs my
+x95/x99/h11_07 DRAFT *mixed*).
+
+Nothing scored — DRAFTs are skipped — so **261/294 was never corrupted**, verified by direct
+check: zero (nativity, house, signification) pairs carried two CONFIRMED verdicts. But confirming
+those rows later would have counted one Raman judgment up to four times in one accuracy figure.
+Repaired: 9 draft-shadows-confirmed dropped, 5 draft-only duplicates collapsed to a canonical
+copy (the human-curated non-`.x` record wins). Duplicate records are KEPT as charts — they earned
+real liveness coverage — only the duplicated verdicts were removed.
+**Guard: `tests/raman_saab/test_golden_verdict_uniqueness.py` makes this unrepresentable.**
+
+### The structural flaw: playbook rule 7 was a one-way gate
+
+The rule said *"confirm engine-matches from DRAFTs (never confirm mismatches to pad)"*. The
+parenthesis was right; the main clause was not. Under it a DRAFT could enter the scored pool ONLY
+by agreeing with the engine — so the ratchet could climb and never fall, and genuine Raman
+conclusions the engine gets WRONG stayed parked in DRAFT forever, invisible to the number. This
+session demonstrated the mechanism live: h5_15 was confirmed in the morning after *searching the
+DRAFTs for engine matches*. Legitimate per record, selection-on-agreement in aggregate.
+
+Three pools measured, which is what exposed it: CONFIRMED **88.8%** exact; drafts parked *because*
+the engine disagreed **1.3%**; drafts extracted **blind to the engine 29.6%**.
+
+**AMENDED, user-signed (CLAUDE.md playbook rule 7): confirm whatever Raman actually CONCLUDED,
+regardless of engine agreement. A confirmed miss is worth exactly as much as a confirmed hit.
+Never confirm to pad; never withhold to protect the number.**
+
+### The confirmable unit: CONCLUSION, never OBSERVATION
+
+The distinction that makes the amendment safe. *"The native lost his mother very early"* is a
+conclusion. *"The Lagna is weak, being occupied by debilitated Mars"* is a factor Raman is still
+weighing — confirming it as a house verdict blames the engine for disagreeing with something that
+was never a verdict. Measured: draft rows whose prose is factor-like score **0.0% exact**
+(n=25) versus outcome-like at **30.0%** (n=20) — the factor rows are bad labels, not engine misses.
+
+### First adjudication batch, engine-blind
+
+A `bphs-doctrine-reviewer` read 16 sampled drafts against the printed text with the engine's
+verdict explicitly excluded from its reasoning. Result: **11 CONFIRM, 3 REVISE (ordinal wrong),
+2 REJECT** — 14/16 salvageable, a ~31% defect rate on the label. Twelve were applied (one ordinal
+revised first: HTJAH-I.x71 H4 afflicted→**mixed**, because Raman credits the 4th house's strength
+for the mother living to the native's 36th year and the karaka for her death — two-sided).
+Rejected: HTJAH-I.x79 (wrong signification — Goethe's row is about *education*, not mother) and
+NH.chart_13 (prose spliced across a footnote, inverting Raman: the Lagna is Vargottama and
+**unafflicted**). Six of the confirmations are **real engine misses** the old rule excluded by
+construction: Roosevelt's career NH:10155, the Gaekwar's children NH:8352, Bose's speech NH:7628,
+plus the H7 pair HTJAH-II:1818/1864.
+
+**Ratchet: 261/294 (88.8%) → 263/306 (85.9%) exact; 284/294 → 291/306 within-1; inversions
+10 → 15.** +12 denominator, +2 numerator. Nothing regressed in the engine.
+
+### Two systematic extractor defects, fixed with tests
+
+1. **Signification mislabelling.** `house_from_chapter` blanket-mapped a house to its primary
+   matter, but a Raman chapter can judge two: HTJAH-I ch.4 covers the mother AND education.
+   Now `_signification_for` picks from the prose (`_SIG_HINTS`), and the chosen key is always one
+   the house owns.
+2. **Ordinal read off the factor clause.** Raman states factors first and the outcome last
+   ("...but the lord and Karaka are afflicted. **Hence the native lost his mother very early**").
+   `outcome_clause` now feeds only the outcome to the classifier. Re-running over stored drafts
+   corrected 6 fields — four became `insufficient-evidence`, i.e. the fix is more conservative,
+   refusing where a factor clause had been driving a spurious verdict.
+
+Also found (pre-existing, not from today): **11 DRAFT rows name a signification that does not
+exist** — NH extractor compound labels like `wealth/speech`, `death/maraka`, `self/body`. None are
+CONFIRMED, so none are scored, but confirming one would silently score against nothing. Ratcheted
+at 11, may only shrink; which matter Raman judged is for the reviewer reading the prose.
+
+### What this means for the number, going forward
+
+Only **12 of the 121-row DRAFT queue** are adjudicated. At the sampled defect and agreement rates
+the honest figure lands near **70-75% exact on a ~380-verdict denominator**. **Expect it to keep
+falling as review proceeds, and do not treat that as regression** — it is the same standard
+already applied when real-outcome generalization was reported NULL rather than buried. The two
+axes stay reported side by side, and neither is ever averaged with the other.

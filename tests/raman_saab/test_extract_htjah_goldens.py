@@ -220,3 +220,37 @@ class TestDegreeGate:
         long_ = ex.moon_offset_deg(19.5, 20.0, "Venus")   # 20-year span
         assert short > long_ * 3
         assert ex.moon_offset_deg(5.0, 5.0, "Ketu") == 0.0
+
+
+class TestReviewFoundDefects:
+    """Both defects an engine-blind reviewer found in the 2026-08-23 sample. They matter more
+    than they look: under the confirmation-rule amendment a DRAFT can now be promoted regardless
+    of engine agreement, so a mislabelled draft can reach the scored pool."""
+
+    def test_the_ordinal_is_read_from_the_outcome_not_the_factors(self):
+        """Raman concedes factors, then states the result. HTJAH-I.x71's real conclusion —
+        'The mother lived till the 36th year of the native on account of the general strength of
+        the fourth house... The Matru-Karaka Moon is considerably afflicted.' — was drafted
+        `afflicted` because the factor clause dominated; the reviewer revised it to `mixed`."""
+        prose = ("The fourth house is moderately strong, but the lord and the Karaka are "
+                 "considerably afflicted. Hence the native lost his mother very early.")
+        assert "Hence the native lost his mother" in ex.outcome_clause(prose)
+        assert "moderately strong" not in ex.outcome_clause(prose)
+
+    def test_outcome_clause_falls_back_to_the_whole_paragraph(self):
+        plain = "The native was very unfortunate in regard to his children."
+        assert ex.outcome_clause(plain) == plain
+
+    def test_a_chapter_covering_two_matters_picks_by_prose(self):
+        """HTJAH-I ch.4 judges the mother AND education; blanket-mapping H4 to `mother`
+        mislabelled every learning row (HTJAH-I.x79, Goethe, was one)."""
+        assert ex._signification_for(4, "the influences blended in relation to the house of "
+                                        "learning; the native got a fine education") == "education"
+        assert ex._signification_for(4, "the native lost his mother very early") == "mother"
+
+    def test_the_chosen_signification_always_belongs_to_the_house(self):
+        """A key the house does not own scores against nothing at all."""
+        from app.raman_saab.doctrine.significations import significations_of
+        for h in range(1, 13):
+            sig = ex._signification_for(h, "the native prospered greatly")
+            assert sig in {s.key for s in significations_of(h)}

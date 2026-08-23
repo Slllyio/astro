@@ -104,11 +104,31 @@ rule below was EARNED by a caught mistake, with the receipts in `DOCTRINE_BACKLO
    deferred and nobody revisits (maraka/arudha/dispositor/effective_strength all unlocked
    rules years-of-sessions later). When sweeping: reuse the B1/B2 measures ONLY in the
    statistical context they were tuned for (H12.C.D6 died on exactly this).
-7. **The accuracy lever now is the GOLDEN CORPUS, not the judge.** Confirm engine-matches
-   from DRAFTs (never confirm mismatches to pad), extract remaining worked charts, and let
-   the denominator grow. The judge's remaining 10 dist-2 errors are ONE mechanism (the
-   pillar-preponderance clause) at a PROVEN local optimum — a new mechanism is design work,
-   not tuning (sweep table in DOCTRINE_BACKLOG).
+7. **The accuracy lever now is the GOLDEN CORPUS, not the judge.** Extract remaining worked
+   charts and let the denominator grow. The judge's remaining dist-2 errors are ONE mechanism
+   (the pillar-preponderance clause) at a PROVEN local optimum — a new mechanism is design
+   work, not tuning (sweep table in DOCTRINE_BACKLOG).
+   - **★ CONFIRMATION RULE — AMENDED 2026-08-23, user-signed. The old wording said "confirm
+     engine-matches from DRAFTs (never confirm mismatches to pad)". The parenthesis was right;
+     the main clause was a ONE-WAY GATE and it was quietly corrupting the measurement.** Under
+     it a DRAFT could enter the scored pool only by agreeing with the engine, so the ratchet
+     could climb and never fall, and genuine Raman conclusions the engine gets WRONG stayed
+     parked in DRAFT forever, invisible to the number. Audit evidence: an engine-blind reviewer
+     read 16 sampled drafts against Raman's printed text and found 14 salvageable, among them
+     six REAL engine misses (Roosevelt's career, the Gaekwar's children, Bose's speech) — all
+     of which the old rule would have excluded by construction.
+   - **The rule is now: confirm whatever Raman actually CONCLUDED, regardless of whether the
+     engine agrees.** A confirmed miss is worth exactly as much as a confirmed hit; both are
+     measurement. Never confirm to pad, and never withhold to protect the number.
+   - **The confirmable unit is Raman's CONCLUSION about a matter, never an OBSERVATION about
+     one contributing factor.** "The native lost his mother very early" is a conclusion;
+     "the Lagna is weak, being occupied by debilitated Mars" is a factor Raman is still
+     weighing, and confirming it as a house verdict blames the engine for disagreeing with
+     something that was never a verdict. This distinction is the whole of the review job.
+   - Expect the honest figure to FALL when the DRAFT queue is adjudicated (projection at
+     amendment time: ~70-75% exact vs the then-current 88.8%). That is the measurement becoming
+     truthful, not the engine regressing — the same standard already applied when real-outcome
+     generalization was reported NULL. Re-base the baseline deliberately, with lineage.
 8. **Grow the private real-outcome set** (`data/private/real_outcomes.json`, guarded by
    `.githooks/pre-commit`): owner-confirmed facts only, floors measured-then-locked, misses
    recorded honestly (never fudged). It is the only ground-truth instrument the project

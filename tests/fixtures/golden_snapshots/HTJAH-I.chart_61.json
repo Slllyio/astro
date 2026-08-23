@@ -45,37 +45,5 @@
         "verdict": "afflicted"
       }
     }
-  },
-  "H5": {
-    "citations": [
-      "HTJAH-I:5166",
-      "HTJAH-I:5183",
-      "HTJAH-I:5193",
-      "HTJAH-I:5265"
-    ],
-    "fired_rule_ids": [
-      "H5.C.1",
-      "H5.C.10",
-      "H5.L.11",
-      "H5.P.Ketu"
-    ],
-    "rollup": "afflicted",
-    "significations": {
-      "children": {
-        "degree": "mild",
-        "lead_frame": "moon",
-        "verdict": "afflicted"
-      },
-      "intellect": {
-        "degree": "strong",
-        "lead_frame": "moon",
-        "verdict": "favourable"
-      },
-      "poorvapunya": {
-        "degree": "strong",
-        "lead_frame": "moon",
-        "verdict": "favourable"
-      }
-    }
   }
 }

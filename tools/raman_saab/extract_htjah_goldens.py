@@ -534,26 +534,73 @@ def existing_birth_keys() -> set[str]:
 _NO_VERDICT_HOUSES: Final[frozenset[int]] = frozenset({8})
 
 
+#: A Raman chapter can judge more than one matter. HTJAH-I's fourth-house chapter runs the
+#: mother AND the native's education (Vidya), and blanket-mapping H4 -> "mother" mislabelled every
+#: learning row — caught by an engine-blind reviewer on 2026-08-23. Where a house is ambiguous
+#: this way, the prose picks the matter; the first entry is the fallback.
+_SIG_HINTS: Final[dict[int, tuple[tuple[str, str], ...]]] = {
+    4: (("education", r"learning|educat|vidya|scholar|study|studies"),
+        ("mother", r"mother|matru")),
+}
+
+
+def _signification_for(house: int, prose: str) -> Optional[str]:
+    """Which matter of `house` this prose is about."""
+    from app.raman_saab.doctrine.significations import significations_of
+    keys = significations_of(house)
+    if not keys:
+        return None
+    valid = {s.key for s in keys}
+    for key, pattern in _SIG_HINTS.get(house, ()):
+        if key in valid and re.search(pattern, prose, re.IGNORECASE):
+            return key
+    return keys[0].key
+
+
+#: Raman states the FACTORS first and the outcome last ("The fourth house is moderately strong,
+#: but the lord and the Karaka are considerably afflicted. Hence the native lost his mother very
+#: early."). Reading the ordinal off the whole paragraph lets the factor clause dominate, which
+#: was the single biggest error mode the 2026-08-23 review found. These mark the outcome clause.
+_OUTCOME_LEAD = re.compile(
+    r"(?:\bhence\b|\bthus\b|\btherefore\b|\bso\b|\bas a result\b|\baccordingly\b|"
+    r"\bthe native\b|\bthe subject\b|\bhe was\b|\bshe was\b|\bhe had\b|\bshe had\b|"
+    r"\bthis (?:gave|enabled|resulted|accounts)\b)", re.IGNORECASE)
+
+
+def outcome_clause(prose: str) -> str:
+    """The part of a Conclusion that states what HAPPENED, not which factors were weighed.
+
+    Returns the prose from the first outcome marker onward, or the whole thing when no marker is
+    present. Raman's conclusions routinely concede a factor before delivering the result, and the
+    result is the verdict."""
+    m = _OUTCOME_LEAD.search(prose)
+    return prose[m.start():] if m else prose
+
+
 def draft_verdict(c: Candidate) -> dict[str, Any]:
     """`expected_verdicts` for a candidate — DRAFT, or empty when nothing can be said.
 
     The ordinal comes from `extract_goldens.classify_prose`, the project's existing and tested
-    prose classifier: it is conservative by construction (an explicit concession outranks a bare
-    affliction word; anything it cannot read becomes insufficient-evidence) and it never invents
-    a reading. Everything it produces is marked DRAFT, and only CONFIRMED verdicts are scored by
-    the accuracy ratchet — so this cannot move fidelity, only queue work for a reviewer."""
-    from app.raman_saab.doctrine.significations import significations_of
+    prose classifier, applied to the OUTCOME clause rather than the whole paragraph (see
+    `outcome_clause`). It is conservative by construction — an explicit concession outranks a bare
+    affliction word, and anything it cannot read becomes insufficient-evidence. Everything it
+    produces is marked DRAFT.
+
+    DRAFT no longer means "unscored forever": under the 2026-08-23 confirmation-rule amendment a
+    reviewer may confirm any of these regardless of whether the engine agrees. That makes the
+    LABEL QUALITY matter far more than it did when drafts were inert, which is why the
+    signification is now chosen from the prose and the ordinal read from the outcome."""
     from tools.raman_saab.extract_goldens import classify_prose
 
     if not c.conclusion or not c.house or c.house in _NO_VERDICT_HOUSES:
         return {}
-    keys = significations_of(c.house)
-    if not keys:
+    sig = _signification_for(c.house, c.conclusion)
+    if sig is None:
         return {}
     return {
         f"H{c.house}": {
-            "signification": keys[0].key,          # the house's primary matter
-            "verdict": classify_prose(c.conclusion),
+            "signification": sig,
+            "verdict": classify_prose(outcome_clause(c.conclusion)),
             "verdict_prose": c.conclusion[:600],
             "verdict_review": "DRAFT",
         }

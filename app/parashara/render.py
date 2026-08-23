@@ -473,4 +473,25 @@ def to_markdown(reading: ParasharaReading) -> str:
                    f"{contrib.years:.2f} |")
     out.append(f"| **Total** | | | **{reading.nisargayu.natural_years:.2f}** |")
     out.append("")
+
+    # --- Nisargayu after the four haranas (ch.43 sl.567) ---
+    hs = reading.nisargayu_haranas
+    out.append("### After the four haranas (BPHS-43:567)")
+    out.append("")
+    out.append("_The four Pindayu reductions applied to Nisargayu — Astangata (combust), Satru "
+               "Kshetra (enemy sign), Vyayadi (12th–7th), Kroorodaya (malefic in lagna); only the "
+               "highest per graha (BPHS-43:392). The Ascendant's own contribution is not yet added._")
+    out.append("")
+    out.append("| Graha | Pre (yrs) | Reduction | Via | After (yrs) |")
+    out.append("|---|---|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        r = hs.per_planet.get(g)
+        c = hs.contributions.get(g)
+        if r is None or c is None:
+            continue
+        out.append(f"| {g} | {c.years:.2f} | {r.net * 100:.0f}% | {r.reason} | "
+                   f"{c.years * (1 - r.net):.2f} |")
+    out.append(f"| **Total** | **{reading.nisargayu.natural_years:.2f}** | | | "
+               f"**{hs.planetary_years:.2f}** |")
+    out.append("")
     return "\n".join(out)

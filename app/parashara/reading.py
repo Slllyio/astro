@@ -61,7 +61,12 @@ from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
 from app.parashara.primitives.deeptadi_avastha import deeptadi
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
-from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
+from app.parashara.primitives.longevity import (
+    HaranaReducedSpan,
+    NisargayuSpan,
+    nisargayu_after_haranas,
+    nisargayu_span,
+)
 from app.parashara.primitives.nakshatra_dasha import DashaPeriod, bhukti_timeline
 from app.parashara.primitives.relationships import GRAHAS, SIGN_LORDS
 from app.parashara.primitives.shadbala.total import PartialShadbala, partial_shadbala_all
@@ -139,6 +144,7 @@ class ParasharaReading:
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
+    nisargayu_haranas: HaranaReducedSpan
     balance_adjusted: bool               # True: timelines use the Moon's-arc birth balance
 
 
@@ -424,6 +430,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),
+        nisargayu_haranas=nisargayu_after_haranas(chart),
         balance_adjusted=True,
     )
 

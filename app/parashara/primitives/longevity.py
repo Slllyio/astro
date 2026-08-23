@@ -100,3 +100,83 @@ def nisargayu_span(longitudes: Mapping[str, float]) -> NisargayuSpan:
     return NisargayuSpan(per_planet=contribs,
                          natural_years=sum(c.years for c in contribs.values()),
                          reductions_applied=False)
+
+
+@dataclass(frozen=True)
+class HaranaReducedSpan:
+    per_planet: Mapping[str, "hr.HaranaResult"]
+    contributions: Mapping[str, NisargayuContribution]  # the pre-reduction scaled allotments
+    planetary_years: float       # sum of scaled allotments AFTER the four haranas
+    ascendant_added: bool        # always False — the Ascendant contribution is a later tranche
+
+
+def nisargayu_after_haranas(chart) -> HaranaReducedSpan:
+    """Nisargayu's seven planetary contributions after the four haranas (BPHS-43:567).
+
+    Applies Astangata / Satru Kshetra / Vyayadi / Kroorodaya per graha, takes only the highest per
+    graha (BPHS-43:392), and honours Vyayadi's "only the strongest of planets sharing a bhava loses"
+    (BPHS-43:429) using the partial Shadbala. The Ascendant's own contribution (BPHS-43:569) forks on
+    a navamsa-lord strength comparison and is DEFERRED — `ascendant_added=False` says so, so this
+    harana-reduced planetary span is never mistaken for the final longevity.
+    """
+    from app.parashara.primitives import haranas as hr
+    from app.parashara.primitives import graha_drishti as gd
+    from app.parashara.primitives.relationships import SIGN_LORDS, naisargika
+    from app.parashara.primitives.combustion import is_combust
+    from app.parashara.primitives.shadbala.total import partial_shadbala
+
+    lons = chart.longitudes
+    sun = lons["Sun"]
+    present = [p for p in NISARGAYU_YEARS if p in lons]
+    signs = {p: int(lons[p] % 360.0 // 30) + 1 for p in present}
+    all_signs = {p: int(l % 360.0 // 30) + 1 for p, l in lons.items()}
+    contribs = {p: contribution(p, lons[p]) for p in present}
+
+    # a benefic aspecting the lagna halves Kroorodaya (BPHS-43:381)
+    lagna_aspecters = gd.planets_aspecting_sign(chart.asc_sign, all_signs)
+    benefic_aspects_lagna = any(hr.is_longevity_benefic(q) for q in lagna_aspecters)
+
+    frac: dict[str, list[float]] = {}
+    for p in present:
+        sign = signs[p]
+        lord = SIGN_LORDS[sign]
+        house = ((sign - chart.asc_sign) % 12) + 1
+        retro = chart.speeds.get(p, 0.0) < 0.0
+        frac[p] = [
+            hr.astangata_fraction(p, combust=is_combust(p, lons[p], sun, retrograde=retro)),
+            hr.satru_kshetra_fraction(
+                in_enemy_sign=(p != lord and naisargika(p, lord) == "shatru"), retrograde=retro),
+            hr.vyayadi_fraction(house, is_benefic=hr.is_longevity_benefic(p)),
+            hr.kroorodaya_fraction(p, in_lagna=(house == 1), asc_longitude=chart.asc_longitude,
+                                   benefic_aspect=benefic_aspects_lagna),
+        ]
+
+    # Vyayadi: when several grahas share a bhava, only the STRONGEST loses (BPHS-43:429).
+    by_house: dict[int, list[str]] = {}
+    for p in present:
+        house = ((signs[p] - chart.asc_sign) % 12) + 1
+        if house in hr._VYAYADI:
+            by_house.setdefault(house, []).append(p)
+    for plist in by_house.values():
+        if len(plist) > 1:
+            strength = {q: partial_shadbala(
+                q, lons, asc_sign=chart.asc_sign, asc_longitude=chart.asc_longitude,
+                moon_waxing=chart.moon_waxing, speed=chart.speeds.get(q, 0.0),
+                ayanamsa=chart.ayanamsa, kala_ctx=chart.kala).virupas for q in plist}
+            strongest = max(plist, key=lambda q: strength[q])
+            for q in plist:
+                if q != strongest:
+                    frac[q][2] = 0.0
+
+    _NAMES = ("Astangata", "Satru Kshetra", "Vyayadi", "Kroorodaya")
+    results: dict[str, "hr.HaranaResult"] = {}
+    total = 0.0
+    for p in present:
+        a, s, v, k = frac[p]
+        net = hr.net_fraction(a, s, v, k)
+        reason = "none" if net == 0.0 else _NAMES[[a, s, v, k].index(net)]
+        results[p] = hr.HaranaResult(planet=p, astangata=a, satru_kshetra=s, vyayadi=v,
+                                     kroorodaya=k, net=net, reason=reason)
+        total += contribs[p].years * (1.0 - net)
+    return HaranaReducedSpan(per_planet=results, contributions=contribs,
+                             planetary_years=total, ascendant_added=False)

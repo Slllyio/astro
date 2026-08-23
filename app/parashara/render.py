@@ -187,6 +187,27 @@ def to_markdown(reading: ParasharaReading) -> str:
                    f"{k.varsha:.0f} | {k.masa:.0f} | {k.vara:.0f} | {k.hora:.0f} | {k.ayana:.1f} |")
     out.append("")
 
+    # --- Ashtakavarga (ch.66) ---
+    out.append("## Ashtakavarga (BPHS ch.66)")
+    out.append("")
+    out.append("Sarvashtakavarga (SAV) bindus per house from the lagna (the total across all signs is "
+               "always 337), then each graha's Bhinnashtakavarga.")
+    out.append("")
+    out.append("| House | Sign | SAV bindus |")
+    out.append("|---|---|---|")
+    for h in range(1, 13):
+        hsign = (c.asc_sign - 1 + h - 1) % 12 + 1
+        out.append(f"| {h} | {_sign(hsign)} | {reading.sav.get(hsign, 0)} |")
+    out.append(f"| **Total** | | **{sum(reading.sav.values())}** |")
+    out.append("")
+    out.append("| Graha | " + " | ".join(_sign(s) for s in range(1, 13)) + " | Total |")
+    out.append("|---|" + "---|" * 13)
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        row = reading.bav.get(g, {})
+        cells = " | ".join(str(row.get(s, 0)) for s in range(1, 13))
+        out.append(f"| {g} | {cells} | {sum(row.values())} |")
+    out.append("")
+
     # --- Avasthas (ch.45) ---
     out.append("## Planetary avasthas (BPHS ch.45)")
     out.append("")

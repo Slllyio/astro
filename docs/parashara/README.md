@@ -90,6 +90,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   headings where the OCR is clean. Honestly PARTIAL (this scan of ch.12-23 is OCR-damaged;
   `bhava_effects.coverage()` reports the per-house sloka count) — a reference catalogue, not yet a
   fire-on-chart rules layer.
+- **Ashtakavarga** (ch.66) — Bhinnashtakavarga per graha and Sarvashtakavarga, the bhava-strength /
+  transit backbone. The canonical benefic-place tables, guarded by a HARD checksum (each BAV total
+  fixed — Sun 48…Saturn 39 — and SAV always 337), so an OCR/transcription error cannot pass silently;
+  asserted at import and in tests. Surfaced per-nativity (SAV per house + the full BAV grid).
 - **Bhava karakas** (ch.32 sl.31-34) — the natural significator of each house (1→Sun, 2/5/9/11→
   Jupiter, 3/6→Mars, 4→Moon, 7→Venus, 8/12→Saturn, 10→Mercury), Parashara's stated order. Queryable
   `karaka_of`.

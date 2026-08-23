@@ -40,6 +40,7 @@ from app.parashara.doctrine.mahapurusha import MahapurushaYoga, detect as detect
 from app.parashara.doctrine.nabhasa import NabhasaYoga, asraya_yoga, sankhya_yoga
 from app.parashara.doctrine.special_yogas import SpecialYoga, detect as detect_special_yogas
 from app.parashara.doctrine.vargottama import vargottama_bodies
+from app.parashara.primitives import ashtakavarga as _av
 from app.parashara.primitives.rasi_dasha import RasiDashaPeriod
 from app.parashara.primitives.sthira_dasha import sthira_timeline
 from app.parashara.judges.bhava_prosperity import BhavaVerdict
@@ -101,6 +102,8 @@ class ParasharaReading:
     mahapurusha: tuple[MahapurushaYoga, ...]  # Pancha Mahapurusha (Saravali ch.37, allied)
     special_yogas: tuple[SpecialYoga, ...]    # ch.36 "many other yogas" — Gaja-Kesari (strict)
     vargottama: tuple[str, ...]          # bodies in the same sign in D1 and D9 (Saravali ch.3)
+    sav: Mapping[int, int]               # Sarvashtakavarga bindus per sign 1..12 (ch.66; total 337)
+    bav: Mapping[str, Mapping[int, int]]  # each graha's Bhinnashtakavarga per sign (ch.66)
     dashas: tuple[DashaReading, ...]
     sthira: SthiraReading                # rasi dasha, seeded end-to-end via the Brahma Graha
     nisargayu: NisargayuSpan
@@ -142,6 +145,12 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
                 if ash_ok else "Rahu in Lagna/Kendra or a trikona from the lagna lord"),
         timeline=ash.timeline(nak) if ash_ok else ())
     return (vimshottari, yogini, ashtottari)
+
+
+def _graha_signs(chart: ParasharaChart) -> dict[str, int]:
+    """The seven grahas' signs (1..12) — the input Ashtakavarga's references need."""
+    return {g: int(chart.longitudes[g] % 360.0 // 30) + 1
+            for g in _av.PLANETS if g in chart.longitudes}
 
 
 def _bhava_lord_effects(chart: ParasharaChart) -> dict[int, BhavaLordPlacement]:
@@ -227,6 +236,9 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         mahapurusha=_mahapurusha(chart),
         special_yogas=_special_yogas(chart),
         vargottama=vargottama_bodies(chart.longitudes, asc_longitude=chart.asc_longitude),
+        sav=_av.sarvashtakavarga(_graha_signs(chart), asc_sign=chart.asc_sign),
+        bav={g: _av.bhinnashtakavarga(g, _graha_signs(chart), asc_sign=chart.asc_sign)
+             for g in _av.PLANETS},
         dashas=_dashas(chart),
         sthira=_sthira(chart),
         nisargayu=nisargayu_span(chart.longitudes),

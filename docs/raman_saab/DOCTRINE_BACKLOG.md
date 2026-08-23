@@ -2321,3 +2321,69 @@ engine remains the most faithful encoding of Raman's system this project can bui
 know what its fidelity actually is when measured without a thumb on the scale. Both axes remain
 reported side by side: textbook fidelity **70.6% exact / 86.4% within-1**, real-outcome
 generalization **NULL**.
+
+## Re-profile of the 52 real errors (2026-08-23) — the one-mechanism diagnosis is REFUTED
+
+Required by the full-adjudication entry above: the old finding ("the 10 remaining dist-2 errors
+are ONE mechanism — the pillar-preponderance clause — at a proven local optimum") described the
+selected pool and had to be re-derived against the true 52-row error surface. It does not survive.
+
+### Where the errors actually come from
+
+| origin in `_decide` | n |
+|---|---|
+| **clause 3** — Track-B fallback, NO pillars available, decided on rule polarity alone | **17** |
+| **clause 2** — the pillar-preponderance contradiction (the old diagnosis) | **14** |
+| clauses 4-8 — pillars known, no benefic/malefic contradiction | 12 |
+| **abstention** — no polarised rule fired at all; engine returns insufficient-evidence | **9** |
+
+**The pillar clause accounts for 14 of 52 (27%), not all of them.** The largest single bucket is
+charts where the engine has *no strength information whatsoever*. Any future mechanism work must
+start here, not from the superseded claim.
+
+### The abstentions are a coverage gap, not a misjudgment
+
+All nine are NH charts, and on every one **no benefic rule and no malefic rule fired** for that
+matter (eight had only neutral-polarity rules fire; one had nothing). The engine is not grading
+wrongly — it is silent, which clause 7 explicitly permits ("silence is a legitimate answer").
+Two things were ruled out by measurement before concluding this:
+- **Not a Shadbala-evaluability problem.** All 743 evaluable rules evaluate cleanly on a sparse NH
+  chart, zero exceptions, firing 67 vs 70 on a comparable fresh-cast chart.
+- **Not a routing bug.** 21 H4 rules carry `signification="mother_home"`, which is not an H4
+  key — this looked like a defect and is NOT one: significations route by `Signification.rule_tags`,
+  and `mother_home` is a deliberate bridge tag listed in mother/happiness/education/vehicles.
+  Recorded so the next reader does not re-raise it.
+
+The scoring convention counts an abstention as distance 2 ("a real miss, not a near-hit",
+`_ordinal_distance`). That is deliberate and unchanged, but it means **9 of the 52 "real errors"
+are silences rather than inversions** — a materially different failure, and it should be reported
+as such rather than folded into the inversion count.
+
+### Fidelity stratified by data completeness — report this, do not hide it
+
+| corpus stratum | n | exact | within-1 | dist-2 |
+|---|---|---|---|---|
+| **full cast** (birth data → Shadbala available) | 283 | **76.3%** | 90.8% | 26 |
+| **sparse** (Raman's printed positions, no birth time → no Shadbala) | 98 | **54.1%** | 73.5% | 26 |
+| **COMBINED — the headline figure** | **381** | **70.6%** | **86.4%** | **52** |
+
+Sparse charts are a quarter of the corpus but carry half the errors — roughly three times the
+error rate. This is a structural handicap, not a doctrinal one: without a birth time there is no
+Shadbala, so the three-pillar machinery cannot run and `_decide` falls through to clause 3, which
+weighs rule polarity alone.
+
+**The combined 70.6% remains THE number to quote.** The strata are published because they say
+where the error concentrates and what would actually move it — NOT so that the flattering half can
+be reported on its own. Quoting 76.3% without its denominator would repeat, in a new form, exactly
+the selection problem this whole audit existed to remove.
+
+### What this makes actionable, in order
+
+1. **Clause 3 is the biggest lever (17 errors).** The Track-B fallback decides on rule polarity
+   with no strength input at all. Raman himself judges these same book charts without computing
+   Shadbala, so there is doctrine to encode here — his qualitative strength assessment (dignity,
+   placement, aspect) is available on a sparse chart even when Shadbala is not.
+2. **The 9 abstentions are a coverage question**, answerable per chart: which of Raman's stated
+   factors produced his conclusion, and is that factor encoded as a polarised rule at all?
+3. **The 14 pillar-clause errors** are the only part the old sweep table still describes, and its
+   "proven local optimum" conclusion stands for them alone.

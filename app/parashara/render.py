@@ -66,6 +66,15 @@ def to_markdown(reading: ParasharaReading) -> str:
         cls = reading.functional_class.get(g, "—")
         out.append(f"| {g} | {cls} | {'yes' if g in reading.marakas else '—'} |")
     out.append("")
+    if reading.maraka_planets:
+        out.append("Maraka (death-dealing) planets — their dasha/bhukti periods are classically "
+                   "life-sensitive (BPHS ch.44):")
+        out.append("")
+        out.append("| Graha | Why | Source |")
+        out.append("|---|---|---|")
+        for m in reading.maraka_planets:
+            out.append(f"| {m.planet} | {m.reason} | {m.source.work}:{m.source.line} |")
+        out.append("")
 
     # --- Bhava verdicts (ch.11) ---
     out.append("## House judgments — prosperity or annihilation (BPHS ch.11)")
@@ -332,15 +341,17 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append("")
         if d.applicable and d.timeline:
             is_yogini = d.system == "yogini"
-            out.append(("| Yogini | Lord | Starts (yrs) | Length (yrs) |" if is_yogini
-                        else "| Lord | Starts (yrs) | Length (yrs) |"))
-            out.append("|---|---|---|---|" if is_yogini else "|---|---|---|")
+            maraka_lords = {m.planet for m in reading.maraka_planets}
+            out.append(("| Yogini | Lord | Starts (yrs) | Length (yrs) | Maraka? |" if is_yogini
+                        else "| Lord | Starts (yrs) | Length (yrs) | Maraka? |"))
+            out.append("|---|---|---|---|---|" if is_yogini else "|---|---|---|---|")
             for p in d.timeline:
+                mk = "maraka" if p.lord in maraka_lords else "—"
                 if is_yogini:
                     out.append(f"| {_YOGINI_BY_LORD.get(p.lord, '?')} | {p.lord} | "
-                               f"{p.start_year:.2f} | {p.years:.0f} |")
+                               f"{p.start_year:.2f} | {p.years:.0f} | {mk} |")
                 else:
-                    out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} |")
+                    out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} | {mk} |")
             out.append("")
         if d.applicable and d.bhuktis:
             out.append("Antardashas (bhuktis) within each mahadasha (BPHS-46:110):")

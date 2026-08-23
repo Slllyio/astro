@@ -95,6 +95,25 @@ def to_markdown(reading: ParasharaReading) -> str:
         out.append(f"| {g} | {house} | {text} | {s.source.work}:{s.source.line} |")
     out.append("")
 
+    # --- Dignity concentrations (Saravali ch.45) ---
+    if reading.dignity_concentrations:
+        out.append("## Dignity concentrations (Saravali ch.45)")
+        out.append("")
+        out.append("When two or more grahas simultaneously hold the same dignity, Saravali gives a "
+                   "distinct verdict (two exalted → rich and famous; all seven → \"an emperor\"). "
+                   "BPHS has the dignity tables but no such concentration rule.")
+        out.append("")
+        out.append("| Dignity | Grahas | Verdict | Source |")
+        out.append("|---|---|---|---|")
+        for dignity in ("exalted", "moolatrikona", "own", "friendly", "debilitated"):
+            hit = reading.dignity_concentrations.get(dignity)
+            if hit is None:
+                continue
+            n, s = hit
+            text = s.text if len(s.text) <= 300 else s.text[:297] + "…"
+            out.append(f"| {dignity} | {n} | {text} | {s.source.work}:{s.source.line} |")
+        out.append("")
+
     # --- Gulika (ch.3 / ch.25) ---
     out.append("## Gulika (Mandi) — the chief non-luminous point (BPHS ch.3, ch.25)")
     out.append("")

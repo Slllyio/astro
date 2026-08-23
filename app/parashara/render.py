@@ -52,6 +52,20 @@ def to_markdown(reading: ParasharaReading) -> str:
                "sloka it derives from._")
     out.append("")
 
+    # --- Functional nature by lagna (ch.34) ---
+    out.append("## Functional nature of the grahas for this lagna (BPHS ch.34)")
+    out.append("")
+    yk = ", ".join(reading.yogakarakas) if reading.yogakarakas else "none"
+    mk = ", ".join(reading.marakas) if reading.marakas else "none"
+    out.append(f"Yogakaraka(s): **{yk}**. Maraka (killer) lords: {mk}.")
+    out.append("")
+    out.append("| Graha | Functional nature | Maraka? |")
+    out.append("|---|---|---|")
+    for g in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"):
+        cls = reading.functional_class.get(g, "—")
+        out.append(f"| {g} | {cls} | {'yes' if g in reading.marakas else '—'} |")
+    out.append("")
+
     # --- Bhava verdicts (ch.11) ---
     out.append("## House judgments — prosperity or annihilation (BPHS ch.11)")
     out.append("")

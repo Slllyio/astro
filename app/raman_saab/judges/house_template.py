@@ -325,12 +325,68 @@ def _effective_strength(planet: str, raw_rupas: float, chart: RamanChart) -> flo
     return eff
 
 
-def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
-    """Legacy ``house_judge._strong`` semantics: None on Track-B, else is_powerful — now read off
-    the B1 effective strength (a strict no-op at the shipped all-zero affliction weights)."""
+def _qualitative_strong(planet: str, chart: RamanChart) -> Optional[bool]:
+    """Raman's POSITIONAL-dignity strength reading, for charts that carry no Shadbala.
+
+    Shadbala is a numeric apparatus the engine derives from a birth time. Raman judges his
+    printed book charts without it, and "Considerations in Judging a House" lists what he weighs
+    instead. Factor 5 (HTJAH-I:474) is stated categorically — *"The exaltations and debilitations
+    of the house lords are equally important"* — and he gives its consequence directly:
+    *"If the strength of the lord is full or complete there will be in general a good influence
+    on the house"* (HTJAH-I:497).
+
+    Before this existed, `_strong` returned None on every sparse chart, so both pillars were
+    unknown and `_decide` fell to the Track-B fallback (clause 3), which weighs fired-rule
+    polarity alone and ignores dignity entirely — the largest single bucket (17) in the 52-row
+    error surface.
+
+    **Only the POSITIONAL dignities are read, and that boundary is load-bearing.** Three arms
+    were written first and removed on doctrine review (2026-08-23), each refuted by Raman working
+    a chart the opposite way:
+
+    * *dusthana location → weak* — HTJAH-I:2150 has a lagna lord **in the 12th** of which he
+      writes "Lagnadhipati **gets strength** because he is aspected by Saturn, a Yoga Karaka".
+      Location is overturnable, and the thing that overturns it is the aspect this function does
+      not read. (`_lord_hard_afflicted` had already excluded dusthana for the same pillar
+      semantics, for its own stated reason — see the note at that function.)
+    * *friend + kendra → strong* — HTJAH-I:2202 rates a planet "**moderate** in strength, because,
+      though in a friendly sign, is in conjunction with Mars and Saturn".
+    * *enemy → weak* (the symmetric temptation) — HTJAH-I:1948 has the Sun "in an **inimical
+      sign** but since this happens to be a Kendra he **becomes strong**". Raman also treats an
+      inimical sign as a graded one-third deduction with exemptions (HTJAH-I:10402), never as a
+      class. The friend/neutral/enemy rungs belong to the Sthana-Bala apparatus whose absence
+      this function exists to cover; reinstating them as a binary substitutes a cruder measure
+      for the one that is missing.
+
+    Aspects and conjunctions are excluded NOT because Raman treats them lightly — "plays no mean
+    part" (HTJAH-I:499) is litotes, and he directs the reader to "blend all the influences
+    carefully" (HTJAH-I:1497). They are excluded because they ALREADY reach `_decide` through
+    `fired_benefic` / `fired_malefic`; folding them into the pillar too would weigh the same
+    testimony twice on both sides of clause 2.
+
+    Everything else returns **None** and the matter still abstains. Raman's own middle reading is
+    a third value — "moderate in strength" recurs at HTJAH-I:1868, :2198, :2202 — which an
+    Optional[bool] pillar cannot carry, so silence is the honest answer rather than a guess.
+    """
     p = chart.planets.get(planet)
-    if p is None or p.shadbala_rupas is None:
+    if p is None:
         return None
+    d = dignity(planet, chart)
+    if d in ("exalt", "moolatrikona", "own"):
+        return True                                  # factor 5 — exaltation / own sign
+    if d == "debil" and not neecha_bhanga(planet, chart):
+        return False                                 # factor 5 — debilitation, uncancelled
+    return None                                      # friend/neutral/enemy: no categorical reading
+
+
+def _strong(planet: str, chart: RamanChart) -> Optional[bool]:
+    """Legacy ``house_judge._strong`` semantics, now with Raman's qualitative fallback: the B1
+    effective strength where Shadbala exists, else `_qualitative_strong` (HTJAH-I:468-520)."""
+    p = chart.planets.get(planet)
+    if p is None:
+        return None
+    if p.shadbala_rupas is None:
+        return _qualitative_strong(planet, chart)
     eff = _effective_strength(planet, p.shadbala_rupas.total / 60.0, chart)
     return shadbala_total.is_powerful(planet, eff)
 

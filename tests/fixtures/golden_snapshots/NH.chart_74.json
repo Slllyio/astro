@@ -72,19 +72,19 @@
         "verdict": "insufficient-evidence"
       },
       "home_comforts": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "mother": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "property": {
-        "degree": "mild",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "vehicles": {
         "degree": "mild",

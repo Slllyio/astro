@@ -106,12 +106,12 @@
         "verdict": "afflicted"
       },
       "intellect": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
-        "verdict": "insufficient-evidence"
+        "verdict": "favourable"
       },
       "poorvapunya": {
-        "degree": "mild",
+        "degree": "moderate",
         "lead_frame": "lagna",
         "verdict": "favourable"
       }

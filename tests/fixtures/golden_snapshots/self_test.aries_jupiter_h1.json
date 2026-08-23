@@ -22,22 +22,22 @@
       "H1.N.39",
       "H1.P.Jupiter"
     ],
-    "rollup": "mixed",
+    "rollup": "favourable",
     "significations": {
       "body": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "health": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "self": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

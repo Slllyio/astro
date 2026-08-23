@@ -538,3 +538,31 @@ class TestTimingMarakaDisplayCap:
         ap = dict(sv.metadata).get("active_periods")
         assert ap and "(maraka)" not in ap
         assert len(ap.split(";")) <= ht._TIMING_DISPLAY_CAP
+
+
+def test_track_b_reads_positional_dignity_when_shadbala_is_absent():
+    """The companion to `test_track_b_decides_on_polarity`: pillars are None on a sparse chart
+    only when no CATEGORICAL dignity is present. Raman judges his printed book charts without
+    Shadbala, and factor 5 of "Considerations in Judging a House" is stated categorically —
+    "the exaltations and debilitations of the house lords are equally important" (HTJAH-I:474).
+
+    Aries lagna, so Mars is the lagna lord; placed in Capricorn it is EXALTED, which Raman reads
+    as strength "full or complete" (HTJAH-I:497). Before this was encoded the engine discarded
+    that and fell through to the polarity fallback."""
+    chart = _track_b({"Mars": 280.0})               # Capricorn -> Mars exalted
+    assert ht._qualitative_strong("Mars", chart) is True
+
+
+def test_positional_dignity_only_the_extremes_speak():
+    """The boundary is load-bearing and was set by doctrine review. Raman overturns location and
+    the friend/enemy rungs with aspects on his own charts — a lagna lord in the 12th that "gets
+    strength" (HTJAH-I:2150), an enemy-sign Sun in a kendra that "becomes strong" (HTJAH-I:1948),
+    a friendly-sign planet rated only "moderate" for its conjunctions (HTJAH-I:2202) — so only
+    exaltation and uncancelled debilitation may speak categorically. Everything else abstains."""
+    friendly = _track_b({"Jupiter": 250.0})         # Sagittarius: own sign -> speaks
+    assert ht._qualitative_strong("Jupiter", friendly) is True
+    debilitated = _track_b({"Jupiter": 280.0})      # Capricorn: Jupiter debilitated -> speaks
+    assert ht._qualitative_strong("Jupiter", debilitated) is False
+    # A dusthana placement on its own must NOT be read as weakness (HTJAH-I:2150).
+    neutral_in_dusthana = _track_b({"Saturn": 220.0})
+    assert ht._qualitative_strong("Saturn", neutral_in_dusthana) is None

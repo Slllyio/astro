@@ -32,7 +32,7 @@
         "verdict": "favourable"
       },
       "profession_learned": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
         "verdict": "favourable"
       },
@@ -68,9 +68,9 @@
     "rollup": "afflicted",
     "significations": {
       "courage": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "ear_throat": {
         "degree": "moderate",
@@ -78,14 +78,14 @@
         "verdict": "afflicted"
       },
       "short_journeys": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       },
       "siblings": {
-        "degree": "moderate",
+        "degree": "strong",
         "lead_frame": "lagna",
-        "verdict": "mixed"
+        "verdict": "favourable"
       }
     }
   }

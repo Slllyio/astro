@@ -2387,3 +2387,69 @@ the selection problem this whole audit existed to remove.
    factors produced his conclusion, and is that factor encoded as a polarised rule at all?
 3. **The 14 pillar-clause errors** are the only part the old sweep table still describes, and its
    "proven local optimum" conclusion stands for them alone.
+
+## Sparse-chart strength: positional dignity encoded, three arms REFUTED on review (2026-08-23)
+
+First fix aimed at the re-profiled error surface. Target: clause 3, the Track-B fallback, which
+was 17 of the 52 errors — the engine judging Raman's own printed book charts with the dignity
+evidence thrown away.
+
+**The gap.** `_strong()` read strength from Shadbala, which a `from_stated_positions` chart does
+not have, so it returned None, both pillars were unknown, and `_decide` fell to clause 3 (rule
+polarity alone). But Raman judges these very charts without Shadbala: "Considerations in Judging
+a House" lists eight factors, none of which need it, and factor 5 is categorical — *"The
+exaltations and debilitations of the house lords are equally important"* (HTJAH-I:474) — with the
+consequence stated at HTJAH-I:497: *"If the strength of the lord is full or complete there will
+be in general a good influence on the house."*
+
+**Shipped (`_qualitative_strong`, used only when `shadbala_rupas is None`):** exalt / moolatrikona
+/ own → strong; uncancelled debilitation → weak; **everything else → None**, still abstaining.
+
+**Three arms were written and removed on review, each refuted by Raman working a chart the
+opposite way.** Recorded so they are not re-proposed:
+
+| proposed arm | refuted by |
+|---|---|
+| dusthana location → weak | HTJAH-I:2150 — a lagna lord **in the 12th**: "Lagnadhipati **gets strength** because he is aspected by Saturn, a Yoga Karaka" |
+| friend + kendra → strong | HTJAH-I:2202 — "**moderate** in strength, because, though in a friendly sign, is in conjunction with Mars and Saturn" |
+| enemy → weak (the symmetric temptation) | HTJAH-I:1948 — "in an **inimical sign** but since this happens to be a Kendra he **becomes strong**"; HTJAH-I:10402 makes an inimical sign a graded one-third deduction with exemptions, never a class |
+
+Two further review corrections: the dusthana arm had **already** been rejected for these same
+pillar semantics by `_lord_hard_afflicted`, and the first draft neither cited nor rebutted that
+ruling. And the original rationale for excluding aspects was wrong — "plays no mean part"
+(HTJAH-I:499) is litotes, and Raman directs the reader to "blend all the influences carefully"
+(HTJAH-I:1497). The correct reason is non-double-counting: aspects already reach `_decide` via
+`fired_benefic`/`fired_malefic`. Two citation line numbers were wrong (:493→:497, :472→:474) and
+are fixed; `sources.passage` backs click-to-source, so a wrong number ships a wrong quote.
+
+**Measured: NET ZERO.** 269/381 exact and 52 dist-2, unchanged; abstentions 9 → 8. The +2 exact /
+−1 inversion the first draft measured was attributable to the two refuted arms — a clean
+demonstration that a corpus gain is not evidence of fidelity. **Shipped anyway, deliberately**:
+the justification is HTJAH-I:474 + :497 alone, and it stands at net zero. Net-negative would have
+meant holding it and recording the number.
+
+**Anchor `self_test.aries_jupiter_h1` re-pinned mixed → favourable.** Not a doctrine claim by
+construction; its `mixed` recorded the old blindness (no pillars known, clause 2 could not run).
+Reviewer-confirmed. The behavioural contract test `test_track_b_decides_on_polarity` needed NO
+change and still passes — its chart has no categorical dignity — and two boundary tests now pin
+the refuted arms so they cannot return by accident.
+
+### Three tickets opened by this review, none acted on yet
+
+1. **Clause 2 is one-way on sparse charts.** `_bhava_bala_for` returns None without
+   `bhava_madhyas`, so a sparse chart has at most TWO knowable pillars, while
+   `CONTRA_PILLAR_AFFLICT = 3` and `CONTRA_PILLAR_FAVOUR = 2`. The afflicted arm is
+   **unreachable** while the favourable arm needs only both pillars, and the B1 guard is inert
+   there too. Raman calls exaltation and debilitation "equally important"; an engine that can
+   promote but never demote contradicts that. Proposed: `weak >= min(CONTRA_PILLAR_AFFLICT,
+   len(known))` — a no-op when all three pillars are known. Needs its own measurement and review.
+2. **BHAVA-RESCUE is structurally dead on Track-B.** HTJAH-I:503-505 is gated on
+   `bhava_bala_strong is True`, always False without bhava madhyas — so the "badly placed →
+   afflicted" half can fire where its rescue half cannot. The adjacent `bhava_ok` already treats
+   None as permissive; this gate does not.
+3. **★ The better-cited lever: combustion is discarded on every sparse chart.**
+   `from_stated_positions` never populates `combust_fraction`, so it is silently 0.0 — though
+   `combustion.combust_fraction` needs only the Sun's and the planet's longitude, both of which
+   printed positions supply. HTJAH-I:3788 — *"the ruler of the third becoming combust and hence
+   powerless"*, this project's strongest lord-weakness citation and the basis of the B1 guard —
+   **is itself a printed book chart**. Take this next.

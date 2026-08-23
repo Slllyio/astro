@@ -427,3 +427,31 @@ Example cases:
 - The tier-A-vs-B columns test the birth-time-noise excuse: if time error blurred a real signal, minute-precision tier-A must out-perform tier-B.
 - Lagna slice uses AstroDatabank's published ascendants (tropical→sidereal, cusp rows flagged) — see atlas_results.json.
 - Governance: per METHODOLOGY.md, nothing here tunes the engine.
+
+---
+
+## Addendum 2026-08-23 — parent channels re-measured at power (mapping_version 3)
+
+The two UNDER-POWERED rows above (`father_died_early` n=26, `mother_died_early` n=25) were the
+only channels in the atlas whose class was a statement about the *test* rather than the engine.
+They are now re-measured through the full governed harness (pre-registered in
+`category_house_map.csv` BEFORE results were read; sham gate passed; supporting tier — never in
+the core ratchet) using the childhood-family composite tags as the powered proxy:
+
+| feature | channel | n_case | AUC | CI | class |
+|---|---|---|---|---|---|
+| father_childhood_adverse (vs _good) | H9·father | 569 vs 458 | 0.509 | (0.473, 0.549) | PURE-NOISE |
+| mother_childhood_adverse (vs _good) | H4·mother | 569 vs 458 | 0.506 | (0.465, 0.543) | PURE-NOISE |
+
+Twenty-two times the case-n of the event tests, and the answer is the corpus's usual one: no
+signal. Two caveats are part of the record, per the mapping's own confound notes: (a)
+**SHARED-SOURCE** — the childhood tags do not distinguish which parent, so the two rows are ONE
+measurement reported on two channels, and the channel tests childhood-family environment, not a
+specific parent; (b) **DISCLOSED PRIOR** — an ad-hoc tag comparison (2026-08-22) had already
+found this channel at chance; this registration replicated that through the sham-gated harness
+so the calibration table's disclosure could carry a properly-measured class. The
+`died_early` event rows above stay as printed (pre-registered Stage-7 numbers are never
+recomputed); the calibration table now lists both generations side by side —
+`father_died_early:UNDER-POWERED, father_childhood_adverse:PURE-NOISE` — and the reader-facing
+note comes from the powered class. Old v2 results archived at
+`data/astro_databank/derived/raman/archive_mapping_v2/`.

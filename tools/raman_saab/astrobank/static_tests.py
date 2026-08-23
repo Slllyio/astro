@@ -41,6 +41,14 @@ TESTS = [
     ("H2_wealth", "H2_BANKRUPT", "H2_WEALTHY", 2, "wealth", "afflicted", "supporting"),
     ("H8_suicide", "H8_SUICIDE", None, 8, "death", "afflicted", "exploratory"),
     ("H8_accident", "H8_ACCIDENT", None, 8, "death", "afflicted", "exploratory"),
+    # mapping_version 3 (2026-08-23): parent channels re-measured on the childhood-family
+    # composite tags (the atlas's father/mother_died_early tests are UNDER-POWERED at n=26/25).
+    # SHARED-SOURCE: both tests read the SAME tokens — one measurement reported on two
+    # channels; the CSV rows carry the full confound note incl. the disclosed prior ad-hoc null.
+    ("H9_father", "H9_FATHER_CHILDHOOD", "H9_FATHER_CHILDHOOD_GOOD", 9, "father",
+     "afflicted", "supporting"),
+    ("H4_mother", "H4_MOTHER_CHILDHOOD", "H4_MOTHER_CHILDHOOD_GOOD", 4, "mother",
+     "afflicted", "supporting"),
 ]
 
 _PRIMARY_TIERS = ("A", "B")

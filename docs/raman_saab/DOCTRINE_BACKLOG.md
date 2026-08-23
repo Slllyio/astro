@@ -1950,3 +1950,23 @@ examples (the "sufficiently strong / not very good / quite afflicted" vocabulary
 per-locus dataset, then a mechanism designed against that dataset. That is golden-corpus work
 (playbook rule 7), which is already the declared accuracy lever. Probe script preserved in the
 session scratchpad; numbers above are the durable record.
+
+## Workstream D DONE: parent-channel disclosure upgraded UNDER-POWERED → PURE-NOISE (2026-08-23)
+
+The last deferred item from the real-people plan. The calibration table's H9_father/H4_mother
+rows carried `*_died_early:UNDER-POWERED` (n=26/25) — a statement about the test, not the
+engine — while the family data and the persona pilot both pointed at the father channel. The
+legitimate route was taken end-to-end: (1) pre-registered mapping_version 3 in
+`category_house_map.csv` (14 rows, 4 composite map_ids, supporting tier) using the childhood-
+family tags as the powered proxy, with the SHARED-SOURCE confound (tags don't distinguish
+parent — one measurement, two channels) and the prior ad-hoc null DISCLOSED in the registration
+itself; (2) v2 results archived (`archive_mapping_v2/`); (3) full governed harness re-run —
+sham gate PASSED, then H9_father AUC 0.511 (0.473-0.549) / H4_mother 0.506 (0.465-0.543) at
+n=496 scored pairs: properly-powered NULL, replicating the ad-hoc result under sham-gated
+governance; (4) failure atlas re-run → both channels classed PURE-NOISE at n≈570; calibration
+table regenerated — rows now carry the powered class alongside the historical event rows, and
+the reader-facing disclosure note upgrades automatically (`test_every_table_class_has_a_
+reader_facing_note` green); (5) `update_baseline --confirm` → mapping_version 3, same 4 core
+metrics (supporting tier never enters the ratchet), `test_astrobank_ratchet` green. FAILURE_
+ATLAS.md carries the dated addendum. No verdict, threshold, or rule was touched — this is the
+disclosure layer telling readers the truth at proper power, exactly what Workstream D was for.

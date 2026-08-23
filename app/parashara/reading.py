@@ -45,6 +45,7 @@ from app.parashara.doctrine.chara_karaka import chara_karakas, karakamsa, ROLE_N
 from app.parashara.primitives.upagrahas import upagrahas as _upagrahas
 from app.parashara.doctrine.upagraha_effects import house_effect as _upagraha_house_effect
 from app.parashara.chart.shodasavarga import shodasavarga_all as _shodasavarga_all
+from app.parashara.doctrine.drekkana import Drekkana, drekkana_all as _drekkana_all
 from app.parashara.chart.sudarshana import SudarshanaPosition, sudarshana_positions as _sudarshana
 from app.parashara.doctrine.arudha import (
     bhava_arudhas as _bhava_arudhas,
@@ -152,6 +153,7 @@ class ParasharaReading:
     upagrahas: Mapping[str, float]       # BPHS ch.3 — the five Sun-derived sub-planet longitudes
     upagraha_house_effects: Mapping[str, tuple[int, Sloka]]  # BPHS ch.25 — each upagraha in its house
     shodasavarga: Mapping[str, Mapping[str, int]]  # BPHS ch.6-7 — each body's 16 divisional signs
+    drekkanas: Mapping[str, Drekkana]    # BPHS ch.6 — each body's decanate (index, sign, lord, deity)
     sudarshana: Mapping[str, SudarshanaPosition]   # BPHS ch.74 — each body's house from Lagna/Moon/Sun
     arudhas: Mapping[int, int]           # BPHS ch.29-30 — each house's Arudha pada sign (1=Arudha Lagna)
     pada_finance: PadaFinance            # BPHS ch.29 sl.8-15 — wealth from the 11th-from-Arudha-Lagna
@@ -458,6 +460,7 @@ def read(chart: ParasharaChart) -> ParasharaReading:
         upagrahas=_upagrahas(chart.longitudes["Sun"]),
         upagraha_house_effects=_upagraha_house_effects(chart),
         shodasavarga=_shodasavarga_all(chart.longitudes),
+        drekkanas=_drekkana_all(chart.longitudes),
         sudarshana=_sudarshana(chart),
         arudhas=_bhava_arudhas(chart),
         pada_finance=_pada_finance(chart),

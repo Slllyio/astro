@@ -125,6 +125,21 @@ def to_markdown(reading: ParasharaReading) -> str:
                + (f" ({'; '.join(detail)})." if detail else "."))
     out.append("")
 
+    # --- Drekkana / decanates (BPHS ch.6) ---
+    out.append("## Drekkana — decanates (BPHS ch.6)")
+    out.append("")
+    out.append("Each body's decanate (the 10° third of its sign): part, decanate sign, its lord and "
+               "presiding sage (BPHS-6:7-8). Read for happiness through co-born (siblings).")
+    out.append("")
+    out.append("| Body | Part | Decanate sign | Lord | Deity |")
+    out.append("|---|---|---|---|---|")
+    for body in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"):
+        d = reading.drekkanas.get(body)
+        if d is None:
+            continue
+        out.append(f"| {body} | {d.index} | {_SIGN_NAMES[d.sign - 1]} | {d.lord} | {d.deity} |")
+    out.append("")
+
     # --- Sudarshana Chakra (BPHS ch.74) ---
     out.append("## Sudarshana Chakra — the three-lagna view (BPHS ch.74)")
     out.append("")

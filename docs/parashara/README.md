@@ -194,7 +194,10 @@ r.nisargayu.natural_years       # natural longevity (pre-reduction)
   the above.
 - **Vimshottari dasha** (ch.46 sl.12-15) — the PRIMARY 120-year system, encoded from Parashara's own
   Krittika-reckoned formulation (which reproduces the standard Aswini→Ketu scheme); the canonical
-  baseline's Revati Moon correctly seeds the Mercury mahadasha. Reported first in every reading.
+  baseline's Revati Moon correctly seeds the Mercury mahadasha. Reported first in every reading, now
+  **with its antardashas (bhuktis)** — each mahadasha subdivided into proportional sub-periods
+  (BPHS-46:110; bhukti = antardasha_years × mahadasha_years ÷ total), summing exactly to the
+  mahadasha's length.
 - **Conditional dashas** (ch.46) — NINE further nakshatra-seeded systems over one shared framework:
   Ashtottari (108), Yogini (36), Shodasottari (116), Dwadasottari (112), Panchottari (105),
   Shatabdika (100), Chaturashiti-sama (84), Dwisaptati-sama (72), Shattrimsat-sama (36). Each cited,

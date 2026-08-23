@@ -271,6 +271,13 @@ def to_markdown(reading: ParasharaReading) -> str:
             for p in d.timeline:
                 out.append(f"| {p.lord} | {p.start_year:.2f} | {p.years:.0f} |")
             out.append("")
+        if d.applicable and d.bhuktis:
+            out.append("Antardashas (bhuktis) within each mahadasha (BPHS-46:110):")
+            out.append("")
+            for md_lord, bh in d.bhuktis:
+                parts = ", ".join(f"{p.lord} {p.years:.2f}y" for p in bh)
+                out.append(f"- **{md_lord}** MD: {parts}")
+            out.append("")
 
     # --- Sthira rasi dasha (ch.46), seeded by the Brahma Graha ---
     sth = reading.sthira

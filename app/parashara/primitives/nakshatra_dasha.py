@@ -57,3 +57,33 @@ def dasha_timeline(cycle: Sequence[tuple[str, float]], start_index: int, *,
 def total_years(cycle: Sequence[tuple[str, float]]) -> float:
     """The system's full cycle length — its defining constant (108 Ashtottari, 36 Yogini, ...)."""
     return sum(years for _, years in cycle)
+
+
+def bhukti_timeline(cycle: Sequence[tuple[str, float]], mahadasha_index: int,
+                    *, mahadasha_start_year: float = 0.0) -> tuple[DashaPeriod, ...]:
+    """The antardashas (bhuktis) within one mahadasha (BPHS-46:110 — the sub-periods).
+
+    Each mahadasha subdivides into the same cyclic sequence of lords, beginning with the mahadasha
+    lord's own antardasha, each length proportional to that lord's dasha years:
+    ``bhukti = antardasha_lord_years * mahadasha_years / total_cycle`` — Parashara's proportional
+    parts. The bhuktis total exactly the mahadasha's length.
+
+    Args:
+        cycle: the system's (lord, years) sequence.
+        mahadasha_index: index into `cycle` of the mahadasha being subdivided.
+        mahadasha_start_year: years-after-birth the mahadasha begins (so `start_year`/`end_year` are
+            absolute); defaults to 0 (relative to the mahadasha's own start).
+    """
+    n = len(cycle)
+    if not 0 <= mahadasha_index < n:
+        raise ValueError(f"mahadasha_index {mahadasha_index} out of range for a {n}-lord cycle")
+    total = total_years(cycle)
+    md_years = cycle[mahadasha_index][1]
+    out: list[DashaPeriod] = []
+    cursor = mahadasha_start_year
+    for step in range(n):
+        lord, years = cycle[(mahadasha_index + step) % n]
+        length = years * md_years / total
+        out.append(DashaPeriod(lord=lord, start_year=cursor, years=length, end_year=cursor + length))
+        cursor += length
+    return out

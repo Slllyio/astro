@@ -52,7 +52,7 @@ from app.parashara.primitives import yogini_dasha as yog
 from app.parashara.primitives.baladi_avastha import baladi_from_longitude
 from app.parashara.primitives.jagradadi_avastha import jagradadi_avastha
 from app.parashara.primitives.longevity import NisargayuSpan, nisargayu_span
-from app.parashara.primitives.nakshatra_dasha import DashaPeriod
+from app.parashara.primitives.nakshatra_dasha import DashaPeriod, bhukti_timeline
 from app.parashara.primitives.relationships import GRAHAS, SIGN_LORDS
 from app.parashara.primitives.shadbala.total import PartialShadbala, partial_shadbala_all
 from app.parashara.primitives.vimsopaka import VimsopakaScore
@@ -64,6 +64,9 @@ class DashaReading:
     applicable: bool
     reason: str                          # why it applies / does not
     timeline: tuple[DashaPeriod, ...]    # from the start of the birth mahadasha (see module note)
+    #: per-mahadasha antardashas (bhuktis): (mahadasha_lord, (bhukti periods...)). Populated for the
+    #: primary Vimshottari system; empty for the others.
+    bhuktis: tuple[tuple[str, tuple[DashaPeriod, ...]], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -130,10 +133,15 @@ def _dashas(chart: ParasharaChart) -> tuple[DashaReading, ...]:
     nak = chart.janma_nakshatra
     # Vimshottari is the primary system — "the most appropriate and the best of all Dasas"
     # (BPHS-46 sl.12-14) — general, always reported first.
+    vim_periods = vim.timeline(nak)
+    _vim_index = {lord: i for i, (lord, _) in enumerate(vim.CYCLE)}
+    vim_bhuktis = tuple(
+        (p.lord, bhukti_timeline(vim.CYCLE, _vim_index[p.lord], mahadasha_start_year=p.start_year))
+        for p in vim_periods)
     vimshottari = DashaReading(
         system="vimshottari", applicable=True,
         reason="the primary 120-year system (BPHS-46 sl.12-14)",
-        timeline=vim.timeline(nak))
+        timeline=vim_periods, bhuktis=vim_bhuktis)
     # Yogini is a general system (no adoption condition stated) — always reported.
     yogini = DashaReading(
         system="yogini", applicable=True,
